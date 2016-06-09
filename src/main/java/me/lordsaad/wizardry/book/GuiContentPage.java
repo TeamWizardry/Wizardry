@@ -1,4 +1,4 @@
-package me.lordsaad.wizardry.gui;
+package me.lordsaad.wizardry.book;
 
 import me.lordsaad.wizardry.CraftingRecipes;
 import me.lordsaad.wizardry.Wizardry;

@@ -1,4 +1,4 @@
-package me.lordsaad.wizardry.gui;
+package me.lordsaad.wizardry.book;
 
 import me.lordsaad.wizardry.Wizardry;
 import net.minecraft.client.gui.GuiButton;
@@ -6,8 +6,8 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
-import static me.lordsaad.wizardry.gui.GuiContentPage.hoverTextures;
-import static me.lordsaad.wizardry.gui.GuiContentPage.regularTextures;
+import static me.lordsaad.wizardry.book.GuiContentPage.hoverTextures;
+import static me.lordsaad.wizardry.book.GuiContentPage.regularTextures;
 
 /**
  * Created by Saad on 4/19/2016.
@@ -18,7 +18,7 @@ public class PageBase extends GuiScreen {
     static int guiWidth = 146, guiHeight = 180;
     static int left;
     static int right;
-    static ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/gui/book.png");
+    static ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/book/book.png");
     static boolean hasBookmark = false;
     static PageBase bookmarkedPage = null;
     private boolean hasNavBar = false;
@@ -40,12 +40,12 @@ public class PageBase extends GuiScreen {
             buttonList.add(NEXT = new Button(1, 0, 0, 7, 12));
             buttonList.add(TOINDEX = new Button(2, 0, 0, 13, 19));
 
-            ResourceLocation back = new ResourceLocation(Wizardry.MODID, "textures/gui/navbaricons/left_arrow.png");
-            ResourceLocation back_hover = new ResourceLocation(Wizardry.MODID, "textures/gui/navbaricons/hover_left_arrow.png");
-            ResourceLocation next = new ResourceLocation(Wizardry.MODID, "textures/gui/navbaricons/right_arrow.png");
-            ResourceLocation next_hover = new ResourceLocation(Wizardry.MODID, "textures/gui/navbaricons/hover_right_arrow.png");
-            ResourceLocation toIndex = new ResourceLocation(Wizardry.MODID, "textures/gui/navbaricons/to_index.png");
-            ResourceLocation toIndex_hover = new ResourceLocation(Wizardry.MODID, "textures/gui/navbaricons/hover_to_index.png");
+            ResourceLocation back = new ResourceLocation(Wizardry.MODID, "textures/book/navbaricons/left_arrow.png");
+            ResourceLocation back_hover = new ResourceLocation(Wizardry.MODID, "textures/book/navbaricons/hover_left_arrow.png");
+            ResourceLocation next = new ResourceLocation(Wizardry.MODID, "textures/book/navbaricons/right_arrow.png");
+            ResourceLocation next_hover = new ResourceLocation(Wizardry.MODID, "textures/book/navbaricons/hover_right_arrow.png");
+            ResourceLocation toIndex = new ResourceLocation(Wizardry.MODID, "textures/book/navbaricons/to_index.png");
+            ResourceLocation toIndex_hover = new ResourceLocation(Wizardry.MODID, "textures/book/navbaricons/hover_to_index.png");
             regularTextures.put(TOINDEX, toIndex);
             regularTextures.put(BACK, back);
             regularTextures.put(NEXT, next);

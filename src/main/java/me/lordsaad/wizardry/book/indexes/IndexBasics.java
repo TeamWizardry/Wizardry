@@ -1,10 +1,10 @@
-package me.lordsaad.wizardry.gui.indexes;
+package me.lordsaad.wizardry.book.indexes;
 
 import me.lordsaad.wizardry.Wizardry;
-import me.lordsaad.wizardry.gui.Button;
-import me.lordsaad.wizardry.gui.GuiHandler;
-import me.lordsaad.wizardry.gui.GuiSubIndex;
-import me.lordsaad.wizardry.gui.IndexItem;
+import me.lordsaad.wizardry.book.Button;
+import me.lordsaad.wizardry.book.GuiHandler;
+import me.lordsaad.wizardry.book.GuiSubIndex;
+import me.lordsaad.wizardry.book.IndexItem;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;

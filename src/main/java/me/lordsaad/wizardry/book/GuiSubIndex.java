@@ -1,4 +1,4 @@
-package me.lordsaad.wizardry.gui;
+package me.lordsaad.wizardry.book;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
 import me.lordsaad.wizardry.Wizardry;

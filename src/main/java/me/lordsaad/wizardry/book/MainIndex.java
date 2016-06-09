@@ -1,4 +1,4 @@
-package me.lordsaad.wizardry.gui;
+package me.lordsaad.wizardry.book;
 
 import me.lordsaad.wizardry.Wizardry;
 import net.minecraft.client.gui.GuiButton;
@@ -24,14 +24,14 @@ public class MainIndex extends Tippable {
     }
 
     private void initIndexButtons() {
-        ResourceLocation bulb = new ResourceLocation(Wizardry.MODID, "textures/gui/icons/light-bulb.png");
-        ResourceLocation bulb_hover = new ResourceLocation(Wizardry.MODID, "textures/gui/icons/light-bulb-hover.png");
-        ResourceLocation laser_blast = new ResourceLocation(Wizardry.MODID, "textures/gui/icons/laser-blast.png");
-        ResourceLocation laser_blast_hover = new ResourceLocation(Wizardry.MODID, "textures/gui/icons/laser-blast-hover.png");
-        ResourceLocation ringed_beam = new ResourceLocation(Wizardry.MODID, "textures/gui/icons/ringed-beam.png");
-        ResourceLocation ringed_beam_hover = new ResourceLocation(Wizardry.MODID, "textures/gui/icons/ringed-beam-hover.png");
-        ResourceLocation sun_rad = new ResourceLocation(Wizardry.MODID, "textures/gui/icons/sun-radiations.png");
-        ResourceLocation sun_rad_hover = new ResourceLocation(Wizardry.MODID, "textures/gui/icons/sun-radiations-hover.png");
+        ResourceLocation bulb = new ResourceLocation(Wizardry.MODID, "textures/book/icons/light-bulb.png");
+        ResourceLocation bulb_hover = new ResourceLocation(Wizardry.MODID, "textures/book/icons/light-bulb-hover.png");
+        ResourceLocation laser_blast = new ResourceLocation(Wizardry.MODID, "textures/book/icons/laser-blast.png");
+        ResourceLocation laser_blast_hover = new ResourceLocation(Wizardry.MODID, "textures/book/icons/laser-blast-hover.png");
+        ResourceLocation ringed_beam = new ResourceLocation(Wizardry.MODID, "textures/book/icons/ringed-beam.png");
+        ResourceLocation ringed_beam_hover = new ResourceLocation(Wizardry.MODID, "textures/book/icons/ringed-beam-hover.png");
+        ResourceLocation sun_rad = new ResourceLocation(Wizardry.MODID, "textures/book/icons/sun-radiations.png");
+        ResourceLocation sun_rad_hover = new ResourceLocation(Wizardry.MODID, "textures/book/icons/sun-radiations-hover.png");
 
         addButton(new Button(0, left + 25, top + 20, 25, 25), bulb, bulb_hover, "Learn the basics of light manipulation and how everything works.");
         addButton(new Button(1, left + 55, top + 20, 25, 25), laser_blast, laser_blast_hover, "Read about what each item and block in this mod does.");

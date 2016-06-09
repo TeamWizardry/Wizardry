@@ -1,8 +1,8 @@
-package me.lordsaad.wizardry.gui.pages;
+package me.lordsaad.wizardry.book.pages;
 
 import me.lordsaad.wizardry.Utils;
-import me.lordsaad.wizardry.gui.GuiContentPage;
-import me.lordsaad.wizardry.gui.GuiHandler;
+import me.lordsaad.wizardry.book.GuiContentPage;
+import me.lordsaad.wizardry.book.GuiHandler;
 
 /**
  * Created by Saad on 4/19/2016.

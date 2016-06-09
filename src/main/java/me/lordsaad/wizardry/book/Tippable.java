@@ -1,4 +1,4 @@
-package me.lordsaad.wizardry.gui;
+package me.lordsaad.wizardry.book;
 
 import me.lordsaad.wizardry.Utils;
 import me.lordsaad.wizardry.Wizardry;
@@ -18,7 +18,7 @@ public class Tippable extends PageBase {
 
     static HashMap<Object, Integer> ID = new HashMap<>();
     private static int IDs = 0;
-    private static ResourceLocation SLIDERS = new ResourceLocation(Wizardry.MODID, "textures/gui/sliders.png");
+    private static ResourceLocation SLIDERS = new ResourceLocation(Wizardry.MODID, "textures/book/sliders.png");
     private static LinkedHashMap<Integer, String> tipText = new LinkedHashMap<>();
     private static LinkedHashMap<Integer, Float> tipX = new LinkedHashMap<>();
     private static LinkedHashMap<Integer, Boolean> slideOut = new LinkedHashMap<>();
