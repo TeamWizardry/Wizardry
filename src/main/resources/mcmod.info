@@ -1,0 +1,16 @@
+[
+{
+  "modid": "wizardry",
+  "name": "Wizardry",
+  "description": "Delve into the creation of magical spells and wizardry",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["LordSaad"],
+  "credits": "LordSaad",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
