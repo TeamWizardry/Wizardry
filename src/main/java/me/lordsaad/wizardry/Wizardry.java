@@ -2,7 +2,6 @@ package me.lordsaad.wizardry;
 
 import me.lordsaad.wizardry.particles.SparkleFX;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.obj.OBJLoader;
@@ -38,6 +37,7 @@ public class Wizardry {
     public void preInit(FMLPreInitializationEvent event) {
         logger = event.getModLog();
         proxy.preInit(event);
+        // ModFluids.init();
     }
 
     @Mod.EventHandler
@@ -51,12 +51,13 @@ public class Wizardry {
         proxy.postInit(e);
     }
 
+
     ///// SERVER  /////
     public static class CommonProxy {
         public void preInit(FMLPreInitializationEvent e) {
             //  PacketHandler.registerMessages();
             //  ModItems.init();
-            //  ModBlocks.init();
+            ModBlocks.init();
         }
 
         public void init(FMLInitializationEvent e) {
@@ -79,7 +80,7 @@ public class Wizardry {
 
             OBJLoader.INSTANCE.addDomain(MODID);
             //  ModItems.initModels();
-            //  ModBlocks.initModels();
+            ModBlocks.initModels();
         }
 
         @SubscribeEvent

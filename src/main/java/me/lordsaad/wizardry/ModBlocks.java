@@ -1,6 +1,7 @@
 package me.lordsaad.wizardry;
 
 
+import me.lordsaad.wizardry.blocks.BlockCraftingPlate;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -9,20 +10,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  */
 public class ModBlocks {
 
-    // public static BlockMirror mirror;
-    // public static BlockPrism prism;
-    // public static BlockMagnifier magnifier;
+    public static BlockCraftingPlate craftingPlate;
 
     public static void init() {
-        //    mirror = new BlockMirror();
-        //    prism = new BlockPrism();
-        //    magnifier = new BlockMagnifier();
+        craftingPlate = new BlockCraftingPlate();
     }
 
     @SideOnly(Side.CLIENT)
     public static void initModels() {
-        //    mirror.initModel();
-        //    prism.initModel();
-        //    magnifier.initModel();
+        craftingPlate.initModel();
     }
 }

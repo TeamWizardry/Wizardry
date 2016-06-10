@@ -139,7 +139,7 @@ public class Tippable extends PageBase {
 
                     //itemRender.renderItemAndEffectIntoGUI(output, (int) (left + x / 1.13) + 100, (int) (height / 2.5) + 26);
 
-                    // render recipe items
+                    // render recipe itemblocks
                     HashMap<Integer, ItemStack> slots = tipRecipe.get(ID).get(output);
                     if (slots != null) {
                         int xSlot, ySlot;

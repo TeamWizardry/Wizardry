@@ -25,14 +25,14 @@ public class IndexBasics extends GuiSubIndex {
         buttonList.add(screwdriver);
         indexItems.add(new IndexItem(ID,
                 GuiHandler.basics_getting_started,
-                new ResourceLocation(Wizardry.MODID, "textures/items/screwdriver.png"),
+                new ResourceLocation(Wizardry.MODID, "textures/itemblocks/screwdriver.png"),
                 "Getting started", "Learn the very basics of the mod and learn how and where to start.",
                 screwdriver));
         Button mirror = new Button(++ID, 0, 0, 10, 10);
         buttonList.add(mirror);
         indexItems.add(new IndexItem(ID,
                 GuiHandler.INDEX,
-                new ResourceLocation(Wizardry.MODID, "textures/items/mirroricon.png"),
+                new ResourceLocation(Wizardry.MODID, "textures/itemblocks/mirroricon.png"),
                 "Light Manipulation", "Learn all the ins and outs of manipulating light and the many kinds of mirrors.",
                 mirror));
     }

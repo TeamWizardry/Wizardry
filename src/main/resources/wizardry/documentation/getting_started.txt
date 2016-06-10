@@ -1,0 +1,7 @@
+*italics test
+/n
+new line
+/b
+break ^
+/p
+new page
