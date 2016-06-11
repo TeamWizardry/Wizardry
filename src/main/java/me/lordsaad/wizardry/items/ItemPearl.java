@@ -17,6 +17,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  */
 public class ItemPearl extends Item {
 
+    private int r1 = itemRand.nextInt(255), r2 = itemRand.nextInt(255);
+    private int g1 = itemRand.nextInt(255), g2 = itemRand.nextInt(255);
+    private int b1 = itemRand.nextInt(255), b2 = itemRand.nextInt(255);
+
     public ItemPearl() {
         setRegistryName("pearl");
         setUnlocalizedName("pearl");
@@ -46,13 +50,16 @@ public class ItemPearl extends Item {
         if (stack.hasTagCompound()) {
             if (stack.getTagCompound().hasKey("type")) {
                 if (stack.getTagCompound().getString("type").equals("mundane")) {
-                    for (int r = 0; r <= 255; r++)
-                        for (int g = 0; g <= 255; g++)
-                            for (int b = 0; b <= 255; b++) {
-                                stack.getTagCompound().setInteger("red", r);
-                                stack.getTagCompound().setInteger("green", g);
-                                stack.getTagCompound().setInteger("blue", b);
-                            }
+
+                    int steps = 30;
+
+                    for (int i = 0; i < steps; i++) {
+                        float ratio = (float) i / (float) steps;
+                        int red = (int) (r2 * ratio + r1 * (1 - ratio));
+                        int green = (int) (g2 * ratio + g1 * (1 - ratio));
+                        int blue = (int) (b2 * ratio + b1 * (1 - ratio));
+                    }
+
                 } else if (stack.getTagCompound().getString("type").equals("infused")) {
 
                 } else {

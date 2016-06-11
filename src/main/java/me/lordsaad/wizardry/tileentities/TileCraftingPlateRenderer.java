@@ -18,10 +18,10 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
         if (ticker > 360) ticker = 0;
 
         for (int i = 0; i < te.getInventory().size(); i++) {
-            GL11.glPushMatrix();
             EntityItem item = new EntityItem(te.getWorld(), x, y, z, te.getInventory().get(i));
             item.hoverStart = 0;
             double shifted = ticker + i * (360.0 / te.getInventory().size());
+            GL11.glPushMatrix();
             GL11.glTranslated(x + 0.5, y + 0.6, z + 0.5);
             GL11.glRotated(shifted, 0, 1, 0);
             GL11.glTranslated(-0.5, 0, 0);

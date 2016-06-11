@@ -34,7 +34,7 @@ public class BlockCraftingPlate extends Block implements ITileEntityProvider {
 
     public BlockCraftingPlate() {
         super(Material.ROCK);
-        setHardness(0.5F);
+        setHardness(1F);
         setLightLevel(5);
         setSoundType(SoundType.STONE);
         setUnlocalizedName("crafting_plate");

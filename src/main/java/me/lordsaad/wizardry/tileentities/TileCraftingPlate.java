@@ -72,14 +72,14 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
     @Override
     public void update() {
         if (!worldObj.isRemote) {
-            List<EntityItem> items = worldObj.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos, pos.add(1, 2, 1)));
-            for (EntityItem item : items) {
-                inventory.add(item.getEntityItem());
-                worldObj.removeEntity(item);
-                markDirty();
-            }
-
             if (isStructureComplete()) {
+                List<EntityItem> items = worldObj.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos, pos.add(1, 2, 1)));
+                for (EntityItem item : items) {
+                    inventory.add(item.getEntityItem());
+                    worldObj.removeEntity(item);
+                    markDirty();
+                }
+
                 for (int i = 0; i < 5; i++) {
                     SparkleFX ambient = Wizardry.proxy.spawnParticleSparkle(worldObj, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.5F, 0.5F, 30, 8, 8, 8);
                     ambient.jitter(8, 0.1, 0.1, 0.1);
