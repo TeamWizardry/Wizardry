@@ -57,7 +57,7 @@ public class Wizardry {
     public static class CommonProxy {
         public void preInit(FMLPreInitializationEvent e) {
             //  PacketHandler.registerMessages();
-            //  ModItems.init();
+            ModItems.init();
             ModBlocks.init();
         }
 
@@ -85,7 +85,7 @@ public class Wizardry {
             MinecraftForge.EVENT_BUS.register(this);
 
             OBJLoader.INSTANCE.addDomain(MODID);
-            //  ModItems.initModels();
+            ModItems.initModels();
             ModBlocks.initModels();
         }
 

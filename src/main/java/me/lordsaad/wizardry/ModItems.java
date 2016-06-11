@@ -1,23 +1,20 @@
 package me.lordsaad.wizardry;
 
+import me.lordsaad.wizardry.items.ItemPearl;
+
 /**
  * Created by Saad on 4/9/2016.
  */
 public class ModItems {
 
-    // public static ItemScrewDriver screwdriver;
-    // public static ItemPhysicsBook physicsBook;
-    // public static ItemLaserPen laserPen;
+    public static ItemPearl pearl;
 
     public static void init() {
-        //  screwdriver = new ItemScrewDriver();
-        //  physicsBook = new ItemPhysicsBook();
-        //  laserPen = new ItemLaserPen();
+        pearl = new ItemPearl();
     }
 
     public static void initModels() {
-        //  screwdriver.initModel();
-        //  physicsBook.initModel();
-        //  laserPen.initModel();
+        pearl.initModel();
+//        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemPearl.ColorHandler(), pearl);
     }
 }

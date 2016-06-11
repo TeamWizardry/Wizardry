@@ -39,16 +39,22 @@ public class SparkleFX extends Particle {
     }
 
     public void randomDirection(double x, double y, double z) {
-        motionX += ThreadLocalRandom.current().nextDouble(-x, x);
-        motionY += ThreadLocalRandom.current().nextDouble(-y, y);
-        motionZ += ThreadLocalRandom.current().nextDouble(-z, z);
+        if (x > 0) motionX += ThreadLocalRandom.current().nextDouble(-x, x);
+        if (y > 0) motionY += ThreadLocalRandom.current().nextDouble(-y, y);
+        if (z > 0) motionZ += ThreadLocalRandom.current().nextDouble(-z, z);
+    }
+
+    public void setMotion(double x, double y, double z) {
+        motionX += x;
+        motionY += y;
+        motionZ += z;
     }
 
     public void jitter(int chance, double x, double y, double z) {
         jitterChance = chance;
-        jitterX = x;
-        jitterY = y;
-        jitterZ = z;
+        if (x > 0) jitterX = x;
+        if (y > 0) jitterY = y;
+        if (z > 0) jitterZ = z;
     }
 
     @Override
@@ -59,9 +65,12 @@ public class SparkleFX extends Particle {
     @Override
     public void onUpdate() {
         super.onUpdate();
-        if (random.nextInt(jitterChance) == 0) motionX += ThreadLocalRandom.current().nextDouble(-jitterX, jitterX);
-        if (random.nextInt(jitterChance) == 0) motionY += ThreadLocalRandom.current().nextDouble(-jitterY, jitterY);
-        if (random.nextInt(jitterChance) == 0) motionZ += ThreadLocalRandom.current().nextDouble(-jitterZ, jitterZ);
+        if (jitterX > 0)
+            if (random.nextInt(jitterChance) == 0) motionX += ThreadLocalRandom.current().nextDouble(-jitterX, jitterX);
+        if (jitterY > 0)
+            if (random.nextInt(jitterChance) == 0) motionY += ThreadLocalRandom.current().nextDouble(-jitterY, jitterY);
+        if (jitterZ > 0)
+            if (random.nextInt(jitterChance) == 0) motionZ += ThreadLocalRandom.current().nextDouble(-jitterZ, jitterZ);
         float lifeCoeff = ((float) this.particleMaxAge - (float) this.particleAge) / (float) this.particleMaxAge;
         if (random.nextInt(4) == 0) this.particleAge--;
         this.particleAlpha = lifeCoeff / 2;

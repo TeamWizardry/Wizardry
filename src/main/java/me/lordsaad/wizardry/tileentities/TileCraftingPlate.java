@@ -3,15 +3,15 @@ package me.lordsaad.wizardry.tileentities;
 import me.lordsaad.wizardry.Wizardry;
 import me.lordsaad.wizardry.particles.SparkleFX;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.common.util.Constants;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class TileCraftingPlate extends TileEntity implements ITickable {
 
-    private ItemStack[] inventory = new ItemStack[54];
+    private ArrayList<ItemStack> inventory = new ArrayList<>();
     private boolean structureComplete = false;
 
     private static boolean canCombine(ItemStack stack1, ItemStack stack2) {
@@ -38,15 +38,11 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
         structureComplete = compound.getBoolean("structureComplete");
-        NBTTagList nbttaglist = compound.getTagList("Items", 10);
-
-        for (int i = 0; i < nbttaglist.tagCount(); ++i) {
-            NBTTagCompound nbttagcompound = nbttaglist.getCompoundTagAt(i);
-            int j = nbttagcompound.getByte("Slot");
-
-            if (j >= 0 && j < this.inventory.length) {
-                this.inventory[j] = ItemStack.loadItemStackFromNBT(nbttagcompound);
-            }
+        inventory = new ArrayList<>();
+        if (compound.hasKey("inventory")) {
+            NBTTagList list = compound.getTagList("inventory", Constants.NBT.TAG_COMPOUND);
+            for (int i = 0; i < list.tagCount(); i++)
+                inventory.add(ItemStack.loadItemStackFromNBT(list.getCompoundTagAt(i)));
         }
     }
 
@@ -55,23 +51,21 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
         super.writeToNBT(compound);
         compound.setBoolean("structureComplete", structureComplete);
 
-        NBTTagList nbttaglist = new NBTTagList();
-
-        for (int i = 0; i < this.inventory.length; ++i) {
-            if (this.inventory[i] != null) {
-                NBTTagCompound nbttagcompound = new NBTTagCompound();
-                nbttagcompound.setByte("Slot", (byte) i);
-                this.inventory[i].writeToNBT(nbttagcompound);
-                nbttaglist.appendTag(nbttagcompound);
-            }
+        if (inventory.size() > 0) {
+            NBTTagList list = new NBTTagList();
+            for (ItemStack anInventory : inventory)
+                list.appendTag(anInventory.writeToNBT(new NBTTagCompound()));
+            compound.setTag("inventory", list);
         }
-
-        compound.setTag("Items", nbttaglist);
-
         return compound;
     }
 
-    public ItemStack[] getInventory() {
+    @Override
+    public NBTTagCompound getUpdateTag() {
+        return writeToNBT(new NBTTagCompound());
+    }
+
+    public ArrayList<ItemStack> getInventory() {
         return inventory;
     }
 
@@ -80,30 +74,21 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
         if (!worldObj.isRemote) {
             List<EntityItem> items = worldObj.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos, pos.add(1, 2, 1)));
             for (EntityItem item : items) {
-                for (int i = 0; i < inventory.length; i++) {
-                    if (inventory[i] == null) {
-                        inventory[i] = item.getEntityItem();
-                        worldObj.removeEntity(item);
-                        break;
-                    } else if (canCombine(item.getEntityItem(), inventory[i])) {
-                        inventory[i] = new ItemStack(item.getEntityItem().getItem(), item.getEntityItem().stackSize + inventory[i].stackSize);
-                        worldObj.removeEntity(item);
-                        break;
-                    }
-                }
+                inventory.add(item.getEntityItem());
+                worldObj.removeEntity(item);
+                markDirty();
             }
-        }
 
-        for (EntityPlayer player : worldObj.playerEntities)
-            for (ItemStack stack : inventory)
-                if (stack != null)
-                    player.addChatMessage(new TextComponentString(stack + ""));
+            if (isStructureComplete()) {
+                for (int i = 0; i < 5; i++) {
+                    SparkleFX ambient = Wizardry.proxy.spawnParticleSparkle(worldObj, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.5F, 0.5F, 30, 8, 8, 8);
+                    ambient.jitter(8, 0.1, 0.1, 0.1);
+                    ambient.randomDirection(0.2, 0.2, 0.2);
 
-        if (isStructureComplete()) {
-            for (int i = 0; i < 5; i++) {
-                SparkleFX fx = Wizardry.proxy.spawnParticleSparkle(worldObj, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.5F, 0.5F, 30, 8, 8, 8);
-                fx.jitter(8, 0.1, 0.1, 0.1);
-                fx.randomDirection(0.3, 0.3, 0.3);
+                /*SparkleFX fog = Wizardry.proxy.spawnParticleSparkle(worldObj, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 1F, 1F, 30);
+                fog.randomDirection(0.5, 0, 0.5);
+                fog.setMotion(0, -0.5, 0);*/
+                }
             }
         }
     }

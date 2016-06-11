@@ -2,6 +2,7 @@ package me.lordsaad.wizardry.blocks;
 
 import me.lordsaad.wizardry.schematic.Schematic;
 import me.lordsaad.wizardry.tileentities.TileCraftingPlate;
+import me.lordsaad.wizardry.tileentities.TileCraftingPlateRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
@@ -21,6 +22,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -38,12 +40,14 @@ public class BlockCraftingPlate extends Block implements ITileEntityProvider {
         setUnlocalizedName("crafting_plate");
         setRegistryName("crafting_plate");
         GameRegistry.register(this);
+        GameRegistry.registerTileEntity(TileCraftingPlate.class, "crafting_altar");
         GameRegistry.register(new ItemBlock(this), getRegistryName());
     }
 
     @SideOnly(Side.CLIENT)
     public void initModel() {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
+        ClientRegistry.bindTileEntitySpecialRenderer(TileCraftingPlate.class, new TileCraftingPlateRenderer());
     }
 
     @Override
