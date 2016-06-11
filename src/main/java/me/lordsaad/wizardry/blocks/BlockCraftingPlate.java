@@ -10,6 +10,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
@@ -32,10 +34,11 @@ public class BlockCraftingPlate extends Block implements ITileEntityProvider {
         super(Material.ROCK);
         setHardness(0.5F);
         setLightLevel(5);
+        setSoundType(SoundType.STONE);
         setUnlocalizedName("Crafting Plate");
         setRegistryName("crafting_plate");
         GameRegistry.register(this);
-        setSoundType(SoundType.STONE);
+        GameRegistry.register(new ItemBlock(this), getRegistryName());
     }
 
     @SideOnly(Side.CLIENT)
@@ -45,7 +48,7 @@ public class BlockCraftingPlate extends Block implements ITileEntityProvider {
 
     @SideOnly(Side.CLIENT)
     public void initModel() {
-        ModelLoader.setCustomModelResourceLocation(new BlockCraftingPlateItem(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
     }
 
     // @Override
@@ -60,15 +63,15 @@ public class BlockCraftingPlate extends Block implements ITileEntityProvider {
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (!worldIn.isRemote) {
-            // TODO
+            Schematic schematic = new Schematic("spell_crafter");
+            schematic.check(worldIn, pos, this, playerIn);
         }
         return true;
     }
 
     @Override
     public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
-        Schematic schematic = new Schematic("mana_battery");
-        schematic.check(worldIn, pos, this);
+
 
         return getDefaultState();
     }

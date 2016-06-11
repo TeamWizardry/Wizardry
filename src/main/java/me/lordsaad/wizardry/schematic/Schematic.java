@@ -20,6 +20,9 @@ import java.util.List;
  */
 public class Schematic {
 
+    short width;
+    short height;
+    short length;
     private BlockObject[] blockObjects;
 
     public Schematic(String fileName) {
@@ -28,9 +31,9 @@ public class Schematic {
             NBTTagCompound nbtdata = CompressedStreamTools.readCompressed(is);
 
             is.close();
-            short width = nbtdata.getShort("Width");
-            short height = nbtdata.getShort("Height");
-            short length = nbtdata.getShort("Length");
+            width = nbtdata.getShort("Width");
+            height = nbtdata.getShort("Height");
+            length = nbtdata.getShort("Length");
             int size = width * height * length;
             blockObjects = new BlockObject[size];
 
@@ -55,22 +58,28 @@ public class Schematic {
         }
     }
 
-
-    public void check(World world, BlockPos pos, Block centerBlock) {
+    public void check(World world, BlockPos pos, Block centerBlock, EntityPlayer player) {
+        boolean success = true;
         List<BlockObject> blocks = new ArrayList<>();
         for (BlockObject obj : blockObjects) {
-            if (obj.getState().getBlock() == Blocks.STAINED_HARDENED_CLAY) {
-                if (obj.getState().getBlock().getMetaFromState(obj.getState()) == 14)
-                    blocks.add(new BlockObject(pos, centerBlock.getDefaultState()));
+            if (obj.getState().getBlock() == Blocks.STAINED_HARDENED_CLAY && obj.getState().getBlock().getMetaFromState(obj.getState()) == 14) {
+                blocks.add(new BlockObject(pos, centerBlock.getDefaultState()));
             } else
-                blocks.add(new BlockObject(new BlockPos(pos.add(obj.getPos().getX(), obj.getPos().getY(), obj.getPos().getZ())), obj.getState()));
+                blocks.add(new BlockObject(new BlockPos(pos.add(obj.getPos().getX(), obj.getPos().getY(), obj.getPos().getZ())).add(-(width / 2), -(height / 2) + 1, -(length / 2)), obj.getState()));
         }
 
-        for (BlockObject obj : blocks)
-            if (world.getBlockState(obj.getPos()) != obj.getState()) {
-                for (EntityPlayer p : world.playerEntities)
-                    p.addChatComponentMessage(new TextComponentString("STRUCTURE INCORRECT"));
-                break;
+        for (BlockObject obj : blocks) {
+            if (world.getBlockState(obj.getPos()).getBlock() == obj.getState().getBlock() && world.getBlockState(obj.getPos()) != obj.getState() && obj.getState().getBlock() != centerBlock) {
+                // FIX WRONG DIRECTIONS AND INCORRECT METADATA LIKE STAIR ROTATION
+                world.setBlockState(obj.getPos(), obj.getState());
             }
+            if (world.getBlockState(obj.getPos()).getBlock() != obj.getState().getBlock()) {
+                success = false;
+                player.addChatMessage(new TextComponentString(obj.getPos() + " is " + world.getBlockState(obj.getPos()) + " but should be " + obj.getState()));
+            }
+        }
+
+        if (success) player.addChatMessage(new TextComponentString("STRUCTURE COMPLETE :D"));
+        else player.addChatMessage(new TextComponentString("STRUCTURE INCOMPLETE :("));
     }
 }
