@@ -68,7 +68,12 @@ public class Wizardry {
         public void postInit(FMLPostInitializationEvent e) {
         }
 
-        public void spawnParticleSparkleLine(World world, double x, double y, double z) {
+        public SparkleFX spawnParticleSparkle(World world, double x, double y, double z, float alpha, float scale, int age) {
+            return null;
+        }
+
+        public SparkleFX spawnParticleSparkle(World world, double x, double y, double z, float alpha, float scale, int age, double rangeX, double rangeY, double rangeZ) {
+            return null;
         }
     }
 
@@ -89,9 +94,16 @@ public class Wizardry {
             event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, "entity/sparkle"));
         }
 
-        public void spawnParticleSparkleLine(World world, double x, double y, double z) {
-            SparkleFX particle = new SparkleFX(world, x, y, z);
+        public SparkleFX spawnParticleSparkle(World world, double x, double y, double z, float alpha, float scale, int age) {
+            SparkleFX particle = new SparkleFX(world, x, y, z, alpha, scale, age);
             Minecraft.getMinecraft().effectRenderer.addEffect(particle);
+            return particle;
+        }
+
+        public SparkleFX spawnParticleSparkle(World world, double x, double y, double z, float alpha, float scale, int age, double rangeX, double rangeY, double rangeZ) {
+            SparkleFX particle = new SparkleFX(world, x, y, z, alpha, scale, age, rangeX, rangeY, rangeZ);
+            Minecraft.getMinecraft().effectRenderer.addEffect(particle);
+            return particle;
         }
     }
 

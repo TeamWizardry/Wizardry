@@ -17,18 +17,38 @@ public class SparkleFX extends Particle {
 
     private static final Random random = new Random();
     public ResourceLocation texture = new ResourceLocation(Wizardry.MODID, "entity/sparkle");
+    private double jitterX, jitterY, jitterZ;
+    private int jitterChance;
 
-    public SparkleFX(World worldIn, double x, double y, double z) {
+    public SparkleFX(World worldIn, double x, double y, double z, float alpha, float scale, int age) {
         super(worldIn, x, y, z);
-        motionX += ThreadLocalRandom.current().nextDouble(-0.1, 0.1);
-        motionY += ThreadLocalRandom.current().nextDouble(-0.1, 0.1);
-        motionZ += ThreadLocalRandom.current().nextDouble(-0.1, 0.1);
-        posX = x + ThreadLocalRandom.current().nextDouble(-10, 10);
-        posY = y + ThreadLocalRandom.current().nextDouble(-10, 10);
-        posZ = z + ThreadLocalRandom.current().nextDouble(-10, 10);
-        particleMaxAge = 10;
+        particleAlpha = alpha;
+        particleMaxAge = age;
+        particleScale = scale;
         TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(texture.toString());
         this.setParticleTexture(sprite);
+    }
+
+    public SparkleFX(World worldIn, double x, double y, double z, float alpha, float scale, int age, double rangeX, double rangeY, double rangeZ) {
+        super(worldIn, x + ThreadLocalRandom.current().nextDouble(-rangeX, rangeX), y + ThreadLocalRandom.current().nextDouble(-rangeY, rangeY), z + ThreadLocalRandom.current().nextDouble(-rangeZ, rangeZ));
+        particleAlpha = alpha;
+        particleMaxAge = age;
+        particleScale = scale;
+        TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(texture.toString());
+        this.setParticleTexture(sprite);
+    }
+
+    public void randomDirection(double x, double y, double z) {
+        motionX += ThreadLocalRandom.current().nextDouble(-x, x);
+        motionY += ThreadLocalRandom.current().nextDouble(-y, y);
+        motionZ += ThreadLocalRandom.current().nextDouble(-z, z);
+    }
+
+    public void jitter(int chance, double x, double y, double z) {
+        jitterChance = chance;
+        jitterX = x;
+        jitterY = y;
+        jitterZ = z;
     }
 
     @Override
@@ -39,12 +59,12 @@ public class SparkleFX extends Particle {
     @Override
     public void onUpdate() {
         super.onUpdate();
-        // if (random.nextInt(10) == 0) motionX += ThreadLocalRandom.current().nextDouble(-0.03, 0.03);
-        // if (random.nextInt(10) == 0) motionY += ThreadLocalRandom.current().nextDouble(-0.03, 0.03);
-        // if (random.nextInt(10) == 0) motionZ += ThreadLocalRandom.current().nextDouble(-0.03, 0.03);
+        if (random.nextInt(jitterChance) == 0) motionX += ThreadLocalRandom.current().nextDouble(-jitterX, jitterX);
+        if (random.nextInt(jitterChance) == 0) motionY += ThreadLocalRandom.current().nextDouble(-jitterY, jitterY);
+        if (random.nextInt(jitterChance) == 0) motionZ += ThreadLocalRandom.current().nextDouble(-jitterZ, jitterZ);
         float lifeCoeff = ((float) this.particleMaxAge - (float) this.particleAge) / (float) this.particleMaxAge;
         if (random.nextInt(4) == 0) this.particleAge--;
-        this.particleAlpha = lifeCoeff;
-        this.particleScale = lifeCoeff;
+        this.particleAlpha = lifeCoeff / 2;
+        this.particleScale = lifeCoeff / 2;
     }
 }

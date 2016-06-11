@@ -1,26 +1,23 @@
 package me.lordsaad.wizardry.tileentities;
 
 import me.lordsaad.wizardry.Wizardry;
+import me.lordsaad.wizardry.particles.SparkleFX;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 /**
  * Created by Saad on 6/10/2016.
  */
-public class TileCraftingPlate extends TileEntity implements IInventory, ITickable {
+public class TileCraftingPlate extends TileEntity implements ITickable {
 
     private ItemStack[] inventory = new ItemStack[54];
     private boolean structureComplete = false;
@@ -103,112 +100,11 @@ public class TileCraftingPlate extends TileEntity implements IInventory, ITickab
                     player.addChatMessage(new TextComponentString(stack + ""));
 
         if (isStructureComplete()) {
-            for (int i = 0; i < 10; i++) {
-                Wizardry.proxy.spawnParticleSparkleLine(worldObj, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+            for (int i = 0; i < 5; i++) {
+                SparkleFX fx = Wizardry.proxy.spawnParticleSparkle(worldObj, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.5F, 0.5F, 30, 8, 8, 8);
+                fx.jitter(8, 0.1, 0.1, 0.1);
+                fx.randomDirection(0.3, 0.3, 0.3);
             }
         }
-    }
-
-    private boolean isEmpty() {
-        for (ItemStack itemstack : this.inventory) if (itemstack != null) return false;
-        return true;
-    }
-
-    private boolean isFull() {
-        for (ItemStack itemstack : this.inventory)
-            if (itemstack == null || itemstack.stackSize != itemstack.getMaxStackSize()) return false;
-        return true;
-    }
-
-    @Override
-    public int getSizeInventory() {
-        return inventory.length;
-    }
-
-    @Nullable
-    @Override
-    public ItemStack getStackInSlot(int index) {
-        return this.inventory[index];
-    }
-
-    @Nullable
-    @Override
-    public ItemStack decrStackSize(int index, int count) {
-        return ItemStackHelper.getAndSplit(this.inventory, index, count);
-    }
-
-    @Nullable
-    @Override
-    public ItemStack removeStackFromSlot(int index) {
-        return ItemStackHelper.getAndRemove(this.inventory, index);
-    }
-
-    @Override
-    public void setInventorySlotContents(int index, @Nullable ItemStack stack) {
-        this.inventory[index] = stack;
-
-        if (stack != null && stack.stackSize > this.getInventoryStackLimit()) {
-            stack.stackSize = this.getInventoryStackLimit();
-        }
-    }
-
-    @Override
-    public int getInventoryStackLimit() {
-        return 64;
-    }
-
-    @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
-        return false;
-    }
-
-    @Override
-    public void openInventory(EntityPlayer player) {
-
-    }
-
-    @Override
-    public void closeInventory(EntityPlayer player) {
-
-    }
-
-    @Override
-    public boolean isItemValidForSlot(int index, ItemStack stack) {
-        return false;
-    }
-
-    @Override
-    public int getField(int id) {
-        return 0;
-    }
-
-    @Override
-    public void setField(int id, int value) {
-
-    }
-
-    @Override
-    public int getFieldCount() {
-        return 0;
-    }
-
-    @Override
-    public void clear() {
-
-    }
-
-    @Override
-    public String getName() {
-        return null;
-    }
-
-    @Override
-    public boolean hasCustomName() {
-        return false;
-    }
-
-    @Override
-    public ITextComponent getDisplayName() {
-        return null;
     }
 }

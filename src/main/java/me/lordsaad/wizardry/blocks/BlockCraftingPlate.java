@@ -2,7 +2,8 @@ package me.lordsaad.wizardry.blocks;
 
 import me.lordsaad.wizardry.schematic.Schematic;
 import me.lordsaad.wizardry.tileentities.TileCraftingPlate;
-import net.minecraft.block.BlockContainer;
+import net.minecraft.block.Block;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -12,6 +13,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -26,14 +28,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 /**
  * Created by Saad on 6/10/2016.
  */
-public class BlockCraftingPlate extends BlockContainer {
+public class BlockCraftingPlate extends Block implements ITileEntityProvider {
 
     public BlockCraftingPlate() {
         super(Material.ROCK);
         setHardness(0.5F);
         setLightLevel(5);
         setSoundType(SoundType.STONE);
-        setUnlocalizedName("Crafting Plate");
+        setUnlocalizedName("crafting_plate");
         setRegistryName("crafting_plate");
         GameRegistry.register(this);
         GameRegistry.register(new ItemBlock(this), getRegistryName());
@@ -70,14 +72,13 @@ public class BlockCraftingPlate extends BlockContainer {
         return new AxisAlignedBB(0, 0, 0, 1, 0.75, 1);
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
-    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
-        return false;
+    public boolean canRenderInLayer(BlockRenderLayer layer) {
+        return layer == BlockRenderLayer.CUTOUT;
     }
 
     @Override
-    public boolean isBlockNormalCube(IBlockState blockState) {
+    public boolean isFullCube(IBlockState state) {
         return false;
     }
 
