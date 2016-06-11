@@ -1,7 +1,17 @@
 {
+  "forge_marker": 1,
+  "defaults": {
+    "custom": {
+      "flip-v": true
+    },
+    "model": "wizardry:crafting_plate.json"
+  },
   "variants": {
-    "normal": {
-      "model": "wizardry:craftingplate"
-    }
+    "normal": [
+      {}
+    ],
+    "inventory": [
+      {}
+    ]
   }
 }

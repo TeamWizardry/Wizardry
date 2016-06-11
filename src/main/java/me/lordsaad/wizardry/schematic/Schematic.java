@@ -9,6 +9,7 @@ import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 import java.io.InputStream;
@@ -58,7 +59,7 @@ public class Schematic {
         }
     }
 
-    public void check(World world, BlockPos pos, Block centerBlock, EntityPlayer player) {
+    public boolean check(World world, BlockPos pos, Block centerBlock, EntityPlayer player) {
         boolean success = true;
         List<BlockObject> blocks = new ArrayList<>();
         for (BlockObject obj : blockObjects) {
@@ -69,17 +70,21 @@ public class Schematic {
         }
 
         for (BlockObject obj : blocks) {
-            if (world.getBlockState(obj.getPos()).getBlock() == obj.getState().getBlock() && world.getBlockState(obj.getPos()) != obj.getState() && obj.getState().getBlock() != centerBlock) {
-                // FIX WRONG DIRECTIONS AND INCORRECT METADATA LIKE STAIR ROTATION
+            // fix a block that turned to dirt and was supposed to be grass
+            if (world.getBlockState(obj.getPos()).getBlock() == Blocks.DIRT && obj.getState().getBlock() == Blocks.GRASS)
                 world.setBlockState(obj.getPos(), obj.getState());
-            }
+
+            // fix any wrong metadata so the structure isn't stupidly strict
+            if (world.getBlockState(obj.getPos()).getBlock() == obj.getState().getBlock() && world.getBlockState(obj.getPos()) != obj.getState() && obj.getState().getBlock() != centerBlock)
+                world.setBlockState(obj.getPos(), obj.getState());
+
             if (world.getBlockState(obj.getPos()).getBlock() != obj.getState().getBlock()) {
                 success = false;
                 player.addChatMessage(new TextComponentString(obj.getPos() + " is " + world.getBlockState(obj.getPos()) + " but should be " + obj.getState()));
             }
         }
-
-        if (success) player.addChatMessage(new TextComponentString("STRUCTURE COMPLETE :D"));
-        else player.addChatMessage(new TextComponentString("STRUCTURE INCOMPLETE :("));
+        if (success) player.addChatMessage(new TextComponentString(TextFormatting.GREEN + "Structure complete."));
+        else player.addChatMessage(new TextComponentString(TextFormatting.RED + "Structure incomplete."));
+        return success;
     }
 }

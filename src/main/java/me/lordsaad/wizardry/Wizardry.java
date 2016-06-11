@@ -2,6 +2,7 @@ package me.lordsaad.wizardry;
 
 import me.lordsaad.wizardry.particles.SparkleFX;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.obj.OBJLoader;
@@ -67,7 +68,7 @@ public class Wizardry {
         public void postInit(FMLPostInitializationEvent e) {
         }
 
-        public void spawnParticleSparkleLine(World world, double x, double y, double z, double xNext, double yNext, double zNext) {
+        public void spawnParticleSparkleLine(World world, double x, double y, double z) {
         }
     }
 
@@ -85,11 +86,11 @@ public class Wizardry {
 
         @SubscribeEvent
         public void onTextureStitchEvent(TextureStitchEvent.Pre event) {
-            // just in case
+            event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, "entity/sparkle"));
         }
 
-        public void spawnParticleSparkleLine(World world, double x, double y, double z, double xNext, double yNext, double zNext) {
-            SparkleFX particle = new SparkleFX(world, x, y, z, xNext, yNext, zNext);
+        public void spawnParticleSparkleLine(World world, double x, double y, double z) {
+            SparkleFX particle = new SparkleFX(world, x, y, z);
             Minecraft.getMinecraft().effectRenderer.addEffect(particle);
         }
     }
