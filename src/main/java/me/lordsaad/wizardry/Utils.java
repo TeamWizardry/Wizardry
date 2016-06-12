@@ -8,7 +8,6 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import org.apache.commons.lang3.text.WordUtils;
@@ -31,27 +30,11 @@ public class Utils {
     public static void drawItemStack(final ItemStack itemStack, final int x, final int y) {
         if (itemStack != null) {
             GlStateManager.enableRescaleNormal();
-            GlStateManager.enableAlpha();
-            GlStateManager.enableBlend();
             RenderHelper.enableGUIStandardItemLighting();
             Minecraft.getMinecraft().getRenderItem().renderItemIntoGUI(itemStack, x, y);
             RenderHelper.disableStandardItemLighting();
             GlStateManager.disableRescaleNormal();
-            GlStateManager.enableAlpha();
-            GlStateManager.disableBlend();
         }
-    }
-
-    public static ArrayList<BlockPos> getCircle(BlockPos center, double radius, int amount) {
-        ArrayList<BlockPos> locations = new ArrayList<>();
-        double increment = (2 * Math.PI) / amount;
-        for (int i = 0; i < amount; i++) {
-            double angle = i * increment;
-            double x = center.getX() + (radius * Math.cos(angle));
-            double z = center.getZ() + (radius * Math.sin(angle));
-            locations.add(new BlockPos(x, center.getY(), z));
-        }
-        return locations;
     }
 
     public static ArrayList<String> padString(String string, int stringSize) {
@@ -93,15 +76,7 @@ public class Utils {
             else if (line.contains("/p")) {
                 pagenb++;
                 pages.putIfAbsent(pagenb, new ArrayList<>());
-            } else if (line.contains("/r")) {
-                int requiredPage = Integer.parseInt(line.substring(line.indexOf("/r:") + 3).split(";")[0]);
-                String itemName = line.substring(line.indexOf("/r:") + 3).split(";")[1];
-                String comment = line.substring(line.indexOf("/r:") + 3).split(";")[2];
-                Item item = Item.getByNameOrId(itemName);
 
-                HashMap<Item, String> temp = new HashMap<>();
-                temp.put(item, comment);
-                GuiContentPage.recipes.put(requiredPage, temp);
             } else {
                 if (line.startsWith("*")) {
                     line = line.substring(line.indexOf("*") + 1);

@@ -2,7 +2,7 @@ package me.lordsaad.wizardry.book;
 
 import net.minecraft.item.ItemStack;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Saad on 6/12/2016.
@@ -11,19 +11,17 @@ public class Tip {
 
     private String text;
     private int ID;
-    private float x;
-    private ArrayList<ItemStack> recipe = new ArrayList<>();
+    private float x = 0F;
+    private HashMap<Slot, ItemStack> recipe = new HashMap<>();
     private ItemStack recipeOutput;
     private boolean isSlidingOut = true, complete = false;
 
-    public Tip(float x, String text, int ID) {
-        this.x = x;
+    public Tip(String text, int ID) {
         this.text = text;
         this.ID = ID;
     }
 
-    public Tip(float x, String text, int ID, ItemStack recipeOutput, ArrayList<ItemStack> recipe) {
-        this.x = x;
+    public Tip(String text, int ID, ItemStack recipeOutput, HashMap<Slot, ItemStack> recipe) {
         this.text = text;
         this.ID = ID;
         this.recipeOutput = recipeOutput;
@@ -50,11 +48,11 @@ public class Tip {
         this.x = x;
     }
 
-    public ArrayList<ItemStack> getRecipe() {
+    public HashMap<Slot, ItemStack> getRecipe() {
         return recipe;
     }
 
-    public void setRecipe(ArrayList<ItemStack> recipe) {
+    public void setRecipe(HashMap<Slot, ItemStack> recipe) {
         this.recipe = recipe;
     }
 

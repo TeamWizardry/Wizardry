@@ -6,8 +6,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
-import static me.lordsaad.wizardry.book.GuiContentPage.hoverTextures;
-import static me.lordsaad.wizardry.book.GuiContentPage.regularTextures;
+import static me.lordsaad.wizardry.book.GuiContentPage.navbarTextures;
 
 /**
  * Created by Saad on 4/19/2016.
@@ -15,13 +14,13 @@ import static me.lordsaad.wizardry.book.GuiContentPage.regularTextures;
 class PageBase extends GuiScreen {
 
     protected static int top;
-    static int guiWidth = 146, guiHeight = 180;
-    static int left;
-    static ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/book/book.png");
-    static boolean hasBookmark = false;
-    static PageBase bookmarkedPage = null;
-    private static int right;
-    private boolean hasNavBar = false;
+    protected static int guiWidth = 146, guiHeight = 180;
+    protected static int left;
+    protected static ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/book/book.png");
+    protected static boolean hasBookmark = false;
+    protected static PageBase bookmarkedPage = null;
+    protected static int right;
+    protected boolean hasNavBar = false;
 
     @Override
     public void initGui() {
@@ -29,9 +28,11 @@ class PageBase extends GuiScreen {
         left = width / 2 - guiWidth / 2;
         top = height / 2 - guiHeight / 2;
         right = (width / 2 + guiWidth / 2) - 6;
+        Button bookmark = new Button(3, 0, 0, 5, 5);
+        buttonList.add(bookmark);
     }
 
-    void enableNavBar(boolean enable) {
+    protected void enableNavBar(boolean enable) {
         buttonList.clear();
         if (enable) {
             hasNavBar = true;
@@ -41,17 +42,11 @@ class PageBase extends GuiScreen {
             buttonList.add(TOINDEX = new Button(2, 0, 0, 13, 19));
 
             ResourceLocation back = new ResourceLocation(Wizardry.MODID, "textures/book/navbaricons/left_arrow.png");
-            ResourceLocation back_hover = new ResourceLocation(Wizardry.MODID, "textures/book/navbaricons/hover_left_arrow.png");
             ResourceLocation next = new ResourceLocation(Wizardry.MODID, "textures/book/navbaricons/right_arrow.png");
-            ResourceLocation next_hover = new ResourceLocation(Wizardry.MODID, "textures/book/navbaricons/hover_right_arrow.png");
             ResourceLocation toIndex = new ResourceLocation(Wizardry.MODID, "textures/book/navbaricons/to_index.png");
-            ResourceLocation toIndex_hover = new ResourceLocation(Wizardry.MODID, "textures/book/navbaricons/hover_to_index.png");
-            regularTextures.put(TOINDEX, toIndex);
-            regularTextures.put(BACK, back);
-            regularTextures.put(NEXT, next);
-            hoverTextures.put(TOINDEX, toIndex_hover);
-            hoverTextures.put(BACK, back_hover);
-            hoverTextures.put(NEXT, next_hover);
+            navbarTextures.put(TOINDEX, toIndex);
+            navbarTextures.put(BACK, back);
+            navbarTextures.put(NEXT, next);
         } else hasNavBar = false;
     }
 
@@ -79,15 +74,16 @@ class PageBase extends GuiScreen {
         fontRendererObj.setBidiFlag(true);
         if (hasNavBar) {
             GlStateManager.color(1F, 1F, 1F, 1F);
-            int y = (int) (top * 3.2);
+            int y = top + height + 50;
             mc.renderEngine.bindTexture(BACKGROUND_TEXTURE);
             drawTexturedModalRect((width / 2) - 66, y - 2, 19, 182, 133, 14);
             for (GuiButton button : buttonList) {
-                if (hoverTextures.containsKey(button) && regularTextures.containsKey(button)) {
+                if (navbarTextures.containsKey(button)) {
 
+                    mc.renderEngine.bindTexture(navbarTextures.get(button));
                     boolean inside = mouseX >= button.xPosition && mouseX < button.xPosition + button.width && mouseY >= button.yPosition && mouseY < button.yPosition + button.height;
-                    if (inside) mc.renderEngine.bindTexture(hoverTextures.get(button));
-                    else mc.renderEngine.bindTexture(regularTextures.get(button));
+                    if (inside) GlStateManager.color(0F, 191F, 255F, 1F);
+                    else GlStateManager.color(1F, 1F, 1F, 1F);
 
                     switch (button.id) {
                         case 0:
@@ -112,6 +108,8 @@ class PageBase extends GuiScreen {
                 }
             }
         }
+        fontRendererObj.setUnicodeFlag(false);
+        fontRendererObj.setBidiFlag(false);
     }
 
     @Override

@@ -16,13 +16,29 @@ import java.util.LinkedHashMap;
 class Tippable extends PageBase {
 
     public static HashMap<Object, Integer> tipManager = new HashMap<>(); // Used to manage tips for pages. Runs solo
+    public static int IDs = 0;
     static ArrayList<Integer> deleteTip = new ArrayList<>(); // Prevent concurrent modification error
-    private static int IDs = 0;
     private static ResourceLocation SLIDERS = new ResourceLocation(Wizardry.MODID, "textures/book/sliders.png");
     private static LinkedHashMap<Integer, Tip> tips = new LinkedHashMap<>();
 
-    static Tip setTip(String text) {
-        Tip tip = new Tip(0F, text, IDs + 1);
+    protected static Tip setTip(Tip tip) {
+        // Check if tip exists
+        boolean tipAlreadyExists = false;
+        for (int test : tips.keySet())
+            if (tips.get(test).getText().equals(tip.getText())) {
+                tipAlreadyExists = true;
+                break;
+            }
+
+        // Save tip. Return null if it already exists
+        if (!tipAlreadyExists) {
+            tips.put(++IDs, tip);
+            return tip;
+        } else return null;
+    }
+
+    protected static Tip setTip(String text) {
+        Tip tip = new Tip(text, IDs + 1);
 
         // Check if tip exists
         boolean tipAlreadyExists = false;
@@ -39,8 +55,8 @@ class Tippable extends PageBase {
         } else return null;
     }
 
-    static Tip setTip(String text, ItemStack recipeOutput, ArrayList<ItemStack> recipe) {
-        Tip tip = new Tip(0F, text, IDs + 1, recipeOutput, recipe);
+    protected static Tip setTip(String text, ItemStack recipeOutput, HashMap<Slot, ItemStack> recipe) {
+        Tip tip = new Tip(text, IDs + 1, recipeOutput, recipe);
 
         // Check if tip exists
         boolean tipAlreadyExists = false;
@@ -57,13 +73,13 @@ class Tippable extends PageBase {
         } else return null;
     }
 
-    static void clearTips() {
+    protected static void clearTips() {
         IDs = -1;
         tips.clear();
         tipManager.clear();
     }
 
-    static void removeTip(int ID) {
+    protected static void removeTip(int ID) {
         if (tips.containsKey(ID)) tips.get(ID).setSlidingOut(false);
     }
 
@@ -76,6 +92,8 @@ class Tippable extends PageBase {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
+        fontRendererObj.setUnicodeFlag(true);
+        fontRendererObj.setBidiFlag(true);
 
         // Remove finished tips
         for (int ID : deleteTip)
@@ -116,7 +134,8 @@ class Tippable extends PageBase {
 
             // Render recipe tips
             if (tip.hasRecipe()) {
-
+                fontRendererObj.setUnicodeFlag(false);
+                fontRendererObj.setBidiFlag(false);
                 // render slider
                 GlStateManager.color(1F, 1F, 1F, 1F);
                 mc.renderEngine.bindTexture(SLIDERS);
@@ -129,21 +148,15 @@ class Tippable extends PageBase {
                     int size = 20;
                     Utils.drawItemStack(tip.getRecipeOutput(), outputX, outputY);
                     boolean inside = mouseX >= outputX && mouseX < outputX + size && mouseY >= outputY && mouseY < outputY + size;
-                    if (inside) renderToolTip(tip.getRecipeOutput(), mouseX, mouseY);
+                    if (inside) renderToolTip(tip.getRecipeOutput(), (int) (left + x + 10), height - 128);
 
                     // render recipe items
-                    int slotX = 0, slotY = 0;
-
-                    for (ItemStack stack : tip.getRecipe()) {
-                        if (slotX > 2) {
-                            slotX = 0;
-                            slotY++;
-                        } else slotX++;
-                        int deltaX = (int) (left + x + 26 + slotX * 18);
-                        int deltaY = (int) (height / 2.5) + 8 + slotY * 18;
-                        Utils.drawItemStack(stack, deltaX, deltaY);
-                        boolean insideSlot = mouseX >= slotX && mouseX < slotX + size && mouseY >= slotY && mouseY < slotY + size;
-                        if (insideSlot) renderToolTip(stack, mouseX, mouseY);
+                    for (Slot slot : tip.getRecipe().keySet()) {
+                        int deltaX = (int) (left + x + 26 + slot.getX() * 18);
+                        int deltaY = (int) (height / 2.5) + 8 + slot.getY() * 18;
+                        Utils.drawItemStack(tip.getRecipe().get(slot), deltaX, deltaY);
+                        boolean insideSlot = mouseX >= deltaX && mouseX < deltaX + size && mouseY >= deltaY && mouseY < +size;
+                        if (insideSlot) renderToolTip(tip.getRecipe().get(slot), (int) (left + x + 10), height - 128);
                     }
                 }
             }

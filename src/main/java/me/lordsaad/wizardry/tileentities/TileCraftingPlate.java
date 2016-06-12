@@ -85,7 +85,7 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
                     ambient.jitter(8, 0.1, 0.1, 0.1);
                     ambient.randomDirection(0.2, 0.2, 0.2);
 
-                /*SparkleFX fog = Wizardry.proxy.spawnParticleSparkle(worldObj, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 1F, 1F, 30);
+                /*SparkleFX fog = Wizardry.proxy.spawnParticleSparkle(worldObj, pos.getSlot() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 1F, 1F, 30);
                 fog.randomDirection(0.5, 0, 0.5);
                 fog.setMotion(0, -0.5, 0);*/
                 }

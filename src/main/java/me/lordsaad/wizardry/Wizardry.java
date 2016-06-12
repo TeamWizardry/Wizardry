@@ -36,7 +36,6 @@ public class Wizardry {
         public String getTabLabel() {
             return MODID;
         }
-
         @Override
         @SideOnly(Side.CLIENT)
         public Item getTabIconItem() {
