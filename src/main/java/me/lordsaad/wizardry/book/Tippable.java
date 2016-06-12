@@ -73,7 +73,7 @@ class Tippable extends PageBase {
         } else return null;
     }
 
-    protected static void clearTips() {
+    static void clearTips() {
         IDs = -1;
         tips.clear();
         tipManager.clear();

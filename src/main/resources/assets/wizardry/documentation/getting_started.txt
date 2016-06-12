@@ -5,3 +5,6 @@ new line
 break ^
 /p
 new page
+/p
+/p
+it's very beautiful.

@@ -2,6 +2,7 @@ package me.lordsaad.wizardry;
 
 import me.lordsaad.wizardry.items.ItemPearl;
 import me.lordsaad.wizardry.items.ItemPhysicsBook;
+import net.minecraft.client.Minecraft;
 
 /**
  * Created by Saad on 4/9/2016.
@@ -19,6 +20,9 @@ public class ModItems {
     public static void initModels() {
         pearl.initModel();
         physicsBook.initModel();
-//        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemPearl.ColorHandler(), pearl);
+    }
+
+    public static void initColors() {
+        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemPearl.ColorHandler(), pearl);
     }
 }

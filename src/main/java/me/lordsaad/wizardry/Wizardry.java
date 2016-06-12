@@ -106,6 +106,11 @@ public class Wizardry {
             ModBlocks.initModels();
         }
 
+        @Override
+        public void init(FMLInitializationEvent e) {
+            ModItems.initColors();
+        }
+
         @SubscribeEvent
         public void onTextureStitchEvent(TextureStitchEvent.Pre event) {
             event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, "entity/sparkle"));

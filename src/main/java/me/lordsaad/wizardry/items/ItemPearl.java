@@ -43,9 +43,9 @@ public class ItemPearl extends Item {
     public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
         if (!stack.hasTagCompound()) {
             NBTTagCompound compound = new NBTTagCompound();
-            compound.setInteger("red", 0);
-            compound.setInteger("green", 0);
-            compound.setInteger("blue", 0);
+            compound.setInteger("red", 255);
+            compound.setInteger("green", 255);
+            compound.setInteger("blue", 255);
             compound.setString("type", "mundane");
             stack.setTagCompound(compound);
         }

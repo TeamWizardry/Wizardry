@@ -2,6 +2,7 @@ package me.lordsaad.wizardry;
 
 
 import me.lordsaad.wizardry.blocks.BlockCraftingPlate;
+import me.lordsaad.wizardry.blocks.BlockMagiciansWorktable;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -11,13 +12,16 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ModBlocks {
 
     public static BlockCraftingPlate craftingPlate;
+    public static BlockMagiciansWorktable magiciansWorktable;
 
     public static void init() {
         craftingPlate = new BlockCraftingPlate();
+        magiciansWorktable = new BlockMagiciansWorktable();
     }
 
     @SideOnly(Side.CLIENT)
     public static void initModels() {
         craftingPlate.initModel();
+        magiciansWorktable.initModel();
     }
 }

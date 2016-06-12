@@ -14,6 +14,7 @@ import net.minecraft.world.World;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -57,6 +58,19 @@ public class Schematic {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public HashMap<Integer, ArrayList<BlockObject>> getSchematicLayers() {
+        HashMap<Integer, ArrayList<BlockObject>> layers = new HashMap<>();
+        for (BlockObject object : blockObjects) {
+            if (!layers.containsKey(object.getPos().getY())) {
+                ArrayList<BlockObject> temp = new ArrayList<>();
+                temp.add(object);
+                layers.put(object.getPos().getY(), temp);
+            }
+            layers.get(object.getPos().getY()).add(object);
+        }
+        return layers;
     }
 
     public boolean check(World world, BlockPos pos, Block centerBlock, EntityPlayer player) {

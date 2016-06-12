@@ -1,6 +1,7 @@
 package me.lordsaad.wizardry.book;
 
 import me.lordsaad.wizardry.Wizardry;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
@@ -73,8 +74,9 @@ class PageBase extends GuiScreen {
         fontRendererObj.setUnicodeFlag(true);
         fontRendererObj.setBidiFlag(true);
         if (hasNavBar) {
+            Minecraft.getMinecraft().thePlayer.sendChatMessage(".");
             GlStateManager.color(1F, 1F, 1F, 1F);
-            int y = top + height + 50;
+            int y = top + 190;
             mc.renderEngine.bindTexture(BACKGROUND_TEXTURE);
             drawTexturedModalRect((width / 2) - 66, y - 2, 19, 182, 133, 14);
             for (GuiButton button : buttonList) {
@@ -82,8 +84,8 @@ class PageBase extends GuiScreen {
 
                     mc.renderEngine.bindTexture(navbarTextures.get(button));
                     boolean inside = mouseX >= button.xPosition && mouseX < button.xPosition + button.width && mouseY >= button.yPosition && mouseY < button.yPosition + button.height;
-                    if (inside) GlStateManager.color(0F, 191F, 255F, 1F);
-                    else GlStateManager.color(1F, 1F, 1F, 1F);
+                    if (inside) GlStateManager.color(20F, 100F, 135F, 1F);
+                    else GlStateManager.color(0F, 170F, 255F, 1F);
 
                     switch (button.id) {
                         case 0:

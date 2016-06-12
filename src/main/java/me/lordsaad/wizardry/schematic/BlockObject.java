@@ -16,11 +16,11 @@ public class BlockObject {
         this.state = state;
     }
 
-    BlockPos getPos() {
+    public BlockPos getPos() {
         return pos;
     }
 
-    IBlockState getState() {
+    public IBlockState getState() {
         return state;
     }
 }
