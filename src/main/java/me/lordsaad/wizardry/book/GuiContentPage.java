@@ -1,11 +1,9 @@
 package me.lordsaad.wizardry.book;
 
-import me.lordsaad.wizardry.CraftingRecipes;
 import me.lordsaad.wizardry.Wizardry;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 import java.io.IOException;
@@ -93,13 +91,13 @@ public class GuiContentPage extends Tippable {
             }
         }
 
-        if (recipes.containsKey(currentPage)) {
+        /*if (recipes.containsKey(currentPage)) {
             for (Item item : recipes.get(currentPage).keySet()) {
                 HashMap<Integer, ItemStack> recipe = CraftingRecipes.recipes.get(new ItemStack(item).getDisplayName());
                 ID.put(item, setTip(new ItemStack(item), recipe, recipes.get(currentPage).get(item)));
             }
         } else ID.keySet().stream().filter(obj -> obj instanceof Item).forEach(obj -> removeTip(ID.get(obj)));
-
+*/
         GlStateManager.color(1F, 1F, 1F, 1F);
         mc.renderEngine.bindTexture(BACKGROUND_TEXTURE);
         drawTexturedModalRect((width / 2) - 66, (float) (top - 20), 19, 182, 133, 14);

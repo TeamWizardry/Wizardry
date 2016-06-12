@@ -1,7 +1,7 @@
 package me.lordsaad.wizardry.book;
 
+import me.lordsaad.wizardry.book.contentpages.BasicsGettingStarted;
 import me.lordsaad.wizardry.book.indexes.IndexBasics;
-import me.lordsaad.wizardry.book.pages.GettingStarted;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
@@ -24,7 +24,7 @@ public class GuiHandler implements IGuiHandler {
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         if (ID == INDEX) return new MainIndex();
         if (ID == BASICS) return new IndexBasics();
-        if (ID == basics_getting_started) return new GettingStarted();
+        if (ID == basics_getting_started) return new BasicsGettingStarted();
         return null;
     }
 }

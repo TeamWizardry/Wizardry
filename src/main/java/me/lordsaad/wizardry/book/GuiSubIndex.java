@@ -13,12 +13,12 @@ import java.util.ArrayList;
  */
 public class GuiSubIndex extends GuiContentPage {
 
-    protected ArrayList<IndexItem> indexItems;
+    protected ArrayList<SubIndexItem> SubIndexItems;
 
     @Override
     public void initGui() {
         super.initGui();
-        indexItems = new ArrayList<>();
+        SubIndexItems = new ArrayList<>();
         hoverTextures.clear();
         regularTextures.clear();
         recipes.clear();
@@ -56,7 +56,7 @@ public class GuiSubIndex extends GuiContentPage {
                 break;
             }
             default: {
-                indexItems.stream().filter(item -> item.getButton() == button).forEach(item -> mc.thePlayer.openGui(Wizardry.instance, item.getPageID(), mc.theWorld, (int) mc.thePlayer.posX, (int) mc.thePlayer.posY, (int) mc.thePlayer.posZ));
+                SubIndexItems.stream().filter(item -> item.getButton() == button).forEach(item -> mc.thePlayer.openGui(Wizardry.instance, item.getPageID(), mc.theWorld, (int) mc.thePlayer.posX, (int) mc.thePlayer.posY, (int) mc.thePlayer.posZ));
                 break;
             }
         }
@@ -71,7 +71,7 @@ public class GuiSubIndex extends GuiContentPage {
         fontRendererObj.setUnicodeFlag(true);
         fontRendererObj.setBidiFlag(true);
 
-        for (IndexItem item : indexItems) {
+        for (SubIndexItem item : SubIndexItems) {
             GlStateManager.color(1F, 1F, 1F, 1F);
             int x = left + 20, y = top + 10 + ((item.getIndexID() - 4) * 15);
             mc.renderEngine.bindTexture(item.getIcon());

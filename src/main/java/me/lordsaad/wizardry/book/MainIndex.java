@@ -1,11 +1,16 @@
 package me.lordsaad.wizardry.book;
 
 import me.lordsaad.wizardry.Wizardry;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
+import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by Saad on 4/13/2016.
@@ -14,8 +19,8 @@ public class MainIndex extends Tippable {
 
     private boolean didInit = false;
     private HashMap<GuiButton, String> tips = new HashMap<>();
-    private HashMap<GuiButton, ResourceLocation> regularTextures = new HashMap<>();
-    private HashMap<GuiButton, ResourceLocation> hoverTextures = new HashMap<>();
+    private HashMap<GuiButton, ResourceLocation> icons = new HashMap<>();
+    private int iconSize = 25, iconSeparation = 15;
 
     @Override
     public void initGui() {
@@ -23,31 +28,51 @@ public class MainIndex extends Tippable {
         enableNavBar(false);
     }
 
+    /**
+     * Initialize all the icons on the front page
+     * with the tips from icon-tips.txt
+     */
     private void initIndexButtons() {
-        ResourceLocation bulb = new ResourceLocation(Wizardry.MODID, "textures/book/icons/light-bulb.png");
-        ResourceLocation bulb_hover = new ResourceLocation(Wizardry.MODID, "textures/book/icons/light-bulb-hover.png");
-        ResourceLocation laser_blast = new ResourceLocation(Wizardry.MODID, "textures/book/icons/laser-blast.png");
-        ResourceLocation laser_blast_hover = new ResourceLocation(Wizardry.MODID, "textures/book/icons/laser-blast-hover.png");
-        ResourceLocation ringed_beam = new ResourceLocation(Wizardry.MODID, "textures/book/icons/ringed-beam.png");
-        ResourceLocation ringed_beam_hover = new ResourceLocation(Wizardry.MODID, "textures/book/icons/ringed-beam-hover.png");
-        ResourceLocation sun_rad = new ResourceLocation(Wizardry.MODID, "textures/book/icons/sun-radiations.png");
-        ResourceLocation sun_rad_hover = new ResourceLocation(Wizardry.MODID, "textures/book/icons/sun-radiations-hover.png");
+        int ID = 0, row = 0, column = 0;
 
-        addButton(new Button(0, left + 25, top + 20, 25, 25), bulb, bulb_hover, "Learn the basics of light manipulation and how everything works.");
-        addButton(new Button(1, left + 55, top + 20, 25, 25), laser_blast, laser_blast_hover, "Read about what each item and block in this mod does.");
-        addButton(new Button(2, left + 90, top + 20, 25, 25), ringed_beam, ringed_beam_hover, "Learn " +
-                "how to accurately manipulate light beams.");
-        addButton(new Button(3, left + 25, top + 60, 25, 25), sun_rad, sun_rad_hover, "Learn how to create, transport, manipulate, and store energy.");
+        List<String> tips = new ArrayList<>();
+        try {
+            String theString = IOUtils.toString(Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(Wizardry.MODID, "textures/book/icons/icon-tips.txt")).getInputStream(), "UTF-8");
+            for (String tip : theString.split("\n")) {
+                if (tip != null)
+                    tips.add(tip);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        for (String tip : tips) {
+            ResourceLocation location = new ResourceLocation(Wizardry.MODID, "textures/book/icons/" + tip.split("=")[0] + ".png");
+
+            int x = left + iconSeparation + (row * iconSize) + (row * iconSeparation);
+            int y = top + iconSeparation + (column * iconSize) + (column * iconSeparation);
+            addNewIndexButton(new Button(ID++, x, y, iconSize, iconSize), location, tip.split("=")[1]);
+            if (row >= 2) {
+                row = 0;
+                column++;
+            } else row++;
+        }
+
         didInit = true;
     }
 
-    public void addButton(Button button, ResourceLocation regularTexture, ResourceLocation hoverTexture, String tip) {
+    private void addNewIndexButton(Button button, ResourceLocation regularTexture, String tip) {
         buttonList.add(button);
         tips.put(button, tip);
-        regularTextures.put(button, regularTexture);
-        hoverTextures.put(button, hoverTexture);
+        icons.put(button, regularTexture);
     }
 
+    /**
+     * When the player clicks a button.
+     *
+     * @param button the button that was clicked.
+     * @throws IOException
+     */
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
         if (button.id == 0) {
@@ -56,38 +81,51 @@ public class MainIndex extends Tippable {
         }
     }
 
+    /**
+     * Render everything in the index
+     *
+     * @param mouseX       The current position of the mouse on the x axis.
+     * @param mouseY       The current position of the mouse on the y axis.
+     * @param partialTicks Useless thing.
+     */
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
 
+        // Initialize if we didn't already.
         if (!didInit) initIndexButtons();
 
-        int rowIndex = 0, height = 0, separation = 15, iconSize = 25;
+        int row = 0, column = 0;
         for (GuiButton button : buttonList) {
 
             boolean inside = mouseX >= button.xPosition && mouseX < button.xPosition + button.width && mouseY >= button.yPosition && mouseY < button.yPosition + button.height;
-            int x = left + separation + (rowIndex * iconSize) + (rowIndex * separation);
-            int y = top + separation + (height * iconSize) + (height * separation);
+            int x = left + iconSeparation + (row * iconSize) + (row * iconSeparation);
+            int y = top + iconSeparation + (column * iconSize) + (column * iconSeparation);
+            if (row >= 2) {
+                row = 0;
+                column++;
+            } else row++;
 
             button.xPosition = x;
             button.yPosition = y;
             button.width = iconSize;
             button.height = iconSize;
+            mc.renderEngine.bindTexture(icons.get(button));
+
             if (inside) {
-                ID.put(button, setTip(tips.get(button)));
-                mc.renderEngine.bindTexture(hoverTextures.get(button));
+                Tip tip = setTip(tips.get(button));
+                if (tip != null) tipManager.put(button, tip.getID());
+                GlStateManager.color(0F, 191F, 255F, 1F);
             } else {
-                if (ID.containsKey(button)) removeTip(ID.get(button));
-                mc.renderEngine.bindTexture(regularTextures.get(button));
+                if (tipManager.containsKey(button)) {
+                    removeTip(tipManager.get(button));
+                    tipManager.remove(button);
+                }
+                GlStateManager.color(0F, 0F, 0F, 1F);
             }
 
             drawScaledCustomSizeModalRect(x, y, 0, 0, iconSize, iconSize, iconSize, iconSize, iconSize, iconSize);
-
-            if (rowIndex < 2) rowIndex++;
-            else {
-                rowIndex = 0;
-                height++;
-            }
+            GlStateManager.color(1F, 1F, 1F, 1F);
         }
 
         mc.renderEngine.bindTexture(BACKGROUND_TEXTURE);

@@ -31,10 +31,14 @@ public class Utils {
     public static void drawItemStack(final ItemStack itemStack, final int x, final int y) {
         if (itemStack != null) {
             GlStateManager.enableRescaleNormal();
+            GlStateManager.enableAlpha();
+            GlStateManager.enableBlend();
             RenderHelper.enableGUIStandardItemLighting();
             Minecraft.getMinecraft().getRenderItem().renderItemIntoGUI(itemStack, x, y);
             RenderHelper.disableStandardItemLighting();
             GlStateManager.disableRescaleNormal();
+            GlStateManager.enableAlpha();
+            GlStateManager.disableBlend();
         }
     }
 

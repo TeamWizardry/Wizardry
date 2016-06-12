@@ -1,10 +1,8 @@
 package me.lordsaad.wizardry.book;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.init.SoundEvents;
 
 /**
  * Created by Saad on 4/15/2016.
@@ -21,6 +19,5 @@ public class Button extends GuiButton {
 
     @Override
     public void playPressSound(SoundHandler soundHandlerIn) {
-        soundHandlerIn.playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.BLOCK_LEVER_CLICK, 1.0F));
     }
 }

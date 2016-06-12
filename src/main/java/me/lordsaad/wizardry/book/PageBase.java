@@ -12,15 +12,15 @@ import static me.lordsaad.wizardry.book.GuiContentPage.regularTextures;
 /**
  * Created by Saad on 4/19/2016.
  */
-public class PageBase extends GuiScreen {
+class PageBase extends GuiScreen {
 
     protected static int top;
     static int guiWidth = 146, guiHeight = 180;
     static int left;
-    static int right;
     static ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/book/book.png");
     static boolean hasBookmark = false;
     static PageBase bookmarkedPage = null;
+    private static int right;
     private boolean hasNavBar = false;
 
     @Override
@@ -31,7 +31,7 @@ public class PageBase extends GuiScreen {
         right = (width / 2 + guiWidth / 2) - 6;
     }
 
-    public void enableNavBar(boolean enable) {
+    void enableNavBar(boolean enable) {
         buttonList.clear();
         if (enable) {
             hasNavBar = true;
@@ -55,7 +55,7 @@ public class PageBase extends GuiScreen {
         } else hasNavBar = false;
     }
 
-    public void renderBookmark(int y, boolean withStripe) {
+    protected void renderBookmark(int y, boolean withStripe) {
         buttonList.stream().filter(button -> button.id == 3).forEach(button -> {
             mc.renderEngine.bindTexture(BACKGROUND_TEXTURE);
             GlStateManager.color(1F, 1F, 1F, 1F);
@@ -121,7 +121,6 @@ public class PageBase extends GuiScreen {
 
     @Override
     public void onGuiClosed() {
-        Tippable.ID.clear();
-
+        Tippable.clearTips();
     }
 }

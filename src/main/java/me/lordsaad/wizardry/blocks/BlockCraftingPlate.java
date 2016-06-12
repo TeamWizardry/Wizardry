@@ -1,5 +1,6 @@
 package me.lordsaad.wizardry.blocks;
 
+import me.lordsaad.wizardry.Wizardry;
 import me.lordsaad.wizardry.schematic.Schematic;
 import me.lordsaad.wizardry.tileentities.TileCraftingPlate;
 import me.lordsaad.wizardry.tileentities.TileCraftingPlateRenderer;
@@ -42,6 +43,7 @@ public class BlockCraftingPlate extends Block implements ITileEntityProvider {
         GameRegistry.register(this);
         GameRegistry.registerTileEntity(TileCraftingPlate.class, "crafting_altar");
         GameRegistry.register(new ItemBlock(this), getRegistryName());
+        setCreativeTab(Wizardry.tab);
     }
 
     @SideOnly(Side.CLIENT)

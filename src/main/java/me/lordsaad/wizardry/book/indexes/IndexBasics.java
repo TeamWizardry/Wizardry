@@ -4,7 +4,7 @@ import me.lordsaad.wizardry.Wizardry;
 import me.lordsaad.wizardry.book.Button;
 import me.lordsaad.wizardry.book.GuiHandler;
 import me.lordsaad.wizardry.book.GuiSubIndex;
-import me.lordsaad.wizardry.book.IndexItem;
+import me.lordsaad.wizardry.book.SubIndexItem;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
@@ -19,18 +19,18 @@ public class IndexBasics extends GuiSubIndex {
     @Override
     public void initGui() {
         super.initGui();
-        indexItems = new ArrayList<>();
+        SubIndexItems = new ArrayList<>();
 
         Button screwdriver = new Button(++ID, 0, 0, 10, 10);
         buttonList.add(screwdriver);
-        indexItems.add(new IndexItem(ID,
+        SubIndexItems.add(new SubIndexItem(ID,
                 GuiHandler.basics_getting_started,
                 new ResourceLocation(Wizardry.MODID, "textures/itemblocks/screwdriver.png"),
                 "Getting started", "Learn the very basics of the mod and learn how and where to start.",
                 screwdriver));
         Button mirror = new Button(++ID, 0, 0, 10, 10);
         buttonList.add(mirror);
-        indexItems.add(new IndexItem(ID,
+        SubIndexItems.add(new SubIndexItem(ID,
                 GuiHandler.INDEX,
                 new ResourceLocation(Wizardry.MODID, "textures/itemblocks/mirroricon.png"),
                 "Light Manipulation", "Learn all the ins and outs of manipulating light and the many kinds of mirrors.",

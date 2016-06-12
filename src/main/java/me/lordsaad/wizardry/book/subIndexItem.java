@@ -5,14 +5,14 @@ import net.minecraft.util.ResourceLocation;
 /**
  * Created by Saad on 5/2/2016.
  */
-public class IndexItem {
+public class SubIndexItem {
 
     private int indexID, pageID;
     private ResourceLocation icon;
     private String text, tip;
     private Button button;
 
-    public IndexItem(int indexID, int pageID, ResourceLocation icon, String text, String tip, Button button) {
+    public SubIndexItem(int indexID, int pageID, ResourceLocation icon, String text, String tip, Button button) {
         this.indexID = indexID;
         this.pageID = pageID;
         this.icon = icon;

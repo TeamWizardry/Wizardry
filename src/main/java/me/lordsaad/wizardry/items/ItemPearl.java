@@ -1,5 +1,6 @@
 package me.lordsaad.wizardry.items;
 
+import me.lordsaad.wizardry.Wizardry;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.entity.Entity;
@@ -26,6 +27,7 @@ public class ItemPearl extends Item {
         setUnlocalizedName("pearl");
         GameRegistry.register(this);
         setMaxStackSize(1);
+        setCreativeTab(Wizardry.tab);
     }
 
     public static int intColor(int r, int g, int b) {
