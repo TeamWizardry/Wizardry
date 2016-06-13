@@ -1,11 +1,16 @@
 package me.lordsaad.wizardry.tileentities;
 
+import me.lordsaad.wizardry.ModItems;
 import me.lordsaad.wizardry.Wizardry;
+import me.lordsaad.wizardry.items.ItemPearl;
 import me.lordsaad.wizardry.particles.SparkleFX;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -21,10 +26,9 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
 
     private ArrayList<ItemStack> inventory = new ArrayList<>();
     private boolean structureComplete = false;
-
-    private static boolean canCombine(ItemStack stack1, ItemStack stack2) {
-        return stack1.getItem() == stack2.getItem() && (stack1.getMetadata() == stack2.getMetadata() && (stack1.stackSize <= stack1.getMaxStackSize() && (stack1.stackSize + stack2.stackSize) <= stack2.getMaxStackSize() && ItemStack.areItemStackTagsEqual(stack1, stack2)));
-    }
+    private boolean crafting = false, finishedCrafting = false;
+    private int craftingProgress = 0, craftingTime = 200;
+    private ItemStack pearl;
 
     public boolean isStructureComplete() {
         return structureComplete;
@@ -32,6 +36,14 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
 
     public void setStructureComplete(boolean structureComplete) {
         this.structureComplete = structureComplete;
+    }
+
+    public ItemStack getPearl() {
+        return pearl;
+    }
+
+    public int getCraftingTime() {
+        return craftingTime;
     }
 
     @Override
@@ -44,6 +56,16 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
             for (int i = 0; i < list.tagCount(); i++)
                 inventory.add(ItemStack.loadItemStackFromNBT(list.getCompoundTagAt(i)));
         }
+        if (compound.hasKey("pearl"))
+            pearl = ItemStack.loadItemStackFromNBT(compound.getCompoundTag("pearl"));
+        if (compound.hasKey("crafting"))
+            crafting = compound.getBoolean("crafting");
+        if (compound.hasKey("finishedCrafting"))
+            finishedCrafting = compound.getBoolean("finishedCrafting");
+        if (compound.hasKey("craftingProgress"))
+            craftingProgress = compound.getInteger("craftingProgress");
+        if (compound.hasKey("craftingTime"))
+            craftingProgress = compound.getInteger("craftingTime");
     }
 
     @Override
@@ -57,12 +79,33 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
                 list.appendTag(anInventory.writeToNBT(new NBTTagCompound()));
             compound.setTag("inventory", list);
         }
+        if (pearl != null) compound.setTag("pearl", pearl.writeToNBT(compound));
+        compound.setBoolean("crafting", crafting);
+        compound.setBoolean("finishedCrafting", finishedCrafting);
+        compound.setInteger("craftingProgress", craftingProgress);
+        compound.setInteger("craftingTime", craftingTime);
         return compound;
     }
 
     @Override
     public NBTTagCompound getUpdateTag() {
         return writeToNBT(new NBTTagCompound());
+    }
+
+    @Override
+    public SPacketUpdateTileEntity getUpdatePacket() {
+        NBTTagCompound tag = new NBTTagCompound();
+        writeToNBT(tag);
+        return new SPacketUpdateTileEntity(pos, 0, tag);
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
+        super.onDataPacket(net, packet);
+        readFromNBT(packet.getNbtCompound());
+
+        IBlockState state = worldObj.getBlockState(pos);
+        worldObj.notifyBlockUpdate(pos, state, state, 3);
     }
 
     public ArrayList<ItemStack> getInventory() {
@@ -77,7 +120,18 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
                 for (EntityItem item : items) {
                     inventory.add(item.getEntityItem());
                     worldObj.removeEntity(item);
+                    if (item.getEntityItem().getItem() == ModItems.pearl) {
+                        ItemPearl pearl = (ItemPearl) item.getEntityItem().getItem();
+                        if (pearl.getPearlType(item.getEntityItem()).equals("mundane")) {
+                            this.pearl = item.getEntityItem();
+                            worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
+                            crafting = true;
+                            craftingTime = inventory.size() * 100;
+                        }
+                    }
                     markDirty();
+                    worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
+
                 }
 
                 for (int i = 0; i < 5; i++) {
@@ -85,11 +139,30 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
                     ambient.jitter(8, 0.1, 0.1, 0.1);
                     ambient.randomDirection(0.2, 0.2, 0.2);
 
-                /*SparkleFX fog = Wizardry.proxy.spawnParticleSparkle(worldObj, pos.getSlot() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 1F, 1F, 30);
-                fog.randomDirection(0.5, 0, 0.5);
-                fog.setMotion(0, -0.5, 0);*/
+                    /*if (!inventory.isEmpty()) {
+                        SparkleFX fog = Wizardry.proxy.spawnParticleSparkle(worldObj, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 1F, 1F, 30);
+                        fog.randomDirection(0.5, 0, 0.5);
+                        fog.setMotion(0, -0.5, 0);
+                    }*/
+                }
+
+                if (craftingProgress <= craftingTime) {
+                    craftingProgress++;
+                } else {
+                    craftingProgress = 0;
+                    crafting = false;
+                    finishedCrafting = true;
+                    if (pearl != null) ((ItemPearl) pearl.getItem()).addSpellItems(pearl, inventory);
                 }
             }
         }
+    }
+
+    public int getCraftingProgress() {
+        return craftingProgress;
+    }
+
+    public boolean isCrafting() {
+        return crafting;
     }
 }

@@ -1,7 +1,6 @@
 package me.lordsaad.wizardry.book;
 
 import me.lordsaad.wizardry.Wizardry;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
@@ -74,7 +73,6 @@ class PageBase extends GuiScreen {
         fontRendererObj.setUnicodeFlag(true);
         fontRendererObj.setBidiFlag(true);
         if (hasNavBar) {
-            Minecraft.getMinecraft().thePlayer.sendChatMessage(".");
             GlStateManager.color(1F, 1F, 1F, 1F);
             int y = top + 190;
             mc.renderEngine.bindTexture(BACKGROUND_TEXTURE);

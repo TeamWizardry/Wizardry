@@ -30,9 +30,11 @@ public class Utils {
     public static void drawItemStack(final ItemStack itemStack, final int x, final int y) {
         if (itemStack != null) {
             GlStateManager.enableRescaleNormal();
+            GlStateManager.scale(0.75, 0.75, 0.75);
             RenderHelper.enableGUIStandardItemLighting();
             Minecraft.getMinecraft().getRenderItem().renderItemIntoGUI(itemStack, x, y);
             RenderHelper.disableStandardItemLighting();
+            GlStateManager.scale(1.0 / 0.75, 1.0 / 0.75, 1.0 / 0.75);
             GlStateManager.disableRescaleNormal();
         }
     }

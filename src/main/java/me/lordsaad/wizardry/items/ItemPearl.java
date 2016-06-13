@@ -1,5 +1,6 @@
 package me.lordsaad.wizardry.items;
 
+import me.lordsaad.wizardry.SerializableItemStack;
 import me.lordsaad.wizardry.Wizardry;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
@@ -13,14 +14,12 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.ArrayList;
+
 /**
  * Created by Saad on 6/10/2016.
  */
 public class ItemPearl extends Item {
-
-    private int r1 = itemRand.nextInt(255), r2 = itemRand.nextInt(255);
-    private int g1 = itemRand.nextInt(255), g2 = itemRand.nextInt(255);
-    private int b1 = itemRand.nextInt(255), b2 = itemRand.nextInt(255);
 
     public ItemPearl() {
         setRegistryName("pearl");
@@ -43,37 +42,95 @@ public class ItemPearl extends Item {
     public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
         if (!stack.hasTagCompound()) {
             NBTTagCompound compound = new NBTTagCompound();
-            compound.setInteger("red", 255);
-            compound.setInteger("green", 255);
-            compound.setInteger("blue", 255);
+            int initialR = itemRand.nextInt(255);
+            int initialG = itemRand.nextInt(255);
+            int initialB = itemRand.nextInt(255);
+            compound.setInteger("red1", initialR);
+            compound.setInteger("green1", initialG);
+            compound.setInteger("blue1", initialB);
+            compound.setInteger("red3", initialR);
+            compound.setInteger("green3", initialG);
+            compound.setInteger("blue3", initialB);
+            compound.setInteger("red2", itemRand.nextInt(255));
+            compound.setInteger("green2", itemRand.nextInt(255));
+            compound.setInteger("blue2", itemRand.nextInt(255));
+            compound.setInteger("ticker", 0);
+            compound.setDouble("steps", 0);
             compound.setString("type", "mundane");
             stack.setTagCompound(compound);
         }
+
         if (stack.hasTagCompound()) {
-            if (stack.getTagCompound().hasKey("type")) {
-                if (stack.getTagCompound().getString("type").equals("mundane")) {
+            if (stack.getTagCompound().getString("type").equals("infused")) {
+                int ticker = stack.getTagCompound().getInteger("ticker");
+                if (ticker >= 30) {
+                    if (stack.getTagCompound().getDouble("steps") <= 30) {
+                        stack.getTagCompound().setInteger("ticker", 0);
+                        int r1 = stack.getTagCompound().getInteger("red1");
+                        int g1 = stack.getTagCompound().getInteger("green1");
+                        int b1 = stack.getTagCompound().getInteger("blue1");
+                        int r2 = stack.getTagCompound().getInteger("red2");
+                        int g2 = stack.getTagCompound().getInteger("green2");
+                        int b2 = stack.getTagCompound().getInteger("blue2");
 
-                    int steps = 30;
+                        double ratio = stack.getTagCompound().getDouble("steps") / 30;
+                        int red3 = (int) Math.abs((ratio * r2) + ((1 - ratio) * r1));
+                        int green3 = (int) Math.abs((ratio * g2) + ((1 - ratio) * g1));
+                        int blue3 = (int) Math.abs((ratio * b2) + ((1 - ratio) * b1));
 
-                    for (int i = 0; i < steps; i++) {
-                        float ratio = (float) i / (float) steps;
-                        int red = (int) (r2 * ratio + r1 * (1 - ratio));
-                        int green = (int) (g2 * ratio + g1 * (1 - ratio));
-                        int blue = (int) (b2 * ratio + b1 * (1 - ratio));
+                        stack.getTagCompound().setInteger("red3", red3);
+                        stack.getTagCompound().setInteger("green3", green3);
+                        stack.getTagCompound().setInteger("blue3", blue3);
+                        stack.getTagCompound().setDouble("steps", stack.getTagCompound().getDouble("steps") + 1);
+                    } else {
+                        stack.getTagCompound().setDouble("steps", 0);
+                        stack.getTagCompound().setInteger("ticker", 0);
+                        stack.getTagCompound().setInteger("red2", stack.getTagCompound().getInteger("red1"));
+                        stack.getTagCompound().setInteger("blue2", stack.getTagCompound().getInteger("blue1"));
+                        stack.getTagCompound().setInteger("green2", stack.getTagCompound().getInteger("green1"));
+
+                        stack.getTagCompound().setInteger("red1", stack.getTagCompound().getInteger("red3"));
+                        stack.getTagCompound().setInteger("blue1", stack.getTagCompound().getInteger("blue3"));
+                        stack.getTagCompound().setInteger("green1", stack.getTagCompound().getInteger("green3"));
                     }
-
-                } else if (stack.getTagCompound().getString("type").equals("infused")) {
-
                 } else {
-
+                    ticker++;
+                    stack.getTagCompound().setInteger("ticker", ticker);
                 }
+            } else if (stack.getTagCompound().getString("type").equals("mundane")) {
+
+            } else {
+
             }
         }
+    }
+
+    public void addSpellItems(ItemStack stack, ArrayList<ItemStack> items) {
+        NBTTagCompound compound = new NBTTagCompound();
+        int i = 0;
+        for (ItemStack item : items) {
+            compound = new SerializableItemStack(item).writeToNBT("item" + i++, compound);
+        }
+        compound.setString("type", String.valueOf("infused"));
+        stack.setTagCompound(compound);
+    }
+
+    public String getPearlType(ItemStack stack) {
+        if (stack.hasTagCompound())
+            if (stack.getTagCompound().hasKey("type"))
+                return stack.getTagCompound().getString("type");
+            else return "mundane";
+        else return "mundane";
     }
 
     @Override
     public boolean canItemEditBlocks() {
         return false;
+    }
+
+    @Override
+    public boolean shouldCauseReequipAnimation(ItemStack oldS, ItemStack newS, boolean slotChanged) {
+        return slotChanged;
     }
 
     public static class ColorHandler implements IItemColor {
@@ -84,9 +141,9 @@ public class ItemPearl extends Item {
         public int getColorFromItemstack(ItemStack stack, int tintIndex) {
             if (stack.hasTagCompound()) {
                 if (tintIndex == 0) {
-                    int r = stack.getTagCompound().getInteger("red");
-                    int g = stack.getTagCompound().getInteger("green");
-                    int b = stack.getTagCompound().getInteger("blue");
+                    int r = stack.getTagCompound().getInteger("red3");
+                    int g = stack.getTagCompound().getInteger("green3");
+                    int b = stack.getTagCompound().getInteger("blue3");
                     return intColor(r, g, b);
                 }
             }

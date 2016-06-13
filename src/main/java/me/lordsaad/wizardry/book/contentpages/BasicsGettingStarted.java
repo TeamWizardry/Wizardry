@@ -9,10 +9,12 @@ import me.lordsaad.wizardry.book.Tip;
 import me.lordsaad.wizardry.schematic.BlockObject;
 import me.lordsaad.wizardry.schematic.Schematic;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -23,8 +25,6 @@ public class BasicsGettingStarted extends ContentPageBase {
 
     HashMap<GuiButton, ResourceLocation> layerNavTextures = new HashMap<>();
     int layer = 0;
-    int x = left + 15;
-    int y = top + 150;
 
     @Override
     public void initGui() {
@@ -38,6 +38,16 @@ public class BasicsGettingStarted extends ContentPageBase {
         buttonList.add(UPLAYER = new Button(4, 0, 0, 15, 15));
         ResourceLocation upLayer = new ResourceLocation(Wizardry.MODID, "textures/book/navbaricons/left_arrow.png");
         layerNavTextures.put(UPLAYER, upLayer);
+    }
+
+    @Override
+    protected void actionPerformed(GuiButton button) throws IOException {
+        switch (button.id) {
+            case 4: {
+                layer++;
+                break;
+            }
+        }
     }
 
     @Override
@@ -58,11 +68,46 @@ public class BasicsGettingStarted extends ContentPageBase {
                 tipManager.remove(currentPage);
             }
         }
+
         if (currentPage == 2) {
             Schematic schematic = new Schematic("spell_crafter");
             HashMap<Integer, ArrayList<BlockObject>> layers = schematic.getSchematicLayers();
             for (BlockObject object : layers.get(layer)) {
-                Utils.drawItemStack(new ItemStack(object.getState().getBlock()), x + object.getPos().getX(), y + object.getPos().getZ());
+                Utils.drawItemStack(new ItemStack(object.getState().getBlock()), left + 118 + object.getPos().getX() * 15, top + 50 + object.getPos().getZ() * 15);
+                int x = left + 22 + object.getPos().getX() * 12;
+                int y = top + 15 + object.getPos().getZ() * 12;
+                int size = 13;
+                boolean insideBlock = mouseX >= x && mouseX < x + size && mouseY >= y && mouseY < y + size;
+                if (insideBlock) renderToolTip(new ItemStack(object.getState().getBlock()), mouseX, mouseY);
+            }
+            for (GuiButton button : layerNavTextures.keySet()) {
+
+                int x = left + 22;
+                int y = top + 150;
+
+                button.xPosition = x;
+                button.yPosition = y;
+                button.width = 15;
+                button.height = 15;
+                mc.renderEngine.bindTexture(layerNavTextures.get(button));
+                boolean inside = mouseX >= button.xPosition && mouseX < button.xPosition + button.width && mouseY >= button.yPosition && mouseY < button.yPosition + button.height;
+                if (inside) GlStateManager.color(20F, 100F, 135F, 1F);
+                else GlStateManager.color(0F, 170F, 255F, 1F);
+
+                if (inside) {
+                    Tip tip = setTip("Increment layer");
+                    if (tip != null) tipManager.put(button, tip.getID());
+                    GlStateManager.color(0F, 191F, 255F, 1F);
+                } else {
+                    if (tipManager.containsKey(button)) {
+                        removeTip(tipManager.get(button));
+                        tipManager.remove(button);
+                    }
+                    GlStateManager.color(0F, 0F, 0F, 1F);
+                }
+
+                drawScaledCustomSizeModalRect(x, y, 0, 0, 6, 10, 6, 10, 6, 10);
+                GlStateManager.color(1F, 1F, 1F, 1F);
             }
         }
     }

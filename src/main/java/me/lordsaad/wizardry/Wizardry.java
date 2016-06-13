@@ -61,7 +61,7 @@ public class Wizardry {
     @Mod.EventHandler
     public void init(FMLInitializationEvent e) {
         proxy.init(e);
-        // CraftingRecipes.initCrafting();
+        CraftingRecipes.initCrafting();
     }
 
     @Mod.EventHandler
@@ -79,10 +79,10 @@ public class Wizardry {
         }
 
         public void init(FMLInitializationEvent e) {
-            NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
         }
 
         public void postInit(FMLPostInitializationEvent e) {
+            NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
         }
 
         public SparkleFX spawnParticleSparkle(World world, double x, double y, double z, float alpha, float scale, int age) {
@@ -101,7 +101,6 @@ public class Wizardry {
             super.preInit(e);
             MinecraftForge.EVENT_BUS.register(this);
 
-            //OBJLoader.INSTANCE.addDomain(MODID);
             ModItems.initModels();
             ModBlocks.initModels();
         }
@@ -114,6 +113,8 @@ public class Wizardry {
         @SubscribeEvent
         public void onTextureStitchEvent(TextureStitchEvent.Pre event) {
             event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, "entity/sparkle"));
+            event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, "items/manaIconNoOutline"));
+            event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, "items/manaIconOutline"));
         }
 
         public SparkleFX spawnParticleSparkle(World world, double x, double y, double z, float alpha, float scale, int age) {

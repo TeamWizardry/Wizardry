@@ -77,10 +77,12 @@ public class Schematic {
         boolean success = true;
         List<BlockObject> blocks = new ArrayList<>();
         for (BlockObject obj : blockObjects) {
-            if (obj.getState().getBlock() == Blocks.STAINED_HARDENED_CLAY && obj.getState().getBlock().getMetaFromState(obj.getState()) == 14) {
-                blocks.add(new BlockObject(pos, centerBlock.getDefaultState()));
-            } else
-                blocks.add(new BlockObject(new BlockPos(pos.add(obj.getPos().getX(), obj.getPos().getY(), obj.getPos().getZ())).add(-(width / 2), -(height / 2) + 1, -(length / 2)), obj.getState()));
+            if (obj != null) {
+                if (obj.getState().getBlock() == Blocks.STAINED_HARDENED_CLAY && obj.getState().getBlock().getMetaFromState(obj.getState()) == 14) {
+                    blocks.add(new BlockObject(pos, centerBlock.getDefaultState()));
+                } else
+                    blocks.add(new BlockObject(new BlockPos(pos.add(obj.getPos().getX(), obj.getPos().getY(), obj.getPos().getZ())).add(-(width / 2), -(height / 2) + 1, -(length / 2)), obj.getState()));
+            }
         }
 
         for (BlockObject obj : blocks) {
@@ -97,7 +99,8 @@ public class Schematic {
                 player.addChatMessage(new TextComponentString(obj.getPos() + " is " + world.getBlockState(obj.getPos()) + " but should be " + obj.getState()));
             }
         }
-        if (success) player.addChatMessage(new TextComponentString(TextFormatting.GREEN + "Structure complete."));
+        if (success)
+            player.addChatMessage(new TextComponentString(TextFormatting.GREEN + "Structure complete."));
         else player.addChatMessage(new TextComponentString(TextFormatting.RED + "Structure incomplete."));
         return success;
     }

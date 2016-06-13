@@ -1,17 +1,16 @@
 package me.lordsaad.wizardry;
 
-import net.minecraft.item.ItemStack;
-
-import java.util.HashMap;
+import me.lordsaad.wizardry.recipes.RingRecipe;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 /**
  * Created by Saad on 4/8/2016.
  */
 public class CraftingRecipes {
 
-    public static HashMap<String, HashMap<Integer, ItemStack>> recipes = new HashMap<>();
-
     public static void initCrafting() {
+        GameRegistry.addRecipe(new RingRecipe());
+
        /* CraftingManager.getInstance().addRecipe(new ItemStack(ModBlocks.mirror),
                 "QQQ", "GGG", " S ",
                 'Q', new ItemStack(Items.quartz),
