@@ -13,11 +13,10 @@ import net.minecraft.util.ResourceLocation;
 class PageBase extends GuiScreen {
 
     public static int bookBackgroundWidth = 146, bookBackgroundHeight = 180;
-    protected static int top, left;
-    static ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/book/book.png");
+    public static ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/book/book.png");
+    protected static int top, left, right;
     static boolean hasBookmark = false;
     static PageBase bookmarkedPage = null;
-    private int right;
     private boolean hasNavBar = false;
 
     @Override
@@ -93,8 +92,8 @@ class PageBase extends GuiScreen {
                         button.drawButton(mc, button.xPosition, button.yPosition);
 
                         boolean inside = mouseX >= button.xPosition && mouseX < button.xPosition + 18 && mouseY >= button.yPosition && mouseY < button.yPosition + 10;
-                        if (inside) GlStateManager.color(20F, 100F, 135F, 1F);
-                        else GlStateManager.color(0F, 170F, 255F, 1F);
+                        if (inside) GlStateManager.color(0F, 153F, 0F, 1F);
+                        else GlStateManager.color(0F, 128F, 255F, 1F);
 
                         drawTexturedModalRect(button.xPosition, button.yPosition, 0, 209, 18, 10);
                         break;
@@ -105,8 +104,8 @@ class PageBase extends GuiScreen {
                         button.drawButton(mc, button.xPosition, button.yPosition);
 
                         boolean inside = mouseX >= button.xPosition && mouseX < button.xPosition + 18 && mouseY >= button.yPosition && mouseY < button.yPosition + 10;
-                        if (inside) GlStateManager.color(20F, 100F, 135F, 1F);
-                        else GlStateManager.color(0F, 170F, 255F, 1F);
+                        if (inside) GlStateManager.color(0F, 153F, 0F, 1F);
+                        else GlStateManager.color(0F, 128F, 255F, 1F);
 
                         drawTexturedModalRect(button.xPosition, button.yPosition, 0, 199, 18, 10);
                         break;
@@ -117,8 +116,8 @@ class PageBase extends GuiScreen {
                         button.drawButton(mc, button.xPosition, button.yPosition);
 
                         boolean inside = mouseX >= button.xPosition && mouseX < button.xPosition + 18 && mouseY >= button.yPosition && mouseY < button.yPosition + 10;
-                        if (inside) GlStateManager.color(20F, 100F, 135F, 1F);
-                        else GlStateManager.color(0F, 170F, 255F, 1F);
+                        if (inside) GlStateManager.color(0F, 153F, 0F, 1F);
+                        else GlStateManager.color(0F, 128F, 255F, 1F);
 
                         drawTexturedModalRect(button.xPosition, button.yPosition, 0, 219, 17, 10);
                         break;

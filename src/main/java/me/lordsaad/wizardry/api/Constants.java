@@ -10,6 +10,8 @@ public class Constants {
         public static final int NAV_BAR_BACK = 2;
         public static final int NAV_BAR_INDEX = 3;
         public static final int BOOKMARK = 4;
+        public static final int SCHEMATIC_UP_LAYER = 5;
+        public static final int SCHEMATIC_DOWN_LAYER = 6;
     }
 
     public static class PageNumbers {

@@ -1,17 +1,18 @@
 package me.lordsaad.wizardry.book.contentpages;
 
 import me.lordsaad.wizardry.Utils;
-import me.lordsaad.wizardry.Wizardry;
 import me.lordsaad.wizardry.api.Constants;
 import me.lordsaad.wizardry.book.Button;
 import me.lordsaad.wizardry.book.Slot;
+import me.lordsaad.wizardry.book.Tip;
 import me.lordsaad.wizardry.schematic.BlockObject;
 import me.lordsaad.wizardry.schematic.Schematic;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,7 +23,6 @@ import java.util.HashMap;
  */
 public class BasicsGettingStarted extends ContentPageBase {
 
-    HashMap<GuiButton, ResourceLocation> layerNavTextures = new HashMap<>();
     int layer = 0;
 
     @Override
@@ -33,18 +33,23 @@ public class BasicsGettingStarted extends ContentPageBase {
         pageID = Constants.PageNumbers.BASICS_GETTING_STARTED;
         setNavBar(true);
 
-        Button UPLAYER;
-        buttonList.add(UPLAYER = new Button(4, 0, 0, 15, 15));
-        ResourceLocation upLayer = new ResourceLocation(Wizardry.MODID, "textures/book/navbaricons/left_arrow.png");
-        layerNavTextures.put(UPLAYER, upLayer);
+        buttonList.add(new Button(Constants.GuiButtons.SCHEMATIC_UP_LAYER, 0, 0, 8, 19));
+        buttonList.add(new Button(Constants.GuiButtons.SCHEMATIC_DOWN_LAYER, 0, 0, 8, 19));
     }
 
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
         super.actionPerformed(button);
+        Schematic schematic = new Schematic("spell_crafter");
         switch (button.id) {
-            case 4: {
-                layer++;
+            case Constants.GuiButtons.SCHEMATIC_UP_LAYER: {
+                if (schematic.getHeight() > layer)
+                    layer++;
+                break;
+            }
+            case Constants.GuiButtons.SCHEMATIC_DOWN_LAYER: {
+                if (schematic.getHeight() < layer)
+                    layer--;
                 break;
             }
         }
@@ -71,46 +76,85 @@ public class BasicsGettingStarted extends ContentPageBase {
 
         if (currentPage == 2) {
             Schematic schematic = new Schematic("spell_crafter");
+
             HashMap<Integer, ArrayList<BlockObject>> layers = schematic.getSchematicLayers();
-            for (BlockObject object : layers.get(layer)) {
-                if (object != null) {
-                    Utils.drawSmallItemStack(new ItemStack(object.getState().getBlock()), left + 118 + object.getPos().getX() * 15, top + 50 + object.getPos().getZ() * 15);
-                    int x = left + 22 + object.getPos().getX() * 12;
-                    int y = top + 15 + object.getPos().getZ() * 12;
-                    int size = 13;
-                    boolean insideBlock = mouseX >= x && mouseX < x + size && mouseY >= y && mouseY < y + size;
-                    if (insideBlock) renderToolTip(new ItemStack(object.getState().getBlock()), mouseX, mouseY);
-                }
-            }
+            if (layers.containsKey(layer))
+                for (BlockObject object : layers.get(layer)) {
+                    if (object != null && object.getState() != null && object.getState().getBlock() != Blocks.AIR) {
+                        ItemStack itemStack = new ItemStack(object.getState().getBlock(), 1);
 
-            for (GuiButton button : layerNavTextures.keySet()) {
+                        GlStateManager.pushMatrix();
+                        RenderHelper.enableGUIStandardItemLighting();
+                        GlStateManager.translate(left + (bookBackgroundWidth / 2) - (schematic.getWidth() * 12 / 2) + object.getPos().getX() * 12,
+                                top + (bookBackgroundWidth / 2) - (schematic.getWidth() * 12 / 2) + object.getPos().getZ() * 12, 1);
+                        GlStateManager.scale(0.75, 0.75, 0.75);
+                        itemRender.renderItemAndEffectIntoGUI(itemStack, 0, 0);
 
-                int x = left + 22;
-                int y = top + 150;
+                        RenderHelper.disableStandardItemLighting();
+                        GlStateManager.popMatrix();
 
-                button.xPosition = x;
-                button.yPosition = y;
-                button.width = 15;
-                button.height = 15;
-                mc.renderEngine.bindTexture(layerNavTextures.get(button));
-                boolean inside = mouseX >= button.xPosition && mouseX < button.xPosition + button.width && mouseY >= button.yPosition && mouseY < button.yPosition + button.height;
-                if (inside) GlStateManager.color(20F, 100F, 135F, 1F);
-                else GlStateManager.color(0F, 170F, 255F, 1F);
-
-                if (inside) {
-                    int tip = setTip("Increment layer");
-                    if (tip != -1) tipManager.put(button, tip);
-                    GlStateManager.color(0F, 191F, 255F, 1F);
-                } else {
-                    if (tipManager.containsKey(button)) {
-                        removeTip(tipManager.get(button));
-                        tipManager.remove(button);
+                        int x = left + (bookBackgroundWidth / 2) - (schematic.getWidth() * 12 / 2) + object.getPos().getX() * 12;
+                        int y = top + (bookBackgroundWidth / 2) - (schematic.getWidth() * 12 / 2) + object.getPos().getZ() * 12;
+                        int size = 13;
+                        boolean insideBlock = mouseX >= x && mouseX < x + size && mouseY >= y && mouseY < y + size;
+                        if (insideBlock) {
+                            // TODO: tooltip goes null and crashes.
+                            fontRendererObj.setBidiFlag(false);
+                            fontRendererObj.setUnicodeFlag(false);
+                            renderToolTip(itemStack, mouseX, mouseY);
+                            fontRendererObj.setBidiFlag(true);
+                            fontRendererObj.setUnicodeFlag(true);
+                        }
                     }
-                    GlStateManager.color(0F, 0F, 0F, 1F);
                 }
 
-                drawScaledCustomSizeModalRect(x, y, 0, 0, 6, 10, 6, 10, 6, 10);
-                GlStateManager.color(1F, 1F, 1F, 1F);
+            for (GuiButton button : buttonList) {
+
+                switch (button.id) {
+                    case Constants.GuiButtons.SCHEMATIC_UP_LAYER: {
+                        button.xPosition = left + (bookBackgroundWidth / 2) - (8 / 2) - 8;
+                        button.yPosition = top + 135;
+                        button.width = 8;
+                        button.height = 19;
+                        mc.renderEngine.bindTexture(BACKGROUND_TEXTURE);
+                        boolean inside = mouseX >= button.xPosition && mouseX < button.xPosition + button.width && mouseY >= button.yPosition && mouseY < button.yPosition + button.height;
+                        if (inside) GlStateManager.color(0F, 153F, 0F, 1F);
+                        else GlStateManager.color(0F, 128F, 255F, 1F);
+
+                        if (inside) {
+                            int tip = setTip(new Tip("Increment layer"));
+                            if (tip != -1) tipManager.put(button, tip);
+                        } else {
+                            if (tipManager.containsKey(button)) {
+                                removeTip(tipManager.get(button));
+                                tipManager.remove(button);
+                            }
+                        }
+                        drawTexturedModalRect(button.xPosition, button.yPosition, 0, 229, 9, 19);
+                        break;
+                    }
+                    case Constants.GuiButtons.SCHEMATIC_DOWN_LAYER: {
+                        button.xPosition = left + (bookBackgroundWidth / 2) - (8 / 2) + 8;
+                        button.yPosition = top + 135;
+                        button.width = 8;
+                        button.height = 19;
+                        mc.renderEngine.bindTexture(BACKGROUND_TEXTURE);
+                        boolean inside = mouseX >= button.xPosition && mouseX < button.xPosition + button.width && mouseY >= button.yPosition && mouseY < button.yPosition + button.height;
+                        if (inside) GlStateManager.color(0F, 153F, 0F, 1F);
+                        else GlStateManager.color(0F, 128F, 255F, 1F);
+
+                        if (inside) {
+                            int tip = setTip(new Tip("Increment layer"));
+                            if (tip != -1) tipManager.put(button, tip);
+                        } else {
+                            if (tipManager.containsKey(button)) {
+                                removeTip(tipManager.get(button));
+                                tipManager.remove(button);
+                            }
+                        }
+                        drawTexturedModalRect(button.xPosition, button.yPosition, 9, 229, 9, 19);
+                    }
+                }
             }
         }
     }

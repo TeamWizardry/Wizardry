@@ -22,9 +22,9 @@ import java.util.List;
  */
 public class Schematic {
 
-    short width;
-    short height;
-    short length;
+    private short width;
+    private short height;
+    private short length;
     private BlockObject[] blockObjects;
 
     public Schematic(String fileName) {
@@ -58,6 +58,18 @@ public class Schematic {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public short getWidth() {
+        return width;
+    }
+
+    public short getHeight() {
+        return height;
+    }
+
+    public short getLength() {
+        return length;
     }
 
     public HashMap<Integer, ArrayList<BlockObject>> getSchematicLayers() {
