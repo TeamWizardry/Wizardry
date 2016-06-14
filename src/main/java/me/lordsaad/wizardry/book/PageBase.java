@@ -1,53 +1,43 @@
 package me.lordsaad.wizardry.book;
 
 import me.lordsaad.wizardry.Wizardry;
+import me.lordsaad.wizardry.api.Constants;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
-
-import static me.lordsaad.wizardry.book.GuiContentPage.navbarTextures;
 
 /**
  * Created by Saad on 4/19/2016.
  */
 class PageBase extends GuiScreen {
 
-    protected static int top;
-    protected static int guiWidth = 146, guiHeight = 180;
-    protected static int left;
-    protected static ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/book/book.png");
-    protected static boolean hasBookmark = false;
-    protected static PageBase bookmarkedPage = null;
-    protected static int right;
-    protected boolean hasNavBar = false;
+    public static int bookBackgroundWidth = 146, bookBackgroundHeight = 180;
+    protected static int top, left;
+    static ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/book/book.png");
+    static boolean hasBookmark = false;
+    static PageBase bookmarkedPage = null;
+    private int right;
+    private boolean hasNavBar = false;
 
     @Override
     public void initGui() {
         super.initGui();
-        left = width / 2 - guiWidth / 2;
-        top = height / 2 - guiHeight / 2;
-        right = (width / 2 + guiWidth / 2) - 6;
-        Button bookmark = new Button(3, 0, 0, 5, 5);
-        buttonList.add(bookmark);
+        left = width / 2 - bookBackgroundWidth / 2;
+        top = height / 2 - bookBackgroundHeight / 2;
+        right = (width / 2 + bookBackgroundWidth / 2) - 6;
+        buttonList.add(new Button(Constants.GuiButtons.BOOKMARK, 0, 0, 5, 5)); // bookmark button
+        buttonList.add(new Button(Constants.GuiButtons.NAV_BAR_BACK, 0, 0, 18, 10)); // nav bar back button
+        buttonList.add(new Button(Constants.GuiButtons.NAV_BAR_NEXT, 0, 0, 18, 10)); // nav bar next button
+        buttonList.add(new Button(Constants.GuiButtons.NAV_BAR_INDEX, 0, 0, 17, 10)); // nav bar index button
     }
 
-    protected void enableNavBar(boolean enable) {
-        buttonList.clear();
-        if (enable) {
-            hasNavBar = true;
-            Button BACK, NEXT, TOINDEX;
-            buttonList.add(BACK = new Button(0, 0, 0, 7, 12));
-            buttonList.add(NEXT = new Button(1, 0, 0, 7, 12));
-            buttonList.add(TOINDEX = new Button(2, 0, 0, 13, 19));
+    protected void setNavBar(boolean enable) {
+        hasNavBar = enable;
+    }
 
-            ResourceLocation back = new ResourceLocation(Wizardry.MODID, "textures/book/navbaricons/left_arrow.png");
-            ResourceLocation next = new ResourceLocation(Wizardry.MODID, "textures/book/navbaricons/right_arrow.png");
-            ResourceLocation toIndex = new ResourceLocation(Wizardry.MODID, "textures/book/navbaricons/to_index.png");
-            navbarTextures.put(TOINDEX, toIndex);
-            navbarTextures.put(BACK, back);
-            navbarTextures.put(NEXT, next);
-        } else hasNavBar = false;
+    public boolean isNavBarEnabled() {
+        return hasNavBar;
     }
 
     protected void renderBookmark(int y, boolean withStripe) {
@@ -70,46 +60,74 @@ class PageBase extends GuiScreen {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
-        fontRendererObj.setUnicodeFlag(true);
-        fontRendererObj.setBidiFlag(true);
+
+        // RENDER HEADER //
+        GlStateManager.color(1F, 1F, 1F, 1F);
+        mc.renderEngine.bindTexture(BACKGROUND_TEXTURE);
+
+        drawTexturedModalRect((width / 2) - (133 / 2), (float) (top - 20), 19, 182, 133, 14);
+        fontRendererObj.setUnicodeFlag(false);
+        fontRendererObj.setBidiFlag(false);
+        fontRendererObj.drawString("Physics Book", (width / 2) - 30, (float) (top - 20) + 4, 0, false);
+        // RENDER HEADER //
+
+        // RENDER BOOK BACKGROUND //
+        GlStateManager.color(1F, 1F, 1F, 1F);
+        mc.renderEngine.bindTexture(BACKGROUND_TEXTURE);
+        drawTexturedModalRect(left, top, 0, 0, bookBackgroundWidth, bookBackgroundHeight);
+        // RENDER BOOK BACKGROUND
+
+        // RENDER NAV BAR //
         if (hasNavBar) {
-            GlStateManager.color(1F, 1F, 1F, 1F);
             int y = top + 190;
-            mc.renderEngine.bindTexture(BACKGROUND_TEXTURE);
-            drawTexturedModalRect((width / 2) - 66, y - 2, 19, 182, 133, 14);
+
+            // render the navbar bar
+            drawTexturedModalRect((width / 2) - (133 / 2), y - 2, 19, 182, 133, 14);
+
+            // render navbar buttons
             for (GuiButton button : buttonList) {
-                if (navbarTextures.containsKey(button)) {
+                switch (button.id) {
+                    case Constants.GuiButtons.NAV_BAR_BACK: {
+                        button.xPosition = left + 15;
+                        button.yPosition = y;
+                        button.drawButton(mc, button.xPosition, button.yPosition);
 
-                    mc.renderEngine.bindTexture(navbarTextures.get(button));
-                    boolean inside = mouseX >= button.xPosition && mouseX < button.xPosition + button.width && mouseY >= button.yPosition && mouseY < button.yPosition + button.height;
-                    if (inside) GlStateManager.color(20F, 100F, 135F, 1F);
-                    else GlStateManager.color(0F, 170F, 255F, 1F);
+                        boolean inside = mouseX >= button.xPosition && mouseX < button.xPosition + 18 && mouseY >= button.yPosition && mouseY < button.yPosition + 10;
+                        if (inside) GlStateManager.color(20F, 100F, 135F, 1F);
+                        else GlStateManager.color(0F, 170F, 255F, 1F);
 
-                    switch (button.id) {
-                        case 0:
-                            button.xPosition = left + 12;
-                            button.yPosition = y;
-                            button.drawButton(mc, left + 12, y);
-                            drawScaledCustomSizeModalRect(left + 12, y, 0, 0, 6, 10, 6, 10, 6, 10);
-                            break;
-                        case 1:
-                            button.xPosition = right - 12;
-                            button.yPosition = y;
-                            button.drawButton(mc, right - 12, y);
-                            drawScaledCustomSizeModalRect(right - 12, y, 0, 0, 6, 10, 6, 10, 6, 10);
-                            break;
-                        case 2:
-                            button.xPosition = width / 2 - 6;
-                            button.yPosition = y;
-                            button.drawButton(mc, width / 2 - 6, y);
-                            drawScaledCustomSizeModalRect(width / 2 - 6, y, 0, 0, 12, 11, 12, 11, 12, 11);
-                            break;
+                        drawTexturedModalRect(button.xPosition, button.yPosition, 0, 209, 18, 10);
+                        break;
+                    }
+                    case Constants.GuiButtons.NAV_BAR_NEXT: {
+                        button.xPosition = right - 26;
+                        button.yPosition = y;
+                        button.drawButton(mc, button.xPosition, button.yPosition);
+
+                        boolean inside = mouseX >= button.xPosition && mouseX < button.xPosition + 18 && mouseY >= button.yPosition && mouseY < button.yPosition + 10;
+                        if (inside) GlStateManager.color(20F, 100F, 135F, 1F);
+                        else GlStateManager.color(0F, 170F, 255F, 1F);
+
+                        drawTexturedModalRect(button.xPosition, button.yPosition, 0, 199, 18, 10);
+                        break;
+                    }
+                    case Constants.GuiButtons.NAV_BAR_INDEX: {
+                        button.xPosition = (width / 2) - (17 / 2);
+                        button.yPosition = y + 1;
+                        button.drawButton(mc, button.xPosition, button.yPosition);
+
+                        boolean inside = mouseX >= button.xPosition && mouseX < button.xPosition + 18 && mouseY >= button.yPosition && mouseY < button.yPosition + 10;
+                        if (inside) GlStateManager.color(20F, 100F, 135F, 1F);
+                        else GlStateManager.color(0F, 170F, 255F, 1F);
+
+                        drawTexturedModalRect(button.xPosition, button.yPosition, 0, 219, 17, 10);
+                        break;
                     }
                 }
             }
         }
-        fontRendererObj.setUnicodeFlag(false);
-        fontRendererObj.setBidiFlag(false);
+        // RENDER NAV BAR //
+
     }
 
     @Override

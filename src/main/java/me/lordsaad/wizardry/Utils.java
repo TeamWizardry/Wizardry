@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class Utils {
 
-    public static void drawItemStack(final ItemStack itemStack, final int x, final int y) {
+    public static void drawSmallItemStack(final ItemStack itemStack, final int x, final int y) {
         if (itemStack != null) {
             GlStateManager.enableRescaleNormal();
             GlStateManager.scale(0.75, 0.75, 0.75);
@@ -35,6 +35,16 @@ public class Utils {
             Minecraft.getMinecraft().getRenderItem().renderItemIntoGUI(itemStack, x, y);
             RenderHelper.disableStandardItemLighting();
             GlStateManager.scale(1.0 / 0.75, 1.0 / 0.75, 1.0 / 0.75);
+            GlStateManager.disableRescaleNormal();
+        }
+    }
+
+    public static void drawNormalItemStack(final ItemStack itemStack, final int x, final int y) {
+        if (itemStack != null) {
+            GlStateManager.enableRescaleNormal();
+            RenderHelper.enableGUIStandardItemLighting();
+            Minecraft.getMinecraft().getRenderItem().renderItemIntoGUI(itemStack, x, y);
+            RenderHelper.disableStandardItemLighting();
             GlStateManager.disableRescaleNormal();
         }
     }

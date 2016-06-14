@@ -10,22 +10,31 @@ import java.util.HashMap;
 public class Tip {
 
     private String text;
-    private int ID;
-    private float x = 0F;
+    private float x = 0F, y = PageBase.top + 10;
     private HashMap<Slot, ItemStack> recipe = new HashMap<>();
     private ItemStack recipeOutput;
     private boolean isSlidingOut = true, complete = false;
 
-    public Tip(String text, int ID) {
+    public Tip(String text) {
         this.text = text;
-        this.ID = ID;
     }
 
-    public Tip(String text, int ID, ItemStack recipeOutput, HashMap<Slot, ItemStack> recipe) {
+    public Tip(String text, float y) {
         this.text = text;
-        this.ID = ID;
+        this.y = y;
+    }
+
+    public Tip(String text, ItemStack recipeOutput, HashMap<Slot, ItemStack> recipe) {
+        this.text = text;
         this.recipeOutput = recipeOutput;
         this.recipe = recipe;
+    }
+
+    public Tip(String text, float y, ItemStack recipeOutput, HashMap<Slot, ItemStack> recipe) {
+        this.text = text;
+        this.recipeOutput = recipeOutput;
+        this.recipe = recipe;
+        this.y = y;
     }
 
     public boolean hasRecipe() {
@@ -76,16 +85,16 @@ public class Tip {
         return complete;
     }
 
-    public void setComplete(boolean complete) {
+    public void setComplete(boolean complete, int ID) {
         this.complete = complete;
         if (complete) Tippable.deleteTip.add(ID);
     }
 
-    public int getID() {
-        return ID;
+    public float getY() {
+        return y;
     }
 
-    public void setID(int ID) {
-        this.ID = ID;
+    public void setY(float y) {
+        this.y = y;
     }
 }

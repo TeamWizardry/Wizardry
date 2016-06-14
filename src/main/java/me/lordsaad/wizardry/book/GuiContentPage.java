@@ -1,9 +1,8 @@
 package me.lordsaad.wizardry.book;
 
 import me.lordsaad.wizardry.Wizardry;
+import me.lordsaad.wizardry.api.Constants;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.ResourceLocation;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,11 +11,14 @@ import java.util.HashMap;
 /**
  * Created by Saad on 5/1/2016.
  */
+
+/**
+ * Extend this class to add actual text pages.
+ */
 public class GuiContentPage extends Tippable {
 
     protected static HashMap<Integer, ArrayList<String>> pages;
     protected static int currentPage = 0;
-    protected static HashMap<GuiButton, ResourceLocation> navbarTextures;
     protected boolean hasBookmark = PageBase.hasBookmark;
     protected int pageID;
 
@@ -24,17 +26,16 @@ public class GuiContentPage extends Tippable {
     public void initGui() {
         super.initGui();
         pages = new HashMap<>();
-        navbarTextures = new HashMap<>();
-        clearTips();
-        enableNavBar(true);
+        //clearTips();
+        setNavBar(true);
         pageID = 0;
-        buttonList.add(new Button(3, 0, 0, 8, 8));
+        //buttonList.add(new Button(3, 0, 0, 8, 8));
     }
 
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
         switch (button.id) {
-            case 0: {
+            case Constants.GuiButtons.NAV_BAR_BACK: {
                 if (currentPage > 0) {
                     currentPage--;
                     mc.thePlayer.openGui(Wizardry.instance, pageID, mc.theWorld, (int) mc.thePlayer.posX, (int)
@@ -46,7 +47,7 @@ public class GuiContentPage extends Tippable {
                 }
                 break;
             }
-            case 1: {
+            case Constants.GuiButtons.NAV_BAR_NEXT: {
                 if (pages.size() >= currentPage) {
                     currentPage++;
                     mc.thePlayer.openGui(Wizardry.instance, pageID, mc.theWorld, (int) mc.thePlayer.posX, (int)
@@ -54,13 +55,13 @@ public class GuiContentPage extends Tippable {
                 }
                 break;
             }
-            case 2: {
+            case Constants.GuiButtons.NAV_BAR_INDEX: {
                 mc.thePlayer.openGui(Wizardry.instance, GuiHandler.INDEX, mc.theWorld, (int) mc.thePlayer.posX, (int)
                         mc.thePlayer.posY, (int) mc.thePlayer.posZ);
                 currentPage = 0;
                 break;
             }
-            case 3: {
+            case Constants.GuiButtons.BOOKMARK: {
                 if (bookmarkedPage == this) {
                     bookmarkedPage = null;
                     hasBookmark = false;
@@ -78,6 +79,7 @@ public class GuiContentPage extends Tippable {
         fontRendererObj.setUnicodeFlag(true);
         fontRendererObj.setBidiFlag(true);
 
+        // set the text
         int height = 0;
         if (pages.containsKey(currentPage)) {
             for (String line : pages.get(currentPage)) {
@@ -85,13 +87,6 @@ public class GuiContentPage extends Tippable {
                 height++;
             }
         }
-
-        GlStateManager.color(1F, 1F, 1F, 1F);
-        mc.renderEngine.bindTexture(BACKGROUND_TEXTURE);
-        drawTexturedModalRect((width / 2) - 66, (float) (top - 20), 19, 182, 133, 14);
-        fontRendererObj.setUnicodeFlag(false);
-        fontRendererObj.setBidiFlag(false);
-        fontRendererObj.drawString("Physics Book", (width / 2) - 30, (float) (top - 20) + 4, 0, false);
     }
 
     @Override

@@ -9,6 +9,8 @@ import net.minecraft.client.gui.GuiButton;
  */
 public class Button extends GuiButton {
 
+    private int ID;
+
     public Button(int buttonId, float x, float y, float width, float height) {
         super(buttonId, (int) x, (int) y, (int) width, (int) height, "");
     }
@@ -19,5 +21,14 @@ public class Button extends GuiButton {
 
     @Override
     public void playPressSound(SoundHandler soundHandlerIn) {
+    }
+
+    public int getID() {
+        return ID;
+    }
+
+    public int setID(int ID) {
+        this.ID = ID;
+        return ID;
     }
 }

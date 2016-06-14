@@ -1,5 +1,6 @@
 package me.lordsaad.wizardry.book;
 
+import me.lordsaad.wizardry.api.Constants;
 import me.lordsaad.wizardry.book.contentpages.BasicsGettingStarted;
 import me.lordsaad.wizardry.book.indexes.IndexBasics;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,9 +13,6 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 public class GuiHandler implements IGuiHandler {
     public static int INDEX = 0, BASICS = 1;
 
-    // BASICS INDEX
-    public static int basics_getting_started = 2;
-
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         return null;
@@ -24,7 +22,7 @@ public class GuiHandler implements IGuiHandler {
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         if (ID == INDEX) return new MainIndex();
         if (ID == BASICS) return new IndexBasics();
-        if (ID == basics_getting_started) return new BasicsGettingStarted();
+        if (ID == Constants.PageNumbers.BASICS_GETTING_STARTED) return new BasicsGettingStarted();
         return null;
     }
 }

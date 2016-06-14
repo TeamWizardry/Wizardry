@@ -8,56 +8,55 @@ import net.minecraft.util.ResourceLocation;
 /**
  * Created by Saad on 5/2/2016.
  */
-public class SubIndexItem {
+public class SubIndexElement {
 
-    private int indexID, pageID;
+    private int IDInIndex, pageID;
     private ResourceLocation textureIcon;
     private Item itemIcon;
-    private Block blockIcon;
     private String text, tip;
     private Button button;
     private TextureType textureType;
 
-    public SubIndexItem(int indexID, int pageID, ResourceLocation icon, String text, String tip, Button button) {
-        this.indexID = indexID;
-        this.pageID = pageID;
+    public SubIndexElement(int IDInIndex, int pageID, ResourceLocation icon, String text, String tip, Button button) {
         this.textureIcon = icon;
+        this.pageID = pageID;
+        this.IDInIndex = IDInIndex;
         this.text = text;
         this.button = button;
         this.tip = tip;
         textureType = TextureType.TEXTURE;
     }
 
-    public SubIndexItem(int indexID, int pageID, Item icon, String text, String tip, Button button) {
-        this.indexID = indexID;
-        this.pageID = pageID;
+    public SubIndexElement(int IDInIndex, int pageID, Item icon, String text, String tip, Button button) {
         this.itemIcon = icon;
+        this.pageID = pageID;
+        this.IDInIndex = IDInIndex;
         this.text = text;
         this.button = button;
         this.tip = tip;
         textureType = TextureType.ITEM;
     }
 
-    public SubIndexItem(int indexID, int pageID, Block icon, String text, String tip, Button button) {
-        this.indexID = indexID;
+    public SubIndexElement(int IDInIndex, int pageID, Block icon, String text, String tip, Button button) {
+        this.itemIcon = Item.getItemFromBlock(icon);
         this.pageID = pageID;
-        this.blockIcon = icon;
+        this.IDInIndex = IDInIndex;
         this.text = text;
         this.button = button;
         this.tip = tip;
-        textureType = TextureType.BLOCK;
+        textureType = TextureType.ITEM;
     }
 
     public TextureType getTextureType() {
         return textureType;
     }
 
-    public int getIndexID() {
-        return indexID;
+    public int getIDInIndex() {
+        return IDInIndex;
     }
 
-    public void setIndexID(int indexID) {
-        this.indexID = indexID;
+    public void setIDInIndex(int IDInIndex) {
+        this.IDInIndex = IDInIndex;
     }
 
     public int getPageID() {
@@ -104,19 +103,7 @@ public class SubIndexItem {
         return itemIcon;
     }
 
-    public void setItemIcon(Item itemIcon) {
-        this.itemIcon = itemIcon;
-    }
-
-    public Block getBlockIcon() {
-        return blockIcon;
-    }
-
-    public void setBlockIcon(Block blockIcon) {
-        this.blockIcon = blockIcon;
-    }
-
-    public enum TextureType {
-        TEXTURE, ITEM, BLOCK
+    enum TextureType {
+        TEXTURE, ITEM
     }
 }
