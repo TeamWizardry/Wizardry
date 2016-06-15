@@ -1,6 +1,7 @@
 package me.lordsaad.wizardry.book.contentpages;
 
 import me.lordsaad.wizardry.Utils;
+import me.lordsaad.wizardry.Wizardry;
 import me.lordsaad.wizardry.api.Constants;
 import me.lordsaad.wizardry.book.Button;
 import me.lordsaad.wizardry.book.Slot;
@@ -13,6 +14,7 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,12 +45,12 @@ public class BasicsGettingStarted extends ContentPageBase {
         Schematic schematic = new Schematic("spell_crafter");
         switch (button.id) {
             case Constants.GuiButtons.SCHEMATIC_UP_LAYER: {
-                if (schematic.getHeight() > layer)
+                if (layer < schematic.getHeight())
                     layer++;
                 break;
             }
             case Constants.GuiButtons.SCHEMATIC_DOWN_LAYER: {
-                if (schematic.getHeight() < layer)
+                if (layer > 0)
                     layer--;
                 break;
             }
@@ -75,13 +77,19 @@ public class BasicsGettingStarted extends ContentPageBase {
         }
 
         if (currentPage == 2) {
-            Schematic schematic = new Schematic("spell_crafter");
+            fontRendererObj.setBidiFlag(false);
+            fontRendererObj.setUnicodeFlag(false);
+            Schematic schematic = new Schematic("spell_crafter_2");
+
+            mc.renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/book/schematic-box.png"));
+            drawScaledCustomSizeModalRect(left + 15, top + 16, 0, 0, 115, 115, 115, 115, 115, 115);
 
             HashMap<Integer, ArrayList<BlockObject>> layers = schematic.getSchematicLayers();
+
             if (layers.containsKey(layer))
                 for (BlockObject object : layers.get(layer)) {
                     if (object != null && object.getState() != null && object.getState().getBlock() != Blocks.AIR) {
-                        ItemStack itemStack = new ItemStack(object.getState().getBlock(), 1);
+                        ItemStack itemStack = new ItemStack(object.getState().getBlock(), 1, object.getState().getBlock().getMetaFromState(object.getState()));
 
                         GlStateManager.pushMatrix();
                         RenderHelper.enableGUIStandardItemLighting();
@@ -98,12 +106,10 @@ public class BasicsGettingStarted extends ContentPageBase {
                         int size = 13;
                         boolean insideBlock = mouseX >= x && mouseX < x + size && mouseY >= y && mouseY < y + size;
                         if (insideBlock) {
-                            // TODO: tooltip goes null and crashes.
-                            fontRendererObj.setBidiFlag(false);
-                            fontRendererObj.setUnicodeFlag(false);
-                            renderToolTip(itemStack, mouseX, mouseY);
-                            fontRendererObj.setBidiFlag(true);
-                            fontRendererObj.setUnicodeFlag(true);
+                            if (itemStack != null) {
+                                System.out.println(itemStack + "");
+                                renderToolTip(itemStack, mouseX, mouseY);
+                            }
                         }
                     }
                 }
@@ -144,7 +150,7 @@ public class BasicsGettingStarted extends ContentPageBase {
                         else GlStateManager.color(0F, 128F, 255F, 1F);
 
                         if (inside) {
-                            int tip = setTip(new Tip("Increment layer"));
+                            int tip = setTip(new Tip("Dencrement layer"));
                             if (tip != -1) tipManager.put(button, tip);
                         } else {
                             if (tipManager.containsKey(button)) {

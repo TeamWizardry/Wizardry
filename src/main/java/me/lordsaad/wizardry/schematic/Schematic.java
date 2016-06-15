@@ -7,10 +7,15 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry;
+import net.minecraftforge.fml.common.registry.GameData;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -22,6 +27,7 @@ import java.util.List;
  */
 public class Schematic {
 
+    private static final FMLControlledNamespacedRegistry<Block> BLOCK_REGISTRY = GameData.getBlockRegistry();
     private short width;
     private short height;
     private short length;
@@ -55,9 +61,44 @@ public class Schematic {
                     }
                 }
             }
+
+            NBTTagList tileEntitiesList = nbtdata.getTagList("TileEntities", Constants.NBT.TAG_COMPOUND);
+
+            for (int i = 0; i < tileEntitiesList.tagCount(); i++) {
+                TileEntity tileEntity = readTileEntityFromCompound(tileEntitiesList.getCompoundTagAt(i));
+                NBTTagCompound tag = tileEntitiesList.getCompoundTagAt(i);
+                int schemX = tag.getInteger("x");
+                int schemY = tag.getInteger("y");
+                int schemZ = tag.getInteger("z");
+                BlockPos pos = new BlockPos(schemX, schemY, schemZ);
+                IBlockState state = Block.getBlockById(tileEntity.getTileData().getId()).getDefaultState();
+
+                blockObjects[counter] = new BlockObject(pos, state);
+            }
+
+            is.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static List<TileEntity> readTileEntitiesFromCompound(final NBTTagCompound compound) {
+        return readTileEntitiesFromCompound(compound, new ArrayList<>());
+    }
+
+    private static List<TileEntity> readTileEntitiesFromCompound(final NBTTagCompound compound, final List<TileEntity> tileEntities) {
+        final NBTTagList tagList = compound.getTagList("TileEntities", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < tagList.tagCount(); i++) {
+            final NBTTagCompound tileEntityCompound = tagList.getCompoundTagAt(i);
+            final TileEntity tileEntity = readTileEntityFromCompound(tileEntityCompound);
+            tileEntities.add(tileEntity);
+        }
+
+        return tileEntities;
+    }
+
+    private static TileEntity readTileEntityFromCompound(final NBTTagCompound tileEntityCompound) {
+        return TileEntity.create(tileEntityCompound);
     }
 
     public short getWidth() {
