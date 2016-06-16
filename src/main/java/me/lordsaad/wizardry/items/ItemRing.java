@@ -24,13 +24,7 @@ public class ItemRing extends Item {
     public void initModel() {
         ModelResourceLocation full = new ModelResourceLocation(getRegistryName() + "_pearl", "inventory");
         ModelResourceLocation empty = new ModelResourceLocation(getRegistryName(), "inventory");
-
-        ModelLoader.setCustomMeshDefinition(this, stack -> {
-            if (stack.getItemDamage() == 1) {
-                return full;
-            } else {
-                return empty;
-            }
-        });
+        ModelLoader.setCustomModelResourceLocation(this,0,empty);
+        ModelLoader.setCustomModelResourceLocation(this,1,full);
     }
 }
