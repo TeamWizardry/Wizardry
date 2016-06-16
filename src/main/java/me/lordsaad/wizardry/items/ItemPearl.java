@@ -97,7 +97,7 @@ public class ItemPearl extends Item {
                     ticker++;
                     stack.getTagCompound().setInteger("ticker", ticker);
                 }
-            } else if (stack.getTagCompound().getString("type").equals("mundane")) {
+            } else if (stack.getTagCompound().getString("type").equals("infused")) {
 
             } else {
 
@@ -140,12 +140,10 @@ public class ItemPearl extends Item {
         @Override
         public int getColorFromItemstack(ItemStack stack, int tintIndex) {
             if (stack.hasTagCompound()) {
-                if (tintIndex == 0) {
-                    int r = stack.getTagCompound().getInteger("red3");
-                    int g = stack.getTagCompound().getInteger("green3");
-                    int b = stack.getTagCompound().getInteger("blue3");
-                    return intColor(r, g, b);
-                }
+                int r = stack.getTagCompound().getInteger("red3");
+                int g = stack.getTagCompound().getInteger("green3");
+                int b = stack.getTagCompound().getInteger("blue3");
+                return intColor(r, g, b);
             }
             return intColor(255, 255, 255);
         }

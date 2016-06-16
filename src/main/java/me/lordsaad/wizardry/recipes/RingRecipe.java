@@ -55,6 +55,7 @@ public class RingRecipe implements IRecipe {
 
         ItemStack ringCopy = ring.copy();
         ringCopy.setItemDamage(1);
+        if (pearl.hasTagCompound()) ringCopy.setTagCompound(pearl.getTagCompound());
 
         return ringCopy;
     }

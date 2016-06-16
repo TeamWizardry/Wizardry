@@ -11,12 +11,12 @@ import net.minecraft.client.Minecraft;
 public class ModItems {
 
     public static ItemPearl pearl;
-    public static ItemRing ringHandle;
+    public static ItemRing ring;
     public static ItemPhysicsBook physicsBook;
 
     public static void init() {
         pearl = new ItemPearl();
-        ringHandle = new ItemRing();
+        ring = new ItemRing();
         physicsBook = new ItemPhysicsBook();
 
     }
@@ -24,10 +24,11 @@ public class ModItems {
     public static void initModels() {
         pearl.initModel();
         physicsBook.initModel();
-        ringHandle.initModel();
+        ring.initModel();
     }
 
     public static void initColors() {
         Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemPearl.ColorHandler(), pearl);
+        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemRing.ColorHandler(), ring);
     }
 }
