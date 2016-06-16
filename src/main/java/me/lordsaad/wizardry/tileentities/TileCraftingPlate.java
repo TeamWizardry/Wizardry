@@ -126,7 +126,8 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
                             this.pearl = item.getEntityItem();
                             worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
                             crafting = true;
-                            craftingTime = inventory.size() * 100;
+                            craftingTime = (inventory.size() - 1) * 100;
+                            craftingProgress = 0;
                         }
                     }
                     markDirty();
@@ -146,8 +147,9 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
                     }*/
                 }
 
-                if (craftingProgress <= craftingTime) {
+                if (craftingProgress < craftingTime && isCrafting()) {
                     craftingProgress++;
+
                 } else {
                     craftingProgress = 0;
                     crafting = false;

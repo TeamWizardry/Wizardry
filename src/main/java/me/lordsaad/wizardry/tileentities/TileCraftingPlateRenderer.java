@@ -1,5 +1,6 @@
 package me.lordsaad.wizardry.tileentities;
 
+import me.lordsaad.wizardry.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.item.EntityItem;
@@ -20,44 +21,43 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
 
             for (int i = 0; i < te.getInventory().size(); i++) {
 
+                // Get Item
+                EntityItem item = new EntityItem(te.getWorld(), x, y, z, te.getInventory().get(i));
+
                 int pearlRotationMultiplier = 1;
-                if (te.getPearl() != null) {
+                if (item.getEntityItem().getItem() == ModItems.pearl) {
                     if (te.isCrafting()) {
                         pearlRotationMultiplier = te.getCraftingProgress() / 10;
-                    } else {
-                        // Not crafting. Act natural.
-
                     }
                 }
 
-                // Check if pearl
-                EntityItem item = new EntityItem(te.getWorld(), x, y, z, te.getInventory().get(i));
+                // debug
+                Minecraft.getMinecraft().thePlayer.sendChatMessage(te.getCraftingProgress() + "/" + te.getCraftingTime() + " - " + te.isCrafting());
 
                 item.hoverStart = 0;
                 double shifted = ticker + i * (360.0 / te.getInventory().size());
                 GL11.glPushMatrix();
 
                 // Position the pearl lower than the rest of the items.
-                if (item.getEntityItem() != te.getPearl()) GL11.glTranslated(x + 0.5, y + 0.6, z + 0.5);
+                if (item.getEntityItem().getItem() != ModItems.pearl) GL11.glTranslated(x + 0.5, y + 0.6, z + 0.5);
                 else GL11.glTranslated(x + 0.5, y + 0.3, z + 0.5);
 
                 // Rotate items around center
-                if (item.getEntityItem() != te.getPearl()) GL11.glRotated(shifted, 0, 1, 0);
+                if (item.getEntityItem().getItem() != ModItems.pearl) GL11.glRotated(shifted, 0, 1, 0);
 
                 // Radius of the items around the pearl.
                 // Raise the pearl slowly when crafting
-                if (item.getEntityItem() != te.getPearl()) GL11.glTranslated(-0.5, 0, 0);
-                else if (te.getCraftingProgress() - te.getCraftingTime() <= 50)
-                    GL11.glTranslated(0, (te.getCraftingProgress() - te.getCraftingTime()) / 15, 0);
+                if (item.getEntityItem().getItem() != ModItems.pearl) GL11.glTranslated(-0.5, 0, 0);
+                else if (te.getCraftingProgress() < te.getCraftingTime() && te.isCrafting())
+                    GL11.glTranslated(0, te.getCraftingProgress(), 0);
 
                 // Rotate the pearl faster depending on the pearlRotationMultiplier
                 // which is based on if it's crafting or not.
-                if (item.getEntityItem() != te.getPearl()) GL11.glRotated(shifted, 0, 1, 0);
-                else GL11.glRotated(shifted * pearlRotationMultiplier, 0, 1, 0);
+                if (item.getEntityItem().getItem() != ModItems.pearl) GL11.glRotated(shifted, 0, 1, 0);
+                else if (te.isCrafting()) GL11.glRotated(shifted * pearlRotationMultiplier, 0, 1, 0);
 
                 Minecraft.getMinecraft().getRenderManager().doRenderEntity(item, 0, 0, 0, 0, 0, true);
                 GL11.glPopMatrix();
-
             }
         }
     }

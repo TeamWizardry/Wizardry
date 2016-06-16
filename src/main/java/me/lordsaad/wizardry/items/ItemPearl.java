@@ -61,7 +61,7 @@ public class ItemPearl extends Item {
         }
 
         if (stack.hasTagCompound()) {
-            if (stack.getTagCompound().getString("type").equals("infused")) {
+            if (stack.getTagCompound().getString("type").equals("mundane")) {
                 int ticker = stack.getTagCompound().getInteger("ticker");
                 if (ticker >= 30) {
                     if (stack.getTagCompound().getDouble("steps") <= 30) {

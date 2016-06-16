@@ -89,7 +89,7 @@ public class BasicsGettingStarted extends ContentPageBase {
             if (layers.containsKey(layer))
                 for (BlockObject object : layers.get(layer)) {
                     if (object != null && object.getState() != null && object.getState().getBlock() != Blocks.AIR) {
-                        ItemStack itemStack = new ItemStack(object.getState().getBlock(), 1, object.getState().getBlock().getMetaFromState(object.getState()));
+                        ItemStack itemStack = new ItemStack(object.getState().getBlock());
 
                         GlStateManager.pushMatrix();
                         RenderHelper.enableGUIStandardItemLighting();
