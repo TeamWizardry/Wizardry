@@ -70,7 +70,7 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        super.writeToNBT(compound);
+        compound = super.writeToNBT(compound);
         compound.setBoolean("structureComplete", structureComplete);
 
         if (inventory.size() > 0) {
@@ -114,40 +114,39 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
-            if (isStructureComplete()) {
-                List<EntityItem> items = worldObj.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos, pos.add(1, 2, 1)));
-                for (EntityItem item : items) {
-                    inventory.add(item.getEntityItem());
-                    worldObj.removeEntity(item);
-                    if (item.getEntityItem().getItem() == ModItems.pearl) {
-                        ItemPearl pearl = (ItemPearl) item.getEntityItem().getItem();
-                        if (pearl.getPearlType(item.getEntityItem()).equals("mundane")) {
-                            this.pearl = item.getEntityItem();
-                            worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
-                            crafting = true;
-                            craftingTime = (inventory.size() - 1) * 100;
-                            craftingProgress = 0;
-                        }
+        if (isStructureComplete()) {
+            List<EntityItem> items = worldObj.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos, pos.add(1, 2, 1)));
+            for (EntityItem item : items) {
+                inventory.add(item.getEntityItem());
+                worldObj.removeEntity(item);
+                if (item.getEntityItem().getItem() == ModItems.pearl) {
+                    ItemPearl pearl = (ItemPearl) item.getEntityItem().getItem();
+                    if (pearl.getPearlType(item.getEntityItem()).equals("mundane")) {
+                        this.pearl = item.getEntityItem();
+                        crafting = true;
+                        craftingTime = (inventory.size() - 1) * 100;
+                        craftingProgress = 0;
                     }
-                    markDirty();
-                    worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
-
                 }
+            }
 
-                for (int i = 0; i < 5; i++) {
-                    SparkleFX ambient = Wizardry.proxy.spawnParticleSparkle(worldObj, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.5F, 0.5F, 30, 8, 8, 8);
-                    ambient.jitter(8, 0.1, 0.1, 0.1);
-                    ambient.randomDirection(0.2, 0.2, 0.2);
+            if (items.size() >= 1)
+                worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
+
+            for (int i = 0; i < 5; i++) {
+                SparkleFX ambient = Wizardry.proxy.spawnParticleSparkle(worldObj, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.5F, 0.5F, 30, 8, 8, 8);
+                ambient.jitter(8, 0.1, 0.1, 0.1);
+                ambient.randomDirection(0.2, 0.2, 0.2);
 
                     /*if (!inventory.isEmpty()) {
                         SparkleFX fog = Wizardry.proxy.spawnParticleSparkle(worldObj, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 1F, 1F, 30);
                         fog.randomDirection(0.5, 0, 0.5);
                         fog.setMotion(0, -0.5, 0);
                     }*/
-                }
+            }
 
-                if (craftingProgress < craftingTime && isCrafting()) {
+            if (isCrafting()) {
+                if (craftingProgress < craftingTime) {
                     craftingProgress++;
 
                 } else {
