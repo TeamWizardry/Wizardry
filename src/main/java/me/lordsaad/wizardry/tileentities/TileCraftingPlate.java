@@ -29,6 +29,7 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
     private boolean crafting = false, finishedCrafting = false;
     private int craftingProgress = 0, craftingTime = 200;
     private ItemStack pearl;
+    private IBlockState state;
 
     public boolean isStructureComplete() {
         return structureComplete;
@@ -79,7 +80,7 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
                 list.appendTag(anInventory.writeToNBT(new NBTTagCompound()));
             compound.setTag("inventory", list);
         }
-        if (pearl != null) compound.setTag("pearl", pearl.writeToNBT(compound));
+        if (pearl != null) compound.setTag("pearl", pearl.writeToNBT(new NBTTagCompound()));
         compound.setBoolean("crafting", crafting);
         compound.setBoolean("finishedCrafting", finishedCrafting);
         compound.setInteger("craftingProgress", craftingProgress);
@@ -104,7 +105,7 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
         super.onDataPacket(net, packet);
         readFromNBT(packet.getNbtCompound());
 
-        IBlockState state = worldObj.getBlockState(pos);
+        state = worldObj.getBlockState(pos);
         worldObj.notifyBlockUpdate(pos, state, state, 3);
     }
 
@@ -119,6 +120,7 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
             for (EntityItem item : items) {
                 inventory.add(item.getEntityItem());
                 worldObj.removeEntity(item);
+
                 if (item.getEntityItem().getItem() == ModItems.pearl) {
                     ItemPearl pearl = (ItemPearl) item.getEntityItem().getItem();
                     if (pearl.getPearlType(item.getEntityItem()).equals("mundane")) {
@@ -130,7 +132,7 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
                 }
             }
 
-            if (items.size() >= 1)
+            if (!items.isEmpty())
                 worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
 
             for (int i = 0; i < 5; i++) {
@@ -144,6 +146,8 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
                         fog.setMotion(0, -0.5, 0);
                     }*/
             }
+
+            // Minecraft.getMinecraft().thePlayer.sendChatMessage(craftingProgress + "/" + craftingTime + " - " + isCrafting());
 
             if (isCrafting()) {
                 if (craftingProgress < craftingTime) {
