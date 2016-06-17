@@ -4,6 +4,7 @@ import org.apache.logging.log4j.Logger;
 
 import me.lordsaad.wizardry.event.EventHandler;
 import me.lordsaad.wizardry.gui.GuiHandler;
+import me.lordsaad.wizardry.world.GenHandler;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
@@ -14,6 +15,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.PacketLoggingHandler;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -72,6 +74,7 @@ public class Wizardry {
     @Mod.EventHandler
     public void init(FMLInitializationEvent e) 
     {
+    	GameRegistry.registerWorldGenerator(new GenHandler(), 0);
     	proxy.init(e);
     }
 
