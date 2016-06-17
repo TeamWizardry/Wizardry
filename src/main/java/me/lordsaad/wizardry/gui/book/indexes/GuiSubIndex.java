@@ -1,12 +1,12 @@
-package me.lordsaad.wizardry.book.indexes;
+package me.lordsaad.wizardry.gui.book.indexes;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
 import me.lordsaad.wizardry.Utils;
 import me.lordsaad.wizardry.Wizardry;
 import me.lordsaad.wizardry.api.Constants;
-import me.lordsaad.wizardry.book.GuiHandler;
-import me.lordsaad.wizardry.book.Tip;
-import me.lordsaad.wizardry.book.Tippable;
+import me.lordsaad.wizardry.gui.book.GuiHandler;
+import me.lordsaad.wizardry.gui.book.Tip;
+import me.lordsaad.wizardry.gui.book.Tippable;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;

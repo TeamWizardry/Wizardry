@@ -1,4 +1,4 @@
-package me.lordsaad.wizardry.book;
+package me.lordsaad.wizardry.gui.book;
 
 import me.lordsaad.wizardry.Wizardry;
 import me.lordsaad.wizardry.api.Constants;
@@ -13,7 +13,7 @@ import net.minecraft.util.ResourceLocation;
 class PageBase extends GuiScreen {
 
     public static int bookBackgroundWidth = 146, bookBackgroundHeight = 180;
-    public static ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/book/book.png");
+    public static ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/gui/book/book.png");
     protected static int top, left, right;
     static boolean hasBookmark = false;
     static PageBase bookmarkedPage = null;

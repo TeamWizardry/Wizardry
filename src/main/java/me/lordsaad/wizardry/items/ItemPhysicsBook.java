@@ -1,7 +1,7 @@
 package me.lordsaad.wizardry.items;
 
 import me.lordsaad.wizardry.Wizardry;
-import me.lordsaad.wizardry.book.GuiHandler;
+import me.lordsaad.wizardry.gui.book.GuiHandler;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;

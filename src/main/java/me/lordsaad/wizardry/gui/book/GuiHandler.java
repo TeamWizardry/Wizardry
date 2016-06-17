@@ -1,8 +1,8 @@
-package me.lordsaad.wizardry.book;
+package me.lordsaad.wizardry.gui.book;
 
 import me.lordsaad.wizardry.api.Constants;
-import me.lordsaad.wizardry.book.contentpages.BasicsGettingStarted;
-import me.lordsaad.wizardry.book.indexes.IndexBasics;
+import me.lordsaad.wizardry.gui.book.contentpages.BasicsGettingStarted;
+import me.lordsaad.wizardry.gui.book.indexes.IndexBasics;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;

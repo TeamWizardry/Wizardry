@@ -1,7 +1,7 @@
 package me.lordsaad.wizardry;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
-import me.lordsaad.wizardry.book.GuiContentPage;
+import me.lordsaad.wizardry.gui.book.GuiContentPage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;

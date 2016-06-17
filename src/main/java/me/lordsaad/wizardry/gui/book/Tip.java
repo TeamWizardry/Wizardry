@@ -1,4 +1,4 @@
-package me.lordsaad.wizardry.book;
+package me.lordsaad.wizardry.gui.book;
 
 import net.minecraft.item.ItemStack;
 

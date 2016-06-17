@@ -1,6 +1,6 @@
-package me.lordsaad.wizardry.book.indexes;
+package me.lordsaad.wizardry.gui.book.indexes;
 
-import me.lordsaad.wizardry.book.Button;
+import me.lordsaad.wizardry.gui.book.Button;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;

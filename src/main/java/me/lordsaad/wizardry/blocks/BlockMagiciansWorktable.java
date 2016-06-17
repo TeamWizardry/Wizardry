@@ -56,7 +56,6 @@ public class BlockMagiciansWorktable extends Block implements ITileEntityProvide
     @SideOnly(Side.CLIENT)
     public void initModel() {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
-        //ClientRegistry.bindTileEntitySpecialRenderer(TileMagiciansWorktable.class, new TileMagiciansWorkTableRenderer());
     }
 
     @Override

@@ -1,4 +1,4 @@
-package me.lordsaad.wizardry.book;
+package me.lordsaad.wizardry.gui.book;
 
 /**
  * Created by Saad on 6/12/2016.

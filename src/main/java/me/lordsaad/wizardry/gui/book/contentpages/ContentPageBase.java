@@ -1,6 +1,6 @@
-package me.lordsaad.wizardry.book.contentpages;
+package me.lordsaad.wizardry.gui.book.contentpages;
 
-import me.lordsaad.wizardry.book.GuiContentPage;
+import me.lordsaad.wizardry.gui.book.GuiContentPage;
 
 /**
  * Created by Saad on 6/12/2016.

@@ -1,8 +1,8 @@
-package me.lordsaad.wizardry.book.indexes;
+package me.lordsaad.wizardry.gui.book.indexes;
 
 import me.lordsaad.wizardry.ModItems;
 import me.lordsaad.wizardry.api.Constants;
-import me.lordsaad.wizardry.book.Button;
+import me.lordsaad.wizardry.gui.book.Button;
 
 /**
  * Created by Saad on 5/2/2016.

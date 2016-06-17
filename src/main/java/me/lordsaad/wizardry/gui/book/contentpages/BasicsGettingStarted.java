@@ -1,11 +1,11 @@
-package me.lordsaad.wizardry.book.contentpages;
+package me.lordsaad.wizardry.gui.book.contentpages;
 
 import me.lordsaad.wizardry.Utils;
 import me.lordsaad.wizardry.Wizardry;
 import me.lordsaad.wizardry.api.Constants;
-import me.lordsaad.wizardry.book.Button;
-import me.lordsaad.wizardry.book.Slot;
-import me.lordsaad.wizardry.book.Tip;
+import me.lordsaad.wizardry.gui.book.Button;
+import me.lordsaad.wizardry.gui.book.Slot;
+import me.lordsaad.wizardry.gui.book.Tip;
 import me.lordsaad.wizardry.schematic.BlockObject;
 import me.lordsaad.wizardry.schematic.Schematic;
 import net.minecraft.client.gui.GuiButton;
@@ -81,7 +81,7 @@ public class BasicsGettingStarted extends ContentPageBase {
             fontRendererObj.setUnicodeFlag(false);
             Schematic schematic = new Schematic("spell_crafter_2");
 
-            mc.renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/book/schematic-box.png"));
+            mc.renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/gui/book/schematic-box.png"));
             drawScaledCustomSizeModalRect(left + 15, top + 16, 0, 0, 115, 115, 115, 115, 115, 115);
 
             HashMap<Integer, ArrayList<BlockObject>> layers = schematic.getSchematicLayers();

@@ -9,6 +9,10 @@ import net.minecraft.item.ItemStack;
  */
 public class SpellIngredients {
 
+    public enum IngredientType {
+        MODIFIER, CONDITION, EFFECT, PERSPECTIVE, EVENT
+    }
+
     public static class Modifiers {
         public static final ItemStack BEAM = new ItemStack(Items.PRISMARINE_SHARD, 1);
         public static final ItemStack PROJECTILE = new ItemStack(Items.ARROW, 16);

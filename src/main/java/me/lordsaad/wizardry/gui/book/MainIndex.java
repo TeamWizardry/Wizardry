@@ -1,4 +1,4 @@
-package me.lordsaad.wizardry.book;
+package me.lordsaad.wizardry.gui.book;
 
 import me.lordsaad.wizardry.Wizardry;
 import net.minecraft.client.Minecraft;
@@ -47,7 +47,7 @@ public class MainIndex extends Tippable {
         }
 
         for (String category : categories) {
-            ResourceLocation location = new ResourceLocation(Wizardry.MODID, "textures/book/icons/" + category.split("=")[0] + ".png");
+            ResourceLocation location = new ResourceLocation(Wizardry.MODID, "textures/gui/book/icons/" + category.split("=")[0] + ".png");
             int x = left + iconSeparation + (row * iconSize) + (row * iconSeparation);
             int y = top + iconSeparation + (column * iconSize) + (column * iconSeparation);
             addNewIndexButton(new Button(++ID, x, y, iconSize, iconSize), location, category.split("=")[1]);
