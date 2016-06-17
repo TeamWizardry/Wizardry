@@ -25,14 +25,14 @@ public abstract class GuiPageCommon extends Tippable {
 	protected int viewWidth, viewHeight;
 	protected int screenScale;
 	
-	public GuiPageCommon(GuiScreen parent, DataNode data, String path, int page) {
+	public GuiPageCommon(GuiScreen parent, DataNode data, DataNode globalData, String path, int page) {
 		this.parent = parent;
 		this.path = path;
 		this.page = page;
 		this.viewWidth = 115;
 		this.viewHeight = 155;
-		if(data.get("title").isString()) {
-			this.title = data.get("title").asString();
+		if(globalData.get("title").isString()) {
+			this.title = globalData.get("title").asString();
 		}
 		setHasNavReturn(true);
 		setHasNavNext(data.get("hasNext").exists());

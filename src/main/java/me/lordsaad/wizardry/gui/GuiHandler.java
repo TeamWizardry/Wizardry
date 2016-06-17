@@ -22,7 +22,7 @@ public class GuiHandler implements IGuiHandler {
 
     @Override
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-        if (ID == Constants.PageNumbers.INDEX) return new MainIndex();
+        if (ID == Constants.PageNumbers.GUIDE) return new MainIndex();
         if (ID == Constants.PageNumbers.BASICS) return new IndexBasics();
         if (ID == Constants.PageNumbers.WORKTABLE) return new WorktableBase();
         return null;

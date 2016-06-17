@@ -15,18 +15,25 @@ public class PageDataManager {
 	}
 	
 	public static DataNode getPageData(String pagePath) {
-		return getData("documentation/" + getLang() + "/" + pagePath);
+		return getData("documentation/%LANG%/" + pagePath);
 	}
 	
 	public static DataNode getData(String resourcePath) {
 		IResource resource;
 		DataNode root = DataNode.NULL;
 		try {
-			resource = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(Wizardry.MODID, PathUtils.resolve( resourcePath + ".json").substring(1)));
+			resource = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(Wizardry.MODID, PathUtils.resolve( resourcePath.replace("%LANG%", getLang()) + ".json").substring(1)));
 			root = DataParser.parse(resource.getInputStream());
 		} catch (IOException e) {
 			//TODO: add logger
-			e.printStackTrace();
+			try {
+				resource = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(Wizardry.MODID, PathUtils.resolve( resourcePath.replace("%LANG%", "en_US") + ".json").substring(1)));
+				root = DataParser.parse(resource.getInputStream());
+			} catch (IOException e2) {
+				//TODO: add logger
+				e2.printStackTrace();
+			}
+			
 		}
 		return root;
 	}

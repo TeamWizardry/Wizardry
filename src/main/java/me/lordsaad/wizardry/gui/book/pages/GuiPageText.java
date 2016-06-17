@@ -11,14 +11,14 @@ public class GuiPageText extends GuiPageCommon {
 	
 	private String text;
 	
-	public GuiPageText(GuiScreen parent, DataNode data, String path, int page) {
-		super(parent, data, path, page);
+	public GuiPageText(GuiScreen parent, DataNode data, DataNode globalData, String path, int page) {
+		super(parent, data, globalData, path, page);
 		List<DataNode> list = data.get("text").asList();
 		String str = "";
 		for (DataNode node : list) {
 			str += node.asStringOr("!! ERROR - text list element not a string !!") + "§r§0\n";
 		}
-		
+		str.replaceAll("(?<!\\\\)&([0-9a-fA-FklmnorKLMNOR])", "§$1");
 		this.text = str;
 	}
 

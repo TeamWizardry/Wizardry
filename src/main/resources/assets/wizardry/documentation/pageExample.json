@@ -1,0 +1,17 @@
+{
+	"title":"Title Text",
+	"pages":[
+	  {
+	    "type":"text",
+		
+			"text": [
+				"Here's one line\nAnd another line",
+				"This is automatically put in another line",
+				"JSON doesn't support multiline strings, so this is my solution"
+			]
+	  },
+		{
+			"another page, just like the one above"
+		}
+	]
+}

@@ -55,7 +55,7 @@ public class GuiSubIndex extends Tippable {
                     mc.thePlayer.openGui(Wizardry.instance, pageNb, mc.theWorld, (int) mc.thePlayer.posX, (int)
                             mc.thePlayer.posY, (int) mc.thePlayer.posZ);
                 } else {
-                    mc.thePlayer.openGui(Wizardry.instance, Constants.PageNumbers.INDEX, mc.theWorld, (int) mc.thePlayer.posX, (int)
+                    mc.thePlayer.openGui(Wizardry.instance, Constants.PageNumbers.GUIDE, mc.theWorld, (int) mc.thePlayer.posX, (int)
                             mc.thePlayer.posY, (int) mc.thePlayer.posZ);
                     pageNb = -1;
                 }
@@ -72,7 +72,7 @@ public class GuiSubIndex extends Tippable {
             }
 
             case Constants.GuiButtons.NAV_BAR_INDEX: {
-                mc.thePlayer.openGui(Wizardry.instance, Constants.PageNumbers.INDEX, mc.theWorld, (int) mc.thePlayer.posX, (int)
+                mc.thePlayer.openGui(Wizardry.instance, Constants.PageNumbers.GUIDE, mc.theWorld, (int) mc.thePlayer.posX, (int)
                         mc.thePlayer.posY, (int) mc.thePlayer.posZ);
                 pageNb = 0;
                 break;

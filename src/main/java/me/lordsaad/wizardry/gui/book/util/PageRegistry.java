@@ -15,7 +15,7 @@ public class PageRegistry {
 	
 	private PageRegistry() {
 //		register("error", (parent, node, path) -> { return new GuiPageText(parent, node, path); });
-		register("text", (parent, node, path, page) -> { return new GuiPageText(parent, node, path, page); });
+		register("text", (parent, node, globalNode, path, page) -> { return new GuiPageText(parent, node, globalNode, path, page); });
 	}
 	
 	public static void register(String name, IPageGuiSupplier supplier) {
@@ -25,24 +25,27 @@ public class PageRegistry {
 	public static GuiScreen construct(GuiScreen parent, String path, int pageNum) {
 		
 		DataNode data = PageDataManager.getPageData(path);
-		DataNode pageData = data.get(pageNum);
+		
+		DataNode pagesList = data.get("pages");
+		DataNode pageData = pagesList.get(pageNum);
+		
 		String type = pageData.get("type").asStringOr("error");
 		if(map.containsKey(type)) {
 			if(pageData.isMap()) {
-				if(data.get(pageNum+1).exists()) {
+				if(pagesList.get(pageNum+1).exists()) {
 					pageData.asMap().put("hasNext", new DataNode("true"));
 				}
-				if(data.get(pageNum+-1).exists()) {
+				if(pagesList.get(pageNum+-1).exists()) {
 					pageData.asMap().put("hasPrev", new DataNode("true"));
 				}
 			}
-			return map.get(type).create(parent, pageData, path, pageNum);
+			return map.get(type).create(parent, pageData, data, path, pageNum);
 		}
 		return null;
 	}
 	
 	@FunctionalInterface
 	public static interface IPageGuiSupplier {
-		GuiScreen create(GuiScreen parent, DataNode node, String path, int page);
+		GuiScreen create(GuiScreen parent, DataNode node, DataNode globalNode, String path, int page);
 	}
 }
