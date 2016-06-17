@@ -1,3 +1,4 @@
 tile.crafting_plate.name=Sorcerer's Plate
 
 item.physicsbook.name=Physics Book
+gui.physicsbook.defaulttitle=Physics Book

@@ -31,6 +31,7 @@ public class GuiSubIndex extends Tippable {
     public void initGui() {
         super.initGui();
         elements = new HashMap<>();
+        setHasNavReturn(true);
     }
 
     public void addElement(SubIndexElement element) {
@@ -54,7 +55,7 @@ public class GuiSubIndex extends Tippable {
                     mc.thePlayer.openGui(Wizardry.instance, pageNb, mc.theWorld, (int) mc.thePlayer.posX, (int)
                             mc.thePlayer.posY, (int) mc.thePlayer.posZ);
                 } else {
-                    mc.thePlayer.openGui(Wizardry.instance, Constants.PageNumbers.INDEX, mc.theWorld, (int) mc.thePlayer.posX, (int)
+                    mc.thePlayer.openGui(Wizardry.instance, Constants.PageNumbers.GUIDE, mc.theWorld, (int) mc.thePlayer.posX, (int)
                             mc.thePlayer.posY, (int) mc.thePlayer.posZ);
                     pageNb = -1;
                 }
@@ -71,7 +72,7 @@ public class GuiSubIndex extends Tippable {
             }
 
             case Constants.GuiButtons.NAV_BAR_INDEX: {
-                mc.thePlayer.openGui(Wizardry.instance, Constants.PageNumbers.INDEX, mc.theWorld, (int) mc.thePlayer.posX, (int)
+                mc.thePlayer.openGui(Wizardry.instance, Constants.PageNumbers.GUIDE, mc.theWorld, (int) mc.thePlayer.posX, (int)
                         mc.thePlayer.posY, (int) mc.thePlayer.posZ);
                 pageNb = 0;
                 break;
@@ -88,8 +89,11 @@ public class GuiSubIndex extends Tippable {
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
 
-        if (buttonList.size() > 5 && !isNavBarEnabled()) setNavBar(true);
-
+//        if (buttonList.size() > 5 && !isNavBarEnabled())
+        
+        setHasNavNext(elements.size()-pageNb > 5);
+        setHasNavPrev(pageNb > 1);
+        
         fontRendererObj.setUnicodeFlag(true);
         fontRendererObj.setBidiFlag(true);
 

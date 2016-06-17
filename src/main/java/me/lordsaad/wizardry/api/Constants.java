@@ -15,7 +15,7 @@ public class Constants {
     }
 
     public static class PageNumbers {
-        public static final int INDEX = 0;
+        public static final int GUIDE = 0;
         public static final int WORKTABLE = 1;
         public static final int BASICS = 2;
         public static final int BASICS_GETTING_STARTED = 3;
