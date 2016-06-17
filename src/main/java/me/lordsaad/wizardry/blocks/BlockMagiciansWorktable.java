@@ -2,6 +2,7 @@ package me.lordsaad.wizardry.blocks;
 
 import me.lordsaad.wizardry.ModBlocks;
 import me.lordsaad.wizardry.Wizardry;
+import me.lordsaad.wizardry.api.Constants;
 import me.lordsaad.wizardry.tileentities.TileMagiciansWorktable;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
@@ -35,12 +36,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 /**
  * Created by Saad on 6/12/2016.
  */
-public class BlockMagiciansWorktable extends Block implements ITileEntityProvider {
-
+public class BlockMagiciansWorktable extends Block implements ITileEntityProvider 
+{
 	public static final PropertyEnum<EnumFacing> FACING = PropertyEnum.create("facing", EnumFacing.class);
 	public static final PropertyBool ISLEFTSIDE = PropertyBool.create("is_left_side");
 
-	public BlockMagiciansWorktable() {
+	public BlockMagiciansWorktable() 
+	{
 		super(Material.WOOD);
 		setHardness(1F);
 		setSoundType(SoundType.WOOD);
@@ -54,7 +56,8 @@ public class BlockMagiciansWorktable extends Block implements ITileEntityProvide
 	}
 
 	@SideOnly(Side.CLIENT)
-	public void initModel() {
+	public void initModel() 
+	{
 		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
 	}
 
@@ -121,7 +124,6 @@ public class BlockMagiciansWorktable extends Block implements ITileEntityProvide
 
 	private BlockPos getOtherTableBlock(IBlockState tablePart, BlockPos tablePartPos)
 	{
-
 		if(tablePart.getValue(ISLEFTSIDE))
 		{
 			return tablePartPos.offset(tablePart.getValue(FACING).rotateYCCW());
@@ -131,9 +133,17 @@ public class BlockMagiciansWorktable extends Block implements ITileEntityProvide
 			return tablePartPos.offset(tablePart.getValue(FACING).rotateY());
 		}
 	}
+	
+	 @Override
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) 
+	{
+        playerIn.openGui(Wizardry.instance, Constants.PageNumbers.WORKTABLE, worldIn, (int) playerIn.posX, (int) playerIn.posY, (int) playerIn.posZ);
+        return true;
+    }
 
 	@Override
-	protected BlockStateContainer createBlockState() {
+	protected BlockStateContainer createBlockState() 
+	{
 		return new BlockStateContainer(this, FACING, ISLEFTSIDE);
 	}
 
@@ -157,22 +167,26 @@ public class BlockMagiciansWorktable extends Block implements ITileEntityProvide
 	}
 
 	@Override
-	public boolean isFullCube(IBlockState state) {
+	public boolean isFullCube(IBlockState state) 
+	{
 		return false;
 	}
 
 	@Override
-	public boolean isNormalCube(IBlockState state, IBlockAccess world, BlockPos pos) {
+	public boolean isNormalCube(IBlockState state, IBlockAccess world, BlockPos pos) 
+	{
 		return false;
 	}
 
 	@Override
-	public boolean isVisuallyOpaque() {
+	public boolean isVisuallyOpaque() 
+	{
 		return false;
 	}
 
 	@Override
-	public boolean isOpaqueCube(IBlockState blockState) {
+	public boolean isOpaqueCube(IBlockState blockState) 
+	{
 		return false;
 	}
 }
