@@ -1,25 +1,21 @@
 package me.lordsaad.wizardry;
 
+import org.apache.logging.log4j.Logger;
+
+import me.lordsaad.wizardry.event.EventHandler;
 import me.lordsaad.wizardry.gui.GuiHandler;
-import me.lordsaad.wizardry.particles.SparkleFX;
-import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.PacketLoggingHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Created by Saad on 6/9/2016.
@@ -29,6 +25,8 @@ public class Wizardry {
     public static final String MODID = "wizardry";
     public static final String MODNAME = "Wizardry";
     public static final String VERSION = "1.0";
+    public static final String CLIENT = "me.lordsaad.wizardry.client.ClientProxy";
+    public static final String SERVER = "me.lordsaad.wizardry.CommonProxy";
     public static PacketLoggingHandler packetHandler;
 
     public static CreativeTabs tab = new CreativeTabs(MODNAME) {
@@ -43,7 +41,7 @@ public class Wizardry {
         }
     };
 
-    @SidedProxy
+    @SidedProxy(clientSide = CLIENT, serverSide = SERVER)
     public static CommonProxy proxy;
 
     @Mod.Instance
@@ -54,14 +52,27 @@ public class Wizardry {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         logger = event.getModLog();
+        
+        ModItems.init();
+        ModBlocks.init();
+        
+        CraftingRecipes.initCrafting();
+        
+        MinecraftForge.EVENT_BUS.register(new EventHandler());
+        
+        proxy.loadModels();
+        
         proxy.preInit(event);
-        // ModFluids.init();
+        if (proxy != null)
+		{
+        	NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
+		}
     }
 
     @Mod.EventHandler
-    public void init(FMLInitializationEvent e) {
-        proxy.init(e);
-        CraftingRecipes.initCrafting();
+    public void init(FMLInitializationEvent e) 
+    {
+    	proxy.init(e);
     }
 
     @Mod.EventHandler
@@ -69,67 +80,4 @@ public class Wizardry {
         proxy.postInit(e);
     }
 
-
-    ///// SERVER  /////
-    public static class CommonProxy {
-        public void preInit(FMLPreInitializationEvent e) {
-            //  PacketHandler.registerMessages();
-            ModItems.init();
-            ModBlocks.init();
-        }
-
-        public void init(FMLInitializationEvent e) {
-        }
-
-        public void postInit(FMLPostInitializationEvent e) {
-            NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
-        }
-
-        public SparkleFX spawnParticleSparkle(World world, double x, double y, double z, float alpha, float scale, int age) {
-            return null;
-        }
-
-        public SparkleFX spawnParticleSparkle(World world, double x, double y, double z, float alpha, float scale, int age, double rangeX, double rangeY, double rangeZ) {
-            return null;
-        }
-    }
-
-    ///// CLIENT  /////
-    public static class ClientProxy extends CommonProxy {
-        @Override
-        public void preInit(FMLPreInitializationEvent e) {
-            super.preInit(e);
-            MinecraftForge.EVENT_BUS.register(this);
-
-            ModItems.initModels();
-            ModBlocks.initModels();
-        }
-
-        @Override
-        public void init(FMLInitializationEvent e) {
-            ModItems.initColors();
-        }
-
-        @SubscribeEvent
-        public void onTextureStitchEvent(TextureStitchEvent.Pre event) {
-            event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, "entity/sparkle"));
-            event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, "items/manaIconNoOutline"));
-            event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, "items/manaIconOutline"));
-        }
-
-        public SparkleFX spawnParticleSparkle(World world, double x, double y, double z, float alpha, float scale, int age) {
-            SparkleFX particle = new SparkleFX(world, x, y, z, alpha, scale, age);
-            Minecraft.getMinecraft().effectRenderer.addEffect(particle);
-            return particle;
-        }
-
-        public SparkleFX spawnParticleSparkle(World world, double x, double y, double z, float alpha, float scale, int age, double rangeX, double rangeY, double rangeZ) {
-            SparkleFX particle = new SparkleFX(world, x, y, z, alpha, scale, age, rangeX, rangeY, rangeZ);
-            Minecraft.getMinecraft().effectRenderer.addEffect(particle);
-            return particle;
-        }
-    }
-
-    public static class ServerProxy extends CommonProxy {
-    }
 }
