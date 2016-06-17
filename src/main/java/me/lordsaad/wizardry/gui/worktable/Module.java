@@ -1,6 +1,7 @@
 package me.lordsaad.wizardry.gui.worktable;
 
 import me.lordsaad.wizardry.api.spells.SpellIngredients;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 /**
@@ -11,12 +12,14 @@ public class Module {
     private int x, y;
     private ResourceLocation icon;
     private SpellIngredients.IngredientType type;
+    private ItemStack stack;
 
-    public Module(int x, int y, ResourceLocation icon, SpellIngredients.IngredientType type) {
+    public Module(int x, int y, ResourceLocation icon, SpellIngredients.IngredientType type, ItemStack stack) {
         this.x = x;
         this.y = y;
         this.icon = icon;
         this.type = type;
+        this.stack = stack;
     }
 
     public int getX() {
@@ -49,5 +52,13 @@ public class Module {
 
     public void setType(SpellIngredients.IngredientType type) {
         this.type = type;
+    }
+
+    public ItemStack getStack() {
+        return stack;
+    }
+
+    public void setStack(ItemStack stack) {
+        this.stack = stack;
     }
 }

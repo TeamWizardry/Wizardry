@@ -120,7 +120,24 @@ public class Utils {
         return pages;
     }
 
-    public static void drawConnection(BlockPos pos1, BlockPos pos2, Color color) {
+    public static void drawLine2D(int x1, int y1, int x2, int y2, int width, Color color) {
+        GlStateManager.pushMatrix();
+        GlStateManager.disableTexture2D();
+        GlStateManager.color(color.getRed(), color.getGreen(), color.getBlue(), 1F);
+
+        GL11.glEnable(GL11.GL_LINE_SMOOTH);
+        GL11.glLineWidth(width);
+
+        GL11.glBegin(GL11.GL_LINES);
+        GL11.glVertex3f(x1, y1, 0);
+        GL11.glVertex3f(x2, y2, 0);
+        GL11.glEnd();
+
+        GlStateManager.enableTexture2D();
+        GlStateManager.popMatrix();
+    }
+
+    public static void drawLine3D(BlockPos pos1, BlockPos pos2, Color color) {
         GlStateManager.pushMatrix();
 
         GL11.glLineWidth(1);

@@ -1,6 +1,5 @@
 package me.lordsaad.wizardry.items;
 
-import me.lordsaad.wizardry.SerializableItemStack;
 import me.lordsaad.wizardry.Wizardry;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
@@ -8,6 +7,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -107,9 +107,11 @@ public class ItemPearl extends Item {
 
     public void addSpellItems(ItemStack stack, ArrayList<ItemStack> items) {
         NBTTagCompound compound = new NBTTagCompound();
-        int i = 0;
-        for (ItemStack item : items) {
-            compound = new SerializableItemStack(item).writeToNBT("item" + i++, compound);
+        if (items.size() > 0) {
+            NBTTagList list = new NBTTagList();
+            for (ItemStack anInventory : items)
+                list.appendTag(anInventory.writeToNBT(new NBTTagCompound()));
+            compound.setTag("inventory", list);
         }
         compound.setString("type", String.valueOf("infused"));
         stack.setTagCompound(compound);
