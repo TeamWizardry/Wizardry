@@ -8,6 +8,8 @@ import com.google.common.collect.ImmutableMap;
 
 public class DataNode {
 
+	private static final int RANDOM_NUMBER_CHECK_VALUE = -262920932;
+	
 	protected EnumNodeType type;
 	
 	protected String stringValue;
@@ -37,6 +39,14 @@ public class DataNode {
 		return type == EnumNodeType.STRING;
 	}
 	
+	public boolean isInt() {
+		return type == EnumNodeType.STRING && asIntOr(RANDOM_NUMBER_CHECK_VALUE) != RANDOM_NUMBER_CHECK_VALUE;
+	}
+	
+	public boolean isDouble() {
+		return type == EnumNodeType.STRING && asDoubleOr(RANDOM_NUMBER_CHECK_VALUE) != RANDOM_NUMBER_CHECK_VALUE;
+	}
+	
 	public boolean isList() {
 		return type == EnumNodeType.LIST;
 	}
@@ -53,6 +63,38 @@ public class DataNode {
 	
 	public String asString() {
 		return asStringOr(null);
+	}
+	
+	public int asIntOr(int i) {
+		String str = asStringOr(null);
+		if(str == null)
+			return i;
+		try{
+			return Integer.parseInt(str);
+		} catch (NumberFormatException e) {
+			// TODO: logging
+		}
+		return i;
+	}
+	
+	public int asInt() {
+		return asIntOr(0);
+	}
+	
+	public double asDoubleOr(double i) {
+		String str = asStringOr(null);
+		if(str == null)
+			return i;
+		try{
+			return Double.parseDouble(str);
+		} catch (NumberFormatException e) {
+			// TODO: logging
+		}
+		return i;
+	}
+	
+	public double asDouble() {
+		return asIntOr(0);
 	}
 	
 	public Map<String, DataNode> asMap() {

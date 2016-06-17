@@ -30,7 +30,7 @@ public abstract class GuiPageCommon extends Tippable {
 		this.path = path;
 		this.page = page;
 		this.viewWidth = 115;
-		this.viewHeight = 155;
+		this.viewHeight = 154;
 		if(globalData.get("title").isString()) {
 			this.title = globalData.get("title").asString();
 		}
