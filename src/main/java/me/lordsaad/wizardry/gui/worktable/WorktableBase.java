@@ -11,7 +11,7 @@ import net.minecraft.util.ResourceLocation;
 public class WorktableBase extends GuiScreen {
 
     public static int left, top, right;
-    public static int backgroundWidth = 136, backgroundHeight = 119; // SIZE OF PAPER
+    public static int backgroundWidth = 214, backgroundHeight = 220; // SIZE OF PAPER
     public static ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sample-page-background.png");
 
     @Override
@@ -31,6 +31,7 @@ public class WorktableBase extends GuiScreen {
         mc.renderEngine.bindTexture(BACKGROUND_TEXTURE);
         drawTexturedModalRect(left, top, 0, 0, backgroundWidth, backgroundHeight);
         // RENDER BACKGROUND
+
     }
 
     @Override

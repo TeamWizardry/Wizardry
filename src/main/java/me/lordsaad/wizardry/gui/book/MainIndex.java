@@ -38,7 +38,7 @@ public class MainIndex extends Tippable {
 
         List<String> categories = new ArrayList<>();
         try {
-            String theString = IOUtils.toString(Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(Wizardry.MODID, "textures/book/icons/categories.txt")).getInputStream(), "UTF-8");
+            String theString = IOUtils.toString(Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(Wizardry.MODID, "textures/gui/book/icons/categories.txt")).getInputStream(), "UTF-8");
             for (String line : theString.split("\n")) {
                 if (line != null)
                     categories.add(line);
