@@ -31,6 +31,7 @@ public class GuiSubIndex extends Tippable {
     public void initGui() {
         super.initGui();
         elements = new HashMap<>();
+        setHasNavReturn(true);
     }
 
     public void addElement(SubIndexElement element) {
@@ -88,8 +89,11 @@ public class GuiSubIndex extends Tippable {
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
 
-        if (buttonList.size() > 5 && !isNavBarEnabled()) setNavBar(true);
-
+//        if (buttonList.size() > 5 && !isNavBarEnabled())
+        
+        setHasNavNext(elements.size()-pageNb > 5);
+        setHasNavPrev(pageNb > 1);
+        
         fontRendererObj.setUnicodeFlag(true);
         fontRendererObj.setBidiFlag(true);
 

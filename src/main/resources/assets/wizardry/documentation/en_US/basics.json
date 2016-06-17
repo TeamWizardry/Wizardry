@@ -1,0 +1,24 @@
+[
+	{
+		"type":"text",
+		"title":"Getting started",
+		
+		"text":[
+			"Look at this page!",
+			"All of these elements will be concatinated with line breaks between them",
+			"",
+			"Here's a paragraph"
+		]
+	},
+	
+	{
+		"type":"text",
+		"title":"Getting started",
+		
+		"text":[
+			"Here's §0C§1o§2l§3o§4r§5m§6a§7t§8i§9c §aG§bu§ci§dd§ee§fs",
+			"there's a line with §oItalics",
+			"I §lnever§r §nended§r the §kitalics§r or the §fwhite§0, but it inserted a 'r' and a '0' code in between array elements"
+		]
+	}
+]

@@ -27,7 +27,6 @@ public class GuiContentPage extends Tippable {
         super.initGui();
         pages = new HashMap<>();
         //clearTips();
-        setNavBar(true);
         pageID = 0;
         //buttonList.add(new Button(3, 0, 0, 8, 8));
     }

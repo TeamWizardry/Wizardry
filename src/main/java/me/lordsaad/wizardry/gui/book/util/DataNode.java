@@ -29,6 +29,10 @@ public class DataNode {
 		listValue = value;
 	}
 	
+	public boolean exists() {
+		return true;
+	}
+	
 	public boolean isString() {
 		return type == EnumNodeType.STRING;
 	}
@@ -41,23 +45,23 @@ public class DataNode {
 		return type == EnumNodeType.MAP;
 	}
 	
-	public String getStringOr(String defaultValue) {
+	public String asStringOr(String defaultValue) {
 		if(!isString())
 			return defaultValue;
 		return stringValue;
 	}
 	
-	public String getString() {
-		return getStringOr(null);
+	public String asString() {
+		return asStringOr(null);
 	}
 	
-	public Map<String, DataNode> getMap() {
+	public Map<String, DataNode> asMap() {
 		if(!isMap())
 			return ImmutableMap.of();
 		return mapValue;
 	}
 	
-	public List<DataNode> getList() {
+	public List<DataNode> asList() {
 		if(!isList())
 			return ImmutableList.of();
 		return listValue;
@@ -101,19 +105,24 @@ public class DataNode {
 			this.mapValue = null;
 		}
 		
-		public String getStringOr(String defaultValue) {
+		@Override
+		public boolean exists() {
+			return false;
+		}
+		
+		public String asStringOr(String defaultValue) {
 			return defaultValue;
 		}
 		
-		public String getString() {
-			return getStringOr(null);
+		public String asString() {
+			return asStringOr(null);
 		}
 		
-		public Map<String, DataNode> getMap() {
+		public Map<String, DataNode> asMap() {
 			return ImmutableMap.of();
 		}
 		
-		public List<DataNode> getList() {
+		public List<DataNode> asList() {
 			return ImmutableList.of();
 		}
 		

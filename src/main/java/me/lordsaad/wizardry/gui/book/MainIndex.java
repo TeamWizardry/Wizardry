@@ -4,6 +4,7 @@ import me.lordsaad.wizardry.Wizardry;
 import me.lordsaad.wizardry.api.Constants;
 import me.lordsaad.wizardry.gui.book.util.DataNode;
 import me.lordsaad.wizardry.gui.book.util.DataParser;
+import me.lordsaad.wizardry.gui.book.util.PageRegistry;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -26,6 +27,8 @@ public class MainIndex extends Tippable {
     private HashMap<GuiButton, ResourceLocation> icons = new HashMap<>();
     private int iconSize = 25, iconSeparation = 15;
 
+    private List<String> categoryLinks = new ArrayList<>();
+    
     @Override
     public void initGui() {
         super.initGui();
@@ -42,20 +45,21 @@ public class MainIndex extends Tippable {
         List<DataNode> categories = new ArrayList<>();
         try {
         	DataNode root = DataParser.parse(Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(Wizardry.MODID, "textures/gui/book/icons/categories.json")).getInputStream());
-        	categories = root.getList();
+        	categories = root.asList();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         for (DataNode category : categories) {
-            ResourceLocation location = new ResourceLocation(Wizardry.MODID, "textures/gui/book/icons/" + category.get("icon").getStringOr("NULL") + ".png");
+            ResourceLocation location = new ResourceLocation(Wizardry.MODID, "textures/gui/book/icons/" + category.get("icon").asStringOr("NULL") + ".png");
             int x = left + iconSeparation + (row * iconSize) + (row * iconSeparation);
             int y = top + iconSeparation + (column * iconSize) + (column * iconSeparation);
-            addNewIndexButton(new Button(++ID, x, y, iconSize, iconSize), location, category.get("text").getString());
+            addNewIndexButton(new Button(++ID, x, y, iconSize, iconSize), location, category.get("text").asString());
             if (row >= 2) {
                 row = 0;
                 column++;
             } else row++;
+            categoryLinks.add(category.get("link").asString());
         }
         didInit = true;
     }
@@ -74,8 +78,9 @@ public class MainIndex extends Tippable {
      */
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
-        if (button.id == 5) {
-            mc.thePlayer.openGui(Wizardry.instance, Constants.PageNumbers.BASICS, mc.theWorld, (int) mc.thePlayer.posX, (int) mc.thePlayer.posY, (int) mc.thePlayer.posZ);
+        if (button.id >= 5) {
+        	mc.displayGuiScreen(PageRegistry.construct(this, categoryLinks.get(button.id-5), 0));
+        	didInit = false;
             clearTips();
         }
     }
