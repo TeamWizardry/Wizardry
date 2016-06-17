@@ -1,6 +1,7 @@
 package me.lordsaad.wizardry.gui.book;
 
 import me.lordsaad.wizardry.Wizardry;
+import me.lordsaad.wizardry.api.Constants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
@@ -74,7 +75,7 @@ public class MainIndex extends Tippable {
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
         if (button.id == 5) {
-            mc.thePlayer.openGui(Wizardry.instance, GuiHandler.BASICS, mc.theWorld, (int) mc.thePlayer.posX, (int) mc.thePlayer.posY, (int) mc.thePlayer.posZ);
+            mc.thePlayer.openGui(Wizardry.instance, Constants.PageNumbers.BASICS, mc.theWorld, (int) mc.thePlayer.posX, (int) mc.thePlayer.posY, (int) mc.thePlayer.posZ);
             clearTips();
         }
     }

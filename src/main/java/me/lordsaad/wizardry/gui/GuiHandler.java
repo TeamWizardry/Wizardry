@@ -1,8 +1,10 @@
-package me.lordsaad.wizardry.gui.book;
+package me.lordsaad.wizardry.gui;
 
 import me.lordsaad.wizardry.api.Constants;
+import me.lordsaad.wizardry.gui.book.MainIndex;
 import me.lordsaad.wizardry.gui.book.contentpages.BasicsGettingStarted;
 import me.lordsaad.wizardry.gui.book.indexes.IndexBasics;
+import me.lordsaad.wizardry.gui.worktable.WorktableBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
@@ -11,7 +13,6 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
  * Created by Saad on 4/13/2016.
  */
 public class GuiHandler implements IGuiHandler {
-    public static int INDEX = 0, BASICS = 1;
 
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
@@ -20,9 +21,10 @@ public class GuiHandler implements IGuiHandler {
 
     @Override
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-        if (ID == INDEX) return new MainIndex();
-        if (ID == BASICS) return new IndexBasics();
+        if (ID == Constants.PageNumbers.INDEX) return new MainIndex();
+        if (ID == Constants.PageNumbers.BASICS) return new IndexBasics();
         if (ID == Constants.PageNumbers.BASICS_GETTING_STARTED) return new BasicsGettingStarted();
+        if (ID == Constants.PageNumbers.WORKTABLE) return new WorktableBase();
         return null;
     }
 }

@@ -8,7 +8,7 @@ import net.minecraft.util.ResourceLocation;
 /**
  * Created by Saad on 6/17/2016.
  */
-public class PageBase extends GuiScreen {
+public class WorktableBase extends GuiScreen {
 
     public static int left, top, right;
     public static int backgroundWidth = 136, backgroundHeight = 119; // SIZE OF PAPER

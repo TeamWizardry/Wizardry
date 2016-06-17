@@ -1,7 +1,7 @@
 package me.lordsaad.wizardry.items;
 
 import me.lordsaad.wizardry.Wizardry;
-import me.lordsaad.wizardry.gui.book.GuiHandler;
+import me.lordsaad.wizardry.api.Constants;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -34,7 +34,7 @@ public class ItemPhysicsBook extends Item {
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
-        playerIn.openGui(Wizardry.instance, GuiHandler.INDEX, worldIn, (int) playerIn.posX, (int) playerIn.posY, (int) playerIn.posZ);
+        playerIn.openGui(Wizardry.instance, Constants.PageNumbers.INDEX, worldIn, (int) playerIn.posX, (int) playerIn.posY, (int) playerIn.posZ);
         return ActionResult.newResult(EnumActionResult.SUCCESS, itemStackIn);
     }
 }

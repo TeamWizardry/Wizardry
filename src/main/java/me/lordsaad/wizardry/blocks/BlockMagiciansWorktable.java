@@ -2,6 +2,7 @@ package me.lordsaad.wizardry.blocks;
 
 import me.lordsaad.wizardry.ModBlocks;
 import me.lordsaad.wizardry.Wizardry;
+import me.lordsaad.wizardry.api.Constants;
 import me.lordsaad.wizardry.tileentities.TileMagiciansWorktable;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
@@ -69,6 +70,7 @@ public class BlockMagiciansWorktable extends Block implements ITileEntityProvide
 
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+        playerIn.openGui(Wizardry.instance, Constants.PageNumbers.WORKTABLE, worldIn, (int) playerIn.posX, (int) playerIn.posY, (int) playerIn.posZ);
 
         return true;
     }

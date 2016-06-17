@@ -4,7 +4,6 @@ import com.mojang.realmsclient.gui.ChatFormatting;
 import me.lordsaad.wizardry.Utils;
 import me.lordsaad.wizardry.Wizardry;
 import me.lordsaad.wizardry.api.Constants;
-import me.lordsaad.wizardry.gui.book.GuiHandler;
 import me.lordsaad.wizardry.gui.book.Tip;
 import me.lordsaad.wizardry.gui.book.Tippable;
 import net.minecraft.client.gui.GuiButton;
@@ -55,7 +54,7 @@ public class GuiSubIndex extends Tippable {
                     mc.thePlayer.openGui(Wizardry.instance, pageNb, mc.theWorld, (int) mc.thePlayer.posX, (int)
                             mc.thePlayer.posY, (int) mc.thePlayer.posZ);
                 } else {
-                    mc.thePlayer.openGui(Wizardry.instance, GuiHandler.INDEX, mc.theWorld, (int) mc.thePlayer.posX, (int)
+                    mc.thePlayer.openGui(Wizardry.instance, Constants.PageNumbers.INDEX, mc.theWorld, (int) mc.thePlayer.posX, (int)
                             mc.thePlayer.posY, (int) mc.thePlayer.posZ);
                     pageNb = -1;
                 }
@@ -72,7 +71,7 @@ public class GuiSubIndex extends Tippable {
             }
 
             case Constants.GuiButtons.NAV_BAR_INDEX: {
-                mc.thePlayer.openGui(Wizardry.instance, GuiHandler.INDEX, mc.theWorld, (int) mc.thePlayer.posX, (int)
+                mc.thePlayer.openGui(Wizardry.instance, Constants.PageNumbers.INDEX, mc.theWorld, (int) mc.thePlayer.posX, (int)
                         mc.thePlayer.posY, (int) mc.thePlayer.posZ);
                 pageNb = 0;
                 break;

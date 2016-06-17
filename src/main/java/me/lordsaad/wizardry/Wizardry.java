@@ -1,6 +1,6 @@
 package me.lordsaad.wizardry;
 
-import me.lordsaad.wizardry.gui.book.GuiHandler;
+import me.lordsaad.wizardry.gui.GuiHandler;
 import me.lordsaad.wizardry.particles.SparkleFX;
 import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;

@@ -41,7 +41,7 @@ public class GuiContentPage extends Tippable {
                     mc.thePlayer.openGui(Wizardry.instance, pageID, mc.theWorld, (int) mc.thePlayer.posX, (int)
                             mc.thePlayer.posY, (int) mc.thePlayer.posZ);
                 } else {
-                    mc.thePlayer.openGui(Wizardry.instance, GuiHandler.INDEX, mc.theWorld, (int) mc.thePlayer.posX, (int)
+                    mc.thePlayer.openGui(Wizardry.instance, Constants.PageNumbers.INDEX, mc.theWorld, (int) mc.thePlayer.posX, (int)
                             mc.thePlayer.posY, (int) mc.thePlayer.posZ);
                     currentPage = 0;
                 }
@@ -56,7 +56,7 @@ public class GuiContentPage extends Tippable {
                 break;
             }
             case Constants.GuiButtons.NAV_BAR_INDEX: {
-                mc.thePlayer.openGui(Wizardry.instance, GuiHandler.INDEX, mc.theWorld, (int) mc.thePlayer.posX, (int)
+                mc.thePlayer.openGui(Wizardry.instance, Constants.PageNumbers.INDEX, mc.theWorld, (int) mc.thePlayer.posX, (int)
                         mc.thePlayer.posY, (int) mc.thePlayer.posZ);
                 currentPage = 0;
                 break;
