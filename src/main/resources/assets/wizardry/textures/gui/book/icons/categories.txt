@@ -1,5 +1,0 @@
-magic-palm=Learn the basics of the mod and how to get started.
-magic-gate=Learn how to build a lot of multi block structures that aren't essential.
-diamond-ring=Learn how the spell crafting system works.
-magic-potion=Learn how the brewing system works.
-magic-swirl=Learn more misc crap.

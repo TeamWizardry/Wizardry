@@ -2,6 +2,9 @@ package me.lordsaad.wizardry.gui.book;
 
 import me.lordsaad.wizardry.Wizardry;
 import me.lordsaad.wizardry.api.Constants;
+import me.lordsaad.wizardry.gui.book.util.DataNode;
+import me.lordsaad.wizardry.gui.book.util.DataParser;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
@@ -36,22 +39,19 @@ public class MainIndex extends Tippable {
     private void initIndexButtons() {
         int ID = 4, row = 0, column = 0;
 
-        List<String> categories = new ArrayList<>();
+        List<DataNode> categories = new ArrayList<>();
         try {
-            String theString = IOUtils.toString(Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(Wizardry.MODID, "textures/gui/book/icons/categories.txt")).getInputStream(), "UTF-8");
-            for (String line : theString.split("\n")) {
-                if (line != null)
-                    categories.add(line);
-            }
+        	DataNode root = DataParser.parse(Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(Wizardry.MODID, "textures/gui/book/icons/categories.json")).getInputStream());
+        	categories = root.getList();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        for (String category : categories) {
-            ResourceLocation location = new ResourceLocation(Wizardry.MODID, "textures/gui/book/icons/" + category.split("=")[0] + ".png");
+        for (DataNode category : categories) {
+            ResourceLocation location = new ResourceLocation(Wizardry.MODID, "textures/gui/book/icons/" + category.get("icon").getStringOr("NULL") + ".png");
             int x = left + iconSeparation + (row * iconSize) + (row * iconSeparation);
             int y = top + iconSeparation + (column * iconSize) + (column * iconSeparation);
-            addNewIndexButton(new Button(++ID, x, y, iconSize, iconSize), location, category.split("=")[1]);
+            addNewIndexButton(new Button(++ID, x, y, iconSize, iconSize), location, category.get("text").getString());
             if (row >= 2) {
                 row = 0;
                 column++;
