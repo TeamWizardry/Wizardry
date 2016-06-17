@@ -10,7 +10,21 @@ import net.minecraft.item.ItemStack;
 public class SpellIngredients {
 
     public enum IngredientType {
-        MODIFIER, CONDITION, EFFECT, PERSPECTIVE, EVENT
+        MODIFIER("Modifiers"),
+        CONDITION("Conditions"),
+        EFFECT("Effects"),
+        PERSPECTIVE("Perspective"),
+        EVENT("Event");
+
+        private String name;
+
+        IngredientType(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
     }
 
     public static class Modifiers {

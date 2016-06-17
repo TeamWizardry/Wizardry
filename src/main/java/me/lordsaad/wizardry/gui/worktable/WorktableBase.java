@@ -6,10 +6,13 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
+import java.awt.*;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import static me.lordsaad.wizardry.api.spells.SpellIngredients.IngredientType.*;
 
 /**
  * Created by Saad on 6/17/2016.
@@ -108,41 +111,59 @@ public class WorktableBase extends GuiScreen {
         drawTexturedModalRect(left, top, 0, 0, backgroundWidth, backgroundHeight);
         // RENDER BACKGROUND //
 
-        int row = 0, column = 0, iconSeparation = 1;
+        for (SpellIngredients.IngredientType category : modules.keySet()) {
 
-        ArrayList<Module> tempModules = new ArrayList<>();
-        tempModules.addAll(modules.get(SpellIngredients.IngredientType.EFFECT));
+            // CATEGORIES //
+            int row = 0, column = 0, iconSeparation = 1, sidebarX;
 
-        for (Module module : modules.get(SpellIngredients.IngredientType.EFFECT)) {
-            int x = left - 90 + iconSeparation + (row * iconSize) + (row * iconSeparation);
-            int y = top + iconSeparation + (column * iconSize) + (column * iconSeparation);
+            if (category == EFFECT) sidebarX = -backgroundWidth / 2 - 90;
+            else if (category == CONDITION) sidebarX = -backgroundWidth / 2 - 180;
+            else if (category == MODIFIER) sidebarX = backgroundWidth / 2 + 20;
+            else if (category == EVENT) sidebarX = backgroundWidth / 2 + 100;
+            else sidebarX = right + 240; // PERSPECTIVE
 
-            // Remove the module from the list so we can update it after we change the new x and y.
-            tempModules.remove(module);
+            // CATEGORY HEADER //
+            fontRendererObj.setUnicodeFlag(true);
+            fontRendererObj.setBidiFlag(true);
+            fontRendererObj.drawString(category.getName(), sidebarX / 2, top, Color.WHITE.getRGB());
+            fontRendererObj.setUnicodeFlag(false);
+            fontRendererObj.setBidiFlag(false);
+            // CATEGORY HEADER //
 
-            module.setX(x);
-            module.setY(y);
 
-            // Updated module's x and y. Now add it back.
-            tempModules.add(module);
+            ArrayList<Module> tempModules = new ArrayList<>();
+            tempModules.addAll(modules.get(category));
 
-            boolean inside = mouseX >= module.getX() && mouseX < module.getX() + iconSize && mouseY >= module.getY() && mouseY < module.getY() + iconSize;
-            if (inside) {
-                mc.renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/blue-gradient.png"));
-                drawScaledCustomSizeModalRect(module.getX() - iconSize / 2, module.getY() - iconSize / 2, 0, 0, iconSize * 2, iconSize * 2, iconSize * 2, iconSize * 2, iconSize * 2, iconSize * 2);
+            for (Module module : modules.get(category)) {
+                int x = width / 2 + sidebarX + iconSeparation + (row * iconSize) + (row * iconSeparation);
+                int y = top + iconSeparation + (column * iconSize) + (column * iconSeparation);
+
+                // Remove the module from the list so we can update it after we change the new x and y.
+                tempModules.remove(module);
+
+                module.setX(x);
+                module.setY(y);
+
+                // Updated module's x and y. Now add it back.
+                tempModules.add(module);
+
+                boolean inside = mouseX >= module.getX() && mouseX < module.getX() + iconSize && mouseY >= module.getY() && mouseY < module.getY() + iconSize;
+                if (inside) {
+                    mc.renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/blue-gradient.png"));
+                    drawScaledCustomSizeModalRect(module.getX() - iconSize / 2, module.getY() - iconSize / 2, 0, 0, iconSize * 2, iconSize * 2, iconSize * 2, iconSize * 2, iconSize * 2, iconSize * 2);
+                }
+
+                mc.renderEngine.bindTexture(module.getIcon());
+                drawScaledCustomSizeModalRect(module.getX(), module.getY(), 0, 0, iconSize, iconSize, iconSize, iconSize, iconSize, iconSize);
+
+
+                if (row >= 3) {
+                    row = 0;
+                    column++;
+                } else row++;
             }
-
-            mc.renderEngine.bindTexture(module.getIcon());
-            drawScaledCustomSizeModalRect(module.getX(), module.getY(), 0, 0, iconSize, iconSize, iconSize, iconSize, iconSize, iconSize);
-
-
-            if (row >= 3) {
-                row = 0;
-                column++;
-            } else row++;
+            modules.put(category, tempModules);
         }
-        modules.remove(SpellIngredients.IngredientType.EFFECT);
-        modules.put(SpellIngredients.IngredientType.EFFECT, tempModules);
 
         if (moduleBeingDragged != null) {
             moduleBeingDragged.setX(mouseX);
