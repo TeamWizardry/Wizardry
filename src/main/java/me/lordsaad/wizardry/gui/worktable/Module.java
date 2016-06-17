@@ -13,13 +13,15 @@ public class Module {
     private ResourceLocation icon;
     private SpellIngredients.IngredientType type;
     private ItemStack stack;
+    private String text;
 
-    public Module(int x, int y, ResourceLocation icon, SpellIngredients.IngredientType type, ItemStack stack) {
+    public Module(int x, int y, String text, ResourceLocation icon, SpellIngredients.IngredientType type, ItemStack stack) {
         this.x = x;
         this.y = y;
         this.icon = icon;
         this.type = type;
         this.stack = stack;
+        this.text = text;
     }
 
     public int getX() {
@@ -60,5 +62,17 @@ public class Module {
 
     public void setStack(ItemStack stack) {
         this.stack = stack;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public Module copy() {
+        return new Module(x, y, text, icon, type, stack);
     }
 }
