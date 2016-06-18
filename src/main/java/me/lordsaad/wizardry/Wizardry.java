@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import me.lordsaad.wizardry.event.EventHandler;
 import me.lordsaad.wizardry.fluid.Fluids;
 import me.lordsaad.wizardry.gui.GuiHandler;
+import me.lordsaad.wizardry.network.PacketHandler;
 import me.lordsaad.wizardry.world.GenHandler;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -70,7 +71,7 @@ public class Wizardry {
         CraftingRecipes.initCrafting();
         
         MinecraftForge.EVENT_BUS.register(new EventHandler());
-        
+        PacketHandler.INSTANCE.getClass(); // loading the class should be enough to initialize the channel
         proxy.loadModels();
         
         proxy.preInit(event);

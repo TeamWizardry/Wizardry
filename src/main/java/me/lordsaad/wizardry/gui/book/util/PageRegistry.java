@@ -8,6 +8,8 @@ import net.minecraft.client.gui.GuiScreen;
 import me.lordsaad.wizardry.gui.book.MainIndex;
 import me.lordsaad.wizardry.gui.book.pages.GuiPageSubindex;
 import me.lordsaad.wizardry.gui.book.pages.GuiPageText;
+import me.lordsaad.wizardry.network.PacketHandler;
+import me.lordsaad.wizardry.network.packets.PacketUpdateSavedPage;
 
 /**
  * Stores the different types of pages and constructs pages based on their path
@@ -31,6 +33,8 @@ public class PageRegistry {
 
     public static GuiScreen construct(GuiScreen parent, String path, int pageNum) {
 
+    	PacketHandler.net().sendToServer(new PacketUpdateSavedPage(path, pageNum));
+    	
     	if("/".equals(path)) {
 			return new MainIndex();
 		}

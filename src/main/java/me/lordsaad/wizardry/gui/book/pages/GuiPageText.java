@@ -72,9 +72,10 @@ public class GuiPageText extends GuiPageCommon {
 	
 	@Override
 	public void drawPage(int mouseX, int mouseY, float partialTicks) {
+		int leftOffset = 2;
 		FontRenderer fr = mc.fontRendererObj;
 		if(lines == null) {
-			lines = listFormattedStringToWidthKeepTrailingWhitespace(text, viewWidth);
+			lines = listFormattedStringToWidthKeepTrailingWhitespace(text, viewWidth-leftOffset);
 			int y = 0;
 			int index = 0;
 			for (TextControl control : controls) {
@@ -122,7 +123,7 @@ public class GuiPageText extends GuiPageCommon {
 						if(shouldAddBox) {
 							int left = fr.getStringWidth(line.substring(0, boxStart));
 							int right = fr.getStringWidth(line.substring(0, boxEnd));
-							control.rects.add(new Rectangle(left, y, right-left, fr.FONT_HEIGHT));
+							control.rects.add(new Rectangle(left+leftOffset, y, right-left, fr.FONT_HEIGHT));
 						}
 						
 						if(i == lines.size()-1) {
@@ -138,7 +139,7 @@ public class GuiPageText extends GuiPageCommon {
 		int color = 0x000000;
 		int y = 0;
 		for (int i = 0; i < LINES_PER_PAGE && i+pageNum*LINES_PER_PAGE < lines.size(); i++) {
-			fr.drawString(lines.get(i+pageNum*LINES_PER_PAGE), 0, y, color);
+			fr.drawString(lines.get(i+pageNum*LINES_PER_PAGE), leftOffset, y, color);
 			y += fr.FONT_HEIGHT;
 		}
 		

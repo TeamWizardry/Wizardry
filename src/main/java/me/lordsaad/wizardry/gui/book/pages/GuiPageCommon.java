@@ -69,6 +69,14 @@ public abstract class GuiPageCommon extends Tippable {
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
         if (button.id == Constants.GuiButtons.NAV_BAR_INDEX) {
+            if(parent == null) {
+            	String indexPath = PathUtils.resolve(PathUtils.parent(path), "index");
+            	if(!indexPath.equals(path))
+            		parent = PageRegistry.construct(null, indexPath, 0); // parent is null because otherwise pressing back goes to the child gui
+            	if(parent == null) {
+            		parent = PageRegistry.construct(null, "/", 0); // see above ^
+            	}
+            }
             mc.displayGuiScreen(parent);
         }
         if (button.id == Constants.GuiButtons.NAV_BAR_NEXT) {

@@ -68,13 +68,15 @@ public class TextControl {
 			int i = str.lastIndexOf(":");
 			int page = 0;
 			
-			try {
-				page = Integer.parseInt( str.substring(i) );
-			} catch (NumberFormatException e) {
-				// TODO: logging
+			if(i != -1) {
+				try {
+					page = Integer.parseInt( str.substring(i) );
+				} catch (NumberFormatException e) {
+					// TODO: logging
+				}
 			}
 			
-			gui.openPageRelative(str.substring(0, i), page);
+			gui.openPageRelative(str.substring(0, i == -1 ? str.length() : 0), page);
 		}
 	}
 }

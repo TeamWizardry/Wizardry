@@ -21,6 +21,7 @@
     },
     {
       "tex":  "wizardry:textures/gui/book/icons/magic-palm.png",
+			"color": "0x000000",
       "text": "Spells",
       "link": "spells",
       "tip":  "Learn how the spell system works."

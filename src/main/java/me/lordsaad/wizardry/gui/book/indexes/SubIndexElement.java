@@ -1,6 +1,8 @@
 package me.lordsaad.wizardry.gui.book.indexes;
 
 import me.lordsaad.wizardry.gui.book.Button;
+import me.lordsaad.wizardry.gui.book.util.Color;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
@@ -16,17 +18,22 @@ public class SubIndexElement {
     private int itemDamage;
     private String text, link, tip;
     private TextureType textureType;
-
-    public SubIndexElement(String text, String link, int linkPage, String tip, ResourceLocation tex) {
+    private Color color;
+    
+    public SubIndexElement(String text, String link, int linkPage, String tip, int color, ResourceLocation tex) {
         this.text = text;
         this.tip = tip;
         this.link = link;
         this.linkPage = linkPage;
         this.textureIcon = tex;
         this.textureType = TextureType.TEXTURE;
+        if((color & 0xff000000) == 0) {
+        	color = color | 0xff000000; // if there is no alpha specified it should be opaque
+        }
+        this.color = Color.argb(color);
     }
     
-    public SubIndexElement(String text, String link, int linkPage, String tip, Item item, int damage) {
+    public SubIndexElement(String text, String link, int linkPage, String tip, int color, Item item, int damage) {
         this.text = text;
         this.tip = tip;
         this.link = link;
@@ -34,8 +41,16 @@ public class SubIndexElement {
         this.itemIcon = item;
         this.itemDamage = damage;
         this.textureType = TextureType.ITEM;
+        if((color & 0xff000000) == 0) {
+        	color = color | 0xff000000; // if there is no alpha specified it should be opaque
+        }
+        this.color = Color.argb(color);
     }
 
+    public void iconGlColor() {
+    	color.glColor();
+    }
+    
     public TextureType getTextureType() {
         return textureType;
     }

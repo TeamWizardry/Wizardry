@@ -45,11 +45,22 @@ public class GuiPageSubindex extends GuiPageCommon {
 				} catch (NumberFormatException e) {}
 			}
 			SubIndexElement e = null;
+			int color = 0xffffffff; // argb
+			if(node.get("color").exists()) {
+				try {
+					String str = node.get("color").asString();
+					if(str.startsWith("0x"))
+						str = str.substring(2);
+					color = Integer.parseInt(str, 16);
+				} catch (NumberFormatException exc) {
+					
+				}
+			}
 			if(node.get("tex").exists()) {
-				e = new SubIndexElement(text, link, linkPage, tip, new ResourceLocation(node.get("tex").asString()));
+				e = new SubIndexElement(text, link, linkPage, tip, color, new ResourceLocation(node.get("tex").asString()));
 			}
 			if(node.get("item").exists()) {
-				e = new SubIndexElement(text, link, linkPage, tip, Item.getByNameOrId(node.get("item").asString()), node.get("damage").asIntOr(0));
+				e = new SubIndexElement(text, link, linkPage, tip, color, Item.getByNameOrId(node.get("item").asString()), node.get("damage").asIntOr(0));
 			}
 			if(e != null)
 				elements.add(e);
@@ -96,8 +107,7 @@ public class GuiPageSubindex extends GuiPageCommon {
 				break;
 			SubIndexElement element = elements.get(i);
 			
-            GlStateManager.color(1F, 1F, 1F, 1F);
-            
+            element.iconGlColor();
             if (element.getTextureType() == SubIndexElement.TextureType.TEXTURE) {
                 mc.renderEngine.bindTexture(element.getTextureIcon());
                 drawScaledCustomSizeModalRect(x, y, 0, 0, 15, 15, 15, 15, 15, 15);
@@ -107,7 +117,9 @@ public class GuiPageSubindex extends GuiPageCommon {
             	mc.renderEngine.bindTexture(new ResourceLocation("missingno"));
                 drawScaledCustomSizeModalRect(x, y, 0, 0, 15, 15, 15, 15, 15, 15);
             }
-
+            
+            GlStateManager.color(1F, 1F, 1F, 1F);
+            
             boolean inside = mouseX >= x && mouseX < x + viewWidth && mouseY >= y && mouseY < y + rowHeight;
             if (inside) {
                 x += 3;
