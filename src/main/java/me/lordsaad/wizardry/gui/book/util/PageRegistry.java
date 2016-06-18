@@ -1,11 +1,13 @@
 package me.lordsaad.wizardry.gui.book.util;
 
-import me.lordsaad.wizardry.gui.book.pages.GuiPageText;
-import me.lordsaad.wizardry.gui.book.MainIndex;
-import net.minecraft.client.gui.GuiScreen;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import net.minecraft.client.gui.GuiScreen;
+
+import me.lordsaad.wizardry.gui.book.MainIndex;
+import me.lordsaad.wizardry.gui.book.pages.GuiPageSubindex;
+import me.lordsaad.wizardry.gui.book.pages.GuiPageText;
 
 /**
  * Stores the different types of pages and constructs pages based on their path
@@ -20,6 +22,7 @@ public class PageRegistry {
         map = new HashMap<>();
 //		register("error", (parent, node, path) -> { return new GuiPageText(parent, node, path); });
         register("text", GuiPageText::new);
+        register("subindex", GuiPageSubindex::new);
     }
 
     public static void register(String name, IPageGuiSupplier supplier) {

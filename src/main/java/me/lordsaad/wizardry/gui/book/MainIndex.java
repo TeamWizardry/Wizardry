@@ -3,6 +3,7 @@ package me.lordsaad.wizardry.gui.book;
 import me.lordsaad.wizardry.Wizardry;
 import me.lordsaad.wizardry.gui.book.util.DataNode;
 import me.lordsaad.wizardry.gui.book.util.DataParser;
+import me.lordsaad.wizardry.gui.book.util.PageDataManager;
 import me.lordsaad.wizardry.gui.book.util.PageRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -39,13 +40,8 @@ public class MainIndex extends Tippable {
     private void initIndexButtons() {
         int ID = 4, row = 0, column = 0;
 
-        List<DataNode> categories = new ArrayList<>();
-        try {
-            DataNode root = DataParser.parse(Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(Wizardry.MODID, "textures/gui/book/icons/categories.json")).getInputStream());
-            categories = root.asList();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        DataNode root = PageDataManager.getPageData("categories");
+        List<DataNode> categories = root.asList();
 
         for (DataNode category : categories) {
             ResourceLocation location = new ResourceLocation(Wizardry.MODID, "textures/gui/book/icons/" + category.get("icon").asStringOr("NULL") + ".png");

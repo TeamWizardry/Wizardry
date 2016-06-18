@@ -53,7 +53,7 @@ public abstract class GuiPageCommon extends Tippable {
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         GL11.glScissor(viewLeft * screenScale, mc.displayHeight - (viewTop + viewHeight) * screenScale,
                 viewWidth * screenScale, viewHeight * screenScale);
-        drawPage(mouseX, mouseY, partialTicks);
+        drawPage(mouseX-viewLeft, mouseY-viewTop, partialTicks);
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
         GlStateManager.popMatrix();
 
@@ -80,7 +80,7 @@ public abstract class GuiPageCommon extends Tippable {
     }
 
     public void openPageRelative(String path, int page) {
-        openPageRelative(PathUtils.resolve(this.path, path), page);
+        openPage(PathUtils.resolve(PathUtils.parent(this.path), path), page);
     }
     
     public void openPage(String path, int page) {

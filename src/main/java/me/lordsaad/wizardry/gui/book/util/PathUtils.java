@@ -19,6 +19,7 @@ public class PathUtils {
             if ("".equals(parts.get(i))) {
                 parts.remove(i);
                 i--;
+                continue;
             }
             if ("..".equals(parts.get(i))) {
                 parts.remove(i);
