@@ -16,11 +16,11 @@ import org.lwjgl.opengl.GL11;
 import java.io.IOException;
 
 public abstract class GuiPageCommon extends Tippable {
-
+	
     protected GuiScreen parent;
     protected String path;
     protected int page;
-    protected int viewWidth, viewHeight;
+    protected int viewWidth, viewHeight, viewLeft, viewTop;
     protected int screenScale;
 
     { /* helpers */ }
@@ -47,8 +47,9 @@ public abstract class GuiPageCommon extends Tippable {
         mc.fontRendererObj.setUnicodeFlag(true);
 
         GlStateManager.pushMatrix();
-        int viewLeft = left + 15, viewTop = top + 12;
-        GlStateManager.translate(viewLeft, viewTop, 0);
+        viewLeft = left + 15;
+        viewTop = top + 12;
+        GlStateManager.translate(viewLeft, viewTop, 100);
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         GL11.glScissor(viewLeft * screenScale, mc.displayHeight - (viewTop + viewHeight) * screenScale,
                 viewWidth * screenScale, viewHeight * screenScale);
@@ -78,6 +79,10 @@ public abstract class GuiPageCommon extends Tippable {
         }
     }
 
+    public void openPageRelative(String path, int page) {
+        openPageRelative(PathUtils.resolve(this.path, path), page);
+    }
+    
     public void openPage(String path, int page) {
         mc.displayGuiScreen(PageRegistry.construct(this.path.equals(path) ? this.parent : this, path, page));
     }
