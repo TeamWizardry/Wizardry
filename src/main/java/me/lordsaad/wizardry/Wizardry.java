@@ -9,6 +9,7 @@ import me.lordsaad.wizardry.world.GenHandler;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -43,6 +44,11 @@ public class Wizardry {
             return ModItems.physicsBook;
         }
     };
+    
+    static
+    {
+    	FluidRegistry.enableUniversalBucket();
+    }
 
     @SidedProxy(clientSide = CLIENT, serverSide = SERVER)
     public static CommonProxy proxy;

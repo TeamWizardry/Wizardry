@@ -28,5 +28,6 @@ public class Fluids {
                 return manafluidLocation;
             }
         });
+        FluidRegistry.addBucketForFluid(FluidMana.instance);
     }
 }

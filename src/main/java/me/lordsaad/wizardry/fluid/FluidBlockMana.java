@@ -35,10 +35,4 @@ public class FluidBlockMana extends BlockFluidClassic{
     {
 		return EnumBlockRenderType.MODEL;
     }
-	
-	@Override
-	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block neighborBlock)
-	{
-	}
-
 }
