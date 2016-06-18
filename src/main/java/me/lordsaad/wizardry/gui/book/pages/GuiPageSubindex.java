@@ -49,7 +49,7 @@ public class GuiPageSubindex extends GuiPageCommon {
 				e = new SubIndexElement(text, link, linkPage, tip, new ResourceLocation(node.get("tex").asString()));
 			}
 			if(node.get("item").exists()) {
-				e = new SubIndexElement(text, link, linkPage, tip, Item.getByNameOrId(node.get("item").asString()));
+				e = new SubIndexElement(text, link, linkPage, tip, Item.getByNameOrId(node.get("item").asString()), node.get("damage").asIntOr(0));
 			}
 			if(e != null)
 				elements.add(e);
@@ -101,7 +101,12 @@ public class GuiPageSubindex extends GuiPageCommon {
             if (element.getTextureType() == SubIndexElement.TextureType.TEXTURE) {
                 mc.renderEngine.bindTexture(element.getTextureIcon());
                 drawScaledCustomSizeModalRect(x, y, 0, 0, 15, 15, 15, 15, 15, 15);
-            } else Utils.drawNormalItemStack(new ItemStack(element.getItemIcon()), x, y);
+            } else if(element.getItemIcon() != null){
+            	Utils.drawNormalItemStack(new ItemStack(element.getItemIcon(), 1, element.getItemDamage()), x, y);
+            } else {
+            	mc.renderEngine.bindTexture(new ResourceLocation("missingno"));
+                drawScaledCustomSizeModalRect(x, y, 0, 0, 15, 15, 15, 15, 15, 15);
+            }
 
             boolean inside = mouseX >= x && mouseX < x + viewWidth && mouseY >= y && mouseY < y + rowHeight;
             if (inside) {

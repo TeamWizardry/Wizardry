@@ -43,7 +43,7 @@
 			"link":"example"
 		},
 		{
-			"item":"minecraft:iron_ingot",
+			"item":"minecraft:iron_ingotz	",
 			"text":"Example8",
 			"link":"example"
 		},
@@ -60,6 +60,12 @@
 		{
 			"item":"minecraft:diamond_sword",
 			"text":"Example11",
+			"link":"example"
+		},
+		{
+			"item":"minecraft:dye",
+			"damage":3,
+			"text":"Example12",
 			"link":"example"
 		}
 	],

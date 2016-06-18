@@ -13,6 +13,7 @@ public class SubIndexElement {
 	private int linkPage;
     private ResourceLocation textureIcon;
     private Item itemIcon;
+    private int itemDamage;
     private String text, link, tip;
     private TextureType textureType;
 
@@ -25,12 +26,13 @@ public class SubIndexElement {
         this.textureType = TextureType.TEXTURE;
     }
     
-    public SubIndexElement(String text, String link, int linkPage, String tip, Item item) {
+    public SubIndexElement(String text, String link, int linkPage, String tip, Item item, int damage) {
         this.text = text;
         this.tip = tip;
         this.link = link;
         this.linkPage = linkPage;
         this.itemIcon = item;
+        this.itemDamage = damage;
         this.textureType = TextureType.ITEM;
     }
 
@@ -70,7 +72,15 @@ public class SubIndexElement {
 		this.itemIcon = itemIcon;
 	}
 
-    public int getLinkPage() {
+    public int getItemDamage() {
+		return itemDamage;
+	}
+
+	public void setItemDamage(int itemDamage) {
+		this.itemDamage = itemDamage;
+	}
+
+	public int getLinkPage() {
 		return linkPage;
 	}
 
