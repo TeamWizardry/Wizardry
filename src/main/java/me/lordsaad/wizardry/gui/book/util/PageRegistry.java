@@ -5,8 +5,13 @@ import java.util.Map;
 
 import net.minecraft.client.gui.GuiScreen;
 
+import me.lordsaad.wizardry.gui.book.MainIndex;
 import me.lordsaad.wizardry.gui.book.pages.GuiPageText;
 
+/**
+ * Stores the different types of pages and constructs pages based on their path
+ * @author piercecorcoran
+ */
 public class PageRegistry {
 
 	private static Map<String, IPageGuiSupplier> map = new HashMap<>();
@@ -23,6 +28,10 @@ public class PageRegistry {
 	}
 	
 	public static GuiScreen construct(GuiScreen parent, String path, int pageNum) {
+		
+		if("/".equals(path)) {
+			return new MainIndex();
+		}
 		
 		DataNode data = PageDataManager.getPageData(path);
 		
