@@ -1,82 +1,85 @@
 {
-	"title":"Basics",
-	"subindex":[
-		{
-			"item":"minecraft:book",
-			"text":"Welcome",
-			"link":"welcome",
-			"tip":"Here's my tooltip"
-		},
-		{
-			"tex":"wizardry:textures/gui/book/icons/magic-gate.png",
-			"text":"Example",
-			"link":"example"
-		},
-		{
-			"item":"minecraft:stone",
-			"text":"Example2",
-			"link":"example"
-		},
-		{
-			"item":"minecraft:cobblestone",
-			"text":"Example3",
-			"link":"example"
-		},
-		{
-			"item":"minecraft:sand",
-			"text":"Example4",
-			"link":"example"
-		},
-		{
-			"item":"minecraft:grass",
-			"text":"Example5",
-			"link":"example"
-		},
-		{
-			"item":"minecraft:snow",
-			"text":"Example6",
-			"link":"example"
-		},
-		{
-			"item":"minecraft:redstone",
-			"text":"Example7",
-			"link":"example"
-		},
-		{
-			"item":"minecraft:iron_ingotz	",
-			"text":"Example8",
-			"link":"example"
-		},
-		{
-			"item":"minecraft:gold_ingot",
-			"text":"Example9",
-			"link":"example"
-		},
-		{
-			"item":"minecraft:diamond",
-			"text":"Example10",
-			"link":"example"
-		},
-		{
-			"item":"minecraft:diamond_sword",
-			"text":"Example11",
-			"link":"example"
-		},
-		{
-			"item":"minecraft:dye",
-			"damage":3,
-			"text":"Example12",
-			"link":"example"
-		}
-	],
-	"pages":[
-		{
-			"type":"subindex",
-			"page":0
-		},
-		{
-			"type":"subindex",
-			"page":1
-		}
-	]
+  "title":    "Basics",
+  "subindex": [
+    {
+      "item": "wizardry:physics_book",
+      "text": "Welcome",
+      "link": "welcome",
+      "tip":  "Welcome To Wizardry."
+    },
+    {
+      "tex":  "wizardry:textures/items/manaIconOutline.png",
+      "text": "Mana",
+      "link": "mana",
+      "tip":  "Learn about what mana is, and why you want it so badly."
+    },
+    {
+      "item": "wizardry:pearl",
+      "text": "Pearls",
+      "link": "pearls",
+      "tip":  "Learn what the best magical catalyst is and how you can use it."
+    },
+    {
+      "tex":  "wizardry:textures/gui/book/icons/magic-palm.png",
+      "text": "Spells",
+      "link": "spells",
+      "tip":  "Learn how the spell system works."
+    },
+    {
+      "item": "minecraft:sand",
+      "text": "Example4",
+      "link": "example"
+    },
+    {
+      "item": "minecraft:grass",
+      "text": "Example5",
+      "link": "example"
+    },
+    {
+      "item": "minecraft:snow",
+      "text": "Example6",
+      "link": "example"
+    },
+    {
+      "item": "minecraft:redstone",
+      "text": "Example7",
+      "link": "example"
+    },
+    {
+      "item": "minecraft:iron_ingotz	",
+      "text": "Example8",
+      "link": "example"
+    },
+    {
+      "item": "minecraft:gold_ingot",
+      "text": "Example9",
+      "link": "example"
+    },
+    {
+      "item": "minecraft:diamond",
+      "text": "Example10",
+      "link": "example"
+    },
+    {
+      "item": "minecraft:diamond_sword",
+      "text": "Example11",
+      "link": "example"
+    },
+    {
+      "item":   "minecraft:dye",
+      "damage": 3,
+      "text":   "Example12",
+      "link":   "example"
+    }
+  ],
+  "pages":    [
+    {
+      "type": "subindex",
+      "page": 0
+    },
+    {
+      "type": "subindex",
+      "page": 1
+    }
+  ]
 }

@@ -4,22 +4,18 @@
     "sectionOne": [
       "In a world where physics exists where students have to take scholastic lessons about the subject, forced to suffocate in the knowledge of the impossible, and try to Math the shit out of the improbable.",
       "Welcome, young wizard, to the world of geometry in which you shall learn how to solve the impossible, and accomplish the improbable; freeing yourself from the clutches of logic and numbers.",
-      "Your journey to become a wizard; able to devise your own spells, delving into unknown knowledge beyond that of human perception, and pursuing what might soon to be the best experience of your life; begins now.",
-      "Trailer:",
-      {
-        "type": "link",
-        "ref": "/",
-        "text": "WIP"
-      }
+      "Your journey to become a wizard; able to devise your own spells, delving into unknown knowledge beyond that of human perception, and pursuing what might soon will be the best experience of your life; begins now.",
+      "Trailer: <WIP>"
     ]
   },
   "pages": [
     {
       "type": "text",
-      "text": {
-        "global": "sectionOne",
-        "page": 0
-      }
+      "text": {"global": "sectionOne", "page": 0}
+    },
+    {
+      "type": "text",
+      "text": {"global": "sectionOne", "page": 1}
     }
   ]
 }

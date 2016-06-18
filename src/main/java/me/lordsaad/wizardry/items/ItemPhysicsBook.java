@@ -21,8 +21,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ItemPhysicsBook extends Item {
 
     public ItemPhysicsBook() {
-        setRegistryName("physicsbook");
-        setUnlocalizedName("physicsbook");
+        setRegistryName("physics_book");
+        setUnlocalizedName("physics_book");
         GameRegistry.register(this);
         setCreativeTab(Wizardry.tab);
     }

@@ -1,0 +1,45 @@
+{
+  "title": "Pearls",
+  "texts": {
+    "sectionOne":   [
+      "A pearl is somewhat of a spell catalyst. They are both efficient at storing raw energy and mana, as well as being able to disperse that raw energy in a very smooth manner.",
+      "What makes a pearl such a good conductor of energy is it’s roundness and fractalized crystalline interior. Raw energy can bounce off of the walls of the crystallized fractals, thus making pearls great for storing energy. Not to mention any mana blips or a change in the state of the pearl will disturb the equilibrium of the raw energy inside and disperse it, making it great component for energy repulsion. So pearls are the most ideal component to be used when it comes to spell magic."
+    ],
+    "sectionTwo":   [
+      "You are presented with two kinds of pearls: ", {"type": "link", "ref": "/basics/mana:0", "text": "Glass Pearls"}, " and ", {"type": "link", "ref": "/basics/mana:0", "text": "Quartz Pearls"},
+      " ",
+      "Glass pearls are a great start as a beginning wizard. Glass pearls are the weaker tier. They are made of (if it weren't obvious already) glass.",
+      "A glass pearl can only hold small and simple spells. The pearl will shatter after one use as it is very weak and fragile. Nor is it smooth for that matter. Although this pearl is far inferior than it’s quartz alternative, it gets the job done for most of what you’ll need to start with.",
+      "Wizards have discovered some interesting effects that come with glass pearls though. When thrown in liquid mana, it not only disperses and catalyzes the concentrated mana through its transparent fractiles, but it also seems to give off some pleasant mood buffs shortly before it shatters. It appears that glass pearls are very effective at dispersing raw energy in a concentrated fashion. They might come in handy in some cases for more efficient mana dispersion."
+    ],
+    "sectionThree": [
+      "As for Quartz Pearls. <WIP>"
+    ]
+  },
+  "pages": [
+    {
+      "type": "text",
+      "text": {"global": "sectionOne", "page": 0}
+    },
+    {
+      "type": "text",
+      "text": {"global": "sectionOne", "page": 1}
+    },
+    {
+      "type": "text",
+      "text": {"global": "sectionTwo", "page": 0}
+    },
+    {
+      "type": "text",
+      "text": {"global": "sectionTwo", "page": 1}
+    },
+    {
+      "type": "text",
+      "text": {"global": "sectionTwo", "page": 2}
+    },
+    {
+      "type": "text",
+      "text": {"global": "sectionThree", "page": 0}
+    }
+  ]
+}

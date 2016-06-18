@@ -4,24 +4,29 @@ import me.lordsaad.wizardry.api.spells.SpellIngredients;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
+import java.util.ArrayList;
+
 /**
  * Created by Saad on 6/17/2016.
  */
 public class Module {
 
-    private int x, y;
+    private int x, y, ID;
     private ResourceLocation icon;
     private SpellIngredients.IngredientType type;
     private ItemStack stack;
     private String text;
+    private ArrayList<Module> modules;
 
-    public Module(int x, int y, String text, ResourceLocation icon, SpellIngredients.IngredientType type, ItemStack stack) {
+    public Module(int ID, int x, int y, String text, ResourceLocation icon, SpellIngredients.IngredientType type, ItemStack stack) {
+        this.ID = ID;
         this.x = x;
         this.y = y;
         this.icon = icon;
         this.type = type;
         this.stack = stack;
         this.text = text;
+        modules = new ArrayList<>();
     }
 
     public int getX() {
@@ -73,6 +78,24 @@ public class Module {
     }
 
     public Module copy() {
-        return new Module(x, y, text, icon, type, stack);
+        Module module = new Module(ID, x, y, text, icon, type, stack);
+        module.setModules(modules);
+        return module;
+    }
+
+    public int getID() {
+        return ID;
+    }
+
+    public void setID(int ID) {
+        this.ID = ID;
+    }
+
+    public ArrayList<Module> getModules() {
+        return modules;
+    }
+
+    public void setModules(ArrayList<Module> modules) {
+        this.modules = modules;
     }
 }

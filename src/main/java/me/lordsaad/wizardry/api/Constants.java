@@ -20,4 +20,8 @@ public class Constants {
         public static final int BASICS = 2;
         public static final int BASICS_GETTING_STARTED = 3;
     }
+
+    public static class WorkTable {
+        public static final int LINKING_TOOL = 0;
+    }
 }

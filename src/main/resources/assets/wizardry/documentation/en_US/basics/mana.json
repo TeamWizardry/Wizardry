@@ -1,0 +1,26 @@
+{
+  "title": "Mana",
+  "texts": {
+    "sectionOne": [
+      "Mana has always existed in the world. It is what gives young wizards their powers, it is what most men who seek power want dearly. Mana is the raw power or energy that flows through a person who practices wizardry.",
+      "Although this energy is all around you, it is most concentrated in shallow ponds found around the world, yearning for its full potential to be released by wizards.",
+      "This liquid mana is essential for wizards who want to grow beyond what they thought possible.",
+      "Every wizard has a mana bar and a burn out bar. The mana bar determines how much mana your current person has. This mana inside of you will be used for most of the main features here. To cast a spell, one requires mana to be within them. In other words, spells cost mana, and you slowly replenish your mana bar by simply existing.",
+      "Your burnout bar determines how tired you are. If the burnout bar is full, you will no longer be able to cast spells. You will need to wait until your agility is restored, and your mana is replenished. These limitations to your weak body can be improved upon later as you progress through."
+    ]
+  },
+  "pages": [
+    {
+      "type": "text",
+      "text": {"global": "sectionOne", "page": 0}
+    },
+    {
+      "type": "text",
+      "text": {"global": "sectionOne", "page": 1}
+    },
+    {
+      "type": "text",
+      "text": {"global": "sectionOne", "page": 2}
+    }
+  ]
+}
