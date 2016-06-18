@@ -4,7 +4,7 @@
     "fluid": {
       "model": "forge:fluid",
       "custom": {
-        "fluid": "mana"
+        "fluid": "mana_fluid"
       }
     }
   }
