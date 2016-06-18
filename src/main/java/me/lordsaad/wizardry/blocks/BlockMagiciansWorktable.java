@@ -17,6 +17,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -92,6 +93,10 @@ public class BlockMagiciansWorktable extends Block implements ITileEntityProvide
 			{
 				worldIn.setBlockState(part2Pos, this.getDefaultState().withProperty(FACING, placerFacing.getOpposite()).withProperty(ISLEFTSIDE, true));
 			}
+			else
+			{
+				return Blocks.AIR.getDefaultState();
+			}
 			return this.getDefaultState().withProperty(FACING, placerFacing.getOpposite()).withProperty(ISLEFTSIDE, false);
 		}
 	}
@@ -108,18 +113,6 @@ public class BlockMagiciansWorktable extends Block implements ITileEntityProvide
 	{
 		super.breakBlock(worldIn, pos, state);
 		worldIn.destroyBlock(getOtherTableBlock(state, pos), false);
-	}
-
-	@Override
-	public boolean canPlaceBlockAt(World worldIn, BlockPos pos) 
-	{
-		for(EnumFacing facing: EnumFacing.HORIZONTALS)
-		{
-			Block block1 = worldIn.getBlockState(pos).getBlock();
-			Block block2 = worldIn.getBlockState(pos.offset(facing)).getBlock();
-			if(block1.isReplaceable(worldIn, pos) && block2.isReplaceable(worldIn, pos)) return true;
-		}
-		return true;
 	}
 
 	private BlockPos getOtherTableBlock(IBlockState tablePart, BlockPos tablePartPos)
