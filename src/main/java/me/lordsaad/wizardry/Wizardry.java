@@ -3,6 +3,7 @@ package me.lordsaad.wizardry;
 import org.apache.logging.log4j.Logger;
 
 import me.lordsaad.wizardry.event.EventHandler;
+import me.lordsaad.wizardry.fluid.Fluids;
 import me.lordsaad.wizardry.gui.GuiHandler;
 import me.lordsaad.wizardry.world.GenHandler;
 import net.minecraft.creativetab.CreativeTabs;
@@ -55,9 +56,11 @@ public class Wizardry {
     public void preInit(FMLPreInitializationEvent event) {
         logger = event.getModLog();
         
+        Config.initConfig();
+        
         ModItems.init();
         ModBlocks.init();
-        
+        Fluids.preInit();
         CraftingRecipes.initCrafting();
         
         MinecraftForge.EVENT_BUS.register(new EventHandler());
