@@ -37,7 +37,7 @@ public class GuiPageText extends GuiPageCommon {
 			DataNode node = list.get(i);
 			if(node.isString()) {
 				if(i != 0 && list.get(i-1).isString()) {
-					str += "\n"; // if it's two strings then it should have a linebreak
+					str += "\n\n"; // if it's two strings then it should have a paragraph break
 				}
 				String addStr = node.asString();
 				addStr = addStr.replaceAll("(?<!\\\\)&([0-9a-fA-Fk-oK-OrR])", "§$1");
