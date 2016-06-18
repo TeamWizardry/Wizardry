@@ -3,6 +3,7 @@ package me.lordsaad.wizardry;
 
 import me.lordsaad.wizardry.blocks.BlockCraftingPlate;
 import me.lordsaad.wizardry.blocks.BlockMagiciansWorktable;
+import me.lordsaad.wizardry.fluid.FluidBlockMana;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 

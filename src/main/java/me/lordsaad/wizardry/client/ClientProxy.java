@@ -3,6 +3,7 @@ package me.lordsaad.wizardry.client;
 import me.lordsaad.wizardry.CommonProxy;
 import me.lordsaad.wizardry.ModBlocks;
 import me.lordsaad.wizardry.ModItems;
+import me.lordsaad.wizardry.fluid.Fluids;
 import me.lordsaad.wizardry.particles.SparkleFX;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -21,7 +22,7 @@ public class ClientProxy extends CommonProxy
 	@Override
 	public void preInit(FMLPreInitializationEvent event)
 	{
-		
+
 	}
 
 	@Override
