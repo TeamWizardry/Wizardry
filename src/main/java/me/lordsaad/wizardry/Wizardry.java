@@ -56,6 +56,8 @@ public class Wizardry {
     public void preInit(FMLPreInitializationEvent event) {
         logger = event.getModLog();
         
+        Config.initConfig();
+        
         ModItems.init();
         ModBlocks.init();
         Fluids.preInit();
