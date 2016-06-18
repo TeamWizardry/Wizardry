@@ -1,14 +1,12 @@
 package me.lordsaad.wizardry.gui;
 
-import net.minecraftforge.fml.common.network.IGuiHandler;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.world.World;
-
 import me.lordsaad.wizardry.api.Constants;
 import me.lordsaad.wizardry.gui.book.MainIndex;
 import me.lordsaad.wizardry.gui.book.indexes.IndexBasics;
 import me.lordsaad.wizardry.gui.worktable.WorktableBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.IGuiHandler;
 
 /**
  * Created by Saad on 4/13/2016.

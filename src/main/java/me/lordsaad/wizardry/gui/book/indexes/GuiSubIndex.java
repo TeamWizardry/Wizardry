@@ -90,10 +90,10 @@ public class GuiSubIndex extends Tippable {
         super.drawScreen(mouseX, mouseY, partialTicks);
 
 //        if (buttonList.size() > 5 && !isNavBarEnabled())
-        
-        setHasNavNext(elements.size()-pageNb > 5);
+
+        setHasNavNext(elements.size() - pageNb > 5);
         setHasNavPrev(pageNb > 1);
-        
+
         fontRendererObj.setUnicodeFlag(true);
         fontRendererObj.setBidiFlag(true);
 

@@ -176,7 +176,7 @@ public class Tippable extends PageBase {
 
         fontRendererObj.setBidiFlag(false);
         fontRendererObj.setUnicodeFlag(false);
-        
+
         GlStateManager.color(1F, 1F, 1F, 1F);
         mc.renderEngine.bindTexture(BACKGROUND_TEXTURE);
         drawTexturedModalRect(left, top, 0, 0, bookBackgroundWidth, bookBackgroundHeight);

@@ -1,16 +1,13 @@
 package me.lordsaad.wizardry.gui.book;
 
 import me.lordsaad.wizardry.Wizardry;
-import me.lordsaad.wizardry.api.Constants;
 import me.lordsaad.wizardry.gui.book.util.DataNode;
 import me.lordsaad.wizardry.gui.book.util.DataParser;
 import me.lordsaad.wizardry.gui.book.util.PageRegistry;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
-import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,7 +25,7 @@ public class MainIndex extends Tippable {
     private int iconSize = 25, iconSeparation = 15;
 
     private List<String> categoryLinks = new ArrayList<>();
-    
+
     @Override
     public void initGui() {
         super.initGui();
@@ -44,8 +41,8 @@ public class MainIndex extends Tippable {
 
         List<DataNode> categories = new ArrayList<>();
         try {
-        	DataNode root = DataParser.parse(Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(Wizardry.MODID, "textures/gui/book/icons/categories.json")).getInputStream());
-        	categories = root.asList();
+            DataNode root = DataParser.parse(Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(Wizardry.MODID, "textures/gui/book/icons/categories.json")).getInputStream());
+            categories = root.asList();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -79,8 +76,8 @@ public class MainIndex extends Tippable {
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
         if (button.id >= 5) {
-        	mc.displayGuiScreen(PageRegistry.construct(this, categoryLinks.get(button.id-5), 0));
-        	didInit = false;
+            mc.displayGuiScreen(PageRegistry.construct(this, categoryLinks.get(button.id - 5), 0));
+            didInit = false;
             clearTips();
         }
     }
