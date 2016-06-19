@@ -8,6 +8,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.math.BlockPos;
@@ -48,6 +49,7 @@ public class FluidBlockMana extends BlockFluidClassic{
 				{
 					ItemPearl pearl = (ItemPearl)stack.getItem();
 					pearl.explode(worldIn, entityIn);
+					worldIn.setBlockState(pos, Blocks.AIR.getDefaultState());
 				}
 			}
 		}
