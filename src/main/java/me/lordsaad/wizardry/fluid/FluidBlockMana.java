@@ -25,7 +25,6 @@ public class FluidBlockMana extends BlockFluidClassic{
 		
 		this.setQuantaPerBlock(6);
 		this.setUnlocalizedName("mana");
-		this.setCreativeTab(Wizardry.tab);
 	}
 
 	@Override
