@@ -24,7 +24,7 @@
       "text": [
         "Here's §0C§1o§2l§3o§4r§5m§6a§7t§8i§9c §aG§bu§ci§dd§ee§fs",
         "there's a line with §oItalics",
-        "I §lnever§r §nended§r the §kitalics§r or the §fwhite§0, but it inserted a 'r' and a '0' code in between array elements"
+        "I §lnever§r §nended§r the §kitalics§r or the §fwhite§0, but it inserted a 'r' and a '0' ", {"type":"tip", "text":"code", "tip":"Codes are a section symbol (§) followed by 0-9, a-f, or one of §oklmnor"}, " in between array elements"
       ]
     },
     {

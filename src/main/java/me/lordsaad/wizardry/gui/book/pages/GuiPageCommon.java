@@ -18,9 +18,9 @@ import java.io.IOException;
 public abstract class GuiPageCommon extends Tippable {
 	
     protected GuiScreen parent;
-    protected String path;
-    protected int page;
-    protected int viewWidth, viewHeight, viewLeft, viewTop;
+    public String path;
+    public int page;
+    public int viewWidth, viewHeight, viewLeft, viewTop;
     protected int screenScale;
 
     { /* helpers */ }

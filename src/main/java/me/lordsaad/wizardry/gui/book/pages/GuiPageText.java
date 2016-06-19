@@ -144,7 +144,7 @@ public class GuiPageText extends GuiPageCommon {
 		}
 		
 		for (TextControl control : controls) {
-			control.draw(mouseX, mouseY, partialTicks);
+			control.draw(this, mouseX, mouseY, partialTicks);
 		}
 	}
 	

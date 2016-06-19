@@ -15,13 +15,13 @@ import java.util.LinkedHashMap;
  */
 public class Tippable extends PageBase {
 
-    protected static HashMap<Object, Integer> tipManager = new HashMap<>(); // Used to manage tips for pages. Runs solo
+    public static HashMap<Object, Integer> tipManager = new HashMap<>(); // Used to manage tips for pages. Runs solo
     static ArrayList<Integer> deleteTip = new ArrayList<>(); // Prevent concurrent modification error
     private static int IDs = 0;
     private static ResourceLocation SLIDERS = new ResourceLocation(Wizardry.MODID, "textures/gui/book/sliders.png");
     private static LinkedHashMap<Integer, Tip> tips = new LinkedHashMap<>();
 
-    protected static int setTip(Tip tip) {
+    public static int setTip(Tip tip) {
         // Check if tip exists
         if (tip.getText() == null) tip.setText("<ERROR>");
         boolean tipAlreadyExists = false;
@@ -38,7 +38,7 @@ public class Tippable extends PageBase {
         } else return -1;
     }
 
-    protected static int setTip(String text) {
+    public static int setTip(String text) {
         if (text == null) text = "<ERROR>";
         Tip tip = new Tip(text);
 
@@ -57,7 +57,7 @@ public class Tippable extends PageBase {
         } else return 0;
     }
 
-    protected static int setTip(String text, ItemStack recipeOutput, HashMap<Slot, ItemStack> recipe) {
+    public static int setTip(String text, ItemStack recipeOutput, HashMap<Slot, ItemStack> recipe) {
         if (text == null) text = "<ERROR>";
         Tip tip = new Tip(text, recipeOutput, recipe);
 
@@ -89,7 +89,7 @@ public class Tippable extends PageBase {
         tipManager.clear();
     }
 
-    protected static void removeTip(int ID) {
+    public static void removeTip(int ID) {
         if (tips.containsKey(ID)) tips.get(ID).setSlidingOut(false);
     }
 
