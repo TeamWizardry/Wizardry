@@ -1,5 +1,9 @@
 package me.lordsaad.wizardry.api;
 
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.items.IItemHandler;
+
 /**
  * Created by Saad on 6/14/2016.
  */
@@ -23,5 +27,10 @@ public class Constants {
 
     public static class WorkTable {
         public static final int LINKING_TOOL = 0;
+    }
+
+    public static class Misc {
+        @CapabilityInject(IItemHandler.class)
+        public static Capability<IItemHandler> BAR_HANDLER_CAPABILITY = null;
     }
 }

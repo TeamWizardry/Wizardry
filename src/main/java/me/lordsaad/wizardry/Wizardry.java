@@ -1,5 +1,6 @@
 package me.lordsaad.wizardry;
 
+import me.lordsaad.wizardry.bars.WizardHandler;
 import me.lordsaad.wizardry.event.EventHandler;
 import me.lordsaad.wizardry.fluid.Fluids;
 import me.lordsaad.wizardry.gui.GuiHandler;
@@ -80,6 +81,8 @@ public class Wizardry {
     public void init(FMLInitializationEvent e) {
         GameRegistry.registerWorldGenerator(new GenHandler(), 0);
         proxy.init(e);
+
+        WizardHandler.INSTANCE.getClass();
     }
 
     @Mod.EventHandler
