@@ -9,6 +9,9 @@ public class FluidMana extends Fluid {
 
     public FluidMana() {
         super("mana_fluid", new ResourceLocation(Wizardry.MODID, "fluid/mana_still"), new ResourceLocation(Wizardry.MODID, "fluid/mana_flowing"));
-
+        setViscosity(500);
+        setTemperature(200);
+        setLuminosity(3);
+        setDensity(500);
     }
 }

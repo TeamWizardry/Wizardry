@@ -6,6 +6,12 @@
       "&oThese so called Botanists, Thaumaturges and blood magicians, although powerful, are no exceptions to the fact that they have not been able to unlock complete and utter freedom in their magical arts. They are still limited by what seems to be a certain barrier of power that they can not bend further to their will.",
       "&oA wizard is able to grow beyond what he is capable of perceiving. A wizard can do whatever he wants to do and will go to the very ends of the End to accomplish what they want. And as such, a wizard yields one very important difference between the rest of these so called “magicians”, and that is the ability to infuse ANY spell they please into a pearl no matter what it is, although that's not necessarily advisable to do...",
       "&oUnlike the rest of the magicians, a wizard, instead of taking what is already established, ESTABLISHES what he takes."
+    ],
+    "sectionTwo": [
+      "To make a spell, a wizard first needs to plan what the spell shall be and scribble his thoughts in his worktable. A ", {"type": "tip", "text": "Magician's Worktable", "tip": "A table in which you piece together the spell you want."}, " is a, well, magical table that can help a wizard organize his thoughts. This process happens by the wizard piecing together parts of what he wants onto the parchment on the table, and the magical worktable will reveal the ingredients required in order to infuse it with a pearl in the crafting altar on the crafting plate.",
+      "The wizard first places his finished desired spell parchment to be crafted onto a frame in the crafting altar. The parchment will display the items required, one by one, to be thrown onto the crafting plate. Once the list is done, you throw a pearl in and the infusion process will begin.",
+      "It doesn't end there though. The infusion process requires a source of mana. More specifically, a mana battery structure which will feed mana into the crafting altar provided it’s at least within a 20 block range.",
+      "After the mana is fed into the plate and the items infuse into the pearl, the pearl becomes infused with the spell and is thus ready for use."
     ]
   },
   "pages": [
@@ -20,6 +26,18 @@
     {
       "type": "text",
       "text": {"global": "sectionOne", "page": 2}
+    },
+    {
+      "type": "text",
+      "text": {"global": "sectionTwo", "page": 0}
+    },
+    {
+      "type": "text",
+      "text": {"global": "sectionTwo", "page": 1}
+    },
+    {
+      "type": "text",
+      "text": {"global": "sectionTwo", "page": 2}
     }
   ]
 }

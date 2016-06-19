@@ -10,6 +10,8 @@ import java.awt.*;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import static me.lordsaad.wizardry.api.spells.SpellIngredients.IngredientType.*;
 
@@ -23,6 +25,7 @@ public class WorktableBase extends GuiScreen {
     public static ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sample-page-background.png");
     public static ArrayList<Module> modulesInSidebar;
     private ArrayList<Module> modulesOnPaper;
+    private HashMap<Module, HashSet<Module>> links;
     private Module moduleBeingDragged, moduleBeingLinked;
     private int iconSize = 16;
     //  private boolean linkingMode = false;
@@ -35,6 +38,7 @@ public class WorktableBase extends GuiScreen {
         right = (width / 2 + backgroundWidth / 2) - 6;
         modulesInSidebar = new ArrayList<>();
         modulesOnPaper = new ArrayList<>();
+        links = new HashMap<>();
         initModules();
     }
 
@@ -53,26 +57,28 @@ public class WorktableBase extends GuiScreen {
         }
     }
 
-    private void updateModuleLocation(Module module) {
-        if (!module.getModules().isEmpty()) {
+   /* private void updateModuleLocation(Module module) {
+        if (module == null) return;
+        if (module.getModules().isEmpty()) return;
 
-            ArrayList<Module> concurrentModules = new ArrayList<>();
-            concurrentModules.addAll(module.getModules()); // original
-            for (Module linkedModule : concurrentModules) { // linked to original
+        boolean inside = module.getX() >= left && module.getX() < left + backgroundWidth && module.getY() >= top && module.getY() < top + backgroundHeight;
 
-                ArrayList<Module> doubleConcurrentModules = new ArrayList<>();
-                doubleConcurrentModules.addAll(linkedModule.getModules());
-                for (Module doubleLinkedModule : linkedModule.getModules())
-                    if (doubleLinkedModule.getID() == module.getID())
-                        if (doubleLinkedModule.getX() != module.getX() || doubleLinkedModule.getY() != module.getY()) {
-                            doubleConcurrentModules.remove(doubleLinkedModule);
-                            doubleConcurrentModules.add(module);
-                        }
-                linkedModule.setModules(doubleConcurrentModules);
-            }
-            module.setModules(concurrentModules);
+        ArrayList<Module> concurrentModules = new ArrayList<>();
+        concurrentModules.addAll(module.getModules()); // original
+        for (Module linkedModule : concurrentModules) { // linked to original
+
+            ArrayList<Module> doubleConcurrentModules = new ArrayList<>();
+            doubleConcurrentModules.addAll(linkedModule.getModules());
+            linkedModule.getModules().stream().filter(doubleLinkedModule -> doubleLinkedModule == module).filter(doubleLinkedModule -> doubleLinkedModule.getX() != module.getX() || doubleLinkedModule.getY() != module.getY()).forEach(doubleLinkedModule -> {
+                if (inside) {
+                    doubleConcurrentModules.remove(doubleLinkedModule);
+                    doubleConcurrentModules.add(module);
+                } else doubleConcurrentModules.remove(doubleLinkedModule);
+            });
+            linkedModule.setModules(doubleConcurrentModules);
         }
-    }
+        module.setModules(concurrentModules);
+    }*/
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int clickedMouseButton) throws IOException {
@@ -85,7 +91,6 @@ public class WorktableBase extends GuiScreen {
                 moduleBeingDragged = module.copy();
                 moduleBeingDragged.setX(mouseX - iconSize / 2);
                 moduleBeingDragged.setY(mouseY - iconSize / 2);
-                updateModuleLocation(moduleBeingDragged);
             }
         }
 
@@ -96,17 +101,18 @@ public class WorktableBase extends GuiScreen {
         for (Module module : modulesOnPaper) {
             boolean inside = mouseX >= module.getX() - iconSize / 2 && mouseX < module.getX() - iconSize / 2 + iconSize && mouseY >= module.getY() - iconSize / 2 && mouseY < module.getY() - iconSize / 2 + iconSize;
             if (inside && clickedMouseButton == 0) {
+                tempModules.remove(module);
                 moduleBeingDragged = module.copy();
                 moduleBeingDragged.setX(mouseX);
                 moduleBeingDragged.setY(mouseY);
-                updateModuleLocation(moduleBeingDragged);
-                tempModules.remove(module);
+                if (links.containsKey(module)) {
+                    links.put(moduleBeingDragged, links.get(module));
+                    links.remove(module);
+                }
                 break;
             }
         }
-
-        modulesOnPaper.clear();
-        modulesOnPaper.addAll(tempModules);
+        modulesOnPaper = tempModules;
     }
 
     @Override
@@ -119,8 +125,6 @@ public class WorktableBase extends GuiScreen {
                     break;
                 }
             }
-
-        if (moduleBeingDragged != null && clickedMouseButton == 0) updateModuleLocation(moduleBeingDragged);
     }
 
     @Override
@@ -130,15 +134,9 @@ public class WorktableBase extends GuiScreen {
             if (inside) {
                 moduleBeingDragged.setX(mouseX);
                 moduleBeingDragged.setY(mouseY);
-                updateModuleLocation(moduleBeingDragged);
                 modulesOnPaper.add(moduleBeingDragged);
                 moduleBeingDragged = null;
-            } else {
-                updateModuleLocation(moduleBeingDragged);
-                moduleBeingDragged.clearModules();
-                moduleBeingDragged = null;
-            }
-
+            } else moduleBeingDragged = null;
         }
 
         if (clickedMouseButton == 1 && moduleBeingLinked != null) {
@@ -146,8 +144,11 @@ public class WorktableBase extends GuiScreen {
             for (Module module : modulesOnPaper) {
                 boolean inside = mouseX >= module.getX() - iconSize / 2 && mouseX < module.getX() - iconSize / 2 + iconSize && mouseY >= module.getY() - iconSize / 2 && mouseY < module.getY() - iconSize / 2 + iconSize;
                 if (inside) {
-                    module.getModules().add(moduleBeingLinked);
-                    moduleBeingLinked.getModules().add(module);
+                    HashSet<Module> temp;
+                    if (links.containsKey(moduleBeingLinked)) temp = links.get(moduleBeingLinked);
+                    else temp = new HashSet<>();
+                    temp.add(module);
+                    links.putIfAbsent(moduleBeingLinked, temp);
                     moduleBeingLinked = null;
                     insideAnything = true;
                     break;
@@ -187,15 +188,20 @@ public class WorktableBase extends GuiScreen {
 
         // RENDER LINE BETWEEN LINKED MODULES //
         GlStateManager.color(1F, 1F, 1F, 1F);
-        if (moduleBeingDragged != null) if (!moduleBeingDragged.getModules().isEmpty())
-            for (Module module : moduleBeingDragged.getModules())
-                Utils.drawLine2D(moduleBeingDragged.getX(), moduleBeingDragged.getY(), module.getX(), module.getY(), 2, Color.BLACK);
+        if (moduleBeingDragged != null)
+            if (links.containsKey(moduleBeingDragged))
+                for (Module linkedModule : links.get(moduleBeingDragged))
+                    Utils.drawLine2D(moduleBeingDragged.getX(), moduleBeingDragged.getY(), linkedModule.getX(), linkedModule.getY(), 2, Color.BLACK);
+
         if (moduleBeingLinked != null)
             Utils.drawLine2D(moduleBeingLinked.getX(), moduleBeingLinked.getY(), mouseX, mouseY, 2, Color.BLACK);
-        modulesOnPaper.stream().filter(module -> !module.getModules().isEmpty()).forEach(module -> {
-            for (Module linkedModule : module.getModules())
-                Utils.drawLine2D(module.getX(), module.getY(), linkedModule.getX(), linkedModule.getY(), 2, Color.BLACK);
-        });
+
+        for (Module module : modulesOnPaper) {
+            if (links.containsKey(module)) {
+                for (Module linkedModule : links.get(module))
+                    Utils.drawLine2D(module.getX(), module.getY(), linkedModule.getX(), linkedModule.getY(), 2, Color.BLACK);
+            }
+        }
         // RENDER LINE BETWEEN LINKED MODULES //
 
         // RENDER SIDEBARS //

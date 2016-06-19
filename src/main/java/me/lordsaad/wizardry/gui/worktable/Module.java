@@ -4,8 +4,6 @@ import me.lordsaad.wizardry.api.spells.SpellIngredients;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.ArrayList;
-
 /**
  * Created by Saad on 6/17/2016.
  */
@@ -16,14 +14,12 @@ public class Module {
     private SpellIngredients.IngredientType type;
     private ItemStack stack;
     private String text;
-    private ArrayList<Module> modules;
 
     public Module(String text, ResourceLocation icon, SpellIngredients.IngredientType type, ItemStack stack) {
         this.icon = icon;
         this.type = type;
         this.stack = stack;
         this.text = text;
-        modules = new ArrayList<>();
     }
 
     public int getX() {
@@ -76,10 +72,9 @@ public class Module {
 
     public Module copy() {
         Module module = new Module(text, icon, type, stack);
-        module.setID(ID);
+        //module.setID(ID);
         module.setX(x);
         module.setY(y);
-        module.setModules(modules);
         return module;
     }
 
@@ -91,29 +86,4 @@ public class Module {
         this.ID = ID;
     }
 
-    public ArrayList<Module> getModules() {
-        return modules;
-    }
-
-    public void setModules(ArrayList<Module> modules) {
-        this.modules = modules;
-    }
-
-    public void clearModules() {
-        if (!modules.isEmpty()) {
-
-            ArrayList<Module> concurrentModules = new ArrayList<>();
-            concurrentModules.addAll(modules); // original
-            for (Module linkedModule : concurrentModules) { // linked to original
-
-                ArrayList<Module> doubleConcurrentModules = new ArrayList<>();
-                doubleConcurrentModules.addAll(linkedModule.getModules());
-                for (Module doubleLinkedModule : linkedModule.getModules())
-                    if (doubleLinkedModule.getID() == ID) {
-                        doubleConcurrentModules.remove(this);
-                    }
-                linkedModule.setModules(doubleConcurrentModules);
-            }
-        }
-    }
 }

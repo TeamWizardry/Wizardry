@@ -1,12 +1,12 @@
 [
   {
     "icon": "magic-palm",
-    "text": "The beginners guide to wizardry. Learn all that you need to know to get started here.",
+    "text": "The beginners guide to wizardry. Learn everything you need to know to get started here.",
     "link": "/basics/index"
   },
   {
     "icon": "magic-gate",
-    "text": "Learn how to build a lot of multi block structures that aren't essential."
+    "text": "Learn about all the multi-block structures here."
   },
   {
     "icon": "diamond-ring",
@@ -17,7 +17,7 @@
     "text": "Learn how the brewing system works."
   },
   {
-    "icon": "magic-swirl",
+    "icon": "hot-spices",
     "text": "Learn more misc crap."
   }
 ]
