@@ -1,19 +1,25 @@
 package me.lordsaad.wizardry.gui.worktable;
 
-import me.lordsaad.wizardry.Utils;
-import me.lordsaad.wizardry.Wizardry;
+import static me.lordsaad.wizardry.api.spells.SpellIngredients.IngredientType.CONDITION;
+import static me.lordsaad.wizardry.api.spells.SpellIngredients.IngredientType.EFFECT;
+import static me.lordsaad.wizardry.api.spells.SpellIngredients.IngredientType.EVENT;
+import static me.lordsaad.wizardry.api.spells.SpellIngredients.IngredientType.MODIFIER;
+
+import java.awt.Color;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashSet;
+
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.*;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
-import static me.lordsaad.wizardry.api.spells.SpellIngredients.IngredientType.*;
+import me.lordsaad.wizardry.Utils;
+import me.lordsaad.wizardry.Wizardry;
 
 /**
  * Created by Saad on 6/17/2016.
@@ -25,7 +31,7 @@ public class WorktableBase extends GuiScreen {
     public static ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sample-page-background.png");
     public static ArrayList<Module> modulesInSidebar;
     private ArrayList<Module> modulesOnPaper;
-    private HashMap<Module, HashSet<Module>> links;
+    private Multimap<Module, Module> links;
     private Module moduleBeingDragged, moduleBeingLinked;
     private int iconSize = 16;
     //  private boolean linkingMode = false;
@@ -38,7 +44,7 @@ public class WorktableBase extends GuiScreen {
         right = (width / 2 + backgroundWidth / 2) - 6;
         modulesInSidebar = new ArrayList<>();
         modulesOnPaper = new ArrayList<>();
-        links = new HashMap<>();
+        links = HashMultimap.create();
         initModules();
     }
 
@@ -135,15 +141,27 @@ public class WorktableBase extends GuiScreen {
             for (Module module : modulesOnPaper) {
                 boolean inside = mouseX >= module.getX() - iconSize / 2 && mouseX < module.getX() - iconSize / 2 + iconSize && mouseY >= module.getY() - iconSize / 2 && mouseY < module.getY() - iconSize / 2 + iconSize;
                 if (inside) {
-                    HashSet<Module> temp;
-                    if (links.containsKey(moduleBeingLinked)) temp = links.get(moduleBeingLinked);
-                    else temp = new HashSet<>();
-                    temp.add(module);
-                    links.putIfAbsent(moduleBeingLinked, temp);
+                	Module from = moduleBeingLinked;
+                	Module to = module;
+                	
+                	boolean wasLinked = false;
+                	
+                	if(links.get(from).contains(to)) {
+                		links.get(from).remove(to);
+                		wasLinked = true;
+                	}
+                	if(links.get(to).contains(from)) {
+                		links.get(to).remove(from);
+                		wasLinked = true;
+                	}
+                	
+                	if(!wasLinked) {
+                		links.get(from).add(to);
+                	}
                     moduleBeingLinked = null;
                     insideAnything = true;
                     break;
-                } else insideAnything = false;
+                }
             }
 
             if (!insideAnything) moduleBeingLinked = null;
