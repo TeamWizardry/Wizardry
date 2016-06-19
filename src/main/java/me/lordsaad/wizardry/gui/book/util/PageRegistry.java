@@ -1,18 +1,18 @@
 package me.lordsaad.wizardry.gui.book.util;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import net.minecraft.client.gui.GuiScreen;
-
 import me.lordsaad.wizardry.gui.book.MainIndex;
 import me.lordsaad.wizardry.gui.book.pages.GuiPageSubindex;
 import me.lordsaad.wizardry.gui.book.pages.GuiPageText;
 import me.lordsaad.wizardry.network.PacketHandler;
 import me.lordsaad.wizardry.network.packets.PacketUpdateSavedPage;
+import net.minecraft.client.gui.GuiScreen;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Stores the different types of pages and constructs pages based on their path
+ *
  * @author piercecorcoran
  */
 public class PageRegistry {
@@ -33,12 +33,12 @@ public class PageRegistry {
 
     public static GuiScreen construct(GuiScreen parent, String path, int pageNum) {
 
-    	PacketHandler.net().sendToServer(new PacketUpdateSavedPage(path, pageNum));
-    	
-    	if("/".equals(path)) {
-			return new MainIndex();
-		}
-    	
+        PacketHandler.net().sendToServer(new PacketUpdateSavedPage(path, pageNum));
+
+        if ("/".equals(path)) {
+            return new MainIndex();
+        }
+
         DataNode data = PageDataManager.getPageData(path);
 
         DataNode pagesList = data.get("pages");

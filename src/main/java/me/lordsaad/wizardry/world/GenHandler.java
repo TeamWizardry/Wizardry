@@ -1,5 +1,6 @@
 package me.lordsaad.wizardry.world;
 
+import me.lordsaad.wizardry.fluid.FluidBlockMana;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
@@ -8,13 +9,9 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.ChunkProviderOverworld;
-import net.minecraft.world.gen.ChunkProviderServer;
-import net.minecraft.world.gen.feature.WorldGenLakes;
 import net.minecraftforge.fml.common.IWorldGenerator;
 
 import java.util.Random;
-
-import me.lordsaad.wizardry.fluid.FluidBlockMana;
 
 public class GenHandler implements IWorldGenerator {
 
@@ -34,20 +31,18 @@ public class GenHandler implements IWorldGenerator {
         Chunk chunk = world.getChunkFromBlockCoords(pos);
         BiomeProvider biomeProvider = world.getBiomeProvider();
         Biome biome = chunk.getBiome(pos, biomeProvider);
-        
+
         generateMana(world, rand, x1, z1);
     }
-    
-    private void generateMana(World world, Random rand, int chunkX, int chunkZ)
-	{
-		WorldGenManaLake gen = new WorldGenManaLake(FluidBlockMana.instance);
-		for (int i = 0; i < 1; i++)
-		{
-			int xRand = chunkX * 16 + rand.nextInt(16);
-			int yRand = rand.nextInt(256);
-			int zRand = chunkZ * 16 + rand.nextInt(16);
-			BlockPos position = new BlockPos(xRand, yRand, zRand);
-			gen.generate(world, rand, position);
-		}
-}
+
+    private void generateMana(World world, Random rand, int chunkX, int chunkZ) {
+        WorldGenManaLake gen = new WorldGenManaLake(FluidBlockMana.instance);
+        for (int i = 0; i < 1; i++) {
+            int xRand = chunkX * 16 + rand.nextInt(16);
+            int yRand = rand.nextInt(256);
+            int zRand = chunkZ * 16 + rand.nextInt(16);
+            BlockPos position = new BlockPos(xRand, yRand, zRand);
+            gen.generate(world, rand, position);
+        }
+    }
 }

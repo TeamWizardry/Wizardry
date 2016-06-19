@@ -7,9 +7,8 @@ import net.minecraftforge.fluids.Fluid;
 public class FluidMana extends Fluid {
     public static final FluidMana instance = new FluidMana();
 
-    public FluidMana() 
-    {
-        super("mana_fluid", new ResourceLocation(Wizardry.MODID + ":" + "fluid/mana_still"), new ResourceLocation(Wizardry.MODID + ":" + "fluid/mana_flowing"));
-    }
+    public FluidMana() {
+        super("mana_fluid", new ResourceLocation(Wizardry.MODID, "fluid/mana_still"), new ResourceLocation(Wizardry.MODID, "fluid/mana_flowing"));
 
+    }
 }

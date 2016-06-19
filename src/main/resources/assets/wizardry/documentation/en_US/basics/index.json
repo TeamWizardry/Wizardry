@@ -20,11 +20,11 @@
       "tip":  "Learn what the best magical catalyst is and how you can use it."
     },
     {
-      "tex":  "wizardry:textures/gui/book/icons/magic-palm.png",
-			"color": "0x000000",
-      "text": "Spells",
-      "link": "spells",
-      "tip":  "Learn how the spell system works."
+      "tex":   "wizardry:textures/gui/book/icons/magic-palm.png",
+      "color": "0x000000",
+      "text":  "Spells",
+      "link":  "spells",
+      "tip":   "Learn how the spell system works."
     },
     {
       "item": "minecraft:sand",

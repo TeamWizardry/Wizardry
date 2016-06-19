@@ -1,7 +1,5 @@
 package me.lordsaad.wizardry;
 
-import org.apache.logging.log4j.Logger;
-
 import me.lordsaad.wizardry.event.EventHandler;
 import me.lordsaad.wizardry.fluid.Fluids;
 import me.lordsaad.wizardry.gui.GuiHandler;
@@ -21,6 +19,7 @@ import net.minecraftforge.fml.common.network.PacketLoggingHandler;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Created by Saad on 6/9/2016.
@@ -39,53 +38,48 @@ public class Wizardry {
         public String getTabLabel() {
             return MODID;
         }
+
         @Override
         @SideOnly(Side.CLIENT)
         public Item getTabIconItem() {
             return ModItems.physicsBook;
         }
     };
-    
-    static
-    {
-    	FluidRegistry.enableUniversalBucket();
-    }
-
     @SidedProxy(clientSide = CLIENT, serverSide = SERVER)
     public static CommonProxy proxy;
-
     @Mod.Instance
     public static Wizardry instance;
-
     public static Logger logger;
+
+    static {
+        FluidRegistry.enableUniversalBucket();
+    }
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         logger = event.getModLog();
-        
+
         Config.initConfig();
-        
+
         ModItems.init();
         ModBlocks.init();
         Fluids.preInit();
         CraftingRecipes.initCrafting();
-        
+
         MinecraftForge.EVENT_BUS.register(new EventHandler());
         PacketHandler.INSTANCE.getClass(); // loading the class should be enough to initialize the channel
         proxy.loadModels();
-        
+
         proxy.preInit(event);
-        if (proxy != null)
-		{
-        	NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
-		}
+        if (proxy != null) {
+            NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
+        }
     }
 
     @Mod.EventHandler
-    public void init(FMLInitializationEvent e) 
-    {
-    	GameRegistry.registerWorldGenerator(new GenHandler(), 0);
-    	proxy.init(e);
+    public void init(FMLInitializationEvent e) {
+        GameRegistry.registerWorldGenerator(new GenHandler(), 0);
+        proxy.init(e);
     }
 
     @Mod.EventHandler

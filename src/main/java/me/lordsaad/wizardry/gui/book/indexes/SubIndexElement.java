@@ -1,9 +1,6 @@
 package me.lordsaad.wizardry.gui.book.indexes;
 
-import me.lordsaad.wizardry.gui.book.Button;
 import me.lordsaad.wizardry.gui.book.util.Color;
-
-import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 
@@ -12,14 +9,14 @@ import net.minecraft.util.ResourceLocation;
  */
 public class SubIndexElement {
 
-	private int linkPage;
+    private int linkPage;
     private ResourceLocation textureIcon;
     private Item itemIcon;
     private int itemDamage;
     private String text, link, tip;
     private TextureType textureType;
     private Color color;
-    
+
     public SubIndexElement(String text, String link, int linkPage, String tip, int color, ResourceLocation tex) {
         this.text = text;
         this.tip = tip;
@@ -27,12 +24,12 @@ public class SubIndexElement {
         this.linkPage = linkPage;
         this.textureIcon = tex;
         this.textureType = TextureType.TEXTURE;
-        if((color & 0xff000000) == 0) {
-        	color = color | 0xff000000; // if there is no alpha specified it should be opaque
+        if ((color & 0xff000000) == 0) {
+            color = color | 0xff000000; // if there is no alpha specified it should be opaque
         }
         this.color = Color.argb(color);
     }
-    
+
     public SubIndexElement(String text, String link, int linkPage, String tip, int color, Item item, int damage) {
         this.text = text;
         this.tip = tip;
@@ -41,20 +38,20 @@ public class SubIndexElement {
         this.itemIcon = item;
         this.itemDamage = damage;
         this.textureType = TextureType.ITEM;
-        if((color & 0xff000000) == 0) {
-        	color = color | 0xff000000; // if there is no alpha specified it should be opaque
+        if ((color & 0xff000000) == 0) {
+            color = color | 0xff000000; // if there is no alpha specified it should be opaque
         }
         this.color = Color.argb(color);
     }
 
     public void iconGlColor() {
-    	color.glColor();
+        color.glColor();
     }
-    
+
     public TextureType getTextureType() {
         return textureType;
     }
-    
+
     public ResourceLocation getTextureIcon() {
         return textureIcon;
     }
@@ -70,7 +67,7 @@ public class SubIndexElement {
     public void setText(String text) {
         this.text = text;
     }
-    
+
     public String getTip() {
         return tip;
     }
@@ -82,36 +79,36 @@ public class SubIndexElement {
     public Item getItemIcon() {
         return itemIcon;
     }
-    
+
     public void setItemIcon(Item itemIcon) {
-		this.itemIcon = itemIcon;
-	}
+        this.itemIcon = itemIcon;
+    }
 
     public int getItemDamage() {
-		return itemDamage;
-	}
+        return itemDamage;
+    }
 
-	public void setItemDamage(int itemDamage) {
-		this.itemDamage = itemDamage;
-	}
+    public void setItemDamage(int itemDamage) {
+        this.itemDamage = itemDamage;
+    }
 
-	public int getLinkPage() {
-		return linkPage;
-	}
+    public int getLinkPage() {
+        return linkPage;
+    }
 
-	public void setLinkPage(int linkPage) {
-		this.linkPage = linkPage;
-	}
+    public void setLinkPage(int linkPage) {
+        this.linkPage = linkPage;
+    }
 
-	public String getLink() {
-		return link;
-	}
+    public String getLink() {
+        return link;
+    }
 
-	public void setLink(String link) {
-		this.link = link;
-	}
-	
-	public static enum TextureType {
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public enum TextureType {
         TEXTURE, ITEM
     }
 }
