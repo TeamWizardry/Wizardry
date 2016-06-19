@@ -2,7 +2,8 @@ package me.lordsaad.wizardry.api;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.items.IItemHandler;
+
+import me.lordsaad.wizardry.bars.IWizardData;
 
 /**
  * Created by Saad on 6/14/2016.
@@ -30,7 +31,7 @@ public class Constants {
     }
 
     public static class Misc {
-        @CapabilityInject(IItemHandler.class)
-        public static Capability<IItemHandler> BAR_HANDLER_CAPABILITY = null;
+        @CapabilityInject(IWizardData.class)
+        public static Capability<IWizardData> BAR_HANDLER_CAPABILITY = null;
     }
 }
