@@ -25,8 +25,9 @@ public class WorktableBase extends GuiScreen {
     public static int left, top, right;
     public static int backgroundWidth = 214, backgroundHeight = 220; // SIZE OF PAPER
     public static ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sample-page-background.png");
-    public static HashMap<SpellIngredients.IngredientType, ArrayList<Module>> modules;
-    private HashMap<SpellIngredients.IngredientType, ArrayList<Module>> modulesOnPaper;
+    public static HashMap<SpellIngredients.IngredientType, ArrayList<Module>> modulesInSidebar;
+    private ArrayList<Module> modulesOnPaper;
+    //private HashMap<SpellIngredients.IngredientType, ArrayList<Module>> modulesOnPaper;
     // private HashMap<Module, Module> modulesLinked;
     private Module moduleBeingDragged, moduleBeingLinked;
     private int iconSize = 16;
@@ -38,8 +39,8 @@ public class WorktableBase extends GuiScreen {
         left = width / 2 - backgroundWidth / 2;
         top = height / 2 - backgroundHeight / 2;
         right = (width / 2 + backgroundWidth / 2) - 6;
-        modules = new HashMap<>();
-        modulesOnPaper = new HashMap<>();
+        modulesInSidebar = new HashMap<>();
+        modulesOnPaper = new ArrayList<>();
         //  modulesLinked = new HashMap<>();
         buttonList.add(new Button(Constants.WorkTable.LINKING_TOOL, 0, 0, iconSize, iconSize));
         initModules();
@@ -50,10 +51,10 @@ public class WorktableBase extends GuiScreen {
             for (Field field : clazz.getDeclaredFields()) {
                 try {
                     Module module = (Module) field.get(clazz);
-                    modules.putIfAbsent(module.getType(), new ArrayList<>());
-                    ArrayList<Module> category = modules.get(module.getType());
+                    modulesInSidebar.putIfAbsent(module.getType(), new ArrayList<>());
+                    ArrayList<Module> category = modulesInSidebar.get(module.getType());
                     category.add(module);
-                    modules.put(module.getType(), category);
+                    modulesInSidebar.put(module.getType(), category);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
@@ -66,8 +67,8 @@ public class WorktableBase extends GuiScreen {
         super.mouseClicked(mouseX, mouseY, mouseButton);
 
         // Get a module from the sidebar.
-        for (SpellIngredients.IngredientType category : modules.keySet())
-            for (Module module : modules.get(category)) {
+        for (SpellIngredients.IngredientType category : modulesInSidebar.keySet())
+            for (Module module : modulesInSidebar.get(category)) {
                 boolean inside = mouseX >= module.getX() && mouseX < module.getX() + iconSize && mouseY >= module.getY() && mouseY < module.getY() + iconSize;
                 if (inside) {
                     moduleBeingDragged = module.copy();
@@ -77,43 +78,30 @@ public class WorktableBase extends GuiScreen {
             }
 
         // Drag/Readjust module on paper.
-        for (SpellIngredients.IngredientType category : modulesOnPaper.keySet()) {
 
-            // Prevent concurrent modification
-            ArrayList<Module> tempModules = new ArrayList<>();
-            tempModules.addAll(modulesOnPaper.get(category));
+        // Prevent concurrent modification
+        ArrayList<Module> tempModules = new ArrayList<>();
+        tempModules.addAll(modulesOnPaper);
+        boolean insideAnything = false;
 
-            boolean insideAnything = false;
-            for (Module module : modulesOnPaper.get(category)) {
-                boolean inside = mouseX >= module.getX() - iconSize / 2 && mouseX < module.getX() - iconSize / 2 + iconSize && mouseY >= module.getY() - iconSize / 2 && mouseY < module.getY() - iconSize / 2 + iconSize;
-                if (inside) {
-                    insideAnything = true;
-                    if (!linkingMode) {
-                        moduleBeingDragged = module.copy();
-                        moduleBeingDragged.setX(mouseX - iconSize / 2);
-                        moduleBeingDragged.setY(mouseY - iconSize / 2);
-                        tempModules.remove(module);
-
-                        if (!module.getModules().isEmpty())
-                            for (Module linkedModule : module.getModules()) {
-
-                                ArrayList<Module> tempTempModules = new ArrayList<>();
-                                tempTempModules.addAll(linkedModule.getModules());
-                                if (!linkedModule.getModules().isEmpty())
-                                    for (Module linkedLinkedModule : linkedModule.getModules())
-                                        if (linkedLinkedModule == module) {
-                                            linkedLinkedModule = moduleBeingDragged;
-                                            tempTempModules.remove(linkedLinkedModule);
-                                        }
-                                linkedModule.getModules().clear();
-                                linkedModule.getModules().addAll(tempTempModules);
-                            }
-                    }
-                } else insideAnything = false;
-            }
-            if (!insideAnything && linkingMode) linkingMode = false;
-            modulesOnPaper.put(category, tempModules);
+        for (Module module : modulesOnPaper) {
+            boolean inside = mouseX >= module.getX() - iconSize / 2 && mouseX < module.getX() - iconSize / 2 + iconSize && mouseY >= module.getY() - iconSize / 2 && mouseY < module.getY() - iconSize / 2 + iconSize;
+            if (inside) {
+                insideAnything = true;
+                if (!linkingMode) {
+                    moduleBeingDragged = module.copy();
+                    moduleBeingDragged.setX(mouseX);
+                    moduleBeingDragged.setY(mouseY);
+                    tempModules.remove(module);
+                    break;
+                }
+            } else insideAnything = false;
         }
+
+        if (!insideAnything && linkingMode) linkingMode = false;
+
+        modulesOnPaper.clear();
+        modulesOnPaper.addAll(tempModules);
 
         // Linking mode button
         int x = left + backgroundWidth / 2 - 32 / 2, y = top - 20;
@@ -123,26 +111,24 @@ public class WorktableBase extends GuiScreen {
     @Override
     protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
         if (linkingMode && moduleBeingLinked == null)
-            for (SpellIngredients.IngredientType category : modulesOnPaper.keySet())
-                for (Module module : modulesOnPaper.get(category)) {
-                    boolean inside = mouseX >= module.getX() - iconSize / 2 && mouseX < module.getX() - iconSize / 2 + iconSize && mouseY >= module.getY() - iconSize / 2 && mouseY < module.getY() - iconSize / 2 + iconSize;
-                    if (inside) {
-                        moduleBeingLinked = module;
-                        break;
-                    }
+            for (Module module : modulesOnPaper) {
+                boolean inside = mouseX >= module.getX() - iconSize / 2 && mouseX < module.getX() - iconSize / 2 + iconSize && mouseY >= module.getY() - iconSize / 2 && mouseY < module.getY() - iconSize / 2 + iconSize;
+                if (inside) {
+                    moduleBeingLinked = module;
+                    break;
                 }
+            }
 
         if (!linkingMode && moduleBeingDragged != null)
             if (!moduleBeingDragged.getModules().isEmpty()) {
                 ArrayList<Module> tempModules = new ArrayList<>();
-                for (Module module : moduleBeingDragged.getModules()) {
+                for (Module module : moduleBeingDragged.getModules())
                     if (module.getModules().contains(moduleBeingDragged)) {
                         module.getModules().remove(moduleBeingDragged);
                         module.getModules().add(moduleBeingDragged);
                         tempModules.add(module);
                     }
-                }
-                moduleBeingDragged.getModules().removeAll(tempModules);
+                moduleBeingDragged.getModules().clear();
                 moduleBeingDragged.getModules().addAll(tempModules);
             }
     }
@@ -154,42 +140,29 @@ public class WorktableBase extends GuiScreen {
             if (inside) {
                 moduleBeingDragged.setX(mouseX);
                 moduleBeingDragged.setY(mouseY);
-                modulesOnPaper.putIfAbsent(moduleBeingDragged.getType(), new ArrayList<>());
-                ArrayList<Module> category = modulesOnPaper.get(moduleBeingDragged.getType());
-                category.add(moduleBeingDragged);
-                modulesOnPaper.put(moduleBeingDragged.getType(), category);
+                modulesOnPaper.add(moduleBeingDragged);
                 moduleBeingDragged = null;
             } else {
                 moduleBeingDragged.getModules().clear();
-                for (SpellIngredients.IngredientType category : modulesOnPaper.keySet())
-                    for (Module module : modulesOnPaper.get(category)) {
-                        if (module.getID() == moduleBeingDragged.getID()) {
-                            modules.get(category).remove(module);
-                            break;
-                        }
-                    }
                 moduleBeingDragged = null;
             }
-        } else {
-            if (linkingMode) {
-                if (moduleBeingLinked != null) {
-                    boolean insideAnything = false;
-                    for (SpellIngredients.IngredientType category : modulesOnPaper.keySet())
-                        for (Module module : modulesOnPaper.get(category)) {
-                            boolean inside = mouseX >= module.getX() - iconSize / 2 && mouseX < module.getX() - iconSize / 2 + iconSize && mouseY >= module.getY() - iconSize / 2 && mouseY < module.getY() - iconSize / 2 + iconSize;
-                            if (inside) {
-                                module.getModules().add(moduleBeingLinked);
-                                moduleBeingLinked = null;
-                                linkingMode = false;
-                                insideAnything = true;
-                                break;
-                            } else insideAnything = false;
-                        }
-                    if (!insideAnything) {
-                        linkingMode = false;
-                        moduleBeingLinked = null;
-                    }
-                }
+        } else if (linkingMode && moduleBeingLinked != null) {
+            boolean insideAnything = false;
+            for (Module module : modulesOnPaper) {
+                boolean inside = mouseX >= module.getX() - iconSize / 2 && mouseX < module.getX() - iconSize / 2 + iconSize && mouseY >= module.getY() - iconSize / 2 && mouseY < module.getY() - iconSize / 2 + iconSize;
+                if (inside) {
+                    module.getModules().add(moduleBeingLinked);
+                    moduleBeingLinked.getModules().add(module);
+                    moduleBeingLinked = null;
+                    linkingMode = false;
+                    insideAnything = true;
+                    break;
+                } else insideAnything = false;
+            }
+
+            if (!insideAnything) {
+                linkingMode = false;
+                moduleBeingLinked = null;
             }
         }
     }
@@ -229,15 +202,14 @@ public class WorktableBase extends GuiScreen {
                 Utils.drawLine2D(moduleBeingDragged.getX(), moduleBeingDragged.getY(), module.getX(), module.getY(), 2, Color.BLACK);
         if (moduleBeingLinked != null)
             Utils.drawLine2D(moduleBeingLinked.getX(), moduleBeingLinked.getY(), mouseX, mouseY, 2, Color.BLACK);
-        for (SpellIngredients.IngredientType category : modulesOnPaper.keySet())
-            modulesOnPaper.get(category).stream().filter(module -> !module.getModules().isEmpty()).forEach(module -> {
-                for (Module linkedModule : module.getModules())
-                    Utils.drawLine2D(module.getX(), module.getY(), linkedModule.getX(), linkedModule.getY(), 2, Color.BLACK);
-            });
+        modulesOnPaper.stream().filter(module -> !module.getModules().isEmpty()).forEach(module -> {
+            for (Module linkedModule : module.getModules())
+                Utils.drawLine2D(module.getX(), module.getY(), linkedModule.getX(), linkedModule.getY(), 2, Color.BLACK);
+        });
         // RENDER LINE BETWEEN LINKED MODULES //
 
         // RENDER SIDEBARS //
-        for (SpellIngredients.IngredientType category : modules.keySet()) {
+        for (SpellIngredients.IngredientType category : modulesInSidebar.keySet()) {
 
             // CATEGORIES //
             int row = 0, column = 0, iconSeparation = 1, sidebarX;
@@ -258,9 +230,9 @@ public class WorktableBase extends GuiScreen {
 
 
             ArrayList<Module> tempModules = new ArrayList<>();
-            tempModules.addAll(modules.get(category));
+            tempModules.addAll(modulesInSidebar.get(category));
 
-            for (Module module : modules.get(category)) {
+            for (Module module : modulesInSidebar.get(category)) {
                 int x = width / 2 + sidebarX + iconSeparation + (row * iconSize) + (row * iconSeparation);
                 int y = top + iconSeparation + (column * iconSize) + (column * iconSeparation);
 
@@ -288,7 +260,7 @@ public class WorktableBase extends GuiScreen {
                     column++;
                 } else row++;
             }
-            modules.put(category, tempModules);
+            modulesInSidebar.put(category, tempModules);
         }
         // RENDER SIDEBARS //
 
@@ -302,11 +274,9 @@ public class WorktableBase extends GuiScreen {
         // RENDER MODULE ON CURSOR //
 
         // RENDER MODULE ON THE PAPER //
-        for (SpellIngredients.IngredientType type : modulesOnPaper.keySet()) {
-            for (Module module : modulesOnPaper.get(type)) {
-                mc.renderEngine.bindTexture(module.getIcon());
-                drawScaledCustomSizeModalRect(module.getX() - iconSize / 2, module.getY() - iconSize / 2, 0, 0, iconSize, iconSize, iconSize, iconSize, iconSize, iconSize);
-            }
+        for (Module module : modulesOnPaper) {
+            mc.renderEngine.bindTexture(module.getIcon());
+            drawScaledCustomSizeModalRect(module.getX() - iconSize / 2, module.getY() - iconSize / 2, 0, 0, iconSize, iconSize, iconSize, iconSize, iconSize, iconSize);
         }
         // RENDER MODULE ON THE PAPER //
     }

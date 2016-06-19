@@ -17,8 +17,9 @@ import me.lordsaad.wizardry.gui.book.pages.GuiPageText;
 
 /**
  * A object that represents a special text element and it's bounds.
- * 
+ * <p>
  * This class doesn't render text.
+ *
  * @author piercecorcoran
  */
 public class TextControl {

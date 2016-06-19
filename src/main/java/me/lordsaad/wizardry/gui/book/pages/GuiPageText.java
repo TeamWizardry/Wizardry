@@ -1,16 +1,15 @@
 package me.lordsaad.wizardry.gui.book.pages;
 
-import java.awt.Rectangle;
+import me.lordsaad.wizardry.gui.book.util.DataNode;
+import me.lordsaad.wizardry.gui.book.util.TextControl;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiScreen;
+
+import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiScreen;
-
-import me.lordsaad.wizardry.gui.book.util.DataNode;
-import me.lordsaad.wizardry.gui.book.util.TextControl;
 
 public class GuiPageText extends GuiPageCommon {
 	
@@ -152,20 +151,20 @@ public class GuiPageText extends GuiPageCommon {
     {
         return Arrays.<String>asList(this.wrapFormattedStringToWidth(str, wrapWidth).split("\n"));
     }
-
+	
+	private static boolean isFormatColor(char colorChar) {
+        return colorChar >= 48 && colorChar <= 57 || colorChar >= 97 && colorChar <= 102 || colorChar >= 65 && colorChar <= 70;
+    }
+	
     /**
      * Inserts newline and formatting into a string to wrap it within the specified width.
      */
-    String wrapFormattedStringToWidth(String str, int wrapWidth)
-    {
+    String wrapFormattedStringToWidth(String str, int wrapWidth) {
         int i = this.sizeStringToWidth(str, wrapWidth);
 
-        if (str.length() <= i)
-        {
+        if (str.length() <= i) {
             return str;
-        }
-        else
-        {
+        } else {
             String s = str.substring(0, i);
             char c0 = str.charAt(i);
             boolean flag = c0 == 32 || c0 == 10;
@@ -177,19 +176,16 @@ public class GuiPageText extends GuiPageCommon {
     /**
      * Determines how many characters from the string will fit into the specified width.
      */
-    private int sizeStringToWidth(String str, int wrapWidth)
-    {
+    private int sizeStringToWidth(String str, int wrapWidth) {
         int i = str.length();
         int j = 0;
         int k = 0;
         int l = -1;
 
-        for (boolean flag = false; k < i; ++k)
-        {
+        for (boolean flag = false; k < i; ++k) {
             char c0 = str.charAt(k);
 
-            switch (c0)
-            {
+            switch (c0) {
                 case '\n':
                     --k;
                     break;
@@ -198,51 +194,38 @@ public class GuiPageText extends GuiPageCommon {
                 default:
                     j += mc.fontRendererObj.getCharWidth(c0);
 
-                    if (flag)
-                    {
+                    if (flag) {
                         ++j;
                     }
 
                     break;
                 case '\u00a7':
 
-                    if (k < i - 1)
-                    {
+                    if (k < i - 1) {
                         ++k;
                         char c1 = str.charAt(k);
 
-                        if (c1 != 108 && c1 != 76)
-                        {
-                            if (c1 == 114 || c1 == 82 || isFormatColor(c1))
-                            {
+                        if (c1 != 108 && c1 != 76) {
+                            if (c1 == 114 || c1 == 82 || isFormatColor(c1)) {
                                 flag = false;
                             }
-                        }
-                        else
-                        {
+                        } else {
                             flag = true;
                         }
                     }
             }
 
-            if (c0 == 10)
-            {
+            if (c0 == 10) {
                 ++k;
                 l = k;
                 break;
             }
 
-            if (j > wrapWidth)
-            {
+            if (j > wrapWidth) {
                 break;
             }
         }
 
         return k != i && l != -1 && l < k ? l : k;
-    }
-	
-    private static boolean isFormatColor(char colorChar)
-    {
-        return colorChar >= 48 && colorChar <= 57 || colorChar >= 97 && colorChar <= 102 || colorChar >= 65 && colorChar <= 70;
     }
 }

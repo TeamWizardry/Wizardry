@@ -2,10 +2,8 @@ package me.lordsaad.wizardry.gui.book;
 
 import me.lordsaad.wizardry.Wizardry;
 import me.lordsaad.wizardry.gui.book.util.DataNode;
-import me.lordsaad.wizardry.gui.book.util.DataParser;
 import me.lordsaad.wizardry.gui.book.util.PageDataManager;
 import me.lordsaad.wizardry.gui.book.util.PageRegistry;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;

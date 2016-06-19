@@ -1,33 +1,26 @@
 {
   "forge_marker": 1,
-  "defaults":
-  {
-  	"model": "wizardry:magicians_worktable"
+  "defaults":     {
+    "model": "wizardry:magicians_worktable"
   },
-  "variants": 
-  {
-  	"inventory":{"model": "wizardry:magicians_worktable"},
-	"is_left_side":
-	{
-		"true": 
-		{
-			"textures":
-			{	
-				"front": "blocks/sponge"
-			}
-		},
-		"false": 
-		{
-		}
-	},
-  	"facing":
-  	{
-  		"north":{},
-		"south": {"y": 180},
-		"east": {"y": 90},
-		"west": {"y": 270},
-		"up": {},
-		"down": {}
-	}
+  "variants":     {
+    "inventory":    {"model": "wizardry:magicians_worktable"},
+    "is_left_side": {
+      "true":  {
+        "textures": {
+          "front": "blocks/sponge"
+        }
+      },
+      "false": {
+      }
+    },
+    "facing":       {
+      "north": {},
+      "south": {"y": 180},
+      "east":  {"y": 90},
+      "west":  {"y": 270},
+      "up":    {},
+      "down":  {}
+    }
   }
 }

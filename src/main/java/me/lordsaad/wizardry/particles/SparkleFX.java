@@ -16,7 +16,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class SparkleFX extends Particle {
 
     private static final Random random = new Random();
-    public ResourceLocation texture = new ResourceLocation(Wizardry.MODID, "entity/sparkle");
+    public ResourceLocation texture = new ResourceLocation(Wizardry.MODID, "particles/sparkle");
     private double jitterX, jitterY, jitterZ;
     private int jitterChance;
 

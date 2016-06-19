@@ -16,7 +16,7 @@ import org.lwjgl.opengl.GL11;
 import java.io.IOException;
 
 public abstract class GuiPageCommon extends Tippable {
-	
+
     protected GuiScreen parent;
     public String path;
     public int page;
@@ -53,7 +53,7 @@ public abstract class GuiPageCommon extends Tippable {
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         GL11.glScissor(viewLeft * screenScale, mc.displayHeight - (viewTop + viewHeight) * screenScale,
                 viewWidth * screenScale, viewHeight * screenScale);
-        drawPage(mouseX-viewLeft, mouseY-viewTop, partialTicks);
+        drawPage(mouseX - viewLeft, mouseY - viewTop, partialTicks);
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
         GlStateManager.popMatrix();
 
@@ -69,13 +69,13 @@ public abstract class GuiPageCommon extends Tippable {
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
         if (button.id == Constants.GuiButtons.NAV_BAR_INDEX) {
-            if(parent == null) {
-            	String indexPath = PathUtils.resolve(PathUtils.parent(path), "index");
-            	if(!indexPath.equals(path))
-            		parent = PageRegistry.construct(null, indexPath, 0); // parent is null because otherwise pressing back goes to the child gui
-            	if(parent == null) {
-            		parent = PageRegistry.construct(null, "/", 0); // see above ^
-            	}
+            if (parent == null) {
+                String indexPath = PathUtils.resolve(PathUtils.parent(path), "index");
+                if (!indexPath.equals(path))
+                    parent = PageRegistry.construct(null, indexPath, 0); // parent is null because otherwise pressing back goes to the child gui
+                if (parent == null) {
+                    parent = PageRegistry.construct(null, "/", 0); // see above ^
+                }
             }
             mc.displayGuiScreen(parent);
         }
@@ -90,7 +90,7 @@ public abstract class GuiPageCommon extends Tippable {
     public void openPageRelative(String path, int page) {
         openPage(PathUtils.resolve(PathUtils.parent(this.path), path), page);
     }
-    
+
     public void openPage(String path, int page) {
         mc.displayGuiScreen(PageRegistry.construct(this.path.equals(path) ? this.parent : this, path, page));
     }
