@@ -1,23 +1,23 @@
 [
   {
-    "icon": "magic-palm",
+    "icon": "wizardry:textures/gui/icons/magic-palm.png",
     "text": "The beginners guide to wizardry. Learn everything you need to know to get started here.",
     "link": "/basics/index"
   },
   {
-    "icon": "magic-gate",
+    "icon": "wizardry:textures/gui/icons/magic-gate.png",
     "text": "Learn about all the multi-block structures here."
   },
   {
-    "icon": "diamond-ring",
+    "icon": "wizardry:textures/gui/icons/diamond-ring.png",
     "text": "Learn how the spell crafting system works."
   },
   {
-    "icon": "magic-potion",
+    "icon": "wizardry:textures/gui/icons/magic-potion.png",
     "text": "Learn how the brewing system works."
   },
   {
-    "icon": "hot-spices",
+    "icon": "wizardry:textures/gui/icons/hot-spices.png",
     "text": "Learn more misc crap."
   }
 ]

@@ -32,6 +32,13 @@ public class Tip {
     	
     	return null; // TODO: Recipes
     }
+    
+    public static Tip from(DataNode node) {
+    	if(node.isString())
+    		return new Tip(node.asString());
+    	
+    	return null; // TODO: Recipes
+    }
 
     public Tip(String text, ItemStack recipeOutput, HashMap<Slot, ItemStack> recipe) {
         this.text = text;

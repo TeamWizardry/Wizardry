@@ -82,11 +82,11 @@ public class GuiPageText extends GuiPageCommon {
 			}
 			
 			for (int i = 0; i < lines.size(); i++) {
-				if(i+pageNum*LINES_PER_PAGE > lines.size())
+				if(i >= (pageNum+1)*LINES_PER_PAGE)
 					break;
 				String line = lines.get(i);
 				line = line.replaceAll("§.", "");
-				if(i+(pageNum-1)*LINES_PER_PAGE < lines.size()) {
+				if(i >= pageNum*LINES_PER_PAGE) {
 					int is = index;
 					int ie = index+line.length();
 					for (TextControl control : controls) {

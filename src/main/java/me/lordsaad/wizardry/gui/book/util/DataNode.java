@@ -1,10 +1,12 @@
 package me.lordsaad.wizardry.gui.book.util;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 
 public class DataNode {
 
@@ -15,6 +17,18 @@ public class DataNode {
     protected Map<String, DataNode> mapValue;
     protected List<DataNode> listValue;
 
+    public static DataNode str(String value) {
+    	return new DataNode(value);
+    }
+    
+    public static DataNode map() {
+    	return new DataNode(new HashMap<>());
+    }
+    
+    public static DataNode list() {
+    	return new DataNode(new ArrayList<>());
+    }
+    
     public DataNode(String value) {
         type = EnumNodeType.STRING;
         stringValue = value;
@@ -129,6 +143,41 @@ public class DataNode {
             node = node.get(part);
         }
         return node;
+    }
+    public boolean put(String key, String str) {
+    	return put(key, DataNode.str(str));
+    }
+    public boolean put(String key, DataNode node) {
+    	if(!isMap())
+    		return false;
+    	
+    	asMap().put(key, node);
+    	
+    	return true;
+    }
+    
+    public boolean put(int index, String str) {
+    	return put(index, DataNode.str(str));
+    }
+    public boolean put(int index, DataNode node) {
+    	if(!isList())
+    		return false;
+    	
+    	asList().set(index, node);
+    	
+    	return true;
+    }
+    
+    public boolean add(String str) {
+    	return add(DataNode.str(str));
+    }
+    public boolean add(DataNode node) {
+    	if(!isList())
+    		return false;
+    	
+    	asList().add(node);
+    	
+    	return true;
     }
 
     @Override

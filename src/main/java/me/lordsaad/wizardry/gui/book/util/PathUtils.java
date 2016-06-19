@@ -16,7 +16,7 @@ public class PathUtils {
         parts.addAll(Arrays.asList(path.split("/")));
 
         for (int i = 0; i < parts.size(); i++) {
-            if ("".equals(parts.get(i))) {
+            if ("".equals(parts.get(i)) || ".".equals(parts.get(i))) {
                 parts.remove(i);
                 i--;
                 continue;
@@ -28,6 +28,7 @@ public class PathUtils {
                     parts.remove(i);
                     i--;
                 }
+                continue;
             }
         }
 

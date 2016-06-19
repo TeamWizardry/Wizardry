@@ -61,7 +61,7 @@ public class TextControl {
 		
 		if("tip".equals(type)) {
 			if (hovering) {
-				int id = Tippable.setTip(Tip.from(data.get("tip"), minY));
+				int id = Tippable.setTip(Tip.from(data.get("tip")));
 				if(id != -1)
 					tipID = id;
 	        } else {
@@ -92,7 +92,7 @@ public class TextControl {
 				}
 			}
 			
-			gui.openPageRelative(str.substring(0, i == -1 ? str.length() : 0), page);
+			gui.openPageRelative(str.substring(0, i == -1 ? str.length() : i), page);
 		}
 	}
 }

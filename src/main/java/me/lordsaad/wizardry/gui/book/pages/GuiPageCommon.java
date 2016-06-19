@@ -22,11 +22,15 @@ public abstract class GuiPageCommon extends Tippable {
     public int page;
     public int viewWidth, viewHeight, viewLeft, viewTop;
     protected int screenScale;
-
+    protected DataNode data;
+    protected DataNode globalData;
+    
     { /* helpers */ }
 
     public GuiPageCommon(GuiScreen parent, DataNode data, DataNode globalData, String path, int page) {
-        this.parent = parent;
+        this.data = data;
+        this.globalData = data;
+    	this.parent = parent;
         this.path = path;
         this.page = page;
         this.viewWidth = 115;

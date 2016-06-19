@@ -42,7 +42,7 @@ public class MainIndex extends Tippable {
         List<DataNode> categories = root.asList();
 
         for (DataNode category : categories) {
-            ResourceLocation location = new ResourceLocation(Wizardry.MODID, "textures/gui/book/icons/" + category.get("icon").asStringOr("NULL") + ".png");
+            ResourceLocation location = new ResourceLocation(category.get("icon").asStringOr("minecraft:missingno"));
             int x = left + iconSeparation + (row * iconSize) + (row * iconSeparation);
             int y = top + iconSeparation + (column * iconSize) + (column * iconSeparation);
             addNewIndexButton(new Button(++ID, x, y, iconSize, iconSize), location, category.get("text").asString());
