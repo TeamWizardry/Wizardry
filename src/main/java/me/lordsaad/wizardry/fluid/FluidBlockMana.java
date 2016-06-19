@@ -38,7 +38,7 @@ public class FluidBlockMana extends BlockFluidClassic{
 	{
 		if(!worldIn.isRemote)
 		{
-			if(entityIn instanceof EntityItem)
+			if(entityIn instanceof EntityItem && new BlockPos(entityIn.getPositionVector()).equals(pos) && state.getValue(BlockFluidClassic.LEVEL) == 0)
 			{
 				EntityItem ei = (EntityItem) entityIn;
 				ItemStack stack = ei.getEntityItem();
