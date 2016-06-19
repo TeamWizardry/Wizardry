@@ -95,24 +95,15 @@ public class WorktableBase extends GuiScreen {
         }
 
         // Drag/Readjust module on paper.
-        // Prevent concurrent modification
-        ArrayList<Module> tempModules = new ArrayList<>();
-        tempModules.addAll(modulesOnPaper);
         for (Module module : modulesOnPaper) {
             boolean inside = mouseX >= module.getX() - iconSize / 2 && mouseX < module.getX() - iconSize / 2 + iconSize && mouseY >= module.getY() - iconSize / 2 && mouseY < module.getY() - iconSize / 2 + iconSize;
             if (inside && clickedMouseButton == 0) {
-                tempModules.remove(module);
-                moduleBeingDragged = module.copy();
+                moduleBeingDragged = module;
                 moduleBeingDragged.setX(mouseX);
                 moduleBeingDragged.setY(mouseY);
-                if (links.containsKey(module)) {
-                    links.put(moduleBeingDragged, links.get(module));
-                    links.remove(module);
-                }
                 break;
             }
         }
-        modulesOnPaper = tempModules;
     }
 
     @Override
