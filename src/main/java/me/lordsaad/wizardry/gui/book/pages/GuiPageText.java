@@ -74,9 +74,11 @@ public class GuiPageText extends GuiPageCommon {
 		int leftOffset = 2;
 		FontRenderer fr = mc.fontRendererObj;
 		if(lines == null) {
-			lines = listFormattedStringToWidthKeepTrailingWhitespace(text, viewWidth-leftOffset);
+			this.lines = new ArrayList<>();
+			List<String> lines = listFormattedStringToWidthKeepTrailingWhitespace(text, viewWidth-leftOffset);
 			int y = 0;
 			int index = 0;
+			boolean leadingWhitespace = true;
 			for (TextControl control : controls) {
 				control.rects = new ArrayList<>();
 			}
@@ -86,7 +88,10 @@ public class GuiPageText extends GuiPageCommon {
 					break;
 				String line = lines.get(i);
 				line = line.replaceAll("§.", "");
-				if(i >= pageNum*LINES_PER_PAGE) {
+				if(i >= pageNum*LINES_PER_PAGE && !( leadingWhitespace && line.matches("^\\s*$") )) {
+					leadingWhitespace = false;
+					this.lines.add(lines.get(i));
+					
 					int is = index;
 					int ie = index+line.length();
 					for (TextControl control : controls) {
@@ -137,8 +142,8 @@ public class GuiPageText extends GuiPageCommon {
 		
 		int color = 0x000000;
 		int y = 0;
-		for (int i = 0; i < LINES_PER_PAGE && i+pageNum*LINES_PER_PAGE < lines.size(); i++) {
-			fr.drawString(lines.get(i+pageNum*LINES_PER_PAGE), leftOffset, y, color);
+		for (int i = 0; i < lines.size(); i++) {
+			fr.drawString(lines.get(i), leftOffset, y, color);
 			y += fr.FONT_HEIGHT;
 		}
 		
