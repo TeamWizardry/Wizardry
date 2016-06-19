@@ -18,10 +18,7 @@ public class Module {
     private String text;
     private ArrayList<Module> modules;
 
-    public Module(int ID, int x, int y, String text, ResourceLocation icon, SpellIngredients.IngredientType type, ItemStack stack) {
-        this.ID = ID;
-        this.x = x;
-        this.y = y;
+    public Module(String text, ResourceLocation icon, SpellIngredients.IngredientType type, ItemStack stack) {
         this.icon = icon;
         this.type = type;
         this.stack = stack;
@@ -78,7 +75,10 @@ public class Module {
     }
 
     public Module copy() {
-        Module module = new Module(ID, x, y, text, icon, type, stack);
+        Module module = new Module(text, icon, type, stack);
+        module.setID(ID);
+        module.setX(x);
+        module.setY(y);
         module.setModules(modules);
         return module;
     }
@@ -97,5 +97,23 @@ public class Module {
 
     public void setModules(ArrayList<Module> modules) {
         this.modules = modules;
+    }
+
+    public void clearModules() {
+        if (!modules.isEmpty()) {
+
+            ArrayList<Module> concurrentModules = new ArrayList<>();
+            concurrentModules.addAll(modules); // original
+            for (Module linkedModule : concurrentModules) { // linked to original
+
+                ArrayList<Module> doubleConcurrentModules = new ArrayList<>();
+                doubleConcurrentModules.addAll(linkedModule.getModules());
+                for (Module doubleLinkedModule : linkedModule.getModules())
+                    if (doubleLinkedModule.getID() == ID) {
+                        doubleConcurrentModules.remove(this);
+                    }
+                linkedModule.setModules(doubleConcurrentModules);
+            }
+        }
     }
 }
