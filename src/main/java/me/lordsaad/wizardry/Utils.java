@@ -1,7 +1,5 @@
 package me.lordsaad.wizardry;
 
-import com.mojang.realmsclient.gui.ChatFormatting;
-import me.lordsaad.wizardry.gui.book.GuiContentPage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -14,13 +12,7 @@ import org.apache.commons.lang3.text.WordUtils;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by Saad on 4/9/2016.
@@ -55,69 +47,6 @@ public class Utils {
         if (string != null)
             for (String line : WordUtils.wrap(string, stringSize).split("\n")) lines.add(line.trim());
         return lines;
-    }
-
-    public static HashMap<Integer, ArrayList<String>> splitTextToPages(HashMap<Integer, ArrayList<String>> pages, InputStream stream, GuiContentPage page) {
-        List<String> txt = new ArrayList<>();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-        try {
-            while (true) {
-                String line = reader.readLine();
-                if (line == null) {
-                    break;
-                }
-                txt.add(line);
-            }
-            reader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        int pagenb = 0;
-        for (String line : txt) {
-
-            pages.putIfAbsent(pagenb, new ArrayList<>());
-            if (pages.get(pagenb).size() >= 18) {
-                pagenb++;
-                pages.putIfAbsent(pagenb, new ArrayList<>());
-            }
-
-            if (line.contains("/n")) pages.get(pagenb).add(" ");
-
-            else if (line.contains("/b")) pages.get(pagenb).add("-----------------------------");
-
-            else if (line.contains("/p")) {
-                pagenb++;
-                pages.putIfAbsent(pagenb, new ArrayList<>());
-
-            } else {
-                if (line.startsWith("*")) {
-                    line = line.substring(line.indexOf("*") + 1);
-                    ArrayList<String> pads = Utils.padString(line, 30);
-                    for (String padded : pads) {
-                        if (pages.get(pagenb).size() < 18) {
-                            pages.get(pagenb).add(ChatFormatting.ITALIC + padded);
-                        } else {
-                            pagenb++;
-                            pages.putIfAbsent(pagenb, new ArrayList<>());
-                            pages.get(pagenb).add(ChatFormatting.ITALIC + padded);
-                        }
-                    }
-                } else {
-                    ArrayList<String> pads = Utils.padString(line, 30);
-                    for (String padded : pads) {
-                        if (pages.get(pagenb).size() < 18) {
-                            pages.get(pagenb).add(padded);
-                        } else {
-                            pagenb++;
-                            pages.putIfAbsent(pagenb, new ArrayList<>());
-                            pages.get(pagenb).add(padded);
-                        }
-                    }
-                }
-            }
-        }
-        return pages;
     }
 
     public static void drawLine2D(int x1, int y1, int x2, int y2, int width, Color color) {

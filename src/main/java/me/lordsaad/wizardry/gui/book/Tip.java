@@ -1,8 +1,7 @@
 package me.lordsaad.wizardry.gui.book;
 
-import net.minecraft.item.ItemStack;
-
 import me.lordsaad.wizardry.gui.book.util.DataNode;
+import net.minecraft.item.ItemStack;
 
 import java.util.HashMap;
 
@@ -25,20 +24,6 @@ public class Tip {
         this.text = text;
         this.y = y;
     }
-    
-    public static Tip from(DataNode node, float y) {
-    	if(node.isString())
-    		return new Tip(node.asString(), y);
-    	
-    	return null; // TODO: Recipes
-    }
-    
-    public static Tip from(DataNode node) {
-    	if(node.isString())
-    		return new Tip(node.asString());
-    	
-    	return null; // TODO: Recipes
-    }
 
     public Tip(String text, ItemStack recipeOutput, HashMap<Slot, ItemStack> recipe) {
         this.text = text;
@@ -51,6 +36,20 @@ public class Tip {
         this.recipeOutput = recipeOutput;
         this.recipe = recipe;
         this.y = y;
+    }
+
+    public static Tip from(DataNode node, float y) {
+        if (node.isString())
+            return new Tip(node.asString(), y);
+
+        return null; // TODO: Recipes
+    }
+
+    public static Tip from(DataNode node) {
+        if (node.isString())
+            return new Tip(node.asString());
+
+        return null; // TODO: Recipes
     }
 
     public boolean hasRecipe() {

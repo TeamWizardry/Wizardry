@@ -2,7 +2,7 @@ package me.lordsaad.wizardry.tileentities;
 
 import me.lordsaad.wizardry.ModItems;
 import me.lordsaad.wizardry.Wizardry;
-import me.lordsaad.wizardry.items.ItemPearl;
+import me.lordsaad.wizardry.items.pearls.ItemQuartzPearl;
 import me.lordsaad.wizardry.particles.SparkleFX;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
@@ -57,8 +57,8 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
             for (int i = 0; i < list.tagCount(); i++)
                 inventory.add(ItemStack.loadItemStackFromNBT(list.getCompoundTagAt(i)));
         }
-        if (compound.hasKey("pearl"))
-            pearl = ItemStack.loadItemStackFromNBT(compound.getCompoundTag("pearl"));
+        if (compound.hasKey("quartzPearl"))
+            pearl = ItemStack.loadItemStackFromNBT(compound.getCompoundTag("quartzPearl"));
         if (compound.hasKey("crafting"))
             crafting = compound.getBoolean("crafting");
         if (compound.hasKey("finishedCrafting"))
@@ -80,7 +80,7 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
                 list.appendTag(anInventory.writeToNBT(new NBTTagCompound()));
             compound.setTag("inventory", list);
         }
-        if (pearl != null) compound.setTag("pearl", pearl.writeToNBT(new NBTTagCompound()));
+        if (pearl != null) compound.setTag("quartzPearl", pearl.writeToNBT(new NBTTagCompound()));
         compound.setBoolean("crafting", crafting);
         compound.setBoolean("finishedCrafting", finishedCrafting);
         compound.setInteger("craftingProgress", craftingProgress);
@@ -121,8 +121,8 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
                 inventory.add(item.getEntityItem());
                 worldObj.removeEntity(item);
 
-                if (item.getEntityItem().getItem() == ModItems.pearl) {
-                    ItemPearl pearl = (ItemPearl) item.getEntityItem().getItem();
+                if (item.getEntityItem().getItem() == ModItems.quartzPearl) {
+                    ItemQuartzPearl pearl = (ItemQuartzPearl) item.getEntityItem().getItem();
                     if (pearl.getPearlType(item.getEntityItem()).equals("mundane")) {
                         this.pearl = item.getEntityItem();
                         crafting = true;
@@ -157,7 +157,7 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
                     craftingProgress = 0;
                     crafting = false;
                     finishedCrafting = true;
-                    if (pearl != null) ((ItemPearl) pearl.getItem()).addSpellItems(pearl, inventory);
+                    if (pearl != null) ((ItemQuartzPearl) pearl.getItem()).addSpellItems(pearl, inventory);
                 }
             }
         }

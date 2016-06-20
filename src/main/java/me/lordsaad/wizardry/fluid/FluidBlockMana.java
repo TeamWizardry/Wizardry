@@ -1,8 +1,7 @@
 package me.lordsaad.wizardry.fluid;
 
-import me.lordsaad.wizardry.ModItems;
 import me.lordsaad.wizardry.Wizardry;
-import me.lordsaad.wizardry.items.ItemPearl;
+import me.lordsaad.wizardry.api.IExplodable;
 import me.lordsaad.wizardry.particles.SparkleFX;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -45,25 +44,23 @@ public class FluidBlockMana extends BlockFluidClassic {
     @Override
     public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
         if (!worldIn.isRemote) {
-            for (int i = 0; i < 2; i++) {
-                SparkleFX ambient = Wizardry.proxy.spawnParticleSparkle(worldIn, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0.5F, 0.5F, 30, 0.5, 0.1, 0.5);
-                ambient.jitter(30, 0.1, 0, 0.1);
-                ambient.setMotion(0, 0.05, 0);
-            }
+
+            SparkleFX ambient = Wizardry.proxy.spawnParticleSparkle(worldIn, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0.5F, 0.5F, 30, 0.5, 0.1, 0.5);
+            ambient.jitter(30, 0.1, 0, 0.1);
+            ambient.setMotion(0, 0.05, 0);
+
             if (entityIn instanceof EntityItem && new BlockPos(entityIn.getPositionVector()).equals(pos) && state.getValue(BlockFluidClassic.LEVEL) == 0) {
                 EntityItem ei = (EntityItem) entityIn;
                 ItemStack stack = ei.getEntityItem();
 
-                if (stack.getItem() == ModItems.pearl) {
+                if (stack.getItem() instanceof IExplodable) {
                     ei.setDead();
-                    ItemPearl pearl = (ItemPearl) stack.getItem();
-                    pearl.explode(worldIn, entityIn);
+                    ((IExplodable) stack.getItem()).explode(entityIn);
                     worldIn.setBlockState(pos, Blocks.AIR.getDefaultState());
                 }
             }
         }
     }
-
 
     @Override
     public EnumBlockRenderType getRenderType(IBlockState state) {

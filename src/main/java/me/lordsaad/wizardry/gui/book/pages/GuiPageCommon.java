@@ -17,20 +17,20 @@ import java.io.IOException;
 
 public abstract class GuiPageCommon extends Tippable {
 
-    protected GuiScreen parent;
     public String path;
     public int page;
     public int viewWidth, viewHeight, viewLeft, viewTop;
+    protected GuiScreen parent;
     protected int screenScale;
     protected DataNode data;
     protected DataNode globalData;
-    
+
     { /* helpers */ }
 
     public GuiPageCommon(GuiScreen parent, DataNode data, DataNode globalData, String path, int page) {
         this.data = data;
         this.globalData = data;
-    	this.parent = parent;
+        this.parent = parent;
         this.path = path;
         this.page = page;
         this.viewWidth = 115;

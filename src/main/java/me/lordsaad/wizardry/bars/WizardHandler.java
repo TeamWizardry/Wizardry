@@ -38,15 +38,15 @@ public class WizardHandler {
         });
     }
 
+    public static IWizardData.BarData getEntityData(Entity entity) {
+        return (IWizardData.BarData) entity.getCapability(Constants.Misc.BAR_HANDLER_CAPABILITY, null);
+    }
+
     @SubscribeEvent
     public void attachCapability(AttachCapabilitiesEvent.Entity event) {
         if (event.getEntity() instanceof EntityPlayer) {
             event.addCapability(new ResourceLocation("barData"), new WizardryDataProvider());
         }
-    }
-
-    private IWizardData.BarData getEntityData(Entity entity) {
-        return (IWizardData.BarData) entity.getCapability(Constants.Misc.BAR_HANDLER_CAPABILITY, null);
     }
 
     @SubscribeEvent

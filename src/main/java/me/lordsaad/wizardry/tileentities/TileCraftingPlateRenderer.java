@@ -1,7 +1,7 @@
 package me.lordsaad.wizardry.tileentities;
 
 import me.lordsaad.wizardry.ModItems;
-import me.lordsaad.wizardry.items.ItemPearl;
+import me.lordsaad.wizardry.items.pearls.ItemQuartzPearl;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.item.EntityItem;
@@ -44,7 +44,7 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
             for (int i = 0; i < te.getInventory().size(); i++) {
                 // Get Item
                 EntityItem item = new EntityItem(te.getWorld(), x, y, z, te.getInventory().get(i));
-                if (item.getEntityItem().getItem() == ModItems.pearl) pearl = item.getEntityItem();
+                if (item.getEntityItem().getItem() == ModItems.quartzPearl) pearl = item.getEntityItem();
 
                 item.hoverStart = 0;
                 double shifted;
@@ -62,30 +62,30 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
                     } else {
                         // IS CRAFTING //
 
-                        // Raise the pearl slowly when crafting
+                        // Raise the quartzPearl slowly when crafting
                         if (raise < 70) GL11.glTranslated(0, raise / 100, 0);
                         else GL11.glTranslated(0, 70, 0);
 
-                        // Rotate the pearl faster as it crafts
+                        // Rotate the quartzPearl faster as it crafts
                         GL11.glRotated(shifted + raise * 500, 0, 1, 0);
                     }
 
                     if (finishedCrafting)
-                        ((ItemPearl) pearl.getItem()).addSpellItems(item.getEntityItem(), te.getInventory());
+                        ((ItemQuartzPearl) pearl.getItem()).addSpellItems(item.getEntityItem(), te.getInventory());
 
-                    // Position pearl lower than the rest of the items.
+                    // Position quartzPearl lower than the rest of the items.
 
                 } else {
                     // NOT A PEARL //
 
-                    // Position item higher than the pearl.
+                    // Position item higher than the quartzPearl.
                     GL11.glTranslated(x + 0.5, y + 0.6, z + 0.5);
 
                     // Rotate item around center
                     if (!isCrafting) GL11.glRotated(shifted, 0, 1, 0);
                     else GL11.glRotated(shifted + raise, 0, 1, 0);
 
-                    // Radius of the items around the pearl.
+                    // Radius of the items around the quartzPearl.
                     if (!finishedCrafting) GL11.glTranslated(-0.5, 0, 0);
                     else GL11.glTranslated(-0.5 + raise / 100, 0, 0);
                     // Rotate the item around itself

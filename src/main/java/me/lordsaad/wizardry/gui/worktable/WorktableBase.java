@@ -27,7 +27,6 @@ public class WorktableBase extends GuiScreen {
     private Multimap<Module, Module> links;
     private Module moduleBeingDragged, moduleBeingLinked;
     private int iconSize = 16;
-    //  private boolean linkingMode = false;
     private int rotateShimmer = 0;
 
     @Override
@@ -128,7 +127,18 @@ public class WorktableBase extends GuiScreen {
                 moduleBeingDragged.setY(mouseY);
                 modulesOnPaper.add(moduleBeingDragged);
                 moduleBeingDragged = null;
-            } else moduleBeingDragged = null;
+            } else {
+                for (Module module : modulesOnPaper) {
+                    if (links.get(moduleBeingDragged).contains(module))
+                        links.get(moduleBeingDragged).remove(module);
+
+                    if (links.get(module).contains(moduleBeingDragged))
+                        links.get(module).remove(moduleBeingDragged);
+                }
+                if (modulesOnPaper.contains(moduleBeingDragged))
+                    modulesOnPaper.remove(moduleBeingDragged);
+                moduleBeingDragged = null;
+            }
         }
 
         if (clickedMouseButton == 1 && moduleBeingLinked != null) {
@@ -269,5 +279,4 @@ public class WorktableBase extends GuiScreen {
     public boolean doesGuiPauseGame() {
         return true;
     }
-
 }

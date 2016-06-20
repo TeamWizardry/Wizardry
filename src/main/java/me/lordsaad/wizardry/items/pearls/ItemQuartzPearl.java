@@ -1,6 +1,7 @@
-package me.lordsaad.wizardry.items;
+package me.lordsaad.wizardry.items.pearls;
 
 import me.lordsaad.wizardry.Wizardry;
+import me.lordsaad.wizardry.api.IExplodable;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.entity.Entity;
@@ -28,13 +29,13 @@ import java.util.Random;
 /**
  * Created by Saad on 6/10/2016.
  */
-public class ItemPearl extends Item {
+public class ItemQuartzPearl extends Item implements IExplodable {
 
-    public List<Integer> potions = new ArrayList<Integer>();
+    public List<Integer> potions = new ArrayList<>();
 
-    public ItemPearl() {
-        setRegistryName("pearl");
-        setUnlocalizedName("pearl");
+    public ItemQuartzPearl() {
+        setRegistryName("quartz_pearl");
+        setUnlocalizedName("quartz_pearl");
         GameRegistry.register(this);
         setMaxStackSize(1);
         setCreativeTab(Wizardry.tab);
@@ -136,14 +137,6 @@ public class ItemPearl extends Item {
         }
     }
 
-    public void explode(World world, Entity entityIn) {
-        Random rand = new Random();
-        int range = 5;
-        List<EntityLivingBase> entitys = entityIn.worldObj.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(entityIn.posX - range, entityIn.posY - range, entityIn.posZ - range, entityIn.posX + range, entityIn.posY + range, entityIn.posZ + range));
-        for (EntityLivingBase e : entitys) {
-            e.addPotionEffect(new PotionEffect(Potion.getPotionById(potions.get(rand.nextInt(potions.size()))), rand.nextInt(30) * 20, rand.nextInt(2) + 1));
-        }
-    }
 
     public void addSpellItems(ItemStack stack, ArrayList<ItemStack> items) {
         NBTTagCompound compound = new NBTTagCompound();
@@ -173,6 +166,16 @@ public class ItemPearl extends Item {
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldS, ItemStack newS, boolean slotChanged) {
         return slotChanged;
+    }
+
+    @Override
+    public void explode(Entity entity) {
+        Random rand = new Random();
+        int range = 5;
+        List<EntityLivingBase> entitys = entity.worldObj.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(entity.posX - range, entity.posY - range, entity.posZ - range, entity.posX + range, entity.posY + range, entity.posZ + range));
+        for (EntityLivingBase e : entitys) {
+            e.addPotionEffect(new PotionEffect(Potion.getPotionById(potions.get(rand.nextInt(potions.size()))), rand.nextInt(30) * 20, rand.nextInt(2) + 1));
+        }
     }
 
     public static class ColorHandler implements IItemColor {

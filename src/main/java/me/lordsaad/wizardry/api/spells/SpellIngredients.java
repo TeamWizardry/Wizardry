@@ -38,9 +38,9 @@ public class SpellIngredients {
     }
 
     public static class SpellShapes {
-        public static final Module BEAM = new Module(new ItemStack(Items.PRISMARINE_SHARD, 1), "The spell will be cast as a continuous beam from the pearl.", new ResourceLocation(Wizardry.MODID, "textures/items/manaIconOutline.png"));
+        public static final Module BEAM = new Module(new ItemStack(Items.PRISMARINE_SHARD, 1), "The spell will be cast as a continuous beam from the quartzPearl.", new ResourceLocation(Wizardry.MODID, "textures/items/manaIconOutline.png"));
         public static final Module PROJECTILE = new Module(new ItemStack(Items.ARROW, 1), "The spell will be cast as a projectile and do projectile damage.", new ResourceLocation(Wizardry.MODID, "textures/items/manaIconOutline.png"));
-        public static final Module MELEE = new Module(new ItemStack(Items.DIAMOND_SWORD, 1), "The spell will be cast when you inflict melee damage with the pearl.", new ResourceLocation(Wizardry.MODID, "textures/items/manaIconOutline.png"));
+        public static final Module MELEE = new Module(new ItemStack(Items.DIAMOND_SWORD, 1), "The spell will be cast when you inflict melee damage with the quartzPearl.", new ResourceLocation(Wizardry.MODID, "textures/items/manaIconOutline.png"));
         public static final Module SELF = new Module(new ItemStack(Items.GOLDEN_APPLE, 1), "The spell will be cast on yourself.", new ResourceLocation(Wizardry.MODID, "textures/items/manaIconOutline.png"));
         public static final Module ZONE = new Module(new ItemStack(Blocks.GLASS_PANE, 1), "The spell will stay in the spot you set and cast the spell.", new ResourceLocation(Wizardry.MODID, "textures/items/manaIconOutline.png"));
     }

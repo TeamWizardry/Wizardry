@@ -1,9 +1,8 @@
 package me.lordsaad.wizardry.api;
 
+import me.lordsaad.wizardry.bars.IWizardData;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-
-import me.lordsaad.wizardry.bars.IWizardData;
 
 /**
  * Created by Saad on 6/14/2016.

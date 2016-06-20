@@ -28,48 +28,48 @@ public class ItemPhysicsBook extends Item {
         setCreativeTab(Wizardry.tab);
     }
 
-	public static ItemStack getHeldBook(EntityPlayer player) {
-		ItemStack stack = player.getHeldItemMainhand();
-		if (stack == null || !(stack.getItem() instanceof ItemPhysicsBook)) {
-			stack = player.getHeldItemOffhand();
-		}
-		if (stack == null || !(stack.getItem() instanceof ItemPhysicsBook)) {
-			return null;
-		}
-		return stack;
-	}
+    public static ItemStack getHeldBook(EntityPlayer player) {
+        ItemStack stack = player.getHeldItemMainhand();
+        if (stack == null || !(stack.getItem() instanceof ItemPhysicsBook)) {
+            stack = player.getHeldItemOffhand();
+        }
+        if (stack == null || !(stack.getItem() instanceof ItemPhysicsBook)) {
+            return null;
+        }
+        return stack;
+    }
 
-	public static String getHeldPath(EntityPlayer player) {
-		ItemStack stack = getHeldBook(player);
-		String path = "/";
-		if (stack != null) {
-			path = ((ItemPhysicsBook) stack.getItem()).getGuide(stack);
-		}
-		return path;
-	}
+    public static String getHeldPath(EntityPlayer player) {
+        ItemStack stack = getHeldBook(player);
+        String path = "/";
+        if (stack != null) {
+            path = ((ItemPhysicsBook) stack.getItem()).getGuide(stack);
+        }
+        return path;
+    }
 
-	public static int getHeldPage(EntityPlayer player) {
-		ItemStack stack = getHeldBook(player);
-		int page = 0;
-		if (stack != null) {
-			page = ((ItemPhysicsBook) stack.getItem()).getPage(stack);
-		}
-		return page;
-	}
+    public static int getHeldPage(EntityPlayer player) {
+        ItemStack stack = getHeldBook(player);
+        int page = 0;
+        if (stack != null) {
+            page = ((ItemPhysicsBook) stack.getItem()).getPage(stack);
+        }
+        return page;
+    }
 
-	public static void setHeldPath(EntityPlayer player, String path) {
-		ItemStack stack = getHeldBook(player);
-		if (stack != null) {
-			((ItemPhysicsBook) stack.getItem()).setGuide(stack, path);
-		}
-	}
+    public static void setHeldPath(EntityPlayer player, String path) {
+        ItemStack stack = getHeldBook(player);
+        if (stack != null) {
+            ((ItemPhysicsBook) stack.getItem()).setGuide(stack, path);
+        }
+    }
 
-	public static void setHeldPage(EntityPlayer player, int page) {
-		ItemStack stack = getHeldBook(player);
-		if (stack != null) {
-			((ItemPhysicsBook) stack.getItem()).setPage(stack, page);
-		}
-	}
+    public static void setHeldPage(EntityPlayer player, int page) {
+        ItemStack stack = getHeldBook(player);
+        if (stack != null) {
+            ((ItemPhysicsBook) stack.getItem()).setPage(stack, page);
+        }
+    }
 
     @SideOnly(Side.CLIENT)
     public void initModel() {
@@ -82,28 +82,28 @@ public class ItemPhysicsBook extends Item {
         return ActionResult.newResult(EnumActionResult.SUCCESS, itemStackIn);
     }
 
-	public String getGuide(ItemStack stack) {
-		if (!stack.hasTagCompound())
-			return "/";
-		return stack.getTagCompound().getString("path");
-	}
+    public String getGuide(ItemStack stack) {
+        if (!stack.hasTagCompound())
+            return "/";
+        return stack.getTagCompound().getString("path");
+    }
 
-	public void setGuide(ItemStack stack, String guide) {
-		if (!stack.hasTagCompound())
-			stack.setTagCompound(new NBTTagCompound());
-		stack.getTagCompound().setString("path", guide);
-	}
+    public void setGuide(ItemStack stack, String guide) {
+        if (!stack.hasTagCompound())
+            stack.setTagCompound(new NBTTagCompound());
+        stack.getTagCompound().setString("path", guide);
+    }
 
-	public int getPage(ItemStack stack) {
-		if (!stack.hasTagCompound())
-			return 0;
-		return stack.getTagCompound().getInteger("page");
-	}
+    public int getPage(ItemStack stack) {
+        if (!stack.hasTagCompound())
+            return 0;
+        return stack.getTagCompound().getInteger("page");
+    }
 
-	public void setPage(ItemStack stack, int page) {
-		if (!stack.hasTagCompound())
-			stack.setTagCompound(new NBTTagCompound());
-		stack.getTagCompound().setInteger("page", page);
-	}
+    public void setPage(ItemStack stack, int page) {
+        if (!stack.hasTagCompound())
+            stack.setTagCompound(new NBTTagCompound());
+        stack.getTagCompound().setInteger("page", page);
+    }
 
 }
