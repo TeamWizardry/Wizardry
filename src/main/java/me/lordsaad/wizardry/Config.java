@@ -1,16 +1,15 @@
 package me.lordsaad.wizardry;
 
-import java.io.File;
-
+import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.common.config.Configuration;
 
-import net.minecraft.launchwrapper.Launch;
+import java.io.File;
 
 public class Config {
     //World Gen
     public static int manaPoolRarity;
-    public static boolean developmentEnvironment = (Boolean)Launch.blackboard.get("fml.deobfuscatedEnvironment");
-    
+    public static boolean developmentEnvironment = (Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
+
     public static void initConfig() {
         Configuration config = new Configuration(new File("config/Wizardry/World.cfg"));
         config.load();

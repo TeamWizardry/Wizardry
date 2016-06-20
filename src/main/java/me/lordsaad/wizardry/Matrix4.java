@@ -1,5 +1,10 @@
 package me.lordsaad.wizardry;
 
+import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.opengl.GL11;
+
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
@@ -7,31 +12,20 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.DoubleBuffer;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+public class Matrix4 {
+    private static DoubleBuffer glBuf = ByteBuffer.allocateDirect(16 * 8).order(ByteOrder.nativeOrder()).asDoubleBuffer();
 
-import net.minecraft.util.Rotation;
-import net.minecraft.util.math.Vec3d;
-
-import org.lwjgl.opengl.GL11;
-
-public class Matrix4
-{
-    private static DoubleBuffer glBuf = ByteBuffer.allocateDirect(16*8).order(ByteOrder.nativeOrder()).asDoubleBuffer();
-    
     //m<row><column>    
     public double m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33;
-    
-    public Matrix4()
-    {
+
+    public Matrix4() {
         m00 = m11 = m22 = m33 = 1;
     }
-    
-    public Matrix4(double d00, double d01, double d02, double d03, 
-            double d10, double d11, double d12, double d13, 
-            double d20, double d21, double d22, double d23, 
-            double d30, double d31, double d32, double d33)
-    {
+
+    public Matrix4(double d00, double d01, double d02, double d03,
+                   double d10, double d11, double d12, double d13,
+                   double d20, double d21, double d22, double d23,
+                   double d30, double d31, double d32, double d33) {
         m00 = d00;
         m01 = d01;
         m02 = d02;
@@ -49,32 +43,28 @@ public class Matrix4
         m32 = d32;
         m33 = d33;
     }
-    
-    public Matrix4(Matrix4 mat)
-    {
+
+    public Matrix4(Matrix4 mat) {
         set(mat);
     }
-    
-    public Matrix4 setIdentity()
-    {
+
+    public Matrix4 setIdentity() {
         m00 = m11 = m22 = m33 = 1;
         m01 = m02 = m03 = m10 = m12 = m13 = m20 = m21 = m23 = m30 = m31 = m32 = 0;
-        
+
         return this;
     }
-    
-    public Matrix4 translate(Vec3d vec)
-    {
+
+    public Matrix4 translate(Vec3d vec) {
         m03 += m00 * vec.xCoord + m01 * vec.yCoord + m02 * vec.zCoord;
         m13 += m10 * vec.xCoord + m11 * vec.yCoord + m12 * vec.zCoord;
         m23 += m20 * vec.xCoord + m21 * vec.yCoord + m22 * vec.zCoord;
         m33 += m30 * vec.xCoord + m31 * vec.yCoord + m32 * vec.zCoord;
-        
+
         return this;
     }
-    
-    public Matrix4 scale(Vec3d vec)
-    {
+
+    public Matrix4 scale(Vec3d vec) {
         m00 *= vec.xCoord;
         m10 *= vec.xCoord;
         m20 *= vec.xCoord;
@@ -87,33 +77,32 @@ public class Matrix4
         m12 *= vec.zCoord;
         m22 *= vec.zCoord;
         m32 *= vec.zCoord;
-        
+
         return this;
     }
-        
-    public Matrix4 rotate(double angle, Vec3d axis)
-    {
+
+    public Matrix4 rotate(double angle, Vec3d axis) {
         double c = Math.cos(angle);
         double s = Math.sin(angle);
         double mc = 1.0f - c;
-        double xy = axis.xCoord*axis.yCoord;
-        double yz = axis.yCoord*axis.zCoord;
-        double xz = axis.xCoord*axis.zCoord;
-        double xs = axis.xCoord*s;
-        double ys = axis.yCoord*s;
-        double zs = axis.zCoord*s;
+        double xy = axis.xCoord * axis.yCoord;
+        double yz = axis.yCoord * axis.zCoord;
+        double xz = axis.xCoord * axis.zCoord;
+        double xs = axis.xCoord * s;
+        double ys = axis.yCoord * s;
+        double zs = axis.zCoord * s;
 
-        double f00 = axis.xCoord*axis.xCoord*mc+c;
-        double f10 = xy*mc+zs;
-        double f20 = xz*mc-ys;
-        
-        double f01 = xy*mc-zs;
-        double f11 = axis.yCoord*axis.yCoord*mc+c;
-        double f21 = yz*mc+xs;
-        
-        double f02 = xz*mc+ys;
-        double f12 = yz*mc-xs;
-        double f22 = axis.zCoord*axis.zCoord*mc+c;
+        double f00 = axis.xCoord * axis.xCoord * mc + c;
+        double f10 = xy * mc + zs;
+        double f20 = xz * mc - ys;
+
+        double f01 = xy * mc - zs;
+        double f11 = axis.yCoord * axis.yCoord * mc + c;
+        double f21 = yz * mc + xs;
+
+        double f02 = xz * mc + ys;
+        double f12 = yz * mc - xs;
+        double f22 = axis.zCoord * axis.zCoord * mc + c;
 
         double t00 = m00 * f00 + m01 * f10 + m02 * f20;
         double t10 = m10 * f00 + m11 * f10 + m12 * f20;
@@ -135,12 +124,11 @@ public class Matrix4
         m11 = t11;
         m21 = t21;
         m31 = t31;
-        
+
         return this;
     }
-    
-    public Matrix4 leftMultiply(Matrix4 mat)
-    {
+
+    public Matrix4 leftMultiply(Matrix4 mat) {
         double n00 = m00 * mat.m00 + m10 * mat.m01 + m20 * mat.m02 + m30 * mat.m03;
         double n01 = m01 * mat.m00 + m11 * mat.m01 + m21 * mat.m02 + m31 * mat.m03;
         double n02 = m02 * mat.m00 + m12 * mat.m01 + m22 * mat.m02 + m32 * mat.m03;
@@ -174,12 +162,11 @@ public class Matrix4
         m31 = n31;
         m32 = n32;
         m33 = n33;
-        
+
         return this;
     }
-    
-    public Matrix4 multiply(Matrix4 mat)
-    {
+
+    public Matrix4 multiply(Matrix4 mat) {
         double n00 = m00 * mat.m00 + m01 * mat.m10 + m02 * mat.m20 + m03 * mat.m30;
         double n01 = m00 * mat.m01 + m01 * mat.m11 + m02 * mat.m21 + m03 * mat.m31;
         double n02 = m00 * mat.m02 + m01 * mat.m12 + m02 * mat.m22 + m03 * mat.m32;
@@ -213,12 +200,11 @@ public class Matrix4
         m31 = n31;
         m32 = n32;
         m33 = n33;
-        
+
         return this;
     }
-    
-    public Matrix4 transpose()
-    {
+
+    public Matrix4 transpose() {
         double n00 = m00;
         double n10 = m01;
         double n20 = m02;
@@ -252,17 +238,15 @@ public class Matrix4
         m31 = n31;
         m32 = n32;
         m33 = n33;
-        
+
         return this;
     }
-    
-    public Matrix4 copy()
-    {
+
+    public Matrix4 copy() {
         return new Matrix4(this);
     }
-    
-    public Matrix4 set(Matrix4 mat)
-    {
+
+    public Matrix4 set(Matrix4 mat) {
         m00 = mat.m00;
         m01 = mat.m01;
         m02 = mat.m02;
@@ -279,53 +263,47 @@ public class Matrix4
         m31 = mat.m31;
         m32 = mat.m32;
         m33 = mat.m33;
-        
+
         return this;
     }
-    
-    public void apply(Matrix4 mat)
-    {
+
+    public void apply(Matrix4 mat) {
         mat.multiply(this);
     }
-    
-    private Vec3d mult3x3(Vec3d vec)
-    {
+
+    private Vec3d mult3x3(Vec3d vec) {
         double x = m00 * vec.xCoord + m01 * vec.yCoord + m02 * vec.zCoord;
         double y = m10 * vec.xCoord + m11 * vec.yCoord + m12 * vec.zCoord;
         double z = m20 * vec.xCoord + m21 * vec.yCoord + m22 * vec.zCoord;
-        
-        return new Vec3d(x,y,z);
+
+        return new Vec3d(x, y, z);
     }
-    
-    public Vec3d apply(Vec3d vec)
-    {
+
+    public Vec3d apply(Vec3d vec) {
         vec = mult3x3(vec);
         return vec.addVector(m03, m13, m23);
     }
-    
-    public Vec3d applyN(Vec3d vec)
-    {
+
+    public Vec3d applyN(Vec3d vec) {
         mult3x3(vec);
         return vec.normalize();
     }
-    
+
     @Override
-    public String toString()
-    {
+    public String toString() {
         MathContext cont = new MathContext(4, RoundingMode.HALF_UP);
-        return "["+new BigDecimal(m00, cont)+","+new BigDecimal(m01, cont)+","+new BigDecimal(m02, cont)+","+new BigDecimal(m03, cont)+"]\n"+
-            "["+new BigDecimal(m10, cont)+","+new BigDecimal(m11, cont)+","+new BigDecimal(m12, cont)+","+new BigDecimal(m13, cont)+"]\n"+
-            "["+new BigDecimal(m20, cont)+","+new BigDecimal(m21, cont)+","+new BigDecimal(m22, cont)+","+new BigDecimal(m23, cont)+"]\n"+
-            "["+new BigDecimal(m30, cont)+","+new BigDecimal(m31, cont)+","+new BigDecimal(m32, cont)+","+new BigDecimal(m33, cont)+"]";
+        return "[" + new BigDecimal(m00, cont) + "," + new BigDecimal(m01, cont) + "," + new BigDecimal(m02, cont) + "," + new BigDecimal(m03, cont) + "]\n" +
+                "[" + new BigDecimal(m10, cont) + "," + new BigDecimal(m11, cont) + "," + new BigDecimal(m12, cont) + "," + new BigDecimal(m13, cont) + "]\n" +
+                "[" + new BigDecimal(m20, cont) + "," + new BigDecimal(m21, cont) + "," + new BigDecimal(m22, cont) + "," + new BigDecimal(m23, cont) + "]\n" +
+                "[" + new BigDecimal(m30, cont) + "," + new BigDecimal(m31, cont) + "," + new BigDecimal(m32, cont) + "," + new BigDecimal(m33, cont) + "]";
     }
-    
+
     @SideOnly(Side.CLIENT)
-    public void glApply()
-    {
+    public void glApply() {
         glBuf.put(m00).put(m10).put(m20).put(m30)
-            .put(m01).put(m11).put(m21).put(m31)
-            .put(m02).put(m12).put(m22).put(m32)
-            .put(m03).put(m13).put(m23).put(m33);
+                .put(m01).put(m11).put(m21).put(m31)
+                .put(m02).put(m12).put(m22).put(m32)
+                .put(m03).put(m13).put(m23).put(m33);
         glBuf.flip();
         GL11.glMultMatrix(glBuf);
     }

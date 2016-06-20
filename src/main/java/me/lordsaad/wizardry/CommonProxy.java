@@ -1,13 +1,11 @@
 package me.lordsaad.wizardry;
 
+import me.lordsaad.wizardry.particles.MagicBurstFX;
+import me.lordsaad.wizardry.particles.SparkleFX;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-
-import net.minecraft.world.World;
-
-import me.lordsaad.wizardry.particles.MagicBurstFX;
-import me.lordsaad.wizardry.particles.SparkleFX;
 
 public class CommonProxy {
 
@@ -41,7 +39,7 @@ public class CommonProxy {
     public SparkleFX spawnParticleSparkle(World world, double x, double y, double z, float alpha, float scale, int age, double rangeX, double rangeY, double rangeZ) {
         return null;
     }
-    
+
     public MagicBurstFX spawnParticleMagicBurst(World world, double x, double y, double z) {
         return null;
     }

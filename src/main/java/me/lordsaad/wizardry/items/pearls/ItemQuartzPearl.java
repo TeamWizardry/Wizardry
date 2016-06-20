@@ -1,10 +1,7 @@
-package me.lordsaad.wizardry.items;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+package me.lordsaad.wizardry.items.pearls;
 
 import me.lordsaad.wizardry.Wizardry;
+import me.lordsaad.wizardry.api.IExplodable;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.entity.Entity;
@@ -25,48 +22,52 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 /**
  * Created by Saad on 6/10/2016.
  */
-public class ItemPearl extends Item {
+public class ItemQuartzPearl extends Item implements IExplodable {
 
-	public List<Integer> potions = new ArrayList<Integer>();
-	
-    public ItemPearl() {
-        setRegistryName("pearl");
-        setUnlocalizedName("pearl");
+    public List<Integer> potions = new ArrayList<>();
+
+    public ItemQuartzPearl() {
+        setRegistryName("quartz_pearl");
+        setUnlocalizedName("quartz_pearl");
         GameRegistry.register(this);
         setMaxStackSize(1);
         setCreativeTab(Wizardry.tab);
         addPotions();
     }
-    
+
+    public static int intColor(int r, int g, int b) {
+        return (r * 65536 + g * 256 + b);
+    }
+
     @Override
     public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn,
-    		EnumHand hand) {
-    	
+                                                    EnumHand hand) {
+
     	if(worldIn.isRemote) {
     		for(int i = 0; i < 100; i++) {
     			
     			Wizardry.proxy.spawnParticleMagicBurst(worldIn, playerIn.posX+( (Math.random()-0.5) * 10), playerIn.posY+( (Math.random()-0.5) * 10), playerIn.posZ+( (Math.random()-0.5) * 10));
     		}
     	}
-    	return super.onItemRightClick(itemStackIn, worldIn, playerIn, hand);
-    }
-    
-    private void addPotions()
-    {
-    	potions.add(1);
-    	potions.add(3);
-    	potions.add(5);
-    	potions.add(8);
-    	potions.add(11);
-    	potions.add(12);
-    	potions.add(21);
+
+        return super.onItemRightClick(itemStackIn, worldIn, playerIn, hand);
     }
 
-    public static int intColor(int r, int g, int b) {
-        return (r * 65536 + g * 256 + b);
+    private void addPotions() {
+        potions.add(1);
+        potions.add(3);
+        potions.add(5);
+        potions.add(8);
+        potions.add(11);
+        potions.add(12);
+        potions.add(21);
     }
 
     @SideOnly(Side.CLIENT)
@@ -140,17 +141,7 @@ public class ItemPearl extends Item {
             }
         }
     }
-    
-    public void explode(World world, Entity entityIn)
-    {
-    	Random rand = new Random();
-    	int range = 5;
-    	List<EntityLivingBase> entitys = entityIn.worldObj.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(entityIn.posX - range, entityIn.posY - range, entityIn.posZ - range, entityIn.posX + range, entityIn.posY + range, entityIn.posZ + range));
-    	for(EntityLivingBase e: entitys)
-    	{
-    		e.addPotionEffect(new PotionEffect(Potion.getPotionById(potions.get(rand.nextInt(potions.size()))), rand.nextInt(60) * 20, rand.nextInt(2) + 1));
-    	}
-    }
+
 
     public void addSpellItems(ItemStack stack, ArrayList<ItemStack> items) {
         NBTTagCompound compound = new NBTTagCompound();
@@ -180,6 +171,16 @@ public class ItemPearl extends Item {
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldS, ItemStack newS, boolean slotChanged) {
         return slotChanged;
+    }
+
+    @Override
+    public void explode(Entity entity) {
+        Random rand = new Random();
+        int range = 5;
+        List<EntityLivingBase> entitys = entity.worldObj.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(entity.posX - range, entity.posY - range, entity.posZ - range, entity.posX + range, entity.posY + range, entity.posZ + range));
+        for (EntityLivingBase e : entitys) {
+            e.addPotionEffect(new PotionEffect(Potion.getPotionById(potions.get(rand.nextInt(potions.size()))), rand.nextInt(30) * 20, rand.nextInt(2) + 1));
+        }
     }
 
     public static class ColorHandler implements IItemColor {

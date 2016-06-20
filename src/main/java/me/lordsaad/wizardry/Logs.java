@@ -6,19 +6,16 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class Logs {
-    private static Logs instance = null;
-
     public static long prevTicks = -1;
-    private Logger logger;
-
     public static boolean debugMode = Config.developmentEnvironment;
     public static boolean doLogging = false;
+    private static Logs instance = null;
+    private Logger logger;
 
     private Logs() {
         logger = LogManager.getLogger("NodeNet");
@@ -35,12 +32,12 @@ public class Logs {
     public static void error(String message, Object... args) {
         getInstance().logger.log(Level.ERROR, String.format(message, args));
     }
-    
+
     public static void error(Exception e, String message, Object... args) {
         getInstance().logger.log(Level.ERROR, String.format(message, args));
         e.printStackTrace();
     }
-    
+
     public static void warn(String message, Object... args) {
         getInstance().logger.log(Level.WARN, String.format(message, args));
     }

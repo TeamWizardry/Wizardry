@@ -1,7 +1,7 @@
 package me.lordsaad.wizardry.recipes;
 
-import me.lordsaad.wizardry.items.ItemPearl;
 import me.lordsaad.wizardry.items.ItemRing;
+import me.lordsaad.wizardry.items.pearls.ItemQuartzPearl;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -26,7 +26,7 @@ public class RingRecipe implements IRecipe {
                 if (stack.getItem() instanceof ItemRing && stack.getItemDamage() == 0)
                     foundRing = true;
 
-                else if (stack.getItem() instanceof ItemPearl)
+                else if (stack.getItem() instanceof ItemQuartzPearl)
                     foundPearl = true;
                 else return false;
             }
@@ -45,7 +45,7 @@ public class RingRecipe implements IRecipe {
             if (stack != null) {
                 if (stack.getItem() instanceof ItemRing && stack.getItemDamage() == 0)
                     ring = stack;
-                else if (stack.getItem() instanceof ItemPearl)
+                else if (stack.getItem() instanceof ItemQuartzPearl)
                     pearl = stack;
             }
         }
