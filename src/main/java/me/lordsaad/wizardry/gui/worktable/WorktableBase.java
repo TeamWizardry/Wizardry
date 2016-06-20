@@ -1,25 +1,18 @@
 package me.lordsaad.wizardry.gui.worktable;
 
-import static me.lordsaad.wizardry.api.spells.SpellIngredients.IngredientType.CONDITION;
-import static me.lordsaad.wizardry.api.spells.SpellIngredients.IngredientType.EFFECT;
-import static me.lordsaad.wizardry.api.spells.SpellIngredients.IngredientType.EVENT;
-import static me.lordsaad.wizardry.api.spells.SpellIngredients.IngredientType.MODIFIER;
-
-import java.awt.Color;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashSet;
-
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import me.lordsaad.wizardry.Utils;
+import me.lordsaad.wizardry.Wizardry;
+import me.lordsaad.wizardry.api.spells.SpellIngredients;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-
-import me.lordsaad.wizardry.Utils;
-import me.lordsaad.wizardry.Wizardry;
+import java.awt.*;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 
 /**
  * Created by Saad on 6/17/2016.
@@ -50,16 +43,18 @@ public class WorktableBase extends GuiScreen {
 
     private void initModules() {
         int ID = 0;
-        for (Class clazz : Modules.class.getDeclaredClasses()) {
-            for (Field field : clazz.getDeclaredFields()) {
-                try {
-                    Module module = ((Module) field.get(clazz)).copy();
-                    module.setID(ID++);
-                    modulesInSidebar.add(module);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
+        for (Class clazz : SpellIngredients.class.getDeclaredClasses()) {
+            if (clazz != SpellIngredients.IngredientType.class)
+                for (Field field : clazz.getDeclaredFields()) {
+                    try {
+                        Module module = ((Module) field.get(clazz)).copy();
+                        module.setID(ID++);
+                        module.setType(SpellIngredients.IngredientType.valueOf(clazz.getSimpleName().toUpperCase()));
+                        modulesInSidebar.add(module);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
         }
     }
 
@@ -141,23 +136,22 @@ public class WorktableBase extends GuiScreen {
             for (Module module : modulesOnPaper) {
                 boolean inside = mouseX >= module.getX() - iconSize / 2 && mouseX < module.getX() - iconSize / 2 + iconSize && mouseY >= module.getY() - iconSize / 2 && mouseY < module.getY() - iconSize / 2 + iconSize;
                 if (inside) {
-                	Module from = moduleBeingLinked;
-                	Module to = module;
-                	
-                	boolean wasLinked = false;
-                	
-                	if(links.get(from).contains(to)) {
-                		links.get(from).remove(to);
-                		wasLinked = true;
-                	}
-                	if(links.get(to).contains(from)) {
-                		links.get(to).remove(from);
-                		wasLinked = true;
-                	}
-                	
-                	if(!wasLinked) {
-                		links.get(from).add(to);
-                	}
+                    Module from = moduleBeingLinked;
+
+                    boolean wasLinked = false;
+
+                    if (links.get(from).contains(module)) {
+                        links.get(from).remove(module);
+                        wasLinked = true;
+                    }
+                    if (links.get(module).contains(from)) {
+                        links.get(module).remove(from);
+                        wasLinked = true;
+                    }
+
+                    if (!wasLinked) {
+                        links.get(from).add(module);
+                    }
                     moduleBeingLinked = null;
                     insideAnything = true;
                     break;
@@ -218,11 +212,14 @@ public class WorktableBase extends GuiScreen {
         for (Module module : modulesInSidebar) {
 
             GlStateManager.color(1F, 1F, 1F, 1F);
-            if (module.getType() == EFFECT) sidebarX = -backgroundWidth / 2 - 90;
-            else if (module.getType() == CONDITION) sidebarX = -backgroundWidth / 2 - 180;
-            else if (module.getType() == MODIFIER) sidebarX = backgroundWidth / 2 + 20;
-            else if (module.getType() == EVENT) sidebarX = backgroundWidth / 2 + 100;
-            else sidebarX = right + 240; // PERSPECTIVE
+            if (module.getType() == SpellIngredients.IngredientType.SPELLEFFECTS) sidebarX = -backgroundWidth / 2 - 90;
+            else if (module.getType() == SpellIngredients.IngredientType.SPELLCONDITIONS)
+                sidebarX = -backgroundWidth / 2 - 180;
+            else if (module.getType() == SpellIngredients.IngredientType.SPELLEFFECTMODIFIERS || module.getType() == SpellIngredients.IngredientType.SPELLSHAPEMODIFIERS)
+                sidebarX = backgroundWidth / 2 + 20;
+            else if (module.getType() == SpellIngredients.IngredientType.SPELLEVENTS)
+                sidebarX = backgroundWidth / 2 + 100;
+            else sidebarX = backgroundWidth / 2 + 240;
 
             int x = width / 2 + sidebarX + iconSeparation + (row * iconSize) + (row * iconSeparation);
             int y = top + iconSeparation + (column * iconSize) + (column * iconSeparation);

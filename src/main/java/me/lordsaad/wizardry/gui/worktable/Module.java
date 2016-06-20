@@ -11,13 +11,12 @@ public class Module {
 
     private int x, y, ID;
     private ResourceLocation icon;
-    private SpellIngredients.IngredientType type;
     private ItemStack stack;
     private String text;
+    private SpellIngredients.IngredientType type;
 
-    public Module(String text, ResourceLocation icon, SpellIngredients.IngredientType type, ItemStack stack) {
+    public Module(ItemStack stack, String text, ResourceLocation icon) {
         this.icon = icon;
-        this.type = type;
         this.stack = stack;
         this.text = text;
     }
@@ -46,14 +45,6 @@ public class Module {
         this.icon = icon;
     }
 
-    public SpellIngredients.IngredientType getType() {
-        return type;
-    }
-
-    public void setType(SpellIngredients.IngredientType type) {
-        this.type = type;
-    }
-
     public ItemStack getStack() {
         return stack;
     }
@@ -71,10 +62,10 @@ public class Module {
     }
 
     public Module copy() {
-        Module module = new Module(text, icon, type, stack);
-        //module.setID(ID);
+        Module module = new Module(stack, text, icon);
         module.setX(x);
         module.setY(y);
+        module.setType(type);
         return module;
     }
 
@@ -86,4 +77,11 @@ public class Module {
         this.ID = ID;
     }
 
+    public SpellIngredients.IngredientType getType() {
+        return type;
+    }
+
+    public void setType(SpellIngredients.IngredientType type) {
+        this.type = type;
+    }
 }

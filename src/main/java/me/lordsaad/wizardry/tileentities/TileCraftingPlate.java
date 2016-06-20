@@ -26,7 +26,7 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
 
     private ArrayList<ItemStack> inventory = new ArrayList<>();
     private boolean structureComplete = false;
-    private boolean crafting = false, finishedCrafting = false;
+    private boolean crafting = false, finishedCrafting = false, recipeAvailable = false;
     private int craftingProgress = 0, craftingTime = 200;
     private ItemStack pearl;
     private IBlockState state;

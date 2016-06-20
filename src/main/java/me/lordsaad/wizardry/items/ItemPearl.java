@@ -1,9 +1,5 @@
 package me.lordsaad.wizardry.items;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import me.lordsaad.wizardry.Wizardry;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
@@ -25,13 +21,17 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 /**
  * Created by Saad on 6/10/2016.
  */
 public class ItemPearl extends Item {
 
-	public List<Integer> potions = new ArrayList<Integer>();
-	
+    public List<Integer> potions = new ArrayList<Integer>();
+
     public ItemPearl() {
         setRegistryName("pearl");
         setUnlocalizedName("pearl");
@@ -40,29 +40,28 @@ public class ItemPearl extends Item {
         setCreativeTab(Wizardry.tab);
         addPotions();
     }
-    
-    @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn,
-    		EnumHand hand) {
-    	
-    	Wizardry.proxy.spawnParticleMagicBurst(worldIn, playerIn.posX, playerIn.posY, playerIn.posZ);
-    	
-    	return super.onItemRightClick(itemStackIn, worldIn, playerIn, hand);
-    }
-    
-    private void addPotions()
-    {
-    	potions.add(1);
-    	potions.add(3);
-    	potions.add(5);
-    	potions.add(8);
-    	potions.add(11);
-    	potions.add(12);
-    	potions.add(21);
-    }
 
     public static int intColor(int r, int g, int b) {
         return (r * 65536 + g * 256 + b);
+    }
+
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn,
+                                                    EnumHand hand) {
+
+        Wizardry.proxy.spawnParticleMagicBurst(worldIn, playerIn.posX, playerIn.posY, playerIn.posZ);
+
+        return super.onItemRightClick(itemStackIn, worldIn, playerIn, hand);
+    }
+
+    private void addPotions() {
+        potions.add(1);
+        potions.add(3);
+        potions.add(5);
+        potions.add(8);
+        potions.add(11);
+        potions.add(12);
+        potions.add(21);
     }
 
     @SideOnly(Side.CLIENT)
@@ -136,16 +135,14 @@ public class ItemPearl extends Item {
             }
         }
     }
-    
-    public void explode(World world, Entity entityIn)
-    {
-    	Random rand = new Random();
-    	int range = 5;
-    	List<EntityLivingBase> entitys = entityIn.worldObj.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(entityIn.posX - range, entityIn.posY - range, entityIn.posZ - range, entityIn.posX + range, entityIn.posY + range, entityIn.posZ + range));
-    	for(EntityLivingBase e: entitys)
-    	{
-    		e.addPotionEffect(new PotionEffect(Potion.getPotionById(potions.get(rand.nextInt(potions.size()))), rand.nextInt(60) * 20, rand.nextInt(2) + 1));
-    	}
+
+    public void explode(World world, Entity entityIn) {
+        Random rand = new Random();
+        int range = 5;
+        List<EntityLivingBase> entitys = entityIn.worldObj.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(entityIn.posX - range, entityIn.posY - range, entityIn.posZ - range, entityIn.posX + range, entityIn.posY + range, entityIn.posZ + range));
+        for (EntityLivingBase e : entitys) {
+            e.addPotionEffect(new PotionEffect(Potion.getPotionById(potions.get(rand.nextInt(potions.size()))), rand.nextInt(30) * 20, rand.nextInt(2) + 1));
+        }
     }
 
     public void addSpellItems(ItemStack stack, ArrayList<ItemStack> items) {
