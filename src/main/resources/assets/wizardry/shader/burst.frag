@@ -2,12 +2,12 @@
 
 uniform int time;
 uniform int count;
-uniform float[16] rands; 
 
 float millis = float(time);
+int randID = 0;
 
 float rand(int n) {
-  return rands[int(mod(n, 16.))];
+  return fract(sin(float(n)) * 43758.5453123);;
 }
 
 vec4 godSparkleSimple( vec2 uv )
@@ -24,23 +24,19 @@ vec4 godSparkleSimple( vec2 uv )
     
     float angle = degrees(atan(detP, dotP));
     angle += 180.;
-    angle += 0.2 * millis;
+    angle += 0.2 * 0.001 * millis;
     
-    int randID = 0;
     for(int i = 0; i < count; i++) {
         float startAngle = 360. * rand(randID++);
         float angleWidth = 20. + 40. * rand(randID++);
         float speed = 0.2 * ( rand(randID++) - 0.45 );
         
-        startAngle += speed * millis;
+        startAngle += speed * 0.001 * millis;
         
         float checkAngle = angle - startAngle;
         
-        checkAngle = mod(checkAngle, 360.);
+        checkAngle = mod(checkAngle, angleWidth*2.);
         float dist = 0.25 + 0.25 * rand(randID++);
-    
-        if(lenSq > dist * dist)
-            continue;
         
         if(checkAngle < angleWidth) {
             vec4 ourColor = gl_Color;
@@ -57,6 +53,11 @@ vec4 godSparkleSimple( vec2 uv )
 
 void main()
 {
-    vec2 uv = vec2(gl_TexCoord[0]) - vec2(0.5, 0.5);
+    vec2 uv = vec2(gl_TexCoord[0]);
+    if(uv.x > 1) {
+        randID = int(uv.x);
+        uv.x = fract(uv.x);
+    }
+    uv -= vec2(0.5);
     gl_FragColor = godSparkleSimple(uv);
 }

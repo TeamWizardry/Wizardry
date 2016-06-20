@@ -11,9 +11,12 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.GL11;
 
 import me.lordsaad.wizardry.Matrix4;
+import me.lordsaad.wizardry.shader.ShaderCallback;
+import me.lordsaad.wizardry.shader.ShaderHelper;
 
 public class MagicBurstFX extends QueuedParticle {
 
@@ -36,22 +39,19 @@ public class MagicBurstFX extends QueuedParticle {
 			GlStateManager.color(1, 1, 1, 1);
 			GlStateManager.enableBlend();
 			GlStateManager.shadeModel(GL11.GL_SMOOTH);
-//			GL11.gl
+			ShaderHelper.useShader(ShaderHelper.burst, new ShaderCallback() {
+				@Override
+				public void call(int shader) {
+					int count = ARBShaderObjects.glGetUniformLocationARB(shader, "count");
+					ARBShaderObjects.glUniform1iARB(count, 15);
+				}
+			});
+			tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
 			for (MagicBurstFX fx : renderQueue) {
-//				ShaderHelper.useShader(ShaderHelper.burst, new ShaderCallback() {
-//					@Override
-//					public void call(int shader) {
-//						int count = ARBShaderObjects.glGetUniformLocationARB(shader, "count");
-//						ARBShaderObjects.glUniform1iARB(count, 1);
-//						
-//						int randLoc = ARBShaderObjects.glGetUniformLocationARB(shader, "rands");
-//						ARBShaderObjects.glUniform1ARB(randLoc, fx.rands);
-//					}
-//				});
-				fx.render(tessellator.getBuffer());
+				fx.renderFlat(tessellator.getBuffer());
 			}
-
-//			ShaderHelper.releaseShader();
+			tessellator.draw();
+			ShaderHelper.releaseShader();
 			GlStateManager.color(1, 1, 1, 1);
 			GlStateManager.enableTexture2D();
 			renderQueue.clear();
@@ -66,12 +66,40 @@ public class MagicBurstFX extends QueuedParticle {
 	public MagicBurstFX(World worldIn, double posXIn, double posYIn, double posZIn) {
 		super(worldIn, posXIn, posYIn, posZIn);
 		setMaxAge(200);
-		Random rand = new Random();
-		while(rands.hasRemaining()) {
-			rands.put(rand.nextFloat());
-		}
+		particleRed = (float)Math.random();
+		particleGreen = (float)Math.random();
+		particleBlue = (float)Math.random();
+		particleGravity = 0.1f;
+		RAND_COUNT = 1+ (int)( Math.random()*100 );
 	}
+	public void renderFlat(VertexBuffer buffer) {
+		float minU = 10 + RAND_COUNT;
+        float maxU = minU + 1;
+        float minV = 0;
+        float maxV = 1;
+        float size = 0.4F * this.particleScale;
 
+        if (this.particleTexture != null)
+        {
+            minU = this.particleTexture.getMinU();
+            maxU = this.particleTexture.getMaxU();
+            minV = this.particleTexture.getMinV();
+            maxV = this.particleTexture.getMaxV();
+        }
+
+        float posX = (float)(this.prevPosX + (this.posX - this.prevPosX) * (double)partialTicks - interpPosX);
+        float posY = (float)(this.prevPosY + (this.posY - this.prevPosY) * (double)partialTicks - interpPosY);
+        float posZ = (float)(this.prevPosZ + (this.posZ - this.prevPosZ) * (double)partialTicks - interpPosZ);
+        int light = this.getBrightnessForRender(partialTicks);
+        int lightU = light >> 16 & 65535;
+        int lightV = light & 65535;
+        
+        buffer.pos((double)(posX - rotationX * size - rotationXY * size), (double)(posY - rotationZ * size), (double)(posZ - rotationYZ * size - rotationXZ * size)).tex((double)maxU, (double)maxV).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(lightU, lightV).endVertex();
+        buffer.pos((double)(posX - rotationX * size + rotationXY * size), (double)(posY + rotationZ * size), (double)(posZ - rotationYZ * size + rotationXZ * size)).tex((double)maxU, (double)minV).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(lightU, lightV).endVertex();
+        buffer.pos((double)(posX + rotationX * size + rotationXY * size), (double)(posY + rotationZ * size), (double)(posZ + rotationYZ * size + rotationXZ * size)).tex((double)minU, (double)minV).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(lightU, lightV).endVertex();
+        buffer.pos((double)(posX + rotationX * size - rotationXY * size), (double)(posY - rotationZ * size), (double)(posZ + rotationYZ * size - rotationXZ * size)).tex((double)minU, (double)maxV).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(lightU, lightV).endVertex();
+	}
+	
 	public void render(VertexBuffer buffer) {
 		Tessellator tessellator = Tessellator.getInstance();
 		buffer = tessellator.getBuffer();

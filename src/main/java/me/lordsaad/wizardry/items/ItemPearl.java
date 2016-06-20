@@ -45,8 +45,12 @@ public class ItemPearl extends Item {
     public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn,
     		EnumHand hand) {
     	
-    	Wizardry.proxy.spawnParticleMagicBurst(worldIn, playerIn.posX, playerIn.posY, playerIn.posZ);
-    	
+    	if(worldIn.isRemote) {
+    		for(int i = 0; i < 100; i++) {
+    			
+    			Wizardry.proxy.spawnParticleMagicBurst(worldIn, playerIn.posX+( (Math.random()-0.5) * 10), playerIn.posY+( (Math.random()-0.5) * 10), playerIn.posZ+( (Math.random()-0.5) * 10));
+    		}
+    	}
     	return super.onItemRightClick(itemStackIn, worldIn, playerIn, hand);
     }
     

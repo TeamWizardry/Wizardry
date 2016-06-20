@@ -55,7 +55,7 @@ public final class ShaderHelper implements IResourceManagerReloadListener {
 
 		if(shader != 0) {
 			int time = ARBShaderObjects.glGetUniformLocationARB(shader, "time");
-			ARBShaderObjects.glUniform1iARB(time, (int)System.currentTimeMillis());
+			ARBShaderObjects.glUniform1iARB(time, (int)(System.nanoTime()/1000));
 
 			if(callback != null)
 				callback.call(shader);
