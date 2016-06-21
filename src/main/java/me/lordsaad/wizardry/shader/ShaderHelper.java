@@ -1,32 +1,36 @@
 package me.lordsaad.wizardry.shader;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.resources.IReloadableResourceManager;
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.IResourceManagerReloadListener;
+
+import org.lwjgl.opengl.ARBFragmentShader;
+import org.lwjgl.opengl.ARBShaderObjects;
+import org.lwjgl.opengl.ARBVertexShader;
+import org.lwjgl.opengl.GL11;
+
 /**
  * Credit to Vazkii (https://github.com/Vazkii/Botania/blob/master/src/main/java/vazkii/botania/client/core/helper/ShaderHelper.java)
  */
 
 import me.lordsaad.wizardry.Config;
 import me.lordsaad.wizardry.Logs;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.resources.IReloadableResourceManager;
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.IResourceManagerReloadListener;
-import org.lwjgl.opengl.ARBFragmentShader;
-import org.lwjgl.opengl.ARBShaderObjects;
-import org.lwjgl.opengl.ARBVertexShader;
-import org.lwjgl.opengl.GL11;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import me.lordsaad.wizardry.shader.shaders.BurstShader;
 
 public final class ShaderHelper implements IResourceManagerReloadListener {
     private static final int VERT = ARBVertexShader.GL_VERTEX_SHADER_ARB;
     private static final int FRAG = ARBFragmentShader.GL_FRAGMENT_SHADER_ARB;
-    public static int burst = 0;
     private static boolean isResourcesRegistered = false;
     private static ShaderHelper INSTANCE = new ShaderHelper();
 
+    public static BurstShader burst;
+    
     private ShaderHelper() {
     }
 
@@ -34,34 +38,37 @@ public final class ShaderHelper implements IResourceManagerReloadListener {
         if (!useShaders())
             return;
 
-        burst = createProgram(null, "/assets/wizardry/shader/burst.frag");
+        burst = new BurstShader( createProgram(null, "/assets/wizardry/shader/burstNew.frag") );
+        
         if (Config.developmentEnvironment && Minecraft.getMinecraft().getResourceManager() instanceof IReloadableResourceManager && !isResourcesRegistered) {
             isResourcesRegistered = true;
             ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(INSTANCE);
         }
     }
 
-    public static void useShader(int shader, ShaderCallback callback) {
-        if (!useShaders())
+    public static <T extends Shader> void useShader(T shader, ShaderCallback<T> callback) {
+    	if(shader == null) {
+            ARBShaderObjects.glUseProgramObjectARB(0);
+            return;
+    	}
+    	if (!useShaders())
             return;
 
-        ARBShaderObjects.glUseProgramObjectARB(shader);
+        ARBShaderObjects.glUseProgramObjectARB(shader.getGlName());
 
-        if (shader != 0) {
-            int time = ARBShaderObjects.glGetUniformLocationARB(shader, "time");
-            ARBShaderObjects.glUniform1iARB(time, (int) System.currentTimeMillis());
+    	if(shader.time != null)
+    		shader.time.set((int) (System.nanoTime()/1000000));
 
-            if (callback != null)
-                callback.call(shader);
-        }
+        if (callback != null)
+            callback.call(shader);
     }
 
-    public static void useShader(int shader) {
+    public static <T extends Shader> void useShader(T shader) {
         useShader(shader, null);
     }
 
     public static void releaseShader() {
-        useShader(0);
+        useShader(null);
     }
 
     public static boolean useShaders() {
@@ -116,6 +123,8 @@ public final class ShaderHelper implements IResourceManagerReloadListener {
             Logs.error(getLogInfo(program, logText));
             return 0;
         }
+        
+        Logs.log("Created program %d - VERT:'%s' FRAG:'%s'", program, vert, frag);
 
         return program;
     }

@@ -17,6 +17,7 @@ import org.lwjgl.opengl.GL11;
 import me.lordsaad.wizardry.Matrix4;
 import me.lordsaad.wizardry.shader.ShaderCallback;
 import me.lordsaad.wizardry.shader.ShaderHelper;
+import me.lordsaad.wizardry.shader.shaders.BurstShader;
 
 public class MagicBurstFX extends QueuedParticle {
 
@@ -39,11 +40,22 @@ public class MagicBurstFX extends QueuedParticle {
 			GlStateManager.color(1, 1, 1, 1);
 			GlStateManager.enableBlend();
 			GlStateManager.shadeModel(GL11.GL_SMOOTH);
-			ShaderHelper.useShader(ShaderHelper.burst, new ShaderCallback() {
+			ShaderHelper.useShader(ShaderHelper.burst, new ShaderCallback<BurstShader>() {
 				@Override
-				public void call(int shader) {
-					int count = ARBShaderObjects.glGetUniformLocationARB(shader, "count");
-					ARBShaderObjects.glUniform1iARB(count, 15);
+				public void call(BurstShader shader) {
+//					int count = ARBShaderObjects.glGetUniformLocationARB(shader.getGlName(), "rayFade");
+//					ARBShaderObjects.glUniform1iARB(count, 2);
+					if(shader.count != null)
+						shader.count.set(5);
+//					shader.count.set(10);
+					if(shader.rotationSpeed != null)
+						shader.rotationSpeed.set(3);
+//					shader.glowColor.set(1, 1, 1, 1);
+//					shader.centerColor.set(0, 1, 1, 1);
+//					shader.rayFade.set(2);
+//					shader.glowFade.set(0.5);
+//					shader.lengthRandomness.set(0.4);
+//					shader.centerRadius.set(0.05);
 				}
 			});
 			tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
@@ -65,12 +77,12 @@ public class MagicBurstFX extends QueuedParticle {
 	
 	public MagicBurstFX(World worldIn, double posXIn, double posYIn, double posZIn) {
 		super(worldIn, posXIn, posYIn, posZIn);
-		setMaxAge(200);
-		particleRed = (float)Math.random();
-		particleGreen = (float)Math.random();
-		particleBlue = (float)Math.random();
+		setMaxAge(2000);
+		particleRed = 1;//(float)Math.random();
+		particleGreen = 0.5f;//(float)Math.random();
+		particleBlue = 0;//(float)Math.random();
 		particleGravity = 0.1f;
-		RAND_COUNT = 1+ (int)( Math.random()*100 );
+//		RAND_COUNT = 1+ (int)( Math.random()*100 );
 	}
 	public void renderFlat(VertexBuffer buffer) {
 		float minU = 10 + RAND_COUNT;

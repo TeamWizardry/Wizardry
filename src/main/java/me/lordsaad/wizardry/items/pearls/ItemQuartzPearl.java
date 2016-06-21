@@ -51,9 +51,9 @@ public class ItemQuartzPearl extends Item implements IExplodable {
                                                     EnumHand hand) {
 
     	if(worldIn.isRemote) {
-    		for(int i = 0; i < 100; i++) {
+    		for(int i = 0; i < 10; i++) {
     			
-    			Wizardry.proxy.spawnParticleMagicBurst(worldIn, playerIn.posX+( (Math.random()-0.5) * 10), playerIn.posY+( (Math.random()-0.5) * 10), playerIn.posZ+( (Math.random()-0.5) * 10));
+    			Wizardry.proxy.spawnParticleMagicBurst(worldIn, playerIn.posX+( (Math.random()-0.5) * 5), playerIn.posY+( (Math.random()-0.5) * 10), playerIn.posZ+( (Math.random()-0.5) * 5));
     		}
     	}
 
@@ -183,6 +183,7 @@ public class ItemQuartzPearl extends Item implements IExplodable {
         }
     }
 
+    @SideOnly(Side.CLIENT)
     public static class ColorHandler implements IItemColor {
         public ColorHandler() {
         }
