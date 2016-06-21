@@ -19,10 +19,10 @@ import java.util.ArrayList;
  */
 public class WorktableBase extends GuiScreen {
 
-    public static int left, top, right;
-    public static int backgroundWidth = 214, backgroundHeight = 220; // SIZE OF PAPER
-    public static ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sample-page-background.png");
-    public static ArrayList<Module> modulesInSidebar;
+    private static int left, top, right;
+    private static int backgroundWidth = 214, backgroundHeight = 220; // SIZE OF PAPER
+    private static ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sample-page-background.png");
+    private static ArrayList<Module> modulesInSidebar;
     private ArrayList<Module> modulesOnPaper;
     private Multimap<Module, Module> links;
     private Module moduleBeingDragged, moduleBeingLinked;
@@ -56,29 +56,6 @@ public class WorktableBase extends GuiScreen {
                 }
         }
     }
-
-   /* private void updateModuleLocation(Module module) {
-        if (module == null) return;
-        if (module.getModules().isEmpty()) return;
-
-        boolean inside = module.getX() >= left && module.getX() < left + backgroundWidth && module.getY() >= top && module.getY() < top + backgroundHeight;
-
-        ArrayList<Module> concurrentModules = new ArrayList<>();
-        concurrentModules.addAll(module.getModules()); // original
-        for (Module linkedModule : concurrentModules) { // linked to original
-
-            ArrayList<Module> doubleConcurrentModules = new ArrayList<>();
-            doubleConcurrentModules.addAll(linkedModule.getModules());
-            linkedModule.getModules().stream().filter(doubleLinkedModule -> doubleLinkedModule == module).filter(doubleLinkedModule -> doubleLinkedModule.getX() != module.getX() || doubleLinkedModule.getY() != module.getY()).forEach(doubleLinkedModule -> {
-                if (inside) {
-                    doubleConcurrentModules.remove(doubleLinkedModule);
-                    doubleConcurrentModules.add(module);
-                } else doubleConcurrentModules.remove(doubleLinkedModule);
-            });
-            linkedModule.setModules(doubleConcurrentModules);
-        }
-        module.setModules(concurrentModules);
-    }*/
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int clickedMouseButton) throws IOException {

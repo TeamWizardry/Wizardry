@@ -27,12 +27,19 @@ import org.apache.logging.log4j.Logger;
  */
 @Mod(modid = Wizardry.MODID, version = Wizardry.VERSION, name = Wizardry.MODNAME, useMetadata = true)
 public class Wizardry {
+
     public static final String MODID = "wizardry";
     public static final String MODNAME = "Wizardry";
     public static final String VERSION = "1.0";
     public static final String CLIENT = "me.lordsaad.wizardry.client.ClientProxy";
     public static final String SERVER = "me.lordsaad.wizardry.CommonProxy";
     public static PacketLoggingHandler packetHandler;
+    public static Logger logger;
+
+    @SidedProxy(clientSide = CLIENT, serverSide = SERVER)
+    public static CommonProxy proxy;
+    @Mod.Instance
+    public static Wizardry instance;
 
     public static CreativeTabs tab = new CreativeTabs(MODNAME) {
         @Override
@@ -46,11 +53,6 @@ public class Wizardry {
             return ModItems.physicsBook;
         }
     };
-    @SidedProxy(clientSide = CLIENT, serverSide = SERVER)
-    public static CommonProxy proxy;
-    @Mod.Instance
-    public static Wizardry instance;
-    public static Logger logger;
 
     static {
         FluidRegistry.enableUniversalBucket();
@@ -68,13 +70,12 @@ public class Wizardry {
         CraftingRecipes.initCrafting();
 
         MinecraftForge.EVENT_BUS.register(new EventHandler());
+
         PacketHandler.INSTANCE.getClass(); // loading the class should be enough to initialize the channel
         proxy.loadModels();
 
         proxy.preInit(event);
-        if (proxy != null) {
-            NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
-        }
+        if (proxy != null) NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
     }
 
     @Mod.EventHandler

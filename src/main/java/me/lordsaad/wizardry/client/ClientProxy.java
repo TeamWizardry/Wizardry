@@ -4,7 +4,6 @@ import me.lordsaad.wizardry.CommonProxy;
 import me.lordsaad.wizardry.ModBlocks;
 import me.lordsaad.wizardry.ModItems;
 import me.lordsaad.wizardry.event.HudEventHandler;
-import me.lordsaad.wizardry.event.ManaBarHandler;
 import me.lordsaad.wizardry.particles.MagicBurstFX;
 import me.lordsaad.wizardry.particles.ParticleRenderDispatcher;
 import me.lordsaad.wizardry.particles.SparkleFX;
@@ -22,6 +21,7 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void preInit(FMLPreInitializationEvent event) {
         ShaderHelper.initShaders();
+        MinecraftForge.EVENT_BUS.register(new HudEventHandler());
     }
 
     @Override
@@ -33,8 +33,6 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void postInit(FMLPostInitializationEvent event) {
-        ManaBarHandler manaBarHandler = new ManaBarHandler(Minecraft.getMinecraft());
-        MinecraftForge.EVENT_BUS.register(new HudEventHandler(manaBarHandler));
     }
 
     @Override
