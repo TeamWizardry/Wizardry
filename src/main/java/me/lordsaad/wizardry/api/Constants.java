@@ -26,7 +26,8 @@ public class Constants {
     }
 
     public static class WorkTable {
-        public static final int LINKING_TOOL = 0;
+        public static final int DONE_BUTTON = 0;
+        public static final int CONFIRM_BUTTON = 1;
     }
 
     public static class Misc {

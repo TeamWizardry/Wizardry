@@ -1,8 +1,6 @@
 package me.lordsaad.wizardry;
 
-import me.lordsaad.wizardry.items.ItemDebugger;
-import me.lordsaad.wizardry.items.ItemPhysicsBook;
-import me.lordsaad.wizardry.items.ItemRing;
+import me.lordsaad.wizardry.items.*;
 import me.lordsaad.wizardry.items.pearls.ItemGlassPearl;
 import me.lordsaad.wizardry.items.pearls.ItemQuartzPearl;
 import net.minecraft.client.Minecraft;
@@ -16,6 +14,8 @@ public class ModItems {
     public static ItemGlassPearl glassPearl;
     public static ItemRing ring;
     public static ItemPhysicsBook physicsBook;
+    public static ItemVinteumDust vinteumDust;
+    public static ItemManaPearl manaPearl;
 
     public static ItemDebugger debug;
 
@@ -25,6 +25,8 @@ public class ModItems {
         ring = new ItemRing();
         physicsBook = new ItemPhysicsBook();
         debug = new ItemDebugger();
+        vinteumDust = new ItemVinteumDust();
+        manaPearl = new ItemManaPearl();
     }
 
     public static void initModels() {
@@ -33,6 +35,8 @@ public class ModItems {
         physicsBook.initModel();
         ring.initModel();
         debug.initModel();
+        vinteumDust.initModel();
+        manaPearl.initModel();
     }
 
     public static void initColors() {

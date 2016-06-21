@@ -4,7 +4,10 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import me.lordsaad.wizardry.Utils;
 import me.lordsaad.wizardry.Wizardry;
+import me.lordsaad.wizardry.api.Constants;
 import me.lordsaad.wizardry.api.spells.SpellIngredients;
+import me.lordsaad.wizardry.gui.book.Button;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
@@ -38,6 +41,9 @@ public class WorktableBase extends GuiScreen {
         modulesOnPaper = new ArrayList<>();
         links = HashMultimap.create();
         initModules();
+
+        buttonList.add(new Button(Constants.WorkTable.DONE_BUTTON, backgroundWidth / 2 + 30, top + 100, 30, 30));
+        buttonList.add(new Button(Constants.WorkTable.CONFIRM_BUTTON, backgroundWidth / 2 - 30, top + 100, 30, 30));
     }
 
     private void initModules() {
@@ -158,6 +164,17 @@ public class WorktableBase extends GuiScreen {
         mc.renderEngine.bindTexture(BACKGROUND_TEXTURE);
         drawTexturedModalRect(left, top, 0, 0, backgroundWidth, backgroundHeight);
         // RENDER BACKGROUND //
+
+        // RENDER BUTTONS //
+        for (GuiButton button : buttonList)
+            if (button.id == Constants.WorkTable.CONFIRM_BUTTON) {
+                mc.renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/gui/book/error.png"));
+                drawScaledCustomSizeModalRect(button.xPosition, button.yPosition, 0, 0, 0, 0, 30, 30, 30, 30);
+            } else if (button.id == Constants.WorkTable.DONE_BUTTON) {
+                mc.renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/gui/book/fof.png"));
+                drawScaledCustomSizeModalRect(button.xPosition, button.yPosition, 0, 0, 0, 0, 30, 30, 30, 30);
+            }
+        // RENDER BUTTONS //
 
         // SHIMMER CURSOR IF LINKING MODE //
         if (moduleBeingLinked != null) {
