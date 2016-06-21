@@ -169,10 +169,10 @@ public class WorktableBase extends GuiScreen {
         for (GuiButton button : buttonList)
             if (button.id == Constants.WorkTable.CONFIRM_BUTTON) {
                 mc.renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/gui/book/error.png"));
-                drawScaledCustomSizeModalRect(button.xPosition, button.yPosition, 0, 0, 0, 0, 30, 30, 30, 30);
+                drawScaledCustomSizeModalRect(button.xPosition, button.yPosition, 0, 0, 0, 0, 100, 50, 100, 50);
             } else if (button.id == Constants.WorkTable.DONE_BUTTON) {
                 mc.renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/gui/book/fof.png"));
-                drawScaledCustomSizeModalRect(button.xPosition, button.yPosition, 0, 0, 0, 0, 30, 30, 30, 30);
+                drawScaledCustomSizeModalRect(button.xPosition, button.yPosition, 0, 0, 0, 0, 100, 50, 100, 50);
             }
         // RENDER BUTTONS //
 
@@ -203,18 +203,18 @@ public class WorktableBase extends GuiScreen {
         if (moduleBeingLinked != null)
             Utils.drawLine2D(moduleBeingLinked.getX(), moduleBeingLinked.getY(), mouseX, mouseY, 2, Color.BLACK);
 
-        for (Module module : modulesOnPaper) {
-            if (links.containsKey(module)) {
-                for (Module linkedModule : links.get(module))
-                    Utils.drawLine2D(module.getX(), module.getY(), linkedModule.getX(), linkedModule.getY(), 2, Color.BLACK);
-            }
-        }
+        modulesOnPaper.stream().filter(module -> links.containsKey(module)).forEach(module -> {
+            for (Module linkedModule : links.get(module))
+                Utils.drawLine2D(module.getX(), module.getY(), linkedModule.getX(), linkedModule.getY(), 2, Color.BLACK);
+        });
         // RENDER LINE BETWEEN LINKED MODULES //
 
         // RENDER SIDEBARS //
         int row = 0, column = 0, iconSeparation = 1, sidebarX;
+        Module lastModule = null;
         for (Module module : modulesInSidebar) {
 
+            // TODO: REDO THIS PART
             GlStateManager.color(1F, 1F, 1F, 1F);
             if (module.getType() == SpellIngredients.IngredientType.SPELLEFFECTS) sidebarX = -backgroundWidth / 2 - 90;
             else if (module.getType() == SpellIngredients.IngredientType.SPELLCONDITIONS)
@@ -225,8 +225,8 @@ public class WorktableBase extends GuiScreen {
                 sidebarX = backgroundWidth / 2 + 100;
             else sidebarX = backgroundWidth / 2 + 240;
 
-            int x = width / 2 + sidebarX + iconSeparation + (row * iconSize) + (row * iconSeparation);
-            int y = top + iconSeparation + (column * iconSize) + (column * iconSeparation);
+            int x = width / 2 + sidebarX + iconSeparation + (column * iconSize) + (column * iconSeparation);
+            int y = top + iconSeparation + (row * iconSize) + (row * iconSeparation);
 
             module.setX(x);
             module.setY(y);
@@ -243,10 +243,13 @@ public class WorktableBase extends GuiScreen {
             drawScaledCustomSizeModalRect(module.getX(), module.getY(), 0, 0, iconSize, iconSize, iconSize, iconSize, iconSize, iconSize);
 
 
-            if (row >= 3) {
-                row = 0;
-                column++;
-            } else row++;
+            if (lastModule != null && lastModule.getType() == module.getType())
+                if (column >= 3) {
+                    row++;
+                    column = 0;
+                } else column++;
+            else row = 0;
+            lastModule = module;
         }
         // RENDER SIDEBARS //
 

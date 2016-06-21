@@ -5,6 +5,7 @@ import me.lordsaad.wizardry.api.IExplodable;
 import me.lordsaad.wizardry.particles.SparkleFX;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
@@ -20,6 +21,7 @@ import java.util.Random;
 public class FluidBlockMana extends BlockFluidClassic {
 
     public static final FluidBlockMana instance = new FluidBlockMana();
+    private int reactionCountdown = 0;
 
     public FluidBlockMana() {
         super(FluidMana.instance, Material.WATER);
@@ -44,19 +46,23 @@ public class FluidBlockMana extends BlockFluidClassic {
     @Override
     public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
         if (!worldIn.isRemote) {
-
             SparkleFX ambient = Wizardry.proxy.spawnParticleSparkle(worldIn, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0.5F, 0.5F, 30, 0.5, 0.1, 0.5);
             ambient.jitter(30, 0.1, 0, 0.1);
             ambient.setMotion(0, 0.05, 0);
+            Minecraft.getMinecraft().thePlayer.sendChatMessage(reactionCountdown + "");
 
             if (entityIn instanceof EntityItem && new BlockPos(entityIn.getPositionVector()).equals(pos) && state.getValue(BlockFluidClassic.LEVEL) == 0) {
                 EntityItem ei = (EntityItem) entityIn;
                 ItemStack stack = ei.getEntityItem();
 
-                if (stack.getItem() instanceof IExplodable) {
-                    ei.setDead();
-                    ((IExplodable) stack.getItem()).explode(entityIn);
-                    worldIn.setBlockState(pos, Blocks.AIR.getDefaultState());
+                if (reactionCountdown < 50) reactionCountdown++;
+                else {
+                    reactionCountdown = 0;
+                    if (stack.getItem() instanceof IExplodable) {
+                        ei.setDead();
+                        ((IExplodable) stack.getItem()).explode(entityIn);
+                        worldIn.setBlockState(pos, Blocks.AIR.getDefaultState());
+                    }
                 }
             }
         }
