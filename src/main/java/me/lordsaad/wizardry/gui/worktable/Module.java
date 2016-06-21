@@ -9,6 +9,8 @@ import net.minecraft.util.ResourceLocation;
  */
 public class Module {
 
+    // TODO: DELETE ENTIRE CLASS
+
     private int x, y, ID;
     private ResourceLocation icon;
     private ItemStack stack;

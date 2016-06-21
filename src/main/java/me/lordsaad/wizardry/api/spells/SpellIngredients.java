@@ -12,6 +12,8 @@ import net.minecraft.util.ResourceLocation;
  */
 public class SpellIngredients {
 
+    // TODO: DELETE ENTIRE CLASS
+
     public enum IngredientType {
         SPELLEFFECTMODIFIERS("Spell Effect Modifiers", SpellEffectModifiers.class),
         SPELLSHAPEMODIFIERS("Spell Shape Modifiers", SpellShapeModifiers.class),

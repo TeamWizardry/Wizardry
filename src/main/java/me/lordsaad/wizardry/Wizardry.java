@@ -15,6 +15,7 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.PacketLoggingHandler;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -35,6 +36,7 @@ public class Wizardry {
     public static final String SERVER = "me.lordsaad.wizardry.CommonProxy";
     public static PacketLoggingHandler packetHandler;
     public static Logger logger;
+    public static EventBus EVENT_BUS = new EventBus();
 
     @SidedProxy(clientSide = CLIENT, serverSide = SERVER)
     public static CommonProxy proxy;
