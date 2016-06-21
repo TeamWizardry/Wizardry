@@ -1,5 +1,6 @@
 package me.lordsaad.wizardry.api.modules;
 
+import me.lordsaad.wizardry.spells.modules.ModuleType;
 import net.minecraft.item.ItemStack;
 
 /**

@@ -1,5 +1,6 @@
-package me.lordsaad.wizardry.api.modules;
+package me.lordsaad.wizardry.spells.modules;
 
+import me.lordsaad.wizardry.api.modules.IEvent;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;

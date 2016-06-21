@@ -1,5 +1,6 @@
-package me.lordsaad.wizardry.api.modules;
+package me.lordsaad.wizardry.spells.modules;
 
+import me.lordsaad.wizardry.api.modules.IEffect;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
