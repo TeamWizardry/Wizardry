@@ -11,24 +11,22 @@ import net.minecraft.world.World;
  */
 public class ModuleMeleeEvent implements IModule {
 
-	private IModule[] modules;
-	
-	public ModuleMeleeEvent(IModule... modules)
-	{
-		this.modules = modules;
-	}
-	
+    private IModule[] modules;
+
+    public ModuleMeleeEvent(IModule... modules) {
+        this.modules = modules;
+    }
+
     @Override
     public ModuleType getType() {
         return ModuleType.EVENT;
     }
-    
-	@Override
-	public NBTTagCompound getModuleData()
-	{
-		return null;
-	}
-	
+
+    @Override
+    public NBTTagCompound getModuleData() {
+        return null;
+    }
+
     public void tick(World world, EntityPlayer source) {
 
     }

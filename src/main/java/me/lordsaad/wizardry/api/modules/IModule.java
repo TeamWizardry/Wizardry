@@ -9,9 +9,9 @@ import net.minecraft.nbt.NBTTagCompound;
 public interface IModule {
 
     ModuleType getType();
-    
+
     /**
      * @author Seth
      */
-    public NBTTagCompound getModuleData();
+    NBTTagCompound getModuleData();
 }

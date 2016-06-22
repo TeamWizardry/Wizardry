@@ -13,13 +13,12 @@ import net.minecraft.world.World;
  */
 public class ModuleLava implements IModule {
 
-	private IModule[] modules;
-	
-	public ModuleLava(IModule... modules)
-	{
-		this.modules = modules;
-	}
-	
+    private IModule[] modules;
+
+    public ModuleLava(IModule... modules) {
+        this.modules = modules;
+    }
+
     public void onCollideWithBlock(World world, BlockPos pos) {
         world.setBlockState(pos, Blocks.LAVA.getDefaultState());
     }
@@ -27,15 +26,14 @@ public class ModuleLava implements IModule {
     public void onCollideWithEntity(World world, Entity entity) {
         world.setBlockState(entity.getPosition(), Blocks.LAVA.getDefaultState());
     }
-	
+
     @Override
     public ModuleType getType() {
         return ModuleType.EFFECT;
     }
-    
-	@Override
-	public NBTTagCompound getModuleData()
-	{
-		return null;
-	}
+
+    @Override
+    public NBTTagCompound getModuleData() {
+        return null;
+    }
 }
