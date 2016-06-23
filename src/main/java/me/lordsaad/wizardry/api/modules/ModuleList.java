@@ -1,6 +1,5 @@
 package me.lordsaad.wizardry.api.modules;
 
-import java.util.HashMap;
 import me.lordsaad.wizardry.spells.modules.booleans.*;
 import me.lordsaad.wizardry.spells.modules.effects.*;
 import me.lordsaad.wizardry.spells.modules.events.*;
@@ -10,6 +9,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+import com.google.common.collect.HashBiMap;
 
 /**
  * @author murapix
@@ -18,12 +18,12 @@ import net.minecraftforge.oredict.OreDictionary;
  */
 public class ModuleList
 {
-	public HashMap<Module, ItemStack> moduleItems;
+	public HashBiMap<Module, ItemStack> moduleItems;
 
 	public void init()
 	{
-		moduleItems = new HashMap<Module, ItemStack>();
-
+		moduleItems = HashBiMap.create();
+		
 		// Boolean Modules
 		moduleItems.put(new ModuleAnd(), new ItemStack(Items.STRING));
 		moduleItems.put(new ModuleOr(), new ItemStack(Items.WHEAT_SEEDS));
@@ -49,7 +49,7 @@ public class ModuleList
 		moduleItems.put(new ModuleFallEvent(), new ItemStack(Items.FEATHER));
 		moduleItems.put(new ModuleOnFireEvent(), new ItemStack(Items.FLINT));
 		moduleItems.put(new ModuleBlinkEvent(), new ItemStack(Items.ENDER_PEARL));
-		moduleItems.put(new ModulePotionEvent(), new ItemStack(Items.POTIONITEM, 1, OreDictionary.WILDCARD_VALUE));
+		moduleItems.put(new ModulePotionEvent(), new ItemStack(Items.GLASS_BOTTLE, 1));
 
 		// Modifier Modules
 		moduleItems.put(new ModuleSilent(), new ItemStack(Blocks.WOOL, 16, OreDictionary.WILDCARD_VALUE));
@@ -58,7 +58,7 @@ public class ModuleList
 		moduleItems.put(new ModuleBurnOut(), new ItemStack(Items.SUGAR, 64));
 		moduleItems.put(new ModuleArea(), new ItemStack(Items.DRAGON_BREATH));
 		moduleItems.put(new ModulePierce(), new ItemStack(Blocks.GLASS, 16, OreDictionary.WILDCARD_VALUE));
-		moduleItems.put(new ModuleBeamModifier(), new ItemStack(Items.PRISMARINE_SHARD));
+		moduleItems.put(new ModuleBeamModifier(), new ItemStack(Items.PRISMARINE_CRYSTALS));
 		moduleItems.put(new ModuleRangedDamage(), new ItemStack(Items.ARROW, 16));
 		moduleItems.put(new ModulePunch(), new ItemStack(Items.SNOWBALL, 100));
 		moduleItems.put(new ModuleSticky(), new ItemStack(Items.SLIME_BALL, 16));
