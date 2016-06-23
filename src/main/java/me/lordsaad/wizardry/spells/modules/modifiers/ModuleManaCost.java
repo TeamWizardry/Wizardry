@@ -6,9 +6,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleManaCost extends Module
 {
-	public ModuleManaCost(Module... modules)
+	public ModuleManaCost()
 	{
-		this.modules = modules;
+		
 	}
 
 	@Override

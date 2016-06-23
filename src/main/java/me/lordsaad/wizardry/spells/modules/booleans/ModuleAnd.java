@@ -6,9 +6,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleAnd extends Module
 {
-	public ModuleAnd(Module... modules)
+	public ModuleAnd()
 	{
-		this.modules = modules;
+		
 	}
 	
 	@Override

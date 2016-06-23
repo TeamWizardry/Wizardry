@@ -11,9 +11,9 @@ public class ModuleExplosion extends Module
 	private boolean damageTerrain;
 	private int power;
 	
-	public ModuleExplosion(Module... modules)
+	public ModuleExplosion()
 	{
-		this.modules = modules;
+		
 	}
 	
     @Override

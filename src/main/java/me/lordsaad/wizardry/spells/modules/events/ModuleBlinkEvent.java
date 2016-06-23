@@ -6,9 +6,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleBlinkEvent extends Module
 {
-	public ModuleBlinkEvent(Module... modules)
+	public ModuleBlinkEvent()
 	{
-		this.modules = modules;
+		
 	}
 
 	@Override

@@ -6,9 +6,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleRangedEvent extends Module
 {
-	public ModuleRangedEvent(Module... modules)
+	public ModuleRangedEvent()
 	{
-		this.modules = modules;
+		
 	}
 
 	@Override

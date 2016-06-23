@@ -17,9 +17,9 @@ public class ModuleBlink extends Module
 	
 	private int distance = 0;
 	
-	public ModuleBlink(Module... modules)
+	public ModuleBlink()
 	{
-		this.modules = modules;
+		
 	}
 	
     @Override

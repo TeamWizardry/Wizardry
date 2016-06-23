@@ -6,9 +6,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModulePotionEvent extends Module
 {
-	public ModulePotionEvent(Module... modules)
+	public ModulePotionEvent()
 	{
-		this.modules = modules;
+		
 	}
 
 	@Override

@@ -6,9 +6,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleMagicDamage extends Module
 {
-	public ModuleMagicDamage(Module... modules)
+	public ModuleMagicDamage()
 	{
-		this.modules = modules;
+		
 	}
 
 	@Override

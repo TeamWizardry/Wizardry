@@ -6,9 +6,9 @@ import me.lordsaad.wizardry.spells.modules.ModuleType;
 
 public class ModuleSilent extends Module
 {
-	public ModuleSilent(Module... modules)
+	public ModuleSilent()
 	{
-		this.modules = modules;
+		
 	}
 
 	@Override

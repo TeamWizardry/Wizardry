@@ -6,9 +6,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleProjectile extends Module
 {
-	public ModuleProjectile(Module... modules)
+	public ModuleProjectile()
 	{
-		this.modules = modules;
+		
 	}
 
 	@Override

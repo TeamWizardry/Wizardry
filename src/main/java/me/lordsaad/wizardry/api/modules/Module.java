@@ -26,12 +26,10 @@ public abstract class Module
 	protected float manaMult = 1;
 	protected int burnoutCost = 0;
 	protected float burnoutMult = 1;
-	
-	protected Module[] modules;
-	
-	public Module(Module... modules)
+		
+	public Module()
 	{
-		this.modules = modules;
+		
 	}
 	
 	/**

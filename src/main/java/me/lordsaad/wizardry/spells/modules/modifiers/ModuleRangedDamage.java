@@ -6,9 +6,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleRangedDamage extends Module
 {
-	public ModuleRangedDamage(Module... modules)
+	public ModuleRangedDamage()
 	{
-		this.modules = modules;
+		
 	}
 
 	@Override

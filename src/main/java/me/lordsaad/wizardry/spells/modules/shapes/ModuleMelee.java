@@ -6,9 +6,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleMelee extends Module
 {
-	public ModuleMelee(Module... modules)
+	public ModuleMelee()
 	{
-		this.modules = modules;
+		
 	}
 
 	@Override

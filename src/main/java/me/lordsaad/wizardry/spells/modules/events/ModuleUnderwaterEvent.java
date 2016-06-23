@@ -6,9 +6,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleUnderwaterEvent extends Module
 {
-	public ModuleUnderwaterEvent(Module... modules)
+	public ModuleUnderwaterEvent()
 	{
-		this.modules = modules;
+		
 	}
 
 	@Override

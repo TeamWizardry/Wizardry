@@ -6,9 +6,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleSticky extends Module
 {
-	public ModuleSticky(Module... modules)
+	public ModuleSticky()
 	{
-		this.modules = modules;
+		
 	}
 
 	@Override

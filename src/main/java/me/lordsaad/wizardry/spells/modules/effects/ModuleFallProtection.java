@@ -8,9 +8,9 @@ public class ModuleFallProtection extends Module
 {
 	private int protectionLevel;
 	
-	public ModuleFallProtection(Module... modules)
+	public ModuleFallProtection()
 	{
-		this.modules = modules;
+		
 	}
 	
     @Override

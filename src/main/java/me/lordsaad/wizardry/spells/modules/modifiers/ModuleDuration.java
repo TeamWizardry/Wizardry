@@ -6,9 +6,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleDuration extends Module
 {
-	public ModuleDuration(Module... modules)
+	public ModuleDuration()
 	{
-		this.modules = modules;
+		
 	}
 
 	@Override

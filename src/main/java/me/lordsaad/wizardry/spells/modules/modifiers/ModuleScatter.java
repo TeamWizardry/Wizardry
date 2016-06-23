@@ -6,9 +6,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleScatter extends Module
 {
-	public ModuleScatter(Module... modules)
+	public ModuleScatter()
 	{
-		this.modules = modules;
+		
 	}
 
 	@Override

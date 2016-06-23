@@ -12,9 +12,9 @@ import net.minecraft.world.World;
 public class ModuleMeleeEvent extends Module
 {
 
-	public ModuleMeleeEvent(Module... modules)
+	public ModuleMeleeEvent()
 	{
-		this.modules = modules;
+		
 	}
 
 	@Override

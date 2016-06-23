@@ -6,9 +6,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleFlame extends Module
 {
-	public ModuleFlame(Module... modules)
+	public ModuleFlame()
 	{
-		this.modules = modules;
+		
 	}
 
 	@Override

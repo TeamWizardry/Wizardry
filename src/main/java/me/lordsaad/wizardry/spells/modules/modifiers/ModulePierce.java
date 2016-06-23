@@ -6,9 +6,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModulePierce extends Module
 {
-	public ModulePierce(Module... modules)
+	public ModulePierce()
 	{
-		this.modules = modules;
+		
 	}
 
 	@Override

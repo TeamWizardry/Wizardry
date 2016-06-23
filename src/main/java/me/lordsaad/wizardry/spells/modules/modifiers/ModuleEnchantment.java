@@ -7,9 +7,9 @@ import net.minecraft.nbt.NBTTagCompound;
 public class ModuleEnchantment extends Module
 {
 
-	public ModuleEnchantment(Module... modules)
+	public ModuleEnchantment()
 	{
-		this.modules = modules;
+		
 	}
 
 	@Override

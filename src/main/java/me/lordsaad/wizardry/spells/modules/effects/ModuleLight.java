@@ -6,9 +6,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleLight extends Module
 {
-	public ModuleLight(Module... modules)
+	public ModuleLight()
 	{
-		this.modules = modules;
+		
 	}
 
 	@Override

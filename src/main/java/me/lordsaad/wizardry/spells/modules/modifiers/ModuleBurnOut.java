@@ -6,9 +6,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleBurnOut extends Module
 {
-	public ModuleBurnOut(Module... modules)
+	public ModuleBurnOut()
 	{
-		this.modules = modules;
+		
 	}
 
 	@Override

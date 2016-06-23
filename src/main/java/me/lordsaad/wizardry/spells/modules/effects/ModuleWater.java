@@ -6,9 +6,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleWater extends Module
 {
-	public ModuleWater(Module... modules)
+	public ModuleWater()
 	{
-		this.modules = modules;
+		
 	}
 
 	@Override

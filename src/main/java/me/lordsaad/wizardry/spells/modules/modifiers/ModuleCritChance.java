@@ -6,9 +6,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleCritChance extends Module
 {
-	public ModuleCritChance(Module... modules)
+	public ModuleCritChance()
 	{
-		this.modules = modules;
+		
 	}
 
 	@Override

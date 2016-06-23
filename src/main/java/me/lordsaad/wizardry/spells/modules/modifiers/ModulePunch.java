@@ -8,7 +8,6 @@ public class ModulePunch extends Module
 {
 	public ModulePunch(Module... modules)
 	{
-		this.modules = modules;
 	}
 
 	@Override

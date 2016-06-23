@@ -13,9 +13,9 @@ import net.minecraft.world.World;
  */
 public class ModuleLava extends Module
 {
-	public ModuleLava(Module... modules)
+	public ModuleLava()
 	{
-		this.modules = modules;
+		
 	}
 
 	public void onCollideWithBlock(World world, BlockPos pos)

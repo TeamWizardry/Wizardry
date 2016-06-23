@@ -6,9 +6,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleBeam extends Module
 {
-	public ModuleBeam(Module... modules)
+	public ModuleBeam()
 	{
-		this.modules = modules;
+		
 	}
 
 	@Override

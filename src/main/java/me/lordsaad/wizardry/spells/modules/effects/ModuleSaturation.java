@@ -6,9 +6,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleSaturation extends Module
 {
-	public ModuleSaturation(Module... modules)
+	public ModuleSaturation()
 	{
-		this.modules = modules;
+		
 	}
 
 	@Override

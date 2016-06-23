@@ -6,9 +6,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleCone extends Module
 {
-	public ModuleCone(Module... modules)
+	public ModuleCone()
 	{
-		this.modules = modules;
+		
 	}
 	
     @Override

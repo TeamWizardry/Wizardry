@@ -6,9 +6,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleFallEvent extends Module
 {
-	public ModuleFallEvent(Module... modules)
+	public ModuleFallEvent()
 	{
-		this.modules = modules;
+		
 	}
 
 	@Override
