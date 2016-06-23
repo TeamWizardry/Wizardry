@@ -4,6 +4,11 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.resources.IReloadableResourceManager;
@@ -26,7 +31,7 @@ import me.lordsaad.wizardry.shader.shaders.BurstShader;
 public final class ShaderHelper implements IResourceManagerReloadListener {
     private static final int VERT = ARBVertexShader.GL_VERTEX_SHADER_ARB;
     private static final int FRAG = ARBFragmentShader.GL_FRAGMENT_SHADER_ARB;
-    private static boolean isResourcesRegistered = false;
+    private static boolean isRegistered = false;
     private static ShaderHelper INSTANCE = new ShaderHelper();
 
     public static BurstShader burst;
@@ -38,12 +43,25 @@ public final class ShaderHelper implements IResourceManagerReloadListener {
         if (!useShaders())
             return;
 
-        burst = new BurstShader( createProgram(null, "/assets/wizardry/shader/burstNew.frag") );
+        burst = new BurstShader( null, "/assets/wizardry/shader/burstNew.frag");
         
-        if (Config.developmentEnvironment && Minecraft.getMinecraft().getResourceManager() instanceof IReloadableResourceManager && !isResourcesRegistered) {
-            isResourcesRegistered = true;
-            ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(INSTANCE);
+        createProgram(burst);
+        
+        if (!isRegistered) {
+            isRegistered = true;
+            if(Config.developmentEnvironment && Minecraft.getMinecraft().getResourceManager() instanceof IReloadableResourceManager)
+            	((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(INSTANCE);
+            MinecraftForge.EVENT_BUS.register(INSTANCE);
+            
         }
+    }
+    
+    @SubscribeEvent
+    public void reloadShaders(LivingJumpEvent event) {
+    	if(!event.getEntity().worldObj.isRemote)
+    		return;
+    	
+    	createProgram(burst);
     }
 
     public static <T extends Shader> void useShader(T shader, ShaderCallback<T> callback) {
@@ -53,11 +71,12 @@ public final class ShaderHelper implements IResourceManagerReloadListener {
     	}
     	if (!useShaders())
             return;
-
+    	
+    	
         ARBShaderObjects.glUseProgramObjectARB(shader.getGlName());
 
-    	if(shader.time != null)
-    		shader.time.set((int) (System.nanoTime()/1000000));
+//    	if(shader.time != null)
+//    		shader.time.set(System.nanoTime()/1000000f);
 
         if (callback != null)
             callback.call(shader);
@@ -75,7 +94,10 @@ public final class ShaderHelper implements IResourceManagerReloadListener {
         return /*ConfigHandler.useShaders && */OpenGlHelper.shadersSupported;
     }
 
-    private static int createProgram(String vert, String frag) {
+    private static int createProgram(Shader shader) {
+    	String vert = shader.getVert();
+    	String frag = shader.getFrag();
+    	
         int vertId = 0, fragId = 0, program = 0;
         String vertText = "[[NONE]]", fragText = "[[NONE]]";
         if (vert != null) {
@@ -103,7 +125,7 @@ public final class ShaderHelper implements IResourceManagerReloadListener {
 
         String logText = ">> VERT: \n```" + vertText + "```\n>> FRAG: \n```" + fragText + "```";
 
-        program = ARBShaderObjects.glCreateProgramObjectARB();
+        program = shader.getGlName() != 0 ? shader.getGlName() : ARBShaderObjects.glCreateProgramObjectARB();
         if (program == 0)
             return 0;
 
@@ -126,6 +148,8 @@ public final class ShaderHelper implements IResourceManagerReloadListener {
         
         Logs.log("Created program %d - VERT:'%s' FRAG:'%s'", program, vert, frag);
 
+        shader.init(program);
+        
         return program;
     }
 
@@ -156,7 +180,7 @@ public final class ShaderHelper implements IResourceManagerReloadListener {
     }
 
     private static String getLogInfo(int obj, String fileText) {
-        return ARBShaderObjects.glGetInfoLogARB(obj, ARBShaderObjects.glGetObjectParameteriARB(obj, ARBShaderObjects.GL_OBJECT_INFO_LOG_LENGTH_ARB)) + "\n" + fileText;
+        return ARBShaderObjects.glGetInfoLogARB(obj, ARBShaderObjects.glGetObjectParameteriARB(obj, ARBShaderObjects.GL_OBJECT_INFO_LOG_LENGTH_ARB));// + "\n" + fileText;
     }
 
     private static String readFileAsString(String filename) throws Exception {

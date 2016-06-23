@@ -2,7 +2,7 @@
 uniform int time;
 
 int randID = 0;
-vec2 getUV()
+vec2 getUVforme()
 {
     vec2 uv = vec2(gl_TexCoord[0]);
     if(uv.x > 1.) {
@@ -84,6 +84,11 @@ float rand(float n){
 	return noise(v);
 }
 
+float mymod(float x, float y)
+{
+    return x-y*floor(x/y);
+}
+
 vec4 sparkle(vec2 uv){
     vec4 color = getGlColor();
 	color.w = 0.;
@@ -97,29 +102,32 @@ vec4 sparkle(vec2 uv){
     float angle = degrees(atan(detP, dotP));
     angle += 180.;
     randID += 4;
-    for(int i = 1; i <= COUNT; i++) {
-        float startAngle = 360. * rand(randID++);
+    // for(int i = 1; i <= COUNT; i++) {
+        float startAngle = 22.5;//360. * rand(randID++);
         float angleWidth = 360. / float( int( 3. + rand(randID++) * 5. )*2);
         float speed = rotationMultiplier * ( rand(randID++) - 0.5 );
         
-        startAngle += speed * getMillis();
+        //startAngle += speed * getMillis();
         
         float checkAngle = angle - startAngle;
         
-        checkAngle = mod(checkAngle, angleWidth*2.);
+        checkAngle = mymod(checkAngle, angleWidth*2.);
         float anglePercent = (checkAngle/angleWidth - 0.5)*2.;
         
         float dist = 0.6-lengthVariation
             +( lengthVariation * rand(randID++)    );
         float distPercent = len/dist;
         
-        float w = getGlColor().w
-            *( 1.-( distPercent+0.1*rand(checkAngle))    /**/)
-            *( 1.-clamp(pow(anglePercent, float(rayFade*2)), 0., 1.)    /**/)
-        ;
-	    
-	    color.w = clamp(color.w + w, 0., 1.);
-    }
+        // float w = getGlColor().w
+//             *( 1.-( distPercent+0.2*fract(checkAngle))    /**/)
+//             // *( 1.-clamp(pow(anglePercent, float(rayFade*2)), 0., 1.)    /**/)
+//         ;
+
+color.w = mymod(angle - startAngle + (speed * 15.), 45.)/45.;
+
+        // color.w = clamp(color.w + w, 0., 1.);
+        // color.b = anglePercent;
+    // }
 	
 	float centerW = clamp(10.*centerRadius-len*10., 0., 1.);
         
@@ -127,17 +135,17 @@ vec4 sparkle(vec2 uv){
             *clamp(1.-len*2., 0., 1.)
         ;
         
-	float w = color.w;
-	color = mix(color, glowColor, foreW);
-	color = mix(color, centerColor, centerW);
-	color.w = max(w, centerW);
+	// float w = color.w;
+    // color = mix(color, glowColor, foreW);
+    // color = mix(color, centerColor, centerW);
+    // color.w = max(w, centerW);
     
     return color;
 }
 
 void main( void ) {
 
-	vec2 uv = getUV();
+	vec2 uv = getUVforme();
 
     vec2 check = vec2(0, 1);
     
@@ -146,7 +154,8 @@ void main( void ) {
     
     float angle = degrees(atan(detP, dotP));
     angle += 180.;
+    angle = mymod(angle, 90.);
 
 	vec4 col = sparkle(uv);
-	gl_FragColor = mix(vec4(0, angle/(360.*2.), 0, 1), col, col.w);
+	gl_FragColor = mix(vec4(0, angle/(90.), 0, 1), col, col.w);
 }

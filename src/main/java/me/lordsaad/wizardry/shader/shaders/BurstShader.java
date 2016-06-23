@@ -22,9 +22,13 @@ public class BurstShader extends Shader {
 	public FloatTypes.Float centerRadius;
 
 	
-	public BurstShader(int program) {
-		super(program);
-		
+	public BurstShader(String vert, String frag) {
+		super(vert, frag);
+	}
+
+
+	@Override
+	public void initUniforms() {
 		count = getUniform("COUNT");
 		rotationSpeed = getUniform("rotationMultiplier");
 		

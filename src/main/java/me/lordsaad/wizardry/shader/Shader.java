@@ -3,19 +3,29 @@ package me.lordsaad.wizardry.shader;
 import org.lwjgl.opengl.GL20;
 
 import me.lordsaad.wizardry.Logs;
-import me.lordsaad.wizardry.shader.uniforms.IntTypes;
+import me.lordsaad.wizardry.shader.uniforms.FloatTypes;
 import me.lordsaad.wizardry.shader.uniforms.Uniform;
 import me.lordsaad.wizardry.shader.uniforms.UniformType;
 
-public class Shader {
-	public static final Shader NONE = new Shader(0);
+public abstract class Shader {
+	public static final Shader NONE = new Shader("","") {
+		@Override
+		public void initUniforms() {}
+	};
 	
-	public final IntTypes.Int time;
+	public FloatTypes.Float time;
 	
-	private final int glName;
-	private final Uniform[] uniforms;
+	private int glName = 0;
+	private Uniform[] uniforms;
  
-	public Shader(int program) {
+	private String vert, frag;
+	
+	public Shader(String vert, String frag) {
+		this.vert = vert;
+		this.frag = frag;
+	}
+	
+	public void init(int program) {
 		glName = program;
 		
 		int uniformCount = GL20.glGetProgrami(getGlName(), GL20.GL_ACTIVE_UNIFORMS);
@@ -32,9 +42,21 @@ public class Shader {
 			uniforms[index++] 	= uniform;
 		}
 		
-		time = (IntTypes.Int) getUniform("time");
+		time = getUniform("time");
+		
+		initUniforms();
 	}
 	
+	public abstract void initUniforms();
+	
+	public String getVert() {
+		return vert;
+	}
+
+	public String getFrag() {
+		return frag;
+	}
+
 	public int getGlName() {
 		return glName;
 	}
