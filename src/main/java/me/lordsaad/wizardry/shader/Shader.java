@@ -1,11 +1,10 @@
 package me.lordsaad.wizardry.shader;
 
-import org.lwjgl.opengl.GL20;
-
 import me.lordsaad.wizardry.Logs;
 import me.lordsaad.wizardry.shader.uniforms.FloatTypes;
 import me.lordsaad.wizardry.shader.uniforms.Uniform;
 import me.lordsaad.wizardry.shader.uniforms.UniformType;
+import org.lwjgl.opengl.GL20;
 
 public abstract class Shader {
 	public static final Shader NONE = new Shader("","") {
@@ -79,5 +78,4 @@ public abstract class Shader {
 		UniformType enumType = UniformType.getByGlEnum(type);
 		return enumType.make(this, name, enumType, size, location);
 	}
- 
 }

@@ -2,13 +2,10 @@ package me.lordsaad.wizardry.shader.shaders;
 
 import me.lordsaad.wizardry.shader.Shader;
 import me.lordsaad.wizardry.shader.uniforms.FloatTypes;
-import me.lordsaad.wizardry.shader.uniforms.FloatTypes.Float;
-import me.lordsaad.wizardry.shader.uniforms.FloatTypes.FloatVec4;
 import me.lordsaad.wizardry.shader.uniforms.IntTypes;
-import me.lordsaad.wizardry.shader.uniforms.IntTypes.Int;
 
 public class BurstShader extends Shader {
-
+	
 	public IntTypes.Int count;
 	public FloatTypes.Float rotationSpeed;
 	
@@ -41,5 +38,4 @@ public class BurstShader extends Shader {
 		lengthRandomness = getUniform("lengthRandomness");
 		centerRadius = getUniform("centerRadius");
 	}
-
 }

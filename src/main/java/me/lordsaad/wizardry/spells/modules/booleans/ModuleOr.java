@@ -1,15 +1,12 @@
 package me.lordsaad.wizardry.spells.modules.booleans;
 
-import me.lordsaad.wizardry.api.modules.IModule;
+import me.lordsaad.wizardry.api.modules.Module;
 import me.lordsaad.wizardry.spells.modules.ModuleType;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 
-public class ModuleOr implements IModule
+public class ModuleOr extends Module
 {
-	private IModule[] modules;
-	
-	public ModuleOr(IModule... modules)
+	public ModuleOr(Module... modules)
 	{
 		this.modules = modules;
 	}
@@ -25,11 +22,6 @@ public class ModuleOr implements IModule
 	{
 		NBTTagCompound compound = new NBTTagCompound();
 		compound.setString("Type", "OR");
-		
-		NBTTagList list = new NBTTagList();
-		for (IModule module : modules)
-			list.appendTag(module.getModuleData());
-		compound.setTag("Modules", list);
 		return compound;
 	}
 }

@@ -1,14 +1,14 @@
 package me.lordsaad.wizardry.spells.modules.effects;
 
-import me.lordsaad.wizardry.api.modules.IModule;
+import me.lordsaad.wizardry.api.modules.Module;
 import me.lordsaad.wizardry.spells.modules.ModuleType;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class ModuleFallProtection implements IModule
+public class ModuleFallProtection extends Module
 {
-	private IModule[] modules;
+	private int protectionLevel;
 	
-	public ModuleFallProtection(IModule... modules)
+	public ModuleFallProtection(Module... modules)
 	{
 		this.modules = modules;
 	}
@@ -21,6 +21,14 @@ public class ModuleFallProtection implements IModule
 	@Override
 	public NBTTagCompound getModuleData()
 	{
-		return null;
+		NBTTagCompound compound = super.getModuleData();
+		compound.setInteger(POWER, protectionLevel);
+		return compound;
+	}
+	
+	public ModuleFallProtection setProtectionLevel(int level)
+	{
+		protectionLevel = level;
+		return this;
 	}
 }

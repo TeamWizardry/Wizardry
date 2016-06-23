@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -20,29 +19,29 @@ import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.ARBVertexShader;
 import org.lwjgl.opengl.GL11;
 
-/**
- * Credit to Vazkii (https://github.com/Vazkii/Botania/blob/master/src/main/java/vazkii/botania/client/core/helper/ShaderHelper.java)
- */
-
 import me.lordsaad.wizardry.Config;
 import me.lordsaad.wizardry.Logs;
 import me.lordsaad.wizardry.shader.shaders.BurstShader;
+
+/**
+ * Credit to Vazkii (https://github.com/Vazkii/Botania/blob/master/src/main/java/vazkii/botania/client/core/helper/ShaderHelper.java)
+ */
 
 public final class ShaderHelper implements IResourceManagerReloadListener {
     private static final int VERT = ARBVertexShader.GL_VERTEX_SHADER_ARB;
     private static final int FRAG = ARBFragmentShader.GL_FRAGMENT_SHADER_ARB;
     private static boolean isRegistered = false;
-    private static ShaderHelper INSTANCE = new ShaderHelper();
-
     public static BurstShader burst;
     
+    private static ShaderHelper INSTANCE = new ShaderHelper();
+
     private ShaderHelper() {
     }
 
     public static void initShaders() {
         if (!useShaders())
             return;
-
+        
         burst = new BurstShader( null, "/assets/wizardry/shader/burstNew.frag");
         
         createProgram(burst);
@@ -52,7 +51,6 @@ public final class ShaderHelper implements IResourceManagerReloadListener {
             if(Config.developmentEnvironment && Minecraft.getMinecraft().getResourceManager() instanceof IReloadableResourceManager)
             	((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(INSTANCE);
             MinecraftForge.EVENT_BUS.register(INSTANCE);
-            
         }
     }
     
@@ -65,16 +63,16 @@ public final class ShaderHelper implements IResourceManagerReloadListener {
     }
 
     public static <T extends Shader> void useShader(T shader, ShaderCallback<T> callback) {
-    	if(shader == null) {
+        if (shader == null) {
             ARBShaderObjects.glUseProgramObjectARB(0);
             return;
-    	}
-    	if (!useShaders())
+        }
+        if (!useShaders())
             return;
     	
     	
         ARBShaderObjects.glUseProgramObjectARB(shader.getGlName());
-
+        
 //    	if(shader.time != null)
 //    		shader.time.set(System.nanoTime()/1000000f);
 
@@ -145,7 +143,7 @@ public final class ShaderHelper implements IResourceManagerReloadListener {
             Logs.error(getLogInfo(program, logText));
             return 0;
         }
-        
+
         Logs.log("Created program %d - VERT:'%s' FRAG:'%s'", program, vert, frag);
 
         shader.init(program);
