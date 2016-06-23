@@ -6,18 +6,17 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleBlinkEvent extends Module
 {
-	private Module[] modules;
-	
 	public ModuleBlinkEvent(Module... modules)
 	{
 		this.modules = modules;
 	}
-	
-    @Override
-    public ModuleType getType() {
-        return ModuleType.EVENT;
-    }
-    
+
+	@Override
+	public ModuleType getType()
+	{
+		return ModuleType.EVENT;
+	}
+
 	@Override
 	public NBTTagCompound getModuleData()
 	{

@@ -6,8 +6,6 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleOnFireEvent extends Module
 {
-	private Module[] modules;
-	
 	public ModuleOnFireEvent(Module... modules)
 	{
 		this.modules = modules;
@@ -17,10 +15,9 @@ public class ModuleOnFireEvent extends Module
     public ModuleType getType() {
         return ModuleType.EFFECT;
     }
-    
-	@Override
-	public NBTTagCompound getModuleData()
-	{
-		return null;
-	}
+
+    @Override
+    public NBTTagCompound getModuleData() {
+        return null;
+    }
 }

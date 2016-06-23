@@ -6,18 +6,17 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleBeam extends Module
 {
-	private Module[] modules;
-	
 	public ModuleBeam(Module... modules)
 	{
 		this.modules = modules;
 	}
-	
-    @Override
-    public ModuleType getType() {
-        return ModuleType.SHAPE;
-    }
-    
+
+	@Override
+	public ModuleType getType()
+	{
+		return ModuleType.SHAPE;
+	}
+
 	@Override
 	public NBTTagCompound getModuleData()
 	{

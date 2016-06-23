@@ -6,18 +6,17 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleProjectile extends Module
 {
-	private Module[] modules;
-	
 	public ModuleProjectile(Module... modules)
 	{
 		this.modules = modules;
 	}
-	
-    @Override
-    public ModuleType getType() {
-        return ModuleType.SHAPE;
-    }
-    
+
+	@Override
+	public ModuleType getType()
+	{
+		return ModuleType.SHAPE;
+	}
+
 	@Override
 	public NBTTagCompound getModuleData()
 	{

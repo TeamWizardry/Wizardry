@@ -6,18 +6,17 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleRangedDamage extends Module
 {
-	private Module[] modules;
-	
 	public ModuleRangedDamage(Module... modules)
 	{
 		this.modules = modules;
 	}
-	
-    @Override
-    public ModuleType getType() {
-        return ModuleType.MODIFIER;
-    }
-    
+
+	@Override
+	public ModuleType getType()
+	{
+		return ModuleType.MODIFIER;
+	}
+
 	@Override
 	public NBTTagCompound getModuleData()
 	{

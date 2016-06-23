@@ -31,7 +31,6 @@ public class ModuleBlink extends Module
 	public NBTTagCompound getModuleData()
 	{
 		NBTTagCompound compound = super.getModuleData();
-		compound.setString(CLASS, "Blink");
 		compound.setBoolean(COORD_SET, useCoord);
 		compound.setInteger(POS_X, pos.getX());
 		compound.setInteger(POS_Y, pos.getY());

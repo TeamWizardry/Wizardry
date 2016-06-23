@@ -6,18 +6,17 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleScatter extends Module
 {
-	private Module[] modules;
-	
 	public ModuleScatter(Module... modules)
 	{
 		this.modules = modules;
 	}
-	
-    @Override
-    public ModuleType getType() {
-        return ModuleType.MODIFIER;
-    }
-    
+
+	@Override
+	public ModuleType getType()
+	{
+		return ModuleType.MODIFIER;
+	}
+
 	@Override
 	public NBTTagCompound getModuleData()
 	{

@@ -6,8 +6,6 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleCone extends Module
 {
-	private Module[] modules;
-	
 	public ModuleCone(Module... modules)
 	{
 		this.modules = modules;

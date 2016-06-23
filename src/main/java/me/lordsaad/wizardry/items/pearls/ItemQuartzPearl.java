@@ -50,12 +50,12 @@ public class ItemQuartzPearl extends Item implements IExplodable {
     public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn,
                                                     EnumHand hand) {
 
-    	if(worldIn.isRemote) {
-    		for(int i = 0; i < 10; i++) {
-    			
-    			Wizardry.proxy.spawnParticleMagicBurst(worldIn, playerIn.posX+( (Math.random()-0.5) * 5), playerIn.posY+( (Math.random()-0.5) * 10), playerIn.posZ+( (Math.random()-0.5) * 5));
-    		}
-    	}
+        if (worldIn.isRemote) {
+            for (int i = 0; i < 10; i++) {
+
+                Wizardry.proxy.spawnParticleMagicBurst(worldIn, playerIn.posX + ((Math.random() - 0.5) * 5), playerIn.posY + ((Math.random() - 0.5) * 10), playerIn.posZ + ((Math.random() - 0.5) * 5));
+            }
+        }
 
         return super.onItemRightClick(itemStackIn, worldIn, playerIn, hand);
     }

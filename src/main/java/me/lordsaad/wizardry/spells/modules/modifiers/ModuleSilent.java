@@ -6,18 +6,17 @@ import me.lordsaad.wizardry.spells.modules.ModuleType;
 
 public class ModuleSilent extends Module
 {
-	private Module[] modules;
-	
 	public ModuleSilent(Module... modules)
 	{
 		this.modules = modules;
 	}
-	
-    @Override
-    public ModuleType getType() {
-        return ModuleType.MODIFIER;
-    }
-    
+
+	@Override
+	public ModuleType getType()
+	{
+		return ModuleType.MODIFIER;
+	}
+
 	@Override
 	public NBTTagCompound getModuleData()
 	{

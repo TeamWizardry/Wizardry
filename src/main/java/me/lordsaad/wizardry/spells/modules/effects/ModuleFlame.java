@@ -6,18 +6,17 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleFlame extends Module
 {
-	private Module[] modules;
-	
 	public ModuleFlame(Module... modules)
 	{
 		this.modules = modules;
 	}
-	
-    @Override
-    public ModuleType getType() {
-        return ModuleType.EFFECT;
-    }
-    
+
+	@Override
+	public ModuleType getType()
+	{
+		return ModuleType.EFFECT;
+	}
+
 	@Override
 	public NBTTagCompound getModuleData()
 	{

@@ -21,7 +21,6 @@ public class ModuleAnd extends Module
 	public NBTTagCompound getModuleData()
 	{
 		NBTTagCompound compound = super.getModuleData();
-		compound.setString(CLASS, "AND");
 		return compound;
 	}
 }

@@ -13,23 +13,23 @@ import net.minecraftforge.oredict.OreDictionary;
 
 /**
  * @author murapix
- * 
- * Created on June 21, 2016
+ *         <p>
+ *         Created on June 21, 2016
  */
 public class ModuleList
 {
 	public HashMap<Module, ItemStack> moduleItems;
-	
+
 	public void init()
 	{
 		moduleItems = new HashMap<Module, ItemStack>();
-		
+
 		// Boolean Modules
 		moduleItems.put(new ModuleAnd(), new ItemStack(Items.STRING));
 		moduleItems.put(new ModuleOr(), new ItemStack(Items.WHEAT_SEEDS));
 		moduleItems.put(new ModuleNand(), new ItemStack(Blocks.REDSTONE_TORCH));
 		moduleItems.put(new ModuleNor(), new ItemStack(Blocks.TORCH));
-		
+
 		// Effect Modules
 		moduleItems.put(new ModuleBlink(), new ItemStack(Items.CHORUS_FRUIT_POPPED));
 		moduleItems.put(new ModuleExplosion(), new ItemStack(Blocks.TNT));
@@ -40,7 +40,7 @@ public class ModuleList
 		moduleItems.put(new ModulePotion(), new ItemStack(Items.POTIONITEM, 6, OreDictionary.WILDCARD_VALUE));
 		moduleItems.put(new ModuleSaturation(), new ItemStack(Blocks.CAKE));
 		moduleItems.put(new ModuleWater(), new ItemStack(Items.WATER_BUCKET));
-		
+
 		// Event Modules
 		moduleItems.put(new ModuleMeleeEvent(), new ItemStack(Items.IRON_SWORD));
 		moduleItems.put(new ModuleRangedEvent(), new ItemStack(Items.BOW));
@@ -50,7 +50,7 @@ public class ModuleList
 		moduleItems.put(new ModuleOnFireEvent(), new ItemStack(Items.FLINT));
 		moduleItems.put(new ModuleBlinkEvent(), new ItemStack(Items.ENDER_PEARL));
 		moduleItems.put(new ModulePotionEvent(), new ItemStack(Items.POTIONITEM, 1, OreDictionary.WILDCARD_VALUE));
-		
+
 		// Modifier Modules
 		moduleItems.put(new ModuleSilent(), new ItemStack(Blocks.WOOL, 16, OreDictionary.WILDCARD_VALUE));
 		moduleItems.put(new ModuleDuration(), new ItemStack(Blocks.SAND));
@@ -68,7 +68,7 @@ public class ModuleList
 		moduleItems.put(new ModuleCritChance(), new ItemStack(Items.RABBIT_FOOT));
 		moduleItems.put(new ModuleMagicDamage(), new ItemStack(Items.GOLD_INGOT));
 		moduleItems.put(new ModuleEnchantment(), new ItemStack(Items.ENCHANTED_BOOK));
-		
+
 		// Shape Modules
 		moduleItems.put(new ModuleBeam(), new ItemStack(Items.PRISMARINE_SHARD));
 		moduleItems.put(new ModuleProjectile(), new ItemStack(Items.BOW));
