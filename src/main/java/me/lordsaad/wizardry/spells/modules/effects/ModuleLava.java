@@ -1,6 +1,6 @@
 package me.lordsaad.wizardry.spells.modules.effects;
 
-import me.lordsaad.wizardry.api.modules.IModule;
+import me.lordsaad.wizardry.api.modules.Module;
 import me.lordsaad.wizardry.spells.modules.ModuleType;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
@@ -11,11 +11,11 @@ import net.minecraft.world.World;
 /**
  * Created by Saad on 6/21/2016.
  */
-public class ModuleLava implements IModule {
+public class ModuleLava extends Module {
 
-	private IModule[] modules;
+	private Module[] modules;
 	
-	public ModuleLava(IModule... modules)
+	public ModuleLava(Module... modules)
 	{
 		this.modules = modules;
 	}

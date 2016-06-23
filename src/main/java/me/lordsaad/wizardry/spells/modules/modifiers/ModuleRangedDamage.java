@@ -1,14 +1,14 @@
 package me.lordsaad.wizardry.spells.modules.modifiers;
 
-import me.lordsaad.wizardry.api.modules.IModule;
+import me.lordsaad.wizardry.api.modules.Module;
 import me.lordsaad.wizardry.spells.modules.ModuleType;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class ModuleRangedDamage implements IModule
+public class ModuleRangedDamage extends Module
 {
-	private IModule[] modules;
+	private Module[] modules;
 	
-	public ModuleRangedDamage(IModule... modules)
+	public ModuleRangedDamage(Module... modules)
 	{
 		this.modules = modules;
 	}

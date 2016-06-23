@@ -1,14 +1,14 @@
 package me.lordsaad.wizardry.spells.modules.shapes;
 
-import me.lordsaad.wizardry.api.modules.IModule;
+import me.lordsaad.wizardry.api.modules.Module;
 import me.lordsaad.wizardry.spells.modules.ModuleType;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class ModuleZone implements IModule
+public class ModuleZone extends Module
 {
-	private IModule[] modules;
+	private Module[] modules;
 	
-	public ModuleZone(IModule... modules)
+	public ModuleZone(Module... modules)
 	{
 		this.modules = modules;
 	}

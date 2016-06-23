@@ -18,11 +18,11 @@ import net.minecraftforge.oredict.OreDictionary;
  */
 public class ModuleList
 {
-	public HashMap<IModule, ItemStack> moduleItems;
+	public HashMap<Module, ItemStack> moduleItems;
 	
 	public void init()
 	{
-		moduleItems = new HashMap<IModule, ItemStack>();
+		moduleItems = new HashMap<Module, ItemStack>();
 		
 		// Boolean Modules
 		moduleItems.put(new ModuleAnd(), new ItemStack(Items.STRING));
@@ -75,5 +75,6 @@ public class ModuleList
 		moduleItems.put(new ModuleMelee(), new ItemStack(Items.DIAMOND_SWORD));
 		moduleItems.put(new ModuleSelf(), new ItemStack(Items.GOLDEN_APPLE));
 		moduleItems.put(new ModuleZone(), new ItemStack(Blocks.GLASS_PANE));
+		moduleItems.put(new ModuleCone(), new ItemStack(Items.GUNPOWDER));
 	}
 }

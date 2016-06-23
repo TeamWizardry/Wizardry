@@ -1,14 +1,17 @@
 package me.lordsaad.wizardry.spells.modules.effects;
 
-import me.lordsaad.wizardry.api.modules.IModule;
+import me.lordsaad.wizardry.api.modules.Module;
 import me.lordsaad.wizardry.spells.modules.ModuleType;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class ModuleExplosion implements IModule
+public class ModuleExplosion extends Module
 {
-	private IModule[] modules;
+	private static final String DAMAGE_TERRAIN = "Damage Terrain";
 	
-	public ModuleExplosion(IModule... modules)
+	private boolean damageTerrain;
+	private int power;
+	
+	public ModuleExplosion(Module... modules)
 	{
 		this.modules = modules;
 	}
@@ -21,6 +24,22 @@ public class ModuleExplosion implements IModule
 	@Override
 	public NBTTagCompound getModuleData()
 	{
-		return null;
+		NBTTagCompound compound = super.getModuleData();
+		compound.setString(CLASS, this.getClass().getSimpleName());
+		compound.setBoolean(DAMAGE_TERRAIN, damageTerrain);
+		compound.setInteger(POWER, power);
+		return compound;
+	}
+	
+	public ModuleExplosion setDamageTerrain(boolean canDamageTerrain)
+	{
+		damageTerrain = canDamageTerrain;
+		return this;
+	}
+	
+	public ModuleExplosion setPower(int power)
+	{
+		this.power = power;
+		return this;
 	}
 }

@@ -1,14 +1,14 @@
 package me.lordsaad.wizardry.spells.modules.effects;
 
-import me.lordsaad.wizardry.api.modules.IModule;
+import me.lordsaad.wizardry.api.modules.Module;
 import me.lordsaad.wizardry.spells.modules.ModuleType;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class ModuleSaturation implements IModule
+public class ModuleSaturation extends Module
 {
-	private IModule[] modules;
+	private Module[] modules;
 	
-	public ModuleSaturation(IModule... modules)
+	public ModuleSaturation(Module... modules)
 	{
 		this.modules = modules;
 	}

@@ -1,14 +1,14 @@
 package me.lordsaad.wizardry.spells.modules.modifiers;
 
-import me.lordsaad.wizardry.api.modules.IModule;
+import me.lordsaad.wizardry.api.modules.Module;
 import me.lordsaad.wizardry.spells.modules.ModuleType;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class ModuleCritChance implements IModule
+public class ModuleCritChance extends Module
 {
-	private IModule[] modules;
+	private Module[] modules;
 	
-	public ModuleCritChance(IModule... modules)
+	public ModuleCritChance(Module... modules)
 	{
 		this.modules = modules;
 	}
