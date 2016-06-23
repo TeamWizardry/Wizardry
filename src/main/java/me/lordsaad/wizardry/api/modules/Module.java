@@ -1,10 +1,13 @@
 package me.lordsaad.wizardry.api.modules;
 
-import me.lordsaad.wizardry.Wizardry;
-import me.lordsaad.wizardry.spells.modules.ModuleType;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
+
+import me.lordsaad.wizardry.Wizardry;
+import me.lordsaad.wizardry.api.modules.attribute.Attribute;
+import me.lordsaad.wizardry.api.modules.attribute.AttributeMap;
+import me.lordsaad.wizardry.spells.modules.ModuleType;
+import me.lordsaad.wizardry.spells.modules.modifiers.ModuleModifier;
 
 /**
  * Created by Saad on 6/21/2016.
@@ -26,10 +29,13 @@ public abstract class Module
 	protected float manaMult = 1;
 	protected int burnoutCost = 0;
 	protected float burnoutMult = 1;
-		
+	
+	protected boolean canHaveChildren = true;
+	
 	public Module()
 	{
-		
+		attributes.addAttribute(Attribute.COST);
+		attributes.addAttribute(Attribute.BURNOUT);
 	}
 	
 	/**
@@ -46,10 +52,6 @@ public abstract class Module
 	{
 		NBTTagCompound compound = new NBTTagCompound();
 		compound.setString(CLASS, this.getClass().getName());
-		NBTTagList list = new NBTTagList();
-		for (Module module : modules)
-			list.appendTag(module.getModuleData());
-		compound.setTag(MODULES, list);
 		return compound;
 	}
 
@@ -85,4 +87,23 @@ public abstract class Module
 		burnoutMult = multiplier;
 		return this;
 	}
+	
+	{ /* attributes/parsing */ }
+	
+	AttributeMap attributes = new AttributeMap();
+	
+	/**
+	 * Handle a child module {@code other}
+	 * @param other the child module
+	 * @return if the module was handled
+	 */
+	public boolean accept(Module other) {
+		if(other instanceof ModuleModifier) {
+			((ModuleModifier)other).apply(attributes);
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean canHaveChildren() { return canHaveChildren; }
 }
