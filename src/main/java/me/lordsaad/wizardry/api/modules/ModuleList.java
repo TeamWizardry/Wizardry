@@ -1,26 +1,63 @@
 package me.lordsaad.wizardry.api.modules;
 
-import com.google.common.collect.HashBiMap;
-import me.lordsaad.wizardry.Wizardry;
-import me.lordsaad.wizardry.spells.modules.booleans.ModuleAnd;
-import me.lordsaad.wizardry.spells.modules.booleans.ModuleNand;
-import me.lordsaad.wizardry.spells.modules.booleans.ModuleNor;
-import me.lordsaad.wizardry.spells.modules.booleans.ModuleOr;
-import me.lordsaad.wizardry.spells.modules.effects.*;
-import me.lordsaad.wizardry.spells.modules.events.*;
-import me.lordsaad.wizardry.spells.modules.modifiers.*;
-import me.lordsaad.wizardry.spells.modules.shapes.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
+import net.minecraftforge.oredict.OreDictionary;
+
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.oredict.OreDictionary;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Predicate;
+import me.lordsaad.wizardry.Wizardry;
+import me.lordsaad.wizardry.spells.modules.booleans.ModuleAnd;
+import me.lordsaad.wizardry.spells.modules.booleans.ModuleNand;
+import me.lordsaad.wizardry.spells.modules.booleans.ModuleNor;
+import me.lordsaad.wizardry.spells.modules.booleans.ModuleOr;
+import me.lordsaad.wizardry.spells.modules.effects.ModuleBlink;
+import me.lordsaad.wizardry.spells.modules.effects.ModuleExplosion;
+import me.lordsaad.wizardry.spells.modules.effects.ModuleFallProtection;
+import me.lordsaad.wizardry.spells.modules.effects.ModuleFlame;
+import me.lordsaad.wizardry.spells.modules.effects.ModuleLava;
+import me.lordsaad.wizardry.spells.modules.effects.ModuleLight;
+import me.lordsaad.wizardry.spells.modules.effects.ModulePotion;
+import me.lordsaad.wizardry.spells.modules.effects.ModuleSaturation;
+import me.lordsaad.wizardry.spells.modules.effects.ModuleWater;
+import me.lordsaad.wizardry.spells.modules.events.ModuleBlinkEvent;
+import me.lordsaad.wizardry.spells.modules.events.ModuleFallEvent;
+import me.lordsaad.wizardry.spells.modules.events.ModuleMeleeEvent;
+import me.lordsaad.wizardry.spells.modules.events.ModuleOnFireEvent;
+import me.lordsaad.wizardry.spells.modules.events.ModulePotionEvent;
+import me.lordsaad.wizardry.spells.modules.events.ModuleRangedEvent;
+import me.lordsaad.wizardry.spells.modules.events.ModuleSuffocationEvent;
+import me.lordsaad.wizardry.spells.modules.events.ModuleUnderwaterEvent;
+import me.lordsaad.wizardry.spells.modules.modifiers.ModuleArea;
+import me.lordsaad.wizardry.spells.modules.modifiers.ModuleBeamModifier;
+import me.lordsaad.wizardry.spells.modules.modifiers.ModuleBurnOut;
+import me.lordsaad.wizardry.spells.modules.modifiers.ModuleCritChance;
+import me.lordsaad.wizardry.spells.modules.modifiers.ModuleDuration;
+import me.lordsaad.wizardry.spells.modules.modifiers.ModuleEnchantment;
+import me.lordsaad.wizardry.spells.modules.modifiers.ModuleMagicDamage;
+import me.lordsaad.wizardry.spells.modules.modifiers.ModuleManaCost;
+import me.lordsaad.wizardry.spells.modules.modifiers.ModuleMeleeDamage;
+import me.lordsaad.wizardry.spells.modules.modifiers.ModulePierce;
+import me.lordsaad.wizardry.spells.modules.modifiers.ModuleProjectileCount;
+import me.lordsaad.wizardry.spells.modules.modifiers.ModulePunch;
+import me.lordsaad.wizardry.spells.modules.modifiers.ModuleRangedDamage;
+import me.lordsaad.wizardry.spells.modules.modifiers.ModuleScatter;
+import me.lordsaad.wizardry.spells.modules.modifiers.ModuleSilent;
+import me.lordsaad.wizardry.spells.modules.modifiers.ModuleSticky;
+import me.lordsaad.wizardry.spells.modules.shapes.ModuleBeam;
+import me.lordsaad.wizardry.spells.modules.shapes.ModuleCone;
+import me.lordsaad.wizardry.spells.modules.shapes.ModuleMelee;
+import me.lordsaad.wizardry.spells.modules.shapes.ModuleProjectile;
+import me.lordsaad.wizardry.spells.modules.shapes.ModuleSelf;
+import me.lordsaad.wizardry.spells.modules.shapes.ModuleZone;
 
 /**
  * @author murapix
@@ -31,7 +68,7 @@ public enum ModuleList {
 	INSTANCE;
 
 	public Map<ResourceLocation, IModuleConstructor> modules;
-	public HashBiMap<Predicate<ItemStack>, ResourceLocation> moduleItems;
+	public SortedMap<ItemStack, ResourceLocation> moduleItems;
 
 	private void register(String name, IModuleConstructor constructor) {
 		modules.put(new ResourceLocation(Wizardry.MODID, name), constructor);
@@ -54,27 +91,42 @@ public enum ModuleList {
 	}
 
 	private void item(String name, ItemStack stack) {
-		moduleItems.put(
-				(itemstack) -> {
-					return ItemStack.areItemsEqual(itemstack, stack) &&
-							itemstack.stackSize == stack.stackSize &&
-							itemstack.getItemDamage() == stack.getItemDamage();
-				},
-				new ResourceLocation(Wizardry.MODID, name)
-		);
+		moduleItems.put(stack, new ResourceLocation(Wizardry.MODID, name));
 	}
 
 	public Module createModule(ItemStack stack) {
-		for (Predicate<ItemStack> pred : moduleItems.keySet()) {
-			if (pred.test(stack))
-				return modules.get(moduleItems.get(pred)).construct();
+		for (ItemStack test : moduleItems.keySet()) {
+			if(match(test, stack))
+				return modules.get(moduleItems.get(test)).construct();
 		}
 		return null;
+	}
+	
+	public boolean match(ItemStack a, ItemStack b) {
+		if(a == b)
+			return true;
+		
+		if(a == null || b == null)
+			return false;
+		
+		if(a.getItem() != b.getItem())
+			return false;
+		
+		if(a.getItemDamage() == OreDictionary.WILDCARD_VALUE)
+			return true;
+		
+		if(b.getItemDamage() == OreDictionary.WILDCARD_VALUE)
+			return true;
+		
+		if(a.getItemDamage() == b.getItemDamage())
+			return true;
+		
+		return false;
 	}
 
 	public void init() {
 		modules = new HashMap<>();
-		moduleItems = HashBiMap.create();
+		moduleItems = new TreeMap<>((a, b) -> -Integer.compare(a == null ? 0 : a.stackSize, b == null ? 0 : b.stackSize));
 
 		// Booleans
 		register("boolAND", ModuleAnd::new);
@@ -129,33 +181,55 @@ public enum ModuleList {
 		item("eventPotion", Items.GLASS_BOTTLE);
 
 		// Modifiers
+		
+		register("modifierSilent", ModuleSilent::new);
+		register("modifierDuration", ModuleDuration::new);
+		register("modifierManaCost", ModuleManaCost::new);
+		register("modifierBurnOut", ModuleBurnOut::new);
+		register("modifierArea", ModuleArea::new);
+		register("modifierPierce", ModulePierce::new);
+		register("modifierBeamModifier", ModuleBeamModifier::new);
+		register("modifierRangedDamage", ModuleRangedDamage::new);
+		register("modifierPunch", ModulePunch::new);
+		register("modifierSticky", ModuleSticky::new);
+		register("modifierScatter", ModuleScatter::new);
+		register("modifierProjectileCount", ModuleProjectileCount::new);
+		register("modifierMeleeDamage", ModuleMeleeDamage::new);
+		register("modifierCritChance", ModuleCritChance::new);
+		register("modifierMagicDamage", ModuleMagicDamage::new);
+		register("modifierEnchantment", ModuleEnchantment::new);
 
-
-		// Modifier Modules
-		moduleItems.put(new ModuleSilent(), new ItemStack(Blocks.WOOL, 16, OreDictionary.WILDCARD_VALUE));
-		moduleItems.put(new ModuleDuration(), new ItemStack(Blocks.SAND));
-		moduleItems.put(new ModuleManaCost(), new ItemStack(Items.DYE, 64, 4));
-		moduleItems.put(new ModuleBurnOut(), new ItemStack(Items.SUGAR, 64));
-		moduleItems.put(new ModuleArea(), new ItemStack(Items.DRAGON_BREATH));
-		moduleItems.put(new ModulePierce(), new ItemStack(Blocks.GLASS, 16, OreDictionary.WILDCARD_VALUE));
-		moduleItems.put(new ModuleBeamModifier(), new ItemStack(Items.PRISMARINE_CRYSTALS));
-		moduleItems.put(new ModuleRangedDamage(), new ItemStack(Items.ARROW, 16));
-		moduleItems.put(new ModulePunch(), new ItemStack(Items.SNOWBALL, 100));
-		moduleItems.put(new ModuleSticky(), new ItemStack(Items.SLIME_BALL, 16));
-		moduleItems.put(new ModuleScatter(), new ItemStack(Blocks.GRAVEL));
-		moduleItems.put(new ModuleProjectileCount(), new ItemStack(Items.QUARTZ));
-		moduleItems.put(new ModuleMeleeDamage(), new ItemStack(Items.DIAMOND, 3));
-		moduleItems.put(new ModuleCritChance(), new ItemStack(Items.RABBIT_FOOT));
-		moduleItems.put(new ModuleMagicDamage(), new ItemStack(Items.GOLD_INGOT));
-		moduleItems.put(new ModuleEnchantment(), new ItemStack(Items.ENCHANTED_BOOK));
-
+		item("modifierSilent", new ItemStack(Blocks.WOOL, 16, OreDictionary.WILDCARD_VALUE));
+		item("modifierDuration", Blocks.SAND);
+		item("modifierManaCost", new ItemStack(Items.DYE, 64, 4));
+		item("modifierBurnOut", Items.SUGAR, 64);
+		item("modifierArea", Items.DRAGON_BREATH);
+		item("modifierPierce", new ItemStack(Blocks.GLASS, 16, OreDictionary.WILDCARD_VALUE));
+		item("modifierBeamModifier", Items.PRISMARINE_CRYSTALS);
+		item("modifierRangedDamage", Items.ARROW, 16);
+		item("modifierPunch", Items.SNOWBALL, 100);
+		item("modifierSticky", Items.SLIME_BALL, 16);
+		item("modifierScatter", Blocks.GRAVEL);
+		item("modifierProjectileCount", Items.QUARTZ);
+		item("modifierMeleeDamage", Items.DIAMOND, 3);
+		item("modifierCritChance", Items.RABBIT_FOOT);
+		item("modifierMagicDamage", Items.GOLD_INGOT);
+		item("modifierEnchantment", Items.ENCHANTED_BOOK);
+		
 		// Shape Modules
-		moduleItems.put(new ModuleBeam(), new ItemStack(Items.PRISMARINE_SHARD));
-		moduleItems.put(new ModuleProjectile(), new ItemStack(Items.BOW));
-		moduleItems.put(new ModuleMelee(), new ItemStack(Items.DIAMOND_SWORD));
-		moduleItems.put(new ModuleSelf(), new ItemStack(Items.GOLDEN_APPLE));
-		moduleItems.put(new ModuleZone(), new ItemStack(Blocks.GLASS_PANE));
-		moduleItems.put(new ModuleCone(), new ItemStack(Items.GUNPOWDER));
+		register("shapeBeam", ModuleBeam::new);
+		register("shapeProjectile", ModuleProjectile::new);
+		register("shapeMelee", ModuleMelee::new);
+		register("shapeSelf", ModuleSelf::new);
+		register("shapeZone", ModuleZone::new);
+		register("shapeCone", ModuleCone::new);
+
+		item("shapeBeam", Items.PRISMARINE_SHARD);
+		item("shapeProjectile", Items.BOW);
+		item("shapeMelee", Items.DIAMOND_SWORD);
+		item("shapeSelf", Items.GOLDEN_APPLE);
+		item("shapeZone", Blocks.GLASS_PANE);
+		item("shapeCone", Items.GUNPOWDER);
 	}
 
 	@FunctionalInterface
