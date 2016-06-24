@@ -3,13 +3,10 @@ package me.lordsaad.wizardry.spells.parsing;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
-
-import net.minecraft.item.ItemStack;
-
 import me.lordsaad.wizardry.ModItems;
-import me.lordsaad.wizardry.Wizardry;
 import me.lordsaad.wizardry.api.modules.Module;
 import me.lordsaad.wizardry.api.modules.ModuleList;
+import net.minecraft.item.ItemStack;
 
 public class Parser {
 

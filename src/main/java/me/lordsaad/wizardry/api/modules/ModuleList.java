@@ -3,18 +3,6 @@ package me.lordsaad.wizardry.api.modules;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
-
-import net.minecraftforge.oredict.OreDictionary;
-
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-
-import com.google.common.collect.HashBiMap;
-
 import me.lordsaad.wizardry.Wizardry;
 import me.lordsaad.wizardry.spells.modules.booleans.ModuleAnd;
 import me.lordsaad.wizardry.spells.modules.booleans.ModuleNand;
@@ -46,7 +34,6 @@ import me.lordsaad.wizardry.spells.modules.modifiers.ModuleEnchantment;
 import me.lordsaad.wizardry.spells.modules.modifiers.ModuleMagicDamage;
 import me.lordsaad.wizardry.spells.modules.modifiers.ModuleManaCost;
 import me.lordsaad.wizardry.spells.modules.modifiers.ModuleMeleeDamage;
-import me.lordsaad.wizardry.spells.modules.modifiers.ModulePierce;
 import me.lordsaad.wizardry.spells.modules.modifiers.ModuleProjectileCount;
 import me.lordsaad.wizardry.spells.modules.modifiers.ModulePunch;
 import me.lordsaad.wizardry.spells.modules.modifiers.ModuleRangedDamage;
@@ -59,6 +46,14 @@ import me.lordsaad.wizardry.spells.modules.shapes.ModuleMelee;
 import me.lordsaad.wizardry.spells.modules.shapes.ModuleProjectile;
 import me.lordsaad.wizardry.spells.modules.shapes.ModuleSelf;
 import me.lordsaad.wizardry.spells.modules.shapes.ModuleZone;
+import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.oredict.OreDictionary;
+import com.google.common.collect.HashBiMap;
 
 /**
  * @author murapix
@@ -174,33 +169,53 @@ public enum ModuleList
 		item("eventPotion", Items.GLASS_BOTTLE);
 		
 		// Modifiers
+		register("silent", ModuleSilent::new);
+		register("duration", ModuleDuration::new);
+		register("manaCost", ModuleManaCost::new);
+		register("burnout", ModuleBurnOut::new);
+		register("area", ModuleArea::new);
+		register("pierce", ModuleArea::new);
+		register("modifierBeam", ModuleBeamModifier::new);
+		register("rangedDamage", ModuleRangedDamage::new);
+		register("punch", ModulePunch::new);
+		register("sticky", ModuleSticky::new);
+		register("scatter", ModuleScatter::new);
+		register("projectileCount", ModuleProjectileCount::new);
+		register("meleeDamage", ModuleMeleeDamage::new);
+		register("critChance", ModuleCritChance::new);
+		register("magicDamage", ModuleMagicDamage::new);
+		register("enchantment", ModuleEnchantment::new);
 		
+		item("silent", new ItemStack(Blocks.WOOL, 16, OreDictionary.WILDCARD_VALUE));
+		item("duration", Blocks.SAND);
+		item("manaCost", new ItemStack(Items.DYE, 64, 4));
+		item("burnout", new ItemStack(Items.SUGAR, 64));
+		item("area", Items.DRAGON_BREATH);
+		item("pierce", new ItemStack(Blocks.GLASS, 16, OreDictionary.WILDCARD_VALUE));
+		item("modifierBeam", Items.PRISMARINE_CRYSTALS);
+		item("rangedDamage", new ItemStack(Items.ARROW, 16));
+		item("punch", new ItemStack(Items.SNOWBALL, 100));
+		item("sticky", new ItemStack(Items.SLIME_BALL, 16));
+		item("scatter", Blocks.GRAVEL);
+		item("projectileCount", new ItemStack(Items.QUARTZ, 16));
+		item("meleeDamage", new ItemStack(Items.DIAMOND, 3));
+		item("critChance", Items.RABBIT_FOOT);
+		item("magicDamage", Items.GOLD_INGOT);
+		item("enchantment", Items.ENCHANTED_BOOK);
+
+		// Shapes
+		register("shapeBeam", ModuleBeam::new);
+		register("shapeProjectile", ModuleProjectile::new);
+		register("shapeMelee", ModuleMelee::new);
+		register("shapeSelf", ModuleSelf::new);
+		register("shapeZone", ModuleZone::new);
+		register("shapeCone", ModuleCone::new);
 		
-
-		// Modifier Modules
-		moduleItems.put(new ModuleSilent(), new ItemStack(Blocks.WOOL, 16, OreDictionary.WILDCARD_VALUE));
-		moduleItems.put(new ModuleDuration(), new ItemStack(Blocks.SAND));
-		moduleItems.put(new ModuleManaCost(), new ItemStack(Items.DYE, 64, 4));
-		moduleItems.put(new ModuleBurnOut(), new ItemStack(Items.SUGAR, 64));
-		moduleItems.put(new ModuleArea(), new ItemStack(Items.DRAGON_BREATH));
-		moduleItems.put(new ModulePierce(), new ItemStack(Blocks.GLASS, 16, OreDictionary.WILDCARD_VALUE));
-		moduleItems.put(new ModuleBeamModifier(), new ItemStack(Items.PRISMARINE_CRYSTALS));
-		moduleItems.put(new ModuleRangedDamage(), new ItemStack(Items.ARROW, 16));
-		moduleItems.put(new ModulePunch(), new ItemStack(Items.SNOWBALL, 100));
-		moduleItems.put(new ModuleSticky(), new ItemStack(Items.SLIME_BALL, 16));
-		moduleItems.put(new ModuleScatter(), new ItemStack(Blocks.GRAVEL));
-		moduleItems.put(new ModuleProjectileCount(), new ItemStack(Items.QUARTZ));
-		moduleItems.put(new ModuleMeleeDamage(), new ItemStack(Items.DIAMOND, 3));
-		moduleItems.put(new ModuleCritChance(), new ItemStack(Items.RABBIT_FOOT));
-		moduleItems.put(new ModuleMagicDamage(), new ItemStack(Items.GOLD_INGOT));
-		moduleItems.put(new ModuleEnchantment(), new ItemStack(Items.ENCHANTED_BOOK));
-
-		// Shape Modules
-		moduleItems.put(new ModuleBeam(), new ItemStack(Items.PRISMARINE_SHARD));
-		moduleItems.put(new ModuleProjectile(), new ItemStack(Items.BOW));
-		moduleItems.put(new ModuleMelee(), new ItemStack(Items.DIAMOND_SWORD));
-		moduleItems.put(new ModuleSelf(), new ItemStack(Items.GOLDEN_APPLE));
-		moduleItems.put(new ModuleZone(), new ItemStack(Blocks.GLASS_PANE));
-		moduleItems.put(new ModuleCone(), new ItemStack(Items.GUNPOWDER));
+		item("shapeBeam", Items.PRISMARINE_SHARD);
+		item("shapeProjectile", Items.BOW);
+		item("shapeMelee", Items.DIAMOND_SWORD);
+		item("shapeSelf", Items.GOLDEN_APPLE);
+		item("shapeZone", Blocks.GLASS_PANE);
+		item("shapeCone", Items.GUNPOWDER);
 	}
 }

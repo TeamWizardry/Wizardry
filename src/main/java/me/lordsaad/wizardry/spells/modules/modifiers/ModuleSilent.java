@@ -1,16 +1,14 @@
 package me.lordsaad.wizardry.spells.modules.modifiers;
 
-import net.minecraft.nbt.NBTTagCompound;
 import me.lordsaad.wizardry.api.modules.Module;
+import me.lordsaad.wizardry.api.modules.attribute.Attribute;
+import me.lordsaad.wizardry.api.modules.attribute.AttributeMap;
+import me.lordsaad.wizardry.api.modules.attribute.AttributeModifier;
+import me.lordsaad.wizardry.api.modules.attribute.AttributeModifier.Operation;
 import me.lordsaad.wizardry.spells.modules.ModuleType;
 
-public class ModuleSilent extends Module
+public class ModuleSilent extends Module implements IModifier
 {
-	public ModuleSilent()
-	{
-		
-	}
-
 	@Override
 	public ModuleType getType()
 	{
@@ -18,8 +16,9 @@ public class ModuleSilent extends Module
 	}
 
 	@Override
-	public NBTTagCompound getModuleData()
+	public void apply(AttributeMap map)
 	{
-		return null;
+		map.putModifier(Attribute.COST, new AttributeModifier(Operation.MULTIPLY, 1.1));
+		map.putModifier(Attribute.BURNOUT, new AttributeModifier(Operation.MULTIPLY, 1.1));
 	}
 }
