@@ -9,28 +9,23 @@ import net.minecraft.world.World;
 /**
  * Created by Saad on 6/21/2016.
  */
-public class ModuleMeleeEvent extends Module
-{
+public class ModuleMeleeEvent extends Module {
 
-	public ModuleMeleeEvent()
-	{
-		
-	}
+    public ModuleMeleeEvent() {
 
-	@Override
-	public ModuleType getType()
-	{
-		return ModuleType.EVENT;
-	}
+    }
 
-	@Override
-	public NBTTagCompound getModuleData()
-	{
-		return null;
-	}
+    @Override
+    public ModuleType getType() {
+        return ModuleType.EVENT;
+    }
 
-	public void tick(World world, EntityPlayer source)
-	{
+    @Override
+    public NBTTagCompound getModuleData() {
+        return null;
+    }
 
-	}
+    public void tick(World world, EntityPlayer source) {
+
+    }
 }

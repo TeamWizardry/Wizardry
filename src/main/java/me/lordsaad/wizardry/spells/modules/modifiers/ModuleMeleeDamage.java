@@ -4,22 +4,18 @@ import me.lordsaad.wizardry.api.modules.Module;
 import me.lordsaad.wizardry.spells.modules.ModuleType;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class ModuleMeleeDamage extends Module
-{
-	public ModuleMeleeDamage()
-	{
-		
-	}
+public class ModuleMeleeDamage extends Module {
+    public ModuleMeleeDamage() {
 
-	@Override
-	public ModuleType getType()
-	{
-		return ModuleType.MODIFIER;
-	}
+    }
 
-	@Override
-	public NBTTagCompound getModuleData()
-	{
-		return null;
-	}
+    @Override
+    public ModuleType getType() {
+        return ModuleType.MODIFIER;
+    }
+
+    @Override
+    public NBTTagCompound getModuleData() {
+        return null;
+    }
 }

@@ -4,24 +4,20 @@ import me.lordsaad.wizardry.api.modules.Module;
 import me.lordsaad.wizardry.spells.modules.ModuleType;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class ModuleNand extends Module
-{
-	public ModuleNand()
-	{
-		
-	}
-	
-	@Override
-	public ModuleType getType()
-	{
-		return ModuleType.BOOLEAN;
-	}
+public class ModuleNand extends Module {
+    public ModuleNand() {
 
-	@Override
-	public NBTTagCompound getModuleData()
-	{
-		NBTTagCompound compound = new NBTTagCompound();
-		compound.setString(CLASS, "NAND");
-		return compound;
-	}
+    }
+
+    @Override
+    public ModuleType getType() {
+        return ModuleType.BOOLEAN;
+    }
+
+    @Override
+    public NBTTagCompound getModuleData() {
+        NBTTagCompound compound = new NBTTagCompound();
+        compound.setString(CLASS, "NAND");
+        return compound;
+    }
 }

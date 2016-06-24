@@ -1,8 +1,7 @@
 package me.lordsaad.wizardry.shader.uniforms;
 
-import org.lwjgl.opengl.ARBShaderObjects;
-
 import me.lordsaad.wizardry.shader.Shader;
+import org.lwjgl.opengl.ARBShaderObjects;
 
 public class BoolTypes {
 

@@ -1,27 +1,24 @@
 package me.lordsaad.wizardry.shader;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-
+import me.lordsaad.wizardry.Config;
+import me.lordsaad.wizardry.Logs;
+import me.lordsaad.wizardry.shader.shaders.BurstShader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
-
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.ARBFragmentShader;
 import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.ARBVertexShader;
 import org.lwjgl.opengl.GL11;
 
-import me.lordsaad.wizardry.Config;
-import me.lordsaad.wizardry.Logs;
-import me.lordsaad.wizardry.shader.shaders.BurstShader;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 /**
  * Credit to Vazkii (https://github.com/Vazkii/Botania/blob/master/src/main/java/vazkii/botania/client/core/helper/ShaderHelper.java)
@@ -30,9 +27,8 @@ import me.lordsaad.wizardry.shader.shaders.BurstShader;
 public final class ShaderHelper implements IResourceManagerReloadListener {
     private static final int VERT = ARBVertexShader.GL_VERTEX_SHADER_ARB;
     private static final int FRAG = ARBFragmentShader.GL_FRAGMENT_SHADER_ARB;
-    private static boolean isRegistered = false;
     public static BurstShader burst;
-    
+    private static boolean isRegistered = false;
     private static ShaderHelper INSTANCE = new ShaderHelper();
 
     private ShaderHelper() {
@@ -41,25 +37,17 @@ public final class ShaderHelper implements IResourceManagerReloadListener {
     public static void initShaders() {
         if (!useShaders())
             return;
-        
-        burst = new BurstShader( null, "/assets/wizardry/shader/burstNew.frag");
-        
+
+        burst = new BurstShader(null, "/assets/wizardry/shader/burstNew.frag");
+
         createProgram(burst);
-        
+
         if (!isRegistered) {
             isRegistered = true;
-            if(Config.developmentEnvironment && Minecraft.getMinecraft().getResourceManager() instanceof IReloadableResourceManager)
-            	((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(INSTANCE);
+            if (Config.developmentEnvironment && Minecraft.getMinecraft().getResourceManager() instanceof IReloadableResourceManager)
+                ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(INSTANCE);
             MinecraftForge.EVENT_BUS.register(INSTANCE);
         }
-    }
-    
-    @SubscribeEvent
-    public void reloadShaders(LivingJumpEvent event) {
-    	if(!event.getEntity().worldObj.isRemote)
-    		return;
-    	
-    	createProgram(burst);
     }
 
     public static <T extends Shader> void useShader(T shader, ShaderCallback<T> callback) {
@@ -69,10 +57,10 @@ public final class ShaderHelper implements IResourceManagerReloadListener {
         }
         if (!useShaders())
             return;
-    	
-    	
+
+
         ARBShaderObjects.glUseProgramObjectARB(shader.getGlName());
-        
+
 //    	if(shader.time != null)
 //    		shader.time.set(System.nanoTime()/1000000f);
 
@@ -93,9 +81,9 @@ public final class ShaderHelper implements IResourceManagerReloadListener {
     }
 
     private static int createProgram(Shader shader) {
-    	String vert = shader.getVert();
-    	String frag = shader.getFrag();
-    	
+        String vert = shader.getVert();
+        String frag = shader.getFrag();
+
         int vertId = 0, fragId = 0, program = 0;
         String vertText = "[[NONE]]", fragText = "[[NONE]]";
         if (vert != null) {
@@ -147,12 +135,9 @@ public final class ShaderHelper implements IResourceManagerReloadListener {
         Logs.log("Created program %d - VERT:'%s' FRAG:'%s'", program, vert, frag);
 
         shader.init(program);
-        
+
         return program;
     }
-
-    // Most of the code taken from the LWJGL wiki
-    // http://lwjgl.org/wiki/index.php?title=GLSL_Shaders_with_LWJGL
 
     private static int createShader(String fileText, int shaderType) {
         int shader = 0;
@@ -176,6 +161,9 @@ public final class ShaderHelper implements IResourceManagerReloadListener {
             return -1;
         }
     }
+
+    // Most of the code taken from the LWJGL wiki
+    // http://lwjgl.org/wiki/index.php?title=GLSL_Shaders_with_LWJGL
 
     private static String getLogInfo(int obj, String fileText) {
         return ARBShaderObjects.glGetInfoLogARB(obj, ARBShaderObjects.glGetObjectParameteriARB(obj, ARBShaderObjects.GL_OBJECT_INFO_LOG_LENGTH_ARB));// + "\n" + fileText;
@@ -228,6 +216,14 @@ public final class ShaderHelper implements IResourceManagerReloadListener {
         }
 
         return source.toString();
+    }
+
+    @SubscribeEvent
+    public void reloadShaders(LivingJumpEvent event) {
+        if (!event.getEntity().worldObj.isRemote)
+            return;
+
+        createProgram(burst);
     }
 
     @Override
