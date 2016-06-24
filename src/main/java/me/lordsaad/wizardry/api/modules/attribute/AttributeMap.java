@@ -96,5 +96,4 @@ public class AttributeMap
 			value = mod.apply(value);
 
 	}
-
 }

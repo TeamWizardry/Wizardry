@@ -4,13 +4,11 @@ import me.lordsaad.wizardry.api.modules.Module;
 import me.lordsaad.wizardry.spells.modules.ModuleType;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class ModuleOnFireEvent extends Module
-{
-	public ModuleOnFireEvent()
-	{
-		
-	}
-	
+public class ModuleOnFireEvent extends Module {
+    public ModuleOnFireEvent() {
+
+    }
+
     @Override
     public ModuleType getType() {
         return ModuleType.EFFECT;

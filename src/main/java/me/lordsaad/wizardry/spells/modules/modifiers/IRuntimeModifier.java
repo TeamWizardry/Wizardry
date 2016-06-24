@@ -4,7 +4,8 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public interface IRuntimeModifier {
 
-	public NBTTagCompound saveToNBT();
-	public void readFromNBT(NBTTagCompound tag);
-	
+    NBTTagCompound saveToNBT();
+
+    void readFromNBT(NBTTagCompound tag);
+
 }

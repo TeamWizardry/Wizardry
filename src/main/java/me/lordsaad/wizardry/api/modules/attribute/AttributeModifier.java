@@ -39,5 +39,4 @@ public class AttributeModifier {
 	public static enum Operation {
 		ADD, MULTIPLY
 	}
-	
 }

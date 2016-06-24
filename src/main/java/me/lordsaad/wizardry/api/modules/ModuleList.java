@@ -63,70 +63,68 @@ import com.google.common.collect.HashBiMap;
 public enum ModuleList
 {
 	INSTANCE;
-	
+
 	public Map<ResourceLocation, IModuleConstructor> modules;
 	public HashBiMap<Predicate<ItemStack>, ResourceLocation> moduleItems;
 
-	@FunctionalInterface
-	public static interface IModuleConstructor {
-		public Module construct();
-	}
-
-	private void register(String name, IModuleConstructor constructor) {
+	private void register(String name, IModuleConstructor constructor)
+	{
 		modules.put(new ResourceLocation(Wizardry.MODID, name), constructor);
 	}
-	
-	private void item(String name, Block block) {
+
+	private void item(String name, Block block)
+	{
 		item(name, block, 1);
 	}
-	
-	private void item(String name, Block block, int amount) {
+
+	private void item(String name, Block block, int amount)
+	{
 		item(name, new ItemStack(block, amount));
 	}
-	
-	private void item(String name, Item item) {
+
+	private void item(String name, Item item)
+	{
 		item(name, item, 1);
 	}
-	
-	private void item(String name, Item item, int amount) {
+
+	private void item(String name, Item item, int amount)
+	{
 		item(name, new ItemStack(item, amount));
 	}
-	
-	private void item(String name, ItemStack stack) {
-		moduleItems.put(
-			(itemstack) -> {
-				return ItemStack.areItemsEqual(itemstack, stack) &&
-						itemstack.stackSize == stack.stackSize &&
-						itemstack.getItemDamage() == stack.getItemDamage();
-			},
-			new ResourceLocation(Wizardry.MODID, name)
-		);
+
+	private void item(String name, ItemStack stack)
+	{
+		moduleItems.put((itemstack) ->
+		{
+			return ItemStack.areItemsEqual(itemstack, stack) && itemstack.stackSize == stack.stackSize && itemstack.getItemDamage() == stack.getItemDamage();
+		}, new ResourceLocation(Wizardry.MODID, name));
 	}
-	
-	public Module createModule(ItemStack stack) {
-		for (Predicate<ItemStack> pred : moduleItems.keySet()) {
-			if(pred.test(stack))
-				return modules.get( moduleItems.get(pred) ).construct();
+
+	public Module createModule(ItemStack stack)
+	{
+		for (Predicate<ItemStack> pred : moduleItems.keySet())
+		{
+			if (pred.test(stack)) return modules.get(moduleItems.get(pred)).construct();
 		}
 		return null;
 	}
-	
+
 	public void init()
 	{
 		modules = new HashMap<>();
 		moduleItems = HashBiMap.create();
-		
+
 		// Booleans
 		register("boolAND", ModuleAnd::new);
 		register("boolOR", ModuleOr::new);
 		register("boolNAND", ModuleNand::new);
 		register("boolNOR", ModuleNor::new);
-		
+
 		item("boolAND", Items.STRING);
 		item("boolOR", Items.WHEAT_SEEDS);
 		item("boolNAND", Blocks.REDSTONE_TORCH);
 		item("boolNOR", Blocks.TORCH);
-		
+
 		// Effects
 		register("blink", ModuleBlink::new);
 		register("explosion", ModuleExplosion::new);
@@ -137,7 +135,7 @@ public enum ModuleList
 		register("potion", ModulePotion::new);
 		register("saturation", ModuleSaturation::new);
 		register("water", ModuleWater::new);
-		
+
 		item("blink", Items.CHORUS_FRUIT_POPPED);
 		item("explosion", Blocks.TNT);
 		item("fallProtection", Blocks.HAY_BLOCK, 32);
@@ -147,7 +145,7 @@ public enum ModuleList
 		item("potion", new ItemStack(Items.POTIONITEM, 6, OreDictionary.WILDCARD_VALUE));
 		item("saturation", Blocks.CAKE);
 		item("water", Items.WATER_BUCKET);
-		
+
 		// Events
 		register("eventMelee", ModuleMeleeEvent::new);
 		register("eventRanged", ModuleRangedEvent::new);
@@ -158,7 +156,6 @@ public enum ModuleList
 		register("eventBlink", ModuleBlinkEvent::new);
 		register("eventPotion", ModulePotionEvent::new);
 
-		
 		item("eventMelee", Items.IRON_SWORD);
 		item("evenRanged", Items.BOW);
 		item("eventUnderwater", Items.FISH);
@@ -167,7 +164,7 @@ public enum ModuleList
 		item("eventOnFire", Items.FLINT);
 		item("eventBlink", Items.ENDER_PEARL);
 		item("eventPotion", Items.GLASS_BOTTLE);
-		
+
 		// Modifiers
 		register("silent", ModuleSilent::new);
 		register("duration", ModuleDuration::new);
@@ -185,7 +182,7 @@ public enum ModuleList
 		register("critChance", ModuleCritChance::new);
 		register("magicDamage", ModuleMagicDamage::new);
 		register("enchantment", ModuleEnchantment::new);
-		
+
 		item("silent", new ItemStack(Blocks.WOOL, 16, OreDictionary.WILDCARD_VALUE));
 		item("duration", Blocks.SAND);
 		item("manaCost", new ItemStack(Items.DYE, 64, 4));
@@ -210,12 +207,18 @@ public enum ModuleList
 		register("shapeSelf", ModuleSelf::new);
 		register("shapeZone", ModuleZone::new);
 		register("shapeCone", ModuleCone::new);
-		
+
 		item("shapeBeam", Items.PRISMARINE_SHARD);
 		item("shapeProjectile", Items.BOW);
 		item("shapeMelee", Items.DIAMOND_SWORD);
 		item("shapeSelf", Items.GOLDEN_APPLE);
 		item("shapeZone", Blocks.GLASS_PANE);
 		item("shapeCone", Items.GUNPOWDER);
+	}
+
+	@FunctionalInterface
+	public interface IModuleConstructor
+	{
+		Module construct();
 	}
 }
