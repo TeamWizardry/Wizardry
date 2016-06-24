@@ -1,13 +1,18 @@
 package me.lordsaad.wizardry.api.modules;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
 
 import me.lordsaad.wizardry.Wizardry;
 import me.lordsaad.wizardry.api.modules.attribute.Attribute;
 import me.lordsaad.wizardry.api.modules.attribute.AttributeMap;
 import me.lordsaad.wizardry.spells.modules.ModuleType;
-import me.lordsaad.wizardry.spells.modules.modifiers.ModuleModifier;
+import me.lordsaad.wizardry.spells.modules.modifiers.IModifier;
+import me.lordsaad.wizardry.spells.modules.modifiers.IRuntimeModifier;
 
 /**
  * Created by Saad on 6/21/2016.
@@ -52,6 +57,10 @@ public abstract class Module
 	{
 		NBTTagCompound compound = new NBTTagCompound();
 		compound.setString(CLASS, this.getClass().getName());
+		NBTTagList list = new NBTTagList();
+		for (IRuntimeModifier modifier : runtimeModifiers) {
+			list.appendTag(modifier.saveToNBT());
+		}
 		return compound;
 	}
 
@@ -91,6 +100,7 @@ public abstract class Module
 	{ /* attributes/parsing */ }
 	
 	AttributeMap attributes = new AttributeMap();
+	List<IRuntimeModifier> runtimeModifiers = new ArrayList<>();
 	
 	/**
 	 * Handle a child module {@code other}
@@ -98,9 +108,20 @@ public abstract class Module
 	 * @return if the module was handled
 	 */
 	public boolean accept(Module other) {
-		if(other instanceof ModuleModifier) {
-			((ModuleModifier)other).apply(attributes);
-			return true;
+		if(other instanceof IModifier) {
+			IModifier modifier = ((IModifier)other);
+			attributes.beginCaputure();
+			modifier.apply(attributes);
+			
+			if(modifier.doesFallback() && attributes.didHaveInvalid()) {
+				attributes.endCapture(false); // discard changes and don't return true so it passes on to subclass
+			} else {
+				attributes.endCapture(true); // save changes
+				return true;// we don't want to handle the module normally, so return that we handled it
+			}
+		}
+		if(other instanceof IRuntimeModifier) {
+			runtimeModifiers.add((IRuntimeModifier)other);
 		}
 		return false;
 	}

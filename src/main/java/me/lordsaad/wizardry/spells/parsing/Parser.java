@@ -6,7 +6,10 @@ import java.util.List;
 
 import net.minecraft.item.ItemStack;
 
+import me.lordsaad.wizardry.ModItems;
+import me.lordsaad.wizardry.Wizardry;
 import me.lordsaad.wizardry.api.modules.Module;
+import me.lordsaad.wizardry.api.modules.ModuleList;
 
 public class Parser {
 
@@ -51,14 +54,14 @@ public class Parser {
 	 * Gets a new instance of the module given an item
 	 */
 	private Module getModuleForItem(ItemStack stack) {
-		return null; // TODO: implement
+		return ModuleList.INSTANCE.createModule(stack);
 	}
 	
 	/**
 	 * Gets the number of levels to end given an item. 0 if the item isn't an end item
 	 */
 	private int getEndCount(ItemStack stack) {
-		return 0; // TODO: implement
+		return stack.getItem() == ModItems.vinteumDust ? 1 : 0;
 	}
 	
 }

@@ -1,55 +1,181 @@
 package me.lordsaad.wizardry.api.modules;
 
-import me.lordsaad.wizardry.spells.modules.booleans.*;
-import me.lordsaad.wizardry.spells.modules.effects.*;
-import me.lordsaad.wizardry.spells.modules.events.*;
-import me.lordsaad.wizardry.spells.modules.modifiers.*;
-import me.lordsaad.wizardry.spells.modules.shapes.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Predicate;
+
+import net.minecraftforge.oredict.OreDictionary;
+
+import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.OreDictionary;
+import net.minecraft.util.ResourceLocation;
+
 import com.google.common.collect.HashBiMap;
+
+import me.lordsaad.wizardry.Wizardry;
+import me.lordsaad.wizardry.spells.modules.booleans.ModuleAnd;
+import me.lordsaad.wizardry.spells.modules.booleans.ModuleNand;
+import me.lordsaad.wizardry.spells.modules.booleans.ModuleNor;
+import me.lordsaad.wizardry.spells.modules.booleans.ModuleOr;
+import me.lordsaad.wizardry.spells.modules.effects.ModuleBlink;
+import me.lordsaad.wizardry.spells.modules.effects.ModuleExplosion;
+import me.lordsaad.wizardry.spells.modules.effects.ModuleFallProtection;
+import me.lordsaad.wizardry.spells.modules.effects.ModuleFlame;
+import me.lordsaad.wizardry.spells.modules.effects.ModuleLava;
+import me.lordsaad.wizardry.spells.modules.effects.ModuleLight;
+import me.lordsaad.wizardry.spells.modules.effects.ModulePotion;
+import me.lordsaad.wizardry.spells.modules.effects.ModuleSaturation;
+import me.lordsaad.wizardry.spells.modules.effects.ModuleWater;
+import me.lordsaad.wizardry.spells.modules.events.ModuleBlinkEvent;
+import me.lordsaad.wizardry.spells.modules.events.ModuleFallEvent;
+import me.lordsaad.wizardry.spells.modules.events.ModuleMeleeEvent;
+import me.lordsaad.wizardry.spells.modules.events.ModuleOnFireEvent;
+import me.lordsaad.wizardry.spells.modules.events.ModulePotionEvent;
+import me.lordsaad.wizardry.spells.modules.events.ModuleRangedEvent;
+import me.lordsaad.wizardry.spells.modules.events.ModuleSuffocationEvent;
+import me.lordsaad.wizardry.spells.modules.events.ModuleUnderwaterEvent;
+import me.lordsaad.wizardry.spells.modules.modifiers.ModuleArea;
+import me.lordsaad.wizardry.spells.modules.modifiers.ModuleBeamModifier;
+import me.lordsaad.wizardry.spells.modules.modifiers.ModuleBurnOut;
+import me.lordsaad.wizardry.spells.modules.modifiers.ModuleCritChance;
+import me.lordsaad.wizardry.spells.modules.modifiers.ModuleDuration;
+import me.lordsaad.wizardry.spells.modules.modifiers.ModuleEnchantment;
+import me.lordsaad.wizardry.spells.modules.modifiers.ModuleMagicDamage;
+import me.lordsaad.wizardry.spells.modules.modifiers.ModuleManaCost;
+import me.lordsaad.wizardry.spells.modules.modifiers.ModuleMeleeDamage;
+import me.lordsaad.wizardry.spells.modules.modifiers.ModulePierce;
+import me.lordsaad.wizardry.spells.modules.modifiers.ModuleProjectileCount;
+import me.lordsaad.wizardry.spells.modules.modifiers.ModulePunch;
+import me.lordsaad.wizardry.spells.modules.modifiers.ModuleRangedDamage;
+import me.lordsaad.wizardry.spells.modules.modifiers.ModuleScatter;
+import me.lordsaad.wizardry.spells.modules.modifiers.ModuleSilent;
+import me.lordsaad.wizardry.spells.modules.modifiers.ModuleSticky;
+import me.lordsaad.wizardry.spells.modules.shapes.ModuleBeam;
+import me.lordsaad.wizardry.spells.modules.shapes.ModuleCone;
+import me.lordsaad.wizardry.spells.modules.shapes.ModuleMelee;
+import me.lordsaad.wizardry.spells.modules.shapes.ModuleProjectile;
+import me.lordsaad.wizardry.spells.modules.shapes.ModuleSelf;
+import me.lordsaad.wizardry.spells.modules.shapes.ModuleZone;
 
 /**
  * @author murapix
  *         <p>
  *         Created on June 21, 2016
  */
-public class ModuleList
+public enum ModuleList
 {
-	public HashBiMap<Module, ItemStack> moduleItems;
+	INSTANCE;
+	
+	public Map<ResourceLocation, IModuleConstructor> modules;
+	public HashBiMap<Predicate<ItemStack>, ResourceLocation> moduleItems;
 
+	@FunctionalInterface
+	public static interface IModuleConstructor {
+		public Module construct();
+	}
+
+	private void register(String name, IModuleConstructor constructor) {
+		modules.put(new ResourceLocation(Wizardry.MODID, name), constructor);
+	}
+	
+	private void item(String name, Block block) {
+		item(name, block, 1);
+	}
+	
+	private void item(String name, Block block, int amount) {
+		item(name, new ItemStack(block, amount));
+	}
+	
+	private void item(String name, Item item) {
+		item(name, item, 1);
+	}
+	
+	private void item(String name, Item item, int amount) {
+		item(name, new ItemStack(item, amount));
+	}
+	
+	private void item(String name, ItemStack stack) {
+		moduleItems.put(
+			(itemstack) -> {
+				return ItemStack.areItemsEqual(itemstack, stack) &&
+						itemstack.stackSize == stack.stackSize &&
+						itemstack.getItemDamage() == stack.getItemDamage();
+			},
+			new ResourceLocation(Wizardry.MODID, name)
+		);
+	}
+	
+	public Module createModule(ItemStack stack) {
+		for (Predicate<ItemStack> pred : moduleItems.keySet()) {
+			if(pred.test(stack))
+				return modules.get( moduleItems.get(pred) ).construct();
+		}
+		return null;
+	}
+	
 	public void init()
 	{
+		modules = new HashMap<>();
 		moduleItems = HashBiMap.create();
 		
-		// Boolean Modules
-		moduleItems.put(new ModuleAnd(), new ItemStack(Items.STRING));
-		moduleItems.put(new ModuleOr(), new ItemStack(Items.WHEAT_SEEDS));
-		moduleItems.put(new ModuleNand(), new ItemStack(Blocks.REDSTONE_TORCH));
-		moduleItems.put(new ModuleNor(), new ItemStack(Blocks.TORCH));
+		// Booleans
+		register("boolAND", ModuleAnd::new);
+		register("boolOR", ModuleOr::new);
+		register("boolNAND", ModuleNand::new);
+		register("boolNOR", ModuleNor::new);
+		
+		item("boolAND", Items.STRING);
+		item("boolOR", Items.WHEAT_SEEDS);
+		item("boolNAND", Blocks.REDSTONE_TORCH);
+		item("boolNOR", Blocks.TORCH);
+		
+		// Effects
+		register("blink", ModuleBlink::new);
+		register("explosion", ModuleExplosion::new);
+		register("fallProtection", ModuleFallProtection::new);
+		register("flame", ModuleFlame::new);
+		register("lava", ModuleLava::new);
+		register("light", ModuleLight::new);
+		register("potion", ModulePotion::new);
+		register("saturation", ModuleSaturation::new);
+		register("water", ModuleWater::new);
+		
+		item("blink", Items.CHORUS_FRUIT_POPPED);
+		item("explosion", Blocks.TNT);
+		item("fallProtection", Blocks.HAY_BLOCK, 32);
+		item("flame", Items.BLAZE_POWDER);
+		item("lava", Items.LAVA_BUCKET);
+		item("light", Blocks.GLOWSTONE);
+		item("potion", new ItemStack(Items.POTIONITEM, 6, OreDictionary.WILDCARD_VALUE));
+		item("saturation", Blocks.CAKE);
+		item("water", Items.WATER_BUCKET);
+		
+		// Events
+		register("eventMelee", ModuleMeleeEvent::new);
+		register("eventRanged", ModuleRangedEvent::new);
+		register("eventUnderwater", ModuleUnderwaterEvent::new);
+		register("eventSuffocation", ModuleSuffocationEvent::new);
+		register("eventFall", ModuleFallEvent::new);
+		register("eventOnFire", ModuleOnFireEvent::new);
+		register("eventBlink", ModuleBlinkEvent::new);
+		register("eventPotion", ModulePotionEvent::new);
 
-		// Effect Modules
-		moduleItems.put(new ModuleBlink(), new ItemStack(Items.CHORUS_FRUIT_POPPED));
-		moduleItems.put(new ModuleExplosion(), new ItemStack(Blocks.TNT));
-		moduleItems.put(new ModuleFallProtection(), new ItemStack(Blocks.HAY_BLOCK, 32));
-		moduleItems.put(new ModuleFlame(), new ItemStack(Items.BLAZE_POWDER));
-		moduleItems.put(new ModuleLava(), new ItemStack(Items.LAVA_BUCKET));
-		moduleItems.put(new ModuleLight(), new ItemStack(Blocks.GLOWSTONE));
-		moduleItems.put(new ModulePotion(), new ItemStack(Items.POTIONITEM, 6, OreDictionary.WILDCARD_VALUE));
-		moduleItems.put(new ModuleSaturation(), new ItemStack(Blocks.CAKE));
-		moduleItems.put(new ModuleWater(), new ItemStack(Items.WATER_BUCKET));
-
-		// Event Modules
-		moduleItems.put(new ModuleMeleeEvent(), new ItemStack(Items.IRON_SWORD));
-		moduleItems.put(new ModuleRangedEvent(), new ItemStack(Items.BOW));
-		moduleItems.put(new ModuleUnderwaterEvent(), new ItemStack(Items.FISH));
-		moduleItems.put(new ModuleSuffocationEvent(), new ItemStack(Items.FISH, 1, 3));
-		moduleItems.put(new ModuleFallEvent(), new ItemStack(Items.FEATHER));
-		moduleItems.put(new ModuleOnFireEvent(), new ItemStack(Items.FLINT));
-		moduleItems.put(new ModuleBlinkEvent(), new ItemStack(Items.ENDER_PEARL));
-		moduleItems.put(new ModulePotionEvent(), new ItemStack(Items.GLASS_BOTTLE, 1));
+		
+		item("eventMelee", Items.IRON_SWORD);
+		item("evenRanged", Items.BOW);
+		item("eventUnderwater", Items.FISH);
+		item("eventSuffocation", new ItemStack(Items.FISH, 1, 3));
+		item("eventFall", Items.FEATHER);
+		item("eventOnFire", Items.FLINT);
+		item("eventBlink", Items.ENDER_PEARL);
+		item("eventPotion", Items.GLASS_BOTTLE);
+		
+		// Modifiers
+		
+		
 
 		// Modifier Modules
 		moduleItems.put(new ModuleSilent(), new ItemStack(Blocks.WOOL, 16, OreDictionary.WILDCARD_VALUE));
