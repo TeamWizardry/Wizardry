@@ -5,7 +5,9 @@ import me.lordsaad.wizardry.Utils;
 import me.lordsaad.wizardry.Wizardry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -35,8 +37,10 @@ public class HudEventHandler {
             int left = width / 2 - 8;
             int top = height - 52;
 
+            GlStateManager.pushMatrix();
+            Gui.drawModalRectWithCustomSizedTexture(left, top, 0, 0, 200, 50, 200, 50);
             Utils.drawTexturedModalRect(left, top, 0, 0, 100, 51);
-
+            GlStateManager.popMatrix();
         }
     }
 }

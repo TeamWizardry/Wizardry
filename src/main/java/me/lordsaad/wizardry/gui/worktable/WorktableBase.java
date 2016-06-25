@@ -124,34 +124,36 @@ public class WorktableBase extends GuiScreen {
             }
         }
 
-        if (clickedMouseButton == 1 && moduleBeingLinked != null) {
-            boolean insideAnything = false;
-            for (Module module : modulesOnPaper) {
-                boolean inside = mouseX >= module.getX() - iconSize / 2 && mouseX < module.getX() - iconSize / 2 + iconSize && mouseY >= module.getY() - iconSize / 2 && mouseY < module.getY() - iconSize / 2 + iconSize;
-                if (inside) {
-                    Module from = moduleBeingLinked;
+        if (clickedMouseButton == 1) {
+            if (moduleBeingLinked != null) {
+                boolean insideAnything = false;
+                for (Module module : modulesOnPaper) {
+                    boolean inside = mouseX >= module.getX() - iconSize / 2 && mouseX < module.getX() - iconSize / 2 + iconSize && mouseY >= module.getY() - iconSize / 2 && mouseY < module.getY() - iconSize / 2 + iconSize;
+                    if (inside) {
+                        Module from = moduleBeingLinked;
 
-                    boolean wasLinked = false;
+                        boolean wasLinked = false;
 
-                    if (links.get(from).contains(module)) {
-                        links.get(from).remove(module);
-                        wasLinked = true;
-                    }
-                    if (links.get(module).contains(from)) {
-                        links.get(module).remove(from);
-                        wasLinked = true;
-                    }
+                        if (links.get(from).contains(module)) {
+                            links.get(from).remove(module);
+                            wasLinked = true;
+                        }
+                        if (links.get(module).contains(from)) {
+                            links.get(module).remove(from);
+                            wasLinked = true;
+                        }
 
-                    if (!wasLinked) {
-                        links.get(from).add(module);
+                        if (!wasLinked) {
+                            links.get(from).add(module);
+                        }
+                        moduleBeingLinked = null;
+                        insideAnything = true;
+                        break;
                     }
-                    moduleBeingLinked = null;
-                    insideAnything = true;
-                    break;
                 }
-            }
-
-            if (!insideAnything) moduleBeingLinked = null;
+                if (!insideAnything) moduleBeingLinked = null;
+                
+            } else moduleBeingLinked = null;
         }
     }
 

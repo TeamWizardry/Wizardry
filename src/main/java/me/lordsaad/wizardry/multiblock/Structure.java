@@ -1,19 +1,10 @@
 package me.lordsaad.wizardry.multiblock;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
-import net.minecraft.block.BlockPane;
-import net.minecraft.block.BlockQuartz;
-import net.minecraft.block.BlockRedstoneComparator;
-import net.minecraft.block.BlockRedstoneRepeater;
-import net.minecraft.block.BlockRedstoneWire;
-import net.minecraft.block.BlockSlab;
-import net.minecraft.block.BlockStairs;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import me.lordsaad.wizardry.multiblock.vanillashade.Template;
+import me.lordsaad.wizardry.multiblock.vanillashade.Template.BlockInfo;
+import net.minecraft.block.*;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -24,11 +15,12 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-
-import me.lordsaad.wizardry.multiblock.vanillashade.Template;
-import me.lordsaad.wizardry.multiblock.vanillashade.Template.BlockInfo;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 public class Structure {
 	
@@ -87,7 +79,8 @@ public class Structure {
 	
 	public List<BlockPos> errors(World world, BlockPos checkPos, Rotation rot) {
 		List<BlockPos> errorPosList = new ArrayList<>();
-				
+
+		// TODO: Null pointer exception right here. template.infos()
 		List<BlockInfo> infos = template.infos();
 		
 		BlockPos offset = checkPos.subtract(origin);

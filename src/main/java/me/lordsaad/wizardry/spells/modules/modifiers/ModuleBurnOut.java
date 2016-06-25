@@ -8,9 +8,9 @@ import me.lordsaad.wizardry.api.modules.attribute.AttributeModifier.Operation;
 import me.lordsaad.wizardry.api.modules.attribute.AttributeModifier.Priority;
 import me.lordsaad.wizardry.spells.modules.ModuleType;
 
-public class ModuleBurnout extends Module implements IModifier
+public class ModuleBurnOut extends Module implements IModifier
 {
-	public ModuleBurnout()
+	public ModuleBurnOut()
 	{
 		canHaveChildren = false;
 	}

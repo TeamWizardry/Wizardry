@@ -1,10 +1,10 @@
 package me.lordsaad.wizardry.tileentities;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import net.minecraftforge.common.util.Constants;
-
+import me.lordsaad.wizardry.ModItems;
+import me.lordsaad.wizardry.Wizardry;
+import me.lordsaad.wizardry.items.pearls.ItemQuartzPearl;
+import me.lordsaad.wizardry.multiblock.Structure;
+import me.lordsaad.wizardry.particles.SparkleFX;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -17,52 +17,48 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.util.Constants;
 
-import me.lordsaad.wizardry.ModItems;
-import me.lordsaad.wizardry.Wizardry;
-import me.lordsaad.wizardry.items.pearls.ItemQuartzPearl;
-import me.lordsaad.wizardry.multiblock.Structure;
-import me.lordsaad.wizardry.particles.SparkleFX;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Saad on 6/10/2016.
  */
 public class TileCraftingPlate extends TileEntity implements ITickable {
 
+    private static Structure structure;
     private ArrayList<ItemStack> inventory = new ArrayList<>();
     private boolean structureComplete = false;
     private boolean crafting = false, finishedCrafting = false, recipeAvailable = false;
     private int craftingProgress = 0, craftingTime = 200;
     private ItemStack pearl;
     private IBlockState state;
-    
-    private static Structure structure;
-    
+
     public TileCraftingPlate() {
-	}
-    
+    }
+
     public void validateStructure() {
-    	structure = new Structure("CraftingAltar");
-    	
-    	List<BlockPos> errors = structure.errors(this.worldObj, this.pos);
-    	
-    	if(errors.size() == 0) {
-    		worldObj.spawnParticle(EnumParticleTypes.FLAME, pos.getX()+0.5, pos.getY()+1.5, pos.getZ()+0.5, 0.0D, 0.0D, 0.0D, new int[0]);
-    		setStructureComplete(true);
-    	} else {
-    		for (BlockPos errorPos : errors) {
-    			worldObj.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, errorPos.getX()+0.5, errorPos.getY()+0.7, errorPos.getZ()+0.5, 0.0D, 0.0D, 0.0D, new int[0]);
-			}
-    		setStructureComplete(false);
-    	}
-    	
+        structure = new Structure("crafting_altar");
+
+        List<BlockPos> errors = structure.errors(this.worldObj, this.pos);
+
+        if (errors.size() == 0) {
+            worldObj.spawnParticle(EnumParticleTypes.FLAME, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5, 0.0D, 0.0D, 0.0D);
+            setStructureComplete(true);
+        } else {
+            for (BlockPos errorPos : errors)
+                worldObj.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, errorPos.getX() + 0.5, errorPos.getY() + 0.7, errorPos.getZ() + 0.5, 0.0D, 0.0D, 0.0D);
+            setStructureComplete(false);
+        }
+
 //    	if(match)
 //    		
 //    	else
 //    		
-    	//setStructureComplete(  );
+        //setStructureComplete(  );
     }
-    
+
     public boolean isStructureComplete() {
         return structureComplete;
     }
