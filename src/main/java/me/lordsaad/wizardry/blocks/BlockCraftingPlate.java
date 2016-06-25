@@ -1,9 +1,11 @@
 package me.lordsaad.wizardry.blocks;
 
-import me.lordsaad.wizardry.Wizardry;
-import me.lordsaad.wizardry.schematic.Schematic;
-import me.lordsaad.wizardry.tileentities.TileCraftingPlate;
-import me.lordsaad.wizardry.tileentities.TileCraftingPlateRenderer;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
@@ -22,11 +24,10 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+
+import me.lordsaad.wizardry.Wizardry;
+import me.lordsaad.wizardry.tileentities.TileCraftingPlate;
+import me.lordsaad.wizardry.tileentities.TileCraftingPlateRenderer;
 
 /**
  * Created by Saad on 6/10/2016.
@@ -64,10 +65,11 @@ public class BlockCraftingPlate extends Block implements ITileEntityProvider {
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         TileCraftingPlate te = getTE(worldIn, pos);
-        if (!worldIn.isRemote) {
+    	te.validateStructure();
+    	if (!worldIn.isRemote) {
             if (!te.isStructureComplete()) {
-                Schematic schematic = new Schematic("spell_crafter");
-                te.setStructureComplete(schematic.check(worldIn, pos, this, playerIn));
+                //Schematic schematic = new Schematic("spell_crafter");
+                //te.setStructureComplete(schematic.check(worldIn, pos, this, playerIn));
             }
         }
         return true;

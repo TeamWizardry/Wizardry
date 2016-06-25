@@ -1,9 +1,10 @@
 package me.lordsaad.wizardry.tileentities;
 
-import me.lordsaad.wizardry.ModItems;
-import me.lordsaad.wizardry.Wizardry;
-import me.lordsaad.wizardry.items.pearls.ItemQuartzPearl;
-import me.lordsaad.wizardry.particles.SparkleFX;
+import java.util.ArrayList;
+import java.util.List;
+
+import net.minecraftforge.common.util.Constants;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -12,12 +13,16 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.util.math.BlockPos;
 
-import java.util.ArrayList;
-import java.util.List;
+import me.lordsaad.wizardry.ModItems;
+import me.lordsaad.wizardry.Wizardry;
+import me.lordsaad.wizardry.items.pearls.ItemQuartzPearl;
+import me.lordsaad.wizardry.multiblock.Structure;
+import me.lordsaad.wizardry.particles.SparkleFX;
 
 /**
  * Created by Saad on 6/10/2016.
@@ -30,7 +35,34 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
     private int craftingProgress = 0, craftingTime = 200;
     private ItemStack pearl;
     private IBlockState state;
-
+    
+    private static Structure structure;
+    
+    public TileCraftingPlate() {
+	}
+    
+    public void validateStructure() {
+    	structure = new Structure("CraftingAltar");
+    	
+    	List<BlockPos> errors = structure.errors(this.worldObj, this.pos);
+    	
+    	if(errors.size() == 0) {
+    		worldObj.spawnParticle(EnumParticleTypes.FLAME, pos.getX()+0.5, pos.getY()+1.5, pos.getZ()+0.5, 0.0D, 0.0D, 0.0D, new int[0]);
+    		setStructureComplete(true);
+    	} else {
+    		for (BlockPos errorPos : errors) {
+    			worldObj.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, errorPos.getX()+0.5, errorPos.getY()+0.7, errorPos.getZ()+0.5, 0.0D, 0.0D, 0.0D, new int[0]);
+			}
+    		setStructureComplete(false);
+    	}
+    	
+//    	if(match)
+//    		
+//    	else
+//    		
+    	//setStructureComplete(  );
+    }
+    
     public boolean isStructureComplete() {
         return structureComplete;
     }
