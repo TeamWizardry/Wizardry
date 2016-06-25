@@ -6,7 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleBlinkEvent extends Module {
     public ModuleBlinkEvent() {
-
+    	canHaveChildren = false;
     }
 
     @Override

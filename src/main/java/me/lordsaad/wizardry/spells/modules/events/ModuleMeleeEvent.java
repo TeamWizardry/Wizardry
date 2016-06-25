@@ -12,7 +12,7 @@ import net.minecraft.world.World;
 public class ModuleMeleeEvent extends Module {
 
     public ModuleMeleeEvent() {
-
+    	canHaveChildren = false;
     }
 
     @Override

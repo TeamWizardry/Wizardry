@@ -9,6 +9,11 @@ import me.lordsaad.wizardry.spells.modules.ModuleType;
 
 public class ModuleRangedDamage extends Module implements IModifier
 {
+	public ModuleRangedDamage()
+	{
+		canHaveChildren = false;
+	}
+	
 	@Override
 	public ModuleType getType()
 	{

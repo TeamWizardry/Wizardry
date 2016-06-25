@@ -11,6 +11,9 @@ import me.lordsaad.wizardry.spells.modules.ModuleType;
 
 public class ModuleSticky extends Module implements IModifier, IRuntimeModifier
 {
+	private int baseCost = 5;
+	private int baseBurnout = 5;
+	
 	@Override
 	public ModuleType getType()
 	{
@@ -34,7 +37,7 @@ public class ModuleSticky extends Module implements IModifier, IRuntimeModifier
 	{
 		map.putModifier(Attribute.COST, new AttributeModifier(Operation.MULTIPLY, 1.2));
 		map.putModifier(Attribute.BURNOUT, new AttributeModifier(Operation.MULTIPLY, 1.2));
-		map.putModifier(Attribute.COST, new AttributeModifier(Operation.ADD, 1, Priority.LOW));
-		map.putModifier(Attribute.BURNOUT, new AttributeModifier(Operation.ADD, 1, Priority.LOW));
+		map.putModifier(Attribute.COST, new AttributeModifier(Operation.ADD, attributes.apply(Attribute.COST, baseCost), Priority.HIGH));
+		map.putModifier(Attribute.BURNOUT, new AttributeModifier(Operation.ADD, attributes.apply(Attribute.BURNOUT, baseBurnout), Priority.HIGH));
 	}
 }

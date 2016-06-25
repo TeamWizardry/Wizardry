@@ -9,6 +9,11 @@ import me.lordsaad.wizardry.spells.modules.ModuleType;
 
 public class ModulePierce extends Module implements IModifier
 {
+	public ModulePierce()
+	{
+		canHaveChildren = false;
+	}
+	
 	@Override
 	public ModuleType getType()
 	{

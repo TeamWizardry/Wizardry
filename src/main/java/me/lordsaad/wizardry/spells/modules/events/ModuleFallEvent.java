@@ -6,7 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleFallEvent extends Module {
     public ModuleFallEvent() {
-
+    	canHaveChildren = false;
     }
 
     @Override

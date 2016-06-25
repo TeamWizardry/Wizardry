@@ -6,7 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleOnFireEvent extends Module {
     public ModuleOnFireEvent() {
-
+    	canHaveChildren = false;
     }
 
     @Override

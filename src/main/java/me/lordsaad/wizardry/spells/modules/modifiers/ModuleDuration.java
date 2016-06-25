@@ -9,6 +9,11 @@ import me.lordsaad.wizardry.spells.modules.ModuleType;
 
 public class ModuleDuration extends Module implements IModifier
 {
+	public ModuleDuration()
+	{
+		canHaveChildren = false;
+	}
+	
 	@Override
 	public ModuleType getType()
 	{

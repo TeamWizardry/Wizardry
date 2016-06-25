@@ -4,16 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
-
-import net.minecraftforge.oredict.OreDictionary;
-
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-
 import me.lordsaad.wizardry.Wizardry;
 import me.lordsaad.wizardry.spells.modules.booleans.ModuleAnd;
 import me.lordsaad.wizardry.spells.modules.booleans.ModuleNand;
@@ -38,7 +28,7 @@ import me.lordsaad.wizardry.spells.modules.events.ModuleSuffocationEvent;
 import me.lordsaad.wizardry.spells.modules.events.ModuleUnderwaterEvent;
 import me.lordsaad.wizardry.spells.modules.modifiers.ModuleArea;
 import me.lordsaad.wizardry.spells.modules.modifiers.ModuleBeamModifier;
-import me.lordsaad.wizardry.spells.modules.modifiers.ModuleBurnOut;
+import me.lordsaad.wizardry.spells.modules.modifiers.ModuleBurnout;
 import me.lordsaad.wizardry.spells.modules.modifiers.ModuleCritChance;
 import me.lordsaad.wizardry.spells.modules.modifiers.ModuleDuration;
 import me.lordsaad.wizardry.spells.modules.modifiers.ModuleEnchantment;
@@ -58,6 +48,13 @@ import me.lordsaad.wizardry.spells.modules.shapes.ModuleMelee;
 import me.lordsaad.wizardry.spells.modules.shapes.ModuleProjectile;
 import me.lordsaad.wizardry.spells.modules.shapes.ModuleSelf;
 import me.lordsaad.wizardry.spells.modules.shapes.ModuleZone;
+import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.oredict.OreDictionary;
 
 /**
  * @author murapix
@@ -190,7 +187,7 @@ public enum ModuleList
 		register("modifierSilent", ModuleSilent::new);
 		register("modifierDuration", ModuleDuration::new);
 		register("modifierManaCost", ModuleManaCost::new);
-		register("modifierBurnOut", ModuleBurnOut::new);
+		register("modifierBurnOut", ModuleBurnout::new);
 		register("modifierArea", ModuleArea::new);
 		register("modifierPierce", ModulePierce::new);
 		register("modifierBeamModifier", ModuleBeamModifier::new);

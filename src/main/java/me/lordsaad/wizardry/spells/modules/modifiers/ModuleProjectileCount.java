@@ -9,6 +9,11 @@ import me.lordsaad.wizardry.spells.modules.ModuleType;
 
 public class ModuleProjectileCount extends Module implements IModifier
 {
+	public ModuleProjectileCount()
+	{
+		canHaveChildren = false;
+	}
+	
 	@Override
 	public ModuleType getType()
 	{

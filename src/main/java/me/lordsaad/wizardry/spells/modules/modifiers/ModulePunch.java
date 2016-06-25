@@ -9,6 +9,11 @@ import me.lordsaad.wizardry.spells.modules.ModuleType;
 
 public class ModulePunch extends Module implements IModifier
 {
+	public ModulePunch()
+	{
+		canHaveChildren = false;
+	}
+	
 	@Override
 	public ModuleType getType()
 	{
@@ -18,6 +23,8 @@ public class ModulePunch extends Module implements IModifier
 	@Override
 	public void apply(AttributeMap map)
 	{
+		map.putModifier(Attribute.KNOCKBACK, new AttributeModifier(Operation.ADD, 0.5));
+		
 		map.putModifier(Attribute.COST, new AttributeModifier(Operation.MULTIPLY, 1.1));
 		map.putModifier(Attribute.BURNOUT, new AttributeModifier(Operation.MULTIPLY, 1.1));
 	}

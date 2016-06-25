@@ -6,7 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModulePotionEvent extends Module {
     public ModulePotionEvent() {
-
+    	canHaveChildren = false;
     }
 
     @Override

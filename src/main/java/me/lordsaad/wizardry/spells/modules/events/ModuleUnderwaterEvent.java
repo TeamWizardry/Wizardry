@@ -6,7 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleUnderwaterEvent extends Module {
     public ModuleUnderwaterEvent() {
-
+    	canHaveChildren = false;
     }
 
     @Override

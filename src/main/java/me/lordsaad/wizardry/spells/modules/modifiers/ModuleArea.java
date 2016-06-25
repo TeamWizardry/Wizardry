@@ -10,6 +10,11 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleArea extends Module implements IModifier, IRuntimeModifier
 {
+	public ModuleArea()
+	{
+		canHaveChildren = false;
+	}
+	
 	@Override
 	public ModuleType getType()
 	{

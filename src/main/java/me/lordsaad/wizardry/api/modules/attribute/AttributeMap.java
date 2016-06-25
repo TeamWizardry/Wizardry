@@ -66,7 +66,7 @@ public class AttributeMap
 
 	}
 
-	public void apply(Attribute attribute, double value)
+	public double apply(Attribute attribute, double value)
 	{
 		Collection<AttributeModifier> list = attributes.get(attribute);
 
@@ -95,5 +95,6 @@ public class AttributeMap
 		for (AttributeModifier mod : priorityLists.get(Priority.LOWEST))
 			value = mod.apply(value);
 
+		return value;
 	}
 }

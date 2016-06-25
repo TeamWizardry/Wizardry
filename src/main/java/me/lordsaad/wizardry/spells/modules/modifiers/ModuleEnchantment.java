@@ -10,6 +10,11 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleEnchantment extends Module implements IModifier, IRuntimeModifier
 {
+	public ModuleEnchantment()
+	{
+		canHaveChildren = false;
+	}
+	
 	@Override
 	public ModuleType getType()
 	{

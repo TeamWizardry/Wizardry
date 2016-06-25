@@ -10,6 +10,11 @@ import me.lordsaad.wizardry.spells.modules.ModuleType;
 
 public class ModuleManaCost extends Module implements IModifier
 {
+	public ModuleManaCost()
+	{
+		canHaveChildren = false;
+	}
+	
 	@Override
 	public ModuleType getType()
 	{

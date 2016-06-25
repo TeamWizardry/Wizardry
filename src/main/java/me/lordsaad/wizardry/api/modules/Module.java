@@ -28,14 +28,9 @@ public abstract class Module {
     public static final String BURNOUT = "Burnout";
     public static final String RADIUS = "Radius";
 
-    protected int manaCost = 0;
-    protected float manaMult = 1;
-    protected int burnoutCost = 0;
-    protected float burnoutMult = 1;
-
     protected boolean canHaveChildren = true;
-    AttributeMap attributes = new AttributeMap();
-    List<IRuntimeModifier> runtimeModifiers = new ArrayList<>();
+    public AttributeMap attributes = new AttributeMap();
+    public List<IRuntimeModifier> runtimeModifiers = new ArrayList<>();
 
     { /* attributes/parsing */ }
 
@@ -73,26 +68,6 @@ public abstract class Module {
      */
     public ResourceLocation getIcon() {
         return new ResourceLocation(Wizardry.MODID, this.getClass().getSimpleName());
-    }
-
-    public Module setManaCost(int cost) {
-        manaCost = cost;
-        return this;
-    }
-
-    public Module setManaMultiplier(float multiplier) {
-        manaMult = multiplier;
-        return this;
-    }
-
-    public Module setBurnout(int amount) {
-        burnoutCost = amount;
-        return this;
-    }
-
-    public Module setBurnoutMultiplier(float multiplier) {
-        burnoutMult = multiplier;
-        return this;
     }
 
     /**

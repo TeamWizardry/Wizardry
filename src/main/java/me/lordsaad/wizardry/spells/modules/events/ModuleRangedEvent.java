@@ -6,7 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleRangedEvent extends Module {
     public ModuleRangedEvent() {
-
+    	canHaveChildren = false;
     }
 
     @Override
