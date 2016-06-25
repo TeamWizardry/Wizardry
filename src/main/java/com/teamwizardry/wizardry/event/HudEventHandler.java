@@ -36,7 +36,7 @@ public class HudEventHandler {
             GlStateManager.pushMatrix();
             GlStateManager.color(1F, 1F, 1F, 1F);
             Minecraft.getMinecraft().getTextureManager().bindTexture(texture);
-            Gui.drawModalRectWithCustomSizedTexture(left, top, 0, 0, 0, 0, 100, 5);
+            Gui.drawModalRectWithCustomSizedTexture(0, 0, 0, 0, 0, 0, 100, 5);
             GlStateManager.popMatrix();
         }
     }
