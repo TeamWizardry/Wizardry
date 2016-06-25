@@ -64,32 +64,38 @@ import me.lordsaad.wizardry.spells.modules.shapes.ModuleZone;
  *         <p>
  *         Created on June 21, 2016
  */
-public enum ModuleList {
+public enum ModuleList
+{
 	INSTANCE;
 
 	public Map<ResourceLocation, IModuleConstructor> modules;
 	public SortedMap<ItemStack, ResourceLocation> moduleItems;
 
-	private void register(String name, IModuleConstructor constructor) {
+	private void register(String name, IModuleConstructor constructor)
+	{
 		modules.put(new ResourceLocation(Wizardry.MODID, name), constructor);
 	}
 
-	private void item(String name, Block block) {
+	private void item(String name, Block block)
+	{
 		item(name, block, 1);
 	}
 
-	private void item(String name, Block block, int amount) {
+	private void item(String name, Block block, int amount)
+	{
 		item(name, new ItemStack(block, amount));
 	}
 
-	private void item(String name, Item item) {
+	private void item(String name, Item item)
+	{
 		item(name, item, 1);
 	}
 
-	private void item(String name, Item item, int amount) {
+	private void item(String name, Item item, int amount)
+	{
 		item(name, new ItemStack(item, amount));
 	}
-
+	
 	private void item(String name, ItemStack stack) {
 		moduleItems.put(stack, new ResourceLocation(Wizardry.MODID, name));
 	}
@@ -124,7 +130,8 @@ public enum ModuleList {
 		return false;
 	}
 
-	public void init() {
+	public void init()
+	{
 		modules = new HashMap<>();
 		moduleItems = new TreeMap<>((a, b) -> -Integer.compare(a == null ? 0 : a.stackSize, b == null ? 0 : b.stackSize));
 
@@ -170,7 +177,6 @@ public enum ModuleList {
 		register("eventBlink", ModuleBlinkEvent::new);
 		register("eventPotion", ModulePotionEvent::new);
 
-
 		item("eventMelee", Items.IRON_SWORD);
 		item("evenRanged", Items.BOW);
 		item("eventUnderwater", Items.FISH);
@@ -181,7 +187,6 @@ public enum ModuleList {
 		item("eventPotion", Items.GLASS_BOTTLE);
 
 		// Modifiers
-		
 		register("modifierSilent", ModuleSilent::new);
 		register("modifierDuration", ModuleDuration::new);
 		register("modifierManaCost", ModuleManaCost::new);
@@ -233,7 +238,8 @@ public enum ModuleList {
 	}
 
 	@FunctionalInterface
-	public interface IModuleConstructor {
+	public interface IModuleConstructor
+	{
 		Module construct();
 	}
 }
