@@ -56,6 +56,8 @@ public class BlockRenderUtils {
 		
 		for (EnumFacing enumfacing : EnumFacing.values())
         {
+			if(!state.shouldSideBeRendered(access, pos, enumfacing))
+				continue;
 			renderQuadsToBuffer(model.getQuads(state, enumfacing, 0L), state, access, pos, renderPos, buffer, red, green, blue, brightness);
         }
 
