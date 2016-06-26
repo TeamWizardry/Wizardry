@@ -70,7 +70,7 @@ public class GuiPageStructure extends GuiPageCommon {
     	
     }
     
-    int dragStartX, dragStartY;
+    int dragStartX = -1, dragStartY = -1;
     double zoom;
     
     @Override
@@ -108,7 +108,7 @@ public class GuiPageStructure extends GuiPageCommon {
     	
     	GlStateManager.translate(this.viewWidth/2, this.viewHeight/2, 0);
     	
-    	{
+    	{ // RenderHelper.enableStandardItemLighting but brighter because of different light and ambiant values.
     		Vec3d LIGHT0_POS = (new Vec3d(0.20000000298023224D, 1.0D, -0.699999988079071D)).normalize();
     	    Vec3d LIGHT1_POS = (new Vec3d(-0.20000000298023224D, 1.0D, 0.699999988079071D)).normalize();
     	    
