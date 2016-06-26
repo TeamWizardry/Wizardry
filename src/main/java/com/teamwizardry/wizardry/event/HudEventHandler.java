@@ -16,10 +16,11 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
  */
 public class HudEventHandler {
 
-    private final ResourceLocation texture = new ResourceLocation(Wizardry.MODID, "textures/gui/hud.png");
+    private final ResourceLocation texture = new ResourceLocation(Wizardry.MODID, "textures/gui/book/sliders.png");
 
     @SubscribeEvent
     public void renderHud(RenderGameOverlayEvent.Post event) {
+        Minecraft mc = Minecraft.getMinecraft();
         ItemStack stack = Minecraft.getMinecraft().thePlayer.getActiveItemStack();
         //       if (stack == null || stack.getItem() != ModItems.quartzPearl) return;
 
@@ -34,9 +35,11 @@ public class HudEventHandler {
             int top = height - 52;
 
             GlStateManager.pushMatrix();
-            GlStateManager.color(1F, 1F, 1F, 1F);
-            Minecraft.getMinecraft().getTextureManager().bindTexture(texture);
-            Gui.drawModalRectWithCustomSizedTexture(0, 0, 0, 0, 0, 0, 100, 5);
+            GlStateManager.color(1F, 1F, 1F);
+            mc.renderEngine.bindTexture(texture);
+            Minecraft.getMinecraft().fontRendererObj.drawStringWithShadow("LOREM IPSUM DOLOR SIT AMET", left, top, 0);
+            //Gui.drawRect(left, top, 50, 50, Color.BLACK.getRGB());
+            Gui.drawModalRectWithCustomSizedTexture(0, 0, 0, 0, 0, 0, 100, 50);
             GlStateManager.popMatrix();
         }
     }
