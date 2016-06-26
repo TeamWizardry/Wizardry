@@ -40,7 +40,7 @@
     },
 	{
 		"type": "structure",
-		"structure": "Test2"
+		"structure": "crafting_altar"
 	}
   ]
 }

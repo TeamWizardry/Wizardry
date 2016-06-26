@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.gui.book.pages;
 
+import java.io.IOException;
 import java.nio.IntBuffer;
 import java.util.List;
 
@@ -32,6 +33,7 @@ public class GuiPageStructure extends GuiPageCommon {
 
 	private static VertexBuffer blockBuf = new VertexBuffer(50000);
 	private static int[] bufferInts;
+	private double rotX, rotY, rotZ;
 	
     Structure structure;
 
@@ -39,6 +41,11 @@ public class GuiPageStructure extends GuiPageCommon {
         super(parent, data, globalData, path, page);
         
         structure = new Structure(data.get("structure").asStringOr("nullStruct"));
+        rotX = 22.5;
+        rotY = 45;
+        rotZ = 0;
+        zoom = 10;
+        
         initStructure();
     }
 
@@ -63,6 +70,33 @@ public class GuiPageStructure extends GuiPageCommon {
     	
     }
     
+    int dragStartX, dragStartY;
+    double zoom;
+    
+    @Override
+    public void mouseClickedPage(int mouseX, int mouseY, int mouseButton) {
+    	if(mouseButton != 0)
+    		return;
+    	dragStartX = mouseX;
+    	dragStartY = mouseY;
+    }
+    
+    @Override
+    public void mouseReleasedPage(int mouseX, int mouseY, int mouseButton) {
+    	if(mouseButton != 0)
+    		return;
+    	
+    	float dragRotX = (mouseX-dragStartX);
+    	float dragRotY = (mouseY-dragStartY);
+    	
+    	rotX += dragRotY;
+    	rotY += dragRotX;
+    	
+    	dragStartX = -1;
+    	dragStartY = -1;
+    	
+    }
+    
     @Override
     public void drawPage(int mouseX, int mouseY, float partialTicks) {
     	
@@ -71,14 +105,8 @@ public class GuiPageStructure extends GuiPageCommon {
     	Tessellator tessellator = Tessellator.getInstance();
     	VertexBuffer renderBuf = tessellator.getBuffer();
     	
-//    	IBakedModel model = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getModelForState(Blocks.STONE.getDefaultState());
-//		Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModelBrightnessColor(model, 1.0F, 1, 1, 1);
-//    	GlStateManager.per
-    	
     	
     	GlStateManager.translate(this.viewWidth/2, this.viewHeight/2, 0);
-    	
-//    	RenderHelper.enableStandardItemLighting();
     	
     	{
     		Vec3d LIGHT0_POS = (new Vec3d(0.20000000298023224D, 1.0D, -0.699999988079071D)).normalize();
@@ -106,12 +134,18 @@ public class GuiPageStructure extends GuiPageCommon {
             GlStateManager.glLightModel(GL11.GL_LIGHT_MODEL_AMBIENT, RenderHelper.setColorBuffer(ambiant, ambiant, ambiant, 1.0F));
     	}
     	
+    	GlStateManager.scale(zoom, -zoom, zoom);
     	
-    	double s = 10;
-    	GlStateManager.scale(s, -s, s);
+    	float dragRotX = (mouseX-dragStartX);
+    	if(dragStartX == -1) dragRotX = 0;
+    	float dragRotY = (mouseY-dragStartY);
+    	if(dragStartY == -1) dragRotY = 0;
+    	
+    	GlStateManager.rotate((float)rotX + dragRotY, 1, 0, 0);
+    	GlStateManager.rotate((float)rotY + dragRotX, 0, 1, 0);
+    	GlStateManager.rotate((float)rotZ, 0, 0, 1);
+    	
     	GlStateManager.translate(-0.5, -0.5, -0.5);
-    	GlStateManager.rotate(22.5f, 1, 0, 0);
-    	GlStateManager.rotate(45, 0, 1, 0);
     	
 //    	RenderHelper.enableStandardItemLighting();
 

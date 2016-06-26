@@ -175,8 +175,7 @@ public class Structure {
 			for(int i = 0; i < list.tagCount(); i++) {
 				NBTTagCompound compound = list.getCompoundTagAt(i);
 				
-				if("minecraft:structure_block".equals(compound.getString("Name")) &&
-				   "save".equals(compound.getCompoundTag("Properties").getString("mode")) ) {
+				if("minecraft:structure_block".equals(compound.getString("Name"))) {
 					paletteID = i;
 					break;
 				}
