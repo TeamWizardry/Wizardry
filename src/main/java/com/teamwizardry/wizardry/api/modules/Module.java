@@ -29,7 +29,10 @@ public abstract class Module {
     public static final String RADIUS = "Radius";
     public AttributeMap attributes = new AttributeMap();
     public List<IRuntimeModifier> runtimeModifiers = new ArrayList<>();
+    
     protected boolean canHaveChildren = true;
+    
+    private ResourceLocation iconLocation = new ResourceLocation(Wizardry.MODID, this.getClass().getSimpleName());
 
     { /* attributes/parsing */ }
 
@@ -61,12 +64,20 @@ public abstract class Module {
     }
 
     /**
-     * Returns the default {@link RecourseLocation} for this module's icon.
-     *
-     * @return A {@code ResourceLocation} with the location {@code Wizardry:this.class.simpleName}
+     * Gets the current {@link RecourseLocation}. Set to {@code Wizardry:this.class.getSimpleName()} by default. 
+     * @return The current {@code ResourceLocation} 
      */
     public ResourceLocation getIcon() {
-        return new ResourceLocation(Wizardry.MODID, this.getClass().getSimpleName());
+        return iconLocation;
+    }
+    
+    /**
+     * Sets the {@link ResourceLocation} for this module
+     * @param location The new {@code ResourceLocation}
+     */
+    public void setIcon(ResourceLocation location)
+    {
+    	iconLocation = location;
     }
 
     /**

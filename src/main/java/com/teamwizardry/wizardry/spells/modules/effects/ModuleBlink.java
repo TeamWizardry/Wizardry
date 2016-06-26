@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.spells.modules.effects;
 
 import com.teamwizardry.wizardry.api.modules.Module;
+import com.teamwizardry.wizardry.api.modules.attribute.Attribute;
 import com.teamwizardry.wizardry.spells.modules.ModuleType;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
@@ -14,10 +15,9 @@ public class ModuleBlink extends Module {
     private boolean useCoord = false;
     private BlockPos pos = new BlockPos(0, 0, 0);
 
-    private int distance = 0;
-
-    public ModuleBlink() {
-
+    public ModuleBlink()
+    {
+    	attributes.addAttribute(Attribute.DISTANCE);
     }
 
     @Override
@@ -26,19 +26,15 @@ public class ModuleBlink extends Module {
     }
 
     @Override
-    public NBTTagCompound getModuleData() {
+    public NBTTagCompound getModuleData()
+    {
         NBTTagCompound compound = super.getModuleData();
         compound.setBoolean(COORD_SET, useCoord);
         compound.setInteger(POS_X, pos.getX());
         compound.setInteger(POS_Y, pos.getY());
         compound.setInteger(POS_Z, pos.getZ());
-        compound.setInteger(POWER, distance);
+        compound.setDouble(POWER, attributes.apply(Attribute.DISTANCE, 1));
         return compound;
-    }
-
-    public ModuleBlink setDistance(int power) {
-        distance = power;
-        return this;
     }
 
     public ModuleBlink setPos(BlockPos pos) {
