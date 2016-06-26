@@ -37,6 +37,10 @@
     {
       "type": "text",
       "text": {"global": "glob", "page": 2}
-    }
+    },
+	{
+		"type": "structure",
+		"structure": "Test2"
+	}
   ]
 }

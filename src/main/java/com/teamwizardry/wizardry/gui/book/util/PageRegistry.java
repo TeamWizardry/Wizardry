@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.gui.book.util;
 import com.teamwizardry.wizardry.gui.book.MainIndex;
 import com.teamwizardry.wizardry.gui.book.pages.GuiPageCommon;
 import com.teamwizardry.wizardry.gui.book.pages.GuiPageError;
+import com.teamwizardry.wizardry.gui.book.pages.GuiPageStructure;
 import com.teamwizardry.wizardry.gui.book.pages.GuiPageSubindex;
 import com.teamwizardry.wizardry.gui.book.pages.GuiPageText;
 import com.teamwizardry.wizardry.network.PacketHandler;
@@ -15,7 +16,7 @@ import java.util.Map;
 /**
  * Stores the different types of pages and constructs pages based on their path
  *
- * @author piercecorcoran
+ * @author Pierce Corcoran
  */
 public class PageRegistry {
 
@@ -28,6 +29,7 @@ public class PageRegistry {
         error = GuiPageError::new;
         register("text", GuiPageText::new);
         register("subindex", GuiPageSubindex::new);
+        register("structure", GuiPageStructure::new);
     }
 
     public static void register(String name, IPageGuiSupplier supplier) {

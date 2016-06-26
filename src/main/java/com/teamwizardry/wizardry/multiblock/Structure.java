@@ -1,9 +1,19 @@
 package com.teamwizardry.wizardry.multiblock;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import com.teamwizardry.wizardry.multiblock.vanillashade.Template;
-import net.minecraft.block.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import net.minecraft.block.BlockPane;
+import net.minecraft.block.BlockQuartz;
+import net.minecraft.block.BlockRedstoneComparator;
+import net.minecraft.block.BlockRedstoneRepeater;
+import net.minecraft.block.BlockRedstoneWire;
+import net.minecraft.block.BlockSlab;
+import net.minecraft.block.BlockStairs;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.CompressedStreamTools;
@@ -12,14 +22,14 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Multimap;
+import com.teamwizardry.wizardry.multiblock.vanillashade.Template;
+import com.teamwizardry.wizardry.multiblock.vanillashade.Template.BlockInfo;
 
 public class Structure {
 	
@@ -43,10 +53,12 @@ public class Structure {
 	}
 	
 	protected Template template;
+	protected TemplateBlockAccess blockAccess;
+	
 	protected BlockPos origin = BlockPos.ORIGIN;
 	
 	public Structure(String name) {
-		InputStream stream = Structure.class.getResourceAsStream("/assets/wizardry/structures/" + name + ".nbt");
+		InputStream stream = Structure.class.getResourceAsStream("/assets/wizardry/schematics/" + name + ".nbt");
 		if(stream != null) {
 			try {
 				parse(stream);
@@ -55,6 +67,22 @@ public class Structure {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public List<BlockInfo> blockInfos() {
+        return template.infos() == null ? ImmutableList.of() : template.infos();
+    }
+	
+	public IBlockAccess getBlockAccess() {
+		return blockAccess;
+	}
+	
+	public BlockPos getOrigin() {
+		return origin;
+	}
+	
+	public void setOrigin(BlockPos pos) {
+		origin = pos;
 	}
 	
 	public List<BlockPos> errors(World world, BlockPos checkPos) {
@@ -66,24 +94,24 @@ public class Structure {
 		
 		List<BlockPos> finalList = none;
 
-		if(reverse.size() < finalList.size())
+		if(finalList == null || reverse != null && reverse.size() < finalList.size())
 			finalList = reverse;
-		if(cw.size() < finalList.size())
+		if(finalList == null || cw != null && cw.size() < finalList.size())
 			finalList = cw;
-		if(ccw.size() < finalList.size())
+		if(finalList == null || ccw != null && ccw.size() < finalList.size())
 			finalList = ccw;
 		
-		return finalList;
+		return finalList == null ? ImmutableList.of() : finalList;
 	}
 	
 	public List<BlockPos> errors(World world, BlockPos checkPos, Rotation rot) {
 		List<BlockPos> errorPosList = new ArrayList<>();
 
-		// TODO: Null pointer exception right here. template.infos()
 		List<Template.BlockInfo> infos = template.infos();
 		
-		BlockPos offset = checkPos.subtract(origin);
-
+		if(infos == null)
+			return null;
+		
 		for (Template.BlockInfo info : infos) {
 			
 			if(info.pos.equals(origin))
@@ -135,7 +163,7 @@ public class Structure {
 	
 	protected void parse(InputStream stream) {
 		template = new Template();
-		
+		blockAccess = new TemplateBlockAccess(template);
 		try {
 			NBTTagCompound tag = CompressedStreamTools.readCompressed(stream);
 			template.read(tag);

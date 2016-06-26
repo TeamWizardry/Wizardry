@@ -4,6 +4,7 @@ import com.teamwizardry.wizardry.ModItems;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.items.pearls.ItemQuartzPearl;
 import com.teamwizardry.wizardry.multiblock.Structure;
+import com.teamwizardry.wizardry.multiblock.Structures;
 import com.teamwizardry.wizardry.particles.SparkleFX;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
@@ -27,7 +28,6 @@ import java.util.List;
  */
 public class TileCraftingPlate extends TileEntity implements ITickable {
 
-    private static Structure structure;
     private ArrayList<ItemStack> inventory = new ArrayList<>();
     private boolean structureComplete = false;
     private boolean crafting = false, finishedCrafting = false, recipeAvailable = false;
@@ -39,9 +39,8 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
     }
 
     public void validateStructure() {
-        structure = new Structure("crafting_altar");
-
-        List<BlockPos> errors = structure.errors(this.worldObj, this.pos);
+    	Structures.reload();
+        List<BlockPos> errors = Structures.craftingAltar.errors(this.worldObj, this.pos);
 
         if (errors.size() == 0) {
             worldObj.spawnParticle(EnumParticleTypes.FLAME, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5, 0.0D, 0.0D, 0.0D);

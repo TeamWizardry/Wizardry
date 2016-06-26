@@ -18,7 +18,7 @@ import java.util.List;
  * <p>
  * This class doesn't render text.
  *
- * @author piercecorcoran
+ * @author Pierce Corcoran
  */
 public class TextControl {
 
