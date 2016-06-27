@@ -10,11 +10,10 @@ public class ModuleExplosion extends Module {
 
     private boolean damageTerrain;
 
-    public ModuleExplosion()
-    {
-    	attributes.addAttribute(Attribute.DAMAGE);
-    	attributes.addAttribute(Attribute.POWER);
-    	attributes.addAttribute(Attribute.RADIUS);
+    public ModuleExplosion() {
+        attributes.addAttribute(Attribute.DAMAGE);
+        attributes.addAttribute(Attribute.POWER);
+        attributes.addAttribute(Attribute.RADIUS);
     }
 
     @Override

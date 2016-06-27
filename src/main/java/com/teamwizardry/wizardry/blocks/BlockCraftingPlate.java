@@ -63,8 +63,8 @@ public class BlockCraftingPlate extends Block implements ITileEntityProvider {
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         TileCraftingPlate te = getTE(worldIn, pos);
-    	te.validateStructure();
-    	if (!worldIn.isRemote) {
+        te.validateStructure();
+        if (!worldIn.isRemote) {
             if (!te.isStructureComplete()) {
                 //Schematic schematic = new Schematic("spell_crafter");
                 //te.setStructureComplete(schematic.check(worldIn, pos, this, playerIn));

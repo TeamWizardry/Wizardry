@@ -7,8 +7,8 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleCone extends Module {
     public ModuleCone() {
-    	attributes.addAttribute(Attribute.DISTANCE);
-    	attributes.addAttribute(Attribute.SCATTER);
+        attributes.addAttribute(Attribute.DISTANCE);
+        attributes.addAttribute(Attribute.SCATTER);
     }
 
     @Override

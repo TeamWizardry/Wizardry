@@ -1,11 +1,7 @@
 package com.teamwizardry.wizardry.gui.book.util;
 
 import com.teamwizardry.wizardry.gui.book.MainIndex;
-import com.teamwizardry.wizardry.gui.book.pages.GuiPageCommon;
-import com.teamwizardry.wizardry.gui.book.pages.GuiPageError;
-import com.teamwizardry.wizardry.gui.book.pages.GuiPageStructure;
-import com.teamwizardry.wizardry.gui.book.pages.GuiPageSubindex;
-import com.teamwizardry.wizardry.gui.book.pages.GuiPageText;
+import com.teamwizardry.wizardry.gui.book.pages.*;
 import com.teamwizardry.wizardry.network.PacketHandler;
 import com.teamwizardry.wizardry.network.packets.PacketUpdateSavedPage;
 import net.minecraft.client.gui.GuiScreen;

@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.tileentities;
 import com.teamwizardry.wizardry.ModItems;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.items.pearls.ItemQuartzPearl;
-import com.teamwizardry.wizardry.multiblock.Structure;
 import com.teamwizardry.wizardry.multiblock.Structures;
 import com.teamwizardry.wizardry.particles.SparkleFX;
 import net.minecraft.block.state.IBlockState;
@@ -39,7 +38,7 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
     }
 
     public void validateStructure() {
-    	Structures.reload();
+        Structures.reload();
         List<BlockPos> errors = Structures.craftingAltar.errors(this.worldObj, this.pos);
 
         if (errors.size() == 0) {

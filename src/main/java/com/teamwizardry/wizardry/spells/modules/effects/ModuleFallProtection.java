@@ -9,7 +9,7 @@ public class ModuleFallProtection extends Module {
     private int protectionLevel;
 
     public ModuleFallProtection() {
-    	attributes.addAttribute(Attribute.POWER);
+        attributes.addAttribute(Attribute.POWER);
     }
 
     @Override

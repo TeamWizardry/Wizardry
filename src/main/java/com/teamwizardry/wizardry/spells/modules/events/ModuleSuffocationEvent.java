@@ -6,7 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleSuffocationEvent extends Module {
     public ModuleSuffocationEvent() {
-    	canHaveChildren = false;
+        canHaveChildren = false;
     }
 
     @Override

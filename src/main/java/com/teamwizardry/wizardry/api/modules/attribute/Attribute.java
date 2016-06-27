@@ -18,7 +18,7 @@ public class Attribute {
             DISTANCE = new Attribute("distance"),
             DAMAGE = new Attribute("damage"),
 
-            COST = new Attribute("cost"),
+    COST = new Attribute("cost"),
             BURNOUT = new Attribute("burnout");
 
     public final String name;
