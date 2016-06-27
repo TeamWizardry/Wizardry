@@ -1,7 +1,8 @@
 package com.teamwizardry.wizardry.multiblock;
 
-import com.teamwizardry.wizardry.multiblock.vanillashade.Template;
-import com.teamwizardry.wizardry.multiblock.vanillashade.Template.BlockInfo;
+import java.util.HashMap;
+import java.util.Map;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Biomes;
 import net.minecraft.init.Blocks;
@@ -12,6 +13,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
 
+import com.teamwizardry.wizardry.multiblock.vanillashade.Template;
+import com.teamwizardry.wizardry.multiblock.vanillashade.Template.BlockInfo;
 
 /**
  * Used to access the blocks in a template. Made for getActualState()
@@ -21,11 +24,20 @@ import net.minecraft.world.biome.Biome;
 public class TemplateBlockAccess implements IBlockAccess {
 
     protected Template template;
-
+    protected Map<BlockPos, IBlockState> overrides = new HashMap<>();
+    
     public TemplateBlockAccess(Template template) {
         this.template = template;
     }
 
+    public void addOverride(BlockPos pos, IBlockState state) {
+    	overrides.put(pos, state);
+    }
+    
+    public void clearOverrides() {
+    	overrides.clear();
+    }
+    
     @Override
     public TileEntity getTileEntity(BlockPos pos) {
         return null;
@@ -38,6 +50,9 @@ public class TemplateBlockAccess implements IBlockAccess {
 
     @Override
     public IBlockState getBlockState(BlockPos pos) {
+    	if (overrides.containsKey(pos))
+    		return overrides.get(pos);
+    	
         if (template == null || template.infos() == null)
             return Blocks.AIR.getDefaultState();
         IBlockState state = null;
@@ -80,15 +95,19 @@ public class TemplateBlockAccess implements IBlockAccess {
         if (template == null || template.infos() == null)
             return _default;
         IBlockState state = null;
-        for (BlockInfo info : template.infos()) {
-            if (info.pos.equals(pos)) {
-                state = info.blockState;
-                break;
-            }
+        if(overrides.containsKey(pos)) {
+        	state = overrides.get(pos);
+        } else {
+	        for (BlockInfo info : template.infos()) {
+	            if (info.pos.equals(pos)) {
+	                state = info.blockState;
+	                break;
+	            }
+	        }
         }
         if (state == null)
             return _default;
-        return getBlockState(pos).isSideSolid(this, pos, side);
+        return state.isSideSolid(this, pos, side);
     }
 
 }

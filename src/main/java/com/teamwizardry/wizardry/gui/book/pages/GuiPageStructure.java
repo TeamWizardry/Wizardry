@@ -1,11 +1,9 @@
 package com.teamwizardry.wizardry.gui.book.pages;
 
-import java.io.IOException;
 import java.nio.IntBuffer;
 import java.util.List;
 
-import net.minecraftforge.fml.client.config.GuiButtonExt;
-
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -15,6 +13,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -25,11 +24,15 @@ import org.lwjgl.opengl.GL11;
 import com.teamwizardry.wizardry.Matrix4;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.gui.book.util.BlockRenderUtils;
+import com.teamwizardry.wizardry.gui.book.util.Color;
 import com.teamwizardry.wizardry.gui.book.util.DataNode;
+import com.teamwizardry.wizardry.gui.book.util.DataNodeParsers;
 import com.teamwizardry.wizardry.gui.lib.GuiEvent;
 import com.teamwizardry.wizardry.gui.lib.TextureDefinition;
 import com.teamwizardry.wizardry.gui.lib.components.GuiComponentButton;
+import com.teamwizardry.wizardry.gui.util.Vec2;
 import com.teamwizardry.wizardry.multiblock.Structure;
+import com.teamwizardry.wizardry.multiblock.StructureRenderUtil;
 import com.teamwizardry.wizardry.multiblock.vanillashade.Template.BlockInfo;
 
 /**
@@ -39,12 +42,13 @@ import com.teamwizardry.wizardry.multiblock.vanillashade.Template.BlockInfo;
  */
 public class GuiPageStructure extends GuiPageCommon {
 
-	private static VertexBuffer blockBuf = new VertexBuffer(50000);
 	private static int[] bufferInts;
 	private static int[] transpBufferInts;
 	private double rotX, rotY, rotZ;
 	private Vec3d center = new Vec3d(-0.5, -0.5, -0.5);
     Structure structure;
+    IBlockState originState;
+    
     int dragStartX = -1, dragStartY = -1;
     double zoom;
     int dragButton = -1;
@@ -60,7 +64,9 @@ public class GuiPageStructure extends GuiPageCommon {
         rotY = 45;
         rotZ = 0;
         zoom = 10;
-
+        
+        originState = DataNodeParsers.parseBlockState(data.get("block"));
+        
         TextureDefinition def = new TextureDefinition(new ResourceLocation(Wizardry.MODID, "textures/gui/texturesheet/structure.png"), 128, 128, /*unused ->*/ 0, 0, 128, 128);
         
         components.add(new GuiComponentButton("up", 0, 0, 16, 8, def.sub(0, 0, 16, 8)));
@@ -70,47 +76,20 @@ public class GuiPageStructure extends GuiPageCommon {
     }
 
     public void initStructure() {
-        List<BlockInfo> blockInfoList = structure.blockInfos();
-        blockBuf.reset();
-        blockBuf.begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
-        EnumFacing[] alwaysSides = layer == -1 ? new EnumFacing[0] : new EnumFacing[] { EnumFacing.UP, EnumFacing.DOWN };
-        for (BlockInfo info : blockInfoList) {
-            if (info.blockState.getRenderType() == EnumBlockRenderType.INVISIBLE)
-                continue;
-            if (layer != -1 && info.pos.getY() != layer)
-            	continue;
-            BlockRenderUtils.renderBlockToVB(info.blockState, structure.getBlockAccess(), info.pos, info.pos.subtract(structure.getOrigin()), blockBuf, 1, 1, 1, 1, 1, alwaysSides);
-        }
-        blockBuf.finishDrawing();
-
-        IntBuffer intBuf = blockBuf.getByteBuffer().asIntBuffer();
-        bufferInts = new int[intBuf.limit()];
-        for (int i = 0; i < bufferInts.length; i++) {
-            bufferInts[i] = intBuf.get(i);
-        }
+        structure.getBlockAccess().addOverride(structure.getOrigin(), originState);
+        
+        EnumFacing[] emptyFaces = new EnumFacing[0], topFace = new EnumFacing[] {EnumFacing.UP};
+        
+        bufferInts = StructureRenderUtil.render(structure, (pos) -> layer != -1 && pos.getY() != layer, (pos) -> layer == -1 ? emptyFaces : topFace, new Color(1, 1, 1, 1), 1);
         
         if(layer == -1) {
         	transpBufferInts = null;
         	return;
         }
         
-        blockBuf.reset();
-        blockBuf.begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
-        alwaysSides = layer == -1 ? new EnumFacing[0] : new EnumFacing[] { EnumFacing.UP, EnumFacing.DOWN };
-        for (BlockInfo info : blockInfoList) {
-            if (info.blockState.getRenderType() == EnumBlockRenderType.INVISIBLE)
-                continue;
-            if (layer != -1 && info.pos.getY() >= layer)
-            	continue;
-            BlockRenderUtils.renderBlockToVB(info.blockState, structure.getBlockAccess(), info.pos, info.pos.subtract(structure.getOrigin()), blockBuf, 1, 1, 1, 0.5f, 1, alwaysSides);
-        }
-        blockBuf.finishDrawing();
-
-        intBuf = blockBuf.getByteBuffer().asIntBuffer();
-        transpBufferInts = new int[intBuf.limit()];
-        for (int i = 0; i < transpBufferInts.length; i++) {
-        	transpBufferInts[i] = intBuf.get(i);
-        }
+        transpBufferInts = StructureRenderUtil.render(structure, (pos) -> pos.getY() >= layer, (pos) -> layer == -1 ? emptyFaces : topFace, new Color(1, 1, 1, 1), 0.5f);
+        
+        structure.getBlockAccess().clearOverrides();
     }
     
     @Override
@@ -143,7 +122,7 @@ public class GuiPageStructure extends GuiPageCommon {
     
     @Override
     public void mouseClickedPage(int mouseX, int mouseY, int mouseButton) {
-    	if(dragButton != -1)
+    	if(dragButton != -1 || components.isMouseOver(new Vec2(mouseX, mouseY)))
     		return;
     	
     	dragStartX = mouseX;

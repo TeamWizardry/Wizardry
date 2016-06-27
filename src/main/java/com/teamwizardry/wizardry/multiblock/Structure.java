@@ -67,7 +67,7 @@ public class Structure {
         return template.infos() == null ? ImmutableList.of() : template.infos();
     }
 
-    public IBlockAccess getBlockAccess() {
+    public TemplateBlockAccess getBlockAccess() {
         return blockAccess;
     }
 

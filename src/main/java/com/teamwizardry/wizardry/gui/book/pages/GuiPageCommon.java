@@ -51,6 +51,7 @@ public abstract class GuiPageCommon extends Tippable implements IGuiEventListene
         setHasNavPrev(data.get("hasPrev").exists());
         
         components = new GuiComponentContainer(0, 0);
+        components.advancedHover = true;
         components.addEventListener(this);
     }
     
@@ -87,11 +88,11 @@ public abstract class GuiPageCommon extends Tippable implements IGuiEventListene
         ScissorUtil.set(viewLeft, viewTop, viewWidth, viewHeight);
         ScissorUtil.enable();
         drawPage(mouseX - viewLeft, mouseY - viewTop, partialTicks);
-        ScissorUtil.disable();
         GlStateManager.popMatrix();
-        
-        components.draw(new Vec2(mouseX, mouseY), partialTicks);
 
+        components.draw(new Vec2(mouseX, mouseY), partialTicks);
+        ScissorUtil.disable();
+        
         mc.fontRendererObj.setUnicodeFlag(false);
     }
 
