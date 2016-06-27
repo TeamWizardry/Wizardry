@@ -1,9 +1,13 @@
 package com.teamwizardry.wizardry.gui.book.pages;
 
+import java.io.IOException;
 import java.nio.IntBuffer;
 import java.util.List;
 
+import net.minecraftforge.fml.client.config.GuiButtonExt;
+
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -16,7 +20,6 @@ import net.minecraft.util.math.Vec3d;
 
 import org.lwjgl.opengl.GL11;
 
-import com.teamwizardry.wizardry.Logs;
 import com.teamwizardry.wizardry.Matrix4;
 import com.teamwizardry.wizardry.gui.book.util.BlockRenderUtils;
 import com.teamwizardry.wizardry.gui.book.util.DataNode;
@@ -39,6 +42,9 @@ public class GuiPageStructure extends GuiPageCommon {
     double zoom;
     int dragButton = -1;
     
+    GuiButton layerUp, layerDown;
+    int layer = -1;
+    
     public GuiPageStructure(GuiScreen parent, DataNode data, DataNode globalData, String path, int page) {
         super(parent, data, globalData, path, page);
 
@@ -48,6 +54,10 @@ public class GuiPageStructure extends GuiPageCommon {
         rotZ = 0;
         zoom = 10;
 
+        layerUp = new GuiButtonExt(0, viewLeft, viewTop, 16, 16, "+");
+        layerDown = new GuiButtonExt(1, viewLeft+16, viewTop, 16, 16, "-");
+        buttonList.add(layerUp);
+        buttonList.add(layerDown);
         initStructure();
     }
 
@@ -58,7 +68,8 @@ public class GuiPageStructure extends GuiPageCommon {
         for (BlockInfo info : blockInfoList) {
             if (info.blockState.getRenderType() == EnumBlockRenderType.INVISIBLE)
                 continue;
-
+            if (info.pos.getY() == layer)
+            	continue;
             BlockRenderUtils.renderBlockToVB(info.blockState, structure.getBlockAccess(), info.pos, info.pos.subtract(structure.getOrigin()), blockBuf, 1, 1, 1, 1);
         }
         blockBuf.finishDrawing();
@@ -68,6 +79,19 @@ public class GuiPageStructure extends GuiPageCommon {
         for (int i = 0; i < bufferInts.length; i++) {
             bufferInts[i] = intBuf.get(i);
         }
+    }
+    
+    @Override
+    protected void actionPerformed(GuiButton button) throws IOException {
+    	super.actionPerformed(button);
+    	if(button.id == 0) {
+    		layer++;
+    		initStructure();
+    	}
+    	if(button.id == 1) {
+    		layer--;
+    		initStructure();
+    	}
     }
     
     @Override
@@ -125,19 +149,30 @@ public class GuiPageStructure extends GuiPageCommon {
 
 
         GlStateManager.translate(this.viewWidth / 2, this.viewHeight / 2, 500);
-
-        { // RenderHelper.enableStandardItemLighting but brighter because of different light and ambiant values.
-            Vec3d LIGHT0_POS = (new Vec3d(0.20000000298023224D, 1.0D, -0.699999988079071D)).normalize();
-            Vec3d LIGHT1_POS = (new Vec3d(-0.20000000298023224D, 1.0D, 0.699999988079071D)).normalize();
+        
+        float dragRotX = (mouseX-dragStartX);
+    	if(dragButton != 0) dragRotX = 0;
+    	float dragRotY = (mouseY-dragStartY);
+    	if(dragButton != 0) dragRotY = 0;
+    	
+    	GlStateManager.enableRescaleNormal();
+    	GlStateManager.scale(zoom, -zoom, zoom);
+    	GlStateManager.rotate((float)rotX + dragRotY, 1, 0, 0);
+    	GlStateManager.rotate((float)rotY + dragRotX, 0, 1, 0);
+    	GlStateManager.rotate((float)rotZ, 0, 0, 1);
+    	
+    	{ // RenderHelper.enableStandardItemLighting but brighter because of different light and ambiant values.
+            Vec3d LIGHT0_POS = new Vec3d(0, 1,  0.1).normalize();//(new Vec3d(0.20000000298023224D, 1.0D, -0.699999988079071D)).normalize();
+            Vec3d LIGHT1_POS = new Vec3d(0, 1, -0.1).normalize();//(new Vec3d(-0.20000000298023224D, 1.0D, 0.699999988079071D)).normalize();
 
             GlStateManager.enableLighting();
             GlStateManager.enableLight(0);
-            GlStateManager.enableLight(1);
+//            GlStateManager.enableLight(1);
             GlStateManager.enableColorMaterial();
             GlStateManager.colorMaterial(GL11.GL_FRONT_AND_BACK, GL11.GL_AMBIENT_AND_DIFFUSE);
 
-            float light = 1F;
-            float ambiant = 0.75F;
+            float light = 0.3F;
+            float ambiant = 0.7F;
             GlStateManager.glLight(GL11.GL_LIGHT0, GL11.GL_POSITION, RenderHelper.setColorBuffer((float) LIGHT0_POS.xCoord, (float) LIGHT0_POS.yCoord, (float) LIGHT0_POS.zCoord, 0.0f));
             GlStateManager.glLight(GL11.GL_LIGHT0, GL11.GL_DIFFUSE, RenderHelper.setColorBuffer(light, light, light, 1.0F));
             GlStateManager.glLight(GL11.GL_LIGHT0, GL11.GL_AMBIENT, RenderHelper.setColorBuffer(0.0F, 0.0F, 0.0F, 1.0F));
@@ -151,17 +186,6 @@ public class GuiPageStructure extends GuiPageCommon {
             GlStateManager.shadeModel(GL11.GL_FLAT);
             GlStateManager.glLightModel(GL11.GL_LIGHT_MODEL_AMBIENT, RenderHelper.setColorBuffer(ambiant, ambiant, ambiant, 1.0F));
     	}
-    	
-    	
-    	float dragRotX = (mouseX-dragStartX);
-    	if(dragButton != 0) dragRotX = 0;
-    	float dragRotY = (mouseY-dragStartY);
-    	if(dragButton != 0) dragRotY = 0;
-    	
-    	GlStateManager.scale(zoom, -zoom, zoom);
-    	GlStateManager.rotate((float)rotX + dragRotY, 1, 0, 0);
-    	GlStateManager.rotate((float)rotY + dragRotX, 0, 1, 0);
-    	GlStateManager.rotate((float)rotZ, 0, 0, 1);
     	
     	Vec3d offset = Vec3d.ZERO;
     	if(dragButton == 1) {
@@ -182,6 +206,7 @@ public class GuiPageStructure extends GuiPageCommon {
     	tessellator.draw();
     	
     	RenderHelper.disableStandardItemLighting();
+    	GlStateManager.disableRescaleNormal();
 //        drawScaledCustomSizeModalRect((viewWidth / 2) - 50, 0, 0, 0, 100, 50, 100, 50, 100, 50);
     }
 

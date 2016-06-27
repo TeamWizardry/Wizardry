@@ -1,23 +1,23 @@
 package com.teamwizardry.wizardry.gui.book.pages;
 
+import java.io.IOException;
+
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.ResourceLocation;
+
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
+
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.gui.book.Tippable;
 import com.teamwizardry.wizardry.gui.book.util.DataNode;
 import com.teamwizardry.wizardry.gui.book.util.PageRegistry;
 import com.teamwizardry.wizardry.gui.book.util.PathUtils;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.gui.inventory.GuiContainerCreative;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
-
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
-
-import java.io.IOException;
+import com.teamwizardry.wizardry.gui.util.ScissorUtil;
 
 public abstract class GuiPageCommon extends Tippable {
 
@@ -25,7 +25,6 @@ public abstract class GuiPageCommon extends Tippable {
     public int page;
     public int viewWidth, viewHeight, viewLeft, viewTop;
     protected GuiScreen parent;
-    protected int screenScale;
     protected DataNode data;
     protected DataNode globalData;
 
@@ -70,11 +69,10 @@ public abstract class GuiPageCommon extends Tippable {
         viewLeft = left + 15;
         viewTop = top + 12;
         GlStateManager.translate(viewLeft, viewTop, 100);
-        GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GL11.glScissor(viewLeft * screenScale, mc.displayHeight - (viewTop + viewHeight) * screenScale,
-                viewWidth * screenScale, viewHeight * screenScale);
+        ScissorUtil.set(viewLeft, viewTop, viewWidth, viewHeight);
+        ScissorUtil.enable();
         drawPage(mouseX - viewLeft, mouseY - viewTop, partialTicks);
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        ScissorUtil.disable();
         GlStateManager.popMatrix();
 
         mc.fontRendererObj.setUnicodeFlag(false);
@@ -119,12 +117,6 @@ public abstract class GuiPageCommon extends Tippable {
             
             mouseScrollPage(mouseX - viewLeft, mouseY - viewTop, wheelAmount);
         }
-    }
-
-    @Override
-    public void initGui() {
-        super.initGui();
-        screenScale = new ScaledResolution(mc).getScaleFactor();
     }
 
     @Override
