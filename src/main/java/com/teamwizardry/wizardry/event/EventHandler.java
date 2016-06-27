@@ -36,7 +36,6 @@ public class EventHandler {
 
     @SubscribeEvent
     public void redstoneExistenentialCrisisEvent(TickEvent.WorldTickEvent event) {
-
         ArrayList<RedstoneTrackerObject> expiredRedstone = new ArrayList<>();
         for (RedstoneTrackerObject redstone : redstoneTracker)
             if (!redstone.isStartCountDown()) {

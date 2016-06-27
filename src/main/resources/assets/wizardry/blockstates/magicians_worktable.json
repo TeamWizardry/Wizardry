@@ -4,14 +4,16 @@
     "model": "wizardry:magicians_worktable"
   },
   "variants":     {
-    "inventory":    {"model": "wizardry:magicians_worktable"},
+    "inventory":    {"model": "wizardry:table_left"},
     "is_left_side": {
       "true":  {
         "textures": {
-          "front": "blocks/sponge"
-        }
+          "front": "blocks/planks"
+        },
+        "model":    "wizardry:table_right"
       },
       "false": {
+        "model": "wizardry:table_left"
       }
     },
     "facing":       {
