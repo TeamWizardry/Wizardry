@@ -68,8 +68,16 @@ public class GuiPageStructure extends GuiPageCommon {
         for (int i = 0; i < bufferInts.length; i++) {
             bufferInts[i] = intBuf.get(i);
         }
-        Logs.debug("HI!");
-
+    }
+    
+    @Override
+    public void mouseScrollPage(int mouseX, int mouseY, int direction) {
+    	if(direction > 0 && zoom < 100) {
+    		zoom *= 1.5;
+    	}
+    	if(direction < 0 && zoom > 1) {
+    		zoom /= 1.5;
+    	}
     }
     
     @Override
@@ -116,7 +124,7 @@ public class GuiPageStructure extends GuiPageCommon {
         VertexBuffer renderBuf = tessellator.getBuffer();
 
 
-        GlStateManager.translate(this.viewWidth / 2, this.viewHeight / 2, 0);
+        GlStateManager.translate(this.viewWidth / 2, this.viewHeight / 2, 500);
 
         { // RenderHelper.enableStandardItemLighting but brighter because of different light and ambiant values.
             Vec3d LIGHT0_POS = (new Vec3d(0.20000000298023224D, 1.0D, -0.699999988079071D)).normalize();

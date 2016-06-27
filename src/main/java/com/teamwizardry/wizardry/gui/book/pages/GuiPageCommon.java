@@ -9,8 +9,12 @@ import com.teamwizardry.wizardry.gui.book.util.PathUtils;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.gui.inventory.GuiContainerCreative;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
+
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
@@ -51,6 +55,9 @@ public abstract class GuiPageCommon extends Tippable {
 
     public void mouseClickMovePage(int mouseX, int mouseY, int button, long timeSinceLastClick) {
     }
+    
+    public void mouseScrollPage(int mouseX, int mouseY, int direction) {
+    }
 
     public abstract void drawPage(int mouseX, int mouseY, float partialTicks);
 
@@ -89,6 +96,29 @@ public abstract class GuiPageCommon extends Tippable {
     protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
         super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
         mouseClickMovePage(mouseX - viewLeft, mouseY - viewTop, clickedMouseButton, timeSinceLastClick);
+    }
+    
+    @Override
+    public void handleMouseInput() throws IOException {
+    	super.handleMouseInput();
+    	int mouseX = Mouse.getEventX() * this.width / this.mc.displayWidth;
+        int mouseY = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
+    	int wheelAmount = Mouse.getEventDWheel();
+
+        if (wheelAmount != 0)
+        {
+            if (wheelAmount > 0)
+            {
+                wheelAmount = 1;
+            }
+
+            if (wheelAmount < 0)
+            {
+                wheelAmount = -1;
+            }
+            
+            mouseScrollPage(mouseX - viewLeft, mouseY - viewTop, wheelAmount);
+        }
     }
 
     @Override
