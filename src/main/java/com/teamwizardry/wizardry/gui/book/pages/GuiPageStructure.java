@@ -1,10 +1,8 @@
 package com.teamwizardry.wizardry.gui.book.pages;
 
-import com.teamwizardry.wizardry.Logs;
-import com.teamwizardry.wizardry.gui.book.util.BlockRenderUtils;
-import com.teamwizardry.wizardry.gui.book.util.DataNode;
-import com.teamwizardry.wizardry.multiblock.Structure;
-import com.teamwizardry.wizardry.multiblock.vanillashade.Template.BlockInfo;
+import java.nio.IntBuffer;
+import java.util.List;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
@@ -15,10 +13,15 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.math.Vec3d;
+
 import org.lwjgl.opengl.GL11;
 
-import java.nio.IntBuffer;
-import java.util.List;
+import com.teamwizardry.wizardry.Logs;
+import com.teamwizardry.wizardry.Matrix4;
+import com.teamwizardry.wizardry.gui.book.util.BlockRenderUtils;
+import com.teamwizardry.wizardry.gui.book.util.DataNode;
+import com.teamwizardry.wizardry.multiblock.Structure;
+import com.teamwizardry.wizardry.multiblock.vanillashade.Template.BlockInfo;
 
 /**
  * Displays a structure
@@ -27,18 +30,20 @@ import java.util.List;
  */
 public class GuiPageStructure extends GuiPageCommon {
 
-    private static VertexBuffer blockBuf = new VertexBuffer(50000);
-    private static int[] bufferInts;
+	private static VertexBuffer blockBuf = new VertexBuffer(50000);
+	private static int[] bufferInts;
+	private double rotX, rotY, rotZ;
+	private Vec3d center = new Vec3d(-0.5, -0.5, -0.5);
     Structure structure;
     int dragStartX = -1, dragStartY = -1;
     double zoom;
-    private double rotX, rotY, rotZ;
-
+    int dragButton = -1;
+    
     public GuiPageStructure(GuiScreen parent, DataNode data, DataNode globalData, String path, int page) {
         super(parent, data, globalData, path, page);
 
         structure = new Structure(data.get("structure").asStringOr("nullStruct"));
-        rotX = 22.5;
+        rotX = 22;
         rotY = 45;
         rotZ = 0;
         zoom = 10;
@@ -66,29 +71,40 @@ public class GuiPageStructure extends GuiPageCommon {
         Logs.debug("HI!");
 
     }
-
+    
     @Override
     public void mouseClickedPage(int mouseX, int mouseY, int mouseButton) {
-        if (mouseButton != 0)
-            return;
-        dragStartX = mouseX;
-        dragStartY = mouseY;
+    	if(dragButton != -1)
+    		return;
+    	
+    	dragStartX = mouseX;
+    	dragStartY = mouseY;
+    	dragButton = mouseButton;
     }
 
     @Override
     public void mouseReleasedPage(int mouseX, int mouseY, int mouseButton) {
-        if (mouseButton != 0)
-            return;
-
-        float dragRotX = (mouseX - dragStartX);
-        float dragRotY = (mouseY - dragStartY);
-
-        rotX += dragRotY;
-        rotY += dragRotX;
-
-        dragStartX = -1;
-        dragStartY = -1;
-
+    	if(mouseButton != dragButton)
+    		return;
+    	
+    	if(dragButton == 0) { // left mouse button
+    		rotY += (mouseX-dragStartX);
+    		rotX += (mouseY-dragStartY);
+    	}
+    	if(dragButton == 1) {
+    		Vec3d offset = new Vec3d(mouseX-dragStartX, mouseY-dragStartY, 0);
+        	Matrix4 matrix = new Matrix4();
+        	matrix.rotate(-Math.toRadians(rotZ), new Vec3d(0, 0, 1));
+        	matrix.rotate(-Math.toRadians(rotY), new Vec3d(0, 1, 0));
+        	matrix.rotate(-Math.toRadians(rotX), new Vec3d(1, 0, 0));
+        	matrix.scale(new Vec3d(1.0/zoom, -1.0/zoom, 1.0/zoom));
+        	offset = matrix.apply(offset);
+        	center = center.add(offset);
+    	}
+    	
+    	dragStartX = 0;
+    	dragStartY = 0;
+    	dragButton = -1;
     }
 
     @Override
@@ -126,31 +142,38 @@ public class GuiPageStructure extends GuiPageCommon {
 
             GlStateManager.shadeModel(GL11.GL_FLAT);
             GlStateManager.glLightModel(GL11.GL_LIGHT_MODEL_AMBIENT, RenderHelper.setColorBuffer(ambiant, ambiant, ambiant, 1.0F));
-        }
-
-        GlStateManager.scale(zoom, -zoom, zoom);
-
-        float dragRotX = (mouseX - dragStartX);
-        if (dragStartX == -1) dragRotX = 0;
-        float dragRotY = (mouseY - dragStartY);
-        if (dragStartY == -1) dragRotY = 0;
-
-        GlStateManager.rotate((float) rotX + dragRotY, 1, 0, 0);
-        GlStateManager.rotate((float) rotY + dragRotX, 0, 1, 0);
-        GlStateManager.rotate((float) rotZ, 0, 0, 1);
-
-        GlStateManager.translate(-0.5, -0.5, -0.5);
-
-//    	RenderHelper.enableStandardItemLighting();
-
-//    	Project.gluPerspective(0, (float)this.mc.displayWidth / (float)this.mc.displayHeight, 1.0F, 3000.0F);
-        renderBuf.begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
-        renderBuf.addVertexData(bufferInts);
-        //BlockRenderUtils.transferVB(blockBuf, renderBuf);
-        tessellator.draw();
-
-        RenderHelper.disableStandardItemLighting();
-
+    	}
+    	
+    	
+    	float dragRotX = (mouseX-dragStartX);
+    	if(dragButton != 0) dragRotX = 0;
+    	float dragRotY = (mouseY-dragStartY);
+    	if(dragButton != 0) dragRotY = 0;
+    	
+    	GlStateManager.scale(zoom, -zoom, zoom);
+    	GlStateManager.rotate((float)rotX + dragRotY, 1, 0, 0);
+    	GlStateManager.rotate((float)rotY + dragRotX, 0, 1, 0);
+    	GlStateManager.rotate((float)rotZ, 0, 0, 1);
+    	
+    	Vec3d offset = Vec3d.ZERO;
+    	if(dragButton == 1) {
+    		offset = new Vec3d(mouseX-dragStartX, mouseY-dragStartY, 0);
+        	Matrix4 matrix = new Matrix4();
+        	matrix.rotate(-Math.toRadians(rotZ), new Vec3d(0, 0, 1));
+        	matrix.rotate(-Math.toRadians(rotY), new Vec3d(0, 1, 0));
+        	matrix.rotate(-Math.toRadians(rotX), new Vec3d(1, 0, 0));
+        	matrix.scale(new Vec3d(1.0/zoom, -1.0/zoom, 1.0/zoom));
+        	offset = matrix.apply(offset);
+//        	Logs.debug("%f, %f, %f", offset.xCoord, offset.yCoord, offset.zCoord);
+    	}
+    	
+    	GlStateManager.translate(center.xCoord + offset.xCoord, center.yCoord + offset.yCoord, center.zCoord + offset.zCoord);
+    	
+    	renderBuf.begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
+    	renderBuf.addVertexData(bufferInts);
+    	tessellator.draw();
+    	
+    	RenderHelper.disableStandardItemLighting();
 //        drawScaledCustomSizeModalRect((viewWidth / 2) - 50, 0, 0, 0, 100, 50, 100, 50, 100, 50);
     }
 
