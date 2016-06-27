@@ -26,6 +26,11 @@ public class ModuleBlink extends Module {
     }
 
     @Override
+    public String getDescription() {
+        return "If no position is set, blink forward 1 block for each fruit. Otherwise, teleport to the set location.";
+    }
+
+    @Override
     public NBTTagCompound getModuleData()
     {
         NBTTagCompound compound = super.getModuleData();

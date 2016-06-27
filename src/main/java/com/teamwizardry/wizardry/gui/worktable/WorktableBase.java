@@ -5,8 +5,10 @@ import com.google.common.collect.Multimap;
 import com.teamwizardry.wizardry.Utils;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.spells.SpellIngredients;
+import com.teamwizardry.wizardry.api.modules.Module;
+import com.teamwizardry.wizardry.api.modules.ModuleList;
 import com.teamwizardry.wizardry.gui.book.Button;
+import com.teamwizardry.wizardry.spells.modules.ModuleType;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
@@ -14,8 +16,8 @@ import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Saad on 6/17/2016.
@@ -25,10 +27,11 @@ public class WorktableBase extends GuiScreen {
     private static int left, top, right;
     private static int backgroundWidth = 214, backgroundHeight = 220; // SIZE OF PAPER
     private static ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sample-page-background.png");
-    private static ArrayList<Module> modulesInSidebar;
-    private ArrayList<Module> modulesOnPaper;
-    private Multimap<Module, Module> links;
-    private Module moduleBeingDragged, moduleBeingLinked;
+    private HashMap<ModuleType, ArrayList<WorktableModule>> moduleCategories;
+    private ArrayList<WorktableModule> modulesInSidebar;
+    private ArrayList<WorktableModule> modulesOnPaper;
+    private Multimap<WorktableModule, WorktableModule> links;
+    private WorktableModule moduleBeingDragged, moduleBeingLinked;
     private int iconSize = 16;
     private int rotateShimmer = 0;
 
@@ -37,9 +40,12 @@ public class WorktableBase extends GuiScreen {
         left = width / 2 - backgroundWidth / 2;
         top = height / 2 - backgroundHeight / 2;
         right = (width / 2 + backgroundWidth / 2) - 6;
+
+        moduleCategories = new HashMap<>();
         modulesInSidebar = new ArrayList<>();
         modulesOnPaper = new ArrayList<>();
         links = HashMultimap.create();
+
         initModules();
 
         buttonList.add(new Button(Constants.WorkTable.DONE_BUTTON, backgroundWidth / 2 + 30, top + 100, 30, 30));
@@ -47,20 +53,75 @@ public class WorktableBase extends GuiScreen {
     }
 
     private void initModules() {
-        int ID = 0;
-        for (Class clazz : SpellIngredients.class.getDeclaredClasses()) {
-            if (clazz != SpellIngredients.IngredientType.class)
-                for (Field field : clazz.getDeclaredFields()) {
-                    try {
-                        Module module = ((Module) field.get(clazz)).copy();
-                        module.setID(ID++);
-                        module.setType(SpellIngredients.IngredientType.valueOf(clazz.getSimpleName().toUpperCase()));
-                        modulesInSidebar.add(module);
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
-                }
+        // Construct the new modules
+        for (ModuleList.IModuleConstructor moduleConstructor : ModuleList.INSTANCE.modules.values()) {
+            // Construct a new module object
+            Module module = moduleConstructor.construct();
+            module.setIcon(new ResourceLocation(Wizardry.MODID, "textures/items/manaIconOutline.png"));
+
+            // Add it into moduleCategories
+            moduleCategories.putIfAbsent(module.getType(), new ArrayList<>());
+            ArrayList<WorktableModule> modules = moduleCategories.get(module.getType());
+            modules.add(new WorktableModule(module));
+            moduleCategories.put(module.getType(), modules);
+
+            // Add it into modulesInSiderbar
+            modulesInSidebar.add(new WorktableModule(module));
         }
+
+        // Recalculate module positions to their respective sidebars
+        HashMap<ModuleType, ArrayList<WorktableModule>> copyModuleCategories = new HashMap<>();
+        for (ModuleType type : moduleCategories.keySet()) {
+
+            // Calculate where the sidebar is
+            int row = 0, column = 0, sidebarLeft = 0, sidebarTop = 0;
+            switch (type) {
+                case BOOLEAN:
+                    sidebarLeft = left - 150;
+                    sidebarTop = top + 100;
+                    break;
+                case SHAPE:
+                    sidebarLeft = left - 150;
+                    sidebarTop = top;
+                    break;
+                case EVENT:
+                    sidebarLeft = left - 70;
+                    sidebarTop = top;
+                    break;
+                case EFFECT:
+                    sidebarLeft = right + 10;
+                    sidebarTop = top;
+                    break;
+                case MODIFIER:
+                    sidebarLeft = right + 100;
+                    sidebarTop = top;
+            }
+
+            // Add the actual modules into the calculated sidebar positions
+            for (WorktableModule module : moduleCategories.get(type)) {
+
+                int iconSeparation = 1;
+                int x = sidebarLeft + (row * iconSize) + (column * iconSeparation);
+                int y = sidebarTop + (column * iconSize) + (column * iconSeparation);
+
+                module.setX(x);
+                module.setY(y);
+
+                if (row >= 3) {
+                    row = 0;
+                    column++;
+                } else row++;
+
+                copyModuleCategories.putIfAbsent(type, new ArrayList<>());
+                ArrayList<WorktableModule> modules = copyModuleCategories.get(type);
+                modules.add(module);
+                copyModuleCategories.put(type, modules);
+            }
+        }
+        moduleCategories.clear();
+        moduleCategories.putAll(copyModuleCategories);
+        modulesInSidebar.clear();
+        for (ArrayList<WorktableModule> modules : moduleCategories.values()) modulesInSidebar.addAll(modules);
     }
 
     @Override
@@ -68,7 +129,7 @@ public class WorktableBase extends GuiScreen {
         super.mouseClicked(mouseX, mouseY, clickedMouseButton);
 
         // Get a module from the sidebar.
-        for (Module module : modulesInSidebar) {
+        for (WorktableModule module : modulesInSidebar) {
             boolean inside = mouseX >= module.getX() && mouseX < module.getX() + iconSize && mouseY >= module.getY() && mouseY < module.getY() + iconSize;
             if (inside) {
                 moduleBeingDragged = module.copy();
@@ -78,7 +139,7 @@ public class WorktableBase extends GuiScreen {
         }
 
         // Drag/Readjust module on paper.
-        for (Module module : modulesOnPaper) {
+        for (WorktableModule module : modulesOnPaper) {
             boolean inside = mouseX >= module.getX() - iconSize / 2 && mouseX < module.getX() - iconSize / 2 + iconSize && mouseY >= module.getY() - iconSize / 2 && mouseY < module.getY() - iconSize / 2 + iconSize;
             if (inside && clickedMouseButton == 0) {
                 moduleBeingDragged = module;
@@ -92,7 +153,7 @@ public class WorktableBase extends GuiScreen {
     @Override
     protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
         if (moduleBeingLinked == null && clickedMouseButton == 1)
-            for (Module module : modulesOnPaper) {
+            for (WorktableModule module : modulesOnPaper) {
                 boolean inside = mouseX >= module.getX() - iconSize / 2 && mouseX < module.getX() - iconSize / 2 + iconSize && mouseY >= module.getY() - iconSize / 2 && mouseY < module.getY() - iconSize / 2 + iconSize;
                 if (inside) {
                     moduleBeingLinked = module;
@@ -111,7 +172,7 @@ public class WorktableBase extends GuiScreen {
                 modulesOnPaper.add(moduleBeingDragged);
                 moduleBeingDragged = null;
             } else {
-                for (Module module : modulesOnPaper) {
+                for (WorktableModule module : modulesOnPaper) {
                     if (links.get(moduleBeingDragged).contains(module))
                         links.get(moduleBeingDragged).remove(module);
 
@@ -127,10 +188,10 @@ public class WorktableBase extends GuiScreen {
         if (clickedMouseButton == 1) {
             if (moduleBeingLinked != null) {
                 boolean insideAnything = false;
-                for (Module module : modulesOnPaper) {
+                for (WorktableModule module : modulesOnPaper) {
                     boolean inside = mouseX >= module.getX() - iconSize / 2 && mouseX < module.getX() - iconSize / 2 + iconSize && mouseY >= module.getY() - iconSize / 2 && mouseY < module.getY() - iconSize / 2 + iconSize;
                     if (inside) {
-                        Module from = moduleBeingLinked;
+                        WorktableModule from = moduleBeingLinked;
 
                         boolean wasLinked = false;
 
@@ -143,16 +204,14 @@ public class WorktableBase extends GuiScreen {
                             wasLinked = true;
                         }
 
-                        if (!wasLinked) {
-                            links.get(from).add(module);
-                        }
+                        if (!wasLinked) links.get(from).add(module);
+
                         moduleBeingLinked = null;
                         insideAnything = true;
                         break;
                     }
                 }
                 if (!insideAnything) moduleBeingLinked = null;
-                
             } else moduleBeingLinked = null;
         }
     }
@@ -168,17 +227,19 @@ public class WorktableBase extends GuiScreen {
         // RENDER BACKGROUND //
 
         // RENDER BUTTONS //
+        GlStateManager.color(1F, 1F, 1F, 1F);
         for (GuiButton button : buttonList)
             if (button.id == Constants.WorkTable.CONFIRM_BUTTON) {
-                mc.renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/gui/book/error.png"));
+                mc.renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/gui/book/error/error.png"));
                 drawScaledCustomSizeModalRect(button.xPosition, button.yPosition, 0, 0, 0, 0, 100, 50, 100, 50);
             } else if (button.id == Constants.WorkTable.DONE_BUTTON) {
-                mc.renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/gui/book/fof.png"));
+                mc.renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/gui/book/error/fof.png"));
                 drawScaledCustomSizeModalRect(button.xPosition, button.yPosition, 0, 0, 0, 0, 100, 50, 100, 50);
             }
         // RENDER BUTTONS //
 
         // SHIMMER CURSOR IF LINKING MODE //
+        GlStateManager.color(1F, 1F, 1F, 1F);
         if (moduleBeingLinked != null) {
             GlStateManager.pushMatrix();
             GlStateManager.enableBlend();
@@ -199,59 +260,35 @@ public class WorktableBase extends GuiScreen {
         GlStateManager.color(1F, 1F, 1F, 1F);
         if (moduleBeingDragged != null)
             if (links.containsKey(moduleBeingDragged))
-                for (Module linkedModule : links.get(moduleBeingDragged))
+                for (WorktableModule linkedModule : links.get(moduleBeingDragged))
                     Utils.drawLine2D(moduleBeingDragged.getX(), moduleBeingDragged.getY(), linkedModule.getX(), linkedModule.getY(), 2, Color.BLACK);
 
         if (moduleBeingLinked != null)
             Utils.drawLine2D(moduleBeingLinked.getX(), moduleBeingLinked.getY(), mouseX, mouseY, 2, Color.BLACK);
 
         modulesOnPaper.stream().filter(module -> links.containsKey(module)).forEach(module -> {
-            for (Module linkedModule : links.get(module))
+            for (WorktableModule linkedModule : links.get(module))
                 Utils.drawLine2D(module.getX(), module.getY(), linkedModule.getX(), linkedModule.getY(), 2, Color.BLACK);
         });
         // RENDER LINE BETWEEN LINKED MODULES //
 
         // RENDER SIDEBARS //
-        int row = 0, column = 0, iconSeparation = 1, sidebarX;
-        Module lastModule = null;
-        for (Module module : modulesInSidebar) {
+        GlStateManager.color(1F, 1F, 1F, 1F);
+        for (ModuleType type : moduleCategories.keySet()) {
+            for (WorktableModule module : moduleCategories.get(type)) {
 
-            // TODO: REDO THIS PART
-            GlStateManager.color(1F, 1F, 1F, 1F);
-            if (module.getType() == SpellIngredients.IngredientType.SPELLEFFECTS) sidebarX = -backgroundWidth / 2 - 90;
-            else if (module.getType() == SpellIngredients.IngredientType.SPELLCONDITIONS)
-                sidebarX = -backgroundWidth / 2 - 180;
-            else if (module.getType() == SpellIngredients.IngredientType.SPELLEFFECTMODIFIERS || module.getType() == SpellIngredients.IngredientType.SPELLSHAPEMODIFIERS)
-                sidebarX = backgroundWidth / 2 + 20;
-            else if (module.getType() == SpellIngredients.IngredientType.SPELLEVENTS)
-                sidebarX = backgroundWidth / 2 + 100;
-            else sidebarX = backgroundWidth / 2 + 240;
+                // Highlight
+                boolean inside = mouseX >= module.getX() && mouseX < module.getX() + iconSize && mouseY >= module.getY() && mouseY < module.getY() + iconSize;
+                if (inside) {
+                    mc.renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/blue-gradient.png"));
+                    GlStateManager.color(1F, 1F, 1F, 1F);
+                    drawScaledCustomSizeModalRect(module.getX() - iconSize / 2, module.getY() - iconSize / 2, 0, 0, iconSize * 2, iconSize * 2, iconSize * 2, iconSize * 2, iconSize * 2, iconSize * 2);
+                }
 
-            int x = width / 2 + sidebarX + iconSeparation + (column * iconSize) + (column * iconSeparation);
-            int y = top + iconSeparation + (row * iconSize) + (row * iconSeparation);
-
-            module.setX(x);
-            module.setY(y);
-
-            // Highlight
-            boolean inside = mouseX >= module.getX() && mouseX < module.getX() + iconSize && mouseY >= module.getY() && mouseY < module.getY() + iconSize;
-            if (inside) {
-                mc.renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/blue-gradient.png"));
-                drawScaledCustomSizeModalRect(module.getX() - iconSize / 2, module.getY() - iconSize / 2, 0, 0, iconSize * 2, iconSize * 2, iconSize * 2, iconSize * 2, iconSize * 2, iconSize * 2);
+                // Render the actual icon
+                mc.renderEngine.bindTexture(module.getModule().getIcon());
+                drawScaledCustomSizeModalRect(module.getX(), module.getY(), 0, 0, iconSize, iconSize, iconSize, iconSize, iconSize, iconSize);
             }
-
-            // Render the actual icon
-            mc.renderEngine.bindTexture(module.getIcon());
-            drawScaledCustomSizeModalRect(module.getX(), module.getY(), 0, 0, iconSize, iconSize, iconSize, iconSize, iconSize, iconSize);
-
-
-            if (lastModule != null && lastModule.getType() == module.getType())
-                if (column >= 3) {
-                    row++;
-                    column = 0;
-                } else column++;
-            else row = 0;
-            lastModule = module;
         }
         // RENDER SIDEBARS //
 
@@ -260,15 +297,15 @@ public class WorktableBase extends GuiScreen {
         if (moduleBeingDragged != null) {
             moduleBeingDragged.setX(mouseX);
             moduleBeingDragged.setY(mouseY);
-            mc.renderEngine.bindTexture(moduleBeingDragged.getIcon());
+            mc.renderEngine.bindTexture(moduleBeingDragged.getModule().getIcon());
             drawScaledCustomSizeModalRect(moduleBeingDragged.getX() - iconSize / 2, moduleBeingDragged.getY() - iconSize / 2, 0, 0, iconSize, iconSize, iconSize, iconSize, iconSize, iconSize);
         }
         // RENDER MODULE ON CURSOR //
 
         // RENDER MODULE ON THE PAPER //
         GlStateManager.color(1F, 1F, 1F, 1F);
-        for (Module module : modulesOnPaper) {
-            mc.renderEngine.bindTexture(module.getIcon());
+        for (WorktableModule module : modulesOnPaper) {
+            mc.renderEngine.bindTexture(module.getModule().getIcon());
             drawScaledCustomSizeModalRect(module.getX() - iconSize / 2, module.getY() - iconSize / 2, 0, 0, iconSize, iconSize, iconSize, iconSize, iconSize, iconSize);
         }
         // RENDER MODULE ON THE PAPER //

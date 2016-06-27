@@ -1,9 +1,9 @@
 package com.teamwizardry.wizardry.spells.modules.effects;
 
-import net.minecraft.nbt.NBTTagCompound;
 import com.teamwizardry.wizardry.api.modules.Module;
 import com.teamwizardry.wizardry.api.modules.attribute.Attribute;
 import com.teamwizardry.wizardry.spells.modules.ModuleType;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleExplosion extends Module {
     private static final String DAMAGE_TERRAIN = "Damage Terrain";
@@ -20,6 +20,11 @@ public class ModuleExplosion extends Module {
     @Override
     public ModuleType getType() {
         return ModuleType.EFFECT;
+    }
+
+    @Override
+    public String getDescription() {
+        return "Cause an explosion dealing blast damage. More increases the size and strength. x64 deals terrain damage.";
     }
 
     @Override
