@@ -4,6 +4,7 @@ import com.teamwizardry.wizardry.CommonProxy;
 import com.teamwizardry.wizardry.ModBlocks;
 import com.teamwizardry.wizardry.ModItems;
 import com.teamwizardry.wizardry.event.HudEventHandler;
+import com.teamwizardry.wizardry.gui.util.ScissorUtil;
 import com.teamwizardry.wizardry.particles.MagicBurstFX;
 import com.teamwizardry.wizardry.particles.ParticleRenderDispatcher;
 import com.teamwizardry.wizardry.particles.SparkleFX;
@@ -22,6 +23,7 @@ public class ClientProxy extends CommonProxy {
     public void preInit(FMLPreInitializationEvent event) {
         ShaderHelper.initShaders();
         MinecraftForge.EVENT_BUS.register(new HudEventHandler());
+        MinecraftForge.EVENT_BUS.register(ScissorUtil.INSTANCE);
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.teamwizardry.wizardry.gui.lib;
 
+import com.teamwizardry.wizardry.gui.util.Vec2;
+
 /**
  * An object that can be drawn to a gui
  * @author Pierce Corcoran
@@ -8,10 +10,9 @@ public interface IGuiDrawable {
 
 	/**
 	 * Draw this object to the screen.
-	 * @param mouseX
-	 * @param mouseY
+	 * @param mousePos
 	 * @param partialTicks
 	 */
-	public void draw(int mouseX, int mouseY, float partialTicks);
+	public void draw(Vec2 mousePos, float partialTicks);
 	
 }

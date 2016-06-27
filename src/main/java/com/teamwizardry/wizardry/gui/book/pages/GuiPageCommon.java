@@ -4,12 +4,11 @@ import java.io.IOException;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
 
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
@@ -17,9 +16,14 @@ import com.teamwizardry.wizardry.gui.book.Tippable;
 import com.teamwizardry.wizardry.gui.book.util.DataNode;
 import com.teamwizardry.wizardry.gui.book.util.PageRegistry;
 import com.teamwizardry.wizardry.gui.book.util.PathUtils;
+import com.teamwizardry.wizardry.gui.lib.EnumMouseButton;
+import com.teamwizardry.wizardry.gui.lib.GuiComponentContainer;
+import com.teamwizardry.wizardry.gui.lib.GuiEvent;
+import com.teamwizardry.wizardry.gui.lib.IGuiEventListener;
 import com.teamwizardry.wizardry.gui.util.ScissorUtil;
+import com.teamwizardry.wizardry.gui.util.Vec2;
 
-public abstract class GuiPageCommon extends Tippable {
+public abstract class GuiPageCommon extends Tippable implements IGuiEventListener {
 
     public String path;
     public int page;
@@ -27,7 +31,8 @@ public abstract class GuiPageCommon extends Tippable {
     protected GuiScreen parent;
     protected DataNode data;
     protected DataNode globalData;
-
+    protected GuiComponentContainer components;
+    
     { /* helpers */ }
 
     public GuiPageCommon(GuiScreen parent, DataNode data, DataNode globalData, String path, int page) {
@@ -44,8 +49,14 @@ public abstract class GuiPageCommon extends Tippable {
         setHasNavReturn(true);
         setHasNavNext(data.get("hasNext").exists());
         setHasNavPrev(data.get("hasPrev").exists());
+        
+        components = new GuiComponentContainer(0, 0);
+        components.addEventListener(this);
     }
-
+    
+    @Override
+    public void handle(GuiEvent event) {}
+    
     public void mouseClickedPage(int mouseX, int mouseY, int button) {
     }
 
@@ -65,15 +76,21 @@ public abstract class GuiPageCommon extends Tippable {
         super.drawScreen(mouseX, mouseY, partialTicks);
         mc.fontRendererObj.setUnicodeFlag(true);
 
-        GlStateManager.pushMatrix();
         viewLeft = left + 15;
         viewTop = top + 12;
+        
+        if(components.getPos().xi != viewLeft || components.getPos().yi != viewTop)
+        	components.setPos(new Vec2(viewLeft, viewTop));
+        
+        GlStateManager.pushMatrix();
         GlStateManager.translate(viewLeft, viewTop, 100);
         ScissorUtil.set(viewLeft, viewTop, viewWidth, viewHeight);
         ScissorUtil.enable();
         drawPage(mouseX - viewLeft, mouseY - viewTop, partialTicks);
         ScissorUtil.disable();
         GlStateManager.popMatrix();
+        
+        components.draw(new Vec2(mouseX, mouseY), partialTicks);
 
         mc.fontRendererObj.setUnicodeFlag(false);
     }
@@ -82,18 +99,31 @@ public abstract class GuiPageCommon extends Tippable {
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         mouseClickedPage(mouseX - viewLeft, mouseY - viewTop, mouseButton);
+        components.mouseDown(components.relativePos(new Vec2(mouseX, mouseY)), EnumMouseButton.getFromCode(mouseButton));
     }
 
     @Override
-    protected void mouseReleased(int mouseX, int mouseY, int state) {
-        super.mouseReleased(mouseX, mouseY, state);
-        mouseReleasedPage(mouseX - viewLeft, mouseY - viewTop, state);
+    protected void mouseReleased(int mouseX, int mouseY, int mouseButton) {
+        super.mouseReleased(mouseX, mouseY, mouseButton);
+        mouseReleasedPage(mouseX - viewLeft, mouseY - viewTop, mouseButton);
+        components.mouseUp(components.relativePos(new Vec2(mouseX, mouseY)), EnumMouseButton.getFromCode(mouseButton));
     }
 
     @Override
-    protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
-        super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
-        mouseClickMovePage(mouseX - viewLeft, mouseY - viewTop, clickedMouseButton, timeSinceLastClick);
+    protected void mouseClickMove(int mouseX, int mouseY, int mouseButton, long timeSinceLastClick) {
+        super.mouseClickMove(mouseX, mouseY, mouseButton, timeSinceLastClick);
+        mouseClickMovePage(mouseX - viewLeft, mouseY - viewTop, mouseButton, timeSinceLastClick);
+        components.mouseDrag(components.relativePos(new Vec2(mouseX, mouseY)), EnumMouseButton.getFromCode(mouseButton));
+    }
+    
+    @Override
+    public void handleKeyboardInput() throws IOException {
+    	super.handleKeyboardInput();
+    	
+    	if(Keyboard.getEventKeyState())
+    		components.keyPressed(Keyboard.getEventCharacter(), Keyboard.getEventKey());
+    	else
+    		components.keyReleased(Keyboard.getEventCharacter(), Keyboard.getEventKey());
     }
     
     @Override
@@ -116,6 +146,7 @@ public abstract class GuiPageCommon extends Tippable {
             }
             
             mouseScrollPage(mouseX - viewLeft, mouseY - viewTop, wheelAmount);
+            components.mouseWheel(components.relativePos(new Vec2(mouseX, mouseY)), wheelAmount);
         }
     }
 
