@@ -19,19 +19,22 @@ public class SparkleFX extends Particle {
     public ResourceLocation texture = new ResourceLocation(Wizardry.MODID, "particles/sparkle");
     private double jitterX, jitterY, jitterZ;
     private int jitterChance;
+    private boolean fadeOut = true;
 
-    public SparkleFX(World worldIn, double x, double y, double z, float alpha, float scale, int age) {
+    public SparkleFX(World worldIn, double x, double y, double z, float alpha, float scale, int age, boolean fadeOut) {
         super(worldIn, x, y, z);
         particleAlpha = alpha;
+        this.fadeOut = fadeOut;
         particleMaxAge = age;
         particleScale = scale;
         TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(texture.toString());
         this.setParticleTexture(sprite);
     }
 
-    public SparkleFX(World worldIn, double x, double y, double z, float alpha, float scale, int age, double rangeX, double rangeY, double rangeZ) {
+    public SparkleFX(World worldIn, double x, double y, double z, float alpha, float scale, int age, double rangeX, double rangeY, double rangeZ, boolean fadeOut) {
         super(worldIn, x + ThreadLocalRandom.current().nextDouble(-rangeX, rangeX), y + ThreadLocalRandom.current().nextDouble(-rangeY, rangeY), z + ThreadLocalRandom.current().nextDouble(-rangeZ, rangeZ));
         particleAlpha = alpha;
+        this.fadeOut = fadeOut;
         particleMaxAge = age;
         particleScale = scale;
         TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(texture.toString());
@@ -73,7 +76,7 @@ public class SparkleFX extends Particle {
             if (random.nextInt(jitterChance) == 0) motionZ += ThreadLocalRandom.current().nextDouble(-jitterZ, jitterZ);
         float lifeCoeff = ((float) this.particleMaxAge - (float) this.particleAge) / (float) this.particleMaxAge;
         if (random.nextInt(4) == 0) this.particleAge--;
-        this.particleAlpha = lifeCoeff / 2;
+        if (fadeOut) this.particleAlpha = lifeCoeff / 2;
         this.particleScale = lifeCoeff / 2;
     }
 }

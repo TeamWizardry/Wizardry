@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.event;
+package com.teamwizardry.wizardry.api.trackers;
 
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.util.math.BlockPos;

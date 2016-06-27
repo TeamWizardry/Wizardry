@@ -48,14 +48,14 @@ public class ClientProxy extends CommonProxy {
         Minecraft.getMinecraft().displayGuiScreen((GuiScreen) gui);
     }
 
-    public SparkleFX spawnParticleSparkle(World world, double x, double y, double z, float alpha, float scale, int age) {
-        SparkleFX particle = new SparkleFX(world, x, y, z, alpha, scale, age);
+    public SparkleFX spawnParticleSparkle(World world, double x, double y, double z, float alpha, float scale, int age, boolean fadeOut) {
+        SparkleFX particle = new SparkleFX(world, x, y, z, alpha, scale, age, fadeOut);
         Minecraft.getMinecraft().effectRenderer.addEffect(particle);
         return particle;
     }
 
-    public SparkleFX spawnParticleSparkle(World world, double x, double y, double z, float alpha, float scale, int age, double rangeX, double rangeY, double rangeZ) {
-        SparkleFX particle = new SparkleFX(world, x, y, z, alpha, scale, age, rangeX, rangeY, rangeZ);
+    public SparkleFX spawnParticleSparkle(World world, double x, double y, double z, float alpha, float scale, int age, double rangeX, double rangeY, double rangeZ, boolean fadeOut) {
+        SparkleFX particle = new SparkleFX(world, x, y, z, alpha, scale, age, rangeX, rangeY, rangeZ, fadeOut);
         Minecraft.getMinecraft().effectRenderer.addEffect(particle);
         return particle;
     }
