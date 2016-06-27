@@ -11,23 +11,21 @@ import javax.annotation.Nullable;
 import java.io.*;
 import java.util.Map;
 
-public class TemplateManager
-{
+public class TemplateManager {
     private final Map<String, Template> templates = Maps.newHashMap();
-    /** the folder in the assets folder where the structure templates are found. */
+    /**
+     * the folder in the assets folder where the structure templates are found.
+     */
     private final String baseFolder;
 
-    public TemplateManager(String basefolderIn)
-    {
+    public TemplateManager(String basefolderIn) {
         this.baseFolder = basefolderIn;
     }
 
-    public Template getTemplate(@Nullable MinecraftServer server, ResourceLocation id)
-    {
+    public Template getTemplate(@Nullable MinecraftServer server, ResourceLocation id) {
         Template template = this.func_189942_b(server, id);
 
-        if (template == null)
-        {
+        if (template == null) {
             template = new Template();
             this.templates.put(id.getResourcePath(), template);
         }
@@ -36,22 +34,15 @@ public class TemplateManager
     }
 
     @Nullable
-    public Template func_189942_b(@Nullable MinecraftServer p_189942_1_, ResourceLocation p_189942_2_)
-    {
+    public Template func_189942_b(@Nullable MinecraftServer p_189942_1_, ResourceLocation p_189942_2_) {
         String s = p_189942_2_.getResourcePath();
 
-        if (this.templates.containsKey(s))
-        {
+        if (this.templates.containsKey(s)) {
             return this.templates.get(s);
-        }
-        else
-        {
-            if (p_189942_1_ != null)
-            {
+        } else {
+            if (p_189942_1_ != null) {
                 this.readTemplate(p_189942_1_, p_189942_2_);
-            }
-            else
-            {
+            } else {
                 this.readTemplateFromJar(p_189942_2_);
             }
 
@@ -64,32 +55,23 @@ public class TemplateManager
      * This first attempts get the template from an external folder.
      * If it isn't there then it attempts to take it from the minecraft jar.
      */
-    public boolean readTemplate(MinecraftServer server, ResourceLocation id)
-    {
+    public boolean readTemplate(MinecraftServer server, ResourceLocation id) {
         String s = id.getResourcePath();
         File file1 = new File(this.baseFolder, s + ".nbt");
 
-        if (!file1.exists())
-        {
+        if (!file1.exists()) {
             return this.readTemplateFromJar(id);
-        }
-        else
-        {
+        } else {
             InputStream inputstream = null;
             boolean flag;
 
-            try
-            {
+            try {
                 inputstream = new FileInputStream(file1);
                 this.readTemplateFromStream(s, inputstream);
                 return true;
-            }
-            catch (Throwable var11)
-            {
+            } catch (Throwable var11) {
                 flag = false;
-            }
-            finally
-            {
+            } finally {
                 IOUtils.closeQuietly(inputstream);
             }
 
@@ -100,25 +82,19 @@ public class TemplateManager
     /**
      * reads a template from the minecraft jar
      */
-    private boolean readTemplateFromJar(ResourceLocation id)
-    {
+    private boolean readTemplateFromJar(ResourceLocation id) {
         String s = id.getResourceDomain();
         String s1 = id.getResourcePath();
         InputStream inputstream = null;
         boolean flag;
 
-        try
-        {
+        try {
             inputstream = MinecraftServer.class.getResourceAsStream("/assets/" + s + "/structures/" + s1 + ".nbt");
             this.readTemplateFromStream(s1, inputstream);
             return true;
-        }
-        catch (Throwable var10)
-        {
+        } catch (Throwable var10) {
             flag = false;
-        }
-        finally
-        {
+        } finally {
             IOUtils.closeQuietly(inputstream);
         }
 
@@ -128,8 +104,7 @@ public class TemplateManager
     /**
      * reads a template from an inputstream
      */
-    private void readTemplateFromStream(String id, InputStream stream) throws IOException
-    {
+    private void readTemplateFromStream(String id, InputStream stream) throws IOException {
         NBTTagCompound nbttagcompound = CompressedStreamTools.readCompressed(stream);
         Template template = new Template();
         template.read(nbttagcompound);
@@ -139,23 +114,17 @@ public class TemplateManager
     /**
      * writes the template to an external folder
      */
-    public boolean writeTemplate(@Nullable MinecraftServer server, ResourceLocation id)
-    {
+    public boolean writeTemplate(@Nullable MinecraftServer server, ResourceLocation id) {
         String s = id.getResourcePath();
 
-        if (server != null && this.templates.containsKey(s))
-        {
+        if (server != null && this.templates.containsKey(s)) {
             File file1 = new File(this.baseFolder);
 
-            if (!file1.exists())
-            {
-                if (!file1.mkdirs())
-                {
+            if (!file1.exists()) {
+                if (!file1.mkdirs()) {
                     return false;
                 }
-            }
-            else if (!file1.isDirectory())
-            {
+            } else if (!file1.isDirectory()) {
                 return false;
             }
 
@@ -164,32 +133,24 @@ public class TemplateManager
             OutputStream outputstream = null;
             boolean flag;
 
-            try
-            {
+            try {
                 NBTTagCompound nbttagcompound = template.writeToNBT(new NBTTagCompound());
                 outputstream = new FileOutputStream(file2);
                 CompressedStreamTools.writeCompressed(nbttagcompound, outputstream);
                 return true;
-            }
-            catch (Throwable var13)
-            {
+            } catch (Throwable var13) {
                 flag = false;
-            }
-            finally
-            {
+            } finally {
                 IOUtils.closeQuietly(outputstream);
             }
 
             return flag;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
 
-    public void func_189941_a(ResourceLocation p_189941_1_)
-    {
+    public void func_189941_a(ResourceLocation p_189941_1_) {
         this.templates.remove(p_189941_1_.getResourcePath());
     }
 }

@@ -15,9 +15,8 @@ public class ModuleBlink extends Module {
     private boolean useCoord = false;
     private BlockPos pos = new BlockPos(0, 0, 0);
 
-    public ModuleBlink()
-    {
-    	attributes.addAttribute(Attribute.DISTANCE);
+    public ModuleBlink() {
+        attributes.addAttribute(Attribute.DISTANCE);
     }
 
     @Override
@@ -26,8 +25,12 @@ public class ModuleBlink extends Module {
     }
 
     @Override
-    public NBTTagCompound getModuleData()
-    {
+    public String getDescription() {
+        return "If no position is set, blink forward 1 block for each fruit. Otherwise, teleport to the set location.";
+    }
+
+    @Override
+    public NBTTagCompound getModuleData() {
         NBTTagCompound compound = super.getModuleData();
         compound.setBoolean(COORD_SET, useCoord);
         compound.setInteger(POS_X, pos.getX());

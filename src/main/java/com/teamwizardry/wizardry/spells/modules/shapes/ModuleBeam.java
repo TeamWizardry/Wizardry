@@ -7,10 +7,10 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleBeam extends Module {
     public ModuleBeam() {
-    	attributes.addAttribute(Attribute.DISTANCE);
-    	attributes.addAttribute(Attribute.SCATTER);
-    	attributes.addAttribute(Attribute.PROJ_COUNT);
-    	attributes.addAttribute(Attribute.PIERCE);
+        attributes.addAttribute(Attribute.DISTANCE);
+        attributes.addAttribute(Attribute.SCATTER);
+        attributes.addAttribute(Attribute.PROJ_COUNT);
+        attributes.addAttribute(Attribute.PIERCE);
     }
 
     @Override

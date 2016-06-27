@@ -8,35 +8,29 @@ import com.teamwizardry.wizardry.api.modules.attribute.AttributeModifier.Operati
 import com.teamwizardry.wizardry.spells.modules.ModuleType;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class ModuleEnchantment extends Module implements IModifier, IRuntimeModifier
-{
-	public ModuleEnchantment()
-	{
-		canHaveChildren = false;
-	}
-	
-	@Override
-	public ModuleType getType()
-	{
-		return ModuleType.EFFECT;
-	}
+public class ModuleEnchantment extends Module implements IModifier, IRuntimeModifier {
+    public ModuleEnchantment() {
+        canHaveChildren = false;
+    }
 
-	@Override
-	public NBTTagCompound saveToNBT()
-	{
-		return null;
-	}
+    @Override
+    public ModuleType getType() {
+        return ModuleType.EFFECT;
+    }
 
-	@Override
-	public void readFromNBT(NBTTagCompound tag)
-	{
-		
-	}
+    @Override
+    public NBTTagCompound saveToNBT() {
+        return null;
+    }
 
-	@Override
-	public void apply(AttributeMap map)
-	{
-		map.putModifier(Attribute.COST, new AttributeModifier(Operation.MULTIPLY, 2));
-		map.putModifier(Attribute.BURNOUT, new AttributeModifier(Operation.MULTIPLY, 2));
-	}
+    @Override
+    public void readFromNBT(NBTTagCompound tag) {
+
+    }
+
+    @Override
+    public void apply(AttributeMap map) {
+        map.putModifier(Attribute.COST, new AttributeModifier(Operation.MULTIPLY, 2));
+        map.putModifier(Attribute.BURNOUT, new AttributeModifier(Operation.MULTIPLY, 2));
+    }
 }

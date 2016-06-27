@@ -8,25 +8,22 @@
       "tip":  "Welcome To Wizardry."
     },
     {
-      "tex":   "wizardry:textures/gui/icons/embrassed-energy.png",
-      "color": "0x000000",
-      "text":  "Mana",
-      "link":  "mana",
-      "tip":   "Learn about what mana is, and why you want it so badly."
+      "item": "wizardry:mana",
+      "text": "Mana",
+      "link": "mana",
+      "tip":  "Learn about what mana is, and why you want it so badly."
     },
     {
-      "tex":   "wizardry:textures/gui/icons/kaleidoscope-pearls.png",
-      "color": "0x000000",
-      "text":  "Pearls",
-      "link":  "pearls",
-      "tip":   "Learn what the best magical catalyst is and how you can use it."
+      "item": "wizardry:quartz_pearl",
+      "text": "Pearls",
+      "link": "pearls",
+      "tip":  "Learn what the best magical catalyst is and how you can use it."
     },
     {
-      "tex":   "wizardry:textures/gui/icons/magic-palm.png",
-      "color": "0x000000",
-      "text":  "Spells",
-      "link":  "spells",
-      "tip":   "Learn how the spell system works."
+      "item": "minecraft:book",
+      "text": "Spells",
+      "link": "spells",
+      "tip":  "Learn how the spell system works."
     },
     {
       "item": "minecraft:sand",

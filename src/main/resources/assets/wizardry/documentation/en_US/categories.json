@@ -1,6 +1,6 @@
 [
   {
-    "icon": "wizardry:textures/gui/icons/magic-palm.png",
+    "icon": "wizardry:textures/gui/icons/pointy-hat.png",
     "text": "The beginners guide to wizardry. Learn everything you need to know to get started here.",
     "link": "/basics/index"
   },
@@ -9,7 +9,7 @@
     "text": "Learn about all the multi-block structures here."
   },
   {
-    "icon": "wizardry:textures/gui/icons/diamond-ring.png",
+    "icon": "wizardry:textures/gui/icons/kaleidoscope-pearls.png",
     "text": "Learn how the spell crafting system works."
   },
   {

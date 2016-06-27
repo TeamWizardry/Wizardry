@@ -7,8 +7,8 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleZone extends Module {
     public ModuleZone() {
-    	attributes.addAttribute(Attribute.RADIUS);
-    	attributes.addAttribute(Attribute.DURATION);
+        attributes.addAttribute(Attribute.RADIUS);
+        attributes.addAttribute(Attribute.DURATION);
     }
 
     @Override

@@ -42,10 +42,16 @@ public abstract class GuiPageCommon extends Tippable {
         setHasNavNext(data.get("hasNext").exists());
         setHasNavPrev(data.get("hasPrev").exists());
     }
-    public void mouseClickedPage(int mouseX, int mouseY, int button) {}
-    public void mouseReleasedPage(int mouseX, int mouseY, int button) {}
-    public void mouseClickMovePage(int mouseX, int mouseY, int button, long timeSinceLastClick) {}
-    
+
+    public void mouseClickedPage(int mouseX, int mouseY, int button) {
+    }
+
+    public void mouseReleasedPage(int mouseX, int mouseY, int button) {
+    }
+
+    public void mouseClickMovePage(int mouseX, int mouseY, int button, long timeSinceLastClick) {
+    }
+
     public abstract void drawPage(int mouseX, int mouseY, float partialTicks);
 
     @Override
@@ -69,22 +75,22 @@ public abstract class GuiPageCommon extends Tippable {
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-    	super.mouseClicked(mouseX, mouseY, mouseButton);
-    	mouseClickedPage(mouseX - viewLeft, mouseY - viewTop, mouseButton);
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+        mouseClickedPage(mouseX - viewLeft, mouseY - viewTop, mouseButton);
     }
-    
+
     @Override
     protected void mouseReleased(int mouseX, int mouseY, int state) {
-    	super.mouseReleased(mouseX, mouseY, state);
-    	mouseReleasedPage(mouseX - viewLeft, mouseY - viewTop, state);
+        super.mouseReleased(mouseX, mouseY, state);
+        mouseReleasedPage(mouseX - viewLeft, mouseY - viewTop, state);
     }
-    
+
     @Override
     protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
-    	super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
-    	mouseClickMovePage(mouseX - viewLeft, mouseY - viewTop, clickedMouseButton, timeSinceLastClick);
+        super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
+        mouseClickMovePage(mouseX - viewLeft, mouseY - viewTop, clickedMouseButton, timeSinceLastClick);
     }
-    
+
     @Override
     public void initGui() {
         super.initGui();

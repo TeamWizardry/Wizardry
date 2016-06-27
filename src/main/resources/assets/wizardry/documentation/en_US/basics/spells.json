@@ -4,7 +4,7 @@
     "sectionOne": [
       "&oA world in which anything is possible is not a world that can be limited by any means. Especially when those means are magic, whose purpose is solely to reduce any and all limitations possible; shunning the laws of Math and Physics away.",
       "&oThese so called Botanists, Thaumaturges and blood magicians, although powerful, are no exceptions to the fact that they have not been able to unlock complete and utter freedom in their magical arts. They are still limited by what seems to be a certain barrier of power that they can not bend further to their will.",
-      "&oA wizard is able to grow beyond what he is capable of perceiving. A wizard can do whatever he wants to do and will go to the very ends of the End to accomplish what they want. And as such, a wizard yields one very important difference between the rest of these so called “magicians”, and that is the ability to infuse ANY spell they please into a pearl no matter what it is, although that's not necessarily advisable to do...",
+      "&oA wizard is able to grow beyond what he is capable of perceiving. A wizard can do whatever he wants to do and will go to the very ends of the End to accomplish what he wants. And as such, a wizard yields one very important difference between the rest of these so called “magicians”, and that is the ability to infuse ANY spell they please into a pearl no matter what it is, although it's not necessarily advisable to go crazy and mix everything together recklessly...",
       "&oUnlike the rest of the magicians, a wizard, instead of taking what is already established, ESTABLISHES what he takes."
     ],
     "sectionTwo": [
@@ -38,6 +38,10 @@
     {
       "type": "text",
       "text": {"global": "sectionTwo", "page": 2}
+    },
+    {
+      "type":      "structure",
+      "structure": "crafting_altar"
     }
   ]
 }

@@ -7,10 +7,10 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleProjectile extends Module {
     public ModuleProjectile() {
-    	attributes.addAttribute(Attribute.SPEED);
-    	attributes.addAttribute(Attribute.PIERCE);
-    	attributes.addAttribute(Attribute.SCATTER);
-    	attributes.addAttribute(Attribute.PROJ_COUNT);
+        attributes.addAttribute(Attribute.SPEED);
+        attributes.addAttribute(Attribute.PIERCE);
+        attributes.addAttribute(Attribute.SCATTER);
+        attributes.addAttribute(Attribute.PROJ_COUNT);
     }
 
     @Override
