@@ -31,12 +31,12 @@ public class ScissorUtil {
 	
 	public static boolean enable() {
 		boolean wasEnabled = GL11.glGetBoolean(GL11.GL_SCISSOR_TEST);
-//		GL11.glEnable(GL11.GL_SCISSOR_TEST);
+		GL11.glEnable(GL11.GL_SCISSOR_TEST);
 		return wasEnabled;
 	}
 	
 	public static void disable() {
-//		GL11.glDisable(GL11.GL_SCISSOR_TEST);
+		GL11.glDisable(GL11.GL_SCISSOR_TEST);
 	}
 	
 	public static void set(int left, int top, int width, int height) {
