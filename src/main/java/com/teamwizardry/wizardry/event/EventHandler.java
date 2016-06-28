@@ -41,6 +41,7 @@ public class EventHandler {
 
     @SubscribeEvent
     public void tickEvent(TickEvent.WorldTickEvent event) {
+        // WARNING: VOLATILE CODE. DO NOT TOUCH. //
         ArrayList<RedstoneTrackerObject> expiredRedstone = new ArrayList<>();
         ArrayList<EntityItem> vinteumList = new ArrayList<>();
         for (RedstoneTrackerObject redstone : redstoneTracker)
@@ -67,6 +68,7 @@ public class EventHandler {
         }
         vinteumList.clear();
         redstoneTracker.removeAll(expiredRedstone);
+        // WARNING: VOLATILE CODE. DO NOT TOUCH. //
 
         ArrayList<BookTrackerObject> expiredBooks = new ArrayList<>();
         for (BookTrackerObject book : bookTracker) {
