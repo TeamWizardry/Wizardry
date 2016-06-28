@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.api.gui.hud;
+package com.teamwizardry.wizardry.api.gui;
 
 /**
  * Created by Saad on 6/19/2016.

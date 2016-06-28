@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.api.gui.hud;
+package com.teamwizardry.wizardry.api.gui;
 
 import com.teamwizardry.wizardry.api.Constants;
 import net.minecraft.entity.Entity;

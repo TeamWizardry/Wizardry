@@ -1,12 +1,10 @@
 package com.teamwizardry.wizardry.common.tile;
 
-import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.client.multiblock.InWorldRender;
-import com.teamwizardry.wizardry.client.multiblock.StructureMatchResult;
-import com.teamwizardry.wizardry.client.multiblock.Structures;
-import com.teamwizardry.wizardry.client.particle.SparkleFX;
-import com.teamwizardry.wizardry.common.item.pearl.ItemQuartzPearl;
-import com.teamwizardry.wizardry.init.ModItems;
+import java.util.ArrayList;
+import java.util.List;
+
+import net.minecraftforge.common.util.Constants;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -18,10 +16,14 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraftforge.common.util.Constants;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.teamwizardry.libarianlib.multiblock.InWorldRender;
+import com.teamwizardry.libarianlib.multiblock.StructureMatchResult;
+import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.client.particle.SparkleFX;
+import com.teamwizardry.wizardry.common.Structures;
+import com.teamwizardry.wizardry.common.item.pearl.ItemQuartzPearl;
+import com.teamwizardry.wizardry.init.ModItems;
 
 /**
  * Created by Saad on 6/10/2016.
@@ -50,12 +52,6 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
         	InWorldRender.INSTANCE.setStructure(Structures.craftingAltar, this.pos);
             setStructureComplete(false);
         }
-
-//    	if(match)
-//    		
-//    	else
-//    		
-        //setStructureComplete(  );
     }
 
     public boolean isStructureComplete() {

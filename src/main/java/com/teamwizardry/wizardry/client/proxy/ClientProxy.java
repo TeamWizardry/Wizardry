@@ -1,35 +1,35 @@
 package com.teamwizardry.wizardry.client.proxy;
 
-import com.teamwizardry.wizardry.api.util.gui.ScissorUtil;
-import com.teamwizardry.wizardry.client.core.HudEventHandler;
-import com.teamwizardry.wizardry.client.particle.MagicBurstFX;
-import com.teamwizardry.wizardry.client.particle.ParticleRenderDispatcher;
-import com.teamwizardry.wizardry.client.particle.SparkleFX;
-import com.teamwizardry.wizardry.client.particle.shader.ShaderHelper;
-import com.teamwizardry.wizardry.common.proxy.CommonProxy;
-import com.teamwizardry.wizardry.init.ModBlocks;
-import com.teamwizardry.wizardry.init.ModItems;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.world.World;
+
+import com.teamwizardry.libarianlib.client.particle.ParticleRenderDispatcher;
+import com.teamwizardry.wizardry.client.Shaders;
+import com.teamwizardry.wizardry.client.core.HudEventHandler;
+import com.teamwizardry.wizardry.client.particle.MagicBurstFX;
+import com.teamwizardry.wizardry.client.particle.SparkleFX;
+import com.teamwizardry.wizardry.common.proxy.CommonProxy;
+import com.teamwizardry.wizardry.init.ModBlocks;
+import com.teamwizardry.wizardry.init.ModItems;
+
 public class ClientProxy extends CommonProxy {
 
     @Override
     public void preInit(FMLPreInitializationEvent event) {
-        ShaderHelper.initShaders();
         MinecraftForge.EVENT_BUS.register(new HudEventHandler());
-        MinecraftForge.EVENT_BUS.register(ScissorUtil.INSTANCE);
     }
 
     @Override
     public void init(FMLInitializationEvent event) {
         ModItems.initColors();
         ParticleRenderDispatcher.class.getName(); // load the class
+        Shaders.INSTANCE.getClass(); // ...
         MagicBurstFX.class.getName(); // ...
     }
 

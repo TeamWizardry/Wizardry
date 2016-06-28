@@ -1,20 +1,25 @@
 package com.teamwizardry.wizardry.client.particle;
 
-import com.teamwizardry.wizardry.api.util.misc.Matrix4;
-import com.teamwizardry.wizardry.client.particle.shader.ShaderCallback;
-import com.teamwizardry.wizardry.client.particle.shader.ShaderHelper;
-import com.teamwizardry.wizardry.client.particle.shader.shaders.BurstShader;
+import java.nio.FloatBuffer;
+import java.util.Random;
+
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
-import java.nio.FloatBuffer;
-import java.util.Random;
+import com.teamwizardry.libarianlib.client.particle.ParticleRenderQueue;
+import com.teamwizardry.libarianlib.client.particle.QueuedParticle;
+import com.teamwizardry.libarianlib.client.shader.ShaderCallback;
+import com.teamwizardry.libarianlib.client.shader.ShaderHelper;
+import com.teamwizardry.wizardry.api.util.misc.Matrix4;
+import com.teamwizardry.wizardry.client.Shaders;
+import com.teamwizardry.wizardry.client.Shaders.BurstShader;
 
 public class MagicBurstFX extends QueuedParticle {
 
@@ -33,7 +38,7 @@ public class MagicBurstFX extends QueuedParticle {
             GlStateManager.color(1, 1, 1, 1);
             GlStateManager.enableBlend();
             GlStateManager.shadeModel(GL11.GL_SMOOTH);
-            ShaderHelper.useShader(ShaderHelper.burst, new ShaderCallback<BurstShader>() {
+            ShaderHelper.useShader(Shaders.burst, new ShaderCallback<BurstShader>() {
                 @Override
                 public void call(BurstShader shader) {
 //					int count = ARBShaderObjects.glGetUniformLocationARB(shader.getGlName(), "rayFade");
