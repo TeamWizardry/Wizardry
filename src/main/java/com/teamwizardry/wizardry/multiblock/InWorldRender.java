@@ -70,7 +70,8 @@ public enum InWorldRender {
 	public void blockPlace(BlockEvent.PlaceEvent event) {
 		if(match == null)
 			return;
-		if(match.allErrors.contains(worldToStructure(event.getPos())))
+		BlockPos pos = worldToStructure(event.getPos());
+		if(match.allErrors.contains(pos))
 			refreshVerts();
 	}
 	
@@ -78,7 +79,8 @@ public enum InWorldRender {
 	public void blockBreak(BlockEvent.BreakEvent event) {
 		if(match == null)
 			return;
-		if(match.matches.contains(worldToStructure(event.getPos())))
+		BlockPos pos = worldToStructure(event.getPos());
+		if(match.matches.contains(pos) || match.allErrors.contains(pos))
 			refreshVerts();
 	}
 	
