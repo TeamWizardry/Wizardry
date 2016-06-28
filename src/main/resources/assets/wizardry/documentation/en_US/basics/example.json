@@ -40,7 +40,7 @@
     },
 	{
 		"type": "structure",
-		"structure": "crafting_altar",
+		"structure": "wizardry:crafting_altar",
 		"block": {
 			"id":"wizardry:crafting_plate"
 		}

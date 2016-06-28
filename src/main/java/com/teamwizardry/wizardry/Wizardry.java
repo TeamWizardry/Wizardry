@@ -34,7 +34,7 @@ import com.teamwizardry.wizardry.init.ModRecipes;
 /**
  * Created by Saad on 6/9/2016.
  */
-@Mod(modid = Wizardry.MODID, version = Wizardry.VERSION, name = Wizardry.MODNAME, useMetadata = true, dependencies="after:librarianlib")
+@Mod(modid = Wizardry.MODID, version = Wizardry.VERSION, name = Wizardry.MODNAME, useMetadata = true, dependencies = "required-after:librarianlib")
 public class Wizardry {
 
     public static final String MODID = "wizardry";
