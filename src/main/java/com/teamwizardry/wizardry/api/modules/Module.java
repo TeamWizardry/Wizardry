@@ -1,16 +1,17 @@
 package com.teamwizardry.wizardry.api.modules;
 
-import java.util.ArrayList;
-import java.util.List;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ResourceLocation;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.modules.attribute.Attribute;
 import com.teamwizardry.wizardry.api.modules.attribute.AttributeMap;
-import com.teamwizardry.wizardry.spells.modules.ModuleType;
-import com.teamwizardry.wizardry.spells.modules.modifiers.IModifier;
-import com.teamwizardry.wizardry.spells.modules.modifiers.IRuntimeModifier;
+import com.teamwizardry.wizardry.api.spell.IModifier;
+import com.teamwizardry.wizardry.api.spell.IRuntimeModifier;
+import com.teamwizardry.wizardry.api.spell.ModuleType;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.ResourceLocation;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Saad on 6/21/2016.
@@ -56,10 +57,10 @@ public abstract class Module
 
 	/**
 	 * Generates an {@link NBTTagCompound} containing information about the
-	 * module and its effects, as well as any connected modules.
+	 * module and its effects, as well as any connected module.
 	 *
 	 * @return An {@code NBTTagCompound} containing information on the module
-	 *         and all connected modules
+	 *         and all connected module
 	 */
 	public NBTTagCompound getModuleData()
 	{

@@ -1,14 +1,14 @@
 package com.teamwizardry.wizardry.api.modules;
 
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.spells.modules.booleans.ModuleAnd;
-import com.teamwizardry.wizardry.spells.modules.booleans.ModuleNand;
-import com.teamwizardry.wizardry.spells.modules.booleans.ModuleNor;
-import com.teamwizardry.wizardry.spells.modules.booleans.ModuleOr;
-import com.teamwizardry.wizardry.spells.modules.effects.*;
-import com.teamwizardry.wizardry.spells.modules.events.*;
-import com.teamwizardry.wizardry.spells.modules.modifiers.*;
-import com.teamwizardry.wizardry.spells.modules.shapes.*;
+import com.teamwizardry.wizardry.common.spell.module.booleans.ModuleAnd;
+import com.teamwizardry.wizardry.common.spell.module.booleans.ModuleNand;
+import com.teamwizardry.wizardry.common.spell.module.booleans.ModuleNor;
+import com.teamwizardry.wizardry.common.spell.module.booleans.ModuleOr;
+import com.teamwizardry.wizardry.common.spell.module.effects.*;
+import com.teamwizardry.wizardry.common.spell.module.events.*;
+import com.teamwizardry.wizardry.common.spell.module.modifiers.*;
+import com.teamwizardry.wizardry.common.spell.module.shapes.*;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;

@@ -1,11 +1,16 @@
 package com.teamwizardry.wizardry;
 
-import com.teamwizardry.wizardry.bars.WizardHandler;
-import com.teamwizardry.wizardry.event.EventHandler;
-import com.teamwizardry.wizardry.fluid.Fluids;
-import com.teamwizardry.wizardry.gui.GuiHandler;
-import com.teamwizardry.wizardry.network.PacketHandler;
-import com.teamwizardry.wizardry.world.GenHandler;
+import com.teamwizardry.wizardry.api.Config;
+import com.teamwizardry.wizardry.api.gui.hud.WizardHandler;
+import com.teamwizardry.wizardry.client.gui.GuiHandler;
+import com.teamwizardry.wizardry.common.CommonProxy;
+import com.teamwizardry.wizardry.common.event.EventHandler;
+import com.teamwizardry.wizardry.common.fluid.Fluids;
+import com.teamwizardry.wizardry.common.network.PacketHandler;
+import com.teamwizardry.wizardry.common.world.GenHandler;
+import com.teamwizardry.wizardry.init.ModBlocks;
+import com.teamwizardry.wizardry.init.ModItems;
+import com.teamwizardry.wizardry.init.ModRecipes;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
@@ -33,7 +38,7 @@ public class Wizardry {
     public static final String MODNAME = "Wizardry";
     public static final String VERSION = "1.0";
     public static final String CLIENT = "com.teamwizardry.wizardry.client.ClientProxy";
-    public static final String SERVER = "com.teamwizardry.wizardry.CommonProxy";
+    public static final String SERVER = "com.teamwizardry.wizardry.common.CommonProxy";
     public static PacketLoggingHandler packetHandler;
     public static Logger logger;
     public static EventBus EVENT_BUS = new EventBus();
@@ -69,7 +74,7 @@ public class Wizardry {
         ModItems.init();
         ModBlocks.init();
         Fluids.preInit();
-        CraftingRecipes.initCrafting();
+        ModRecipes.initCrafting();
 
         MinecraftForge.EVENT_BUS.register(new EventHandler());
 

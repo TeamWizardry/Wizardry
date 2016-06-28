@@ -1,14 +1,14 @@
 package com.teamwizardry.wizardry.client;
 
-import com.teamwizardry.wizardry.CommonProxy;
-import com.teamwizardry.wizardry.ModBlocks;
-import com.teamwizardry.wizardry.ModItems;
-import com.teamwizardry.wizardry.event.HudEventHandler;
-import com.teamwizardry.wizardry.gui.util.ScissorUtil;
-import com.teamwizardry.wizardry.particles.MagicBurstFX;
-import com.teamwizardry.wizardry.particles.ParticleRenderDispatcher;
-import com.teamwizardry.wizardry.particles.SparkleFX;
-import com.teamwizardry.wizardry.shader.ShaderHelper;
+import com.teamwizardry.wizardry.api.util.gui.ScissorUtil;
+import com.teamwizardry.wizardry.client.particle.MagicBurstFX;
+import com.teamwizardry.wizardry.client.particle.ParticleRenderDispatcher;
+import com.teamwizardry.wizardry.client.particle.SparkleFX;
+import com.teamwizardry.wizardry.client.particle.shader.ShaderHelper;
+import com.teamwizardry.wizardry.common.CommonProxy;
+import com.teamwizardry.wizardry.common.event.HudEventHandler;
+import com.teamwizardry.wizardry.init.ModBlocks;
+import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.world.World;
