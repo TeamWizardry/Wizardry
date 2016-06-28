@@ -17,6 +17,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -28,7 +29,7 @@ public class FluidBlockMana extends BlockFluidClassic {
 
     public FluidBlockMana() {
         super(FluidMana.instance, Material.WATER);
-
+        GameRegistry.registerBlock(this, "mana");
         this.setQuantaPerBlock(6);
         this.setUnlocalizedName("mana");
     }
