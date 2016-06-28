@@ -31,7 +31,7 @@ import org.apache.logging.log4j.Logger;
 /**
  * Created by Saad on 6/9/2016.
  */
-@Mod(modid = Wizardry.MODID, version = Wizardry.VERSION, name = Wizardry.MODNAME, useMetadata = true)
+@Mod(modid = Wizardry.MODID, version = Wizardry.VERSION, name = Wizardry.MODNAME, useMetadata = true, dependencies="after:librarianlib")
 public class Wizardry {
 
     public static final String MODID = "wizardry";
