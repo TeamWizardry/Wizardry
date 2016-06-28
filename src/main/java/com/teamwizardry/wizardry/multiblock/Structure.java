@@ -8,6 +8,7 @@ import com.teamwizardry.wizardry.multiblock.vanillashade.Template.BlockInfo;
 import net.minecraft.block.*;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -51,6 +52,8 @@ public class Structure {
 
     protected BlockPos origin = BlockPos.ORIGIN;
 
+    public Rotation matchedRotation;
+    
     public Structure(String name) {
         InputStream stream = Structure.class.getResourceAsStream("/assets/wizardry/schematics/" + name + ".nbt");
         if (stream != null) {
@@ -79,28 +82,35 @@ public class Structure {
         origin = pos;
     }
 
-    public List<BlockPos> errors(World world, BlockPos checkPos) {
+    public StructureMatchResult match(World world, BlockPos checkPos) {
 
-        List<BlockPos> none = errors(world, checkPos, Rotation.NONE);
-        List<BlockPos> reverse = errors(world, checkPos, Rotation.CLOCKWISE_180);
-        List<BlockPos> cw = errors(world, checkPos, Rotation.CLOCKWISE_90);
-        List<BlockPos> ccw = errors(world, checkPos, Rotation.COUNTERCLOCKWISE_90);
+        StructureMatchResult none = match(world, checkPos, Rotation.NONE);
+        StructureMatchResult reverse = match(world, checkPos, Rotation.CLOCKWISE_180);
+        StructureMatchResult cw = match(world, checkPos, Rotation.CLOCKWISE_90);
+        StructureMatchResult ccw = match(world, checkPos, Rotation.COUNTERCLOCKWISE_90);
 
-        List<BlockPos> finalList = none;
+        StructureMatchResult finalList = none;
+        matchedRotation = Rotation.NONE;
 
-        if (finalList == null || reverse != null && reverse.size() < finalList.size())
+        if (finalList == null || reverse != null && reverse.allErrors.size() < finalList.allErrors.size()) {
             finalList = reverse;
-        if (finalList == null || cw != null && cw.size() < finalList.size())
+            matchedRotation = Rotation.CLOCKWISE_180;
+        }
+        if (finalList == null || cw != null && cw.allErrors.size() < finalList.allErrors.size()) {
             finalList = cw;
-        if (finalList == null || ccw != null && ccw.size() < finalList.size())
+            matchedRotation = Rotation.CLOCKWISE_90;
+        }
+        if (finalList == null || ccw != null && ccw.allErrors.size() < finalList.allErrors.size()) {
             finalList = ccw;
+            matchedRotation = Rotation.COUNTERCLOCKWISE_90;
+        }
 
-        return finalList == null ? ImmutableList.of() : finalList;
+        return finalList;
     }
 
-    public List<BlockPos> errors(World world, BlockPos checkPos, Rotation rot) {
-        List<BlockPos> errorPosList = new ArrayList<>();
-
+    public StructureMatchResult match(World world, BlockPos checkPos, Rotation rot) {
+        StructureMatchResult result = new StructureMatchResult(checkPos.subtract(origin), rot, this);
+        
         List<Template.BlockInfo> infos = template.infos();
 
         if (infos == null)
@@ -115,9 +125,15 @@ public class Structure {
 
             IBlockState worldState = world.getBlockState(worldPos);
             IBlockState templateState = info.blockState;
-
+            boolean match = true;
+            
             if (worldState.getBlock() != templateState.getBlock()) {
-                errorPosList.add(worldPos);
+            	if(worldState.getBlock() == Blocks.AIR) {
+                	result.airErrors.add(info.pos);
+                } else {
+                	result.nonAirErrors.add(info.pos);
+                }
+            	match = false;
             } else {
                 Collection<IProperty<?>> worldProps = worldState.getPropertyNames();
                 for (IProperty<?> prop : templateState.getPropertyNames()) {
@@ -125,7 +141,8 @@ public class Structure {
                         continue;
 
                     if (!worldProps.contains(prop)) {
-                        errorPosList.add(worldPos);
+                    	result.propertyErrors.add(info.pos);
+                    	match = false;
                         break;
                     }
 
@@ -145,14 +162,20 @@ public class Structure {
                     }
 
                     if (!propsMatch) {
-                        errorPosList.add(worldPos);
+                    	result.propertyErrors.add(info.pos);
+                    	match = false;
                         break;
                     }
                 }
             }
+            
+            if(match)
+            	result.matches.add(info.pos);
+            else
+            	result.allErrors.add(info.pos);
         }
 
-        return errorPosList;
+        return result;
     }
 
     protected void parse(InputStream stream) {

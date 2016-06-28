@@ -80,14 +80,14 @@ public class GuiPageStructure extends GuiPageCommon {
         
         EnumFacing[] emptyFaces = new EnumFacing[0], topFace = new EnumFacing[] {EnumFacing.UP};
         
-        bufferInts = StructureRenderUtil.render(structure, (pos) -> layer != -1 && pos.getY() != layer, (pos) -> layer == -1 ? emptyFaces : topFace, new Color(1, 1, 1, 1), 1);
+        bufferInts = StructureRenderUtil.render(structure, (pos) -> layer == -1 || pos.getY() == layer, (pos) -> layer == -1 ? emptyFaces : topFace, new Color(1, 1, 1, 1), 1);
         
         if(layer == -1) {
         	transpBufferInts = null;
         	return;
         }
         
-        transpBufferInts = StructureRenderUtil.render(structure, (pos) -> pos.getY() >= layer, (pos) -> layer == -1 ? emptyFaces : topFace, new Color(1, 1, 1, 1), 0.5f);
+        transpBufferInts = StructureRenderUtil.render(structure, (pos) -> pos.getY() < layer, (pos) -> layer == -1 ? emptyFaces : topFace, new Color(1, 1, 1, 1), 0.5f);
         
         structure.getBlockAccess().clearOverrides();
     }

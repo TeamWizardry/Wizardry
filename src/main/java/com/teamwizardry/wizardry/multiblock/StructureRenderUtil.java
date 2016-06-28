@@ -4,6 +4,7 @@ import java.nio.IntBuffer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.BlockRenderLayer;
@@ -30,29 +31,32 @@ public class StructureRenderUtil {
         
         // solid blocks first
         for (BlockInfo info : structure.blockInfos()) {
-            if (info.blockState.getRenderType() == EnumBlockRenderType.INVISIBLE || renderMask.test(info.pos))
+        	IBlockState state = access.getBlockState(info.pos);
+            if (state.getRenderType() == EnumBlockRenderType.INVISIBLE || !renderMask.test(info.pos))
                 continue;
-            if (info.blockState.getBlock().getBlockLayer() != BlockRenderLayer.SOLID)
+            if (state.getBlock().getBlockLayer() != BlockRenderLayer.SOLID)
             	continue;
-            BlockRenderUtils.renderBlockToVB(access.getBlockState(info.pos), access, info.pos, info.pos.subtract(structure.getOrigin()), blockBuf, color.r, color.g, color.b, brightness, color.a, sideDrawingOverrides.apply(info.pos));
+            BlockRenderUtils.renderBlockToVB(state, access, info.pos, info.pos.subtract(structure.getOrigin()), blockBuf, color.r, color.g, color.b, brightness, color.a, sideDrawingOverrides.apply(info.pos));
         }
         
         // cutout blocks next
         for (BlockInfo info : structure.blockInfos()) {
-            if (info.blockState.getRenderType() == EnumBlockRenderType.INVISIBLE || renderMask.test(info.pos))
+        	IBlockState state = access.getBlockState(info.pos);
+        	if (state.getRenderType() == EnumBlockRenderType.INVISIBLE || !renderMask.test(info.pos))
                 continue;
-            if (info.blockState.getBlock().getBlockLayer() != BlockRenderLayer.CUTOUT && info.blockState.getBlock().getBlockLayer() != BlockRenderLayer.CUTOUT_MIPPED)
+            if (state.getBlock().getBlockLayer() != BlockRenderLayer.CUTOUT && state.getBlock().getBlockLayer() != BlockRenderLayer.CUTOUT_MIPPED)
             	continue;
-            BlockRenderUtils.renderBlockToVB(access.getBlockState(info.pos), access, info.pos, info.pos.subtract(structure.getOrigin()), blockBuf, color.r, color.g, color.b, brightness, color.a, sideDrawingOverrides.apply(info.pos));
+            BlockRenderUtils.renderBlockToVB(state, access, info.pos, info.pos.subtract(structure.getOrigin()), blockBuf, color.r, color.g, color.b, brightness, color.a, sideDrawingOverrides.apply(info.pos));
         }
         
         // translucent blocks next
         for (BlockInfo info : structure.blockInfos()) {
-            if (info.blockState.getRenderType() == EnumBlockRenderType.INVISIBLE || renderMask.test(info.pos))
+        	IBlockState state = access.getBlockState(info.pos);
+        	if (state.getRenderType() == EnumBlockRenderType.INVISIBLE || !renderMask.test(info.pos))
                 continue;
-            if (info.blockState.getBlock().getBlockLayer() != BlockRenderLayer.TRANSLUCENT)
+            if (state.getBlock().getBlockLayer() != BlockRenderLayer.TRANSLUCENT)
             	continue;
-            BlockRenderUtils.renderBlockToVB(access.getBlockState(info.pos), access, info.pos, info.pos.subtract(structure.getOrigin()), blockBuf, color.r, color.g, color.b, brightness, color.a, sideDrawingOverrides.apply(info.pos));
+            BlockRenderUtils.renderBlockToVB(state, access, info.pos, info.pos.subtract(structure.getOrigin()), blockBuf, color.r, color.g, color.b, brightness, color.a, sideDrawingOverrides.apply(info.pos));
         }
         
         blockBuf.finishDrawing();

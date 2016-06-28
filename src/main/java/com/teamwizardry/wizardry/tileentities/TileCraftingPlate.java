@@ -1,10 +1,10 @@
 package com.teamwizardry.wizardry.tileentities;
 
-import com.teamwizardry.wizardry.ModItems;
-import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.items.pearls.ItemQuartzPearl;
-import com.teamwizardry.wizardry.multiblock.Structures;
-import com.teamwizardry.wizardry.particles.SparkleFX;
+import java.util.ArrayList;
+import java.util.List;
+
+import net.minecraftforge.common.util.Constants;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -17,10 +17,14 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.common.util.Constants;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.teamwizardry.wizardry.ModItems;
+import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.items.pearls.ItemQuartzPearl;
+import com.teamwizardry.wizardry.multiblock.InWorldRender;
+import com.teamwizardry.wizardry.multiblock.StructureMatchResult;
+import com.teamwizardry.wizardry.multiblock.Structures;
+import com.teamwizardry.wizardry.particles.SparkleFX;
 
 /**
  * Created by Saad on 6/10/2016.
@@ -39,14 +43,14 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
 
     public void validateStructure() {
         Structures.reload();
-        List<BlockPos> errors = Structures.craftingAltar.errors(this.worldObj, this.pos);
+        StructureMatchResult match = Structures.craftingAltar.match(this.worldObj, this.pos);
 
-        if (errors.size() == 0) {
+        if (match.allErrors.size() == 0) {
             worldObj.spawnParticle(EnumParticleTypes.FLAME, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5, 0.0D, 0.0D, 0.0D);
+            InWorldRender.INSTANCE.unsetStructure();
             setStructureComplete(true);
         } else {
-            for (BlockPos errorPos : errors)
-                worldObj.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, errorPos.getX() + 0.5, errorPos.getY() + 0.7, errorPos.getZ() + 0.5, 0.0D, 0.0D, 0.0D);
+        	InWorldRender.INSTANCE.setStructure(Structures.craftingAltar, this.pos);
             setStructureComplete(false);
         }
 

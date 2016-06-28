@@ -223,7 +223,7 @@ public final class ShaderHelper implements IResourceManagerReloadListener {
         if (!event.getEntity().worldObj.isRemote)
             return;
 
-        createProgram(burst);
+//        createProgram(burst);
     }
 
     @Override

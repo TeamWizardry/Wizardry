@@ -76,6 +76,35 @@ public class Template {
                 return flag ? new BlockPos(i, j, k) : pos;
         }
     }
+    
+    public static BlockPos inverseTransformedBlockPos(BlockPos pos, Mirror mirrorIn, Rotation rotationIn) {
+        int x = pos.getX();
+        int y = pos.getY();
+        int z = pos.getZ();
+        boolean flag = true;
+
+        switch (mirrorIn) {
+            case LEFT_RIGHT:
+                z = -z;
+                break;
+            case FRONT_BACK:
+                x = -x;
+                break;
+            default:
+                flag = false;
+        }
+
+        switch (rotationIn) {
+            case COUNTERCLOCKWISE_90:
+                return new BlockPos(-z, y, x);
+            case CLOCKWISE_90:
+                return new BlockPos(z, y, -x);
+            case CLOCKWISE_180:
+                return new BlockPos(-x, y, -z);
+            default:
+                return flag ? new BlockPos(x, y, z) : pos;
+        }
+    }
 
     private static Vec3d transformedVec3d(Vec3d vec, Mirror mirrorIn, Rotation rotationIn) {
         double d0 = vec.xCoord;
