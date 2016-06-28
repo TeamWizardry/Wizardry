@@ -18,6 +18,7 @@ public class HudEventHandler {
 
     private final ResourceLocation texture = new ResourceLocation(Wizardry.MODID, "textures/gui/book/sliders.png");
 
+    // TODO: Textures refuse to render. Everything else renders properly
     @SubscribeEvent
     public void renderHud(RenderGameOverlayEvent.Post event) {
         Minecraft mc = Minecraft.getMinecraft();

@@ -25,7 +25,7 @@ public class EventHandler {
 
     @SubscribeEvent
     public void onTextureStitchEvent(TextureStitchEvent.Pre event) {
-        event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, "particle/sparkle"));
+        event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, "particles/sparkle"));
         event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, "item/manaIconNoOutline"));
         event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, "item/manaIconOutline"));
     }

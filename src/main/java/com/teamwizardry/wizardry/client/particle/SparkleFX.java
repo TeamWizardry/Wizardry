@@ -16,10 +16,11 @@ import java.util.concurrent.ThreadLocalRandom;
 public class SparkleFX extends Particle {
 
     private static final Random random = new Random();
-    public ResourceLocation texture = new ResourceLocation(Wizardry.MODID, "particle/sparkle");
+    public ResourceLocation texture = new ResourceLocation(Wizardry.MODID, "particles/sparkle");
     private double jitterX, jitterY, jitterZ;
     private int jitterChance;
     private boolean fadeOut = true;
+    private boolean randomSizes = false;
 
     public SparkleFX(World worldIn, double x, double y, double z, float alpha, float scale, int age, boolean fadeOut) {
         super(worldIn, x, y, z);
@@ -60,14 +61,24 @@ public class SparkleFX extends Particle {
         if (z > 0) jitterZ = z;
     }
 
+    public void setRandomizedSizes(boolean randomizedSizes) {
+        this.randomSizes = randomizedSizes;
+    }
+
     @Override
     public int getFXLayer() {
         return 1;
     }
 
     @Override
+    public boolean isTransparent() {
+        return true;
+    }
+
+    @Override
     public void onUpdate() {
         super.onUpdate();
+        if (randomSizes) particleScale = (this.rand.nextFloat() * 0.5F + 0.5F) * 2.0F;
         if (jitterX > 0)
             if (random.nextInt(jitterChance) == 0) motionX += ThreadLocalRandom.current().nextDouble(-jitterX, jitterX);
         if (jitterY > 0)

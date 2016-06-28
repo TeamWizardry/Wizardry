@@ -173,6 +173,7 @@ public class ItemQuartzPearl extends Item implements IExplodable {
             SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(entityIn.worldObj, entityIn.posX, entityIn.posY + 0.5, entityIn.posZ, 1, 1F, 30, false);
             fizz.jitter(10, 0.1, 0.1, 0.1);
             fizz.randomDirection(0.3, 0.3, 0.3);
+            fizz.setRandomizedSizes(true);
         }
     }
 
@@ -184,9 +185,9 @@ public class ItemQuartzPearl extends Item implements IExplodable {
         @Override
         public int getColorFromItemstack(ItemStack stack, int tintIndex) {
             if (stack.hasTagCompound()) {
-                int r = stack.getTagCompound().getInteger("red3");
-                int g = stack.getTagCompound().getInteger("green3");
-                int b = stack.getTagCompound().getInteger("blue3");
+                int r = stack.getTagCompound().getInteger("red");
+                int g = stack.getTagCompound().getInteger("green");
+                int b = stack.getTagCompound().getInteger("blue");
                 return intColor(r, g, b);
             }
             return intColor(255, 255, 255);
