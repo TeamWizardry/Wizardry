@@ -1,12 +1,12 @@
-package com.teamwizardry.wizardry.client;
+package com.teamwizardry.wizardry.client.proxy;
 
 import com.teamwizardry.wizardry.api.util.gui.ScissorUtil;
 import com.teamwizardry.wizardry.client.particle.MagicBurstFX;
 import com.teamwizardry.wizardry.client.particle.ParticleRenderDispatcher;
 import com.teamwizardry.wizardry.client.particle.SparkleFX;
 import com.teamwizardry.wizardry.client.particle.shader.ShaderHelper;
-import com.teamwizardry.wizardry.common.CommonProxy;
 import com.teamwizardry.wizardry.common.event.HudEventHandler;
+import com.teamwizardry.wizardry.common.proxy.CommonProxy;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.Minecraft;

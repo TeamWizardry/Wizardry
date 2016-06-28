@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common;
+package com.teamwizardry.wizardry.common.proxy;
 
 import com.teamwizardry.wizardry.client.particle.MagicBurstFX;
 import com.teamwizardry.wizardry.client.particle.SparkleFX;
