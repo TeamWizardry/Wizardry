@@ -54,7 +54,7 @@ public class EventHandler {
                     }
             } else {
                 if (redstone.getCountdown() >= 50) {
-                    EntityItem vinteum = new EntityItem(event.world, redstone.getPos().getX() + 0.5, redstone.getPos().getY() + 0.5, redstone.getPos().getZ() + 0.5, new ItemStack(ModItems.vinteumDust, redstone.getStackSize()));
+                    EntityItem vinteum = new EntityItem(event.world, redstone.getPos().getX() + 0.5, redstone.getPos().getY() + 0.5, redstone.getPos().getZ() + 0.5, new ItemStack(ModItems.VINTEUM_DUST, redstone.getStackSize()));
                     vinteum.setPickupDelay(5);
                     vinteum.setVelocity(0, 0.7, 0);
                     vinteumList.add(vinteum);
@@ -79,7 +79,7 @@ public class EventHandler {
             if (book.isStartCountDown() && !book.getItem().isDead) {
                 if (book.getCountdown() >= 500) {
 
-                    book.getWorld().spawnEntityInWorld(new EntityItem(book.getWorld(), book.getX(), book.getY(), book.getZ(), new ItemStack(ModItems.physicsBook)));
+                    book.getWorld().spawnEntityInWorld(new EntityItem(book.getWorld(), book.getX(), book.getY(), book.getZ(), new ItemStack(ModItems.PHYSICS_BOOK)));
                     book.setStartCountDown(false);
                     book.getItem().setDead();
                     expiredBooks.add(book);

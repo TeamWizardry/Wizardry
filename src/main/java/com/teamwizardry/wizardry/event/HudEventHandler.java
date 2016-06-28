@@ -22,7 +22,7 @@ public class HudEventHandler {
     public void renderHud(RenderGameOverlayEvent.Post event) {
         Minecraft mc = Minecraft.getMinecraft();
         ItemStack stack = Minecraft.getMinecraft().thePlayer.getActiveItemStack();
-        //       if (stack == null || stack.getItem() != ModItems.quartzPearl) return;
+        //       if (stack == null || stack.getItem() != ModItems.PEARL_QUARTZ) return;
 
         ScaledResolution resolution = event.getResolution();
         int width = resolution.getScaledWidth();

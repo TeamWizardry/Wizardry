@@ -1,10 +1,12 @@
 package com.teamwizardry.wizardry.tileentities;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import net.minecraftforge.common.util.Constants;
-
+import com.teamwizardry.wizardry.ModItems;
+import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.items.pearls.ItemQuartzPearl;
+import com.teamwizardry.wizardry.multiblock.InWorldRender;
+import com.teamwizardry.wizardry.multiblock.StructureMatchResult;
+import com.teamwizardry.wizardry.multiblock.Structures;
+import com.teamwizardry.wizardry.particles.SparkleFX;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -16,15 +18,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.util.Constants;
 
-import com.teamwizardry.wizardry.ModItems;
-import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.items.pearls.ItemQuartzPearl;
-import com.teamwizardry.wizardry.multiblock.InWorldRender;
-import com.teamwizardry.wizardry.multiblock.StructureMatchResult;
-import com.teamwizardry.wizardry.multiblock.Structures;
-import com.teamwizardry.wizardry.particles.SparkleFX;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Saad on 6/10/2016.
@@ -87,8 +84,8 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
             for (int i = 0; i < list.tagCount(); i++)
                 inventory.add(ItemStack.loadItemStackFromNBT(list.getCompoundTagAt(i)));
         }
-        if (compound.hasKey("quartzPearl"))
-            pearl = ItemStack.loadItemStackFromNBT(compound.getCompoundTag("quartzPearl"));
+        if (compound.hasKey("PEARL_QUARTZ"))
+            pearl = ItemStack.loadItemStackFromNBT(compound.getCompoundTag("PEARL_QUARTZ"));
         if (compound.hasKey("crafting"))
             crafting = compound.getBoolean("crafting");
         if (compound.hasKey("finishedCrafting"))
@@ -110,7 +107,7 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
                 list.appendTag(anInventory.writeToNBT(new NBTTagCompound()));
             compound.setTag("inventory", list);
         }
-        if (pearl != null) compound.setTag("quartzPearl", pearl.writeToNBT(new NBTTagCompound()));
+        if (pearl != null) compound.setTag("PEARL_QUARTZ", pearl.writeToNBT(new NBTTagCompound()));
         compound.setBoolean("crafting", crafting);
         compound.setBoolean("finishedCrafting", finishedCrafting);
         compound.setInteger("craftingProgress", craftingProgress);
@@ -151,7 +148,7 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
                 inventory.add(item.getEntityItem());
                 worldObj.removeEntity(item);
 
-                if (item.getEntityItem().getItem() == ModItems.quartzPearl) {
+                if (item.getEntityItem().getItem() == ModItems.PEARL_QUARTZ) {
                     ItemQuartzPearl pearl = (ItemQuartzPearl) item.getEntityItem().getItem();
                     if (pearl.getPearlType(item.getEntityItem()).equals("mundane")) {
                         this.pearl = item.getEntityItem();

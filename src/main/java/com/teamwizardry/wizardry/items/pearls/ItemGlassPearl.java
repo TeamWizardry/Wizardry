@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.items.pearls;
 
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.IExplodable;
+import com.teamwizardry.wizardry.particles.SparkleFX;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -70,8 +71,13 @@ public class ItemGlassPearl extends Item implements IExplodable {
         Random rand = new Random();
         int range = 5;
         List<EntityLivingBase> entitys = entityIn.worldObj.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(entityIn.posX - range, entityIn.posY - range, entityIn.posZ - range, entityIn.posX + range, entityIn.posY + range, entityIn.posZ + range));
-        for (EntityLivingBase e : entitys) {
+        for (EntityLivingBase e : entitys)
             e.addPotionEffect(new PotionEffect(Potion.getPotionById(potions.get(rand.nextInt(potions.size()))), rand.nextInt(30) * 20, rand.nextInt(2) + 1));
+
+        for (int i = 0; i < 300; i++) {
+            SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(entityIn.worldObj, entityIn.posX, entityIn.posY + 0.5, entityIn.posZ, 1, 1F, 30, false);
+            fizz.jitter(10, 0.1, 0.1, 0.1);
+            fizz.randomDirection(0.3, 0.3, 0.3);
         }
     }
 

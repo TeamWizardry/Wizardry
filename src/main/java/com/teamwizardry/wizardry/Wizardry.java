@@ -52,7 +52,7 @@ public class Wizardry {
         @Override
         @SideOnly(Side.CLIENT)
         public Item getTabIconItem() {
-            return ModItems.physicsBook;
+            return ModItems.PHYSICS_BOOK;
         }
     };
 

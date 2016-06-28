@@ -58,7 +58,7 @@ public class Parser {
      * Gets the number of levels to end given an item. 0 if the item isn't an end item
      */
     private int getEndCount(ItemStack stack) {
-        return stack.getItem() == ModItems.vinteumDust ? 1 : 0;
+        return stack.getItem() == ModItems.VINTEUM_DUST ? 1 : 0;
     }
 
 }

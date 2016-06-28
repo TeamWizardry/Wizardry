@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.items;
+package com.teamwizardry.wizardry.items.pearls;
 
 import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;

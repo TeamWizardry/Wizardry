@@ -7,15 +7,12 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -30,15 +27,15 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Created by Saad on 6/10/2016.
+ * Created by Saad on 6/28/2016.
  */
-public class ItemQuartzPearl extends Item implements IExplodable {
+public class ItemNacrePearl extends Item implements IExplodable {
 
-    public List<Integer> potions = new ArrayList<>();
+    private List<Integer> potions = new ArrayList<>();
 
-    public ItemQuartzPearl() {
-        setRegistryName("quartz_pearl");
-        setUnlocalizedName("quartz_pearl");
+    public ItemNacrePearl() {
+        setRegistryName("nacre_pearl");
+        setUnlocalizedName("nacre_pearl");
         GameRegistry.register(this);
         setMaxStackSize(1);
         setCreativeTab(Wizardry.tab);
@@ -47,19 +44,6 @@ public class ItemQuartzPearl extends Item implements IExplodable {
 
     private static int intColor(int r, int g, int b) {
         return (r * 65536 + g * 256 + b);
-    }
-
-    @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
-
-        if (worldIn.isRemote) {
-            for (int i = 0; i < 10; i++) {
-
-                Wizardry.proxy.spawnParticleMagicBurst(worldIn, playerIn.posX + ((Math.random() - 0.5) * 5), playerIn.posY + ((Math.random() - 0.5) * 10), playerIn.posZ + ((Math.random() - 0.5) * 5));
-            }
-        }
-
-        return super.onItemRightClick(itemStackIn, worldIn, playerIn, hand);
     }
 
     private void addPotions() {
@@ -130,7 +114,6 @@ public class ItemQuartzPearl extends Item implements IExplodable {
         } else setDefaultColor(stack, min, max);
     }
 
-
     public void addSpellItems(ItemStack stack, ArrayList<ItemStack> items) {
         NBTTagCompound compound = new NBTTagCompound();
         if (items.size() > 0) {
@@ -152,16 +135,10 @@ public class ItemQuartzPearl extends Item implements IExplodable {
     }
 
     @Override
-    public boolean canItemEditBlocks() {
-        return false;
-    }
-
-    @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldS, ItemStack newS, boolean slotChanged) {
         return slotChanged;
     }
 
-    @Override
     public void explode(Entity entityIn) {
         Random rand = new Random();
         int range = 5;
@@ -176,6 +153,11 @@ public class ItemQuartzPearl extends Item implements IExplodable {
         }
     }
 
+    @Override
+    public boolean canItemEditBlocks() {
+        return false;
+    }
+
     @SideOnly(Side.CLIENT)
     public static class ColorHandler implements IItemColor {
         public ColorHandler() {
@@ -184,9 +166,9 @@ public class ItemQuartzPearl extends Item implements IExplodable {
         @Override
         public int getColorFromItemstack(ItemStack stack, int tintIndex) {
             if (stack.hasTagCompound()) {
-                int r = stack.getTagCompound().getInteger("red3");
-                int g = stack.getTagCompound().getInteger("green3");
-                int b = stack.getTagCompound().getInteger("blue3");
+                int r = stack.getTagCompound().getInteger("red");
+                int g = stack.getTagCompound().getInteger("green");
+                int b = stack.getTagCompound().getInteger("blue");
                 return intColor(r, g, b);
             }
             return intColor(255, 255, 255);

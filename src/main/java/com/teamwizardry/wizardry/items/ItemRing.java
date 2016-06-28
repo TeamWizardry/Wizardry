@@ -13,6 +13,9 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.awt.*;
+import java.util.concurrent.ThreadLocalRandom;
+
 /**
  * Created by Saad on 6/13/2016.
  */
@@ -37,71 +40,56 @@ public class ItemRing extends Item {
         ModelLoader.setCustomModelResourceLocation(this, 1, full);
     }
 
+    private void setDefaultColor(ItemStack stack, int min, int max) {
+        Color color = new Color(ThreadLocalRandom.current().nextInt(min, max), ThreadLocalRandom.current().nextInt(min, max), ThreadLocalRandom.current().nextInt(min, max));
+        NBTTagCompound compound = new NBTTagCompound();
+        compound.setInteger("red", color.getRed());
+        compound.setInteger("green", color.getGreen());
+        compound.setInteger("blue", color.getBlue());
+        compound.setBoolean("checkRed", false);
+        compound.setBoolean("checkBlue", false);
+        compound.setBoolean("checkGreen", false);
+        stack.setTagCompound(compound);
+    }
     @Override
     public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-        if (!stack.hasTagCompound()) {
-            NBTTagCompound compound = new NBTTagCompound();
-            int initialR = itemRand.nextInt(255);
-            int initialG = itemRand.nextInt(255);
-            int initialB = itemRand.nextInt(255);
-            compound.setInteger("red1", initialR);
-            compound.setInteger("green1", initialG);
-            compound.setInteger("blue1", initialB);
-            compound.setInteger("red3", initialR);
-            compound.setInteger("green3", initialG);
-            compound.setInteger("blue3", initialB);
-            compound.setInteger("red2", itemRand.nextInt(255));
-            compound.setInteger("green2", itemRand.nextInt(255));
-            compound.setInteger("blue2", itemRand.nextInt(255));
-            compound.setInteger("ticker", 0);
-            compound.setDouble("steps", 0);
-            compound.setString("type", "mundane");
-            stack.setTagCompound(compound);
-        }
-
+        int max = 220, min = 120;
         if (stack.hasTagCompound()) {
-            if (stack.getTagCompound().getString("type").equals("mundane")) {
-                int ticker = stack.getTagCompound().getInteger("ticker");
-                if (ticker >= 30) {
-                    if (stack.getTagCompound().getDouble("steps") <= 30) {
-                        stack.getTagCompound().setInteger("ticker", 0);
-                        int r1 = stack.getTagCompound().getInteger("red1");
-                        int g1 = stack.getTagCompound().getInteger("green1");
-                        int b1 = stack.getTagCompound().getInteger("blue1");
-                        int r2 = stack.getTagCompound().getInteger("red2");
-                        int g2 = stack.getTagCompound().getInteger("green2");
-                        int b2 = stack.getTagCompound().getInteger("blue2");
+            NBTTagCompound compound = stack.getTagCompound();
+            if (compound.hasKey("red") && compound.hasKey("green") && compound.hasKey("blue")) {
 
-                        double ratio = stack.getTagCompound().getDouble("steps") / 30;
-                        int red3 = (int) Math.abs((ratio * r2) + ((1 - ratio) * r1));
-                        int green3 = (int) Math.abs((ratio * g2) + ((1 - ratio) * g1));
-                        int blue3 = (int) Math.abs((ratio * b2) + ((1 - ratio) * b1));
+                int red = compound.getInteger("red");
+                int green = compound.getInteger("green");
+                int blue = compound.getInteger("blue");
+                boolean checkRed = compound.getBoolean("checkRed");
+                boolean checkGreen = compound.getBoolean("checkGreen");
+                boolean checkBlue = compound.getBoolean("checkBlue");
 
-                        stack.getTagCompound().setInteger("red3", red3);
-                        stack.getTagCompound().setInteger("green3", green3);
-                        stack.getTagCompound().setInteger("blue3", blue3);
-                        stack.getTagCompound().setDouble("steps", stack.getTagCompound().getDouble("steps") + 1);
-                    } else {
-                        stack.getTagCompound().setDouble("steps", 0);
-                        stack.getTagCompound().setInteger("ticker", 0);
-                        stack.getTagCompound().setInteger("red2", stack.getTagCompound().getInteger("red1"));
-                        stack.getTagCompound().setInteger("blue2", stack.getTagCompound().getInteger("blue1"));
-                        stack.getTagCompound().setInteger("green2", stack.getTagCompound().getInteger("green1"));
+                if (checkRed && red < max) red++;
+                else if (red > min) red--;
+                else green++;
 
-                        stack.getTagCompound().setInteger("red1", stack.getTagCompound().getInteger("red3"));
-                        stack.getTagCompound().setInteger("blue1", stack.getTagCompound().getInteger("blue3"));
-                        stack.getTagCompound().setInteger("green1", stack.getTagCompound().getInteger("green3"));
-                    }
-                } else {
-                    ticker++;
-                    stack.getTagCompound().setInteger("ticker", ticker);
-                }
-            } else if (stack.getTagCompound().getString("type").equals("mundane")) {
+                if (checkGreen && green < max) green++;
+                else if (green > min) green--;
+                else green++;
 
-            } else {
+                if (checkBlue && blue < max) blue++;
+                else if (blue > min) blue--;
+                else blue++;
 
-            }
-        }
+                if (itemRand.nextInt(100) == 0) checkRed = !checkRed;
+                if (itemRand.nextInt(100) == 0) checkGreen = !checkGreen;
+                if (itemRand.nextInt(100) == 0) checkBlue = !checkBlue;
+
+                compound.setInteger("red", red);
+                compound.setInteger("green", green);
+                compound.setInteger("blue", blue);
+                compound.setBoolean("checkRed", checkRed);
+                compound.setBoolean("checkBlue", checkGreen);
+                compound.setBoolean("checkGreen", checkBlue);
+
+            } else setDefaultColor(stack, min, max);
+        } else setDefaultColor(stack, min, max);
     }
 
     @Override

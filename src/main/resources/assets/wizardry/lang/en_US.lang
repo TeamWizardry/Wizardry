@@ -1,4 +1,19 @@
 tile.crafting_plate.name=Sorcerer's Plate
+tile.magicians_worktable.name=Magician's Worktable
+tile.mana_battery.name=Mana Battery
+
+tile.nacre.name=Nacre
+tile.mana.name=Mana
 
 item.physics_book.name=Physics Book
+item.ring.name=Ring
+item.vinteum_dust.name=Vinteum Dust
+item.mana_pearl.name=Mana Pearl
+item.glass_pearl.name=Glass Pearl
+item.nacre_pearl.name=Nacre Pearl
+item.quartz_pearl.name=Quartz Pearl
+
 gui.physicsbook.defaulttitle=Physics Book
+
+fluid.nacre_fluid=Nacre
+fluid.mana_fluid=Mana

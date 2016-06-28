@@ -19,19 +19,6 @@ import java.util.ArrayList;
  */
 public class Utils {
 
-    public static void drawSmallItemStack(final ItemStack itemStack, final int x, final int y) {
-        if (itemStack != null) {
-            GlStateManager.pushMatrix();
-            GlStateManager.enableRescaleNormal();
-            GlStateManager.scale(0.75, 0.75, 0.75);
-            RenderHelper.enableGUIStandardItemLighting();
-            Minecraft.getMinecraft().getRenderItem().renderItemIntoGUI(itemStack, x, y);
-            RenderHelper.disableStandardItemLighting();
-            GlStateManager.disableRescaleNormal();
-            GlStateManager.popMatrix();
-        }
-    }
-
     public static void drawNormalItemStack(final ItemStack itemStack, final int x, final int y) {
         if (itemStack != null) {
             GlStateManager.enableRescaleNormal();
