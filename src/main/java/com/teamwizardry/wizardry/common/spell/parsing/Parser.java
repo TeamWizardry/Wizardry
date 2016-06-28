@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.common.spell.parsing;
 
-import com.teamwizardry.wizardry.api.modules.Module;
-import com.teamwizardry.wizardry.api.modules.ModuleList;
+import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.api.module.ModuleList;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.item.ItemStack;
 

@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.api.spell;
 
-import com.teamwizardry.wizardry.api.modules.attribute.AttributeMap;
+import com.teamwizardry.wizardry.api.module.attribute.AttributeMap;
 
 public interface IModifier {
 

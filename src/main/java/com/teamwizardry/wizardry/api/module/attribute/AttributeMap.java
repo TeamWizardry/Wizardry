@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.api.modules.attribute;
+package com.teamwizardry.wizardry.api.module.attribute;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;

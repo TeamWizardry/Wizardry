@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.event;
+package com.teamwizardry.wizardry.client.core;
 
 import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.client.Minecraft;

@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.api.modules.attribute;
+package com.teamwizardry.wizardry.api.module.attribute;
 
 public class AttributeModifier {
 

@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry;
 import com.teamwizardry.wizardry.api.Config;
 import com.teamwizardry.wizardry.api.gui.hud.WizardHandler;
 import com.teamwizardry.wizardry.client.gui.GuiHandler;
-import com.teamwizardry.wizardry.common.event.EventHandler;
+import com.teamwizardry.wizardry.common.core.EventHandler;
 import com.teamwizardry.wizardry.common.fluid.Fluids;
 import com.teamwizardry.wizardry.common.network.PacketHandler;
 import com.teamwizardry.wizardry.common.proxy.CommonProxy;

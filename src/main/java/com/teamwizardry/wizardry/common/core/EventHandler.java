@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.event;
+package com.teamwizardry.wizardry.common.core;
 
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.trackerobject.BookTrackerObject;

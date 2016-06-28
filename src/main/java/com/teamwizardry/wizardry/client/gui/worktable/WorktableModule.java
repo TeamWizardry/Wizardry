@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.client.gui.worktable;
 
-import com.teamwizardry.wizardry.api.modules.Module;
+import com.teamwizardry.wizardry.api.module.Module;
 
 /**
  * Created by Saad on 6/17/2016.

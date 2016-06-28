@@ -1,8 +1,8 @@
-package com.teamwizardry.wizardry.api.modules;
+package com.teamwizardry.wizardry.api.module;
 
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.modules.attribute.Attribute;
-import com.teamwizardry.wizardry.api.modules.attribute.AttributeMap;
+import com.teamwizardry.wizardry.api.module.attribute.Attribute;
+import com.teamwizardry.wizardry.api.module.attribute.AttributeMap;
 import com.teamwizardry.wizardry.api.spell.IModifier;
 import com.teamwizardry.wizardry.api.spell.IRuntimeModifier;
 import com.teamwizardry.wizardry.api.spell.ModuleType;

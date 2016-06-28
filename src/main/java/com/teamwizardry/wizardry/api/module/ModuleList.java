@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.api.modules;
+package com.teamwizardry.wizardry.api.module;
 
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.spell.module.booleans.ModuleAnd;
