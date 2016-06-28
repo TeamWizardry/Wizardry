@@ -11,7 +11,6 @@ import java.util.List;
 
 public class Parser {
 
-    private Deque<Module> moduleStack = new ArrayDeque<>();
     private Deque<ItemStack> stacks;
     private int endCount = 0;
 
@@ -39,7 +38,6 @@ public class Parser {
             }
             endCount--;
         }
-
         return module;
     }
 
