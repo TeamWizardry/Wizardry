@@ -1,25 +1,23 @@
 package com.teamwizardry.wizardry.client.particle;
 
-import java.nio.FloatBuffer;
-import java.util.Random;
-
+import com.teamwizardry.librarianlib.client.fx.particle.ParticleRenderQueue;
+import com.teamwizardry.librarianlib.client.fx.particle.QueuedParticle;
+import com.teamwizardry.librarianlib.client.fx.shader.ShaderCallback;
+import com.teamwizardry.librarianlib.client.fx.shader.ShaderHelper;
+import com.teamwizardry.wizardry.api.util.misc.Matrix4;
+import com.teamwizardry.wizardry.client.Shaders;
+import com.teamwizardry.wizardry.client.Shaders.BurstShader;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
-import com.teamwizardry.libarianlib.client.particle.ParticleRenderQueue;
-import com.teamwizardry.libarianlib.client.particle.QueuedParticle;
-import com.teamwizardry.libarianlib.client.shader.ShaderCallback;
-import com.teamwizardry.libarianlib.client.shader.ShaderHelper;
-import com.teamwizardry.wizardry.api.util.misc.Matrix4;
-import com.teamwizardry.wizardry.client.Shaders;
-import com.teamwizardry.wizardry.client.Shaders.BurstShader;
+import java.nio.FloatBuffer;
+import java.util.Random;
 
 public class MagicBurstFX extends QueuedParticle {
 

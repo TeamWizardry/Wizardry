@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.api.util.misc;
 
-import com.teamwizardry.libarianlib.LoggerBase;
+import com.teamwizardry.librarianlib.api.LoggerBase;
 
 public class Logs extends LoggerBase {
 	public static final Logs I = new Logs();

@@ -1,9 +1,8 @@
 package com.teamwizardry.wizardry.common;
 
-import net.minecraft.util.ResourceLocation;
-
-import com.teamwizardry.libarianlib.multiblock.Structure;
+import com.teamwizardry.librarianlib.client.multiblock.Structure;
 import com.teamwizardry.wizardry.Wizardry;
+import net.minecraft.util.ResourceLocation;
 
 public enum Structures {
     INSTANCE;

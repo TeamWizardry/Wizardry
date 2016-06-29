@@ -16,7 +16,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
  */
 public class HudEventHandler {
 
-    private final ResourceLocation texture = new ResourceLocation(Wizardry.MODID, "textures/gui/book/sliders.png");
+    private final ResourceLocation texture = new ResourceLocation(Wizardry.MODID, "textures/bookcomponents/book/sliders.png");
 
     // TODO: Textures refuse to render. Everything else renders properly
     @SubscribeEvent

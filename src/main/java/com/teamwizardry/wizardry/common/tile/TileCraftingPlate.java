@@ -1,10 +1,12 @@
 package com.teamwizardry.wizardry.common.tile;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import net.minecraftforge.common.util.Constants;
-
+import com.teamwizardry.librarianlib.client.multiblock.InWorldRender;
+import com.teamwizardry.librarianlib.client.multiblock.StructureMatchResult;
+import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.client.particle.SparkleFX;
+import com.teamwizardry.wizardry.common.Structures;
+import com.teamwizardry.wizardry.common.item.pearl.ItemQuartzPearl;
+import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -16,14 +18,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraftforge.common.util.Constants;
 
-import com.teamwizardry.libarianlib.multiblock.InWorldRender;
-import com.teamwizardry.libarianlib.multiblock.StructureMatchResult;
-import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.client.particle.SparkleFX;
-import com.teamwizardry.wizardry.common.Structures;
-import com.teamwizardry.wizardry.common.item.pearl.ItemQuartzPearl;
-import com.teamwizardry.wizardry.init.ModItems;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Saad on 6/10/2016.
