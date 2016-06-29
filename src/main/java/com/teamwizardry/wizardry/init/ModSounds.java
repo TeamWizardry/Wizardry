@@ -12,10 +12,12 @@ public class ModSounds {
 
     public static SoundEvent GLASS_BREAK;
     public static SoundEvent FIZZING_LOOP;
+    public static SoundEvent FIRE_SIZZLE_LOOP;
 
     public static void init() {
         GLASS_BREAK = registerSound("glassbreak");
         FIZZING_LOOP = registerSound("fizzingloop");
+        FIRE_SIZZLE_LOOP = registerSound("firesizzleloop");
     }
 
     private static SoundEvent registerSound(String soundName) {

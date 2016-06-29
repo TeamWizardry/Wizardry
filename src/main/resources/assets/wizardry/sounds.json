@@ -1,4 +1,5 @@
 {
-  "glassbreak":  {"category": "block", "sounds": ["wizardry:glassbreak"]},
-  "fizzingloop": {"category": "block", "sounds": ["wizardry:fizzingloop"]}
+  "glassbreak":     {"category": "block", "sounds": ["wizardry:glassbreak"]},
+  "fizzingloop":    {"category": "block", "sounds": ["wizardry:fizzingloop"]},
+  "firesizzleloop": {"category": "block", "sounds": ["wizardry:firesizzleloop"]}
 }

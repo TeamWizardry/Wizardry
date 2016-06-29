@@ -1,15 +1,20 @@
 package com.teamwizardry.wizardry.common.core;
 
+import com.teamwizardry.librarianlib.api.util.misc.PosUtils;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.trackerobject.BookTrackerObject;
 import com.teamwizardry.wizardry.api.trackerobject.RedstoneTrackerObject;
 import com.teamwizardry.wizardry.client.particle.SparkleFX;
 import com.teamwizardry.wizardry.init.ModItems;
+import com.teamwizardry.wizardry.init.ModSounds;
+import io.netty.util.internal.ThreadLocalRandom;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -48,19 +53,31 @@ public class EventHandler {
             if (!redstone.isStartCountDown()) {
                 if (redstone.getItem().isBurning() || redstone.getItem().isDead)
                     if (event.world.isMaterialInBB(redstone.getItem().getEntityBoundingBox().expand(0, 0.2, 0), Material.FIRE)) {
+
+                        redstone.setPos(PosUtils.adjustPositionToBlock(event.world, redstone.getItem().getPosition(), Blocks.FIRE));
                         redstone.setStartCountDown(true);
-                        redstone.setPos(redstone.getItem().getPosition());
                         redstone.getItem().setDead();
                     }
             } else {
-                if (redstone.getCountdown() >= 50) {
+                if (redstone.getCountdown() >= 200) {
                     EntityItem vinteum = new EntityItem(event.world, redstone.getPos().getX() + 0.5, redstone.getPos().getY() + 0.5, redstone.getPos().getZ() + 0.5, new ItemStack(ModItems.VINTEUM_DUST, redstone.getStackSize()));
                     vinteum.setPickupDelay(5);
                     vinteum.setVelocity(0, 0.7, 0);
                     vinteumList.add(vinteum);
                     expiredRedstone.add(redstone);
 
-                } else redstone.setCountdown(redstone.getCountdown() + 1);
+                } else {
+                    redstone.setCountdown(redstone.getCountdown() + 1);
+                    event.world.playSound(null, redstone.getPos(), ModSounds.FIRE_SIZZLE_LOOP, SoundCategory.BLOCKS, 0.3F, ThreadLocalRandom.current().nextFloat() * 0.4F + 0.8F);
+
+                    SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(event.world, redstone.getPos().getX() + 0.5, redstone.getPos().getY() + 0.3, redstone.getPos().getZ() + 0.5, 1, 1F, 10, false);
+                    fizz.jitter(10, 0.05, 0.05, 0.05);
+                    fizz.randomDirection(0.1, 0, 0.1);
+                    fizz.setMotion(0, ThreadLocalRandom.current().nextDouble(0.05, 0.2), 0);
+                    fizz.setColor(128, 0, 128);
+                    fizz.randomlyOscillateColor();
+
+                }
             }
         for (EntityItem vinteum : vinteumList) {
             vinteum.forceSpawn = true;
