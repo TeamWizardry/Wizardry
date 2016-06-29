@@ -4,6 +4,8 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.IExplodable;
 import com.teamwizardry.wizardry.api.trackerobject.BookTrackerObject;
 import com.teamwizardry.wizardry.client.particle.SparkleFX;
+import com.teamwizardry.wizardry.init.ModSounds;
+import io.netty.util.internal.ThreadLocalRandom;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -13,6 +15,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.BlockFluidClassic;
@@ -76,8 +79,12 @@ public class FluidBlockMana extends BlockFluidClassic {
                                 ei.setDead();
                                 ((IExplodable) stack.getItem()).explode(entityIn);
                                 worldIn.setBlockState(pos, Blocks.AIR.getDefaultState());
+                                worldIn.playSound(null, ei.posX, ei.posY, ei.posZ, ModSounds.GLASS_BREAK, SoundCategory.BLOCKS, 0.5F, ThreadLocalRandom.current().nextFloat() * 0.4F + 0.8F);
 
-                            } else compound.setInteger("reactionCooldown", compound.getInteger("reactionCooldown") + 1);
+                            } else {
+                                compound.setInteger("reactionCooldown", compound.getInteger("reactionCooldown") + 1);
+                                worldIn.playSound(null, ei.posX, ei.posY, ei.posZ, ModSounds.FIZZING_LOOP, SoundCategory.BLOCKS, 0.3F, ThreadLocalRandom.current().nextFloat() * 0.4F + 0.8F);
+                            }
                         } else stack.getTagCompound().setInteger("reactionCooldown", 0);
                     } else stack.setTagCompound(new NBTTagCompound());
                 }
