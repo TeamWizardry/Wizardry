@@ -14,5 +14,4 @@ public class ModuleAnd extends Module {
     public String getDescription() {
         return "Will pass conditions if all are true.";
     }
-
 }

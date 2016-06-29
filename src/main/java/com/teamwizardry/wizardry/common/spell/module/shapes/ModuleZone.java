@@ -15,9 +15,20 @@ public class ModuleZone extends Module {
     public ModuleType getType() {
         return ModuleType.SHAPE;
     }
+    
+    @Override
+    public String getDescription()
+    {
+    	return "Casts the spell on all valid targets in a circular area.";
+    }
 
     @Override
     public NBTTagCompound getModuleData() {
+    	NBTTagCompound compound = super.getModuleData();
+    	compound.setDouble(RADIUS, attributes.apply(Attribute.RADIUS, 1));
+    	compound.setInteger(DURATION, (int) attributes.apply(Attribute.DURATION, 1));
+    	compound.setDouble(MANA, attributes.apply(Attribute.MANA, 10));
+    	compound.setDouble(BURNOUT, attributes.apply(Attribute.BURNOUT, 10));
         return null;
     }
 }

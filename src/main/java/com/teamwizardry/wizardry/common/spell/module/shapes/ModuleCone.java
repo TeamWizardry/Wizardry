@@ -17,7 +17,18 @@ public class ModuleCone extends Module {
     }
 
     @Override
+    public String getDescription()
+    {
+    	return "Casts the spell on all entities within a frontal cone.";
+    }
+    
+    @Override
     public NBTTagCompound getModuleData() {
-        return null;
+        NBTTagCompound compound = super.getModuleData();
+        compound.setDouble(DISTANCE, attributes.apply(Attribute.DISTANCE, 1));
+        compound.setDouble(SCATTER, attributes.apply(Attribute.SCATTER, 1));
+        compound.setDouble(MANA, attributes.apply(Attribute.MANA, 10));
+        compound.setDouble(BURNOUT, attributes.apply(Attribute.BURNOUT, 10));
+    	return compound;
     }
 }

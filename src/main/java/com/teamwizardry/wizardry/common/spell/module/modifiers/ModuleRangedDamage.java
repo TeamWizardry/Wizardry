@@ -18,10 +18,16 @@ public class ModuleRangedDamage extends Module implements IModifier {
     }
 
     @Override
+    public String getDescription()
+    {
+    	return "Increases the damage dealt by a spell from range.";
+    }
+    
+    @Override
     public void apply(AttributeMap map) {
         map.putModifier(Attribute.DAMAGE, new AttributeModifier(AttributeModifier.Operation.ADD, 1));
 
-        map.putModifier(Attribute.COST, new AttributeModifier(AttributeModifier.Operation.MULTIPLY, 1.2));
+        map.putModifier(Attribute.MANA, new AttributeModifier(AttributeModifier.Operation.MULTIPLY, 1.2));
         map.putModifier(Attribute.BURNOUT, new AttributeModifier(AttributeModifier.Operation.MULTIPLY, 1.2));
     }
 }

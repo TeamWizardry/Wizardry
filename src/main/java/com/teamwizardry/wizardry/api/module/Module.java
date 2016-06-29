@@ -26,10 +26,21 @@ public abstract class Module
 	public static final String MODULES = "Modules";
 	public static final String POWER = "Power";
 	public static final String DURATION = "Duration";
+	public static final String RADIUS = "Radius";
+	public static final String PIERCE = "Pierce";
 	public static final String SILENT = "Silent";
+	public static final String SPEED = "Speed";
+	public static final String KNOCKBACK = "Knockback";
+	public static final String PROJ_COUNT = "Projectile Count";
+	public static final String SCATTER = "Scatter";
+	public static final String CRIT_CHANCE = "Crit Chance";
+	public static final String CRIT_DAMAGE = "Crit Damage";
+	public static final String DISTANCE = "Distance";
+	public static final String DAMAGE = "Damage";
+	
 	public static final String MANA = "Mana";
 	public static final String BURNOUT = "Burnout";
-	public static final String RADIUS = "Radius";
+	
 	public AttributeMap attributes = new AttributeMap();
 
 	public List<Module> children = new ArrayList<Module>();
@@ -43,7 +54,7 @@ public abstract class Module
 
 	public Module()
 	{
-		attributes.addAttribute(Attribute.COST);
+		attributes.addAttribute(Attribute.MANA);
 		attributes.addAttribute(Attribute.BURNOUT);
 	}
 
@@ -56,10 +67,10 @@ public abstract class Module
 	public abstract ModuleType getType();
 
 	/**
-	 * Generates an {@link NBTTagCompound} containing information about the
+	 * Generates an {@code NBTTagCompound} containing information about the
 	 * module and its effects, as well as any connected module.
 	 *
-	 * @return An {@code NBTTagCompound} containing information on the module
+	 * @return An {@link NBTTagCompound} containing information on the module
 	 *         and all connected module
 	 */
 	public NBTTagCompound getModuleData()
@@ -68,17 +79,15 @@ public abstract class Module
 		compound.setString(CLASS, this.getClass().getName());
 		NBTTagList list = new NBTTagList();
 		for (Module module : children)
-		{
 			list.appendTag(module.getModuleData());
-		}
 		return compound;
 	}
 
 	/**
-	 * Gets the current {@link ResourceLocation}. Set to
+	 * Gets the current {@code ResourceLocation}. Set to
 	 * {@code Wizardry:this.class.getSimpleName()} by default.
 	 *
-	 * @return The current {@code ResourceLocation}
+	 * @return The current {@link ResourceLocation}
 	 */
 	public ResourceLocation getIcon()
 	{
@@ -86,10 +95,10 @@ public abstract class Module
 	}
 
 	/**
-	 * Sets the {@link ResourceLocation} for this module
+	 * Sets the {@code ResourceLocation} for this module
 	 *
 	 * @param location
-	 *            The new {@code ResourceLocation}
+	 *            The new {@link ResourceLocation}
 	 */
 	public void setIcon(ResourceLocation location)
 	{

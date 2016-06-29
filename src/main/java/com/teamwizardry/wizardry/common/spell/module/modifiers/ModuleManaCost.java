@@ -18,7 +18,13 @@ public class ModuleManaCost extends Module implements IModifier {
     }
 
     @Override
+    public String getDescription()
+    {
+    	return "Decreases the mana cost of a spell shape or effect.";
+    }
+    
+    @Override
     public void apply(AttributeMap map) {
-        map.putModifier(Attribute.COST, new AttributeModifier(AttributeModifier.Operation.ADD, -10, AttributeModifier.Priority.LOWEST));
+        map.putModifier(Attribute.MANA, new AttributeModifier(AttributeModifier.Operation.ADD, -10, AttributeModifier.Priority.LOWEST));
     }
 }

@@ -30,6 +30,12 @@ public class ModuleExplosion extends Module {
     public NBTTagCompound getModuleData() {
         NBTTagCompound compound = super.getModuleData();
         compound.setBoolean(DAMAGE_TERRAIN, damageTerrain);
+        
+        compound.setDouble(DAMAGE, attributes.apply(Attribute.DAMAGE, 1));
+        compound.setDouble(POWER, attributes.apply(Attribute.POWER, 1));
+        compound.setDouble(RADIUS, attributes.apply(Attribute.RADIUS, 1));
+        compound.setDouble(MANA, attributes.apply(Attribute.MANA, 10));
+        compound.setDouble(BURNOUT, attributes.apply(Attribute.BURNOUT, 10));
         return compound;
     }
 

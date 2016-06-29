@@ -8,7 +8,6 @@ import com.teamwizardry.wizardry.api.module.attribute.AttributeModifier.Operatio
 import com.teamwizardry.wizardry.api.spell.IModifier;
 import com.teamwizardry.wizardry.api.spell.IRuntimeModifier;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
-import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleEnchantment extends Module implements IModifier, IRuntimeModifier {
     public ModuleEnchantment() {
@@ -21,18 +20,14 @@ public class ModuleEnchantment extends Module implements IModifier, IRuntimeModi
     }
 
     @Override
-    public NBTTagCompound saveToNBT() {
-        return null;
+    public String getDescription()
+    {
+    	return "Attempts to apply the given enchantment to the spell effect.";
     }
-
-    @Override
-    public void readFromNBT(NBTTagCompound tag) {
-
-    }
-
+    
     @Override
     public void apply(AttributeMap map) {
-        map.putModifier(Attribute.COST, new AttributeModifier(Operation.MULTIPLY, 2));
+        map.putModifier(Attribute.MANA, new AttributeModifier(Operation.MULTIPLY, 2));
         map.putModifier(Attribute.BURNOUT, new AttributeModifier(Operation.MULTIPLY, 2));
     }
 }

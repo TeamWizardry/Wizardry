@@ -26,7 +26,7 @@ public class ModuleBlink extends Module {
 
     @Override
     public String getDescription() {
-        return "If no position is set, blink forward 1 block for each fruit. Otherwise, teleport to the set location.";
+        return "If no position is set, blink forward based on the power. Otherwise, teleport to the set location.";
     }
 
     @Override
@@ -36,7 +36,10 @@ public class ModuleBlink extends Module {
         compound.setInteger(POS_X, pos.getX());
         compound.setInteger(POS_Y, pos.getY());
         compound.setInteger(POS_Z, pos.getZ());
+        
         compound.setDouble(POWER, attributes.apply(Attribute.DISTANCE, 1));
+        compound.setDouble(MANA, attributes.apply(Attribute.MANA, 10));
+        compound.setDouble(BURNOUT, attributes.apply(Attribute.BURNOUT, 10));
         return compound;
     }
 

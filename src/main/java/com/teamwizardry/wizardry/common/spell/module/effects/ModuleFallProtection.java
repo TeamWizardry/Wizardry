@@ -6,10 +6,9 @@ import com.teamwizardry.wizardry.api.spell.ModuleType;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleFallProtection extends Module {
-    private int protectionLevel;
-
     public ModuleFallProtection() {
         attributes.addAttribute(Attribute.POWER);
+        attributes.addAttribute(Attribute.DURATION);
     }
 
     @Override
@@ -25,12 +24,10 @@ public class ModuleFallProtection extends Module {
     @Override
     public NBTTagCompound getModuleData() {
         NBTTagCompound compound = super.getModuleData();
-        compound.setInteger(POWER, protectionLevel);
+        compound.setInteger(POWER, (int) attributes.apply(Attribute.POWER, 1));
+        compound.setInteger(DURATION, (int) attributes.apply(Attribute.DURATION, 1));
+        compound.setDouble(MANA, attributes.apply(Attribute.MANA, 10));
+        compound.setDouble(BURNOUT, attributes.apply(Attribute.BURNOUT, 10));
         return compound;
-    }
-
-    public ModuleFallProtection setProtectionLevel(int level) {
-        protectionLevel = level;
-        return this;
     }
 }

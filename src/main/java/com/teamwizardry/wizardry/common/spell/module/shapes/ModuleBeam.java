@@ -17,9 +17,20 @@ public class ModuleBeam extends Module {
     public ModuleType getType() {
         return ModuleType.SHAPE;
     }
+    
+    @Override
+    public String getDescription()
+    {
+    	return "Casts a beam that strikes the first target in a raycast.";
+    }
 
     @Override
     public NBTTagCompound getModuleData() {
+    	NBTTagCompound compound = super.getModuleData();
+    	compound.setDouble(DISTANCE, attributes.apply(Attribute.DISTANCE, 1));
+    	compound.setDouble(SCATTER, attributes.apply(Attribute.SCATTER, 0));
+    	compound.setInteger(PROJ_COUNT, (int) attributes.apply(Attribute.PROJ_COUNT, 1));
+    	compound.setInteger(PIERCE, (int) attributes.apply(Attribute.PIERCE, 0));
         return null;
     }
 }

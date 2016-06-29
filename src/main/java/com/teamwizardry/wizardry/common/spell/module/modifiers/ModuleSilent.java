@@ -16,12 +16,18 @@ public class ModuleSilent extends Module implements IModifier {
     public ModuleType getType() {
         return ModuleType.MODIFIER;
     }
+    
+    @Override
+    public String getDescription()
+    {
+    	return "Causes the spell effect to produce no noise.";
+    }
 
     @Override
     public void apply(AttributeMap map) {
         map.putModifier(Attribute.SILENT, new AttributeModifier(AttributeModifier.Operation.ADD, 1));
 
-        map.putModifier(Attribute.COST, new AttributeModifier(AttributeModifier.Operation.MULTIPLY, 1.1));
+        map.putModifier(Attribute.MANA, new AttributeModifier(AttributeModifier.Operation.MULTIPLY, 1.1));
         map.putModifier(Attribute.BURNOUT, new AttributeModifier(AttributeModifier.Operation.MULTIPLY, 1.1));
     }
 }

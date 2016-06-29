@@ -16,12 +16,18 @@ public class ModuleDuration extends Module implements IModifier {
     public ModuleType getType() {
         return ModuleType.MODIFIER;
     }
+    
+    @Override
+    public String getDescription()
+    {
+    	return "Increases the duration of a shape, effect, or modifier.";
+    }
 
     @Override
     public void apply(AttributeMap map) {
         map.putModifier(Attribute.DURATION, new AttributeModifier(AttributeModifier.Operation.ADD, 1));
 
-        map.putModifier(Attribute.COST, new AttributeModifier(AttributeModifier.Operation.MULTIPLY, 1.1));
+        map.putModifier(Attribute.MANA, new AttributeModifier(AttributeModifier.Operation.MULTIPLY, 1.1));
         map.putModifier(Attribute.BURNOUT, new AttributeModifier(AttributeModifier.Operation.MULTIPLY, 1.1));
     }
 }

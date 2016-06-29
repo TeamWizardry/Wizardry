@@ -19,6 +19,12 @@ public class ModuleBeamModifier extends Module implements IModifier {
     }
 
     @Override
+    public String getDescription()
+    {
+    	return "Increases the distance a beam travels.";
+    }
+    
+    @Override
     public void apply(AttributeMap map) {
         map.putModifier(Attribute.DISTANCE, new AttributeModifier(Operation.ADD, 1));
     }

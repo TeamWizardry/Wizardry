@@ -19,10 +19,16 @@ public class ModulePierce extends Module implements IModifier {
     }
 
     @Override
+    public String getDescription()
+    {
+    	return "Allows the projectile or beam shape to strike additional targets behind the first.";
+    }
+    
+    @Override
     public void apply(AttributeMap map) {
         map.putModifier(Attribute.PIERCE, new AttributeModifier(Operation.ADD, 1));
 
-        map.putModifier(Attribute.COST, new AttributeModifier(Operation.MULTIPLY, 1.6));
+        map.putModifier(Attribute.MANA, new AttributeModifier(Operation.MULTIPLY, 1.6));
         map.putModifier(Attribute.BURNOUT, new AttributeModifier(Operation.MULTIPLY, 1.6));
     }
 }

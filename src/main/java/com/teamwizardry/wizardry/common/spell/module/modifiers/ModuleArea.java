@@ -8,7 +8,6 @@ import com.teamwizardry.wizardry.api.module.attribute.AttributeModifier.Operatio
 import com.teamwizardry.wizardry.api.spell.IModifier;
 import com.teamwizardry.wizardry.api.spell.IRuntimeModifier;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
-import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleArea extends Module implements IModifier, IRuntimeModifier {
     public ModuleArea() {
@@ -21,20 +20,16 @@ public class ModuleArea extends Module implements IModifier, IRuntimeModifier {
     }
 
     @Override
-    public NBTTagCompound saveToNBT() {
-        return null;
+    public String getDescription()
+    {
+    	return "Increases a shape or effect's area of effect.";
     }
-
-    @Override
-    public void readFromNBT(NBTTagCompound tag) {
-
-    }
-
+    
     @Override
     public void apply(AttributeMap map) {
         map.putModifier(Attribute.RADIUS, new AttributeModifier(Operation.ADD, 1));
 
-        map.putModifier(Attribute.COST, new AttributeModifier(Operation.MULTIPLY, 1.5));
+        map.putModifier(Attribute.MANA, new AttributeModifier(Operation.MULTIPLY, 1.5));
         map.putModifier(Attribute.BURNOUT, new AttributeModifier(Operation.MULTIPLY, 1.5));
     }
 }

@@ -18,13 +18,19 @@ public class ModuleCritChance extends Module implements IModifier {
     public ModuleType getType() {
         return ModuleType.MODIFIER;
     }
+    
+    @Override
+    public String getDescription()
+    {
+    	return "Allows a spell effect to critically strike, dealing bonus damage.";
+    }
 
     @Override
     public void apply(AttributeMap map) {
         map.putModifier(Attribute.CRIT_CHANCE, new AttributeModifier(Operation.ADD, 0.1));
 
         // 100% Crit Chance ~
-        map.putModifier(Attribute.COST, new AttributeModifier(Operation.MULTIPLY, 1.5, Priority.LOW));
+        map.putModifier(Attribute.MANA, new AttributeModifier(Operation.MULTIPLY, 1.5, Priority.LOW));
         map.putModifier(Attribute.BURNOUT, new AttributeModifier(Operation.MULTIPLY, 1.5, Priority.LOW));
     }
 }

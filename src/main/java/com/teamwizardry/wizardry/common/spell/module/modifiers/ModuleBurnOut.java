@@ -18,6 +18,12 @@ public class ModuleBurnOut extends Module implements IModifier {
     }
 
     @Override
+    public String getDescription()
+    {
+    	return "Decreases the burnout of a spell shape or effect.";
+    }
+    
+    @Override
     public void apply(AttributeMap map) {
         map.putModifier(Attribute.BURNOUT, new AttributeModifier(AttributeModifier.Operation.ADD, -10, AttributeModifier.Priority.LOWEST));
     }

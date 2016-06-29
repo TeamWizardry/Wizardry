@@ -17,12 +17,18 @@ public class ModulePunch extends Module implements IModifier {
     public ModuleType getType() {
         return ModuleType.MODIFIER;
     }
+    
+    @Override
+    public String getDescription()
+    {
+    	return "Gives a spell effect knockback.";
+    }
 
     @Override
     public void apply(AttributeMap map) {
         map.putModifier(Attribute.KNOCKBACK, new AttributeModifier(Operation.ADD, 0.5));
 
-        map.putModifier(Attribute.COST, new AttributeModifier(Operation.MULTIPLY, 1.1));
+        map.putModifier(Attribute.MANA, new AttributeModifier(Operation.MULTIPLY, 1.1));
         map.putModifier(Attribute.BURNOUT, new AttributeModifier(Operation.MULTIPLY, 1.1));
     }
 }

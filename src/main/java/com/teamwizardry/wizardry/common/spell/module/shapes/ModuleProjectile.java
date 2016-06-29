@@ -19,7 +19,20 @@ public class ModuleProjectile extends Module {
     }
 
     @Override
+    public String getDescription()
+    {
+    	return "Fires a projectile that targets the first entity hit.";
+    }
+    
+    @Override
     public NBTTagCompound getModuleData() {
+    	NBTTagCompound compound = super.getModuleData();
+    	compound.setDouble(SPEED, attributes.apply(Attribute.SPEED, 1));
+    	compound.setDouble(PIERCE, attributes.apply(Attribute.PIERCE, 0));
+    	compound.setDouble(SCATTER, attributes.apply(Attribute.SCATTER, 0));
+    	compound.setInteger(PROJ_COUNT, (int) attributes.apply(Attribute.PROJ_COUNT, 1));
+    	compound.setDouble(MANA, attributes.apply(Attribute.MANA, 10));
+    	compound.setDouble(BURNOUT, attributes.apply(Attribute.BURNOUT, 10));
         return null;
     }
 }

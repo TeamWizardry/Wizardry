@@ -17,11 +17,13 @@ public class ModuleFlame extends Module {
 
     @Override
     public String getDescription() {
-        return "Inflict fire damage for 1 tick. More will increase fire ticks. Will smelt block it touches.";
+        return "Inflict fire damage every tick. Will smelt any block or item it touches.";
     }
 
     @Override
     public NBTTagCompound getModuleData() {
-        return null;
+        NBTTagCompound compound = super.getModuleData();
+        compound.setInteger(DURATION, (int) attributes.apply(Attribute.DURATION, 1));
+        return compound;
     }
 }

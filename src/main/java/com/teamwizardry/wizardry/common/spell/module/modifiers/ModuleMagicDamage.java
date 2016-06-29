@@ -19,10 +19,16 @@ public class ModuleMagicDamage extends Module implements IModifier {
     }
 
     @Override
+    public String getDescription()
+    {
+    	return "Increases the amount of magic damage a spell does.";
+    }
+    
+    @Override
     public void apply(AttributeMap map) {
         map.putModifier(Attribute.DAMAGE, new AttributeModifier(Operation.ADD, 1));
 
-        map.putModifier(Attribute.COST, new AttributeModifier(Operation.MULTIPLY, 1.2));
+        map.putModifier(Attribute.MANA, new AttributeModifier(Operation.MULTIPLY, 1.2));
         map.putModifier(Attribute.BURNOUT, new AttributeModifier(Operation.MULTIPLY, 1.2));
     }
 }

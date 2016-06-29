@@ -7,7 +7,6 @@ import com.teamwizardry.wizardry.api.module.attribute.AttributeModifier;
 import com.teamwizardry.wizardry.api.spell.IModifier;
 import com.teamwizardry.wizardry.api.spell.IRuntimeModifier;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
-import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleSticky extends Module implements IModifier, IRuntimeModifier {
     private int baseCost = 5;
@@ -19,20 +18,16 @@ public class ModuleSticky extends Module implements IModifier, IRuntimeModifier 
     }
 
     @Override
-    public NBTTagCompound saveToNBT() {
-        return null;
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound tag) {
-
+    public String getDescription()
+    {
+    	return "Causes the spell effect to last beyond the instant it activates.";
     }
 
     @Override
     public void apply(AttributeMap map) {
-        map.putModifier(Attribute.COST, new AttributeModifier(AttributeModifier.Operation.MULTIPLY, 1.2));
+        map.putModifier(Attribute.MANA, new AttributeModifier(AttributeModifier.Operation.MULTIPLY, 1.2));
         map.putModifier(Attribute.BURNOUT, new AttributeModifier(AttributeModifier.Operation.MULTIPLY, 1.2));
-        map.putModifier(Attribute.COST, new AttributeModifier(AttributeModifier.Operation.ADD, attributes.apply(Attribute.COST, baseCost), AttributeModifier.Priority.HIGH));
+        map.putModifier(Attribute.MANA, new AttributeModifier(AttributeModifier.Operation.ADD, attributes.apply(Attribute.MANA, baseCost), AttributeModifier.Priority.HIGH));
         map.putModifier(Attribute.BURNOUT, new AttributeModifier(AttributeModifier.Operation.ADD, attributes.apply(Attribute.BURNOUT, baseBurnout), AttributeModifier.Priority.HIGH));
     }
 }

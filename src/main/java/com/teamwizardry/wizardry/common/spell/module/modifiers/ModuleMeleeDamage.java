@@ -19,10 +19,16 @@ public class ModuleMeleeDamage extends Module implements IModifier {
     }
 
     @Override
+    public String getDescription()
+    {
+    	return "Increases the damage of a melee range spell effect";
+    }
+    
+    @Override
     public void apply(AttributeMap map) {
         map.putModifier(Attribute.DAMAGE, new AttributeModifier(Operation.ADD, 1));
 
-        map.putModifier(Attribute.COST, new AttributeModifier(Operation.MULTIPLY, 1.2));
+        map.putModifier(Attribute.MANA, new AttributeModifier(Operation.MULTIPLY, 1.2));
         map.putModifier(Attribute.BURNOUT, new AttributeModifier(Operation.MULTIPLY, 1.2));
     }
 }
