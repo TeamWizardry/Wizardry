@@ -32,6 +32,7 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
 
                 PosObject pos = PosUtils.generateRandomPosition(new PosObject(te.getPos()), 3);
 
+                GL11.glPushMatrix();
                 Minecraft.getMinecraft().getRenderManager().doRenderEntity(item, pos.getX(), pos.getY(), pos.getZ(), ticker, ticker, true);
                 GL11.glPopMatrix();
             }

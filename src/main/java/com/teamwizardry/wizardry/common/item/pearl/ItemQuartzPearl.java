@@ -1,10 +1,13 @@
 package com.teamwizardry.wizardry.common.item.pearl;
 
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.item.IExplodable;
+import com.teamwizardry.wizardry.api.item.IInfusible;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
@@ -21,7 +24,7 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Created by Saad on 6/10/2016.
  */
-public class ItemQuartzPearl extends Infusible {
+public class ItemQuartzPearl extends Item implements IInfusible, IExplodable {
 
     public ItemQuartzPearl() {
         setRegistryName("quartz_pearl");

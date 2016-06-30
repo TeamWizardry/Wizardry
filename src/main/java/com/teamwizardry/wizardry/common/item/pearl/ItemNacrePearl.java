@@ -2,9 +2,11 @@ package com.teamwizardry.wizardry.common.item.pearl;
 
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.IExplodable;
+import com.teamwizardry.wizardry.api.item.IInfusible;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -14,16 +16,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by Saad on 6/28/2016.
  */
-public class ItemNacrePearl extends Infusible implements IExplodable {
-
-    private List<Integer> potions = new ArrayList<>();
+public class ItemNacrePearl extends Item implements IInfusible, IExplodable {
 
     public ItemNacrePearl() {
         setRegistryName("nacre_pearl");
@@ -31,21 +29,10 @@ public class ItemNacrePearl extends Infusible implements IExplodable {
         GameRegistry.register(this);
         setMaxStackSize(1);
         setCreativeTab(Wizardry.tab);
-        addPotions();
     }
 
     private static int intColor(int r, int g, int b) {
         return (r * 65536 + g * 256 + b);
-    }
-
-    private void addPotions() {
-        potions.add(1);
-        potions.add(3);
-        potions.add(5);
-        potions.add(8);
-        potions.add(11);
-        potions.add(12);
-        potions.add(21);
     }
 
     @SideOnly(Side.CLIENT)

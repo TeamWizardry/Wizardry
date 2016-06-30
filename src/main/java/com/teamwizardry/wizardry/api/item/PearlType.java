@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.item.pearl;
+package com.teamwizardry.wizardry.api.item;
 
 /**
  * Created by Saad on 6/30/2016.

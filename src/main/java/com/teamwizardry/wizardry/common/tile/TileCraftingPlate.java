@@ -1,8 +1,14 @@
 package com.teamwizardry.wizardry.common.tile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import com.teamwizardry.librarianlib.client.multiblock.InWorldRender;
+import com.teamwizardry.librarianlib.client.multiblock.StructureMatchResult;
+import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.item.IInfusible;
+import com.teamwizardry.wizardry.api.item.PearlType;
+import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
+import com.teamwizardry.wizardry.common.Structures;
+import com.teamwizardry.wizardry.common.spell.parsing.Parser;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -15,15 +21,10 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.common.util.Constants;
-import com.teamwizardry.librarianlib.client.multiblock.InWorldRender;
-import com.teamwizardry.librarianlib.client.multiblock.StructureMatchResult;
-import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
-import com.teamwizardry.wizardry.common.Structures;
-import com.teamwizardry.wizardry.common.item.pearl.Infusible;
-import com.teamwizardry.wizardry.common.item.pearl.PearlType;
-import com.teamwizardry.wizardry.common.spell.parsing.Parser;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Created by Saad on 6/10/2016.
@@ -114,8 +115,8 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
             List<EntityItem> items = worldObj.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos, pos.add(1, 2, 1)));
             for (EntityItem item : items) {
 
-                if (item.getEntityItem().getItem() instanceof Infusible) {
-                    Infusible pearl = (Infusible) item.getEntityItem().getItem();
+                if (item.getEntityItem().getItem() instanceof IInfusible) {
+                    IInfusible pearl = (IInfusible) item.getEntityItem().getItem();
                     if (pearl.getType(item.getEntityItem()) == PearlType.MUNDANE) {
                         this.pearl = item.getEntityItem();
                         isCrafting = true;
