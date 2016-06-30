@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.tile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -17,6 +18,7 @@ import net.minecraftforge.common.util.Constants;
 import com.teamwizardry.librarianlib.client.multiblock.InWorldRender;
 import com.teamwizardry.librarianlib.client.multiblock.StructureMatchResult;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import com.teamwizardry.wizardry.common.Structures;
 import com.teamwizardry.wizardry.common.item.pearl.Infusible;
@@ -138,9 +140,20 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
                 if (craftingTimeLeft > 0) --craftingTimeLeft;
                 else {
                     Parser spellParser = new Parser(inventory);
-                    NBTTagCompound compound = pearl.getTagCompound();
-                    compound.setTag("Spell", spellParser.parse().getModuleData());
-                    pearl.setTagCompound(compound);
+                    Module parsedSpell = null;
+                    try
+                    {
+                    	while (parsedSpell == null)
+                    		parsedSpell = spellParser.parse();
+                    }
+                    catch(NoSuchElementException e)
+                    {}
+                    if (parsedSpell != null)
+                    {
+                    	NBTTagCompound compound = pearl.getTagCompound();
+                    	compound.setTag("Spell", parsedSpell.getModuleData());
+                    	pearl.setTagCompound(compound);
+                    }
                     isCrafting = false;
                 }
             }
