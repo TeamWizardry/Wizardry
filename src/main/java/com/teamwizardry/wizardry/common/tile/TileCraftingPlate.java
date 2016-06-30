@@ -1,12 +1,7 @@
 package com.teamwizardry.wizardry.common.tile;
 
-import com.teamwizardry.librarianlib.client.multiblock.InWorldRender;
-import com.teamwizardry.librarianlib.client.multiblock.StructureMatchResult;
-import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
-import com.teamwizardry.wizardry.common.Structures;
-import com.teamwizardry.wizardry.common.item.pearl.Infusible;
-import com.teamwizardry.wizardry.common.item.pearl.PearlType;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -19,9 +14,14 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.common.util.Constants;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.teamwizardry.librarianlib.client.multiblock.InWorldRender;
+import com.teamwizardry.librarianlib.client.multiblock.StructureMatchResult;
+import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
+import com.teamwizardry.wizardry.common.Structures;
+import com.teamwizardry.wizardry.common.item.pearl.Infusible;
+import com.teamwizardry.wizardry.common.item.pearl.PearlType;
+import com.teamwizardry.wizardry.common.spell.parsing.Parser;
 
 /**
  * Created by Saad on 6/10/2016.
@@ -137,7 +137,10 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
             if (isCrafting) {
                 if (craftingTimeLeft > 0) --craftingTimeLeft;
                 else {
-                    // TODO: OUTPUT INFUSED PEARL HERE
+                    Parser spellParser = new Parser(inventory);
+                    NBTTagCompound compound = pearl.getTagCompound();
+                    compound.setTag("Spell", spellParser.parse().getModuleData());
+                    pearl.setTagCompound(compound);
                     isCrafting = false;
                 }
             }
