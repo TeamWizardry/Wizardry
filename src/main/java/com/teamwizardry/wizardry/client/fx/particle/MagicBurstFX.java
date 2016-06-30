@@ -1,12 +1,10 @@
-package com.teamwizardry.wizardry.client.particle;
+package com.teamwizardry.wizardry.client.fx.particle;
 
 import com.teamwizardry.librarianlib.client.fx.particle.ParticleRenderQueue;
 import com.teamwizardry.librarianlib.client.fx.particle.QueuedParticle;
-import com.teamwizardry.librarianlib.client.fx.shader.ShaderCallback;
 import com.teamwizardry.librarianlib.client.fx.shader.ShaderHelper;
 import com.teamwizardry.wizardry.api.util.misc.Matrix4;
-import com.teamwizardry.wizardry.client.Shaders;
-import com.teamwizardry.wizardry.client.Shaders.BurstShader;
+import com.teamwizardry.wizardry.client.fx.Shaders;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
@@ -36,23 +34,20 @@ public class MagicBurstFX extends QueuedParticle {
             GlStateManager.color(1, 1, 1, 1);
             GlStateManager.enableBlend();
             GlStateManager.shadeModel(GL11.GL_SMOOTH);
-            ShaderHelper.useShader(Shaders.burst, new ShaderCallback<BurstShader>() {
-                @Override
-                public void call(BurstShader shader) {
+            ShaderHelper.useShader(Shaders.burst, shader -> {
 //					int count = ARBShaderObjects.glGetUniformLocationARB(shader.getGlName(), "rayFade");
 //					ARBShaderObjects.glUniform1iARB(count, 2);
-                    if (shader.count != null)
-                        shader.count.set(5);
+                if (shader.count != null)
+                    shader.count.set(5);
 //					shader.count.set(10);
-                    if (shader.rotationSpeed != null)
-                        shader.rotationSpeed.set(3);
+                if (shader.rotationSpeed != null)
+                    shader.rotationSpeed.set(3);
 //					shader.glowColor.set(1, 1, 1, 1);
 //					shader.centerColor.set(0, 1, 1, 1);
 //					shader.rayFade.set(2);
 //					shader.glowFade.set(0.5);
 //					shader.lengthRandomness.set(0.4);
 //					shader.centerRadius.set(0.05);
-                }
             });
             tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
             for (MagicBurstFX fx : renderQueue) {

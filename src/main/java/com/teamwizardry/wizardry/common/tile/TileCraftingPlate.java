@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.common.tile;
 import com.teamwizardry.librarianlib.client.multiblock.InWorldRender;
 import com.teamwizardry.librarianlib.client.multiblock.StructureMatchResult;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.client.particle.SparkleFX;
+import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import com.teamwizardry.wizardry.common.Structures;
 import com.teamwizardry.wizardry.common.item.pearl.Infusible;
 import com.teamwizardry.wizardry.common.item.pearl.PearlType;

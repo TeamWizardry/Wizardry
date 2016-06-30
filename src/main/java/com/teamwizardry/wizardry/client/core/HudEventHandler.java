@@ -14,16 +14,14 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 /**
  * Created by Saad on 6/20/2016.
  */
-public class HudEventHandler {
+public class HudEventHandler extends Gui {
 
-    private final ResourceLocation texture = new ResourceLocation(Wizardry.MODID, "textures/bookcomponents/book/sliders.png");
+    private final ResourceLocation texture = new ResourceLocation(Wizardry.MODID, "textures/gui/book/sliders.png");
 
-    // TODO: Textures refuse to render. Everything else renders properly
     @SubscribeEvent
     public void renderHud(RenderGameOverlayEvent.Post event) {
         Minecraft mc = Minecraft.getMinecraft();
         ItemStack stack = Minecraft.getMinecraft().thePlayer.getActiveItemStack();
-        //       if (stack == null || stack.getItem() != ModItems.PEARL_QUARTZ) return;
 
         ScaledResolution resolution = event.getResolution();
         int width = resolution.getScaledWidth();
@@ -40,7 +38,7 @@ public class HudEventHandler {
             mc.renderEngine.bindTexture(texture);
             Minecraft.getMinecraft().fontRendererObj.drawStringWithShadow("LOREM IPSUM DOLOR SIT AMET", left, top, 0);
             //Gui.drawRect(left, top, 50, 50, Color.BLACK.getRGB());
-            Gui.drawModalRectWithCustomSizedTexture(0, 0, 0, 0, 0, 0, 100, 50);
+            drawTexturedModalRect(left, top, 0, 0, 100, 50);
             GlStateManager.popMatrix();
         }
     }

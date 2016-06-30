@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.common.fluid;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.IExplodable;
 import com.teamwizardry.wizardry.api.trackerobject.BookTrackerObject;
-import com.teamwizardry.wizardry.client.particle.SparkleFX;
+import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import com.teamwizardry.wizardry.init.ModSounds;
 import io.netty.util.internal.ThreadLocalRandom;
 import net.minecraft.block.material.Material;

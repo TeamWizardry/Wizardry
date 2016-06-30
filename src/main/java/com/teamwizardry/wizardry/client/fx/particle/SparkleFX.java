@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.client.particle;
+package com.teamwizardry.wizardry.client.fx.particle;
 
 import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.client.Minecraft;
@@ -7,7 +7,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
-import java.awt.*;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -20,7 +19,7 @@ public class SparkleFX extends Particle {
     public ResourceLocation texture = new ResourceLocation(Wizardry.MODID, "particles/sparkle");
     private double jitterX, jitterY, jitterZ;
     private int jitterChance;
-    private boolean fadeOut = true, randomSizes = false, oscillateColor = false;
+    private boolean fadeOut = true, randomSizes = false;
 
     public SparkleFX(World worldIn, double x, double y, double z, float alpha, float scale, int age, boolean fadeOut) {
         super(worldIn, x, y, z);
@@ -71,16 +70,21 @@ public class SparkleFX extends Particle {
         if (ThreadLocalRandom.current().nextBoolean()) {
             double fraction = ThreadLocalRandom.current().nextDouble(0.25, 1 / 0.25);
             particleRed = (int) Math.round(Math.min(255, particleRed + 255 * fraction));
+        }
+        if (ThreadLocalRandom.current().nextBoolean()) {
+            double fraction = ThreadLocalRandom.current().nextDouble(0.25, 1 / 0.25);
             particleGreen = (int) Math.round(Math.min(255, particleGreen + 255 * fraction));
+        }
+        if (ThreadLocalRandom.current().nextBoolean()) {
+            double fraction = ThreadLocalRandom.current().nextDouble(0.25, 1 / 0.25);
             particleBlue = (int) Math.round(Math.min(255, particleBlue + 255 * fraction));
         }
     }
 
     public void randomizeColor(int minRange, int maxRange) {
-        Color color = new Color(ThreadLocalRandom.current().nextInt(minRange, maxRange), ThreadLocalRandom.current().nextInt(minRange, maxRange), ThreadLocalRandom.current().nextInt(minRange, maxRange));
-        this.particleRed = color.getRed();
-        this.particleGreen = color.getGreen();
-        this.particleBlue = color.getBlue();
+        this.particleRed = ThreadLocalRandom.current().nextInt(minRange, maxRange);
+        this.particleGreen = ThreadLocalRandom.current().nextInt(minRange, maxRange);
+        this.particleBlue = ThreadLocalRandom.current().nextInt(minRange, maxRange);
     }
 
     public void setRandomizedSizes(boolean randomizedSizes) {

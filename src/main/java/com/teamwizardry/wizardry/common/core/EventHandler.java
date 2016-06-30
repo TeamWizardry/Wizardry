@@ -4,7 +4,7 @@ import com.teamwizardry.librarianlib.api.util.misc.PosUtils;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.trackerobject.BookTrackerObject;
 import com.teamwizardry.wizardry.api.trackerobject.RedstoneTrackerObject;
-import com.teamwizardry.wizardry.client.particle.SparkleFX;
+import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
 import io.netty.util.internal.ThreadLocalRandom;
@@ -47,6 +47,7 @@ public class EventHandler {
     @SubscribeEvent
     public void tickEvent(TickEvent.WorldTickEvent event) {
         // WARNING: VOLATILE CODE. DO NOT TOUCH. //
+        // Vinteum spawning //
         ArrayList<RedstoneTrackerObject> expiredRedstone = new ArrayList<>();
         ArrayList<EntityItem> vinteumList = new ArrayList<>();
         for (RedstoneTrackerObject redstone : redstoneTracker)
@@ -85,6 +86,7 @@ public class EventHandler {
         vinteumList.clear();
         redstoneTracker.removeAll(expiredRedstone);
         // WARNING: VOLATILE CODE. DO NOT TOUCH. //
+
 
         ArrayList<BookTrackerObject> expiredBooks = new ArrayList<>();
         for (BookTrackerObject book : bookTracker) {

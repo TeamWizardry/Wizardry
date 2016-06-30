@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.common.item.pearl;
 
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.client.particle.SparkleFX;
+import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;

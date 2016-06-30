@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.client;
+package com.teamwizardry.wizardry.client.fx;
 
 import com.teamwizardry.librarianlib.client.fx.shader.Shader;
 import com.teamwizardry.librarianlib.client.fx.shader.ShaderHelper;

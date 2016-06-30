@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.common.proxy;
 
-import com.teamwizardry.wizardry.client.particle.MagicBurstFX;
-import com.teamwizardry.wizardry.client.particle.SparkleFX;
+import com.teamwizardry.wizardry.client.fx.particle.MagicBurstFX;
+import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
