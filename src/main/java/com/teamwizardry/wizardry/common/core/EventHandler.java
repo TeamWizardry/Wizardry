@@ -76,7 +76,6 @@ public class EventHandler {
                     fizz.setMotion(0, ThreadLocalRandom.current().nextDouble(0.05, 0.2), 0);
                     fizz.setColor(128, 0, 128);
                     fizz.randomlyOscillateColor();
-
                 }
             }
         for (EntityItem vinteum : vinteumList) {

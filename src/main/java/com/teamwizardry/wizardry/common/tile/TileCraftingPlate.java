@@ -5,8 +5,8 @@ import com.teamwizardry.librarianlib.client.multiblock.StructureMatchResult;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.client.particle.SparkleFX;
 import com.teamwizardry.wizardry.common.Structures;
-import com.teamwizardry.wizardry.common.item.pearl.ItemQuartzPearl;
-import com.teamwizardry.wizardry.init.ModItems;
+import com.teamwizardry.wizardry.common.item.pearl.Infusible;
+import com.teamwizardry.wizardry.common.item.pearl.PearlType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -29,9 +29,8 @@ import java.util.List;
 public class TileCraftingPlate extends TileEntity implements ITickable {
 
     private ArrayList<ItemStack> inventory = new ArrayList<>();
-    private boolean structureComplete = false;
-    private boolean crafting = false, finishedCrafting = false, recipeAvailable = false;
-    private int craftingProgress = 0, craftingTime = 200;
+    private boolean structureComplete = false, isCrafting = false;
+    private int craftingTime = 100, craftingTimeLeft = 100;
     private ItemStack pearl;
     private IBlockState state;
 
@@ -47,25 +46,9 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
             InWorldRender.INSTANCE.unsetStructure();
             setStructureComplete(true);
         } else {
-        	InWorldRender.INSTANCE.setStructure(Structures.craftingAltar, this.pos);
+            InWorldRender.INSTANCE.setStructure(Structures.craftingAltar, this.pos);
             setStructureComplete(false);
         }
-    }
-
-    public boolean isStructureComplete() {
-        return structureComplete;
-    }
-
-    public void setStructureComplete(boolean structureComplete) {
-        this.structureComplete = structureComplete;
-    }
-
-    public ItemStack getPearl() {
-        return pearl;
-    }
-
-    public int getCraftingTime() {
-        return craftingTime;
     }
 
     @Override
@@ -78,16 +61,8 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
             for (int i = 0; i < list.tagCount(); i++)
                 inventory.add(ItemStack.loadItemStackFromNBT(list.getCompoundTagAt(i)));
         }
-        if (compound.hasKey("PEARL_QUARTZ"))
-            pearl = ItemStack.loadItemStackFromNBT(compound.getCompoundTag("PEARL_QUARTZ"));
-        if (compound.hasKey("crafting"))
-            crafting = compound.getBoolean("crafting");
-        if (compound.hasKey("finishedCrafting"))
-            finishedCrafting = compound.getBoolean("finishedCrafting");
-        if (compound.hasKey("craftingProgress"))
-            craftingProgress = compound.getInteger("craftingProgress");
-        if (compound.hasKey("craftingTime"))
-            craftingProgress = compound.getInteger("craftingTime");
+        if (compound.hasKey("pearl"))
+            pearl = ItemStack.loadItemStackFromNBT(compound.getCompoundTag("pearl"));
     }
 
     @Override
@@ -101,11 +76,7 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
                 list.appendTag(anInventory.writeToNBT(new NBTTagCompound()));
             compound.setTag("inventory", list);
         }
-        if (pearl != null) compound.setTag("PEARL_QUARTZ", pearl.writeToNBT(new NBTTagCompound()));
-        compound.setBoolean("crafting", crafting);
-        compound.setBoolean("finishedCrafting", finishedCrafting);
-        compound.setInteger("craftingProgress", craftingProgress);
-        compound.setInteger("craftingTime", craftingTime);
+        if (pearl != null) compound.setTag("pearl", pearl.writeToNBT(new NBTTagCompound()));
         return compound;
     }
 
@@ -137,58 +108,59 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
     @Override
     public void update() {
         if (isStructureComplete()) {
+            boolean update = false;
             List<EntityItem> items = worldObj.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos, pos.add(1, 2, 1)));
             for (EntityItem item : items) {
-                inventory.add(item.getEntityItem());
-                worldObj.removeEntity(item);
 
-                if (item.getEntityItem().getItem() == ModItems.PEARL_QUARTZ) {
-                    ItemQuartzPearl pearl = (ItemQuartzPearl) item.getEntityItem().getItem();
-                    if (pearl.getPearlType(item.getEntityItem()).equals("mundane")) {
+                if (item.getEntityItem().getItem() instanceof Infusible) {
+                    Infusible pearl = (Infusible) item.getEntityItem().getItem();
+                    if (pearl.getType(item.getEntityItem()) == PearlType.MUNDANE) {
                         this.pearl = item.getEntityItem();
-                        crafting = true;
-                        craftingTime = (inventory.size() - 1) * 100;
-                        craftingProgress = 0;
+                        isCrafting = true;
+                        craftingTime = inventory.size() * 100;
+                        craftingTimeLeft = inventory.size() * 100;
                     }
-                }
+                } else inventory.add(item.getEntityItem());
+
+                update = true;
+                worldObj.removeEntity(item);
             }
 
-            if (!items.isEmpty())
-                worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
+            if (update) worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
 
             for (int i = 0; i < 5; i++) {
                 SparkleFX ambient = Wizardry.proxy.spawnParticleSparkle(worldObj, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.5F, 0.5F, 30, 8, 8, 8, true);
                 ambient.jitter(8, 0.1, 0.1, 0.1);
                 ambient.randomDirection(0.2, 0.2, 0.2);
-
-                    /*if (!inventory.isEmpty()) {
-                        SparkleFX fog = Wizardry.proxy.spawnParticleSparkle(worldObj, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 1F, 1F, 30);
-                        fog.randomDirection(0.5, 0, 0.5);
-                        fog.setMotion(0, -0.5, 0);
-                    }*/
             }
 
-            // Minecraft.getMinecraft().thePlayer.sendChatMessage(craftingProgress + "/" + craftingTime + " - " + isCrafting());
-
-            if (isCrafting()) {
-                if (craftingProgress < craftingTime) {
-                    craftingProgress++;
-
-                } else {
-                    craftingProgress = 0;
-                    crafting = false;
-                    finishedCrafting = true;
-                    if (pearl != null) ((ItemQuartzPearl) pearl.getItem()).addSpellItems(pearl, inventory);
+            if (isCrafting) {
+                if (craftingTimeLeft > 0) --craftingTimeLeft;
+                else {
+                    // TODO: OUTPUT INFUSED PEARL HERE
+                    isCrafting = false;
                 }
             }
         }
     }
 
-    public int getCraftingProgress() {
-        return craftingProgress;
+    public boolean isStructureComplete() {
+        return structureComplete;
+    }
+
+    public void setStructureComplete(boolean structureComplete) {
+        this.structureComplete = structureComplete;
+    }
+
+    public ItemStack getPearl() {
+        return pearl;
+    }
+
+    public int getCraftingTime() {
+        return craftingTime;
     }
 
     public boolean isCrafting() {
-        return crafting;
+        return isCrafting;
     }
 }

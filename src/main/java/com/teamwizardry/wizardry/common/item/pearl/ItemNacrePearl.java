@@ -2,18 +2,11 @@ package com.teamwizardry.wizardry.common.item.pearl;
 
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.IExplodable;
-import com.teamwizardry.wizardry.client.particle.SparkleFX;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -23,13 +16,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by Saad on 6/28/2016.
  */
-public class ItemNacrePearl extends Item implements IExplodable {
+public class ItemNacrePearl extends Infusible implements IExplodable {
 
     private List<Integer> potions = new ArrayList<>();
 
@@ -114,43 +106,9 @@ public class ItemNacrePearl extends Item implements IExplodable {
         } else setDefaultColor(stack, min, max);
     }
 
-    public void addSpellItems(ItemStack stack, ArrayList<ItemStack> items) {
-        NBTTagCompound compound = new NBTTagCompound();
-        if (items.size() > 0) {
-            NBTTagList list = new NBTTagList();
-            for (ItemStack anInventory : items)
-                list.appendTag(anInventory.writeToNBT(new NBTTagCompound()));
-            compound.setTag("inventory", list);
-        }
-        compound.setString("type", String.valueOf("infused"));
-        stack.setTagCompound(compound);
-    }
-
-    public String getPearlType(ItemStack stack) {
-        if (stack.hasTagCompound())
-            if (stack.getTagCompound().hasKey("type"))
-                return stack.getTagCompound().getString("type");
-            else return "mundane";
-        else return "mundane";
-    }
-
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldS, ItemStack newS, boolean slotChanged) {
         return slotChanged;
-    }
-
-    public void explode(Entity entityIn) {
-        Random rand = new Random();
-        int range = 5;
-        List<EntityLivingBase> entitys = entityIn.worldObj.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(entityIn.posX - range, entityIn.posY - range, entityIn.posZ - range, entityIn.posX + range, entityIn.posY + range, entityIn.posZ + range));
-        for (EntityLivingBase e : entitys)
-            e.addPotionEffect(new PotionEffect(Potion.getPotionById(potions.get(rand.nextInt(potions.size()))), rand.nextInt(30) * 20, rand.nextInt(2) + 1));
-
-        for (int i = 0; i < 300; i++) {
-            SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(entityIn.worldObj, entityIn.posX, entityIn.posY + 0.5, entityIn.posZ, 1, 1F, 30, false);
-            fizz.jitter(10, 0.1, 0.1, 0.1);
-            fizz.randomDirection(0.3, 0.3, 0.3);
-        }
     }
 
     @Override
