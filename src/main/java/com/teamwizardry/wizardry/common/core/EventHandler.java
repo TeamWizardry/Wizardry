@@ -111,7 +111,6 @@ public class EventHandler {
                 }
 
                 EntityItem ei = new EntityItem(book.getWorld(), book.getX(), book.getY() + 10, book.getZ(), new ItemStack(ModItems.PHYSICS_BOOK));
-                ei.motionY = 0.3;
                 book.getWorld().spawnEntityInWorld(ei);
                 expiredBooks.add(book);
             }
