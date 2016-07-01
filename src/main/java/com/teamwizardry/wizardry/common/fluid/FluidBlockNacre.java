@@ -22,7 +22,7 @@ public class FluidBlockNacre extends BlockFluidClassic {
     public FluidBlockNacre() {
         super(FluidNacre.instance, Material.WATER);
         GameRegistry.registerBlock(this, "nacre");
-        this.setQuantaPerBlock(6);
+        this.setQuantaPerBlock(1);
         this.setUnlocalizedName("nacre");
     }
     
