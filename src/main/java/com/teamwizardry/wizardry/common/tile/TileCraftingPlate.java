@@ -1,8 +1,14 @@
 package com.teamwizardry.wizardry.common.tile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import com.teamwizardry.librarianlib.client.multiblock.InWorldRender;
+import com.teamwizardry.librarianlib.client.multiblock.StructureMatchResult;
+import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.item.IInfusible;
+import com.teamwizardry.wizardry.api.item.PearlType;
+import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
+import com.teamwizardry.wizardry.common.Structures;
+import com.teamwizardry.wizardry.common.spell.parsing.Parser;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -15,15 +21,10 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.common.util.Constants;
-import com.teamwizardry.librarianlib.client.multiblock.InWorldRender;
-import com.teamwizardry.librarianlib.client.multiblock.StructureMatchResult;
-import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.item.IInfusible;
-import com.teamwizardry.wizardry.api.item.PearlType;
-import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
-import com.teamwizardry.wizardry.common.Structures;
-import com.teamwizardry.wizardry.common.spell.parsing.Parser;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Created by Saad on 6/10/2016.
@@ -130,29 +131,25 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
 
             if (update) worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
 
-            for (int i = 0; i < 5; i++) {
-                SparkleFX ambient = Wizardry.proxy.spawnParticleSparkle(worldObj, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.5F, 0.5F, 30, 8, 8, 8, true);
+            SparkleFX ambient = Wizardry.proxy.spawnParticleSparkle(worldObj, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.5F, 0.5F, 100, 8, 8, 8, true);
                 ambient.jitter(8, 0.1, 0.1, 0.1);
                 ambient.randomDirection(0.2, 0.2, 0.2);
-            }
 
             if (isCrafting) {
                 if (craftingTimeLeft > 0) --craftingTimeLeft;
                 else {
                     Parser spellParser = new Parser(inventory);
                     Module parsedSpell = null;
-                    try
-                    {
-                    	while (parsedSpell == null)
-                    		parsedSpell = spellParser.parse();
+                    try {
+                        while (parsedSpell == null)
+                            parsedSpell = spellParser.parse();
+                    } catch (NoSuchElementException e) {
+                        e.printStackTrace();
                     }
-                    catch (NoSuchElementException e)
-                    {}
-                    if (parsedSpell != null)
-                    {
-                    	NBTTagCompound compound = pearl.getTagCompound();
-                    	compound.setTag("Spell", parsedSpell.getModuleData());
-                    	pearl.setTagCompound(compound);
+                    if (parsedSpell != null) {
+                        NBTTagCompound compound = pearl.getTagCompound();
+                        compound.setTag("Spell", parsedSpell.getModuleData());
+                        pearl.setTagCompound(compound);
                     }
                     inventory.clear();
                     isCrafting = false;
