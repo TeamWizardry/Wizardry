@@ -1,9 +1,9 @@
 package com.teamwizardry.wizardry.client.fx.particle;
 
+import com.teamwizardry.librarianlib.api.util.math.Matrix4;
 import com.teamwizardry.librarianlib.client.fx.particle.ParticleRenderQueue;
 import com.teamwizardry.librarianlib.client.fx.particle.QueuedParticle;
 import com.teamwizardry.librarianlib.client.fx.shader.ShaderHelper;
-import com.teamwizardry.wizardry.api.util.misc.Matrix4;
 import com.teamwizardry.wizardry.client.fx.Shaders;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;

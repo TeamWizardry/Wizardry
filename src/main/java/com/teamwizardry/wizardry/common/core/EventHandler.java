@@ -15,6 +15,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -87,29 +88,32 @@ public class EventHandler {
         redstoneTracker.removeAll(expiredRedstone);
         // WARNING: VOLATILE CODE. DO NOT TOUCH. //
 
-
         ArrayList<BookTrackerObject> expiredBooks = new ArrayList<>();
         for (BookTrackerObject book : bookTracker) {
+            book.setCountdown(book.getCountdown() + 1);
 
-            book.getItem().setInvisible(true);
-            book.getItem().setInfinitePickupDelay();
+            if (book.getQueue() < book.getHelix().size()) {
+                Vec3d location = book.getHelix().get(book.getQueue());
 
-            if (book.isStartCountDown() && !book.getItem().isDead) {
-                if (book.getCountdown() >= 500) {
-
-                    book.getWorld().spawnEntityInWorld(new EntityItem(book.getWorld(), book.getX(), book.getY(), book.getZ(), new ItemStack(ModItems.PHYSICS_BOOK)));
-                    book.setStartCountDown(false);
-                    book.getItem().setDead();
-                    expiredBooks.add(book);
-                } else {
-                    book.setCountdown(book.getCountdown() + 1);
-                    book.setY(book.getY() + 0.005);
-                    if (book.itemExists()) {
-                        SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(event.world, book.getX(), book.getY() + 0.5, book.getZ(), 1, 1F, 10, false);
-                        fizz.jitter(10, 0.05, 0.05, 0.05);
-                        fizz.randomDirection(0.05, 0.05, 0.05);
-                    }
+                for (int i = 0; i < 10; i++) {
+                    SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(event.world, location.xCoord, location.yCoord, location.zCoord, 0.5F, 0.5F, 100, false);
+                    fizz.jitter(10, 0.01, 0, 0.01);
+                    fizz.randomDirection(0.05, 0, 0.05);
+                    fizz.setMotion(0, ThreadLocalRandom.current().nextDouble(-0.2, -0.05), 0);
                 }
+                book.setQueue(book.getQueue() + 1);
+            } else {
+                for (int i = 0; i < 600; i++) {
+                    SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(event.world, book.getX(), book.getY() + 10, book.getZ(), 0.5F, 0.5F, 200, true);
+                    fizz.jitter(10, 0.01, 0, 0.01);
+                    fizz.randomDirection(0.25, 0.01, 0.25);
+                    fizz.setMotion(0, ThreadLocalRandom.current().nextDouble(-0.2, -0.05), 0);
+                }
+
+                EntityItem ei = new EntityItem(book.getWorld(), book.getX(), book.getY() + 10, book.getZ(), new ItemStack(ModItems.PHYSICS_BOOK));
+                ei.motionY = 0.3;
+                book.getWorld().spawnEntityInWorld(ei);
+                expiredBooks.add(book);
             }
         }
         bookTracker.removeAll(expiredBooks);

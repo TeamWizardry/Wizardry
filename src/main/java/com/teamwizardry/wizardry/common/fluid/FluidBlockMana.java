@@ -91,7 +91,10 @@ public class FluidBlockMana extends BlockFluidClassic {
 
                 if (stack.getItem() == Items.BOOK) {
                     BookTrackerObject book = new BookTrackerObject(ei);
-                    if (!bookTracker.contains(book)) bookTracker.add(book);
+                    if (!bookTracker.contains(book)) {
+                        bookTracker.add(book);
+                        ei.setDead();
+                    }
                 }
             }
         }

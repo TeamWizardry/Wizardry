@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.api.gui;
 
 import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTBase;
@@ -64,5 +65,10 @@ public class WizardHandler {
 
             } else tickCooldown++;
         }
+    }
+
+    @SubscribeEvent
+    public void spellCast(SpellCastEvent event) {
+        // TODO
     }
 }
