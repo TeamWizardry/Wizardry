@@ -14,5 +14,7 @@ public class Achievements {
 
     public static void init() {
         PHYSICSBOOK = new ModAchievement("physicsBook", 0, 0, ModItems.PHYSICS_BOOK, null);
+        MANAPOOL = new ModAchievement("manapool", 0, 1, ModItems.PEARL_MANA, null);
+        VINTEUMDUST = new ModAchievement("vinteumdust", 0, 1, ModItems.VINTEUM_DUST, null);
     }
 }
