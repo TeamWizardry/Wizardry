@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry;
 
 import com.teamwizardry.wizardry.api.Config;
 import com.teamwizardry.wizardry.api.gui.WizardHandler;
+import com.teamwizardry.wizardry.api.module.ModuleList;
 import com.teamwizardry.wizardry.api.util.misc.Logs;
 import com.teamwizardry.wizardry.client.gui.GuiHandler;
 import com.teamwizardry.wizardry.common.core.EventHandler;

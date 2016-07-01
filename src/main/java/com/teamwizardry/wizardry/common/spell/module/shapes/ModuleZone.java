@@ -29,6 +29,6 @@ public class ModuleZone extends Module {
     	compound.setInteger(DURATION, (int) attributes.apply(Attribute.DURATION, 1));
     	compound.setDouble(MANA, attributes.apply(Attribute.MANA, 10));
     	compound.setDouble(BURNOUT, attributes.apply(Attribute.BURNOUT, 10));
-        return null;
+        return compound;
     }
 }

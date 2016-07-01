@@ -80,6 +80,7 @@ public abstract class Module
 		NBTTagList list = new NBTTagList();
 		for (Module module : children)
 			list.appendTag(module.getModuleData());
+		compound.setTag(MODULES, list);
 		return compound;
 	}
 
@@ -127,34 +128,89 @@ public abstract class Module
 	 */
 	public boolean accept(Module other)
 	{
-		if (other instanceof IModifier)
+		boolean accept = false;
+		switch (this.getType())
 		{
-			IModifier modifier = ((IModifier) other);
-			attributes.beginCaputure();
-			modifier.apply(attributes);
-
-			if (modifier.doesFallback() && attributes.didHaveInvalid())
-				attributes.endCapture(false); // discard changes and don't
-												// return true so it passes on
-												// to subclass
-			else
-			{
-				attributes.endCapture(true); // save changes
-				return true;// we don't want to handle the module normally, so
-							// return that we handled it
-			}
+			case BOOLEAN:
+				if (other instanceof IModifier)
+				{
+					accept = addModifier((IModifier) other);
+					if (other instanceof IRuntimeModifier)
+					{
+						children.add(other);
+						accept = true;
+					}
+				}
+				else
+				{
+					children.add(other);
+					accept = true;
+				}
+				return accept;
+			case EFFECT:
+				if (other instanceof IModifier)
+					accept = addModifier((IModifier) other);
+				if (other instanceof IRuntimeModifier)
+				{
+					children.add(other);
+					accept = true;
+				}
+				return accept;
+			case EVENT:
+				if (other.getType() == ModuleType.SHAPE || other.getType() == ModuleType.EFFECT)
+				{
+					children.add(other);
+					return true;
+				}
+				break;
+			case MODIFIER:
+				if (other instanceof IModifier)
+					accept = addModifier((IModifier) other);
+				if (other instanceof IRuntimeModifier)
+				{
+					children.add(other);
+					accept = true;
+				}
+				return accept;
+			case SHAPE:
+				if (other.getType() != ModuleType.SHAPE)
+				{
+					if (other instanceof IModifier)
+					{
+						accept = addModifier((IModifier) other);
+						if (other instanceof IRuntimeModifier)
+						{
+							children.add(other);
+							accept = true;
+						}
+					}
+					else
+					{
+						children.add(other);
+						accept = true;
+					}
+					return accept;
+				}
+				break;
 		}
-		if (other instanceof IRuntimeModifier)
-			children.add(other);
-		if (this.getType() == ModuleType.EVENT)
-			if (other.getType() == ModuleType.SHAPE)
-				children.add(other);
-		if (this.getType() == ModuleType.BOOLEAN)
-			if (other.getType() == ModuleType.BOOLEAN || other.getType() == ModuleType.EVENT)
-				children.add(other);
-		if (this.getType() == ModuleType.SHAPE)
-			if (other.getType() == ModuleType.BOOLEAN || other.getType() == ModuleType.EFFECT || other.getType() == ModuleType.EVENT)
-				children.add(other);
+		return false;
+	}
+	
+	private boolean addModifier(IModifier modifier)
+	{
+		attributes.beginCaputure();
+		modifier.apply(attributes);
+
+		if (modifier.doesFallback() && attributes.didHaveInvalid())
+			attributes.endCapture(false); // discard changes and don't
+											// return true so it passes on
+											// to subclass
+		else
+		{
+			attributes.endCapture(true); // save changes
+			return true;// we don't want to handle the module normally, so
+						// return that we handled it
+		}
 		return false;
 	}
 

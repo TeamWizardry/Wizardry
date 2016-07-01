@@ -6,10 +6,9 @@ import com.teamwizardry.wizardry.api.module.attribute.AttributeMap;
 import com.teamwizardry.wizardry.api.module.attribute.AttributeModifier;
 import com.teamwizardry.wizardry.api.module.attribute.AttributeModifier.Operation;
 import com.teamwizardry.wizardry.api.spell.IModifier;
-import com.teamwizardry.wizardry.api.spell.IRuntimeModifier;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 
-public class ModuleArea extends Module implements IModifier, IRuntimeModifier {
+public class ModuleArea extends Module implements IModifier {
     public ModuleArea() {
         canHaveChildren = false;
     }

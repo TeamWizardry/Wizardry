@@ -21,6 +21,6 @@ public class ModuleWater extends Module {
     	NBTTagCompound compound = super.getModuleData();
     	compound.setDouble(MANA, attributes.apply(Attribute.MANA, 10));
     	compound.setDouble(BURNOUT, attributes.apply(Attribute.BURNOUT, 10));
-        return null;
+        return compound;
     }
 }
