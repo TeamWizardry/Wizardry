@@ -4,6 +4,8 @@ import com.teamwizardry.librarianlib.api.LibrarianLog;
 import com.teamwizardry.wizardry.api.Config;
 import com.teamwizardry.wizardry.api.gui.WizardHandler;
 import com.teamwizardry.wizardry.client.gui.GuiHandler;
+import com.teamwizardry.wizardry.common.achievement.AchievementTriggerer;
+import com.teamwizardry.wizardry.common.achievement.Achievements;
 import com.teamwizardry.wizardry.common.core.EventHandler;
 import com.teamwizardry.wizardry.common.fluid.Fluids;
 import com.teamwizardry.wizardry.common.proxy.CommonProxy;
@@ -79,8 +81,10 @@ public class Wizardry {
         ModBlocks.init();
         Fluids.preInit();
         ModRecipes.initCrafting();
+        Achievements.init();
 
         MinecraftForge.EVENT_BUS.register(new EventHandler());
+        MinecraftForge.EVENT_BUS.register(new AchievementTriggerer());
 
         proxy.loadModels();
 

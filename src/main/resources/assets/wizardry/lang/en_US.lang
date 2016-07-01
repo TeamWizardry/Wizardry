@@ -17,3 +17,6 @@ gui.physicsbook.defaulttitle=Physics Book
 
 fluid.nacre_fluid=Nacre
 fluid.mana_fluid=Mana
+
+achievement.physicsBook=NEEEEEEEEEEERD!
+achievement.physicsBook.desc=Acquire a physics book
