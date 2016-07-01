@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.api.trackerobject;
 
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 /**
  * Created by Saad on 6/27/2016.
@@ -9,6 +10,7 @@ import net.minecraft.util.math.BlockPos;
 public class RedstoneTrackerObject {
 
     private BlockPos pos;
+    private World world;
     private EntityItem item;
     private int countdown;
     private boolean startCountDown = false;
@@ -18,6 +20,7 @@ public class RedstoneTrackerObject {
         item = entityItem;
         stackSize = entityItem.getEntityItem().stackSize;
         countdown = 0;
+        world = entityItem.worldObj;
         pos = entityItem.getPosition();
     }
 
@@ -55,5 +58,9 @@ public class RedstoneTrackerObject {
 
     public int getStackSize() {
         return stackSize;
+    }
+
+    public World getWorld() {
+        return world;
     }
 }

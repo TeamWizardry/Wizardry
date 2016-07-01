@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.core;
 
 import com.teamwizardry.librarianlib.api.util.misc.PosUtils;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.Config;
 import com.teamwizardry.wizardry.api.trackerobject.BookTrackerObject;
 import com.teamwizardry.wizardry.api.trackerobject.RedstoneTrackerObject;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
@@ -54,15 +55,15 @@ public class EventHandler {
         for (RedstoneTrackerObject redstone : redstoneTracker)
             if (!redstone.isStartCountDown()) {
                 if (redstone.getItem().isBurning() || redstone.getItem().isDead)
-                    if (event.world.isMaterialInBB(redstone.getItem().getEntityBoundingBox().expand(0, 0.2, 0), Material.FIRE)) {
+                    if (redstone.getWorld().isMaterialInBB(redstone.getItem().getEntityBoundingBox().expand(0, 0.2, 0), Material.FIRE)) {
 
-                        redstone.setPos(PosUtils.adjustPositionToBlock(event.world, redstone.getItem().getPosition(), Blocks.FIRE));
+                        redstone.setPos(PosUtils.adjustPositionToBlock(redstone.getWorld(), redstone.getItem().getPosition(), Blocks.FIRE));
                         redstone.setStartCountDown(true);
                         redstone.getItem().setDead();
                     }
             } else {
                 if (redstone.getCountdown() >= 200) {
-                    EntityItem vinteum = new EntityItem(event.world, redstone.getPos().getX() + 0.5, redstone.getPos().getY() + 0.5, redstone.getPos().getZ() + 0.5, new ItemStack(ModItems.VINTEUM_DUST, redstone.getStackSize()));
+                    EntityItem vinteum = new EntityItem(redstone.getWorld(), redstone.getPos().getX() + 0.5, redstone.getPos().getY() + 0.5, redstone.getPos().getZ() + 0.5, new ItemStack(ModItems.VINTEUM_DUST, redstone.getStackSize()));
                     vinteum.setPickupDelay(0);
                     vinteum.setVelocity(0, 0.7, 0);
                     vinteumList.add(vinteum);
@@ -70,9 +71,9 @@ public class EventHandler {
 
                 } else {
                     redstone.setCountdown(redstone.getCountdown() + 1);
-                    event.world.playSound(null, redstone.getPos(), ModSounds.FIRE_SIZZLE_LOOP, SoundCategory.BLOCKS, 0.3F, ThreadLocalRandom.current().nextFloat() * 0.4F + 0.8F);
+                    redstone.getWorld().playSound(null, redstone.getPos(), ModSounds.FIRE_SIZZLE_LOOP, SoundCategory.BLOCKS, 0.3F, ThreadLocalRandom.current().nextFloat() * 0.4F + 0.8F);
 
-                    SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(event.world, redstone.getPos().getX() + 0.5, redstone.getPos().getY() + 0.3, redstone.getPos().getZ() + 0.5, 1, 1F, 10, false);
+                    SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(redstone.getWorld(), redstone.getPos().getX() + 0.5, redstone.getPos().getY() + 0.3, redstone.getPos().getZ() + 0.5, 1, 1F, 10, false);
                     fizz.jitter(10, 0.05, 0.05, 0.05);
                     fizz.randomDirection(0.1, 0, 0.1);
                     fizz.setMotion(0, ThreadLocalRandom.current().nextDouble(0.05, 0.2), 0);
@@ -95,16 +96,17 @@ public class EventHandler {
             if (book.getQueue() < book.getHelix().size()) {
                 Vec3d location = book.getHelix().get(book.getQueue());
 
-                for (int i = 0; i < 10; i++) {
-                    SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(event.world, location.xCoord, location.yCoord, location.zCoord, 0.5F, 0.5F, 100, false);
+                for (int i = 0; i < 10 / Config.particlePercentage; i++) {
+                    SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(book.getWorld(), location.xCoord, location.yCoord, location.zCoord, 0.5F, 0.5F, 100, false);
                     fizz.jitter(10, 0.01, 0, 0.01);
                     fizz.randomDirection(0.05, 0, 0.05);
                     fizz.setMotion(0, ThreadLocalRandom.current().nextDouble(-0.2, -0.05), 0);
                 }
+                book.getWorld().playSound(null, location.xCoord, location.yCoord, location.zCoord, ModSounds.FIRE_SIZZLE_LOOP, SoundCategory.BLOCKS, 0.7F, ThreadLocalRandom.current().nextFloat() * 0.4F + 0.8F);
                 book.setQueue(book.getQueue() + 1);
             } else {
-                for (int i = 0; i < 600; i++) {
-                    SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(event.world, book.getX(), book.getY() + 10, book.getZ(), 0.5F, 0.5F, 200, true);
+                for (int i = 0; i < 600 / Config.particlePercentage; i++) {
+                    SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(book.getWorld(), book.getX(), book.getY() + 10, book.getZ(), 1F, 0.5F, 200, true);
                     fizz.jitter(10, 0.01, 0, 0.01);
                     fizz.randomDirection(0.25, 0.01, 0.25);
                     fizz.setMotion(0, ThreadLocalRandom.current().nextDouble(-0.2, -0.05), 0);
@@ -112,6 +114,7 @@ public class EventHandler {
 
                 EntityItem ei = new EntityItem(book.getWorld(), book.getX(), book.getY() + 10, book.getZ(), new ItemStack(ModItems.PHYSICS_BOOK));
                 book.getWorld().spawnEntityInWorld(ei);
+                book.getWorld().playSound(null, book.getX(), book.getY(), book.getZ(), ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1F);
                 expiredBooks.add(book);
             }
         }
