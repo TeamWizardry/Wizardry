@@ -6,6 +6,6 @@ package com.teamwizardry.wizardry.api.gui;
 public interface IWizardData {
 
     class BarData implements IWizardData {
-        public int burnoutMax = 100, manaMax = 100, burnoutAmount = 0, manaAmount = 0;
+        public int burnoutMax = 100, manaMax = 100, burnoutAmount = burnoutMax, manaAmount = 0;
     }
 }
