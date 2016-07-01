@@ -1,21 +1,5 @@
 package com.teamwizardry.wizardry;
 
-import com.teamwizardry.librarianlib.api.LibrarianLog;
-import com.teamwizardry.wizardry.api.Config;
-import com.teamwizardry.wizardry.api.gui.WizardHandler;
-import com.teamwizardry.wizardry.client.gui.GuiHandler;
-import com.teamwizardry.wizardry.common.achievement.AchievementEvents;
-import com.teamwizardry.wizardry.common.achievement.Achievements;
-import com.teamwizardry.wizardry.common.core.EventHandler;
-import com.teamwizardry.wizardry.common.fluid.Fluids;
-import com.teamwizardry.wizardry.common.proxy.CommonProxy;
-import com.teamwizardry.wizardry.common.world.GenHandler;
-import com.teamwizardry.wizardry.init.ModBlocks;
-import com.teamwizardry.wizardry.init.ModItems;
-import com.teamwizardry.wizardry.init.ModRecipes;
-import com.teamwizardry.wizardry.init.ModSounds;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -29,7 +13,28 @@ import net.minecraftforge.fml.common.network.PacketLoggingHandler;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
+
 import org.apache.logging.log4j.Logger;
+
+import com.teamwizardry.librarianlib.api.LibrarianLog;
+import com.teamwizardry.librarianlib.api.util.misc.Color;
+import com.teamwizardry.librarianlib.book.Book;
+import com.teamwizardry.wizardry.api.Config;
+import com.teamwizardry.wizardry.api.gui.WizardHandler;
+import com.teamwizardry.wizardry.client.gui.GuiHandler;
+import com.teamwizardry.wizardry.common.achievement.AchievementEvents;
+import com.teamwizardry.wizardry.common.achievement.Achievements;
+import com.teamwizardry.wizardry.common.core.EventHandler;
+import com.teamwizardry.wizardry.common.fluid.Fluids;
+import com.teamwizardry.wizardry.common.proxy.CommonProxy;
+import com.teamwizardry.wizardry.common.world.GenHandler;
+import com.teamwizardry.wizardry.init.ModBlocks;
+import com.teamwizardry.wizardry.init.ModItems;
+import com.teamwizardry.wizardry.init.ModRecipes;
+import com.teamwizardry.wizardry.init.ModSounds;
 
 /**
  * Created by Saad on 6/9/2016.
@@ -50,7 +55,9 @@ public class Wizardry {
     public static CommonProxy proxy;
     @Mod.Instance
     public static Wizardry instance;
-
+    
+    public static Book guide;
+    
     public static CreativeTabs tab = new CreativeTabs(MODNAME) {
         @Override
         public String getTabLabel() {
@@ -73,7 +80,8 @@ public class Wizardry {
         LibrarianLog.I.info("~*~*~*~*~WHOOOSH~*~*~*~*~");
 
         logger = event.getModLog();
-
+        guide = new Book(MODID);
+        guide.setColor(Color.rgb(0x1AFF00));
         Config.initConfig();
 
         ModSounds.init();

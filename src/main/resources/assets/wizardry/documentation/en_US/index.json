@@ -1,0 +1,30 @@
+{
+	"pages": [
+		{
+			"type":"index",
+			"icons": [
+				{
+					"icon": "wizardry:textures/gui/icons/pointy-hat.png",
+					"text": "The beginners guide to wizardry. Learn everything you need to know to get started here.",
+					"link": "/basics/index"
+				},
+				{
+					"icon": "wizardry:textures/gui/icons/magic-gate.png",
+					"text": "Learn about all the multi-block structures here."
+				},
+				{
+					"icon": "wizardry:textures/gui/icons/kaleidoscope-pearls.png",
+					"text": "Learn how the spell crafting system works."
+				},
+				{
+					"icon": "wizardry:textures/gui/icons/magic-potion.png",
+					"text": "Learn how the brewing system works."
+				},
+				{
+					"icon": "wizardry:textures/gui/icons/hot-spices.png",
+					"text": "Learn more misc crap."
+				}
+			]
+		}
+	]
+}

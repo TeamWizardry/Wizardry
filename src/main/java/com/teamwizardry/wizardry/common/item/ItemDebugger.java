@@ -1,7 +1,10 @@
 package com.teamwizardry.wizardry.common.item;
 
-import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.common.tile.TileManaBattery;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -12,10 +15,9 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+
+import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.common.tile.TileManaBattery;
 
 public class ItemDebugger extends Item {
     public ItemDebugger() {
@@ -33,6 +35,9 @@ public class ItemDebugger extends Item {
             if (!worldIn.isRemote) {
                 playerIn.addChatMessage(new TextComponentString("Mana: " + tmb.current_mana + "/" + tmb.MAX_MANA));
             }
+        }
+        if(worldIn.isRemote) {
+        	Wizardry.guide.display();
         }
         return EnumActionResult.PASS;
     }
