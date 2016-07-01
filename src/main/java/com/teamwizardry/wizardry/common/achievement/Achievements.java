@@ -9,9 +9,10 @@ import net.minecraft.stats.Achievement;
 public class Achievements {
 
     public static Achievement PHYSICSBOOK;
+    public static Achievement MANAPOOL;
+    public static Achievement VINTEUMDUST;
 
     public static void init() {
-        PHYSICSBOOK = new Achievement("physicsBook", "physicsBook", 0, 0, ModItems.PHYSICS_BOOK, null);
-        PHYSICSBOOK.registerStat();
+        PHYSICSBOOK = new ModAchievement("physicsBook", 0, 0, ModItems.PHYSICS_BOOK, null);
     }
 }
