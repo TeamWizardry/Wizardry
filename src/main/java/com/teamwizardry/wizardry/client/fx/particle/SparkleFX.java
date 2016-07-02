@@ -66,18 +66,21 @@ public class SparkleFX extends Particle {
         particleBlue = b;
     }
 
-    public void randomlyOscillateColor() {
-        if (ThreadLocalRandom.current().nextBoolean()) {
-            double fraction = ThreadLocalRandom.current().nextDouble(0.25, 1 / 0.25);
-            particleRed = (int) Math.round(Math.min(255, particleRed + 255 * fraction));
+    public void randomlyOscillateColor(boolean r, boolean g, boolean b) {
+        if (r && ThreadLocalRandom.current().nextBoolean()) {
+            if (ThreadLocalRandom.current().nextBoolean())
+                particleRed += ThreadLocalRandom.current().nextFloat() + 3;
+            else particleRed -= ThreadLocalRandom.current().nextFloat() + 3;
         }
-        if (ThreadLocalRandom.current().nextBoolean()) {
-            double fraction = ThreadLocalRandom.current().nextDouble(0.25, 1 / 0.25);
-            particleGreen = (int) Math.round(Math.min(255, particleGreen + 255 * fraction));
+        if (b && ThreadLocalRandom.current().nextBoolean()) {
+            if (ThreadLocalRandom.current().nextBoolean())
+                particleBlue += ThreadLocalRandom.current().nextFloat() + 3;
+            else particleBlue -= ThreadLocalRandom.current().nextFloat() + 3;
         }
-        if (ThreadLocalRandom.current().nextBoolean()) {
-            double fraction = ThreadLocalRandom.current().nextDouble(0.25, 1 / 0.25);
-            particleBlue = (int) Math.round(Math.min(255, particleBlue + 255 * fraction));
+        if (g && ThreadLocalRandom.current().nextBoolean()) {
+            if (ThreadLocalRandom.current().nextBoolean())
+                particleGreen += ThreadLocalRandom.current().nextFloat() + 3;
+            else particleGreen -= ThreadLocalRandom.current().nextFloat() + 3;
         }
     }
 

@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.api.trackerobject;
 
-import com.teamwizardry.librarianlib.api.util.math.MathShapes;
+import com.teamwizardry.librarianlib.math.shapes.Helix;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -14,24 +14,15 @@ public class BookTrackerObject {
     private double x, y, z;
     private ArrayList<Vec3d> helix;
     private World world;
-    private int countdown, queue;
+    private int queue;
 
     public BookTrackerObject(EntityItem entityItem) {
         world = entityItem.worldObj;
-        countdown = 0;
         queue = 0;
         x = entityItem.posX;
         y = entityItem.posY;
         z = entityItem.posZ;
-        helix = MathShapes.createHelix(new Vec3d(entityItem.posX, entityItem.posY, entityItem.posZ));
-    }
-
-    public int getCountdown() {
-        return countdown;
-    }
-
-    public void setCountdown(int countdown) {
-        this.countdown = countdown;
+        helix = new Helix(new Vec3d(entityItem.posX, entityItem.posY, entityItem.posZ), 200, 5, 10, 1, 10, true).getPoints();
     }
 
     public double getX() {
