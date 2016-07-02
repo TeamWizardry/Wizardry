@@ -173,25 +173,21 @@ public abstract class Module
 				}
 				return accept;
 			case SHAPE:
-				if (other.getType() != ModuleType.SHAPE)
+				if (other instanceof IModifier)
 				{
-					if (other instanceof IModifier)
-					{
-						accept = addModifier((IModifier) other);
-						if (other instanceof IRuntimeModifier)
-						{
-							children.add(other);
-							accept = true;
-						}
-					}
-					else
+					accept = addModifier((IModifier) other);
+					if (other instanceof IRuntimeModifier)
 					{
 						children.add(other);
 						accept = true;
 					}
-					return accept;
 				}
-				break;
+				else
+				{
+					children.add(other);
+					accept = true;
+				}
+				return accept;
 		}
 		return false;
 	}
