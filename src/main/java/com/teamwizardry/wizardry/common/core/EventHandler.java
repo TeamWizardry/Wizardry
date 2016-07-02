@@ -72,7 +72,7 @@ public class EventHandler {
             if (redstone.isStartCountdown()) {
                 if (redstone.getCountdown() >= 200) {
                     if (!redstone.hasVinteumSpawned()) {
-                        EntityItem vinteum = new EntityItem(redstone.getWorld(), redstone.getPos().xCoord + 0.5, redstone.getPos().yCoord + 0.5, redstone.getPos().zCoord + 0.5, new ItemStack(ModItems.VINTEUM_DUST));
+                        EntityItem vinteum = new EntityItem(redstone.getWorld(), redstone.getPos().xCoord + 0.5, redstone.getPos().yCoord + 0.5, redstone.getPos().zCoord + 0.5, new ItemStack(ModItems.VINTEUM_DUST, redstone.getStackSize()));
                         vinteum.setPickupDelay(5);
                         vinteum.setVelocity(0, 0.8, 0);
                         vinteum.forceSpawn = true;
