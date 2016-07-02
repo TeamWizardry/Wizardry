@@ -123,7 +123,7 @@ public class EventHandler {
                 book.setQueue(book.getQueue() + 1);
             } else {
                 for (int i = 0; i < 600 / Config.particlePercentage; i++) {
-                    SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(book.getWorld(), book.getX(), book.getY() + 10, book.getZ(), 1F, 0.5F, 200, true);
+                    SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(book.getWorld(), book.getX(), book.getY() + 8, book.getZ(), 1F, 0.5F, 200, true);
                     fizz.jitter(10, 0.01, 0, 0.01);
                     fizz.randomDirection(0.25, 0.01, 0.25);
                     fizz.setMotion(0, ThreadLocalRandom.current().nextDouble(-0.2, -0.05), 0);

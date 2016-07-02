@@ -22,7 +22,7 @@ public class BookTrackerObject {
         x = entityItem.posX;
         y = entityItem.posY;
         z = entityItem.posZ;
-        helix = new Helix(new Vec3d(entityItem.posX, entityItem.posY, entityItem.posZ), 200, 5, 10, 1, 10, true).getPoints();
+        helix = new Helix(new Vec3d(entityItem.posX, entityItem.posY, entityItem.posZ), 200, 3, 8, 1, 10, true).getPoints();
     }
 
     public double getX() {
