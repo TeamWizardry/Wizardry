@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.client.proxy;
 
 import com.teamwizardry.librarianlib.client.fx.particle.ParticleRenderDispatcher;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.client.core.HudEventHandler;
 import com.teamwizardry.wizardry.client.fx.Shaders;
 import com.teamwizardry.wizardry.client.fx.particle.MagicBurstFX;
@@ -11,6 +12,8 @@ import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.world.World;
+
+import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -29,6 +32,7 @@ public class ClientProxy extends CommonProxy {
         ParticleRenderDispatcher.class.getName(); // load the class
         Shaders.INSTANCE.getClass(); // ...
         MagicBurstFX.class.getName(); // ...
+        OBJLoader.INSTANCE.addDomain(Wizardry.MODID);
     }
 
     @Override

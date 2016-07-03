@@ -10,7 +10,8 @@
 				},
 				{
 					"icon": "wizardry:textures/gui/icons/magic-gate.png",
-					"text": "Learn about all the multi-block structures here."
+					"text": "Learn about all the multi-block structures here.",
+					"link": "/basics/example"
 				},
 				{
 					"icon": "wizardry:textures/gui/icons/kaleidoscope-pearls.png",
