@@ -20,7 +20,7 @@ import com.teamwizardry.librarianlib.api.LibrarianLog;
 import com.teamwizardry.librarianlib.api.util.misc.Color;
 import com.teamwizardry.librarianlib.book.Book;
 import com.teamwizardry.wizardry.api.Config;
-import com.teamwizardry.wizardry.api.gui.WizardHandler;
+import com.teamwizardry.wizardry.api.capability.WizardHandler;
 import com.teamwizardry.wizardry.api.module.ModuleList;
 import com.teamwizardry.wizardry.client.gui.GuiHandler;
 import com.teamwizardry.wizardry.common.achievement.AchievementEvents;

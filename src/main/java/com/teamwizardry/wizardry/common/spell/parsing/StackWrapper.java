@@ -22,11 +22,8 @@ public class StackWrapper implements Comparable<StackWrapper>
 			return this.hashCode();
 		if (wrapper.stack == null)
 			return this.stack.hashCode();
-		if (wrapper.stack.getItem() == null)
-			return this.stack.getItem().hashCode();
 		if (this.stack.getItem() != wrapper.stack.getItem())
 		{
-			if (this.stack.getItem() == null) return -wrapper.stack.getItem().hashCode();
 			return this.stack.getItem().hashCode() - wrapper.stack.getItem().hashCode();
 		}
 		

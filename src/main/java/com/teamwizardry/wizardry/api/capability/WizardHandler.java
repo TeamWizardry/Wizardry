@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.api.gui;
+package com.teamwizardry.wizardry.api.capability;
 
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
@@ -53,7 +53,7 @@ public class WizardHandler {
     @SubscribeEvent
     public void playerUpdate(LivingEvent.LivingUpdateEvent event) {
         if (event.getEntity() instanceof EntityPlayer) {
-            if (tickCooldown >= 10) {
+            if (tickCooldown >= 5) {
                 tickCooldown = 0;
 
                 EntityPlayer player = (EntityPlayer) event.getEntity();

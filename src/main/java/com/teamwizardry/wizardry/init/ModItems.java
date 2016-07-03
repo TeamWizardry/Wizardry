@@ -1,9 +1,6 @@
 package com.teamwizardry.wizardry.init;
 
-import com.teamwizardry.wizardry.common.item.ItemDebugger;
-import com.teamwizardry.wizardry.common.item.ItemPhysicsBook;
-import com.teamwizardry.wizardry.common.item.ItemRing;
-import com.teamwizardry.wizardry.common.item.ItemVinteumDust;
+import com.teamwizardry.wizardry.common.item.*;
 import com.teamwizardry.wizardry.common.item.pearl.ItemGlassPearl;
 import com.teamwizardry.wizardry.common.item.pearl.ItemManaPearl;
 import com.teamwizardry.wizardry.common.item.pearl.ItemNacrePearl;
@@ -23,6 +20,7 @@ public class ModItems {
     public static ItemRing RING;
     public static ItemPhysicsBook PHYSICS_BOOK;
     public static ItemVinteumDust VINTEUM_DUST;
+    public static ItemManaCake MANA_CAKE;
 
     public static ItemDebugger debug;
 
@@ -35,6 +33,7 @@ public class ModItems {
         VINTEUM_DUST = new ItemVinteumDust();
         PEARL_MANA = new ItemManaPearl();
         PEARL_NACRE = new ItemNacrePearl();
+        MANA_CAKE = new ItemManaCake();
     }
 
     public static void initModels() {
@@ -46,6 +45,7 @@ public class ModItems {
         VINTEUM_DUST.initModel();
         PEARL_MANA.initModel();
         PEARL_NACRE.initModel();
+        MANA_CAKE.initModel();
     }
 
     public static void initColors() {
