@@ -86,7 +86,7 @@ public class FluidBlockMana extends BlockFluidClassic {
                             } else {
                                 compound.setInteger("reactionCooldown", compound.getInteger("reactionCooldown") + 1);
                                 if (compound.getInteger("reactionCooldown") % 5 == 0)
-                                    worldIn.playSound(null, ei.posX, ei.posY, ei.posZ, ModSounds.FIZZING_LOOP, SoundCategory.BLOCKS, 0.3F, ThreadLocalRandom.current().nextFloat() * 0.4F + 0.8F);
+                                    worldIn.playSound(null, ei.posX, ei.posY, ei.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.3F, ThreadLocalRandom.current().nextFloat() * 0.4F + 0.8F);
                             }
                         } else stack.getTagCompound().setInteger("reactionCooldown", 0);
                     } else stack.setTagCompound(new NBTTagCompound());

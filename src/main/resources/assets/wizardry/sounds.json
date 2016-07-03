@@ -4,5 +4,6 @@
   "harp1":          {"category": "block", "sounds": ["wizardry:harp1"]},
   "harp2":          {"category": "block", "sounds": ["wizardry:harp2"]},
   "bell":           {"category": "block", "sounds": ["wizardry:bell"]},
-  "firesizzleloop": {"category": "block", "sounds": ["wizardry:firesizzleloop"]}
+  "bubbling":       {"category": "block", "sounds": ["wizardry:bubbling"]},
+  "firesizzleloop": {"category": "block", "sounds": ["wizardry:frying_sizzle"]}
 }

@@ -98,7 +98,7 @@ public class EventHandler {
                         redstone.setQueue(redstone.getQueue() + 1);
                     }
                     if (redstone.getQueue() % 5 == 0)
-                        redstone.getWorld().playSound(null, redstone.getPos().xCoord, redstone.getPos().yCoord, redstone.getPos().zCoord, ModSounds.FIRE_SIZZLE_LOOP, SoundCategory.BLOCKS, 0.7F, (float) ThreadLocalRandom.current().nextDouble(0.8, 1.3));
+                        redstone.getWorld().playSound(null, redstone.getPos().xCoord, redstone.getPos().yCoord, redstone.getPos().zCoord, ModSounds.FRYING_SIZZLE, SoundCategory.BLOCKS, 0.7F, (float) ThreadLocalRandom.current().nextDouble(0.8, 1.3));
                 }
             }
         }
@@ -119,7 +119,7 @@ public class EventHandler {
                     fizz.setMotion(0, ThreadLocalRandom.current().nextDouble(-0.2, -0.05), 0);
                 }
                 if (book.getQueue() % 5 == 0)
-                    book.getWorld().playSound(null, location.xCoord, location.yCoord, location.zCoord, ModSounds.FIRE_SIZZLE_LOOP, SoundCategory.BLOCKS, 0.7F, ThreadLocalRandom.current().nextFloat() * 0.4F + 0.8F);
+                    book.getWorld().playSound(null, location.xCoord, location.yCoord, location.zCoord, ModSounds.FIZZING_LOOP, SoundCategory.BLOCKS, 0.7F, ThreadLocalRandom.current().nextFloat() * 0.4F + 0.8F);
                 book.setQueue(book.getQueue() + 1);
             } else {
                 for (int i = 0; i < 600 / Config.particlePercentage; i++) {
