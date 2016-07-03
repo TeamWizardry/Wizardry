@@ -53,7 +53,7 @@ public class WizardHandler {
     @SubscribeEvent
     public void playerUpdate(LivingEvent.LivingUpdateEvent event) {
         if (event.getEntity() instanceof EntityPlayer) {
-            if (tickCooldown >= 10) {
+            if (tickCooldown >= 5) {
                 tickCooldown = 0;
 
                 EntityPlayer player = (EntityPlayer) event.getEntity();

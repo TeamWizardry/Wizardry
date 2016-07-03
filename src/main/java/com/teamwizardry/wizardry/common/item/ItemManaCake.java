@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.item.pearl;
+package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.capability.IWizardData;
@@ -31,7 +31,7 @@ public class ItemManaCake extends ItemFood {
         super.onFoodEaten(stack, worldIn, player);
         IWizardData.BarData data = WizardHandler.getEntityData(player);
         if (data.manaMax >= data.manaAmount + 300)
-            data.manaAmount += 300;
+            data.manaAmount = data.manaAmount + 300;
     }
 
     @SideOnly(Side.CLIENT)

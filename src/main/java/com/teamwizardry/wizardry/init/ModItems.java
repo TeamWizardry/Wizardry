@@ -1,10 +1,10 @@
 package com.teamwizardry.wizardry.init;
 
-import com.teamwizardry.wizardry.common.item.ItemDebugger;
-import com.teamwizardry.wizardry.common.item.ItemPhysicsBook;
-import com.teamwizardry.wizardry.common.item.ItemRing;
-import com.teamwizardry.wizardry.common.item.ItemVinteumDust;
-import com.teamwizardry.wizardry.common.item.pearl.*;
+import com.teamwizardry.wizardry.common.item.*;
+import com.teamwizardry.wizardry.common.item.pearl.ItemGlassPearl;
+import com.teamwizardry.wizardry.common.item.pearl.ItemManaPearl;
+import com.teamwizardry.wizardry.common.item.pearl.ItemNacrePearl;
+import com.teamwizardry.wizardry.common.item.pearl.ItemQuartzPearl;
 import net.minecraft.client.Minecraft;
 
 /**
