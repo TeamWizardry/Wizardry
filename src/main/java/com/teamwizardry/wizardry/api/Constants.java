@@ -1,9 +1,8 @@
 package com.teamwizardry.wizardry.api;
 
+import com.teamwizardry.wizardry.api.capability.IWizardData;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-
-import com.teamwizardry.wizardry.api.gui.IWizardData;
 
 /**
  * Created by Saad on 6/14/2016.

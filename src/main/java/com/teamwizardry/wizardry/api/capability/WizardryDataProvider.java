@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.api.gui;
+package com.teamwizardry.wizardry.api.capability;
 
 import com.teamwizardry.wizardry.api.Constants;
 import net.minecraft.util.EnumFacing;
