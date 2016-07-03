@@ -49,7 +49,7 @@ public class Wizardry {
     public static Logger logger;
     public static EventBus EVENT_BUS = new EventBus();
     
-    public static ModuleList moduleList;
+    public static ModuleList moduleList = new ModuleList();
 
     @SidedProxy(clientSide = CLIENT, serverSide = SERVER)
     public static CommonProxy proxy;
