@@ -3,8 +3,8 @@ package com.teamwizardry.wizardry.client.core;
 import com.teamwizardry.librarianlib.client.Sprite;
 import com.teamwizardry.librarianlib.client.Texture;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.gui.IWizardData;
-import com.teamwizardry.wizardry.api.gui.WizardHandler;
+import com.teamwizardry.wizardry.api.capability.IWizardData;
+import com.teamwizardry.wizardry.api.capability.WizardHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.Gui;
@@ -20,7 +20,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
  */
 public class HudEventHandler extends Gui {
 
-    private final Texture HUD_TEXTURE = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/hud.png"), 256, 256);
+    private final Texture HUD_TEXTURE = new Texture(new ResourceLocation(Wizardry.MODID, "textures/capability/hud.png"), 256, 256);
     private final Sprite emptyManaBar = new Sprite(HUD_TEXTURE, 0, 0, 101, 5);
     private final Sprite fullManaBar = new Sprite(HUD_TEXTURE, 0, 5, 101, 5);
     private final Sprite emptyBurnoutBar = new Sprite(HUD_TEXTURE, 0, 10, 101, 5);

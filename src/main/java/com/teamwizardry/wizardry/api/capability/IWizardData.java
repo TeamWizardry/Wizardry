@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.api.gui;
+package com.teamwizardry.wizardry.api.capability;
 
 /**
  * Created by Saad on 6/19/2016.
