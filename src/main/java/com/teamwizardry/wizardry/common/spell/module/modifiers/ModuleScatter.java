@@ -1,5 +1,8 @@
 package com.teamwizardry.wizardry.common.spell.module.modifiers;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.attribute.Attribute;
 import com.teamwizardry.wizardry.api.module.attribute.AttributeMap;
@@ -33,5 +36,12 @@ public class ModuleScatter extends Module implements IModifier
 
 		map.putModifier(Attribute.MANA, new AttributeModifier(AttributeModifier.Operation.MULTIPLY, 1));
 		map.putModifier(Attribute.BURNOUT, new AttributeModifier(AttributeModifier.Operation.MULTIPLY, 1));
+	}
+
+	@Override
+	public void cast(EntityPlayer player, Entity caster, NBTTagCompound spell)
+	{
+		// TODO Auto-generated method stub
+		
 	}
 }

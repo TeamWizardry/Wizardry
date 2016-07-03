@@ -54,7 +54,7 @@ public class WorktableBase extends GuiScreen {
 
     private void initModules() {
         // Construct the new module
-        for (ModuleList.IModuleConstructor moduleConstructor : ModuleList.INSTANCE.modules.values()) {
+        for (ModuleList.IModuleConstructor moduleConstructor : Wizardry.moduleList.modules.values()) {
             // Construct a new module object
             Module module = moduleConstructor.construct();
             module.setIcon(new ResourceLocation(Wizardry.MODID, "textures/item/manaIconOutline.png"));

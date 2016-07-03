@@ -3,6 +3,8 @@ package com.teamwizardry.wizardry.common.spell.module.shapes;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.attribute.Attribute;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleBeam extends Module {
@@ -33,4 +35,11 @@ public class ModuleBeam extends Module {
     	compound.setInteger(PIERCE, (int) attributes.apply(Attribute.PIERCE, 0));
         return null;
     }
+
+	@Override
+	public void cast(EntityPlayer player, Entity caster, NBTTagCompound spell)
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

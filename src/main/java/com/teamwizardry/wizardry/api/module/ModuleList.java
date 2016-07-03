@@ -60,11 +60,11 @@ import com.teamwizardry.wizardry.common.spell.parsing.StackWrapper;
  * @author murapix
  *         <p>
  *         Created on June 21, 2016
+ *         <p>
+ *         Use Wizardry.moduleList to access the static copy
  */
-public enum ModuleList
+public class ModuleList
 {
-	INSTANCE;
-
 	public SortedMap<StackWrapper, String> booleanItems;
 	public SortedMap<StackWrapper, String> effectItems;
 	public SortedMap<StackWrapper, String> eventItems;
@@ -72,7 +72,7 @@ public enum ModuleList
 	public SortedMap<StackWrapper, String> shapeItems;
 	public Map<String, IModuleConstructor> modules;
 
-	ModuleList()
+	public void init()
 	{
 		modules = new HashMap<>();
 		booleanItems = new TreeMap<>();
@@ -82,152 +82,102 @@ public enum ModuleList
 		shapeItems = new TreeMap<>();
 
 		// Booleans
-		register("boolAND", ModuleAnd::new);
-		register("boolOR", ModuleOr::new);
-		register("boolNAND", ModuleNand::new);
-		register("boolNOR", ModuleNor::new);
-
-		item("boolAND", ModuleType.BOOLEAN, Items.STRING);
-		item("boolOR", ModuleType.BOOLEAN, Items.WHEAT_SEEDS);
-		item("boolNAND", ModuleType.BOOLEAN, Blocks.REDSTONE_TORCH);
-		item("boolNOR", ModuleType.BOOLEAN, Blocks.TORCH);
+		register(Items.STRING, ModuleAnd::new);
+		register(Items.WHEAT_SEEDS, ModuleOr::new);
+		register(Blocks.REDSTONE_TORCH, ModuleNand::new);
+		register(Blocks.TORCH, ModuleNor::new);
 
 		// Effects
-		register("blink", ModuleBlink::new);
-		register("explosion", ModuleExplosion::new);
-		register("fallProtection", ModuleFallProtection::new);
-		register("flame", ModuleFlame::new);
-		register("lava", ModuleLava::new);
-		register("light", ModuleLight::new);
-		register("potion", ModulePotion::new);
-		register("saturation", ModuleSaturation::new);
-		register("water", ModuleWater::new);
-
-		item("blink", ModuleType.EFFECT, Items.CHORUS_FRUIT_POPPED);
-		item("explosion", ModuleType.EFFECT, Blocks.TNT);
-		item("fallProtection", ModuleType.EFFECT, Blocks.HAY_BLOCK, 32);
-		item("flame", ModuleType.EFFECT, Items.BLAZE_POWDER);
-		item("lava", ModuleType.EFFECT, Items.LAVA_BUCKET);
-		item("light", ModuleType.EFFECT, Blocks.GLOWSTONE);
-		item("potion", ModuleType.EFFECT, new ItemStack(Items.POTIONITEM, 6, OreDictionary.WILDCARD_VALUE));
-		item("saturation", ModuleType.EFFECT, Items.CAKE);
-		item("water", ModuleType.EFFECT, Items.WATER_BUCKET);
+		register(Items.CHORUS_FRUIT_POPPED, ModuleBlink::new);
+		register(Blocks.TNT, ModuleExplosion::new);
+		register(Blocks.HAY_BLOCK, 32, ModuleFallProtection::new);
+		register(Items.BLAZE_POWDER, ModuleFlame::new);
+		register(Items.LAVA_BUCKET, ModuleLava::new);
+		register(Blocks.GLOWSTONE, ModuleLight::new);
+		register(new ItemStack(Items.POTIONITEM, 6, OreDictionary.WILDCARD_VALUE), ModulePotion::new);
+		register(Items.CAKE, ModuleSaturation::new);
+		register(Items.WATER_BUCKET, ModuleWater::new);
 
 		// Events
-		register("eventMelee", ModuleMeleeEvent::new);
-		register("eventRanged", ModuleRangedEvent::new);
-		register("eventUnderwater", ModuleUnderwaterEvent::new);
-		register("eventSuffocation", ModuleSuffocationEvent::new);
-		register("eventFall", ModuleFallEvent::new);
-		register("eventOnFire", ModuleOnFireEvent::new);
-		register("eventBlink", ModuleBlinkEvent::new);
-		register("eventPotion", ModulePotionEvent::new);
-
-		item("eventMelee", ModuleType.EVENT, Items.IRON_SWORD);
-		item("evenRanged", ModuleType.EVENT, Items.BOW);
-		item("eventUnderwater", ModuleType.EVENT, Items.FISH);
-		item("eventSuffocation", ModuleType.EVENT, new ItemStack(Items.FISH, 1, 3));
-		item("eventFall", ModuleType.EVENT, Items.FEATHER);
-		item("eventOnFire", ModuleType.EVENT, Items.FLINT);
-		item("eventBlink", ModuleType.EVENT, Items.ENDER_PEARL);
-		item("eventPotion", ModuleType.EVENT, Items.GLASS_BOTTLE);
+		register(Items.IRON_SWORD, ModuleMeleeEvent::new);
+		register(Items.BOW, ModuleRangedEvent::new);
+		register(Items.FISH, ModuleUnderwaterEvent::new);
+		register(new ItemStack(Items.FISH, 1, 3), ModuleSuffocationEvent::new);
+		register(Items.FEATHER, ModuleFallEvent::new);
+		register(Items.FLINT, ModuleOnFireEvent::new);
+		register(Items.ENDER_PEARL, ModuleBlinkEvent::new);
+		register(Items.GLASS_BOTTLE, ModulePotionEvent::new);
 
 		// Modifiers
-		register("modifierSilent", ModuleSilent::new);
-		register("modifierDuration", ModuleDuration::new);
-		register("modifierManaCost", ModuleManaCost::new);
-		register("modifierBurnOut", ModuleBurnOut::new);
-		register("modifierArea", ModuleArea::new);
-		register("modifierPierce", ModulePierce::new);
-		register("modifierBeamModifier", ModuleBeamModifier::new);
-		register("modifierRangedDamage", ModuleRangedDamage::new);
-		register("modifierPunch", ModulePunch::new);
-		register("modifierSticky", ModuleSticky::new);
-		register("modifierScatter", ModuleScatter::new);
-		register("modifierProjectileCount", ModuleProjectileCount::new);
-		register("modifierMeleeDamage", ModuleMeleeDamage::new);
-		register("modifierCritChance", ModuleCritChance::new);
-		register("modifierMagicDamage", ModuleMagicDamage::new);
-		register("modifierEnchantment", ModuleEnchantment::new);
-
-		item("modifierSilent", ModuleType.MODIFIER, new ItemStack(Blocks.WOOL, 16, OreDictionary.WILDCARD_VALUE));
-		item("modifierDuration", ModuleType.MODIFIER, Blocks.SAND);
-		item("modifierManaCost", ModuleType.MODIFIER, new ItemStack(Items.DYE, 64, 4));
-		item("modifierBurnOut", ModuleType.MODIFIER, Items.SUGAR, 64);
-		item("modifierArea", ModuleType.MODIFIER, Items.DRAGON_BREATH);
-		item("modifierPierce", ModuleType.MODIFIER, new ItemStack(Blocks.GLASS, 16, OreDictionary.WILDCARD_VALUE));
-		item("modifierBeamModifier", ModuleType.MODIFIER, Items.PRISMARINE_CRYSTALS);
-		item("modifierRangedDamage", ModuleType.MODIFIER, Items.ARROW, 16);
-		item("modifierPunch", ModuleType.MODIFIER, Items.SNOWBALL, 100);
-		item("modifierSticky", ModuleType.MODIFIER, Items.SLIME_BALL, 16);
-		item("modifierScatter", ModuleType.MODIFIER, Blocks.GRAVEL);
-		item("modifierProjectileCount", ModuleType.MODIFIER, Items.QUARTZ);
-		item("modifierMeleeDamage", ModuleType.MODIFIER, Items.DIAMOND, 3);
-		item("modifierCritChance", ModuleType.MODIFIER, Items.RABBIT_FOOT);
-		item("modifierMagicDamage", ModuleType.MODIFIER, Items.GOLD_INGOT);
-		item("modifierEnchantment", ModuleType.MODIFIER, Items.ENCHANTED_BOOK);
+		register(new ItemStack(Blocks.WOOL, 16, OreDictionary.WILDCARD_VALUE), ModuleSilent::new);
+		register(Blocks.SAND, ModuleDuration::new);
+		register(new ItemStack(Items.DYE, 64, 4), ModuleManaCost::new);
+		register(Items.SUGAR, 64, ModuleBurnOut::new);
+		register(Items.DRAGON_BREATH, ModuleArea::new);
+		register(new ItemStack(Blocks.GLASS, 16, OreDictionary.WILDCARD_VALUE), ModulePierce::new);
+		register(Items.PRISMARINE_CRYSTALS, ModuleBeamModifier::new);
+		register(Items.ARROW, 16, ModuleRangedDamage::new);
+		register(Items.SNOWBALL, 100, ModulePunch::new);
+		register(Items.SLIME_BALL, 16, ModuleSticky::new);
+		register(Blocks.GRAVEL, ModuleScatter::new);
+		register(Items.QUARTZ, 16, ModuleProjectileCount::new);
+		register(Items.DIAMOND, 3, ModuleMeleeDamage::new);
+		register(Items.RABBIT_FOOT, ModuleCritChance::new);
+		register(Items.GOLD_INGOT, ModuleMagicDamage::new);
+		register(Items.ENCHANTED_BOOK, ModuleEnchantment::new);
 
 		// Shape Modules
-		register("shapeBeam", ModuleBeam::new);
-		register("shapeProjectile", ModuleProjectile::new);
-		register("shapeMelee", ModuleMelee::new);
-		register("shapeSelf", ModuleSelf::new);
-		register("shapeZone", ModuleZone::new);
-		register("shapeCone", ModuleCone::new);
-
-		item("shapeBeam", ModuleType.SHAPE, Items.PRISMARINE_SHARD);
-		item("shapeProjectile", ModuleType.SHAPE, Items.BOW);
-		item("shapeMelee", ModuleType.SHAPE, Items.DIAMOND_SWORD);
-		item("shapeSelf", ModuleType.SHAPE, Items.GOLDEN_APPLE);
-		item("shapeZone", ModuleType.SHAPE, Blocks.GLASS_PANE);
-		item("shapeCone", ModuleType.SHAPE, Items.GUNPOWDER);
+		register(Items.PRISMARINE_SHARD, ModuleBeam::new);
+		register(Items.BOW, ModuleProjectile::new);
+		register(Items.DIAMOND_SWORD, ModuleMelee::new);
+		register(Items.GOLDEN_APPLE, ModuleSelf::new);
+		register(Blocks.GLASS_PANE, ModuleZone::new);
+		register(Items.GUNPOWDER, ModuleCone::new);
 	}
 
-	private void register(String name, IModuleConstructor constructor)
+	public void register(ItemStack item, IModuleConstructor constructor)
 	{
+		Module module = constructor.construct();
+		String name = module.getClass().getName();
 		modules.put(name, constructor);
-	}
-
-	private void item(String name, ModuleType type, Block block)
-	{
-		item(name, type, block, 1);
-	}
-
-	private void item(String name, ModuleType type, Block block, int amount)
-	{
-		item(name, type, new ItemStack(block, amount));
-	}
-
-	private void item(String name, ModuleType type, Item item)
-	{
-		item(name, type, item, 1);
-	}
-
-	private void item(String name, ModuleType type, Item item, int amount)
-	{
-		item(name, type, new ItemStack(item, amount));
-	}
-
-	private void item(String name, ModuleType type, ItemStack stack)
-	{
-		switch (type)
+		switch (module.getType())
 		{
 			case BOOLEAN:
-				booleanItems.put(new StackWrapper(stack), name);
+				booleanItems.put(new StackWrapper(item), name);
 				break;
 			case EFFECT:
-				effectItems.put(new StackWrapper(stack), name);
+				effectItems.put(new StackWrapper(item), name);
 				break;
 			case EVENT:
-				eventItems.put(new StackWrapper(stack), name);
+				eventItems.put(new StackWrapper(item), name);
 				break;
 			case MODIFIER:
-				modifierItems.put(new StackWrapper(stack), name);
+				modifierItems.put(new StackWrapper(item), name);
 				break;
 			case SHAPE:
-				shapeItems.put(new StackWrapper(stack), name);
+				shapeItems.put(new StackWrapper(item), name);
 				break;
 		}
+	}
+	
+	public void register(Block block, IModuleConstructor constructor)
+	{
+		register(block, 1, constructor);
+	}
+	
+	public void register(Block block, int amount, IModuleConstructor constructor)
+	{
+		register(new ItemStack(block, amount), constructor);
+	}
+	
+	public void register(Item item, IModuleConstructor constructor)
+	{
+		register(item, 1, constructor);
+	}
+	
+	public void register(Item item, int amount, IModuleConstructor constructor)
+	{
+		register(new ItemStack(item, amount), constructor);
 	}
 
 	public Module createModule(ItemStack stack, ModuleType type)

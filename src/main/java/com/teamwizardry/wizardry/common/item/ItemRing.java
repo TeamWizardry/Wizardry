@@ -1,9 +1,12 @@
 package com.teamwizardry.wizardry.common.item;
 
-import com.teamwizardry.wizardry.Wizardry;
+import java.awt.Color;
+import java.util.concurrent.ThreadLocalRandom;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -12,9 +15,8 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import java.awt.*;
-import java.util.concurrent.ThreadLocalRandom;
+import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.module.Module;
 
 /**
  * Created by Saad on 6/13/2016.
@@ -91,7 +93,19 @@ public class ItemRing extends Item {
             } else setDefaultColor(stack, min, max);
         } else setDefaultColor(stack, min, max);
     }
-
+    
+    @Override
+    public ItemStack onItemUseFinish(ItemStack stack, World world, EntityLivingBase entityLiving)
+    {
+    	NBTTagCompound compound = stack.getTagCompound();
+    	if (compound == null) return stack;
+    	NBTTagCompound spell = compound.getCompoundTag("Spell");
+    	String moduleClass = spell.getString(Module.CLASS);
+    	Module module = Wizardry.moduleList.modules.get(moduleClass).construct();
+    	module.cast((EntityPlayer) entityLiving, entityLiving, spell);
+    	return stack;
+    }
+    
     @Override
     public boolean canItemEditBlocks() {
         return false;

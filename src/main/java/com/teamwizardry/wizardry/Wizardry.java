@@ -1,5 +1,7 @@
 package com.teamwizardry.wizardry;
 
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -13,17 +15,13 @@ import net.minecraftforge.fml.common.network.PacketLoggingHandler;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
-
 import org.apache.logging.log4j.Logger;
-
 import com.teamwizardry.librarianlib.api.LibrarianLog;
 import com.teamwizardry.librarianlib.api.util.misc.Color;
 import com.teamwizardry.librarianlib.book.Book;
 import com.teamwizardry.wizardry.api.Config;
 import com.teamwizardry.wizardry.api.gui.WizardHandler;
+import com.teamwizardry.wizardry.api.module.ModuleList;
 import com.teamwizardry.wizardry.client.gui.GuiHandler;
 import com.teamwizardry.wizardry.common.achievement.AchievementEvents;
 import com.teamwizardry.wizardry.common.achievement.Achievements;
@@ -50,6 +48,8 @@ public class Wizardry {
     public static PacketLoggingHandler packetHandler;
     public static Logger logger;
     public static EventBus EVENT_BUS = new EventBus();
+    
+    public static ModuleList moduleList;
 
     @SidedProxy(clientSide = CLIENT, serverSide = SERVER)
     public static CommonProxy proxy;
@@ -106,6 +106,7 @@ public class Wizardry {
         proxy.init(e);
 
         WizardHandler.INSTANCE.getClass();
+        moduleList.init();
     }
 
     @Mod.EventHandler

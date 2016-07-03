@@ -1,17 +1,18 @@
 package com.teamwizardry.wizardry.api.module;
 
+import java.util.ArrayList;
+import java.util.List;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.ResourceLocation;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.module.attribute.Attribute;
 import com.teamwizardry.wizardry.api.module.attribute.AttributeMap;
 import com.teamwizardry.wizardry.api.spell.IModifier;
 import com.teamwizardry.wizardry.api.spell.IRuntimeModifier;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ResourceLocation;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Saad on 6/21/2016.
@@ -37,10 +38,10 @@ public abstract class Module
 	public static final String CRIT_DAMAGE = "Crit Damage";
 	public static final String DISTANCE = "Distance";
 	public static final String DAMAGE = "Damage";
-	
+
 	public static final String MANA = "Mana";
 	public static final String BURNOUT = "Burnout";
-	
+
 	public AttributeMap attributes = new AttributeMap();
 
 	public List<Module> children = new ArrayList<Module>();
@@ -191,7 +192,7 @@ public abstract class Module
 		}
 		return false;
 	}
-	
+
 	private boolean addModifier(IModifier modifier)
 	{
 		attributes.beginCaputure();
@@ -214,4 +215,17 @@ public abstract class Module
 	{
 		return canHaveChildren;
 	}
+
+	/**
+	 * Causes the module to be cast, producing the corresponding effect.
+	 * 
+	 * @param player
+	 *            The original caster of the spell
+	 * @param caster
+	 *            The current entity using the spell. This can be the player, a
+	 *            spell entity, or any target
+	 * @param spell
+	 *            The spell's data
+	 */
+	public abstract void cast(EntityPlayer player, Entity caster, NBTTagCompound spell);
 }

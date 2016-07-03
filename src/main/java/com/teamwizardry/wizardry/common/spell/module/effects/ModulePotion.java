@@ -1,5 +1,7 @@
 package com.teamwizardry.wizardry.common.spell.module.effects;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.attribute.Attribute;
@@ -30,4 +32,11 @@ public class ModulePotion extends Module {
         compound.setDouble(BURNOUT, attributes.apply(Attribute.BURNOUT, 10));
     	return compound;
     }
+
+	@Override
+	public void cast(EntityPlayer player, Entity caster, NBTTagCompound spell)
+	{
+		// TODO Auto-generated method stub
+		
+	}
 }

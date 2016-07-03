@@ -4,8 +4,8 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
 import net.minecraft.item.ItemStack;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.ModuleList;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.init.ModItems;
 
@@ -67,7 +67,7 @@ public class Parser
 	 */
 	private Module getModuleForItem(ItemStack stack, ModuleType type)
 	{
-		return ModuleList.INSTANCE.createModule(stack, type);
+		return Wizardry.moduleList.createModule(stack, type);
 	}
 
 	/**
