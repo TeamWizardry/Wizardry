@@ -32,6 +32,7 @@ public class ItemManaCake extends ItemFood {
         IWizardData.BarData data = WizardHandler.getEntityData(player);
         if (data.manaMax >= data.manaAmount + 300)
             data.manaAmount = data.manaAmount + 300;
+        else data.manaAmount = data.manaMax;
     }
 
     @SideOnly(Side.CLIENT)
