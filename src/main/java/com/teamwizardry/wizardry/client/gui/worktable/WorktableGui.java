@@ -316,7 +316,7 @@ public class WorktableGui extends GuiScreen {
         for (WorktableModule module : modulesOnPaper) {
             mc.renderEngine.bindTexture(module.getModule().getIcon());
             drawScaledCustomSizeModalRect(module.getX() - iconSize / 2, module.getY() - iconSize / 2, 0, 0, iconSize, iconSize, iconSize, iconSize, iconSize, iconSize);
-            boolean inside = mouseX >= module.getX() && mouseX < module.getX() + iconSize && mouseY >= module.getY() && mouseY < module.getY() + iconSize;
+            boolean inside = mouseX >= module.getX() - iconSize / 2 && mouseX < module.getX() - iconSize / 2 + iconSize && mouseY >= module.getY() - iconSize / 2 && mouseY < module.getY() - iconSize / 2 + iconSize;
             if (inside) {
                 isHoveringOverSomething = true;
                 moduleBeingHovered = module.getModule();
