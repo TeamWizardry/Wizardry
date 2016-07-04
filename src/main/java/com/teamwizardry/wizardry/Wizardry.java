@@ -22,6 +22,7 @@ import com.teamwizardry.librarianlib.book.Book;
 import com.teamwizardry.wizardry.api.Config;
 import com.teamwizardry.wizardry.api.capability.WizardHandler;
 import com.teamwizardry.wizardry.api.module.ModuleList;
+import com.teamwizardry.wizardry.api.spell.SpellHandler;
 import com.teamwizardry.wizardry.client.gui.GuiHandler;
 import com.teamwizardry.wizardry.common.achievement.AchievementEvents;
 import com.teamwizardry.wizardry.common.achievement.Achievements;
@@ -49,8 +50,6 @@ public class Wizardry {
     public static Logger logger;
     public static EventBus EVENT_BUS = new EventBus();
     
-    public static ModuleList moduleList = new ModuleList();
-
     @SidedProxy(clientSide = CLIENT, serverSide = SERVER)
     public static CommonProxy proxy;
     @Mod.Instance
@@ -106,7 +105,8 @@ public class Wizardry {
         proxy.init(e);
 
         WizardHandler.INSTANCE.getClass();
-        moduleList.init();
+        ModuleList.INSTANCE.getClass();
+        SpellHandler.INSTANCE.getClass();
     }
 
     @Mod.EventHandler

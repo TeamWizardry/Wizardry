@@ -61,10 +61,12 @@ import com.teamwizardry.wizardry.common.spell.parsing.StackWrapper;
  *         <p>
  *         Created on June 21, 2016
  *         <p>
- *         Use Wizardry.moduleList to access the static copy
+ *         Use ModuleList.INSTANCE to access the static copy
  */
 public class ModuleList
 {
+	public static final ModuleList INSTANCE = new ModuleList();
+	
 	public SortedMap<StackWrapper, String> booleanItems;
 	public SortedMap<StackWrapper, String> effectItems;
 	public SortedMap<StackWrapper, String> eventItems;
@@ -72,7 +74,7 @@ public class ModuleList
 	public SortedMap<StackWrapper, String> shapeItems;
 	public Map<String, IModuleConstructor> modules;
 
-	public void init()
+	public ModuleList()
 	{
 		modules = new HashMap<>();
 		booleanItems = new TreeMap<>();

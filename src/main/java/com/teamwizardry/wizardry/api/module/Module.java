@@ -17,9 +17,7 @@ import java.util.List;
 
 /**
  * Created by Saad on 6/21/2016.
- * 
- * <pre></pre>
- * 
+ * <p>
  * Edited by Escapee from 6/22/2016
  */
 public abstract class Module
