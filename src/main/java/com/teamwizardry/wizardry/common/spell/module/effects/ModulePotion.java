@@ -1,11 +1,11 @@
 package com.teamwizardry.wizardry.common.spell.module.effects;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.attribute.Attribute;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class ModulePotion extends Module {
     public ModulePotion() {
@@ -22,7 +22,12 @@ public class ModulePotion extends Module {
     public String getDescription() {
         return "Cause the targeted entity to gain the given potion effect, at a certain strength and duration.";
     }
-    
+
+    @Override
+    public String getDisplayName() {
+        return "Potion";
+    }
+
     @Override
     public NBTTagCompound getModuleData() {
     	NBTTagCompound compound = super.getModuleData();

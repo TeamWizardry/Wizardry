@@ -23,6 +23,11 @@ public class ModuleFlame extends Module {
     }
 
     @Override
+    public String getDisplayName() {
+        return "Inflame";
+    }
+
+    @Override
     public NBTTagCompound getModuleData() {
         NBTTagCompound compound = super.getModuleData();
         compound.setInteger(DURATION, (int) attributes.apply(Attribute.DURATION, 1));

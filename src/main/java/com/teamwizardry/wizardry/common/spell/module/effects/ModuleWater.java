@@ -17,7 +17,12 @@ public class ModuleWater extends Module {
     public String getDescription() {
         return "Places a water source block at the targeted location.";
     }
-    
+
+    @Override
+    public String getDisplayName() {
+        return "Water";
+    }
+
     @Override
     public NBTTagCompound getModuleData() {
     	NBTTagCompound compound = super.getModuleData();

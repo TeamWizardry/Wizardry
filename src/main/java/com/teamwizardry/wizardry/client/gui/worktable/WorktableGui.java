@@ -17,6 +17,7 @@ import net.minecraft.util.ResourceLocation;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by Saad on 6/17/2016.
@@ -31,7 +32,7 @@ public class WorktableGui extends GuiScreen {
     private ArrayList<WorktableModule> modulesOnPaper;
     private Multimap<WorktableModule, WorktableModule> links;
     private WorktableModule moduleBeingDragged, moduleBeingLinked;
-    private int iconSize = 16;
+    private int iconSize = 12;
     private int rotateShimmer = 0;
 
     @Override
@@ -195,19 +196,21 @@ public class WorktableGui extends GuiScreen {
 
                         boolean wasLinked = false;
 
-                        if (links.get(from).contains(module)) {
-                            links.get(from).remove(module);
-                            wasLinked = true;
-                        }
-                        if (links.get(module).contains(from)) {
-                            links.get(module).remove(from);
-                            wasLinked = true;
-                        }
+                        if (module.getModule().canAccept(from.getModule()) && from.getModule().canAccept(module.getModule())) {
+                            if (links.get(from).contains(module)) {
+                                links.get(from).remove(module);
+                                wasLinked = true;
+                            }
+                            if (links.get(module).contains(from)) {
+                                links.get(module).remove(from);
+                                wasLinked = true;
+                            }
 
-                        if (!wasLinked) links.get(from).add(module);
+                            if (!wasLinked) links.get(from).add(module);
 
-                        moduleBeingLinked = null;
-                        insideAnything = true;
+                            moduleBeingLinked = null;
+                            insideAnything = true;
+                        }
                         break;
                     }
                 }
@@ -274,6 +277,8 @@ public class WorktableGui extends GuiScreen {
 
         // RENDER SIDEBARS //
         GlStateManager.color(1F, 1F, 1F, 1F);
+        Module hovering = null;
+        boolean hoveringOverModule = false;
         for (ModuleType type : moduleCategories.keySet()) {
             for (WorktableModule module : moduleCategories.get(type)) {
 
@@ -283,12 +288,21 @@ public class WorktableGui extends GuiScreen {
                     mc.renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/blue-gradient.png"));
                     GlStateManager.color(1F, 1F, 1F, 1F);
                     drawScaledCustomSizeModalRect(module.getX() - iconSize / 2, module.getY() - iconSize / 2, 0, 0, iconSize * 2, iconSize * 2, iconSize * 2, iconSize * 2, iconSize * 2, iconSize * 2);
+
+                    hoveringOverModule = true;
+                    hovering = module.getModule();
                 }
 
                 // Render the actual icon
                 mc.renderEngine.bindTexture(module.getModule().getIcon());
                 drawScaledCustomSizeModalRect(module.getX(), module.getY(), 0, 0, iconSize, iconSize, iconSize, iconSize, iconSize, iconSize);
             }
+        }
+        if (hoveringOverModule) {
+            List<String> txt = new ArrayList<>();
+            txt.add(hovering.getClass().getSimpleName());
+            txt.add(hovering.getDescription());
+            drawHoveringText(txt, mouseX, mouseY);
         }
         // RENDER SIDEBARS //
 
@@ -307,6 +321,13 @@ public class WorktableGui extends GuiScreen {
         for (WorktableModule module : modulesOnPaper) {
             mc.renderEngine.bindTexture(module.getModule().getIcon());
             drawScaledCustomSizeModalRect(module.getX() - iconSize / 2, module.getY() - iconSize / 2, 0, 0, iconSize, iconSize, iconSize, iconSize, iconSize, iconSize);
+            boolean inside = mouseX >= module.getX() && mouseX < module.getX() + iconSize && mouseY >= module.getY() && mouseY < module.getY() + iconSize;
+            if (inside) {
+                List<String> txt = new ArrayList<>();
+                txt.add(module.getModule().getClass().getSimpleName());
+                txt.add(module.getModule().getDescription());
+                drawHoveringText(txt, mouseX, mouseY);
+            }
         }
         // RENDER MODULE ON THE PAPER //
     }

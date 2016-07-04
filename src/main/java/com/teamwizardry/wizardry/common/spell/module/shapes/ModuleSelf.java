@@ -18,6 +18,16 @@ public class ModuleSelf extends Module {
     }
 
     @Override
+    public String getDescription() {
+        return "Casts the spell on the caster. IE: You";
+    }
+
+    @Override
+    public String getDisplayName() {
+        return "Self";
+    }
+
+    @Override
     public NBTTagCompound getModuleData() {
         NBTTagCompound compound = super.getModuleData();
         compound.setInteger(DURATION, (int) attributes.apply(Attribute.DURATION, 1));

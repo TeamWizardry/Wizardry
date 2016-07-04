@@ -21,7 +21,12 @@ public class ModuleSaturation extends Module {
     public String getDescription() {
         return "Give the targeted player hunger and saturation points.";
     }
-    
+
+    @Override
+    public String getDisplayName() {
+        return "Saturation";
+    }
+
     @Override
     public NBTTagCompound getModuleData() {
         NBTTagCompound compound = super.getModuleData();

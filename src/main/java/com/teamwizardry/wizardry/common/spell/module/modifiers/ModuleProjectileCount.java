@@ -1,14 +1,14 @@
 package com.teamwizardry.wizardry.common.spell.module.modifiers;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.attribute.Attribute;
 import com.teamwizardry.wizardry.api.module.attribute.AttributeMap;
 import com.teamwizardry.wizardry.api.module.attribute.AttributeModifier;
 import com.teamwizardry.wizardry.api.spell.IModifier;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleProjectileCount extends Module implements IModifier {
     public ModuleProjectileCount() {
@@ -24,6 +24,11 @@ public class ModuleProjectileCount extends Module implements IModifier {
     public String getDescription()
     {
     	return "Increases the number of beams or projectiles fired by the spell.";
+    }
+
+    @Override
+    public String getDisplayName() {
+        return "Increase Projectile Count";
     }
 
     @Override

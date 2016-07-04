@@ -1,18 +1,19 @@
 package com.teamwizardry.wizardry.api.module;
 
-import java.util.ArrayList;
-import java.util.List;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ResourceLocation;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.module.attribute.Attribute;
 import com.teamwizardry.wizardry.api.module.attribute.AttributeMap;
 import com.teamwizardry.wizardry.api.spell.IModifier;
 import com.teamwizardry.wizardry.api.spell.IRuntimeModifier;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.ResourceLocation;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Saad on 6/21/2016.
@@ -50,6 +51,7 @@ public abstract class Module
 
 	private ResourceLocation iconLocation = new ResourceLocation(Wizardry.MODID, this.getClass().getSimpleName());
 	private String description = "<-NULL->";
+	private String displayName = "<-NULL->";
 
 	{ /* attributes/parsing */}
 
@@ -127,7 +129,7 @@ public abstract class Module
 	 *            the child module
 	 * @return if the module was handled
 	 */
-	public boolean accept(Module other)
+	public boolean canAccept(Module other)
 	{
 		boolean accept = false;
 		switch (this.getType())
@@ -228,4 +230,13 @@ public abstract class Module
 	 *            The spell's data
 	 */
 	public abstract void cast(EntityPlayer player, Entity caster, NBTTagCompound spell);
+
+	/**
+	 * Will return the display name of the module
+	 *
+	 * @return the display name of the module
+	 */
+	public String getDisplayName() {
+		return displayName;
+	}
 }

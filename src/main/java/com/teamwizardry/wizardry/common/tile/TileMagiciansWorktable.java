@@ -1,8 +1,12 @@
 package com.teamwizardry.wizardry.common.tile;
 
+import com.google.common.collect.Multimap;
+import com.teamwizardry.wizardry.client.gui.worktable.WorktableModule;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+
+import java.util.ArrayList;
 
 /**
  * Created by Saad on 6/12/2016.
@@ -10,6 +14,8 @@ import net.minecraft.util.math.BlockPos;
 public class TileMagiciansWorktable extends TileEntity {
 
     private BlockPos linkedTable;
+    private ArrayList<WorktableModule> modulesOnPaper;
+    private Multimap<WorktableModule, WorktableModule> links;
 
     @Override
     public void readFromNBT(NBTTagCompound compound) {
