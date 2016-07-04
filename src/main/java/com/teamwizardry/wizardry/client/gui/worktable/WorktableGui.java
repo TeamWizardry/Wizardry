@@ -32,7 +32,7 @@ public class WorktableGui extends GuiScreen {
     private ArrayList<WorktableModule> modulesInSidebar;
     private ArrayList<WorktableModule> modulesOnPaper;
     private Multimap<WorktableModule, WorktableModule> links;
-    private WorktableModule moduleBeingDragged, moduleBeingLinked;
+    private WorktableModule moduleBeingDragged, moduleBeingLinked, masterModule;
     private int iconSize = 12;
     private int rotateShimmer = 0;
 
@@ -103,7 +103,7 @@ public class WorktableGui extends GuiScreen {
             for (WorktableModule module : moduleCategories.get(type)) {
 
                 int iconSeparation = 1;
-                int x = sidebarLeft + (row * iconSize) + (column * iconSeparation);
+                int x = sidebarLeft + (row * iconSize) + (row * iconSeparation);
                 int y = sidebarTop + (column * iconSize) + (column * iconSeparation);
 
                 module.setX(x);
@@ -132,8 +132,7 @@ public class WorktableGui extends GuiScreen {
 
         // Get a module from the sidebar.
         for (WorktableModule module : modulesInSidebar) {
-            boolean inside = mouseX >= module.getX() && mouseX < module.getX() + iconSize && mouseY >= module.getY() && mouseY < module.getY() + iconSize;
-            if (inside) {
+            if (Utils.isInside(mouseX, mouseY, module.getX(), module.getY(), iconSize)) {
                 moduleBeingDragged = module.copy();
                 moduleBeingDragged.setX(mouseX - iconSize / 2);
                 moduleBeingDragged.setY(mouseY - iconSize / 2);
@@ -142,8 +141,8 @@ public class WorktableGui extends GuiScreen {
 
         // Drag/Readjust module on paper.
         for (WorktableModule module : modulesOnPaper) {
-            boolean inside = mouseX >= module.getX() - iconSize / 2 && mouseX < module.getX() - iconSize / 2 + iconSize && mouseY >= module.getY() - iconSize / 2 && mouseY < module.getY() - iconSize / 2 + iconSize;
-            if (inside && clickedMouseButton == 0) {
+            if (Utils.isInside(mouseX, mouseY, module.getX() - iconSize / 2, module.getY() - iconSize / 2, iconSize) && clickedMouseButton == 0) {
+                if (masterModule == module) masterModule = null;
                 moduleBeingDragged = module;
                 moduleBeingDragged.setX(mouseX);
                 moduleBeingDragged.setY(mouseY);
@@ -156,8 +155,7 @@ public class WorktableGui extends GuiScreen {
     protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
         if (moduleBeingLinked == null && clickedMouseButton == 1)
             for (WorktableModule module : modulesOnPaper) {
-                boolean inside = mouseX >= module.getX() - iconSize / 2 && mouseX < module.getX() - iconSize / 2 + iconSize && mouseY >= module.getY() - iconSize / 2 && mouseY < module.getY() - iconSize / 2 + iconSize;
-                if (inside) {
+                if (Utils.isInside(mouseX, mouseY, module.getX() - iconSize / 2, module.getY() - iconSize / 2, iconSize)) {
                     moduleBeingLinked = module;
                     break;
                 }
@@ -167,8 +165,10 @@ public class WorktableGui extends GuiScreen {
     @Override
     protected void mouseReleased(int mouseX, int mouseY, int clickedMouseButton) {
         if (clickedMouseButton == 0 && moduleBeingDragged != null) {
-            boolean inside = mouseX >= left && mouseX < left + backgroundWidth && mouseY >= top && mouseY < top + backgroundHeight;
-            if (inside) {
+            if (Utils.isInside(mouseX, mouseY, left, top, backgroundWidth, backgroundHeight)) {
+                // TODO: Config for isMaster on the table
+                if (moduleBeingDragged.getModule().getType() == ModuleType.SHAPE) moduleBeingDragged.setMaster(true);
+                masterModule = moduleBeingDragged;
                 moduleBeingDragged.setX(mouseX);
                 moduleBeingDragged.setY(mouseY);
                 modulesOnPaper.add(moduleBeingDragged);
@@ -191,13 +191,12 @@ public class WorktableGui extends GuiScreen {
             if (moduleBeingLinked != null) {
                 boolean insideAnything = false;
                 for (WorktableModule module : modulesOnPaper) {
-                    boolean inside = mouseX >= module.getX() - iconSize / 2 && mouseX < module.getX() - iconSize / 2 + iconSize && mouseY >= module.getY() - iconSize / 2 && mouseY < module.getY() - iconSize / 2 + iconSize;
-                    if (inside) {
+                    if (Utils.isInside(mouseX, mouseY, module.getX() - iconSize / 2, module.getY() - iconSize / 2, iconSize)) {
                         WorktableModule from = moduleBeingLinked;
 
                         boolean wasLinked = false;
 
-                        if (module.getModule().canAccept(from.getModule()) && from.getModule().canAccept(module.getModule())) {
+                        if (module.getModule().canAccept(from.getModule()) || from.getModule().canAccept(module.getModule())) {
                             if (links.get(from).contains(module)) {
                                 links.get(from).remove(module);
                                 wasLinked = true;
@@ -284,8 +283,7 @@ public class WorktableGui extends GuiScreen {
             for (WorktableModule module : moduleCategories.get(type)) {
 
                 // Highlight
-                boolean inside = mouseX >= module.getX() && mouseX < module.getX() + iconSize && mouseY >= module.getY() && mouseY < module.getY() + iconSize;
-                if (inside) {
+                if (Utils.isInside(mouseX, mouseY, module.getX(), module.getY(), iconSize)) {
                     mc.renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/blue-gradient.png"));
                     GlStateManager.color(1F, 1F, 1F, 1F);
                     drawScaledCustomSizeModalRect(module.getX() - iconSize / 2, module.getY() - iconSize / 2, 0, 0, iconSize * 2, iconSize * 2, iconSize * 2, iconSize * 2, iconSize * 2, iconSize * 2);
@@ -316,8 +314,7 @@ public class WorktableGui extends GuiScreen {
         for (WorktableModule module : modulesOnPaper) {
             mc.renderEngine.bindTexture(module.getModule().getIcon());
             drawScaledCustomSizeModalRect(module.getX() - iconSize / 2, module.getY() - iconSize / 2, 0, 0, iconSize, iconSize, iconSize, iconSize, iconSize, iconSize);
-            boolean inside = mouseX >= module.getX() - iconSize / 2 && mouseX < module.getX() - iconSize / 2 + iconSize && mouseY >= module.getY() - iconSize / 2 && mouseY < module.getY() - iconSize / 2 + iconSize;
-            if (inside) {
+            if (Utils.isInside(mouseX, mouseY, module.getX() - iconSize / 2, module.getY() - iconSize / 2, iconSize)) {
                 isHoveringOverSomething = true;
                 moduleBeingHovered = module.getModule();
             }
