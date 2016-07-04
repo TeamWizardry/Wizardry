@@ -25,7 +25,12 @@ public class ModuleProjectile extends Module {
     {
     	return "Fires a projectile that targets the first entity hit.";
     }
-    
+
+    @Override
+    public String getDisplayName() {
+        return "Projectile";
+    }
+
     @Override
     public NBTTagCompound getModuleData() {
     	NBTTagCompound compound = super.getModuleData();

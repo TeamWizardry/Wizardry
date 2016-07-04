@@ -1,8 +1,5 @@
 package com.teamwizardry.wizardry.common.spell.module.modifiers;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.attribute.Attribute;
 import com.teamwizardry.wizardry.api.module.attribute.AttributeMap;
@@ -11,6 +8,9 @@ import com.teamwizardry.wizardry.api.module.attribute.AttributeModifier.Operatio
 import com.teamwizardry.wizardry.api.module.attribute.AttributeModifier.Priority;
 import com.teamwizardry.wizardry.api.spell.IModifier;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleCritChance extends Module implements IModifier {
     public ModuleCritChance() {
@@ -26,6 +26,11 @@ public class ModuleCritChance extends Module implements IModifier {
     public String getDescription()
     {
     	return "Allows a spell effect to critically strike, dealing bonus damage.";
+    }
+
+    @Override
+    public String getDisplayName() {
+        return "Increase Critical Hit Chance";
     }
 
     @Override

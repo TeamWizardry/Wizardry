@@ -32,6 +32,11 @@ public class ModuleBlink extends Module {
     }
 
     @Override
+    public String getDisplayName() {
+        return "Blink";
+    }
+
+    @Override
     public NBTTagCompound getModuleData() {
         NBTTagCompound compound = super.getModuleData();
         compound.setBoolean(COORD_SET, useCoord);

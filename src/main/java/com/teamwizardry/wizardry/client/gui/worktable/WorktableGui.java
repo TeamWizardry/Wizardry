@@ -13,25 +13,27 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by Saad on 6/17/2016.
  */
-public class WorktableBase extends GuiScreen {
+public class WorktableGui extends GuiScreen {
 
     private static int left, top, right;
     private static int backgroundWidth = 214, backgroundHeight = 220; // SIZE OF PAPER
-    private static ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/bookcomponents/worktable/sample-page-background.png");
+    private static ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sample-page-background.png");
     private HashMap<ModuleType, ArrayList<WorktableModule>> moduleCategories;
     private ArrayList<WorktableModule> modulesInSidebar;
     private ArrayList<WorktableModule> modulesOnPaper;
     private Multimap<WorktableModule, WorktableModule> links;
     private WorktableModule moduleBeingDragged, moduleBeingLinked;
-    private int iconSize = 16;
+    private int iconSize = 12;
     private int rotateShimmer = 0;
 
     @Override
@@ -57,7 +59,7 @@ public class WorktableBase extends GuiScreen {
         for (ModuleList.IModuleConstructor moduleConstructor : ModuleList.INSTANCE.modules.values()) {
             // Construct a new module object
             Module module = moduleConstructor.construct();
-            module.setIcon(new ResourceLocation(Wizardry.MODID, "textures/item/manaIconOutline.png"));
+            //module.setIcon(new ResourceLocation(Wizardry.MODID, "textures/items/manaIconOutline.png"));
 
             // Add it into moduleCategories
             moduleCategories.putIfAbsent(module.getType(), new ArrayList<>());
@@ -195,19 +197,21 @@ public class WorktableBase extends GuiScreen {
 
                         boolean wasLinked = false;
 
-                        if (links.get(from).contains(module)) {
-                            links.get(from).remove(module);
-                            wasLinked = true;
-                        }
-                        if (links.get(module).contains(from)) {
-                            links.get(module).remove(from);
-                            wasLinked = true;
-                        }
+                        if (module.getModule().canAccept(from.getModule()) && from.getModule().canAccept(module.getModule())) {
+                            if (links.get(from).contains(module)) {
+                                links.get(from).remove(module);
+                                wasLinked = true;
+                            }
+                            if (links.get(module).contains(from)) {
+                                links.get(module).remove(from);
+                                wasLinked = true;
+                            }
 
-                        if (!wasLinked) links.get(from).add(module);
+                            if (!wasLinked) links.get(from).add(module);
 
-                        moduleBeingLinked = null;
-                        insideAnything = true;
+                            moduleBeingLinked = null;
+                            insideAnything = true;
+                        }
                         break;
                     }
                 }
@@ -219,6 +223,8 @@ public class WorktableBase extends GuiScreen {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
+        boolean isHoveringOverSomething = false;
+        Module moduleBeingHovered = null;
 
         // RENDER BACKGROUND //
         GlStateManager.color(1F, 1F, 1F, 1F);
@@ -230,10 +236,10 @@ public class WorktableBase extends GuiScreen {
         GlStateManager.color(1F, 1F, 1F, 1F);
         for (GuiButton button : buttonList)
             if (button.id == Constants.WorkTable.CONFIRM_BUTTON) {
-                mc.renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/bookcomponents/book/error/error.png"));
+                mc.renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/gui/book/error/error.png"));
                 drawScaledCustomSizeModalRect(button.xPosition, button.yPosition, 0, 0, 0, 0, 100, 50, 100, 50);
             } else if (button.id == Constants.WorkTable.DONE_BUTTON) {
-                mc.renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/bookcomponents/book/error/fof.png"));
+                mc.renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/gui/book/error/fof.png"));
                 drawScaledCustomSizeModalRect(button.xPosition, button.yPosition, 0, 0, 0, 0, 100, 50, 100, 50);
             }
         // RENDER BUTTONS //
@@ -249,7 +255,7 @@ public class WorktableBase extends GuiScreen {
             GlStateManager.translate(mouseX, mouseY, 0);
             GlStateManager.rotate(rotateShimmer * 5, 0, 0, 1);
             GlStateManager.translate(-mouseX, -mouseY, 0);
-            mc.renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/bookcomponents/worktable/shimmer.png"));
+            mc.renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/shimmer.png"));
             drawScaledCustomSizeModalRect(mouseX - 16 / 2, mouseY - 16 / 2, 0, 0, 16, 16, 16, 16, 16, 16);
             GlStateManager.disableBlend();
             GlStateManager.popMatrix();
@@ -280,9 +286,12 @@ public class WorktableBase extends GuiScreen {
                 // Highlight
                 boolean inside = mouseX >= module.getX() && mouseX < module.getX() + iconSize && mouseY >= module.getY() && mouseY < module.getY() + iconSize;
                 if (inside) {
-                    mc.renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/bookcomponents/worktable/blue-gradient.png"));
+                    mc.renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/blue-gradient.png"));
                     GlStateManager.color(1F, 1F, 1F, 1F);
                     drawScaledCustomSizeModalRect(module.getX() - iconSize / 2, module.getY() - iconSize / 2, 0, 0, iconSize * 2, iconSize * 2, iconSize * 2, iconSize * 2, iconSize * 2, iconSize * 2);
+
+                    isHoveringOverSomething = true;
+                    moduleBeingHovered = module.getModule();
                 }
 
                 // Render the actual icon
@@ -307,8 +316,21 @@ public class WorktableBase extends GuiScreen {
         for (WorktableModule module : modulesOnPaper) {
             mc.renderEngine.bindTexture(module.getModule().getIcon());
             drawScaledCustomSizeModalRect(module.getX() - iconSize / 2, module.getY() - iconSize / 2, 0, 0, iconSize, iconSize, iconSize, iconSize, iconSize, iconSize);
+            boolean inside = mouseX >= module.getX() - iconSize / 2 && mouseX < module.getX() - iconSize / 2 + iconSize && mouseY >= module.getY() - iconSize / 2 && mouseY < module.getY() - iconSize / 2 + iconSize;
+            if (inside) {
+                isHoveringOverSomething = true;
+                moduleBeingHovered = module.getModule();
+            }
         }
         // RENDER MODULE ON THE PAPER //
+
+        // RENDER TOOLTIP //
+        if (isHoveringOverSomething) {
+            List<String> txt = new ArrayList<>();
+            txt.add(TextFormatting.GOLD + moduleBeingHovered.getDisplayName());
+            txt.addAll(Utils.padString(moduleBeingHovered.getDescription(), 30));
+            drawHoveringText(txt, mouseX, mouseY, fontRendererObj);
+        }
     }
 
     @Override

@@ -24,6 +24,11 @@ public class ModuleFallProtection extends Module {
     }
 
     @Override
+    public String getDisplayName() {
+        return "Fall Protection";
+    }
+
+    @Override
     public NBTTagCompound getModuleData() {
         NBTTagCompound compound = super.getModuleData();
         compound.setInteger(POWER, (int) attributes.apply(Attribute.POWER, 1));

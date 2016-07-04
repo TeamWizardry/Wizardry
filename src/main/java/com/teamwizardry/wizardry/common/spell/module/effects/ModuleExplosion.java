@@ -29,6 +29,11 @@ public class ModuleExplosion extends Module {
     }
 
     @Override
+    public String getDisplayName() {
+        return "Explode";
+    }
+
+    @Override
     public NBTTagCompound getModuleData() {
         NBTTagCompound compound = super.getModuleData();
         compound.setBoolean(DAMAGE_TERRAIN, damageTerrain);

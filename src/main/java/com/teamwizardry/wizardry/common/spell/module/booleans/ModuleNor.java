@@ -1,10 +1,10 @@
 package com.teamwizardry.wizardry.common.spell.module.booleans;
 
+import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.api.spell.ModuleType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
 
 public class ModuleNor extends Module {
     @Override
@@ -23,4 +23,9 @@ public class ModuleNor extends Module {
 		// TODO Auto-generated method stub
 		
 	}
+
+    @Override
+    public String getDisplayName() {
+        return "Nor";
+    }
 }

@@ -11,9 +11,11 @@ import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
 import io.netty.util.internal.ThreadLocalRandom;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
@@ -57,7 +59,8 @@ public class EventHandler {
 
             if (!redstone.hasAdjusted()) {
                 BlockPos pos = PosUtils.adjustPositionToBlock(event.world, new BlockPos(redstone.getRedstone().posX, redstone.getRedstone().posY, redstone.getRedstone().posZ), Blocks.FIRE);
-                if (redstone.getWorld().getBlockState(pos).getBlock() == Blocks.FIRE) {
+                if (redstone.getWorld().getBlockState(pos).getBlock() == Blocks.FIRE
+                        && redstone.getWorld().isMaterialInBB(redstone.getRedstone().getEntityBoundingBox().expand(0.1, 0.1, 0.1), Material.FIRE)) {
 
                     redstone.setPos(pos.add(0.5, 0, 0.5));
                     redstone.setHelix(new Helix(new Vec3d(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5), 100, 2, 3, 1, 10, true).getPoints());
@@ -82,6 +85,7 @@ public class EventHandler {
                         redstone.setVinteum(vinteum);
                         redstone.setStartCountdown(false);
                         expiredRedstone.add(redstone);
+                        redstone.getWorld().playSound(null, redstone.getPos().xCoord, redstone.getPos().yCoord, redstone.getPos().zCoord, SoundEvents.ENTITY_CHICKEN_EGG, SoundCategory.BLOCKS, 0.7F, (float) ThreadLocalRandom.current().nextDouble(0.8, 1.3));
                     }
                 } else {
                     redstone.setCountdown(redstone.getCountdown() + 1);

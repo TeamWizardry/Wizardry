@@ -1,10 +1,10 @@
 package com.teamwizardry.wizardry.common.spell.module.events;
 
+import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.api.spell.ModuleType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
 
 public class ModuleFallEvent extends Module {
     @Override
@@ -16,6 +16,11 @@ public class ModuleFallEvent extends Module {
     public String getDescription()
     {
     	return "Called whenever a targetable entity hits the ground.";
+    }
+
+    @Override
+    public String getDisplayName() {
+        return "If Target Takes Fall Damage";
     }
 
 	@Override

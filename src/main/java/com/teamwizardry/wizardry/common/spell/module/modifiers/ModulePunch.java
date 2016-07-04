@@ -1,8 +1,5 @@
 package com.teamwizardry.wizardry.common.spell.module.modifiers;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.attribute.Attribute;
 import com.teamwizardry.wizardry.api.module.attribute.AttributeMap;
@@ -10,6 +7,9 @@ import com.teamwizardry.wizardry.api.module.attribute.AttributeModifier;
 import com.teamwizardry.wizardry.api.module.attribute.AttributeModifier.Operation;
 import com.teamwizardry.wizardry.api.spell.IModifier;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class ModulePunch extends Module implements IModifier {
     public ModulePunch() {
@@ -24,7 +24,12 @@ public class ModulePunch extends Module implements IModifier {
     @Override
     public String getDescription()
     {
-    	return "Gives a spell effect knockback.";
+        return "Gives a spell a knockback effect.";
+    }
+
+    @Override
+    public String getDisplayName() {
+        return "Increase Punch";
     }
 
     @Override

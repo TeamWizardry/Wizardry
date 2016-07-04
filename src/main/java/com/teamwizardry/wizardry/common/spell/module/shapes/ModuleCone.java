@@ -23,7 +23,12 @@ public class ModuleCone extends Module {
     {
     	return "Casts the spell on all entities within a frontal cone.";
     }
-    
+
+    @Override
+    public String getDisplayName() {
+        return "Cone";
+    }
+
     @Override
     public NBTTagCompound getModuleData() {
         NBTTagCompound compound = super.getModuleData();

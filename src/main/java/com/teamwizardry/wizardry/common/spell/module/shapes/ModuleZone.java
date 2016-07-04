@@ -25,6 +25,11 @@ public class ModuleZone extends Module {
     }
 
     @Override
+    public String getDisplayName() {
+        return "Zone";
+    }
+
+    @Override
     public NBTTagCompound getModuleData() {
     	NBTTagCompound compound = super.getModuleData();
     	compound.setDouble(RADIUS, attributes.apply(Attribute.RADIUS, 1));

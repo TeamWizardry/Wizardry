@@ -21,7 +21,12 @@ public class ModuleLight extends Module {
     public String getDescription() {
         return "Places a temporary light source at the targeted location. If the duration is high enough, the light will be permanent.";
     }
-    
+
+    @Override
+    public String getDisplayName() {
+        return "Light";
+    }
+
     @Override
     public NBTTagCompound getModuleData() {
         NBTTagCompound compound = super.getModuleData();

@@ -27,6 +27,11 @@ public class ModuleBeam extends Module {
     }
 
     @Override
+    public String getDisplayName() {
+        return "Beam";
+    }
+
+    @Override
     public NBTTagCompound getModuleData() {
     	NBTTagCompound compound = super.getModuleData();
     	compound.setDouble(DISTANCE, attributes.apply(Attribute.DISTANCE, 1));
