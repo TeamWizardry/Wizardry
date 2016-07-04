@@ -12,11 +12,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
 
 /**
  * Created by Saad on 6/13/2016.
@@ -100,9 +101,8 @@ public class ItemRing extends Item {
     	NBTTagCompound compound = stack.getTagCompound();
     	if (compound == null) return stack;
     	NBTTagCompound spell = compound.getCompoundTag("Spell");
-    	String moduleClass = spell.getString(Module.CLASS);
-    	Module module = Wizardry.moduleList.modules.get(moduleClass).construct();
-    	module.cast((EntityPlayer) entityLiving, entityLiving, spell);
+    	SpellCastEvent event = new SpellCastEvent(spell, entityLiving, (EntityPlayer) entityLiving);
+    	MinecraftForge.EVENT_BUS.post(event);
     	return stack;
     }
     
