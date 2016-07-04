@@ -13,6 +13,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -58,7 +59,7 @@ public class WorktableGui extends GuiScreen {
         for (ModuleList.IModuleConstructor moduleConstructor : Wizardry.moduleList.modules.values()) {
             // Construct a new module object
             Module module = moduleConstructor.construct();
-            module.setIcon(new ResourceLocation(Wizardry.MODID, "textures/items/manaIconOutline.png"));
+            //module.setIcon(new ResourceLocation(Wizardry.MODID, "textures/items/manaIconOutline.png"));
 
             // Add it into moduleCategories
             moduleCategories.putIfAbsent(module.getType(), new ArrayList<>());
@@ -222,6 +223,8 @@ public class WorktableGui extends GuiScreen {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
+        boolean isHoveringOverSomething = false;
+        Module moduleBeingHovered = null;
 
         // RENDER BACKGROUND //
         GlStateManager.color(1F, 1F, 1F, 1F);
@@ -277,8 +280,6 @@ public class WorktableGui extends GuiScreen {
 
         // RENDER SIDEBARS //
         GlStateManager.color(1F, 1F, 1F, 1F);
-        Module hovering = null;
-        boolean hoveringOverModule = false;
         for (ModuleType type : moduleCategories.keySet()) {
             for (WorktableModule module : moduleCategories.get(type)) {
 
@@ -289,20 +290,14 @@ public class WorktableGui extends GuiScreen {
                     GlStateManager.color(1F, 1F, 1F, 1F);
                     drawScaledCustomSizeModalRect(module.getX() - iconSize / 2, module.getY() - iconSize / 2, 0, 0, iconSize * 2, iconSize * 2, iconSize * 2, iconSize * 2, iconSize * 2, iconSize * 2);
 
-                    hoveringOverModule = true;
-                    hovering = module.getModule();
+                    isHoveringOverSomething = true;
+                    moduleBeingHovered = module.getModule();
                 }
 
                 // Render the actual icon
                 mc.renderEngine.bindTexture(module.getModule().getIcon());
                 drawScaledCustomSizeModalRect(module.getX(), module.getY(), 0, 0, iconSize, iconSize, iconSize, iconSize, iconSize, iconSize);
             }
-        }
-        if (hoveringOverModule) {
-            List<String> txt = new ArrayList<>();
-            txt.add(hovering.getClass().getSimpleName());
-            txt.add(hovering.getDescription());
-            drawHoveringText(txt, mouseX, mouseY);
         }
         // RENDER SIDEBARS //
 
@@ -323,13 +318,19 @@ public class WorktableGui extends GuiScreen {
             drawScaledCustomSizeModalRect(module.getX() - iconSize / 2, module.getY() - iconSize / 2, 0, 0, iconSize, iconSize, iconSize, iconSize, iconSize, iconSize);
             boolean inside = mouseX >= module.getX() && mouseX < module.getX() + iconSize && mouseY >= module.getY() && mouseY < module.getY() + iconSize;
             if (inside) {
-                List<String> txt = new ArrayList<>();
-                txt.add(module.getModule().getClass().getSimpleName());
-                txt.add(module.getModule().getDescription());
-                drawHoveringText(txt, mouseX, mouseY);
+                isHoveringOverSomething = true;
+                moduleBeingHovered = module.getModule();
             }
         }
         // RENDER MODULE ON THE PAPER //
+
+        // RENDER TOOLTIP //
+        if (isHoveringOverSomething) {
+            List<String> txt = new ArrayList<>();
+            txt.add(TextFormatting.GOLD + moduleBeingHovered.getDisplayName());
+            txt.addAll(Utils.padString(moduleBeingHovered.getDescription(), 30));
+            drawHoveringText(txt, mouseX, mouseY, fontRendererObj);
+        }
     }
 
     @Override
