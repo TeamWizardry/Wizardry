@@ -68,7 +68,6 @@ public class EventHandler {
                     redstone.setStartCountdown(true);
 
                     redstone.setHasAdjusted(true);
-
                 }
             }
 
@@ -101,6 +100,7 @@ public class EventHandler {
                         }
                         redstone.setQueue(redstone.getQueue() + 1);
                     }
+
                     if (redstone.getQueue() % 5 == 0)
                         redstone.getWorld().playSound(null, redstone.getPos().xCoord, redstone.getPos().yCoord, redstone.getPos().zCoord, ModSounds.FRYING_SIZZLE, SoundCategory.BLOCKS, 0.7F, (float) ThreadLocalRandom.current().nextDouble(0.8, 1.3));
                 }

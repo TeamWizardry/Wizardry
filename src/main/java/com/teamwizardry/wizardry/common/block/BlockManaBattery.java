@@ -16,6 +16,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockManaBattery extends Block implements ITileEntityProvider {
+
     public BlockManaBattery() {
         super(Material.GROUND);
         setUnlocalizedName("mana_battery");

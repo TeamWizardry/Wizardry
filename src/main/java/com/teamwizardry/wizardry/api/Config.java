@@ -14,7 +14,7 @@ public class Config {
         Configuration config = new Configuration(new File("config/Wizardry/Config.cfg"));
         config.load();
         manaPoolRarity = config.get("World", "ManaPool", 75, "How rare the mana pool is in terms of 1 in X").getInt();
-        particlePercentage = config.get("General", "reduce-particles", 1, "Any particle effects will be divided by this number. Higher numbers will reduce the particles").getInt();
+        particlePercentage = config.get("General", "particle-percentage", 100, "The lower the percentage, the less particles you'll see and they will die quicker").getInt();
         config.save();
     }
 }

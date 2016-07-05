@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.client.fx.particle;
 
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.Config;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -25,7 +26,7 @@ public class SparkleFX extends Particle {
         super(worldIn, x, y, z);
         particleAlpha = alpha;
         this.fadeOut = fadeOut;
-        particleMaxAge = age;
+        particleMaxAge = age * Config.particlePercentage / 100;
         particleScale = scale;
         TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(texture.toString());
         this.setParticleTexture(sprite);
@@ -35,7 +36,7 @@ public class SparkleFX extends Particle {
         super(worldIn, x + ThreadLocalRandom.current().nextDouble(-rangeX, rangeX), y + ThreadLocalRandom.current().nextDouble(-rangeY, rangeY), z + ThreadLocalRandom.current().nextDouble(-rangeZ, rangeZ));
         particleAlpha = alpha;
         this.fadeOut = fadeOut;
-        particleMaxAge = age;
+        particleMaxAge = age * Config.particlePercentage / 100;
         particleScale = scale;
         TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(texture.toString());
         this.setParticleTexture(sprite);
