@@ -9,6 +9,7 @@ public class WorktableModule {
 
     private int x, y;
     private Module module;
+    private boolean isMaster = false;
 
     public WorktableModule(Module module) {
         this.module = module;
@@ -39,5 +40,13 @@ public class WorktableModule {
         copy.setX(x);
         copy.setY(y);
         return copy;
+    }
+
+    public boolean isMaster() {
+        return isMaster;
+    }
+
+    public void setMaster(boolean master) {
+        isMaster = master;
     }
 }

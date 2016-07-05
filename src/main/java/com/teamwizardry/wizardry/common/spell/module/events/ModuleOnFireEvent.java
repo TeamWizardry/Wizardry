@@ -9,7 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
 public class ModuleOnFireEvent extends Module {
     @Override
     public ModuleType getType() {
-        return ModuleType.EFFECT;
+        return ModuleType.EVENT;
     }
 
     @Override
