@@ -1,12 +1,15 @@
 package com.teamwizardry.wizardry.common.spell.module.effects;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.attribute.Attribute;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.BlockPos;
 
 public class ModuleBlink extends Module {
     public static final String COORD_SET = "Blink Coord Set";
@@ -57,9 +60,23 @@ public class ModuleBlink extends Module {
     }
 
 	@Override
-	public void cast(EntityPlayer player, Entity caster, NBTTagCompound spell)
+	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell)
 	{
-		// TODO Auto-generated method stub
+		double power = spell.getDouble(POWER);
 		
+		Vec3d look = caster.getLookVec();
+		double posX = look.xCoord * power;
+		double posY = look.yCoord * power;
+		double posZ = look.zCoord * power;
+
+        net.minecraftforge.event.entity.living.EnderTeleportEvent event = new net.minecraftforge.event.entity.living.EnderTeleportEvent((EntityLiving) caster, caster.posX, caster.posY, caster.posZ, 0);
+        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) return false;
+        caster.posX = posX;
+        caster.posY = posY;
+        caster.posZ = posZ;
+        caster.worldObj.playSound((EntityPlayer)null, caster.prevPosX, caster.prevPosY, caster.prevPosZ, SoundEvents.ENTITY_ENDERMEN_TELEPORT, ((EntityLiving) caster).getSoundCategory(), 1.0F, 1.0F);
+        caster.playSound(SoundEvents.ENTITY_ENDERMEN_TELEPORT, 1.0F, 1.0F);
+
+        return true;
 	}
 }

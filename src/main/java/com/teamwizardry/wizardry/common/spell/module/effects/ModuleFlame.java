@@ -1,11 +1,16 @@
 package com.teamwizardry.wizardry.common.spell.module.effects;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.FurnaceRecipes;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.attribute.Attribute;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleFlame extends Module {
     public ModuleFlame() {
@@ -37,9 +42,22 @@ public class ModuleFlame extends Module {
     }
 
 	@Override
-	public void cast(EntityPlayer player, Entity caster, NBTTagCompound spell)
+	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell)
 	{
-		// TODO Auto-generated method stub
-		
+		BlockPos pos = caster.getPosition();
+		IBlockState state = caster.worldObj.getBlockState(pos);
+		Block block = state.getBlock();
+		ItemStack stack = new ItemStack(block, 1, block.getMetaFromState(state));
+		ItemStack result = FurnaceRecipes.instance().getSmeltingResult(stack);
+		if (result != null)
+		{
+			Block smelted = Block.getBlockFromItem(result.getItem());
+			if (smelted != null)
+			{
+				caster.worldObj.setBlockState(pos, smelted.getDefaultState());
+				caster.worldObj.playEvent(2001, pos, Block.getStateId(smelted.getDefaultState()));
+			}
+		}
+		return true;
 	}
 }

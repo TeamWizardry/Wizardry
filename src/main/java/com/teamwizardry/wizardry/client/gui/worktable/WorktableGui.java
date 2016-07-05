@@ -197,7 +197,7 @@ public class WorktableGui extends GuiScreen {
 
                         boolean wasLinked = false;
 
-                        if (module.getModule().canAccept(from.getModule()) && from.getModule().canAccept(module.getModule())) {
+                        if (module.getModule().accept(from.getModule()) && from.getModule().accept(module.getModule())) {
                             if (links.get(from).contains(module)) {
                                 links.get(from).remove(module);
                                 wasLinked = true;

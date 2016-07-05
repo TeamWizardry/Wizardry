@@ -41,9 +41,9 @@ public class ModuleArea extends Module implements IModifier {
     }
 
 	@Override
-	public void cast(EntityPlayer player, Entity caster, NBTTagCompound spell)
+	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell)
 	{
 		// TODO Auto-generated method stub
-		
+		return false;
 	}
 }

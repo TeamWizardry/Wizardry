@@ -11,7 +11,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -127,22 +126,13 @@ public abstract class Module
 	 *            the child module
 	 * @return if the module was handled
 	 */
-	public boolean canAccept(Module other)
+	public boolean accept(Module other)
 	{
 		boolean accept = false;
 		switch (this.getType())
 		{
 			case BOOLEAN:
-				if (other instanceof IModifier)
-				{
-					accept = addModifier((IModifier) other);
-					if (other instanceof IRuntimeModifier)
-					{
-						children.add(other);
-						accept = true;
-					}
-				}
-				else
+				if (!(other instanceof IModifier))
 				{
 					children.add(other);
 					accept = true;
@@ -226,15 +216,18 @@ public abstract class Module
 	 *            spell entity, or any target
 	 * @param spell
 	 *            The spell's data
+	 * @return Whether or not the module was successfully cast. Used to evaluate
+	 *         conditional modules.
 	 */
-	public abstract void cast(EntityPlayer player, Entity caster, NBTTagCompound spell);
+	public abstract boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell);
 
 	/**
 	 * Will return the display name of the module
 	 *
 	 * @return the display name of the module
 	 */
-	public String getDisplayName() {
+	public String getDisplayName()
+	{
 		return displayName;
 	}
 }

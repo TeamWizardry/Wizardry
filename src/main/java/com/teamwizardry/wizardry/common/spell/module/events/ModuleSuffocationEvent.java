@@ -23,9 +23,9 @@ public class ModuleSuffocationEvent extends Module {
     }
 
 	@Override
-	public void cast(EntityPlayer player, Entity caster, NBTTagCompound spell)
+	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell)
 	{
 		// TODO Auto-generated method stub
-		
+		return false;
 	}
 }
