@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.item.IColorable;
 import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
@@ -17,13 +18,10 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.awt.*;
-import java.util.concurrent.ThreadLocalRandom;
-
 /**
  * Created by Saad on 6/13/2016.
  */
-public class ItemRing extends Item {
+public class ItemRing extends Item implements IColorable {
 
     public ItemRing() {
         setRegistryName("ring");
@@ -42,18 +40,6 @@ public class ItemRing extends Item {
         ModelResourceLocation empty = new ModelResourceLocation(getRegistryName(), "inventory");
         ModelLoader.setCustomModelResourceLocation(this, 0, empty);
         ModelLoader.setCustomModelResourceLocation(this, 1, full);
-    }
-
-    private void setDefaultColor(ItemStack stack, int min, int max) {
-        Color color = new Color(ThreadLocalRandom.current().nextInt(min, max), ThreadLocalRandom.current().nextInt(min, max), ThreadLocalRandom.current().nextInt(min, max));
-        NBTTagCompound compound = new NBTTagCompound();
-        compound.setInteger("red", color.getRed());
-        compound.setInteger("green", color.getGreen());
-        compound.setInteger("blue", color.getBlue());
-        compound.setBoolean("checkRed", false);
-        compound.setBoolean("checkBlue", false);
-        compound.setBoolean("checkGreen", false);
-        stack.setTagCompound(compound);
     }
 
     @Override
