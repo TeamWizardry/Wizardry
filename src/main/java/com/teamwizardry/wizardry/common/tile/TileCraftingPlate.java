@@ -1,14 +1,9 @@
 package com.teamwizardry.wizardry.common.tile;
 
-import com.teamwizardry.librarianlib.client.multiblock.InWorldRender;
-import com.teamwizardry.librarianlib.client.multiblock.StructureMatchResult;
-import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.item.IInfusible;
-import com.teamwizardry.wizardry.api.item.PearlType;
-import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
-import com.teamwizardry.wizardry.common.Structures;
-import com.teamwizardry.wizardry.common.spell.parsing.Parser;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Random;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -21,10 +16,15 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.common.util.Constants;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import com.teamwizardry.librarianlib.client.multiblock.InWorldRender;
+import com.teamwizardry.librarianlib.client.multiblock.StructureMatchResult;
+import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.item.IInfusible;
+import com.teamwizardry.wizardry.api.item.PearlType;
+import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
+import com.teamwizardry.wizardry.common.Structures;
+import com.teamwizardry.wizardry.common.spell.parsing.Parser;
 
 /**
  * Created by Saad on 6/10/2016.
@@ -148,8 +148,16 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
                     }
                     if (parsedSpell != null) {
                         NBTTagCompound compound = pearl.getTagCompound();
+                        compound.setString("type", PearlType.INFUSED.toString());
                         compound.setTag("Spell", parsedSpell.getModuleData());
                         pearl.setTagCompound(compound);
+                        EntityItem pearlItem = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, pearl);
+                        Random rand = new Random();
+                        pearlItem.motionX = rand.nextGaussian();
+                        pearlItem.motionY = rand.nextGaussian() + 0.5;
+                        pearlItem.motionZ = rand.nextGaussian();
+                        worldObj.spawnEntityInWorld(pearlItem);
+                        pearl = null; 
                     }
                     inventory.clear();
                     isCrafting = false;
