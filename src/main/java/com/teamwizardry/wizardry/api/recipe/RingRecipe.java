@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.api.recipe;
 
 import com.teamwizardry.wizardry.common.item.ItemRing;
+import com.teamwizardry.wizardry.common.item.pearl.ItemNacrePearl;
 import com.teamwizardry.wizardry.common.item.pearl.ItemQuartzPearl;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
@@ -26,7 +27,7 @@ public class RingRecipe implements IRecipe {
                 if (stack.getItem() instanceof ItemRing && stack.getItemDamage() == 0)
                     foundRing = true;
 
-                else if (stack.getItem() instanceof ItemQuartzPearl)
+                else if (stack.getItem() instanceof ItemQuartzPearl || stack.getItem() instanceof ItemNacrePearl)
                     foundPearl = true;
                 else return false;
             }

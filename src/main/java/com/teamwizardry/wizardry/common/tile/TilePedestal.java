@@ -80,15 +80,14 @@ public class TilePedestal extends TileEntity implements ITickable {
         if (draw) {
             if (queue < points.size()) {
                 Vec3d location = points.get(queue);
-                SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(worldObj, location.xCoord, location.yCoord, location.zCoord, 0.8F, 0.5F, 50, false);
-                fizz.setMotion(0, 0.1, 0);
-                fizz.setColor(0, 0, 0);
+                SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(worldObj, location.xCoord, location.yCoord, location.zCoord, 0.8F, 0.5F, 30, false);
+                fizz.setMotion(0, 0, 0);
                 fizz.jitter(20, 0.05, 0.05, 0.05);
-                // fizz.randomlyOscillateColor(true, true, true);
                 queue++;
             } else {
                 queue = 0;
                 draw = false;
+                points.clear();
             }
         }
     }

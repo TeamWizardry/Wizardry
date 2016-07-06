@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.common.item;
 
-import java.awt.Color;
-import java.util.concurrent.ThreadLocalRandom;
+import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.entity.Entity;
@@ -16,8 +16,9 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
+
+import java.awt.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by Saad on 6/13/2016.
@@ -54,6 +55,7 @@ public class ItemRing extends Item {
         compound.setBoolean("checkGreen", false);
         stack.setTagCompound(compound);
     }
+
     @Override
     public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
         int max = 220, min = 120;
@@ -124,9 +126,9 @@ public class ItemRing extends Item {
         public int getColorFromItemstack(ItemStack stack, int tintIndex) {
             if (stack.hasTagCompound()) {
                 if (tintIndex == 1) {
-                    int r = stack.getTagCompound().getInteger("red3");
-                    int g = stack.getTagCompound().getInteger("green3");
-                    int b = stack.getTagCompound().getInteger("blue3");
+                    int r = stack.getTagCompound().getInteger("red");
+                    int g = stack.getTagCompound().getInteger("green");
+                    int b = stack.getTagCompound().getInteger("blue");
                     return intColor(r, g, b);
                 }
             }

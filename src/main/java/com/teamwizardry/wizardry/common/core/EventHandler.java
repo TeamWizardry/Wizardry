@@ -90,7 +90,7 @@ public class EventHandler {
                     redstone.setCountdown(redstone.getCountdown() + 1);
 
                     if (redstone.getQueue() < redstone.getHelix().size()) {
-                        for (int i = 0; i < 10 / Config.particlePercentage; i++) {
+                        for (int i = 0; i < 10 * Config.particlePercentage / 100; i++) {
                             Vec3d location = redstone.getHelix().get(redstone.getQueue());
                             SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(event.world, location.xCoord, location.yCoord, location.zCoord, 0.8F, 0.5F, 50, false);
                             fizz.setMotion(0, -0.1, 0);
@@ -108,7 +108,6 @@ public class EventHandler {
         }
         redstoneTracker.removeAll(expiredRedstone);
 
-
         // BOOK SPAWNING
         ArrayList<BookTrackerObject> expiredBooks = new ArrayList<>();
         for (BookTrackerObject book : bookTracker) {
@@ -116,7 +115,7 @@ public class EventHandler {
             if (book.getQueue() < book.getHelix().size()) {
                 Vec3d location = book.getHelix().get(book.getQueue());
 
-                for (int i = 0; i < 10 / Config.particlePercentage; i++) {
+                for (int i = 0; i < 10 * Config.particlePercentage / 100; i++) {
                     SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(book.getWorld(), location.xCoord, location.yCoord, location.zCoord, 0.5F, 0.5F, 100, false);
                     fizz.jitter(10, 0.01, 0, 0.01);
                     fizz.randomDirection(0.05, 0, 0.05);
@@ -126,7 +125,7 @@ public class EventHandler {
                     book.getWorld().playSound(null, location.xCoord, location.yCoord, location.zCoord, ModSounds.FIZZING_LOOP, SoundCategory.BLOCKS, 0.7F, ThreadLocalRandom.current().nextFloat() * 0.4F + 0.8F);
                 book.setQueue(book.getQueue() + 1);
             } else {
-                for (int i = 0; i < 600 / Config.particlePercentage; i++) {
+                for (int i = 0; i < 600 * Config.particlePercentage / 100; i++) {
                     SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(book.getWorld(), book.getX(), book.getY() + 8, book.getZ(), 1F, 0.5F, 200, true);
                     fizz.jitter(10, 0.01, 0, 0.01);
                     fizz.randomDirection(0.25, 0.01, 0.25);
