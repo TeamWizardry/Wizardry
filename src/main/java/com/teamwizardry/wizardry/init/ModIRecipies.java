@@ -1,8 +1,11 @@
-package com.teamwizardry.wizardry.api.recipe;
+package com.teamwizardry.wizardry.init;
 
+import com.teamwizardry.wizardry.api.item.IInfusible;
 import com.teamwizardry.wizardry.common.item.ItemRing;
 import com.teamwizardry.wizardry.common.item.pearl.ItemNacrePearl;
 import com.teamwizardry.wizardry.common.item.pearl.ItemQuartzPearl;
+import com.teamwizardry.wizardry.common.item.staff.ItemGoldStaff;
+import com.teamwizardry.wizardry.common.item.staff.ItemWoodStaff;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -14,51 +17,59 @@ import javax.annotation.Nullable;
 /**
  * Created by Saad on 6/13/2016.
  */
-public class RingRecipe implements IRecipe {
+public class ModIRecipies implements IRecipe {
 
     @Override
     public boolean matches(InventoryCrafting inv, World worldIn) {
-        boolean foundRing = false;
+        boolean foundBaseItem = false;
         boolean foundPearl = false;
 
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack != null) {
-                if (stack.getItem() instanceof ItemRing && stack.getItemDamage() == 0)
-                    foundRing = true;
+                if (stack.getItem() instanceof ItemRing
+                        || stack.getItem() instanceof ItemWoodStaff
+                        || stack.getItem() instanceof ItemGoldStaff) {
 
-                else if (stack.getItem() instanceof ItemQuartzPearl || stack.getItem() instanceof ItemNacrePearl)
+                    if (stack.getItemDamage() == 0)
+                        foundBaseItem = true;
+
+                }
+                if (stack.getItem() instanceof ItemQuartzPearl || stack.getItem() instanceof ItemNacrePearl)
                     foundPearl = true;
-                else return false;
             }
         }
-        return foundRing && foundPearl;
+        return foundBaseItem && foundPearl;
     }
 
     @Nullable
     @Override
     public ItemStack getCraftingResult(InventoryCrafting inv) {
         ItemStack pearl = null;
-        ItemStack ring = null;
+        ItemStack baseItem = null;
 
         for (int i = 0; i < inv.getSizeInventory(); i++) {
             ItemStack stack = inv.getStackInSlot(i);
             if (stack != null) {
-                if (stack.getItem() instanceof ItemRing && stack.getItemDamage() == 0)
-                    ring = stack;
-                else if (stack.getItem() instanceof ItemQuartzPearl)
+                if (stack.getItem() instanceof ItemRing
+                        || stack.getItem() instanceof ItemWoodStaff
+                        || stack.getItem() instanceof ItemGoldStaff) {
+                    if (stack.getItemDamage() == 0)
+                        baseItem = stack;
+                }
+                if (stack.getItem() instanceof IInfusible)
                     pearl = stack;
             }
         }
 
-        if (pearl == null || ring == null)
+        if (pearl == null || baseItem == null)
             return null;
 
-        ItemStack ringCopy = ring.copy();
-        ringCopy.setItemDamage(1);
-        if (pearl.hasTagCompound()) ringCopy.setTagCompound(pearl.getTagCompound());
+        ItemStack baseItemCopy = baseItem.copy();
+        baseItemCopy.setItemDamage(1);
+        if (pearl.hasTagCompound()) baseItemCopy.setTagCompound(pearl.getTagCompound());
 
-        return ringCopy;
+        return baseItemCopy;
     }
 
     @Override

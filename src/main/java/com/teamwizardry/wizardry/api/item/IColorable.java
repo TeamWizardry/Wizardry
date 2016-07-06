@@ -22,4 +22,5 @@ public interface IColorable {
         compound.setBoolean("checkGreen", false);
         stack.setTagCompound(compound);
     }
+
 }

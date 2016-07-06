@@ -5,6 +5,7 @@ import com.teamwizardry.wizardry.common.item.pearl.ItemGlassPearl;
 import com.teamwizardry.wizardry.common.item.pearl.ItemManaPearl;
 import com.teamwizardry.wizardry.common.item.pearl.ItemNacrePearl;
 import com.teamwizardry.wizardry.common.item.pearl.ItemQuartzPearl;
+import com.teamwizardry.wizardry.common.item.staff.ItemGoldStaff;
 import net.minecraft.client.Minecraft;
 
 /**
@@ -17,23 +18,28 @@ public class ModItems {
     public static ItemManaPearl PEARL_MANA;
     public static ItemNacrePearl PEARL_NACRE;
 
+    public static com.teamwizardry.wizardry.common.item.staff.ItemWoodStaff STAFF_WOOD;
+    public static ItemGoldStaff STAFF_GOLD;
+
     public static ItemRing RING;
     public static ItemPhysicsBook PHYSICS_BOOK;
     public static ItemVinteumDust VINTEUM_DUST;
     public static ItemManaCake MANA_CAKE;
 
-    public static ItemDebugger debug;
+    public static ItemDebugger DEBUG;
 
     public static void init() {
         PEARL_QUARTZ = new ItemQuartzPearl();
         PEARL_GLASS = new ItemGlassPearl();
         RING = new ItemRing();
         PHYSICS_BOOK = new ItemPhysicsBook();
-        debug = new ItemDebugger();
+        DEBUG = new ItemDebugger();
         VINTEUM_DUST = new ItemVinteumDust();
         PEARL_MANA = new ItemManaPearl();
         PEARL_NACRE = new ItemNacrePearl();
         MANA_CAKE = new ItemManaCake();
+        STAFF_GOLD = new ItemGoldStaff();
+        STAFF_WOOD = new com.teamwizardry.wizardry.common.item.staff.ItemWoodStaff();
     }
 
     public static void initModels() {
@@ -41,16 +47,20 @@ public class ModItems {
         PEARL_GLASS.initModel();
         PHYSICS_BOOK.initModel();
         RING.initModel();
-        debug.initModel();
+        DEBUG.initModel();
         VINTEUM_DUST.initModel();
         PEARL_MANA.initModel();
         PEARL_NACRE.initModel();
         MANA_CAKE.initModel();
+        STAFF_WOOD.initModel();
+        STAFF_GOLD.initModel();
     }
 
     public static void initColors() {
         Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemQuartzPearl.ColorHandler(), PEARL_QUARTZ);
         Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemNacrePearl.ColorHandler(), PEARL_NACRE);
         Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemRing.ColorHandler(), RING);
+        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemRing.ColorHandler(), STAFF_GOLD);
+        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemRing.ColorHandler(), STAFF_WOOD);
     }
 }

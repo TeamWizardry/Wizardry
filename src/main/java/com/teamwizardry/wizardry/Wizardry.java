@@ -1,21 +1,5 @@
 package com.teamwizardry.wizardry;
 
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.EventBus;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.PacketLoggingHandler;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.apache.logging.log4j.Logger;
 import com.teamwizardry.librarianlib.api.LibrarianLog;
 import com.teamwizardry.librarianlib.api.util.misc.Color;
 import com.teamwizardry.librarianlib.book.Book;
@@ -32,8 +16,24 @@ import com.teamwizardry.wizardry.common.proxy.CommonProxy;
 import com.teamwizardry.wizardry.common.world.GenHandler;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
-import com.teamwizardry.wizardry.init.ModRecipes;
+import com.teamwizardry.wizardry.init.ModRecipies;
 import com.teamwizardry.wizardry.init.ModSounds;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.EventBus;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.PacketLoggingHandler;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Created by Saad on 6/9/2016.
@@ -87,7 +87,7 @@ public class Wizardry {
         ModItems.init();
         ModBlocks.init();
         Fluids.preInit();
-        ModRecipes.initCrafting();
+        ModRecipies.initCrafting();
         Achievements.init();
 
         MinecraftForge.EVENT_BUS.register(new EventHandler());
