@@ -1,11 +1,24 @@
 package com.teamwizardry.wizardry.common.spell.module.shapes;
 
+import java.util.List;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.Constants.NBT;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.attribute.Attribute;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
+import com.teamwizardry.wizardry.api.spell.SpellEntity;
+import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
 
 public class ModuleCone extends Module {
     public ModuleCone() {
@@ -42,7 +55,38 @@ public class ModuleCone extends Module {
 	@Override
 	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell)
 	{
-		// TODO Auto-generated method stub
+		double radius = spell.getDouble(RADIUS);
+		double scatter = Math.PI / 2 * MathHelper.clamp_double(spell.getDouble(SCATTER), 0, 1);
+		NBTTagList modules = spell.getTagList(MODULES, NBT.TAG_COMPOUND);
+		Vec3d look = caster.getLookVec();
+		if (!(caster instanceof SpellEntity))
+		{
+			BlockPos pos = caster.getPosition();
+			AxisAlignedBB axis = new AxisAlignedBB(pos.subtract(new Vec3i(radius, 0, radius)), pos.add(new Vec3i(radius, 1, radius)));
+			List<Entity> entities = caster.worldObj.getEntitiesWithinAABB(EntityItem.class, axis);
+			entities.addAll(caster.worldObj.getEntitiesWithinAABB(EntityLivingBase.class, axis));
+			for (Entity entity : entities)
+			{
+				if (entity.getDistanceSqToEntity(caster) <= radius * radius)
+				{
+					double entityX = entity.posX - caster.posX;
+					double entityZ = entity.posZ - caster.posZ;
+					double lookX = look.xCoord;
+					double lookZ = look.zCoord;
+					double cos = (entityX*lookX + entityZ*lookZ)/Math.sqrt((entityX*entityX+entityZ*entityZ)*(lookX*lookX+lookZ*lookZ));
+					double angle = Math.acos(Math.abs(cos));
+					if (angle <= scatter)
+					{
+						for (int i = 0; i < modules.tagCount(); i++)
+						{
+							SpellCastEvent event = new SpellCastEvent(modules.getCompoundTagAt(i), entity, player);
+							MinecraftForge.EVENT_BUS.post(event);
+						}
+					}
+				}
+			}
+			return true;
+		}
 		return false;
 	}
 }

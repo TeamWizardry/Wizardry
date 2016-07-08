@@ -7,6 +7,7 @@ import com.teamwizardry.wizardry.api.Config;
 import com.teamwizardry.wizardry.api.capability.WizardHandler;
 import com.teamwizardry.wizardry.api.module.ModuleList;
 import com.teamwizardry.wizardry.api.spell.SpellHandler;
+import com.teamwizardry.wizardry.api.trackerobject.SpellTracker;
 import com.teamwizardry.wizardry.client.gui.GuiHandler;
 import com.teamwizardry.wizardry.common.achievement.AchievementEvents;
 import com.teamwizardry.wizardry.common.achievement.Achievements;
@@ -112,6 +113,8 @@ public class Wizardry {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent e) {
         proxy.postInit(e);
+        
+        SpellTracker.init();
     }
 
 }

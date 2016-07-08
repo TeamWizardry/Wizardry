@@ -3,9 +3,12 @@ package com.teamwizardry.wizardry.common.spell.module.effects;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.attribute.Attribute;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.spell.SpellEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
 
 public class ModuleWater extends Module {
     @Override
@@ -34,7 +37,20 @@ public class ModuleWater extends Module {
 	@Override
 	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell)
 	{
-		// TODO Auto-generated method stub
+		if (!(caster instanceof SpellEntity))
+		{
+			caster.worldObj.setBlockState(caster.getPosition(), Blocks.WATER.getDefaultState());
+			return true;
+		}
+		else
+		{
+			BlockPos pos = caster.getPosition().add(0, 1, 0);
+			if (caster.worldObj.isAirBlock(pos))
+			{
+				caster.worldObj.setBlockState(pos, Blocks.WATER.getDefaultState());
+				return true;
+			}
+		}
 		return false;
 	}
 }
