@@ -18,7 +18,7 @@ public class GuiHandler implements IGuiHandler {
 
     @Override
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-        if (ID == Constants.PageNumbers.WORKTABLE) return new WorktableGui();
+        if (ID == Constants.PageNumbers.WORKTABLE) return new WorktableGui(512, 256);
         return null;
     }
 }

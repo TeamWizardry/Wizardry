@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.common.block;
 
-import com.teamwizardry.librarianlib.math.shapes.Arc;
+import com.teamwizardry.librarianlib.math.shapes.Arc3D;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.client.render.TilePedestalRenderer;
 import com.teamwizardry.wizardry.common.tile.TilePedestal;
@@ -92,7 +92,7 @@ public class BlockPedestal extends Block implements ITileEntityProvider {
         } else {
             Vec3d origin = new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
             Vec3d target = new Vec3d(te.getConnectedManaBattery().getX() + 0.5, te.getConnectedManaBattery().getY() + 0.5, te.getConnectedManaBattery().getZ() + 0.5);
-            te.setPoints(new Arc(target, origin, (float) ThreadLocalRandom.current().nextDouble(-3, 3), 30).getPoints());
+            te.setPoints(new Arc3D(target, origin, (float) ThreadLocalRandom.current().nextDouble(-3, 3), 30).getPoints());
             Collections.reverse(te.getPoints());
             te.setDraw(true);
         }
