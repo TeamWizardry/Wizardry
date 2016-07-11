@@ -42,7 +42,7 @@ public class ModuleProjectile extends Module {
     	compound.setInteger(PROJ_COUNT, (int) attributes.apply(Attribute.PROJ_COUNT, 1));
     	compound.setDouble(MANA, attributes.apply(Attribute.MANA, 10));
     	compound.setDouble(BURNOUT, attributes.apply(Attribute.BURNOUT, 10));
-        return null;
+        return compound;
     }
 
 	@Override

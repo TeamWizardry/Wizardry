@@ -13,7 +13,7 @@ public class Parser
 {
 	private Deque<ItemStack> stacks;
 	private int endCount = 0;
-	
+
 	{ /* boilerplate */}
 
 	public Parser(List<ItemStack> items)
@@ -32,7 +32,8 @@ public class Parser
 		{
 			while (endCount == 0 && expectedType != null)
 			{
-				if (stacks.isEmpty()) return module;
+				if (stacks.isEmpty())
+					return module;
 				endCount = getEndCount(stacks.peek());
 				if (endCount != 0)
 				{
@@ -40,17 +41,20 @@ public class Parser
 					{
 						expectedType = getNextType(currentType, expectedType);
 						endCount--;
+						continue;
 					}
-					if (endCount != 0) 
+					if (endCount != 0)
 					{
 						stacks.pop();
 						break;
 					}
 				}
 
+				if (expectedType == null)
+					return module;
 				Module childModule = parseSub(currentType, expectedType);
 				if (childModule != null)
-					module.accept(childModule);				
+					module.accept(childModule);
 			}
 			endCount--;
 		}
@@ -87,7 +91,6 @@ public class Parser
 		{
 			case MODIFIER:
 			case EFFECT:
-			case EVENT:
 				return null;
 			case SHAPE:
 				if (expectedType == ModuleType.MODIFIER)
@@ -97,6 +100,7 @@ public class Parser
 					return ModuleType.EVENT;
 				if (expectedType == ModuleType.EVENT)
 					return ModuleType.EFFECT;
+			case EVENT:
 				if (expectedType == ModuleType.EFFECT)
 					return ModuleType.SHAPE;
 				if (expectedType == ModuleType.SHAPE)
@@ -105,7 +109,7 @@ public class Parser
 				return null;
 		}
 	}
-	
+
 	private ModuleType getDefaultType(ModuleType currentType)
 	{
 		switch (currentType)

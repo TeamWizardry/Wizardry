@@ -37,7 +37,7 @@ public class ModuleSelf extends Module {
         compound.setInteger(DURATION, (int) attributes.apply(Attribute.DURATION, 1));
         compound.setDouble(MANA, attributes.apply(Attribute.MANA, 5));
         compound.setDouble(BURNOUT, attributes.apply(Attribute.BURNOUT, 5));
-    	return null;
+    	return compound;
     }
 
 	@Override

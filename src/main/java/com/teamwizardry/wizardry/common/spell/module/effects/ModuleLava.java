@@ -47,7 +47,7 @@ public class ModuleLava extends Module
 	{
 		if (!(caster instanceof SpellEntity))
 		{
-			caster.worldObj.setBlockState(caster.getPosition(), Blocks.LAVA.getDefaultState());
+			caster.worldObj.setBlockState(caster.getPosition(), Blocks.FLOWING_LAVA.getDefaultState());
 			return true;
 		}
 		else
@@ -55,7 +55,7 @@ public class ModuleLava extends Module
 			BlockPos pos = caster.getPosition().add(0, 1, 0);
 			if (caster.worldObj.isAirBlock(pos))
 			{
-				caster.worldObj.setBlockState(pos, Blocks.LAVA.getDefaultState());
+				caster.worldObj.setBlockState(pos, Blocks.FLOWING_LAVA.getDefaultState());
 				return true;
 			}
 		}
