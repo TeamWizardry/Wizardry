@@ -1,5 +1,6 @@
-package com.teamwizardry.wizardry.common.item.staff;
+	package com.teamwizardry.wizardry.common.item.staff;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.entity.Entity;
@@ -42,19 +43,26 @@ public class ItemGoldStaff extends Item implements IColorable {
     @Override
     public void onPlayerStoppedUsing(ItemStack stack, World world, EntityLivingBase entityLiving, int timeLeft)
     {
-    	NBTTagCompound compound = stack.getTagCompound();
-    	if (compound == null) return;
-    	NBTTagCompound spell = compound.getCompoundTag("Spell");
-    	if (spell == null) return;
-    	SpellCastEvent event = new SpellCastEvent(spell, entityLiving, (EntityPlayer) entityLiving);
-    	MinecraftForge.EVENT_BUS.post(event);
+   		NBTTagCompound compound = stack.getTagCompound();
+   		if (compound == null) return;
+   		NBTTagCompound spell = compound.getCompoundTag("Spell");
+   		if (spell == null) return;
+   		SpellCastEvent event = new SpellCastEvent(spell, entityLiving, (EntityPlayer) entityLiving);
+   		MinecraftForge.EVENT_BUS.post(event);
     }
     
     @Override
     public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand)
     {
-    	player.setActiveHand(hand);
-    	return new ActionResult<>(EnumActionResult.PASS, stack);
+    	if (world.isRemote && Minecraft.getMinecraft().currentScreen != null)
+    	{
+    		return new ActionResult<>(EnumActionResult.FAIL, stack);
+    	}
+    	else
+    	{
+    		player.setActiveHand(hand);
+    		return new ActionResult<>(EnumActionResult.PASS, stack);
+    	}
     }
     
     @Override
@@ -80,6 +88,7 @@ public class ItemGoldStaff extends Item implements IColorable {
     @Override
     public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
         int max = 220, min = 120;
+        if (isSelected) return;
         if (stack.hasTagCompound()) {
             NBTTagCompound compound = stack.getTagCompound();
             if (compound.hasKey("red") && compound.hasKey("green") && compound.hasKey("blue")) {

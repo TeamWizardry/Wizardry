@@ -128,6 +128,7 @@ public abstract class Module
 	 */
 	public boolean accept(Module other)
 	{
+		if (this == other) return false;
 		boolean accept = false;
 		switch (this.getType())
 		{
