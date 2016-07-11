@@ -1,17 +1,5 @@
 package com.teamwizardry.wizardry.client.gui.worktable;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
-
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextFormatting;
-
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.teamwizardry.librarianlib.api.gui.GuiBase;
@@ -21,11 +9,21 @@ import com.teamwizardry.librarianlib.api.util.misc.Utils;
 import com.teamwizardry.librarianlib.client.Sprite;
 import com.teamwizardry.librarianlib.client.Texture;
 import com.teamwizardry.librarianlib.math.Vec2;
-import com.teamwizardry.librarianlib.math.shapes.AnimtedCurve2D;
+import com.teamwizardry.librarianlib.math.shapes.AnimatedCurve2D;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.ModuleList;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Created by Saad on 6/17/2016.
@@ -39,23 +37,22 @@ public class WorktableGui extends GuiBase {
 
     private HashMap<ModuleType, ArrayList<WorktableModule>> moduleCategories;
     private HashMap<ModuleType, WorktableSlider> categorySlidebars;
-    private HashMap<WorktableModule, ArrayList<AnimtedCurve2D>> bezierCurves;
+    private HashMap<WorktableModule, ArrayList<AnimatedCurve2D>> bezierCurves;
 
     private ArrayList<WorktableModule> modulesInSidebar;
     private ArrayList<WorktableModule> modulesOnPaper;
 
     private Multimap<WorktableModule, WorktableModule> links;
 
+    private AnimatedCurve2D curveModuleBeingLinked;
     private WorktableModule moduleBeingDragged, moduleBeingLinked, masterModule, moduleSelected;
 
     private Texture spriteSheet = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sprite_sheet.png"), 256, 256);
     private Texture BACKGROUND_TEXTURE = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/table_background.png"), backgroundWidth, backgroundHeight);
 
-    private Random random = new Random();
-
     public WorktableGui(int guiWidth, int guiHeight) {
         super(guiWidth, guiHeight);
-        
+
         ComponentVoid v = new ComponentVoid(0, 0);
         v.preDraw.add((comp, pos, ticks) -> {
         	GlStateManager.translate(0, 0, 5);
@@ -64,12 +61,12 @@ public class WorktableGui extends GuiBase {
         v2.preDraw.add((comp, pos, ticks) -> {
         	GlStateManager.translate(0, 0, -5);
         });
-        
+
         ComponentSprite comp = new ComponentSprite(spriteSheet.getSprite(33, 208, 23, 23), 100, 100, 12, 12);
-        
+
         AtomicBoolean tracking = new AtomicBoolean(false);
         AtomicReference<Vec2> clickStart = new AtomicReference<>(new Vec2(0,0));
-        
+
         comp.mouseDown.add((c, pos, button) -> {
         	if(c.mouseOverThisFrame) {
         		c.setSize(new Vec2(24, 24));
@@ -95,11 +92,11 @@ public class WorktableGui extends GuiBase {
         			);
         	}
         });
-        
+
         v.zIndex = 50;
         comp.zIndex = 100;
         v2.zIndex = 150;
-        
+
         components.add(v);
         components.add(v2);
         components.add(comp);
@@ -259,6 +256,7 @@ public class WorktableGui extends GuiBase {
             for (WorktableModule module : modulesOnPaper) {
                 if (Utils.isInside(mouseX, mouseY, module.getX(), module.getY(), iconSize)) {
                     moduleBeingLinked = module;
+                    curveModuleBeingLinked = new AnimatedCurve2D(new Vec2(mouseX, mouseY), new Vec2(module.getX(), mouseY));
                     break;
                 }
             }
@@ -273,7 +271,7 @@ public class WorktableGui extends GuiBase {
                         moduleBeingDragged = module;
                         moduleBeingDragged.setX(mouseX);
                         moduleBeingDragged.setY(mouseY);
-                        modulesOnPaper.forEach(this::refreshBeziers);
+
                         remove = module;
                         break;
                     }
@@ -288,19 +286,6 @@ public class WorktableGui extends GuiBase {
         }
     }
 
-    private void refreshBeziers(WorktableModule module) {
-        bezierCurves.remove(module);
-        bezierCurves.putIfAbsent(module, new ArrayList<>());
-        ArrayList<AnimtedCurve2D> beziers = new ArrayList<>();
-        for (WorktableModule linked : links.get(module)) {
-            Vec2 point1 = new Vec2(module.getX() + iconSize / 2, module.getY() + iconSize / 2);
-            Vec2 point2 = new Vec2(linked.getX() + iconSize / 2, linked.getY() + iconSize / 2);
-
-            beziers.add(new AnimtedCurve2D(point1, point2, 50, 50, 10));
-        }
-        bezierCurves.put(module, beziers);
-    }
-
     @Override
     protected void mouseReleased(int mouseX, int mouseY, int clickedMouseButton) {
         super.mouseReleased(mouseX, mouseY, clickedMouseButton);
@@ -311,9 +296,9 @@ public class WorktableGui extends GuiBase {
                 if (moduleBeingDragged.getModule().getType() == ModuleType.SHAPE) moduleBeingDragged.setMaster(true);
                 masterModule = moduleBeingDragged;
                 modulesOnPaper.add(moduleBeingDragged);
+                bezierCurves.putIfAbsent(moduleBeingDragged, new ArrayList<>());
                 moduleBeingDragged = null;
                 moduleSelected = null;
-                modulesOnPaper.forEach(this::refreshBeziers);
             } else {
                 // Delete module being dragged if it's outside the paper
                 for (WorktableModule module : modulesOnPaper) {
@@ -327,7 +312,6 @@ public class WorktableGui extends GuiBase {
                     modulesOnPaper.remove(moduleBeingDragged);
                 moduleBeingDragged = null;
                 moduleSelected = null;
-                modulesOnPaper.forEach(this::refreshBeziers);
             }
         }
 
@@ -354,21 +338,24 @@ public class WorktableGui extends GuiBase {
                             if (!wasLinked) {
                                 links.get(module).add(from);
 
-                                Vec2 point1 = new Vec2(module.getX() + iconSize / 2, module.getY() + iconSize / 2);
-                                Vec2 point2 = new Vec2(from.getX() + iconSize / 2, from.getY() + iconSize / 2);
-
-                                bezierCurves.get(module).add(new AnimtedCurve2D(point1, point2, 50, 50, 30));
+                                bezierCurves.get(module).add(curveModuleBeingLinked);
                             }
 
+                            curveModuleBeingLinked = null;
                             moduleBeingLinked = null;
                             insideAnything = true;
-                            modulesOnPaper.forEach(this::refreshBeziers);
                         }
                         break;
                     }
                 }
-                if (!insideAnything) moduleBeingLinked = null;
-            } else moduleBeingLinked = null;
+                if (!insideAnything) {
+                    moduleBeingLinked = null;
+                    curveModuleBeingLinked = null;
+                }
+            } else {
+                moduleBeingLinked = null;
+                curveModuleBeingLinked = null;
+            }
         }
     }
 
@@ -440,22 +427,27 @@ public class WorktableGui extends GuiBase {
         GlStateManager.color(1F, 1F, 1F, 1F);
         if (moduleBeingDragged != null) {
             if (links.containsKey(moduleBeingDragged))
-                for (WorktableModule linkedModule : links.get(moduleBeingDragged)) {
-                    Vec2 point1 = new Vec2(moduleBeingDragged.getX() + iconSize / 2, moduleBeingDragged.getY() + iconSize / 2);
-                    Vec2 point2 = new Vec2(linkedModule.getX() + iconSize / 2, linkedModule.getY() + iconSize / 2);
-                    new AnimtedCurve2D(point1, point2, (float) 50, (float) 50, 50).draw();
+                for (AnimatedCurve2D curve : bezierCurves.get(moduleBeingDragged)) {
+                    curve.setStartPoint(new Vec2(moduleBeingDragged.getX() + iconSize / 2, moduleBeingDragged.getY() + iconSize / 2));
+                    curve.draw();
                 }
-            modulesOnPaper.forEach(this::refreshBeziers);
+            for (WorktableModule module : links.keySet()) {
+                if (links.containsEntry(module, moduleBeingDragged)) {
+                    for (AnimatedCurve2D curve : bezierCurves.get(module)) {
+                        curve.setEndPoint(new Vec2(moduleBeingDragged.getX() + iconSize / 2, moduleBeingDragged.getY() + iconSize / 2));
+                        curve.draw();
+                    }
+                }
+            }
         }
 
-        if (moduleBeingLinked != null) {
-            Vec2 point1 = new Vec2(moduleBeingLinked.getX() + iconSize / 2, moduleBeingLinked.getY() + iconSize / 2);
-            Vec2 point2 = new Vec2(mouseX, mouseY);
-            new AnimtedCurve2D(point1, point2, (float) 50, (float) 50, 50).draw();
+        if (moduleBeingLinked != null && curveModuleBeingLinked != null) {
+            curveModuleBeingLinked.setStartPoint(new Vec2(mouseX, mouseY));
+            curveModuleBeingLinked.draw();
         }
 
         modulesOnPaper.stream().filter(module -> links.containsKey(module)).forEach(module -> {
-            bezierCurves.get(module).forEach(AnimtedCurve2D::draw);
+            bezierCurves.get(module).forEach(AnimatedCurve2D::draw);
         });
         // RENDER LINE BETWEEN LINKED MODULES //
 
