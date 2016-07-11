@@ -12,6 +12,7 @@ import net.minecraft.world.World;
 
 import com.teamwizardry.librarianlib.client.fx.particle.ParticleRenderDispatcher;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.client.core.CapeHandler;
 import com.teamwizardry.wizardry.client.core.HudEventHandler;
 import com.teamwizardry.wizardry.client.fx.Shaders;
 import com.teamwizardry.wizardry.client.fx.particle.MagicBurstFX;
@@ -34,6 +35,7 @@ public class ClientProxy extends CommonProxy {
         ParticleRenderDispatcher.class.getName(); // load the class
         Shaders.INSTANCE.getClass(); // ...
         MagicBurstFX.class.getName(); // ...
+        CapeHandler.INSTANCE.getClass(); // ...
         OBJLoader.INSTANCE.addDomain(Wizardry.MODID);
     }
 

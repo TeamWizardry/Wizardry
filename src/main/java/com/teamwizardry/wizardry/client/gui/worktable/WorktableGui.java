@@ -1,8 +1,22 @@
 package com.teamwizardry.wizardry.client.gui.worktable;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
+
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.teamwizardry.librarianlib.api.gui.GuiBase;
+import com.teamwizardry.librarianlib.api.gui.components.ComponentSprite;
+import com.teamwizardry.librarianlib.api.gui.components.ComponentVoid;
 import com.teamwizardry.librarianlib.api.util.misc.Utils;
 import com.teamwizardry.librarianlib.client.Sprite;
 import com.teamwizardry.librarianlib.client.Texture;
@@ -12,15 +26,6 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.ModuleList;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextFormatting;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
 
 /**
  * Created by Saad on 6/17/2016.
@@ -50,6 +55,54 @@ public class WorktableGui extends GuiBase {
 
     public WorktableGui(int guiWidth, int guiHeight) {
         super(guiWidth, guiHeight);
+        
+        ComponentVoid v = new ComponentVoid(0, 0);
+        v.preDraw.add((comp, pos, ticks) -> {
+        	GlStateManager.translate(0, 0, 5);
+        });
+        ComponentVoid v2 = new ComponentVoid(0, 0);
+        v2.preDraw.add((comp, pos, ticks) -> {
+        	GlStateManager.translate(0, 0, -5);
+        });
+        
+        ComponentSprite comp = new ComponentSprite(spriteSheet.getSprite(33, 208, 23, 23), 100, 100, 12, 12);
+        
+        AtomicBoolean tracking = new AtomicBoolean(false);
+        AtomicReference<Vec2> clickStart = new AtomicReference<>(new Vec2(0,0));
+        
+        comp.mouseDown.add((c, pos, button) -> {
+        	if(c.mouseOverThisFrame) {
+        		c.setSize(new Vec2(24, 24));
+        		tracking.set(true);
+        		clickStart.set(pos.add(6, 6));
+        		return true;
+        	}
+        	return false;
+        });
+        comp.mouseUp.add((c, pos, button) -> {
+    		if(tracking.get()) {
+    			c.setPos(c.getPos().add(new Vec2(6, 6)));
+        		c.setSize(new Vec2(12, 12));
+    		}
+        	tracking.set(false);
+        	return false;
+        });
+        comp.preDraw.add((c, pos, ticks) -> {
+        	if(tracking.get()) {
+        		c.setPos(
+        				c.getPos().add(pos)
+        				.sub(clickStart.get())
+        			);
+        	}
+        });
+        
+        v.zIndex = 50;
+        comp.zIndex = 100;
+        v2.zIndex = 150;
+        
+        components.add(v);
+        components.add(v2);
+        components.add(comp);
     }
 
     @Override
