@@ -1,14 +1,14 @@
 package com.teamwizardry.wizardry.common.spell.module.effects;
 
+import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.api.module.attribute.Attribute;
+import com.teamwizardry.wizardry.api.spell.ModuleType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.attribute.Attribute;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
 
 public class ModulePotion extends Module {
 	public static final String POTION = "Potion";
@@ -26,7 +26,7 @@ public class ModulePotion extends Module {
 
     @Override
     public String getDescription() {
-        return "Cause the targeted entity to gain the given potion effect, at a certain strength and duration.";
+        return "Cause the targeted entity to gain the given potion effect, at a certain stiffness and duration.";
     }
 
     @Override

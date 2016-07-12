@@ -24,7 +24,7 @@ public class ModuleBeamModifier extends Module implements IModifier {
     @Override
     public String getDescription()
     {
-    	return "Increases the distance a beam travels.";
+        return "Increases the restingDistance a beam travels.";
     }
 
     @Override

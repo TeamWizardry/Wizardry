@@ -10,13 +10,17 @@ import com.teamwizardry.librarianlib.client.Sprite;
 import com.teamwizardry.librarianlib.client.Texture;
 import com.teamwizardry.librarianlib.math.Vec2;
 import com.teamwizardry.librarianlib.ragdoll.line.AnimatedCurve2D;
+import com.teamwizardry.librarianlib.ragdoll.line.PointMass2D;
+import com.teamwizardry.librarianlib.ragdoll.line.RagdollLine;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.ModuleList;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
+import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -44,8 +48,10 @@ public class WorktableGui extends GuiBase {
 
     private Multimap<WorktableModule, WorktableModule> links;
 
-    private AnimatedCurve2D curveModuleBeingLinked;
+    private RagdollLine curveModuleBeingLinked;
     private WorktableModule moduleBeingDragged, moduleBeingLinked, masterModule, moduleSelected;
+
+    private int prevMouseX, prevMouseY;
 
     private Texture spriteSheet = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sprite_sheet.png"), 256, 256);
     private Texture BACKGROUND_TEXTURE = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/table_background.png"), backgroundWidth, backgroundHeight);
@@ -256,11 +262,13 @@ public class WorktableGui extends GuiBase {
             for (WorktableModule module : modulesOnPaper) {
                 if (Utils.isInside(mouseX, mouseY, module.getX(), module.getY(), iconSize)) {
                     moduleBeingLinked = module;
-                    curveModuleBeingLinked = new AnimatedCurve2D(new Vec2(mouseX, mouseY), new Vec2(module.getX(), mouseY));
+                    //curveModuleBeingLinked = new AnimatedCurve2D(new Vec2(mouseX, mouseY), new Vec2(module.getX(), mouseY));
+                    curveModuleBeingLinked = new RagdollLine(new AnimatedCurve2D(new Vec2(mouseX, mouseY), new Vec2(module.getX(), mouseY)).getPoints());
                     break;
                 }
             }
         }
+
         if (clickedMouseButton == 0) {
             // Drag/Readjust module on paper.
             WorktableModule remove = null;
@@ -338,7 +346,7 @@ public class WorktableGui extends GuiBase {
                             if (!wasLinked) {
                                 links.get(module).add(from);
 
-                                bezierCurves.get(module).add(curveModuleBeingLinked);
+                                //bezierCurves.get(module).add(curveModuleBeingLinked);
                             }
 
                             curveModuleBeingLinked = null;
@@ -442,8 +450,36 @@ public class WorktableGui extends GuiBase {
         }
 
         if (moduleBeingLinked != null && curveModuleBeingLinked != null) {
-            curveModuleBeingLinked.setStartPoint(new Vec2(mouseX, mouseY));
-            curveModuleBeingLinked.draw();
+
+            for (int i = 0; i < curveModuleBeingLinked.masses.size(); i++) {
+                if (i == 0) {
+                    curveModuleBeingLinked.masses.get(i).pos.x = mouseX;
+                    curveModuleBeingLinked.masses.get(i).pos.y = mouseY;
+                }
+                PointMass2D point = curveModuleBeingLinked.masses.get(i);
+                point.prevPos = point.pos.sub((mouseX - prevMouseX), (mouseY - prevMouseY));
+            }
+            curveModuleBeingLinked.tick();
+            Minecraft.getMinecraft().thePlayer.sendChatMessage((mouseX - prevMouseY) + " - " + (mouseY - prevMouseY));
+            prevMouseX = mouseX;
+            prevMouseY = mouseY;
+
+            GlStateManager.pushMatrix();
+            GlStateManager.disableTexture2D();
+            GlStateManager.color(0, 0, 0, 1);
+
+            GL11.glPushMatrix();
+            GL11.glEnable(GL11.GL_LINE_STRIP);
+            GL11.glLineWidth(2);
+            GL11.glBegin(GL11.GL_LINE_STRIP);
+
+            for (Vec2 point : curveModuleBeingLinked.points)
+                GL11.glVertex2d(curveModuleBeingLinked.origin.pos.x + point.x, curveModuleBeingLinked.origin.pos.y + point.y);
+
+            GL11.glEnd();
+            GL11.glPopMatrix();
+            GlStateManager.enableTexture2D();
+            GlStateManager.popMatrix();
         }
 
         modulesOnPaper.stream().filter(module -> links.containsKey(module)).forEach(module -> {
