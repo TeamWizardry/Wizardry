@@ -61,6 +61,7 @@ public class ModuleProjectile extends Module {
 			ProjectileEntity proj = new ProjectileEntity(caster.worldObj, caster.posX, caster.posY, caster.posZ, player, caster, spell);
 			proj.setDirection(yaw, pitch);
 			yaw += anglePerProj;
+			caster.worldObj.spawnEntityInWorld(proj);
 		}
 		return true;
 	}

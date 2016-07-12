@@ -34,14 +34,13 @@ import com.teamwizardry.wizardry.common.spell.module.events.ModuleSuffocationEve
 import com.teamwizardry.wizardry.common.spell.module.events.ModuleUnderwaterEvent;
 import com.teamwizardry.wizardry.common.spell.module.modifiers.ModuleArea;
 import com.teamwizardry.wizardry.common.spell.module.modifiers.ModuleBeamModifier;
-import com.teamwizardry.wizardry.common.spell.module.modifiers.ModuleBurnOut;
 import com.teamwizardry.wizardry.common.spell.module.modifiers.ModuleCritChance;
 import com.teamwizardry.wizardry.common.spell.module.modifiers.ModuleDuration;
 import com.teamwizardry.wizardry.common.spell.module.modifiers.ModuleEnchantment;
 import com.teamwizardry.wizardry.common.spell.module.modifiers.ModuleMagicDamage;
-import com.teamwizardry.wizardry.common.spell.module.modifiers.ModuleManaCost;
 import com.teamwizardry.wizardry.common.spell.module.modifiers.ModuleMeleeDamage;
 import com.teamwizardry.wizardry.common.spell.module.modifiers.ModulePierce;
+import com.teamwizardry.wizardry.common.spell.module.modifiers.ModulePower;
 import com.teamwizardry.wizardry.common.spell.module.modifiers.ModuleProjectileCount;
 import com.teamwizardry.wizardry.common.spell.module.modifiers.ModulePunch;
 import com.teamwizardry.wizardry.common.spell.module.modifiers.ModuleRangedDamage;
@@ -113,8 +112,6 @@ public class ModuleList
 		// Modifiers
 		register(new ItemStack(Blocks.WOOL, 16, OreDictionary.WILDCARD_VALUE), ModuleSilent::new);
 		register(Blocks.SAND, ModuleDuration::new);
-		register(new ItemStack(Items.DYE, 64, 4), ModuleManaCost::new);
-		register(Items.SUGAR, 64, ModuleBurnOut::new);
 		register(Items.DRAGON_BREATH, ModuleArea::new);
 		register(new ItemStack(Blocks.GLASS, 16, OreDictionary.WILDCARD_VALUE), ModulePierce::new);
 		register(Items.PRISMARINE_CRYSTALS, ModuleBeamModifier::new);
@@ -127,6 +124,7 @@ public class ModuleList
 		register(Items.RABBIT_FOOT, ModuleCritChance::new);
 		register(Items.GOLD_INGOT, ModuleMagicDamage::new);
 		register(Items.ENCHANTED_BOOK, ModuleEnchantment::new);
+		register(Items.GLOWSTONE_DUST, 16, ModulePower::new);
 
 		// Shape Modules
 		register(Items.PRISMARINE_SHARD, ModuleBeam::new);
