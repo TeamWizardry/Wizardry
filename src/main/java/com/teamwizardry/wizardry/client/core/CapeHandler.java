@@ -1,16 +1,8 @@
 package com.teamwizardry.wizardry.client.core;
 
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.WeakHashMap;
-
-import net.minecraftforge.client.event.RenderLivingEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.item.ItemTossEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
-
+import com.teamwizardry.librarianlib.math.Matrix4;
+import com.teamwizardry.librarianlib.ragdoll.cloth.Cloth;
+import com.teamwizardry.librarianlib.ragdoll.cloth.Link;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -23,12 +15,17 @@ import net.minecraft.init.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
-
+import net.minecraftforge.client.event.RenderLivingEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.item.ItemTossEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import org.lwjgl.opengl.GL11;
 
-import com.teamwizardry.librarianlib.cloth.Cloth;
-import com.teamwizardry.librarianlib.cloth.Link;
-import com.teamwizardry.librarianlib.math.Matrix4;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.WeakHashMap;
 
 public class CapeHandler {
 
@@ -46,8 +43,8 @@ public class CapeHandler {
 			return;
 //		Matrix4 matrix = new Matrix4();
 //		matrix.rotate(Math.toRadians(1), new Vec3d(0, 1, 0));
-//		for (PointMass[] column : c.masses) {
-//			for (PointMass point : column) {
+//		for (PointMass3D[] column : c.masses) {
+//			for (PointMass3D point : column) {
 //				if(!point.pin)
 //					continue;
 //				point.pos = matrix.apply(point.pos);

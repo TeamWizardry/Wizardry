@@ -9,7 +9,7 @@ import com.teamwizardry.librarianlib.api.util.misc.Utils;
 import com.teamwizardry.librarianlib.client.Sprite;
 import com.teamwizardry.librarianlib.client.Texture;
 import com.teamwizardry.librarianlib.math.Vec2;
-import com.teamwizardry.librarianlib.math.shapes.AnimatedCurve2D;
+import com.teamwizardry.librarianlib.ragdoll.line.AnimatedCurve2D;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.ModuleList;
