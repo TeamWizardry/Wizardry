@@ -31,7 +31,6 @@ import com.teamwizardry.librarianlib.math.Matrix4;
 public class CapeHandler {
 
 	public static final CapeHandler INSTANCE = new CapeHandler();
-	public Cloth c;
 	
 	WeakHashMap<EntityLivingBase, Cloth> cloths = new WeakHashMap<>();
 	
@@ -54,6 +53,30 @@ public class CapeHandler {
 		for (Entry<EntityLivingBase, Cloth> e : cloths.entrySet()) {
 			EntityLivingBase entity = e.getKey();
 			List<AxisAlignedBB> aabbs = entity.worldObj.getCollisionBoxes(entity.getEntityBoundingBox().expand(5, 5, 5));
+			
+			if(e.getValue().masses != null && e.getValue().masses[0] != null) {
+				
+				Vec3d[] shoulderPoints = new Vec3d[] {
+						new Vec3d( 0.4, 1.5,  0),
+						new Vec3d( 0.25, 1.5, -0.25),
+						new Vec3d( 0,    1.5, -0.25),
+						new Vec3d(-0.25, 1.5, -0.25),
+						new Vec3d(-0.4, 1.5,  0)
+				};
+				
+				Matrix4 matrix = new Matrix4();
+				matrix.translate(entity.getPositionVector());
+				matrix.rotate(Math.toRadians( entity.rotationYawHead), new Vec3d(0, -1, 0));
+				
+				for (int i = 0; i < shoulderPoints.length; i++) {
+					shoulderPoints[i] = matrix.apply(shoulderPoints[i]);
+				}
+				
+				for (int i = 0; i < e.getValue().masses[0].length && i < shoulderPoints.length; i++) {
+					e.getValue().masses[0][i].pos = shoulderPoints[i];
+				}
+			}
+			
 			e.getValue().tick(aabbs);
 		}
 		
@@ -62,16 +85,8 @@ public class CapeHandler {
 	
 	@SubscribeEvent
 	public void damage(ItemTossEvent event) {
-		if(event.getEntityItem().getEntityItem().getItem() == Items.PORKCHOP)
-			c.init();
 		if(event.getEntityItem().getEntityItem().getItem() == Items.BEEF) {
-			for (PointMass[] column : c.masses) {
-				for (PointMass point : column) {
-					if(!point.pin)
-						continue;
-					point.pos = point.pos.add(new Vec3d(0.25, 0, 0.25));
-				}
-			}
+			cloths.clear();
 		}
 	}
 	
@@ -82,11 +97,11 @@ public class CapeHandler {
 			return;
 		
 		Vec3d[] shoulderPoints = new Vec3d[] {
-				new Vec3d( 0.25, 1.5,  0),
+				new Vec3d( 0.4, 1.5,  0),
 				new Vec3d( 0.25, 1.5, -0.25),
 				new Vec3d( 0,    1.5, -0.25),
 				new Vec3d(-0.25, 1.5, -0.25),
-				new Vec3d(-0.25, 1.5,  0)
+				new Vec3d(-0.4, 1.5,  0)
 		};
 		
 		Matrix4 matrix = new Matrix4();
@@ -106,9 +121,9 @@ public class CapeHandler {
 		}
 		Cloth c = cloths.get(event.getEntity());
 		
-		for (int i = 0; i < c.masses[0].length && i < shoulderPoints.length; i++) {
-			c.masses[0][i].pos = shoulderPoints[i];
-		}
+//		for (int i = 0; i < c.masses[0].length && i < shoulderPoints.length; i++) {
+//			c.masses[0][i].pos = shoulderPoints[i];
+//		}
 		
 		
 		Tessellator tess = Tessellator.getInstance();
