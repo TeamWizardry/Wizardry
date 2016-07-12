@@ -9,7 +9,9 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
@@ -18,6 +20,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 
@@ -25,7 +28,6 @@ import org.lwjgl.opengl.GL11;
 
 import com.teamwizardry.librarianlib.cloth.Cloth;
 import com.teamwizardry.librarianlib.cloth.Link;
-import com.teamwizardry.librarianlib.cloth.PointMass;
 import com.teamwizardry.librarianlib.math.Matrix4;
 
 public class CapeHandler {
@@ -40,6 +42,8 @@ public class CapeHandler {
 	
 	@SubscribeEvent
 	public void tick(ClientTickEvent event) {
+		if(event.phase == Phase.END)
+			return;
 //		Matrix4 matrix = new Matrix4();
 //		matrix.rotate(Math.toRadians(1), new Vec3d(0, 1, 0));
 //		for (PointMass[] column : c.masses) {
@@ -133,9 +137,10 @@ public class CapeHandler {
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(event.getX(), event.getY(), event.getZ());
 		GlStateManager.translate(-event.getEntity().posX, -event.getEntity().posY, -event.getEntity().posZ);
-		GlStateManager.color(0, 1, 0);
-		GlStateManager.disableLighting();
-		GlStateManager.disableTexture2D();
+		GlStateManager.color(1, 1, 1);
+		Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("Nulleynull"));
+//		GlStateManager.disableLighting();
+//		GlStateManager.disableTexture2D();
 		
 		vb.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
 		for (Link link : c.links) {
