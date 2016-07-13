@@ -1,13 +1,14 @@
 package com.teamwizardry.wizardry.common.spell.parsing;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.List;
-import net.minecraft.item.ItemStack;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.ModuleList;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.init.ModItems;
+import net.minecraft.item.ItemStack;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.List;
 
 public class Parser
 {
@@ -25,7 +26,7 @@ public class Parser
 	{
 		Module module = getModuleForItem(stacks.pop(), expectedType);
 		if (module == null)
-			return module;
+			return null;
 		currentType = module.getType();
 		expectedType = getDefaultType(currentType);
 		if (module.canHaveChildren())
@@ -41,7 +42,6 @@ public class Parser
 					{
 						expectedType = getNextType(currentType, expectedType);
 						endCount--;
-						continue;
 					}
 					if (endCount != 0)
 					{

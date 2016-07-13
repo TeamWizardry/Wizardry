@@ -1,7 +1,9 @@
 package com.teamwizardry.wizardry.common.tile;
 
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.block.IManaAcceptor;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
+import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -22,7 +24,7 @@ public class TilePedestal extends TileEntity implements ITickable {
     private ItemStack stack;
     private List<Vec3d> points;
     private boolean draw;
-    private BlockPos connectedManaBattery;
+    private BlockPos linkedBlock;
     private int queue = 0;
 
     public ItemStack getStack() {
@@ -41,9 +43,14 @@ public class TilePedestal extends TileEntity implements ITickable {
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        if (compound.hasKey("stack"))
-            stack = ItemStack.loadItemStackFromNBT(compound.getCompoundTag("stack"));
+        if (compound.hasKey("stack")) stack = ItemStack.loadItemStackFromNBT(compound.getCompoundTag("stack"));
         else stack = null;
+
+        int x = 0, y = 0, z = 0;
+        if (compound.hasKey("link_x")) x = compound.getInteger("link_x");
+        if (compound.hasKey("link_y")) y = compound.getInteger("link_y");
+        if (compound.hasKey("link_z")) z = compound.getInteger("link_z");
+        linkedBlock = new BlockPos(x, y, z);
     }
 
     @Override
@@ -54,12 +61,18 @@ public class TilePedestal extends TileEntity implements ITickable {
             stack.writeToNBT(tagCompound);
             compound.setTag("stack", tagCompound);
         }
+        if (linkedBlock != null) {
+            NBTTagCompound tagCompound = new NBTTagCompound();
+            tagCompound.setInteger("link_x", pos.getX());
+            tagCompound.setInteger("link_y", pos.getY());
+            tagCompound.setInteger("link_z", pos.getZ());
+            compound.setTag("linkedBlock", tagCompound);
+        }
         return compound;
     }
 
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
-        // Here we get the packet from the server and read it into our client side tile entity
         this.readFromNBT(packet.getNbtCompound());
     }
 
@@ -77,7 +90,7 @@ public class TilePedestal extends TileEntity implements ITickable {
 
     @Override
     public void update() {
-        if (draw) {
+        if (linkedBlock != null && stack != null) {
             if (queue < points.size()) {
                 Vec3d location = points.get(queue);
                 SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(worldObj, location.xCoord, location.yCoord, location.zCoord, 0.8F, 0.5F, 30, false);
@@ -89,6 +102,19 @@ public class TilePedestal extends TileEntity implements ITickable {
                 draw = false;
                 points.clear();
             }
+        }
+
+        if (linkedBlock == null && stack != null) {
+            if (stack.getItem() != ModItems.PEARL_MANA) return;
+            if (!stack.hasTagCompound()) return;
+            NBTTagCompound compound = stack.getTagCompound();
+            int x = 0, y = 0, z = 0;
+            if (compound.hasKey("link_x")) x = compound.getInteger("link_x");
+            if (compound.hasKey("link_y")) y = compound.getInteger("link_y");
+            if (compound.hasKey("link_z")) z = compound.getInteger("link_z");
+            BlockPos pos = new BlockPos(x, y, z);
+            IBlockState block = worldObj.getBlockState(pos);
+            if (block instanceof IManaAcceptor) linkedBlock = pos;
         }
     }
 
@@ -104,11 +130,12 @@ public class TilePedestal extends TileEntity implements ITickable {
         this.draw = draw;
     }
 
-    public BlockPos getConnectedManaBattery() {
-        return connectedManaBattery;
+    public BlockPos getLinkedBlock() {
+        return linkedBlock;
     }
 
-    public void setConnectedManaBattery(BlockPos connectedManaBattery) {
-        this.connectedManaBattery = connectedManaBattery;
+    public void setLinkedBlock(BlockPos pos) {
+        this.linkedBlock = pos;
     }
+
 }
