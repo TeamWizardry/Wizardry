@@ -1,5 +1,22 @@
 package com.teamwizardry.wizardry.client.gui.worktable;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
+
+import org.lwjgl.opengl.GL11;
+
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.teamwizardry.librarianlib.api.gui.GuiBase;
@@ -10,24 +27,13 @@ import com.teamwizardry.librarianlib.client.Sprite;
 import com.teamwizardry.librarianlib.client.Texture;
 import com.teamwizardry.librarianlib.math.Vec2;
 import com.teamwizardry.librarianlib.ragdoll.line.AnimatedCurve2D;
+import com.teamwizardry.librarianlib.ragdoll.line.Link2D;
 import com.teamwizardry.librarianlib.ragdoll.line.PointMass2D;
-import com.teamwizardry.librarianlib.ragdoll.line.RagdollLine;
+import com.teamwizardry.librarianlib.ragdoll.line.Rope;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.ModuleList;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextFormatting;
-import org.lwjgl.opengl.GL11;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Created by Saad on 6/17/2016.
@@ -48,7 +54,7 @@ public class WorktableGui extends GuiBase {
 
     private Multimap<WorktableModule, WorktableModule> links;
 
-    private RagdollLine curveModuleBeingLinked;
+    private Rope curveModuleBeingLinked;
     private WorktableModule moduleBeingDragged, moduleBeingLinked, masterModule, moduleSelected;
 
     private int prevMouseX, prevMouseY;
@@ -262,11 +268,21 @@ public class WorktableGui extends GuiBase {
             for (WorktableModule module : modulesOnPaper) {
                 if (Utils.isInside(mouseX, mouseY, module.getX(), module.getY(), iconSize)) {
                     moduleBeingLinked = module;
-                    //curveModuleBeingLinked = new AnimatedCurve2D(new Vec2(mouseX, mouseY), new Vec2(module.getX(), mouseY));
-                    curveModuleBeingLinked = new RagdollLine(new AnimatedCurve2D(new Vec2(mouseX, mouseY), new Vec2(module.getX(), mouseY)).getPoints());
+                	float length = (float) new Vec2(module.getX(), module.getY()).sub(mouseX, mouseY).length();
+                    curveModuleBeingLinked = new Rope(10, length, 0.2f, 1, new Vec2(module.getX(), module.getY()), new Vec2(mouseX, mouseY));
+                    curveModuleBeingLinked.start.pin = true;
+                    curveModuleBeingLinked.end.pin = true;
                     break;
                 }
             }
+        }
+        
+        if(moduleBeingLinked != null && clickedMouseButton == 1) {
+        	float length = (float) new Vec2(moduleBeingLinked.getX(), moduleBeingLinked.getY()).sub(mouseX, mouseY).length()/(curveModuleBeingLinked.middles+1);
+        	for (Link2D link : curveModuleBeingLinked.stretchLinks) {
+				link.restingDistance = length;
+			}
+        	curveModuleBeingLinked.end.pos = new Vec2(mouseX, mouseY);
         }
 
         if (clickedMouseButton == 0) {
@@ -451,14 +467,14 @@ public class WorktableGui extends GuiBase {
 
         if (moduleBeingLinked != null && curveModuleBeingLinked != null) {
 
-            for (int i = 0; i < curveModuleBeingLinked.masses.size(); i++) {
-                if (i == 0) {
-                    curveModuleBeingLinked.masses.get(i).pos.x = mouseX;
-                    curveModuleBeingLinked.masses.get(i).pos.y = mouseY;
-                }
-                PointMass2D point = curveModuleBeingLinked.masses.get(i);
-                point.prevPos = point.pos.sub((mouseX - prevMouseX), (mouseY - prevMouseY));
-            }
+//            for (int i = 0; i < curveModuleBeingLinked.masses.size(); i++) {
+//                if (i == 0) {
+//                    curveModuleBeingLinked.masses.get(i).pos.x = mouseX;
+//                    curveModuleBeingLinked.masses.get(i).pos.y = mouseY;
+//                }
+//                PointMass2D point = curveModuleBeingLinked.masses.get(i);
+//                point.prevPos = point.pos.sub((mouseX - prevMouseX), (mouseY - prevMouseY));
+//            }
             curveModuleBeingLinked.tick();
             Minecraft.getMinecraft().thePlayer.sendChatMessage((mouseX - prevMouseY) + " - " + (mouseY - prevMouseY));
             prevMouseX = mouseX;
@@ -468,16 +484,24 @@ public class WorktableGui extends GuiBase {
             GlStateManager.disableTexture2D();
             GlStateManager.color(0, 0, 0, 1);
 
-            GL11.glPushMatrix();
-            GL11.glEnable(GL11.GL_LINE_STRIP);
-            GL11.glLineWidth(2);
-            GL11.glBegin(GL11.GL_LINE_STRIP);
+            Tessellator t = Tessellator.getInstance();
+            VertexBuffer vb = t.getBuffer();
+            
+            vb.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION);
+            for (PointMass2D point : curveModuleBeingLinked.points)
+            	vb.pos(point.pos.x, point.pos.y, 0).endVertex();
+            t.draw();
+            
+//            GL11.glPushMatrix();
+//            GL11.glEnable(GL11.GL_LINE_STRIP);
+//            GL11.glLineWidth(2);
+//            GL11.glBegin(GL11.GL_LINE_STRIP);
 
-            for (Vec2 point : curveModuleBeingLinked.points)
-                GL11.glVertex2d(curveModuleBeingLinked.origin.pos.x + point.x, curveModuleBeingLinked.origin.pos.y + point.y);
+//            for (PointMass2D point : curveModuleBeingLinked.points)
+//                GL11.glVertex2d(point.pos.x, point.pos.y);
 
-            GL11.glEnd();
-            GL11.glPopMatrix();
+//            GL11.glEnd();
+//            GL11.glPopMatrix();
             GlStateManager.enableTexture2D();
             GlStateManager.popMatrix();
         }
