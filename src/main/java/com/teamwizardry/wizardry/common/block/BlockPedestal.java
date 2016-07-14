@@ -2,9 +2,9 @@ package com.teamwizardry.wizardry.common.block;
 
 import com.teamwizardry.librarianlib.math.shapes.Arc3D;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.block.IManaAcceptor;
 import com.teamwizardry.wizardry.client.render.TilePedestalRenderer;
 import com.teamwizardry.wizardry.common.tile.TilePedestal;
-import com.teamwizardry.wizardry.init.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -35,7 +35,7 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Created by Saad on 5/7/2016.
  */
-public class BlockPedestal extends Block implements ITileEntityProvider {
+public class BlockPedestal extends Block implements ITileEntityProvider, IManaAcceptor {
 
     public BlockPedestal() {
         super(Material.ROCK);
@@ -58,7 +58,6 @@ public class BlockPedestal extends Block implements ITileEntityProvider {
         if (!world.isRemote) {
             TilePedestal te = getTE(world, pos);
             if (te.getStack() == null && player.getHeldItem(hand) != null) {
-
                 te.setStack(player.getHeldItem(hand));
                 player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
                 player.openContainer.detectAndSendChanges();
@@ -80,18 +79,9 @@ public class BlockPedestal extends Block implements ITileEntityProvider {
     @SideOnly(Side.CLIENT)
     public void randomDisplayTick(IBlockState stateIn, World worldIn, BlockPos pos, Random rand) {
         TilePedestal te = getTE(worldIn, pos);
-        if (te.getConnectedManaBattery() == null) {
-            for (int i = -7; i < 7; i++) {
-                for (int j = -7; j < 7; j++) {
-                    BlockPos blockpos = pos.add(i, +2, j);
-
-                    if (worldIn.getBlockState(blockpos).getBlock() == ModBlocks.MANA_BATTERY)
-                        te.setConnectedManaBattery(blockpos);
-                }
-            }
-        } else {
+        if (te.getStack() != null && te.getLinkedBlock() != null && te.getPoints().isEmpty()) {
             Vec3d origin = new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
-            Vec3d target = new Vec3d(te.getConnectedManaBattery().getX() + 0.5, te.getConnectedManaBattery().getY() + 0.5, te.getConnectedManaBattery().getZ() + 0.5);
+            Vec3d target = new Vec3d(te.getLinkedBlock().getX() + 0.5, te.getLinkedBlock().getY() + 0.5, te.getLinkedBlock().getZ() + 0.5);
             te.setPoints(new Arc3D(target, origin, (float) ThreadLocalRandom.current().nextDouble(-3, 3), 30).getPoints());
             Collections.reverse(te.getPoints());
             te.setDraw(true);

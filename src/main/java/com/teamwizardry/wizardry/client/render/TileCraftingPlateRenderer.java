@@ -1,12 +1,12 @@
 package com.teamwizardry.wizardry.client.render;
 
-import com.teamwizardry.librarianlib.api.util.misc.PosUtils;
+import com.teamwizardry.wizardry.client.helper.CraftingPlateItemStackHelper;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.util.math.Vec3d;
-import org.lwjgl.opengl.GL11;
 
 /**
  * Created by Saad on 6/11/2016.
@@ -27,14 +27,18 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
 
             // RENDER INVENTORY ITEMS HERE //
             for (int i = 0; i < te.getInventory().size(); i++) {
-                // Get Item
-                EntityItem item = new EntityItem(te.getWorld(), x, y, z, te.getInventory().get(i));
+                CraftingPlateItemStackHelper stack = te.getInventory().get(i);
 
-                Vec3d pos = PosUtils.generateRandomPosition(new Vec3d(item.posX, item.posY, item.posZ), 3);
+                if (stack.getQueue() < stack.getPoints().size() - 1) stack.setQueue(stack.getQueue() + 1);
+                Vec3d point = stack.getPoints().get(stack.getQueue());
 
-                GL11.glPushMatrix();
-                Minecraft.getMinecraft().getRenderManager().doRenderEntity(item, pos.xCoord, pos.yCoord, pos.zCoord, ticker, ticker, true);
-                GL11.glPopMatrix();
+                GlStateManager.pushMatrix();
+                GlStateManager.translate(point.xCoord, point.yCoord, point.zCoord);
+                GlStateManager.scale(0.4, 0.4, 0.4);
+                GlStateManager.rotate(ticker, 0, 1, 0);
+                Minecraft.getMinecraft().getRenderItem().renderItem(stack.getItemStack(), ItemCameraTransforms.TransformType.NONE);
+                GlStateManager.popMatrix();
+
             }
         }
     }

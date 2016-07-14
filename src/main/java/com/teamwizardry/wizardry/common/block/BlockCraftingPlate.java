@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.common.block;
 
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.block.IManaAcceptor;
 import com.teamwizardry.wizardry.client.render.TileCraftingPlateRenderer;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
 import net.minecraft.block.Block;
@@ -30,7 +31,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 /**
  * Created by Saad on 6/10/2016.
  */
-public class BlockCraftingPlate extends Block implements ITileEntityProvider {
+public class BlockCraftingPlate extends Block implements ITileEntityProvider, IManaAcceptor {
 
     public BlockCraftingPlate() {
         super(Material.ROCK);

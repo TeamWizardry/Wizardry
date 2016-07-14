@@ -1,8 +1,17 @@
 package com.teamwizardry.wizardry.client.core;
 
-import com.teamwizardry.librarianlib.math.Matrix4;
-import com.teamwizardry.librarianlib.ragdoll.cloth.Cloth;
-import com.teamwizardry.librarianlib.ragdoll.cloth.Link;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.WeakHashMap;
+
+import net.minecraftforge.client.event.RenderLivingEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.item.ItemTossEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -15,17 +24,12 @@ import net.minecraft.init.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.client.event.RenderLivingEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.item.ItemTossEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+
 import org.lwjgl.opengl.GL11;
 
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.WeakHashMap;
+import com.teamwizardry.librarianlib.math.Matrix4;
+import com.teamwizardry.librarianlib.ragdoll.cloth.Cloth;
+import com.teamwizardry.librarianlib.ragdoll.cloth.Link;
 
 public class CapeHandler {
 
@@ -51,8 +55,14 @@ public class CapeHandler {
 //			}
 //		}
 		
+		List<EntityLivingBase> keysToRemove = new ArrayList<>();
+		
 		for (Entry<EntityLivingBase, Cloth> e : cloths.entrySet()) {
 			EntityLivingBase entity = e.getKey();
+			if(entity.isDead) {
+				keysToRemove.add(entity);
+				continue;
+			}
 			List<AxisAlignedBB> aabbs = entity.worldObj.getCollisionBoxes(entity.getEntityBoundingBox().expand(5, 5, 5));
 			
 			if(e.getValue().masses != null && e.getValue().masses[0] != null) {
@@ -67,6 +77,7 @@ public class CapeHandler {
 				
 				Matrix4 matrix = new Matrix4();
 				matrix.translate(entity.getPositionVector());
+				matrix.translate(new Vec3d(entity.motionX, entity.motionY, entity.motionZ));
 				matrix.rotate(Math.toRadians( entity.rotationYawHead), new Vec3d(0, -1, 0));
 				
 				for (int i = 0; i < shoulderPoints.length; i++) {
@@ -79,6 +90,10 @@ public class CapeHandler {
 			}
 			
 			e.getValue().tick(aabbs);
+		}
+		
+		for (EntityLivingBase entity : keysToRemove) {
+			cloths.remove(entity);
 		}
 		
 //		c.tick();
