@@ -1,10 +1,10 @@
 package com.teamwizardry.wizardry.common.block;
 
-import com.teamwizardry.librarianlib.math.shapes.Arc3D;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.block.IManaAcceptor;
 import com.teamwizardry.wizardry.client.render.TilePedestalRenderer;
 import com.teamwizardry.wizardry.common.tile.TilePedestal;
+import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -15,22 +15,18 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import java.util.Collections;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by Saad on 5/7/2016.
@@ -57,11 +53,23 @@ public class BlockPedestal extends Block implements ITileEntityProvider, IManaAc
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (!world.isRemote) {
             TilePedestal te = getTE(world, pos);
-            if (te.getStack() == null && player.getHeldItem(hand) != null) {
-                te.setStack(player.getHeldItem(hand));
+            if (heldItem != null && player.isSneaking()) {
+                if (heldItem.getItem() == ModItems.PEARL_MANA) {
+                    NBTTagCompound compound = new NBTTagCompound();
+                    compound.setInteger("link_x", pos.getX());
+                    compound.setInteger("link_y", pos.getY());
+                    compound.setInteger("link_z", pos.getZ());
+                    heldItem.setTagCompound(compound);
+                    return true;
+                }
+            }
+
+            if (te.getStack() == null && heldItem != null) {
+                te.setStack(heldItem);
                 player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
                 player.openContainer.detectAndSendChanges();
-            } else {
+
+            } else if (te.getStack() != null && heldItem == null) {
                 ItemStack stack = te.getStack();
                 te.setStack(null);
                 if (!player.inventory.addItemStackToInventory(stack)) {
@@ -73,19 +81,6 @@ public class BlockPedestal extends Block implements ITileEntityProvider, IManaAc
             }
         }
         return true;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void randomDisplayTick(IBlockState stateIn, World worldIn, BlockPos pos, Random rand) {
-        TilePedestal te = getTE(worldIn, pos);
-        if (te.getStack() != null && te.getLinkedBlock() != null && te.getPoints().isEmpty()) {
-            Vec3d origin = new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
-            Vec3d target = new Vec3d(te.getLinkedBlock().getX() + 0.5, te.getLinkedBlock().getY() + 0.5, te.getLinkedBlock().getZ() + 0.5);
-            te.setPoints(new Arc3D(target, origin, (float) ThreadLocalRandom.current().nextDouble(-3, 3), 30).getPoints());
-            Collections.reverse(te.getPoints());
-            te.setDraw(true);
-        }
     }
 
     private TilePedestal getTE(World world, BlockPos pos) {

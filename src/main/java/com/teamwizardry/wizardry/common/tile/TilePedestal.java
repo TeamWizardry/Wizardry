@@ -1,8 +1,8 @@
 package com.teamwizardry.wizardry.common.tile;
 
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.block.IManaAcceptor;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
+import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
@@ -23,7 +23,6 @@ public class TilePedestal extends TileEntity implements ITickable {
 
     private ItemStack stack;
     private List<Vec3d> points;
-    private boolean draw;
     private BlockPos linkedBlock;
     private int queue = 0;
 
@@ -45,12 +44,6 @@ public class TilePedestal extends TileEntity implements ITickable {
         super.readFromNBT(compound);
         if (compound.hasKey("stack")) stack = ItemStack.loadItemStackFromNBT(compound.getCompoundTag("stack"));
         else stack = null;
-
-        int x = 0, y = 0, z = 0;
-        if (compound.hasKey("link_x")) x = compound.getInteger("link_x");
-        if (compound.hasKey("link_y")) y = compound.getInteger("link_y");
-        if (compound.hasKey("link_z")) z = compound.getInteger("link_z");
-        linkedBlock = new BlockPos(x, y, z);
     }
 
     @Override
@@ -60,13 +53,6 @@ public class TilePedestal extends TileEntity implements ITickable {
             NBTTagCompound tagCompound = new NBTTagCompound();
             stack.writeToNBT(tagCompound);
             compound.setTag("stack", tagCompound);
-        }
-        if (linkedBlock != null) {
-            NBTTagCompound tagCompound = new NBTTagCompound();
-            tagCompound.setInteger("link_x", pos.getX());
-            tagCompound.setInteger("link_y", pos.getY());
-            tagCompound.setInteger("link_z", pos.getZ());
-            compound.setTag("linkedBlock", tagCompound);
         }
         return compound;
     }
@@ -90,31 +76,35 @@ public class TilePedestal extends TileEntity implements ITickable {
 
     @Override
     public void update() {
-        if (linkedBlock != null && stack != null) {
-            if (queue < points.size()) {
-                Vec3d location = points.get(queue);
-                SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(worldObj, location.xCoord, location.yCoord, location.zCoord, 0.8F, 0.5F, 30, false);
-                fizz.setMotion(0, 0, 0);
-                fizz.jitter(20, 0.05, 0.05, 0.05);
-                queue++;
-            } else {
-                queue = 0;
-                draw = false;
-                points.clear();
+        if (stack != null && linkedBlock == null) {
+            if (stack.getItem() == ModItems.PEARL_MANA) {
+                NBTTagCompound compound = stack.getTagCompound();
+                if (compound != null) {
+                    if (compound.hasKey("link_x") && compound.hasKey("link_y") && compound.hasKey("link_z")) {
+                        BlockPos pos = new BlockPos(compound.getInteger("link_x"), compound.getInteger("link_y"), compound.getInteger("link_z"));
+                        if (worldObj.getBlockState(pos).getBlock() == ModBlocks.PEDESTAL) { // TODO: instanceOf IManaAccepter
+                            if (pos != getPos()) linkedBlock = pos;
+                            worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
+                        }
+                    }
+                }
             }
         }
 
-        if (linkedBlock == null && stack != null) {
-            if (stack.getItem() != ModItems.PEARL_MANA) return;
-            if (!stack.hasTagCompound()) return;
-            NBTTagCompound compound = stack.getTagCompound();
-            int x = 0, y = 0, z = 0;
-            if (compound.hasKey("link_x")) x = compound.getInteger("link_x");
-            if (compound.hasKey("link_y")) y = compound.getInteger("link_y");
-            if (compound.hasKey("link_z")) z = compound.getInteger("link_z");
-            BlockPos pos = new BlockPos(x, y, z);
-            IBlockState block = worldObj.getBlockState(pos);
-            if (block instanceof IManaAcceptor) linkedBlock = pos;
+        if (stack != null && linkedBlock != null) {
+            if (stack.getItem() == ModItems.PEARL_MANA) {
+
+                if (queue < points.size()) {
+                    Vec3d location = points.get(queue);
+                    SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(worldObj, location.xCoord, location.yCoord, location.zCoord, 0.8F, 0.5F, 30, false);
+                    fizz.setMotion(0, 0, 0);
+                    fizz.jitter(20, 0.05, 0.05, 0.05);
+                    queue++;
+                } else {
+                    queue = 0;
+                    points.clear();
+                }
+            }
         }
     }
 
@@ -126,16 +116,7 @@ public class TilePedestal extends TileEntity implements ITickable {
         this.points = points;
     }
 
-    public void setDraw(boolean draw) {
-        this.draw = draw;
+    public void setLinkedBlock(BlockPos linkedBlock) {
+        this.linkedBlock = linkedBlock;
     }
-
-    public BlockPos getLinkedBlock() {
-        return linkedBlock;
-    }
-
-    public void setLinkedBlock(BlockPos pos) {
-        this.linkedBlock = pos;
-    }
-
 }
