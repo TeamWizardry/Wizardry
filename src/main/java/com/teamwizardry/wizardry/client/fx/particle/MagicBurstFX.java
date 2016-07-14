@@ -1,25 +1,21 @@
 package com.teamwizardry.wizardry.client.fx.particle;
 
-import com.teamwizardry.librarianlib.client.fx.particle.ParticleRenderQueue;
-import com.teamwizardry.librarianlib.client.fx.particle.QueuedParticle;
-import com.teamwizardry.librarianlib.client.fx.shader.ShaderHelper;
-import com.teamwizardry.librarianlib.math.Matrix4;
-import com.teamwizardry.wizardry.client.fx.Shaders;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import org.lwjgl.BufferUtils;
+
 import org.lwjgl.opengl.GL11;
 
-import java.nio.FloatBuffer;
-import java.util.Random;
+import com.teamwizardry.librarianlib.client.fx.particle.ParticleRenderQueue;
+import com.teamwizardry.librarianlib.client.fx.particle.QueuedParticle;
+import com.teamwizardry.librarianlib.client.fx.shader.ShaderHelper;
+import com.teamwizardry.wizardry.client.fx.Shaders;
 
 public class MagicBurstFX extends QueuedParticle {
 
-    private static ParticleRenderQueue<MagicBurstFX> QUEUE = new ParticleRenderQueue<MagicBurstFX>() {
+    private static ParticleRenderQueue<MagicBurstFX> QUEUE = new ParticleRenderQueue<MagicBurstFX>(true) {
 
         @Override
         public String name() {
@@ -27,7 +23,7 @@ public class MagicBurstFX extends QueuedParticle {
         }
 
         @Override
-        public void dispatchQueuedRenders(Tessellator tessellator) {
+        public void renderParticles(Tessellator tessellator) {
             if (renderQueue.isEmpty())
                 return;
             GlStateManager.disableTexture2D();
@@ -56,7 +52,7 @@ public class MagicBurstFX extends QueuedParticle {
         particleRed = (float)Math.random();
         particleGreen = (float)Math.random();
         particleBlue = (float)Math.random();
-        particleGravity = 0.0f;
+        particleGravity = 0.1f;
 		rand = (int)( Math.random()*1000 );
     }
 
