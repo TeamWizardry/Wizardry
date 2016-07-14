@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.common.spell.module.shapes;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.MathHelper;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.attribute.Attribute;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
@@ -36,7 +35,7 @@ public class ModuleProjectile extends Module {
     @Override
     public NBTTagCompound getModuleData() {
     	NBTTagCompound compound = super.getModuleData();
-    	compound.setDouble(SPEED, attributes.apply(Attribute.SPEED, 1));
+    	compound.setDouble(SPEED, attributes.apply(Attribute.SPEED, 0.1));
     	compound.setInteger(PIERCE, (int) attributes.apply(Attribute.PIERCE, 0));
     	compound.setDouble(SCATTER, attributes.apply(Attribute.SCATTER, 0));
     	compound.setInteger(PROJ_COUNT, (int) attributes.apply(Attribute.PROJ_COUNT, 1));
@@ -48,19 +47,19 @@ public class ModuleProjectile extends Module {
 	@Override
 	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell)
 	{
-		double scatter = MathHelper.clamp_double(spell.getDouble(SCATTER), 0, 2);
-		int projCount = spell.getInteger(PROJ_COUNT);
+//		double scatter = MathHelper.clamp_double(spell.getDouble(SCATTER), 0, 2);
+//		int projCount = spell.getInteger(PROJ_COUNT);
 		
-		double castSpread = 180 * scatter; //180 degrees, or half a circle
-		double anglePerProj = castSpread / (projCount - 1);
+//		double castSpread = 180 * scatter; //180 degrees, or half a circle
+//		double anglePerProj = castSpread / (projCount - 1);
 		
-		float yaw = caster.rotationYaw - (90 * (float)castSpread);
+		float yaw = caster.rotationYaw /*- (90 * (float)castSpread)*/;
 		float pitch = caster.rotationPitch;
-		for (int i = 0; i < projCount; i++)
+//		for (int i = 0; i < projCount; i++)
 		{
-			ProjectileEntity proj = new ProjectileEntity(caster.worldObj, caster.posX, caster.posY, caster.posZ, player, caster, spell);
+			ProjectileEntity proj = new ProjectileEntity(caster.worldObj, caster.posX, caster.posY + caster.getEyeHeight(), caster.posZ, player, spell);
 			proj.setDirection(yaw, pitch);
-			yaw += anglePerProj;
+//			yaw += anglePerProj;
 			caster.worldObj.spawnEntityInWorld(proj);
 		}
 		return true;
