@@ -135,8 +135,8 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
             if (update) worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
 
             SparkleFX ambient = Wizardry.proxy.spawnParticleSparkle(worldObj, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.5F, 0.5F, 100, 8, 8, 8, true);
-                ambient.jitter(8, 0.1, 0.1, 0.1);
-                ambient.randomDirection(0.2, 0.2, 0.2);
+            ambient.jitter(8, 0.1, 0.1, 0.1);
+            ambient.randomDirection(0.2, 0.2, 0.2);
 
             if (isCrafting) {
                 if (craftingTimeLeft > 0) --craftingTimeLeft;
