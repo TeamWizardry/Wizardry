@@ -93,7 +93,7 @@ public class ModuleZone extends Module {
 			for (BlockPos block : blocks)
 			{
 				SpellEntity entity = new SpellEntity(caster.worldObj, block.getX(), block.getY(), block.getZ());
-				entity.rotationPitch = -90;
+				entity.rotationPitch = 90;
 				for (int i = 0; i < modules.tagCount(); i++)
 				{
 					SpellCastEvent event = new SpellCastEvent(modules.getCompoundTagAt(i), entity, player);

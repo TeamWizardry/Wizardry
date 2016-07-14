@@ -63,7 +63,7 @@ public class ModuleCone extends Module
 		double radius = spell.getDouble(RADIUS);
 		double scatter = Math.PI / 2 * MathHelper.clamp_double(spell.getDouble(SCATTER), 0, 1);
 		NBTTagList modules = spell.getTagList(MODULES, NBT.TAG_COMPOUND);
-		Vec3d look = caster.getLookVec();
+		Vec3d look = caster.getLook(1);
 		if (!(caster instanceof SpellEntity))
 		{
 			BlockPos pos = caster.getPosition();
@@ -101,7 +101,12 @@ public class ModuleCone extends Module
 				{
 					if (i * i + j * j <= radius * radius && !caster.worldObj.isAirBlock(pos.add(i, 0, j)))
 					{
-						double cos = (look.xCoord * i + look.zCoord * j) / Math.sqrt((look.xCoord * look.xCoord + look.zCoord * look.zCoord) * (i * i + j * j));
+						double xCoord = look.xCoord * i;
+						double zCoord = look.zCoord * j;
+						double lookSq = look.xCoord * look.xCoord + look.zCoord * look.zCoord;
+						double posSq = i*i + j*j;
+						double cos = (xCoord + zCoord) / Math.sqrt(lookSq * posSq);
+//						double cos = (look.xCoord * i + look.zCoord * j) / Math.sqrt((look.xCoord * look.xCoord + look.zCoord * look.zCoord) * (i * i + j * j));
 						double angle = Math.acos(Math.abs(cos));
 						if (angle <= scatter)
 						{

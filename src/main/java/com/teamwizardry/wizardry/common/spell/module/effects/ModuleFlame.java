@@ -14,6 +14,7 @@ import net.minecraft.util.math.MathHelper;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.attribute.Attribute;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.spell.SpellEntity;
 
 public class ModuleFlame extends Module
 {
@@ -84,7 +85,7 @@ public class ModuleFlame extends Module
 			int duration = spell.getInteger(DURATION);
 			((EntityLivingBase) caster).setFire(MathHelper.ceiling_double_int(duration / 20.));
 		}
-		else
+		else if (caster instanceof SpellEntity)
 		{
 			BlockPos pos = caster.getPosition();
 			IBlockState state = caster.worldObj.getBlockState(pos);

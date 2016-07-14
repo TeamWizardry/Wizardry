@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.api.spell;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -11,6 +12,7 @@ public class SpellEntity extends Entity
 	public SpellEntity(World world)
 	{
 		super(world);
+		this.setEntityBoundingBox(Block.NULL_AABB);
 	}
 	
 	public SpellEntity(World world, NBTTagCompound spell)
