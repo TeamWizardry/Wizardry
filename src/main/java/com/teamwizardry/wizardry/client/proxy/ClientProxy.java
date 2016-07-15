@@ -68,15 +68,15 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
-    public SparkleTrailHelix spawnParticleSparkleTrailHelix(World worldIn, Vec3d origin, Vec3d center, double radius, double initialTheta) {
-        SparkleTrailHelix particle = new SparkleTrailHelix(worldIn, origin, center, radius, initialTheta);
+    public SparkleTrailHelix spawnParticleSparkleTrailHelix(World worldIn, Vec3d origin, Vec3d center, double radius, double initialTheta, int age) {
+        SparkleTrailHelix particle = new SparkleTrailHelix(worldIn, origin, center, radius, initialTheta, age);
         Minecraft.getMinecraft().effectRenderer.addEffect(particle);
         return particle;
     }
 
     @Override
-    public SparkleTrailHelix spawnParticleSparkleTrailHelix(World worldIn, Vec3d origin, Vec3d center, double radius) {
-        SparkleTrailHelix particle = new SparkleTrailHelix(worldIn, origin, center, radius);
+    public SparkleTrailHelix spawnParticleSparkleTrailHelix(World worldIn, Vec3d origin, Vec3d center, double radius, int age) {
+        SparkleTrailHelix particle = new SparkleTrailHelix(worldIn, origin, center, radius, age);
         Minecraft.getMinecraft().effectRenderer.addEffect(particle);
         return particle;
     }

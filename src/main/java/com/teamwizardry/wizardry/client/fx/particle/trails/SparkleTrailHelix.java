@@ -14,18 +14,20 @@ public class SparkleTrailHelix extends SparkleFX {
     private double theta, radius;
     private Vec3d center;
 
-    public SparkleTrailHelix(World worldIn, Vec3d origin, Vec3d center, double radius, double initialTheta) {
+    public SparkleTrailHelix(World worldIn, Vec3d origin, Vec3d center, double radius, double initialTheta, int age) {
         super(worldIn, origin.xCoord, origin.yCoord, origin.zCoord, 1f, 0.5f, 50, false);
         this.center = center;
         this.radius = radius;
         this.theta = initialTheta;
+        this.particleMaxAge = age;
     }
 
-    public SparkleTrailHelix(World worldIn, Vec3d origin, Vec3d center, double radius) {
+    public SparkleTrailHelix(World worldIn, Vec3d origin, Vec3d center, double radius, int age) {
         super(worldIn, origin.xCoord, origin.yCoord, origin.zCoord, 1f, 0.5f, 50, false);
         this.center = center;
         this.radius = radius;
         this.theta = ThreadLocalRandom.current().nextDouble(0, 360);
+        this.particleMaxAge = age;
     }
 
     @Override
