@@ -1,16 +1,20 @@
 package com.teamwizardry.wizardry.common.spell.module.effects;
 
-import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.attribute.Attribute;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.potion.PotionUtils;
+import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.api.module.attribute.Attribute;
+import com.teamwizardry.wizardry.api.spell.IRequireItem;
+import com.teamwizardry.wizardry.api.spell.ModuleType;
 
-public class ModulePotion extends Module {
+public class ModulePotion extends Module implements IRequireItem{
 	public static final String POTION = "Potion";
 	private int potionID;
 	
@@ -26,7 +30,7 @@ public class ModulePotion extends Module {
 
     @Override
     public String getDescription() {
-        return "Cause the targeted entity to gain the given potion effect, at a certain stiffness and duration.";
+        return "Cause the targeted entity to gain the given potion effect, at a certain power and duration.";
     }
 
     @Override
@@ -34,6 +38,17 @@ public class ModulePotion extends Module {
         return "Potion";
     }
 
+    @Override
+    public void handle(ItemStack stack)
+    {
+    	if (stack == null) return;
+    	if (stack.getItem() == null) return;
+    	if (stack.getItem() != Items.POTIONITEM) return;
+    	PotionEffect effect = PotionUtils.getEffectsFromStack(stack).get(0);
+    	if (effect.getPotion().isInstant()) return;
+    	potionID = Potion.getIdFromPotion(effect.getPotion());
+    }
+    
     @Override
     public NBTTagCompound getModuleData() {
     	NBTTagCompound compound = super.getModuleData();
@@ -45,12 +60,6 @@ public class ModulePotion extends Module {
     	return compound;
     }
     
-    public ModulePotion setPotionID(int potionID)
-    {
-    	this.potionID = potionID;
-    	return this;
-    }
-
 	@Override
 	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell)
 	{
@@ -58,7 +67,10 @@ public class ModulePotion extends Module {
 		int power = spell.getInteger(POWER);
 		int duration = spell.getInteger(DURATION);
 		if (caster instanceof EntityLivingBase)
-			((EntityLivingBase) caster).addPotionEffect(new PotionEffect(Potion.getPotionById(potionId), duration, power));
+		{
+			((EntityLivingBase) caster).addPotionEffect(new PotionEffect(Potion.getPotionById(potionId), duration * 20, power - 1));
+			return true;
+		}
 		return false;
 	}
 }

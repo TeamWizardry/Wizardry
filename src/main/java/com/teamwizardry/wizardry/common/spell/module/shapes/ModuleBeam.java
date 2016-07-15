@@ -10,11 +10,12 @@ import net.minecraftforge.common.util.Constants.NBT;
 import com.teamwizardry.librarianlib.math.Raycast;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.attribute.Attribute;
+import com.teamwizardry.wizardry.api.spell.IContinuousCast;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.SpellEntity;
 import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
 
-public class ModuleBeam extends Module {
+public class ModuleBeam extends Module implements IContinuousCast {
     public ModuleBeam() {
         attributes.addAttribute(Attribute.DISTANCE);
         attributes.addAttribute(Attribute.SCATTER);

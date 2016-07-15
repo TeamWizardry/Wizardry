@@ -47,20 +47,23 @@ public class ModuleProjectile extends Module {
 	@Override
 	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell)
 	{
-//		double scatter = MathHelper.clamp_double(spell.getDouble(SCATTER), 0, 2);
-//		int projCount = spell.getInteger(PROJ_COUNT);
-		
-//		double castSpread = 180 * scatter; //180 degrees, or half a circle
-//		double anglePerProj = castSpread / (projCount - 1);
-		
-		float yaw = caster.rotationYaw /*- (90 * (float)castSpread)*/;
-		float pitch = caster.rotationPitch;
-//		for (int i = 0; i < projCount; i++)
+		if (caster.worldObj.isRemote)
 		{
-			ProjectileEntity proj = new ProjectileEntity(caster.worldObj, caster.posX, caster.posY + caster.getEyeHeight(), caster.posZ, player, spell);
-			proj.setDirection(yaw, pitch);
-//			yaw += anglePerProj;
-			caster.worldObj.spawnEntityInWorld(proj);
+//			double scatter = MathHelper.clamp_double(spell.getDouble(SCATTER), 0, 2);
+//			int projCount = spell.getInteger(PROJ_COUNT);
+		
+//			double castSpread = 180 * scatter; //180 degrees, or half a circle
+//			double anglePerProj = castSpread / (projCount - 1);
+		
+			float yaw = caster.rotationYaw /*- (90 * (float)castSpread)*/;
+			float pitch = caster.rotationPitch;
+//			for (int i = 0; i < projCount; i++)
+			{
+				ProjectileEntity proj = new ProjectileEntity(caster.worldObj, caster.posX, caster.posY + caster.getEyeHeight(), caster.posZ, player, spell);
+				proj.setDirection(yaw, pitch);
+//				yaw += anglePerProj;
+				caster.worldObj.spawnEntityInWorld(proj);
+			}
 		}
 		return true;
 	}

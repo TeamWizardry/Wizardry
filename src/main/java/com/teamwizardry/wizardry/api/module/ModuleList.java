@@ -14,6 +14,7 @@ import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.common.spell.module.booleans.ModuleAnd;
 import com.teamwizardry.wizardry.common.spell.module.booleans.ModuleNand;
 import com.teamwizardry.wizardry.common.spell.module.booleans.ModuleNor;
+import com.teamwizardry.wizardry.common.spell.module.booleans.ModuleNot;
 import com.teamwizardry.wizardry.common.spell.module.booleans.ModuleOr;
 import com.teamwizardry.wizardry.common.spell.module.effects.ModuleBlink;
 import com.teamwizardry.wizardry.common.spell.module.effects.ModuleExplosion;
@@ -87,6 +88,7 @@ public class ModuleList
 		register(Items.WHEAT_SEEDS, ModuleOr::new);
 		register(Blocks.REDSTONE_TORCH, ModuleNand::new);
 		register(Blocks.TORCH, ModuleNor::new);
+		register(Items.REDSTONE, ModuleNot::new);
 
 		// Effects
 		register(Items.CHORUS_FRUIT_POPPED, ModuleBlink::new);
@@ -107,7 +109,7 @@ public class ModuleList
 		register(Items.FEATHER, ModuleFallEvent::new);
 		register(Items.FLINT, ModuleOnFireEvent::new);
 		register(Items.ENDER_PEARL, ModuleBlinkEvent::new);
-		register(Items.GLASS_BOTTLE, ModulePotionEvent::new);
+		register(new ItemStack(Items.POTIONITEM, 3, OreDictionary.WILDCARD_VALUE), ModulePotionEvent::new);
 
 		// Modifiers
 		register(new ItemStack(Blocks.WOOL, 16, OreDictionary.WILDCARD_VALUE), ModuleSilent::new);

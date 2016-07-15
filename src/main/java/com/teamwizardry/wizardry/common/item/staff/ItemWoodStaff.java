@@ -2,6 +2,9 @@ package com.teamwizardry.wizardry.common.item.staff;
 
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.IColorable;
+import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.api.module.ModuleList;
+import com.teamwizardry.wizardry.api.spell.IContinuousCast;
 import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -75,6 +78,30 @@ public class ItemWoodStaff extends Item implements IColorable {
     public int getMaxItemUseDuration(ItemStack stack)
     {
     	return 72000;
+    }
+    
+    @Override
+    public void onUsingTick(ItemStack stack, EntityLivingBase player, int count)
+    {
+    	if (count > 0 && count < (getMaxItemUseDuration(stack) - 20) && player instanceof EntityPlayer)
+    	{
+    		if (stack.hasTagCompound())
+    		{
+    			NBTTagCompound compound = stack.getTagCompound();
+    			if (compound.hasKey("Spell"))
+    			{
+    				NBTTagCompound spell = compound.getCompoundTag("Spell");
+    				if (spell.hasKey(Module.CLASS))
+    				{
+    					Module module = ModuleList.INSTANCE.modules.get(spell.getString(Module.CLASS)).construct();
+    					if (module instanceof IContinuousCast)
+    					{
+    						module.cast((EntityPlayer) player, player, spell);
+    					}
+    				}
+    			}
+    		}
+    	}
     }
 
     @SideOnly(Side.CLIENT)

@@ -16,11 +16,15 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.IColorable;
+import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.api.module.ModuleList;
+import com.teamwizardry.wizardry.api.spell.IContinuousCast;
 import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
 
 /**
@@ -37,7 +41,7 @@ public class ItemGoldStaff extends Item implements IColorable {
     }
 
     private static int intColor(int r, int g, int b) {
-        return (r * 65536 + g * 256 + b);
+    	return (r * 65536 + g * 256 + b);
     }
 
     @Override
@@ -49,6 +53,7 @@ public class ItemGoldStaff extends Item implements IColorable {
    		if (spell == null) return;
    		SpellCastEvent event = new SpellCastEvent(spell, entityLiving, (EntityPlayer) entityLiving);
    		MinecraftForge.EVENT_BUS.post(event);
+   		FakePlayer.class.getClass();
     }
     
     @Override
@@ -75,6 +80,30 @@ public class ItemGoldStaff extends Item implements IColorable {
     public int getMaxItemUseDuration(ItemStack stack)
     {
     	return 72000;
+    }
+    
+    @Override
+    public void onUsingTick(ItemStack stack, EntityLivingBase player, int count)
+    {
+    	if (count > 0 && count < (getMaxItemUseDuration(stack) - 20) && player instanceof EntityPlayer)
+    	{
+    		if (stack.hasTagCompound())
+    		{
+    			NBTTagCompound compound = stack.getTagCompound();
+    			if (compound.hasKey("Spell"))
+    			{
+    				NBTTagCompound spell = compound.getCompoundTag("Spell");
+    				if (spell.hasKey(Module.CLASS))
+    				{
+    					Module module = ModuleList.INSTANCE.modules.get(spell.getString(Module.CLASS)).construct();
+    					if (module instanceof IContinuousCast)
+    					{
+    						module.cast((EntityPlayer) player, player, spell);
+    					}
+    				}
+    			}
+    		}
+    	}
     }
     
     @SideOnly(Side.CLIENT)
