@@ -1,12 +1,16 @@
 package com.teamwizardry.wizardry.common.spell;
 
+import com.teamwizardry.librarianlib.api.util.misc.Color;
 import com.teamwizardry.librarianlib.math.Raycast;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.item.IColorable;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.spell.SpellEntity;
 import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
+import com.teamwizardry.wizardry.client.fx.particle.trails.SparkleTrailHelix;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
@@ -19,6 +23,8 @@ import net.minecraftforge.common.util.Constants.NBT;
 public class ProjectileEntity extends SpellEntity {
     private NBTTagList modules;
     private EntityPlayer player;
+    private int ticker = 0;
+    private Color trailColor;
 
     public ProjectileEntity(World world, double posX, double posY, double posZ, EntityPlayer caster, NBTTagCompound spell) {
         super(world, posX, posY, posZ, spell);
@@ -26,6 +32,14 @@ public class ProjectileEntity extends SpellEntity {
         this.isImmuneToFire = true;
         this.player = caster;
         modules = spell.getTagList(Module.MODULES, NBT.TAG_COMPOUND);
+
+        if (caster.getHeldItemMainhand() != null) {
+            ItemStack stack = caster.getHeldItemMainhand();
+            if (stack.getItem() instanceof IColorable) {
+                IColorable colorable = (IColorable) stack.getItem();
+                trailColor = colorable.getColor(stack);
+            }
+        }
     }
 
     @Override
@@ -37,13 +51,16 @@ public class ProjectileEntity extends SpellEntity {
     public void onEntityUpdate() {
         super.onEntityUpdate();
 
+        ticker++;
         for (int i = 0; i <= 2; i++) {
-            double theta = Math.toRadians(360.0 / i);
-            SparkleFX trail = Wizardry.proxy.spawnParticleSparkle(worldObj, posX + 0.5 * Math.cos(theta), posY, posZ + 0.5 * Math.sin(theta), 0.5F, 0.5F, 50, true);
-            trail.setMoveOnCircularPath(0.5, getPositionVector(), Math.toRadians(360.0 / i));
+            double theta = Math.toRadians((360.0 / i) + ticker);
+            Vec3d origin = new Vec3d(posX + 0.5 * Math.cos(theta), posY, posZ + 0.5 * Math.sin(theta));
+            SparkleTrailHelix helix = Wizardry.proxy.spawnParticleSparkleTrailHelix(worldObj, origin, getPositionVector(), 0.5, Math.toRadians(360.0 / i));
+            helix.setColor((int) trailColor.r - 30, (int) trailColor.g - 30, (int) trailColor.b - 30);
 
             SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(worldObj, posX, posY, posZ, 0.5F, 0.5F, 20, true);
             fizz.setRandomizedSizes(true);
+            fizz.setColor((int) trailColor.r, (int) trailColor.g, (int) trailColor.b);
             fizz.randomDirection(0.1, 0.1, 0.1);
             fizz.jitter(10, 0.1, 0.1, 0.1);
         }

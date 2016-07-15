@@ -2,6 +2,8 @@ package com.teamwizardry.wizardry.common.proxy;
 
 import com.teamwizardry.wizardry.client.fx.particle.MagicBurstFX;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
+import com.teamwizardry.wizardry.client.fx.particle.trails.SparkleTrailHelix;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -37,6 +39,14 @@ public class CommonProxy {
     }
 
     public SparkleFX spawnParticleSparkle(World world, double x, double y, double z, float alpha, float scale, int age, double rangeX, double rangeY, double rangeZ, boolean fadeOut) {
+        return null;
+    }
+
+    public SparkleTrailHelix spawnParticleSparkleTrailHelix(World worldIn, Vec3d origin, Vec3d center, double radius, double initialTheta) {
+        return null;
+    }
+
+    public SparkleTrailHelix spawnParticleSparkleTrailHelix(World worldIn, Vec3d origin, Vec3d center, double radius) {
         return null;
     }
 

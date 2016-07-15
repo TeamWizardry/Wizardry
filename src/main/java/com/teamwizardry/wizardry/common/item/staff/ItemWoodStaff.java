@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.item.staff;
 
+import com.teamwizardry.librarianlib.api.util.misc.Color;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.IColorable;
 import com.teamwizardry.wizardry.api.module.Module;
@@ -44,64 +45,51 @@ public class ItemWoodStaff extends Item implements IColorable {
     }
 
     @Override
-    public void onPlayerStoppedUsing(ItemStack stack, World world, EntityLivingBase entityLiving, int timeLeft)
-    {
-   		NBTTagCompound compound = stack.getTagCompound();
-   		if (compound == null) return;
-   		NBTTagCompound spell = compound.getCompoundTag("Spell");
-   		if (spell == null) return;
-   		SpellCastEvent event = new SpellCastEvent(spell, entityLiving, (EntityPlayer) entityLiving);
-   		MinecraftForge.EVENT_BUS.post(event);
+    public void onPlayerStoppedUsing(ItemStack stack, World world, EntityLivingBase entityLiving, int timeLeft) {
+        NBTTagCompound compound = stack.getTagCompound();
+        if (compound == null) return;
+        NBTTagCompound spell = compound.getCompoundTag("Spell");
+        if (spell == null) return;
+        SpellCastEvent event = new SpellCastEvent(spell, entityLiving, (EntityPlayer) entityLiving);
+        MinecraftForge.EVENT_BUS.post(event);
     }
-    
+
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand)
-    {
-    	if (world.isRemote && Minecraft.getMinecraft().currentScreen != null)
-    	{
-    		return new ActionResult<>(EnumActionResult.FAIL, stack);
-    	}
-    	else
-    	{
-    		player.setActiveHand(hand);
-    		return new ActionResult<>(EnumActionResult.PASS, stack);
-    	}
+    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+        if (world.isRemote && Minecraft.getMinecraft().currentScreen != null) {
+            return new ActionResult<>(EnumActionResult.FAIL, stack);
+        } else {
+            player.setActiveHand(hand);
+            return new ActionResult<>(EnumActionResult.PASS, stack);
+        }
     }
-    
+
     @Override
-    public EnumAction getItemUseAction(ItemStack stack)
-    {
-    	return EnumAction.BOW;
+    public EnumAction getItemUseAction(ItemStack stack) {
+        return EnumAction.BOW;
     }
-    
+
     @Override
-    public int getMaxItemUseDuration(ItemStack stack)
-    {
-    	return 72000;
+    public int getMaxItemUseDuration(ItemStack stack) {
+        return 72000;
     }
-    
+
     @Override
-    public void onUsingTick(ItemStack stack, EntityLivingBase player, int count)
-    {
-    	if (count > 0 && count < (getMaxItemUseDuration(stack) - 20) && player instanceof EntityPlayer)
-    	{
-    		if (stack.hasTagCompound())
-    		{
-    			NBTTagCompound compound = stack.getTagCompound();
-    			if (compound.hasKey("Spell"))
-    			{
-    				NBTTagCompound spell = compound.getCompoundTag("Spell");
-    				if (spell.hasKey(Module.CLASS))
-    				{
-    					Module module = ModuleList.INSTANCE.modules.get(spell.getString(Module.CLASS)).construct();
-    					if (module instanceof IContinuousCast)
-    					{
-    						module.cast((EntityPlayer) player, player, spell);
-    					}
-    				}
-    			}
-    		}
-    	}
+    public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
+        if (count > 0 && count < (getMaxItemUseDuration(stack) - 20) && player instanceof EntityPlayer) {
+            if (stack.hasTagCompound()) {
+                NBTTagCompound compound = stack.getTagCompound();
+                if (compound.hasKey("Spell")) {
+                    NBTTagCompound spell = compound.getCompoundTag("Spell");
+                    if (spell.hasKey(Module.CLASS)) {
+                        Module module = ModuleList.INSTANCE.modules.get(spell.getString(Module.CLASS)).construct();
+                        if (module instanceof IContinuousCast) {
+                            module.cast((EntityPlayer) player, player, spell);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @SideOnly(Side.CLIENT)
@@ -162,6 +150,14 @@ public class ItemWoodStaff extends Item implements IColorable {
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldS, ItemStack newS, boolean slotChanged) {
         return slotChanged;
+    }
+
+    @Override
+    public Color getColor(ItemStack stack) {
+        int r = stack.getTagCompound().getInteger("red");
+        int g = stack.getTagCompound().getInteger("green");
+        int b = stack.getTagCompound().getInteger("blue");
+        return new Color(r, g, b);
     }
 
     @SideOnly(Side.CLIENT)

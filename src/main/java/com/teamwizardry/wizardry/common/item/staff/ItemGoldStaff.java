@@ -1,31 +1,32 @@
 	package com.teamwizardry.wizardry.common.item.staff;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.color.IItemColor;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.EnumAction;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
-import net.minecraft.world.World;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.item.IColorable;
-import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.ModuleList;
-import com.teamwizardry.wizardry.api.spell.IContinuousCast;
-import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
+    import com.teamwizardry.librarianlib.api.util.misc.Color;
+    import com.teamwizardry.wizardry.Wizardry;
+    import com.teamwizardry.wizardry.api.item.IColorable;
+    import com.teamwizardry.wizardry.api.module.Module;
+    import com.teamwizardry.wizardry.api.module.ModuleList;
+    import com.teamwizardry.wizardry.api.spell.IContinuousCast;
+    import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
+    import net.minecraft.client.Minecraft;
+    import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+    import net.minecraft.client.renderer.color.IItemColor;
+    import net.minecraft.entity.Entity;
+    import net.minecraft.entity.EntityLivingBase;
+    import net.minecraft.entity.player.EntityPlayer;
+    import net.minecraft.item.EnumAction;
+    import net.minecraft.item.Item;
+    import net.minecraft.item.ItemStack;
+    import net.minecraft.nbt.NBTTagCompound;
+    import net.minecraft.util.ActionResult;
+    import net.minecraft.util.EnumActionResult;
+    import net.minecraft.util.EnumHand;
+    import net.minecraft.world.World;
+    import net.minecraftforge.client.model.ModelLoader;
+    import net.minecraftforge.common.MinecraftForge;
+    import net.minecraftforge.common.util.FakePlayer;
+    import net.minecraftforge.fml.common.registry.GameRegistry;
+    import net.minecraftforge.fml.relauncher.Side;
+    import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Created by Saad on 6/7/2016.
@@ -164,6 +165,14 @@ public class ItemGoldStaff extends Item implements IColorable {
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldS, ItemStack newS, boolean slotChanged) {
         return slotChanged;
+    }
+
+    @Override
+    public Color getColor(ItemStack stack) {
+        int r = stack.getTagCompound().getInteger("red");
+        int g = stack.getTagCompound().getInteger("green");
+        int b = stack.getTagCompound().getInteger("blue");
+        return new Color(r, g, b);
     }
 
     @SideOnly(Side.CLIENT)

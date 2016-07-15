@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.item.pearl;
 
+import com.teamwizardry.librarianlib.api.util.misc.Color;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.IColorable;
 import com.teamwizardry.wizardry.api.item.IExplodable;
@@ -103,6 +104,14 @@ public class ItemQuartzPearl extends Item implements IInfusible, IExplodable, IC
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldS, ItemStack newS, boolean slotChanged) {
         return slotChanged;
+    }
+
+    @Override
+    public Color getColor(ItemStack stack) {
+        int r = stack.getTagCompound().getInteger("red");
+        int g = stack.getTagCompound().getInteger("green");
+        int b = stack.getTagCompound().getInteger("blue");
+        return new Color(r, g, b);
     }
 
     @SideOnly(Side.CLIENT)

@@ -11,6 +11,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +47,7 @@ public abstract class Module
 
 	protected boolean canHaveChildren = true;
 
-	private ResourceLocation iconLocation = new ResourceLocation(Wizardry.MODID, this.getClass().getSimpleName());
+	private ResourceLocation iconLocation = new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/icons/" + this.getClass().getSimpleName() + ".png");
 	private String description = "<-NULL->";
 	private String displayName = "<-NULL->";
 

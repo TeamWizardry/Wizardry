@@ -78,7 +78,7 @@ public class Wizardry {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        LibrarianLog.I.info("~*~*~*~*~WHOOOSH~*~*~*~*~");
+        LibrarianLog.I.info("o͡͡͡╮༼ ಠДಠ ༽╭o͡͡͡━☆ﾟ.*･｡ﾟ IT'S LAVIOSA, NOT LAVIOSAA");
 
         logger = event.getModLog();
         guide = new Book(MODID);

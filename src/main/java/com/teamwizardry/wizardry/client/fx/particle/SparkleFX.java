@@ -6,7 +6,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.util.Random;
@@ -21,9 +20,7 @@ public class SparkleFX extends Particle {
     public ResourceLocation texture = new ResourceLocation(Wizardry.MODID, "particles/sparkle");
     private double jitterX, jitterY, jitterZ;
     private int jitterChance;
-    private boolean fadeOut = true, randomSizes = false, circularPath;
-    private double theta, radius;
-    private Vec3d center;
+    private boolean fadeOut = true, randomSizes = false;
 
     public SparkleFX(World worldIn, double x, double y, double z, float alpha, float scale, int age, boolean fadeOut) {
         super(worldIn, x, y, z);
@@ -70,20 +67,6 @@ public class SparkleFX extends Particle {
         particleBlue = b;
     }
 
-    public void setMoveOnCircularPath(double radius, Vec3d center, double initialTheta) {
-        this.radius = radius;
-        this.theta = initialTheta;
-        this.center = center;
-        circularPath = true;
-    }
-
-    public void setMoveOnCircularPath(double radius, Vec3d center) {
-        this.radius = radius;
-        this.theta = ThreadLocalRandom.current().nextDouble(0, 360);
-        this.center = center;
-        circularPath = true;
-    }
-
     public void randomlyOscillateColor(boolean r, boolean g, boolean b) {
         if (r && ThreadLocalRandom.current().nextBoolean()) {
             if (ThreadLocalRandom.current().nextBoolean())
@@ -125,13 +108,7 @@ public class SparkleFX extends Particle {
     @Override
     public void onUpdate() {
         super.onUpdate();
-        if (circularPath) {
-            theta += Math.toRadians(10);
 
-            posX = center.xCoord + radius * Math.cos(theta);
-            posY = center.yCoord + radius * Math.sin(theta) * Math.cos(theta);
-            posZ = center.zCoord + radius * Math.sin(theta);
-        }
         if (randomSizes) particleScale = (this.rand.nextFloat() * 0.5F + 0.5F) * 2.0F;
         if (jitterX > 0)
             if (random.nextInt(jitterChance) == 0) motionX += ThreadLocalRandom.current().nextDouble(-jitterX, jitterX);
@@ -143,5 +120,37 @@ public class SparkleFX extends Particle {
         if (random.nextInt(4) == 0) this.particleAge--;
         if (fadeOut) this.particleAlpha = lifeCoeff / 2;
         this.particleScale = lifeCoeff / 2;
+    }
+
+    public double getX() {
+        return posX;
+    }
+
+    public void setX(double x) {
+        this.posX = x;
+    }
+
+    public double getY() {
+        return posY;
+    }
+
+    public void setY(double y) {
+        this.posY = y;
+    }
+
+    public double getZ() {
+        return posZ;
+    }
+
+    public void setZ(double z) {
+        this.posZ = z;
+    }
+
+    public int getAge() {
+        return particleAge;
+    }
+
+    public int getMaxAge() {
+        return particleMaxAge;
     }
 }
