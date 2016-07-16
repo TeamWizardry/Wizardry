@@ -61,8 +61,8 @@ public class ModuleBeam extends Module implements IContinuousCast {
         RayTraceResult raycast = Raycast.cast(caster, distance);
         NBTTagList modules = spell.getTagList(MODULES, NBT.TAG_COMPOUND);
 
+        // Beam particles
         double slopeX = 0, slopeY = 0, slopeZ = 0;
-
         if (raycast.typeOfHit == RayTraceResult.Type.BLOCK) {
             slopeX = (raycast.getBlockPos().getX() + 0.5 - caster.posX) / distance;
             slopeY = (raycast.getBlockPos().getY() - 0.5 - caster.posY) / distance;
@@ -74,19 +74,20 @@ public class ModuleBeam extends Module implements IContinuousCast {
         }
 
         Vec3d cross = caster.getLook(1).crossProduct(new Vec3d(0, caster.getEyeHeight(), 0)).normalize().scale(caster.width / 2);
+        ticker++;
         for (double i = 0; i < distance; i += 1 / distance) {
             double x = slopeX * i + caster.posX + cross.xCoord;
             double y = slopeY * i + caster.posY + caster.getEyeHeight();
             double z = slopeZ * i + caster.posZ + cross.zCoord;
 
-            double theta = Math.toRadians((360.0 / i) + ticker);
-            ticker++;
+            double theta = Math.toRadians((360.0 / i));
             Vec3d origin = new Vec3d(x + 0.2 * Math.cos(theta), y, z + 0.2 * Math.sin(theta));
             Vec3d center = new Vec3d(x, y, z);
 
-            SparkleTrailHelix helix = Wizardry.proxy.spawnParticleSparkleTrailHelix(caster.worldObj, origin, center, 0.5, theta, 100);
+            SparkleTrailHelix helix = Wizardry.proxy.spawnParticleSparkleTrailHelix(caster.worldObj, origin, center, 0.5, theta, 10);
             helix.setRandomizedSizes(true);
         }
+        // Beam particles
 
         do {
             if (raycast.typeOfHit == RayTraceResult.Type.BLOCK) {

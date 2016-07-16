@@ -12,7 +12,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class SparkleTrailHelix extends SparkleFX {
 
     private double theta, radius;
-    private Vec3d center;
+    private Vec3d center, addMotion = new Vec3d(0, 0, 0);
 
     public SparkleTrailHelix(World worldIn, Vec3d origin, Vec3d center, double radius, double initialTheta, int age) {
         super(worldIn, origin.xCoord, origin.yCoord, origin.zCoord, 1f, 0.5f, 50, false);
@@ -28,6 +28,10 @@ public class SparkleTrailHelix extends SparkleFX {
         this.radius = radius;
         this.theta = ThreadLocalRandom.current().nextDouble(0, 360);
         this.particleMaxAge = age;
+    }
+
+    public void addContinuousMotion(Vec3d addMotion) {
+        this.addMotion = addMotion;
     }
 
     @Override
@@ -46,9 +50,12 @@ public class SparkleTrailHelix extends SparkleFX {
 
         theta += Math.toRadians(10);
 
-        posX = center.xCoord + radius * Math.cos(theta);
-        posY = center.yCoord + radius * Math.sin(theta) * Math.cos(theta);
-        posZ = center.zCoord + radius * Math.sin(theta);
+        double x = center.xCoord + radius * Math.cos(theta);
+        double y = center.yCoord + radius * Math.sin(theta) * Math.cos(theta);
+        double z = center.zCoord + radius * Math.sin(theta);
+        motionX = (x - prevPosX) / 2 + addMotion.xCoord;
+        motionY = (y - prevPosY) / 2 + addMotion.yCoord;
+        motionZ = (z - prevPosZ) / 2 + addMotion.zCoord;
     }
 
     public double getTheta() {

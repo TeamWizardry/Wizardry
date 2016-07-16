@@ -1,32 +1,36 @@
-	package com.teamwizardry.wizardry.common.item.staff;
+package com.teamwizardry.wizardry.common.item.staff;
 
-    import com.teamwizardry.librarianlib.api.util.misc.Color;
-    import com.teamwizardry.wizardry.Wizardry;
-    import com.teamwizardry.wizardry.api.item.IColorable;
-    import com.teamwizardry.wizardry.api.module.Module;
-    import com.teamwizardry.wizardry.api.module.ModuleList;
-    import com.teamwizardry.wizardry.api.spell.IContinuousCast;
-    import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
-    import net.minecraft.client.Minecraft;
-    import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-    import net.minecraft.client.renderer.color.IItemColor;
-    import net.minecraft.entity.Entity;
-    import net.minecraft.entity.EntityLivingBase;
-    import net.minecraft.entity.player.EntityPlayer;
-    import net.minecraft.item.EnumAction;
-    import net.minecraft.item.Item;
-    import net.minecraft.item.ItemStack;
-    import net.minecraft.nbt.NBTTagCompound;
-    import net.minecraft.util.ActionResult;
-    import net.minecraft.util.EnumActionResult;
-    import net.minecraft.util.EnumHand;
-    import net.minecraft.world.World;
-    import net.minecraftforge.client.model.ModelLoader;
-    import net.minecraftforge.common.MinecraftForge;
-    import net.minecraftforge.common.util.FakePlayer;
-    import net.minecraftforge.fml.common.registry.GameRegistry;
-    import net.minecraftforge.fml.relauncher.Side;
-    import net.minecraftforge.fml.relauncher.SideOnly;
+import com.teamwizardry.librarianlib.api.util.misc.Color;
+import com.teamwizardry.librarianlib.math.shapes.Arc3D;
+import com.teamwizardry.librarianlib.math.shapes.Circle3D;
+import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.item.IColorable;
+import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.api.module.ModuleList;
+import com.teamwizardry.wizardry.api.spell.IContinuousCast;
+import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
+import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.color.IItemColor;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.EnumAction;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Created by Saad on 6/7/2016.
@@ -42,71 +46,70 @@ public class ItemGoldStaff extends Item implements IColorable {
     }
 
     private static int intColor(int r, int g, int b) {
-    	return (r * 65536 + g * 256 + b);
+        return (r * 65536 + g * 256 + b);
     }
 
     @Override
-    public void onPlayerStoppedUsing(ItemStack stack, World world, EntityLivingBase entityLiving, int timeLeft)
-    {
-   		NBTTagCompound compound = stack.getTagCompound();
-   		if (compound == null) return;
-   		NBTTagCompound spell = compound.getCompoundTag("Spell");
-   		if (spell == null) return;
-   		SpellCastEvent event = new SpellCastEvent(spell, entityLiving, (EntityPlayer) entityLiving);
-   		MinecraftForge.EVENT_BUS.post(event);
-   		FakePlayer.class.getClass();
+    public void onPlayerStoppedUsing(ItemStack stack, World world, EntityLivingBase entityLiving, int timeLeft) {
+        NBTTagCompound compound = stack.getTagCompound();
+        if (compound == null) return;
+        NBTTagCompound spell = compound.getCompoundTag("Spell");
+        if (spell == null) return;
+        SpellCastEvent event = new SpellCastEvent(spell, entityLiving, (EntityPlayer) entityLiving);
+        MinecraftForge.EVENT_BUS.post(event);
+        FakePlayer.class.getClass();
     }
-    
+
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand)
-    {
-    	if (world.isRemote && Minecraft.getMinecraft().currentScreen != null)
-    	{
-    		return new ActionResult<>(EnumActionResult.FAIL, stack);
-    	}
-    	else
-    	{
-    		player.setActiveHand(hand);
-    		return new ActionResult<>(EnumActionResult.PASS, stack);
-    	}
+    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+        if (world.isRemote && Minecraft.getMinecraft().currentScreen != null) {
+            return new ActionResult<>(EnumActionResult.FAIL, stack);
+        } else {
+            player.setActiveHand(hand);
+            return new ActionResult<>(EnumActionResult.PASS, stack);
+        }
     }
-    
+
     @Override
-    public EnumAction getItemUseAction(ItemStack stack)
-    {
-    	return EnumAction.BOW;
+    public EnumAction getItemUseAction(ItemStack stack) {
+        return EnumAction.BOW;
     }
-    
+
     @Override
-    public int getMaxItemUseDuration(ItemStack stack)
-    {
-    	return 72000;
+    public int getMaxItemUseDuration(ItemStack stack) {
+        return 72000;
     }
-    
+
     @Override
-    public void onUsingTick(ItemStack stack, EntityLivingBase player, int count)
-    {
-    	if (count > 0 && count < (getMaxItemUseDuration(stack) - 20) && player instanceof EntityPlayer)
-    	{
-    		if (stack.hasTagCompound())
-    		{
-    			NBTTagCompound compound = stack.getTagCompound();
-    			if (compound.hasKey("Spell"))
-    			{
-    				NBTTagCompound spell = compound.getCompoundTag("Spell");
-    				if (spell.hasKey(Module.CLASS))
-    				{
-    					Module module = ModuleList.INSTANCE.modules.get(spell.getString(Module.CLASS)).construct();
-    					if (module instanceof IContinuousCast)
-    					{
-    						module.cast((EntityPlayer) player, player, spell);
-    					}
-    				}
-    			}
-    		}
-    	}
+    public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
+        if (count > 0 && count < (getMaxItemUseDuration(stack) - 20) && player instanceof EntityPlayer) {
+            if (stack.hasTagCompound()) {
+                NBTTagCompound compound = stack.getTagCompound();
+                if (compound.hasKey("Spell")) {
+                    NBTTagCompound spell = compound.getCompoundTag("Spell");
+                    if (spell.hasKey(Module.CLASS)) {
+                        Module module = ModuleList.INSTANCE.modules.get(spell.getString(Module.CLASS)).construct();
+                        if (module instanceof IContinuousCast) {
+                            module.cast((EntityPlayer) player, player, spell);
+                        }
+                    }
+                }
+            }
+        }
+
+        int betterCount = Math.abs(count - 72000);
+        Circle3D circle = new Circle3D(player.getPositionVector(), player.width + 0.3, 5);
+        for (Vec3d points : circle.getPoints()) {
+            Vec3d target = new Vec3d(player.posX, player.posY + player.getEyeHeight() - 0.3, player.posZ);
+            Arc3D arc = new Arc3D(points, target, (float) 0.9, 20);
+            if (betterCount < arc.getPoints().size()) {
+                Vec3d point = arc.getPoints().get(betterCount);
+                SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(player.worldObj, point.xCoord, point.yCoord, point.zCoord, 0.5F, 0.5F, 20, true);
+                fizz.setRandomizedSizes(true);
+            }
+        }
     }
-    
+
     @SideOnly(Side.CLIENT)
     public void initModel() {
         ModelResourceLocation full = new ModelResourceLocation(getRegistryName() + "_pearl", "inventory");

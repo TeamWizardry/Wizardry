@@ -1,5 +1,12 @@
 package com.teamwizardry.wizardry.common.spell.module.effects;
 
+import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.api.module.attribute.Attribute;
+import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.spell.SpellEntity;
+import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
+import io.netty.util.internal.ThreadLocalRandom;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -11,10 +18,6 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.attribute.Attribute;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.api.spell.SpellEntity;
 
 public class ModuleFlame extends Module
 {
@@ -83,7 +86,7 @@ public class ModuleFlame extends Module
 		else if (caster instanceof EntityLivingBase)
 		{
 			int duration = spell.getInteger(DURATION);
-			((EntityLivingBase) caster).setFire(MathHelper.ceiling_double_int(duration / 20.));
+			caster.setFire(MathHelper.ceiling_double_int(duration / 20.));
 		}
 		else if (caster instanceof SpellEntity)
 		{
@@ -101,6 +104,17 @@ public class ModuleFlame extends Module
 					caster.worldObj.playEvent(2001, pos, Block.getStateId(smelted.getDefaultState()));
 				}
 			}
+		}
+
+		for (int i = 0; i < 20; i++) {
+			SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(caster.worldObj, caster.posX, caster.posY + 0.5, caster.posZ, 1F, 0.5F, 20, false);
+			fizz.setRandomizedSizes(true);
+			// TODO: Add color. It's currently messing up
+			//fizz.setColor(Color.ORANGE.getRed(), Color.ORANGE.getGreen(), Color.ORANGE.getBlue());
+			fizz.setMotion(0, ThreadLocalRandom.current().nextDouble(0.10, 0.30), 0);
+			fizz.randomDirection(0.1, 0, 0.1);
+			fizz.jitter(10, 0.2, 0.2, 0.2);
+			fizz.setRandomizedSizes(true);
 		}
 		return true;
 	}
