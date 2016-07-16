@@ -71,7 +71,7 @@ public class ModuleBlink extends Module
 	{
 		double power = spell.getDouble(POWER);
 
-		Vec3d look = caster.getLookVec();
+		Vec3d look = caster.getLook(1);
 		double posX = look.xCoord * power;
 		double posY = look.yCoord * power;
 		double posZ = look.zCoord * power;
@@ -83,7 +83,7 @@ public class ModuleBlink extends Module
 					return false;
 		}
 		caster.setPositionAndUpdate(caster.posX + posX, caster.posY + posY, caster.posZ + posZ);
-		caster.worldObj.playSound((EntityPlayer) null, caster.prevPosX, caster.prevPosY, caster.prevPosZ, SoundEvents.ENTITY_ENDERMEN_TELEPORT, ((EntityLivingBase) caster).getSoundCategory(), 1.0F, 1.0F);
+		caster.worldObj.playSound(null, caster.prevPosX, caster.prevPosY, caster.prevPosZ, SoundEvents.ENTITY_ENDERMEN_TELEPORT, caster.getSoundCategory(), 1.0F, 1.0F);
 		caster.playSound(SoundEvents.ENTITY_ENDERMEN_TELEPORT, 1.0F, 1.0F);
 
 		return true;
