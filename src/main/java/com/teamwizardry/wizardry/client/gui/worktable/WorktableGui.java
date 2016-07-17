@@ -14,6 +14,7 @@ import com.teamwizardry.librarianlib.api.gui.GuiBase;
 import com.teamwizardry.librarianlib.api.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.api.gui.components.ComponentSpriteCapped;
 import com.teamwizardry.librarianlib.api.gui.components.ComponentVoid;
+import com.teamwizardry.librarianlib.api.gui.components.input.ComponentSlider;
 import com.teamwizardry.librarianlib.api.util.misc.Utils;
 import com.teamwizardry.librarianlib.client.Sprite;
 import com.teamwizardry.librarianlib.client.Texture;
@@ -46,8 +47,8 @@ public class WorktableGui extends GuiBase {
 		MODULE_DEFAULT = SPRITE_SHEET.getSprite(32, 208, 24, 24),
 		MODULE_DEFAULT_GLOW = SPRITE_SHEET.getSprite(0, 208, 24, 24),
 		
-		SCROLL_SLIDER_V = SPRITE_SHEET.getSprite(0, 193, 8, 16),
-		SCROLL_SLIDER_H = SPRITE_SHEET.getSprite(16, 193, 16, 8),
+		SCROLL_SLIDER_V = SPRITE_SHEET.getSprite(0, 192, 8, 16),
+		SCROLL_SLIDER_H = SPRITE_SHEET.getSprite(16, 192, 16, 8),
 		
 		SCROLL_GROOVE_V = SPRITE_SHEET.getSprite(64, 16, 12, 12),
 		SCROLL_GROOVE_V_TOP = SPRITE_SHEET.getSprite(64, 0, 12, 12),
@@ -90,16 +91,20 @@ public class WorktableGui extends GuiBase {
         useModules = true;
         
         ComponentSprite background = new ComponentSprite(BACKGROUND_SPRITE, 0, 0);
-        paper = new ComponentVoid(160, 0, 191, 202);
-        
         components.add(background);
+
+        paper = new ComponentVoid(160, 0, 191, 202);
         components.add(paper);
         
         effects = new ComponentVoid(92, 32, 52, 158);
+        components.add(effects);
+
         ComponentSpriteCapped scrollSlot = new ComponentSpriteCapped(SCROLL_GROOVE_V_TOP, SCROLL_GROOVE_V, SCROLL_GROOVE_V_BOTTOM, false, 52, 0, 12, 158);
         effects.add(scrollSlot);
         
-        components.add(effects);
+        ComponentSlider scrollSlider = new ComponentSlider(6, SCROLL_SLIDER_V.getHeight()/2, 0, 158-SCROLL_SLIDER_V.getHeight(), 0, -1);
+        scrollSlider.handle.add(new ComponentSprite(SCROLL_SLIDER_V, -SCROLL_SLIDER_V.getWidth()/2, -SCROLL_SLIDER_V.getHeight()/2));
+        scrollSlot.add(scrollSlider);
 //        ComponentVoid v = new ComponentVoid(0, 0);
 //        v.preDraw.add((comp, pos, ticks) -> GlStateManager.translate(0, 0, 5));
 //        ComponentVoid v2 = new ComponentVoid(0, 0);
