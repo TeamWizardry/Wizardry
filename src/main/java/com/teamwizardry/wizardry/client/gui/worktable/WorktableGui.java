@@ -1,7 +1,18 @@
 package com.teamwizardry.wizardry.client.gui.worktable;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
+
 import com.teamwizardry.librarianlib.api.gui.GuiBase;
 import com.teamwizardry.librarianlib.api.gui.components.ComponentSprite;
+import com.teamwizardry.librarianlib.api.gui.components.ComponentSpriteCapped;
 import com.teamwizardry.librarianlib.api.gui.components.ComponentVoid;
 import com.teamwizardry.librarianlib.api.util.misc.Utils;
 import com.teamwizardry.librarianlib.client.Sprite;
@@ -12,23 +23,48 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.ModuleList;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextFormatting;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
 
 /**
  * Created by Saad on 6/17/2016.
  */
 public class WorktableGui extends GuiBase {
 
+	public static final Texture BACKGROUND_TEXTURE = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/table_background.png"), 512, 256);
+	public static final Sprite BACKGROUND_SPRITE = BACKGROUND_TEXTURE.getSprite(0, 0, 512, 256);
+	
+	public static final Texture SPRITE_SHEET = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sprite_sheet.png"), 256, 256);
+	
+	public static final Sprite 
+		TAB_SIDE = SPRITE_SHEET.getSprite(0, 0, 24, 24),
+		TAB_TOP  = SPRITE_SHEET.getSprite(0, 32, 24, 24),
+		
+		MODULE_SLOT_SINGLE = SPRITE_SHEET.getSprite(0, 64, 32, 32),
+		MODULE_SLOT_L      = SPRITE_SHEET.getSprite(0, 96, 32, 32),
+		MODULE_SLOT_R      = SPRITE_SHEET.getSprite(0, 128, 32, 32),
+		MODULE_SLOT_LR     = SPRITE_SHEET.getSprite(0, 160, 32, 32),
+		
+		MODULE_DEFAULT = SPRITE_SHEET.getSprite(32, 208, 24, 24),
+		MODULE_DEFAULT_GLOW = SPRITE_SHEET.getSprite(0, 208, 24, 24),
+		
+		SCROLL_SLIDER_V = SPRITE_SHEET.getSprite(0, 193, 8, 16),
+		SCROLL_SLIDER_H = SPRITE_SHEET.getSprite(16, 193, 16, 8),
+		
+		SCROLL_GROOVE_V = SPRITE_SHEET.getSprite(64, 16, 12, 12),
+		SCROLL_GROOVE_V_TOP = SPRITE_SHEET.getSprite(64, 0, 12, 12),
+		SCROLL_GROOVE_V_BOTTOM = SPRITE_SHEET.getSprite(64, 32, 12, 12),
+		
+		SCROLL_GROOVE_H = SPRITE_SHEET.getSprite(80, 16, 12, 12),
+		SCROLL_GROOVE_H_LEFT = SPRITE_SHEET.getSprite(80, 0, 12, 12),
+		SCROLL_GROOVE_H_RIGHT = SPRITE_SHEET.getSprite(80, 32, 12, 12),
+		
+		_WHATISTHIS_GRID_THING = SPRITE_SHEET.getSprite(32, 64, 24, 24),
+		_WHATISTHIS_BOX_THING = SPRITE_SHEET.getSprite(96, 0, 16, 16),
+		_WHATISTHIS_BOX_H_THING = SPRITE_SHEET.getSprite(112, 16, 16, 13),
+		_WHATISTHIS_BOX_H_LEFT_THING = SPRITE_SHEET.getSprite(112, 0, 16, 13),
+		_WHATISTHIS_BOX_H_RIGHT_THING = SPRITE_SHEET.getSprite(112, 32, 16, 13),
+		
+	___fluff___ = null; // fluff just so I don't have to mess around with removing and adding trailing commas
+	
     static final int iconSize = 12;
     private int left, top, paperLeft = 160, paperTop = 0;
     private int backgroundWidth = 512, backgroundHeight = 256, paperWidth = 191, paperHeight = 202;
@@ -44,55 +80,69 @@ public class WorktableGui extends GuiBase {
     private BezierCurve2D curveModuleBeingLinked;
     private WorktableModule moduleBeingDragged, moduleBeingLinked, masterModule, moduleSelected;
 
-    private Texture spriteSheet = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sprite_sheet.png"), 256, 256);
-    private Texture BACKGROUND_TEXTURE = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/table_background.png"), backgroundWidth, backgroundHeight);
-
-    public WorktableGui(int guiWidth, int guiHeight) {
-        super(guiWidth, guiHeight);
-
-        ComponentVoid v = new ComponentVoid(0, 0);
-        v.preDraw.add((comp, pos, ticks) -> GlStateManager.translate(0, 0, 5));
-        ComponentVoid v2 = new ComponentVoid(0, 0);
-        v2.preDraw.add((comp, pos, ticks) -> GlStateManager.translate(0, 0, -5));
-
-        ComponentSprite comp = new ComponentSprite(spriteSheet.getSprite(33, 208, 23, 23), 100, 100, 12, 12);
-
-        AtomicBoolean tracking = new AtomicBoolean(false);
-        AtomicReference<Vec2> clickStart = new AtomicReference<>(new Vec2(0, 0));
-
-        comp.mouseDown.add((c, pos, button) -> {
-            if (c.mouseOverThisFrame) {
-                c.setSize(new Vec2(24, 24));
-                tracking.set(true);
-                clickStart.set(pos.add(6, 6));
-                return true;
-            }
-            return false;
-        });
-        comp.mouseUp.add((c, pos, button) -> {
-            if (tracking.get()) {
-                c.setPos(c.getPos().add(new Vec2(6, 6)));
-                c.setSize(new Vec2(12, 12));
-            }
-            tracking.set(false);
-            return false;
-        });
-        comp.preDraw.add((c, pos, ticks) -> {
-            if (tracking.get()) {
-                c.setPos(
-                        c.getPos().add(pos)
-                                .sub(clickStart.get())
-                );
-            }
-        });
-
-        v.zIndex = 50;
-        comp.zIndex = 100;
-        v2.zIndex = 150;
-
-        components.add(v);
-        components.add(v2);
-        components.add(comp);
+    ComponentVoid paper, shapes, modifiers, effects, booleans, events;
+    
+    public boolean useModules = false; // setting to true disables conventional rendering
+    
+    public WorktableGui() {
+        super(512, 256);
+        
+        useModules = true;
+        
+        ComponentSprite background = new ComponentSprite(BACKGROUND_SPRITE, 0, 0);
+        paper = new ComponentVoid(160, 0, 191, 202);
+        
+        components.add(background);
+        components.add(paper);
+        
+        effects = new ComponentVoid(92, 32, 52, 158);
+        ComponentSpriteCapped scrollSlot = new ComponentSpriteCapped(SCROLL_GROOVE_V_TOP, SCROLL_GROOVE_V, SCROLL_GROOVE_V_BOTTOM, false, 52, 0, 12, 158);
+        effects.add(scrollSlot);
+        
+        components.add(effects);
+//        ComponentVoid v = new ComponentVoid(0, 0);
+//        v.preDraw.add((comp, pos, ticks) -> GlStateManager.translate(0, 0, 5));
+//        ComponentVoid v2 = new ComponentVoid(0, 0);
+//        v2.preDraw.add((comp, pos, ticks) -> GlStateManager.translate(0, 0, -5));
+//
+//        ComponentSprite comp = new ComponentSprite(spriteSheet.getSprite(33, 208, 23, 23), 100, 100, 12, 12);
+//
+//        AtomicBoolean tracking = new AtomicBoolean(false);
+//        AtomicReference<Vec2> clickStart = new AtomicReference<>(new Vec2(0, 0));
+//
+//        comp.mouseDown.add((c, pos, button) -> {
+//            if (c.mouseOverThisFrame) {
+//                c.setSize(new Vec2(24, 24));
+//                tracking.set(true);
+//                clickStart.set(pos.add(6, 6));
+//                return true;
+//            }
+//            return false;
+//        });
+//        comp.mouseUp.add((c, pos, button) -> {
+//            if (tracking.get()) {
+//                c.setPos(c.getPos().add(new Vec2(6, 6)));
+//                c.setSize(new Vec2(12, 12));
+//            }
+//            tracking.set(false);
+//            return false;
+//        });
+//        comp.preDraw.add((c, pos, ticks) -> {
+//            if (tracking.get()) {
+//                c.setPos(
+//                        c.getPos().add(pos)
+//                                .sub(clickStart.get())
+//                );
+//            }
+//        });
+//
+//        v.zIndex = 50;
+//        comp.zIndex = 100;
+//        v2.zIndex = 150;
+//
+//        components.add(v);
+//        components.add(v2);
+//        components.add(comp);
     }
 
     @Override
@@ -351,6 +401,9 @@ public class WorktableGui extends GuiBase {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
+        if(!useModules) { // no indent for git diff
+        	
+        	
         WorktableModule moduleBeingHovered = null;
 
         // RENDER BACKGROUND //
@@ -382,7 +435,7 @@ public class WorktableGui extends GuiBase {
 
         // RENDER MODULES IN THE SIDEBARS //
         GlStateManager.color(1F, 1F, 1F, 1F);
-        spriteSheet.bind();
+        SPRITE_SHEET.bind();
         for (ModuleType type : moduleCategories.keySet()) {
             if (categorySlidebars.containsKey(type)) {
                 for (WorktableModule module : categorySlidebars.get(type).getModules()) {
@@ -390,7 +443,7 @@ public class WorktableGui extends GuiBase {
                     if (Utils.isInside(mouseX, mouseY, module.getX(), module.getY(), iconSize)) {
                         moduleBeingHovered = module;
                     } else {
-                        Sprite base = spriteSheet.getSprite(33, 208, 23, 23);
+                        Sprite base = SPRITE_SHEET.getSprite(33, 208, 23, 23);
                         base.getTex().bind();
                         base.draw(module.getX(), module.getY(), iconSize, iconSize);
                     }
@@ -401,7 +454,7 @@ public class WorktableGui extends GuiBase {
                     if (Utils.isInside(mouseX, mouseY, module.getX(), module.getY(), iconSize)) {
                         moduleBeingHovered = module;
                     } else {
-                        Sprite base = spriteSheet.getSprite(33, 208, 23, 23);
+                        Sprite base = SPRITE_SHEET.getSprite(33, 208, 23, 23);
                         base.getTex().bind();
                         base.draw(module.getX(), module.getY(), iconSize, iconSize);
 
@@ -441,7 +494,7 @@ public class WorktableGui extends GuiBase {
                 if (Utils.isInside(mouseX, mouseY, module.getX(), module.getY(), iconSize)) {
                     moduleBeingHovered = module;
                 } else {
-                    Sprite moduleSprite = spriteSheet.getSprite(33, 208, 23, 23);
+                    Sprite moduleSprite = SPRITE_SHEET.getSprite(33, 208, 23, 23);
                     moduleSprite.getTex().bind();
                     moduleSprite.draw(module.getX(), module.getY(), iconSize, iconSize);
                 }
@@ -454,7 +507,7 @@ public class WorktableGui extends GuiBase {
         if (moduleBeingDragged != null) {
             moduleBeingDragged.setX(mouseX - iconSize / 2);
             moduleBeingDragged.setY(mouseY - iconSize / 2);
-            Sprite draggingSprite = spriteSheet.getSprite(0, 208, 24, 24);
+            Sprite draggingSprite = SPRITE_SHEET.getSprite(0, 208, 24, 24);
             draggingSprite.getTex().bind();
             draggingSprite.draw(mouseX - iconSize / 2 - 2, mouseY - iconSize / 2 - 2, iconSize + 4, iconSize + 4);
         }
@@ -465,7 +518,7 @@ public class WorktableGui extends GuiBase {
         if (moduleSelected != null) {
             // Render highlight
             GlStateManager.disableLighting();
-            Sprite highlight = spriteSheet.getSprite(0, 208, 24, 24);
+            Sprite highlight = SPRITE_SHEET.getSprite(0, 208, 24, 24);
             highlight.getTex().bind();
             highlight.draw(moduleSelected.getX() - 2, moduleSelected.getY() - 2, iconSize + 4, iconSize + 4);
             GlStateManager.enableLighting();
@@ -475,7 +528,7 @@ public class WorktableGui extends GuiBase {
         if (moduleBeingHovered != null && moduleBeingDragged == null) {
             // Render highlight
             GlStateManager.disableLighting();
-            Sprite highlight = spriteSheet.getSprite(0, 208, 24, 24);
+            Sprite highlight = SPRITE_SHEET.getSprite(0, 208, 24, 24);
             highlight.getTex().bind();
             highlight.draw(moduleBeingHovered.getX(), moduleBeingHovered.getY(), iconSize, iconSize);
             GlStateManager.enableLighting();
@@ -488,6 +541,8 @@ public class WorktableGui extends GuiBase {
             drawHoveringText(txt, mouseX, mouseY, fontRendererObj);
         }
         // RENDER TOOLTIP & HIGHLIGHT //
+        
+        } // end useModules - no indent for git diff
     }
 
     @Override
