@@ -14,6 +14,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.GlStateManager.TexGen;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -30,6 +31,8 @@ import org.lwjgl.opengl.GL11;
 import com.teamwizardry.librarianlib.math.Matrix4;
 import com.teamwizardry.librarianlib.ragdoll.cloth.Cloth;
 import com.teamwizardry.librarianlib.ragdoll.cloth.Link;
+import com.teamwizardry.librarianlib.ragdoll.cloth.PointMass3D;
+import com.teamwizardry.wizardry.Wizardry;
 
 public class CapeHandler {
 
@@ -43,7 +46,7 @@ public class CapeHandler {
 	
 	@SubscribeEvent
 	public void tick(ClientTickEvent event) {
-		if(event.phase == Phase.END)
+		if(event.phase != Phase.END)
 			return;
 //		Matrix4 matrix = new Matrix4();
 //		matrix.rotate(Math.toRadians(1), new Vec3d(0, 1, 0));
@@ -77,7 +80,6 @@ public class CapeHandler {
 				
 				Matrix4 matrix = new Matrix4();
 				matrix.translate(entity.getPositionVector());
-				matrix.translate(new Vec3d(entity.motionX, entity.motionY, entity.motionZ));
 				matrix.rotate(Math.toRadians( entity.rotationYawHead), new Vec3d(0, -1, 0));
 				
 				for (int i = 0; i < shoulderPoints.length; i++) {
@@ -106,7 +108,7 @@ public class CapeHandler {
 		}
 	}
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "rawtypes" })
 	@SubscribeEvent
 	public void drawPlayer(RenderLivingEvent.Post event) {
 		if(!( event.getEntity() instanceof EntityVillager || event.getEntity() instanceof EntityPlayer))
@@ -131,16 +133,11 @@ public class CapeHandler {
 		if(!cloths.containsKey(event.getEntity())) {
 			cloths.put(event.getEntity(), new Cloth(
 					shoulderPoints,
-					10,
+					15,
 					new Vec3d(0, 0.2, 0)
 			) );
 		}
 		Cloth c = cloths.get(event.getEntity());
-		
-//		for (int i = 0; i < c.masses[0].length && i < shoulderPoints.length; i++) {
-//			c.masses[0][i].pos = shoulderPoints[i];
-//		}
-		
 		
 		Tessellator tess = Tessellator.getInstance();
 		VertexBuffer vb = tess.getBuffer();
@@ -149,18 +146,49 @@ public class CapeHandler {
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(event.getX(), event.getY(), event.getZ());
 		GlStateManager.translate(-event.getEntity().posX, -event.getEntity().posY, -event.getEntity().posZ);
-		GlStateManager.color(1, 1, 1);
-		Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation("Nulleynull"));
-//		GlStateManager.disableLighting();
-//		GlStateManager.disableTexture2D();
 		
+		
+		GlStateManager.disableTexture2D();
+		GlStateManager.depthFunc(GL11.GL_LEQUAL);
+		GlStateManager.glLineWidth(1);
+		GlStateManager.color(1, 1, 1, 1);
 		vb.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
+		
 		for (Link link : c.links) {
-			vb.pos(
-					link.a.prevPos.xCoord, 
-					link.a.prevPos.yCoord, 
-					link.a.prevPos.zCoord).endVertex();
+			vb.pos(link.a.pos.xCoord, link.a.pos.yCoord, link.a.pos.zCoord).endVertex();
 			vb.pos(link.b.pos.xCoord, link.b.pos.yCoord, link.b.pos.zCoord).endVertex();
+		}
+		
+		tess.draw();
+		
+		GlStateManager.enableBlend();
+		GlStateManager.color(1, 1, 1, 0.5f);
+		Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/cape.png"));
+		GlStateManager.enableTexture2D();
+		GlStateManager.disableCull();
+		
+		vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+		
+		for (int x = 0; x < c.masses.length-1; x++) {
+            for (int y = 0; y < c.masses[x].length-1; y++) {
+            	float minU = (float)x/(float)(c.masses.length-1);
+            	float minV = (float)y/(float)(c.masses[x].length-1);
+            	float maxU = (float)(x+1)/(float)(c.masses.length-1);
+            	float maxV = (float)(y+1)/(float)(c.masses[x].length-1);
+            	Vec3d pos;
+            	
+            	pos = c.masses[x][y].pos;
+            	vb.pos(pos.xCoord, pos.yCoord, pos.zCoord).tex(minU, minV).endVertex();
+            	
+            	pos = c.masses[x+1][y].pos;
+            	vb.pos(pos.xCoord, pos.yCoord, pos.zCoord).tex(maxU, minV).endVertex();
+            	
+            	pos = c.masses[x+1][y+1].pos;
+            	vb.pos(pos.xCoord, pos.yCoord, pos.zCoord).tex(maxU, maxV).endVertex();
+            	
+            	pos = c.masses[x][y+1].pos;
+            	vb.pos(pos.xCoord, pos.yCoord, pos.zCoord).tex(minU, maxV).endVertex();
+            }
 		}
 		tess.draw();
 		

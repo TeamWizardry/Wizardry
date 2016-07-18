@@ -10,7 +10,11 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import com.teamwizardry.librarianlib.api.gui.GuiBase;
+import com.teamwizardry.librarianlib.api.gui.GuiComponent;
+import com.teamwizardry.librarianlib.api.gui.components.ComponentGrid;
 import com.teamwizardry.librarianlib.api.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.api.gui.components.ComponentSpriteCapped;
 import com.teamwizardry.librarianlib.api.gui.components.ComponentVoid;
@@ -85,8 +89,15 @@ public class WorktableGui extends GuiBase {
     
     public boolean useModules = false; // setting to true disables conventional rendering
     
+    public Multimap<ModuleType, ModuleList.IModuleConstructor> modulesByType = HashMultimap.create();
+    
     public WorktableGui() {
         super(512, 256);
+        
+        for (ModuleList.IModuleConstructor moduleConstructor : ModuleList.INSTANCE.modules.values()) {
+            Module module = moduleConstructor.construct();
+            modulesByType.get(module.getType()).add(moduleConstructor);
+        }
         
         useModules = true;
         
@@ -99,57 +110,25 @@ public class WorktableGui extends GuiBase {
         effects = new ComponentVoid(92, 32, 52, 158);
         components.add(effects);
 
+        addModules(effects, ModuleType.EFFECT, 7, 7, 3);
+        
         ComponentSpriteCapped scrollSlot = new ComponentSpriteCapped(SCROLL_GROOVE_V_TOP, SCROLL_GROOVE_V, SCROLL_GROOVE_V_BOTTOM, false, 52, 0, 12, 158);
         effects.add(scrollSlot);
-        
-        ComponentSlider scrollSlider = new ComponentSlider(6, SCROLL_SLIDER_V.getHeight()/2, 0, 158-SCROLL_SLIDER_V.getHeight(), 0, -1);
+                
+        ComponentSlider scrollSlider = new ComponentSlider(6, SCROLL_SLIDER_V.getHeight()/2 + 2, 0, 158-SCROLL_SLIDER_V.getHeight()-4, 0, -1);
         scrollSlider.handle.add(new ComponentSprite(SCROLL_SLIDER_V, -SCROLL_SLIDER_V.getWidth()/2, -SCROLL_SLIDER_V.getHeight()/2));
         scrollSlot.add(scrollSlider);
-//        ComponentVoid v = new ComponentVoid(0, 0);
-//        v.preDraw.add((comp, pos, ticks) -> GlStateManager.translate(0, 0, 5));
-//        ComponentVoid v2 = new ComponentVoid(0, 0);
-//        v2.preDraw.add((comp, pos, ticks) -> GlStateManager.translate(0, 0, -5));
-//
-//        ComponentSprite comp = new ComponentSprite(spriteSheet.getSprite(33, 208, 23, 23), 100, 100, 12, 12);
-//
-//        AtomicBoolean tracking = new AtomicBoolean(false);
-//        AtomicReference<Vec2> clickStart = new AtomicReference<>(new Vec2(0, 0));
-//
-//        comp.mouseDown.add((c, pos, button) -> {
-//            if (c.mouseOverThisFrame) {
-//                c.setSize(new Vec2(24, 24));
-//                tracking.set(true);
-//                clickStart.set(pos.add(6, 6));
-//                return true;
-//            }
-//            return false;
-//        });
-//        comp.mouseUp.add((c, pos, button) -> {
-//            if (tracking.get()) {
-//                c.setPos(c.getPos().add(new Vec2(6, 6)));
-//                c.setSize(new Vec2(12, 12));
-//            }
-//            tracking.set(false);
-//            return false;
-//        });
-//        comp.preDraw.add((c, pos, ticks) -> {
-//            if (tracking.get()) {
-//                c.setPos(
-//                        c.getPos().add(pos)
-//                                .sub(clickStart.get())
-//                );
-//            }
-//        });
-//
-//        v.zIndex = 50;
-//        comp.zIndex = 100;
-//        v2.zIndex = 150;
-//
-//        components.add(v);
-//        components.add(v2);
-//        components.add(comp);
     }
 
+    private void addModules(ComponentVoid parent, ModuleType type, int x, int y, int columns) {
+    	ComponentGrid grid = new ComponentGrid(x, y, 12, 12, columns);
+    	for (ModuleList.IModuleConstructor constructor : modulesByType.get(type)) {
+			SidebarItem item = new SidebarItem(0, 0, constructor, paper);
+			grid.add(item.result);
+		}
+    	parent.add(grid);
+    }
+    
     @Override
     public void initGui() {
         super.initGui();
