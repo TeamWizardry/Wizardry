@@ -46,10 +46,11 @@ public class ItemWoodStaff extends Item implements IColorable {
 
     @Override
     public void onPlayerStoppedUsing(ItemStack stack, World world, EntityLivingBase entityLiving, int timeLeft) {
+    	if (stack == null || world == null || entityLiving == null) return;
+    	if (!stack.hasTagCompound()) return;
         NBTTagCompound compound = stack.getTagCompound();
-        if (compound == null) return;
+        if (!compound.hasKey("Spell")) return;
         NBTTagCompound spell = compound.getCompoundTag("Spell");
-        if (spell == null) return;
         SpellCastEvent event = new SpellCastEvent(spell, entityLiving, (EntityPlayer) entityLiving);
         MinecraftForge.EVENT_BUS.post(event);
     }
@@ -149,6 +150,9 @@ public class ItemWoodStaff extends Item implements IColorable {
 
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldS, ItemStack newS, boolean slotChanged) {
+    	if (oldS == null || newS == null) return true;
+    	if (!ItemStack.areItemsEqual(oldS, newS)) return true;
+    	if (oldS.stackSize != newS.stackSize) return true;
         return slotChanged;
     }
 

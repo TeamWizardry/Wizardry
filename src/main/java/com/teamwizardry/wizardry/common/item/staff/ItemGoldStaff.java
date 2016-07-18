@@ -1,15 +1,5 @@
 package com.teamwizardry.wizardry.common.item.staff;
 
-import com.teamwizardry.librarianlib.api.util.misc.Color;
-import com.teamwizardry.librarianlib.math.shapes.Arc3D;
-import com.teamwizardry.librarianlib.math.shapes.Circle3D;
-import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.item.IColorable;
-import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.ModuleList;
-import com.teamwizardry.wizardry.api.spell.IContinuousCast;
-import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
-import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
@@ -27,10 +17,19 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import com.teamwizardry.librarianlib.api.util.misc.Color;
+import com.teamwizardry.librarianlib.math.shapes.Arc3D;
+import com.teamwizardry.librarianlib.math.shapes.Circle3D;
+import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.item.IColorable;
+import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.api.module.ModuleList;
+import com.teamwizardry.wizardry.api.spell.IContinuousCast;
+import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
+import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 
 /**
  * Created by Saad on 6/7/2016.
@@ -51,13 +50,13 @@ public class ItemGoldStaff extends Item implements IColorable {
 
     @Override
     public void onPlayerStoppedUsing(ItemStack stack, World world, EntityLivingBase entityLiving, int timeLeft) {
+    	if (stack == null || world == null || entityLiving == null) return;
+    	if (!stack.hasTagCompound()) return;
         NBTTagCompound compound = stack.getTagCompound();
-        if (compound == null) return;
+        if (!compound.hasKey("Spell")) return;
         NBTTagCompound spell = compound.getCompoundTag("Spell");
-        if (spell == null) return;
         SpellCastEvent event = new SpellCastEvent(spell, entityLiving, (EntityPlayer) entityLiving);
         MinecraftForge.EVENT_BUS.post(event);
-        FakePlayer.class.getClass();
     }
 
     @Override
@@ -167,6 +166,9 @@ public class ItemGoldStaff extends Item implements IColorable {
 
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldS, ItemStack newS, boolean slotChanged) {
+    	if (oldS == null || newS == null) return true;
+    	if (!ItemStack.areItemsEqual(oldS, newS)) return true;
+    	if (oldS.stackSize != newS.stackSize) return true;
         return slotChanged;
     }
 
