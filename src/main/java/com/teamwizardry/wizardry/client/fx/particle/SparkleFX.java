@@ -18,6 +18,7 @@ public class SparkleFX extends Particle {
 
     private static final Random random = new Random();
     public ResourceLocation texture = new ResourceLocation(Wizardry.MODID, "particles/sparkle");
+    public ResourceLocation texture_blurred = new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred");
     private double jitterX, jitterY, jitterZ;
     private int jitterChance;
     private boolean fadeOut = true, randomSizes = false;
@@ -65,6 +66,11 @@ public class SparkleFX extends Particle {
         particleRed = r;
         particleGreen = g;
         particleBlue = b;
+    }
+
+    public void blur() {
+        TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(texture_blurred.toString());
+        this.setParticleTexture(sprite);
     }
 
     public void randomlyOscillateColor(boolean r, boolean g, boolean b) {
@@ -154,5 +160,7 @@ public class SparkleFX extends Particle {
         return particleMaxAge;
     }
 
-    public void setFadeOut(boolean fadeOut) { this.fadeOut = fadeOut;}
+    public void setFadeOut(boolean fadeOut) {
+        this.fadeOut = fadeOut;
+    }
 }

@@ -90,10 +90,12 @@ public class ModuleBeam extends Module implements IContinuousCast {
 
             SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(caster.worldObj, x, y, z, 0.5F, 0.5F, 10, true);
             fizz.setRandomizedSizes(true);
+            fizz.blur();
 
             if (ThreadLocalRandom.current().nextInt(10) == 0) {
                 SparkleTrailHelix helix = Wizardry.proxy.spawnParticleSparkleTrailHelix(caster.worldObj, origin, center, 0.2, theta, 50, true);
                 helix.setRandomizedSizes(true);
+                //helix.blur();
             }
         }
         // Beam particles
