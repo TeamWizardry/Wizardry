@@ -57,7 +57,7 @@ public class ProjectileEntity extends SpellEntity {
             Vec3d origin = new Vec3d(posX + 0.5 * Math.cos(theta), posY, posZ + 0.5 * Math.sin(theta));
 
             // TODO: Add motion so they dont just move in the same space
-            SparkleTrailHelix helix = Wizardry.proxy.spawnParticleSparkleTrailHelix(worldObj, origin, getPositionVector(), 0.5, theta, 50);
+            SparkleTrailHelix helix = Wizardry.proxy.spawnParticleSparkleTrailHelix(worldObj, origin, getPositionVector(), 0.5, theta, 50, false);
             helix.setColor((int) trailColor.r - 30, (int) trailColor.g - 30, (int) trailColor.b - 30);
             //helix.addContinuousMotion(new Vec3d(-motionX * 10, -motionY * 10, -motionZ * 10));
 

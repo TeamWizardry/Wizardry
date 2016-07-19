@@ -17,11 +17,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 /**
  * Created by Saad on 6/21/2016.
  */
-public class ItemVinteumDust extends Item implements IPickupAchievement {
+public class ItemDevilDust extends Item implements IPickupAchievement {
 
-    public ItemVinteumDust() {
-        setRegistryName("vinteum_dust");
-        setUnlocalizedName("vinteum_dust");
+    public ItemDevilDust() {
+        setRegistryName("devil_dust");
+        setUnlocalizedName("devil_dust");
         GameRegistry.register(this);
         setMaxStackSize(64);
         setCreativeTab(Wizardry.tab);
@@ -34,6 +34,6 @@ public class ItemVinteumDust extends Item implements IPickupAchievement {
 
     @Override
     public Achievement getAchievementOnPickup(ItemStack stack, EntityPlayer player, EntityItem item) {
-        return Achievements.VINTEUMDUST;
+        return Achievements.DEVILDUST;
     }
 }

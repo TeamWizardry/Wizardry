@@ -84,7 +84,7 @@ public class Parser
 	{
 		if (stack == null)
 			return 0;
-		return stack.getItem() == ModItems.VINTEUM_DUST ? 1 : 0;
+		return stack.getItem() == ModItems.DEVIL_DUST ? 1 : 0;
 	}
 
 	private ModuleType getNextType(ModuleType currentType, ModuleType expectedType)

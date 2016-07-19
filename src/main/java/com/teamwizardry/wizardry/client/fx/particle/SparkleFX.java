@@ -153,4 +153,6 @@ public class SparkleFX extends Particle {
     public int getMaxAge() {
         return particleMaxAge;
     }
+
+    public void setFadeOut(boolean fadeOut) { this.fadeOut = fadeOut;}
 }

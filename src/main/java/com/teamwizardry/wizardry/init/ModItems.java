@@ -23,7 +23,7 @@ public class ModItems {
 
     public static ItemRing RING;
     public static ItemPhysicsBook PHYSICS_BOOK;
-    public static ItemVinteumDust VINTEUM_DUST;
+    public static ItemDevilDust DEVIL_DUST;
     public static ItemManaCake MANA_CAKE;
 
     public static ItemDebugger DEBUG;
@@ -34,7 +34,7 @@ public class ModItems {
         RING = new ItemRing();
         PHYSICS_BOOK = new ItemPhysicsBook();
         DEBUG = new ItemDebugger();
-        VINTEUM_DUST = new ItemVinteumDust();
+        DEVIL_DUST = new ItemDevilDust();
         PEARL_MANA = new ItemManaPearl();
         PEARL_NACRE = new ItemNacrePearl();
         MANA_CAKE = new ItemManaCake();
@@ -48,7 +48,7 @@ public class ModItems {
         PHYSICS_BOOK.initModel();
         RING.initModel();
         DEBUG.initModel();
-        VINTEUM_DUST.initModel();
+        DEVIL_DUST.initModel();
         PEARL_MANA.initModel();
         PEARL_NACRE.initModel();
         MANA_CAKE.initModel();
