@@ -10,9 +10,11 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+//        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
     }
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
+//apply plugin: 'com.github.johnrengelman.shadow'
 
 repositories {
     maven { url "https://jitpack.io" }
@@ -21,12 +23,6 @@ repositories {
     }
 }
 
-/*
-// for people who want stable - not yet functional for MC 1.8.8 - we require the forgegradle 2.1 snapshot
-plugins {
-    id "net.minecraftforge.gradle.forge" version "2.0.2"
-}
-*/
 version = "1.0"
 group= "me.lordsaad.wizardry" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "wizardry"
@@ -34,9 +30,16 @@ archivesBaseName = "wizardry"
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+//configurations {
+//	shade
+//	compile.extendsFrom shade
+//	build.dependsOn(shadowJar)
+//}
+
 minecraft {
     version = "1.9.4-12.17.0.1957"
     runDir = "run"
+    
     useDepAts = true
     // the mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   snapshot are built nightly.
@@ -50,7 +53,8 @@ minecraft {
 dependencies {
     deobfCompile "mezz.jei:jei_1.9.4:3.4.0.204"
     compile 'com.github.Azanor:Baubles:3f3fdadf09'
-
+    //shade 'org.smurn:jply:0.2.0'
+    
     // you may put jars on which you depend on in ./libs
     // or you may define them like so..
     //compile "some.group:artifact:version:classifier"
@@ -93,3 +97,9 @@ processResources
         exclude 'mcmod.info'
     }
 }
+
+//shadowJar {
+//	configurations = [project.configurations.shade]
+//	relocate 'org.smurn.jply', 'com.teamwizardry.shade.jply'
+//}
+

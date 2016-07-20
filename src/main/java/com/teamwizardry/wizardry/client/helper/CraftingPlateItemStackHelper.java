@@ -6,6 +6,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by Saad on 13/7/2016.
@@ -15,13 +16,24 @@ public class CraftingPlateItemStackHelper {
     private ItemStack stack;
     private ArrayList<Vec3d> points;
     private int queue = 0;
+    private double positionTheta;
+    private Vec3d point;
+    private double maxX, maxY, maxZ;
 
     public CraftingPlateItemStackHelper(ItemStack stack, BlockPos pos) {
         this.stack = stack;
-        double angle = Math.random() * Math.PI * 2;
-        Vec3d point1 = new Vec3d(pos.getX() + 0.5, pos.getY() + 1.2, pos.getZ() + 0.5);
-        Vec3d point2 = new Vec3d(pos.getX() + Math.cos(angle) * 3, pos.getY() + 3.0, pos.getZ() + Math.sin(angle) * 3);
-        points = new Arc3D(point1, point1.add(new Vec3d(3, 3, 3)), 4, 50).getPoints();
+
+        maxX = ThreadLocalRandom.current().nextDouble(0, 5);
+        maxZ = ThreadLocalRandom.current().nextDouble(0, 5);
+        maxY = ThreadLocalRandom.current().nextInt(1, 5);
+
+        positionTheta = ThreadLocalRandom.current().nextDouble(0.01, 1);
+        double theta = Math.PI * 2 * positionTheta;
+        double cosTheta = Math.cos(theta);
+        double sinTheta = Math.sin(theta);
+        point = new Vec3d(cosTheta * maxX, ThreadLocalRandom.current().nextDouble(2, 8), sinTheta * maxZ);
+
+        points = new Arc3D(new Vec3d(0, 0, 0), point, (float) maxY, ThreadLocalRandom.current().nextInt(50, 100)).getPoints();
     }
 
     public ItemStack getItemStack() {
@@ -38,5 +50,45 @@ public class CraftingPlateItemStackHelper {
 
     public void setQueue(int queue) {
         this.queue = queue;
+    }
+
+    public double getPositionTheta() {
+        return positionTheta;
+    }
+
+    public void setPositionTheta(double positionTheta) {
+        this.positionTheta = positionTheta;
+    }
+
+    public void setPoint(Vec3d point) {
+        this.point = point;
+    }
+
+    public Vec3d getPoint() {
+        return point;
+    }
+
+    public double getMaxX() {
+        return maxX;
+    }
+
+    public double getMaxZ() {
+        return maxZ;
+    }
+
+    public void setMaxX(double maxX) {
+        this.maxX = maxX;
+    }
+
+    public void setMaxZ(double maxZ) {
+        this.maxZ = maxZ;
+    }
+
+    public void setMaxY(double maxY) {
+        this.maxY = maxY;
+    }
+
+    public double getMaxY() {
+        return maxY;
     }
 }

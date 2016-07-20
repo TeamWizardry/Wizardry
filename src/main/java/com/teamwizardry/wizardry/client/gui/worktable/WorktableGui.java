@@ -19,6 +19,7 @@ import com.teamwizardry.librarianlib.api.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.api.gui.components.ComponentSpriteCapped;
 import com.teamwizardry.librarianlib.api.gui.components.ComponentVoid;
 import com.teamwizardry.librarianlib.api.gui.components.input.ComponentSlider;
+import com.teamwizardry.librarianlib.api.gui.components.mixin.DragMixin;
 import com.teamwizardry.librarianlib.api.util.misc.Utils;
 import com.teamwizardry.librarianlib.client.Sprite;
 import com.teamwizardry.librarianlib.client.Texture;
@@ -105,6 +106,13 @@ public class WorktableGui extends GuiBase {
         components.add(background);
 
         paper = new ComponentVoid(160, 0, 191, 202);
+        paper.zIndex = 100;
+        paper.add(new ComponentVoid(0, 0, 191, 202).setup((c) -> {
+        	c.addTag("tray");
+        }));
+        paper.add(new ComponentVoid(213, 134, 98, 66).setup((c) -> {
+        	c.addTag("tray");
+        }));
         components.add(paper);
         
         effects = new ComponentVoid(92, 32, 52, 158);

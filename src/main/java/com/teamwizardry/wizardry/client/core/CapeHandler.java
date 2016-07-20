@@ -244,17 +244,6 @@ public class CapeHandler {
 		
 		
 		Cloth c = cloths.get(event.getEntity());
-		List<Box> boxes = models.get(event.getEntity());
-		
-		for (PointMass3D[] column : c.masses) {
-			for (PointMass3D point : column) {
-				if(!point.pin) {
-					for (Box box : boxes) {
-						point.pos = box.fix(point.pos);
-					}
-				}
-			}
-		}
 		
 		Tessellator tess = Tessellator.getInstance();
 		VertexBuffer vb = tess.getBuffer();
@@ -281,77 +270,6 @@ public class CapeHandler {
 			vecPos(vb, link.a.origPos, link.a.pos, partialTicks).endVertex();
 			vecPos(vb, link.b.origPos, link.b.pos, partialTicks).endVertex();
 		}
-		
-//		for (Box box : boxes) {
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.minX, box.minY, box.minZ) ), 1).endVertex(); // 0 0 0 
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.maxX, box.minY, box.minZ) ), 1).endVertex(); // 1 0 0
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.maxX, box.maxY, box.minZ) ), 1).endVertex(); // 1 1 0
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.minX, box.maxY, box.minZ) ), 1).endVertex(); // 0 1 0
-//			
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.minX, box.minY, box.maxZ) ), 1).endVertex(); // 0 0 1 
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.maxX, box.minY, box.maxZ) ), 1).endVertex(); // 1 0 1
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.maxX, box.maxY, box.maxZ) ), 1).endVertex(); // 1 1 1
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.minX, box.maxY, box.maxZ) ), 1).endVertex(); // 0 1 1
-//			
-//			
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.minX, box.minY, box.minZ) ), 1).endVertex(); // 0 0 0 
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.minX, box.minY, box.maxZ) ), 1).endVertex(); // 0 0 1
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.minX, box.maxY, box.maxZ) ), 1).endVertex(); // 0 1 1
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.minX, box.maxY, box.minZ) ), 1).endVertex(); // 0 1 0
-//
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.maxX, box.minY, box.minZ) ), 1).endVertex(); // 1 0 0 
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.maxX, box.minY, box.maxZ) ), 1).endVertex(); // 1 0 1
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.maxX, box.maxY, box.maxZ) ), 1).endVertex(); // 1 1 1
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.maxX, box.maxY, box.minZ) ), 1).endVertex(); // 1 1 0
-//
-//			
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.minX, box.minY, box.minZ) ), 1).endVertex(); // 0 0 0 
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.minX, box.minY, box.maxZ) ), 1).endVertex(); // 0 0 1
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.maxX, box.minY, box.maxZ) ), 1).endVertex(); // 1 0 1
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.maxX, box.minY, box.minZ) ), 1).endVertex(); // 1 0 0
-//			
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.minX, box.maxY, box.minZ) ), 1).endVertex(); // 0 1 0 
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.minX, box.maxY, box.maxZ) ), 1).endVertex(); // 0 1 1
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.maxX, box.maxY, box.maxZ) ), 1).endVertex(); // 1 1 1
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.maxX, box.maxY, box.minZ) ), 1).endVertex(); // 1 1 0
-			
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.minX, box.minY, box.minZ) ), 1).endVertex(); // 0 0 0 
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.minX, box.minY, box.maxZ) ), 1).endVertex(); // 0 0 1
-//			
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.maxX, box.minY, box.maxZ) ), 1).endVertex(); // 1 0 1 
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.maxX, box.minY, box.minZ) ), 1).endVertex(); // 1 0 0 
-//
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.maxX, box.minY, box.maxZ) ), 1).endVertex(); // 1 0 1 
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.minX, box.minY, box.maxZ) ), 1).endVertex(); // 0 0 1 
-//			
-//			
-//			
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.minX, box.maxY, box.minZ) ), 1).endVertex(); // 0 1 0 
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.maxX, box.maxY, box.minZ) ), 1).endVertex(); // 1 1 0
-//			
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.minX, box.maxY, box.minZ) ), 1).endVertex(); // 0 1 0 
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.minX, box.maxY, box.maxZ) ), 1).endVertex(); // 0 1 1
-//			
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.maxX, box.maxY, box.maxZ) ), 1).endVertex(); // 1 1 1 
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.maxX, box.maxY, box.minZ) ), 1).endVertex(); // 1 1 0 
-//
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.maxX, box.maxY, box.maxZ) ), 1).endVertex(); // 1 1 1 
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.minX, box.maxY, box.maxZ) ), 1).endVertex(); // 0 1 1 
-//
-//			
-//			
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.minX, box.minY, box.minZ) ), 1).endVertex(); // 0 0 0 
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.minX, box.maxY, box.minZ) ), 1).endVertex(); // 0 1 0
-//			
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.maxX, box.minY, box.minZ) ), 1).endVertex(); // 1 0 0 
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.maxX, box.maxY, box.minZ) ), 1).endVertex(); // 1 1 0
-//			
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.minX, box.minY, box.maxZ) ), 1).endVertex(); // 0 0 1
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.minX, box.maxY, box.maxZ) ), 1).endVertex(); // 0 1 1
-//			
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.maxX, box.minY, box.maxZ) ), 1).endVertex(); // 1 0 1
-//			vecPos(vb, null, box.inverse.apply( new Vec3d(box.maxX, box.maxY, box.maxZ) ), 1).endVertex(); // 1 1 1
-//		}
 		tess.draw();
 
 		Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/cape.png"));

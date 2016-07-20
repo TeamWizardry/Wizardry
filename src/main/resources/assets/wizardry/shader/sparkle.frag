@@ -49,7 +49,7 @@ float noise(vec2 p){
 }
 
 // interpolates between two values using the control input
-float range(float low, float high, float control) {
+float positionTheta(float low, float high, float control) {
     return low + control * (high-low);
 }
 
@@ -60,23 +60,23 @@ float fanRand(int fan, int offset, float param) {
 
 // gets the angle offset of the fan
 float getFanRotation(int fanID) {
-    float speed  = range(fanSpeedMin*2.*PI, fanSpeedMax*2.*PI, fanRand(fanID, 10, 0.));
-    float initial = range(0., 2.*PI, fanRand(fanID, 11, 0.));
+    float speed  = positionTheta(fanSpeedMin*2.*PI, fanSpeedMax*2.*PI, fanRand(fanID, 10, 0.));
+    float initial = positionTheta(0., 2.*PI, fanRand(fanID, 11, 0.));
     
     return initial + speed * timeSec();
 }
 
 int getBladeCount(int fanID) {
-    return int(range(float(fanBladesMin), float(fanBladesMax), fanRand(fanID, 30, 0.)));
+    return int(positionTheta(float(fanBladesMin), float(fanBladesMax), fanRand(fanID, 30, 0.)));
 }
 
 // gets the length of the fan given an angle and an index
 float getFanLength(int fanID, float angle) {
     float bladeSweep = (2.*PI)/float(getBladeCount(fanID));
     int bladeNum = int(angle/bladeSweep);
-    float main = range(fanSizeMin, fanSizeMax, fanRand(fanID, 20, float(bladeNum)));
+    float main = positionTheta(fanSizeMin, fanSizeMax, fanRand(fanID, 20, float(bladeNum)));
     
-    float jitter = range(fanJitterMin, fanJitterMax,
+    float jitter = positionTheta(fanJitterMin, fanJitterMax,
                          rand(vec2( float(int(degrees(angle))  ), 0 ))
                         );
     return main + jitter;
