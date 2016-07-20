@@ -22,6 +22,8 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -107,6 +109,12 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
         worldObj.notifyBlockUpdate(pos, state, state, 3);
     }
 
+    @SideOnly(Side.CLIENT)
+    @Override
+    public net.minecraft.util.math.AxisAlignedBB getRenderBoundingBox() {
+        return INFINITE_EXTENT_AABB;
+    }
+
     public ArrayList<CraftingPlateItemStackHelper> getInventory() {
         return inventory;
     }
@@ -123,8 +131,8 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
                     if (pearl.getType(item.getEntityItem()) == PearlType.MUNDANE) {
                         this.pearl = item.getEntityItem();
                         isCrafting = true;
-                        craftingTime = inventory.size()/* * 100*/;
-                        craftingTimeLeft = inventory.size()/* * 100*/;
+                        craftingTime = inventory.size() * 10;
+                        craftingTimeLeft = inventory.size() * 10;
                     }
                 } else inventory.add(new CraftingPlateItemStackHelper(item.getEntityItem(), pos));
 
@@ -160,7 +168,7 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
                         pearlItem.motionY = rand.nextGaussian() + 0.5;
                         pearlItem.motionZ = rand.nextGaussian();
                         worldObj.spawnEntityInWorld(pearlItem);
-                        pearl = null; 
+                        pearl = null;
                     }
                     inventory.clear();
                     isCrafting = false;
@@ -183,6 +191,10 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
 
     public int getCraftingTime() {
         return craftingTime;
+    }
+
+    public int getCraftingTimeLeft() {
+        return craftingTimeLeft;
     }
 
     public boolean isCrafting() {
