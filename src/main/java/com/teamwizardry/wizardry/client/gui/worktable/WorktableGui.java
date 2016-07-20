@@ -107,6 +107,12 @@ public class WorktableGui extends GuiBase {
 
         paper = new ComponentVoid(160, 0, 191, 202);
         paper.zIndex = 100;
+        paper.add(new ComponentVoid(0, 0, 191, 202).setup((c) -> {
+        	c.addTag("tray");
+        }));
+        paper.add(new ComponentVoid(213, 134, 98, 66).setup((c) -> {
+        	c.addTag("tray");
+        }));
         components.add(paper);
         
         effects = new ComponentVoid(92, 32, 52, 158);

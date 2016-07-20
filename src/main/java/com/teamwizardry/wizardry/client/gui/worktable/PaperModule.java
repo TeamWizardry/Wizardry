@@ -1,5 +1,7 @@
 package com.teamwizardry.wizardry.client.gui.worktable;
 
+import java.util.List;
+
 import com.teamwizardry.librarianlib.api.gui.GuiComponent;
 import com.teamwizardry.librarianlib.api.gui.components.ComponentCenterAlign;
 import com.teamwizardry.librarianlib.api.gui.components.ComponentSprite;
@@ -37,9 +39,17 @@ public class PaperModule {
 		this.drag = new DragMixin<ComponentCenterAlign>(result, (v) -> v);
 		
 		this.drag.drop.add((c, pos) -> {
-			if(!paper.isMouseOver(c.getPos())) {
-				c.invalidate();
+			GuiComponent<?> pep = paper;
+			List<GuiComponent<?>> trays = paper.getByTag("tray");
+			boolean hover = false;
+			for (GuiComponent<?> tray : trays) {
+				if(tray.isMouseOver(tray.relativePos(c.getPos()))) {
+					hover = true;
+					break;
+				}
 			}
+			if(!hover)
+				c.invalidate();
 		});
 		
 		result.addTag("module");
