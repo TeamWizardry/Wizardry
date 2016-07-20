@@ -7,7 +7,7 @@ tile.mana.name=Mana
 
 item.physics_book.name=Physics Book
 item.ring.name=Ring
-item.vinteum_dust.name=Vinteum Dust
+item.devil_dust.name=Devil Dust
 item.mana_pearl.name=Mana Pearl
 item.glass_pearl.name=Glass Pearl
 item.nacre_pearl.name=Nacre Pearl
@@ -22,5 +22,5 @@ achievement.wizardry.physicsBook=NEEEEEEEEEEERD!
 achievement.wizardry.physicsBook.desc=Acquire a physics book
 achievement.wizardry.manapool=Not A Mana Pool
 achievement.wizardry.manapool.desc=Find a pool of mana
-achievement.wizardry.vinteumdust=Sugar, Spice, And Everything Nice
-achievement.wizardry.vinteumdust.desc=Craft vinteum dust
+achievement.wizardry.devildust=Sugar, Spice, And Everything Nice
+achievement.wizardry.devildust.desc=Craft devil dust

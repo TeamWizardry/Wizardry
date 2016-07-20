@@ -106,8 +106,9 @@ public class ItemGoldStaff extends Item implements IColorable {
             Arc3D arc = new Arc3D(points, target, (float) 0.9, 20);
             if (betterCount < arc.getPoints().size()) {
                 Vec3d point = arc.getPoints().get(betterCount);
-                SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(player.worldObj, point.xCoord, point.yCoord, point.zCoord, 0.5F, 0.5F, 20, true);
+                SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(player.worldObj, point.xCoord, point.yCoord, point.zCoord, 0.1F, 0.5F, 20, true);
                 fizz.setRandomizedSizes(true);
+                fizz.blur();
             }
         }
     }

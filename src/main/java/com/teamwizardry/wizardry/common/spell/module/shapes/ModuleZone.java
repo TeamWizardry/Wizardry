@@ -2,6 +2,11 @@ package com.teamwizardry.wizardry.common.spell.module.shapes;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.teamwizardry.librarianlib.math.shapes.Circle3D;
+import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
+import com.teamwizardry.wizardry.client.fx.particle.trails.SparkleTrailHelix;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -10,6 +15,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -58,6 +64,13 @@ public class ModuleZone extends Module {
 		double radius = spell.getDouble(RADIUS);
 		int duration = spell.getInteger(DURATION);
 		NBTTagList modules = spell.getTagList(MODULES, NBT.TAG_COMPOUND);
+
+        Circle3D circle = new Circle3D(new Vec3d(caster.posX, caster.posY, caster.posZ), radius, (int) (radius * 10));
+        for (Vec3d point : circle.getPoints()) {
+            SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(caster.worldObj, point.xCoord, point.yCoord, point.zCoord, 0.5f, 2f, 30, true);
+            fizz.setRandomizedSizes(true);
+        }
+
 		if (!(caster instanceof SpellEntity))
 		{
 			BlockPos pos = caster.getPosition();
