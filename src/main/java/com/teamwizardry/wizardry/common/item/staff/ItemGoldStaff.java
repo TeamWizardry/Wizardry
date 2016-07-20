@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.item.staff;
 
+import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
@@ -10,6 +11,7 @@ import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
@@ -17,6 +19,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -178,6 +181,31 @@ public class ItemGoldStaff extends Item implements IColorable {
         int g = stack.getTagCompound().getInteger("green");
         int b = stack.getTagCompound().getInteger("blue");
         return new Color(r, g, b);
+    }
+    
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced)
+    {
+    	if (!stack.hasTagCompound()) return;
+    	NBTTagCompound compound = stack.getTagCompound();
+    	if (!compound.hasKey("Spell")) return;
+    	tooltip.add("Spell:");
+    	addInformation(compound.getCompoundTag("Spell"), tooltip, 0);
+    }
+    
+    private void addInformation(NBTTagCompound compound, List<String> tooltip, int level)
+    {
+    	if (!compound.hasKey(Module.CLASS)) return;
+    	String cls = compound.getString(Module.CLASS);
+    	cls = cls.substring(cls.lastIndexOf('.') + 1);
+    	for (int i = 0; i < level; i++)
+    		cls = ' ' + cls;
+    	tooltip.add(cls);
+    	if (!compound.hasKey(Module.MODULES)) return;
+    	NBTTagList children = compound.getTagList(Module.MODULES, NBT.TAG_COMPOUND);
+    	for (int i = 0; i < children.tagCount(); i++)
+    		addInformation(children.getCompoundTagAt(i), tooltip, level + 1);
     }
 
     @SideOnly(Side.CLIENT)

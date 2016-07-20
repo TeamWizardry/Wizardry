@@ -19,8 +19,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
 
 public class ModuleBeam extends Module implements IContinuousCast {
-    private int ticker = 0;
-
     public ModuleBeam() {
         attributes.addAttribute(Attribute.DISTANCE);
         attributes.addAttribute(Attribute.SCATTER);
@@ -74,7 +72,6 @@ public class ModuleBeam extends Module implements IContinuousCast {
         }
 
         Vec3d cross = caster.getLook(1).crossProduct(new Vec3d(0, caster.getEyeHeight(), 0)).normalize().scale(caster.width / 2);
-        ticker++;
         for (double i = 0; i < distance; i += 1 / distance) {
             double x = slopeX * i + caster.posX + cross.xCoord;
             double y = slopeY * i + caster.posY + caster.getEyeHeight();
