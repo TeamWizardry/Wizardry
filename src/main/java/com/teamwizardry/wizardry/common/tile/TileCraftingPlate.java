@@ -171,7 +171,7 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
                 }
 
             if (isCrafting) {
-                Wizardry.proxy.spawnParticleLensFlare(worldObj, new Vec3d(pos.getX() + 0.5, pos.getY() + pearl.getPoint().yCoord, pos.getZ() + 0.5), 50, 5);
+                Wizardry.proxy.spawnParticleSparkle(worldObj, pos.getX() + 0.5, pos.getY() + pearl.getPoint().yCoord, pos.getZ() + 0.5, 0.1f, 0.5f, 10, true).blur();
                 for (int i = 0; i < 5; i++)
                     Wizardry.proxy.spawnParticleLensFlare(worldObj, new Vec3d(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5), 50, 0.3);
 

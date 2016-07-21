@@ -32,7 +32,7 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
             if (te.isAnimating() && te.getPearl() != null) {
                 Vec3d point = te.getPearl().getPoint();
 
-                te.getPearl().setPoint(new Vec3d(0.5, te.getPearl().getPoint().yCoord + 0.001, 0.5));
+                te.getPearl().setPoint(new Vec3d(0.5, te.getPearl().getPoint().yCoord + 0.001 * partialTicks, 0.5));
 
                 if (te.getPearlAnimationTimeLeft() > 0.0) {
                     GlStateManager.pushMatrix();
