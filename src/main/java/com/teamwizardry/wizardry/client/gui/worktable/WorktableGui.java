@@ -15,6 +15,7 @@ import com.google.common.collect.Multimap;
 import com.teamwizardry.librarianlib.api.gui.GuiBase;
 import com.teamwizardry.librarianlib.api.gui.GuiComponent;
 import com.teamwizardry.librarianlib.api.gui.components.ComponentGrid;
+import com.teamwizardry.librarianlib.api.gui.components.ComponentScrolledView;
 import com.teamwizardry.librarianlib.api.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.api.gui.components.ComponentSpriteCapped;
 import com.teamwizardry.librarianlib.api.gui.components.ComponentVoid;
@@ -51,7 +52,7 @@ public class WorktableGui extends GuiBase {
 		
 		MODULE_DEFAULT = SPRITE_SHEET.getSprite(32, 208, 24, 24),
 		MODULE_DEFAULT_GLOW = SPRITE_SHEET.getSprite(0, 208, 24, 24),
-		
+		MODULE_ICON_MISSING = SPRITE_SHEET.getSprite(0, 232, 16, 16),
 		SCROLL_SLIDER_V = SPRITE_SHEET.getSprite(0, 192, 8, 16),
 		SCROLL_SLIDER_H = SPRITE_SHEET.getSprite(16, 192, 16, 8),
 		
@@ -116,25 +117,51 @@ public class WorktableGui extends GuiBase {
         components.add(paper);
         
         effects = new ComponentVoid(92, 32, 52, 158);
+        addModules(effects, ModuleType.EFFECT, 7, 7, 3, 12);
         components.add(effects);
-
-        addModules(effects, ModuleType.EFFECT, 7, 7, 3);
         
-        ComponentSpriteCapped scrollSlot = new ComponentSpriteCapped(SCROLL_GROOVE_V_TOP, SCROLL_GROOVE_V, SCROLL_GROOVE_V_BOTTOM, false, 52, 0, 12, 158);
-        effects.add(scrollSlot);
-                
-        ComponentSlider scrollSlider = new ComponentSlider(6, SCROLL_SLIDER_V.getHeight()/2 + 2, 0, 158-SCROLL_SLIDER_V.getHeight()-4, 0, -1);
-        scrollSlider.handle.add(new ComponentSprite(SCROLL_SLIDER_V, -SCROLL_SLIDER_V.getWidth()/2, -SCROLL_SLIDER_V.getHeight()/2));
-        scrollSlot.add(scrollSlider);
+        shapes = new ComponentVoid(32, 32, 52, 74);
+        addModules(shapes, ModuleType.SHAPE, 7, 7, 3, 5);
+        components.add(shapes);
+        
+        booleans = new ComponentVoid(32, 116, 52, 74);
+        addModules(booleans, ModuleType.BOOLEAN, 7, 7, 3, 5);
+        components.add(booleans);
+        
+        events = new ComponentVoid(368, 31, 52, 87);
+        addModules(events, ModuleType.EVENT, 7, 7, 3, 6);
+        components.add(events);
+        
+        modifiers = new ComponentVoid(428, 31, 52, 87);
+        addModules(modifiers, ModuleType.MODIFIER, 7, 7, 3, 6);
+        components.add(modifiers);
     }
 
-    private void addModules(ComponentVoid parent, ModuleType type, int x, int y, int columns) {
-    	ComponentGrid grid = new ComponentGrid(x, y, 12, 12, columns);
+    private void addModules(ComponentVoid parent, ModuleType type, int x, int y, int columns, int rows) {
+    	ComponentScrolledView view = new ComponentScrolledView(x, y, columns*12, rows*12);
+    	parent.add(view);
+    	
+    	ComponentGrid grid = new ComponentGrid(0, 0, 12, 12, columns);
+    	view.add(grid);
+    	
+    	int count = 0;
     	for (ModuleList.IModuleConstructor constructor : modulesByType.get(type)) {
 			SidebarItem item = new SidebarItem(0, 0, constructor, paper);
 			grid.add(item.result);
+			count++;
 		}
-    	parent.add(grid);
+    	int usedRows = (int)Math.ceil( count/(float)columns );
+    	if(usedRows > rows) {
+    		ComponentSpriteCapped scrollSlot = new ComponentSpriteCapped(SCROLL_GROOVE_V_TOP, SCROLL_GROOVE_V, SCROLL_GROOVE_V_BOTTOM, false, x+columns*12, y, 12, rows*12);
+            parent.add(scrollSlot);
+                    
+            ComponentSlider scrollSlider = new ComponentSlider(6, SCROLL_SLIDER_V.getHeight()/2+2, 0, rows*12 - SCROLL_SLIDER_V.getHeight() - 4, 0, usedRows-3);
+            scrollSlider.handle.add(new ComponentSprite(SCROLL_SLIDER_V, -SCROLL_SLIDER_V.getWidth()/2, -SCROLL_SLIDER_V.getHeight()/2));
+            scrollSlider.percentageChange.add((p) -> {
+            	view.scrollToPercent(new Vec2(0, p));
+            });
+            scrollSlot.add(scrollSlider);
+    	}
     }
     
     @Override
@@ -450,7 +477,7 @@ public class WorktableGui extends GuiBase {
                         base.getTex().bind();
                         base.draw(module.getX(), module.getY(), iconSize, iconSize);
 
-                        Sprite icon = new Sprite(module.getModule().getIcon());
+                        Sprite icon = module.getModule().getStaticIcon();
                         icon.getTex().bind();
                         icon.draw(module.getX(), module.getY(), iconSize, iconSize);
                     }
