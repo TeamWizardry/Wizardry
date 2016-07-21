@@ -19,8 +19,9 @@ public class CraftingPlateItemStackHelper {
     private double positionTheta;
     private Vec3d point;
     private double maxX, maxY, maxZ;
+    private double ticker = 0;
 
-    public CraftingPlateItemStackHelper(ItemStack stack, BlockPos pos) {
+    public CraftingPlateItemStackHelper(ItemStack stack) {
         this.stack = stack;
 
         maxX = ThreadLocalRandom.current().nextDouble(0, 5);
@@ -90,5 +91,14 @@ public class CraftingPlateItemStackHelper {
 
     public double getMaxY() {
         return maxY;
+    }
+
+    public void tick() {
+        if (ticker >= 360) ticker = 0;
+        else ticker += (maxX + maxY + maxZ) / 3;
+    }
+
+    public double getTick() {
+        return ticker;
     }
 }
