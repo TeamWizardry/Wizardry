@@ -83,7 +83,7 @@ public class ModuleZone extends Module {
 				{
 					for (int i = 0; i < modules.tagCount(); i++)
 					{
-						SpellCastEvent event = new SpellCastEvent(spell, entity, player);
+						SpellCastEvent event = new SpellCastEvent(modules.getCompoundTagAt(i), entity, player);
 						MinecraftForge.EVENT_BUS.post(event);
 					}
 				}
