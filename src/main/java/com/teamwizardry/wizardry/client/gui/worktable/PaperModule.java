@@ -60,10 +60,10 @@ public class PaperModule extends ModuleComponent {
 		
 		result.addTag("module");
 		
-		if(paper.getData(DraggingFromData.class) == null)
-			paper.setData(DraggingFromData.class, new DraggingFromData());
+		if(paper.getData(DraggingFromData.class, "") == null)
+			paper.setData(DraggingFromData.class, "", new DraggingFromData());
 		
-		DraggingFromData data = paper.getData(DraggingFromData.class);
+		DraggingFromData data = paper.getData(DraggingFromData.class, "");
 		
 		result.mouseDown.add((c, pos, button) -> {
 			if(c.mouseOverThisFrame && button == EnumMouseButton.RIGHT) {

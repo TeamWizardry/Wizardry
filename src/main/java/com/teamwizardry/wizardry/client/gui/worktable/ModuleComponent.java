@@ -48,8 +48,8 @@ public class ModuleComponent {
 	}
 	
 	private <D> void setSelfData(Class<D> klass) {
-		result.setData(ModuleComponent.class, this);
-		result.setData(klass, (D) this);
+		result.setData(ModuleComponent.class, "", this);
+		result.setData(klass, "", (D) this);
 	}
 	
 }
