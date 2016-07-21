@@ -41,6 +41,14 @@ public class EventHandler {
     public void onTextureStitchEvent(TextureStitchEvent.Pre event) {
         event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, "particles/sparkle"));
         event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
+        event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, "particles/hexagon"));
+        event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, "particles/octagon"));
+        event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, "particles/hexagon_blur_1"));
+        event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, "particles/hexagon_blur_2"));
+        event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, "particles/hexagon_blur_3"));
+        event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, "particles/octagon_blur_1"));
+        event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, "particles/octagon_blur_2"));
+        event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, "particles/octagon_blur_3"));
     }
 
     @SubscribeEvent

@@ -9,12 +9,9 @@ import com.teamwizardry.wizardry.api.item.PearlType;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import com.teamwizardry.wizardry.client.helper.CraftingPlateItemStackHelper;
-import com.teamwizardry.wizardry.client.render.TileCraftingPlateRenderer;
 import com.teamwizardry.wizardry.common.Structures;
 import com.teamwizardry.wizardry.common.spell.parsing.Parser;
-import io.netty.util.internal.ThreadLocalRandom;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -33,7 +30,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 /**
@@ -42,7 +39,7 @@ import java.util.stream.Collectors;
 public class TileCraftingPlate extends TileEntity implements ITickable {
 
     private ArrayList<CraftingPlateItemStackHelper> inventory = new ArrayList<>();
-    private boolean structureComplete = false, isCrafting = false, animationComplete = false;
+    private boolean structureComplete = false, isCrafting = false, isAnimating = false, animationComplete = false, burst = false;
     private int craftingTime = 100, craftingTimeLeft = 100;
     private int pearlAnimationTime = 500, pearlAnimationTimeLeft = 500;
     private CraftingPlateItemStackHelper pearl;
@@ -137,64 +134,95 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
             for (EntityItem item : items) {
 
                 if (item.getEntityItem().getItem() instanceof IInfusible) {
-                    IInfusible pearl = (IInfusible) item.getEntityItem().getItem();
-                    if (pearl.getType(item.getEntityItem()) == PearlType.MUNDANE) {
-                        this.pearl = new CraftingPlateItemStackHelper(item.getEntityItem());
-                        this.pearl.setPoint(new Vec3d(0.5, 1, 0.5));
-                        isCrafting = true;
-                        craftingTime = inventory.size() * 10;
-                        craftingTimeLeft = inventory.size() * 10;
+                    if (!inventory.isEmpty()) {
+                        IInfusible pearl = (IInfusible) item.getEntityItem().getItem();
+                        if (pearl.getType(item.getEntityItem()) == PearlType.MUNDANE) {
+                            this.pearl = new CraftingPlateItemStackHelper(item.getEntityItem());
+                            this.pearl.setPoint(new Vec3d(0.5, 1, 0.5));
+                            isCrafting = true;
+                            craftingTime = inventory.size() * 10;
+                            craftingTimeLeft = inventory.size() * 10;
+                        }
                     }
                 } else inventory.add(new CraftingPlateItemStackHelper(item.getEntityItem()));
 
                 update = true;
                 worldObj.removeEntity(item);
             }
-
             if (update) worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
 
             SparkleFX ambient = Wizardry.proxy.spawnParticleSparkle(worldObj, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.5F, 0.5F, 100, 8, 8, 8, true);
             ambient.jitter(8, 0.1, 0.1, 0.1);
             ambient.randomDirection(0.2, 0.2, 0.2);
 
+
+            // > 1 to prevent java.lang.ArithmeticException: / by zero in TileCraftingPlateRenderer.class
             if (isCrafting)
-                if (craftingTimeLeft > 0) --craftingTimeLeft;
-                else isCrafting = false;
-            else if (!animationComplete && craftingTimeLeft == 0 && pearlAnimationTimeLeft > 0) --pearlAnimationTimeLeft;
-            if (!animationComplete && craftingTimeLeft == 0 && pearlAnimationTimeLeft == 0) animationComplete = true;
+                if (craftingTimeLeft > 1) --craftingTimeLeft;
+                else {
+                    isAnimating = true;
+                    isCrafting = false;
+                }
+            else if (isAnimating)
+                if (pearlAnimationTimeLeft > 1) --pearlAnimationTimeLeft;
+                else {
+                    isAnimating = false;
+                    animationComplete = true;
+                }
+
+            if (isCrafting) {
+                Wizardry.proxy.spawnParticleLensFlare(worldObj, new Vec3d(pos.getX() + 0.5, pos.getY() + pearl.getPoint().yCoord, pos.getZ() + 0.5), 50, 5);
+                for (int i = 0; i < 5; i++)
+                    Wizardry.proxy.spawnParticleLensFlare(worldObj, new Vec3d(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5), 50, 0.3);
+
+            } else if (isAnimating) {
+                for (int i = 0; i < 10; i++) {
+                    SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(worldObj, pos.getX() + 0.5, pos.getX() + 1, pos.getZ() + 0.5, 0.5F, 0.5F, 50, true);
+                    fizz.jitter(10, 0.01, 0, 0.01);
+                    fizz.randomDirection(0.05, 0, 0.05);
+                    fizz.setMotion(0, ThreadLocalRandom.current().nextDouble(0.05, 0.2), 0);
+                }
+
+            } else if (animationComplete) {
+                for (int i = 0; i < 10; i++) {
+                    SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(worldObj, pos.getX() + pearl.getPoint().xCoord + 0.5, pos.getX() + pearl.getPoint().yCoord, pos.getZ() + pearl.getPoint().zCoord + 0.5, 0.5F, 0.5F, 10, true);
+                    fizz.randomDirection(0.1, 0.1, 0.1);
+                }
+                structureComplete = false;
+            }
 
             if (animationComplete) {
                 Parser spellParser = new Parser(inventory.stream().map(CraftingPlateItemStackHelper::getItemStack).collect(Collectors.toCollection(ArrayList::new)));
                 Module parsedSpell = null;
+
                 try {
                     while (parsedSpell == null)
                         parsedSpell = spellParser.parse();
-                } catch (NoSuchElementException e) {
-                    e.printStackTrace();
+                } catch (NoSuchElementException ignored) {
                 }
+
                 if (parsedSpell != null) {
-                    Minecraft.getMinecraft().thePlayer.sendChatMessage(".");
                     NBTTagCompound compound = pearl.getItemStack().getTagCompound();
                     compound.setString("type", PearlType.INFUSED.toString());
                     compound.setTag("Spell", parsedSpell.getModuleData());
                     pearl.getItemStack().setTagCompound(compound);
                     EntityItem pearlItem = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() + pearl.getPoint().yCoord, pos.getZ() + 0.5, pearl.getItemStack());
-                    pearlItem.motionX = 0;
-                    pearlItem.motionY = 0;
-                    pearlItem.motionZ = 0;
+                    pearlItem.setVelocity(0, 0.8, 0);
+                    pearlItem.forceSpawn = true;
                     worldObj.spawnEntityInWorld(pearlItem);
 
-                    for (int i = 0; i < 10 * Config.particlePercentage / 100; i++) {
-                        SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(worldObj, pos.getX() + 0.5, pos.getY() + pearl.getPoint().yCoord, pos.getZ() + 0.5, 0.5F, 0.5F, 50, false);
-                        fizz.jitter(20, 0.01, 0, 0.01);
-                        fizz.randomDirection(0.05, 0, 0.05);
-                        fizz.setMotion(0, ThreadLocalRandom.current().nextDouble(-0.2, -0.05), 0);
+                    for (int i = 0; i < 100 * Config.particlePercentage / 100; i++) {
+                        SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(worldObj, pos.getX() + 0.5, pos.getY() + pearl.getPoint().yCoord, pos.getZ() + 0.5, 0.5F, 0.5F, 20, true);
+                        fizz.jitter(10, 0.005, 0.005, 0.005);
+                        fizz.randomDirection(0.05, 0.005, 0.05);
                     }
 
                     pearl = null;
+                    inventory.clear();
+                    animationComplete = false;
+                    craftingTimeLeft = craftingTime;
+                    pearlAnimationTimeLeft = pearlAnimationTime;
                 }
-                inventory.clear();
-                animationComplete = false;
             }
         }
     }
@@ -237,5 +265,21 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
 
     public void setPearlAnimationTimeLeft(int pearlAnimationTimeLeft) {
         this.pearlAnimationTimeLeft = pearlAnimationTimeLeft;
+    }
+
+    public boolean isBurst() {
+        return burst;
+    }
+
+    public void setBurst(boolean burst) {
+        this.burst = burst;
+    }
+
+    public boolean isAnimating() {
+        return isAnimating;
+    }
+
+    public void setAnimating(boolean animating) {
+        isAnimating = animating;
     }
 }

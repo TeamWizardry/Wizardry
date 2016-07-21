@@ -19,19 +19,17 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
     public void renderTileEntityAt(TileCraftingPlate te, double x, double y, double z, float partialTicks, int destroyStage) {
         if (te.isStructureComplete()) {
 
-            if (te.getCraftingTimeLeft() > 0.0) {
+            if (te.isCrafting()) {
                 // Speed rotation up as crafting time decreases
                 rotationTicker += te.getCraftingTime() / te.getCraftingTimeLeft();
                 if (rotationTicker >= 360) rotationTicker = 0;
             }
-            if (!te.isCrafting() && te.getPearlAnimationTimeLeft() > 0) {
+            if (te.isAnimating()) {
                 pearlRotationTicker += te.getPearlAnimationTime() / te.getPearlAnimationTimeLeft();
                 if (pearlRotationTicker >= 360) pearlRotationTicker = 0;
             }
-            // Minecraft.getMinecraft().thePlayer.sendChatMessage(pearlAnimationTimeLeft + " - " + te.getCraftingTimeLeft());
 
-            // RENDER INVENTORY ITEMS HERE WHEN CRAFTING //
-            if (te.getCraftingTimeLeft() == 0.0 && !te.isCrafting()) {
+            if (te.isAnimating() && te.getPearl() != null) {
                 Vec3d point = te.getPearl().getPoint();
 
                 te.getPearl().setPoint(new Vec3d(0.5, te.getPearl().getPoint().yCoord + 0.001, 0.5));
@@ -50,13 +48,12 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
                 for (CraftingPlateItemStackHelper stack : te.getInventory()) {
 
                     if (te.getCraftingTimeLeft() > 0.0) {
-                        if (stack.getPositionTheta() >= 1 || stack.getPositionTheta() + 1.0 / te.getCraftingTimeLeft() > 1)
-                            stack.setPositionTheta(1.0 / te.getCraftingTime());
+                        if (stack.getPositionTheta() >= 1) stack.setPositionTheta(1.0 / te.getCraftingTime());
                         else stack.setPositionTheta(stack.getPositionTheta() + 1.0 / te.getCraftingTimeLeft());
 
-                        stack.setMaxX(stack.getMaxX() - (stack.getMaxX() / te.getCraftingTimeLeft() / 4));
-                        stack.setMaxZ(stack.getMaxZ() - (stack.getMaxZ() / te.getCraftingTimeLeft() / 4));
-                        stack.setMaxY(stack.getMaxY() - (stack.getMaxY() / te.getCraftingTimeLeft() / 4));
+                        stack.setMaxX(stack.getMaxX() - (stack.getMaxX() / te.getCraftingTimeLeft() / 10));
+                        stack.setMaxZ(stack.getMaxZ() - (stack.getMaxZ() / te.getCraftingTimeLeft() / 10));
+                        stack.setMaxY(stack.getMaxY() - (stack.getMaxY() / te.getCraftingTimeLeft() / 10));
                     }
 
                     double theta = Math.PI * 2 * stack.getPositionTheta();
@@ -71,10 +68,8 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
                     Minecraft.getMinecraft().getRenderItem().renderItem(stack.getItemStack(), ItemCameraTransforms.TransformType.NONE);
                     GlStateManager.popMatrix();
                 }
-            }
-
-            // RENDER INVENTORY ITEMS HERE WHEN NOT CRAFTING //
-            if (!te.isCrafting())
+            } else {
+                // RENDER INVENTORY ITEMS HERE WHEN NOT CRAFTING //
                 for (CraftingPlateItemStackHelper stack : te.getInventory()) {
 
                     if (stack.getQueue() < stack.getPoints().size() - 1) stack.setQueue(stack.getQueue() + 1);
@@ -88,6 +83,7 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
                     Minecraft.getMinecraft().getRenderItem().renderItem(stack.getItemStack(), ItemCameraTransforms.TransformType.NONE);
                     GlStateManager.popMatrix();
                 }
+            }
         }
     }
 }

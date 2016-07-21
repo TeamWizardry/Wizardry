@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.proxy;
 
+import com.teamwizardry.wizardry.client.fx.particle.LensFlareFX;
 import com.teamwizardry.wizardry.client.fx.particle.MagicBurstFX;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import com.teamwizardry.wizardry.client.fx.particle.trails.SparkleTrailHelix;
@@ -47,6 +48,10 @@ public class CommonProxy {
     }
 
     public SparkleTrailHelix spawnParticleSparkleTrailHelix(World worldIn, Vec3d origin, Vec3d center, double radius, int age, boolean fade) {
+        return null;
+    }
+
+    public LensFlareFX spawnParticleLensFlare(World worldIn, Vec3d pos, int age, double range) {
         return null;
     }
 
