@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.proxy;
 
+import com.teamwizardry.wizardry.client.fx.particle.FireFX;
 import com.teamwizardry.wizardry.client.fx.particle.LensFlareFX;
 import com.teamwizardry.wizardry.client.fx.particle.MagicBurstFX;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
@@ -52,6 +53,10 @@ public class CommonProxy {
     }
 
     public LensFlareFX spawnParticleLensFlare(World worldIn, Vec3d pos, int age, double range) {
+        return null;
+    }
+
+    public FireFX spawnParticleFire(World worldIn, Vec3d pos, int age, double range) {
         return null;
     }
 

@@ -23,8 +23,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class ModuleBeam extends Module implements IContinuousCast {
 
-    private int ticker = 0;
-
     public ModuleBeam() {
         attributes.addAttribute(Attribute.DISTANCE);
         attributes.addAttribute(Attribute.SCATTER);
@@ -79,7 +77,6 @@ public class ModuleBeam extends Module implements IContinuousCast {
 
         Vec3d cross = caster.getLook(1).crossProduct(new Vec3d(0, caster.getEyeHeight(), 0)).normalize().scale(caster.width / 2);
 
-        ticker++;
         for (double i = 0; i < distance; i += distance / 100) {
             double x = slopeX * i + caster.posX + cross.xCoord;
             double y = slopeY * i + caster.posY + caster.getEyeHeight();
@@ -90,12 +87,12 @@ public class ModuleBeam extends Module implements IContinuousCast {
             Vec3d center = new Vec3d(x, y, z);
 
             SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(caster.worldObj, x, y, z, 0.5F, 0.5F, 10, true);
-            fizz.setRandomizedSizes(true);
+            fizz.randomizeSizes();
             fizz.blur();
 
             if (ThreadLocalRandom.current().nextInt(10) == 0) {
                 SparkleTrailHelix helix = Wizardry.proxy.spawnParticleSparkleTrailHelix(caster.worldObj, origin, center, 0.2, theta, 50, true);
-                helix.setRandomizedSizes(true);
+                helix.randomizeSizes();
                 //helix.blur();
             }
         }

@@ -1,6 +1,15 @@
 package com.teamwizardry.wizardry.common.item.staff;
 
-import java.util.List;
+import com.teamwizardry.librarianlib.api.util.misc.Color;
+import com.teamwizardry.librarianlib.math.shapes.Arc3D;
+import com.teamwizardry.librarianlib.math.shapes.Circle3D;
+import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.item.IColorable;
+import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.api.module.ModuleList;
+import com.teamwizardry.wizardry.api.spell.IContinuousCast;
+import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
+import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
@@ -23,16 +32,8 @@ import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import com.teamwizardry.librarianlib.api.util.misc.Color;
-import com.teamwizardry.librarianlib.math.shapes.Arc3D;
-import com.teamwizardry.librarianlib.math.shapes.Circle3D;
-import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.item.IColorable;
-import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.ModuleList;
-import com.teamwizardry.wizardry.api.spell.IContinuousCast;
-import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
-import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
+
+import java.util.List;
 
 /**
  * Created by Saad on 6/7/2016.
@@ -107,7 +108,7 @@ public class ItemGoldStaff extends Item implements IColorable {
             if (betterCount < arc.getPoints().size()) {
                 Vec3d point = arc.getPoints().get(betterCount);
                 SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(player.worldObj, point.xCoord, point.yCoord, point.zCoord, 0.1F, 0.5F, 20, true);
-                fizz.setRandomizedSizes(true);
+                fizz.randomizeSizes();
                 fizz.blur();
             }
         }
@@ -170,10 +171,7 @@ public class ItemGoldStaff extends Item implements IColorable {
 
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldS, ItemStack newS, boolean slotChanged) {
-    	if (oldS == null || newS == null) return true;
-    	if (!ItemStack.areItemsEqual(oldS, newS)) return true;
-    	if (oldS.stackSize != newS.stackSize) return true;
-        return slotChanged;
+        return !ItemStack.areItemsEqual(oldS, newS) || oldS.stackSize != newS.stackSize || slotChanged;
     }
 
     @Override

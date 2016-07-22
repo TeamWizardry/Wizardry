@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.client.fx.particle;
 
+import com.teamwizardry.librarianlib.api.util.misc.Color;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Config;
 import net.minecraft.client.Minecraft;
@@ -19,9 +20,10 @@ public class SparkleFX extends Particle {
     private static final Random random = new Random();
     public ResourceLocation texture = new ResourceLocation(Wizardry.MODID, "particles/sparkle");
     public ResourceLocation texture_blurred = new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred");
+    public Color toLerp, fromLerp;
     private double jitterX, jitterY, jitterZ;
     private int jitterChance;
-    private boolean fadeOut = true, randomSizes = false;
+    private boolean fadeOut = true, randomSizes = false, lerp = false;
 
     public SparkleFX(World worldIn, double x, double y, double z, float alpha, float scale, int age, boolean fadeOut) {
         super(worldIn, x, y, z);
@@ -62,10 +64,16 @@ public class SparkleFX extends Particle {
         if (z > 0) jitterZ = z;
     }
 
-    public void setColor(int r, int g, int b) {
+    public void setColor(float r, float g, float b) {
         particleRed = r;
         particleGreen = g;
         particleBlue = b;
+    }
+
+    public void lerp(Color toLerp) {
+        this.lerp = true;
+        this.toLerp = toLerp;
+        this.fromLerp = new Color(particleRed, particleGreen, particleBlue);
     }
 
     public void blur() {
@@ -75,19 +83,38 @@ public class SparkleFX extends Particle {
 
     public void randomlyOscillateColor(boolean r, boolean g, boolean b) {
         if (r && ThreadLocalRandom.current().nextBoolean()) {
-            if (ThreadLocalRandom.current().nextBoolean())
-                particleRed += ThreadLocalRandom.current().nextFloat() + 3;
-            else particleRed -= ThreadLocalRandom.current().nextFloat() + 3;
+            if (ThreadLocalRandom.current().nextBoolean()) {
+                double rand = ThreadLocalRandom.current().nextDouble(0, 1);
+                if (particleRed + rand > 1) particleRed = 1;
+                else particleRed += rand;
+            } else {
+                double rand = ThreadLocalRandom.current().nextDouble(0, 1);
+                if (particleRed - rand < 0) particleRed = 0;
+                else particleRed -= rand;
+            }
         }
+
         if (b && ThreadLocalRandom.current().nextBoolean()) {
-            if (ThreadLocalRandom.current().nextBoolean())
-                particleBlue += ThreadLocalRandom.current().nextFloat() + 3;
-            else particleBlue -= ThreadLocalRandom.current().nextFloat() + 3;
+            if (ThreadLocalRandom.current().nextBoolean()) {
+                double rand = ThreadLocalRandom.current().nextDouble(0, 1);
+                if (particleBlue + rand > 1) particleBlue = 1;
+                else particleBlue += rand;
+            } else {
+                double rand = ThreadLocalRandom.current().nextDouble(0, 1);
+                if (particleBlue - rand < 0) particleBlue = 0;
+                else particleBlue -= rand;
+            }
         }
         if (g && ThreadLocalRandom.current().nextBoolean()) {
-            if (ThreadLocalRandom.current().nextBoolean())
-                particleGreen += ThreadLocalRandom.current().nextFloat() + 3;
-            else particleGreen -= ThreadLocalRandom.current().nextFloat() + 3;
+            if (ThreadLocalRandom.current().nextBoolean()) {
+                double rand = ThreadLocalRandom.current().nextDouble(0, 1);
+                if (particleGreen + rand > 1) particleGreen = 1;
+                else particleGreen += rand;
+            } else {
+                double rand = ThreadLocalRandom.current().nextDouble(0, 1);
+                if (particleGreen - rand < 0) particleGreen = 0;
+                else particleGreen -= rand;
+            }
         }
     }
 
@@ -97,8 +124,8 @@ public class SparkleFX extends Particle {
         this.particleBlue = ThreadLocalRandom.current().nextInt(minRange, maxRange);
     }
 
-    public void setRandomizedSizes(boolean randomizedSizes) {
-        this.randomSizes = randomizedSizes;
+    public void randomizeSizes() {
+        this.randomSizes = true;
     }
 
     @Override
@@ -114,6 +141,13 @@ public class SparkleFX extends Particle {
     @Override
     public void onUpdate() {
         super.onUpdate();
+
+        if (lerp) {
+            float t = (float) particleAge / (float) particleMaxAge;
+            particleRed = (float) ((1.0 - t) * fromLerp.r + t * toLerp.r);
+            particleGreen = (float) ((1.0 - t) * fromLerp.g + t * toLerp.g);
+            particleBlue = (float) ((1.0 - t) * fromLerp.b + t * toLerp.b);
+        }
 
         if (randomSizes) particleScale = (this.rand.nextFloat() * 0.5F + 0.5F) * 2.0F;
         if (jitterX > 0)

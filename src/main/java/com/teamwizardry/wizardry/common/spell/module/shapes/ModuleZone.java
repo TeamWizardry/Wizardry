@@ -1,12 +1,14 @@
 package com.teamwizardry.wizardry.common.spell.module.shapes;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.teamwizardry.librarianlib.math.shapes.Circle3D;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.api.module.attribute.Attribute;
+import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.spell.SpellEntity;
+import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
+import com.teamwizardry.wizardry.api.trackerobject.SpellTracker;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
-import com.teamwizardry.wizardry.client.fx.particle.trails.SparkleTrailHelix;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -19,12 +21,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
-import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.attribute.Attribute;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.api.spell.SpellEntity;
-import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
-import com.teamwizardry.wizardry.api.trackerobject.SpellTracker;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ModuleZone extends Module {
     public ModuleZone() {
@@ -68,7 +67,7 @@ public class ModuleZone extends Module {
         Circle3D circle = new Circle3D(new Vec3d(caster.posX, caster.posY, caster.posZ), radius, (int) (radius * 10));
         for (Vec3d point : circle.getPoints()) {
             SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(caster.worldObj, point.xCoord, point.yCoord, point.zCoord, 0.5f, 2f, 30, true);
-            fizz.setRandomizedSizes(true);
+            fizz.randomizeSizes();
         }
 
 		if (!(caster instanceof SpellEntity))

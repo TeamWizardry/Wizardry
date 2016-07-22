@@ -4,6 +4,7 @@ import com.teamwizardry.librarianlib.client.fx.particle.ParticleRenderDispatcher
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.client.core.CapeHandler;
 import com.teamwizardry.wizardry.client.core.HudEventHandler;
+import com.teamwizardry.wizardry.client.fx.particle.FireFX;
 import com.teamwizardry.wizardry.client.fx.particle.LensFlareFX;
 import com.teamwizardry.wizardry.client.fx.particle.MagicBurstFX;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
@@ -92,6 +93,13 @@ public class ClientProxy extends CommonProxy {
     @Override
     public LensFlareFX spawnParticleLensFlare(World world, Vec3d pos, int age, double range) {
         LensFlareFX particle = new LensFlareFX(world, pos, age, range);
+        Minecraft.getMinecraft().effectRenderer.addEffect(particle);
+        return particle;
+    }
+
+    @Override
+    public FireFX spawnParticleFire(World world, Vec3d pos, int age, double range) {
+        FireFX particle = new FireFX(world, pos, age, range);
         Minecraft.getMinecraft().effectRenderer.addEffect(particle);
         return particle;
     }

@@ -40,7 +40,7 @@ public interface IExplodable {
             SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(entityIn.worldObj, entityIn.posX, entityIn.posY + 0.5, entityIn.posZ, 1, 1F, 30, false);
             fizz.jitter(10, 0.1, 0.1, 0.1);
             fizz.randomDirection(0.3, 0.3, 0.3);
-            fizz.setRandomizedSizes(true);
+            fizz.randomizeSizes();
         }
     }
 }

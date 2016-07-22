@@ -62,7 +62,7 @@ public class ProjectileEntity extends SpellEntity {
             //helix.addContinuousMotion(new Vec3d(-motionX * 10, -motionY * 10, -motionZ * 10));
 
             SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(worldObj, posX, posY, posZ, 0.5F, 0.5F, 20, true);
-            fizz.setRandomizedSizes(true);
+            fizz.randomizeSizes();
             fizz.setColor((int) trailColor.r, (int) trailColor.g, (int) trailColor.b);
             fizz.randomDirection(0.1, 0.1, 0.1);
             fizz.jitter(10, 0.1, 0.1, 0.1);
