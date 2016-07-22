@@ -22,15 +22,17 @@ public class SparkleFX extends Particle {
     public ResourceLocation texture_blurred = new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred");
     public Color toLerp, fromLerp;
     private double jitterX, jitterY, jitterZ;
+    private float maxScale = 1f;
     private int jitterChance;
-    private boolean fadeOut = true, randomSizes = false, lerp = false;
+    private boolean fadeOut = true, randomSizes = false, lerp = false, shrink = false, grow = false;
 
     public SparkleFX(World worldIn, double x, double y, double z, float alpha, float scale, int age, boolean fadeOut) {
         super(worldIn, x, y, z);
         particleAlpha = alpha;
         this.fadeOut = fadeOut;
         particleMaxAge = age * Config.particlePercentage / 100;
-        particleScale = scale;
+        particleScale = 0f;
+        maxScale = scale;
         TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(texture.toString());
         this.setParticleTexture(sprite);
     }
@@ -40,7 +42,8 @@ public class SparkleFX extends Particle {
         particleAlpha = alpha;
         this.fadeOut = fadeOut;
         particleMaxAge = age * Config.particlePercentage / 100;
-        particleScale = scale;
+        particleScale = 0f;
+        maxScale = scale;
         TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(texture.toString());
         this.setParticleTexture(sprite);
     }
@@ -124,6 +127,14 @@ public class SparkleFX extends Particle {
         this.particleBlue = ThreadLocalRandom.current().nextInt(minRange, maxRange);
     }
 
+    public void shrink() {
+        shrink = true;
+    }
+
+    public void grow() {
+        grow = true;
+    }
+
     public void randomizeSizes() {
         this.randomSizes = true;
     }
@@ -149,17 +160,26 @@ public class SparkleFX extends Particle {
             particleBlue = (float) ((1.0 - t) * fromLerp.b + t * toLerp.b);
         }
 
-        if (randomSizes) particleScale = (this.rand.nextFloat() * 0.5F + 0.5F) * 2.0F;
+        if (randomSizes) {
+            randomSizes = false;
+            particleScale = (this.rand.nextFloat() * 0.5F + 0.5F) * 2.0F;
+        }
         if (jitterX > 0)
-            if (random.nextInt(jitterChance) == 0) motionX += ThreadLocalRandom.current().nextDouble(-jitterX, jitterX);
+            if (random.nextInt(jitterChance) == 0) motionX = ThreadLocalRandom.current().nextDouble(-jitterX, jitterX);
         if (jitterY > 0)
-            if (random.nextInt(jitterChance) == 0) motionY += ThreadLocalRandom.current().nextDouble(-jitterY, jitterY);
+            if (random.nextInt(jitterChance) == 0) motionY = ThreadLocalRandom.current().nextDouble(-jitterY, jitterY);
         if (jitterZ > 0)
-            if (random.nextInt(jitterChance) == 0) motionZ += ThreadLocalRandom.current().nextDouble(-jitterZ, jitterZ);
+            if (random.nextInt(jitterChance) == 0) motionZ = ThreadLocalRandom.current().nextDouble(-jitterZ, jitterZ);
         float lifeCoeff = ((float) this.particleMaxAge - (float) this.particleAge) / (float) this.particleMaxAge;
         if (random.nextInt(4) == 0) this.particleAge--;
+
         if (fadeOut) this.particleAlpha = lifeCoeff / 2;
-        this.particleScale = lifeCoeff / 2;
+
+        if (particleAge < particleMaxAge / 2) {
+            if (grow) {
+                if (particleScale < maxScale) particleScale += 0.1;
+            } else particleScale = maxScale;
+        } else if (shrink) this.particleScale -= 0.1;
     }
 
     public double getX() {
