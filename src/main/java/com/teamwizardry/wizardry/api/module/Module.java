@@ -25,7 +25,7 @@ import java.util.List;
  */
 public abstract class Module
 {
-	public static final Texture STATIC_ICON_SHEET = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/modules/static.png"), 128, 128);
+	public static final Texture STATIC_ICON_SHEET = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/modules/static.png"));
 	
 	public static final String CLASS = "Class";
 	public static final String MODULES = "Modules";
@@ -52,8 +52,7 @@ public abstract class Module
 
 	protected boolean canHaveChildren = true;
 
-	private Sprite staticIcon = WorktableGui.MODULE_ICON_MISSING, animatedIcon = WorktableGui.MODULE_ICON_MISSING;
-	//private ResourceLocation iconLocation = new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/icons/" + this.getClass().getSimpleName() + ".png");
+	private Sprite staticIcon = STATIC_ICON_SHEET.getSprite(this.getClass().getSimpleName()), animatedIcon = WorktableGui.MODULE_ICON_MISSING;
 	private String description = "<-NULL->";
 	private String displayName = "<-NULL->";
 
@@ -110,16 +109,6 @@ public abstract class Module
 	public void setStaticIcon(Sprite sprite)
 	{
 		staticIcon = sprite;
-	}
-	
-	/**
-	 * Sets the static icon to the icon at x,y on the standard icon sheet.
-	 * 
-	 * @param x the horizontal position from the left (not in pixels, in icon size units)
-	 * @param y the vertical position from the top (not in pixels, in icon size units)
-	 */
-	public void setStaticIconIndex(int x, int y) {
-		setStaticIcon(STATIC_ICON_SHEET.getSprite(x*16, y*16 + 32, 16, 16));
 	}
 	
 	/**

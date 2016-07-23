@@ -11,6 +11,6 @@ public enum ModuleType {
     
 	public final Sprite backgroundSprite;
 	private ModuleType() {
-		backgroundSprite = Module.STATIC_ICON_SHEET.getSprite(this.ordinal()*24, 0, 24, 24);
+		backgroundSprite = Module.STATIC_ICON_SHEET.getSprite(this.toString().toLowerCase());
 	}
 }

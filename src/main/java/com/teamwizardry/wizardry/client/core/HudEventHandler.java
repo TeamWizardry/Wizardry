@@ -20,11 +20,11 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
  */
 public class HudEventHandler extends Gui {
 
-    private final Texture HUD_TEXTURE = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/hud.png"), 256, 256);
-    private final Sprite emptyManaBar = new Sprite(HUD_TEXTURE, 0, 0, 101, 5);
-    private final Sprite fullManaBar = new Sprite(HUD_TEXTURE, 0, 5, 101, 5);
-    private final Sprite emptyBurnoutBar = new Sprite(HUD_TEXTURE, 0, 10, 101, 5);
-    private final Sprite fullBurnoutBar = new Sprite(HUD_TEXTURE, 0, 15, 101, 5);
+    private final Texture HUD_TEXTURE = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/hud.png"));
+    private final Sprite emptyManaBar = HUD_TEXTURE.getSprite("mana_empty");
+    private final Sprite fullManaBar = HUD_TEXTURE.getSprite("mana_full");
+    private final Sprite emptyBurnoutBar = HUD_TEXTURE.getSprite("burnout_empty");
+    private final Sprite fullBurnoutBar = HUD_TEXTURE.getSprite("burnout_full");
 
     @SubscribeEvent
     public void renderHud(RenderGameOverlayEvent.Post event) {

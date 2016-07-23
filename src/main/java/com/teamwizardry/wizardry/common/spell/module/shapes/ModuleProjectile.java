@@ -10,7 +10,6 @@ import com.teamwizardry.wizardry.common.spell.ProjectileEntity;
 
 public class ModuleProjectile extends Module {
     public ModuleProjectile() {
-    	setStaticIconIndex(0, 0);
         attributes.addAttribute(Attribute.SPEED);
         attributes.addAttribute(Attribute.PIERCE);
         attributes.addAttribute(Attribute.SCATTER);

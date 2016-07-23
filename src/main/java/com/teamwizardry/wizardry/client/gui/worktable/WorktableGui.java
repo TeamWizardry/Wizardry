@@ -28,43 +28,42 @@ import java.util.stream.Collectors;
  * Created by Saad on 6/17/2016.
  */
 public class WorktableGui extends GuiBase {
-
-    public static final Texture BACKGROUND_TEXTURE = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/table_background.png"), 512, 256);
-    public static final Sprite BACKGROUND_SPRITE = BACKGROUND_TEXTURE.getSprite(0, 0, 512, 256);
-
-    public static final Texture SPRITE_SHEET = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sprite_sheet.png"), 256, 256);
-
-    public static final Sprite
-            TAB_SIDE = SPRITE_SHEET.getSprite(0, 0, 24, 24),
-            TAB_TOP = SPRITE_SHEET.getSprite(0, 32, 24, 24),
-
-    MODULE_SLOT_SINGLE = SPRITE_SHEET.getSprite(0, 64, 32, 32),
-            MODULE_SLOT_L = SPRITE_SHEET.getSprite(0, 96, 32, 32),
-            MODULE_SLOT_R = SPRITE_SHEET.getSprite(0, 128, 32, 32),
-            MODULE_SLOT_LR = SPRITE_SHEET.getSprite(0, 160, 32, 32),
-
-    MODULE_DEFAULT = SPRITE_SHEET.getSprite(32, 208, 24, 24),
-            MODULE_DEFAULT_GLOW = SPRITE_SHEET.getSprite(0, 208, 24, 24),
-            MODULE_ICON_MISSING = SPRITE_SHEET.getSprite(0, 232, 16, 16),
-            SCROLL_SLIDER_V = SPRITE_SHEET.getSprite(0, 192, 8, 16),
-            SCROLL_SLIDER_H = SPRITE_SHEET.getSprite(16, 192, 16, 8),
-
-    SCROLL_GROOVE_V = SPRITE_SHEET.getSprite(64, 16, 12, 12),
-            SCROLL_GROOVE_V_TOP = SPRITE_SHEET.getSprite(64, 0, 12, 12),
-            SCROLL_GROOVE_V_BOTTOM = SPRITE_SHEET.getSprite(64, 32, 12, 12),
-
-    SCROLL_GROOVE_H = SPRITE_SHEET.getSprite(80, 16, 12, 12),
-            SCROLL_GROOVE_H_LEFT = SPRITE_SHEET.getSprite(80, 0, 12, 12),
-            SCROLL_GROOVE_H_RIGHT = SPRITE_SHEET.getSprite(80, 32, 12, 12),
-
-    _WHATISTHIS_GRID_THING = SPRITE_SHEET.getSprite(32, 64, 24, 24),
-            _WHATISTHIS_BOX_THING = SPRITE_SHEET.getSprite(96, 0, 16, 16),
-            _WHATISTHIS_BOX_H_THING = SPRITE_SHEET.getSprite(112, 16, 16, 13),
-            _WHATISTHIS_BOX_H_LEFT_THING = SPRITE_SHEET.getSprite(112, 0, 16, 13),
-            _WHATISTHIS_BOX_H_RIGHT_THING = SPRITE_SHEET.getSprite(112, 32, 16, 13),
-
-    ___fluff___ = null; // fluff just so I don't have to mess around with removing and adding trailing commas
-
+	public static final Texture BACKGROUND_TEXTURE = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/table_background.png"));
+	public static final Sprite BACKGROUND_SPRITE = BACKGROUND_TEXTURE.getSprite("bg");
+	
+	public static final Texture SPRITE_SHEET = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sprite_sheet.png"));
+	
+	public static final Sprite 
+		TAB_SIDE = SPRITE_SHEET.getSprite("tab_side"),
+		TAB_TOP  = SPRITE_SHEET.getSprite("tab_top"),
+		
+		MODULE_SLOT_SINGLE = SPRITE_SHEET.getSprite("module_slot_single"),
+		MODULE_SLOT_L      = SPRITE_SHEET.getSprite("module_slot_l"),
+		MODULE_SLOT_R      = SPRITE_SHEET.getSprite("module_slot_r"),
+		MODULE_SLOT_LR     = SPRITE_SHEET.getSprite("module_slot_lr"),
+		
+		MODULE_DEFAULT = SPRITE_SHEET.getSprite("module_default"),
+		MODULE_DEFAULT_GLOW = SPRITE_SHEET.getSprite("module_default_glow"),
+		MODULE_ICON_MISSING = SPRITE_SHEET.getSprite("module_icon_missing"),
+		SCROLL_SLIDER_V = SPRITE_SHEET.getSprite("scroll_slider_v"),
+		SCROLL_SLIDER_H = SPRITE_SHEET.getSprite("scroll_slider_h"),
+		
+		SCROLL_GROOVE_V = SPRITE_SHEET.getSprite("scroll_groove_v"),
+		SCROLL_GROOVE_V_TOP = SPRITE_SHEET.getSprite("scroll_groove_v_top"),
+		SCROLL_GROOVE_V_BOTTOM = SPRITE_SHEET.getSprite("scroll_groove_v_bottom"),
+		
+		SCROLL_GROOVE_H = SPRITE_SHEET.getSprite("scroll_groove_h"),
+		SCROLL_GROOVE_H_LEFT = SPRITE_SHEET.getSprite("scroll_groove_h_left"),
+		SCROLL_GROOVE_H_RIGHT = SPRITE_SHEET.getSprite("scroll_groove_h_right"),
+		
+		_WHATISTHIS_GRID_THING = SPRITE_SHEET.getSprite("_whatisthis_grid_thing"),
+		_WHATISTHIS_BOX_THING = SPRITE_SHEET.getSprite("_whatisthis_box_thing"),
+		_WHATISTHIS_BOX_H_THING = SPRITE_SHEET.getSprite("_whatisthis_box_h_thing"),
+		_WHATISTHIS_BOX_H_LEFT_THING = SPRITE_SHEET.getSprite("_whatisthis_box_h_left_thing"),
+		_WHATISTHIS_BOX_H_RIGHT_THING = SPRITE_SHEET.getSprite("_whatisthis_box_h_right_thing"),
+		
+	___fluff___ = null; // fluff just so I don't have to mess around with removing and adding trailing commas
+	
     static final int iconSize = 12;
     public boolean useModules = false; // setting to true disables conventional rendering
     public Multimap<ModuleType, ModuleList.IModuleConstructor> modulesByType = HashMultimap.create();
@@ -405,15 +404,7 @@ public class WorktableGui extends GuiBase {
 
 
             WorktableModule moduleBeingHovered = null;
-
-            // RENDER BACKGROUND //
-            drawDefaultBackground();
-
-            GlStateManager.color(1F, 1F, 1F, 1F);
-            BACKGROUND_TEXTURE.bind();
-            BACKGROUND_TEXTURE.getSprite(0, 0, backgroundWidth, backgroundHeight).draw(left, top);
-            // RENDER BACKGROUND //
-
+            
             // SHIMMER CURSOR IF LINKING MODE //
             // TODO
             GlStateManager.color(1F, 1F, 1F, 1F);
@@ -443,7 +434,7 @@ public class WorktableGui extends GuiBase {
                         if (Utils.isInside(mouseX, mouseY, module.getX(), module.getY(), iconSize)) {
                             moduleBeingHovered = module;
                         } else {
-                            Sprite base = SPRITE_SHEET.getSprite(33, 208, 23, 23);
+                            Sprite base = MODULE_DEFAULT_GLOW;
                             base.getTex().bind();
                             base.draw(module.getX(), module.getY(), iconSize, iconSize);
                         }
@@ -454,7 +445,7 @@ public class WorktableGui extends GuiBase {
                         if (Utils.isInside(mouseX, mouseY, module.getX(), module.getY(), iconSize)) {
                             moduleBeingHovered = module;
                         } else {
-                            Sprite base = SPRITE_SHEET.getSprite(33, 208, 23, 23);
+                            Sprite base = MODULE_DEFAULT_GLOW;
                             base.getTex().bind();
                             base.draw(module.getX(), module.getY(), iconSize, iconSize);
 
@@ -494,7 +485,7 @@ public class WorktableGui extends GuiBase {
                     if (Utils.isInside(mouseX, mouseY, module.getX(), module.getY(), iconSize)) {
                         moduleBeingHovered = module;
                     } else {
-                        Sprite moduleSprite = SPRITE_SHEET.getSprite(33, 208, 23, 23);
+                        Sprite moduleSprite = MODULE_DEFAULT;
                         moduleSprite.getTex().bind();
                         moduleSprite.draw(module.getX(), module.getY(), iconSize, iconSize);
                     }
@@ -507,7 +498,7 @@ public class WorktableGui extends GuiBase {
             if (moduleBeingDragged != null) {
                 moduleBeingDragged.setX(mouseX - iconSize / 2);
                 moduleBeingDragged.setY(mouseY - iconSize / 2);
-                Sprite draggingSprite = SPRITE_SHEET.getSprite(0, 208, 24, 24);
+                Sprite draggingSprite = MODULE_DEFAULT;
                 draggingSprite.getTex().bind();
                 draggingSprite.draw(mouseX - iconSize / 2 - 2, mouseY - iconSize / 2 - 2, iconSize + 4, iconSize + 4);
             }
@@ -518,17 +509,17 @@ public class WorktableGui extends GuiBase {
             if (moduleSelected != null) {
                 // Render highlight
                 GlStateManager.disableLighting();
-                Sprite highlight = SPRITE_SHEET.getSprite(0, 208, 24, 24);
+                Sprite highlight = MODULE_DEFAULT;
                 highlight.getTex().bind();
                 highlight.draw(moduleSelected.getX() - 2, moduleSelected.getY() - 2, iconSize + 4, iconSize + 4);
                 GlStateManager.enableLighting();
             }
-
+            
             // Highlight module being hovered
             if (moduleBeingHovered != null && moduleBeingDragged == null) {
                 // Render highlight
                 GlStateManager.disableLighting();
-                Sprite highlight = SPRITE_SHEET.getSprite(0, 208, 24, 24);
+                Sprite highlight = MODULE_DEFAULT;
                 highlight.getTex().bind();
                 highlight.draw(moduleBeingHovered.getX(), moduleBeingHovered.getY(), iconSize, iconSize);
                 GlStateManager.enableLighting();

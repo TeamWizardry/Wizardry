@@ -12,11 +12,11 @@ import java.util.ArrayList;
  */
 public class WorktableSlider {
 
-    private Texture spriteSheet = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sprite_sheet.png"), 256, 256);
-    private Sprite barTop = spriteSheet.getSprite(64, 0, 12, 12);
-    private Sprite barMid = spriteSheet.getSprite(64, 16, 12, 12);
-    private Sprite barBottom = spriteSheet.getSprite(64, 32, 12, 12);
-    private Sprite slider = spriteSheet.getSprite(0, 192, 8, 16);
+    private Texture spriteSheet = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sprite_sheet.png"));
+    private Sprite barTop = spriteSheet.getSprite("scroll_groove_v_top");
+    private Sprite barMid = spriteSheet.getSprite("scroll_groove_v");
+    private Sprite barBottom = spriteSheet.getSprite("scroll_groove_v_bottom");
+    private Sprite slider = spriteSheet.getSprite("scroll_slider_v");
 
     private ArrayList<WorktableModule> modules;
 
