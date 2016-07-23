@@ -57,15 +57,29 @@ public class ProjectileEntity extends SpellEntity {
             Vec3d origin = new Vec3d(posX + 0.5 * Math.cos(theta), posY, posZ + 0.5 * Math.sin(theta));
 
             // TODO: Add motion so they dont just move in the same space
-            SparkleTrailHelix helix = Wizardry.proxy.spawnParticleSparkleTrailHelix(worldObj, origin, getPositionVector(), 0.5, theta, 50, false);
-            helix.setColor((int) trailColor.r - 30, (int) trailColor.g - 30, (int) trailColor.b - 30);
+            // TODO: Fix color
+            SparkleTrailHelix helix = Wizardry.proxy.spawnParticleSparkleTrailHelix(worldObj, origin, getPositionVector(), 0.5, theta);
+            helix.setColor(trailColor);
+            helix.setFadeIn();
+            helix.setGrow();
+            helix.setShrink();
+            helix.setMaxAge(50);
+            helix.setChanceOfDecay(4);
+            helix.setAlpha(1f);
+            helix.setScale(0.5f);
             //helix.addContinuousMotion(new Vec3d(-motionX * 10, -motionY * 10, -motionZ * 10));
 
-            SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(worldObj, posX, posY, posZ, 0.5F, 0.5F, 20, true);
-            fizz.randomizeSizes();
-            fizz.setColor((int) trailColor.r, (int) trailColor.g, (int) trailColor.b);
-            fizz.randomDirection(0.1, 0.1, 0.1);
-            fizz.jitter(10, 0.1, 0.1, 0.1);
+            SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(worldObj, getPositionVector());
+            fizz.setColor(trailColor);
+            fizz.setFadeIn();
+            fizz.setGrow();
+            fizz.setShrink();
+            fizz.setMaxAge(50);
+            fizz.setChanceOfDecay(4);
+            fizz.setAlpha(1f);
+            fizz.setScale(0.5f);
+            fizz.setRandomDirection(0.1, 0.1, 0.1);
+            fizz.setJitter(10, 0.1, 0.1, 0.1);
         }
 
         RayTraceResult cast = Raycast.cast(this, new Vec3d(motionX, motionY, motionZ), Math.min(spell.getDouble(Module.SPEED), 1));

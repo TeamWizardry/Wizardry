@@ -86,14 +86,18 @@ public class ModuleBeam extends Module implements IContinuousCast {
             Vec3d origin = new Vec3d(x + 0.2 * Math.cos(theta), y, z + 0.2 * Math.sin(theta));
             Vec3d center = new Vec3d(x, y, z);
 
-            SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(caster.worldObj, x, y, z, 0.5F, 0.5F, 10, true);
-            fizz.randomizeSizes();
-            fizz.blur();
+            SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(caster.worldObj, center);
+            fizz.setScale(0.5f);
+            fizz.setAlpha(0.5f);
+            fizz.setMaxAge(10);
+            fizz.setFadeOut();
+            fizz.setShrink();
+            fizz.setRandomSize(0.3f);
+            fizz.setBlurred();
 
             if (ThreadLocalRandom.current().nextInt(10) == 0) {
-                SparkleTrailHelix helix = Wizardry.proxy.spawnParticleSparkleTrailHelix(caster.worldObj, origin, center, 0.2, theta, 50, true);
-                helix.randomizeSizes();
-                //helix.blur();
+                SparkleTrailHelix helix = Wizardry.proxy.spawnParticleSparkleTrailHelix(caster.worldObj, origin, center, 0.2, theta);
+                helix.setBlurred();
             }
         }
         // Beam particles

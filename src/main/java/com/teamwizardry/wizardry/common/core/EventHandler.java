@@ -111,11 +111,16 @@ public class EventHandler {
                     if (redstone.getQueue() < redstone.getHelix().size()) {
                         for (int i = 0; i < 10 * Config.particlePercentage / 100; i++) {
                             Vec3d location = redstone.getHelix().get(redstone.getQueue());
-                            SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(event.world, location.xCoord, location.yCoord, location.zCoord, 0.8F, 0.5F, 50, false);
+                            SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(event.world, location);
+                            fizz.setShrink();
+                            fizz.setMaxAge(50);
+                            fizz.setChanceOfDecay(4);
+                            fizz.setAlpha(0.8f);
+                            fizz.setScale(0.5f);
                             fizz.setMotion(0, -0.1, 0);
-                            fizz.jitter(20, 0.05, 0.05, 0.05);
-                            fizz.setColor((int) Color.RED.r, (int) Color.RED.g, (int) Color.RED.b);
-                            fizz.randomlyOscillateColor(true, false, false);
+                            fizz.setJitter(20, 0.05, 0.05, 0.05);
+                            fizz.setColor(Color.RED);
+                            fizz.setRandomlyShiftColor(0.2f, true, false, false);
                         }
                         redstone.setQueue(redstone.getQueue() + 1);
                     }
@@ -135,9 +140,16 @@ public class EventHandler {
                 Vec3d location = book.getHelix().get(book.getQueue());
 
                 for (int i = 0; i < 10 * Config.particlePercentage / 100; i++) {
-                    SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(book.getWorld(), location.xCoord, location.yCoord, location.zCoord, 0.5F, 0.5F, 100, false);
-                    fizz.jitter(10, 0.01, 0, 0.01);
-                    fizz.randomDirection(0.05, 0, 0.05);
+                    SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(book.getWorld(), location);
+                    fizz.setJitter(10, 0.01, 0, 0.01);
+                    fizz.setRandomDirection(0.05, 0, 0.05);
+                    fizz.setShrink();
+                    fizz.setMaxAge(100);
+                    fizz.setChanceOfDecay(4);
+                    fizz.setAlpha(0.5f);
+                    fizz.setScale(0.5f);
+                    fizz.setColor(Color.WHITE);
+                    fizz.setRandomlyShiftColor(0.2f, true, false, false);
                     fizz.setMotion(0, ThreadLocalRandom.current().nextDouble(-0.2, -0.05), 0);
                 }
                 if (book.getQueue() % 5 == 0)
@@ -145,9 +157,14 @@ public class EventHandler {
                 book.setQueue(book.getQueue() + 1);
             } else {
                 for (int i = 0; i < 600 * Config.particlePercentage / 100; i++) {
-                    SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(book.getWorld(), book.getX(), book.getY() + 8, book.getZ(), 1F, 0.5F, 200, true);
-                    fizz.jitter(10, 0.01, 0, 0.01);
-                    fizz.randomDirection(0.25, 0.01, 0.25);
+                    SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(book.getWorld(), new Vec3d(book.getX(), book.getY(), book.getZ()));
+                    fizz.setFadeOut();
+                    fizz.setMaxAge(200);
+                    fizz.setChanceOfDecay(4);
+                    fizz.setAlpha(1f);
+                    fizz.setScale(0.5f);
+                    fizz.setJitter(10, 0.01, 0, 0.01);
+                    fizz.setRandomDirection(0.25, 0.01, 0.25);
                     fizz.setMotion(0, ThreadLocalRandom.current().nextDouble(-0.2, -0.05), 0);
                 }
 

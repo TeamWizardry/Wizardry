@@ -1,14 +1,5 @@
 package com.teamwizardry.wizardry.api.module;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ResourceLocation;
-
 import com.teamwizardry.librarianlib.client.Sprite;
 import com.teamwizardry.librarianlib.client.Texture;
 import com.teamwizardry.wizardry.Wizardry;
@@ -18,6 +9,14 @@ import com.teamwizardry.wizardry.api.spell.IModifier;
 import com.teamwizardry.wizardry.api.spell.IRuntimeModifier;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.client.gui.worktable.WorktableGui;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.ResourceLocation;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Saad on 6/21/2016.
@@ -76,7 +75,7 @@ public abstract class Module
 
 	/**
 	 * Generates an {@code NBTTagCompound} containing information about the
-	 * module and its effects, as well as any connected module.
+	 * module and its effect, as well as any connected module.
 	 *
 	 * @return An {@link NBTTagCompound} containing information on the module
 	 *         and all connected module

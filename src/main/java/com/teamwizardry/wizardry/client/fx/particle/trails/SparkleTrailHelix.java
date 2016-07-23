@@ -14,22 +14,22 @@ public class SparkleTrailHelix extends SparkleFX {
     private double theta, radius;
     private Vec3d center, addMotion = new Vec3d(0, 0, 0);
 
-    public SparkleTrailHelix(World worldIn, Vec3d origin, Vec3d center, double radius, double initialTheta, int age, boolean fade) {
-        super(worldIn, origin.xCoord, origin.yCoord, origin.zCoord, 1f, 0.5f, 50, false);
+    public SparkleTrailHelix(World worldIn, Vec3d origin, Vec3d center, double radius, double initialTheta) {
+        super(worldIn, origin);
         this.center = center;
         this.radius = radius;
         this.theta = initialTheta;
-        this.particleMaxAge = age;
-        setFadeOut(fade);
+        setMaxAge(50);
+        setShrink();
     }
 
-    public SparkleTrailHelix(World worldIn, Vec3d origin, Vec3d center, double radius, int age, boolean fade) {
-        super(worldIn, origin.xCoord, origin.yCoord, origin.zCoord, 1f, 0.5f, 50, false);
+    public SparkleTrailHelix(World worldIn, Vec3d origin, Vec3d center, double radius) {
+        super(worldIn, origin);
         this.center = center;
         this.radius = radius;
         this.theta = ThreadLocalRandom.current().nextDouble(0, 360);
-        this.particleMaxAge = age;
-        setFadeOut(fade);
+        this.particleMaxAge = 50;
+        setShrink();
     }
 
     public void addContinuousMotion(Vec3d addMotion) {

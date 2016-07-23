@@ -37,10 +37,14 @@ public interface IExplodable {
             e.addPotionEffect(new PotionEffect(Potion.getPotionById(potions.get(rand.nextInt(potions.size()))), rand.nextInt(30) * 20, rand.nextInt(2) + 1));
 
         for (int i = 0; i < 300; i++) {
-            SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(entityIn.worldObj, entityIn.posX, entityIn.posY + 0.5, entityIn.posZ, 1, 1F, 30, false);
-            fizz.jitter(10, 0.1, 0.1, 0.1);
-            fizz.randomDirection(0.3, 0.3, 0.3);
-            fizz.randomizeSizes();
+            SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(entityIn.worldObj, entityIn.getPositionVector());
+            fizz.setAlpha(1f);
+            fizz.setScale(1f);
+            fizz.setFadeIn();
+            fizz.setShrink();
+            fizz.setMaxAge(30);
+            fizz.setRandomDirection(0.3, 0.3, 0.3);
+            //fizz.setRandomSize(1);
         }
     }
 }

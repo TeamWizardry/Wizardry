@@ -66,8 +66,15 @@ public class ModuleZone extends Module {
 
         Circle3D circle = new Circle3D(new Vec3d(caster.posX, caster.posY, caster.posZ), radius, (int) (radius * 10));
         for (Vec3d point : circle.getPoints()) {
-            SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(caster.worldObj, point.xCoord, point.yCoord, point.zCoord, 0.5f, 2f, 30, true);
-            fizz.randomizeSizes();
+            SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(caster.worldObj, point);
+			fizz.setMaxAge(30);
+			fizz.setScale(3f);
+			fizz.setAlpha(0.5f);
+			fizz.setShrink();
+			fizz.setGrow();
+			fizz.setFadeOut();
+			fizz.setFadeIn();
+            fizz.setRandomSize(0.3f);
         }
 
 		if (!(caster instanceof SpellEntity))

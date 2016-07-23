@@ -19,6 +19,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
@@ -47,8 +48,14 @@ public class FluidBlockMana extends BlockFluidClassic {
     @Override
     public void updateTick(World world, BlockPos pos, IBlockState state, Random rand) {
         super.updateTick(world, pos, state, rand);
-        SparkleFX ambient = Wizardry.proxy.spawnParticleSparkle(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.5F, 0.5F, 30, 1, 1, 1, true);
-        ambient.jitter(5, 0.2, 0, 0.2);
+        SparkleFX ambient = Wizardry.proxy.spawnParticleSparkle(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()));
+        ambient.setShrink();
+        ambient.setMaxAge(30);
+        ambient.setAlpha(0.5f);
+        ambient.setFadeIn();
+        ambient.setFadeOut();
+        ambient.setScale(0.5f);
+        ambient.setJitter(5, 0.2, 0, 0.2);
         ambient.setMotion(0, 0.1, 0);
     }
 
@@ -56,9 +63,16 @@ public class FluidBlockMana extends BlockFluidClassic {
     public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
         if (!worldIn.isRemote) {
 
-            SparkleFX ambient = Wizardry.proxy.spawnParticleSparkle(worldIn, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0.5F, 0.5F, 30, 0.5, 0.1, 0.5, true);
-            ambient.jitter(30, 0.1, 0, 0.1);
-            ambient.setMotion(0, 0.05, 0);
+            SparkleFX ambient = Wizardry.proxy.spawnParticleSparkle(worldIn, entityIn.getPositionVector());
+            ambient.setMaxAge(30);
+            ambient.setAlpha(0.5f);
+            ambient.setFadeIn();
+            ambient.setFadeOut();
+            ambient.setShrink();
+            ambient.setGrow();
+            ambient.setScale(0.5f);
+            ambient.setRandomDirection(0.1, 0.1, 0.1);
+            ambient.addMotion(0, 0.05, 0);
 
             if (entityIn instanceof EntityItem && new BlockPos(entityIn.getPositionVector()).equals(pos) && state.getValue(BlockFluidClassic.LEVEL) == 0) {
                 EntityItem ei = (EntityItem) entityIn;
@@ -67,9 +81,14 @@ public class FluidBlockMana extends BlockFluidClassic {
                 if (stack.getItem() instanceof IExplodable) {
 
                     for (int i = 0; i < 10; i++) {
-                        SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(worldIn, entityIn.posX, entityIn.posY + 0.5, entityIn.posZ, 0.5F, 0.5F, 30, true);
-                        fizz.jitter(10, 0.01, 0, 0.01);
-                        fizz.setMotion(0, 0.08, 0);
+                        SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(worldIn, entityIn.getPositionVector().add(new Vec3d(0, 0.5, 0)));
+                        fizz.setMaxAge(30);
+                        fizz.setScale(0.5f);
+                        fizz.setAlpha(0.5f);
+                        fizz.setShrink();
+                        fizz.setFadeOut();
+                        fizz.setJitter(10, 0.01, 0, 0.01);
+                        fizz.addMotion(0, 0.1, 0);
                     }
 
                     if (stack.hasTagCompound()) {

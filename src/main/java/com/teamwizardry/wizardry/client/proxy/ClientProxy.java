@@ -4,7 +4,6 @@ import com.teamwizardry.librarianlib.client.fx.particle.ParticleRenderDispatcher
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.client.core.CapeHandler;
 import com.teamwizardry.wizardry.client.core.HudEventHandler;
-import com.teamwizardry.wizardry.client.fx.particle.FireFX;
 import com.teamwizardry.wizardry.client.fx.particle.LensFlareFX;
 import com.teamwizardry.wizardry.client.fx.particle.MagicBurstFX;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
@@ -56,29 +55,29 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
-    public SparkleFX spawnParticleSparkle(World world, double x, double y, double z, float alpha, float scale, int age, boolean fadeOut) {
-        SparkleFX particle = new SparkleFX(world, x, y, z, alpha, scale, age, fadeOut);
+    public SparkleFX spawnParticleSparkle(World worldIn, Vec3d origin) {
+        SparkleFX particle = new SparkleFX(worldIn, origin);
         Minecraft.getMinecraft().effectRenderer.addEffect(particle);
         return particle;
     }
 
     @Override
-    public SparkleFX spawnParticleSparkle(World world, double x, double y, double z, float alpha, float scale, int age, double rangeX, double rangeY, double rangeZ, boolean fadeOut) {
-        SparkleFX particle = new SparkleFX(world, x, y, z, alpha, scale, age, rangeX, rangeY, rangeZ, fadeOut);
+    public SparkleFX spawnParticleSparkle(World worldIn, Vec3d origin, Vec3d range) {
+        SparkleFX particle = new SparkleFX(worldIn, origin, range);
         Minecraft.getMinecraft().effectRenderer.addEffect(particle);
         return particle;
     }
 
     @Override
-    public SparkleTrailHelix spawnParticleSparkleTrailHelix(World worldIn, Vec3d origin, Vec3d center, double radius, double initialTheta, int age, boolean fade) {
-        SparkleTrailHelix particle = new SparkleTrailHelix(worldIn, origin, center, radius, initialTheta, age, fade);
+    public SparkleTrailHelix spawnParticleSparkleTrailHelix(World worldIn, Vec3d origin, Vec3d center, double radius, double initialTheta) {
+        SparkleTrailHelix particle = new SparkleTrailHelix(worldIn, origin, center, radius, initialTheta);
         Minecraft.getMinecraft().effectRenderer.addEffect(particle);
         return particle;
     }
 
     @Override
-    public SparkleTrailHelix spawnParticleSparkleTrailHelix(World worldIn, Vec3d origin, Vec3d center, double radius, int age, boolean fade) {
-        SparkleTrailHelix particle = new SparkleTrailHelix(worldIn, origin, center, radius, age, fade);
+    public SparkleTrailHelix spawnParticleSparkleTrailHelix(World worldIn, Vec3d origin, Vec3d center, double radius) {
+        SparkleTrailHelix particle = new SparkleTrailHelix(worldIn, origin, center, radius);
         Minecraft.getMinecraft().effectRenderer.addEffect(particle);
         return particle;
     }
@@ -93,13 +92,6 @@ public class ClientProxy extends CommonProxy {
     @Override
     public LensFlareFX spawnParticleLensFlare(World world, Vec3d pos, int age, double range) {
         LensFlareFX particle = new LensFlareFX(world, pos, age, range);
-        Minecraft.getMinecraft().effectRenderer.addEffect(particle);
-        return particle;
-    }
-
-    @Override
-    public FireFX spawnParticleFire(World world, Vec3d pos, int age, double range) {
-        FireFX particle = new FireFX(world, pos, age, range);
         Minecraft.getMinecraft().effectRenderer.addEffect(particle);
         return particle;
     }
