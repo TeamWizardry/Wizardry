@@ -12,11 +12,10 @@ import java.util.ArrayList;
  */
 public class WorktableSlider {
 
-    private Texture spriteSheet = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sprite_sheet.png"));
-    private Sprite barTop = spriteSheet.getSprite("scroll_groove_v_top");
-    private Sprite barMid = spriteSheet.getSprite("scroll_groove_v");
-    private Sprite barBottom = spriteSheet.getSprite("scroll_groove_v_bottom");
-    private Sprite slider = spriteSheet.getSprite("scroll_slider_v");
+    private Sprite barTop = WorktableGui.SCROLL_GROOVE_V_TOP;
+    private Sprite barMid = WorktableGui.SCROLL_GROOVE_V;
+    private Sprite barBottom = WorktableGui.SCROLL_GROOVE_V_BOTTOM;
+    private Sprite slider = WorktableGui.SCROLL_SLIDER_V;
 
     private ArrayList<WorktableModule> modules;
 
@@ -72,7 +71,7 @@ public class WorktableSlider {
     }
 
     public void draw() {
-        spriteSheet.bind();
+        barTop.getTex().bind();
 
         barTop.draw(left, top);
 
@@ -80,6 +79,6 @@ public class WorktableSlider {
 
         barBottom.draw(left, top + separation * (rows - 1));
 
-        slider.draw(left + (barMid.getWidth() / 2) - (slider.getWidth() / 2), top + slide * separation);
+        slider.draw(left + (barMid.width / 2) - (slider.height / 2), top + slide * separation);
     }
 }

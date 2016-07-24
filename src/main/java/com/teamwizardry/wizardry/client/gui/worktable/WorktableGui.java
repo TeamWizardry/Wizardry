@@ -29,38 +29,39 @@ import java.util.stream.Collectors;
  */
 public class WorktableGui extends GuiBase {
 	public static final Texture BACKGROUND_TEXTURE = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/table_background.png"));
-	public static final Sprite BACKGROUND_SPRITE = BACKGROUND_TEXTURE.getSprite("bg");
+	public static final Sprite BACKGROUND_SPRITE = BACKGROUND_TEXTURE.getSprite("bg", 512, 256);
 	
 	public static final Texture SPRITE_SHEET = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sprite_sheet.png"));
 	
 	public static final Sprite 
-		TAB_SIDE = SPRITE_SHEET.getSprite("tab_side"),
-		TAB_TOP  = SPRITE_SHEET.getSprite("tab_top"),
+		TAB_SIDE = SPRITE_SHEET.getSprite("tab_side", 24, 24),
+		TAB_TOP  = SPRITE_SHEET.getSprite("tab_top", 24, 24),
 		
-		MODULE_SLOT_SINGLE = SPRITE_SHEET.getSprite("module_slot_single"),
-		MODULE_SLOT_L      = SPRITE_SHEET.getSprite("module_slot_l"),
-		MODULE_SLOT_R      = SPRITE_SHEET.getSprite("module_slot_r"),
-		MODULE_SLOT_LR     = SPRITE_SHEET.getSprite("module_slot_lr"),
+		MODULE_SLOT_SINGLE = SPRITE_SHEET.getSprite("module_slot_single", 32, 32),
+		MODULE_SLOT_L      = SPRITE_SHEET.getSprite("module_slot_l", 32, 32),
+		MODULE_SLOT_R      = SPRITE_SHEET.getSprite("module_slot_r", 32, 32),
+		MODULE_SLOT_LR     = SPRITE_SHEET.getSprite("module_slot_lr", 32, 32),
 		
-		MODULE_DEFAULT = SPRITE_SHEET.getSprite("module_default"),
-		MODULE_DEFAULT_GLOW = SPRITE_SHEET.getSprite("module_default_glow"),
-		MODULE_ICON_MISSING = SPRITE_SHEET.getSprite("module_icon_missing"),
-		SCROLL_SLIDER_V = SPRITE_SHEET.getSprite("scroll_slider_v"),
-		SCROLL_SLIDER_H = SPRITE_SHEET.getSprite("scroll_slider_h"),
+		MODULE_DEFAULT = SPRITE_SHEET.getSprite("module_default", 24, 24),
+		MODULE_DEFAULT_GLOW = SPRITE_SHEET.getSprite("module_default_glow", 24, 24),
 		
-		SCROLL_GROOVE_V = SPRITE_SHEET.getSprite("scroll_groove_v"),
-		SCROLL_GROOVE_V_TOP = SPRITE_SHEET.getSprite("scroll_groove_v_top"),
-		SCROLL_GROOVE_V_BOTTOM = SPRITE_SHEET.getSprite("scroll_groove_v_bottom"),
+		MODULE_ICON_MISSING = SPRITE_SHEET.getSprite("module_icon_missing", 16, 16),
+		SCROLL_SLIDER_V = SPRITE_SHEET.getSprite("scroll_slider_v", 8, 16),
+		SCROLL_SLIDER_H = SPRITE_SHEET.getSprite("scroll_slider_h", 16, 8),
 		
-		SCROLL_GROOVE_H = SPRITE_SHEET.getSprite("scroll_groove_h"),
-		SCROLL_GROOVE_H_LEFT = SPRITE_SHEET.getSprite("scroll_groove_h_left"),
-		SCROLL_GROOVE_H_RIGHT = SPRITE_SHEET.getSprite("scroll_groove_h_right"),
+		SCROLL_GROOVE_V = SPRITE_SHEET.getSprite("scroll_groove_v", 12, 12),
+		SCROLL_GROOVE_V_TOP = SPRITE_SHEET.getSprite("scroll_groove_v_top", 12, 12),
+		SCROLL_GROOVE_V_BOTTOM = SPRITE_SHEET.getSprite("scroll_groove_v_bottom", 12, 12),
 		
-		_WHATISTHIS_GRID_THING = SPRITE_SHEET.getSprite("_whatisthis_grid_thing"),
-		_WHATISTHIS_BOX_THING = SPRITE_SHEET.getSprite("_whatisthis_box_thing"),
-		_WHATISTHIS_BOX_H_THING = SPRITE_SHEET.getSprite("_whatisthis_box_h_thing"),
-		_WHATISTHIS_BOX_H_LEFT_THING = SPRITE_SHEET.getSprite("_whatisthis_box_h_left_thing"),
-		_WHATISTHIS_BOX_H_RIGHT_THING = SPRITE_SHEET.getSprite("_whatisthis_box_h_right_thing"),
+		SCROLL_GROOVE_H = SPRITE_SHEET.getSprite("scroll_groove_h", 12, 12),
+		SCROLL_GROOVE_H_LEFT = SPRITE_SHEET.getSprite("scroll_groove_h_left", 12, 12),
+		SCROLL_GROOVE_H_RIGHT = SPRITE_SHEET.getSprite("scroll_groove_h_right", 12, 12),
+		
+		_WHATISTHIS_GRID_THING = SPRITE_SHEET.getSprite("_whatisthis_grid_thing", 24, 24),
+		_WHATISTHIS_BOX_THING = SPRITE_SHEET.getSprite("_whatisthis_box_thing", 16, 16),
+		_WHATISTHIS_BOX_H_THING = SPRITE_SHEET.getSprite("_whatisthis_box_h_thing", 16, 13),
+		_WHATISTHIS_BOX_H_LEFT_THING = SPRITE_SHEET.getSprite("_whatisthis_box_h_left_thing", 16, 13),
+		_WHATISTHIS_BOX_H_RIGHT_THING = SPRITE_SHEET.getSprite("_whatisthis_box_h_right_thing", 16, 13),
 		
 	___fluff___ = null; // fluff just so I don't have to mess around with removing and adding trailing commas
 	
@@ -137,8 +138,8 @@ public class WorktableGui extends GuiBase {
             ComponentSpriteCapped scrollSlot = new ComponentSpriteCapped(SCROLL_GROOVE_V_TOP, SCROLL_GROOVE_V, SCROLL_GROOVE_V_BOTTOM, false, x + columns * 12, y, 12, rows * 12);
             parent.add(scrollSlot);
 
-            ComponentSlider scrollSlider = new ComponentSlider(6, SCROLL_SLIDER_V.getHeight() / 2 + 2, 0, rows * 12 - SCROLL_SLIDER_V.getHeight() - 4, 0, usedRows - 3);
-            scrollSlider.handle.add(new ComponentSprite(SCROLL_SLIDER_V, -SCROLL_SLIDER_V.getWidth() / 2, -SCROLL_SLIDER_V.getHeight() / 2));
+            ComponentSlider scrollSlider = new ComponentSlider(6, SCROLL_SLIDER_V.height / 2 + 2, 0, rows * 12 - SCROLL_SLIDER_V.height - 4, 0, usedRows - 3);
+            scrollSlider.handle.add(new ComponentSprite(SCROLL_SLIDER_V, -SCROLL_SLIDER_V.width / 2, -SCROLL_SLIDER_V.height / 2));
             scrollSlider.percentageChange.add((p) -> view.scrollToPercent(new Vec2(0, p)));
             scrollSlot.add(scrollSlider);
         }

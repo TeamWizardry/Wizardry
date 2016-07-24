@@ -26,6 +26,7 @@ import java.util.List;
 public abstract class Module
 {
 	public static final Texture STATIC_ICON_SHEET = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/modules/static.png"));
+	public static final Texture ANIMATED_ICON_SHEET = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/modules/animated.png"));
 	
 	public static final String CLASS = "Class";
 	public static final String MODULES = "Modules";
@@ -52,7 +53,7 @@ public abstract class Module
 
 	protected boolean canHaveChildren = true;
 
-	private Sprite staticIcon = STATIC_ICON_SHEET.getSprite(this.getClass().getSimpleName()), animatedIcon = WorktableGui.MODULE_ICON_MISSING;
+	private Sprite staticIcon = STATIC_ICON_SHEET.getSprite(this.getClass().getSimpleName(), 16, 16), animatedIcon = ANIMATED_ICON_SHEET.getSprite(this.getClass().getSimpleName(), 16, 16);
 	private String description = "<-NULL->";
 	private String displayName = "<-NULL->";
 
