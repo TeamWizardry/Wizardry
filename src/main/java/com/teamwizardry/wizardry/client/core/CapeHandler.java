@@ -26,6 +26,7 @@ import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 
 import org.lwjgl.opengl.GL11;
@@ -35,6 +36,7 @@ import com.google.common.collect.Lists;
 import com.teamwizardry.librarianlib.api.gui.GuiTickHandler;
 import com.teamwizardry.librarianlib.math.Box;
 import com.teamwizardry.librarianlib.math.Matrix4;
+import com.teamwizardry.librarianlib.math.Sphere;
 import com.teamwizardry.librarianlib.ragdoll.cloth.Cloth;
 import com.teamwizardry.librarianlib.ragdoll.cloth.Link;
 import com.teamwizardry.librarianlib.ragdoll.cloth.PointMass3D;
@@ -43,18 +45,36 @@ import com.teamwizardry.wizardry.Wizardry;
 public class CapeHandler {
 
 	public static final CapeHandler INSTANCE = new CapeHandler();
+	public static Vec3d[] basePoints;
 	
 	WeakHashMap<EntityLivingBase, Cloth> cloths = new WeakHashMap<>();
 	WeakHashMap<EntityLivingBase, List<Box>> models = new WeakHashMap<>();
 	
 	private CapeHandler() {
 		MinecraftForge.EVENT_BUS.register(this);
+		basePointsSet();
+	}
+	
+	public void basePointsSet() {
+		basePoints = new Vec3d[] {
+				new Vec3d( 0.4, 1.5,  0),
+				new Vec3d( 0.325, 1.5,  -0.125),
+				new Vec3d( 0.25, 1.5, -0.25),
+				new Vec3d( 0.125,    1.5, -0.25),
+				new Vec3d( 0,    1.5, -0.25),
+				new Vec3d(-0.125,    1.5, -0.25),
+				new Vec3d(-0.25, 1.5, -0.25),
+				new Vec3d(-0.325, 1.5,  -0.125),
+				new Vec3d(-0.4, 1.5,  0)
+		};
 	}
 	
 	@SubscribeEvent
 	public void tick(ClientTickEvent event) {
 		if(event.phase != Phase.END)
 			return;
+		
+		basePointsSet();
 		
 		List<EntityLivingBase> keysToRemove = new ArrayList<>();
 		
@@ -67,20 +87,17 @@ public class CapeHandler {
 			
 			if(e.getValue().masses != null && e.getValue().masses[0] != null) {
 				
-				Vec3d[] shoulderPoints = new Vec3d[] {
-						new Vec3d( 0.4, 1.5,  0),
-						new Vec3d( 0.25, 1.5, -0.25),
-						new Vec3d( 0,    1.5, -0.25),
-						new Vec3d(-0.25, 1.5, -0.25),
-						new Vec3d(-0.4, 1.5,  0)
-				};
+				Vec3d[] shoulderPoints = new Vec3d[basePoints.length];
 				
-				Matrix4 matrix = new Matrix4();
+				Matrix4 matrix = new Matrix4(), inverse = new Matrix4();
 				matrix.translate(entity.getPositionVector());
 				matrix.rotate(Math.toRadians( entity.renderYawOffset), new Vec3d(0, -1, 0));
 				
+				inverse.rotate(Math.toRadians( entity.renderYawOffset), new Vec3d(0, 1, 0));
+				inverse.translate(entity.getPositionVector().scale(-1));
+				
 				for (int i = 0; i < shoulderPoints.length; i++) {
-					shoulderPoints[i] = matrix.apply(shoulderPoints[i]);
+					shoulderPoints[i] = matrix.apply(basePoints[i]);
 				}
 				
 				for (int i = 0; i < e.getValue().masses[0].length && i < shoulderPoints.length; i++) {
@@ -88,11 +105,40 @@ public class CapeHandler {
 					e.getValue().masses[0][i].pos = shoulderPoints[i];
 				}
 				
-				List<Box> boxes = models.get(entity);
-				if(boxes == null)
-					boxes = ImmutableList.of();
+				List<Sphere> spheres = new ArrayList<>();
 				
-				e.getValue().tick(entity, boxes);
+				Vec3d[] vecs = new Vec3d[] {
+						new Vec3d( 0.1, 0, 0),
+						new Vec3d( 0.1, 0.25, 0),
+						new Vec3d( 0.1, 0.5, 0),
+						new Vec3d( 0.1, 0.75, 0),
+						new Vec3d( 0.1, 1, 0),
+						new Vec3d( 0.1, 1.25, 0),
+						new Vec3d( 0.1, 1.5, 0),
+						
+						new Vec3d(-0.1, 0, 0),
+						new Vec3d(-0.1, 0.25, 0),
+						new Vec3d(-0.1, 0.5, 0),
+						new Vec3d(-0.1, 0.75, 0),
+						new Vec3d(-0.1, 1, 0),
+						new Vec3d(-0.1, 1.25, 0),
+						new Vec3d(-0.1, 1.5, 0),
+						
+						new Vec3d( 0.3, 0.75, 0),
+						new Vec3d( 0.3, 1, 0),
+						new Vec3d( 0.3, 1.25, 0),
+						
+						new Vec3d(-0.3, 0.75, 0),
+						new Vec3d(-0.3, 1, 0),
+						new Vec3d(-0.3, 1.25, 0),
+				};
+				
+				for (Vec3d vec : vecs) {
+					vec = matrix.apply(vec);
+					spheres.add(new Sphere(vec, 0.25));
+				}
+				
+				e.getValue().tick(entity, spheres);
 			}
 		}
 		
@@ -219,26 +265,20 @@ public class CapeHandler {
 		models.put(event.getEntity(), ImmutableList.of());//getBoxes(event.getEntity().getPositionVector(), event.getRenderer().getMainModel(), event.getEntity().renderYawOffset));
 		
 		if(!cloths.containsKey(event.getEntity())) {
-			Vec3d[] shoulderPoints = new Vec3d[] {
-					new Vec3d( 0.4, 1.5,  0),
-					new Vec3d( 0.25, 1.5, -0.25),
-					new Vec3d( 0,    1.5, -0.25),
-					new Vec3d(-0.25, 1.5, -0.25),
-					new Vec3d(-0.4, 1.5,  0)
-			};
+			Vec3d[] shoulderPoints = new Vec3d[basePoints.length];
 			
 			Matrix4 matrix = new Matrix4();
 			matrix.translate(event.getEntity().getPositionVector());
 			matrix.rotate(Math.toRadians( event.getEntity().renderYawOffset), new Vec3d(0, -1, 0));
 			
 			for (int i = 0; i < shoulderPoints.length; i++) {
-				shoulderPoints[i] = matrix.apply(shoulderPoints[i]);
+				shoulderPoints[i] = matrix.apply(basePoints[i]);
 			}
 			
 			cloths.put(event.getEntity(), new Cloth(
 					shoulderPoints,
-					10,
-					new Vec3d(0, 0.2, 0)
+					20,
+					new Vec3d(0, 0.1, 0)
 			) );
 		}
 		
@@ -298,6 +338,65 @@ public class CapeHandler {
             }
 		}
 		tess.draw();
+		
+//		GlStateManager.depthFunc(GL11.GL_ALWAYS);
+		GlStateManager.disableTexture2D();
+		GlStateManager.color(1, 0, 0, 1);
+		GlStateManager.translate(event.getEntity().posX, event.getEntity().posY, event.getEntity().posZ);
+		GlStateManager.rotate(event.getEntity().renderYawOffset, 0, -1, 0);
+		
+		AxisAlignedBB[] aabbs = new AxisAlignedBB[] {
+				new AxisAlignedBB(-0.23, 0, -0.12, 0.23, 1.4, 0.11),
+				new AxisAlignedBB(-0.125, 0.7, -0.12, 0.125, 1.4, 0.11).offset(0.355, 0, 0),
+				new AxisAlignedBB(-0.125, 0.7, -0.12, 0.125, 1.4, 0.11).offset(-0.355, 0, 0),
+				new AxisAlignedBB(-0.2, 0.5, -0.5, 0.2, 0.7, -0.7)
+		};
+		
+		vb.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
+		
+		for (AxisAlignedBB aabb : aabbs) {
+			vb.pos(aabb.minX, aabb.minY, aabb.minZ).endVertex(); // . . .
+			vb.pos(aabb.maxX, aabb.minY, aabb.minZ).endVertex(); // ^ . .
+			
+			vb.pos(aabb.maxX, aabb.minY, aabb.minZ).endVertex(); // ^ . .
+			vb.pos(aabb.maxX, aabb.minY, aabb.maxZ).endVertex(); // ^ . ^
+			
+			vb.pos(aabb.maxX, aabb.minY, aabb.maxZ).endVertex(); // ^ . ^
+			vb.pos(aabb.minX, aabb.minY, aabb.maxZ).endVertex(); // . . ^
+			
+			vb.pos(aabb.minX, aabb.minY, aabb.maxZ).endVertex(); // . . ^
+			vb.pos(aabb.minX, aabb.minY, aabb.minZ).endVertex(); // . . .
+			
+			vb.pos(aabb.minX, aabb.maxY, aabb.minZ).endVertex(); // . ^ .
+			vb.pos(aabb.maxX, aabb.maxY, aabb.minZ).endVertex(); // ^ ^ .
+			
+			vb.pos(aabb.maxX, aabb.maxY, aabb.minZ).endVertex(); // ^ ^ .
+			vb.pos(aabb.maxX, aabb.maxY, aabb.maxZ).endVertex(); // ^ ^ ^
+			
+			vb.pos(aabb.maxX, aabb.maxY, aabb.maxZ).endVertex(); // ^ ^ ^
+			vb.pos(aabb.minX, aabb.maxY, aabb.maxZ).endVertex(); // . ^ ^
+			
+			vb.pos(aabb.minX, aabb.maxY, aabb.maxZ).endVertex(); // . ^ ^
+			vb.pos(aabb.minX, aabb.maxY, aabb.minZ).endVertex(); // . ^ .
+			
+			vb.pos(aabb.minX, aabb.minY, aabb.minZ).endVertex(); // . . .
+			vb.pos(aabb.minX, aabb.maxY, aabb.minZ).endVertex(); // . ^ .
+			
+			vb.pos(aabb.maxX, aabb.minY, aabb.minZ).endVertex(); // ^ . .
+			vb.pos(aabb.maxX, aabb.maxY, aabb.minZ).endVertex(); // ^ ^ .
+			
+			vb.pos(aabb.minX, aabb.minY, aabb.maxZ).endVertex(); // . . ^
+			vb.pos(aabb.minX, aabb.maxY, aabb.maxZ).endVertex(); // . ^ ^
+
+			vb.pos(aabb.maxX, aabb.minY, aabb.maxZ).endVertex(); // ^ . ^
+			vb.pos(aabb.maxX, aabb.maxY, aabb.maxZ).endVertex(); // ^ ^ ^
+			
+		}
+		
+		tess.draw();
+		
+//		GlStateManager.depthFunc(GL11.GL_LEQUAL);
+		
 		
 		GlStateManager.popMatrix();
 		GlStateManager.popAttrib();

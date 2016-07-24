@@ -33,6 +33,7 @@ public class WorktableGui extends GuiBase {
 	
 	public static final Texture SPRITE_SHEET = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sprite_sheet.png"));
 	
+	// @formatter:off
 	public static final Sprite 
 		TAB_SIDE = SPRITE_SHEET.getSprite("tab_side", 24, 24),
 		TAB_TOP  = SPRITE_SHEET.getSprite("tab_top", 24, 24),
@@ -64,6 +65,7 @@ public class WorktableGui extends GuiBase {
 		_WHATISTHIS_BOX_H_RIGHT_THING = SPRITE_SHEET.getSprite("_whatisthis_box_h_right_thing", 16, 13),
 		
 	___fluff___ = null; // fluff just so I don't have to mess around with removing and adding trailing commas
+	// @formatter:on
 	
     static final int iconSize = 12;
     public boolean useModules = false; // setting to true disables conventional rendering
