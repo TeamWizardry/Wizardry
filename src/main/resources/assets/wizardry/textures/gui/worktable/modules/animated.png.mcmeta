@@ -1,0 +1,12 @@
+{
+	"spritesheet":{
+		"textureWidth":256,
+		"textureHeight":128,
+		"sprites":{
+			"ModuleArea":{
+				"pos":[0,0,16,16],
+				"frames":[0, 0, 0, 0, 1, 1, 2, 2, 3, 3]
+			}
+		}
+	}
+}
