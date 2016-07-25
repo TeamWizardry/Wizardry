@@ -1,12 +1,13 @@
 package com.teamwizardry.wizardry.common.spell.module.shapes;
 
 import java.util.List;
+import javax.annotation.Nullable;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -14,6 +15,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.attribute.Attribute;
 import com.teamwizardry.wizardry.api.spell.IContinuousCast;
@@ -69,17 +72,18 @@ public class ModuleCone extends Module implements IContinuousCast
 		{
 			BlockPos pos = caster.getPosition();
 			AxisAlignedBB axis = new AxisAlignedBB(pos.subtract(new Vec3i(radius, 0, radius)), pos.add(new Vec3i(radius, 1, radius)));
-			List<Entity> entities = caster.worldObj.getEntitiesWithinAABB(EntityItem.class, axis);
-			List<Entity> living = caster.worldObj.getEntitiesWithinAABB(EntityLivingBase.class, axis);
-//			entities.addAll(caster.worldObj.getEntitiesWithinAABB(EntityLivingBase.class, axis));
-			entities.addAll(living);
+			List<Entity> entities = caster.worldObj.getEntitiesInAABBexcluding(caster, axis, Predicates.and(new Predicate<Entity>() {
+				public boolean apply(@Nullable Entity apply) {
+					return apply != null && (apply.canBeCollidedWith() || apply instanceof EntityItem);
+				}
+			}, EntitySelectors.NOT_SPECTATING));
 			for (Entity entity : entities)
 			{
 				if (entity.getDistanceSqToEntity(caster) <= radius * radius)
 				{
-					Vec3d leftVec = look.rotateYaw(-(float) scatter / 2);
-					Vec3d rightVec = look.rotateYaw((float) scatter / 2);
-					Vec3d posVec = entity.getPositionVector().subtract(caster.getPositionVector());
+					Vec3d leftVec = look.rotateYaw(-(float) scatter / 2).rotatePitch(-caster.rotationPitch);
+					Vec3d rightVec = look.rotateYaw((float) scatter / 2).rotatePitch(-caster.rotationPitch);
+					Vec3d posVec = entity.getPositionVector().subtract(caster.getPositionVector()).normalize();
 					if (leftVec.xCoord == -rightVec.xCoord && leftVec.zCoord == -rightVec.zCoord)
 					{
 						if (betweenVectors(posVec, leftVec, look) || betweenVectors(posVec, look, rightVec))

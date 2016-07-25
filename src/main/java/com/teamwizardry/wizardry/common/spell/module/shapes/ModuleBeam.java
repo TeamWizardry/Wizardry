@@ -67,17 +67,10 @@ public class ModuleBeam extends Module implements IContinuousCast {
 
         // Beam particles
         double slopeX = 0, slopeY = 0, slopeZ = 0;
-        if (raycast.typeOfHit == RayTraceResult.Type.BLOCK) {
-            slopeX = (raycast.getBlockPos().getX() + 0.5 - caster.posX) / distance;
-            slopeY = (raycast.getBlockPos().getY() - 0.5 - caster.posY) / distance;
-            slopeZ = (raycast.getBlockPos().getZ() + 0.5 - caster.posZ) / distance;
-        } else if (raycast.typeOfHit == RayTraceResult.Type.ENTITY) {
-            slopeX = (raycast.entityHit.getPositionVector().xCoord - raycast.entityHit.width / 2 - caster.posX) / distance;
-            slopeY = (raycast.entityHit.getPositionVector().yCoord - raycast.entityHit.height / 2 - caster.posY) / distance;
-            slopeZ = (raycast.entityHit.getPositionVector().zCoord - raycast.entityHit.width / 2 - caster.posZ) / distance;
-        }
-
         Vec3d cross = caster.getLook(1).crossProduct(new Vec3d(0, caster.getEyeHeight(), 0)).normalize().scale(caster.width / 2);
+        slopeX = (raycast.hitVec.xCoord - (caster.posX + cross.xCoord)) / distance;
+        slopeY = (raycast.hitVec.yCoord - (caster.posY + caster.getEyeHeight() + cross.yCoord)) / distance;
+        slopeZ = (raycast.hitVec.zCoord - (caster.posZ + cross.zCoord)) / distance;
 
         ticker++;
         for (double i = 0; i < distance; i += distance / 100) {
