@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.common.item.staff;
 import com.teamwizardry.librarianlib.api.util.misc.Color;
 import com.teamwizardry.librarianlib.math.shapes.Arc3D;
 import com.teamwizardry.librarianlib.math.shapes.Circle3D;
+import com.teamwizardry.librarianlib.math.shapes.Helix;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.IColorable;
 import com.teamwizardry.wizardry.api.module.Module;
@@ -34,6 +35,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -55,8 +57,8 @@ public class ItemGoldStaff extends Item implements IColorable {
 
     @Override
     public void onPlayerStoppedUsing(ItemStack stack, World world, EntityLivingBase entityLiving, int timeLeft) {
-    	if (stack == null || world == null || entityLiving == null) return;
-    	if (!stack.hasTagCompound()) return;
+        if (stack == null || world == null || entityLiving == null) return;
+        if (!stack.hasTagCompound()) return;
         NBTTagCompound compound = stack.getTagCompound();
         if (!compound.hasKey("Spell")) return;
         NBTTagCompound spell = compound.getCompoundTag("Spell");
@@ -108,11 +110,10 @@ public class ItemGoldStaff extends Item implements IColorable {
             Arc3D arc = new Arc3D(points, target, (float) 0.9, 20);
             if (betterCount < arc.getPoints().size()) {
                 Vec3d point = arc.getPoints().get(betterCount);
-                SparkleFX fizz = GlitterFactory.getInstance().createSparkle(player.worldObj, point, 20);
+                SparkleFX fizz = GlitterFactory.getInstance().createSparkle(player.worldObj, point, 10);
                 fizz.setFadeOut();
                 fizz.setAlpha(0.1f);
-                fizz.setScale(0.5f);
-                fizz.setRandomSize();
+                fizz.setScale(0.3f);
                 fizz.setBlurred();
             }
         }
@@ -185,30 +186,28 @@ public class ItemGoldStaff extends Item implements IColorable {
         int b = stack.getTagCompound().getInteger("blue");
         return new Color(r, g, b);
     }
-    
+
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced)
-    {
-    	if (!stack.hasTagCompound()) return;
-    	NBTTagCompound compound = stack.getTagCompound();
-    	if (!compound.hasKey("Spell")) return;
-    	tooltip.add("Spell:");
-    	addInformation(compound.getCompoundTag("Spell"), tooltip, 0);
+    public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
+        if (!stack.hasTagCompound()) return;
+        NBTTagCompound compound = stack.getTagCompound();
+        if (!compound.hasKey("Spell")) return;
+        tooltip.add("Spell:");
+        addInformation(compound.getCompoundTag("Spell"), tooltip, 0);
     }
-    
-    private void addInformation(NBTTagCompound compound, List<String> tooltip, int level)
-    {
-    	if (!compound.hasKey(Module.CLASS)) return;
-    	String cls = compound.getString(Module.CLASS);
-    	cls = cls.substring(cls.lastIndexOf('.') + 1);
-    	for (int i = 0; i < level; i++)
-    		cls = ' ' + cls;
-    	tooltip.add(cls);
-    	if (!compound.hasKey(Module.MODULES)) return;
-    	NBTTagList children = compound.getTagList(Module.MODULES, NBT.TAG_COMPOUND);
-    	for (int i = 0; i < children.tagCount(); i++)
-    		addInformation(children.getCompoundTagAt(i), tooltip, level + 1);
+
+    private void addInformation(NBTTagCompound compound, List<String> tooltip, int level) {
+        if (!compound.hasKey(Module.CLASS)) return;
+        String cls = compound.getString(Module.CLASS);
+        cls = cls.substring(cls.lastIndexOf('.') + 1);
+        for (int i = 0; i < level; i++)
+            cls = ' ' + cls;
+        tooltip.add(cls);
+        if (!compound.hasKey(Module.MODULES)) return;
+        NBTTagList children = compound.getTagList(Module.MODULES, NBT.TAG_COMPOUND);
+        for (int i = 0; i < children.tagCount(); i++)
+            addInformation(children.getCompoundTagAt(i), tooltip, level + 1);
     }
 
     @SideOnly(Side.CLIENT)

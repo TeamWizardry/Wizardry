@@ -138,12 +138,7 @@ public class SparkleFX extends Particle {
     public void setJitter(int chance, double x, double y, double z) {
         if (chance <= 0) jitterChance = 10;
         else jitterChance = chance;
-
-        double jitX = 0, jitY = 0, jitZ = 0;
-        if (x >= 0.0) jitX = x;
-        if (y >= 0.0) jitY = y;
-        if (z >= 0.0) jitZ = z;
-        jitter = new Vec3d(jitX, jitY, jitZ);
+        jitter = new Vec3d(x, y, z);
         SETDirection = true;
     }
 
@@ -262,6 +257,16 @@ public class SparkleFX extends Particle {
     }
 
     /**
+     * Will set the maximum age the particle will live for.
+     *
+     * @param maxAge The maximum age the particle will live for.
+     */
+    public void setMaxAge(int maxAge) {
+        particleMaxAge = maxAge;
+        SETAge = true;
+    }
+
+    /**
      * Will set the size of the particle.
      *
      * @param scale The particle's set such that scale is a float between [0, 1].
@@ -321,6 +326,7 @@ public class SparkleFX extends Particle {
 
         float lifeCoeff = ((float) this.particleMaxAge - (float) this.particleAge) / (float) this.particleMaxAge;
 
+
         if (lerp) {
             float t = (float) particleAge / (float) particleMaxAge;
             particleRed = (float) ((1.0 - t) * fromLerp.r + t * toLerp.r);
@@ -343,8 +349,9 @@ public class SparkleFX extends Particle {
             if (fadeIn && particleAlpha < defaultAlpha) particleAlpha += 0.05;
         }
 
-        if (shrink && particleScale > 0) particleScale = lifeCoeff / 2;
+        if (shrink && particleScale > 0 && lifeCoeff / 2 < defaultScale) particleScale = lifeCoeff / 2;
         if (fadeOut && particleAlpha > 0 && lifeCoeff / 2 < defaultAlpha) particleAlpha = lifeCoeff / 2;
+
     }
 
     public double getX() {
@@ -377,14 +384,5 @@ public class SparkleFX extends Particle {
 
     public int getMaxAge() {
         return particleMaxAge;
-    }
-
-    /**
-     * Will set the maximum age the particle will live for.
-     *
-     * @param maxAge The maximum age the particle will live for.
-     */
-    public void setMaxAge(int maxAge) {
-        particleMaxAge = maxAge;
     }
 }

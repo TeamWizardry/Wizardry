@@ -73,7 +73,6 @@ public class WorktableSlider {
 
     public void draw() {
         barTop.getTex().bind();
-
         barTop.draw(GuiTickHandler.ticks, left, top);
 
         for (int i = 0; i < rows - 2; i++) barMid.draw(GuiTickHandler.ticks, left, top + separation + i * separation);
