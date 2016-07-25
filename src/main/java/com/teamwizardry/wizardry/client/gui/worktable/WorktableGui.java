@@ -33,6 +33,7 @@ public class WorktableGui extends GuiBase {
 	
 	public static final Texture SPRITE_SHEET = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sprite_sheet.png"));
 	
+	// @formatter:off
 	public static final Sprite 
 		TAB_SIDE = SPRITE_SHEET.getSprite("tab_side", 24, 24),
 		TAB_TOP  = SPRITE_SHEET.getSprite("tab_top", 24, 24),
@@ -64,6 +65,7 @@ public class WorktableGui extends GuiBase {
 		_WHATISTHIS_BOX_H_RIGHT_THING = SPRITE_SHEET.getSprite("_whatisthis_box_h_right_thing", 16, 13),
 		
 	___fluff___ = null; // fluff just so I don't have to mess around with removing and adding trailing commas
+	// @formatter:on
 	
     static final int iconSize = 12;
     public boolean useModules = false; // setting to true disables conventional rendering
@@ -87,7 +89,7 @@ public class WorktableGui extends GuiBase {
             Module module = moduleConstructor.construct();
             modulesByType.get(module.getType()).add(moduleConstructor);
         }
-
+        
         useModules = true;
 
         ComponentSprite background = new ComponentSprite(BACKGROUND_SPRITE, 0, 0);
@@ -437,7 +439,7 @@ public class WorktableGui extends GuiBase {
                         } else {
                             Sprite base = MODULE_DEFAULT_GLOW;
                             base.getTex().bind();
-                            base.draw(module.getX(), module.getY(), iconSize, iconSize);
+                            base.draw(0, module.getX(), module.getY(), iconSize, iconSize);
                         }
                     }
                 } else {
@@ -448,11 +450,11 @@ public class WorktableGui extends GuiBase {
                         } else {
                             Sprite base = MODULE_DEFAULT_GLOW;
                             base.getTex().bind();
-                            base.draw(module.getX(), module.getY(), iconSize, iconSize);
+                            base.draw(0, module.getX(), module.getY(), iconSize, iconSize);
 
                             Sprite icon = module.getModule().getStaticIcon();
                             icon.getTex().bind();
-                            icon.draw(module.getX(), module.getY(), iconSize, iconSize);
+                            icon.draw(0, module.getX(), module.getY(), iconSize, iconSize);
                         }
                     }
                 }
@@ -488,7 +490,7 @@ public class WorktableGui extends GuiBase {
                     } else {
                         Sprite moduleSprite = MODULE_DEFAULT;
                         moduleSprite.getTex().bind();
-                        moduleSprite.draw(module.getX(), module.getY(), iconSize, iconSize);
+                        moduleSprite.draw(0, module.getX(), module.getY(), iconSize, iconSize);
                     }
                 }
             }
@@ -501,7 +503,7 @@ public class WorktableGui extends GuiBase {
                 moduleBeingDragged.setY(mouseY - iconSize / 2);
                 Sprite draggingSprite = MODULE_DEFAULT;
                 draggingSprite.getTex().bind();
-                draggingSprite.draw(mouseX - iconSize / 2 - 2, mouseY - iconSize / 2 - 2, iconSize + 4, iconSize + 4);
+                draggingSprite.draw(0, mouseX - iconSize / 2 - 2, mouseY - iconSize / 2 - 2, iconSize + 4, iconSize + 4);
             }
             // RENDER MODULE BEING DRAGGED //
 
@@ -512,7 +514,7 @@ public class WorktableGui extends GuiBase {
                 GlStateManager.disableLighting();
                 Sprite highlight = MODULE_DEFAULT;
                 highlight.getTex().bind();
-                highlight.draw(moduleSelected.getX() - 2, moduleSelected.getY() - 2, iconSize + 4, iconSize + 4);
+                highlight.draw(0, moduleSelected.getX() - 2, moduleSelected.getY() - 2, iconSize + 4, iconSize + 4);
                 GlStateManager.enableLighting();
             }
             
@@ -522,7 +524,7 @@ public class WorktableGui extends GuiBase {
                 GlStateManager.disableLighting();
                 Sprite highlight = MODULE_DEFAULT;
                 highlight.getTex().bind();
-                highlight.draw(moduleBeingHovered.getX(), moduleBeingHovered.getY(), iconSize, iconSize);
+                highlight.draw(0, moduleBeingHovered.getX(), moduleBeingHovered.getY(), iconSize, iconSize);
                 GlStateManager.enableLighting();
 
                 // Render tooltip
