@@ -1,0 +1,15 @@
+{
+	"spritesheet":{
+		"textureWidth":128,
+		"textureHeight":128,
+		"sprites":{
+			"event":[0, 0, 24, 24],
+			"boolean":[24, 0, 24, 24],
+			"effect":[48, 0, 24, 24],
+			"modifier":[72, 0, 24, 24],
+			"shape":[96, 0, 24, 24],
+			
+			"ModuleProjectile":[0, 32, 16, 16]
+		}
+	}
+}

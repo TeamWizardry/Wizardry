@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.client.gui.worktable;
 
+import com.teamwizardry.librarianlib.api.gui.GuiTickHandler;
 import com.teamwizardry.librarianlib.client.Sprite;
 import com.teamwizardry.librarianlib.client.Texture;
 import com.teamwizardry.wizardry.Wizardry;
@@ -12,11 +13,10 @@ import java.util.ArrayList;
  */
 public class WorktableSlider {
 
-    private Texture spriteSheet = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sprite_sheet.png"), 256, 256);
-    private Sprite barTop = spriteSheet.getSprite(64, 0, 12, 12);
-    private Sprite barMid = spriteSheet.getSprite(64, 16, 12, 12);
-    private Sprite barBottom = spriteSheet.getSprite(64, 32, 12, 12);
-    private Sprite slider = spriteSheet.getSprite(0, 192, 8, 16);
+    private Sprite barTop = WorktableGui.SCROLL_GROOVE_V_TOP;
+    private Sprite barMid = WorktableGui.SCROLL_GROOVE_V;
+    private Sprite barBottom = WorktableGui.SCROLL_GROOVE_V_BOTTOM;
+    private Sprite slider = WorktableGui.SCROLL_SLIDER_V;
 
     private ArrayList<WorktableModule> modules;
 
@@ -72,14 +72,13 @@ public class WorktableSlider {
     }
 
     public void draw() {
-        spriteSheet.bind();
+        barTop.getTex().bind();
+        barTop.draw(GuiTickHandler.ticks, left, top);
 
-        barTop.draw(left, top);
+        for (int i = 0; i < rows - 2; i++) barMid.draw(GuiTickHandler.ticks, left, top + separation + i * separation);
 
-        for (int i = 0; i < rows - 2; i++) barMid.draw(left, top + separation + i * separation);
+        barBottom.draw(GuiTickHandler.ticks, left, top + separation * (rows - 1));
 
-        barBottom.draw(left, top + separation * (rows - 1));
-
-        slider.draw(left + (barMid.getWidth() / 2) - (slider.getWidth() / 2), top + slide * separation);
+        slider.draw(GuiTickHandler.ticks, left + (barMid.width / 2) - (slider.height / 2), top + slide * separation);
     }
 }

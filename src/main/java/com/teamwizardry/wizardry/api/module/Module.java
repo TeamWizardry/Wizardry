@@ -1,14 +1,5 @@
 package com.teamwizardry.wizardry.api.module;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ResourceLocation;
-
 import com.teamwizardry.librarianlib.client.Sprite;
 import com.teamwizardry.librarianlib.client.Texture;
 import com.teamwizardry.wizardry.Wizardry;
@@ -18,6 +9,14 @@ import com.teamwizardry.wizardry.api.spell.IModifier;
 import com.teamwizardry.wizardry.api.spell.IRuntimeModifier;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.client.gui.worktable.WorktableGui;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.ResourceLocation;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Saad on 6/21/2016.
@@ -26,7 +25,8 @@ import com.teamwizardry.wizardry.client.gui.worktable.WorktableGui;
  */
 public abstract class Module
 {
-	public static final Texture STATIC_ICON_SHEET = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/modules/static.png"), 128, 128);
+	public static final Texture STATIC_ICON_SHEET = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/modules/static.png"));
+	public static final Texture ANIMATED_ICON_SHEET = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/modules/animated.png"));
 	
 	public static final String CLASS = "Class";
 	public static final String MODULES = "Modules";
@@ -53,8 +53,7 @@ public abstract class Module
 
 	protected boolean canHaveChildren = true;
 
-	private Sprite staticIcon = WorktableGui.MODULE_ICON_MISSING, animatedIcon = WorktableGui.MODULE_ICON_MISSING;
-	//private ResourceLocation iconLocation = new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/icons/" + this.getClass().getSimpleName() + ".png");
+	private Sprite staticIcon = STATIC_ICON_SHEET.getSprite(this.getClass().getSimpleName(), 16, 16), animatedIcon = ANIMATED_ICON_SHEET.getSprite(this.getClass().getSimpleName(), 16, 16);
 	private String description = "<-NULL->";
 	private String displayName = "<-NULL->";
 
@@ -76,7 +75,7 @@ public abstract class Module
 
 	/**
 	 * Generates an {@code NBTTagCompound} containing information about the
-	 * module and its effects, as well as any connected module.
+	 * module and its effect, as well as any connected module.
 	 *
 	 * @return An {@link NBTTagCompound} containing information on the module
 	 *         and all connected module
@@ -111,16 +110,6 @@ public abstract class Module
 	public void setStaticIcon(Sprite sprite)
 	{
 		staticIcon = sprite;
-	}
-	
-	/**
-	 * Sets the static icon to the icon at x,y on the standard icon sheet.
-	 * 
-	 * @param x the horizontal position from the left (not in pixels, in icon size units)
-	 * @param y the vertical position from the top (not in pixels, in icon size units)
-	 */
-	public void setStaticIconIndex(int x, int y) {
-		setStaticIcon(STATIC_ICON_SHEET.getSprite(x*16, y*16 + 32, 16, 16));
 	}
 	
 	/**

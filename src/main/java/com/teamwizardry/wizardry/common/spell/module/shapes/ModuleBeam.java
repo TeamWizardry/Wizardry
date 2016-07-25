@@ -8,6 +8,7 @@ import com.teamwizardry.wizardry.api.spell.IContinuousCast;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.SpellEntity;
 import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
+import com.teamwizardry.wizardry.client.fx.GlitterFactory;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import com.teamwizardry.wizardry.client.fx.particle.trails.SparkleTrailHelix;
 import net.minecraft.entity.Entity;
@@ -22,8 +23,6 @@ import net.minecraftforge.common.util.Constants.NBT;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class ModuleBeam extends Module implements IContinuousCast {
-
-    private int ticker = 0;
 
     public ModuleBeam() {
         attributes.addAttribute(Attribute.DISTANCE);
@@ -72,7 +71,6 @@ public class ModuleBeam extends Module implements IContinuousCast {
         slopeY = (raycast.hitVec.yCoord - (caster.posY + caster.getEyeHeight() + cross.yCoord)) / distance;
         slopeZ = (raycast.hitVec.zCoord - (caster.posZ + cross.zCoord)) / distance;
 
-        ticker++;
         for (double i = 0; i < distance; i += distance / 100) {
             double x = slopeX * i + caster.posX + cross.xCoord;
             double y = slopeY * i + caster.posY + caster.getEyeHeight();
@@ -82,14 +80,16 @@ public class ModuleBeam extends Module implements IContinuousCast {
             Vec3d origin = new Vec3d(x + 0.2 * Math.cos(theta), y, z + 0.2 * Math.sin(theta));
             Vec3d center = new Vec3d(x, y, z);
 
-            SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(caster.worldObj, x, y, z, 0.5F, 0.5F, 10, true);
-            fizz.setRandomizedSizes(true);
-            fizz.blur();
+            SparkleFX fizz = GlitterFactory.getInstance().createSparkle(caster.worldObj, center, 10);
+            fizz.setScale(0.5f);
+            fizz.setAlpha(1f);
+            fizz.setFadeOut();
+            fizz.setShrink();
+            fizz.setRandomSize();
+            fizz.setBlurred();
 
             if (ThreadLocalRandom.current().nextInt(10) == 0) {
-                SparkleTrailHelix helix = Wizardry.proxy.spawnParticleSparkleTrailHelix(caster.worldObj, origin, center, 0.2, theta, 50, true);
-                helix.setRandomizedSizes(true);
-                //helix.blur();
+                Wizardry.proxy.spawnParticleSparkleTrailHelix(caster.worldObj, origin, center, 0.2, theta).setFadeOut();
             }
         }
         // Beam particles

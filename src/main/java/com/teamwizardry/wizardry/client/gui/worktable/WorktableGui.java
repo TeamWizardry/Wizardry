@@ -1,26 +1,10 @@
 package com.teamwizardry.wizardry.client.gui.worktable;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextFormatting;
-
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.teamwizardry.librarianlib.api.gui.GuiBase;
-import com.teamwizardry.librarianlib.api.gui.GuiComponent;
-import com.teamwizardry.librarianlib.api.gui.components.ComponentGrid;
-import com.teamwizardry.librarianlib.api.gui.components.ComponentScrolledView;
-import com.teamwizardry.librarianlib.api.gui.components.ComponentSprite;
-import com.teamwizardry.librarianlib.api.gui.components.ComponentSpriteCapped;
-import com.teamwizardry.librarianlib.api.gui.components.ComponentVoid;
+import com.teamwizardry.librarianlib.api.gui.components.*;
 import com.teamwizardry.librarianlib.api.gui.components.input.ComponentSlider;
-import com.teamwizardry.librarianlib.api.gui.components.mixin.DragMixin;
 import com.teamwizardry.librarianlib.api.util.misc.Utils;
 import com.teamwizardry.librarianlib.client.Sprite;
 import com.teamwizardry.librarianlib.client.Texture;
@@ -30,140 +14,139 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.ModuleList;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Saad on 6/17/2016.
  */
 public class WorktableGui extends GuiBase {
-
-	public static final Texture BACKGROUND_TEXTURE = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/table_background.png"), 512, 256);
-	public static final Sprite BACKGROUND_SPRITE = BACKGROUND_TEXTURE.getSprite(0, 0, 512, 256);
+	public static final Texture BACKGROUND_TEXTURE = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/table_background.png"));
+	public static final Sprite BACKGROUND_SPRITE = BACKGROUND_TEXTURE.getSprite("bg", 512, 256);
 	
-	public static final Texture SPRITE_SHEET = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sprite_sheet.png"), 256, 256);
+	public static final Texture SPRITE_SHEET = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sprite_sheet.png"));
 	
+	// @formatter:off
 	public static final Sprite 
-		TAB_SIDE = SPRITE_SHEET.getSprite(0, 0, 24, 24),
-		TAB_TOP  = SPRITE_SHEET.getSprite(0, 32, 24, 24),
+		TAB_SIDE = SPRITE_SHEET.getSprite("tab_side", 24, 24),
+		TAB_TOP  = SPRITE_SHEET.getSprite("tab_top", 24, 24),
 		
-		MODULE_SLOT_SINGLE = SPRITE_SHEET.getSprite(0, 64, 32, 32),
-		MODULE_SLOT_L      = SPRITE_SHEET.getSprite(0, 96, 32, 32),
-		MODULE_SLOT_R      = SPRITE_SHEET.getSprite(0, 128, 32, 32),
-		MODULE_SLOT_LR     = SPRITE_SHEET.getSprite(0, 160, 32, 32),
+		MODULE_SLOT_SINGLE = SPRITE_SHEET.getSprite("module_slot_single", 32, 32),
+		MODULE_SLOT_L      = SPRITE_SHEET.getSprite("module_slot_l", 32, 32),
+		MODULE_SLOT_R      = SPRITE_SHEET.getSprite("module_slot_r", 32, 32),
+		MODULE_SLOT_LR     = SPRITE_SHEET.getSprite("module_slot_lr", 32, 32),
 		
-		MODULE_DEFAULT = SPRITE_SHEET.getSprite(32, 208, 24, 24),
-		MODULE_DEFAULT_GLOW = SPRITE_SHEET.getSprite(0, 208, 24, 24),
-		MODULE_ICON_MISSING = SPRITE_SHEET.getSprite(0, 232, 16, 16),
-		SCROLL_SLIDER_V = SPRITE_SHEET.getSprite(0, 192, 8, 16),
-		SCROLL_SLIDER_H = SPRITE_SHEET.getSprite(16, 192, 16, 8),
+		MODULE_DEFAULT = SPRITE_SHEET.getSprite("module_default", 24, 24),
+		MODULE_DEFAULT_GLOW = SPRITE_SHEET.getSprite("module_default_glow", 24, 24),
 		
-		SCROLL_GROOVE_V = SPRITE_SHEET.getSprite(64, 16, 12, 12),
-		SCROLL_GROOVE_V_TOP = SPRITE_SHEET.getSprite(64, 0, 12, 12),
-		SCROLL_GROOVE_V_BOTTOM = SPRITE_SHEET.getSprite(64, 32, 12, 12),
+		MODULE_ICON_MISSING = SPRITE_SHEET.getSprite("module_icon_missing", 16, 16),
+		SCROLL_SLIDER_V = SPRITE_SHEET.getSprite("scroll_slider_v", 8, 16),
+		SCROLL_SLIDER_H = SPRITE_SHEET.getSprite("scroll_slider_h", 16, 8),
 		
-		SCROLL_GROOVE_H = SPRITE_SHEET.getSprite(80, 16, 12, 12),
-		SCROLL_GROOVE_H_LEFT = SPRITE_SHEET.getSprite(80, 0, 12, 12),
-		SCROLL_GROOVE_H_RIGHT = SPRITE_SHEET.getSprite(80, 32, 12, 12),
+		SCROLL_GROOVE_V = SPRITE_SHEET.getSprite("scroll_groove_v", 12, 12),
+		SCROLL_GROOVE_V_TOP = SPRITE_SHEET.getSprite("scroll_groove_v_top", 12, 12),
+		SCROLL_GROOVE_V_BOTTOM = SPRITE_SHEET.getSprite("scroll_groove_v_bottom", 12, 12),
 		
-		_WHATISTHIS_GRID_THING = SPRITE_SHEET.getSprite(32, 64, 24, 24),
-		_WHATISTHIS_BOX_THING = SPRITE_SHEET.getSprite(96, 0, 16, 16),
-		_WHATISTHIS_BOX_H_THING = SPRITE_SHEET.getSprite(112, 16, 16, 13),
-		_WHATISTHIS_BOX_H_LEFT_THING = SPRITE_SHEET.getSprite(112, 0, 16, 13),
-		_WHATISTHIS_BOX_H_RIGHT_THING = SPRITE_SHEET.getSprite(112, 32, 16, 13),
+		SCROLL_GROOVE_H = SPRITE_SHEET.getSprite("scroll_groove_h", 12, 12),
+		SCROLL_GROOVE_H_LEFT = SPRITE_SHEET.getSprite("scroll_groove_h_left", 12, 12),
+		SCROLL_GROOVE_H_RIGHT = SPRITE_SHEET.getSprite("scroll_groove_h_right", 12, 12),
+		
+		_WHATISTHIS_GRID_THING = SPRITE_SHEET.getSprite("_whatisthis_grid_thing", 24, 24),
+		_WHATISTHIS_BOX_THING = SPRITE_SHEET.getSprite("_whatisthis_box_thing", 16, 16),
+		_WHATISTHIS_BOX_H_THING = SPRITE_SHEET.getSprite("_whatisthis_box_h_thing", 16, 13),
+		_WHATISTHIS_BOX_H_LEFT_THING = SPRITE_SHEET.getSprite("_whatisthis_box_h_left_thing", 16, 13),
+		_WHATISTHIS_BOX_H_RIGHT_THING = SPRITE_SHEET.getSprite("_whatisthis_box_h_right_thing", 16, 13),
 		
 	___fluff___ = null; // fluff just so I don't have to mess around with removing and adding trailing commas
+	// @formatter:on
 	
     static final int iconSize = 12;
+    public boolean useModules = false; // setting to true disables conventional rendering
+    public Multimap<ModuleType, ModuleList.IModuleConstructor> modulesByType = HashMultimap.create();
+    ComponentVoid paper, shapes, modifiers, effects, booleans, events;
     private int left, top, paperLeft = 160, paperTop = 0;
     private int backgroundWidth = 512, backgroundHeight = 256, paperWidth = 191, paperHeight = 202;
     private int rotateShimmer = 0;
-
     private HashMap<ModuleType, ArrayList<WorktableModule>> moduleCategories;
     private HashMap<ModuleType, WorktableSlider> categorySlidebars;
-
     private ArrayList<WorktableModule> modulesInSidebar;
     private ArrayList<WorktableModule> modulesOnPaper;
     private ArrayList<WorktableLink> moduleLinks;
-
     private BezierCurve2D curveModuleBeingLinked;
     private WorktableModule moduleBeingDragged, moduleBeingLinked, masterModule, moduleSelected;
 
-    ComponentVoid paper, shapes, modifiers, effects, booleans, events;
-    
-    public boolean useModules = false; // setting to true disables conventional rendering
-    
-    public Multimap<ModuleType, ModuleList.IModuleConstructor> modulesByType = HashMultimap.create();
-    
     public WorktableGui() {
         super(512, 256);
-        
+
         for (ModuleList.IModuleConstructor moduleConstructor : ModuleList.INSTANCE.modules.values()) {
             Module module = moduleConstructor.construct();
             modulesByType.get(module.getType()).add(moduleConstructor);
         }
         
         useModules = true;
-        
+
         ComponentSprite background = new ComponentSprite(BACKGROUND_SPRITE, 0, 0);
         components.add(background);
 
         paper = new ComponentVoid(160, 0, 191, 202);
         paper.zIndex = 100;
-        paper.add(new ComponentVoid(0, 0, 191, 202).setup((c) -> {
-        	c.addTag("tray");
-        }));
-        paper.add(new ComponentVoid(213, 134, 98, 66).setup((c) -> {
-        	c.addTag("tray");
-        }));
+        paper.add(new ComponentVoid(0, 0, 191, 202).setup((c) -> c.addTag("tray")));
+        paper.add(new ComponentVoid(213, 134, 98, 66).setup((c) -> c.addTag("tray")));
         components.add(paper);
-        
+
         effects = new ComponentVoid(92, 32, 52, 158);
         addModules(effects, ModuleType.EFFECT, 7, 7, 3, 12);
         components.add(effects);
-        
+
         shapes = new ComponentVoid(32, 32, 52, 74);
         addModules(shapes, ModuleType.SHAPE, 7, 7, 3, 5);
         components.add(shapes);
-        
+
         booleans = new ComponentVoid(32, 116, 52, 74);
         addModules(booleans, ModuleType.BOOLEAN, 7, 7, 3, 5);
         components.add(booleans);
-        
+
         events = new ComponentVoid(368, 31, 52, 87);
         addModules(events, ModuleType.EVENT, 7, 7, 3, 6);
         components.add(events);
-        
+
         modifiers = new ComponentVoid(428, 31, 52, 87);
         addModules(modifiers, ModuleType.MODIFIER, 7, 7, 3, 6);
         components.add(modifiers);
     }
 
     private void addModules(ComponentVoid parent, ModuleType type, int x, int y, int columns, int rows) {
-    	ComponentScrolledView view = new ComponentScrolledView(x, y, columns*12, rows*12);
-    	parent.add(view);
-    	
-    	ComponentGrid grid = new ComponentGrid(0, 0, 12, 12, columns);
-    	view.add(grid);
-    	
-    	int count = 0;
-    	for (ModuleList.IModuleConstructor constructor : modulesByType.get(type)) {
-			SidebarItem item = new SidebarItem(0, 0, constructor, paper);
-			grid.add(item.result);
-			count++;
-		}
-    	int usedRows = (int)Math.ceil( count/(float)columns );
-    	if(usedRows > rows) {
-    		ComponentSpriteCapped scrollSlot = new ComponentSpriteCapped(SCROLL_GROOVE_V_TOP, SCROLL_GROOVE_V, SCROLL_GROOVE_V_BOTTOM, false, x+columns*12, y, 12, rows*12);
+        ComponentScrolledView view = new ComponentScrolledView(x, y, columns * 12, rows * 12);
+        parent.add(view);
+
+        ComponentGrid grid = new ComponentGrid(0, 0, 12, 12, columns);
+        view.add(grid);
+
+        int count = 0;
+        for (ModuleList.IModuleConstructor constructor : modulesByType.get(type)) {
+            SidebarItem item = new SidebarItem(0, 0, constructor, paper);
+            grid.add(item.result);
+            count++;
+        }
+        int usedRows = (int) Math.ceil(count / (float) columns);
+        if (usedRows > rows) {
+            ComponentSpriteCapped scrollSlot = new ComponentSpriteCapped(SCROLL_GROOVE_V_TOP, SCROLL_GROOVE_V, SCROLL_GROOVE_V_BOTTOM, false, x + columns * 12, y, 12, rows * 12);
             parent.add(scrollSlot);
-                    
-            ComponentSlider scrollSlider = new ComponentSlider(6, SCROLL_SLIDER_V.getHeight()/2+2, 0, rows*12 - SCROLL_SLIDER_V.getHeight() - 4, 0, usedRows-3);
-            scrollSlider.handle.add(new ComponentSprite(SCROLL_SLIDER_V, -SCROLL_SLIDER_V.getWidth()/2, -SCROLL_SLIDER_V.getHeight()/2));
-            scrollSlider.percentageChange.add((p) -> {
-            	view.scrollToPercent(new Vec2(0, p));
-            });
+
+            ComponentSlider scrollSlider = new ComponentSlider(6, SCROLL_SLIDER_V.height / 2 + 2, 0, rows * 12 - SCROLL_SLIDER_V.height - 4, 0, usedRows - 3);
+            scrollSlider.handle.add(new ComponentSprite(SCROLL_SLIDER_V, -SCROLL_SLIDER_V.width / 2, -SCROLL_SLIDER_V.height / 2));
+            scrollSlider.percentageChange.add((p) -> view.scrollToPercent(new Vec2(0, p)));
             scrollSlot.add(scrollSlider);
-    	}
+        }
     }
-    
+
     @Override
     public void initGui() {
         super.initGui();
@@ -420,147 +403,139 @@ public class WorktableGui extends GuiBase {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
-        if(!useModules) { // no indent for git diff
-        	
-        	
-        WorktableModule moduleBeingHovered = null;
+        if (!useModules) { // no indent for git diff
 
-        // RENDER BACKGROUND //
-        drawDefaultBackground();
 
-        GlStateManager.color(1F, 1F, 1F, 1F);
-        BACKGROUND_TEXTURE.bind();
-        BACKGROUND_TEXTURE.getSprite(0, 0, backgroundWidth, backgroundHeight).draw(left, top);
-        // RENDER BACKGROUND //
-
-        // SHIMMER CURSOR IF LINKING MODE //
-        // TODO
-        GlStateManager.color(1F, 1F, 1F, 1F);
-        if (moduleBeingLinked != null) {
-            GlStateManager.pushMatrix();
-            GlStateManager.enableBlend();
+            WorktableModule moduleBeingHovered = null;
+            
+            // SHIMMER CURSOR IF LINKING MODE //
+            // TODO
             GlStateManager.color(1F, 1F, 1F, 1F);
-            if (rotateShimmer < 360) rotateShimmer++;
-            else rotateShimmer = 0;
-            GlStateManager.translate(mouseX, mouseY, 0);
-            GlStateManager.rotate(rotateShimmer * 5, 0, 0, 1);
-            GlStateManager.translate(-mouseX, -mouseY, 0);
-            mc.renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/shimmer.png"));
-            drawScaledCustomSizeModalRect(mouseX - 16 / 2, mouseY - 16 / 2, 0, 0, 16, 16, 16, 16, 16, 16);
-            GlStateManager.disableBlend();
-            GlStateManager.popMatrix();
-        }
-        // SHIMMER CURSOR IF LINKING MODE //
-
-        // RENDER MODULES IN THE SIDEBARS //
-        GlStateManager.color(1F, 1F, 1F, 1F);
-        SPRITE_SHEET.bind();
-        for (ModuleType type : moduleCategories.keySet()) {
-            if (categorySlidebars.containsKey(type)) {
-                for (WorktableModule module : categorySlidebars.get(type).getModules()) {
-                    // Highlight if hovering over
-                    if (Utils.isInside(mouseX, mouseY, module.getX(), module.getY(), iconSize)) {
-                        moduleBeingHovered = module;
-                    } else {
-                        Sprite base = SPRITE_SHEET.getSprite(33, 208, 23, 23);
-                        base.getTex().bind();
-                        base.draw(module.getX(), module.getY(), iconSize, iconSize);
-                    }
-                }
-            } else {
-                for (WorktableModule module : moduleCategories.get(type)) {
-                    // Highlight if hovering over
-                    if (Utils.isInside(mouseX, mouseY, module.getX(), module.getY(), iconSize)) {
-                        moduleBeingHovered = module;
-                    } else {
-                        Sprite base = SPRITE_SHEET.getSprite(33, 208, 23, 23);
-                        base.getTex().bind();
-                        base.draw(module.getX(), module.getY(), iconSize, iconSize);
-
-                        Sprite icon = module.getModule().getStaticIcon();
-                        icon.getTex().bind();
-                        icon.draw(module.getX(), module.getY(), iconSize, iconSize);
-                    }
-                }
+            if (moduleBeingLinked != null) {
+                GlStateManager.pushMatrix();
+                GlStateManager.enableBlend();
+                GlStateManager.color(1F, 1F, 1F, 1F);
+                if (rotateShimmer < 360) rotateShimmer++;
+                else rotateShimmer = 0;
+                GlStateManager.translate(mouseX, mouseY, 0);
+                GlStateManager.rotate(rotateShimmer * 5, 0, 0, 1);
+                GlStateManager.translate(-mouseX, -mouseY, 0);
+                mc.renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/shimmer.png"));
+                drawScaledCustomSizeModalRect(mouseX - 16 / 2, mouseY - 16 / 2, 0, 0, 16, 16, 16, 16, 16, 16);
+                GlStateManager.disableBlend();
+                GlStateManager.popMatrix();
             }
-        }
-        GlStateManager.color(1F, 1F, 1F, 1F);
-        for (ModuleType type : categorySlidebars.keySet()) categorySlidebars.get(type).draw();
-        // RENDER MODULES IN THE SIDEBARS //
+            // SHIMMER CURSOR IF LINKING MODE //
 
-        // RENDER LINE BETWEEN LINKED MODULES //
-        GlStateManager.color(1F, 1F, 1F, 1F);
-        if (moduleBeingDragged != null) {
-            for (WorktableLink link : moduleLinks) {
-                if (link.getStartPointModule() == moduleBeingDragged) link.setStartPointModule(moduleBeingDragged);
-                else if (link.getEndPointModule() == moduleBeingDragged) link.setEndPointModule(moduleBeingDragged);
-                link.draw();
-            }
-        }
-
-        if (moduleBeingLinked != null && curveModuleBeingLinked != null) {
-            curveModuleBeingLinked.setStartPoint(new Vec2(mouseX, mouseY));
-            curveModuleBeingLinked.draw();
-        }
-
-        moduleLinks.stream().filter(link -> link.getStartPointModule() != moduleBeingDragged && link.getEndPointModule() != moduleBeingDragged).forEach(BezierCurve2D::draw);
-        // RENDER LINE BETWEEN LINKED MODULES //
-
-        // RENDER MODULE ON THE PAPER //
-        GlStateManager.color(1F, 1F, 1F, 1F);
-        for (WorktableModule module : modulesOnPaper) {
-            if (moduleSelected != module) {
-                if (Utils.isInside(mouseX, mouseY, module.getX(), module.getY(), iconSize)) {
-                    moduleBeingHovered = module;
+            // RENDER MODULES IN THE SIDEBARS //
+            GlStateManager.color(1F, 1F, 1F, 1F);
+            SPRITE_SHEET.bind();
+            for (ModuleType type : moduleCategories.keySet()) {
+                if (categorySlidebars.containsKey(type)) {
+                    for (WorktableModule module : categorySlidebars.get(type).getModules()) {
+                        // Highlight if hovering over
+                        if (Utils.isInside(mouseX, mouseY, module.getX(), module.getY(), iconSize)) {
+                            moduleBeingHovered = module;
+                        } else {
+                            Sprite base = MODULE_DEFAULT_GLOW;
+                            base.getTex().bind();
+                            base.draw(0, module.getX(), module.getY(), iconSize, iconSize);
+                        }
+                    }
                 } else {
-                    Sprite moduleSprite = SPRITE_SHEET.getSprite(33, 208, 23, 23);
-                    moduleSprite.getTex().bind();
-                    moduleSprite.draw(module.getX(), module.getY(), iconSize, iconSize);
+                    for (WorktableModule module : moduleCategories.get(type)) {
+                        // Highlight if hovering over
+                        if (Utils.isInside(mouseX, mouseY, module.getX(), module.getY(), iconSize)) {
+                            moduleBeingHovered = module;
+                        } else {
+                            Sprite base = MODULE_DEFAULT_GLOW;
+                            base.getTex().bind();
+                            base.draw(0, module.getX(), module.getY(), iconSize, iconSize);
+
+                            Sprite icon = module.getModule().getStaticIcon();
+                            icon.getTex().bind();
+                            icon.draw(0, module.getX(), module.getY(), iconSize, iconSize);
+                        }
+                    }
                 }
             }
-        }
-        // RENDER MODULE ON THE PAPER //
+            GlStateManager.color(1F, 1F, 1F, 1F);
+            for (ModuleType type : categorySlidebars.keySet()) categorySlidebars.get(type).draw();
+            // RENDER MODULES IN THE SIDEBARS //
 
-        // RENDER MODULE BEING DRAGGED //
-        GlStateManager.color(1F, 1F, 1F, 1F);
-        if (moduleBeingDragged != null) {
-            moduleBeingDragged.setX(mouseX - iconSize / 2);
-            moduleBeingDragged.setY(mouseY - iconSize / 2);
-            Sprite draggingSprite = SPRITE_SHEET.getSprite(0, 208, 24, 24);
-            draggingSprite.getTex().bind();
-            draggingSprite.draw(mouseX - iconSize / 2 - 2, mouseY - iconSize / 2 - 2, iconSize + 4, iconSize + 4);
-        }
-        // RENDER MODULE BEING DRAGGED //
+            // RENDER LINE BETWEEN LINKED MODULES //
+            GlStateManager.color(1F, 1F, 1F, 1F);
+            if (moduleBeingDragged != null) {
+                for (WorktableLink link : moduleLinks) {
+                    if (link.getStartPointModule() == moduleBeingDragged) link.setStartPointModule(moduleBeingDragged);
+                    else if (link.getEndPointModule() == moduleBeingDragged) link.setEndPointModule(moduleBeingDragged);
+                    link.draw();
+                }
+            }
 
-        // RENDER TOOLTIP & HIGHLIGHT //
-        // Highlight module selected
-        if (moduleSelected != null) {
-            // Render highlight
-            GlStateManager.disableLighting();
-            Sprite highlight = SPRITE_SHEET.getSprite(0, 208, 24, 24);
-            highlight.getTex().bind();
-            highlight.draw(moduleSelected.getX() - 2, moduleSelected.getY() - 2, iconSize + 4, iconSize + 4);
-            GlStateManager.enableLighting();
-        }
+            if (moduleBeingLinked != null && curveModuleBeingLinked != null) {
+                curveModuleBeingLinked.setStartPoint(new Vec2(mouseX, mouseY));
+                curveModuleBeingLinked.draw();
+            }
 
-        // Highlight module being hovered
-        if (moduleBeingHovered != null && moduleBeingDragged == null) {
-            // Render highlight
-            GlStateManager.disableLighting();
-            Sprite highlight = SPRITE_SHEET.getSprite(0, 208, 24, 24);
-            highlight.getTex().bind();
-            highlight.draw(moduleBeingHovered.getX(), moduleBeingHovered.getY(), iconSize, iconSize);
-            GlStateManager.enableLighting();
+            moduleLinks.stream().filter(link -> link.getStartPointModule() != moduleBeingDragged && link.getEndPointModule() != moduleBeingDragged).forEach(BezierCurve2D::draw);
+            // RENDER LINE BETWEEN LINKED MODULES //
 
-            // Render tooltip
-            if (modulesOnPaper.contains(moduleBeingHovered) && !isShiftKeyDown()) return;
-            List<String> txt = new ArrayList<>();
-            txt.add(TextFormatting.GOLD + moduleBeingHovered.getModule().getDisplayName());
-            txt.addAll(Utils.padString(moduleBeingHovered.getModule().getDescription(), 30));
-            drawHoveringText(txt, mouseX, mouseY, fontRendererObj);
-        }
-        // RENDER TOOLTIP & HIGHLIGHT //
-        
+            // RENDER MODULE ON THE PAPER //
+            GlStateManager.color(1F, 1F, 1F, 1F);
+            for (WorktableModule module : modulesOnPaper) {
+                if (moduleSelected != module) {
+                    if (Utils.isInside(mouseX, mouseY, module.getX(), module.getY(), iconSize)) {
+                        moduleBeingHovered = module;
+                    } else {
+                        Sprite moduleSprite = MODULE_DEFAULT;
+                        moduleSprite.getTex().bind();
+                        moduleSprite.draw(0, module.getX(), module.getY(), iconSize, iconSize);
+                    }
+                }
+            }
+            // RENDER MODULE ON THE PAPER //
+
+            // RENDER MODULE BEING DRAGGED //
+            GlStateManager.color(1F, 1F, 1F, 1F);
+            if (moduleBeingDragged != null) {
+                moduleBeingDragged.setX(mouseX - iconSize / 2);
+                moduleBeingDragged.setY(mouseY - iconSize / 2);
+                Sprite draggingSprite = MODULE_DEFAULT;
+                draggingSprite.getTex().bind();
+                draggingSprite.draw(0, mouseX - iconSize / 2 - 2, mouseY - iconSize / 2 - 2, iconSize + 4, iconSize + 4);
+            }
+            // RENDER MODULE BEING DRAGGED //
+
+            // RENDER TOOLTIP & HIGHLIGHT //
+            // Highlight module selected
+            if (moduleSelected != null) {
+                // Render highlight
+                GlStateManager.disableLighting();
+                Sprite highlight = MODULE_DEFAULT;
+                highlight.getTex().bind();
+                highlight.draw(0, moduleSelected.getX() - 2, moduleSelected.getY() - 2, iconSize + 4, iconSize + 4);
+                GlStateManager.enableLighting();
+            }
+            
+            // Highlight module being hovered
+            if (moduleBeingHovered != null && moduleBeingDragged == null) {
+                // Render highlight
+                GlStateManager.disableLighting();
+                Sprite highlight = MODULE_DEFAULT;
+                highlight.getTex().bind();
+                highlight.draw(0, moduleBeingHovered.getX(), moduleBeingHovered.getY(), iconSize, iconSize);
+                GlStateManager.enableLighting();
+
+                // Render tooltip
+                if (modulesOnPaper.contains(moduleBeingHovered) && !isShiftKeyDown()) return;
+                List<String> txt = new ArrayList<>();
+                txt.add(TextFormatting.GOLD + moduleBeingHovered.getModule().getDisplayName());
+                txt.addAll(Utils.padString(moduleBeingHovered.getModule().getDescription(), 30));
+                drawHoveringText(txt, mouseX, mouseY, fontRendererObj);
+            }
+            // RENDER TOOLTIP & HIGHLIGHT //
+
         } // end useModules - no indent for git diff
     }
 

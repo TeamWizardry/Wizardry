@@ -151,9 +151,15 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
             }
             if (update) worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
 
-            SparkleFX ambient = Wizardry.proxy.spawnParticleSparkle(worldObj, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 0.5F, 0.5F, 100, 8, 8, 8, true);
-            ambient.jitter(8, 0.1, 0.1, 0.1);
-            ambient.randomDirection(0.2, 0.2, 0.2);
+            SparkleFX ambient = Wizardry.proxy.spawnParticleSparkle(worldObj, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(8, 8, 8));
+            ambient.setAlpha(0.5f);
+            ambient.setScale(0.5f);
+            ambient.setMaxAge(100);
+            ambient.setFadeOut();
+            ambient.setShrink();
+            ambient.setFadeIn();
+            ambient.setJitter(8, 0.1, 0.1, 0.1);
+            ambient.setRandomDirection(0.2, 0.2, 0.2);
 
 
             // > 1 to prevent java.lang.ArithmeticException: / by zero in TileCraftingPlateRenderer.class
@@ -171,22 +177,44 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
                 }
 
             if (isCrafting) {
-                Wizardry.proxy.spawnParticleSparkle(worldObj, pos.getX() + 0.5, pos.getY() + pearl.getPoint().yCoord, pos.getZ() + 0.5, 0.1f, 0.5f, 10, true).blur();
+                SparkleFX ambient2 = Wizardry.proxy.spawnParticleSparkle(worldObj, new Vec3d(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5));
+                ambient2.setFadeIn();
+                ambient2.setMaxAge(10);
+                ambient2.setScale(0.5f);
+                ambient2.setAlpha(0.1f);
+                ambient2.setGrow();
+                ambient2.setShrink();
+                ambient2.setFadeOut();
+                ambient2.setBlurred();
                 for (int i = 0; i < 5; i++)
                     Wizardry.proxy.spawnParticleLensFlare(worldObj, new Vec3d(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5), 50, 0.3);
 
             } else if (isAnimating) {
                 for (int i = 0; i < 10; i++) {
-                    SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(worldObj, pos.getX() + 0.5, pos.getX() + 1, pos.getZ() + 0.5, 0.5F, 0.5F, 50, true);
-                    fizz.jitter(10, 0.01, 0, 0.01);
-                    fizz.randomDirection(0.05, 0, 0.05);
+                    SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(worldObj, new Vec3d(pos.getX() + 0.5, pos.getX() + 1, pos.getZ() + 0.5));
+                    fizz.setFadeIn();
+                    fizz.setMaxAge(50);
+                    fizz.setScale(0.5f);
+                    fizz.setAlpha(0.1f);
+                    fizz.setGrow();
+                    fizz.setShrink();
+                    fizz.setFadeOut();
+                    fizz.setJitter(10, 0.01, 0, 0.01);
+                    fizz.setRandomDirection(0.05, 0, 0.05);
                     fizz.setMotion(0, ThreadLocalRandom.current().nextDouble(0.05, 0.2), 0);
                 }
 
             } else if (animationComplete) {
                 for (int i = 0; i < 10; i++) {
-                    SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(worldObj, pos.getX() + pearl.getPoint().xCoord + 0.5, pos.getX() + pearl.getPoint().yCoord, pos.getZ() + pearl.getPoint().zCoord + 0.5, 0.5F, 0.5F, 10, true);
-                    fizz.randomDirection(0.1, 0.1, 0.1);
+                    SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(worldObj, new Vec3d(pos.getX() + pearl.getPoint().xCoord + 0.5, pos.getX() + pearl.getPoint().yCoord, pos.getZ() + pearl.getPoint().zCoord + 0.5));
+                    fizz.setFadeIn();
+                    fizz.setMaxAge(10);
+                    fizz.setScale(0.5f);
+                    fizz.setAlpha(0.1f);
+                    fizz.setGrow();
+                    fizz.setShrink();
+                    fizz.setFadeOut();
+                    fizz.setRandomDirection(0.1, 0.1, 0.1);
                 }
                 structureComplete = false;
             }
@@ -212,9 +240,16 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
                     worldObj.spawnEntityInWorld(pearlItem);
 
                     for (int i = 0; i < 100 * Config.particlePercentage / 100; i++) {
-                        SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(worldObj, pos.getX() + 0.5, pos.getY() + pearl.getPoint().yCoord, pos.getZ() + 0.5, 0.5F, 0.5F, 20, true);
-                        fizz.jitter(10, 0.005, 0.005, 0.005);
-                        fizz.randomDirection(0.05, 0.005, 0.05);
+                        SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(worldObj, new Vec3d(pos.getX() + 0.5, pos.getY() + pearl.getPoint().yCoord, pos.getZ() + 0.5));
+                        fizz.setFadeIn();
+                        fizz.setMaxAge(20);
+                        fizz.setScale(0.5f);
+                        fizz.setAlpha(0.1f);
+                        fizz.setGrow();
+                        fizz.setShrink();
+                        fizz.setFadeOut();
+                        fizz.setJitter(10, 0.005, 0.005, 0.005);
+                        fizz.setRandomDirection(0.05, 0.005, 0.05);
                     }
 
                     pearl = null;

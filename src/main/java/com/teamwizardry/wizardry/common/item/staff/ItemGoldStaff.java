@@ -1,6 +1,17 @@
 package com.teamwizardry.wizardry.common.item.staff;
 
-import java.util.List;
+import com.teamwizardry.librarianlib.api.util.misc.Color;
+import com.teamwizardry.librarianlib.math.shapes.Arc3D;
+import com.teamwizardry.librarianlib.math.shapes.Circle3D;
+import com.teamwizardry.librarianlib.math.shapes.Helix;
+import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.item.IColorable;
+import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.api.module.ModuleList;
+import com.teamwizardry.wizardry.api.spell.IContinuousCast;
+import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
+import com.teamwizardry.wizardry.client.fx.GlitterFactory;
+import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
@@ -23,16 +34,9 @@ import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import com.teamwizardry.librarianlib.api.util.misc.Color;
-import com.teamwizardry.librarianlib.math.shapes.Arc3D;
-import com.teamwizardry.librarianlib.math.shapes.Circle3D;
-import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.item.IColorable;
-import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.ModuleList;
-import com.teamwizardry.wizardry.api.spell.IContinuousCast;
-import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
-import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Saad on 6/7/2016.
@@ -53,8 +57,8 @@ public class ItemGoldStaff extends Item implements IColorable {
 
     @Override
     public void onPlayerStoppedUsing(ItemStack stack, World world, EntityLivingBase entityLiving, int timeLeft) {
-    	if (stack == null || world == null || entityLiving == null) return;
-    	if (!stack.hasTagCompound()) return;
+        if (stack == null || world == null || entityLiving == null) return;
+        if (!stack.hasTagCompound()) return;
         NBTTagCompound compound = stack.getTagCompound();
         if (!compound.hasKey("Spell")) return;
         NBTTagCompound spell = compound.getCompoundTag("Spell");
@@ -106,9 +110,11 @@ public class ItemGoldStaff extends Item implements IColorable {
             Arc3D arc = new Arc3D(points, target, (float) 0.9, 20);
             if (betterCount < arc.getPoints().size()) {
                 Vec3d point = arc.getPoints().get(betterCount);
-                SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(player.worldObj, point.xCoord, point.yCoord, point.zCoord, 0.1F, 0.5F, 20, true);
-                fizz.setRandomizedSizes(true);
-                fizz.blur();
+                SparkleFX fizz = GlitterFactory.getInstance().createSparkle(player.worldObj, point, 10);
+                fizz.setFadeOut();
+                fizz.setAlpha(0.1f);
+                fizz.setScale(0.3f);
+                fizz.setBlurred();
             }
         }
     }
@@ -170,10 +176,7 @@ public class ItemGoldStaff extends Item implements IColorable {
 
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldS, ItemStack newS, boolean slotChanged) {
-    	if (oldS == null || newS == null) return true;
-    	if (!ItemStack.areItemsEqual(oldS, newS)) return true;
-    	if (oldS.stackSize != newS.stackSize) return true;
-        return slotChanged;
+        return !ItemStack.areItemsEqual(oldS, newS) || oldS.stackSize != newS.stackSize || slotChanged;
     }
 
     @Override
@@ -183,30 +186,28 @@ public class ItemGoldStaff extends Item implements IColorable {
         int b = stack.getTagCompound().getInteger("blue");
         return new Color(r, g, b);
     }
-    
+
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced)
-    {
-    	if (!stack.hasTagCompound()) return;
-    	NBTTagCompound compound = stack.getTagCompound();
-    	if (!compound.hasKey("Spell")) return;
-    	tooltip.add("Spell:");
-    	addInformation(compound.getCompoundTag("Spell"), tooltip, 0);
+    public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
+        if (!stack.hasTagCompound()) return;
+        NBTTagCompound compound = stack.getTagCompound();
+        if (!compound.hasKey("Spell")) return;
+        tooltip.add("Spell:");
+        addInformation(compound.getCompoundTag("Spell"), tooltip, 0);
     }
-    
-    private void addInformation(NBTTagCompound compound, List<String> tooltip, int level)
-    {
-    	if (!compound.hasKey(Module.CLASS)) return;
-    	String cls = compound.getString(Module.CLASS);
-    	cls = cls.substring(cls.lastIndexOf('.') + 1);
-    	for (int i = 0; i < level; i++)
-    		cls = ' ' + cls;
-    	tooltip.add(cls);
-    	if (!compound.hasKey(Module.MODULES)) return;
-    	NBTTagList children = compound.getTagList(Module.MODULES, NBT.TAG_COMPOUND);
-    	for (int i = 0; i < children.tagCount(); i++)
-    		addInformation(children.getCompoundTagAt(i), tooltip, level + 1);
+
+    private void addInformation(NBTTagCompound compound, List<String> tooltip, int level) {
+        if (!compound.hasKey(Module.CLASS)) return;
+        String cls = compound.getString(Module.CLASS);
+        cls = cls.substring(cls.lastIndexOf('.') + 1);
+        for (int i = 0; i < level; i++)
+            cls = ' ' + cls;
+        tooltip.add(cls);
+        if (!compound.hasKey(Module.MODULES)) return;
+        NBTTagList children = compound.getTagList(Module.MODULES, NBT.TAG_COMPOUND);
+        for (int i = 0; i < children.tagCount(); i++)
+            addInformation(children.getCompoundTagAt(i), tooltip, level + 1);
     }
 
     @SideOnly(Side.CLIENT)

@@ -8,7 +8,7 @@ import com.teamwizardry.wizardry.api.capability.WizardHandler;
 import com.teamwizardry.wizardry.api.module.ModuleList;
 import com.teamwizardry.wizardry.api.spell.SpellHandler;
 import com.teamwizardry.wizardry.api.trackerobject.SpellTracker;
-import com.teamwizardry.wizardry.client.core.SpellParticleHandler;
+import com.teamwizardry.wizardry.client.fx.GlitterFactory;
 import com.teamwizardry.wizardry.client.gui.GuiHandler;
 import com.teamwizardry.wizardry.common.achievement.AchievementEvents;
 import com.teamwizardry.wizardry.common.achievement.Achievements;
@@ -94,7 +94,6 @@ public class Wizardry {
 
         MinecraftForge.EVENT_BUS.register(new EventHandler());
         MinecraftForge.EVENT_BUS.register(new AchievementEvents());
-        MinecraftForge.EVENT_BUS.register(new SpellParticleHandler());
 
         proxy.loadModels();
 

@@ -35,19 +35,19 @@ public class CommonProxy {
 
     }
 
-    public SparkleFX spawnParticleSparkle(World world, double x, double y, double z, float alpha, float scale, int age, boolean fadeOut) {
+    public SparkleFX spawnParticleSparkle(World worldIn, Vec3d origin) {
         return null;
     }
 
-    public SparkleFX spawnParticleSparkle(World world, double x, double y, double z, float alpha, float scale, int age, double rangeX, double rangeY, double rangeZ, boolean fadeOut) {
+    public SparkleFX spawnParticleSparkle(World worldIn, Vec3d origin, Vec3d range) {
         return null;
     }
 
-    public SparkleTrailHelix spawnParticleSparkleTrailHelix(World worldIn, Vec3d origin, Vec3d center, double radius, double initialTheta, int age, boolean fade) {
+    public SparkleTrailHelix spawnParticleSparkleTrailHelix(World worldIn, Vec3d origin, Vec3d center, double radius, double initialTheta) {
         return null;
     }
 
-    public SparkleTrailHelix spawnParticleSparkleTrailHelix(World worldIn, Vec3d origin, Vec3d center, double radius, int age, boolean fade) {
+    public SparkleTrailHelix spawnParticleSparkleTrailHelix(World worldIn, Vec3d origin, Vec3d center, double radius) {
         return null;
     }
 
