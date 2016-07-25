@@ -56,16 +56,18 @@ public class CapeHandler {
 	}
 	
 	public void basePointsSet() {
+		double y = 1.4;
+		double p = 0.058;
 		basePoints = new Vec3d[] {
-				new Vec3d( 0.4, 1.5,  0),
-				new Vec3d( 0.325, 1.5,  -0.125),
-				new Vec3d( 0.25, 1.5, -0.25),
-				new Vec3d( 0.125,    1.5, -0.25),
-				new Vec3d( 0,    1.5, -0.25),
-				new Vec3d(-0.125,    1.5, -0.25),
-				new Vec3d(-0.25, 1.5, -0.25),
-				new Vec3d(-0.325, 1.5,  -0.125),
-				new Vec3d(-0.4, 1.5,  0)
+				new Vec3d( 8*p, y, -2*p),
+				new Vec3d( 6*p, y, -2*p),
+				new Vec3d( 4*p, y, -2*p),
+				new Vec3d( 2*p, y, -2*p),
+				new Vec3d( 0.0, y, -2*p),
+				new Vec3d(-2*p, y, -2*p),
+				new Vec3d(-4*p, y, -2*p),
+				new Vec3d(-6*p, y, -2*p),
+				new Vec3d(-8*p, y, -2*p),
 		};
 	}
 	
