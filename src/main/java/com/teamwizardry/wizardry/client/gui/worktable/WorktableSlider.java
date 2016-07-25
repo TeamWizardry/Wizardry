@@ -73,12 +73,12 @@ public class WorktableSlider {
     public void draw() {
         barTop.getTex().bind();
 
-        barTop.draw(left, top);
+        barTop.draw(1, left, top);
 
-        for (int i = 0; i < rows - 2; i++) barMid.draw(left, top + separation + i * separation);
+        for (int i = 0; i < rows - 2; i++) barMid.draw(1, left, top + separation + i * separation);
 
-        barBottom.draw(left, top + separation * (rows - 1));
+        barBottom.draw(1, left, top + separation * (rows - 1));
 
-        slider.draw(left + (barMid.width / 2) - (slider.height / 2), top + slide * separation);
+        slider.draw(1, left + (barMid.width / 2) - (slider.height / 2), top + slide * separation);
     }
 }

@@ -8,6 +8,7 @@ import com.teamwizardry.wizardry.api.spell.IContinuousCast;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.SpellEntity;
 import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
+import com.teamwizardry.wizardry.client.fx.GlitterFactory;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import com.teamwizardry.wizardry.client.fx.particle.trails.SparkleTrailHelix;
 import net.minecraft.entity.Entity;
@@ -86,18 +87,16 @@ public class ModuleBeam extends Module implements IContinuousCast {
             Vec3d origin = new Vec3d(x + 0.2 * Math.cos(theta), y, z + 0.2 * Math.sin(theta));
             Vec3d center = new Vec3d(x, y, z);
 
-            SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(caster.worldObj, center);
+            SparkleFX fizz = GlitterFactory.getInstance().createSparkle(caster.worldObj, center, 10);
             fizz.setScale(0.5f);
-            fizz.setAlpha(0.5f);
-            fizz.setMaxAge(10);
+            fizz.setAlpha(1f);
             fizz.setFadeOut();
             fizz.setShrink();
             fizz.setRandomSize();
             fizz.setBlurred();
 
             if (ThreadLocalRandom.current().nextInt(10) == 0) {
-                SparkleTrailHelix helix = Wizardry.proxy.spawnParticleSparkleTrailHelix(caster.worldObj, origin, center, 0.2, theta);
-                helix.setBlurred();
+                Wizardry.proxy.spawnParticleSparkleTrailHelix(caster.worldObj, origin, center, 0.2, theta).setFadeOut();
             }
         }
         // Beam particles

@@ -15,6 +15,7 @@ import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
 import io.netty.util.internal.ThreadLocalRandom;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -141,28 +142,27 @@ public class EventHandler {
 
                 for (int i = 0; i < 10 * Config.particlePercentage / 100; i++) {
                     SparkleFX fizz = GlitterFactory.getInstance().createSparkle(book.getWorld(), location, 100);
-                    fizz.setFadeIn();
+                    fizz.setFadeOut();
                     fizz.setAlpha(0.5f);
                     fizz.setScale(0.5f);
                     fizz.setColor(Color.WHITE);
                     fizz.setRandomlyShiftColor(-0.2f, 0.2f, true, false, false);
-                    fizz.addMotion(0, ThreadLocalRandom.current().nextDouble(-0.2, -0.05), 0);
                     fizz.setRandomDirection(0.05, 0, 0.05);
-                    fizz.setJitter(10, 0.01, 0, 0.01);
+                    fizz.setJitter(10, 0.05, 0, 0.05);
+                    fizz.addMotion(0, ThreadLocalRandom.current().nextDouble(-0.2, -0.1), 0);
                 }
                 if (book.getQueue() % 5 == 0)
                     book.getWorld().playSound(null, location.xCoord, location.yCoord, location.zCoord, ModSounds.FIZZING_LOOP, SoundCategory.BLOCKS, 0.7F, ThreadLocalRandom.current().nextFloat() * 0.4F + 0.8F);
                 book.setQueue(book.getQueue() + 1);
             } else {
-                for (int i = 0; i < 600 * Config.particlePercentage / 100; i++) {
-                    SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(book.getWorld(), new Vec3d(book.getX(), book.getY(), book.getZ()));
+                for (int i = 0; i < 600; i++) {
+                    SparkleFX fizz = GlitterFactory.getInstance().createSparkle(book.getWorld(), new Vec3d(book.getX(), book.getY() + 10, book.getZ()), 200);
                     fizz.setFadeOut();
-                    fizz.setMaxAge(200);
-                    fizz.setAlpha(1f);
+                    fizz.setAlpha(0.5f);
                     fizz.setScale(0.5f);
-                    fizz.setJitter(10, 0.01, 0, 0.01);
-                    fizz.setRandomDirection(0.25, 0.01, 0.25);
-                    fizz.setMotion(0, ThreadLocalRandom.current().nextDouble(-0.2, -0.05), 0);
+                    //fizz.setJitter(10, 0.05, 0, 0.05);
+                    fizz.setRandomDirection(0.3, 0, 0.3);
+                    fizz.addMotion(0, ThreadLocalRandom.current().nextDouble(-0.2, -0.1), 0);
                 }
 
                 EntityItem ei = new EntityItem(book.getWorld(), book.getX(), book.getY() + 10, book.getZ(), new ItemStack(ModItems.PHYSICS_BOOK));

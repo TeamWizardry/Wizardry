@@ -44,8 +44,8 @@ public class HudEventHandler extends Gui {
 
             GlStateManager.pushMatrix();
             GlStateManager.color(1F, 1F, 1F);
-            emptyManaBar.draw(right, top);
-            emptyBurnoutBar.draw(right, top + 6);
+            emptyManaBar.draw(1, right, top);
+            emptyBurnoutBar.draw(1, right, top + 6);
             GlStateManager.popMatrix();
 
             IWizardData.BarData data = WizardHandler.getEntityData(player);
@@ -55,13 +55,13 @@ public class HudEventHandler extends Gui {
             int visualManaLength = 0;
             if (data.manaAmount > 0)
                 visualManaLength = (data.manaAmount * 100 / data.manaMax) % 101;
-            fullManaBar.drawClipped(right, top, visualManaLength, 5);
+            fullManaBar.drawClipped(1, right, top, visualManaLength, 5);
 
             GlStateManager.color(1F, 1F, 1F);
             int visualBurnoutLength = 0;
             if (data.burnoutAmount > 0)
                 visualBurnoutLength = (data.burnoutAmount * 100 / data.burnoutMax) % 101;
-            fullBurnoutBar.drawClipped(right, top + 6, visualBurnoutLength, 5);
+            fullBurnoutBar.drawClipped(1, right, top + 6, visualBurnoutLength, 5);
             GlStateManager.popMatrix();
         }
     }

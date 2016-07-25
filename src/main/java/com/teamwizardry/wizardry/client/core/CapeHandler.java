@@ -92,7 +92,7 @@ public class CapeHandler {
 				if(boxes == null)
 					boxes = ImmutableList.of();
 				
-				e.getValue().tick(entity, boxes);
+				//e.getValue().tick(entity, boxes);
 			}
 		}
 		

@@ -437,7 +437,7 @@ public class WorktableGui extends GuiBase {
                         } else {
                             Sprite base = MODULE_DEFAULT_GLOW;
                             base.getTex().bind();
-                            base.draw(module.getX(), module.getY(), iconSize, iconSize);
+                            base.draw(1, module.getX(), module.getY(), iconSize, iconSize);
                         }
                     }
                 } else {
@@ -448,11 +448,11 @@ public class WorktableGui extends GuiBase {
                         } else {
                             Sprite base = MODULE_DEFAULT_GLOW;
                             base.getTex().bind();
-                            base.draw(module.getX(), module.getY(), iconSize, iconSize);
+                            base.draw(1, module.getX(), module.getY(), iconSize, iconSize);
 
                             Sprite icon = module.getModule().getStaticIcon();
                             icon.getTex().bind();
-                            icon.draw(module.getX(), module.getY(), iconSize, iconSize);
+                            icon.draw(1, module.getX(), module.getY(), iconSize, iconSize);
                         }
                     }
                 }
@@ -488,7 +488,7 @@ public class WorktableGui extends GuiBase {
                     } else {
                         Sprite moduleSprite = MODULE_DEFAULT;
                         moduleSprite.getTex().bind();
-                        moduleSprite.draw(module.getX(), module.getY(), iconSize, iconSize);
+                        moduleSprite.draw(1, module.getX(), module.getY(), iconSize, iconSize);
                     }
                 }
             }
@@ -501,7 +501,7 @@ public class WorktableGui extends GuiBase {
                 moduleBeingDragged.setY(mouseY - iconSize / 2);
                 Sprite draggingSprite = MODULE_DEFAULT;
                 draggingSprite.getTex().bind();
-                draggingSprite.draw(mouseX - iconSize / 2 - 2, mouseY - iconSize / 2 - 2, iconSize + 4, iconSize + 4);
+                draggingSprite.draw(1, mouseX - iconSize / 2 - 2, mouseY - iconSize / 2 - 2, iconSize + 4, iconSize + 4);
             }
             // RENDER MODULE BEING DRAGGED //
 
@@ -512,7 +512,7 @@ public class WorktableGui extends GuiBase {
                 GlStateManager.disableLighting();
                 Sprite highlight = MODULE_DEFAULT;
                 highlight.getTex().bind();
-                highlight.draw(moduleSelected.getX() - 2, moduleSelected.getY() - 2, iconSize + 4, iconSize + 4);
+                highlight.draw(1, moduleSelected.getX() - 2, moduleSelected.getY() - 2, iconSize + 4, iconSize + 4);
                 GlStateManager.enableLighting();
             }
             
@@ -522,7 +522,7 @@ public class WorktableGui extends GuiBase {
                 GlStateManager.disableLighting();
                 Sprite highlight = MODULE_DEFAULT;
                 highlight.getTex().bind();
-                highlight.draw(moduleBeingHovered.getX(), moduleBeingHovered.getY(), iconSize, iconSize);
+                highlight.draw(1, moduleBeingHovered.getX(), moduleBeingHovered.getY(), iconSize, iconSize);
                 GlStateManager.enableLighting();
 
                 // Render tooltip
