@@ -321,22 +321,22 @@ public class CapeHandler {
 		
 		for (int x = 0; x < c.masses.length-1; x++) {
             for (int y = 0; y < c.masses[x].length-1; y++) {
-            	float minU = (float)x/(float)(c.masses.length-1);
-            	float minV = (float)y/(float)(c.masses[x].length-1);
-            	float maxU = (float)(x+1)/(float)(c.masses.length-1);
-            	float maxV = (float)(y+1)/(float)(c.masses[x].length-1);
+            	float minU = (float)y/(float)(c.masses[x].length-1);
+            	float minV = (float)x/(float)(c.masses.length-1);
+            	float maxU = (float)(y+1)/(float)(c.masses[x].length-1);
+            	float maxV = (float)(x+1)/(float)(c.masses.length-1);
             	
             	PointMass3D mass = c.masses[x][y];
             	vecPos(vb, mass.origPos, mass.pos, partialTicks).tex(minU, minV).endVertex();
             	
             	mass = c.masses[x+1][y];
-            	vecPos(vb, mass.origPos, mass.pos, partialTicks).tex(maxU, minV).endVertex();
+            	vecPos(vb, mass.origPos, mass.pos, partialTicks).tex(minU, maxV).endVertex();
             	
             	mass = c.masses[x+1][y+1];
             	vecPos(vb, mass.origPos, mass.pos, partialTicks).tex(maxU, maxV).endVertex();
             	
             	mass = c.masses[x][y+1];
-            	vecPos(vb, mass.origPos, mass.pos, partialTicks).tex(minU, maxV).endVertex();
+            	vecPos(vb, mass.origPos, mass.pos, partialTicks).tex(maxU, minV).endVertex();
             }
 		}
 		tess.draw();
