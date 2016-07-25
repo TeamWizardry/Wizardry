@@ -305,12 +305,12 @@ public class CapeHandler {
 		GlStateManager.glLineWidth(1f);
 		GlStateManager.disableCull();
 		GlStateManager.enableBlend();
-		GlStateManager.color(1, 1, 1, 0.75f);
+		GlStateManager.color(1, 1, 1, 1f);
 		
 		vb.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
 		for (Link link : c.links) {
-			vecPos(vb, link.a.origPos, link.a.pos, partialTicks).endVertex();
-			vecPos(vb, link.b.origPos, link.b.pos, partialTicks).endVertex();
+//			vecPos(vb, link.a.origPos, link.a.pos, partialTicks).endVertex();
+//			vecPos(vb, link.b.origPos, link.b.pos, partialTicks).endVertex();
 		}
 		tess.draw();
 
@@ -340,65 +340,6 @@ public class CapeHandler {
             }
 		}
 		tess.draw();
-		
-//		GlStateManager.depthFunc(GL11.GL_ALWAYS);
-		GlStateManager.disableTexture2D();
-		GlStateManager.color(1, 0, 0, 1);
-		GlStateManager.translate(event.getEntity().posX, event.getEntity().posY, event.getEntity().posZ);
-		GlStateManager.rotate(event.getEntity().renderYawOffset, 0, -1, 0);
-		
-		AxisAlignedBB[] aabbs = new AxisAlignedBB[] {
-				new AxisAlignedBB(-0.23, 0, -0.12, 0.23, 1.4, 0.11),
-				new AxisAlignedBB(-0.125, 0.7, -0.12, 0.125, 1.4, 0.11).offset(0.355, 0, 0),
-				new AxisAlignedBB(-0.125, 0.7, -0.12, 0.125, 1.4, 0.11).offset(-0.355, 0, 0),
-				new AxisAlignedBB(-0.2, 0.5, -0.5, 0.2, 0.7, -0.7)
-		};
-		
-		vb.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
-		
-		for (AxisAlignedBB aabb : aabbs) {
-			vb.pos(aabb.minX, aabb.minY, aabb.minZ).endVertex(); // . . .
-			vb.pos(aabb.maxX, aabb.minY, aabb.minZ).endVertex(); // ^ . .
-			
-			vb.pos(aabb.maxX, aabb.minY, aabb.minZ).endVertex(); // ^ . .
-			vb.pos(aabb.maxX, aabb.minY, aabb.maxZ).endVertex(); // ^ . ^
-			
-			vb.pos(aabb.maxX, aabb.minY, aabb.maxZ).endVertex(); // ^ . ^
-			vb.pos(aabb.minX, aabb.minY, aabb.maxZ).endVertex(); // . . ^
-			
-			vb.pos(aabb.minX, aabb.minY, aabb.maxZ).endVertex(); // . . ^
-			vb.pos(aabb.minX, aabb.minY, aabb.minZ).endVertex(); // . . .
-			
-			vb.pos(aabb.minX, aabb.maxY, aabb.minZ).endVertex(); // . ^ .
-			vb.pos(aabb.maxX, aabb.maxY, aabb.minZ).endVertex(); // ^ ^ .
-			
-			vb.pos(aabb.maxX, aabb.maxY, aabb.minZ).endVertex(); // ^ ^ .
-			vb.pos(aabb.maxX, aabb.maxY, aabb.maxZ).endVertex(); // ^ ^ ^
-			
-			vb.pos(aabb.maxX, aabb.maxY, aabb.maxZ).endVertex(); // ^ ^ ^
-			vb.pos(aabb.minX, aabb.maxY, aabb.maxZ).endVertex(); // . ^ ^
-			
-			vb.pos(aabb.minX, aabb.maxY, aabb.maxZ).endVertex(); // . ^ ^
-			vb.pos(aabb.minX, aabb.maxY, aabb.minZ).endVertex(); // . ^ .
-			
-			vb.pos(aabb.minX, aabb.minY, aabb.minZ).endVertex(); // . . .
-			vb.pos(aabb.minX, aabb.maxY, aabb.minZ).endVertex(); // . ^ .
-			
-			vb.pos(aabb.maxX, aabb.minY, aabb.minZ).endVertex(); // ^ . .
-			vb.pos(aabb.maxX, aabb.maxY, aabb.minZ).endVertex(); // ^ ^ .
-			
-			vb.pos(aabb.minX, aabb.minY, aabb.maxZ).endVertex(); // . . ^
-			vb.pos(aabb.minX, aabb.maxY, aabb.maxZ).endVertex(); // . ^ ^
-
-			vb.pos(aabb.maxX, aabb.minY, aabb.maxZ).endVertex(); // ^ . ^
-			vb.pos(aabb.maxX, aabb.maxY, aabb.maxZ).endVertex(); // ^ ^ ^
-			
-		}
-		
-		tess.draw();
-		
-//		GlStateManager.depthFunc(GL11.GL_LEQUAL);
-		
 		
 		GlStateManager.popMatrix();
 		GlStateManager.popAttrib();
