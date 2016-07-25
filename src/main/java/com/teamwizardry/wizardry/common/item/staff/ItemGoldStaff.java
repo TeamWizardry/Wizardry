@@ -9,6 +9,7 @@ import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.ModuleList;
 import com.teamwizardry.wizardry.api.spell.IContinuousCast;
 import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
+import com.teamwizardry.wizardry.client.fx.GlitterFactory;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -107,14 +108,11 @@ public class ItemGoldStaff extends Item implements IColorable {
             Arc3D arc = new Arc3D(points, target, (float) 0.9, 20);
             if (betterCount < arc.getPoints().size()) {
                 Vec3d point = arc.getPoints().get(betterCount);
-                SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(player.worldObj, point);
+                SparkleFX fizz = GlitterFactory.getInstance().createSparkle(player.worldObj, point, 20);
                 fizz.setFadeOut();
-                fizz.setShrink();
-                fizz.setMaxAge(20);
-                fizz.setChanceOfDecay(4);
                 fizz.setAlpha(0.1f);
                 fizz.setScale(0.5f);
-                fizz.setRandomSize(0.3);
+                fizz.setRandomSize();
                 fizz.setBlurred();
             }
         }

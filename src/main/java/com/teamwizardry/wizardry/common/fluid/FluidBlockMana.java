@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.common.fluid;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.IExplodable;
 import com.teamwizardry.wizardry.api.trackerobject.BookTrackerObject;
+import com.teamwizardry.wizardry.client.fx.GlitterFactory;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import com.teamwizardry.wizardry.common.achievement.Achievements;
 import com.teamwizardry.wizardry.init.ModSounds;
@@ -48,29 +49,26 @@ public class FluidBlockMana extends BlockFluidClassic {
     @Override
     public void updateTick(World world, BlockPos pos, IBlockState state, Random rand) {
         super.updateTick(world, pos, state, rand);
-        SparkleFX ambient = Wizardry.proxy.spawnParticleSparkle(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()));
-        ambient.setShrink();
-        ambient.setMaxAge(30);
+        SparkleFX ambient =  GlitterFactory.getInstance().createSparkle(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), 30);
         ambient.setAlpha(0.5f);
+        ambient.setScale(0.5f);
         ambient.setFadeIn();
         ambient.setFadeOut();
-        ambient.setScale(0.5f);
+        ambient.setShrink();
         ambient.setJitter(5, 0.2, 0, 0.2);
-        ambient.setMotion(0, 0.1, 0);
+        ambient.addMotion(0, 0.1, 0);
     }
 
     @Override
     public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
         if (!worldIn.isRemote) {
 
-            SparkleFX ambient = Wizardry.proxy.spawnParticleSparkle(worldIn, entityIn.getPositionVector());
-            ambient.setMaxAge(30);
+            SparkleFX ambient = GlitterFactory.getInstance().createSparkle(worldIn, entityIn.getPositionVector(), new Vec3d(0.5, 0.3, 0.5), 30);
             ambient.setAlpha(0.5f);
+            ambient.setScale(0.5f);
             ambient.setFadeIn();
             ambient.setFadeOut();
             ambient.setShrink();
-            ambient.setGrow();
-            ambient.setScale(0.5f);
             ambient.setRandomDirection(0.1, 0.1, 0.1);
             ambient.addMotion(0, 0.05, 0);
 
@@ -81,8 +79,7 @@ public class FluidBlockMana extends BlockFluidClassic {
                 if (stack.getItem() instanceof IExplodable) {
 
                     for (int i = 0; i < 10; i++) {
-                        SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(worldIn, entityIn.getPositionVector().add(new Vec3d(0, 0.5, 0)));
-                        fizz.setMaxAge(30);
+                        SparkleFX fizz = GlitterFactory.getInstance().createSparkle(worldIn, entityIn.getPositionVector().add(new Vec3d(0, 0.5, 0)), 30);
                         fizz.setScale(0.5f);
                         fizz.setAlpha(0.5f);
                         fizz.setShrink();

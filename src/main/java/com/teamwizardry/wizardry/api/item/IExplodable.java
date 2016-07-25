@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.api.item;
 
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.client.fx.GlitterFactory;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -37,14 +38,9 @@ public interface IExplodable {
             e.addPotionEffect(new PotionEffect(Potion.getPotionById(potions.get(rand.nextInt(potions.size()))), rand.nextInt(30) * 20, rand.nextInt(2) + 1));
 
         for (int i = 0; i < 300; i++) {
-            SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(entityIn.worldObj, entityIn.getPositionVector());
-            fizz.setAlpha(1f);
-            fizz.setScale(1f);
-            fizz.setFadeIn();
+            SparkleFX fizz = GlitterFactory.getInstance().createSparkle(entityIn.worldObj, entityIn.getPositionVector(), 30);
             fizz.setShrink();
-            fizz.setMaxAge(30);
-            fizz.setRandomDirection(0.3, 0.3, 0.3);
-            //fizz.setRandomSize(1);
+            fizz.setRandomDirection(0.4, 0.4, 0.4);
         }
     }
 }

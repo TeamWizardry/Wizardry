@@ -64,7 +64,6 @@ public class ProjectileEntity extends SpellEntity {
             helix.setGrow();
             helix.setShrink();
             helix.setMaxAge(50);
-            helix.setChanceOfDecay(4);
             helix.setAlpha(1f);
             helix.setScale(0.5f);
             //helix.addContinuousMotion(new Vec3d(-motionX * 10, -motionY * 10, -motionZ * 10));
@@ -75,7 +74,6 @@ public class ProjectileEntity extends SpellEntity {
             fizz.setGrow();
             fizz.setShrink();
             fizz.setMaxAge(50);
-            fizz.setChanceOfDecay(4);
             fizz.setAlpha(1f);
             fizz.setScale(0.5f);
             fizz.setRandomDirection(0.1, 0.1, 0.1);

@@ -9,8 +9,7 @@
 			"modifier":[72, 0, 24, 24],
 			"shape":[96, 0, 24, 24],
 			
-			"ModuleProjectile":[0, 32, 16, 16],
-			"ModuleBeam":[16,32,16,16]
+			"ModuleProjectile":[0, 32, 16, 16]
 		}
 	}
 }

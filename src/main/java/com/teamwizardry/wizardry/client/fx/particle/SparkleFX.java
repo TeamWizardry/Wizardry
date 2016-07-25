@@ -39,11 +39,6 @@ public class SparkleFX extends Particle {
     private int jitterChance = -1;
 
     /**
-     * The chance for a particle's life to decrease per tick.
-     */
-    private int decayChance = -1;
-
-    /**
      * Used to control shrink & grow. Ignore this.
      */
     private float defaultScale = 1f;
@@ -64,6 +59,13 @@ public class SparkleFX extends Particle {
      * and if it should end with scale from 1 to 0.
      */
     private boolean shrink = false, grow = false;
+
+    /**
+     * Internal booleans that will handle the randomization of the scale, age,
+     * direction, and transparency
+     * if and ONLY if any of them was not specified.
+     */
+    private boolean SETScale = false, SETAge = false, SETAlpha = false, SETDirection = false;
 
     public SparkleFX(World worldIn, Vec3d origin) {
         super(worldIn, origin.xCoord, origin.yCoord, origin.zCoord);
@@ -94,6 +96,7 @@ public class SparkleFX extends Particle {
         if (x > 0) motionX = ThreadLocalRandom.current().nextDouble(-x, x);
         if (y > 0) motionY = ThreadLocalRandom.current().nextDouble(-y, y);
         if (z > 0) motionZ = ThreadLocalRandom.current().nextDouble(-z, z);
+        SETDirection = true;
     }
 
     /**
@@ -107,6 +110,7 @@ public class SparkleFX extends Particle {
         motionX = x;
         motionY = y;
         motionZ = z;
+        SETDirection = true;
     }
 
     /**
@@ -120,6 +124,7 @@ public class SparkleFX extends Particle {
         motionX += x;
         motionY += y;
         motionZ += z;
+        SETDirection = true;
     }
 
     /**
@@ -139,6 +144,7 @@ public class SparkleFX extends Particle {
         if (y >= 0.0) jitY = y;
         if (z >= 0.0) jitZ = z;
         jitter = new Vec3d(jitX, jitY, jitZ);
+        SETDirection = true;
     }
 
     /**
@@ -174,28 +180,29 @@ public class SparkleFX extends Particle {
     /**
      * Will set the particle to a color that's similar or close to the default current color set.
      *
-     * @param range Will set the maximum/minimum color range to shift to.
+     * @param minRange Will set the minimum color range to add to the color.
+     * @param maxRange Will set the maximum color range to add to the color.
      * @param r     Will shift the color slightly on the red range.
      * @param g     Will shift the color slightly on the green range.
      * @param b     Will shift the color slightly on the blue range.
      */
-    public void setRandomlyShiftColor(double range, boolean r, boolean g, boolean b) {
-        if (range <= 0) range = 0.2;
+    public void setRandomlyShiftColor(double minRange, double maxRange, boolean r, boolean g, boolean b) {
+        if (minRange >= maxRange) return;
         if (r && ThreadLocalRandom.current().nextBoolean()) {
-            double rand = ThreadLocalRandom.current().nextDouble(-range, range);
+            double rand = ThreadLocalRandom.current().nextDouble(minRange, maxRange);
             if (particleRed + rand > 1) particleRed = 1;
             else if (particleRed + rand < 0) particleRed = 0;
             else particleRed += rand;
         }
 
         if (g && ThreadLocalRandom.current().nextBoolean()) {
-            double rand = ThreadLocalRandom.current().nextDouble(-range, range);
+            double rand = ThreadLocalRandom.current().nextDouble(minRange, maxRange);
             if (particleGreen + rand > 1) particleGreen = 1;
             else if (particleGreen + rand < 0) particleGreen = 0;
             else particleGreen += rand;
         }
         if (b && ThreadLocalRandom.current().nextBoolean()) {
-            double rand = ThreadLocalRandom.current().nextDouble(-range, range);
+            double rand = ThreadLocalRandom.current().nextDouble(minRange, maxRange);
             if (particleBlue + rand > 1) particleBlue = 1;
             else if (particleBlue + rand < 0) particleBlue = 0;
             else particleBlue += rand;
@@ -234,12 +241,13 @@ public class SparkleFX extends Particle {
 
     /**
      * Will randomize the size of the particle.
-     *
-     * @param range The minimum or maximum possible scale to use when randomly choosing the particle's size.
      */
-    public void setRandomSize(double range) {
-        if (range <= 0) range = 1;
-        this.defaultScale = 1 + (float) ThreadLocalRandom.current().nextDouble(-range, range);
+    public void setRandomSize() {
+        float rand = (float) ThreadLocalRandom.current().nextDouble(0.1, 1);
+        this.defaultScale = rand;
+        if (!grow) particleScale = rand;
+        else particleScale = 0;
+        SETScale = true;
     }
 
     /**
@@ -250,6 +258,7 @@ public class SparkleFX extends Particle {
     public void setAlpha(float alpha) {
         particleAlpha = alpha;
         defaultAlpha = alpha;
+        SETAlpha = true;
     }
 
     /**
@@ -260,6 +269,7 @@ public class SparkleFX extends Particle {
     public void setScale(float scale) {
         particleScale = scale;
         defaultScale = scale;
+        SETScale = true;
     }
 
     /**
@@ -271,18 +281,7 @@ public class SparkleFX extends Particle {
     public void setRandomizedAge(int minAge, int maxAge) {
         if (minAge > 0 && maxAge > minAge) particleMaxAge = ThreadLocalRandom.current().nextInt(minAge, maxAge);
         else particleMaxAge = 50;
-    }
-
-    /**
-     * This is an alternative to setRandomizedAge.
-     * This method will set a chance that will determine if the particle should decay in
-     * age every tick.
-     *
-     * @param decayChance The chance for a particle's life to decrease per tick.
-     */
-    public void setChanceOfDecay(int decayChance) {
-        if (decayChance < 0) decayChance = 4;
-        this.decayChance = decayChance;
+        SETAge = true;
     }
 
     @Override
@@ -298,6 +297,27 @@ public class SparkleFX extends Particle {
     @Override
     public void onUpdate() {
         super.onUpdate();
+
+        // CHECK //
+        if (!SETAge) {
+            particleMaxAge = ThreadLocalRandom.current().nextInt(20, 50);
+            SETAge = true;
+        }
+        if (!SETAlpha) {
+            if (fadeIn) particleAlpha = 0.0f;
+            else particleAlpha = 0.5f;
+            SETAlpha = true;
+        }
+        if (!SETScale) {
+            if (grow) particleScale = 0.0f;
+            else particleScale = this.rand.nextFloat();
+            SETScale = true;
+        }
+        if (!SETDirection) {
+            setMotion(0, 0, 0);
+            SETDirection = true;
+        }
+        // CHECK //
 
         float lifeCoeff = ((float) this.particleMaxAge - (float) this.particleAge) / (float) this.particleMaxAge;
 
@@ -321,10 +341,10 @@ public class SparkleFX extends Particle {
         if (particleAge < particleMaxAge / 2) {
             if (grow && particleScale < defaultScale) particleScale += 0.05;
             if (fadeIn && particleAlpha < defaultAlpha) particleAlpha += 0.05;
-        } else {
-            if (shrink && particleScale > 0) particleScale = lifeCoeff / 2;
-            if (fadeOut && particleScale > 0) particleAlpha = lifeCoeff / 2;
         }
+
+        if (shrink && particleScale > 0) particleScale = lifeCoeff / 2;
+        if (fadeOut && particleAlpha > 0 && lifeCoeff / 2 < defaultAlpha) particleAlpha = lifeCoeff / 2;
     }
 
     public double getX() {

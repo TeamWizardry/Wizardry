@@ -155,7 +155,6 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
             ambient.setAlpha(0.5f);
             ambient.setScale(0.5f);
             ambient.setMaxAge(100);
-            ambient.setChanceOfDecay(4);
             ambient.setFadeOut();
             ambient.setShrink();
             ambient.setFadeIn();

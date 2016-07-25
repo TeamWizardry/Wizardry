@@ -74,7 +74,7 @@ public class ModuleZone extends Module {
 			fizz.setGrow();
 			fizz.setFadeOut();
 			fizz.setFadeIn();
-            fizz.setRandomSize(0.3f);
+            fizz.setRandomSize();
         }
 
 		if (!(caster instanceof SpellEntity))

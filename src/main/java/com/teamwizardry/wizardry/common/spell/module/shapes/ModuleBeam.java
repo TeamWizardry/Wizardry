@@ -92,7 +92,7 @@ public class ModuleBeam extends Module implements IContinuousCast {
             fizz.setMaxAge(10);
             fizz.setFadeOut();
             fizz.setShrink();
-            fizz.setRandomSize(0.3f);
+            fizz.setRandomSize();
             fizz.setBlurred();
 
             if (ThreadLocalRandom.current().nextInt(10) == 0) {

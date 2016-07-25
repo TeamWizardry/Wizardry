@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.client.gui.worktable;
 
-import com.teamwizardry.librarianlib.api.gui.GuiTickHandler;
 import com.teamwizardry.librarianlib.client.Sprite;
 import com.teamwizardry.librarianlib.client.Texture;
 import com.teamwizardry.wizardry.Wizardry;
@@ -74,12 +73,12 @@ public class WorktableSlider {
     public void draw() {
         barTop.getTex().bind();
 
-        barTop.draw(GuiTickHandler.ticks, left, top);
+        barTop.draw(left, top);
 
-        for (int i = 0; i < rows - 2; i++) barMid.draw(GuiTickHandler.ticks, left, top + separation + i * separation);
+        for (int i = 0; i < rows - 2; i++) barMid.draw(left, top + separation + i * separation);
 
-        barBottom.draw(GuiTickHandler.ticks, left, top + separation * (rows - 1));
+        barBottom.draw(left, top + separation * (rows - 1));
 
-        slider.draw(GuiTickHandler.ticks, left + (barMid.width / 2) - (slider.height / 2), top + slide * separation);
+        slider.draw(left + (barMid.width / 2) - (slider.height / 2), top + slide * separation);
     }
 }

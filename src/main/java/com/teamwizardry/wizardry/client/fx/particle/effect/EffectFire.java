@@ -26,7 +26,6 @@ public class EffectFire implements IEffect {
 
             SparkleFX center = Wizardry.proxy.spawnParticleSparkle(world, pos);
             center.setMaxAge(10);
-            center.setChanceOfDecay(4);
             center.setScale(2);
             center.setAlpha(1);
             center.setFadeIn();
@@ -40,7 +39,6 @@ public class EffectFire implements IEffect {
             rim.setMaxAge(20);
             center.setScale(1);
             rim.setAlpha(0.5f);
-            rim.setChanceOfDecay(4);
             rim.setColor(Color.RED);
             rim.setFadeOut();
             rim.setFadeIn();
@@ -50,7 +48,6 @@ public class EffectFire implements IEffect {
 
             SparkleFX outerRim = Wizardry.proxy.spawnParticleSparkle(world, pos, new Vec3d(0.3, 0.3, 0.3));
             outerRim.setColor(orange);
-            outerRim.setChanceOfDecay(4);
             center.setScale(0.5f);
             outerRim.setAlpha(0.5f);
             outerRim.setFadeOut();
@@ -62,7 +59,6 @@ public class EffectFire implements IEffect {
             SparkleFX outestRim = Wizardry.proxy.spawnParticleSparkle(world, pos, new Vec3d(0.4, 0.4, 0.4));
             outestRim.setColor(gray);
             center.setScale(1f);
-            outerRim.setChanceOfDecay(4);
             outerRim.setAlpha(0.5f);
             outestRim.setLerp(Color.BLACK);
             outestRim.setBlurred();
