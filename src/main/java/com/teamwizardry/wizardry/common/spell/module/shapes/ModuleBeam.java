@@ -65,7 +65,7 @@ public class ModuleBeam extends Module implements IContinuousCast {
         NBTTagList modules = spell.getTagList(MODULES, NBT.TAG_COMPOUND);
 
         // Beam particles
-        double slopeX = 0, slopeY = 0, slopeZ = 0;
+        double slopeX, slopeY, slopeZ;
         Vec3d cross = caster.getLook(1).crossProduct(new Vec3d(0, caster.getEyeHeight(), 0)).normalize().scale(caster.width / 2);
         slopeX = (raycast.hitVec.xCoord - (caster.posX + cross.xCoord)) / distance;
         slopeY = (raycast.hitVec.yCoord - (caster.posY + caster.getEyeHeight() + cross.yCoord)) / distance;
@@ -85,11 +85,12 @@ public class ModuleBeam extends Module implements IContinuousCast {
             fizz.setAlpha(1f);
             fizz.setFadeOut();
             fizz.setShrink();
-            fizz.setRandomlyBlurred();
             fizz.setBlurred();
 
             if (ThreadLocalRandom.current().nextInt(10) == 0) {
-                Wizardry.proxy.spawnParticleSparkleTrailHelix(caster.worldObj, origin, center, 0.2, theta).setFadeOut();
+                SparkleTrailHelix helix = Wizardry.proxy.spawnParticleSparkleTrailHelix(caster.worldObj, origin, center, 0.2, theta);
+                helix.setFadeOut();
+                helix.setRandomlyBlurred();
             }
         }
         // Beam particles

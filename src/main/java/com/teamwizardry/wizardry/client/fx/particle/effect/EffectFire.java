@@ -28,7 +28,7 @@ public class EffectFire implements IEffect {
             Color orangeRed = Color.rgb(0xFF4500);
             Color gray = Color.rgb(0x696969);
 
-            SparkleFX center = GlitterFactory.getInstance().createSparkle(world, pos, new Vec3d(0.01, 0.01, 0.01), 5 + power / 10);
+            SparkleFX center = GlitterFactory.getInstance().createSparkle(world, pos, new Vec3d(0.01, 0.01, 0.01), 5 + power / 30);
             center.setColor(Color.WHITE);
             center.setScale(1.5f + power / 1000);
             center.setAlpha(0.2f + power / 1000);
@@ -37,7 +37,7 @@ public class EffectFire implements IEffect {
             center.setRandomlyBlurred();
             center.setRandomDirection(0.01 + power / 1000, 0.03 + power / 1000, 0.01 + power / 1000);
 
-            SparkleFX rim = GlitterFactory.getInstance().createSparkle(world, pos, new Vec3d(0.1, 0.1, 0.1), 13 + power / 10);
+            SparkleFX rim = GlitterFactory.getInstance().createSparkle(world, pos, new Vec3d(0.1, 0.1, 0.1), 13 + power / 30);
             rim.setColor(Color.RED);
             rim.setScale(1f + power / 1000);
             rim.setAlpha(0.5f + power / 1000);
@@ -46,7 +46,7 @@ public class EffectFire implements IEffect {
             rim.setRandomlyBlurred();
             rim.setRandomDirection(0.1 + power / 1000, 0.3 + power / 1000, 0.1 + power / 1000);
 
-            SparkleFX outerRim = GlitterFactory.getInstance().createSparkle(world, pos, new Vec3d(0.3, 0.3, 0.3), 10 + power / 10);
+            SparkleFX outerRim = GlitterFactory.getInstance().createSparkle(world, pos, new Vec3d(0.3, 0.3, 0.3), 10 + power / 30);
             outerRim.setColor(orange);
             outerRim.setScale(1f + power / 1000);
             outerRim.setAlpha(0.5f + power / 1000);
@@ -55,7 +55,7 @@ public class EffectFire implements IEffect {
             outerRim.setRandomlyBlurred();
             outerRim.setRandomDirection(0.15 + power / 1000, 0.2 + power / 1000, 0.15 + power / 1000);
 
-            SparkleFX outestRim = GlitterFactory.getInstance().createSparkle(world, pos, new Vec3d(0.4, 0.4, 0.4), 10 + power / 10);
+            SparkleFX outestRim = GlitterFactory.getInstance().createSparkle(world, pos, new Vec3d(0.4, 0.4, 0.4), 10 + power / 30);
             outestRim.setColor(gray);
             outestRim.setScale(1.5f + power / 1000);
             outestRim.setAlpha(0.2f + power / 1000);
@@ -64,7 +64,7 @@ public class EffectFire implements IEffect {
             outestRim.setFadeOut();
             outestRim.setFadeIn();
             outestRim.setRandomDirection(0.2 + power / 1000, 0.3 + power / 1000, 0.2 + power / 1000);
-            outestRim.setJitter(10, 0.2 + power / 1000, 0.3 + power / 1000, 0.2 + power / 1000);
+            outestRim.setJitter(20, 0.2 + power / 1000, 0.3 + power / 1000, 0.2 + power / 1000);
         }
     }
 }
