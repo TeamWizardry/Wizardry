@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.client.fx.particle.effect;
 import com.teamwizardry.librarianlib.api.util.misc.Color;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.fx.IEffect;
+import com.teamwizardry.wizardry.client.fx.GlitterFactory;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -12,62 +13,58 @@ import net.minecraft.world.World;
  */
 public class EffectFire implements IEffect {
 
-    public EffectFire() {
+    private int power;
 
+    public EffectFire(int power) {
+        if (power > 500) power = 500;
+        this.power = power;
     }
 
     @Override
     public void spawn(World world, Vec3d pos) {
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 5 + power / 100; i++) {
             Color yellow = Color.rgb(0xFFFF00);
             Color orange = Color.rgb(0xFF8C00);
             Color orangeRed = Color.rgb(0xFF4500);
             Color gray = Color.rgb(0x696969);
 
-            SparkleFX center = Wizardry.proxy.spawnParticleSparkle(world, pos);
-            center.setMaxAge(10);
-            center.setScale(2);
-            center.setAlpha(1);
-            center.setFadeIn();
-            center.setFadeOut();
-            center.setGrow();
-            center.setShrink();
+            SparkleFX center = GlitterFactory.getInstance().createSparkle(world, pos, new Vec3d(0.01, 0.01, 0.01), 5 + power / 10);
             center.setColor(Color.WHITE);
-            center.setRandomDirection(0.01, 0.05, 0.01);
+            center.setScale(1.5f + power / 1000);
+            center.setAlpha(0.2f + power / 1000);
+            center.setFadeOut();
+            center.setFadeIn();
+            center.setRandomlyBlurred();
+            center.setRandomDirection(0.01 + power / 1000, 0.03 + power / 1000, 0.01 + power / 1000);
 
-            SparkleFX rim = Wizardry.proxy.spawnParticleSparkle(world, pos);
-            rim.setMaxAge(20);
-            center.setScale(1);
-            rim.setAlpha(0.5f);
+            SparkleFX rim = GlitterFactory.getInstance().createSparkle(world, pos, new Vec3d(0.1, 0.1, 0.1), 13 + power / 10);
             rim.setColor(Color.RED);
+            rim.setScale(1f + power / 1000);
+            rim.setAlpha(0.5f + power / 1000);
             rim.setFadeOut();
             rim.setFadeIn();
-            rim.setGrow();
-            rim.setShrink();
-            rim.setRandomDirection(0.03, 0.05, 0.03);
+            rim.setRandomlyBlurred();
+            rim.setRandomDirection(0.1 + power / 1000, 0.3 + power / 1000, 0.1 + power / 1000);
 
-            SparkleFX outerRim = Wizardry.proxy.spawnParticleSparkle(world, pos, new Vec3d(0.3, 0.3, 0.3));
+            SparkleFX outerRim = GlitterFactory.getInstance().createSparkle(world, pos, new Vec3d(0.3, 0.3, 0.3), 10 + power / 10);
             outerRim.setColor(orange);
-            center.setScale(0.5f);
-            outerRim.setAlpha(0.5f);
+            outerRim.setScale(1f + power / 1000);
+            outerRim.setAlpha(0.5f + power / 1000);
             outerRim.setFadeOut();
             outerRim.setFadeIn();
-            outerRim.setGrow();
-            outerRim.setShrink();
-            outerRim.setRandomDirection(0.05, 0.05, 0.05);
+            outerRim.setRandomlyBlurred();
+            outerRim.setRandomDirection(0.15 + power / 1000, 0.2 + power / 1000, 0.15 + power / 1000);
 
-            SparkleFX outestRim = Wizardry.proxy.spawnParticleSparkle(world, pos, new Vec3d(0.4, 0.4, 0.4));
+            SparkleFX outestRim = GlitterFactory.getInstance().createSparkle(world, pos, new Vec3d(0.4, 0.4, 0.4), 10 + power / 10);
             outestRim.setColor(gray);
-            center.setScale(1f);
-            outerRim.setAlpha(0.5f);
+            outestRim.setScale(1.5f + power / 1000);
+            outestRim.setAlpha(0.2f + power / 1000);
             outestRim.setLerp(Color.BLACK);
-            outestRim.setBlurred();
-            outerRim.setFadeOut();
-            outerRim.setFadeIn();
-            outestRim.setGrow();
-            outestRim.setShrink();
-            outestRim.setRandomDirection(0.05, 0.15, 0.05);
-            outestRim.setJitter(10, 0.01, 0.01, 0.01);
+            outestRim.setRandomlyBlurred();
+            outestRim.setFadeOut();
+            outestRim.setFadeIn();
+            outestRim.setRandomDirection(0.2 + power / 1000, 0.3 + power / 1000, 0.2 + power / 1000);
+            outestRim.setJitter(10, 0.2 + power / 1000, 0.3 + power / 1000, 0.2 + power / 1000);
         }
     }
 }

@@ -173,13 +173,24 @@ public class SparkleFX extends Particle {
     }
 
     /**
+     * Will randomly choose to blur the particle
+     */
+    public void setRandomlyBlurred() {
+        if (ThreadLocalRandom.current().nextBoolean()) {
+            TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(texture_blurred.toString());
+            this.setParticleTexture(sprite);
+        }
+    }
+
+
+    /**
      * Will set the particle to a color that's similar or close to the default current color set.
      *
      * @param minRange Will set the minimum color range to add to the color.
      * @param maxRange Will set the maximum color range to add to the color.
-     * @param r     Will shift the color slightly on the red range.
-     * @param g     Will shift the color slightly on the green range.
-     * @param b     Will shift the color slightly on the blue range.
+     * @param r        Will shift the color slightly on the red range.
+     * @param g        Will shift the color slightly on the green range.
+     * @param b        Will shift the color slightly on the blue range.
      */
     public void setRandomlyShiftColor(double minRange, double maxRange, boolean r, boolean g, boolean b) {
         if (minRange >= maxRange) return;
@@ -344,10 +355,8 @@ public class SparkleFX extends Particle {
         }
 
         // TODO: Make better math here
-        if (particleAge < particleMaxAge / 2) {
-            if (grow && particleScale < defaultScale) particleScale += 0.05;
-            if (fadeIn && particleAlpha < defaultAlpha) particleAlpha += 0.05;
-        }
+        if (grow && particleScale < defaultScale) particleScale += 0.05;
+        if (fadeIn && particleAlpha < defaultAlpha) particleAlpha += 0.05;
 
         if (shrink && particleScale > 0 && lifeCoeff / 2 < defaultScale) particleScale = lifeCoeff / 2;
         if (fadeOut && particleAlpha > 0 && lifeCoeff / 2 < defaultAlpha) particleAlpha = lifeCoeff / 2;

@@ -39,6 +39,8 @@ public interface IExplodable {
 
         for (int i = 0; i < 300; i++) {
             SparkleFX fizz = GlitterFactory.getInstance().createSparkle(entityIn.worldObj, entityIn.getPositionVector(), 30);
+            fizz.setAlpha(1f);
+            fizz.setScale(0.5f);
             fizz.setShrink();
             fizz.setRandomDirection(0.4, 0.4, 0.4);
         }

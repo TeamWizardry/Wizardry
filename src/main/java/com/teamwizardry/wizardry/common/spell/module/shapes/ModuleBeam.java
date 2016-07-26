@@ -85,7 +85,7 @@ public class ModuleBeam extends Module implements IContinuousCast {
             fizz.setAlpha(1f);
             fizz.setFadeOut();
             fizz.setShrink();
-            fizz.setRandomSize();
+            fizz.setRandomlyBlurred();
             fizz.setBlurred();
 
             if (ThreadLocalRandom.current().nextInt(10) == 0) {

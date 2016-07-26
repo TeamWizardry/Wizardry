@@ -16,6 +16,7 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 
 public class ModuleFlame extends Module {
     public ModuleFlame() {
@@ -90,7 +91,7 @@ public class ModuleFlame extends Module {
 			if (result != null)
 			{
 				Block smelted = Block.getBlockFromItem(result.getItem());
-				if (!caster.worldObj.isRemote && smelted != null)
+				if (!caster.worldObj.isRemote)
 				{
 					caster.worldObj.setBlockState(pos, smelted.getStateFromMeta(result.getMetadata()));
 					caster.worldObj.playEvent(2001, pos, Block.getStateId(smelted.getDefaultState()));
@@ -98,7 +99,7 @@ public class ModuleFlame extends Module {
 			}
 		}
 
-        new EffectFire().spawn(caster.worldObj, caster.getPositionVector());
+        new EffectFire(500).spawn(caster.worldObj, caster.getPositionVector().add(new Vec3d(0, 1, 0)));
 
         return true;
     }
