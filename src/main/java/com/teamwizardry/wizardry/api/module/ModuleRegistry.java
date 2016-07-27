@@ -15,6 +15,7 @@ public class ModuleRegistry {
     private final static ModuleRegistry INSTANCE = new ModuleRegistry();
     private int id = 0;
     private HashMap<ModuleType, LinkedHashMap<Integer, Module>> modules = Maps.newHashMap();
+
     private ModuleRegistry() {
         for (ModuleType type : ModuleType.values()) modules.putIfAbsent(type, new LinkedHashMap<>());
     }
@@ -32,7 +33,9 @@ public class ModuleRegistry {
     }
 
     public Pair<Integer, Module> registerModule(IModuleConstructor module, ItemStack stack) {
-        return new Pair<>(++id, module.construct(stack));
+        Module constructedModule = module.construct(stack);
+        modules.get(constructedModule.getType()).putIfAbsent(++id, constructedModule);
+        return new Pair<>(id, module.construct(stack));
     }
 
     public Module getModuleById(int id) {
