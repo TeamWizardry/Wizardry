@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.common.tile;
 import com.teamwizardry.librarianlib.client.multiblock.InWorldRender;
 import com.teamwizardry.librarianlib.client.multiblock.StructureMatchResult;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.item.IInfusible;
+import com.teamwizardry.wizardry.api.item.Infusable;
 import com.teamwizardry.wizardry.api.item.PearlType;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
@@ -132,9 +132,9 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
             List<EntityItem> items = worldObj.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos, pos.add(1, 2, 1)));
             for (EntityItem item : items) {
 
-                if (item.getEntityItem().getItem() instanceof IInfusible) {
+                if (item.getEntityItem().getItem() instanceof Infusable) {
                     if (!inventory.isEmpty()) {
-                        IInfusible pearl = (IInfusible) item.getEntityItem().getItem();
+                        Infusable pearl = (Infusable) item.getEntityItem().getItem();
                         if (pearl.getType(item.getEntityItem()) == PearlType.MUNDANE) {
                             this.pearl = new CraftingPlateItemStackHelper(item.getEntityItem());
                             this.pearl.setPoint(new Vec3d(0.5, 1, 0.5));
@@ -236,7 +236,8 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
                     EntityItem pearlItem = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() + pearl.getPoint().yCoord, pos.getZ() + 0.5, pearl.getItemStack());
                     pearlItem.setVelocity(0, 0.8, 0);
                     pearlItem.forceSpawn = true;
-                    worldObj.spawnEntityInWorld(pearlItem);
+                    if(!worldObj.isRemote)
+                        worldObj.spawnEntityInWorld(pearlItem);
 
                     for (int i = 0; i < 100 * Wizardry.proxy.getParticleDensity() / 100; i++) {
                         SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(worldObj, new Vec3d(pos.getX() + 0.5, pos.getY() + pearl.getPoint().yCoord, pos.getZ() + 0.5));

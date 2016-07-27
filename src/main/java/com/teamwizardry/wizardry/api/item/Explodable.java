@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.api.item;
 
-import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.client.fx.GlitterFactory;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import net.minecraft.entity.Entity;
@@ -16,7 +15,7 @@ import java.util.Random;
 /**
  * Created by Saad on 6/30/2016.
  */
-public interface IExplodable {
+public interface Explodable {
 
     List<Integer> potions = new ArrayList<>();
 

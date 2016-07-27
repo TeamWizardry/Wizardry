@@ -2,9 +2,9 @@ package com.teamwizardry.wizardry.common.item.pearl;
 
 import com.teamwizardry.librarianlib.api.util.misc.Color;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.item.IColorable;
-import com.teamwizardry.wizardry.api.item.IExplodable;
-import com.teamwizardry.wizardry.api.item.IInfusible;
+import com.teamwizardry.wizardry.api.item.Colorable;
+import com.teamwizardry.wizardry.api.item.Explodable;
+import com.teamwizardry.wizardry.api.item.Infusable;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.entity.Entity;
@@ -23,7 +23,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 /**
  * Created by Saad on 6/10/2016.
  */
-public class ItemQuartzPearl extends Item implements IInfusible, IExplodable, IColorable {
+public class ItemQuartzPearl extends Item implements Infusable, Explodable, Colorable {
 
     public ItemQuartzPearl() {
         setRegistryName("quartz_pearl");

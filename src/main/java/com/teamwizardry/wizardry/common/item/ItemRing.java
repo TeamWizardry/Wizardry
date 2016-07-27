@@ -2,7 +2,7 @@ package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.api.util.misc.Color;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.item.IColorable;
+import com.teamwizardry.wizardry.api.item.Colorable;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.entity.Entity;
@@ -18,7 +18,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 /**
  * Created by Saad on 6/13/2016.
  */
-public class ItemRing extends Item implements IColorable {
+public class ItemRing extends Item implements Colorable {
 
     public ItemRing() {
         setRegistryName("ring");

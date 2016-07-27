@@ -5,7 +5,7 @@ import net.minecraft.item.ItemStack;
 /**
  * Created by Saad on 6/30/2016.
  */
-public interface IInfusible {
+public interface Infusable {
 
     default PearlType getType(ItemStack stack) {
         if (stack.hasTagCompound())

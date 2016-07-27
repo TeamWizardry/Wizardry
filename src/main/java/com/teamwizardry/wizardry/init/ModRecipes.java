@@ -5,9 +5,9 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 /**
  * Created by Saad on 4/8/2016.
  */
-public class ModRecipies {
+public class ModRecipes {
 
     public static void initCrafting() {
-        GameRegistry.addRecipe(new ModIRecipies());
+        GameRegistry.addRecipe(new ModIRecipes());
     }
 }

@@ -1,7 +1,6 @@
 package com.teamwizardry.wizardry.common.fluid;
 
-import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.item.IExplodable;
+import com.teamwizardry.wizardry.api.item.Explodable;
 import com.teamwizardry.wizardry.api.trackerobject.BookTrackerObject;
 import com.teamwizardry.wizardry.client.fx.GlitterFactory;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
@@ -76,7 +75,7 @@ public class FluidBlockMana extends BlockFluidClassic {
                 EntityItem ei = (EntityItem) entityIn;
                 ItemStack stack = ei.getEntityItem();
 
-                if (stack.getItem() instanceof IExplodable) {
+                if (stack.getItem() instanceof Explodable) {
 
                     for (int i = 0; i < 10; i++) {
                         SparkleFX fizz = GlitterFactory.getInstance().createSparkle(worldIn, entityIn.getPositionVector().add(new Vec3d(0, 0.5, 0)), 30);
@@ -95,7 +94,7 @@ public class FluidBlockMana extends BlockFluidClassic {
                                 compound.setInteger("reactionCooldown", 0);
 
                                 ei.setDead();
-                                ((IExplodable) stack.getItem()).explode(entityIn);
+                                ((Explodable) stack.getItem()).explode(entityIn);
                                 worldIn.setBlockState(pos, Blocks.AIR.getDefaultState());
                                 worldIn.playSound(null, ei.posX, ei.posY, ei.posZ, ModSounds.GLASS_BREAK, SoundCategory.BLOCKS, 0.5F, ThreadLocalRandom.current().nextFloat() * 0.4F + 0.8F);
 

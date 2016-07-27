@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.common.item.pearl;
 
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.item.IExplodable;
+import com.teamwizardry.wizardry.api.item.Explodable;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,7 +18,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 /**
  * Created by Saad on 6/20/2016.
  */
-public class ItemGlassPearl extends Item implements IExplodable {
+public class ItemGlassPearl extends Item implements Explodable {
 
     public ItemGlassPearl() {
         setRegistryName("glass_pearl");

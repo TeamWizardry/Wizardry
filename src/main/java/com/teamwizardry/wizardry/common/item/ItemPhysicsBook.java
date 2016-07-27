@@ -29,6 +29,7 @@ public class ItemPhysicsBook extends Item implements IPickupAchievement {
         setUnlocalizedName("physics_book");
         GameRegistry.register(this);
         setCreativeTab(Wizardry.tab);
+        setMaxStackSize(1);
     }
 
     @SideOnly(Side.CLIENT)

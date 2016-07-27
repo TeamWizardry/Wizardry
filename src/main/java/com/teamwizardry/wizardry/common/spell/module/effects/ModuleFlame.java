@@ -91,7 +91,7 @@ public class ModuleFlame extends Module {
 			if (result != null)
 			{
 				Block smelted = Block.getBlockFromItem(result.getItem());
-				if (!caster.worldObj.isRemote)
+				if (!caster.worldObj.isRemote && smelted != null)
 				{
 					caster.worldObj.setBlockState(pos, smelted.getStateFromMeta(result.getMetadata()));
 					caster.worldObj.playEvent(2001, pos, Block.getStateId(smelted.getDefaultState()));

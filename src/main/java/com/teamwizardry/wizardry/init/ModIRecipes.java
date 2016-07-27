@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.init;
 
-import com.teamwizardry.wizardry.api.item.IInfusible;
+import com.teamwizardry.wizardry.api.item.Infusable;
 import com.teamwizardry.wizardry.common.item.ItemRing;
 import com.teamwizardry.wizardry.common.item.pearl.ItemNacrePearl;
 import com.teamwizardry.wizardry.common.item.pearl.ItemQuartzPearl;
@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
 /**
  * Created by Saad on 6/13/2016.
  */
-public class ModIRecipies implements IRecipe {
+public class ModIRecipes implements IRecipe {
 
     @Override
     public boolean matches(InventoryCrafting inv, World worldIn) {
@@ -57,7 +57,7 @@ public class ModIRecipies implements IRecipe {
                     if (stack.getItemDamage() == 0)
                         baseItem = stack;
                 }
-                if (stack.getItem() instanceof IInfusible)
+                if (stack.getItem() instanceof Infusable)
                     pearl = stack;
             }
         }

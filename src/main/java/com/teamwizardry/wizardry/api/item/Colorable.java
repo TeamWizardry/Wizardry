@@ -9,7 +9,7 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Created by Saad on 6/7/2016.
  */
-public interface IColorable {
+public interface Colorable {
 
     default void setDefaultColor(ItemStack stack, int min, int max) {
         Color color = new Color(ThreadLocalRandom.current().nextInt(min, max), ThreadLocalRandom.current().nextInt(min, max), ThreadLocalRandom.current().nextInt(min, max));

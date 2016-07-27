@@ -3,9 +3,8 @@ package com.teamwizardry.wizardry.common.item.staff;
 import com.teamwizardry.librarianlib.api.util.misc.Color;
 import com.teamwizardry.librarianlib.math.shapes.Arc3D;
 import com.teamwizardry.librarianlib.math.shapes.Circle3D;
-import com.teamwizardry.librarianlib.math.shapes.Helix;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.item.IColorable;
+import com.teamwizardry.wizardry.api.item.Colorable;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.ModuleList;
 import com.teamwizardry.wizardry.api.spell.IContinuousCast;
@@ -35,13 +34,12 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Saad on 6/7/2016.
  */
-public class ItemGoldStaff extends Item implements IColorable {
+public class ItemGoldStaff extends Item implements Colorable {
 
     public ItemGoldStaff() {
         setRegistryName("gold_staff");

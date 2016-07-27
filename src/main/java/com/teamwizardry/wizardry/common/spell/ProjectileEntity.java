@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.common.spell;
 import com.teamwizardry.librarianlib.api.util.misc.Color;
 import com.teamwizardry.librarianlib.math.Raycast;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.item.IColorable;
+import com.teamwizardry.wizardry.api.item.Colorable;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.spell.SpellEntity;
 import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
@@ -35,8 +35,8 @@ public class ProjectileEntity extends SpellEntity {
 
         if (caster.getHeldItemMainhand() != null) {
             ItemStack stack = caster.getHeldItemMainhand();
-            if (stack.getItem() instanceof IColorable) {
-                IColorable colorable = (IColorable) stack.getItem();
+            if (stack.getItem() instanceof Colorable) {
+                Colorable colorable = (Colorable) stack.getItem();
                 trailColor = colorable.getColor(stack);
             }
         }
