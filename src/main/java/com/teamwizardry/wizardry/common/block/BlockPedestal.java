@@ -4,7 +4,6 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.block.IManaAcceptor;
 import com.teamwizardry.wizardry.client.render.TilePedestalRenderer;
 import com.teamwizardry.wizardry.common.tile.TilePedestal;
-import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -15,7 +14,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
@@ -53,16 +51,6 @@ public class BlockPedestal extends Block implements ITileEntityProvider, IManaAc
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (!world.isRemote) {
             TilePedestal te = getTE(world, pos);
-            if (heldItem != null && player.isSneaking()) {
-                if (heldItem.getItem() == ModItems.PEARL_MANA) {
-                    NBTTagCompound compound = new NBTTagCompound();
-                    compound.setInteger("link_x", pos.getX());
-                    compound.setInteger("link_y", pos.getY());
-                    compound.setInteger("link_z", pos.getZ());
-                    heldItem.setTagCompound(compound);
-                    return true;
-                }
-            }
 
             if (te.getStack() == null && heldItem != null) {
                 te.setStack(heldItem);
@@ -75,9 +63,7 @@ public class BlockPedestal extends Block implements ITileEntityProvider, IManaAc
                 if (!player.inventory.addItemStackToInventory(stack)) {
                     EntityItem entityItem = new EntityItem(world, pos.getX(), pos.getY() + 1, pos.getZ(), stack);
                     world.spawnEntityInWorld(entityItem);
-                } else {
-                    player.openContainer.detectAndSendChanges();
-                }
+                } else player.openContainer.detectAndSendChanges();
             }
         }
         return true;

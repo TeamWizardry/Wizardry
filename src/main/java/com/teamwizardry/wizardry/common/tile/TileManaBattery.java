@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.tile;
 
+import com.teamwizardry.wizardry.api.block.IManaAcceptor;
 import com.teamwizardry.wizardry.common.fluid.FluidBlockMana;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
@@ -10,7 +11,7 @@ import net.minecraft.world.World;
 
 import java.util.Random;
 
-public class TileManaBattery extends TileEntity implements ITickable {
+public class TileManaBattery extends TileEntity implements ITickable, IManaAcceptor {
 
     public int MAX_MANA = 1000000;
     public int current_mana = 0;

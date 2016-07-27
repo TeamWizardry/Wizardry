@@ -1,10 +1,12 @@
 package com.teamwizardry.wizardry.common.tile;
 
-import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.librarianlib.math.shapes.Arc3D;
+import com.teamwizardry.wizardry.api.block.IManaAcceptor;
+import com.teamwizardry.wizardry.client.fx.GlitterFactory;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
-import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -76,14 +78,17 @@ public class TilePedestal extends TileEntity implements ITickable {
 
     @Override
     public void update() {
-        if (stack != null && linkedBlock == null) {
+        if (stack != null) {
             if (stack.getItem() == ModItems.PEARL_MANA) {
                 NBTTagCompound compound = stack.getTagCompound();
                 if (compound != null) {
                     if (compound.hasKey("link_x") && compound.hasKey("link_y") && compound.hasKey("link_z")) {
                         BlockPos pos = new BlockPos(compound.getInteger("link_x"), compound.getInteger("link_y"), compound.getInteger("link_z"));
-                        if (worldObj.getBlockState(pos).getBlock() == ModBlocks.PEDESTAL) { // TODO: instanceOf IManaAccepter
-                            if (pos != getPos()) linkedBlock = pos;
+                        if (worldObj.getBlockState(pos).getBlock() instanceof IManaAcceptor) {
+                            if (pos != getPos() && linkedBlock != pos) {
+                                linkedBlock = pos;
+                                points = new Arc3D(new Vec3d(getPos().getX(), getPos().getY(), getPos().getZ()), new Vec3d(pos.getX(), pos.getY(), pos.getZ()), 3, 50).getPoints();
+                            }
                             worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
                         }
                     }
@@ -91,36 +96,24 @@ public class TilePedestal extends TileEntity implements ITickable {
             }
         }
 
-        if (stack != null && linkedBlock != null) {
-            if (stack.getItem() == ModItems.PEARL_MANA) {
+        if (!worldObj.isRemote) {
+            if (stack != null && linkedBlock != null) {
+                if (stack.getItem() == ModItems.PEARL_MANA) {
 
-                if (queue < points.size()) {
-                    Vec3d location = points.get(queue);
-                    SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(worldObj, location);
-                    fizz.setAlpha(0.8f);
-                    fizz.setScale(0.5f);
-                    fizz.setMaxAge(30);
-                    fizz.setShrink();
-                    fizz.setMotion(0, 0, 0);
-                    fizz.setJitter(20, 0.05, 0.05, 0.05);
-                    queue++;
-                } else {
-                    queue = 0;
-                    points.clear();
+                    if (queue < points.size()) {
+                        Vec3d location = points.get(queue);
+                        SparkleFX fizz = GlitterFactory.getInstance().createSparkle(worldObj, location, 30);
+                        fizz.setAlpha(1f);
+                        fizz.setScale(4f);
+                        fizz.setMotion(0.1, 0.1, 0.1);
+                        queue++;
+
+                        Minecraft.getMinecraft().thePlayer.sendChatMessage(queue + "");
+                    } else {
+                        queue = 0;
+                    }
                 }
             }
         }
-    }
-
-    public List<Vec3d> getPoints() {
-        return points;
-    }
-
-    public void setPoints(List<Vec3d> points) {
-        this.points = points;
-    }
-
-    public void setLinkedBlock(BlockPos linkedBlock) {
-        this.linkedBlock = linkedBlock;
     }
 }
