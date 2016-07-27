@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.client.proxy;
 
 import com.teamwizardry.librarianlib.client.fx.particle.ParticleRenderDispatcher;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.Config;
 import com.teamwizardry.wizardry.client.core.CapeHandler;
 import com.teamwizardry.wizardry.client.core.HudEventHandler;
 import com.teamwizardry.wizardry.client.fx.particle.LensFlareFX;
@@ -94,5 +95,14 @@ public class ClientProxy extends CommonProxy {
         LensFlareFX particle = new LensFlareFX(world, pos, age, range);
         Minecraft.getMinecraft().effectRenderer.addEffect(particle);
         return particle;
+    }
+
+    @Override
+    public int getParticleDensity() {
+        //2 is minimal, so 0%
+        //1 is reduced, so 50%
+        //0 is all, so 100%
+        return Config.particlePercentage == -1 ? (Minecraft.getMinecraft().gameSettings.particleSetting == 2 ? 0 :
+                Minecraft.getMinecraft().gameSettings.particleSetting == 1 ? 50 : 100) : Config.particlePercentage;
     }
 }

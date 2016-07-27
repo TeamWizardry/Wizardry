@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.proxy;
 
+import com.teamwizardry.wizardry.api.Config;
 import com.teamwizardry.wizardry.client.fx.particle.LensFlareFX;
 import com.teamwizardry.wizardry.client.fx.particle.MagicBurstFX;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
@@ -57,5 +58,9 @@ public class CommonProxy {
 
     public MagicBurstFX spawnParticleMagicBurst(World world, double x, double y, double z) {
         return null;
+    }
+
+    public int getParticleDensity() {
+        return Config.particlePercentage; //not that it matters, it should never be called on server side
     }
 }

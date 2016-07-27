@@ -3,7 +3,7 @@
   "texts": {
     "sectionOne":   [
       "A pearl is somewhat of a spell catalyst. They are both efficient at storing raw energy and mana, as well as being able to disperse that raw energy in a very smooth manner.",
-      "What makes a pearl such a good conductor of energy is it’s roundness and fractalized crystalline interior. Raw energy can bounce off of the walls of the crystallized fractals, thus making pearls great for storing energy. Not to mention any mana blips or a change in the state of the pearl will disturb the equilibrium of the raw energy inside and disperse it, making it a great component for energy repulsion. So pearls are the most ideal component to be used when it comes to spell magic."
+      "What makes a pearl such a good conductor of energy is its roundness and fractalized crystalline interior. Raw energy can bounce off of the walls of the crystallized fractals, thus making pearls great for storing energy. Not to mention any mana blips or a change in the state of the pearl will disturb the equilibrium of the raw energy inside and disperse it, making it a great component for energy repulsion. So pearls are the most ideal component to be used when it comes to spell magic."
     ],
     "sectionTwo":   [
       "You are presented with two kinds of pearls: ", {"type": "link", "ref": "/basics/mana:0", "text": "Glass Pearls"}, " and ", {"type": "link", "ref": "/basics/mana:0", "text": "Quartz Pearls"},

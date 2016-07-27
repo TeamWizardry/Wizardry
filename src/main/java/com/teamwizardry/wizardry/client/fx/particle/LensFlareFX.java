@@ -1,7 +1,6 @@
 package com.teamwizardry.wizardry.client.fx.particle;
 
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Config;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -28,7 +27,7 @@ public class LensFlareFX extends Particle {
     public LensFlareFX(World world, Vec3d pos, int age, double maxRange) {
         super(world, pos.xCoord + ThreadLocalRandom.current().nextDouble(-maxRange, maxRange), pos.yCoord + ThreadLocalRandom.current().nextDouble(-maxRange, maxRange), pos.zCoord + ThreadLocalRandom.current().nextDouble(-maxRange, maxRange));
         particleAlpha =  0.0001f;
-        particleMaxAge = age * Config.particlePercentage / 100;
+        particleMaxAge = age * Wizardry.proxy.getParticleDensity() / 100;
         particleScale = 1.5f;
 
         motionX = 0;

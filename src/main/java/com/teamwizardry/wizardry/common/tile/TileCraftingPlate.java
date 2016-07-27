@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.common.tile;
 import com.teamwizardry.librarianlib.client.multiblock.InWorldRender;
 import com.teamwizardry.librarianlib.client.multiblock.StructureMatchResult;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Config;
 import com.teamwizardry.wizardry.api.item.IInfusible;
 import com.teamwizardry.wizardry.api.item.PearlType;
 import com.teamwizardry.wizardry.api.module.Module;
@@ -239,7 +238,7 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
                     pearlItem.forceSpawn = true;
                     worldObj.spawnEntityInWorld(pearlItem);
 
-                    for (int i = 0; i < 100 * Config.particlePercentage / 100; i++) {
+                    for (int i = 0; i < 100 * Wizardry.proxy.getParticleDensity() / 100; i++) {
                         SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(worldObj, new Vec3d(pos.getX() + 0.5, pos.getY() + pearl.getPoint().yCoord, pos.getZ() + 0.5));
                         fizz.setFadeIn();
                         fizz.setMaxAge(20);

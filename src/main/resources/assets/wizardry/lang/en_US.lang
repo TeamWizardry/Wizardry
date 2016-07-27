@@ -1,7 +1,7 @@
 tile.crafting_plate.name=Sorcerer's Plate
 tile.magicians_worktable.name=Magician's Worktable
 tile.mana_battery.name=Mana Battery
-
+tile.pedestal.name=Pedestal
 tile.nacre.name=Nacre
 tile.mana.name=Mana
 
@@ -12,6 +12,7 @@ item.mana_pearl.name=Mana Pearl
 item.glass_pearl.name=Glass Pearl
 item.nacre_pearl.name=Nacre Pearl
 item.quartz_pearl.name=Quartz Pearl
+item.debugger.name=Debugger
 
 gui.physicsbook.defaulttitle=Physics Book
 
@@ -24,3 +25,5 @@ achievement.wizardry.manapool=Not A Mana Pool
 achievement.wizardry.manapool.desc=Find a pool of mana
 achievement.wizardry.devildust=Sugar, Spice, And Everything Nice
 achievement.wizardry.devildust.desc=Craft devil dust
+
+itemGroup.wizardry=Wizardry

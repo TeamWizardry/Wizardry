@@ -4,7 +4,6 @@ import com.teamwizardry.librarianlib.api.util.misc.Color;
 import com.teamwizardry.librarianlib.api.util.misc.PosUtils;
 import com.teamwizardry.librarianlib.math.shapes.Helix;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Config;
 import com.teamwizardry.wizardry.api.trackerobject.BookTrackerObject;
 import com.teamwizardry.wizardry.api.trackerobject.RedstoneTrackerObject;
 import com.teamwizardry.wizardry.client.fx.GlitterFactory;
@@ -15,7 +14,6 @@ import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
 import io.netty.util.internal.ThreadLocalRandom;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -111,7 +109,7 @@ public class EventHandler {
                     redstone.setCountdown(redstone.getCountdown() + 1);
 
                     if (redstone.getQueue() < redstone.getHelix().size()) {
-                        for (int i = 0; i < 10 * Config.particlePercentage / 100; i++) {
+                        for (int i = 0; i < 10 * Wizardry.proxy.getParticleDensity() / 100; i++) {
                             Vec3d location = redstone.getHelix().get(redstone.getQueue());
                             SparkleFX fizz = GlitterFactory.getInstance().createSparkle(event.world, location, 150);
                             fizz.setShrink();
@@ -140,7 +138,7 @@ public class EventHandler {
             if (book.getQueue() < book.getHelix().size()) {
                 Vec3d location = book.getHelix().get(book.getQueue());
 
-                for (int i = 0; i < 10 * Config.particlePercentage / 100; i++) {
+                for (int i = 0; i < 10 * Wizardry.proxy.getParticleDensity() / 100; i++) {
                     SparkleFX fizz = GlitterFactory.getInstance().createSparkle(book.getWorld(), location, 100);
                     fizz.setFadeOut();
                     fizz.setAlpha(0.5f);
