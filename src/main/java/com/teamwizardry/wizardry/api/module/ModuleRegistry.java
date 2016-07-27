@@ -24,11 +24,13 @@ public class ModuleRegistry {
         return INSTANCE;
     }
 
-    // TODO: stack.equals will not match "stack". Required: Itemstack matching method
+    private static boolean simpleAreStacksEqual(ItemStack stack, ItemStack stack2) {
+        return stack.getItem() == stack2.getItem() && stack.getItemDamage() == stack2.getItemDamage();
+    }
     public Module getModuleFromItemStack(ItemStack stack) {
         for (ModuleType type : ModuleType.values())
             for (int ID : modules.get(type).keySet())
-                if (modules.get(type).get(ID).stack.equals(stack)) return modules.get(type).get(ID);
+                if (simpleAreStacksEqual(modules.get(type).get(ID).stack, stack)) return modules.get(type).get(ID);
         return null;
     }
 
