@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.api.module;
 
+import com.teamwizardry.librarianlib.api.util.misc.Color;
 import com.teamwizardry.librarianlib.client.Sprite;
 import com.teamwizardry.librarianlib.client.Texture;
 import com.teamwizardry.wizardry.Wizardry;
@@ -47,14 +48,10 @@ public abstract class Module {
     public static final String BURNOUT = "Burnout";
 
     public AttributeMap attributes = new AttributeMap();
-
-    public List<Module> children = new ArrayList<>();
-
-    protected boolean canHaveChildren = true;
-
-    public int id;
     public ItemStack stack;
-
+    protected boolean canHaveChildren = true;
+    private List<Module> children = new ArrayList<>();
+    private int id;
     private Sprite staticIcon = STATIC_ICON_SHEET.getSprite(this.getClass().getSimpleName(), 16, 16), animatedIcon = ANIMATED_ICON_SHEET.getSprite(this.getClass().getSimpleName(), 16, 16);
     private String description = "<-NULL->";
     private String displayName = "<-NULL->";
@@ -87,8 +84,7 @@ public abstract class Module {
         NBTTagCompound compound = new NBTTagCompound();
         compound.setString(CLASS, this.getClass().getName());
         NBTTagList list = new NBTTagList();
-        for (Module module : children)
-            list.appendTag(module.getModuleData());
+        for (Module module : children) list.appendTag(module.getModuleData());
         compound.setTag(MODULES, list);
         return compound;
     }
@@ -236,7 +232,19 @@ public abstract class Module {
         return displayName;
     }
 
+    public Color getColor() {
+        return Color.WHITE;
+    }
+
+    public int getId() {
+        return id;
+    }
+
     public void setId(int id0) {
         id = id0;
     }
+
+    public List<Module> getChildren() { return children; }
+
+    public boolean hasChildren() { return !children.isEmpty(); }
 }

@@ -224,7 +224,7 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
 
                 try {
                     while (parsedSpell == null)
-                        parsedSpell = spellParser.parse();
+                        parsedSpell = spellParser.parseInventoryToModule();
                 } catch (NoSuchElementException ignored) {
                 }
 

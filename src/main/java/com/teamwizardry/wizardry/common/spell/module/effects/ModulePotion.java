@@ -1,5 +1,9 @@
 package com.teamwizardry.wizardry.common.spell.module.effects;
 
+import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.api.module.attribute.Attribute;
+import com.teamwizardry.wizardry.api.spell.IRequireItem;
+import com.teamwizardry.wizardry.api.spell.ModuleType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -9,10 +13,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionUtils;
-import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.attribute.Attribute;
-import com.teamwizardry.wizardry.api.spell.IRequireItem;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
 
 public class ModulePotion extends Module implements IRequireItem{
 	public static final String POTION = "Potion";
@@ -43,8 +43,7 @@ public class ModulePotion extends Module implements IRequireItem{
     public void handle(ItemStack stack)
     {
     	if (stack == null) return;
-    	if (stack.getItem() == null) return;
-    	if (stack.getItem() != Items.POTIONITEM) return;
+        if (stack.getItem() != Items.POTIONITEM) return;
     	PotionEffect effect = PotionUtils.getEffectsFromStack(stack).get(0);
     	if (effect.getPotion().isInstant()) return;
     	potionID = Potion.getIdFromPotion(effect.getPotion());

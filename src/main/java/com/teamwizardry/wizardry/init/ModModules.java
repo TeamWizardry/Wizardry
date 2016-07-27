@@ -16,6 +16,7 @@ import net.minecraftforge.oredict.OreDictionary;
 
 //modmod, hehe
 public class ModModules {
+
     public static void init() {
         // Booleans
         register(Items.STRING, ModuleAnd::new);
