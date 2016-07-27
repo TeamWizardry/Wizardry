@@ -6,7 +6,6 @@ import com.teamwizardry.wizardry.client.fx.GlitterFactory;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -108,7 +107,6 @@ public class TilePedestal extends TileEntity implements ITickable {
                         fizz.setMotion(0.1, 0.1, 0.1);
                         queue++;
 
-                        Minecraft.getMinecraft().thePlayer.sendChatMessage(queue + "");
                     } else {
                         queue = 0;
                     }

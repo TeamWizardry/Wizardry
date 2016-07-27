@@ -1,18 +1,17 @@
 package com.teamwizardry.wizardry.api.module.attribute;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.Maps;
 
 import java.util.*;
 
 public class AttributeMap {
 
-    protected Multimap<Attribute, AttributeModifier> attributes = HashMultimap.create();
+    protected HashMap<Attribute, List<AttributeModifier>> attributes = Maps.newHashMap();
 
     protected List<AttributeModifier> invalids = new ArrayList<>();
     protected Set<Attribute> validAttributes = new HashSet<>();
 
-    protected Multimap<Attribute, AttributeModifier> attributeCapture = HashMultimap.create();
+    protected HashMap<Attribute, List<AttributeModifier>> attributeCapture = Maps.newHashMap();
     protected List<AttributeModifier> invalidsCapture = new ArrayList<>();
     protected boolean isCapturing = false;
     protected boolean didHaveInvalid = false;
@@ -47,8 +46,8 @@ public class AttributeMap {
             if (isCapturing) didHaveInvalid = true;
             return;
         }
-        if (isCapturing) attributeCapture.put(attribute, mod);
-        else attributes.put(attribute, mod);
+        if (isCapturing) attributeCapture.get(attribute).add(mod);
+        else attributes.get(attribute).add(mod);
 
     }
 
