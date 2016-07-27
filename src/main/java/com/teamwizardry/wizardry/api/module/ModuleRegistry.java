@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.api.module;
 import com.google.common.collect.Maps;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -24,13 +25,44 @@ public class ModuleRegistry {
         return INSTANCE;
     }
 
-    private static boolean simpleAreStacksEqual(ItemStack stack, ItemStack stack2) {
-        return stack.getItem() == stack2.getItem() && stack.getItemDamage() == stack2.getItemDamage();
+    private static boolean areItemStacksEqual(ItemStack stack, ItemStack stack2) {
+        if (stack.getItem() != stack2.getItem()) return false;
+        if (stack.getItemDamage() != stack2.getItemDamage()) return false;
+        if (stack.stackSize != stack2.stackSize) return false;
+        NBTTagCompound compound1 = stack.getTagCompound();
+        NBTTagCompound compound2 = stack2.getTagCompound();
+        if (compound1 == null && compound2 != null) return false;
+        if (compound1 != null && compound2 == null) return false;
+
+        if (compound1 != null) {
+            for (String tag1 : compound1.getKeySet()) {
+                boolean success = false;
+                for (String tag2 : compound2.getKeySet()) {
+                    if (tag1.equals(tag2)) {
+                        success = true;
+                        break;
+                    }
+                }
+                if (!success) return false;
+            }
+            for (String tag2 : compound2.getKeySet()) {
+                boolean success = false;
+                for (String tag1 : compound1.getKeySet()) {
+                    if (tag2.equals(tag1)) {
+                        success = true;
+                        break;
+                    }
+                }
+                if (!success) return false;
+            }
+        }
+        return true;
     }
+
     public Module getModuleFromItemStack(ItemStack stack) {
         for (ModuleType type : ModuleType.values())
             for (int ID : modules.get(type).keySet())
-                if (simpleAreStacksEqual(modules.get(type).get(ID).stack, stack)) return modules.get(type).get(ID);
+                if (areItemStacksEqual(modules.get(type).get(ID).stack, stack)) return modules.get(type).get(ID);
         return null;
     }
 
