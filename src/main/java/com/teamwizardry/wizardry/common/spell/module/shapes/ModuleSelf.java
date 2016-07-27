@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.spell.module.shapes;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.MinecraftForge;
@@ -12,8 +13,9 @@ import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
 
 public class ModuleSelf extends Module {
-    public ModuleSelf() {
-    	attributes.addAttribute(Attribute.DURATION);
+    public ModuleSelf(ItemStack stack) {
+        super(stack);
+        attributes.addAttribute(Attribute.DURATION);
     }
 
     @Override

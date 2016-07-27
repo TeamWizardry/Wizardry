@@ -4,19 +4,19 @@ import com.teamwizardry.librarianlib.api.gui.GuiComponent;
 import com.teamwizardry.librarianlib.api.gui.components.ComponentCenterAlign;
 import com.teamwizardry.librarianlib.api.gui.components.ComponentSprite;
 import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.ModuleList;
+import com.teamwizardry.wizardry.api.module.ModuleRegistry;
 
 public class ModuleComponent {
 
 	public ComponentCenterAlign result;
 	
-	protected ModuleList.IModuleConstructor constructor;
+	protected ModuleRegistry.IModuleConstructor constructor;
 	protected Module module;
 	protected GuiComponent<?> paper;
 	
-	public ModuleComponent(int posX, int posY, ModuleList.IModuleConstructor constructor, GuiComponent<?> paper) {
+	public ModuleComponent(int posX, int posY, ModuleRegistry.IModuleConstructor constructor, GuiComponent<?> paper) {
 		this.constructor = constructor;
-		this.module = constructor.construct();
+		this.module = constructor.construct(null);
 		this.paper = paper;
 		
 		result = new ComponentCenterAlign(posX, posY, false, false);

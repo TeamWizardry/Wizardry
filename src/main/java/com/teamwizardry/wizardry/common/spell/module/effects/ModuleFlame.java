@@ -19,7 +19,8 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
 public class ModuleFlame extends Module {
-    public ModuleFlame() {
+    public ModuleFlame(ItemStack stack) {
+		super(stack);
         attributes.addAttribute(Attribute.DURATION);
     }
 

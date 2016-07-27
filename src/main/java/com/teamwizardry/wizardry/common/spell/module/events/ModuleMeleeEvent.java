@@ -4,6 +4,7 @@ import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 /**
@@ -11,6 +12,10 @@ import net.minecraft.nbt.NBTTagCompound;
  */
 public class ModuleMeleeEvent extends Module
 {
+    public ModuleMeleeEvent(ItemStack stack) {
+        super(stack);
+    }
+
     @Override
     public ModuleType getType() {
         return ModuleType.EVENT;

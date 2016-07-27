@@ -1,10 +1,5 @@
 package com.teamwizardry.wizardry.client.gui.worktable;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import net.minecraft.util.math.Vec3d;
-
 import com.teamwizardry.librarianlib.api.gui.EnumMouseButton;
 import com.teamwizardry.librarianlib.api.gui.GuiComponent;
 import com.teamwizardry.librarianlib.api.gui.components.ComponentCenterAlign;
@@ -12,7 +7,11 @@ import com.teamwizardry.librarianlib.api.gui.components.ComponentVoid;
 import com.teamwizardry.librarianlib.api.gui.components.mixin.DragMixin;
 import com.teamwizardry.librarianlib.api.gui.components.mixin.gl.GlMixin;
 import com.teamwizardry.librarianlib.api.util.misc.Color;
-import com.teamwizardry.wizardry.api.module.ModuleList;
+import com.teamwizardry.wizardry.api.module.ModuleRegistry;
+import net.minecraft.util.math.Vec3d;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PaperModule extends ModuleComponent {
 
@@ -22,7 +21,7 @@ public class PaperModule extends ModuleComponent {
 	
 	public List<PaperModule> connections = new ArrayList<>();
 	
-	public PaperModule(int posX, int posY, ModuleList.IModuleConstructor constructor, GuiComponent<?> paper) {
+	public PaperModule(int posX, int posY, ModuleRegistry.IModuleConstructor constructor, GuiComponent<?> paper) {
 		super(posX, posY, constructor, paper);
 
 		result.centerHorizontal = true;

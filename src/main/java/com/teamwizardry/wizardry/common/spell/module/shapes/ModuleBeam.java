@@ -13,6 +13,7 @@ import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import com.teamwizardry.wizardry.client.fx.particle.trails.SparkleTrailHelix;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.RayTraceResult;
@@ -24,7 +25,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class ModuleBeam extends Module implements IContinuousCast {
 
-    public ModuleBeam() {
+    public ModuleBeam(ItemStack stack) {
+        super(stack);
         attributes.addAttribute(Attribute.DISTANCE);
         attributes.addAttribute(Attribute.SCATTER);
         attributes.addAttribute(Attribute.PROJ_COUNT);

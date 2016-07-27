@@ -5,6 +5,7 @@ import com.teamwizardry.wizardry.api.module.attribute.Attribute;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
@@ -17,7 +18,8 @@ public class ModuleExplosion extends Module {
 
     private boolean damageTerrain;
 
-    public ModuleExplosion() {
+    public ModuleExplosion(ItemStack stack) {
+        super(stack);
         attributes.addAttribute(Attribute.POWER);
     }
 

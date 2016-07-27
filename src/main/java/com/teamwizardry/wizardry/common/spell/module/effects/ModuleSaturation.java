@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.spell.module.effects;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.attribute.Attribute;
@@ -9,8 +10,9 @@ import com.teamwizardry.wizardry.api.spell.ModuleType;
 
 public class ModuleSaturation extends Module
 {
-	public ModuleSaturation()
+	public ModuleSaturation(ItemStack stack)
 	{
+		super(stack);
 		attributes.addAttribute(Attribute.POWER);
 	}
 

@@ -10,6 +10,10 @@ import com.teamwizardry.wizardry.api.spell.ModuleType;
 
 public class ModuleHitEntityEvent extends Module implements IRequireItem
 {
+	public ModuleHitEntityEvent(ItemStack stack) {
+		super(stack);
+	}
+
 	@Override
 	public ModuleType getType()
 	{

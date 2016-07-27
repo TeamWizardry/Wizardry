@@ -4,7 +4,7 @@ import com.teamwizardry.librarianlib.api.util.misc.Color;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.Colorable;
 import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.ModuleList;
+import com.teamwizardry.wizardry.api.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.IContinuousCast;
 import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
 import net.minecraft.client.Minecraft;
@@ -83,7 +83,7 @@ public class ItemWoodStaff extends Item implements Colorable {
                 if (compound.hasKey("Spell")) {
                     NBTTagCompound spell = compound.getCompoundTag("Spell");
                     if (spell.hasKey(Module.CLASS)) {
-                        Module module = ModuleList.INSTANCE.modules.get(spell.getString(Module.CLASS)).construct();
+                        Module module = ModuleRegistry.getInstance().modules.get(spell.getInteger(Module.CLASS)).construct(null);
                         if (module instanceof IContinuousCast) {
                             module.cast((EntityPlayer) player, player, spell);
                         }

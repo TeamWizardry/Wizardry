@@ -13,6 +13,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -26,7 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ModuleZone extends Module {
-    public ModuleZone() {
+    public ModuleZone(ItemStack stack) {
+		super(stack);
         attributes.addAttribute(Attribute.RADIUS);
         attributes.addAttribute(Attribute.DURATION);
     }

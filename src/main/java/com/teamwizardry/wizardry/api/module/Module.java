@@ -10,6 +10,7 @@ import com.teamwizardry.wizardry.api.spell.IRuntimeModifier;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
@@ -51,16 +52,21 @@ public abstract class Module {
 
     protected boolean canHaveChildren = true;
 
+    public int id;
+    public ItemStack stack;
+
     private Sprite staticIcon = STATIC_ICON_SHEET.getSprite(this.getClass().getSimpleName(), 16, 16), animatedIcon = ANIMATED_ICON_SHEET.getSprite(this.getClass().getSimpleName(), 16, 16);
     private String description = "<-NULL->";
     private String displayName = "<-NULL->";
 
     { /* attributes/parsing */}
 
-    public Module() {
+    public Module(ItemStack stack) {
+        this.stack = stack;
         attributes.addAttribute(Attribute.MANA);
         attributes.addAttribute(Attribute.BURNOUT);
     }
+
 
     /**
      * Determine what type of module this is: An EFFECT, EVENT, MODIFIER, SHAPE,
@@ -228,5 +234,9 @@ public abstract class Module {
      */
     public String getDisplayName() {
         return displayName;
+    }
+
+    public void setId(int id0) {
+        id = id0;
     }
 }

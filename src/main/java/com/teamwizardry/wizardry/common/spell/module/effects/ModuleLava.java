@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.common.spell.module.effects;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import com.teamwizardry.wizardry.api.module.Module;
@@ -15,6 +16,10 @@ import com.teamwizardry.wizardry.api.spell.SpellEntity;
  */
 public class ModuleLava extends Module
 {
+	public ModuleLava(ItemStack stack) {
+		super(stack);
+	}
+
 	@Override
 	public ModuleType getType()
 	{

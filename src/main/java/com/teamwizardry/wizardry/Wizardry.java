@@ -5,7 +5,7 @@ import com.teamwizardry.librarianlib.api.util.misc.Color;
 import com.teamwizardry.librarianlib.book.Book;
 import com.teamwizardry.wizardry.api.Config;
 import com.teamwizardry.wizardry.api.capability.WizardHandler;
-import com.teamwizardry.wizardry.api.module.ModuleList;
+import com.teamwizardry.wizardry.api.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.SpellHandler;
 import com.teamwizardry.wizardry.api.trackerobject.SpellTracker;
 import com.teamwizardry.wizardry.client.gui.GuiHandler;
@@ -15,10 +15,7 @@ import com.teamwizardry.wizardry.common.core.EventHandler;
 import com.teamwizardry.wizardry.common.fluid.Fluids;
 import com.teamwizardry.wizardry.common.proxy.CommonProxy;
 import com.teamwizardry.wizardry.common.world.GenHandler;
-import com.teamwizardry.wizardry.init.ModBlocks;
-import com.teamwizardry.wizardry.init.ModItems;
-import com.teamwizardry.wizardry.init.ModRecipes;
-import com.teamwizardry.wizardry.init.ModSounds;
+import com.teamwizardry.wizardry.init.*;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
@@ -106,8 +103,9 @@ public class Wizardry {
         proxy.init(e);
 
         WizardHandler.INSTANCE.getClass();
-        ModuleList.INSTANCE.getClass();
+        ModuleRegistry.getInstance().getClass();
         SpellHandler.INSTANCE.getClass();
+        ModModules.init();
     }
 
     @Mod.EventHandler

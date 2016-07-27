@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.api.trackerobject;
 
 import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.ModuleList;
+import com.teamwizardry.wizardry.api.module.ModuleRegistry;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
@@ -30,7 +30,7 @@ public class SpellTrackerAlpha {
         this.spellNBT = spell;
         NBTTagList modules = spell.getTagList(MODULES, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < modules.tagCount(); i++) this.modules.add(modules.getCompoundTagAt(i));
-        currentActiveShape = mainShape = ModuleList.INSTANCE.modules.get(spell.getString(Module.CLASS)).construct();
+        currentActiveShape = mainShape = ModuleRegistry.getInstance().modules.get(spell.getInteger(Module.CLASS)).construct(null);
 
         // TODO: Fill in effects, events, modifiers, shapes, and booleans
     }

@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.spell.module.shapes;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.RayTraceResult;
@@ -15,7 +16,11 @@ import com.teamwizardry.wizardry.api.spell.SpellEntity;
 import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
 
 public class ModuleMelee extends Module {
-    @Override
+	public ModuleMelee(ItemStack stack) {
+		super(stack);
+	}
+
+	@Override
     public ModuleType getType() {
         return ModuleType.SHAPE;
     }

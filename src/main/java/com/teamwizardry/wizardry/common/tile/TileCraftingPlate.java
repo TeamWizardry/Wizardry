@@ -257,7 +257,7 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
                     animationComplete = false;
                     craftingTimeLeft = craftingTime;
                     pearlAnimationTimeLeft = pearlAnimationTime;
-                }
+                } else System.err.println("Something went wrong! @" + pos);
             }
         }
     }

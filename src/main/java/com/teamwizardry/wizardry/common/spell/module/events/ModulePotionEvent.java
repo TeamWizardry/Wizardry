@@ -9,6 +9,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class ModulePotionEvent extends Module implements IRequireItem{
+    public ModulePotionEvent(ItemStack stack) {
+        super(stack);
+    }
+
     @Override
     public ModuleType getType() {
         return ModuleType.EVENT;

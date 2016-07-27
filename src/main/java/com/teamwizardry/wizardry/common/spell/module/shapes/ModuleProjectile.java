@@ -1,15 +1,17 @@
 package com.teamwizardry.wizardry.common.spell.module.shapes;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.attribute.Attribute;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.common.spell.ProjectileEntity;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleProjectile extends Module {
-    public ModuleProjectile() {
+    public ModuleProjectile(ItemStack stack) {
+		super(stack);
         attributes.addAttribute(Attribute.SPEED);
         attributes.addAttribute(Attribute.PIERCE);
         attributes.addAttribute(Attribute.SCATTER);

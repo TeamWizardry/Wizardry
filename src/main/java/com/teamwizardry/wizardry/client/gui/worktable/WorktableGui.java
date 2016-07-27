@@ -12,7 +12,7 @@ import com.teamwizardry.librarianlib.math.Vec2;
 import com.teamwizardry.librarianlib.math.shapes.BezierCurve2D;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.ModuleList;
+import com.teamwizardry.wizardry.api.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
@@ -69,7 +69,7 @@ public class WorktableGui extends GuiBase {
 	
     static final int iconSize = 12;
     public boolean useModules = false; // setting to true disables conventional rendering
-    public Multimap<ModuleType, ModuleList.IModuleConstructor> modulesByType = HashMultimap.create();
+    public Multimap<ModuleType, ModuleRegistry.IModuleConstructor> modulesByType = HashMultimap.create();
     ComponentVoid paper, shapes, modifiers, effects, booleans, events;
     private int left, top, paperLeft = 160, paperTop = 0;
     private int backgroundWidth = 512, backgroundHeight = 256, paperWidth = 191, paperHeight = 202;
@@ -85,8 +85,8 @@ public class WorktableGui extends GuiBase {
     public WorktableGui() {
         super(512, 256);
 
-        for (ModuleList.IModuleConstructor moduleConstructor : ModuleList.INSTANCE.modules.values()) {
-            Module module = moduleConstructor.construct();
+        for (ModuleRegistry.IModuleConstructor moduleConstructor : ModuleRegistry.getInstance().modules.values()) {
+            Module module = moduleConstructor.construct(null);
             modulesByType.get(module.getType()).add(moduleConstructor);
         }
         
@@ -130,7 +130,7 @@ public class WorktableGui extends GuiBase {
         view.add(grid);
 
         int count = 0;
-        for (ModuleList.IModuleConstructor constructor : modulesByType.get(type)) {
+        for (ModuleRegistry.IModuleConstructor constructor : modulesByType.get(type)) {
             SidebarItem item = new SidebarItem(0, 0, constructor, paper);
             grid.add(item.result);
             count++;
@@ -164,9 +164,9 @@ public class WorktableGui extends GuiBase {
 
     private void initModules() {
         // Construct the new module
-        for (ModuleList.IModuleConstructor moduleConstructor : ModuleList.INSTANCE.modules.values()) {
+        for (ModuleRegistry.IModuleConstructor moduleConstructor : ModuleRegistry.getInstance().modules.values()) {
             // Construct a new module object
-            Module module = moduleConstructor.construct();
+            Module module = moduleConstructor.construct(null);
 
             // Add it into moduleCategories
             moduleCategories.putIfAbsent(module.getType(), new ArrayList<>());

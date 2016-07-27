@@ -1,14 +1,15 @@
 package com.teamwizardry.wizardry.common.spell.parsing;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.List;
-import net.minecraft.item.ItemStack;
 import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.ModuleList;
+import com.teamwizardry.wizardry.api.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.IRequireItem;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.init.ModItems;
+import net.minecraft.item.ItemStack;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.List;
 
 public class Parser
 {
@@ -71,7 +72,7 @@ public class Parser
 	 */
 	private Module getModuleForItem(ItemStack stack, ModuleType type)
 	{
-		Module module = ModuleList.INSTANCE.createModule(stack, type);
+		Module module = ModuleRegistry.getInstance().createModule(stack, type);
 		if (module instanceof IRequireItem) ((IRequireItem) module).handle(stack);
 		return module;
 	}

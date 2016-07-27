@@ -18,7 +18,8 @@ public class ModulePotion extends Module implements IRequireItem{
 	public static final String POTION = "Potion";
 	private int potionID;
 	
-    public ModulePotion() {
+    public ModulePotion(ItemStack stack) {
+        super(stack);
         attributes.addAttribute(Attribute.POWER);
         attributes.addAttribute(Attribute.DURATION);
     }

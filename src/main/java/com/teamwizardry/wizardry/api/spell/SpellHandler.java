@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.api.spell;
 
 import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.ModuleList;
+import com.teamwizardry.wizardry.api.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,7 +27,7 @@ public class SpellHandler
 		
 		if (!event.isCanceled())
 		{
-			ModuleList.INSTANCE.modules.get(spell.getString(Module.CLASS)).construct().cast(player, source, spell);
+			ModuleRegistry.getInstance().modules.get(spell.getInteger(Module.CLASS)).construct(null).cast(player, source, spell);
 		}
 	}
 }

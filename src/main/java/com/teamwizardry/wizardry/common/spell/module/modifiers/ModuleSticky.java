@@ -9,11 +9,16 @@ import com.teamwizardry.wizardry.api.spell.IRuntimeModifier;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleSticky extends Module implements IModifier, IRuntimeModifier {
     private int baseCost = 5;
     private int baseBurnout = 5;
+
+    public ModuleSticky(ItemStack stack) {
+        super(stack);
+    }
 
     @Override
     public ModuleType getType() {
