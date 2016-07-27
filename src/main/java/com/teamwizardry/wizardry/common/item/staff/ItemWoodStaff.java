@@ -83,7 +83,7 @@ public class ItemWoodStaff extends Item implements Colorable {
                 if (compound.hasKey("Spell")) {
                     NBTTagCompound spell = compound.getCompoundTag("Spell");
                     if (spell.hasKey(Module.CLASS)) {
-                        Module module = ModuleRegistry.getInstance().modules.get(spell.getInteger(Module.CLASS)).construct(null);
+                        Module module = ModuleRegistry.getInstance().getModuleById(spell.getInteger(Module.CLASS));
                         if (module instanceof IContinuousCast) {
                             module.cast((EntityPlayer) player, player, spell);
                         }

@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.client.gui.worktable;
 import com.teamwizardry.librarianlib.api.gui.EnumMouseButton;
 import com.teamwizardry.librarianlib.api.gui.GuiComponent;
 import com.teamwizardry.librarianlib.api.util.misc.Utils;
+import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.ModuleRegistry;
 import net.minecraft.util.text.TextFormatting;
 
@@ -11,7 +12,7 @@ import java.util.List;
 
 public class SidebarItem extends ModuleComponent {
 	
-	public SidebarItem(int posX, int posY, ModuleRegistry.IModuleConstructor constructor, GuiComponent<?> paper) {
+	public SidebarItem(int posX, int posY, Module constructor, GuiComponent<?> paper) {
 		super(posX, posY, constructor, paper);
 		
 		result.mouseDown.add( (c, pos, button) -> {

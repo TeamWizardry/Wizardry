@@ -40,7 +40,7 @@ public class ModuleNand extends Module {
 		for (int i = 0; i < children.tagCount(); i++)
 		{
 			NBTTagCompound child = children.getCompoundTagAt(i);
-			Module module = ModuleRegistry.getInstance().getModules().get(child.getInteger(CLASS)).construct(stack);
+			Module module = ModuleRegistry.getInstance().getModuleById(child.getInteger(CLASS));
 			if (module.getType() == ModuleType.BOOLEAN || module.getType() == ModuleType.EVENT)
 				conditionals.put(module, child);
 			else effects.put(module, child);

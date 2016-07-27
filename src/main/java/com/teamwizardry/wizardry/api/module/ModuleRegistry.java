@@ -6,7 +6,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 /*
     @author eladkay
@@ -15,10 +14,10 @@ public class ModuleRegistry {
 
     private final static ModuleRegistry INSTANCE = new ModuleRegistry();
     private int id = 0;
-    private HashMap<ModuleType, LinkedHashMap<Integer, Module>> modules = Maps.newHashMap();
+    private HashMap<ModuleType, HashMap<Integer, Module>> modules = Maps.newHashMap();
 
     private ModuleRegistry() {
-        for (ModuleType type : ModuleType.values()) modules.putIfAbsent(type, new LinkedHashMap<>());
+        for (ModuleType type : ModuleType.values()) modules.putIfAbsent(type, new HashMap<>());
     }
 
     public static ModuleRegistry getInstance() {
@@ -79,7 +78,7 @@ public class ModuleRegistry {
         return null;
     }
 
-    public HashMap<ModuleType, LinkedHashMap<Integer, Module>> getModules() {
+    public HashMap<ModuleType, HashMap<Integer, Module>> getModules() {
         return modules;
     }
 

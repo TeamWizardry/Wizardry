@@ -27,7 +27,7 @@ public class SpellHandler
 		
 		if (!event.isCanceled())
 		{
-			ModuleRegistry.getInstance().modules.get(spell.getInteger(Module.CLASS)).construct(null).cast(player, source, spell);
+			ModuleRegistry.getInstance().getModuleById(spell.getInteger(Module.CLASS)).cast(player, source, spell);
 		}
 	}
 }

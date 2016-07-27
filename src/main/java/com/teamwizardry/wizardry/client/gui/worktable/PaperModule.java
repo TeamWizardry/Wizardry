@@ -7,7 +7,7 @@ import com.teamwizardry.librarianlib.api.gui.components.ComponentVoid;
 import com.teamwizardry.librarianlib.api.gui.components.mixin.DragMixin;
 import com.teamwizardry.librarianlib.api.gui.components.mixin.gl.GlMixin;
 import com.teamwizardry.librarianlib.api.util.misc.Color;
-import com.teamwizardry.wizardry.api.module.ModuleRegistry;
+import com.teamwizardry.wizardry.api.module.Module;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class PaperModule extends ModuleComponent {
 	
 	public List<PaperModule> connections = new ArrayList<>();
 	
-	public PaperModule(int posX, int posY, ModuleRegistry.IModuleConstructor constructor, GuiComponent<?> paper) {
+	public PaperModule(int posX, int posY, Module constructor, GuiComponent<?> paper) {
 		super(posX, posY, constructor, paper);
 
 		result.centerHorizontal = true;

@@ -69,7 +69,7 @@ public class WorktableGui extends GuiBase {
 	
     static final int iconSize = 12;
     public boolean useModules = false; // setting to true disables conventional rendering
-    public Multimap<ModuleType, ModuleRegistry.IModuleConstructor> modulesByType = HashMultimap.create();
+    public Multimap<ModuleType, Module> modulesByType = HashMultimap.create();
     ComponentVoid paper, shapes, modifiers, effects, booleans, events;
     private int left, top, paperLeft = 160, paperTop = 0;
     private int backgroundWidth = 512, backgroundHeight = 256, paperWidth = 191, paperHeight = 202;
@@ -85,9 +85,8 @@ public class WorktableGui extends GuiBase {
     public WorktableGui() {
         super(512, 256);
 
-        for (ModuleRegistry.IModuleConstructor moduleConstructor : ModuleRegistry.getInstance().modules.values()) {
-            Module module = moduleConstructor.construct(null);
-            modulesByType.get(module.getType()).add(moduleConstructor);
+        for (Module module : ((HashMap<Integer, Module>)ModuleRegistry.getInstance().getModules().values()).values()) {
+            modulesByType.get(module.getType()).add(module);
         }
         
         useModules = true;
@@ -130,7 +129,7 @@ public class WorktableGui extends GuiBase {
         view.add(grid);
 
         int count = 0;
-        for (ModuleRegistry.IModuleConstructor constructor : modulesByType.get(type)) {
+        for (Module constructor : modulesByType.get(type)) {
             SidebarItem item = new SidebarItem(0, 0, constructor, paper);
             grid.add(item.result);
             count++;
@@ -164,9 +163,7 @@ public class WorktableGui extends GuiBase {
 
     private void initModules() {
         // Construct the new module
-        for (ModuleRegistry.IModuleConstructor moduleConstructor : ModuleRegistry.getInstance().modules.values()) {
-            // Construct a new module object
-            Module module = moduleConstructor.construct(null);
+        for (Module module : ((HashMap<Integer, Module>) ModuleRegistry.getInstance().getModules().values()).values()) {
 
             // Add it into moduleCategories
             moduleCategories.putIfAbsent(module.getType(), new ArrayList<>());
