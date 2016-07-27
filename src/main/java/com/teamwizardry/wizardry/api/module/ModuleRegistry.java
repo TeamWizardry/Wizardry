@@ -12,7 +12,7 @@ import java.util.LinkedHashMap;
 */
 public class ModuleRegistry {
 
-    private static ModuleRegistry INSTANCE = new ModuleRegistry();
+    private final static ModuleRegistry INSTANCE = new ModuleRegistry();
     private int id = 0;
     private HashMap<ModuleType, LinkedHashMap<Integer, Module>> modules = Maps.newHashMap();
     private ModuleRegistry() {
