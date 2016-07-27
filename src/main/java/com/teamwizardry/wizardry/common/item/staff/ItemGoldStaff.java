@@ -60,7 +60,7 @@ public class ItemGoldStaff extends Item implements Colorable {
         NBTTagCompound compound = stack.getTagCompound();
         if (!compound.hasKey("Spell")) return;
         NBTTagCompound spell = compound.getCompoundTag("Spell");
-        SpellCastEvent event = new SpellCastEvent(spell, entityLiving, (EntityPlayer) entityLiving);
+        SpellCastEvent event = new SpellCastEvent(compound, entityLiving, (EntityPlayer) entityLiving);
         MinecraftForge.EVENT_BUS.post(event);
     }
 

@@ -232,6 +232,7 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
                     NBTTagCompound compound = pearl.getItemStack().getTagCompound();
                     compound.setString("type", PearlType.INFUSED.toString());
                     compound.setTag("Spell", parsedSpell.getModuleData());
+                    compound.setInteger(Module.CLASS, parsedSpell.getId());
                     pearl.getItemStack().setTagCompound(compound);
                     EntityItem pearlItem = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() + pearl.getPoint().yCoord, pos.getZ() + 0.5, pearl.getItemStack());
                     pearlItem.setVelocity(0, 0.8, 0);
