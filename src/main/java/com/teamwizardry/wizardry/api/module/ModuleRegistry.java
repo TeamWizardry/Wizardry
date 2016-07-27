@@ -28,8 +28,10 @@ public class ModuleRegistry {
         if (stack.getItem() != stack2.getItem()) return false;
         if (stack.getItemDamage() != stack2.getItemDamage()) return false;
         if (stack.stackSize != stack2.stackSize) return false;
+
         NBTTagCompound compound1 = stack.getTagCompound();
         NBTTagCompound compound2 = stack2.getTagCompound();
+
         if (compound1 == null && compound2 != null) return false;
         if (compound1 != null && compound2 == null) return false;
 

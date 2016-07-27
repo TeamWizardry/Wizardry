@@ -82,7 +82,7 @@ public abstract class Module {
      */
     public NBTTagCompound getModuleData() {
         NBTTagCompound compound = new NBTTagCompound();
-        compound.setString(CLASS, this.getClass().getName());
+        compound.setInteger(CLASS, id);
         NBTTagList list = new NBTTagList();
         for (Module module : children) list.appendTag(module.getModuleData());
         compound.setTag(MODULES, list);
