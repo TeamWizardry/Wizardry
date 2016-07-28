@@ -1,7 +1,5 @@
 package com.teamwizardry.wizardry.api.spell;
 
-import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,11 +20,12 @@ public class SpellHandler {
         Entity source = event.source;
         NBTTagCompound spell = event.spell;
 
-        if (!event.isCanceled() && ModuleRegistry.getInstance().getModuleById(spell.getInteger(Module.CLASS)) != null) {
+       /* if (!event.isCanceled() && ModuleRegistry.getInstance().getModuleById(spell.getInteger(Module.CLASS)) != null) {
             ModuleRegistry.getInstance().getModuleById(spell.getInteger(Module.CLASS)).cast(player, source, spell.getCompoundTag("Spell"));
 
         } else if (ModuleRegistry.getInstance().getModuleById(spell.getInteger(Module.CLASS)) == null) {
             System.err.println("Spell is null! @" + event.source.getPosition() + " com.wizardry.wizardry.api.SpellHandler.java:34");
         }
+        */
     }
 }
