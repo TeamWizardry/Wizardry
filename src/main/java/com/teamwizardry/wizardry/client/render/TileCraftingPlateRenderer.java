@@ -21,11 +21,11 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
 
             if (te.isCrafting()) {
                 // Speed rotation up as crafting time decreases
-                rotationTicker += te.getCraftingTime() / te.getCraftingTimeLeft();
+                rotationTicker += (double) te.getCraftingTime() / (double) te.getCraftingTimeLeft();
                 if (rotationTicker >= 360) rotationTicker = 0;
             }
             if (te.isAnimating()) {
-                pearlRotationTicker += te.getPearlAnimationTime() / te.getPearlAnimationTimeLeft();
+                pearlRotationTicker += (double) te.getPearlAnimationTime() / (double) te.getPearlAnimationTimeLeft();
                 if (pearlRotationTicker >= 360) pearlRotationTicker = 0;
             }
 
@@ -51,9 +51,9 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
                         if (stack.getPositionTheta() >= 1) stack.setPositionTheta(1.0 / te.getCraftingTime());
                         else stack.setPositionTheta(stack.getPositionTheta() + 1.0 / te.getCraftingTimeLeft());
 
-                        stack.setMaxX(stack.getMaxX() - (stack.getMaxX() / te.getCraftingTimeLeft() / 10));
-                        stack.setMaxZ(stack.getMaxZ() - (stack.getMaxZ() / te.getCraftingTimeLeft() / 10));
-                        stack.setMaxY(stack.getMaxY() - (stack.getMaxY() / te.getCraftingTimeLeft() / 10));
+                        stack.setMaxX(stack.getMaxX() - (stack.getMaxX() / te.getCraftingTimeLeft() / 10.0));
+                        stack.setMaxZ(stack.getMaxZ() - (stack.getMaxZ() / te.getCraftingTimeLeft() / 10.0));
+                        stack.setMaxY(stack.getMaxY() - (stack.getMaxY() / te.getCraftingTimeLeft() / 10.0));
                     }
 
                     double theta = Math.PI * 2 * stack.getPositionTheta();

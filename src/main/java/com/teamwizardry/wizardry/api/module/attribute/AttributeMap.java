@@ -56,11 +56,11 @@ public class AttributeMap {
 
         HashMap<AttributeModifier.Priority, ArrayList<AttributeModifier>> priorityLists = new HashMap<AttributeModifier.Priority, ArrayList<AttributeModifier>>();
 
-        priorityLists.put(AttributeModifier.Priority.HIGHEST, new ArrayList<AttributeModifier>());
-        priorityLists.put(AttributeModifier.Priority.HIGH, new ArrayList<AttributeModifier>());
-        priorityLists.put(AttributeModifier.Priority.NORMAL, new ArrayList<AttributeModifier>());
-        priorityLists.put(AttributeModifier.Priority.LOW, new ArrayList<AttributeModifier>());
-        priorityLists.put(AttributeModifier.Priority.LOWEST, new ArrayList<AttributeModifier>());
+        priorityLists.putIfAbsent(AttributeModifier.Priority.HIGHEST, new ArrayList<>());
+        priorityLists.putIfAbsent(AttributeModifier.Priority.HIGH, new ArrayList<>());
+        priorityLists.putIfAbsent(AttributeModifier.Priority.NORMAL, new ArrayList<>());
+        priorityLists.putIfAbsent(AttributeModifier.Priority.LOW, new ArrayList<>());
+        priorityLists.putIfAbsent(AttributeModifier.Priority.LOWEST, new ArrayList<>());
 
         for (AttributeModifier mod : list) {
             if (mod.op == AttributeModifier.Operation.ADD) priorityLists.get(mod.priority).add(0, mod);

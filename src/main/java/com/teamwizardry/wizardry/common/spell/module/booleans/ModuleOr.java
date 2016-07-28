@@ -39,8 +39,8 @@ public class ModuleOr extends Module {
 		for (int i = 0; i < children.tagCount(); i++)
 		{
 			NBTTagCompound child = children.getCompoundTagAt(i);
-			Module module = ModuleRegistry.getInstance().getModuleById(child.getInteger(CLASS));;
-			if (module.getType() == ModuleType.BOOLEAN || module.getType() == ModuleType.EVENT)
+			Module module = ModuleRegistry.getInstance().getModuleById(child.getInteger(PRIMARY_SHAPE));
+            if (module.getType() == ModuleType.BOOLEAN || module.getType() == ModuleType.EVENT)
 				conditionals.put(module, child);
 			else effects.put(module, child);
 		}

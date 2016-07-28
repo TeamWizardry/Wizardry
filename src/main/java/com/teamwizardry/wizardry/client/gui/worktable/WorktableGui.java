@@ -28,45 +28,45 @@ import java.util.stream.Collectors;
  * Created by Saad on 6/17/2016.
  */
 public class WorktableGui extends GuiBase {
-	public static final Texture BACKGROUND_TEXTURE = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/table_background.png"));
-	public static final Sprite BACKGROUND_SPRITE = BACKGROUND_TEXTURE.getSprite("bg", 512, 256);
-	
-	public static final Texture SPRITE_SHEET = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sprite_sheet.png"));
-	
-	// @formatter:off
-	public static final Sprite 
-		TAB_SIDE = SPRITE_SHEET.getSprite("tab_side", 24, 24),
-		TAB_TOP  = SPRITE_SHEET.getSprite("tab_top", 24, 24),
-		
-		MODULE_SLOT_SINGLE = SPRITE_SHEET.getSprite("module_slot_single", 32, 32),
-		MODULE_SLOT_L      = SPRITE_SHEET.getSprite("module_slot_l", 32, 32),
-		MODULE_SLOT_R      = SPRITE_SHEET.getSprite("module_slot_r", 32, 32),
-		MODULE_SLOT_LR     = SPRITE_SHEET.getSprite("module_slot_lr", 32, 32),
-		
-		MODULE_DEFAULT = SPRITE_SHEET.getSprite("module_default", 24, 24),
-		MODULE_DEFAULT_GLOW = SPRITE_SHEET.getSprite("module_default_glow", 24, 24),
-		
-		MODULE_ICON_MISSING = SPRITE_SHEET.getSprite("module_icon_missing", 16, 16),
-		SCROLL_SLIDER_V = SPRITE_SHEET.getSprite("scroll_slider_v", 8, 16),
-		SCROLL_SLIDER_H = SPRITE_SHEET.getSprite("scroll_slider_h", 16, 8),
-		
-		SCROLL_GROOVE_V = SPRITE_SHEET.getSprite("scroll_groove_v", 12, 12),
-		SCROLL_GROOVE_V_TOP = SPRITE_SHEET.getSprite("scroll_groove_v_top", 12, 12),
-		SCROLL_GROOVE_V_BOTTOM = SPRITE_SHEET.getSprite("scroll_groove_v_bottom", 12, 12),
-		
-		SCROLL_GROOVE_H = SPRITE_SHEET.getSprite("scroll_groove_h", 12, 12),
-		SCROLL_GROOVE_H_LEFT = SPRITE_SHEET.getSprite("scroll_groove_h_left", 12, 12),
-		SCROLL_GROOVE_H_RIGHT = SPRITE_SHEET.getSprite("scroll_groove_h_right", 12, 12),
-		
-		_WHATISTHIS_GRID_THING = SPRITE_SHEET.getSprite("_whatisthis_grid_thing", 24, 24),
-		_WHATISTHIS_BOX_THING = SPRITE_SHEET.getSprite("_whatisthis_box_thing", 16, 16),
-		_WHATISTHIS_BOX_H_THING = SPRITE_SHEET.getSprite("_whatisthis_box_h_thing", 16, 13),
-		_WHATISTHIS_BOX_H_LEFT_THING = SPRITE_SHEET.getSprite("_whatisthis_box_h_left_thing", 16, 13),
-		_WHATISTHIS_BOX_H_RIGHT_THING = SPRITE_SHEET.getSprite("_whatisthis_box_h_right_thing", 16, 13),
-		
-	___fluff___ = null; // fluff just so I don't have to mess around with removing and adding trailing commas
-	// @formatter:on
-	
+    public static final Texture BACKGROUND_TEXTURE = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/table_background.png"));
+    public static final Sprite BACKGROUND_SPRITE = BACKGROUND_TEXTURE.getSprite("bg", 512, 256);
+
+    public static final Texture SPRITE_SHEET = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sprite_sheet.png"));
+
+    // @formatter:off
+    public static final Sprite
+            TAB_SIDE = SPRITE_SHEET.getSprite("tab_side", 24, 24),
+            TAB_TOP = SPRITE_SHEET.getSprite("tab_top", 24, 24),
+
+    MODULE_SLOT_SINGLE = SPRITE_SHEET.getSprite("module_slot_single", 32, 32),
+            MODULE_SLOT_L = SPRITE_SHEET.getSprite("module_slot_l", 32, 32),
+            MODULE_SLOT_R = SPRITE_SHEET.getSprite("module_slot_r", 32, 32),
+            MODULE_SLOT_LR = SPRITE_SHEET.getSprite("module_slot_lr", 32, 32),
+
+    MODULE_DEFAULT = SPRITE_SHEET.getSprite("module_default", 24, 24),
+            MODULE_DEFAULT_GLOW = SPRITE_SHEET.getSprite("module_default_glow", 24, 24),
+
+    MODULE_ICON_MISSING = SPRITE_SHEET.getSprite("module_icon_missing", 16, 16),
+            SCROLL_SLIDER_V = SPRITE_SHEET.getSprite("scroll_slider_v", 8, 16),
+            SCROLL_SLIDER_H = SPRITE_SHEET.getSprite("scroll_slider_h", 16, 8),
+
+    SCROLL_GROOVE_V = SPRITE_SHEET.getSprite("scroll_groove_v", 12, 12),
+            SCROLL_GROOVE_V_TOP = SPRITE_SHEET.getSprite("scroll_groove_v_top", 12, 12),
+            SCROLL_GROOVE_V_BOTTOM = SPRITE_SHEET.getSprite("scroll_groove_v_bottom", 12, 12),
+
+    SCROLL_GROOVE_H = SPRITE_SHEET.getSprite("scroll_groove_h", 12, 12),
+            SCROLL_GROOVE_H_LEFT = SPRITE_SHEET.getSprite("scroll_groove_h_left", 12, 12),
+            SCROLL_GROOVE_H_RIGHT = SPRITE_SHEET.getSprite("scroll_groove_h_right", 12, 12),
+
+    _WHATISTHIS_GRID_THING = SPRITE_SHEET.getSprite("_whatisthis_grid_thing", 24, 24),
+            _WHATISTHIS_BOX_THING = SPRITE_SHEET.getSprite("_whatisthis_box_thing", 16, 16),
+            _WHATISTHIS_BOX_H_THING = SPRITE_SHEET.getSprite("_whatisthis_box_h_thing", 16, 13),
+            _WHATISTHIS_BOX_H_LEFT_THING = SPRITE_SHEET.getSprite("_whatisthis_box_h_left_thing", 16, 13),
+            _WHATISTHIS_BOX_H_RIGHT_THING = SPRITE_SHEET.getSprite("_whatisthis_box_h_right_thing", 16, 13),
+
+    ___fluff___ = null; // fluff just so I don't have to mess around with removing and adding trailing commas
+    // @formatter:on
+
     static final int iconSize = 12;
     public boolean useModules = false; // setting to true disables conventional rendering
     public Multimap<ModuleType, Module> modulesByType = HashMultimap.create();
@@ -85,10 +85,10 @@ public class WorktableGui extends GuiBase {
     public WorktableGui() {
         super(512, 256);
 
-        for (Module module : ((HashMap<Integer, Module>)ModuleRegistry.getInstance().getModules().values()).values()) {
-            modulesByType.get(module.getType()).add(module);
-        }
-        
+        for (HashMap<Integer, Module> hashMap : ModuleRegistry.getInstance().getModules().values())
+            for (Module module : hashMap.values())
+                modulesByType.get(module.getType()).add(module);
+
         useModules = true;
 
         ComponentSprite background = new ComponentSprite(BACKGROUND_SPRITE, 0, 0);
@@ -163,17 +163,17 @@ public class WorktableGui extends GuiBase {
 
     private void initModules() {
         // Construct the new module
-        for (Module module : ((HashMap<Integer, Module>) ModuleRegistry.getInstance().getModules().values()).values()) {
+        for (HashMap<Integer, Module> hashMap : ModuleRegistry.getInstance().getModules().values())
+            for (Module module : hashMap.values()) {
+                // Add it into moduleCategories
+                moduleCategories.putIfAbsent(module.getType(), new ArrayList<>());
+                ArrayList<WorktableModule> modules = moduleCategories.get(module.getType());
+                modules.add(new WorktableModule(module));
+                moduleCategories.put(module.getType(), modules);
 
-            // Add it into moduleCategories
-            moduleCategories.putIfAbsent(module.getType(), new ArrayList<>());
-            ArrayList<WorktableModule> modules = moduleCategories.get(module.getType());
-            modules.add(new WorktableModule(module));
-            moduleCategories.put(module.getType(), modules);
-
-            // Add it into modulesInSiderbar
-            modulesInSidebar.add(new WorktableModule(module));
-        }
+                // Add it into modulesInSiderbar
+                modulesInSidebar.add(new WorktableModule(module));
+            }
 
         // Recalculate module positions to their respective sidebars
         HashMap<ModuleType, ArrayList<WorktableModule>> copyModuleCategories = new HashMap<>();
@@ -404,7 +404,7 @@ public class WorktableGui extends GuiBase {
 
 
             WorktableModule moduleBeingHovered = null;
-            
+
             // SHIMMER CURSOR IF LINKING MODE //
             // TODO
             GlStateManager.color(1F, 1F, 1F, 1F);
@@ -514,7 +514,7 @@ public class WorktableGui extends GuiBase {
                 highlight.draw(0, moduleSelected.getX() - 2, moduleSelected.getY() - 2, iconSize + 4, iconSize + 4);
                 GlStateManager.enableLighting();
             }
-            
+
             // Highlight module being hovered
             if (moduleBeingHovered != null && moduleBeingDragged == null) {
                 // Render highlight

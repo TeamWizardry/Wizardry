@@ -8,7 +8,7 @@ import com.teamwizardry.wizardry.api.item.Colorable;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.IContinuousCast;
-import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
+import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
 import com.teamwizardry.wizardry.client.fx.GlitterFactory;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import net.minecraft.client.Minecraft;
@@ -27,7 +27,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -58,8 +57,10 @@ public class ItemGoldStaff extends Item implements Colorable {
         NBTTagCompound compound = stack.getTagCompound();
         if (!compound.hasKey("Spell")) return;
         NBTTagCompound spell = compound.getCompoundTag("Spell");
-        SpellCastEvent event = new SpellCastEvent(compound, entityLiving, (EntityPlayer) entityLiving);
-        MinecraftForge.EVENT_BUS.post(event);
+        Module module = ModuleRegistry.getInstance().getModuleById(spell.getInteger(Module.PRIMARY_SHAPE));
+        if (!(module instanceof IContinuousCast)) {
+            new SpellStack((EntityPlayer) entityLiving, entityLiving, spell).initSpell();
+        }
     }
 
     @Override
@@ -89,10 +90,10 @@ public class ItemGoldStaff extends Item implements Colorable {
                 NBTTagCompound compound = stack.getTagCompound();
                 if (compound.hasKey("Spell")) {
                     NBTTagCompound spell = compound.getCompoundTag("Spell");
-                    if (spell.hasKey(Module.CLASS)) {
-                        Module module = ModuleRegistry.getInstance().getModuleById(spell.getInteger(Module.CLASS));
+                    if (spell.hasKey(Module.PRIMARY_SHAPE)) {
+                        Module module = ModuleRegistry.getInstance().getModuleById(spell.getInteger(Module.PRIMARY_SHAPE));
                         if (module instanceof IContinuousCast) {
-                            module.cast((EntityPlayer) player, player, spell);
+                            new SpellStack((EntityPlayer) player, player, spell).castSpell();
                         }
                     }
                 }
@@ -196,8 +197,8 @@ public class ItemGoldStaff extends Item implements Colorable {
     private void addInformation(NBTTagCompound compound, List<String> tooltip, int level) {
 
         //TODO
-      /*  if (!compound.hasKey(Module.CLASS)) return;
-        String cls = compound.getString(Module.CLASS);
+      /*  if (!compound.hasKey(Module.PRIMARY_SHAPE)) return;
+        String cls = compound.getString(Module.PRIMARY_SHAPE);
         cls = cls.substring(cls.lastIndexOf('.') + 1);
         for (int i = 0; i < level; i++)
             cls = ' ' + cls;

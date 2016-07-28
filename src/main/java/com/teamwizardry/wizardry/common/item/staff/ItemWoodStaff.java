@@ -1,12 +1,16 @@
 package com.teamwizardry.wizardry.common.item.staff;
 
 import com.teamwizardry.librarianlib.api.util.misc.Color;
+import com.teamwizardry.librarianlib.math.shapes.Arc3D;
+import com.teamwizardry.librarianlib.math.shapes.Circle3D;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.Colorable;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.IContinuousCast;
-import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
+import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
+import com.teamwizardry.wizardry.client.fx.GlitterFactory;
+import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
@@ -20,9 +24,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -46,13 +50,15 @@ public class ItemWoodStaff extends Item implements Colorable {
 
     @Override
     public void onPlayerStoppedUsing(ItemStack stack, World world, EntityLivingBase entityLiving, int timeLeft) {
-    	if (stack == null || world == null || entityLiving == null) return;
-    	if (!stack.hasTagCompound()) return;
+        if (stack == null || world == null || entityLiving == null) return;
+        if (!stack.hasTagCompound()) return;
         NBTTagCompound compound = stack.getTagCompound();
         if (!compound.hasKey("Spell")) return;
         NBTTagCompound spell = compound.getCompoundTag("Spell");
-        SpellCastEvent event = new SpellCastEvent(spell, entityLiving, (EntityPlayer) entityLiving);
-        MinecraftForge.EVENT_BUS.post(event);
+        Module module = ModuleRegistry.getInstance().getModuleById(spell.getInteger(Module.PRIMARY_SHAPE));
+        if (!(module instanceof IContinuousCast)) {
+            new SpellStack((EntityPlayer) entityLiving, entityLiving, spell).initSpell();
+        }
     }
 
     @Override
@@ -82,13 +88,28 @@ public class ItemWoodStaff extends Item implements Colorable {
                 NBTTagCompound compound = stack.getTagCompound();
                 if (compound.hasKey("Spell")) {
                     NBTTagCompound spell = compound.getCompoundTag("Spell");
-                    if (spell.hasKey(Module.CLASS)) {
-                        Module module = ModuleRegistry.getInstance().getModuleById(spell.getInteger(Module.CLASS));
+                    if (spell.hasKey(Module.PRIMARY_SHAPE)) {
+                        Module module = ModuleRegistry.getInstance().getModuleById(spell.getInteger(Module.PRIMARY_SHAPE));
                         if (module instanceof IContinuousCast) {
-                            module.cast((EntityPlayer) player, player, spell);
+                            new SpellStack((EntityPlayer) player, player, spell).castSpell();
                         }
                     }
                 }
+            }
+        }
+
+        int betterCount = Math.abs(count - 72000);
+        Circle3D circle = new Circle3D(player.getPositionVector(), player.width + 0.3, 5);
+        for (Vec3d points : circle.getPoints()) {
+            Vec3d target = new Vec3d(player.posX, player.posY + player.getEyeHeight() - 0.3, player.posZ);
+            Arc3D arc = new Arc3D(points, target, (float) 0.9, 20);
+            if (betterCount < arc.getPoints().size()) {
+                Vec3d point = arc.getPoints().get(betterCount);
+                SparkleFX fizz = GlitterFactory.getInstance().createSparkle(player.worldObj, point, 10);
+                fizz.setFadeOut();
+                fizz.setAlpha(0.1f);
+                fizz.setScale(0.3f);
+                fizz.setBlurred();
             }
         }
     }

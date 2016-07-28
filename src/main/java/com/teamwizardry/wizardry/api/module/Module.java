@@ -28,7 +28,7 @@ public abstract class Module {
     public static final Texture STATIC_ICON_SHEET = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/modules/static.png"));
     public static final Texture ANIMATED_ICON_SHEET = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/modules/animated.png"));
 
-    public static final String CLASS = "Class";
+    public static final String PRIMARY_SHAPE = "Primary Shape";
     public static final String MODULES = "Modules";
     public static final String POWER = "Power";
     public static final String DURATION = "Duration";
@@ -56,8 +56,6 @@ public abstract class Module {
     private String description = "<-NULL->";
     private String displayName = "<-NULL->";
 
-    { /* attributes/parsing */}
-
     public Module(ItemStack stack) {
         this.stack = stack;
         attributes.addAttribute(Attribute.MANA);
@@ -82,7 +80,7 @@ public abstract class Module {
      */
     public NBTTagCompound getModuleData() {
         NBTTagCompound compound = new NBTTagCompound();
-        compound.setInteger(CLASS, id);
+        compound.setInteger(PRIMARY_SHAPE, id);
         NBTTagList list = new NBTTagList();
         for (Module module : children) list.appendTag(module.getModuleData());
         compound.setTag(MODULES, list);

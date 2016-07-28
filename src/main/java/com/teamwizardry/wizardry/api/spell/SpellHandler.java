@@ -20,10 +20,10 @@ public class SpellHandler {
         Entity source = event.source;
         NBTTagCompound spell = event.spell;
 
-       /* if (!event.isCanceled() && ModuleRegistry.getInstance().getModuleById(spell.getInteger(Module.CLASS)) != null) {
-            ModuleRegistry.getInstance().getModuleById(spell.getInteger(Module.CLASS)).cast(player, source, spell.getCompoundTag("Spell"));
+       /* if (!event.isCanceled() && ModuleRegistry.getInstance().getModuleById(spell.getInteger(Module.PRIMARY_SHAPE)) != null) {
+            ModuleRegistry.getInstance().getModuleById(spell.getInteger(Module.PRIMARY_SHAPE)).cast(player, source, spell.getCompoundTag("Spell"));
 
-        } else if (ModuleRegistry.getInstance().getModuleById(spell.getInteger(Module.CLASS)) == null) {
+        } else if (ModuleRegistry.getInstance().getModuleById(spell.getInteger(Module.PRIMARY_SHAPE)) == null) {
             System.err.println("Spell is null! @" + event.source.getPosition() + " com.wizardry.wizardry.api.SpellHandler.java:34");
         }
         */

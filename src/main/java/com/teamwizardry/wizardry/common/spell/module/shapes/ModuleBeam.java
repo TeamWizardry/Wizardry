@@ -3,11 +3,12 @@ package com.teamwizardry.wizardry.common.spell.module.shapes;
 import com.teamwizardry.librarianlib.math.Raycast;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.api.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.module.attribute.Attribute;
 import com.teamwizardry.wizardry.api.spell.IContinuousCast;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.SpellEntity;
-import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
+import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
 import com.teamwizardry.wizardry.client.fx.GlitterFactory;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import com.teamwizardry.wizardry.client.fx.particle.trails.SparkleTrailHelix;
@@ -18,7 +19,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -101,14 +101,24 @@ public class ModuleBeam extends Module implements IContinuousCast {
             if (raycast.typeOfHit == RayTraceResult.Type.BLOCK) {
                 for (int i = 0; i < modules.tagCount(); i++) {
                     Entity entity = new SpellEntity(caster.worldObj, raycast.getBlockPos().getX(), raycast.getBlockPos().getY(), raycast.getBlockPos().getZ());
-                    SpellCastEvent event = new SpellCastEvent(modules.getCompoundTagAt(i), entity, player);
-                    MinecraftForge.EVENT_BUS.post(event);
+
+                    Module nextShape = ModuleRegistry.getInstance().getModuleById(modules.getCompoundTagAt(i).getInteger(Module.PRIMARY_SHAPE));
+
+                    SpellStack stack = new SpellStack(player, entity, nextShape.getModuleData());
+                    if (nextShape instanceof IContinuousCast) {
+                        stack.castSpell();
+                    } else stack.initSpell();
                 }
                 return true;
             } else if (raycast.typeOfHit == RayTraceResult.Type.ENTITY) {
                 for (int i = 0; i < modules.tagCount(); i++) {
-                    SpellCastEvent event = new SpellCastEvent(modules.getCompoundTagAt(i), raycast.entityHit, player);
-                    MinecraftForge.EVENT_BUS.post(event);
+
+                    Module nextShape = ModuleRegistry.getInstance().getModuleById(modules.getCompoundTagAt(i).getInteger(Module.PRIMARY_SHAPE));
+                    SpellStack stack = new SpellStack(player, raycast.entityHit, nextShape.getModuleData());
+                    if (nextShape instanceof IContinuousCast) {
+                        stack.castSpell();
+                    } else stack.initSpell();
+
                 }
                 pierce--;
                 raycast = Raycast.cast(raycast.entityHit, caster.getLookVec(), distance);

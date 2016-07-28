@@ -49,6 +49,8 @@ public class ModuleProjectile extends Module {
 	@Override
 	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell)
 	{
+		// TODO: SPAWN ENTITY IN "init" method
+		// RUN EFFECTS HERE
 		if (caster.worldObj.isRemote)
 		{
 //			double scatter = MathHelper.clamp_double(spell.getDouble(SCATTER), 0, 2);
