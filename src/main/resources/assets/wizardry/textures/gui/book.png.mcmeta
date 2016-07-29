@@ -3,7 +3,7 @@
 		"textureWidth":512,
 		"textureHeight":512,
 		"sprites":{
-			"book_background_border":[0, 0, 146, 180],
+			"background_border":[0, 0, 146, 180],
 			"background_page":[146, 0, 146, 180],
 			"title_bar":[0, 180, 133, 13],
 			"bookmark":[133, 180, 100, 13],
