@@ -1,5 +1,21 @@
 package com.teamwizardry.wizardry;
 
+import com.teamwizardry.librarianlib.api.LibrarianLog;
+import com.teamwizardry.librarianlib.api.util.misc.Color;
+import com.teamwizardry.librarianlib.book.Book;
+import com.teamwizardry.wizardry.api.Config;
+import com.teamwizardry.wizardry.api.capability.WizardHandler;
+import com.teamwizardry.wizardry.api.module.ModuleRegistry;
+import com.teamwizardry.wizardry.api.spell.SpellHandler;
+import com.teamwizardry.wizardry.api.trackerobject.SpellTracker;
+import com.teamwizardry.wizardry.client.gui.GuiHandler;
+import com.teamwizardry.wizardry.common.achievement.AchievementEvents;
+import com.teamwizardry.wizardry.common.achievement.Achievements;
+import com.teamwizardry.wizardry.common.core.EventHandler;
+import com.teamwizardry.wizardry.common.fluid.Fluids;
+import com.teamwizardry.wizardry.common.proxy.CommonProxy;
+import com.teamwizardry.wizardry.common.world.GenHandler;
+import com.teamwizardry.wizardry.init.*;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
@@ -16,24 +32,6 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.Logger;
-import com.teamwizardry.librarianlib.api.LibrarianLog;
-import com.teamwizardry.librarianlib.api.util.misc.Color;
-import com.teamwizardry.librarianlib.book.Book;
-import com.teamwizardry.wizardry.api.Config;
-import com.teamwizardry.wizardry.api.capability.WizardHandler;
-import com.teamwizardry.wizardry.api.module.ModuleList;
-import com.teamwizardry.wizardry.api.spell.SpellHandler;
-import com.teamwizardry.wizardry.client.gui.GuiHandler;
-import com.teamwizardry.wizardry.common.achievement.AchievementEvents;
-import com.teamwizardry.wizardry.common.achievement.Achievements;
-import com.teamwizardry.wizardry.common.core.EventHandler;
-import com.teamwizardry.wizardry.common.fluid.Fluids;
-import com.teamwizardry.wizardry.common.proxy.CommonProxy;
-import com.teamwizardry.wizardry.common.world.GenHandler;
-import com.teamwizardry.wizardry.init.ModBlocks;
-import com.teamwizardry.wizardry.init.ModItems;
-import com.teamwizardry.wizardry.init.ModRecipes;
-import com.teamwizardry.wizardry.init.ModSounds;
 
 /**
  * Created by Saad on 6/9/2016.
@@ -76,7 +74,7 @@ public class Wizardry {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        LibrarianLog.I.info("~*~*~*~*~WHOOOSH~*~*~*~*~");
+        LibrarianLog.I.info("o͡͡͡╮༼ ಠДಠ ༽╭o͡͡͡━☆ﾟ.*･｡ﾟ IT'S LEVI-OH-SA, NOT LEVIOSAA");
 
         logger = event.getModLog();
         guide = new Book(MODID);
@@ -105,13 +103,16 @@ public class Wizardry {
         proxy.init(e);
 
         WizardHandler.INSTANCE.getClass();
-        ModuleList.INSTANCE.getClass();
+        ModuleRegistry.getInstance().getClass();
         SpellHandler.INSTANCE.getClass();
+        ModModules.init();
     }
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent e) {
         proxy.postInit(e);
+        
+        SpellTracker.init();
     }
 
 }

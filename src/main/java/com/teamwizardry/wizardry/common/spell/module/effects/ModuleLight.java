@@ -5,10 +5,12 @@ import com.teamwizardry.wizardry.api.module.attribute.Attribute;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleLight extends Module {
-    public ModuleLight() {
+    public ModuleLight(ItemStack stack) {
+        super(stack);
         attributes.addAttribute(Attribute.DURATION);
     }
 

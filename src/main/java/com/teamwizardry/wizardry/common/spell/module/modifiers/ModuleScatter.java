@@ -8,12 +8,14 @@ import com.teamwizardry.wizardry.api.spell.IModifier;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleScatter extends Module implements IModifier
 {
-	public ModuleScatter()
+	public ModuleScatter(ItemStack stack)
 	{
+		super(stack);
 		canHaveChildren = false;
 	}
 

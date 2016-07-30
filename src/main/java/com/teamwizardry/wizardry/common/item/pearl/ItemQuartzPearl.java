@@ -1,8 +1,10 @@
 package com.teamwizardry.wizardry.common.item.pearl;
 
+import com.teamwizardry.librarianlib.api.util.misc.Color;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.item.IExplodable;
-import com.teamwizardry.wizardry.api.item.IInfusible;
+import com.teamwizardry.wizardry.api.item.Colorable;
+import com.teamwizardry.wizardry.api.item.Explodable;
+import com.teamwizardry.wizardry.api.item.Infusable;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.entity.Entity;
@@ -18,13 +20,10 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.awt.*;
-import java.util.concurrent.ThreadLocalRandom;
-
 /**
  * Created by Saad on 6/10/2016.
  */
-public class ItemQuartzPearl extends Item implements IInfusible, IExplodable {
+public class ItemQuartzPearl extends Item implements Infusable, Explodable, Colorable {
 
     public ItemQuartzPearl() {
         setRegistryName("quartz_pearl");
@@ -54,18 +53,6 @@ public class ItemQuartzPearl extends Item implements IInfusible, IExplodable {
     @SideOnly(Side.CLIENT)
     public void initModel() {
         ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(getRegistryName(), "inventory"));
-    }
-
-    private void setDefaultColor(ItemStack stack, int min, int max) {
-        Color color = new Color(ThreadLocalRandom.current().nextInt(min, max), ThreadLocalRandom.current().nextInt(min, max), ThreadLocalRandom.current().nextInt(min, max));
-        NBTTagCompound compound = new NBTTagCompound();
-        compound.setInteger("red", color.getRed());
-        compound.setInteger("green", color.getGreen());
-        compound.setInteger("blue", color.getBlue());
-        compound.setBoolean("checkRed", false);
-        compound.setBoolean("checkBlue", false);
-        compound.setBoolean("checkGreen", false);
-        stack.setTagCompound(compound);
     }
 
     @Override
@@ -117,6 +104,14 @@ public class ItemQuartzPearl extends Item implements IInfusible, IExplodable {
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldS, ItemStack newS, boolean slotChanged) {
         return slotChanged;
+    }
+
+    @Override
+    public Color getColor(ItemStack stack) {
+        int r = stack.getTagCompound().getInteger("red");
+        int g = stack.getTagCompound().getInteger("green");
+        int b = stack.getTagCompound().getInteger("blue");
+        return new Color(r, g, b);
     }
 
     @SideOnly(Side.CLIENT)

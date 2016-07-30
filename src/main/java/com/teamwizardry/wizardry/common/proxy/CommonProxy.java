@@ -1,7 +1,11 @@
 package com.teamwizardry.wizardry.common.proxy;
 
+import com.teamwizardry.wizardry.api.Config;
+import com.teamwizardry.wizardry.client.fx.particle.LensFlareFX;
 import com.teamwizardry.wizardry.client.fx.particle.MagicBurstFX;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
+import com.teamwizardry.wizardry.client.fx.particle.trails.SparkleTrailHelix;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -32,15 +36,31 @@ public class CommonProxy {
 
     }
 
-    public SparkleFX spawnParticleSparkle(World world, double x, double y, double z, float alpha, float scale, int age, boolean fadeOut) {
+    public SparkleFX spawnParticleSparkle(World worldIn, Vec3d origin) {
         return null;
     }
 
-    public SparkleFX spawnParticleSparkle(World world, double x, double y, double z, float alpha, float scale, int age, double rangeX, double rangeY, double rangeZ, boolean fadeOut) {
+    public SparkleFX spawnParticleSparkle(World worldIn, Vec3d origin, Vec3d range) {
+        return null;
+    }
+
+    public SparkleTrailHelix spawnParticleSparkleTrailHelix(World worldIn, Vec3d origin, Vec3d center, double radius, double initialTheta) {
+        return null;
+    }
+
+    public SparkleTrailHelix spawnParticleSparkleTrailHelix(World worldIn, Vec3d origin, Vec3d center, double radius) {
+        return null;
+    }
+
+    public LensFlareFX spawnParticleLensFlare(World worldIn, Vec3d pos, int age, double range) {
         return null;
     }
 
     public MagicBurstFX spawnParticleMagicBurst(World world, double x, double y, double z) {
         return null;
+    }
+
+    public int getParticleDensity() {
+        return Config.particlePercentage; //not that it matters, it should never be called on server side
     }
 }

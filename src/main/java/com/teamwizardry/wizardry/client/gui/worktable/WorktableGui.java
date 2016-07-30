@@ -2,15 +2,18 @@ package com.teamwizardry.wizardry.client.gui.worktable;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.teamwizardry.librarianlib.api.util.misc.Color;
+import com.teamwizardry.librarianlib.api.gui.GuiBase;
+import com.teamwizardry.librarianlib.api.gui.components.*;
+import com.teamwizardry.librarianlib.api.gui.components.input.ComponentSlider;
 import com.teamwizardry.librarianlib.api.util.misc.Utils;
+import com.teamwizardry.librarianlib.client.Sprite;
+import com.teamwizardry.librarianlib.client.Texture;
+import com.teamwizardry.librarianlib.math.Vec2;
+import com.teamwizardry.librarianlib.math.shapes.BezierCurve2D;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.ModuleList;
+import com.teamwizardry.wizardry.api.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
@@ -19,99 +22,230 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Saad on 6/17/2016.
  */
-public class WorktableGui extends GuiScreen {
+public class WorktableGui extends GuiBase {
+    public static final Texture BACKGROUND_TEXTURE = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/table_background.png"));
+    public static final Sprite BACKGROUND_SPRITE = BACKGROUND_TEXTURE.getSprite("bg", 512, 256);
 
-    private static int left, top, right;
-    private static int backgroundWidth = 214, backgroundHeight = 220; // SIZE OF PAPER
-    private static ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sample-page-background.png");
+    public static final Texture SPRITE_SHEET = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sprite_sheet.png"));
+
+    // @formatter:off
+    public static final Sprite
+            TAB_SIDE = SPRITE_SHEET.getSprite("tab_side", 24, 24),
+            TAB_TOP = SPRITE_SHEET.getSprite("tab_top", 24, 24),
+
+    MODULE_SLOT_SINGLE = SPRITE_SHEET.getSprite("module_slot_single", 32, 32),
+            MODULE_SLOT_L = SPRITE_SHEET.getSprite("module_slot_l", 32, 32),
+            MODULE_SLOT_R = SPRITE_SHEET.getSprite("module_slot_r", 32, 32),
+            MODULE_SLOT_LR = SPRITE_SHEET.getSprite("module_slot_lr", 32, 32),
+
+    MODULE_DEFAULT = SPRITE_SHEET.getSprite("module_default", 24, 24),
+            MODULE_DEFAULT_GLOW = SPRITE_SHEET.getSprite("module_default_glow", 24, 24),
+
+    MODULE_ICON_MISSING = SPRITE_SHEET.getSprite("module_icon_missing", 16, 16),
+            SCROLL_SLIDER_V = SPRITE_SHEET.getSprite("scroll_slider_v", 8, 16),
+            SCROLL_SLIDER_H = SPRITE_SHEET.getSprite("scroll_slider_h", 16, 8),
+
+    SCROLL_GROOVE_V = SPRITE_SHEET.getSprite("scroll_groove_v", 12, 12),
+            SCROLL_GROOVE_V_TOP = SPRITE_SHEET.getSprite("scroll_groove_v_top", 12, 12),
+            SCROLL_GROOVE_V_BOTTOM = SPRITE_SHEET.getSprite("scroll_groove_v_bottom", 12, 12),
+
+    SCROLL_GROOVE_H = SPRITE_SHEET.getSprite("scroll_groove_h", 12, 12),
+            SCROLL_GROOVE_H_LEFT = SPRITE_SHEET.getSprite("scroll_groove_h_left", 12, 12),
+            SCROLL_GROOVE_H_RIGHT = SPRITE_SHEET.getSprite("scroll_groove_h_right", 12, 12),
+
+    _WHATISTHIS_GRID_THING = SPRITE_SHEET.getSprite("_whatisthis_grid_thing", 24, 24),
+            _WHATISTHIS_BOX_THING = SPRITE_SHEET.getSprite("_whatisthis_box_thing", 16, 16),
+            _WHATISTHIS_BOX_H_THING = SPRITE_SHEET.getSprite("_whatisthis_box_h_thing", 16, 13),
+            _WHATISTHIS_BOX_H_LEFT_THING = SPRITE_SHEET.getSprite("_whatisthis_box_h_left_thing", 16, 13),
+            _WHATISTHIS_BOX_H_RIGHT_THING = SPRITE_SHEET.getSprite("_whatisthis_box_h_right_thing", 16, 13),
+
+    ___fluff___ = null; // fluff just so I don't have to mess around with removing and adding trailing commas
+    // @formatter:on
+
+    static final int iconSize = 12;
+    public boolean useModules = false; // setting to true disables conventional rendering
+    public Multimap<ModuleType, Module> modulesByType = HashMultimap.create();
+    ComponentVoid paper, shapes, modifiers, effects, booleans, events;
+    private int left, top, paperLeft = 160, paperTop = 0;
+    private int backgroundWidth = 512, backgroundHeight = 256, paperWidth = 191, paperHeight = 202;
+    private int rotateShimmer = 0;
     private HashMap<ModuleType, ArrayList<WorktableModule>> moduleCategories;
+    private HashMap<ModuleType, WorktableSlider> categorySlidebars;
     private ArrayList<WorktableModule> modulesInSidebar;
     private ArrayList<WorktableModule> modulesOnPaper;
-    private Multimap<WorktableModule, WorktableModule> links;
-    private WorktableModule moduleBeingDragged, moduleBeingLinked, masterModule;
-    private int iconSize = 12;
-    private int rotateShimmer = 0;
+    private ArrayList<WorktableLink> moduleLinks;
+    private BezierCurve2D curveModuleBeingLinked;
+    private WorktableModule moduleBeingDragged, moduleBeingLinked, masterModule, moduleSelected;
+
+    public WorktableGui() {
+        super(512, 256);
+
+        for (HashMap<Integer, Module> hashMap : ModuleRegistry.getInstance().getModules().values())
+            for (Module module : hashMap.values())
+                modulesByType.get(module.getType()).add(module);
+
+        useModules = true;
+
+        ComponentSprite background = new ComponentSprite(BACKGROUND_SPRITE, 0, 0);
+        components.add(background);
+
+        paper = new ComponentVoid(160, 0, 191, 202);
+        paper.zIndex = 100;
+        paper.add(new ComponentVoid(0, 0, 191, 202).setup((c) -> c.addTag("tray")));
+        paper.add(new ComponentVoid(213, 134, 98, 66).setup((c) -> c.addTag("tray")));
+        components.add(paper);
+
+        effects = new ComponentVoid(92, 32, 52, 158);
+        addModules(effects, ModuleType.EFFECT, 7, 7, 3, 12);
+        components.add(effects);
+
+        shapes = new ComponentVoid(32, 32, 52, 74);
+        addModules(shapes, ModuleType.SHAPE, 7, 7, 3, 5);
+        components.add(shapes);
+
+        booleans = new ComponentVoid(32, 116, 52, 74);
+        addModules(booleans, ModuleType.BOOLEAN, 7, 7, 3, 5);
+        components.add(booleans);
+
+        events = new ComponentVoid(368, 31, 52, 87);
+        addModules(events, ModuleType.EVENT, 7, 7, 3, 6);
+        components.add(events);
+
+        modifiers = new ComponentVoid(428, 31, 52, 87);
+        addModules(modifiers, ModuleType.MODIFIER, 7, 7, 3, 6);
+        components.add(modifiers);
+    }
+
+    private void addModules(ComponentVoid parent, ModuleType type, int x, int y, int columns, int rows) {
+        ComponentScrolledView view = new ComponentScrolledView(x, y, columns * 12, rows * 12);
+        parent.add(view);
+
+        ComponentGrid grid = new ComponentGrid(0, 0, 12, 12, columns);
+        view.add(grid);
+
+        int count = 0;
+        for (Module constructor : modulesByType.get(type)) {
+            SidebarItem item = new SidebarItem(0, 0, constructor, paper);
+            grid.add(item.result);
+            count++;
+        }
+        int usedRows = (int) Math.ceil(count / (float) columns);
+        if (usedRows > rows) {
+            ComponentSpriteCapped scrollSlot = new ComponentSpriteCapped(SCROLL_GROOVE_V_TOP, SCROLL_GROOVE_V, SCROLL_GROOVE_V_BOTTOM, false, x + columns * 12, y, 12, rows * 12);
+            parent.add(scrollSlot);
+
+            ComponentSlider scrollSlider = new ComponentSlider(6, SCROLL_SLIDER_V.height / 2 + 2, 0, rows * 12 - SCROLL_SLIDER_V.height - 4, 0, usedRows - 3);
+            scrollSlider.handle.add(new ComponentSprite(SCROLL_SLIDER_V, -SCROLL_SLIDER_V.width / 2, -SCROLL_SLIDER_V.height / 2));
+            scrollSlider.percentageChange.add((p) -> view.scrollToPercent(new Vec2(0, p)));
+            scrollSlot.add(scrollSlider);
+        }
+    }
 
     @Override
     public void initGui() {
+        super.initGui();
         left = width / 2 - backgroundWidth / 2;
         top = height / 2 - backgroundHeight / 2;
-        right = (width / 2 + backgroundWidth / 2) - 6;
 
         moduleCategories = new HashMap<>();
+        categorySlidebars = new HashMap<>();
         modulesInSidebar = new ArrayList<>();
         modulesOnPaper = new ArrayList<>();
-        links = HashMultimap.create();
+        moduleLinks = new ArrayList<>();
 
         initModules();
-
-        // TODO: move worktable to component based buttons
-        //buttonList.add(new Button(Constants.WorkTable.DONE_BUTTON, backgroundWidth / 2 + 30, top + 100, 30, 30));
-        //buttonList.add(new Button(Constants.WorkTable.CONFIRM_BUTTON, backgroundWidth / 2 - 30, top + 100, 30, 30));
     }
 
     private void initModules() {
         // Construct the new module
-        for (ModuleList.IModuleConstructor moduleConstructor : ModuleList.INSTANCE.modules.values()) {
-            // Construct a new module object
-            Module module = moduleConstructor.construct();
-            //module.setIcon(new ResourceLocation(Wizardry.MODID, "textures/items/manaIconOutline.png"));
+        for (HashMap<Integer, Module> hashMap : ModuleRegistry.getInstance().getModules().values())
+            for (Module module : hashMap.values()) {
+                // Add it into moduleCategories
+                moduleCategories.putIfAbsent(module.getType(), new ArrayList<>());
+                ArrayList<WorktableModule> modules = moduleCategories.get(module.getType());
+                modules.add(new WorktableModule(module));
+                moduleCategories.put(module.getType(), modules);
 
-            // Add it into moduleCategories
-            moduleCategories.putIfAbsent(module.getType(), new ArrayList<>());
-            ArrayList<WorktableModule> modules = moduleCategories.get(module.getType());
-            modules.add(new WorktableModule(module));
-            moduleCategories.put(module.getType(), modules);
-
-            // Add it into modulesInSiderbar
-            modulesInSidebar.add(new WorktableModule(module));
-        }
+                // Add it into modulesInSiderbar
+                modulesInSidebar.add(new WorktableModule(module));
+            }
 
         // Recalculate module positions to their respective sidebars
         HashMap<ModuleType, ArrayList<WorktableModule>> copyModuleCategories = new HashMap<>();
         for (ModuleType type : moduleCategories.keySet()) {
 
             // Calculate where the sidebar is
-            int row = 0, column = 0, sidebarLeft = 0, sidebarTop = 0;
+            int row = 0, maxColumns = 2, maxRows = 2, column = 0, sidebarLeft = 0, sidebarTop = 0;
             switch (type) {
                 case BOOLEAN:
-                    sidebarLeft = left - 150;
-                    sidebarTop = top + 100;
+                    sidebarLeft = left + 39;
+                    sidebarTop = top + 123;
+                    maxRows = 5;
+                    if (moduleCategories.get(type).size() >= 15) {
+                        maxColumns = 2;
+                        categorySlidebars.put(type, new WorktableSlider(maxRows, maxColumns, sidebarLeft + iconSize * 2 + 1, sidebarTop, moduleCategories.get(type)));
+                    } else maxColumns = 3;
                     break;
                 case SHAPE:
-                    sidebarLeft = left - 150;
-                    sidebarTop = top;
+                    sidebarLeft = left + 39;
+                    sidebarTop = top + 39;
+                    maxRows = 5;
+                    if (moduleCategories.get(type).size() >= 15) {
+                        maxColumns = 2;
+                        categorySlidebars.put(type, new WorktableSlider(maxRows, maxColumns, sidebarLeft + iconSize * 2 + 1, sidebarTop, moduleCategories.get(type)));
+                    } else maxColumns = 3;
                     break;
                 case EVENT:
-                    sidebarLeft = left - 70;
-                    sidebarTop = top;
+                    sidebarLeft = left + 375;
+                    sidebarTop = top + 38;
+                    maxRows = 6;
+                    if (moduleCategories.get(type).size() >= 18) {
+                        maxColumns = 2;
+                        categorySlidebars.put(type, new WorktableSlider(maxRows, maxColumns, sidebarLeft + iconSize * 2 + 1, sidebarTop, moduleCategories.get(type)));
+                    } else maxColumns = 3;
                     break;
                 case EFFECT:
-                    sidebarLeft = right + 10;
-                    sidebarTop = top;
+                    sidebarLeft = left + 99;
+                    sidebarTop = top + 39;
+                    maxRows = 12;
+                    // TODO: TESTING HERE //
+                    maxColumns = 2;
+                    categorySlidebars.put(type, new WorktableSlider(maxRows, maxColumns, sidebarLeft + iconSize * 2 + 1, sidebarTop, moduleCategories.get(type)));
+                    /*if (moduleCategories.get(type).size() >= 36) {
+                        maxColumns = 2;
+                        categorySlidebars.put(type, new WorktableSlider(maxRows, maxColumns, sidebarLeft + iconSize * 2 + 1, sidebarTop, moduleCategories.get(type)));
+                    } else maxColumns = 3;*/
+                    // TODO: TESTING HERE //
                     break;
                 case MODIFIER:
-                    sidebarLeft = right + 100;
-                    sidebarTop = top;
+                    sidebarLeft = left + 435;
+                    sidebarTop = top + 38;
+                    maxRows = 6;
+                    if (moduleCategories.get(type).size() >= 18) {
+                        maxColumns = 2;
+                        categorySlidebars.put(type, new WorktableSlider(maxRows, maxColumns, sidebarLeft + iconSize * 2 + 1, sidebarTop, moduleCategories.get(type)));
+                    } else maxColumns = 3;
+                    break;
             }
 
             // Add the actual module into the calculated sidebar positions
             for (WorktableModule module : moduleCategories.get(type)) {
 
-                int iconSeparation = 1;
+                int iconSeparation = 0;
                 int x = sidebarLeft + (row * iconSize) + (row * iconSeparation);
                 int y = sidebarTop + (column * iconSize) + (column * iconSeparation);
 
                 module.setX(x);
                 module.setY(y);
 
-                if (row >= 3) {
+                if (row >= maxColumns - 1) {
                     row = 0;
-                    column++;
+                    if (column < maxRows) column++;
                 } else row++;
 
                 copyModuleCategories.putIfAbsent(type, new ArrayList<>());
@@ -120,6 +254,7 @@ public class WorktableGui extends GuiScreen {
                 copyModuleCategories.put(type, modules);
             }
         }
+
         moduleCategories.clear();
         moduleCategories.putAll(copyModuleCategories);
         modulesInSidebar.clear();
@@ -130,204 +265,275 @@ public class WorktableGui extends GuiScreen {
     protected void mouseClicked(int mouseX, int mouseY, int clickedMouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, clickedMouseButton);
 
-        // Get a module from the sidebar.
-        for (WorktableModule module : modulesInSidebar) {
-            if (Utils.isInside(mouseX, mouseY, module.getX(), module.getY(), iconSize)) {
+        if (clickedMouseButton == 0) {
+
+            // Get a module from the sidebar.
+            modulesInSidebar.stream().filter(module -> Utils.isInside(mouseX, mouseY, module.getX(), module.getY(), iconSize)).forEach(module -> {
                 moduleBeingDragged = module.copy();
                 moduleBeingDragged.setX(mouseX - iconSize / 2);
                 moduleBeingDragged.setY(mouseY - iconSize / 2);
-            }
-        }
+            });
 
-        // Drag/Readjust module on paper.
-        for (WorktableModule module : modulesOnPaper) {
-            if (Utils.isInside(mouseX, mouseY, module.getX() - iconSize / 2, module.getY() - iconSize / 2, iconSize) && clickedMouseButton == 0) {
-                if (masterModule == module) masterModule = null;
-                moduleBeingDragged = module;
-                moduleBeingDragged.setX(mouseX);
-                moduleBeingDragged.setY(mouseY);
-                break;
+            // Select a module
+            boolean insideAnything = false;
+            for (WorktableModule module : modulesOnPaper) {
+                if (Utils.isInside(mouseX, mouseY, module.getX(), module.getY(), iconSize)) {
+                    if (moduleSelected != module) {
+                        moduleSelected = module;
+                        insideAnything = true;
+                        break;
+                    }
+                }
             }
+            if (!insideAnything && moduleSelected != null) moduleSelected = null;
         }
     }
 
     @Override
     protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
-        if (moduleBeingLinked == null && clickedMouseButton == 1)
+        super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
+        if (moduleBeingLinked == null && clickedMouseButton == 1) {
+            // Link module on paper
             for (WorktableModule module : modulesOnPaper) {
-                if (Utils.isInside(mouseX, mouseY, module.getX() - iconSize / 2, module.getY() - iconSize / 2, iconSize)) {
+                if (Utils.isInside(mouseX, mouseY, module.getX(), module.getY(), iconSize)) {
                     moduleBeingLinked = module;
+                    curveModuleBeingLinked = new BezierCurve2D(new Vec2(module.getX() + iconSize / 2, module.getY() + iconSize / 2), new Vec2(mouseX, mouseY));
                     break;
                 }
             }
+        }
+
+        if (clickedMouseButton == 0) {
+            // Drag/Readjust module on paper.
+            WorktableModule remove = null;
+            if (moduleBeingDragged == null)
+                for (WorktableModule module : modulesOnPaper) {
+                    if (Utils.isInside(mouseX, mouseY, module.getX(), module.getY(), iconSize)) {
+                        if (masterModule == module) masterModule = null;
+                        moduleBeingDragged = module;
+                        moduleBeingDragged.setX(mouseX);
+                        moduleBeingDragged.setY(mouseY);
+                        remove = module;
+                        break;
+                    }
+                }
+
+            // Delete module that was on paper but is now a module being dragged
+            if (remove != null) {
+                if (modulesOnPaper.contains(remove))
+                    modulesOnPaper.remove(remove);
+                moduleSelected = null;
+            }
+        }
     }
 
     @Override
     protected void mouseReleased(int mouseX, int mouseY, int clickedMouseButton) {
+        super.mouseReleased(mouseX, mouseY, clickedMouseButton);
         if (clickedMouseButton == 0 && moduleBeingDragged != null) {
-            if (Utils.isInside(mouseX, mouseY, left, top, backgroundWidth, backgroundHeight)) {
+            if (Utils.isInside(mouseX, mouseY, left + paperLeft, top + paperTop, paperWidth, paperHeight)) {
                 // TODO: Config for isMaster on the table
+                // Set the module being dragged on the paper
                 if (moduleBeingDragged.getModule().getType() == ModuleType.SHAPE) moduleBeingDragged.setMaster(true);
                 masterModule = moduleBeingDragged;
-                moduleBeingDragged.setX(mouseX);
-                moduleBeingDragged.setY(mouseY);
                 modulesOnPaper.add(moduleBeingDragged);
                 moduleBeingDragged = null;
+                moduleSelected = null;
             } else {
-                for (WorktableModule module : modulesOnPaper) {
-                    if (links.get(moduleBeingDragged).contains(module))
-                        links.get(moduleBeingDragged).remove(module);
+                // Delete module being dragged if it's outside the paper
 
-                    if (links.get(module).contains(moduleBeingDragged))
-                        links.get(module).remove(moduleBeingDragged);
-                }
-                if (modulesOnPaper.contains(moduleBeingDragged))
-                    modulesOnPaper.remove(moduleBeingDragged);
+                List<WorktableLink> concurrentLinks = moduleLinks.stream().filter(link -> link.getEndPointModule() == moduleBeingDragged || link.getStartPointModule() == moduleBeingDragged).collect(Collectors.toList());
+                moduleLinks.removeAll(concurrentLinks);
+
+                if (modulesOnPaper.contains(moduleBeingDragged)) modulesOnPaper.remove(moduleBeingDragged);
                 moduleBeingDragged = null;
+                moduleSelected = null;
             }
         }
 
         if (clickedMouseButton == 1) {
             if (moduleBeingLinked != null) {
                 boolean insideAnything = false;
-                for (WorktableModule module : modulesOnPaper) {
-                    if (Utils.isInside(mouseX, mouseY, module.getX() - iconSize / 2, module.getY() - iconSize / 2, iconSize)) {
+                for (WorktableModule to : modulesOnPaper) {
+                    if (Utils.isInside(mouseX, mouseY, to.getX(), to.getY(), iconSize)) {
                         WorktableModule from = moduleBeingLinked;
 
                         boolean wasLinked = false;
 
-                        if (module.getModule().accept(from.getModule()) || from.getModule().accept(module.getModule())) {
-                            if (links.get(from).contains(module)) {
-                                links.get(from).remove(module);
+                        // Remove a link if it's already established on either side
+                        for (WorktableLink link : moduleLinks)
+                            if (link.getStartPointModule() == from && link.getEndPointModule() == to) {
+                                moduleLinks.remove(link);
                                 wasLinked = true;
-                            }
-                            if (links.get(module).contains(from)) {
-                                links.get(module).remove(from);
+                                break;
+                            } else if (link.getStartPointModule() == to && link.getEndPointModule() == from) {
+                                moduleLinks.remove(link);
                                 wasLinked = true;
+                                break;
                             }
 
-                            if (!wasLinked) links.get(from).add(module);
+                        if (to.getModule().accept(from.getModule())) {
 
+                            // There was no link, make one
+                            if (!wasLinked) moduleLinks.add(new WorktableLink(from, to));
+
+                            curveModuleBeingLinked = null;
                             moduleBeingLinked = null;
                             insideAnything = true;
                         }
                         break;
                     }
                 }
-                if (!insideAnything) moduleBeingLinked = null;
-            } else moduleBeingLinked = null;
+
+                // The mouse linking was never in a module to begin with, remove the mouse link
+                if (!insideAnything) {
+                    moduleBeingLinked = null;
+                    curveModuleBeingLinked = null;
+                }
+            } else {
+                moduleBeingLinked = null;
+                curveModuleBeingLinked = null;
+            }
         }
     }
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
-        boolean isHoveringOverSomething = false;
-        Module moduleBeingHovered = null;
+        if (!useModules) { // no indent for git diff
 
-        // RENDER BACKGROUND //
-        GlStateManager.color(1F, 1F, 1F, 1F);
-        mc.renderEngine.bindTexture(BACKGROUND_TEXTURE);
-        drawTexturedModalRect(left, top, 0, 0, backgroundWidth, backgroundHeight);
-        // RENDER BACKGROUND //
 
-        // RENDER BUTTONS //
-        GlStateManager.color(1F, 1F, 1F, 1F);
-        for (GuiButton button : buttonList)
-            if (button.id == Constants.WorkTable.CONFIRM_BUTTON) {
-                mc.renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/gui/book/error/error.png"));
-                drawScaledCustomSizeModalRect(button.xPosition, button.yPosition, 0, 0, 0, 0, 100, 50, 100, 50);
-            } else if (button.id == Constants.WorkTable.DONE_BUTTON) {
-                mc.renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/gui/book/error/fof.png"));
-                drawScaledCustomSizeModalRect(button.xPosition, button.yPosition, 0, 0, 0, 0, 100, 50, 100, 50);
-            }
-        // RENDER BUTTONS //
+            WorktableModule moduleBeingHovered = null;
 
-        // SHIMMER CURSOR IF LINKING MODE //
-        GlStateManager.color(1F, 1F, 1F, 1F);
-        if (moduleBeingLinked != null) {
-            GlStateManager.pushMatrix();
-            GlStateManager.enableBlend();
+            // SHIMMER CURSOR IF LINKING MODE //
+            // TODO
             GlStateManager.color(1F, 1F, 1F, 1F);
-            if (rotateShimmer < 360) rotateShimmer++;
-            else rotateShimmer = 0;
-            GlStateManager.translate(mouseX, mouseY, 0);
-            GlStateManager.rotate(rotateShimmer * 5, 0, 0, 1);
-            GlStateManager.translate(-mouseX, -mouseY, 0);
-            mc.renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/shimmer.png"));
-            drawScaledCustomSizeModalRect(mouseX - 16 / 2, mouseY - 16 / 2, 0, 0, 16, 16, 16, 16, 16, 16);
-            GlStateManager.disableBlend();
-            GlStateManager.popMatrix();
-        }
-        // SHIMMER CURSOR IF LINKING MODE //
+            if (moduleBeingLinked != null) {
+                GlStateManager.pushMatrix();
+                GlStateManager.enableBlend();
+                GlStateManager.color(1F, 1F, 1F, 1F);
+                if (rotateShimmer < 360) rotateShimmer++;
+                else rotateShimmer = 0;
+                GlStateManager.translate(mouseX, mouseY, 0);
+                GlStateManager.rotate(rotateShimmer * 5, 0, 0, 1);
+                GlStateManager.translate(-mouseX, -mouseY, 0);
+                mc.renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/shimmer.png"));
+                drawScaledCustomSizeModalRect(mouseX - 16 / 2, mouseY - 16 / 2, 0, 0, 16, 16, 16, 16, 16, 16);
+                GlStateManager.disableBlend();
+                GlStateManager.popMatrix();
+            }
+            // SHIMMER CURSOR IF LINKING MODE //
 
-        // RENDER LINE BETWEEN LINKED MODULES //
-        GlStateManager.color(1F, 1F, 1F, 1F);
-        if (moduleBeingDragged != null)
-            if (links.containsKey(moduleBeingDragged))
-                for (WorktableModule linkedModule : links.get(moduleBeingDragged))
-                    Utils.drawLine2D(moduleBeingDragged.getX(), moduleBeingDragged.getY(), linkedModule.getX(), linkedModule.getY(), 2, Color.BLACK);
+            // RENDER MODULES IN THE SIDEBARS //
+            GlStateManager.color(1F, 1F, 1F, 1F);
+            SPRITE_SHEET.bind();
+            for (ModuleType type : moduleCategories.keySet()) {
+                if (categorySlidebars.containsKey(type)) {
+                    for (WorktableModule module : categorySlidebars.get(type).getModules()) {
+                        // Highlight if hovering over
+                        if (Utils.isInside(mouseX, mouseY, module.getX(), module.getY(), iconSize)) {
+                            moduleBeingHovered = module;
+                        } else {
+                            Sprite base = MODULE_DEFAULT_GLOW;
+                            base.getTex().bind();
+                            base.draw(0, module.getX(), module.getY(), iconSize, iconSize);
+                        }
+                    }
+                } else {
+                    for (WorktableModule module : moduleCategories.get(type)) {
+                        // Highlight if hovering over
+                        if (Utils.isInside(mouseX, mouseY, module.getX(), module.getY(), iconSize)) {
+                            moduleBeingHovered = module;
+                        } else {
+                            Sprite base = MODULE_DEFAULT_GLOW;
+                            base.getTex().bind();
+                            base.draw(0, module.getX(), module.getY(), iconSize, iconSize);
 
-        if (moduleBeingLinked != null)
-            Utils.drawLine2D(moduleBeingLinked.getX(), moduleBeingLinked.getY(), mouseX, mouseY, 2, Color.BLACK);
-
-        modulesOnPaper.stream().filter(module -> links.containsKey(module)).forEach(module -> {
-            for (WorktableModule linkedModule : links.get(module))
-                Utils.drawLine2D(module.getX(), module.getY(), linkedModule.getX(), linkedModule.getY(), 2, Color.BLACK);
-        });
-        // RENDER LINE BETWEEN LINKED MODULES //
-
-        // RENDER SIDEBARS //
-        GlStateManager.color(1F, 1F, 1F, 1F);
-        for (ModuleType type : moduleCategories.keySet()) {
-            for (WorktableModule module : moduleCategories.get(type)) {
-
-                // Highlight
-                if (Utils.isInside(mouseX, mouseY, module.getX(), module.getY(), iconSize)) {
-                    mc.renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/blue-gradient.png"));
-                    GlStateManager.color(1F, 1F, 1F, 1F);
-                    drawScaledCustomSizeModalRect(module.getX() - iconSize / 2, module.getY() - iconSize / 2, 0, 0, iconSize * 2, iconSize * 2, iconSize * 2, iconSize * 2, iconSize * 2, iconSize * 2);
-
-                    isHoveringOverSomething = true;
-                    moduleBeingHovered = module.getModule();
+                            Sprite icon = module.getModule().getStaticIcon();
+                            icon.getTex().bind();
+                            icon.draw(0, module.getX(), module.getY(), iconSize, iconSize);
+                        }
+                    }
                 }
-
-                // Render the actual icon
-                mc.renderEngine.bindTexture(module.getModule().getIcon());
-                drawScaledCustomSizeModalRect(module.getX(), module.getY(), 0, 0, iconSize, iconSize, iconSize, iconSize, iconSize, iconSize);
             }
-        }
-        // RENDER SIDEBARS //
+            GlStateManager.color(1F, 1F, 1F, 1F);
+            for (ModuleType type : categorySlidebars.keySet()) categorySlidebars.get(type).draw();
+            // RENDER MODULES IN THE SIDEBARS //
 
-        // RENDER MODULE ON CURSOR //
-        GlStateManager.color(1F, 1F, 1F, 1F);
-        if (moduleBeingDragged != null) {
-            moduleBeingDragged.setX(mouseX);
-            moduleBeingDragged.setY(mouseY);
-            mc.renderEngine.bindTexture(moduleBeingDragged.getModule().getIcon());
-            drawScaledCustomSizeModalRect(moduleBeingDragged.getX() - iconSize / 2, moduleBeingDragged.getY() - iconSize / 2, 0, 0, iconSize, iconSize, iconSize, iconSize, iconSize, iconSize);
-        }
-        // RENDER MODULE ON CURSOR //
-
-        // RENDER MODULE ON THE PAPER //
-        GlStateManager.color(1F, 1F, 1F, 1F);
-        for (WorktableModule module : modulesOnPaper) {
-            mc.renderEngine.bindTexture(module.getModule().getIcon());
-            drawScaledCustomSizeModalRect(module.getX() - iconSize / 2, module.getY() - iconSize / 2, 0, 0, iconSize, iconSize, iconSize, iconSize, iconSize, iconSize);
-            if (Utils.isInside(mouseX, mouseY, module.getX() - iconSize / 2, module.getY() - iconSize / 2, iconSize)) {
-                isHoveringOverSomething = true;
-                moduleBeingHovered = module.getModule();
+            // RENDER LINE BETWEEN LINKED MODULES //
+            GlStateManager.color(1F, 1F, 1F, 1F);
+            if (moduleBeingDragged != null) {
+                for (WorktableLink link : moduleLinks) {
+                    if (link.getStartPointModule() == moduleBeingDragged) link.setStartPointModule(moduleBeingDragged);
+                    else if (link.getEndPointModule() == moduleBeingDragged) link.setEndPointModule(moduleBeingDragged);
+                    link.draw();
+                }
             }
-        }
-        // RENDER MODULE ON THE PAPER //
 
-        // RENDER TOOLTIP //
-        if (isHoveringOverSomething) {
-            List<String> txt = new ArrayList<>();
-            txt.add(TextFormatting.GOLD + moduleBeingHovered.getDisplayName());
-            txt.addAll(Utils.padString(moduleBeingHovered.getDescription(), 30));
-            drawHoveringText(txt, mouseX, mouseY, fontRendererObj);
-        }
+            if (moduleBeingLinked != null && curveModuleBeingLinked != null) {
+                curveModuleBeingLinked.setStartPoint(new Vec2(mouseX, mouseY));
+                curveModuleBeingLinked.draw();
+            }
+
+            moduleLinks.stream().filter(link -> link.getStartPointModule() != moduleBeingDragged && link.getEndPointModule() != moduleBeingDragged).forEach(BezierCurve2D::draw);
+            // RENDER LINE BETWEEN LINKED MODULES //
+
+            // RENDER MODULE ON THE PAPER //
+            GlStateManager.color(1F, 1F, 1F, 1F);
+            for (WorktableModule module : modulesOnPaper) {
+                if (moduleSelected != module) {
+                    if (Utils.isInside(mouseX, mouseY, module.getX(), module.getY(), iconSize)) {
+                        moduleBeingHovered = module;
+                    } else {
+                        Sprite moduleSprite = MODULE_DEFAULT;
+                        moduleSprite.getTex().bind();
+                        moduleSprite.draw(0, module.getX(), module.getY(), iconSize, iconSize);
+                    }
+                }
+            }
+            // RENDER MODULE ON THE PAPER //
+
+            // RENDER MODULE BEING DRAGGED //
+            GlStateManager.color(1F, 1F, 1F, 1F);
+            if (moduleBeingDragged != null) {
+                moduleBeingDragged.setX(mouseX - iconSize / 2);
+                moduleBeingDragged.setY(mouseY - iconSize / 2);
+                Sprite draggingSprite = MODULE_DEFAULT;
+                draggingSprite.getTex().bind();
+                draggingSprite.draw(0, mouseX - iconSize / 2 - 2, mouseY - iconSize / 2 - 2, iconSize + 4, iconSize + 4);
+            }
+            // RENDER MODULE BEING DRAGGED //
+
+            // RENDER TOOLTIP & HIGHLIGHT //
+            // Highlight module selected
+            if (moduleSelected != null) {
+                // Render highlight
+                GlStateManager.disableLighting();
+                Sprite highlight = MODULE_DEFAULT;
+                highlight.getTex().bind();
+                highlight.draw(0, moduleSelected.getX() - 2, moduleSelected.getY() - 2, iconSize + 4, iconSize + 4);
+                GlStateManager.enableLighting();
+            }
+
+            // Highlight module being hovered
+            if (moduleBeingHovered != null && moduleBeingDragged == null) {
+                // Render highlight
+                GlStateManager.disableLighting();
+                Sprite highlight = MODULE_DEFAULT;
+                highlight.getTex().bind();
+                highlight.draw(0, moduleBeingHovered.getX(), moduleBeingHovered.getY(), iconSize, iconSize);
+                GlStateManager.enableLighting();
+
+                // Render tooltip
+                if (modulesOnPaper.contains(moduleBeingHovered) && !isShiftKeyDown()) return;
+                List<String> txt = new ArrayList<>();
+                txt.add(TextFormatting.GOLD + moduleBeingHovered.getModule().getDisplayName());
+                txt.addAll(Utils.padString(moduleBeingHovered.getModule().getDescription(), 30));
+                drawHoveringText(txt, mouseX, mouseY, fontRendererObj);
+            }
+            // RENDER TOOLTIP & HIGHLIGHT //
+
+        } // end useModules - no indent for git diff
     }
 
     @Override

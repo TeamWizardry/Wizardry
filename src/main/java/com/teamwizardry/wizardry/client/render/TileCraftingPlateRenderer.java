@@ -1,40 +1,88 @@
 package com.teamwizardry.wizardry.client.render;
 
-import com.teamwizardry.librarianlib.api.util.misc.PosUtils;
+import com.teamwizardry.wizardry.client.helper.CraftingPlateItemStackHelper;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.util.math.Vec3d;
-import org.lwjgl.opengl.GL11;
 
 /**
  * Created by Saad on 6/11/2016.
  */
 public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCraftingPlate> {
 
-    private int ticker = 0;
+    private double rotationTicker = 0, pearlRotationTicker = 0;
 
     @Override
     public void renderTileEntityAt(TileCraftingPlate te, double x, double y, double z, float partialTicks, int destroyStage) {
         if (te.isStructureComplete()) {
-            ticker += 1;
-            if (ticker > 360) ticker = 0;
 
             if (te.isCrafting()) {
-                // TODO: crafting animations here
+                // Speed rotation up as crafting time decreases
+                rotationTicker += (double) te.getCraftingTime() / (double) te.getCraftingTimeLeft();
+                if (rotationTicker >= 360) rotationTicker = 0;
+            }
+            if (te.isAnimating()) {
+                pearlRotationTicker += (double) te.getPearlAnimationTime() / (double) te.getPearlAnimationTimeLeft();
+                if (pearlRotationTicker >= 360) pearlRotationTicker = 0;
             }
 
-            // RENDER INVENTORY ITEMS HERE //
-            for (int i = 0; i < te.getInventory().size(); i++) {
-                // Get Item
-                EntityItem item = new EntityItem(te.getWorld(), x, y, z, te.getInventory().get(i));
+            if (te.isAnimating() && te.getPearl() != null) {
+                Vec3d point = te.getPearl().getPoint();
 
-                Vec3d pos = PosUtils.generateRandomPosition(new Vec3d(item.posX, item.posY, item.posZ), 3);
+                te.getPearl().setPoint(new Vec3d(0.5, te.getPearl().getPoint().yCoord + 0.001 * partialTicks, 0.5));
 
-                GL11.glPushMatrix();
-                Minecraft.getMinecraft().getRenderManager().doRenderEntity(item, pos.xCoord, pos.yCoord, pos.zCoord, ticker, ticker, true);
-                GL11.glPopMatrix();
+                if (te.getPearlAnimationTimeLeft() > 0.0) {
+                    GlStateManager.pushMatrix();
+                    GlStateManager.translate(x + point.xCoord, y + point.yCoord, z + point.zCoord);
+                    GlStateManager.scale(0.4, 0.4, 0.4);
+                    GlStateManager.rotate((float) pearlRotationTicker, 0, 1, 0);
+                    Minecraft.getMinecraft().getRenderItem().renderItem(te.getPearl().getItemStack(), ItemCameraTransforms.TransformType.NONE);
+                    GlStateManager.popMatrix();
+                }
+            }
+
+            if (te.isCrafting()) {
+                for (CraftingPlateItemStackHelper stack : te.getInventory()) {
+
+                    if (te.getCraftingTimeLeft() > 0.0) {
+                        if (stack.getPositionTheta() >= 1) stack.setPositionTheta(1.0 / te.getCraftingTime());
+                        else stack.setPositionTheta(stack.getPositionTheta() + 1.0 / te.getCraftingTimeLeft());
+
+                        stack.setMaxX(stack.getMaxX() - (stack.getMaxX() / te.getCraftingTimeLeft() / 10.0));
+                        stack.setMaxZ(stack.getMaxZ() - (stack.getMaxZ() / te.getCraftingTimeLeft() / 10.0));
+                        stack.setMaxY(stack.getMaxY() - (stack.getMaxY() / te.getCraftingTimeLeft() / 10.0));
+                    }
+
+                    double theta = Math.PI * 2 * stack.getPositionTheta();
+                    double cosTheta = Math.cos(theta);
+                    double sinTheta = Math.sin(theta);
+                    stack.setPoint(new Vec3d(cosTheta * stack.getMaxX(), stack.getMaxY(), sinTheta * stack.getMaxZ()));
+
+                    GlStateManager.pushMatrix();
+                    GlStateManager.translate(x + stack.getPoint().xCoord + 0.5, y + stack.getPoint().yCoord + 1, z + stack.getPoint().zCoord + 0.5);
+                    GlStateManager.scale(0.4, 0.4, 0.4);
+                    GlStateManager.rotate((float) rotationTicker, 0, 1, 0);
+                    Minecraft.getMinecraft().getRenderItem().renderItem(stack.getItemStack(), ItemCameraTransforms.TransformType.NONE);
+                    GlStateManager.popMatrix();
+                }
+            } else {
+                // RENDER INVENTORY ITEMS HERE WHEN NOT CRAFTING //
+                for (CraftingPlateItemStackHelper stack : te.getInventory()) {
+
+                    if (stack.getQueue() < stack.getPoints().size() - 1) stack.setQueue(stack.getQueue() + 1);
+                    Vec3d point = stack.getPoints().get(stack.getQueue());
+                    stack.tick();
+
+                    GlStateManager.pushMatrix();
+                    GlStateManager.translate(x + point.xCoord + 0.5, y + point.yCoord + 0.5, z + point.zCoord + 0.5);
+                    GlStateManager.scale(0.4, 0.4, 0.4);
+                    GlStateManager.rotate((float) stack.getTick(), 0, 1, 0);
+                    Minecraft.getMinecraft().getRenderItem().renderItem(stack.getItemStack(), ItemCameraTransforms.TransformType.NONE);
+                    GlStateManager.popMatrix();
+                }
             }
         }
     }

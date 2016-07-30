@@ -1,19 +1,17 @@
 {
   "forge_marker": 1,
   "defaults":     {
-    "model": "wizardry:magicians_worktable"
+    "model": "wizardry:magicians_worktable.obj"
   },
   "variants":     {
     "inventory":    {"model": "wizardry:table_left"},
     "is_left_side": {
       "true":  {
-        "textures": {
-          "front": "blocks/planks"
-        },
-        "model":    "wizardry:table_right"
+        "model": "wizardry:Empty"
       },
       "false": {
-        "model": "wizardry:table_left"
+        "model":  "wizardry:magicians_worktable.obj",
+        "uvlock": false
       }
     },
     "facing":       {

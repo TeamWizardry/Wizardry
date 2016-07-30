@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.common.block;
 
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.block.IManaAcceptor;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
@@ -15,7 +16,8 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class BlockManaBattery extends Block implements ITileEntityProvider {
+public class BlockManaBattery extends Block implements ITileEntityProvider, IManaAcceptor {
+
     public BlockManaBattery() {
         super(Material.GROUND);
         setUnlocalizedName("mana_battery");

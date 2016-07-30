@@ -1,18 +1,17 @@
 package com.teamwizardry.wizardry.api.module.attribute;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.Maps;
 
 import java.util.*;
 
 public class AttributeMap {
 
-    protected Multimap<Attribute, AttributeModifier> attributes = HashMultimap.create();
+    protected HashMap<Attribute, List<AttributeModifier>> attributes = Maps.newHashMap();
 
     protected List<AttributeModifier> invalids = new ArrayList<>();
     protected Set<Attribute> validAttributes = new HashSet<>();
 
-    protected Multimap<Attribute, AttributeModifier> attributeCapture = HashMultimap.create();
+    protected HashMap<Attribute, List<AttributeModifier>> attributeCapture = Maps.newHashMap();
     protected List<AttributeModifier> invalidsCapture = new ArrayList<>();
     protected boolean isCapturing = false;
     protected boolean didHaveInvalid = false;
@@ -47,8 +46,8 @@ public class AttributeMap {
             if (isCapturing) didHaveInvalid = true;
             return;
         }
-        if (isCapturing) attributeCapture.put(attribute, mod);
-        else attributes.put(attribute, mod);
+        if (isCapturing) attributeCapture.get(attribute).add(mod);
+        else attributes.get(attribute).add(mod);
 
     }
 
@@ -57,11 +56,11 @@ public class AttributeMap {
 
         HashMap<AttributeModifier.Priority, ArrayList<AttributeModifier>> priorityLists = new HashMap<AttributeModifier.Priority, ArrayList<AttributeModifier>>();
 
-        priorityLists.put(AttributeModifier.Priority.HIGHEST, new ArrayList<AttributeModifier>());
-        priorityLists.put(AttributeModifier.Priority.HIGH, new ArrayList<AttributeModifier>());
-        priorityLists.put(AttributeModifier.Priority.NORMAL, new ArrayList<AttributeModifier>());
-        priorityLists.put(AttributeModifier.Priority.LOW, new ArrayList<AttributeModifier>());
-        priorityLists.put(AttributeModifier.Priority.LOWEST, new ArrayList<AttributeModifier>());
+        priorityLists.putIfAbsent(AttributeModifier.Priority.HIGHEST, new ArrayList<>());
+        priorityLists.putIfAbsent(AttributeModifier.Priority.HIGH, new ArrayList<>());
+        priorityLists.putIfAbsent(AttributeModifier.Priority.NORMAL, new ArrayList<>());
+        priorityLists.putIfAbsent(AttributeModifier.Priority.LOW, new ArrayList<>());
+        priorityLists.putIfAbsent(AttributeModifier.Priority.LOWEST, new ArrayList<>());
 
         for (AttributeModifier mod : list) {
             if (mod.op == AttributeModifier.Operation.ADD) priorityLists.get(mod.priority).add(0, mod);

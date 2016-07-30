@@ -1,0 +1,22 @@
+{
+	"spritesheet":{
+		"textureWidth":512,
+		"textureHeight":512,
+		"sprites":{
+			"background_border":[0, 0, 146, 180],
+			"background_page":[146, 0, 146, 180],
+			"title_bar":[0, 180, 133, 13],
+			"bookmark":[133, 180, 100, 13],
+			"back_page":[0, 193, 18, 10],
+			"next_page":[18, 193, 18, 10],
+			"back_arrow":[0, 203, 18, 9],
+			"up_arrow":[0, 212, 9, 18],
+			"down_arrow":[9, 212, 9, 18],
+			"checkbox":[18, 203, 9, 9],
+			"checkbox_on":[27, 203, 9, 9],
+			"checkmark":[18, 212, 16, 16],
+			"slider_normal":[292, 0, 133, 37],
+			"slider_recipe":[292, 37, 133, 68]
+		}
+	}
+}

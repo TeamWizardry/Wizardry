@@ -1,19 +1,25 @@
 package com.teamwizardry.wizardry.common.spell.module.booleans;
 
-import java.util.HashMap;
 import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.ModuleList;
+import com.teamwizardry.wizardry.api.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
 
+import java.util.HashMap;
+
 public class ModuleNor extends Module {
-    @Override
+	public ModuleNor(ItemStack stack) {
+		super(stack);
+	}
+
+	@Override
     public ModuleType getType() {
         return ModuleType.BOOLEAN;
     }
@@ -33,7 +39,7 @@ public class ModuleNor extends Module {
 		for (int i = 0; i < children.tagCount(); i++)
 		{
 			NBTTagCompound child = children.getCompoundTagAt(i);
-			Module module = ModuleList.INSTANCE.modules.get(child.getTag(CLASS)).construct();
+			Module module = ModuleRegistry.getInstance().getModuleById(child.getInteger(PRIMARY_SHAPE));
 			if (module.getType() == ModuleType.BOOLEAN || module.getType() == ModuleType.EVENT)
 				conditionals.put(module, child);
 			else effects.put(module, child);

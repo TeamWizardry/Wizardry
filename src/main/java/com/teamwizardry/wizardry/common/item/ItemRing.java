@@ -1,28 +1,24 @@
 package com.teamwizardry.wizardry.common.item;
 
-import java.awt.Color;
-import java.util.concurrent.ThreadLocalRandom;
+import com.teamwizardry.librarianlib.api.util.misc.Color;
+import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.item.Colorable;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
 
 /**
  * Created by Saad on 6/13/2016.
  */
-public class ItemRing extends Item {
+public class ItemRing extends Item implements Colorable {
 
     public ItemRing() {
         setRegistryName("ring");
@@ -43,17 +39,6 @@ public class ItemRing extends Item {
         ModelLoader.setCustomModelResourceLocation(this, 1, full);
     }
 
-    private void setDefaultColor(ItemStack stack, int min, int max) {
-        Color color = new Color(ThreadLocalRandom.current().nextInt(min, max), ThreadLocalRandom.current().nextInt(min, max), ThreadLocalRandom.current().nextInt(min, max));
-        NBTTagCompound compound = new NBTTagCompound();
-        compound.setInteger("red", color.getRed());
-        compound.setInteger("green", color.getGreen());
-        compound.setInteger("blue", color.getBlue());
-        compound.setBoolean("checkRed", false);
-        compound.setBoolean("checkBlue", false);
-        compound.setBoolean("checkGreen", false);
-        stack.setTagCompound(compound);
-    }
     @Override
     public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
         int max = 220, min = 120;
@@ -96,17 +81,6 @@ public class ItemRing extends Item {
     }
     
     @Override
-    public ItemStack onItemUseFinish(ItemStack stack, World world, EntityLivingBase entityLiving)
-    {
-    	NBTTagCompound compound = stack.getTagCompound();
-    	if (compound == null) return stack;
-    	NBTTagCompound spell = compound.getCompoundTag("Spell");
-    	SpellCastEvent event = new SpellCastEvent(spell, entityLiving, (EntityPlayer) entityLiving);
-    	MinecraftForge.EVENT_BUS.post(event);
-    	return stack;
-    }
-    
-    @Override
     public boolean canItemEditBlocks() {
         return false;
     }
@@ -114,6 +88,14 @@ public class ItemRing extends Item {
     @Override
     public boolean shouldCauseReequipAnimation(ItemStack oldS, ItemStack newS, boolean slotChanged) {
         return slotChanged;
+    }
+
+    @Override
+    public Color getColor(ItemStack stack) {
+        int r = stack.getTagCompound().getInteger("red");
+        int g = stack.getTagCompound().getInteger("green");
+        int b = stack.getTagCompound().getInteger("blue");
+        return new Color(r, g, b);
     }
 
     public static class ColorHandler implements IItemColor {
@@ -124,9 +106,9 @@ public class ItemRing extends Item {
         public int getColorFromItemstack(ItemStack stack, int tintIndex) {
             if (stack.hasTagCompound()) {
                 if (tintIndex == 1) {
-                    int r = stack.getTagCompound().getInteger("red3");
-                    int g = stack.getTagCompound().getInteger("green3");
-                    int b = stack.getTagCompound().getInteger("blue3");
+                    int r = stack.getTagCompound().getInteger("red");
+                    int g = stack.getTagCompound().getInteger("green");
+                    int b = stack.getTagCompound().getInteger("blue");
                     return intColor(r, g, b);
                 }
             }

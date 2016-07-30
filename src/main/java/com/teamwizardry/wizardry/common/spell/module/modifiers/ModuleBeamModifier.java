@@ -9,10 +9,12 @@ import com.teamwizardry.wizardry.api.spell.IModifier;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleBeamModifier extends Module implements IModifier {
-    public ModuleBeamModifier() {
+    public ModuleBeamModifier(ItemStack stack) {
+        super(stack);
         canHaveChildren = false;
     }
 
@@ -24,7 +26,7 @@ public class ModuleBeamModifier extends Module implements IModifier {
     @Override
     public String getDescription()
     {
-    	return "Increases the distance a beam travels.";
+        return "Increases the restingDistance a beam travels.";
     }
 
     @Override

@@ -1,22 +1,25 @@
 package com.teamwizardry.wizardry.common.spell.module.effects;
 
-import java.util.ArrayList;
-import java.util.List;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.Explosion;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.attribute.Attribute;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.Explosion;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ModuleExplosion extends Module {
     private static final String DAMAGE_TERRAIN = "Damage Terrain";
 
     private boolean damageTerrain;
 
-    public ModuleExplosion() {
+    public ModuleExplosion(ItemStack stack) {
+        super(stack);
         attributes.addAttribute(Attribute.POWER);
     }
 
@@ -27,7 +30,7 @@ public class ModuleExplosion extends Module {
 
     @Override
     public String getDescription() {
-        return "Cause an explosion dealing blast damage. More increases the size and strength. x64 deals terrain damage.";
+        return "Cause an explosion dealing blast damage. More increases the size and stiffness. x64 deals terrain damage.";
     }
 
     @Override

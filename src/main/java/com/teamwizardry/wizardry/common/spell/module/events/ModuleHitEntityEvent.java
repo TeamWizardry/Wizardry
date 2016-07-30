@@ -1,13 +1,19 @@
 package com.teamwizardry.wizardry.common.spell.module.events;
 
-import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.api.spell.IRequireItem;
+import com.teamwizardry.wizardry.api.spell.ModuleType;
 
-public class ModuleHitEntityEvent extends Module
+public class ModuleHitEntityEvent extends Module implements IRequireItem
 {
+	public ModuleHitEntityEvent(ItemStack stack) {
+		super(stack);
+	}
+
 	@Override
 	public ModuleType getType()
 	{
@@ -23,6 +29,12 @@ public class ModuleHitEntityEvent extends Module
 	@Override
 	public String getDisplayName() {
 		return "If Target Is Hit";
+	}
+	
+	@Override
+	public void handle(ItemStack stack)
+	{
+		// TODO Auto-generated method stub
 	}
 
 	@Override
