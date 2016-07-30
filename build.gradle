@@ -53,8 +53,8 @@ minecraft {
 dependencies {
     deobfCompile "mezz.jei:jei_1.9.4:3.4.0.204"
     compile 'com.github.Azanor:Baubles:3f3fdadf09'
+		compile project(':LibrarianLib')
     //shade 'org.smurn:jply:0.2.0'
-    
     // you may put jars on which you depend on in ./libs
     // or you may define them like so..
     //compile "some.group:artifact:version:classifier"
