@@ -56,17 +56,17 @@ public class WizardryDataHandler {
     }
 
     public static void setBloodType(UUID uuid, IBloodType blood) {
-        getPersistentCompound(uuid).setInteger(KEY_BLOODTYPE, BloodRegistry.getRegistry().getBloodTypeId(blood));
+        getPersistentCompound(uuid).setInteger(KEY_BLOODTYPE, BloodRegistry.getBloodTypeId(blood));
         getSaveData().markDirty();
 
     }
 
     public static IBloodType getBloodType(EntityPlayer uuid) {
-        return BloodRegistry.getRegistry().getBloodTypeById(getIntegerSafe(getPersistentCompound(uuid.getUniqueID()), KEY_BLOODTYPE, 0));
+        return BloodRegistry.getBloodTypeById(getIntegerSafe(getPersistentCompound(uuid.getUniqueID()), KEY_BLOODTYPE, 0));
     }
 
     public static IBloodType getBloodType(UUID uuid) {
-        return BloodRegistry.getRegistry().getBloodTypeById(getIntegerSafe(getPersistentCompound(uuid), KEY_BLOODTYPE, 0));
+        return BloodRegistry.getBloodTypeById(getIntegerSafe(getPersistentCompound(uuid), KEY_BLOODTYPE, 0));
     }
 
     //int burnoutMax = 100,
