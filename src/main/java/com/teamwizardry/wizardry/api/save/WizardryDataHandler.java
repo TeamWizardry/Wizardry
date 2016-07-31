@@ -1,6 +1,8 @@
 package com.teamwizardry.wizardry.api.save;
 
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.bloods.BloodRegistry;
+import com.teamwizardry.wizardry.api.bloods.IBloodType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -18,13 +20,6 @@ import java.util.UUID;
 //copy pasta from wiresegal's class in github.com/eladkay/quaritum
 //AnimusHelper.Network
 public class WizardryDataHandler {
-    public enum EnumBloodType {
-        NULL,
-        AQUA,
-        PYRO,
-        AERO,
-        TERRA;
-    }
     private static final String KEY_WIZARDRY_NETWORK = Wizardry.MODID + "-Network";
     private static final String KEY_HAS_BLOOD = Wizardry.MODID + "-Blood";
     private static final String KEY_BLOODTYPE = Wizardry.MODID + "-BloodType";
@@ -56,22 +51,22 @@ public class WizardryDataHandler {
     }
 
     //bloodtype - mine is A+
-    public static void setBloodType(EntityPlayer player, EnumBloodType blood) {
+    public static void setBloodType(EntityPlayer player, IBloodType blood) {
         setBloodType(player.getUniqueID(), blood);
     }
 
-    public static void setBloodType(UUID uuid, EnumBloodType blood) {
-        getPersistentCompound(uuid).setInteger(KEY_BLOODTYPE, blood.ordinal());
+    public static void setBloodType(UUID uuid, IBloodType blood) {
+        getPersistentCompound(uuid).setInteger(KEY_BLOODTYPE, BloodRegistry.getRegistry().getBloodTypeId(blood));
         getSaveData().markDirty();
 
     }
 
-    public static EnumBloodType getBloodType(EntityPlayer uuid) {
-        return EnumBloodType.values()[getIntegerSafe(getPersistentCompound(uuid.getUniqueID()), KEY_BLOODTYPE, 0)];
+    public static IBloodType getBloodType(EntityPlayer uuid) {
+        return BloodRegistry.getRegistry().getBloodTypeById(getIntegerSafe(getPersistentCompound(uuid.getUniqueID()), KEY_BLOODTYPE, 0));
     }
 
-    public static EnumBloodType getBloodType(UUID uuid) {
-        return EnumBloodType.values()[getIntegerSafe(getPersistentCompound(uuid), KEY_BLOODTYPE, 0)];
+    public static IBloodType getBloodType(UUID uuid) {
+        return BloodRegistry.getRegistry().getBloodTypeById(getIntegerSafe(getPersistentCompound(uuid), KEY_BLOODTYPE, 0));
     }
 
     //int burnoutMax = 100,
