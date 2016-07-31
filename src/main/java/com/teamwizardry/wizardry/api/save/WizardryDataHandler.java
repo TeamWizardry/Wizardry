@@ -29,6 +29,11 @@ public class WizardryDataHandler {
     private static final String KEY_HAS_BLOOD = Wizardry.MODID + "-Blood";
     private static final String KEY_BLOODTYPE = Wizardry.MODID + "-BloodType";
     private static final String KEY_BURNOUT_MAX = Wizardry.MODID + "-BurnoutMax";
+
+    private static final String KEY_MANA = Wizardry.MODID + "-Mana";
+    private static final String KEY_MAX_MANA = Wizardry.MODID + "-ManaMax";
+    private static final String KEY_BURNOUT = Wizardry.MODID + "-Burnout";
+
     private static final String TAG_LAST_KNOWN_USERNAME = "lastUsername";
 
     //blood
@@ -75,7 +80,7 @@ public class WizardryDataHandler {
     }
 
     public static void setBurnoutMax(UUID uuid, int burnoutMax) {
-        getPersistentCompound(uuid).setInteger(KEY_BLOODTYPE, burnoutMax);
+        getPersistentCompound(uuid).setInteger(KEY_BURNOUT_MAX, burnoutMax);
         getSaveData().markDirty();
 
     }
@@ -87,7 +92,60 @@ public class WizardryDataHandler {
     public static int getBurnoutMax(UUID uuid) {
         return getIntegerSafe(getPersistentCompound(uuid), KEY_BURNOUT_MAX, 100);
     }
-    //manaMax = 100, burnoutAmount = burnoutMax, manaAmount = 0;
+    //manaMax = 100,
+    public static void setManaMax(EntityPlayer player, int manaMax) {
+        setManaMax(player.getUniqueID(), manaMax);
+    }
+
+    public static void setManaMax(UUID uuid, int manaMax) {
+        getPersistentCompound(uuid).setInteger(KEY_MAX_MANA, manaMax);
+        getSaveData().markDirty();
+
+    }
+
+    public static int getManaMax(EntityPlayer uuid) {
+        return getIntegerSafe(getPersistentCompound(uuid.getUniqueID()), KEY_MAX_MANA, 100);
+    }
+
+    public static int getManaMax(UUID uuid) {
+        return getIntegerSafe(getPersistentCompound(uuid), KEY_MAX_MANA, 100);
+    }
+    //burnoutAmount = burnoutMax,
+    public static void setBurnoutAmount(EntityPlayer player, int burnoutAmount) {
+        setBurnoutMax(player.getUniqueID(), burnoutAmount);
+    }
+
+    public static void setBurnoutAmount(UUID uuid, int burnoutAmount) {
+        getPersistentCompound(uuid).setInteger(KEY_BURNOUT, burnoutAmount);
+        getSaveData().markDirty();
+
+    }
+
+    public static int getBurnoutAmount(EntityPlayer uuid) {
+        return getIntegerSafe(getPersistentCompound(uuid.getUniqueID()), KEY_BURNOUT, getBurnoutMax(uuid));
+    }
+
+    public static int getBurnoutAmount(UUID uuid) {
+        return getIntegerSafe(getPersistentCompound(uuid), KEY_BURNOUT, getBurnoutMax(uuid));
+    }
+    //manaAmount = 0;
+    public static void setMana(EntityPlayer player, int mana) {
+        setMana(player.getUniqueID(), mana);
+    }
+
+    public static void setMana(UUID uuid, int mana) {
+        getPersistentCompound(uuid).setInteger(KEY_MANA, mana);
+        getSaveData().markDirty();
+
+    }
+
+    public static int getMana(EntityPlayer uuid) {
+        return getIntegerSafe(getPersistentCompound(uuid.getUniqueID()), KEY_MANA, 100);
+    }
+
+    public static int getMana(UUID uuid) {
+        return getIntegerSafe(getPersistentCompound(uuid), KEY_MANA, 100);
+    }
 
     public static void updatePlayerName(EntityPlayer player) {
         NBTTagCompound compound = getPersistentCompound(player.getUniqueID());
