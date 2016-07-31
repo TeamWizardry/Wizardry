@@ -35,9 +35,6 @@ public class ItemDebugger extends Item {
                 playerIn.addChatMessage(new TextComponentString("Mana: " + tmb.current_mana + "/" + tmb.MAX_MANA));
             }
         }
-        if (worldIn.isRemote) {
-            Wizardry.guide.display();
-        }
         return EnumActionResult.PASS;
     }
 
