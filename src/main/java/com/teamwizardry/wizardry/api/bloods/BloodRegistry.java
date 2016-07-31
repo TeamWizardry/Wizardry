@@ -5,11 +5,11 @@ import com.google.common.collect.HashBiMap;
 
 //some vampiric shit right there, folks
 public class BloodRegistry {
-    public IBloodType NULLBLOOD = register(null);
-    public IBloodType TERRABLOOD = register(new TerraBlood());
-    public IBloodType AQUABLOOD = register(new AquaBlood());
-    public IBloodType AEROBLOOD = register(new AeroBlood());
-    public IBloodType PYROBLOOD = register(new PyroBlood());
+    public static final IBloodType NULLBLOOD = getRegistry().register(null);
+    public static final IBloodType TERRABLOOD = getRegistry().register(new TerraBlood());
+    public static final IBloodType AQUABLOOD = getRegistry().register(new AquaBlood());
+    public static final IBloodType ZEPHYRBLOOD = getRegistry().register(new AeroBlood());
+    public static final IBloodType PYROBLOOD = getRegistry().register(new PyroBlood());
     private BloodRegistry() {}
     public static BloodRegistry getRegistry() {
         return instance;
@@ -18,7 +18,8 @@ public class BloodRegistry {
     public BiMap<IBloodType, Integer> values = HashBiMap.create(512);
     private int ID = 0;
     public IBloodType register(IBloodType blood) {
-        return getBloodTypeById(values.putIfAbsent(blood, ID++));
+        values.putIfAbsent(blood, ID++);
+        return blood;
     }
     public IBloodType getBloodTypeById(int id) {
         return values.inverse().get(id);
