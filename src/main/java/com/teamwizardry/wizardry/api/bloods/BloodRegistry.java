@@ -5,7 +5,7 @@ import com.google.common.collect.HashBiMap;
 
 //some vampiric shit right there, folks
 public class BloodRegistry {
-    public static final IBloodType NULLBLOOD = getRegistry().register(null);
+    //public static final IBloodType NULLBLOOD = getRegistry().register(null);
     public static final IBloodType TERRABLOOD = getRegistry().register(new TerraBlood());
     public static final IBloodType AQUABLOOD = getRegistry().register(new AquaBlood());
     public static final IBloodType ZEPHYRBLOOD = getRegistry().register(new AeroBlood());
