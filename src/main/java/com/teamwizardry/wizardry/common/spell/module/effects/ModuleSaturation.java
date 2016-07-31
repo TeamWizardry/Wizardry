@@ -7,6 +7,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.attribute.Attribute;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
 
 public class ModuleSaturation extends Module
 {
@@ -45,20 +46,14 @@ public class ModuleSaturation extends Module
 	}
 
 	@Override
-	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell)
+	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack)
 	{
 		if (caster instanceof EntityPlayer)
 		{
 			int power = spell.getInteger(POWER);
 			EntityPlayer target = (EntityPlayer) caster;
-			target.getFoodStats().addStats(power, 0.5F); // Function adds
-															// saturation equal
-															// to 2*arg1*arg2.
-															// Setting arg2 to
-															// 0.5 will make
-															// spell saturate as
-															// much hunger as it
-															// fills
+			//Vanilla code: addStats(power, mult) adds power to hunger and power*mult*2 to saturation
+			target.getFoodStats().addStats(power, 0.5F);
 			return true;
 		}
 		return false;

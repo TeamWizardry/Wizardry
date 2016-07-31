@@ -11,6 +11,7 @@ import com.teamwizardry.wizardry.api.module.attribute.AttributeModifier;
 import com.teamwizardry.wizardry.api.module.attribute.AttributeModifier.Operation;
 import com.teamwizardry.wizardry.api.spell.IModifier;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
 
 public class ModulePower extends Module implements IModifier
 {
@@ -48,7 +49,7 @@ public class ModulePower extends Module implements IModifier
 	}
 
 	@Override
-	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell)
+	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack)
 	{
 		// TODO Auto-generated method stub
 		return false;

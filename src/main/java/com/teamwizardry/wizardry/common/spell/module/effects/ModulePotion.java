@@ -1,9 +1,5 @@
 package com.teamwizardry.wizardry.common.spell.module.effects;
 
-import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.attribute.Attribute;
-import com.teamwizardry.wizardry.api.spell.IRequireItem;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -13,6 +9,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionUtils;
+import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.api.module.attribute.Attribute;
+import com.teamwizardry.wizardry.api.spell.IRequireItem;
+import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
 
 public class ModulePotion extends Module implements IRequireItem{
 	public static final String POTION = "Potion";
@@ -61,7 +62,7 @@ public class ModulePotion extends Module implements IRequireItem{
     }
     
 	@Override
-	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell)
+	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack)
 	{
 		int potionId = spell.getInteger(POTION);
 		int power = spell.getInteger(POWER);

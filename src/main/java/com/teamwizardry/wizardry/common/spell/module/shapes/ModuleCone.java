@@ -1,5 +1,18 @@
 package com.teamwizardry.wizardry.common.spell.module.shapes;
 
+import java.util.List;
+import javax.annotation.Nullable;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EntitySelectors;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.teamwizardry.wizardry.api.module.Module;
@@ -7,20 +20,7 @@ import com.teamwizardry.wizardry.api.module.attribute.Attribute;
 import com.teamwizardry.wizardry.api.spell.IContinuousCast;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.SpellEntity;
-import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.EntitySelectors;
-import net.minecraft.util.math.*;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.Constants.NBT;
-
-import javax.annotation.Nullable;
-import java.util.List;
+import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
 
 public class ModuleCone extends Module implements IContinuousCast
 {
@@ -61,18 +61,19 @@ public class ModuleCone extends Module implements IContinuousCast
 	}
 
 	@Override
-	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell)
+	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack)
 	{
 		double radius = spell.getDouble(DISTANCE);
 		double scatter = 360 / 2 * MathHelper.clamp_double(spell.getDouble(SCATTER), 0, 1);
-		NBTTagList modules = spell.getTagList(MODULES, NBT.TAG_COMPOUND);
 		Vec3d look = caster.getLook(1);
 		if (!(caster instanceof SpellEntity))
 		{
 			BlockPos pos = caster.getPosition();
 			AxisAlignedBB axis = new AxisAlignedBB(pos.subtract(new Vec3i(radius, 0, radius)), pos.add(new Vec3i(radius, 1, radius)));
-			List<Entity> entities = caster.worldObj.getEntitiesInAABBexcluding(caster, axis, Predicates.and(new Predicate<Entity>() {
-				public boolean apply(@Nullable Entity apply) {
+			List<Entity> entities = caster.worldObj.getEntitiesInAABBexcluding(caster, axis, Predicates.and(new Predicate<Entity>()
+			{
+				public boolean apply(@Nullable Entity apply)
+				{
 					return apply != null && (apply.canBeCollidedWith() || apply instanceof EntityItem);
 				}
 			}, EntitySelectors.NOT_SPECTATING));
@@ -84,24 +85,10 @@ public class ModuleCone extends Module implements IContinuousCast
 					Vec3d rightVec = look.rotateYaw((float) scatter / 2).rotatePitch(-caster.rotationPitch);
 					Vec3d posVec = entity.getPositionVector().subtract(caster.getPositionVector()).normalize();
 					if (leftVec.xCoord == -rightVec.xCoord && leftVec.zCoord == -rightVec.zCoord)
-					{
 						if (betweenVectors(posVec, leftVec, look) || betweenVectors(posVec, look, rightVec))
-						{
-							for (int i = 0; i < modules.tagCount(); i++)
-							{
-								SpellCastEvent event = new SpellCastEvent(modules.getCompoundTagAt(i), entity, player);
-								MinecraftForge.EVENT_BUS.post(event);
-							}
-						}
-					}
+							stack.castEffects(entity);
 					if (betweenVectors(posVec, leftVec, rightVec))
-					{
-						for (int i = 0; i < modules.tagCount(); i++)
-						{
-							SpellCastEvent event = new SpellCastEvent(modules.getCompoundTagAt(i), entity, player);
-							MinecraftForge.EVENT_BUS.post(event);
-						}
-					}
+						stack.castEffects(caster);
 				}
 			}
 			return true;
@@ -118,17 +105,13 @@ public class ModuleCone extends Module implements IContinuousCast
 						double xCoord = look.xCoord * i;
 						double zCoord = look.zCoord * j;
 						double lookSq = look.xCoord * look.xCoord + look.zCoord * look.zCoord;
-						double posSq = i*i + j*j;
+						double posSq = i * i + j * j;
 						double cos = (xCoord + zCoord) / Math.sqrt(lookSq * posSq);
 						double angle = Math.acos(Math.abs(cos));
 						if (angle <= scatter)
 						{
 							SpellEntity entity = new SpellEntity(caster.worldObj, pos.getX() + i, pos.getY(), pos.getZ() + j);
-							for (int k = 0; k < modules.tagCount(); k++)
-							{
-								SpellCastEvent event = new SpellCastEvent(modules.getCompoundTagAt(k), entity, player);
-								MinecraftForge.EVENT_BUS.post(event);
-							}
+							stack.castEffects(entity);
 						}
 					}
 				}
@@ -136,7 +119,7 @@ public class ModuleCone extends Module implements IContinuousCast
 		}
 		return false;
 	}
-	
+
 	private boolean betweenVectors(Vec3d test, Vec3d left, Vec3d right)
 	{
 		double testX = test.xCoord;
@@ -145,7 +128,7 @@ public class ModuleCone extends Module implements IContinuousCast
 		double leftZ = left.zCoord;
 		double rightX = right.xCoord;
 		double rightZ = right.zCoord;
-		
+
 		// Math taken from: http://www.blackpawn.com/texts/pointinpoly/
 		// P = A + u * (C - A) + v * (B - A)
 		// 0 <= (u, v) <= 1

@@ -1,11 +1,12 @@
 package com.teamwizardry.wizardry.common.spell.module.events;
 
-import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
 
 /**
  * Created by Saad on 6/21/2016.
@@ -33,7 +34,7 @@ public class ModuleMeleeEvent extends Module
     }
 
 	@Override
-	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell)
+	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack)
 	{
 		// TODO Auto-generated method stub
 		return false;

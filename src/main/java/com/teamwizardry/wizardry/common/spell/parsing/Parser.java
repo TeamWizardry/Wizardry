@@ -1,5 +1,12 @@
 package com.teamwizardry.wizardry.common.spell.parsing;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import javafx.collections.transformation.SortedList;
+import net.minecraft.item.ItemStack;
 import com.google.common.collect.Maps;
 import com.sun.javafx.collections.ObservableListWrapper;
 import com.teamwizardry.wizardry.api.module.Module;
@@ -7,10 +14,6 @@ import com.teamwizardry.wizardry.api.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.IRequireItem;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.init.ModItems;
-import javafx.collections.transformation.SortedList;
-import net.minecraft.item.ItemStack;
-
-import java.util.*;
 
 public class Parser {
 

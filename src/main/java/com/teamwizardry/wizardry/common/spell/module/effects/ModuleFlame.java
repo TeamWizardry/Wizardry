@@ -1,10 +1,5 @@
 package com.teamwizardry.wizardry.common.spell.module.effects;
 
-import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.attribute.Attribute;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.api.spell.SpellEntity;
-import com.teamwizardry.wizardry.client.fx.particle.effect.EffectFire;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -17,6 +12,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.api.module.attribute.Attribute;
+import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.spell.SpellEntity;
+import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
+import com.teamwizardry.wizardry.client.fx.particle.effect.EffectFire;
 
 public class ModuleFlame extends Module {
     public ModuleFlame(ItemStack stack) {
@@ -50,7 +51,7 @@ public class ModuleFlame extends Module {
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell)
+	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack)
 	{
 		if (caster instanceof EntityItem && !caster.worldObj.isRemote)
 		{
@@ -87,8 +88,8 @@ public class ModuleFlame extends Module {
 			BlockPos pos = caster.getPosition();
 			IBlockState state = caster.worldObj.getBlockState(pos);
 			Block block = state.getBlock();
-			ItemStack stack = new ItemStack(block, 1, block.getMetaFromState(state));
-			ItemStack result = FurnaceRecipes.instance().getSmeltingResult(stack);
+			ItemStack item = new ItemStack(block, 1, block.getMetaFromState(state));
+			ItemStack result = FurnaceRecipes.instance().getSmeltingResult(item);
 			if (result != null)
 			{
 				Block smelted = Block.getBlockFromItem(result.getItem());
