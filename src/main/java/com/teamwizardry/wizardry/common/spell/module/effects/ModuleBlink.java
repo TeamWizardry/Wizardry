@@ -11,6 +11,7 @@ import net.minecraft.util.math.Vec3d;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.attribute.Attribute;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
 
 public class ModuleBlink extends Module
 {
@@ -69,7 +70,7 @@ public class ModuleBlink extends Module
 	}
 
 	@Override
-	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell)
+	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack)
 	{
 		double power = spell.getDouble(POWER);
 

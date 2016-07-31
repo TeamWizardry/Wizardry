@@ -1,30 +1,26 @@
 package com.teamwizardry.wizardry.common.spell.module.shapes;
 
-import com.teamwizardry.librarianlib.math.shapes.Circle3D;
-import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.attribute.Attribute;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.api.spell.SpellEntity;
-import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
-import com.teamwizardry.wizardry.api.trackerobject.SpellTracker;
-import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.Constants.NBT;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.teamwizardry.librarianlib.math.shapes.Circle3D;
+import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.api.module.attribute.Attribute;
+import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.spell.SpellEntity;
+import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
+import com.teamwizardry.wizardry.api.trackerobject.SpellTracker;
+import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 
 public class ModuleZone extends Module {
     public ModuleZone(ItemStack stack) {
@@ -60,11 +56,10 @@ public class ModuleZone extends Module {
     }
 
 	@Override
-	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell)
+	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack)
 	{
 		double radius = spell.getDouble(RADIUS);
 		int duration = spell.getInteger(DURATION);
-		NBTTagList modules = spell.getTagList(MODULES, NBT.TAG_COMPOUND);
 
         Circle3D circle = new Circle3D(new Vec3d(caster.posX, caster.posY, caster.posZ), radius, (int) (radius * 10));
         for (Vec3d point : circle.getPoints()) {
@@ -86,16 +81,8 @@ public class ModuleZone extends Module {
 			List<Entity> entities = caster.worldObj.getEntitiesWithinAABB(EntityItem.class, axis);
 			entities.addAll(caster.worldObj.getEntitiesWithinAABB(EntityLivingBase.class, axis));
 			for (Entity entity : entities)
-			{
 				if (entity.getDistanceSqToEntity(caster) <= radius * radius)
-				{
-					for (int i = 0; i < modules.tagCount(); i++)
-					{
-						SpellCastEvent event = new SpellCastEvent(modules.getCompoundTagAt(i), entity, player);
-						MinecraftForge.EVENT_BUS.post(event);
-					}
-				}
-			}
+						stack.castEffects(entity);
 		}
 		else
 		{
@@ -115,11 +102,7 @@ public class ModuleZone extends Module {
 			{
 				SpellEntity entity = new SpellEntity(caster.worldObj, block.getX(), block.getY(), block.getZ());
 				entity.rotationPitch = 90;
-				for (int i = 0; i < modules.tagCount(); i++)
-				{
-					SpellCastEvent event = new SpellCastEvent(modules.getCompoundTagAt(i), entity, player);
-					MinecraftForge.EVENT_BUS.post(event);
-				}
+				stack.castEffects(entity);
 			}
 		}
 		

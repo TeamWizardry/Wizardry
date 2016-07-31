@@ -7,6 +7,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.spell.IRequireItem;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
 
 public class ModuleHitEntityEvent extends Module implements IRequireItem
 {
@@ -38,7 +39,7 @@ public class ModuleHitEntityEvent extends Module implements IRequireItem
 	}
 
 	@Override
-	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell)
+	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack)
 	{
 		// TODO Auto-generated method stub
 		return false;

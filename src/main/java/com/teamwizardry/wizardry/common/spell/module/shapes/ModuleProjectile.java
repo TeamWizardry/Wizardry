@@ -1,13 +1,14 @@
 package com.teamwizardry.wizardry.common.spell.module.shapes;
 
-import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.attribute.Attribute;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.common.spell.ProjectileEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.api.module.attribute.Attribute;
+import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
+import com.teamwizardry.wizardry.common.spell.ProjectileEntity;
 
 public class ModuleProjectile extends Module {
     public ModuleProjectile(ItemStack stack) {
@@ -47,7 +48,7 @@ public class ModuleProjectile extends Module {
     }
 
 	@Override
-	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell)
+	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack)
 	{
 		// TODO: SPAWN ENTITY IN "init" method
 		// RUN EFFECTS HERE
@@ -63,7 +64,7 @@ public class ModuleProjectile extends Module {
 			float pitch = caster.rotationPitch;
 //			for (int i = 0; i < projCount; i++)
 			{
-				ProjectileEntity proj = new ProjectileEntity(caster.worldObj, caster.posX, caster.posY + caster.getEyeHeight(), caster.posZ, player, spell);
+				ProjectileEntity proj = new ProjectileEntity(caster.worldObj, caster.posX, caster.posY + caster.getEyeHeight(), caster.posZ, stack);
 				proj.setDirection(yaw, pitch);
 //				yaw += anglePerProj;
 				caster.worldObj.spawnEntityInWorld(proj);

@@ -1,5 +1,13 @@
 package com.teamwizardry.wizardry.api.module;
 
+import java.util.ArrayList;
+import java.util.List;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.ResourceLocation;
 import com.teamwizardry.librarianlib.api.util.misc.Color;
 import com.teamwizardry.librarianlib.client.Sprite;
 import com.teamwizardry.librarianlib.client.Texture;
@@ -9,15 +17,7 @@ import com.teamwizardry.wizardry.api.module.attribute.AttributeMap;
 import com.teamwizardry.wizardry.api.spell.IModifier;
 import com.teamwizardry.wizardry.api.spell.IRuntimeModifier;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ResourceLocation;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
 
 /**
  * Created by Saad on 6/21/2016.
@@ -28,7 +28,8 @@ public abstract class Module {
     public static final Texture STATIC_ICON_SHEET = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/modules/static.png"));
     public static final Texture ANIMATED_ICON_SHEET = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/modules/animated.png"));
 
-    public static final String PRIMARY_SHAPE = "Primary Shape";
+    public static final String SHAPE = "Shape";
+    public static final String TYPE = "Type";
     public static final String MODULES = "Modules";
     public static final String POWER = "Power";
     public static final String DURATION = "Duration";
@@ -80,7 +81,8 @@ public abstract class Module {
      */
     public NBTTagCompound getModuleData() {
         NBTTagCompound compound = new NBTTagCompound();
-        compound.setInteger(PRIMARY_SHAPE, id);
+        compound.setInteger(SHAPE, id);
+        compound.setString(TYPE, getType().toString());
         NBTTagList list = new NBTTagList();
         for (Module module : children) list.appendTag(module.getModuleData());
         compound.setTag(MODULES, list);
@@ -142,7 +144,7 @@ public abstract class Module {
      * @return if the module was handled
      */
     public boolean accept(Module other) {
-        if (this == other) return false;
+    	if (other == null || other == this) return false;
         boolean accept = false;
         switch (this.getType()) {
             case BOOLEAN:
@@ -219,7 +221,7 @@ public abstract class Module {
      * @return Whether or not the module was successfully cast. Used to evaluate
      * conditional modules.
      */
-    public abstract boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell);
+    public abstract boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack);
 
     /**
      * Will return the display name of the module
