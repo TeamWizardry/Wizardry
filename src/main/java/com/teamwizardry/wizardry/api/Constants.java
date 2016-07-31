@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.api;
 
-import com.teamwizardry.wizardry.api.capability.IWizardData;
+import com.teamwizardry.wizardry.api.save.IWizardData;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 

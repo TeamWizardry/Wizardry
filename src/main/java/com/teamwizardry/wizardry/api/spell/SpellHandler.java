@@ -22,7 +22,6 @@ public class SpellHandler {
 
        /* if (!event.isCanceled() && ModuleRegistry.getInstance().getModuleById(spell.getInteger(Module.PRIMARY_SHAPE)) != null) {
             ModuleRegistry.getInstance().getModuleById(spell.getInteger(Module.PRIMARY_SHAPE)).cast(player, source, spell.getCompoundTag("Spell"));
-
         } else if (ModuleRegistry.getInstance().getModuleById(spell.getInteger(Module.PRIMARY_SHAPE)) == null) {
             System.err.println("Spell is null! @" + event.source.getPosition() + " com.wizardry.wizardry.api.SpellHandler.java:34");
         }

@@ -4,8 +4,9 @@ import com.teamwizardry.librarianlib.api.LibrarianLog;
 import com.teamwizardry.librarianlib.api.util.misc.Color;
 import com.teamwizardry.librarianlib.book.Book;
 import com.teamwizardry.wizardry.api.Config;
-import com.teamwizardry.wizardry.api.capability.WizardHandler;
 import com.teamwizardry.wizardry.api.module.ModuleRegistry;
+import com.teamwizardry.wizardry.api.save.WizardHandler;
+import com.teamwizardry.wizardry.api.save.WizardryDataHandler;
 import com.teamwizardry.wizardry.api.spell.SpellHandler;
 import com.teamwizardry.wizardry.api.trackerobject.SpellTracker;
 import com.teamwizardry.wizardry.client.gui.GuiHandler;
@@ -72,6 +73,8 @@ public class Wizardry {
         FluidRegistry.enableUniversalBucket();
     }
 
+    private WizardryDataHandler.EventHandler handler; //why? because eladkay said so.
+
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         LibrarianLog.I.info("o͡͡͡╮༼ ಠДಠ ༽╭o͡͡͡━☆ﾟ.*･｡ﾟ IT'S LEVI-OH-SA, NOT LEVIOSAA");
@@ -80,6 +83,8 @@ public class Wizardry {
         guide = new Book(MODID);
         guide.setColor(Color.rgb(0x1AFF00));
         Config.initConfig();
+
+        handler = new WizardryDataHandler.EventHandler();
 
         ModSounds.init();
         ModItems.init();

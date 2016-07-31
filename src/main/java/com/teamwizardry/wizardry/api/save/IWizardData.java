@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.api.capability;
+package com.teamwizardry.wizardry.api.save;
 
 /**
  * Created by Saad on 6/19/2016.

@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.api.capability;
+package com.teamwizardry.wizardry.api.save;
 
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;

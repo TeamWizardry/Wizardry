@@ -1,8 +1,8 @@
 package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.capability.IWizardData;
-import com.teamwizardry.wizardry.api.capability.WizardHandler;
+import com.teamwizardry.wizardry.api.save.IWizardData;
+import com.teamwizardry.wizardry.api.save.WizardHandler;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemFood;
