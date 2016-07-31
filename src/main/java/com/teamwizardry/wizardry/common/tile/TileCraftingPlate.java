@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.tile;
 
-import com.teamwizardry.librarianlib.client.multiblock.InWorldRender;
 import com.teamwizardry.librarianlib.client.multiblock.StructureMatchResult;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.Infusable;
@@ -18,7 +17,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
@@ -51,14 +49,15 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
         Structures.reload();
         StructureMatchResult match = Structures.craftingAltar.match(this.worldObj, this.pos);
 
-        if (match.allErrors.size() == 0) {
+	    setStructureComplete(true);
+        /*if (match.allErrors.size() == 0) {
             worldObj.spawnParticle(EnumParticleTypes.FLAME, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5, 0.0D, 0.0D, 0.0D);
             InWorldRender.INSTANCE.unsetStructure();
             setStructureComplete(true);
         } else {
             InWorldRender.INSTANCE.setStructure(Structures.craftingAltar, this.pos);
             setStructureComplete(false);
-        }
+        }*/
     }
 
     // TODO save inventory's CraftingPlateItemStackHelper as the full object
