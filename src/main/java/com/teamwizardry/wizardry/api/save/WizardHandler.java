@@ -1,8 +1,6 @@
 package com.teamwizardry.wizardry.api.save;
 
-import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
@@ -39,8 +37,14 @@ public class WizardHandler {
         });
     }
 
-    public static IWizardData.BarData getEntityData(Entity entity) {
-        return (IWizardData.BarData) entity.getCapability(Constants.Misc.BAR_HANDLER_CAPABILITY, null);
+    public static IWizardData.BarData getEntityData(EntityPlayer entity) {
+        IWizardData.BarData ret = new IWizardData.BarData();
+        ret.burnoutAmount = WizardryDataHandler.getBurnoutAmount(entity);
+        ret.burnoutMax = WizardryDataHandler.getBurnoutMax(entity);
+        ret.manaAmount = WizardryDataHandler.getMana(entity);
+        ret.manaMax = WizardryDataHandler.getManaMax(entity);
+
+        return ret;
     }
 
     @SubscribeEvent
@@ -59,9 +63,9 @@ public class WizardHandler {
                 EntityPlayer player = (EntityPlayer) event.getEntity();
                 IWizardData.BarData provider = getEntityData(player);
                 if (provider.manaAmount < provider.manaMax)
-                    provider.manaAmount++;
+                    WizardryDataHandler.setMana(player, provider.manaAmount + 1);
                 if (provider.burnoutAmount > 0)
-                    provider.burnoutAmount--;
+                    WizardryDataHandler.setBurnoutAmount(player, provider.burnoutAmount - 1);
 
             } else tickCooldown++;
         }
