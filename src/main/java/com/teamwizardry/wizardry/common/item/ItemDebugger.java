@@ -1,11 +1,14 @@
 package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.save.WizardryDataHandler;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -35,10 +38,24 @@ public class ItemDebugger extends Item {
                 playerIn.addChatMessage(new TextComponentString("Mana: " + tmb.current_mana + "/" + tmb.MAX_MANA));
             }
         }
-        if (worldIn.isRemote) {
-            Wizardry.guide.display();
-        }
         return EnumActionResult.PASS;
+    }
+
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
+        if(!worldIn.isRemote) return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
+        if(playerIn.isSneaking())
+            if(GuiScreen.isCtrlKeyDown())
+                WizardryDataHandler.setBurnoutAmount(playerIn, 50);
+            else
+                WizardryDataHandler.setBurnoutAmount(playerIn, 0);
+        else
+            if(GuiScreen.isCtrlKeyDown())
+                WizardryDataHandler.setMana(playerIn, 50);
+            else
+                WizardryDataHandler.setMana(playerIn, 0);
+
+        return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
     }
 
     @SideOnly(Side.CLIENT)

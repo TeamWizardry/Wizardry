@@ -1,8 +1,9 @@
 package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.capability.IWizardData;
-import com.teamwizardry.wizardry.api.capability.WizardHandler;
+import com.teamwizardry.wizardry.api.save.BarData;
+import com.teamwizardry.wizardry.api.save.WizardHandler;
+import com.teamwizardry.wizardry.api.save.WizardryDataHandler;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemFood;
@@ -29,10 +30,10 @@ public class ItemManaCake extends ItemFood {
     @Override
     protected void onFoodEaten(ItemStack stack, World worldIn, EntityPlayer player) {
         super.onFoodEaten(stack, worldIn, player);
-        IWizardData.BarData data = WizardHandler.getEntityData(player);
+        BarData data = WizardHandler.getEntityData(player);
         if (data.manaMax >= data.manaAmount + 300)
-            data.manaAmount = data.manaAmount + 300;
-        else data.manaAmount = data.manaMax;
+            WizardryDataHandler.setMana(player, data.manaAmount + 300);
+        else WizardryDataHandler.setMana(player, data.manaMax);
     }
 
     @SideOnly(Side.CLIENT)

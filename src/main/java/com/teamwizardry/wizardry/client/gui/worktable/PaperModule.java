@@ -28,7 +28,7 @@ public class PaperModule extends ModuleComponent {
 		result.centerVertical = true;
 		GlMixin.transform(result).setValue(new Vec3d(0, 0, 5));
 		
-		drag = new DragMixin<ComponentCenterAlign>(result, (v) -> v);
+		drag = new DragMixin<>(result, (v) -> v);
 		drag.pickup.add((c, button, pos) -> button != EnumMouseButton.LEFT);
 		drag.drop.add((c, button, pos) -> {
 			if(button != EnumMouseButton.LEFT)

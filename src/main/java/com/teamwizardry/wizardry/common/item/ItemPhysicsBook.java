@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.item;
 
-import com.teamwizardry.librarianlib.client.gui.book.BookHandler;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.achievement.Achievements;
 import com.teamwizardry.wizardry.common.achievement.IPickupAchievement;
@@ -39,8 +38,7 @@ public class ItemPhysicsBook extends Item implements IPickupAchievement {
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
-    	if(worldIn.isRemote)
-    		BookHandler.display(Wizardry.MODID);
+    	if(worldIn.isRemote) Wizardry.guide.display();
         return ActionResult.newResult(EnumActionResult.SUCCESS, itemStackIn);
     }
 

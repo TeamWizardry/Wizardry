@@ -13,7 +13,7 @@
       "text": [
         "Look at this ", {"type": "link", "ref": "/:0", "text": "page"}, "!",
         "All of these elements will be concatinated with line breaks between them",
-        "Here's a paragraph, and a ", {"type": "link", "ref": "/browse:3", "text": "link"}, ".",
+        "Here's a paragraph, and a ", {"type": "link", "ref": "/basics/mana:0", "text": "link"}, ".",
         "hi im some text, and I'm ", {"type": "link", "ref": "/browse:1", "text": "more long links that link"},
         "\nI'm another ", {"type": "link", "ref": "/browse/long/missing/thing/that/should/wrap/on/error/page:2", "text": "link that should wrap to be multiple lines long, preferably three, that way it covers at least an entire row"}
       ]
@@ -23,7 +23,7 @@
       "text": [
         "Here's §0C§1o§2l§3o§4r§5m§6a§7t§8i§9c §aG§bu§ci§dd§ee§fs",
         "there's a line with §oItalics",
-        "I §lnever§r §nended§r the §kitalics§r or the §fwhite§0, but it inserted a 'r' and a '0' ", {"type": "tip", "text": "code", "tip": "Codes are a section symbol (option+6 on mac) followed by 0-9, a-f, or one of §oklmnor"}, " in between array elements"
+        "I §lnever§r §nended§r the §kitalics§r or the §fwhite§0, but it inserted a 'r' and a '0' §l", {"type": "tip", "text": "code", "tip": "Codes are a section symbol (option+6 on mac) followed by 0-9, a-f, or one of §oklmnor"}, "§r in between lines. Seperate elements on the same line (wrapping doesn't count as a seperate line) will persist their formatting"
       ]
     },
     {
@@ -37,6 +37,14 @@
     {
       "type": "text",
       "text": {"global": "glob", "page": 2}
+    },
+    {
+      "type": "text",
+      "text": {"global": "glob", "page": 3}
+    },
+    {
+      "type": "text",
+      "text": {"global": "glob", "page": 4}
     },
 	{
 		"type": "structure",

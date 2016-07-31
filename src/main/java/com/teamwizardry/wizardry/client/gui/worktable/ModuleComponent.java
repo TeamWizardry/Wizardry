@@ -4,6 +4,7 @@ import com.teamwizardry.librarianlib.api.gui.GuiComponent;
 import com.teamwizardry.librarianlib.api.gui.components.ComponentCenterAlign;
 import com.teamwizardry.librarianlib.api.gui.components.ComponentSprite;
 import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.lib.LibSprites;
 
 public class ModuleComponent {
 
@@ -22,15 +23,14 @@ public class ModuleComponent {
 		sprite.addTag("sprite");
 		result.add(sprite);
 		
-		ComponentSprite glow = new ComponentSprite(WorktableGui.MODULE_DEFAULT_GLOW, 0, 0, 12, 12);
+		ComponentSprite glow = new ComponentSprite(LibSprites.Worktable.MODULE_DEFAULT_GLOW, 0, 0, 12, 12);
 		glow.setVisible(false);
 		sprite.add(glow);
 		
 		
 		ComponentSprite icon = new ComponentSprite(this.module.getStaticIcon(), 2, 2, 8, 8);
 		sprite.add(icon);
-		
-		
+
 		result.mouseIn.add( (c, pos) -> {
 			glow.setVisible(true);
 			icon.setSprite(this.module.getAnimatedIcon());

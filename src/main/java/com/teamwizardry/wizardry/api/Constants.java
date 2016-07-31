@@ -1,9 +1,5 @@
 package com.teamwizardry.wizardry.api;
 
-import com.teamwizardry.wizardry.api.capability.IWizardData;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
-
 /**
  * Created by Saad on 6/14/2016.
  */
@@ -30,8 +26,5 @@ public class Constants {
         public static final int CONFIRM_BUTTON = 1;
     }
 
-    public static class Misc {
-        @CapabilityInject(IWizardData.class)
-        public static Capability<IWizardData> BAR_HANDLER_CAPABILITY = null;
-    }
+
 }

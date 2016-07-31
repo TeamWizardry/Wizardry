@@ -4,8 +4,8 @@ import com.teamwizardry.librarianlib.api.gui.GuiTickHandler;
 import com.teamwizardry.librarianlib.client.Sprite;
 import com.teamwizardry.librarianlib.client.Texture;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.capability.IWizardData;
-import com.teamwizardry.wizardry.api.capability.WizardHandler;
+import com.teamwizardry.wizardry.api.save.BarData;
+import com.teamwizardry.wizardry.api.save.WizardHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.Gui;
@@ -49,7 +49,7 @@ public class HudEventHandler extends Gui {
             emptyBurnoutBar.draw(GuiTickHandler.ticks, right, top + 6);
             GlStateManager.popMatrix();
 
-            IWizardData.BarData data = WizardHandler.getEntityData(player);
+            BarData data = WizardHandler.getEntityData(player);
 
             GlStateManager.pushMatrix();
             GlStateManager.color(1F, 1F, 1F);

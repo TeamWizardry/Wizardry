@@ -46,8 +46,10 @@ public class AttributeMap {
             if (isCapturing) didHaveInvalid = true;
             return;
         }
-        if (isCapturing) attributeCapture.get(attribute).add(mod);
-        else attributes.get(attribute).add(mod);
+        if(attributeCapture.get(attribute) != null) {
+            if (isCapturing) attributeCapture.get(attribute).add(mod);
+            else attributes.get(attribute).add(mod);
+        }
 
     }
 
@@ -62,10 +64,11 @@ public class AttributeMap {
         priorityLists.putIfAbsent(AttributeModifier.Priority.LOW, new ArrayList<>());
         priorityLists.putIfAbsent(AttributeModifier.Priority.LOWEST, new ArrayList<>());
 
-        for (AttributeModifier mod : list) {
-            if (mod.op == AttributeModifier.Operation.ADD) priorityLists.get(mod.priority).add(0, mod);
-            else priorityLists.get(mod.priority).add(mod);
-        }
+        if(list != null)
+            for (AttributeModifier mod : list) {
+                if (mod.op == AttributeModifier.Operation.ADD) priorityLists.get(mod.priority).add(0, mod);
+                else priorityLists.get(mod.priority).add(mod);
+            }
 
         for (AttributeModifier mod : priorityLists.get(AttributeModifier.Priority.HIGHEST))
             value = mod.apply(value);
