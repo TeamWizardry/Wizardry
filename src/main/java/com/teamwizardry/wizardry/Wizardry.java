@@ -81,7 +81,6 @@ public class Wizardry {
 
         logger = event.getModLog();
         guide = new Book(MODID);
-        guide.setColor(Color.rgb(0x1AFF00));
         Config.initConfig();
 
         handler = new WizardryDataHandler.EventHandler();
