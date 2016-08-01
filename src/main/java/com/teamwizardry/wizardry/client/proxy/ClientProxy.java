@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.client.proxy;
 import com.teamwizardry.librarianlib.client.fx.particle.ParticleRenderDispatcher;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Config;
+import com.teamwizardry.wizardry.api.WizardryClientMethodHandler;
 import com.teamwizardry.wizardry.client.core.CapeHandler;
 import com.teamwizardry.wizardry.client.core.HudEventHandler;
 import com.teamwizardry.wizardry.client.fx.particle.LensFlareFX;
@@ -38,6 +39,7 @@ public class ClientProxy extends CommonProxy {
         //MagicBurstFX.class.getName(); // ...
         CapeHandler.INSTANCE.getClass(); // ...
         OBJLoader.INSTANCE.addDomain(Wizardry.MODID);
+        new WizardryClientMethodHandler(); // Load the class
     }
 
     @Override

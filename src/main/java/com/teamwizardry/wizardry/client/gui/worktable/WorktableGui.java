@@ -333,6 +333,7 @@ public class WorktableGui extends GuiBase {
 
 						boolean wasLinked = false;
 
+
 						// Remove a link if it's already established on either side
 						for (WorktableLink link : moduleLinks)
 							if (link.getStartPointModule() == from && link.getEndPointModule() == to) {
