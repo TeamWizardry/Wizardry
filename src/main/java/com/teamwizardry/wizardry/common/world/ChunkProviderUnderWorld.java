@@ -1,47 +1,37 @@
 package com.teamwizardry.wizardry.common.world;
 
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
+import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
-import net.minecraft.world.chunk.IChunkProvider;
-
-import javax.annotation.Nullable;
+import net.minecraft.world.gen.ChunkProviderFlat;
 
 /**
  * Created by LordSaad44
  */
-public class ChunkProviderUnderWorld implements IChunkProvider {
+public class ChunkProviderUnderWorld extends ChunkProviderFlat {
 
-    @Nullable
-    @Override
-    public Chunk getLoadedChunk(int x, int z) {
-        return null;
-    }
+	private World world;
 
-    @Override
-    public Chunk provideChunk(int x, int z) {
+	public ChunkProviderUnderWorld(World worldIn, long seed, boolean generateStructures, String flatGeneratorSettings) {
+		super(worldIn, seed, generateStructures, flatGeneratorSettings);
+		this.world = worldIn;
+	}
 
-        ChunkPrimer primer = new ChunkPrimer();
-        Block cloud = Blocks.GRASS;
+	@Override
+	public Chunk provideChunk(int x, int z) {
+		Chunk chunk = new Chunk(world, new ChunkPrimer(), x, z);
+		Biome[] biomes = world.getBiomeProvider().getBiomes(null, x * 16, z * 16, 16, 16);
+		byte[] ids = chunk.getBiomeArray();
 
-        for (int y = 50; y < 100; y++) {
-            for (int xi = 0; xi < 16; xi++) {
-                for (int zi = 0; zi < 16; zi++) {
-                }
-            }
-        }
+		for (int i = 0; i < ids.length; ++i) ids[i] = (byte) Biome.getIdForBiome(biomes[i]);
 
-        return null;
-    }
+		chunk.generateSkylightMap();
+		return chunk;
+	}
 
-    @Override
-    public boolean unloadQueuedChunks() {
-        return false;
-    }
+	@Override
+	public void populate(int x, int z) {
 
-    @Override
-    public String makeString() {
-        return null;
-    }
+	}
 }
