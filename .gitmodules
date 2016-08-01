@@ -1,3 +1,3 @@
 [submodule "LibrarianLib"]
 	path = LibrarianLib
-	url = ../LibrarianLib
+	url = https://github.com/TeamWizardry/LibrarianLib
