@@ -1,8 +1,8 @@
 package com.teamwizardry.wizardry.client.core;
 
-import com.teamwizardry.librarianlib.api.gui.GuiTickHandler;
-import com.teamwizardry.librarianlib.client.Sprite;
-import com.teamwizardry.librarianlib.client.Texture;
+import com.teamwizardry.librarianlib.gui.GuiTickHandler;
+import com.teamwizardry.librarianlib.sprite.Sprite;
+import com.teamwizardry.librarianlib.sprite.Texture;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.save.BarData;
 import com.teamwizardry.wizardry.api.save.WizardHandler;

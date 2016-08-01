@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.common.core;
 
-import com.teamwizardry.librarianlib.api.util.misc.Color;
-import com.teamwizardry.librarianlib.api.util.misc.PosUtils;
+import com.teamwizardry.librarianlib.util.Color;
+import com.teamwizardry.librarianlib.util.PosUtils;
 import com.teamwizardry.librarianlib.math.shapes.Helix;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.trackerobject.BookTrackerObject;

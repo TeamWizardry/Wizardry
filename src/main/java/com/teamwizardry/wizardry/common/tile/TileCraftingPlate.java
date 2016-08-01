@@ -19,7 +19,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import com.teamwizardry.librarianlib.client.multiblock.StructureMatchResult;
+import com.teamwizardry.librarianlib.structure.StructureMatchResult;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.Infusable;
 import com.teamwizardry.wizardry.api.item.PearlType;

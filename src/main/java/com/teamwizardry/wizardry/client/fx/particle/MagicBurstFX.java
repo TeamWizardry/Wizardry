@@ -8,9 +8,9 @@ import net.minecraft.world.World;
 
 import org.lwjgl.opengl.GL11;
 
-import com.teamwizardry.librarianlib.client.fx.particle.ParticleRenderQueue;
-import com.teamwizardry.librarianlib.client.fx.particle.QueuedParticle;
-import com.teamwizardry.librarianlib.client.fx.shader.ShaderHelper;
+import com.teamwizardry.librarianlib.fx.particle.ParticleRenderQueue;
+import com.teamwizardry.librarianlib.fx.particle.QueuedParticle;
+import com.teamwizardry.librarianlib.fx.shader.ShaderHelper;
 import com.teamwizardry.wizardry.client.fx.Shaders;
 
 public class MagicBurstFX extends QueuedParticle {

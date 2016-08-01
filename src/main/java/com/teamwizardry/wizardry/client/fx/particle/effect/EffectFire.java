@@ -1,7 +1,6 @@
 package com.teamwizardry.wizardry.client.fx.particle.effect;
 
-import com.teamwizardry.librarianlib.api.util.misc.Color;
-import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.librarianlib.util.Color;
 import com.teamwizardry.wizardry.api.fx.IEffect;
 import com.teamwizardry.wizardry.client.fx.GlitterFactory;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;

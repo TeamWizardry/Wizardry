@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.common.item.staff;
 
-import com.teamwizardry.librarianlib.api.util.misc.Color;
+import com.teamwizardry.librarianlib.util.Color;
 import com.teamwizardry.librarianlib.math.shapes.Arc3D;
 import com.teamwizardry.librarianlib.math.shapes.Circle3D;
 import com.teamwizardry.wizardry.Wizardry;

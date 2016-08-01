@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.common.item;
 
-import com.teamwizardry.librarianlib.api.util.misc.Color;
+import com.teamwizardry.librarianlib.util.Color;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.Colorable;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;

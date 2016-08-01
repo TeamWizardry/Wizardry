@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.api.spell;
 
-import com.teamwizardry.librarianlib.client.Sprite;
+import com.teamwizardry.librarianlib.sprite.Sprite;
 import com.teamwizardry.wizardry.api.module.Module;
 
 /**

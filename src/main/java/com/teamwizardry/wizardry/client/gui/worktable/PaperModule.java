@@ -1,12 +1,12 @@
 package com.teamwizardry.wizardry.client.gui.worktable;
 
-import com.teamwizardry.librarianlib.api.gui.EnumMouseButton;
-import com.teamwizardry.librarianlib.api.gui.GuiComponent;
-import com.teamwizardry.librarianlib.api.gui.components.ComponentCenterAlign;
-import com.teamwizardry.librarianlib.api.gui.components.ComponentVoid;
-import com.teamwizardry.librarianlib.api.gui.components.mixin.DragMixin;
-import com.teamwizardry.librarianlib.api.gui.components.mixin.gl.GlMixin;
-import com.teamwizardry.librarianlib.api.util.misc.Color;
+import com.teamwizardry.librarianlib.gui.EnumMouseButton;
+import com.teamwizardry.librarianlib.gui.GuiComponent;
+import com.teamwizardry.librarianlib.gui.components.ComponentCenterAlign;
+import com.teamwizardry.librarianlib.gui.components.ComponentVoid;
+import com.teamwizardry.librarianlib.gui.mixin.DragMixin;
+import com.teamwizardry.librarianlib.gui.mixin.gl.GlMixin;
+import com.teamwizardry.librarianlib.util.Color;
 import com.teamwizardry.wizardry.api.module.Module;
 import net.minecraft.util.math.Vec3d;
 

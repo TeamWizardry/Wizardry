@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.client.gui.worktable;
 
-import com.teamwizardry.librarianlib.math.Vec2;
+import com.teamwizardry.librarianlib.math.Vec2d;
 import com.teamwizardry.librarianlib.math.shapes.BezierCurve2D;
 
 /**
@@ -14,7 +14,7 @@ public class WorktableLink extends BezierCurve2D {
     private WorktableModule startPointModule, endPointModule;
 
     public WorktableLink(WorktableModule startPointModule, WorktableModule endPointModule) {
-        super(new Vec2(startPointModule.getX() + WorktableGui.iconSize / 2, startPointModule.getY() + WorktableGui.iconSize / 2), new Vec2(endPointModule.getX() + WorktableGui.iconSize / 2, endPointModule.getY() + WorktableGui.iconSize / 2));
+        super(new Vec2d(startPointModule.getX() + WorktableGui.iconSize / 2, startPointModule.getY() + WorktableGui.iconSize / 2), new Vec2d(endPointModule.getX() + WorktableGui.iconSize / 2, endPointModule.getY() + WorktableGui.iconSize / 2));
         this.startPointModule = startPointModule;
         this.endPointModule = endPointModule;
     }
@@ -25,7 +25,7 @@ public class WorktableLink extends BezierCurve2D {
 
     public void setStartPointModule(WorktableModule startPoint) {
         this.startPointModule = startPoint;
-        setStartPoint(new Vec2(startPoint.getX() + WorktableGui.iconSize / 2, startPoint.getY() + WorktableGui.iconSize / 2));
+        setStartPoint(new Vec2d(startPoint.getX() + WorktableGui.iconSize / 2, startPoint.getY() + WorktableGui.iconSize / 2));
     }
 
     public WorktableModule getEndPointModule() {
@@ -34,6 +34,6 @@ public class WorktableLink extends BezierCurve2D {
 
     public void setEndPointModule(WorktableModule endPoint) {
         this.endPointModule = endPoint;
-        setEndPoint(new Vec2(endPoint.getX() + WorktableGui.iconSize / 2, endPoint.getY() + WorktableGui.iconSize / 2));
+        setEndPoint(new Vec2d(endPoint.getX() + WorktableGui.iconSize / 2, endPoint.getY() + WorktableGui.iconSize / 2));
     }
 }

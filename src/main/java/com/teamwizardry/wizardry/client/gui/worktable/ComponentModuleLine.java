@@ -7,21 +7,21 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
 import org.lwjgl.opengl.GL11;
 
-import com.teamwizardry.librarianlib.api.gui.GuiComponent;
-import com.teamwizardry.librarianlib.api.gui.Option;
-import com.teamwizardry.librarianlib.math.Vec2;
+import com.teamwizardry.librarianlib.gui.GuiComponent;
+import com.teamwizardry.librarianlib.gui.Option;
+import com.teamwizardry.librarianlib.math.Vec2d;
 
 public class ComponentModuleLine extends GuiComponent<ComponentModuleLine> {
 
-	public final Option<ComponentModuleLine, Vec2> endPos = new Option<>(Vec2.ZERO);
+	public final Option<ComponentModuleLine, Vec2d> endPos = new Option<>(Vec2d.ZERO);
 	
 	public ComponentModuleLine(int posX, int posY) {
 		super(posX, posY);
 	}
 
 	@Override
-	public void drawComponent(Vec2 mousePos, float partialTicks) {
-		Vec2 end = endPos.getValue(this);
+	public void drawComponent(Vec2d mousePos, float partialTicks) {
+		Vec2d end = endPos.getValue(this);
 		
 		GlStateManager.disableTexture2D();
 		Tessellator tessellator = Tessellator.getInstance();

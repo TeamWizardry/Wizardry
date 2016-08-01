@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.client.fx.particle;
 
-import com.teamwizardry.librarianlib.api.util.misc.Color;
+import com.teamwizardry.librarianlib.util.Color;
 import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;

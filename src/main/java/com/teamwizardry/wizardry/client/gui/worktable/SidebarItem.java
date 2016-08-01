@@ -1,10 +1,9 @@
 package com.teamwizardry.wizardry.client.gui.worktable;
 
-import com.teamwizardry.librarianlib.api.gui.EnumMouseButton;
-import com.teamwizardry.librarianlib.api.gui.GuiComponent;
-import com.teamwizardry.librarianlib.api.util.misc.Utils;
+import com.teamwizardry.librarianlib.gui.EnumMouseButton;
+import com.teamwizardry.librarianlib.gui.GuiComponent;
+import com.teamwizardry.librarianlib.util.Utils;
 import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.ModuleRegistry;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.ArrayList;

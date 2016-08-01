@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.client.gui.worktable;
 
-import com.teamwizardry.librarianlib.api.gui.GuiTickHandler;
+import com.teamwizardry.librarianlib.gui.GuiTickHandler;
 
 import java.util.ArrayList;
 

@@ -1,8 +1,8 @@
 package com.teamwizardry.wizardry.client.gui.worktable;
 
-import com.teamwizardry.librarianlib.api.gui.GuiComponent;
-import com.teamwizardry.librarianlib.api.gui.components.ComponentCenterAlign;
-import com.teamwizardry.librarianlib.api.gui.components.ComponentSprite;
+import com.teamwizardry.librarianlib.gui.GuiComponent;
+import com.teamwizardry.librarianlib.gui.components.ComponentCenterAlign;
+import com.teamwizardry.librarianlib.gui.components.ComponentSprite;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.lib.LibSprites;
 

@@ -26,19 +26,18 @@ import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 
 import org.lwjgl.opengl.GL11;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.teamwizardry.librarianlib.api.gui.GuiTickHandler;
+import com.teamwizardry.librarianlib.gui.GuiTickHandler;
 import com.teamwizardry.librarianlib.math.Box;
 import com.teamwizardry.librarianlib.math.Matrix4;
 import com.teamwizardry.librarianlib.math.Sphere;
 import com.teamwizardry.librarianlib.ragdoll.cloth.Cloth;
-import com.teamwizardry.librarianlib.ragdoll.cloth.Link;
+import com.teamwizardry.librarianlib.ragdoll.cloth.Link3D;
 import com.teamwizardry.librarianlib.ragdoll.cloth.PointMass3D;
 import com.teamwizardry.wizardry.Wizardry;
 
@@ -308,7 +307,7 @@ public class CapeHandler {
 		GlStateManager.color(1, 1, 1, 1f);
 		
 		vb.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
-		for (Link link : c.links) {
+		for (Link3D link : c.links) {
 //			vecPos(vb, link.a.origPos, link.a.pos, partialTicks).endVertex();
 //			vecPos(vb, link.b.origPos, link.b.pos, partialTicks).endVertex();
 		}

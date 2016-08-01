@@ -2,14 +2,14 @@ package com.teamwizardry.wizardry.client.gui.worktable;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.teamwizardry.librarianlib.api.gui.EnumMouseButton;
-import com.teamwizardry.librarianlib.api.gui.GuiBase;
-import com.teamwizardry.librarianlib.api.gui.components.*;
-import com.teamwizardry.librarianlib.api.gui.components.input.ComponentSlider;
-import com.teamwizardry.librarianlib.api.util.misc.Utils;
-import com.teamwizardry.librarianlib.client.Sprite;
-import com.teamwizardry.librarianlib.client.Texture;
-import com.teamwizardry.librarianlib.math.Vec2;
+import com.teamwizardry.librarianlib.gui.EnumMouseButton;
+import com.teamwizardry.librarianlib.gui.GuiBase;
+import com.teamwizardry.librarianlib.gui.components.*;
+import com.teamwizardry.librarianlib.gui.components.ComponentSlider;
+import com.teamwizardry.librarianlib.util.Utils;
+import com.teamwizardry.librarianlib.sprite.Sprite;
+import com.teamwizardry.librarianlib.sprite.Texture;
+import com.teamwizardry.librarianlib.math.Vec2d;
 import com.teamwizardry.librarianlib.math.shapes.BezierCurve2D;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.module.Module;
@@ -134,7 +134,7 @@ public class WorktableGui extends GuiBase {
 
 			ComponentSlider scrollSlider = new ComponentSlider(6, SCROLL_SLIDER_VERTICAL.height / 2 + 2, 0, rows * 12 - SCROLL_SLIDER_VERTICAL.height - 4, 0, usedRows - 3);
 			scrollSlider.handle.add(new ComponentSprite(SCROLL_SLIDER_VERTICAL, -SCROLL_SLIDER_VERTICAL.width / 2, -SCROLL_SLIDER_VERTICAL.height / 2));
-			scrollSlider.percentageChange.add((p) -> view.scrollToPercent(new Vec2(0, p)));
+			scrollSlider.percentageChange.add((p) -> view.scrollToPercent(new Vec2d(0, p)));
 			scrollSlot.add(scrollSlider);
 		}
 	}
@@ -286,11 +286,11 @@ public class WorktableGui extends GuiBase {
 	protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
 		super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
 		if (moduleBeingLinked == null && clickedMouseButton == 1) {
-			// Link module on paper
+			// Link3D module on paper
 			for (WorktableModule module : modulesOnPaper) {
 				if (Utils.isInside(mouseX, mouseY, module.getX(), module.getY(), iconSize)) {
 					moduleBeingLinked = module;
-					curveModuleBeingLinked = new BezierCurve2D(new Vec2(module.getX() + iconSize / 2, module.getY() + iconSize / 2), new Vec2(mouseX, mouseY));
+					curveModuleBeingLinked = new BezierCurve2D(new Vec2d(module.getX() + iconSize / 2, module.getY() + iconSize / 2), new Vec2d(mouseX, mouseY));
 					break;
 				}
 			}
@@ -444,7 +444,7 @@ public class WorktableGui extends GuiBase {
 			}
 
 			if (moduleBeingLinked != null && curveModuleBeingLinked != null) {
-				curveModuleBeingLinked.setStartPoint(new Vec2(mouseX, mouseY));
+				curveModuleBeingLinked.setStartPoint(new Vec2d(mouseX, mouseY));
 				curveModuleBeingLinked.draw();
 			}
 
