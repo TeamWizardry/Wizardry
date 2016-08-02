@@ -80,7 +80,7 @@ public class Wizardry {
 
 		logger = event.getModLog();
 		guide = new Book(MODID);
-		Config.initConfig();
+		Config.initConfig(event.getSuggestedConfigurationFile());
 
 		new WizardryDataHandler.EventHandler();
 
