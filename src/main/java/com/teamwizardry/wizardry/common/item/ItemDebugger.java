@@ -50,10 +50,8 @@ public class ItemDebugger extends Item {
 				WizardryDataHandler.setBurnoutAmount(playerIn, 50);
 			else
 				WizardryDataHandler.setBurnoutAmount(playerIn, 0);
-		else if (GuiScreen.isCtrlKeyDown())
-			WizardryDataHandler.setMana(playerIn, 50);
-		else
-			WizardryDataHandler.setMana(playerIn, 0);
+		else if (GuiScreen.isCtrlKeyDown()) WizardryDataHandler.setMana(playerIn, 50);
+		else WizardryDataHandler.setMana(playerIn, 0);
 
 		WizardryDataHandler.setBloodType(playerIn, BloodRegistry.PYROBLOOD);
 
