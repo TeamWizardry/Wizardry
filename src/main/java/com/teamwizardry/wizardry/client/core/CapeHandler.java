@@ -261,7 +261,7 @@ public class CapeHandler {
 		if(!( event.getEntity() instanceof EntityVillager || event.getEntity() instanceof EntityPlayer))
 			return;
 		
-		float partialTicks = GuiTickHandler.getPartialTicks();
+		float partialTicks = GuiTickHandler.partialTicks;
 		
 		models.put(event.getEntity(), ImmutableList.of());//getBoxes(event.getEntity().getPositionVector(), event.getRenderer().getMainModel(), event.getEntity().renderYawOffset));
 		
