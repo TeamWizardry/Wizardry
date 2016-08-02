@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.bloods.BloodRegistry;
+import com.teamwizardry.wizardry.api.bloods.IBloodType;
 import com.teamwizardry.wizardry.api.item.GlowingOverlayHelper;
 import com.teamwizardry.wizardry.api.item.IGlowOverlayable;
 import com.teamwizardry.wizardry.api.save.WizardryDataHandler;
@@ -44,7 +45,16 @@ public class ItemDebugger extends Item implements IGlowOverlayable {
 
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
-		if (!worldIn.isRemote) return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
+		if (!worldIn.isRemote) {
+			if (playerIn.isSneaking())
+				WizardryDataHandler.setBloodType(playerIn, null);
+			else {
+				IBloodType type = WizardryDataHandler.getBloodType(playerIn);
+				int i = type == null ? 0 : (BloodRegistry.getBloodTypeId(type) + 1) % BloodRegistry.getRegistry().size();
+				WizardryDataHandler.setBloodType(playerIn, BloodRegistry.getBloodTypeById(i));
+			}
+			return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
+		}
 		if (playerIn.isSneaking())
 			if (GuiScreen.isCtrlKeyDown())
 				WizardryDataHandler.setBurnoutAmount(playerIn, 50);
@@ -52,8 +62,6 @@ public class ItemDebugger extends Item implements IGlowOverlayable {
 				WizardryDataHandler.setBurnoutAmount(playerIn, 0);
 		else if (GuiScreen.isCtrlKeyDown()) WizardryDataHandler.setMana(playerIn, 50);
 		else WizardryDataHandler.setMana(playerIn, 0);
-
-		WizardryDataHandler.setBloodType(playerIn, BloodRegistry.PYROBLOOD);
 
 		return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
 	}

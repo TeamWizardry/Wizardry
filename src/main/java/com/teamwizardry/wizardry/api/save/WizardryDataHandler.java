@@ -21,7 +21,6 @@ import java.util.UUID;
 //AnimusHelper.Network
 public class WizardryDataHandler {
     private static final String KEY_WIZARDRY_NETWORK = Wizardry.MODID + "-Network";
-    private static final String KEY_HAS_BLOOD = Wizardry.MODID + "-Blood";
     private static final String KEY_BLOODTYPE = Wizardry.MODID + "-BloodType";
     private static final String KEY_BURNOUT_MAX = Wizardry.MODID + "-BurnoutMax";
 
@@ -31,23 +30,12 @@ public class WizardryDataHandler {
 
     private static final String TAG_LAST_KNOWN_USERNAME = "lastUsername";
 
-    //blood
-    public static void setHasBlood(EntityPlayer player, boolean blood) {
-        setHasBlood(player.getUniqueID(), blood);
+    public static boolean hasBlood(EntityPlayer player) {
+        return hasBlood(player.getUniqueID());
     }
 
-    public static void setHasBlood(UUID uuid, boolean blood) {
-        getPersistentCompound(uuid).setBoolean(KEY_HAS_BLOOD, blood);
-        getSaveData().markDirty();
-
-    }
-
-    public static boolean getHasBlood(EntityPlayer uuid) {
-        return getBooleanSafe(getPersistentCompound(uuid.getUniqueID()), KEY_HAS_BLOOD, true);
-    }
-
-    public static boolean getHasBlood(UUID uuid) {
-        return getBooleanSafe(getPersistentCompound(uuid), KEY_HAS_BLOOD, false);
+    public static boolean hasBlood(UUID uuid) {
+        return getBloodType(uuid) != null;
     }
 
     //bloodtype - mine is A+
@@ -56,17 +44,20 @@ public class WizardryDataHandler {
     }
 
     public static void setBloodType(UUID uuid, IBloodType blood) {
-        getPersistentCompound(uuid).setInteger(KEY_BLOODTYPE, BloodRegistry.getBloodTypeId(blood));
+        if (blood == null)
+            getPersistentCompound(uuid).removeTag(KEY_BLOODTYPE);
+        else
+            getPersistentCompound(uuid).setInteger(KEY_BLOODTYPE, BloodRegistry.getBloodTypeId(blood));
         getSaveData().markDirty();
 
     }
 
-    public static IBloodType getBloodType(EntityPlayer uuid) {
-        return BloodRegistry.getBloodTypeById(getIntegerSafe(getPersistentCompound(uuid.getUniqueID()), KEY_BLOODTYPE, 0));
+    public static IBloodType getBloodType(EntityPlayer player) {
+        return getBloodType(player.getUniqueID());
     }
 
     public static IBloodType getBloodType(UUID uuid) {
-        return BloodRegistry.getBloodTypeById(getIntegerSafe(getPersistentCompound(uuid), KEY_BLOODTYPE, 0));
+        return BloodRegistry.getBloodTypeById(getIntegerSafe(getPersistentCompound(uuid), KEY_BLOODTYPE, -1));
     }
 
     //int burnoutMax = 100,
@@ -80,8 +71,8 @@ public class WizardryDataHandler {
 
     }
 
-    public static int getBurnoutMax(EntityPlayer uuid) {
-        return getIntegerSafe(getPersistentCompound(uuid.getUniqueID()), KEY_BURNOUT_MAX, 100);
+    public static int getBurnoutMax(EntityPlayer player) {
+        return getBurnoutMax(player.getUniqueID());
     }
 
     public static int getBurnoutMax(UUID uuid) {
@@ -98,8 +89,8 @@ public class WizardryDataHandler {
 
     }
 
-    public static int getManaMax(EntityPlayer uuid) {
-        return getIntegerSafe(getPersistentCompound(uuid.getUniqueID()), KEY_MAX_MANA, 100);
+    public static int getManaMax(EntityPlayer player) {
+        return getManaMax(player.getUniqueID());
     }
 
     public static int getManaMax(UUID uuid) {
@@ -116,8 +107,8 @@ public class WizardryDataHandler {
 
     }
 
-    public static int getBurnoutAmount(EntityPlayer uuid) {
-        return getIntegerSafe(getPersistentCompound(uuid.getUniqueID()), KEY_BURNOUT, getBurnoutMax(uuid));
+    public static int getBurnoutAmount(EntityPlayer player) {
+        return getBurnoutAmount(player.getUniqueID());
     }
 
     public static int getBurnoutAmount(UUID uuid) {

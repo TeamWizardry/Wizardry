@@ -1,15 +1,18 @@
 package com.teamwizardry.wizardry.client.proxy;
 
 import com.teamwizardry.librarianlib.fx.particle.ParticleRenderDispatcher;
+import com.teamwizardry.librarianlib.fx.shader.ShaderHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Config;
 import com.teamwizardry.wizardry.client.core.CapeHandler;
 import com.teamwizardry.wizardry.client.core.HudEventHandler;
 import com.teamwizardry.wizardry.client.core.WizardryClientMethodHandles;
+import com.teamwizardry.wizardry.client.fx.Shaders;
 import com.teamwizardry.wizardry.client.fx.particle.LensFlareFX;
 import com.teamwizardry.wizardry.client.fx.particle.MagicBurstFX;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import com.teamwizardry.wizardry.client.fx.particle.trails.SparkleTrailHelix;
+import com.teamwizardry.wizardry.client.render.BloodRenderLayer;
 import com.teamwizardry.wizardry.client.render.glow.GlowingItemEventHandler;
 import com.teamwizardry.wizardry.client.render.glow.GlowingItemRenderLayer;
 import com.teamwizardry.wizardry.common.proxy.CommonProxy;
@@ -36,6 +39,8 @@ public class ClientProxy extends CommonProxy {
         MinecraftForge.EVENT_BUS.register(new HudEventHandler());
         new WizardryClientMethodHandles(); // Load the class
         GlowingItemEventHandler.init();
+
+        new Shaders();
     }
 
     @Override
@@ -50,9 +55,11 @@ public class ClientProxy extends CommonProxy {
         Map<String, RenderPlayer> skinMap = Minecraft.getMinecraft().getRenderManager().getSkinMap();
         RenderPlayer render = skinMap.get("default");
         render.addLayer(new GlowingItemRenderLayer(render));
+        render.addLayer(new BloodRenderLayer(render));
 
         render = skinMap.get("slim");
         render.addLayer(new GlowingItemRenderLayer(render));
+        render.addLayer(new BloodRenderLayer(render));
     }
 
     @Override

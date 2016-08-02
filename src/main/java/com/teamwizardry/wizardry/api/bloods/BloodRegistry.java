@@ -6,7 +6,7 @@ import com.google.common.collect.HashBiMap;
 //some vampiric shit right there, folks
 public final class BloodRegistry {
 
-    private static final BiMap<IBloodType, Integer> values = HashBiMap.create(512);
+    private static final BiMap<IBloodType, Integer> values = HashBiMap.create();
 
     public static BiMap<IBloodType, Integer> getRegistry() {
         return values;

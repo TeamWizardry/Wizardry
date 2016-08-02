@@ -13,6 +13,7 @@ public class Shaders {
 	static {
 		burst = ShaderHelper.addShader(new BurstShader(null, "/assets/wizardry/shader/sparkle.frag"));
 		rawColor = ShaderHelper.addShader(new Shader(null, "/assets/wizardry/shader/rawColor.frag"));
+		ShaderHelper.initShaders();
 	}
 	
 	public static class BurstShader extends Shader {
