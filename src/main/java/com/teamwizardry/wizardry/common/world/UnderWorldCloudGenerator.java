@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.common.world;
 
-import com.teamwizardry.librarianlib.api.util.misc.PosUtils;
+import com.teamwizardry.librarianlib.util.PosUtils;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
