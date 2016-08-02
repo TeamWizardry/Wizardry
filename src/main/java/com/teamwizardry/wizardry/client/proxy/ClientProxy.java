@@ -38,7 +38,6 @@ public class ClientProxy extends CommonProxy {
         //MagicBurstFX.class.getName(); // ...
         CapeHandler.INSTANCE.getClass(); // ...
         OBJLoader.INSTANCE.addDomain(Wizardry.MODID);
-        new WizardryClientMethodHandle(); // Load the class
     }
 
     @Override

@@ -5,12 +5,11 @@ import com.google.common.collect.Multimap;
 import com.teamwizardry.librarianlib.gui.EnumMouseButton;
 import com.teamwizardry.librarianlib.gui.GuiBase;
 import com.teamwizardry.librarianlib.gui.components.*;
-import com.teamwizardry.librarianlib.gui.components.ComponentSlider;
-import com.teamwizardry.librarianlib.util.Utils;
-import com.teamwizardry.librarianlib.sprite.Sprite;
-import com.teamwizardry.librarianlib.sprite.Texture;
 import com.teamwizardry.librarianlib.math.Vec2d;
 import com.teamwizardry.librarianlib.math.shapes.BezierCurve2D;
+import com.teamwizardry.librarianlib.sprite.Sprite;
+import com.teamwizardry.librarianlib.sprite.Texture;
+import com.teamwizardry.librarianlib.util.Utils;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.ModuleRegistry;
@@ -39,7 +38,6 @@ public class WorktableGui extends GuiBase {
 	static final int iconSize = 12;
 	public boolean useModules = false; // setting to true disables conventional rendering
 	public Multimap<ModuleType, Module> modulesByType = HashMultimap.create();
-	public Multimap<ModuleType, ComponentVoid> COMPONENTmodulesByType = HashMultimap.create();
 	private ComponentVoid paper;
 	private int left, top;
 	private int rotateShimmer = 0;
