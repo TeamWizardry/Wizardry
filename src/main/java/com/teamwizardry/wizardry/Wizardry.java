@@ -15,9 +15,11 @@ import com.teamwizardry.wizardry.common.core.EventHandler;
 import com.teamwizardry.wizardry.common.fluid.Fluids;
 import com.teamwizardry.wizardry.common.proxy.CommonProxy;
 import com.teamwizardry.wizardry.common.world.GenHandler;
+import com.teamwizardry.wizardry.common.world.UnderWorldProvider;
 import com.teamwizardry.wizardry.init.*;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -39,83 +41,86 @@ import org.apache.logging.log4j.Logger;
 @Mod(modid = Wizardry.MODID, version = Wizardry.VERSION, name = Wizardry.MODNAME, useMetadata = true, dependencies = "required-after:librarianlib")
 public class Wizardry {
 
-    public static final String MODID = "wizardry";
-    public static final String MODNAME = "Wizardry";
-    public static final String VERSION = "1.0";
-    public static final String CLIENT = "com.teamwizardry.wizardry.client.proxy.ClientProxy";
-    public static final String SERVER = "com.teamwizardry.wizardry.common.proxy.CommonProxy";
-    public static PacketLoggingHandler packetHandler;
-    public static Logger logger;
-    public static EventBus EVENT_BUS = new EventBus();
-    
-    @SidedProxy(clientSide = CLIENT, serverSide = SERVER)
-    public static CommonProxy proxy;
-    @Mod.Instance
-    public static Wizardry instance;
-    
-    public static Book guide;
-    
-    public static CreativeTabs tab = new CreativeTabs(MODNAME) {
-        @Override
-        public String getTabLabel() {
-            return MODID;
-        }
+	public static final String MODID = "wizardry";
+	public static final String MODNAME = "Wizardry";
+	public static final String VERSION = "1.0";
+	public static final String CLIENT = "com.teamwizardry.wizardry.client.proxy.ClientProxy";
+	public static final String SERVER = "com.teamwizardry.wizardry.common.proxy.CommonProxy";
+	public static PacketLoggingHandler packetHandler;
+	public static Logger logger;
+	public static EventBus EVENT_BUS = new EventBus();
 
-        @Override
-        @SideOnly(Side.CLIENT)
-        public Item getTabIconItem() {
-            return ModItems.PHYSICS_BOOK;
-        }
-    };
+	@SidedProxy(clientSide = CLIENT, serverSide = SERVER)
+	public static CommonProxy proxy;
+	@Mod.Instance
+	public static Wizardry instance;
 
-    static {
-        FluidRegistry.enableUniversalBucket();
-    }
+	public static Book guide;
 
-    private WizardryDataHandler.EventHandler handler; //why? because eladkay said so.
+	public static CreativeTabs tab = new CreativeTabs(MODNAME) {
+		@Override
+		public String getTabLabel() {
+			return MODID;
+		}
 
-    @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent event) {
-        LibrarianLog.I.info("o͡͡͡╮༼ ಠДಠ ༽╭o͡͡͡━☆ﾟ.*･｡ﾟ IT'S LEVI-OH-SA, NOT LEVIOSAA");
+		@Override
+		@SideOnly(Side.CLIENT)
+		public Item getTabIconItem() {
+			return ModItems.PHYSICS_BOOK;
+		}
+	};
 
-        logger = event.getModLog();
-        guide = new Book(MODID);
-        Config.initConfig();
+	static {
+		FluidRegistry.enableUniversalBucket();
+	}
 
-        handler = new WizardryDataHandler.EventHandler();
+	private WizardryDataHandler.EventHandler handler; //why? because eladkay said so.
 
-        ModSounds.init();
-        ModItems.init();
-        ModBlocks.init();
-        Fluids.preInit();
-        ModRecipes.initCrafting();
-        Achievements.init();
+	@Mod.EventHandler
+	public void preInit(FMLPreInitializationEvent event) {
+		LibrarianLog.I.info("o͡͡͡╮༼ ಠДಠ ༽╭o͡͡͡━☆ﾟ.*･｡ﾟ IT'S LEVI-OH-SA, NOT LEVIOSAA");
 
-        MinecraftForge.EVENT_BUS.register(new EventHandler());
-        MinecraftForge.EVENT_BUS.register(new AchievementEvents());
+		logger = event.getModLog();
+		guide = new Book(MODID);
+		Config.initConfig();
 
-        proxy.loadModels();
+		handler = new WizardryDataHandler.EventHandler();
 
-        proxy.preInit(event);
-        if (proxy != null) NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
-    }
+		ModSounds.init();
+		ModItems.init();
+		ModBlocks.init();
+		Fluids.preInit();
+		ModRecipes.initCrafting();
+		Achievements.init();
 
-    @Mod.EventHandler
-    public void init(FMLInitializationEvent e) {
-        GameRegistry.registerWorldGenerator(new GenHandler(), 0);
-        proxy.init(e);
+		DimensionManager.createProviderFor(UnderWorldProvider.id);
+		DimensionManager.registerDimension(UnderWorldProvider.id, new UnderWorldProvider().getDimensionType());
 
-        WizardHandler.INSTANCE.getClass();
-        ModuleRegistry.getInstance().getClass();
-        SpellHandler.INSTANCE.getClass();
-        ModModules.init();
-    }
+		MinecraftForge.EVENT_BUS.register(new EventHandler());
+		MinecraftForge.EVENT_BUS.register(new AchievementEvents());
 
-    @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent e) {
-        proxy.postInit(e);
-        
-        SpellTracker.init();
-    }
+		proxy.loadModels();
+
+		proxy.preInit(event);
+		if (proxy != null) NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
+	}
+
+	@Mod.EventHandler
+	public void init(FMLInitializationEvent e) {
+		GameRegistry.registerWorldGenerator(new GenHandler(), 0);
+		proxy.init(e);
+
+		WizardHandler.INSTANCE.getClass();
+		ModuleRegistry.getInstance().getClass();
+		SpellHandler.INSTANCE.getClass();
+		ModModules.init();
+	}
+
+	@Mod.EventHandler
+	public void postInit(FMLPostInitializationEvent e) {
+		proxy.postInit(e);
+
+		SpellTracker.init();
+	}
 
 }
