@@ -1,10 +1,13 @@
 package com.teamwizardry.wizardry.common.world;
 
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.ChunkProviderFlat;
+
+import java.util.Random;
 
 /**
  * Created by LordSaad44
@@ -33,5 +36,10 @@ public class ChunkProviderUnderWorld extends ChunkProviderFlat {
 	@Override
 	public void populate(int x, int z) {
 
+	}
+
+	@Override
+	public void recreateStructures(Chunk chunk, int x, int z) {
+		new WorldGeneratorCloud().generate(world, new Random(), new BlockPos(x, 50,z));
 	}
 }

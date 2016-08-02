@@ -15,7 +15,7 @@ import com.teamwizardry.wizardry.common.core.EventHandler;
 import com.teamwizardry.wizardry.common.fluid.Fluids;
 import com.teamwizardry.wizardry.common.proxy.CommonProxy;
 import com.teamwizardry.wizardry.common.world.GenHandler;
-import com.teamwizardry.wizardry.common.world.UnderWorldProvider;
+import com.teamwizardry.wizardry.common.world.WorldProviderUnderWorld;
 import com.teamwizardry.wizardry.init.*;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -93,8 +93,8 @@ public class Wizardry {
 		ModRecipes.initCrafting();
 		Achievements.init();
 
-		DimensionManager.createProviderFor(UnderWorldProvider.id);
-		DimensionManager.registerDimension(UnderWorldProvider.id, new UnderWorldProvider().getDimensionType());
+		//DimensionManager.createProviderFor(WorldProviderUnderWorld.id);
+		DimensionManager.registerDimension(WorldProviderUnderWorld.id, new WorldProviderUnderWorld().getDimensionType());
 
 		MinecraftForge.EVENT_BUS.register(new EventHandler());
 		MinecraftForge.EVENT_BUS.register(new AchievementEvents());
