@@ -3,17 +3,16 @@ package com.teamwizardry.wizardry.client.gui.worktable;
 import com.teamwizardry.librarianlib.gui.GuiComponent;
 import com.teamwizardry.librarianlib.gui.components.ComponentCenterAlign;
 import com.teamwizardry.librarianlib.gui.components.ComponentSprite;
+import com.teamwizardry.librarianlib.gui.template.ComponentTemplate;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.lib.LibSprites;
 
-public class ModuleComponent {
-
-	public ComponentCenterAlign result;
+public class ModuleTemplate extends ComponentTemplate<ComponentCenterAlign> {
 
 	protected Module module;
 	protected GuiComponent<?> paper;
 	
-	public ModuleComponent(int posX, int posY, Module constructor, GuiComponent<?> paper) {
+	public ModuleTemplate(int posX, int posY, Module constructor, GuiComponent<?> paper) {
 		this.module = constructor;
 		this.paper = paper;
 		
@@ -45,7 +44,7 @@ public class ModuleComponent {
 	}
 	
 	private <D> void setSelfData(Class<D> klass) {
-		result.setData(ModuleComponent.class, "", this);
+		result.setData(ModuleTemplate.class, "", this);
 		result.setData(klass, "", (D) this);
 	}
 	

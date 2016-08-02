@@ -13,15 +13,15 @@ import net.minecraft.util.math.Vec3d;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PaperModule extends ModuleComponent {
+public class ModuleTemplatePaper extends ModuleTemplate {
 
 	public DragMixin<ComponentCenterAlign> drag;
 	public ComponentVoid lines;
 	public ComponentModuleLine mouseLine;
 	
-	public List<PaperModule> connections = new ArrayList<>();
+	public List<ModuleTemplatePaper> connections = new ArrayList<>();
 	
-	public PaperModule(int posX, int posY, Module constructor, GuiComponent<?> paper) {
+	public ModuleTemplatePaper(int posX, int posY, Module constructor, GuiComponent<?> paper) {
 		super(posX, posY, constructor, paper);
 
 		result.centerHorizontal = true;
@@ -83,7 +83,7 @@ public class PaperModule extends ModuleComponent {
 						data.draggingFrom.connections.remove(this);
 						data.draggingFrom.lines.removeByTag(this);
 					} else if(!data.draggingFrom.connections.contains(this)){
-						PaperModule module = data.draggingFrom;
+						ModuleTemplatePaper module = data.draggingFrom;
 						module.connections.add(this);
 						ComponentModuleLine line = new ComponentModuleLine(0,0);
 						line.addTag(this);
@@ -108,7 +108,7 @@ public class PaperModule extends ModuleComponent {
 	}
 	
 	public static class DraggingFromData {
-		public PaperModule draggingFrom;
+		public ModuleTemplatePaper draggingFrom;
 		public int shouldDeleteNextFrame = 0;
 	}
 	

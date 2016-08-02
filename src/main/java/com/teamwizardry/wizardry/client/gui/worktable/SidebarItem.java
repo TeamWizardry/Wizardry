@@ -9,17 +9,17 @@ import net.minecraft.util.text.TextFormatting;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SidebarItem extends ModuleComponent {
+public class SidebarItem extends ModuleTemplate {
 	
 	public SidebarItem(int posX, int posY, Module constructor, GuiComponent<?> paper) {
 		super(posX, posY, constructor, paper);
 		
 		result.mouseDown.add( (c, pos, button) -> {
 			if(button == EnumMouseButton.LEFT && c.mouseOverThisFrame) {
-				PaperModule m = new PaperModule(pos.xi, pos.yi, constructor, paper);
+				ModuleTemplatePaper m = new ModuleTemplatePaper(pos.xi, pos.yi, constructor, paper);
 				m.drag.mouseDown = true;
 				m.drag.clickPos = pos.sub(6, 6);
-				paper.add(m.result);
+				paper.add(m.get());
 				return true;
 			}
 			return false;
