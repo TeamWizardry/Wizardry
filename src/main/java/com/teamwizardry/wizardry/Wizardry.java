@@ -74,8 +74,6 @@ public class Wizardry {
 		FluidRegistry.enableUniversalBucket();
 	}
 
-	private WizardryDataHandler.EventHandler handler; //why? because eladkay said so.
-
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		LibrarianLog.I.info("o͡͡͡╮༼ ಠДಠ ༽╭o͡͡͡━☆ﾟ.*･｡ﾟ IT'S LEVI-OH-SA, NOT LEVIOSAA");
@@ -84,7 +82,7 @@ public class Wizardry {
 		guide = new Book(MODID);
 		Config.initConfig();
 
-		handler = new WizardryDataHandler.EventHandler();
+		new WizardryDataHandler.EventHandler();
 
 		ModSounds.init();
 		ModItems.init();
