@@ -6,12 +6,13 @@ import com.teamwizardry.librarianlib.fx.shader.uniforms.FloatTypes;
 import com.teamwizardry.librarianlib.fx.shader.uniforms.IntTypes;
 
 public class Shaders {
-	public static final Shaders INSTANCE = new Shaders();
-	
+
 	public static BurstShader burst;
+	public static Shader rawColor;
 	
-	private Shaders() {
+	static {
 		burst = ShaderHelper.addShader(new BurstShader(null, "/assets/wizardry/shader/sparkle.frag"));
+		rawColor = ShaderHelper.addShader(new Shader(null, "/assets/wizardry/shader/rawColor.frag"));
 	}
 	
 	public static class BurstShader extends Shader {

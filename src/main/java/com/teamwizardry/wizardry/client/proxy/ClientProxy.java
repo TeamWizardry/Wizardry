@@ -5,15 +5,19 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Config;
 import com.teamwizardry.wizardry.client.core.CapeHandler;
 import com.teamwizardry.wizardry.client.core.HudEventHandler;
+import com.teamwizardry.wizardry.client.core.WizardryClientMethodHandles;
 import com.teamwizardry.wizardry.client.fx.particle.LensFlareFX;
 import com.teamwizardry.wizardry.client.fx.particle.MagicBurstFX;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import com.teamwizardry.wizardry.client.fx.particle.trails.SparkleTrailHelix;
+import com.teamwizardry.wizardry.client.render.glow.GlowingItemEventHandler;
+import com.teamwizardry.wizardry.client.render.glow.GlowingItemRenderLayer;
 import com.teamwizardry.wizardry.common.proxy.CommonProxy;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.obj.OBJLoader;
@@ -22,12 +26,16 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
+import java.util.Map;
+
 public class ClientProxy extends CommonProxy {
 
     @Override
     public void preInit(FMLPreInitializationEvent event) {
         OBJLoader.INSTANCE.addDomain(Wizardry.MODID);
         MinecraftForge.EVENT_BUS.register(new HudEventHandler());
+        new WizardryClientMethodHandles(); // Load the class
+        GlowingItemEventHandler.init();
     }
 
     @Override
@@ -38,7 +46,13 @@ public class ClientProxy extends CommonProxy {
         //MagicBurstFX.class.getName(); // ...
         CapeHandler.INSTANCE.getClass(); // ...
         OBJLoader.INSTANCE.addDomain(Wizardry.MODID);
-        new WizardryClientMethodHandle(); // Load the class
+
+        Map<String, RenderPlayer> skinMap = Minecraft.getMinecraft().getRenderManager().getSkinMap();
+        RenderPlayer render = skinMap.get("default");
+        render.addLayer(new GlowingItemRenderLayer(render));
+
+        render = skinMap.get("slim");
+        render.addLayer(new GlowingItemRenderLayer(render));
     }
 
     @Override
