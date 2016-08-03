@@ -1,7 +1,6 @@
 package com.teamwizardry.wizardry.client.proxy;
 
 import com.teamwizardry.librarianlib.fx.particle.ParticleRenderDispatcher;
-import com.teamwizardry.librarianlib.fx.shader.ShaderHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Config;
 import com.teamwizardry.wizardry.client.core.CapeHandler;
@@ -30,6 +29,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class ClientProxy extends CommonProxy {
 
@@ -126,5 +126,25 @@ public class ClientProxy extends CommonProxy {
         //0 is all, so 100%
         return Config.particlePercentage == -1 ? (Minecraft.getMinecraft().gameSettings.particleSetting == 2 ? 0 :
                 Minecraft.getMinecraft().gameSettings.particleSetting == 1 ? 50 : 100) : Config.particlePercentage;
+    }
+
+    @Override
+    public SparkleFX createSparkle(World world, Vec3d origin, int age) {
+        SparkleFX fx = Wizardry.proxy.spawnParticleSparkle(world, origin);
+        if(Wizardry.proxy.getParticleDensity() > 0)
+            if (ThreadLocalRandom.current().nextInt(Wizardry.proxy.getParticleDensity()) / 100 <= 1) {
+                fx.setMaxAge(age * Wizardry.proxy.getParticleDensity() / 100);
+            } else fx.setMaxAge(0);
+        return fx;
+    }
+
+    @Override
+    public SparkleFX createSparkle(World world, Vec3d origin, Vec3d range, int age) {
+        SparkleFX fx = Wizardry.proxy.spawnParticleSparkle(world, origin, range);
+        if(Wizardry.proxy.getParticleDensity() > 0)
+            if (ThreadLocalRandom.current().nextInt(Wizardry.proxy.getParticleDensity()) / 100 <= 1) {
+                fx.setMaxAge(age * Wizardry.proxy.getParticleDensity() / 100);
+            } else fx.setMaxAge(0);
+        return fx;
     }
 }

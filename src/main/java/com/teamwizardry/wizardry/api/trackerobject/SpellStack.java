@@ -1,18 +1,19 @@
 package com.teamwizardry.wizardry.api.trackerobject;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.teamwizardry.librarianlib.util.Color;
+import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.api.module.ModuleRegistry;
+import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
-import com.teamwizardry.librarianlib.util.Color;
-import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.ModuleRegistry;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by LordSaad44 This class is created when a spell is created, then
@@ -50,7 +51,8 @@ public class SpellStack
 
 	public void castSpell()
 	{
-		shape.cast(player, player, spell, this);
+		if(shape != null)
+			shape.cast(player, player, spell, this);
 	}
 
 	public void castEffects(Entity caster)

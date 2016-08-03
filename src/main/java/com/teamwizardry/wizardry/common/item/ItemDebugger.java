@@ -4,6 +4,7 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.bloods.BloodRegistry;
 import com.teamwizardry.wizardry.api.item.GlowingOverlayHelper;
 import com.teamwizardry.wizardry.api.item.IGlowOverlayable;
+import com.teamwizardry.wizardry.api.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.save.WizardryDataHandler;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
 import net.minecraft.client.gui.GuiScreen;
@@ -64,6 +65,8 @@ public class ItemDebugger extends Item implements IGlowOverlayable {
 		else if (GuiScreen.isCtrlKeyDown()) WizardryDataHandler.setMana(playerIn, 50);
 		else WizardryDataHandler.setMana(playerIn, 0);
 
+		//System.out.println(ModuleRegistry.getInstance().getModuleId(ModuleRegistry.getInstance().getModuleById(0)));
+		System.out.println(ModuleRegistry.getInstance().getModuleId(ModuleRegistry.getInstance().getModuleById(1)));
 		return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
 	}
 

@@ -19,6 +19,18 @@ public class ModuleRegistry {
     private Map<ModuleType, Map<Integer, Module>> modules = Maps.newHashMap();
     private BiMap<Integer, Module> idlookup = HashBiMap.create(512);
 
+    public int getRegistrySize() {
+        return idlookup.size();
+    }
+
+    public BiMap<Integer, Module>  getRegistryMap() {
+        return idlookup;
+    }
+
+    public int getCurrentId() {
+        return id;
+    }
+
     private ModuleRegistry() {
         for (ModuleType type : ModuleType.values()) modules.putIfAbsent(type, HashBiMap.create(512));
     }
@@ -73,7 +85,8 @@ public class ModuleRegistry {
     public Pair<Integer, Module> registerModule(IModuleConstructor module, ItemStack stack) {
         Module constructedModule = module.construct(stack);
         modules.get(constructedModule.getType()).putIfAbsent(++id, constructedModule);
-        idlookup.putIfAbsent(id, constructedModule);
+        idlookup.put(id, constructedModule);
+        System.out.println("Putting " + id + " as " + constructedModule.getDisplayName());
         return new Pair<>(id, constructedModule);
     }
 
