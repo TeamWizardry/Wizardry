@@ -29,7 +29,7 @@ public class ChunkGeneratorUnderWorld implements IChunkGenerator {
 
 	public List<BlockPos> generateCloud(BlockPos center, int weight) {
 		List<BlockPos> poses = new ArrayList<>();
-		if (weight > 0) {
+		/*if (weight > 0) {
 			if (ThreadLocalRandom.current().nextBoolean()) poses.addAll(generateCloud(center.south(), weight - 1));
 			else  poses.addAll(generateCloud(center.south(), weight - 2));
 
@@ -41,6 +41,10 @@ public class ChunkGeneratorUnderWorld implements IChunkGenerator {
 
 			if (ThreadLocalRandom.current().nextBoolean()) poses.addAll(generateCloud(center.east(), weight - 1));
 			else  poses.addAll(generateCloud(center.south(), weight - 2));
+		}*/
+		if(weight > 0) {
+			poses.add(new BlockPos(center.south()));
+			poses.addAll(generateCloud(center.south(), weight - 1));
 		}
 		return poses;
 	}
@@ -50,6 +54,7 @@ public class ChunkGeneratorUnderWorld implements IChunkGenerator {
 
 		for (BlockPos pos : generateCloud(new BlockPos(x, y, z), 10)) {
 			primer.setBlockState(pos.getX(), pos.getY(), pos.getZ(), Blocks.GRASS.getDefaultState());
+			System.out.println("hi");
 		}
 	}
 

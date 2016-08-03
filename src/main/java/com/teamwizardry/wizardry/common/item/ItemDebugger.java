@@ -56,7 +56,7 @@ public class ItemDebugger extends Item implements IGlowOverlayable {
 				String i = values.toArray(new String[values.size()])[worldIn.rand.nextInt(values.size())];
 				WizardryDataHandler.setBloodType(playerIn, BloodRegistry.getBloodTypeById(i));
 			}
-			return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
+			//return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
 		}
 		if (playerIn.isSneaking())
 			if (GuiScreen.isCtrlKeyDown())
@@ -68,7 +68,6 @@ public class ItemDebugger extends Item implements IGlowOverlayable {
 
 		//System.out.println(ModuleRegistry.getInstance().getModuleId(ModuleRegistry.getInstance().getModuleById(0)));
 		System.out.println(ModuleRegistry.getInstance().getModuleId(ModuleRegistry.getInstance().getModuleById(1)));
-
 		TeleportUtil.teleportToDimension(playerIn, 100, 0, 100, 0);
 		return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
 	}
