@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.common.item.pearl;
 
-import com.teamwizardry.librarianlib.util.Color;
+import com.teamwizardry.librarianlib.gui.GuiTickHandler;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.Colorable;
 import com.teamwizardry.wizardry.api.item.Explodable;
@@ -8,6 +8,7 @@ import com.teamwizardry.wizardry.api.item.Infusable;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,10 +18,12 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.awt.*;
+
 /**
  * Created by Saad on 6/28/2016.
  */
-public class ItemNacrePearl extends Item implements Infusable, Explodable, Colorable {
+public class ItemNacrePearl extends Item implements Infusable, Explodable {
 
     public ItemNacrePearl() {
         setRegistryName("nacre_pearl");
@@ -30,10 +33,6 @@ public class ItemNacrePearl extends Item implements Infusable, Explodable, Color
         setCreativeTab(Wizardry.tab);
     }
 
-    private static int intColor(int r, int g, int b) {
-        return (r * 65536 + g * 256 + b);
-    }
-
     @SideOnly(Side.CLIENT)
     public void initModel() {
         ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(getRegistryName(), "inventory"));
@@ -41,48 +40,27 @@ public class ItemNacrePearl extends Item implements Infusable, Explodable, Color
 
     @Override
     public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-        int max = 220, min = 120;
-        if (stack.hasTagCompound()) {
-            NBTTagCompound compound = stack.getTagCompound();
-            if (compound.hasKey("red") && compound.hasKey("green") && compound.hasKey("blue")) {
-
-                int red = compound.getInteger("red");
-                int green = compound.getInteger("green");
-                int blue = compound.getInteger("blue");
-                boolean checkRed = compound.getBoolean("checkRed");
-                boolean checkGreen = compound.getBoolean("checkGreen");
-                boolean checkBlue = compound.getBoolean("checkBlue");
-
-                if (checkRed && red < max) red++;
-                else if (red > min) red--;
-                else green++;
-
-                if (checkGreen && green < max) green++;
-                else if (green > min) green--;
-                else green++;
-
-                if (checkBlue && blue < max) blue++;
-                else if (blue > min) blue--;
-                else blue++;
-
-                if (itemRand.nextInt(100) == 0) checkRed = !checkRed;
-                if (itemRand.nextInt(100) == 0) checkGreen = !checkGreen;
-                if (itemRand.nextInt(100) == 0) checkBlue = !checkBlue;
-
-                compound.setInteger("red", red);
-                compound.setInteger("green", green);
-                compound.setInteger("blue", blue);
-                compound.setBoolean("checkRed", checkRed);
-                compound.setBoolean("checkBlue", checkGreen);
-                compound.setBoolean("checkGreen", checkBlue);
-
-            } else setDefaultColor(stack, min, max);
-        } else setDefaultColor(stack, min, max);
+        NBTTagCompound compound = stack.getTagCompound();
+        if (compound == null) {
+            compound = new NBTTagCompound();
+            stack.setTagCompound(compound);
+        }
+        if (!compound.hasKey("rand"))
+            compound.setInteger("rand", worldIn.rand.nextInt(100));
     }
 
     @Override
-    public boolean shouldCauseReequipAnimation(ItemStack oldS, ItemStack newS, boolean slotChanged) {
-        return slotChanged;
+    public boolean onEntityItemUpdate(EntityItem entityItem) {
+        ItemStack stack = entityItem.getEntityItem();
+        NBTTagCompound compound = stack.getTagCompound();
+        if (compound == null) {
+            compound = new NBTTagCompound();
+            stack.setTagCompound(compound);
+        }
+        if (!compound.hasKey("rand"))
+            compound.setInteger("rand", entityItem.worldObj.rand.nextInt(100));
+
+        return super.onEntityItemUpdate(entityItem);
     }
 
     @Override
@@ -90,28 +68,17 @@ public class ItemNacrePearl extends Item implements Infusable, Explodable, Color
         return false;
     }
 
-    @Override
-    public Color getColor(ItemStack stack) {
-        int r = stack.getTagCompound().getInteger("red");
-        int g = stack.getTagCompound().getInteger("green");
-        int b = stack.getTagCompound().getInteger("blue");
-        return new Color(r, g, b);
-    }
-
     @SideOnly(Side.CLIENT)
     public static class ColorHandler implements IItemColor {
-        public ColorHandler() {
-        }
 
         @Override
         public int getColorFromItemstack(ItemStack stack, int tintIndex) {
-            if (stack.hasTagCompound()) {
-                int r = stack.getTagCompound().getInteger("red");
-                int g = stack.getTagCompound().getInteger("green");
-                int b = stack.getTagCompound().getInteger("blue");
-                return intColor(r, g, b);
-            }
-            return intColor(255, 255, 255);
+            int rand = 0;
+            NBTTagCompound compound = stack.getTagCompound();
+            if (compound != null && compound.hasKey("rand"))
+                rand = compound.getInteger("rand");
+
+            return Color.HSBtoRGB((rand + GuiTickHandler.ticksInGame) * 0.01f, 0.15f, 1f);
         }
     }
 }

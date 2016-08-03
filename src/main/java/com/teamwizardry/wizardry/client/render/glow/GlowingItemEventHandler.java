@@ -47,7 +47,7 @@ public class GlowingItemEventHandler {
         if (mc.playerController != null && mc.gameSettings.thirdPersonView == 0 && !flag && !mc.gameSettings.hideGUI && !mc.playerController.isSpectator()) {
             GlStateManager.pushMatrix();
             render.enableLightmap();
-            render(e.getPartialTicks(), false, e.isCanceled());
+            render(e.getPartialTicks(), false, !e.isCanceled());
             render.disableLightmap();
             GlStateManager.popMatrix();
 
@@ -90,7 +90,8 @@ public class GlowingItemEventHandler {
         ItemStack stackMain = WizardryClientMethodHandles.getStackMainHand(render);
         ItemStack stackOff = WizardryClientMethodHandles.getStackOffHand(render);
 
-        if (flag && stackMain != null && (stackMain.getItem() instanceof IGlowOverlayable || !overlay && renderNonOverlays)) {
+        GlStateManager.pushMatrix();
+        if (flag && stackMain != null && (stackMain.getItem() instanceof IGlowOverlayable || (!overlay && renderNonOverlays))) {
             if (!overlay || !(stackMain.getItem() instanceof IGlowOverlayable) || ((IGlowOverlayable) stackMain.getItem()).useOverlay(stackMain)) {
                 if (overlay && stackMain.getItem() instanceof IGlowOverlayable) {
                     IGlowOverlayable item = (IGlowOverlayable) stackMain.getItem();
@@ -114,7 +115,8 @@ public class GlowingItemEventHandler {
             }
         }
 
-        if (flag1 && stackOff != null && (stackOff.getItem() instanceof IGlowOverlayable || !overlay && renderNonOverlays)) {
+        GlStateManager.pushMatrix();
+        if (flag1 && stackOff != null && (stackOff.getItem() instanceof IGlowOverlayable || (!overlay && renderNonOverlays))) {
             if (!overlay || !(stackOff.getItem() instanceof IGlowOverlayable) || ((IGlowOverlayable) stackOff.getItem()).useOverlay(stackOff)) {
                 if (overlay && stackOff.getItem() instanceof IGlowOverlayable) {
                     IGlowOverlayable item = (IGlowOverlayable) stackOff.getItem();
@@ -126,7 +128,7 @@ public class GlowingItemEventHandler {
 
                 float f4 = enumhand == EnumHand.OFF_HAND ? f : 0.0F;
                 float f6 = 1.0F - (prevProgOff + (progOff - prevProgOff) * partialTicks);
-                render.renderItemInFirstPerson(abstractclientplayer, partialTicks, f1, EnumHand.OFF_HAND, f4, overlay ? GlowingOverlayHelper.overlayStack(stackOff) : stackMain, f6);
+                render.renderItemInFirstPerson(abstractclientplayer, partialTicks, f1, EnumHand.OFF_HAND, f4, overlay ? GlowingOverlayHelper.overlayStack(stackOff) : stackOff, f6);
 
                 if (overlay && stackOff.getItem() instanceof IGlowOverlayable) {
                     IGlowOverlayable item = (IGlowOverlayable) stackOff.getItem();
