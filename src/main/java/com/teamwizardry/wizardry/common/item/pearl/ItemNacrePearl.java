@@ -31,6 +31,7 @@ public class ItemNacrePearl extends Item implements Infusable, Explodable {
     public static final String TAG_PURITY = "purity";
     public static final String TAG_COMPLETE = "complete";
     public static final int NACRE_PURITY_CONVERSION = 30 * 20; // 30 seconds
+    public static final int COLOR_CYCLE_LENGTH = 50 * 20; // 50 seconds
 
     public ItemNacrePearl() {
         setRegistryName("nacre_pearl");
@@ -76,7 +77,7 @@ public class ItemNacrePearl extends Item implements Infusable, Explodable {
 
 
         if (!compound.hasKey(TAG_RAND))
-            compound.setInteger(TAG_RAND, entityItem.worldObj.rand.nextInt(100));
+            compound.setInteger(TAG_RAND, entityItem.worldObj.rand.nextInt(COLOR_CYCLE_LENGTH));
 
         if (entityItem.isInsideOfMaterial(ModBlocks.NACRE_MATERIAL) && !compound.getBoolean(TAG_COMPLETE)) {
             int purity = 0;
@@ -103,7 +104,7 @@ public class ItemNacrePearl extends Item implements Infusable, Explodable {
             if (compound != null && compound.hasKey(TAG_PURITY))
                 saturation = MathHelper.sin(compound.getInteger(TAG_PURITY) * (float) Math.PI * 0.5f / NACRE_PURITY_CONVERSION);
 
-            return Color.HSBtoRGB((rand + GuiTickHandler.ticksInGame) * 0.01f, saturation * 0.3f, 1f);
+            return Color.HSBtoRGB((rand + GuiTickHandler.ticksInGame) / (float) COLOR_CYCLE_LENGTH, saturation * 0.3f, 1f);
         }
     }
 }
