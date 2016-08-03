@@ -1,10 +1,10 @@
 package com.teamwizardry.wizardry.init;
 
 
-import com.teamwizardry.wizardry.common.block.BlockCraftingPlate;
-import com.teamwizardry.wizardry.common.block.BlockMagiciansWorktable;
-import com.teamwizardry.wizardry.common.block.BlockManaBattery;
-import com.teamwizardry.wizardry.common.block.BlockPedestal;
+import com.teamwizardry.wizardry.common.block.*;
+import net.minecraft.block.material.MapColor;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MaterialLiquid;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -12,6 +12,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  * Created by Saad on 3/24/2016.
  */
 public class ModBlocks {
+
+    public static Material NACRE_MATERIAL = new MaterialNacre(MapColor.WATER);
 
     public static BlockCraftingPlate CRAFTING_PLATE;
     public static BlockMagiciansWorktable MAGICIANS_WORKTABLE;
