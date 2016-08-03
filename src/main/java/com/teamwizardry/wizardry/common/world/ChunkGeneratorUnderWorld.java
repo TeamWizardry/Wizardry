@@ -31,16 +31,16 @@ public class ChunkGeneratorUnderWorld implements IChunkGenerator {
 		List<BlockPos> poses = new ArrayList<>();
 		if (weight > 0) {
 			if (ThreadLocalRandom.current().nextBoolean()) poses.addAll(generateCloud(center.south(), weight - 1));
-			else  poses.addAll(generateCloud(center.south(), weight));
+			else  poses.addAll(generateCloud(center.south(), weight - 2));
 
 			if (ThreadLocalRandom.current().nextBoolean()) poses.addAll(generateCloud(center.west(), weight - 1));
-			else  poses.addAll(generateCloud(center.south(), weight));
+			else  poses.addAll(generateCloud(center.south(), weight - 2));
 
 			if (ThreadLocalRandom.current().nextBoolean()) poses.addAll(generateCloud(center.north(), weight - 1));
-			else  poses.addAll(generateCloud(center.south(), weight));
+			else  poses.addAll(generateCloud(center.south(), weight - 2));
 
 			if (ThreadLocalRandom.current().nextBoolean()) poses.addAll(generateCloud(center.east(), weight - 1));
-			else  poses.addAll(generateCloud(center.south(), weight));
+			else  poses.addAll(generateCloud(center.south(), weight - 2));
 		}
 		return poses;
 	}
