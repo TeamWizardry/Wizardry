@@ -56,7 +56,7 @@ public class ItemNacrePearl extends Item implements Infusable, Explodable {
         }
 
         if (!compound.hasKey(TAG_RAND))
-            compound.setInteger(TAG_RAND, worldIn.rand.nextInt(100));
+            compound.setInteger(TAG_RAND, 0);
         if (!compound.hasKey(TAG_PURITY))
             compound.setInteger(TAG_PURITY, NACRE_PURITY_CONVERSION);
         if (!compound.getBoolean(TAG_COMPLETE))
