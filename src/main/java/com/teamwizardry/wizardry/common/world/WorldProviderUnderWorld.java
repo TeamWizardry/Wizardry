@@ -1,12 +1,12 @@
 package com.teamwizardry.wizardry.common.world;
 
+import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkGenerator;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -15,16 +15,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  */
 public class WorldProviderUnderWorld extends WorldProvider {
 
-	public static int id = DimensionManager.getNextFreeDimId();
-
 	@Override
 	public IChunkGenerator createChunkGenerator() {
-		return new ChunkProviderUnderWorld(worldObj, 3242351, true, "null");
+		return new ChunkGeneratorUnderWorld(worldObj);
 	}
 
 	@Override
 	public DimensionType getDimensionType() {
-		return DimensionType.register("underworld", "world", id, WorldProviderUnderWorld.class, false);
+		return Wizardry.underWorld;
 	}
 
 	@Override

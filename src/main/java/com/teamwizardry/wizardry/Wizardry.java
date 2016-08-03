@@ -19,6 +19,7 @@ import com.teamwizardry.wizardry.common.world.WorldProviderUnderWorld;
 import com.teamwizardry.wizardry.init.*;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -49,6 +50,7 @@ public class Wizardry {
 	public static PacketLoggingHandler packetHandler;
 	public static Logger logger;
 	public static EventBus EVENT_BUS = new EventBus();
+	public static DimensionType underWorld;
 
 	@SidedProxy(clientSide = CLIENT, serverSide = SERVER)
 	public static CommonProxy proxy;
@@ -91,8 +93,17 @@ public class Wizardry {
 		ModRecipes.initCrafting();
 		Achievements.init();
 
-		//DimensionManager.createProviderFor(WorldProviderUnderWorld.id);
-		DimensionManager.registerDimension(WorldProviderUnderWorld.id, new WorldProviderUnderWorld().getDimensionType());
+		int id = -1;
+		for (DimensionType type : DimensionType.values()) {
+			if (type.getId() > id) {
+				id = type.getId();
+			}
+		}
+		id++;
+
+		underWorld = DimensionType.register("underworld", "_dim", id, WorldProviderUnderWorld.class, false);
+		int dimensionId = 100;   // @todo Make configurable
+		DimensionManager.registerDimension(dimensionId , underWorld);
 
 		MinecraftForge.EVENT_BUS.register(new EventHandler());
 		MinecraftForge.EVENT_BUS.register(new AchievementEvents());
