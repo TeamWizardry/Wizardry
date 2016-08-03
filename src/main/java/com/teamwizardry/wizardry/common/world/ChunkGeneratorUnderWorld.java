@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.world;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Biomes;
 import net.minecraft.init.Blocks;
@@ -14,7 +15,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.Random;
 
 /**
  * Created by LordSaad44
@@ -27,33 +28,42 @@ public class ChunkGeneratorUnderWorld implements IChunkGenerator {
 		this.world = worldIn;
 	}
 
-	public List<BlockPos> generateCloud(BlockPos center, int weight) {
+	public List<BlockPos> generateCloud(BlockPos center, int weight, float seed) {
 		List<BlockPos> poses = new ArrayList<>();
-		/*if (weight > 0) {
-			if (ThreadLocalRandom.current().nextBoolean()) poses.addAll(generateCloud(center.south(), weight - 1));
-			else  poses.addAll(generateCloud(center.south(), weight - 2));
+		poses.add(new BlockPos(center));
 
-			if (ThreadLocalRandom.current().nextBoolean()) poses.addAll(generateCloud(center.west(), weight - 1));
-			else  poses.addAll(generateCloud(center.south(), weight - 2));
+		if (weight > 0) {
+			if (seed < 0.5f) poses.addAll(generateCloud(center.south(), weight - 1, seed));
+			else poses.addAll(generateCloud(center.south(), weight - 2, seed));
 
-			if (ThreadLocalRandom.current().nextBoolean()) poses.addAll(generateCloud(center.north(), weight - 1));
-			else  poses.addAll(generateCloud(center.south(), weight - 2));
+			if (seed < 0.5f) poses.addAll(generateCloud(center.north(), weight - 1, seed));
+			else poses.addAll(generateCloud(center.north(), weight - 2, seed));
 
-			if (ThreadLocalRandom.current().nextBoolean()) poses.addAll(generateCloud(center.east(), weight - 1));
-			else  poses.addAll(generateCloud(center.south(), weight - 2));
-		}*/
-		if(weight > 0) {
-			poses.add(new BlockPos(center.south()));
-			poses.addAll(generateCloud(center.south(), weight - 1));
+			if (seed < 0.5f) poses.addAll(generateCloud(center.east(), weight - 1, seed));
+			else poses.addAll(generateCloud(center.east(), weight - 2, seed));
+
+			if (seed < 0.5f) poses.addAll(generateCloud(center.west(), weight - 1, seed));
+			else poses.addAll(generateCloud(center.west(), weight - 2, seed));
 		}
 		return poses;
 	}
 
-	public void generate(int x, int z, ChunkPrimer primer) {
-		int y = ThreadLocalRandom.current().nextInt(50, 60);
+	public void generate(int chunkX, int chunkZ, ChunkPrimer primer) {
+		long s2 = (((chunkX >> 2) + world.getSeed() + 13) * 314) + (chunkZ >> 2) * 17L;
+		Random rand = new Random(s2);
+		rand.nextFloat();
+		float seed = rand.nextFloat();
 
-		for (BlockPos pos : generateCloud(new BlockPos(x, y, z), 10)) {
-			primer.setBlockState(2, 2, 2/*pos.getX(), pos.getY(), pos.getZ()*/, Blocks.GRASS.getDefaultState());
+		List<BlockPos> poses = generateCloud(new BlockPos(chunkX, 50, chunkZ), 10, seed);
+
+		for (BlockPos pos : poses) {
+			if (seed < 0.5f) {
+				int x = pos.getX() * 16;
+				int y = pos.getY() * 16;
+				int z = pos.getZ() * 16;
+				IBlockState block = Blocks.STONE.getDefaultState();
+				primer.setBlockState(x, y, z, block);
+			}
 		}
 	}
 
