@@ -147,4 +147,14 @@ public class ClientProxy extends CommonProxy {
             } else fx.setMaxAge(0);
         return fx;
     }
+
+    //Wizardry.proxy.<SparkleFX>createParticle(world, origin, age)
+    /*public <T extends Particle> T createParticle(World world, Vec3d origin, int age) {
+        //T fx = T.
+        if(Wizardry.proxy.getParticleDensity() > 0)
+            if (ThreadLocalRandom.current().nextInt(Wizardry.proxy.getParticleDensity()) / 100 <= 1) {
+                fx.setMaxAge(age * Wizardry.proxy.getParticleDensity() / 100);
+            } else fx.setMaxAge(0);
+        return fx;
+    }*/
 }
