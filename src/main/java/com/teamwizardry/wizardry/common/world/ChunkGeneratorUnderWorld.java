@@ -53,8 +53,7 @@ public class ChunkGeneratorUnderWorld implements IChunkGenerator {
 		int y = ThreadLocalRandom.current().nextInt(50, 60);
 
 		for (BlockPos pos : generateCloud(new BlockPos(x, y, z), 10)) {
-			primer.setBlockState(pos.getX(), pos.getY(), pos.getZ(), Blocks.GRASS.getDefaultState());
-			System.out.println("hi");
+			primer.setBlockState(2, 2, 2/*pos.getX(), pos.getY(), pos.getZ()*/, Blocks.GRASS.getDefaultState());
 		}
 	}
 
