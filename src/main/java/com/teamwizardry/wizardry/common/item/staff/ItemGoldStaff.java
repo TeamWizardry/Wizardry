@@ -21,16 +21,17 @@ import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
 import java.util.List;
 
 /**
@@ -195,19 +196,18 @@ public class ItemGoldStaff extends Item implements Colorable {
     }
 
     private void addInformation(NBTTagCompound compound, List<String> tooltip, int level) {
-
-        //TODO
-      /*  if (!compound.hasKey(Module.PRIMARY_SHAPE)) return;
-        String cls = compound.getString(Module.PRIMARY_SHAPE);
-        cls = cls.substring(cls.lastIndexOf('.') + 1);
-        for (int i = 0; i < level; i++)
-            cls = ' ' + cls;
-        tooltip.add(cls);
-        if (!compound.hasKey(Module.MODULES)) return;
-        NBTTagList children = compound.getTagList(Module.MODULES, NBT.TAG_COMPOUND);
-        for (int i = 0; i < children.tagCount(); i++)
-            addInformation(children.getCompoundTagAt(i), tooltip, level + 1);
-            */
+    	if (!compound.hasKey(Module.SHAPE)) return;
+    	int id = compound.getInteger(Module.SHAPE);
+    	Module module = ModuleRegistry.getInstance().getModuleById(id);
+    	if (module == null) return;
+    	String name = module.getDisplayName();
+    	for (int i = 0; i < level; i++)
+    		name = ' ' + name;
+    	tooltip.add(name);
+    	if (!compound.hasKey(Module.MODULES)) return;
+    	NBTTagList children = compound.getTagList(Module.MODULES, NBT.TAG_COMPOUND);
+    	for (int i = 0; i < children.tagCount(); i++)
+    		addInformation(children.getCompoundTagAt(i), tooltip, level + 1);
     }
 
     @SideOnly(Side.CLIENT)
