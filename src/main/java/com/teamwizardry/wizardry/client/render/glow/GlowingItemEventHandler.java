@@ -90,7 +90,6 @@ public class GlowingItemEventHandler {
         ItemStack stackMain = WizardryClientMethodHandles.getStackMainHand(render);
         ItemStack stackOff = WizardryClientMethodHandles.getStackOffHand(render);
 
-        GlStateManager.pushMatrix();
         if (flag && stackMain != null && (stackMain.getItem() instanceof IGlowOverlayable || (!overlay && renderNonOverlays))) {
             if (!overlay || !(stackMain.getItem() instanceof IGlowOverlayable) || ((IGlowOverlayable) stackMain.getItem()).useOverlay(stackMain)) {
                 if (overlay && stackMain.getItem() instanceof IGlowOverlayable) {
@@ -115,7 +114,6 @@ public class GlowingItemEventHandler {
             }
         }
 
-        GlStateManager.pushMatrix();
         if (flag1 && stackOff != null && (stackOff.getItem() instanceof IGlowOverlayable || (!overlay && renderNonOverlays))) {
             if (!overlay || !(stackOff.getItem() instanceof IGlowOverlayable) || ((IGlowOverlayable) stackOff.getItem()).useOverlay(stackOff)) {
                 if (overlay && stackOff.getItem() instanceof IGlowOverlayable) {

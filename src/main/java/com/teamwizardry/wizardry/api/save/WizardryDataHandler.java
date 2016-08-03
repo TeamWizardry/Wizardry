@@ -47,7 +47,7 @@ public class WizardryDataHandler {
         if (blood == null)
             getPersistentCompound(uuid).removeTag(KEY_BLOODTYPE);
         else
-            getPersistentCompound(uuid).setInteger(KEY_BLOODTYPE, BloodRegistry.getBloodTypeId(blood));
+            getPersistentCompound(uuid).setString(KEY_BLOODTYPE, BloodRegistry.getBloodTypeId(blood));
         getSaveData().markDirty();
 
     }
@@ -57,7 +57,7 @@ public class WizardryDataHandler {
     }
 
     public static IBloodType getBloodType(UUID uuid) {
-        return BloodRegistry.getBloodTypeById(getIntegerSafe(getPersistentCompound(uuid), KEY_BLOODTYPE, -1));
+        return BloodRegistry.getBloodTypeById(getStringSafe(getPersistentCompound(uuid), KEY_BLOODTYPE, null));
     }
 
     //int burnoutMax = 100,

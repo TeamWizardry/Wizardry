@@ -2,7 +2,6 @@ package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.bloods.BloodRegistry;
-import com.teamwizardry.wizardry.api.bloods.IBloodType;
 import com.teamwizardry.wizardry.api.item.GlowingOverlayHelper;
 import com.teamwizardry.wizardry.api.item.IGlowOverlayable;
 import com.teamwizardry.wizardry.api.save.WizardryDataHandler;
@@ -20,6 +19,8 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.Set;
 
 public class ItemDebugger extends Item implements IGlowOverlayable {
 
@@ -49,8 +50,8 @@ public class ItemDebugger extends Item implements IGlowOverlayable {
 			if (playerIn.isSneaking())
 				WizardryDataHandler.setBloodType(playerIn, null);
 			else {
-				IBloodType type = WizardryDataHandler.getBloodType(playerIn);
-				int i = type == null ? 0 : (BloodRegistry.getBloodTypeId(type) + 1) % BloodRegistry.getRegistry().size();
+				Set<String> values = BloodRegistry.getRegistry().values();
+				String i = values.toArray(new String[values.size()])[worldIn.rand.nextInt(values.size())];
 				WizardryDataHandler.setBloodType(playerIn, BloodRegistry.getBloodTypeById(i));
 			}
 			return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
