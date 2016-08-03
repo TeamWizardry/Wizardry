@@ -1,16 +1,8 @@
 package com.teamwizardry.wizardry.api.module;
 
-import java.util.ArrayList;
-import java.util.List;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ResourceLocation;
-import com.teamwizardry.librarianlib.util.Color;
 import com.teamwizardry.librarianlib.sprite.Sprite;
 import com.teamwizardry.librarianlib.sprite.Texture;
+import com.teamwizardry.librarianlib.util.Color;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.module.attribute.Attribute;
 import com.teamwizardry.wizardry.api.module.attribute.AttributeMap;
@@ -18,6 +10,15 @@ import com.teamwizardry.wizardry.api.spell.IModifier;
 import com.teamwizardry.wizardry.api.spell.IRuntimeModifier;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.ResourceLocation;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Saad on 6/21/2016.
@@ -81,7 +82,7 @@ public abstract class Module {
      */
     public NBTTagCompound getModuleData() {
         NBTTagCompound compound = new NBTTagCompound();
-        compound.setInteger(SHAPE, id);
+        compound.setInteger(SHAPE, ModuleRegistry.getInstance().getModuleId(this));
         compound.setString(TYPE, getType().toString());
         NBTTagList list = new NBTTagList();
         for (Module module : children) list.appendTag(module.getModuleData());
@@ -237,7 +238,7 @@ public abstract class Module {
     }
 
     public int getId() {
-        return id;
+        return ModuleRegistry.getInstance().getModuleId(this);
     }
 
     public void setId(int id0) {

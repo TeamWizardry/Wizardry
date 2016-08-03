@@ -1,11 +1,13 @@
 package com.teamwizardry.wizardry.api.module;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import java.util.HashMap;
+import java.util.Map;
 
 /*
     @author eladkay
@@ -14,10 +16,11 @@ public class ModuleRegistry {
 
     private final static ModuleRegistry INSTANCE = new ModuleRegistry();
     private int id = 0;
-    private HashMap<ModuleType, HashMap<Integer, Module>> modules = Maps.newHashMap();
+    private Map<ModuleType, Map<Integer, Module>> modules = Maps.newHashMap();
+    private BiMap<Integer, Module> idlookup = HashBiMap.create(512);
 
     private ModuleRegistry() {
-        for (ModuleType type : ModuleType.values()) modules.putIfAbsent(type, new HashMap<>());
+        for (ModuleType type : ModuleType.values()) modules.putIfAbsent(type, HashBiMap.create(512));
     }
 
     public static ModuleRegistry getInstance() {
@@ -70,17 +73,19 @@ public class ModuleRegistry {
     public Pair<Integer, Module> registerModule(IModuleConstructor module, ItemStack stack) {
         Module constructedModule = module.construct(stack);
         modules.get(constructedModule.getType()).putIfAbsent(++id, constructedModule);
-        return new Pair<>(id, module.construct(stack));
+        idlookup.putIfAbsent(id, constructedModule);
+        return new Pair<>(id, constructedModule);
     }
 
     public Module getModuleById(int id) {
-        for (ModuleType moduleType : ModuleType.values())
-            for (int ID : modules.get(moduleType).keySet())
-                if (id == ID) return modules.get(moduleType).get(ID);
-        return null;
+        return idlookup.get(id);
     }
 
-    public HashMap<ModuleType, HashMap<Integer, Module>> getModules() {
+    public Integer getModuleId(Module id) {
+        return idlookup.inverse().get(id);
+    }
+
+    public Map<ModuleType, Map<Integer, Module>> getModules() {
         return modules;
     }
 

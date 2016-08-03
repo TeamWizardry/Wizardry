@@ -109,7 +109,7 @@ public class Wizardry {
 		proxy.init(e);
 
 		WizardHandler.INSTANCE.getClass();
-		ModuleRegistry.getInstance().getClass();
+		ModuleRegistry.getInstance();
 		SpellHandler.INSTANCE.getClass();
 		ModModules.init();
 	}

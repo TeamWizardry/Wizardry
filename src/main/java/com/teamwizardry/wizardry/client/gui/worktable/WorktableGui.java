@@ -2,27 +2,18 @@ package com.teamwizardry.wizardry.client.gui.worktable;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.teamwizardry.librarianlib.gui.EnumMouseButton;
 import com.teamwizardry.librarianlib.gui.GuiBase;
 import com.teamwizardry.librarianlib.gui.components.*;
 import com.teamwizardry.librarianlib.math.Vec2d;
-import com.teamwizardry.librarianlib.math.shapes.BezierCurve2D;
 import com.teamwizardry.librarianlib.sprite.Sprite;
 import com.teamwizardry.librarianlib.sprite.Texture;
-import com.teamwizardry.librarianlib.util.Utils;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextFormatting;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 import static com.teamwizardry.wizardry.lib.LibSprites.Worktable.*;
 
@@ -42,7 +33,7 @@ public class WorktableGui extends GuiBase {
 	public WorktableGui() {
 		super(512, 256);
 
-		for (HashMap<Integer, Module> hashMap : ModuleRegistry.getInstance().getModules().values())
+		for (Map<Integer, Module> hashMap : ModuleRegistry.getInstance().getModules().values())
 			for (Module module : hashMap.values())
 				modulesByType.get(module.getType()).add(module);
 
