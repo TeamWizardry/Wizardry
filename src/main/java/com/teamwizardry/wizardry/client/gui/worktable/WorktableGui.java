@@ -4,9 +4,11 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.teamwizardry.librarianlib.gui.GuiBase;
 import com.teamwizardry.librarianlib.gui.components.*;
+import com.teamwizardry.librarianlib.gui.mixin.ButtonMixin;
 import com.teamwizardry.librarianlib.math.Vec2d;
 import com.teamwizardry.librarianlib.sprite.Sprite;
 import com.teamwizardry.librarianlib.sprite.Texture;
+import com.teamwizardry.librarianlib.util.Color;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.ModuleRegistry;
@@ -29,6 +31,7 @@ public class WorktableGui extends GuiBase {
 	static final int iconSize = 12;
 	public Multimap<ModuleType, Module> modulesByType = HashMultimap.create();
 	private ComponentVoid paper;
+	private boolean setupMode = true;
 
 	public WorktableGui() {
 		super(512, 256);
@@ -65,6 +68,18 @@ public class WorktableGui extends GuiBase {
 		ComponentVoid modifiers = new ComponentVoid(428, 31, 52, 87);
 		addModules(modifiers, ModuleType.MODIFIER, 7, 7, 3, 6);
 		components.add(modifiers);
+
+		ComponentRect ring = new ComponentRect(guiWidth / 2, guiHeight / 2, 100, 200).setup(component -> {
+			new ButtonMixin(component,
+					() -> component.color.setValue(Color.argb(0x804A4A4A)),
+					() -> component.color.setValue(Color.argb(0x809A9A9A)),
+					() -> component.color.setValue(Color.argb(0x80222222)),
+					() -> {
+						components.remove(shapes); // TODO: Shade out instead of remove
+						setupMode = false;
+					});
+		});
+		components.add(ring);
 	}
 
 	private void addModules(ComponentVoid parent, ModuleType type, int x, int y, int columns, int rows) {
