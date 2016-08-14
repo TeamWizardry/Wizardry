@@ -58,7 +58,7 @@ public class ItemGoldStaff extends Item implements Colorable {
         NBTTagCompound compound = stack.getTagCompound();
         if (!compound.hasKey("Spell")) return;
         NBTTagCompound spell = compound.getCompoundTag("Spell");
-        Module module = ModuleRegistry.getInstance().getModuleById(spell.getInteger(Module.SHAPE));
+        Module module = ModuleRegistry.getInstance().getModuleByLocation(spell.getString(Module.SHAPE));
         if (!(module instanceof IContinuousCast)) {
             new SpellStack((EntityPlayer) entityLiving, entityLiving, spell).castSpell();
         }
@@ -92,7 +92,7 @@ public class ItemGoldStaff extends Item implements Colorable {
                 if (compound.hasKey("Spell")) {
                     NBTTagCompound spell = compound.getCompoundTag("Spell");
                     if (spell.hasKey(Module.SHAPE)) {
-                        Module module = ModuleRegistry.getInstance().getModuleById(spell.getInteger(Module.SHAPE));
+                        Module module = ModuleRegistry.getInstance().getModuleByLocation(spell.getString(Module.SHAPE));
                         if (module instanceof IContinuousCast) {
                             new SpellStack((EntityPlayer) player, player, spell).castSpell();
                         }
@@ -197,8 +197,8 @@ public class ItemGoldStaff extends Item implements Colorable {
 
     private void addInformation(NBTTagCompound compound, List<String> tooltip, int level) {
     	if (!compound.hasKey(Module.SHAPE)) return;
-    	int id = compound.getInteger(Module.SHAPE);
-    	Module module = ModuleRegistry.getInstance().getModuleById(id);
+    	String location = compound.getString(Module.SHAPE);
+    	Module module = ModuleRegistry.getInstance().getModuleByLocation(location);
     	if (module == null) return;
     	String name = module.getDisplayName();
     	for (int i = 0; i < level; i++)

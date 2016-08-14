@@ -21,22 +21,6 @@ public class Parser
 		stacks = new ArrayDeque<>(items);
 	}
 
-	// public static HashMap<ModuleType, SortedList<Module>>
-	// parseModuleToLists(Module module) {
-	// HashMap<ModuleType, SortedList<Module>> lists = Maps.newHashMap();
-	// for (ModuleType type : ModuleType.values()) lists.putIfAbsent(type, new
-	// SortedList<>(new ObservableListWrapper<>(new LinkedList<>())));
-	//
-	// List<Module> children = module.getChildren();
-	// for (Module child : children) {
-	// if (child.hasChildren()) {
-	// lists.putAll(parseModuleToLists(child));
-	// }
-	// lists.get(child.getType()).add(child);
-	// }
-	// return lists;
-	// }
-
 	/**
 	 * Will convert the list of items into a Module with all the respective
 	 * children.
@@ -46,18 +30,24 @@ public class Parser
 	 */
 	public Module parseInventoryToModule()
 	{
-		Module module = getModuleFromItemStack(stacks.pop());
+		return parseInventoryToModule(ModuleType.EVENT, this.getDefaultType(ModuleType.EVENT));
+	}
+	
+	public Module parseInventoryToModule(ModuleType currentType, ModuleType expectedType)
+	{
+		Module module = getModuleFromItemStack(stacks.pop(), expectedType);
 		if (module == null)
 			return null;
-		ModuleType currentType = module.getType();
-		ModuleType expectedType = getDefaultType(currentType);
+		currentType = module.getType();
+		expectedType = getDefaultType(currentType);
 		if (module.canHaveChildren())
 		{
 			while (endCount == 0 && expectedType != null)
 			{
 				if (stacks.isEmpty())
 					return module;
-				endCount = getEndCount(stacks.peek());
+				ItemStack peek = stacks.peek();
+				endCount = getEndCount(peek) * peek.stackSize;
 				if (endCount != 0)
 				{
 					while (endCount != 0 && expectedType != null)
@@ -74,7 +64,7 @@ public class Parser
 
 				if (expectedType == null)
 					return module;
-				Module childModule = parseInventoryToModule();
+				Module childModule = parseInventoryToModule(currentType, expectedType);
 				if (childModule != null)
 					module.accept(childModule);
 			}
@@ -86,9 +76,14 @@ public class Parser
 	/**
 	 * Gets a new instance of the module given an item
 	 */
-	private Module getModuleFromItemStack(ItemStack stack)
+	private Module getModuleFromItemStack(ItemStack stack, ModuleType type)
 	{
-		Module module = ModuleRegistry.getInstance().getModuleFromItemStack(stack);
+		Module module = ModuleRegistry.getInstance().getModuleFromItemStack(stack, type);
+		if (module != null && stack.stackSize > module.stack.stackSize)
+		{
+			stack.stackSize -= module.stack.stackSize;
+			stacks.push(stack);
+		}
 		if (module instanceof IRequireItem)
 			((IRequireItem) module).handle(stack);
 		return module;

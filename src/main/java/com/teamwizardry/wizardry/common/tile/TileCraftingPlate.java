@@ -24,6 +24,7 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.Infusable;
 import com.teamwizardry.wizardry.api.item.PearlType;
 import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.api.module.ModuleRegistry;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import com.teamwizardry.wizardry.client.helper.CraftingPlateItemStackHelper;
 import com.teamwizardry.wizardry.common.Structures;
@@ -217,7 +218,8 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
             }
 
             if (animationComplete) {
-                Parser spellParser = new Parser(inventory.stream().map(CraftingPlateItemStackHelper::getItemStack).collect(Collectors.toList()));
+            	List<ItemStack> condensed = condenseItemList(inventory.stream().map(CraftingPlateItemStackHelper::getItemStack).collect(Collectors.toList()));
+                Parser spellParser = new Parser(condensed);
                 Module parsedSpell = null;
 
                 try {
@@ -230,7 +232,6 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
                     NBTTagCompound compound = pearl.getItemStack().getTagCompound();
                     compound.setString("type", PearlType.INFUSED.toString());
                     compound.setTag("Spell", parsedSpell.getModuleData());
-                    compound.setInteger(Module.SHAPE, parsedSpell.getId());
                     pearl.getItemStack().setTagCompound(compound);
                     EntityItem pearlItem = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() + pearl.getPoint().yCoord, pos.getZ() + 0.5, pearl.getItemStack());
                     pearlItem.setVelocity(0, 0.8, 0);
@@ -315,5 +316,19 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
 
     public void setAnimating(boolean animating) {
         isAnimating = animating;
+    }
+    
+    private List<ItemStack> condenseItemList(List<ItemStack> list)
+    {
+    	ArrayList<ItemStack> items = new ArrayList<ItemStack>();
+    	items.add(list.remove(0));
+    	while (list.size() > 0)
+    	{
+    		if (ModuleRegistry.areItemsEqual(list.get(0), items.get(items.size() - 1)))
+    			items.get(items.size() - 1).stackSize += list.remove(0).stackSize;
+    		else
+    			items.add(list.remove(0));
+    	}
+    	return items;
     }
 }

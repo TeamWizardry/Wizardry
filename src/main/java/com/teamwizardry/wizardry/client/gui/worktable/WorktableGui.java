@@ -36,7 +36,7 @@ public class WorktableGui extends GuiBase {
 	public WorktableGui() {
 		super(512, 256);
 
-		for (Map<Integer, Module> hashMap : ModuleRegistry.getInstance().getModules().values())
+		for (Map<ResourceLocation, Module> hashMap : ModuleRegistry.getInstance().getModules().values())
 			for (Module module : hashMap.values())
 				modulesByType.get(module.getType()).add(module);
 

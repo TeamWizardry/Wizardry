@@ -1,13 +1,15 @@
 package com.teamwizardry.wizardry.api.module;
 
+import java.util.Map;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.oredict.OreDictionary;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-
-import java.util.Map;
 
 /*
     @author eladkay
@@ -15,22 +17,17 @@ import java.util.Map;
 public class ModuleRegistry {
 
     private final static ModuleRegistry INSTANCE = new ModuleRegistry();
-    private int id = 0;
-    private Map<ModuleType, Map<Integer, Module>> modules = Maps.newHashMap();
-    private BiMap<Integer, Module> idlookup = HashBiMap.create(512);
+    private Map<ModuleType, Map<ResourceLocation, Module>> modules = Maps.newHashMap();
+    private BiMap<ResourceLocation, Module> moduleLookup = HashBiMap.create(512);
 
     public int getRegistrySize() {
-        return idlookup.size();
+        return moduleLookup.size();
     }
 
-    public BiMap<Integer, Module>  getRegistryMap() {
-        return idlookup;
+    public BiMap<ResourceLocation, Module> getRegistryMap() {
+        return moduleLookup;
     }
-
-    public int getCurrentId() {
-        return id;
-    }
-
+    
     private ModuleRegistry() {
         for (ModuleType type : ModuleType.values()) modules.putIfAbsent(type, HashBiMap.create(512));
     }
@@ -39,9 +36,20 @@ public class ModuleRegistry {
         return INSTANCE;
     }
 
-    private static boolean areItemStacksEqual(ItemStack stack, ItemStack stack2) {
+    public static boolean areItemsEqual(ItemStack stack, ItemStack stack2)
+    {
+    	if (stack.getItem() != stack2.getItem()) return false;
+    	if (stack.getItemDamage() != OreDictionary.WILDCARD_VALUE)
+    		if (stack2.getItemDamage() != OreDictionary.WILDCARD_VALUE)
+    			if (stack.getItemDamage() != stack2.getItemDamage()) return false;
+    	return true;
+    }
+    
+    public static boolean areItemStacksEqual(ItemStack stack, ItemStack stack2) {
         if (stack.getItem() != stack2.getItem()) return false;
-        if (stack.getItemDamage() != stack2.getItemDamage()) return false;
+        if (stack.getItemDamage() != OreDictionary.WILDCARD_VALUE)
+        	if (stack2.getItemDamage() != OreDictionary.WILDCARD_VALUE)
+        		if (stack.getItemDamage() != stack2.getItemDamage()) return false;
         if (stack.stackSize != stack2.stackSize) return false;
 
         NBTTagCompound compound1 = stack.getTagCompound();
@@ -75,30 +83,32 @@ public class ModuleRegistry {
         return true;
     }
 
-    public Module getModuleFromItemStack(ItemStack stack) {
-        for (ModuleType type : ModuleType.values())
-            for (int ID : modules.get(type).keySet())
-                if (areItemStacksEqual(modules.get(type).get(ID).stack, stack)) return modules.get(type).get(ID);
+    public Module getModuleFromItemStack(ItemStack stack, ModuleType type) {
+        if (type != null)
+            for (ResourceLocation rl : modules.get(type).keySet())
+                if (areItemsEqual(modules.get(type).get(rl).stack, stack)) return modules.get(type).get(rl);
         return null;
     }
 
-    public Pair<Integer, Module> registerModule(IModuleConstructor module, ItemStack stack) {
+    public Pair<ResourceLocation, Module> registerModule(IModuleConstructor module, ItemStack stack) {
         Module constructedModule = module.construct(stack);
-        modules.get(constructedModule.getType()).putIfAbsent(++id, constructedModule);
-        idlookup.put(id, constructedModule);
-        System.out.println("Putting " + id + " as " + constructedModule.getDisplayName());
-        return new Pair<>(id, constructedModule);
+        ResourceLocation location = constructedModule.getResourceLocation();
+        ModuleType type = constructedModule.getType();
+        modules.get(type).putIfAbsent(location, constructedModule);
+        moduleLookup.put(location, constructedModule);
+        Wizardry.logger.info("Registered " + constructedModule.getDisplayName() + " in " + type + " under " + location);
+        return new Pair<>(location, constructedModule);
     }
 
-    public Module getModuleById(int id) {
-        return idlookup.get(id);
+    public Module getModuleByLocation(String location) {
+        return moduleLookup.get(new ResourceLocation(location));
     }
 
-    public Integer getModuleId(Module id) {
-        return idlookup.inverse().get(id);
+    public ResourceLocation getModuleLocation(Module module) {
+        return moduleLookup.inverse().get(module);
     }
 
-    public Map<ModuleType, Map<Integer, Module>> getModules() {
+    public Map<ModuleType, Map<ResourceLocation, Module>> getModules() {
         return modules;
     }
 

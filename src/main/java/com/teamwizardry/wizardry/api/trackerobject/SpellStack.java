@@ -1,19 +1,18 @@
 package com.teamwizardry.wizardry.api.trackerobject;
 
-import com.teamwizardry.librarianlib.util.Color;
-import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.ModuleRegistry;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.teamwizardry.librarianlib.util.Color;
+import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.api.module.ModuleRegistry;
+import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
 
 /**
  * Created by LordSaad44 This class is created when a spell is created, then
@@ -72,7 +71,7 @@ public class SpellStack
 				}
 				else
 				{
-					Module spell = ModuleRegistry.getInstance().getModuleById(module.getInteger(Module.SHAPE));
+					Module spell = ModuleRegistry.getInstance().getModuleByLocation(module.getString(Module.SHAPE));
 					spell.cast(player, caster, module, this);
 				}
 			}
@@ -81,7 +80,7 @@ public class SpellStack
 
 	private Module getModuleTree(NBTTagCompound fullSpell)
 	{
-		Module module = ModuleRegistry.getInstance().getModuleById(fullSpell.getInteger(Module.SHAPE));
+		Module module = ModuleRegistry.getInstance().getModuleByLocation(fullSpell.getString(Module.SHAPE));
 		if (module == null) return null;
 		NBTTagList children = fullSpell.getTagList(Module.MODULES, NBT.TAG_COMPOUND);
 		for (int i = 0; i < children.tagCount(); i++)

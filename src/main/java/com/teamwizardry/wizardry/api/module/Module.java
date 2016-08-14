@@ -53,7 +53,6 @@ public abstract class Module {
     public ItemStack stack;
     protected boolean canHaveChildren = true;
     private List<Module> children = new ArrayList<>();
-    private int id;
     private Sprite staticIcon = STATIC_ICON_SHEET.getSprite(this.getClass().getSimpleName(), 16, 16), animatedIcon = ANIMATED_ICON_SHEET.getSprite(this.getClass().getSimpleName(), 16, 16);
     private String description = "<-NULL->";
     private String displayName = "<-NULL->";
@@ -82,7 +81,7 @@ public abstract class Module {
      */
     public NBTTagCompound getModuleData() {
         NBTTagCompound compound = new NBTTagCompound();
-        compound.setInteger(SHAPE, ModuleRegistry.getInstance().getModuleId(this));
+        compound.setString(SHAPE, ModuleRegistry.getInstance().getModuleLocation(this).toString());
         compound.setString(TYPE, getType().toString());
         NBTTagList list = new NBTTagList();
         for (Module module : children) list.appendTag(module.getModuleData());
@@ -237,12 +236,13 @@ public abstract class Module {
         return Color.WHITE;
     }
 
-    public int getId() {
-        return ModuleRegistry.getInstance().getModuleId(this);
+    public ResourceLocation getRegisteredLocation() {
+        return ModuleRegistry.getInstance().getModuleLocation(this);
     }
-
-    public void setId(int id0) {
-        id = id0;
+    
+    public ResourceLocation getResourceLocation()
+    {
+    	return new ResourceLocation(Wizardry.MODID + ":" + getClass().getSimpleName());
     }
 
     public List<Module> getChildren() { return children; }
