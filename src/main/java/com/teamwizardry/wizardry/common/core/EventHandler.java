@@ -77,7 +77,7 @@ public class EventHandler {
         for (RedstoneTrackerObject redstone : redstoneTracker) {
 
             if (!redstone.hasAdjusted()) {
-                BlockPos pos = PosUtils.adjustPositionToBlock(event.world, new BlockPos(redstone.getRedstone().posX, redstone.getRedstone().posY, redstone.getRedstone().posZ), Blocks.FIRE);
+                BlockPos pos = PosUtils.INSTANCE.adjustPositionToBlock(event.world, new BlockPos(redstone.getRedstone().posX, redstone.getRedstone().posY, redstone.getRedstone().posZ), Blocks.FIRE);
                 if (redstone.getWorld().getBlockState(pos).getBlock() == Blocks.FIRE
                         && redstone.getWorld().isMaterialInBB(redstone.getRedstone().getEntityBoundingBox().expand(0.1, 0.1, 0.1), Material.FIRE)) {
 
@@ -118,7 +118,7 @@ public class EventHandler {
                             fizz.setScale(0.5f);
                             fizz.setMotion(0, -0.1, 0);
                             fizz.setJitter(30, 0.05, 0, 0.05);
-                            fizz.setColor(Color.RED);
+                            fizz.setColor(Color.Companion.getRED());
                             fizz.setRandomlyShiftColor(-1f, -0.9f, true, false, false);
                         }
                         redstone.setQueue(redstone.getQueue() + 1);
@@ -143,7 +143,7 @@ public class EventHandler {
                     fizz.setFadeOut();
                     fizz.setAlpha(0.5f);
                     fizz.setScale(0.5f);
-                    fizz.setColor(Color.WHITE);
+                    fizz.setColor(Color.Companion.getWHITE());
                     fizz.setRandomlyShiftColor(-0.2f, 0.2f, true, false, false);
                     fizz.setRandomDirection(0.05, 0, 0.05);
                     fizz.setJitter(10, 0.05, 0, 0.05);

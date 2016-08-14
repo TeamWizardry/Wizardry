@@ -68,7 +68,7 @@ public class ItemDebugger extends Item implements IGlowOverlayable {
 
 		//System.out.println(ModuleRegistry.getInstance().getModuleId(ModuleRegistry.getInstance().getModuleById(0)));
 		System.out.println(ModuleRegistry.getInstance().getModuleId(ModuleRegistry.getInstance().getModuleById(1)));
-		TeleportUtil.teleportToDimension(playerIn, 100, 0, 100, 0);
+		TeleportUtil.INSTANCE.teleportToDimension(playerIn, 100, 0, 100, 0);
 		return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
 	}
 

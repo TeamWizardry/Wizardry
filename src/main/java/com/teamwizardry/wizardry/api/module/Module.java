@@ -234,7 +234,7 @@ public abstract class Module {
     }
 
     public Color getColor() {
-        return Color.WHITE;
+        return Color.Companion.getWHITE();
     }
 
     public int getId() {

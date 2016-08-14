@@ -14,26 +14,26 @@ public class SidebarItem extends ModuleTemplate {
 	public SidebarItem(int posX, int posY, Module constructor, GuiComponent<?> paper) {
 		super(posX, posY, constructor, paper);
 		
-		result.mouseDown.add( (c, pos, button) -> {
-			if(button == EnumMouseButton.LEFT && c.mouseOverThisFrame) {
-				ModuleTemplatePaper m = new ModuleTemplatePaper(pos.xi, pos.yi, constructor, paper);
-				m.drag.mouseDown = true;
-				m.drag.clickPos = pos.sub(6, 6);
+		getResult().getMouseDown().add( (c, pos, button) -> {
+			if(button == EnumMouseButton.LEFT && c.getMouseOverThisFrame()) {
+				ModuleTemplatePaper m = new ModuleTemplatePaper(pos.getXi(), pos.getYi(), constructor, paper);
+				m.drag.setMouseDown(true);
+				m.drag.setClickPos(pos.sub(6, 6));
 				paper.add(m.get());
 				return true;
 			}
 			return false;
 		});
-		result.postDraw.add( (c, pos, partialTicks) -> {
-			if(c.mouseOverThisFrame) {
+		getResult().getPostDraw().add( (c, pos, partialTicks) -> {
+			if(c.getMouseOverThisFrame()) {
 				List<String> txt = new ArrayList<>();
 	            txt.add(TextFormatting.GOLD + module.getDisplayName());
-	            txt.addAll(Utils.padString(module.getDescription(), 30));
+	            txt.addAll(Utils.INSTANCE.padString(module.getDescription(), 30));
 	            c.setTooltip(txt);
 			}
 		});
 		
-		result.addTag("sidebarItem");
+		getResult().addTag("sidebarItem");
 	}
 	
 	

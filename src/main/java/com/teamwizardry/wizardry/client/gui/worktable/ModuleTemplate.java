@@ -16,11 +16,11 @@ public class ModuleTemplate extends ComponentTemplate<ComponentCenterAlign> {
 		this.module = constructor;
 		this.paper = paper;
 		
-		result = new ComponentCenterAlign(posX, posY, false, false);
+		setResult(new ComponentCenterAlign(posX, posY, false, false));
 		
 		ComponentSprite sprite = new ComponentSprite(module.getType().backgroundSprite, 0, 0, 12, 12);
 		sprite.addTag("sprite");
-		result.add(sprite);
+		getResult().add(sprite);
 		
 		ComponentSprite glow = new ComponentSprite(LibSprites.Worktable.MODULE_DEFAULT_GLOW, 0, 0, 12, 12);
 		glow.setVisible(false);
@@ -30,12 +30,12 @@ public class ModuleTemplate extends ComponentTemplate<ComponentCenterAlign> {
 		ComponentSprite icon = new ComponentSprite(this.module.getStaticIcon(), 2, 2, 8, 8);
 		sprite.add(icon);
 
-		result.mouseIn.add( (c, pos) -> {
+		getResult().getMouseIn().add( (c, pos) -> {
 			glow.setVisible(true);
 			icon.setSprite(this.module.getAnimatedIcon());
 			return false;
 		});
-		result.mouseOut.add( (c, pos) -> {
+		getResult().getMouseOut().add( (c, pos) -> {
 			glow.setVisible(false);
 			icon.setSprite(this.module.getStaticIcon());
 			return false;
@@ -44,8 +44,8 @@ public class ModuleTemplate extends ComponentTemplate<ComponentCenterAlign> {
 	}
 	
 	private <D> void setSelfData(Class<D> klass) {
-		result.setData(ModuleTemplate.class, "", this);
-		result.setData(klass, "", (D) this);
+		getResult().setData(ModuleTemplate.class, "", this);
+		getResult().setData(klass, "", (D) this);
 	}
 	
 }

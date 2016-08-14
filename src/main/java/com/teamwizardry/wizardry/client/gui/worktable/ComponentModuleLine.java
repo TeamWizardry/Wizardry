@@ -12,7 +12,7 @@ import org.lwjgl.opengl.GL11;
 
 public class ComponentModuleLine extends GuiComponent<ComponentModuleLine> {
 
-	public final Option<ComponentModuleLine, Vec2d> endPos = new Option<>(Vec2d.ZERO);
+	public final Option<ComponentModuleLine, Vec2d> endPos = new Option<>(Vec2d.Companion.getZERO());
 
 	public ComponentModuleLine(int posX, int posY) {
 		super(posX, posY);
@@ -27,9 +27,9 @@ public class ComponentModuleLine extends GuiComponent<ComponentModuleLine> {
 		VertexBuffer vb = tessellator.getBuffer();
 		vb.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
 		Vec2d lastPos = null;
-		for (Vec2d position : new BezierCurve2D(pos, end).getPoints()) {
-			vb.pos(position.x, position.y, 0).endVertex();
-			if (lastPos != null) vb.pos(lastPos.x, lastPos.y, 0).endVertex();
+		for (Vec2d position : new BezierCurve2D(getPos(), end).getPoints()) {
+			vb.pos(position.getX(), position.getY(), 0).endVertex();
+			if (lastPos != null) vb.pos(lastPos.getX(), lastPos.getY(), 0).endVertex();
 			lastPos = position;
 		}
 		tessellator.draw();

@@ -14,9 +14,9 @@ public interface Colorable {
     default void setDefaultColor(ItemStack stack, int min, int max) {
         Color color = new Color(ThreadLocalRandom.current().nextInt(min, max), ThreadLocalRandom.current().nextInt(min, max), ThreadLocalRandom.current().nextInt(min, max));
         NBTTagCompound compound = new NBTTagCompound();
-        compound.setInteger("red", (int) color.r);
-        compound.setInteger("green", (int) color.g);
-        compound.setInteger("blue", (int) color.b);
+        compound.setInteger("red", (int) color.getR());
+        compound.setInteger("green", (int) color.getG());
+        compound.setInteger("blue", (int) color.getB());
         compound.setBoolean("checkRed", false);
         compound.setBoolean("checkBlue", false);
         compound.setBoolean("checkGreen", false);

@@ -38,33 +38,33 @@ public class WorktableGui extends GuiBase {
 				modulesByType.get(module.getType()).add(module);
 
 		ComponentSprite background = new ComponentSprite(BACKGROUND_SPRITE, 0, 0);
-		components.add(background);
+		getComponents().add(background);
 
 		paper = new ComponentVoid(160, 0, 191, 202);
-		paper.zIndex = 100;
+		paper.setZIndex(100);
 		paper.add(new ComponentVoid(0, 0, 191, 202).setup((c) -> c.addTag("tray")));
 		paper.add(new ComponentVoid(213, 134, 98, 66).setup((c) -> c.addTag("tray")));
-		components.add(paper);
+		getComponents().add(paper);
 
 		ComponentVoid effects = new ComponentVoid(92, 32, 52, 158);
 		addModules(effects, ModuleType.EFFECT, 7, 7, 3, 12);
-		components.add(effects);
+		getComponents().add(effects);
 
 		ComponentVoid shapes = new ComponentVoid(32, 32, 52, 74);
 		addModules(shapes, ModuleType.SHAPE, 7, 7, 3, 5);
-		components.add(shapes);
+		getComponents().add(shapes);
 
 		ComponentVoid booleans = new ComponentVoid(32, 116, 52, 74);
 		addModules(booleans, ModuleType.BOOLEAN, 7, 7, 3, 5);
-		components.add(booleans);
+		getComponents().add(booleans);
 
 		ComponentVoid events = new ComponentVoid(368, 31, 52, 87);
 		addModules(events, ModuleType.EVENT, 7, 7, 3, 6);
-		components.add(events);
+		getComponents().add(events);
 
 		ComponentVoid modifiers = new ComponentVoid(428, 31, 52, 87);
 		addModules(modifiers, ModuleType.MODIFIER, 7, 7, 3, 6);
-		components.add(modifiers);
+		getComponents().add(modifiers);
 	}
 
 	private void addModules(ComponentVoid parent, ModuleType type, int x, int y, int columns, int rows) {
@@ -85,9 +85,9 @@ public class WorktableGui extends GuiBase {
 			ComponentSpriteCapped scrollSlot = new ComponentSpriteCapped(SCROLL_GROOVE_VERTICAL_TOP, SCROLL_GROOVE_VERTICAL_MIDDLE, SCROLL_GROOVE_VERTICAL_BOTTOM, false, x + columns * 12, y, 12, rows * 12);
 			parent.add(scrollSlot);
 
-			ComponentSlider scrollSlider = new ComponentSlider(6, SCROLL_SLIDER_VERTICAL.height / 2 + 2, 0, rows * 12 - SCROLL_SLIDER_VERTICAL.height - 4, 0, usedRows - 3);
-			scrollSlider.handle.add(new ComponentSprite(SCROLL_SLIDER_VERTICAL, -SCROLL_SLIDER_VERTICAL.width / 2, -SCROLL_SLIDER_VERTICAL.height / 2));
-			scrollSlider.percentageChange.add((p) -> view.scrollToPercent(new Vec2d(0, p)));
+			ComponentSlider scrollSlider = new ComponentSlider(6, SCROLL_SLIDER_VERTICAL.getHeight() / 2 + 2, 0, rows * 12 - SCROLL_SLIDER_VERTICAL.getHeight() - 4, 0, usedRows - 3);
+			scrollSlider.getHandle().add(new ComponentSprite(SCROLL_SLIDER_VERTICAL, -SCROLL_SLIDER_VERTICAL.getWidth() / 2, -SCROLL_SLIDER_VERTICAL.getHeight() / 2));
+			scrollSlider.getPercentageChange().add((p) -> view.scrollToPercent(new Vec2d(0, p)));
 			scrollSlot.add(scrollSlider);
 		}
 	}

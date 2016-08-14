@@ -22,13 +22,13 @@ public class EffectFire implements IEffect {
     @Override
     public void spawn(World world, Vec3d pos) {
         for (int i = 0; i < 5 + power / 100; i++) {
-            Color yellow = Color.rgb(0xFFFF00);
-            Color orange = Color.rgb(0xFF8C00);
-            Color orangeRed = Color.rgb(0xFF4500);
-            Color gray = Color.rgb(0x696969);
+            Color yellow = Color.Companion.rgb(0xFFFF00);
+            Color orange = Color.Companion.rgb(0xFF8C00);
+            Color orangeRed = Color.Companion.rgb(0xFF4500);
+            Color gray = Color.Companion.rgb(0x696969);
 
             SparkleFX center = GlitterFactory.getInstance().createSparkle(world, pos, new Vec3d(0.01, 0.01, 0.01), 5 + power / 30);
-            center.setColor(Color.WHITE);
+            center.setColor(Color.Companion.getWHITE());
             center.setScale(1.5f + power / 1000);
             center.setAlpha(0.2f + power / 1000);
             center.setFadeOut();
@@ -37,7 +37,7 @@ public class EffectFire implements IEffect {
             center.setRandomDirection(0.01 + power / 1000, 0.03 + power / 1000, 0.01 + power / 1000);
 
             SparkleFX rim = GlitterFactory.getInstance().createSparkle(world, pos, new Vec3d(0.1, 0.1, 0.1), 13 + power / 30);
-            rim.setColor(Color.RED);
+            rim.setColor(Color.Companion.getRED());
             rim.setScale(1f + power / 1000);
             rim.setAlpha(0.5f + power / 1000);
             rim.setFadeOut();
@@ -58,7 +58,7 @@ public class EffectFire implements IEffect {
             outestRim.setColor(gray);
             outestRim.setScale(1.5f + power / 1000);
             outestRim.setAlpha(0.2f + power / 1000);
-            outestRim.setLerp(Color.BLACK);
+            outestRim.setLerp(Color.Companion.getBLACK());
             outestRim.setRandomlyBlurred();
             outestRim.setFadeOut();
             outestRim.setFadeIn();

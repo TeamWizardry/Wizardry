@@ -84,7 +84,7 @@ public class ProjectileEntity extends SpellEntity
 			fizz.setJitter(10, 0.1, 0.1, 0.1);
 		}
 
-		RayTraceResult cast = Raycast.cast(this, new Vec3d(motionX, motionY, motionZ), Math.min(spell.getDouble(Module.SPEED), 1));
+		RayTraceResult cast = Raycast.INSTANCE.cast(this, new Vec3d(motionX, motionY, motionZ), Math.min(spell.getDouble(Module.SPEED), 1));
 
 		if (cast != null)
 		{

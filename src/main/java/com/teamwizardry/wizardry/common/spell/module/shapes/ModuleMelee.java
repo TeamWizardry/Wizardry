@@ -45,7 +45,7 @@ public class ModuleMelee extends Module {
 	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack)
 	{
 		double distance = 3;
-		RayTraceResult raycast = Raycast.cast(caster, distance);
+		RayTraceResult raycast = Raycast.INSTANCE.cast(caster, distance);
 		if (raycast.typeOfHit == RayTraceResult.Type.BLOCK)
 		{
 			Entity entity = new SpellEntity(caster.worldObj, raycast.getBlockPos().getX(), raycast.getBlockPos().getY(), raycast.getBlockPos().getZ());

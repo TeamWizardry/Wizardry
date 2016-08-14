@@ -66,7 +66,7 @@ public class ModuleBeam extends Module implements IContinuousCast
 
 		double distance = spell.getDouble(DISTANCE);
 		double pierce = spell.getInteger(PIERCE);
-		RayTraceResult raycast = Raycast.cast(caster, distance);
+		RayTraceResult raycast = Raycast.INSTANCE.cast(caster, distance);
 
 		// Beam particles
 		double slopeX, slopeY, slopeZ;
@@ -113,7 +113,7 @@ public class ModuleBeam extends Module implements IContinuousCast
 			{
 				stack.castEffects(raycast.entityHit);
 				pierce--;
-				raycast = Raycast.cast(raycast.entityHit, caster.getLookVec(), distance);
+				raycast = Raycast.INSTANCE.cast(raycast.entityHit, caster.getLookVec(), distance);
 			}
 			else return false;
 		}

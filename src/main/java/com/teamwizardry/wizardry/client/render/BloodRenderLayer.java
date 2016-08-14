@@ -48,14 +48,14 @@ public class BloodRenderLayer implements LayerRenderer<AbstractClientPlayer> {
 
             if (glowing) {
                 GlStateManager.disableLighting();
-                ShaderHelper.useShader(Shaders.rawColor);
+                ShaderHelper.Companion.useShader(Shaders.rawColor);
             }
 
             render.getMainModel().render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
 
             if (glowing) {
                 GlStateManager.enableLighting();
-                ShaderHelper.releaseShader();
+                ShaderHelper.Companion.releaseShader();
             }
 
             GlStateManager.disableBlendProfile(GlStateManager.Profile.PLAYER_SKIN);

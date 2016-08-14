@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.client.core;
 
-import com.teamwizardry.librarianlib.gui.GuiTickHandler;
+import com.teamwizardry.librarianlib.gui.TickCounter;
 import com.teamwizardry.librarianlib.sprite.Sprite;
 import com.teamwizardry.librarianlib.sprite.Texture;
 import com.teamwizardry.wizardry.Wizardry;
@@ -45,8 +45,8 @@ public class HudEventHandler extends Gui {
 
             GlStateManager.pushMatrix();
             GlStateManager.color(1F, 1F, 1F);
-            emptyManaBar.draw(GuiTickHandler.ticks, right, top);
-            emptyBurnoutBar.draw(GuiTickHandler.ticks, right, top + 6);
+            emptyManaBar.draw(TickCounter.Companion.getTicks(), right, top);
+            emptyBurnoutBar.draw(TickCounter.Companion.getTicks(), right, top + 6);
             GlStateManager.popMatrix();
 
             BarData data = WizardHandler.getEntityData(player);
@@ -56,13 +56,13 @@ public class HudEventHandler extends Gui {
             int visualManaLength = 0;
             if (data.manaAmount > 0)
                 visualManaLength = (data.manaAmount * 100 / data.manaMax) % 101;
-            fullManaBar.drawClipped(GuiTickHandler.ticks, right, top, visualManaLength, 5);
+            fullManaBar.drawClipped(TickCounter.Companion.getTicks(), right, top, visualManaLength, 5);
 
             GlStateManager.color(1F, 1F, 1F);
             int visualBurnoutLength = 0;
             if (data.burnoutAmount > 0)
                 visualBurnoutLength = (data.burnoutAmount * 100 / data.burnoutMax) % 101;
-            fullBurnoutBar.drawClipped(GuiTickHandler.ticks, right, top + 6, visualBurnoutLength, 5);
+            fullBurnoutBar.drawClipped(TickCounter.Companion.getTicks(), right, top + 6, visualBurnoutLength, 5);
             GlStateManager.popMatrix();
         }
     }

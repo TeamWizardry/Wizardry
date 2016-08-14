@@ -123,20 +123,20 @@ public class SpellStack
 		{
 			if (r == -1 && g == -1 && b == -1)
 			{
-				r = effect.getColor().r;
-				g = effect.getColor().g;
-				b = effect.getColor().b;
+				r = effect.getColor().getR();
+				g = effect.getColor().getG();
+				b = effect.getColor().getB();
 			}
 			else
 			{
-				r = (r + effect.getColor().r) / 2;
-				g = (g + effect.getColor().g) / 2;
-				b = (b + effect.getColor().b) / 2;
+				r = (r + effect.getColor().getR() ) / 2;
+				g = (g + effect.getColor().getG() ) / 2;
+				b = (b + effect.getColor().getB() ) / 2;
 			}
 		}
 
 		if (r == -1 && g == -1 && b == -1)
-			return Color.WHITE;
+			return Color.Companion.getWHITE();
 		else return new Color(r, g, b);
 	}
 }

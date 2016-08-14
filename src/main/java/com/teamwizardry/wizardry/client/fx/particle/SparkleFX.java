@@ -148,9 +148,9 @@ public class SparkleFX extends Particle {
      * @param color The Color to set the particle to.
      */
     public void setColor(Color color) {
-        particleRed = color.r;
-        particleGreen = color.g;
-        particleBlue = color.b;
+        particleRed = color.getR();
+        particleGreen = color.getG();
+        particleBlue = color.getB();
     }
 
     /**
@@ -340,9 +340,9 @@ public class SparkleFX extends Particle {
 
         if (lerp) {
             float t = (float) particleAge / (float) particleMaxAge;
-            particleRed = (float) ((1.0 - t) * fromLerp.r + t * toLerp.r);
-            particleGreen = (float) ((1.0 - t) * fromLerp.g + t * toLerp.g);
-            particleBlue = (float) ((1.0 - t) * fromLerp.b + t * toLerp.b);
+            particleRed = (float) ((1.0 - t) * fromLerp.getR() + t * toLerp.getR() );
+            particleGreen = (float) ((1.0 - t) * fromLerp.getG() + t * toLerp.getG() );
+            particleBlue = (float) ((1.0 - t) * fromLerp.getB() + t * toLerp.getB() );
         }
 
         if (jitterChance > 0) {
