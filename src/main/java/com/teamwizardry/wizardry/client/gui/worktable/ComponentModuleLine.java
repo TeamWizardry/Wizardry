@@ -13,7 +13,7 @@ import org.lwjgl.opengl.GL11;
 public class ComponentModuleLine extends GuiComponent<ComponentModuleLine> {
 
 	public final Option<ComponentModuleLine, Vec2d> endPos = new Option<>(Vec2d.ZERO);
-	
+
 	public ComponentModuleLine(int posX, int posY) {
 		super(posX, posY);
 	}
@@ -21,7 +21,7 @@ public class ComponentModuleLine extends GuiComponent<ComponentModuleLine> {
 	@Override
 	public void drawComponent(Vec2d mousePos, float partialTicks) {
 		Vec2d end = endPos.getValue(this);
-		
+
 		GlStateManager.disableTexture2D();
 		Tessellator tessellator = Tessellator.getInstance();
 		VertexBuffer vb = tessellator.getBuffer();
@@ -33,7 +33,7 @@ public class ComponentModuleLine extends GuiComponent<ComponentModuleLine> {
 			lastPos = position;
 		}
 		tessellator.draw();
-		
+
 		GlStateManager.enableTexture2D();
 	}
 
