@@ -73,7 +73,7 @@ public class WorktableGui extends GuiBase {
 		Sprite ringTexture = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/items/ringBase.png"));
 		Sprite staffTexture = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/items/staffGold.png"));
 
-		ComponentRect menu = new ComponentRect(width - left, height - top, width, height);
+		ComponentRect menu = new ComponentRect(left, top, guiWidth, guiHeight);
 		menu.color.setValue(Color.argb(0x804A4A4A));
 
 		ComponentRect ring = new ComponentRect((guiWidth / 2) - (boxWidth / 2) - 55, (guiHeight / 2) - (boxHeight / 2), boxWidth, boxHeight).setup(componentRingBox -> {
@@ -86,16 +86,22 @@ public class WorktableGui extends GuiBase {
 						sprite.setSize(new Vec2d(ringTexture.width, ringTexture.height).mul(2));
 						sprite.setPos(new Vec2d((boxWidth / 2) - (ringTexture.width * 2 / 2), (boxHeight / 2) - (ringTexture.height * 2 / 2)));
 						componentRingBox.color.setValue(Color.argb(0x804A4A4A));
+						componentRingBox.setSize(new Vec2d(boxWidth, boxHeight));
+						componentRingBox.setPos(new Vec2d((guiWidth / 2) - (boxWidth / 2) - 55, (guiHeight / 2) - (boxHeight / 2)));
 					},
 					() -> {
 						sprite.setSize(new Vec2d(ringTexture.width, ringTexture.height).mul(4));
 						sprite.setPos(new Vec2d((boxWidth / 2) - (ringTexture.width * 4 / 2), (boxHeight / 2) - (ringTexture.height * 4 / 2)));
 						componentRingBox.color.setValue(Color.argb(0x809A9A9A));
+						componentRingBox.setSize(new Vec2d(boxWidth + 20, boxHeight + 20));
+						componentRingBox.setPos(new Vec2d((guiWidth / 2) - (boxWidth / 2) - 55 - 10, (guiHeight / 2) - (boxHeight / 2)));
 					},
 					() -> {
 						sprite.setSize(new Vec2d(ringTexture.width, ringTexture.height));
 						sprite.setPos(new Vec2d((boxWidth / 2) - (ringTexture.width / 2), (boxHeight / 2) - (ringTexture.height / 2)));
 						componentRingBox.color.setValue(Color.argb(0x80222222));
+						componentRingBox.setSize(new Vec2d(boxWidth, boxHeight));
+						componentRingBox.setPos(new Vec2d((guiWidth / 2) - (boxWidth / 2) - 55, (guiHeight / 2) - (boxHeight / 2)));
 					},
 					() -> {
 						components.remove(shapes);
@@ -141,7 +147,8 @@ public class WorktableGui extends GuiBase {
 		menu.add(staff);
 		menu.add(ring);
 
-		components.add(menu);
+		// TODO
+		//components.add(menu);
 	}
 
 	private void addModules(ComponentVoid parent, ModuleType type, int x, int y, int columns, int rows) {
