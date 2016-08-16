@@ -51,6 +51,8 @@ public class HudEventHandler extends Gui {
 
 			IWizardryCapability cap = WizardryCapabilityProvider.get(player);
 
+			if (cap == null) return;
+
 			GlStateManager.pushMatrix();
 			GlStateManager.color(1F, 1F, 1F);
 			int visualManaLength = 0;

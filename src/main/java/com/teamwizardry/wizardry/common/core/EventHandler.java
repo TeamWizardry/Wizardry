@@ -76,8 +76,10 @@ public class EventHandler {
 	public void tickEvent(TickEvent.WorldTickEvent event) {
 		for (EntityPlayer player : event.world.playerEntities) {
 			IWizardryCapability cap = WizardryCapabilityProvider.get(player);
-			cap.setMana(cap.getMana() + 1, player);
-			cap.setBurnout(cap.getBurnout() - 1, player);
+			if (cap != null) {
+				cap.setMana(cap.getMana() + 1, player);
+				cap.setBurnout(cap.getBurnout() - 1, player);
+			}
 		}
 
 		// DEVIL DUST SPAWNING
