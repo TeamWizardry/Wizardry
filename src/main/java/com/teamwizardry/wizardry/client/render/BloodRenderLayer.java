@@ -1,29 +1,19 @@
 package com.teamwizardry.wizardry.client.render;
 
 import com.teamwizardry.librarianlib.fx.shader.ShaderHelper;
-import com.teamwizardry.wizardry.api.bloods.BloodRegistry;
-import com.teamwizardry.wizardry.api.bloods.IBloodType;
-import com.teamwizardry.wizardry.api.item.GlowingOverlayHelper;
-import com.teamwizardry.wizardry.api.item.IGlowOverlayable;
+import com.teamwizardry.wizardry.api.capability.bloods.IBloodType;
 import com.teamwizardry.wizardry.api.save.WizardryDataHandler;
 import com.teamwizardry.wizardry.client.fx.Shaders;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelPlayer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EnumPlayerModelParts;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHandSide;
-import net.minecraft.util.math.MathHelper;
 
 import javax.annotation.Nonnull;
 

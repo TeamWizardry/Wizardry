@@ -1,20 +1,28 @@
 package com.teamwizardry.wizardry.common.proxy;
 
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Config;
 import com.teamwizardry.wizardry.client.fx.particle.LensFlareFX;
 import com.teamwizardry.wizardry.client.fx.particle.MagicBurstFX;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import com.teamwizardry.wizardry.client.fx.particle.trails.SparkleTrailHelix;
+import com.teamwizardry.wizardry.common.network.MessageUpdateCapabilities;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.relauncher.Side;
 
 public class CommonProxy {
 
-    public void preInit(FMLPreInitializationEvent event) {
+    public static SimpleNetworkWrapper NETWORK;
 
+    public void preInit(FMLPreInitializationEvent event) {
+	    NETWORK = NetworkRegistry.INSTANCE.newSimpleChannel(Wizardry.MODID);
+	    NETWORK.registerMessage(MessageUpdateCapabilities.CapsMessageHandler.class, MessageUpdateCapabilities.class, 2, Side.CLIENT);
     }
 
     public void init(FMLInitializationEvent event) {

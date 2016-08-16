@@ -73,7 +73,7 @@ public class WorktableGui extends GuiBase {
 		Sprite ringTexture = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/items/ringBase.png"));
 		Sprite staffTexture = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/items/staffGold.png"));
 
-		ComponentRect menu = new ComponentRect(left, top, guiWidth, guiHeight);
+		ComponentRect menu = new ComponentRect(0, 0, guiWidth, guiHeight);
 		menu.color.setValue(Color.argb(0x804A4A4A));
 
 		ComponentRect ring = new ComponentRect((guiWidth / 2) - (boxWidth / 2) - 55, (guiHeight / 2) - (boxHeight / 2), boxWidth, boxHeight).setup(componentRingBox -> {
@@ -147,8 +147,7 @@ public class WorktableGui extends GuiBase {
 		menu.add(staff);
 		menu.add(ring);
 
-		// TODO
-		//components.add(menu);
+		components.add(menu);
 	}
 
 	private void addModules(ComponentVoid parent, ModuleType type, int x, int y, int columns, int rows) {
