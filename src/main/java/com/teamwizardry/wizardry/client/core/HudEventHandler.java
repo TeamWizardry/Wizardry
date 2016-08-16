@@ -4,8 +4,8 @@ import com.teamwizardry.librarianlib.gui.GuiTickHandler;
 import com.teamwizardry.librarianlib.sprite.Sprite;
 import com.teamwizardry.librarianlib.sprite.Texture;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.save.BarData;
-import com.teamwizardry.wizardry.api.save.WizardHandler;
+import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
+import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.Gui;
@@ -21,49 +21,47 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
  */
 public class HudEventHandler extends Gui {
 
-    private final Texture HUD_TEXTURE = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/hud.png"));
-    private final Sprite emptyManaBar = HUD_TEXTURE.getSprite("mana_empty", 101, 5);
-    private final Sprite fullManaBar = HUD_TEXTURE.getSprite("mana_full", 101, 5);
-    private final Sprite emptyBurnoutBar = HUD_TEXTURE.getSprite("burnout_empty", 101, 5);
-    private final Sprite fullBurnoutBar = HUD_TEXTURE.getSprite("burnout_full", 101, 5);
+	private final Texture HUD_TEXTURE = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/hud.png"));
+	private final Sprite emptyManaBar = HUD_TEXTURE.getSprite("mana_empty", 101, 5);
+	private final Sprite fullManaBar = HUD_TEXTURE.getSprite("mana_full", 101, 5);
+	private final Sprite emptyBurnoutBar = HUD_TEXTURE.getSprite("burnout_empty", 101, 5);
+	private final Sprite fullBurnoutBar = HUD_TEXTURE.getSprite("burnout_full", 101, 5);
 
-    @SubscribeEvent
-    public void renderHud(RenderGameOverlayEvent.Post event) {
-        Minecraft mc = Minecraft.getMinecraft();
-        ItemStack stack = Minecraft.getMinecraft().thePlayer.getActiveItemStack();
+	@SubscribeEvent
+	public void renderHud(RenderGameOverlayEvent.Post event) {
+		Minecraft mc = Minecraft.getMinecraft();
+		ItemStack stack = Minecraft.getMinecraft().thePlayer.getActiveItemStack();
 
-        ScaledResolution resolution = event.getResolution();
-        int width = resolution.getScaledWidth();
-        int height = resolution.getScaledHeight();
-        EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
+		ScaledResolution resolution = event.getResolution();
+		int width = resolution.getScaledWidth();
+		int height = resolution.getScaledHeight();
+		EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
 
-        if (event.getType() == RenderGameOverlayEvent.ElementType.EXPERIENCE) {
+		if (event.getType() == RenderGameOverlayEvent.ElementType.EXPERIENCE) {
 
-            int right = (width / 2) - (100 / 2) + 145;
-            int top = height - 20;
-            HUD_TEXTURE.bind();
+			int right = (width / 2) - (100 / 2) + 145;
+			int top = height - 20;
+			HUD_TEXTURE.bind();
 
-            GlStateManager.pushMatrix();
-            GlStateManager.color(1F, 1F, 1F);
-            emptyManaBar.draw(GuiTickHandler.ticks, right, top);
-            emptyBurnoutBar.draw(GuiTickHandler.ticks, right, top + 6);
-            GlStateManager.popMatrix();
+			GlStateManager.pushMatrix();
+			GlStateManager.color(1F, 1F, 1F);
+			emptyManaBar.draw(GuiTickHandler.ticks, right, top);
+			emptyBurnoutBar.draw(GuiTickHandler.ticks, right, top + 6);
+			GlStateManager.popMatrix();
 
-            BarData data = WizardHandler.getEntityData(player);
+			IWizardryCapability cap = WizardryCapabilityProvider.get(player);
 
-            GlStateManager.pushMatrix();
-            GlStateManager.color(1F, 1F, 1F);
-            int visualManaLength = 0;
-            if (data.manaAmount > 0)
-                visualManaLength = (data.manaAmount * 100 / data.manaMax) % 101;
-            fullManaBar.drawClipped(GuiTickHandler.ticks, right, top, visualManaLength, 5);
+			GlStateManager.pushMatrix();
+			GlStateManager.color(1F, 1F, 1F);
+			int visualManaLength = 0;
+			if (cap.getMana() > 0) visualManaLength = (cap.getMana() * 100 / cap.getMaxMana()) % 101;
+			fullManaBar.drawClipped(GuiTickHandler.ticks, right, top, visualManaLength, 5);
 
-            GlStateManager.color(1F, 1F, 1F);
-            int visualBurnoutLength = 0;
-            if (data.burnoutAmount > 0)
-                visualBurnoutLength = (data.burnoutAmount * 100 / data.burnoutMax) % 101;
-            fullBurnoutBar.drawClipped(GuiTickHandler.ticks, right, top + 6, visualBurnoutLength, 5);
-            GlStateManager.popMatrix();
-        }
-    }
+			GlStateManager.color(1F, 1F, 1F);
+			int visualBurnoutLength = 0;
+			if (cap.getBurnout() > 0) visualBurnoutLength = (cap.getBurnout() * 100 / cap.getMaxBurnout()) % 101;
+			fullBurnoutBar.drawClipped(GuiTickHandler.ticks, right, top + 6, visualBurnoutLength, 5);
+			GlStateManager.popMatrix();
+		}
+	}
 }

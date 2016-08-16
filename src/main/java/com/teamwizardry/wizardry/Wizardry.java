@@ -4,8 +4,6 @@ import com.teamwizardry.librarianlib.LibrarianLog;
 import com.teamwizardry.librarianlib.book.Book;
 import com.teamwizardry.wizardry.api.Config;
 import com.teamwizardry.wizardry.api.module.ModuleRegistry;
-import com.teamwizardry.wizardry.api.save.WizardHandler;
-import com.teamwizardry.wizardry.api.save.WizardryDataHandler;
 import com.teamwizardry.wizardry.api.spell.SpellHandler;
 import com.teamwizardry.wizardry.api.trackerobject.SpellTracker;
 import com.teamwizardry.wizardry.client.gui.GuiHandler;
@@ -84,8 +82,6 @@ public class Wizardry {
 		guide = new Book(MODID);
 		Config.initConfig(event.getSuggestedConfigurationFile());
 
-		new WizardryDataHandler.EventHandler();
-
 		ModSounds.init();
 		ModItems.init();
 		ModBlocks.init();
@@ -103,7 +99,7 @@ public class Wizardry {
 
 		underWorld = DimensionType.register("underworld", "_dim", id, WorldProviderUnderWorld.class, false);
 		int dimensionId = 100;   // @todo Make configurable
-		DimensionManager.registerDimension(dimensionId , underWorld);
+		DimensionManager.registerDimension(dimensionId, underWorld);
 
 		MinecraftForge.EVENT_BUS.register(new EventHandler());
 		MinecraftForge.EVENT_BUS.register(new AchievementEvents());
@@ -119,7 +115,6 @@ public class Wizardry {
 		GameRegistry.registerWorldGenerator(new GenHandler(), 0);
 		proxy.init(e);
 
-		WizardHandler.INSTANCE.getClass();
 		ModuleRegistry.getInstance();
 		SpellHandler.INSTANCE.getClass();
 		ModModules.init();

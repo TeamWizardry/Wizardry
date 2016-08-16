@@ -2,11 +2,13 @@ package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.util.TeleportUtil;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
+import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
 import com.teamwizardry.wizardry.api.capability.bloods.BloodRegistry;
 import com.teamwizardry.wizardry.api.item.GlowingOverlayHelper;
 import com.teamwizardry.wizardry.api.item.IGlowOverlayable;
-import com.teamwizardry.wizardry.api.save.WizardryDataHandler;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,8 +22,6 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import java.util.Set;
 
 public class ItemDebugger extends Item implements IGlowOverlayable {
 
@@ -47,25 +47,21 @@ public class ItemDebugger extends Item implements IGlowOverlayable {
 
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
+		IWizardryCapability cap = WizardryCapabilityProvider.get(playerIn);
 		if (!worldIn.isRemote) {
 			if (playerIn.isSneaking())
-				WizardryDataHandler.setBloodType(playerIn, null);
-			else {
-				Set<String> values = BloodRegistry.getRegistry().values();
-				String i = values.toArray(new String[values.size()])[worldIn.rand.nextInt(values.size())];
-				WizardryDataHandler.setBloodType(playerIn, BloodRegistry.getBloodTypeByName(i));
-			}
+				cap.setBloodType(BloodRegistry.HUMANBLOOD, playerIn);
+			else cap.setBloodType(BloodRegistry.PYROBLOOD, playerIn);
 			//return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
+			Minecraft.getMinecraft().thePlayer.sendChatMessage(cap.getBloodType() + "");
 		}
 		if (playerIn.isSneaking())
-			if (GuiScreen.isCtrlKeyDown())
-				WizardryDataHandler.setBurnoutAmount(playerIn, 50);
-			else
-				WizardryDataHandler.setBurnoutAmount(playerIn, 0);
-		else if (GuiScreen.isCtrlKeyDown()) WizardryDataHandler.setMana(playerIn, 50);
-		else WizardryDataHandler.setMana(playerIn, 0);
+			if (GuiScreen.isCtrlKeyDown()) cap.setBurnout(50, playerIn);
+			else cap.setBurnout(0, playerIn);
 
-		//System.out.println(ModuleRegistry.getInstance().getModuleId(ModuleRegistry.getInstance().getModuleById(0)));
+		else if (GuiScreen.isCtrlKeyDown()) cap.setMana(50, playerIn);
+		else cap.setMana(0, playerIn);
+
 		TeleportUtil.teleportToDimension(playerIn, 100, 0, 100, 0);
 		return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
 	}

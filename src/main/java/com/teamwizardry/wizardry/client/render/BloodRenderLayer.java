@@ -1,8 +1,8 @@
 package com.teamwizardry.wizardry.client.render;
 
 import com.teamwizardry.librarianlib.fx.shader.ShaderHelper;
+import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
 import com.teamwizardry.wizardry.api.capability.bloods.IBloodType;
-import com.teamwizardry.wizardry.api.save.WizardryDataHandler;
 import com.teamwizardry.wizardry.client.fx.Shaders;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelBiped;
@@ -27,7 +27,7 @@ public class BloodRenderLayer implements LayerRenderer<AbstractClientPlayer> {
 
     @Override
     public void doRenderLayer(@Nonnull AbstractClientPlayer entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-        IBloodType type = WizardryDataHandler.getBloodType(entity);
+        IBloodType type = WizardryCapabilityProvider.get(entity).getBloodType();
         if (type != null) {
             render.bindTexture(type.getBloodTexture(entity));
             type.getBloodColor(entity).glColor();
