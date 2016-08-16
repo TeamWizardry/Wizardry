@@ -13,10 +13,10 @@ public class ModuleTemplate extends ComponentTemplate<ComponentCenterAlign> {
 	protected GuiComponent<?> paper;
 	
 	public ModuleTemplate(int posX, int posY, Module constructor, GuiComponent<?> paper) {
+		super(new ComponentCenterAlign(posX, posY, false, false));
+		
 		this.module = constructor;
 		this.paper = paper;
-		
-		setResult(new ComponentCenterAlign(posX, posY, false, false));
 		
 		ComponentSprite sprite = new ComponentSprite(module.getType().backgroundSprite, 0, 0, 12, 12);
 		sprite.addTag("sprite");
@@ -30,15 +30,13 @@ public class ModuleTemplate extends ComponentTemplate<ComponentCenterAlign> {
 		ComponentSprite icon = new ComponentSprite(this.module.getStaticIcon(), 2, 2, 8, 8);
 		sprite.add(icon);
 
-		getResult().getMouseIn().add( (c, pos) -> {
+		getResult().BUS.hook(GuiComponent.MouseInEvent.class, (event) -> {
 			glow.setVisible(true);
 			icon.setSprite(this.module.getAnimatedIcon());
-			return false;
 		});
-		getResult().getMouseOut().add( (c, pos) -> {
+		getResult().BUS.hook(GuiComponent.MouseInEvent.class, (event) -> {
 			glow.setVisible(false);
 			icon.setSprite(this.module.getStaticIcon());
-			return false;
 		});
 		setSelfData(getClass());
 	}

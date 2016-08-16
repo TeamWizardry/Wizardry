@@ -13,7 +13,7 @@ import com.teamwizardry.librarianlib.fx.particle.QueuedParticle;
 import com.teamwizardry.librarianlib.fx.shader.ShaderHelper;
 import com.teamwizardry.wizardry.client.fx.Shaders;
 
-public class MagicBurstFX extends QueuedParticle {
+public class MagicBurstFX extends QueuedParticle<MagicBurstFX> {
 
     private static ParticleRenderQueue<MagicBurstFX> QUEUE = new ParticleRenderQueue<MagicBurstFX>(true) {
 

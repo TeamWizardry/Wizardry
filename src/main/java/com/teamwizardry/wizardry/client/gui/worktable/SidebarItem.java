@@ -14,22 +14,21 @@ public class SidebarItem extends ModuleTemplate {
 	public SidebarItem(int posX, int posY, Module constructor, GuiComponent<?> paper) {
 		super(posX, posY, constructor, paper);
 		
-		getResult().getMouseDown().add( (c, pos, button) -> {
-			if(button == EnumMouseButton.LEFT && c.getMouseOverThisFrame()) {
-				ModuleTemplatePaper m = new ModuleTemplatePaper(pos.getXi(), pos.getYi(), constructor, paper);
-				m.drag.setMouseDown(true);
-				m.drag.setClickPos(pos.sub(6, 6));
+		getResult().BUS.hook(GuiComponent.MouseDownEvent.class, (event) -> {
+			if(event.getButton() == EnumMouseButton.LEFT && event.getComponent().getMouseOver()) {
+				ModuleTemplatePaper m = new ModuleTemplatePaper(event.getMousePos().getXi(), event.getMousePos().getYi(), constructor, paper);
+				m.drag.setMouseDown(event.getButton());
+				m.drag.setClickPos(event.getMousePos().sub(6, 6));
 				paper.add(m.get());
-				return true;
+				event.cancel();
 			}
-			return false;
 		});
-		getResult().getPostDraw().add( (c, pos, partialTicks) -> {
-			if(c.getMouseOverThisFrame()) {
+		getResult().BUS.hook(GuiComponent.PostDrawEvent.class, (event) -> {
+			if(event.getComponent().getMouseOver()) {
 				List<String> txt = new ArrayList<>();
 	            txt.add(TextFormatting.GOLD + module.getDisplayName());
 	            txt.addAll(Utils.INSTANCE.padString(module.getDescription(), 30));
-	            c.setTooltip(txt);
+	            event.getComponent().setTooltip(txt);
 			}
 		});
 		

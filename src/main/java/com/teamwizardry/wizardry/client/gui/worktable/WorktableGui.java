@@ -42,8 +42,12 @@ public class WorktableGui extends GuiBase {
 
 		paper = new ComponentVoid(160, 0, 191, 202);
 		paper.setZIndex(100);
-		paper.add(new ComponentVoid(0, 0, 191, 202).setup((c) -> c.addTag("tray")));
-		paper.add(new ComponentVoid(213, 134, 98, 66).setup((c) -> c.addTag("tray")));
+		ComponentVoid c = new ComponentVoid(0, 0, 191, 202);
+		paper.add(c);
+		c.addTag("tray");
+		c = new ComponentVoid(213, 134, 98, 66);
+		paper.add(c);
+		c.addTag("tray");
 		getComponents().add(paper);
 
 		ComponentVoid effects = new ComponentVoid(92, 32, 52, 158);

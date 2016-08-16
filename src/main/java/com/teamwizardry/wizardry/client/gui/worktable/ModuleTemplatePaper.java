@@ -29,21 +29,23 @@ public class ModuleTemplatePaper extends ModuleTemplate {
 		GlMixin.INSTANCE.transform(getResult()).setValue(new Vec3d(0, 0, 5));
 		
 		drag = new DragMixin<>(getResult(), (v) -> v);
-		drag.getPickup().add((c, button, pos) -> button != EnumMouseButton.LEFT);
-		drag.getDrop().add((c, button, pos) -> {
-			if(button != EnumMouseButton.LEFT)
-				return true;
+		getResult().BUS.hook(DragMixin.DragPickupEvent.class, (event) -> {
+			if(event.getButton() != EnumMouseButton.LEFT)
+				event.cancel();
+		});
+		getResult().BUS.hook(DragMixin.DragDropEvent.class, (event) -> {
+			if(event.getButton() != EnumMouseButton.LEFT)
+				event.cancel();
 			List<GuiComponent<?>> trays = paper.getByTag("tray");
 			boolean hover = false;
 			for (GuiComponent<?> tray : trays) {
-				if(tray.isMouseOver(tray.relativePos(c.getPos()))) {
+				if(tray.getLogicalSize().contains(event.getComponent().getPos().sub( tray.getPos() ))) {
 					hover = true;
 					break;
 				}
 			}
 			if(!hover)
-				c.invalidate();
-			return false;
+				event.getComponent().invalidate();
 		});
 		
 		lines = new ComponentVoid(0, 0);
@@ -64,18 +66,17 @@ public class ModuleTemplatePaper extends ModuleTemplate {
 		
 		DraggingFromData data = paper.getData(DraggingFromData.class, "");
 		
-		getResult().getMouseDown().add((c, pos, button) -> {
-			if(c.getMouseOverThisFrame() && button == EnumMouseButton.RIGHT) {
+		getResult().BUS.hook(GuiComponent.MouseDownEvent.class, (event) -> {
+			if(event.getComponent().getMouseOver() && event.getButton() == EnumMouseButton.RIGHT) {
 				data.draggingFrom = this;
 				data.shouldDeleteNextFrame = 0;
 				mouseLine.setVisible(true);
 			}
-			return false;
 		});
 		
-		getResult().getMouseUp().add((c, pos, button) -> {
-			if(button == EnumMouseButton.RIGHT) {
-				if(c.getMouseOverThisFrame() && data.draggingFrom != this) {
+		getResult().BUS.hook(GuiComponent.MouseUpEvent.class, (event) -> {
+			if(event.getButton() == EnumMouseButton.RIGHT) {
+				if(event.getComponent().getMouseOver() && data.draggingFrom != this) {
 					if(this.connections.contains(data.draggingFrom)) {
 						this.connections.remove(data.draggingFrom);
 						this.lines.removeByTag(data.draggingFrom);
@@ -102,7 +103,6 @@ public class ModuleTemplatePaper extends ModuleTemplate {
 					mouseLine.setVisible(false);
 				}
 			}
-			return false;
 		});
 		
 	}
