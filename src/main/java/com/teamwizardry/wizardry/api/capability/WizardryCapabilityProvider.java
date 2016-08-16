@@ -8,6 +8,8 @@ import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
 
+import javax.annotation.Nullable;
+
 /**
  * Created by Saad on 8/16/2016.
  */
@@ -29,7 +31,7 @@ public class WizardryCapabilityProvider implements ICapabilityProvider, INBTSeri
 	}
 
 	@Override
-	public boolean hasCapability(Capability<?> capability, EnumFacing facing){
+	public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing){
 		return capability == wizardryCapability;
 	}
 
