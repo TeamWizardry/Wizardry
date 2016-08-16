@@ -7,6 +7,7 @@ import com.teamwizardry.wizardry.client.fx.particle.MagicBurstFX;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import com.teamwizardry.wizardry.client.fx.particle.trails.SparkleTrailHelix;
 import com.teamwizardry.wizardry.common.network.MessageUpdateCapabilities;
+import com.teamwizardry.wizardry.init.ModCapabilities;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -18,68 +19,69 @@ import net.minecraftforge.fml.relauncher.Side;
 
 public class CommonProxy {
 
-    public static SimpleNetworkWrapper NETWORK;
+	public static SimpleNetworkWrapper NETWORK;
 
-    public void preInit(FMLPreInitializationEvent event) {
-	    NETWORK = NetworkRegistry.INSTANCE.newSimpleChannel(Wizardry.MODID);
-	    NETWORK.registerMessage(MessageUpdateCapabilities.CapsMessageHandler.class, MessageUpdateCapabilities.class, 2, Side.CLIENT);
-    }
+	public void preInit(FMLPreInitializationEvent event) {
+		ModCapabilities.preInit();
+		NETWORK = NetworkRegistry.INSTANCE.newSimpleChannel(Wizardry.MODID);
+		NETWORK.registerMessage(MessageUpdateCapabilities.CapsMessageHandler.class, MessageUpdateCapabilities.class, 2, Side.CLIENT);
+	}
 
-    public void init(FMLInitializationEvent event) {
+	public void init(FMLInitializationEvent event) {
 
-    }
+	}
 
-    public void postInit(FMLPostInitializationEvent event) {
-    }
+	public void postInit(FMLPostInitializationEvent event) {
+	}
 
-    public boolean isClient() {
-        return false;
-    }
+	public boolean isClient() {
+		return false;
+	}
 
-    public void openGUI(Object gui) {
+	public void openGUI(Object gui) {
 
-    }
+	}
 
-    public void loadModels() {
+	public void loadModels() {
 
-    }
+	}
 
-    public SparkleFX spawnParticleSparkle(World worldIn, Vec3d origin) {
-        return null;
-    }
+	public SparkleFX spawnParticleSparkle(World worldIn, Vec3d origin) {
+		return null;
+	}
 
-    public SparkleFX spawnParticleSparkle(World worldIn, Vec3d origin, Vec3d range) {
-        return null;
-    }
+	public SparkleFX spawnParticleSparkle(World worldIn, Vec3d origin, Vec3d range) {
+		return null;
+	}
 
-    public SparkleTrailHelix spawnParticleSparkleTrailHelix(World worldIn, Vec3d origin, Vec3d center, double radius, double initialTheta) {
-        return null;
-    }
+	public SparkleTrailHelix spawnParticleSparkleTrailHelix(World worldIn, Vec3d origin, Vec3d center, double radius, double initialTheta) {
+		return null;
+	}
 
-    public SparkleTrailHelix spawnParticleSparkleTrailHelix(World worldIn, Vec3d origin, Vec3d center, double radius) {
-        return null;
-    }
+	public SparkleTrailHelix spawnParticleSparkleTrailHelix(World worldIn, Vec3d origin, Vec3d center, double radius) {
+		return null;
+	}
 
-    public LensFlareFX spawnParticleLensFlare(World worldIn, Vec3d pos, int age, double range) {
-        return null;
-    }
+	public LensFlareFX spawnParticleLensFlare(World worldIn, Vec3d pos, int age, double range) {
+		return null;
+	}
 
-    public MagicBurstFX spawnParticleMagicBurst(World world, double x, double y, double z) {
-        return null;
-    }
+	public MagicBurstFX spawnParticleMagicBurst(World world, double x, double y, double z) {
+		return null;
+	}
 
-    public int getParticleDensity() {
-        if(Config.particlePercentage <= 0) return 100;
-        else return Config.particlePercentage;
-        //not that it matters, it should never be called on server side
-    }
+	public int getParticleDensity() {
+		if (Config.particlePercentage <= 0) return 100;
+		else return Config.particlePercentage;
+		//not that it matters, it should never be called on server side
+	}
 
-    public SparkleFX createSparkle(World world, Vec3d origin, Vec3d range, int age) {
-        return null;
-    }
+	public SparkleFX createSparkle(World world, Vec3d origin, Vec3d range, int age) {
+		return null;
+	}
 
-    public SparkleFX createSparkle(World world, Vec3d origin, int age) {
-        return null;
-    }
+	public SparkleFX createSparkle(World world, Vec3d origin, int age) {
+		return null;
+	}
 
 }

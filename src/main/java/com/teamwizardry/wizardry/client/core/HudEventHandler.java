@@ -7,10 +7,10 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -35,7 +35,7 @@ public class HudEventHandler extends Gui {
 		ScaledResolution resolution = event.getResolution();
 		int width = resolution.getScaledWidth();
 		int height = resolution.getScaledHeight();
-		EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
+		EntityPlayer player = Minecraft.getMinecraft().thePlayer;
 
 		if (event.getType() == RenderGameOverlayEvent.ElementType.EXPERIENCE) {
 
