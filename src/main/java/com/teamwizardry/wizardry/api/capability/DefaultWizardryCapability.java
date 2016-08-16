@@ -90,6 +90,7 @@ public class DefaultWizardryCapability implements IWizardryCapability {
 
 	@Override
 	public void loadNBTData(NBTTagCompound compound) {
+		WizardryCapabilityStorage.INSTANCE.readNBT(WizardryCapabilityProvider.wizardryCapability, this, null, compound);
 
 	}
 
