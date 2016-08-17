@@ -182,7 +182,6 @@ public class SparkleFX extends Particle {
         }
     }
 
-
     /**
      * Will set the particle to a color that's similar or close to the default current color set.
      *
@@ -265,16 +264,6 @@ public class SparkleFX extends Particle {
         particleAlpha = alpha;
         defaultAlpha = alpha;
         SETAlpha = true;
-    }
-
-    /**
-     * Will set the maximum age the particle will live for.
-     *
-     * @param maxAge The maximum age the particle will live for.
-     */
-    public void setMaxAge(int maxAge) {
-        particleMaxAge = maxAge;
-        SETAge = true;
     }
 
     /**
@@ -393,5 +382,15 @@ public class SparkleFX extends Particle {
 
     public int getMaxAge() {
         return particleMaxAge;
+    }
+
+    /**
+     * Will set the maximum age the particle will live for.
+     *
+     * @param maxAge The maximum age the particle will live for.
+     */
+    public void setMaxAge(int maxAge) {
+        particleMaxAge = maxAge;
+        SETAge = true;
     }
 }

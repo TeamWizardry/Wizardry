@@ -5,6 +5,8 @@ import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 /**
  * Created by saad4 on 24/7/2016.
  */
@@ -19,20 +21,20 @@ public class GlitterFactory {
     }
 
     public SparkleFX createSparkle(World world, Vec3d origin, int age) {
-        /*SparkleFX fx = Wizardry.proxy.spawnParticleSparkle(world, origin);
+        SparkleFX fx = Wizardry.proxy.spawnParticleSparkle(world, origin);
         if (ThreadLocalRandom.current().nextInt((Wizardry.proxy.getParticleDensity() < 0 ? 100 : Wizardry.proxy.getParticleDensity()) / 100) <= 1) {
             fx.setMaxAge(age * Wizardry.proxy.getParticleDensity() / 100);
         } else fx.setMaxAge(0);
-        return fx;*/
-        return Wizardry.proxy.createSparkle(world, origin, age);
+        return fx;
+        //return Wizardry.proxy.createSparkle(world, origin, age);
     }
 
     public SparkleFX createSparkle(World world, Vec3d origin, Vec3d range, int age) {
-       /* SparkleFX fx = Wizardry.proxy.spawnParticleSparkle(world, origin, range);
+        SparkleFX fx = Wizardry.proxy.spawnParticleSparkle(world, origin, range);
         if (ThreadLocalRandom.current().nextInt(Wizardry.proxy.getParticleDensity() < 0 ? 100 : Wizardry.proxy.getParticleDensity() / 100) <= 1) {
             fx.setMaxAge(age * Wizardry.proxy.getParticleDensity() / 100);
         } else fx.setMaxAge(0);
-        return fx;*/
-        return Wizardry.proxy.createSparkle(world, origin, range, age);
+        return fx;
+        //return Wizardry.proxy.createSparkle(world, origin, range, age);
     }
 }
