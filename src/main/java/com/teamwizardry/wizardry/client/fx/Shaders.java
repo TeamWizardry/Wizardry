@@ -18,8 +18,8 @@ public class Shaders {
 	
 	public static class BurstShader extends Shader {
 		
-		public FloatTypes.Float fanSpeedMin, fanSpeedMax, fanSizeMin, fanSizeMax, fanJitterMin, fanJitterMax;
-		public IntTypes.Int fanBladesMin, fanBladesMax, fanCount;
+		public FloatTypes.Float1 fanSpeedMin, fanSpeedMax, fanSizeMin, fanSizeMax, fanJitterMin, fanJitterMax;
+		public IntTypes.Int1 fanBladesMin, fanBladesMax, fanCount;
 
 	    public BurstShader(String vert, String frag) {
 	        super(vert, frag);

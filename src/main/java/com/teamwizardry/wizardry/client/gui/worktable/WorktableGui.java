@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.client.gui.worktable;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.teamwizardry.librarianlib.gui.GuiBase;
+import com.teamwizardry.librarianlib.gui.GuiComponent;
 import com.teamwizardry.librarianlib.gui.components.*;
 import com.teamwizardry.librarianlib.math.Vec2d;
 import com.teamwizardry.librarianlib.sprite.Sprite;
@@ -82,6 +83,12 @@ public class WorktableGui extends GuiBase {
 		for (Module constructor : modulesByType.get(type)) {
 			SidebarItem item = new SidebarItem(0, 0, constructor, paper);
 			grid.add(item.get());
+			if(count == 0) {
+				item.get().BUS.hook(GuiComponent.MouseOverEvent.class, (event) -> {
+					if(event.isOver())
+						event.setOver(true);
+				});
+			}
 			count++;
 		}
 		int usedRows = (int) Math.ceil(count / (float) columns);
