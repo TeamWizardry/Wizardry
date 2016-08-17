@@ -24,10 +24,10 @@ public class DefaultWizardryCapability implements IWizardryCapability {
 	@Override
 	public void setMana(int mana, EntityPlayer player) {
 		this.mana = mana;
-		if (mana < 0){
+		if (mana < 0) {
 			this.mana = 0;
 		}
-		if (mana > getMaxMana()){
+		if (mana > getMaxMana()) {
 			this.mana = getMaxMana();
 		}
 		dataChanged(player);
@@ -52,10 +52,10 @@ public class DefaultWizardryCapability implements IWizardryCapability {
 	@Override
 	public void setBurnout(int burnout, EntityPlayer player) {
 		this.burnout = burnout;
-		if (burnout < 0){
+		if (burnout < 0) {
 			this.burnout = 0;
 		}
-		if (burnout > getMaxBurnout()){
+		if (burnout > getMaxBurnout()) {
 			this.burnout = getMaxBurnout();
 		}
 		dataChanged(player);
@@ -85,7 +85,7 @@ public class DefaultWizardryCapability implements IWizardryCapability {
 
 	@Override
 	public NBTTagCompound saveNBTData() {
-		return (NBTTagCompound)WizardryCapabilityStorage.INSTANCE.writeNBT(WizardryCapabilityProvider.wizardryCapability, this, null);
+		return (NBTTagCompound) WizardryCapabilityStorage.INSTANCE.writeNBT(WizardryCapabilityProvider.wizardryCapability, this, null);
 	}
 
 	@Override
@@ -96,8 +96,7 @@ public class DefaultWizardryCapability implements IWizardryCapability {
 
 	@Override
 	public void dataChanged(EntityPlayer player) {
-		if(player != null && !player.getEntityWorld().isRemote){
+		if (player != null && !player.getEntityWorld().isRemote)
 			CommonProxy.NETWORK.sendTo(new MessageUpdateCapabilities(saveNBTData()), (EntityPlayerMP) player);
-		}
 	}
 }

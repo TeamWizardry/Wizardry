@@ -4,8 +4,8 @@ import com.teamwizardry.librarianlib.gui.GuiTickHandler;
 import com.teamwizardry.librarianlib.sprite.Sprite;
 import com.teamwizardry.librarianlib.sprite.Texture;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
-import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
+import com.teamwizardry.wizardry.api.screwcaps.DataFactory;
+import com.teamwizardry.wizardry.api.screwcaps.WizardryData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
@@ -49,19 +49,19 @@ public class HudEventHandler extends Gui {
 			emptyBurnoutBar.draw(GuiTickHandler.ticks, right, top + 6);
 			GlStateManager.popMatrix();
 
-			IWizardryCapability cap = WizardryCapabilityProvider.get(player);
+			WizardryData data = DataFactory.INSTANCE.getPlayerData(player);
 
-			if (cap == null) return;
+			if (data == null) return;
 
 			GlStateManager.pushMatrix();
 			GlStateManager.color(1F, 1F, 1F);
 			int visualManaLength = 0;
-			if (cap.getMana() > 0) visualManaLength = (cap.getMana() * 100 / cap.getMaxMana()) % 101;
+			if (data.getMana() > 0) visualManaLength = (data.getMana() * 100 / data.getManaMax()) % 101;
 			fullManaBar.drawClipped(GuiTickHandler.ticks, right, top, visualManaLength, 5);
 
 			GlStateManager.color(1F, 1F, 1F);
 			int visualBurnoutLength = 0;
-			if (cap.getBurnout() > 0) visualBurnoutLength = (cap.getBurnout() * 100 / cap.getMaxBurnout()) % 101;
+			if (data.getBurnout() > 0) visualBurnoutLength = (data.getBurnout() * 100 / data.getBurnoutMax()) % 101;
 			fullBurnoutBar.drawClipped(GuiTickHandler.ticks, right, top + 6, visualBurnoutLength, 5);
 			GlStateManager.popMatrix();
 		}

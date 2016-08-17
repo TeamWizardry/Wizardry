@@ -5,7 +5,7 @@ package com.teamwizardry.wizardry.api;
  */
 public class Constants {
 
-	public static class Capabilities {
+	public static class Data {
 		public static final String BLOOD_TYPE = "blood_type";
 		public static final String MAX_MANA = "max_mana";
 		public static final String MAX_BURNOUT = "max_burnout";

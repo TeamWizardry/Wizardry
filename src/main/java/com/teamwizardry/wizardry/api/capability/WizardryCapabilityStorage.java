@@ -6,7 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 
-import static com.teamwizardry.wizardry.api.Constants.Capabilities.*;
+import static com.teamwizardry.wizardry.api.Constants.Data.*;
 
 /**
  * Created by Saad on 8/16/2016.

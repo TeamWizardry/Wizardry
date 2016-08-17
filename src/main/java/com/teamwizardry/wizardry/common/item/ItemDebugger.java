@@ -1,15 +1,12 @@
 package com.teamwizardry.wizardry.common.item;
 
-import com.teamwizardry.librarianlib.util.TeleportUtil;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
-import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
-import com.teamwizardry.wizardry.api.capability.bloods.BloodRegistry;
 import com.teamwizardry.wizardry.api.item.GlowingOverlayHelper;
 import com.teamwizardry.wizardry.api.item.IGlowOverlayable;
+import com.teamwizardry.wizardry.api.screwcaps.DataFactory;
+import com.teamwizardry.wizardry.api.screwcaps.WizardryData;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -47,22 +44,25 @@ public class ItemDebugger extends Item implements IGlowOverlayable {
 
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
-		IWizardryCapability cap = WizardryCapabilityProvider.get(playerIn);
-		if (!worldIn.isRemote) {
+		WizardryData data = DataFactory.INSTANCE.getPlayerData(playerIn);
+		Minecraft.getMinecraft().thePlayer.sendChatMessage(data.toNBT() + "");
+		/*if (!worldIn.isRemote) {
 			if (playerIn.isSneaking())
-				cap.setBloodType(BloodRegistry.HUMANBLOOD, playerIn);
-			else cap.setBloodType(BloodRegistry.PYROBLOOD, playerIn);
+				data.setBloodType(BloodRegistry.HUMANBLOOD);
+			else data.setBloodType(BloodRegistry.PYROBLOOD);
 			//return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
-			Minecraft.getMinecraft().thePlayer.sendChatMessage(cap.getBloodType() + "");
+			//Minecraft.getMinecraft().thePlayer.sendChatMessage(data.getBloodType() + "");
 		}
 		if (playerIn.isSneaking())
-			if (GuiScreen.isCtrlKeyDown()) cap.setBurnout(50, playerIn);
-			else cap.setBurnout(0, playerIn);
+			if (GuiScreen.isCtrlKeyDown()) data.setBurnout(50);
+			else data.setBurnout(0);
 
-		else if (GuiScreen.isCtrlKeyDown()) cap.setMana(50, playerIn);
-		else cap.setMana(0, playerIn);
+		else if (GuiScreen.isCtrlKeyDown()) data.setMana(50);
+		else data.setMana(0);*/
 
-		TeleportUtil.teleportToDimension(playerIn, 100, 0, 100, 0);
+		//DataFactory.INSTANCE.setPlayerData(playerIn, data);
+
+		// TeleportUtil.teleportToDimension(playerIn, 100, 0, 100, 0);
 		return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
 	}
 

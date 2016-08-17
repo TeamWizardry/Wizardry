@@ -14,11 +14,12 @@ import javax.annotation.Nullable;
  * Created by Saad on 8/16/2016.
  */
 public class WizardryCapabilityProvider implements ICapabilityProvider, INBTSerializable<NBTTagCompound> {
+
 	@CapabilityInject(IWizardryCapability.class)
 	public static final Capability<IWizardryCapability> wizardryCapability = null;
 	private IWizardryCapability capability = null;
 
-	public WizardryCapabilityProvider(){
+	public WizardryCapabilityProvider() {
 		capability = new DefaultWizardryCapability();
 	}
 
@@ -37,8 +38,7 @@ public class WizardryCapabilityProvider implements ICapabilityProvider, INBTSeri
 
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing){
-		if (wizardryCapability != null && capability == wizardryCapability)
-			return (T) this.capability;
+		if (wizardryCapability != null && capability == wizardryCapability) return (T) this.capability;
 		return null;
 	}
 

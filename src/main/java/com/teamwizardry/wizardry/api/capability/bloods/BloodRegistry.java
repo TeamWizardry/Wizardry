@@ -12,6 +12,7 @@ public final class BloodRegistry {
     public static final IBloodType ZEPHYRBLOOD = register(new AeroBlood(), "zephyr");
     public static final IBloodType PYROBLOOD = register(new PyroBlood(), "pyro");
     public static final IBloodType HUMANBLOOD = register(new PyroBlood(), "human");
+    public static final IBloodType INANIMATE = register(new PyroBlood(), "inanimate");
 
     public static BiMap<IBloodType, String> getRegistry() {
         return values;

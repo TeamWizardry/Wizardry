@@ -4,8 +4,8 @@ import com.teamwizardry.librarianlib.math.shapes.Helix;
 import com.teamwizardry.librarianlib.util.Color;
 import com.teamwizardry.librarianlib.util.PosUtils;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
-import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
+import com.teamwizardry.wizardry.api.screwcaps.DataFactory;
+import com.teamwizardry.wizardry.api.screwcaps.WizardryData;
 import com.teamwizardry.wizardry.api.trackerobject.BookTrackerObject;
 import com.teamwizardry.wizardry.api.trackerobject.RedstoneTrackerObject;
 import com.teamwizardry.wizardry.client.fx.GlitterFactory;
@@ -75,10 +75,12 @@ public class EventHandler {
 	@SubscribeEvent
 	public void tickEvent(TickEvent.WorldTickEvent event) {
 		for (EntityPlayer player : event.world.playerEntities) {
-			IWizardryCapability cap = WizardryCapabilityProvider.get(player);
-			if (cap != null) {
-				cap.setMana(cap.getMana() + 1, player);
-				cap.setBurnout(cap.getBurnout() - 1, player);
+			WizardryData data = DataFactory.INSTANCE.getPlayerData(player);
+			if (data != null) {
+				//Minecraft.getMinecraft().thePlayer.sendChatMessage(data.getMana() + "/" + data.getManaMax());
+				if (data.getMana() < data.getManaMax()) data.setMana(data.getMana() + 1);
+				if (data.getBurnout() < data.getBurnoutMax()) data.setBurnout(data.getBurnout() - 1);
+				DataFactory.INSTANCE.setPlayerData(player, data);
 			}
 		}
 
