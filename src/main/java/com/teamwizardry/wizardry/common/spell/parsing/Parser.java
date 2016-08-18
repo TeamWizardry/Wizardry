@@ -79,10 +79,15 @@ public class Parser
 	private Module getModuleFromItemStack(ItemStack stack, ModuleType type)
 	{
 		Module module = ModuleRegistry.getInstance().getModuleFromItemStack(stack, type);
-		if (module != null && stack.stackSize > module.stack.stackSize)
+		if (module != null)
 		{
+			if (stack.stackSize > module.stack.stackSize)
+			{
 			stack.stackSize -= module.stack.stackSize;
 			stacks.push(stack);
+			}
+			else if (stack.stackSize < module.stack.stackSize)
+				module = null;
 		}
 		if (module instanceof IRequireItem)
 			((IRequireItem) module).handle(stack);
