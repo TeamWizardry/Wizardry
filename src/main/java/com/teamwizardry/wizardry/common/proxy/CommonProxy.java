@@ -5,7 +5,6 @@ import com.teamwizardry.wizardry.client.fx.particle.LensFlareFX;
 import com.teamwizardry.wizardry.client.fx.particle.MagicBurstFX;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import com.teamwizardry.wizardry.client.fx.particle.trails.SparkleTrailHelix;
-import com.teamwizardry.wizardry.common.network.WizardryPacketHandler;
 import com.teamwizardry.wizardry.init.ModEntities;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -16,7 +15,6 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 public class CommonProxy {
 
 	public void preInit(FMLPreInitializationEvent event) {
-		WizardryPacketHandler.registerMessages();
 	}
 
 	public void init(FMLInitializationEvent event) {

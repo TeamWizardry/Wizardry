@@ -11,6 +11,7 @@ import com.teamwizardry.wizardry.common.achievement.AchievementEvents;
 import com.teamwizardry.wizardry.common.achievement.Achievements;
 import com.teamwizardry.wizardry.common.core.EventHandler;
 import com.teamwizardry.wizardry.common.fluid.Fluids;
+import com.teamwizardry.wizardry.common.network.WizardryPacketHandler;
 import com.teamwizardry.wizardry.common.proxy.CommonProxy;
 import com.teamwizardry.wizardry.common.world.GenHandler;
 import com.teamwizardry.wizardry.common.world.WorldProviderUnderWorld;
@@ -77,6 +78,8 @@ public class Wizardry {
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		LibrarianLog.I.info("o͡͡͡╮༼ ಠДಠ ༽╭o͡͡͡━☆ﾟ.*･｡ﾟ IT'S LEVI-OH-SA, NOT LEVIOSAA");
+
+		WizardryPacketHandler.registerMessages();
 
 		logger = event.getModLog();
 		guide = new Book(MODID);
