@@ -103,7 +103,7 @@ public class Wizardry {
 
 		MinecraftForge.EVENT_BUS.register(new EventHandler());
 		MinecraftForge.EVENT_BUS.register(new AchievementEvents());
-		MinecraftForge.EVENT_BUS.register(new ModData());
+		MinecraftForge.EVENT_BUS.register(new ModCapabilities());
 
 		proxy.loadModels();
 

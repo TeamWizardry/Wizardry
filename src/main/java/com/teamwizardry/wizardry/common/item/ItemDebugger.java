@@ -1,11 +1,10 @@
 package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
+import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
 import com.teamwizardry.wizardry.api.item.GlowingOverlayHelper;
 import com.teamwizardry.wizardry.api.item.IGlowOverlayable;
-import com.teamwizardry.wizardry.api.screwcaps.DataFactory;
-import com.teamwizardry.wizardry.api.screwcaps.WizardryData;
-import com.teamwizardry.wizardry.common.entity.EntityHallowedSprit;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
@@ -44,7 +43,7 @@ public class ItemDebugger extends Item implements IGlowOverlayable {
 
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
-		WizardryData data = DataFactory.INSTANCE.getPlayerData(playerIn);
+		//WizardryData data = DataFactory.INSTANCE.getPlayerData(playerIn);
 		//Minecraft.getMinecraft().thePlayer.sendChatMessage(data.toNBT() + "");
 		/*if (!worldIn.isRemote) {
 			if (playerIn.isSneaking())
@@ -63,9 +62,11 @@ public class ItemDebugger extends Item implements IGlowOverlayable {
 		//DataFactory.INSTANCE.setPlayerData(playerIn, data);
 
 		// TeleportUtil.teleportToDimension(playerIn, 100, 0, 100, 0);
-		EntityHallowedSprit spirit = new EntityHallowedSprit(worldIn);
-		spirit.setPosition(playerIn.posX, playerIn.posY + 1, playerIn.posZ);
-		worldIn.spawnEntityInWorld(spirit);
+		//EntityHallowedSprit spirit = new EntityHallowedSprit(worldIn);
+		//spirit.setPosition(playerIn.posX, playerIn.posY + 1, playerIn.posZ);
+		//worldIn.spawnEntityInWorld(spirit);
+
+		IWizardryCapability capability = WizardryCapabilityProvider.get(playerIn);
 
 		return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
 	}
