@@ -27,15 +27,22 @@ public class AttributeMap {
     public void endCapture(boolean add) {
         if (!isCapturing) return;
         isCapturing = false;
-        if (add) {
-            attributes.putAll(attributeCapture);
+        if (add)
+        {
+        	for (Attribute attr : attributeCapture.keySet())
+        	{
+        		List<AttributeModifier> mods = attributeCapture.get(attr);
+        		attributes.get(attr).addAll(mods);
+        		mods.clear();
+        	}
         }
-        attributeCapture.clear();
         didHaveInvalid = false;
     }
 
     public void addAttribute(Attribute attribute) {
         validAttributes.add(attribute);
+        attributeCapture.put(attribute, new ArrayList<>());
+        attributes.put(attribute, new ArrayList<>());
     }
 
     public void putModifier(Attribute attribute, AttributeModifier mod) {

@@ -1,12 +1,15 @@
 package com.teamwizardry.wizardry.init;
 
 
-import com.teamwizardry.wizardry.common.block.*;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.material.MaterialLiquid;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import com.teamwizardry.wizardry.common.block.BlockCraftingPlate;
+import com.teamwizardry.wizardry.common.block.BlockMagiciansWorktable;
+import com.teamwizardry.wizardry.common.block.BlockManaBattery;
+import com.teamwizardry.wizardry.common.block.BlockPedestal;
+import com.teamwizardry.wizardry.common.block.MaterialNacre;
 
 /**
  * Created by Saad on 3/24/2016.
