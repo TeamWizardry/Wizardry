@@ -83,6 +83,7 @@ public class Wizardry {
 		Config.initConfig(event.getSuggestedConfigurationFile());
 
 		ModSounds.init();
+		ModCapabilities.preInit();
 		ModItems.init();
 		ModBlocks.init();
 		Fluids.preInit();

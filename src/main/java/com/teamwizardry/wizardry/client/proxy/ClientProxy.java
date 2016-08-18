@@ -51,7 +51,6 @@ public class ClientProxy extends CommonProxy {
         //MagicBurstFX.class.getName(); // ...
         CapeHandler.INSTANCE.getClass(); // ...
         OBJLoader.INSTANCE.addDomain(Wizardry.MODID);
-
         Map<String, RenderPlayer> skinMap = Minecraft.getMinecraft().getRenderManager().getSkinMap();
         RenderPlayer render = skinMap.get("default");
         render.addLayer(new GlowingItemRenderLayer(render));

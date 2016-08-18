@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.api.capability;
 import com.teamwizardry.wizardry.api.capability.bloods.BloodRegistry;
 import com.teamwizardry.wizardry.api.capability.bloods.IBloodType;
 import com.teamwizardry.wizardry.common.network.MessageUpdateCapabilities;
-import com.teamwizardry.wizardry.common.proxy.CommonProxy;
+import com.teamwizardry.wizardry.common.network.WizardryPacketHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -91,12 +91,11 @@ public class DefaultWizardryCapability implements IWizardryCapability {
 	@Override
 	public void loadNBTData(NBTTagCompound compound) {
 		WizardryCapabilityStorage.INSTANCE.readNBT(WizardryCapabilityProvider.wizardryCapability, this, null, compound);
-
 	}
 
 	@Override
 	public void dataChanged(EntityPlayer player) {
 		if (player != null && !player.getEntityWorld().isRemote)
-			CommonProxy.NETWORK.sendTo(new MessageUpdateCapabilities(saveNBTData()), (EntityPlayerMP) player);
+			WizardryPacketHandler.INSTANCE.sendTo(new MessageUpdateCapabilities(saveNBTData()), (EntityPlayerMP) player);
 	}
 }
