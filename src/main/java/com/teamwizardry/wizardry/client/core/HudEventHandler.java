@@ -52,7 +52,7 @@ public class HudEventHandler extends Gui {
 			//WizardryData data = DataFactory.INSTANCE.getPlayerData(player)
 			IWizardryCapability data = WizardryCapabilityProvider.get(player);
 
-			if (data == null) return;
+			//if (data == null) return;
 
 			GlStateManager.pushMatrix();
 			GlStateManager.color(1F, 1F, 1F);

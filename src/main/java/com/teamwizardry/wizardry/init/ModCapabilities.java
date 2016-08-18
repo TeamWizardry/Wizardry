@@ -23,9 +23,10 @@ public class ModCapabilities {
 	@SubscribeEvent
 	public void onAddCapabilities(AttachCapabilitiesEvent.Entity e) {
 		if (e.getEntity() instanceof EntityPlayer) {
-			if (!e.getEntity().hasCapability(WizardryCapabilityProvider.wizardryCapability, null)) {
-				e.addCapability(new ResourceLocation(Wizardry.MODID, "capabilities"), new WizardryCapabilityProvider(new DefaultWizardryCapability()));
-			}
+			//if (!e.getEntity().hasCapability(WizardryCapabilityProvider.wizardryCapability, null)) {
+			WizardryCapabilityProvider cap = new WizardryCapabilityProvider(new DefaultWizardryCapability());
+			e.addCapability(new ResourceLocation(Wizardry.MODID, "capabilities"), cap);
+			//}
 		}
 	}
 }
