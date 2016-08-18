@@ -1,24 +1,83 @@
 package com.teamwizardry.wizardry.common.proxy;
 
+import com.teamwizardry.librarianlib.book.Book;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Config;
+import com.teamwizardry.wizardry.api.module.ModuleRegistry;
+import com.teamwizardry.wizardry.api.spell.SpellHandler;
 import com.teamwizardry.wizardry.client.fx.particle.LensFlareFX;
 import com.teamwizardry.wizardry.client.fx.particle.MagicBurstFX;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import com.teamwizardry.wizardry.client.fx.particle.trails.SparkleTrailHelix;
-import com.teamwizardry.wizardry.init.ModEntities;
+import com.teamwizardry.wizardry.client.gui.GuiHandler;
+import com.teamwizardry.wizardry.common.achievement.AchievementEvents;
+import com.teamwizardry.wizardry.common.achievement.Achievements;
+import com.teamwizardry.wizardry.common.core.EventHandler;
+import com.teamwizardry.wizardry.common.fluid.Fluids;
+import com.teamwizardry.wizardry.common.network.WizardryPacketHandler;
+import com.teamwizardry.wizardry.common.world.GenHandler;
+import com.teamwizardry.wizardry.common.world.WorldProviderUnderWorld;
+import com.teamwizardry.wizardry.init.*;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+
+import static com.teamwizardry.wizardry.Wizardry.MODID;
 
 public class CommonProxy {
 
+
 	public void preInit(FMLPreInitializationEvent event) {
+		WizardryPacketHandler.registerMessages();
+
+		Wizardry.guide = new Book(MODID);
+		Config.initConfig(event.getSuggestedConfigurationFile());
+
+		ModSounds.init();
+		ModItems.init();
+		ModBlocks.init();
+		Achievements.init();
+		ModRecipes.initCrafting();
+
+		ModCapabilities.preInit();
+		Fluids.preInit();
+
+		WizardryPacketHandler.registerMessages();
+		NetworkRegistry.INSTANCE.registerGuiHandler(Wizardry.instance, new GuiHandler());
+
+		int id = -1;
+		for (DimensionType type : DimensionType.values()) {
+			if (type.getId() > id) {
+				id = type.getId();
+			}
+		}
+		id++;
+
+		Wizardry.underWorld = DimensionType.register("underworld", "_dim", id, WorldProviderUnderWorld.class, false);
+		int dimensionId = 100;   // @todo Make configurable
+		DimensionManager.registerDimension(dimensionId, Wizardry.underWorld);
+
+		MinecraftForge.EVENT_BUS.register(new EventHandler());
+		MinecraftForge.EVENT_BUS.register(new AchievementEvents());
+		MinecraftForge.EVENT_BUS.register(new ModCapabilities());
+
 	}
 
 	public void init(FMLInitializationEvent event) {
+		GameRegistry.registerWorldGenerator(new GenHandler(), 0);
+
 		ModEntities.init();
+
+		ModuleRegistry.getInstance();
+		SpellHandler.INSTANCE.getClass();
+		ModModules.init();
 	}
 
 	public void postInit(FMLPostInitializationEvent event) {
@@ -32,9 +91,6 @@ public class CommonProxy {
 
 	}
 
-	public void loadModels() {
-
-	}
 
 	public SparkleFX spawnParticleSparkle(World worldIn, Vec3d origin) {
 		return null;

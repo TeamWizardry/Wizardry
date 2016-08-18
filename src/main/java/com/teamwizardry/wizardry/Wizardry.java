@@ -2,35 +2,19 @@ package com.teamwizardry.wizardry;
 
 import com.teamwizardry.librarianlib.LibrarianLog;
 import com.teamwizardry.librarianlib.book.Book;
-import com.teamwizardry.wizardry.api.Config;
-import com.teamwizardry.wizardry.api.module.ModuleRegistry;
-import com.teamwizardry.wizardry.api.spell.SpellHandler;
 import com.teamwizardry.wizardry.api.trackerobject.SpellTracker;
-import com.teamwizardry.wizardry.client.gui.GuiHandler;
-import com.teamwizardry.wizardry.common.achievement.AchievementEvents;
-import com.teamwizardry.wizardry.common.achievement.Achievements;
-import com.teamwizardry.wizardry.common.core.EventHandler;
-import com.teamwizardry.wizardry.common.fluid.Fluids;
-import com.teamwizardry.wizardry.common.network.WizardryPacketHandler;
 import com.teamwizardry.wizardry.common.proxy.CommonProxy;
-import com.teamwizardry.wizardry.common.world.GenHandler;
-import com.teamwizardry.wizardry.common.world.WorldProviderUnderWorld;
-import com.teamwizardry.wizardry.init.*;
+import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.world.DimensionType;
-import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.EventBus;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.PacketLoggingHandler;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.Logger;
@@ -48,15 +32,13 @@ public class Wizardry {
 	public static final String SERVER = "com.teamwizardry.wizardry.common.proxy.CommonProxy";
 	public static PacketLoggingHandler packetHandler;
 	public static Logger logger;
-	public static EventBus EVENT_BUS = new EventBus();
+	public static Book guide;
 	public static DimensionType underWorld;
 
 	@SidedProxy(clientSide = CLIENT, serverSide = SERVER)
 	public static CommonProxy proxy;
 	@Mod.Instance
 	public static Wizardry instance;
-
-	public static Book guide;
 
 	public static CreativeTabs tab = new CreativeTabs(MODNAME) {
 		@Override
@@ -79,50 +61,14 @@ public class Wizardry {
 	public void preInit(FMLPreInitializationEvent event) {
 		LibrarianLog.I.info("o͡͡͡╮༼ ಠДಠ ༽╭o͡͡͡━☆ﾟ.*･｡ﾟ IT'S LEVI-OH-SA, NOT LEVIOSAA");
 
-		WizardryPacketHandler.registerMessages();
-
 		logger = event.getModLog();
-		guide = new Book(MODID);
-		Config.initConfig(event.getSuggestedConfigurationFile());
-
-		ModSounds.init();
-		ModCapabilities.preInit();
-		ModItems.init();
-		ModBlocks.init();
-		Fluids.preInit();
-		ModRecipes.initCrafting();
-		Achievements.init();
-
-		int id = -1;
-		for (DimensionType type : DimensionType.values()) {
-			if (type.getId() > id) {
-				id = type.getId();
-			}
-		}
-		id++;
-
-		underWorld = DimensionType.register("underworld", "_dim", id, WorldProviderUnderWorld.class, false);
-		int dimensionId = 100;   // @todo Make configurable
-		DimensionManager.registerDimension(dimensionId, underWorld);
-
-		MinecraftForge.EVENT_BUS.register(new EventHandler());
-		MinecraftForge.EVENT_BUS.register(new AchievementEvents());
-		MinecraftForge.EVENT_BUS.register(new ModCapabilities());
-
-		proxy.loadModels();
 
 		proxy.preInit(event);
-		if (proxy != null) NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 	}
 
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent e) {
-		GameRegistry.registerWorldGenerator(new GenHandler(), 0);
 		proxy.init(e);
-
-		ModuleRegistry.getInstance();
-		SpellHandler.INSTANCE.getClass();
-		ModModules.init();
 	}
 
 	@Mod.EventHandler
