@@ -2,7 +2,6 @@ package com.teamwizardry.wizardry;
 
 import com.teamwizardry.librarianlib.LibrarianLog;
 import com.teamwizardry.librarianlib.book.Book;
-import com.teamwizardry.wizardry.api.trackerobject.SpellTracker;
 import com.teamwizardry.wizardry.common.proxy.CommonProxy;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.creativetab.CreativeTabs;
@@ -74,8 +73,5 @@ public class Wizardry {
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent e) {
 		proxy.postInit(e);
-
-		SpellTracker.init();
 	}
-
 }

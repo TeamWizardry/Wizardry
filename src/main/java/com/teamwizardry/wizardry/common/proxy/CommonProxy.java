@@ -5,6 +5,7 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Config;
 import com.teamwizardry.wizardry.api.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.SpellHandler;
+import com.teamwizardry.wizardry.api.trackerobject.SpellTracker;
 import com.teamwizardry.wizardry.client.fx.particle.LensFlareFX;
 import com.teamwizardry.wizardry.client.fx.particle.MagicBurstFX;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
@@ -52,17 +53,8 @@ public class CommonProxy {
 		WizardryPacketHandler.registerMessages();
 		NetworkRegistry.INSTANCE.registerGuiHandler(Wizardry.instance, new GuiHandler());
 
-		int id = -1;
-		for (DimensionType type : DimensionType.values()) {
-			if (type.getId() > id) {
-				id = type.getId();
-			}
-		}
-		id++;
-
-		Wizardry.underWorld = DimensionType.register("underworld", "_dim", id, WorldProviderUnderWorld.class, false);
-		int dimensionId = 100;   // @todo Make configurable
-		DimensionManager.registerDimension(dimensionId, Wizardry.underWorld);
+		Wizardry.underWorld = DimensionType.register("underworld", "_dim", Config.underworld_id, WorldProviderUnderWorld.class, false);
+		DimensionManager.registerDimension(Config.underworld_id, Wizardry.underWorld);
 
 		MinecraftForge.EVENT_BUS.register(new EventHandler());
 		MinecraftForge.EVENT_BUS.register(new AchievementEvents());
@@ -81,6 +73,7 @@ public class CommonProxy {
 	}
 
 	public void postInit(FMLPostInitializationEvent event) {
+		SpellTracker.init();
 	}
 
 	public boolean isClient() {

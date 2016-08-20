@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.item;
 
+import com.teamwizardry.librarianlib.util.TeleportUtil;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
@@ -61,7 +62,7 @@ public class ItemDebugger extends Item implements IGlowOverlayable {
 
 		playerIn.addChatComponentMessage(new TextComponentString(data.getMana() + "/" + data.getMaxMana()));
 
-		// TeleportUtil.teleportToDimension(playerIn, 100, 0, 100, 0);
+		TeleportUtil.teleportToDimension(playerIn, 100, 0, 100, 0);
 		//EntityHallowedSprit spirit = new EntityHallowedSprit(worldIn);
 		//spirit.setPosition(playerIn.posX, playerIn.posY + 1, playerIn.posZ);
 		//worldIn.spawnEntityInWorld(spirit);

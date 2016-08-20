@@ -14,6 +14,7 @@ import net.minecraft.world.chunk.IChunkGenerator;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by LordSaad44
@@ -34,11 +35,16 @@ public class ChunkGeneratorUnderWorld implements IChunkGenerator {
 
 		if (weight > 1) {
 			List<EnumFacing> directions = new ArrayList<>();
+			Set<EnumFacing> horizontals = new HashSet<>();
 			Collections.addAll(directions, EnumFacing.VALUES);
-			Collections.addAll(directions, EnumFacing.HORIZONTALS);
+			Collections.addAll(horizontals, EnumFacing.HORIZONTALS);
 			while (!directions.isEmpty()) {
 				int i = seed.nextInt(directions.size());
-				EnumFacing dir = directions.remove(i);
+				EnumFacing dir;
+				if (horizontals.contains(directions.get(i))) {
+					if (ThreadLocalRandom.current().nextBoolean()) dir = directions.get(i);
+					else dir = directions.remove(i);
+				} else dir = directions.remove(i);
 				generateCloud(poses, center.offset(dir), weight - seed.nextFloat() - 1, seed);
 			}
 		}
