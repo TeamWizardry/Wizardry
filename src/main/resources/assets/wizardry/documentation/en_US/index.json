@@ -1,6 +1,8 @@
 {
-	"pages": [
-		{
+	"title": "Wizardry",
+	"text": ["Some text and stuff like things ", {"page":"index"}],
+	"pages": {
+		"index":{
 			"type":"index",
 			"icons": [
 				{
@@ -27,5 +29,5 @@
 				}
 			]
 		}
-	]
+	}
 }

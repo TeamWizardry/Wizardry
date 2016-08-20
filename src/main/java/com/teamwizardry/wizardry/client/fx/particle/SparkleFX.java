@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.client.fx.particle;
 
-import com.teamwizardry.librarianlib.util.Color;
 import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.Particle;
@@ -9,6 +8,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+import java.awt.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -148,9 +148,9 @@ public class SparkleFX extends Particle {
      * @param color The Color to set the particle to.
      */
     public void setColor(Color color) {
-        particleRed = color.getR();
-        particleGreen = color.getG();
-        particleBlue = color.getB();
+        particleRed = color.getRed()/255f;
+        particleGreen = color.getGreen()/255f;
+        particleBlue = color.getBlue()/255f;
     }
 
     /**
@@ -340,9 +340,9 @@ public class SparkleFX extends Particle {
 
         if (lerp) {
             float t = (float) particleAge / (float) particleMaxAge;
-            particleRed = (float) ((1.0 - t) * fromLerp.getR() + t * toLerp.getR() );
-            particleGreen = (float) ((1.0 - t) * fromLerp.getG() + t * toLerp.getG() );
-            particleBlue = (float) ((1.0 - t) * fromLerp.getB() + t * toLerp.getB() );
+            particleRed = (float) ((1.0 - t) * fromLerp.getRed()/255f + t * toLerp.getRed()/255f );
+            particleGreen = (float) ((1.0 - t) * fromLerp.getGreen()/255f + t * toLerp.getGreen()/255f );
+            particleBlue = (float) ((1.0 - t) * fromLerp.getBlue()/255f + t * toLerp.getBlue()/255f );
         }
 
         if (jitterChance > 0) {

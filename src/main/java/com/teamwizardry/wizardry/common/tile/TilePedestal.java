@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.tile;
 
-import com.teamwizardry.librarianlib.math.shapes.Arc3D;
 import com.teamwizardry.wizardry.api.block.IManaAcceptor;
 import com.teamwizardry.wizardry.client.fx.GlitterFactory;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
@@ -86,7 +85,7 @@ public class TilePedestal extends TileEntity implements ITickable {
                         if (worldObj.getBlockState(pos).getBlock() instanceof IManaAcceptor) {
                             if (pos != getPos() && linkedBlock != pos) {
                                 linkedBlock = pos;
-                                points = new Arc3D(new Vec3d(getPos().getX(), getPos().getY(), getPos().getZ()), new Vec3d(pos.getX(), pos.getY(), pos.getZ()), 3, 50).getPoints();
+//                                points = new Arc3D(new Vec3d(getPos().getX(), getPos().getY(), getPos().getZ()), new Vec3d(pos.getX(), pos.getY(), pos.getZ()), 3, 50).getPoints();
                             }
                             worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
                         }

@@ -1,13 +1,12 @@
 package com.teamwizardry.wizardry.common.spell;
 
+import com.teamwizardry.librarianlib.common.util.RaycastUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import com.teamwizardry.librarianlib.util.Color;
-import com.teamwizardry.librarianlib.math.Raycast;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.Colorable;
 import com.teamwizardry.wizardry.api.module.Module;
@@ -15,6 +14,8 @@ import com.teamwizardry.wizardry.api.spell.SpellEntity;
 import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import com.teamwizardry.wizardry.client.fx.particle.trails.SparkleTrailHelix;
+
+import java.awt.*;
 
 public class ProjectileEntity extends SpellEntity
 {
@@ -84,7 +85,7 @@ public class ProjectileEntity extends SpellEntity
 			fizz.setJitter(10, 0.1, 0.1, 0.1);
 		}
 
-		RayTraceResult cast = Raycast.INSTANCE.cast(this, new Vec3d(motionX, motionY, motionZ), Math.min(spell.getDouble(Module.SPEED), 1));
+		RayTraceResult cast = RaycastUtils.INSTANCE.raycast(this.worldObj, this.getPositionVector(), new Vec3d(motionX, motionY, motionZ), Math.min(spell.getDouble(Module.SPEED), 1));
 
 		if (cast != null)
 		{

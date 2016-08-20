@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.common.item.pearl;
 
-import com.teamwizardry.librarianlib.gui.TickCounter;
+import com.teamwizardry.librarianlib.client.core.ClientTickHandler;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.Explodable;
 import com.teamwizardry.wizardry.api.item.Infusable;
@@ -103,7 +103,7 @@ public class ItemNacrePearl extends Item implements Infusable, Explodable {
             if (compound != null && compound.hasKey(TAG_PURITY))
                 saturation = MathHelper.sin(compound.getInteger(TAG_PURITY) * (float) Math.PI * 0.5f / NACRE_PURITY_CONVERSION);
 
-            return Color.HSBtoRGB((rand + TickCounter.Companion.getTicksInGame() ) / (float) COLOR_CYCLE_LENGTH, saturation * 0.3f, 1f);
+            return Color.HSBtoRGB((rand + ClientTickHandler.INSTANCE.getTicksInGame() ) / (float) COLOR_CYCLE_LENGTH, saturation * 0.3f, 1f);
         }
     }
 }

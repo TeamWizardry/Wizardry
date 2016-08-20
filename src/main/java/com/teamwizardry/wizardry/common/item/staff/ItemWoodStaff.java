@@ -1,8 +1,5 @@
 package com.teamwizardry.wizardry.common.item.staff;
 
-import com.teamwizardry.librarianlib.util.Color;
-import com.teamwizardry.librarianlib.math.shapes.Arc3D;
-import com.teamwizardry.librarianlib.math.shapes.Circle3D;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.Colorable;
 import com.teamwizardry.wizardry.api.module.Module;
@@ -30,6 +27,8 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.awt.*;
 
 /**
  * Created by Saad on 6/7/2016.
@@ -99,19 +98,19 @@ public class ItemWoodStaff extends Item implements Colorable {
         }
 
         int betterCount = Math.abs(count - 72000);
-        Circle3D circle = new Circle3D(player.getPositionVector(), player.width + 0.3, 5);
-        for (Vec3d points : circle.getPoints()) {
-            Vec3d target = new Vec3d(player.posX, player.posY + player.getEyeHeight() - 0.3, player.posZ);
-            Arc3D arc = new Arc3D(points, target, (float) 0.9, 20);
-            if (betterCount < arc.getPoints().size()) {
-                Vec3d point = arc.getPoints().get(betterCount);
-                SparkleFX fizz = GlitterFactory.getInstance().createSparkle(player.worldObj, point, 10);
-                fizz.setFadeOut();
-                fizz.setAlpha(0.1f);
-                fizz.setScale(0.3f);
-                fizz.setBlurred();
-            }
-        }
+//        Circle3D circle = new Circle3D(player.getPositionVector(), player.width + 0.3, 5);
+//        for (Vec3d points : circle.getPoints()) {
+//            Vec3d target = new Vec3d(player.posX, player.posY + player.getEyeHeight() - 0.3, player.posZ);
+//            Arc3D arc = new Arc3D(points, target, (float) 0.9, 20);
+//            if (betterCount < arc.getPoints().size()) {
+//                Vec3d point = arc.getPoints().get(betterCount);
+//                SparkleFX fizz = GlitterFactory.getInstance().createSparkle(player.worldObj, point, 10);
+//                fizz.setFadeOut();
+//                fizz.setAlpha(0.1f);
+//                fizz.setScale(0.3f);
+//                fizz.setBlurred();
+//            }
+//        }
     }
 
     @SideOnly(Side.CLIENT)

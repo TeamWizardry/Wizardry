@@ -1,15 +1,15 @@
 package com.teamwizardry.wizardry.client.gui.worktable;
 
-import com.teamwizardry.librarianlib.gui.EnumMouseButton;
-import com.teamwizardry.librarianlib.gui.GuiComponent;
-import com.teamwizardry.librarianlib.gui.components.ComponentCenterAlign;
-import com.teamwizardry.librarianlib.gui.components.ComponentVoid;
-import com.teamwizardry.librarianlib.gui.mixin.DragMixin;
-import com.teamwizardry.librarianlib.gui.mixin.gl.GlMixin;
-import com.teamwizardry.librarianlib.util.Color;
+import com.teamwizardry.librarianlib.client.gui.EnumMouseButton;
+import com.teamwizardry.librarianlib.client.gui.GuiComponent;
+import com.teamwizardry.librarianlib.client.gui.components.ComponentCenterAlign;
+import com.teamwizardry.librarianlib.client.gui.components.ComponentVoid;
+import com.teamwizardry.librarianlib.client.gui.mixin.DragMixin;
+import com.teamwizardry.librarianlib.client.gui.mixin.gl.GlMixin;
 import com.teamwizardry.wizardry.api.module.Module;
 import net.minecraft.util.math.Vec3d;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,7 +53,7 @@ public class ModuleTemplatePaper extends ModuleTemplate {
 
 		mouseLine = new ComponentModuleLine(0, 0);
 		mouseLine.endPos.func((c) -> c.getMousePosThisFrame());
-		GlMixin.INSTANCE.color(mouseLine).setValue(Color.Companion.getBLACK());
+		GlMixin.INSTANCE.color(mouseLine).setValue(Color.BLACK);
 		mouseLine.setVisible(false);
 		GlMixin.INSTANCE.transform(mouseLine).setValue(new Vec3d(0, 0, -2));
 		lines.add(mouseLine);
@@ -88,7 +88,7 @@ public class ModuleTemplatePaper extends ModuleTemplate {
 						module.connections.add(this);
 						ComponentModuleLine line = new ComponentModuleLine(0,0);
 						line.addTag(this);
-						GlMixin.INSTANCE.color(line).setValue(Color.Companion.getBLACK());
+						GlMixin.INSTANCE.color(line).setValue(Color.BLACK);
 						line.endPos.func((_c_) -> {
 							if(this.getResult().getParent() == null) {
 								_c_.invalidate();

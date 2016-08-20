@@ -1,10 +1,11 @@
 package com.teamwizardry.wizardry.api.bloods;
 
-import com.teamwizardry.librarianlib.util.Color;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.awt.*;
 
 public class AquaBlood implements IBloodType {
     private static final ResourceLocation BLOOD_TEXTURE = new ResourceLocation("wizardry", "textures/model/blood_overlay.png");

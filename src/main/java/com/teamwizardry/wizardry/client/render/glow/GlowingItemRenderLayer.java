@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.client.render.glow;
 
-import com.teamwizardry.librarianlib.fx.shader.ShaderHelper;
+import com.teamwizardry.librarianlib.client.fx.shader.ShaderHelper;
 import com.teamwizardry.wizardry.api.item.GlowingOverlayHelper;
 import com.teamwizardry.wizardry.api.item.IGlowOverlayable;
 import com.teamwizardry.wizardry.client.fx.Shaders;

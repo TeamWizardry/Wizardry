@@ -1,5 +1,9 @@
 package com.teamwizardry.wizardry.client.fx.particle;
 
+import com.teamwizardry.librarianlib.client.fx.particle.ParticleRenderQueue;
+import com.teamwizardry.librarianlib.client.fx.particle.QueuedParticle;
+import com.teamwizardry.librarianlib.client.fx.shader.ShaderHelper;
+import kotlin.Unit;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
@@ -8,9 +12,6 @@ import net.minecraft.world.World;
 
 import org.lwjgl.opengl.GL11;
 
-import com.teamwizardry.librarianlib.fx.particle.ParticleRenderQueue;
-import com.teamwizardry.librarianlib.fx.particle.QueuedParticle;
-import com.teamwizardry.librarianlib.fx.shader.ShaderHelper;
 import com.teamwizardry.wizardry.client.fx.Shaders;
 
 public class MagicBurstFX extends QueuedParticle<MagicBurstFX> {
@@ -30,8 +31,7 @@ public class MagicBurstFX extends QueuedParticle<MagicBurstFX> {
             GlStateManager.color(1, 1, 1, 1);
             GlStateManager.enableBlend();
             GlStateManager.shadeModel(GL11.GL_SMOOTH);
-            ShaderHelper.Companion.useShader(Shaders.burst, shader -> {
-            });
+            ShaderHelper.Companion.useShader(Shaders.burst, shader -> {});
             tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
             for (MagicBurstFX fx : getRenderQueue()) {
                 fx.render(tessellator.getBuffer());

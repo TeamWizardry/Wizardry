@@ -1,9 +1,8 @@
 package com.teamwizardry.wizardry.client.gui.worktable;
 
-import com.teamwizardry.librarianlib.gui.GuiComponent;
-import com.teamwizardry.librarianlib.gui.Option;
-import com.teamwizardry.librarianlib.math.Vec2d;
-import com.teamwizardry.librarianlib.math.shapes.BezierCurve2D;
+import com.teamwizardry.librarianlib.client.gui.GuiComponent;
+import com.teamwizardry.librarianlib.client.gui.Option;
+import com.teamwizardry.librarianlib.common.util.math.Vec2d;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
@@ -12,7 +11,7 @@ import org.lwjgl.opengl.GL11;
 
 public class ComponentModuleLine extends GuiComponent<ComponentModuleLine> {
 
-	public final Option<ComponentModuleLine, Vec2d> endPos = new Option<>(Vec2d.Companion.getZERO());
+	public final Option<ComponentModuleLine, Vec2d> endPos = new Option<>(Vec2d.ZERO);
 
 	public ComponentModuleLine(int posX, int posY) {
 		super(posX, posY);
@@ -27,11 +26,11 @@ public class ComponentModuleLine extends GuiComponent<ComponentModuleLine> {
 		VertexBuffer vb = tessellator.getBuffer();
 		vb.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
 		Vec2d lastPos = null;
-		for (Vec2d position : new BezierCurve2D(getPos(), end).getPoints()) {
-			vb.pos(position.getX(), position.getY(), 0).endVertex();
-			if (lastPos != null) vb.pos(lastPos.getX(), lastPos.getY(), 0).endVertex();
-			lastPos = position;
-		}
+//		for (Vec2d position : new BezierCurve2D(getPos(), end).getPoints()) {
+//			vb.pos(position.getX(), position.getY(), 0).endVertex();
+//			if (lastPos != null) vb.pos(lastPos.getX(), lastPos.getY(), 0).endVertex();
+//			lastPos = position;
+//		}
 		tessellator.draw();
 
 		GlStateManager.enableTexture2D();

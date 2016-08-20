@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.common.item;
 
-import com.teamwizardry.librarianlib.util.TeleportUtil;
+import com.teamwizardry.librarianlib.bloat.TeleportUtil;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.bloods.BloodRegistry;
 import com.teamwizardry.wizardry.api.item.GlowingOverlayHelper;

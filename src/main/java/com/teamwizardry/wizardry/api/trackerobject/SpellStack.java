@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.api.trackerobject;
 
-import com.teamwizardry.librarianlib.util.Color;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
@@ -12,6 +11,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -123,20 +123,20 @@ public class SpellStack
 		{
 			if (r == -1 && g == -1 && b == -1)
 			{
-				r = effect.getColor().getR();
-				g = effect.getColor().getG();
-				b = effect.getColor().getB();
+				r = effect.getColor().getRed();
+				g = effect.getColor().getGreen();
+				b = effect.getColor().getBlue();
 			}
 			else
 			{
-				r = (r + effect.getColor().getR() ) / 2;
-				g = (g + effect.getColor().getG() ) / 2;
-				b = (b + effect.getColor().getB() ) / 2;
+				r = (r + effect.getColor().getRed() ) / 2;
+				g = (g + effect.getColor().getGreen() ) / 2;
+				b = (b + effect.getColor().getBlue() ) / 2;
 			}
 		}
 
 		if (r == -1 && g == -1 && b == -1)
-			return Color.Companion.getWHITE();
+			return Color.WHITE;
 		else return new Color(r, g, b);
 	}
 }

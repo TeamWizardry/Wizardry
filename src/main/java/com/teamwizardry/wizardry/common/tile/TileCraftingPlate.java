@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
+
+import com.teamwizardry.librarianlib.common.structure.StructureMatchResult;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -19,7 +21,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import com.teamwizardry.librarianlib.structure.StructureMatchResult;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.Infusable;
 import com.teamwizardry.wizardry.api.item.PearlType;

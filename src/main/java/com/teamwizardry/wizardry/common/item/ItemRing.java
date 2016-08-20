@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.item;
 
-import com.teamwizardry.librarianlib.util.Color;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.Colorable;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -14,6 +13,8 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.awt.*;
 
 /**
  * Created by Saad on 6/13/2016.

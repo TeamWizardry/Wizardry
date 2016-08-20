@@ -1,10 +1,11 @@
 package com.teamwizardry.wizardry.api.bloods;
 
-import com.teamwizardry.librarianlib.gui.TickCounter;
-import com.teamwizardry.librarianlib.util.Color;
+import com.teamwizardry.librarianlib.client.core.ClientTickHandler;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.awt.*;
 
 /**
  * @author WireSegal
@@ -13,7 +14,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public final class BloodColorHelper {
     public static int pulseColor(int rgb, int variance) {
-        int add = (int) (MathHelper.sin((float) TickCounter.Companion.getTicksInGame() * 0.2f) * variance);
+        int add = (int) (MathHelper.sin((float) ClientTickHandler.INSTANCE.getTicksInGame() * 0.2f) * variance);
         int r = (rgb & (0xFF << 16)) >> 16;
         int b = (rgb & (0xFF << 8)) >> 8;
         int g = (rgb & (0xFF));

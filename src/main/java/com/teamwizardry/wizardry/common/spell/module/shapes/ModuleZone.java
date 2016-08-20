@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.spell.module.shapes;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -12,7 +13,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
-import com.teamwizardry.librarianlib.math.shapes.Circle3D;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.attribute.Attribute;
@@ -61,18 +61,18 @@ public class ModuleZone extends Module {
 		double radius = spell.getDouble(RADIUS);
 		int duration = spell.getInteger(DURATION);
 
-        Circle3D circle = new Circle3D(new Vec3d(caster.posX, caster.posY, caster.posZ), radius, (int) (radius * 10));
-        for (Vec3d point : circle.getPoints()) {
-            SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(caster.worldObj, point);
-			fizz.setMaxAge(30);
-			fizz.setScale(3f);
-			fizz.setAlpha(0.5f);
-			fizz.setShrink();
-			fizz.setGrow();
-			fizz.setFadeOut();
-			fizz.setFadeIn();
-            fizz.setRandomSize();
-        }
+//        Circle3D circle = new Circle3D(new Vec3d(caster.posX, caster.posY, caster.posZ), radius, (int) (radius * 10));
+//        for (Vec3d point : circle.getPoints()) {
+//            SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(caster.worldObj, point);
+//			fizz.setMaxAge(30);
+//			fizz.setScale(3f);
+//			fizz.setAlpha(0.5f);
+//			fizz.setShrink();
+//			fizz.setGrow();
+//			fizz.setFadeOut();
+//			fizz.setFadeIn();
+//            fizz.setRandomSize();
+//        }
 
 		if (!(caster instanceof SpellEntity))
 		{

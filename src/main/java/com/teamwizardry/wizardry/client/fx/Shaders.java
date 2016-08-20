@@ -1,9 +1,10 @@
 package com.teamwizardry.wizardry.client.fx;
 
-import com.teamwizardry.librarianlib.fx.shader.Shader;
-import com.teamwizardry.librarianlib.fx.shader.ShaderHelper;
-import com.teamwizardry.librarianlib.fx.shader.uniforms.FloatTypes;
-import com.teamwizardry.librarianlib.fx.shader.uniforms.IntTypes;
+
+import com.teamwizardry.librarianlib.client.fx.shader.Shader;
+import com.teamwizardry.librarianlib.client.fx.shader.ShaderHelper;
+import com.teamwizardry.librarianlib.client.fx.shader.uniforms.FloatTypes;
+import com.teamwizardry.librarianlib.client.fx.shader.uniforms.IntTypes;
 
 public class Shaders {
 

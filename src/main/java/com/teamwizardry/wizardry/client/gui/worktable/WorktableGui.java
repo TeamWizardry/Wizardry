@@ -2,12 +2,12 @@ package com.teamwizardry.wizardry.client.gui.worktable;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.teamwizardry.librarianlib.gui.GuiBase;
-import com.teamwizardry.librarianlib.gui.GuiComponent;
-import com.teamwizardry.librarianlib.gui.components.*;
-import com.teamwizardry.librarianlib.math.Vec2d;
-import com.teamwizardry.librarianlib.sprite.Sprite;
-import com.teamwizardry.librarianlib.sprite.Texture;
+import com.teamwizardry.librarianlib.client.gui.GuiBase;
+import com.teamwizardry.librarianlib.client.gui.GuiComponent;
+import com.teamwizardry.librarianlib.client.gui.components.*;
+import com.teamwizardry.librarianlib.client.sprite.Sprite;
+import com.teamwizardry.librarianlib.client.sprite.Texture;
+import com.teamwizardry.librarianlib.common.util.math.Vec2d;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.ModuleRegistry;

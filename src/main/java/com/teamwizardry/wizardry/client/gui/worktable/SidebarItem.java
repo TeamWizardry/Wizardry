@@ -1,8 +1,7 @@
 package com.teamwizardry.wizardry.client.gui.worktable;
 
-import com.teamwizardry.librarianlib.gui.EnumMouseButton;
-import com.teamwizardry.librarianlib.gui.GuiComponent;
-import com.teamwizardry.librarianlib.util.Utils;
+import com.teamwizardry.librarianlib.client.gui.EnumMouseButton;
+import com.teamwizardry.librarianlib.client.gui.GuiComponent;
 import com.teamwizardry.wizardry.api.module.Module;
 import net.minecraft.util.text.TextFormatting;
 
@@ -27,7 +26,7 @@ public class SidebarItem extends ModuleTemplate {
 			if(event.getComponent().getMouseOver()) {
 				List<String> txt = new ArrayList<>();
 	            txt.add(TextFormatting.GOLD + module.getDisplayName());
-	            txt.addAll(Utils.INSTANCE.padString(module.getDescription(), 30));
+//	            txt.addAll(Utils.INSTANCE.padString(module.getDescription(), 30));
 	            event.getComponent().setTooltip(txt);
 			}
 		});

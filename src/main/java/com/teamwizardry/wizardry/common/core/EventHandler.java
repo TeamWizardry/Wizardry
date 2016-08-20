@@ -1,8 +1,5 @@
 package com.teamwizardry.wizardry.common.core;
 
-import com.teamwizardry.librarianlib.util.Color;
-import com.teamwizardry.librarianlib.util.PosUtils;
-import com.teamwizardry.librarianlib.math.shapes.Helix;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.trackerobject.BookTrackerObject;
 import com.teamwizardry.wizardry.api.trackerobject.RedstoneTrackerObject;
@@ -29,6 +26,7 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 import static com.teamwizardry.wizardry.common.fluid.FluidBlockMana.bookTracker;
@@ -76,19 +74,19 @@ public class EventHandler {
 
         for (RedstoneTrackerObject redstone : redstoneTracker) {
 
-            if (!redstone.hasAdjusted()) {
-                BlockPos pos = PosUtils.INSTANCE.adjustPositionToBlock(event.world, new BlockPos(redstone.getRedstone().posX, redstone.getRedstone().posY, redstone.getRedstone().posZ), Blocks.FIRE);
-                if (redstone.getWorld().getBlockState(pos).getBlock() == Blocks.FIRE
-                        && redstone.getWorld().isMaterialInBB(redstone.getRedstone().getEntityBoundingBox().expand(0.1, 0.1, 0.1), Material.FIRE)) {
-
-                    redstone.setPos(pos.add(0.5, 0, 0.5));
-                    redstone.setHelix(new Helix(new Vec3d(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5), 100, 2, 3, 1, 10, true).getPoints());
-                    redstone.getRedstone().setDead();
-                    redstone.setStartCountdown(true);
-
-                    redstone.setHasAdjusted(true);
-                }
-            }
+//            if (!redstone.hasAdjusted()) {
+//                BlockPos pos = PosUtils.INSTANCE.adjustPositionToBlock(event.world, new BlockPos(redstone.getRedstone().posX, redstone.getRedstone().posY, redstone.getRedstone().posZ), Blocks.FIRE);
+//                if (redstone.getWorld().getBlockState(pos).getBlock() == Blocks.FIRE
+//                        && redstone.getWorld().isMaterialInBB(redstone.getRedstone().getEntityBoundingBox().expand(0.1, 0.1, 0.1), Material.FIRE)) {
+//
+//                    redstone.setPos(pos.add(0.5, 0, 0.5));
+//                    redstone.setHelix(new Helix(new Vec3d(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5), 100, 2, 3, 1, 10, true).getPoints());
+//                    redstone.getRedstone().setDead();
+//                    redstone.setStartCountdown(true);
+//
+//                    redstone.setHasAdjusted(true);
+//                }
+//            }
 
             if (redstone.isStartCountdown()) {
                 if (redstone.getCountdown() >= 200) {
@@ -118,7 +116,7 @@ public class EventHandler {
                             fizz.setScale(0.5f);
                             fizz.setMotion(0, -0.1, 0);
                             fizz.setJitter(30, 0.05, 0, 0.05);
-                            fizz.setColor(Color.Companion.getRED());
+                            fizz.setColor(Color.RED);
                             fizz.setRandomlyShiftColor(-1f, -0.9f, true, false, false);
                         }
                         redstone.setQueue(redstone.getQueue() + 1);
@@ -143,7 +141,7 @@ public class EventHandler {
                     fizz.setFadeOut();
                     fizz.setAlpha(0.5f);
                     fizz.setScale(0.5f);
-                    fizz.setColor(Color.Companion.getWHITE());
+                    fizz.setColor(Color.WHITE);
                     fizz.setRandomlyShiftColor(-0.2f, 0.2f, true, false, false);
                     fizz.setRandomDirection(0.05, 0, 0.05);
                     fizz.setJitter(10, 0.05, 0, 0.05);
