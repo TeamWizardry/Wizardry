@@ -75,14 +75,9 @@ public class EventHandler {
 	@SubscribeEvent
 	public void tickEvent(TickEvent.WorldTickEvent event) {
 		for (EntityPlayer player : event.world.playerEntities) {
-			//WizardryData data = DataFactory.INSTANCE.getPlayerData(player);
-			IWizardryCapability data = WizardryCapabilityProvider.get(player);
-			//if (data != null) {
-				//Minecraft.getMinecraft().thePlayer.sendChatMessage(data.getMana() + "/" + data.getManaMax());
+				IWizardryCapability data = WizardryCapabilityProvider.get(player);
 				if (data.getMana() < data.getMaxMana()) data.setMana(data.getMana() + 1, player);
 				if (data.getBurnout() < data.getMaxBurnout()) data.setBurnout(data.getBurnout() - 1, player);
-				//DataFactory.INSTANCE.setPlayerData(player, data);
-			//}
 		}
 
 		// DEVIL DUST SPAWNING

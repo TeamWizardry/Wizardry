@@ -3,9 +3,11 @@ package com.teamwizardry.wizardry.common.item;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
+import com.teamwizardry.wizardry.api.capability.bloods.BloodRegistry;
 import com.teamwizardry.wizardry.api.item.GlowingOverlayHelper;
 import com.teamwizardry.wizardry.api.item.IGlowOverlayable;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -43,30 +45,26 @@ public class ItemDebugger extends Item implements IGlowOverlayable {
 
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
-		//WizardryData data = DataFactory.INSTANCE.getPlayerData(playerIn);
-		//Minecraft.getMinecraft().thePlayer.sendChatMessage(data.toNBT() + "");
-		/*if (!worldIn.isRemote) {
+		IWizardryCapability data = WizardryCapabilityProvider.get(playerIn);
+		if (!worldIn.isRemote) {
 			if (playerIn.isSneaking())
-				data.setBloodType(BloodRegistry.HUMANBLOOD);
-			else data.setBloodType(BloodRegistry.PYROBLOOD);
-			//return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
-			//Minecraft.getMinecraft().thePlayer.sendChatMessage(data.getBloodType() + "");
+				data.setBloodType(BloodRegistry.HUMANBLOOD, playerIn);
+			else data.setBloodType(BloodRegistry.PYROBLOOD, playerIn);
+			return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
 		}
 		if (playerIn.isSneaking())
-			if (GuiScreen.isCtrlKeyDown()) data.setBurnout(50);
-			else data.setBurnout(0);
+			if (GuiScreen.isCtrlKeyDown()) data.setBurnout(50, playerIn);
+			else data.setBurnout(0, playerIn);
 
-		else if (GuiScreen.isCtrlKeyDown()) data.setMana(50);
-		else data.setMana(0);*/
+		else if (GuiScreen.isCtrlKeyDown()) data.setMana(50, playerIn);
+		else data.setMana(0, playerIn);
 
-		//DataFactory.INSTANCE.setPlayerData(playerIn, data);
+		playerIn.addChatComponentMessage(new TextComponentString(data.getMana() + "/" + data.getMaxMana()));
 
 		// TeleportUtil.teleportToDimension(playerIn, 100, 0, 100, 0);
 		//EntityHallowedSprit spirit = new EntityHallowedSprit(worldIn);
 		//spirit.setPosition(playerIn.posX, playerIn.posY + 1, playerIn.posZ);
 		//worldIn.spawnEntityInWorld(spirit);
-
-		IWizardryCapability capability = WizardryCapabilityProvider.get(playerIn);
 
 		return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
 	}

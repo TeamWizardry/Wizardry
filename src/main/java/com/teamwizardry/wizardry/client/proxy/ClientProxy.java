@@ -36,6 +36,9 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void preInit(FMLPreInitializationEvent event) {
 		super.preInit(event);
+		ModItems.initModels();
+		ModBlocks.initModels();
+
 		OBJLoader.INSTANCE.addDomain(Wizardry.MODID);
 		MinecraftForge.EVENT_BUS.register(new HudEventHandler());
 		new WizardryClientMethodHandles(); // Load the class
@@ -47,9 +50,6 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void init(FMLInitializationEvent event) {
 		super.init(event);
-
-		ModItems.initModels();
-		ModBlocks.initModels();
 		ModItems.initColors();
 
 		ParticleRenderDispatcher.class.getName(); // load the class

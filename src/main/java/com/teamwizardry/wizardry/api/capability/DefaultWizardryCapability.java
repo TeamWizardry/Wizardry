@@ -13,7 +13,7 @@ import net.minecraft.nbt.NBTTagCompound;
  */
 public class DefaultWizardryCapability implements IWizardryCapability {
 
-	int mana = 0, maxMana = 100, burnout = 0, maxBurnout = 100;
+	int mana = 0, maxMana = 100, burnout = 100, maxBurnout = 100;
 	IBloodType bloodType = BloodRegistry.HUMANBLOOD;
 
 	@Override
