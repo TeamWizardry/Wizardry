@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.common.item;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.GlowingOverlayHelper;
 import com.teamwizardry.wizardry.api.item.IGlowOverlayable;
-import com.teamwizardry.wizardry.common.entity.EntityHallowedSprit;
+import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
@@ -60,9 +60,10 @@ public class ItemDebugger extends Item implements IGlowOverlayable {
 		playerIn.addChatComponentMessage(new TextComponentString(data.getMana() + "/" + data.getMaxMana()));*/
 
 		//TeleportUtil.teleportToDimension(playerIn, 100, 0, 100, 0);
-		EntityHallowedSprit spirit = new EntityHallowedSprit(worldIn);
-		spirit.setPosition(playerIn.posX, playerIn.posY + 1, playerIn.posZ);
-		worldIn.spawnEntityInWorld(spirit);
+		//EntityHallowedSpirit entity = new EntityHallowedSpirit(worldIn);
+		EntityFairy entity = new EntityFairy(worldIn);
+		entity.setPosition(playerIn.posX, playerIn.posY + 1, playerIn.posZ);
+		worldIn.spawnEntityInWorld(entity);
 
 		return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
 	}

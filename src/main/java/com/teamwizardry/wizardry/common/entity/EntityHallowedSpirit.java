@@ -19,11 +19,11 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Created by Saad on 8/17/2016.
  */
-public class EntityHallowedSprit extends EntityMob {
+public class EntityHallowedSpirit extends EntityMob {
 
 	private boolean angry = false;
 
-	public EntityHallowedSprit(World worldIn) {
+	public EntityHallowedSpirit(World worldIn) {
 		super(worldIn);
 		this.setSize(0.6F, 1.95F);
 		this.experienceValue = 5;

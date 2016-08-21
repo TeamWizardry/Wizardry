@@ -2,7 +2,7 @@ package com.teamwizardry.wizardry;
 
 import com.teamwizardry.librarianlib.LibrarianLog;
 import com.teamwizardry.librarianlib.book.Book;
-import com.teamwizardry.wizardry.common.proxy.CommonProxy;
+import com.teamwizardry.wizardry.common.CommonProxy;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -27,8 +27,8 @@ public class Wizardry {
 	public static final String MODID = "wizardry";
 	public static final String MODNAME = "Wizardry";
 	public static final String VERSION = "1.0";
-	public static final String CLIENT = "com.teamwizardry.wizardry.client.proxy.ClientProxy";
-	public static final String SERVER = "com.teamwizardry.wizardry.common.proxy.CommonProxy";
+	public static final String CLIENT = "com.teamwizardry.wizardry.client.ClientProxy";
+	public static final String SERVER = "com.teamwizardry.wizardry.common.CommonProxy";
 	public static PacketLoggingHandler packetHandler;
 	public static Logger logger;
 	public static Book guide;

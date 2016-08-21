@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.client.proxy;
+package com.teamwizardry.wizardry.client;
 
 import com.teamwizardry.librarianlib.fx.particle.ParticleRenderDispatcher;
 import com.teamwizardry.wizardry.Wizardry;
@@ -16,8 +16,8 @@ import com.teamwizardry.wizardry.client.render.ModelHolder;
 import com.teamwizardry.wizardry.client.render.entity.RenderHallowedSpirit;
 import com.teamwizardry.wizardry.client.render.glow.GlowingItemEventHandler;
 import com.teamwizardry.wizardry.client.render.glow.GlowingItemRenderLayer;
-import com.teamwizardry.wizardry.common.entity.EntityHallowedSprit;
-import com.teamwizardry.wizardry.common.proxy.CommonProxy;
+import com.teamwizardry.wizardry.common.CommonProxy;
+import com.teamwizardry.wizardry.common.entity.EntityHallowedSpirit;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.Minecraft;
@@ -72,7 +72,7 @@ public class ClientProxy extends CommonProxy {
 		render.addLayer(new GlowingItemRenderLayer(render));
 		render.addLayer(new BloodRenderLayer(render));
 
-		RenderingRegistry.registerEntityRenderingHandler(EntityHallowedSprit.class, new RenderHallowedSpirit(Minecraft.getMinecraft().getRenderManager(), ModelHolder.entityModels.get("hallowed_spirit"), 0.5f));
+		RenderingRegistry.registerEntityRenderingHandler(EntityHallowedSpirit.class, new RenderHallowedSpirit(Minecraft.getMinecraft().getRenderManager(), ModelHolder.entityModels.get("hallowed_spirit"), 0.5f));
 	}
 
 	@Override

@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.proxy;
+package com.teamwizardry.wizardry.common;
 
 import com.teamwizardry.librarianlib.book.Book;
 import com.teamwizardry.wizardry.Wizardry;
@@ -33,7 +33,6 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import static com.teamwizardry.wizardry.Wizardry.MODID;
 
 public class CommonProxy {
-
 
 	public void preInit(FMLPreInitializationEvent event) {
 		WizardryPacketHandler.registerMessages();
