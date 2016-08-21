@@ -1,27 +1,53 @@
 package com.teamwizardry.wizardry.api.item;
 
-import com.teamwizardry.librarianlib.util.Color;
+import com.teamwizardry.wizardry.init.ModBlocks;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by Saad on 6/7/2016.
  */
 public interface Colorable {
 
-    default void setDefaultColor(ItemStack stack, int min, int max) {
-        Color color = new Color(ThreadLocalRandom.current().nextInt(min, max), ThreadLocalRandom.current().nextInt(min, max), ThreadLocalRandom.current().nextInt(min, max));
-        NBTTagCompound compound = new NBTTagCompound();
-        compound.setInteger("red", (int) color.r);
-        compound.setInteger("green", (int) color.g);
-        compound.setInteger("blue", (int) color.b);
-        compound.setBoolean("checkRed", false);
-        compound.setBoolean("checkBlue", false);
-        compound.setBoolean("checkGreen", false);
-        stack.setTagCompound(compound);
-    }
+	String TAG_RAND = "rand";
+	String TAG_PURITY = "purity";
+	String TAG_COMPLETE = "complete";
+	int NACRE_PURITY_CONVERSION = 30 * 20; // 30 seconds
+	int COLOR_CYCLE_LENGTH = 50 * 20; // 50 seconds
 
-    Color getColor(ItemStack stack);
+	default void colorableOnUpdate(ItemStack stack) {
+		NBTTagCompound compound = stack.getTagCompound();
+		if (compound == null) {
+			compound = new NBTTagCompound();
+			stack.setTagCompound(compound);
+		}
+
+		if (!compound.hasKey(TAG_RAND))
+			compound.setInteger(TAG_RAND, 0);
+		if (!compound.hasKey(TAG_PURITY))
+			compound.setInteger(TAG_PURITY, NACRE_PURITY_CONVERSION);
+		if (!compound.getBoolean(TAG_COMPLETE))
+			compound.setBoolean(TAG_COMPLETE, true);
+	}
+
+	default void colorableOnEntityItemUpdate(EntityItem entityItem) {
+		ItemStack stack = entityItem.getEntityItem();
+		NBTTagCompound compound = stack.getTagCompound();
+		if (compound == null) {
+			compound = new NBTTagCompound();
+			stack.setTagCompound(compound);
+		}
+
+		if (!compound.hasKey(TAG_RAND))
+			compound.setInteger(TAG_RAND, entityItem.worldObj.rand.nextInt(COLOR_CYCLE_LENGTH));
+
+		if (entityItem.isInsideOfMaterial(ModBlocks.NACRE_MATERIAL) && !compound.getBoolean(TAG_COMPLETE)) {
+			int purity = 0;
+			if (compound.hasKey(TAG_PURITY))
+				purity = compound.getInteger(TAG_PURITY);
+			purity = Math.min(purity + 1, NACRE_PURITY_CONVERSION * 2);
+			compound.setInteger(TAG_PURITY, purity);
+		} else compound.setBoolean(TAG_COMPLETE, true);
+	}
 }

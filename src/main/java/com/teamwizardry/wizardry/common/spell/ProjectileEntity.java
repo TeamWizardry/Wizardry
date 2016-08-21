@@ -1,13 +1,7 @@
 package com.teamwizardry.wizardry.common.spell;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-import com.teamwizardry.librarianlib.util.Color;
 import com.teamwizardry.librarianlib.math.Raycast;
+import com.teamwizardry.librarianlib.util.Color;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.Colorable;
 import com.teamwizardry.wizardry.api.module.Module;
@@ -15,6 +9,12 @@ import com.teamwizardry.wizardry.api.spell.SpellEntity;
 import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import com.teamwizardry.wizardry.client.fx.particle.trails.SparkleTrailHelix;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 
 public class ProjectileEntity extends SpellEntity
 {
@@ -37,7 +37,7 @@ public class ProjectileEntity extends SpellEntity
 			if (item.getItem() instanceof Colorable)
 			{
 				Colorable colorable = (Colorable) item.getItem();
-				trailColor = colorable.getColor(item);
+				//trailColor = colorable.getColor(item);
 			}
 		}
 	}

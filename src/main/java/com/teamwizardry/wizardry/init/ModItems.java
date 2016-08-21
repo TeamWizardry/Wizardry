@@ -57,7 +57,6 @@ public class ModItems {
     }
 
     public static void initColors() {
-        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemQuartzPearl.ColorHandler(), PEARL_QUARTZ);
         Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemNacrePearl.ColorHandler(), PEARL_NACRE);
         Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemRing.ColorHandler(), RING);
         Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemRing.ColorHandler(), STAFF_GOLD);
