@@ -38,8 +38,8 @@ public class EntityHallowedSprit extends EntityMob {
 	protected void initEntityAI() {
 		this.tasks.addTask(0, new EntityAISwimming(this));
 		this.tasks.addTask(2, new EntityAIAttackMelee(this, 0.3, true));
-		this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
-		this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
+		this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 0.3D));
+		this.tasks.addTask(7, new EntityAIWander(this, 0.3D));
 		this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
 		this.applyEntityAI();
 	}
@@ -47,9 +47,8 @@ public class EntityHallowedSprit extends EntityMob {
 	protected void applyEntityAttributes() {
 		super.applyEntityAttributes();
 		this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(50.0D);
-		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.3D);
 		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(30.0D);
-		this.getEntityAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(1D);
+		//this.getEntityAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(0.6D);
 	}
 
 	protected void applyEntityAI() {
@@ -58,14 +57,11 @@ public class EntityHallowedSprit extends EntityMob {
 
 	@Override
 	public void collideWithEntity(Entity entity) {
-		if (this.getAttackTarget() != null && this.getHealth() > 0) {
-			if (entity.getUniqueID().compareTo(this.getAttackTarget().getUniqueID()) == 0) {
-				((EntityLivingBase) entity).motionX += motionX / 2;
-				((EntityLivingBase) entity).motionY += 1;
-				((EntityLivingBase) entity).motionX += motionX / 2;
-				((EntityLivingBase) entity).attackEntityAsMob(this);
-				((EntityLivingBase) entity).setRevengeTarget(this);
-			}
+		if (this.getHealth() > 0) {
+			if (entity.getName().equals(getName())) return;
+			((EntityLivingBase) entity).motionY += 0.3;
+			((EntityLivingBase) entity).attackEntityAsMob(this);
+			((EntityLivingBase) entity).setRevengeTarget(this);
 		}
 	}
 
@@ -127,6 +123,7 @@ public class EntityHallowedSprit extends EntityMob {
 		float initHealth = getHealth();
 		if (getHealth() <= 0 && initHealth > 0) {
 			if (source.getEntity() instanceof EntityPlayer) {
+
 				//if (((EntityPlayer) source.getEntity()).hasCapability(ImpurityProvider.impurityCapability, null)) {
 				//	source.getEntity().getCapability(ImpurityProvider.impurityCapability, null).setImpurity((EntityPlayer) source.getEntity(), ((EntityPlayer) source.getEntity()).getCapability(ImpurityProvider.impurityCapability, null).getImpurity() + rand.nextInt(3) + 3);
 				//}

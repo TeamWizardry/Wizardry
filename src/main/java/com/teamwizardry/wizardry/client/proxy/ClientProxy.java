@@ -12,8 +12,11 @@ import com.teamwizardry.wizardry.client.fx.particle.MagicBurstFX;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import com.teamwizardry.wizardry.client.fx.particle.trails.SparkleTrailHelix;
 import com.teamwizardry.wizardry.client.render.BloodRenderLayer;
+import com.teamwizardry.wizardry.client.render.ModelHolder;
+import com.teamwizardry.wizardry.client.render.entity.RenderHallowedSpirit;
 import com.teamwizardry.wizardry.client.render.glow.GlowingItemEventHandler;
 import com.teamwizardry.wizardry.client.render.glow.GlowingItemRenderLayer;
+import com.teamwizardry.wizardry.common.entity.EntityHallowedSprit;
 import com.teamwizardry.wizardry.common.proxy.CommonProxy;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
@@ -24,6 +27,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -45,6 +49,8 @@ public class ClientProxy extends CommonProxy {
 		GlowingItemEventHandler.init();
 
 		new Shaders();
+
+		ModelHolder.init();
 	}
 
 	@Override
@@ -65,6 +71,8 @@ public class ClientProxy extends CommonProxy {
 		render = skinMap.get("slim");
 		render.addLayer(new GlowingItemRenderLayer(render));
 		render.addLayer(new BloodRenderLayer(render));
+
+		RenderingRegistry.registerEntityRenderingHandler(EntityHallowedSprit.class, new RenderHallowedSpirit(Minecraft.getMinecraft().getRenderManager(), ModelHolder.entityModels.get("hallowed_spirit"), 0.5f));
 	}
 
 	@Override
@@ -150,7 +158,7 @@ public class ClientProxy extends CommonProxy {
 
 	//Wizardry.proxy.<SparkleFX>createParticle(world, origin, age)
 	/*public <T extends Particle> T createParticle(World world, Vec3d origin, int age) {
-        //T fx = T.
+	    //T fx = T.
         if(Wizardry.proxy.getParticleDensity() > 0)
             if (ThreadLocalRandom.current().nextInt(Wizardry.proxy.getParticleDensity()) / 100 <= 1) {
                 fx.setMaxAge(age * Wizardry.proxy.getParticleDensity() / 100);
