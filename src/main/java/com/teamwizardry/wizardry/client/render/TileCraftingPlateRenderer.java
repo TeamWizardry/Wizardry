@@ -70,7 +70,7 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
                 }
             } else {
                 // RENDER INVENTORY ITEMS HERE WHEN NOT CRAFTING //
-                for (CraftingPlateItemStackHelper stack : te.getInventory()) {
+                /*for (CraftingPlateItemStackHelper stack : te.getInventory()) {
 
                     if (stack.getQueue() < stack.getPoints().size() - 1) stack.setQueue(stack.getQueue() + 1);
                     Vec3d point = stack.getPoints().get(stack.getQueue());
@@ -82,7 +82,7 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
                     GlStateManager.rotate((float) stack.getTick(), 0, 1, 0);
                     Minecraft.getMinecraft().getRenderItem().renderItem(stack.getItemStack(), ItemCameraTransforms.TransformType.NONE);
                     GlStateManager.popMatrix();
-                }
+                }*/
             }
         }
     }

@@ -1,15 +1,21 @@
 package com.teamwizardry.wizardry.common.entity;
 
-import com.teamwizardry.wizardry.client.fx.GlitterFactory;
-import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
+import com.teamwizardry.librarianlib.client.fx.particle.ParticleBuilder;
+import com.teamwizardry.librarianlib.client.fx.particle.ParticleSpawner;
+import com.teamwizardry.librarianlib.common.util.math.interpolate.StaticInterp;
+import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.*;
+import net.minecraft.entity.ai.EntityAIFindEntityNearestPlayer;
+import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
+import net.minecraft.entity.ai.EntityAISwimming;
+import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -36,11 +42,9 @@ public class EntityHallowedSpirit extends EntityMob {
 	}
 
 	protected void initEntityAI() {
-		this.tasks.addTask(0, new EntityAISwimming(this));
-		this.tasks.addTask(2, new EntityAIAttackMelee(this, 0.3, true));
-		this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 0.3D));
-		this.tasks.addTask(7, new EntityAIWander(this, 0.3D));
-		this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
+		this.targetTasks.addTask(0, new EntityAIFindEntityNearestPlayer(this));
+		this.tasks.addTask(1, new EntityAIWander(this, 0.3D));
+		this.tasks.addTask(2, new EntityAISwimming(this));
 		this.applyEntityAI();
 	}
 
@@ -75,25 +79,14 @@ public class EntityHallowedSpirit extends EntityMob {
 			}
 		}
 
-		for (int i = 0; i < 5; i++) {
-			Vec3d headCenter = new Vec3d(posX + width + ThreadLocalRandom.current().nextDouble(-0.3, 0.3), getEyeHeight() + ThreadLocalRandom.current().nextDouble(-0.3, 0.3), posZ + width + ThreadLocalRandom.current().nextDouble(-0.3, 0.3));
-			SparkleFX headLight = GlitterFactory.getInstance().createSparkle(worldObj, headCenter, 30);
-			if (this.getAttackTarget() != null) {
-				headLight.setColor(Color.RED);
-				headLight.setRandomlyShiftColor(-0.2, 0.2, true, false, false);
-			}
-			if (!angry)
-				headLight.setMotion(ThreadLocalRandom.current().nextDouble(0.005, 0.01), ThreadLocalRandom.current().nextDouble(0.005, 0.01), ThreadLocalRandom.current().nextDouble(0.005, 0.01));
-			else {
-				headLight.setMotion(ThreadLocalRandom.current().nextDouble(0.1, 0.2), 0, ThreadLocalRandom.current().nextDouble(0.1, 0.2));
-				headLight.setJitter(10, 0, 0.1, 0);
-			}
-			headLight.setAlpha(0.4f);
-			headLight.setScale(0.5f);
-			headLight.setBlurred();
-			headLight.setShrink();
-			headLight.setFadeOut();
-		}
+		Vec3d headCenter = new Vec3d(posX + width + ThreadLocalRandom.current().nextDouble(-0.3, 0.3), posY + getEyeHeight() + ThreadLocalRandom.current().nextDouble(-0.3, 0.3), posZ + width + ThreadLocalRandom.current().nextDouble(-0.3, 0.3));
+
+		ParticleBuilder glitter = new ParticleBuilder(10);
+		glitter.addMotion(new Vec3d(0, ThreadLocalRandom.current().nextDouble(0.1, 0.2), 0));
+		glitter.setColor(Color.WHITE);
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle"));
+
+		ParticleSpawner.spawn(glitter, worldObj, new StaticInterp<>(headCenter), 5);
 	}
 
 	@Override
