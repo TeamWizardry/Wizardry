@@ -23,7 +23,7 @@ public class ProjectileEntity extends SpellEntity
 	private int ticker = 0;
 	private Color trailColor;
 	private SpellStack stack;
-
+	
 	public ProjectileEntity(World world, double posX, double posY, double posZ, SpellStack stack)
 	{
 		super(world, posX, posY, posZ, stack.spell);
@@ -31,35 +31,35 @@ public class ProjectileEntity extends SpellEntity
 		this.isImmuneToFire = true;
 		this.player = stack.player;
 		this.stack = stack;
-
+		
 		if (stack.player.getHeldItemMainhand() != null)
 		{
 			ItemStack item = stack.player.getHeldItemMainhand();
 			if (item.getItem() instanceof Colorable)
 			{
 				Colorable colorable = (Colorable) item.getItem();
-				trailColor = colorable.getColor(item);
+				//trailColor = colorable.getColor(item);
 			}
 		}
 	}
-
+	
 	@Override
 	public float getEyeHeight()
 	{
 		return 0;
 	}
-
+	
 	@Override
 	public void onEntityUpdate()
 	{
 		super.onEntityUpdate();
-
+		
 		ticker++;
 		for (int i = 0; i < 2; i++)
 		{
 			double theta = i * Math.toRadians((360.0 / 2) + ticker);
 			Vec3d origin = new Vec3d(posX + 0.5 * Math.cos(theta), posY, posZ + 0.5 * Math.sin(theta));
-
+			
 			// TODO: Add motion so they dont just move in the same space
 			// TODO: Fix color
 			SparkleTrailHelix helix = Wizardry.proxy.spawnParticleSparkleTrailHelix(worldObj, origin, getPositionVector(), 0.5, theta);
@@ -72,7 +72,7 @@ public class ProjectileEntity extends SpellEntity
 			helix.setScale(0.5f);
 			// helix.addContinuousMotion(new Vec3d(-motionX * 10, -motionY * 10,
 			// -motionZ * 10));
-
+			
 			SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(worldObj, getPositionVector());
 			fizz.setColor(trailColor);
 			fizz.setFadeIn();
@@ -84,9 +84,9 @@ public class ProjectileEntity extends SpellEntity
 			fizz.setRandomDirection(0.1, 0.1, 0.1);
 			fizz.setJitter(10, 0.1, 0.1, 0.1);
 		}
-
-		RayTraceResult cast = RaycastUtils.INSTANCE.raycast(this.worldObj, this.getPositionVector(), new Vec3d(motionX, motionY, motionZ), Math.min(spell.getDouble(Module.SPEED), 1));
-
+		
+		RayTraceResult cast = RaycastUtils.raycast(this.worldObj, this.getPositionVector(), new Vec3d(motionX, motionY, motionZ), Math.min(spell.getDouble(Module.SPEED), 1));
+		
 		if (cast != null)
 		{
 			if (cast.typeOfHit == RayTraceResult.Type.BLOCK)
@@ -102,13 +102,13 @@ public class ProjectileEntity extends SpellEntity
 				this.setDead();
 			}
 		}
-
+		
 		posX += motionX * 4;
 		posY += motionY * 4;
 		posZ += motionZ * 4;
 		setPosition(posX, posY, posZ);
 	}
-
+	
 	public void setDirection(float yaw, float pitch)
 	{
 		double speed = spell.getDouble(Module.SPEED) / 10;

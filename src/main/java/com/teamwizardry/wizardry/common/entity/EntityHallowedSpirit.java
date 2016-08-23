@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.entity;
 
-import com.teamwizardry.librarianlib.util.Color;
 import com.teamwizardry.wizardry.client.fx.GlitterFactory;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import net.minecraft.entity.Entity;
@@ -14,6 +13,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+import java.awt.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**

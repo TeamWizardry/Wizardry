@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.entity;
 
-import com.teamwizardry.librarianlib.util.Color;
 import com.teamwizardry.wizardry.client.fx.GlitterFactory;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import net.minecraft.entity.Entity;
@@ -15,6 +14,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 
+import java.awt.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -134,12 +134,12 @@ public class EntityFairy extends EntityCreature {
 	@Override
 	public void readEntityFromNBT(NBTTagCompound compound) {
 		super.readEntityFromNBT(compound);
-		if (compound.hasKey("color")) color = Color.rgba(compound.getInteger("color"));
+		if (compound.hasKey("color")) color = new Color(compound.getInteger("color"));
 	}
 
 	@Override
 	public void writeEntityToNBT(NBTTagCompound compound) {
 		super.writeEntityToNBT(compound);
-		compound.setInteger("color", color.hexRGBA());
+		compound.setInteger("color", color.getRGB());
 	}
 }

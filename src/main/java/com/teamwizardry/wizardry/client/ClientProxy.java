@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.client;
 
-import com.teamwizardry.librarianlib.fx.particle.ParticleRenderDispatcher;
+import com.teamwizardry.librarianlib.client.fx.particle.ParticleRenderDispatcher;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Config;
 import com.teamwizardry.wizardry.client.core.CapeHandler;
