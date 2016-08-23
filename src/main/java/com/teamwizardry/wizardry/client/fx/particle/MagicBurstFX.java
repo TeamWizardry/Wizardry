@@ -31,13 +31,13 @@ public class MagicBurstFX extends QueuedParticle<MagicBurstFX> {
             GlStateManager.color(1, 1, 1, 1);
             GlStateManager.enableBlend();
             GlStateManager.shadeModel(GL11.GL_SMOOTH);
-            ShaderHelper.Companion.useShader(Shaders.burst, shader -> {});
+            ShaderHelper.INSTANCE.useShader(Shaders.burst, shader -> {});
             tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
             for (MagicBurstFX fx : getRenderQueue()) {
                 fx.render(tessellator.getBuffer());
             }
             tessellator.draw();
-            ShaderHelper.Companion.releaseShader();
+            ShaderHelper.INSTANCE.releaseShader();
             GlStateManager.color(1, 1, 1, 1);
             GlStateManager.enableTexture2D();
             getRenderQueue().clear();

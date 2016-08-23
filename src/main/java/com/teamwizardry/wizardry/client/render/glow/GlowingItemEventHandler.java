@@ -95,7 +95,7 @@ public class GlowingItemEventHandler {
                 if (overlay && stackMain.getItem() instanceof IGlowOverlayable) {
                     IGlowOverlayable item = (IGlowOverlayable) stackMain.getItem();
                     if (item.useShader(stackMain))
-                        ShaderHelper.Companion.useShader(Shaders.rawColor);
+                        ShaderHelper.INSTANCE.useShader(Shaders.rawColor);
                     if (item.disableLighting(stackMain))
                         GlStateManager.disableLighting();
                 }
@@ -107,7 +107,7 @@ public class GlowingItemEventHandler {
                 if (overlay && stackMain.getItem() instanceof IGlowOverlayable) {
                     IGlowOverlayable item = (IGlowOverlayable) stackMain.getItem();
                     if (item.useShader(stackMain))
-                        ShaderHelper.Companion.releaseShader();
+                        ShaderHelper.INSTANCE.releaseShader();
                     if (item.disableLighting(stackMain))
                         GlStateManager.enableLighting();
                 }
@@ -119,7 +119,7 @@ public class GlowingItemEventHandler {
                 if (overlay && stackOff.getItem() instanceof IGlowOverlayable) {
                     IGlowOverlayable item = (IGlowOverlayable) stackOff.getItem();
                     if (item.useShader(stackOff))
-                        ShaderHelper.Companion.useShader(Shaders.rawColor);
+                        ShaderHelper.INSTANCE.useShader(Shaders.rawColor);
                     if (item.disableLighting(stackOff))
                         GlStateManager.disableLighting();
                 }
@@ -131,7 +131,7 @@ public class GlowingItemEventHandler {
                 if (overlay && stackOff.getItem() instanceof IGlowOverlayable) {
                     IGlowOverlayable item = (IGlowOverlayable) stackOff.getItem();
                     if (item.useShader(stackOff))
-                        ShaderHelper.Companion.releaseShader();
+                        ShaderHelper.INSTANCE.releaseShader();
                     if (item.disableLighting(stackOff))
                         GlStateManager.enableLighting();
                 }

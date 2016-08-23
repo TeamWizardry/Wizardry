@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry;
 
 import com.teamwizardry.librarianlib.LibrarianLog;
-import com.teamwizardry.librarianlib.book.Book;
+import com.teamwizardry.librarianlib.client.book.Book;
 import com.teamwizardry.wizardry.api.Config;
 import com.teamwizardry.wizardry.api.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.save.WizardHandler;
@@ -39,7 +39,7 @@ import org.apache.logging.log4j.Logger;
 /**
  * Created by Saad on 6/9/2016.
  */
-@Mod(modid = Wizardry.MODID, version = Wizardry.VERSION, name = Wizardry.MODNAME, useMetadata = true, dependencies = "required-after:librarianlib")
+@Mod(modid = Wizardry.MODID, version = Wizardry.VERSION, name = Wizardry.MODNAME, useMetadata = true, dependencies = "required-before:librarianlib")
 public class Wizardry {
 
 	public static final String MODID = "wizardry";

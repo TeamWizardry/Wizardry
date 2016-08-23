@@ -12,9 +12,9 @@ public class Shaders {
 	public static Shader rawColor;
 	
 	static {
-		burst = ShaderHelper.Companion.addShader(new BurstShader(null, "/assets/wizardry/shader/sparkle.frag"));
-		rawColor = ShaderHelper.Companion.addShader(new Shader(null, "/assets/wizardry/shader/rawColor.frag"));
-		ShaderHelper.Companion.initShaders();
+		burst = ShaderHelper.INSTANCE.addShader(new BurstShader(null, "/assets/wizardry/shader/sparkle.frag"));
+		rawColor = ShaderHelper.INSTANCE.addShader(new Shader(null, "/assets/wizardry/shader/rawColor.frag"));
+		ShaderHelper.INSTANCE.initShaders();
 	}
 	
 	public static class BurstShader extends Shader {

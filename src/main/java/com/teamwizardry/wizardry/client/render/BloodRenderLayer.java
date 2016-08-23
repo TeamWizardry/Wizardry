@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.client.render;
 
 import com.teamwizardry.librarianlib.client.fx.shader.ShaderHelper;
-import com.teamwizardry.librarianlib.client.util.LibClientExtensionsKt;
+import com.teamwizardry.librarianlib.client.util.ClientUtilMethods;
 import com.teamwizardry.wizardry.api.bloods.IBloodType;
 import com.teamwizardry.wizardry.api.save.WizardryDataHandler;
 import com.teamwizardry.wizardry.client.fx.Shaders;
@@ -31,7 +31,7 @@ public class BloodRenderLayer implements LayerRenderer<AbstractClientPlayer> {
         IBloodType type = WizardryDataHandler.getBloodType(entity);
         if (type != null) {
             render.bindTexture(type.getBloodTexture(entity));
-            LibClientExtensionsKt.glColor(type.getBloodColor(entity));
+            ClientUtilMethods.glColor(type.getBloodColor(entity));
             setModelVisibilities(entity);
             GlStateManager.enableBlendProfile(GlStateManager.Profile.PLAYER_SKIN);
 
@@ -39,14 +39,14 @@ public class BloodRenderLayer implements LayerRenderer<AbstractClientPlayer> {
 
             if (glowing) {
                 GlStateManager.disableLighting();
-                ShaderHelper.Companion.useShader(Shaders.rawColor);
+                ShaderHelper.INSTANCE.useShader(Shaders.rawColor);
             }
 
             render.getMainModel().render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
 
             if (glowing) {
                 GlStateManager.enableLighting();
-                ShaderHelper.Companion.releaseShader();
+                ShaderHelper.INSTANCE.releaseShader();
             }
 
             GlStateManager.disableBlendProfile(GlStateManager.Profile.PLAYER_SKIN);
