@@ -1,9 +1,10 @@
 package com.teamwizardry.wizardry.client.fx;
 
-import com.teamwizardry.librarianlib.fx.shader.Shader;
-import com.teamwizardry.librarianlib.fx.shader.ShaderHelper;
-import com.teamwizardry.librarianlib.fx.shader.uniforms.FloatTypes;
-import com.teamwizardry.librarianlib.fx.shader.uniforms.IntTypes;
+
+import com.teamwizardry.librarianlib.client.fx.shader.Shader;
+import com.teamwizardry.librarianlib.client.fx.shader.ShaderHelper;
+import com.teamwizardry.librarianlib.client.fx.shader.uniforms.FloatTypes;
+import com.teamwizardry.librarianlib.client.fx.shader.uniforms.IntTypes;
 
 public class Shaders {
 
@@ -11,15 +12,15 @@ public class Shaders {
 	public static Shader rawColor;
 	
 	static {
-		burst = ShaderHelper.addShader(new BurstShader(null, "/assets/wizardry/shader/sparkle.frag"));
-		rawColor = ShaderHelper.addShader(new Shader(null, "/assets/wizardry/shader/rawColor.frag"));
-		ShaderHelper.initShaders();
+		burst = ShaderHelper.INSTANCE.addShader(new BurstShader(null, "/assets/wizardry/shader/sparkle.frag"));
+		rawColor = ShaderHelper.INSTANCE.addShader(new Shader(null, "/assets/wizardry/shader/rawColor.frag"));
+		ShaderHelper.INSTANCE.initShaders();
 	}
 	
 	public static class BurstShader extends Shader {
 		
-		public FloatTypes.Float fanSpeedMin, fanSpeedMax, fanSizeMin, fanSizeMax, fanJitterMin, fanJitterMax;
-		public IntTypes.Int fanBladesMin, fanBladesMax, fanCount;
+		public FloatTypes.FloatUniform fanSpeedMin, fanSpeedMax, fanSizeMin, fanSizeMax, fanJitterMin, fanJitterMax;
+		public IntTypes.IntUniform fanBladesMin, fanBladesMax, fanCount;
 
 	    public BurstShader(String vert, String frag) {
 	        super(vert, frag);

@@ -1,8 +1,8 @@
 package com.teamwizardry.wizardry.client.core;
 
-import com.teamwizardry.librarianlib.gui.GuiTickHandler;
-import com.teamwizardry.librarianlib.sprite.Sprite;
-import com.teamwizardry.librarianlib.sprite.Texture;
+import com.teamwizardry.librarianlib.client.core.ClientTickHandler;
+import com.teamwizardry.librarianlib.client.sprite.Sprite;
+import com.teamwizardry.librarianlib.client.sprite.Texture;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
@@ -42,12 +42,12 @@ public class HudEventHandler extends Gui {
 			int right = (width / 2) - (100 / 2) + 145;
 			int top = height - 20;
 			HUD_TEXTURE.bind();
-
-			GlStateManager.pushMatrix();
-			GlStateManager.color(1F, 1F, 1F);
-			emptyManaBar.draw(GuiTickHandler.ticks, right, top);
-			emptyBurnoutBar.draw(GuiTickHandler.ticks, right, top + 6);
-			GlStateManager.popMatrix();
+			
+            GlStateManager.pushMatrix();
+            GlStateManager.color(1F, 1F, 1F);
+            emptyManaBar.draw(ClientTickHandler.INSTANCE.getTicks(), right, top);
+            emptyBurnoutBar.draw(ClientTickHandler.INSTANCE.getTicks(), right, top + 6);
+            GlStateManager.popMatrix();
 
 			//WizardryData data = DataFactory.INSTANCE.getPlayerData(player)
 			IWizardryCapability data = WizardryCapabilityProvider.get(player);
@@ -58,12 +58,12 @@ public class HudEventHandler extends Gui {
 			GlStateManager.color(1F, 1F, 1F);
 			int visualManaLength = 0;
 			if (data.getMana() > 0) visualManaLength = (data.getMana() * 100 / data.getMaxMana()) % 101;
-			fullManaBar.drawClipped(GuiTickHandler.ticks, right, top, visualManaLength, 5);
+			fullManaBar.drawClipped(ClientTickHandler.INSTANCE.getTicks(), right, top, visualManaLength, 5);
 
 			GlStateManager.color(1F, 1F, 1F);
 			int visualBurnoutLength = 0;
 			if (data.getBurnout() > 0) visualBurnoutLength = (data.getBurnout() * 100 / data.getMaxBurnout()) % 101;
-			fullBurnoutBar.drawClipped(GuiTickHandler.ticks, right, top + 6, visualBurnoutLength, 5);
+			fullBurnoutBar.drawClipped(ClientTickHandler.INSTANCE.getTicks(), right, top + 6, visualBurnoutLength, 5);
 			GlStateManager.popMatrix();
 		}
 	}

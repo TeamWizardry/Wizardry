@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.common;
 
-import com.teamwizardry.librarianlib.book.Book;
+import com.teamwizardry.librarianlib.client.book.Book;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Config;
 import com.teamwizardry.wizardry.api.module.ModuleRegistry;

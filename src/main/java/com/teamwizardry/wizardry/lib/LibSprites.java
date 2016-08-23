@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.lib;
 
-import com.teamwizardry.librarianlib.sprite.Sprite;
-import com.teamwizardry.librarianlib.sprite.Texture;
+import com.teamwizardry.librarianlib.client.sprite.Sprite;
+import com.teamwizardry.librarianlib.client.sprite.Texture;
 import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.util.ResourceLocation;
 

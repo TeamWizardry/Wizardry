@@ -1,11 +1,12 @@
 package com.teamwizardry.wizardry.client.fx.particle.effect;
 
-import com.teamwizardry.librarianlib.util.Color;
 import com.teamwizardry.wizardry.api.fx.IEffect;
 import com.teamwizardry.wizardry.client.fx.GlitterFactory;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+
+import java.awt.*;
 
 /**
  * Created by saad4 on 23/7/2016.
@@ -22,10 +23,10 @@ public class EffectFire implements IEffect {
     @Override
     public void spawn(World world, Vec3d pos) {
         for (int i = 0; i < 5 + power / 100; i++) {
-            Color yellow = Color.rgb(0xFFFF00);
-            Color orange = Color.rgb(0xFF8C00);
-            Color orangeRed = Color.rgb(0xFF4500);
-            Color gray = Color.rgb(0x696969);
+            Color yellow = new Color(0xFFFF00);
+            Color orange = new Color(0xFF8C00);
+            Color orangeRed = new Color(0xFF4500);
+            Color gray = new Color(0x696969);
 
             SparkleFX center = GlitterFactory.getInstance().createSparkle(world, pos, new Vec3d(0.01, 0.01, 0.01), 5 + power / 30);
             center.setColor(Color.WHITE);

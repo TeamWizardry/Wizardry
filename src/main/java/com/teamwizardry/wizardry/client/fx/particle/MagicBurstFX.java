@@ -1,5 +1,9 @@
 package com.teamwizardry.wizardry.client.fx.particle;
 
+import com.teamwizardry.librarianlib.client.fx.particle.ParticleRenderQueue;
+import com.teamwizardry.librarianlib.client.fx.particle.QueuedParticle;
+import com.teamwizardry.librarianlib.client.fx.shader.ShaderHelper;
+import kotlin.Unit;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
@@ -8,12 +12,9 @@ import net.minecraft.world.World;
 
 import org.lwjgl.opengl.GL11;
 
-import com.teamwizardry.librarianlib.fx.particle.ParticleRenderQueue;
-import com.teamwizardry.librarianlib.fx.particle.QueuedParticle;
-import com.teamwizardry.librarianlib.fx.shader.ShaderHelper;
 import com.teamwizardry.wizardry.client.fx.Shaders;
 
-public class MagicBurstFX extends QueuedParticle {
+public class MagicBurstFX extends QueuedParticle<MagicBurstFX> {
 
     private static ParticleRenderQueue<MagicBurstFX> QUEUE = new ParticleRenderQueue<MagicBurstFX>(true) {
 
@@ -24,23 +25,22 @@ public class MagicBurstFX extends QueuedParticle {
 
         @Override
         public void renderParticles(Tessellator tessellator) {
-            if (renderQueue.isEmpty())
+            if (getRenderQueue().isEmpty())
                 return;
             GlStateManager.disableTexture2D();
             GlStateManager.color(1, 1, 1, 1);
             GlStateManager.enableBlend();
             GlStateManager.shadeModel(GL11.GL_SMOOTH);
-            ShaderHelper.useShader(Shaders.burst, shader -> {
-            });
+            ShaderHelper.INSTANCE.useShader(Shaders.burst, shader -> {});
             tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
-            for (MagicBurstFX fx : renderQueue) {
+            for (MagicBurstFX fx : getRenderQueue()) {
                 fx.render(tessellator.getBuffer());
             }
             tessellator.draw();
-            ShaderHelper.releaseShader();
+            ShaderHelper.INSTANCE.releaseShader();
             GlStateManager.color(1, 1, 1, 1);
             GlStateManager.enableTexture2D();
-            renderQueue.clear();
+            getRenderQueue().clear();
         }
     };
     
@@ -75,17 +75,17 @@ public class MagicBurstFX extends QueuedParticle {
             maxV = this.particleTexture.getMaxV();
         }
 
-        float posX = (float) (this.prevPosX + (this.posX - this.prevPosX) * (double) partialTicks - interpPosX);
-        float posY = (float) (this.prevPosY + (this.posY - this.prevPosY) * (double) partialTicks - interpPosY);
-        float posZ = (float) (this.prevPosZ + (this.posZ - this.prevPosZ) * (double) partialTicks - interpPosZ);
-        int light = this.getBrightnessForRender(partialTicks);
+        float posX = (float) (this.prevPosX + (this.posX - this.prevPosX) * (double) getPartialTicks() - interpPosX);
+        float posY = (float) (this.prevPosY + (this.posY - this.prevPosY) * (double) getPartialTicks() - interpPosY);
+        float posZ = (float) (this.prevPosZ + (this.posZ - this.prevPosZ) * (double) getPartialTicks() - interpPosZ);
+        int light = this.getBrightnessForRender(getPartialTicks());
         int lightU = light >> 16 & 65535;
         int lightV = light & 65535;
 
-        buffer.pos((double) (posX - rotationX * size - rotationXY * size), (double) (posY - rotationZ * size), (double) (posZ - rotationYZ * size - rotationXZ * size)).tex((double) maxU, (double) maxV).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(lightU, lightV).endVertex();
-        buffer.pos((double) (posX - rotationX * size + rotationXY * size), (double) (posY + rotationZ * size), (double) (posZ - rotationYZ * size + rotationXZ * size)).tex((double) maxU, (double) minV).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(lightU, lightV).endVertex();
-        buffer.pos((double) (posX + rotationX * size + rotationXY * size), (double) (posY + rotationZ * size), (double) (posZ + rotationYZ * size + rotationXZ * size)).tex((double) minU, (double) minV).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(lightU, lightV).endVertex();
-        buffer.pos((double) (posX + rotationX * size - rotationXY * size), (double) (posY - rotationZ * size), (double) (posZ + rotationYZ * size - rotationXZ * size)).tex((double) minU, (double) maxV).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(lightU, lightV).endVertex();
+        buffer.pos((double) (posX - getRotationX() * size - getRotationXY() * size), (double) (posY - getRotationZ() * size), (double) (posZ - getRotationYZ() * size - getRotationXZ() * size)).tex((double) maxU, (double) maxV).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(lightU, lightV).endVertex();
+        buffer.pos((double) (posX - getRotationX() * size + getRotationXY() * size), (double) (posY + getRotationZ() * size), (double) (posZ - getRotationYZ() * size + getRotationXZ() * size)).tex((double) maxU, (double) minV).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(lightU, lightV).endVertex();
+        buffer.pos((double) (posX + getRotationX() * size + getRotationXY() * size), (double) (posY + getRotationZ() * size), (double) (posZ + getRotationYZ() * size + getRotationXZ() * size)).tex((double) minU, (double) minV).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(lightU, lightV).endVertex();
+        buffer.pos((double) (posX + getRotationX() * size - getRotationXY() * size), (double) (posY - getRotationZ() * size), (double) (posZ + getRotationYZ() * size - getRotationXZ() * size)).tex((double) minU, (double) maxV).color(this.particleRed, this.particleGreen, this.particleBlue, this.particleAlpha).lightmap(lightU, lightV).endVertex();
     }
 
 }

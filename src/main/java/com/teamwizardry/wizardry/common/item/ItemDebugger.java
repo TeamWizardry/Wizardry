@@ -1,22 +1,37 @@
 package com.teamwizardry.wizardry.common.item;
 
+import com.teamwizardry.librarianlib.client.fx.particle.ParticleBase;
+import com.teamwizardry.librarianlib.client.fx.particle.ParticleBuilder;
+import com.teamwizardry.librarianlib.client.fx.particle.ParticleSpawner;
+import com.teamwizardry.librarianlib.client.fx.particle.functions.InterpColorHSV;
+import com.teamwizardry.librarianlib.client.fx.particle.functions.RenderFunctionBasic;
+import com.teamwizardry.librarianlib.common.util.math.interpolate.InterpFunction;
+import com.teamwizardry.librarianlib.common.util.math.interpolate.InterpUnion;
+import com.teamwizardry.librarianlib.common.util.math.interpolate.InterpUnionImpl;
+import com.teamwizardry.librarianlib.common.util.math.interpolate.StaticInterp;
+import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpBezier3D;
+import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpHelix;
+import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpLine;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.GlowingOverlayHelper;
 import com.teamwizardry.wizardry.api.item.IGlowOverlayable;
-import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.awt.*;
 
 public class ItemDebugger extends Item implements IGlowOverlayable {
 
@@ -42,29 +57,93 @@ public class ItemDebugger extends Item implements IGlowOverlayable {
 
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
-		if (worldIn.isRemote) return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
-		/*IWizardryCapability data = WizardryCapabilityProvider.get(playerIn);
-		if (!worldIn.isRemote) {
-			if (playerIn.isSneaking())
-				data.setBloodType(BloodRegistry.HUMANBLOOD, playerIn);
-			else data.setBloodType(BloodRegistry.PYROBLOOD, playerIn);
-			return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
+		if(worldIn.isRemote) {
+			
+			// create a builder
+			ParticleBuilder builder = new ParticleBuilder(30); // world, lifetime
+			
+			builder.setPosition(new InterpBezier3D(
+				new Vec3d(0,0,0), new Vec3d(3,3,3),
+				new Vec3d(1,-1,1), new Vec3d(2,4,2)
+			)); // a basic bezier curve
+			
+			InterpFunction<Color> color = new InterpColorHSV(Color.RED, 255, 360*3);
+			// going from red, ending at 255 (max) transparency, and doing 3 full rotations of hue
+			
+			builder.setRender(new RenderFunctionBasic( // basic particle rendering
+				new ResourceLocation(Wizardry.MODID, "particles/sparkle")
+			));
+			
+			ParticleSpawner.spawn(builder, worldIn,
+				new InterpBezier3D( // the curve to spawn the particles along
+					new Vec3d(0, 60, 0), new Vec3d(10, 64, 10)
+				),
+				20, // number of particles, reduced based on the current particle setting
+				20, // [optional] the travel time. Allows you to, say, have a particle line move like a mana burst
+				(i, build) -> {
+					// [optional] a lambda that's called each time a particle is created
+					// (not when they're spawned, the particles are prebuilt)
+					
+					builder.setColor(new StaticInterp<>(color.get(i)));
+					// get the color for the point `i` and use that as the static color for this particle
+				}
+			);
+			
+			
+			
+			/*
+			// create a builder
+			ParticleBuilder builder = new ParticleBuilder(120); // world, lifetime
+			
+			// create a union
+			InterpUnion<Vec3d> union = new InterpUnion<>();
+			
+			// add a line, returns func.get(1)
+			Vec3d end = union.add(new InterpLine(
+				new Vec3d(0, 0, 0), new Vec3d(0, 3, 3)
+			), 2); // a weight of 2 (func takes 2/totalWeight of the time)
+			
+			union.with(new InterpLine( // add another line
+				end, new Vec3d(0, 3, 6)
+			), 1).with(new InterpBezier3D( // by using `with` the calls can be chained
+				new Vec3d(0, 3, 6), new Vec3d(0, 0, 0), new Vec3d(0, 6, 3), new Vec3d(0, 3, 0)
+			), 4); // a weight
+			
+			InterpUnionImpl<Vec3d> impl = union.build();
+			builder.setPosition(impl);
+			
+			builder.setColor(new InterpColorHSV(Color.RED, 255, 360*3));
+			// going from red, ending at 255 (max) transparency, and doing 3 full rotations of hue
+			
+			builder.setRender(new RenderFunctionBasic( // basic particle rendering
+				new ResourceLocation(Wizardry.MODID, "particles/sparkle")
+			));
+			
+			ParticleBase p = builder.build(worldIn, new Vec3d(0, 57, 0)); // create an actual particle
+			Minecraft.getMinecraft().effectRenderer.addEffect(p); // spawn it
+			*/
 		}
-		if (playerIn.isSneaking())
-			if (GuiScreen.isCtrlKeyDown()) data.setBurnout(50, playerIn);
-			else data.setBurnout(0, playerIn);
-
-		else if (GuiScreen.isCtrlKeyDown()) data.setMana(50, playerIn);
-		else data.setMana(0, playerIn);
-
-		playerIn.addChatComponentMessage(new TextComponentString(data.getMana() + "/" + data.getMaxMana()));*/
-
-		//TeleportUtil.teleportToDimension(playerIn, 100, 0, 100, 0);
-		//EntityHallowedSpirit entity = new EntityHallowedSpirit(worldIn);
-		EntityFairy entity = new EntityFairy(worldIn);
-		entity.setPosition(playerIn.posX, playerIn.posY + 1, playerIn.posZ);
-		worldIn.spawnEntityInWorld(entity);
-
+//		if (!worldIn.isRemote) {
+//			if (playerIn.isSneaking())
+//				WizardryDataHandler.setBloodType(playerIn, null);
+//			else {
+//				Set<String> values = BloodRegistry.getRegistry().values();
+//				String i = values.toArray(new String[values.size()])[worldIn.rand.nextInt(values.size())];
+//				WizardryDataHandler.setBloodType(playerIn, BloodRegistry.getBloodTypeById(i));
+//			}
+//			//return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
+//		}
+//		if (playerIn.isSneaking())
+//			if (GuiScreen.isCtrlKeyDown())
+//				WizardryDataHandler.setBurnoutAmount(playerIn, 50);
+//			else
+//				WizardryDataHandler.setBurnoutAmount(playerIn, 0);
+//		else if (GuiScreen.isCtrlKeyDown()) WizardryDataHandler.setMana(playerIn, 50);
+//		else WizardryDataHandler.setMana(playerIn, 0);
+//
+//		//System.out.println(ModuleRegistry.getInstance().getModuleId(ModuleRegistry.getInstance().getModuleById(0)));
+//		System.out.println(ModuleRegistry.getInstance().getModuleId(ModuleRegistry.getInstance().getModuleById(1)));
+//		TeleportUtil.INSTANCE.teleportToDimension(playerIn, 100, 0, 100, 0);
 		return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
 	}
 

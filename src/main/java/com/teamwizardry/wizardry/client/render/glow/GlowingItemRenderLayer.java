@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.client.render.glow;
 
-import com.teamwizardry.librarianlib.fx.shader.ShaderHelper;
+import com.teamwizardry.librarianlib.client.fx.shader.ShaderHelper;
 import com.teamwizardry.wizardry.api.item.GlowingOverlayHelper;
 import com.teamwizardry.wizardry.api.item.IGlowOverlayable;
 import com.teamwizardry.wizardry.client.fx.Shaders;
@@ -43,14 +43,14 @@ public class GlowingItemRenderLayer implements LayerRenderer<EntityLivingBase> {
                 IGlowOverlayable item = (IGlowOverlayable) right.getItem();
                 if (item.useOverlay(right)) {
                     if (item.useShader(right))
-                        ShaderHelper.useShader(Shaders.rawColor);
+                        ShaderHelper.INSTANCE.useShader(Shaders.rawColor);
                     if (item.disableLighting(right))
                         GlStateManager.disableLighting();
 
                     this.renderHeldItem(entity, right, ItemCameraTransforms.TransformType.THIRD_PERSON_RIGHT_HAND, EnumHandSide.RIGHT);
 
                     if (item.useShader(right))
-                        ShaderHelper.releaseShader();
+                        ShaderHelper.INSTANCE.releaseShader();
                     if (item.disableLighting(right))
                         GlStateManager.enableLighting();
                 }
@@ -60,14 +60,14 @@ public class GlowingItemRenderLayer implements LayerRenderer<EntityLivingBase> {
                 IGlowOverlayable item = (IGlowOverlayable) left.getItem();
                 if (item.useOverlay(left)) {
                     if (item.useShader(left))
-                        ShaderHelper.useShader(Shaders.rawColor);
+                        ShaderHelper.INSTANCE.useShader(Shaders.rawColor);
                     if (item.disableLighting(left))
                         GlStateManager.disableLighting();
 
                     this.renderHeldItem(entity, left, ItemCameraTransforms.TransformType.THIRD_PERSON_LEFT_HAND, EnumHandSide.LEFT);
 
                     if (item.useShader(left))
-                        ShaderHelper.releaseShader();
+                        ShaderHelper.INSTANCE.releaseShader();
                     if (item.disableLighting(left))
                         GlStateManager.enableLighting();
                 }

@@ -1,8 +1,7 @@
 package com.teamwizardry.wizardry.api.module;
 
-import com.teamwizardry.librarianlib.sprite.Sprite;
-import com.teamwizardry.librarianlib.sprite.Texture;
-import com.teamwizardry.librarianlib.util.Color;
+import com.teamwizardry.librarianlib.client.sprite.Sprite;
+import com.teamwizardry.librarianlib.client.sprite.Texture;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.module.attribute.Attribute;
 import com.teamwizardry.wizardry.api.module.attribute.AttributeMap;
@@ -17,6 +16,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 

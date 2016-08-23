@@ -5,6 +5,13 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.WeakHashMap;
 
+import com.teamwizardry.librarianlib.bloat.ragdoll.Sphere;
+import com.teamwizardry.librarianlib.bloat.ragdoll.cloth.Cloth;
+import com.teamwizardry.librarianlib.bloat.ragdoll.cloth.Link3D;
+import com.teamwizardry.librarianlib.bloat.ragdoll.cloth.PointMass3D;
+import com.teamwizardry.librarianlib.client.core.ClientTickHandler;
+import com.teamwizardry.librarianlib.common.util.math.Matrix4;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
@@ -32,13 +39,6 @@ import org.lwjgl.opengl.GL11;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.teamwizardry.librarianlib.gui.GuiTickHandler;
-import com.teamwizardry.librarianlib.math.Box;
-import com.teamwizardry.librarianlib.math.Matrix4;
-import com.teamwizardry.librarianlib.math.Sphere;
-import com.teamwizardry.librarianlib.ragdoll.cloth.Cloth;
-import com.teamwizardry.librarianlib.ragdoll.cloth.Link3D;
-import com.teamwizardry.librarianlib.ragdoll.cloth.PointMass3D;
 import com.teamwizardry.wizardry.Wizardry;
 
 public class CapeHandler {
@@ -47,7 +47,7 @@ public class CapeHandler {
 	public static Vec3d[] basePoints;
 	
 	WeakHashMap<EntityLivingBase, Cloth> cloths = new WeakHashMap<>();
-	WeakHashMap<EntityLivingBase, List<Box>> models = new WeakHashMap<>();
+//	WeakHashMap<EntityLivingBase, List<Box>> models = new WeakHashMap<>();
 	
 	private CapeHandler() {
 		MinecraftForge.EVENT_BUS.register(this);
@@ -86,7 +86,7 @@ public class CapeHandler {
 				continue;
 			}
 			
-			if(e.getValue().masses != null && e.getValue().masses[0] != null) {
+			if(e.getValue().getMasses() != null && e.getValue().getMasses()[0] != null) {
 				
 				Vec3d[] shoulderPoints = new Vec3d[basePoints.length];
 				
@@ -101,9 +101,9 @@ public class CapeHandler {
 					shoulderPoints[i] = matrix.apply(basePoints[i]);
 				}
 				
-				for (int i = 0; i < e.getValue().masses[0].length && i < shoulderPoints.length; i++) {
-					e.getValue().masses[0][i].origPos = e.getValue().masses[0][i].pos;
-					e.getValue().masses[0][i].pos = shoulderPoints[i];
+				for (int i = 0; i < e.getValue().getMasses()[0].length && i < shoulderPoints.length; i++) {
+					e.getValue().getMasses()[0][i].setOrigPos(e.getValue().getMasses()[0][i].getPos());
+					e.getValue().getMasses()[0][i].setPos(shoulderPoints[i]);
 				}
 				
 				List<Sphere> spheres = new ArrayList<>();
@@ -145,108 +145,108 @@ public class CapeHandler {
 		
 		for (EntityLivingBase entity : keysToRemove) {
 			cloths.remove(entity);
-			models.remove(entity);
+//			models.remove(entity);
 		}
 	}
 	
 	List<ModelRenderer> rendererStack = new ArrayList<>();
 	
-	public List<Box> getBoxes(Vec3d modelPos, ModelBase model, double yaw) {
-		if(!(model instanceof ModelBiped))
-			return ImmutableList.of();
-		List<Box> boxes = new ArrayList<>();
-		
-		rendererStack.clear();
-		
-		ModelBiped biped = (ModelBiped) model;
-		
-		Vec3d scale = new Vec3d(-1, 1, 1), transform = new Vec3d(0, -22.5, 0), rotate = new Vec3d(0, Math.toRadians(yaw), 0);
-		
-		processModel(modelPos, biped.bipedHead, boxes, scale, transform, rotate);
-		
-		scale = new Vec3d(-1, 1, 1);
-		transform = new Vec3d(0, -22.5, 0);
-		Vec3d armTransform = new Vec3d(2, 0, 0);
-		
-		processModel(modelPos, biped.bipedBody, boxes, scale, transform, rotate);
-		processModel(modelPos, biped.bipedLeftArm, boxes, scale, transform.add(armTransform), rotate);
-		processModel(modelPos, biped.bipedRightArm, boxes, scale, transform.subtract(armTransform), rotate);
-		processModel(modelPos, biped.bipedLeftLeg, boxes, scale, transform, rotate);
-		processModel(modelPos, biped.bipedRightLeg, boxes, scale, transform, rotate);
-		
-		return boxes;
-	}
+//	public List<Box> getBoxes(Vec3d modelPos, ModelBase model, double yaw) {
+//		if(!(model instanceof ModelBiped))
+//			return ImmutableList.of();
+//		List<Box> boxes = new ArrayList<>();
+//
+//		rendererStack.clear();
+//
+//		ModelBiped biped = (ModelBiped) model;
+//
+//		Vec3d scale = new Vec3d(-1, 1, 1), transform = new Vec3d(0, -22.5, 0), rotate = new Vec3d(0, Math.toRadians(yaw), 0);
+//
+//		processModel(modelPos, biped.bipedHead, boxes, scale, transform, rotate);
+//
+//		scale = new Vec3d(-1, 1, 1);
+//		transform = new Vec3d(0, -22.5, 0);
+//		Vec3d armTransform = new Vec3d(2, 0, 0);
+//
+//		processModel(modelPos, biped.bipedBody, boxes, scale, transform, rotate);
+//		processModel(modelPos, biped.bipedLeftArm, boxes, scale, transform.add(armTransform), rotate);
+//		processModel(modelPos, biped.bipedRightArm, boxes, scale, transform.subtract(armTransform), rotate);
+//		processModel(modelPos, biped.bipedLeftLeg, boxes, scale, transform, rotate);
+//		processModel(modelPos, biped.bipedRightLeg, boxes, scale, transform, rotate);
+//
+//		return boxes;
+//	}
 	
-	public void processModel(Vec3d modelPos, ModelRenderer renderer, List<Box> boxes, Vec3d scale, Vec3d transform, Vec3d rotate) {
-		rendererStack.add(renderer);
-		Matrix4 matrix = new Matrix4(), inverse = new Matrix4();
-		
-		for (ModelRenderer render : rendererStack) {
-			matrix.translate(new Vec3d(
-					render.offsetX,
-					render.offsetY,
-					render.offsetZ
-				));
-			matrix.rotate(-render.rotateAngleX, new Vec3d(1, 0, 0));
-			matrix.rotate(-render.rotateAngleY, new Vec3d(0, 1, 0));
-			matrix.rotate(-render.rotateAngleZ, new Vec3d(0, 0, 1));
-			matrix.translate(new Vec3d(
-					render.rotationPointX,
-					render.rotationPointY,
-					render.rotationPointZ
-				));
-		}
-		
-		matrix.rotate(-rotate.zCoord, new Vec3d(0, 0, 1));
-		matrix.rotate(-rotate.yCoord, new Vec3d(0, 1, 0));
-		matrix.rotate(-rotate.xCoord, new Vec3d(1, 0, 0));
-		matrix.translate(transform);
-		matrix.scale(new Vec3d(scale.xCoord, scale.yCoord, scale.zCoord));
-		matrix.scale(new Vec3d(16.0, 16.0, 16.0));
-		matrix.translate(modelPos.scale(-1));
-		
-		inverse.translate(modelPos);
-		inverse.scale(new Vec3d(1.0/16.0, 1.0/16.0, 1.0/16.0));
-		inverse.scale(new Vec3d(1/scale.xCoord, 1/scale.yCoord, 1/scale.zCoord));
-		inverse.translate(transform.scale(-1));
-		inverse.rotate(rotate.xCoord, new Vec3d(1, 0, 0));
-		inverse.rotate(rotate.yCoord, new Vec3d(0, 1, 0));
-		inverse.rotate(rotate.zCoord, new Vec3d(0, 0, 1));
-		
-		for (ModelRenderer render : Lists.reverse(rendererStack)) {
-			inverse.translate(new Vec3d(
-					-(render.rotationPointX),
-					-(render.rotationPointY),
-					-(render.rotationPointZ)
-				));
-			inverse.rotate(render.rotateAngleZ, new Vec3d(0, 0, 1));
-			inverse.rotate(render.rotateAngleY, new Vec3d(0, 1, 0));
-			inverse.rotate(render.rotateAngleX, new Vec3d(1, 0, 0));
-			inverse.translate(new Vec3d(
-					-(render.offsetX),
-					-(render.offsetY),
-					-(render.offsetZ)
-				));
-		}
-		
-		
-		addBoxes(renderer, matrix, inverse, boxes);
-		if(renderer.childModels != null) {
-			for (ModelRenderer child : renderer.childModels) {
-				processModel(modelPos, child, boxes, scale, transform, rotate);
-			}
-		}
-		
-		rendererStack.remove(rendererStack.size()-1);
-	}
-	
-	public void addBoxes(ModelRenderer renderer, Matrix4 matrix, Matrix4 inverse, List<Box> boxes) {
-		if(renderer.cubeList != null) {
-			for (ModelBox box : renderer.cubeList) {
-				boxes.add( new Box(matrix, inverse, box.posX1, -box.posY2, box.posZ1, box.posX2, -box.posY1, box.posZ2) );
-			}
-		}
-	}
+//	public void processModel(Vec3d modelPos, ModelRenderer renderer, List<Box> boxes, Vec3d scale, Vec3d transform, Vec3d rotate) {
+//		rendererStack.add(renderer);
+//		Matrix4 matrix = new Matrix4(), inverse = new Matrix4();
+//
+//		for (ModelRenderer render : rendererStack) {
+//			matrix.translate(new Vec3d(
+//					render.offsetX,
+//					render.offsetY,
+//					render.offsetZ
+//				));
+//			matrix.rotate(-render.rotateAngleX, new Vec3d(1, 0, 0));
+//			matrix.rotate(-render.rotateAngleY, new Vec3d(0, 1, 0));
+//			matrix.rotate(-render.rotateAngleZ, new Vec3d(0, 0, 1));
+//			matrix.translate(new Vec3d(
+//					render.rotationPointX,
+//					render.rotationPointY,
+//					render.rotationPointZ
+//				));
+//		}
+//
+//		matrix.rotate(-rotate.zCoord, new Vec3d(0, 0, 1));
+//		matrix.rotate(-rotate.yCoord, new Vec3d(0, 1, 0));
+//		matrix.rotate(-rotate.xCoord, new Vec3d(1, 0, 0));
+//		matrix.translate(transform);
+//		matrix.scale(new Vec3d(scale.xCoord, scale.yCoord, scale.zCoord));
+//		matrix.scale(new Vec3d(16.0, 16.0, 16.0));
+//		matrix.translate(modelPos.scale(-1));
+//
+//		inverse.translate(modelPos);
+//		inverse.scale(new Vec3d(1.0/16.0, 1.0/16.0, 1.0/16.0));
+//		inverse.scale(new Vec3d(1/scale.xCoord, 1/scale.yCoord, 1/scale.zCoord));
+//		inverse.translate(transform.scale(-1));
+//		inverse.rotate(rotate.xCoord, new Vec3d(1, 0, 0));
+//		inverse.rotate(rotate.yCoord, new Vec3d(0, 1, 0));
+//		inverse.rotate(rotate.zCoord, new Vec3d(0, 0, 1));
+//
+//		for (ModelRenderer render : Lists.reverse(rendererStack)) {
+//			inverse.translate(new Vec3d(
+//					-(render.rotationPointX),
+//					-(render.rotationPointY),
+//					-(render.rotationPointZ)
+//				));
+//			inverse.rotate(render.rotateAngleZ, new Vec3d(0, 0, 1));
+//			inverse.rotate(render.rotateAngleY, new Vec3d(0, 1, 0));
+//			inverse.rotate(render.rotateAngleX, new Vec3d(1, 0, 0));
+//			inverse.translate(new Vec3d(
+//					-(render.offsetX),
+//					-(render.offsetY),
+//					-(render.offsetZ)
+//				));
+//		}
+//
+//
+//		addBoxes(renderer, matrix, inverse, boxes);
+//		if(renderer.childModels != null) {
+//			for (ModelRenderer child : renderer.childModels) {
+//				processModel(modelPos, child, boxes, scale, transform, rotate);
+//			}
+//		}
+//
+//		rendererStack.remove(rendererStack.size()-1);
+//	}
+//
+//	public void addBoxes(ModelRenderer renderer, Matrix4 matrix, Matrix4 inverse, List<Box> boxes) {
+//		if(renderer.cubeList != null) {
+//			for (ModelBox box : renderer.cubeList) {
+//				boxes.add( new Box(matrix, inverse, new AxisAlignedBB(box.posX1, -box.posY2, box.posZ1, box.posX2, -box.posY1, box.posZ2)) );
+//			}
+//		}
+//	}
 	
 	@SubscribeEvent
 	public void damage(ItemTossEvent event) {
@@ -261,9 +261,9 @@ public class CapeHandler {
 		if(!( event.getEntity() instanceof EntityVillager || event.getEntity() instanceof EntityPlayer))
 			return;
 		
-		float partialTicks = GuiTickHandler.partialTicks;
+		float partialTicks = ClientTickHandler.INSTANCE.getPartialTicks();
 		
-		models.put(event.getEntity(), ImmutableList.of());//getBoxes(event.getEntity().getPositionVector(), event.getRenderer().getMainModel(), event.getEntity().renderYawOffset));
+//		models.put(event.getEntity(), ImmutableList.of());//getBoxes(event.getEntity().getPositionVector(), event.getRenderer().getMainModel(), event.getEntity().renderYawOffset));
 		
 		if(!cloths.containsKey(event.getEntity())) {
 			Vec3d[] shoulderPoints = new Vec3d[basePoints.length];
@@ -307,7 +307,7 @@ public class CapeHandler {
 		GlStateManager.color(1, 1, 1, 1f);
 		
 		vb.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
-		for (Link3D link : c.links) {
+		for (Link3D link : c.getLinks()) {
 //			vecPos(vb, link.a.origPos, link.a.pos, partialTicks).endVertex();
 //			vecPos(vb, link.b.origPos, link.b.pos, partialTicks).endVertex();
 		}
@@ -318,24 +318,24 @@ public class CapeHandler {
 		
 		vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 		
-		for (int x = 0; x < c.masses.length-1; x++) {
-            for (int y = 0; y < c.masses[x].length-1; y++) {
-            	float minU = (float)y/(float)(c.masses[x].length-1);
-            	float minV = (float)x/(float)(c.masses.length-1);
-            	float maxU = (float)(y+1)/(float)(c.masses[x].length-1);
-            	float maxV = (float)(x+1)/(float)(c.masses.length-1);
+		for (int x = 0; x < c.getMasses().length-1; x++) {
+            for (int y = 0; y < c.getMasses()[x].length-1; y++) {
+            	float minU = (float)y/(float)( c.getMasses()[x].length-1);
+            	float minV = (float)x/(float)( c.getMasses().length-1);
+            	float maxU = (float)(y+1)/(float)( c.getMasses()[x].length-1);
+            	float maxV = (float)(x+1)/(float)( c.getMasses().length-1);
             	
-            	PointMass3D mass = c.masses[x][y];
-            	vecPos(vb, mass.origPos, mass.pos, partialTicks).tex(minU, minV).endVertex();
+            	PointMass3D mass = c.getMasses()[x][y];
+            	vecPos(vb, mass.getOrigPos(), mass.getPos(), partialTicks).tex(minU, minV).endVertex();
             	
-            	mass = c.masses[x+1][y];
-            	vecPos(vb, mass.origPos, mass.pos, partialTicks).tex(minU, maxV).endVertex();
+            	mass = c.getMasses()[x+1][y];
+            	vecPos(vb, mass.getOrigPos(), mass.getPos(), partialTicks).tex(minU, maxV).endVertex();
             	
-            	mass = c.masses[x+1][y+1];
-            	vecPos(vb, mass.origPos, mass.pos, partialTicks).tex(maxU, maxV).endVertex();
+            	mass = c.getMasses()[x+1][y+1];
+            	vecPos(vb, mass.getOrigPos(), mass.getPos(), partialTicks).tex(maxU, maxV).endVertex();
             	
-            	mass = c.masses[x][y+1];
-            	vecPos(vb, mass.origPos, mass.pos, partialTicks).tex(maxU, minV).endVertex();
+            	mass = c.getMasses()[x][y+1];
+            	vecPos(vb, mass.getOrigPos(), mass.getPos(), partialTicks).tex(maxU, minV).endVertex();
             }
 		}
 		tess.draw();

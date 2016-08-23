@@ -1,8 +1,7 @@
 package com.teamwizardry.wizardry.client.gui.worktable;
 
-import com.teamwizardry.librarianlib.gui.EnumMouseButton;
-import com.teamwizardry.librarianlib.gui.GuiComponent;
-import com.teamwizardry.librarianlib.util.Utils;
+import com.teamwizardry.librarianlib.client.gui.EnumMouseButton;
+import com.teamwizardry.librarianlib.client.gui.GuiComponent;
 import com.teamwizardry.wizardry.api.module.Module;
 import net.minecraft.util.text.TextFormatting;
 
@@ -14,26 +13,25 @@ public class SidebarItem extends ModuleTemplate {
 	public SidebarItem(int posX, int posY, Module constructor, GuiComponent<?> paper) {
 		super(posX, posY, constructor, paper);
 		
-		result.mouseDown.add( (c, pos, button) -> {
-			if(button == EnumMouseButton.LEFT && c.mouseOverThisFrame) {
-				ModuleTemplatePaper m = new ModuleTemplatePaper(pos.xi, pos.yi, constructor, paper);
-				m.drag.mouseDown = true;
-				m.drag.clickPos = pos.sub(6, 6);
+		getResult().BUS.hook(GuiComponent.MouseDownEvent.class, (event) -> {
+			if(event.getButton() == EnumMouseButton.LEFT && event.getComponent().getMouseOver()) {
+				ModuleTemplatePaper m = new ModuleTemplatePaper(event.getMousePos().getXi(), event.getMousePos().getYi(), constructor, paper);
+				m.drag.setMouseDown(event.getButton());
+				m.drag.setClickPos(event.getMousePos().sub(6, 6));
 				paper.add(m.get());
-				return true;
+				event.cancel();
 			}
-			return false;
 		});
-		result.postDraw.add( (c, pos, partialTicks) -> {
-			if(c.mouseOverThisFrame) {
+		getResult().BUS.hook(GuiComponent.PostDrawEvent.class, (event) -> {
+			if(event.getComponent().getMouseOver()) {
 				List<String> txt = new ArrayList<>();
 	            txt.add(TextFormatting.GOLD + module.getDisplayName());
-	            txt.addAll(Utils.padString(module.getDescription(), 30));
-	            c.setTooltip(txt);
+//	            txt.addAll(Utils.INSTANCE.padString(module.getDescription(), 30));
+	            event.getComponent().setTooltip(txt);
 			}
 		});
 		
-		result.addTag("sidebarItem");
+		getResult().addTag("sidebarItem");
 	}
 	
 	

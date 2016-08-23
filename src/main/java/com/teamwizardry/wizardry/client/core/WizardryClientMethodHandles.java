@@ -42,7 +42,7 @@ public class WizardryClientMethodHandles {
             stackOffGetter = publicLookup().unreflectGetter(f);
 
         } catch (Throwable t) {
-            LibrarianLog.I.error("Couldn't initialize methodhandles! Things will be broken!");
+            LibrarianLog.INSTANCE.error("Couldn't initialize methodhandles! Things will be broken!");
             t.printStackTrace();
             throw Throwables.propagate(t);
         }
@@ -99,7 +99,7 @@ public class WizardryClientMethodHandles {
     }
 
     private static RuntimeException propagate(Throwable t) {
-        LibrarianLog.I.error("Methodhandle failed!");
+        LibrarianLog.INSTANCE.error("Methodhandle failed!");
         t.printStackTrace();
         return Throwables.propagate(t);
     }

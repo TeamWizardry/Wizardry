@@ -1,15 +1,15 @@
 package com.teamwizardry.wizardry.client.gui.worktable;
 
-import com.teamwizardry.librarianlib.gui.EnumMouseButton;
-import com.teamwizardry.librarianlib.gui.GuiComponent;
-import com.teamwizardry.librarianlib.gui.components.ComponentCenterAlign;
-import com.teamwizardry.librarianlib.gui.components.ComponentVoid;
-import com.teamwizardry.librarianlib.gui.mixin.DragMixin;
-import com.teamwizardry.librarianlib.gui.mixin.gl.GlMixin;
-import com.teamwizardry.librarianlib.util.Color;
+import com.teamwizardry.librarianlib.client.gui.EnumMouseButton;
+import com.teamwizardry.librarianlib.client.gui.GuiComponent;
+import com.teamwizardry.librarianlib.client.gui.components.ComponentCenterAlign;
+import com.teamwizardry.librarianlib.client.gui.components.ComponentVoid;
+import com.teamwizardry.librarianlib.client.gui.mixin.DragMixin;
+import com.teamwizardry.librarianlib.client.gui.mixin.gl.GlMixin;
 import com.teamwizardry.wizardry.api.module.Module;
 import net.minecraft.util.math.Vec3d;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,58 +24,59 @@ public class ModuleTemplatePaper extends ModuleTemplate {
 	public ModuleTemplatePaper(int posX, int posY, Module constructor, GuiComponent<?> paper) {
 		super(posX, posY, constructor, paper);
 
-		result.centerHorizontal = true;
-		result.centerVertical = true;
-		GlMixin.transform(result).setValue(new Vec3d(0, 0, 5));
+		getResult().setCenterHorizontal(true);
+		getResult().setCenterVertical(true);
+		GlMixin.INSTANCE.transform(getResult()).setValue(new Vec3d(0, 0, 5));
 		
-		drag = new DragMixin<>(result, (v) -> v);
-		drag.pickup.add((c, button, pos) -> button != EnumMouseButton.LEFT);
-		drag.drop.add((c, button, pos) -> {
-			if(button != EnumMouseButton.LEFT)
-				return true;
+		drag = new DragMixin<>(getResult(), (v) -> v);
+		getResult().BUS.hook(DragMixin.DragPickupEvent.class, (event) -> {
+			if(event.getButton() != EnumMouseButton.LEFT)
+				event.cancel();
+		});
+		getResult().BUS.hook(DragMixin.DragDropEvent.class, (event) -> {
+			if(event.getButton() != EnumMouseButton.LEFT)
+				event.cancel();
 			List<GuiComponent<?>> trays = paper.getByTag("tray");
 			boolean hover = false;
 			for (GuiComponent<?> tray : trays) {
-				if(tray.isMouseOver(tray.relativePos(c.getPos()))) {
+				if(tray.getLogicalSize().contains(event.getComponent().getPos().sub( tray.getPos() ))) {
 					hover = true;
 					break;
 				}
 			}
 			if(!hover)
-				c.invalidate();
-			return false;
+				event.getComponent().invalidate();
 		});
 		
 		lines = new ComponentVoid(0, 0);
-		result.add(lines);
+		getResult().add(lines);
 
 		mouseLine = new ComponentModuleLine(0, 0);
-		mouseLine.endPos.func((c) -> c.mousePosThisFrame);
-		GlMixin.color(mouseLine).setValue(Color.BLACK);
+		mouseLine.endPos.func((c) -> c.getMousePosThisFrame());
+		GlMixin.INSTANCE.color(mouseLine).setValue(Color.BLACK);
 		mouseLine.setVisible(false);
-		GlMixin.transform(mouseLine).setValue(new Vec3d(0, 0, -2));
+		GlMixin.INSTANCE.transform(mouseLine).setValue(new Vec3d(0, 0, -2));
 		lines.add(mouseLine);
-		GlMixin.transform(lines).setValue(new Vec3d(0, 0, -2));
+		GlMixin.INSTANCE.transform(lines).setValue(new Vec3d(0, 0, -2));
 		
-		result.addTag("module");
+		getResult().addTag("module");
 		
 		if(paper.getData(DraggingFromData.class, "") == null)
 			paper.setData(DraggingFromData.class, "", new DraggingFromData());
 		
 		DraggingFromData data = paper.getData(DraggingFromData.class, "");
 		
-		result.mouseDown.add((c, pos, button) -> {
-			if(c.mouseOverThisFrame && button == EnumMouseButton.RIGHT) {
+		getResult().BUS.hook(GuiComponent.MouseDownEvent.class, (event) -> {
+			if(event.getComponent().getMouseOver() && event.getButton() == EnumMouseButton.RIGHT) {
 				data.draggingFrom = this;
 				data.shouldDeleteNextFrame = 0;
 				mouseLine.setVisible(true);
 			}
-			return false;
 		});
 		
-		result.mouseUp.add((c, pos, button) -> {
-			if(button == EnumMouseButton.RIGHT) {
-				if(c.mouseOverThisFrame && data.draggingFrom != this) {
+		getResult().BUS.hook(GuiComponent.MouseUpEvent.class, (event) -> {
+			if(event.getButton() == EnumMouseButton.RIGHT) {
+				if(event.getComponent().getMouseOver() && data.draggingFrom != this) {
 					if(this.connections.contains(data.draggingFrom)) {
 						this.connections.remove(data.draggingFrom);
 						this.lines.removeByTag(data.draggingFrom);
@@ -87,13 +88,13 @@ public class ModuleTemplatePaper extends ModuleTemplate {
 						module.connections.add(this);
 						ComponentModuleLine line = new ComponentModuleLine(0,0);
 						line.addTag(this);
-						GlMixin.color(line).setValue(Color.BLACK);
+						GlMixin.INSTANCE.color(line).setValue(Color.BLACK);
 						line.endPos.func((_c_) -> {
-							if(this.result.getParent() == null) {
+							if(this.getResult().getParent() == null) {
 								_c_.invalidate();
 								module.connections.remove(this);
 							}
-							return this.result.getPos().sub(module.result.getPos());
+							return this.getResult().getPos().sub(module.getResult().getPos());
 						});
 						module.lines.add(line);
 					}
@@ -102,7 +103,6 @@ public class ModuleTemplatePaper extends ModuleTemplate {
 					mouseLine.setVisible(false);
 				}
 			}
-			return false;
 		});
 		
 	}

@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry;
 
 import com.teamwizardry.librarianlib.LibrarianLog;
-import com.teamwizardry.librarianlib.book.Book;
+import com.teamwizardry.librarianlib.client.book.Book;
 import com.teamwizardry.wizardry.common.CommonProxy;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.creativetab.CreativeTabs;
@@ -18,10 +18,11 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.Logger;
 
+
 /**
  * Created by Saad on 6/9/2016.
  */
-@Mod(modid = Wizardry.MODID, version = Wizardry.VERSION, name = Wizardry.MODNAME, useMetadata = true, dependencies = "required-after:librarianlib")
+@Mod(modid = Wizardry.MODID, version = Wizardry.VERSION, name = Wizardry.MODNAME, useMetadata = true, dependencies = "required-before:librarianlib")
 public class Wizardry {
 
 	public static final String MODID = "wizardry";
@@ -58,7 +59,7 @@ public class Wizardry {
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
-		LibrarianLog.I.info("o͡͡͡╮༼ ಠДಠ ༽╭o͡͡͡━☆ﾟ.*･｡ﾟ IT'S LEVI-OH-SA, NOT LEVIOSAA");
+		LibrarianLog.INSTANCE.info("o͡͡͡╮༼ ಠДಠ ༽╭o͡͡͡━☆ﾟ.*･｡ﾟ IT'S LEVI-OH-SA, NOT LEVIOSAA");
 
 		logger = event.getModLog();
 

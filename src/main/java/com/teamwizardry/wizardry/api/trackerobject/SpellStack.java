@@ -1,18 +1,20 @@
 package com.teamwizardry.wizardry.api.trackerobject;
 
-import java.util.ArrayList;
-import java.util.List;
+
+import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.api.module.ModuleRegistry;
+import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
-import com.teamwizardry.librarianlib.util.Color;
-import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.ModuleRegistry;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by LordSaad44 This class is created when a spell is created, then
@@ -122,15 +124,15 @@ public class SpellStack
 		{
 			if (r == -1 && g == -1 && b == -1)
 			{
-				r = effect.getColor().r;
-				g = effect.getColor().g;
-				b = effect.getColor().b;
+				r = effect.getColor().getRed();
+				g = effect.getColor().getGreen();
+				b = effect.getColor().getBlue();
 			}
 			else
 			{
-				r = (r + effect.getColor().r) / 2;
-				g = (g + effect.getColor().g) / 2;
-				b = (b + effect.getColor().b) / 2;
+				r = (r + effect.getColor().getRed() ) / 2;
+				g = (g + effect.getColor().getGreen() ) / 2;
+				b = (b + effect.getColor().getBlue() ) / 2;
 			}
 		}
 

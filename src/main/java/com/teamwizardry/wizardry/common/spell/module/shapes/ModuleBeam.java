@@ -1,13 +1,14 @@
 package com.teamwizardry.wizardry.common.spell.module.shapes;
 
 import java.util.concurrent.ThreadLocalRandom;
+
+import com.teamwizardry.librarianlib.common.util.RaycastUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
-import com.teamwizardry.librarianlib.math.Raycast;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.attribute.Attribute;
@@ -66,7 +67,7 @@ public class ModuleBeam extends Module implements IContinuousCast
 
 		double distance = spell.getDouble(DISTANCE);
 		double pierce = spell.getInteger(PIERCE);
-		RayTraceResult raycast = Raycast.cast(caster, distance);
+		RayTraceResult raycast = RaycastUtils.INSTANCE.raycast(caster, distance);
 
 		// Beam particles
 		double slopeX, slopeY, slopeZ;
@@ -113,7 +114,7 @@ public class ModuleBeam extends Module implements IContinuousCast
 			{
 				stack.castEffects(raycast.entityHit);
 				pierce--;
-				raycast = Raycast.cast(raycast.entityHit, caster.getLookVec(), distance);
+				raycast = RaycastUtils.INSTANCE.raycast(raycast.entityHit.worldObj, raycast.entityHit.getPositionVector(), caster.getLookVec(), distance);
 			}
 			else return false;
 		}
