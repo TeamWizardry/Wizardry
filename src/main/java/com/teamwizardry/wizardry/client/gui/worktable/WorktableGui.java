@@ -125,7 +125,7 @@ public class WorktableGui extends GuiBase {
 		ComponentRect staff = new ComponentRect((getGuiWidth() / 2) - (boxWidth / 2) + 55, (getGuiHeight() / 2) - (boxHeight / 2), boxWidth, boxHeight);
 
 		ComponentSprite sprite2 = new ComponentSprite(staffTexture, (boxWidth / 2) - (staffTexture.getWidth() / 2), (boxHeight / 2) - (staffTexture.getHeight() / 2));
-		staff.add(sprite);
+		staff.add(sprite2);
 
 		new ButtonMixin(staff, () -> {});
 		
@@ -162,8 +162,6 @@ public class WorktableGui extends GuiBase {
 		
 		menu.add(staff);
 		menu.add(ring);
-
-		getComponents().add(modifiers);
 	}
 
 	private void addModules(ComponentVoid parent, ModuleType type, int x, int y, int columns, int rows) {
