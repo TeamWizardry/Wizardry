@@ -43,9 +43,6 @@ public class ItemDebugger extends Item implements IGlowOverlayable {
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
 		if(worldIn.isRemote) {
-			EntityHallowedSpirit spirit = new EntityHallowedSpirit(worldIn);
-			spirit.setPosition(playerIn.posX, playerIn.posY, playerIn.posZ);
-			worldIn.spawnEntityInWorld(spirit);
 
 			// create a builder
 			/*ParticleBuilder builder = new ParticleBuilder(30); // world, lifetime
@@ -139,6 +136,10 @@ public class ItemDebugger extends Item implements IGlowOverlayable {
 			ParticleBase p = builder.build(worldIn, new Vec3d(0, 57, 0)); // create an actual particle
 			Minecraft.getMinecraft().effectRenderer.addEffect(p); // spawn it
 			*/
+		} else {
+			EntityHallowedSpirit spirit = new EntityHallowedSpirit(worldIn);
+			spirit.setPosition(playerIn.posX, playerIn.posY, playerIn.posZ);
+			worldIn.spawnEntityInWorld(spirit);
 		}
 //		if (!worldIn.isRemote) {
 //			if (playerIn.isSneaking())
