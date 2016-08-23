@@ -98,11 +98,11 @@ public class ItemDebugger extends Item implements IGlowOverlayable {
 			builder.setColor(Color.RED);
 			builder.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle"));
 			
-//			ParticleSpawner.spawn(builder, worldIn,
-//				new InterpCircle(playerIn.getPositionVector().addVector(0, 1, 0), new Vec3d(0,1,0), 1),
-//				32,
-//				20
-//			);
+			ParticleSpawner.spawn(builder, worldIn,
+				new InterpCircle(playerIn.getPositionVector().addVector(0, 1, 0), new Vec3d(0,1,0), 1),
+				32,
+				20
+			);
 			
 			builder = new ParticleBuilder(60);
 			
@@ -114,7 +114,7 @@ public class ItemDebugger extends Item implements IGlowOverlayable {
 			
 			ParticleSpawner.spawn(builder, worldIn,
 				new InterpCircle(playerIn.getPositionVector().addVector(0, 3, 0), new Vec3d(0,1,0), 1),
-				2,//32,
+				32,
 				20,
 				(i, build) -> {
 					build.setMotion(zeroCircle.get(i).normalize().scale(0.2).addVector(0, 0.1, 0));
