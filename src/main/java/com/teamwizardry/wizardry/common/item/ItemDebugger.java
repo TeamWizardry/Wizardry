@@ -10,6 +10,7 @@ import com.teamwizardry.librarianlib.common.util.math.interpolate.InterpUnion;
 import com.teamwizardry.librarianlib.common.util.math.interpolate.InterpUnionImpl;
 import com.teamwizardry.librarianlib.common.util.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpBezier3D;
+import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpCircle;
 import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpHelix;
 import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpLine;
 import com.teamwizardry.wizardry.Wizardry;
@@ -62,7 +63,7 @@ public class ItemDebugger extends Item implements IGlowOverlayable {
 			// create a builder
 			ParticleBuilder builder = new ParticleBuilder(30); // world, lifetime
 			
-			builder.setPosition(new InterpBezier3D(
+			builder.setPositionFunction(new InterpBezier3D(
 				new Vec3d(0,0,0), new Vec3d(3,3,3),
 				new Vec3d(1,-1,1), new Vec3d(2,4,2)
 			)); // a basic bezier curve
@@ -84,12 +85,41 @@ public class ItemDebugger extends Item implements IGlowOverlayable {
 					// [optional] a lambda that's called each time a particle is created
 					// (not when they're spawned, the particles are prebuilt)
 					
-					builder.setColor(new StaticInterp<>(color.get(i)));
+					build.setColor(new StaticInterp<>(color.get(i)));
 					// get the color for the point `i` and use that as the static color for this particle
 				}
 			);
 			
 			
+			
+			builder = new ParticleBuilder(60);
+			
+			builder.setMotion(new Vec3d(0, 0.2, 0));
+			builder.setColor(Color.RED);
+			builder.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle"));
+			
+//			ParticleSpawner.spawn(builder, worldIn,
+//				new InterpCircle(playerIn.getPositionVector().addVector(0, 1, 0), new Vec3d(0,1,0), 1),
+//				32,
+//				20
+//			);
+			
+			builder = new ParticleBuilder(60);
+			
+			
+			builder.setColor(Color.GREEN);
+			builder.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle"));
+			
+			InterpCircle zeroCircle = new InterpCircle(new Vec3d(0,0,0), new Vec3d(0,1,0), 1);
+			
+			ParticleSpawner.spawn(builder, worldIn,
+				new InterpCircle(playerIn.getPositionVector().addVector(0, 3, 0), new Vec3d(0,1,0), 1),
+				2,//32,
+				20,
+				(i, build) -> {
+					build.setMotion(zeroCircle.get(i).normalize().scale(0.2).addVector(0, 0.1, 0));
+				}
+			);
 			
 			/*
 			// create a builder
