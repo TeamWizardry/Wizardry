@@ -14,7 +14,7 @@ public class TilePedestalRenderer extends TileEntitySpecialRenderer<TilePedestal
 
     @Override
     public void renderTileEntityAt(TilePedestal te, double x, double y, double z, float partialTicks, int destroyStage) {
-        if (te.getStack() != null) {
+        if (te.getManaPearl() != null) {
 
             ticker += 2 * partialTicks;
             if (ticker > 360) ticker = 0;
@@ -23,7 +23,7 @@ public class TilePedestalRenderer extends TileEntitySpecialRenderer<TilePedestal
             GlStateManager.translate(x + 0.5, y + 1.2, z + 0.5);
             GlStateManager.scale(0.4, 0.4, 0.4);
             GlStateManager.rotate(ticker, 0, 1, 0);
-            Minecraft.getMinecraft().getRenderItem().renderItem(te.getStack(), ItemCameraTransforms.TransformType.NONE);
+            Minecraft.getMinecraft().getRenderItem().renderItem(te.getManaPearl(), ItemCameraTransforms.TransformType.NONE);
             GlStateManager.popMatrix();
         }
     }

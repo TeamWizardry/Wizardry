@@ -52,14 +52,14 @@ public class BlockPedestal extends Block implements ITileEntityProvider, IManaAc
         if (!world.isRemote) {
             TilePedestal te = getTE(world, pos);
 
-            if (te.getStack() == null && heldItem != null) {
-                te.setStack(heldItem);
+            if (te.getManaPearl() == null && heldItem != null) {
+                te.setManaPearl(heldItem);
                 player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
                 player.openContainer.detectAndSendChanges();
 
-            } else if (te.getStack() != null && heldItem == null) {
-                ItemStack stack = te.getStack();
-                te.setStack(null);
+            } else if (te.getManaPearl() != null && heldItem == null) {
+                ItemStack stack = te.getManaPearl();
+                te.setManaPearl(null);
                 if (!player.inventory.addItemStackToInventory(stack)) {
                     EntityItem entityItem = new EntityItem(world, pos.getX(), pos.getY() + 1, pos.getZ(), stack);
                     world.spawnEntityInWorld(entityItem);

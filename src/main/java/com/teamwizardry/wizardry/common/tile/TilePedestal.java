@@ -1,9 +1,6 @@
 package com.teamwizardry.wizardry.common.tile;
 
 import com.teamwizardry.wizardry.api.block.IManaAcceptor;
-import com.teamwizardry.wizardry.client.fx.GlitterFactory;
-import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
-import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -12,105 +9,77 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-
-import java.util.List;
 
 /**
  * Created by Saad on 5/7/2016.
  */
 public class TilePedestal extends TileEntity implements ITickable {
 
-    private ItemStack stack;
-    private List<Vec3d> points;
-    private BlockPos linkedBlock;
-    private int queue = 0;
+	private ItemStack manaPearl;
+	private IBlockState state;
 
-    public ItemStack getStack() {
-        return stack;
-    }
+	public ItemStack getManaPearl() {
+		return manaPearl;
+	}
 
-    public void setStack(ItemStack stack) {
-        this.stack = stack;
-        markDirty();
-        if (worldObj != null) {
-            IBlockState state = worldObj.getBlockState(getPos());
-            worldObj.notifyBlockUpdate(getPos(), state, state, 3);
-        }
-    }
+	public void setManaPearl(ItemStack manaPearl) {
+		this.manaPearl = manaPearl;
+	}
 
-    @Override
-    public void readFromNBT(NBTTagCompound compound) {
-        super.readFromNBT(compound);
-        if (compound.hasKey("stack")) stack = ItemStack.loadItemStackFromNBT(compound.getCompoundTag("stack"));
-        else stack = null;
-    }
+	@Override
+	public void readFromNBT(NBTTagCompound compound) {
+		super.readFromNBT(compound);
+		if (compound.hasKey("mana_pearl"))
+			manaPearl = ItemStack.loadItemStackFromNBT(compound.getCompoundTag("man_pearl"));
+		else manaPearl = null;
+	}
 
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        super.writeToNBT(compound);
-        if (stack != null) {
-            NBTTagCompound tagCompound = new NBTTagCompound();
-            stack.writeToNBT(tagCompound);
-            compound.setTag("stack", tagCompound);
-        }
-        return compound;
-    }
+	@Override
+	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+		super.writeToNBT(compound);
+		if (manaPearl != null) {
+			NBTTagCompound tagCompound = new NBTTagCompound();
+			manaPearl.writeToNBT(tagCompound);
+			compound.setTag("mana_pearl", tagCompound);
+		}
+		return compound;
+	}
 
-    @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
-        this.readFromNBT(packet.getNbtCompound());
-    }
+	@Override
+	public NBTTagCompound getUpdateTag() {
+		return writeToNBT(new NBTTagCompound());
+	}
 
-    @Override
-    public SPacketUpdateTileEntity getUpdatePacket() {
-        NBTTagCompound nbtTag = new NBTTagCompound();
-        this.writeToNBT(nbtTag);
-        return new SPacketUpdateTileEntity(getPos(), 1, nbtTag);
-    }
+	@Override
+	public SPacketUpdateTileEntity getUpdatePacket() {
+		NBTTagCompound tag = new NBTTagCompound();
+		writeToNBT(tag);
+		return new SPacketUpdateTileEntity(pos, 0, tag);
+	}
 
-    @Override
-    public NBTTagCompound getUpdateTag() {
-        return writeToNBT(new NBTTagCompound());
-    }
+	@Override
+	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
+		super.onDataPacket(net, packet);
+		readFromNBT(packet.getNbtCompound());
 
-    @Override
-    public void update() {
-        if (stack != null) {
-            if (stack.getItem() == ModItems.PEARL_MANA) {
-                NBTTagCompound compound = stack.getTagCompound();
-                if (compound != null) {
-                    if (compound.hasKey("link_x") && compound.hasKey("link_y") && compound.hasKey("link_z")) {
-                        BlockPos pos = new BlockPos(compound.getInteger("link_x"), compound.getInteger("link_y"), compound.getInteger("link_z"));
-                        if (worldObj.getBlockState(pos).getBlock() instanceof IManaAcceptor) {
-                            if (pos != getPos() && linkedBlock != pos) {
-                                linkedBlock = pos;
-//                                points = new Arc3D(new Vec3d(getPos().getX(), getPos().getY(), getPos().getZ()), new Vec3d(pos.getX(), pos.getY(), pos.getZ()), 3, 50).getPoints();
-                            }
-                            worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
-                        }
-                    }
-                }
-            }
-        }
+		state = worldObj.getBlockState(pos);
+		worldObj.notifyBlockUpdate(pos, state, state, 3);
+	}
 
-        if (!worldObj.isRemote) {
-            if (stack != null && linkedBlock != null) {
-                if (stack.getItem() == ModItems.PEARL_MANA) {
+	@Override
+	public void update() {
+		if (worldObj.isRemote) return;
 
-                    if (queue < points.size()) {
-                        Vec3d location = points.get(queue);
-                        SparkleFX fizz = GlitterFactory.getInstance().createSparkle(worldObj, location, 30);
-                        fizz.setAlpha(1f);
-                        fizz.setScale(4f);
-                        fizz.setMotion(0.1, 0.1, 0.1);
-                        queue++;
+		if (manaPearl == null) return;
 
-                    } else {
-                        queue = 0;
-                    }
-                }
-            }
-        }
-    }
+		NBTTagCompound compound = manaPearl.getTagCompound();
+		if (compound == null) return;
+		if (!compound.hasKey("link_x") || !compound.hasKey("link_y") || !compound.hasKey("link_z")) return;
+
+		BlockPos pos = new BlockPos(compound.getInteger("link_x"), compound.getInteger("link_y"), compound.getInteger("link_z"));
+		IBlockState block = worldObj.getBlockState(pos);
+		if (!(block.getBlock() instanceof IManaAcceptor)) return;
+
+		// TODO
+	}
 }

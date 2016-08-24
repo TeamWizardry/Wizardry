@@ -70,12 +70,13 @@ public class EntityFairy extends EntityCreature {
 		if (!worldObj.isRemote) return;
 
 		ParticleBuilder glitter = new ParticleBuilder(30);
+		glitter.setPositionOffset(new Vec3d(ThreadLocalRandom.current().nextDouble(-3, 3), 0, ThreadLocalRandom.current().nextDouble(-3, 3)));
 		glitter.setMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.05, 0.05), ThreadLocalRandom.current().nextDouble(-0.05, 0.05), ThreadLocalRandom.current().nextDouble(-0.05, 0.05)));
 		glitter.addFriction(new Vec3d(0.1, 0.1, 0.1));
 		glitter.disableMotion();
 		glitter.setColor(color);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle"));
-		ParticleSpawner.spawn(glitter, worldObj, new StaticInterp<>(getPositionVector()), 20);
+		ParticleSpawner.spawn(glitter, worldObj, new StaticInterp<>(getPositionVector()), 50);
 
 		if (motionX == 0 && motionY == 0 && motionZ == 0) newPosition();
 

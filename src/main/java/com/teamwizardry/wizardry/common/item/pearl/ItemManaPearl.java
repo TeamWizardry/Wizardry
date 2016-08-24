@@ -22,28 +22,28 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  */
 public class ItemManaPearl extends Item {
 
-    public ItemManaPearl() {
-        setRegistryName("mana_pearl");
-        setUnlocalizedName("mana_pearl");
-        GameRegistry.register(this);
-        setMaxStackSize(1);
-        setCreativeTab(Wizardry.tab);
-    }
+	public ItemManaPearl() {
+		setRegistryName("mana_pearl");
+		setUnlocalizedName("mana_pearl");
+		GameRegistry.register(this);
+		setMaxStackSize(1);
+		setCreativeTab(Wizardry.tab);
+	}
 
-    @SideOnly(Side.CLIENT)
-    public void initModel() {
-        ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(getRegistryName(), "inventory"));
-    }
+	@SideOnly(Side.CLIENT)
+	public void initModel() {
+		ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(getRegistryName(), "inventory"));
+	}
 
-    @Override
-    public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
-        if (stack != null && world.getBlockState(pos).getBlock() instanceof IManaAcceptor) {
-            NBTTagCompound compound = new NBTTagCompound();
-            compound.setInteger("link_x", pos.getX());
-            compound.setInteger("link_y", pos.getY());
-            compound.setInteger("link_z", pos.getZ());
-            stack.setTagCompound(compound);
-        }
-        return EnumActionResult.PASS;
-    }
+	@Override
+	public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
+		if (stack != null && world.getBlockState(pos).getBlock() instanceof IManaAcceptor) {
+			NBTTagCompound compound = new NBTTagCompound();
+			compound.setInteger("link_x", pos.getX());
+			compound.setInteger("link_y", pos.getY());
+			compound.setInteger("link_z", pos.getZ());
+			stack.setTagCompound(compound);
+		}
+		return EnumActionResult.PASS;
+	}
 }
