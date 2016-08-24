@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.common.entity;
 import com.teamwizardry.librarianlib.client.fx.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.client.fx.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.common.util.math.interpolate.StaticInterp;
+import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpBezier3D;
 import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -63,30 +64,46 @@ public class EntityHallowedSpirit extends EntityMob {
 	public void collideWithEntity(Entity entity) {
 		if (this.getHealth() > 0) {
 			if (entity.getName().equals(getName())) return;
-			((EntityLivingBase) entity).motionY += 0.3;
+			((EntityLivingBase) entity).motionY += 0.4;
 			((EntityLivingBase) entity).attackEntityAsMob(this);
 			((EntityLivingBase) entity).setRevengeTarget(this);
 		}
+		entity.fallDistance = 0;
 	}
 
 	@Override
 	public void onUpdate() {
 		super.onUpdate();
-		if (getAttackTarget() != null) {
-			EntityLivingBase target = getAttackTarget();
-			if (target.getDistanceSq(getPosition()) <= 2) {
-				angry = true;
-			}
+		if (worldObj.isRemote) return;
+
+		Vec3d pos = new Vec3d(posX, posY + getEyeHeight(), posZ);
+
+		ParticleBuilder glitter = new ParticleBuilder(50);
+		//glitter.setPositionOffset(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.2, 0.2), ThreadLocalRandom.current().nextDouble(-0.2, 0.2), ThreadLocalRandom.current().nextDouble(-0.2, 0.2)));
+		EntityPlayer player = worldObj.getNearestPlayerNotCreative(this, 2);
+		if (player == null) {
+			glitter.setPositionFunction(new InterpBezier3D(
+					new Vec3d(0, ThreadLocalRandom.current().nextDouble(-0.1, 0), 0),
+					new Vec3d(ThreadLocalRandom.current().nextDouble(-0.2, 0.2), 0.5, ThreadLocalRandom.current().nextDouble(-0.2, 0.2)),
+					new Vec3d(ThreadLocalRandom.current().nextDouble(-0.65, 0.65), 0, (ThreadLocalRandom.current().nextDouble(-0.65, 0.65))),
+					new Vec3d(ThreadLocalRandom.current().nextDouble(-0.1, 0.1), 0, ThreadLocalRandom.current().nextDouble(-0.1, 0.1))
+			));
+			glitter.setColor(Color.WHITE);
+			angry = false;
+		} else {
+			glitter.setJitter(10, new Vec3d(0.2, 0, 0.2));
+			glitter.addMotion(new Vec3d(0, 0.01, 0));
+			glitter.setColor(Color.RED);
+
+			player.attackEntityFrom(DamageSource.generic, 0.15f);
+			player.hurtResistantTime = 0;
+
+			angry = true;
 		}
-
-		Vec3d headCenter = new Vec3d(posX + width + ThreadLocalRandom.current().nextDouble(-0.3, 0.3), posY + getEyeHeight() + ThreadLocalRandom.current().nextDouble(-0.3, 0.3), posZ + width + ThreadLocalRandom.current().nextDouble(-0.3, 0.3));
-
-		ParticleBuilder glitter = new ParticleBuilder(10);
-		glitter.addMotion(new Vec3d(0, ThreadLocalRandom.current().nextDouble(0.1, 0.2), 0));
-		glitter.setColor(Color.WHITE);
+		glitter.disableMotion();
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle"));
 
-		ParticleSpawner.spawn(glitter, worldObj, new StaticInterp<>(headCenter), 5);
+		ParticleSpawner.spawn(glitter, worldObj, new StaticInterp<>(pos), 50);
 	}
 
 	@Override

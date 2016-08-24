@@ -1,5 +1,12 @@
 package com.teamwizardry.wizardry.common.item;
 
+import com.teamwizardry.librarianlib.client.fx.particle.ParticleBuilder;
+import com.teamwizardry.librarianlib.client.fx.particle.ParticleSpawner;
+import com.teamwizardry.librarianlib.client.fx.particle.functions.InterpColorHSV;
+import com.teamwizardry.librarianlib.client.fx.particle.functions.RenderFunctionBasic;
+import com.teamwizardry.librarianlib.common.util.math.interpolate.InterpFunction;
+import com.teamwizardry.librarianlib.common.util.math.interpolate.StaticInterp;
+import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpBezier3D;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.GlowingOverlayHelper;
 import com.teamwizardry.wizardry.api.item.IGlowOverlayable;
@@ -11,12 +18,15 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.awt.*;
 
 public class ItemDebugger extends Item implements IGlowOverlayable {
 
@@ -45,7 +55,7 @@ public class ItemDebugger extends Item implements IGlowOverlayable {
 		if(worldIn.isRemote) {
 
 			// create a builder
-			/*ParticleBuilder builder = new ParticleBuilder(30); // world, lifetime
+			ParticleBuilder builder = new ParticleBuilder(30); // world, lifetime
 			
 			builder.setPositionFunction(new InterpBezier3D(
 				new Vec3d(0,0,0), new Vec3d(3,3,3),
@@ -72,7 +82,7 @@ public class ItemDebugger extends Item implements IGlowOverlayable {
 					build.setColor(new StaticInterp<>(color.get(i)));
 					// get the color for the point `i` and use that as the static color for this particle
 				}
-			);*/
+			);
 			
 			
 			
