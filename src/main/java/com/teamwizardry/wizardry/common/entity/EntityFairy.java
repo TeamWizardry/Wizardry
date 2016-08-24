@@ -1,14 +1,18 @@
 package com.teamwizardry.wizardry.common.entity;
 
-import com.teamwizardry.wizardry.client.fx.GlitterFactory;
-import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
+import com.teamwizardry.librarianlib.client.fx.particle.ParticleBuilder;
+import com.teamwizardry.librarianlib.client.fx.particle.ParticleSpawner;
+import com.teamwizardry.librarianlib.common.util.math.interpolate.StaticInterp;
+import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
@@ -39,7 +43,7 @@ public class EntityFairy extends EntityCreature {
 	}
 
 	protected void initEntityAI() {
-		//this.tasks.addTask(7, new EntityAIWander(this, 0.46D));
+		this.tasks.addTask(7, new EntityAIWander(this, 0.46D));
 	}
 
 
@@ -65,16 +69,13 @@ public class EntityFairy extends EntityCreature {
 		super.onUpdate();
 		if (!worldObj.isRemote) return;
 
-		for (int i = 0; i < 10; i++) {
-			Vec3d headCenter = new Vec3d(posX + width + ThreadLocalRandom.current().nextDouble(-0.5, 0.5), getEyeHeight() + ThreadLocalRandom.current().nextDouble(-0.5, 0.5), posZ + width + ThreadLocalRandom.current().nextDouble(-0.5, 0.5));
-			SparkleFX headLight = GlitterFactory.getInstance().createSparkle(worldObj, headCenter, 10);
-			headLight.setColor(color);
-			headLight.setAlpha(1f);
-			headLight.setScale(0.5f);
-			headLight.setBlurred();
-			headLight.setFadeIn();
-			headLight.setFadeOut();
-		}
+		ParticleBuilder glitter = new ParticleBuilder(30);
+		glitter.setMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.05, 0.05), ThreadLocalRandom.current().nextDouble(-0.05, 0.05), ThreadLocalRandom.current().nextDouble(-0.05, 0.05)));
+		glitter.addFriction(new Vec3d(0.1, 0.1, 0.1));
+		glitter.disableMotion();
+		glitter.setColor(color);
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle"));
+		ParticleSpawner.spawn(glitter, worldObj, new StaticInterp<>(getPositionVector()), 20);
 
 		if (motionX == 0 && motionY == 0 && motionZ == 0) newPosition();
 
