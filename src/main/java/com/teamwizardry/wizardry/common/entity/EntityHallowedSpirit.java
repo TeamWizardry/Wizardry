@@ -78,11 +78,9 @@ public class EntityHallowedSpirit extends EntityMob {
 		super.onUpdate();
 		if (worldObj.isRemote) return;
 
-		Vec3d pos = new Vec3d(posX, posY + getEyeHeight(), posZ);
 		EntityPlayer player = worldObj.getNearestPlayerNotCreative(this, 2);
 
-		ParticleBuilder glitter = new ParticleBuilder(50);
-		//glitter.setPositionOffset(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.2, 0.2), ThreadLocalRandom.current().nextDouble(-0.2, 0.2), ThreadLocalRandom.current().nextDouble(-0.2, 0.2)));
+		ParticleBuilder glitter = new ParticleBuilder(30);
 		if (player == null) {
 			glitter.setColor(new Color(0x4DFFFFFF, true));
 			angry = false;
@@ -93,20 +91,29 @@ public class EntityHallowedSpirit extends EntityMob {
 		glitter.disableMotion();
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
 
-		ParticleSpawner.spawn(glitter, worldObj, new StaticInterp<>(pos), 1, 5, (i, build) -> {
+		ParticleSpawner.spawn(glitter, worldObj, new StaticInterp<>(new Vec3d(posX, posY + getEyeHeight(), posZ)), 5, 0, (i, build) -> {
 			if (player == null) {
-				glitter.setPositionFunction(new InterpBezier3D(
-						new Vec3d(0, 0, 0),
-						new Vec3d(0, 0.3, 0),
-						new Vec3d(ThreadLocalRandom.current().nextDouble(-0.3, 0.3), 0, (ThreadLocalRandom.current().nextDouble(-0.3, 0.3))),
-						new Vec3d(ThreadLocalRandom.current().nextDouble(-0.3, 0.3), 0.3, ThreadLocalRandom.current().nextDouble(-0.3, 0.3))
-				));
+				if (ThreadLocalRandom.current().nextBoolean()) {
+					glitter.setPositionFunction(new InterpBezier3D(
+							new Vec3d(0, 0, 0),
+							new Vec3d(0, 0.3, 0),
+							new Vec3d(ThreadLocalRandom.current().nextDouble(-0.3, 0.3), 0, (ThreadLocalRandom.current().nextDouble(-0.3, 0.3))),
+							new Vec3d(ThreadLocalRandom.current().nextDouble(-0.3, 0.3), 0.3, ThreadLocalRandom.current().nextDouble(-0.3, 0.3))
+					));
+				} else {
+					glitter.setPositionFunction(new InterpBezier3D(
+							new Vec3d(0, 0.3, 0),
+							new Vec3d(0, 0, 0),
+							new Vec3d(ThreadLocalRandom.current().nextDouble(-0.3, 0.3), 0.3, (ThreadLocalRandom.current().nextDouble(-0.3, 0.3))),
+							new Vec3d(ThreadLocalRandom.current().nextDouble(-0.3, 0.3), 0, ThreadLocalRandom.current().nextDouble(-0.3, 0.3))
+					));
+				}
 			} else {
 				glitter.setPositionFunction(new InterpBezier3D(
 						new Vec3d(0, 0, 0),
-						new Vec3d(ThreadLocalRandom.current().nextDouble(-0.5, 0.5), 0.5, ThreadLocalRandom.current().nextDouble(-0.5, 0.5)),
-						new Vec3d(ThreadLocalRandom.current().nextDouble(-0.25, 0.25), 0.1, (ThreadLocalRandom.current().nextDouble(-0.25, 0.25))),
-						new Vec3d(ThreadLocalRandom.current().nextDouble(-0.3, 0.3), 0.3, ThreadLocalRandom.current().nextDouble(-0.3, 0.3))
+						new Vec3d(ThreadLocalRandom.current().nextDouble(-0.6, 0.6), 0.3, ThreadLocalRandom.current().nextDouble(-0.6, 0.6)),
+						new Vec3d(ThreadLocalRandom.current().nextDouble(-0.2, 0.2), 0, (ThreadLocalRandom.current().nextDouble(-0.2, 0.2))),
+						new Vec3d(0, 0.2, 0)
 				));
 			}
 		});

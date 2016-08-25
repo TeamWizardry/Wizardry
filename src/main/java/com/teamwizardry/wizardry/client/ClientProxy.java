@@ -13,12 +13,11 @@ import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import com.teamwizardry.wizardry.client.fx.particle.trails.SparkleTrailHelix;
 import com.teamwizardry.wizardry.client.render.BloodRenderLayer;
 import com.teamwizardry.wizardry.client.render.ModelHolder;
-import com.teamwizardry.wizardry.client.render.entity.RenderHallowedSpirit;
 import com.teamwizardry.wizardry.client.render.glow.GlowingItemEventHandler;
 import com.teamwizardry.wizardry.client.render.glow.GlowingItemRenderLayer;
 import com.teamwizardry.wizardry.common.CommonProxy;
-import com.teamwizardry.wizardry.common.entity.EntityHallowedSpirit;
 import com.teamwizardry.wizardry.init.ModBlocks;
+import com.teamwizardry.wizardry.init.ModEntities;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -27,7 +26,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -72,7 +70,7 @@ public class ClientProxy extends CommonProxy {
 		render.addLayer(new GlowingItemRenderLayer(render));
 		render.addLayer(new BloodRenderLayer(render));
 
-		RenderingRegistry.registerEntityRenderingHandler(EntityHallowedSpirit.class, new RenderHallowedSpirit(Minecraft.getMinecraft().getRenderManager(), ModelHolder.entityModels.get("hallowed_spirit"), 0.5f));
+		ModEntities.initModels();
 	}
 
 	@Override
