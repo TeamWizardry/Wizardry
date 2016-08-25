@@ -15,6 +15,7 @@ import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
@@ -29,6 +30,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class EntityHallowedSpirit extends EntityMob {
 
 	private boolean angry = false;
+	private EntityDataManager anger = new EntityDataManager(this);
 
 	public EntityHallowedSpirit(World worldIn) {
 		super(worldIn);
@@ -77,33 +79,42 @@ public class EntityHallowedSpirit extends EntityMob {
 		if (worldObj.isRemote) return;
 
 		Vec3d pos = new Vec3d(posX, posY + getEyeHeight(), posZ);
+		EntityPlayer player = worldObj.getNearestPlayerNotCreative(this, 2);
 
 		ParticleBuilder glitter = new ParticleBuilder(50);
 		//glitter.setPositionOffset(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.2, 0.2), ThreadLocalRandom.current().nextDouble(-0.2, 0.2), ThreadLocalRandom.current().nextDouble(-0.2, 0.2)));
-		EntityPlayer player = worldObj.getNearestPlayerNotCreative(this, 2);
 		if (player == null) {
-			glitter.setPositionFunction(new InterpBezier3D(
-					new Vec3d(0, ThreadLocalRandom.current().nextDouble(-0.1, 0), 0),
-					new Vec3d(ThreadLocalRandom.current().nextDouble(-0.2, 0.2), 0.5, ThreadLocalRandom.current().nextDouble(-0.2, 0.2)),
-					new Vec3d(ThreadLocalRandom.current().nextDouble(-0.65, 0.65), 0, (ThreadLocalRandom.current().nextDouble(-0.65, 0.65))),
-					new Vec3d(ThreadLocalRandom.current().nextDouble(-0.1, 0.1), 0, ThreadLocalRandom.current().nextDouble(-0.1, 0.1))
-			));
-			glitter.setColor(Color.WHITE);
+			glitter.setColor(new Color(0x4DFFFFFF, true));
 			angry = false;
 		} else {
-			glitter.setJitter(10, new Vec3d(0.2, 0, 0.2));
-			glitter.addMotion(new Vec3d(0, 0.01, 0));
-			glitter.setColor(Color.RED);
-
-			player.attackEntityFrom(DamageSource.generic, 0.15f);
-			player.hurtResistantTime = 0;
-
+			glitter.setColor(new Color(0x4DFF0000, true));
 			angry = true;
 		}
 		glitter.disableMotion();
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle"));
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
 
-		ParticleSpawner.spawn(glitter, worldObj, new StaticInterp<>(pos), 50);
+		ParticleSpawner.spawn(glitter, worldObj, new StaticInterp<>(pos), 1, 5, (i, build) -> {
+			if (player == null) {
+				glitter.setPositionFunction(new InterpBezier3D(
+						new Vec3d(0, 0, 0),
+						new Vec3d(0, 0.3, 0),
+						new Vec3d(ThreadLocalRandom.current().nextDouble(-0.3, 0.3), 0, (ThreadLocalRandom.current().nextDouble(-0.3, 0.3))),
+						new Vec3d(ThreadLocalRandom.current().nextDouble(-0.3, 0.3), 0.3, ThreadLocalRandom.current().nextDouble(-0.3, 0.3))
+				));
+			} else {
+				glitter.setPositionFunction(new InterpBezier3D(
+						new Vec3d(0, 0, 0),
+						new Vec3d(ThreadLocalRandom.current().nextDouble(-0.5, 0.5), 0.5, ThreadLocalRandom.current().nextDouble(-0.5, 0.5)),
+						new Vec3d(ThreadLocalRandom.current().nextDouble(-0.25, 0.25), 0.1, (ThreadLocalRandom.current().nextDouble(-0.25, 0.25))),
+						new Vec3d(ThreadLocalRandom.current().nextDouble(-0.3, 0.3), 0.3, ThreadLocalRandom.current().nextDouble(-0.3, 0.3))
+				));
+			}
+		});
+
+		if (angry && player != null) {
+			player.attackEntityFrom(DamageSource.generic, 0.15f);
+			player.hurtResistantTime = 0;
+		}
 	}
 
 	@Override
