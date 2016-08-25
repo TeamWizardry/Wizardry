@@ -5,17 +5,13 @@ import com.teamwizardry.librarianlib.client.fx.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.common.util.math.interpolate.StaticInterp;
 import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityCreature;
+import net.minecraft.entity.EntityFlying;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIWander;
-import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 
 import java.awt.*;
@@ -24,9 +20,13 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Created by Saad on 8/21/2016.
  */
-public class EntityFairy extends EntityCreature {
+public class EntityFairy extends EntityFlying {
 
-	private int changeCourseCounter = 0;
+	private int changeCourseTimer = 0;
+	private boolean shouldChangeCourse = false;
+	private int changeCourseExpireTimer = 0;
+	private boolean dirYawAdd = false;
+	private boolean dirPitchAdd = false;
 	private Color color;
 
 	public EntityFairy(World worldIn) {
@@ -34,6 +34,7 @@ public class EntityFairy extends EntityCreature {
 		this.setSize(0.5F, 0.5F);
 		this.isAirBorne = true;
 		this.experienceValue = 5;
+		changeCourseTimer = 100;
 		color = new Color(ThreadLocalRandom.current().nextFloat(), ThreadLocalRandom.current().nextFloat(), ThreadLocalRandom.current().nextFloat());
 	}
 
@@ -42,10 +43,10 @@ public class EntityFairy extends EntityCreature {
 		super.entityInit();
 	}
 
-	protected void initEntityAI() {
-		this.tasks.addTask(7, new EntityAIWander(this, 0.46D));
+	@Override
+	public boolean isAIDisabled() {
+		return false;
 	}
-
 
 	protected void applyEntityAttributes() {
 		super.applyEntityAttributes();
@@ -76,39 +77,36 @@ public class EntityFairy extends EntityCreature {
 		glitter.disableMotion();
 		glitter.setColor(color);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle"));
-		ParticleSpawner.spawn(glitter, worldObj, new StaticInterp<>(getPositionVector()), 50);
+		ParticleSpawner.spawn(glitter, worldObj, new StaticInterp<>(getPositionVector()), 10);
 
-		if (motionX == 0 && motionY == 0 && motionZ == 0) newPosition();
-
-		if (changeCourseCounter > 0) {
-			changeCourseCounter--;
-			return;
-		} else {
-			changeCourseCounter = ThreadLocalRandom.current().nextInt(100, 500);
+		if (!shouldChangeCourse) {
+			if (changeCourseTimer > 0) changeCourseTimer--;
+			else {
+				changeCourseTimer = ThreadLocalRandom.current().nextInt(100, 200);
+				shouldChangeCourse = true;
+				dirYawAdd = ThreadLocalRandom.current().nextBoolean();
+				dirPitchAdd = ThreadLocalRandom.current().nextBoolean();
+				changeCourseExpireTimer = ThreadLocalRandom.current().nextInt(30, 300);
+			}
+			Vec3d rot = getVectorForRotation(rotationPitch, rotationYaw);
+			motionX = rot.xCoord / 10;
+			motionY = rot.yCoord / 10;
+			motionZ = rot.zCoord / 10;
 		}
 
-		newPosition();
-	}
+		if (shouldChangeCourse) {
+			if (changeCourseExpireTimer > 0) changeCourseExpireTimer--;
+			else shouldChangeCourse = false;
 
-	private void newPosition() {
-		int x = getPosition().getX();
-		int y = getPosition().getY();
-		int z = getPosition().getZ();
-
-		if (y > ThreadLocalRandom.current().nextInt(100, 200)) y -= ThreadLocalRandom.current().nextInt(50, 100);
-		else y += ThreadLocalRandom.current().nextInt(-30, 30);
-		x += ThreadLocalRandom.current().nextInt(-60, 60);
-		z += ThreadLocalRandom.current().nextInt(-60, 60);
-		while (worldObj.getBlockState(new BlockPos(x, y, z)).getBlock() != Blocks.AIR) y++;
-
-		Vec3i destDist = getPosition().subtract(new Vec3i(x, y, z));
-		int addX = 0, addY = 0, addZ = 0;
-		if (destDist.getX() == 0) addX = ThreadLocalRandom.current().nextInt(10, 20);
-		if (destDist.getY() == 0) addY = ThreadLocalRandom.current().nextInt(10, 20);
-		if (destDist.getZ() == 0) addZ = ThreadLocalRandom.current().nextInt(10, 20);
-		motionX = 1 / (destDist.getX() + addX);
-		motionY = 1 / (destDist.getY() + addY);
-		motionZ = 1 / (destDist.getZ() + addZ);
+			if (ThreadLocalRandom.current().nextInt(0, 10) == 0) {
+				if (dirYawAdd) rotationYaw += 1;
+				else rotationYaw -= 1;
+			}
+			if (ThreadLocalRandom.current().nextInt(0, 30) == 0) {
+				if (dirPitchAdd) rotationPitch += 1;
+				else rotationPitch -= 1;
+			}
+		}
 	}
 
 	@Override

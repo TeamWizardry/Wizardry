@@ -1,9 +1,11 @@
 package com.teamwizardry.wizardry.common.item;
 
+import com.teamwizardry.librarianlib.client.gui.GuiBase;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.GlowingOverlayHelper;
 import com.teamwizardry.wizardry.api.item.IGlowOverlayable;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
+import com.teamwizardry.wizardry.common.entity.EntityHallowedSpirit;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
@@ -44,9 +46,15 @@ public class ItemDebugger extends Item implements IGlowOverlayable {
 	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
 		if (worldIn.isRemote) return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
 
-		EntityFairy entity = new EntityFairy(worldIn);
-		entity.setPosition(playerIn.posX, playerIn.posY, playerIn.posZ);
-		worldIn.spawnEntityInWorld(entity);
+		if (GuiBase.isShiftKeyDown()) {
+			EntityFairy entity = new EntityFairy(worldIn);
+			entity.setPosition(playerIn.posX, playerIn.posY, playerIn.posZ);
+			worldIn.spawnEntityInWorld(entity);
+		} else {
+			EntityHallowedSpirit entity = new EntityHallowedSpirit(worldIn);
+			entity.setPosition(playerIn.posX, playerIn.posY, playerIn.posZ);
+			worldIn.spawnEntityInWorld(entity);
+		}
 
 		// create a builder
 			/*ParticleBuilder builder = new ParticleBuilder(30); // world, lifetime
