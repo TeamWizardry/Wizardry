@@ -1,14 +1,23 @@
 package com.teamwizardry.wizardry.api.item;
 
+import com.teamwizardry.librarianlib.client.core.ClientTickHandler;
+import com.teamwizardry.librarianlib.common.base.item.IItemColorProvider;
 import com.teamwizardry.wizardry.init.ModBlocks;
+import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.Nullable;
+
+import java.awt.*;
 
 /**
  * Created by Saad on 6/7/2016.
  */
-public interface Colorable {
+public interface INacreColorable extends IItemColorProvider {
 
 	String TAG_RAND = "rand";
 	String TAG_PURITY = "purity";
@@ -49,5 +58,23 @@ public interface Colorable {
 			purity = Math.min(purity + 1, NACRE_PURITY_CONVERSION * 2);
 			compound.setInteger(TAG_PURITY, purity);
 		} else compound.setBoolean(TAG_COMPLETE, true);
+	}
+
+	@Nullable
+	@Override
+	@SideOnly(Side.CLIENT)
+	default IItemColor getItemColor() {
+		return (stack, tintIndex) -> {
+			if (tintIndex != 0) return 0xFFFFFF;
+			int rand = 0;
+			float saturation = 1f;
+			NBTTagCompound compound = stack.getTagCompound();
+			if (compound != null && compound.hasKey(TAG_RAND))
+				rand = compound.getInteger(TAG_RAND);
+			if (compound != null && compound.hasKey(TAG_PURITY))
+				saturation = MathHelper.sin(compound.getInteger(TAG_PURITY) * (float) Math.PI * 0.5f / NACRE_PURITY_CONVERSION);
+
+			return Color.HSBtoRGB((rand + ClientTickHandler.getTicksInGame()) / (float) COLOR_CYCLE_LENGTH, saturation * 0.3f, 1f);
+		};
 	}
 }

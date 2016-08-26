@@ -16,14 +16,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 /**
  * Created by Saad on 3/7/2016.
  */
-public class ItemManaCake extends ItemFood {
+public class ItemManaCake extends ItemWizardryFood {
 
 	public ItemManaCake() {
-		super(0, 0.3F, false);
-		setRegistryName("mana_cake");
-		setUnlocalizedName("mana_cake");
-		GameRegistry.register(this);
-		setCreativeTab(Wizardry.tab);
+		super("mana_cake", 0, 0.3F, false);
 	}
 
 	@Override
@@ -32,10 +28,5 @@ public class ItemManaCake extends ItemFood {
 		IWizardryCapability cap = WizardryCapabilityProvider.get(player);
 		if (cap.getMaxMana() >= cap.getMana() + 300) cap.setMana(cap.getMana() + 300, player);
 		else cap.setMana(cap.getMaxMana(), player);
-	}
-
-	@SideOnly(Side.CLIENT)
-	public void initModel() {
-		ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(getRegistryName(), "inventory"));
 	}
 }

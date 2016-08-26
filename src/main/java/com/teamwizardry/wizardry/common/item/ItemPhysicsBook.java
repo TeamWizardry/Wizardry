@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.item;
 
+import com.teamwizardry.librarianlib.common.base.item.ItemMod;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.achievement.Achievements;
 import com.teamwizardry.wizardry.common.achievement.IPickupAchievement;
@@ -21,19 +22,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 /**
  * Created by Saad on 6/12/2016.
  */
-public class ItemPhysicsBook extends Item implements IPickupAchievement {
+public class ItemPhysicsBook extends ItemMod implements IPickupAchievement {
 
     public ItemPhysicsBook() {
-        setRegistryName("physics_book");
-        setUnlocalizedName("physics_book");
-        GameRegistry.register(this);
-        setCreativeTab(Wizardry.tab);
+        super("physics_book");
         setMaxStackSize(1);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void initModel() {
-        ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(getRegistryName(), "inventory"));
     }
 
     @Override

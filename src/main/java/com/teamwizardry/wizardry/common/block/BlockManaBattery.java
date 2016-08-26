@@ -1,5 +1,7 @@
 package com.teamwizardry.wizardry.common.block;
 
+import com.teamwizardry.librarianlib.common.base.ModCreativeTab;
+import com.teamwizardry.librarianlib.common.base.block.BlockModContainer;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.block.IManaAcceptor;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
@@ -18,35 +20,21 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
-public class BlockManaBattery extends Block implements ITileEntityProvider, IManaAcceptor {
+public class BlockManaBattery extends BlockModContainer implements IManaAcceptor {
 
 	public BlockManaBattery() {
-		super(Material.GROUND);
-		setUnlocalizedName("mana_battery");
-		setRegistryName("mana_battery");
-		GameRegistry.register(this);
-		GameRegistry.register(new ItemBlock(this), getRegistryName());
+		super("mana_battery", Material.GROUND);
 		GameRegistry.registerTileEntity(TileManaBattery.class, "mana_battery");
-		setCreativeTab(Wizardry.tab);
-		setTickRandomly(true);
 	}
 
-	@SideOnly(Side.CLIENT)
-	public void initModel() {
-		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
-	}
-
+	@Nullable
 	@Override
-	public TileEntity createNewTileEntity(World worldIn, int meta) {
+	public TileEntity createTileEntity(World world, IBlockState iBlockState) {
 		return new TileManaBattery();
-	}
-
-	public void randomTick(World worldIn, BlockPos pos, IBlockState state, Random random) {
-		this.updateTick(worldIn, pos, state, random);
-
 	}
 
 	@Override
@@ -62,5 +50,11 @@ public class BlockManaBattery extends Block implements ITileEntityProvider, IMan
 	@Override
 	public boolean isOpaqueCube(IBlockState blockState) {
 		return false;
+	}
+
+	@Nullable
+	@Override
+	public ModCreativeTab getCreativeTab() {
+		return Wizardry.tab;
 	}
 }

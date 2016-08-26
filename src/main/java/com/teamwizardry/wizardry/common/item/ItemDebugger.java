@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.client.gui.GuiBase;
+import com.teamwizardry.librarianlib.common.base.item.ItemMod;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.GlowingOverlayHelper;
 import com.teamwizardry.wizardry.api.item.IGlowOverlayable;
@@ -20,14 +21,11 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class ItemDebugger extends Item implements IGlowOverlayable {
+public class ItemDebugger extends ItemWizardry implements IGlowOverlayable {
 
 	public ItemDebugger() {
-		setRegistryName("debugger");
-		setUnlocalizedName("debugger");
-		GameRegistry.register(this);
+		super("debugger");
 		setMaxStackSize(1);
-		setCreativeTab(Wizardry.tab);
 		addPropertyOverride(new ResourceLocation(Wizardry.MODID, "overlay"), GlowingOverlayHelper.OVERLAY_OVERRIDE);
 	}
 
@@ -171,10 +169,5 @@ public class ItemDebugger extends Item implements IGlowOverlayable {
 //		System.out.println(ModuleRegistry.getInstance().getModuleId(ModuleRegistry.getInstance().getModuleById(1)));
 //		TeleportUtil.INSTANCE.teleportToDimension(playerIn, 100, 0, 100, 0);
 		return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
-	}
-
-	@SideOnly(Side.CLIENT)
-	public void initModel() {
-		ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(getRegistryName(), "inventory"));
 	}
 }

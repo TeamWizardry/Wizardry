@@ -17,19 +17,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 /**
  * Created by Saad on 6/21/2016.
  */
-public class ItemDevilDust extends Item implements IPickupAchievement {
+public class ItemDevilDust extends ItemWizardry implements IPickupAchievement {
 
     public ItemDevilDust() {
-        setRegistryName("devil_dust");
-        setUnlocalizedName("devil_dust");
-        GameRegistry.register(this);
-        setMaxStackSize(64);
-        setCreativeTab(Wizardry.tab);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void initModel() {
-        ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(getRegistryName(), "inventory"));
+        super("devil_dust");
     }
 
     @Override

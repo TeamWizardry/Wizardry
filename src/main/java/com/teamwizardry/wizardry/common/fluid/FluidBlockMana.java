@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.fluid;
 
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.Explodable;
 import com.teamwizardry.wizardry.api.trackerobject.BookTrackerObject;
 import com.teamwizardry.wizardry.client.fx.GlitterFactory;
@@ -17,6 +18,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -35,7 +37,7 @@ public class FluidBlockMana extends BlockFluidClassic {
 
     public FluidBlockMana() {
         super(FluidMana.instance, Material.WATER);
-        GameRegistry.registerBlock(this, "mana");
+        GameRegistry.register(this, new ResourceLocation(Wizardry.MODID, "mana"));
         this.setQuantaPerBlock(6);
         this.setUnlocalizedName("mana");
     }

@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.fluid;
 
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
@@ -12,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -25,7 +27,7 @@ public class FluidBlockNacre extends BlockFluidClassic {
 
     public FluidBlockNacre() {
         super(FluidNacre.instance, ModBlocks.NACRE_MATERIAL);
-        GameRegistry.registerBlock(this, "nacre");
+        GameRegistry.register(this, new ResourceLocation(Wizardry.MODID, "nacre"));
         this.setQuantaPerBlock(1);
         this.setUnlocalizedName("nacre");
     }

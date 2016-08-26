@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.item.pearl;
 
+import com.teamwizardry.librarianlib.common.base.item.ItemMod;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.block.IManaAcceptor;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -20,19 +21,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 /**
  * Created by Saad on 6/21/2016.
  */
-public class ItemManaPearl extends Item {
+public class ItemManaPearl extends ItemMod {
 
 	public ItemManaPearl() {
-		setRegistryName("mana_pearl");
-		setUnlocalizedName("mana_pearl");
-		GameRegistry.register(this);
+		super("mana_pearl");
 		setMaxStackSize(1);
-		setCreativeTab(Wizardry.tab);
-	}
-
-	@SideOnly(Side.CLIENT)
-	public void initModel() {
-		ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(getRegistryName(), "inventory"));
 	}
 
 	@Override

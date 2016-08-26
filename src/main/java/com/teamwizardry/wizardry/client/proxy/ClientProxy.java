@@ -45,7 +45,6 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void init(FMLInitializationEvent event) {
-        ModItems.initColors();
         ParticleRenderDispatcher.class.getName(); // load the class
         //Shaders.INSTANCE.getClass(); // ...
         //MagicBurstFX.class.getName(); // ...
@@ -64,11 +63,6 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void postInit(FMLPostInitializationEvent event) {
-    }
-
-    public void loadModels() {
-        ModItems.initModels();
-        ModBlocks.initModels();
     }
 
     @Override

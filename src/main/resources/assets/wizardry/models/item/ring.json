@@ -1,6 +1,7 @@
 {
   "parent":   "item/generated",
   "textures": {
-    "layer0": "wizardry:items/ringBase"
+    "layer0": "wizardry:items/empty",
+    "layer1": "wizardry:items/ringBase"
   }
 }

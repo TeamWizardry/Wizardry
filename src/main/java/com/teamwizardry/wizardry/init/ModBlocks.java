@@ -29,12 +29,4 @@ public class ModBlocks {
         MANA_BATTERY = new BlockManaBattery();
         PEDESTAL = new BlockPedestal();
     }
-
-    @SideOnly(Side.CLIENT)
-    public static void initModels() {
-        CRAFTING_PLATE.initModel();
-        MAGICIANS_WORKTABLE.initModel();
-        MANA_BATTERY.initModel();
-        PEDESTAL.initModel();
-    }
 }

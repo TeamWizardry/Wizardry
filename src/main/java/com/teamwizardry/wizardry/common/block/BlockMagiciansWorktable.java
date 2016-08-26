@@ -1,9 +1,13 @@
 package com.teamwizardry.wizardry.common.block;
 
+import com.teamwizardry.librarianlib.common.base.ModCreativeTab;
+import com.teamwizardry.librarianlib.common.base.block.BlockMod;
+import com.teamwizardry.librarianlib.common.base.block.BlockModContainer;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.common.tile.TileMagiciansWorktable;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockContainer;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -29,34 +33,26 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Created by Saad on 6/12/2016.
  */
-public class BlockMagiciansWorktable extends Block implements ITileEntityProvider {
-    public static final PropertyEnum<EnumFacing> FACING = PropertyEnum.create("facing", EnumFacing.class);
+public class BlockMagiciansWorktable extends BlockModContainer {
+    public static final PropertyEnum<EnumFacing> FACING = PropertyEnum.create("facing", EnumFacing.class, EnumFacing.HORIZONTALS);
     public static final PropertyBool ISLEFTSIDE = PropertyBool.create("is_left_side");
 
     public BlockMagiciansWorktable() {
-        super(Material.WOOD);
+        super("magicians_worktable", Material.WOOD);
         setHardness(1F);
         setSoundType(SoundType.WOOD);
-        setUnlocalizedName("magicians_worktable");
-        setRegistryName("magicians_worktable");
-        GameRegistry.register(this);
-        GameRegistry.register(new ItemBlock(this), getRegistryName());
         GameRegistry.registerTileEntity(TileMagiciansWorktable.class, "magicians_worktable");
-        setCreativeTab(Wizardry.tab);
         setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(ISLEFTSIDE, true));
     }
 
-    @SideOnly(Side.CLIENT)
-    public void initModel() {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
-    }
-
+    @Nullable
     @Override
-    public TileEntity createNewTileEntity(World worldIn, int meta) {
+    public TileEntity createTileEntity(World world, IBlockState iBlockState) {
         return new TileMagiciansWorktable();
     }
 
@@ -118,13 +114,13 @@ public class BlockMagiciansWorktable extends Block implements ITileEntityProvide
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return this.getDefaultState().withProperty(ISLEFTSIDE, meta <= 5).withProperty(FACING, EnumFacing.values()[meta <= 5 ? meta : meta - 6]);
+        return this.getDefaultState().withProperty(ISLEFTSIDE, (meta & 4) != 0).withProperty(FACING, EnumFacing.getHorizontal(meta & 3));
     }
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        int facing = state.getValue(FACING).getIndex();
-        return state.getValue(ISLEFTSIDE) ? facing : facing + 6;
+        int facing = state.getValue(FACING).getHorizontalIndex();
+        return state.getValue(ISLEFTSIDE) ? facing | 4 : facing;
     }
 
     @Override
@@ -150,5 +146,11 @@ public class BlockMagiciansWorktable extends Block implements ITileEntityProvide
     @Override
     public boolean isOpaqueCube(IBlockState blockState) {
         return false;
+    }
+
+    @Nullable
+    @Override
+    public ModCreativeTab getCreativeTab() {
+        return Wizardry.tab;
     }
 }

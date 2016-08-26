@@ -1,10 +1,14 @@
 package com.teamwizardry.wizardry.common.block;
 
+import com.teamwizardry.librarianlib.common.base.ModCreativeTab;
+import com.teamwizardry.librarianlib.common.base.block.BlockMod;
+import com.teamwizardry.librarianlib.common.base.block.BlockModContainer;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.block.IManaAcceptor;
 import com.teamwizardry.wizardry.client.render.TilePedestalRenderer;
 import com.teamwizardry.wizardry.common.tile.TilePedestal;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockContainer;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -25,26 +29,17 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Created by Saad on 5/7/2016.
  */
-public class BlockPedestal extends Block implements ITileEntityProvider, IManaAcceptor {
+public class BlockPedestal extends BlockModContainer implements IManaAcceptor {
 
     public BlockPedestal() {
-        super(Material.ROCK);
-        setUnlocalizedName("pedestal");
-        setRegistryName("pedestal");
-        GameRegistry.register(this);
-        GameRegistry.register(new ItemBlock(this), getRegistryName());
+        super("pedestal", Material.ROCK);
         GameRegistry.registerTileEntity(TilePedestal.class, "pedestal");
         setCreativeTab(Wizardry.tab);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void initModel() {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
-        ClientRegistry.bindTileEntitySpecialRenderer(TilePedestal.class, new TilePedestalRenderer());
     }
 
     @Override
@@ -73,8 +68,9 @@ public class BlockPedestal extends Block implements ITileEntityProvider, IManaAc
         return (TilePedestal) world.getTileEntity(pos);
     }
 
+    @Nullable
     @Override
-    public TileEntity createNewTileEntity(World worldIn, int meta) {
+    public TileEntity createTileEntity(World world, IBlockState iBlockState) {
         return new TilePedestal();
     }
 
@@ -91,5 +87,11 @@ public class BlockPedestal extends Block implements ITileEntityProvider, IManaAc
     @Override
     public boolean isOpaqueCube(IBlockState blockState) {
         return false;
+    }
+
+    @Nullable
+    @Override
+    public ModCreativeTab getCreativeTab() {
+        return Wizardry.tab;
     }
 }

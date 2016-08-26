@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.item.pearl;
 
+import com.teamwizardry.librarianlib.common.base.item.ItemMod;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.Explodable;
 import com.teamwizardry.wizardry.api.item.Infusable;
@@ -20,18 +21,11 @@ import java.awt.*;
 /**
  * Created by Saad on 6/10/2016.
  */
-public class ItemQuartzPearl extends Item implements Infusable, Explodable {
+public class ItemQuartzPearl extends ItemMod implements Infusable, Explodable {
 
 	public ItemQuartzPearl() {
-		setRegistryName("quartz_pearl");
-		setUnlocalizedName("quartz_pearl");
-		GameRegistry.register(this);
+		super("quartz_pearl");
 		setMaxStackSize(1);
-		setCreativeTab(Wizardry.tab);
-	}
-
-	private static int intColor(int r, int g, int b) {
-		return (r * 65536 + g * 256 + b);
 	}
 
 	@Override
@@ -46,20 +40,4 @@ public class ItemQuartzPearl extends Item implements Infusable, Explodable {
 
 		return super.onItemRightClick(itemStackIn, worldIn, playerIn, hand);
 	}
-
-	@SideOnly(Side.CLIENT)
-	public void initModel() {
-		ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(getRegistryName(), "inventory"));
-	}
-
-	@Override
-	public boolean canItemEditBlocks() {
-		return false;
-	}
-
-	@Override
-	public boolean shouldCauseReequipAnimation(ItemStack oldS, ItemStack newS, boolean slotChanged) {
-		return slotChanged;
-	}
-
 }

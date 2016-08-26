@@ -1,5 +1,7 @@
 package com.teamwizardry.wizardry.common.block;
 
+import com.teamwizardry.librarianlib.common.base.ModCreativeTab;
+import com.teamwizardry.librarianlib.common.base.block.BlockModContainer;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.block.IManaAcceptor;
 import com.teamwizardry.wizardry.client.render.TileCraftingPlateRenderer;
@@ -27,33 +29,24 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Created by Saad on 6/10/2016.
  */
-public class BlockCraftingPlate extends Block implements ITileEntityProvider, IManaAcceptor {
+public class BlockCraftingPlate extends BlockModContainer implements IManaAcceptor {
 
 	public BlockCraftingPlate() {
-		super(Material.ROCK);
+		super("crafting_plate", Material.ROCK);
 		setHardness(1F);
 		setLightLevel(15);
 		setSoundType(SoundType.STONE);
-		setUnlocalizedName("crafting_plate");
-		setRegistryName("crafting_plate");
-		GameRegistry.register(this);
 		GameRegistry.registerTileEntity(TileCraftingPlate.class, "crafting_altar");
-		GameRegistry.register(new ItemBlock(this), getRegistryName());
-		setCreativeTab(Wizardry.tab);
 	}
 
-	@SideOnly(Side.CLIENT)
-	public void initModel() {
-		ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
-		ClientRegistry.bindTileEntitySpecialRenderer(TileCraftingPlate.class, new TileCraftingPlateRenderer());
-	}
-
+	@Nullable
 	@Override
-	public TileEntity createNewTileEntity(World worldIn, int meta) {
+	public TileEntity createTileEntity(World world, IBlockState iBlockState) {
 		return new TileCraftingPlate();
 	}
 
@@ -94,5 +87,11 @@ public class BlockCraftingPlate extends Block implements ITileEntityProvider, IM
 	@Override
 	public boolean isOpaqueCube(IBlockState blockState) {
 		return false;
+	}
+
+	@Nullable
+	@Override
+	public ModCreativeTab getCreativeTab() {
+		return Wizardry.tab;
 	}
 }

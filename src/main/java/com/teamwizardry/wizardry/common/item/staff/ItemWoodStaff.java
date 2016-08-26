@@ -1,14 +1,13 @@
 package com.teamwizardry.wizardry.common.item.staff;
 
 import com.teamwizardry.librarianlib.client.core.ClientTickHandler;
+import com.teamwizardry.librarianlib.common.base.item.ItemMod;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.item.Colorable;
+import com.teamwizardry.wizardry.api.item.INacreColorable;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.IContinuousCast;
 import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
-import com.teamwizardry.wizardry.client.fx.GlitterFactory;
-import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
@@ -24,26 +23,20 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.awt.*;
-
 /**
  * Created by Saad on 6/7/2016.
  */
-public class ItemWoodStaff extends Item implements Colorable {
+public class ItemWoodStaff extends ItemMod implements INacreColorable {
     
     public ItemWoodStaff() {
-        setRegistryName("wood_staff");
-        setUnlocalizedName("wood_staff");
-        GameRegistry.register(this);
+        super("wood_staff", "wood_staff_pearl", "wood_staff");
         setMaxStackSize(1);
-        setCreativeTab(Wizardry.tab);
     }
     
     private static int intColor(int r, int g, int b) {
@@ -117,14 +110,6 @@ public class ItemWoodStaff extends Item implements Colorable {
 //        }
     }
     
-    @SideOnly(Side.CLIENT)
-    public void initModel() {
-        ModelResourceLocation full = new ModelResourceLocation(getRegistryName() + "_pearl", "inventory");
-        ModelResourceLocation empty = new ModelResourceLocation(getRegistryName(), "inventory");
-        ModelLoader.setCustomModelResourceLocation(this, 0, empty);
-        ModelLoader.setCustomModelResourceLocation(this, 1, full);
-    }
-    
     @Override
     public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
         if (!worldIn.isRemote) return;
@@ -139,32 +124,5 @@ public class ItemWoodStaff extends Item implements Colorable {
         colorableOnEntityItemUpdate(entityItem);
         
         return super.onEntityItemUpdate(entityItem);
-    }
-    
-    @Override
-    public boolean canItemEditBlocks() {
-        return false;
-    }
-    
-    @Override
-    public boolean shouldCauseReequipAnimation(ItemStack oldS, ItemStack newS, boolean slotChanged) {
-        return !ItemStack.areItemsEqual(oldS, newS) || oldS.stackSize != newS.stackSize || slotChanged;
-    }
-    
-    @SideOnly(Side.CLIENT)
-    public static class ColorHandler implements IItemColor {
-        
-        @Override
-        public int getColorFromItemstack(ItemStack stack, int tintIndex) {
-            int rand = 0;
-            float saturation = 1f;
-            NBTTagCompound compound = stack.getTagCompound();
-            if (compound != null && compound.hasKey(TAG_RAND))
-                rand = compound.getInteger(TAG_RAND);
-            if (compound != null && compound.hasKey(TAG_PURITY))
-                saturation = MathHelper.sin(compound.getInteger(TAG_PURITY) * (float) Math.PI * 0.5f / NACRE_PURITY_CONVERSION);
-            
-            return java.awt.Color.HSBtoRGB((rand + ClientTickHandler.getTicksInGame()) / (float) COLOR_CYCLE_LENGTH, saturation * 0.3f, 1f);
-        }
     }
 }

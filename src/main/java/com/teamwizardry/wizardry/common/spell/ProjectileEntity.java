@@ -8,7 +8,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.item.Colorable;
+import com.teamwizardry.wizardry.api.item.INacreColorable;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.spell.SpellEntity;
 import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
@@ -35,9 +35,9 @@ public class ProjectileEntity extends SpellEntity
 		if (stack.player.getHeldItemMainhand() != null)
 		{
 			ItemStack item = stack.player.getHeldItemMainhand();
-			if (item.getItem() instanceof Colorable)
+			if (item.getItem() instanceof INacreColorable)
 			{
-				Colorable colorable = (Colorable) item.getItem();
+				INacreColorable colorable = (INacreColorable) item.getItem();
 				//trailColor = colorable.getColor(item);
 			}
 		}

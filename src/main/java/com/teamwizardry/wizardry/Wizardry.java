@@ -2,10 +2,12 @@ package com.teamwizardry.wizardry;
 
 import com.teamwizardry.librarianlib.LibrarianLog;
 import com.teamwizardry.librarianlib.client.book.Book;
+import com.teamwizardry.librarianlib.common.base.ModCreativeTab;
 import com.teamwizardry.wizardry.common.CommonProxy;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -17,6 +19,7 @@ import net.minecraftforge.fml.common.network.PacketLoggingHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 
 /**
@@ -40,16 +43,11 @@ public class Wizardry {
 	@Mod.Instance
 	public static Wizardry instance;
 
-	public static CreativeTabs tab = new CreativeTabs(MODNAME) {
+	public static ModCreativeTab tab = new ModCreativeTab(MODNAME) {
+		@NotNull
 		@Override
-		public String getTabLabel() {
-			return MODID;
-		}
-
-		@Override
-		@SideOnly(Side.CLIENT)
-		public Item getTabIconItem() {
-			return ModItems.PHYSICS_BOOK;
+		public ItemStack getIconItemStack() {
+			return new ItemStack(ModItems.PHYSICS_BOOK);
 		}
 	};
 
