@@ -8,9 +8,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityFlying;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -22,21 +24,22 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class EntityFairy extends EntityFlying {
 
-	private int changeCourseTimer = 0;
-	private boolean shouldChangeCourse = false;
-	private int changeCourseExpireTimer = 0;
+	private boolean readjustingComplete = true;
 	private boolean dirYawAdd = false;
 	private boolean dirPitchAdd = false;
 	private Color color;
+	private double pitchAmount = 0, yawAmount = 0;
+	private boolean enableNextStep = true;
 
 	public EntityFairy(World worldIn) {
 		super(worldIn);
 		this.setSize(0.5F, 0.5F);
 		this.isAirBorne = true;
 		this.experienceValue = 5;
-		changeCourseTimer = 100;
 		color = new Color(ThreadLocalRandom.current().nextFloat(), ThreadLocalRandom.current().nextFloat(), ThreadLocalRandom.current().nextFloat());
 		color = color.brighter();
+		rotationPitch = (float) ThreadLocalRandom.current().nextDouble(-90, 90);
+		rotationYaw = (float) ThreadLocalRandom.current().nextDouble(-180, 180);
 	}
 
 	@Override
@@ -71,59 +74,75 @@ public class EntityFairy extends EntityFlying {
 		super.onUpdate();
 		if (worldObj.isRemote) return;
 
-		ParticleBuilder glitter = new ParticleBuilder(20);
+		ParticleBuilder glitter = new ParticleBuilder(50);
 		glitter.setColor(color);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
 
 		ParticleSpawner.spawn(glitter, worldObj, new StaticInterp<>(new Vec3d(posX, posY + 0.25, posZ)), 20, 0, (i, build) -> {
 			glitter.setMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.02, 0.02), ThreadLocalRandom.current().nextDouble(-0.02, 0.02), ThreadLocalRandom.current().nextDouble(-0.02, 0.02)));
 			glitter.disableMotion();
-
-			/*if (ThreadLocalRandom.current().nextBoolean()) {
-				glitter.setPositionFunction(new InterpBezier3D(
-						new Vec3d(0, 0, 0),
-						new Vec3d(0, 0.5, 0),
-						new Vec3d(ThreadLocalRandom.current().nextDouble(-0.5, 0.5), 0, (ThreadLocalRandom.current().nextDouble(-0.5, 0.5))),
-						new Vec3d(ThreadLocalRandom.current().nextDouble(-0.5, 0.5), 0.5, ThreadLocalRandom.current().nextDouble(-0.5, 0.5))
-				));
-			} else {
-				glitter.setPositionFunction(new InterpBezier3D(
-						new Vec3d(0, 0.5, 0),
-						new Vec3d(0, 0, 0),
-						new Vec3d(ThreadLocalRandom.current().nextDouble(-0.5, 0.5), 0.5, (ThreadLocalRandom.current().nextDouble(-0.5, 0.5))),
-						new Vec3d(ThreadLocalRandom.current().nextDouble(-0.5, 0.5), 0, ThreadLocalRandom.current().nextDouble(-0.5, 0.5))
-				));
-			}*/
 		});
 
-		if (!shouldChangeCourse) {
-			if (changeCourseTimer > 0) changeCourseTimer--;
-			else {
-				changeCourseTimer = ThreadLocalRandom.current().nextInt(100, 200);
-				shouldChangeCourse = true;
-				dirYawAdd = ThreadLocalRandom.current().nextBoolean();
-				dirPitchAdd = ThreadLocalRandom.current().nextBoolean();
-				changeCourseExpireTimer = ThreadLocalRandom.current().nextInt(30, 300);
+		boolean match = true;
+		for (int i = -3; i < 3; i++)
+			for (int j = -3; j < 0; j++)
+				for (int k = -3; k < 3; k++)
+					if (worldObj.getBlockState(new BlockPos(posX + i, posY + j, posZ + k)).getBlock() != Blocks.AIR) {
+						if (pitchAmount < 90) {
+							dirPitchAdd = false;
+							pitchAmount += 0.2;
+							readjustingComplete = false;
+						}
+						match = false;
+						break;
+					}
+
+		for (int i = -3; i < 3; i++)
+			for (int j = 0; j < 3; j++)
+				for (int k = -3; k < 3; k++)
+					if (worldObj.getBlockState(new BlockPos(posX + i, posY + j, posZ + k)).getBlock() != Blocks.AIR) {
+						if (pitchAmount > -90) {
+							dirPitchAdd = true;
+							pitchAmount += 0.2;
+							readjustingComplete = false;
+						}
+						match = false;
+						break;
+					}
+		if (match) {
+			if (readjustingComplete) {
+				if (ThreadLocalRandom.current().nextInt(0, 20) == 0) {
+					dirYawAdd = ThreadLocalRandom.current().nextBoolean();
+					dirPitchAdd = ThreadLocalRandom.current().nextBoolean();
+					if (rotationPitch > 89) rotationPitch = -89;
+					if (rotationPitch < -89) rotationPitch = 89;
+					if (rotationYaw > 179) rotationYaw = -179;
+					if (rotationYaw < -179) rotationYaw = 179;
+					pitchAmount += ThreadLocalRandom.current().nextDouble(-4, 4);
+					yawAmount += ThreadLocalRandom.current().nextDouble(-1, 1);
+				}
+			} else {
+				if (pitchAmount > ThreadLocalRandom.current().nextInt(-20, 20)) {
+					dirPitchAdd = false;
+					pitchAmount -= ThreadLocalRandom.current().nextDouble(0.5, 5);
+				} else readjustingComplete = true;
 			}
-			Vec3d rot = getVectorForRotation(rotationPitch, rotationYaw);
-			motionX = rot.xCoord / 10;
-			motionY = rot.yCoord / 10;
-			motionZ = rot.zCoord / 10;
 		}
 
-		if (shouldChangeCourse) {
-			if (changeCourseExpireTimer > 0) changeCourseExpireTimer--;
-			else shouldChangeCourse = false;
+		if (dirYawAdd) rotationYaw += yawAmount;
+		else rotationYaw -= yawAmount;
 
-			if (ThreadLocalRandom.current().nextInt(0, 10) == 0) {
-				if (dirYawAdd) rotationYaw += 1;
-				else rotationYaw -= 1;
-			}
-			if (ThreadLocalRandom.current().nextInt(0, 30) == 0) {
-				if (dirPitchAdd) rotationPitch += 1;
-				else rotationPitch -= 1;
-			}
-		}
+		if (dirPitchAdd) rotationPitch += pitchAmount;
+		else rotationPitch -= pitchAmount;
+
+		Vec3d rot = getVectorForRotation(rotationPitch, rotationYaw);
+		motionX = rot.xCoord / 10;
+		motionY = rot.yCoord / 10;
+		motionZ = rot.zCoord / 10;
+	}
+
+	private void checkForHostiles() {
+		//ArrayList<EntityPlayer> players = worldObj.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(-3, -3, -3, 3, 3, 3));
 	}
 
 	@Override
