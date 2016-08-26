@@ -96,19 +96,6 @@ public class EntityFairy extends EntityFlying {
 						match = false;
 						break;
 					}
-
-		for (int i = -3; i < 3; i++)
-			for (int j = 0; j < 3; j++)
-				for (int k = -3; k < 3; k++)
-					if (worldObj.getBlockState(new BlockPos(posX + i, posY + j, posZ + k)).getBlock() != Blocks.AIR) {
-						if (pitchAmount > -90) {
-							dirPitchAdd = true;
-							pitchAmount += 0.2;
-							readjustingComplete = false;
-						}
-						match = false;
-						break;
-					}
 		if (match) {
 			if (readjustingComplete) {
 				if (ThreadLocalRandom.current().nextInt(0, 20) == 0) {
