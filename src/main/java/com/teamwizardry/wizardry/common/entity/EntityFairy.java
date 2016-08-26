@@ -158,7 +158,12 @@ public class EntityFairy extends EntityFlying {
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
 
 		ParticleSpawner.spawn(glitter, worldObj, new StaticInterp<>(new Vec3d(posX, posY + 0.25, posZ)), ThreadLocalRandom.current().nextInt(50, 100), 0, (i, build) -> {
-			glitter.setMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.2, 0.2), ThreadLocalRandom.current().nextDouble(-0.2, 0.2), ThreadLocalRandom.current().nextDouble(-0.2, 0.2)));
+			double radius = 0.5;
+			double t = 2 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
+			double u = ThreadLocalRandom.current().nextDouble(-radius, radius) + ThreadLocalRandom.current().nextDouble(-radius, radius);
+			double r = (u > 1) ? 2 - u : u;
+			double x = r * Math.cos(t), z = r * Math.sin(t);
+			glitter.setMotion(new Vec3d(x, ThreadLocalRandom.current().nextDouble(-0.3, 0.5), z));
 		});
 
 		return true;

@@ -174,19 +174,19 @@ public class EntityHallowedSpirit extends EntityMob {
 	@Override
 	public boolean attackEntityFrom(DamageSource source, float amount) {
 		super.attackEntityFrom(source, amount);
-		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(100, 200));
+		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(100, 150));
 		glitter.setColor(new InterpColorHSV(Color.BLUE, 50, 20));
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
 
-		ParticleSpawner.spawn(glitter, worldObj, new StaticInterp<>(new Vec3d(posX, posY + getEyeHeight(), posZ)), 5, 0, (i, build) -> {
-			double radius = 0.15;
+		ParticleSpawner.spawn(glitter, worldObj, new StaticInterp<>(new Vec3d(posX, posY + getEyeHeight(), posZ)), ThreadLocalRandom.current().nextInt(40, 100), 0, (i, build) -> {
+			double radius = 0.2;
 			double t = 2 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
 			double u = ThreadLocalRandom.current().nextDouble(-radius, radius) + ThreadLocalRandom.current().nextDouble(-radius, radius);
 			double r = (u > 1) ? 2 - u : u;
 			double x = r * Math.cos(t), z = r * Math.sin(t);
 
 			glitter.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(0, 0.4), z));
-			glitter.addMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.1, 0.1), ThreadLocalRandom.current().nextDouble(0, 0.3), ThreadLocalRandom.current().nextDouble(-0.1, 0.1)));
+			glitter.setMotion(new Vec3d(0, ThreadLocalRandom.current().nextDouble(0, 0.02), 0));
 			glitter.disableMotion();
 		});
 		return true;
