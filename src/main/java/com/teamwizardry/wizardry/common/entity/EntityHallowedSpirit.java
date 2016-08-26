@@ -2,20 +2,17 @@ package com.teamwizardry.wizardry.common.entity;
 
 import com.teamwizardry.librarianlib.client.fx.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.client.fx.particle.ParticleSpawner;
+import com.teamwizardry.librarianlib.client.fx.particle.functions.InterpColorHSV;
 import com.teamwizardry.librarianlib.common.util.math.interpolate.StaticInterp;
-import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpBezier3D;
 import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIFindEntityNearestPlayer;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAIWander;
+import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
@@ -30,7 +27,6 @@ import java.util.concurrent.ThreadLocalRandom;
 public class EntityHallowedSpirit extends EntityMob {
 
 	private boolean angry = false;
-	private EntityDataManager anger = new EntityDataManager(this);
 
 	public EntityHallowedSpirit(World worldIn) {
 		super(worldIn);
@@ -45,9 +41,7 @@ public class EntityHallowedSpirit extends EntityMob {
 	}
 
 	protected void initEntityAI() {
-		this.targetTasks.addTask(0, new EntityAIFindEntityNearestPlayer(this));
-		this.tasks.addTask(1, new EntityAIWander(this, 0.3D));
-		this.tasks.addTask(2, new EntityAISwimming(this));
+		this.tasks.addTask(1, new EntityAIWatchClosest(this, EntityPlayer.class, 50.0F));
 		this.applyEntityAI();
 	}
 
@@ -71,6 +65,15 @@ public class EntityHallowedSpirit extends EntityMob {
 			((EntityLivingBase) entity).setRevengeTarget(this);
 		}
 		entity.fallDistance = 0;
+
+		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(30, 50));
+		glitter.setColor(new Color(0x4DFFFFFF, true));
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
+
+		ParticleSpawner.spawn(glitter, worldObj, new StaticInterp<>(new Vec3d(posX, posY + getEyeHeight(), posZ)), ThreadLocalRandom.current().nextInt(30, 50), 0, (i, build) -> {
+			glitter.setMotion(new Vec3d(entity.motionX + ThreadLocalRandom.current().nextDouble(-0.01, 0.01), entity.motionY / 2 + ThreadLocalRandom.current().nextDouble(-0.01, 0.01), entity.motionZ + ThreadLocalRandom.current().nextDouble(-0.01, 0.01)));
+			glitter.disableMotion();
+		});
 	}
 
 	@Override
@@ -78,43 +81,65 @@ public class EntityHallowedSpirit extends EntityMob {
 		super.onUpdate();
 		if (worldObj.isRemote) return;
 
+		fallDistance = 0;
+
+		EntityPlayer farPlayer = worldObj.getNearestPlayerNotCreative(this, 50);
+		if (farPlayer != null) {
+			Vec3d direction = getPositionVector().subtract(farPlayer.getPositionVector()).normalize();
+			motionX = direction.xCoord * -0.05;
+			motionY = direction.yCoord * -0.05;
+			motionZ = direction.zCoord * -0.05;
+			rotationYaw = (float) (-Math.atan2(direction.xCoord, direction.zCoord) * 180 / Math.PI - 180);
+		}
+
 		EntityPlayer player = worldObj.getNearestPlayerNotCreative(this, 2);
+		EntityPlayer closePlayer = worldObj.getNearestPlayerNotCreative(this, 10);
+		angry = player != null;
 
 		ParticleBuilder glitter = new ParticleBuilder(30);
-		if (player == null) {
-			glitter.setColor(new Color(0x4DFFFFFF, true));
-			angry = false;
-		} else {
-			glitter.setColor(new Color(0x4DFF0000, true));
-			angry = true;
-		}
 		glitter.disableMotion();
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
 
 		ParticleSpawner.spawn(glitter, worldObj, new StaticInterp<>(new Vec3d(posX, posY + getEyeHeight(), posZ)), 5, 0, (i, build) -> {
-			if (player == null) {
-				if (ThreadLocalRandom.current().nextBoolean()) {
-					glitter.setPositionFunction(new InterpBezier3D(
-							new Vec3d(0, 0, 0),
-							new Vec3d(0, 0.3, 0),
-							new Vec3d(ThreadLocalRandom.current().nextDouble(-0.3, 0.3), 0, (ThreadLocalRandom.current().nextDouble(-0.3, 0.3))),
-							new Vec3d(ThreadLocalRandom.current().nextDouble(-0.3, 0.3), 0.3, ThreadLocalRandom.current().nextDouble(-0.3, 0.3))
-					));
-				} else {
-					glitter.setPositionFunction(new InterpBezier3D(
-							new Vec3d(0, 0.3, 0),
-							new Vec3d(0, 0, 0),
-							new Vec3d(ThreadLocalRandom.current().nextDouble(-0.3, 0.3), 0.3, (ThreadLocalRandom.current().nextDouble(-0.3, 0.3))),
-							new Vec3d(ThreadLocalRandom.current().nextDouble(-0.3, 0.3), 0, ThreadLocalRandom.current().nextDouble(-0.3, 0.3))
-					));
-				}
+			if (closePlayer != null && !angry) {
+
+				double radius = 0.15;
+				double t = 2 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
+				double u = ThreadLocalRandom.current().nextDouble(-radius, radius) + ThreadLocalRandom.current().nextDouble(-radius, radius);
+				double r = (u > 1) ? 2 - u : u;
+				double x = r * Math.cos(t), z = r * Math.sin(t);
+
+				glitter.setColor(new InterpColorHSV(Color.RED, 50, 20));
+				glitter.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(0, 0.5), z));
+				glitter.addMotion(new Vec3d(0, ThreadLocalRandom.current().nextDouble(0, 0.02), 0));
+				glitter.disableMotion();
+
+			} else if (angry) {
+
+				double radius = 0.2;
+				double t = 2 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
+				double u = ThreadLocalRandom.current().nextDouble(-radius, radius) + ThreadLocalRandom.current().nextDouble(-radius, radius);
+				double r = (u > 1) ? 2 - u : u;
+				double x = r * Math.cos(t), z = r * Math.sin(t);
+
+				glitter.setColor(Color.RED);
+				glitter.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(0, 0.5), z));
+				glitter.addMotion(new Vec3d(0, ThreadLocalRandom.current().nextDouble(0, 0.02), 0));
+				glitter.disableMotion();
+
+
 			} else {
-				glitter.setPositionFunction(new InterpBezier3D(
-						new Vec3d(0, 0, 0),
-						new Vec3d(ThreadLocalRandom.current().nextDouble(-0.6, 0.6), 0.3, ThreadLocalRandom.current().nextDouble(-0.6, 0.6)),
-						new Vec3d(ThreadLocalRandom.current().nextDouble(-0.2, 0.2), 0, (ThreadLocalRandom.current().nextDouble(-0.2, 0.2))),
-						new Vec3d(0, 0.2, 0)
-				));
+
+				double radius = 0.15;
+				double t = 2 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
+				double u = ThreadLocalRandom.current().nextDouble(-radius, radius) + ThreadLocalRandom.current().nextDouble(-radius, radius);
+				double r = (u > 1) ? 2 - u : u;
+				double x = r * Math.cos(t), z = r * Math.sin(t);
+
+				glitter.setColor(new Color(0x4DFFFFFF, true));
+				glitter.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(0, 0.4), z));
+				glitter.addMotion(new Vec3d(-motionX / 10, 0, -motionZ / 10));
+				glitter.disableMotion();
 			}
 		});
 
@@ -149,15 +174,22 @@ public class EntityHallowedSpirit extends EntityMob {
 	@Override
 	public boolean attackEntityFrom(DamageSource source, float amount) {
 		super.attackEntityFrom(source, amount);
-		float initHealth = getHealth();
-		if (getHealth() <= 0 && initHealth > 0) {
-			if (source.getEntity() instanceof EntityPlayer) {
+		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(100, 200));
+		glitter.setColor(new InterpColorHSV(Color.BLUE, 50, 20));
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
 
-				//if (((EntityPlayer) source.getEntity()).hasCapability(ImpurityProvider.impurityCapability, null)) {
-				//	source.getEntity().getCapability(ImpurityProvider.impurityCapability, null).setImpurity((EntityPlayer) source.getEntity(), ((EntityPlayer) source.getEntity()).getCapability(ImpurityProvider.impurityCapability, null).getImpurity() + rand.nextInt(3) + 3);
-				//}
-			}
-		}
+		ParticleSpawner.spawn(glitter, worldObj, new StaticInterp<>(new Vec3d(posX, posY + getEyeHeight(), posZ)), 5, 0, (i, build) -> {
+			double radius = 0.15;
+			double t = 2 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
+			double u = ThreadLocalRandom.current().nextDouble(-radius, radius) + ThreadLocalRandom.current().nextDouble(-radius, radius);
+			double r = (u > 1) ? 2 - u : u;
+			double x = r * Math.cos(t), z = r * Math.sin(t);
+
+			glitter.setColor(new InterpColorHSV(Color.BLUE, 50, 10));
+			glitter.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(0, 0.4), z));
+			glitter.addMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.1, 0.1), ThreadLocalRandom.current().nextDouble(0, 0.3), ThreadLocalRandom.current().nextDouble(-0.1, 0.1)));
+			glitter.disableMotion();
+		});
 		return true;
 	}
 

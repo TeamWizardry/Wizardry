@@ -12,7 +12,7 @@ import net.minecraft.util.ResourceLocation;
 public class RenderFairy extends RenderLiving<EntityFairy> {
 
 	public RenderFairy(RenderManager renderManager, ModelBase modelBase, float shadowSize) {
-		super(renderManager, modelBase, shadowSize);
+		super(renderManager, modelBase, 0);
 	}
 
 	@Override

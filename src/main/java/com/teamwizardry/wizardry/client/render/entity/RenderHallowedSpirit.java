@@ -13,7 +13,7 @@ import net.minecraft.util.ResourceLocation;
 public class RenderHallowedSpirit extends RenderLiving<EntityHallowedSpirit> {
 
 	public RenderHallowedSpirit(RenderManager renderManager, ModelBase modelBase, float shadowSize) {
-		super(renderManager, modelBase, shadowSize);
+		super(renderManager, modelBase, 0);
 	}
 
 	@Override
