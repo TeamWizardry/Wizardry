@@ -89,7 +89,7 @@ public class EntityHallowedSpirit extends EntityMob {
 			motionX = direction.xCoord * -0.05;
 			motionY = direction.yCoord * -0.05;
 			motionZ = direction.zCoord * -0.05;
-			rotationYaw = (float) (-Math.atan2(direction.xCoord, direction.zCoord) * 180 / Math.PI - 180);
+			rotationYaw = (float) (-Math.atan2(direction.xCoord, direction.zCoord) * 180 / Math.PI - 180) / 2;
 		}
 
 		EntityPlayer player = worldObj.getNearestPlayerNotCreative(this, 2);
@@ -185,7 +185,6 @@ public class EntityHallowedSpirit extends EntityMob {
 			double r = (u > 1) ? 2 - u : u;
 			double x = r * Math.cos(t), z = r * Math.sin(t);
 
-			glitter.setColor(new InterpColorHSV(Color.BLUE, 50, 10));
 			glitter.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(0, 0.4), z));
 			glitter.addMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.1, 0.1), ThreadLocalRandom.current().nextDouble(0, 0.3), ThreadLocalRandom.current().nextDouble(-0.1, 0.1)));
 			glitter.disableMotion();
