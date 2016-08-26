@@ -148,6 +148,7 @@ public class EntityHallowedSpirit extends EntityMob {
 
 	@Override
 	public boolean attackEntityFrom(DamageSource source, float amount) {
+		super.attackEntityFrom(source, amount);
 		float initHealth = getHealth();
 		if (getHealth() <= 0 && initHealth > 0) {
 			if (source.getEntity() instanceof EntityPlayer) {

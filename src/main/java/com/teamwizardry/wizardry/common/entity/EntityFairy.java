@@ -8,6 +8,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityFlying;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
@@ -29,7 +30,7 @@ public class EntityFairy extends EntityFlying {
 	private boolean dirPitchAdd = false;
 	private Color color;
 	private double pitchAmount = 0, yawAmount = 0;
-	private boolean enableNextStep = true;
+	private boolean sad = false;
 
 	public EntityFairy(World worldIn) {
 		super(worldIn);
@@ -43,20 +44,14 @@ public class EntityFairy extends EntityFlying {
 	}
 
 	@Override
-	protected void entityInit() {
-		super.entityInit();
-	}
-
-	@Override
 	public boolean isAIDisabled() {
 		return false;
 	}
 
 	protected void applyEntityAttributes() {
 		super.applyEntityAttributes();
-		this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(8.0D);
-		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(5.0D);
-		this.getEntityAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(0.1D);
+		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(1.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(0.0D);
 	}
 
 	@Override
@@ -67,6 +62,16 @@ public class EntityFairy extends EntityFlying {
 			((EntityLivingBase) entity).attackEntityAsMob(this);
 			((EntityLivingBase) entity).setRevengeTarget(this);
 		}
+		entity.fallDistance = 0;
+
+		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(20, 30));
+		glitter.setColor(color);
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
+
+		ParticleSpawner.spawn(glitter, worldObj, new StaticInterp<>(new Vec3d(posX, posY + 0.25, posZ)), ThreadLocalRandom.current().nextInt(5, 10), 0, (i, build) -> {
+			glitter.setMotion(new Vec3d(motionX + ThreadLocalRandom.current().nextDouble(-0.01, 0.01), motionY + ThreadLocalRandom.current().nextDouble(0.1, 0.2), motionZ + ThreadLocalRandom.current().nextDouble(-0.01, 0.01)));
+			if (!sad) glitter.disableMotion();
+		});
 	}
 
 	@Override
@@ -74,13 +79,13 @@ public class EntityFairy extends EntityFlying {
 		super.onUpdate();
 		if (worldObj.isRemote) return;
 
-		ParticleBuilder glitter = new ParticleBuilder(50);
+		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(10, 30));
 		glitter.setColor(color);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
 
-		ParticleSpawner.spawn(glitter, worldObj, new StaticInterp<>(new Vec3d(posX, posY + 0.25, posZ)), 20, 0, (i, build) -> {
+		ParticleSpawner.spawn(glitter, worldObj, new StaticInterp<>(new Vec3d(posX, posY + 0.25, posZ)), ThreadLocalRandom.current().nextInt(5, 10), 0, (i, build) -> {
 			glitter.setMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.02, 0.02), ThreadLocalRandom.current().nextDouble(-0.02, 0.02), ThreadLocalRandom.current().nextDouble(-0.02, 0.02)));
-			glitter.disableMotion();
+			if (!sad) glitter.disableMotion();
 		});
 
 		boolean match = true;
@@ -96,17 +101,34 @@ public class EntityFairy extends EntityFlying {
 						match = false;
 						break;
 					}
+		EntityPlayer player = worldObj.getNearestPlayerNotCreative(this, 2);
+		if (player != null) {
+			if (pitchAmount < 90) {
+				dirPitchAdd = false;
+				pitchAmount += 0.2;
+				readjustingComplete = false;
+			}
+			match = false;
+		}
+
 		if (match) {
 			if (readjustingComplete) {
 				if (ThreadLocalRandom.current().nextInt(0, 20) == 0) {
+					boolean prevDirYawAdd = dirYawAdd;
+					boolean prevDirPitchAdd = dirPitchAdd;
+
 					dirYawAdd = ThreadLocalRandom.current().nextBoolean();
 					dirPitchAdd = ThreadLocalRandom.current().nextBoolean();
+
 					if (rotationPitch > 89) rotationPitch = -89;
 					if (rotationPitch < -89) rotationPitch = 89;
 					if (rotationYaw > 179) rotationYaw = -179;
 					if (rotationYaw < -179) rotationYaw = 179;
-					pitchAmount += ThreadLocalRandom.current().nextDouble(-4, 4);
-					yawAmount += ThreadLocalRandom.current().nextDouble(-1, 1);
+
+					if (prevDirPitchAdd == dirPitchAdd) pitchAmount += ThreadLocalRandom.current().nextDouble(-4, 4);
+					else pitchAmount += -pitchAmount / 5;
+					if (prevDirYawAdd == dirYawAdd) yawAmount += ThreadLocalRandom.current().nextDouble(-1, 1);
+					else yawAmount += -yawAmount / 5;
 				}
 			} else {
 				if (pitchAmount > ThreadLocalRandom.current().nextInt(-20, 20)) {
@@ -123,13 +145,23 @@ public class EntityFairy extends EntityFlying {
 		else rotationPitch -= pitchAmount;
 
 		Vec3d rot = getVectorForRotation(rotationPitch, rotationYaw);
-		motionX = rot.xCoord / 10;
-		motionY = rot.yCoord / 10;
-		motionZ = rot.zCoord / 10;
+		motionX = rot.xCoord / ThreadLocalRandom.current().nextDouble(5, 10);
+		motionY = rot.yCoord / ThreadLocalRandom.current().nextDouble(5, 10);
+		motionZ = rot.zCoord / ThreadLocalRandom.current().nextDouble(5, 10);
 	}
 
-	private void checkForHostiles() {
-		//ArrayList<EntityPlayer> players = worldObj.getEntitiesWithinAABB(EntityPlayer.class, new AxisAlignedBB(-3, -3, -3, 3, 3, 3));
+	@Override
+	public boolean attackEntityFrom(DamageSource source, float amount) {
+		super.attackEntityFrom(source, amount);
+		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(30, 50));
+		glitter.setColor(color.darker());
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
+
+		ParticleSpawner.spawn(glitter, worldObj, new StaticInterp<>(new Vec3d(posX, posY + 0.25, posZ)), ThreadLocalRandom.current().nextInt(50, 100), 0, (i, build) -> {
+			glitter.setMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.2, 0.2), ThreadLocalRandom.current().nextDouble(-0.2, 0.2), ThreadLocalRandom.current().nextDouble(-0.2, 0.2)));
+		});
+
+		return true;
 	}
 
 	@Override
@@ -158,11 +190,13 @@ public class EntityFairy extends EntityFlying {
 	public void readEntityFromNBT(NBTTagCompound compound) {
 		super.readEntityFromNBT(compound);
 		if (compound.hasKey("color")) color = new Color(compound.getInteger("color"));
+		if (compound.hasKey("sad")) sad = compound.getBoolean("sad");
 	}
 
 	@Override
 	public void writeEntityToNBT(NBTTagCompound compound) {
 		super.writeEntityToNBT(compound);
 		compound.setInteger("color", color.getRGB());
+		compound.setBoolean("sad", sad);
 	}
 }
