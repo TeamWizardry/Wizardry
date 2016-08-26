@@ -1,7 +1,7 @@
 {
   "variants": {
     "normal": {
-      "model": "wizardry:crafting_plate"
+      "model": "wizardry:crafting_basin"
     }
   }
 }

@@ -74,9 +74,11 @@ public class BlockCraftingPlate extends Block implements ITileEntityProvider, IM
 		return true;
 	}
 
+	public static final AxisAlignedBB AABB = new AxisAlignedBB(0.125, 0, 0.125, 0.875, 0.625, 0.875);
+
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos) {
-		return new AxisAlignedBB(0, 0, 0, 1, 0.75, 1);
+		return AABB;
 	}
 
 	@Override
