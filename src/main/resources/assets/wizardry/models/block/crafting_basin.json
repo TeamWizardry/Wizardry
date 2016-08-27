@@ -2,12 +2,12 @@
 "__comment": "Designed by Wiresegal with BDcraft Cubik PRO 0.95 Beta - http://bdcraft.net",
 "parent": "block/block",
 "textures": {
-    "particle": "wizardry:blocks/goldbowlinterior",
-    "outer": "wizardry:blocks/goldbowlexterior",
-    "inner": "wizardry:blocks/goldbowlinterior",
-    "legs": "wizardry:blocks/woodlegs",
-    "bottom": "wizardry:blocks/goldbowlbottom",
-    "lining": "wizardry:blocks/goldbowllining"
+    "particle": "wizardry:blocks/gold_bowl_interior",
+    "outer": "wizardry:blocks/gold_bowl_exterior",
+    "inner": "wizardry:blocks/gold_bowl_interior",
+    "legs": "wizardry:blocks/wood_legs",
+    "bottom": "wizardry:blocks/gold_bowl_bottom",
+    "lining": "wizardry:blocks/gold_bowl_lining"
 },
 "elements": [ 
 {

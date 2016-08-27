@@ -1,8 +1,11 @@
 package com.teamwizardry.wizardry.common.spell.module.shapes;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.api.module.attribute.Attribute;
+import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.spell.SpellEntity;
+import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
+import com.teamwizardry.wizardry.api.trackerobject.SpellTracker;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -11,16 +14,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
-import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.attribute.Attribute;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.api.spell.SpellEntity;
-import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
-import com.teamwizardry.wizardry.api.trackerobject.SpellTracker;
-import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ModuleZone extends Module {
     public ModuleZone(ItemStack stack) {

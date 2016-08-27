@@ -6,10 +6,6 @@ import com.teamwizardry.wizardry.client.render.entity.RenderFairy;
 import com.teamwizardry.wizardry.client.render.entity.RenderHallowedSpirit;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.common.entity.EntityHallowedSpirit;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 

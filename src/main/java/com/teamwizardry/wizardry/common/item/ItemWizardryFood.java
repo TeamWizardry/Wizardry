@@ -2,7 +2,6 @@ package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.common.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.common.base.item.IModItemProvider;
-import com.teamwizardry.librarianlib.common.base.item.ItemMod;
 import com.teamwizardry.librarianlib.common.util.VariantHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.client.renderer.ItemMeshDefinition;

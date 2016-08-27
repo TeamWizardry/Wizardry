@@ -5,8 +5,6 @@ import com.teamwizardry.librarianlib.client.book.Book;
 import com.teamwizardry.librarianlib.common.base.ModCreativeTab;
 import com.teamwizardry.wizardry.common.CommonProxy;
 import com.teamwizardry.wizardry.init.ModItems;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -16,8 +14,6 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.PacketLoggingHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 

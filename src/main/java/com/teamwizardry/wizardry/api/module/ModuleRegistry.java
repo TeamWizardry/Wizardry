@@ -1,15 +1,16 @@
 package com.teamwizardry.wizardry.api.module;
 
-import java.util.Map;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.oredict.OreDictionary;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.oredict.OreDictionary;
+
+import java.util.Map;
 
 /*
     @author eladkay
@@ -20,14 +21,6 @@ public class ModuleRegistry {
     private Map<ModuleType, Map<ResourceLocation, Module>> modules = Maps.newHashMap();
     private BiMap<ResourceLocation, Module> moduleLookup = HashBiMap.create(512);
 
-    public int getRegistrySize() {
-        return moduleLookup.size();
-    }
-
-    public BiMap<ResourceLocation, Module> getRegistryMap() {
-        return moduleLookup;
-    }
-    
     private ModuleRegistry() {
         for (ModuleType type : ModuleType.values()) modules.putIfAbsent(type, HashBiMap.create(512));
     }
@@ -35,7 +28,7 @@ public class ModuleRegistry {
     public static ModuleRegistry getInstance() {
         return INSTANCE;
     }
-
+    
     public static boolean areItemsEqual(ItemStack stack, ItemStack stack2)
     {
     	if (stack.getItem() != stack2.getItem()) return false;
@@ -44,7 +37,7 @@ public class ModuleRegistry {
     			if (stack.getItemDamage() != stack2.getItemDamage()) return false;
     	return true;
     }
-    
+
     public static boolean areItemStacksEqual(ItemStack stack, ItemStack stack2) {
         if (stack.getItem() != stack2.getItem()) return false;
         if (stack.getItemDamage() != OreDictionary.WILDCARD_VALUE)
@@ -81,6 +74,14 @@ public class ModuleRegistry {
             }
         }
         return true;
+    }
+
+    public int getRegistrySize() {
+        return moduleLookup.size();
+    }
+    
+    public BiMap<ResourceLocation, Module> getRegistryMap() {
+        return moduleLookup;
     }
 
     public Module getModuleFromItemStack(ItemStack stack, ModuleType type) {
