@@ -16,11 +16,13 @@ public class ModBlocks {
     public static BlockMagiciansWorktable MAGICIANS_WORKTABLE;
     public static BlockManaBattery MANA_BATTERY;
     public static BlockPedestal PEDESTAL;
+    public static BlockCloud CLOUD;
 
     public static void init() {
         CRAFTING_PLATE = new BlockCraftingPlate();
         MAGICIANS_WORKTABLE = new BlockMagiciansWorktable();
         MANA_BATTERY = new BlockManaBattery();
         PEDESTAL = new BlockPedestal();
+        CLOUD = new BlockCloud();
     }
 }

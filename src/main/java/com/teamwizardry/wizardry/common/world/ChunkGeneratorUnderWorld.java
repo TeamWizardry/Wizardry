@@ -1,9 +1,9 @@
 package com.teamwizardry.wizardry.common.world;
 
+import com.teamwizardry.wizardry.init.ModBlocks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Biomes;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -75,7 +75,7 @@ public class ChunkGeneratorUnderWorld implements IChunkGenerator {
 					for (BlockPos pos : poses) {
 						if (pos.getX() >= 0 && pos.getX() <= 15
 								&& pos.getZ() >= 0 && pos.getZ() <= 15) {
-							IBlockState block = Blocks.STONE.getDefaultState();
+							IBlockState block = ModBlocks.CLOUD.getDefaultState();
 							primer.setBlockState(pos.getX(), pos.getY(), pos.getZ(), block);
 						}
 					}

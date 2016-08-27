@@ -1,23 +1,31 @@
 package com.teamwizardry.wizardry.common.core;
 
+import com.teamwizardry.librarianlib.bloat.TeleportUtil;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.trackerobject.BookTrackerObject;
 import com.teamwizardry.wizardry.api.trackerobject.DevilDustTracker;
+import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.client.fx.GlitterFactory;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
+import com.teamwizardry.wizardry.common.achievement.Achievements;
 import com.teamwizardry.wizardry.common.tile.TilePedestal;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
 import io.netty.util.internal.ThreadLocalRandom;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -109,5 +117,33 @@ public class EventHandler {
 			}
 		}
 		bookTracker.removeAll(expiredBooks);
+	}
+
+	@SubscribeEvent
+	public void onFallDamage(LivingHurtEvent event) {
+		if (!(event.getEntity() instanceof EntityPlayer)) return;
+		if (event.getEntity().getEntityWorld().provider.getDimension() != Wizardry.underWorld.getId()) {
+			if (event.getSource() == EntityDamageSource.fall) {
+				if (event.getEntity().fallDistance >= 250) {
+					BlockPos location = event.getEntity().getPosition();
+					BlockPos bedrock = PosUtils.INSTANCE.checkNeighbor(event.getEntity().getEntityWorld(), location, Blocks.BEDROCK);
+					if (bedrock != null) {
+						if (event.getEntity().getEntityWorld().getBlockState(bedrock).getBlock() == Blocks.BEDROCK) {
+							TeleportUtil.INSTANCE.teleportToDimension((EntityPlayer) event.getEntity(), Wizardry.underWorld.getId(), 0, 100, 0);
+							event.getEntity().fallDistance = -300;
+							((EntityPlayer) event.getEntity()).addStat(Achievements.CRUNCH);
+							event.setCanceled(true);
+						}
+					}
+				}
+			}
+		} else {
+			if (event.getSource() == EntityDamageSource.outOfWorld) {
+				BlockPos bed = ((EntityPlayer) event.getEntity()).getBedLocation(0).add(0, 255, 0);
+				TeleportUtil.INSTANCE.teleportToDimension((EntityPlayer) event.getEntity(), 0, bed.getX(), bed.getY(), bed.getZ());
+				event.getEntity().fallDistance = -300;
+				event.setCanceled(true);
+			}
+		}
 	}
 }
