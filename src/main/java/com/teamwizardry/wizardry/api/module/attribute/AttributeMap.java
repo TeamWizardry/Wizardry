@@ -1,8 +1,11 @@
 package com.teamwizardry.wizardry.api.module.attribute;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import com.google.common.collect.Maps;
-
-import java.util.*;
 
 public class AttributeMap {
 
@@ -46,6 +49,7 @@ public class AttributeMap {
     }
 
     public void putModifier(Attribute attribute, AttributeModifier mod) {
+    	if (mod == null) return;
         if (!validAttributes.contains(attribute)) {
             if (isCapturing) invalidsCapture.add(mod);
             else invalids.add(mod);
@@ -61,7 +65,7 @@ public class AttributeMap {
     }
 
     public double apply(Attribute attribute, double value) {
-        Collection<AttributeModifier> list = attributes.get(attribute);
+        List<AttributeModifier> list = attributes.get(attribute);
 
         HashMap<AttributeModifier.Priority, ArrayList<AttributeModifier>> priorityLists = new HashMap<AttributeModifier.Priority, ArrayList<AttributeModifier>>();
 
@@ -72,7 +76,10 @@ public class AttributeMap {
         priorityLists.putIfAbsent(AttributeModifier.Priority.LOWEST, new ArrayList<>());
 
         if(list != null)
-            for (AttributeModifier mod : list) {
+        	for (int i = 0; i < list.size(); i++)
+        	{
+        		AttributeModifier mod = list.get(i);
+            	if (mod == null) continue;
                 if (mod.op == AttributeModifier.Operation.ADD) priorityLists.get(mod.priority).add(0, mod);
                 else priorityLists.get(mod.priority).add(mod);
             }

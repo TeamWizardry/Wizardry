@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
-
-import com.teamwizardry.librarianlib.common.structure.StructureMatchResult;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -21,6 +19,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import com.teamwizardry.librarianlib.common.structure.StructureMatchResult;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.Infusable;
 import com.teamwizardry.wizardry.api.item.PearlType;
@@ -222,11 +221,14 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
             	List<ItemStack> condensed = condenseItemList(inventory.stream().map(CraftingPlateItemStackHelper::getItemStack).collect(Collectors.toList()));
                 Parser spellParser = new Parser(condensed);
                 Module parsedSpell = null;
-
-                try {
-                    while (parsedSpell == null)
-                        parsedSpell = spellParser.parseInventoryToModule();
-                } catch (NoSuchElementException ignored) {
+                if (!worldObj.isRemote)
+                {
+                	try {
+                		while (parsedSpell == null)
+                			parsedSpell = spellParser.parseInventoryToModule();
+                	}
+                	catch (NoSuchElementException ignored)
+                	{}
                 }
 
                 if (parsedSpell != null) {
@@ -254,7 +256,7 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
                     }
 
                     pearl = null;
-                    inventory.clear();
+                    inventory = new ArrayList<>();
                     animationComplete = false;
                     craftingTimeLeft = craftingTime;
                     pearlAnimationTimeLeft = pearlAnimationTime;
