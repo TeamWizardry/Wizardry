@@ -1,8 +1,10 @@
 package com.teamwizardry.wizardry.common.item.pearl;
 
 import com.teamwizardry.librarianlib.common.base.item.ItemMod;
+import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.block.IManaAcceptor;
+import com.teamwizardry.wizardry.common.item.ItemWizardry;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -21,7 +23,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 /**
  * Created by Saad on 6/21/2016.
  */
-public class ItemManaPearl extends ItemMod {
+public class ItemManaPearl extends ItemWizardry {
 
 	public ItemManaPearl() {
 		super("mana_pearl");
@@ -31,11 +33,10 @@ public class ItemManaPearl extends ItemMod {
 	@Override
 	public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
 		if (stack != null && world.getBlockState(pos).getBlock() instanceof IManaAcceptor) {
-			NBTTagCompound compound = new NBTTagCompound();
-			compound.setInteger("link_x", pos.getX());
-			compound.setInteger("link_y", pos.getY());
-			compound.setInteger("link_z", pos.getZ());
-			stack.setTagCompound(compound);
+			ItemNBTHelper.setInt(stack, "link_x", pos.getX());
+			ItemNBTHelper.setInt(stack, "link_y", pos.getY());
+			ItemNBTHelper.setInt(stack, "link_z", pos.getZ());
+			return EnumActionResult.SUCCESS;
 		}
 		return EnumActionResult.PASS;
 	}

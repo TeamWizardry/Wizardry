@@ -24,7 +24,7 @@ import java.awt.*;
 /**
  * Created by Saad on 6/13/2016.
  */
-public class ItemRing extends ItemMod implements INacreColorable {
+public class ItemRing extends ItemWizardry implements INacreColorable {
     
     public ItemRing() {
         super("ring", "ring_pearl", "ring");

@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.api.item;
 
+import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,17 +14,11 @@ public final class GlowingOverlayHelper {
 
     public static ItemStack overlayStack(ItemStack stack) {
         ItemStack ret = stack.copy();
-        NBTTagCompound comp = ret.getTagCompound();
-        if (comp == null) {
-            comp = new NBTTagCompound();
-            ret.setTagCompound(comp);
-        }
-        comp.setBoolean(TAG_OVERLAY, true);
+        ItemNBTHelper.setBoolean(ret, TAG_OVERLAY, true);
         return ret;
     }
 
     public static boolean hasOverlay(ItemStack stack) {
-        NBTTagCompound comp = stack.getTagCompound();
-        return comp != null && comp.getBoolean(TAG_OVERLAY);
+        return ItemNBTHelper.getBoolean(stack, TAG_OVERLAY, false);
     }
 }

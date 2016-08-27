@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.common.item.pearl;
 import com.teamwizardry.librarianlib.common.base.item.ItemMod;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.Explodable;
+import com.teamwizardry.wizardry.common.item.ItemWizardry;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -23,7 +24,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 /**
  * Created by Saad on 6/20/2016.
  */
-public class ItemGlassPearl extends ItemMod implements Explodable {
+public class ItemGlassPearl extends ItemWizardry implements Explodable {
 
     public ItemGlassPearl() {
         super("glass_pearl");

@@ -22,7 +22,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 /**
  * Created by Saad on 6/12/2016.
  */
-public class ItemPhysicsBook extends ItemMod implements IPickupAchievement {
+public class ItemPhysicsBook extends ItemWizardry implements IPickupAchievement {
 
     public ItemPhysicsBook() {
         super("physics_book");

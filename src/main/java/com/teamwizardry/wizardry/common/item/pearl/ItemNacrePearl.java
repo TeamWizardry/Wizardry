@@ -6,6 +6,7 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.Explodable;
 import com.teamwizardry.wizardry.api.item.INacreColorable;
 import com.teamwizardry.wizardry.api.item.Infusable;
+import com.teamwizardry.wizardry.common.item.ItemWizardry;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
@@ -26,7 +27,7 @@ import java.awt.*;
 /**
  * Created by Saad on 6/28/2016.
  */
-public class ItemNacrePearl extends ItemMod implements Infusable, Explodable, INacreColorable {
+public class ItemNacrePearl extends ItemWizardry implements Infusable, Explodable, INacreColorable {
 
     public ItemNacrePearl() {
         super("nacre_pearl");

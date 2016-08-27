@@ -2,12 +2,14 @@ package com.teamwizardry.wizardry.common.item.staff;
 
 import com.teamwizardry.librarianlib.client.core.ClientTickHandler;
 import com.teamwizardry.librarianlib.common.base.item.ItemMod;
+import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.INacreColorable;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.IContinuousCast;
 import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
+import com.teamwizardry.wizardry.common.item.ItemWizardry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
@@ -32,7 +34,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 /**
  * Created by Saad on 6/7/2016.
  */
-public class ItemWoodStaff extends ItemMod implements INacreColorable {
+public class ItemWoodStaff extends ItemWizardry implements INacreColorable {
     
     public ItemWoodStaff() {
         super("wood_staff", "wood_staff_pearl", "wood_staff");
@@ -46,10 +48,9 @@ public class ItemWoodStaff extends ItemMod implements INacreColorable {
     @Override
     public void onPlayerStoppedUsing(ItemStack stack, World world, EntityLivingBase entityLiving, int timeLeft) {
         if (stack == null || world == null || entityLiving == null) return;
-        if (!stack.hasTagCompound()) return;
-        NBTTagCompound compound = stack.getTagCompound();
-        if (!compound.hasKey("Spell")) return;
-        NBTTagCompound spell = compound.getCompoundTag("Spell");
+        NBTTagCompound spell = ItemNBTHelper.getCompound(stack, "Spell", true);
+        if (spell == null) return;
+
         Module module = ModuleRegistry.getInstance().getModuleByLocation(spell.getString(Module.SHAPE));
         if (!(module instanceof IContinuousCast)) {
             new SpellStack((EntityPlayer) entityLiving, entityLiving, spell).castSpell();
@@ -79,16 +80,11 @@ public class ItemWoodStaff extends ItemMod implements INacreColorable {
     @Override
     public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
         if (count > 0 && count < (getMaxItemUseDuration(stack) - 20) && player instanceof EntityPlayer) {
-            if (stack.hasTagCompound()) {
-                NBTTagCompound compound = stack.getTagCompound();
-                if (compound.hasKey("Spell")) {
-                    NBTTagCompound spell = compound.getCompoundTag("Spell");
-                    if (spell.hasKey(Module.SHAPE)) {
-                        Module module = ModuleRegistry.getInstance().getModuleByLocation(spell.getString(Module.SHAPE));
-                        if (module instanceof IContinuousCast) {
-                            new SpellStack((EntityPlayer) player, player, spell).castSpell();
-                        }
-                    }
+            NBTTagCompound spell = ItemNBTHelper.getCompound(stack, "Spell", true);
+            if (spell != null && spell.hasKey(Module.SHAPE)) {
+                Module module = ModuleRegistry.getInstance().getModuleByLocation(spell.getString(Module.SHAPE));
+                if (module instanceof IContinuousCast) {
+                    new SpellStack((EntityPlayer) player, player, spell).castSpell();
                 }
             }
         }

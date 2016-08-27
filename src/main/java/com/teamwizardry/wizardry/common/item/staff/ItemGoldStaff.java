@@ -1,13 +1,16 @@
 package com.teamwizardry.wizardry.common.item.staff;
 
 import com.teamwizardry.librarianlib.client.core.ClientTickHandler;
+import com.teamwizardry.librarianlib.client.util.TooltipHelper;
 import com.teamwizardry.librarianlib.common.base.item.ItemMod;
+import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.INacreColorable;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.IContinuousCast;
 import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
+import com.teamwizardry.wizardry.common.item.ItemWizardry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IItemColor;
@@ -36,7 +39,7 @@ import java.util.List;
 /**
  * Created by Saad on 6/7/2016.
  */
-public class ItemGoldStaff extends ItemMod implements INacreColorable {
+public class ItemGoldStaff extends ItemWizardry implements INacreColorable {
     
     public ItemGoldStaff() {
         super("gold_staff", "gold_staff_pearl", "gold_staff");
@@ -46,10 +49,9 @@ public class ItemGoldStaff extends ItemMod implements INacreColorable {
     @Override
     public void onPlayerStoppedUsing(ItemStack stack, World world, EntityLivingBase entityLiving, int timeLeft) {
         if (stack == null || world == null || entityLiving == null) return;
-        if (!stack.hasTagCompound()) return;
-        NBTTagCompound compound = stack.getTagCompound();
-        if (!compound.hasKey("Spell")) return;
-        NBTTagCompound spell = compound.getCompoundTag("Spell");
+        NBTTagCompound spell = ItemNBTHelper.getCompound(stack, "Spell", true);
+        if (spell == null) return;
+
         Module module = ModuleRegistry.getInstance().getModuleByLocation(spell.getString(Module.SHAPE));
         if (!(module instanceof IContinuousCast)) {
             new SpellStack((EntityPlayer) entityLiving, entityLiving, spell).castSpell();
@@ -79,18 +81,14 @@ public class ItemGoldStaff extends ItemMod implements INacreColorable {
     @Override
     public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
         if (count > 0 && count < (getMaxItemUseDuration(stack) - 20) && player instanceof EntityPlayer) {
-            if (stack.hasTagCompound()) {
-                NBTTagCompound compound = stack.getTagCompound();
-                if (compound.hasKey("Spell")) {
-                    NBTTagCompound spell = compound.getCompoundTag("Spell");
-                    if (spell.hasKey(Module.SHAPE)) {
-                        Module module = ModuleRegistry.getInstance().getModuleByLocation(spell.getString(Module.SHAPE));
-                        if (module instanceof IContinuousCast) {
-                            new SpellStack((EntityPlayer) player, player, spell).castSpell();
-                        }
-                    }
+            NBTTagCompound spell = ItemNBTHelper.getCompound(stack, "Spell", true);
+            if (spell != null && spell.hasKey(Module.SHAPE)) {
+                Module module = ModuleRegistry.getInstance().getModuleByLocation(spell.getString(Module.SHAPE));
+                if (module instanceof IContinuousCast) {
+                    new SpellStack((EntityPlayer) player, player, spell).castSpell();
                 }
             }
+
         }
         // TODO: PARTICLES
 //        int betterCount = Math.abs(count - 72000);
@@ -128,11 +126,10 @@ public class ItemGoldStaff extends ItemMod implements INacreColorable {
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
-        if (!stack.hasTagCompound()) return;
-        NBTTagCompound compound = stack.getTagCompound();
-        if (!compound.hasKey("Spell")) return;
-        tooltip.add("Spell:");
-        addInformation(compound.getCompoundTag("Spell"), tooltip, 0);
+        NBTTagCompound spell = ItemNBTHelper.getCompound(stack, "Spell", true);
+        if (spell == null) return;
+        TooltipHelper.addToTooltip(tooltip, Wizardry.MODID + ".misc.spell");
+        addInformation(spell, tooltip, 0);
     }
     
     private void addInformation(NBTTagCompound compound, List<String> tooltip, int level) {
