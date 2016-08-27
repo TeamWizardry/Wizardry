@@ -5,6 +5,7 @@ import com.teamwizardry.librarianlib.client.fx.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.client.fx.particle.functions.InterpColorHSV;
 import com.teamwizardry.librarianlib.common.util.math.interpolate.StaticInterp;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -80,6 +81,8 @@ public class EntityHallowedSpirit extends EntityMob {
 	public void onUpdate() {
 		super.onUpdate();
 		if (worldObj.isRemote) return;
+
+		if (ticksExisted % ThreadLocalRandom.current().nextInt(100, 500) == 0) playSound(ModSounds.HALLOWED_SPIRIT_SOUNDS.get(ThreadLocalRandom.current().nextInt(5)), ThreadLocalRandom.current().nextFloat(), ThreadLocalRandom.current().nextFloat());
 
 		fallDistance = 0;
 
