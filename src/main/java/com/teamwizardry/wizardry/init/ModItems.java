@@ -7,7 +7,6 @@ import com.teamwizardry.wizardry.common.item.pearl.ItemNacrePearl;
 import com.teamwizardry.wizardry.common.item.pearl.ItemQuartzPearl;
 import com.teamwizardry.wizardry.common.item.staff.ItemGoldStaff;
 import com.teamwizardry.wizardry.common.item.staff.ItemWoodStaff;
-import net.minecraft.client.Minecraft;
 
 /**
  * Created by Saad on 4/9/2016.

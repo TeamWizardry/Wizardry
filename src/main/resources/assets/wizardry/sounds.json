@@ -5,5 +5,11 @@
   "harp2":          {"category": "block", "sounds": ["wizardry:harp2"]},
   "bell":           {"category": "block", "sounds": ["wizardry:bell"]},
   "bubbling":       {"category": "block", "sounds": ["wizardry:bubbling"]},
-  "firesizzleloop": {"category": "block", "sounds": ["wizardry:frying_sizzle"]}
+  "firesizzleloop": {"category": "block", "sounds": ["wizardry:frying_sizzle"]},
+  "hallowed_spirit_shriek_1": {"category": "hostile", "sounds": ["wizardry:hallowed_spirit_shriek_1"]},
+  "hallowed_spirit_shriek_2": {"category": "hostile", "sounds": ["wizardry:hallowed_spirit_shriek_2"]},
+  "hallowed_spirit_shriek_3": {"category": "hostile", "sounds": ["wizardry:hallowed_spirit_shriek_3"]},
+  "hallowed_spirit_shriek_4": {"category": "hostile", "sounds": ["wizardry:hallowed_spirit_shriek_4"]},
+  "hallowed_spirit_shriek_5": {"category": "hostile", "sounds": ["wizardry:hallowed_spirit_shriek_5"]},
+  "hallowed_spirit_shriek_6": {"category": "hostile", "sounds": ["wizardry:hallowed_spirit_shriek_6"]}
 }

@@ -3,16 +3,13 @@ package com.teamwizardry.wizardry.client.fx.particle;
 import com.teamwizardry.librarianlib.client.fx.particle.ParticleRenderQueue;
 import com.teamwizardry.librarianlib.client.fx.particle.QueuedParticle;
 import com.teamwizardry.librarianlib.client.fx.shader.ShaderHelper;
-import kotlin.Unit;
+import com.teamwizardry.wizardry.client.fx.Shaders;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.world.World;
-
 import org.lwjgl.opengl.GL11;
-
-import com.teamwizardry.wizardry.client.fx.Shaders;
 
 public class MagicBurstFX extends QueuedParticle<MagicBurstFX> {
 

@@ -1,18 +1,5 @@
 package com.teamwizardry.wizardry.common.spell.module.shapes;
 
-import java.util.List;
-import javax.annotation.Nullable;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EntitySelectors;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.teamwizardry.wizardry.api.module.Module;
@@ -21,6 +8,16 @@ import com.teamwizardry.wizardry.api.spell.IContinuousCast;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.SpellEntity;
 import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EntitySelectors;
+import net.minecraft.util.math.*;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class ModuleCone extends Module implements IContinuousCast
 {

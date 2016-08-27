@@ -1,28 +1,13 @@
 package com.teamwizardry.wizardry.client.core;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.WeakHashMap;
-
 import com.teamwizardry.librarianlib.bloat.ragdoll.Sphere;
 import com.teamwizardry.librarianlib.bloat.ragdoll.cloth.Cloth;
 import com.teamwizardry.librarianlib.bloat.ragdoll.cloth.Link3D;
 import com.teamwizardry.librarianlib.bloat.ragdoll.cloth.PointMass3D;
 import com.teamwizardry.librarianlib.client.core.ClientTickHandler;
 import com.teamwizardry.librarianlib.common.util.math.Matrix4;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraftforge.client.event.RenderLivingEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.item.ItemTossEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
-
+import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.model.ModelBiped;
-import net.minecraft.client.model.ModelBox;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -34,12 +19,18 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
-
+import net.minecraftforge.client.event.RenderLivingEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.item.ItemTossEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import org.lwjgl.opengl.GL11;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.teamwizardry.wizardry.Wizardry;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.WeakHashMap;
 
 public class CapeHandler {
 
@@ -48,6 +39,7 @@ public class CapeHandler {
 	
 	WeakHashMap<EntityLivingBase, Cloth> cloths = new WeakHashMap<>();
 //	WeakHashMap<EntityLivingBase, List<Box>> models = new WeakHashMap<>();
+	List<ModelRenderer> rendererStack = new ArrayList<>();
 	
 	private CapeHandler() {
 		MinecraftForge.EVENT_BUS.register(this);
@@ -74,40 +66,40 @@ public class CapeHandler {
 	public void tick(ClientTickEvent event) {
 		if(event.phase != Phase.END)
 			return;
-		
+
 		basePointsSet();
-		
+
 		List<EntityLivingBase> keysToRemove = new ArrayList<>();
-		
+
 		for (Entry<EntityLivingBase, Cloth> e : cloths.entrySet()) {
 			EntityLivingBase entity = e.getKey();
 			if(entity.isDead) {
 				keysToRemove.add(entity);
 				continue;
 			}
-			
+
 			if(e.getValue().getMasses() != null && e.getValue().getMasses()[0] != null) {
-				
+
 				Vec3d[] shoulderPoints = new Vec3d[basePoints.length];
-				
+
 				Matrix4 matrix = new Matrix4(), inverse = new Matrix4();
 				matrix.translate(entity.getPositionVector());
 				matrix.rotate(Math.toRadians( entity.renderYawOffset), new Vec3d(0, -1, 0));
-				
+
 				inverse.rotate(Math.toRadians( entity.renderYawOffset), new Vec3d(0, 1, 0));
 				inverse.translate(entity.getPositionVector().scale(-1));
-				
+
 				for (int i = 0; i < shoulderPoints.length; i++) {
 					shoulderPoints[i] = matrix.apply(basePoints[i]);
 				}
-				
+
 				for (int i = 0; i < e.getValue().getMasses()[0].length && i < shoulderPoints.length; i++) {
 					e.getValue().getMasses()[0][i].setOrigPos(e.getValue().getMasses()[0][i].getPos());
 					e.getValue().getMasses()[0][i].setPos(shoulderPoints[i]);
 				}
-				
+
 				List<Sphere> spheres = new ArrayList<>();
-				
+
 				Vec3d[] vecs = new Vec3d[] {
 						new Vec3d( 0.1, 0, 0),
 						new Vec3d( 0.1, 0.25, 0),
@@ -116,7 +108,7 @@ public class CapeHandler {
 						new Vec3d( 0.1, 1, 0),
 						new Vec3d( 0.1, 1.25, 0),
 						new Vec3d( 0.1, 1.5, 0),
-						
+
 						new Vec3d(-0.1, 0, 0),
 						new Vec3d(-0.1, 0.25, 0),
 						new Vec3d(-0.1, 0.5, 0),
@@ -124,32 +116,30 @@ public class CapeHandler {
 						new Vec3d(-0.1, 1, 0),
 						new Vec3d(-0.1, 1.25, 0),
 						new Vec3d(-0.1, 1.5, 0),
-						
+
 						new Vec3d( 0.3, 0.75, 0),
 						new Vec3d( 0.3, 1, 0),
 						new Vec3d( 0.3, 1.25, 0),
-						
+
 						new Vec3d(-0.3, 0.75, 0),
 						new Vec3d(-0.3, 1, 0),
 						new Vec3d(-0.3, 1.25, 0),
 				};
-				
+
 				for (Vec3d vec : vecs) {
 					vec = matrix.apply(vec);
 					spheres.add(new Sphere(vec, 0.25));
 				}
-				
+
 				e.getValue().tick(entity, spheres);
 			}
 		}
-		
+
 		for (EntityLivingBase entity : keysToRemove) {
 			cloths.remove(entity);
 //			models.remove(entity);
 		}
 	}
-	
-	List<ModelRenderer> rendererStack = new ArrayList<>();
 	
 //	public List<Box> getBoxes(Vec3d modelPos, ModelBase model, double yaw) {
 //		if(!(model instanceof ModelBiped))
@@ -261,7 +251,7 @@ public class CapeHandler {
 		if(!( event.getEntity() instanceof EntityVillager || event.getEntity() instanceof EntityPlayer))
 			return;
 		
-		float partialTicks = ClientTickHandler.INSTANCE.getPartialTicks();
+		float partialTicks = ClientTickHandler.getPartialTicks();
 		
 //		models.put(event.getEntity(), ImmutableList.of());//getBoxes(event.getEntity().getPositionVector(), event.getRenderer().getMainModel(), event.getEntity().renderYawOffset));
 		

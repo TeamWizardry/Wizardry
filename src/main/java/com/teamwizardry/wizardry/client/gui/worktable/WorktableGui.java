@@ -76,8 +76,8 @@ public class WorktableGui extends GuiBase {
 		getComponents().add(modifiers);
 		
 		int boxHeight = 200, boxWidth = 100;
-		Sprite ringTexture = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/items/ringBase.png"));
-		Sprite staffTexture = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/items/staffGold.png"));
+		Sprite ringTexture = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/items/ring_base.png"));
+		Sprite staffTexture = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/items/staff_gold.png"));
 
 		ComponentRect menu = new ComponentRect(0, 0, getGuiWidth(), getGuiHeight());
 		menu.getColor().setValue(new Color(0x804A4A4A));
