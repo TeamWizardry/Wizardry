@@ -8,13 +8,15 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 
+import javax.annotation.Nullable;
+
 /**
  * Created by Saad on 8/16/2016.
  */
 public class DefaultWizardryCapability implements IWizardryCapability {
 
 	int mana = 0, maxMana = 100, burnout = 100, maxBurnout = 100;
-	IBloodType bloodType = BloodRegistry.HUMANBLOOD;
+	IBloodType bloodType = null;
 
 	@Override
 	public int getMana() {
@@ -73,12 +75,13 @@ public class DefaultWizardryCapability implements IWizardryCapability {
 	}
 
 	@Override
+	@Nullable
 	public IBloodType getBloodType() {
 		return bloodType;
 	}
 
 	@Override
-	public void setBloodType(IBloodType bloodType, EntityPlayer player) {
+	public void setBloodType(@Nullable IBloodType bloodType, EntityPlayer player) {
 		this.bloodType = bloodType;
 		dataChanged(player);
 	}

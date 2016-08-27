@@ -11,24 +11,24 @@ public final class BloodRegistry {
     public static final IBloodType AQUABLOOD = register(new AquaBlood(), "aqua");
     public static final IBloodType ZEPHYRBLOOD = register(new AeroBlood(), "zephyr");
     public static final IBloodType PYROBLOOD = register(new PyroBlood(), "pyro");
-    public static final IBloodType HUMANBLOOD = register(new PyroBlood(), "human");
-    public static final IBloodType INANIMATE = register(new PyroBlood(), "inanimate");
 
     public static BiMap<IBloodType, String> getRegistry() {
         return values;
     }
 
     public static IBloodType register(IBloodType blood, String registryName) {
+        if (registryName.equals("")) return null;
         values.putIfAbsent(blood, registryName);
         return blood;
     }
 
     public static IBloodType getBloodTypeByName(String id) {
-        if (id == null) return null;
+        if (id == null || id.equals("")) return null;
         return values.inverse().get(id);
     }
 
     public static String getBloodNameByType(IBloodType iBloodType) {
+        if (iBloodType == null) return "";
         return values.get(iBloodType);
     }
 }
