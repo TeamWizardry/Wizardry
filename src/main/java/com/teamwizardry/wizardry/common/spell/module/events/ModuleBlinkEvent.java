@@ -17,11 +17,10 @@ public class ModuleBlinkEvent extends Module {
     public ModuleType getType() {
         return ModuleType.EVENT;
     }
-    
+
     @Override
-    public String getDescription()
-    {
-    	return "Called whenever a targetable entity blinks.";
+    public String getDescription() {
+        return "Called whenever a targetable entity blinks.";
     }
 
     @Override
@@ -29,10 +28,9 @@ public class ModuleBlinkEvent extends Module {
         return "If Target Blinks";
     }
 
-	@Override
-	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack)
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

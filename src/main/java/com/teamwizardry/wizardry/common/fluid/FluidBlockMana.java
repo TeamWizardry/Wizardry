@@ -50,7 +50,7 @@ public class FluidBlockMana extends BlockFluidClassic {
     @Override
     public void updateTick(World world, BlockPos pos, IBlockState state, Random rand) {
         super.updateTick(world, pos, state, rand);
-        SparkleFX ambient =  GlitterFactory.getInstance().createSparkle(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), 30);
+        SparkleFX ambient = GlitterFactory.getInstance().createSparkle(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), 30);
         ambient.setAlpha(0.5f);
         ambient.setScale(0.5f);
         ambient.setFadeIn();

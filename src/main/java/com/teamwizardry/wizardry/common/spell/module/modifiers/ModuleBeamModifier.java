@@ -25,8 +25,7 @@ public class ModuleBeamModifier extends Module implements IModifier {
     }
 
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Increases the restingDistance a beam travels.";
     }
 
@@ -40,10 +39,9 @@ public class ModuleBeamModifier extends Module implements IModifier {
         map.putModifier(Attribute.DISTANCE, new AttributeModifier(Operation.ADD, 1));
     }
 
-	@Override
-	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack)
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

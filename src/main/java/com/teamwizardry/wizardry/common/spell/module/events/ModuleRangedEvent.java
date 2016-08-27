@@ -28,10 +28,9 @@ public class ModuleRangedEvent extends Module {
         return "If Target Takes Projectile Damage";
     }
 
-	@Override
-	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack)
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

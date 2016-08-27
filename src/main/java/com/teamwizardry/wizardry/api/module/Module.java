@@ -144,7 +144,7 @@ public abstract class Module {
      * @return if the module was handled
      */
     public boolean accept(Module other) {
-    	if (other == null || other == this) return false;
+        if (other == null || other == this) return false;
         boolean accept = false;
         switch (this.getType()) {
             case BOOLEAN:
@@ -239,13 +239,16 @@ public abstract class Module {
     public ResourceLocation getRegisteredLocation() {
         return ModuleRegistry.getInstance().getModuleLocation(this);
     }
-    
-    public ResourceLocation getResourceLocation()
-    {
-    	return new ResourceLocation(Wizardry.MODID + ":" + getClass().getSimpleName());
+
+    public ResourceLocation getResourceLocation() {
+        return new ResourceLocation(Wizardry.MODID + ":" + getClass().getSimpleName());
     }
 
-    public List<Module> getChildren() { return children; }
+    public List<Module> getChildren() {
+        return children;
+    }
 
-    public boolean hasChildren() { return !children.isEmpty(); }
+    public boolean hasChildren() {
+        return !children.isEmpty();
+    }
 }

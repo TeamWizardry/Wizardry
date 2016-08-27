@@ -18,17 +18,16 @@ public class Fluids {
         buildRender(FluidMana.instance, FluidBlockMana.instance, "mana", manafluidLocation);
         buildRender(FluidNacre.instance, FluidBlockNacre.instance, "nacre", nacrefluidLocation);
     }
-    
-    private static void buildRender(Fluid fluid, Block block, String name, ModelResourceLocation resource)
-    {
-         Item item = Item.getItemFromBlock(block);
-         if (item != null) ModelLoader.setCustomMeshDefinition(item, stack -> resource);
 
-         ModelLoader.setCustomStateMapper(block, new StateMapperBase() {
-             protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
-                 return resource;
-             }
-         });
-         FluidRegistry.addBucketForFluid(fluid);
+    private static void buildRender(Fluid fluid, Block block, String name, ModelResourceLocation resource) {
+        Item item = Item.getItemFromBlock(block);
+        if (item != null) ModelLoader.setCustomMeshDefinition(item, stack -> resource);
+
+        ModelLoader.setCustomStateMapper(block, new StateMapperBase() {
+            protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
+                return resource;
+            }
+        });
+        FluidRegistry.addBucketForFluid(fluid);
     }
 }

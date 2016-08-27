@@ -22,11 +22,10 @@ public class ModuleDuration extends Module implements IModifier {
     public ModuleType getType() {
         return ModuleType.MODIFIER;
     }
-    
+
     @Override
-    public String getDescription()
-    {
-    	return "Increases the duration of a shape, effect, or modifier.";
+    public String getDescription() {
+        return "Increases the duration of a shape, effect, or modifier.";
     }
 
     @Override
@@ -42,10 +41,9 @@ public class ModuleDuration extends Module implements IModifier {
         map.putModifier(Attribute.BURNOUT, new AttributeModifier(AttributeModifier.Operation.MULTIPLY, 1.1));
     }
 
-	@Override
-	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack)
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

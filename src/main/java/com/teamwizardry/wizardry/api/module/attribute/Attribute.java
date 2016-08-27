@@ -17,8 +17,8 @@ public class Attribute {
             CRIT_DAMAGE = new Attribute("Crit Damage"),
             DISTANCE = new Attribute("Distance"),
             DAMAGE = new Attribute("Damage"),
-            
-            MANA = new Attribute("Mana"),
+
+    MANA = new Attribute("Mana"),
             BURNOUT = new Attribute("Burnout");
 
     public final String name;

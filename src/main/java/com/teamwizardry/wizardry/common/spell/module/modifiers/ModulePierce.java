@@ -25,9 +25,8 @@ public class ModulePierce extends Module implements IModifier {
     }
 
     @Override
-    public String getDescription()
-    {
-    	return "Allows the projectile or beam shape to strike additional targets behind the first.";
+    public String getDescription() {
+        return "Allows the projectile or beam shape to strike additional targets behind the first.";
     }
 
     @Override
@@ -35,7 +34,7 @@ public class ModulePierce extends Module implements IModifier {
         return "Increase Piercing/Phasing";
     }
 
-    
+
     @Override
     public void apply(AttributeMap map) {
         map.putModifier(Attribute.PIERCE, new AttributeModifier(Operation.ADD, 1));
@@ -44,10 +43,9 @@ public class ModulePierce extends Module implements IModifier {
         map.putModifier(Attribute.BURNOUT, new AttributeModifier(Operation.MULTIPLY, 1.6));
     }
 
-	@Override
-	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack)
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

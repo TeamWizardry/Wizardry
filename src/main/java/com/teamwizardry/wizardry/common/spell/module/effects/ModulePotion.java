@@ -15,10 +15,10 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionUtils;
 
-public class ModulePotion extends Module implements IRequireItem{
-	public static final String POTION = "Potion";
-	private int potionID;
-	
+public class ModulePotion extends Module implements IRequireItem {
+    public static final String POTION = "Potion";
+    private int potionID;
+
     public ModulePotion(ItemStack stack) {
         super(stack);
         attributes.addAttribute(Attribute.POWER);
@@ -41,37 +41,34 @@ public class ModulePotion extends Module implements IRequireItem{
     }
 
     @Override
-    public void handle(ItemStack stack)
-    {
-    	if (stack == null) return;
+    public void handle(ItemStack stack) {
+        if (stack == null) return;
         if (stack.getItem() != Items.POTIONITEM) return;
-    	PotionEffect effect = PotionUtils.getEffectsFromStack(stack).get(0);
-    	if (effect.getPotion().isInstant()) return;
-    	potionID = Potion.getIdFromPotion(effect.getPotion());
+        PotionEffect effect = PotionUtils.getEffectsFromStack(stack).get(0);
+        if (effect.getPotion().isInstant()) return;
+        potionID = Potion.getIdFromPotion(effect.getPotion());
     }
-    
+
     @Override
     public NBTTagCompound getModuleData() {
-    	NBTTagCompound compound = super.getModuleData();
-    	compound.setInteger(POTION, potionID);
+        NBTTagCompound compound = super.getModuleData();
+        compound.setInteger(POTION, potionID);
         compound.setInteger(POWER, (int) attributes.apply(Attribute.POWER, 1));
         compound.setInteger(DURATION, (int) attributes.apply(Attribute.DURATION, 1));
         compound.setDouble(MANA, attributes.apply(Attribute.MANA, 10));
         compound.setDouble(BURNOUT, attributes.apply(Attribute.BURNOUT, 10));
-    	return compound;
+        return compound;
     }
-    
-	@Override
-	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack)
-	{
-		int potionId = spell.getInteger(POTION);
-		int power = spell.getInteger(POWER);
-		int duration = spell.getInteger(DURATION);
-		if (caster instanceof EntityLivingBase)
-		{
-			((EntityLivingBase) caster).addPotionEffect(new PotionEffect(Potion.getPotionById(potionId), duration * 20, power - 1));
-			return true;
-		}
-		return false;
-	}
+
+    @Override
+    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+        int potionId = spell.getInteger(POTION);
+        int power = spell.getInteger(POWER);
+        int duration = spell.getInteger(DURATION);
+        if (caster instanceof EntityLivingBase) {
+            ((EntityLivingBase) caster).addPotionEffect(new PotionEffect(Potion.getPotionById(potionId), duration * 20, power - 1));
+            return true;
+        }
+        return false;
+    }
 }

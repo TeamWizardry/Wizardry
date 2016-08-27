@@ -41,10 +41,9 @@ public class ModuleFallProtection extends Module {
         return compound;
     }
 
-	@Override
-	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack)
-	{
-		// TODO: Add fall protection (potion effect?)
-		return false;
-	}
+    @Override
+    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+        // TODO: Add fall protection (potion effect?)
+        return false;
+    }
 }

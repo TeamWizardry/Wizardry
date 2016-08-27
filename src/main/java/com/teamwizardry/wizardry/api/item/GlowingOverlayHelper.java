@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.api.item;
 import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 
 public final class GlowingOverlayHelper {
 

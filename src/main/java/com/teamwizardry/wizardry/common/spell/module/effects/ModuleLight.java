@@ -36,13 +36,12 @@ public class ModuleLight extends Module {
         compound.setInteger(DURATION, (int) attributes.apply(Attribute.DURATION, 1));
         compound.setDouble(MANA, attributes.apply(Attribute.MANA, 10));
         compound.setDouble(BURNOUT, attributes.apply(Attribute.BURNOUT, 10));
-    	return compound;
+        return compound;
     }
 
-	@Override
-	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack)
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

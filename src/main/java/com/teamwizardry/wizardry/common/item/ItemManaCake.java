@@ -11,15 +11,15 @@ import net.minecraft.world.World;
  */
 public class ItemManaCake extends ItemWizardryFood {
 
-	public ItemManaCake() {
-		super("mana_cake", 0, 0.3F, false);
-	}
+    public ItemManaCake() {
+        super("mana_cake", 0, 0.3F, false);
+    }
 
-	@Override
-	protected void onFoodEaten(ItemStack stack, World worldIn, EntityPlayer player) {
-		super.onFoodEaten(stack, worldIn, player);
-		IWizardryCapability cap = WizardryCapabilityProvider.get(player);
-		if (cap.getMaxMana() >= cap.getMana() + 300) cap.setMana(cap.getMana() + 300, player);
-		else cap.setMana(cap.getMaxMana(), player);
-	}
+    @Override
+    protected void onFoodEaten(ItemStack stack, World worldIn, EntityPlayer player) {
+        super.onFoodEaten(stack, worldIn, player);
+        IWizardryCapability cap = WizardryCapabilityProvider.get(player);
+        if (cap.getMaxMana() >= cap.getMana() + 300) cap.setMana(cap.getMana() + 300, player);
+        else cap.setMana(cap.getMaxMana(), player);
+    }
 }

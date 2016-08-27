@@ -122,7 +122,7 @@ public class ClientProxy extends CommonProxy {
     @Override
     public SparkleFX createSparkle(World world, Vec3d origin, int age) {
         SparkleFX fx = Wizardry.proxy.spawnParticleSparkle(world, origin);
-        if(Wizardry.proxy.getParticleDensity() > 0)
+        if (Wizardry.proxy.getParticleDensity() > 0)
             if (ThreadLocalRandom.current().nextInt(Wizardry.proxy.getParticleDensity()) / 100 <= 1) {
                 fx.setMaxAge(age * Wizardry.proxy.getParticleDensity() / 100);
             } else fx.setMaxAge(0);
@@ -132,7 +132,7 @@ public class ClientProxy extends CommonProxy {
     @Override
     public SparkleFX createSparkle(World world, Vec3d origin, Vec3d range, int age) {
         SparkleFX fx = Wizardry.proxy.spawnParticleSparkle(world, origin, range);
-        if(Wizardry.proxy.getParticleDensity() > 0)
+        if (Wizardry.proxy.getParticleDensity() > 0)
             if (ThreadLocalRandom.current().nextInt(Wizardry.proxy.getParticleDensity()) / 100 <= 1) {
                 fx.setMaxAge(age * Wizardry.proxy.getParticleDensity() / 100);
             } else fx.setMaxAge(0);

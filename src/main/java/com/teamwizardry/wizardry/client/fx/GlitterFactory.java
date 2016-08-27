@@ -13,6 +13,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class GlitterFactory {
 
     private static GlitterFactory INSTANCE = new GlitterFactory();
+
     private GlitterFactory() {
     }
 

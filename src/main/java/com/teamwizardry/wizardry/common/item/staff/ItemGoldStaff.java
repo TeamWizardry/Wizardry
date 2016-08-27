@@ -1,8 +1,6 @@
 package com.teamwizardry.wizardry.common.item.staff;
 
-import com.teamwizardry.librarianlib.client.core.ClientTickHandler;
 import com.teamwizardry.librarianlib.client.util.TooltipHelper;
-import com.teamwizardry.librarianlib.common.base.item.ItemMod;
 import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.INacreColorable;
@@ -34,12 +32,12 @@ import java.util.List;
  * Created by Saad on 6/7/2016.
  */
 public class ItemGoldStaff extends ItemWizardry implements INacreColorable {
-    
+
     public ItemGoldStaff() {
         super("gold_staff", "gold_staff_pearl", "gold_staff");
         setMaxStackSize(1);
     }
-    
+
     @Override
     public void onPlayerStoppedUsing(ItemStack stack, World world, EntityLivingBase entityLiving, int timeLeft) {
         if (stack == null || world == null || entityLiving == null) return;
@@ -51,7 +49,7 @@ public class ItemGoldStaff extends ItemWizardry implements INacreColorable {
             new SpellStack((EntityPlayer) entityLiving, entityLiving, spell).castSpell();
         }
     }
-    
+
     @Override
     public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
         if (world.isRemote && Minecraft.getMinecraft().currentScreen != null) {
@@ -61,17 +59,17 @@ public class ItemGoldStaff extends ItemWizardry implements INacreColorable {
             return new ActionResult<>(EnumActionResult.PASS, stack);
         }
     }
-    
+
     @Override
     public EnumAction getItemUseAction(ItemStack stack) {
         return EnumAction.BOW;
     }
-    
+
     @Override
     public int getMaxItemUseDuration(ItemStack stack) {
         return 72000;
     }
-    
+
     @Override
     public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
         if (count > 0 && count < (getMaxItemUseDuration(stack) - 20) && player instanceof EntityPlayer) {
@@ -100,23 +98,23 @@ public class ItemGoldStaff extends ItemWizardry implements INacreColorable {
 //            }
 //        }
     }
-    
+
     @Override
     public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
         if (!worldIn.isRemote) return;
-        
+
         colorableOnUpdate(stack);
     }
-    
+
     @Override
     public boolean onEntityItemUpdate(EntityItem entityItem) {
         if (!entityItem.worldObj.isRemote) return false;
-        
+
         colorableOnEntityItemUpdate(entityItem);
-        
+
         return super.onEntityItemUpdate(entityItem);
     }
-    
+
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
@@ -125,7 +123,7 @@ public class ItemGoldStaff extends ItemWizardry implements INacreColorable {
         TooltipHelper.addToTooltip(tooltip, Wizardry.MODID + ".misc.spell");
         addInformation(spell, tooltip, 0);
     }
-    
+
     private void addInformation(NBTTagCompound compound, List<String> tooltip, int level) {
         if (!compound.hasKey(Module.SHAPE)) return;
         String location = compound.getString(Module.SHAPE);

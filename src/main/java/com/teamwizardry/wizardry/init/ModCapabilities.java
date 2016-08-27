@@ -16,17 +16,17 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
  */
 public class ModCapabilities {
 
-	public static void preInit() {
-		CapabilityManager.INSTANCE.register(IWizardryCapability.class, new WizardryCapabilityStorage(), DefaultWizardryCapability.class);
-	}
+    public static void preInit() {
+        CapabilityManager.INSTANCE.register(IWizardryCapability.class, new WizardryCapabilityStorage(), DefaultWizardryCapability.class);
+    }
 
-	@SubscribeEvent
-	public void onAddCapabilities(AttachCapabilitiesEvent.Entity e) {
-		if (e.getEntity() instanceof EntityPlayer) {
-			//if (!e.getEntity().hasCapability(WizardryCapabilityProvider.wizardryCapability, null)) {
-			WizardryCapabilityProvider cap = new WizardryCapabilityProvider(new DefaultWizardryCapability());
-			e.addCapability(new ResourceLocation(Wizardry.MODID, "capabilities"), cap);
-			//}
-		}
-	}
+    @SubscribeEvent
+    public void onAddCapabilities(AttachCapabilitiesEvent.Entity e) {
+        if (e.getEntity() instanceof EntityPlayer) {
+            //if (!e.getEntity().hasCapability(WizardryCapabilityProvider.wizardryCapability, null)) {
+            WizardryCapabilityProvider cap = new WizardryCapabilityProvider(new DefaultWizardryCapability());
+            e.addCapability(new ResourceLocation(Wizardry.MODID, "capabilities"), cap);
+            //}
+        }
+    }
 }

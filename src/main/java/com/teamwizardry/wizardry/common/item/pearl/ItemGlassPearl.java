@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.item.pearl;
 
-import com.teamwizardry.librarianlib.common.base.item.ItemMod;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.Explodable;
 import com.teamwizardry.wizardry.common.item.ItemWizardry;

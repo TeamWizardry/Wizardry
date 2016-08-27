@@ -24,11 +24,10 @@ public class ModuleCritChance extends Module implements IModifier {
     public ModuleType getType() {
         return ModuleType.MODIFIER;
     }
-    
+
     @Override
-    public String getDescription()
-    {
-    	return "Allows a spell effect to critically strike, dealing bonus damage.";
+    public String getDescription() {
+        return "Allows a spell effect to critically strike, dealing bonus damage.";
     }
 
     @Override
@@ -45,10 +44,9 @@ public class ModuleCritChance extends Module implements IModifier {
         map.putModifier(Attribute.BURNOUT, new AttributeModifier(Operation.MULTIPLY, 1.5, Priority.LOW));
     }
 
-	@Override
-	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack)
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

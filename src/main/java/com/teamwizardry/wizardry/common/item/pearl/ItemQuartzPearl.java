@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.item.pearl;
 
-import com.teamwizardry.librarianlib.common.base.item.ItemMod;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.Explodable;
 import com.teamwizardry.wizardry.api.item.Infusable;
@@ -16,18 +15,18 @@ import net.minecraft.world.World;
  */
 public class ItemQuartzPearl extends ItemWizardry implements Infusable, Explodable {
 
-	public ItemQuartzPearl() {
-		super("quartz_pearl");
-		setMaxStackSize(1);
-	}
+    public ItemQuartzPearl() {
+        super("quartz_pearl");
+        setMaxStackSize(1);
+    }
 
-	@Override
-	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
-		if (worldIn.isRemote) {
-			for (int i = 0; i < 10; i++) {
-				Wizardry.proxy.spawnParticleMagicBurst(worldIn, playerIn.posX + ((Math.random() - 0.5) * 5), playerIn.posY + ((Math.random() - 0.5) * 10), playerIn.posZ + ((Math.random() - 0.5) * 5));
-			}
-		}
-		return super.onItemRightClick(itemStackIn, worldIn, playerIn, hand);
-	}
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
+        if (worldIn.isRemote) {
+            for (int i = 0; i < 10; i++) {
+                Wizardry.proxy.spawnParticleMagicBurst(worldIn, playerIn.posX + ((Math.random() - 0.5) * 5), playerIn.posY + ((Math.random() - 0.5) * 10), playerIn.posZ + ((Math.random() - 0.5) * 5));
+            }
+        }
+        return super.onItemRightClick(itemStackIn, worldIn, playerIn, hand);
+    }
 }

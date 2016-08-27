@@ -26,9 +26,8 @@ public class ModuleEnchantment extends Module implements IModifier, IRuntimeModi
     }
 
     @Override
-    public String getDescription()
-    {
-    	return "Attempts to apply the given enchantment to the spell effect.";
+    public String getDescription() {
+        return "Attempts to apply the given enchantment to the spell effect.";
     }
 
     @Override
@@ -42,10 +41,9 @@ public class ModuleEnchantment extends Module implements IModifier, IRuntimeModi
         map.putModifier(Attribute.BURNOUT, new AttributeModifier(Operation.MULTIPLY, 2));
     }
 
-	@Override
-	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack)
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

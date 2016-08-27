@@ -15,11 +15,11 @@ import java.util.HashMap;
 
 public class ModuleAnd extends Module {
 
-	public ModuleAnd(ItemStack stack) {
-		super(stack);
-	}
+    public ModuleAnd(ItemStack stack) {
+        super(stack);
+    }
 
-	@Override
+    @Override
     public ModuleType getType() {
         return ModuleType.BOOLEAN;
     }
@@ -29,27 +29,24 @@ public class ModuleAnd extends Module {
         return "Will pass conditions if all are true.";
     }
 
-	@Override
-	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack)
-	{
-		boolean cast = false;
-		HashMap<Module, NBTTagCompound> conditionals = new HashMap<Module, NBTTagCompound>();
-		NBTTagList children = spell.getTagList(MODULES, NBT.TAG_COMPOUND);
-		for (int i = 0; i < children.tagCount(); i++)
-		{
-			NBTTagCompound child = children.getCompoundTagAt(i);
-			Module module = ModuleRegistry.getInstance().getModuleByLocation(child.getString(SHAPE));
-			if (module.getType() == ModuleType.BOOLEAN || module.getType() == ModuleType.EVENT)
-				conditionals.put(module, child);
-		}
-		for (Module module : conditionals.keySet())
-		{
-			cast = module.cast(player, caster, conditionals.get(module), stack);
-			if (!cast) return false;
-		}
-		stack.castEffects(caster);
-		return cast;
-	}
+    @Override
+    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+        boolean cast = false;
+        HashMap<Module, NBTTagCompound> conditionals = new HashMap<Module, NBTTagCompound>();
+        NBTTagList children = spell.getTagList(MODULES, NBT.TAG_COMPOUND);
+        for (int i = 0; i < children.tagCount(); i++) {
+            NBTTagCompound child = children.getCompoundTagAt(i);
+            Module module = ModuleRegistry.getInstance().getModuleByLocation(child.getString(SHAPE));
+            if (module.getType() == ModuleType.BOOLEAN || module.getType() == ModuleType.EVENT)
+                conditionals.put(module, child);
+        }
+        for (Module module : conditionals.keySet()) {
+            cast = module.cast(player, caster, conditionals.get(module), stack);
+            if (!cast) return false;
+        }
+        stack.castEffects(caster);
+        return cast;
+    }
 
     @Override
     public String getDisplayName() {

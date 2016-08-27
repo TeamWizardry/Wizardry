@@ -27,14 +27,12 @@ public class AttributeMap {
     public void endCapture(boolean add) {
         if (!isCapturing) return;
         isCapturing = false;
-        if (add)
-        {
-        	for (Attribute attr : attributeCapture.keySet())
-        	{
-        		List<AttributeModifier> mods = attributeCapture.get(attr);
-        		attributes.get(attr).addAll(mods);
-        		mods.clear();
-        	}
+        if (add) {
+            for (Attribute attr : attributeCapture.keySet()) {
+                List<AttributeModifier> mods = attributeCapture.get(attr);
+                attributes.get(attr).addAll(mods);
+                mods.clear();
+            }
         }
         didHaveInvalid = false;
     }
@@ -53,7 +51,7 @@ public class AttributeMap {
             if (isCapturing) didHaveInvalid = true;
             return;
         }
-        if(attributeCapture.get(attribute) != null) {
+        if (attributeCapture.get(attribute) != null) {
             if (isCapturing) attributeCapture.get(attribute).add(mod);
             else attributes.get(attribute).add(mod);
         }
@@ -71,7 +69,7 @@ public class AttributeMap {
         priorityLists.putIfAbsent(AttributeModifier.Priority.LOW, new ArrayList<>());
         priorityLists.putIfAbsent(AttributeModifier.Priority.LOWEST, new ArrayList<>());
 
-        if(list != null)
+        if (list != null)
             for (AttributeModifier mod : list) {
                 if (mod.op == AttributeModifier.Operation.ADD) priorityLists.get(mod.priority).add(0, mod);
                 else priorityLists.get(mod.priority).add(mod);

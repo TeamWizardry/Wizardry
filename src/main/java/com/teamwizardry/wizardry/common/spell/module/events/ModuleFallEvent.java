@@ -17,11 +17,10 @@ public class ModuleFallEvent extends Module {
     public ModuleType getType() {
         return ModuleType.EVENT;
     }
-    
+
     @Override
-    public String getDescription()
-    {
-    	return "Called whenever a targetable entity hits the ground.";
+    public String getDescription() {
+        return "Called whenever a targetable entity hits the ground.";
     }
 
     @Override
@@ -29,10 +28,9 @@ public class ModuleFallEvent extends Module {
         return "If Target Takes Fall Damage";
     }
 
-	@Override
-	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack)
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

@@ -10,7 +10,7 @@ public enum Structures {
     public static Structure craftingAltar;
 
     Structures() {
-    	reload();
+        reload();
     }
 
     public static void reload() {

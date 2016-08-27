@@ -24,49 +24,49 @@ import org.jetbrains.annotations.NotNull;
 @Mod(modid = Wizardry.MODID, version = Wizardry.VERSION, name = Wizardry.MODNAME, useMetadata = true, dependencies = "required-before:librarianlib")
 public class Wizardry {
 
-	public static final String MODID = "wizardry";
-	public static final String MODNAME = "Wizardry";
-	public static final String VERSION = "1.0";
-	public static final String CLIENT = "com.teamwizardry.wizardry.client.ClientProxy";
-	public static final String SERVER = "com.teamwizardry.wizardry.common.CommonProxy";
-	public static PacketLoggingHandler packetHandler;
-	public static Logger logger;
-	public static Book guide;
-	public static DimensionType underWorld;
+    public static final String MODID = "wizardry";
+    public static final String MODNAME = "Wizardry";
+    public static final String VERSION = "1.0";
+    public static final String CLIENT = "com.teamwizardry.wizardry.client.ClientProxy";
+    public static final String SERVER = "com.teamwizardry.wizardry.common.CommonProxy";
+    public static PacketLoggingHandler packetHandler;
+    public static Logger logger;
+    public static Book guide;
+    public static DimensionType underWorld;
 
-	@SidedProxy(clientSide = CLIENT, serverSide = SERVER)
-	public static CommonProxy proxy;
-	@Mod.Instance
-	public static Wizardry instance;
+    @SidedProxy(clientSide = CLIENT, serverSide = SERVER)
+    public static CommonProxy proxy;
+    @Mod.Instance
+    public static Wizardry instance;
 
-	public static ModCreativeTab tab = new ModCreativeTab(MODNAME) {
-		@NotNull
-		@Override
-		public ItemStack getIconItemStack() {
-			return new ItemStack(ModItems.PHYSICS_BOOK);
-		}
-	};
+    public static ModCreativeTab tab = new ModCreativeTab(MODNAME) {
+        @NotNull
+        @Override
+        public ItemStack getIconItemStack() {
+            return new ItemStack(ModItems.PHYSICS_BOOK);
+        }
+    };
 
-	static {
-		FluidRegistry.enableUniversalBucket();
-	}
+    static {
+        FluidRegistry.enableUniversalBucket();
+    }
 
-	@Mod.EventHandler
-	public void preInit(FMLPreInitializationEvent event) {
-		LibrarianLog.INSTANCE.info("o͡͡͡╮༼ ಠДಠ ༽╭o͡͡͡━☆ﾟ.*･｡ﾟ IT'S LEVI-OH-SA, NOT LEVIOSAA");
+    @Mod.EventHandler
+    public void preInit(FMLPreInitializationEvent event) {
+        LibrarianLog.INSTANCE.info("o͡͡͡╮༼ ಠДಠ ༽╭o͡͡͡━☆ﾟ.*･｡ﾟ IT'S LEVI-OH-SA, NOT LEVIOSAA");
 
-		logger = event.getModLog();
+        logger = event.getModLog();
 
-		proxy.preInit(event);
-	}
+        proxy.preInit(event);
+    }
 
-	@Mod.EventHandler
-	public void init(FMLInitializationEvent e) {
-		proxy.init(e);
-	}
+    @Mod.EventHandler
+    public void init(FMLInitializationEvent e) {
+        proxy.init(e);
+    }
 
-	@Mod.EventHandler
-	public void postInit(FMLPostInitializationEvent e) {
-		proxy.postInit(e);
-	}
+    @Mod.EventHandler
+    public void postInit(FMLPostInitializationEvent e) {
+        proxy.postInit(e);
+    }
 }

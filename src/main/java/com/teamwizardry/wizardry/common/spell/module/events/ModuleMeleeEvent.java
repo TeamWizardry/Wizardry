@@ -11,8 +11,7 @@ import net.minecraft.nbt.NBTTagCompound;
 /**
  * Created by Saad on 6/21/2016.
  */
-public class ModuleMeleeEvent extends Module
-{
+public class ModuleMeleeEvent extends Module {
     public ModuleMeleeEvent(ItemStack stack) {
         super(stack);
     }
@@ -23,9 +22,8 @@ public class ModuleMeleeEvent extends Module
     }
 
     @Override
-    public String getDescription()
-    {
-    	return "Called whenever a targetable entity is struck by a melee attack.";
+    public String getDescription() {
+        return "Called whenever a targetable entity is struck by a melee attack.";
     }
 
     @Override
@@ -33,10 +31,9 @@ public class ModuleMeleeEvent extends Module
         return "If Target Takes Melee Damage";
     }
 
-	@Override
-	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack)
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

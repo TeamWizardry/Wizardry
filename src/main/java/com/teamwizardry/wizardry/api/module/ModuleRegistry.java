@@ -28,21 +28,20 @@ public class ModuleRegistry {
     public static ModuleRegistry getInstance() {
         return INSTANCE;
     }
-    
-    public static boolean areItemsEqual(ItemStack stack, ItemStack stack2)
-    {
-    	if (stack.getItem() != stack2.getItem()) return false;
-    	if (stack.getItemDamage() != OreDictionary.WILDCARD_VALUE)
-    		if (stack2.getItemDamage() != OreDictionary.WILDCARD_VALUE)
-    			if (stack.getItemDamage() != stack2.getItemDamage()) return false;
-    	return true;
+
+    public static boolean areItemsEqual(ItemStack stack, ItemStack stack2) {
+        if (stack.getItem() != stack2.getItem()) return false;
+        if (stack.getItemDamage() != OreDictionary.WILDCARD_VALUE)
+            if (stack2.getItemDamage() != OreDictionary.WILDCARD_VALUE)
+                if (stack.getItemDamage() != stack2.getItemDamage()) return false;
+        return true;
     }
 
     public static boolean areItemStacksEqual(ItemStack stack, ItemStack stack2) {
         if (stack.getItem() != stack2.getItem()) return false;
         if (stack.getItemDamage() != OreDictionary.WILDCARD_VALUE)
-        	if (stack2.getItemDamage() != OreDictionary.WILDCARD_VALUE)
-        		if (stack.getItemDamage() != stack2.getItemDamage()) return false;
+            if (stack2.getItemDamage() != OreDictionary.WILDCARD_VALUE)
+                if (stack.getItemDamage() != stack2.getItemDamage()) return false;
         if (stack.stackSize != stack2.stackSize) return false;
 
         NBTTagCompound compound1 = stack.getTagCompound();
@@ -79,7 +78,7 @@ public class ModuleRegistry {
     public int getRegistrySize() {
         return moduleLookup.size();
     }
-    
+
     public BiMap<ResourceLocation, Module> getRegistryMap() {
         return moduleLookup;
     }

@@ -15,13 +15,13 @@ import net.minecraftforge.fml.common.registry.EntityRegistry;
  */
 public class ModEntities {
 
-	public static void init() {
-		EntityRegistry.registerModEntity(EntityHallowedSpirit.class, "hallowed_spirit", 0, Wizardry.instance, 64, 3, true);
-		EntityRegistry.registerModEntity(EntityFairy.class, "fairy", 1, Wizardry.instance, 64, 3, true);
-	}
+    public static void init() {
+        EntityRegistry.registerModEntity(EntityHallowedSpirit.class, "hallowed_spirit", 0, Wizardry.instance, 64, 3, true);
+        EntityRegistry.registerModEntity(EntityFairy.class, "fairy", 1, Wizardry.instance, 64, 3, true);
+    }
 
-	public static void initModels() {
-		RenderingRegistry.registerEntityRenderingHandler(EntityHallowedSpirit.class, new RenderHallowedSpirit(Minecraft.getMinecraft().getRenderManager(), ModelHolder.entityModels.get("hallowed_spirit"), 0.5f));
-		RenderingRegistry.registerEntityRenderingHandler(EntityFairy.class, new RenderFairy(Minecraft.getMinecraft().getRenderManager(), ModelHolder.entityModels.get("fairy"), 0.5f));
-	}
+    public static void initModels() {
+        RenderingRegistry.registerEntityRenderingHandler(EntityHallowedSpirit.class, new RenderHallowedSpirit(Minecraft.getMinecraft().getRenderManager(), ModelHolder.entityModels.get("hallowed_spirit"), 0.5f));
+        RenderingRegistry.registerEntityRenderingHandler(EntityFairy.class, new RenderFairy(Minecraft.getMinecraft().getRenderManager(), ModelHolder.entityModels.get("fairy"), 0.5f));
+    }
 }

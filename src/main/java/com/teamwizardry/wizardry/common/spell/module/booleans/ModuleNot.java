@@ -13,49 +13,44 @@ import net.minecraftforge.common.util.Constants.NBT;
 
 import java.util.HashMap;
 
-public class ModuleNot extends Module
-{
-	public ModuleNot(ItemStack stack) {
-		super(stack);
-	}
+public class ModuleNot extends Module {
+    public ModuleNot(ItemStack stack) {
+        super(stack);
+    }
 
-	@Override
-	public ModuleType getType()
-	{
-		return ModuleType.BOOLEAN;
-	}
-	
-	@Override
-	public String getDescription()
-	{
-		return "Will pass condition if it is false.";
-	}
+    @Override
+    public ModuleType getType() {
+        return ModuleType.BOOLEAN;
+    }
 
-	@Override
-	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack)
-	{
-		boolean cast = false;
-		HashMap<Module, NBTTagCompound> conditionals = new HashMap<Module, NBTTagCompound>();
-		NBTTagList children = spell.getTagList(MODULES, NBT.TAG_COMPOUND);
-		for (int i = 0; i < children.tagCount(); i++)
-		{
-			NBTTagCompound child = children.getCompoundTagAt(i);
-			Module module = ModuleRegistry.getInstance().getModuleByLocation(child.getString(SHAPE));
-			if (module.getType() == ModuleType.BOOLEAN || module.getType() == ModuleType.EVENT)
-				conditionals.put(module, child);
-		}
-		for (Module module : conditionals.keySet()) //todo intellij warns about for loop that doesn't loop
-		{
-			cast = module.cast(player, caster, conditionals.get(module), stack);
-			if (!cast) break;
-			return false;
-		}
-		stack.castEffects(caster);
-		return cast;
-	}
+    @Override
+    public String getDescription() {
+        return "Will pass condition if it is false.";
+    }
 
-	@Override
-	public String getDisplayName() {
-		return "Not";
-	}
+    @Override
+    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+        boolean cast = false;
+        HashMap<Module, NBTTagCompound> conditionals = new HashMap<Module, NBTTagCompound>();
+        NBTTagList children = spell.getTagList(MODULES, NBT.TAG_COMPOUND);
+        for (int i = 0; i < children.tagCount(); i++) {
+            NBTTagCompound child = children.getCompoundTagAt(i);
+            Module module = ModuleRegistry.getInstance().getModuleByLocation(child.getString(SHAPE));
+            if (module.getType() == ModuleType.BOOLEAN || module.getType() == ModuleType.EVENT)
+                conditionals.put(module, child);
+        }
+        for (Module module : conditionals.keySet()) //todo intellij warns about for loop that doesn't loop
+        {
+            cast = module.cast(player, caster, conditionals.get(module), stack);
+            if (!cast) break;
+            return false;
+        }
+        stack.castEffects(caster);
+        return cast;
+    }
+
+    @Override
+    public String getDisplayName() {
+        return "Not";
+    }
 }

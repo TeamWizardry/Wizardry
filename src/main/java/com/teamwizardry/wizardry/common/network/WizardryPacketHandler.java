@@ -10,9 +10,9 @@ import net.minecraftforge.fml.relauncher.Side;
  */
 public class WizardryPacketHandler {
 
-	public static SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(Wizardry.MODID);
+    public static SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(Wizardry.MODID);
 
-	public static void registerMessages() {
-		INSTANCE.registerMessage(MessageUpdateCapabilities.CapsMessageHandler.class, MessageUpdateCapabilities.class, 0, Side.CLIENT);
-	}
+    public static void registerMessages() {
+        INSTANCE.registerMessage(MessageUpdateCapabilities.CapsMessageHandler.class, MessageUpdateCapabilities.class, 0, Side.CLIENT);
+    }
 }

@@ -13,16 +13,16 @@ import net.minecraft.world.World;
  */
 public class ItemJar extends ItemWizardry {
 
-	public ItemJar() {
-		super("jar");
-		setMaxStackSize(1);
-	}
+    public ItemJar() {
+        super("jar");
+        setMaxStackSize(1);
+    }
 
-	@Override
-	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-		if (!worldIn.isRemote) {
+    @Override
+    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        if (!worldIn.isRemote) {
 
-		}
-		return EnumActionResult.PASS;
-	}
+        }
+        return EnumActionResult.PASS;
+    }
 }

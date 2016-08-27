@@ -28,7 +28,8 @@ public class MagicBurstFX extends QueuedParticle<MagicBurstFX> {
             GlStateManager.color(1, 1, 1, 1);
             GlStateManager.enableBlend();
             GlStateManager.shadeModel(GL11.GL_SMOOTH);
-            ShaderHelper.INSTANCE.useShader(Shaders.burst, shader -> {});
+            ShaderHelper.INSTANCE.useShader(Shaders.burst, shader -> {
+            });
             tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.PARTICLE_POSITION_TEX_COLOR_LMAP);
             for (MagicBurstFX fx : getRenderQueue()) {
                 fx.render(tessellator.getBuffer());
@@ -40,17 +41,17 @@ public class MagicBurstFX extends QueuedParticle<MagicBurstFX> {
             getRenderQueue().clear();
         }
     };
-    
+
     protected float rand;
 
     public MagicBurstFX(World worldIn, double posXIn, double posYIn, double posZIn) {
         super(worldIn, posXIn, posYIn, posZIn);
         setMaxAge(2000);
-        particleRed = (float)Math.random();
-        particleGreen = (float)Math.random();
-        particleBlue = (float)Math.random();
+        particleRed = (float) Math.random();
+        particleGreen = (float) Math.random();
+        particleBlue = (float) Math.random();
         particleGravity = 0.1f;
-		rand = (int)( Math.random()*1000 );
+        rand = (int) (Math.random() * 1000);
     }
 
     @Override

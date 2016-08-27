@@ -13,15 +13,15 @@ import org.jetbrains.annotations.Nullable;
  */
 public class BlockCloud extends BlockMod {
 
-	public BlockCloud() {
-		super("cloud", Material.ROCK);
-		GameRegistry.registerTileEntity(TilePedestal.class, "cloud");
-		setCreativeTab(Wizardry.tab);
-	}
+    public BlockCloud() {
+        super("cloud", Material.ROCK);
+        GameRegistry.registerTileEntity(TilePedestal.class, "cloud");
+        setCreativeTab(Wizardry.tab);
+    }
 
-	@Nullable
-	@Override
-	public ModCreativeTab getCreativeTab() {
-		return Wizardry.tab;
-	}
+    @Nullable
+    @Override
+    public ModCreativeTab getCreativeTab() {
+        return Wizardry.tab;
+    }
 }

@@ -11,21 +11,21 @@ import net.minecraft.util.ResourceLocation;
  */
 public class RenderFairy extends RenderLiving<EntityFairy> {
 
-	public RenderFairy(RenderManager renderManager, ModelBase modelBase, float shadowSize) {
-		super(renderManager, modelBase, 0);
-	}
+    public RenderFairy(RenderManager renderManager, ModelBase modelBase, float shadowSize) {
+        super(renderManager, modelBase, 0);
+    }
 
-	@Override
-	public boolean canRenderName(EntityFairy entity) {
-		return false;
-	}
+    @Override
+    public boolean canRenderName(EntityFairy entity) {
+        return false;
+    }
 
-	@Override
-	protected ResourceLocation getEntityTexture(EntityFairy entity) {
-		return null;
-	}
+    @Override
+    protected ResourceLocation getEntityTexture(EntityFairy entity) {
+        return null;
+    }
 
-	@Override
-	public void doRender(EntityFairy entity, double x, double y, double z, float entityYaw, float partialTicks) {
-	}
+    @Override
+    public void doRender(EntityFairy entity, double x, double y, double z, float entityYaw, float partialTicks) {
+    }
 }

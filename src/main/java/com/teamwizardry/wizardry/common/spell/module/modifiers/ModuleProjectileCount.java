@@ -22,11 +22,10 @@ public class ModuleProjectileCount extends Module implements IModifier {
     public ModuleType getType() {
         return ModuleType.MODIFIER;
     }
-    
+
     @Override
-    public String getDescription()
-    {
-    	return "Increases the number of beams or projectiles fired by the spell.";
+    public String getDescription() {
+        return "Increases the number of beams or projectiles fired by the spell.";
     }
 
     @Override
@@ -42,10 +41,9 @@ public class ModuleProjectileCount extends Module implements IModifier {
         map.putModifier(Attribute.BURNOUT, new AttributeModifier(AttributeModifier.Operation.MULTIPLY, 1.8));
     }
 
-	@Override
-	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack)
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

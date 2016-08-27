@@ -9,17 +9,29 @@ import net.minecraft.nbt.NBTTagCompound;
  */
 public interface IWizardryCapability {
 
-	int getMana();
-	void setMana(int mana, EntityPlayer player);
-	int getMaxMana();
-	void setMaxMana(int maxMana, EntityPlayer player);
-	int getBurnout();
-	void setBurnout(int burnout, EntityPlayer player);
-	int getMaxBurnout();
-	void setMaxBurnout(int maxBurnout, EntityPlayer player);
-	IBloodType getBloodType();
-	void setBloodType(IBloodType bloodType, EntityPlayer player);
-	NBTTagCompound saveNBTData();
-	void loadNBTData(NBTTagCompound compound);
-	void dataChanged(EntityPlayer player);
+    int getMana();
+
+    void setMana(int mana, EntityPlayer player);
+
+    int getMaxMana();
+
+    void setMaxMana(int maxMana, EntityPlayer player);
+
+    int getBurnout();
+
+    void setBurnout(int burnout, EntityPlayer player);
+
+    int getMaxBurnout();
+
+    void setMaxBurnout(int maxBurnout, EntityPlayer player);
+
+    IBloodType getBloodType();
+
+    void setBloodType(IBloodType bloodType, EntityPlayer player);
+
+    NBTTagCompound saveNBTData();
+
+    void loadNBTData(NBTTagCompound compound);
+
+    void dataChanged(EntityPlayer player);
 }

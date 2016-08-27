@@ -15,35 +15,35 @@ import org.jetbrains.annotations.Nullable;
 
 public class BlockManaBattery extends BlockModContainer implements IManaAcceptor {
 
-	public BlockManaBattery() {
-		super("mana_battery", Material.GROUND);
-		GameRegistry.registerTileEntity(TileManaBattery.class, "mana_battery");
-	}
+    public BlockManaBattery() {
+        super("mana_battery", Material.GROUND);
+        GameRegistry.registerTileEntity(TileManaBattery.class, "mana_battery");
+    }
 
-	@Nullable
-	@Override
-	public TileEntity createTileEntity(World world, IBlockState iBlockState) {
-		return new TileManaBattery();
-	}
+    @Nullable
+    @Override
+    public TileEntity createTileEntity(World world, IBlockState iBlockState) {
+        return new TileManaBattery();
+    }
 
-	@Override
-	public boolean canRenderInLayer(BlockRenderLayer layer) {
-		return layer == BlockRenderLayer.CUTOUT;
-	}
+    @Override
+    public boolean canRenderInLayer(BlockRenderLayer layer) {
+        return layer == BlockRenderLayer.CUTOUT;
+    }
 
-	@Override
-	public boolean isFullCube(IBlockState state) {
-		return false;
-	}
+    @Override
+    public boolean isFullCube(IBlockState state) {
+        return false;
+    }
 
-	@Override
-	public boolean isOpaqueCube(IBlockState blockState) {
-		return false;
-	}
+    @Override
+    public boolean isOpaqueCube(IBlockState blockState) {
+        return false;
+    }
 
-	@Nullable
-	@Override
-	public ModCreativeTab getCreativeTab() {
-		return Wizardry.tab;
-	}
+    @Nullable
+    @Override
+    public ModCreativeTab getCreativeTab() {
+        return Wizardry.tab;
+    }
 }

@@ -22,11 +22,10 @@ public class ModuleSilent extends Module implements IModifier {
     public ModuleType getType() {
         return ModuleType.MODIFIER;
     }
-    
+
     @Override
-    public String getDescription()
-    {
-    	return "Causes the spell effect to produce no noise.";
+    public String getDescription() {
+        return "Causes the spell effect to produce no noise.";
     }
 
     @Override
@@ -42,10 +41,9 @@ public class ModuleSilent extends Module implements IModifier {
         map.putModifier(Attribute.BURNOUT, new AttributeModifier(AttributeModifier.Operation.MULTIPLY, 1.1));
     }
 
-	@Override
-	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack)
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

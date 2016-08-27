@@ -74,6 +74,7 @@ public class ModModules {
     private static void register(Block a, int amount, ModuleRegistry.IModuleConstructor constructor) {
         register(new ItemStack(a, amount), constructor);
     }
+
     private static void register(Item a, int amount, ModuleRegistry.IModuleConstructor constructor) {
         register(new ItemStack(a, amount), constructor);
     }
@@ -82,9 +83,11 @@ public class ModModules {
         register(new ItemStack(a, 1), constructor);
 
     }
+
     private static void register(Block a, ModuleRegistry.IModuleConstructor constructor) {
         register(new ItemStack(a, 1), constructor);
     }
+
     private static void register(ItemStack a, ModuleRegistry.IModuleConstructor constructor) {
         ModuleRegistry.getInstance().registerModule(constructor, a);
     }

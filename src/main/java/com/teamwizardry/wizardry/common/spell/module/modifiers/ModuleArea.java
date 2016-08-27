@@ -25,9 +25,8 @@ public class ModuleArea extends Module implements IModifier {
     }
 
     @Override
-    public String getDescription()
-    {
-    	return "Increases a shape or effect's area of effect.";
+    public String getDescription() {
+        return "Increases a shape or effect's area of effect.";
     }
 
     @Override
@@ -43,10 +42,9 @@ public class ModuleArea extends Module implements IModifier {
         map.putModifier(Attribute.BURNOUT, new AttributeModifier(Operation.MULTIPLY, 1.5));
     }
 
-	@Override
-	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack)
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

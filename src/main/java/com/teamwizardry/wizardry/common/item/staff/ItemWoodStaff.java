@@ -1,7 +1,6 @@
 package com.teamwizardry.wizardry.common.item.staff;
 
 import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
-import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.INacreColorable;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.ModuleRegistry;
@@ -25,16 +24,16 @@ import net.minecraft.world.World;
  * Created by Saad on 6/7/2016.
  */
 public class ItemWoodStaff extends ItemWizardry implements INacreColorable {
-    
+
     public ItemWoodStaff() {
         super("wood_staff", "wood_staff_pearl", "wood_staff");
         setMaxStackSize(1);
     }
-    
+
     private static int intColor(int r, int g, int b) {
         return (r * 65536 + g * 256 + b);
     }
-    
+
     @Override
     public void onPlayerStoppedUsing(ItemStack stack, World world, EntityLivingBase entityLiving, int timeLeft) {
         if (stack == null || world == null || entityLiving == null) return;
@@ -46,7 +45,7 @@ public class ItemWoodStaff extends ItemWizardry implements INacreColorable {
             new SpellStack((EntityPlayer) entityLiving, entityLiving, spell).castSpell();
         }
     }
-    
+
     @Override
     public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
         if (world.isRemote && Minecraft.getMinecraft().currentScreen != null) {
@@ -56,17 +55,17 @@ public class ItemWoodStaff extends ItemWizardry implements INacreColorable {
             return new ActionResult<>(EnumActionResult.PASS, stack);
         }
     }
-    
+
     @Override
     public EnumAction getItemUseAction(ItemStack stack) {
         return EnumAction.BOW;
     }
-    
+
     @Override
     public int getMaxItemUseDuration(ItemStack stack) {
         return 72000;
     }
-    
+
     @Override
     public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
         if (count > 0 && count < (getMaxItemUseDuration(stack) - 20) && player instanceof EntityPlayer) {
@@ -78,7 +77,7 @@ public class ItemWoodStaff extends ItemWizardry implements INacreColorable {
                 }
             }
         }
-        
+
         // TODO: PARTICLES
 //        int betterCount = Math.abs(count - 72000);
 //        Circle3D circle = new Circle3D(player.getPositionVector(), player.width + 0.3, 5);
@@ -95,20 +94,20 @@ public class ItemWoodStaff extends ItemWizardry implements INacreColorable {
 //            }
 //        }
     }
-    
+
     @Override
     public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
         if (!worldIn.isRemote) return;
-        
+
         colorableOnUpdate(stack);
     }
-    
+
     @Override
     public boolean onEntityItemUpdate(EntityItem entityItem) {
         if (!entityItem.worldObj.isRemote) return false;
-        
+
         colorableOnEntityItemUpdate(entityItem);
-        
+
         return super.onEntityItemUpdate(entityItem);
     }
 }
