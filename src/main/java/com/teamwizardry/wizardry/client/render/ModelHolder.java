@@ -10,9 +10,9 @@ import java.util.HashMap;
  */
 public class ModelHolder {
 
-	public static HashMap<String, ModelBase> entityModels = new HashMap<>();
+    public static HashMap<String, ModelBase> entityModels = new HashMap<>();
 
-	public static void init() {
-		entityModels.put("hallowed_spirit", new ModelHallowedSpirit());
-	}
+    public static void init() {
+        entityModels.put("hallowed_spirit", new ModelHallowedSpirit());
+    }
 }

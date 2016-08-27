@@ -2,45 +2,31 @@ package com.teamwizardry.wizardry.common.item.pearl;
 
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.Explodable;
+import com.teamwizardry.wizardry.common.item.ItemWizardry;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Created by Saad on 6/20/2016.
  */
-public class ItemGlassPearl extends Item implements Explodable {
+public class ItemGlassPearl extends ItemWizardry implements Explodable {
 
     public ItemGlassPearl() {
-        setRegistryName("glass_pearl");
-        setUnlocalizedName("glass_pearl");
-        GameRegistry.register(this);
+        super("glass_pearl");
         setMaxStackSize(1);
-        setCreativeTab(Wizardry.tab);
     }
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
         Wizardry.proxy.spawnParticleMagicBurst(worldIn, playerIn.posX, playerIn.posY, playerIn.posZ);
         return super.onItemRightClick(itemStackIn, worldIn, playerIn, hand);
-    }
-
-    @SideOnly(Side.CLIENT)
-    public void initModel() {
-        ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(getRegistryName(), "inventory"));
     }
 
     @Override

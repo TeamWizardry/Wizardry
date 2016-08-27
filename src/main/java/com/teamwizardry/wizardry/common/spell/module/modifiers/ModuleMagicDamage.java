@@ -25,9 +25,8 @@ public class ModuleMagicDamage extends Module implements IModifier {
     }
 
     @Override
-    public String getDescription()
-    {
-    	return "Increases the amount of magic damage a spell does.";
+    public String getDescription() {
+        return "Increases the amount of magic damage a spell does.";
     }
 
     @Override
@@ -43,10 +42,9 @@ public class ModuleMagicDamage extends Module implements IModifier {
         map.putModifier(Attribute.BURNOUT, new AttributeModifier(Operation.MULTIPLY, 1.2));
     }
 
-	@Override
-	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack)
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

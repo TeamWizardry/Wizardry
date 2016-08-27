@@ -6,7 +6,7 @@ import com.teamwizardry.wizardry.common.item.pearl.ItemManaPearl;
 import com.teamwizardry.wizardry.common.item.pearl.ItemNacrePearl;
 import com.teamwizardry.wizardry.common.item.pearl.ItemQuartzPearl;
 import com.teamwizardry.wizardry.common.item.staff.ItemGoldStaff;
-import net.minecraft.client.Minecraft;
+import com.teamwizardry.wizardry.common.item.staff.ItemWoodStaff;
 
 /**
  * Created by Saad on 4/9/2016.
@@ -18,7 +18,7 @@ public class ModItems {
     public static ItemManaPearl PEARL_MANA;
     public static ItemNacrePearl PEARL_NACRE;
 
-    public static com.teamwizardry.wizardry.common.item.staff.ItemWoodStaff STAFF_WOOD;
+    public static ItemWoodStaff STAFF_WOOD;
     public static ItemGoldStaff STAFF_GOLD;
 
     public static ItemRing RING;
@@ -39,27 +39,6 @@ public class ModItems {
         PEARL_NACRE = new ItemNacrePearl();
         MANA_CAKE = new ItemManaCake();
         STAFF_GOLD = new ItemGoldStaff();
-        STAFF_WOOD = new com.teamwizardry.wizardry.common.item.staff.ItemWoodStaff();
-    }
-
-    public static void initModels() {
-        PEARL_QUARTZ.initModel();
-        PEARL_GLASS.initModel();
-        PHYSICS_BOOK.initModel();
-        RING.initModel();
-        DEBUG.initModel();
-        DEVIL_DUST.initModel();
-        PEARL_MANA.initModel();
-        PEARL_NACRE.initModel();
-        MANA_CAKE.initModel();
-        STAFF_WOOD.initModel();
-        STAFF_GOLD.initModel();
-    }
-
-    public static void initColors() {
-        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemNacrePearl.ColorHandler(), PEARL_NACRE);
-        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemRing.ColorHandler(), RING);
-        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemRing.ColorHandler(), STAFF_GOLD);
-        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemRing.ColorHandler(), STAFF_WOOD);
+        STAFF_WOOD = new ItemWoodStaff();
     }
 }

@@ -1,18 +1,24 @@
-tile.crafting_plate.name=Sorcerer's Plate
-tile.magicians_worktable.name=Magician's Worktable
-tile.mana_battery.name=Mana Battery
-tile.pedestal.name=Pedestal
-tile.nacre.name=Nacre
-tile.mana.name=Mana
+tile.wizardry:crafting_plate.name=Sorcerer's Plate
+tile.wizardry:magicians_worktable.name=Magician's Worktable
+tile.wizardry:mana_battery.name=Mana Battery
+tile.wizardry:pedestal.name=Pedestal
+tile.wizardry:nacre.name=Nacre
+tile.wizardry:mana.name=Mana
 
-item.physics_book.name=Physics Book
-item.ring.name=Ring
-item.devil_dust.name=Devil Dust
-item.mana_pearl.name=Mana Pearl
-item.glass_pearl.name=Glass Pearl
-item.nacre_pearl.name=Nacre Pearl
-item.quartz_pearl.name=Quartz Pearl
-item.debugger.name=Debugger
+item.wizardry:physics_book.name=Physics Book
+item.wizardry:ring.name=Ring
+item.wizardry:ring_pearl.name=Inset Ring
+item.wizardry:devil_dust.name=Devil Dust
+item.wizardry:mana_pearl.name=Mana Pearl
+item.wizardry:glass_pearl.name=Glass Pearl
+item.wizardry:nacre_pearl.name=Nacre Pearl
+item.wizardry:quartz_pearl.name=Quartz Pearl
+item.wizardry:mana_cake.name=Mana Cake
+item.wizardry:debugger.name=Debugger
+item.wizardry:wood_staff.name=Wooden Staff
+item.wizardry:wood_staff_pearl.name=Inset Wooden Staff
+item.wizardry:gold_staff.name=Golden Staff
+item.wizardry:gold_staff_pearl.name=Inset Golden Staff
 
 gui.physicsbook.defaulttitle=Physics Book
 
@@ -25,5 +31,9 @@ achievement.wizardry.manapool=Not A Mana Pool
 achievement.wizardry.manapool.desc=Find a pool of mana
 achievement.wizardry.devildust=Sugar, Spice, And Everything Nice
 achievement.wizardry.devildust.desc=Craft devil dust
+achievement.wizardry.crunch=CRUNCH.
+achievement.wizardry.crunch.desc=Travel to the Underworld
 
-itemGroup.wizardry=Wizardry
+itemGroup.wizardry.Wizardry=Wizardry
+
+wizardry.misc.spell=Spell:

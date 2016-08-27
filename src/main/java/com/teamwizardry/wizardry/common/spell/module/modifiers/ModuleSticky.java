@@ -27,9 +27,8 @@ public class ModuleSticky extends Module implements IModifier, IRuntimeModifier 
     }
 
     @Override
-    public String getDescription()
-    {
-    	return "Causes the spell effect to last beyond the instant it activates.";
+    public String getDescription() {
+        return "Causes the spell effect to last beyond the instant it activates.";
     }
 
     @Override
@@ -45,10 +44,9 @@ public class ModuleSticky extends Module implements IModifier, IRuntimeModifier 
         map.putModifier(Attribute.BURNOUT, new AttributeModifier(AttributeModifier.Operation.ADD, attributes.apply(Attribute.BURNOUT, baseBurnout), AttributeModifier.Priority.HIGH));
     }
 
-	@Override
-	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack)
-	{
-		// TODO Auto-generated method stub
-		return true;
-	}
+    @Override
+    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+        // TODO Auto-generated method stub
+        return true;
+    }
 }

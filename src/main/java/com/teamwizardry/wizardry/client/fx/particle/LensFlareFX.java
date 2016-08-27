@@ -26,7 +26,7 @@ public class LensFlareFX extends Particle {
 
     public LensFlareFX(World world, Vec3d pos, int age, double maxRange) {
         super(world, pos.xCoord + ThreadLocalRandom.current().nextDouble(-maxRange, maxRange), pos.yCoord + ThreadLocalRandom.current().nextDouble(-maxRange, maxRange), pos.zCoord + ThreadLocalRandom.current().nextDouble(-maxRange, maxRange));
-        particleAlpha =  0.0001f;
+        particleAlpha = 0.0001f;
         particleMaxAge = age * Wizardry.proxy.getParticleDensity() / 100;
         particleScale = 1.5f;
 
@@ -44,7 +44,8 @@ public class LensFlareFX extends Particle {
                 sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(texture_hexagon_blur_1.toString());
             else if (ThreadLocalRandom.current().nextBoolean())
                 sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(texture_hexagon_blur_2.toString());
-            else */sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(texture_hexagon_blur_3.toString());
+            else */
+            sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(texture_hexagon_blur_3.toString());
         } else {
             /*if (ThreadLocalRandom.current().nextBoolean())
                 sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(texture_octagon.toString());
@@ -52,7 +53,8 @@ public class LensFlareFX extends Particle {
                 sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(texture_octagon_blur_1.toString());
             else if (ThreadLocalRandom.current().nextBoolean())
                 sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(texture_octagon_blur_2.toString());
-            else */sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(texture_octagon_blur_3.toString());
+            else */
+            sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(texture_octagon_blur_3.toString());
         }
         this.setParticleTexture(sprite);
     }

@@ -1,7 +1,6 @@
 package com.teamwizardry.wizardry.client.helper;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.ArrayList;
@@ -60,36 +59,36 @@ public class CraftingPlateItemStackHelper {
         this.positionTheta = positionTheta;
     }
 
-    public void setPoint(Vec3d point) {
-        this.point = point;
-    }
-
     public Vec3d getPoint() {
         return point;
+    }
+
+    public void setPoint(Vec3d point) {
+        this.point = point;
     }
 
     public double getMaxX() {
         return maxX;
     }
 
-    public double getMaxZ() {
-        return maxZ;
-    }
-
     public void setMaxX(double maxX) {
         this.maxX = maxX;
+    }
+
+    public double getMaxZ() {
+        return maxZ;
     }
 
     public void setMaxZ(double maxZ) {
         this.maxZ = maxZ;
     }
 
-    public void setMaxY(double maxY) {
-        this.maxY = maxY;
-    }
-
     public double getMaxY() {
         return maxY;
+    }
+
+    public void setMaxY(double maxY) {
+        this.maxY = maxY;
     }
 
     public void tick() {

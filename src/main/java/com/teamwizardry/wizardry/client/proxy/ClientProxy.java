@@ -15,8 +15,6 @@ import com.teamwizardry.wizardry.client.render.BloodRenderLayer;
 import com.teamwizardry.wizardry.client.render.glow.GlowingItemEventHandler;
 import com.teamwizardry.wizardry.client.render.glow.GlowingItemRenderLayer;
 import com.teamwizardry.wizardry.common.CommonProxy;
-import com.teamwizardry.wizardry.init.ModBlocks;
-import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.entity.RenderPlayer;
@@ -45,7 +43,6 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void init(FMLInitializationEvent event) {
-        ModItems.initColors();
         ParticleRenderDispatcher.class.getName(); // load the class
         //Shaders.INSTANCE.getClass(); // ...
         //MagicBurstFX.class.getName(); // ...
@@ -64,11 +61,6 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void postInit(FMLPostInitializationEvent event) {
-    }
-
-    public void loadModels() {
-        ModItems.initModels();
-        ModBlocks.initModels();
     }
 
     @Override
@@ -130,7 +122,7 @@ public class ClientProxy extends CommonProxy {
     @Override
     public SparkleFX createSparkle(World world, Vec3d origin, int age) {
         SparkleFX fx = Wizardry.proxy.spawnParticleSparkle(world, origin);
-        if(Wizardry.proxy.getParticleDensity() > 0)
+        if (Wizardry.proxy.getParticleDensity() > 0)
             if (ThreadLocalRandom.current().nextInt(Wizardry.proxy.getParticleDensity()) / 100 <= 1) {
                 fx.setMaxAge(age * Wizardry.proxy.getParticleDensity() / 100);
             } else fx.setMaxAge(0);
@@ -140,7 +132,7 @@ public class ClientProxy extends CommonProxy {
     @Override
     public SparkleFX createSparkle(World world, Vec3d origin, Vec3d range, int age) {
         SparkleFX fx = Wizardry.proxy.spawnParticleSparkle(world, origin, range);
-        if(Wizardry.proxy.getParticleDensity() > 0)
+        if (Wizardry.proxy.getParticleDensity() > 0)
             if (ThreadLocalRandom.current().nextInt(Wizardry.proxy.getParticleDensity()) / 100 <= 1) {
                 fx.setMaxAge(age * Wizardry.proxy.getParticleDensity() / 100);
             } else fx.setMaxAge(0);

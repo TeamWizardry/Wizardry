@@ -1,15 +1,15 @@
 package com.teamwizardry.wizardry.common.spell.module.events;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.spell.IRequireItem;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
-public class ModulePotionEvent extends Module implements IRequireItem{
+public class ModulePotionEvent extends Module implements IRequireItem {
     public ModulePotionEvent(ItemStack stack) {
         super(stack);
     }
@@ -30,15 +30,13 @@ public class ModulePotionEvent extends Module implements IRequireItem{
     }
 
     @Override
-    public void handle(ItemStack stack)
-    {
-    	// TODO Auto-generated method stub
+    public void handle(ItemStack stack) {
+        // TODO Auto-generated method stub
     }
-    
-	@Override
-	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack)
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
+
+    @Override
+    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

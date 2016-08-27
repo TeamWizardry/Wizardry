@@ -23,10 +23,9 @@ public class ModulePunch extends Module implements IModifier {
     public ModuleType getType() {
         return ModuleType.MODIFIER;
     }
-    
+
     @Override
-    public String getDescription()
-    {
+    public String getDescription() {
         return "Gives a spell a knockback effect.";
     }
 
@@ -43,10 +42,9 @@ public class ModulePunch extends Module implements IModifier {
         map.putModifier(Attribute.BURNOUT, new AttributeModifier(Operation.MULTIPLY, 1.1));
     }
 
-	@Override
-	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack)
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

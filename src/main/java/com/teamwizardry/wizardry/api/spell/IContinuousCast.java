@@ -5,5 +5,5 @@ package com.teamwizardry.wizardry.api.spell;
  * <p>
  * Check for this in casting tools to allow spells to continuously cast.
  */
-public interface IContinuousCast
-{}
+public interface IContinuousCast {
+}

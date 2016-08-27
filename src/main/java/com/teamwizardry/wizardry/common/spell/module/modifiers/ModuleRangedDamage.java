@@ -24,9 +24,8 @@ public class ModuleRangedDamage extends Module implements IModifier {
     }
 
     @Override
-    public String getDescription()
-    {
-    	return "Increases the damage dealt by a spell from range.";
+    public String getDescription() {
+        return "Increases the damage dealt by a spell from range.";
     }
 
     @Override
@@ -42,10 +41,9 @@ public class ModuleRangedDamage extends Module implements IModifier {
         map.putModifier(Attribute.BURNOUT, new AttributeModifier(AttributeModifier.Operation.MULTIPLY, 1.2));
     }
 
-	@Override
-	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack)
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

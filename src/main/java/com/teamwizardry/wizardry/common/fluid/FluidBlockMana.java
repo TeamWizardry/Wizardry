@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.fluid;
 
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.Explodable;
 import com.teamwizardry.wizardry.api.trackerobject.BookTrackerObject;
 import com.teamwizardry.wizardry.client.fx.GlitterFactory;
@@ -17,6 +18,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -35,7 +37,7 @@ public class FluidBlockMana extends BlockFluidClassic {
 
     public FluidBlockMana() {
         super(FluidMana.instance, Material.WATER);
-        GameRegistry.registerBlock(this, "mana");
+        GameRegistry.register(this, new ResourceLocation(Wizardry.MODID, "mana"));
         this.setQuantaPerBlock(6);
         this.setUnlocalizedName("mana");
     }
@@ -48,7 +50,7 @@ public class FluidBlockMana extends BlockFluidClassic {
     @Override
     public void updateTick(World world, BlockPos pos, IBlockState state, Random rand) {
         super.updateTick(world, pos, state, rand);
-        SparkleFX ambient =  GlitterFactory.getInstance().createSparkle(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), 30);
+        SparkleFX ambient = GlitterFactory.getInstance().createSparkle(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), 30);
         ambient.setAlpha(0.5f);
         ambient.setScale(0.5f);
         ambient.setFadeIn();

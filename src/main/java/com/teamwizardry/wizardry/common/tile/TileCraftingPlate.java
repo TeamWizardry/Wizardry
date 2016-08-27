@@ -47,9 +47,9 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
 
     public void validateStructure() {
         Structures.reload();
-		StructureMatchResult match = Structures.craftingAltar.match(this.worldObj, this.pos);
+        StructureMatchResult match = Structures.craftingAltar.match(this.worldObj, this.pos);
 
-	    setStructureComplete(true);
+        setStructureComplete(true);
         /*if (match.allErrors.size() == 0) {
             worldObj.spawnParticle(EnumParticleTypes.FLAME, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5, 0.0D, 0.0D, 0.0D);
             InWorldRender.INSTANCE.unsetStructure();
@@ -218,7 +218,7 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
             }
 
             if (animationComplete) {
-            	List<ItemStack> condensed = condenseItemList(inventory.stream().map(CraftingPlateItemStackHelper::getItemStack).collect(Collectors.toList()));
+                List<ItemStack> condensed = condenseItemList(inventory.stream().map(CraftingPlateItemStackHelper::getItemStack).collect(Collectors.toList()));
                 Parser spellParser = new Parser(condensed);
                 Module parsedSpell = null;
                 if (!worldObj.isRemote)
@@ -239,7 +239,7 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
                     EntityItem pearlItem = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() + pearl.getPoint().yCoord, pos.getZ() + 0.5, pearl.getItemStack());
                     pearlItem.setVelocity(0, 0.8, 0);
                     pearlItem.forceSpawn = true;
-                    if(!worldObj.isRemote)
+                    if (!worldObj.isRemote)
                         worldObj.spawnEntityInWorld(pearlItem);
 
                     for (int i = 0; i < 100 * Wizardry.proxy.getParticleDensity() / 100; i++) {
@@ -320,18 +320,16 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
     public void setAnimating(boolean animating) {
         isAnimating = animating;
     }
-    
-    private List<ItemStack> condenseItemList(List<ItemStack> list)
-    {
-    	ArrayList<ItemStack> items = new ArrayList<ItemStack>();
-    	items.add(list.remove(0));
-    	while (list.size() > 0)
-    	{
-    		if (ModuleRegistry.areItemsEqual(list.get(0), items.get(items.size() - 1)))
-    			items.get(items.size() - 1).stackSize += list.remove(0).stackSize;
-    		else
-    			items.add(list.remove(0));
-    	}
-    	return items;
+
+    private List<ItemStack> condenseItemList(List<ItemStack> list) {
+        ArrayList<ItemStack> items = new ArrayList<ItemStack>();
+        items.add(list.remove(0));
+        while (list.size() > 0) {
+            if (ModuleRegistry.areItemsEqual(list.get(0), items.get(items.size() - 1)))
+                items.get(items.size() - 1).stackSize += list.remove(0).stackSize;
+            else
+                items.add(list.remove(0));
+        }
+        return items;
     }
 }

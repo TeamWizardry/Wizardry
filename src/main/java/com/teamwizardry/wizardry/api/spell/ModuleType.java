@@ -8,9 +8,10 @@ import com.teamwizardry.wizardry.api.module.Module;
  */
 public enum ModuleType {
     BOOLEAN, EFFECT, EVENT, MODIFIER, SHAPE;
-    
-	public final Sprite backgroundSprite;
-	private ModuleType() {
-		backgroundSprite = Module.STATIC_ICON_SHEET.getSprite(this.toString().toLowerCase(), 24, 24);
-	}
+
+    public final Sprite backgroundSprite;
+
+    private ModuleType() {
+        backgroundSprite = Module.STATIC_ICON_SHEET.getSprite(this.toString().toLowerCase(), 24, 24);
+    }
 }

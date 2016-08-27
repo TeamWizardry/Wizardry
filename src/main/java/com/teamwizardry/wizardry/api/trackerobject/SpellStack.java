@@ -19,17 +19,16 @@ import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
  * Created by LordSaad44 This class is created when a spell is created, then
  * tracks it and controls it everywhere
  */
-public class SpellStack
-{
-	// WIP
+public class SpellStack {
+    // WIP
 
-	public NBTTagCompound spell;
-	public Module shape;
+    public NBTTagCompound spell;
+    public Module shape;
 
-	/**
-	 * The player that originally casted the spell
-	 */
-	public EntityPlayer player;
+    /**
+     * The player that originally casted the spell
+     */
+    public EntityPlayer player;
 //	private double manaMult;
 //	private double burnoutMult;
 	

@@ -1,12 +1,12 @@
 package com.teamwizardry.wizardry.common.spell.module.events;
 
+import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
 
 public class ModuleRangedEvent extends Module {
     public ModuleRangedEvent(ItemStack stack) {
@@ -28,10 +28,9 @@ public class ModuleRangedEvent extends Module {
         return "If Target Takes Projectile Damage";
     }
 
-	@Override
-	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack)
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

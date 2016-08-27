@@ -30,14 +30,12 @@ public class AttributeMap {
     public void endCapture(boolean add) {
         if (!isCapturing) return;
         isCapturing = false;
-        if (add)
-        {
-        	for (Attribute attr : attributeCapture.keySet())
-        	{
-        		List<AttributeModifier> mods = attributeCapture.get(attr);
-        		attributes.get(attr).addAll(mods);
-        		mods.clear();
-        	}
+        if (add) {
+            for (Attribute attr : attributeCapture.keySet()) {
+                List<AttributeModifier> mods = attributeCapture.get(attr);
+                attributes.get(attr).addAll(mods);
+                mods.clear();
+            }
         }
         didHaveInvalid = false;
     }
@@ -57,7 +55,7 @@ public class AttributeMap {
             if (isCapturing) didHaveInvalid = true;
             return;
         }
-        if(attributeCapture.get(attribute) != null) {
+        if (attributeCapture.get(attribute) != null) {
             if (isCapturing) attributeCapture.get(attribute).add(mod);
             else attributes.get(attribute).add(mod);
         }

@@ -34,92 +34,92 @@ import static com.teamwizardry.wizardry.Wizardry.MODID;
 
 public class CommonProxy {
 
-	public void preInit(FMLPreInitializationEvent event) {
-		WizardryPacketHandler.registerMessages();
+    public void preInit(FMLPreInitializationEvent event) {
+        WizardryPacketHandler.registerMessages();
 
-		Wizardry.guide = new Book(MODID);
-		Config.initConfig(event.getSuggestedConfigurationFile());
+        Wizardry.guide = new Book(MODID);
+        Config.initConfig(event.getSuggestedConfigurationFile());
 
-		ModSounds.init();
-		ModItems.init();
-		ModBlocks.init();
-		Achievements.init();
-		ModRecipes.initCrafting();
+        ModSounds.init();
+        ModItems.init();
+        ModBlocks.init();
+        Achievements.init();
+        ModRecipes.initCrafting();
 
-		ModCapabilities.preInit();
-		Fluids.preInit();
+        ModCapabilities.preInit();
+        Fluids.preInit();
 
-		WizardryPacketHandler.registerMessages();
-		NetworkRegistry.INSTANCE.registerGuiHandler(Wizardry.instance, new GuiHandler());
+        WizardryPacketHandler.registerMessages();
+        NetworkRegistry.INSTANCE.registerGuiHandler(Wizardry.instance, new GuiHandler());
 
-		Wizardry.underWorld = DimensionType.register("underworld", "_dim", Config.underworld_id, WorldProviderUnderWorld.class, false);
-		DimensionManager.registerDimension(Config.underworld_id, Wizardry.underWorld);
+        Wizardry.underWorld = DimensionType.register("underworld", "_dim", Config.underworld_id, WorldProviderUnderWorld.class, false);
+        DimensionManager.registerDimension(Config.underworld_id, Wizardry.underWorld);
 
-		MinecraftForge.EVENT_BUS.register(new EventHandler());
-		MinecraftForge.EVENT_BUS.register(new AchievementEvents());
-		MinecraftForge.EVENT_BUS.register(new ModCapabilities());
+        MinecraftForge.EVENT_BUS.register(new EventHandler());
+        MinecraftForge.EVENT_BUS.register(new AchievementEvents());
+        MinecraftForge.EVENT_BUS.register(new ModCapabilities());
 
-	}
+    }
 
-	public void init(FMLInitializationEvent event) {
-		GameRegistry.registerWorldGenerator(new GenHandler(), 0);
+    public void init(FMLInitializationEvent event) {
+        GameRegistry.registerWorldGenerator(new GenHandler(), 0);
 
-		ModEntities.init();
+        ModEntities.init();
 
-		ModuleRegistry.getInstance();
-		SpellHandler.INSTANCE.getClass();
-		ModModules.init();
-	}
+        ModuleRegistry.getInstance();
+        SpellHandler.INSTANCE.getClass();
+        ModModules.init();
+    }
 
-	public void postInit(FMLPostInitializationEvent event) {
-		SpellTracker.init();
-	}
+    public void postInit(FMLPostInitializationEvent event) {
+        SpellTracker.init();
+    }
 
-	public boolean isClient() {
-		return false;
-	}
+    public boolean isClient() {
+        return false;
+    }
 
-	public void openGUI(Object gui) {
+    public void openGUI(Object gui) {
 
-	}
+    }
 
 
-	public SparkleFX spawnParticleSparkle(World worldIn, Vec3d origin) {
-		return null;
-	}
+    public SparkleFX spawnParticleSparkle(World worldIn, Vec3d origin) {
+        return null;
+    }
 
-	public SparkleFX spawnParticleSparkle(World worldIn, Vec3d origin, Vec3d range) {
-		return null;
-	}
+    public SparkleFX spawnParticleSparkle(World worldIn, Vec3d origin, Vec3d range) {
+        return null;
+    }
 
-	public SparkleTrailHelix spawnParticleSparkleTrailHelix(World worldIn, Vec3d origin, Vec3d center, double radius, double initialTheta) {
-		return null;
-	}
+    public SparkleTrailHelix spawnParticleSparkleTrailHelix(World worldIn, Vec3d origin, Vec3d center, double radius, double initialTheta) {
+        return null;
+    }
 
-	public SparkleTrailHelix spawnParticleSparkleTrailHelix(World worldIn, Vec3d origin, Vec3d center, double radius) {
-		return null;
-	}
+    public SparkleTrailHelix spawnParticleSparkleTrailHelix(World worldIn, Vec3d origin, Vec3d center, double radius) {
+        return null;
+    }
 
-	public LensFlareFX spawnParticleLensFlare(World worldIn, Vec3d pos, int age, double range) {
-		return null;
-	}
+    public LensFlareFX spawnParticleLensFlare(World worldIn, Vec3d pos, int age, double range) {
+        return null;
+    }
 
-	public MagicBurstFX spawnParticleMagicBurst(World world, double x, double y, double z) {
-		return null;
-	}
+    public MagicBurstFX spawnParticleMagicBurst(World world, double x, double y, double z) {
+        return null;
+    }
 
-	public int getParticleDensity() {
-		if (Config.particlePercentage <= 0) return 100;
-		else return Config.particlePercentage;
-		//not that it matters, it should never be called on server side
-	}
+    public int getParticleDensity() {
+        if (Config.particlePercentage <= 0) return 100;
+        else return Config.particlePercentage;
+        //not that it matters, it should never be called on server side
+    }
 
-	public SparkleFX createSparkle(World world, Vec3d origin, Vec3d range, int age) {
-		return null;
-	}
+    public SparkleFX createSparkle(World world, Vec3d origin, Vec3d range, int age) {
+        return null;
+    }
 
-	public SparkleFX createSparkle(World world, Vec3d origin, int age) {
-		return null;
-	}
+    public SparkleFX createSparkle(World world, Vec3d origin, int age) {
+        return null;
+    }
 
 }
