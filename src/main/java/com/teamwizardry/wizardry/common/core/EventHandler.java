@@ -126,7 +126,7 @@ public class EventHandler {
 			if (event.getSource() == EntityDamageSource.fall) {
 				if (event.getEntity().fallDistance >= 250) {
 					BlockPos location = event.getEntity().getPosition();
-					BlockPos bedrock = PosUtils.INSTANCE.checkNeighbor(event.getEntity().getEntityWorld(), location, Blocks.BEDROCK);
+					BlockPos bedrock = PosUtils.checkNeighbor(event.getEntity().getEntityWorld(), location, Blocks.BEDROCK);
 					if (bedrock != null) {
 						if (event.getEntity().getEntityWorld().getBlockState(bedrock).getBlock() == Blocks.BEDROCK) {
 							TeleportUtil.INSTANCE.teleportToDimension((EntityPlayer) event.getEntity(), Wizardry.underWorld.getId(), 0, 100, 0);
