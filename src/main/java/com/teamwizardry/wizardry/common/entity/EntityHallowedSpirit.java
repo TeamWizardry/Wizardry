@@ -82,7 +82,7 @@ public class EntityHallowedSpirit extends EntityMob {
 		super.onUpdate();
 		if (worldObj.isRemote) return;
 
-		if (ticksExisted % ThreadLocalRandom.current().nextInt(100, 500) == 0) playSound(ModSounds.HALLOWED_SPIRIT_SOUNDS.get(ThreadLocalRandom.current().nextInt(5)), ThreadLocalRandom.current().nextFloat(), ThreadLocalRandom.current().nextFloat());
+		if (ticksExisted % ThreadLocalRandom.current().nextInt(100, 200) == 0) playSound(ModSounds.HALLOWED_SPIRIT_SOUNDS.get(ThreadLocalRandom.current().nextInt(5)), ThreadLocalRandom.current().nextFloat(), ThreadLocalRandom.current().nextFloat());
 
 		fallDistance = 0;
 
