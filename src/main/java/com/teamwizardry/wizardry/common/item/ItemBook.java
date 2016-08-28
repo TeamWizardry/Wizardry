@@ -30,6 +30,6 @@ public class ItemBook extends ItemWizardry implements IPickupAchievement {
 
     @Override
     public Achievement getAchievementOnPickup(ItemStack stack, EntityPlayer player, EntityItem item) {
-        return Achievements.PHYSICSBOOK;
+        return Achievements.BOOK;
     }
 }

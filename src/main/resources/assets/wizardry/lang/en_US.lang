@@ -1,43 +1,39 @@
 tile.wizardry:crafting_plate.name=Sorcerer's Plate
 tile.wizardry:magicians_worktable.name=Magician's Worktable
-tile.wizardry:mana_battery.name=Mana Crystal
+tile.wizardry:mana_battery.name=Mana Battery
 tile.wizardry:pedestal.name=Pedestal
 tile.wizardry:nacre.name=Liquid Nacre
 tile.wizardry:mana.name=Liquid Mana
-tile.wizardry:cloud.name=Underworld Wisp
+tile.wizardry:cloud.name=Cloud
 
 item.wizardry:book.name=Spellforger's Codex
 item.wizardry:ring.name=Golden Ring
-item.wizardry:ring_pearl.name=Inset Golden Ring
-item.wizardry:devil_dust.name=Devil's Dust
-item.wizardry:mana_pearl.name=Mana Sphere
-item.wizardry:glass_pearl.name=Glass Sphere
-item.wizardry:nacre_pearl.name=Mother-of-Pearl
-item.wizardry:quartz_pearl.name=Quartz Sphere
-item.wizardry:mana_cake.name=Mana Pastry
+item.wizardry:ring_pearl.name=Golden Ring
+item.wizardry:devil_dust.name=Devil Dust
+item.wizardry:mana_pearl.name=Mana Pearl
+item.wizardry:glass_pearl.name=Glass Pearl
+item.wizardry:nacre_pearl.name=Nacre Pearl
+item.wizardry:quartz_pearl.name=Quartz Pearl
+item.wizardry:mana_cake.name=Mana Cake
 item.wizardry:debugger.name=Wand of Creativity
 item.wizardry:wood_staff.name=Wooden Staff
-item.wizardry:wood_staff_pearl.name=Inset Wooden Staff
+item.wizardry:wood_staff_pearl.name=Wooden Staff
 item.wizardry:gold_staff.name=Golden Staff
-item.wizardry:gold_staff_pearl.name=Inset Golden Staff
+item.wizardry:gold_staff_pearl.name=Golden Staff
 
 gui.physicsbook.defaulttitle=Physics Book
 
-fluid.wizardry.nacre_fluid=Liquid Nacre
-fluid.wizardry.mana_fluid=Liquid Mana
+fluid.nacre_fluid=Nacre
+fluid.mana_fluid=Mana
 
-achievement.wizardry.manapool=Not Livingrock
-achievement.wizardry.manapool.desc=Discover a reservoir of liquid Mana in your travels
-achievement.wizardry.physicsBook=Arcane Initiation
-achievement.wizardry.physicsBook.desc=Create a Codex by soaking a book in Mana, the stuff of magic
-achievement.wizardry.devildust=Sugar and Spice
-achievement.wizardry.devildust.desc=Melt redstone in a fire to make Devil's Dust
+achievement.wizardry.book=You're a Wizardry Harry
+achievement.wizardry.book.desc=Create a book to aid in your delve into magic
+achievement.wizardry.manapool=Not a Mana Pool
+achievement.wizardry.manapool.desc=Discover a pool of liquid Mana in your travels
+achievement.wizardry.devildust=Sugar, Spice, And Everything Nice
+achievement.wizardry.devildust.desc=Melt redstone in fire to make Devil Dust
 achievement.wizardry.crunch=CRUNCH.
-achievement.wizardry.crunch.desc=Crash straight through Bedrock to the Underworld beneath
-
-itemGroup.wizardry.Wizardry=Wizardry
-
-wizardry.misc.spell=Spell:
+achievement.wizardry.crunch.desc=Crash straight through Bedrock to the Underworld above
 
 wizardry.subtitle.glassbreak=Glass shatters
 wizardry.subtitle.fizz=Dust fizzes
@@ -46,3 +42,7 @@ wizardry.subtitle.harp=Harp plays
 wizardry.subtitle.bell=Bell tolls
 wizardry.subtitle.bubbling=Liquid bubbles
 wizardry.subtitle.spirit=Spirit whispers
+
+itemGroup.wizardry.Wizardry=Wizardry
+
+wizardry.misc.spell=Spell:
