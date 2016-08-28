@@ -178,7 +178,7 @@ public class EntityFairy extends EntityFlying {
 			ItemNBTHelper.setBoolean(stack, "fairy_inside", true);
 			ItemNBTHelper.setInt(stack, "fairy_color", color.getRGB());
 			ItemNBTHelper.setInt(stack, "fairy_age", age);
-			attemptTeleport(0, -1000, 0);
+			setPosition(posX, posY - 10000, posZ);
 		}
 		return EnumActionResult.PASS;
 	}
