@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common;
+package com.teamwizardry.wizardry.common.core;
 
 import com.teamwizardry.librarianlib.client.book.Book;
 import com.teamwizardry.wizardry.Wizardry;
@@ -13,7 +13,6 @@ import com.teamwizardry.wizardry.client.fx.particle.trails.SparkleTrailHelix;
 import com.teamwizardry.wizardry.client.gui.GuiHandler;
 import com.teamwizardry.wizardry.common.achievement.AchievementEvents;
 import com.teamwizardry.wizardry.common.achievement.Achievements;
-import com.teamwizardry.wizardry.common.core.EventHandler;
 import com.teamwizardry.wizardry.common.fluid.Fluids;
 import com.teamwizardry.wizardry.common.network.WizardryPacketHandler;
 import com.teamwizardry.wizardry.common.world.GenHandler;
