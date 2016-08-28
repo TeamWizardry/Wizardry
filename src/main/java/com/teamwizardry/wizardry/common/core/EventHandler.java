@@ -25,6 +25,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -32,12 +33,14 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import static com.teamwizardry.wizardry.common.fluid.FluidBlockMana.bookTracker;
 
 public class EventHandler {
 
     private ArrayList<DevilDustTracker> redstoneTracker = new ArrayList<>();
+    private ArrayList<UUID> fallResetUUIDs = new ArrayList<>();
 
     @SubscribeEvent
     public void onTextureStitchEvent(TextureStitchEvent.Pre event) {
@@ -73,77 +76,87 @@ public class EventHandler {
 
     @SubscribeEvent
     public void tickEvent(TickEvent.WorldTickEvent event) {
-        // DEVIL DUST SPAWNING
-        redstoneTracker.forEach(DevilDustTracker::tick);
-        redstoneTracker.removeAll(DevilDustTracker.expired);
-        DevilDustTracker.expired.clear();
+        if (event.phase == TickEvent.Phase.START) {
+            // DEVIL DUST SPAWNING
+            redstoneTracker.forEach(DevilDustTracker::tick);
+            redstoneTracker.removeAll(DevilDustTracker.expired);
+            DevilDustTracker.expired.clear();
 
-        // BOOK SPAWNING
-        ArrayList<BookTrackerObject> expiredBooks = new ArrayList<>();
-        for (BookTrackerObject book : bookTracker) {
+            // BOOK SPAWNING
+            ArrayList<BookTrackerObject> expiredBooks = new ArrayList<>();
+            for (BookTrackerObject book : bookTracker) {
 
-            if (book.getQueue() < book.getHelix().size()) {
-                Vec3d location = book.getHelix().get(book.getQueue());
+                if (book.getQueue() < book.getHelix().size()) {
+                    Vec3d location = book.getHelix().get(book.getQueue());
 
-                for (int i = 0; i < 10 * Wizardry.proxy.getParticleDensity() / 100; i++) {
-                    SparkleFX fizz = GlitterFactory.getInstance().createSparkle(book.getWorld(), location, 100);
-                    fizz.setFadeOut();
-                    fizz.setAlpha(0.5f);
-                    fizz.setScale(0.5f);
-                    fizz.setColor(Color.WHITE);
-                    fizz.setRandomlyShiftColor(-0.2f, 0.2f, true, false, false);
-                    fizz.setRandomDirection(0.05, 0, 0.05);
-                    fizz.setJitter(10, 0.05, 0, 0.05);
-                    fizz.addMotion(0, ThreadLocalRandom.current().nextDouble(-0.2, -0.1), 0);
+                    for (int i = 0; i < 10 * Wizardry.proxy.getParticleDensity() / 100; i++) {
+                        SparkleFX fizz = GlitterFactory.getInstance().createSparkle(book.getWorld(), location, 100);
+                        fizz.setFadeOut();
+                        fizz.setAlpha(0.5f);
+                        fizz.setScale(0.5f);
+                        fizz.setColor(Color.WHITE);
+                        fizz.setRandomlyShiftColor(-0.2f, 0.2f, true, false, false);
+                        fizz.setRandomDirection(0.05, 0, 0.05);
+                        fizz.setJitter(10, 0.05, 0, 0.05);
+                        fizz.addMotion(0, ThreadLocalRandom.current().nextDouble(-0.2, -0.1), 0);
+                    }
+                    if (book.getQueue() % 5 == 0)
+                        book.getWorld().playSound(null, location.xCoord, location.yCoord, location.zCoord, ModSounds.FIZZING_LOOP, SoundCategory.BLOCKS, 0.7F, ThreadLocalRandom.current().nextFloat() * 0.4F + 0.8F);
+                    book.setQueue(book.getQueue() + 1);
+                } else {
+                    for (int i = 0; i < 600; i++) {
+                        SparkleFX fizz = GlitterFactory.getInstance().createSparkle(book.getWorld(), new Vec3d(book.getX(), book.getY() + 10, book.getZ()), 200);
+                        fizz.setFadeOut();
+                        fizz.setAlpha(0.5f);
+                        fizz.setScale(0.5f);
+                        //fizz.setJitter(10, 0.05, 0, 0.05);
+                        fizz.setRandomDirection(0.3, 0, 0.3);
+                        fizz.addMotion(0, ThreadLocalRandom.current().nextDouble(-0.2, -0.1), 0);
+                    }
+
+                    EntityItem ei = new EntityItem(book.getWorld(), book.getX(), book.getY() + 10, book.getZ(), new ItemStack(ModItems.BOOK));
+                    book.getWorld().spawnEntityInWorld(ei);
+                    book.getWorld().playSound(null, book.getX(), book.getY(), book.getZ(), ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1F);
+                    expiredBooks.add(book);
                 }
-                if (book.getQueue() % 5 == 0)
-                    book.getWorld().playSound(null, location.xCoord, location.yCoord, location.zCoord, ModSounds.FIZZING_LOOP, SoundCategory.BLOCKS, 0.7F, ThreadLocalRandom.current().nextFloat() * 0.4F + 0.8F);
-                book.setQueue(book.getQueue() + 1);
-            } else {
-                for (int i = 0; i < 600; i++) {
-                    SparkleFX fizz = GlitterFactory.getInstance().createSparkle(book.getWorld(), new Vec3d(book.getX(), book.getY() + 10, book.getZ()), 200);
-                    fizz.setFadeOut();
-                    fizz.setAlpha(0.5f);
-                    fizz.setScale(0.5f);
-                    //fizz.setJitter(10, 0.05, 0, 0.05);
-                    fizz.setRandomDirection(0.3, 0, 0.3);
-                    fizz.addMotion(0, ThreadLocalRandom.current().nextDouble(-0.2, -0.1), 0);
-                }
-
-                EntityItem ei = new EntityItem(book.getWorld(), book.getX(), book.getY() + 10, book.getZ(), new ItemStack(ModItems.BOOK));
-                book.getWorld().spawnEntityInWorld(ei);
-                book.getWorld().playSound(null, book.getX(), book.getY(), book.getZ(), ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1F);
-                expiredBooks.add(book);
             }
+            bookTracker.removeAll(expiredBooks);
+        } else {
+            if (!fallResetUUIDs.isEmpty())
+                event.world.playerEntities.stream().filter(entity -> fallResetUUIDs.contains(entity.getUniqueID())).forEach(entity -> entity.fallDistance = -255);
+            fallResetUUIDs.clear();
         }
-        bookTracker.removeAll(expiredBooks);
     }
 
     @SubscribeEvent
     public void onFallDamage(LivingHurtEvent event) {
         if (!(event.getEntity() instanceof EntityPlayer)) return;
-        if (event.getEntity().getEntityWorld().provider.getDimension() != Wizardry.underWorld.getId()) {
-            if (event.getSource() == EntityDamageSource.fall) {
-                if (event.getEntity().fallDistance >= 250) {
-                    BlockPos location = event.getEntity().getPosition();
-                    BlockPos bedrock = PosUtils.checkNeighbor(event.getEntity().getEntityWorld(), location, Blocks.BEDROCK);
-                    if (bedrock != null) {
-                        if (event.getEntity().getEntityWorld().getBlockState(bedrock).getBlock() == Blocks.BEDROCK) {
-                            TeleportUtil.INSTANCE.teleportToDimension((EntityPlayer) event.getEntity(), Wizardry.underWorld.getId(), 0, 100, 0);
-                            event.getEntity().fallDistance = -300;
-                            ((EntityPlayer) event.getEntity()).addStat(Achievements.CRUNCH);
-                            event.setCanceled(true);
-                        }
-                    }
-                }
-            }
-        } else if (event.getSource() == EntityDamageSource.outOfWorld) {
+        if (event.getSource() == EntityDamageSource.outOfWorld) {
             EntityPlayer player = ((EntityPlayer) event.getEntityLiving());
             BlockPos spawn = player.isSpawnForced(0) ? player.getBedLocation(0) : player.worldObj.getSpawnPoint().add(player.worldObj.rand.nextGaussian() * 16, 0, player.worldObj.rand.nextGaussian() * 16);
             BlockPos teleportTo = spawn.add(0, 255 - spawn.getY(), 0);
             TeleportUtil.INSTANCE.teleportToDimension((EntityPlayer) event.getEntity(), 0, teleportTo.getX(), teleportTo.getY(), teleportTo.getZ());
             event.getEntity().fallDistance = -255;
             event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public void onFall(LivingFallEvent event) {
+        if (!(event.getEntity() instanceof EntityPlayer)) return;
+        if (event.getEntity().getEntityWorld().provider.getDimension() != Wizardry.underWorld.getId()) {
+            if (event.getEntity().fallDistance >= 250) {
+                BlockPos location = event.getEntity().getPosition();
+                BlockPos bedrock = PosUtils.checkNeighbor(event.getEntity().getEntityWorld(), location, Blocks.BEDROCK);
+                if (bedrock != null) {
+                    if (event.getEntity().getEntityWorld().getBlockState(bedrock).getBlock() == Blocks.BEDROCK) {
+                        TeleportUtil.INSTANCE.teleportToDimension((EntityPlayer) event.getEntity(), Wizardry.underWorld.getId(), 0, 100, 0);
+                        fallResetUUIDs.add(event.getEntity().getUniqueID());
+                        ((EntityPlayer) event.getEntity()).addStat(Achievements.CRUNCH);
+                        event.setCanceled(true);
+                    }
+                }
+            }
         }
     }
 }

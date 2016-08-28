@@ -54,6 +54,8 @@ public class GlowingItemEventHandler {
             render(e.getPartialTicks(), true, false);
         }
 
+        GlStateManager.disableBlend();
+
         e.setCanceled(true);
     }
 
