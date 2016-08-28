@@ -12,7 +12,6 @@ import com.teamwizardry.wizardry.client.fx.particle.MagicBurstFX;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import com.teamwizardry.wizardry.client.fx.particle.trails.SparkleTrailHelix;
 import com.teamwizardry.wizardry.client.render.BloodRenderLayer;
-import com.teamwizardry.wizardry.client.render.ModelHolder;
 import com.teamwizardry.wizardry.client.render.TilePedestalRenderer;
 import com.teamwizardry.wizardry.client.render.glow.GlowingItemEventHandler;
 import com.teamwizardry.wizardry.client.render.glow.GlowingItemRenderLayer;
@@ -47,7 +46,7 @@ public class ClientProxy extends CommonProxy {
 
         new Shaders();
 
-        ModelHolder.init();
+        ModEntities.initModels();
     }
 
     @Override
@@ -70,8 +69,6 @@ public class ClientProxy extends CommonProxy {
         render = skinMap.get("slim");
         render.addLayer(new GlowingItemRenderLayer(render));
         render.addLayer(new BloodRenderLayer(render));
-
-        ModEntities.initModels();
     }
 
     @Override

@@ -45,6 +45,7 @@ public class CommonProxy {
         ModBlocks.init();
         Achievements.init();
         ModRecipes.initCrafting();
+        ModEntities.init();
 
         ModCapabilities.preInit();
         Fluids.preInit();
@@ -63,8 +64,6 @@ public class CommonProxy {
 
     public void init(FMLInitializationEvent event) {
         GameRegistry.registerWorldGenerator(new GenHandler(), 0);
-
-        ModEntities.init();
 
         ModuleRegistry.getInstance();
         SpellHandler.INSTANCE.getClass();

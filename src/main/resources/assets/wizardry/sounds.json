@@ -1,15 +1,17 @@
 {
-  "glassbreak":     {"category": "block", "sounds": ["wizardry:glassbreak"]},
-  "fizzingloop":    {"category": "block", "sounds": ["wizardry:fizzingloop"]},
-  "harp1":          {"category": "block", "sounds": ["wizardry:harp1"]},
-  "harp2":          {"category": "block", "sounds": ["wizardry:harp2"]},
-  "bell":           {"category": "block", "sounds": ["wizardry:bell"]},
-  "bubbling":       {"category": "block", "sounds": ["wizardry:bubbling"]},
-  "firesizzleloop": {"category": "block", "sounds": ["wizardry:frying_sizzle"]},
-  "hallowed_spirit_shriek_1": {"category": "hostile", "sounds": ["wizardry:hallowed_spirit_shriek_1"]},
-  "hallowed_spirit_shriek_2": {"category": "hostile", "sounds": ["wizardry:hallowed_spirit_shriek_2"]},
-  "hallowed_spirit_shriek_3": {"category": "hostile", "sounds": ["wizardry:hallowed_spirit_shriek_3"]},
-  "hallowed_spirit_shriek_4": {"category": "hostile", "sounds": ["wizardry:hallowed_spirit_shriek_4"]},
-  "hallowed_spirit_shriek_5": {"category": "hostile", "sounds": ["wizardry:hallowed_spirit_shriek_5"]},
-  "hallowed_spirit_shriek_6": {"category": "hostile", "sounds": ["wizardry:hallowed_spirit_shriek_6"]}
+  "glassbreak":     {"category": "block", "sounds": ["wizardry:glassbreak"], "subtitle": "wizardry.subtitle.glassbreak"},
+  "fizzingloop":    {"category": "block", "sounds": ["wizardry:fizzingloop"], "subtitle": "wizardry.subtitle.fizz"},
+  "harp1":          {"category": "block", "sounds": ["wizardry:harp1"], "subtitle": "wizardry.subtitle.harp"},
+  "harp2":          {"category": "block", "sounds": ["wizardry:harp2"], "subtitle": "wizardry.subtitle.harp"},
+  "bell":           {"category": "block", "sounds": ["wizardry:bell"], "subtitle": "wizardry.subtitle.bell"},
+  "bubbling":       {"category": "block", "sounds": ["wizardry:bubbling"], "subtitle": "wizardry.subtitle.bubbling"},
+  "firesizzleloop": {"category": "block", "sounds": ["wizardry:frying_sizzle"], "subtitle": "wizardry.subtitle.sizzle"},
+  "hallowed_spirit_shriek": {"category": "hostile", "sounds": [
+    "wizardry:hallowed_spirit_shriek_1",
+    "wizardry:hallowed_spirit_shriek_2",
+    "wizardry:hallowed_spirit_shriek_3",
+    "wizardry:hallowed_spirit_shriek_4",
+    "wizardry:hallowed_spirit_shriek_5",
+    "wizardry:hallowed_spirit_shriek_6"
+  ], "subtitle": "wizardry.subtitle.spirit"}
 }
