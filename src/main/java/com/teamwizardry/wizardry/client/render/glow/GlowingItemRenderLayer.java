@@ -75,6 +75,7 @@ public class GlowingItemRenderLayer implements LayerRenderer<EntityLivingBase> {
 
             GlStateManager.popMatrix();
         }
+        GlStateManager.disableBlend();
     }
 
     private void renderHeldItem(EntityLivingBase entity, ItemStack stack, ItemCameraTransforms.TransformType transform, EnumHandSide handSide) {
