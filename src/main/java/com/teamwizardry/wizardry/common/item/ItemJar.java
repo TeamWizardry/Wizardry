@@ -27,8 +27,7 @@ public class ItemJar extends ItemWizardry {
 			if (playerIn.isSneaking()) {
 				if (ItemNBTHelper.getBoolean(itemStackIn, "fairy_inside", false)) {
 					ItemNBTHelper.setBoolean(itemStackIn, "fairy_inside", false);
-					int color = ItemNBTHelper.getInt(itemStackIn, "fairy_color", 0xFFFFFF);
-					EntityFairy entity = new EntityFairy(worldIn, Color.getColor("idk", color), ItemNBTHelper.getInt(itemStackIn, "fairy_age", 0));
+					EntityFairy entity = new EntityFairy(worldIn, new Color(ItemNBTHelper.getInt(itemStackIn, "fairy_color", 0xFFFFFF)), ItemNBTHelper.getInt(itemStackIn, "fairy_age", 0));
 					entity.setPosition(playerIn.posX, playerIn.posY, playerIn.posZ);
 					entity.setSad(true);
 					worldIn.spawnEntityInWorld(entity);
