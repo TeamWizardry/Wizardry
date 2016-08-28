@@ -31,6 +31,7 @@ public class ModelHallowedSpirit extends ModelBiped {
 	public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
 		GlStateManager.disableBlend();
 		GlStateManager.enableBlend();
+		GlStateManager.disableLighting();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 0.3F);
 		GlStateManager.rotate(entityIn.rotationYaw, 0, 1, 0);
@@ -38,6 +39,7 @@ public class ModelHallowedSpirit extends ModelBiped {
 		super.render(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
 
 		GlStateManager.disableBlend();
+		GlStateManager.enableLighting();
 	}
 
 	public void setRotateAngle(ModelRenderer modelRenderer, float x, float y, float z) {
