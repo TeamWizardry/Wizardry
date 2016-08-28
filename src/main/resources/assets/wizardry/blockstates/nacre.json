@@ -4,7 +4,7 @@
     "fluid": {
       "model":  "forge:fluid",
       "custom": {
-        "fluid": "nacre_fluid"
+        "fluid": "wizardry.nacre_fluid"
       }
     }
   }

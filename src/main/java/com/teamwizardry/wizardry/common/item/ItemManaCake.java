@@ -13,6 +13,7 @@ public class ItemManaCake extends ItemWizardryFood {
 
     public ItemManaCake() {
         super("mana_cake", 0, 0.3F, false);
+        setAlwaysEdible();
     }
 
     @Override

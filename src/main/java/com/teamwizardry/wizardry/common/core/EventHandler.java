@@ -139,8 +139,10 @@ public class EventHandler {
             }
         } else {
             if (event.getSource() == EntityDamageSource.outOfWorld) {
-                BlockPos bed = ((EntityPlayer) event.getEntity()).getBedLocation(0).add(0, 255, 0);
-                TeleportUtil.INSTANCE.teleportToDimension((EntityPlayer) event.getEntity(), 0, bed.getX(), bed.getY(), bed.getZ());
+                EntityPlayer player = ((EntityPlayer) event.getEntityLiving());
+                BlockPos spawn = player.isSpawnForced(0) ? player.getBedLocation(0) : player.worldObj.getSpawnPoint().add(player.worldObj.rand.nextGaussian() * 16, 0, player.worldObj.rand.nextGaussian() * 16);
+                BlockPos teleportTo = spawn.add(0, 255, 0);
+                TeleportUtil.INSTANCE.teleportToDimension((EntityPlayer) event.getEntity(), 0, teleportTo.getX(), teleportTo.getY(), teleportTo.getZ());
                 event.getEntity().fallDistance = -300;
                 event.setCanceled(true);
             }
