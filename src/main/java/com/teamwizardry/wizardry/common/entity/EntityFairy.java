@@ -59,6 +59,7 @@ public class EntityFairy extends EntityFlying {
 		this.color = color;
 		rotationPitch = (float) ThreadLocalRandom.current().nextDouble(-90, 90);
 		rotationYaw = (float) ThreadLocalRandom.current().nextDouble(-180, 180);
+		this.age = age;
 	}
 
 	@Override
