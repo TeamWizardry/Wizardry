@@ -43,7 +43,7 @@ public class Wizardry {
         @NotNull
         @Override
         public ItemStack getIconItemStack() {
-            return new ItemStack(ModItems.PHYSICS_BOOK);
+            return new ItemStack(ModItems.BOOK);
         }
     };
 

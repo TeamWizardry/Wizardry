@@ -15,10 +15,10 @@ import net.minecraft.world.World;
 /**
  * Created by Saad on 6/12/2016.
  */
-public class ItemPhysicsBook extends ItemWizardry implements IPickupAchievement {
+public class ItemBook extends ItemWizardry implements IPickupAchievement {
 
-    public ItemPhysicsBook() {
-        super("physics_book");
+    public ItemBook() {
+        super("book");
         setMaxStackSize(1);
     }
 

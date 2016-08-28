@@ -110,7 +110,7 @@ public class EventHandler {
                     fizz.addMotion(0, ThreadLocalRandom.current().nextDouble(-0.2, -0.1), 0);
                 }
 
-                EntityItem ei = new EntityItem(book.getWorld(), book.getX(), book.getY() + 10, book.getZ(), new ItemStack(ModItems.PHYSICS_BOOK));
+                EntityItem ei = new EntityItem(book.getWorld(), book.getX(), book.getY() + 10, book.getZ(), new ItemStack(ModItems.BOOK));
                 book.getWorld().spawnEntityInWorld(ei);
                 book.getWorld().playSound(null, book.getX(), book.getY(), book.getZ(), ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1F);
                 expiredBooks.add(book);

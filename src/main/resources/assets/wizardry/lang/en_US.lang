@@ -6,7 +6,7 @@ tile.wizardry:nacre.name=Liquid Nacre
 tile.wizardry:mana.name=Liquid Mana
 tile.wizardry:cloud.name=Underworld Wisp
 
-item.wizardry:physics_book.name=Physics Book
+item.wizardry:book.name=Spellforger's Codex
 item.wizardry:ring.name=Golden Ring
 item.wizardry:ring_pearl.name=Inset Golden Ring
 item.wizardry:devil_dust.name=Devil's Dust
@@ -26,10 +26,10 @@ gui.physicsbook.defaulttitle=Physics Book
 fluid.wizardry.nacre_fluid=Liquid Nacre
 fluid.wizardry.mana_fluid=Liquid Mana
 
-achievement.wizardry.physicsBook=Arcane Initiation
-achievement.wizardry.physicsBook.desc=Create a book to aid in your delve into magic
-achievement.wizardry.manapool=Not a Mana Pool
+achievement.wizardry.manapool=Not Livingrock
 achievement.wizardry.manapool.desc=Discover a reservoir of liquid Mana in your travels
+achievement.wizardry.physicsBook=Arcane Initiation
+achievement.wizardry.physicsBook.desc=Create a Codex by soaking a book in Mana, the stuff of magic
 achievement.wizardry.devildust=Sugar and Spice
 achievement.wizardry.devildust.desc=Melt redstone in a fire to make Devil's Dust
 achievement.wizardry.crunch=CRUNCH.

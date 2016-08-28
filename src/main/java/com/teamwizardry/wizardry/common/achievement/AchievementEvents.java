@@ -25,7 +25,10 @@ public class AchievementEvents {
 
     @SubscribeEvent
     public void onAchievement(AchievementEvent event) {
-        if (ModAchievement.achievements.contains(event.getAchievement()) && !event.getEntityPlayer().hasAchievement(event.getAchievement()))
-            event.getEntity().worldObj.playSound(null, event.getEntity().posX, event.getEntity().posY, event.getEntity().posZ, ModSounds.BELL, SoundCategory.BLOCKS, 0.3F, 1F);
+        if (ModAchievement.achievements.contains(event.getAchievement()) && !event.getEntityPlayer().hasAchievement(event.getAchievement())) {
+            Achievement parent = event.getAchievement().parentAchievement;
+            if (parent == null || event.getEntityPlayer().hasAchievement(parent))
+                event.getEntity().worldObj.playSound(null, event.getEntity().posX, event.getEntity().posY, event.getEntity().posZ, ModSounds.BELL, SoundCategory.BLOCKS, 0.3F, 1F);
+        }
     }
 }

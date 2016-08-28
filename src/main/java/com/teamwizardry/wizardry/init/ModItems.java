@@ -22,7 +22,7 @@ public class ModItems {
     public static ItemGoldStaff STAFF_GOLD;
 
     public static ItemRing RING;
-    public static ItemPhysicsBook PHYSICS_BOOK;
+    public static ItemBook BOOK;
     public static ItemDevilDust DEVIL_DUST;
     public static ItemManaCake MANA_CAKE;
 
@@ -32,7 +32,7 @@ public class ModItems {
         PEARL_QUARTZ = new ItemQuartzPearl();
         PEARL_GLASS = new ItemGlassPearl();
         RING = new ItemRing();
-        PHYSICS_BOOK = new ItemPhysicsBook();
+        BOOK = new ItemBook();
         DEBUG = new ItemDebugger();
         DEVIL_DUST = new ItemDevilDust();
         PEARL_MANA = new ItemManaPearl();
