@@ -15,13 +15,15 @@ import net.minecraftforge.fml.common.registry.EntityRegistry;
  */
 public class ModEntities {
 
+    private static int i = 0;
+
     public static void init() {
-        EntityRegistry.registerModEntity(EntityHallowedSpirit.class, "hallowed_spirit", 0, Wizardry.instance, 64, 3, true);
-        EntityRegistry.registerModEntity(EntityFairy.class, "fairy", 1, Wizardry.instance, 64, 3, true);
+        EntityRegistry.registerModEntity(EntityHallowedSpirit.class, "hallowed_spirit", i++, Wizardry.instance, 64, 3, true);
+        EntityRegistry.registerModEntity(EntityFairy.class, "fairy", i++, Wizardry.instance, 64, 3, true);
     }
 
     public static void initModels() {
-        RenderingRegistry.registerEntityRenderingHandler(EntityHallowedSpirit.class, manager -> new RenderHallowedSpirit(manager, new ModelHallowedSpirit(), 0.5f));
-        RenderingRegistry.registerEntityRenderingHandler(EntityFairy.class, manager -> new RenderFairy(manager, new ModelFairy(), 0.5f));
+        RenderingRegistry.registerEntityRenderingHandler(EntityHallowedSpirit.class, manager -> new RenderHallowedSpirit(manager, new ModelHallowedSpirit()));
+        RenderingRegistry.registerEntityRenderingHandler(EntityFairy.class, manager -> new RenderFairy(manager, new ModelFairy()));
     }
 }
