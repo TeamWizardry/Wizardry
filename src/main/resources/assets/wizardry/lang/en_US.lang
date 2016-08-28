@@ -30,11 +30,11 @@ gui.physicsbook.defaulttitle=Physics Book
 fluid.nacre_fluid=Nacre
 fluid.mana_fluid=Mana
 
-achievement.wizardry.book=You're a Wizard Harry
+achievement.wizardry.book=You're a Wizard, Harry
 achievement.wizardry.book.desc=Create a book to aid in your delve into magic
 achievement.wizardry.manapool=Not a Mana Pool
 achievement.wizardry.manapool.desc=Discover a pool of liquid Mana in your travels
-achievement.wizardry.devildust=Sugar, Spice, And Everything Nice
+achievement.wizardry.devildust=Sugar and Spice
 achievement.wizardry.devildust.desc=Melt redstone in fire to make Devil Dust
 achievement.wizardry.crunch=CRUNCH.
 achievement.wizardry.crunch.desc=Crash straight through Bedrock to the Underworld above
