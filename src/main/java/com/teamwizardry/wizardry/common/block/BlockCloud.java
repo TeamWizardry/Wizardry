@@ -3,9 +3,15 @@ package com.teamwizardry.wizardry.common.block;
 import com.teamwizardry.librarianlib.common.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.common.base.block.BlockMod;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.common.tile.TilePedestal;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -15,8 +21,24 @@ public class BlockCloud extends BlockMod {
 
     public BlockCloud() {
         super("cloud", Material.ROCK);
-        GameRegistry.registerTileEntity(TilePedestal.class, "cloud");
-        setCreativeTab(Wizardry.tab);
+    }
+
+    @Override
+    public boolean isOpaqueCube(IBlockState state) {
+        return false;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public BlockRenderLayer getBlockLayer()
+    {
+        return BlockRenderLayer.TRANSLUCENT;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
+        IBlockState worldState = blockAccess.getBlockState(pos.offset(side));
+        Block block = worldState.getBlock();
+        return blockState != worldState || (block != this && super.shouldSideBeRendered(blockState, blockAccess, pos, side));
     }
 
     @Nullable
