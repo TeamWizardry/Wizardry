@@ -161,18 +161,6 @@ public class EntityHallowedSpirit extends EntityMob {
     @Override
     public void dropLoot(boolean wasRecentlyHit, int lootingModifier, DamageSource source) {
         super.dropLoot(wasRecentlyHit, lootingModifier, source);
-        if (!getEntityWorld().isRemote) {
-            /*for (int i = 0; i < 1 + lootingModifier; i++) {
-				if (rand.nextInt(2) == 0) {
-					getEntityWorld().spawnEntityInWorld(new EntityItem(getEntityWorld(), posX, posY + 0.5, posZ, new ItemStack(Items.BONE, 1)));
-				}
-			}
-			for (int i = 0; i < 1 + lootingModifier; i++) {
-				if (rand.nextInt(3) == 0) {
-					getEntityWorld().spawnEntityInWorld(new EntityItem(getEntityWorld(), posX, posY + 0.5, posZ, new ItemStack(MainRegistry.impTallow, 1)));
-				}
-			}*/
-        }
     }
 
     @Override

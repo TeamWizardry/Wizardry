@@ -46,6 +46,8 @@ public class EntityDevilDust extends Entity {
 	public void onUpdate() {
 		super.onUpdate();
 
+		if (worldObj.isRemote) return;
+
 		if (!consumed) {
 			BlockPos fire = PosUtils.checkNeighbor(worldObj, redstone.getPosition(), Blocks.FIRE);
 			if (worldObj.getBlockState(fire).getBlock() == Blocks.FIRE
