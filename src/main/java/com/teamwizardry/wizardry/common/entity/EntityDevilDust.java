@@ -1,12 +1,9 @@
 package com.teamwizardry.wizardry.common.entity;
 
-import com.teamwizardry.librarianlib.client.fx.particle.ParticleBuilder;
-import com.teamwizardry.librarianlib.client.fx.particle.ParticleSpawner;
-import com.teamwizardry.librarianlib.common.util.math.interpolate.StaticInterp;
-import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
+import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -14,13 +11,10 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-import java.awt.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -65,27 +59,8 @@ public class EntityDevilDust extends Entity {
 			if (expiry > 0) {
 				expiry--;
 
-				ParticleBuilder glitter = new ParticleBuilder(30);
-				glitter.setScale(ThreadLocalRandom.current().nextFloat());
-				glitter.setColor(new Color(ThreadLocalRandom.current().nextFloat(), 0, 0));
-				glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle"));
-				ParticleSpawner.spawn(glitter, worldObj, new StaticInterp<>(getPositionVector()), 1, 0, (i, builder) -> {
-					Vec3d offset = new Vec3d(ThreadLocalRandom.current().nextDouble(-0.5, 0.5), ThreadLocalRandom.current().nextDouble(-0.5, 0.5), ThreadLocalRandom.current().nextDouble(-0.5, 0.5));
-					glitter.setPositionOffset(offset);
-					glitter.setLifetime(ThreadLocalRandom.current().nextInt(30, 50));
-					glitter.setMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.01, 0.01), ThreadLocalRandom.current().nextDouble(0.04, 0.06), ThreadLocalRandom.current().nextDouble(-0.01, 0.01)));
-					glitter.disableMotion();
-				});
-
-				ParticleBuilder glitter2 = new ParticleBuilder(10);
-				glitter2.setColor(new Color(ThreadLocalRandom.current().nextFloat(), 0, 0).darker());
-				glitter2.setScale((float) ThreadLocalRandom.current().nextDouble(0, 0.5));
-				glitter2.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle"));
-				ParticleSpawner.spawn(glitter2, worldObj, new StaticInterp<>(getPositionVector()), 5, 0, (i, builder) -> {
-					glitter2.setLifetime(ThreadLocalRandom.current().nextInt(10, 30));
-					glitter2.setMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.03, 0.03), ThreadLocalRandom.current().nextDouble(0.07, 0.2), ThreadLocalRandom.current().nextDouble(-0.03, 0.03)));
-					glitter2.disableMotion();
-				});
+				LibParticles.DEVIL_DUST_BIG_CRACKLES(getPositionVector());
+				LibParticles.DEVIL_DUST_SMALL_CRACKLES(getPositionVector());
 
 				if (expiry % 5 == 0)
 					worldObj.playSound(null, posX, posY, posZ, ModSounds.FRYING_SIZZLE, SoundCategory.BLOCKS, 0.7F, (float) ThreadLocalRandom.current().nextDouble(0.8, 1.3));

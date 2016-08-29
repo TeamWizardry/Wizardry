@@ -6,6 +6,7 @@ import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
 import com.teamwizardry.librarianlib.common.util.math.interpolate.StaticInterp;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.init.ModItems;
+import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityFlying;
 import net.minecraft.entity.EntityLivingBase;
@@ -101,14 +102,7 @@ public class EntityFairy extends EntityFlying {
 		if (age <= 0) age = 2;
 		if (ticksExisted % ThreadLocalRandom.current().nextInt(200, 400) == 0 && age < 100) age++;
 
-		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(age / 4, age / 2));
-		glitter.setColor(color);
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
-
-		ParticleSpawner.spawn(glitter, worldObj, new StaticInterp<>(new Vec3d(posX, posY + 0.25, posZ)), ThreadLocalRandom.current().nextInt(5, 10), 0, (i, build) -> {
-			glitter.setMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.02, 0.02), ThreadLocalRandom.current().nextDouble(-0.02, 0.02), ThreadLocalRandom.current().nextDouble(-0.02, 0.02)));
-			if (!sad) glitter.disableMotion();
-		});
+		LibParticles.FAIRY_TRAIL(getPositionVector().addVector(0, 0.25, 0), color, sad, age);
 
 		boolean match = true;
 		for (int i = -3; i < 3; i++)
@@ -186,19 +180,7 @@ public class EntityFairy extends EntityFlying {
 	@Override
 	public boolean attackEntityFrom(DamageSource source, float amount) {
 		super.attackEntityFrom(source, amount);
-		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(30, 50));
-		glitter.setColor(color.darker());
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
-
-		ParticleSpawner.spawn(glitter, worldObj, new StaticInterp<>(new Vec3d(posX, posY + 0.25, posZ)), ThreadLocalRandom.current().nextInt(50, 100), 0, (i, build) -> {
-			double radius = 0.5;
-			double t = 2 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
-			double u = ThreadLocalRandom.current().nextDouble(-radius, radius) + ThreadLocalRandom.current().nextDouble(-radius, radius);
-			double r = (u > 1) ? 2 - u : u;
-			double x = r * Math.cos(t), z = r * Math.sin(t);
-			glitter.setMotion(new Vec3d(x, ThreadLocalRandom.current().nextDouble(-0.3, 0.5), z));
-		});
-
+		LibParticles.FAIRY_EXPLODE(getPositionVector().addVector(0, 0.25, 0), color);
 		return true;
 	}
 
@@ -210,18 +192,6 @@ public class EntityFairy extends EntityFlying {
 	@Override
 	public void dropLoot(boolean wasRecentlyHit, int lootingModifier, DamageSource source) {
 		super.dropLoot(wasRecentlyHit, lootingModifier, source);
-		if (!getEntityWorld().isRemote) {
-			/*for (int i = 0; i < 1 + lootingModifier; i++) {
-				if (rand.nextInt(2) == 0) {
-					getEntityWorld().spawnEntityInWorld(new EntityItem(getEntityWorld(), posX, posY + 0.5, posZ, new ItemStack(Items.BONE, 1)));
-				}
-			}
-			for (int i = 0; i < 1 + lootingModifier; i++) {
-				if (rand.nextInt(3) == 0) {
-					getEntityWorld().spawnEntityInWorld(new EntityItem(getEntityWorld(), posX, posY + 0.5, posZ, new ItemStack(MainRegistry.impTallow, 1)));
-				}
-			}*/
-		}
 	}
 
 	@Override
