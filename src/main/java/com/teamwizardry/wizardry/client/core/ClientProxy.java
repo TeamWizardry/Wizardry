@@ -1,20 +1,20 @@
-package com.teamwizardry.wizardry.client.proxy;
+package com.teamwizardry.wizardry.client.core;
 
 import com.teamwizardry.librarianlib.client.fx.particle.ParticleRenderDispatcher;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Config;
-import com.teamwizardry.wizardry.client.core.CapeHandler;
-import com.teamwizardry.wizardry.client.core.HudEventHandler;
-import com.teamwizardry.wizardry.client.core.WizardryClientMethodHandles;
 import com.teamwizardry.wizardry.client.fx.Shaders;
 import com.teamwizardry.wizardry.client.fx.particle.LensFlareFX;
 import com.teamwizardry.wizardry.client.fx.particle.MagicBurstFX;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import com.teamwizardry.wizardry.client.fx.particle.trails.SparkleTrailHelix;
 import com.teamwizardry.wizardry.client.render.BloodRenderLayer;
+import com.teamwizardry.wizardry.client.render.TilePedestalRenderer;
 import com.teamwizardry.wizardry.client.render.glow.GlowingItemEventHandler;
 import com.teamwizardry.wizardry.client.render.glow.GlowingItemRenderLayer;
-import com.teamwizardry.wizardry.common.CommonProxy;
+import com.teamwizardry.wizardry.common.core.CommonProxy;
+import com.teamwizardry.wizardry.common.tile.TilePedestal;
+import com.teamwizardry.wizardry.init.ModEntities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.entity.RenderPlayer;
@@ -22,6 +22,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -33,16 +34,24 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void preInit(FMLPreInitializationEvent event) {
+        super.preInit(event);
+
         OBJLoader.INSTANCE.addDomain(Wizardry.MODID);
         MinecraftForge.EVENT_BUS.register(new HudEventHandler());
         new WizardryClientMethodHandles(); // Load the class
         GlowingItemEventHandler.init();
 
         new Shaders();
+
+        ModEntities.initModels();
     }
 
     @Override
     public void init(FMLInitializationEvent event) {
+        super.init(event);
+
+        ClientRegistry.bindTileEntitySpecialRenderer(TilePedestal.class, new TilePedestalRenderer());
+
         ParticleRenderDispatcher.class.getName(); // load the class
         //Shaders.INSTANCE.getClass(); // ...
         //MagicBurstFX.class.getName(); // ...
@@ -61,6 +70,7 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void postInit(FMLPostInitializationEvent event) {
+        super.postInit(event);
     }
 
     @Override
@@ -141,7 +151,7 @@ public class ClientProxy extends CommonProxy {
 
     //Wizardry.proxy.<SparkleFX>createParticle(world, origin, age)
     /*public <T extends Particle> T createParticle(World world, Vec3d origin, int age) {
-        //T fx = T.
+	    //T fx = T.
         if(Wizardry.proxy.getParticleDensity() > 0)
             if (ThreadLocalRandom.current().nextInt(Wizardry.proxy.getParticleDensity()) / 100 <= 1) {
                 fx.setMaxAge(age * Wizardry.proxy.getParticleDensity() / 100);
