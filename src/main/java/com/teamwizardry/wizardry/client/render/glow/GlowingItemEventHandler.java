@@ -55,6 +55,7 @@ public class GlowingItemEventHandler {
         }
 
         GlStateManager.disableBlend();
+        GlStateManager.color(1f, 1f, 1f, 1f);
 
         e.setCanceled(true);
     }

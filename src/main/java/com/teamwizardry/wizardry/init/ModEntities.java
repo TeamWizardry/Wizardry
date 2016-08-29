@@ -5,8 +5,10 @@ import com.teamwizardry.wizardry.client.render.entity.ModelFairy;
 import com.teamwizardry.wizardry.client.render.entity.ModelHallowedSpirit;
 import com.teamwizardry.wizardry.client.render.entity.RenderFairy;
 import com.teamwizardry.wizardry.client.render.entity.RenderHallowedSpirit;
+import com.teamwizardry.wizardry.common.entity.EntityDevilDust;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.common.entity.EntityHallowedSpirit;
+import com.teamwizardry.wizardry.common.entity.EntitySpellCodex;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 
@@ -20,6 +22,8 @@ public class ModEntities {
     public static void init() {
         EntityRegistry.registerModEntity(EntityHallowedSpirit.class, "hallowed_spirit", i++, Wizardry.instance, 64, 3, true);
         EntityRegistry.registerModEntity(EntityFairy.class, "fairy", i++, Wizardry.instance, 64, 3, true);
+        EntityRegistry.registerModEntity(EntityDevilDust.class, "dust_tracker", i++, Wizardry.instance, 64, 1, false);
+        EntityRegistry.registerModEntity(EntitySpellCodex.class, "book_tracker", i++, Wizardry.instance, 64, 1, false);
     }
 
     public static void initModels() {
