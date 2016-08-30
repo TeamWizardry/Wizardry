@@ -5,6 +5,7 @@ import com.teamwizardry.librarianlib.client.fx.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.client.fx.particle.functions.InterpColorHSV;
 import com.teamwizardry.librarianlib.common.util.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpHelix;
+import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpLine;
 import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
@@ -232,6 +233,18 @@ public class LibParticles {
 			double r = (u > 1) ? 2 - u : u;
 			double x = r * Math.cos(t), z = r * Math.sin(t);
 			glitter.setMotion(new Vec3d(x, ThreadLocalRandom.current().nextDouble(-0.3, 0.5), z));
+		});
+	}
+
+	public static void MODULE_BEAM(World world, Vec3d target, Vec3d origin, Vec3d reverseNormal, int distance) {
+		ParticleBuilder glitter = new ParticleBuilder(10);
+		glitter.setColor(new Color(1f, 1f, 1f, 0.1f));
+		glitter.setPositionFunction(new InterpHelix(Vec3d.ZERO, reverseNormal, 0.15f, 0.15f, 1, 0));
+		glitter.disableMotion();
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle"));
+		ParticleSpawner.spawn(glitter, world, new InterpLine(target, origin), distance, 0, (aFloat, particleBuilder) -> {
+			glitter.setScale((float) ThreadLocalRandom.current().nextDouble(0.3, 0.8));
+			glitter.setLifetime(ThreadLocalRandom.current().nextInt(10, 20));
 		});
 	}
 }
