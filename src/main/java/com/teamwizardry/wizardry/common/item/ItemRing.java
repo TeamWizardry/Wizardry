@@ -12,7 +12,7 @@ import net.minecraft.world.World;
 public class ItemRing extends ItemWizardry implements INacreColorable {
 
     public ItemRing() {
-        super("ring", "ring_pearl", "ring");
+        super("ring", "ring", "ring_pearl");
     }
 
     @Override

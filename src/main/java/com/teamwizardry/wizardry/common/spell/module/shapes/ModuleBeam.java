@@ -1,12 +1,5 @@
 package com.teamwizardry.wizardry.common.spell.module.shapes;
 
-import java.util.concurrent.ThreadLocalRandom;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
 import com.teamwizardry.librarianlib.common.util.RaycastUtils;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.module.Module;
@@ -18,6 +11,14 @@ import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
 import com.teamwizardry.wizardry.client.fx.GlitterFactory;
 import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import com.teamwizardry.wizardry.client.fx.particle.trails.SparkleTrailHelix;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 public class ModuleBeam extends Module implements IContinuousCast
 {
@@ -66,6 +67,8 @@ public class ModuleBeam extends Module implements IContinuousCast
 		double distance = spell.getDouble(DISTANCE);
 		double pierce = spell.getInteger(PIERCE);
 		RayTraceResult raycast = RaycastUtils.raycast(caster, distance);
+
+		if (raycast == null) return false;
 
 		// Beam particles
 		double slopeX, slopeY, slopeZ;

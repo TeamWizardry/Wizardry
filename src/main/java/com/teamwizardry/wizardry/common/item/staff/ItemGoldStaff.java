@@ -34,7 +34,7 @@ import java.util.List;
 public class ItemGoldStaff extends ItemWizardry implements INacreColorable {
 
     public ItemGoldStaff() {
-        super("gold_staff", "gold_staff_pearl", "gold_staff");
+        super("gold_staff", "gold_staff", "gold_staff_pearl");
         setMaxStackSize(1);
     }
 

@@ -1,10 +1,16 @@
 package com.teamwizardry.wizardry.common.tile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
+import com.teamwizardry.librarianlib.common.structure.StructureMatchResult;
+import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
+import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.item.Infusable;
+import com.teamwizardry.wizardry.api.item.PearlType;
+import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.api.module.ModuleRegistry;
+import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
+import com.teamwizardry.wizardry.client.helper.CraftingPlateItemStackHelper;
+import com.teamwizardry.wizardry.common.Structures;
+import com.teamwizardry.wizardry.common.spell.parsing.Parser;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -19,16 +25,12 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import com.teamwizardry.librarianlib.common.structure.StructureMatchResult;
-import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.item.Infusable;
-import com.teamwizardry.wizardry.api.item.PearlType;
-import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.ModuleRegistry;
-import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
-import com.teamwizardry.wizardry.client.helper.CraftingPlateItemStackHelper;
-import com.teamwizardry.wizardry.common.Structures;
-import com.teamwizardry.wizardry.common.spell.parsing.Parser;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 /**
  * Created by Saad on 6/10/2016.
@@ -232,10 +234,8 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
                 }
 
                 if (parsedSpell != null) {
-                    NBTTagCompound compound = pearl.getItemStack().getTagCompound();
-                    compound.setString("type", PearlType.INFUSED.toString());
-                    compound.setTag("Spell", parsedSpell.getModuleData());
-                    pearl.getItemStack().setTagCompound(compound);
+                    ItemNBTHelper.setString(pearl.getItemStack(), "type", PearlType.INFUSED.toString());
+                    ItemNBTHelper.setCompound(pearl.getItemStack(), "Spell", parsedSpell.getModuleData());
                     EntityItem pearlItem = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() + pearl.getPoint().yCoord, pos.getZ() + 0.5, pearl.getItemStack());
                     pearlItem.setVelocity(0, 0.8, 0);
                     pearlItem.forceSpawn = true;

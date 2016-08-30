@@ -26,7 +26,7 @@ import net.minecraft.world.World;
 public class ItemWoodStaff extends ItemWizardry implements INacreColorable {
 
     public ItemWoodStaff() {
-        super("wood_staff", "wood_staff_pearl", "wood_staff");
+        super("wood_staff", "wood_staff", "wood_staff_pearl");
         setMaxStackSize(1);
     }
 
