@@ -32,6 +32,7 @@ public class ModItems {
 
 	public static ItemJar JAR;
 	public static ItemUnicornHorn UNICORN_HORN;
+	public static ItemCape CAPE;
 
 	public static ItemDebugger DEBUG;
 
@@ -56,5 +57,6 @@ public class ModItems {
 
 		JAR = new ItemJar();
 		UNICORN_HORN = new ItemUnicornHorn();
+		CAPE = new ItemCape();
 	}
 }

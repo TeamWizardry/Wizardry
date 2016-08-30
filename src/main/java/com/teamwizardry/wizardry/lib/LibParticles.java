@@ -214,6 +214,7 @@ public class LibParticles {
 	}
 
 	public static void FAIRY_TRAIL(Vec3d pos, Color color, boolean sad, int age) {
+		if (age / 4 >= age / 2 || age == 0) return;
 		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(age / 4, age / 2));
 		glitter.setColor(color);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
