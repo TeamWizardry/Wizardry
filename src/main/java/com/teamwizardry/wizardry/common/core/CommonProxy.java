@@ -46,8 +46,6 @@ public class CommonProxy {
 		ModRecipes.initCrafting();
 		ModEntities.init();
 
-		GameRegistry.addRecipe(new ModIRecipes());
-
 		ModCapabilities.preInit();
 		Fluids.preInit();
 

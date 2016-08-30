@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.init;
+package com.teamwizardry.wizardry.init.irecipies;
 
 import com.teamwizardry.wizardry.api.item.Infusable;
 import com.teamwizardry.wizardry.common.item.ItemRing;
@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
 /**
  * Created by Saad on 6/13/2016.
  */
-public class ModIRecipes implements IRecipe {
+public class RecipePearl implements IRecipe {
 
 	@Override
 	public boolean matches(InventoryCrafting inv, World worldIn) {
