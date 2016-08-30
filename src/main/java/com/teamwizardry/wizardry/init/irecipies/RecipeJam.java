@@ -76,6 +76,21 @@ public class RecipeJam implements IRecipe {
 
 	@Override
 	public ItemStack[] getRemainingItems(InventoryCrafting inv) {
-		return ForgeHooks.defaultRecipeGetRemainingItems(inv);
+		ItemStack[] remainingItems = ForgeHooks.defaultRecipeGetRemainingItems(inv);
+		
+		ItemStack sword;
+		for (int i = 0; i < inv.getSizeInventory(); i++)
+		{
+			ItemStack stack = inv.getStackInSlot(i);
+			if (stack != null && stack.getItem() == Items.GOLDEN_SWORD)
+			{
+				sword = stack.copy();
+				sword.setItemDamage(sword.getItemDamage() + 1);
+				remainingItems[i] = sword;
+				break;
+			}
+		}
+		
+		return remainingItems;
 	}
 }
