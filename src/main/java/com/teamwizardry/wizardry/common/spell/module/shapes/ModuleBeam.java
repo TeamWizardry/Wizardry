@@ -1,6 +1,10 @@
 package com.teamwizardry.wizardry.common.spell.module.shapes;
 
+import com.teamwizardry.librarianlib.client.fx.particle.ParticleBuilder;
+import com.teamwizardry.librarianlib.client.fx.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.common.util.RaycastUtils;
+import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpCircle;
+import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpLine;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.attribute.Attribute;
@@ -8,16 +12,15 @@ import com.teamwizardry.wizardry.api.spell.IContinuousCast;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.SpellEntity;
 import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
-import com.teamwizardry.wizardry.client.fx.GlitterFactory;
-import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
-import com.teamwizardry.wizardry.client.fx.particle.trails.SparkleTrailHelix;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 
+import java.awt.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class ModuleBeam extends Module implements IContinuousCast
@@ -71,36 +74,17 @@ public class ModuleBeam extends Module implements IContinuousCast
 		if (raycast == null) return false;
 
 		// Beam particles
-		double slopeX, slopeY, slopeZ;
+		ParticleBuilder glitter = new ParticleBuilder(20);
+		glitter.setColor(new Color(1f, 1f, 1f, 0.1f));
 		Vec3d cross = caster.getLook(1).crossProduct(new Vec3d(0, caster.getEyeHeight(), 0)).normalize().scale(caster.width / 2);
-		slopeX = (raycast.hitVec.xCoord - (caster.posX + cross.xCoord)) / distance;
-		slopeY = (raycast.hitVec.yCoord - (caster.posY + caster.getEyeHeight() + cross.yCoord)) / distance;
-		slopeZ = (raycast.hitVec.zCoord - (caster.posZ + cross.zCoord)) / distance;
-
-		for (double i = 0; i < distance; i += distance / 100)
-		{
-			double x = slopeX * i + caster.posX + cross.xCoord;
-			double y = slopeY * i + caster.posY + caster.getEyeHeight();
-			double z = slopeZ * i + caster.posZ + cross.zCoord;
-
-			double theta = Math.toRadians((360.0 / i));
-			Vec3d origin = new Vec3d(x + 0.2 * Math.cos(theta), y, z + 0.2 * Math.sin(theta));
-			Vec3d center = new Vec3d(x, y, z);
-
-			SparkleFX fizz = GlitterFactory.getInstance().createSparkle(caster.worldObj, center, 10);
-			fizz.setScale(0.5f);
-			fizz.setAlpha(1f);
-			fizz.setFadeOut();
-			fizz.setShrink();
-			fizz.setBlurred();
-
-			if (ThreadLocalRandom.current().nextInt(10) == 0)
-			{
-				SparkleTrailHelix helix = Wizardry.proxy.spawnParticleSparkleTrailHelix(caster.worldObj, origin, center, 0.2, theta);
-				helix.setFadeOut();
-				helix.setRandomlyBlurred();
-			}
-		}
+		Vec3d casterVec = new Vec3d(caster.posX + cross.xCoord, caster.posY + caster.getEyeHeight() + cross.yCoord, caster.posZ + cross.zCoord);
+		Vec3d target = raycast.hitVec.subtract(casterVec).scale(-1);
+		glitter.setPositionFunction(new InterpCircle(Vec3d.ZERO, target, 0.2f));
+		glitter.disableMotion();
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle"));
+		ParticleSpawner.spawn(glitter, player.getEntityWorld(), new InterpLine(raycast.hitVec, casterVec), (int) distance, 0, (aFloat, particleBuilder) -> {
+			glitter.setScale(ThreadLocalRandom.current().nextFloat());
+		});
 		// Beam particles
 
 		do

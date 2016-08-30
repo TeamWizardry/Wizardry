@@ -47,8 +47,8 @@ public class EntitySpellCodex extends Entity {
 			if (expiry > 0) {
 				expiry--;
 
-				LibParticles.BOOK_BEAM_NORMAL(getPositionVector());
-				LibParticles.BOOK_BEAM_HELIX(getPositionVector());
+				LibParticles.BOOK_BEAM_NORMAL(worldObj, getPositionVector());
+				LibParticles.BOOK_BEAM_HELIX(worldObj, getPositionVector());
 
 				if (expiry % 5 == 0)
 					worldObj.playSound(null, posX, posY, posZ, ModSounds.FIZZING_LOOP, SoundCategory.AMBIENT, 0.7F, ThreadLocalRandom.current().nextFloat() * 0.4F + 0.8F);
@@ -66,7 +66,7 @@ public class EntitySpellCodex extends Entity {
 
 				worldObj.playSound(null, posX, posY, posZ, ModSounds.HARP1, SoundCategory.AMBIENT, 0.3F, 1F);
 
-				LibParticles.BOOK_LARGE_EXPLOSION(getPositionVector());
+				LibParticles.BOOK_LARGE_EXPLOSION(worldObj, getPositionVector());
 				return;
 			}
 		}

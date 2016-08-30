@@ -102,7 +102,7 @@ public class EntityFairy extends EntityFlying {
 		if (age <= 0) age = 2;
 		if (ticksExisted % ThreadLocalRandom.current().nextInt(200, 400) == 0 && age < 100) age++;
 
-		LibParticles.FAIRY_TRAIL(getPositionVector().addVector(0, 0.25, 0), color, sad, age);
+		LibParticles.FAIRY_TRAIL(worldObj, getPositionVector().addVector(0, 0.25, 0), color, sad, age);
 
 		boolean match = true;
 		for (int i = -3; i < 3; i++)
@@ -180,7 +180,7 @@ public class EntityFairy extends EntityFlying {
 	@Override
 	public boolean attackEntityFrom(DamageSource source, float amount) {
 		super.attackEntityFrom(source, amount);
-		LibParticles.FAIRY_EXPLODE(getPositionVector().addVector(0, 0.25, 0), color);
+		LibParticles.FAIRY_EXPLODE(worldObj, getPositionVector().addVector(0, 0.25, 0), color);
 		return true;
 	}
 

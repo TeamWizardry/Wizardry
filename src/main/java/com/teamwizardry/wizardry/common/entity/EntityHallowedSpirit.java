@@ -61,7 +61,7 @@ public class EntityHallowedSpirit extends EntityMob {
 		}
 		entity.fallDistance = 0;
 
-		LibParticles.HALLOWED_SPIRIT_AIR_THROTTLE(getPositionVector().addVector(0, getEyeHeight(), 0), entity);
+		LibParticles.HALLOWED_SPIRIT_AIR_THROTTLE(worldObj, getPositionVector().addVector(0, getEyeHeight(), 0), entity);
 	}
 
 	@Override
@@ -88,9 +88,9 @@ public class EntityHallowedSpirit extends EntityMob {
 		angry = player != null;
 
 		if (closePlayer != null && !angry)
-			LibParticles.HALLOWED_SPIRIT_FLAME_FAR(getPositionVector().addVector(0, getEyeHeight(), 0));
-		 else if (angry) LibParticles.HALLOWED_SPIRIT_FLAME_CLOSE(getPositionVector().addVector(0, getEyeHeight(), 0));
-		 else LibParticles.HALLOWED_SPIRIT_FLAME_NORMAL(getPositionVector().addVector(0, getEyeHeight(), 0));
+			LibParticles.HALLOWED_SPIRIT_FLAME_FAR(worldObj, getPositionVector().addVector(0, getEyeHeight(), 0));
+		 else if (angry) LibParticles.HALLOWED_SPIRIT_FLAME_CLOSE(worldObj, getPositionVector().addVector(0, getEyeHeight(), 0));
+		 else LibParticles.HALLOWED_SPIRIT_FLAME_NORMAL(worldObj, getPositionVector().addVector(0, getEyeHeight(), 0));
 
 		if (angry && player != null) {
 			player.attackEntityFrom(DamageSource.generic, 0.15f);
@@ -111,7 +111,7 @@ public class EntityHallowedSpirit extends EntityMob {
 	@Override
 	public boolean attackEntityFrom(DamageSource source, float amount) {
 		super.attackEntityFrom(source, amount);
-		LibParticles.HALLOWED_SPIRIT_HURT(getPositionVector());
+		LibParticles.HALLOWED_SPIRIT_HURT(worldObj, getPositionVector());
 		return true;
 	}
 

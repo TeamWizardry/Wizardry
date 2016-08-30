@@ -45,14 +45,14 @@ public class FluidBlockMana extends BlockFluidClassic {
 	@Override
 	public void updateTick(World world, BlockPos pos, IBlockState state, Random rand) {
 		super.updateTick(world, pos, state, rand);
-		LibParticles.FIZZING_AMBIENT(new Vec3d(pos.getX(), pos.getY(), pos.getZ()));
+		LibParticles.FIZZING_AMBIENT(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()));
 	}
 
 	@Override
 	public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
 		if (!worldIn.isRemote) {
 
-			LibParticles.FIZZING_AMBIENT(entityIn.getPositionVector());
+			LibParticles.FIZZING_AMBIENT(worldIn, entityIn.getPositionVector());
 
 			if (entityIn instanceof EntityItem && new BlockPos(entityIn.getPositionVector()).equals(pos) && state.getValue(BlockFluidClassic.LEVEL) == 0) {
 				EntityItem ei = (EntityItem) entityIn;
@@ -60,7 +60,7 @@ public class FluidBlockMana extends BlockFluidClassic {
 
 				if (stack.getItem() instanceof Explodable) {
 
-					LibParticles.FIZZING_ITEM(ei.getPositionVector());
+					LibParticles.FIZZING_ITEM(worldIn, ei.getPositionVector());
 
 					if (stack.hasTagCompound()) {
 						NBTTagCompound compound = stack.getTagCompound();
