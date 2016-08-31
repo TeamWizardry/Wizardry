@@ -1,27 +1,19 @@
 package com.teamwizardry.wizardry.common.spell.module.shapes;
 
-import com.teamwizardry.librarianlib.client.fx.particle.ParticleBuilder;
-import com.teamwizardry.librarianlib.client.fx.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.common.util.RaycastUtils;
-import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpCircle;
-import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpLine;
-import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.attribute.Attribute;
 import com.teamwizardry.wizardry.api.spell.IContinuousCast;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.SpellEntity;
 import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
+import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
-
-import java.awt.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class ModuleBeam extends Module implements IContinuousCast
 {
@@ -73,19 +65,10 @@ public class ModuleBeam extends Module implements IContinuousCast
 
 		if (raycast == null) return false;
 
-		// Beam particles
-		ParticleBuilder glitter = new ParticleBuilder(20);
-		glitter.setColor(new Color(1f, 1f, 1f, 0.1f));
+		// TODO: add light colors
 		Vec3d cross = caster.getLook(1).crossProduct(new Vec3d(0, caster.getEyeHeight(), 0)).normalize().scale(caster.width / 2);
 		Vec3d casterVec = new Vec3d(caster.posX + cross.xCoord, caster.posY + caster.getEyeHeight() + cross.yCoord, caster.posZ + cross.zCoord);
-		Vec3d target = raycast.hitVec.subtract(casterVec).scale(-1);
-		glitter.setPositionFunction(new InterpCircle(Vec3d.ZERO, target, 0.2f));
-		glitter.disableMotion();
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle"));
-		ParticleSpawner.spawn(glitter, player.getEntityWorld(), new InterpLine(raycast.hitVec, casterVec), (int) distance, 0, (aFloat, particleBuilder) -> {
-			glitter.setScale(ThreadLocalRandom.current().nextFloat());
-		});
-		// Beam particles
+		LibParticles.MODULE_BEAM(player.worldObj, raycast.hitVec, casterVec, caster.getLook(1).scale(-1), (int) distance);
 
 		do
 		{

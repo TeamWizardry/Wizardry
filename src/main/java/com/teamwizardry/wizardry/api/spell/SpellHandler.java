@@ -1,11 +1,11 @@
 package com.teamwizardry.wizardry.api.spell;
 
-import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
+import com.teamwizardry.wizardry.api.spell.event.SpellEvent.SpellCastEvent;
+import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
 
 public class SpellHandler {
     public static final SpellHandler INSTANCE = new SpellHandler();
@@ -16,15 +16,9 @@ public class SpellHandler {
 
     @SubscribeEvent
     public void onModuleCast(SpellCastEvent event) {
+        SpellStack stack = event.stack;
         EntityPlayer player = event.player;
-        Entity source = event.source;
-        NBTTagCompound spell = event.spell;
-
-       /* if (!event.isCanceled() && ModuleRegistry.getInstance().getModuleById(spell.getInteger(Module.PRIMARY_SHAPE)) != null) {
-            ModuleRegistry.getInstance().getModuleById(spell.getInteger(Module.PRIMARY_SHAPE)).cast(player, source, spell.getCompoundTag("Spell"));
-        } else if (ModuleRegistry.getInstance().getModuleById(spell.getInteger(Module.PRIMARY_SHAPE)) == null) {
-            System.err.println("Spell is null! @" + event.source.getPosition() + " com.wizardry.wizardry.api.SpellHandler.java:34");
-        }
-        */
+        
+       WizardryCapabilityProvider.get(player).incrementBloodLevel(stack.getAffinity(), player); 
     }
 }

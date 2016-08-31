@@ -172,6 +172,7 @@ public class EntityFairy extends EntityFlying {
 			ItemNBTHelper.setBoolean(stack, "fairy_inside", true);
 			ItemNBTHelper.setInt(stack, "fairy_color", color.getRGB());
 			ItemNBTHelper.setInt(stack, "fairy_age", age);
+			stack.setItemDamage(1);
 			worldObj.removeEntity(this);
 		}
 		return EnumActionResult.PASS;

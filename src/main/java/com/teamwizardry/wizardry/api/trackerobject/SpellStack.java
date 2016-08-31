@@ -3,17 +3,21 @@ package com.teamwizardry.wizardry.api.trackerobject;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
+import com.teamwizardry.wizardry.api.capability.bloods.IBloodType;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.ModuleRegistry;
+import com.teamwizardry.wizardry.api.spell.IHasAffinity;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
+import com.teamwizardry.wizardry.api.spell.event.SpellEvent.SpellRunEvent;
 
 /**
  * Created by LordSaad44 This class is created when a spell is created, then
@@ -24,6 +28,7 @@ public class SpellStack {
 
     public NBTTagCompound spell;
     public Module shape;
+    public List<Module> effects;
 
     /**
      * The player that originally casted the spell
@@ -45,6 +50,7 @@ public class SpellStack {
 		this.caster = caster;
 		this.spell = spell;
 		this.shape = getModuleTree(spell);
+		this.effects = getEffectModules(shape);
 		this.color = getSpellColor();
 	}
 
@@ -56,7 +62,7 @@ public class SpellStack {
 
 	public void castEffects(Entity caster)
 	{
-		SpellCastEvent event = new SpellCastEvent(spell, caster, player);
+		SpellRunEvent event = new SpellRunEvent(spell, caster, player);
 		MinecraftForge.EVENT_BUS.post(event);
 		if (!event.isCanceled())
 		{
@@ -117,8 +123,8 @@ public class SpellStack {
 	public Color getSpellColor()
 	{
 		int r = -1, b = -1, g = -1;
-
-		List<Module> effects = getEffectModules(shape);
+		
+		if (effects == null) effects = getEffectModules(shape);
 
 		for (Module effect : effects)
 		{
@@ -136,5 +142,38 @@ public class SpellStack {
 		if (g == -1) g = Color.WHITE.getGreen();
 		if (b == -1) b = Color.WHITE.getBlue();
 		return new Color(r, g, b);
+	}
+	
+	public IBloodType getAffinity()
+	{
+		Map<IBloodType, Integer> bloodLevels = new HashMap<IBloodType, Integer>();
+		for (Module effect : effects)
+		{
+			if (effect instanceof IHasAffinity)
+			{
+				Map<IBloodType, Integer> effectLevels = ((IHasAffinity) effect).getAffinityLevels();
+				for (IBloodType type : effectLevels.keySet())
+				{
+					bloodLevels.put(type, bloodLevels.get(type) + effectLevels.get(type));
+				}
+			}
+		}
+		
+		IBloodType bloodType = null;
+		int affinityLevel = 0;
+		for (IBloodType type : bloodLevels.keySet())
+		{
+			if (bloodLevels.get(type) > affinityLevel)
+			{
+				bloodType = type;
+				affinityLevel = bloodLevels.get(type);
+			}
+			else if (bloodLevels.get(type) == affinityLevel)
+			{
+				bloodType = null;
+			}
+		}
+		
+		return bloodType;
 	}
 }
