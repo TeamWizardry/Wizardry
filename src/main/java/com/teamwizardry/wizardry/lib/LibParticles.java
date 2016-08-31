@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.lib;
 import com.teamwizardry.librarianlib.client.fx.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.client.fx.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.client.fx.particle.functions.InterpColorHSV;
+import com.teamwizardry.librarianlib.client.fx.particle.functions.InterpFadeInOut;
 import com.teamwizardry.librarianlib.common.util.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpHelix;
 import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpLine;
@@ -126,12 +127,13 @@ public class LibParticles {
 
 	public static void HALLOWED_SPIRIT_AIR_THROTTLE(World world, Vec3d pos, Entity collided) {
 		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(30, 50));
-		glitter.setColor(new Color(0x4DFFFFFF, true));
+		glitter.setColor(Color.WHITE);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
-
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(30, 50), 0, (i, build) -> {
+		glitter.setAlphaFunction(new InterpFadeInOut(0.4f, 0.4f));
+		
+		ParticleSpawner.spawn(glitter, world, new InterpLine(pos, pos.addVector(collided.posX-collided.prevPosX, collided.posY-collided.prevPosY, collided.posZ-collided.prevPosZ)), ThreadLocalRandom.current().nextInt(30, 50), 1, (i, build) -> {
 			glitter.setMotion(new Vec3d(collided.motionX + ThreadLocalRandom.current().nextDouble(-0.01, 0.01), collided.motionY / 2 + ThreadLocalRandom.current().nextDouble(-0.01, 0.01), collided.motionZ + ThreadLocalRandom.current().nextDouble(-0.01, 0.01)));
-			glitter.disableMotion();
+//			glitter.disableMotion();
 		});
 	}
 
@@ -147,7 +149,7 @@ public class LibParticles {
 			double r = (u > 1) ? 2 - u : u;
 			double x = r * Math.cos(t), z = r * Math.sin(t);
 
-			glitter.setColor(new InterpColorHSV(Color.RED, 50, 20));
+			glitter.setColorFunction(new InterpColorHSV(Color.RED, 50, 20));
 			glitter.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(0, 0.5), z));
 			glitter.addMotion(new Vec3d(0, ThreadLocalRandom.current().nextDouble(0, 0.02), 0));
 			glitter.disableMotion();
@@ -193,7 +195,7 @@ public class LibParticles {
 
 	public static void HALLOWED_SPIRIT_HURT(World world, Vec3d pos) {
 		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(100, 150));
-		glitter.setColor(new InterpColorHSV(Color.BLUE, 50, 20));
+		glitter.setColorFunction(new InterpColorHSV(Color.BLUE, 50, 20));
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(40, 100), 0, (i, build) -> {
