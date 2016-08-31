@@ -192,7 +192,12 @@ public class EntityFairy extends EntityFlying {
 
 	@Override
 	public void dropLoot(boolean wasRecentlyHit, int lootingModifier, DamageSource source) {
-		super.dropLoot(wasRecentlyHit, lootingModifier, source);
+		//super.dropLoot(wasRecentlyHit, lootingModifier, source);
+		ItemStack fairyWings = new ItemStack(ModItems.FAIRY_WINGS);
+		ItemStack fairyDust = new ItemStack(ModItems.FAIRY_DUST);
+		ItemNBTHelper.setInt(fairyWings, "fairy_color", color.getRGB());
+		entityDropItem(fairyDust, ThreadLocalRandom.current().nextFloat());
+		entityDropItem(fairyWings, ThreadLocalRandom.current().nextFloat());
 	}
 
 	@Override
@@ -227,7 +232,11 @@ public class EntityFairy extends EntityFlying {
 		this.sad = sad;
 	}
 
-	public int getAge() { return age; }
+	public int getAge() {
+		return age;
+	}
 
-	public void setAge(int age) { this.age = age; }
+	public void setAge(int age) {
+		this.age = age;
+	}
 }

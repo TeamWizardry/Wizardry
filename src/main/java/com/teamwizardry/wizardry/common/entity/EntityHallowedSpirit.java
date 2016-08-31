@@ -110,9 +110,11 @@ public class EntityHallowedSpirit extends EntityMob {
 
 	@Override
 	public boolean attackEntityFrom(DamageSource source, float amount) {
-		super.attackEntityFrom(source, amount);
-		LibParticles.HALLOWED_SPIRIT_HURT(worldObj, getPositionVector());
-		return true;
+		if (source.isMagicDamage()) {
+			super.attackEntityFrom(source, amount);
+			LibParticles.HALLOWED_SPIRIT_HURT(worldObj, getPositionVector());
+			return true;
+		} else return false;
 	}
 
 	@Override
