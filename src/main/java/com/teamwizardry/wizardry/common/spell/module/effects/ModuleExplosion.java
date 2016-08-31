@@ -1,20 +1,24 @@
 package com.teamwizardry.wizardry.common.spell.module.effects;
 
-import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.attribute.Attribute;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
+import com.teamwizardry.wizardry.api.capability.bloods.BloodRegistry;
+import com.teamwizardry.wizardry.api.capability.bloods.IBloodType;
+import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.api.module.attribute.Attribute;
+import com.teamwizardry.wizardry.api.spell.IHasAffinity;
+import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class ModuleExplosion extends Module {
+public class ModuleExplosion extends Module implements IHasAffinity {
     private static final String DAMAGE_TERRAIN = "Damage Terrain";
 
     private boolean damageTerrain;
@@ -71,4 +75,13 @@ public class ModuleExplosion extends Module {
         explosion.doExplosionB(true);
         return true;
     }
+    
+    @Override
+	public Map<IBloodType, Integer> getAffinityLevels()
+	{
+		Map<IBloodType, Integer> levels = new HashMap<>();
+		levels.put(BloodRegistry.PYROBLOOD, 2);
+		levels.put(BloodRegistry.ZEPHYRBLOOD, 1);
+		return levels;
+	}
 }

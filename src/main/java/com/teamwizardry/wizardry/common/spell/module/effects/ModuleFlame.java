@@ -1,11 +1,7 @@
 package com.teamwizardry.wizardry.common.spell.module.effects;
 
-import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.attribute.Attribute;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.api.spell.SpellEntity;
-import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
-import com.teamwizardry.wizardry.client.fx.particle.effect.EffectFire;
+import java.util.HashMap;
+import java.util.Map;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -18,8 +14,17 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import com.teamwizardry.wizardry.api.capability.bloods.BloodRegistry;
+import com.teamwizardry.wizardry.api.capability.bloods.IBloodType;
+import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.api.module.attribute.Attribute;
+import com.teamwizardry.wizardry.api.spell.IHasAffinity;
+import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.spell.SpellEntity;
+import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
+import com.teamwizardry.wizardry.client.fx.particle.effect.EffectFire;
 
-public class ModuleFlame extends Module {
+public class ModuleFlame extends Module implements IHasAffinity {
     public ModuleFlame(ItemStack stack) {
         super(stack);
         attributes.addAttribute(Attribute.DURATION);
@@ -93,4 +98,12 @@ public class ModuleFlame extends Module {
 
         return true;
     }
+    
+    @Override
+	public Map<IBloodType, Integer> getAffinityLevels()
+	{
+		Map<IBloodType, Integer> levels = new HashMap<>();
+		levels.put(BloodRegistry.PYROBLOOD, 3);
+		return levels;
+	}
 }

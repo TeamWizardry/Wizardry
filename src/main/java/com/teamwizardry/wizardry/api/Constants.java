@@ -11,6 +11,7 @@ public class Constants {
         public static final String MAX_BURNOUT = "max_burnout";
         public static final String MANA = "mana";
         public static final String BURNOUT = "burnout";
+        public static final String BLOOD_LEVELS = "blood_levels";
     }
 
     public static class GuiButtons {

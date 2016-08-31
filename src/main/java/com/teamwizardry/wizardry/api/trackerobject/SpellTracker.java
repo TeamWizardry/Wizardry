@@ -1,15 +1,14 @@
 package com.teamwizardry.wizardry.api.trackerobject;
 
-import com.teamwizardry.wizardry.api.spell.event.SpellCastEvent;
+import java.util.LinkedList;
+import java.util.Queue;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
-
-import java.util.LinkedList;
-import java.util.Queue;
+import com.teamwizardry.wizardry.api.spell.event.SpellEvent.SpellRunEvent;
 
 public class SpellTracker {
     private static Queue<Entity> spellEntities;
@@ -43,7 +42,7 @@ public class SpellTracker {
     @SubscribeEvent
     public static void onUpdateTick(WorldTickEvent event) {
         while (!spellEntities.isEmpty() && !spellCasters.isEmpty() && !spellData.isEmpty()) {
-            SpellCastEvent cast = new SpellCastEvent(spellData.remove(), spellEntities.remove(), spellCasters.remove());
+            SpellRunEvent cast = new SpellRunEvent(spellData.remove(), spellEntities.remove(), spellCasters.remove());
             MinecraftForge.EVENT_BUS.post(cast);
         }
         spellEntities.clear();

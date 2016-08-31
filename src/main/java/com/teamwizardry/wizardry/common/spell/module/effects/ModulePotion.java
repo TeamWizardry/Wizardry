@@ -1,10 +1,7 @@
 package com.teamwizardry.wizardry.common.spell.module.effects;
 
-import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.attribute.Attribute;
-import com.teamwizardry.wizardry.api.spell.IRequireItem;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
+import java.util.HashMap;
+import java.util.Map;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,8 +11,16 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionUtils;
+import com.teamwizardry.wizardry.api.capability.bloods.BloodRegistry;
+import com.teamwizardry.wizardry.api.capability.bloods.IBloodType;
+import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.api.module.attribute.Attribute;
+import com.teamwizardry.wizardry.api.spell.IHasAffinity;
+import com.teamwizardry.wizardry.api.spell.IRequireItem;
+import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
 
-public class ModulePotion extends Module implements IRequireItem {
+public class ModulePotion extends Module implements IRequireItem, IHasAffinity {
     public static final String POTION = "Potion";
     private int potionID;
 
@@ -71,4 +76,13 @@ public class ModulePotion extends Module implements IRequireItem {
         }
         return false;
     }
+    
+    @Override
+	public Map<IBloodType, Integer> getAffinityLevels()
+	{
+		Map<IBloodType, Integer> levels = new HashMap<>();
+		levels.put(BloodRegistry.AQUABLOOD, 2);
+		levels.put(BloodRegistry.TERRABLOOD, 1);
+		return levels;
+	}
 }
