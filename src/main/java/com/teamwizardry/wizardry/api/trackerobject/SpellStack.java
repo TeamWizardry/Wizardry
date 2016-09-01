@@ -70,6 +70,7 @@ public class SpellStack {
 			for (int i = 0; i < children.tagCount(); i++)
 			{
 				NBTTagCompound module = children.getCompoundTagAt(i);
+				module.setInteger(Module.COLOR, color.getRGB());
 				if (module.getString(Module.TYPE).equals(ModuleType.SHAPE.toString()))
 				{
 					SpellStack stack = new SpellStack(player, caster, module);

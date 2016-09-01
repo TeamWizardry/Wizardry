@@ -48,6 +48,8 @@ public abstract class Module {
 
     public static final String MANA = "Mana";
     public static final String BURNOUT = "Burnout";
+    
+    public static final String COLOR = "Color";
 
     public AttributeMap attributes = new AttributeMap();
     public ItemStack stack;
