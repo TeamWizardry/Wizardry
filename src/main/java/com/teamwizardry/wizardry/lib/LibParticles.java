@@ -29,7 +29,6 @@ public class LibParticles {
 			glitter.setColor(new Color(255, 255, 255, ThreadLocalRandom.current().nextInt(50, 150)));
 			glitter.setLifetime(ThreadLocalRandom.current().nextInt(20, 30));
 			glitter.setMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.05, 0.05), ThreadLocalRandom.current().nextDouble(0.1, 0.15), ThreadLocalRandom.current().nextDouble(-0.05, 0.05)));
-			glitter.disableMotion();
 		});
 	}
 
@@ -41,7 +40,6 @@ public class LibParticles {
 			fizz.setColor(new Color(255, 255, 255, ThreadLocalRandom.current().nextInt(50, 150)));
 			fizz.setLifetime(ThreadLocalRandom.current().nextInt(20, 30));
 			fizz.setMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.005, 0.005), ThreadLocalRandom.current().nextDouble(0.04, 0.08), ThreadLocalRandom.current().nextDouble(-0.005, 0.005)));
-			fizz.disableMotion();
 		});
 	}
 
@@ -53,7 +51,6 @@ public class LibParticles {
 			glitter.setLifetime(ThreadLocalRandom.current().nextInt(20, 30));
 			glitter.setColor(new Color(255, 255, 255, ThreadLocalRandom.current().nextInt(100, 150)));
 			glitter.setMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.5, 0.5), ThreadLocalRandom.current().nextDouble(-0.5, 0.5), ThreadLocalRandom.current().nextDouble(-0.5, 0.5)));
-			glitter.disableMotion();
 		});
 	}
 
@@ -67,7 +64,6 @@ public class LibParticles {
 			glitter.setPositionOffset(offset);
 			glitter.setLifetime(ThreadLocalRandom.current().nextInt(30, 50));
 			glitter.setMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.01, 0.01), ThreadLocalRandom.current().nextDouble(0.04, 0.06), ThreadLocalRandom.current().nextDouble(-0.01, 0.01)));
-			glitter.disableMotion();
 		});
 	}
 
@@ -79,7 +75,6 @@ public class LibParticles {
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 5, 0, (i, builder) -> {
 			glitter.setLifetime(ThreadLocalRandom.current().nextInt(10, 30));
 			glitter.setMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.03, 0.03), ThreadLocalRandom.current().nextDouble(0.07, 0.2), ThreadLocalRandom.current().nextDouble(-0.03, 0.03)));
-			glitter.disableMotion();
 		});
 	}
 
@@ -88,7 +83,6 @@ public class LibParticles {
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 10, 0, (aFloat, particleBuilder) -> {
 			glitter.setMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.02, 0.02), ThreadLocalRandom.current().nextDouble(0, 1), ThreadLocalRandom.current().nextDouble(-0.02, 0.02)));
-			glitter.disableMotion();
 			glitter.setColor(new Color(255, 255, 255, ThreadLocalRandom.current().nextInt(0, 255)));
 			glitter.setScale(ThreadLocalRandom.current().nextFloat());
 			glitter.setLifetime(ThreadLocalRandom.current().nextInt(0, 50));
@@ -139,7 +133,6 @@ public class LibParticles {
 
 	public static void HALLOWED_SPIRIT_FLAME_FAR(World world, Vec3d pos) {
 		ParticleBuilder glitter = new ParticleBuilder(30);
-		glitter.disableMotion();
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 5, 0, (i, build) -> {
@@ -152,13 +145,11 @@ public class LibParticles {
 			glitter.setColorFunction(new InterpColorHSV(Color.RED, 50, 20));
 			glitter.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(0, 0.5), z));
 			glitter.addMotion(new Vec3d(0, ThreadLocalRandom.current().nextDouble(0, 0.02), 0));
-			glitter.disableMotion();
 		});
 	}
 
 	public static void HALLOWED_SPIRIT_FLAME_CLOSE(World world, Vec3d pos) {
 		ParticleBuilder glitter = new ParticleBuilder(30);
-		glitter.disableMotion();
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 5, 0, (i, build) -> {
@@ -171,13 +162,11 @@ public class LibParticles {
 			glitter.setColor(Color.RED);
 			glitter.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(0, 0.5), z));
 			glitter.addMotion(new Vec3d(0, ThreadLocalRandom.current().nextDouble(0, 0.02), 0));
-			glitter.disableMotion();
 		});
 	}
 
 	public static void HALLOWED_SPIRIT_FLAME_NORMAL(World world, Vec3d pos) {
 		ParticleBuilder glitter = new ParticleBuilder(30);
-		glitter.disableMotion();
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 5, 0, (i, build) -> {
@@ -189,7 +178,6 @@ public class LibParticles {
 
 			glitter.setColor(new Color(0x4DFFFFFF, true));
 			glitter.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(0, 0.4), z));
-			glitter.disableMotion();
 		});
 	}
 
@@ -207,7 +195,6 @@ public class LibParticles {
 
 			glitter.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(0, 0.4), z));
 			glitter.setMotion(new Vec3d(0, ThreadLocalRandom.current().nextDouble(0, 0.02), 0));
-			glitter.disableMotion();
 		});
 	}
 
@@ -219,7 +206,7 @@ public class LibParticles {
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(5, 10), 0, (i, build) -> {
 			glitter.setMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.02, 0.02), ThreadLocalRandom.current().nextDouble(-0.02, 0.02), ThreadLocalRandom.current().nextDouble(-0.02, 0.02)));
-			if (!sad) glitter.disableMotion();
+			if (sad) glitter.enableMotionCalculation();
 		});
 	}
 
@@ -242,7 +229,6 @@ public class LibParticles {
 		ParticleBuilder glitter = new ParticleBuilder(10);
 		glitter.setColor(new Color(1f, 1f, 1f, 0.1f));
 		glitter.setPositionFunction(new InterpHelix(Vec3d.ZERO, reverseNormal, 0.15f, 0.15f, 1, 0));
-		glitter.disableMotion();
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle"));
 		ParticleSpawner.spawn(glitter, world, new InterpLine(target, origin), distance, 0, (aFloat, particleBuilder) -> {
 			glitter.setScale((float) ThreadLocalRandom.current().nextDouble(0.3, 0.8));

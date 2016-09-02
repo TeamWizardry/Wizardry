@@ -90,7 +90,7 @@ public class EntityFairy extends EntityFlying {
 
 		ParticleSpawner.spawn(glitter, worldObj, new StaticInterp<>(new Vec3d(posX, posY + 0.25, posZ)), ThreadLocalRandom.current().nextInt(5, 10), 0, (i, build) -> {
 			glitter.setMotion(new Vec3d(motionX + ThreadLocalRandom.current().nextDouble(-0.01, 0.01), motionY + ThreadLocalRandom.current().nextDouble(0.1, 0.2), motionZ + ThreadLocalRandom.current().nextDouble(-0.01, 0.01)));
-			if (!sad) glitter.disableMotion();
+			if (sad) glitter.enableMotionCalculation();
 		});
 	}
 
