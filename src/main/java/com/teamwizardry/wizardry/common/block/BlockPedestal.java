@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.common.block;
 import com.teamwizardry.librarianlib.common.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.common.base.block.BlockModContainer;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.block.IManaAcceptor;
+import com.teamwizardry.wizardry.api.block.IManaSink;
 import com.teamwizardry.wizardry.common.tile.TilePedestal;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -22,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Created by Saad on 5/7/2016.
  */
-public class BlockPedestal extends BlockModContainer implements IManaAcceptor {
+public class BlockPedestal extends BlockModContainer implements IManaSink {
 
     public BlockPedestal() {
         super("pedestal", Material.ROCK);

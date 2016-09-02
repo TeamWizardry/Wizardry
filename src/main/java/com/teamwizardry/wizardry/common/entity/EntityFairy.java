@@ -1,10 +1,6 @@
 package com.teamwizardry.wizardry.common.entity;
 
-import com.teamwizardry.librarianlib.client.fx.particle.ParticleBuilder;
-import com.teamwizardry.librarianlib.client.fx.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
-import com.teamwizardry.librarianlib.common.util.math.interpolate.StaticInterp;
-import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
@@ -18,7 +14,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -84,14 +79,7 @@ public class EntityFairy extends EntityFlying {
 		}
 		entity.fallDistance = 0;
 
-		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(20, 30));
-		glitter.setColor(color);
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
-
-		ParticleSpawner.spawn(glitter, worldObj, new StaticInterp<>(new Vec3d(posX, posY + 0.25, posZ)), ThreadLocalRandom.current().nextInt(5, 10), 0, (i, build) -> {
-			glitter.setMotion(new Vec3d(motionX + ThreadLocalRandom.current().nextDouble(-0.01, 0.01), motionY + ThreadLocalRandom.current().nextDouble(0.1, 0.2), motionZ + ThreadLocalRandom.current().nextDouble(-0.01, 0.01)));
-			if (sad) glitter.enableMotionCalculation();
-		});
+		LibParticles.AIR_THROTTLE(worldObj, getPositionVector(), entity, color, color.brighter());
 	}
 
 	@Override

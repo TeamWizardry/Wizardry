@@ -1,23 +1,24 @@
 package com.teamwizardry.wizardry.api.trackerobject;
 
 
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.Constants.NBT;
 import com.teamwizardry.wizardry.api.capability.bloods.IBloodType;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.IHasAffinity;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.event.SpellEvent.SpellRunEvent;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.Constants.NBT;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by LordSaad44 This class is created when a spell is created, then
@@ -34,8 +35,6 @@ public class SpellStack {
      * The player that originally casted the spell
      */
     public EntityPlayer player;
-//	private double manaMult;
-//	private double burnoutMult;
 	
 	public Color color;
 	
@@ -97,7 +96,7 @@ public class SpellStack {
 	
 	private List<Module> getEffectModules(Module spellTree)
 	{
-		List<Module> effects = new ArrayList<Module>();
+		List<Module> effects = new ArrayList<>();
 		return getEffectModules(spellTree, effects);
 	}
 	
@@ -147,18 +146,13 @@ public class SpellStack {
 	
 	public IBloodType getAffinity()
 	{
-		Map<IBloodType, Integer> bloodLevels = new HashMap<IBloodType, Integer>();
-		for (Module effect : effects)
-		{
-			if (effect instanceof IHasAffinity)
-			{
-				Map<IBloodType, Integer> effectLevels = ((IHasAffinity) effect).getAffinityLevels();
-				for (IBloodType type : effectLevels.keySet())
-				{
-					bloodLevels.put(type, bloodLevels.get(type) + effectLevels.get(type));
-				}
+		Map<IBloodType, Integer> bloodLevels = new HashMap<>();
+		effects.stream().filter(effect -> effect instanceof IHasAffinity).forEach(effect -> {
+			Map<IBloodType, Integer> effectLevels = ((IHasAffinity) effect).getAffinityLevels();
+			for (IBloodType type : effectLevels.keySet()) {
+				bloodLevels.put(type, bloodLevels.get(type) + effectLevels.get(type));
 			}
-		}
+		});
 		
 		IBloodType bloodType = null;
 		int affinityLevel = 0;

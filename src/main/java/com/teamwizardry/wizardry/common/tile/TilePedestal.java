@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.common.tile;
 
-import com.teamwizardry.wizardry.api.block.IManaAcceptor;
+import com.teamwizardry.wizardry.api.block.IManaSink;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -78,7 +78,7 @@ public class TilePedestal extends TileEntity implements ITickable {
 
         BlockPos pos = new BlockPos(compound.getInteger("link_x"), compound.getInteger("link_y"), compound.getInteger("link_z"));
         IBlockState block = worldObj.getBlockState(pos);
-        if (!(block.getBlock() instanceof IManaAcceptor)) return;
+        if (!(block.getBlock() instanceof IManaSink)) return;
 
         // TODO
     }

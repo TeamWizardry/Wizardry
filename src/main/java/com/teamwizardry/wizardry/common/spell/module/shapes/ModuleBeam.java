@@ -65,10 +65,9 @@ public class ModuleBeam extends Module implements IContinuousCast
 
 		if (raycast == null) return false;
 
-		// TODO: add light colors
 		Vec3d cross = caster.getLook(1).crossProduct(new Vec3d(0, caster.getEyeHeight(), 0)).normalize().scale(caster.width / 2);
 		Vec3d casterVec = new Vec3d(caster.posX + cross.xCoord, caster.posY + caster.getEyeHeight() + cross.yCoord, caster.posZ + cross.zCoord);
-		LibParticles.MODULE_BEAM(player.worldObj, raycast.hitVec, casterVec, caster.getLook(1).scale(-1), (int) distance);
+		LibParticles.SHAPE_BEAM(player.worldObj, raycast.hitVec, casterVec, caster.getLook(1).scale(-1), (int) distance, stack.getSpellColor());
 
 		do
 		{

@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.common.block;
 import com.teamwizardry.librarianlib.common.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.common.base.block.BlockModContainer;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.block.IManaAcceptor;
+import com.teamwizardry.wizardry.api.block.IManaSink;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Created by Saad on 6/10/2016.
  */
-public class BlockCraftingPlate extends BlockModContainer implements IManaAcceptor {
+public class BlockCraftingPlate extends BlockModContainer implements IManaSink {
 
     public static final AxisAlignedBB AABB = new AxisAlignedBB(0.125, 0, 0.125, 0.875, 0.625, 0.875);
 
