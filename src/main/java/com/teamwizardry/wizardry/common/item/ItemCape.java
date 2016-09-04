@@ -1,27 +1,24 @@
 package com.teamwizardry.wizardry.common.item;
 
+import com.teamwizardry.librarianlib.common.base.item.ItemModArmor;
 import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 
 /**
  * Created by Saad on 8/30/2016.
  */
-public class ItemCape extends ItemArmor {
+public class ItemCape extends ItemModArmor {
 
 	public ItemCape() {
-		super(ArmorMaterial.LEATHER, 0, EntityEquipmentSlot.CHEST);
-		setRegistryName("cape");
-		setUnlocalizedName("cape");
-		GameRegistry.register(this);
+		super("cape", ArmorMaterial.LEATHER, EntityEquipmentSlot.CHEST);
 		setMaxStackSize(1);
 		setCreativeTab(Wizardry.tab);
 		setMaxDamage(0);
@@ -42,6 +39,6 @@ public class ItemCape extends ItemArmor {
 
 	@Override
 	public final String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
-		return null;
+		return new ResourceLocation(Wizardry.MODID, "empty").toString();
 	}
 }
