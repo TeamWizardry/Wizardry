@@ -39,6 +39,6 @@ public class ItemCape extends ItemModArmor {
 
 	@Override
 	public final String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) {
-		return new ResourceLocation(Wizardry.MODID, "empty").toString();
+		return new ResourceLocation(Wizardry.MODID, "textures/empty.png").toString();
 	}
 }
