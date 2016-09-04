@@ -22,7 +22,7 @@ public class BlockCloud extends BlockMod {
 
 	public BlockCloud() {
 		super("cloud", Material.CLOTH);
-		setHardness(0.3f);
+		setHardness(0.5f);
 		setSoundType(SoundType.CLOTH);
 	}
 
