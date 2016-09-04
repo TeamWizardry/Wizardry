@@ -32,7 +32,7 @@ public class ModelHallowedSpirit extends ModelBiped {
 		GlStateManager.disableBlend();
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		GlStateManager.color(1.0F, 1.0F, 1.0F, 0.7F);
+		GlStateManager.color(1.0F, 1.0F, 1.0F, 0.9F);
 		GlStateManager.rotate(entityIn.rotationYaw, 0, 1, 0);
 
 		super.render(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);

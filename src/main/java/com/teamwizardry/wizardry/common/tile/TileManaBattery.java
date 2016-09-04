@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.common.tile;
 
-import com.teamwizardry.wizardry.api.block.IManaAcceptor;
+import com.teamwizardry.wizardry.api.block.IManaSink;
 import com.teamwizardry.wizardry.common.fluid.FluidBlockMana;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import net.minecraft.block.state.IBlockState;
@@ -13,7 +13,7 @@ import net.minecraft.util.math.BlockPos;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class TileManaBattery extends TileEntity implements ITickable, IManaAcceptor {
+public class TileManaBattery extends TileEntity implements ITickable, IManaSink {
 
     public int MAX_MANA = 1000000;
     public int current_mana = 0;
@@ -55,7 +55,7 @@ public class TileManaBattery extends TileEntity implements ITickable, IManaAccep
                 TilePedestal pedestal = (TilePedestal) worldObj.getTileEntity(pedPos);
                 if (pedestals.contains(pedPos)) continue;
                 if (pedestal == null) return;
-                if (pedestal.getManaPearl() == null) return;
+                if (pedestal.getPearl() == null) return;
 
                 BlockPos oppPos = new BlockPos(pos.getX() - i, pedPos.getY(), pos.getZ() - j);
                 IBlockState oppBlock = worldObj.getBlockState(oppPos);
@@ -63,7 +63,7 @@ public class TileManaBattery extends TileEntity implements ITickable, IManaAccep
                 TilePedestal oppPed = (TilePedestal) worldObj.getTileEntity(oppPos);
                 if (pedestals.contains(oppPos)) continue;
                 if (oppPed == null) return;
-                if (oppPed.getManaPearl() == null) return;
+                if (oppPed.getPearl() == null) return;
 
                 pedestals.add(pedPos);
                 pedestals.add(oppPos);

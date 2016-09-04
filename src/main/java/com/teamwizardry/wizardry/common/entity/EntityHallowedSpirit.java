@@ -14,6 +14,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+import java.awt.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -61,7 +62,7 @@ public class EntityHallowedSpirit extends EntityMob {
 		}
 		entity.fallDistance = 0;
 
-		LibParticles.HALLOWED_SPIRIT_AIR_THROTTLE(worldObj, getPositionVector().addVector(0, getEyeHeight(), 0), entity);
+		LibParticles.AIR_THROTTLE(worldObj, getPositionVector().addVector(0, getEyeHeight(), 0), entity, Color.WHITE, Color.YELLOW);
 	}
 
 	@Override

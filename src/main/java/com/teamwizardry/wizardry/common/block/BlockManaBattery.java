@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.common.block;
 import com.teamwizardry.librarianlib.common.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.common.base.block.BlockModContainer;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.block.IManaAcceptor;
+import com.teamwizardry.wizardry.api.block.IManaSink;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -13,7 +13,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.jetbrains.annotations.Nullable;
 
-public class BlockManaBattery extends BlockModContainer implements IManaAcceptor {
+public class BlockManaBattery extends BlockModContainer implements IManaSink {
 
     public BlockManaBattery() {
         super("mana_battery", Material.GROUND);

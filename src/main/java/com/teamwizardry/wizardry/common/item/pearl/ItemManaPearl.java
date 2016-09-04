@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.common.item.pearl;
 
 import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
-import com.teamwizardry.wizardry.api.block.IManaAcceptor;
+import com.teamwizardry.wizardry.api.block.IManaSink;
 import com.teamwizardry.wizardry.common.item.ItemWizardry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -23,7 +23,7 @@ public class ItemManaPearl extends ItemWizardry {
 
     @Override
     public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
-        if (stack != null && world.getBlockState(pos).getBlock() instanceof IManaAcceptor) {
+        if (stack != null && world.getBlockState(pos).getBlock() instanceof IManaSink) {
             ItemNBTHelper.setInt(stack, "link_x", pos.getX());
             ItemNBTHelper.setInt(stack, "link_y", pos.getY());
             ItemNBTHelper.setInt(stack, "link_z", pos.getZ());

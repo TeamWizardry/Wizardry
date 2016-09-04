@@ -24,3 +24,5 @@ run
 
 libs/librarianlib-1.0.jar
 kotlinlib/
+
+.DS_Store
