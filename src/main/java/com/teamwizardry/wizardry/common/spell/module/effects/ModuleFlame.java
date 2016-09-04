@@ -1,7 +1,13 @@
 package com.teamwizardry.wizardry.common.spell.module.effects;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.teamwizardry.wizardry.api.capability.bloods.BloodRegistry;
+import com.teamwizardry.wizardry.api.capability.bloods.IBloodType;
+import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.api.module.attribute.Attribute;
+import com.teamwizardry.wizardry.api.spell.IHasAffinity;
+import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.spell.SpellEntity;
+import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -13,16 +19,9 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import com.teamwizardry.wizardry.api.capability.bloods.BloodRegistry;
-import com.teamwizardry.wizardry.api.capability.bloods.IBloodType;
-import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.attribute.Attribute;
-import com.teamwizardry.wizardry.api.spell.IHasAffinity;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.api.spell.SpellEntity;
-import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
-import com.teamwizardry.wizardry.client.fx.particle.effect.EffectFire;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ModuleFlame extends Module implements IHasAffinity {
     public ModuleFlame(ItemStack stack) {
@@ -93,8 +92,8 @@ public class ModuleFlame extends Module implements IHasAffinity {
                 }
             }
         }
-
-        new EffectFire(500).spawn(caster.worldObj, caster.getPositionVector().add(new Vec3d(0, 1, 0)));
+        
+        // TODO: Removed fire effect particle code
 
         return true;
     }

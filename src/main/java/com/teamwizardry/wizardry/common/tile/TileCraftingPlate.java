@@ -2,12 +2,10 @@ package com.teamwizardry.wizardry.common.tile;
 
 import com.teamwizardry.librarianlib.common.structure.StructureMatchResult;
 import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
-import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.Infusable;
 import com.teamwizardry.wizardry.api.item.PearlType;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.ModuleRegistry;
-import com.teamwizardry.wizardry.client.fx.particle.SparkleFX;
 import com.teamwizardry.wizardry.client.helper.CraftingPlateItemStackHelper;
 import com.teamwizardry.wizardry.common.Structures;
 import com.teamwizardry.wizardry.common.spell.parsing.Parser;
@@ -29,7 +27,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 /**
@@ -150,16 +147,8 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
                 worldObj.removeEntity(item);
             }
             if (update) worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
-
-            SparkleFX ambient = Wizardry.proxy.spawnParticleSparkle(worldObj, new Vec3d(pos.getX(), pos.getY(), pos.getZ()), new Vec3d(8, 8, 8));
-            ambient.setAlpha(0.5f);
-            ambient.setScale(0.5f);
-            ambient.setMaxAge(100);
-            ambient.setFadeOut();
-            ambient.setShrink();
-            ambient.setFadeIn();
-            ambient.setJitter(8, 0.1, 0.1, 0.1);
-            ambient.setRandomDirection(0.2, 0.2, 0.2);
+            
+            // TODO: Removed particle spawning code (particle aura)
 
 
             // > 1 to prevent java.lang.ArithmeticException: / by zero in TileCraftingPlateRenderer.class
@@ -177,44 +166,19 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
                 }
 
             if (isCrafting) {
-                SparkleFX ambient2 = Wizardry.proxy.spawnParticleSparkle(worldObj, new Vec3d(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5));
-                ambient2.setFadeIn();
-                ambient2.setMaxAge(10);
-                ambient2.setScale(0.5f);
-                ambient2.setAlpha(0.1f);
-                ambient2.setGrow();
-                ambient2.setShrink();
-                ambient2.setFadeOut();
-                ambient2.setBlurred();
+                // TODO: Removed particle code (crafting particle)
+                
                 for (int i = 0; i < 5; i++)
-                    Wizardry.proxy.spawnParticleLensFlare(worldObj, new Vec3d(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5), 50, 0.3);
+                    ; // TODO: Removed particle code (lens flare particle)
 
             } else if (isAnimating) {
                 for (int i = 0; i < 10; i++) {
-                    SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(worldObj, new Vec3d(pos.getX() + 0.5, pos.getX() + 1, pos.getZ() + 0.5));
-                    fizz.setFadeIn();
-                    fizz.setMaxAge(50);
-                    fizz.setScale(0.5f);
-                    fizz.setAlpha(0.1f);
-                    fizz.setGrow();
-                    fizz.setShrink();
-                    fizz.setFadeOut();
-                    fizz.setJitter(10, 0.01, 0, 0.01);
-                    fizz.setRandomDirection(0.05, 0, 0.05);
-                    fizz.setMotion(0, ThreadLocalRandom.current().nextDouble(0.05, 0.2), 0);
+                    // TODO: Removed particle code (randomized particle things?)
                 }
 
             } else if (animationComplete) {
                 for (int i = 0; i < 10; i++) {
-                    SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(worldObj, new Vec3d(pos.getX() + pearl.getPoint().xCoord + 0.5, pos.getX() + pearl.getPoint().yCoord, pos.getZ() + pearl.getPoint().zCoord + 0.5));
-                    fizz.setFadeIn();
-                    fizz.setMaxAge(10);
-                    fizz.setScale(0.5f);
-                    fizz.setAlpha(0.1f);
-                    fizz.setGrow();
-                    fizz.setShrink();
-                    fizz.setFadeOut();
-                    fizz.setRandomDirection(0.1, 0.1, 0.1);
+                    // TODO: Removed particle code (particle explosion)
                 }
                 structureComplete = false;
             }
@@ -242,18 +206,7 @@ public class TileCraftingPlate extends TileEntity implements ITickable {
                     if (!worldObj.isRemote)
                         worldObj.spawnEntityInWorld(pearlItem);
 
-                    for (int i = 0; i < 100 * Wizardry.proxy.getParticleDensity() / 100; i++) {
-                        SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(worldObj, new Vec3d(pos.getX() + 0.5, pos.getY() + pearl.getPoint().yCoord, pos.getZ() + 0.5));
-                        fizz.setFadeIn();
-                        fizz.setMaxAge(20);
-                        fizz.setScale(0.5f);
-                        fizz.setAlpha(0.1f);
-                        fizz.setGrow();
-                        fizz.setShrink();
-                        fizz.setFadeOut();
-                        fizz.setJitter(10, 0.005, 0.005, 0.005);
-                        fizz.setRandomDirection(0.05, 0.005, 0.05);
-                    }
+                    // TODO: Removed particle code (some random particles at pearl pos?)
 
                     pearl = null;
                     inventory = new ArrayList<>();
