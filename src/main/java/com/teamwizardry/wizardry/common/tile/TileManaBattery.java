@@ -55,7 +55,7 @@ public class TileManaBattery extends TileEntity implements ITickable, IManaSink 
                 TilePedestal pedestal = (TilePedestal) worldObj.getTileEntity(pedPos);
                 if (pedestals.contains(pedPos)) continue;
                 if (pedestal == null) return;
-                if (pedestal.getManaPearl() == null) return;
+                if (pedestal.getPearl() == null) return;
 
                 BlockPos oppPos = new BlockPos(pos.getX() - i, pedPos.getY(), pos.getZ() - j);
                 IBlockState oppBlock = worldObj.getBlockState(oppPos);
@@ -63,7 +63,7 @@ public class TileManaBattery extends TileEntity implements ITickable, IManaSink 
                 TilePedestal oppPed = (TilePedestal) worldObj.getTileEntity(oppPos);
                 if (pedestals.contains(oppPos)) continue;
                 if (oppPed == null) return;
-                if (oppPed.getManaPearl() == null) return;
+                if (oppPed.getPearl() == null) return;
 
                 pedestals.add(pedPos);
                 pedestals.add(oppPos);

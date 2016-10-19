@@ -17,6 +17,7 @@ public class ModBlocks {
 	public static BlockManaBattery MANA_BATTERY;
 	public static BlockPedestal PEDESTAL;
 	public static BlockCloud CLOUD;
+	public static BlockManaMagnet MANA_MAGNET;
 
 	public static BlockNacre NACRE;
 	public static BlockNacreBrick NACRE_BRICK;
@@ -29,5 +30,6 @@ public class ModBlocks {
 		CLOUD = new BlockCloud();
 		NACRE = new BlockNacre();
 		NACRE_BRICK = new BlockNacreBrick();
+		MANA_MAGNET = new BlockManaMagnet();
 	}
 }

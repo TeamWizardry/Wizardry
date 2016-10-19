@@ -254,7 +254,7 @@ public class LibParticles {
 	public static void SHAPE_BEAM(World world, Vec3d target, Vec3d origin, Vec3d reverseNormal, int distance, Color color) {
 		ParticleBuilder glitter = new ParticleBuilder(10);
 		glitter.setColor(new Color(1f, 1f, 1f, 0.1f));
-		glitter.setPositionFunction(new InterpHelix(Vec3d.ZERO, reverseNormal, 0.15f, 0.15f, 1, 0));
+		glitter.setPositionFunction(new InterpHelix(Vec3d.ZERO, reverseNormal, 0f, 0.15f, 1, 0));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 
 		float[] hsbVals = new float[3];
