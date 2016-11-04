@@ -32,4 +32,8 @@ public class ModBlocks {
 		NACRE_BRICK = new BlockNacreBrick();
 		MANA_MAGNET = new BlockManaMagnet();
 	}
+
+	public static void initModel() {
+		CRAFTING_PLATE.initModel();
+	}
 }

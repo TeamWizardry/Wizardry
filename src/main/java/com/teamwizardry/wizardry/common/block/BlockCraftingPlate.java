@@ -2,8 +2,11 @@ package com.teamwizardry.wizardry.common.block;
 
 import com.teamwizardry.librarianlib.common.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.common.base.block.BlockModContainer;
+import com.teamwizardry.librarianlib.common.base.block.TileMod;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.block.IManaSink;
+import com.teamwizardry.wizardry.api.util.CapsUtils;
+import com.teamwizardry.wizardry.client.render.TileCraftingPlateRenderer;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -18,6 +21,9 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -32,6 +38,12 @@ public class BlockCraftingPlate extends BlockModContainer implements IManaSink {
 		setHardness(1.0F);
 		setLightLevel(15);
 		setSoundType(SoundType.STONE);
+		TileMod.registerTile(TileCraftingPlate.class, "crafting_plate");
+	}
+
+	@SideOnly(Side.CLIENT)
+	public void initModel() {
+		ClientRegistry.bindTileEntitySpecialRenderer(TileCraftingPlate.class, new TileCraftingPlateRenderer());
 	}
 
 	@Nullable
@@ -46,14 +58,30 @@ public class BlockCraftingPlate extends BlockModContainer implements IManaSink {
 
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-		TileCraftingPlate te = getTE(worldIn, pos);
 		if (!worldIn.isRemote) {
-			// TODO
-			//if (!te.isStructureComplete()) {
-				//Schematic schematic = new Schematic("spell_crafter");
-				//te.setStructureComplete(schematic.check(worldIn, pos, this, playerIn));
-			//}
+			TileCraftingPlate plate = getTE(worldIn, pos);
+
+			if ((heldItem != null) && (heldItem.stackSize > 0)) {
+				ItemStack stack = heldItem.copy();
+				stack.stackSize = 1;
+				--heldItem.stackSize;
+				for (int i = 0; i < plate.inventory.getSlots(); i++)
+					if (plate.inventory.getStackInSlot(i) == null) {
+						plate.inventory.insertItem(i, stack, false);
+						break;
+					}
+				playerIn.openContainer.detectAndSendChanges();
+
+			} else if (plate.output.getStackInSlot(0) != null) {
+				playerIn.setHeldItem(hand, plate.output.extractItem(0, plate.output.getStackInSlot(0).stackSize, false));
+				playerIn.openContainer.detectAndSendChanges();
+
+			} else if (CapsUtils.getOccupiedSlotCount(plate.inventory) > 0) {
+				playerIn.setHeldItem(hand, plate.inventory.extractItem(CapsUtils.getOccupiedSlotCount(plate.inventory), 1, false));
+				playerIn.openContainer.detectAndSendChanges();
+			}
 		}
+		worldIn.notifyBlockUpdate(pos, worldIn.getBlockState(pos), worldIn.getBlockState(pos), 3);
 		return true;
 	}
 

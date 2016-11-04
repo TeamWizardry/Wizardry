@@ -52,7 +52,6 @@ public class CommonProxy {
 		MinecraftForge.EVENT_BUS.register(new EventHandler());
 		MinecraftForge.EVENT_BUS.register(new AchievementEvents());
 		MinecraftForge.EVENT_BUS.register(new ModCapabilities());
-
 	}
 
 	public void init(FMLInitializationEvent event) {

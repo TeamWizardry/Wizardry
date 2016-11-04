@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.block;
 
 import com.teamwizardry.librarianlib.common.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.common.base.block.BlockModContainer;
+import com.teamwizardry.librarianlib.common.base.block.TileMod;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.block.IManaSink;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
@@ -16,6 +17,7 @@ public class BlockManaBattery extends BlockModContainer implements IManaSink {
 
 	public BlockManaBattery() {
 		super("mana_battery", Material.GROUND);
+		TileMod.registerTile(TileManaBattery.class, "mana_battery");
 	}
 
 	@Nullable

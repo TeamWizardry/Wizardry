@@ -29,7 +29,7 @@ public class Parser {
 	 * provided
 	 */
 	public Module parseInventoryToModule() {
-		return parseInventoryToModule(ModuleType.EVENT, this.getDefaultType(ModuleType.EVENT));
+		return parseInventoryToModule(ModuleType.EVENT, getDefaultType(ModuleType.EVENT));
 	}
 
 	@Nullable

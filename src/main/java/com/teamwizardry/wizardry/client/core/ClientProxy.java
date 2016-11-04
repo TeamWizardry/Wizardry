@@ -8,6 +8,7 @@ import com.teamwizardry.wizardry.client.render.glow.GlowingItemEventHandler;
 import com.teamwizardry.wizardry.client.render.glow.GlowingItemRenderLayer;
 import com.teamwizardry.wizardry.common.core.CommonProxy;
 import com.teamwizardry.wizardry.common.tile.TilePedestal;
+import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModEntities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -34,6 +35,7 @@ public class ClientProxy extends CommonProxy {
 
 		new Shaders();
 
+		ModBlocks.initModel();
 		ModEntities.initModels();
 	}
 
