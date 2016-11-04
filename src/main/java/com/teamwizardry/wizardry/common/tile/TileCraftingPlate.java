@@ -8,7 +8,6 @@ import com.teamwizardry.wizardry.api.Constants.NBT;
 import com.teamwizardry.wizardry.api.block.IManaSink;
 import com.teamwizardry.wizardry.api.item.PearlType;
 import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.util.CapsUtils;
 import com.teamwizardry.wizardry.common.Structures;
 import com.teamwizardry.wizardry.common.spell.parsing.Parser;
@@ -29,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Created by Saad on 6/10/2016.
@@ -74,7 +74,7 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink {
 		List<ItemStack> items = new ArrayList<>();
 		items.add(list.remove(0));
 		while (!list.isEmpty()) {
-			if (ModuleRegistry.areItemsEqual(list.get(0), items.get(items.size() - 1)))
+			if (ItemStack.areItemStacksEqual(list.get(0), items.get(items.size() - 1)))
 				items.get(items.size() - 1).stackSize += list.remove(0).stackSize;
 			else
 				items.add(list.remove(0));
@@ -114,7 +114,7 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink {
 			else isCrafting = false;
 
 			// TODO condenser is broken
-			List<ItemStack> condensed = condenseItemList(CapsUtils.getListOfItems(inventory));
+			List<ItemStack> condensed = condenseItemList(CapsUtils.getListOfItems(inventory).stream().collect(Collectors.toList()));
 			Parser spellParser = new Parser(condensed);
 			Module parsedSpell = null;
 			try {

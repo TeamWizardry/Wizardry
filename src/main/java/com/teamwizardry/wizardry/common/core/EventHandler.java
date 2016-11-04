@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.common.core;
 
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.Constants.MISC;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.TeleportUtil;
 import com.teamwizardry.wizardry.common.achievement.Achievements;
@@ -16,25 +16,26 @@ import net.minecraft.init.Items;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.client.event.TextureStitchEvent.Pre;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
 public class EventHandler {
 
-	private ArrayList<UUID> fallResetUUIDs = new ArrayList<>();
+	private final ArrayList<UUID> fallResetUUIDs = new ArrayList<>();
 
 	@SubscribeEvent
-	public void onTextureStitchEvent(TextureStitchEvent.Pre event) {
-		event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, Constants.MISC.PARTICLES_SPARKLE));
-		event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, Constants.MISC.PARTICLES_SPARKLE_BLURRED));
+	public void onTextureStitchEvent(Pre event) {
+		event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE));
+		event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, "particles/hexagon"));
 		event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, "particles/octagon"));
 		event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, "particles/hexagon_blur_1"));
@@ -58,7 +59,7 @@ public class EventHandler {
 	}
 
 	@SubscribeEvent
-	public void onBlockBreak(BlockEvent.BreakEvent event) {
+	public void onBlockBreak(BreakEvent event) {
 		if (event.getWorld().getBlockState(event.getPos()).getBlock() == ModBlocks.PEDESTAL) {
 			TilePedestal pedestal = (TilePedestal) event.getWorld().getTileEntity(event.getPos());
 			//for (pedestal.getLinkedPedestals())
@@ -66,8 +67,8 @@ public class EventHandler {
 	}
 
 	@SubscribeEvent
-	public void tickEvent(TickEvent.WorldTickEvent event) {
-		if (event.phase != TickEvent.Phase.START) {
+	public void tickEvent(WorldTickEvent event) {
+		if (event.phase != Phase.START) {
 			if (!fallResetUUIDs.isEmpty())
 				event.world.playerEntities.stream().filter(entity -> fallResetUUIDs.contains(entity.getUniqueID())).forEach(entity -> entity.fallDistance = -255);
 			fallResetUUIDs.clear();
