@@ -1,11 +1,11 @@
 package com.teamwizardry.wizardry.common.tile;
 
 import com.teamwizardry.librarianlib.common.base.block.TileMod;
-import com.teamwizardry.librarianlib.common.structure.StructureMatchResult;
 import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
 import com.teamwizardry.librarianlib.common.util.saving.Save;
 import com.teamwizardry.wizardry.api.Constants.NBT;
 import com.teamwizardry.wizardry.api.block.IManaSink;
+import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.api.item.PearlType;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.util.CapsUtils;
@@ -33,10 +33,8 @@ import java.util.stream.Collectors;
 /**
  * Created by Saad on 6/10/2016.
  */
-public class TileCraftingPlate extends TileMod implements ITickable, IManaSink {
+public class TileCraftingPlate extends TileMod implements ITickable, IManaSink, IStructure {
 
-	@Save
-	public boolean structureComplete;
 	@Save
 	public boolean isCrafting;
 	@Save
@@ -89,13 +87,7 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink {
 
 	@Override
 	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-		return (Objects.equals(capability, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)) ? (T) inventory : super.getCapability(capability, facing);
-	}
-
-	public void validateStructure() {
-		Structures.reload();
-		// TODO
-		StructureMatchResult match = Structures.craftingAltar.match(worldObj, pos);
+		return (Objects.equals(capability, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)) ? ((T) ((facing == EnumFacing.DOWN) ? output : inventory)) : super.getCapability(capability, facing);
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -107,13 +99,12 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink {
 	@Override
 	public void update() {
 		if (worldObj.isRemote) return;
-		if (!structureComplete) return;
+		if (Structures.craftingAltar.match(worldObj, pos).getNonAirErrors().isEmpty()) return;
 
 		if (isCrafting) {
 			if (craftingTimeLeft > 0) --craftingTimeLeft;
 			else isCrafting = false;
 
-			// TODO condenser is broken
 			List<ItemStack> condensed = condenseItemList(CapsUtils.getListOfItems(inventory).stream().collect(Collectors.toList()));
 			Parser spellParser = new Parser(condensed);
 			Module parsedSpell = null;

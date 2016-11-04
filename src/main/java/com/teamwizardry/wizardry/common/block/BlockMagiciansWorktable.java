@@ -46,17 +46,17 @@ public class BlockMagiciansWorktable extends BlockModContainer {
 		BlockPos part2Pos = pos.offset(offsetDir);
 		Block block = worldIn.getBlockState(part2Pos).getBlock();
 		if (block.isReplaceable(worldIn, part2Pos)) {
-			worldIn.setBlockState(part2Pos, this.getDefaultState().withProperty(FACING, placerFacing.getOpposite()).withProperty(ISLEFTSIDE, false));
-			return this.getDefaultState().withProperty(FACING, placerFacing.getOpposite()).withProperty(ISLEFTSIDE, true);
+			worldIn.setBlockState(part2Pos, getDefaultState().withProperty(FACING, placerFacing.getOpposite()).withProperty(ISLEFTSIDE, false));
+			return getDefaultState().withProperty(FACING, placerFacing.getOpposite()).withProperty(ISLEFTSIDE, true);
 		} else {
 			block = worldIn.getBlockState(part2Pos.offset(offsetDir.getOpposite(), 2)).getBlock();
 			part2Pos = part2Pos.offset(offsetDir.getOpposite(), 2);
 			if (block.isReplaceable(worldIn, part2Pos)) {
-				worldIn.setBlockState(part2Pos, this.getDefaultState().withProperty(FACING, placerFacing.getOpposite()).withProperty(ISLEFTSIDE, true));
+				worldIn.setBlockState(part2Pos, getDefaultState().withProperty(FACING, placerFacing.getOpposite()).withProperty(ISLEFTSIDE, true));
 			} else {
 				return Blocks.AIR.getDefaultState();
 			}
-			return this.getDefaultState().withProperty(FACING, placerFacing.getOpposite()).withProperty(ISLEFTSIDE, false);
+			return getDefaultState().withProperty(FACING, placerFacing.getOpposite()).withProperty(ISLEFTSIDE, false);
 		}
 	}
 
@@ -75,7 +75,7 @@ public class BlockMagiciansWorktable extends BlockModContainer {
 	}
 
 	private BlockPos getOtherTableBlock(IBlockState tablePart, BlockPos tablePartPos) {
-		return tablePart.getValue(ISLEFTSIDE) ? tablePartPos.offset(tablePart.getValue(FACING).rotateYCCW()) : tablePartPos.offset(tablePart.getValue(FACING).rotateY());
+		return tablePartPos.offset(tablePart.getValue(ISLEFTSIDE) ? tablePart.getValue(FACING).rotateYCCW() : tablePart.getValue(FACING).rotateY());
 	}
 
 	@Override
@@ -91,7 +91,7 @@ public class BlockMagiciansWorktable extends BlockModContainer {
 
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
-		return this.getDefaultState().withProperty(ISLEFTSIDE, (meta & 4) != 0).withProperty(FACING, EnumFacing.getHorizontal(meta & 3));
+		return getDefaultState().withProperty(ISLEFTSIDE, (meta & 4) != 0).withProperty(FACING, EnumFacing.getHorizontal(meta & 3));
 	}
 
 	@Override

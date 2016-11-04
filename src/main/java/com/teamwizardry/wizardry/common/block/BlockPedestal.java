@@ -16,7 +16,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -26,7 +25,6 @@ public class BlockPedestal extends BlockModContainer implements IManaSink {
 
 	public BlockPedestal() {
 		super("pedestal", Material.ROCK);
-		GameRegistry.registerTileEntity(TilePedestal.class, "pedestal");
 		setCreativeTab(Wizardry.tab);
 	}
 

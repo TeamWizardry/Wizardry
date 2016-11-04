@@ -18,7 +18,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -33,7 +32,6 @@ public class BlockCraftingPlate extends BlockModContainer implements IManaSink {
 		setHardness(1.0F);
 		setLightLevel(15);
 		setSoundType(SoundType.STONE);
-		GameRegistry.registerTileEntity(TileCraftingPlate.class, "crafting_altar");
 	}
 
 	@Nullable
@@ -49,7 +47,6 @@ public class BlockCraftingPlate extends BlockModContainer implements IManaSink {
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
 		TileCraftingPlate te = getTE(worldIn, pos);
-		te.validateStructure();
 		if (!worldIn.isRemote) {
 			// TODO
 			//if (!te.isStructureComplete()) {

@@ -10,14 +10,12 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.jetbrains.annotations.Nullable;
 
 public class BlockManaBattery extends BlockModContainer implements IManaSink {
 
 	public BlockManaBattery() {
 		super("mana_battery", Material.GROUND);
-		GameRegistry.registerTileEntity(TileManaBattery.class, "mana_battery");
 	}
 
 	@Nullable
