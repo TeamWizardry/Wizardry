@@ -15,35 +15,36 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleEnchantment extends Module implements IModifier, IRuntimeModifier {
-    public ModuleEnchantment(ItemStack stack) {
-        super(stack);
-        canHaveChildren = false;
-    }
 
-    @Override
-    public ModuleType getType() {
-        return ModuleType.EFFECT;
-    }
+	public ModuleEnchantment(ItemStack stack) {
+		super(stack);
+		canHaveChildren = false;
+	}
 
-    @Override
-    public String getDescription() {
-        return "Attempts to apply the given enchantment to the spell effect.";
-    }
+	@Override
+	public ModuleType getType() {
+		return ModuleType.EFFECT;
+	}
 
-    @Override
-    public String getDisplayName() {
-        return "Apply Enchantment";
-    }
+	@Override
+	public String getDescription() {
+		return "Attempts to apply the given enchantment to the spell effect.";
+	}
 
-    @Override
-    public void apply(AttributeMap map) {
-        map.putModifier(Attribute.MANA, new AttributeModifier(Operation.MULTIPLY, 2));
-        map.putModifier(Attribute.BURNOUT, new AttributeModifier(Operation.MULTIPLY, 2));
-    }
+	@Override
+	public String getDisplayName() {
+		return "Apply Enchantment";
+	}
 
-    @Override
-    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public void apply(AttributeMap map) {
+		map.putModifier(Attribute.MANA, new AttributeModifier(Operation.MULTIPLY, 2.0));
+		map.putModifier(Attribute.BURNOUT, new AttributeModifier(Operation.MULTIPLY, 2.0));
+	}
+
+	@Override
+	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

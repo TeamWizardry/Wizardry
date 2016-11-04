@@ -5,16 +5,16 @@ import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.util.ResourceLocation;
 
 public enum Structures {
-    INSTANCE;
+	INSTANCE;
 
-    public static Structure craftingAltar;
+	public static Structure craftingAltar;
 
-    Structures() {
-        reload();
-    }
+	Structures() {
+		reload();
+	}
 
-    public static void reload() {
-        craftingAltar = new Structure(new ResourceLocation(Wizardry.MODID, "crafting_altar"));
-    }
+	public static void reload() {
+		craftingAltar = new Structure(new ResourceLocation(Wizardry.MODID, "crafting_altar"));
+	}
 }
 

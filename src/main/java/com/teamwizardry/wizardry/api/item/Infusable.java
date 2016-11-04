@@ -7,11 +7,9 @@ import net.minecraft.item.ItemStack;
  */
 public interface Infusable {
 
-    default PearlType getType(ItemStack stack) {
-        if (stack.hasTagCompound())
-            if (stack.getTagCompound().hasKey("type"))
-                return PearlType.valueOf(stack.getTagCompound().getString("type").toUpperCase());
-            else return PearlType.MUNDANE;
-        else return PearlType.MUNDANE;
-    }
+	default PearlType getType(ItemStack stack) {
+		if (stack.hasTagCompound())
+			return stack.getTagCompound().hasKey("type") ? PearlType.valueOf(stack.getTagCompound().getString("type").toUpperCase()) : PearlType.MUNDANE;
+		else return PearlType.MUNDANE;
+	}
 }

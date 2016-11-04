@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.spell.module.effects;
 
+import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.capability.bloods.BloodRegistry;
 import com.teamwizardry.wizardry.api.capability.bloods.IBloodType;
 import com.teamwizardry.wizardry.api.module.Module;
@@ -56,17 +57,17 @@ public class ModuleFlame extends Module implements IHasAffinity {
 	@Override
 	public NBTTagCompound getModuleData() {
 		NBTTagCompound compound = super.getModuleData();
-		compound.setInteger(DURATION, (int) attributes.apply(Attribute.DURATION, 1));
-		compound.setDouble(MANA, attributes.apply(Attribute.MANA, 10));
-		compound.setDouble(BURNOUT, attributes.apply(Attribute.BURNOUT, 10));
+		compound.setInteger(Constants.Module.DURATION, (int) attributes.apply(Attribute.DURATION, 1.0));
+		compound.setDouble(Constants.Module.MANA, attributes.apply(Attribute.MANA, 10.0));
+		compound.setDouble(Constants.Module.BURNOUT, attributes.apply(Attribute.BURNOUT, 10.0));
 		return compound;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
-		if (caster instanceof EntityItem && !caster.worldObj.isRemote) {
-			int duration = spell.getInteger(DURATION);
+		if (caster.worldObj.isRemote) return false;
+		if (caster instanceof EntityItem) {
+			int duration = spell.getInteger(Constants.Module.DURATION);
 			EntityItem item = (EntityItem) caster;
 			ItemStack result = FurnaceRecipes.instance().getSmeltingResult(item.getEntityItem());
 			if (result != null) {
@@ -85,8 +86,8 @@ public class ModuleFlame extends Module implements IHasAffinity {
 				}
 			}
 		} else if (caster instanceof EntityLivingBase) {
-			int duration = spell.getInteger(DURATION);
-			caster.setFire(MathHelper.ceiling_double_int(duration / 20.));
+			int duration = spell.getInteger(Constants.Module.DURATION);
+			caster.setFire(MathHelper.ceiling_double_int(duration / 20.0));
 		} else if (caster instanceof SpellEntity) {
 			BlockPos pos = caster.getPosition();
 			IBlockState state = caster.worldObj.getBlockState(pos);
@@ -102,7 +103,7 @@ public class ModuleFlame extends Module implements IHasAffinity {
 			}
 		}
 
-		LibParticles.EFFECT_FIRE(caster.worldObj, caster.getPositionVector().addVector(0, 1, 0), Vec3d.ZERO, 0.7f);
+		LibParticles.EFFECT_FIRE(caster.worldObj, caster.getPositionVector().addVector(0.0, 1.0, 0.0), Vec3d.ZERO, 0.7f);
 
 		return true;
 	}

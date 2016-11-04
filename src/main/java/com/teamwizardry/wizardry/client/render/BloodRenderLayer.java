@@ -7,8 +7,10 @@ import com.teamwizardry.wizardry.api.capability.bloods.IBloodType;
 import com.teamwizardry.wizardry.client.fx.Shaders;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.model.ModelBiped.ArmPose;
 import net.minecraft.client.model.ModelPlayer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.GlStateManager.Profile;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.entity.player.EnumPlayerModelParts;
@@ -20,99 +22,99 @@ import javax.annotation.Nonnull;
 
 public class BloodRenderLayer implements LayerRenderer<AbstractClientPlayer> {
 
-    private RenderPlayer render;
+	private final RenderPlayer render;
 
-    public BloodRenderLayer(RenderPlayer renderIn) {
-        render = renderIn;
-    }
+	public BloodRenderLayer(RenderPlayer renderIn) {
+		render = renderIn;
+	}
 
-    @Override
-    public void doRenderLayer(@Nonnull AbstractClientPlayer entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-        IBloodType type = WizardryCapabilityProvider.get(entity).getBloodType();
-        if (type != null) {
-            render.bindTexture(type.getBloodTexture(entity));
-            ClientUtilMethods.glColor(type.getBloodColor(entity));
-            setModelVisibilities(entity);
-            GlStateManager.enableBlendProfile(GlStateManager.Profile.PLAYER_SKIN);
+	@Override
+	public void doRenderLayer(@Nonnull AbstractClientPlayer entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+		IBloodType type = WizardryCapabilityProvider.get(entity).getBloodType();
+		if (type != null) {
+			render.bindTexture(type.getBloodTexture(entity));
+			ClientUtilMethods.glColor(type.getBloodColor(entity));
+			setModelVisibilities(entity);
+			GlStateManager.enableBlendProfile(Profile.PLAYER_SKIN);
 
-            boolean glowing = type.isGlowing(entity);
+			boolean glowing = type.isGlowing(entity);
 
-            if (glowing) {
-                GlStateManager.disableLighting();
-                ShaderHelper.INSTANCE.useShader(Shaders.rawColor);
-            }
+			if (glowing) {
+				GlStateManager.disableLighting();
+				ShaderHelper.INSTANCE.useShader(Shaders.rawColor);
+			}
 
-            render.getMainModel().render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
+			render.getMainModel().render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
 
-            if (glowing) {
-                GlStateManager.enableLighting();
-                ShaderHelper.INSTANCE.releaseShader();
-            }
+			if (glowing) {
+				GlStateManager.enableLighting();
+				ShaderHelper.INSTANCE.releaseShader();
+			}
 
-            GlStateManager.disableBlendProfile(GlStateManager.Profile.PLAYER_SKIN);
-            GlStateManager.color(1F, 1F, 1F);
-        }
-    }
+			GlStateManager.disableBlendProfile(Profile.PLAYER_SKIN);
+			GlStateManager.color(1.0F, 1.0F, 1.0F);
+		}
+	}
 
-    private void setModelVisibilities(AbstractClientPlayer clientPlayer) {
-        ModelPlayer modelplayer = render.getMainModel();
+	private void setModelVisibilities(AbstractClientPlayer clientPlayer) {
+		ModelPlayer modelplayer = render.getMainModel();
 
-        if (clientPlayer.isSpectator()) {
-            modelplayer.setInvisible(false);
-            modelplayer.bipedHead.showModel = true;
-            modelplayer.bipedHeadwear.showModel = true;
-        } else {
-            ItemStack stackMain = clientPlayer.getHeldItemMainhand();
-            ItemStack stackOff = clientPlayer.getHeldItemOffhand();
-            modelplayer.setInvisible(true);
-            modelplayer.bipedHeadwear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.HAT);
-            modelplayer.bipedBodyWear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.JACKET);
-            modelplayer.bipedLeftLegwear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.LEFT_PANTS_LEG);
-            modelplayer.bipedRightLegwear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.RIGHT_PANTS_LEG);
-            modelplayer.bipedLeftArmwear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.LEFT_SLEEVE);
-            modelplayer.bipedRightArmwear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.RIGHT_SLEEVE);
-            modelplayer.isSneak = clientPlayer.isSneaking();
-            ModelBiped.ArmPose poseMain = ModelBiped.ArmPose.EMPTY;
-            ModelBiped.ArmPose poseOff = ModelBiped.ArmPose.EMPTY;
+		if (clientPlayer.isSpectator()) {
+			modelplayer.setInvisible(false);
+			modelplayer.bipedHead.showModel = true;
+			modelplayer.bipedHeadwear.showModel = true;
+		} else {
+			ItemStack stackMain = clientPlayer.getHeldItemMainhand();
+			ItemStack stackOff = clientPlayer.getHeldItemOffhand();
+			modelplayer.setInvisible(true);
+			modelplayer.bipedHeadwear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.HAT);
+			modelplayer.bipedBodyWear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.JACKET);
+			modelplayer.bipedLeftLegwear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.LEFT_PANTS_LEG);
+			modelplayer.bipedRightLegwear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.RIGHT_PANTS_LEG);
+			modelplayer.bipedLeftArmwear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.LEFT_SLEEVE);
+			modelplayer.bipedRightArmwear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.RIGHT_SLEEVE);
+			modelplayer.isSneak = clientPlayer.isSneaking();
+			ArmPose poseMain = ArmPose.EMPTY;
 
-            if (stackMain != null) {
-                poseMain = ModelBiped.ArmPose.ITEM;
+			if (stackMain != null) {
+				poseMain = ArmPose.ITEM;
 
-                if (clientPlayer.getItemInUseCount() > 0) {
-                    EnumAction enumaction = stackMain.getItemUseAction();
+				if (clientPlayer.getItemInUseCount() > 0) {
+					EnumAction enumaction = stackMain.getItemUseAction();
 
-                    if (enumaction == EnumAction.BLOCK) {
-                        poseMain = ModelBiped.ArmPose.BLOCK;
-                    } else if (enumaction == EnumAction.BOW) {
-                        poseMain = ModelBiped.ArmPose.BOW_AND_ARROW;
-                    }
-                }
-            }
+					if (enumaction == EnumAction.BLOCK) {
+						poseMain = ArmPose.BLOCK;
+					} else if (enumaction == EnumAction.BOW) {
+						poseMain = ArmPose.BOW_AND_ARROW;
+					}
+				}
+			}
 
-            if (stackOff != null) {
-                poseOff = ModelBiped.ArmPose.ITEM;
+			ArmPose poseOff = ArmPose.EMPTY;
+			if (stackOff != null) {
+				poseOff = ArmPose.ITEM;
 
-                if (clientPlayer.getItemInUseCount() > 0) {
-                    EnumAction enumaction1 = stackOff.getItemUseAction();
+				if (clientPlayer.getItemInUseCount() > 0) {
+					EnumAction enumaction1 = stackOff.getItemUseAction();
 
-                    if (enumaction1 == EnumAction.BLOCK) {
-                        poseOff = ModelBiped.ArmPose.BLOCK;
-                    }
-                }
-            }
+					if (enumaction1 == EnumAction.BLOCK) {
+						poseOff = ArmPose.BLOCK;
+					}
+				}
+			}
 
-            if (clientPlayer.getPrimaryHand() == EnumHandSide.RIGHT) {
-                modelplayer.rightArmPose = poseMain;
-                modelplayer.leftArmPose = poseOff;
-            } else {
-                modelplayer.rightArmPose = poseOff;
-                modelplayer.leftArmPose = poseMain;
-            }
-        }
-    }
+			if (clientPlayer.getPrimaryHand() == EnumHandSide.RIGHT) {
+				modelplayer.rightArmPose = poseMain;
+				modelplayer.leftArmPose = poseOff;
+			} else {
+				modelplayer.rightArmPose = poseOff;
+				modelplayer.leftArmPose = poseMain;
+			}
+		}
+	}
 
-    @Override
-    public boolean shouldCombineTextures() {
-        return false;
-    }
+	@Override
+	public boolean shouldCombineTextures() {
+		return false;
+	}
 }

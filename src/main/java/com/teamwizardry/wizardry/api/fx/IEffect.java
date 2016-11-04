@@ -8,10 +8,10 @@ import net.minecraft.world.World;
  */
 public interface IEffect {
 
-    /**
-     * Will spawn the effect
-     *
-     * @param pos The precise position the effect will spawn at
-     */
-    void spawn(World world, Vec3d pos);
+	/**
+	 * Will spawn the effect
+	 *
+	 * @param pos The precise position the effect will spawn at
+	 */
+	void spawn(World world, Vec3d pos);
 }

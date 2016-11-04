@@ -6,12 +6,12 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 
 public class FluidNacre extends Fluid {
-    public static final FluidNacre instance = new FluidNacre();
+	public static final FluidNacre instance = new FluidNacre();
 
-    public FluidNacre() {
-        super("wizardry.nacre_fluid", new ResourceLocation(Wizardry.MODID, "fluid/nacre_still"), new ResourceLocation(Wizardry.MODID, "fluid/nacre_flowing"));
-        FluidRegistry.registerFluid(this);
-        setViscosity(500);
-        setDensity(500);
-    }
+	public FluidNacre() {
+		super("wizardry.nacre_fluid", new ResourceLocation(Wizardry.MODID, "fluid/nacre_still"), new ResourceLocation(Wizardry.MODID, "fluid/nacre_flowing"));
+		FluidRegistry.registerFluid(this);
+		setViscosity(500);
+		setDensity(500);
+	}
 }

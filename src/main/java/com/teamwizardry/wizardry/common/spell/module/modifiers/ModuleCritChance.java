@@ -15,38 +15,39 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleCritChance extends Module implements IModifier {
-    public ModuleCritChance(ItemStack stack) {
-        super(stack);
-        canHaveChildren = false;
-    }
 
-    @Override
-    public ModuleType getType() {
-        return ModuleType.MODIFIER;
-    }
+	public ModuleCritChance(ItemStack stack) {
+		super(stack);
+		canHaveChildren = false;
+	}
 
-    @Override
-    public String getDescription() {
-        return "Allows a spell effect to critically strike, dealing bonus damage.";
-    }
+	@Override
+	public ModuleType getType() {
+		return ModuleType.MODIFIER;
+	}
 
-    @Override
-    public String getDisplayName() {
-        return "Increase Critical Hit Chance";
-    }
+	@Override
+	public String getDescription() {
+		return "Allows a spell effect to critically strike, dealing bonus damage.";
+	}
 
-    @Override
-    public void apply(AttributeMap map) {
-        map.putModifier(Attribute.CRIT_CHANCE, new AttributeModifier(Operation.ADD, 0.1));
+	@Override
+	public String getDisplayName() {
+		return "Increase Critical Hit Chance";
+	}
 
-        // 100% Crit Chance ~
-        map.putModifier(Attribute.MANA, new AttributeModifier(Operation.MULTIPLY, 1.5, Priority.LOW));
-        map.putModifier(Attribute.BURNOUT, new AttributeModifier(Operation.MULTIPLY, 1.5, Priority.LOW));
-    }
+	@Override
+	public void apply(AttributeMap map) {
+		map.putModifier(Attribute.CRIT_CHANCE, new AttributeModifier(Operation.ADD, 0.1));
 
-    @Override
-    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
-        // TODO Auto-generated method stub
-        return false;
-    }
+		// 100% Crit Chance ~
+		map.putModifier(Attribute.MANA, new AttributeModifier(Operation.MULTIPLY, 1.5, Priority.LOW));
+		map.putModifier(Attribute.BURNOUT, new AttributeModifier(Operation.MULTIPLY, 1.5, Priority.LOW));
+	}
+
+	@Override
+	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

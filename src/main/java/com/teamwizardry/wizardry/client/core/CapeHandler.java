@@ -1,12 +1,12 @@
 package com.teamwizardry.wizardry.client.core;
 
-import com.teamwizardry.librarianlib.bloat.ragdoll.Sphere;
-import com.teamwizardry.librarianlib.bloat.ragdoll.cloth.Cloth;
-import com.teamwizardry.librarianlib.bloat.ragdoll.cloth.Link3D;
-import com.teamwizardry.librarianlib.bloat.ragdoll.cloth.PointMass3D;
 import com.teamwizardry.librarianlib.client.core.ClientTickHandler;
 import com.teamwizardry.librarianlib.common.util.math.Matrix4;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.client.cloth.Cloth;
+import com.teamwizardry.wizardry.client.cloth.Link3D;
+import com.teamwizardry.wizardry.client.cloth.PointMass3D;
+import com.teamwizardry.wizardry.client.cloth.Sphere;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelRenderer;
@@ -31,6 +31,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.WeakHashMap;
 
@@ -39,7 +40,7 @@ public class CapeHandler {
 	public static final CapeHandler INSTANCE = new CapeHandler();
 	public static Vec3d[] basePoints;
 
-	WeakHashMap<EntityLivingBase, Cloth> cloths = new WeakHashMap<>();
+	private final Map<EntityLivingBase, Cloth> cloths = new WeakHashMap<>();
 	//	WeakHashMap<EntityLivingBase, List<Box>> models = new WeakHashMap<>();
 	List<ModelRenderer> rendererStack = new ArrayList<>();
 
@@ -80,9 +81,7 @@ public class CapeHandler {
 				continue;
 			}
 
-			if (e.getValue().getMasses() != null && e.getValue().getMasses()[0] != null) {
-
-				Vec3d[] shoulderPoints = new Vec3d[basePoints.length];
+			if ((e.getValue().masses != null) && (e.getValue().masses[0] != null)) {
 
 				Matrix4 matrix = new Matrix4(), inverse = new Matrix4();
 				matrix.translate(entity.getPositionVector());
@@ -91,18 +90,19 @@ public class CapeHandler {
 				inverse.rotate(Math.toRadians(entity.renderYawOffset), new Vec3d(0, 1, 0));
 				inverse.translate(entity.getPositionVector().scale(-1));
 
+				Vec3d[] shoulderPoints = new Vec3d[basePoints.length];
 				for (int i = 0; i < shoulderPoints.length; i++) {
 					shoulderPoints[i] = matrix.apply(basePoints[i]);
 				}
 
-				for (int i = 0; i < e.getValue().getMasses()[0].length && i < shoulderPoints.length; i++) {
-					e.getValue().getMasses()[0][i].setOrigPos(e.getValue().getMasses()[0][i].getPos());
-					e.getValue().getMasses()[0][i].setPos(shoulderPoints[i]);
+				for (int i = 0; (i < e.getValue().masses[0].length) && (i < shoulderPoints.length); i++) {
+					e.getValue().masses[0][i].origPos = e.getValue().masses[0][i].pos;
+					e.getValue().masses[0][i].pos = shoulderPoints[i];
 				}
 
 				List<Sphere> spheres = new ArrayList<>();
 
-				Vec3d[] vecs = new Vec3d[]{
+				Vec3d[] vecs = {
 						new Vec3d(0.1, 0, 0),
 						new Vec3d(0.1, 0.25, 0),
 						new Vec3d(0.1, 0.5, 0),
@@ -250,14 +250,14 @@ public class CapeHandler {
 	@SuppressWarnings({"rawtypes"})
 	@SubscribeEvent
 	public void drawPlayer(RenderLivingEvent.Post event) {
-		if (!(event.getEntity() instanceof EntityVillager || event.getEntity() instanceof EntityPlayer))
+		if (!((event.getEntity() instanceof EntityVillager) || (event.getEntity() instanceof EntityPlayer)))
 			return;
 
 		if (event.getEntity() instanceof EntityPlayer) {
 			boolean match = false;
 			EntityPlayer player = (EntityPlayer) event.getEntity();
 			for (ItemStack eq : player.getArmorInventoryList()) {
-				if (eq != null && eq.getItem() == ModItems.CAPE) {
+				if ((eq != null) && (eq.getItem() == ModItems.CAPE)) {
 					match = true;
 					break;
 				}
@@ -305,16 +305,12 @@ public class CapeHandler {
 
 
 		GlStateManager.disableTexture2D();
-		GlStateManager.glLineWidth(1f);
+		GlStateManager.glLineWidth(1.0f);
 		GlStateManager.disableCull();
 		GlStateManager.enableBlend();
-		GlStateManager.color(1, 1, 1, 1f);
+		GlStateManager.color(1, 1, 1, 1.0f);
 
 		vb.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
-		for (Link3D link : c.getLinks()) {
-//			vecPos(vb, link.a.origPos, link.a.pos, partialTicks).endVertex();
-//			vecPos(vb, link.b.origPos, link.b.pos, partialTicks).endVertex();
-		}
 		tess.draw();
 
 		Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/capes/nader.png"));
@@ -322,24 +318,24 @@ public class CapeHandler {
 
 		vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
-		for (int x = 0; x < c.getMasses().length - 1; x++) {
-			for (int y = 0; y < c.getMasses()[x].length - 1; y++) {
-				float minU = (float) y / (float) (c.getMasses()[x].length - 1);
-				float minV = (float) x / (float) (c.getMasses().length - 1);
-				float maxU = (float) (y + 1) / (float) (c.getMasses()[x].length - 1);
-				float maxV = (float) (x + 1) / (float) (c.getMasses().length - 1);
+		for (int x = 0; x < (c.masses.length - 1); x++) {
+			for (int y = 0; y < (c.masses[x].length - 1); y++) {
+				float minU = y / (float) (c.masses[x].length - 1);
+				float minV = x / (float) (c.masses.length - 1);
+				float maxU = (y + 1) / (float) (c.masses[x].length - 1);
+				float maxV = (x + 1) / (float) (c.masses.length - 1);
 
-				PointMass3D mass = c.getMasses()[x][y];
-				vecPos(vb, mass.getOrigPos(), mass.getPos(), partialTicks).tex(minU, minV).endVertex();
+				PointMass3D mass = c.masses[x][y];
+				vecPos(vb, mass.origPos, mass.pos, partialTicks).tex(minU, minV).endVertex();
 
-				mass = c.getMasses()[x + 1][y];
-				vecPos(vb, mass.getOrigPos(), mass.getPos(), partialTicks).tex(minU, maxV).endVertex();
+				mass = c.masses[x + 1][y];
+				vecPos(vb, mass.origPos, mass.pos, partialTicks).tex(minU, maxV).endVertex();
 
-				mass = c.getMasses()[x + 1][y + 1];
-				vecPos(vb, mass.getOrigPos(), mass.getPos(), partialTicks).tex(maxU, maxV).endVertex();
+				mass = c.masses[x + 1][y + 1];
+				vecPos(vb, mass.origPos, mass.pos, partialTicks).tex(maxU, maxV).endVertex();
 
-				mass = c.getMasses()[x][y + 1];
-				vecPos(vb, mass.getOrigPos(), mass.getPos(), partialTicks).tex(maxU, minV).endVertex();
+				mass = c.masses[x][y + 1];
+				vecPos(vb, mass.origPos, mass.pos, partialTicks).tex(maxU, minV).endVertex();
 			}
 		}
 		tess.draw();
@@ -354,9 +350,9 @@ public class CapeHandler {
 		if (pos == null)
 			pos = lastTick;
 		return vb.pos(
-				lastTick.xCoord + (pos.xCoord - lastTick.xCoord) * partialTicks,
-				lastTick.yCoord + (pos.yCoord - lastTick.yCoord) * partialTicks,
-				lastTick.zCoord + (pos.zCoord - lastTick.zCoord) * partialTicks
+				lastTick.xCoord + ((pos.xCoord - lastTick.xCoord) * partialTicks),
+				lastTick.yCoord + ((pos.yCoord - lastTick.yCoord) * partialTicks),
+				lastTick.zCoord + ((pos.zCoord - lastTick.zCoord) * partialTicks)
 		);
 	}
 }

@@ -23,48 +23,48 @@ import java.util.Map;
 
 public class ClientProxy extends CommonProxy {
 
-    @Override
-    public void preInit(FMLPreInitializationEvent event) {
-        super.preInit(event);
+	@Override
+	public void preInit(FMLPreInitializationEvent event) {
+		super.preInit(event);
 
-        OBJLoader.INSTANCE.addDomain(Wizardry.MODID);
-        MinecraftForge.EVENT_BUS.register(new HudEventHandler());
-        new WizardryClientMethodHandles(); // Load the class
-        GlowingItemEventHandler.init();
+		OBJLoader.INSTANCE.addDomain(Wizardry.MODID);
+		MinecraftForge.EVENT_BUS.register(new HudEventHandler());
+		new WizardryClientMethodHandles(); // Load the class
+		GlowingItemEventHandler.init();
 
-        new Shaders();
+		new Shaders();
 
-        ModEntities.initModels();
-    }
+		ModEntities.initModels();
+	}
 
-    @Override
-    public void init(FMLInitializationEvent event) {
-        super.init(event);
+	@Override
+	public void init(FMLInitializationEvent event) {
+		super.init(event);
 
-        ClientRegistry.bindTileEntitySpecialRenderer(TilePedestal.class, new TilePedestalRenderer());
+		ClientRegistry.bindTileEntitySpecialRenderer(TilePedestal.class, new TilePedestalRenderer());
 
-        //Shaders.INSTANCE.getClass(); // ...
-        //MagicBurstFX.class.getName(); // ...
-        CapeHandler.INSTANCE.getClass(); // ...
-        OBJLoader.INSTANCE.addDomain(Wizardry.MODID);
+		//Shaders.INSTANCE.getClass(); // ...
+		//MagicBurstFX.class.getName(); // ...
+		CapeHandler.INSTANCE.getClass(); // ...
+		OBJLoader.INSTANCE.addDomain(Wizardry.MODID);
 
-        Map<String, RenderPlayer> skinMap = Minecraft.getMinecraft().getRenderManager().getSkinMap();
-        RenderPlayer render = skinMap.get("default");
-        render.addLayer(new GlowingItemRenderLayer(render));
-        render.addLayer(new BloodRenderLayer(render));
+		Map<String, RenderPlayer> skinMap = Minecraft.getMinecraft().getRenderManager().getSkinMap();
+		RenderPlayer render = skinMap.get("default");
+		render.addLayer(new GlowingItemRenderLayer(render));
+		render.addLayer(new BloodRenderLayer(render));
 
-        render = skinMap.get("slim");
-        render.addLayer(new GlowingItemRenderLayer(render));
-        render.addLayer(new BloodRenderLayer(render));
-    }
+		render = skinMap.get("slim");
+		render.addLayer(new GlowingItemRenderLayer(render));
+		render.addLayer(new BloodRenderLayer(render));
+	}
 
-    @Override
-    public void postInit(FMLPostInitializationEvent event) {
-        super.postInit(event);
-    }
+	@Override
+	public void postInit(FMLPostInitializationEvent event) {
+		super.postInit(event);
+	}
 
-    @Override
-    public void openGUI(Object gui) {
-        Minecraft.getMinecraft().displayGuiScreen((GuiScreen) gui);
-    }
+	@Override
+	public void openGUI(Object gui) {
+		Minecraft.getMinecraft().displayGuiScreen((GuiScreen) gui);
+	}
 }

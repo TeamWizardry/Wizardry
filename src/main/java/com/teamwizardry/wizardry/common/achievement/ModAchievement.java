@@ -13,19 +13,19 @@ import java.util.List;
  */
 public class ModAchievement extends Achievement {
 
-    public static List<Achievement> achievements = new ArrayList<>();
+	public static List<Achievement> achievements = new ArrayList<>();
 
-    public ModAchievement(String unlocalizedName, int column, int row, ItemStack stack, Achievement parent) {
-        super("achievement.wizardry." + unlocalizedName, "wizardry." + unlocalizedName, column, row, stack, parent);
-        registerStat();
-        achievements.add(this);
-    }
+	public ModAchievement(String unlocalizedName, int column, int row, ItemStack stack, Achievement parent) {
+		super("achievement.wizardry." + unlocalizedName, "wizardry." + unlocalizedName, column, row, stack, parent);
+		registerStat();
+		achievements.add(this);
+	}
 
-    public ModAchievement(String unlocalizedName, int column, int row, Block blockIn, Achievement parent) {
-        this(unlocalizedName, column, row, new ItemStack(blockIn), parent);
-    }
+	public ModAchievement(String unlocalizedName, int column, int row, Block blockIn, Achievement parent) {
+		this(unlocalizedName, column, row, new ItemStack(blockIn), parent);
+	}
 
-    public ModAchievement(String unlocalizedName, int column, int row, Item itemIn, Achievement parent) {
-        this(unlocalizedName, column, row, new ItemStack(itemIn), parent);
-    }
+	public ModAchievement(String unlocalizedName, int column, int row, Item itemIn, Achievement parent) {
+		this(unlocalizedName, column, row, new ItemStack(itemIn), parent);
+	}
 }

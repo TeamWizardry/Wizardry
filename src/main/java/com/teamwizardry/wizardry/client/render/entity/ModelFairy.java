@@ -8,12 +8,12 @@ import net.minecraft.entity.Entity;
  */
 public class ModelFairy extends ModelBase {
 
-    public ModelFairy() {
-        this.textureWidth = 64;
-        this.textureHeight = 64;
-    }
+	public ModelFairy() {
+		textureWidth = 64;
+		textureHeight = 64;
+	}
 
-    @Override
-    public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-    }
+	@Override
+	public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+	}
 }

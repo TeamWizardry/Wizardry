@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.common.network;
 
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.common.network.MessageUpdateCapabilities.CapsMessageHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
@@ -10,9 +11,9 @@ import net.minecraftforge.fml.relauncher.Side;
  */
 public class WizardryPacketHandler {
 
-    public static SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(Wizardry.MODID);
+	public static SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(Wizardry.MODID);
 
-    public static void registerMessages() {
-        INSTANCE.registerMessage(MessageUpdateCapabilities.CapsMessageHandler.class, MessageUpdateCapabilities.class, 0, Side.CLIENT);
-    }
+	public static void registerMessages() {
+		INSTANCE.registerMessage(CapsMessageHandler.class, MessageUpdateCapabilities.class, 0, Side.CLIENT);
+	}
 }

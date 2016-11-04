@@ -17,19 +17,19 @@ import net.minecraft.world.World;
  */
 public class ItemBook extends ItemWizardry implements IPickupAchievement {
 
-    public ItemBook() {
-        super("book");
-        setMaxStackSize(1);
-    }
+	public ItemBook() {
+		super("book");
+		setMaxStackSize(1);
+	}
 
-    @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
-        if (worldIn.isRemote) Wizardry.guide.display();
-        return ActionResult.newResult(EnumActionResult.SUCCESS, itemStackIn);
-    }
+	@Override
+	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
+		if (worldIn.isRemote) Wizardry.guide.display();
+		return ActionResult.newResult(EnumActionResult.SUCCESS, itemStackIn);
+	}
 
-    @Override
-    public Achievement getAchievementOnPickup(ItemStack stack, EntityPlayer player, EntityItem item) {
-        return Achievements.BOOK;
-    }
+	@Override
+	public Achievement getAchievementOnPickup(ItemStack stack, EntityPlayer player, EntityItem item) {
+		return Achievements.BOOK;
+	}
 }

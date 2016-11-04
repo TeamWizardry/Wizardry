@@ -13,20 +13,20 @@ import net.minecraft.nbt.NBTTagCompound;
  */
 public class ItemGlassPearl extends ItemWizardry implements Explodable {
 
-    public ItemGlassPearl() {
-        super("glass_pearl");
-        setMaxStackSize(1);
-    }
-    
-    @Override
-    public boolean onEntityItemUpdate(EntityItem entityItem) {
-        if (entityItem.isInsideOfMaterial(ModBlocks.NACRE_MATERIAL)) {
-            NBTTagCompound oldStackNBT = entityItem.getEntityItem().getTagCompound();
-            ItemStack newStack = new ItemStack(ModItems.PEARL_NACRE);
-            if (oldStackNBT != null)
-                newStack.setTagCompound(oldStackNBT);
-            entityItem.setEntityItemStack(newStack);
-        }
-        return super.onEntityItemUpdate(entityItem);
-    }
+	public ItemGlassPearl() {
+		super("glass_pearl");
+		setMaxStackSize(1);
+	}
+
+	@Override
+	public boolean onEntityItemUpdate(EntityItem entityItem) {
+		if (entityItem.isInsideOfMaterial(ModBlocks.NACRE_MATERIAL)) {
+			NBTTagCompound oldStackNBT = entityItem.getEntityItem().getTagCompound();
+			ItemStack newStack = new ItemStack(ModItems.PEARL_NACRE);
+			if (oldStackNBT != null)
+				newStack.setTagCompound(oldStackNBT);
+			entityItem.setEntityItemStack(newStack);
+		}
+		return super.onEntityItemUpdate(entityItem);
+	}
 }

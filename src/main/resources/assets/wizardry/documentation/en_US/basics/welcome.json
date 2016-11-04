@@ -11,11 +11,17 @@
   "pages": [
     {
       "type": "text",
-      "text": {"global": "sectionOne", "page": 0}
+      "text": {
+        "global": "sectionOne",
+        "page": 0
+      }
     },
     {
       "type": "text",
-      "text": {"global": "sectionOne", "page": 1}
+      "text": {
+        "global": "sectionOne",
+        "page": 1
+      }
     }
   ]
 }

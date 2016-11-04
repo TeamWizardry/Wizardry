@@ -14,38 +14,39 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class ModulePierce extends Module implements IModifier {
-    public ModulePierce(ItemStack stack) {
-        super(stack);
-        canHaveChildren = false;
-    }
 
-    @Override
-    public ModuleType getType() {
-        return ModuleType.MODIFIER;
-    }
+	public ModulePierce(ItemStack stack) {
+		super(stack);
+		canHaveChildren = false;
+	}
 
-    @Override
-    public String getDescription() {
-        return "Allows the projectile or beam shape to strike additional targets behind the first.";
-    }
+	@Override
+	public ModuleType getType() {
+		return ModuleType.MODIFIER;
+	}
 
-    @Override
-    public String getDisplayName() {
-        return "Increase Piercing/Phasing";
-    }
+	@Override
+	public String getDescription() {
+		return "Allows the projectile or beam shape to strike additional targets behind the first.";
+	}
+
+	@Override
+	public String getDisplayName() {
+		return "Increase Piercing/Phasing";
+	}
 
 
-    @Override
-    public void apply(AttributeMap map) {
-        map.putModifier(Attribute.PIERCE, new AttributeModifier(Operation.ADD, 1));
+	@Override
+	public void apply(AttributeMap map) {
+		map.putModifier(Attribute.PIERCE, new AttributeModifier(Operation.ADD, 1.0));
 
-        map.putModifier(Attribute.MANA, new AttributeModifier(Operation.MULTIPLY, 1.6));
-        map.putModifier(Attribute.BURNOUT, new AttributeModifier(Operation.MULTIPLY, 1.6));
-    }
+		map.putModifier(Attribute.MANA, new AttributeModifier(Operation.MULTIPLY, 1.6));
+		map.putModifier(Attribute.BURNOUT, new AttributeModifier(Operation.MULTIPLY, 1.6));
+	}
 
-    @Override
-    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

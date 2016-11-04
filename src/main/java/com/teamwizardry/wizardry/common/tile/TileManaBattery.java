@@ -1,73 +1,62 @@
 package com.teamwizardry.wizardry.common.tile;
 
+import com.teamwizardry.librarianlib.common.base.block.TileMod;
+import com.teamwizardry.librarianlib.common.util.saving.Save;
 import com.teamwizardry.wizardry.api.block.IManaSink;
 import com.teamwizardry.wizardry.common.fluid.FluidBlockMana;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
-public class TileManaBattery extends TileEntity implements ITickable, IManaSink {
+public class TileManaBattery extends TileMod implements ITickable, IManaSink {
 
-    public int MAX_MANA = 1000000;
-    public int current_mana = 0;
+	public int maxMana = 1000000;
+	@Save
+	public int currentMana;
 
-    @Override
-    public void readFromNBT(NBTTagCompound compound) {
-        super.readFromNBT(compound);
-        if (compound.hasKey("mana")) current_mana = compound.getInteger("mana");
-    }
+	@Override
+	public void update() {
+		Random rand = new Random();
+		int chance = rand.nextInt(50);
+		if (chance != 1) return;
 
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        super.writeToNBT(compound);
-        compound.setInteger("mana", current_mana);
-        return compound;
-    }
+		int x = rand.nextInt(3) - 1;
+		int z = rand.nextInt(3) - 1;
+		BlockPos pos = getPos().add(x, -2, z);
+		if (worldObj.getBlockState(pos) == FluidBlockMana.instance.getDefaultState()) {
+			currentMana += 1000;
+			worldObj.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+		}
 
-    @Override
-    public void update() {
-        Random rand = new Random();
-        int chance = rand.nextInt(50);
-        if (chance != 1) return;
+		List<BlockPos> pedestals = new ArrayList<>();
+		for (int i = -6; i < 6; i++) {
+			for (int j = -6; j < 6; j++) {
 
-        int x = rand.nextInt(3) - 1;
-        int z = rand.nextInt(3) - 1;
-        BlockPos pos = this.getPos().add(x, -2, z);
-        if (worldObj.getBlockState(pos) == FluidBlockMana.instance.getDefaultState()) {
-            this.current_mana += 1000;
-            worldObj.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
-        }
+				BlockPos pedPos = new BlockPos(pos.getX() + i, pos.getY() - 2, pos.getZ() + j);
+				if (pedestals.contains(pedPos)) continue;
+				IBlockState block = worldObj.getBlockState(pedPos);
+				if (block.getBlock() != ModBlocks.PEDESTAL) continue;
+				TilePedestal pedestal = (TilePedestal) worldObj.getTileEntity(pedPos);
+				if (pedestal == null) return;
+				if (pedestal.pearl == null) return;
 
-        ArrayList<BlockPos> pedestals = new ArrayList<>();
-        for (int i = -6; i < 6; i++) {
-            for (int j = -6; j < 6; j++) {
+				BlockPos oppPos = new BlockPos(pos.getX() - i, pedPos.getY(), pos.getZ() - j);
+				if (pedestals.contains(oppPos)) continue;
+				IBlockState oppBlock = worldObj.getBlockState(oppPos);
+				if (oppBlock.getBlock() != ModBlocks.PEDESTAL) return;
+				TilePedestal oppPed = (TilePedestal) worldObj.getTileEntity(oppPos);
+				if (oppPed == null) return;
+				if (oppPed.pearl == null) return;
 
-                BlockPos pedPos = new BlockPos(pos.getX() + i, pos.getY() - 2, pos.getZ() + j);
-                IBlockState block = worldObj.getBlockState(pedPos);
-                if (block.getBlock() != ModBlocks.PEDESTAL) continue;
-                TilePedestal pedestal = (TilePedestal) worldObj.getTileEntity(pedPos);
-                if (pedestals.contains(pedPos)) continue;
-                if (pedestal == null) return;
-                if (pedestal.getPearl() == null) return;
-
-                BlockPos oppPos = new BlockPos(pos.getX() - i, pedPos.getY(), pos.getZ() - j);
-                IBlockState oppBlock = worldObj.getBlockState(oppPos);
-                if (oppBlock.getBlock() != ModBlocks.PEDESTAL) return;
-                TilePedestal oppPed = (TilePedestal) worldObj.getTileEntity(oppPos);
-                if (pedestals.contains(oppPos)) continue;
-                if (oppPed == null) return;
-                if (oppPed.getPearl() == null) return;
-
-                pedestals.add(pedPos);
-                pedestals.add(oppPos);
-            }
-        }
-    }
+				pedestals.add(pedPos);
+				pedestals.add(oppPos);
+			}
+		}
+	}
 }

@@ -1,8 +1,8 @@
 {
   "forge_marker": 1,
-  "variants":     {
+  "variants": {
     "fluid": {
-      "model":  "forge:fluid",
+      "model": "forge:fluid",
       "custom": {
         "fluid": "wizardry.nacre_fluid"
       }

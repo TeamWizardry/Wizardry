@@ -1,13 +1,14 @@
 package com.teamwizardry.wizardry.init.irecipies;
 
-import javax.annotation.Nullable;
+import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
-import com.teamwizardry.wizardry.init.ModItems;
+
+import javax.annotation.Nullable;
 
 /**
  * Created by Saad on 8/30/2016.
@@ -76,13 +77,11 @@ public class RecipeJam implements IRecipe {
 	@Override
 	public ItemStack[] getRemainingItems(InventoryCrafting inv) {
 		ItemStack[] remainingItems = ForgeHooks.defaultRecipeGetRemainingItems(inv);
-		
+
 		ItemStack sword;
-		for (int i = 0; i < inv.getSizeInventory(); i++)
-		{
+		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);
-			if (stack != null && stack.getItem() == Items.GOLDEN_SWORD)
-			{
+			if (stack != null && stack.getItem() == Items.GOLDEN_SWORD) {
 				sword = stack.copy();
 				sword.setItemDamage(sword.getItemDamage() + 1);
 				if (sword.getItemDamage() > sword.getMaxDamage()) sword = null;
@@ -90,7 +89,7 @@ public class RecipeJam implements IRecipe {
 				break;
 			}
 		}
-		
+
 		return remainingItems;
 	}
 }

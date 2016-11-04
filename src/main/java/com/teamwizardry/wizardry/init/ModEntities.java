@@ -17,17 +17,17 @@ import net.minecraftforge.fml.common.registry.EntityRegistry;
  */
 public class ModEntities {
 
-    private static int i = 0;
+	private static int i = 0;
 
-    public static void init() {
-        EntityRegistry.registerModEntity(EntityHallowedSpirit.class, "hallowed_spirit", i++, Wizardry.instance, 64, 3, true);
-        EntityRegistry.registerModEntity(EntityFairy.class, "fairy", i++, Wizardry.instance, 64, 3, true);
-        EntityRegistry.registerModEntity(EntityDevilDust.class, "dust_tracker", i++, Wizardry.instance, 64, 1, false);
-        EntityRegistry.registerModEntity(EntitySpellCodex.class, "book_tracker", i++, Wizardry.instance, 64, 1, false);
-    }
+	public static void init() {
+		EntityRegistry.registerModEntity(EntityHallowedSpirit.class, "hallowed_spirit", i++, Wizardry.instance, 64, 3, true);
+		EntityRegistry.registerModEntity(EntityFairy.class, "fairy", i++, Wizardry.instance, 64, 3, true);
+		EntityRegistry.registerModEntity(EntityDevilDust.class, "dust_tracker", i++, Wizardry.instance, 64, 1, false);
+		EntityRegistry.registerModEntity(EntitySpellCodex.class, "book_tracker", i++, Wizardry.instance, 64, 1, false);
+	}
 
-    public static void initModels() {
-        RenderingRegistry.registerEntityRenderingHandler(EntityHallowedSpirit.class, manager -> new RenderHallowedSpirit(manager, new ModelHallowedSpirit()));
-        RenderingRegistry.registerEntityRenderingHandler(EntityFairy.class, manager -> new RenderFairy(manager, new ModelFairy()));
-    }
+	public static void initModels() {
+		RenderingRegistry.registerEntityRenderingHandler(EntityHallowedSpirit.class, manager -> new RenderHallowedSpirit(manager, new ModelHallowedSpirit()));
+		RenderingRegistry.registerEntityRenderingHandler(EntityFairy.class, manager -> new RenderFairy(manager, new ModelFairy()));
+	}
 }

@@ -20,7 +20,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class EntitySpellCodex extends Entity {
 
 	private EntityItem book;
-	private int expiry = 0;
+	private int expiry;
 
 	public EntitySpellCodex(World world, EntityItem book) {
 		super(world);
@@ -40,18 +40,15 @@ public class EntitySpellCodex extends Entity {
 		posY = book.posY;
 		posZ = book.posZ;
 
-		if (worldObj.getBlockState(getPosition()).getBlock() != FluidMana.instance.getBlock()) {
-			expiry = 200;
-			return;
-		} else {
+		if (worldObj.getBlockState(getPosition()).getBlock() == FluidMana.instance.getBlock()) {
 			if (expiry > 0) {
 				expiry--;
 
 				LibParticles.BOOK_BEAM_NORMAL(worldObj, getPositionVector());
 				LibParticles.BOOK_BEAM_HELIX(worldObj, getPositionVector());
 
-				if (expiry % 5 == 0)
-					worldObj.playSound(null, posX, posY, posZ, ModSounds.FIZZING_LOOP, SoundCategory.AMBIENT, 0.7F, ThreadLocalRandom.current().nextFloat() * 0.4F + 0.8F);
+				if ((expiry % 5) == 0)
+					worldObj.playSound(null, posX, posY, posZ, ModSounds.FIZZING_LOOP, SoundCategory.AMBIENT, 0.7F, (ThreadLocalRandom.current().nextFloat() * 0.4F) + 0.8F);
 
 			} else {
 				EntityItem codex = new EntityItem(worldObj, posX, posY, posZ, new ItemStack(ModItems.BOOK, 1));
@@ -64,11 +61,14 @@ public class EntitySpellCodex extends Entity {
 				worldObj.spawnEntityInWorld(codex);
 				worldObj.removeEntity(this);
 
-				worldObj.playSound(null, posX, posY, posZ, ModSounds.HARP1, SoundCategory.AMBIENT, 0.3F, 1F);
+				worldObj.playSound(null, posX, posY, posZ, ModSounds.HARP1, SoundCategory.AMBIENT, 0.3F, 1.0F);
 
 				LibParticles.BOOK_LARGE_EXPLOSION(worldObj, getPositionVector());
 				return;
 			}
+		} else {
+			expiry = 200;
+			return;
 		}
 
 		if (book.isDead) worldObj.removeEntity(this);

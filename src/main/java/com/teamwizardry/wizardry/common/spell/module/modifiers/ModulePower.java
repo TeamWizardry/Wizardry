@@ -14,37 +14,37 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class ModulePower extends Module implements IModifier {
-    public ModulePower(ItemStack stack) {
-        super(stack);
-        canHaveChildren = false;
-    }
+	public ModulePower(ItemStack stack) {
+		super(stack);
+		canHaveChildren = false;
+	}
 
-    @Override
-    public ModuleType getType() {
-        return ModuleType.MODIFIER;
-    }
+	@Override
+	public ModuleType getType() {
+		return ModuleType.MODIFIER;
+	}
 
-    @Override
-    public String getDescription() {
-        return "Increases the power of a spell effect";
-    }
+	@Override
+	public String getDescription() {
+		return "Increases the power of a spell effect";
+	}
 
-    @Override
-    public String getDisplayName() {
-        return "Increases Spell Power";
-    }
+	@Override
+	public String getDisplayName() {
+		return "Increases Spell Power";
+	}
 
-    @Override
-    public void apply(AttributeMap map) {
-        map.putModifier(Attribute.POWER, new AttributeModifier(Operation.ADD, 1));
+	@Override
+	public void apply(AttributeMap map) {
+		map.putModifier(Attribute.POWER, new AttributeModifier(Operation.ADD, 1.0));
 
-        map.putModifier(Attribute.MANA, new AttributeModifier(Operation.MULTIPLY, 1.2));
-        map.putModifier(Attribute.BURNOUT, new AttributeModifier(Operation.MULTIPLY, 1.2));
-    }
+		map.putModifier(Attribute.MANA, new AttributeModifier(Operation.MULTIPLY, 1.2));
+		map.putModifier(Attribute.BURNOUT, new AttributeModifier(Operation.MULTIPLY, 1.2));
+	}
 
-    @Override
-    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

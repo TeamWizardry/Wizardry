@@ -9,8 +9,8 @@ import com.teamwizardry.wizardry.common.item.ItemWizardry;
  */
 public class ItemQuartzPearl extends ItemWizardry implements Infusable, Explodable {
 
-    public ItemQuartzPearl() {
-        super("quartz_pearl");
-        setMaxStackSize(1);
-    }
+	public ItemQuartzPearl() {
+		super("quartz_pearl");
+		setMaxStackSize(1);
+	}
 }

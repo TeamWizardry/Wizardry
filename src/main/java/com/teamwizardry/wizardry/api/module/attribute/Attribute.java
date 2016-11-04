@@ -1,30 +1,30 @@
 package com.teamwizardry.wizardry.api.module.attribute;
 
+import com.teamwizardry.wizardry.api.Constants.Module;
+
 public class Attribute {
 
-    public static final Attribute
+	public static final Attribute
+			POWER = new Attribute(Module.POWER),
+			DURATION = new Attribute(Module.DURATION),
+			RADIUS = new Attribute(Module.RADIUS),
+			PIERCE = new Attribute(Module.PIERCE),
+			SILENT = new Attribute(Module.SILENT),
+			SPEED = new Attribute(Module.SPEED),
+			KNOCKBACK = new Attribute(Module.KNOCKBACK),
+			PROJ_COUNT = new Attribute(Module.PROJ_COUNT),
+			SCATTER = new Attribute(Module.SCATTER),
+			CRIT_CHANCE = new Attribute(Module.CRIT_CHANCE),
+			CRIT_DAMAGE = new Attribute(Module.CRIT_DAMAGE),
+			DISTANCE = new Attribute(Module.DISTANCE),
+			DAMAGE = new Attribute(Module.DAMAGE),
+			MANA = new Attribute("Mana"),
+			BURNOUT = new Attribute(Module.BURNOUT);
 
-            POWER = new Attribute("Power"),
-            DURATION = new Attribute("Duration"),
-            RADIUS = new Attribute("Radius"),
-            PIERCE = new Attribute("Pierce"),
-            SILENT = new Attribute("Silent"),
-            SPEED = new Attribute("Speed"),
-            KNOCKBACK = new Attribute("Knockback"),
-            PROJ_COUNT = new Attribute("Projectile Count"),
-            SCATTER = new Attribute("Scatter"),
-            CRIT_CHANCE = new Attribute("Crit Chance"),
-            CRIT_DAMAGE = new Attribute("Crit Damage"),
-            DISTANCE = new Attribute("Distance"),
-            DAMAGE = new Attribute("Damage"),
+	public final String name;
 
-    MANA = new Attribute("Mana"),
-            BURNOUT = new Attribute("Burnout");
-
-    public final String name;
-
-    public Attribute(String name) {
-        this.name = name;
-    }
+	public Attribute(String name) {
+		this.name = name;
+	}
 
 }

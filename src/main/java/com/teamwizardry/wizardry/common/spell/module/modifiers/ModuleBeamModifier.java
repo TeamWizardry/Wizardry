@@ -14,34 +14,35 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleBeamModifier extends Module implements IModifier {
-    public ModuleBeamModifier(ItemStack stack) {
-        super(stack);
-        canHaveChildren = false;
-    }
 
-    @Override
-    public ModuleType getType() {
-        return ModuleType.MODIFIER;
-    }
+	public ModuleBeamModifier(ItemStack stack) {
+		super(stack);
+		canHaveChildren = false;
+	}
 
-    @Override
-    public String getDescription() {
-        return "Increases the restingDistance a beam travels.";
-    }
+	@Override
+	public ModuleType getType() {
+		return ModuleType.MODIFIER;
+	}
 
-    @Override
-    public String getDisplayName() {
-        return "Increase Beam Distance";
-    }
+	@Override
+	public String getDescription() {
+		return "Increases the restingDistance a beam travels.";
+	}
 
-    @Override
-    public void apply(AttributeMap map) {
-        map.putModifier(Attribute.DISTANCE, new AttributeModifier(Operation.ADD, 1));
-    }
+	@Override
+	public String getDisplayName() {
+		return "Increase Beam Distance";
+	}
 
-    @Override
-    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public void apply(AttributeMap map) {
+		map.putModifier(Attribute.DISTANCE, new AttributeModifier(Operation.ADD, 1.0));
+	}
+
+	@Override
+	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

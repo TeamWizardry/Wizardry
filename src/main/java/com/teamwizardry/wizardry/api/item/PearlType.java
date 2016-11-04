@@ -5,5 +5,5 @@ package com.teamwizardry.wizardry.api.item;
  */
 public enum PearlType {
 
-    MUNDANE, AWKWARD, INFUSED
+	MUNDANE, AWKWARD, INFUSED
 }

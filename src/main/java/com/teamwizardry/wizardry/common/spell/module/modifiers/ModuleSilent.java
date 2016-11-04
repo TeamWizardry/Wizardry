@@ -4,6 +4,7 @@ import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.attribute.Attribute;
 import com.teamwizardry.wizardry.api.module.attribute.AttributeMap;
 import com.teamwizardry.wizardry.api.module.attribute.AttributeModifier;
+import com.teamwizardry.wizardry.api.module.attribute.AttributeModifier.Operation;
 import com.teamwizardry.wizardry.api.spell.IModifier;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
@@ -13,37 +14,38 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleSilent extends Module implements IModifier {
-    public ModuleSilent(ItemStack stack) {
-        super(stack);
-        canHaveChildren = false;
-    }
 
-    @Override
-    public ModuleType getType() {
-        return ModuleType.MODIFIER;
-    }
+	public ModuleSilent(ItemStack stack) {
+		super(stack);
+		canHaveChildren = false;
+	}
 
-    @Override
-    public String getDescription() {
-        return "Causes the spell effect to produce no noise.";
-    }
+	@Override
+	public ModuleType getType() {
+		return ModuleType.MODIFIER;
+	}
 
-    @Override
-    public String getDisplayName() {
-        return "Silence Spell";
-    }
+	@Override
+	public String getDescription() {
+		return "Causes the spell effect to produce no noise.";
+	}
 
-    @Override
-    public void apply(AttributeMap map) {
-        map.putModifier(Attribute.SILENT, new AttributeModifier(AttributeModifier.Operation.ADD, 1));
+	@Override
+	public String getDisplayName() {
+		return "Silence Spell";
+	}
 
-        map.putModifier(Attribute.MANA, new AttributeModifier(AttributeModifier.Operation.MULTIPLY, 1.1));
-        map.putModifier(Attribute.BURNOUT, new AttributeModifier(AttributeModifier.Operation.MULTIPLY, 1.1));
-    }
+	@Override
+	public void apply(AttributeMap map) {
+		map.putModifier(Attribute.SILENT, new AttributeModifier(Operation.ADD, 1.0));
 
-    @Override
-    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
-        // TODO Auto-generated method stub
-        return false;
-    }
+		map.putModifier(Attribute.MANA, new AttributeModifier(Operation.MULTIPLY, 1.1));
+		map.putModifier(Attribute.BURNOUT, new AttributeModifier(Operation.MULTIPLY, 1.1));
+	}
+
+	@Override
+	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

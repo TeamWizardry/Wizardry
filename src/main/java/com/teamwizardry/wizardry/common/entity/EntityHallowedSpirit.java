@@ -22,39 +22,37 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class EntityHallowedSpirit extends EntityMob {
 
-	private boolean angry = false;
-
 	public EntityHallowedSpirit(World worldIn) {
 		super(worldIn);
-		this.setSize(0.6F, 1.95F);
-		this.experienceValue = 5;
+		setSize(0.6F, 1.95F);
+		experienceValue = 5;
 	}
 
 	@Override
 	protected void entityInit() {
 		super.entityInit();
-		this.isImmuneToFire = true;
+		isImmuneToFire = true;
 	}
 
 	protected void initEntityAI() {
-		this.tasks.addTask(1, new EntityAIWatchClosest(this, EntityPlayer.class, 50.0F));
-		this.applyEntityAI();
+		tasks.addTask(1, new EntityAIWatchClosest(this, EntityPlayer.class, 50.0F));
+		applyEntityAI();
 	}
 
 	protected void applyEntityAttributes() {
 		super.applyEntityAttributes();
-		this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(50.0D);
-		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(30.0D);
+		getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(50.0D);
+		getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(30.0D);
 		//this.getEntityAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(0.6D);
 	}
 
 	protected void applyEntityAI() {
-		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, true));
+		targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, true));
 	}
 
 	@Override
 	public void collideWithEntity(Entity entity) {
-		if (this.getHealth() > 0) {
+		if (getHealth() > 0) {
 			if (entity.getName().equals(getName())) return;
 			((EntityLivingBase) entity).motionY += 0.4;
 			((EntityLivingBase) entity).attackEntityAsMob(this);
@@ -70,7 +68,7 @@ public class EntityHallowedSpirit extends EntityMob {
 		super.onUpdate();
 		if (worldObj.isRemote) return;
 
-		if (ticksExisted % ThreadLocalRandom.current().nextInt(100, 200) == 0)
+		if ((ticksExisted % ThreadLocalRandom.current().nextInt(100, 200)) == 0)
 			playSound(ModSounds.HALLOWED_SPIRIT, ThreadLocalRandom.current().nextFloat(), ThreadLocalRandom.current().nextFloat());
 
 		fallDistance = 0;
@@ -81,19 +79,20 @@ public class EntityHallowedSpirit extends EntityMob {
 			motionX = direction.xCoord * -0.05;
 			motionY = direction.yCoord * -0.05;
 			motionZ = direction.zCoord * -0.05;
-			rotationYaw = (float) (-Math.atan2(direction.xCoord, direction.zCoord) * 180 / Math.PI - 180) / 2;
+			rotationYaw = (float) (((-StrictMath.atan2(direction.xCoord, direction.zCoord) * 180) / Math.PI) - 180) / 2;
 		}
 
 		EntityPlayer player = worldObj.getNearestPlayerNotCreative(this, 2);
 		EntityPlayer closePlayer = worldObj.getNearestPlayerNotCreative(this, 10);
-		angry = player != null;
+		boolean angry = player != null;
 
-		if (closePlayer != null && !angry)
+		if ((closePlayer != null) && !angry)
 			LibParticles.HALLOWED_SPIRIT_FLAME_FAR(worldObj, getPositionVector().addVector(0, getEyeHeight(), 0));
-		 else if (angry) LibParticles.HALLOWED_SPIRIT_FLAME_CLOSE(worldObj, getPositionVector().addVector(0, getEyeHeight(), 0));
-		 else LibParticles.HALLOWED_SPIRIT_FLAME_NORMAL(worldObj, getPositionVector().addVector(0, getEyeHeight(), 0));
+		else if (angry)
+			LibParticles.HALLOWED_SPIRIT_FLAME_CLOSE(worldObj, getPositionVector().addVector(0, getEyeHeight(), 0));
+		else LibParticles.HALLOWED_SPIRIT_FLAME_NORMAL(worldObj, getPositionVector().addVector(0, getEyeHeight(), 0));
 
-		if (angry && player != null) {
+		if (angry) {
 			player.attackEntityFrom(DamageSource.generic, 0.15f);
 			player.hurtResistantTime = 0;
 		}

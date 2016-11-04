@@ -9,28 +9,28 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleRangedEvent extends Module {
-    public ModuleRangedEvent(ItemStack stack) {
-        super(stack);
-    }
+	public ModuleRangedEvent(ItemStack stack) {
+		super(stack);
+	}
 
-    @Override
-    public ModuleType getType() {
-        return ModuleType.EVENT;
-    }
+	@Override
+	public ModuleType getType() {
+		return ModuleType.EVENT;
+	}
 
-    @Override
-    public String getDescription() {
-        return "Called whenever a targetable entity is struck by a projectile.";
-    }
+	@Override
+	public String getDescription() {
+		return "Called whenever a targetable entity is struck by a projectile.";
+	}
 
-    @Override
-    public String getDisplayName() {
-        return "If Target Takes Projectile Damage";
-    }
+	@Override
+	public String getDisplayName() {
+		return "If Target Takes Projectile Damage";
+	}
 
-    @Override
-    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

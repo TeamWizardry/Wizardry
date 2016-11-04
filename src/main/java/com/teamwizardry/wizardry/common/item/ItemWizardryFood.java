@@ -22,59 +22,59 @@ import java.util.List;
  */
 public abstract class ItemWizardryFood extends ItemFood implements IModItemProvider {
 
-    public final String[] variants;
+	public final String[] variants;
 
-    private final String bareName;
-    private final String modId;
+	private final String bareName;
+	private final String modId;
 
-    public ItemWizardryFood(String name, int amount, float saturation, boolean wolfFood, String... variants) {
-        super(amount, saturation, wolfFood);
-        modId = Loader.instance().activeModContainer().getModId();
-        bareName = name;
-        this.variants = VariantHelper.setupItem(this, name, variants, getCreativeTab());
-    }
+	public ItemWizardryFood(String name, int amount, float saturation, boolean wolfFood, String... variants) {
+		super(amount, saturation, wolfFood);
+		modId = Loader.instance().activeModContainer().getModId();
+		bareName = name;
+		this.variants = VariantHelper.setupItem(this, name, variants, getCreativeTab());
+	}
 
-    @NotNull
-    @Override
-    public Item setUnlocalizedName(@NotNull String unlocalizedName) {
-        VariantHelper.setUnlocalizedNameForItem(this, modId, unlocalizedName);
-        return super.setUnlocalizedName(unlocalizedName);
-    }
+	@NotNull
+	@Override
+	public Item setUnlocalizedName(@NotNull String unlocalizedName) {
+		VariantHelper.setUnlocalizedNameForItem(this, modId, unlocalizedName);
+		return super.setUnlocalizedName(unlocalizedName);
+	}
 
-    @NotNull
-    @Override
-    public String getUnlocalizedName(ItemStack stack) {
-        int dmg = stack.getItemDamage();
-        return "item." + modId + ":" + (dmg > variants.length ? bareName : variants[dmg]);
-    }
+	@NotNull
+	@Override
+	public String getUnlocalizedName(ItemStack stack) {
+		int dmg = stack.getItemDamage();
+		return "item." + modId + ':' + (dmg > variants.length ? bareName : variants[dmg]);
+	}
 
-    @Override
-    public void getSubItems(@NotNull Item itemIn, CreativeTabs tab, List<ItemStack> subItems) {
-        for (int i = 0; i < variants.length; i++)
-            subItems.add(new ItemStack(itemIn, 1, i));
-    }
+	@Override
+	public void getSubItems(@NotNull Item itemIn, CreativeTabs tab, List<ItemStack> subItems) {
+		for (int i = 0; i < variants.length; i++)
+			subItems.add(new ItemStack(itemIn, 1, i));
+	}
 
-    @Nonnull
-    @Override
-    public String[] getVariants() {
-        return variants;
-    }
+	@Nonnull
+	@Override
+	public String[] getVariants() {
+		return variants;
+	}
 
-    @Nonnull
-    @Override
-    public Item getProvidedItem() {
-        return this;
-    }
+	@Nonnull
+	@Override
+	public Item getProvidedItem() {
+		return this;
+	}
 
-    @NotNull
-    @Override
-    public ModCreativeTab getCreativeTab() {
-        return Wizardry.tab;
-    }
+	@NotNull
+	@Override
+	public ModCreativeTab getCreativeTab() {
+		return Wizardry.tab;
+	}
 
-    @Nullable
-    @Override
-    public ItemMeshDefinition getCustomMeshDefinition() {
-        return null;
-    }
+	@Nullable
+	@Override
+	public ItemMeshDefinition getCustomMeshDefinition() {
+		return null;
+	}
 }

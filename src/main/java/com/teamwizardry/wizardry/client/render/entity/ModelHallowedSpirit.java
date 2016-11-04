@@ -19,8 +19,8 @@ public class ModelHallowedSpirit extends ModelBiped {
 	//public ModelRenderer arm_left;
 
 	public ModelHallowedSpirit() {
-		this.textureWidth = 64;
-		this.textureHeight = 64;
+		textureWidth = 64;
+		textureHeight = 64;
 		bipedHead.showModel = false;
 		bipedHeadwear.showModel = false;
 		bipedLeftLeg.showModel = false;

@@ -35,18 +35,20 @@ public class BlockPedestal extends BlockModContainer implements IManaSink {
 		if (!world.isRemote) {
 			TilePedestal te = getTE(world, pos);
 
-			if (te.getPearl() == null && heldItem != null) {
-				te.setPearl(heldItem);
+			if ((te.pearl == null) && (heldItem != null)) {
+				te.pearl = heldItem.copy();
+				heldItem.stackSize--;
 				player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
 				player.openContainer.detectAndSendChanges();
 
-			} else if (te.getPearl() != null && heldItem == null) {
-				ItemStack stack = te.getPearl();
-				te.setPearl(null);
-				if (!player.inventory.addItemStackToInventory(stack)) {
+			} else if ((te.pearl != null) && (heldItem == null)) {
+				ItemStack stack = te.pearl.copy();
+				te.pearl = null;
+				if (player.inventory.addItemStackToInventory(stack)) player.openContainer.detectAndSendChanges();
+				else {
 					EntityItem entityItem = new EntityItem(world, pos.getX(), pos.getY() + 1, pos.getZ(), stack);
 					world.spawnEntityInWorld(entityItem);
-				} else player.openContainer.detectAndSendChanges();
+				}
 			}
 		}
 		return true;

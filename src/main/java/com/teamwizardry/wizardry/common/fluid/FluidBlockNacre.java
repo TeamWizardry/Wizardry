@@ -11,22 +11,22 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class FluidBlockNacre extends BlockFluidClassic {
 
-    public static final FluidBlockNacre instance = new FluidBlockNacre();
+	public static final FluidBlockNacre instance = new FluidBlockNacre();
 
-    public FluidBlockNacre() {
-        super(FluidNacre.instance, ModBlocks.NACRE_MATERIAL);
-        GameRegistry.register(this, new ResourceLocation(Wizardry.MODID, "nacre"));
-        this.setQuantaPerBlock(1);
-        this.setUnlocalizedName("nacre");
-    }
+	public FluidBlockNacre() {
+		super(FluidNacre.instance, ModBlocks.NACRE_MATERIAL);
+		GameRegistry.register(this, new ResourceLocation(Wizardry.MODID, "nacre"));
+		setQuantaPerBlock(1);
+		setUnlocalizedName("nacre");
+	}
 
-    @Override
-    public Fluid getFluid() {
-        return FluidNacre.instance;
-    }
+	@Override
+	public Fluid getFluid() {
+		return FluidNacre.instance;
+	}
 
-    @Override
-    public EnumBlockRenderType getRenderType(IBlockState state) {
-        return EnumBlockRenderType.MODEL;
-    }
+	@Override
+	public EnumBlockRenderType getRenderType(IBlockState state) {
+		return EnumBlockRenderType.MODEL;
+	}
 }

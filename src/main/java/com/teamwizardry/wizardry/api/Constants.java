@@ -5,35 +5,75 @@ package com.teamwizardry.wizardry.api;
  */
 public class Constants {
 
-    public static class Data {
-        public static final String BLOOD_TYPE = "blood_type";
-        public static final String MAX_MANA = "max_mana";
-        public static final String MAX_BURNOUT = "max_burnout";
-        public static final String MANA = "mana";
-        public static final String BURNOUT = "burnout";
-        public static final String BLOOD_LEVELS = "blood_levels";
-    }
+	public static class Module {
 
-    public static class GuiButtons {
-        public static final int NAV_BAR_NEXT = 1;
-        public static final int NAV_BAR_BACK = 2;
-        public static final int NAV_BAR_INDEX = 3;
-        public static final int BOOKMARK = 4;
-        public static final int SCHEMATIC_UP_LAYER = 5;
-        public static final int SCHEMATIC_DOWN_LAYER = 6;
-    }
+		public static final String SHAPE = "Shape";
+		public static final String TYPE = "Type";
+		public static final String MODULES = "Modules";
+		public static final String POWER = "Power";
+		public static final String DURATION = "Duration";
+		public static final String RADIUS = "Radius";
+		public static final String PIERCE = "Pierce";
+		public static final String SILENT = "Silent";
+		public static final String SPEED = "Speed";
+		public static final String KNOCKBACK = "Knockback";
+		public static final String PROJ_COUNT = "Projectile Count";
+		public static final String SCATTER = "Scatter";
+		public static final String CRIT_CHANCE = "Crit Chance";
+		public static final String CRIT_DAMAGE = "Crit Damage";
+		public static final String DISTANCE = "Distance";
+		public static final String DAMAGE = "Damage";
+		public static final String MANA = "Mana";
+		public static final String BURNOUT = "Burnout";
+		public static final String COLOR = "Color";
+	}
 
-    public static class PageNumbers {
-        public static final int GUIDE = 0;
-        public static final int WORKTABLE = 1;
-        public static final int BASICS = 2;
-        public static final int BASICS_GETTING_STARTED = 3;
-    }
+	public static class MISC {
+		public static final String PARTICLES_SPARKLE_BLURRED = "particles/sparkle_blurred";
+		public static final String PARTICLES_SPARKLE = "particles/sparkle";
+	}
 
-    public static class WorkTable {
-        public static final int DONE_BUTTON = 0;
-        public static final int CONFIRM_BUTTON = 1;
-    }
+	public static class Data {
+		public static final String BLOOD_TYPE = "blood_type";
+		public static final String MAX_MANA = "maxMana";
+		public static final String MAX_BURNOUT = "max_burnout";
+		public static final String MANA = "mana";
+		public static final String BURNOUT = "burnout";
+		public static final String BLOOD_LEVELS = "blood_levels";
+	}
 
+	public static class GuiButtons {
+		public static final int NAV_BAR_NEXT = 1;
+		public static final int NAV_BAR_BACK = 2;
+		public static final int NAV_BAR_INDEX = 3;
+		public static final int BOOKMARK = 4;
+		public static final int SCHEMATIC_UP_LAYER = 5;
+		public static final int SCHEMATIC_DOWN_LAYER = 6;
+	}
 
+	public static class PageNumbers {
+		public static final int GUIDE = 0;
+		public static final int WORKTABLE = 1;
+		public static final int BASICS = 2;
+		public static final int BASICS_GETTING_STARTED = 3;
+	}
+
+	public static class WorkTable {
+		public static final int DONE_BUTTON = 0;
+		public static final int CONFIRM_BUTTON = 1;
+	}
+
+	public static class NBT {
+		public static final String SPELL = "Spell";
+		public static final String TAG_OVERLAY = "overlay";
+		public static final String FAIRY_INSIDE = "fairy_inside";
+		public static final String FAIRY_COLOR = "fairy_color";
+		public static final String FAIRY_AGE = "fairy_age";
+		public static final String COLOR = "color";
+		public static final String RAND = "rand";
+		public static final String PURITY = "purity";
+		public static final String COMPLETE = "complete";
+		public static final int NACRE_PURITY_CONVERSION = 30 * 20; // 30 seconds for max purity, 0/60 for no purity
+		public static final int COLOR_CYCLE_LENGTH = 50 * 20; // 50 seconds
+	}
 }

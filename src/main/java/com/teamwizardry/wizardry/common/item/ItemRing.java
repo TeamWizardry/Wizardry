@@ -11,23 +11,23 @@ import net.minecraft.world.World;
  */
 public class ItemRing extends ItemWizardry implements INacreColorable {
 
-    public ItemRing() {
-        super("ring", "ring", "ring_pearl");
-    }
+	public ItemRing() {
+		super("ring", "ring", "ring_pearl");
+	}
 
-    @Override
-    public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-        if (!worldIn.isRemote) return;
+	@Override
+	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
+		if (!worldIn.isRemote) return;
 
-        colorableOnUpdate(stack);
-    }
+		colorableOnUpdate(stack);
+	}
 
-    @Override
-    public boolean onEntityItemUpdate(EntityItem entityItem) {
-        if (!entityItem.worldObj.isRemote) return false;
+	@Override
+	public boolean onEntityItemUpdate(EntityItem entityItem) {
+		if (!entityItem.worldObj.isRemote) return false;
 
-        colorableOnEntityItemUpdate(entityItem);
+		colorableOnEntityItemUpdate(entityItem);
 
-        return super.onEntityItemUpdate(entityItem);
-    }
+		return super.onEntityItemUpdate(entityItem);
+	}
 }

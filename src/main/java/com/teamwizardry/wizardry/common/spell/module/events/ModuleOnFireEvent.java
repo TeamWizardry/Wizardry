@@ -9,28 +9,28 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleOnFireEvent extends Module {
-    public ModuleOnFireEvent(ItemStack stack) {
-        super(stack);
-    }
+	public ModuleOnFireEvent(ItemStack stack) {
+		super(stack);
+	}
 
-    @Override
-    public ModuleType getType() {
-        return ModuleType.EVENT;
-    }
+	@Override
+	public ModuleType getType() {
+		return ModuleType.EVENT;
+	}
 
-    @Override
-    public String getDescription() {
-        return "Called whenever a targetable entity is lit on fire.";
-    }
+	@Override
+	public String getDescription() {
+		return "Called whenever a targetable entity is lit on fire.";
+	}
 
-    @Override
-    public String getDisplayName() {
-        return "If Target Is On Fire";
-    }
+	@Override
+	public String getDisplayName() {
+		return "If Target Is On Fire";
+	}
 
-    @Override
-    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

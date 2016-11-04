@@ -1,8 +1,9 @@
 package com.teamwizardry.wizardry.common.core;
 
-import com.teamwizardry.librarianlib.bloat.TeleportUtil;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.util.PosUtils;
+import com.teamwizardry.wizardry.api.util.TeleportUtil;
 import com.teamwizardry.wizardry.common.achievement.Achievements;
 import com.teamwizardry.wizardry.common.entity.EntityDevilDust;
 import com.teamwizardry.wizardry.common.entity.EntitySpellCodex;
@@ -32,8 +33,8 @@ public class EventHandler {
 
 	@SubscribeEvent
 	public void onTextureStitchEvent(TextureStitchEvent.Pre event) {
-		event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, "particles/sparkle"));
-		event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
+		event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, Constants.MISC.PARTICLES_SPARKLE));
+		event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, Constants.MISC.PARTICLES_SPARKLE_BLURRED));
 		event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, "particles/hexagon"));
 		event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, "particles/octagon"));
 		event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, "particles/hexagon_blur_1"));
@@ -80,7 +81,7 @@ public class EventHandler {
 			EntityPlayer player = ((EntityPlayer) event.getEntityLiving());
 			BlockPos spawn = player.isSpawnForced(0) ? player.getBedLocation(0) : player.worldObj.getSpawnPoint().add(player.worldObj.rand.nextGaussian() * 16, 0, player.worldObj.rand.nextGaussian() * 16);
 			BlockPos teleportTo = spawn.add(0, 255 - spawn.getY(), 0);
-			TeleportUtil.INSTANCE.teleportToDimension((EntityPlayer) event.getEntity(), 0, teleportTo.getX(), teleportTo.getY(), teleportTo.getZ());
+			TeleportUtil.teleportToDimension((EntityPlayer) event.getEntity(), 0, teleportTo.getX(), teleportTo.getY(), teleportTo.getZ());
 			event.getEntity().fallDistance = -500;
 			event.setCanceled(true);
 		}
@@ -95,7 +96,7 @@ public class EventHandler {
 				BlockPos bedrock = PosUtils.checkNeighbor(event.getEntity().getEntityWorld(), location, Blocks.BEDROCK);
 				if (bedrock != null) {
 					if (event.getEntity().getEntityWorld().getBlockState(bedrock).getBlock() == Blocks.BEDROCK) {
-						TeleportUtil.INSTANCE.teleportToDimension((EntityPlayer) event.getEntity(), Wizardry.underWorld.getId(), 0, 100, 0);
+						TeleportUtil.teleportToDimension((EntityPlayer) event.getEntity(), Wizardry.underWorld.getId(), 0, 100, 0);
 						fallResetUUIDs.add(event.getEntity().getUniqueID());
 						((EntityPlayer) event.getEntity()).addStat(Achievements.CRUNCH);
 						event.setCanceled(true);

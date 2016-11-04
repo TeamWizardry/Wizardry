@@ -12,12 +12,12 @@ import net.minecraft.stats.Achievement;
  */
 public class ItemDevilDust extends ItemWizardry implements IPickupAchievement {
 
-    public ItemDevilDust() {
-        super("devil_dust");
-    }
+	public ItemDevilDust() {
+		super("devil_dust");
+	}
 
-    @Override
-    public Achievement getAchievementOnPickup(ItemStack stack, EntityPlayer player, EntityItem item) {
-        return Achievements.DEVILDUST;
-    }
+	@Override
+	public Achievement getAchievementOnPickup(ItemStack stack, EntityPlayer player, EntityItem item) {
+		return Achievements.DEVILDUST;
+	}
 }

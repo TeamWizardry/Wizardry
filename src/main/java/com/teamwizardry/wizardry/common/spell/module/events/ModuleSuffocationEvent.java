@@ -9,28 +9,28 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleSuffocationEvent extends Module {
-    public ModuleSuffocationEvent(ItemStack stack) {
-        super(stack);
-    }
+	public ModuleSuffocationEvent(ItemStack stack) {
+		super(stack);
+	}
 
-    @Override
-    public ModuleType getType() {
-        return ModuleType.EVENT;
-    }
+	@Override
+	public ModuleType getType() {
+		return ModuleType.EVENT;
+	}
 
-    @Override
-    public String getDescription() {
-        return "Called whenever a targetable entity takes damage from suffocation.";
-    }
+	@Override
+	public String getDescription() {
+		return "Called whenever a targetable entity takes damage from suffocation.";
+	}
 
-    @Override
-    public String getDisplayName() {
-        return "If Target Suffocates";
-    }
+	@Override
+	public String getDisplayName() {
+		return "If Target Suffocates";
+	}
 
-    @Override
-    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

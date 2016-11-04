@@ -10,5 +10,5 @@ import net.minecraft.stats.Achievement;
  */
 public interface IPickupAchievement {
 
-    Achievement getAchievementOnPickup(ItemStack stack, EntityPlayer player, EntityItem item);
+	Achievement getAchievementOnPickup(ItemStack stack, EntityPlayer player, EntityItem item);
 }

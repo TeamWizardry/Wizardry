@@ -1,5 +1,5 @@
 {
-  "parent":   "item/generated",
+  "parent": "item/generated",
   "textures": {
     "layer0": "wizardry:items/mana_icon_no_outline"
   }

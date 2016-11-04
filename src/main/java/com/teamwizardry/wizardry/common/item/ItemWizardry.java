@@ -11,13 +11,13 @@ import org.jetbrains.annotations.Nullable;
  */
 public abstract class ItemWizardry extends ItemMod {
 
-    public ItemWizardry(String name, String... variants) {
-        super(name, variants);
-    }
+	public ItemWizardry(String name, String... variants) {
+		super(name, variants);
+	}
 
-    @Nullable
-    @Override
-    public ModCreativeTab getCreativeTab() {
-        return Wizardry.tab;
-    }
+	@Nullable
+	@Override
+	public ModCreativeTab getCreativeTab() {
+		return Wizardry.tab;
+	}
 }

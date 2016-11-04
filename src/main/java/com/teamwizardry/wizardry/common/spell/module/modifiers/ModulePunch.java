@@ -14,37 +14,38 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class ModulePunch extends Module implements IModifier {
-    public ModulePunch(ItemStack stack) {
-        super(stack);
-        canHaveChildren = false;
-    }
 
-    @Override
-    public ModuleType getType() {
-        return ModuleType.MODIFIER;
-    }
+	public ModulePunch(ItemStack stack) {
+		super(stack);
+		canHaveChildren = false;
+	}
 
-    @Override
-    public String getDescription() {
-        return "Gives a spell a knockback effect.";
-    }
+	@Override
+	public ModuleType getType() {
+		return ModuleType.MODIFIER;
+	}
 
-    @Override
-    public String getDisplayName() {
-        return "Increase Punch";
-    }
+	@Override
+	public String getDescription() {
+		return "Gives a spell a knockback effect.";
+	}
 
-    @Override
-    public void apply(AttributeMap map) {
-        map.putModifier(Attribute.KNOCKBACK, new AttributeModifier(Operation.ADD, 0.5));
+	@Override
+	public String getDisplayName() {
+		return "Increase Punch";
+	}
 
-        map.putModifier(Attribute.MANA, new AttributeModifier(Operation.MULTIPLY, 1.1));
-        map.putModifier(Attribute.BURNOUT, new AttributeModifier(Operation.MULTIPLY, 1.1));
-    }
+	@Override
+	public void apply(AttributeMap map) {
+		map.putModifier(Attribute.KNOCKBACK, new AttributeModifier(Operation.ADD, 0.5));
 
-    @Override
-    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
-        // TODO Auto-generated method stub
-        return false;
-    }
+		map.putModifier(Attribute.MANA, new AttributeModifier(Operation.MULTIPLY, 1.1));
+		map.putModifier(Attribute.BURNOUT, new AttributeModifier(Operation.MULTIPLY, 1.1));
+	}
+
+	@Override
+	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

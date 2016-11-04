@@ -1,15 +1,28 @@
 {
-	"title": "Example",
-	"text": [
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis ex id quam sagittis commodo. Fusce eget dui id lacus dapibus tempus ac eget augue. Nullam sem ipsum, cursus vel euismod non, laoreet sed eros. ", ["integer"], "Integer aliquam imperdiet nisl non dignissim. Cras massa leo, accumsan sit amet purus in, interdum pellentesque magna. Sed eget nisi ligula. Pellentesque ut ante sagittis lobortis quis eget dolor. Ut non nunc ", ["orci", "!link", "/orcs"], ". Donec nulla sem, egestas at dictum sit amet, faucibus sit amet magna. Maecenas sagittis nunc augue, ac pulvinar mauris egestas vitae. Nulla sodales ullamcorper quam, in luctus ex faucibus eget. Suspendisse cursus arcu sit amet varius efficitur. Donec lorem dolor, consectetur id nibh ac, sollicitudin ornare velit. Nunc sit amet imperdiet nulla. Quisque auctor eros vitae orci condimentum, vitae placerat tellus eleifend. Maecenas semper leo in eros imperdiet placerat.\n", {"page":"struct"}
-	],
-	"pages": {
-		"struct": {
-			"type": "structure",
-			"structure": "wizardry:crafting_altar",
-			"block": {
-				"id":"wizardry:crafting_plate"
-			}
-		}
-	}
+  "title": "Example",
+  "text": [
+    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla venenatis ex id quam sagittis commodo. Fusce eget dui id lacus dapibus tempus ac eget augue. Nullam sem ipsum, cursus vel euismod non, laoreet sed eros. ",
+    [
+      "integer"
+    ],
+    "Integer aliquam imperdiet nisl non dignissim. Cras massa leo, accumsan sit amet purus in, interdum pellentesque magna. Sed eget nisi ligula. Pellentesque ut ante sagittis lobortis quis eget dolor. Ut non nunc ",
+    [
+      "orci",
+      "!link",
+      "/orcs"
+    ],
+    ". Donec nulla sem, egestas at dictum sit amet, faucibus sit amet magna. Maecenas sagittis nunc augue, ac pulvinar mauris egestas vitae. Nulla sodales ullamcorper quam, in luctus ex faucibus eget. Suspendisse cursus arcu sit amet varius efficitur. Donec lorem dolor, consectetur id nibh ac, sollicitudin ornare velit. Nunc sit amet imperdiet nulla. Quisque auctor eros vitae orci condimentum, vitae placerat tellus eleifend. Maecenas semper leo in eros imperdiet placerat.\n",
+    {
+      "page": "struct"
+    }
+  ],
+  "pages": {
+    "struct": {
+      "type": "structure",
+      "structure": "wizardry:crafting_altar",
+      "block": {
+        "id": "wizardry:crafting_plate"
+      }
+    }
+  }
 }

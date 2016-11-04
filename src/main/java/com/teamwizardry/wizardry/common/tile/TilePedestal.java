@@ -1,7 +1,11 @@
 package com.teamwizardry.wizardry.common.tile;
 
 import com.mojang.authlib.GameProfile;
+import com.teamwizardry.librarianlib.common.base.block.TileMod;
 import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
+import com.teamwizardry.librarianlib.common.util.saving.Save;
+import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.Constants.NBT;
 import com.teamwizardry.wizardry.api.block.IManaSink;
 import com.teamwizardry.wizardry.api.item.Infusable;
 import com.teamwizardry.wizardry.api.module.Module;
@@ -13,9 +17,6 @@ import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -23,66 +24,19 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 
+import javax.annotation.Nullable;
 import java.util.UUID;
 
 /**
  * Created by Saad on 5/7/2016.
  */
-public class TilePedestal extends TileEntity implements ITickable {
+public class TilePedestal extends TileMod implements ITickable {
 
-	private ItemStack pearl;
+	@Nullable
+	@Save
+	public ItemStack pearl;
 	private FakePlayer fakePlayer;
-	private int castCooldown = 0;
-
-	private IBlockState state;
-
-	public ItemStack getPearl() {
-		return pearl;
-	}
-
-	public void setPearl(ItemStack pearl) {
-		this.pearl = pearl;
-	}
-
-	@Override
-	public void readFromNBT(NBTTagCompound compound) {
-		super.readFromNBT(compound);
-		if (compound.hasKey("mana_pearl"))
-			pearl = ItemStack.loadItemStackFromNBT(compound.getCompoundTag("man_pearl"));
-		else pearl = null;
-	}
-
-	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-		super.writeToNBT(compound);
-		if (pearl != null) {
-			NBTTagCompound tagCompound = new NBTTagCompound();
-			pearl.writeToNBT(tagCompound);
-			compound.setTag("mana_pearl", tagCompound);
-		}
-		return compound;
-	}
-
-	@Override
-	public NBTTagCompound getUpdateTag() {
-		return writeToNBT(new NBTTagCompound());
-	}
-
-	@Override
-	public SPacketUpdateTileEntity getUpdatePacket() {
-		NBTTagCompound tag = new NBTTagCompound();
-		writeToNBT(tag);
-		return new SPacketUpdateTileEntity(pos, 0, tag);
-	}
-
-	@Override
-	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
-		super.onDataPacket(net, packet);
-		readFromNBT(packet.getNbtCompound());
-
-		state = worldObj.getBlockState(pos);
-		worldObj.notifyBlockUpdate(pos, state, state, 3);
-	}
+	private int castCooldown;
 
 	@Override
 	public void update() {
@@ -91,12 +45,10 @@ public class TilePedestal extends TileEntity implements ITickable {
 
 		if (pearl.getItem() instanceof Infusable) {
 
-			if (!worldObj.isBlockPowered(getPos())) return;
-
-			NBTTagCompound spellCompound = ItemNBTHelper.getCompound(pearl, "Spell", true);
+			NBTTagCompound spellCompound = ItemNBTHelper.getCompound(pearl, NBT.SPELL, true);
 			if (spellCompound == null) return;
 			SpellStack spell = new SpellStack(fakePlayer, fakePlayer, spellCompound);
-			Module module = ModuleRegistry.getInstance().getModuleByLocation(spellCompound.getString(Module.SHAPE));
+			Module module = ModuleRegistry.getInstance().getModuleByLocation(spellCompound.getString(Constants.Module.SHAPE));
 
 			if (!(module instanceof IContinuousCast)) {
 				if (castCooldown > 0) {

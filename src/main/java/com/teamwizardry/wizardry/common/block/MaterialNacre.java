@@ -8,8 +8,8 @@ import net.minecraft.block.material.MaterialLiquid;
  *         Created at 1:55 AM on 8/3/16.
  */
 public class MaterialNacre extends MaterialLiquid {
-    public MaterialNacre(MapColor color) {
-        super(color);
-        setNoPushMobility();
-    }
+	public MaterialNacre(MapColor color) {
+		super(color);
+		setNoPushMobility();
+	}
 }

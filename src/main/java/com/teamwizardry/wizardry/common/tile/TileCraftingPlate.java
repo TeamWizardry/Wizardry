@@ -1,288 +1,138 @@
 package com.teamwizardry.wizardry.common.tile;
 
+import com.teamwizardry.librarianlib.common.base.block.TileMod;
 import com.teamwizardry.librarianlib.common.structure.StructureMatchResult;
 import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
-import com.teamwizardry.wizardry.api.item.Infusable;
+import com.teamwizardry.librarianlib.common.util.saving.Save;
+import com.teamwizardry.wizardry.api.Constants.NBT;
+import com.teamwizardry.wizardry.api.block.IManaSink;
 import com.teamwizardry.wizardry.api.item.PearlType;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.ModuleRegistry;
-import com.teamwizardry.wizardry.client.helper.CraftingPlateItemStackHelper;
+import com.teamwizardry.wizardry.api.util.CapsUtils;
 import com.teamwizardry.wizardry.common.Structures;
 import com.teamwizardry.wizardry.common.spell.parsing.Parser;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 /**
  * Created by Saad on 6/10/2016.
  */
-public class TileCraftingPlate extends TileEntity implements ITickable {
+public class TileCraftingPlate extends TileMod implements ITickable, IManaSink {
 
-    private ArrayList<CraftingPlateItemStackHelper> inventory = new ArrayList<>();
-    private boolean structureComplete = false, isCrafting = false, isAnimating = false, animationComplete = false, burst = false;
-    private int craftingTime = 100, craftingTimeLeft = 100;
-    private int pearlAnimationTime = 500, pearlAnimationTimeLeft = 500;
-    private CraftingPlateItemStackHelper pearl;
-    private IBlockState state;
+	@Save
+	public boolean structureComplete;
+	@Save
+	public boolean isCrafting;
+	@Save
+	public int craftingTime = 500;
+	public int craftingTimeLeft = 500;
+	@Nullable
+	@Save
+	public ItemStack pearl;
+	@Save
+	public ItemStackHandler output = new ItemStackHandler(1) {
+		@Override
+		public ItemStack extractItem(int slot, int amount, boolean simulate) {
+			return (!isCrafting && (output.getStackInSlot(0) != null)) ? super.extractItem(slot, amount, simulate) : null;
+		}
 
-    public TileCraftingPlate() {
-    }
+		@Override
+		public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+			return stack;
+		}
+	};
+	@Save
+	public ItemStackHandler inventory = new ItemStackHandler(54) {
+		@Override
+		public ItemStack extractItem(int slot, int amount, boolean simulate) {
+			return (isCrafting || (output.getStackInSlot(0) != null)) ? null : super.extractItem(slot, amount, simulate);
+		}
 
-    public void validateStructure() {
-        Structures.reload();
-        StructureMatchResult match = Structures.craftingAltar.match(this.worldObj, this.pos);
+		@Override
+		public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+			return (isCrafting || (output.getStackInSlot(0) != null)) ? null : super.insertItem(slot, stack, simulate);
+		}
+	};
 
-        setStructureComplete(true);
-        /*if (match.allErrors.size() == 0) {
-            worldObj.spawnParticle(EnumParticleTypes.FLAME, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5, 0.0D, 0.0D, 0.0D);
-            InWorldRender.INSTANCE.unsetStructure();
-            setStructureComplete(true);
-        } else {
-            InWorldRender.INSTANCE.setStructure(Structures.craftingAltar, this.pos);
-            setStructureComplete(false);
-        }*/
-    }
+	private static List<ItemStack> condenseItemList(List<ItemStack> list) {
+		List<ItemStack> items = new ArrayList<>();
+		items.add(list.remove(0));
+		while (!list.isEmpty()) {
+			if (ModuleRegistry.areItemsEqual(list.get(0), items.get(items.size() - 1)))
+				items.get(items.size() - 1).stackSize += list.remove(0).stackSize;
+			else
+				items.add(list.remove(0));
+		}
+		return items;
+	}
 
-    // TODO save inventory's CraftingPlateItemStackHelper as the full object
-    @Override
-    public void readFromNBT(NBTTagCompound compound) {
-        super.readFromNBT(compound);
-        structureComplete = compound.getBoolean("structureComplete");
-        inventory = new ArrayList<>();
-        if (compound.hasKey("inventory")) {
-            NBTTagList list = compound.getTagList("inventory", Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < list.tagCount(); i++)
-                inventory.add(new CraftingPlateItemStackHelper(ItemStack.loadItemStackFromNBT(list.getCompoundTagAt(i))));
-        }
-        if (compound.hasKey("pearl")) {
-            pearl = new CraftingPlateItemStackHelper(ItemStack.loadItemStackFromNBT(compound.getCompoundTag("pearl")));
-            pearl.setPoint(new Vec3d(0.5, 1, 0.5));
-        }
-    }
+	@Override
+	public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+		return (Objects.equals(capability, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)) || super.hasCapability(capability, facing);
+	}
 
-    // TODO save inventory's CraftingPlateItemStackHelper as the full object
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        compound = super.writeToNBT(compound);
-        compound.setBoolean("structureComplete", structureComplete);
+	@Override
+	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+		return (Objects.equals(capability, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)) ? (T) inventory : super.getCapability(capability, facing);
+	}
 
-        if (inventory.size() > 0) {
-            NBTTagList list = new NBTTagList();
-            for (CraftingPlateItemStackHelper anInventory : inventory)
-                list.appendTag(anInventory.getItemStack().writeToNBT(new NBTTagCompound()));
-            compound.setTag("inventory", list);
-        }
-        if (pearl != null) compound.setTag("pearl", pearl.getItemStack().writeToNBT(new NBTTagCompound()));
-        return compound;
-    }
+	public void validateStructure() {
+		Structures.reload();
+		// TODO
+		StructureMatchResult match = Structures.craftingAltar.match(worldObj, pos);
+	}
 
-    @Override
-    public NBTTagCompound getUpdateTag() {
-        return writeToNBT(new NBTTagCompound());
-    }
+	@SideOnly(Side.CLIENT)
+	@Override
+	public AxisAlignedBB getRenderBoundingBox() {
+		return TileEntity.INFINITE_EXTENT_AABB;
+	}
 
-    @Override
-    public SPacketUpdateTileEntity getUpdatePacket() {
-        NBTTagCompound tag = new NBTTagCompound();
-        writeToNBT(tag);
-        return new SPacketUpdateTileEntity(pos, 0, tag);
-    }
+	@Override
+	public void update() {
+		if (worldObj.isRemote) return;
+		if (!structureComplete) return;
 
-    @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
-        super.onDataPacket(net, packet);
-        readFromNBT(packet.getNbtCompound());
+		if (isCrafting) {
+			if (craftingTimeLeft > 0) --craftingTimeLeft;
+			else isCrafting = false;
 
-        state = worldObj.getBlockState(pos);
-        worldObj.notifyBlockUpdate(pos, state, state, 3);
-    }
+			// TODO condenser is broken
+			List<ItemStack> condensed = condenseItemList(CapsUtils.getListOfItems(inventory));
+			Parser spellParser = new Parser(condensed);
+			Module parsedSpell = null;
+			try {
+				while (parsedSpell == null) parsedSpell = spellParser.parseInventoryToModule();
+			} catch (NoSuchElementException ignored) {
+			}
 
-    @SideOnly(Side.CLIENT)
-    @Override
-    public net.minecraft.util.math.AxisAlignedBB getRenderBoundingBox() {
-        return INFINITE_EXTENT_AABB;
-    }
-
-    public ArrayList<CraftingPlateItemStackHelper> getInventory() {
-        return inventory;
-    }
-
-    @Override
-    public void update() {
-        if (isStructureComplete()) {
-            boolean update = false;
-            List<EntityItem> items = worldObj.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos, pos.add(1, 2, 1)));
-            for (EntityItem item : items) {
-
-                if (item.getEntityItem().getItem() instanceof Infusable) {
-                    if (!inventory.isEmpty()) {
-                        Infusable pearl = (Infusable) item.getEntityItem().getItem();
-                        if (pearl.getType(item.getEntityItem()) == PearlType.MUNDANE) {
-                            this.pearl = new CraftingPlateItemStackHelper(item.getEntityItem());
-                            this.pearl.setPoint(new Vec3d(0.5, 1, 0.5));
-                            isCrafting = true;
-                            craftingTime = inventory.size() * 10;
-                            craftingTimeLeft = inventory.size() * 10;
-                        }
-                    }
-                } else inventory.add(new CraftingPlateItemStackHelper(item.getEntityItem()));
-
-                update = true;
-                worldObj.removeEntity(item);
-            }
-            if (update) worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
-            
-            // TODO: Removed particle spawning code (particle aura)
-
-
-            // > 1 to prevent java.lang.ArithmeticException: / by zero in TileCraftingPlateRenderer.class
-            if (isCrafting)
-                if (craftingTimeLeft > 1) --craftingTimeLeft;
-                else {
-                    isAnimating = true;
-                    isCrafting = false;
-                }
-            else if (isAnimating)
-                if (pearlAnimationTimeLeft > 1) --pearlAnimationTimeLeft;
-                else {
-                    isAnimating = false;
-                    animationComplete = true;
-                }
-
-            if (isCrafting) {
-                // TODO: Removed particle code (crafting particle)
-                
-                for (int i = 0; i < 5; i++)
-                    ; // TODO: Removed particle code (lens flare particle)
-
-            } else if (isAnimating) {
-                for (int i = 0; i < 10; i++) {
-                    // TODO: Removed particle code (randomized particle things?)
-                }
-
-            } else if (animationComplete) {
-                for (int i = 0; i < 10; i++) {
-                    // TODO: Removed particle code (particle explosion)
-                }
-                structureComplete = false;
-            }
-
-            if (animationComplete) {
-                List<ItemStack> condensed = condenseItemList(inventory.stream().map(CraftingPlateItemStackHelper::getItemStack).collect(Collectors.toList()));
-                Parser spellParser = new Parser(condensed);
-                Module parsedSpell = null;
-                if (!worldObj.isRemote)
-                {
-                	try {
-                		while (parsedSpell == null)
-                			parsedSpell = spellParser.parseInventoryToModule();
-                	}
-                	catch (NoSuchElementException ignored)
-                	{}
-                }
-
-                if (parsedSpell != null) {
-                    ItemNBTHelper.setString(pearl.getItemStack(), "type", PearlType.INFUSED.toString());
-                    ItemNBTHelper.setCompound(pearl.getItemStack(), "Spell", parsedSpell.getModuleData());
-                    EntityItem pearlItem = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() + pearl.getPoint().yCoord, pos.getZ() + 0.5, pearl.getItemStack());
-                    pearlItem.setVelocity(0, 0.8, 0);
-                    pearlItem.forceSpawn = true;
-                    if (!worldObj.isRemote)
-                        worldObj.spawnEntityInWorld(pearlItem);
-
-                    // TODO: Removed particle code (some random particles at pearl pos?)
-
-                    pearl = null;
-                    inventory = new ArrayList<>();
-                    animationComplete = false;
-                    craftingTimeLeft = craftingTime;
-                    pearlAnimationTimeLeft = pearlAnimationTime;
-                } else System.err.println("Something went wrong! @" + pos);
-            }
-        }
-    }
-
-    public boolean isStructureComplete() {
-        return structureComplete;
-    }
-
-    public void setStructureComplete(boolean structureComplete) {
-        this.structureComplete = structureComplete;
-    }
-
-    public CraftingPlateItemStackHelper getPearl() {
-        return pearl;
-    }
-
-    public int getCraftingTime() {
-        return craftingTime;
-    }
-
-    public int getCraftingTimeLeft() {
-        return craftingTimeLeft;
-    }
-
-    public boolean isCrafting() {
-        return isCrafting;
-    }
-
-    public int getPearlAnimationTime() {
-        return pearlAnimationTime;
-    }
-
-    public void setPearlAnimationTime(int pearlAnimationTime) {
-        this.pearlAnimationTime = pearlAnimationTime;
-    }
-
-    public int getPearlAnimationTimeLeft() {
-        return pearlAnimationTimeLeft;
-    }
-
-    public void setPearlAnimationTimeLeft(int pearlAnimationTimeLeft) {
-        this.pearlAnimationTimeLeft = pearlAnimationTimeLeft;
-    }
-
-    public boolean isBurst() {
-        return burst;
-    }
-
-    public void setBurst(boolean burst) {
-        this.burst = burst;
-    }
-
-    public boolean isAnimating() {
-        return isAnimating;
-    }
-
-    public void setAnimating(boolean animating) {
-        isAnimating = animating;
-    }
-
-    private List<ItemStack> condenseItemList(List<ItemStack> list) {
-        ArrayList<ItemStack> items = new ArrayList<ItemStack>();
-        items.add(list.remove(0));
-        while (list.size() > 0) {
-            if (ModuleRegistry.areItemsEqual(list.get(0), items.get(items.size() - 1)))
-                items.get(items.size() - 1).stackSize += list.remove(0).stackSize;
-            else
-                items.add(list.remove(0));
-        }
-        return items;
-    }
+			if (parsedSpell != null) {
+				ItemNBTHelper.setString(pearl, "type", PearlType.INFUSED.toString());
+				ItemNBTHelper.setCompound(pearl, NBT.SPELL, parsedSpell.getModuleData());
+				EntityItem pearlItem = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5, pearl);
+				pearlItem.setVelocity(0.0, 0.8, 0.0);
+				pearlItem.forceSpawn = true;
+				worldObj.spawnEntityInWorld(pearlItem);
+				pearl = null;
+				CapsUtils.clearInventory(inventory);
+				craftingTimeLeft = craftingTime;
+			} else System.err.println("Something went wrong! @" + pos);
+		}
+	}
 }

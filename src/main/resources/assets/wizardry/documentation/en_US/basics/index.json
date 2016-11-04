@@ -1,29 +1,29 @@
 {
-  "title":    "Basics",
+  "title": "Basics",
   "subindex": [
     {
       "item": "wizardry:physics_book",
       "text": "Welcome",
       "link": "welcome",
-      "tip":  "Welcome To Wizardry."
+      "tip": "Welcome To Wizardry."
     },
     {
       "item": "wizardry:mana",
       "text": "Mana",
       "link": "mana",
-      "tip":  "Learn about what mana is, and why you want it so badly."
+      "tip": "Learn about what mana is, and why you want it so badly."
     },
     {
       "item": "wizardry:quartz_pearl",
       "text": "Pearls",
       "link": "pearls",
-      "tip":  "Learn what the best magical catalyst is and how you can use it."
+      "tip": "Learn what the best magical catalyst is and how you can use it."
     },
     {
       "item": "minecraft:book",
       "text": "Spells",
       "link": "spells",
-      "tip":  "Learn how the spell system works."
+      "tip": "Learn how the spell system works."
     },
     {
       "item": "minecraft:sand",
@@ -66,13 +66,13 @@
       "link": "example"
     },
     {
-      "item":   "minecraft:dye",
+      "item": "minecraft:dye",
       "damage": 3,
-      "text":   "Example12",
-      "link":   "example"
+      "text": "Example12",
+      "link": "example"
     }
   ],
-  "pages":    [
+  "pages": [
     {
       "type": "subindex",
       "page": 0

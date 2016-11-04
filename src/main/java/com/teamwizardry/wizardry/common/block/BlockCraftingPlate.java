@@ -26,62 +26,63 @@ import org.jetbrains.annotations.Nullable;
  */
 public class BlockCraftingPlate extends BlockModContainer implements IManaSink {
 
-    public static final AxisAlignedBB AABB = new AxisAlignedBB(0.125, 0, 0.125, 0.875, 0.625, 0.875);
+	public static final AxisAlignedBB AABB = new AxisAlignedBB(0.125, 0, 0.125, 0.875, 0.625, 0.875);
 
-    public BlockCraftingPlate() {
-        super("crafting_plate", Material.ROCK);
-        setHardness(1F);
-        setLightLevel(15);
-        setSoundType(SoundType.STONE);
-        GameRegistry.registerTileEntity(TileCraftingPlate.class, "crafting_altar");
-    }
+	public BlockCraftingPlate() {
+		super("crafting_plate", Material.ROCK);
+		setHardness(1.0F);
+		setLightLevel(15);
+		setSoundType(SoundType.STONE);
+		GameRegistry.registerTileEntity(TileCraftingPlate.class, "crafting_altar");
+	}
 
-    @Nullable
-    @Override
-    public TileEntity createTileEntity(World world, IBlockState iBlockState) {
-        return new TileCraftingPlate();
-    }
+	@Nullable
+	@Override
+	public TileEntity createTileEntity(World world, IBlockState iBlockState) {
+		return new TileCraftingPlate();
+	}
 
-    private TileCraftingPlate getTE(World world, BlockPos pos) {
-        return (TileCraftingPlate) world.getTileEntity(pos);
-    }
+	private TileCraftingPlate getTE(World world, BlockPos pos) {
+		return (TileCraftingPlate) world.getTileEntity(pos);
+	}
 
-    @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-        TileCraftingPlate te = getTE(worldIn, pos);
-        te.validateStructure();
-        if (!worldIn.isRemote) {
-            if (!te.isStructureComplete()) {
-                //Schematic schematic = new Schematic("spell_crafter");
-                //te.setStructureComplete(schematic.check(worldIn, pos, this, playerIn));
-            }
-        }
-        return true;
-    }
+	@Override
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+		TileCraftingPlate te = getTE(worldIn, pos);
+		te.validateStructure();
+		if (!worldIn.isRemote) {
+			// TODO
+			//if (!te.isStructureComplete()) {
+				//Schematic schematic = new Schematic("spell_crafter");
+				//te.setStructureComplete(schematic.check(worldIn, pos, this, playerIn));
+			//}
+		}
+		return true;
+	}
 
-    @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos) {
-        return AABB;
-    }
+	@Override
+	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos) {
+		return AABB;
+	}
 
-    @Override
-    public boolean canRenderInLayer(BlockRenderLayer layer) {
-        return layer == BlockRenderLayer.CUTOUT;
-    }
+	@Override
+	public boolean canRenderInLayer(BlockRenderLayer layer) {
+		return layer == BlockRenderLayer.CUTOUT;
+	}
 
-    @Override
-    public boolean isFullCube(IBlockState state) {
-        return false;
-    }
+	@Override
+	public boolean isFullCube(IBlockState state) {
+		return false;
+	}
 
-    @Override
-    public boolean isOpaqueCube(IBlockState blockState) {
-        return false;
-    }
+	@Override
+	public boolean isOpaqueCube(IBlockState blockState) {
+		return false;
+	}
 
-    @Nullable
-    @Override
-    public ModCreativeTab getCreativeTab() {
-        return Wizardry.tab;
-    }
+	@Nullable
+	@Override
+	public ModCreativeTab getCreativeTab() {
+		return Wizardry.tab;
+	}
 }

@@ -1,13 +1,6 @@
 package com.teamwizardry.wizardry.common.spell.module.effects;
 
-import java.util.HashMap;
-import java.util.Map;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.BlockPos;
+import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.capability.bloods.BloodRegistry;
 import com.teamwizardry.wizardry.api.capability.bloods.IBloodType;
 import com.teamwizardry.wizardry.api.module.Module;
@@ -16,56 +9,65 @@ import com.teamwizardry.wizardry.api.spell.IHasAffinity;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.SpellEntity;
 import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by Saad on 6/21/2016.
  */
 public class ModuleLava extends Module implements IHasAffinity {
-    public ModuleLava(ItemStack stack) {
-        super(stack);
-    }
 
-    @Override
-    public ModuleType getType() {
-        return ModuleType.EFFECT;
-    }
+	public ModuleLava(ItemStack stack) {
+		super(stack);
+	}
 
-    @Override
-    public String getDescription() {
-        return "Places a lava source block at the targeted location.";
-    }
+	@Override
+	public ModuleType getType() {
+		return ModuleType.EFFECT;
+	}
 
-    @Override
-    public String getDisplayName() {
-        return "Lava";
-    }
+	@Override
+	public String getDescription() {
+		return "Places a lava source block at the targeted location.";
+	}
 
-    @Override
-    public NBTTagCompound getModuleData() {
-        NBTTagCompound compound = super.getModuleData();
-        compound.setDouble(MANA, attributes.apply(Attribute.MANA, 10));
-        compound.setDouble(BURNOUT, attributes.apply(Attribute.BURNOUT, 10));
-        return compound;
-    }
+	@Override
+	public String getDisplayName() {
+		return "Lava";
+	}
 
-    @Override
-    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
-        if (!(caster instanceof SpellEntity)) {
-            caster.worldObj.setBlockState(caster.getPosition(), Blocks.FLOWING_LAVA.getDefaultState());
-            return true;
-        } else {
-            BlockPos pos = caster.getPosition().add(0, 1, 0);
-            if (caster.worldObj.isAirBlock(pos)) {
-                caster.worldObj.setBlockState(pos, Blocks.FLOWING_LAVA.getDefaultState());
-                return true;
-            }
-        }
-        return false;
-    }
+	@Override
+	public NBTTagCompound getModuleData() {
+		NBTTagCompound compound = super.getModuleData();
+		compound.setDouble(Constants.Module.MANA, attributes.apply(Attribute.MANA, 10.0));
+		compound.setDouble(Constants.Module.BURNOUT, attributes.apply(Attribute.BURNOUT, 10.0));
+		return compound;
+	}
 
-    @Override
-	public Map<IBloodType, Integer> getAffinityLevels()
-	{
+	@Override
+	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+		if (caster instanceof SpellEntity) {
+			BlockPos pos = caster.getPosition().add(0, 1, 0);
+			if (caster.worldObj.isAirBlock(pos)) {
+				caster.worldObj.setBlockState(pos, Blocks.FLOWING_LAVA.getDefaultState());
+				return true;
+			}
+		} else {
+			caster.worldObj.setBlockState(caster.getPosition(), Blocks.FLOWING_LAVA.getDefaultState());
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public Map<IBloodType, Integer> getAffinityLevels() {
 		Map<IBloodType, Integer> levels = new HashMap<>();
 		levels.put(BloodRegistry.PYROBLOOD, 2);
 		levels.put(BloodRegistry.TERRABLOOD, 1);

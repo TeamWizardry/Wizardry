@@ -9,28 +9,29 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleFallEvent extends Module {
-    public ModuleFallEvent(ItemStack stack) {
-        super(stack);
-    }
 
-    @Override
-    public ModuleType getType() {
-        return ModuleType.EVENT;
-    }
+	public ModuleFallEvent(ItemStack stack) {
+		super(stack);
+	}
 
-    @Override
-    public String getDescription() {
-        return "Called whenever a targetable entity hits the ground.";
-    }
+	@Override
+	public ModuleType getType() {
+		return ModuleType.EVENT;
+	}
 
-    @Override
-    public String getDisplayName() {
-        return "If Target Takes Fall Damage";
-    }
+	@Override
+	public String getDescription() {
+		return "Called whenever a targetable entity hits the ground.";
+	}
 
-    @Override
-    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public String getDisplayName() {
+		return "If Target Takes Fall Damage";
+	}
+
+	@Override
+	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

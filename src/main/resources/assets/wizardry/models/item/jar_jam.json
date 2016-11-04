@@ -1,5 +1,5 @@
 {
-  "parent":   "item/generated",
+  "parent": "item/generated",
   "textures": {
     "layer0": "wizardry:items/jam",
     "layer1": "wizardry:items/jam_jar"

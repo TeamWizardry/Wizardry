@@ -3,6 +3,8 @@ package com.teamwizardry.wizardry.api.item;
 import com.teamwizardry.librarianlib.client.core.ClientTickHandler;
 import com.teamwizardry.librarianlib.common.base.item.IItemColorProvider;
 import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
+import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.Constants.NBT;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.entity.item.EntityItem;
@@ -19,45 +21,39 @@ import java.awt.*;
  */
 public interface INacreColorable extends IItemColorProvider {
 
-    String TAG_RAND = "rand";
-    String TAG_PURITY = "purity";
-    String TAG_COMPLETE = "complete";
-    int NACRE_PURITY_CONVERSION = 30 * 20; // 30 seconds for max purity, 0/60 for no purity
-    int COLOR_CYCLE_LENGTH = 50 * 20; // 50 seconds
+	default void colorableOnUpdate(ItemStack stack) {
+		if (!ItemNBTHelper.verifyExistence(stack, NBT.RAND))
+			ItemNBTHelper.setInt(stack, NBT.RAND, 0);
+		if (!ItemNBTHelper.verifyExistence(stack, NBT.PURITY))
+			ItemNBTHelper.setInt(stack, NBT.PURITY, NBT.NACRE_PURITY_CONVERSION);
+		if (!ItemNBTHelper.getBoolean(stack, NBT.COMPLETE, false))
+			ItemNBTHelper.setBoolean(stack, NBT.COMPLETE, true);
+	}
 
-    default void colorableOnUpdate(ItemStack stack) {
-        if (!ItemNBTHelper.verifyExistence(stack, TAG_RAND))
-            ItemNBTHelper.setInt(stack, TAG_RAND, 0);
-        if (!ItemNBTHelper.verifyExistence(stack, TAG_PURITY))
-            ItemNBTHelper.setInt(stack, TAG_PURITY, NACRE_PURITY_CONVERSION);
-        if (!ItemNBTHelper.getBoolean(stack, TAG_COMPLETE, false))
-            ItemNBTHelper.setBoolean(stack, TAG_COMPLETE, true);
-    }
+	default void colorableOnEntityItemUpdate(EntityItem entityItem) {
+		ItemStack stack = entityItem.getEntityItem();
 
-    default void colorableOnEntityItemUpdate(EntityItem entityItem) {
-        ItemStack stack = entityItem.getEntityItem();
+		if (!ItemNBTHelper.verifyExistence(stack, NBT.RAND))
+			ItemNBTHelper.setInt(stack, NBT.RAND, entityItem.worldObj.rand.nextInt(NBT.COLOR_CYCLE_LENGTH));
 
-        if (!ItemNBTHelper.verifyExistence(stack, TAG_RAND))
-            ItemNBTHelper.setInt(stack, TAG_RAND, entityItem.worldObj.rand.nextInt(COLOR_CYCLE_LENGTH));
+		if (entityItem.isInsideOfMaterial(ModBlocks.NACRE_MATERIAL) && !ItemNBTHelper.getBoolean(stack, NBT.COMPLETE, false)) {
+			int purity = ItemNBTHelper.getInt(stack, NBT.PURITY, 0);
+			purity = Math.min(purity + 1, NBT.NACRE_PURITY_CONVERSION * 2);
+			ItemNBTHelper.setInt(stack, NBT.PURITY, purity);
+		} else ItemNBTHelper.setBoolean(stack, NBT.COMPLETE, true);
+	}
 
-        if (entityItem.isInsideOfMaterial(ModBlocks.NACRE_MATERIAL) && !ItemNBTHelper.getBoolean(stack, TAG_COMPLETE, false)) {
-            int purity = ItemNBTHelper.getInt(stack, TAG_PURITY, 0);
-            purity = Math.min(purity + 1, NACRE_PURITY_CONVERSION * 2);
-            ItemNBTHelper.setInt(stack, TAG_PURITY, purity);
-        } else ItemNBTHelper.setBoolean(stack, TAG_COMPLETE, true);
-    }
+	@Nullable
+	@Override
+	@SideOnly(Side.CLIENT)
+	default IItemColor getItemColor() {
+		return (stack, tintIndex) -> {
+			if (tintIndex != 0) return 0xFFFFFF;
+			int rand = ItemNBTHelper.getInt(stack, NBT.RAND, 0);
+			int purity = ItemNBTHelper.getInt(stack, NBT.PURITY, NBT.NACRE_PURITY_CONVERSION);
+			float saturation = MathHelper.sin((purity * (float) Math.PI * 0.5f) / NBT.NACRE_PURITY_CONVERSION);
 
-    @Nullable
-    @Override
-    @SideOnly(Side.CLIENT)
-    default IItemColor getItemColor() {
-        return (stack, tintIndex) -> {
-            if (tintIndex != 0) return 0xFFFFFF;
-            int rand = ItemNBTHelper.getInt(stack, TAG_RAND, 0);
-            int purity = ItemNBTHelper.getInt(stack, TAG_PURITY, NACRE_PURITY_CONVERSION);
-            float saturation = MathHelper.sin(purity * (float) Math.PI * 0.5f / NACRE_PURITY_CONVERSION);
-
-            return Color.HSBtoRGB((rand + ClientTickHandler.getTicksInGame()) / (float) COLOR_CYCLE_LENGTH, saturation * 0.3f, 1f);
-        };
-    }
+			return Color.HSBtoRGB((rand + ClientTickHandler.getTicksInGame()) / (float) NBT.COLOR_CYCLE_LENGTH, saturation * 0.3f, 1f);
+		};
+	}
 }

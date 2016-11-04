@@ -1,10 +1,14 @@
 {
-  "parent":   "item/handheld",
+  "parent": "item/handheld",
   "textures": {
     "layer0": "wizardry:items/debug_wand"
   },
-  "overrides": [{
-    "predicate": { "wizardry:overlay": 1 },
-    "model": "wizardry:item/debugger_overlay"
-  }]
+  "overrides": [
+    {
+      "predicate": {
+        "wizardry:overlay": 1
+      },
+      "model": "wizardry:item/debugger_overlay"
+    }
+  ]
 }

@@ -12,19 +12,19 @@ import net.minecraft.util.ResourceLocation;
  */
 public class RenderHallowedSpirit extends RenderLiving<EntityHallowedSpirit> {
 
-    public static final ResourceLocation SPIRIT_TEX = new ResourceLocation(Wizardry.MODID, "textures/entity/hallowed_spirit.png");
+	public static final ResourceLocation SPIRIT_TEX = new ResourceLocation(Wizardry.MODID, "textures/entity/hallowed_spirit.png");
 
-    public RenderHallowedSpirit(RenderManager renderManager, ModelBase modelBase) {
-        super(renderManager, modelBase, 0f);
-    }
+	public RenderHallowedSpirit(RenderManager renderManager, ModelBase modelBase) {
+		super(renderManager, modelBase, 0.0f);
+	}
 
-    @Override
-    public boolean canRenderName(EntityHallowedSpirit entity) {
-        return false;
-    }
+	@Override
+	public boolean canRenderName(EntityHallowedSpirit entity) {
+		return false;
+	}
 
-    @Override
-    protected ResourceLocation getEntityTexture(EntityHallowedSpirit entity) {
-        return SPIRIT_TEX;
-    }
+	@Override
+	protected ResourceLocation getEntityTexture(EntityHallowedSpirit entity) {
+		return SPIRIT_TEX;
+	}
 }

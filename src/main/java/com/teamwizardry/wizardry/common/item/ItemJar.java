@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.common.base.item.IItemColorProvider;
 import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
+import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,10 +30,10 @@ public class ItemJar extends ItemWizardry implements IItemColorProvider {
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
 		if (!worldIn.isRemote) {
-			if (playerIn.isSneaking() && itemStackIn.getItemDamage() == 1) {
-				if (ItemNBTHelper.getBoolean(itemStackIn, "fairy_inside", false)) {
-					ItemNBTHelper.setBoolean(itemStackIn, "fairy_inside", false);
-					EntityFairy entity = new EntityFairy(worldIn, new Color(ItemNBTHelper.getInt(itemStackIn, "fairy_color", 0xFFFFFF)), ItemNBTHelper.getInt(itemStackIn, "fairy_age", 0));
+			if (playerIn.isSneaking() && (itemStackIn.getItemDamage() == 1)) {
+				if (ItemNBTHelper.getBoolean(itemStackIn, Constants.NBT.FAIRY_INSIDE, false)) {
+					ItemNBTHelper.setBoolean(itemStackIn, Constants.NBT.FAIRY_INSIDE, false);
+					EntityFairy entity = new EntityFairy(worldIn, new Color(ItemNBTHelper.getInt(itemStackIn, Constants.NBT.FAIRY_COLOR, 0xFFFFFF)), ItemNBTHelper.getInt(itemStackIn, Constants.NBT.FAIRY_AGE, 0));
 					entity.setPosition(playerIn.posX, playerIn.posY, playerIn.posZ);
 					entity.setSad(true);
 					worldIn.spawnEntityInWorld(entity);
@@ -47,9 +48,6 @@ public class ItemJar extends ItemWizardry implements IItemColorProvider {
 	@SideOnly(Side.CLIENT)
 	@Override
 	public IItemColor getItemColor() {
-		return (stack, tintIndex) -> {
-			if (tintIndex == 0 && stack.getItemDamage() != 0) return ItemNBTHelper.getInt(stack, "fairy_color", 0xFFFFFF);
-			else return 0xFFFFFF;
-		};
+		return (stack, tintIndex) -> ((tintIndex == 0) && (stack.getItemDamage() != 0)) ? ItemNBTHelper.getInt(stack, Constants.NBT.FAIRY_COLOR, 0xFFFFFF) : 0xFFFFFF;
 	}
 }

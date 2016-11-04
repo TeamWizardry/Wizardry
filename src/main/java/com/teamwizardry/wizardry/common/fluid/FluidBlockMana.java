@@ -19,6 +19,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -29,12 +30,13 @@ import java.util.concurrent.ThreadLocalRandom;
 public class FluidBlockMana extends BlockFluidClassic {
 
 	public static final FluidBlockMana instance = new FluidBlockMana();
+	public static final String REACTION_COOLDOWN = "reaction_cooldown";
 
 	public FluidBlockMana() {
 		super(FluidMana.instance, Material.WATER);
 		GameRegistry.register(this, new ResourceLocation(Wizardry.MODID, "mana"));
-		this.setQuantaPerBlock(6);
-		this.setUnlocalizedName("mana");
+		setQuantaPerBlock(6);
+		setUnlocalizedName("mana");
 	}
 
 	@Override
@@ -54,7 +56,7 @@ public class FluidBlockMana extends BlockFluidClassic {
 
 			LibParticles.FIZZING_AMBIENT(worldIn, entityIn.getPositionVector());
 
-			if (entityIn instanceof EntityItem && new BlockPos(entityIn.getPositionVector()).equals(pos) && state.getValue(BlockFluidClassic.LEVEL) == 0) {
+			if ((entityIn instanceof EntityItem) && new BlockPos(entityIn.getPositionVector()).equals(pos) && (state.getValue(BlockFluidBase.LEVEL) == 0)) {
 				EntityItem ei = (EntityItem) entityIn;
 				ItemStack stack = ei.getEntityItem();
 
@@ -64,21 +66,23 @@ public class FluidBlockMana extends BlockFluidClassic {
 
 					if (stack.hasTagCompound()) {
 						NBTTagCompound compound = stack.getTagCompound();
-						if (compound.hasKey("reactionCooldown")) {
-							if (compound.getInteger("reactionCooldown") >= 100) {
-								compound.setInteger("reactionCooldown", 0);
+						if (compound != null) {
+							if (compound.hasKey(REACTION_COOLDOWN)) {
+								if (compound.getInteger(REACTION_COOLDOWN) >= 100) {
+									compound.setInteger(REACTION_COOLDOWN, 0);
 
-								ei.setDead();
-								((Explodable) stack.getItem()).explode(entityIn);
-								worldIn.setBlockState(pos, Blocks.AIR.getDefaultState());
-								worldIn.playSound(null, ei.posX, ei.posY, ei.posZ, ModSounds.GLASS_BREAK, SoundCategory.BLOCKS, 0.5F, ThreadLocalRandom.current().nextFloat() * 0.4F + 0.8F);
+									ei.setDead();
+									((Explodable) stack.getItem()).explode(entityIn);
+									worldIn.setBlockState(pos, Blocks.AIR.getDefaultState());
+									worldIn.playSound(null, ei.posX, ei.posY, ei.posZ, ModSounds.GLASS_BREAK, SoundCategory.BLOCKS, 0.5F, (ThreadLocalRandom.current().nextFloat() * 0.4F) + 0.8F);
 
-							} else {
-								compound.setInteger("reactionCooldown", compound.getInteger("reactionCooldown") + 1);
-								if (compound.getInteger("reactionCooldown") % 5 == 0)
-									worldIn.playSound(null, ei.posX, ei.posY, ei.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.3F, ThreadLocalRandom.current().nextFloat() * 0.4F + 0.8F);
-							}
-						} else stack.getTagCompound().setInteger("reactionCooldown", 0);
+								} else {
+									compound.setInteger(REACTION_COOLDOWN, compound.getInteger(REACTION_COOLDOWN) + 1);
+									if ((compound.getInteger(REACTION_COOLDOWN) % 5) == 0)
+										worldIn.playSound(null, ei.posX, ei.posY, ei.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.3F, (ThreadLocalRandom.current().nextFloat() * 0.4F) + 0.8F);
+								}
+							} else stack.getTagCompound().setInteger(REACTION_COOLDOWN, 0);
+						}
 					} else stack.setTagCompound(new NBTTagCompound());
 				}
 

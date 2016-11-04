@@ -1,83 +1,85 @@
 package com.teamwizardry.wizardry.common.spell;
 
 import com.teamwizardry.librarianlib.common.util.RaycastUtils;
+import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.item.INacreColorable;
-import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.spell.SpellEntity;
 import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.RayTraceResult.Type;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.awt.*;
 
 public class ProjectileEntity extends SpellEntity {
-    private EntityPlayer player;
-    private int ticker = 0;
-    private Color trailColor;
-    private SpellStack stack;
 
-    public ProjectileEntity(World world, double posX, double posY, double posZ, SpellStack stack) {
-        super(world, posX, posY, posZ, stack.spell);
-        this.setSize(0.1F, 0.1F);
-        this.isImmuneToFire = true;
-        this.player = stack.player;
-        this.stack = stack;
+	private EntityPlayer player;
+	private int ticker;
+	private Color trailColor;
+	private SpellStack stack;
 
-        if (stack.player.getHeldItemMainhand() != null) {
-            ItemStack item = stack.player.getHeldItemMainhand();
-            if (item.getItem() instanceof INacreColorable) {
-                INacreColorable colorable = (INacreColorable) item.getItem();
-                //trailColor = colorable.getColor(item);
-            }
-        }
-    }
+	public ProjectileEntity(World world, double posX, double posY, double posZ, SpellStack stack) {
+		super(world, posX, posY, posZ, stack.spell);
+		setSize(0.1F, 0.1F);
+		isImmuneToFire = true;
+		player = stack.player;
+		this.stack = stack;
 
-    @Override
-    public float getEyeHeight() {
-        return 0;
-    }
+		if (stack.player.getHeldItemMainhand() != null) {
+			ItemStack item = stack.player.getHeldItemMainhand();
+			if (item.getItem() instanceof INacreColorable) {
+				INacreColorable colorable = (INacreColorable) item.getItem();
+				//trailColor = colorable.getColor(item);
+			}
+		}
+	}
 
-    @Override
-    public void onEntityUpdate() {
-        super.onEntityUpdate();
+	@Override
+	public float getEyeHeight() {
+		return 0;
+	}
 
-        ticker++;
-        for (int i = 0; i < 2; i++) {
-            double theta = i * Math.toRadians((360.0 / 2) + ticker);
-            Vec3d origin = new Vec3d(posX + 0.5 * Math.cos(theta), posY, posZ + 0.5 * Math.sin(theta));
+	@Override
+	public void onEntityUpdate() {
+		super.onEntityUpdate();
 
-            // TODO: Removed particle code (projectile trail)
+		ticker++;
+		for (int i = 0; i < 2; i++) {
+			double theta = i * Math.toRadians((360.0 / 2) + ticker);
+			Vec3d origin = new Vec3d(posX + (0.5 * StrictMath.cos(theta)), posY, posZ + (0.5 * StrictMath.sin(theta)));
 
-            // TODO: Removed particle code (projectile pos)
-        }
+			// TODO: Removed particle code (projectile trail)
 
-        RayTraceResult cast = RaycastUtils.raycast(this.worldObj, this.getPositionVector(), new Vec3d(motionX, motionY, motionZ), Math.min(spell.getDouble(Module.SPEED), 1));
+			// TODO: Removed particle code (projectile pos)
+		}
 
-        if (cast != null) {
-            if (cast.typeOfHit == RayTraceResult.Type.BLOCK) {
-                BlockPos pos = cast.getBlockPos();
-                SpellEntity entity = new SpellEntity(worldObj, pos.getX(), pos.getY(), pos.getZ());
-                stack.castEffects(entity);
-                this.setDead();
-            } else if (cast.typeOfHit == RayTraceResult.Type.ENTITY && cast.entityHit != player) {
-                stack.castEffects(cast.entityHit);
-                this.setDead();
-            }
-        }
+		RayTraceResult cast = RaycastUtils.raycast(worldObj, getPositionVector(), new Vec3d(motionX, motionY, motionZ), Math.min(spell.getDouble(Constants.Module.SPEED), 1));
 
-        posX += motionX * 4;
-        posY += motionY * 4;
-        posZ += motionZ * 4;
-        setPosition(posX, posY, posZ);
-    }
+		if (cast != null) {
+			if (cast.typeOfHit == Type.BLOCK) {
+				BlockPos pos = cast.getBlockPos();
+				SpellEntity entity = new SpellEntity(worldObj, pos.getX(), pos.getY(), pos.getZ());
+				stack.castEffects(entity);
+				setDead();
+			} else if ((cast.typeOfHit == Type.ENTITY) && (cast.entityHit != player)) {
+				stack.castEffects(cast.entityHit);
+				setDead();
+			}
+		}
 
-    public void setDirection(float yaw, float pitch) {
-        double speed = spell.getDouble(Module.SPEED) / 10;
-        Vec3d dir = this.getVectorForRotation(pitch, yaw);
-        this.setVelocity(dir.xCoord * speed, dir.yCoord * speed, dir.zCoord * speed);
-    }
+		posX += motionX * 4;
+		posY += motionY * 4;
+		posZ += motionZ * 4;
+		setPosition(posX, posY, posZ);
+	}
+
+	public void setDirection(float yaw, float pitch) {
+		double speed = spell.getDouble(Constants.Module.SPEED) / 10;
+		Vec3d dir = getVectorForRotation(pitch, yaw);
+		setVelocity(dir.xCoord * speed, dir.yCoord * speed, dir.zCoord * speed);
+	}
 }

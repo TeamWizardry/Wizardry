@@ -10,33 +10,33 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleHitEntityEvent extends Module implements IRequireItem {
-    public ModuleHitEntityEvent(ItemStack stack) {
-        super(stack);
-    }
+	public ModuleHitEntityEvent(ItemStack stack) {
+		super(stack);
+	}
 
-    @Override
-    public ModuleType getType() {
-        return ModuleType.EVENT;
-    }
+	@Override
+	public ModuleType getType() {
+		return ModuleType.EVENT;
+	}
 
-    @Override
-    public String getDescription() {
-        return "Called whenever a targetable entity is hit.";
-    }
+	@Override
+	public String getDescription() {
+		return "Called whenever a targetable entity is hit.";
+	}
 
-    @Override
-    public String getDisplayName() {
-        return "If Target Is Hit";
-    }
+	@Override
+	public String getDisplayName() {
+		return "If Target Is Hit";
+	}
 
-    @Override
-    public void handle(ItemStack stack) {
-        // TODO Auto-generated method stub
-    }
+	@Override
+	public void handle(ItemStack stack) {
+		// TODO Auto-generated method stub
+	}
 
-    @Override
-    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

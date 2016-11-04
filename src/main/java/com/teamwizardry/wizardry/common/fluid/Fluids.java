@@ -9,25 +9,28 @@ import net.minecraft.item.Item;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
+import org.jetbrains.annotations.NotNull;
 
 public class Fluids {
-    private static ModelResourceLocation manafluidLocation = new ModelResourceLocation(Wizardry.MODID + ":" + "mana", "fluid");
-    private static ModelResourceLocation nacrefluidLocation = new ModelResourceLocation(Wizardry.MODID + ":" + "nacre", "fluid");
+	private static ModelResourceLocation manafluidLocation = new ModelResourceLocation(Wizardry.MODID + ":" + "mana", "fluid");
+	private static ModelResourceLocation nacrefluidLocation = new ModelResourceLocation(Wizardry.MODID + ":" + "nacre", "fluid");
 
-    public static void preInit() {
-        buildRender(FluidMana.instance, FluidBlockMana.instance, "mana", manafluidLocation);
-        buildRender(FluidNacre.instance, FluidBlockNacre.instance, "nacre", nacrefluidLocation);
-    }
+	public static void preInit() {
+		buildRender(FluidMana.instance, FluidBlockMana.instance, "mana", manafluidLocation);
+		buildRender(FluidNacre.instance, FluidBlockNacre.instance, "nacre", nacrefluidLocation);
+	}
 
-    private static void buildRender(Fluid fluid, Block block, String name, ModelResourceLocation resource) {
-        Item item = Item.getItemFromBlock(block);
-        if (item != null) ModelLoader.setCustomMeshDefinition(item, stack -> resource);
+	private static void buildRender(Fluid fluid, Block block, String name, ModelResourceLocation resource) {
+		Item item = Item.getItemFromBlock(block);
+		if (item != null) ModelLoader.setCustomMeshDefinition(item, stack -> resource);
 
-        ModelLoader.setCustomStateMapper(block, new StateMapperBase() {
-            protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
-                return resource;
-            }
-        });
-        FluidRegistry.addBucketForFluid(fluid);
-    }
+		ModelLoader.setCustomStateMapper(block, new StateMapperBase() {
+			@NotNull
+			@Override
+			protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
+				return resource;
+			}
+		});
+		FluidRegistry.addBucketForFluid(fluid);
+	}
 }

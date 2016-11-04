@@ -14,37 +14,38 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class ModuleMagicDamage extends Module implements IModifier {
-    public ModuleMagicDamage(ItemStack stack) {
-        super(stack);
-        canHaveChildren = false;
-    }
 
-    @Override
-    public ModuleType getType() {
-        return ModuleType.MODIFIER;
-    }
+	public ModuleMagicDamage(ItemStack stack) {
+		super(stack);
+		canHaveChildren = false;
+	}
 
-    @Override
-    public String getDescription() {
-        return "Increases the amount of magic damage a spell does.";
-    }
+	@Override
+	public ModuleType getType() {
+		return ModuleType.MODIFIER;
+	}
 
-    @Override
-    public String getDisplayName() {
-        return "Increase Magic Damage";
-    }
+	@Override
+	public String getDescription() {
+		return "Increases the amount of magic damage a spell does.";
+	}
 
-    @Override
-    public void apply(AttributeMap map) {
-        map.putModifier(Attribute.DAMAGE, new AttributeModifier(Operation.ADD, 1));
+	@Override
+	public String getDisplayName() {
+		return "Increase Magic Damage";
+	}
 
-        map.putModifier(Attribute.MANA, new AttributeModifier(Operation.MULTIPLY, 1.2));
-        map.putModifier(Attribute.BURNOUT, new AttributeModifier(Operation.MULTIPLY, 1.2));
-    }
+	@Override
+	public void apply(AttributeMap map) {
+		map.putModifier(Attribute.DAMAGE, new AttributeModifier(Operation.ADD, 1.0));
 
-    @Override
-    public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
-        // TODO Auto-generated method stub
-        return false;
-    }
+		map.putModifier(Attribute.MANA, new AttributeModifier(Operation.MULTIPLY, 1.2));
+		map.putModifier(Attribute.BURNOUT, new AttributeModifier(Operation.MULTIPLY, 1.2));
+	}
+
+	@Override
+	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

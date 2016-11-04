@@ -16,19 +16,19 @@ import net.minecraft.world.World;
  */
 public class ItemManaPearl extends ItemWizardry {
 
-    public ItemManaPearl() {
-        super("mana_pearl");
-        setMaxStackSize(1);
-    }
+	public ItemManaPearl() {
+		super("mana_pearl");
+		setMaxStackSize(1);
+	}
 
-    @Override
-    public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
-        if (stack != null && world.getBlockState(pos).getBlock() instanceof IManaSink) {
-            ItemNBTHelper.setInt(stack, "link_x", pos.getX());
-            ItemNBTHelper.setInt(stack, "link_y", pos.getY());
-            ItemNBTHelper.setInt(stack, "link_z", pos.getZ());
-            return EnumActionResult.SUCCESS;
-        }
-        return EnumActionResult.PASS;
-    }
+	@Override
+	public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
+		if ((stack != null) && (world.getBlockState(pos).getBlock() instanceof IManaSink)) {
+			ItemNBTHelper.setInt(stack, "link_x", pos.getX());
+			ItemNBTHelper.setInt(stack, "link_y", pos.getY());
+			ItemNBTHelper.setInt(stack, "link_z", pos.getZ());
+			return EnumActionResult.SUCCESS;
+		}
+		return EnumActionResult.PASS;
+	}
 }

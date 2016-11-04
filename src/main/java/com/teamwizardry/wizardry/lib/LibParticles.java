@@ -8,6 +8,8 @@ import com.teamwizardry.librarianlib.common.util.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpHelix;
 import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpLine;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.Constants.MISC;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
@@ -21,10 +23,13 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class LibParticles {
 
+	private LibParticles() {
+	}
+
 	public static void FIZZING_AMBIENT(World world, Vec3d pos) {
 		ParticleBuilder glitter = new ParticleBuilder(30);
 		glitter.setScale(0.3f);
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(pos.xCoord + ThreadLocalRandom.current().nextDouble(-0.5, 0.5), pos.yCoord + ThreadLocalRandom.current().nextDouble(-0.5, 0.5), pos.zCoord + ThreadLocalRandom.current().nextDouble(-0.5, 0.5))), 1, 0, (aFloat, particleBuilder) -> {
@@ -37,7 +42,7 @@ public class LibParticles {
 	public static void FIZZING_ITEM(World world, Vec3d pos) {
 		ParticleBuilder fizz = new ParticleBuilder(10);
 		fizz.setScale(0.3f);
-		fizz.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
+		fizz.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		fizz.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 
 		ParticleSpawner.spawn(fizz, world, new StaticInterp<>(pos.addVector(0, 0.5, 0)), 10, 0, (aFloat, particleBuilder) -> {
@@ -50,7 +55,7 @@ public class LibParticles {
 	public static void FIZZING_EXPLOSION(World world, Vec3d pos) {
 		ParticleBuilder glitter = new ParticleBuilder(50);
 		glitter.setScale(0.3f);
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.0f, 0.3f));
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 300, 0, (aFloat, particleBuilder) -> {
@@ -64,8 +69,8 @@ public class LibParticles {
 		ParticleBuilder glitter = new ParticleBuilder(30);
 		glitter.setScale(ThreadLocalRandom.current().nextFloat());
 		glitter.setColor(new Color(ThreadLocalRandom.current().nextFloat(), 0, 0));
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle"));
-		glitter.setAlphaFunction(new InterpFadeInOut(0f, 0.3f));
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE));
+		glitter.setAlphaFunction(new InterpFadeInOut(0.0f, 0.3f));
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 1, 0, (i, builder) -> {
 			Vec3d offset = new Vec3d(ThreadLocalRandom.current().nextDouble(-0.5, 0.5), ThreadLocalRandom.current().nextDouble(-0.5, 0.5), ThreadLocalRandom.current().nextDouble(-0.5, 0.5));
@@ -79,7 +84,7 @@ public class LibParticles {
 		ParticleBuilder glitter = new ParticleBuilder(10);
 		glitter.setColor(new Color(ThreadLocalRandom.current().nextFloat(), 0, 0).darker());
 		glitter.setScale((float) ThreadLocalRandom.current().nextDouble(0, 0.5));
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle"));
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.0f, 0.3f));
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 5, 0, (i, builder) -> {
@@ -90,11 +95,11 @@ public class LibParticles {
 
 	public static void BOOK_BEAM_NORMAL(World world, Vec3d pos) {
 		ParticleBuilder glitter = new ParticleBuilder(50);
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
-		glitter.setAlphaFunction(new InterpFadeInOut(0f, 0.3f));
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
+		glitter.setAlphaFunction(new InterpFadeInOut(0.0f, 0.3f));
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 10, 0, (aFloat, particleBuilder) -> {
-			glitter.setMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.02, 0.02), ThreadLocalRandom.current().nextDouble(0, 1), ThreadLocalRandom.current().nextDouble(-0.02, 0.02)));
+			glitter.setMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.02, 0.02), ThreadLocalRandom.current().nextDouble(0, 1.0), ThreadLocalRandom.current().nextDouble(-0.02, 0.02)));
 			glitter.setColor(new Color(255, 255, 255, ThreadLocalRandom.current().nextInt(0, 255)));
 			glitter.setScale(ThreadLocalRandom.current().nextFloat());
 			glitter.setLifetime(ThreadLocalRandom.current().nextInt(0, 50));
@@ -103,31 +108,32 @@ public class LibParticles {
 
 	public static void BOOK_BEAM_HELIX(World world, Vec3d pos) {
 		ParticleBuilder helix = new ParticleBuilder(200);
-		helix.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
+		helix.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		helix.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 
 		ParticleSpawner.spawn(helix, world, new StaticInterp<>(pos), 30, 0, (aFloat, particleBuilder) -> {
 			helix.setColor(new Color(255, 255, 255, ThreadLocalRandom.current().nextInt(0, 255)));
 			helix.setScale(ThreadLocalRandom.current().nextFloat());
-			helix.setPositionFunction(new InterpHelix(Vec3d.ZERO, new Vec3d(0, ThreadLocalRandom.current().nextDouble(1, 255), 0), 0, ThreadLocalRandom.current().nextInt(1, 5), ThreadLocalRandom.current().nextInt(1, 5), 0));
+			helix.setPositionFunction(new InterpHelix(Vec3d.ZERO, new Vec3d(0, ThreadLocalRandom.current().nextDouble(1.0, 255.0), 0), 0, ThreadLocalRandom.current().nextInt(1, 5), ThreadLocalRandom.current().nextInt(1, 5), 0));
 			helix.setLifetime(ThreadLocalRandom.current().nextInt(0, 200));
 		});
 	}
 
 	public static void BOOK_LARGE_EXPLOSION(World world, Vec3d pos) {
 		ParticleBuilder glitter = new ParticleBuilder(1000);
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
-		glitter.setAlphaFunction(new InterpFadeInOut(0f, 0.3f));
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
+		glitter.setAlphaFunction(new InterpFadeInOut(0.0f, 0.3f));
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 1000, 0, (i, build) -> {
 
-			double radius = 1;
-			double t = 2 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
+			double radius = 1.0;
+			double t = 2.0 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
 			double u = ThreadLocalRandom.current().nextDouble(-radius, radius) + ThreadLocalRandom.current().nextDouble(-radius, radius);
-			double r = (u > 1) ? 2 - u : u;
-			double x = r * Math.cos(t), z = r * Math.sin(t);
+			double r = (u > 1.0) ? (2.0 - u) : u;
+			double x = r * StrictMath.cos(t);
+			double z = r * StrictMath.sin(t);
 
-			glitter.setPositionOffset(new Vec3d(0, ThreadLocalRandom.current().nextDouble(0, 255), 0));
+			glitter.setPositionOffset(new Vec3d(0, ThreadLocalRandom.current().nextDouble(0, 255.0), 0));
 			glitter.setMotion(new Vec3d(x, 0, z));
 			glitter.setJitter(10, new Vec3d(ThreadLocalRandom.current().nextDouble(-0.05, 0.05), ThreadLocalRandom.current().nextDouble(-0.05, -0.01), ThreadLocalRandom.current().nextDouble(-0.05, 0.05)));
 			glitter.enableMotionCalculation();
@@ -138,12 +144,12 @@ public class LibParticles {
 
 	public static void AIR_THROTTLE(World world, Vec3d pos, Entity collided, Color color1, Color color2) {
 		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(30, 50));
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
-		glitter.setAlphaFunction(new InterpFadeInOut(0f, 0.3f));
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
+		glitter.setAlphaFunction(new InterpFadeInOut(0.0f, 0.3f));
 		glitter.enableMotionCalculation();
 
 		ParticleSpawner.spawn(glitter, world, new InterpLine(pos, pos.addVector(collided.posX - collided.prevPosX, collided.posY - collided.prevPosY, collided.posZ - collided.prevPosZ)), ThreadLocalRandom.current().nextInt(30, 50), 1, (i, build) -> {
-			glitter.setMotion(new Vec3d(collided.motionX + ThreadLocalRandom.current().nextDouble(-0.01, 0.01), collided.motionY / 2 + ThreadLocalRandom.current().nextDouble(-0.01, 0.01), collided.motionZ + ThreadLocalRandom.current().nextDouble(-0.01, 0.01)));
+			glitter.setMotion(new Vec3d(collided.motionX + ThreadLocalRandom.current().nextDouble(-0.01, 0.01), (collided.motionY / 2.0) + ThreadLocalRandom.current().nextDouble(-0.01, 0.01), collided.motionZ + ThreadLocalRandom.current().nextDouble(-0.01, 0.01)));
 			if (ThreadLocalRandom.current().nextBoolean()) glitter.setColor(color1);
 			else glitter.setColor(color2);
 		});
@@ -151,17 +157,18 @@ public class LibParticles {
 
 	public static void HALLOWED_SPIRIT_FLAME_FAR(World world, Vec3d pos) {
 		ParticleBuilder glitter = new ParticleBuilder(30);
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 5, 0, (i, build) -> {
 			double radius = 0.15;
-			double t = 2 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
+			double t = 2.0 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
 			double u = ThreadLocalRandom.current().nextDouble(-radius, radius) + ThreadLocalRandom.current().nextDouble(-radius, radius);
-			double r = (u > 1) ? 2 - u : u;
-			double x = r * Math.cos(t), z = r * Math.sin(t);
+			double r = (u > 1.0) ? (2.0 - u) : u;
+			double x = r * StrictMath.cos(t);
+			double z = r * StrictMath.sin(t);
 
-			glitter.setColorFunction(new InterpColorHSV(Color.RED, 50, 20));
+			glitter.setColorFunction(new InterpColorHSV(Color.RED, 50, 20.0F));
 			glitter.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(0, 0.5), z));
 			glitter.addMotion(new Vec3d(0, ThreadLocalRandom.current().nextDouble(0, 0.02), 0));
 		});
@@ -169,15 +176,16 @@ public class LibParticles {
 
 	public static void HALLOWED_SPIRIT_FLAME_CLOSE(World world, Vec3d pos) {
 		ParticleBuilder glitter = new ParticleBuilder(30);
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 20, 0, (i, build) -> {
 			double radius = 0.2;
-			double t = 2 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
+			double t = 2.0 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
 			double u = ThreadLocalRandom.current().nextDouble(-radius, radius) + ThreadLocalRandom.current().nextDouble(-radius, radius);
-			double r = (u > 1) ? 2 - u : u;
-			double x = r * Math.cos(t), z = r * Math.sin(t);
+			double r = (u > 1.0) ? (2.0 - u) : u;
+			double x = r * StrictMath.cos(t);
+			double z = r * StrictMath.sin(t);
 
 			glitter.setColor(Color.RED);
 			glitter.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(0, 0.5), z));
@@ -187,16 +195,17 @@ public class LibParticles {
 
 	public static void HALLOWED_SPIRIT_FLAME_NORMAL(World world, Vec3d pos) {
 		ParticleBuilder glitter = new ParticleBuilder(30);
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 		glitter.disableRandom();
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 10, 0, (i, build) -> {
 			double radius = 0.15;
-			double t = 2 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
+			double t = 2.0 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
 			double u = ThreadLocalRandom.current().nextDouble(-radius, radius) + ThreadLocalRandom.current().nextDouble(-radius, radius);
-			double r = (u > 1) ? 2 - u : u;
-			double x = r * Math.cos(t), z = r * Math.sin(t);
+			double r = (u > 1.0) ? (2.0 - u) : u;
+			double x = r * StrictMath.cos(t);
+			double z = r * StrictMath.sin(t);
 
 			glitter.setColor(new Color(0x4DFFFFFF, true));
 			glitter.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(0, 0.4), z));
@@ -205,16 +214,17 @@ public class LibParticles {
 
 	public static void HALLOWED_SPIRIT_HURT(World world, Vec3d pos) {
 		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(100, 150));
-		glitter.setColorFunction(new InterpColorHSV(Color.BLUE, 50, 20));
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
+		glitter.setColorFunction(new InterpColorHSV(Color.BLUE, 50, 20.0F));
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.1f, 0.1f));
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(40, 100), 0, (i, build) -> {
 			double radius = 0.2;
-			double t = 2 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
+			double t = 2.0 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
 			double u = ThreadLocalRandom.current().nextDouble(-radius, radius) + ThreadLocalRandom.current().nextDouble(-radius, radius);
-			double r = (u > 1) ? 2 - u : u;
-			double x = r * Math.cos(t), z = r * Math.sin(t);
+			double r = (u > 1.0) ? (2.0 - u) : u;
+			double x = r * StrictMath.cos(t);
+			double z = r * StrictMath.sin(t);
 
 			glitter.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(0, 0.4), z));
 			glitter.setMotion(new Vec3d(0, ThreadLocalRandom.current().nextDouble(0, 0.02), 0));
@@ -222,10 +232,10 @@ public class LibParticles {
 	}
 
 	public static void FAIRY_TRAIL(World world, Vec3d pos, Color color, boolean sad, int age) {
-		if (age / 4 >= age / 2 || age == 0) return;
+		if (((age / 4) >= (age / 2)) || (age == 0)) return;
 		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(age / 4, age / 2));
 		glitter.setColor(color);
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.2f, 0.4f));
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(5, 10), 0, (i, build) -> {
@@ -237,24 +247,25 @@ public class LibParticles {
 	public static void FAIRY_EXPLODE(World world, Vec3d pos, Color color) {
 		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(50, 80));
 		glitter.setColor(color.darker());
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.0f, 0.3f));
 		glitter.enableMotionCalculation();
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(50, 100), 0, (i, build) -> {
 			double radius = 0.5;
-			double t = 2 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
+			double t = 2.0 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
 			double u = ThreadLocalRandom.current().nextDouble(-radius, radius) + ThreadLocalRandom.current().nextDouble(-radius, radius);
-			double r = (u > 1) ? 2 - u : u;
-			double x = r * Math.cos(t), z = r * Math.sin(t);
+			double r = (u > 1.0) ? (2.0 - u) : u;
+			double x = r * StrictMath.cos(t);
+			double z = r * StrictMath.sin(t);
 			glitter.setMotion(new Vec3d(x, ThreadLocalRandom.current().nextDouble(-0.3, 0.5), z));
 		});
 	}
 
 	public static void SHAPE_BEAM(World world, Vec3d target, Vec3d origin, Vec3d reverseNormal, int distance, Color color) {
 		ParticleBuilder glitter = new ParticleBuilder(10);
-		glitter.setColor(new Color(1f, 1f, 1f, 0.1f));
-		glitter.setPositionFunction(new InterpHelix(Vec3d.ZERO, reverseNormal, 0f, 0.15f, 1, 0));
+		glitter.setColor(new Color(1.0f, 1.0f, 1.0f, 0.1f));
+		glitter.setPositionFunction(new InterpHelix(Vec3d.ZERO, reverseNormal, 0.0f, 0.15f, 1.0F, 0));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 
 		float[] hsbVals = new float[3];
@@ -266,21 +277,23 @@ public class LibParticles {
 			glitter.setScale((float) ThreadLocalRandom.current().nextDouble(0.3, 0.8));
 			glitter.setLifetime(ThreadLocalRandom.current().nextInt(10, 20));
 			if (ThreadLocalRandom.current().nextBoolean())
-				glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle"));
-			else glitter.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
+				glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE));
+			else glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		});
 	}
 
 	public static void EFFECT_FIRE(World world, Vec3d pos, Vec3d normal, float power) {
-		ParticleBuilder core = new ParticleBuilder((int) (20 * power));
-		core.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
-		ParticleSpawner.spawn(core, world, new StaticInterp<>(pos), (int) (40 * power), 0, (aFloat, particleBuilder) -> {
-			double radius = 3 * power;
-			double t = 2 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
+		ParticleBuilder core = new ParticleBuilder((int) (20.0F * power));
+		core.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
+		ParticleSpawner.spawn(core, world, new StaticInterp<>(pos), (int) (40.0F * power), 0, (aFloat, particleBuilder) -> {
+			double radius = (3.0 * power);
+			double t = 2.0 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
 			double u = ThreadLocalRandom.current().nextDouble(-radius, radius) + ThreadLocalRandom.current().nextDouble(-radius, radius);
-			double r = (u > 1) ? 2 - u : u;
-			double x = r * Math.cos(t), z = r * Math.sin(t);
-			core.setMotion(new Vec3d(x / 10 * power, ThreadLocalRandom.current().nextDouble(0.2 * power, 0.3 * power), z / 10 * power));
+			double r = (u > 1.0) ? (2.0 - u) : u;
+			double x = r * StrictMath.cos(t);
+			double z = r * StrictMath.sin(t);
+
+			core.setMotion(new Vec3d((x / 10.0) * power, ThreadLocalRandom.current().nextDouble(0.2 * power, 0.3 * power), z / 10.0 * power));
 
 			Color color = Color.RED;
 			float[] hsbVals = new float[3];
@@ -293,14 +306,15 @@ public class LibParticles {
 
 	public static void SHAPE_CONE(World world, Vec3d pos, Vec3d normal) {
 		ParticleBuilder core = new ParticleBuilder(20);
-		core.setRender(new ResourceLocation(Wizardry.MODID, "particles/sparkle_blurred"));
+		core.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		ParticleSpawner.spawn(core, world, new StaticInterp<>(pos), 40, 0, (aFloat, particleBuilder) -> {
-			double radius = 3;
-			double t = 2 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
+			double radius = 3.0;
+			double t = 2.0 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
 			double u = ThreadLocalRandom.current().nextDouble(-radius, radius) + ThreadLocalRandom.current().nextDouble(-radius, radius);
-			double r = (u > 1) ? 2 - u : u;
-			double x = r * Math.cos(t), z = r * Math.sin(t);
-			core.setMotion(new Vec3d(x + normal.xCoord, z / 10, z + normal.yCoord).normalize());
+			double r = (u > 1.0) ? (2.0 - u) : u;
+			double x = r * StrictMath.cos(t);
+			double z = r * StrictMath.sin(t);
+			core.setMotion(new Vec3d(x + normal.xCoord, z / 10.0, z + normal.yCoord).normalize());
 
 			Color color = Color.RED;
 			float[] hsbVals = new float[3];

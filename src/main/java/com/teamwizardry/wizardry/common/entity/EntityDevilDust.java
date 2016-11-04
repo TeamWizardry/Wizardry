@@ -22,10 +22,13 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class EntityDevilDust extends Entity {
 
+	public static final String EXPIRY = "expiry";
+	public static final String STACK_SIZE = "stack_size";
+	public static final String CONSUMED = "consumed";
 	private EntityItem redstone;
-	private int expiry = 0;
+	private int expiry;
 	private int stackSize = 1;
-	private boolean consumed = false;
+	private boolean consumed;
 
 	public EntityDevilDust(World world, EntityItem redstone) {
 		super(world);
@@ -42,27 +45,14 @@ public class EntityDevilDust extends Entity {
 
 		if (worldObj.isRemote) return;
 
-		if (!consumed) {
-			BlockPos fire = PosUtils.checkNeighbor(worldObj, redstone.getPosition(), Blocks.FIRE);
-			if (worldObj.getBlockState(fire).getBlock() == Blocks.FIRE
-					&& worldObj.isMaterialInBB(redstone.getEntityBoundingBox().expand(0.1, 0.1, 0.1), Material.FIRE)) {
-				stackSize = redstone.getEntityItem().stackSize;
-				if (!redstone.isDead) redstone.setDead();
-				consumed = true;
-				setPosition(fire.getX() + 0.5, fire.getY(), fire.getZ() + 0.5);
-			} else {
-				posX = redstone.posX;
-				posY = redstone.posY;
-				posZ = redstone.posZ;
-			}
-		} else {
+		if (consumed) {
 			if (expiry > 0) {
 				expiry--;
 
 				LibParticles.DEVIL_DUST_BIG_CRACKLES(worldObj, getPositionVector());
 				LibParticles.DEVIL_DUST_SMALL_CRACKLES(worldObj, getPositionVector());
 
-				if (expiry % 5 == 0)
+				if ((expiry % 5) == 0)
 					worldObj.playSound(null, posX, posY, posZ, ModSounds.FRYING_SIZZLE, SoundCategory.BLOCKS, 0.7F, (float) ThreadLocalRandom.current().nextDouble(0.8, 1.3));
 
 			} else {
@@ -73,6 +63,19 @@ public class EntityDevilDust extends Entity {
 				worldObj.spawnEntityInWorld(devilDust);
 				worldObj.removeEntity(this);
 				return;
+			}
+		} else {
+			BlockPos fire = PosUtils.checkNeighbor(worldObj, redstone.getPosition(), Blocks.FIRE);
+			if ((worldObj.getBlockState(fire).getBlock() == Blocks.FIRE)
+					&& worldObj.isMaterialInBB(redstone.getEntityBoundingBox().expand(0.1, 0.1, 0.1), Material.FIRE)) {
+				stackSize = redstone.getEntityItem().stackSize;
+				if (!redstone.isDead) redstone.setDead();
+				consumed = true;
+				setPosition(fire.getX() + 0.5, fire.getY(), fire.getZ() + 0.5);
+			} else {
+				posX = redstone.posX;
+				posY = redstone.posY;
+				posZ = redstone.posZ;
 			}
 		}
 
@@ -90,15 +93,15 @@ public class EntityDevilDust extends Entity {
 
 	@Override
 	protected void readEntityFromNBT(NBTTagCompound compound) {
-		if (compound.hasKey("expiry")) expiry = compound.getInteger("expiry");
-		if (compound.hasKey("consumed")) consumed = compound.getBoolean("consumed");
-		if (compound.hasKey("stack_size")) stackSize = compound.getInteger("stack_size");
+		if (compound.hasKey(EXPIRY)) expiry = compound.getInteger(EXPIRY);
+		if (compound.hasKey(CONSUMED)) consumed = compound.getBoolean(CONSUMED);
+		if (compound.hasKey(STACK_SIZE)) stackSize = compound.getInteger(STACK_SIZE);
 	}
 
 	@Override
 	protected void writeEntityToNBT(NBTTagCompound compound) {
-		compound.setInteger("expiry", expiry);
-		compound.setInteger("stack_size", stackSize);
-		compound.setBoolean("consumed", consumed);
+		compound.setInteger(EXPIRY, expiry);
+		compound.setInteger(STACK_SIZE, stackSize);
+		compound.setBoolean(CONSUMED, consumed);
 	}
 }

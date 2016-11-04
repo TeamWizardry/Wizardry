@@ -1,6 +1,8 @@
 package com.teamwizardry.wizardry.common.entity;
 
 import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
+import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.Constants.NBT;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
@@ -28,18 +30,19 @@ import java.util.concurrent.ThreadLocalRandom;
 public class EntityFairy extends EntityFlying {
 
 	private boolean readjustingComplete = true;
-	private boolean dirYawAdd = false;
-	private boolean dirPitchAdd = false;
+	private boolean dirYawAdd;
+	private boolean dirPitchAdd;
 	private Color color;
-	private double pitchAmount = 0, yawAmount = 0;
-	private boolean sad = false;
+	private double pitchAmount;
+	private double yawAmount;
+	private boolean sad;
 	private int age;
 
 	public EntityFairy(World worldIn) {
 		super(worldIn);
-		this.setSize(0.5F, 0.5F);
-		this.isAirBorne = true;
-		this.experienceValue = 5;
+		setSize(0.5F, 0.5F);
+		isAirBorne = true;
+		experienceValue = 5;
 		color = new Color(ThreadLocalRandom.current().nextFloat(), ThreadLocalRandom.current().nextFloat(), ThreadLocalRandom.current().nextFloat());
 		color = color.brighter();
 		rotationPitch = (float) ThreadLocalRandom.current().nextDouble(-90, 90);
@@ -49,9 +52,9 @@ public class EntityFairy extends EntityFlying {
 
 	public EntityFairy(World worldIn, Color color, int age) {
 		super(worldIn);
-		this.setSize(0.5F, 0.5F);
-		this.isAirBorne = true;
-		this.experienceValue = 5;
+		setSize(0.5F, 0.5F);
+		isAirBorne = true;
+		experienceValue = 5;
 		this.color = color;
 		rotationPitch = (float) ThreadLocalRandom.current().nextDouble(-90, 90);
 		rotationYaw = (float) ThreadLocalRandom.current().nextDouble(-180, 180);
@@ -65,13 +68,13 @@ public class EntityFairy extends EntityFlying {
 
 	protected void applyEntityAttributes() {
 		super.applyEntityAttributes();
-		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(0.1D);
-		this.getEntityAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(0.0D);
+		getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(0.1D);
+		getEntityAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(0.0D);
 	}
 
 	@Override
 	public void collideWithEntity(Entity entity) {
-		if (this.getHealth() > 0) {
+		if (getHealth() > 0) {
 			if (entity.getName().equals(getName())) return;
 			((EntityLivingBase) entity).motionY += 0.3;
 			((EntityLivingBase) entity).attackEntityAsMob(this);
@@ -88,7 +91,7 @@ public class EntityFairy extends EntityFlying {
 		if (worldObj.isRemote) return;
 
 		if (age <= 0) age = 2;
-		if (ticksExisted % ThreadLocalRandom.current().nextInt(200, 400) == 0 && age < 100) age++;
+		if (((ticksExisted % ThreadLocalRandom.current().nextInt(200, 400)) == 0) && (age < 100)) age++;
 
 		LibParticles.FAIRY_TRAIL(worldObj, getPositionVector().addVector(0, 0.25, 0), color, sad, age);
 
@@ -129,10 +132,8 @@ public class EntityFairy extends EntityFlying {
 					if (rotationYaw > 179) rotationYaw = -179;
 					if (rotationYaw < -179) rotationYaw = 179;
 
-					if (prevDirPitchAdd == dirPitchAdd) pitchAmount += ThreadLocalRandom.current().nextDouble(-4, 4);
-					else pitchAmount += -pitchAmount / 5;
-					if (prevDirYawAdd == dirYawAdd) yawAmount += ThreadLocalRandom.current().nextDouble(-1, 1);
-					else yawAmount += -yawAmount / 5;
+					pitchAmount += (prevDirPitchAdd == dirPitchAdd) ? ThreadLocalRandom.current().nextDouble(-4, 4) : (-pitchAmount / 5);
+					yawAmount += (prevDirYawAdd == dirYawAdd) ? ThreadLocalRandom.current().nextDouble(-1, 1) : (-yawAmount / 5);
 				}
 			} else {
 				if (pitchAmount > ThreadLocalRandom.current().nextInt(-20, 20)) {
@@ -156,10 +157,10 @@ public class EntityFairy extends EntityFlying {
 
 	@Override
 	public EnumActionResult applyPlayerInteraction(EntityPlayer player, Vec3d vec, @Nullable ItemStack stack, EnumHand hand) {
-		if (stack != null && stack.getItem() == ModItems.JAR) {
-			ItemNBTHelper.setBoolean(stack, "fairy_inside", true);
-			ItemNBTHelper.setInt(stack, "fairy_color", color.getRGB());
-			ItemNBTHelper.setInt(stack, "fairy_age", age);
+		if ((stack != null) && (stack.getItem() == ModItems.JAR)) {
+			ItemNBTHelper.setBoolean(stack, NBT.FAIRY_INSIDE, true);
+			ItemNBTHelper.setInt(stack, NBT.FAIRY_COLOR, color.getRGB());
+			ItemNBTHelper.setInt(stack, NBT.FAIRY_AGE, age);
 			stack.setItemDamage(1);
 			worldObj.removeEntity(this);
 		}
@@ -183,7 +184,7 @@ public class EntityFairy extends EntityFlying {
 		//super.dropLoot(wasRecentlyHit, lootingModifier, source);
 		ItemStack fairyWings = new ItemStack(ModItems.FAIRY_WINGS);
 		ItemStack fairyDust = new ItemStack(ModItems.FAIRY_DUST);
-		ItemNBTHelper.setInt(fairyWings, "fairy_color", color.getRGB());
+		ItemNBTHelper.setInt(fairyWings, NBT.FAIRY_COLOR, color.getRGB());
 		entityDropItem(fairyDust, ThreadLocalRandom.current().nextFloat());
 		entityDropItem(fairyWings, ThreadLocalRandom.current().nextFloat());
 	}
@@ -191,7 +192,7 @@ public class EntityFairy extends EntityFlying {
 	@Override
 	public void readEntityFromNBT(NBTTagCompound compound) {
 		super.readEntityFromNBT(compound);
-		if (compound.hasKey("color")) color = new Color(compound.getInteger("color"));
+		if (compound.hasKey(NBT.COLOR)) color = new Color(compound.getInteger(NBT.COLOR));
 		if (compound.hasKey("sad")) sad = compound.getBoolean("sad");
 		if (compound.hasKey("age")) age = compound.getInteger("age");
 	}
@@ -199,7 +200,7 @@ public class EntityFairy extends EntityFlying {
 	@Override
 	public void writeEntityToNBT(NBTTagCompound compound) {
 		super.writeEntityToNBT(compound);
-		compound.setInteger("color", color.getRGB());
+		compound.setInteger(NBT.COLOR, color.getRGB());
 		compound.setBoolean("sad", sad);
 		compound.setInteger("age", age);
 	}
