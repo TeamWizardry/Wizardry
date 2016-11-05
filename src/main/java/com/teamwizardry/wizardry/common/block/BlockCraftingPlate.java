@@ -5,9 +5,9 @@ import com.teamwizardry.librarianlib.common.base.block.BlockModContainer;
 import com.teamwizardry.librarianlib.common.base.block.TileMod;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.block.IManaSink;
-import com.teamwizardry.wizardry.api.util.CapsUtils;
 import com.teamwizardry.wizardry.client.render.TileCraftingPlateRenderer;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
+import com.teamwizardry.wizardry.common.tile.TileCraftingPlate.ClusterObject;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -19,6 +19,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -60,28 +61,25 @@ public class BlockCraftingPlate extends BlockModContainer implements IManaSink {
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
 		if (!worldIn.isRemote) {
 			TileCraftingPlate plate = getTE(worldIn, pos);
-
+			if (plate.isCrafting) return false;
 			if ((heldItem != null) && (heldItem.stackSize > 0)) {
 				ItemStack stack = heldItem.copy();
 				stack.stackSize = 1;
 				--heldItem.stackSize;
-				for (int i = 0; i < plate.inventory.getSlots(); i++)
-					if (plate.inventory.getStackInSlot(i) == null) {
-						plate.inventory.insertItem(i, stack, false);
-						break;
-					}
+				plate.inventory.add(new ClusterObject(stack, new Vec3d(pos).addVector(0.5, 0.5, 0.5), plate.random));
 				playerIn.openContainer.detectAndSendChanges();
 
-			} else if (plate.output.getStackInSlot(0) != null) {
-				playerIn.setHeldItem(hand, plate.output.extractItem(0, plate.output.getStackInSlot(0).stackSize, false));
+			} else if (plate.output != null) {
+				playerIn.setHeldItem(hand, plate.output.copy());
+				plate.output = null;
 				playerIn.openContainer.detectAndSendChanges();
 
-			} else if (CapsUtils.getOccupiedSlotCount(plate.inventory) > 0) {
-				playerIn.setHeldItem(hand, plate.inventory.extractItem(CapsUtils.getOccupiedSlotCount(plate.inventory), 1, false));
+			} else if (!plate.inventory.isEmpty()) {
+				playerIn.setHeldItem(hand, plate.inventory.remove(plate.inventory.size() - 1).stack);
 				playerIn.openContainer.detectAndSendChanges();
 			}
 		}
-		worldIn.notifyBlockUpdate(pos, worldIn.getBlockState(pos), worldIn.getBlockState(pos), 3);
+		worldIn.notifyBlockUpdate(pos, state, state, 3);
 		return true;
 	}
 

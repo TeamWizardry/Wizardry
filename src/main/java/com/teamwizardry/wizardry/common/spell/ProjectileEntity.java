@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.common.spell;
 
 import com.teamwizardry.librarianlib.common.util.RaycastUtils;
-import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.Constants.Module;
 import com.teamwizardry.wizardry.api.item.INacreColorable;
 import com.teamwizardry.wizardry.api.spell.SpellEntity;
 import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
@@ -17,10 +17,10 @@ import java.awt.*;
 
 public class ProjectileEntity extends SpellEntity {
 
-	private EntityPlayer player;
+	private final EntityPlayer player;
+	private final SpellStack stack;
 	private int ticker;
 	private Color trailColor;
-	private SpellStack stack;
 
 	public ProjectileEntity(World world, double posX, double posY, double posZ, SpellStack stack) {
 		super(world, posX, posY, posZ, stack.spell);
@@ -54,10 +54,10 @@ public class ProjectileEntity extends SpellEntity {
 
 			// TODO: Removed particle code (projectile trail)
 
-			// TODO: Removed particle code (projectile pos)
+			// TODO: Removed particle code (projectile dest)
 		}
 
-		RayTraceResult cast = RaycastUtils.raycast(worldObj, getPositionVector(), new Vec3d(motionX, motionY, motionZ), Math.min(spell.getDouble(Constants.Module.SPEED), 1));
+		RayTraceResult cast = RaycastUtils.raycast(worldObj, getPositionVector(), new Vec3d(motionX, motionY, motionZ), Math.min(spell.getDouble(Module.SPEED), 1));
 
 		if (cast != null) {
 			if (cast.typeOfHit == Type.BLOCK) {
@@ -78,7 +78,7 @@ public class ProjectileEntity extends SpellEntity {
 	}
 
 	public void setDirection(float yaw, float pitch) {
-		double speed = spell.getDouble(Constants.Module.SPEED) / 10;
+		double speed = spell.getDouble(Module.SPEED) / 10;
 		Vec3d dir = getVectorForRotation(pitch, yaw);
 		setVelocity(dir.xCoord * speed, dir.yCoord * speed, dir.zCoord * speed);
 	}

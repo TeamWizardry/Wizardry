@@ -8,10 +8,10 @@ import com.teamwizardry.librarianlib.common.util.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpHelix;
 import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpLine;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.Constants.MISC;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -69,7 +69,7 @@ public class LibParticles {
 		ParticleBuilder glitter = new ParticleBuilder(30);
 		glitter.setScale(ThreadLocalRandom.current().nextFloat());
 		glitter.setColor(new Color(ThreadLocalRandom.current().nextFloat(), 0, 0));
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE));
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.0f, 0.3f));
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 1, 0, (i, builder) -> {
@@ -84,7 +84,7 @@ public class LibParticles {
 		ParticleBuilder glitter = new ParticleBuilder(10);
 		glitter.setColor(new Color(ThreadLocalRandom.current().nextFloat(), 0, 0).darker());
 		glitter.setScale((float) ThreadLocalRandom.current().nextDouble(0, 0.5));
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE));
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.0f, 0.3f));
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 5, 0, (i, builder) -> {
@@ -130,8 +130,8 @@ public class LibParticles {
 			double t = 2.0 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
 			double u = ThreadLocalRandom.current().nextDouble(-radius, radius) + ThreadLocalRandom.current().nextDouble(-radius, radius);
 			double r = (u > 1.0) ? (2.0 - u) : u;
-			double x = r * StrictMath.cos(t);
-			double z = r * StrictMath.sin(t);
+			double x = r * MathHelper.cos((float) t);
+			double z = r * MathHelper.sin((float) t);
 
 			glitter.setPositionOffset(new Vec3d(0, ThreadLocalRandom.current().nextDouble(0, 255.0), 0));
 			glitter.setMotion(new Vec3d(x, 0, z));
@@ -165,8 +165,8 @@ public class LibParticles {
 			double t = 2.0 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
 			double u = ThreadLocalRandom.current().nextDouble(-radius, radius) + ThreadLocalRandom.current().nextDouble(-radius, radius);
 			double r = (u > 1.0) ? (2.0 - u) : u;
-			double x = r * StrictMath.cos(t);
-			double z = r * StrictMath.sin(t);
+			double x = r * MathHelper.cos((float) t);
+			double z = r * MathHelper.sin((float) t);
 
 			glitter.setColorFunction(new InterpColorHSV(Color.RED, 50, 20.0F));
 			glitter.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(0, 0.5), z));
@@ -184,8 +184,8 @@ public class LibParticles {
 			double t = 2.0 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
 			double u = ThreadLocalRandom.current().nextDouble(-radius, radius) + ThreadLocalRandom.current().nextDouble(-radius, radius);
 			double r = (u > 1.0) ? (2.0 - u) : u;
-			double x = r * StrictMath.cos(t);
-			double z = r * StrictMath.sin(t);
+			double x = r * MathHelper.cos((float) t);
+			double z = r * MathHelper.sin((float) t);
 
 			glitter.setColor(Color.RED);
 			glitter.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(0, 0.5), z));
@@ -204,8 +204,8 @@ public class LibParticles {
 			double t = 2.0 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
 			double u = ThreadLocalRandom.current().nextDouble(-radius, radius) + ThreadLocalRandom.current().nextDouble(-radius, radius);
 			double r = (u > 1.0) ? (2.0 - u) : u;
-			double x = r * StrictMath.cos(t);
-			double z = r * StrictMath.sin(t);
+			double x = r * MathHelper.cos((float) t);
+			double z = r * MathHelper.sin((float) t);
 
 			glitter.setColor(new Color(0x4DFFFFFF, true));
 			glitter.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(0, 0.4), z));
@@ -223,8 +223,8 @@ public class LibParticles {
 			double t = 2.0 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
 			double u = ThreadLocalRandom.current().nextDouble(-radius, radius) + ThreadLocalRandom.current().nextDouble(-radius, radius);
 			double r = (u > 1.0) ? (2.0 - u) : u;
-			double x = r * StrictMath.cos(t);
-			double z = r * StrictMath.sin(t);
+			double x = r * MathHelper.cos((float) t);
+			double z = r * MathHelper.sin((float) t);
 
 			glitter.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(0, 0.4), z));
 			glitter.setMotion(new Vec3d(0, ThreadLocalRandom.current().nextDouble(0, 0.02), 0));
@@ -256,8 +256,8 @@ public class LibParticles {
 			double t = 2.0 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
 			double u = ThreadLocalRandom.current().nextDouble(-radius, radius) + ThreadLocalRandom.current().nextDouble(-radius, radius);
 			double r = (u > 1.0) ? (2.0 - u) : u;
-			double x = r * StrictMath.cos(t);
-			double z = r * StrictMath.sin(t);
+			double x = r * MathHelper.cos((float) t);
+			double z = r * MathHelper.sin((float) t);
 			glitter.setMotion(new Vec3d(x, ThreadLocalRandom.current().nextDouble(-0.3, 0.5), z));
 		});
 	}
@@ -277,7 +277,7 @@ public class LibParticles {
 			glitter.setScale((float) ThreadLocalRandom.current().nextDouble(0.3, 0.8));
 			glitter.setLifetime(ThreadLocalRandom.current().nextInt(10, 20));
 			if (ThreadLocalRandom.current().nextBoolean())
-				glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE));
+				glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE));
 			else glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		});
 	}
@@ -290,8 +290,8 @@ public class LibParticles {
 			double t = 2.0 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
 			double u = ThreadLocalRandom.current().nextDouble(-radius, radius) + ThreadLocalRandom.current().nextDouble(-radius, radius);
 			double r = (u > 1.0) ? (2.0 - u) : u;
-			double x = r * StrictMath.cos(t);
-			double z = r * StrictMath.sin(t);
+			double x = r * MathHelper.cos((float) t);
+			double z = r * MathHelper.sin((float) t);
 
 			core.setMotion(new Vec3d((x / 10.0) * power, ThreadLocalRandom.current().nextDouble(0.2 * power, 0.3 * power), z / 10.0 * power));
 
@@ -312,8 +312,8 @@ public class LibParticles {
 			double t = 2.0 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
 			double u = ThreadLocalRandom.current().nextDouble(-radius, radius) + ThreadLocalRandom.current().nextDouble(-radius, radius);
 			double r = (u > 1.0) ? (2.0 - u) : u;
-			double x = r * StrictMath.cos(t);
-			double z = r * StrictMath.sin(t);
+			double x = r * MathHelper.cos((float) t);
+			double z = r * MathHelper.sin((float) t);
 			core.setMotion(new Vec3d(x + normal.xCoord, z / 10.0, z + normal.yCoord).normalize());
 
 			Color color = Color.RED;

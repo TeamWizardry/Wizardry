@@ -143,7 +143,7 @@ public class Cloth {
 		if (point.pin)
 			return;
 		for (AxisAlignedBB aabb : aabbs) {
-//			point.pos = AABBUtils.closestOutsidePoint(aabb, point.pos);
+//			point.dest = AABBUtils.closestOutsidePoint(aabb, point.dest);
 		}
 		for (Sphere sphere : spheres) {
 			point.pos = sphere.fix(point.pos);

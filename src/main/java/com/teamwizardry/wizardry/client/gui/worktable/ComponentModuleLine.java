@@ -27,8 +27,8 @@ public class ComponentModuleLine extends GuiComponent<ComponentModuleLine> {
 		vb.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
 		Vec2d lastPos = null;
 //		for (Vec2d position : new BezierCurve2D(getPos(), end).getPoints()) {
-//			vb.pos(position.getX(), position.getY(), 0).endVertex();
-//			if (lastPos != null) vb.pos(lastPos.getX(), lastPos.getY(), 0).endVertex();
+//			vb.dest(position.getX(), position.getY(), 0).endVertex();
+//			if (lastPos != null) vb.dest(lastPos.getX(), lastPos.getY(), 0).endVertex();
 //			lastPos = position;
 //		}
 		tessellator.draw();
