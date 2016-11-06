@@ -16,20 +16,15 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
 	public void renderTileEntityAt(TileCraftingPlate te, double x, double y, double z, float partialTicks, int destroyStage) {
 
 		for (ClusterObject cluster : te.inventory) {
-			if (cluster.reverse) {
-				if (cluster.tick < 360) cluster.tick += 1 * cluster.speedMultiplier;
-				else cluster.tick = 0;
-			} else if (cluster.tick > 0) cluster.tick -= 1 * cluster.speedMultiplier;
-			else cluster.tick = 360;
 			GlStateManager.pushMatrix();
-			GlStateManager.translate(x + cluster.dest.xCoord, y + cluster.dest.yCoord, z + cluster.dest.zCoord);
-			GlStateManager.scale(0.4, 0.4, 0.4);
-			GlStateManager.rotate(cluster.tick, 0, 1, 0);
+			GlStateManager.translate(x + 0.5 + cluster.current.xCoord, y + 0.5 + cluster.current.yCoord, z + 0.5 + cluster.current.zCoord);
+			GlStateManager.scale(0.3, 0.3, 0.3);
+			GlStateManager.rotate((float) cluster.tick, 0, 1, 0);
 			Minecraft.getMinecraft().getRenderItem().renderItem(cluster.stack, TransformType.NONE);
 			GlStateManager.popMatrix();
 		}
 
-		if (te.output != null) {
+		if (!te.isCrafting && (te.output != null)) {
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(x + 0.5, y + 1, z + 0.5);
 			GlStateManager.scale(0.4, 0.4, 0.4);

@@ -19,7 +19,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -66,7 +65,7 @@ public class BlockCraftingPlate extends BlockModContainer implements IManaSink {
 				ItemStack stack = heldItem.copy();
 				stack.stackSize = 1;
 				--heldItem.stackSize;
-				plate.inventory.add(new ClusterObject(stack, new Vec3d(pos).addVector(0.5, 0.5, 0.5), plate.random));
+				plate.inventory.add(new ClusterObject(stack, plate.random));
 				playerIn.openContainer.detectAndSendChanges();
 
 			} else if (plate.output != null) {
