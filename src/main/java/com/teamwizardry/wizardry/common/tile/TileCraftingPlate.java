@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
 
 /**
  * Created by Saad on 6/10/2016.
@@ -136,8 +135,9 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink, 
 					inventory.clear();
 				}
 
-				List<ItemStack> stacks = inventory.stream().map(cluster -> cluster.stack).collect(Collectors.toCollection(ArrayList::new));
-				List<ItemStack> condensed = condenseItemList(stacks.stream().collect(Collectors.toList()));
+				List<ItemStack> stacks = new ArrayList<>();
+				for (ClusterObject cluster : inventory) stacks.add(cluster.stack);
+				List<ItemStack> condensed = condenseItemList(stacks);
 				Parser spellParser = new Parser(condensed);
 				Module parsedSpell = null;
 				try {
