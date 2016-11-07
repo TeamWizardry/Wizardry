@@ -65,7 +65,7 @@ public class BlockCraftingPlate extends BlockModContainer implements IManaSink {
 				ItemStack stack = heldItem.copy();
 				stack.stackSize = 1;
 				--heldItem.stackSize;
-				plate.inventory.add(new ClusterObject(stack, plate.random));
+				plate.inventory.add(new ClusterObject(stack, worldIn, plate.random));
 				playerIn.openContainer.detectAndSendChanges();
 
 			} else if (plate.output != null) {

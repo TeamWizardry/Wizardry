@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.util.math.Vec3d;
 
 /**
  * Created by Saad on 6/11/2016.
@@ -16,8 +17,11 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
 	public void renderTileEntityAt(TileCraftingPlate te, double x, double y, double z, float partialTicks, int destroyStage) {
 
 		for (ClusterObject cluster : te.inventory) {
+			double timeDifference = (te.getWorld().getTotalWorldTime() - cluster.worldTime);
+			Vec3d current = cluster.trail.get((float) timeDifference / cluster.destTime);
+
 			GlStateManager.pushMatrix();
-			GlStateManager.translate(x + 0.5 + cluster.current.xCoord, y + 0.5 + cluster.current.yCoord, z + 0.5 + cluster.current.zCoord);
+			GlStateManager.translate(x + 0.5 + current.xCoord, y + 0.5 + current.yCoord, z + 0.5 + current.zCoord);
 			GlStateManager.scale(0.3, 0.3, 0.3);
 			GlStateManager.rotate((float) cluster.tick, 0, 1, 0);
 			Minecraft.getMinecraft().getRenderItem().renderItem(cluster.stack, TransformType.NONE);

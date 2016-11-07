@@ -304,7 +304,7 @@ public class LibParticles {
 
 		ParticleSpawner.spawn(helix, world, new StaticInterp<>(pos), 10, 0, (aFloat, particleBuilder) -> {
 			helix.setScale(ThreadLocalRandom.current().nextFloat());
-			helix.setColor(new Color(255, 255, 255, ThreadLocalRandom.current().nextInt(10, 100)));
+			helix.setColor(new Color(255, 255, 255, ThreadLocalRandom.current().nextInt(50, 170)));
 			helix.setPositionFunction(new InterpHelix(Vec3d.ZERO, new Vec3d(0, ThreadLocalRandom.current().nextDouble(1.0, 255.0), 0), 0, ThreadLocalRandom.current().nextInt(1, 5), ThreadLocalRandom.current().nextInt(1, 5), 0));
 			helix.setLifetime(ThreadLocalRandom.current().nextInt(0, 200));
 		});
@@ -316,13 +316,13 @@ public class LibParticles {
 		helix.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 		helix.enableMotionCalculation();
 
-		ParticleSpawner.spawn(helix, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(1, 5), 0, (aFloat, particleBuilder) -> {
+		ParticleSpawner.spawn(helix, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(5, 20), 0, (aFloat, particleBuilder) -> {
 			helix.setColor(new Color(ThreadLocalRandom.current().nextInt(0, 100), ThreadLocalRandom.current().nextInt(0, 100), ThreadLocalRandom.current().nextInt(50, 255)));
 			helix.setScale(ThreadLocalRandom.current().nextFloat());
 			helix.addMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.01, 0.01),
 					ThreadLocalRandom.current().nextDouble(-0.01, 0.01),
 					ThreadLocalRandom.current().nextDouble(-0.01, 0.01)));
-			helix.setLifetime(ThreadLocalRandom.current().nextInt(10, 50));
+			helix.setLifetime(ThreadLocalRandom.current().nextInt(20, 50));
 		});
 	}
 

@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.tile;
 
 import com.teamwizardry.librarianlib.common.base.block.TileMod;
 import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpBezier3D;
+import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpLine;
 import com.teamwizardry.librarianlib.common.util.saving.Save;
 import com.teamwizardry.wizardry.api.block.IManaSink;
 import com.teamwizardry.wizardry.api.block.IStructure;
@@ -16,6 +17,7 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.relauncher.Side;
@@ -88,7 +90,7 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink, 
 		if (tick < 360) tick += 10;
 		else tick = 0;
 		if (!inventory.isEmpty()) {
-			inventory.forEach(ClusterObject::tick);
+			for (ClusterObject cluster : inventory) cluster.tick(worldObj, random);
 			worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
 		}
 		markDirty();
@@ -98,7 +100,7 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink, 
 			if (!inventory.isEmpty())
 				for (ClusterObject cluster : inventory) {
 					if (((ThreadLocalRandom.current().nextInt(10)) != 0)) continue;
-					LibParticles.CRAFTING_ALTAR_CLUSTER_SUCTION(worldObj, new Vec3d(pos).addVector(0.5, 0.5, 0.5), cluster.trail.reverse());
+					LibParticles.CRAFTING_ALTAR_CLUSTER_SUCTION(worldObj, new Vec3d(pos).addVector(0.5, 0.5, 0.5), new InterpBezier3D(cluster.current, new Vec3d(0.5, 0.5, 0.5)));
 				}
 		}
 
@@ -148,15 +150,16 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink, 
 	public static class ClusterObject implements INBTSerializable<NBTTagCompound> {
 
 		public ItemStack stack;
-		public Vec3d dest;
-		public Vec3d current;
-		public InterpBezier3D trail;
+		public Vec3d dest, current, origin;
+		public InterpLine trail;
 		public double tick;
 		public boolean reverse;
 		public double speedMultiplier;
+		public long worldTime;
+		public int destTime;
 		private float queue;
 
-		public ClusterObject(ItemStack stack, Random random) {
+		public ClusterObject(ItemStack stack, World world, Random random) {
 			double extent = 10.0;
 			double theta = 2.0f * (float) Math.PI * random.nextFloat();
 			double r = extent * random.nextFloat();
@@ -165,19 +168,36 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink, 
 
 			dest = new Vec3d(x1, 5 + (random.nextFloat() * 3), z1);
 			this.stack = stack;
-			current = Vec3d.ZERO;
-			trail = new InterpBezier3D(Vec3d.ZERO, dest);
+			origin = current = Vec3d.ZERO;
+			trail = new InterpLine(origin, dest);
 			reverse = random.nextBoolean();
 			speedMultiplier = (2.0f * (random.nextFloat() - 0.5f)) * 3;
+			worldTime = world.getTotalWorldTime();
 		}
 
 		public ClusterObject() {
 		}
 
-		public void tick() {
-			current = trail.get((queue < 1.0f) ? (queue += 0.01f) : 1.0f);
+		public void tick(World world, Random random) {
 			if (tick < 360) tick += 1 * speedMultiplier;
 			else tick = 0;
+			double timeDifference = (world.getTotalWorldTime() - worldTime);
+			current = trail.get((float) timeDifference / destTime);
+
+			if ((world.getTotalWorldTime() - worldTime) >= destTime) {
+				double extent = 10.0;
+				double theta = 2.0f * (float) Math.PI * random.nextFloat();
+				double r = extent * random.nextFloat();
+				double x1 = r * MathHelper.cos((float) theta);
+				double z1 = r * MathHelper.sin((float) theta);
+
+				Vec3d newDest = new Vec3d(x1, 5 + (random.nextFloat() * 3), z1);
+				origin = dest;
+				dest = newDest;
+				trail = new InterpLine(origin, dest);
+				destTime = ThreadLocalRandom.current().nextInt(1000, 5000);
+				worldTime = world.getTotalWorldTime();
+			}
 		}
 
 		@Override
@@ -190,9 +210,14 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink, 
 			compound.setDouble("current_x", current.xCoord);
 			compound.setDouble("current_y", current.yCoord);
 			compound.setDouble("current_z", current.zCoord);
+			compound.setDouble("origin_x", origin.xCoord);
+			compound.setDouble("origin_y", origin.yCoord);
+			compound.setDouble("origin_z", origin.zCoord);
 			compound.setDouble("speed_multiplier", speedMultiplier);
 			compound.setFloat("queue", queue);
 			compound.setDouble("tick", tick);
+			compound.setInteger("dest_time", destTime);
+			compound.setLong("world_time", worldTime);
 			return compound;
 		}
 
@@ -201,10 +226,13 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink, 
 			stack = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("stack"));
 			dest = new Vec3d(nbt.getDouble("dest_x"), nbt.getDouble("dest_y"), nbt.getDouble("dest_z"));
 			current = new Vec3d(nbt.getDouble("current_x"), nbt.getDouble("current_y"), nbt.getDouble("current_z"));
+			origin = new Vec3d(nbt.getDouble("origin_x"), nbt.getDouble("origin_y"), nbt.getDouble("origin_z"));
 			speedMultiplier = nbt.getDouble("speed_multiplier");
 			queue = nbt.getFloat("queue");
 			tick = nbt.getDouble("tick");
-			trail = new InterpBezier3D(Vec3d.ZERO, dest);
+			trail = new InterpLine(origin, dest);
+			destTime = nbt.getInteger("dest_time");
+			worldTime = nbt.getLong("world_time");
 		}
 	}
 }
