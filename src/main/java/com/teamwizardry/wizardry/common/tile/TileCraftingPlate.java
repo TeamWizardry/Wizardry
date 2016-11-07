@@ -1,12 +1,17 @@
 package com.teamwizardry.wizardry.common.tile;
 
 import com.teamwizardry.librarianlib.common.base.block.TileMod;
+import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
 import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpBezier3D;
 import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpLine;
 import com.teamwizardry.librarianlib.common.util.saving.Save;
+import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.IManaSink;
 import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.api.item.Infusable;
+import com.teamwizardry.wizardry.api.item.PearlType;
+import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.common.spell.parsing.Parser;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.item.ItemStack;
@@ -26,8 +31,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 /**
  * Created by Saad on 6/10/2016.
@@ -128,21 +135,23 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink, 
 						LibParticles.CRAFTING_ALTAR_CLUSTER_EXPLODE(worldObj, new Vec3d(pos).addVector(0.5, 0.5, 0.5).add(cluster.current));
 					inventory.clear();
 				}
-			/*List<ItemStack> condensed = condenseItemList(CapsUtils.getListOfItems(inventory).stream().collect(Collectors.toList()));
-			Parser spellParser = new Parser(condensed);
-			Module parsedSpell = null;
-			try {
-				while (parsedSpell == null) parsedSpell = spellParser.parseInventoryToModule();
-			} catch (NoSuchElementException ignored) {
-			}*/
 
-				//if (parsedSpell != null) {
-				ItemStack stack = new ItemStack(ModItems.PEARL_NACRE);
-				//	ItemNBTHelper.setString(stack, "type", PearlType.INFUSED.toString());
-				//	ItemNBTHelper.setCompound(stack, NBT.SPELL, parsedSpell.getModuleData());
-				output = stack;
-				craftingTimeLeft = craftingTime;
-				//} else System.err.println("Something went wrong! @" + dest);
+				List<ItemStack> stacks = inventory.stream().map(cluster -> cluster.stack).collect(Collectors.toCollection(ArrayList::new));
+				List<ItemStack> condensed = condenseItemList(stacks.stream().collect(Collectors.toList()));
+				Parser spellParser = new Parser(condensed);
+				Module parsedSpell = null;
+				try {
+					while (parsedSpell == null) parsedSpell = spellParser.parseInventoryToModule();
+				} catch (NoSuchElementException ignored) {
+				}
+
+				if (parsedSpell != null) {
+					ItemStack stack = new ItemStack(ModItems.PEARL_NACRE);
+					ItemNBTHelper.setString(stack, "type", PearlType.INFUSED.toString());
+					ItemNBTHelper.setCompound(stack, Constants.NBT.SPELL, parsedSpell.getModuleData());
+					output = stack;
+					craftingTimeLeft = craftingTime;
+				} else System.err.println("Something went wrong! @" + getPos());
 			}
 		}
 	}
