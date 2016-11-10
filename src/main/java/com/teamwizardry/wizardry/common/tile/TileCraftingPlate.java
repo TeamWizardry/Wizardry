@@ -54,7 +54,7 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink, 
 	public Random random = new Random(getPos().toLong());
 
 	private static List<ItemStack> condenseItemList(List<ItemStack> list) {
-		if (list.isEmpty()) return null;
+		if (list.isEmpty()) return list;
 		List<ItemStack> items = new ArrayList<>();
 		items.add(list.remove(0));
 		while (!list.isEmpty()) {
