@@ -119,7 +119,6 @@ public class EventHandler {
 						TeleportUtil.teleportToDimension(event.getEntityPlayer(), Wizardry.underWorld.getId(), 0, 100, 0);
 						fallResetUUIDs.add(event.getEntityPlayer().getUniqueID());
 						event.getEntityPlayer().addStat(Achievements.CRUNCH);
-						event.setCanceled(true);
 					}
 				}
 			}
