@@ -20,6 +20,7 @@ import net.minecraftforge.client.event.TextureStitchEvent.Pre;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
@@ -100,6 +101,24 @@ public class EventHandler {
 						TeleportUtil.teleportToDimension((EntityPlayer) event.getEntity(), Wizardry.underWorld.getId(), 0, 100, 0);
 						fallResetUUIDs.add(event.getEntity().getUniqueID());
 						((EntityPlayer) event.getEntity()).addStat(Achievements.CRUNCH);
+						event.setCanceled(true);
+					}
+				}
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public void onFlyFall(PlayerFlyableFallEvent event) {
+		if (event.getEntityPlayer().getEntityWorld().provider.getDimension() != Wizardry.underWorld.getId()) {
+			if (event.getEntityPlayer().fallDistance >= 250) {
+				BlockPos location = event.getEntityPlayer().getPosition();
+				BlockPos bedrock = PosUtils.checkNeighbor(event.getEntity().getEntityWorld(), location, Blocks.BEDROCK);
+				if (bedrock != null) {
+					if (event.getEntity().getEntityWorld().getBlockState(bedrock).getBlock() == Blocks.BEDROCK) {
+						TeleportUtil.teleportToDimension(event.getEntityPlayer(), Wizardry.underWorld.getId(), 0, 100, 0);
+						fallResetUUIDs.add(event.getEntityPlayer().getUniqueID());
+						event.getEntityPlayer().addStat(Achievements.CRUNCH);
 						event.setCanceled(true);
 					}
 				}
