@@ -40,6 +40,7 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class TileCraftingPlate extends TileMod implements ITickable, IManaSink, IStructure {
 
+	@Save
 	public int craftingTimeLeft = 500;
 	@Save
 	public int tick;

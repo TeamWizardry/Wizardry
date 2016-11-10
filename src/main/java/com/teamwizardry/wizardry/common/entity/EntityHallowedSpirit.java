@@ -34,14 +34,16 @@ public class EntityHallowedSpirit extends EntityMob {
 		isImmuneToFire = true;
 	}
 
+	@Override
 	protected void initEntityAI() {
 		tasks.addTask(1, new EntityAIWatchClosest(this, EntityPlayer.class, 50.0F));
 		applyEntityAI();
 	}
 
+	@Override
 	protected void applyEntityAttributes() {
 		super.applyEntityAttributes();
-		getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(50.0D);
+		getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(75.0D);
 		getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(30.0D);
 		//this.getEntityAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(0.6D);
 	}
