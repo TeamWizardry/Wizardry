@@ -1,7 +1,6 @@
 package com.teamwizardry.wizardry.common.core;
 
 import com.teamwizardry.librarianlib.client.book.Book;
-import com.teamwizardry.librarianlib.common.util.autoregister.AutoRegisterHandler;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Config;
 import com.teamwizardry.wizardry.api.module.ModuleRegistry;
@@ -46,8 +45,6 @@ public class CommonProxy {
 
 		WizardryPacketHandler.registerMessages();
 		NetworkRegistry.INSTANCE.registerGuiHandler(Wizardry.instance, new GuiHandler());
-
-		AutoRegisterHandler.registerPrefix("com.teamwizardry.wizardry.", MODID);
 
 		Wizardry.underWorld = DimensionType.register("underworld", "_dim", Config.underworld_id, WorldProviderUnderWorld.class, false);
 		DimensionManager.registerDimension(Config.underworld_id, Wizardry.underWorld);
