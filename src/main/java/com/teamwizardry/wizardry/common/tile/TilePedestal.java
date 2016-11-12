@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.common.tile;
 import com.mojang.authlib.GameProfile;
 import com.teamwizardry.librarianlib.common.base.block.TileMod;
 import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
+import com.teamwizardry.librarianlib.common.util.autoregister.TileRegister;
 import com.teamwizardry.librarianlib.common.util.saving.Save;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.Constants.NBT;
@@ -30,6 +31,7 @@ import java.util.UUID;
 /**
  * Created by Saad on 5/7/2016.
  */
+@TileRegister("pedestal")
 public class TilePedestal extends TileMod implements ITickable {
 
 	@Nullable

@@ -2,29 +2,40 @@ package com.teamwizardry.wizardry.common.block;
 
 import com.teamwizardry.librarianlib.common.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.common.base.block.BlockModContainer;
-import com.teamwizardry.librarianlib.common.base.block.TileMod;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.block.IManaSink;
 import com.teamwizardry.wizardry.client.render.TileCraftingPlateRenderer;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate.ClusterObject;
+import com.teamwizardry.wizardry.init.ModStructures;
+import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraft.world.gen.structure.template.Template;
+import net.minecraft.world.gen.structure.template.TemplateManager;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.Nullable;
+
+import java.awt.*;
+import java.util.Random;
 
 /**
  * Created by Saad on 6/10/2016.
@@ -38,7 +49,6 @@ public class BlockCraftingPlate extends BlockModContainer implements IManaSink {
 		setHardness(1.0F);
 		setLightLevel(15);
 		setSoundType(SoundType.STONE);
-		TileMod.registerTile(TileCraftingPlate.class, "crafting_plate");
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -59,7 +69,25 @@ public class BlockCraftingPlate extends BlockModContainer implements IManaSink {
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
 		if (!worldIn.isRemote) {
+
 			TileCraftingPlate plate = getTE(worldIn, pos);
+			WorldServer worldserver = (WorldServer) worldIn;
+			MinecraftServer minecraftserver = worldIn.getMinecraftServer();
+			TemplateManager templatemanager = worldserver.getStructureTemplateManager();
+			Template template = templatemanager.getTemplate(minecraftserver, new ResourceLocation("crafting_altar"));
+			if (ModStructures.matchTemplateToPos(template, worldIn, pos.subtract(new Vec3i(6, 3, 6)))) {
+				if (!plate.structureComplete) {
+					plate.structureComplete = true;
+					Random r = new Random();
+					LibParticles.FAIRY_EXPLODE(worldIn, new Vec3d(pos).addVector(0.5, 0.5, 0.5), new Color(r.nextFloat(), r.nextFloat(), r.nextFloat()));
+					return true;
+				}
+			} else {
+				LibParticles.TEMPLATE_BLOCK_ERROR(worldIn, new Vec3d(pos).addVector(0.5, 0.5, 0.5));
+				plate.structureComplete = false;
+				return true;
+			}
+
 			if (plate.isCrafting) return false;
 			if ((heldItem != null) && (heldItem.stackSize > 0)) {
 				ItemStack stack = heldItem.copy();

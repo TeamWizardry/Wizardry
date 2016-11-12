@@ -19,10 +19,6 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 configurations.all {
     resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 }
-repositories {
-    maven { url "https://jitpack.io" }
-    maven { url "http://dvs1.progwml6.com/files/maven" }
-}
 
 version = "1.0"
 group= "me.lordsaad.wizardry" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -51,16 +47,23 @@ minecraft {
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 }
 
+repositories {
+    maven { url "https://jitpack.io" }
+    maven { url "http://dvs1.progwml6.com/files/maven" }
+    maven { url "http://maven.amadornes.com/" }
+}
+
 dependencies {
     deobfCompile "mezz.jei:jei_1.9.4:3.4.0.204"
     compile 'com.github.Azanor:Baubles:3f3fdadf09'
     compile 'com.github.TeamWizardry:LibrarianLib:-SNAPSHOT'
+
     //shade 'org.smurn:jply:0.2.0'
     // you may put jars on which you depend on in ./libs
     // or you may define them like so..
     //compile "some.group:artifact:version:classifier"
     //compile "some.group:artifact:version"
-      
+
     // real examples
     //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
     //compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
@@ -88,14 +91,20 @@ processResources
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
-                
+
         // replace version and mcversion
         expand 'version':project.version, 'mcversion':project.minecraft.version
     }
-        
+
     // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
+    }
+}
+
+jar {
+    manifest {
+        attributes 'FMLAT': 'wizardry_at.cfg'
     }
 }
 

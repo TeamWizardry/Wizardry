@@ -130,11 +130,10 @@ public class LibParticles {
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 1000, 0, (i, build) -> {
 
 			double radius = 1.0;
-			double t = 2.0 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
-			double u = ThreadLocalRandom.current().nextDouble(-radius, radius) + ThreadLocalRandom.current().nextDouble(-radius, radius);
-			double r = (u > 1.0) ? (2.0 - u) : u;
-			double x = r * MathHelper.cos((float) t);
-			double z = r * MathHelper.sin((float) t);
+			double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
+			double r = radius * ThreadLocalRandom.current().nextFloat();
+			double x = r * MathHelper.cos((float) theta);
+			double z = r * MathHelper.sin((float) theta);
 
 			glitter.setPositionOffset(new Vec3d(0, ThreadLocalRandom.current().nextDouble(0, 255.0), 0));
 			glitter.setMotion(new Vec3d(x, 0, z));
@@ -165,11 +164,10 @@ public class LibParticles {
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 5, 0, (i, build) -> {
 			double radius = 0.15;
-			double t = 2.0 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
-			double u = ThreadLocalRandom.current().nextDouble(-radius, radius) + ThreadLocalRandom.current().nextDouble(-radius, radius);
-			double r = (u > 1.0) ? (2.0 - u) : u;
-			double x = r * MathHelper.cos((float) t);
-			double z = r * MathHelper.sin((float) t);
+			double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
+			double r = radius * ThreadLocalRandom.current().nextFloat();
+			double x = r * MathHelper.cos((float) theta);
+			double z = r * MathHelper.sin((float) theta);
 
 			glitter.setColorFunction(new InterpColorHSV(Color.RED, 50, 20.0F));
 			glitter.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(0, 0.5), z));
@@ -184,11 +182,10 @@ public class LibParticles {
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 20, 0, (i, build) -> {
 			double radius = 0.2;
-			double t = 2.0 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
-			double u = ThreadLocalRandom.current().nextDouble(-radius, radius) + ThreadLocalRandom.current().nextDouble(-radius, radius);
-			double r = (u > 1.0) ? (2.0 - u) : u;
-			double x = r * MathHelper.cos((float) t);
-			double z = r * MathHelper.sin((float) t);
+			double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
+			double r = radius * ThreadLocalRandom.current().nextFloat();
+			double x = r * MathHelper.cos((float) theta);
+			double z = r * MathHelper.sin((float) theta);
 
 			glitter.setColor(Color.RED);
 			glitter.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(0, 0.5), z));
@@ -204,11 +201,10 @@ public class LibParticles {
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 10, 0, (i, build) -> {
 			double radius = 0.15;
-			double t = 2.0 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
-			double u = ThreadLocalRandom.current().nextDouble(-radius, radius) + ThreadLocalRandom.current().nextDouble(-radius, radius);
-			double r = (u > 1.0) ? (2.0 - u) : u;
-			double x = r * MathHelper.cos((float) t);
-			double z = r * MathHelper.sin((float) t);
+			double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
+			double r = radius * ThreadLocalRandom.current().nextFloat();
+			double x = r * MathHelper.cos((float) theta);
+			double z = r * MathHelper.sin((float) theta);
 
 			glitter.setColor(new Color(0x4DFFFFFF, true));
 			glitter.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(0, 0.4), z));
@@ -223,11 +219,10 @@ public class LibParticles {
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(40, 100), 0, (i, build) -> {
 			double radius = 0.2;
-			double t = 2.0 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
-			double u = ThreadLocalRandom.current().nextDouble(-radius, radius) + ThreadLocalRandom.current().nextDouble(-radius, radius);
-			double r = (u > 1.0) ? (2.0 - u) : u;
-			double x = r * MathHelper.cos((float) t);
-			double z = r * MathHelper.sin((float) t);
+			double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
+			double r = radius * ThreadLocalRandom.current().nextFloat();
+			double x = r * MathHelper.cos((float) theta);
+			double z = r * MathHelper.sin((float) theta);
 
 			glitter.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(0, 0.4), z));
 			glitter.setMotion(new Vec3d(0, ThreadLocalRandom.current().nextDouble(0, 0.02), 0));
@@ -256,11 +251,10 @@ public class LibParticles {
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(50, 100), 0, (i, build) -> {
 			double radius = 0.5;
-			double t = 2.0 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
-			double u = ThreadLocalRandom.current().nextDouble(-radius, radius) + ThreadLocalRandom.current().nextDouble(-radius, radius);
-			double r = (u > 1.0) ? (2.0 - u) : u;
-			double x = r * MathHelper.cos((float) t);
-			double z = r * MathHelper.sin((float) t);
+			double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
+			double r = radius * ThreadLocalRandom.current().nextFloat();
+			double x = r * MathHelper.cos((float) theta);
+			double z = r * MathHelper.sin((float) theta);
 			glitter.setMotion(new Vec3d(x, ThreadLocalRandom.current().nextDouble(-0.3, 0.5), z));
 		});
 	}
@@ -271,9 +265,9 @@ public class LibParticles {
 		glitter.setAlphaFunction(new InterpFadeInOut(0.0f, 1.0f));
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(20, 30), 0, (i, build) -> {
-			double extent = 0.3;
+			double radius = 0.3;
 			double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
-			double r = extent * ThreadLocalRandom.current().nextFloat();
+			double r = radius * ThreadLocalRandom.current().nextFloat();
 			double x = r * MathHelper.cos((float) theta);
 			double z = r * MathHelper.sin((float) theta);
 			Random random = new Random();
@@ -345,9 +339,9 @@ public class LibParticles {
 		builder.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		ParticleSpawner.spawn(builder, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(200, 300), 0, (aFloat, particleBuilder) -> {
 			builder.setColorFunction(new InterpColorFade(new Color(ThreadLocalRandom.current().nextInt(0, 20), ThreadLocalRandom.current().nextInt(100, 255), ThreadLocalRandom.current().nextInt(0, 20)), 1, 255, 1));
-			double extent = 0.1;
+			double radius = 0.1;
 			double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
-			double r = extent * ThreadLocalRandom.current().nextFloat();
+			double r = radius * ThreadLocalRandom.current().nextFloat();
 			double x = r * MathHelper.cos((float) theta);
 			double z = r * MathHelper.sin((float) theta);
 			builder.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(-0.1, 0.1), z));
@@ -384,11 +378,10 @@ public class LibParticles {
 		core.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		ParticleSpawner.spawn(core, world, new StaticInterp<>(pos), (int) (40.0F * power), 0, (aFloat, particleBuilder) -> {
 			double radius = (3.0 * power);
-			double t = 2.0 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
-			double u = ThreadLocalRandom.current().nextDouble(-radius, radius) + ThreadLocalRandom.current().nextDouble(-radius, radius);
-			double r = (u > 1.0) ? (2.0 - u) : u;
-			double x = r * MathHelper.cos((float) t);
-			double z = r * MathHelper.sin((float) t);
+			double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
+			double r = radius * ThreadLocalRandom.current().nextFloat();
+			double x = r * MathHelper.cos((float) theta);
+			double z = r * MathHelper.sin((float) theta);
 
 			core.setMotion(new Vec3d((x / 10.0) * power, ThreadLocalRandom.current().nextDouble(0.2 * power, 0.3 * power), z / 10.0 * power));
 
@@ -406,11 +399,10 @@ public class LibParticles {
 		core.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		ParticleSpawner.spawn(core, world, new StaticInterp<>(pos), 40, 0, (aFloat, particleBuilder) -> {
 			double radius = 3.0;
-			double t = 2.0 * Math.PI * ThreadLocalRandom.current().nextDouble(-radius, radius);
-			double u = ThreadLocalRandom.current().nextDouble(-radius, radius) + ThreadLocalRandom.current().nextDouble(-radius, radius);
-			double r = (u > 1.0) ? (2.0 - u) : u;
-			double x = r * MathHelper.cos((float) t);
-			double z = r * MathHelper.sin((float) t);
+			double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
+			double r = radius * ThreadLocalRandom.current().nextFloat();
+			double x = r * MathHelper.cos((float) theta);
+			double z = r * MathHelper.sin((float) theta);
 			core.setMotion(new Vec3d(x + normal.xCoord, z / 10.0, z + normal.yCoord).normalize());
 
 			Color color = Color.RED;
@@ -419,6 +411,17 @@ public class LibParticles {
 			color = new Color(Color.HSBtoRGB((float) (1.0 / ThreadLocalRandom.current().nextInt(50, 255)), hsbVals[1], hsbVals[2]));
 			core.setColor(color);
 			core.setAlphaFunction(new InterpFadeInOut(0.1f, (float) ThreadLocalRandom.current().nextDouble(0.3, 0.6)));
+		});
+	}
+
+	public static void TEMPLATE_BLOCK_ERROR(World world, Vec3d pos) {
+		ParticleBuilder glitter = new ParticleBuilder(50);
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
+		glitter.setColor(Color.RED);
+		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.5f));
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 50, 0, (aFloat, particleBuilder) -> {
+			glitter.setMotion(new Vec3d(0, ThreadLocalRandom.current().nextDouble(0, 0.1), 0));
+			glitter.setPositionOffset(new Vec3d(0, ThreadLocalRandom.current().nextDouble(0, 1), 0));
 		});
 	}
 }

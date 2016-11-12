@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.tile;
 
 import com.teamwizardry.librarianlib.common.base.block.TileMod;
 import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
+import com.teamwizardry.librarianlib.common.util.autoregister.TileRegister;
 import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpBezier3D;
 import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpLine;
 import com.teamwizardry.librarianlib.common.util.saving.Save;
@@ -38,6 +39,7 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Created by Saad on 6/10/2016.
  */
+@TileRegister("crafting_plate")
 public class TileCraftingPlate extends TileMod implements ITickable, IManaSink, IStructure {
 
 	@Save
@@ -51,6 +53,8 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink, 
 	@Save
 	@Nullable
 	public ItemStack output;
+	@Save
+	public boolean structureComplete;
 	public List<ClusterObject> inventory = new ArrayList<>();
 	public Random random = new Random(getPos().toLong());
 
@@ -79,7 +83,7 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink, 
 	}
 
 	@Override
-	public void writeCustomNBT(NBTTagCompound compound) {
+	public void writeCustomNBT(NBTTagCompound compound, boolean sync) {
 		NBTTagList list = new NBTTagList();
 		for (ClusterObject cluster : inventory) list.appendTag(cluster.serializeNBT());
 		compound.setTag("clusters", list);
@@ -93,7 +97,7 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink, 
 
 	@Override
 	public void update() {
-		if (worldObj.isRemote) return;
+		if (worldObj.isRemote || !structureComplete) return;
 		if (tick < 360) tick += 10;
 		else tick = 0;
 		if (!inventory.isEmpty()) {
@@ -107,7 +111,7 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink, 
 			if (!inventory.isEmpty())
 				for (ClusterObject cluster : inventory) {
 					if (((ThreadLocalRandom.current().nextInt(10)) != 0)) continue;
-					LibParticles.CRAFTING_ALTAR_CLUSTER_SUCTION(worldObj, new Vec3d(pos).addVector(0.5, 0.5, 0.5), new InterpBezier3D(cluster.current, new Vec3d(0.5, 0.5, 0.5)));
+					LibParticles.CRAFTING_ALTAR_CLUSTER_SUCTION(worldObj, new Vec3d(pos).addVector(0.5, 0.5, 0.5), new InterpBezier3D(cluster.current, new Vec3d(0, 0, 0)));
 				}
 		}
 

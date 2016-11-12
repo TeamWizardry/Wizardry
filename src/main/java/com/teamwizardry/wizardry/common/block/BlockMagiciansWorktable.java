@@ -2,7 +2,6 @@ package com.teamwizardry.wizardry.common.block;
 
 import com.teamwizardry.librarianlib.common.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.common.base.block.BlockModContainer;
-import com.teamwizardry.librarianlib.common.base.block.TileMod;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants.PageNumbers;
 import com.teamwizardry.wizardry.common.tile.TileMagiciansWorktable;
@@ -38,7 +37,6 @@ public class BlockMagiciansWorktable extends BlockModContainer {
 		setHardness(1.0F);
 		setSoundType(SoundType.WOOD);
 		setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(ISLEFTSIDE, true));
-		TileMod.registerTile(TileMagiciansWorktable.class, "magicians_worktable");
 	}
 
 	@Override
