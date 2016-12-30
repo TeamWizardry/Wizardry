@@ -52,7 +52,7 @@ public class ItemJar extends ItemWizardry implements IItemColorProvider {
         if (entityLiving instanceof EntityPlayer) {
             EntityPlayer entityplayer = (EntityPlayer) entityLiving;
             worldIn.playSound(null, entityplayer.posX, entityplayer.posY, entityplayer.posZ, SoundEvents.ENTITY_PLAYER_BURP, SoundCategory.PLAYERS, 0.5F, worldIn.rand.nextFloat() * 0.1F + 0.9F);
-            entityLiving.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 40, 2, false, false));
+            entityLiving.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 200, 2, false, false));
         }
 
         return stack;

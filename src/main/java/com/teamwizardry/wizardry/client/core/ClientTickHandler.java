@@ -1,7 +1,11 @@
 package com.teamwizardry.wizardry.client.core;
 
+import com.teamwizardry.librarianlib.common.network.PacketHandler;
 import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
+import com.teamwizardry.wizardry.common.network.PacketCapeOwnerTransfer;
+import com.teamwizardry.wizardry.common.network.PacketCapeTick;
 import com.teamwizardry.wizardry.init.ModItems;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -28,11 +32,16 @@ public class ClientTickHandler {
         if (cape == null) return;
         if (cape.getItem() != ModItems.CAPE) return;
 
+
         if (tick < 1200) tick++;
         else {
             tick = 0;
 
-            ItemNBTHelper.setInt(cape, "time", ItemNBTHelper.getInt(cape, "time", 0) + 1);
+            Minecraft.getMinecraft().player.sendChatMessage(ItemNBTHelper.getInt(cape, "time", 0) + "");
+            PacketHandler.NETWORK.sendToServer(new PacketCapeTick());
+
+            if (ItemNBTHelper.getInt(cape, "owner", -1) != player.getEntityId() && ItemNBTHelper.getInt(cape, "time", 0) >= 60)
+                PacketHandler.NETWORK.sendToServer(new PacketCapeOwnerTransfer());
         }
     }
 }

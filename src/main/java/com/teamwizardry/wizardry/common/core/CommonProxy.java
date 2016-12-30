@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.core;
 
+import com.teamwizardry.librarianlib.common.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Config;
 import com.teamwizardry.wizardry.api.module.ModuleRegistry;
@@ -9,6 +10,8 @@ import com.teamwizardry.wizardry.client.gui.GuiHandler;
 import com.teamwizardry.wizardry.common.achievement.AchievementEvents;
 import com.teamwizardry.wizardry.common.achievement.Achievements;
 import com.teamwizardry.wizardry.common.fluid.Fluids;
+import com.teamwizardry.wizardry.common.network.PacketCapeOwnerTransfer;
+import com.teamwizardry.wizardry.common.network.PacketCapeTick;
 import com.teamwizardry.wizardry.common.network.WizardryPacketHandler;
 import com.teamwizardry.wizardry.common.world.GenHandler;
 import com.teamwizardry.wizardry.common.world.WorldProviderUnderWorld;
@@ -21,6 +24,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 
 public class CommonProxy {
 
@@ -48,6 +52,9 @@ public class CommonProxy {
 		MinecraftForge.EVENT_BUS.register(new EventHandler());
 		MinecraftForge.EVENT_BUS.register(new AchievementEvents());
 		MinecraftForge.EVENT_BUS.register(new ModCapabilities());
+
+		PacketHandler.register(PacketCapeTick.class, Side.SERVER);
+		PacketHandler.register(PacketCapeOwnerTransfer.class, Side.SERVER);
 	}
 
 	public void init(FMLInitializationEvent event) {
