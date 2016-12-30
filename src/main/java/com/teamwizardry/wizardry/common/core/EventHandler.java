@@ -53,10 +53,10 @@ public class EventHandler {
 		if (event.getEntity() instanceof EntityItem) {
 			EntityItem item = (EntityItem) event.getEntity();
 			if (item.getEntityItem().getItem() == Items.REDSTONE)
-				event.getWorld().spawnEntityInWorld(new EntityDevilDust(event.getWorld(), item));
-			else if (item.getEntityItem().getItem() == Items.BOOK)
-				event.getWorld().spawnEntityInWorld(new EntitySpellCodex(event.getWorld(), item));
-		}
+                event.getWorld().spawnEntity(new EntityDevilDust(event.getWorld(), item));
+            else if (item.getEntityItem().getItem() == Items.BOOK)
+                event.getWorld().spawnEntity(new EntitySpellCodex(event.getWorld(), item));
+        }
 	}
 
 	@SubscribeEvent
@@ -81,8 +81,8 @@ public class EventHandler {
 		if (!(event.getEntity() instanceof EntityPlayer)) return;
 		if (event.getSource() == EntityDamageSource.outOfWorld) {
 			EntityPlayer player = ((EntityPlayer) event.getEntityLiving());
-			BlockPos spawn = player.isSpawnForced(0) ? player.getBedLocation(0) : player.worldObj.getSpawnPoint().add(player.worldObj.rand.nextGaussian() * 16, 0, player.worldObj.rand.nextGaussian() * 16);
-			BlockPos teleportTo = spawn.add(0, 255 - spawn.getY(), 0);
+            BlockPos spawn = player.isSpawnForced(0) ? player.getBedLocation(0) : player.world.getSpawnPoint().add(player.world.rand.nextGaussian() * 16, 0, player.world.rand.nextGaussian() * 16);
+            BlockPos teleportTo = spawn.add(0, 255 - spawn.getY(), 0);
 			TeleportUtil.teleportToDimension((EntityPlayer) event.getEntity(), 0, teleportTo.getX(), teleportTo.getY(), teleportTo.getZ());
 			event.getEntity().fallDistance = -500;
 			event.setCanceled(true);

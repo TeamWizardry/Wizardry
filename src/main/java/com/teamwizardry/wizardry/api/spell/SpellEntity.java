@@ -1,11 +1,11 @@
 package com.teamwizardry.wizardry.api.spell;
 
-import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.Constants.NBT;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 public class SpellEntity extends Entity {
 	protected NBTTagCompound spell;
@@ -40,15 +40,15 @@ public class SpellEntity extends Entity {
 	}
 
 	@Override
-	protected void readEntityFromNBT(NBTTagCompound compound) {
-		readFromNBT(compound);
+    protected void readEntityFromNBT(@NotNull NBTTagCompound compound) {
+        readFromNBT(compound);
 		if (compound.hasKey(NBT.SPELL))
 			spell = compound.getCompoundTag(NBT.SPELL);
 	}
 
 	@Override
-	protected void writeEntityToNBT(NBTTagCompound compound) {
-		if (spell != null) compound.setTag(NBT.SPELL, compound);
+    protected void writeEntityToNBT(@NotNull NBTTagCompound compound) {
+        if (spell != null) compound.setTag(NBT.SPELL, compound);
 		writeToNBT(compound);
 	}
 }

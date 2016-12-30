@@ -55,44 +55,44 @@ public class ModuleCone extends Module implements IContinuousCast {
 	@Override
 	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
 		double radius = spell.getDouble(Constants.Module.DISTANCE);
-		double scatter = (360.0 / 2.0) * MathHelper.clamp_double(spell.getDouble(Constants.Module.SCATTER), 0.0, 1.0);
-		Vec3d look = caster.getLook(1.0F);
+        double scatter = (360.0 / 2.0) * MathHelper.clamp(spell.getDouble(Constants.Module.SCATTER), 0.0, 1.0);
+        Vec3d look = caster.getLook(1.0F);
 		if (caster instanceof SpellEntity) {
 			BlockPos pos = caster.getPosition();
 			for (int i = -(int) radius; i <= radius; i++) {
 				for (int j = -(int) radius; j <= radius; j++) {
-					if ((((i * i) + (j * j)) <= (radius * radius)) && !caster.worldObj.isAirBlock(pos.add(i, 0, j))) {
-						double xCoord = look.xCoord * i;
+                    if ((((i * i) + (j * j)) <= (radius * radius)) && !caster.world.isAirBlock(pos.add(i, 0, j))) {
+                        double xCoord = look.xCoord * i;
 						double zCoord = look.zCoord * j;
 						double lookSq = (look.xCoord * look.xCoord) + (look.zCoord * look.zCoord);
 						double posSq = (i * i) + (j * j);
 						double cos = (xCoord + zCoord) / Math.sqrt(lookSq * posSq);
 						double angle = StrictMath.acos(Math.abs(cos));
 						if (angle <= scatter) {
-							SpellEntity entity = new SpellEntity(caster.worldObj, pos.getX() + i, pos.getY(), pos.getZ() + j);
-							stack.castEffects(entity);
-							LibParticles.SHAPE_CONE(caster.worldObj, caster.getPositionVector(), caster.getLook(1));
-						}
+                            SpellEntity entity = new SpellEntity(caster.world, pos.getX() + i, pos.getY(), pos.getZ() + j);
+                            stack.castEffects(entity);
+                            LibParticles.SHAPE_CONE(caster.world, caster.getPositionVector(), caster.getLook(1));
+                        }
 					}
 				}
 			}
 		} else {
 			BlockPos pos = caster.getPosition();
 			AxisAlignedBB axis = new AxisAlignedBB(pos.subtract(new Vec3i(radius, 0.0, radius)), pos.add(new Vec3i(radius, 1, radius)));
-			List<Entity> entities = caster.worldObj.getEntitiesInAABBexcluding(caster, axis, Predicates.and(apply -> (apply != null) && (apply.canBeCollidedWith() || (apply instanceof EntityItem)), EntitySelectors.NOT_SPECTATING));
-			entities.stream().filter(entity -> entity.getDistanceSqToEntity(caster) <= (radius * radius)).forEach(entity -> {
+            List<Entity> entities = caster.world.getEntitiesInAABBexcluding(caster, axis, Predicates.and(apply -> (apply != null) && (apply.canBeCollidedWith() || (apply instanceof EntityItem)), EntitySelectors.NOT_SPECTATING));
+            entities.stream().filter(entity -> entity.getDistanceSqToEntity(caster) <= (radius * radius)).forEach(entity -> {
 				Vec3d leftVec = look.rotateYaw(-(float) scatter / 2.0F).rotatePitch(-caster.rotationPitch);
 				Vec3d rightVec = look.rotateYaw((float) scatter / 2.0F).rotatePitch(-caster.rotationPitch);
 				Vec3d posVec = entity.getPositionVector().subtract(caster.getPositionVector()).normalize();
 				if (((int) leftVec.xCoord == (int) -rightVec.xCoord) && ((int) leftVec.zCoord == (int) -rightVec.zCoord))
 					if (betweenVectors(posVec, leftVec, look) || betweenVectors(posVec, look, rightVec)) {
 						stack.castEffects(entity);
-						LibParticles.SHAPE_CONE(caster.worldObj, caster.getPositionVector(), caster.getLook(1));
-					}
+                        LibParticles.SHAPE_CONE(caster.world, caster.getPositionVector(), caster.getLook(1));
+                    }
 				if (betweenVectors(posVec, leftVec, rightVec)) {
 					stack.castEffects(caster);
-					LibParticles.SHAPE_CONE(caster.worldObj, caster.getPositionVector(), caster.getLook(1));
-				}
+                    LibParticles.SHAPE_CONE(caster.world, caster.getPositionVector(), caster.getLook(1));
+                }
 			});
 			return true;
 		}

@@ -28,6 +28,7 @@ import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -89,37 +90,38 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink, 
 		compound.setTag("clusters", list);
 	}
 
-	@SideOnly(Side.CLIENT)
-	@Override
+    @NotNull
+    @SideOnly(Side.CLIENT)
+    @Override
 	public AxisAlignedBB getRenderBoundingBox() {
 		return TileEntity.INFINITE_EXTENT_AABB;
 	}
 
 	@Override
 	public void update() {
-		if (worldObj.isRemote || !structureComplete) return;
-		if (tick < 360) tick += 10;
+        if (world.isRemote || !structureComplete) return;
+        if (tick < 360) tick += 10;
 		else tick = 0;
 		if (!inventory.isEmpty()) {
-			for (ClusterObject cluster : inventory) cluster.tick(worldObj, random);
-			worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
-		}
+            for (ClusterObject cluster : inventory) cluster.tick(world, random);
+            world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
+        }
 		markDirty();
 
 		if (isCrafting && (output != null)) {
-			LibParticles.CRAFTING_ALTAR_HELIX(worldObj, new Vec3d(pos).addVector(0.5, 0.25, 0.5));
-			if (!inventory.isEmpty())
+            LibParticles.CRAFTING_ALTAR_HELIX(world, new Vec3d(pos).addVector(0.5, 0.25, 0.5));
+            if (!inventory.isEmpty())
 				for (ClusterObject cluster : inventory) {
 					if (((ThreadLocalRandom.current().nextInt(10)) != 0)) continue;
-					LibParticles.CRAFTING_ALTAR_CLUSTER_SUCTION(worldObj, new Vec3d(pos).addVector(0.5, 0.5, 0.5), new InterpBezier3D(cluster.current, new Vec3d(0, 0, 0)));
-				}
+                    LibParticles.CRAFTING_ALTAR_CLUSTER_SUCTION(world, new Vec3d(pos).addVector(0.5, 0.5, 0.5), new InterpBezier3D(cluster.current, new Vec3d(0, 0, 0)));
+                }
 		}
 
 		if (!isCrafting && !inventory.isEmpty())
 			for (int i = 0; i < ThreadLocalRandom.current().nextInt(1, 10); i++) {
 				ClusterObject cluster = inventory.get(ThreadLocalRandom.current().nextInt(inventory.size()));
-				LibParticles.CRAFTING_ALTAR_CLUSTER_DRAPE(worldObj, new Vec3d(pos).addVector(0.5, 0.5, 0.5).add(cluster.current));
-			}
+                LibParticles.CRAFTING_ALTAR_CLUSTER_DRAPE(world, new Vec3d(pos).addVector(0.5, 0.5, 0.5).add(cluster.current));
+            }
 
 		if ((output == null) && !isCrafting && !inventory.isEmpty() && (inventory.get(inventory.size() - 1).stack.getItem() instanceof Infusable)) {
 			isCrafting = true;
@@ -132,12 +134,12 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink, 
 			else {
 				isCrafting = false;
 
-				LibParticles.CRAFTING_ALTAR_PEARL_EXPLODE(worldObj, new Vec3d(pos).addVector(0.5, 1, 0.5));
+                LibParticles.CRAFTING_ALTAR_PEARL_EXPLODE(world, new Vec3d(pos).addVector(0.5, 1, 0.5));
 
 				if (!inventory.isEmpty()) {
 					for (ClusterObject cluster : inventory)
-						LibParticles.CRAFTING_ALTAR_CLUSTER_EXPLODE(worldObj, new Vec3d(pos).addVector(0.5, 0.5, 0.5).add(cluster.current));
-					inventory.clear();
+                        LibParticles.CRAFTING_ALTAR_CLUSTER_EXPLODE(world, new Vec3d(pos).addVector(0.5, 0.5, 0.5).add(cluster.current));
+                    inventory.clear();
 				}
 
 				List<ItemStack> stacks = new ArrayList<>();

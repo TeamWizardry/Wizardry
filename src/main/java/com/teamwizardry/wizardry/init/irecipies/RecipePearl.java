@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
@@ -20,8 +21,8 @@ import javax.annotation.Nullable;
 public class RecipePearl implements IRecipe {
 
 	@Override
-	public boolean matches(InventoryCrafting inv, World worldIn) {
-		boolean foundBaseItem = false;
+    public boolean matches(@NotNull InventoryCrafting inv, World worldIn) {
+        boolean foundBaseItem = false;
 		boolean foundPearl = false;
 
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
@@ -43,8 +44,8 @@ public class RecipePearl implements IRecipe {
 
 	@Nullable
 	@Override
-	public ItemStack getCraftingResult(InventoryCrafting inv) {
-		ItemStack pearl = null;
+    public ItemStack getCraftingResult(@NotNull InventoryCrafting inv) {
+        ItemStack pearl = null;
 		ItemStack baseItem = null;
 
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
@@ -82,8 +83,9 @@ public class RecipePearl implements IRecipe {
 		return null;
 	}
 
-	@Override
-	public ItemStack[] getRemainingItems(InventoryCrafting inv) {
-		return ForgeHooks.defaultRecipeGetRemainingItems(inv);
+    @NotNull
+    @Override
+    public ItemStack[] getRemainingItems(@NotNull InventoryCrafting inv) {
+        return ForgeHooks.defaultRecipeGetRemainingItems(inv);
 	}
 }

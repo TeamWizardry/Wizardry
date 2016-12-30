@@ -57,13 +57,13 @@ public class ProjectileEntity extends SpellEntity {
 			// TODO: Removed particle code (projectile dest)
 		}
 
-		RayTraceResult cast = RaycastUtils.raycast(worldObj, getPositionVector(), new Vec3d(motionX, motionY, motionZ), Math.min(spell.getDouble(Module.SPEED), 1));
+        RayTraceResult cast = RaycastUtils.raycast(world, getPositionVector(), new Vec3d(motionX, motionY, motionZ), Math.min(spell.getDouble(Module.SPEED), 1));
 
 		if (cast != null) {
 			if (cast.typeOfHit == Type.BLOCK) {
 				BlockPos pos = cast.getBlockPos();
-				SpellEntity entity = new SpellEntity(worldObj, pos.getX(), pos.getY(), pos.getZ());
-				stack.castEffects(entity);
+                SpellEntity entity = new SpellEntity(world, pos.getX(), pos.getY(), pos.getZ());
+                stack.castEffects(entity);
 				setDead();
 			} else if ((cast.typeOfHit == Type.ENTITY) && (cast.entityHit != player)) {
 				stack.castEffects(cast.entityHit);

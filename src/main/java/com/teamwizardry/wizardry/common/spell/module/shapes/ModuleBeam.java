@@ -62,19 +62,19 @@ public class ModuleBeam extends Module implements IContinuousCast {
 
 		Vec3d cross = caster.getLook(1.0F).crossProduct(new Vec3d(0.0, caster.getEyeHeight(), 0.0)).normalize().scale(caster.width / 2);
 		Vec3d casterVec = new Vec3d(caster.posX + cross.xCoord, caster.posY + caster.getEyeHeight() + cross.yCoord, caster.posZ + cross.zCoord);
-		LibParticles.SHAPE_BEAM(player.worldObj, raycast.hitVec, casterVec, caster.getLook(1.0F).scale(-1.0), (int) distance, stack.getSpellColor());
+        LibParticles.SHAPE_BEAM(player.world, raycast.hitVec, casterVec, caster.getLook(1.0F).scale(-1.0), (int) distance, stack.getSpellColor());
 
 		do {
 			if (raycast != null)
 				if (raycast.typeOfHit == Type.BLOCK) {
-					Entity entity = new SpellEntity(caster.worldObj, raycast.getBlockPos().getX(), raycast.getBlockPos().getY(), raycast.getBlockPos().getZ());
-					stack.castEffects(entity);
+                    Entity entity = new SpellEntity(caster.world, raycast.getBlockPos().getX(), raycast.getBlockPos().getY(), raycast.getBlockPos().getZ());
+                    stack.castEffects(entity);
 					return true;
 				} else if (raycast.typeOfHit == Type.ENTITY) {
 					stack.castEffects(raycast.entityHit);
 					pierce--;
-					raycast = RaycastUtils.raycast(raycast.entityHit.worldObj, raycast.entityHit.getPositionVector(), caster.getLookVec(), distance);
-				} else return false;
+                    raycast = RaycastUtils.raycast(raycast.entityHit.world, raycast.entityHit.getPositionVector(), caster.getLookVec(), distance);
+                } else return false;
 		}
 		while (pierce > 0.0);
 		return true;

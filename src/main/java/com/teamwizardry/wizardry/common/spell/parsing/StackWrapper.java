@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.spell.parsing;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+import org.jetbrains.annotations.NotNull;
 
 public class StackWrapper implements Comparable<StackWrapper> {
 	public ItemStack stack;
@@ -11,8 +12,8 @@ public class StackWrapper implements Comparable<StackWrapper> {
 	}
 
 	@Override
-	public int compareTo(StackWrapper wrapper) {
-		int stack;
+    public int compareTo(@NotNull StackWrapper wrapper) {
+        int stack;
 		int other;
 
 		if (wrapper == null)

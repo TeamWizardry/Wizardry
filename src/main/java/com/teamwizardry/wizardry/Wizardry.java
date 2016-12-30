@@ -1,10 +1,10 @@
 package com.teamwizardry.wizardry;
 
 import com.teamwizardry.librarianlib.LibrarianLog;
-import com.teamwizardry.librarianlib.client.book.Book;
 import com.teamwizardry.librarianlib.common.base.ModCreativeTab;
 import com.teamwizardry.wizardry.common.core.CommonProxy;
 import com.teamwizardry.wizardry.init.ModItems;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -31,7 +31,6 @@ public class Wizardry {
 	public static final String SERVER = "com.teamwizardry.wizardry.common.core.CommonProxy";
 	public static PacketLoggingHandler packetHandler;
 	public static Logger logger;
-	public static Book guide;
 	public static DimensionType underWorld;
 
 	@SidedProxy(clientSide = CLIENT, serverSide = SERVER)
@@ -44,6 +43,12 @@ public class Wizardry {
 		@Override
 		public ItemStack getIconItemStack() {
 			return new ItemStack(ModItems.BOOK);
+		}
+
+		@NotNull
+		@Override
+		public Item getTabIconItem() {
+			return ModItems.BOOK;
 		}
 	};
 

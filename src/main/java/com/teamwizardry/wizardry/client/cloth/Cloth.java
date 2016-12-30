@@ -288,8 +288,8 @@ public class Cloth {
 		double m = 0.5;
 		AxisAlignedBB checkAABB = new AxisAlignedBB(minX - m, minY - m, minZ - m, maxX + m, maxY + m, maxZ + m);
 
-		return e.worldObj.getCollisionBoxes(checkAABB);
-	}
+        return e.world.getCollisionBoxes(checkAABB);
+    }
 
 	public void tick(Entity e, List<Sphere> spheres) {
 

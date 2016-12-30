@@ -13,6 +13,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -62,21 +63,21 @@ public class EntityHallowedSpirit extends EntityMob {
 		}
 		entity.fallDistance = 0;
 
-		LibParticles.AIR_THROTTLE(worldObj, getPositionVector().addVector(0, getEyeHeight(), 0), entity, Color.WHITE, Color.YELLOW);
-	}
+        LibParticles.AIR_THROTTLE(world, getPositionVector().addVector(0, getEyeHeight(), 0), entity, Color.WHITE, Color.YELLOW);
+    }
 
 	@Override
 	public void onUpdate() {
 		super.onUpdate();
-		if (worldObj.isRemote) return;
+        if (world.isRemote) return;
 
 		if ((ticksExisted % ThreadLocalRandom.current().nextInt(100, 200)) == 0)
 			playSound(ModSounds.HALLOWED_SPIRIT, ThreadLocalRandom.current().nextFloat(), ThreadLocalRandom.current().nextFloat());
 
 		fallDistance = 0;
 
-		EntityPlayer farPlayer = worldObj.getNearestPlayerNotCreative(this, 50);
-		if (farPlayer != null) {
+        EntityPlayer farPlayer = world.getNearestPlayerNotCreative(this, 50);
+        if (farPlayer != null) {
 			Vec3d direction = getPositionVector().subtract(farPlayer.getPositionVector()).normalize();
 			motionX = direction.xCoord * -0.05;
 			motionY = direction.yCoord * -0.05;
@@ -84,15 +85,15 @@ public class EntityHallowedSpirit extends EntityMob {
 			rotationYaw = (float) (((-StrictMath.atan2(direction.xCoord, direction.zCoord) * 180) / Math.PI) - 180) / 2;
 		}
 
-		EntityPlayer player = worldObj.getNearestPlayerNotCreative(this, 2);
-		EntityPlayer closePlayer = worldObj.getNearestPlayerNotCreative(this, 10);
-		boolean angry = player != null;
+        EntityPlayer player = world.getNearestPlayerNotCreative(this, 2);
+        EntityPlayer closePlayer = world.getNearestPlayerNotCreative(this, 10);
+        boolean angry = player != null;
 
 		if ((closePlayer != null) && !angry)
-			LibParticles.HALLOWED_SPIRIT_FLAME_FAR(worldObj, getPositionVector().addVector(0, getEyeHeight(), 0));
-		else if (angry)
-			LibParticles.HALLOWED_SPIRIT_FLAME_CLOSE(worldObj, getPositionVector().addVector(0, getEyeHeight(), 0));
-		else LibParticles.HALLOWED_SPIRIT_FLAME_NORMAL(worldObj, getPositionVector().addVector(0, getEyeHeight(), 0));
+            LibParticles.HALLOWED_SPIRIT_FLAME_FAR(world, getPositionVector().addVector(0, getEyeHeight(), 0));
+        else if (angry)
+            LibParticles.HALLOWED_SPIRIT_FLAME_CLOSE(world, getPositionVector().addVector(0, getEyeHeight(), 0));
+        else LibParticles.HALLOWED_SPIRIT_FLAME_NORMAL(world, getPositionVector().addVector(0, getEyeHeight(), 0));
 
 		if (angry) {
 			player.attackEntityFrom(DamageSource.generic, 0.15f);
@@ -106,16 +107,16 @@ public class EntityHallowedSpirit extends EntityMob {
 	}
 
 	@Override
-	public void dropLoot(boolean wasRecentlyHit, int lootingModifier, DamageSource source) {
-		super.dropLoot(wasRecentlyHit, lootingModifier, source);
+    public void dropLoot(boolean wasRecentlyHit, int lootingModifier, @NotNull DamageSource source) {
+        super.dropLoot(wasRecentlyHit, lootingModifier, source);
 	}
 
 	@Override
-	public boolean attackEntityFrom(DamageSource source, float amount) {
-		if (source.isMagicDamage()) {
+    public boolean attackEntityFrom(@NotNull DamageSource source, float amount) {
+        if (source.isMagicDamage()) {
 			super.attackEntityFrom(source, amount);
-			LibParticles.HALLOWED_SPIRIT_HURT(worldObj, getPositionVector());
-			return true;
+            LibParticles.HALLOWED_SPIRIT_HURT(world, getPositionVector());
+            return true;
 		} else return false;
 	}
 

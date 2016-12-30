@@ -45,8 +45,8 @@ public class BlockPedestal extends BlockModContainer implements IManaSink {
 				if (player.inventory.addItemStackToInventory(stack)) player.openContainer.detectAndSendChanges();
 				else {
 					EntityItem entityItem = new EntityItem(world, pos.getX(), pos.getY() + 1, pos.getZ(), stack);
-					world.spawnEntityInWorld(entityItem);
-				}
+                    world.spawnEntity(entityItem);
+                }
 			}
 		}
 		return true;

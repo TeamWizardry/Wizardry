@@ -60,7 +60,7 @@ public class ModuleZone extends Module {
 
 //        Circle3D circle = new Circle3D(new Vec3d(caster.posX, caster.posY, caster.posZ), radius, (int) (radius * 10));
 //        for (Vec3d point : circle.getPoints()) {
-//            SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(caster.worldObj, point);
+//            SparkleFX fizz = Wizardry.proxy.spawnParticleSparkle(caster.world, point);
 //			fizz.setMaxAge(30);
 //			fizz.setScale(3f);
 //			fizz.setAlpha(0.5f);
@@ -78,21 +78,21 @@ public class ModuleZone extends Module {
 				for (int j = -(int) radius; j <= radius; j++) {
 					if (((i * i) + (j * j)) > (radius * radius)) continue;
 					BlockPos block = pos.add(i, 0, j);
-					if (!caster.worldObj.isAirBlock(block))
-						blocks.add(block);
+                    if (!caster.world.isAirBlock(block))
+                        blocks.add(block);
 				}
 			}
 			for (BlockPos block : blocks) {
-				SpellEntity entity = new SpellEntity(caster.worldObj, block.getX(), block.getY(), block.getZ());
-				entity.rotationPitch = 90;
+                SpellEntity entity = new SpellEntity(caster.world, block.getX(), block.getY(), block.getZ());
+                entity.rotationPitch = 90;
 				stack.castEffects(entity);
 			}
 		} else {
 			BlockPos pos = caster.getPosition();
 			AxisAlignedBB axis = new AxisAlignedBB(pos.subtract(new Vec3i(radius, 0, radius)), pos.add(new Vec3i(radius, 1, radius)));
-			List<Entity> entities = caster.worldObj.getEntitiesWithinAABB(EntityItem.class, axis);
-			entities.addAll(caster.worldObj.getEntitiesWithinAABB(EntityLivingBase.class, axis));
-			entities.stream().filter(entity -> entity.getDistanceSqToEntity(caster) <= (radius * radius)).forEach(stack::castEffects);
+            List<Entity> entities = caster.world.getEntitiesWithinAABB(EntityItem.class, axis);
+            entities.addAll(caster.world.getEntitiesWithinAABB(EntityLivingBase.class, axis));
+            entities.stream().filter(entity -> entity.getDistanceSqToEntity(caster) <= (radius * radius)).forEach(stack::castEffects);
 		}
 
 		duration--;

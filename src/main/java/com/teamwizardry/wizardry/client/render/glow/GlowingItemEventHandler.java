@@ -63,8 +63,8 @@ public class GlowingItemEventHandler {
 	private void render(float partialTicks, boolean overlay, boolean renderNonOverlays) {
 		ItemRenderer render = Minecraft.getMinecraft().getItemRenderer();
 
-		AbstractClientPlayer abstractclientplayer = Minecraft.getMinecraft().thePlayer;
-		float f = abstractclientplayer.getSwingProgress(partialTicks);
+        AbstractClientPlayer abstractclientplayer = Minecraft.getMinecraft().player;
+        float f = abstractclientplayer.getSwingProgress(partialTicks);
 		EnumHand enumhand = Objects.firstNonNull(abstractclientplayer.swingingHand, EnumHand.MAIN_HAND);
 		float f1 = abstractclientplayer.prevRotationPitch + ((abstractclientplayer.rotationPitch - abstractclientplayer.prevRotationPitch) * partialTicks);
 		float f2 = abstractclientplayer.prevRotationYaw + ((abstractclientplayer.rotationYaw - abstractclientplayer.prevRotationYaw) * partialTicks);
@@ -154,16 +154,16 @@ public class GlowingItemEventHandler {
 	}
 
 	private void setLightmap() {
-		AbstractClientPlayer abstractclientplayer = Minecraft.getMinecraft().thePlayer;
-		int i = Minecraft.getMinecraft().theWorld.getCombinedLight(new BlockPos(abstractclientplayer.posX, abstractclientplayer.posY + abstractclientplayer.getEyeHeight(), abstractclientplayer.posZ), 0);
-		float f = (i & 65535);
+        AbstractClientPlayer abstractclientplayer = Minecraft.getMinecraft().player;
+        int i = Minecraft.getMinecraft().world.getCombinedLight(new BlockPos(abstractclientplayer.posX, abstractclientplayer.posY + abstractclientplayer.getEyeHeight(), abstractclientplayer.posZ), 0);
+        float f = (i & 65535);
 		float f1 = (i >> 16);
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, f, f1);
 	}
 
 	private void rotateArm(float partTicks) {
-		EntityPlayerSP entityplayersp = Minecraft.getMinecraft().thePlayer;
-		float f = entityplayersp.prevRenderArmPitch + ((entityplayersp.renderArmPitch - entityplayersp.prevRenderArmPitch) * partTicks);
+        EntityPlayerSP entityplayersp = Minecraft.getMinecraft().player;
+        float f = entityplayersp.prevRenderArmPitch + ((entityplayersp.renderArmPitch - entityplayersp.prevRenderArmPitch) * partTicks);
 		float f1 = entityplayersp.prevRenderArmYaw + ((entityplayersp.renderArmYaw - entityplayersp.prevRenderArmYaw) * partTicks);
 		GlStateManager.rotate((entityplayersp.rotationPitch - f) * 0.1F, 1.0F, 0.0F, 0.0F);
 		GlStateManager.rotate((entityplayersp.rotationYaw - f1) * 0.1F, 0.0F, 1.0F, 0.0F);

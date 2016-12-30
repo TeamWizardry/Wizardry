@@ -1,8 +1,6 @@
 package com.teamwizardry.wizardry.common.item;
 
-import com.teamwizardry.librarianlib.client.gui.GuiBase;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.Constants.NBT;
 import com.teamwizardry.wizardry.api.item.GlowingOverlayHelper;
 import com.teamwizardry.wizardry.api.item.IGlowOverlayable;
@@ -16,6 +14,7 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 public class ItemDebugger extends ItemWizardry implements IGlowOverlayable {
 
@@ -25,30 +24,32 @@ public class ItemDebugger extends ItemWizardry implements IGlowOverlayable {
 		addPropertyOverride(new ResourceLocation(Wizardry.MODID, NBT.TAG_OVERLAY), GlowingOverlayHelper.OVERLAY_OVERRIDE);
 	}
 
-	@Override
-	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    @NotNull
+    @Override
+    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		if (worldIn.getTileEntity(pos) instanceof TileManaBattery) {
 			TileManaBattery tmb = (TileManaBattery) worldIn.getTileEntity(pos);
 			if (!worldIn.isRemote)
 				if (tmb != null)
-					playerIn.addChatMessage(new TextComponentString("Mana: " + tmb.currentMana + '/' + tmb.maxMana));
-		}
+                    playerIn.sendMessage(new TextComponentString("Mana: " + tmb.currentMana + '/' + tmb.maxMana));
+        }
 		return EnumActionResult.PASS;
 	}
 
-	@Override
-	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
-		if (worldIn.isRemote) return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
+    @NotNull
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(@NotNull ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
+        if (worldIn.isRemote) return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
 
 		if (GuiScreen.isShiftKeyDown()) {
 			EntityFairy entity = new EntityFairy(worldIn);
 			entity.setPosition(playerIn.posX, playerIn.posY, playerIn.posZ);
-			worldIn.spawnEntityInWorld(entity);
-		} else {
+            worldIn.spawnEntity(entity);
+        } else {
 			EntityHallowedSpirit entity = new EntityHallowedSpirit(worldIn);
 			entity.setPosition(playerIn.posX, playerIn.posY, playerIn.posZ);
-			worldIn.spawnEntityInWorld(entity);
-		}
+            worldIn.spawnEntity(entity);
+        }
 
 		// create a builder
 	        /*ParticleBuilder builder = new ParticleBuilder(30); // world, lifetime

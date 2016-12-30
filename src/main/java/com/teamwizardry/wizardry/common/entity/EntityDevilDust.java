@@ -14,6 +14,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -43,32 +44,32 @@ public class EntityDevilDust extends Entity {
 	public void onUpdate() {
 		super.onUpdate();
 
-		if (worldObj.isRemote) return;
+        if (world.isRemote) return;
 
 		if (consumed) {
 			if (expiry > 0) {
 				expiry--;
 
-				LibParticles.DEVIL_DUST_BIG_CRACKLES(worldObj, getPositionVector());
-				LibParticles.DEVIL_DUST_SMALL_CRACKLES(worldObj, getPositionVector());
+                LibParticles.DEVIL_DUST_BIG_CRACKLES(world, getPositionVector());
+                LibParticles.DEVIL_DUST_SMALL_CRACKLES(world, getPositionVector());
 
 				if ((expiry % 5) == 0)
-					worldObj.playSound(null, posX, posY, posZ, ModSounds.FRYING_SIZZLE, SoundCategory.BLOCKS, 0.7F, (float) ThreadLocalRandom.current().nextDouble(0.8, 1.3));
+                    world.playSound(null, posX, posY, posZ, ModSounds.FRYING_SIZZLE, SoundCategory.BLOCKS, 0.7F, (float) ThreadLocalRandom.current().nextDouble(0.8, 1.3));
 
 			} else {
-				EntityItem devilDust = new EntityItem(worldObj, posX, posY, posZ, new ItemStack(ModItems.DEVIL_DUST, stackSize));
-				devilDust.setPickupDelay(5);
+                EntityItem devilDust = new EntityItem(world, posX, posY, posZ, new ItemStack(ModItems.DEVIL_DUST, stackSize));
+                devilDust.setPickupDelay(5);
 				devilDust.motionY = 0.8;
 				devilDust.forceSpawn = true;
-				worldObj.spawnEntityInWorld(devilDust);
-				worldObj.removeEntity(this);
-				return;
+                world.spawnEntity(devilDust);
+                world.removeEntity(this);
+                return;
 			}
 		} else {
-			BlockPos fire = PosUtils.checkNeighbor(worldObj, redstone.getPosition(), Blocks.FIRE);
-			if ((worldObj.getBlockState(fire).getBlock() == Blocks.FIRE)
-					&& worldObj.isMaterialInBB(redstone.getEntityBoundingBox().expand(0.1, 0.1, 0.1), Material.FIRE)) {
-				stackSize = redstone.getEntityItem().stackSize;
+            BlockPos fire = PosUtils.checkNeighbor(world, redstone.getPosition(), Blocks.FIRE);
+            if ((world.getBlockState(fire).getBlock() == Blocks.FIRE)
+                    && world.isMaterialInBB(redstone.getEntityBoundingBox().expand(0.1, 0.1, 0.1), Material.FIRE)) {
+                stackSize = redstone.getEntityItem().stackSize;
 				if (!redstone.isDead) redstone.setDead();
 				consumed = true;
 				setPosition(fire.getX() + 0.5, fire.getY(), fire.getZ() + 0.5);
@@ -79,12 +80,12 @@ public class EntityDevilDust extends Entity {
 			}
 		}
 
-		if (redstone.isDead && !consumed) worldObj.removeEntity(this);
-	}
+        if (redstone.isDead && !consumed) world.removeEntity(this);
+    }
 
 	@Override
-	public boolean attackEntityFrom(DamageSource source, float amount) {
-		return false;
+    public boolean attackEntityFrom(@NotNull DamageSource source, float amount) {
+        return false;
 	}
 
 	@Override
@@ -92,15 +93,15 @@ public class EntityDevilDust extends Entity {
 	}
 
 	@Override
-	protected void readEntityFromNBT(NBTTagCompound compound) {
-		if (compound.hasKey(EXPIRY)) expiry = compound.getInteger(EXPIRY);
+    protected void readEntityFromNBT(@NotNull NBTTagCompound compound) {
+        if (compound.hasKey(EXPIRY)) expiry = compound.getInteger(EXPIRY);
 		if (compound.hasKey(CONSUMED)) consumed = compound.getBoolean(CONSUMED);
 		if (compound.hasKey(STACK_SIZE)) stackSize = compound.getInteger(STACK_SIZE);
 	}
 
 	@Override
-	protected void writeEntityToNBT(NBTTagCompound compound) {
-		compound.setInteger(EXPIRY, expiry);
+    protected void writeEntityToNBT(@NotNull NBTTagCompound compound) {
+        compound.setInteger(EXPIRY, expiry);
 		compound.setInteger(STACK_SIZE, stackSize);
 		compound.setBoolean(CONSUMED, consumed);
 	}

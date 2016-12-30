@@ -49,8 +49,8 @@ public class ModuleMelee extends Module {
 		RayTraceResult raycast = RaycastUtils.raycast(caster, distance);
 		if (raycast != null)
 			if (raycast.typeOfHit == Type.BLOCK) {
-				Entity entity = new SpellEntity(caster.worldObj, raycast.getBlockPos().getX(), raycast.getBlockPos().getY(), raycast.getBlockPos().getZ());
-				stack.castEffects(entity);
+                Entity entity = new SpellEntity(caster.world, raycast.getBlockPos().getX(), raycast.getBlockPos().getY(), raycast.getBlockPos().getZ());
+                stack.castEffects(entity);
 				return true;
 			} else if (raycast.typeOfHit == Type.ENTITY) {
 				stack.castEffects(raycast.entityHit);

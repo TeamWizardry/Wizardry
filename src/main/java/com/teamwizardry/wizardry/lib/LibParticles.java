@@ -26,9 +26,6 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class LibParticles {
 
-	private LibParticles() {
-	}
-
 	public static void FIZZING_AMBIENT(World world, Vec3d pos) {
 		ParticleBuilder glitter = new ParticleBuilder(30);
 		glitter.setScale(0.3f);
@@ -305,19 +302,19 @@ public class LibParticles {
 	}
 
 	public static void CRAFTING_ALTAR_CLUSTER_DRAPE(World world, Vec3d pos) {
-		ParticleBuilder helix = new ParticleBuilder(200);
-		helix.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
-		helix.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
-		helix.enableMotionCalculation();
+        ParticleBuilder glitter = new ParticleBuilder(200);
+        glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
+        glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
+        glitter.enableMotionCalculation();
 
-		ParticleSpawner.spawn(helix, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(5, 20), 0, (aFloat, particleBuilder) -> {
-			helix.setColor(new Color(ThreadLocalRandom.current().nextInt(0, 100), ThreadLocalRandom.current().nextInt(0, 100), ThreadLocalRandom.current().nextInt(50, 255)));
-			helix.setScale(ThreadLocalRandom.current().nextFloat());
-			helix.addMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.01, 0.01),
-					ThreadLocalRandom.current().nextDouble(-0.01, 0.01),
+        ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(5, 20), 0, (aFloat, particleBuilder) -> {
+            glitter.setColor(new Color(ThreadLocalRandom.current().nextInt(0, 100), ThreadLocalRandom.current().nextInt(0, 100), ThreadLocalRandom.current().nextInt(50, 255)));
+            glitter.setScale(ThreadLocalRandom.current().nextFloat());
+            glitter.addMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.01, 0.01),
+                    ThreadLocalRandom.current().nextDouble(-0.01, 0.01),
 					ThreadLocalRandom.current().nextDouble(-0.01, 0.01)));
-			helix.setLifetime(ThreadLocalRandom.current().nextInt(20, 50));
-		});
+            glitter.setLifetime(ThreadLocalRandom.current().nextInt(20, 50));
+        });
 	}
 
 	public static void CRAFTING_ALTAR_CLUSTER_SUCTION(World world, Vec3d pos, InterpFunction<Vec3d> bezier3D) {

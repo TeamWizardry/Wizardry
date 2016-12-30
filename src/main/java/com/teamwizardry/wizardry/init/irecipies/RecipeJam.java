@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
@@ -16,8 +17,8 @@ import javax.annotation.Nullable;
 public class RecipeJam implements IRecipe {
 
 	@Override
-	public boolean matches(InventoryCrafting inv, World worldIn) {
-		boolean foundJar = false;
+    public boolean matches(@NotNull InventoryCrafting inv, @NotNull World worldIn) {
+        boolean foundJar = false;
 		boolean foundSword = false;
 
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
@@ -37,8 +38,8 @@ public class RecipeJam implements IRecipe {
 
 	@Nullable
 	@Override
-	public ItemStack getCraftingResult(InventoryCrafting inv) {
-		ItemStack sword = null;
+    public ItemStack getCraftingResult(@NotNull InventoryCrafting inv) {
+        ItemStack sword = null;
 		ItemStack jar = null;
 
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
@@ -74,9 +75,10 @@ public class RecipeJam implements IRecipe {
 		return null;
 	}
 
-	@Override
-	public ItemStack[] getRemainingItems(InventoryCrafting inv) {
-		ItemStack[] remainingItems = ForgeHooks.defaultRecipeGetRemainingItems(inv);
+    @NotNull
+    @Override
+    public ItemStack[] getRemainingItems(@NotNull InventoryCrafting inv) {
+        ItemStack[] remainingItems = ForgeHooks.defaultRecipeGetRemainingItems(inv);
 
 		ItemStack sword;
 		for (int i = 0; i < inv.getSizeInventory(); i++) {

@@ -42,8 +42,8 @@ public class TilePedestal extends TileMod implements ITickable {
 
 	@Override
 	public void update() {
-		if (worldObj.isRemote) return;
-		if (pearl == null) return;
+        if (world.isRemote) return;
+        if (pearl == null) return;
 
 		if (pearl.getItem() instanceof Infusable) {
 
@@ -64,12 +64,12 @@ public class TilePedestal extends TileMod implements ITickable {
 				for (int j = -3; j < 3; j++)
 					for (int k = -3; k < 3; k++) {
 						BlockPos pos = new BlockPos(getPos().getX() + i, getPos().getY() + j, getPos().getZ() + k);
-						if (worldObj.getBlockState(pos).getBlock() != ModBlocks.MANA_MAGNET) continue;
+                        if (world.getBlockState(pos).getBlock() != ModBlocks.MANA_MAGNET) continue;
 
 						castCooldown = 20;
 
 						if (fakePlayer == null)
-							fakePlayer = FakePlayerFactory.get((WorldServer) worldObj, new GameProfile(UUID.randomUUID(), "a pearl in a pedestal"));
+                            fakePlayer = FakePlayerFactory.get((WorldServer) world, new GameProfile(UUID.randomUUID(), "a pearl in a pedestal"));
 
 						fakePlayer.posX = getPos().getX() + 0.5;
 						fakePlayer.posY = getPos().getY() + 0.5;
@@ -92,8 +92,8 @@ public class TilePedestal extends TileMod implements ITickable {
 		if (!compound.hasKey("link_x") || !compound.hasKey("link_y") || !compound.hasKey("link_z")) return;
 
 		BlockPos pos = new BlockPos(compound.getInteger("link_x"), compound.getInteger("link_y"), compound.getInteger("link_z"));
-		IBlockState block = worldObj.getBlockState(pos);
-		if (!(block.getBlock() instanceof IManaSink)) return;
+        IBlockState block = world.getBlockState(pos);
+        if (!(block.getBlock() instanceof IManaSink)) return;
 
 		// TODO
 	}

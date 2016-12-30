@@ -5,7 +5,6 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IThreadListener;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -39,9 +38,9 @@ public class MessageUpdateCapabilities implements IMessage {
 
 		@Override
 		public IMessage onMessage(final MessageUpdateCapabilities message, final MessageContext ctx) {
-			IThreadListener mainThread = (ctx.side.isClient()) ? Minecraft.getMinecraft() : (IThreadListener) ctx.getServerHandler().playerEntity.worldObj;
-			mainThread.addScheduledTask(() -> WizardryCapabilityProvider.get(Minecraft.getMinecraft().thePlayer).loadNBTData(message.tags));
-			return null;
+            IThreadListener mainThread = (ctx.side.isClient()) ? Minecraft.getMinecraft() : (IThreadListener) ctx.getServerHandler().playerEntity.world;
+            mainThread.addScheduledTask(() -> WizardryCapabilityProvider.get(Minecraft.getMinecraft().player).loadNBTData(message.tags));
+            return null;
 		}
 	}
 }

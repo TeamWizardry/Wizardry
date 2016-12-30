@@ -4,14 +4,12 @@ import com.teamwizardry.librarianlib.common.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.common.base.item.IModItemProvider;
 import com.teamwizardry.librarianlib.common.util.VariantHelper;
 import com.teamwizardry.wizardry.Wizardry;
-import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Loader;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -70,11 +68,5 @@ public abstract class ItemWizardryFood extends ItemFood implements IModItemProvi
 	@Override
 	public ModCreativeTab getCreativeTab() {
 		return Wizardry.tab;
-	}
-
-	@Nullable
-	@Override
-	public ItemMeshDefinition getCustomMeshDefinition() {
-		return null;
 	}
 }

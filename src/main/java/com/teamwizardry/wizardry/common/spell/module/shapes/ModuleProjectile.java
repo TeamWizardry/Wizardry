@@ -52,7 +52,7 @@ public class ModuleProjectile extends Module {
 	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
 		// TODO: SPAWN ENTITY IN "init" method
 		// RUN EFFECTS HERE
-		if (caster.worldObj.isRemote) {
+        if (caster.world.isRemote) {
 //			double scatter = MathHelper.clamp_double(spell.getDouble(SCATTER), 0, 2);
 //			int projCount = spell.getInteger(PROJ_COUNT);
 
@@ -63,11 +63,11 @@ public class ModuleProjectile extends Module {
 			float pitch = caster.rotationPitch;
 //			for (int i = 0; i < projCount; i++)
 			{
-				ProjectileEntity proj = new ProjectileEntity(caster.worldObj, caster.posX, caster.posY + caster.getEyeHeight(), caster.posZ, stack);
-				proj.setDirection(yaw, pitch);
+                ProjectileEntity proj = new ProjectileEntity(caster.world, caster.posX, caster.posY + caster.getEyeHeight(), caster.posZ, stack);
+                proj.setDirection(yaw, pitch);
 //				yaw += anglePerProj;
-				caster.worldObj.spawnEntityInWorld(proj);
-			}
+                caster.world.spawnEntity(proj);
+            }
 		}
 		return true;
 	}

@@ -11,6 +11,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by Saad on 8/30/2016.
@@ -24,8 +25,9 @@ public class ItemCape extends ItemModArmor {
 		setMaxDamage(0);
 	}
 
-	@Override
-	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
+    @NotNull
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
 		ItemStack itemstack = playerIn.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
 
 		if (itemstack == null) {

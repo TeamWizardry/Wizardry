@@ -55,13 +55,13 @@ public class ModuleLava extends Module implements IHasAffinity {
 	public boolean cast(EntityPlayer player, Entity caster, NBTTagCompound spell, SpellStack stack) {
 		if (caster instanceof SpellEntity) {
 			BlockPos pos = caster.getPosition().add(0, 1, 0);
-			if (caster.worldObj.isAirBlock(pos)) {
-				caster.worldObj.setBlockState(pos, Blocks.FLOWING_LAVA.getDefaultState());
-				return true;
+            if (caster.world.isAirBlock(pos)) {
+                caster.world.setBlockState(pos, Blocks.FLOWING_LAVA.getDefaultState());
+                return true;
 			}
 		} else {
-			caster.worldObj.setBlockState(caster.getPosition(), Blocks.FLOWING_LAVA.getDefaultState());
-			return true;
+            caster.world.setBlockState(caster.getPosition(), Blocks.FLOWING_LAVA.getDefaultState());
+            return true;
 		}
 		return false;
 	}

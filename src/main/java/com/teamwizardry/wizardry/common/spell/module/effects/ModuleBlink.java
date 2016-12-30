@@ -72,8 +72,8 @@ public class ModuleBlink extends Module {
 
 		Vec3d look = caster.getLook(1.0F);
 
-		if (!caster.worldObj.isRemote && (caster instanceof EntityLivingBase)) {
-			EnderTeleportEvent event = new EnderTeleportEvent((EntityLivingBase) caster, caster.posX, caster.posY, caster.posZ, 0);
+        if (!caster.world.isRemote && (caster instanceof EntityLivingBase)) {
+            EnderTeleportEvent event = new EnderTeleportEvent((EntityLivingBase) caster, caster.posX, caster.posY, caster.posZ, 0);
 			if (MinecraftForge.EVENT_BUS.post(event))
 				return false;
 		}
@@ -81,8 +81,8 @@ public class ModuleBlink extends Module {
 		double posY = look.yCoord * power;
 		double posZ = look.zCoord * power;
 		caster.setPositionAndUpdate(caster.posX + posX, caster.posY + posY, caster.posZ + posZ);
-		caster.worldObj.playSound(null, caster.prevPosX, caster.prevPosY, caster.prevPosZ, SoundEvents.ENTITY_ENDERMEN_TELEPORT, caster.getSoundCategory(), 1.0F, 1.0F);
-		caster.playSound(SoundEvents.ENTITY_ENDERMEN_TELEPORT, 1.0F, 1.0F);
+        caster.world.playSound(null, caster.prevPosX, caster.prevPosY, caster.prevPosZ, SoundEvents.ENTITY_ENDERMEN_TELEPORT, caster.getSoundCategory(), 1.0F, 1.0F);
+        caster.playSound(SoundEvents.ENTITY_ENDERMEN_TELEPORT, 1.0F, 1.0F);
 
 		return true;
 	}

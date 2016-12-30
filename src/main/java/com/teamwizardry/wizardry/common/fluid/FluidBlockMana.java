@@ -23,6 +23,7 @@ import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -92,8 +93,9 @@ public class FluidBlockMana extends BlockFluidClassic {
 		}
 	}
 
-	@Override
-	public EnumBlockRenderType getRenderType(IBlockState state) {
+    @NotNull
+    @Override
+    public EnumBlockRenderType getRenderType(IBlockState state) {
 		return EnumBlockRenderType.MODEL;
 	}
 }

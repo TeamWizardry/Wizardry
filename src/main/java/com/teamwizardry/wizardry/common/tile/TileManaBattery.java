@@ -31,10 +31,10 @@ public class TileManaBattery extends TileMod implements ITickable, IManaSink {
 		int x = rand.nextInt(3) - 1;
 		int z = rand.nextInt(3) - 1;
 		BlockPos pos = getPos().add(x, -2, z);
-		if (worldObj.getBlockState(pos) == FluidBlockMana.instance.getDefaultState()) {
-			currentMana += 1000;
-			worldObj.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
-		}
+        if (world.getBlockState(pos) == FluidBlockMana.instance.getDefaultState()) {
+            currentMana += 1000;
+            world.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+        }
 
 		List<BlockPos> pedestals = new ArrayList<>();
 		for (int i = -6; i < 6; i++) {
@@ -42,18 +42,18 @@ public class TileManaBattery extends TileMod implements ITickable, IManaSink {
 
 				BlockPos pedPos = new BlockPos(pos.getX() + i, pos.getY() - 2, pos.getZ() + j);
 				if (pedestals.contains(pedPos)) continue;
-				IBlockState block = worldObj.getBlockState(pedPos);
-				if (block.getBlock() != ModBlocks.PEDESTAL) continue;
-				TilePedestal pedestal = (TilePedestal) worldObj.getTileEntity(pedPos);
-				if (pedestal == null) return;
+                IBlockState block = world.getBlockState(pedPos);
+                if (block.getBlock() != ModBlocks.PEDESTAL) continue;
+                TilePedestal pedestal = (TilePedestal) world.getTileEntity(pedPos);
+                if (pedestal == null) return;
 				if (pedestal.pearl == null) return;
 
 				BlockPos oppPos = new BlockPos(pos.getX() - i, pedPos.getY(), pos.getZ() - j);
 				if (pedestals.contains(oppPos)) continue;
-				IBlockState oppBlock = worldObj.getBlockState(oppPos);
-				if (oppBlock.getBlock() != ModBlocks.PEDESTAL) return;
-				TilePedestal oppPed = (TilePedestal) worldObj.getTileEntity(oppPos);
-				if (oppPed == null) return;
+                IBlockState oppBlock = world.getBlockState(oppPos);
+                if (oppBlock.getBlock() != ModBlocks.PEDESTAL) return;
+                TilePedestal oppPed = (TilePedestal) world.getTileEntity(oppPos);
+                if (oppPed == null) return;
 				if (oppPed.pearl == null) return;
 
 				pedestals.add(pedPos);

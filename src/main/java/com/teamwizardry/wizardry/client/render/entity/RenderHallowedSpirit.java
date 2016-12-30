@@ -6,6 +6,7 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by Saad on 8/21/2016.
@@ -23,8 +24,9 @@ public class RenderHallowedSpirit extends RenderLiving<EntityHallowedSpirit> {
 		return false;
 	}
 
-	@Override
-	protected ResourceLocation getEntityTexture(EntityHallowedSpirit entity) {
-		return SPIRIT_TEX;
+    @NotNull
+    @Override
+    protected ResourceLocation getEntityTexture(@NotNull EntityHallowedSpirit entity) {
+        return SPIRIT_TEX;
 	}
 }

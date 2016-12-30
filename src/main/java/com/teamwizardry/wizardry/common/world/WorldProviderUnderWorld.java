@@ -9,18 +9,21 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by LordSaad44
  */
 public class WorldProviderUnderWorld extends WorldProvider {
 
-	@Override
-	public IChunkGenerator createChunkGenerator() {
-		return new ChunkGeneratorUnderWorld(worldObj);
-	}
+    @NotNull
+    @Override
+    public IChunkGenerator createChunkGenerator() {
+        return new ChunkGeneratorUnderWorld(world);
+    }
 
-	@Override
+    @NotNull
+    @Override
 	public DimensionType getDimensionType() {
 		return Wizardry.underWorld;
 	}
@@ -57,13 +60,15 @@ public class WorldProviderUnderWorld extends WorldProvider {
 		return true;
 	}
 
-	@Override
-	public Vec3d getSkyColor(Entity cameraEntity, float partialTicks) {
-		return new Vec3d(0, 180, 50);
+    @NotNull
+    @Override
+    public Vec3d getSkyColor(@NotNull Entity cameraEntity, float partialTicks) {
+        return new Vec3d(0, 180, 50);
 	}
 
 
-	@Override
+    @NotNull
+    @Override
 	public String getSaveFolder() {
 		return "underworld";
 	}

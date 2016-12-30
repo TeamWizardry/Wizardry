@@ -11,6 +11,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -34,49 +35,49 @@ public class EntitySpellCodex extends Entity {
 	@Override
 	public void onUpdate() {
 		super.onUpdate();
-		if (worldObj.isRemote) return;
+        if (world.isRemote) return;
 
 		posX = book.posX;
 		posY = book.posY;
 		posZ = book.posZ;
 
-		if (worldObj.getBlockState(getPosition()).getBlock() == FluidMana.instance.getBlock()) {
-			if (expiry > 0) {
+        if (world.getBlockState(getPosition()).getBlock() == FluidMana.instance.getBlock()) {
+            if (expiry > 0) {
 				expiry--;
 
-				LibParticles.BOOK_BEAM_NORMAL(worldObj, getPositionVector());
-				LibParticles.BOOK_BEAM_HELIX(worldObj, getPositionVector());
+                LibParticles.BOOK_BEAM_NORMAL(world, getPositionVector());
+                LibParticles.BOOK_BEAM_HELIX(world, getPositionVector());
 
 				if ((expiry % 5) == 0)
-					worldObj.playSound(null, posX, posY, posZ, ModSounds.FIZZING_LOOP, SoundCategory.AMBIENT, 0.7F, (ThreadLocalRandom.current().nextFloat() * 0.4F) + 0.8F);
+                    world.playSound(null, posX, posY, posZ, ModSounds.FIZZING_LOOP, SoundCategory.AMBIENT, 0.7F, (ThreadLocalRandom.current().nextFloat() * 0.4F) + 0.8F);
 
 			} else {
-				EntityItem codex = new EntityItem(worldObj, posX, posY, posZ, new ItemStack(ModItems.BOOK, 1));
-				codex.setPickupDelay(0);
+                EntityItem codex = new EntityItem(world, posX, posY, posZ, new ItemStack(ModItems.BOOK, 1));
+                codex.setPickupDelay(0);
 				codex.motionY = 0;
 				codex.motionX = 0;
 				codex.motionZ = 0;
 				codex.forceSpawn = true;
 				book.getEntityItem().stackSize--;
-				worldObj.spawnEntityInWorld(codex);
-				worldObj.removeEntity(this);
+                world.spawnEntity(codex);
+                world.removeEntity(this);
 
-				worldObj.playSound(null, posX, posY, posZ, ModSounds.HARP1, SoundCategory.AMBIENT, 0.3F, 1.0F);
+                world.playSound(null, posX, posY, posZ, ModSounds.HARP1, SoundCategory.AMBIENT, 0.3F, 1.0F);
 
-				LibParticles.BOOK_LARGE_EXPLOSION(worldObj, getPositionVector());
-				return;
+                LibParticles.BOOK_LARGE_EXPLOSION(world, getPositionVector());
+                return;
 			}
 		} else {
 			expiry = 200;
 			return;
 		}
 
-		if (book.isDead) worldObj.removeEntity(this);
-	}
+        if (book.isDead) world.removeEntity(this);
+    }
 
 	@Override
-	public boolean attackEntityFrom(DamageSource source, float amount) {
-		return false;
+    public boolean attackEntityFrom(@NotNull DamageSource source, float amount) {
+        return false;
 	}
 
 	@Override
@@ -84,10 +85,10 @@ public class EntitySpellCodex extends Entity {
 	}
 
 	@Override
-	protected void readEntityFromNBT(NBTTagCompound compound) {
-	}
+    protected void readEntityFromNBT(@NotNull NBTTagCompound compound) {
+    }
 
 	@Override
-	protected void writeEntityToNBT(NBTTagCompound compound) {
-	}
+    protected void writeEntityToNBT(@NotNull NBTTagCompound compound) {
+    }
 }

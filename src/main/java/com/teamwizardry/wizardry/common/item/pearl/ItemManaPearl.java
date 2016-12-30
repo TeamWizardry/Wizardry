@@ -10,6 +10,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by Saad on 6/21/2016.
@@ -21,8 +22,9 @@ public class ItemManaPearl extends ItemWizardry {
 		setMaxStackSize(1);
 	}
 
-	@Override
-	public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
+    @NotNull
+    @Override
+    public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
 		if ((stack != null) && (world.getBlockState(pos).getBlock() instanceof IManaSink)) {
 			ItemNBTHelper.setInt(stack, "link_x", pos.getX());
 			ItemNBTHelper.setInt(stack, "link_y", pos.getY());

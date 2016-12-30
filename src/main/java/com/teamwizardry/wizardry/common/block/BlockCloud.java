@@ -13,6 +13,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -36,14 +37,15 @@ public class BlockCloud extends BlockMod {
 		return false;
 	}
 
-	@SideOnly(Side.CLIENT)
-	public BlockRenderLayer getBlockLayer() {
+    @NotNull
+    @SideOnly(Side.CLIENT)
+    public BlockRenderLayer getBlockLayer() {
 		return BlockRenderLayer.TRANSLUCENT;
 	}
 
 	@SideOnly(Side.CLIENT)
-	public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
-		IBlockState worldState = blockAccess.getBlockState(pos.offset(side));
+    public boolean shouldSideBeRendered(IBlockState blockState, @NotNull IBlockAccess blockAccess, @NotNull BlockPos pos, EnumFacing side) {
+        IBlockState worldState = blockAccess.getBlockState(pos.offset(side));
 		Block block = worldState.getBlock();
 		return (blockState != worldState) || ((block != this) && super.shouldSideBeRendered(blockState, blockAccess, pos, side));
 	}

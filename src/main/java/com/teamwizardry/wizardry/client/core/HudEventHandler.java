@@ -13,7 +13,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.Post;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -32,12 +31,12 @@ public class HudEventHandler extends Gui {
 	@SubscribeEvent
 	public void renderHud(Post event) {
 		Minecraft mc = Minecraft.getMinecraft();
-		ItemStack stack = Minecraft.getMinecraft().thePlayer.getActiveItemStack();
+        ItemStack stack = Minecraft.getMinecraft().player.getActiveItemStack();
 
 		ScaledResolution resolution = event.getResolution();
 		int width = resolution.getScaledWidth();
 		int height = resolution.getScaledHeight();
-		EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+        EntityPlayer player = Minecraft.getMinecraft().player;
 
 		if (event.getType() == ElementType.EXPERIENCE) {
 

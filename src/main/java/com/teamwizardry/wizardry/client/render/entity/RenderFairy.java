@@ -5,6 +5,7 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by Saad on 8/25/2016.
@@ -20,12 +21,13 @@ public class RenderFairy extends RenderLiving<EntityFairy> {
 		return false;
 	}
 
-	@Override
-	protected ResourceLocation getEntityTexture(EntityFairy entity) {
-		return null;
+    @NotNull
+    @Override
+    protected ResourceLocation getEntityTexture(@NotNull EntityFairy entity) {
+        return null;
 	}
 
 	@Override
-	public void doRender(EntityFairy entity, double x, double y, double z, float entityYaw, float partialTicks) {
-	}
+    public void doRender(@NotNull EntityFairy entity, double x, double y, double z, float entityYaw, float partialTicks) {
+    }
 }

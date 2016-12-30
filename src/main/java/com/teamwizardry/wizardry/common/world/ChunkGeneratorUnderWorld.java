@@ -11,6 +11,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.chunk.IChunkGenerator;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -84,8 +85,9 @@ public class ChunkGeneratorUnderWorld implements IChunkGenerator {
 		}
 	}
 
-	@Override
-	public Chunk provideChunk(int x, int z) {
+    @NotNull
+    @Override
+    public Chunk provideChunk(int x, int z) {
 		ChunkPrimer chunkprimer = new ChunkPrimer();
 
 		generate(x, z, chunkprimer);
@@ -111,8 +113,9 @@ public class ChunkGeneratorUnderWorld implements IChunkGenerator {
 		return false;
 	}
 
-	@Override
-	public List<Biome.SpawnListEntry> getPossibleCreatures(EnumCreatureType creatureType, BlockPos pos) {
+    @NotNull
+    @Override
+    public List<Biome.SpawnListEntry> getPossibleCreatures(EnumCreatureType creatureType, BlockPos pos) {
 		return Collections.emptyList();
 	}
 

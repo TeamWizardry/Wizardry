@@ -34,29 +34,31 @@ targetCompatibility = 1.8
 //}
 
 minecraft {
-    version = "1.10.2-12.18.1.2026"
+    version = "1.10.2-12.18.1.2095"
     runDir = "run"
-    
-    useDepAts = true
+
     // the mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   snapshot are built nightly.
     // stable_#            stables are built at the discretion of the MCP team.
-    // Use non-default mappings at your own risk. they may not allways work.
+    // Use non-default mappings at your own risk. they may not always work.
     // simply re-run your setup task after changing the mappings to update your workspace.
-    mappings = "snapshot_20160803"
+    mappings = "stable_29"
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 }
 
 repositories {
-    maven { url "https://jitpack.io" }
+    mavenCentral()
     maven { url "http://dvs1.progwml6.com/files/maven" }
-    maven { url "http://maven.amadornes.com/" }
+    maven { url "http://mobiusstrip.eu/maven" }
+    maven {
+        name 'tterag maven'
+        url "http://maven.tterrag.com/"
+    }
 }
 
 dependencies {
-    deobfCompile "mezz.jei:jei_1.9.4:3.4.0.204"
-    compile 'com.github.Azanor:Baubles:3f3fdadf09'
-    compile 'com.github.TeamWizardry:LibrarianLib:-SNAPSHOT'
+    deobfCompile "mezz.jei:jei_1.10.2:3.13.3.382:api"
+    runtime "mezz.jei:jei_1.10.2:3.13.3.382"
 
     //shade 'org.smurn:jply:0.2.0'
     // you may put jars on which you depend on in ./libs

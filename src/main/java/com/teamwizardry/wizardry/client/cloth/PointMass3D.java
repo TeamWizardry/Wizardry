@@ -9,8 +9,8 @@ public class PointMass3D {
 	public float mass;
 	public boolean pin;
 
-	public PointMass3D(Vec3d pos, float mass) {
-		prevPos = this.pos = pos;
+    public PointMass3D(@Nullable Vec3d pos, float mass) {
+        prevPos = this.pos = pos;
 		this.mass = mass;
 	}
 

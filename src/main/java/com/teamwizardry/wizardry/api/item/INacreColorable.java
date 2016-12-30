@@ -3,10 +3,9 @@ package com.teamwizardry.wizardry.api.item;
 import com.teamwizardry.librarianlib.client.core.ClientTickHandler;
 import com.teamwizardry.librarianlib.common.base.item.IItemColorProvider;
 import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
-import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.Constants.NBT;
 import com.teamwizardry.wizardry.init.ModBlocks;
-import net.minecraft.client.renderer.color.IItemColor;
+import kotlin.jvm.functions.Function2;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
@@ -34,7 +33,7 @@ public interface INacreColorable extends IItemColorProvider {
 		ItemStack stack = entityItem.getEntityItem();
 
 		if (!ItemNBTHelper.verifyExistence(stack, NBT.RAND))
-			ItemNBTHelper.setInt(stack, NBT.RAND, entityItem.worldObj.rand.nextInt(NBT.COLOR_CYCLE_LENGTH));
+            ItemNBTHelper.setInt(stack, NBT.RAND, entityItem.world.rand.nextInt(NBT.COLOR_CYCLE_LENGTH));
 
 		if (entityItem.isInsideOfMaterial(ModBlocks.NACRE_MATERIAL) && !ItemNBTHelper.getBoolean(stack, NBT.COMPLETE, false)) {
 			int purity = ItemNBTHelper.getInt(stack, NBT.PURITY, 0);
@@ -46,8 +45,8 @@ public interface INacreColorable extends IItemColorProvider {
 	@Nullable
 	@Override
 	@SideOnly(Side.CLIENT)
-	default IItemColor getItemColor() {
-		return (stack, tintIndex) -> {
+    default Function2<ItemStack, Integer, Integer> getItemColorFunction() {
+        return (stack, tintIndex) -> {
 			if (tintIndex != 0) return 0xFFFFFF;
 			int rand = ItemNBTHelper.getInt(stack, NBT.RAND, 0);
 			int purity = ItemNBTHelper.getInt(stack, NBT.PURITY, NBT.NACRE_PURITY_CONVERSION);

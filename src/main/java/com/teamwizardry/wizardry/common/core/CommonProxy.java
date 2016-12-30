@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.core;
 
-import com.teamwizardry.librarianlib.client.book.Book;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Config;
 import com.teamwizardry.wizardry.api.module.ModuleRegistry;
@@ -23,14 +22,11 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-import static com.teamwizardry.wizardry.Wizardry.MODID;
-
 public class CommonProxy {
 
 	public void preInit(FMLPreInitializationEvent event) {
 		WizardryPacketHandler.registerMessages();
 
-		Wizardry.guide = new Book(MODID);
 		Config.initConfig(event.getSuggestedConfigurationFile());
 
 		ModSounds.init();

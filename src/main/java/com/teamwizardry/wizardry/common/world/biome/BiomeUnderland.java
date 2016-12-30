@@ -4,6 +4,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
@@ -32,7 +33,7 @@ public class BiomeUnderland extends Biome {
 	}
 
 	@Override
-	public void decorate(World worldIn, Random rand, BlockPos pos) {
+    public void decorate(@NotNull World worldIn, @NotNull Random rand, @NotNull BlockPos pos) {
 
 	}
 }

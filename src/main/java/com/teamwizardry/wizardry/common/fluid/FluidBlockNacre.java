@@ -8,6 +8,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import org.jetbrains.annotations.NotNull;
 
 public class FluidBlockNacre extends BlockFluidClassic {
 
@@ -25,8 +26,9 @@ public class FluidBlockNacre extends BlockFluidClassic {
 		return FluidNacre.instance;
 	}
 
-	@Override
-	public EnumBlockRenderType getRenderType(IBlockState state) {
+    @NotNull
+    @Override
+    public EnumBlockRenderType getRenderType(IBlockState state) {
 		return EnumBlockRenderType.MODEL;
 	}
 }

@@ -1,7 +1,6 @@
 package com.teamwizardry.wizardry.common.entity;
 
 import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
-import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.Constants.NBT;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.lib.LibParticles;
@@ -19,6 +18,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.awt.*;
@@ -82,25 +82,25 @@ public class EntityFairy extends EntityFlying {
 		}
 		entity.fallDistance = 0;
 
-		LibParticles.AIR_THROTTLE(worldObj, getPositionVector(), entity, color, color.brighter());
-	}
+        LibParticles.AIR_THROTTLE(world, getPositionVector(), entity, color, color.brighter());
+    }
 
 	@Override
 	public void onUpdate() {
 		super.onUpdate();
-		if (worldObj.isRemote) return;
+        if (world.isRemote) return;
 
 		if (age <= 0) age = 2;
 		if (((ticksExisted % ThreadLocalRandom.current().nextInt(200, 400)) == 0) && (age < 100)) age++;
 
-		LibParticles.FAIRY_TRAIL(worldObj, getPositionVector().addVector(0, 0.25, 0), color, sad, age);
+        LibParticles.FAIRY_TRAIL(world, getPositionVector().addVector(0, 0.25, 0), color, sad, age);
 
 		boolean match = true;
 		for (int i = -3; i < 3; i++)
 			for (int j = -3; j < 0; j++)
 				for (int k = -3; k < 3; k++)
-					if (worldObj.getBlockState(new BlockPos(posX + i, posY + j, posZ + k)).getBlock() != Blocks.AIR) {
-						if (pitchAmount < 90) {
+                    if (world.getBlockState(new BlockPos(posX + i, posY + j, posZ + k)).getBlock() != Blocks.AIR) {
+                        if (pitchAmount < 90) {
 							dirPitchAdd = false;
 							pitchAmount += 0.2;
 							readjustingComplete = false;
@@ -108,8 +108,8 @@ public class EntityFairy extends EntityFlying {
 						match = false;
 						break;
 					}
-		EntityPlayer player = worldObj.getNearestPlayerNotCreative(this, 2);
-		if (player != null) {
+        EntityPlayer player = world.getNearestPlayerNotCreative(this, 2);
+        if (player != null) {
 			if (pitchAmount < 90) {
 				dirPitchAdd = false;
 				pitchAmount += 0.2;
@@ -155,23 +155,24 @@ public class EntityFairy extends EntityFlying {
 		motionZ = rot.zCoord / ThreadLocalRandom.current().nextDouble(5, 10);
 	}
 
-	@Override
-	public EnumActionResult applyPlayerInteraction(EntityPlayer player, Vec3d vec, @Nullable ItemStack stack, EnumHand hand) {
+    @NotNull
+    @Override
+    public EnumActionResult applyPlayerInteraction(EntityPlayer player, Vec3d vec, @Nullable ItemStack stack, EnumHand hand) {
 		if ((stack != null) && (stack.getItem() == ModItems.JAR)) {
 			ItemNBTHelper.setBoolean(stack, NBT.FAIRY_INSIDE, true);
 			ItemNBTHelper.setInt(stack, NBT.FAIRY_COLOR, color.getRGB());
 			ItemNBTHelper.setInt(stack, NBT.FAIRY_AGE, age);
 			stack.setItemDamage(1);
-			worldObj.removeEntity(this);
-		}
+            world.removeEntity(this);
+        }
 		return EnumActionResult.PASS;
 	}
 
 	@Override
-	public boolean attackEntityFrom(DamageSource source, float amount) {
-		super.attackEntityFrom(source, amount);
-		LibParticles.FAIRY_EXPLODE(worldObj, getPositionVector().addVector(0, 0.25, 0), color);
-		return true;
+    public boolean attackEntityFrom(@NotNull DamageSource source, float amount) {
+        super.attackEntityFrom(source, amount);
+        LibParticles.FAIRY_EXPLODE(world, getPositionVector().addVector(0, 0.25, 0), color);
+        return true;
 	}
 
 	@Override
@@ -180,8 +181,8 @@ public class EntityFairy extends EntityFlying {
 	}
 
 	@Override
-	public void dropLoot(boolean wasRecentlyHit, int lootingModifier, DamageSource source) {
-		//super.dropLoot(wasRecentlyHit, lootingModifier, source);
+    public void dropLoot(boolean wasRecentlyHit, int lootingModifier, @NotNull DamageSource source) {
+        //super.dropLoot(wasRecentlyHit, lootingModifier, source);
 		ItemStack fairyWings = new ItemStack(ModItems.FAIRY_WINGS);
 		ItemStack fairyDust = new ItemStack(ModItems.FAIRY_DUST);
 		ItemNBTHelper.setInt(fairyWings, NBT.FAIRY_COLOR, color.getRGB());

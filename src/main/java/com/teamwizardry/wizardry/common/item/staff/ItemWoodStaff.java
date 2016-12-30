@@ -21,6 +21,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by Saad on 6/7/2016.
@@ -48,9 +49,10 @@ public class ItemWoodStaff extends ItemWizardry implements INacreColorable {
 		}
 	}
 
-	@Override
-	public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
-		if (world.isRemote && (Minecraft.getMinecraft().currentScreen != null)) {
+    @NotNull
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(@NotNull ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+        if (world.isRemote && (Minecraft.getMinecraft().currentScreen != null)) {
 			return new ActionResult<>(EnumActionResult.FAIL, stack);
 		} else {
 			player.setActiveHand(hand);
@@ -58,7 +60,8 @@ public class ItemWoodStaff extends ItemWizardry implements INacreColorable {
 		}
 	}
 
-	@Override
+    @NotNull
+    @Override
 	public EnumAction getItemUseAction(ItemStack stack) {
 		return EnumAction.BOW;
 	}
@@ -88,7 +91,7 @@ public class ItemWoodStaff extends ItemWizardry implements INacreColorable {
 //            Arc3D arc = new Arc3D(points, target, (float) 0.9, 20);
 //            if (betterCount < arc.getPoints().size()) {
 //                Vec3d point = arc.getPoints().get(betterCount);
-//                SparkleFX fizz = GlitterFactory.getInstance().createSparkle(player.worldObj, point, 10);
+//                SparkleFX fizz = GlitterFactory.getInstance().createSparkle(player.world, point, 10);
 //                fizz.setFadeOut();
 //                fizz.setAlpha(0.1f);
 //                fizz.setScale(0.3f);
@@ -106,7 +109,7 @@ public class ItemWoodStaff extends ItemWizardry implements INacreColorable {
 
 	@Override
 	public boolean onEntityItemUpdate(EntityItem entityItem) {
-		if (!entityItem.worldObj.isRemote) return false;
+        if (!entityItem.world.isRemote) return false;
 
 		colorableOnEntityItemUpdate(entityItem);
 

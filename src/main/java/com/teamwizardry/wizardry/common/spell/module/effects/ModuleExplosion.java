@@ -73,8 +73,8 @@ public class ModuleExplosion extends Module implements IHasAffinity {
 						if (((i * i) + (j * j) + (k * k)) < (power * power))
 							affectedPositions.add(caster.getPosition().add(i, j, k));
 		}
-		Explosion explosion = new Explosion(caster.worldObj, player, caster.posX, caster.posY, caster.posZ, power, affectedPositions);
-		explosion.doExplosionA();
+        Explosion explosion = new Explosion(caster.world, player, caster.posX, caster.posY, caster.posZ, power, affectedPositions);
+        explosion.doExplosionA();
 		explosion.doExplosionB(true);
 		return true;
 	}
