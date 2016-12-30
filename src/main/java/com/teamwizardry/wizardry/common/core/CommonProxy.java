@@ -10,9 +10,7 @@ import com.teamwizardry.wizardry.client.gui.GuiHandler;
 import com.teamwizardry.wizardry.common.achievement.AchievementEvents;
 import com.teamwizardry.wizardry.common.achievement.Achievements;
 import com.teamwizardry.wizardry.common.fluid.Fluids;
-import com.teamwizardry.wizardry.common.network.PacketCapeOwnerTransfer;
-import com.teamwizardry.wizardry.common.network.PacketCapeTick;
-import com.teamwizardry.wizardry.common.network.WizardryPacketHandler;
+import com.teamwizardry.wizardry.common.network.*;
 import com.teamwizardry.wizardry.common.world.GenHandler;
 import com.teamwizardry.wizardry.common.world.WorldProviderUnderWorld;
 import com.teamwizardry.wizardry.init.*;
@@ -55,6 +53,9 @@ public class CommonProxy {
 
 		PacketHandler.register(PacketCapeTick.class, Side.SERVER);
 		PacketHandler.register(PacketCapeOwnerTransfer.class, Side.SERVER);
+		PacketHandler.register(PacketParticleBatteryCircle.class, Side.CLIENT);
+		PacketHandler.register(PacketParticleMagicDot.class, Side.CLIENT);
+		PacketHandler.register(PacketParticlePedestalBezier.class, Side.CLIENT);
 	}
 
 	public void init(FMLInitializationEvent event) {

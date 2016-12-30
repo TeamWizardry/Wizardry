@@ -120,7 +120,7 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink, 
 		if (!isCrafting && !inventory.isEmpty())
 			for (int i = 0; i < ThreadLocalRandom.current().nextInt(1, 10); i++) {
 				ClusterObject cluster = inventory.get(ThreadLocalRandom.current().nextInt(inventory.size()));
-                LibParticles.CRAFTING_ALTAR_CLUSTER_DRAPE(world, new Vec3d(pos).addVector(0.5, 0.5, 0.5).add(cluster.current));
+                LibParticles.CLUSTER_DRAPE(world, new Vec3d(pos).addVector(0.5, 0.5, 0.5).add(cluster.current));
             }
 
 		if ((output == null) && !isCrafting && !inventory.isEmpty() && (inventory.get(inventory.size() - 1).stack.getItem() instanceof Infusable)) {

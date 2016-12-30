@@ -32,7 +32,6 @@ public class ClientTickHandler {
         if (cape == null) return;
         if (cape.getItem() != ModItems.CAPE) return;
 
-
         if (tick < 1200) tick++;
         else {
             tick = 0;

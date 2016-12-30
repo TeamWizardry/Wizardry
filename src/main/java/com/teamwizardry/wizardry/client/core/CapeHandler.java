@@ -4,7 +4,6 @@ import com.teamwizardry.librarianlib.client.core.ClientTickHandler;
 import com.teamwizardry.librarianlib.common.util.math.Matrix4;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.client.cloth.Cloth;
-import com.teamwizardry.wizardry.client.cloth.Link3D;
 import com.teamwizardry.wizardry.client.cloth.PointMass3D;
 import com.teamwizardry.wizardry.client.cloth.Sphere;
 import com.teamwizardry.wizardry.init.ModItems;
@@ -313,8 +312,8 @@ public class CapeHandler {
 		vb.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
 		tess.draw();
 
-		Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/capes/nader.png"));
-		GlStateManager.enableTexture2D();
+        Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/capes/template.png"));
+        GlStateManager.enableTexture2D();
 
 		vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 

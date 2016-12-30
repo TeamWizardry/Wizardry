@@ -1,32 +1,19 @@
 package com.teamwizardry.wizardry.common.tile;
 
-import com.mojang.authlib.GameProfile;
 import com.teamwizardry.librarianlib.common.base.block.TileMod;
-import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
 import com.teamwizardry.librarianlib.common.util.autoregister.TileRegister;
 import com.teamwizardry.librarianlib.common.util.saving.Save;
-import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.Constants.NBT;
 import com.teamwizardry.wizardry.api.block.IManaSink;
 import com.teamwizardry.wizardry.api.item.Infusable;
-import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.ModuleRegistry;
-import com.teamwizardry.wizardry.api.spell.IContinuousCast;
-import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
-import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.common.util.FakePlayerFactory;
 
 import javax.annotation.Nullable;
-import java.util.UUID;
 
 /**
  * Created by Saad on 5/7/2016.
@@ -47,7 +34,7 @@ public class TilePedestal extends TileMod implements ITickable {
 
 		if (pearl.getItem() instanceof Infusable) {
 
-			NBTTagCompound spellCompound = ItemNBTHelper.getCompound(pearl, NBT.SPELL, true);
+			/*NBTTagCompound spellCompound = ItemNBTHelper.getCompound(pearl, NBT.SPELL, true);
 			if (spellCompound == null) return;
 			SpellStack spell = new SpellStack(fakePlayer, fakePlayer, spellCompound);
 			Module module = ModuleRegistry.getInstance().getModuleByLocation(spellCompound.getString(Constants.Module.SHAPE));
@@ -83,8 +70,7 @@ public class TilePedestal extends TileMod implements ITickable {
 						spell.castSpell();
 
 						break;
-					}
-
+					}*/
 		} else if (pearl.getItem() != ModItems.PEARL_MANA) return;
 
 		NBTTagCompound compound = pearl.getTagCompound();
@@ -95,6 +81,5 @@ public class TilePedestal extends TileMod implements ITickable {
         IBlockState block = world.getBlockState(pos);
         if (!(block.getBlock() instanceof IManaSink)) return;
 
-		// TODO
 	}
 }

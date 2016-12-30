@@ -1,8 +1,8 @@
 package com.teamwizardry.wizardry.common.item.pearl;
 
-import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
-import com.teamwizardry.wizardry.api.block.IManaSink;
 import com.teamwizardry.wizardry.common.item.ItemWizardry;
+import com.teamwizardry.wizardry.common.tile.TilePedestal;
+import com.teamwizardry.wizardry.init.ModBlocks;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumActionResult;
@@ -17,20 +17,24 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ItemManaPearl extends ItemWizardry {
 
-	public ItemManaPearl() {
-		super("mana_pearl");
-		setMaxStackSize(1);
-	}
+    public ItemManaPearl() {
+        super("mana_pearl");
+        setMaxStackSize(1);
+    }
 
     @NotNull
     @Override
     public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
-		if ((stack != null) && (world.getBlockState(pos).getBlock() instanceof IManaSink)) {
-			ItemNBTHelper.setInt(stack, "link_x", pos.getX());
-			ItemNBTHelper.setInt(stack, "link_y", pos.getY());
-			ItemNBTHelper.setInt(stack, "link_z", pos.getZ());
-			return EnumActionResult.SUCCESS;
-		}
-		return EnumActionResult.PASS;
-	}
+        if (stack != null) {
+            if (world.getBlockState(pos).getBlock() == ModBlocks.PEDESTAL) {
+                TilePedestal pedestal = (TilePedestal) world.getTileEntity(pos);
+                if (pedestal != null) {
+                    pedestal.pearl = stack;
+                    stack.stackSize--;
+                    pedestal.markDirty();
+                }
+            }
+        }
+        return EnumActionResult.PASS;
+    }
 }
