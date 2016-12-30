@@ -157,28 +157,13 @@ public class WorktableGui extends GuiBase {
     }
 
     private void addModules(ComponentVoid parent, ModuleType type, int x, int y, int columns, int rows) {
-        //ComponentScrolledView view = new ComponentScrolledView(x, y, columns * 12, rows * 12);
-        // parent.add(view);
-
         ComponentGrid grid = new ComponentGrid(x, y, 12, 12, columns);
         parent.add(grid);
 
-        int count = 0;
         for (Module module : modulesByType.get(type)) {
             TableModule item = new TableModule(this, module, false);
             grid.add(item.component);
-            count++;
         }
-        int usedRows = (int) Math.ceil(count / (float) columns);
-        /*if (usedRows > rows) {
-            ComponentSpriteCapped scrollSlot = new ComponentSpriteCapped(SCROLL_GROOVE_VERTICAL_TOP, SCROLL_GROOVE_VERTICAL_MIDDLE, SCROLL_GROOVE_VERTICAL_BOTTOM, false, x + (columns * 12), y, 12, rows * 12);
-            parent.add(scrollSlot);
-
-            ComponentSlider scrollSlider = new ComponentSlider(6, (SCROLL_SLIDER_VERTICAL.getHeight() / 2) + 2, 0, (rows * 12) - SCROLL_SLIDER_VERTICAL.getHeight() - 4, 0, usedRows - 3);
-            scrollSlider.getHandle().add(new ComponentSprite(SCROLL_SLIDER_VERTICAL, -SCROLL_SLIDER_VERTICAL.getWidth() / 2, -SCROLL_SLIDER_VERTICAL.getHeight() / 2));
-            scrollSlider.getPercentageChange().add((p) -> view.scrollToPercent(new Vec2d(0, p)));
-            scrollSlot.add(scrollSlider);
-        }*/
     }
 
     @Override

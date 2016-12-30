@@ -24,6 +24,8 @@ item.wizardry:fairy_imbued_apple.name=Fairy Imbued Apple
 item.wizardry:fairy_wings.name=Fairy Wings
 item.wizardry:unicorn_horn.name=Unicorn Horn
 item.wizardry:jar.name=Jar
+item.wizardry:jar_fairy.name=Fairy in a Jar
+item.wizardry:jar_jam.name=Fairy Jam
 
 gui.physicsbook.defaulttitle=Physics Book
 

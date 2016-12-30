@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.client.gui.worktable;
 import com.teamwizardry.librarianlib.client.gui.EnumMouseButton;
 import com.teamwizardry.librarianlib.client.gui.GuiComponent;
 import com.teamwizardry.librarianlib.client.gui.components.ComponentSprite;
+import com.teamwizardry.librarianlib.common.util.math.Vec2d;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.lib.LibSprites;
 import net.minecraft.util.text.TextFormatting;
@@ -38,11 +39,12 @@ public class TableModule {
         sprite.BUS.hook(GuiComponent.MouseDownEvent.class, (event) -> {
             if (event.getButton() == EnumMouseButton.LEFT) {
                 if (!draggable) {
-                    TableModule item = new TableModule(table, module, false);
-                    item.component.setPos(event.getMousePos().sub(-6, -6));
+                    TableModule item = new TableModule(table, module, true);
+                    item.component.setPos(new Vec2d(50, 50));
                     table.selected = item.component;
-                    event.cancel();
-                } else sprite.setPos(event.getMousePos().sub(-6, -6));
+                } else {
+                    sprite.setPos(event.getMousePos().sub(-6, -6));
+                }
             }
         });
 
