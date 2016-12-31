@@ -7,6 +7,7 @@ import com.teamwizardry.librarianlib.common.util.math.Matrix4;
 import com.teamwizardry.librarianlib.common.util.saving.Save;
 import com.teamwizardry.wizardry.api.block.IManaSink;
 import com.teamwizardry.wizardry.common.fluid.FluidBlockMana;
+import com.teamwizardry.wizardry.common.network.PacketParticleMagicDot;
 import com.teamwizardry.wizardry.common.network.PacketParticlePedestalBezier;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import net.minecraft.block.state.IBlockState;
@@ -67,7 +68,7 @@ public class TileManaBattery extends TileMod implements ITickable, IManaSink {
             if (pedestals.contains(oppPos)) continue;
             IBlockState oppBlock = world.getBlockState(oppPos);
             if (oppBlock.getBlock() != ModBlocks.PEDESTAL) {
-                // PacketHandler.NETWORK.sendToAllAround(new PacketParticleMagicDot(new Vec3d(oppPos).addVector(0.5, 0.5, 0.5), (float) ThreadLocalRandom.current().nextDouble(1, 4)), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 20));
+                PacketHandler.NETWORK.sendToAllAround(new PacketParticleMagicDot(new Vec3d(oppPos).addVector(0.5, 0.5, 0.5), (float) ThreadLocalRandom.current().nextDouble(1, 4)), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 20));
                 continue;
             }
             TilePedestal oppPed = (TilePedestal) world.getTileEntity(oppPos);
@@ -78,12 +79,12 @@ public class TileManaBattery extends TileMod implements ITickable, IManaSink {
             pedestals.add(oppPos);
         }
 
-        for (BlockPos pos : poses)
-            //PacketHandler.NETWORK.sendToAllAround(new PacketParticleMagicDot(new Vec3d(pos).addVector(0.5, 0.5, 0.5), -1), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 20));
-
-            for (BlockPos ped : pedestals) {
-                if (ThreadLocalRandom.current().nextInt(4) == 0)
-                    PacketHandler.NETWORK.sendToAllAround(new PacketParticlePedestalBezier(ped, pos), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 60));
-            }
+        for (BlockPos pos : poses) {
+            PacketHandler.NETWORK.sendToAllAround(new PacketParticleMagicDot(new Vec3d(pos).addVector(0.5, 0.5, 0.5), -1), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 20));
+        }
+        for (BlockPos ped : pedestals) {
+            //  if (ThreadLocalRandom.current().nextInt(5) == 0)
+            PacketHandler.NETWORK.sendToAllAround(new PacketParticlePedestalBezier(ped, this.pos), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 60));
+        }
     }
 }

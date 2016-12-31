@@ -5,8 +5,10 @@ import com.teamwizardry.librarianlib.client.fx.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.client.fx.particle.functions.InterpColorFade;
 import com.teamwizardry.librarianlib.client.fx.particle.functions.InterpColorHSV;
 import com.teamwizardry.librarianlib.client.fx.particle.functions.InterpFadeInOut;
+import com.teamwizardry.librarianlib.common.util.math.Matrix4;
 import com.teamwizardry.librarianlib.common.util.math.interpolate.InterpFunction;
 import com.teamwizardry.librarianlib.common.util.math.interpolate.StaticInterp;
+import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpBezier3D;
 import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpHelix;
 import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpLine;
 import com.teamwizardry.wizardry.Wizardry;
@@ -361,6 +363,24 @@ public class LibParticles {
                     ThreadLocalRandom.current().nextDouble(-0.03, 0.03),
                     ThreadLocalRandom.current().nextDouble(-0.03, 0.03)));
             builder.setLifetime(ThreadLocalRandom.current().nextInt(20, 80));
+        });
+    }
+
+    public static void COLORFUL_BATTERY_BEZIER(World world, BlockPos pedestal, BlockPos center) {
+        ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(10, 50));
+        glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+        glitter.setAlphaFunction(new InterpFadeInOut(0.5f, 0.1f));
+
+        Vec3d sub = new Vec3d(center).addVector(0.5, 0.5, 0.5).subtract(new Vec3d(pedestal).addVector(0.5, 0.5, 0.5));
+
+        Matrix4 matrix = new Matrix4();
+        InterpBezier3D bezier3D = new InterpBezier3D(Vec3d.ZERO, sub,
+                matrix.rotate(Math.toRadians(90), new Vec3d(0, 1, 0)).apply(sub).addVector(0, 5, 0),
+                matrix.rotate(Math.toRadians(-90), new Vec3d(0, 1, 0)).apply(sub));
+        ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(pedestal).addVector(0.5, 0.5, 0.5)), 3, 0, (aFloat, particleBuilder) -> {
+            glitter.setColor(new Color(0, ThreadLocalRandom.current().nextInt(30, 100), ThreadLocalRandom.current().nextInt(50, 255), ThreadLocalRandom.current().nextInt(10, 255)));
+            glitter.setScale(ThreadLocalRandom.current().nextFloat());
+            glitter.setPositionFunction(bezier3D);
         });
     }
 
