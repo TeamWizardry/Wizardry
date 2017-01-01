@@ -1,71 +1,72 @@
-package com.teamwizardry.wizardry.common.spell.module.events;
+package com.teamwizardry.wizardry.common.spell.module.modifiers;
 
+import com.teamwizardry.wizardry.api.Attributes;
+import com.teamwizardry.wizardry.api.spell.IModifier;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.SpellStack;
-import com.teamwizardry.wizardry.init.ModItems;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Set;
 
 /**
  * Created by LordSaad.
  */
-public class ModuleEventCast extends Module {
+public class ModuleModifierPlus extends Module implements IModifier {
 
-    public ModuleEventCast() {
+    public ModuleModifierPlus() {
     }
 
     @NotNull
     @Override
     public ItemStack getRequiredStack() {
-        return new ItemStack(ModItems.JAR, 1, 2);
+        return new ItemStack(Items.GOLD_NUGGET);
     }
 
     @NotNull
     @Override
     public ModuleType getModuleType() {
-        return ModuleType.EVENT;
+        return ModuleType.MODIFIER;
     }
 
     @NotNull
     @Override
     public String getID() {
-        return "on_cast";
+        return "modifier_plus";
     }
 
     @NotNull
     @Override
     public String getReadableName() {
-        return "On Spell Cast";
+        return "+";
     }
 
     @NotNull
     @Override
     public String getDescription() {
-        return "Triggered when this spell is ran";
-    }
-
-
-    @NotNull
-    @Override
-    public Set<Module> getCompatibleModifierModules() {
-        return super.getCompatibleModifierModules();
+        return "Increase the power of a module hooked";
     }
 
     @Override
-    public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull SpellStack spellStack) {
-        return false;
+    public double getManaToConsume() {
+        return 3;
+    }
+
+    @Override
+    public double getBurnoutToFill() {
+        return 3;
+    }
+
+    @Override
+    public void apply(Module module, SpellStack spellStack) {
+        if (module.canAcceptModifier(this))
+            module.attributes.setInteger(Attributes.PLUS, 3);
     }
 
     @NotNull
     @Override
     public Module copy() {
-        ModuleEventCast clone = new ModuleEventCast();
+        ModuleModifierExtend clone = new ModuleModifierExtend();
         clone.modifierModules = modifierModules;
         clone.extraModifiers = extraModifiers;
         clone.children = children;

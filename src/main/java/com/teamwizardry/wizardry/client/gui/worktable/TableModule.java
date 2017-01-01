@@ -4,7 +4,7 @@ import com.teamwizardry.librarianlib.client.gui.EnumMouseButton;
 import com.teamwizardry.librarianlib.client.gui.GuiComponent;
 import com.teamwizardry.librarianlib.client.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.common.util.math.Vec2d;
-import com.teamwizardry.wizardry.api.spell.IModule;
+import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.lib.LibSprites;
 import net.minecraft.util.text.TextFormatting;
 
@@ -15,7 +15,7 @@ public class TableModule {
 
     public ComponentSprite component;
 
-    public TableModule(WorktableGui table, IModule module, boolean draggable) {
+    public TableModule(WorktableGui table, Module module, boolean draggable) {
         ComponentSprite sprite = new ComponentSprite(module.backgroundSprite, 0, 0, 12, 12);
         if (draggable) sprite.addTag("draggable");
 

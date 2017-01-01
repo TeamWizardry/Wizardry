@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.common.spell.module.shapes;
 
-import com.teamwizardry.wizardry.api.spell.IModule;
+import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.SpellStack;
 import net.minecraft.entity.EntityLivingBase;
@@ -15,7 +15,7 @@ import java.util.Set;
 /**
  * Created by LordSaad.
  */
-public class ModuleShapeSelf extends IModule {
+public class ModuleShapeSelf extends Module {
 
     public ModuleShapeSelf() {
     }
@@ -52,7 +52,7 @@ public class ModuleShapeSelf extends IModule {
 
     @NotNull
     @Override
-    public Set<IModule> getCompatibleModifierModules() {
+    public Set<Module> getCompatibleModifierModules() {
         return super.getCompatibleModifierModules();
     }
 
@@ -63,10 +63,11 @@ public class ModuleShapeSelf extends IModule {
 
     @NotNull
     @Override
-    public IModule copy() {
+    public Module copy() {
         ModuleShapeSelf clone = new ModuleShapeSelf();
         clone.modifierModules = modifierModules;
         clone.extraModifiers = extraModifiers;
+        clone.children = children;
         return clone;
     }
 }

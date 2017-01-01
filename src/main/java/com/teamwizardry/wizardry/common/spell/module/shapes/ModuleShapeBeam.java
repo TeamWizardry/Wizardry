@@ -1,11 +1,20 @@
 package com.teamwizardry.wizardry.common.spell.module.shapes;
 
-import com.teamwizardry.wizardry.api.spell.IModule;
+import com.teamwizardry.librarianlib.client.core.ClientTickHandler;
+import com.teamwizardry.librarianlib.common.util.ConfigPropertyDouble;
+import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.Attributes;
+import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
+import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.SpellStack;
+import com.teamwizardry.wizardry.common.spell.module.events.ModuleEventCast;
+import com.teamwizardry.wizardry.common.spell.module.events.ModuleEventCollideBlock;
+import com.teamwizardry.wizardry.common.spell.module.events.ModuleEventCollideEntity;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,7 +24,10 @@ import java.util.Set;
 /**
  * Created by LordSaad.
  */
-public class ModuleShapeBeam extends IModule {
+public class ModuleShapeBeam extends Module {
+
+    @ConfigPropertyDouble(modid = Wizardry.MODID, category = "modules", id = "shape_beam_default_range", comment = "The default range of a pure beam spell shape", defaultValue = 10)
+    public double defaultRange;
 
     public ModuleShapeBeam() {
     }
@@ -24,6 +36,16 @@ public class ModuleShapeBeam extends IModule {
     @Override
     public ItemStack getRequiredStack() {
         return new ItemStack(ModItems.UNICORN_HORN);
+    }
+
+    @Override
+    public double getManaToConsume() {
+        return 5;
+    }
+
+    @Override
+    public double getBurnoutToFill() {
+        return 10;
     }
 
     @NotNull
@@ -52,21 +74,52 @@ public class ModuleShapeBeam extends IModule {
 
     @NotNull
     @Override
-    public Set<IModule> getCompatibleModifierModules() {
+    public Set<Module> getCompatibleModifierModules() {
         return super.getCompatibleModifierModules();
     }
 
     @Override
     public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull SpellStack spellStack) {
+        applyModifiers(spellStack);
 
-        return false;
+        Module nextModule = spellStack.grid[depth + 1][width];
+
+        if (nextModule.getModuleType() == ModuleType.EVENT
+                && nextModule instanceof ModuleEventCast) {
+            nextModule.run(world, caster, spellStack);
+        }
+
+        RayTraceResult trace = null;
+        if (caster != null) {
+            IWizardryCapability cap = getCap(caster);
+            if (cap != null)
+                trace = caster.rayTrace(attributes.hasKey(Attributes.EXTEND) ? defaultRange + attributes.getDouble(Attributes.EXTEND) : defaultRange, ClientTickHandler.getPartialTicks());
+        }
+
+        if (trace == null) {
+            return false;
+        } else {
+            // TODO: eventAlongPath for trace here
+
+            if (nextModule.getModuleType() == ModuleType.EVENT) {
+                if (trace.typeOfHit == RayTraceResult.Type.ENTITY) {
+                    if (nextModule instanceof ModuleEventCollideEntity)
+                        nextModule.run(world, caster, spellStack);
+                } else if (nextModule instanceof ModuleEventCollideBlock)
+                    nextModule.run(world, caster, spellStack);
+            }
+
+            return true;
+        }
     }
 
     @NotNull
     @Override
-    public IModule copy() {
+    public Module copy() {
         ModuleShapeBeam clone = new ModuleShapeBeam();
         clone.modifierModules = modifierModules;
+        clone.extraModifiers = extraModifiers;
+        clone.children = children;
         return clone;
     }
 }

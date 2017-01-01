@@ -1,14 +1,13 @@
-package com.teamwizardry.wizardry.common.spell.module.shapes;
+package com.teamwizardry.wizardry.common.spell.module.modifiers;
 
+import com.teamwizardry.wizardry.api.Attributes;
+import com.teamwizardry.wizardry.api.spell.IModifier;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.SpellStack;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -16,60 +15,72 @@ import java.util.Set;
 /**
  * Created by LordSaad.
  */
-public class ModuleShapeProjectile extends Module {
+public class ModuleModifierExtend extends Module implements IModifier {
 
-    public ModuleShapeProjectile() {
+    public ModuleModifierExtend() {
     }
 
     @NotNull
     @Override
     public ItemStack getRequiredStack() {
-        return new ItemStack(Items.NETHER_WART);
+        return new ItemStack(Items.PRISMARINE_CRYSTALS);
     }
 
     @NotNull
     @Override
     public ModuleType getModuleType() {
-        return ModuleType.SHAPE;
+        return ModuleType.MODIFIER;
     }
 
     @NotNull
     @Override
     public String getID() {
-        return "shape_projectile";
+        return "modifier_extend";
     }
 
     @NotNull
     @Override
     public String getReadableName() {
-        return "Projectile";
+        return "Extend";
     }
 
     @NotNull
     @Override
     public String getDescription() {
-        return "Will launch the spell as a projectile in the direction the caster is looking.";
+        return "Can increase range or time on shapes and effects.";
+    }
+
+    @Override
+    public double getManaToConsume() {
+        return 0;
+    }
+
+    @Override
+    public double getBurnoutToFill() {
+        return 0;
     }
 
     @NotNull
     @Override
     public Set<Module> getCompatibleModifierModules() {
         Set<Module> modules = new HashSet<>();
-        // TODO
-        //modules.add()
+        modules.add(new ModuleModifierPlus());
         return modules;
     }
 
     @Override
-    public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull SpellStack spellStack) {
-        // TODO: Spawn Spell Entity
-        return true;
+    public void apply(Module module, SpellStack spellStack) {
+        if (module.canAcceptModifier(this)) {
+            int power = 2;
+            if (attributes.hasKey(Attributes.PLUS)) power *= attributes.getDouble(Attributes.PLUS);
+            module.attributes.setDouble(Attributes.EXTEND, power);
+        }
     }
 
     @NotNull
     @Override
     public Module copy() {
-        ModuleShapeProjectile clone = new ModuleShapeProjectile();
+        ModuleModifierExtend clone = new ModuleModifierExtend();
         clone.modifierModules = modifierModules;
         clone.extraModifiers = extraModifiers;
         clone.children = children;

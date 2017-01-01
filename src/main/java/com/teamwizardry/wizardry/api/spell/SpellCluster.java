@@ -19,7 +19,7 @@ public class SpellCluster {
     public static Item[] depthIdentifiers = new Item[]{
             ModItems.FAIRY_DUST,
             ModItems.DEVIL_DUST,
-            Items.GOLD_NUGGET,
+            Items.SPECKLED_MELON,
             ModItems.FAIRY_WINGS,
             Items.BEETROOT,
             Items.SPIDER_EYE,

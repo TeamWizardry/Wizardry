@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.common.spell.module.events;
 
-import com.teamwizardry.wizardry.api.spell.IModule;
+import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.SpellStack;
 import net.minecraft.entity.EntityLivingBase;
@@ -15,9 +15,9 @@ import java.util.Set;
 /**
  * Created by LordSaad.
  */
-public class ModuleEventAirBorne extends IModule {
+public class ModuleEventAlongPath extends Module {
 
-    public ModuleEventAirBorne() {
+    public ModuleEventAlongPath() {
     }
 
     @NotNull
@@ -35,24 +35,24 @@ public class ModuleEventAirBorne extends IModule {
     @NotNull
     @Override
     public String getID() {
-        return "while_air_borne";
+        return "while_along_path";
     }
 
     @NotNull
     @Override
     public String getReadableName() {
-        return "While Air Borne";
+        return "While Along Path";
     }
 
     @NotNull
     @Override
     public String getDescription() {
-        return "Triggered continuously while the spell is flying in the air.";
+        return "Triggered throughout the journey of a spell, like a projectile shape whilst airborne or across an entire beam shape";
     }
 
     @NotNull
     @Override
-    public Set<IModule> getCompatibleModifierModules() {
+    public Set<Module> getCompatibleModifierModules() {
         return super.getCompatibleModifierModules();
     }
 
@@ -63,10 +63,11 @@ public class ModuleEventAirBorne extends IModule {
 
     @NotNull
     @Override
-    public IModule copy() {
-        ModuleEventAirBorne clone = new ModuleEventAirBorne();
+    public Module copy() {
+        ModuleEventAlongPath clone = new ModuleEventAlongPath();
         clone.modifierModules = modifierModules;
         clone.extraModifiers = extraModifiers;
+        clone.children = children;
         return clone;
     }
 }
