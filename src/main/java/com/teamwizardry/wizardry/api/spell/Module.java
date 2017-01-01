@@ -166,9 +166,8 @@ public class Module {
     }
 
     /**
-     * Basically: http://i.imgur.com/hEdlCzt.png
      * Apply modifiers that can be applied to modifiers.
-     * Then apply everything left to cell width [0].
+     * Then apply everything left to cell depth [0].
      *
      * @param spellStack The spellStack
      */

@@ -30,7 +30,6 @@ public class SpellStack {
                 Module module = ModuleRegistry.INSTANCE.getModule(stack);
                 if (module == null) {
                     height++;
-                    width = 0;
                     depth = 0;
                 } else {
                     if (module.getModuleType() == ModuleType.MODIFIER) depth++;
