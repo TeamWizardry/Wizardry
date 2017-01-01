@@ -1,17 +1,9 @@
 package com.teamwizardry.wizardry.api.spell;
 
-import com.teamwizardry.librarianlib.client.sprite.Sprite;
-import com.teamwizardry.wizardry.api.module.Module;
-
 /**
- * Created by Saad on 6/21/2016.
+ * Created by LordSaad.
  */
 public enum ModuleType {
-	BOOLEAN, EFFECT, EVENT, MODIFIER, SHAPE;
 
-	public final Sprite backgroundSprite;
-
-	ModuleType() {
-		backgroundSprite = Module.STATIC_ICON_SHEET.getSprite(toString().toLowerCase(), 24, 24);
-	}
+    BOOLEAN, EFFECT, SHAPE, EVENT, MODIFIER
 }

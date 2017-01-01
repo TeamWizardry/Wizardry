@@ -7,7 +7,6 @@ import com.teamwizardry.wizardry.api.item.INacreColorable;
 import com.teamwizardry.wizardry.api.module.Module;
 import com.teamwizardry.wizardry.api.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.IContinuousCast;
-import com.teamwizardry.wizardry.api.trackerobject.SpellStack;
 import com.teamwizardry.wizardry.common.item.ItemWizardry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;

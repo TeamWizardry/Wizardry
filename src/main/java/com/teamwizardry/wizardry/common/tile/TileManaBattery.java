@@ -7,6 +7,7 @@ import com.teamwizardry.librarianlib.common.util.math.Matrix4;
 import com.teamwizardry.librarianlib.common.util.saving.Save;
 import com.teamwizardry.wizardry.api.block.IManaSink;
 import com.teamwizardry.wizardry.common.fluid.FluidBlockMana;
+import com.teamwizardry.wizardry.common.network.PacketParticleAmbientFizz;
 import com.teamwizardry.wizardry.common.network.PacketParticleMagicDot;
 import com.teamwizardry.wizardry.common.network.PacketParticlePedestalBezier;
 import com.teamwizardry.wizardry.init.ModBlocks;
@@ -23,7 +24,7 @@ import java.util.concurrent.ThreadLocalRandom;
 @TileRegister("mana_battery")
 public class TileManaBattery extends TileMod implements ITickable, IManaSink {
 
-    public int maxMana = 1000000;
+    public int maxMana = 9000;
     @Save
     public int currentMana;
 
@@ -32,14 +33,19 @@ public class TileManaBattery extends TileMod implements ITickable, IManaSink {
         if (!world.isRemote) return;
 
         Random rand = new Random();
-        int chance = rand.nextInt(50);
-        if (chance == 0) {
-            int x = rand.nextInt(3) - 1;
-            int z = rand.nextInt(3) - 1;
-            BlockPos pos = getPos().add(x, -2, z);
-            if (world.getBlockState(pos) == FluidBlockMana.instance.getDefaultState()) {
-                currentMana += 1000;
-                world.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+
+        if (currentMana < maxMana) {
+            int x = ThreadLocalRandom.current().nextInt(-5, 5);
+            int z = ThreadLocalRandom.current().nextInt(-5, 5);
+            BlockPos mana = getPos().add(x, -3, z);
+            if (world.getBlockState(mana) == FluidBlockMana.instance.getDefaultState()) {
+                PacketHandler.NETWORK.sendToAllAround(new PacketParticleAmbientFizz(new Vec3d(mana).addVector(0.5, 0.5, 0.5)), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 20));
+                int chance = rand.nextInt(50);
+                if (chance == 0) {
+                    if (currentMana > maxMana - 1000) currentMana = maxMana;
+                    else currentMana += 1000;
+                    world.setBlockState(mana, Blocks.AIR.getDefaultState(), 3);
+                }
             }
         }
 
@@ -79,12 +85,10 @@ public class TileManaBattery extends TileMod implements ITickable, IManaSink {
             pedestals.add(oppPos);
         }
 
-        for (BlockPos pos : poses) {
+        for (BlockPos pos : poses)
             PacketHandler.NETWORK.sendToAllAround(new PacketParticleMagicDot(new Vec3d(pos).addVector(0.5, 0.5, 0.5), -1), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 20));
-        }
-        for (BlockPos ped : pedestals) {
-            //  if (ThreadLocalRandom.current().nextInt(5) == 0)
-            PacketHandler.NETWORK.sendToAllAround(new PacketParticlePedestalBezier(ped, this.pos), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 60));
-        }
+
+        for (BlockPos ped : pedestals)
+            PacketHandler.NETWORK.sendToAllAround(new PacketParticlePedestalBezier(ped, this.pos), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 40));
     }
 }

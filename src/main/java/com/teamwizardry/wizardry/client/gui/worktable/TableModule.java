@@ -4,7 +4,7 @@ import com.teamwizardry.librarianlib.client.gui.EnumMouseButton;
 import com.teamwizardry.librarianlib.client.gui.GuiComponent;
 import com.teamwizardry.librarianlib.client.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.common.util.math.Vec2d;
-import com.teamwizardry.wizardry.api.module.Module;
+import com.teamwizardry.wizardry.api.spell.IModule;
 import com.teamwizardry.wizardry.lib.LibSprites;
 import net.minecraft.util.text.TextFormatting;
 
@@ -15,11 +15,11 @@ public class TableModule {
 
     public ComponentSprite component;
 
-    public TableModule(WorktableGui table, Module module, boolean draggable) {
-        ComponentSprite sprite = new ComponentSprite(module.getType().backgroundSprite, 0, 0, 12, 12);
+    public TableModule(WorktableGui table, IModule module, boolean draggable) {
+        ComponentSprite sprite = new ComponentSprite(module.backgroundSprite, 0, 0, 12, 12);
         if (draggable) sprite.addTag("draggable");
 
-        ComponentSprite glow = new ComponentSprite(LibSprites.Worktable.MODULE_DEFAULT_GLOW, 0, 0, 12, 12);
+        ComponentSprite glow = new ComponentSprite(LibSprites.Worktable.IModule_DEFAULT_GLOW, 0, 0, 12, 12);
         glow.setVisible(false);
         sprite.add(glow);
 
@@ -39,7 +39,7 @@ public class TableModule {
         sprite.BUS.hook(GuiComponent.MouseDownEvent.class, (event) -> {
             if (event.getButton() == EnumMouseButton.LEFT) {
                 if (!draggable) {
-                    TableModule item = new TableModule(table, module, true);
+                    TableIModule item = new TableIModule(table, module, true);
                     item.component.setPos(new Vec2d(50, 50));
                     table.selected = item.component;
                 } else {

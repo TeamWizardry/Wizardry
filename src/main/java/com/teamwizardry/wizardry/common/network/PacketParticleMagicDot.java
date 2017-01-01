@@ -1,8 +1,8 @@
 package com.teamwizardry.wizardry.common.network;
 
 import com.teamwizardry.librarianlib.common.network.PacketBase;
+import com.teamwizardry.librarianlib.common.util.saving.Save;
 import com.teamwizardry.wizardry.lib.LibParticles;
-import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -13,7 +13,9 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
  */
 public class PacketParticleMagicDot extends PacketBase {
 
+    @Save
     private Vec3d pos;
+    @Save
     private float scale;
 
     public PacketParticleMagicDot() {
@@ -22,20 +24,6 @@ public class PacketParticleMagicDot extends PacketBase {
     public PacketParticleMagicDot(Vec3d pos, float scale) {
         this.pos = pos;
         this.scale = scale;
-    }
-
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        pos = new Vec3d(buf.readDouble(), buf.readDouble(), buf.readDouble());
-        scale = buf.readFloat();
-    }
-
-    @Override
-    public void toBytes(ByteBuf buf) {
-        buf.writeDouble(pos.xCoord);
-        buf.writeDouble(pos.yCoord);
-        buf.writeDouble(pos.zCoord);
-        buf.writeFloat(scale);
     }
 
     @Override

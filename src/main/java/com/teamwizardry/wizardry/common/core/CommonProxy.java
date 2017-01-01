@@ -3,8 +3,7 @@ package com.teamwizardry.wizardry.common.core;
 import com.teamwizardry.librarianlib.common.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Config;
-import com.teamwizardry.wizardry.api.module.ModuleRegistry;
-import com.teamwizardry.wizardry.api.spell.SpellHandler;
+import com.teamwizardry.wizardry.api.spell.ModuleRegistry;
 import com.teamwizardry.wizardry.api.trackerobject.SpellTracker;
 import com.teamwizardry.wizardry.client.gui.GuiHandler;
 import com.teamwizardry.wizardry.common.achievement.AchievementEvents;
@@ -26,55 +25,53 @@ import net.minecraftforge.fml.relauncher.Side;
 
 public class CommonProxy {
 
-	public void preInit(FMLPreInitializationEvent event) {
-		WizardryPacketHandler.registerMessages();
+    public void preInit(FMLPreInitializationEvent event) {
+        WizardryPacketHandler.registerMessages();
 
-		Config.initConfig(event.getSuggestedConfigurationFile());
+        Config.initConfig(event.getSuggestedConfigurationFile());
 
-		ModSounds.init();
-		ModItems.init();
-		ModBlocks.init();
-		Achievements.init();
-		ModRecipes.initCrafting();
-		ModEntities.init();
+        ModSounds.init();
+        ModItems.init();
+        ModBlocks.init();
+        Achievements.init();
+        ModRecipes.initCrafting();
+        ModEntities.init();
 
-		ModCapabilities.preInit();
-		Fluids.preInit();
+        ModCapabilities.preInit();
+        Fluids.preInit();
 
-		WizardryPacketHandler.registerMessages();
-		NetworkRegistry.INSTANCE.registerGuiHandler(Wizardry.instance, new GuiHandler());
+        WizardryPacketHandler.registerMessages();
+        NetworkRegistry.INSTANCE.registerGuiHandler(Wizardry.instance, new GuiHandler());
 
-		Wizardry.underWorld = DimensionType.register("underworld", "_dim", Config.underworld_id, WorldProviderUnderWorld.class, false);
-		DimensionManager.registerDimension(Config.underworld_id, Wizardry.underWorld);
+        Wizardry.underWorld = DimensionType.register("underworld", "_dim", Config.underworld_id, WorldProviderUnderWorld.class, false);
+        DimensionManager.registerDimension(Config.underworld_id, Wizardry.underWorld);
 
-		MinecraftForge.EVENT_BUS.register(new EventHandler());
-		MinecraftForge.EVENT_BUS.register(new AchievementEvents());
-		MinecraftForge.EVENT_BUS.register(new ModCapabilities());
+        MinecraftForge.EVENT_BUS.register(new EventHandler());
+        MinecraftForge.EVENT_BUS.register(new AchievementEvents());
+        MinecraftForge.EVENT_BUS.register(new ModCapabilities());
 
-		PacketHandler.register(PacketCapeTick.class, Side.SERVER);
-		PacketHandler.register(PacketCapeOwnerTransfer.class, Side.SERVER);
-		PacketHandler.register(PacketParticleBatteryCircle.class, Side.CLIENT);
-		PacketHandler.register(PacketParticleMagicDot.class, Side.CLIENT);
-		PacketHandler.register(PacketParticlePedestalBezier.class, Side.CLIENT);
-	}
+        PacketHandler.register(PacketCapeTick.class, Side.SERVER);
+        PacketHandler.register(PacketCapeOwnerTransfer.class, Side.SERVER);
+        PacketHandler.register(PacketParticleMagicDot.class, Side.CLIENT);
+        PacketHandler.register(PacketParticlePedestalBezier.class, Side.CLIENT);
+        PacketHandler.register(PacketParticleAmbientFizz.class, Side.CLIENT);
+    }
 
-	public void init(FMLInitializationEvent event) {
-		GameRegistry.registerWorldGenerator(new GenHandler(), 0);
+    public void init(FMLInitializationEvent event) {
+        GameRegistry.registerWorldGenerator(new GenHandler(), 0);
 
-		ModuleRegistry.getInstance();
-		SpellHandler.INSTANCE.getClass();
-		ModModules.init();
-	}
+        ModuleRegistry.INSTANCE.getClass();
+    }
 
-	public void postInit(FMLPostInitializationEvent event) {
-		SpellTracker.init();
-	}
+    public void postInit(FMLPostInitializationEvent event) {
+        SpellTracker.init();
+    }
 
-	public boolean isClient() {
-		return false;
-	}
+    public boolean isClient() {
+        return false;
+    }
 
-	public void openGUI(Object gui) {
+    public void openGUI(Object gui) {
 
-	}
+    }
 }
