@@ -18,7 +18,7 @@ import java.util.*;
  */
 public class Module {
 
-    public int depth, width;
+    public int height, width, depth;
 
     /**
      * Extra information that can be editted and read by the module.
@@ -130,7 +130,7 @@ public class Module {
         ArrayList<Module> nextModules = new ArrayList<>();
 
         ArrayList<ItemStack> inventory = new ArrayList<>(children);
-        Set<List<ItemStack>> branches = SpellCluster.brancher(inventory, SpellCluster.depthIdentifiers[spellStack.depth]);
+        Set<List<ItemStack>> branches = SpellCluster.brancher(inventory, SpellCluster.depthIdentifiers[spellStack.height]);
         Set<List<ItemStack>> copy = new HashSet<>(branches);
 
         for (List<ItemStack> branch : copy) {
@@ -143,7 +143,7 @@ public class Module {
             }
         }
 
-        spellStack.depth++;
+        spellStack.height++;
 
         return nextModules;
     }
@@ -172,25 +172,25 @@ public class Module {
      *
      * @param spellStack The spellStack
      */
-    public void applyModifiers(SpellStack spellStack) {
-        Module[][] grid = spellStack.grid;
+    public void applyModifiers(SpellStack spellStack, int height, int width) {
+        Module[][][] grid = spellStack.grid;
         List<Module> finalModifiers = new ArrayList<>();
 
         Set<Integer> skipCells = new HashSet<>();
-        if (grid[spellStack.depth][spellStack.width + 1] != null) {
-            for (int i = 0; i < spellStack.maxWidth - spellStack.width; i++) {
-                if (skipCells.contains(spellStack.width + i)) continue;
+        if (grid[height][width][1] != null) {
+            for (int i = 1; i < spellStack.maxDepth; i++) {
+                if (skipCells.contains(i)) continue;
 
-                Module mainModifier = grid[spellStack.depth][spellStack.width + i];
+                Module mainModifier = grid[height][width][i];
                 if (mainModifier == null) break;
                 if (!(mainModifier instanceof IModifier)) break;
 
 
-                Set<Integer> modifierModifiers = getModifierModifers(spellStack, spellStack.depth, spellStack.width + i);
+                Set<Integer> modifierModifiers = getModifierModifers(spellStack, height, width, i);
                 skipCells.addAll(modifierModifiers);
 
                 for (int j : modifierModifiers) {
-                    Module modifierModifier = grid[spellStack.depth][j];
+                    Module modifierModifier = grid[height][width][j];
                     if (mainModifier.canAcceptModifier(modifierModifier) && modifierModifier instanceof IModifier)
                         ((IModifier) modifierModifier).apply(mainModifier, spellStack);
                 }
@@ -199,7 +199,7 @@ public class Module {
             }
         }
 
-        Module mainModule = spellStack.grid[spellStack.depth][0];
+        Module mainModule = spellStack.grid[height][width][0];
         if (mainModule != null)
             for (Module modifier : finalModifiers) {
                 if (!(modifier instanceof IModifier)) break;
@@ -211,19 +211,20 @@ public class Module {
      * Example: A PLUS modifier modifying EXTEND to power it further.
      *
      * @param spellStack The spellStack.
-     * @param depthPos   The current depth position of, in this example, "EXTEND"
-     * @param widthPos   The current width position of, in this example, "EXTEND"
-     * @return A set of ints representing the horizontal cells containing,
+     * @param height     The current height position of, in this example, "EXTEND"
+     * @param width      The current width position of, in this example, "EXTEND"
+     * @param depth      The current depth position of, in this example, "EXTEND"
+     * @return A set of ints representing the back row cells containing,
      * in this example, "PLUS" cells, that modify, in this example, "EXTEND"
      */
-    private Set<Integer> getModifierModifers(SpellStack spellStack, int depthPos, int widthPos) {
-        Module mainModifier = spellStack.grid[depthPos][widthPos];
+    private Set<Integer> getModifierModifers(SpellStack spellStack, int height, int width, int depth) {
+        Module mainModifier = spellStack.grid[height][width][depth];
         Set<Integer> modifyingModifiers = new HashSet<>();
-        for (int i = 0; i < spellStack.maxWidth - widthPos; i++) {
-            Module modifier = spellStack.grid[depthPos][widthPos + i];
+        for (int i = depth + 1; i < spellStack.maxDepth; i++) {
+            Module modifier = spellStack.grid[height][width][i];
             if (!(modifier instanceof IModifier)) break;
             if (mainModifier.canAcceptModifier(modifier)) {
-                modifyingModifiers.add(widthPos + i);
+                modifyingModifiers.add(i);
             } else break;
         }
         return modifyingModifiers;

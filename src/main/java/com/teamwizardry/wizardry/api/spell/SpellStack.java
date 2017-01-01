@@ -14,11 +14,11 @@ public class SpellStack {
 
     @NotNull
     public Deque<ItemStack> children = new ArrayDeque<>();
-    public int depth, width, maxWidth = 30, maxHeight = 30;
+    public int height, width, depth, maxWidth = 30, maxHeight = 30, maxDepth = 30;
 
     public Module head;
 
-    public Module[][] grid = new Module[maxWidth][maxHeight];
+    public Module[][][] grid = new Module[maxWidth][maxHeight][maxDepth];
 
     public SpellStack(List<ItemStack> inventory) {
         Module head = ModuleRegistry.INSTANCE.getModule(inventory.get(0));
@@ -29,24 +29,23 @@ public class SpellStack {
             for (ItemStack stack : inventory) {
                 Module module = ModuleRegistry.INSTANCE.getModule(stack);
                 if (module == null) {
-                    depth++;
+                    height++;
                     width = 0;
+                    depth = 0;
                 } else {
-                    grid[depth][width] = module;
-                    module.depth = depth;
+                    if (module.getModuleType() == ModuleType.MODIFIER) depth++;
+                    else width++;
+                    grid[height][width][depth] = module;
+                    module.height = height;
                     module.width = width;
-                    width++;
+                    module.depth = depth;
+                    module.children = children = new ArrayDeque<>(inventory);
                 }
             }
-
-
-            Deque<ItemStack> stacks = new ArrayDeque<>(inventory);
-            stacks.pop();
-            children = stacks;
-            depth = 1;
         }
 
-        depth = 0;
+        height = 0;
         width = 0;
+        depth = 0;
     }
 }

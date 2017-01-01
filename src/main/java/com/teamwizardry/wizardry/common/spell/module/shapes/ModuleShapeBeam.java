@@ -82,7 +82,7 @@ public class ModuleShapeBeam extends Module {
     public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull SpellStack spellStack) {
         applyModifiers(spellStack);
 
-        Module nextModule = spellStack.grid[depth + 1][width];
+        Module nextModule = spellStack.grid[height + 1][width];
 
         if (nextModule.getModuleType() == ModuleType.EVENT
                 && nextModule instanceof ModuleEventCast) {
