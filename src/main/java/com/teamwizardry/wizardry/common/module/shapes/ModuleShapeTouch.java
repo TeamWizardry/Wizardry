@@ -2,7 +2,6 @@ package com.teamwizardry.wizardry.common.module.shapes;
 
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.api.spell.SpellStack;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -57,7 +56,7 @@ public class ModuleShapeTouch extends Module {
     }
 
     @Override
-    public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull SpellStack spellStack) {
+    public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
 
         return false;
     }
@@ -66,7 +65,6 @@ public class ModuleShapeTouch extends Module {
     @Override
     public Module copy() {
         ModuleShapeTouch clone = new ModuleShapeTouch();
-        clone.extraModifiers = extraModifiers;
         clone.children = children;
         return clone;
     }

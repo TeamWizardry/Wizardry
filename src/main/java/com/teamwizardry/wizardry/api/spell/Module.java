@@ -7,7 +7,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,7 +19,7 @@ import java.util.*;
 /**
  * Created by LordSaad.
  */
-public class Module {
+public class Module implements INBTSerializable<NBTTagCompound> {
 
     /**
      * Extra information that can be editted and read by the module.
@@ -28,15 +31,6 @@ public class Module {
      * The branches under this module in the stream of stacks provided in the recipe.
      */
     public Deque<Module> children = new ArrayDeque<>();
-
-    /**
-     * The list of itemstacks that where dumped into the spell after this module
-     * and aren't modules themselves are added to this list.
-     * <p>
-     * A module may interpret these items as they wish.
-     */
-    @Deprecated
-    public List<ItemStack> extraModifiers = new ArrayList<>();
 
     public Module() {
     }
@@ -112,10 +106,9 @@ public class Module {
     /**
      * Run the whatever is required on the SpellStack and then trigger the next step.
      *
-     * @param spellStack The SpellStack object holding all the information about the spell.
      * @return whether this spell has succeeded or failed this step.
      */
-    public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull SpellStack spellStack) {
+    public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
 
         return false;
     }
@@ -178,7 +171,8 @@ public class Module {
             Module modifier = ModuleRegistry.INSTANCE.getModule(modifiers.get(i));
             if (modifier == null) break;
             if (!(modifier instanceof IModifier)) break;
-            modifyingModifiers.add(i);
+            if (mainModifier.getCompatibleModifierModules().contains(modifier))
+                modifyingModifiers.add(i);
         }
         return modifyingModifiers;
     }
@@ -186,5 +180,33 @@ public class Module {
     @NotNull
     public Module copy() {
         return new Module();
+    }
+
+    @Override
+    public NBTTagCompound serializeNBT() {
+        NBTTagCompound compound = new NBTTagCompound();
+
+        compound.setString("id", getID());
+
+        compound.setTag("attributes", attributes);
+
+        NBTTagList list = new NBTTagList();
+        for (Module module : children) list.appendTag(module.serializeNBT());
+        compound.setTag("children", list);
+        return compound;
+    }
+
+    @Override
+    public void deserializeNBT(NBTTagCompound nbt) {
+        attributes = nbt.getCompoundTag("attributes");
+
+        NBTTagList list = nbt.getTagList("children", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < list.tagCount(); i++) {
+            NBTTagCompound compound = list.getCompoundTagAt(i);
+            Module module = ModuleRegistry.INSTANCE.getModule(compound.getString("id"));
+            if (module == null) continue;
+            module.deserializeNBT(compound);
+            children.add(module);
+        }
     }
 }

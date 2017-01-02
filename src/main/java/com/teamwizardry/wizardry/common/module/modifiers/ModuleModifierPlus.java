@@ -65,7 +65,6 @@ public class ModuleModifierPlus extends Module implements IModifier {
     @Override
     public Module copy() {
         ModuleModifierExtend clone = new ModuleModifierExtend();
-        clone.extraModifiers = extraModifiers;
         clone.children = children;
         return clone;
     }

@@ -44,20 +44,20 @@ public class ModuleRegistry {
     @Nullable
     public Module getModule(ItemStack itemStack) {
         for (Module module : modules)
-            if (ItemStack.areItemStacksEqual(itemStack, module.getRequiredStack())) return module;
+            if (ItemStack.areItemStacksEqual(itemStack, module.getRequiredStack())) return module.copy();
         return null;
     }
 
     @Nullable
     public Module getModule(Item item) {
-        for (Module module : modules) if (item == module.getRequiredStack().getItem()) return module;
+        for (Module module : modules) if (item == module.getRequiredStack().getItem()) return module.copy();
         return null;
     }
 
     @NotNull
     public Set<Module> getModules(ModuleType type) {
         Set<Module> modules = new HashSet<>();
-        for (Module module : this.modules) if (module.getModuleType() == type) modules.add(module);
+        for (Module module : this.modules) if (module.getModuleType() == type) modules.add(module.copy());
         return modules;
     }
 }

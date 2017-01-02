@@ -2,7 +2,6 @@ package com.teamwizardry.wizardry.common.module.events;
 
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.api.spell.SpellStack;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -57,15 +56,14 @@ public class ModuleEventAlongPath extends Module {
     }
 
     @Override
-    public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull SpellStack spellStack) {
-        return super.run(world, caster, spellStack);
+    public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
+        return super.run(world, caster);
     }
 
     @NotNull
     @Override
     public Module copy() {
         ModuleEventAlongPath clone = new ModuleEventAlongPath();
-        clone.extraModifiers = extraModifiers;
         clone.children = children;
         return clone;
     }

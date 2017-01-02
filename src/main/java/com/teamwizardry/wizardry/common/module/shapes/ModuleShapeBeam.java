@@ -7,7 +7,6 @@ import com.teamwizardry.wizardry.api.Attributes;
 import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.api.spell.SpellStack;
 import com.teamwizardry.wizardry.common.module.events.ModuleEventCast;
 import com.teamwizardry.wizardry.common.module.events.ModuleEventCollideBlock;
 import com.teamwizardry.wizardry.common.module.events.ModuleEventCollideEntity;
@@ -79,12 +78,12 @@ public class ModuleShapeBeam extends Module {
     }
 
     @Override
-    public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull SpellStack spellStack) {
+    public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
         Module nextModule = children.pop();
 
         if (nextModule.getModuleType() == ModuleType.EVENT
                 && nextModule instanceof ModuleEventCast) {
-            nextModule.run(world, caster, spellStack);
+            nextModule.run(world, caster);
         }
 
         RayTraceResult trace = null;
@@ -102,9 +101,9 @@ public class ModuleShapeBeam extends Module {
             if (nextModule.getModuleType() == ModuleType.EVENT) {
                 if (trace.typeOfHit == RayTraceResult.Type.ENTITY) {
                     if (nextModule instanceof ModuleEventCollideEntity)
-                        nextModule.run(world, caster, spellStack);
+                        nextModule.run(world, caster);
                 } else if (nextModule instanceof ModuleEventCollideBlock)
-                    nextModule.run(world, caster, spellStack);
+                    nextModule.run(world, caster);
             }
 
             return true;
@@ -115,7 +114,6 @@ public class ModuleShapeBeam extends Module {
     @Override
     public Module copy() {
         ModuleShapeBeam clone = new ModuleShapeBeam();
-        clone.extraModifiers = extraModifiers;
         clone.children = children;
         return clone;
     }

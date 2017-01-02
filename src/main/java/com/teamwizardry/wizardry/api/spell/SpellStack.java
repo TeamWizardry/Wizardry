@@ -1,10 +1,17 @@
 package com.teamwizardry.wizardry.api.spell;
 
+import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
+import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.init.ModItems;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -113,5 +120,20 @@ public class SpellStack {
             } else temp.add(stack);
         }
         return branches;
+    }
+
+    public static void runModules(ItemStack spellHolder, World world, @Nullable EntityLivingBase entityLiving) {
+        if ((spellHolder == null) || (world == null)) return;
+
+        NBTTagList list = ItemNBTHelper.getList(spellHolder, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND, false);
+        if (list == null) return;
+
+        for (int i = 0; i < list.tagCount(); i++) {
+            NBTTagCompound compound = list.getCompoundTagAt(i);
+            Module module = ModuleRegistry.INSTANCE.getModule(compound.getString("id"));
+            if (module == null) continue;
+            module.deserializeNBT(compound);
+            module.run(world, entityLiving);
+        }
     }
 }
