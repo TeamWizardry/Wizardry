@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.spell.module.events;
+package com.teamwizardry.wizardry.common.module.events;
 
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;

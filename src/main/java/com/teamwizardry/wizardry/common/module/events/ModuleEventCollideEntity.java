@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.spell.module.shapes;
+package com.teamwizardry.wizardry.common.module.events;
 
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
@@ -10,66 +10,61 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Created by LordSaad.
  */
-public class ModuleShapeProjectile extends Module {
+public class ModuleEventCollideEntity extends Module {
 
-    public ModuleShapeProjectile() {
+    public ModuleEventCollideEntity() {
     }
 
     @NotNull
     @Override
     public ItemStack getRequiredStack() {
-        return new ItemStack(Items.NETHER_WART);
+        return new ItemStack(Items.ROTTEN_FLESH);
     }
 
     @NotNull
     @Override
     public ModuleType getModuleType() {
-        return ModuleType.SHAPE;
+        return ModuleType.EVENT;
     }
 
     @NotNull
     @Override
     public String getID() {
-        return "shape_projectile";
+        return "on_collide_entity";
     }
 
     @NotNull
     @Override
     public String getReadableName() {
-        return "Projectile";
+        return "On Collide Entity";
     }
 
     @NotNull
     @Override
     public String getDescription() {
-        return "Will launch the spell as a projectile in the direction the caster is looking.";
+        return "Triggered when the spell collides with an entity";
     }
 
     @NotNull
     @Override
     public Set<Module> getCompatibleModifierModules() {
-        Set<Module> modules = new HashSet<>();
-        // TODO
-        //modules.add()
-        return modules;
+        return super.getCompatibleModifierModules();
     }
 
     @Override
     public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull SpellStack spellStack) {
-        // TODO: Spawn Spell Entity
-        return true;
+        return super.run(world, caster, spellStack);
     }
 
     @NotNull
     @Override
     public Module copy() {
-        ModuleShapeProjectile clone = new ModuleShapeProjectile();
+        ModuleEventCollideEntity clone = new ModuleEventCollideEntity();
         clone.extraModifiers = extraModifiers;
         clone.children = children;
         return clone;

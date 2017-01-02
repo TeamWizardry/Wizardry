@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.spell.module.events;
+package com.teamwizardry.wizardry.common.module.shapes;
 
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
@@ -15,39 +15,39 @@ import java.util.Set;
 /**
  * Created by LordSaad.
  */
-public class ModuleEventCollideBlock extends Module {
+public class ModuleShapeTouch extends Module {
 
-    public ModuleEventCollideBlock() {
+    public ModuleShapeTouch() {
     }
 
     @NotNull
     @Override
     public ItemStack getRequiredStack() {
-        return new ItemStack(Items.COAL);
+        return new ItemStack(Items.RABBIT_FOOT);
     }
 
     @NotNull
     @Override
     public ModuleType getModuleType() {
-        return ModuleType.EVENT;
+        return ModuleType.SHAPE;
     }
 
     @NotNull
     @Override
     public String getID() {
-        return "on_collide_block";
+        return "shape_touch";
     }
 
     @NotNull
     @Override
     public String getReadableName() {
-        return "On Collide Block";
+        return "Touch";
     }
 
     @NotNull
     @Override
     public String getDescription() {
-        return "Triggered when the spell collides with a block";
+        return "Will run the spell on the block hit";
     }
 
     @NotNull
@@ -58,13 +58,14 @@ public class ModuleEventCollideBlock extends Module {
 
     @Override
     public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull SpellStack spellStack) {
-        return super.run(world, caster, spellStack);
+
+        return false;
     }
 
     @NotNull
     @Override
     public Module copy() {
-        ModuleEventCollideBlock clone = new ModuleEventCollideBlock();
+        ModuleShapeTouch clone = new ModuleShapeTouch();
         clone.extraModifiers = extraModifiers;
         clone.children = children;
         return clone;

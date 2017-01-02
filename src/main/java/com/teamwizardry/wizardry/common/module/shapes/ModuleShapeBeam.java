@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.spell.module.shapes;
+package com.teamwizardry.wizardry.common.module.shapes;
 
 import com.teamwizardry.librarianlib.client.core.ClientTickHandler;
 import com.teamwizardry.librarianlib.common.util.ConfigPropertyDouble;
@@ -8,9 +8,9 @@ import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.SpellStack;
-import com.teamwizardry.wizardry.common.spell.module.events.ModuleEventCast;
-import com.teamwizardry.wizardry.common.spell.module.events.ModuleEventCollideBlock;
-import com.teamwizardry.wizardry.common.spell.module.events.ModuleEventCollideEntity;
+import com.teamwizardry.wizardry.common.module.events.ModuleEventCast;
+import com.teamwizardry.wizardry.common.module.events.ModuleEventCollideBlock;
+import com.teamwizardry.wizardry.common.module.events.ModuleEventCollideEntity;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;

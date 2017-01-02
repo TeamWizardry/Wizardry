@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.spell.module.events;
+package com.teamwizardry.wizardry.common.module.events;
 
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
@@ -15,15 +15,15 @@ import java.util.Set;
 /**
  * Created by LordSaad.
  */
-public class ModuleEventAlongPath extends Module {
+public class ModuleEventCollideBlock extends Module {
 
-    public ModuleEventAlongPath() {
+    public ModuleEventCollideBlock() {
     }
 
     @NotNull
     @Override
     public ItemStack getRequiredStack() {
-        return new ItemStack(Items.FEATHER);
+        return new ItemStack(Items.COAL);
     }
 
     @NotNull
@@ -35,19 +35,19 @@ public class ModuleEventAlongPath extends Module {
     @NotNull
     @Override
     public String getID() {
-        return "while_along_path";
+        return "on_collide_block";
     }
 
     @NotNull
     @Override
     public String getReadableName() {
-        return "While Along Path";
+        return "On Collide Block";
     }
 
     @NotNull
     @Override
     public String getDescription() {
-        return "Triggered throughout the journey of a spell, like a projectile shape whilst airborne or across an entire beam shape";
+        return "Triggered when the spell collides with a block";
     }
 
     @NotNull
@@ -64,7 +64,7 @@ public class ModuleEventAlongPath extends Module {
     @NotNull
     @Override
     public Module copy() {
-        ModuleEventAlongPath clone = new ModuleEventAlongPath();
+        ModuleEventCollideBlock clone = new ModuleEventCollideBlock();
         clone.extraModifiers = extraModifiers;
         clone.children = children;
         return clone;

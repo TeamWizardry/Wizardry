@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.spell.module.events;
+package com.teamwizardry.wizardry.common.module.events;
 
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
@@ -15,15 +15,15 @@ import java.util.Set;
 /**
  * Created by LordSaad.
  */
-public class ModuleEventCollideEntity extends Module {
+public class ModuleEventAlongPath extends Module {
 
-    public ModuleEventCollideEntity() {
+    public ModuleEventAlongPath() {
     }
 
     @NotNull
     @Override
     public ItemStack getRequiredStack() {
-        return new ItemStack(Items.ROTTEN_FLESH);
+        return new ItemStack(Items.FEATHER);
     }
 
     @NotNull
@@ -35,19 +35,19 @@ public class ModuleEventCollideEntity extends Module {
     @NotNull
     @Override
     public String getID() {
-        return "on_collide_entity";
+        return "while_along_path";
     }
 
     @NotNull
     @Override
     public String getReadableName() {
-        return "On Collide Entity";
+        return "While Along Path";
     }
 
     @NotNull
     @Override
     public String getDescription() {
-        return "Triggered when the spell collides with an entity";
+        return "Triggered throughout the journey of a spell, like a projectile shape whilst airborne or across an entire beam shape";
     }
 
     @NotNull
@@ -64,7 +64,7 @@ public class ModuleEventCollideEntity extends Module {
     @NotNull
     @Override
     public Module copy() {
-        ModuleEventCollideEntity clone = new ModuleEventCollideEntity();
+        ModuleEventAlongPath clone = new ModuleEventAlongPath();
         clone.extraModifiers = extraModifiers;
         clone.children = children;
         return clone;

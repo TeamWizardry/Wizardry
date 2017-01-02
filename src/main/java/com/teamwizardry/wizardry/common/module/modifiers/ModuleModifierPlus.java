@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.spell.module.modifiers;
+package com.teamwizardry.wizardry.common.module.modifiers;
 
 import com.teamwizardry.wizardry.api.Attributes;
 import com.teamwizardry.wizardry.api.spell.IModifier;

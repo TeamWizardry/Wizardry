@@ -1,10 +1,10 @@
 package com.teamwizardry.wizardry.api.spell;
 
-import com.teamwizardry.wizardry.common.spell.module.events.ModuleEventAlongPath;
-import com.teamwizardry.wizardry.common.spell.module.events.ModuleEventCast;
-import com.teamwizardry.wizardry.common.spell.module.events.ModuleEventCollideBlock;
-import com.teamwizardry.wizardry.common.spell.module.events.ModuleEventCollideEntity;
-import com.teamwizardry.wizardry.common.spell.module.shapes.ModuleShapeBeam;
+import com.teamwizardry.wizardry.common.module.events.ModuleEventAlongPath;
+import com.teamwizardry.wizardry.common.module.events.ModuleEventCast;
+import com.teamwizardry.wizardry.common.module.events.ModuleEventCollideBlock;
+import com.teamwizardry.wizardry.common.module.events.ModuleEventCollideEntity;
+import com.teamwizardry.wizardry.common.module.shapes.ModuleShapeBeam;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;

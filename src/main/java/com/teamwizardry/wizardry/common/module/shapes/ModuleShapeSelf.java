@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.spell.module.shapes;
+package com.teamwizardry.wizardry.common.module.shapes;
 
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;

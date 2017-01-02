@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.spell.module.shapes;
+package com.teamwizardry.wizardry.common.module.shapes;
 
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
@@ -10,20 +10,21 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Created by LordSaad.
  */
-public class ModuleShapeTouch extends Module {
+public class ModuleShapeProjectile extends Module {
 
-    public ModuleShapeTouch() {
+    public ModuleShapeProjectile() {
     }
 
     @NotNull
     @Override
     public ItemStack getRequiredStack() {
-        return new ItemStack(Items.RABBIT_FOOT);
+        return new ItemStack(Items.NETHER_WART);
     }
 
     @NotNull
@@ -35,37 +36,40 @@ public class ModuleShapeTouch extends Module {
     @NotNull
     @Override
     public String getID() {
-        return "shape_touch";
+        return "shape_projectile";
     }
 
     @NotNull
     @Override
     public String getReadableName() {
-        return "Touch";
+        return "Projectile";
     }
 
     @NotNull
     @Override
     public String getDescription() {
-        return "Will run the spell on the block hit";
+        return "Will launch the spell as a projectile in the direction the caster is looking.";
     }
 
     @NotNull
     @Override
     public Set<Module> getCompatibleModifierModules() {
-        return super.getCompatibleModifierModules();
+        Set<Module> modules = new HashSet<>();
+        // TODO
+        //modules.add()
+        return modules;
     }
 
     @Override
     public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull SpellStack spellStack) {
-
-        return false;
+        // TODO: Spawn Spell Entity
+        return true;
     }
 
     @NotNull
     @Override
     public Module copy() {
-        ModuleShapeTouch clone = new ModuleShapeTouch();
+        ModuleShapeProjectile clone = new ModuleShapeProjectile();
         clone.extraModifiers = extraModifiers;
         clone.children = children;
         return clone;
