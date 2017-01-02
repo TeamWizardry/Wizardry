@@ -127,16 +127,6 @@ public class Module {
         return null;
     }
 
-    public boolean canAcceptModifier(Module module) {
-        boolean flag = false;
-        for (Module comp : getCompatibleModifierModules())
-            if (comp.getClass().isAssignableFrom(module.getClass())) {
-                flag = true;
-                break;
-            }
-        return flag;
-    }
-
     /**
      * Will apply modifiers to the head module given a stream of itemstacks representing the modifiers.
      *

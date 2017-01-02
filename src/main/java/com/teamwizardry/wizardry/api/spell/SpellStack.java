@@ -33,9 +33,6 @@ public class SpellStack {
     // TRY 1
     @NotNull
     public Deque<ItemStack> children = new ArrayDeque<>();
-    public int height, width, depth, maxWidth = 30, maxHeight = 30, maxDepth = 30;
-    public Module head;
-    public Module[][][] grid = new Module[maxWidth][maxHeight][maxDepth];
     public HashMap<Item, Module> fields = new HashMap<>();
     public ArrayList<Module> compiled = new ArrayList<>();
 
