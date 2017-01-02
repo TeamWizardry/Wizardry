@@ -10,12 +10,10 @@ import com.teamwizardry.librarianlib.client.gui.components.ComponentVoid;
 import com.teamwizardry.librarianlib.client.sprite.Sprite;
 import com.teamwizardry.librarianlib.client.sprite.Texture;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.module.Module;
-import com.teamwizardry.wizardry.api.module.ModuleRegistry;
+import com.teamwizardry.wizardry.api.spell.Module;
+import com.teamwizardry.wizardry.api.spell.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import net.minecraft.util.ResourceLocation;
-
-import java.util.Map;
 
 /**
  * Created by Saad on 6/17/2016.
@@ -34,9 +32,8 @@ public class WorktableGui extends GuiBase {
     public WorktableGui() {
         super(512, 256);
 
-        for (Map<ResourceLocation, Module> hashMap : ModuleRegistry.getInstance().getModules().values())
-            for (Module module : hashMap.values())
-                modulesByType.get(module.getType()).add(module);
+        for (Module module : ModuleRegistry.INSTANCE.modules)
+            modulesByType.get(module.getModuleType()).add(module);
 
         ComponentSprite background = new ComponentSprite(BACKGROUND_SPRITE, 0, 0);
         getMainComponents().add(background);

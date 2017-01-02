@@ -4,7 +4,12 @@ import com.teamwizardry.wizardry.common.module.events.ModuleEventAlongPath;
 import com.teamwizardry.wizardry.common.module.events.ModuleEventCast;
 import com.teamwizardry.wizardry.common.module.events.ModuleEventCollideBlock;
 import com.teamwizardry.wizardry.common.module.events.ModuleEventCollideEntity;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtend;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierPlus;
 import com.teamwizardry.wizardry.common.module.shapes.ModuleShapeBeam;
+import com.teamwizardry.wizardry.common.module.shapes.ModuleShapeProjectile;
+import com.teamwizardry.wizardry.common.module.shapes.ModuleShapeSelf;
+import com.teamwizardry.wizardry.common.module.shapes.ModuleShapeTouch;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -29,6 +34,12 @@ public class ModuleRegistry {
         registerModule(new ModuleEventCast());
 
         registerModule(new ModuleShapeBeam());
+        registerModule(new ModuleShapeProjectile());
+        registerModule(new ModuleShapeSelf());
+        registerModule(new ModuleShapeTouch());
+
+        registerModule(new ModuleModifierExtend());
+        registerModule(new ModuleModifierPlus());
     }
 
     public void registerModule(Module module) {

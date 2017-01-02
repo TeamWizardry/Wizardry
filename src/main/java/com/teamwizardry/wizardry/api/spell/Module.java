@@ -109,7 +109,6 @@ public class Module implements INBTSerializable<NBTTagCompound> {
      * @return whether this spell has succeeded or failed this step.
      */
     public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
-
         return false;
     }
 

@@ -16,30 +16,30 @@ public class TableModule {
     public ComponentSprite component;
 
     public TableModule(WorktableGui table, Module module, boolean draggable) {
-        ComponentSprite sprite = new ComponentSprite(module.backgroundSprite, 0, 0, 12, 12);
+        ComponentSprite sprite = new ComponentSprite(LibSprites.Worktable.MODULE_DEFAULT, 0, 0, 12, 12);
         if (draggable) sprite.addTag("draggable");
 
-        ComponentSprite glow = new ComponentSprite(LibSprites.Worktable.IModule_DEFAULT_GLOW, 0, 0, 12, 12);
+        ComponentSprite glow = new ComponentSprite(LibSprites.Worktable.MODULE_DEFAULT_GLOW, 0, 0, 12, 12);
         glow.setVisible(false);
         sprite.add(glow);
 
-        ComponentSprite icon = new ComponentSprite(module.getStaticIcon(), 2, 2, 8, 8);
+        ComponentSprite icon = new ComponentSprite(LibSprites.Worktable.MODULE_DEFAULT, 2, 2, 8, 8);
         sprite.add(icon);
 
         sprite.BUS.hook(GuiComponent.MouseInEvent.class, (event) -> {
             glow.setVisible(true);
-            icon.setSprite(module.getAnimatedIcon());
+            icon.setSprite(LibSprites.Worktable.MODULE_DEFAULT);
         });
 
         sprite.BUS.hook(GuiComponent.MouseOutEvent.class, (event) -> {
             glow.setVisible(false);
-            icon.setSprite(module.getStaticIcon());
+            icon.setSprite(LibSprites.Worktable.MODULE_DEFAULT);
         });
 
         sprite.BUS.hook(GuiComponent.MouseDownEvent.class, (event) -> {
             if (event.getButton() == EnumMouseButton.LEFT) {
                 if (!draggable) {
-                    TableIModule item = new TableIModule(table, module, true);
+                    TableModule item = new TableModule(table, module, true);
                     item.component.setPos(new Vec2d(50, 50));
                     table.selected = item.component;
                 } else {
@@ -61,7 +61,7 @@ public class TableModule {
         sprite.BUS.hook(GuiComponent.PostDrawEvent.class, (event) -> {
             if (event.getComponent().getMouseOver()) {
                 List<String> txt = new ArrayList<>();
-                txt.add(TextFormatting.GOLD + module.getDisplayName());
+                txt.add(TextFormatting.GOLD + module.getReadableName());
                 event.getComponent().setTooltip(txt);
             }
         });
