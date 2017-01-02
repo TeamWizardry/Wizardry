@@ -4,7 +4,6 @@ import com.teamwizardry.wizardry.api.Attributes;
 import com.teamwizardry.wizardry.api.spell.IModifier;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.api.spell.SpellStack;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -58,16 +57,14 @@ public class ModuleModifierPlus extends Module implements IModifier {
     }
 
     @Override
-    public void apply(Module module, SpellStack spellStack) {
-        if (module.canAcceptModifier(this))
-            module.attributes.setInteger(Attributes.PLUS, 3);
+    public void apply(Module module) {
+        module.attributes.setInteger(Attributes.PLUS, 3);
     }
 
     @NotNull
     @Override
     public Module copy() {
         ModuleModifierExtend clone = new ModuleModifierExtend();
-        clone.modifierModules = modifierModules;
         clone.extraModifiers = extraModifiers;
         clone.children = children;
         return clone;

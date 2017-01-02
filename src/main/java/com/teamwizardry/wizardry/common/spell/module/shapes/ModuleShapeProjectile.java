@@ -70,7 +70,6 @@ public class ModuleShapeProjectile extends Module {
     @Override
     public Module copy() {
         ModuleShapeProjectile clone = new ModuleShapeProjectile();
-        clone.modifierModules = modifierModules;
         clone.extraModifiers = extraModifiers;
         clone.children = children;
         return clone;

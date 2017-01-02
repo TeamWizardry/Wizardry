@@ -65,7 +65,6 @@ public class ModuleEventCollideEntity extends Module {
     @Override
     public Module copy() {
         ModuleEventCollideEntity clone = new ModuleEventCollideEntity();
-        clone.modifierModules = modifierModules;
         clone.extraModifiers = extraModifiers;
         clone.children = children;
         return clone;

@@ -18,8 +18,6 @@ import java.util.*;
  */
 public class Module {
 
-    public int height, width, depth;
-
     /**
      * Extra information that can be editted and read by the module.
      * Used by modifiers.
@@ -32,16 +30,12 @@ public class Module {
     public Deque<Module> children = new ArrayDeque<>();
 
     /**
-     * The list of modifiers added to this module after the spell is created.
-     */
-    public Set<Module> modifierModules = new HashSet<>();
-
-    /**
      * The list of itemstacks that where dumped into the spell after this module
      * and aren't modules themselves are added to this list.
      * <p>
      * A module may interpret these items as they wish.
      */
+    @Deprecated
     public List<ItemStack> extraModifiers = new ArrayList<>();
 
     public Module() {
@@ -145,6 +139,7 @@ public class Module {
 
     /**
      * Will apply modifiers to the head module given a stream of itemstacks representing the modifiers.
+     *
      * @param modifiers The list of itemstacks representing a stream of modifiers to apply.
      */
     public void processModifiers(List<ItemStack> modifiers) {
@@ -164,8 +159,7 @@ public class Module {
 
             for (int j : modifierModifiers) {
                 Module modifierModifier = ModuleRegistry.INSTANCE.getModule(modifiers.get(j));
-                if (modifierModifier != null &&
-                        mainModifier.canAcceptModifier(modifierModifier)
+                if (modifierModifier != null
                         && modifierModifier instanceof IModifier)
                     ((IModifier) modifierModifier).apply(mainModifier);
             }
@@ -182,9 +176,10 @@ public class Module {
 
     /**
      * WIll process modifiers of modifiers, example: PLUS modifier for EXTEND modifier.
+     *
      * @param mainModifier The main modifier, in this example: EXTEND.
-     * @param modifiers The list of modifiers being processed.
-     * @param index The index of the modifiers list that's directly after the main modifier, example: Index of PLUS.
+     * @param modifiers    The list of modifiers being processed.
+     * @param index        The index of the modifiers list that's directly after the main modifier, example: Index of PLUS.
      * @return The set of indexes in the list to apply to the main modifier and to skip processing on the main module.
      */
     private Set<Integer> getModifierModifers(Module mainModifier, List<ItemStack> modifiers, int index) {
@@ -193,9 +188,7 @@ public class Module {
             Module modifier = ModuleRegistry.INSTANCE.getModule(modifiers.get(i));
             if (modifier == null) break;
             if (!(modifier instanceof IModifier)) break;
-            if (mainModifier.canAcceptModifier(modifier)) {
-                modifyingModifiers.add(i);
-            } else break;
+            modifyingModifiers.add(i);
         }
         return modifyingModifiers;
     }

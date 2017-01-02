@@ -65,7 +65,6 @@ public class ModuleEventAlongPath extends Module {
     @Override
     public Module copy() {
         ModuleEventAlongPath clone = new ModuleEventAlongPath();
-        clone.modifierModules = modifierModules;
         clone.extraModifiers = extraModifiers;
         clone.children = children;
         return clone;

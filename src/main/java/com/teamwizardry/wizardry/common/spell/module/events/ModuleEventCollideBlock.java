@@ -65,7 +65,6 @@ public class ModuleEventCollideBlock extends Module {
     @Override
     public Module copy() {
         ModuleEventCollideBlock clone = new ModuleEventCollideBlock();
-        clone.modifierModules = modifierModules;
         clone.extraModifiers = extraModifiers;
         clone.children = children;
         return clone;

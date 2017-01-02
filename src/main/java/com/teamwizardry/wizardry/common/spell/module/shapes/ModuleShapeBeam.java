@@ -80,9 +80,7 @@ public class ModuleShapeBeam extends Module {
 
     @Override
     public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull SpellStack spellStack) {
-        processModifiers(spellStack, height, width);
-
-        Module nextModule = spellStack.grid[height + 1][width][0];
+        Module nextModule = children.pop();
 
         if (nextModule.getModuleType() == ModuleType.EVENT
                 && nextModule instanceof ModuleEventCast) {
@@ -117,7 +115,6 @@ public class ModuleShapeBeam extends Module {
     @Override
     public Module copy() {
         ModuleShapeBeam clone = new ModuleShapeBeam();
-        clone.modifierModules = modifierModules;
         clone.extraModifiers = extraModifiers;
         clone.children = children;
         return clone;

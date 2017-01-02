@@ -66,7 +66,6 @@ public class ModuleShapeTouch extends Module {
     @Override
     public Module copy() {
         ModuleShapeTouch clone = new ModuleShapeTouch();
-        clone.modifierModules = modifierModules;
         clone.extraModifiers = extraModifiers;
         clone.children = children;
         return clone;

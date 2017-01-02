@@ -65,7 +65,6 @@ public class ModuleShapeSelf extends Module {
     @Override
     public Module copy() {
         ModuleShapeSelf clone = new ModuleShapeSelf();
-        clone.modifierModules = modifierModules;
         clone.extraModifiers = extraModifiers;
         clone.children = children;
         return clone;

@@ -40,11 +40,11 @@ public class SpellStack {
     public ArrayList<Module> compiled = new ArrayList<>();
 
     public SpellStack(List<ItemStack> inventory) {
-        List<List<ItemStack>> branches = SpellCluster.brancher(inventory, ModItems.FAIRY_DUST);
+        List<List<ItemStack>> branches = brancher(inventory, ModItems.FAIRY_DUST);
         if (branches.size() != 2) return;
 
         // PROCESS FIELDS
-        List<List<ItemStack>> fieldLines = SpellCluster.brancher(branches.get(0), Items.WHEAT_SEEDS);
+        List<List<ItemStack>> fieldLines = brancher(branches.get(0), Items.WHEAT_SEEDS);
         for (List<ItemStack> fieldLine : fieldLines) {
             if (!(identifiers.contains(fieldLine.get(0).getItem()))) continue;
 
@@ -70,7 +70,7 @@ public class SpellStack {
         }
 
         // PROCESS CHILDREN OF LINE HEADS
-        List<List<ItemStack>> lines = SpellCluster.brancher(branches.get(1), ModItems.DEVIL_DUST);
+        List<List<ItemStack>> lines = brancher(branches.get(1), ModItems.DEVIL_DUST);
         prime:
         for (List<ItemStack> line : lines) {
             ItemStack headStack = line.get(0);
@@ -101,5 +101,20 @@ public class SpellStack {
                 module.children = children;
             }
         }
+    }
+
+    @NotNull
+    public static List<List<ItemStack>> brancher(List<ItemStack> inventory, Item identifier) {
+        List<List<ItemStack>> branches = new ArrayList<>();
+        List<ItemStack> temp = new ArrayList<>();
+        for (ItemStack stack : inventory) {
+            if (ItemStack.areItemsEqual(new ItemStack(identifier), stack)) {
+                if (!temp.isEmpty()) {
+                    branches.add(temp);
+                    temp.clear();
+                }
+            } else temp.add(stack);
+        }
+        return branches;
     }
 }

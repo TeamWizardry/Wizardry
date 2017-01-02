@@ -66,7 +66,6 @@ public class ModuleEventCast extends Module {
     @Override
     public Module copy() {
         ModuleEventCast clone = new ModuleEventCast();
-        clone.modifierModules = modifierModules;
         clone.extraModifiers = extraModifiers;
         clone.children = children;
         return clone;
