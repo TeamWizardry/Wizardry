@@ -5,5 +5,5 @@ package com.teamwizardry.wizardry.api.spell;
  */
 public interface IModifier {
 
-    void apply(Module module, SpellStack spellStack);
+    void apply(Module module);
 }

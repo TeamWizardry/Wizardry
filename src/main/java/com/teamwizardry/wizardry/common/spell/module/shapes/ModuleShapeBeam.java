@@ -80,7 +80,7 @@ public class ModuleShapeBeam extends Module {
 
     @Override
     public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull SpellStack spellStack) {
-        applyModifiers(spellStack, height, width);
+        processModifiers(spellStack, height, width);
 
         Module nextModule = spellStack.grid[height + 1][width][0];
 

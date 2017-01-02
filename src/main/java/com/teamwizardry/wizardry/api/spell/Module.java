@@ -29,7 +29,7 @@ public class Module {
     /**
      * The branches under this module in the stream of stacks provided in the recipe.
      */
-    public Deque<ItemStack> children = new ArrayDeque<>();
+    public Deque<Module> children = new ArrayDeque<>();
 
     /**
      * The list of modifiers added to this module after the spell is created.
@@ -126,28 +126,6 @@ public class Module {
         return false;
     }
 
-    public ArrayList<Module> compileNextChildren(@NotNull SpellStack spellStack) {
-        ArrayList<Module> nextModules = new ArrayList<>();
-
-        ArrayList<ItemStack> inventory = new ArrayList<>(children);
-        Set<List<ItemStack>> branches = SpellCluster.brancher(inventory, SpellCluster.depthIdentifiers[spellStack.height]);
-        Set<List<ItemStack>> copy = new HashSet<>(branches);
-
-        for (List<ItemStack> branch : copy) {
-            Deque<ItemStack> queue = new ArrayDeque<>(branch);
-            Module head = ModuleRegistry.INSTANCE.getModule(queue.peekFirst());
-            if (head != null) {
-                queue.pop();
-                head.children = queue;
-                nextModules.add(head);
-            }
-        }
-
-        spellStack.height++;
-
-        return nextModules;
-    }
-
     @Nullable
     public IWizardryCapability getCap(EntityLivingBase entity) {
         if (entity != null && entity instanceof EntityPlayer)
@@ -166,61 +144,54 @@ public class Module {
     }
 
     /**
-     * Apply modifiers that can be applied to modifiers.
-     * Then apply everything left to cell depth [0].
-     *
-     * @param spellStack The spellStack
+     * Will apply modifiers to the head module given a stream of itemstacks representing the modifiers.
+     * @param modifiers The list of itemstacks representing a stream of modifiers to apply.
      */
-    public void applyModifiers(SpellStack spellStack, int height, int width) {
-        Module[][][] grid = spellStack.grid;
+    public void processModifiers(List<ItemStack> modifiers) {
         List<Module> finalModifiers = new ArrayList<>();
 
         Set<Integer> skipCells = new HashSet<>();
-        if (grid[height][width][1] != null) {
-            for (int i = 1; i < spellStack.maxDepth; i++) {
-                if (skipCells.contains(i)) continue;
+        for (int i = 0; i < modifiers.size() - 1; i++) {
+            if (skipCells.contains(i)) continue;
 
-                Module mainModifier = grid[height][width][i];
-                if (mainModifier == null) break;
-                if (!(mainModifier instanceof IModifier)) break;
+            Module mainModifier = ModuleRegistry.INSTANCE.getModule(modifiers.get(i));
+            if (mainModifier == null) break;
+            if (!(mainModifier instanceof IModifier)) break;
 
+            // PROCESS MODIFIERMODIFIERS
+            Set<Integer> modifierModifiers = getModifierModifers(mainModifier, modifiers, i + 1);
+            skipCells.addAll(modifierModifiers);
 
-                Set<Integer> modifierModifiers = getModifierModifers(spellStack, height, width, i);
-                skipCells.addAll(modifierModifiers);
-
-                for (int j : modifierModifiers) {
-                    Module modifierModifier = grid[height][width][j];
-                    if (mainModifier.canAcceptModifier(modifierModifier) && modifierModifier instanceof IModifier)
-                        ((IModifier) modifierModifier).apply(mainModifier, spellStack);
-                }
-
-                finalModifiers.add(mainModifier);
+            for (int j : modifierModifiers) {
+                Module modifierModifier = ModuleRegistry.INSTANCE.getModule(modifiers.get(j));
+                if (modifierModifier != null &&
+                        mainModifier.canAcceptModifier(modifierModifier)
+                        && modifierModifier instanceof IModifier)
+                    ((IModifier) modifierModifier).apply(mainModifier);
             }
+
+            finalModifiers.add(mainModifier);
         }
 
-        Module mainModule = spellStack.grid[height][width][0];
-        if (mainModule != null)
-            for (Module modifier : finalModifiers) {
-                if (!(modifier instanceof IModifier)) break;
-                ((IModifier) modifier).apply(mainModule, spellStack);
-            }
+        // APPLY MODIIFERS TO MODULE
+        for (Module modifier : finalModifiers) {
+            if (!(modifier instanceof IModifier)) break;
+            ((IModifier) modifier).apply(this);
+        }
     }
 
     /**
-     * Example: A PLUS modifier modifying EXTEND to power it further.
-     *
-     * @param spellStack The spellStack.
-     * @param height     The current height position of, in this example, "EXTEND"
-     * @param width      The current width position of, in this example, "EXTEND"
-     * @param depth      The current depth position of, in this example, "EXTEND"
-     * @return A set of ints representing the back row cells containing,
-     * in this example, "PLUS" cells, that modify, in this example, "EXTEND"
+     * WIll process modifiers of modifiers, example: PLUS modifier for EXTEND modifier.
+     * @param mainModifier The main modifier, in this example: EXTEND.
+     * @param modifiers The list of modifiers being processed.
+     * @param index The index of the modifiers list that's directly after the main modifier, example: Index of PLUS.
+     * @return The set of indexes in the list to apply to the main modifier and to skip processing on the main module.
      */
-    private Set<Integer> getModifierModifers(SpellStack spellStack, int height, int width, int depth) {
-        Module mainModifier = spellStack.grid[height][width][depth];
+    private Set<Integer> getModifierModifers(Module mainModifier, List<ItemStack> modifiers, int index) {
         Set<Integer> modifyingModifiers = new HashSet<>();
-        for (int i = depth + 1; i < spellStack.maxDepth; i++) {
-            Module modifier = spellStack.grid[height][width][i];
+        for (int i = index; i < modifiers.size() - index - 1; i++) {
+            Module modifier = ModuleRegistry.INSTANCE.getModule(modifiers.get(i));
+            if (modifier == null) break;
             if (!(modifier instanceof IModifier)) break;
             if (mainModifier.canAcceptModifier(modifier)) {
                 modifyingModifiers.add(i);

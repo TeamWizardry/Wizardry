@@ -40,13 +40,15 @@ public class SpellCluster {
     }
 
     @NotNull
-    public static Set<List<ItemStack>> brancher(List<ItemStack> inventory, Item identifier) {
-        Set<List<ItemStack>> branches = new HashSet<>();
+    public static List<List<ItemStack>> brancher(List<ItemStack> inventory, Item identifier) {
+        List<List<ItemStack>> branches = new ArrayList<>();
         List<ItemStack> temp = new ArrayList<>();
         for (ItemStack stack : inventory) {
             if (ItemStack.areItemsEqual(new ItemStack(identifier), stack)) {
-                branches.add(temp);
-                temp.clear();
+                if (!temp.isEmpty()) {
+                    branches.add(temp);
+                    temp.clear();
+                }
             } else temp.add(stack);
         }
         return branches;
