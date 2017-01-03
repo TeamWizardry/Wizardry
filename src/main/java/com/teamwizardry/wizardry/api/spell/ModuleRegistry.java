@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.api.spell;
 
+import com.teamwizardry.wizardry.common.module.effects.ModuleEffectBlink;
 import com.teamwizardry.wizardry.common.module.events.ModuleEventAlongPath;
 import com.teamwizardry.wizardry.common.module.events.ModuleEventCast;
 import com.teamwizardry.wizardry.common.module.events.ModuleEventCollideBlock;
@@ -40,6 +41,8 @@ public class ModuleRegistry {
 
         registerModule(new ModuleModifierExtend());
         registerModule(new ModuleModifierPlus());
+
+        registerModule(new ModuleEffectBlink());
     }
 
     public void registerModule(Module module) {

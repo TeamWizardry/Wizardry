@@ -3,18 +3,15 @@ package com.teamwizardry.wizardry.common.module.shapes;
 import com.teamwizardry.librarianlib.client.core.ClientTickHandler;
 import com.teamwizardry.librarianlib.common.util.ConfigPropertyDouble;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Attributes;
 import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
+import com.teamwizardry.wizardry.api.spell.ITargettable;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.common.module.events.ModuleEventCast;
-import com.teamwizardry.wizardry.common.module.events.ModuleEventCollideBlock;
-import com.teamwizardry.wizardry.common.module.events.ModuleEventCollideEntity;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -82,9 +79,6 @@ public class ModuleShapeBeam extends Module {
     public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
         Module nextModule = children.getFirst();
 
-        if (caster != null)
-            caster.sendMessage(new TextComponentString(":)"));
-
         if (nextModule.getModuleType() == ModuleType.EVENT
                 && nextModule instanceof ModuleEventCast) {
             nextModule.run(world, caster);
@@ -94,7 +88,8 @@ public class ModuleShapeBeam extends Module {
         if (caster != null) {
             IWizardryCapability cap = getCap(caster);
             if (cap != null)
-                trace = caster.rayTrace(attributes.hasKey(Attributes.EXTEND) ? defaultRange + attributes.getDouble(Attributes.EXTEND) : defaultRange, ClientTickHandler.getPartialTicks());
+                trace = caster.rayTrace(50, ClientTickHandler.getPartialTicks());
+            //trace = caster.rayTrace(attributes.hasKey(Attributes.EXTEND) ? defaultRange + attributes.getDouble(Attributes.EXTEND) : defaultRange, ClientTickHandler.getPartialTicks());
         }
 
         if (trace == null) {
@@ -102,13 +97,12 @@ public class ModuleShapeBeam extends Module {
         } else {
             // TODO: eventAlongPath for trace here
 
-            if (nextModule.getModuleType() == ModuleType.EVENT) {
                 if (trace.typeOfHit == RayTraceResult.Type.ENTITY) {
-                    if (nextModule instanceof ModuleEventCollideEntity)
-                        nextModule.run(world, caster);
-                } else if (nextModule instanceof ModuleEventCollideBlock)
-                    nextModule.run(world, caster);
-            }
+                    if (nextModule instanceof ITargettable)
+                        ((ITargettable) nextModule).run(world, caster, trace.entityHit);
+                } else if (trace.typeOfHit == RayTraceResult.Type.BLOCK)
+                    if (nextModule instanceof ITargettable)
+                        ((ITargettable) nextModule).run(world, caster, trace.hitVec);
 
             return true;
         }

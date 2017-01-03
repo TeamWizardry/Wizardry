@@ -1,10 +1,13 @@
 package com.teamwizardry.wizardry.common.module.events;
 
+import com.teamwizardry.wizardry.api.spell.ITargettable;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,7 +17,7 @@ import java.util.Set;
 /**
  * Created by LordSaad.
  */
-public class ModuleEventCollideEntity extends Module {
+public class ModuleEventCollideEntity extends Module implements ITargettable {
 
     public ModuleEventCollideEntity() {
     }
@@ -55,16 +58,23 @@ public class ModuleEventCollideEntity extends Module {
         return super.getCompatibleModifierModules();
     }
 
-    @Override
-    public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
-        return super.run(world, caster);
-    }
-
     @NotNull
     @Override
     public Module copy() {
         ModuleEventCollideEntity clone = new ModuleEventCollideEntity();
         clone.children = children;
         return clone;
+    }
+
+    @Override
+    public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @Nullable Vec3d target) {
+        return false;
+    }
+
+    @Override
+    public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @Nullable Entity target) {
+        Module nextModule = children.getFirst();
+        nextModule.run(world, caster);
+        return nextModule instanceof ITargettable && ((ITargettable) nextModule).run(world, caster, target);
     }
 }

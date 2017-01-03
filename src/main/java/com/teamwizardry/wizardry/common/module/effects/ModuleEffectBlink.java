@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.module.events;
+package com.teamwizardry.wizardry.common.module.effects;
 
 import com.teamwizardry.wizardry.api.spell.ITargettable;
 import com.teamwizardry.wizardry.api.spell.Module;
@@ -12,74 +12,69 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Set;
-
 /**
  * Created by LordSaad.
  */
-public class ModuleEventCollideBlock extends Module implements ITargettable {
+public class ModuleEffectBlink extends Module implements ITargettable {
 
-    public ModuleEventCollideBlock() {
+    public ModuleEffectBlink() {
     }
 
     @NotNull
     @Override
     public ItemStack getRequiredStack() {
-        return new ItemStack(Items.COAL);
+        return new ItemStack(Items.CHORUS_FRUIT_POPPED);
     }
 
     @NotNull
     @Override
     public ModuleType getModuleType() {
-        return ModuleType.EVENT;
+        return ModuleType.EFFECT;
     }
 
     @NotNull
     @Override
     public String getID() {
-        return "on_collide_block";
+        return "effect_blink";
     }
 
     @NotNull
     @Override
     public String getReadableName() {
-        return "On Collide Block";
+        return "Blink";
     }
 
     @NotNull
     @Override
     public String getDescription() {
-        return "Triggered when the spell collides with a block";
-    }
-
-    @NotNull
-    @Override
-    public Set<Module> getCompatibleModifierModules() {
-        return super.getCompatibleModifierModules();
+        return "Will teleport the target to the position of the spell";
     }
 
     @Override
-    public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
-        return super.run(world, caster);
+    public double getManaToConsume() {
+        return 50;
+    }
+
+    @Override
+    public double getBurnoutToFill() {
+        return 20;
     }
 
     @NotNull
     @Override
     public Module copy() {
-        ModuleEventCollideBlock clone = new ModuleEventCollideBlock();
+        ModuleEffectBlink clone = new ModuleEffectBlink();
         clone.children = children;
         return clone;
     }
 
     @Override
     public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @Nullable Vec3d target) {
-        Module nextModule = children.getFirst();
-        nextModule.run(world, caster);
-        return nextModule instanceof ITargettable && ((ITargettable) nextModule).run(world, caster, target);
+        return caster != null && target != null && caster.attemptTeleport(target.xCoord, target.yCoord, target.zCoord);
     }
 
     @Override
     public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @Nullable Entity target) {
-        return false;
+        return caster != null && target != null && caster.attemptTeleport(target.posX, target.posY, target.posZ);
     }
 }
