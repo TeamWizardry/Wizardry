@@ -79,7 +79,7 @@ public class ModuleShapeBeam extends Module {
 
     @Override
     public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
-        Module nextModule = children.pop();
+        Module nextModule = children.getFirst();
 
         if (nextModule.getModuleType() == ModuleType.EVENT
                 && nextModule instanceof ModuleEventCast) {

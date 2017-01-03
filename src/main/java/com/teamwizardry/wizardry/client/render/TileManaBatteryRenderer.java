@@ -1,61 +1,41 @@
-package com.teamwizardry.wizardry.common.tile;
+package com.teamwizardry.wizardry.client.render;
 
-import com.teamwizardry.librarianlib.common.base.block.TileMod;
-import com.teamwizardry.librarianlib.common.network.PacketHandler;
-import com.teamwizardry.librarianlib.common.util.autoregister.TileRegister;
 import com.teamwizardry.librarianlib.common.util.math.Matrix4;
-import com.teamwizardry.librarianlib.common.util.saving.Save;
-import com.teamwizardry.wizardry.api.block.IManaSink;
-import com.teamwizardry.wizardry.common.fluid.FluidBlockMana;
-import com.teamwizardry.wizardry.common.network.PacketParticleAmbientFizz;
+import com.teamwizardry.wizardry.common.tile.TileManaBattery;
+import com.teamwizardry.wizardry.common.tile.TilePedestal;
 import com.teamwizardry.wizardry.init.ModBlocks;
+import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.ITickable;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraft.world.World;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
-@TileRegister("mana_battery")
-public class TileManaBattery extends TileMod implements ITickable, IManaSink {
-
-    public int maxMana = 9000;
-    @Save
-    public int currentMana;
+/**
+ * Created by LordSaad.
+ */
+public class TileManaBatteryRenderer extends TileEntitySpecialRenderer<TileManaBattery> {
 
     @Override
-    public void update() {
-        if (!world.isRemote) return;
-
-        Random rand = new Random();
-
-        if (currentMana < maxMana) {
-            int x = ThreadLocalRandom.current().nextInt(-5, 5);
-            int z = ThreadLocalRandom.current().nextInt(-5, 5);
-            BlockPos mana = getPos().add(x, -3, z);
-            if (world.getBlockState(mana) == FluidBlockMana.instance.getDefaultState()) {
-                PacketHandler.NETWORK.sendToAllAround(new PacketParticleAmbientFizz(new Vec3d(mana).addVector(0.5, 0.5, 0.5)), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 20));
-                int chance = rand.nextInt(50);
-                if (chance == 0) {
-                    if (currentMana > maxMana - 1000) currentMana = maxMana;
-                    else currentMana += 1000;
-                    world.setBlockState(mana, Blocks.AIR.getDefaultState(), 3);
-                }
-            }
-        }
+    public void renderTileEntityAt(TileManaBattery te, double x, double y, double z, float partialTicks, int destroyStage) {
+        World world = te.getWorld();
+        BlockPos pos = te.getPos();
 
         List<BlockPos> pedestals = new ArrayList<>();
+        Set<BlockPos> poses = new HashSet<>();
         for (int i = 0; i < 360; i++) {
             double angle = Math.toRadians(i) * Math.PI * 2;
             double cX = 0.5 + Math.cos(angle) * 6;
             double cZ = 0.5 + Math.sin(angle) * 6;
             BlockPos pedPos = new BlockPos(pos.getX() + cX, pos.getY() - 2, pos.getZ() + cZ);
 
+            poses.add(pedPos);
             if (pedestals.contains(pedPos)) continue;
             IBlockState block = world.getBlockState(pedPos);
             if (block.getBlock() != ModBlocks.PEDESTAL) continue;
@@ -72,6 +52,7 @@ public class TileManaBattery extends TileMod implements ITickable, IManaSink {
             if (pedestals.contains(oppPos)) continue;
             IBlockState oppBlock = world.getBlockState(oppPos);
             if (oppBlock.getBlock() != ModBlocks.PEDESTAL) {
+                LibParticles.MAGIC_DOT(world, new Vec3d(oppPos).addVector(0.5, 0.5, 0.5), (float) ThreadLocalRandom.current().nextDouble(1, 4));
                 continue;
             }
             TilePedestal oppPed = (TilePedestal) world.getTileEntity(oppPos);
@@ -82,5 +63,10 @@ public class TileManaBattery extends TileMod implements ITickable, IManaSink {
             pedestals.add(oppPos);
         }
 
+        for (BlockPos pedPos : poses)
+            LibParticles.MAGIC_DOT(world, new Vec3d(pedPos).addVector(0.5, 0.5, 0.5), -1);
+
+        for (BlockPos pedPos : pedestals)
+            LibParticles.COLORFUL_BATTERY_BEZIER(world, pedPos, pos);
     }
 }

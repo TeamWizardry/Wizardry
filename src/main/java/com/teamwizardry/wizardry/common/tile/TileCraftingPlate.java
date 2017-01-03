@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.common.tile;
 import com.teamwizardry.librarianlib.common.base.block.TileMod;
 import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
 import com.teamwizardry.librarianlib.common.util.autoregister.TileRegister;
-import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpBezier3D;
 import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpLine;
 import com.teamwizardry.librarianlib.common.util.saving.Save;
 import com.teamwizardry.wizardry.api.Constants;
@@ -94,24 +93,9 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink, 
         }
         markDirty();
 
-        if (isCrafting && (output != null)) {
-            LibParticles.CRAFTING_ALTAR_HELIX(world, new Vec3d(pos).addVector(0.5, 0.25, 0.5));
-            if (!inventory.isEmpty())
-                for (ClusterObject cluster : inventory) {
-                    if (((ThreadLocalRandom.current().nextInt(10)) != 0)) continue;
-                    LibParticles.CRAFTING_ALTAR_CLUSTER_SUCTION(world, new Vec3d(pos).addVector(0.5, 0.5, 0.5), new InterpBezier3D(cluster.current, new Vec3d(0, 0, 0)));
-                }
-        }
-
-        if (!isCrafting && !inventory.isEmpty())
-            for (int i = 0; i < ThreadLocalRandom.current().nextInt(1, 10); i++) {
-                ClusterObject cluster = inventory.get(ThreadLocalRandom.current().nextInt(inventory.size()));
-                LibParticles.CLUSTER_DRAPE(world, new Vec3d(pos).addVector(0.5, 0.5, 0.5).add(cluster.current));
-            }
-
         if ((output == null) && !isCrafting && !inventory.isEmpty() && (inventory.get(inventory.size() - 1).stack.getItem() instanceof Infusable)) {
             isCrafting = true;
-            craftingTimeLeft = 500;
+            craftingTimeLeft = 100;
             output = inventory.remove(inventory.size() - 1).stack;
         }
 
@@ -119,14 +103,14 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink, 
             if (craftingTimeLeft > 0) --craftingTimeLeft;
             else {
                 isCrafting = false;
+                markDirty();
 
+                // TODO PACKET
                 LibParticles.CRAFTING_ALTAR_PEARL_EXPLODE(world, new Vec3d(pos).addVector(0.5, 1, 0.5));
 
-                if (!inventory.isEmpty()) {
+                if (!inventory.isEmpty())
                     for (ClusterObject cluster : inventory)
                         LibParticles.CRAFTING_ALTAR_CLUSTER_EXPLODE(world, new Vec3d(pos).addVector(0.5, 0.5, 0.5).add(cluster.current));
-                    inventory.clear();
-                }
 
                 List<ItemStack> stacks = new ArrayList<>();
                 for (ClusterObject cluster : inventory) stacks.add(cluster.stack);
@@ -141,6 +125,7 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink, 
 
                 output = stack;
                 craftingTimeLeft = craftingTime;
+                inventory.clear();
             }
         }
     }

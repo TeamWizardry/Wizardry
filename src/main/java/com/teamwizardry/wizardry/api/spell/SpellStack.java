@@ -49,6 +49,8 @@ public class SpellStack {
 
         // PROCESS FIELDS
         List<List<ItemStack>> fieldLines = brancher(branches.get(0), Items.WHEAT_SEEDS);
+        if (fieldLines.isEmpty()) return;
+
         for (List<ItemStack> fieldLine : fieldLines) {
             if (!(identifiers.contains(fieldLine.get(0).getItem()))) continue;
 
@@ -57,26 +59,22 @@ public class SpellStack {
             if (head instanceof IModifier) continue;
 
             List<ItemStack> modifiers = new ArrayList<>();
-            for (int i = 2; i < fieldLine.size() - 1; i++) modifiers.add(fieldLine.get(i));
+            for (int i = 2; i < fieldLine.size() - 1; i++) {
+                Module modifier = ModuleRegistry.INSTANCE.getModule(fieldLine.get(i));
+                if (modifier instanceof IModifier)
+                    modifiers.add(fieldLine.get(i));
+            }
 
             head.processModifiers(modifiers);
-        }
 
-        for (int i = 0; i < fieldLines.get(0).size() - 2; i++) {
-            ItemStack stack = fieldLines.get(0).get(i);
-            if (identifiers.contains(stack.getItem())
-                    && !identifiers.contains(fieldLines.get(0).get(i + 1).getItem())) {
-
-                Module module = ModuleRegistry.INSTANCE.getModule(fieldLines.get(0).get(i + 1));
-                if (module == null) continue;
-                fields.put(stack.getItem(), module);
-            }
+            fields.put(fieldLine.get(0).getItem(), head);
         }
 
         // PROCESS CHILDREN OF LINE HEADS
         List<List<ItemStack>> lines = brancher(branches.get(1), ModItems.DEVIL_DUST);
         prime:
         for (List<ItemStack> line : lines) {
+            if (line.isEmpty()) continue;
             ItemStack headStack = line.get(0);
             if (!fields.containsKey(headStack.getItem())) continue;
 
@@ -113,12 +111,11 @@ public class SpellStack {
         List<ItemStack> temp = new ArrayList<>();
         for (ItemStack stack : inventory) {
             if (ItemStack.areItemsEqual(new ItemStack(identifier), stack)) {
-                if (!temp.isEmpty()) {
-                    branches.add(temp);
-                    temp.clear();
-                }
+                if (!temp.isEmpty()) branches.add(temp);
+                temp = new ArrayList<>();
             } else temp.add(stack);
         }
+        if (!temp.isEmpty()) branches.add(temp);
         return branches;
     }
 

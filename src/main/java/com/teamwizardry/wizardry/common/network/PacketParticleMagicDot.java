@@ -29,6 +29,7 @@ public class PacketParticleMagicDot extends PacketBase {
     @Override
     public void handle(MessageContext messageContext) {
         if (messageContext.side.isServer()) return;
+        if (Minecraft.getMinecraft().player == null) return;
 
         World world = Minecraft.getMinecraft().player.world;
 
