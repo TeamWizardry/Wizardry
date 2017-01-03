@@ -70,11 +70,11 @@ public class SpellStack {
             fields.put(fieldLine.get(0).getItem(), head);
         }
 
-        // PROCESS CHILDREN OF LINE HEADS
         List<List<ItemStack>> lines = brancher(branches.get(1), ModItems.DEVIL_DUST);
+
+        // PROCESS CHILDREN OF LINE HEADS
         prime:
         for (List<ItemStack> line : lines) {
-            if (line.isEmpty()) continue;
             ItemStack headStack = line.get(0);
             if (!fields.containsKey(headStack.getItem())) continue;
 
@@ -82,20 +82,25 @@ public class SpellStack {
             if (head == null) continue;
             if (head.getModuleType() != ModuleType.SHAPE) continue;
 
-            for (int i = 1; i < line.size() - 1; i++) {
-                if (!fields.containsKey(line.get(i).getItem())) continue prime;
+            Deque<ItemStack> children = new ArrayDeque<>(line);
+            children.pollFirst();
+            if (children.isEmpty()) continue;
 
-                Module child = fields.get(headStack.getItem());
-                if (child == null) continue;
-                head.children.add(child);
+            for (ItemStack child : children) {
+                if (!fields.containsKey(child.getItem())) continue prime;
+
+                Module childModule = fields.get(child.getItem());
+                if (childModule == null) continue;
+                head.children.add(childModule);
             }
+
             compiled.add(head);
         }
 
         // REPROCESS CHILDREN FOR ALL CHILDREN MODULES
         for (Module head : compiled) {
 
-            Deque<Module> children = new ArrayDeque<>(head.children);
+            Deque<Module> children = head.children;
             ArrayList<Module> childrenList = new ArrayList<>(children);
 
             for (int i = 0; i < childrenList.size() - 1; i++) {
@@ -130,7 +135,8 @@ public class SpellStack {
             Module module = ModuleRegistry.INSTANCE.getModule(compound.getString("id"));
             if (module == null) continue;
             module.deserializeNBT(compound);
-            module.run(world, entityLiving);
+            if (!module.children.isEmpty())
+                module.run(world, entityLiving);
         }
     }
 }

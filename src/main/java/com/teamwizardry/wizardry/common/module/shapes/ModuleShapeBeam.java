@@ -14,6 +14,7 @@ import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -80,6 +81,9 @@ public class ModuleShapeBeam extends Module {
     @Override
     public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
         Module nextModule = children.getFirst();
+
+        if (caster != null)
+            caster.sendMessage(new TextComponentString(":)"));
 
         if (nextModule.getModuleType() == ModuleType.EVENT
                 && nextModule instanceof ModuleEventCast) {
