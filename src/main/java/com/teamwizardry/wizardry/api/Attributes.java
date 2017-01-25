@@ -5,6 +5,6 @@ package com.teamwizardry.wizardry.api;
  */
 public class Attributes {
 
-    public static final String EXTEND = "extend";
-    public static final String PLUS = "plus";
+	public static final String EXTEND = "extend";
+	public static final String PLUS = "plus";
 }

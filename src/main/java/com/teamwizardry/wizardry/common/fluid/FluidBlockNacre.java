@@ -26,9 +26,9 @@ public class FluidBlockNacre extends BlockFluidClassic {
 		return FluidNacre.instance;
 	}
 
-    @NotNull
-    @Override
-    public EnumBlockRenderType getRenderType(IBlockState state) {
+	@NotNull
+	@Override
+	public EnumBlockRenderType getRenderType(IBlockState state) {
 		return EnumBlockRenderType.MODEL;
 	}
 }

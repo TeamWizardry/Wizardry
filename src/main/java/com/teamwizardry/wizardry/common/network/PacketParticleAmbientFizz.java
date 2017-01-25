@@ -13,23 +13,23 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
  */
 public class PacketParticleAmbientFizz extends PacketBase {
 
-    @Save
-    private Vec3d pos;
+	@Save
+	private Vec3d pos;
 
-    public PacketParticleAmbientFizz() {
-    }
+	public PacketParticleAmbientFizz() {
+	}
 
-    public PacketParticleAmbientFizz(Vec3d pos) {
-        this.pos = pos;
-    }
+	public PacketParticleAmbientFizz(Vec3d pos) {
+		this.pos = pos;
+	}
 
-    @Override
-    public void handle(MessageContext messageContext) {
-        if (messageContext.side.isServer()) return;
-        if (Minecraft.getMinecraft().player == null) return;
+	@Override
+	public void handle(MessageContext messageContext) {
+		if (messageContext.side.isServer()) return;
+		if (Minecraft.getMinecraft().player == null) return;
 
-        World world = Minecraft.getMinecraft().player.world;
+		World world = Minecraft.getMinecraft().player.world;
 
-        LibParticles.FIZZING_AMBIENT(world, pos);
-    }
+		LibParticles.FIZZING_AMBIENT(world, pos);
+	}
 }

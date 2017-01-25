@@ -21,8 +21,8 @@ import javax.annotation.Nullable;
 public class RecipePearl implements IRecipe {
 
 	@Override
-    public boolean matches(@NotNull InventoryCrafting inv, World worldIn) {
-        boolean foundBaseItem = false;
+	public boolean matches(@NotNull InventoryCrafting inv, World worldIn) {
+		boolean foundBaseItem = false;
 		boolean foundPearl = false;
 
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
@@ -44,8 +44,8 @@ public class RecipePearl implements IRecipe {
 
 	@Nullable
 	@Override
-    public ItemStack getCraftingResult(@NotNull InventoryCrafting inv) {
-        ItemStack pearl = null;
+	public ItemStack getCraftingResult(@NotNull InventoryCrafting inv) {
+		ItemStack pearl = null;
 		ItemStack baseItem = null;
 
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
@@ -83,9 +83,9 @@ public class RecipePearl implements IRecipe {
 		return null;
 	}
 
-    @NotNull
-    @Override
-    public ItemStack[] getRemainingItems(@NotNull InventoryCrafting inv) {
-        return ForgeHooks.defaultRecipeGetRemainingItems(inv);
+	@NotNull
+	@Override
+	public ItemStack[] getRemainingItems(@NotNull InventoryCrafting inv) {
+		return ForgeHooks.defaultRecipeGetRemainingItems(inv);
 	}
 }

@@ -35,6 +35,7 @@ public class CommonProxy {
         Achievements.init();
         ModRecipes.initCrafting();
         ModEntities.init();
+        ModPotions.init();
 
         ModCapabilities.preInit();
         Fluids.preInit();
@@ -42,7 +43,7 @@ public class CommonProxy {
         WizardryPacketHandler.registerMessages();
         NetworkRegistry.INSTANCE.registerGuiHandler(Wizardry.instance, new GuiHandler());
 
-	    ModStructures.INSTANCE.getClass();
+        ModStructures.INSTANCE.getClass();
 
         Wizardry.underWorld = DimensionType.register("underworld", "_dim", Config.underworld_id, WorldProviderUnderWorld.class, false);
         DimensionManager.registerDimension(Config.underworld_id, Wizardry.underWorld);
@@ -54,7 +55,6 @@ public class CommonProxy {
         PacketHandler.register(PacketCapeTick.class, Side.SERVER);
         PacketHandler.register(PacketCapeOwnerTransfer.class, Side.SERVER);
         PacketHandler.register(PacketParticleMagicDot.class, Side.CLIENT);
-        PacketHandler.register(PacketParticlePedestalBezier.class, Side.CLIENT);
         PacketHandler.register(PacketParticleAmbientFizz.class, Side.CLIENT);
     }
 

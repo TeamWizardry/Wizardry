@@ -31,12 +31,12 @@ public class HudEventHandler extends Gui {
 	@SubscribeEvent
 	public void renderHud(Post event) {
 		Minecraft mc = Minecraft.getMinecraft();
-        ItemStack stack = Minecraft.getMinecraft().player.getActiveItemStack();
+		ItemStack stack = Minecraft.getMinecraft().player.getActiveItemStack();
 
 		ScaledResolution resolution = event.getResolution();
 		int width = resolution.getScaledWidth();
 		int height = resolution.getScaledHeight();
-        EntityPlayer player = Minecraft.getMinecraft().player;
+		EntityPlayer player = Minecraft.getMinecraft().player;
 
 		if (event.getType() == ElementType.EXPERIENCE) {
 

@@ -25,9 +25,9 @@ public class ItemCape extends ItemModArmor {
 		setMaxDamage(0);
 	}
 
-    @NotNull
-    @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
+	@NotNull
+	@Override
+	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
 		ItemStack itemstack = playerIn.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
 
 		if (itemstack == null) {

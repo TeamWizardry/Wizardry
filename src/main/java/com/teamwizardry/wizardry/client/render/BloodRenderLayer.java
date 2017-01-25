@@ -6,7 +6,6 @@ import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
 import com.teamwizardry.wizardry.api.capability.bloods.IBloodType;
 import com.teamwizardry.wizardry.client.fx.Shaders;
 import net.minecraft.client.entity.AbstractClientPlayer;
-import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelBiped.ArmPose;
 import net.minecraft.client.model.ModelPlayer;
 import net.minecraft.client.renderer.GlStateManager;

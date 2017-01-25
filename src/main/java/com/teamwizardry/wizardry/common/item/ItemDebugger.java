@@ -25,70 +25,70 @@ import org.jetbrains.annotations.NotNull;
 
 public class ItemDebugger extends ItemWizardry implements IGlowOverlayable {
 
-    public ItemDebugger() {
-        super("debugger");
-        setMaxStackSize(1);
-        addPropertyOverride(new ResourceLocation(Wizardry.MODID, NBT.TAG_OVERLAY), GlowingOverlayHelper.OVERLAY_OVERRIDE);
-    }
+	public ItemDebugger() {
+		super("debugger");
+		setMaxStackSize(1);
+		addPropertyOverride(new ResourceLocation(Wizardry.MODID, NBT.TAG_OVERLAY), GlowingOverlayHelper.OVERLAY_OVERRIDE);
+	}
 
-    @NotNull
-    @Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        TileEntity tile = worldIn.getTileEntity(pos);
-        if (tile == null) {
-            if (!worldIn.isRemote)
-                if (GuiScreen.isShiftKeyDown()) {
-                    EntityFairy entity = new EntityFairy(worldIn);
-                    entity.setPosition(playerIn.posX, playerIn.posY, playerIn.posZ);
-                    worldIn.spawnEntity(entity);
-                } else {
-                    EntityHallowedSpirit entity = new EntityHallowedSpirit(worldIn);
-                    entity.setPosition(playerIn.posX, playerIn.posY, playerIn.posZ);
-                    worldIn.spawnEntity(entity);
-                }
-            return EnumActionResult.FAIL;
-        } else {
+	@NotNull
+	@Override
+	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+		TileEntity tile = worldIn.getTileEntity(pos);
+		if (tile == null) {
+			if (!worldIn.isRemote)
+				if (GuiScreen.isShiftKeyDown()) {
+					EntityFairy entity = new EntityFairy(worldIn);
+					entity.setPosition(playerIn.posX, playerIn.posY, playerIn.posZ);
+					worldIn.spawnEntity(entity);
+				} else {
+					EntityHallowedSpirit entity = new EntityHallowedSpirit(worldIn);
+					entity.setPosition(playerIn.posX, playerIn.posY, playerIn.posZ);
+					worldIn.spawnEntity(entity);
+				}
+			return EnumActionResult.FAIL;
+		} else {
 
-            if (tile instanceof IStructure) {
+			if (tile instanceof IStructure) {
 
-                Structure structure = ModStructures.INSTANCE.structures.get(((IStructure) tile).structureName());
+				Structure structure = ModStructures.INSTANCE.structures.get(((IStructure) tile).structureName());
 
-                for (Template.BlockInfo info : structure.blockInfos()) {
-                    BlockPos newPos = info.pos.add(pos).subtract(new Vec3i(6, 3, 6));
-                    if (worldIn.getBlockState(newPos).getBlock() != Blocks.AIR) continue;
-                    if (info.blockState == null) continue;
+				for (Template.BlockInfo info : structure.blockInfos()) {
+					BlockPos newPos = info.pos.add(pos).subtract(new Vec3i(6, 3, 6));
+					if (worldIn.getBlockState(newPos).getBlock() != Blocks.AIR) continue;
+					if (info.blockState == null) continue;
 
-                    boolean flag = false;
-                    if (!playerIn.isCreative())
-                        for (ItemStack invStack : playerIn.inventory.mainInventory)
-                            if (invStack != null
-                                    && invStack.isItemEqual(new ItemStack(info.blockState.getBlock()))) {
-                                flag = true;
-                                invStack.stackSize--;
-                                break;
-                            }
-                    if (!flag && !playerIn.isCreative()) continue;
-                    worldIn.setBlockState(newPos, info.blockState, 3);
-                    break;
-                }
-            }
+					boolean flag = false;
+					if (!playerIn.isCreative())
+						for (ItemStack invStack : playerIn.inventory.mainInventory)
+							if (invStack != null
+									&& invStack.isItemEqual(new ItemStack(info.blockState.getBlock()))) {
+								flag = true;
+								invStack.stackSize--;
+								break;
+							}
+					if (!flag && !playerIn.isCreative()) continue;
+					worldIn.setBlockState(newPos, info.blockState, 3);
+					break;
+				}
+			}
 
-            if (tile instanceof TileManaBattery) {
-                TileManaBattery tmb = (TileManaBattery) worldIn.getTileEntity(pos);
-                if (tmb != null)
-                    playerIn.sendMessage(new TextComponentString("Mana: " + tmb.currentMana + '/' + tmb.maxMana));
-            }
-        }
-        return EnumActionResult.PASS;
-    }
-
-
-    @NotNull
-    @Override
-    public ActionResult<ItemStack> onItemRightClick(@NotNull ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
-        if (worldIn.isRemote) return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
+			if (tile instanceof TileManaBattery) {
+				TileManaBattery tmb = (TileManaBattery) worldIn.getTileEntity(pos);
+				if (tmb != null)
+					playerIn.sendMessage(new TextComponentString("Mana: " + tmb.currentMana + '/' + tmb.maxMana));
+			}
+		}
+		return EnumActionResult.PASS;
+	}
 
 
-        return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
-    }
+	@NotNull
+	@Override
+	public ActionResult<ItemStack> onItemRightClick(@NotNull ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
+		if (worldIn.isRemote) return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
+
+
+		return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
+	}
 }

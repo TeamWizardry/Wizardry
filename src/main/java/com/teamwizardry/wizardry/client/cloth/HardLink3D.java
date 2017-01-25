@@ -9,13 +9,13 @@ public class HardLink3D extends Link3D {
 	}
 
 	public void resolve() {
-		if(b.pin)
+		if (b.pin)
 			return;
 
 		Vec3d posDiff = a.pos.subtract(b.pos);
 		double d = posDiff.lengthVector();
 
-		double difference = (distance - d)/d;
+		double difference = (distance - d) / d;
 
 		Vec3d translate = posDiff.scale(difference);
 

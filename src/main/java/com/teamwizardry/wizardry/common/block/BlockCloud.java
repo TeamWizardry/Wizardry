@@ -37,15 +37,15 @@ public class BlockCloud extends BlockMod {
 		return false;
 	}
 
-    @NotNull
-    @SideOnly(Side.CLIENT)
-    public BlockRenderLayer getBlockLayer() {
+	@NotNull
+	@SideOnly(Side.CLIENT)
+	public BlockRenderLayer getBlockLayer() {
 		return BlockRenderLayer.TRANSLUCENT;
 	}
 
 	@SideOnly(Side.CLIENT)
-    public boolean shouldSideBeRendered(IBlockState blockState, @NotNull IBlockAccess blockAccess, @NotNull BlockPos pos, EnumFacing side) {
-        IBlockState worldState = blockAccess.getBlockState(pos.offset(side));
+	public boolean shouldSideBeRendered(IBlockState blockState, @NotNull IBlockAccess blockAccess, @NotNull BlockPos pos, EnumFacing side) {
+		IBlockState worldState = blockAccess.getBlockState(pos.offset(side));
 		Block block = worldState.getBlock();
 		return (blockState != worldState) || ((block != this) && super.shouldSideBeRendered(blockState, blockAccess, pos, side));
 	}

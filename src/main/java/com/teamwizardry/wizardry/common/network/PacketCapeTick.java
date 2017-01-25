@@ -12,15 +12,15 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
  */
 public class PacketCapeTick extends PacketBase {
 
-    public PacketCapeTick() {
+	public PacketCapeTick() {
 
-    }
+	}
 
-    @Override
-    public void handle(MessageContext messageContext) {
-        EntityPlayer player = messageContext.getServerHandler().playerEntity;
-        ItemStack cape = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-        if (cape == null) return;
-        ItemNBTHelper.setInt(cape, "time", ItemNBTHelper.getInt(cape, "time", 0) + 1);
-    }
+	@Override
+	public void handle(MessageContext messageContext) {
+		EntityPlayer player = messageContext.getServerHandler().playerEntity;
+		ItemStack cape = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+		if (cape == null) return;
+		ItemNBTHelper.setInt(cape, "time", ItemNBTHelper.getInt(cape, "time", 0) + 1);
+	}
 }

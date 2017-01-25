@@ -35,6 +35,6 @@ public class ModBlocks {
 
 	public static void initModel() {
 		CRAFTING_PLATE.initModel();
-        MANA_BATTERY.initModel();
-    }
+		MANA_BATTERY.initModel();
+	}
 }

@@ -28,7 +28,7 @@ public class ItemNacrePearl extends ItemWizardry implements Infusable, Explodabl
 
 	@Override
 	public boolean onEntityItemUpdate(EntityItem entityItem) {
-        if (!entityItem.world.isRemote) return false;
+		if (!entityItem.world.isRemote) return false;
 
 		colorableOnEntityItemUpdate(entityItem);
 

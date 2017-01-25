@@ -19,57 +19,57 @@ import net.minecraft.util.ResourceLocation;
  * Created by Saad on 6/17/2016.
  */
 public class WorktableGui extends GuiBase {
-    public static final Texture BACKGROUND_TEXTURE = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/table_background.png"));
-    public static final Sprite BACKGROUND_SPRITE = BACKGROUND_TEXTURE.getSprite("bg", 512, 256);
+	public static final Texture BACKGROUND_TEXTURE = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/table_background.png"));
+	public static final Sprite BACKGROUND_SPRITE = BACKGROUND_TEXTURE.getSprite("bg", 512, 256);
 
-    public static final Texture SPRITE_SHEET = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sprite_sheet.png"));
+	public static final Texture SPRITE_SHEET = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sprite_sheet.png"));
 
-    static final int iconSize = 12;
-    public Multimap<ModuleType, Module> modulesByType = HashMultimap.create();
-    public GuiComponent<?> paper;
-    public GuiComponent<?> selected;
+	static final int iconSize = 12;
+	public Multimap<ModuleType, Module> modulesByType = HashMultimap.create();
+	public GuiComponent<?> paper;
+	public GuiComponent<?> selected;
 
-    public WorktableGui() {
-        super(512, 256);
+	public WorktableGui() {
+		super(512, 256);
 
-        for (Module module : ModuleRegistry.INSTANCE.modules)
-            modulesByType.get(module.getModuleType()).add(module);
+		for (Module module : ModuleRegistry.INSTANCE.modules)
+			modulesByType.get(module.getModuleType()).add(module);
 
-        ComponentSprite background = new ComponentSprite(BACKGROUND_SPRITE, 0, 0);
-        getMainComponents().add(background);
+		ComponentSprite background = new ComponentSprite(BACKGROUND_SPRITE, 0, 0);
+		getMainComponents().add(background);
 
-        paper = new ComponentVoid(160, 0, 191, 202);
-        paper.setZIndex(100);
-        getMainComponents().add(paper);
+		paper = new ComponentVoid(160, 0, 191, 202);
+		paper.setZIndex(100);
+		getMainComponents().add(paper);
 
-        ComponentVoid effects = new ComponentVoid(92, 32, 52, 158);
-        addModules(effects, ModuleType.EFFECT, 7, 7, 3, 12);
-        getMainComponents().add(effects);
+		ComponentVoid effects = new ComponentVoid(92, 32, 52, 158);
+		addModules(effects, ModuleType.EFFECT, 7, 7, 3, 12);
+		getMainComponents().add(effects);
 
-        ComponentVoid shapes = new ComponentVoid(32, 32, 52, 74);
-        addModules(shapes, ModuleType.SHAPE, 7, 7, 3, 5);
-        getMainComponents().add(shapes);
+		ComponentVoid shapes = new ComponentVoid(32, 32, 52, 74);
+		addModules(shapes, ModuleType.SHAPE, 7, 7, 3, 5);
+		getMainComponents().add(shapes);
 
-        ComponentVoid booleans = new ComponentVoid(32, 116, 52, 74);
-        addModules(booleans, ModuleType.BOOLEAN, 7, 7, 3, 5);
-        getMainComponents().add(booleans);
+		ComponentVoid booleans = new ComponentVoid(32, 116, 52, 74);
+		addModules(booleans, ModuleType.BOOLEAN, 7, 7, 3, 5);
+		getMainComponents().add(booleans);
 
-        ComponentVoid events = new ComponentVoid(368, 31, 52, 87);
-        addModules(events, ModuleType.EVENT, 7, 7, 3, 6);
-        getMainComponents().add(events);
+		ComponentVoid events = new ComponentVoid(368, 31, 52, 87);
+		addModules(events, ModuleType.EVENT, 7, 7, 3, 6);
+		getMainComponents().add(events);
 
-        ComponentVoid modifiers = new ComponentVoid(428, 31, 52, 87);
-        addModules(modifiers, ModuleType.MODIFIER, 7, 7, 3, 6);
-        getMainComponents().add(modifiers);
+		ComponentVoid modifiers = new ComponentVoid(428, 31, 52, 87);
+		addModules(modifiers, ModuleType.MODIFIER, 7, 7, 3, 6);
+		getMainComponents().add(modifiers);
 
-        getMainComponents().add(selected);
+		getMainComponents().add(selected);
 
-        int boxHeight = 200, boxWidth = 100;
-        Sprite ringTexture = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/items/ring_base.png"));
-        Sprite staffTexture = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/items/staff_gold.png"));
+		int boxHeight = 200, boxWidth = 100;
+		Sprite ringTexture = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/items/ring_base.png"));
+		Sprite staffTexture = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/items/staff_gold.png"));
 
 		/*ComponentRect menu = new ComponentRect(0, 0, getGuiWidth(), getGuiHeight());
-        menu.getColor().setValue(new Color(0x804A4A4A));
+		menu.getColor().setValue(new Color(0x804A4A4A));
 
 
 		ComponentRect ring = new ComponentRect((getGuiWidth() / 2) - (boxWidth / 2) - 55, (getGuiHeight() / 2) - (boxHeight / 2), boxWidth, boxHeight);
@@ -151,20 +151,20 @@ public class WorktableGui extends GuiBase {
 
 		menu.add(staff);
 		menu.add(ring);*/
-    }
+	}
 
-    private void addModules(ComponentVoid parent, ModuleType type, int x, int y, int columns, int rows) {
-        ComponentGrid grid = new ComponentGrid(x, y, 12, 12, columns);
-        parent.add(grid);
+	private void addModules(ComponentVoid parent, ModuleType type, int x, int y, int columns, int rows) {
+		ComponentGrid grid = new ComponentGrid(x, y, 12, 12, columns);
+		parent.add(grid);
 
-        for (Module module : modulesByType.get(type)) {
-            TableModule item = new TableModule(this, module, false);
-            grid.add(item.component);
-        }
-    }
+		for (Module module : modulesByType.get(type)) {
+			TableModule item = new TableModule(this, module, false);
+			grid.add(item.component);
+		}
+	}
 
-    @Override
-    public boolean doesGuiPauseGame() {
-        return true;
-    }
+	@Override
+	public boolean doesGuiPauseGame() {
+		return true;
+	}
 }

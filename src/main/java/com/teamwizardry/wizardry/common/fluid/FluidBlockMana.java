@@ -93,9 +93,9 @@ public class FluidBlockMana extends BlockFluidClassic {
 		}
 	}
 
-    @NotNull
-    @Override
-    public EnumBlockRenderType getRenderType(IBlockState state) {
+	@NotNull
+	@Override
+	public EnumBlockRenderType getRenderType(IBlockState state) {
 		return EnumBlockRenderType.MODEL;
 	}
 }

@@ -17,24 +17,24 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ItemManaPearl extends ItemWizardry {
 
-    public ItemManaPearl() {
-        super("mana_pearl");
-        setMaxStackSize(1);
-    }
+	public ItemManaPearl() {
+		super("mana_pearl");
+		setMaxStackSize(1);
+	}
 
-    @NotNull
-    @Override
-    public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
-        if (stack != null) {
-            if (world.getBlockState(pos).getBlock() == ModBlocks.PEDESTAL) {
-                TilePedestal pedestal = (TilePedestal) world.getTileEntity(pos);
-                if (pedestal != null) {
-                    pedestal.pearl = stack;
-                    stack.stackSize--;
-                    pedestal.markDirty();
-                }
-            }
-        }
-        return EnumActionResult.PASS;
-    }
+	@NotNull
+	@Override
+	public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
+		if (stack != null) {
+			if (world.getBlockState(pos).getBlock() == ModBlocks.PEDESTAL) {
+				TilePedestal pedestal = (TilePedestal) world.getTileEntity(pos);
+				if (pedestal != null) {
+					pedestal.pearl = stack;
+					stack.stackSize--;
+					pedestal.markDirty();
+				}
+			}
+		}
+		return EnumActionResult.PASS;
+	}
 }

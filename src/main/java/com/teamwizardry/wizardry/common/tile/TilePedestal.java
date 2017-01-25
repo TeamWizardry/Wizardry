@@ -29,8 +29,8 @@ public class TilePedestal extends TileMod implements ITickable {
 
 	@Override
 	public void update() {
-        if (world.isRemote) return;
-        if (pearl == null) return;
+		if (world.isRemote) return;
+		if (pearl == null) return;
 
 		if (pearl.getItem() instanceof Infusable) {
 
@@ -78,8 +78,8 @@ public class TilePedestal extends TileMod implements ITickable {
 		if (!compound.hasKey("link_x") || !compound.hasKey("link_y") || !compound.hasKey("link_z")) return;
 
 		BlockPos pos = new BlockPos(compound.getInteger("link_x"), compound.getInteger("link_y"), compound.getInteger("link_z"));
-        IBlockState block = world.getBlockState(pos);
-        if (!(block.getBlock() instanceof IManaSink)) return;
+		IBlockState block = world.getBlockState(pos);
+		if (!(block.getBlock() instanceof IManaSink)) return;
 
 	}
 }

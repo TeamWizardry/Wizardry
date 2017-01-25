@@ -21,52 +21,52 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ItemWoodStaff extends ItemWizardry implements INacreColorable {
 
-    public ItemWoodStaff() {
-        super("wood_staff", "wood_staff", "wood_staff_pearl");
-        setMaxStackSize(1);
-    }
+	public ItemWoodStaff() {
+		super("wood_staff", "wood_staff", "wood_staff_pearl");
+		setMaxStackSize(1);
+	}
 
-    private static int intColor(int r, int g, int b) {
-        return ((r << 16) + (g << 8) + b);
-    }
+	private static int intColor(int r, int g, int b) {
+		return ((r << 16) + (g << 8) + b);
+	}
 
-    @Override
-    public void onPlayerStoppedUsing(ItemStack stack, World world, EntityLivingBase entityLiving, int timeLeft) {
-        if (stack == null || world == null || entityLiving == null) return;
+	@Override
+	public void onPlayerStoppedUsing(ItemStack stack, World world, EntityLivingBase entityLiving, int timeLeft) {
+		if (stack == null || world == null || entityLiving == null) return;
 
-        SpellStack.runModules(stack, world, entityLiving);
-    }
+		SpellStack.runModules(stack, world, entityLiving);
+	}
 
-    @NotNull
-    @Override
-    public ActionResult<ItemStack> onItemRightClick(@NotNull ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
-        if (world.isRemote && (Minecraft.getMinecraft().currentScreen != null)) {
-            return new ActionResult<>(EnumActionResult.FAIL, stack);
-        } else {
-            player.setActiveHand(hand);
-            return new ActionResult<>(EnumActionResult.PASS, stack);
-        }
-    }
+	@NotNull
+	@Override
+	public ActionResult<ItemStack> onItemRightClick(@NotNull ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+		if (world.isRemote && (Minecraft.getMinecraft().currentScreen != null)) {
+			return new ActionResult<>(EnumActionResult.FAIL, stack);
+		} else {
+			player.setActiveHand(hand);
+			return new ActionResult<>(EnumActionResult.PASS, stack);
+		}
+	}
 
-    @NotNull
-    @Override
-    public EnumAction getItemUseAction(ItemStack stack) {
-        return EnumAction.BOW;
-    }
+	@NotNull
+	@Override
+	public EnumAction getItemUseAction(ItemStack stack) {
+		return EnumAction.BOW;
+	}
 
-    @Override
-    public int getMaxItemUseDuration(ItemStack stack) {
-        return 72000;
-    }
+	@Override
+	public int getMaxItemUseDuration(ItemStack stack) {
+		return 72000;
+	}
 
-    @Override
-    public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
-        if ((count > 0) && (count < (getMaxItemUseDuration(stack) - 20)) && (player instanceof EntityPlayer)) {
+	@Override
+	public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
+		if ((count > 0) && (count < (getMaxItemUseDuration(stack) - 20)) && (player instanceof EntityPlayer)) {
 
-            SpellStack.runModules(stack, ((EntityPlayer) player).world, player);
-        }
+			SpellStack.runModules(stack, ((EntityPlayer) player).world, player);
+		}
 
-        // TODO: PARTICLES
+		// TODO: PARTICLES
 //        int betterCount = Math.abs(count - 72000);
 //        Circle3D circle = new Circle3D(player.getPositionVector(), player.width + 0.3, 5);
 //        for (Vec3d points : circle.getPoints()) {
@@ -81,21 +81,21 @@ public class ItemWoodStaff extends ItemWizardry implements INacreColorable {
 //                fizz.setBlurred();
 //            }
 //        }
-    }
+	}
 
-    @Override
-    public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-        if (!worldIn.isRemote) return;
+	@Override
+	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
+		if (!worldIn.isRemote) return;
 
-        colorableOnUpdate(stack);
-    }
+		colorableOnUpdate(stack);
+	}
 
-    @Override
-    public boolean onEntityItemUpdate(EntityItem entityItem) {
-        if (!entityItem.world.isRemote) return false;
+	@Override
+	public boolean onEntityItemUpdate(EntityItem entityItem) {
+		if (!entityItem.world.isRemote) return false;
 
-        colorableOnEntityItemUpdate(entityItem);
+		colorableOnEntityItemUpdate(entityItem);
 
-        return super.onEntityItemUpdate(entityItem);
-    }
+		return super.onEntityItemUpdate(entityItem);
+	}
 }

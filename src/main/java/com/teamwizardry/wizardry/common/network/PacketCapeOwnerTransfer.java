@@ -12,16 +12,16 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
  */
 public class PacketCapeOwnerTransfer extends PacketBase {
 
-    public PacketCapeOwnerTransfer() {
-    }
+	public PacketCapeOwnerTransfer() {
+	}
 
-    @Override
-    public void handle(MessageContext messageContext) {
-        EntityPlayer player = messageContext.getServerHandler().playerEntity;
-        ItemStack cape = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-        if (cape == null) return;
-        ItemNBTHelper.setInt(cape, "owner", player.getEntityId());
-        if (ItemNBTHelper.getInt(cape, "owner", -1) != -1)
-            ItemNBTHelper.setInt(cape, "time", ItemNBTHelper.getInt(cape, "time", 0) / 2);
-    }
+	@Override
+	public void handle(MessageContext messageContext) {
+		EntityPlayer player = messageContext.getServerHandler().playerEntity;
+		ItemStack cape = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+		if (cape == null) return;
+		ItemNBTHelper.setInt(cape, "owner", player.getEntityId());
+		if (ItemNBTHelper.getInt(cape, "owner", -1) != -1)
+			ItemNBTHelper.setInt(cape, "time", ItemNBTHelper.getInt(cape, "time", 0) / 2);
+	}
 }

@@ -21,16 +21,16 @@ public class ItemManaCake extends ItemWizardryFood {
 	}
 
 	@Override
-    protected void onFoodEaten(ItemStack stack, World worldIn, @NotNull EntityPlayer player) {
-        super.onFoodEaten(stack, worldIn, player);
+	protected void onFoodEaten(ItemStack stack, World worldIn, @NotNull EntityPlayer player) {
+		super.onFoodEaten(stack, worldIn, player);
 		IWizardryCapability cap = WizardryCapabilityProvider.get(player);
 		if (cap.getMaxMana() >= (cap.getMana() + 300)) cap.setMana(cap.getMana() + 300, player);
 		else cap.setMana(cap.getMaxMana(), player);
-    }
+	}
 
-    @Nullable
-    @Override
-    public Function1<ItemStack, ModelResourceLocation> getMeshDefinition() {
-        return null;
-    }
+	@Nullable
+	@Override
+	public Function1<ItemStack, ModelResourceLocation> getMeshDefinition() {
+		return null;
+	}
 }

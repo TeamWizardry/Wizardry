@@ -105,11 +105,11 @@ public class BlockCraftingPlate extends BlockModContainer implements IManaSink {
 		return true;
 	}
 
-    @NotNull
-    @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos) {
-	    return AABB;
-    }
+	@NotNull
+	@Override
+	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos) {
+		return AABB;
+	}
 
 	@Override
 	public boolean canRenderInLayer(BlockRenderLayer layer) {

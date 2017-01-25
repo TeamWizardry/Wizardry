@@ -21,13 +21,13 @@ public class RenderFairy extends RenderLiving<EntityFairy> {
 		return false;
 	}
 
-    @NotNull
-    @Override
-    protected ResourceLocation getEntityTexture(@NotNull EntityFairy entity) {
-        return null;
+	@NotNull
+	@Override
+	protected ResourceLocation getEntityTexture(@NotNull EntityFairy entity) {
+		return null;
 	}
 
 	@Override
-    public void doRender(@NotNull EntityFairy entity, double x, double y, double z, float entityYaw, float partialTicks) {
-    }
+	public void doRender(@NotNull EntityFairy entity, double x, double y, double z, float entityYaw, float partialTicks) {
+	}
 }

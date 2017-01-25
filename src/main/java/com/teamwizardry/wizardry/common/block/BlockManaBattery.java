@@ -22,12 +22,12 @@ public class BlockManaBattery extends BlockModContainer implements IManaSink {
 		super("mana_battery", Material.GROUND);
 	}
 
-    @SideOnly(Side.CLIENT)
-    public void initModel() {
-        ClientRegistry.bindTileEntitySpecialRenderer(TileManaBattery.class, new TileManaBatteryRenderer());
-    }
+	@SideOnly(Side.CLIENT)
+	public void initModel() {
+		ClientRegistry.bindTileEntitySpecialRenderer(TileManaBattery.class, new TileManaBatteryRenderer());
+	}
 
-    @Nullable
+	@Nullable
 	@Override
 	public TileEntity createTileEntity(World world, IBlockState iBlockState) {
 		return new TileManaBattery();

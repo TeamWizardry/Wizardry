@@ -22,12 +22,12 @@ public class ItemBook extends ItemWizardry implements IPickupAchievement {
 		setMaxStackSize(1);
 	}
 
-    @NotNull
-    @Override
-    public ActionResult<ItemStack> onItemRightClick(@NotNull ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
-        // TODO
-        // if (worldIn.isRemote) Wizardry.guide.display();
-        return ActionResult.newResult(EnumActionResult.SUCCESS, itemStackIn);
+	@NotNull
+	@Override
+	public ActionResult<ItemStack> onItemRightClick(@NotNull ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
+		// TODO
+		// if (worldIn.isRemote) Wizardry.guide.display();
+		return ActionResult.newResult(EnumActionResult.SUCCESS, itemStackIn);
 	}
 
 	@Override

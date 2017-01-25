@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.client.gui;
 
-import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.Constants.PageNumbers;
 import com.teamwizardry.wizardry.client.gui.worktable.WorktableGui;
 import net.minecraft.entity.player.EntityPlayer;

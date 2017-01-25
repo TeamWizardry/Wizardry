@@ -22,24 +22,24 @@ public class Link3D {
 	}
 
 	public void resolve() {
-		if(a.pin && b.pin)
+		if (a.pin && b.pin)
 			return;
 
 		Vec3d posDiff = a.pos.subtract(b.pos);
 		double d = posDiff.lengthVector();
 
-		double difference = (distance - d)/d;
+		double difference = (distance - d) / d;
 		difference *= strength;
-		if(!a.pin && !b.pin) // neither are pinned
+		if (!a.pin && !b.pin) // neither are pinned
 			difference /= 2.0;
 
 		Vec3d translate = posDiff.scale(difference);
 
-		if(!a.pin) {
+		if (!a.pin) {
 			a.pos = a.pos.add(translate);
 		}
 
-		if(!b.pin) {
+		if (!b.pin) {
 			b.pos = b.pos.subtract(translate);
 		}
 	}

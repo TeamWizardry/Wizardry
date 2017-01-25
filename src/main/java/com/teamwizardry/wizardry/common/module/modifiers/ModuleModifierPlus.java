@@ -13,59 +13,59 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ModuleModifierPlus extends Module implements IModifier {
 
-    public ModuleModifierPlus() {
-    }
+	public ModuleModifierPlus() {
+	}
 
-    @NotNull
-    @Override
-    public ItemStack getRequiredStack() {
-        return new ItemStack(Items.GOLD_NUGGET);
-    }
+	@NotNull
+	@Override
+	public ItemStack getRequiredStack() {
+		return new ItemStack(Items.GOLD_NUGGET);
+	}
 
-    @NotNull
-    @Override
-    public ModuleType getModuleType() {
-        return ModuleType.MODIFIER;
-    }
+	@NotNull
+	@Override
+	public ModuleType getModuleType() {
+		return ModuleType.MODIFIER;
+	}
 
-    @NotNull
-    @Override
-    public String getID() {
-        return "modifier_plus";
-    }
+	@NotNull
+	@Override
+	public String getID() {
+		return "modifier_plus";
+	}
 
-    @NotNull
-    @Override
-    public String getReadableName() {
-        return "+";
-    }
+	@NotNull
+	@Override
+	public String getReadableName() {
+		return "+";
+	}
 
-    @NotNull
-    @Override
-    public String getDescription() {
-        return "Increase the power of a module hooked";
-    }
+	@NotNull
+	@Override
+	public String getDescription() {
+		return "Increase the power of a module hooked";
+	}
 
-    @Override
-    public double getManaToConsume() {
-        return 3;
-    }
+	@Override
+	public double getManaToConsume() {
+		return 3;
+	}
 
-    @Override
-    public double getBurnoutToFill() {
-        return 3;
-    }
+	@Override
+	public double getBurnoutToFill() {
+		return 3;
+	}
 
-    @Override
-    public void apply(Module module) {
-        module.attributes.setInteger(Attributes.PLUS, module.attributes.getInteger(Attributes.PLUS) + 3);
-    }
+	@Override
+	public void apply(Module module) {
+		module.attributes.setInteger(Attributes.PLUS, module.attributes.getInteger(Attributes.PLUS) + 3);
+	}
 
-    @NotNull
-    @Override
-    public ModuleModifierPlus copy() {
-        ModuleModifierPlus module = new ModuleModifierPlus();
-        module.deserializeNBT(serializeNBT());
-        return module;
-    }
+	@NotNull
+	@Override
+	public ModuleModifierPlus copy() {
+		ModuleModifierPlus module = new ModuleModifierPlus();
+		module.deserializeNBT(serializeNBT());
+		return module;
+	}
 }

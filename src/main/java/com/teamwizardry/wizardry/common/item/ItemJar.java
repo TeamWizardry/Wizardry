@@ -27,63 +27,63 @@ import java.awt.*;
  */
 public class ItemJar extends ItemWizardry implements IItemColorProvider {
 
-    public ItemJar() {
-        super("jar", "jar", "jar_fairy", "jar_jam");
-        setMaxStackSize(1);
-    }
+	public ItemJar() {
+		super("jar", "jar", "jar_fairy", "jar_jam");
+		setMaxStackSize(1);
+	}
 
-    @NotNull
-    @Override
-    public EnumAction getItemUseAction(ItemStack stack) {
-        if (stack.getItemDamage() == 2) return EnumAction.DRINK;
-        return EnumAction.NONE;
-    }
+	@NotNull
+	@Override
+	public EnumAction getItemUseAction(ItemStack stack) {
+		if (stack.getItemDamage() == 2) return EnumAction.DRINK;
+		return EnumAction.NONE;
+	}
 
-    @Override
-    public int getMaxItemUseDuration(ItemStack stack) {
-        return 32;
-    }
+	@Override
+	public int getMaxItemUseDuration(ItemStack stack) {
+		return 32;
+	}
 
-    @Override
-    public ItemStack onItemUseFinish(@NotNull ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
-        --stack.stackSize;
-        if (entityLiving instanceof EntityPlayer)
-            ((EntityPlayer) entityLiving).getFoodStats().addStats(4, 7f);
-        if (entityLiving instanceof EntityPlayer) {
-            EntityPlayer entityplayer = (EntityPlayer) entityLiving;
-            worldIn.playSound(null, entityplayer.posX, entityplayer.posY, entityplayer.posZ, SoundEvents.ENTITY_PLAYER_BURP, SoundCategory.PLAYERS, 0.5F, worldIn.rand.nextFloat() * 0.1F + 0.9F);
-            entityLiving.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 200, 2, false, false));
-        }
+	@Override
+	public ItemStack onItemUseFinish(@NotNull ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
+		--stack.stackSize;
+		if (entityLiving instanceof EntityPlayer)
+			((EntityPlayer) entityLiving).getFoodStats().addStats(4, 7f);
+		if (entityLiving instanceof EntityPlayer) {
+			EntityPlayer entityplayer = (EntityPlayer) entityLiving;
+			worldIn.playSound(null, entityplayer.posX, entityplayer.posY, entityplayer.posZ, SoundEvents.ENTITY_PLAYER_BURP, SoundCategory.PLAYERS, 0.5F, worldIn.rand.nextFloat() * 0.1F + 0.9F);
+			entityLiving.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 200, 2, false, false));
+		}
 
-        return stack;
-    }
+		return stack;
+	}
 
-    @NotNull
-    @Override
-    public ActionResult<ItemStack> onItemRightClick(@NotNull ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
-        if (itemStackIn.getItemDamage() == 2) {
-            playerIn.setActiveHand(hand);
-            return new ActionResult(EnumActionResult.SUCCESS, itemStackIn);
-        } else {
-            if (!worldIn.isRemote) {
-                if (playerIn.isSneaking() && (itemStackIn.getItemDamage() == 1)) {
-                    if (ItemNBTHelper.getBoolean(itemStackIn, Constants.NBT.FAIRY_INSIDE, false)) {
-                        ItemNBTHelper.setBoolean(itemStackIn, Constants.NBT.FAIRY_INSIDE, false);
-                        EntityFairy entity = new EntityFairy(worldIn, new Color(ItemNBTHelper.getInt(itemStackIn, Constants.NBT.FAIRY_COLOR, 0xFFFFFF)), ItemNBTHelper.getInt(itemStackIn, Constants.NBT.FAIRY_AGE, 0));
-                        entity.setPosition(playerIn.posX, playerIn.posY, playerIn.posZ);
-                        entity.setSad(true);
-                        worldIn.spawnEntity(entity);
-                        itemStackIn.setItemDamage(0);
-                    }
-                }
-            }
-            return new ActionResult(EnumActionResult.FAIL, itemStackIn);
-        }
-    }
+	@NotNull
+	@Override
+	public ActionResult<ItemStack> onItemRightClick(@NotNull ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
+		if (itemStackIn.getItemDamage() == 2) {
+			playerIn.setActiveHand(hand);
+			return new ActionResult(EnumActionResult.SUCCESS, itemStackIn);
+		} else {
+			if (!worldIn.isRemote) {
+				if (playerIn.isSneaking() && (itemStackIn.getItemDamage() == 1)) {
+					if (ItemNBTHelper.getBoolean(itemStackIn, Constants.NBT.FAIRY_INSIDE, false)) {
+						ItemNBTHelper.setBoolean(itemStackIn, Constants.NBT.FAIRY_INSIDE, false);
+						EntityFairy entity = new EntityFairy(worldIn, new Color(ItemNBTHelper.getInt(itemStackIn, Constants.NBT.FAIRY_COLOR, 0xFFFFFF)), ItemNBTHelper.getInt(itemStackIn, Constants.NBT.FAIRY_AGE, 0));
+						entity.setPosition(playerIn.posX, playerIn.posY, playerIn.posZ);
+						entity.setSad(true);
+						worldIn.spawnEntity(entity);
+						itemStackIn.setItemDamage(0);
+					}
+				}
+			}
+			return new ActionResult(EnumActionResult.FAIL, itemStackIn);
+		}
+	}
 
-    @Nullable
-    @Override
-    public Function2<ItemStack, Integer, Integer> getItemColorFunction() {
-        return (stack, tintIndex) -> ((tintIndex == 0) && (stack.getItemDamage() != 0)) ? ItemNBTHelper.getInt(stack, Constants.NBT.FAIRY_COLOR, 0xFFFFFF) : 0xFFFFFF;
-    }
+	@Nullable
+	@Override
+	public Function2<ItemStack, Integer, Integer> getItemColorFunction() {
+		return (stack, tintIndex) -> ((tintIndex == 0) && (stack.getItemDamage() != 0)) ? ItemNBTHelper.getInt(stack, Constants.NBT.FAIRY_COLOR, 0xFFFFFF) : 0xFFFFFF;
+	}
 }

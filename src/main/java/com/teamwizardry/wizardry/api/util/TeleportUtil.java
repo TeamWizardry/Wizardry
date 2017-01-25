@@ -16,10 +16,10 @@ public class TeleportUtil {
 
 	public static void teleportToDimension(EntityPlayer player, int dimension, double x, double y, double z) {
 		if (!(player instanceof EntityPlayerMP)) return;
-        int oldDimension = player.world.provider.getDimension();
-        EntityPlayerMP entityPlayerMP = (EntityPlayerMP) player;
-        MinecraftServer server = ((EntityPlayerMP) player).world.getMinecraftServer();
-        WorldServer worldServer = server.worldServerForDimension(dimension);
+		int oldDimension = player.world.provider.getDimension();
+		EntityPlayerMP entityPlayerMP = (EntityPlayerMP) player;
+		MinecraftServer server = ((EntityPlayerMP) player).world.getMinecraftServer();
+		WorldServer worldServer = server.worldServerForDimension(dimension);
 		player.addExperienceLevel(0);
 
 
@@ -28,8 +28,8 @@ public class TeleportUtil {
 		if (oldDimension == 1) {
 			// For some reason teleporting out of the end does weird things.
 			player.setPositionAndUpdate(x, y, z);
-            worldServer.spawnEntity(player);
-            worldServer.updateEntityWithOptionalForce(player, false);
+			worldServer.spawnEntity(player);
+			worldServer.updateEntityWithOptionalForce(player, false);
 		}
 	}
 
@@ -52,8 +52,8 @@ public class TeleportUtil {
 		}
 
 		@Override
-        public void placeInPortal(@NotNull Entity entity, float rotationYaw) {
-            worldServer.getBlockState(new BlockPos((int) x, (int) y, (int) z));
+		public void placeInPortal(@NotNull Entity entity, float rotationYaw) {
+			worldServer.getBlockState(new BlockPos((int) x, (int) y, (int) z));
 
 			entity.setPosition(x, y, z);
 			entity.motionX = 0.0f;

@@ -29,8 +29,8 @@ public class ModelHallowedSpirit extends ModelBiped {
 	}
 
 	@Override
-    public void render(@NotNull Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-        GlStateManager.disableBlend();
+	public void render(@NotNull Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+		GlStateManager.disableBlend();
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 0.9F);

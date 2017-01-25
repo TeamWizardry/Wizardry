@@ -13,26 +13,26 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
  */
 public class PacketParticleMagicDot extends PacketBase {
 
-    @Save
-    private Vec3d pos;
-    @Save
-    private float scale;
+	@Save
+	private Vec3d pos;
+	@Save
+	private float scale;
 
-    public PacketParticleMagicDot() {
-    }
+	public PacketParticleMagicDot() {
+	}
 
-    public PacketParticleMagicDot(Vec3d pos, float scale) {
-        this.pos = pos;
-        this.scale = scale;
-    }
+	public PacketParticleMagicDot(Vec3d pos, float scale) {
+		this.pos = pos;
+		this.scale = scale;
+	}
 
-    @Override
-    public void handle(MessageContext messageContext) {
-        if (messageContext.side.isServer()) return;
-        if (Minecraft.getMinecraft().player == null) return;
+	@Override
+	public void handle(MessageContext messageContext) {
+		if (messageContext.side.isServer()) return;
+		if (Minecraft.getMinecraft().player == null) return;
 
-        World world = Minecraft.getMinecraft().player.world;
+		World world = Minecraft.getMinecraft().player.world;
 
-        LibParticles.MAGIC_DOT(world, pos, scale);
-    }
+		LibParticles.MAGIC_DOT(world, pos, scale);
+	}
 }

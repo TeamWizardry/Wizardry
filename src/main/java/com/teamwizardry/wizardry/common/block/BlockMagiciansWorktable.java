@@ -40,10 +40,10 @@ public class BlockMagiciansWorktable extends BlockModContainer {
 		setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(ISLEFTSIDE, true));
 	}
 
-    @NotNull
-    @Override
-    public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
-        EnumFacing placerFacing = placer.getHorizontalFacing();
+	@NotNull
+	@Override
+	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+		EnumFacing placerFacing = placer.getHorizontalFacing();
 		EnumFacing offsetDir = placerFacing.rotateY();
 		BlockPos part2Pos = pos.offset(offsetDir);
 		Block block = worldIn.getBlockState(part2Pos).getBlock();
@@ -71,8 +71,8 @@ public class BlockMagiciansWorktable extends BlockModContainer {
 	}
 
 	@Override
-    public void breakBlock(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state) {
-        super.breakBlock(worldIn, pos, state);
+	public void breakBlock(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state) {
+		super.breakBlock(worldIn, pos, state);
 		worldIn.destroyBlock(getOtherTableBlock(state, pos), false);
 	}
 
@@ -86,15 +86,15 @@ public class BlockMagiciansWorktable extends BlockModContainer {
 		return true;
 	}
 
-    @NotNull
-    @Override
-    protected BlockStateContainer createBlockState() {
+	@NotNull
+	@Override
+	protected BlockStateContainer createBlockState() {
 		return new BlockStateContainer(this, FACING, ISLEFTSIDE);
 	}
 
-    @NotNull
-    @Override
-    public IBlockState getStateFromMeta(int meta) {
+	@NotNull
+	@Override
+	public IBlockState getStateFromMeta(int meta) {
 		return getDefaultState().withProperty(ISLEFTSIDE, (meta & 4) != 0).withProperty(FACING, EnumFacing.getHorizontal(meta & 3));
 	}
 

@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.api.spell;
 
 import com.teamwizardry.wizardry.common.module.effects.ModuleEffectBlink;
+import com.teamwizardry.wizardry.common.module.effects.ModuleEffectNullGrav;
 import com.teamwizardry.wizardry.common.module.events.ModuleEventAlongPath;
 import com.teamwizardry.wizardry.common.module.events.ModuleEventCast;
 import com.teamwizardry.wizardry.common.module.events.ModuleEventCollideBlock;
@@ -24,54 +25,55 @@ import java.util.Set;
  */
 public class ModuleRegistry {
 
-    public static ModuleRegistry INSTANCE = new ModuleRegistry();
+	public static ModuleRegistry INSTANCE = new ModuleRegistry();
 
-    public Set<Module> modules = new HashSet<>();
+	public Set<Module> modules = new HashSet<>();
 
-    private ModuleRegistry() {
-        registerModule(new ModuleEventCollideBlock());
-        registerModule(new ModuleEventCollideEntity());
-        registerModule(new ModuleEventAlongPath());
-        registerModule(new ModuleEventCast());
+	private ModuleRegistry() {
+		registerModule(new ModuleEventCollideBlock());
+		registerModule(new ModuleEventCollideEntity());
+		registerModule(new ModuleEventAlongPath());
+		registerModule(new ModuleEventCast());
 
-        registerModule(new ModuleShapeBeam());
-        registerModule(new ModuleShapeProjectile());
-        registerModule(new ModuleShapeSelf());
-        registerModule(new ModuleShapeTouch());
+		registerModule(new ModuleShapeBeam());
+		registerModule(new ModuleShapeProjectile());
+		registerModule(new ModuleShapeSelf());
+		registerModule(new ModuleShapeTouch());
 
-        registerModule(new ModuleModifierExtend());
-        registerModule(new ModuleModifierPlus());
+		registerModule(new ModuleModifierExtend());
+		registerModule(new ModuleModifierPlus());
 
-        registerModule(new ModuleEffectBlink());
-    }
+		registerModule(new ModuleEffectBlink());
+		registerModule(new ModuleEffectNullGrav());
+	}
 
-    public void registerModule(Module module) {
-        modules.add(module);
-    }
+	public void registerModule(Module module) {
+		modules.add(module);
+	}
 
-    @Nullable
-    public Module getModule(String id) {
-        for (Module module : modules) if (module.getID().equals(id)) return module.copy();
-        return null;
-    }
+	@Nullable
+	public Module getModule(String id) {
+		for (Module module : modules) if (module.getID().equals(id)) return module.copy();
+		return null;
+	}
 
-    @Nullable
-    public Module getModule(ItemStack itemStack) {
-        for (Module module : modules)
-            if (ItemStack.areItemStacksEqual(itemStack, module.getRequiredStack())) return module.copy();
-        return null;
-    }
+	@Nullable
+	public Module getModule(ItemStack itemStack) {
+		for (Module module : modules)
+			if (ItemStack.areItemStacksEqual(itemStack, module.getRequiredStack())) return module.copy();
+		return null;
+	}
 
-    @Nullable
-    public Module getModule(Item item) {
-        for (Module module : modules) if (item == module.getRequiredStack().getItem()) return module.copy();
-        return null;
-    }
+	@Nullable
+	public Module getModule(Item item) {
+		for (Module module : modules) if (item == module.getRequiredStack().getItem()) return module.copy();
+		return null;
+	}
 
-    @NotNull
-    public Set<Module> getModules(ModuleType type) {
-        Set<Module> modules = new HashSet<>();
-        for (Module module : this.modules) if (module.getModuleType() == type) modules.add(module.copy());
-        return modules;
-    }
+	@NotNull
+	public Set<Module> getModules(ModuleType type) {
+		Set<Module> modules = new HashSet<>();
+		for (Module module : this.modules) if (module.getModuleType() == type) modules.add(module.copy());
+		return modules;
+	}
 }

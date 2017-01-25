@@ -85,9 +85,9 @@ public class ChunkGeneratorUnderWorld implements IChunkGenerator {
 		}
 	}
 
-    @NotNull
-    @Override
-    public Chunk provideChunk(int x, int z) {
+	@NotNull
+	@Override
+	public Chunk provideChunk(int x, int z) {
 		ChunkPrimer chunkprimer = new ChunkPrimer();
 
 		generate(x, z, chunkprimer);
@@ -113,9 +113,9 @@ public class ChunkGeneratorUnderWorld implements IChunkGenerator {
 		return false;
 	}
 
-    @NotNull
-    @Override
-    public List<Biome.SpawnListEntry> getPossibleCreatures(EnumCreatureType creatureType, BlockPos pos) {
+	@NotNull
+	@Override
+	public List<Biome.SpawnListEntry> getPossibleCreatures(EnumCreatureType creatureType, BlockPos pos) {
 		return Collections.emptyList();
 	}
 

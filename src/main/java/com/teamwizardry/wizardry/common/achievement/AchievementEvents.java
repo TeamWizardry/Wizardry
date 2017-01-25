@@ -28,7 +28,7 @@ public class AchievementEvents {
 		if (ModAchievement.achievements.contains(event.getAchievement()) && !event.getEntityPlayer().hasAchievement(event.getAchievement())) {
 			Achievement parent = event.getAchievement().parentAchievement;
 			if ((parent == null) || event.getEntityPlayer().hasAchievement(parent))
-                event.getEntity().world.playSound(null, event.getEntity().posX, event.getEntity().posY, event.getEntity().posZ, ModSounds.BELL, SoundCategory.BLOCKS, 0.3F, 1F);
-        }
+				event.getEntity().world.playSound(null, event.getEntity().posX, event.getEntity().posY, event.getEntity().posZ, ModSounds.BELL, SoundCategory.BLOCKS, 0.3F, 1F);
+		}
 	}
 }

@@ -312,8 +312,8 @@ public class CapeHandler {
 		vb.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
 		tess.draw();
 
-        Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/capes/template.png"));
-        GlStateManager.enableTexture2D();
+		Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/capes/template.png"));
+		GlStateManager.enableTexture2D();
 
 		vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 

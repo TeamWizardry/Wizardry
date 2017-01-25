@@ -5,8 +5,8 @@ package com.teamwizardry.wizardry.api.spell;
  */
 public enum ModuleType {
 
-    BOOLEAN("boolean"), EFFECT("effect"), SHAPE("shape"), EVENT("event"), MODIFIER("modifier");
+	BOOLEAN("boolean"), EFFECT("effect"), SHAPE("shape"), EVENT("event"), MODIFIER("modifier");
 
-    ModuleType(String name) {
-    }
+	ModuleType(String name) {
+	}
 }

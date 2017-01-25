@@ -24,7 +24,7 @@ public class ItemRing extends ItemWizardry implements INacreColorable {
 
 	@Override
 	public boolean onEntityItemUpdate(EntityItem entityItem) {
-        if (!entityItem.world.isRemote) return false;
+		if (!entityItem.world.isRemote) return false;
 
 		colorableOnEntityItemUpdate(entityItem);
 

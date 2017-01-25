@@ -9,13 +9,13 @@ public class PointMass3D {
 	public float mass;
 	public boolean pin;
 
-    public PointMass3D(@Nullable Vec3d pos, float mass) {
-        prevPos = this.pos = pos;
+	public PointMass3D(@Nullable Vec3d pos, float mass) {
+		prevPos = this.pos = pos;
 		this.mass = mass;
 	}
 
 	public void applyForce(Vec3d force) {
-		pos = pos.add(force.scale(1.0/mass));
+		pos = pos.add(force.scale(1.0 / mass));
 	}
 
 	public void applyMotion(Vec3d motion) {

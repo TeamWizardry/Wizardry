@@ -31,10 +31,10 @@ public interface Explodable {
 
 		Random rand = new Random();
 		int range = 5;
-        List<EntityLivingBase> entitys = entityIn.world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(entityIn.posX - range, entityIn.posY - range, entityIn.posZ - range, entityIn.posX + range, entityIn.posY + range, entityIn.posZ + range));
-        for (EntityLivingBase e : entitys)
+		List<EntityLivingBase> entitys = entityIn.world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(entityIn.posX - range, entityIn.posY - range, entityIn.posZ - range, entityIn.posX + range, entityIn.posY + range, entityIn.posZ + range));
+		for (EntityLivingBase e : entitys)
 			e.addPotionEffect(new PotionEffect(Potion.getPotionById(potions.get(rand.nextInt(potions.size()))), rand.nextInt(30) * 20, rand.nextInt(2) + 1));
 
-        LibParticles.FIZZING_EXPLOSION(entityIn.world, entityIn.getPositionVector());
-    }
+		LibParticles.FIZZING_EXPLOSION(entityIn.world, entityIn.getPositionVector());
+	}
 }

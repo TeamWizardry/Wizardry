@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface ITargettable {
 
-    boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @Nullable Vec3d target);
+	boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @Nullable Vec3d target);
 
-    boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @Nullable Entity target);
+	boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @Nullable Entity target);
 }

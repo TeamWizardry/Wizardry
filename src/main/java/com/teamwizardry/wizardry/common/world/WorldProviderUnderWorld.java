@@ -16,14 +16,14 @@ import org.jetbrains.annotations.NotNull;
  */
 public class WorldProviderUnderWorld extends WorldProvider {
 
-    @NotNull
-    @Override
-    public IChunkGenerator createChunkGenerator() {
-        return new ChunkGeneratorUnderWorld(world);
-    }
+	@NotNull
+	@Override
+	public IChunkGenerator createChunkGenerator() {
+		return new ChunkGeneratorUnderWorld(world);
+	}
 
-    @NotNull
-    @Override
+	@NotNull
+	@Override
 	public DimensionType getDimensionType() {
 		return Wizardry.underWorld;
 	}
@@ -60,15 +60,15 @@ public class WorldProviderUnderWorld extends WorldProvider {
 		return true;
 	}
 
-    @NotNull
-    @Override
-    public Vec3d getSkyColor(@NotNull Entity cameraEntity, float partialTicks) {
-        return new Vec3d(0, 180, 50);
+	@NotNull
+	@Override
+	public Vec3d getSkyColor(@NotNull Entity cameraEntity, float partialTicks) {
+		return new Vec3d(0, 180, 50);
 	}
 
 
-    @NotNull
-    @Override
+	@NotNull
+	@Override
 	public String getSaveFolder() {
 		return "underworld";
 	}

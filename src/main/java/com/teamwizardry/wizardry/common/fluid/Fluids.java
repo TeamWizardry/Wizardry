@@ -27,8 +27,8 @@ public class Fluids {
 		ModelLoader.setCustomStateMapper(block, new StateMapperBase() {
 			@NotNull
 			@Override
-            protected ModelResourceLocation getModelResourceLocation(@NotNull IBlockState state) {
-                return resource;
+			protected ModelResourceLocation getModelResourceLocation(@NotNull IBlockState state) {
+				return resource;
 			}
 		});
 		FluidRegistry.addBucketForFluid(fluid);

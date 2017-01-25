@@ -24,9 +24,9 @@ public class RenderHallowedSpirit extends RenderLiving<EntityHallowedSpirit> {
 		return false;
 	}
 
-    @NotNull
-    @Override
-    protected ResourceLocation getEntityTexture(@NotNull EntityHallowedSpirit entity) {
-        return SPIRIT_TEX;
+	@NotNull
+	@Override
+	protected ResourceLocation getEntityTexture(@NotNull EntityHallowedSpirit entity) {
+		return SPIRIT_TEX;
 	}
 }
