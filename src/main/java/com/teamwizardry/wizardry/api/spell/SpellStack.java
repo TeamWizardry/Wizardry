@@ -20,7 +20,6 @@ import java.util.*;
  */
 public class SpellStack {
 
-    // TRY 2
     public static Set<Item> identifiers = new HashSet<>();
 
     static {
@@ -37,9 +36,6 @@ public class SpellStack {
         identifiers.add(Items.BONE);
     }
 
-    // TRY 1
-    @NotNull
-    public Deque<ItemStack> children = new ArrayDeque<>();
     public HashMap<Item, Module> fields = new HashMap<>();
     public ArrayList<Module> compiled = new ArrayList<>();
 
@@ -52,61 +48,49 @@ public class SpellStack {
         if (fieldLines.isEmpty()) return;
 
         for (List<ItemStack> fieldLine : fieldLines) {
-            if (!(identifiers.contains(fieldLine.get(0).getItem()))) continue;
+	        Deque<ItemStack> queue = new ArrayDeque<>(fieldLine);
 
-            Module head = ModuleRegistry.INSTANCE.getModule(fieldLine.get(1));
-            if (head == null) continue;
+	        ItemStack stack = queue.pollFirst();
+	        if (!(identifiers.contains(stack.getItem()))) continue;
+
+	        Module head = ModuleRegistry.INSTANCE.getModule(queue.pollFirst());
+	        if (head == null) continue;
             if (head instanceof IModifier) continue;
 
             List<ItemStack> modifiers = new ArrayList<>();
-            for (int i = 2; i < fieldLine.size() - 1; i++) {
-                Module modifier = ModuleRegistry.INSTANCE.getModule(fieldLine.get(i));
-                if (modifier instanceof IModifier)
+	        for (int i = 0; i < queue.size() - 1; i++) {
+		        Module modifier = ModuleRegistry.INSTANCE.getModule(queue.peekFirst());
+		        if (modifier instanceof IModifier)
                     modifiers.add(fieldLine.get(i));
             }
 
             head.processModifiers(modifiers);
 
-            fields.put(fieldLine.get(0).getItem(), head);
+	        fields.put(stack.getItem(), head);
         }
 
         List<List<ItemStack>> lines = brancher(branches.get(1), ModItems.DEVIL_DUST);
 
         // PROCESS CHILDREN OF LINE HEADS
-        prime:
         for (List<ItemStack> line : lines) {
-            ItemStack headStack = line.get(0);
-            if (!fields.containsKey(headStack.getItem())) continue;
 
-            Module head = fields.get(headStack.getItem());
-            if (head == null) continue;
-            if (head.getModuleType() != ModuleType.SHAPE) continue;
+	        Deque<ItemStack> queue = new ArrayDeque<>(line);
+	        Deque<Module> processedQueue = new ArrayDeque<>();
 
-            Deque<ItemStack> children = new ArrayDeque<>(line);
-            children.pollFirst();
-            if (children.isEmpty()) continue;
+	        for (int i = 0; i < queue.size() - 1; i++) {
+		        ItemStack firstStack = queue.pollFirst();
+		        if (firstStack != null && fields.containsKey(firstStack.getItem())) {
+			        Module firstModule = fields.get(firstStack.getItem());
 
-            for (ItemStack child : children) {
-                if (!fields.containsKey(child.getItem())) continue prime;
+			        ItemStack nextStack = queue.peekFirst();
+			        if (nextStack != null && fields.containsKey(nextStack.getItem()))
+				        firstModule.nextModule = fields.get(nextStack.getItem());
 
-                Module childModule = fields.get(child.getItem());
-                if (childModule == null) continue;
-                head.children.add(childModule);
-            }
+			        processedQueue.add(firstModule);
+		        }
+	        }
 
-            compiled.add(head);
-        }
-
-        // REPROCESS CHILDREN FOR ALL CHILDREN MODULES
-        for (Module head : compiled) {
-
-            Deque<Module> children = head.children;
-            ArrayList<Module> childrenList = new ArrayList<>(children);
-
-            for (int i = 0; i < childrenList.size() - 1; i++) {
-                Module module = children.pop();
-                module.children = children;
-            }
+	        compiled.add(processedQueue.peekFirst());
         }
     }
 
@@ -135,8 +119,7 @@ public class SpellStack {
             Module module = ModuleRegistry.INSTANCE.getModule(compound.getString("id"));
             if (module == null) continue;
             module.deserializeNBT(compound);
-            if (!module.children.isEmpty())
-                module.run(world, entityLiving);
+	        module.run(world, entityLiving);
         }
     }
 }

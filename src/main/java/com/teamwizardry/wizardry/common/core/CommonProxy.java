@@ -42,6 +42,8 @@ public class CommonProxy {
         WizardryPacketHandler.registerMessages();
         NetworkRegistry.INSTANCE.registerGuiHandler(Wizardry.instance, new GuiHandler());
 
+	    ModStructures.INSTANCE.getClass();
+
         Wizardry.underWorld = DimensionType.register("underworld", "_dim", Config.underworld_id, WorldProviderUnderWorld.class, false);
         DimensionManager.registerDimension(Config.underworld_id, Wizardry.underWorld);
 

@@ -30,7 +30,14 @@ public class Module implements INBTSerializable<NBTTagCompound> {
     /**
      * The branches under this module in the stream of stacks provided in the recipe.
      */
+    @Deprecated
     public Deque<Module> children = new ArrayDeque<>();
+
+	/**
+	 * The module that is to be ran from the run methods of the current module.
+	 */
+	@Nullable
+	public Module nextModule;
 
     public Module() {
     }

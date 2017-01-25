@@ -1,13 +1,15 @@
 package com.teamwizardry.wizardry.client.render;
 
+import com.teamwizardry.librarianlib.client.core.ClientTickHandler;
 import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpBezier3D;
+import com.teamwizardry.wizardry.api.render.ClusterObject;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
-import com.teamwizardry.wizardry.common.tile.TileCraftingPlate.ClusterObject;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -19,30 +21,42 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
 
 	@Override
 	public void renderTileEntityAt(TileCraftingPlate te, double x, double y, double z, float partialTicks, int destroyStage) {
+		/*if (Minecraft.getMinecraft().objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK) {
+			BlockPos pos = Minecraft.getMinecraft().objectMouseOver.getBlockPos();
+			GlStateManager.pushMatrix();
+			GlStateManager.translate(x, y, z);
+			GlStateManager.enableBlend();
+			GlStateManager.enableAlpha();
+			GlStateManager.disableCull();
+			GlStateManager.disableTexture2D();
+			Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+			Tessellator tessellator = Tessellator.getInstance();
+			VertexBuffer buffer = tessellator.getBuffer();
+			buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+			buffer.addVertexData(StructureRenderUtil.INSTANCE.render(ModStructures.INSTANCE.structures.get(te.structureName()), Color.CYAN, 1.0F));
+			tessellator.draw();
 
-		if (te.isCrafting && (te.output != null)) {
-			LibParticles.CRAFTING_ALTAR_HELIX(te.getWorld(), new Vec3d(te.getPos()).addVector(0.5, 0.25, 0.5));
-			if (!te.inventory.isEmpty())
-				for (ClusterObject cluster : te.inventory) {
-					if (((ThreadLocalRandom.current().nextInt(10)) != 0)) continue;
-					LibParticles.CRAFTING_ALTAR_CLUSTER_SUCTION(te.getWorld(), new Vec3d(te.getPos()).addVector(0.5, 0.5, 0.5), new InterpBezier3D(cluster.current, new Vec3d(0, 0, 0)));
-				}
-		}
-
-		if (!te.isCrafting && !te.inventory.isEmpty())
-			for (int i = 0; i < ThreadLocalRandom.current().nextInt(1, 10); i++) {
-				ClusterObject cluster = te.inventory.get(ThreadLocalRandom.current().nextInt(te.inventory.size()));
-				LibParticles.CLUSTER_DRAPE(te.getWorld(), new Vec3d(te.getPos()).addVector(0.5, 0.5, 0.5).add(cluster.current));
-			}
+			GlStateManager.popMatrix();
+		}*/
 
 		for (ClusterObject cluster : te.inventory) {
-			double timeDifference = (te.getWorld().getTotalWorldTime() - cluster.worldTime);
-			Vec3d current = cluster.trail.get((float) timeDifference / cluster.destTime);
+			double timeDifference = (te.getWorld().getTotalWorldTime() - cluster.worldTime + partialTicks) / cluster.destTime;
+			Vec3d current = cluster.origin.add(cluster.dest.subtract(cluster.origin).scale(MathHelper.sin((float) (timeDifference * Math.PI / 2))));
+
+			if (!te.isCrafting && ThreadLocalRandom.current().nextInt(20) == 0)
+				LibParticles.CLUSTER_DRAPE(te.getWorld(), new Vec3d(te.getPos()).addVector(0.5, 0.5, 0.5).add(current));
+
+			if (te.isCrafting && (te.output != null)) {
+				if (ThreadLocalRandom.current().nextInt(20) == 0)
+					LibParticles.CRAFTING_ALTAR_HELIX(te.getWorld(), new Vec3d(te.getPos()).addVector(0.5, 0.25, 0.5));
+				if (((ThreadLocalRandom.current().nextInt(10)) != 0)) continue;
+				LibParticles.CRAFTING_ALTAR_CLUSTER_SUCTION(te.getWorld(), new Vec3d(te.getPos()).addVector(0.5, 0.5, 0.5), new InterpBezier3D(current, new Vec3d(0, 0, 0)));
+			}
 
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(x + 0.5 + current.xCoord, y + 0.5 + current.yCoord, z + 0.5 + current.zCoord);
 			GlStateManager.scale(0.3, 0.3, 0.3);
-			GlStateManager.rotate((float) cluster.tick, 0, 1, 0);
+			GlStateManager.rotate((float) ClientTickHandler.getTicksInGame() + partialTicks, 0, 1, 0);
 			Minecraft.getMinecraft().getRenderItem().renderItem(cluster.stack, TransformType.NONE);
 			GlStateManager.popMatrix();
 		}

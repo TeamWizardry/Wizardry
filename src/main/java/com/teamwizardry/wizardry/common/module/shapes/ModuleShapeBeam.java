@@ -77,7 +77,7 @@ public class ModuleShapeBeam extends Module {
 
     @Override
     public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
-        Module nextModule = children.getFirst();
+	    if (nextModule == null) return false;
 
         if (nextModule.getModuleType() == ModuleType.EVENT
                 && nextModule instanceof ModuleEventCast) {
@@ -88,8 +88,8 @@ public class ModuleShapeBeam extends Module {
         if (caster != null) {
             IWizardryCapability cap = getCap(caster);
             if (cap != null)
-                trace = caster.rayTrace(50, ClientTickHandler.getPartialTicks());
-            //trace = caster.rayTrace(attributes.hasKey(Attributes.EXTEND) ? defaultRange + attributes.getDouble(Attributes.EXTEND) : defaultRange, ClientTickHandler.getPartialTicks());
+	            trace = caster.rayTrace(128, ClientTickHandler.getPartialTicks());
+	        //trace = caster.rayTrace(attributes.hasKey(Attributes.EXTEND) ? defaultRange + attributes.getDouble(Attributes.EXTEND) : defaultRange, ClientTickHandler.getPartialTicks());
         }
 
         if (trace == null) {
@@ -97,12 +97,13 @@ public class ModuleShapeBeam extends Module {
         } else {
             // TODO: eventAlongPath for trace here
 
-                if (trace.typeOfHit == RayTraceResult.Type.ENTITY) {
-                    if (nextModule instanceof ITargettable)
-                        ((ITargettable) nextModule).run(world, caster, trace.entityHit);
-                } else if (trace.typeOfHit == RayTraceResult.Type.BLOCK)
-                    if (nextModule instanceof ITargettable)
-                        ((ITargettable) nextModule).run(world, caster, trace.hitVec);
+	        if (nextModule.getModuleType() == ModuleType.EVENT)
+		        if (trace.typeOfHit == RayTraceResult.Type.ENTITY) {
+			        if (nextModule instanceof ITargettable)
+				        ((ITargettable) nextModule).run(world, caster, trace.entityHit);
+		        } else if (trace.typeOfHit == RayTraceResult.Type.BLOCK)
+			        if (nextModule instanceof ITargettable)
+				        ((ITargettable) nextModule).run(world, caster, trace.hitVec);
 
             return true;
         }
