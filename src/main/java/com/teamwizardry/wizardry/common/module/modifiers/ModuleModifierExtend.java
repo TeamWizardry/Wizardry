@@ -8,9 +8,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * Created by LordSaad.
  */
@@ -59,26 +56,10 @@ public class ModuleModifierExtend extends Module implements IModifier {
         return 0;
     }
 
-    @NotNull
-    @Override
-    public Set<Module> getCompatibleModifierModules() {
-        Set<Module> modules = new HashSet<>();
-        modules.add(new ModuleModifierPlus());
-        return modules;
-    }
-
     @Override
     public void apply(Module module) {
         int power = 2;
         if (attributes.hasKey(Attributes.PLUS)) power *= attributes.getDouble(Attributes.PLUS);
         module.attributes.setDouble(Attributes.EXTEND, power);
-    }
-
-    @NotNull
-    @Override
-    public Module copy() {
-        ModuleModifierExtend clone = new ModuleModifierExtend();
-        clone.children = children;
-        return clone;
     }
 }

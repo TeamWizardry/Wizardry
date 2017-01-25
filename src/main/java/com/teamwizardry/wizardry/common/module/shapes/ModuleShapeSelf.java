@@ -9,8 +9,6 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Set;
-
 /**
  * Created by LordSaad.
  */
@@ -49,22 +47,8 @@ public class ModuleShapeSelf extends Module {
         return "Will run the spell on the caster";
     }
 
-    @NotNull
-    @Override
-    public Set<Module> getCompatibleModifierModules() {
-        return super.getCompatibleModifierModules();
-    }
-
     @Override
     public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
         return super.run(world, caster);
-    }
-
-    @NotNull
-    @Override
-    public Module copy() {
-        ModuleShapeSelf clone = new ModuleShapeSelf();
-        clone.children = children;
-        return clone;
     }
 }

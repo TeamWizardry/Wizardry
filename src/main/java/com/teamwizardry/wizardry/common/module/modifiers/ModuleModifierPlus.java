@@ -60,12 +60,4 @@ public class ModuleModifierPlus extends Module implements IModifier {
     public void apply(Module module) {
         module.attributes.setInteger(Attributes.PLUS, 3);
     }
-
-    @NotNull
-    @Override
-    public Module copy() {
-        ModuleModifierExtend clone = new ModuleModifierExtend();
-        clone.children = children;
-        return clone;
-    }
 }

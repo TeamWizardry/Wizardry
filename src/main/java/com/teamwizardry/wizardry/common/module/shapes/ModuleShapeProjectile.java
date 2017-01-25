@@ -9,9 +9,6 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * Created by LordSaad.
  */
@@ -50,15 +47,6 @@ public class ModuleShapeProjectile extends Module {
         return "Will launch the spell as a projectile in the direction the caster is looking.";
     }
 
-    @NotNull
-    @Override
-    public Set<Module> getCompatibleModifierModules() {
-        Set<Module> modules = new HashSet<>();
-        // TODO
-        //modules.add()
-        return modules;
-    }
-
     @Override
     public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
         // TODO: Spawn Spell Entity
@@ -69,7 +57,6 @@ public class ModuleShapeProjectile extends Module {
     @Override
     public Module copy() {
         ModuleShapeProjectile clone = new ModuleShapeProjectile();
-        clone.children = children;
         return clone;
     }
 }

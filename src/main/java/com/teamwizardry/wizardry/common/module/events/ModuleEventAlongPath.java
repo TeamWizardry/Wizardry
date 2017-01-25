@@ -9,8 +9,6 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Set;
-
 /**
  * Created by LordSaad.
  */
@@ -49,22 +47,8 @@ public class ModuleEventAlongPath extends Module {
         return "Triggered throughout the journey of a spell, like a projectile shape whilst airborne or across an entire beam shape";
     }
 
-    @NotNull
-    @Override
-    public Set<Module> getCompatibleModifierModules() {
-        return super.getCompatibleModifierModules();
-    }
-
     @Override
     public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
         return super.run(world, caster);
-    }
-
-    @NotNull
-    @Override
-    public Module copy() {
-        ModuleEventAlongPath clone = new ModuleEventAlongPath();
-        clone.children = children;
-        return clone;
     }
 }

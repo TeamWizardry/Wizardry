@@ -12,8 +12,6 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Set;
-
 /**
  * Created by LordSaad.
  */
@@ -54,15 +52,8 @@ public class ModuleEventCollideEntity extends Module implements ITargettable {
 
     @NotNull
     @Override
-    public Set<Module> getCompatibleModifierModules() {
-        return super.getCompatibleModifierModules();
-    }
-
-    @NotNull
-    @Override
     public Module copy() {
         ModuleEventCollideEntity clone = new ModuleEventCollideEntity();
-        clone.children = children;
         return clone;
     }
 
@@ -73,8 +64,6 @@ public class ModuleEventCollideEntity extends Module implements ITargettable {
 
     @Override
     public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @Nullable Entity target) {
-        Module nextModule = children.getFirst();
-        nextModule.run(world, caster);
-        return nextModule instanceof ITargettable && ((ITargettable) nextModule).run(world, caster, target);
+        return nextModule != null && nextModule instanceof ITargettable && ((ITargettable) nextModule).run(world, caster, target);
     }
 }

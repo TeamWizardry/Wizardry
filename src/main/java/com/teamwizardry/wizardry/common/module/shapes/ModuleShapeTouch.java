@@ -9,8 +9,6 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Set;
-
 /**
  * Created by LordSaad.
  */
@@ -49,23 +47,9 @@ public class ModuleShapeTouch extends Module {
         return "Will run the spell on the block hit";
     }
 
-    @NotNull
-    @Override
-    public Set<Module> getCompatibleModifierModules() {
-        return super.getCompatibleModifierModules();
-    }
-
     @Override
     public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
 
         return false;
-    }
-
-    @NotNull
-    @Override
-    public Module copy() {
-        ModuleShapeTouch clone = new ModuleShapeTouch();
-        clone.children = children;
-        return clone;
     }
 }

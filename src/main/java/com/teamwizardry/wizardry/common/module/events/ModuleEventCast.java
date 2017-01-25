@@ -9,8 +9,6 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Set;
-
 /**
  * Created by LordSaad.
  */
@@ -50,22 +48,8 @@ public class ModuleEventCast extends Module {
     }
 
 
-    @NotNull
-    @Override
-    public Set<Module> getCompatibleModifierModules() {
-        return super.getCompatibleModifierModules();
-    }
-
     @Override
     public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
         return false;
-    }
-
-    @NotNull
-    @Override
-    public Module copy() {
-        ModuleEventCast clone = new ModuleEventCast();
-        clone.children = children;
-        return clone;
     }
 }

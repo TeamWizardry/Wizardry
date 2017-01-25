@@ -60,14 +60,6 @@ public class ModuleEffectBlink extends Module implements ITargettable {
         return 20;
     }
 
-    @NotNull
-    @Override
-    public Module copy() {
-        ModuleEffectBlink clone = new ModuleEffectBlink();
-        clone.children = children;
-        return clone;
-    }
-
     @Override
     public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @Nullable Vec3d target) {
         return caster != null && target != null && caster.attemptTeleport(target.xCoord, target.yCoord, target.zCoord);
