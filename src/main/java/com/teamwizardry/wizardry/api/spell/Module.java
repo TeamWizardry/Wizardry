@@ -133,6 +133,7 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	@Override
 	public NBTTagCompound serializeNBT() {
 		NBTTagCompound compound = new NBTTagCompound();
+		compound.setString("id", getID());
 		compound.setTag("attributes", attributes);
 		if (nextModule != null) compound.setTag("next_module", nextModule.serializeNBT());
 		return compound;
@@ -142,8 +143,8 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	public void deserializeNBT(NBTTagCompound nbt) {
 		attributes = nbt.getCompoundTag("attributes");
 		if (nbt.hasKey("next_module")) {
-			nextModule = new Module();
-			nextModule.deserializeNBT(nbt.getCompoundTag("next_module"));
+			nextModule = ModuleRegistry.INSTANCE.getModule(nbt.getCompoundTag("next_module").getString("id"));
+			if (nextModule != null) nextModule.deserializeNBT(nbt.getCompoundTag("next_module"));
 		}
 	}
 }

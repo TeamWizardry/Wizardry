@@ -69,4 +69,12 @@ public class ModuleEffectBlink extends Module implements ITargettable {
     public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @Nullable Entity target) {
         return caster != null && target != null && caster.attemptTeleport(target.posX, target.posY, target.posZ);
     }
+
+    @NotNull
+    @Override
+    public ModuleEffectBlink copy() {
+        ModuleEffectBlink module = new ModuleEffectBlink();
+        module.deserializeNBT(serializeNBT());
+        return module;
+    }
 }

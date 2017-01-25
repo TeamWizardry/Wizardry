@@ -59,7 +59,14 @@ public class ModuleModifierExtend extends Module implements IModifier {
     @Override
     public void apply(Module module) {
         int power = 2;
-        if (attributes.hasKey(Attributes.PLUS)) power *= attributes.getDouble(Attributes.PLUS);
-        module.attributes.setDouble(Attributes.EXTEND, power);
+        module.attributes.setDouble(Attributes.EXTEND, module.attributes.getDouble(Attributes.EXTEND) + power);
+    }
+
+    @NotNull
+    @Override
+    public ModuleModifierExtend copy() {
+        ModuleModifierExtend module = new ModuleModifierExtend();
+        module.deserializeNBT(serializeNBT());
+        return module;
     }
 }

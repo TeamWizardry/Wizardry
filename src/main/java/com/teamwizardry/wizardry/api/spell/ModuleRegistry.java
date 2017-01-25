@@ -51,7 +51,7 @@ public class ModuleRegistry {
 
     @Nullable
     public Module getModule(String id) {
-        for (Module module : modules) if (module.getID().equals(id)) return module;
+        for (Module module : modules) if (module.getID().equals(id)) return module.copy();
         return null;
     }
 

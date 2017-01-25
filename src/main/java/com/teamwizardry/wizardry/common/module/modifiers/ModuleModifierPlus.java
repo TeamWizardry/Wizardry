@@ -58,6 +58,14 @@ public class ModuleModifierPlus extends Module implements IModifier {
 
     @Override
     public void apply(Module module) {
-        module.attributes.setInteger(Attributes.PLUS, 3);
+        module.attributes.setInteger(Attributes.PLUS, module.attributes.getInteger(Attributes.PLUS) + 3);
+    }
+
+    @NotNull
+    @Override
+    public ModuleModifierPlus copy() {
+        ModuleModifierPlus module = new ModuleModifierPlus();
+        module.deserializeNBT(serializeNBT());
+        return module;
     }
 }

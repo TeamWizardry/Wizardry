@@ -64,4 +64,12 @@ public class ModuleEventCollideBlock extends Module implements ITargettable {
 	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @Nullable Entity target) {
 		return false;
 	}
+
+	@NotNull
+	@Override
+	public ModuleEventCollideBlock copy() {
+		ModuleEventCollideBlock module = new ModuleEventCollideBlock();
+		module.deserializeNBT(serializeNBT());
+		return module;
+	}
 }
