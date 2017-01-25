@@ -55,8 +55,9 @@ public class ModuleShapeProjectile extends Module {
 
     @NotNull
     @Override
-    public Module copy() {
-        ModuleShapeProjectile clone = new ModuleShapeProjectile();
-        return clone;
+    public ModuleShapeProjectile copy() {
+        ModuleShapeProjectile module = new ModuleShapeProjectile();
+        module.deserializeNBT(serializeNBT());
+        return module;
     }
 }

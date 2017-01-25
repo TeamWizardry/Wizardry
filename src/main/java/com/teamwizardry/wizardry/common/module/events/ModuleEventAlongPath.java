@@ -51,4 +51,12 @@ public class ModuleEventAlongPath extends Module {
     public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
         return super.run(world, caster);
     }
+
+	@NotNull
+	@Override
+	public ModuleEventAlongPath copy() {
+		ModuleEventAlongPath module = new ModuleEventAlongPath();
+		module.deserializeNBT(serializeNBT());
+		return module;
+	}
 }

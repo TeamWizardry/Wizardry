@@ -52,4 +52,12 @@ public class ModuleEventCast extends Module {
     public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
         return false;
     }
+
+    @NotNull
+    @Override
+    public ModuleEventCast copy() {
+        ModuleEventCast module = new ModuleEventCast();
+        module.deserializeNBT(serializeNBT());
+        return module;
+    }
 }
