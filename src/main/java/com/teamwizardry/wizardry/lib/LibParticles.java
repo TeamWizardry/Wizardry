@@ -387,20 +387,19 @@ public class LibParticles {
 	public static void SHAPE_BEAM(World world, Vec3d target, Vec3d origin, Vec3d reverseNormal, int distance, Color color) {
 		ParticleBuilder glitter = new ParticleBuilder(10);
 		glitter.setColor(new Color(1.0f, 1.0f, 1.0f, 0.1f));
-		glitter.setPositionFunction(new InterpHelix(Vec3d.ZERO, reverseNormal, 0.0f, 0.15f, 1.0F, 0));
+		glitter.setPositionFunction(new InterpHelix(Vec3d.ZERO, target.subtract(origin), 0.0f, 0.15f, 1.0F, 0));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 
-		float[] hsbVals = new float[3];
-		Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), hsbVals);
-		color = new Color(Color.HSBtoRGB((float) (1.0 / ThreadLocalRandom.current().nextInt(100, 255)), hsbVals[1], hsbVals[2]));
-		glitter.setColor(color);
+		glitter.setColor(new Color(
+				Math.min(255, color.getRed() + ThreadLocalRandom.current().nextInt(5, 20)),
+				Math.min(255, color.getGreen() + ThreadLocalRandom.current().nextInt(5, 20)),
+				Math.min(255, color.getBlue() + ThreadLocalRandom.current().nextInt(5, 20)),
+				color.getAlpha()));
 
-		ParticleSpawner.spawn(glitter, world, new InterpLine(target, origin), distance, 0, (aFloat, particleBuilder) -> {
+		ParticleSpawner.spawn(glitter, world, new InterpHelix(target, origin, 0.0f, 0.15f, 1.0f, 0), distance, 0, (aFloat, particleBuilder) -> {
 			glitter.setScale((float) ThreadLocalRandom.current().nextDouble(0.3, 0.8));
 			glitter.setLifetime(ThreadLocalRandom.current().nextInt(10, 20));
-			if (ThreadLocalRandom.current().nextBoolean())
-				glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE));
-			else glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
+			glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		});
 	}
 

@@ -48,6 +48,9 @@ minecraft {
 
 repositories {
     mavenCentral()
+    maven {
+        url "http://mvn.rx14.co.uk/shadowfacts/"
+    }
     maven { url "http://dvs1.progwml6.com/files/maven" }
     maven { url "http://mobiusstrip.eu/maven" }
     maven {
@@ -59,6 +62,7 @@ repositories {
 dependencies {
     deobfCompile "mezz.jei:jei_1.10.2:3.13.3.382:api"
     runtime "mezz.jei:jei_1.10.2:3.13.3.382"
+    compile "net.shadowfacts:Forgelin:1.2.0"
 
     //shade 'org.smurn:jply:0.2.0'
     // you may put jars on which you depend on in ./libs

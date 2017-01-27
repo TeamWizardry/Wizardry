@@ -33,7 +33,7 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
 			Tessellator tessellator = Tessellator.getInstance();
 			VertexBuffer buffer = tessellator.getBuffer();
 			buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-			buffer.addVertexData(StructureRenderUtil.INSTANCE.render(ModStructures.INSTANCE.structures.get(te.structureName()), Color.CYAN, 1.0F));
+			buffer.addVertexData(StructureRenderUtil.INSTANCE.runClient(ModStructures.INSTANCE.structures.get(te.structureName()), Color.CYAN, 1.0F));
 			tessellator.draw();
 
 			GlStateManager.popMatrix();

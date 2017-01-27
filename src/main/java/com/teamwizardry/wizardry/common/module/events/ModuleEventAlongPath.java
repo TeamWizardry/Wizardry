@@ -15,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 public class ModuleEventAlongPath extends Module {
 
     public ModuleEventAlongPath() {
+        process();
     }
 
     @NotNull
@@ -57,6 +58,7 @@ public class ModuleEventAlongPath extends Module {
 	public ModuleEventAlongPath copy() {
 		ModuleEventAlongPath module = new ModuleEventAlongPath();
 		module.deserializeNBT(serializeNBT());
-		return module;
-	}
+        module.process();
+        return module;
+    }
 }

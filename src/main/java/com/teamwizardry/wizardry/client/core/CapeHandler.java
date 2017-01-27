@@ -172,19 +172,19 @@ public class CapeHandler {
 //		rendererStack.add(renderer);
 //		Matrix4 matrix = new Matrix4(), inverse = new Matrix4();
 //
-//		for (ModelRenderer render : rendererStack) {
+//		for (ModelRenderer runClient : rendererStack) {
 //			matrix.translate(new Vec3d(
-//					render.offsetX,
-//					render.offsetY,
-//					render.offsetZ
+//					runClient.offsetX,
+//					runClient.offsetY,
+//					runClient.offsetZ
 //				));
-//			matrix.rotate(-render.rotateAngleX, new Vec3d(1, 0, 0));
-//			matrix.rotate(-render.rotateAngleY, new Vec3d(0, 1, 0));
-//			matrix.rotate(-render.rotateAngleZ, new Vec3d(0, 0, 1));
+//			matrix.rotate(-runClient.rotateAngleX, new Vec3d(1, 0, 0));
+//			matrix.rotate(-runClient.rotateAngleY, new Vec3d(0, 1, 0));
+//			matrix.rotate(-runClient.rotateAngleZ, new Vec3d(0, 0, 1));
 //			matrix.translate(new Vec3d(
-//					render.rotationPointX,
-//					render.rotationPointY,
-//					render.rotationPointZ
+//					runClient.rotationPointX,
+//					runClient.rotationPointY,
+//					runClient.rotationPointZ
 //				));
 //		}
 //
@@ -204,19 +204,19 @@ public class CapeHandler {
 //		inverse.rotate(rotate.yCoord, new Vec3d(0, 1, 0));
 //		inverse.rotate(rotate.zCoord, new Vec3d(0, 0, 1));
 //
-//		for (ModelRenderer render : Lists.reverse(rendererStack)) {
+//		for (ModelRenderer runClient : Lists.reverse(rendererStack)) {
 //			inverse.translate(new Vec3d(
-//					-(render.rotationPointX),
-//					-(render.rotationPointY),
-//					-(render.rotationPointZ)
+//					-(runClient.rotationPointX),
+//					-(runClient.rotationPointY),
+//					-(runClient.rotationPointZ)
 //				));
-//			inverse.rotate(render.rotateAngleZ, new Vec3d(0, 0, 1));
-//			inverse.rotate(render.rotateAngleY, new Vec3d(0, 1, 0));
-//			inverse.rotate(render.rotateAngleX, new Vec3d(1, 0, 0));
+//			inverse.rotate(runClient.rotateAngleZ, new Vec3d(0, 0, 1));
+//			inverse.rotate(runClient.rotateAngleY, new Vec3d(0, 1, 0));
+//			inverse.rotate(runClient.rotateAngleX, new Vec3d(1, 0, 0));
 //			inverse.translate(new Vec3d(
-//					-(render.offsetX),
-//					-(render.offsetY),
-//					-(render.offsetZ)
+//					-(runClient.offsetX),
+//					-(runClient.offsetY),
+//					-(runClient.offsetZ)
 //				));
 //		}
 //

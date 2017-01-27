@@ -2,16 +2,19 @@ package com.teamwizardry.wizardry.api.spell;
 
 import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
+import com.teamwizardry.wizardry.api.util.Utils;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.*;
 import java.util.List;
 
 /**
@@ -29,9 +32,16 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	 * The module that is to be ran from the run methods of the current module.
 	 */
 	@Nullable
-	public Module nextModule;
+	public Module nextModule = null;
+
+	public int finalManaCost = 10;
+
+	public int finalBurnoutCost = 10;
+
+	private Color color = null;
 
 	public Module() {
+		process();
 	}
 
 	/**
@@ -51,7 +61,7 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	 */
 	@NotNull
 	public ModuleType getModuleType() {
-		return ModuleType.SHAPE;
+		return ModuleType.EFFECT;
 	}
 
 	/**
@@ -109,6 +119,37 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	}
 
 	/**
+	 * This method runs client side when the spell runs. Spawn particles here.
+	 *
+	 * @param world  The world obj.
+	 * @param stack  The itemStack running th spell
+	 * @param caster The caster running the spell
+	 * @param pos    The position the spell runs at, in case the caster is null.
+	 */
+	public void runClient(@NotNull World world, @NotNull ItemStack stack, @Nullable EntityLivingBase caster, @NotNull Vec3d pos) {
+
+	}
+
+	/**
+	 * The color of this module. This color is used for particles and such.
+	 *
+	 * @return The current color.
+	 */
+	@Nullable
+	public Color getColor() {
+		return color;
+	}
+
+	/**
+	 * Set the color of this module. This color is used for particles and such.
+	 *
+	 * @param color The new color.
+	 */
+	public void setColor(Color color) {
+		this.color = color;
+	}
+
+	/**
 	 * Will apply modifiers to the head module given a stream of itemstacks representing the modifiers.
 	 *
 	 * @param modifiers The list of itemstacks representing a stream of modifiers to apply.
@@ -123,11 +164,55 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 		}
 	}
 
+	@Nullable
+	public Color processColor() {
+		Color color;
+		if (nextModule != null) {
+			Color childColor = nextModule.processColor();
+			if (childColor == null) {
+				color = getColor();
+			} else {
+				if (getColor() != null) color = Utils.mixColors(childColor, getColor());
+				else color = childColor;
+			}
+		} else color = getColor();
+		setColor(color);
+		return color;
+	}
+
+	public double processMana() {
+		double mana = getManaToConsume();
+		for (String key : attributes.getKeySet()) {
+			Module module = ModuleRegistry.INSTANCE.getModule(key);
+			if (module != null)
+				mana += module.getManaToConsume() * attributes.getDouble(key);
+		}
+		return mana + (nextModule != null ? nextModule.processMana() : 0);
+	}
+
+	public double processBurnout() {
+		double mana = getBurnoutToFill();
+		for (String key : attributes.getKeySet()) {
+			Module module = ModuleRegistry.INSTANCE.getModule(key);
+			if (module != null)
+				mana += module.getBurnoutToFill() * attributes.getDouble(key);
+		}
+		return mana + (nextModule != null ? nextModule.processBurnout() : 0);
+	}
+
+
 	@NotNull
 	public Module copy() {
-		Module module = new Module();
-		module.deserializeNBT(serializeNBT());
-		return module;
+		Module clone = new Module();
+		clone.deserializeNBT(serializeNBT());
+		clone.process();
+		return clone;
+	}
+
+	public void process() {
+		processBurnout();
+		processMana();
+		processColor();
 	}
 
 	@Override
@@ -146,5 +231,6 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 			nextModule = ModuleRegistry.INSTANCE.getModule(nbt.getCompoundTag("next_module").getString("id"));
 			if (nextModule != null) nextModule.deserializeNBT(nbt.getCompoundTag("next_module"));
 		}
+		processColor();
 	}
 }

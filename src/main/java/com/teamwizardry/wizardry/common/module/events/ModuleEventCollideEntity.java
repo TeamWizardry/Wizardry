@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 public class ModuleEventCollideEntity extends Module implements ITargettable {
 
 	public ModuleEventCollideEntity() {
+		process();
 	}
 
 	@NotNull
@@ -65,6 +66,7 @@ public class ModuleEventCollideEntity extends Module implements ITargettable {
 	public ModuleEventCollideEntity copy() {
 		ModuleEventCollideEntity module = new ModuleEventCollideEntity();
 		module.deserializeNBT(serializeNBT());
+		module.process();
 		return module;
 	}
 }

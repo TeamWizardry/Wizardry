@@ -20,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 public class ModuleShapeTouch extends Module {
 
 	public ModuleShapeTouch() {
+		process();
 	}
 
 	@NotNull
@@ -76,6 +77,7 @@ public class ModuleShapeTouch extends Module {
 	public ModuleShapeTouch copy() {
 		ModuleShapeTouch module = new ModuleShapeTouch();
 		module.deserializeNBT(serializeNBT());
+		module.process();
 		return module;
 	}
 }

@@ -56,6 +56,7 @@ public class CommonProxy {
         PacketHandler.register(PacketCapeOwnerTransfer.class, Side.SERVER);
         PacketHandler.register(PacketParticleMagicDot.class, Side.CLIENT);
         PacketHandler.register(PacketParticleAmbientFizz.class, Side.CLIENT);
+	    PacketHandler.register(PacketRenderSpell.class, Side.CLIENT);
     }
 
     public void init(FMLInitializationEvent event) {

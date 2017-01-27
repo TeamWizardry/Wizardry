@@ -11,12 +11,16 @@ import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.common.module.events.ModuleEventCast;
 import com.teamwizardry.wizardry.init.ModItems;
+import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.awt.*;
 
 /**
  * Created by LordSaad.
@@ -27,6 +31,7 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 	public static double defaultRange;
 
 	public ModuleShapeBeam() {
+		process();
 	}
 
 	@NotNull
@@ -102,11 +107,24 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 		}
 	}
 
+	@Override
+	public void runClient(@NotNull World world, @NotNull ItemStack stack, @Nullable EntityLivingBase caster, @NotNull Vec3d pos) {
+		if (caster == null) return;
+		double range = 10;
+		if (attributes.hasKey(Attributes.EXTEND)) range += attributes.getDouble(Attributes.EXTEND);
+		float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - caster.rotationYaw));
+		float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - caster.rotationYaw));
+		Vec3d vec = new Vec3d(offX, caster.getEyeHeight(), offZ).add(caster.getPositionVector());
+
+		LibParticles.SHAPE_BEAM(world, caster.getPositionVector().add(caster.getLook(0).scale(range)), vec, caster.getLook(1.0F).scale(-1.0), (int) range, getColor() == null ? Color.WHITE : getColor());
+	}
+
 	@NotNull
 	@Override
 	public ModuleShapeBeam copy() {
 		ModuleShapeBeam module = new ModuleShapeBeam();
 		module.deserializeNBT(serializeNBT());
+		module.process();
 		return module;
 	}
 }

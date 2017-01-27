@@ -66,6 +66,7 @@ public class ModuleModifierPlus extends Module implements IModifier {
 	public ModuleModifierPlus copy() {
 		ModuleModifierPlus module = new ModuleModifierPlus();
 		module.deserializeNBT(serializeNBT());
+		module.process();
 		return module;
 	}
 }

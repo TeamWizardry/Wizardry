@@ -12,12 +12,15 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.*;
+
 /**
  * Created by LordSaad.
  */
 public class ModuleEffectBlink extends Module implements ITargettable {
 
     public ModuleEffectBlink() {
+	    process();
     }
 
     @NotNull
@@ -26,8 +29,13 @@ public class ModuleEffectBlink extends Module implements ITargettable {
         return new ItemStack(Items.CHORUS_FRUIT_POPPED);
     }
 
-    @NotNull
-    @Override
+	@Override
+	public Color getColor() {
+		return Color.MAGENTA;
+	}
+
+	@NotNull
+	@Override
     public ModuleType getModuleType() {
         return ModuleType.EFFECT;
     }
@@ -75,6 +83,7 @@ public class ModuleEffectBlink extends Module implements ITargettable {
     public ModuleEffectBlink copy() {
         ModuleEffectBlink module = new ModuleEffectBlink();
         module.deserializeNBT(serializeNBT());
-        return module;
+	    module.process();
+	    return module;
     }
 }
