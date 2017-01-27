@@ -99,18 +99,23 @@ public class SpellStack {
 		return branches;
 	}
 
-	public static void runModules(ItemStack spellHolder, World world, @Nullable EntityLivingBase entityLiving) {
-		if ((spellHolder == null) || (world == null)) return;
+	public static void runModules(@NotNull ItemStack spellHolder, @NotNull World world, @Nullable EntityLivingBase entityLiving) {
+		for (Module module : getModules(spellHolder)) module.run(world, entityLiving);
+	}
+
+	public static Set<Module> getModules(@NotNull ItemStack spellHolder) {
+		Set<Module> modules = new HashSet<>();
 
 		NBTTagList list = ItemNBTHelper.getList(spellHolder, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND, false);
-		if (list == null) return;
+		if (list == null) return modules;
 
 		for (int i = 0; i < list.tagCount(); i++) {
 			NBTTagCompound compound = list.getCompoundTagAt(i);
 			Module module = ModuleRegistry.INSTANCE.getModule(compound.getString("id"));
 			if (module == null) continue;
 			module.deserializeNBT(compound);
-			module.run(world, entityLiving);
+			modules.add(module);
 		}
+		return modules;
 	}
 }

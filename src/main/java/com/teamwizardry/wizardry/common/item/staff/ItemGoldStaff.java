@@ -5,6 +5,8 @@ import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.item.INacreColorable;
+import com.teamwizardry.wizardry.api.spell.IContinousSpell;
+import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.SpellStack;
 import com.teamwizardry.wizardry.common.item.ItemWizardry;
 import net.minecraft.client.Minecraft;
@@ -17,7 +19,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -38,25 +42,33 @@ public class ItemGoldStaff extends ItemWizardry implements INacreColorable {
 	@Override
 	public void onPlayerStoppedUsing(ItemStack stack, World world, EntityLivingBase entityLiving, int timeLeft) {
 		if ((stack == null) || (world == null) || (entityLiving == null)) return;
-
 		SpellStack.runModules(stack, world, entityLiving);
 	}
 
 	@NotNull
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(@NotNull ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
-		if (world.isRemote && (Minecraft.getMinecraft().currentScreen != null)) {
-			return new ActionResult<>(EnumActionResult.FAIL, stack);
-		} else {
-			player.setActiveHand(hand);
+		if (getItemUseAction(stack) == EnumAction.NONE) {
+			SpellStack.runModules(stack, world, player);
+			player.swingArm(EnumHand.MAIN_HAND);
+			player.getCooldownTracker().setCooldown(this, 10);
 			return new ActionResult<>(EnumActionResult.PASS, stack);
+		} else {
+			if (world.isRemote && (Minecraft.getMinecraft().currentScreen != null)) {
+				return new ActionResult<>(EnumActionResult.FAIL, stack);
+			} else {
+				player.setActiveHand(hand);
+				return new ActionResult<>(EnumActionResult.PASS, stack);
+			}
 		}
 	}
 
 	@NotNull
 	@Override
 	public EnumAction getItemUseAction(ItemStack stack) {
-		return EnumAction.BOW;
+		for (Module module : SpellStack.getModules(stack))
+			if (module instanceof IContinousSpell) return EnumAction.BOW;
+		return EnumAction.NONE;
 	}
 
 	@Override
@@ -64,12 +76,18 @@ public class ItemGoldStaff extends ItemWizardry implements INacreColorable {
 		return 72000;
 	}
 
+	@NotNull
+	@Override
+	public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
+		return EnumActionResult.PASS;
+	}
+
 	@Override
 	public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
 		if ((count > 0) && (count < (getMaxItemUseDuration(stack) - 20)) && (player instanceof EntityPlayer)) {
 			SpellStack.runModules(stack, ((EntityPlayer) player).world, player);
-
 		}
+
 		// TODO: PARTICLES
 //        int betterCount = Math.abs(count - 72000);
 //        Circle3D circle = new Circle3D(player.getPositionVector(), player.width + 0.3, 5);
