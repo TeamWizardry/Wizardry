@@ -52,7 +52,9 @@ public class TileManaBatteryRenderer extends TileEntitySpecialRenderer<TileManaB
 			if (pedestals.contains(oppPos)) continue;
 			IBlockState oppBlock = world.getBlockState(oppPos);
 			if (oppBlock.getBlock() != ModBlocks.PEDESTAL) {
-				LibParticles.MAGIC_DOT(world, new Vec3d(oppPos).addVector(0.5, 0.5, 0.5), (float) ThreadLocalRandom.current().nextDouble(1, 4));
+				poses.remove(oppPos);
+				if (ThreadLocalRandom.current().nextInt(10) == 0)
+					LibParticles.MAGIC_DOT(world, new Vec3d(oppPos).addVector(0.5, 0.5, 0.5), (float) ThreadLocalRandom.current().nextDouble(1, 4));
 				continue;
 			}
 			TilePedestal oppPed = (TilePedestal) world.getTileEntity(oppPos);
@@ -64,9 +66,11 @@ public class TileManaBatteryRenderer extends TileEntitySpecialRenderer<TileManaB
 		}
 
 		for (BlockPos pedPos : poses)
-			LibParticles.MAGIC_DOT(world, new Vec3d(pedPos).addVector(0.5, 0.5, 0.5), -1);
+			if (ThreadLocalRandom.current().nextInt(5) == 0)
+				LibParticles.MAGIC_DOT(world, new Vec3d(pedPos).addVector(0.5, 0.5, 0.5), -1);
 
 		for (BlockPos pedPos : pedestals)
-			LibParticles.COLORFUL_BATTERY_BEZIER(world, pedPos, pos);
+			if (ThreadLocalRandom.current().nextBoolean())
+				LibParticles.COLORFUL_BATTERY_BEZIER(world, pedPos, pos);
 	}
 }
