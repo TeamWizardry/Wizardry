@@ -31,7 +31,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class ModuleEffectNullGrav extends Module implements ITargettable {
 
 	public ModuleEffectNullGrav() {
-		process();
+		process(this);
 	}
 
 	@NotNull
@@ -66,7 +66,7 @@ public class ModuleEffectNullGrav extends Module implements ITargettable {
 
 	@Override
 	public double getManaToConsume() {
-		return 500;
+		return 100;
 	}
 
 	@Override
@@ -104,9 +104,14 @@ public class ModuleEffectNullGrav extends Module implements ITargettable {
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(5, 10), ThreadLocalRandom.current().nextInt(0, 30), (aFloat, particleBuilder) -> {
 			glitter.setScale((float) ThreadLocalRandom.current().nextDouble(0.3, 0.8));
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-			glitter.setPositionFunction(new InterpHelix(
-					Vec3d.ZERO,
-					new Vec3d(0, caster == null ? 2 : caster.height + 1, 0),
+			if (ThreadLocalRandom.current().nextBoolean())
+				glitter.setPositionFunction(new InterpHelix(
+						new Vec3d(0, caster == null ? 1 / 2 : caster.height / 2, 0),
+						new Vec3d(0, caster == null ? -1 : -caster.height, 0),
+						1f, 0f, 1f, ThreadLocalRandom.current().nextFloat()));
+			else glitter.setPositionFunction(new InterpHelix(
+					new Vec3d(0, caster == null ? 1 / 2 : caster.height / 2, 0),
+					new Vec3d(0, caster == null ? 1.5 : caster.height + 0.5, 0),
 					1f, 0f, 1f, ThreadLocalRandom.current().nextFloat()));
 		});
 	}
@@ -116,7 +121,7 @@ public class ModuleEffectNullGrav extends Module implements ITargettable {
 	public ModuleEffectNullGrav copy() {
 		ModuleEffectNullGrav module = new ModuleEffectNullGrav();
 		module.deserializeNBT(serializeNBT());
-		module.process();
+		process(module);
 		return module;
 	}
 }

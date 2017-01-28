@@ -34,14 +34,55 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	@Nullable
 	public Module nextModule = null;
 
-	public int finalManaCost = 10;
-
-	public int finalBurnoutCost = 10;
+	public double finalManaCost = 10;
+	public double finalBurnoutCost = 10;
 
 	private Color color = null;
 
 	public Module() {
-		process();
+		process(this);
+	}
+
+	@Nullable
+	public static Color processColor(Module module) {
+		Color color;
+		if (module.nextModule != null) {
+			Color childColor = processColor(module.nextModule);
+			if (childColor == null) {
+				color = module.getColor();
+			} else {
+				if (module.getColor() != null) color = Utils.mixColors(childColor, module.getColor());
+				else color = childColor;
+			}
+		} else color = module.getColor();
+		module.setColor(color);
+		return color;
+	}
+
+	public static double processMana(Module module) {
+		double mana = module.getManaToConsume();
+		for (String key : module.attributes.getKeySet()) {
+			Module modifier = ModuleRegistry.INSTANCE.getModule(key);
+			if (modifier != null)
+				mana += modifier.getManaToConsume() * module.attributes.getDouble(key);
+		}
+		return module.finalManaCost = mana + (module.nextModule != null ? processMana(module.nextModule) : 0);
+	}
+
+	public static double processBurnout(Module module) {
+		double burnout = module.getBurnoutToFill();
+		for (String key : module.attributes.getKeySet()) {
+			Module modifier = ModuleRegistry.INSTANCE.getModule(key);
+			if (modifier != null)
+				burnout += modifier.getBurnoutToFill() * module.attributes.getDouble(key);
+		}
+		return module.finalBurnoutCost = burnout + (module.nextModule != null ? processBurnout(module.nextModule) : 0);
+	}
+
+	public static void process(Module module) {
+		processBurnout(module);
+		processMana(module);
+		processColor(module);
 	}
 
 	/**
@@ -164,55 +205,12 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 		}
 	}
 
-	@Nullable
-	public Color processColor() {
-		Color color;
-		if (nextModule != null) {
-			Color childColor = nextModule.processColor();
-			if (childColor == null) {
-				color = getColor();
-			} else {
-				if (getColor() != null) color = Utils.mixColors(childColor, getColor());
-				else color = childColor;
-			}
-		} else color = getColor();
-		setColor(color);
-		return color;
-	}
-
-	public double processMana() {
-		double mana = getManaToConsume();
-		for (String key : attributes.getKeySet()) {
-			Module module = ModuleRegistry.INSTANCE.getModule(key);
-			if (module != null)
-				mana += module.getManaToConsume() * attributes.getDouble(key);
-		}
-		return mana + (nextModule != null ? nextModule.processMana() : 0);
-	}
-
-	public double processBurnout() {
-		double mana = getBurnoutToFill();
-		for (String key : attributes.getKeySet()) {
-			Module module = ModuleRegistry.INSTANCE.getModule(key);
-			if (module != null)
-				mana += module.getBurnoutToFill() * attributes.getDouble(key);
-		}
-		return mana + (nextModule != null ? nextModule.processBurnout() : 0);
-	}
-
-
 	@NotNull
 	public Module copy() {
 		Module clone = new Module();
 		clone.deserializeNBT(serializeNBT());
-		clone.process();
+		process(clone);
 		return clone;
-	}
-
-	public void process() {
-		processBurnout();
-		processMana();
-		processColor();
 	}
 
 	@Override
@@ -231,6 +229,5 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 			nextModule = ModuleRegistry.INSTANCE.getModule(nbt.getCompoundTag("next_module").getString("id"));
 			if (nextModule != null) nextModule.deserializeNBT(nbt.getCompoundTag("next_module"));
 		}
-		processColor();
 	}
 }

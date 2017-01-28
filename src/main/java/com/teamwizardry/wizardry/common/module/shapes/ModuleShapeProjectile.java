@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 public class ModuleShapeProjectile extends Module {
 
     public ModuleShapeProjectile() {
-        process();
+        process(this);
     }
 
     @NotNull
@@ -59,7 +59,7 @@ public class ModuleShapeProjectile extends Module {
     public ModuleShapeProjectile copy() {
         ModuleShapeProjectile module = new ModuleShapeProjectile();
         module.deserializeNBT(serializeNBT());
-        module.process();
+        process(module);
         return module;
     }
 }

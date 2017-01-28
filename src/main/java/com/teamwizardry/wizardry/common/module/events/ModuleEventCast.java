@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 public class ModuleEventCast extends Module {
 
     public ModuleEventCast() {
-        process();
+        process(this);
     }
 
     @NotNull
@@ -59,7 +59,7 @@ public class ModuleEventCast extends Module {
     public ModuleEventCast copy() {
         ModuleEventCast module = new ModuleEventCast();
         module.deserializeNBT(serializeNBT());
-        module.process();
+        process(module);
         return module;
     }
 }

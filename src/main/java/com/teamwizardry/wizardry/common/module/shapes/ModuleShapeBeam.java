@@ -31,7 +31,7 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 	public static double defaultRange;
 
 	public ModuleShapeBeam() {
-		process();
+		process(this);
 	}
 
 	@NotNull
@@ -116,7 +116,14 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 		float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - caster.rotationYaw));
 		Vec3d vec = new Vec3d(offX, caster.getEyeHeight(), offZ).add(caster.getPositionVector());
 
-		LibParticles.SHAPE_BEAM(world, caster.getPositionVector().add(caster.getLook(0).scale(range)), vec, caster.getLook(1.0F).scale(-1.0), (int) range, getColor() == null ? Color.WHITE : getColor());
+		RayTraceResult trace = caster.rayTrace(range, ClientTickHandler.getPartialTicks());
+
+		LibParticles.SHAPE_BEAM(world,
+				trace == null ? caster.getPositionVector().add(caster.getLook(0).scale(range)) : trace.hitVec,
+				vec,
+				caster.getLook(1.0F).scale(-1.0),
+				(int) range,
+				getColor() == null ? Color.WHITE : getColor());
 	}
 
 	@NotNull
@@ -124,7 +131,7 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 	public ModuleShapeBeam copy() {
 		ModuleShapeBeam module = new ModuleShapeBeam();
 		module.deserializeNBT(serializeNBT());
-		module.process();
+		process(module);
 		return module;
 	}
 }

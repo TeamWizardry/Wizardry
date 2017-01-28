@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 public class ModuleModifierPlus extends Module implements IModifier {
 
 	public ModuleModifierPlus() {
+		process(this);
 	}
 
 	@NotNull
@@ -66,7 +67,7 @@ public class ModuleModifierPlus extends Module implements IModifier {
 	public ModuleModifierPlus copy() {
 		ModuleModifierPlus module = new ModuleModifierPlus();
 		module.deserializeNBT(serializeNBT());
-		module.process();
+		process(module);
 		return module;
 	}
 }

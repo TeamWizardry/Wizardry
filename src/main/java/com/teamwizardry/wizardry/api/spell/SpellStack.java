@@ -106,7 +106,6 @@ public class SpellStack {
 	public static void runModules(@NotNull ItemStack spellHolder, @NotNull World world, @Nullable EntityLivingBase caster, Vec3d pos) {
 		for (Module module : getModules(spellHolder)) {
 			module.run(world, caster);
-			System.out.println(module.getReadableName() + " --> " + module.getManaToConsume());
 			PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(spellHolder, caster == null ? -1 : caster.getEntityId(), pos),
 					new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.xCoord, pos.yCoord, pos.zCoord, 60));
 		}
@@ -134,6 +133,7 @@ public class SpellStack {
 			Module module = ModuleRegistry.INSTANCE.getModule(compound.getString("id"));
 			if (module == null) continue;
 			module.deserializeNBT(compound);
+			Module.process(module);
 			modules.add(module);
 		}
 		return modules;

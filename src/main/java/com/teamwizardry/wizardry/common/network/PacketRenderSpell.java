@@ -48,8 +48,8 @@ public class PacketRenderSpell extends PacketBase {
 			if (module != null) {
 				Module tempModule = module;
 				while (tempModule != null) {
+					tempModule.runClient(world, stack, caster, pos);
 					tempModule = tempModule.nextModule;
-					if (tempModule != null) tempModule.runClient(world, stack, caster, pos);
 				}
 			}
 		}

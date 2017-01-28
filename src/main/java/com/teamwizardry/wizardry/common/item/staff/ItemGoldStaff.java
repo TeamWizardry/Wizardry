@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.common.item.staff;
 import com.teamwizardry.wizardry.api.item.INacreColorable;
 import com.teamwizardry.wizardry.api.spell.IContinousSpell;
 import com.teamwizardry.wizardry.api.spell.Module;
+import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.SpellStack;
 import com.teamwizardry.wizardry.common.item.ItemWizardry;
 import net.minecraft.client.Minecraft;
@@ -18,6 +19,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -102,12 +105,42 @@ public class ItemGoldStaff extends ItemWizardry implements INacreColorable {
 		return super.onEntityItemUpdate(entityItem);
 	}
 
+	@NotNull
+	@Override
+	public String getItemStackDisplayName(@NotNull ItemStack stack) {
+		String finalName = null;
+		Set<Module> modules = SpellStack.getModules(stack);
+		for (Module module : modules) {
+			if (module != null) {
+				Module tempModule = module;
+				while (tempModule != null) {
+					if (tempModule.getModuleType() == ModuleType.EFFECT)
+						if (finalName == null) finalName = tempModule.getReadableName();
+						else finalName += " & " + tempModule.getReadableName();
+					tempModule = tempModule.nextModule;
+				}
+			}
+		}
+		if (finalName == null)
+			return ("" + I18n.translateToLocal(this.getUnlocalizedNameInefficiently(stack) + ".name")).trim();
+		else return finalName;
+	}
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
 		Set<Module> modules = SpellStack.getModules(stack);
 		for (Module module : modules) {
-			// TODO
+			if (module != null) {
+				tooltip.add("Final " + TextFormatting.BLUE + "Mana" + TextFormatting.GRAY + "/" + TextFormatting.RED + "Burnout" + TextFormatting.GRAY + " Cost: " + TextFormatting.BLUE + module.finalManaCost + TextFormatting.GRAY + "/" + TextFormatting.RED + module.finalBurnoutCost);
+				Module tempModule = module;
+				int i = 0;
+				while (tempModule != null) {
+					tooltip.add(new String(new char[i]).replace("\0", "-") + "> " + TextFormatting.BLUE + tempModule.getManaToConsume() + TextFormatting.GRAY + "/" + TextFormatting.RED + tempModule.getBurnoutToFill() + TextFormatting.GRAY + " - " + tempModule.getReadableName());
+					tempModule = tempModule.nextModule;
+					i++;
+				}
+			}
 		}
 	}
 }

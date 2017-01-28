@@ -20,7 +20,7 @@ import java.awt.*;
 public class ModuleEffectBlink extends Module implements ITargettable {
 
     public ModuleEffectBlink() {
-	    process();
+	    process(this);
     }
 
     @NotNull
@@ -83,7 +83,7 @@ public class ModuleEffectBlink extends Module implements ITargettable {
     public ModuleEffectBlink copy() {
         ModuleEffectBlink module = new ModuleEffectBlink();
         module.deserializeNBT(serializeNBT());
-	    module.process();
+	    process(module);
 	    return module;
     }
 }
