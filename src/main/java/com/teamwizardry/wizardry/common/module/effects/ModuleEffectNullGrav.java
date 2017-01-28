@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
+import com.teamwizardry.wizardry.api.Attributes;
 import com.teamwizardry.wizardry.api.spell.ITargettable;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
@@ -60,12 +61,12 @@ public class ModuleEffectNullGrav extends Module implements ITargettable {
 
 	@Override
 	public double getManaToConsume() {
-		return 100;
+		return 1000;
 	}
 
 	@Override
 	public double getBurnoutToFill() {
-		return 200;
+		return 500;
 	}
 
 	@Nullable
@@ -82,7 +83,12 @@ public class ModuleEffectNullGrav extends Module implements ITargettable {
 	@Override
 	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @Nullable Entity target) {
 		if (target != null && target instanceof EntityLivingBase) {
-			((EntityLivingBase) target).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 3, false, false));
+			double length = 30;
+			if (attributes.hasKey(Attributes.EXTEND))
+				length *= Math.min(10, attributes.getDouble(Attributes.EXTEND) * 10);
+			if (caster != null && getCap(caster) != null)
+				length *= calcBurnoutPercent(getCap(caster));
+			((EntityLivingBase) target).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, (int) length, 3, false, false));
 			return true;
 		}
 		return false;

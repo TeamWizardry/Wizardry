@@ -63,12 +63,12 @@ public class ModuleEffectBlink extends Module implements ITargettable {
 
     @Override
     public double getManaToConsume() {
-        return 50;
+	    return 300;
     }
 
     @Override
     public double getBurnoutToFill() {
-        return 20;
+	    return 200;
     }
 
     @Override

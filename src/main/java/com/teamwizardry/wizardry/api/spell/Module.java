@@ -77,9 +77,7 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	public static double processMana(Module module) {
 		double mana = module.getManaToConsume();
 		for (String key : module.attributes.getKeySet()) {
-			Module modifier = ModuleRegistry.INSTANCE.getModule(key);
-			if (modifier != null)
-				mana += modifier.getManaToConsume() * module.attributes.getDouble(key);
+			module.attributes.getDouble(key);
 		}
 		return module.finalManaCost = mana + (module.nextModule != null ? processMana(module.nextModule) : 0);
 	}
@@ -248,6 +246,11 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 
 			((IModifier) modifier).apply(this);
 		}
+	}
+
+	public double calcBurnoutPercent(IWizardryCapability cap) {
+		return ((cap.getMaxBurnout() - cap.getBurnout()) / cap.getMaxBurnout());
+
 	}
 
 	@NotNull

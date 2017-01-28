@@ -58,7 +58,7 @@ public class ModuleEffectLeap extends Module implements ITargettable {
 
 	@Override
 	public double getManaToConsume() {
-		return 50;
+		return 100;
 	}
 
 	@Override
@@ -88,10 +88,12 @@ public class ModuleEffectLeap extends Module implements ITargettable {
 			double strength = 0.5;
 			if (attributes.hasKey(Attributes.EXTEND))
 				strength += Math.min(64.0 / 100.0, attributes.getDouble(Attributes.EXTEND) / 100.0);
-
+			if (caster != null && getCap(caster) != null)
+				strength *= calcBurnoutPercent(getCap(caster));
 			target.motionX = target.isCollidedVertically ? target.getLookVec().xCoord : target.getLookVec().xCoord / 2;
 			target.motionY = target.isCollidedVertically ? strength : strength / 3;
 			target.motionZ = target.isCollidedVertically ? target.getLookVec().zCoord : target.getLookVec().zCoord / 2;
+			target.fallDistance = 0;
 			return true;
 		}
 		return false;

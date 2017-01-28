@@ -3,9 +3,12 @@ package com.teamwizardry.wizardry.api.spell;
 import com.teamwizardry.librarianlib.common.network.PacketHandler;
 import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
 import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
+import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
 import com.teamwizardry.wizardry.common.network.PacketRenderSpell;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -105,6 +108,10 @@ public class SpellStack {
 
 	public static void runModules(@NotNull ItemStack spellHolder, @NotNull World world, @Nullable EntityLivingBase caster, Vec3d pos) {
 		for (Module module : getModules(spellHolder)) {
+			if (caster instanceof EntityPlayer && !((EntityPlayer) caster).isCreative()) {
+				IWizardryCapability cap = WizardryCapabilityProvider.get((EntityPlayer) caster);
+				if (cap.getMana() < module.finalManaCost) return;
+			}
 			module.run(world, caster);
 			if (module.getTargetPosition() == null) {
 				PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(spellHolder, caster == null ? -1 : caster.getEntityId(), pos),
@@ -112,6 +119,12 @@ public class SpellStack {
 			} else {
 				PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(spellHolder, caster == null ? -1 : caster.getEntityId(), module.getTargetPosition()),
 						new NetworkRegistry.TargetPoint(world.provider.getDimension(), module.getTargetPosition().xCoord, module.getTargetPosition().yCoord, module.getTargetPosition().zCoord, 60));
+			}
+
+			if (caster instanceof EntityPlayer && !((EntityPlayer) caster).isCreative()) {
+				IWizardryCapability cap = WizardryCapabilityProvider.get((EntityPlayer) caster);
+				cap.setMana((int) Math.max(0, cap.getMana() - module.finalManaCost), (EntityPlayer) caster);
+				cap.setBurnout((int) Math.max(0, cap.getBurnout() + module.finalBurnoutCost), (EntityPlayer) caster);
 			}
 		}
 	}

@@ -74,9 +74,6 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 
 	@Override
 	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
-
-		if (caster == null) return false; // TODO: dont do this
-
 		if (nextModule instanceof ModuleEventCast) nextModule.run(world, caster);
 
 		double range = 10;
