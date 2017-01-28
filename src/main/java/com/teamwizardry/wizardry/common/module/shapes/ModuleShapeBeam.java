@@ -11,7 +11,6 @@ import com.teamwizardry.wizardry.api.util.Utils;
 import com.teamwizardry.wizardry.common.module.events.ModuleEventCast;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.lib.LibParticles;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -89,7 +88,6 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 		RayTraceResult trace = Utils.raytrace(world, caster.getLookVec(), caster.getPositionVector().addVector(0, caster.getEyeHeight(), 0), range, caster);
 
 		if (trace == null) return false;
-		Minecraft.getMinecraft().player.sendChatMessage(trace.typeOfHit + " - " + trace.hitVec.distanceTo(caster.getPositionVector()));
 		// TODO: eventAlongPath for trace here
 		setTargetPosition(this, trace.hitVec);
 		if (nextModule == null) return false;

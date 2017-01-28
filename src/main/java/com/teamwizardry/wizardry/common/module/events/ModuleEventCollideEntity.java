@@ -24,7 +24,7 @@ public class ModuleEventCollideEntity extends Module implements ITargettable {
 	@NotNull
 	@Override
 	public ItemStack getRequiredStack() {
-		return new ItemStack(Items.ROTTEN_FLESH);
+		return new ItemStack(Items.BEEF);
 	}
 
 	@NotNull
@@ -58,7 +58,9 @@ public class ModuleEventCollideEntity extends Module implements ITargettable {
 
 	@Override
 	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @Nullable Entity target) {
-		return nextModule != null && nextModule instanceof ITargettable && ((ITargettable) nextModule).run(world, caster, target);
+		if (nextModule != null && nextModule instanceof ITargettable)
+			return ((ITargettable) nextModule).run(world, caster, target);
+		return false;
 	}
 
 	@NotNull
