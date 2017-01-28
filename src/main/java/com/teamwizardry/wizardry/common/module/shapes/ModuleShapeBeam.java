@@ -94,7 +94,7 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 			return false;
 		} else {
 			// TODO: eventAlongPath for trace here
-
+			setTargetPosition(this, trace.hitVec);
 			if (nextModule.getModuleType() == ModuleType.EVENT)
 				if (trace.typeOfHit == RayTraceResult.Type.ENTITY) {
 					if (nextModule instanceof ITargettable)

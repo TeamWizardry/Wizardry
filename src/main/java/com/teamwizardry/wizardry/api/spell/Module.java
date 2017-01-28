@@ -34,8 +34,23 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	@Nullable
 	public Module nextModule = null;
 
+	/**
+	 * The final calculated cost of mana this spell consumes.
+	 */
 	public double finalManaCost = 10;
+
+	/**
+	 * The final calculated cost of burnout this spell fills.
+	 */
 	public double finalBurnoutCost = 10;
+
+	/**
+	 * The target position of this spell. It would be really nice if you set this value in your shape modules.
+	 * It improves particle positioning in runClient methods because there's no way to tell
+	 * otherwise.
+	 */
+	@Nullable
+	private Vec3d targetPosition = null;
 
 	private Color color = null;
 
@@ -83,6 +98,19 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 		processBurnout(module);
 		processMana(module);
 		processColor(module);
+	}
+
+	/**
+	 * The target position of this spell. It would be really nice if you set this value in your run methods.
+	 * It improves particle positioning in runClient methods because there's no way to tell
+	 * otherwise.
+	 */
+	public static void setTargetPosition(@NotNull Module module, @Nullable Vec3d targetPosition) {
+		Module tempModule = module;
+		while (tempModule != null) {
+			tempModule.targetPosition = targetPosition;
+			tempModule = tempModule.nextModule;
+		}
 	}
 
 	/**
@@ -191,6 +219,16 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	}
 
 	/**
+	 * The target position of this spell. It would be really nice if you set this value in your run methods.
+	 * It improves particle positioning in runClient methods because there's no way to tell
+	 * otherwise.
+	 */
+	@Nullable
+	public Vec3d getTargetPosition() {
+		return targetPosition;
+	}
+
+	/**
 	 * Will apply modifiers to the head module given a stream of itemstacks representing the modifiers.
 	 *
 	 * @param modifiers The list of itemstacks representing a stream of modifiers to apply.
@@ -218,6 +256,11 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 		NBTTagCompound compound = new NBTTagCompound();
 		compound.setString("id", getID());
 		compound.setTag("attributes", attributes);
+		if (targetPosition != null) {
+			compound.setDouble("target_pos_x", targetPosition.xCoord);
+			compound.setDouble("target_pos_y", targetPosition.yCoord);
+			compound.setDouble("target_pos_z", targetPosition.zCoord);
+		}
 		if (nextModule != null) compound.setTag("next_module", nextModule.serializeNBT());
 		return compound;
 	}
@@ -225,6 +268,9 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	@Override
 	public void deserializeNBT(NBTTagCompound nbt) {
 		attributes = nbt.getCompoundTag("attributes");
+		if (nbt.hasKey("target_pos_x") && nbt.hasKey("target_pos_y") && nbt.hasKey("target_pos_z")) {
+			targetPosition = new Vec3d(nbt.getDouble("target_pos_x"), nbt.getDouble("target_pos_y"), nbt.getDouble("target_pos_z"));
+		}
 		if (nbt.hasKey("next_module")) {
 			nextModule = ModuleRegistry.INSTANCE.getModule(nbt.getCompoundTag("next_module").getString("id"));
 			if (nextModule != null) nextModule.deserializeNBT(nbt.getCompoundTag("next_module"));

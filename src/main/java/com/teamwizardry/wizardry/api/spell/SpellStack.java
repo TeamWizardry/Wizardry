@@ -106,8 +106,13 @@ public class SpellStack {
 	public static void runModules(@NotNull ItemStack spellHolder, @NotNull World world, @Nullable EntityLivingBase caster, Vec3d pos) {
 		for (Module module : getModules(spellHolder)) {
 			module.run(world, caster);
-			PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(spellHolder, caster == null ? -1 : caster.getEntityId(), pos),
-					new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.xCoord, pos.yCoord, pos.zCoord, 60));
+			if (module.getTargetPosition() == null) {
+				PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(spellHolder, caster == null ? -1 : caster.getEntityId(), pos),
+						new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.xCoord, pos.yCoord, pos.zCoord, 60));
+			} else {
+				PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(spellHolder, caster == null ? -1 : caster.getEntityId(), module.getTargetPosition()),
+						new NetworkRegistry.TargetPoint(world.provider.getDimension(), module.getTargetPosition().xCoord, module.getTargetPosition().yCoord, module.getTargetPosition().zCoord, 60));
+			}
 		}
 	}
 
