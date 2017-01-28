@@ -21,6 +21,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
@@ -407,7 +408,7 @@ public class LibParticles {
 		});
 	}
 
-	public static void EFFECT_NULL_GRAV(World world, Vec3d pos, @Nullable EntityLivingBase caster, Color color) {
+	public static void EFFECT_NULL_GRAV(World world, @NotNull Vec3d pos, @Nullable EntityLivingBase caster, Color color) {
 		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(20, 30));
 		glitter.setColor(color);
 		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));

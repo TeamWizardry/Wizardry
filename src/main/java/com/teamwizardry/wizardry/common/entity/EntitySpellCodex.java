@@ -23,10 +23,6 @@ public class EntitySpellCodex extends Entity {
 	private EntityItem book;
 	private int expiry;
 
-	public EntitySpellCodex(World world) {
-		super(world);
-	}
-
 	public EntitySpellCodex(World world, EntityItem book) {
 		super(world);
 		this.book = book;

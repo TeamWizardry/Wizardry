@@ -22,6 +22,7 @@ public class ModEntities {
 		EntityRegistry.registerModEntity(EntityDevilDust.class, "dust_tracker", i++, Wizardry.instance, 64, 1, false);
 		EntityRegistry.registerModEntity(EntitySpellCodex.class, "book_tracker", i++, Wizardry.instance, 64, 1, false);
 		EntityRegistry.registerModEntity(EntitySpellProjectile.class, "spell_projectile", i++, Wizardry.instance, 64, 1, false);
+		EntityRegistry.registerModEntity(EntitySpellGravityWell.class, "gravity_well", i++, Wizardry.instance, 64, 1, false);
 	}
 
 	public static void initModels() {

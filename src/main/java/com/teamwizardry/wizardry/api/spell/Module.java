@@ -77,7 +77,7 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	public static double processMana(Module module) {
 		double mana = module.getManaToConsume();
 		for (String key : module.attributes.getKeySet()) {
-			module.attributes.getDouble(key);
+			mana += module.attributes.getDouble(key);
 		}
 		return module.finalManaCost = mana + (module.nextModule != null ? processMana(module.nextModule) : 0);
 	}
@@ -85,9 +85,7 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	public static double processBurnout(Module module) {
 		double burnout = module.getBurnoutToFill();
 		for (String key : module.attributes.getKeySet()) {
-			Module modifier = ModuleRegistry.INSTANCE.getModule(key);
-			if (modifier != null)
-				burnout += modifier.getBurnoutToFill() * module.attributes.getDouble(key);
+			burnout += module.attributes.getDouble(key);
 		}
 		return module.finalBurnoutCost = burnout + (module.nextModule != null ? processBurnout(module.nextModule) : 0);
 	}
