@@ -1,29 +1,21 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
-import com.teamwizardry.librarianlib.client.fx.particle.ParticleBuilder;
-import com.teamwizardry.librarianlib.client.fx.particle.ParticleSpawner;
-import com.teamwizardry.librarianlib.client.fx.particle.functions.InterpFadeInOut;
-import com.teamwizardry.librarianlib.common.util.math.interpolate.StaticInterp;
-import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpHelix;
-import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.ITargettable;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.init.ModPotions;
+import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by LordSaad.
@@ -96,24 +88,7 @@ public class ModuleEffectNullGrav extends Module implements ITargettable {
 
 	@Override
 	public void runClient(@NotNull World world, @NotNull ItemStack stack, @Nullable EntityLivingBase caster, @NotNull Vec3d pos) {
-		// TODO move to libparticles
-		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(20, 30));
-		glitter.setColor(getColor());
-		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
-
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(5, 10), ThreadLocalRandom.current().nextInt(0, 30), (aFloat, particleBuilder) -> {
-			glitter.setScale((float) ThreadLocalRandom.current().nextDouble(0.3, 0.8));
-			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-			if (ThreadLocalRandom.current().nextBoolean())
-				glitter.setPositionFunction(new InterpHelix(
-						new Vec3d(0, caster == null ? 1 / 2 : caster.height / 2, 0),
-						new Vec3d(0, caster == null ? -1 : -caster.height, 0),
-						1f, 0f, 1f, ThreadLocalRandom.current().nextFloat()));
-			else glitter.setPositionFunction(new InterpHelix(
-					new Vec3d(0, caster == null ? 1 / 2 : caster.height / 2, 0),
-					new Vec3d(0, caster == null ? 1.5 : caster.height + 0.5, 0),
-					1f, 0f, 1f, ThreadLocalRandom.current().nextFloat()));
-		});
+		LibParticles.EFFECT_NULL_GRAV(world, pos, caster, getColor());
 	}
 
 	@NotNull

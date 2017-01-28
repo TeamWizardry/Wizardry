@@ -31,6 +31,10 @@ public class EntityDevilDust extends Entity {
 	private int stackSize = 1;
 	private boolean consumed;
 
+	public EntityDevilDust(World world) {
+		super(world);
+	}
+
 	public EntityDevilDust(World world, EntityItem redstone) {
 		super(world);
 		this.redstone = redstone;

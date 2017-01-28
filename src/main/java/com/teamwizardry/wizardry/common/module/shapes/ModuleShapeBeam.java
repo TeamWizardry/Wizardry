@@ -1,14 +1,13 @@
 package com.teamwizardry.wizardry.common.module.shapes;
 
-import com.teamwizardry.librarianlib.client.core.ClientTickHandler;
 import com.teamwizardry.librarianlib.common.util.ConfigPropertyDouble;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Attributes;
-import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
 import com.teamwizardry.wizardry.api.spell.IContinousSpell;
 import com.teamwizardry.wizardry.api.spell.ITargettable;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.util.EntityTrace;
 import com.teamwizardry.wizardry.common.module.events.ModuleEventCast;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.lib.LibParticles;
@@ -78,33 +77,28 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
 		if (nextModule == null) return false;
 
+		if (caster == null) return false; // TODO: dont do this
+
 		if (nextModule instanceof ModuleEventCast) nextModule.run(world, caster);
 
-		RayTraceResult trace = null;
-		if (caster != null) {
-			IWizardryCapability cap = getCap(caster);
-			if (cap != null) {
-				double range = 10;
-				if (attributes.hasKey(Attributes.EXTEND)) range += attributes.getDouble(Attributes.EXTEND);
-				trace = caster.rayTrace(range, ClientTickHandler.getPartialTicks());
-			}
-		}
+		double range = 10;
+		if (attributes.hasKey(Attributes.EXTEND)) range += attributes.getDouble(Attributes.EXTEND);
 
-		if (trace == null) {
-			return false;
-		} else {
-			// TODO: eventAlongPath for trace here
-			setTargetPosition(this, trace.hitVec);
-			if (nextModule.getModuleType() == ModuleType.EVENT)
-				if (trace.typeOfHit == RayTraceResult.Type.ENTITY) {
-					if (nextModule instanceof ITargettable)
-						((ITargettable) nextModule).run(world, caster, trace.entityHit);
-				} else if (trace.typeOfHit == RayTraceResult.Type.BLOCK)
-					if (nextModule instanceof ITargettable)
-						((ITargettable) nextModule).run(world, caster, trace.hitVec);
+		RayTraceResult trace = new EntityTrace(world, caster.getPositionVector(), caster.getLookVec(), range).setUUIDToSkip(caster.getUniqueID()).cast();
 
-			return true;
-		}
+		if (trace == null) return false;
+		// TODO: eventAlongPath for trace here
+
+		setTargetPosition(this, trace.hitVec);
+		if (nextModule.getModuleType() == ModuleType.EVENT)
+			if (trace.typeOfHit == RayTraceResult.Type.ENTITY) {
+				if (nextModule instanceof ITargettable)
+					((ITargettable) nextModule).run(world, caster, trace.entityHit);
+			} else if (trace.typeOfHit == RayTraceResult.Type.BLOCK)
+				if (nextModule instanceof ITargettable)
+					((ITargettable) nextModule).run(world, caster, trace.hitVec);
+
+		return true;
 	}
 
 	@Override
@@ -116,14 +110,7 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 		float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - caster.rotationYaw));
 		Vec3d vec = new Vec3d(offX, caster.getEyeHeight(), offZ).add(caster.getPositionVector());
 
-		RayTraceResult trace = caster.rayTrace(range, ClientTickHandler.getPartialTicks());
-
-		LibParticles.SHAPE_BEAM(world,
-				trace == null ? caster.getPositionVector().add(caster.getLook(0).scale(range)) : trace.hitVec,
-				vec,
-				caster.getLook(1.0F).scale(-1.0),
-				(int) range,
-				getColor() == null ? Color.WHITE : getColor());
+		LibParticles.SHAPE_BEAM(world, pos, vec, (int) range, getColor() == null ? Color.WHITE : getColor());
 	}
 
 	@NotNull

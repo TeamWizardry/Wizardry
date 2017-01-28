@@ -15,11 +15,13 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.Constants.MISC;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.util.Random;
@@ -384,7 +386,7 @@ public class LibParticles {
 		});
 	}
 
-	public static void SHAPE_BEAM(World world, Vec3d target, Vec3d origin, Vec3d reverseNormal, int distance, Color color) {
+	public static void SHAPE_BEAM(World world, Vec3d target, Vec3d origin, int distance, Color color) {
 		ParticleBuilder glitter = new ParticleBuilder(10);
 		glitter.setColor(new Color(1.0f, 1.0f, 1.0f, 0.1f));
 		glitter.setPositionFunction(new InterpHelix(Vec3d.ZERO, target.subtract(origin), 0.0f, 0.15f, 1.0F, 0));
@@ -400,6 +402,26 @@ public class LibParticles {
 			glitter.setScale((float) ThreadLocalRandom.current().nextDouble(0.3, 0.8));
 			glitter.setLifetime(ThreadLocalRandom.current().nextInt(10, 20));
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
+		});
+	}
+
+	public static void EFFECT_NULL_GRAV(World world, Vec3d pos, @Nullable EntityLivingBase caster, Color color) {
+		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(20, 30));
+		glitter.setColor(color);
+		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
+
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(5, 10), ThreadLocalRandom.current().nextInt(0, 30), (aFloat, particleBuilder) -> {
+			glitter.setScale((float) ThreadLocalRandom.current().nextDouble(0.3, 0.8));
+			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+			if (ThreadLocalRandom.current().nextBoolean())
+				glitter.setPositionFunction(new InterpHelix(
+						new Vec3d(0, caster == null ? 1 / 2 : caster.height / 2, 0),
+						new Vec3d(0, caster == null ? -1 : -caster.height, 0),
+						1f, 0f, 1f, ThreadLocalRandom.current().nextFloat()));
+			else glitter.setPositionFunction(new InterpHelix(
+					new Vec3d(0, caster == null ? 1 / 2 : caster.height / 2, 0),
+					new Vec3d(0, caster == null ? 1.5 : caster.height + 0.5, 0),
+					1f, 0f, 1f, ThreadLocalRandom.current().nextFloat()));
 		});
 	}
 

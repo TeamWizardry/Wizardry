@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.potion;
 
+import com.teamwizardry.librarianlib.common.base.PotionMod;
 import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.potion.PotionEffect;
 import net.minecraftforge.common.MinecraftForge;
@@ -10,10 +11,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 /**
  * Created by LordSaad.
  */
-public class PotionNullGrav extends WizardryPotion {
+public class PotionNullGrav extends PotionMod {
 
-	public PotionNullGrav(int iconIndex) {
-		super("nullify_gravity", false, 0xFFFFFF, iconIndex);
+	public PotionNullGrav() {
+		super("nullify_gravity", false, 0xFFFFFF);
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 

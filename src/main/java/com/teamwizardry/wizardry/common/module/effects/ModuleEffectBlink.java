@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.common.module.effects;
 import com.teamwizardry.wizardry.api.spell.ITargettable;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
@@ -70,12 +71,20 @@ public class ModuleEffectBlink extends Module implements ITargettable {
 
     @Override
     public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @Nullable Vec3d target) {
-        return caster != null && target != null && caster.attemptTeleport(target.xCoord, target.yCoord, target.zCoord);
+	    if (caster != null && target != null) {
+		    Utils.blink(caster, target.distanceTo(caster.getPositionVector()));
+		    return true;
+	    }
+	    return false;
     }
 
     @Override
     public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @Nullable Entity target) {
-        return caster != null && target != null && caster.attemptTeleport(target.posX, target.posY, target.posZ);
+	    if (caster != null && target != null) {
+		    Utils.blink(caster, target.getPositionVector().distanceTo(caster.getPositionVector()));
+		    return true;
+	    }
+	    return false;
     }
 
     @NotNull
