@@ -66,14 +66,20 @@ public class ItemGoldStaff extends ItemWizardry implements INacreColorable {
 	@NotNull
 	@Override
 	public EnumAction getItemUseAction(ItemStack stack) {
-		for (Module module : SpellStack.getModules(stack))
-			if (module instanceof IContinousSpell) return EnumAction.BOW;
+		for (Module module : SpellStack.getAllModules(stack))
+			if (module instanceof IContinousSpell || module.getChargeUpTime() > 0) return EnumAction.BOW;
 		return EnumAction.NONE;
 	}
 
 	@Override
 	public int getMaxItemUseDuration(ItemStack stack) {
-		return 72000;
+		int i = 0;
+		for (Module module : SpellStack.getAllModules(stack))
+			if (module instanceof IContinousSpell) {
+				if (module.getChargeUpTime() == 0) i += 72000;
+				else i += module.getChargeUpTime();
+			} else i += module.getChargeUpTime();
+		return i > 0 ? i : 72000;
 	}
 
 	@NotNull

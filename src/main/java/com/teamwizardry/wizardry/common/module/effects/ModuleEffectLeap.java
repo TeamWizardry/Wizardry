@@ -69,7 +69,7 @@ public class ModuleEffectLeap extends Module implements ITargettable {
 	@Nullable
 	@Override
 	public Color getColor() {
-		return Color.GREEN;
+		return Color.YELLOW;
 	}
 
 	@Override
@@ -84,7 +84,7 @@ public class ModuleEffectLeap extends Module implements ITargettable {
 
 	@Override
 	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @Nullable Entity target) {
-		if (target != null) {
+		if (target != null && !target.hasNoGravity()) {
 			double strength = 0.5;
 			if (attributes.hasKey(Attributes.EXTEND))
 				strength += Math.min(64.0 / 100.0, attributes.getDouble(Attributes.EXTEND) / 100.0);
@@ -101,7 +101,10 @@ public class ModuleEffectLeap extends Module implements ITargettable {
 	public void runClient(@NotNull World world, @NotNull ItemStack stack, @Nullable EntityLivingBase caster, @NotNull Vec3d pos) {
 		double strength = 1;
 		if (attributes.hasKey(Attributes.EXTEND)) strength += attributes.getDouble(Attributes.EXTEND);
-		LibParticles.EFFECT_LEAP(world, getColor(), pos, strength);
+		if (caster != null && !caster.hasNoGravity()) {
+			LibParticles.EFFECT_LEAP(world, getColor(), pos, strength);
+			LibParticles.AIR_THROTTLE(world, pos, caster, getColor(), Color.WHITE);
+		}
 	}
 
 	@NotNull

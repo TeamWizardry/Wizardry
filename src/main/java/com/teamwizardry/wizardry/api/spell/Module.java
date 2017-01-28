@@ -172,6 +172,13 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	}
 
 	/**
+	 * The amount of time in ticks the item needs to be right clicked for in order to execute the spell.
+	 */
+	public int getChargeUpTime() {
+		return 0;
+	}
+
+	/**
 	 * Run the whatever is required on the SpellStack and then trigger the next step.
 	 *
 	 * @return whether this spell has succeeded or failed this step.

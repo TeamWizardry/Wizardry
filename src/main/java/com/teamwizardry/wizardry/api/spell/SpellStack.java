@@ -143,4 +143,30 @@ public class SpellStack {
 		}
 		return modules;
 	}
+
+	public static Set<Module> getAllModules(@NotNull NBTTagCompound compound) {
+		Set<Module> modules = new HashSet<>();
+		Set<Module> heads = getModules(compound);
+		for (Module module : heads) {
+			Module tempModule = module;
+			while (tempModule != null) {
+				modules.add(tempModule);
+				tempModule = tempModule.nextModule;
+			}
+		}
+		return modules;
+	}
+
+	public static Set<Module> getAllModules(@NotNull ItemStack spellHolder) {
+		Set<Module> modules = new HashSet<>();
+		Set<Module> heads = getModules(spellHolder);
+		for (Module module : heads) {
+			Module tempModule = module;
+			while (tempModule != null) {
+				modules.add(tempModule);
+				tempModule = tempModule.nextModule;
+			}
+		}
+		return modules;
+	}
 }
