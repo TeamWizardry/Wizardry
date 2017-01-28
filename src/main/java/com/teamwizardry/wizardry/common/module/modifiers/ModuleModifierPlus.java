@@ -4,6 +4,7 @@ import com.teamwizardry.wizardry.api.Attributes;
 import com.teamwizardry.wizardry.api.spell.IModifier;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.spell.RegisterModule;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -11,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Created by LordSaad.
  */
+@RegisterModule
 public class ModuleModifierPlus extends Module implements IModifier {
 
 	public ModuleModifierPlus() {

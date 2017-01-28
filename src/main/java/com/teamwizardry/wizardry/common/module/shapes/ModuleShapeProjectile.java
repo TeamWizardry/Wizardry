@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.module.shapes;
 
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.spell.RegisterModule;
 import com.teamwizardry.wizardry.common.entity.EntitySpellProjectile;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Created by LordSaad.
  */
+@RegisterModule
 public class ModuleShapeProjectile extends Module {
 
 	public ModuleShapeProjectile() {

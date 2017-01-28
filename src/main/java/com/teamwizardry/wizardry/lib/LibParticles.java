@@ -492,4 +492,19 @@ public class LibParticles {
 			glitter.setPositionOffset(new Vec3d(0, ThreadLocalRandom.current().nextDouble(-0.5, 0.5), 0));
 		});
 	}
+
+	public static void EFFECT_LEAP(World world, Color color, Vec3d pos, double strength) {
+		ParticleBuilder glitter = new ParticleBuilder(20);
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
+		glitter.setColor(color);
+		glitter.setAlphaFunction(new InterpFadeInOut(0f, 1f));
+
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 30, 0, (aFloat, particleBuilder) -> {
+			double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
+			double r = strength * ThreadLocalRandom.current().nextFloat();
+			double x = r * MathHelper.cos((float) theta);
+			double z = r * MathHelper.sin((float) theta);
+			glitter.setPositionFunction(new InterpLine(pos, pos.addVector(x, ThreadLocalRandom.current().nextDouble(0, -1), z)));
+		});
+	}
 }

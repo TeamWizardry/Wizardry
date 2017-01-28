@@ -3,10 +3,7 @@ package com.teamwizardry.wizardry.common.module.shapes;
 import com.teamwizardry.librarianlib.common.util.ConfigPropertyDouble;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Attributes;
-import com.teamwizardry.wizardry.api.spell.IContinousSpell;
-import com.teamwizardry.wizardry.api.spell.ITargettable;
-import com.teamwizardry.wizardry.api.spell.Module;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.api.util.Utils;
 import com.teamwizardry.wizardry.common.module.events.ModuleEventCast;
 import com.teamwizardry.wizardry.init.ModItems;
@@ -25,6 +22,7 @@ import java.awt.*;
 /**
  * Created by LordSaad.
  */
+@RegisterModule
 public class ModuleShapeBeam extends Module implements IContinousSpell {
 
 	@ConfigPropertyDouble(modid = Wizardry.MODID, category = "modules", id = "shape_beam_default_range", comment = "The default range of a pure beam spell shape", defaultValue = 10)

@@ -1,17 +1,8 @@
 package com.teamwizardry.wizardry.api.spell;
 
-import com.teamwizardry.wizardry.common.module.effects.ModuleEffectBlink;
-import com.teamwizardry.wizardry.common.module.effects.ModuleEffectNullGrav;
-import com.teamwizardry.wizardry.common.module.events.ModuleEventAlongPath;
-import com.teamwizardry.wizardry.common.module.events.ModuleEventCast;
-import com.teamwizardry.wizardry.common.module.events.ModuleEventCollideBlock;
-import com.teamwizardry.wizardry.common.module.events.ModuleEventCollideEntity;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtend;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierPlus;
-import com.teamwizardry.wizardry.common.module.shapes.ModuleShapeBeam;
-import com.teamwizardry.wizardry.common.module.shapes.ModuleShapeProjectile;
-import com.teamwizardry.wizardry.common.module.shapes.ModuleShapeSelf;
-import com.teamwizardry.wizardry.common.module.shapes.ModuleShapeTouch;
+import com.teamwizardry.librarianlib.LibrarianLib;
+import com.teamwizardry.librarianlib.common.util.AnnotationHelper;
+import com.teamwizardry.librarianlib.common.util.UnsafeKt;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -30,21 +21,15 @@ public class ModuleRegistry {
 	public Set<Module> modules = new HashSet<>();
 
 	private ModuleRegistry() {
-		registerModule(new ModuleEventCollideBlock());
-		registerModule(new ModuleEventCollideEntity());
-		registerModule(new ModuleEventAlongPath());
-		registerModule(new ModuleEventCast());
+		AnnotationHelper.INSTANCE.findAnnotatedClasses(LibrarianLib.PROXY.getAsmDataTable(), Module.class, RegisterModule.class, (clazz, info) -> {
+			try {
+				registerModule((Module) UnsafeKt.getUnsafeSafely(0).allocateInstance(clazz));
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			}
+			return null;
+		});
 
-		registerModule(new ModuleShapeBeam());
-		registerModule(new ModuleShapeProjectile());
-		registerModule(new ModuleShapeSelf());
-		registerModule(new ModuleShapeTouch());
-
-		registerModule(new ModuleModifierExtend());
-		registerModule(new ModuleModifierPlus());
-
-		registerModule(new ModuleEffectBlink());
-		registerModule(new ModuleEffectNullGrav());
 	}
 
 	public void registerModule(Module module) {
