@@ -7,11 +7,13 @@ import com.teamwizardry.wizardry.api.spell.IContinousSpell;
 import com.teamwizardry.wizardry.api.spell.ITargettable;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.api.util.EntityTrace;
+import com.teamwizardry.wizardry.api.util.Utils;
 import com.teamwizardry.wizardry.common.module.events.ModuleEventCast;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.lib.LibParticles;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -75,7 +77,6 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 
 	@Override
 	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
-		if (nextModule == null) return false;
 
 		if (caster == null) return false; // TODO: dont do this
 
@@ -84,19 +85,22 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 		double range = 10;
 		if (attributes.hasKey(Attributes.EXTEND)) range += attributes.getDouble(Attributes.EXTEND);
 
-		RayTraceResult trace = new EntityTrace(world, caster.getPositionVector(), caster.getLookVec(), range).setUUIDToSkip(caster.getUniqueID()).cast();
+		if (!(caster instanceof EntityPlayer)) return false;
+		RayTraceResult trace = Utils.raytrace(world, caster.getLookVec(), caster.getPositionVector().addVector(0, caster.getEyeHeight(), 0), range, caster);
 
 		if (trace == null) return false;
+		Minecraft.getMinecraft().player.sendChatMessage(trace.typeOfHit + " - " + trace.hitVec.distanceTo(caster.getPositionVector()));
 		// TODO: eventAlongPath for trace here
-
 		setTargetPosition(this, trace.hitVec);
+		if (nextModule == null) return false;
 		if (nextModule.getModuleType() == ModuleType.EVENT)
 			if (trace.typeOfHit == RayTraceResult.Type.ENTITY) {
 				if (nextModule instanceof ITargettable)
 					((ITargettable) nextModule).run(world, caster, trace.entityHit);
-			} else if (trace.typeOfHit == RayTraceResult.Type.BLOCK)
+			} else if (trace.typeOfHit == RayTraceResult.Type.BLOCK) {
 				if (nextModule instanceof ITargettable)
 					((ITargettable) nextModule).run(world, caster, trace.hitVec);
+			}
 
 		return true;
 	}

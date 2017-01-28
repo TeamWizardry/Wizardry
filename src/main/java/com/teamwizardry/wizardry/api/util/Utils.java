@@ -3,12 +3,14 @@ package com.teamwizardry.wizardry.api.util;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
+import java.util.List;
 
 /**
  * Created by LordSaad.
@@ -38,21 +40,45 @@ public class Utils {
 		} else entity.setPosition(x, y, z);
 	}
 
-	public static RayTraceResult getTargetBlock(World world, Entity entity, boolean stopOnLiquid, boolean ignoreBlockWithoutBoundingBox, double range) {
-		float var4 = 1.0F;
-		float var5 = entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * var4;
-		float var6 = entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * var4;
-		double var7 = entity.prevPosX + (entity.posX - entity.prevPosX) * var4;
-		double var9 = entity.prevPosY + (entity.posY - entity.prevPosY) * var4 + entity.getEyeHeight();
-		double var11 = entity.prevPosZ + (entity.posZ - entity.prevPosZ) * var4;
-		Vec3d var13 = new Vec3d(var7, var9, var11);
-		float var14 = MathHelper.cos(-var6 * 0.017453292F - 3.1415927F);
-		float var15 = MathHelper.sin(-var6 * 0.017453292F - 3.1415927F);
-		float var16 = -MathHelper.cos(-var5 * 0.017453292F);
-		float var17 = MathHelper.sin(-var5 * 0.017453292F);
-		float var18 = var15 * var16;
-		float var20 = var14 * var16;
-		Vec3d var23 = var13.addVector(var18 * range, var17 * range, var20 * range);
-		return world.rayTraceBlocks(var13, var23, stopOnLiquid, !ignoreBlockWithoutBoundingBox, false);
+	/**
+	 * Credits to Masa on discord for providing the base of the code. I heavily editted it.
+	 * This raytracer will precisely trace entities and blocks (including misses) without snapping to the grid.
+	 *
+	 * @param world  The world obj.
+	 * @param slope  The angle vector to trace along.
+	 * @param origin The origin of the trace.
+	 * @param range  The maximum range to trace by.
+	 * @param skip   An optional entity you can add to skip the trace with.
+	 * @return The RaytraceResult.
+	 */
+	public static RayTraceResult raytrace(World world, Vec3d slope, Vec3d origin, double range, @Nullable Entity skip) {
+		Vec3d lookVec = origin.add(slope.scale(range));
+
+		RayTraceResult result = world.rayTraceBlocks(origin, lookVec, false, false, true);
+
+		Entity targetEntity = null;
+		RayTraceResult entityTrace = null;
+		AxisAlignedBB bb = new AxisAlignedBB(lookVec.xCoord, lookVec.yCoord, lookVec.zCoord, lookVec.xCoord, lookVec.yCoord, lookVec.zCoord);
+		List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(skip, bb.expand(range, range, range));
+		double closest = 0.0D;
+
+		for (Entity entity : list) {
+			bb = entity.getEntityBoundingBox();
+			RayTraceResult traceTmp = bb.calculateIntercept(lookVec, origin);
+
+			if (traceTmp != null) {
+				double tmp = origin.distanceTo(traceTmp.hitVec);
+
+				if (tmp < closest || closest == 0.0D) {
+					targetEntity = entity;
+					entityTrace = traceTmp;
+					closest = tmp;
+				}
+			}
+		}
+
+		if (targetEntity != null) result = new RayTraceResult(targetEntity, entityTrace.hitVec);
+
+		return result;
 	}
 }
