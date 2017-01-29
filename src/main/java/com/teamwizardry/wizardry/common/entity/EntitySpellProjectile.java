@@ -1,5 +1,12 @@
 package com.teamwizardry.wizardry.common.entity;
 
+import com.teamwizardry.librarianlib.client.fx.particle.ParticleBuilder;
+import com.teamwizardry.librarianlib.client.fx.particle.ParticleSpawner;
+import com.teamwizardry.librarianlib.client.fx.particle.functions.InterpFadeInOut;
+import com.teamwizardry.librarianlib.common.util.math.interpolate.StaticInterp;
+import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpHelix;
+import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.ITargettable;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleRegistry;
@@ -9,15 +16,17 @@ import com.teamwizardry.wizardry.common.module.events.ModuleEventCast;
 import com.teamwizardry.wizardry.common.module.events.ModuleEventCollideBlock;
 import com.teamwizardry.wizardry.common.module.events.ModuleEventCollideEntity;
 import com.teamwizardry.wizardry.common.module.shapes.ModuleShapeProjectile;
-import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by LordSaad.
@@ -54,10 +63,27 @@ public class EntitySpellProjectile extends EntityThrowable {
 	@Override
 	public void onUpdate() {
 		super.onUpdate();
-		if (world.isRemote)
-			LibParticles.FAIRY_TRAIL(world, getPositionVector(), Color.RED, false, 50);
 		if (ticksExisted > 50) setDead();
 		if (spell == null) return;
+
+		if (spell.getColor() != null) {
+			ParticleBuilder glitter = new ParticleBuilder(10);
+			glitter.setColor(new Color(1.0f, 1.0f, 1.0f, 0.1f));
+			glitter.setPositionFunction(new InterpHelix(Vec3d.ZERO, getLook(0).scale(2), 0.0f, 0.15f, 1.0F, 0));
+			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
+			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+
+			glitter.setColor(new Color(
+					Math.min(255, spell.getColor().getRed() + ThreadLocalRandom.current().nextInt(5, 20)),
+					Math.min(255, spell.getColor().getGreen() + ThreadLocalRandom.current().nextInt(5, 20)),
+					Math.min(255, spell.getColor().getBlue() + ThreadLocalRandom.current().nextInt(5, 20)),
+					spell.getColor().getAlpha()));
+
+			ParticleSpawner.spawn(glitter, world, new StaticInterp<>(getPositionVector()), 5, 0, (aFloat, particleBuilder) -> {
+				glitter.setScale((float) ThreadLocalRandom.current().nextDouble(0.3, 0.8));
+				glitter.setLifetime(ThreadLocalRandom.current().nextInt(10, 20));
+			});
+		}
 
 		if (spell instanceof ModuleShapeProjectile) {
 			if (spell.nextModule != null && spell.nextModule.getModuleType() == ModuleType.EVENT) {

@@ -21,8 +21,9 @@ public class ItemGlassPearl extends ItemWizardry implements Explodable {
 	public boolean onEntityItemUpdate(EntityItem entityItem) {
 		if (entityItem.isInsideOfMaterial(ModBlocks.NACRE_MATERIAL)) {
 			ItemStack newStack = new ItemStack(ModItems.PEARL_NACRE);
-			if (entityItem.getEntityItem().hasTagCompound())
-				newStack.setTagCompound(entityItem.getEntityItem().getTagCompound());
+			entityItem.setEntityItemStack(newStack);
+		} else if (entityItem.isInsideOfMaterial(ModBlocks.MANA_MATERIAL)) {
+			ItemStack newStack = new ItemStack(ModItems.PEARL_MANA);
 			entityItem.setEntityItemStack(newStack);
 		}
 		return super.onEntityItemUpdate(entityItem);

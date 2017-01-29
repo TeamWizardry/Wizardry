@@ -99,7 +99,7 @@ public class ModuleEffectAntiGravityWell extends Module implements ITargettable 
 	}
 
 	@Override
-	public void runClient(@NotNull World world, @NotNull ItemStack stack, @Nullable EntityLivingBase caster, @NotNull Vec3d pos) {
+	public void runClient(@NotNull World world, @Nullable ItemStack stack, @Nullable EntityLivingBase caster, @NotNull Vec3d pos) {
 	}
 
 	@NotNull

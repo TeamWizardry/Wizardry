@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.init.irecipies;
 import com.teamwizardry.wizardry.api.item.Infusable;
 import com.teamwizardry.wizardry.common.item.ItemRing;
 import com.teamwizardry.wizardry.common.item.ItemStaff;
-import com.teamwizardry.wizardry.init.ModItems;
+import com.teamwizardry.wizardry.common.item.pearl.ItemNacrePearl;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -17,18 +17,25 @@ import javax.annotation.Nullable;
  * Created by Saad on 6/13/2016.
  */
 public class RecipePearl implements IRecipe {
-
 	@Override
-	public boolean matches(@NotNull InventoryCrafting inv, World worldIn) {
+	public boolean matches(@NotNull InventoryCrafting inv, @NotNull World worldIn) {
 		boolean foundBaseItem = false;
+		boolean foundPearl = false;
 
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);
-			if (stack != null && stack.getItem() instanceof ItemStaff) {
-				foundBaseItem = true;
+			if (stack != null) {
+				if (stack.getItem() instanceof ItemRing
+						|| stack.getItem() instanceof ItemStaff) {
+
+					if (stack.getItemDamage() == 0)
+						foundBaseItem = true;
+				}
+				if (stack.getItem() instanceof ItemNacrePearl)
+					foundPearl = true;
 			}
 		}
-		return foundBaseItem;
+		return foundBaseItem && foundPearl;
 	}
 
 	@Nullable
@@ -40,45 +47,24 @@ public class RecipePearl implements IRecipe {
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);
 			if (stack != null) {
-				if (stack.getItem() instanceof ItemRing || stack.getItem() instanceof ItemStaff)
-					baseItem = stack;
+				if (stack.getItem() instanceof ItemRing
+						|| stack.getItem() instanceof ItemStaff) {
+					if (stack.getItemDamage() == 0)
+						baseItem = stack;
+				}
 				if (stack.getItem() instanceof Infusable)
 					pearl = stack;
 			}
 		}
 
-		if (baseItem == null) return null;
+		if (pearl == null || baseItem == null)
+			return null;
 
-		if (pearl != null) {
-			if (baseItem.getItemDamage() == 0) {
-				ItemStack baseItemCopy = baseItem.copy();
-				baseItemCopy.setItemDamage(1);
-				if (pearl.hasTagCompound()) baseItemCopy.setTagCompound(pearl.getTagCompound());
-				return baseItemCopy;
-			} else {
-				ItemStack newPearl = new ItemStack(ModItems.PEARL_NACRE);
-				if (pearl.hasTagCompound()) newPearl.setTagCompound(pearl.getTagCompound());
-				boolean flag = false;
-				for (int i = 0; i < inv.getSizeInventory(); i++)
-					if (inv.isItemValidForSlot(i, newPearl)) {
-						inv.setInventorySlotContents(i, newPearl);
-						flag = true;
-						break;
-					}
-				if (flag) {
-					ItemStack baseItemCopy = baseItem.copy();
-					if (pearl.hasTagCompound()) baseItemCopy.setTagCompound(pearl.getTagCompound());
-					return baseItemCopy;
-				}
-				return null;
-			}
-		} else if (baseItem.getItemDamage() == 1) {
-			ItemStack newPearl = new ItemStack(ModItems.PEARL_NACRE);
-			if (baseItem.hasTagCompound()) newPearl.setTagCompound(baseItem.getTagCompound());
-			baseItem.setItemDamage(0);
-			return newPearl;
-		}
-		return null;
+		ItemStack baseItemCopy = baseItem.copy();
+		baseItemCopy.setItemDamage(1);
+		if (pearl.hasTagCompound()) baseItemCopy.setTagCompound(pearl.getTagCompound());
+
+		return baseItemCopy;
 	}
 
 	@Override
@@ -98,3 +84,4 @@ public class RecipePearl implements IRecipe {
 		return ForgeHooks.defaultRecipeGetRemainingItems(inv);
 	}
 }
+

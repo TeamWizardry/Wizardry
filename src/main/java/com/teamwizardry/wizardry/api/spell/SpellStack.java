@@ -170,6 +170,16 @@ public class SpellStack {
 		return modules;
 	}
 
+	public static Set<Module> getAllModules(@NotNull Module module) {
+		Set<Module> modules = new HashSet<>();
+		Module tempModule = module;
+		while (tempModule != null) {
+			modules.add(tempModule);
+			tempModule = tempModule.nextModule;
+		}
+		return modules;
+	}
+
 	public static Set<Module> getAllModules(@NotNull ItemStack spellHolder) {
 		Set<Module> modules = new HashSet<>();
 		Set<Module> heads = getModules(spellHolder);

@@ -25,6 +25,7 @@ public class EntityUnicorn extends EntityHorse {
 	public int prepareChargeTicks = 0;
 	public int shieldCooldown = 0;
 	public int flatulenceTicker;
+	public boolean givenPath = false;
 	private EntityLivingBase target;
 
 	public EntityUnicorn(World worldIn) {
@@ -86,9 +87,10 @@ public class EntityUnicorn extends EntityHorse {
 			prepareChargeTicks++;
 			limbSwingAmount += prepareChargeTicks / 10;
 		} else {
-			if (getNavigator().noPath()) {
+			if (getNavigator().noPath() && !givenPath) {
 				Vec3d excess = target.getPositionVector();
 				getNavigator().tryMoveToXYZ(excess.xCoord, excess.yCoord, excess.zCoord, 2);
+				givenPath = true;
 			}
 
 			if (getEntityBoundingBox().expand(1, 1, 1).intersectsWith(target.getEntityBoundingBox())) {
@@ -97,6 +99,7 @@ public class EntityUnicorn extends EntityHorse {
 				target.attackEntityFrom(DamageSource.causeMobDamage(target), (float) 5);
 				isCharging = false;
 				getNavigator().setPath(null, 1);
+				givenPath = false;
 			}
 		}
 	}
@@ -123,6 +126,7 @@ public class EntityUnicorn extends EntityHorse {
 		compound.setBoolean("is_charging", isCharging);
 		compound.setInteger("prepare_charge_ticks", prepareChargeTicks);
 		compound.setInteger("target", target.getEntityId());
+		compound.setBoolean("given_path", givenPath);
 	}
 
 	@Override
@@ -131,6 +135,7 @@ public class EntityUnicorn extends EntityHorse {
 		shieldCooldown = compound.getInteger(SHIELD_COOLDOWN);
 		isCharging = compound.getBoolean("is_charging");
 		prepareChargeTicks = compound.getInteger("prepare_charge_ticks");
+		givenPath = compound.getBoolean("given_path");
 		target = (EntityLivingBase) world.getEntityByID(compound.getInteger("target"));
 	}
 }

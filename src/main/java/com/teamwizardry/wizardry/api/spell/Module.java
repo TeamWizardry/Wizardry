@@ -198,7 +198,7 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	 * @param caster The caster running the spell
 	 * @param pos    The position the spell runs at, in case the caster is null.
 	 */
-	public void runClient(@NotNull World world, @NotNull ItemStack stack, @Nullable EntityLivingBase caster, @NotNull Vec3d pos) {
+	public void runClient(@NotNull World world, @Nullable ItemStack stack, @Nullable EntityLivingBase caster, @NotNull Vec3d pos) {
 
 	}
 

@@ -109,24 +109,24 @@ public class ChunkGeneratorUnderWorld implements IChunkGenerator {
 	}
 
 	@Override
-	public boolean generateStructures(Chunk chunkIn, int x, int z) {
+	public boolean generateStructures(@NotNull Chunk chunkIn, int x, int z) {
 		return false;
 	}
 
 	@NotNull
 	@Override
-	public List<Biome.SpawnListEntry> getPossibleCreatures(EnumCreatureType creatureType, BlockPos pos) {
+	public List<Biome.SpawnListEntry> getPossibleCreatures(@NotNull EnumCreatureType creatureType, @NotNull BlockPos pos) {
 		return Collections.emptyList();
 	}
 
 	@Nullable
 	@Override
-	public BlockPos getStrongholdGen(World worldIn, String structureName, BlockPos position) {
+	public BlockPos getStrongholdGen(@NotNull World worldIn, @NotNull String structureName, @NotNull BlockPos position) {
 		return null;
 	}
 
 	@Override
-	public void recreateStructures(Chunk chunkIn, int x, int z) {
+	public void recreateStructures(@NotNull Chunk chunkIn, int x, int z) {
 
 	}
 }

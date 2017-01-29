@@ -3,9 +3,9 @@ package com.teamwizardry.wizardry.common.fluid;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.Explodable;
 import com.teamwizardry.wizardry.common.achievement.Achievements;
+import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModSounds;
 import com.teamwizardry.wizardry.lib.LibParticles;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -34,7 +34,7 @@ public class FluidBlockMana extends BlockFluidClassic {
 	public static final String REACTION_COOLDOWN = "reaction_cooldown";
 
 	public FluidBlockMana() {
-		super(FluidMana.instance, Material.WATER);
+		super(FluidMana.instance, ModBlocks.MANA_MATERIAL);
 		GameRegistry.register(this, new ResourceLocation(Wizardry.MODID, "mana"));
 		setQuantaPerBlock(6);
 		setUnlocalizedName("mana");

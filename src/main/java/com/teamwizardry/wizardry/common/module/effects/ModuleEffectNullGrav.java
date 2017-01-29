@@ -95,7 +95,7 @@ public class ModuleEffectNullGrav extends Module implements ITargettable {
 	}
 
 	@Override
-	public void runClient(@NotNull World world, @NotNull ItemStack stack, @Nullable EntityLivingBase caster, @NotNull Vec3d pos) {
+	public void runClient(@NotNull World world, @Nullable ItemStack stack, @Nullable EntityLivingBase caster, @NotNull Vec3d pos) {
 		LibParticles.EFFECT_NULL_GRAV(world, pos, caster, getColor());
 	}
 

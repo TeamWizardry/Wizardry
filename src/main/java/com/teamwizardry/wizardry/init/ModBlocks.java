@@ -11,6 +11,7 @@ import net.minecraft.block.material.Material;
 public class ModBlocks {
 
 	public static Material NACRE_MATERIAL = new MaterialNacre(MapColor.WATER);
+	public static Material MANA_MATERIAL = new MaterialNacre(MapColor.WATER);
 
 	public static BlockCraftingPlate CRAFTING_PLATE;
 	public static BlockMagiciansWorktable MAGICIANS_WORKTABLE;
