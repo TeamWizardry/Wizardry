@@ -69,7 +69,7 @@ public class EntitySpellProjectile extends EntityThrowable {
 		if (spell.getColor() != null) {
 			ParticleBuilder glitter = new ParticleBuilder(10);
 			glitter.setColor(new Color(1.0f, 1.0f, 1.0f, 0.1f));
-			glitter.setPositionFunction(new InterpHelix(Vec3d.ZERO, getLook(0).scale(2), 0.0f, 0.15f, 1.0F, 0));
+			glitter.setPositionFunction(new InterpHelix(Vec3d.ZERO, getLook(0).scale(20), 0.3f, 0.3f, 3F, ThreadLocalRandom.current().nextFloat()));
 			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 
@@ -79,7 +79,7 @@ public class EntitySpellProjectile extends EntityThrowable {
 					Math.min(255, spell.getColor().getBlue() + ThreadLocalRandom.current().nextInt(5, 20)),
 					spell.getColor().getAlpha()));
 
-			ParticleSpawner.spawn(glitter, world, new StaticInterp<>(getPositionVector()), 5, 0, (aFloat, particleBuilder) -> {
+			ParticleSpawner.spawn(glitter, world, new StaticInterp<>(getPositionVector()), 10, 0, (aFloat, particleBuilder) -> {
 				glitter.setScale((float) ThreadLocalRandom.current().nextDouble(0.3, 0.8));
 				glitter.setLifetime(ThreadLocalRandom.current().nextInt(10, 20));
 			});
