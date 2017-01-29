@@ -3,30 +3,31 @@ package com.teamwizardry.wizardry.common.entity.ai;
 import com.teamwizardry.wizardry.common.entity.EntityUnicorn;
 
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 
 public class EntityAICharge extends EntityAIBase {
-
+    
 	private EntityUnicorn attacker;
 	private float speed;
 	private float maxRange;
 	private boolean targetAttacked;
 	private BlockPos chargeStartPos = BlockPos.ORIGIN;
 
-	public EntityAICharge(EntityUnicorn attacker, float speed, float maxRange) 
-	{
+	public EntityAICharge(EntityUnicorn attacker, float speed, float maxRange) {
 		this.attacker = attacker;
 		this.speed = speed;
 		this.maxRange = maxRange;
 	}
 
 	@Override
-	public boolean shouldExecute() 
-	{
+	public boolean shouldExecute() {
 		EntityLivingBase target = this.attacker.getAttackTarget();
 		if(target == null || !target.isEntityAlive()) return false;
 		if(target.getDistanceToEntity(attacker) > maxRange) return false;
@@ -35,16 +36,14 @@ public class EntityAICharge extends EntityAIBase {
 	}
 	
 	@Override
-	public void startExecuting() 
-	{
+	public void startExecuting() {
 		this.attacker.getNavigator().setPath(getChargePath(this.attacker.getAttackTarget()), speed);
 		chargeStartPos = this.attacker.getPosition();
 		attacker.resetChargeCooldown();
 	}
 	
 	@Override
-	public boolean continueExecuting() 
-	{
+	public boolean continueExecuting() {
 		EntityLivingBase target = this.attacker.getAttackTarget();
 		if(target == null || !target.isEntityAlive() || attacker.getDistanceToEntity(target) >= 16.0D) {
 			return false;
@@ -61,11 +60,11 @@ public class EntityAICharge extends EntityAIBase {
 	}
 	
 	@Override
-	public void updateTask() 
-	{
+	public void updateTask() {
 		if(this.attacker.getEntityBoundingBox().intersectsWith(this.attacker.getAttackTarget().getEntityBoundingBox()))
 		{
-			this.attacker.getAttackTarget().knockBack(attacker, 10.0F, 1.0F, 1.0F);
+			this.attacker.getAttackTarget().knockBack(attacker, 0.6F, MathHelper.sin(this.attacker.rotationYaw), -MathHelper.cos(this.attacker.rotationYaw));
+			this.attacker.getAttackTarget().attackEntityFrom(DamageSource.causeMobDamage(attacker), (float) attacker.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
 			targetAttacked = true;
 		}
 		if(targetAttacked)
