@@ -4,6 +4,7 @@ import com.teamwizardry.librarianlib.client.core.ClientTickHandler;
 import com.teamwizardry.wizardry.api.spell.ITargettable;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.spell.RegisterModule;
 import com.teamwizardry.wizardry.common.module.events.ModuleEventCast;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -17,9 +18,11 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Created by LordSaad.
  */
+@RegisterModule
 public class ModuleShapeTouch extends Module {
 
 	public ModuleShapeTouch() {
+		process(this);
 	}
 
 	@NotNull
@@ -76,6 +79,7 @@ public class ModuleShapeTouch extends Module {
 	public ModuleShapeTouch copy() {
 		ModuleShapeTouch module = new ModuleShapeTouch();
 		module.deserializeNBT(serializeNBT());
+		process(module);
 		return module;
 	}
 }

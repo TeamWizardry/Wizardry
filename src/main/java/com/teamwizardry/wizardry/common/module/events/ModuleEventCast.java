@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.module.events;
 
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.spell.RegisterModule;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
@@ -12,9 +13,11 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Created by LordSaad.
  */
+@RegisterModule
 public class ModuleEventCast extends Module {
 
     public ModuleEventCast() {
+        process(this);
     }
 
     @NotNull
@@ -58,6 +61,7 @@ public class ModuleEventCast extends Module {
     public ModuleEventCast copy() {
         ModuleEventCast module = new ModuleEventCast();
         module.deserializeNBT(serializeNBT());
+        process(module);
         return module;
     }
 }

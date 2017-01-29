@@ -1,7 +1,6 @@
 package com.teamwizardry.wizardry.common.item.staff;
 
 import com.teamwizardry.wizardry.api.item.INacreColorable;
-import com.teamwizardry.wizardry.api.spell.SpellStack;
 import com.teamwizardry.wizardry.common.item.ItemWizardry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -34,7 +33,7 @@ public class ItemWoodStaff extends ItemWizardry implements INacreColorable {
 	public void onPlayerStoppedUsing(ItemStack stack, World world, EntityLivingBase entityLiving, int timeLeft) {
 		if (stack == null || world == null || entityLiving == null) return;
 
-		SpellStack.runModules(stack, world, entityLiving);
+		//SpellStack.runModules(stack, world, entityLiving);
 	}
 
 	@NotNull
@@ -63,7 +62,7 @@ public class ItemWoodStaff extends ItemWizardry implements INacreColorable {
 	public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
 		if ((count > 0) && (count < (getMaxItemUseDuration(stack) - 20)) && (player instanceof EntityPlayer)) {
 
-			SpellStack.runModules(stack, ((EntityPlayer) player).world, player);
+			//	SpellStack.runModules(stack, ((EntityPlayer) player).world, player);
 		}
 
 		// TODO: PARTICLES

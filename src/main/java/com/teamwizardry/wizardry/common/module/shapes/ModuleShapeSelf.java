@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.common.module.shapes;
 import com.teamwizardry.wizardry.api.spell.ITargettable;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.spell.RegisterModule;
 import com.teamwizardry.wizardry.common.module.events.ModuleEventCast;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
@@ -14,9 +15,11 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Created by LordSaad.
  */
+@RegisterModule
 public class ModuleShapeSelf extends Module {
 
 	public ModuleShapeSelf() {
+		process(this);
 	}
 
 	@NotNull
@@ -64,6 +67,7 @@ public class ModuleShapeSelf extends Module {
 	public ModuleShapeSelf copy() {
 		ModuleShapeSelf module = new ModuleShapeSelf();
 		module.deserializeNBT(serializeNBT());
+		process(module);
 		return module;
 	}
 }

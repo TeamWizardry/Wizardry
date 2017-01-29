@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.module.events;
 
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.spell.RegisterModule;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -12,9 +13,11 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Created by LordSaad.
  */
+@RegisterModule
 public class ModuleEventAlongPath extends Module {
 
     public ModuleEventAlongPath() {
+        process(this);
     }
 
     @NotNull
@@ -57,6 +60,7 @@ public class ModuleEventAlongPath extends Module {
 	public ModuleEventAlongPath copy() {
 		ModuleEventAlongPath module = new ModuleEventAlongPath();
 		module.deserializeNBT(serializeNBT());
-		return module;
-	}
+        process(module);
+        return module;
+    }
 }

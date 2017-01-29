@@ -1,15 +1,22 @@
 package com.teamwizardry.wizardry.api.spell;
 
+import com.teamwizardry.librarianlib.common.network.PacketHandler;
 import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
 import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
+import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
+import com.teamwizardry.wizardry.common.network.PacketRenderSpell;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -99,18 +106,80 @@ public class SpellStack {
 		return branches;
 	}
 
-	public static void runModules(ItemStack spellHolder, World world, @Nullable EntityLivingBase entityLiving) {
-		if ((spellHolder == null) || (world == null)) return;
+	public static void runModules(@NotNull ItemStack spellHolder, @NotNull World world, @Nullable EntityLivingBase caster, Vec3d pos) {
+		for (Module module : getModules(spellHolder)) {
+			if (caster instanceof EntityPlayer && !((EntityPlayer) caster).isCreative()) {
+				IWizardryCapability cap = WizardryCapabilityProvider.get((EntityPlayer) caster);
+				if (cap.getMana() < module.finalManaCost) return;
+			}
+			module.run(world, caster);
+			if (module.getTargetPosition() == null) {
+				PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(spellHolder, caster == null ? -1 : caster.getEntityId(), pos),
+						new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.xCoord, pos.yCoord, pos.zCoord, 60));
+			} else {
+				PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(spellHolder, caster == null ? -1 : caster.getEntityId(), module.getTargetPosition()),
+						new NetworkRegistry.TargetPoint(world.provider.getDimension(), module.getTargetPosition().xCoord, module.getTargetPosition().yCoord, module.getTargetPosition().zCoord, 60));
+			}
+
+			if (caster instanceof EntityPlayer && !((EntityPlayer) caster).isCreative()) {
+				IWizardryCapability cap = WizardryCapabilityProvider.get((EntityPlayer) caster);
+				cap.setMana((int) Math.max(0, cap.getMana() - module.finalManaCost), (EntityPlayer) caster);
+				cap.setBurnout((int) Math.max(0, cap.getBurnout() + module.finalBurnoutCost), (EntityPlayer) caster);
+			}
+		}
+	}
+
+	public static Set<Module> getModules(@NotNull ItemStack spellHolder) {
+		Set<Module> modules = new HashSet<>();
 
 		NBTTagList list = ItemNBTHelper.getList(spellHolder, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND, false);
-		if (list == null) return;
+		if (list == null) return modules;
 
+		return getModules(list);
+	}
+
+	public static Set<Module> getModules(@NotNull NBTTagCompound compound) {
+		if (compound.hasKey(Constants.NBT.SPELL))
+			return getModules(compound.getTagList(Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND));
+		else return new HashSet<>();
+	}
+
+	public static Set<Module> getModules(@NotNull NBTTagList list) {
+		Set<Module> modules = new HashSet<>();
 		for (int i = 0; i < list.tagCount(); i++) {
 			NBTTagCompound compound = list.getCompoundTagAt(i);
 			Module module = ModuleRegistry.INSTANCE.getModule(compound.getString("id"));
 			if (module == null) continue;
 			module.deserializeNBT(compound);
-			module.run(world, entityLiving);
+			Module.process(module);
+			modules.add(module);
 		}
+		return modules;
+	}
+
+	public static Set<Module> getAllModules(@NotNull NBTTagCompound compound) {
+		Set<Module> modules = new HashSet<>();
+		Set<Module> heads = getModules(compound);
+		for (Module module : heads) {
+			Module tempModule = module;
+			while (tempModule != null) {
+				modules.add(tempModule);
+				tempModule = tempModule.nextModule;
+			}
+		}
+		return modules;
+	}
+
+	public static Set<Module> getAllModules(@NotNull ItemStack spellHolder) {
+		Set<Module> modules = new HashSet<>();
+		Set<Module> heads = getModules(spellHolder);
+		for (Module module : heads) {
+			Module tempModule = module;
+			while (tempModule != null) {
+				modules.add(tempModule);
+				tempModule = tempModule.nextModule;
+			}
+		}
+		return modules;
 	}
 }

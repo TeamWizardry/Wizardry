@@ -1,31 +1,35 @@
 package com.teamwizardry.wizardry.common.module.shapes;
 
-import com.teamwizardry.librarianlib.client.core.ClientTickHandler;
 import com.teamwizardry.librarianlib.common.util.ConfigPropertyDouble;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Attributes;
-import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
-import com.teamwizardry.wizardry.api.spell.ITargettable;
-import com.teamwizardry.wizardry.api.spell.Module;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.util.Utils;
 import com.teamwizardry.wizardry.common.module.events.ModuleEventCast;
 import com.teamwizardry.wizardry.init.ModItems;
+import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.*;
+
 /**
  * Created by LordSaad.
  */
-public class ModuleShapeBeam extends Module {
+@RegisterModule
+public class ModuleShapeBeam extends Module implements IContinousSpell {
 
 	@ConfigPropertyDouble(modid = Wizardry.MODID, category = "modules", id = "shape_beam_default_range", comment = "The default range of a pure beam spell shape", defaultValue = 10)
 	public static double defaultRange;
 
 	public ModuleShapeBeam() {
+		process(this);
 	}
 
 	@NotNull
@@ -70,35 +74,40 @@ public class ModuleShapeBeam extends Module {
 
 	@Override
 	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
-		if (nextModule == null) return false;
-
 		if (nextModule instanceof ModuleEventCast) nextModule.run(world, caster);
 
-		RayTraceResult trace = null;
-		if (caster != null) {
-			IWizardryCapability cap = getCap(caster);
-			if (cap != null) {
-				double range = 10;
-				if (attributes.hasKey(Attributes.EXTEND)) range += attributes.getDouble(Attributes.EXTEND);
-				trace = caster.rayTrace(range, ClientTickHandler.getPartialTicks());
+		double range = 10;
+		if (attributes.hasKey(Attributes.EXTEND)) range += attributes.getDouble(Attributes.EXTEND);
+
+		if (!(caster instanceof EntityPlayer)) return false;
+		RayTraceResult trace = Utils.raytrace(world, caster.getLookVec(), caster.getPositionVector().addVector(0, caster.getEyeHeight(), 0), range, caster);
+
+		if (trace == null) return false;
+		// TODO: eventAlongPath for trace here
+		setTargetPosition(this, trace.hitVec);
+		if (nextModule == null) return false;
+		if (nextModule.getModuleType() == ModuleType.EVENT)
+			if (trace.typeOfHit == RayTraceResult.Type.ENTITY) {
+				if (nextModule instanceof ITargettable)
+					((ITargettable) nextModule).run(world, caster, trace.entityHit);
+			} else if (trace.typeOfHit == RayTraceResult.Type.BLOCK) {
+				if (nextModule instanceof ITargettable)
+					((ITargettable) nextModule).run(world, caster, trace.hitVec);
 			}
-		}
 
-		if (trace == null) {
-			return false;
-		} else {
-			// TODO: eventAlongPath for trace here
+		return true;
+	}
 
-			if (nextModule.getModuleType() == ModuleType.EVENT)
-				if (trace.typeOfHit == RayTraceResult.Type.ENTITY) {
-					if (nextModule instanceof ITargettable)
-						((ITargettable) nextModule).run(world, caster, trace.entityHit);
-				} else if (trace.typeOfHit == RayTraceResult.Type.BLOCK)
-					if (nextModule instanceof ITargettable)
-						((ITargettable) nextModule).run(world, caster, trace.hitVec);
+	@Override
+	public void runClient(@NotNull World world, @NotNull ItemStack stack, @Nullable EntityLivingBase caster, @NotNull Vec3d pos) {
+		if (caster == null) return;
+		double range = 10;
+		if (attributes.hasKey(Attributes.EXTEND)) range += attributes.getDouble(Attributes.EXTEND);
+		float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - caster.rotationYaw));
+		float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - caster.rotationYaw));
+		Vec3d vec = new Vec3d(offX, caster.getEyeHeight(), offZ).add(caster.getPositionVector());
 
-			return true;
-		}
+		LibParticles.SHAPE_BEAM(world, pos, vec, (int) range, getColor() == null ? Color.WHITE : getColor());
 	}
 
 	@NotNull
@@ -106,6 +115,7 @@ public class ModuleShapeBeam extends Module {
 	public ModuleShapeBeam copy() {
 		ModuleShapeBeam module = new ModuleShapeBeam();
 		module.deserializeNBT(serializeNBT());
+		process(module);
 		return module;
 	}
 }

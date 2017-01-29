@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.common.structure.Structure;
+import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants.NBT;
 import com.teamwizardry.wizardry.api.block.IStructure;
@@ -10,9 +11,11 @@ import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.common.entity.EntityHallowedSpirit;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
 import com.teamwizardry.wizardry.init.ModStructures;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
@@ -34,6 +37,20 @@ public class ItemDebugger extends ItemWizardry implements IGlowOverlayable {
 	@NotNull
 	@Override
 	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+		/*if (playerIn.isSneaking()) {
+			if (GuiScreen.isCtrlKeyDown()) {
+				WizardryCapabilityProvider.get(playerIn).setMana(10, playerIn);
+			} else {
+				WizardryCapabilityProvider.get(playerIn).setMana(0, playerIn);
+			}
+			return EnumActionResult.PASS;
+		}*/
+
+		ItemStack cape = playerIn.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+		if (cape != null) {
+			ItemNBTHelper.setInt(cape, "time", ItemNBTHelper.getInt(cape, "time", 0) + 100);
+			Minecraft.getMinecraft().player.sendChatMessage(ItemNBTHelper.getInt(cape, "time", 0) + "");
+		}
 		TileEntity tile = worldIn.getTileEntity(pos);
 		if (tile == null) {
 			if (!worldIn.isRemote)

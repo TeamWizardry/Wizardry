@@ -4,8 +4,8 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.client.render.entity.*;
 import com.teamwizardry.wizardry.common.entity.*;
 
-import net.minecraft.client.model.ModelShield;
 import net.minecraft.entity.Entity;
+//github.com/TeamWizardry/Wizardry
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 
@@ -21,6 +21,8 @@ public class ModEntities {
 		registerEntity(EntityFairy.class, "fairy", 64, 3, true);
 		registerEntity(EntityDevilDust.class, "dust_tracker", 64, 1, false);
 		registerEntity(EntitySpellCodex.class, "book_tracker", 64, 1, false);
+		registerEntity(EntitySpellProjectile.class, "spell_projectile", 64, 1, false);
+		registerEntity(EntitySpellGravityWell.class, "gravity_well", 64, 1, false)
 		registerEntity(EntityUnicorn.class, "unicorn");
 	}
 	

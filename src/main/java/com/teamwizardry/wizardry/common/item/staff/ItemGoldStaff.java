@@ -1,10 +1,9 @@
 package com.teamwizardry.wizardry.common.item.staff;
 
-import com.teamwizardry.librarianlib.client.util.TooltipHelper;
-import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
-import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.item.INacreColorable;
+import com.teamwizardry.wizardry.api.spell.IContinousSpell;
+import com.teamwizardry.wizardry.api.spell.Module;
+import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.SpellStack;
 import com.teamwizardry.wizardry.common.item.ItemWizardry;
 import net.minecraft.client.Minecraft;
@@ -14,16 +13,21 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Saad on 6/7/2016.
@@ -38,53 +42,59 @@ public class ItemGoldStaff extends ItemWizardry implements INacreColorable {
 	@Override
 	public void onPlayerStoppedUsing(ItemStack stack, World world, EntityLivingBase entityLiving, int timeLeft) {
 		if ((stack == null) || (world == null) || (entityLiving == null)) return;
-
-		SpellStack.runModules(stack, world, entityLiving);
+		//SpellStack.runModules(stack, world, entityLiving, new Vec3d(entityLiving.posX, entityLiving.posY, entityLiving.posZ));
 	}
 
 	@NotNull
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(@NotNull ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
-		if (world.isRemote && (Minecraft.getMinecraft().currentScreen != null)) {
-			return new ActionResult<>(EnumActionResult.FAIL, stack);
-		} else {
-			player.setActiveHand(hand);
+		if (getItemUseAction(stack) == EnumAction.NONE) {
+			if (!world.isRemote) {
+				SpellStack.runModules(stack, world, player, new Vec3d(player.posX, player.posY, player.posZ));
+			}
+			player.swingArm(EnumHand.MAIN_HAND);
+			player.getCooldownTracker().setCooldown(this, 10);
 			return new ActionResult<>(EnumActionResult.PASS, stack);
+		} else {
+			if (world.isRemote && (Minecraft.getMinecraft().currentScreen != null)) {
+				return new ActionResult<>(EnumActionResult.FAIL, stack);
+			} else {
+				player.setActiveHand(hand);
+				return new ActionResult<>(EnumActionResult.PASS, stack);
+			}
 		}
 	}
 
 	@NotNull
 	@Override
 	public EnumAction getItemUseAction(ItemStack stack) {
-		return EnumAction.BOW;
+		for (Module module : SpellStack.getAllModules(stack))
+			if (module instanceof IContinousSpell || module.getChargeUpTime() > 0) return EnumAction.BOW;
+		return EnumAction.NONE;
 	}
 
 	@Override
 	public int getMaxItemUseDuration(ItemStack stack) {
-		return 72000;
+		int i = 0;
+		for (Module module : SpellStack.getAllModules(stack))
+			if (module instanceof IContinousSpell) {
+				if (module.getChargeUpTime() == 0) i += 72000;
+				else i += module.getChargeUpTime();
+			} else i += module.getChargeUpTime();
+		return i > 0 ? i : 72000;
+	}
+
+	@NotNull
+	@Override
+	public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
+		return EnumActionResult.PASS;
 	}
 
 	@Override
 	public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
 		if ((count > 0) && (count < (getMaxItemUseDuration(stack) - 20)) && (player instanceof EntityPlayer)) {
-			SpellStack.runModules(stack, ((EntityPlayer) player).world, player);
-
+			SpellStack.runModules(stack, ((EntityPlayer) player).world, player, new Vec3d(player.posX, player.posY, player.posZ));
 		}
-		// TODO: PARTICLES
-//        int betterCount = Math.abs(count - 72000);
-//        Circle3D circle = new Circle3D(player.getPositionVector(), player.width + 0.3, 5);
-//        for (Vec3d points : circle.getPoints()) {
-//            Vec3d target = new Vec3d(player.posX, player.posY + player.getEyeHeight() - 0.3, player.posZ);
-//            Arc3D arc = new Arc3D(points, target, (float) 0.9, 20);
-//            if (betterCount < arc.getPoints().size()) {
-//                Vec3d point = arc.getPoints().get(betterCount);
-//                SparkleFX fizz = GlitterFactory.getInstance().createSparkle(player.world, point, 10);
-//                fizz.setFadeOut();
-//                fizz.setAlpha(0.1f);
-//                fizz.setScale(0.3f);
-//                fizz.setBlurred();
-//            }
-//        }
 	}
 
 	@Override
@@ -103,16 +113,44 @@ public class ItemGoldStaff extends ItemWizardry implements INacreColorable {
 		return super.onEntityItemUpdate(entityItem);
 	}
 
+	@NotNull
+	@Override
+	public String getItemStackDisplayName(@NotNull ItemStack stack) {
+		String finalName = null;
+		Set<Module> modules = SpellStack.getModules(stack);
+		for (Module module : modules) {
+			if (module != null) {
+				Module tempModule = module;
+				while (tempModule != null) {
+					if (tempModule.getModuleType() == ModuleType.EFFECT)
+						if (finalName == null) finalName = tempModule.getReadableName();
+						else finalName += " & " + tempModule.getReadableName();
+					tempModule = tempModule.nextModule;
+				}
+			}
+		}
+		if (finalName == null)
+			return ("" + I18n.translateToLocal(this.getUnlocalizedNameInefficiently(stack) + ".name")).trim();
+		else return finalName;
+	}
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
-		NBTTagCompound spell = ItemNBTHelper.getCompound(stack, Constants.NBT.SPELL, true);
-		if (spell == null) return;
-		TooltipHelper.addToTooltip(tooltip, Wizardry.MODID + ".misc.spell");
-		addInformation(spell, tooltip, 0);
-	}
-
-	private void addInformation(NBTTagCompound compound, List<String> tooltip, int level) {
-		// TODO
+		Set<Module> modules = SpellStack.getModules(stack);
+		for (Module module : modules) {
+			if (module != null) {
+				tooltip.add("Final " + TextFormatting.BLUE + "Mana" + TextFormatting.GRAY + "/" + TextFormatting.RED + "Burnout" + TextFormatting.GRAY + " Cost: " + TextFormatting.BLUE + module.finalManaCost + TextFormatting.GRAY + "/" + TextFormatting.RED + module.finalBurnoutCost);
+				Module tempModule = module;
+				int i = 0;
+				while (tempModule != null) {
+					tooltip.add(new String(new char[i]).replace("\0", "-") + "> " + TextFormatting.BLUE + tempModule.getManaToConsume() + TextFormatting.GRAY + "/" + TextFormatting.RED + tempModule.getBurnoutToFill() + TextFormatting.GRAY + " - " + tempModule.getReadableName());
+					for (String key : tempModule.attributes.getKeySet())
+						tooltip.add(new String(new char[i]).replace("\0", "-") + "^ " + TextFormatting.YELLOW + key + TextFormatting.GRAY + " * " + TextFormatting.GREEN + tempModule.attributes.getDouble(key));
+					tempModule = tempModule.nextModule;
+					i++;
+				}
+			}
+		}
 	}
 }

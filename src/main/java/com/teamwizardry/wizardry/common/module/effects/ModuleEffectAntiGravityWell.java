@@ -5,13 +5,11 @@ import com.teamwizardry.wizardry.api.spell.ITargettable;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.RegisterModule;
-import com.teamwizardry.wizardry.init.ModPotions;
-import com.teamwizardry.wizardry.lib.LibParticles;
+import com.teamwizardry.wizardry.common.entity.EntitySpellGravityWell;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -23,16 +21,21 @@ import java.awt.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEffectNullGrav extends Module implements ITargettable {
+public class ModuleEffectAntiGravityWell extends Module implements ITargettable {
 
-	public ModuleEffectNullGrav() {
-		process(this);
+	public ModuleEffectAntiGravityWell() {
+	}
+
+	@Nullable
+	@Override
+	public Color getColor() {
+		return Color.MAGENTA;
 	}
 
 	@NotNull
 	@Override
 	public ItemStack getRequiredStack() {
-		return new ItemStack(Items.DRAGON_BREATH);
+		return new ItemStack(Items.MAGMA_CREAM);
 	}
 
 	@NotNull
@@ -44,19 +47,19 @@ public class ModuleEffectNullGrav extends Module implements ITargettable {
 	@NotNull
 	@Override
 	public String getID() {
-		return "effect_nullify_gravity";
+		return "effect_anti_gravity_well";
 	}
 
 	@NotNull
 	@Override
 	public String getReadableName() {
-		return "Nullify Gravity";
+		return "Anti Gravity Well";
 	}
 
 	@NotNull
 	@Override
 	public String getDescription() {
-		return "Will completely disable the target entity's gravity.";
+		return "Will disperse in all entities around the target.";
 	}
 
 	@Override
@@ -66,43 +69,43 @@ public class ModuleEffectNullGrav extends Module implements ITargettable {
 
 	@Override
 	public double getBurnoutToFill() {
-		return 500;
-	}
-
-	@Nullable
-	@Override
-	public Color getColor() {
-		return Color.WHITE;
+		return 1000;
 	}
 
 	@Override
 	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Vec3d target) {
-		return false;
+		double strength = 20;
+		if (attributes.hasKey(Attributes.EXTEND))
+			strength += attributes.getDouble(Attributes.EXTEND);
+		EntitySpellGravityWell well = new EntitySpellGravityWell(world, caster, target, (int) (strength * 20), strength, true);
+		well.setPosition(target.xCoord, target.yCoord, target.zCoord);
+		world.spawnEntity(well);
+		setTargetPosition(this, target);
+		return world.spawnEntity(well);
 	}
 
 	@Override
 	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Entity target) {
-		if (target instanceof EntityLivingBase) {
-			double length = 30;
-			if (attributes.hasKey(Attributes.EXTEND))
-				length *= Math.min(10, attributes.getDouble(Attributes.EXTEND) * 10);
-			if (caster != null && getCap(caster) != null)
-				length *= calcBurnoutPercent(getCap(caster));
-			((EntityLivingBase) target).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, (int) length, 3, false, false));
-			return true;
-		}
-		return false;
+		double strength = 20;
+		if (attributes.hasKey(Attributes.EXTEND))
+			strength += attributes.getDouble(Attributes.EXTEND);
+		if (target instanceof EntityLivingBase)
+			strength *= calcBurnoutPercent(getCap((EntityLivingBase) target));
+		EntitySpellGravityWell well = new EntitySpellGravityWell(world, caster, target.getPositionVector(), (int) (strength * 20), strength, true);
+		well.setPosition(target.posX, target.posY, target.posZ);
+		world.spawnEntity(well);
+		setTargetPosition(this, target.getPositionVector());
+		return world.spawnEntity(well);
 	}
 
 	@Override
 	public void runClient(@NotNull World world, @NotNull ItemStack stack, @Nullable EntityLivingBase caster, @NotNull Vec3d pos) {
-		LibParticles.EFFECT_NULL_GRAV(world, pos, caster, getColor());
 	}
 
 	@NotNull
 	@Override
-	public ModuleEffectNullGrav copy() {
-		ModuleEffectNullGrav module = new ModuleEffectNullGrav();
+	public ModuleEffectAntiGravityWell copy() {
+		ModuleEffectAntiGravityWell module = new ModuleEffectAntiGravityWell();
 		module.deserializeNBT(serializeNBT());
 		process(module);
 		return module;

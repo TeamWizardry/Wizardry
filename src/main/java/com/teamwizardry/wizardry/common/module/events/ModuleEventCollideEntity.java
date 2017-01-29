@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.common.module.events;
 import com.teamwizardry.wizardry.api.spell.ITargettable;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.spell.RegisterModule;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
@@ -15,15 +16,17 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Created by LordSaad.
  */
+@RegisterModule
 public class ModuleEventCollideEntity extends Module implements ITargettable {
 
 	public ModuleEventCollideEntity() {
+		process(this);
 	}
 
 	@NotNull
 	@Override
 	public ItemStack getRequiredStack() {
-		return new ItemStack(Items.ROTTEN_FLESH);
+		return new ItemStack(Items.BEEF);
 	}
 
 	@NotNull
@@ -51,12 +54,12 @@ public class ModuleEventCollideEntity extends Module implements ITargettable {
 	}
 
 	@Override
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @Nullable Vec3d target) {
+	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Vec3d target) {
 		return false;
 	}
 
 	@Override
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @Nullable Entity target) {
+	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Entity target) {
 		return nextModule != null && nextModule instanceof ITargettable && ((ITargettable) nextModule).run(world, caster, target);
 	}
 
@@ -65,6 +68,7 @@ public class ModuleEventCollideEntity extends Module implements ITargettable {
 	public ModuleEventCollideEntity copy() {
 		ModuleEventCollideEntity module = new ModuleEventCollideEntity();
 		module.deserializeNBT(serializeNBT());
+		process(module);
 		return module;
 	}
 }

@@ -3,6 +3,8 @@ package com.teamwizardry.wizardry.common.module.effects;
 import com.teamwizardry.wizardry.api.spell.ITargettable;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.spell.RegisterModule;
+import com.teamwizardry.wizardry.api.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
@@ -12,12 +14,16 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.*;
+
 /**
  * Created by LordSaad.
  */
+@RegisterModule
 public class ModuleEffectBlink extends Module implements ITargettable {
 
     public ModuleEffectBlink() {
+	    process(this);
     }
 
     @NotNull
@@ -26,8 +32,13 @@ public class ModuleEffectBlink extends Module implements ITargettable {
         return new ItemStack(Items.CHORUS_FRUIT_POPPED);
     }
 
-    @NotNull
-    @Override
+	@Override
+	public Color getColor() {
+		return Color.MAGENTA;
+	}
+
+	@NotNull
+	@Override
     public ModuleType getModuleType() {
         return ModuleType.EFFECT;
     }
@@ -52,22 +63,30 @@ public class ModuleEffectBlink extends Module implements ITargettable {
 
     @Override
     public double getManaToConsume() {
-        return 50;
+	    return 300;
     }
 
     @Override
     public double getBurnoutToFill() {
-        return 20;
+	    return 200;
     }
 
     @Override
-    public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @Nullable Vec3d target) {
-        return caster != null && target != null && caster.attemptTeleport(target.xCoord, target.yCoord, target.zCoord);
+    public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Vec3d target) {
+	    if (caster != null) {
+		    Utils.blink(caster, target.distanceTo(caster.getPositionVector()));
+		    return true;
+	    }
+	    return false;
     }
 
     @Override
-    public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @Nullable Entity target) {
-        return caster != null && target != null && caster.attemptTeleport(target.posX, target.posY, target.posZ);
+    public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Entity target) {
+	    if (caster != null) {
+		    Utils.blink(caster, target.getPositionVector().distanceTo(caster.getPositionVector()));
+		    return true;
+	    }
+	    return false;
     }
 
     @NotNull
@@ -75,6 +94,7 @@ public class ModuleEffectBlink extends Module implements ITargettable {
     public ModuleEffectBlink copy() {
         ModuleEffectBlink module = new ModuleEffectBlink();
         module.deserializeNBT(serializeNBT());
-        return module;
+	    process(module);
+	    return module;
     }
 }

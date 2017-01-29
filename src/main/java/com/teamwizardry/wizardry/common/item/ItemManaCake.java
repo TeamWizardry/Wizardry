@@ -24,7 +24,7 @@ public class ItemManaCake extends ItemWizardryFood {
 	protected void onFoodEaten(ItemStack stack, World worldIn, @NotNull EntityPlayer player) {
 		super.onFoodEaten(stack, worldIn, player);
 		IWizardryCapability cap = WizardryCapabilityProvider.get(player);
-		if (cap.getMaxMana() >= (cap.getMana() + 300)) cap.setMana(cap.getMana() + 300, player);
+		if (cap.getMaxMana() >= (cap.getMana() * 1.3)) cap.setMana((int) (cap.getMana() * 1.3), player);
 		else cap.setMana(cap.getMaxMana(), player);
 	}
 

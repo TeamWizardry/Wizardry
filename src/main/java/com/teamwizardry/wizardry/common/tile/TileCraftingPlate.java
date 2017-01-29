@@ -125,8 +125,10 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink, 
 				markDirty();
 			}
 		} else {
-			craftingTimeLeft = craftingTime;
-			markDirty();
+			if (craftingTimeLeft != craftingTime) {
+				craftingTimeLeft = craftingTime;
+				markDirty();
+			}
 		}
 	}
 
