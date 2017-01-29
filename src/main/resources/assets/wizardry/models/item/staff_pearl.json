@@ -2,7 +2,7 @@
   "parent": "item/generated",
   "textures": {
     "layer0": "wizardry:items/staff_pearl",
-    "layer1": "wizardry:items/staff_wood",
+    "layer1": "wizardry:items/staff",
     "layer2": "wizardry:items/staff_pearl_highlight"
   }
 }

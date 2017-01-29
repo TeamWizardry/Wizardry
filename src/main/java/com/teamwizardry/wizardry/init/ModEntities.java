@@ -3,11 +3,11 @@ package com.teamwizardry.wizardry.init;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.client.render.entity.*;
 import com.teamwizardry.wizardry.common.entity.*;
-
 import net.minecraft.entity.Entity;
-//github.com/TeamWizardry/Wizardry
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
+
+//github.com/TeamWizardry/Wizardry
 
 /**
  * Created by Saad on 8/17/2016.
@@ -22,7 +22,7 @@ public class ModEntities {
 		registerEntity(EntityDevilDust.class, "dust_tracker", 64, 1, false);
 		registerEntity(EntitySpellCodex.class, "book_tracker", 64, 1, false);
 		registerEntity(EntitySpellProjectile.class, "spell_projectile", 64, 1, false);
-		registerEntity(EntitySpellGravityWell.class, "gravity_well", 64, 1, false)
+		registerEntity(EntitySpellGravityWell.class, "gravity_well", 64, 1, false);
 		registerEntity(EntityUnicorn.class, "unicorn");
 	}
 	

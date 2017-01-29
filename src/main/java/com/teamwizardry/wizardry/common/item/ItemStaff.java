@@ -1,11 +1,10 @@
-package com.teamwizardry.wizardry.common.item.staff;
+package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.wizardry.api.item.INacreColorable;
 import com.teamwizardry.wizardry.api.spell.IContinousSpell;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.SpellStack;
-import com.teamwizardry.wizardry.common.item.ItemWizardry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -32,17 +31,11 @@ import java.util.Set;
 /**
  * Created by Saad on 6/7/2016.
  */
-public class ItemGoldStaff extends ItemWizardry implements INacreColorable {
+public class ItemStaff extends ItemWizardry implements INacreColorable {
 
-	public ItemGoldStaff() {
-		super("gold_staff", "gold_staff", "gold_staff_pearl");
+	public ItemStaff() {
+		super("staff", "staff", "staff_pearl");
 		setMaxStackSize(1);
-	}
-
-	@Override
-	public void onPlayerStoppedUsing(ItemStack stack, World world, EntityLivingBase entityLiving, int timeLeft) {
-		if ((stack == null) || (world == null) || (entityLiving == null)) return;
-		//SpellStack.runModules(stack, world, entityLiving, new Vec3d(entityLiving.posX, entityLiving.posY, entityLiving.posZ));
 	}
 
 	@NotNull

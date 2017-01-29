@@ -1,105 +1,136 @@
 package com.teamwizardry.wizardry.common.entity;
 
-import java.util.concurrent.ThreadLocalRandom;
-
-import com.teamwizardry.wizardry.common.entity.ai.EntityAICharge;
-
-import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.*;
-import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-public class EntityUnicorn extends EntityMob 
-{
-    public static final String CHARGE_COOLDOWN = "charge_cooldown";
-    public static final String SHIELD_COOLDOWN = "shield_cooldown";
+import java.util.concurrent.ThreadLocalRandom;
 
-    private static final float FART_OFFSET = 0.35F;
-    private static final float FART_SIZE = 0.5F;
+public class EntityUnicorn extends EntityHorse {
 
-    private int chargeCooldown = 0;
-    private int shieldCooldown = 0;
-    //Time in ticks until the next fart
-    private int flatulenceTicker;
+	public static final String CHARGE_COOLDOWN = "charge_cooldown";
+	public static final String SHIELD_COOLDOWN = "shield_cooldown";
 
-    public EntityUnicorn(World worldIn) {
-	super(worldIn);
-	this.setSize(1.4F, 1.6F);
-	this.stepHeight = 1.0F;
-	this.tasks.addTask(1, new EntityAIWander(this, 0.5F));
-	this.tasks.addTask(2, new EntityAICharge(this, 2.0F, 10.0F));
-	this.targetTasks.addTask(1, new EntityAINearestAttackableTarget<EntityPlayer>(this, EntityPlayer.class, true, false));
-	this.targetTasks.addTask(2, new EntityAIHurtByTarget(this, false));
-    }
+	private static final float FART_OFFSET = 0.35F;
+	private static final float FART_SIZE = 0.5F;
 
-    @Override
-    protected void entityInit() {
-	super.entityInit();	
-	flatulenceTicker = ThreadLocalRandom.current().nextInt(20, 200);
-    }
+	public boolean isCharging = false;
+	public int prepareChargeTicks = 0;
+	public int shieldCooldown = 0;
+	public int flatulenceTicker;
+	private EntityLivingBase target;
 
-    @Override
-    protected void applyEntityAttributes() {
-	super.applyEntityAttributes();
-	this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(10.0D);
-	this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.25D);
-	this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(5.0D);
-    }
-
-    @Override
-    public void onLivingUpdate() {
-	super.onLivingUpdate();
-	chargeCooldown--;
-	shieldCooldown--;
-	this.fart();
-    }
-
-    private void fart() {
-	flatulenceTicker--;
-	if(flatulenceTicker <= 0) {
-	    Vec3d fartPos = this.getLookVec().subtract(this.getPositionVector()).rotateYaw((float) Math.PI);
-	    for(int p = 0; p < 64; p++) {
-		this.world.spawnParticle(EnumParticleTypes.REDSTONE, fartPos.xCoord + ThreadLocalRandom.current().nextDouble(-FART_SIZE, FART_SIZE),
-			this.posY + this.getEyeHeight() - FART_OFFSET + ThreadLocalRandom.current().nextDouble(-FART_SIZE, FART_SIZE),
-			fartPos.zCoord + ThreadLocalRandom.current().nextDouble(-FART_SIZE, FART_SIZE),
-			this.world.rand.nextFloat(), this.world.rand.nextFloat(), this.world.rand.nextFloat()
-			);
-	    }
-	    flatulenceTicker = ThreadLocalRandom.current().nextInt(200, 6000);
+	public EntityUnicorn(World worldIn) {
+		super(worldIn);
+		this.setSize(1.3964844F, 1.6F);
+		this.isImmuneToFire = false;
+		this.setChested(false);
+		this.stepHeight = 1.0F;
 	}
-    }
 
-    public int getChargeCooldown() {
-	return chargeCooldown;
-    }
+	@Override
+	protected void entityInit() {
+		super.entityInit();
+		flatulenceTicker = ThreadLocalRandom.current().nextInt(20, 200);
+	}
 
-    public void resetChargeCooldown() {
-	chargeCooldown = this.world.rand.nextInt(60) + 20;
-    }
+	@Override
+	protected void initEntityAI() {
+		//this.tasks.addTask(0, new EntityAIUnicornCharge(this, 1.0F, 10.0F, 5.0));
+		this.tasks.addTask(1, new EntityAISwimming(this));
+		this.tasks.addTask(2, new EntityAIMoveTowardsRestriction(this, 1.0D));
+		this.tasks.addTask(3, new EntityAIWander(this, 1.0D));
+		this.tasks.addTask(4, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
+		this.tasks.addTask(5, new EntityAILookIdle(this));
+		this.tasks.addTask(6, new EntityAIRunAroundLikeCrazy(this, 1.2D));
+		this.tasks.addTask(7, new EntityAIMate(this, 1.0D));
+		this.tasks.addTask(8, new EntityAIFollowParent(this, 1.0D));
 
-    public int getShieldCooldown() {
-	return shieldCooldown;
-    }
+		//this.targetTasks.addTask(1, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, false, false));
+		this.targetTasks.addTask(2, new EntityAIHurtByTarget(this, false));
+	}
 
-    public void resetShieldCooldown() {
-	shieldCooldown = this.world.rand.nextInt(60) + 20;
-    }
+	@Override
+	protected void applyEntityAttributes() {
+		super.applyEntityAttributes();
+	}
 
-    @Override
-    public void writeEntityToNBT(NBTTagCompound compound) {
-	super.writeEntityToNBT(compound);
-	compound.setInteger(CHARGE_COOLDOWN, chargeCooldown);
-	compound.setInteger(SHIELD_COOLDOWN, shieldCooldown);
-    }
+	@Override
+	public void onUpdate() {
+		super.onUpdate();
+		shieldCooldown--;
+		this.fart();
 
-    @Override
-    public void readEntityFromNBT(NBTTagCompound compound) {
-	super.readEntityFromNBT(compound);
-	chargeCooldown = compound.getInteger(CHARGE_COOLDOWN);
-	shieldCooldown = compound.getInteger(SHIELD_COOLDOWN);
-    }
+		if (target == null) {
+			target = world.getNearestAttackablePlayer(this, 50, 50);
+		}
+		if (target == null) return;
+		if (!target.isEntityAlive()) return;
+		if (target.getDistanceToEntity(this) > 10) return;
+		if (((EntityPlayer) target).capabilities.isCreativeMode || ((EntityPlayer) target).isSpectator())
+			return;
+
+		if (!isCharging) {
+			isCharging = true;
+			prepareChargeTicks = 0;
+		}
+
+		if (prepareChargeTicks < 60) {
+			prepareChargeTicks++;
+			limbSwingAmount += prepareChargeTicks / 10;
+		} else {
+			if (getNavigator().noPath()) {
+				Vec3d excess = target.getPositionVector();
+				getNavigator().tryMoveToXYZ(excess.xCoord, excess.yCoord, excess.zCoord, 2);
+			}
+
+			if (getEntityBoundingBox().expand(1, 1, 1).intersectsWith(target.getEntityBoundingBox())) {
+				target.knockBack(this, 3F, MathHelper.sin(rotationYaw), -MathHelper.cos(rotationYaw));
+				knockBack(this, 1F, -MathHelper.sin(rotationYaw), MathHelper.cos(rotationYaw));
+				target.attackEntityFrom(DamageSource.causeMobDamage(target), (float) 5);
+				isCharging = false;
+				getNavigator().setPath(null, 1);
+			}
+		}
+	}
+
+	private void fart() {
+		flatulenceTicker--;
+		if (flatulenceTicker <= 0) {
+			Vec3d fartPos = this.getLookVec().subtract(this.getPositionVector()).rotateYaw((float) Math.PI);
+			for (int p = 0; p < 64; p++) {
+				this.world.spawnParticle(EnumParticleTypes.REDSTONE, fartPos.xCoord + ThreadLocalRandom.current().nextDouble(-FART_SIZE, FART_SIZE),
+						this.posY + this.getEyeHeight() - FART_OFFSET + ThreadLocalRandom.current().nextDouble(-FART_SIZE, FART_SIZE),
+						fartPos.zCoord + ThreadLocalRandom.current().nextDouble(-FART_SIZE, FART_SIZE),
+						this.world.rand.nextFloat(), this.world.rand.nextFloat(), this.world.rand.nextFloat()
+				);
+			}
+			flatulenceTicker = ThreadLocalRandom.current().nextInt(200, 6000);
+		}
+	}
+
+	@Override
+	public void writeEntityToNBT(NBTTagCompound compound) {
+		super.writeEntityToNBT(compound);
+		compound.setInteger(SHIELD_COOLDOWN, shieldCooldown);
+		compound.setBoolean("is_charging", isCharging);
+		compound.setInteger("prepare_charge_ticks", prepareChargeTicks);
+		compound.setInteger("target", target.getEntityId());
+	}
+
+	@Override
+	public void readEntityFromNBT(NBTTagCompound compound) {
+		super.readEntityFromNBT(compound);
+		shieldCooldown = compound.getInteger(SHIELD_COOLDOWN);
+		isCharging = compound.getBoolean("is_charging");
+		prepareChargeTicks = compound.getInteger("prepare_charge_ticks");
+		target = (EntityLivingBase) world.getEntityByID(compound.getInteger("target"));
+	}
 }

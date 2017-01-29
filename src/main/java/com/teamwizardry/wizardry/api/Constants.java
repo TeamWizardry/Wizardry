@@ -64,7 +64,7 @@ public class Constants {
 	}
 
 	public static class NBT {
-		public static final String SPELL = "Spell";
+		public static final String SPELL = "spell";
 		public static final String TAG_OVERLAY = "overlay";
 		public static final String FAIRY_INSIDE = "fairy_inside";
 		public static final String FAIRY_COLOR = "fairy_color";

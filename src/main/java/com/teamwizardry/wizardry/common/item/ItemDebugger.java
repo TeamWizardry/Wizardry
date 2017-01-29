@@ -8,7 +8,7 @@ import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.api.item.GlowingOverlayHelper;
 import com.teamwizardry.wizardry.api.item.IGlowOverlayable;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
-import com.teamwizardry.wizardry.common.entity.EntityHallowedSpirit;
+import com.teamwizardry.wizardry.common.entity.EntityUnicorn;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
 import com.teamwizardry.wizardry.init.ModStructures;
 import net.minecraft.client.Minecraft;
@@ -59,7 +59,7 @@ public class ItemDebugger extends ItemWizardry implements IGlowOverlayable {
 					entity.setPosition(playerIn.posX, playerIn.posY, playerIn.posZ);
 					worldIn.spawnEntity(entity);
 				} else {
-					EntityHallowedSpirit entity = new EntityHallowedSpirit(worldIn);
+					EntityUnicorn entity = new EntityUnicorn(worldIn);
 					entity.setPosition(playerIn.posX, playerIn.posY, playerIn.posZ);
 					worldIn.spawnEntity(entity);
 				}
