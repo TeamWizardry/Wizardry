@@ -76,13 +76,13 @@ public class ModuleEffectNullGrav extends Module implements ITargettable {
 	}
 
 	@Override
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @Nullable Vec3d target) {
+	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Vec3d target) {
 		return false;
 	}
 
 	@Override
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @Nullable Entity target) {
-		if (target != null && target instanceof EntityLivingBase) {
+	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Entity target) {
+		if (target instanceof EntityLivingBase) {
 			double length = 30;
 			if (attributes.hasKey(Attributes.EXTEND))
 				length *= Math.min(10, attributes.getDouble(Attributes.EXTEND) * 10);

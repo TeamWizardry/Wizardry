@@ -78,13 +78,13 @@ public class ModuleEffectLeap extends Module implements ITargettable {
 	}
 
 	@Override
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @Nullable Vec3d target) {
+	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Vec3d target) {
 		return false;
 	}
 
 	@Override
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @Nullable Entity target) {
-		if (target != null && !target.hasNoGravity()) {
+	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Entity target) {
+		if (!target.hasNoGravity()) {
 			double strength = 0.5;
 			if (attributes.hasKey(Attributes.EXTEND))
 				strength += Math.min(64.0 / 100.0, attributes.getDouble(Attributes.EXTEND) / 100.0);

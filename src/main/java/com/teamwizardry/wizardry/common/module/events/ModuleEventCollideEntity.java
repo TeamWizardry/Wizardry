@@ -54,15 +54,13 @@ public class ModuleEventCollideEntity extends Module implements ITargettable {
 	}
 
 	@Override
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @Nullable Vec3d target) {
+	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Vec3d target) {
 		return false;
 	}
 
 	@Override
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @Nullable Entity target) {
-		if (nextModule != null && nextModule instanceof ITargettable)
-			return ((ITargettable) nextModule).run(world, caster, target);
-		return false;
+	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Entity target) {
+		return nextModule != null && nextModule instanceof ITargettable && ((ITargettable) nextModule).run(world, caster, target);
 	}
 
 	@NotNull

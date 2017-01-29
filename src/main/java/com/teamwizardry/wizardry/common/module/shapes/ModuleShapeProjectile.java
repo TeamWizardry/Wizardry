@@ -55,12 +55,11 @@ public class ModuleShapeProjectile extends Module {
 	@Override
 	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
 		if (caster == null) return false;
-		float yaw = caster.rotationYaw;
-		float pitch = caster.rotationPitch;
-		EntitySpellProjectile proj = new EntitySpellProjectile(world, caster, caster.getLookVec(), this);
+		EntitySpellProjectile proj = new EntitySpellProjectile(world, caster, this);
 		Vec3d pos = caster.getPositionVector().addVector(0, caster.getEyeHeight(), 0);
 		proj.setPosition(pos.xCoord, pos.yCoord, pos.zCoord);
-		proj.setDirection(yaw, pitch);
+		proj.setHeadingFromThrower(caster, caster.rotationPitch, caster.rotationYaw, 0.0f, 1.5f, 1.0f);
+		proj.velocityChanged = true;
 		world.spawnEntity(proj);
 		return true;
 	}

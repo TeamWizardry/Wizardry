@@ -72,8 +72,8 @@ public class ModuleEffectBlink extends Module implements ITargettable {
     }
 
     @Override
-    public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @Nullable Vec3d target) {
-	    if (caster != null && target != null) {
+    public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Vec3d target) {
+	    if (caster != null) {
 		    Utils.blink(caster, target.distanceTo(caster.getPositionVector()));
 		    return true;
 	    }
@@ -81,8 +81,8 @@ public class ModuleEffectBlink extends Module implements ITargettable {
     }
 
     @Override
-    public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @Nullable Entity target) {
-	    if (caster != null && target != null) {
+    public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Entity target) {
+	    if (caster != null) {
 		    Utils.blink(caster, target.getPositionVector().distanceTo(caster.getPositionVector()));
 		    return true;
 	    }

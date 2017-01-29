@@ -21,21 +21,21 @@ import java.awt.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEffectGravityWell extends Module implements ITargettable {
+public class ModuleEffectAntiGravityWell extends Module implements ITargettable {
 
-	public ModuleEffectGravityWell() {
+	public ModuleEffectAntiGravityWell() {
 	}
 
 	@Nullable
 	@Override
 	public Color getColor() {
-		return Color.BLUE;
+		return Color.MAGENTA;
 	}
 
 	@NotNull
 	@Override
 	public ItemStack getRequiredStack() {
-		return new ItemStack(Items.SLIME_BALL);
+		return new ItemStack(Items.MAGMA_CREAM);
 	}
 
 	@NotNull
@@ -47,19 +47,19 @@ public class ModuleEffectGravityWell extends Module implements ITargettable {
 	@NotNull
 	@Override
 	public String getID() {
-		return "effect_gravity_well";
+		return "effect_anti_gravity_well";
 	}
 
 	@NotNull
 	@Override
 	public String getReadableName() {
-		return "Gravity Well";
+		return "Anti Gravity Well";
 	}
 
 	@NotNull
 	@Override
 	public String getDescription() {
-		return "Will suck in all entities around the target.";
+		return "Will disperse in all entities around the target.";
 	}
 
 	@Override
@@ -77,7 +77,7 @@ public class ModuleEffectGravityWell extends Module implements ITargettable {
 		double strength = 20;
 		if (attributes.hasKey(Attributes.EXTEND))
 			strength += attributes.getDouble(Attributes.EXTEND);
-		EntitySpellGravityWell well = new EntitySpellGravityWell(world, caster, target, (int) (strength * 20), strength, false);
+		EntitySpellGravityWell well = new EntitySpellGravityWell(world, caster, target, (int) (strength * 20), strength, true);
 		well.setPosition(target.xCoord, target.yCoord, target.zCoord);
 		world.spawnEntity(well);
 		setTargetPosition(this, target);
@@ -91,7 +91,7 @@ public class ModuleEffectGravityWell extends Module implements ITargettable {
 			strength += attributes.getDouble(Attributes.EXTEND);
 		if (target instanceof EntityLivingBase)
 			strength *= calcBurnoutPercent(getCap((EntityLivingBase) target));
-		EntitySpellGravityWell well = new EntitySpellGravityWell(world, caster, target.getPositionVector(), (int) (strength * 20), strength, false);
+		EntitySpellGravityWell well = new EntitySpellGravityWell(world, caster, target.getPositionVector(), (int) (strength * 20), strength, true);
 		well.setPosition(target.posX, target.posY, target.posZ);
 		world.spawnEntity(well);
 		setTargetPosition(this, target.getPositionVector());
@@ -104,8 +104,8 @@ public class ModuleEffectGravityWell extends Module implements ITargettable {
 
 	@NotNull
 	@Override
-	public ModuleEffectGravityWell copy() {
-		ModuleEffectGravityWell module = new ModuleEffectGravityWell();
+	public ModuleEffectAntiGravityWell copy() {
+		ModuleEffectAntiGravityWell module = new ModuleEffectAntiGravityWell();
 		module.deserializeNBT(serializeNBT());
 		process(module);
 		return module;

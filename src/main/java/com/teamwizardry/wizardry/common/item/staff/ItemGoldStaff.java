@@ -42,14 +42,16 @@ public class ItemGoldStaff extends ItemWizardry implements INacreColorable {
 	@Override
 	public void onPlayerStoppedUsing(ItemStack stack, World world, EntityLivingBase entityLiving, int timeLeft) {
 		if ((stack == null) || (world == null) || (entityLiving == null)) return;
-		SpellStack.runModules(stack, world, entityLiving, new Vec3d(entityLiving.posX, entityLiving.posY, entityLiving.posZ));
+		//SpellStack.runModules(stack, world, entityLiving, new Vec3d(entityLiving.posX, entityLiving.posY, entityLiving.posZ));
 	}
 
 	@NotNull
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(@NotNull ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
 		if (getItemUseAction(stack) == EnumAction.NONE) {
-			SpellStack.runModules(stack, world, player, new Vec3d(player.posX, player.posY, player.posZ));
+			if (!world.isRemote) {
+				SpellStack.runModules(stack, world, player, new Vec3d(player.posX, player.posY, player.posZ));
+			}
 			player.swingArm(EnumHand.MAIN_HAND);
 			player.getCooldownTracker().setCooldown(this, 10);
 			return new ActionResult<>(EnumActionResult.PASS, stack);
@@ -143,6 +145,8 @@ public class ItemGoldStaff extends ItemWizardry implements INacreColorable {
 				int i = 0;
 				while (tempModule != null) {
 					tooltip.add(new String(new char[i]).replace("\0", "-") + "> " + TextFormatting.BLUE + tempModule.getManaToConsume() + TextFormatting.GRAY + "/" + TextFormatting.RED + tempModule.getBurnoutToFill() + TextFormatting.GRAY + " - " + tempModule.getReadableName());
+					for (String key : tempModule.attributes.getKeySet())
+						tooltip.add(new String(new char[i]).replace("\0", "-") + "^ " + TextFormatting.YELLOW + key + TextFormatting.GRAY + " * " + TextFormatting.GREEN + tempModule.attributes.getDouble(key));
 					tempModule = tempModule.nextModule;
 					i++;
 				}

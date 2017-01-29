@@ -21,6 +21,7 @@ public class EntitySpellGravityWell extends Entity {
 
 	@Nullable
 	private EntityLivingBase caster;
+	private boolean antigrav;
 	private Vec3d pos;
 	private int maxTicks;
 	private double range;
@@ -29,12 +30,13 @@ public class EntitySpellGravityWell extends Entity {
 		super(worldIn);
 	}
 
-	public EntitySpellGravityWell(World world, @Nullable EntityLivingBase caster, Vec3d pos, int maxTicks, double range) {
+	public EntitySpellGravityWell(World world, @Nullable EntityLivingBase caster, Vec3d pos, int maxTicks, double range, boolean antigrav) {
 		super(world);
 		this.pos = pos;
 		this.maxTicks = maxTicks;
 		this.range = range;
 		this.caster = caster;
+		this.antigrav = antigrav;
 
 		setPosition(pos.xCoord, pos.yCoord, pos.zCoord);
 		setSize(0.1F, 0.1F);
@@ -48,6 +50,7 @@ public class EntitySpellGravityWell extends Entity {
 			setDead();
 			return;
 		}
+
 		LibParticles.EFFECT_NULL_GRAV(world, pos, null, Color.RED);
 		if (ticksExisted > maxTicks) setDead();
 		if (world.isRemote) return;
@@ -56,12 +59,21 @@ public class EntitySpellGravityWell extends Entity {
 			if (entity == null) continue;
 			if (entity.getDistanceToEntity(this) > range) continue;
 
-			Vec3d dir = pos.subtract(entity.getPositionVector());
-			entity.motionX += (dir.xCoord) / 10.0;
-			entity.motionY += (dir.yCoord) / 10.0;
-			entity.motionZ += (dir.zCoord) / 10.0;
-			entity.fallDistance = 0;
-			entity.velocityChanged = true;
+			if (!antigrav) {
+				Vec3d dir = pos.subtract(entity.getPositionVector());
+				entity.motionX += (dir.xCoord) / 50.0;
+				entity.motionY += (dir.yCoord) / 50.0;
+				entity.motionZ += (dir.zCoord) / 50.0;
+				entity.fallDistance = 0;
+				entity.velocityChanged = true;
+			} else {
+				Vec3d dir = pos.subtract(entity.getPositionVector());
+				entity.motionX += (range - dir.xCoord) / 50.0;
+				entity.motionY += (range - dir.yCoord) / 50.0;
+				entity.motionZ += (range - dir.zCoord) / 50.0;
+				entity.fallDistance = 0;
+				entity.velocityChanged = true;
+			}
 		}
 	}
 
@@ -80,6 +92,7 @@ public class EntitySpellGravityWell extends Entity {
 		pos = new Vec3d(compound.getDouble("x_coord"), compound.getDouble("y_coord"), compound.getDouble("z_coord"));
 		maxTicks = compound.getInteger("max_ticks");
 		range = compound.getDouble("range");
+		antigrav = compound.getBoolean("anti_grav");
 
 		if (compound.hasKey("caster_id"))
 			caster = (EntityLivingBase) world.getEntityByID(compound.getInteger("caster_id"));
@@ -92,6 +105,7 @@ public class EntitySpellGravityWell extends Entity {
 		compound.setDouble("z_coord", pos.zCoord);
 		compound.setInteger("max_ticks", maxTicks);
 		compound.setDouble("range", range);
+		compound.setBoolean("anti_grav", antigrav);
 		if (caster != null) compound.setInteger("caster_id", caster.getEntityId());
 	}
 }
