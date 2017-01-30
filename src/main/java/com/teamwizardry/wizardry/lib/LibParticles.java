@@ -258,6 +258,22 @@ public class LibParticles {
 		});
 	}
 
+	public static void FAIRY_HEAD(World world, Vec3d pos, Color color) {
+		ParticleBuilder glitter = new ParticleBuilder(3);
+		glitter.setColor(color);
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+		glitter.setAlphaFunction(new InterpFadeInOut(0.2f, 1f));
+		glitter.setScale(3.5f);
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 2);
+
+		ParticleBuilder glitter2 = new ParticleBuilder(5);
+		glitter2.setColor(color);
+		glitter2.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+		glitter2.setAlphaFunction(new InterpFadeInOut(0.2f, 1f));
+		glitter2.setScale(1);
+		ParticleSpawner.spawn(glitter2, world, new StaticInterp<>(pos), 3);
+	}
+
 	public static void FAIRY_EXPLODE(World world, Vec3d pos, Color color) {
 		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(50, 80));
 		glitter.setColor(color.darker());

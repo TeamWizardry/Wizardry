@@ -20,12 +20,14 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -65,6 +67,10 @@ public class EntitySpellProjectile extends EntityThrowable {
 		super.onUpdate();
 		if (ticksExisted > 500) setDead();
 		if (spell == null) return;
+		List<EntitySpellProjectile> projectiles = world.getEntitiesWithinAABB(EntitySpellProjectile.class, new AxisAlignedBB(getPosition()).expand(0.5, 0.5, 0.5));
+		if (!projectiles.isEmpty())
+			for (EntitySpellProjectile projectile : projectiles)
+				if (projectile.spell.equals(spell) && getEntityId() % 2 == 0) setDead();
 
 		if (spell.getColor() != null) {
 			ParticleBuilder glitter = new ParticleBuilder(10);

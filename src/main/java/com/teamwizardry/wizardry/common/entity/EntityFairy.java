@@ -93,6 +93,8 @@ public class EntityFairy extends EntityFlying {
 		if (age <= 0) age = 2;
 		if (((ticksExisted % ThreadLocalRandom.current().nextInt(200, 400)) == 0) && (age < 100)) age++;
 
+		if (((age / 4) >= (age / 2)) || (age == 0)) return;
+		LibParticles.FAIRY_HEAD(world, getPositionVector().addVector(0, 0.25, 0), color);
 		LibParticles.FAIRY_TRAIL(world, getPositionVector().addVector(0, 0.25, 0), color, sad, age);
 
 		boolean match = true;
