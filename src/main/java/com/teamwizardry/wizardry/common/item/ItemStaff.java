@@ -92,6 +92,7 @@ public class ItemStaff extends ItemWizardry implements INacreColorable {
 					SpellStack.runModules(stack, ((EntityPlayer) player).world, player, new Vec3d(player.posX, player.posY, player.posZ));
 					player.swingArm(EnumHand.MAIN_HAND);
 					((EntityPlayer) player).getCooldownTracker().setCooldown(this, 10);
+					return;
 				} else return;
 			}
 		if (((count > 0) && (count < (getMaxItemUseDuration(stack) - 20)) && (player instanceof EntityPlayer)))
