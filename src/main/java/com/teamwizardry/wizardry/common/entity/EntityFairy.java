@@ -82,7 +82,7 @@ public class EntityFairy extends EntityFlying {
 		}
 		entity.fallDistance = 0;
 
-		LibParticles.AIR_THROTTLE(world, getPositionVector(), entity, color, color.brighter());
+		LibParticles.AIR_THROTTLE(world, getPositionVector(), entity, color, color.brighter(), -1);
 	}
 
 	@Override

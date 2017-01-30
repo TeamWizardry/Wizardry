@@ -21,6 +21,7 @@ public class PacketCapeTick extends PacketBase {
 		EntityPlayer player = messageContext.getServerHandler().playerEntity;
 		ItemStack cape = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
 		if (cape == null) return;
+		if (ItemNBTHelper.getInt(cape, "time", -1) == -1) return;
 		ItemNBTHelper.setInt(cape, "time", ItemNBTHelper.getInt(cape, "time", 0) + 1);
 	}
 }

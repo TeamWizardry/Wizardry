@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.entity;
 
+import com.teamwizardry.wizardry.api.spell.ModuleRegistry;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -11,8 +12,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.awt.*;
 
 /**
  * Created by LordSaad.
@@ -51,11 +50,11 @@ public class EntitySpellGravityWell extends Entity {
 			return;
 		}
 
-		LibParticles.EFFECT_NULL_GRAV(world, pos, null, Color.RED);
+		LibParticles.EFFECT_NULL_GRAV(world, pos, null, antigrav ? ModuleRegistry.INSTANCE.getModule("effect_anti_gravity_well").getColor() : ModuleRegistry.INSTANCE.getModule("effect_gravity_well").getColor());
 		if (ticksExisted > maxTicks) setDead();
 		if (world.isRemote) return;
 
-		for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(pos)).expand(range, range, range))) {
+		for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(pos)).expand(range, range, range))) {
 			if (entity == null) continue;
 			if (entity.getDistanceToEntity(this) > range) continue;
 

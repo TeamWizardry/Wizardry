@@ -1,10 +1,10 @@
 package com.teamwizardry.wizardry.common.module.shapes;
 
-import com.teamwizardry.librarianlib.client.core.ClientTickHandler;
 import com.teamwizardry.wizardry.api.spell.ITargettable;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.RegisterModule;
+import com.teamwizardry.wizardry.api.util.Utils;
 import com.teamwizardry.wizardry.common.module.events.ModuleEventCast;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -28,7 +28,7 @@ public class ModuleShapeTouch extends Module {
 	@NotNull
 	@Override
 	public ItemStack getRequiredStack() {
-		return new ItemStack(Items.RABBIT_FOOT);
+		return new ItemStack(Items.EGG);
 	}
 
 	@NotNull
@@ -58,19 +58,20 @@ public class ModuleShapeTouch extends Module {
 	@Override
 	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
 		if (nextModule == null) return false;
+		if (caster == null) return false;
 
 		if (nextModule instanceof ModuleEventCast) return nextModule.run(world, caster);
 		else if (nextModule instanceof ITargettable) {
-			if (caster instanceof EntityPlayerMP) {
-				double range = ((EntityPlayerMP) caster).interactionManager.getBlockReachDistance();
-				RayTraceResult trace = caster.rayTrace(range, ClientTickHandler.getPartialTicks());
-				if (trace == null) return false;
-				if (trace.typeOfHit == RayTraceResult.Type.BLOCK)
-					return ((ITargettable) nextModule).run(world, caster, trace.hitVec);
-				else if (trace.typeOfHit == RayTraceResult.Type.ENTITY)
-					return ((ITargettable) nextModule).run(world, caster, trace.entityHit);
-			}
+			double range = 5;
+			if (caster instanceof EntityPlayerMP)
+				range = ((EntityPlayerMP) caster).interactionManager.getBlockReachDistance();
+			RayTraceResult result = Utils.raytrace(world, caster.getLookVec(), caster.getPositionVector().addVector(0, caster.getEyeHeight(), 0), range, caster);
+			if (result != null && result.typeOfHit == RayTraceResult.Type.BLOCK)
+				return ((ITargettable) nextModule).run(world, caster, result.hitVec);
+			else if (result != null && result.typeOfHit == RayTraceResult.Type.ENTITY)
+				return ((ITargettable) nextModule).run(world, caster, result.entityHit);
 		}
+
 		return false;
 	}
 

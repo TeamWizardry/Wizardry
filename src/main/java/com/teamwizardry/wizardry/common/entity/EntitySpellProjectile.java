@@ -63,25 +63,20 @@ public class EntitySpellProjectile extends EntityThrowable {
 	@Override
 	public void onUpdate() {
 		super.onUpdate();
-		if (ticksExisted > 50) setDead();
+		if (ticksExisted > 500) setDead();
 		if (spell == null) return;
 
 		if (spell.getColor() != null) {
 			ParticleBuilder glitter = new ParticleBuilder(10);
 			glitter.setColor(new Color(1.0f, 1.0f, 1.0f, 0.1f));
-			glitter.setPositionFunction(new InterpHelix(Vec3d.ZERO, getLook(0).scale(20), 0.3f, 0.3f, 3F, ThreadLocalRandom.current().nextFloat()));
 			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-
-			glitter.setColor(new Color(
-					Math.min(255, spell.getColor().getRed() + ThreadLocalRandom.current().nextInt(5, 20)),
-					Math.min(255, spell.getColor().getGreen() + ThreadLocalRandom.current().nextInt(5, 20)),
-					Math.min(255, spell.getColor().getBlue() + ThreadLocalRandom.current().nextInt(5, 20)),
-					spell.getColor().getAlpha()));
+			glitter.setColor(spell.getColor());
 
 			ParticleSpawner.spawn(glitter, world, new StaticInterp<>(getPositionVector()), 10, 0, (aFloat, particleBuilder) -> {
 				glitter.setScale((float) ThreadLocalRandom.current().nextDouble(0.3, 0.8));
 				glitter.setLifetime(ThreadLocalRandom.current().nextInt(10, 20));
+				glitter.setPositionFunction(new InterpHelix(Vec3d.ZERO, getLook(0), 0.3f, 0.3f, 1F, ThreadLocalRandom.current().nextFloat()));
 			});
 		}
 

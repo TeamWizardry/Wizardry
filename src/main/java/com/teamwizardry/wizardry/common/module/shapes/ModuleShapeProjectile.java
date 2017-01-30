@@ -64,6 +64,11 @@ public class ModuleShapeProjectile extends Module {
 		return true;
 	}
 
+	@Override
+	public int getChargeUpTime() {
+		return 50;
+	}
+
 	@NotNull
 	@Override
 	public ModuleShapeProjectile copy() {

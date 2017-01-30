@@ -62,7 +62,8 @@ public class ItemStaff extends ItemWizardry implements INacreColorable {
 	@Override
 	public EnumAction getItemUseAction(ItemStack stack) {
 		for (Module module : SpellStack.getAllModules(stack))
-			if (module instanceof IContinousSpell || module.getChargeUpTime() > 0) return EnumAction.BOW;
+			if (module instanceof IContinousSpell || (module.getChargeUpTime() > 0))
+				return EnumAction.BOW;
 		return EnumAction.NONE;
 	}
 
@@ -85,9 +86,16 @@ public class ItemStaff extends ItemWizardry implements INacreColorable {
 
 	@Override
 	public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
-		if ((count > 0) && (count < (getMaxItemUseDuration(stack) - 20)) && (player instanceof EntityPlayer)) {
+		for (Module module : SpellStack.getAllModules(stack))
+			if (module.getChargeUpTime() > 0) {
+				if (count <= 1) {
+					SpellStack.runModules(stack, ((EntityPlayer) player).world, player, new Vec3d(player.posX, player.posY, player.posZ));
+					player.swingArm(EnumHand.MAIN_HAND);
+					((EntityPlayer) player).getCooldownTracker().setCooldown(this, 10);
+				} else return;
+			}
+		if (((count > 0) && (count < (getMaxItemUseDuration(stack) - 20)) && (player instanceof EntityPlayer)))
 			SpellStack.runModules(stack, ((EntityPlayer) player).world, player, new Vec3d(player.posX, player.posY, player.posZ));
-		}
 	}
 
 	@Override

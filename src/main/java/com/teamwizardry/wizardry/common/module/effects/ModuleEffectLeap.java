@@ -85,7 +85,7 @@ public class ModuleEffectLeap extends Module implements ITargettable {
 	@Override
 	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Entity target) {
 		if (!target.hasNoGravity()) {
-			double strength = 0.5;
+			double strength = 0.75;
 			if (attributes.hasKey(Attributes.EXTEND))
 				strength += Math.min(64.0 / 100.0, attributes.getDouble(Attributes.EXTEND) / 100.0);
 			if (caster != null && getCap(caster) != null)
@@ -93,6 +93,7 @@ public class ModuleEffectLeap extends Module implements ITargettable {
 			target.motionX = target.isCollidedVertically ? target.getLookVec().xCoord : target.getLookVec().xCoord / 2;
 			target.motionY = target.isCollidedVertically ? strength : strength / 3;
 			target.motionZ = target.isCollidedVertically ? target.getLookVec().zCoord : target.getLookVec().zCoord / 2;
+			target.velocityChanged = true;
 			target.fallDistance = 0;
 			return true;
 		}
@@ -101,12 +102,8 @@ public class ModuleEffectLeap extends Module implements ITargettable {
 
 	@Override
 	public void runClient(@NotNull World world, @Nullable ItemStack stack, @Nullable EntityLivingBase caster, @NotNull Vec3d pos) {
-		double strength = 1;
-		if (attributes.hasKey(Attributes.EXTEND)) strength += attributes.getDouble(Attributes.EXTEND);
-		if (caster != null && !caster.hasNoGravity()) {
-			LibParticles.EFFECT_LEAP(world, getColor(), pos, strength);
-			LibParticles.AIR_THROTTLE(world, pos, caster, getColor(), Color.WHITE);
-		}
+		if (caster != null && !caster.hasNoGravity())
+			LibParticles.AIR_THROTTLE(world, pos, caster, getColor(), Color.WHITE, 0.5);
 	}
 
 	@NotNull
