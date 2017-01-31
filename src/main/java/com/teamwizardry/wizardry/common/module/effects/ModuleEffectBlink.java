@@ -23,7 +23,6 @@ import java.awt.*;
 public class ModuleEffectBlink extends Module implements ITargettable {
 
     public ModuleEffectBlink() {
-	    process(this);
     }
 
     @NotNull

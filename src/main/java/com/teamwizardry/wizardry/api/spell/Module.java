@@ -52,11 +52,12 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	@Nullable
 	private Vec3d targetPosition = null;
 
+	/**
+	 * The summative final calculated/merged/mixed color from this module's children modules.
+	 */
 	private Color color = null;
 
-	public Module() {
-		process(this);
-	}
+	public Module() {}
 
 	@Nullable
 	public static Color processColor(Module module) {
@@ -248,7 +249,6 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 
 	public double calcBurnoutPercent(IWizardryCapability cap) {
 		return ((cap.getMaxBurnout() - cap.getBurnout()) / cap.getMaxBurnout());
-
 	}
 
 	@NotNull
