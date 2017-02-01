@@ -6,8 +6,8 @@ import com.teamwizardry.librarianlib.client.fx.particle.functions.InterpFadeInOu
 import com.teamwizardry.librarianlib.common.util.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpHelix;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Attributes;
 import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.spell.Attributes;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.RegisterModule;

@@ -2,7 +2,6 @@ package com.teamwizardry.wizardry.common.module.shapes;
 
 import com.teamwizardry.librarianlib.common.util.ConfigPropertyDouble;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Attributes;
 import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.api.util.Utils;
 import com.teamwizardry.wizardry.common.module.events.ModuleEventCast;
@@ -25,7 +24,7 @@ import java.awt.*;
 @RegisterModule
 public class ModuleShapeBeam extends Module implements IContinousSpell {
 
-	@ConfigPropertyDouble(modid = Wizardry.MODID, category = "modules", id = "shape_beam_default_range", comment = "The default range of a pure beam spell shape", defaultValue = 10)
+	@ConfigPropertyDouble(modid = Wizardry.MODID, category = "attributes", id = "shape_beam_default_range", comment = "The default range of a pure beam spell shape", defaultValue = 10)
 	public static double defaultRange;
 
 	public ModuleShapeBeam() {

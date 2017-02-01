@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.api;
+package com.teamwizardry.wizardry.api.spell;
 
 /**
  * Created by LordSaad.

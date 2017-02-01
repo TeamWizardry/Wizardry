@@ -45,7 +45,7 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	public double finalBurnoutCost = 10;
 
 	/**
-	 * The target position of this spell. It would be really nice if you set this value in your shape modules.
+	 * The target position of this spell. It would be really nice if you set this value in your shape attributes.
 	 * It improves particle positioning in runClient methods because there's no way to tell
 	 * otherwise.
 	 */
@@ -53,7 +53,7 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	private Vec3d targetPosition = null;
 
 	/**
-	 * The summative final calculated/merged/mixed color from this module's children modules.
+	 * The summative final calculated/merged/mixed color from this module's children attributes.
 	 */
 	private Color color = null;
 

@@ -1,7 +1,5 @@
 package com.teamwizardry.wizardry.client.gui.worktable;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import com.teamwizardry.librarianlib.client.gui.GuiBase;
 import com.teamwizardry.librarianlib.client.gui.GuiComponent;
 import com.teamwizardry.librarianlib.client.gui.components.ComponentGrid;
@@ -25,15 +23,11 @@ public class WorktableGui extends GuiBase {
 	public static final Texture SPRITE_SHEET = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sprite_sheet.png"));
 
 	static final int iconSize = 12;
-	public Multimap<ModuleType, Module> modulesByType = HashMultimap.create();
 	public GuiComponent<?> paper;
 	public GuiComponent<?> selected;
 
 	public WorktableGui() {
 		super(512, 256);
-
-		for (Module module : ModuleRegistry.INSTANCE.modules)
-			modulesByType.get(module.getModuleType()).add(module);
 
 		ComponentSprite background = new ComponentSprite(BACKGROUND_SPRITE, 0, 0);
 		getMainComponents().add(background);
@@ -157,7 +151,7 @@ public class WorktableGui extends GuiBase {
 		ComponentGrid grid = new ComponentGrid(x, y, 12, 12, columns);
 		parent.add(grid);
 
-		for (Module module : modulesByType.get(type)) {
+		for (Module module : ModuleRegistry.INSTANCE.getModules(type)) {
 			TableModule item = new TableModule(this, module, false);
 			grid.add(item.component);
 		}

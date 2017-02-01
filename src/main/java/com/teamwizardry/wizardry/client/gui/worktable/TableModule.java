@@ -3,6 +3,8 @@ package com.teamwizardry.wizardry.client.gui.worktable;
 import com.teamwizardry.librarianlib.client.gui.EnumMouseButton;
 import com.teamwizardry.librarianlib.client.gui.GuiComponent;
 import com.teamwizardry.librarianlib.client.gui.components.ComponentSprite;
+import com.teamwizardry.librarianlib.client.gui.mixin.ButtonMixin;
+import com.teamwizardry.librarianlib.client.gui.mixin.DragMixin;
 import com.teamwizardry.librarianlib.common.util.math.Vec2d;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.lib.LibSprites;
@@ -14,6 +16,7 @@ import java.util.List;
 public class TableModule {
 
 	public ComponentSprite component;
+	public DragMixin<?> drag;
 
 	public TableModule(WorktableGui table, Module module, boolean draggable) {
 		ComponentSprite sprite = new ComponentSprite(LibSprites.Worktable.MODULE_DEFAULT, 0, 0, 12, 12);
@@ -23,17 +26,18 @@ public class TableModule {
 		glow.setVisible(false);
 		sprite.add(glow);
 
+		// TODO: The thing's icon here
 		ComponentSprite icon = new ComponentSprite(LibSprites.Worktable.MODULE_DEFAULT, 2, 2, 8, 8);
 		sprite.add(icon);
 
+		new ButtonMixin<>(sprite, () -> {
+		});
 		sprite.BUS.hook(GuiComponent.MouseInEvent.class, (event) -> {
 			glow.setVisible(true);
-			icon.setSprite(LibSprites.Worktable.MODULE_DEFAULT);
 		});
 
 		sprite.BUS.hook(GuiComponent.MouseOutEvent.class, (event) -> {
 			glow.setVisible(false);
-			icon.setSprite(LibSprites.Worktable.MODULE_DEFAULT);
 		});
 
 		sprite.BUS.hook(GuiComponent.MouseDownEvent.class, (event) -> {
@@ -42,8 +46,8 @@ public class TableModule {
 					TableModule item = new TableModule(table, module, true);
 					item.component.setPos(new Vec2d(50, 50));
 					table.selected = item.component;
-				} else {
-					sprite.setPos(event.getMousePos().sub(-6, -6));
+					item.drag = new DragMixin<>(item.component, vec2d -> vec2d.sub(6, 6));
+					event.cancel();
 				}
 			}
 		});
