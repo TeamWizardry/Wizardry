@@ -36,6 +36,12 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	public Module nextModule = null;
 
 	/**
+	 * The module that ran this module.
+	 */
+	@Nullable
+	public Module prevModule = null;
+
+	/**
 	 * The final calculated cost of mana this spell consumes.
 	 */
 	public double finalManaCost = 10;

@@ -212,11 +212,11 @@ public class LibParticles {
 	public static void HALLOWED_SPIRIT_FLAME_NORMAL(World world, Vec3d pos) {
 		ParticleBuilder glitter = new ParticleBuilder(30);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
-		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
+		glitter.setAlphaFunction(new InterpFadeInOut(1f, 1f));
 		glitter.disableRandom();
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 10, 0, (i, build) -> {
-			double radius = 0.15;
+			double radius = 0.2;
 			double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
 			double r = radius * ThreadLocalRandom.current().nextFloat();
 			double x = r * MathHelper.cos((float) theta);

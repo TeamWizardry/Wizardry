@@ -76,14 +76,15 @@ public class EntityHallowedSpirit extends EntityMob {
 
 		fallDistance = 0;
 
-		EntityPlayer farPlayer = world.getNearestPlayerNotCreative(this, 50);
+		EntityPlayer farPlayer = world.getNearestPlayerNotCreative(this, 100);
 		if (farPlayer != null) {
+			noClip = true;
 			Vec3d direction = getPositionVector().subtract(farPlayer.getPositionVector()).normalize();
 			motionX = direction.xCoord * -0.05;
 			motionY = direction.yCoord * -0.05;
 			motionZ = direction.zCoord * -0.05;
 			rotationYaw = (float) (((-StrictMath.atan2(direction.xCoord, direction.zCoord) * 180) / Math.PI) - 180) / 2;
-		}
+		} else noClip = false;
 
 		EntityPlayer player = world.getNearestPlayerNotCreative(this, 2);
 		EntityPlayer closePlayer = world.getNearestPlayerNotCreative(this, 10);
@@ -96,7 +97,7 @@ public class EntityHallowedSpirit extends EntityMob {
 		else LibParticles.HALLOWED_SPIRIT_FLAME_NORMAL(world, getPositionVector().addVector(0, getEyeHeight(), 0));
 
 		if (angry) {
-			player.attackEntityFrom(DamageSource.generic, 0.15f);
+			player.attackEntityFrom(DamageSource.magic, 0.15f);
 			player.hurtResistantTime = 0;
 		}
 	}
