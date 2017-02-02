@@ -1,10 +1,12 @@
 package com.teamwizardry.wizardry.api.util;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Teleporter;
 import net.minecraft.world.WorldServer;
 import org.jetbrains.annotations.NotNull;
@@ -31,6 +33,20 @@ public class TeleportUtil {
 			worldServer.spawnEntity(player);
 			worldServer.updateEntityWithOptionalForce(player, false);
 		}
+	}
+
+	public static void blink(EntityLivingBase entity, double dist) {
+		if (entity == null) return;
+		Vec3d look = entity.getLookVec();
+
+		double x = entity.posX += look.xCoord * dist;
+		double y = entity.posY += Math.max(0, look.yCoord * dist);
+		double z = entity.posZ += look.zCoord * dist;
+
+		if (entity instanceof EntityPlayerMP) {
+			EntityPlayerMP mp = (EntityPlayerMP) entity;
+			mp.connection.setPlayerLocation(x, y, z, entity.rotationYaw, entity.rotationPitch);
+		} else entity.setPosition(x, y, z);
 	}
 
 

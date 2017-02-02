@@ -70,7 +70,7 @@ public class TileManaBatteryRenderer extends TileEntitySpecialRenderer<TileManaB
 				LibParticles.MAGIC_DOT(world, new Vec3d(pedPos).addVector(0.5, 0.5, 0.5), -1);
 
 		for (BlockPos pedPos : pedestals)
-			if (ThreadLocalRandom.current().nextInt(5) == 0)
+			if (ThreadLocalRandom.current().nextInt(10) == 0)
 				LibParticles.COLORFUL_BATTERY_BEZIER(world, pedPos, pos);
 	}
 }

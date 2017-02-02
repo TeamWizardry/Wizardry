@@ -94,12 +94,6 @@ public class ModuleShapeCone extends Module {
 		glitter.setPositionFunction(new InterpHelix(Vec3d.ZERO, caster.getLookVec().scale(range), 0.0f, (float) range, 3f, ThreadLocalRandom.current().nextFloat()));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-		glitter.setScale(1);
-		glitter.setColor(new Color(
-				Math.min(255, Color.RED.getRed() + ThreadLocalRandom.current().nextInt(5, 20)),
-				Math.min(255, Color.RED.getGreen() + ThreadLocalRandom.current().nextInt(5, 20)),
-				Math.min(255, Color.RED.getBlue() + ThreadLocalRandom.current().nextInt(5, 20)),
-				Color.RED.getAlpha()));
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(origin), 50, (int) (5 * range), (aFloat, particleBuilder) -> {
 			double radius = 0.5;
@@ -108,6 +102,12 @@ public class ModuleShapeCone extends Module {
 			double x = r * MathHelper.cos((float) theta);
 			double z = r * MathHelper.sin((float) theta);
 			glitter.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(0.5), z));
+			glitter.setColor(new Color(
+					Math.min(255, Color.RED.getRed() + ThreadLocalRandom.current().nextInt(20, 50)),
+					Math.min(255, Color.RED.getGreen() + ThreadLocalRandom.current().nextInt(20, 50)),
+					Math.min(255, Color.RED.getBlue() + ThreadLocalRandom.current().nextInt(20, 50)),
+					Color.RED.getAlpha()));
+			glitter.setScale(1);
 		});
 	}
 

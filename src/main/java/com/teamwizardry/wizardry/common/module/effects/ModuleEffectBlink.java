@@ -4,7 +4,7 @@ import com.teamwizardry.wizardry.api.spell.ITargettable;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.RegisterModule;
-import com.teamwizardry.wizardry.api.util.Utils;
+import com.teamwizardry.wizardry.api.util.TeleportUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
@@ -73,7 +73,7 @@ public class ModuleEffectBlink extends Module implements ITargettable {
     @Override
     public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Vec3d target) {
 	    if (caster != null) {
-		    Utils.blink(caster, target.distanceTo(caster.getPositionVector()));
+		    TeleportUtil.blink(caster, target.distanceTo(caster.getPositionVector()));
 		    return true;
 	    }
 	    return false;
@@ -82,7 +82,7 @@ public class ModuleEffectBlink extends Module implements ITargettable {
     @Override
     public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Entity target) {
 	    if (caster != null) {
-		    Utils.blink(caster, target.getPositionVector().distanceTo(caster.getPositionVector()));
+		    TeleportUtil.blink(caster, target.getPositionVector().distanceTo(caster.getPositionVector()));
 		    return true;
 	    }
 	    return false;

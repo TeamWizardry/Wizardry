@@ -99,7 +99,7 @@ public class ModuleEffectLeap extends Module implements ITargettable {
 	@Override
 	public void runClient(@NotNull World world, @Nullable ItemStack stack, @Nullable EntityLivingBase caster, @NotNull Vec3d pos) {
 		if (caster != null && !caster.hasNoGravity())
-			LibParticles.AIR_THROTTLE(world, pos, caster, getColor(), Color.WHITE, 0.5);
+			LibParticles.AIR_THROTTLE(world, pos, caster, getColor(), Color.WHITE, 0.5, true);
 	}
 
 	@NotNull

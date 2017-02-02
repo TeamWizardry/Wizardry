@@ -1,8 +1,6 @@
 package com.teamwizardry.wizardry.api.util;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -24,20 +22,6 @@ public class Utils {
 		double bluePart = color1.getBlue() * 0.9 + color2.getBlue() * inverse_percent;
 		double alphaPart = color1.getAlpha() * 0.9 + color2.getAlpha() * inverse_percent;
 		return new Color((int) redPart, (int) greenPart, (int) bluePart, (int) alphaPart);
-	}
-
-	public static void blink(EntityLivingBase entity, double dist) {
-		if (entity == null) return;
-		Vec3d look = entity.getLookVec();
-
-		double x = entity.posX += look.xCoord * dist;
-		double y = entity.posY += Math.max(0, look.yCoord * dist);
-		double z = entity.posZ += look.zCoord * dist;
-
-		if (entity instanceof EntityPlayerMP) {
-			EntityPlayerMP mp = (EntityPlayerMP) entity;
-			mp.connection.setPlayerLocation(x, y, z, entity.rotationYaw, entity.rotationPitch);
-		} else entity.setPosition(x, y, z);
 	}
 
 	/**

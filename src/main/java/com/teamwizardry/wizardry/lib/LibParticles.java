@@ -148,14 +148,14 @@ public class LibParticles {
 		});
 	}
 
-	public static void AIR_THROTTLE(World world, Vec3d pos, Entity collided, Color color1, Color color2, double scatter) {
+	public static void AIR_THROTTLE(World world, Vec3d pos, Entity collided, Color color1, Color color2, double scatter, boolean enableCollision) {
 		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(30, 50));
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.1f, 0.3f));
 		glitter.enableMotionCalculation();
 		Color color3 = new Color(color1.getRed(), color1.getGreen(), color1.getBlue(), ThreadLocalRandom.current().nextInt(50, 100));
 		Color color4 = new Color(color2.getRed(), color2.getGreen(), color2.getBlue(), ThreadLocalRandom.current().nextInt(50, 100));
-
+		glitter.setCollision(enableCollision);
 		ParticleSpawner.spawn(glitter, world, new InterpLine(pos, pos.addVector(collided.posX - collided.prevPosX, collided.posY - collided.prevPosY, collided.posZ - collided.prevPosZ)), ThreadLocalRandom.current().nextInt(50, 80), 1, (i, build) -> {
 			glitter.setMotion(new Vec3d(collided.motionX + ThreadLocalRandom.current().nextDouble(-0.01, 0.01), (collided.motionY / 2.0) + ThreadLocalRandom.current().nextDouble(-0.01, 0.01), collided.motionZ + ThreadLocalRandom.current().nextDouble(-0.01, 0.01)));
 			if (ThreadLocalRandom.current().nextBoolean()) glitter.setColor(color3);
@@ -254,7 +254,10 @@ public class LibParticles {
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(5, 10), 0, (i, build) -> {
 			glitter.setMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.02, 0.02), ThreadLocalRandom.current().nextDouble(-0.02, 0.02), ThreadLocalRandom.current().nextDouble(-0.02, 0.02)));
-			if (sad) glitter.enableMotionCalculation();
+			if (sad) {
+				glitter.setCollision(true);
+				glitter.enableMotionCalculation();
+			}
 		});
 	}
 
