@@ -1,6 +1,9 @@
 package com.teamwizardry.wizardry.api.util;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -64,5 +67,18 @@ public class Utils {
 		if (targetEntity != null) result = new RayTraceResult(targetEntity, entityTrace.hitVec);
 
 		return result;
+	}
+
+	public static ItemStack getItemInHand(EntityPlayer player, Item item) {
+		ItemStack stack = player.getHeldItemMainhand();
+		if (stack == null)
+			stack = player.getHeldItemOffhand();
+
+		if (stack == null)
+			return null;
+		if (stack.getItem() != item)
+			return null;
+
+		return stack;
 	}
 }

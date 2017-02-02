@@ -11,9 +11,6 @@ import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.common.module.events.ModuleEventAlongPath;
-import com.teamwizardry.wizardry.common.module.events.ModuleEventCast;
-import com.teamwizardry.wizardry.common.module.events.ModuleEventCollideBlock;
-import com.teamwizardry.wizardry.common.module.events.ModuleEventCollideEntity;
 import com.teamwizardry.wizardry.common.module.shapes.ModuleShapeProjectile;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityThrowable;
@@ -50,13 +47,10 @@ public class EntitySpellProjectile extends EntityThrowable {
 		this.spell = spell;
 
 		if (spell instanceof ModuleShapeProjectile) {
-			if (spell.nextModule != null && spell.nextModule.getModuleType() == ModuleType.EVENT) {
+			if (spell.nextModule != null) {
 				Module nextModule = spell.nextModule;
-				if (nextModule instanceof ModuleEventCast) {
-					nextModule.run(world, caster);
-					if (nextModule instanceof ITargettable)
-						((ITargettable) nextModule).run(world, caster, getPositionVector());
-				}
+				nextModule.run(world, caster);
+				nextModule.run(world, caster, getPositionVector());
 			}
 		}
 	}
@@ -86,12 +80,11 @@ public class EntitySpellProjectile extends EntityThrowable {
 		}
 
 		if (spell instanceof ModuleShapeProjectile) {
-			if (spell.nextModule != null && spell.nextModule.getModuleType() == ModuleType.EVENT) {
+			if (spell.nextModule != null) {
 				Module nextModule = spell.nextModule;
 				if (nextModule instanceof ModuleEventAlongPath) {
 					nextModule.run(world, caster);
-					if (nextModule instanceof ITargettable)
-						((ITargettable) nextModule).run(world, caster, getPositionVector());
+					nextModule.run(world, caster, getPositionVector());
 				}
 			}
 		}
@@ -103,15 +96,13 @@ public class EntitySpellProjectile extends EntityThrowable {
 			if (spell.nextModule != null && spell.nextModule.getModuleType() == ModuleType.EVENT) {
 				Module nextModule = spell.nextModule;
 
-				if (result.typeOfHit == RayTraceResult.Type.ENTITY && nextModule instanceof ModuleEventCollideEntity) {
-					nextModule.run(world, caster);
-					((ITargettable) nextModule).run(world, caster, result.entityHit);
-					setDead();
-				} else if (result.typeOfHit == RayTraceResult.Type.BLOCK && nextModule instanceof ModuleEventCollideBlock) {
-					nextModule.run(world, caster);
-					((ITargettable) nextModule).run(world, caster, getPositionVector());
-					setDead();
+				nextModule.run(world, caster);
+				if (result.typeOfHit == RayTraceResult.Type.ENTITY) {
+					nextModule.run(world, caster, result.entityHit);
+				} else if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
+					nextModule.run(world, caster, getPositionVector());
 				}
+				setDead();
 			}
 		}
 	}
