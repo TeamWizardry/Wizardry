@@ -91,6 +91,7 @@ public class ModuleShapeCone extends Module {
 		float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - caster.rotationYaw));
 		Vec3d origin = new Vec3d(offX, caster.getEyeHeight(), offZ).add(caster.getPositionVector());
 
+		setTargetPosition(this, caster.getLookVec());
 		for (int i = 0; i < range * 10; i++) {
 			Matrix4 matrix = new Matrix4();
 			Vec3d cross = caster.getLookVec().crossProduct(new Vec3d(0, 1, 0));
