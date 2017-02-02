@@ -1,6 +1,9 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
-import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.spell.Attributes;
+import com.teamwizardry.wizardry.api.spell.Module;
+import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.spell.RegisterModule;
 import com.teamwizardry.wizardry.common.entity.EntitySpellGravityWell;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -17,7 +20,7 @@ import java.awt.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEffectGravityWell extends Module implements ITargettable {
+public class ModuleEffectGravityWell extends Module {
 
 	public ModuleEffectGravityWell() {
 	}

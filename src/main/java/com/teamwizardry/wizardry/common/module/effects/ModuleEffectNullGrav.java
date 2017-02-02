@@ -1,6 +1,9 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
-import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.spell.Attributes;
+import com.teamwizardry.wizardry.api.spell.Module;
+import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.spell.RegisterModule;
 import com.teamwizardry.wizardry.init.ModPotions;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
@@ -19,10 +22,9 @@ import java.awt.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEffectNullGrav extends Module implements ITargettable {
+public class ModuleEffectNullGrav extends Module {
 
 	public ModuleEffectNullGrav() {
-		process(this);
 	}
 
 	@NotNull
@@ -69,11 +71,6 @@ public class ModuleEffectNullGrav extends Module implements ITargettable {
 	@Override
 	public Color getColor() {
 		return Color.WHITE;
-	}
-
-	@Override
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Vec3d target) {
-		return false;
 	}
 
 	@Override

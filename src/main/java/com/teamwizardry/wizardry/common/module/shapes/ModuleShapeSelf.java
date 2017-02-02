@@ -1,10 +1,8 @@
 package com.teamwizardry.wizardry.common.module.shapes;
 
-import com.teamwizardry.wizardry.api.spell.ITargettable;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.RegisterModule;
-import com.teamwizardry.wizardry.common.module.events.ModuleEventCast;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -19,7 +17,6 @@ import org.jetbrains.annotations.Nullable;
 public class ModuleShapeSelf extends Module {
 
 	public ModuleShapeSelf() {
-		process(this);
 	}
 
 	@NotNull
@@ -56,10 +53,9 @@ public class ModuleShapeSelf extends Module {
 	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
 		if (nextModule == null) return false;
 
-		if (nextModule instanceof ModuleEventCast) return nextModule.run(world, caster);
-		else if (nextModule instanceof ITargettable) return ((ITargettable) nextModule).run(world, caster, caster);
+		nextModule.run(world, caster);
 
-		return false;
+		return caster != null && nextModule.run(world, caster, caster);
 	}
 
 	@NotNull

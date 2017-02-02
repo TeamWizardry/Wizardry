@@ -9,7 +9,10 @@ import com.teamwizardry.librarianlib.common.util.math.interpolate.position.Inter
 import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpLine;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.spell.Attributes;
+import com.teamwizardry.wizardry.api.spell.Module;
+import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.spell.RegisterModule;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
@@ -97,15 +100,13 @@ public class ModuleShapeCone extends Module {
 			Matrix4 matrix2 = new Matrix4();
 			matrix2.rotate(Math.toRadians(ThreadLocalRandom.current().nextDouble(-range * 10, range * 10)), normal);
 			Vec3d target = matrix2.apply(caster.getLookVec()).scale(ThreadLocalRandom.current().nextDouble(range)).add(origin);
-			if (nextModule instanceof ITargettable) {
-				((ITargettable) nextModule).run(world, caster, target);
+			nextModule.run(world, caster, target);
 
-				List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(target)));
-				if (entityList.isEmpty()) continue;
-				for (Entity entity : entityList) {
-					if (entity == null) continue;
-					((ITargettable) nextModule).run(world, caster, entity);
-				}
+			List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(target)));
+			if (entityList.isEmpty()) continue;
+			for (Entity entity : entityList) {
+				if (entity == null) continue;
+				nextModule.run(world, caster, entity);
 			}
 		}
 		return true;

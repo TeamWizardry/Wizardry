@@ -4,7 +4,6 @@ import com.teamwizardry.librarianlib.common.util.ConfigPropertyDouble;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.api.util.Utils;
-import com.teamwizardry.wizardry.common.module.events.ModuleEventCast;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.EntityLivingBase;
@@ -73,7 +72,9 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 
 	@Override
 	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
-		if (nextModule instanceof ModuleEventCast) nextModule.run(world, caster);
+		if (nextModule == null) return true;
+
+		nextModule.run(world, caster);
 
 		double range = 10;
 		if (attributes.hasKey(Attributes.EXTEND)) range += attributes.getDouble(Attributes.EXTEND);
@@ -86,13 +87,10 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 		setTargetPosition(this, trace.hitVec);
 		if (nextModule == null) return false;
 		if (nextModule.getModuleType() == ModuleType.EVENT)
-			if (trace.typeOfHit == RayTraceResult.Type.ENTITY) {
-				if (nextModule instanceof ITargettable)
-					((ITargettable) nextModule).run(world, caster, trace.entityHit);
-			} else if (trace.typeOfHit == RayTraceResult.Type.BLOCK) {
-				if (nextModule instanceof ITargettable)
-					((ITargettable) nextModule).run(world, caster, trace.hitVec);
-			}
+			if (trace.typeOfHit == RayTraceResult.Type.ENTITY)
+				return nextModule.run(world, caster, trace.entityHit);
+			else if (trace.typeOfHit == RayTraceResult.Type.BLOCK)
+				return nextModule.run(world, caster, trace.hitVec);
 
 		return true;
 	}

@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.api.spell;
 import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
 import com.teamwizardry.wizardry.api.util.Utils;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -181,6 +182,15 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	 * @return whether this spell has succeeded or failed this step.
 	 */
 	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
+		return false;
+	}
+
+
+	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Vec3d target) {
+		return false;
+	}
+
+	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Entity target) {
 		return false;
 	}
 

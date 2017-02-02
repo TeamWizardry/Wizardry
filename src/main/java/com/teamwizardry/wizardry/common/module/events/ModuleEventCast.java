@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 public class ModuleEventCast extends Module {
 
     public ModuleEventCast() {
-        process(this);
+
     }
 
     @NotNull

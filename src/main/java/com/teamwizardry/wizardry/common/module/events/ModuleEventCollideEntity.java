@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.module.events;
 
-import com.teamwizardry.wizardry.api.spell.ITargettable;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.RegisterModule;
@@ -17,10 +16,9 @@ import org.jetbrains.annotations.Nullable;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEventCollideEntity extends Module implements ITargettable {
+public class ModuleEventCollideEntity extends Module {
 
 	public ModuleEventCollideEntity() {
-		process(this);
 	}
 
 	@NotNull
@@ -60,7 +58,7 @@ public class ModuleEventCollideEntity extends Module implements ITargettable {
 
 	@Override
 	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Entity target) {
-		return nextModule != null && nextModule instanceof ITargettable && ((ITargettable) nextModule).run(world, caster, target);
+		return nextModule != null && nextModule.run(world, caster, target);
 	}
 
 	@NotNull
