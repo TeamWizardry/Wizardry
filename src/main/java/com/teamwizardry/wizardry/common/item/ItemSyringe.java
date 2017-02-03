@@ -2,10 +2,8 @@ package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
-import com.teamwizardry.wizardry.init.ModBlocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
@@ -18,10 +16,10 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Created by LordSaad.
  */
-public class ItemManaSteroid extends ItemWizardry {
+public class ItemSyringe extends ItemWizardry {
 
-	public ItemManaSteroid() {
-		super("mana_steroid", "mana_steroid", "mana_steroid_full");
+	public ItemSyringe() {
+		super("syringe", "syringe", "syringe_mana", "syringe_steroid");
 		setMaxStackSize(1);
 	}
 
@@ -56,15 +54,15 @@ public class ItemManaSteroid extends ItemWizardry {
 			player.swingArm(player.getActiveHand());
 			((EntityPlayer) player).getCooldownTracker().setCooldown(this, 500);
 			IWizardryCapability cap = WizardryCapabilityProvider.get((EntityPlayer) player);
-			cap.setMana(cap.getMaxMana(), (EntityPlayer) player);
-			cap.setBurnout(0, (EntityPlayer) player);
-		}
-	}
 
-	@Override
-	public boolean onEntityItemUpdate(EntityItem entityItem) {
-		if (entityItem.isInsideOfMaterial(ModBlocks.MANA_MATERIAL))
-			entityItem.getEntityItem().setItemDamage(1);
-		return super.onEntityItemUpdate(entityItem);
+			if (stack.getItemDamage() == 2) {
+				cap.setMana(cap.getMaxMana(), (EntityPlayer) player);
+				cap.setBurnout(0, (EntityPlayer) player);
+			} else if (stack.getItemDamage() == 1) {
+				if (cap.getMaxMana() >= (cap.getMana() * 1.3))
+					cap.setMana((int) (cap.getMana() * 1.3), (EntityPlayer) player);
+				else cap.setMana(cap.getMaxMana(), (EntityPlayer) player);
+			}
+		}
 	}
 }

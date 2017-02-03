@@ -19,8 +19,7 @@ public class ModItems {
 	public static ItemRing RING;
 	public static ItemBook BOOK;
 	public static ItemDevilDust DEVIL_DUST;
-	public static ItemManaCake MANA_CAKE;
-	public static ItemManaSteroid MANA_STEROID;
+	public static ItemSyringe SYRINGE;
 
 	public static ItemFairyWings FAIRY_WINGS;
 	public static ItemFairyDust FAIRY_DUST;
@@ -41,8 +40,7 @@ public class ModItems {
 		BOOK = new ItemBook();
 		DEBUG = new ItemDebugger();
 		DEVIL_DUST = new ItemDevilDust();
-		MANA_CAKE = new ItemManaCake();
-		MANA_STEROID = new ItemManaSteroid();
+		SYRINGE = new ItemSyringe();
 
 		STAFF = new ItemStaff();
 
