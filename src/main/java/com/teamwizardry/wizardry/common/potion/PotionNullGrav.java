@@ -25,11 +25,8 @@ public class PotionNullGrav extends PotionMod {
 	@SubscribeEvent
 	public void onLivingTick(LivingUpdateEvent event) {
 		PotionEffect effect = event.getEntityLiving().getActivePotionEffect(ModPotions.NULLIFY_GRAVITY);
-		if (effect == null) {
-			if (event.getEntityLiving().hasNoGravity()) event.getEntityLiving().setNoGravity(false);
-			return;
-		}
-		if (!event.getEntityLiving().hasNoGravity())
-			event.getEntityLiving().setNoGravity(effect.getDuration() > 0);
+		if (effect == null) return;
+
+		event.getEntityLiving().setNoGravity(effect.getDuration() > 2);
 	}
 }

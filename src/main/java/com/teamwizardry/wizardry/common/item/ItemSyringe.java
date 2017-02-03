@@ -2,16 +2,22 @@ package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
+import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * Created by LordSaad.
@@ -52,17 +58,27 @@ public class ItemSyringe extends ItemWizardry {
 		if (!(player instanceof EntityPlayer)) return;
 		if (count <= 1) {
 			player.swingArm(player.getActiveHand());
-			((EntityPlayer) player).getCooldownTracker().setCooldown(this, 500);
+			((EntityPlayer) player).getCooldownTracker().setCooldown(this, stack.getItemDamage() == 1 ? 100 : 500);
 			IWizardryCapability cap = WizardryCapabilityProvider.get((EntityPlayer) player);
 
 			if (stack.getItemDamage() == 2) {
-				cap.setMana(cap.getMaxMana(), (EntityPlayer) player);
-				cap.setBurnout(0, (EntityPlayer) player);
+				player.addPotionEffect(new PotionEffect(ModPotions.STEROID, 500, 1, true, false));
 			} else if (stack.getItemDamage() == 1) {
 				if (cap.getMaxMana() >= (cap.getMana() * 1.3))
 					cap.setMana((int) (cap.getMana() * 1.3), (EntityPlayer) player);
 				else cap.setMana(cap.getMaxMana(), (EntityPlayer) player);
 			}
+		}
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
+		if (stack.getItemDamage() == 2) {
+			tooltip.add("Will completely saturate your mana bar and deplete your burnout bar for 10 seconds. Severe side-effects included");
+			tooltip.add("Feel the burn.");
+		} else if (stack.getItemDamage() == 1) {
+			tooltip.add("Will fill your mana bar by 30%");
 		}
 	}
 }
