@@ -35,12 +35,10 @@ public class CommonProxy {
 		ModItems.init();
 		ModBlocks.init();
 		Achievements.init();
-		ModRecipes.initCrafting();
+		Fluids.preInit();
 		ModEntities.init();
 		ModPotions.init();
-
 		ModCapabilities.preInit();
-		Fluids.preInit();
 
 		WizardryPacketHandler.registerMessages();
 		NetworkRegistry.INSTANCE.registerGuiHandler(Wizardry.instance, new GuiHandler());
@@ -63,6 +61,7 @@ public class CommonProxy {
 
 	public void init(FMLInitializationEvent event) {
 		GameRegistry.registerWorldGenerator(new GenHandler(), 0);
+		ModRecipes.initCrafting();
 
 		FMLInterModComms.sendMessage(LibrarianLib.MODID, "unsafe", "librarianliblate");
 	}
