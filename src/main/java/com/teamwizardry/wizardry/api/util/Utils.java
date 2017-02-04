@@ -27,6 +27,17 @@ public class Utils {
 		return new Color((int) redPart, (int) greenPart, (int) bluePart, (int) alphaPart);
 	}
 
+	public static Color changeColorAlpha(Color color, int newAlpha) {
+		return new Color(color.getRed(), color.getGreen(), color.getBlue(), newAlpha);
+	}
+
+	public static Color shiftColorHueRandomly(Color color, double shiftAmount) {
+		return new Color(
+				(int) Math.min(color.getRed() + shiftAmount, 255),
+				(int) Math.min(color.getGreen() + shiftAmount, 255),
+				(int) Math.min(color.getBlue() + shiftAmount, 255));
+	}
+
 	/**
 	 * Credits to Masa on discord for providing the base of the code. I heavily editted it.
 	 * This raytracer will precisely trace entities and blocks (including misses) without snapping to the grid.

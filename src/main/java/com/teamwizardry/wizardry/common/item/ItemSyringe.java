@@ -64,8 +64,8 @@ public class ItemSyringe extends ItemWizardry {
 			if (stack.getItemDamage() == 2) {
 				player.addPotionEffect(new PotionEffect(ModPotions.STEROID, 500, 1, true, false));
 			} else if (stack.getItemDamage() == 1) {
-				if (cap.getMaxMana() >= (cap.getMana() * 1.3))
-					cap.setMana((int) (cap.getMana() * 1.3), (EntityPlayer) player);
+				if (cap.getMaxMana() >= (cap.getMana() + (cap.getMaxMana() / 2)))
+					cap.setMana(cap.getMana() + (cap.getMaxMana() / 2), (EntityPlayer) player);
 				else cap.setMana(cap.getMaxMana(), (EntityPlayer) player);
 			}
 		}

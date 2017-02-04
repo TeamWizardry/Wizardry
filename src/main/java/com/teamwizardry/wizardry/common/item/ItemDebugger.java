@@ -5,6 +5,7 @@ import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants.NBT;
 import com.teamwizardry.wizardry.api.block.IStructure;
+import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
 import com.teamwizardry.wizardry.api.item.GlowingOverlayHelper;
 import com.teamwizardry.wizardry.api.item.IGlowOverlayable;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
@@ -37,14 +38,13 @@ public class ItemDebugger extends ItemWizardry implements IGlowOverlayable {
 	@NotNull
 	@Override
 	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-		/*if (playerIn.isSneaking()) {
+		if (playerIn.isSneaking()) {
 			if (GuiScreen.isCtrlKeyDown()) {
 				WizardryCapabilityProvider.get(playerIn).setMana(10, playerIn);
 			} else {
 				WizardryCapabilityProvider.get(playerIn).setMana(0, playerIn);
 			}
-			return EnumActionResult.PASS;
-		}*/
+		}
 
 		ItemStack cape = playerIn.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
 		if (cape != null) {

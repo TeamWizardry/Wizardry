@@ -5,7 +5,6 @@ import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.RegisterModule;
 import com.teamwizardry.wizardry.lib.LibParticles;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
@@ -58,12 +57,12 @@ public class ModuleEffectLeap extends Module {
 
 	@Override
 	public double getManaToConsume() {
-		return 100;
+		return 150;
 	}
 
 	@Override
 	public double getBurnoutToFill() {
-		return 100;
+		return 250;
 	}
 
 	@Nullable
@@ -78,9 +77,9 @@ public class ModuleEffectLeap extends Module {
 			double strength = 0.75;
 			if (attributes.hasKey(Attributes.EXTEND))
 				strength += Math.min(64.0 / 100.0, attributes.getDouble(Attributes.EXTEND) / 100.0);
-			Minecraft.getMinecraft().player.sendChatMessage(strength + " - " + calcBurnoutPercent(getCap(caster)) + " - " + strength * calcBurnoutPercent(getCap(caster)));
 			if (caster != null && getCap(caster) != null)
 				strength *= calcBurnoutPercent(getCap(caster));
+
 			if (getTargetPosition() == null)
 				target.motionX = target.isCollidedVertically ? target.getLookVec().xCoord : target.getLookVec().xCoord / 2.0;
 			else
@@ -94,7 +93,7 @@ public class ModuleEffectLeap extends Module {
 				target.motionZ = target.isCollidedVertically ? getTargetPosition().zCoord : getTargetPosition().zCoord / 2.0;
 
 			target.velocityChanged = true;
-			target.fallDistance = 0;
+			target.fallDistance /= 2 * calcBurnoutPercent(getCap(caster));
 			return true;
 		}
 		return false;

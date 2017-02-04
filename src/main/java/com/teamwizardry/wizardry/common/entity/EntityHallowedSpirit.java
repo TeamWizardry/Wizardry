@@ -77,17 +77,18 @@ public class EntityHallowedSpirit extends EntityMob {
 		fallDistance = 0;
 
 		EntityPlayer farPlayer = world.getNearestPlayerNotCreative(this, 100);
-		if (farPlayer != null) {
+		setAttackTarget(farPlayer);
+		if (getAttackTarget() != null) {
 			noClip = true;
-			Vec3d direction = getPositionVector().subtract(farPlayer.getPositionVector()).normalize();
+			Vec3d direction = getPositionVector().subtract(getAttackTarget().getPositionVector()).normalize();
 			motionX = direction.xCoord * -0.05;
 			motionY = direction.yCoord * -0.05;
 			motionZ = direction.zCoord * -0.05;
 			rotationYaw = (float) (((-StrictMath.atan2(direction.xCoord, direction.zCoord) * 180) / Math.PI) - 180) / 2;
 		} else noClip = false;
 
-		EntityPlayer player = world.getNearestPlayerNotCreative(this, 2);
-		EntityPlayer closePlayer = world.getNearestPlayerNotCreative(this, 10);
+		EntityPlayer player = getAttackTarget() == null ? null : world.getNearestPlayerNotCreative(this, 2);
+		EntityPlayer closePlayer = getAttackTarget() == null ? null : world.getNearestPlayerNotCreative(this, 30);
 		boolean angry = player != null;
 
 		if ((closePlayer != null) && !angry)
