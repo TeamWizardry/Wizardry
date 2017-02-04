@@ -45,14 +45,6 @@ public class EntitySpellProjectile extends EntityThrowable {
 
 		this.caster = caster;
 		this.spell = spell;
-
-		if (spell instanceof ModuleShapeProjectile) {
-			if (spell.nextModule != null) {
-				Module nextModule = spell.nextModule;
-				nextModule.run(world, caster);
-				nextModule.run(world, caster, getPositionVector());
-			}
-		}
 	}
 
 	@Override

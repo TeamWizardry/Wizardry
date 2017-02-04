@@ -264,7 +264,7 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	}
 
 	public double calcBurnoutPercent(IWizardryCapability cap) {
-		return ((cap.getMaxBurnout() - cap.getBurnout()) / cap.getMaxBurnout());
+		return ((cap.getMaxBurnout() - cap.getBurnout()) / (cap.getMaxBurnout() * 1.0));
 	}
 
 	@NotNull

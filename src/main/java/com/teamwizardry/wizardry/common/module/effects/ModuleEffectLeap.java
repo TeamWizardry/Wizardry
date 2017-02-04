@@ -5,6 +5,7 @@ import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.RegisterModule;
 import com.teamwizardry.wizardry.lib.LibParticles;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
@@ -77,13 +78,16 @@ public class ModuleEffectLeap extends Module {
 			double strength = 0.75;
 			if (attributes.hasKey(Attributes.EXTEND))
 				strength += Math.min(64.0 / 100.0, attributes.getDouble(Attributes.EXTEND) / 100.0);
+			Minecraft.getMinecraft().player.sendChatMessage(strength + " - " + calcBurnoutPercent(getCap(caster)) + " - " + strength * calcBurnoutPercent(getCap(caster)));
 			if (caster != null && getCap(caster) != null)
 				strength *= calcBurnoutPercent(getCap(caster));
 			if (getTargetPosition() == null)
 				target.motionX = target.isCollidedVertically ? target.getLookVec().xCoord : target.getLookVec().xCoord / 2.0;
 			else
 				target.motionX = target.isCollidedVertically ? getTargetPosition().xCoord : getTargetPosition().xCoord / 2.0;
+
 			target.motionY = target.isCollidedVertically ? strength : strength / 3.0;
+
 			if (getTargetPosition() == null)
 				target.motionZ = target.isCollidedVertically ? target.getLookVec().zCoord : target.getLookVec().zCoord / 2.0;
 			else
