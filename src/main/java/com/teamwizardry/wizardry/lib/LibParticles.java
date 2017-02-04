@@ -14,6 +14,7 @@ import com.teamwizardry.librarianlib.common.util.math.interpolate.position.Inter
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.Constants.MISC;
+import com.teamwizardry.wizardry.api.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
@@ -432,6 +433,22 @@ public class LibParticles {
 					new Vec3d(0, caster == null ? 1 / 2 : caster.height / 2, 0),
 					new Vec3d(0, caster == null ? 1.5 : caster.height + 0.5, 0),
 					1f, 0f, 1f, ThreadLocalRandom.current().nextFloat()));
+		});
+	}
+
+	public static void EFFECT_REGENERATE(World world, @NotNull Vec3d pos, Color color) {
+		ParticleBuilder glitter = new ParticleBuilder(50);
+		glitter.setColor(Utils.changeColorAlpha(color, ThreadLocalRandom.current().nextInt(200, 255)));
+		glitter.setScale(1);
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+		glitter.disableRandom();
+
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 20, 0, (aFloat, particleBuilder) -> {
+			glitter.setLifetime(ThreadLocalRandom.current().nextInt(10, 40));
+			glitter.setScale(ThreadLocalRandom.current().nextFloat());
+			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, ThreadLocalRandom.current().nextFloat()));
+			Vec3d dest = new Vec3d(ThreadLocalRandom.current().nextDouble(-1, 1), ThreadLocalRandom.current().nextDouble(-1, 1), ThreadLocalRandom.current().nextDouble(-1, 1));
+			glitter.setPositionFunction(new InterpBezier3D(Vec3d.ZERO, dest, dest.scale(2), new Vec3d(dest.xCoord, ThreadLocalRandom.current().nextDouble(-2, 2), dest.zCoord)));
 		});
 	}
 }

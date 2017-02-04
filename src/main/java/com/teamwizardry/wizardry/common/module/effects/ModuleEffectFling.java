@@ -74,26 +74,27 @@ public class ModuleEffectFling extends Module {
 	@Override
 	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Vec3d target) {
 		if (caster == null) return false;
-		double v = 0.3;
-		double g = 0.02;
 		Vec3d origin = caster.getPositionVector();
+		double v = 32;
+		double g = 32;
 		double distSquared = MathHelper.sqrt(
-				(target.xCoord - origin.xCoord) * (target.xCoord - origin.xCoord))
-				+ (target.zCoord - origin.zCoord) * (target.zCoord - origin.zCoord);
+				(target.xCoord - origin.xCoord) * (target.xCoord - origin.xCoord)
+						+ (target.zCoord - origin.zCoord) * (target.zCoord - origin.zCoord));
 		double distSqrt = MathHelper.sqrt(distSquared);
 		double det = (v * v * v * v) - (g * (g * distSquared + (2 * v * v * (target.yCoord - origin.yCoord))));
 		double tan = ((v * v) + MathHelper.sqrt(det)) / (g * distSqrt);
 
 		double y = tan / (MathHelper.sqrt((tan * tan) + 1));
 
-		Vec3d axis = target.subtract(origin).normalize().scale(1 / ((tan * tan) + 1));
+		Vec3d axis = target.subtract(origin);
+		axis = new Vec3d(axis.xCoord, 0, axis.zCoord).normalize();
 		double x = axis.xCoord;
 		double z = axis.zCoord;
 
-		Minecraft.getMinecraft().player.sendChatMessage(x + ", " + y + ", " + z);
-		caster.motionX = x;
-		caster.motionY = y;
-		caster.motionZ = z;
+		Minecraft.getMinecraft().player.sendChatMessage(x * v + ", " + y * v + ", " + z * v);
+		caster.motionX = x * v / 20;
+		caster.motionY = y * v / 20;
+		caster.motionZ = z * v / 20;
 		caster.velocityChanged = true;
 
 		return true;

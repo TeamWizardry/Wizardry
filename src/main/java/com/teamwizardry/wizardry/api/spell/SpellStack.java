@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by LordSaad.
@@ -107,24 +108,39 @@ public class SpellStack {
 	}
 
 	public static void runModules(@NotNull ItemStack spellHolder, @NotNull World world, @Nullable EntityLivingBase caster, Vec3d pos) {
+		boolean particleDanger = false;
+		boolean continuousSpell = false;
+		int chance = 1;
+		for (Module check : getAllModules(spellHolder)) {
+			if (check instanceof IParticleDanger) {
+				particleDanger = true;
+				if (((IParticleDanger) check).chanceOfParticles() > chance)
+					chance = ((IParticleDanger) check).chanceOfParticles();
+			}
+			if (check instanceof IContinousSpell) continuousSpell = true;
+		}
+
 		for (Module module : getModules(spellHolder)) {
 			if (caster instanceof EntityPlayer && !((EntityPlayer) caster).isCreative()) {
 				IWizardryCapability cap = WizardryCapabilityProvider.get((EntityPlayer) caster);
 				if (cap.getMana() < module.finalManaCost) return;
 			}
 			module.run(world, caster);
-			if (module.getTargetPosition() == null) {
-				PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(spellHolder, caster == null ? -1 : caster.getEntityId(), pos),
-						new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.xCoord, pos.yCoord, pos.zCoord, 60));
-			} else {
-				PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(spellHolder, caster == null ? -1 : caster.getEntityId(), module.getTargetPosition()),
-						new NetworkRegistry.TargetPoint(world.provider.getDimension(), module.getTargetPosition().xCoord, module.getTargetPosition().yCoord, module.getTargetPosition().zCoord, 60));
+
+			if (!(particleDanger && continuousSpell) || ThreadLocalRandom.current().nextInt(chance) == 0) {
+				if (module.getTargetPosition() == null) {
+					PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(spellHolder, caster == null ? -1 : caster.getEntityId(), pos),
+							new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.xCoord, pos.yCoord, pos.zCoord, 60));
+				} else {
+					PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(spellHolder, caster == null ? -1 : caster.getEntityId(), module.getTargetPosition()),
+							new NetworkRegistry.TargetPoint(world.provider.getDimension(), module.getTargetPosition().xCoord, module.getTargetPosition().yCoord, module.getTargetPosition().zCoord, 60));
+				}
 			}
 
 			if (caster instanceof EntityPlayer && !((EntityPlayer) caster).isCreative()) {
 				IWizardryCapability cap = WizardryCapabilityProvider.get((EntityPlayer) caster);
 				cap.setMana((int) Math.max(0, cap.getMana() - module.finalManaCost), (EntityPlayer) caster);
-				cap.setBurnout((int) Math.max(0, cap.getBurnout() + module.finalBurnoutCost), (EntityPlayer) caster);
+				cap.setBurnout((int) Math.min(cap.getMaxBurnout(), cap.getBurnout() + module.finalBurnoutCost), (EntityPlayer) caster);
 			}
 		}
 	}

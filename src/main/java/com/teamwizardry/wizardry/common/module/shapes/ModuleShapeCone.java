@@ -9,10 +9,7 @@ import com.teamwizardry.librarianlib.common.util.math.interpolate.position.Inter
 import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpLine;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.spell.Attributes;
-import com.teamwizardry.wizardry.api.spell.Module;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.api.spell.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
@@ -35,7 +32,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleShapeCone extends Module {
+public class ModuleShapeCone extends Module implements IParticleDanger {
 
 	public ModuleShapeCone() {
 	}
@@ -156,5 +153,10 @@ public class ModuleShapeCone extends Module {
 		module.deserializeNBT(serializeNBT());
 		process(module);
 		return module;
+	}
+
+	@Override
+	public int chanceOfParticles() {
+		return 10;
 	}
 }
