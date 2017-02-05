@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.common.module.effects;
 import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.block.IGrowable;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
@@ -82,8 +81,7 @@ public class ModuleEffectThrive extends Module implements IContinousSpell {
 		double strength = 0.3;
 		if (attributes.hasKey(Attributes.EXTEND))
 			strength += Math.min(20.0 / 10.0, attributes.getDouble(Attributes.EXTEND) / 10.0);
-		if (caster != null && getCap(caster) != null)
-			strength *= calcBurnoutPercent(getCap(caster));
+		strength *= calcBurnoutPercent(caster);
 
 		((EntityLivingBase) target).setHealth((float) (((EntityLivingBase) target).getHealth() + strength));
 		return true;
@@ -94,14 +92,8 @@ public class ModuleEffectThrive extends Module implements IContinousSpell {
 		double chance = 80;
 		if (attributes.hasKey(Attributes.EXTEND))
 			chance -= Math.min(20, attributes.getDouble(Attributes.EXTEND));
-		if (caster != null && getCap(caster) != null)
-			chance *= calcBurnoutPercent(getCap(caster));
-		if (chance < 0) {
-			Minecraft.getMinecraft().player.sendChatMessage(
-					chance + " - " + Math.min(20, attributes.getDouble(Attributes.EXTEND)) + " - "
-							+ calcBurnoutPercent(getCap(caster)));
-			return false;
-		}
+		chance *= calcBurnoutPercent(caster);
+		if (chance < 0) return false;
 		if (ThreadLocalRandom.current().nextInt((int) chance) != 0) return false;
 
 		BlockPos pos = new BlockPos(target);

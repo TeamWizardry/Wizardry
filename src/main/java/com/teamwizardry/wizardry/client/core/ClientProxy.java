@@ -30,7 +30,6 @@ public class ClientProxy extends CommonProxy {
 
 		OBJLoader.INSTANCE.addDomain(Wizardry.MODID);
 		MinecraftForge.EVENT_BUS.register(new HudEventHandler());
-		ClientTickHandler.INSTANCE.getClass();
 		new WizardryClientMethodHandles(); // Load the class
 		GlowingItemEventHandler.init();
 

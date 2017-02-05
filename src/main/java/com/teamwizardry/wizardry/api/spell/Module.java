@@ -1,11 +1,9 @@
 package com.teamwizardry.wizardry.api.spell;
 
-import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
-import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
+import com.teamwizardry.wizardry.api.WizardManager;
 import com.teamwizardry.wizardry.api.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -200,13 +198,6 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 		return false;
 	}
 
-	@Nullable
-	public IWizardryCapability getCap(EntityLivingBase entity) {
-		if (entity != null && entity instanceof EntityPlayer)
-			return WizardryCapabilityProvider.get((EntityPlayer) entity);
-		return null;
-	}
-
 	/**
 	 * This method runs client side when the spell runs. Spawn particles here.
 	 *
@@ -263,8 +254,9 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 		}
 	}
 
-	public double calcBurnoutPercent(IWizardryCapability cap) {
-		return ((cap.getMaxBurnout() - cap.getBurnout()) / (cap.getMaxBurnout() * 1.0));
+	public double calcBurnoutPercent(@Nullable Entity player) {
+		if (!(player instanceof EntityLivingBase)) return 1;
+		return ((WizardManager.getMaxBurnout((EntityLivingBase) player) - WizardManager.getBurnout((EntityLivingBase) player)) / (WizardManager.getMaxBurnout((EntityLivingBase) player) * 1.0));
 	}
 
 	@NotNull

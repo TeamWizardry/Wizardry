@@ -79,8 +79,7 @@ public class ModuleEffectNullGrav extends Module {
 			double length = 300;
 			if (attributes.hasKey(Attributes.EXTEND))
 				length *= Math.min(100, attributes.getDouble(Attributes.EXTEND) * 10);
-			if (caster != null && getCap(caster) != null)
-				length *= calcBurnoutPercent(getCap(caster));
+			length *= calcBurnoutPercent(caster);
 			((EntityLivingBase) target).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, (int) length, 3, false, false));
 			return true;
 		}

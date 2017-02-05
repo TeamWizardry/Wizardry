@@ -89,7 +89,7 @@ public class ModuleEffectAntiGravityWell extends Module {
 		if (attributes.hasKey(Attributes.EXTEND))
 			strength += attributes.getDouble(Attributes.EXTEND);
 		if (target instanceof EntityLivingBase)
-			strength *= calcBurnoutPercent(getCap((EntityLivingBase) target));
+			strength *= calcBurnoutPercent(target);
 		EntitySpellGravityWell well = new EntitySpellGravityWell(world, caster, target.getPositionVector(), (int) (strength * 20), strength, true);
 		well.setPosition(target.posX, target.posY, target.posZ);
 		world.spawnEntity(well);

@@ -3,8 +3,7 @@ package com.teamwizardry.wizardry.api.spell;
 import com.teamwizardry.librarianlib.common.network.PacketHandler;
 import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
-import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
+import com.teamwizardry.wizardry.api.WizardManager;
 import com.teamwizardry.wizardry.common.network.PacketRenderSpell;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.EntityLivingBase;
@@ -122,9 +121,9 @@ public class SpellStack {
 
 		for (Module module : getModules(spellHolder)) {
 			if (caster instanceof EntityPlayer && !((EntityPlayer) caster).isCreative()) {
-				IWizardryCapability cap = WizardryCapabilityProvider.get((EntityPlayer) caster);
-				if (cap.getMana() < module.finalManaCost) {
-					cap.setBurnout(cap.getMaxBurnout(), (EntityPlayer) caster);
+				if (WizardManager.getMana(caster) < module.finalManaCost) {
+					WizardManager.removeMana((int) module.finalManaCost, caster);
+					WizardManager.addBurnout((int) module.finalBurnoutCost, caster);
 					return;
 				}
 			}
@@ -141,9 +140,8 @@ public class SpellStack {
 			}
 
 			if (caster instanceof EntityPlayer && !((EntityPlayer) caster).isCreative()) {
-				IWizardryCapability cap = WizardryCapabilityProvider.get((EntityPlayer) caster);
-				cap.setMana((int) Math.max(0, cap.getMana() - module.finalManaCost), (EntityPlayer) caster);
-				cap.setBurnout((int) Math.min(cap.getMaxBurnout(), cap.getBurnout() + module.finalBurnoutCost), (EntityPlayer) caster);
+				WizardManager.removeMana((int) module.finalManaCost, caster);
+				WizardManager.addBurnout((int) module.finalBurnoutCost, caster);
 			}
 		}
 	}

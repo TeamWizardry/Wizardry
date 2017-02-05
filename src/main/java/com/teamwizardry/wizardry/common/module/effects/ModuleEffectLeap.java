@@ -77,8 +77,7 @@ public class ModuleEffectLeap extends Module {
 			double strength = 0.75;
 			if (attributes.hasKey(Attributes.EXTEND))
 				strength += Math.min(64.0 / 100.0, attributes.getDouble(Attributes.EXTEND) / 100.0);
-			if (caster != null && getCap(caster) != null)
-				strength *= calcBurnoutPercent(getCap(caster));
+			strength *= calcBurnoutPercent(target);
 
 			if (getTargetPosition() == null)
 				target.motionX = target.isCollidedVertically ? target.getLookVec().xCoord : target.getLookVec().xCoord / 2.0;
@@ -93,7 +92,7 @@ public class ModuleEffectLeap extends Module {
 				target.motionZ = target.isCollidedVertically ? getTargetPosition().zCoord : getTargetPosition().zCoord / 2.0;
 
 			target.velocityChanged = true;
-			target.fallDistance /= 2 * calcBurnoutPercent(getCap(caster));
+			target.fallDistance /= 2 * calcBurnoutPercent(target);
 			return true;
 		}
 		return false;

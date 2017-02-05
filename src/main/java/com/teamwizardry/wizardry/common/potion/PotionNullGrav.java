@@ -20,7 +20,6 @@ public class PotionNullGrav extends PotionMod {
 		super.applyAttributesModifiersToEntity(entityLivingBaseIn, attributeMapIn, amplifier);
 	}
 
-
 	@Override
 	public void removeAttributesModifiersFromEntity(EntityLivingBase entityLivingBaseIn, @NotNull AbstractAttributeMap attributeMapIn, int amplifier) {
 		entityLivingBaseIn.setNoGravity(false);

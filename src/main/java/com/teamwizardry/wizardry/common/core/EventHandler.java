@@ -3,8 +3,7 @@ package com.teamwizardry.wizardry.common.core;
 import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants.MISC;
-import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
-import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
+import com.teamwizardry.wizardry.api.WizardManager;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.TeleportUtil;
 import com.teamwizardry.wizardry.common.achievement.Achievements;
@@ -12,6 +11,7 @@ import com.teamwizardry.wizardry.common.entity.EntityDevilDust;
 import com.teamwizardry.wizardry.common.entity.EntitySpellCodex;
 import com.teamwizardry.wizardry.common.tile.TilePedestal;
 import com.teamwizardry.wizardry.init.ModBlocks;
+import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -133,14 +133,19 @@ public class EventHandler {
 
 	@SubscribeEvent
 	public void capTick(TickEvent.PlayerTickEvent event) {
-		IWizardryCapability cap = WizardryCapabilityProvider.get(event.player);
-		if (cap != null) {
-			cap.setMana(cap.getMana() + 1, event.player);
-			cap.setBurnout(cap.getBurnout() - 1, event.player);
-			ItemStack cape = event.player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-			if (cape == null) return;
-			cap.setMaxMana(ItemNBTHelper.getInt(cape, "time", 0), event.player);
-			cap.setMaxBurnout(ItemNBTHelper.getInt(cape, "time", 0), event.player);
+		WizardManager.addMana(1, event.player);
+		WizardManager.removeBurnout(1, event.player);
+
+		ItemStack cape = event.player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+		if (cape == null || cape.getItem() != ModItems.CAPE) {
+			if (WizardManager.getMaxMana(event.player) != 100)
+				WizardManager.setMaxMana(100, event.player);
+			if (WizardManager.getMaxBurnout(event.player) != 100)
+				WizardManager.setMaxBurnout(100, event.player);
+
+		} else if (cape.getItem() == ModItems.CAPE) {
+			WizardManager.setMaxMana(ItemNBTHelper.getInt(cape, "time", 0), event.player);
+			WizardManager.setMaxBurnout(ItemNBTHelper.getInt(cape, "time", 0), event.player);
 		}
 	}
 }
