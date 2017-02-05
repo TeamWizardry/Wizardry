@@ -24,7 +24,6 @@ public class WorktableGui extends GuiBase {
 
 	static final int iconSize = 12;
 	public GuiComponent<?> paper;
-	public GuiComponent<?> selected;
 
 	public WorktableGui() {
 		super(512, 256);
@@ -33,7 +32,6 @@ public class WorktableGui extends GuiBase {
 		getMainComponents().add(background);
 
 		paper = new ComponentVoid(160, 0, 191, 202);
-		paper.setZIndex(100);
 		getMainComponents().add(paper);
 
 		ComponentVoid effects = new ComponentVoid(92, 32, 52, 158);
@@ -56,7 +54,9 @@ public class WorktableGui extends GuiBase {
 		addModules(modifiers, ModuleType.MODIFIER, 7, 7, 3, 6);
 		getMainComponents().add(modifiers);
 
-		getMainComponents().add(selected);
+		ComponentVoid selected = new ComponentVoid(0, 0, 12, 12);
+		selected.addTag("selected");
+		paper.add(selected);
 
 		int boxHeight = 200, boxWidth = 100;
 		Sprite ringTexture = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/items/ring_base.png"));

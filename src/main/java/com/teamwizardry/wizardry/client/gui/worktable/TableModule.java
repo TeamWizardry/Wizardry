@@ -16,7 +16,6 @@ import java.util.List;
 public class TableModule {
 
 	public ComponentSprite component;
-	public DragMixin<?> drag;
 
 	public TableModule(WorktableGui table, Module module, boolean draggable) {
 		ComponentSprite sprite = new ComponentSprite(LibSprites.Worktable.MODULE_DEFAULT, 0, 0, 12, 12);
@@ -44,21 +43,23 @@ public class TableModule {
 			if (event.getButton() == EnumMouseButton.LEFT) {
 				if (!draggable) {
 					TableModule item = new TableModule(table, module, true);
+					item.component.addTag("selected");
 					item.component.setPos(new Vec2d(50, 50));
-					table.selected = item.component;
-					item.drag = new DragMixin<>(item.component, vec2d -> vec2d.sub(6, 6));
+					List<GuiComponent<?>> selected = table.paper.getByTag("selected");
+					if (selected.isEmpty()) table.paper.add(item.component);
+					else {
+						for (GuiComponent<?> comp : selected) {
+							if (comp.equals(item.component))
+								return;
+						}
+						table.paper.removeByTag("selected");
+						table.paper.add(item.component);
+					}
+
+					DragMixin drag = new DragMixin<>(item.component, vec2d -> vec2d);
+					drag.setMouseDown(event.getButton());
 					event.cancel();
 				}
-			}
-		});
-
-		sprite.BUS.hook(GuiComponent.MouseUpEvent.class, (event) -> {
-			if (draggable && table.paper.getMouseOver()) table.paper.add(sprite);
-		});
-
-		sprite.BUS.hook(GuiComponent.MouseDragEvent.class, (event) -> {
-			if (event.getButton() == EnumMouseButton.LEFT) {
-				if (draggable) sprite.setPos(event.getMousePos().sub(-6, -6));
 			}
 		});
 

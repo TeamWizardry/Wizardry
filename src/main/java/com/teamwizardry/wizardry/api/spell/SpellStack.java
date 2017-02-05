@@ -123,7 +123,10 @@ public class SpellStack {
 		for (Module module : getModules(spellHolder)) {
 			if (caster instanceof EntityPlayer && !((EntityPlayer) caster).isCreative()) {
 				IWizardryCapability cap = WizardryCapabilityProvider.get((EntityPlayer) caster);
-				if (cap.getMana() < module.finalManaCost) return;
+				if (cap.getMana() < module.finalManaCost) {
+					cap.setBurnout(cap.getMaxBurnout(), (EntityPlayer) caster);
+					return;
+				}
 			}
 			module.run(world, caster);
 
