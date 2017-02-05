@@ -1,8 +1,6 @@
 package com.teamwizardry.wizardry.common.world;
 
 import com.teamwizardry.wizardry.Wizardry;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.chunk.Chunk;
@@ -52,18 +50,6 @@ public class WorldProviderUnderWorld extends WorldProvider {
 	@SideOnly(Side.CLIENT)
 	public float[] calcSunriseSunsetColors(float par1, float par2) {
 		return null;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public boolean isSkyColored() {
-		return true;
-	}
-
-	@NotNull
-	@Override
-	public Vec3d getSkyColor(@NotNull Entity cameraEntity, float partialTicks) {
-		return new Vec3d(0, 35, 60);
 	}
 
 	@NotNull

@@ -9,12 +9,12 @@ import net.minecraft.entity.EntityFlying;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -22,6 +22,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.awt.*;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -29,14 +31,14 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class EntityFairy extends EntityFlying {
 
-	private boolean readjustingComplete = true;
-	private boolean dirYawAdd;
-	private boolean dirPitchAdd;
 	private Color color;
-	private double pitchAmount;
-	private double yawAmount;
 	private boolean sad;
 	private int age;
+	private boolean isFlying = false;
+	private boolean changingCourse = false;
+	private int changeCourseTick = 0;
+	private float tickPitch = 0;
+	private float tickYaw = 0;
 
 	public EntityFairy(World worldIn) {
 		super(worldIn);
@@ -45,8 +47,6 @@ public class EntityFairy extends EntityFlying {
 		experienceValue = 5;
 		color = new Color(ThreadLocalRandom.current().nextFloat(), ThreadLocalRandom.current().nextFloat(), ThreadLocalRandom.current().nextFloat());
 		color = color.brighter();
-		rotationPitch = (float) ThreadLocalRandom.current().nextDouble(-90, 90);
-		rotationYaw = (float) ThreadLocalRandom.current().nextDouble(-180, 180);
 		age = ThreadLocalRandom.current().nextInt(1, 100);
 	}
 
@@ -56,16 +56,10 @@ public class EntityFairy extends EntityFlying {
 		isAirBorne = true;
 		experienceValue = 5;
 		this.color = color;
-		rotationPitch = (float) ThreadLocalRandom.current().nextDouble(-90, 90);
-		rotationYaw = (float) ThreadLocalRandom.current().nextDouble(-180, 180);
 		this.age = age;
 	}
 
 	@Override
-	public boolean isAIDisabled() {
-		return false;
-	}
-
 	protected void applyEntityAttributes() {
 		super.applyEntityAttributes();
 		getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(0.1D);
@@ -90,71 +84,58 @@ public class EntityFairy extends EntityFlying {
 		super.onUpdate();
 		if (world.isRemote) return;
 
-		if (age <= 0) age = 2;
-		if (((ticksExisted % ThreadLocalRandom.current().nextInt(200, 400)) == 0) && (age < 100)) age++;
-
-		if (((age / 4) >= (age / 2)) || (age == 0)) return;
 		LibParticles.FAIRY_HEAD(world, getPositionVector().addVector(0, 0.25, 0), color);
-		LibParticles.FAIRY_TRAIL(world, getPositionVector().addVector(0, 0.25, 0), color, sad, age);
+		LibParticles.FAIRY_TRAIL(world, getPositionVector().addVector(0, 0.25, 0), color, sad, new Random(getUniqueID().hashCode()).nextInt(300));
 
-		boolean match = true;
-		for (int i = -3; i < 3; i++)
-			for (int j = -3; j < 0; j++)
-				for (int k = -3; k < 3; k++)
-					if (world.getBlockState(new BlockPos(posX + i, posY + j, posZ + k)).getBlock() != Blocks.AIR) {
-						if (pitchAmount < 90) {
-							dirPitchAdd = false;
-							pitchAmount += 0.2;
-							readjustingComplete = false;
+		boolean nopeOut = false;
+
+		List<Entity> entities = world.getEntitiesInAABBexcluding(this, new AxisAlignedBB(getPosition()).expand(5, 5, 5), null);
+		for (Entity entity : entities)
+			if (entity instanceof EntityLivingBase) {
+				nopeOut = true;
+
+				Vec3d sub = getPositionVector().subtract(entity.getPositionVector().addVector(0, entity.height / 2, 0)).normalize();
+
+				motionX += sub.xCoord / 10;
+				motionY += sub.yCoord / 10;
+				motionZ += sub.zCoord / 10;
+			}
+
+		if (nopeOut) {
+			for (int i = -2; i < 2; i++)
+				for (int k = -2; k < 2; k++)
+					for (int j = -2; j < 2; j++) {
+						BlockPos pos = new BlockPos(getPositionVector()).add(i, j, k);
+						if (!world.isAirBlock(pos)) {
+							Vec3d center = new Vec3d(pos).addVector(0.5, 0.5, 0.5);
+							Vec3d sub = getPositionVector().addVector(0, height / 2, 0).subtract(center).normalize();
+
+							motionX += sub.xCoord / 10;
+							motionY += sub.yCoord / 10;
+							motionZ += sub.zCoord / 10;
 						}
-						match = false;
-						break;
 					}
-		EntityPlayer player = world.getNearestPlayerNotCreative(this, 2);
-		if (player != null) {
-			if (pitchAmount < 90) {
-				dirPitchAdd = false;
-				pitchAmount += 0.2;
-				readjustingComplete = false;
-			}
-			match = false;
 		}
 
-		if (match) {
-			if (readjustingComplete) {
-				if (ThreadLocalRandom.current().nextInt(0, 20) == 0) {
-					boolean prevDirYawAdd = dirYawAdd;
-					boolean prevDirPitchAdd = dirPitchAdd;
+		if (!nopeOut) {
+			int r = Math.abs(new Random(getPosition().toLong()).nextInt(20)) + 1;
+			if (ThreadLocalRandom.current().nextInt(r) == 0) {
+				changingCourse = true;
+				changeCourseTick = ThreadLocalRandom.current().nextInt(200);
+				tickPitch = (float) ThreadLocalRandom.current().nextDouble(-3, 3);
+				tickYaw = (float) ThreadLocalRandom.current().nextDouble(-3, 3);
+			}
+			if (changingCourse) {
+				if (changeCourseTick > 0) {
+					changeCourseTick--;
+					Vec3d dir = getVectorForRotation(rotationPitch += tickPitch, rotationYaw += tickYaw).normalize();
 
-					dirYawAdd = ThreadLocalRandom.current().nextBoolean();
-					dirPitchAdd = ThreadLocalRandom.current().nextBoolean();
-
-					if (rotationPitch > 89) rotationPitch = -89;
-					if (rotationPitch < -89) rotationPitch = 89;
-					if (rotationYaw > 179) rotationYaw = -179;
-					if (rotationYaw < -179) rotationYaw = 179;
-
-					pitchAmount += (prevDirPitchAdd == dirPitchAdd) ? ThreadLocalRandom.current().nextDouble(-4, 4) : (-pitchAmount / 5);
-					yawAmount += (prevDirYawAdd == dirYawAdd) ? ThreadLocalRandom.current().nextDouble(-1, 1) : (-yawAmount / 5);
-				}
-			} else {
-				if (pitchAmount > ThreadLocalRandom.current().nextInt(-20, 20)) {
-					dirPitchAdd = false;
-					pitchAmount -= ThreadLocalRandom.current().nextDouble(0.5, 5);
-				} else readjustingComplete = true;
+					motionX = dir.xCoord / 10;
+					motionY = dir.yCoord / 10;
+					motionZ = dir.zCoord / 10;
+				} else changingCourse = false;
 			}
 		}
-
-		if (dirYawAdd) rotationYaw += yawAmount;
-		else rotationYaw -= yawAmount;
-
-		if (dirPitchAdd) rotationPitch += pitchAmount;
-		else rotationPitch -= pitchAmount;
-
-		Vec3d rot = getVectorForRotation(rotationPitch, rotationYaw);
-		motionX = rot.xCoord / ThreadLocalRandom.current().nextDouble(5, 10);
-		motionY = rot.yCoord / ThreadLocalRandom.current().nextDouble(5, 10);
-		motionZ = rot.zCoord / ThreadLocalRandom.current().nextDouble(5, 10);
 	}
 
 	@NotNull
@@ -195,9 +176,14 @@ public class EntityFairy extends EntityFlying {
 	@Override
 	public void readEntityFromNBT(NBTTagCompound compound) {
 		super.readEntityFromNBT(compound);
-		if (compound.hasKey(NBT.COLOR)) color = new Color(compound.getInteger(NBT.COLOR));
-		if (compound.hasKey("sad")) sad = compound.getBoolean("sad");
-		if (compound.hasKey("age")) age = compound.getInteger("age");
+		color = new Color(compound.getInteger(NBT.COLOR));
+		sad = compound.getBoolean("sad");
+		age = compound.getInteger("age");
+		isFlying = compound.getBoolean("is_flying");
+		changingCourse = compound.getBoolean("changing_course");
+		changeCourseTick = compound.getInteger("changing_course_tick");
+		tickPitch = compound.getFloat("tick_pitch");
+		tickYaw = compound.getFloat("tick_yaw");
 	}
 
 	@Override
@@ -206,6 +192,11 @@ public class EntityFairy extends EntityFlying {
 		compound.setInteger(NBT.COLOR, color.getRGB());
 		compound.setBoolean("sad", sad);
 		compound.setInteger("age", age);
+		compound.setBoolean("is_flying", isFlying);
+		compound.setBoolean("changing_course", changingCourse);
+		compound.setInteger("changing_course_tick", changeCourseTick);
+		compound.setFloat("tick_pitch", tickPitch);
+		compound.setFloat("tick_yaw", tickYaw);
 	}
 
 	public Color getColor() {

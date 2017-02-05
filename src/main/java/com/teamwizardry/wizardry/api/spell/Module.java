@@ -230,6 +230,16 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	}
 
 	/**
+	 * The secondary color of the module. Used for prettier particles.
+	 *
+	 * @return The secondary color.
+	 */
+	@Nullable
+	public Color getSecondaryColor() {
+		return null;
+	}
+
+	/**
 	 * The target position of this spell. It would be really nice if you set this value in your run methods.
 	 * It improves particle positioning in runClient methods because there's no way to tell
 	 * otherwise.

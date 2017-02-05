@@ -19,6 +19,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by Saad on 8/30/2016.
@@ -47,19 +48,23 @@ public class ItemCape extends ItemModArmor {
 
 			int time = ItemNBTHelper.getInt(stack, "time", 0);
 			int buffer = ItemNBTHelper.getInt(stack, "buffer", 0);
-			int owner = ItemNBTHelper.getInt(stack, "owner", -1);
-			int thief = ItemNBTHelper.getInt(stack, "thief", -1);
+			UUID owner = ItemNBTHelper.getUUID(stack, "owner", true);
+			UUID thief = ItemNBTHelper.getUUID(stack, "thief", true);
 
-			if (owner != entityIn.getEntityId()) {
+			if (owner == null) {
+				ItemNBTHelper.setUUID(stack, "owner", entityIn.getUniqueID());
+				owner = entityIn.getUniqueID();
+			}
+			if (!owner.equals(entityIn.getUniqueID())) {
 				Minecraft.getMinecraft().player.sendChatMessage("DIFFERENT OWNERS DETECTED");
-				if (buffer >= 60) {
-					ItemNBTHelper.setInt(stack, "owner", entityIn.getEntityId());
+				if (buffer >= 30) {
+					ItemNBTHelper.setUUID(stack, "owner", entityIn.getUniqueID());
 					ItemNBTHelper.setInt(stack, "time", (int) (time / 1.5));
 					ItemNBTHelper.setInt(stack, "buffer", 0);
 				} else {
-					if (thief != entityIn.getEntityId()) {
+					if (thief != entityIn.getUniqueID()) {
 						ItemNBTHelper.setInt(stack, "buffer", 0);
-						ItemNBTHelper.setInt(stack, "thief", entityIn.getEntityId());
+						ItemNBTHelper.setUUID(stack, "thief", entityIn.getUniqueID());
 					} else ItemNBTHelper.setInt(stack, "buffer", buffer + 1);
 				}
 			} else ItemNBTHelper.setInt(stack, "time", time + 1);
@@ -70,8 +75,8 @@ public class ItemCape extends ItemModArmor {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
-		Entity owner = player.world.getEntityByID(ItemNBTHelper.getInt(stack, "owner", -1));
-		Entity thief = player.world.getEntityByID(ItemNBTHelper.getInt(stack, "thief", -1));
+		Entity owner = player.world.getPlayerEntityByUUID(ItemNBTHelper.getUUID(stack, "owner", false));
+		Entity thief = player.world.getPlayerEntityByUUID(ItemNBTHelper.getUUID(stack, "thief", false));
 		tooltip.add("time: " + ItemNBTHelper.getInt(stack, "time", 0));
 		tooltip.add("buffer: " + ItemNBTHelper.getInt(stack, "buffer", 0));
 		tooltip.add("owner: " + (owner == null ? "null" : owner.getName()));
