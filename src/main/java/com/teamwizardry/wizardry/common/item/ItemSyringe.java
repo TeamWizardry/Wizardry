@@ -1,7 +1,6 @@
 package com.teamwizardry.wizardry.common.item;
 
-import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
-import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
+import com.teamwizardry.wizardry.api.WizardManager;
 import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
@@ -59,14 +58,14 @@ public class ItemSyringe extends ItemWizardry {
 		if (count <= 1) {
 			player.swingArm(player.getActiveHand());
 			((EntityPlayer) player).getCooldownTracker().setCooldown(this, stack.getItemDamage() == 1 ? 100 : 500);
-			IWizardryCapability cap = WizardryCapabilityProvider.get((EntityPlayer) player);
 
 			if (stack.getItemDamage() == 2) {
 				player.addPotionEffect(new PotionEffect(ModPotions.STEROID, 500, 1, true, false));
+				stack.setItemDamage(0);
 			} else if (stack.getItemDamage() == 1) {
-				if (cap.getMaxMana() >= (cap.getMana() + (cap.getMaxMana() / 2)))
-					cap.setMana(cap.getMana() + (cap.getMaxMana() / 2), (EntityPlayer) player);
-				else cap.setMana(cap.getMaxMana(), (EntityPlayer) player);
+				WizardManager.addMana(WizardManager.getMana(player) + WizardManager.getMaxMana(player) / 2, player);
+				player.setHealth(player.getHealth() - 2);
+				stack.setItemDamage(0);
 			}
 		}
 	}

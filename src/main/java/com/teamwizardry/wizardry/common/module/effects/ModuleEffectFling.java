@@ -63,12 +63,12 @@ public class ModuleEffectFling extends Module {
 
 	@Override
 	public double getManaToConsume() {
-		return 2000;
+		return 1000;
 	}
 
 	@Override
 	public double getBurnoutToFill() {
-		return 5000;
+		return 500;
 	}
 
 	@Override

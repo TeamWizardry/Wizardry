@@ -63,9 +63,8 @@ public class WorldProviderUnderWorld extends WorldProvider {
 	@NotNull
 	@Override
 	public Vec3d getSkyColor(@NotNull Entity cameraEntity, float partialTicks) {
-		return new Vec3d(0, 180, 50);
+		return new Vec3d(0, 35, 60);
 	}
-
 
 	@NotNull
 	@Override

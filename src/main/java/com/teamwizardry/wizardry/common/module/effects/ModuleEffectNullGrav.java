@@ -76,7 +76,7 @@ public class ModuleEffectNullGrav extends Module {
 	@Override
 	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Entity target) {
 		if (target instanceof EntityLivingBase) {
-			double length = 300;
+			double length = 100;
 			if (attributes.hasKey(Attributes.EXTEND))
 				length *= Math.min(100, attributes.getDouble(Attributes.EXTEND) * 10);
 			length *= calcBurnoutPercent(caster);

@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.common.fluid;
 
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.init.ModBlocks;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.ResourceLocation;
@@ -15,7 +15,7 @@ public class FluidBlockNacre extends BlockFluidClassic {
 	public static final FluidBlockNacre instance = new FluidBlockNacre();
 
 	public FluidBlockNacre() {
-		super(FluidNacre.instance, ModBlocks.NACRE_MATERIAL);
+		super(FluidNacre.instance, Material.WATER);
 		GameRegistry.register(this, new ResourceLocation(Wizardry.MODID, "nacre"));
 		setQuantaPerBlock(1);
 		setUnlocalizedName("nacre");

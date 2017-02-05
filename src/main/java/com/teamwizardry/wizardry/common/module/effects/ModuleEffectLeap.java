@@ -62,7 +62,7 @@ public class ModuleEffectLeap extends Module {
 
 	@Override
 	public double getBurnoutToFill() {
-		return 250;
+		return 100;
 	}
 
 	@Nullable
