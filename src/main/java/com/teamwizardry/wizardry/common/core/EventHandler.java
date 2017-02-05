@@ -133,8 +133,8 @@ public class EventHandler {
 
 	@SubscribeEvent
 	public void capTick(TickEvent.PlayerTickEvent event) {
-		WizardManager.addMana(1, event.player);
-		WizardManager.removeBurnout(1, event.player);
+		WizardManager.addMana(WizardManager.getMaxMana(event.player) / 1000, event.player);
+		WizardManager.removeBurnout(WizardManager.getMaxBurnout(event.player) / 1000, event.player);
 
 		ItemStack cape = event.player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
 		if (cape == null || cape.getItem() != ModItems.CAPE) {
