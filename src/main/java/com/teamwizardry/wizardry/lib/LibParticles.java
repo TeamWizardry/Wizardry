@@ -282,7 +282,7 @@ public class LibParticles {
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		glitter.setCollision(true);
 		glitter.enableMotionCalculation();
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(200, 400), 0, (i, build) -> {
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(100, 200), 0, (i, build) -> {
 			double radius = ThreadLocalRandom.current().nextDouble(1, 5);
 			double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
 			double r = radius * ThreadLocalRandom.current().nextFloat();
@@ -291,7 +291,7 @@ public class LibParticles {
 			glitter.setMotion(new Vec3d(x / 2, ThreadLocalRandom.current().nextDouble(-5, 5) / 2, z / 2));
 			glitter.setAlphaFunction(new InterpFadeInOut(0.0f, ThreadLocalRandom.current().nextFloat()));
 			glitter.setColor(Utils.shiftColorHueRandomly(Utils.changeColorAlpha(color, ThreadLocalRandom.current().nextInt(100, 200)), 30).brighter());
-			glitter.setLifetime(ThreadLocalRandom.current().nextInt(100, 500));
+			glitter.setLifetime(ThreadLocalRandom.current().nextInt(100, 300));
 			glitter.setScale(ThreadLocalRandom.current().nextFloat());
 		});
 	}

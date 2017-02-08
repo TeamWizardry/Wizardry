@@ -56,7 +56,7 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(x + 0.5 + current.xCoord, y + 0.5 + current.yCoord, z + 0.5 + current.zCoord);
 			GlStateManager.scale(0.3, 0.3, 0.3);
-			GlStateManager.rotate((float) ClientTickHandler.getTicksInGame() + partialTicks, 0, 1, 0);
+			GlStateManager.rotate((float) ClientTickHandler.getTicksInGame(), 0, 1, 0);
 			Minecraft.getMinecraft().getRenderItem().renderItem(cluster.stack, TransformType.NONE);
 			GlStateManager.popMatrix();
 		}

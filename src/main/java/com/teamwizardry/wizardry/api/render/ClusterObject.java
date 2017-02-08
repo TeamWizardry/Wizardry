@@ -54,7 +54,7 @@ public class ClusterObject implements INBTSerializable<NBTTagCompound> {
 			origin = dest;
 			dest = newDest;
 			worldTime = world.getTotalWorldTime();
-			destTime = ThreadLocalRandom.current().nextDouble(10, 30);
+			destTime = ThreadLocalRandom.current().nextDouble(10, 30) * (1 / t);
 		}
 	}
 

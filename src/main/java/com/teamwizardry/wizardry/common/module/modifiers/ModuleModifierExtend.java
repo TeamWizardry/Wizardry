@@ -46,12 +46,12 @@ public class ModuleModifierExtend extends Module implements IModifier {
 
 	@Override
 	public double getManaToConsume() {
-		return 0;
+		return 50;
 	}
 
 	@Override
 	public double getBurnoutToFill() {
-		return 0;
+		return 50;
 	}
 
 	@Override

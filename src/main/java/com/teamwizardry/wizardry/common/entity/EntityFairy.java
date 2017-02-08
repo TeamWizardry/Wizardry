@@ -9,8 +9,10 @@ import net.minecraft.entity.EntityFlying;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
@@ -31,6 +33,7 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class EntityFairy extends EntityFlying {
 
+	public boolean ambush = false;
 	private Color color;
 	private boolean sad;
 	private int age;
@@ -70,7 +73,7 @@ public class EntityFairy extends EntityFlying {
 	public void collideWithEntity(Entity entity) {
 		if (getHealth() > 0) {
 			if (entity.getName().equals(getName())) return;
-			((EntityLivingBase) entity).motionY += 0.3;
+			((EntityLivingBase) entity).motionY += 0.2;
 			((EntityLivingBase) entity).attackEntityAsMob(this);
 			((EntityLivingBase) entity).setRevengeTarget(this);
 		}
@@ -87,8 +90,31 @@ public class EntityFairy extends EntityFlying {
 		LibParticles.FAIRY_HEAD(world, getPositionVector().addVector(0, 0.25, 0), color);
 		LibParticles.FAIRY_TRAIL(world, getPositionVector().addVector(0, 0.25, 0), color, sad, new Random(getUniqueID().hashCode()).nextInt(300));
 
-		boolean nopeOut = false;
+		if (ambush) {
+			List<Entity> entities = world.getEntitiesInAABBexcluding(this, new AxisAlignedBB(getPosition()).expand(126, 126, 126), null);
+			for (Entity entity : entities)
+				if (entity instanceof EntityPlayer) {
 
+					double dist = entity.getPositionVector().distanceTo(getPositionVector());
+					Vec3d sub = entity.getPositionVector().addVector(0, entity.height / 2, 0).subtract(getPositionVector()).normalize().scale(dist / 5.0);
+
+					motionX = sub.xCoord;
+					motionY = sub.yCoord;
+					motionZ = sub.zCoord;
+					velocityChanged = true;
+
+					if (ThreadLocalRandom.current().nextInt((int) (dist * 20.0)) == 0)
+						ambush = false;
+
+					if (entity instanceof EntityPlayerMP)
+						((EntityPlayerMP) entity).connection.sendPacket(new SPacketEntityVelocity(this));
+				}
+			return;
+		}
+
+		if (!getNavigator().noPath()) return;
+
+		boolean nopeOut = false;
 		List<Entity> entities = world.getEntitiesInAABBexcluding(this, new AxisAlignedBB(getPosition()).expand(5, 5, 5), null);
 		for (Entity entity : entities)
 			if (entity instanceof EntityLivingBase) {
@@ -181,6 +207,7 @@ public class EntityFairy extends EntityFlying {
 		age = compound.getInteger("age");
 		isFlying = compound.getBoolean("is_flying");
 		changingCourse = compound.getBoolean("changing_course");
+		ambush = compound.getBoolean("ambush");
 		changeCourseTick = compound.getInteger("changing_course_tick");
 		tickPitch = compound.getFloat("tick_pitch");
 		tickYaw = compound.getFloat("tick_yaw");
@@ -194,6 +221,7 @@ public class EntityFairy extends EntityFlying {
 		compound.setInteger("age", age);
 		compound.setBoolean("is_flying", isFlying);
 		compound.setBoolean("changing_course", changingCourse);
+		compound.setBoolean("ambush", ambush);
 		compound.setInteger("changing_course_tick", changeCourseTick);
 		compound.setFloat("tick_pitch", tickPitch);
 		compound.setFloat("tick_yaw", tickYaw);

@@ -76,7 +76,7 @@ public class ModuleEffectLeap extends Module {
 		if (!target.hasNoGravity()) {
 			double strength = 0.75;
 			if (attributes.hasKey(Attributes.EXTEND))
-				strength += Math.min(64.0 / 100.0, attributes.getDouble(Attributes.EXTEND) / 100.0);
+				strength += Math.min(128.0 / 100.0, attributes.getDouble(Attributes.EXTEND) / 100.0);
 			strength *= calcBurnoutPercent(target);
 
 			if (getTargetPosition() == null)

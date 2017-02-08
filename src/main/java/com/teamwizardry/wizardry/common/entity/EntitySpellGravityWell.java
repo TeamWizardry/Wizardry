@@ -4,7 +4,9 @@ import com.teamwizardry.wizardry.api.spell.ModuleRegistry;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -52,26 +54,29 @@ public class EntitySpellGravityWell extends Entity {
 
 		LibParticles.EFFECT_NULL_GRAV(world, pos, null, antigrav ? ModuleRegistry.INSTANCE.getModule("effect_anti_gravity_well").getColor() : ModuleRegistry.INSTANCE.getModule("effect_gravity_well").getColor());
 		if (ticksExisted > maxTicks) setDead();
-		if (world.isRemote) return;
 
-		for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(pos)).expand(range, range, range))) {
+		for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(this, new AxisAlignedBB(new BlockPos(pos)).expand(range, range, range))) {
 			if (entity == null) continue;
 			if (entity.getDistanceToEntity(this) > range) continue;
 
+			Vec3d dir1 = pos.subtract(entity.getPositionVector());
+			Vec3d dir = dir1.scale(1 / range);
 			if (!antigrav) {
-				Vec3d dir = pos.subtract(entity.getPositionVector());
-				entity.motionX += (dir.xCoord) / 50.0;
-				entity.motionY += (dir.yCoord) / 50.0;
-				entity.motionZ += (dir.zCoord) / 50.0;
+				entity.motionX += (dir.xCoord) / 10.0;
+				entity.motionY += (dir.yCoord) / 10.0;
+				entity.motionZ += (dir.zCoord) / 10.0;
 				entity.fallDistance = 0;
 				entity.velocityChanged = true;
 			} else {
-				Vec3d dir = pos.subtract(entity.getPositionVector());
-				entity.motionX += (range - dir.xCoord) / 50.0;
-				entity.motionY += (range - dir.yCoord) / 50.0;
-				entity.motionZ += (range - dir.zCoord) / 50.0;
+				entity.motionX += (range - dir.xCoord) / 10.0;
+				entity.motionY += (range - dir.yCoord) / 10.0;
+				entity.motionZ += (range - dir.zCoord) / 10.0;
 				entity.fallDistance = 0;
 				entity.velocityChanged = true;
+			}
+
+			if (entity instanceof EntityPlayerMP) {
+				((EntityPlayerMP) entity).connection.sendPacket(new SPacketEntityVelocity(entity));
 			}
 		}
 	}

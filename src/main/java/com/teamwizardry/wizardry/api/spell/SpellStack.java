@@ -15,6 +15,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -144,6 +145,9 @@ public class SpellStack {
 				WizardManager.addBurnout((int) module.finalBurnoutCost, caster);
 			}
 		}
+
+		SpellCastEvent event = new SpellCastEvent(world, caster, spellHolder, pos);
+		MinecraftForge.EVENT_BUS.post(event);
 	}
 
 	public static Set<Module> getModules(@NotNull ItemStack spellHolder) {

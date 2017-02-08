@@ -4,10 +4,12 @@ import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants.MISC;
 import com.teamwizardry.wizardry.api.WizardManager;
+import com.teamwizardry.wizardry.api.spell.SpellCastEvent;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.TeleportUtil;
 import com.teamwizardry.wizardry.common.achievement.Achievements;
 import com.teamwizardry.wizardry.common.entity.EntityDevilDust;
+import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.common.entity.EntitySpellCodex;
 import com.teamwizardry.wizardry.common.tile.TilePedestal;
 import com.teamwizardry.wizardry.init.ModBlocks;
@@ -20,6 +22,7 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.event.TextureStitchEvent.Pre;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -33,6 +36,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class EventHandler {
@@ -144,8 +148,19 @@ public class EventHandler {
 				WizardManager.setMaxBurnout(100, event.player);
 
 		} else if (cape.getItem() == ModItems.CAPE) {
-			WizardManager.setMaxMana(ItemNBTHelper.getInt(cape, "time", 0), event.player);
-			WizardManager.setMaxBurnout(ItemNBTHelper.getInt(cape, "time", 0), event.player);
+			WizardManager.setMaxMana((int) Math.log(ItemNBTHelper.getInt(cape, "time", 0)) * 1000, event.player);
+			WizardManager.setMaxBurnout((int) Math.log(ItemNBTHelper.getInt(cape, "time", 0)) * 1000, event.player);
+		}
+		//Minecraft.getMinecraft().player.sendChatMessage(WizardManager.getMaxMana(event.player)+ "");
+	}
+
+	@SubscribeEvent
+	public void fairyAmbush(SpellCastEvent event) {
+		if (event.getCaster() != null) {
+			List<EntityFairy> fairyList = event.getWorld().getEntitiesWithinAABB(EntityFairy.class, new AxisAlignedBB(event.getCaster().getPosition()).expand(126, 126, 126));
+			for (EntityFairy fairy : fairyList) {
+				fairy.ambush = true;
+			}
 		}
 	}
 }

@@ -89,12 +89,12 @@ public class ModuleEffectThrive extends Module implements IContinousSpell {
 
 	@Override
 	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Vec3d target) {
-		double chance = 80;
+		int chance = 80;
 		if (attributes.hasKey(Attributes.EXTEND))
-			chance -= Math.min(20, attributes.getDouble(Attributes.EXTEND));
+			chance -= Math.min(50, attributes.getDouble(Attributes.EXTEND));
 		chance *= calcBurnoutPercent(caster);
-		if (chance < 0) return false;
-		if (ThreadLocalRandom.current().nextInt((int) chance) != 0) return false;
+		if (chance <= 0) return false;
+		if (ThreadLocalRandom.current().nextInt(chance) != 0) return false;
 
 		BlockPos pos = new BlockPos(target);
 		if (world.getBlockState(pos).getBlock() instanceof IGrowable)
