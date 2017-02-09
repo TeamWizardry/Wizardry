@@ -5,7 +5,6 @@ import com.teamwizardry.librarianlib.client.gui.GuiComponent;
 import com.teamwizardry.librarianlib.client.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.client.gui.mixin.ButtonMixin;
 import com.teamwizardry.librarianlib.client.gui.mixin.DragMixin;
-import com.teamwizardry.librarianlib.common.util.math.Vec2d;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.lib.LibSprites;
 import net.minecraft.util.text.TextFormatting;
@@ -44,7 +43,6 @@ public class TableModule {
 				if (!draggable) {
 					TableModule item = new TableModule(table, module, true);
 					item.component.addTag("selected");
-					item.component.setPos(new Vec2d(50, 50));
 					List<GuiComponent<?>> selected = table.paper.getByTag("selected");
 					if (selected.isEmpty()) table.paper.add(item.component);
 					else {
@@ -56,7 +54,7 @@ public class TableModule {
 						table.paper.add(item.component);
 					}
 
-					DragMixin drag = new DragMixin<>(item.component, vec2d -> vec2d);
+					DragMixin drag = new DragMixin<>(item.component, vec2d -> vec2d.sub(6, 6));
 					drag.setMouseDown(event.getButton());
 					event.cancel();
 				}

@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.item;
 
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.achievement.Achievements;
 import com.teamwizardry.wizardry.common.achievement.IPickupAchievement;
 import net.minecraft.entity.item.EntityItem;
@@ -25,8 +26,7 @@ public class ItemBook extends ItemWizardry implements IPickupAchievement {
 	@NotNull
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(@NotNull ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
-		// TODO
-		// if (worldIn.isRemote) Wizardry.guide.display();
+		playerIn.openGui(Wizardry.instance, 1, worldIn, (int) playerIn.posX, (int) playerIn.posY, (int) playerIn.posZ);
 		return ActionResult.newResult(EnumActionResult.SUCCESS, itemStackIn);
 	}
 

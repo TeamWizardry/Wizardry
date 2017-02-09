@@ -96,14 +96,14 @@ public class EntityFairy extends EntityFlying {
 				if (entity instanceof EntityPlayer) {
 
 					double dist = entity.getPositionVector().distanceTo(getPositionVector());
-					Vec3d sub = entity.getPositionVector().addVector(0, entity.height / 2, 0).subtract(getPositionVector()).normalize().scale(dist / 5.0);
+					Vec3d sub = entity.getPositionVector().addVector(0, entity.height / 2, 0).subtract(getPositionVector()).normalize().scale(dist / 2.0);
 
 					motionX = sub.xCoord;
 					motionY = sub.yCoord;
 					motionZ = sub.zCoord;
 					velocityChanged = true;
 
-					if (ThreadLocalRandom.current().nextInt((int) (dist * 20.0)) == 0)
+					if ((int) dist <= 0 || ThreadLocalRandom.current().nextInt((int) (dist * 20.0)) == 0)
 						ambush = false;
 
 					if (entity instanceof EntityPlayerMP)

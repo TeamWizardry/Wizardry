@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.client.gui;
 
-import com.teamwizardry.wizardry.api.Constants.PageNumbers;
+import com.teamwizardry.wizardry.client.gui.book.BookGui;
 import com.teamwizardry.wizardry.client.gui.worktable.WorktableGui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
@@ -18,7 +18,8 @@ public class GuiHandler implements IGuiHandler {
 
 	@Override
 	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-		if (ID == PageNumbers.WORKTABLE) return new WorktableGui();
+		if (ID == 0) return new WorktableGui();
+		if (ID == 1) return new BookGui();
 		return null;
 	}
 }

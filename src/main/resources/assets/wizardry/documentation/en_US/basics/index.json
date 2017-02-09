@@ -1,6 +1,7 @@
 {
   "title": "Basics",
-  "subindex": [
+  "type": "index",
+  "index": [
     {
       "item": "wizardry:physics_book",
       "text": "Welcome",
@@ -8,19 +9,19 @@
       "tip": "Welcome To Wizardry."
     },
     {
-      "item": "wizardry:mana",
+      "item": "wizardry:mana_pearl",
       "text": "Mana",
       "link": "mana",
-      "tip": "Learn about what mana is, and why you want it so badly."
+      "tip": "Learn about what mana is and why you want it so badly."
     },
     {
-      "item": "wizardry:quartz_pearl",
-      "text": "Pearls",
-      "link": "pearls",
-      "tip": "Learn what the best magical catalyst is and how you can use it."
+      "item": "wizardry:magicians_worktable",
+      "text": "Spell Creation",
+      "link": "spell_creation",
+      "tip": "Learn how to create or visualise your spells."
     },
     {
-      "item": "minecraft:book",
+      "item": "wizardry:nacre_pearl",
       "text": "Spells",
       "link": "spells",
       "tip": "Learn how the spell system works."

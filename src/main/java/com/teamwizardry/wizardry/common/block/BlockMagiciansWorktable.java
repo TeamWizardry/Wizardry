@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.common.block;
 import com.teamwizardry.librarianlib.common.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.common.base.block.BlockModContainer;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Constants.PageNumbers;
 import com.teamwizardry.wizardry.common.tile.TileMagiciansWorktable;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -82,7 +81,7 @@ public class BlockMagiciansWorktable extends BlockModContainer {
 
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-		playerIn.openGui(Wizardry.instance, PageNumbers.WORKTABLE, worldIn, (int) playerIn.posX, (int) playerIn.posY, (int) playerIn.posZ);
+		playerIn.openGui(Wizardry.instance, 0, worldIn, (int) playerIn.posX, (int) playerIn.posY, (int) playerIn.posZ);
 		return true;
 	}
 
