@@ -165,10 +165,29 @@ public class LibParticles {
 				double r = scatter * ThreadLocalRandom.current().nextFloat();
 				double x = r * MathHelper.cos((float) theta);
 				double z = r * MathHelper.sin((float) theta);
-				glitter.setPositionOffset(new Vec3d(
-						x,
-						ThreadLocalRandom.current().nextDouble(scatter),
-						z));
+				glitter.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(-scatter, scatter), z));
+			}
+		});
+	}
+
+	public static void AIR_THROTTLE(World world, Vec3d pos, Vec3d normal, Color color1, Color color2, double scatter, boolean enableCollision) {
+		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(30, 50));
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
+		glitter.setAlphaFunction(new InterpFadeInOut(0.1f, 0.3f));
+		glitter.enableMotionCalculation();
+		Color color3 = new Color(color1.getRed(), color1.getGreen(), color1.getBlue(), ThreadLocalRandom.current().nextInt(50, 100));
+		Color color4 = new Color(color2.getRed(), color2.getGreen(), color2.getBlue(), ThreadLocalRandom.current().nextInt(50, 100));
+		glitter.setCollision(enableCollision);
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(50, 80), 1, (i, build) -> {
+			glitter.setMotion(normal);
+			if (ThreadLocalRandom.current().nextBoolean()) glitter.setColor(color3);
+			else glitter.setColor(color4);
+			if (scatter > 0) {
+				double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
+				double r = scatter * ThreadLocalRandom.current().nextFloat();
+				double x = r * MathHelper.cos((float) theta);
+				double z = r * MathHelper.sin((float) theta);
+				glitter.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(-scatter, scatter), z));
 			}
 		});
 	}

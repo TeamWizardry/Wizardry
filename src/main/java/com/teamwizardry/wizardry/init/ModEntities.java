@@ -23,6 +23,7 @@ public class ModEntities {
 		registerEntity(EntitySpellCodex.class, "book_tracker", 64, 1, false);
 		registerEntity(EntitySpellProjectile.class, "spell_projectile", 64, 1, false);
 		registerEntity(EntitySpellGravityWell.class, "gravity_well", 64, 1, false);
+		registerEntity(EntityJumpPad.class, "jump_pad", 64, 1, false);
 		registerEntity(EntityUnicorn.class, "unicorn");
 	}
 	
@@ -38,7 +39,8 @@ public class ModEntities {
 
 	public static void initModels() {
 		RenderingRegistry.registerEntityRenderingHandler(EntityHallowedSpirit.class, manager -> new RenderHallowedSpirit(manager, new ModelHallowedSpirit()));
-		RenderingRegistry.registerEntityRenderingHandler(EntityFairy.class, manager -> new RenderFairy(manager, new ModelFairy()));
+		RenderingRegistry.registerEntityRenderingHandler(EntityFairy.class, manager -> new RenderFairy(manager, new ModelNull()));
 		RenderingRegistry.registerEntityRenderingHandler(EntityUnicorn.class, manager -> new RenderUnicorn(manager, new ModelUnicorn()));
+		RenderingRegistry.registerEntityRenderingHandler(EntityJumpPad.class, manager -> new RenderJumpPad(manager, new ModelNull()));
 	}
 }

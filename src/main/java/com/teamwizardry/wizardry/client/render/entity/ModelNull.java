@@ -6,9 +6,9 @@ import net.minecraft.entity.Entity;
 /**
  * Created by Saad on 8/25/2016.
  */
-public class ModelFairy extends ModelBase {
+public class ModelNull extends ModelBase {
 
-	public ModelFairy() {
+	public ModelNull() {
 		textureWidth = 64;
 		textureHeight = 64;
 	}

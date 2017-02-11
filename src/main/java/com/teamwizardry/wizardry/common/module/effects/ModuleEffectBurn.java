@@ -98,7 +98,7 @@ public class ModuleEffectBurn extends Module implements IContinousSpell {
 		if (attributes.hasKey(Attributes.EXTEND))
 			chance -= Math.min(20, attributes.getDouble(Attributes.EXTEND));
 		chance *= calcBurnoutPercent(caster);
-		if (chance <= 0) return false;
+		if ((int) chance <= 0) return false;
 		if (ThreadLocalRandom.current().nextInt((int) chance) != 0) return false;
 
 		BlockPos pos = new BlockPos(target);

@@ -84,7 +84,7 @@ public class ModuleEffectLeap extends Module {
 			else
 				target.motionX = target.isCollidedVertically ? getTargetPosition().xCoord : getTargetPosition().xCoord / 2.0;
 
-			target.motionY = target.isCollidedVertically ? strength : strength / 3.0;
+			target.motionY = target.isCollidedVertically ? strength : 0.4 * calcBurnoutPercent(target);
 
 			if (getTargetPosition() == null)
 				target.motionZ = target.isCollidedVertically ? target.getLookVec().zCoord : target.getLookVec().zCoord / 2.0;

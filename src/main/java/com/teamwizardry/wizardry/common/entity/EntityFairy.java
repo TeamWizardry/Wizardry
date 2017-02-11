@@ -73,7 +73,7 @@ public class EntityFairy extends EntityFlying {
 	public void collideWithEntity(Entity entity) {
 		if (getHealth() > 0) {
 			if (entity.getName().equals(getName())) return;
-			((EntityLivingBase) entity).motionY += 0.2;
+			((EntityLivingBase) entity).motionY += 0.3;
 			((EntityLivingBase) entity).attackEntityAsMob(this);
 			((EntityLivingBase) entity).setRevengeTarget(this);
 		}
@@ -122,9 +122,11 @@ public class EntityFairy extends EntityFlying {
 
 				Vec3d sub = getPositionVector().subtract(entity.getPositionVector().addVector(0, entity.height / 2, 0)).normalize();
 
-				motionX += sub.xCoord / 10;
-				motionY += sub.yCoord / 10;
-				motionZ += sub.zCoord / 10;
+				Random rand = new Random(hashCode());
+				double speed = rand.nextInt(9) + 1;
+				motionX += sub.xCoord / speed;
+				motionY += sub.yCoord / speed;
+				motionZ += sub.zCoord / speed;
 			}
 
 		if (nopeOut) {
@@ -136,9 +138,11 @@ public class EntityFairy extends EntityFlying {
 							Vec3d center = new Vec3d(pos).addVector(0.5, 0.5, 0.5);
 							Vec3d sub = getPositionVector().addVector(0, height / 2, 0).subtract(center).normalize();
 
-							motionX += sub.xCoord / 10;
-							motionY += sub.yCoord / 10;
-							motionZ += sub.zCoord / 10;
+							Random rand = new Random(hashCode());
+							double speed = rand.nextInt(9) + 1;
+							motionX += sub.xCoord / speed;
+							motionY += sub.yCoord / speed;
+							motionZ += sub.zCoord / speed;
 						}
 					}
 		}
