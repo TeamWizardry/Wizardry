@@ -51,6 +51,7 @@ public class CommonProxy {
 		Wizardry.underWorld = DimensionType.register("underworld", "_dim", Config.underworld_id, WorldProviderUnderWorld.class, false);
 		DimensionManager.registerDimension(Config.underworld_id, Wizardry.underWorld);
 
+		MinecraftForge.EVENT_BUS.register(new WorldProviderUnderWorld());
 		MinecraftForge.EVENT_BUS.register(new EventHandler());
 		MinecraftForge.EVENT_BUS.register(new AchievementEvents());
 		MinecraftForge.EVENT_BUS.register(new ModCapabilities());

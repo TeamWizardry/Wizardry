@@ -45,7 +45,7 @@ public class EntityFairy extends EntityFlying {
 
 	public EntityFairy(World worldIn) {
 		super(worldIn);
-		setSize(0.5F, 0.5F);
+		setSize(1F, 1F);
 		isAirBorne = true;
 		experienceValue = 5;
 		color = new Color(ThreadLocalRandom.current().nextFloat(), ThreadLocalRandom.current().nextFloat(), ThreadLocalRandom.current().nextFloat());
@@ -55,7 +55,7 @@ public class EntityFairy extends EntityFlying {
 
 	public EntityFairy(World worldIn, Color color, int age) {
 		super(worldIn);
-		setSize(0.5F, 0.5F);
+		setSize(1F, 1F);
 		isAirBorne = true;
 		experienceValue = 5;
 		this.color = color;
@@ -91,12 +91,12 @@ public class EntityFairy extends EntityFlying {
 		LibParticles.FAIRY_TRAIL(world, getPositionVector().addVector(0, 0.25, 0), color, sad, new Random(getUniqueID().hashCode()).nextInt(300));
 
 		if (ambush) {
-			List<Entity> entities = world.getEntitiesInAABBexcluding(this, new AxisAlignedBB(getPosition()).expand(126, 126, 126), null);
+			List<Entity> entities = world.getEntitiesInAABBexcluding(this, new AxisAlignedBB(getPosition()).expand(64, 64, 64), null);
 			for (Entity entity : entities)
 				if (entity instanceof EntityPlayer) {
 
 					double dist = entity.getPositionVector().distanceTo(getPositionVector());
-					Vec3d sub = entity.getPositionVector().addVector(0, entity.height / 2, 0).subtract(getPositionVector()).normalize().scale(dist / 2.0);
+					Vec3d sub = entity.getPositionVector().addVector(0, entity.height / 2, 0).subtract(getPositionVector()).normalize().scale(dist / 3.0);
 
 					motionX = sub.xCoord;
 					motionY = sub.yCoord;
@@ -147,18 +147,19 @@ public class EntityFairy extends EntityFlying {
 			int r = Math.abs(new Random(getPosition().toLong()).nextInt(20)) + 1;
 			if (ThreadLocalRandom.current().nextInt(r) == 0) {
 				changingCourse = true;
-				changeCourseTick = ThreadLocalRandom.current().nextInt(200);
-				tickPitch = (float) ThreadLocalRandom.current().nextDouble(-3, 3);
-				tickYaw = (float) ThreadLocalRandom.current().nextDouble(-3, 3);
+				changeCourseTick = ThreadLocalRandom.current().nextInt(50);
+				tickPitch = (float) ThreadLocalRandom.current().nextDouble(-10, 10);
+				tickYaw = (float) ThreadLocalRandom.current().nextDouble(-10, 10);
 			}
 			if (changingCourse) {
 				if (changeCourseTick > 0) {
 					changeCourseTick--;
 					Vec3d dir = getVectorForRotation(rotationPitch += tickPitch, rotationYaw += tickYaw).normalize();
-
-					motionX = dir.xCoord / 10;
-					motionY = dir.yCoord / 10;
-					motionZ = dir.zCoord / 10;
+					Random rand = new Random(hashCode());
+					double speed = rand.nextInt(9) + 1;
+					motionX = dir.xCoord / speed;
+					motionY = dir.yCoord / speed;
+					motionZ = dir.zCoord / speed;
 				} else changingCourse = false;
 			}
 		}

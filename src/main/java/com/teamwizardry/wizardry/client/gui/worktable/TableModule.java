@@ -18,6 +18,7 @@ public class TableModule {
 
 	public TableModule(WorktableGui table, Module module, boolean draggable) {
 		ComponentSprite sprite = new ComponentSprite(LibSprites.Worktable.MODULE_DEFAULT, 0, 0, 12, 12);
+		sprite.addTag(module.getID());
 		if (draggable) sprite.addTag("draggable");
 
 		ComponentSprite glow = new ComponentSprite(LibSprites.Worktable.MODULE_DEFAULT_GLOW, 0, 0, 12, 12);
@@ -41,18 +42,10 @@ public class TableModule {
 		sprite.BUS.hook(GuiComponent.MouseDownEvent.class, (event) -> {
 			if (event.getButton() == EnumMouseButton.LEFT) {
 				if (!draggable) {
+					System.out.println(event.getComponent().getTags() + "");
 					TableModule item = new TableModule(table, module, true);
-					item.component.addTag("selected");
-					List<GuiComponent<?>> selected = table.paper.getByTag("selected");
-					if (selected.isEmpty()) table.paper.add(item.component);
-					else {
-						for (GuiComponent<?> comp : selected) {
-							if (comp.equals(item.component))
-								return;
-						}
-						table.paper.removeByTag("selected");
-						table.paper.add(item.component);
-					}
+					item.component.addTag("on_paper");
+					table.paper.add(item.component);
 
 					DragMixin drag = new DragMixin<>(item.component, vec2d -> vec2d.sub(6, 6));
 					drag.setMouseDown(event.getButton());

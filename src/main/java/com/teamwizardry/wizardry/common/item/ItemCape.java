@@ -68,7 +68,7 @@ public class ItemCape extends ItemModArmor {
 					} else ItemNBTHelper.setInt(stack, "buffer", buffer + 1);
 				}
 			} else ItemNBTHelper.setInt(stack, "time", time + 1);
-			Minecraft.getMinecraft().player.sendChatMessage(time + " -- " + buffer + " -- " + owner + " -- " + thief);
+			//Minecraft.getMinecraft().player.sendChatMessage(time + " -- " + buffer + " -- " + owner + " -- " + thief);
 		}
 	}
 

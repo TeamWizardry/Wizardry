@@ -5,8 +5,6 @@ import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkGenerator;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -41,20 +39,14 @@ public class WorldProviderUnderWorld extends WorldProvider {
 		return true;
 	}
 
-	@Override
-	public float calculateCelestialAngle(long par1, float par3) {
-		return 0.0F;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public float[] calcSunriseSunsetColors(float par1, float par2) {
-		return null;
-	}
-
 	@NotNull
 	@Override
 	public String getSaveFolder() {
 		return "underworld";
+	}
+
+	@Override
+	public void onWorldUpdateEntities() {
+		setWorldTime(getWorldTime() + 5);
 	}
 }

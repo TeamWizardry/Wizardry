@@ -3,7 +3,7 @@
     {
       "icon": "wizardry:textures/gui/book/icons/pointy-hat.png",
       "text": "Learn everything you need to know to get started here.",
-      "link": "/basics/index.json"
+      "link": "/basics/welcome.json"
     },
     {
       "icon": "wizardry:textures/gui/book/icons/magic-gate.png",

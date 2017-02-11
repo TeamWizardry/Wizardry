@@ -42,10 +42,10 @@ public class BookGui extends GuiBase {
 		String path;
 		try {
 			stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "documentation/" + langname + "/index.json");
-			path = "documentation/" + langname;
+			path = "wizardry:documentation/" + langname;
 		} catch (Throwable e) {
 			stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "documentation/en_US/index.json");
-			path = "documentation/en_US";
+			path = "wizardry:documentation/en_US";
 		}
 
 		if (stream != null) {
@@ -75,8 +75,11 @@ public class BookGui extends GuiBase {
 							category.BUS.hook(GuiComponent.MouseOverEvent.class, mouseOverEvent -> {
 								// TODO
 							});
+							final String finalPath = path + chunk.get("link").getAsString();
 							category.BUS.hook(GuiComponent.MouseClickEvent.class, mouseClickEvent -> {
-
+								PageText pageText = new PageText(finalPath, 0, 0, 0);
+								mainIndex.setVisible(false);
+								getMainComponents().add(pageText.component);
 							});
 							mainIndex.add(category);
 							i++;

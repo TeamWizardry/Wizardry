@@ -38,6 +38,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class EventHandler {
 
@@ -157,9 +158,9 @@ public class EventHandler {
 	@SubscribeEvent
 	public void fairyAmbush(SpellCastEvent event) {
 		if (event.getCaster() != null) {
-			List<EntityFairy> fairyList = event.getWorld().getEntitiesWithinAABB(EntityFairy.class, new AxisAlignedBB(event.getCaster().getPosition()).expand(126, 126, 126));
+			List<EntityFairy> fairyList = event.getWorld().getEntitiesWithinAABB(EntityFairy.class, new AxisAlignedBB(event.getCaster().getPosition()).expand(64, 64, 64));
 			for (EntityFairy fairy : fairyList) {
-				fairy.ambush = true;
+				if (ThreadLocalRandom.current().nextInt(5) == 0) fairy.ambush = true;
 			}
 		}
 	}
