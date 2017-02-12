@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.entity;
 
 import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
 import com.teamwizardry.wizardry.api.Constants.NBT;
+import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
@@ -60,6 +61,11 @@ public class EntityFairy extends EntityFlying {
 		experienceValue = 5;
 		this.color = color;
 		this.age = age;
+	}
+
+	@Override
+	public boolean getCanSpawnHere() {
+		return getEntityWorld().getBlockState(getPosition().down()).getBlock() == ModBlocks.CLOUD;
 	}
 
 	@Override

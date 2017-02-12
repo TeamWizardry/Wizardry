@@ -80,6 +80,16 @@ public class ChunkGeneratorUnderWorld implements IChunkGenerator {
 							primer.setBlockState(pos.getX(), pos.getY(), pos.getZ(), block);
 						}
 					}
+
+					for (BlockPos pos : poses) {
+						if (pos.getX() >= 0 && pos.getX() <= 15
+								&& pos.getZ() >= 0 && pos.getZ() <= 15) {
+							if (primer.getBlockState(pos.getX(), pos.getY() - 1, pos.getZ()) != ModBlocks.CLOUD) {
+								IBlockState block = ModBlocks.CLOUD.getDefaultState();
+								primer.setBlockState(pos.getX(), pos.getY(), pos.getZ(), block);
+							}
+						}
+					}
 				}
 			}
 		}
