@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "half=top": {
+      "model": "wizardry:wisdom_wood_slab_top"
+    },
+    "half=bottom": {
+      "model": "wizardry:wisdom_wood_slab_bottom"
+    }
+  }
+}

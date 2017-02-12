@@ -23,6 +23,10 @@ public class ModBlocks {
 	public static BlockNacre NACRE;
 	public static BlockNacreBrick NACRE_BRICK;
 
+	public static BlockWisdomWoodPlanks WISDOM_WOOD_PLANKS;
+	public static BlockWisdomWoodSlab WISDOM_WOOD_SLAB;
+	public static BlockWisdomWoodStairs WISDOM_WOOD_STAIRS;
+
 	public static void init() {
 		CRAFTING_PLATE = new BlockCraftingPlate();
 		MAGICIANS_WORKTABLE = new BlockMagiciansWorktable();
@@ -32,6 +36,9 @@ public class ModBlocks {
 		NACRE = new BlockNacre();
 		NACRE_BRICK = new BlockNacreBrick();
 		MANA_MAGNET = new BlockManaMagnet();
+		WISDOM_WOOD_PLANKS = new BlockWisdomWoodPlanks();
+		WISDOM_WOOD_SLAB = new BlockWisdomWoodSlab();
+		WISDOM_WOOD_STAIRS = new BlockWisdomWoodStairs();
 	}
 
 	public static void initModel() {

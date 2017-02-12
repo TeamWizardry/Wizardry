@@ -1,0 +1,8 @@
+{
+  "parent": "block/half_slab",
+  "textures": {
+    "bottom": "wizardry:blocks/wisdom_wood_planks",
+    "top": "wizardry:blocks/wisdom_wood_planks",
+    "side": "wizardry:blocks/wisdom_wood_planks"
+  }
+}
