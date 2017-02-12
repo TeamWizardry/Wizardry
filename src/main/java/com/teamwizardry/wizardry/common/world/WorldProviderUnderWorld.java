@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.common.world;
 
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.common.world.biome.BiomeUnderWorld;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.GlStateManager;
@@ -10,9 +11,11 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraftforge.client.IRenderHandler;
@@ -35,6 +38,12 @@ public class WorldProviderUnderWorld extends WorldProvider {
 	@Override
 	public DimensionType getDimensionType() {
 		return Wizardry.underWorld;
+	}
+
+	@NotNull
+	@Override
+	public Biome getBiomeForCoords(@NotNull BlockPos pos) {
+		return new BiomeUnderWorld(new Biome.BiomeProperties("underworld"));
 	}
 
 	@Override
@@ -115,15 +124,14 @@ public class WorldProviderUnderWorld extends WorldProvider {
 			EntityPlayer p = Minecraft.getMinecraft().player;
 			if (p != null) {
 				if (p.getEntityWorld().provider instanceof WorldProviderUnderWorld) {
-					ResourceLocation texture = new ResourceLocation(Wizardry.MODID, "textures/misc/underworld_sky.png");
-					Minecraft.getMinecraft().renderEngine.bindTexture(texture);
+					ResourceLocation sides = new ResourceLocation(Wizardry.MODID, "textures/misc/underworld_sky.png");
+					ResourceLocation top = new ResourceLocation(Wizardry.MODID, "textures/misc/underworld_sky_top.png");
+					ResourceLocation bottom = new ResourceLocation(Wizardry.MODID, "textures/misc/underworld_sky_bottom.png");
+					Minecraft.getMinecraft().renderEngine.bindTexture(sides);
 					GlStateManager.pushMatrix();
 					GlStateManager.disableCull();
 					GlStateManager.disableFog();
 					GlStateManager.disableLighting();
-					GlStateManager.enableAlpha();
-					GlStateManager.enableBlend();
-					GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
 
 					GlStateManager.depthMask(false);
 					Tessellator tessellator = Tessellator.getInstance();
@@ -132,11 +140,30 @@ public class WorldProviderUnderWorld extends WorldProvider {
 					for (int i = 0; i < 6; ++i) {
 						GlStateManager.pushMatrix();
 
-						if (i == 1) GlStateManager.rotate(90.0F, 1.0F, 0.0F, 0.0F);
-						if (i == 2) GlStateManager.rotate(-90.0F, 1.0F, 0.0F, 0.0F);
-						if (i == 3) GlStateManager.rotate(180.0F, 1.0F, 0.0F, 0.0F);
-						if (i == 4) GlStateManager.rotate(90.0F, 0.0F, 0.0F, 1.0F);
-						if (i == 5) GlStateManager.rotate(-90.0F, 0.0F, 0.0F, 1.0F);
+						Minecraft.getMinecraft().renderEngine.bindTexture(bottom);
+						if (i == 3) {
+							Minecraft.getMinecraft().renderEngine.bindTexture(top);
+							GlStateManager.rotate(180.0F, 1.0F, 0.0F, 0.0F);
+						}
+						if (i == 1) {
+							Minecraft.getMinecraft().renderEngine.bindTexture(sides);
+							GlStateManager.rotate(90.0F, 1.0F, 0.0F, 0.0F);
+						}
+						if (i == 2) {
+							Minecraft.getMinecraft().renderEngine.bindTexture(sides);
+							GlStateManager.rotate(-90.0F, 1.0F, 0.0F, 0.0F);
+							GlStateManager.rotate(180.0F, 0.0F, 1.0F, 0.0F);
+						}
+						if (i == 4) {
+							Minecraft.getMinecraft().renderEngine.bindTexture(sides);
+							GlStateManager.rotate(90.0F, 0.0F, 0.0F, 1.0F);
+							GlStateManager.rotate(270.0F, 0.0F, 1.0F, 0.0F);
+						}
+						if (i == 5) {
+							Minecraft.getMinecraft().renderEngine.bindTexture(sides);
+							GlStateManager.rotate(-90.0F, 0.0F, 0.0F, 1.0F);
+							GlStateManager.rotate(-270.0F, 0.0F, 1.0F, 0.0F);
+						}
 
 						vertexbuffer.begin(7, DefaultVertexFormats.POSITION_TEX);
 						vertexbuffer.pos(-100.0D, -100.0D, -100.0D).tex(0.0D, 0.0D).endVertex();

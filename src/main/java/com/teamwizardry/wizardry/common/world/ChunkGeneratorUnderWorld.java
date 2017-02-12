@@ -1,9 +1,10 @@
 package com.teamwizardry.wizardry.common.world;
 
+import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EnumCreatureType;
-import net.minecraft.init.Biomes;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -106,7 +107,7 @@ public class ChunkGeneratorUnderWorld implements IChunkGenerator {
 
 		byte[] biomeArray = chunk.getBiomeArray();
 		for (int i = 0; i < biomeArray.length; ++i) {
-			biomeArray[i] = (byte) Biome.getIdForBiome(Biomes.PLAINS);
+			biomeArray[i] = (byte) 42;
 		}
 
 		chunk.generateSkylightMap();
@@ -115,7 +116,12 @@ public class ChunkGeneratorUnderWorld implements IChunkGenerator {
 
 	@Override
 	public void populate(int x, int z) {
-
+		if (x / 16 == 0 && z / 16 == 0) {
+			for (int i = -3; i < 3; i++)
+				for (int j = -3; j < 3; j++) {
+					world.setBlockState(new BlockPos(i, 50, j), Blocks.OBSIDIAN.getDefaultState());
+				}
+		}
 	}
 
 	@Override
@@ -126,7 +132,9 @@ public class ChunkGeneratorUnderWorld implements IChunkGenerator {
 	@NotNull
 	@Override
 	public List<Biome.SpawnListEntry> getPossibleCreatures(@NotNull EnumCreatureType creatureType, @NotNull BlockPos pos) {
-		return Collections.emptyList();
+		ArrayList<Biome.SpawnListEntry> list = new ArrayList<>();
+		list.add(new Biome.SpawnListEntry(EntityFairy.class, 1, 1, 3));
+		return list;
 	}
 
 	@Nullable

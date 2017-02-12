@@ -42,6 +42,7 @@ public class CommonProxy {
 		ModEntities.init();
 		ModPotions.init();
 		ModCapabilities.preInit();
+		ModBiomes.init();
 
 		WizardryPacketHandler.registerMessages();
 		NetworkRegistry.INSTANCE.registerGuiHandler(Wizardry.instance, new GuiHandler());

@@ -14,12 +14,14 @@ import com.teamwizardry.wizardry.common.entity.EntitySpellCodex;
 import com.teamwizardry.wizardry.common.tile.TilePedestal;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
+import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -93,7 +95,7 @@ public class EventHandler {
 		if (event.getSource() == EntityDamageSource.outOfWorld) {
 			EntityPlayer player = ((EntityPlayer) event.getEntityLiving());
 			BlockPos spawn = player.isSpawnForced(0) ? player.getBedLocation(0) : player.world.getSpawnPoint().add(player.world.rand.nextGaussian() * 16, 0, player.world.rand.nextGaussian() * 16);
-			BlockPos teleportTo = spawn.add(0, 255 - spawn.getY(), 0);
+			BlockPos teleportTo = spawn.add(0, 300 - spawn.getY(), 0);
 			TeleportUtil.teleportToDimension((EntityPlayer) event.getEntity(), 0, teleportTo.getX(), teleportTo.getY(), teleportTo.getZ());
 			event.getEntity().fallDistance = -500;
 			event.setCanceled(true);
@@ -109,7 +111,8 @@ public class EventHandler {
 				BlockPos bedrock = PosUtils.checkNeighbor(event.getEntity().getEntityWorld(), location, Blocks.BEDROCK);
 				if (bedrock != null) {
 					if (event.getEntity().getEntityWorld().getBlockState(bedrock).getBlock() == Blocks.BEDROCK) {
-						TeleportUtil.teleportToDimension((EntityPlayer) event.getEntity(), Wizardry.underWorld.getId(), 0, 100, 0);
+						TeleportUtil.teleportToDimension((EntityPlayer) event.getEntity(), Wizardry.underWorld.getId(), 0, 300, 0);
+						((EntityPlayer) event.getEntity()).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 1, false, false));
 						fallResetUUIDs.add(event.getEntity().getUniqueID());
 						((EntityPlayer) event.getEntity()).addStat(Achievements.CRUNCH);
 						event.setCanceled(true);
@@ -127,7 +130,8 @@ public class EventHandler {
 				BlockPos bedrock = PosUtils.checkNeighbor(event.getEntity().getEntityWorld(), location, Blocks.BEDROCK);
 				if (bedrock != null) {
 					if (event.getEntity().getEntityWorld().getBlockState(bedrock).getBlock() == Blocks.BEDROCK) {
-						TeleportUtil.teleportToDimension(event.getEntityPlayer(), Wizardry.underWorld.getId(), 0, 100, 0);
+						TeleportUtil.teleportToDimension(event.getEntityPlayer(), Wizardry.underWorld.getId(), 0, 300, 0);
+						((EntityPlayer) event.getEntity()).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 1, false, false));
 						fallResetUUIDs.add(event.getEntityPlayer().getUniqueID());
 						event.getEntityPlayer().addStat(Achievements.CRUNCH);
 					}

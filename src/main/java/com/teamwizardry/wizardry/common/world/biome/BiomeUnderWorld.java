@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.world.biome;
 
+import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -11,9 +12,9 @@ import java.util.Random;
 /**
  * Created by LordSaad44
  */
-public class BiomeUnderland extends Biome {
+public class BiomeUnderWorld extends Biome {
 
-	public BiomeUnderland(BiomeProperties properties) {
+	public BiomeUnderWorld(BiomeProperties properties) {
 		super(properties);
 		properties.setRainDisabled();
 
@@ -30,6 +31,7 @@ public class BiomeUnderland extends Biome {
 		this.theBiomeDecorator.sandPerChunk2 = 0;
 		this.theBiomeDecorator.treesPerChunk = 0;
 		this.theBiomeDecorator.waterlilyPerChunk = 0;
+		this.spawnableCreatureList.add(new Biome.SpawnListEntry(EntityFairy.class, 1, 1, 3));
 	}
 
 	@Override
