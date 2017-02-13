@@ -48,8 +48,6 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink, 
 	@Save
 	@Nullable
 	public ItemStack output;
-	@Save
-	public boolean structureComplete;
 	public List<ClusterObject> inventory = new ArrayList<>();
 	public Random random = new Random(getPos().toLong());
 

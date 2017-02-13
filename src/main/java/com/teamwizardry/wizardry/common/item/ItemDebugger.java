@@ -71,7 +71,7 @@ public class ItemDebugger extends ItemWizardry implements IGlowOverlayable {
 				Structure structure = ModStructures.INSTANCE.structures.get(((IStructure) tile).structureName());
 
 				for (Template.BlockInfo info : structure.blockInfos()) {
-					BlockPos newPos = info.pos.add(pos).subtract(new Vec3i(6, 3, 6));
+					BlockPos newPos = info.pos.add(pos).subtract(new Vec3i(6, 2, 6));
 					if (worldIn.getBlockState(newPos).getBlock() != Blocks.AIR) continue;
 					if (info.blockState == null) continue;
 

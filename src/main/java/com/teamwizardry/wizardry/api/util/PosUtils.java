@@ -1,10 +1,15 @@
 package com.teamwizardry.wizardry.api.util;
 
+import com.teamwizardry.wizardry.common.tile.TileStaff;
+import com.teamwizardry.wizardry.init.ModBlocks;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Saad on 8/27/2016.
@@ -48,35 +53,62 @@ public final class PosUtils {
 		return origin;
 	}
 
-	public static boolean isLyingInCone(Vec3d pointToCheck, Vec3d origin, Vec3d endVector, float aperture) {
-		float[] x = new float[]{(float) pointToCheck.xCoord, (float) pointToCheck.yCoord, (float) pointToCheck.zCoord};
-		float[] t = new float[]{(float) origin.xCoord, (float) origin.yCoord, (float) origin.zCoord};
-		float[] b = new float[]{(float) endVector.xCoord, (float) endVector.yCoord, (float) endVector.zCoord};
+	public static class ManaBatteryPositions {
 
-		float halfAperture = aperture / 2.f;
-		float[] apexToXVect = dif(t, x);
-		float[] axisVect = dif(t, b);
+		public Set<BlockPos> takenPoses = new HashSet<>();
+		public Set<BlockPos> missingSymmetry = new HashSet<>();
+		public Set<BlockPos> fullCircle = new HashSet<>();
 
-		boolean isInInfiniteCone = dotProd(apexToXVect, axisVect) / magn(apexToXVect) / magn(axisVect)
-				> Math.cos(halfAperture);
+		public ManaBatteryPositions(World world, BlockPos battery) {
+			for (int i = 0; i < 360; i++) {
+				double angle = Math.toRadians(i);
+				double cX = Math.cos(angle) * 6;
+				double cZ = Math.sin(angle) * 6;
+				BlockPos staffPos = new BlockPos(battery.getX() + cX + 0.5, battery.getY() - 2, battery.getZ() + cZ + 0.5);
 
-		return isInInfiniteCone && dotProd(apexToXVect, axisVect) / magn(axisVect) < magn(axisVect);
+				if (world.getBlockState(staffPos.down()).getBlock() != ModBlocks.WISDOM_WOOD_PIGMENTED_PLANKS) continue;
+				fullCircle.add(staffPos);
 
-	}
+				if (takenPoses.contains(staffPos)) continue;
+				IBlockState block = world.getBlockState(staffPos);
+				if (block.getBlock() != ModBlocks.STAFF_BLOCK) continue;
+				TileStaff staff = (TileStaff) world.getTileEntity(staffPos);
+				if (staff == null) continue;
+				if (staff.pearl == null) continue;
+				fullCircle.remove(staffPos);
 
-	private static float dotProd(float[] a, float[] b) {
-		return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-	}
+				int j = (180 + i) % 360;
+				double newAngle = Math.toRadians(j);
+				double oppX = 0.5 + Math.cos(newAngle) * 6;
+				double oppZ = 0.5 + Math.sin(newAngle) * 6;
+				BlockPos oppPos = new BlockPos(battery.getX() + oppX + 0.5, battery.getY() - 2, battery.getZ() + oppZ + 0.5);
 
-	private static float[] dif(float[] a, float[] b) {
-		return (new float[]{
-				a[0] - b[0],
-				a[1] - b[1],
-				a[2] - b[2]
-		});
-	}
+				if (world.getBlockState(oppPos.down()).getBlock() != ModBlocks.WISDOM_WOOD_PIGMENTED_PLANKS) {
+					missingSymmetry.add(oppPos);
+					continue;
+				}
+				if (takenPoses.contains(oppPos)) {
+					missingSymmetry.add(oppPos);
+					continue;
+				}
+				IBlockState oppBlock = world.getBlockState(oppPos);
+				if (oppBlock.getBlock() != ModBlocks.STAFF_BLOCK) {
+					missingSymmetry.add(oppPos);
+					continue;
+				}
+				TileStaff oppPed = (TileStaff) world.getTileEntity(oppPos);
+				if (oppPed == null) {
+					missingSymmetry.add(oppPos);
+					continue;
+				}
+				if (oppPed.pearl == null) {
+					missingSymmetry.add(oppPos);
+					continue;
+				}
 
-	private static float magn(float[] a) {
-		return (float) (Math.sqrt(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]));
+				takenPoses.add(staffPos);
+				takenPoses.add(oppPos);
+			}
+		}
 	}
 }

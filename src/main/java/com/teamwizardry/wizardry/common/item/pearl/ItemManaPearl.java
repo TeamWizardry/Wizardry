@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.common.item.pearl;
 
 import com.teamwizardry.wizardry.common.item.ItemWizardry;
-import com.teamwizardry.wizardry.common.tile.TilePedestal;
+import com.teamwizardry.wizardry.common.tile.TileStaff;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -26,8 +26,8 @@ public class ItemManaPearl extends ItemWizardry {
 	@Override
 	public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
 		if (stack != null) {
-			if (world.getBlockState(pos).getBlock() == ModBlocks.PEDESTAL) {
-				TilePedestal pedestal = (TilePedestal) world.getTileEntity(pos);
+			if (world.getBlockState(pos).getBlock() == ModBlocks.STAFF_BLOCK) {
+				TileStaff pedestal = (TileStaff) world.getTileEntity(pos);
 				if (pedestal != null) {
 					pedestal.pearl = stack;
 					stack.stackSize--;

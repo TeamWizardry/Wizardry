@@ -3,11 +3,11 @@ package com.teamwizardry.wizardry.client.core;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.client.fx.Shaders;
 import com.teamwizardry.wizardry.client.render.BloodRenderLayer;
-import com.teamwizardry.wizardry.client.render.TilePedestalRenderer;
+import com.teamwizardry.wizardry.client.render.TileStaffRenderer;
 import com.teamwizardry.wizardry.client.render.glow.GlowingItemEventHandler;
 import com.teamwizardry.wizardry.client.render.glow.GlowingItemRenderLayer;
 import com.teamwizardry.wizardry.common.core.CommonProxy;
-import com.teamwizardry.wizardry.common.tile.TilePedestal;
+import com.teamwizardry.wizardry.common.tile.TileStaff;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModEntities;
 import net.minecraft.client.Minecraft;
@@ -43,7 +43,7 @@ public class ClientProxy extends CommonProxy {
 	public void init(FMLInitializationEvent event) {
 		super.init(event);
 
-		ClientRegistry.bindTileEntitySpecialRenderer(TilePedestal.class, new TilePedestalRenderer());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileStaff.class, new TileStaffRenderer());
 
 		//Shaders.INSTANCE.getClass(); // ...
 		//MagicBurstFX.class.getName(); // ...

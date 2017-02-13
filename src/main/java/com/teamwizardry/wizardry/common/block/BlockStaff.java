@@ -4,7 +4,7 @@ import com.teamwizardry.librarianlib.common.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.common.base.block.BlockModContainer;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.block.IManaSink;
-import com.teamwizardry.wizardry.common.tile.TilePedestal;
+import com.teamwizardry.wizardry.common.tile.TileStaff;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
@@ -21,17 +21,17 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Created by Saad on 5/7/2016.
  */
-public class BlockPedestal extends BlockModContainer implements IManaSink {
+public class BlockStaff extends BlockModContainer implements IManaSink {
 
-	public BlockPedestal() {
-		super("pedestal", Material.ROCK);
+	public BlockStaff() {
+		super("staff_block", Material.ROCK);
 		setCreativeTab(Wizardry.tab);
 	}
 
 	@Override
 	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
 		if (!world.isRemote) {
-			TilePedestal te = getTE(world, pos);
+			TileStaff te = getTE(world, pos);
 
 			if ((te.pearl == null) && (heldItem != null)) {
 				te.pearl = heldItem.copy();
@@ -52,14 +52,14 @@ public class BlockPedestal extends BlockModContainer implements IManaSink {
 		return true;
 	}
 
-	private TilePedestal getTE(World world, BlockPos pos) {
-		return (TilePedestal) world.getTileEntity(pos);
+	private TileStaff getTE(World world, BlockPos pos) {
+		return (TileStaff) world.getTileEntity(pos);
 	}
 
 	@Nullable
 	@Override
 	public TileEntity createTileEntity(World world, IBlockState iBlockState) {
-		return new TilePedestal();
+		return new TileStaff();
 	}
 
 	@Override

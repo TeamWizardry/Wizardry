@@ -363,7 +363,11 @@ public class LibParticles {
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 1, 0, (aFloat, particleBuilder) -> {
 			glitter.setColor(new Color(ThreadLocalRandom.current().nextInt(0, 100), ThreadLocalRandom.current().nextInt(0, 100), ThreadLocalRandom.current().nextInt(50, 255)));
 			if (scale == -1) glitter.setScale(ThreadLocalRandom.current().nextFloat());
-			else glitter.setScale(scale);
+			else {
+				glitter.setMotion(new Vec3d(0, ThreadLocalRandom.current().nextDouble(0.3), 0));
+				glitter.setLifetime(ThreadLocalRandom.current().nextInt(10));
+				glitter.setScale(scale);
+			}
 		});
 	}
 

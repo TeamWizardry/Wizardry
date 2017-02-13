@@ -19,7 +19,7 @@ import javax.annotation.Nullable;
  * Created by Saad on 5/7/2016.
  */
 @TileRegister("pedestal")
-public class TilePedestal extends TileMod implements ITickable {
+public class TileStaff extends TileMod implements ITickable {
 
 	@Nullable
 	@Save

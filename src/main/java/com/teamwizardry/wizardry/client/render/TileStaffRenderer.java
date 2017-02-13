@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.client.render;
 
 import com.teamwizardry.librarianlib.client.core.ClientTickHandler;
-import com.teamwizardry.wizardry.common.tile.TilePedestal;
+import com.teamwizardry.wizardry.common.tile.TileStaff;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -10,10 +10,10 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 /**
  * Created by Saad on 5/7/2016.
  */
-public class TilePedestalRenderer extends TileEntitySpecialRenderer<TilePedestal> {
+public class TileStaffRenderer extends TileEntitySpecialRenderer<TileStaff> {
 
 	@Override
-	public void renderTileEntityAt(TilePedestal te, double x, double y, double z, float partialTicks, int destroyStage) {
+	public void renderTileEntityAt(TileStaff te, double x, double y, double z, float partialTicks, int destroyStage) {
 		if (te.pearl != null) {
 			double time = ClientTickHandler.getTicksInGame() + partialTicks;
 

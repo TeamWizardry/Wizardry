@@ -17,7 +17,7 @@ public class ModBlocks {
 	public static BlockCraftingPlate CRAFTING_PLATE;
 	public static BlockMagiciansWorktable MAGICIANS_WORKTABLE;
 	public static BlockManaBattery MANA_BATTERY;
-	public static BlockPedestal PEDESTAL;
+	public static BlockStaff STAFF_BLOCK;
 	public static BlockCloud CLOUD;
 	public static BlockManaMagnet MANA_MAGNET;
 
@@ -38,7 +38,7 @@ public class ModBlocks {
 		CRAFTING_PLATE = new BlockCraftingPlate();
 		MAGICIANS_WORKTABLE = new BlockMagiciansWorktable();
 		MANA_BATTERY = new BlockManaBattery();
-		PEDESTAL = new BlockPedestal();
+		STAFF_BLOCK = new BlockStaff();
 		CLOUD = new BlockCloud();
 		NACRE = new BlockNacre();
 		NACRE_BRICK = new BlockNacreBrick();
