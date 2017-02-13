@@ -1,10 +1,7 @@
 {
   "variants": {
-    "variant=wisdom_wood_planks": {
+    "normal": {
       "model": "wizardry:wisdom_wood_planks"
-    },
-    "variant=wisdom_wood_planks_pigmented": {
-      "model": "wizardry:wisdom_wood_planks_pigmented"
     }
   }
 }

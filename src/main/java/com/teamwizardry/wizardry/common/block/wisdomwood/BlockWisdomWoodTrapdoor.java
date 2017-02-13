@@ -1,7 +1,7 @@
-package com.teamwizardry.wizardry.common.block;
+package com.teamwizardry.wizardry.common.block.wisdomwood;
 
 import com.teamwizardry.librarianlib.common.base.ModCreativeTab;
-import com.teamwizardry.librarianlib.common.base.block.BlockModSlab;
+import com.teamwizardry.librarianlib.common.base.block.BlockModTrapdoor;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import org.jetbrains.annotations.Nullable;
@@ -9,10 +9,10 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Created by LordSaad.
  */
-public class BlockWisdomWoodSlab extends BlockModSlab {
+public class BlockWisdomWoodTrapdoor extends BlockModTrapdoor {
 
-	public BlockWisdomWoodSlab() {
-		super("wisdom_wood_slab", ModBlocks.WISDOM_WOOD_PLANKS.getDefaultState());
+	public BlockWisdomWoodTrapdoor() {
+		super("wisdom_wood_trapdoor", ModBlocks.WISDOM_WOOD_PLANKS.getDefaultState());
 	}
 
 	@Nullable

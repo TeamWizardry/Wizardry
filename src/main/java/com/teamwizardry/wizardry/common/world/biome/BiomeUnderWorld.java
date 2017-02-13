@@ -31,7 +31,7 @@ public class BiomeUnderWorld extends Biome {
 		this.theBiomeDecorator.sandPerChunk2 = 0;
 		this.theBiomeDecorator.treesPerChunk = 0;
 		this.theBiomeDecorator.waterlilyPerChunk = 0;
-		this.spawnableCreatureList.add(new Biome.SpawnListEntry(EntityFairy.class, 1, 1, 3));
+		this.spawnableCreatureList.add(new Biome.SpawnListEntry(EntityFairy.class, 100, 1, 3));
 	}
 
 	@Override

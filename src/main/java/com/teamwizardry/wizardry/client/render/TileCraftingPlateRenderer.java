@@ -1,23 +1,16 @@
 package com.teamwizardry.wizardry.client.render;
 
 import com.teamwizardry.librarianlib.client.core.ClientTickHandler;
-import com.teamwizardry.librarianlib.common.structure.Structure;
 import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpBezier3D;
 import com.teamwizardry.wizardry.api.render.ClusterObject;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
-import com.teamwizardry.wizardry.init.ModStructures;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.math.*;
-import net.minecraft.world.gen.structure.template.Template;
-import org.lwjgl.opengl.GL11;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -28,7 +21,7 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
 
 	@Override
 	public void renderTileEntityAt(TileCraftingPlate te, double x, double y, double z, float partialTicks, int destroyStage) {
-		if (Minecraft.getMinecraft().objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK) {
+		/*if (Minecraft.getMinecraft().objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK) {
 			BlockPos pos = Minecraft.getMinecraft().objectMouseOver.getBlockPos().subtract(new Vec3i(0, 64, 0));
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(x, y, z);
@@ -48,7 +41,7 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
 			tes.draw();
 
 			GlStateManager.popMatrix();
-		}
+		}*/
 
 		for (ClusterObject cluster : te.inventory) {
 			double timeDifference = (te.getWorld().getTotalWorldTime() - cluster.worldTime + partialTicks) / cluster.destTime;

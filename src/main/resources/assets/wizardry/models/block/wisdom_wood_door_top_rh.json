@@ -1,0 +1,7 @@
+{
+  "parent": "block/door_top_rh",
+  "textures": {
+    "bottom": "wizardry:blocks/wisdom_wood_planks_door_lower",
+    "top": "wizardry:blocks/wisdom_wood_planks_door_upper"
+  }
+}
