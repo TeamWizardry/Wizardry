@@ -1,86 +1,66 @@
 {
   "title": "Basics",
   "type": "index",
-  "index": [
+  "content": [
     {
-      "item": "wizardry:physics_book",
+      "icon": "wizardry:textures/items/physics_book.png",
       "text": "Welcome",
-      "link": "welcome",
-      "tip": "Welcome To Wizardry."
+      "link": "/basics/welcome.json",
+      "info": "Welcome To Wizardry."
     },
     {
-      "item": "wizardry:mana_pearl",
+      "icon": "wizardry:textures/items/mana_pearl.png",
       "text": "Mana",
-      "link": "mana",
-      "tip": "Learn about what mana is and why you want it so badly."
+      "link": "/basics/mana.json",
+      "info": "Learn about what mana is and why you want it so badly."
     },
     {
-      "item": "wizardry:magicians_worktable",
-      "text": "Spell Creation",
-      "link": "spell_creation",
-      "tip": "Learn how to create or visualise your spells."
+      "icon": "wizardry:textures/items/magic_wand.png",
+      "text": "TEST 1",
+      "link": "test_1",
+      "info": "Learn how to create or visualise your spells."
     },
     {
-      "item": "wizardry:nacre_pearl",
-      "text": "Spells",
-      "link": "spells",
-      "tip": "Learn how the spell system works."
+      "icon": "wizardry:textures/items/magic_wand.png",
+      "text": "TEST 2",
+      "link": "test_2",
+      "info": "Learn how to create or visualise your spells."
     },
     {
-      "item": "minecraft:sand",
-      "text": "Example4",
-      "link": "example"
+      "icon": "wizardry:textures/items/magic_wand.png",
+      "text": "TEST 3",
+      "link": "test_3",
+      "info": "Learn how to create or visualise your spells."
     },
     {
-      "item": "minecraft:grass",
-      "text": "Example5",
-      "link": "example"
+      "icon": "wizardry:textures/items/magic_wand.png",
+      "text": "TEST 4",
+      "link": "test_4",
+      "info": "Learn how to create or visualise your spells."
     },
     {
-      "item": "minecraft:snow",
-      "text": "Example6",
-      "link": "example"
+      "icon": "wizardry:textures/items/magic_wand.png",
+      "text": "TEST 5",
+      "link": "test_5",
+      "info": "Learn how to create or visualise your spells."
     },
     {
-      "item": "minecraft:redstone",
-      "text": "Example7",
-      "link": "example"
+      "icon": "wizardry:textures/items/magic_wand.png",
+      "text": "TEST 6",
+      "link": "test_6",
+      "info": "Learn how to create or visualise your spells."
     },
     {
-      "item": "minecraft:iron_ingotz	",
-      "text": "Example8",
-      "link": "example"
+      "icon": "wizardry:textures/items/magic_wand.png",
+      "text": "TEST 7",
+      "link": "test_7",
+      "info": "Learn how to create or visualise your spells."
     },
     {
-      "item": "minecraft:gold_ingot",
-      "text": "Example9",
-      "link": "example"
-    },
-    {
-      "item": "minecraft:diamond",
-      "text": "Example10",
-      "link": "example"
-    },
-    {
-      "item": "minecraft:diamond_sword",
-      "text": "Example11",
-      "link": "example"
-    },
-    {
-      "item": "minecraft:dye",
-      "damage": 3,
-      "text": "Example12",
-      "link": "example"
-    }
-  ],
-  "pages": [
-    {
-      "type": "subindex",
-      "page": 0
-    },
-    {
-      "type": "subindex",
-      "page": 1
+      "icon": "wizardry:textures/items/magic_wand.png",
+      "text": "TEST 8",
+      "link": "test_8",
+      "info": "Learn how to create or visualise your spells."
     }
   ]
 }

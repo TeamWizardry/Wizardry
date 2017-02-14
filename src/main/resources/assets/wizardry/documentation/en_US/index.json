@@ -3,10 +3,10 @@
     {
       "icon": "wizardry:textures/gui/book/icons/pointy-hat.png",
       "text": "Learn everything you need to know to get started here.",
-      "link": "/basics/welcome.json"
+      "link": "/basics/index.json"
     },
     {
-      "icon": "wizardry:textures/gui/book/icons/magic-gate.png",
+      "icon": "wizardry:textures/gui/book/icons/embrassed-energy.png",
       "text": "Learn about all the multi-block structures here.",
       "link": "/basics/mana.json"
     },

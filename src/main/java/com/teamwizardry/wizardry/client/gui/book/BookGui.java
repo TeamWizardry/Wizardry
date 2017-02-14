@@ -25,16 +25,17 @@ import java.io.InputStreamReader;
  */
 public class BookGui extends GuiBase {
 
-	private static Texture SPRITE_SHEET = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/book/book.png"));
+	public static Texture SPRITE_SHEET = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/book/book.png"));
 	private static Sprite background = SPRITE_SHEET.getSprite("background", 145, 179);
+
+	public ComponentVoid mainIndex;
 
 	public BookGui() {
 		super(145, 179);
-
 		ComponentSprite componentBackground = new ComponentSprite(background, 0, 0);
 		getMainComponents().add(componentBackground);
 
-		ComponentVoid mainIndex = new ComponentVoid(0, 0, background.getWidth(), background.getHeight());
+		mainIndex = new ComponentVoid(0, 0, background.getWidth(), background.getHeight());
 		componentBackground.add(mainIndex);
 
 		String langname = Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode();
@@ -42,10 +43,10 @@ public class BookGui extends GuiBase {
 		String path;
 		try {
 			stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "documentation/" + langname + "/index.json");
-			path = "wizardry:documentation/" + langname;
+			path = "documentation/" + langname;
 		} catch (Throwable e) {
 			stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "documentation/en_US/index.json");
-			path = "wizardry:documentation/en_US";
+			path = "documentation/en_US";
 		}
 
 		if (stream != null) {
@@ -77,9 +78,10 @@ public class BookGui extends GuiBase {
 							});
 							final String finalPath = path + chunk.get("link").getAsString();
 							category.BUS.hook(GuiComponent.MouseClickEvent.class, mouseClickEvent -> {
-								PageText pageText = new PageText(finalPath, 0, 0, 0);
+								Page page = new Page(this, finalPath, background.getWidth(), background.getHeight(), 0);
 								mainIndex.setVisible(false);
-								getMainComponents().add(pageText.component);
+								mainIndex.setEnabled(false);
+								getMainComponents().add(page.component);
 							});
 							mainIndex.add(category);
 							i++;
