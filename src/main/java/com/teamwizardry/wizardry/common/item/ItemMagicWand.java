@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.item;
 
-import com.teamwizardry.librarianlib.common.structure.Structure;
 import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants.NBT;
@@ -10,27 +9,21 @@ import com.teamwizardry.wizardry.api.item.GlowingOverlayHelper;
 import com.teamwizardry.wizardry.api.item.IGlowOverlayable;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.common.entity.EntityUnicorn;
-import com.teamwizardry.wizardry.common.tile.TileManaBattery;
-import com.teamwizardry.wizardry.init.ModStructures;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3i;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.structure.template.Template;
 import org.jetbrains.annotations.NotNull;
 
-public class ItemDebugger extends ItemWizardry implements IGlowOverlayable {
+public class ItemMagicWand extends ItemWizardry implements IGlowOverlayable {
 
-	public ItemDebugger() {
-		super("debugger");
+	public ItemMagicWand() {
+		super("magic_wand");
 		setMaxStackSize(1);
 		addPropertyOverride(new ResourceLocation(Wizardry.MODID, NBT.TAG_OVERLAY), GlowingOverlayHelper.OVERLAY_OVERRIDE);
 	}
@@ -51,8 +44,8 @@ public class ItemDebugger extends ItemWizardry implements IGlowOverlayable {
 			ItemNBTHelper.setInt(cape, "time", ItemNBTHelper.getInt(cape, "time", 0) + 100);
 			Minecraft.getMinecraft().player.sendChatMessage(ItemNBTHelper.getInt(cape, "time", 0) + "");
 		}
-		TileEntity tile = worldIn.getTileEntity(pos);
-		if (tile == null) {
+		IBlockState state = worldIn.getBlockState(pos);
+		if (!(state.getBlock() instanceof IStructure)) {
 			if (!worldIn.isRemote)
 				if (GuiScreen.isShiftKeyDown()) {
 					EntityFairy entity = new EntityFairy(worldIn);
@@ -66,35 +59,11 @@ public class ItemDebugger extends ItemWizardry implements IGlowOverlayable {
 			return EnumActionResult.FAIL;
 		} else {
 
-			if (tile instanceof IStructure) {
-
-				Structure structure = ModStructures.INSTANCE.structures.get(((IStructure) tile).structureName());
-
-				for (Template.BlockInfo info : structure.blockInfos()) {
-					BlockPos newPos = info.pos.add(pos).subtract(new Vec3i(6, 2, 6));
-					if (worldIn.getBlockState(newPos).getBlock() != Blocks.AIR) continue;
-					if (info.blockState == null) continue;
-
-					boolean flag = false;
-					if (!playerIn.isCreative())
-						for (ItemStack invStack : playerIn.inventory.mainInventory)
-							if (invStack != null
-									&& invStack.isItemEqual(new ItemStack(info.blockState.getBlock()))) {
-								flag = true;
-								invStack.stackSize--;
-								break;
-							}
-					if (!flag && !playerIn.isCreative()) continue;
-					worldIn.setBlockState(newPos, info.blockState, 3);
-					break;
-				}
-			}
-
-			if (tile instanceof TileManaBattery) {
+			/*if (tile instanceof TileManaBattery) {
 				TileManaBattery tmb = (TileManaBattery) worldIn.getTileEntity(pos);
 				if (tmb != null)
 					playerIn.sendMessage(new TextComponentString("Mana: " + tmb.currentMana + '/' + tmb.maxMana));
-			}
+			}*/
 		}
 		return EnumActionResult.PASS;
 	}

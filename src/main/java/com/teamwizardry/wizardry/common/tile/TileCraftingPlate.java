@@ -6,7 +6,6 @@ import com.teamwizardry.librarianlib.common.util.autoregister.TileRegister;
 import com.teamwizardry.librarianlib.common.util.saving.Save;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.IManaSink;
-import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.api.item.Infusable;
 import com.teamwizardry.wizardry.api.item.PearlType;
 import com.teamwizardry.wizardry.api.render.ClusterObject;
@@ -35,7 +34,7 @@ import java.util.Random;
  * Created by Saad on 6/10/2016.
  */
 @TileRegister("crafting_plate")
-public class TileCraftingPlate extends TileMod implements ITickable, IManaSink, IStructure {
+public class TileCraftingPlate extends TileMod implements ITickable, IManaSink {
 
 	@Save
 	public int craftingTime = 300;
@@ -128,10 +127,5 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink, 
 				markDirty();
 			}
 		}
-	}
-
-	@Override
-	public String structureName() {
-		return "crafting_altar";
 	}
 }

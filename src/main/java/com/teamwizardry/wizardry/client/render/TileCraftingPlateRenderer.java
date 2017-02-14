@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.client.render;
 
 import com.teamwizardry.librarianlib.client.core.ClientTickHandler;
 import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpBezier3D;
+import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.api.render.ClusterObject;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
 import com.teamwizardry.wizardry.lib.LibParticles;
@@ -21,27 +22,8 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
 
 	@Override
 	public void renderTileEntityAt(TileCraftingPlate te, double x, double y, double z, float partialTicks, int destroyStage) {
-		/*if (Minecraft.getMinecraft().objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK) {
-			BlockPos pos = Minecraft.getMinecraft().objectMouseOver.getBlockPos().subtract(new Vec3i(0, 64, 0));
-			GlStateManager.pushMatrix();
-			GlStateManager.translate(x, y, z);
-			GlStateManager.enableBlend();
-			GlStateManager.enableAlpha();
-			GlStateManager.disableCull();
-			GlStateManager.disableTexture2D();
-			Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-
-			Tessellator tes = Tessellator.getInstance();
-			VertexBuffer vb = tes.getBuffer();
-			vb.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-
-			Structure structure = ModStructures.INSTANCE.structures.get(te.structureName());
-			for (Template.BlockInfo info : structure.blockInfos())
-				Minecraft.getMinecraft().getBlockRendererDispatcher().renderBlock(info.blockState, pos.add(info.pos.getX(), info.pos.getY(), info.pos.getZ()), te.getWorld(), vb);
-			tes.draw();
-
-			GlStateManager.popMatrix();
-		}*/
+		if (te.getBlockType() instanceof IStructure)
+			if (!((IStructure) te.getBlockType()).renderBoundries(te.getWorld(), te.getPos())) return;
 
 		for (ClusterObject cluster : te.inventory) {
 			double timeDifference = (te.getWorld().getTotalWorldTime() - cluster.worldTime + partialTicks) / cluster.destTime;

@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by LordSaad.
@@ -33,9 +34,9 @@ public class Utils {
 
 	public static Color shiftColorHueRandomly(Color color, double shiftAmount) {
 		return new Color(
-				(int) Math.min(color.getRed() + shiftAmount, 255),
-				(int) Math.min(color.getGreen() + shiftAmount, 255),
-				(int) Math.min(color.getBlue() + shiftAmount, 255));
+				(int) Math.max(0, Math.min(color.getRed() + ThreadLocalRandom.current().nextDouble(-shiftAmount, shiftAmount), 255)),
+				(int) Math.max(0, Math.min(color.getGreen() + ThreadLocalRandom.current().nextDouble(-shiftAmount, shiftAmount), 255)),
+				(int) Math.max(0, Math.min(color.getBlue() + ThreadLocalRandom.current().nextDouble(-shiftAmount, shiftAmount), 255)));
 	}
 
 	/**

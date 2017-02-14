@@ -29,7 +29,7 @@ public class ModItems {
 	public static ItemUnicornHorn UNICORN_HORN;
 	public static ItemCape CAPE;
 
-	public static ItemDebugger DEBUG;
+	public static ItemMagicWand MAGIC_WAND;
 
 	public static void init() {
 		PEARL_GLASS = new ItemGlassPearl();
@@ -38,7 +38,7 @@ public class ModItems {
 
 		RING = new ItemRing();
 		BOOK = new ItemBook();
-		DEBUG = new ItemDebugger();
+		MAGIC_WAND = new ItemMagicWand();
 		DEVIL_DUST = new ItemDevilDust();
 		SYRINGE = new ItemSyringe();
 

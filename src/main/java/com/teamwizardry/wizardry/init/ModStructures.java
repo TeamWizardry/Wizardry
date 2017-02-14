@@ -13,12 +13,13 @@ public class ModStructures {
 	public HashMap<String, Structure> structures = new HashMap<>();
 
 	public ModStructures() {
-		reload();
+		init();
 	}
 
-	public void reload() {
+	public void init() {
 		structures.clear();
 		structures.put("crafting_altar", new Structure(new ResourceLocation(Wizardry.MODID, "crafting_altar")));
+		structures.put("mana_battery", new Structure(new ResourceLocation(Wizardry.MODID, "mana_battery")));
 	}
 }
 

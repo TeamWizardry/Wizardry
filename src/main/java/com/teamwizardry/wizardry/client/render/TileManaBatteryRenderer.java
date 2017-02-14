@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.client.render;
 
+import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
 import com.teamwizardry.wizardry.lib.LibParticles;
@@ -18,6 +19,9 @@ public class TileManaBatteryRenderer extends TileEntitySpecialRenderer<TileManaB
 	@Override
 	public void renderTileEntityAt(TileManaBattery te, double x, double y, double z, float partialTicks, int destroyStage) {
 		World world = te.getWorld();
+
+		if (te.getBlockType() instanceof IStructure)
+			if (!((IStructure) te.getBlockType()).renderBoundries(te.getWorld(), te.getPos())) return;
 
 		PosUtils.ManaBatteryPositions positions = new PosUtils.ManaBatteryPositions(world, te.getPos());
 		for (BlockPos pos : positions.fullCircle)

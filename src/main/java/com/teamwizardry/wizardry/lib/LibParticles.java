@@ -315,6 +315,37 @@ public class LibParticles {
 		});
 	}
 
+	public static void STRUCTURE_FLAIR(World world, Vec3d pos, Color color) {
+		ParticleBuilder glitter = new ParticleBuilder(10);
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
+		glitter.setCollision(true);
+		glitter.enableMotionCalculation();
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(10, 30), 0, (i, build) -> {
+			double radius = ThreadLocalRandom.current().nextDouble(1, 2);
+			double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
+			double r = radius * ThreadLocalRandom.current().nextFloat();
+			double x = r * MathHelper.cos((float) theta);
+			double z = r * MathHelper.sin((float) theta);
+			glitter.setMotion(new Vec3d(x / 5, ThreadLocalRandom.current().nextDouble(-0.3, 0.3), z / 5));
+			glitter.setAlphaFunction(new InterpFadeInOut(0.0f, ThreadLocalRandom.current().nextFloat()));
+			glitter.setColor(Utils.shiftColorHueRandomly(Utils.changeColorAlpha(color, ThreadLocalRandom.current().nextInt(180, 255)), 30));
+			glitter.setLifetime(ThreadLocalRandom.current().nextInt(50, 80));
+			glitter.setScale(ThreadLocalRandom.current().nextFloat());
+		});
+	}
+
+	public static void STRUCTURE_BEACON(World world, Vec3d pos, Color color) {
+		ParticleBuilder beacon = new ParticleBuilder(10);
+		beacon.setRenderNormalLayer(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
+		ParticleSpawner.spawn(beacon, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(10, 30), 0, (i, build) -> {
+			beacon.setMotion(new Vec3d(0, ThreadLocalRandom.current().nextDouble(-0.3, 0.3), 0));
+			beacon.setAlphaFunction(new InterpFadeInOut(0.1f, ThreadLocalRandom.current().nextFloat()));
+			beacon.setColor(Utils.shiftColorHueRandomly(Utils.changeColorAlpha(color, 255), 30));
+			beacon.setLifetime(ThreadLocalRandom.current().nextInt(50, 80));
+			beacon.setScale(ThreadLocalRandom.current().nextFloat());
+		});
+	}
+
 	public static void CRAFTING_ALTAR_HELIX(World world, Vec3d pos) {
 		ParticleBuilder beam = new ParticleBuilder(200);
 		beam.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
@@ -505,5 +536,13 @@ public class LibParticles {
 					new Vec3d(0, ThreadLocalRandom.current().nextDouble(0, 1), 0),
 					new Vec3d(0, ThreadLocalRandom.current().nextDouble(-2, 0), 0)));
 		});
+	}
+
+	public static void STRUCTURE_BOUNDS(World world, Vec3d pos, Color color) {
+		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(10));
+		glitter.setScale(ThreadLocalRandom.current().nextFloat());
+		glitter.setRenderNormalLayer(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+		glitter.setAlphaFunction(new InterpFadeInOut(0.9F, 0.9F));
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 1, 0, (aFloat, particleBuilder) -> glitter.setColor(Utils.shiftColorHueRandomly(Utils.changeColorAlpha(color, ThreadLocalRandom.current().nextInt(50, 200)), 100)));
 	}
 }
