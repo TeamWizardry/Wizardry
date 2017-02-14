@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.client.gui.worktable;
 import com.teamwizardry.librarianlib.client.gui.EnumMouseButton;
 import com.teamwizardry.librarianlib.client.gui.GuiComponent;
 import com.teamwizardry.librarianlib.client.gui.components.ComponentSprite;
-import com.teamwizardry.librarianlib.client.gui.mixin.ButtonMixin;
 import com.teamwizardry.librarianlib.client.gui.mixin.DragMixin;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.lib.LibSprites;
@@ -19,7 +18,6 @@ public class TableModule {
 	public TableModule(WorktableGui table, Module module, boolean draggable) {
 		ComponentSprite sprite = new ComponentSprite(LibSprites.Worktable.MODULE_DEFAULT, 0, 0, 12, 12);
 		sprite.addTag(module.getID());
-		if (draggable) sprite.addTag("draggable");
 
 		ComponentSprite glow = new ComponentSprite(LibSprites.Worktable.MODULE_DEFAULT_GLOW, 0, 0, 12, 12);
 		glow.setVisible(false);
@@ -29,8 +27,6 @@ public class TableModule {
 		ComponentSprite icon = new ComponentSprite(LibSprites.Worktable.MODULE_DEFAULT, 2, 2, 8, 8);
 		sprite.add(icon);
 
-		new ButtonMixin<>(sprite, () -> {
-		});
 		sprite.BUS.hook(GuiComponent.MouseInEvent.class, (event) -> {
 			glow.setVisible(true);
 		});
@@ -42,7 +38,6 @@ public class TableModule {
 		sprite.BUS.hook(GuiComponent.MouseDownEvent.class, (event) -> {
 			if (event.getButton() == EnumMouseButton.LEFT) {
 				if (!draggable) {
-					System.out.println(event.getComponent().getTags() + "");
 					TableModule item = new TableModule(table, module, true);
 					item.component.addTag("on_paper");
 					table.paper.add(item.component);

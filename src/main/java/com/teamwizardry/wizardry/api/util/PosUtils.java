@@ -75,7 +75,6 @@ public final class PosUtils {
 				TileStaff staff = (TileStaff) world.getTileEntity(staffPos);
 				if (staff == null) continue;
 				if (staff.pearl == null) continue;
-				fullCircle.remove(staffPos);
 
 				int j = (180 + i) % 360;
 				double newAngle = Math.toRadians(j);
@@ -83,14 +82,9 @@ public final class PosUtils {
 				double oppZ = 0.5 + Math.sin(newAngle) * 6;
 				BlockPos oppPos = new BlockPos(battery.getX() + oppX + 0.5, battery.getY() - 2, battery.getZ() + oppZ + 0.5);
 
-				if (world.getBlockState(oppPos.down()).getBlock() != ModBlocks.WISDOM_WOOD_PIGMENTED_PLANKS) {
-					missingSymmetry.add(oppPos);
-					continue;
-				}
-				if (takenPoses.contains(oppPos)) {
-					missingSymmetry.add(oppPos);
-					continue;
-				}
+				if (world.getBlockState(oppPos.down()).getBlock() != ModBlocks.WISDOM_WOOD_PIGMENTED_PLANKS) continue;
+				if (takenPoses.contains(oppPos)) continue;
+
 				IBlockState oppBlock = world.getBlockState(oppPos);
 				if (oppBlock.getBlock() != ModBlocks.STAFF_BLOCK) {
 					missingSymmetry.add(oppPos);
@@ -109,6 +103,7 @@ public final class PosUtils {
 				takenPoses.add(staffPos);
 				takenPoses.add(oppPos);
 			}
+			fullCircle.removeAll(takenPoses);
 		}
 	}
 }

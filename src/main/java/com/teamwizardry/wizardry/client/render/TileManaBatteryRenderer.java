@@ -34,6 +34,6 @@ public class TileManaBatteryRenderer extends TileEntitySpecialRenderer<TileManaB
 
 		for (BlockPos pos : positions.takenPoses)
 			if (ThreadLocalRandom.current().nextInt(10) == 0)
-				LibParticles.COLORFUL_BATTERY_BEZIER(world, pos, pos);
+				LibParticles.COLORFUL_BATTERY_BEZIER(world, pos, te.getPos());
 	}
 }
