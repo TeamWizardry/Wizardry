@@ -1,9 +1,8 @@
-package com.teamwizardry.wizardry.common.item.pearl;
+package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.wizardry.api.item.Explodable;
 import com.teamwizardry.wizardry.api.item.INacreColorable;
 import com.teamwizardry.wizardry.api.item.Infusable;
-import com.teamwizardry.wizardry.common.item.ItemWizardry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;

@@ -1,10 +1,7 @@
 package com.teamwizardry.wizardry.api.capability;
 
-import com.teamwizardry.wizardry.api.capability.bloods.IBloodType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-
-import java.util.Map;
 
 /**
  * Created by Saad on 8/16/2016.
@@ -27,19 +24,9 @@ public interface IWizardryCapability {
 
 	void setMaxBurnout(int maxBurnout, EntityPlayer player);
 
-	IBloodType getBloodType();
+	EnumBloodType getBloodType();
 
-	void setBloodType(IBloodType bloodType, EntityPlayer player);
-
-	int getBloodLevel(IBloodType bloodType);
-
-	Map<IBloodType, Integer> getBloodLevels();
-
-	void setBloodLevel(IBloodType bloodType, int level, EntityPlayer player);
-
-	void setBloodLevels(Map<IBloodType, Integer> levels, EntityPlayer player);
-
-	void incrementBloodLevel(IBloodType bloodType, EntityPlayer player);
+	void setBloodType(EnumBloodType bloodType, EntityPlayer player);
 
 	NBTTagCompound saveNBTData();
 

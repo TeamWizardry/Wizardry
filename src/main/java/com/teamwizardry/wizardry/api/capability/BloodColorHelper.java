@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.api.capability.bloods;
+package com.teamwizardry.wizardry.api.capability;
 
 import com.teamwizardry.librarianlib.client.core.ClientTickHandler;
 import net.minecraft.util.math.MathHelper;

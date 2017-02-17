@@ -14,7 +14,7 @@ import com.teamwizardry.wizardry.common.network.PacketParticleMagicDot;
 import com.teamwizardry.wizardry.common.network.PacketRenderSpell;
 import com.teamwizardry.wizardry.common.network.WizardryPacketHandler;
 import com.teamwizardry.wizardry.common.world.GenHandler;
-import com.teamwizardry.wizardry.common.world.WorldProviderUnderWorld;
+import com.teamwizardry.wizardry.common.world.underworld.WorldProviderUnderWorld;
 import com.teamwizardry.wizardry.init.*;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.DimensionManager;

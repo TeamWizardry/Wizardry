@@ -35,6 +35,6 @@ public class ModRecipes {
 				UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, FluidRegistry.getFluid("wizardry.mana_fluid")),
 				UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, FluidRegistry.getFluid("wizardry.nacre_fluid")),
 				Items.LAVA_BUCKET,
-				ModItems.PEARL_MANA));
+				ModItems.MANA_ORB));
 	}
 }

@@ -14,7 +14,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 @TileRegister("mana_battery")
@@ -26,19 +25,17 @@ public class TileManaBattery extends TileMod implements ITickable, IManaSink {
 
 	@Override
 	public void update() {
-		Random rand = new Random();
-
 		if (currentMana < maxMana) {
-			int x = ThreadLocalRandom.current().nextInt(-5, 5);
-			int z = ThreadLocalRandom.current().nextInt(-5, 5);
+			int x = ThreadLocalRandom.current().nextInt(-4, 4);
+			int z = ThreadLocalRandom.current().nextInt(-4, 4);
 			BlockPos mana = getPos().add(x, -3, z);
 			if (world.getBlockState(mana) == FluidBlockMana.instance.getDefaultState()) {
 				PacketHandler.NETWORK.sendToAllAround(new PacketParticleAmbientFizz(new Vec3d(mana).addVector(0.5, 0.5, 0.5)), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 20));
-				int chance = rand.nextInt(50);
-				if (chance == 0) {
+				if (ThreadLocalRandom.current().nextInt(30) == 0) {
 					if (currentMana > maxMana - 1000) currentMana = maxMana;
 					else currentMana += 1000;
 					world.setBlockState(mana, Blocks.AIR.getDefaultState(), 3);
+					markDirty();
 				}
 			}
 		}

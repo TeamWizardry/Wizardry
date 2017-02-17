@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.world;
+package com.teamwizardry.wizardry.common.world.underworld;
 
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.init.ModBlocks;

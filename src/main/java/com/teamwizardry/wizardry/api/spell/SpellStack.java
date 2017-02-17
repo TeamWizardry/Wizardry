@@ -125,7 +125,7 @@ public class SpellStack {
 				if (WizardManager.getMana(caster) < module.finalManaCost) {
 					WizardManager.removeMana((int) module.finalManaCost, caster);
 					WizardManager.addBurnout((int) module.finalBurnoutCost, caster);
-					return;
+					//return;
 				}
 			}
 			module.run(world, caster);

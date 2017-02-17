@@ -1,9 +1,9 @@
 package com.teamwizardry.wizardry.init.irecipies;
 
 import com.teamwizardry.wizardry.api.item.Infusable;
+import com.teamwizardry.wizardry.common.item.ItemNacrePearl;
 import com.teamwizardry.wizardry.common.item.ItemRing;
 import com.teamwizardry.wizardry.common.item.ItemStaff;
-import com.teamwizardry.wizardry.common.item.pearl.ItemNacrePearl;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;

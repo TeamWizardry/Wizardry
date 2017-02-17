@@ -80,16 +80,16 @@ public class ModuleEffectLeap extends Module {
 			strength *= calcBurnoutPercent(target);
 
 			if (getTargetPosition() == null)
-				target.motionX = target.isCollidedVertically ? target.getLookVec().xCoord : target.getLookVec().xCoord / 2.0;
+				target.motionX += target.isCollidedVertically ? target.getLookVec().xCoord : target.getLookVec().xCoord / 2.0;
 			else
-				target.motionX = target.isCollidedVertically ? getTargetPosition().xCoord : getTargetPosition().xCoord / 2.0;
+				target.motionX += target.isCollidedVertically ? getTargetPosition().xCoord : getTargetPosition().xCoord / 2.0;
 
-			target.motionY = target.isCollidedVertically ? strength : 0.4 * calcBurnoutPercent(target);
+			target.motionY += target.isCollidedVertically ? strength : Math.max(0.5, strength / 3) * calcBurnoutPercent(target);
 
 			if (getTargetPosition() == null)
-				target.motionZ = target.isCollidedVertically ? target.getLookVec().zCoord : target.getLookVec().zCoord / 2.0;
+				target.motionZ += target.isCollidedVertically ? target.getLookVec().zCoord : target.getLookVec().zCoord / 2.0;
 			else
-				target.motionZ = target.isCollidedVertically ? getTargetPosition().zCoord : getTargetPosition().zCoord / 2.0;
+				target.motionZ += target.isCollidedVertically ? getTargetPosition().zCoord : getTargetPosition().zCoord / 2.0;
 
 			target.velocityChanged = true;
 			target.fallDistance /= 2 * calcBurnoutPercent(target);

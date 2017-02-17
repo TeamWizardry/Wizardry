@@ -80,6 +80,7 @@ public interface IStructure {
 					} else if (world.getBlockState(newPos) != info.blockState.getBlock())
 						world.setBlockState(newPos, info.blockState);
 				}
+				return true;
 			}
 		}
 		return false;

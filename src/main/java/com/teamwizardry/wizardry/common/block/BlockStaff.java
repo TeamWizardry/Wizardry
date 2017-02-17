@@ -5,6 +5,7 @@ import com.teamwizardry.librarianlib.common.base.block.BlockModContainer;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.block.IManaSink;
 import com.teamwizardry.wizardry.common.tile.TileStaff;
+import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
@@ -33,13 +34,12 @@ public class BlockStaff extends BlockModContainer implements IManaSink {
 		if (!world.isRemote) {
 			TileStaff te = getTE(world, pos);
 
-			if ((te.pearl == null) && (heldItem != null)) {
+			if ((te.pearl == null) && (heldItem != null) && (heldItem.getItem() == ModItems.MANA_ORB || heldItem.getItem() == ModItems.PEARL_NACRE)) {
 				te.pearl = heldItem.copy();
+				te.pearl.stackSize = 1;
 				heldItem.stackSize--;
-				player.inventory.setInventorySlotContents(player.inventory.currentItem, null);
-				player.openContainer.detectAndSendChanges();
 
-			} else if ((te.pearl != null) && (heldItem == null)) {
+			} else if ((te.pearl != null)) {
 				ItemStack stack = te.pearl.copy();
 				te.pearl = null;
 				if (player.inventory.addItemStackToInventory(stack)) player.openContainer.detectAndSendChanges();
@@ -48,6 +48,7 @@ public class BlockStaff extends BlockModContainer implements IManaSink {
 					world.spawnEntity(entityItem);
 				}
 			}
+			te.markDirty();
 		}
 		return true;
 	}

@@ -34,6 +34,8 @@ public class ModBlocks {
 	public static BlockWisdomWoodFenceGate WISDOM_WOOD_FENCE_GATE;
 	public static BlockWisdomWoodPigmentedPlanks WISDOM_WOOD_PIGMENTED_PLANKS;
 
+	public static BlockTorikkiGrass TORIKKI_GRASS;
+
 	public static void init() {
 		CRAFTING_PLATE = new BlockCraftingPlate();
 		MAGICIANS_WORKTABLE = new BlockMagiciansWorktable();
@@ -53,6 +55,8 @@ public class ModBlocks {
 		WISDOM_WOOD_FENCE = new BlockWisdomWoodFence();
 		WISDOM_WOOD_FENCE_GATE = new BlockWisdomWoodFenceGate();
 		WISDOM_WOOD_PIGMENTED_PLANKS = new BlockWisdomWoodPigmentedPlanks();
+
+		TORIKKI_GRASS = new BlockTorikkiGrass();
 	}
 
 	public static void initModel() {

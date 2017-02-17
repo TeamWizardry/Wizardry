@@ -40,8 +40,7 @@ public class PacketRenderSpell extends PacketBase {
 		World world = Minecraft.getMinecraft().player.world;
 
 		EntityLivingBase caster;
-		if (casterID != -1 && world.getEntityByID(casterID) instanceof EntityLivingBase)
-			caster = (EntityLivingBase) world.getEntityByID(casterID);
+		if (casterID != -1) caster = (EntityLivingBase) world.getEntityByID(casterID);
 		else caster = null;
 
 		for (Module module : getModules(stack)) {

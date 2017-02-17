@@ -1,17 +1,14 @@
 package com.teamwizardry.wizardry.init;
 
 import com.teamwizardry.wizardry.common.item.*;
-import com.teamwizardry.wizardry.common.item.pearl.ItemGlassPearl;
-import com.teamwizardry.wizardry.common.item.pearl.ItemManaPearl;
-import com.teamwizardry.wizardry.common.item.pearl.ItemNacrePearl;
 
 /**
  * Created by Saad on 4/9/2016.
  */
 public class ModItems {
 
-	public static ItemGlassPearl PEARL_GLASS;
-	public static ItemManaPearl PEARL_MANA;
+	public static ItemGlassOrb GLASS_ORB;
+	public static ItemManaOrb MANA_ORB;
 	public static ItemNacrePearl PEARL_NACRE;
 
 	public static ItemStaff STAFF;
@@ -32,8 +29,8 @@ public class ModItems {
 	public static ItemMagicWand MAGIC_WAND;
 
 	public static void init() {
-		PEARL_GLASS = new ItemGlassPearl();
-		PEARL_MANA = new ItemManaPearl();
+		GLASS_ORB = new ItemGlassOrb();
+		MANA_ORB = new ItemManaOrb();
 		PEARL_NACRE = new ItemNacrePearl();
 
 		RING = new ItemRing();

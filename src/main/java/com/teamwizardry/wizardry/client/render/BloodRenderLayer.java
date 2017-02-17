@@ -2,8 +2,8 @@ package com.teamwizardry.wizardry.client.render;
 
 import com.teamwizardry.librarianlib.client.fx.shader.ShaderHelper;
 import com.teamwizardry.librarianlib.client.util.ClientUtilMethods;
+import com.teamwizardry.wizardry.api.capability.EnumBloodType;
 import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
-import com.teamwizardry.wizardry.api.capability.bloods.IBloodType;
 import com.teamwizardry.wizardry.client.fx.Shaders;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelBiped.ArmPose;
@@ -29,26 +29,20 @@ public class BloodRenderLayer implements LayerRenderer<AbstractClientPlayer> {
 
 	@Override
 	public void doRenderLayer(@Nonnull AbstractClientPlayer entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-		IBloodType type = WizardryCapabilityProvider.get(entity).getBloodType();
+		EnumBloodType type = WizardryCapabilityProvider.get(entity).getBloodType();
 		if (type != null) {
-			render.bindTexture(type.getBloodTexture(entity));
-			ClientUtilMethods.glColor(type.getBloodColor(entity));
+			render.bindTexture(EnumBloodType.getResourceLocation(type));
+			ClientUtilMethods.glColor(type.color);
 			setModelVisibilities(entity);
 			GlStateManager.enableBlendProfile(Profile.PLAYER_SKIN);
 
-			boolean glowing = type.isGlowing(entity);
-
-			if (glowing) {
-				GlStateManager.disableLighting();
-				ShaderHelper.INSTANCE.useShader(Shaders.rawColor);
-			}
+			GlStateManager.disableLighting();
+			ShaderHelper.INSTANCE.useShader(Shaders.rawColor);
 
 			render.getMainModel().render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
 
-			if (glowing) {
-				GlStateManager.enableLighting();
-				ShaderHelper.INSTANCE.releaseShader();
-			}
+			GlStateManager.enableLighting();
+			ShaderHelper.INSTANCE.releaseShader();
 
 			GlStateManager.disableBlendProfile(Profile.PLAYER_SKIN);
 			GlStateManager.color(1.0F, 1.0F, 1.0F);

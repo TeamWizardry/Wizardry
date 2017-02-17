@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.world;
+package com.teamwizardry.wizardry.common.world.underworld;
 
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.world.biome.BiomeUnderWorld;
