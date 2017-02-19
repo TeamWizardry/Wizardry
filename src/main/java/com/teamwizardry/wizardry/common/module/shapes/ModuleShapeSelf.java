@@ -3,12 +3,13 @@ package com.teamwizardry.wizardry.common.module.shapes;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.RegisterModule;
-import net.minecraft.entity.EntityLivingBase;
+import com.teamwizardry.wizardry.api.spell.Spell;
+import net.minecraft.entity.Entity;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import static com.teamwizardry.wizardry.api.spell.Spell.DefaultKeys.CASTER;
 
 /**
  * Created by LordSaad.
@@ -50,12 +51,13 @@ public class ModuleShapeSelf extends Module {
 	}
 
 	@Override
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
+	public boolean run(@NotNull Spell spell) {
 		if (nextModule == null) return false;
-
-		nextModule.run(world, caster);
-
-		return caster != null && nextModule.run(world, caster, caster);
+		Entity caster = spell.getData(CASTER);
+		if (caster == null) return false;
+		spell.crunchData(caster, true);
+		spell.crunchData(caster, false);
+		return nextModule.run(spell);
 	}
 
 	@NotNull

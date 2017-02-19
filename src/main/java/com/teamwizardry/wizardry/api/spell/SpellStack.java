@@ -6,6 +6,7 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.WizardManager;
 import com.teamwizardry.wizardry.common.network.PacketRenderSpell;
 import com.teamwizardry.wizardry.init.ModItems;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -14,11 +15,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -107,7 +106,7 @@ public class SpellStack {
 		return branches;
 	}
 
-	public static void runModules(@NotNull ItemStack spellHolder, @NotNull World world, @Nullable EntityLivingBase caster, Vec3d pos) {
+	public static void runModules(@NotNull ItemStack spellHolder, Spell spell) {
 		boolean particleDanger = false;
 		boolean continuousSpell = false;
 		int chance = 1;
@@ -120,34 +119,38 @@ public class SpellStack {
 			if (check instanceof IContinousSpell) continuousSpell = true;
 		}
 
+		Entity caster = spell.getData(Spell.DefaultKeys.CASTER);
+
 		for (Module module : getModules(spellHolder)) {
 			if (caster instanceof EntityPlayer && !((EntityPlayer) caster).isCreative()) {
-				if (WizardManager.getMana(caster) < module.finalManaCost) {
-					WizardManager.removeMana((int) module.finalManaCost, caster);
-					WizardManager.addBurnout((int) module.finalBurnoutCost, caster);
+				if (WizardManager.getMana((EntityLivingBase) caster) < module.finalManaCost) {
+					WizardManager.removeMana((int) module.finalManaCost, (EntityLivingBase) caster);
+					WizardManager.addBurnout((int) module.finalBurnoutCost, (EntityLivingBase) caster);
 					//return;
 				}
 			}
-			module.run(world, caster);
+			module.run(spell);
+
+			Vec3d pos = spell.getData(Spell.DefaultKeys.ORIGIN, caster != null ? caster.getPositionVector() : spell.getData(Spell.DefaultKeys.TARGET_HIT, Vec3d.ZERO));
 
 			if (!(particleDanger && continuousSpell) || ThreadLocalRandom.current().nextInt(chance) == 0) {
 				if (module.getTargetPosition() == null) {
 					PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(spellHolder, caster == null ? -1 : caster.getEntityId(), pos),
-							new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.xCoord, pos.yCoord, pos.zCoord, 60));
+							new NetworkRegistry.TargetPoint(spell.world.provider.getDimension(), pos.xCoord, pos.yCoord, pos.zCoord, 60));
 				} else {
 					PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(spellHolder, caster == null ? -1 : caster.getEntityId(), module.getTargetPosition()),
-							new NetworkRegistry.TargetPoint(world.provider.getDimension(), module.getTargetPosition().xCoord, module.getTargetPosition().yCoord, module.getTargetPosition().zCoord, 60));
+							new NetworkRegistry.TargetPoint(spell.world.provider.getDimension(), module.getTargetPosition().xCoord, module.getTargetPosition().yCoord, module.getTargetPosition().zCoord, 60));
 				}
 			}
 
 			if (caster instanceof EntityPlayer && !((EntityPlayer) caster).isCreative()) {
-				WizardManager.removeMana((int) module.finalManaCost, caster);
-				WizardManager.addBurnout((int) module.finalBurnoutCost, caster);
+				WizardManager.removeMana((int) module.finalManaCost, (EntityLivingBase) caster);
+				WizardManager.addBurnout((int) module.finalBurnoutCost, (EntityLivingBase) caster);
 			}
-		}
 
-		SpellCastEvent event = new SpellCastEvent(world, caster, spellHolder, pos);
-		MinecraftForge.EVENT_BUS.post(event);
+			SpellCastEvent event = new SpellCastEvent(spellHolder, module, spell);
+			MinecraftForge.EVENT_BUS.post(event);
+		}
 	}
 
 	public static Set<Module> getModules(@NotNull ItemStack spellHolder) {

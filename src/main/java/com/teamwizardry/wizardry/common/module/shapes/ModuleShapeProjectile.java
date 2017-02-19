@@ -3,14 +3,16 @@ package com.teamwizardry.wizardry.common.module.shapes;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.Spell;
 import com.teamwizardry.wizardry.common.entity.EntitySpellProjectile;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.Entity;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import static com.teamwizardry.wizardry.api.spell.Spell.DefaultKeys.*;
 
 /**
  * Created by LordSaad.
@@ -53,12 +55,22 @@ public class ModuleShapeProjectile extends Module {
 	}
 
 	@Override
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
-		if (caster == null) return false;
-		EntitySpellProjectile proj = new EntitySpellProjectile(world, caster, this);
-		Vec3d pos = caster.getPositionVector().addVector(0, caster.getEyeHeight(), 0);
-		proj.setPosition(pos.xCoord, pos.yCoord, pos.zCoord);
-		proj.setHeadingFromThrower(caster, caster.rotationPitch, caster.rotationYaw, 0.0f, 1.5f, 1.0f);
+	public boolean run(@NotNull Spell spell) {
+		if (nextModule == null) return true;
+		World world = spell.world;
+		float yaw = spell.getData(YAW, 0F);
+		float pitch = spell.getData(PITCH, 0F);
+		Vec3d position = spell.getData(ORIGIN);
+		Entity caster = spell.getData(CASTER);
+
+		if (position == null) return false;
+
+		if (caster != null) position.addVector(0, caster.getEyeHeight(), 0); // TODO: cross product and crap
+
+		EntitySpellProjectile proj = new EntitySpellProjectile(world, this, spell);
+		proj.setPosition(position.xCoord, position.yCoord, position.xCoord);
+		if (caster != null)
+			proj.setHeadingFromThrower(caster, pitch, yaw, 0.0f, 1.5f, 1.0f);
 		proj.velocityChanged = true;
 		world.spawnEntity(proj);
 		return true;

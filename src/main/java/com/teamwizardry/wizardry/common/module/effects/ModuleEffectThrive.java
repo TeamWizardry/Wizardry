@@ -20,6 +20,8 @@ import java.awt.*;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static com.teamwizardry.wizardry.api.spell.Spell.DefaultKeys.*;
+
 /**
  * Created by LordSaad.
  */
@@ -73,6 +75,37 @@ public class ModuleEffectThrive extends Module implements IContinousSpell {
 	@Override
 	public Color getColor() {
 		return Color.RED;
+	}
+
+	@Override
+	public boolean run(@NotNull Spell spell) {
+		World world = spell.world;
+		BlockPos targetPos = spell.getData(BLOCK_HIT);
+		Entity targetEntity = spell.getData(ENTITY_HIT);
+		Entity caster = spell.getData(CASTER);
+
+		if (targetEntity instanceof EntityLivingBase) {
+			double strength = 0.3;
+			if (attributes.hasKey(Attributes.EXTEND))
+				strength += Math.min(20.0 / 10.0, attributes.getDouble(Attributes.EXTEND) / 10.0);
+			strength *= calcBurnoutPercent(caster);
+
+			((EntityLivingBase) targetEntity).setHealth((float) (((EntityLivingBase) targetEntity).getHealth() + strength));
+		}
+		if (targetPos != null) {
+			int chance = 80;
+			if (attributes.hasKey(Attributes.EXTEND))
+				chance -= Math.min(50, attributes.getDouble(Attributes.EXTEND));
+			chance *= calcBurnoutPercent(caster);
+			if (chance <= 0) return false;
+			if (ThreadLocalRandom.current().nextInt(chance) != 0) return false;
+
+			BlockPos pos = new BlockPos(targetPos);
+			if (world.getBlockState(pos).getBlock() instanceof IGrowable)
+				ItemDye.applyBonemeal(new ItemStack(Items.DYE), world, pos);
+
+		}
+		return true;
 	}
 
 	@Override

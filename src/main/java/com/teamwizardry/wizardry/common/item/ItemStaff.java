@@ -1,10 +1,7 @@
 package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.wizardry.api.item.INacreColorable;
-import com.teamwizardry.wizardry.api.spell.IContinousSpell;
-import com.teamwizardry.wizardry.api.spell.Module;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.api.spell.SpellStack;
+import com.teamwizardry.wizardry.api.spell.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -17,7 +14,6 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
@@ -43,7 +39,9 @@ public class ItemStaff extends ItemWizardry implements INacreColorable {
 	public ActionResult<ItemStack> onItemRightClick(@NotNull ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
 		if (getItemUseAction(stack) == EnumAction.NONE) {
 			if (!world.isRemote) {
-				SpellStack.runModules(stack, world, player, new Vec3d(player.posX, player.posY, player.posZ));
+				Spell spell = new Spell(world);
+				spell.crunchData(player, true);
+				SpellStack.runModules(stack, spell);
 			}
 			player.swingArm(EnumHand.MAIN_HAND);
 			player.getCooldownTracker().setCooldown(this, 10);
@@ -89,14 +87,19 @@ public class ItemStaff extends ItemWizardry implements INacreColorable {
 		for (Module module : SpellStack.getAllModules(stack))
 			if (module.getChargeUpTime() > 0) {
 				if (count <= 1) {
-					SpellStack.runModules(stack, ((EntityPlayer) player).world, player, new Vec3d(player.posX, player.posY, player.posZ));
+					Spell spell = new Spell(player.world);
+					spell.crunchData(player, true);
+					SpellStack.runModules(stack, spell);
 					player.swingArm(EnumHand.MAIN_HAND);
 					((EntityPlayer) player).getCooldownTracker().setCooldown(this, 10);
 					return;
 				} else return;
 			}
-		if (((count > 0) && (count < (getMaxItemUseDuration(stack) - 20)) && (player instanceof EntityPlayer)))
-			SpellStack.runModules(stack, ((EntityPlayer) player).world, player, new Vec3d(player.posX, player.posY, player.posZ));
+		if (((count > 0) && (count < (getMaxItemUseDuration(stack) - 20)) && (player instanceof EntityPlayer))) {
+			Spell spell = new Spell(((EntityPlayer) player).world);
+			spell.crunchData(player, true);
+			SpellStack.runModules(stack, spell);
+		}
 	}
 
 	@Override

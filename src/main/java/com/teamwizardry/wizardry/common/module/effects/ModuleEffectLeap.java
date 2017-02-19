@@ -1,9 +1,7 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
-import com.teamwizardry.wizardry.api.spell.Attributes;
-import com.teamwizardry.wizardry.api.spell.Module;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.api.spell.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -15,6 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
+
+import static com.teamwizardry.wizardry.api.spell.Spell.DefaultKeys.*;
 
 /**
  * Created by LordSaad.
@@ -69,6 +69,34 @@ public class ModuleEffectLeap extends Module {
 	@Override
 	public Color getColor() {
 		return Color.YELLOW;
+	}
+
+	@Override
+	public boolean run(@NotNull Spell spell) {
+		float yaw = spell.getData(YAW, 0F);
+		float pitch = spell.getData(PITCH, 0F);
+		Entity target = spell.getData(ENTITY_HIT);
+
+		if (target == null) return false;
+		Vec3d lookVec = PosUtils.vecFromRotations(pitch, yaw);
+
+		if (!target.hasNoGravity()) {
+			double strength = 0.75;
+			if (attributes.hasKey(Attributes.EXTEND))
+				strength += Math.min(128.0 / 100.0, attributes.getDouble(Attributes.EXTEND) / 100.0);
+			strength *= calcBurnoutPercent(target);
+
+			target.motionX += target.isCollidedVertically ? lookVec.xCoord : lookVec.xCoord / 2.0;
+
+			target.motionY += target.isCollidedVertically ? strength : Math.max(0.5, strength / 3) * calcBurnoutPercent(target);
+
+			target.motionZ += target.isCollidedVertically ? lookVec.zCoord : lookVec.zCoord / 2.0;
+
+			target.velocityChanged = true;
+			target.fallDistance /= 2 * calcBurnoutPercent(target);
+			return true;
+		}
+		return false;
 	}
 
 	@Override

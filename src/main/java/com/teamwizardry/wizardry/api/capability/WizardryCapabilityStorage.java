@@ -18,7 +18,8 @@ public class WizardryCapabilityStorage implements IStorage<IWizardryCapability> 
 	@Override
 	public NBTBase writeNBT(Capability<IWizardryCapability> capability, IWizardryCapability instance, EnumFacing side) {
 		NBTTagCompound nbt = new NBTTagCompound();
-		nbt.setString(BLOOD_TYPE, instance.getBloodType().id);
+		if (instance.getBloodType() != null)
+			nbt.setString(BLOOD_TYPE, instance.getBloodType().id);
 		nbt.setInteger(MAX_MANA, instance.getMaxMana());
 		nbt.setInteger(MAX_BURNOUT, instance.getMaxBurnout());
 		nbt.setInteger(MANA, instance.getMana());
@@ -34,6 +35,7 @@ public class WizardryCapabilityStorage implements IStorage<IWizardryCapability> 
 		((DefaultWizardryCapability) instance).maxMana = tag.getInteger(MAX_MANA);
 		((DefaultWizardryCapability) instance).burnout = tag.getInteger(BURNOUT);
 		((DefaultWizardryCapability) instance).maxBurnout = tag.getInteger(MAX_BURNOUT);
-		((DefaultWizardryCapability) instance).bloodType = EnumBloodType.getType(tag.getString(BLOOD_TYPE));
+		if (tag.hasKey(BLOOD_TYPE))
+			((DefaultWizardryCapability) instance).bloodType = EnumBloodType.getType(tag.getString(BLOOD_TYPE));
 	}
 }

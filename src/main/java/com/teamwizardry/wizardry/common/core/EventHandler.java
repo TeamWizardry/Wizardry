@@ -4,6 +4,7 @@ import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants.MISC;
 import com.teamwizardry.wizardry.api.WizardManager;
+import com.teamwizardry.wizardry.api.spell.Spell;
 import com.teamwizardry.wizardry.api.spell.SpellCastEvent;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.TeleportUtil;
@@ -15,6 +16,7 @@ import com.teamwizardry.wizardry.common.tile.TileStaff;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModPotions;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -161,8 +163,9 @@ public class EventHandler {
 
 	@SubscribeEvent
 	public void fairyAmbush(SpellCastEvent event) {
-		if (event.getCaster() != null) {
-			List<EntityFairy> fairyList = event.getWorld().getEntitiesWithinAABB(EntityFairy.class, new AxisAlignedBB(event.getCaster().getPosition()).expand(64, 64, 64));
+		Entity caster = event.spell.getData(Spell.DefaultKeys.CASTER);
+		if (caster != null) {
+			List<EntityFairy> fairyList = event.spell.world.getEntitiesWithinAABB(EntityFairy.class, new AxisAlignedBB(caster.getPosition()).expand(64, 64, 64));
 			for (EntityFairy fairy : fairyList) {
 				if (ThreadLocalRandom.current().nextInt(5) == 0) fairy.ambush = true;
 			}

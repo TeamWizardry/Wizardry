@@ -3,9 +3,11 @@ package com.teamwizardry.wizardry.common.module.shapes;
 import com.teamwizardry.librarianlib.common.util.ConfigPropertyDouble;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.Utils;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.lib.LibParticles;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -16,6 +18,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
+
+import static com.teamwizardry.wizardry.api.spell.Spell.DefaultKeys.*;
 
 /**
  * Created by LordSaad.
@@ -68,6 +72,35 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 	@Override
 	public String getDescription() {
 		return "Will run the spell via a beam emanating from the caster";
+	}
+
+	@Override
+	public boolean run(@NotNull Spell spell) {
+		if (nextModule == null) return false;
+
+		World world = spell.world;
+		float yaw = spell.getData(YAW, 0F);
+		float pitch = spell.getData(PITCH, 0F);
+		Vec3d position = spell.getData(ORIGIN);
+		Entity caster = spell.getData(CASTER);
+
+		if (position == null) return false;
+
+		double range = 10;
+		if (attributes.hasKey(Attributes.EXTEND)) range += attributes.getDouble(Attributes.EXTEND);
+
+		RayTraceResult trace = Utils.raytrace(world, PosUtils.vecFromRotations(pitch, yaw), caster != null ? position.addVector(0, caster.getEyeHeight(), 0) : position, range, caster);
+		if (trace == null) return false;
+
+		setTargetPosition(this, trace.hitVec);
+
+		if (trace.typeOfHit == RayTraceResult.Type.ENTITY)
+			spell.crunchData(trace.entityHit, false);
+		else if (trace.typeOfHit == RayTraceResult.Type.BLOCK) {
+			spell.addData(BLOCK_HIT, trace.getBlockPos());
+			spell.addData(TARGET_HIT, trace.hitVec);
+		}
+		return nextModule.run(spell);
 	}
 
 	@Override

@@ -10,6 +10,7 @@ import com.teamwizardry.librarianlib.common.util.math.interpolate.position.Inter
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.util.PosUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
@@ -26,6 +27,8 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+
+import static com.teamwizardry.wizardry.api.spell.Spell.DefaultKeys.*;
 
 
 /**
@@ -75,6 +78,52 @@ public class ModuleShapeCone extends Module implements IParticleDanger {
 	@Override
 	public String getDescription() {
 		return "Will run the spell in a circular arc in front of the caster";
+	}
+
+	@Override
+	public boolean run(@NotNull Spell spell) {
+		if (nextModule == null) return true;
+		World world = spell.world;
+		float yaw = spell.getData(YAW, 0F);
+		float pitch = spell.getData(PITCH, 0F);
+		Vec3d position = spell.getData(ORIGIN);
+		Entity caster = spell.getData(CASTER);
+
+		if (position == null) return false;
+
+		Vec3d lookVec = PosUtils.vecFromRotations(pitch, yaw);
+
+		double range = 5;
+		if (attributes.hasKey(Attributes.EXTEND)) range += attributes.getDouble(Attributes.EXTEND);
+		float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - yaw));
+		float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - yaw));
+		Vec3d origin = new Vec3d(offX, caster == null ? 0 : caster.getEyeHeight(), offZ).add(lookVec);
+
+		setTargetPosition(this, lookVec);
+		for (int i = 0; i < range * 10; i++) {
+			Matrix4 matrix = new Matrix4();
+			Vec3d cross = caster != null ? lookVec.crossProduct(new Vec3d(0, 1, 0)) : lookVec;
+			matrix.rotate(Math.toRadians(ThreadLocalRandom.current().nextDouble(-range * 10, range * 10)), lookVec);
+			Vec3d normal = matrix.apply(cross).normalize();
+
+			Matrix4 matrix2 = new Matrix4();
+			matrix2.rotate(Math.toRadians(ThreadLocalRandom.current().nextDouble(-range * 10, range * 10)), normal);
+			Vec3d target = matrix2.apply(lookVec).scale(ThreadLocalRandom.current().nextDouble(range)).add(origin);
+
+			Spell newSpell = spell.copy();
+
+			newSpell.addData(TARGET_HIT, target);
+			nextModule.run(spell);
+
+			List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(target)));
+			if (entityList.isEmpty()) continue;
+			for (Entity entity : entityList) {
+				if (entity == null) continue;
+				newSpell.crunchData(entity, false);
+				nextModule.run(spell);
+			}
+		}
+		return true;
 	}
 
 	@Override

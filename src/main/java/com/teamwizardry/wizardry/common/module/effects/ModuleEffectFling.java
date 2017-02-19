@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.common.module.effects;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.Spell;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -15,6 +16,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
+
+import static com.teamwizardry.wizardry.api.spell.Spell.DefaultKeys.*;
 
 /**
  * Created by LordSaad.
@@ -69,6 +72,41 @@ public class ModuleEffectFling extends Module {
 	@Override
 	public double getBurnoutToFill() {
 		return 500;
+	}
+
+	@Override
+	public boolean run(@NotNull Spell spell) {
+		World world = spell.world;
+		float yaw = spell.getData(YAW, 0F);
+		float pitch = spell.getData(PITCH, 0F);
+		Entity target = spell.getData(ENTITY_HIT);
+
+		if (target == null) return false;
+
+		Vec3d origin = target.getPositionVector();
+		double v = 32;
+		double g = 32;
+		double distSquared = MathHelper.sqrt(
+				(target.posX - origin.xCoord) * (target.posX - origin.xCoord)
+						+ (target.posZ - origin.zCoord) * (target.posZ - origin.zCoord));
+		double distSqrt = MathHelper.sqrt(distSquared);
+		double det = (v * v * v * v) - (g * (g * distSquared + (2 * v * v * (target.posY - origin.yCoord))));
+		double tan = ((v * v) + MathHelper.sqrt(det)) / (g * distSqrt);
+
+		double y = tan / (MathHelper.sqrt((tan * tan) + 1));
+
+		Vec3d axis = target.getPositionVector().subtract(origin);
+		axis = new Vec3d(axis.xCoord, 0, axis.zCoord).normalize();
+		double x = axis.xCoord;
+		double z = axis.zCoord;
+
+		Minecraft.getMinecraft().player.sendChatMessage(x * v + ", " + y * v + ", " + z * v);
+		target.motionX = x * v / 20;
+		target.motionY = y * v / 20;
+		target.motionZ = z * v / 20;
+		target.velocityChanged = true;
+
+		return true;
 	}
 
 	@Override

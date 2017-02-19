@@ -21,7 +21,7 @@ public enum EnumBloodType {
 	}
 
 	public static ResourceLocation getResourceLocation(EnumBloodType type) {
-		return new ResourceLocation(Wizardry.MODID, "textures/model/" + type.name() + ".png");
+		return new ResourceLocation(Wizardry.MODID, "textures/model/" + type.id + ".png");
 	}
 
 	public static EnumBloodType getType(String id) {

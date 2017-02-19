@@ -6,6 +6,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.util.HashSet;
@@ -51,6 +52,16 @@ public final class PosUtils {
 			}
 		}
 		return origin;
+	}
+
+	public static Vec3d vecFromRotations(float rotationPitch, float rotationYaw) {
+		return Vec3d.fromPitchYaw(rotationPitch, rotationYaw);
+	}
+
+	public static float[] vecToRotations(Vec3d vec) {
+		float yaw = (float) Math.atan2(vec.xCoord, vec.zCoord);
+		float pitch = (float) Math.asin(vec.yCoord / vec.lengthVector());
+		return new float[]{pitch, yaw};
 	}
 
 	public static class ManaBatteryPositions {

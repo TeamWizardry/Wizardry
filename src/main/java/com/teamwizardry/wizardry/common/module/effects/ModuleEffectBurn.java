@@ -19,6 +19,8 @@ import java.awt.*;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static com.teamwizardry.wizardry.api.spell.Spell.DefaultKeys.*;
+
 /**
  * Created by LordSaad.
  */
@@ -78,6 +80,39 @@ public class ModuleEffectBurn extends Module implements IContinousSpell {
 	@Override
 	public Color getSecondaryColor() {
 		return new Color(0xA10000);
+	}
+
+	@Override
+	public boolean run(@NotNull Spell spell) {
+		World world = spell.world;
+		Entity targetEntity = spell.getData(ENTITY_HIT);
+		BlockPos targetPos = spell.getData(BLOCK_HIT);
+		Entity caster = spell.getData(CASTER);
+
+		int strength = 1;
+		if (attributes.hasKey(Attributes.EXTEND))
+			strength += Math.min(80, attributes.getDouble(Attributes.EXTEND));
+		strength *= calcBurnoutPercent(caster);
+
+		if (targetEntity != null) targetEntity.setFire(strength);
+		if (targetPos != null) {
+			double chance = 50;
+			if (attributes.hasKey(Attributes.EXTEND))
+				chance -= Math.min(20, attributes.getDouble(Attributes.EXTEND));
+			chance *= calcBurnoutPercent(caster);
+			if ((int) chance <= 0) return false;
+			if (ThreadLocalRandom.current().nextInt((int) chance) != 0) return false;
+
+			if (world.isAirBlock(targetPos)) {
+				for (EnumFacing facing : EnumFacing.VALUES) {
+					if (world.isAirBlock(targetPos.offset(facing)) || world.getBlockState(targetPos.offset(facing)).getBlock() == Blocks.FIRE) {
+						world.setBlockState(targetPos, Blocks.FIRE.getDefaultState());
+						return true;
+					}
+				}
+			}
+		}
+		return true;
 	}
 
 	@Override

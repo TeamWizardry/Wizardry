@@ -1,9 +1,6 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
-import com.teamwizardry.wizardry.api.spell.Attributes;
-import com.teamwizardry.wizardry.api.spell.Module;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.api.spell.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.init.ModPotions;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
@@ -17,6 +14,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
+
+import static com.teamwizardry.wizardry.api.spell.Spell.DefaultKeys.CASTER;
+import static com.teamwizardry.wizardry.api.spell.Spell.DefaultKeys.ENTITY_HIT;
 
 /**
  * Created by LordSaad.
@@ -71,6 +71,23 @@ public class ModuleEffectNullGrav extends Module {
 	@Override
 	public Color getColor() {
 		return Color.WHITE;
+	}
+
+	@Override
+	public boolean run(@NotNull Spell spell) {
+		Entity target = spell.getData(ENTITY_HIT);
+		Entity caster = spell.getData(CASTER);
+
+		if (target instanceof EntityLivingBase) {
+			double length = 100;
+			if (attributes.hasKey(Attributes.EXTEND))
+				length *= Math.min(100, attributes.getDouble(Attributes.EXTEND) * 10);
+			length *= calcBurnoutPercent(caster);
+			((EntityLivingBase) target).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, (int) length, 3, false, false));
+			return true;
+		}
+		return false;
+
 	}
 
 	@Override

@@ -30,7 +30,7 @@ public class BloodRenderLayer implements LayerRenderer<AbstractClientPlayer> {
 	@Override
 	public void doRenderLayer(@Nonnull AbstractClientPlayer entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
 		EnumBloodType type = WizardryCapabilityProvider.get(entity).getBloodType();
-		if (type != null) {
+		if (type != null && type != EnumBloodType.NONE) {
 			render.bindTexture(EnumBloodType.getResourceLocation(type));
 			ClientUtilMethods.glColor(type.color);
 			setModelVisibilities(entity);
