@@ -5,6 +5,7 @@ import com.teamwizardry.librarianlib.common.util.autoregister.TileRegister;
 import com.teamwizardry.librarianlib.common.util.saving.Save;
 import com.teamwizardry.wizardry.api.spell.Spell;
 import com.teamwizardry.wizardry.api.spell.SpellStack;
+import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.common.entity.EntityStaffFakePlayer;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
@@ -16,7 +17,7 @@ import net.minecraft.world.WorldServer;
 
 import javax.annotation.Nullable;
 
-import static com.teamwizardry.wizardry.api.spell.Spell.DefaultKeys.*;
+import static com.teamwizardry.wizardry.api.spell.Spell.DefaultKeys.ORIGIN;
 
 /**
  * Created by Saad on 5/7/2016.
@@ -45,12 +46,13 @@ public class TileStaff extends TileMod implements ITickable {
 						fakePlayer.setPosition(getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5);
 
 						Vec3d direction = new Vec3d(getPos().subtract(pos)).normalize();
-						fakePlayer.rotationYaw = (float) Math.atan2(direction.xCoord, direction.zCoord);
+						float[] rotations = PosUtils.vecToRotations(direction);
+						fakePlayer.rotationPitch = rotations[0];
+						fakePlayer.rotationYaw = rotations[1];
 
 						Spell spell = new Spell(getWorld());
-						spell.addData(CASTER, fakePlayer);
+						spell.crunchData(fakePlayer, true);
 						spell.addData(ORIGIN, new Vec3d(getPos()).addVector(0.5, 0.5, 0.5));
-						spell.addData(YAW, fakePlayer.rotationYaw);
 						SpellStack.runModules(pearl, spell);
 						break;
 					}

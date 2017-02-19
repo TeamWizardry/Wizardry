@@ -60,17 +60,15 @@ public class ModuleShapeProjectile extends Module {
 		World world = spell.world;
 		float yaw = spell.getData(YAW, 0F);
 		float pitch = spell.getData(PITCH, 0F);
-		Vec3d position = spell.getData(ORIGIN);
 		Entity caster = spell.getData(CASTER);
 
-		if (position == null) return false;
-
-		if (caster != null) position.addVector(0, caster.getEyeHeight(), 0); // TODO: cross product and crap
+		if (caster == null) return false;
+		Vec3d position = caster.getPositionVector();
+		position = position.addVector(0, caster.getEyeHeight(), 0);
 
 		EntitySpellProjectile proj = new EntitySpellProjectile(world, this, spell);
 		proj.setPosition(position.xCoord, position.yCoord, position.xCoord);
-		if (caster != null)
-			proj.setHeadingFromThrower(caster, pitch, yaw, 0.0f, 1.5f, 1.0f);
+		proj.setHeadingFromThrower(caster, pitch, yaw, 0.0f, 1.5f, 1.0f);
 		proj.velocityChanged = true;
 		world.spawnEntity(proj);
 		return true;

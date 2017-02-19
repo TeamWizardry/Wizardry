@@ -75,6 +75,7 @@ public class ModuleEffectLeap extends Module {
 	public boolean run(@NotNull Spell spell) {
 		float yaw = spell.getData(YAW, 0F);
 		float pitch = spell.getData(PITCH, 0F);
+		Vec3d pos = spell.getData(TARGET_HIT);
 		Entity target = spell.getData(ENTITY_HIT);
 
 		if (target == null) return false;
@@ -91,33 +92,6 @@ public class ModuleEffectLeap extends Module {
 			target.motionY += target.isCollidedVertically ? strength : Math.max(0.5, strength / 3) * calcBurnoutPercent(target);
 
 			target.motionZ += target.isCollidedVertically ? lookVec.zCoord : lookVec.zCoord / 2.0;
-
-			target.velocityChanged = true;
-			target.fallDistance /= 2 * calcBurnoutPercent(target);
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Entity target) {
-		if (!target.hasNoGravity()) {
-			double strength = 0.75;
-			if (attributes.hasKey(Attributes.EXTEND))
-				strength += Math.min(128.0 / 100.0, attributes.getDouble(Attributes.EXTEND) / 100.0);
-			strength *= calcBurnoutPercent(target);
-
-			if (getTargetPosition() == null)
-				target.motionX += target.isCollidedVertically ? target.getLookVec().xCoord : target.getLookVec().xCoord / 2.0;
-			else
-				target.motionX += target.isCollidedVertically ? getTargetPosition().xCoord : getTargetPosition().xCoord / 2.0;
-
-			target.motionY += target.isCollidedVertically ? strength : Math.max(0.5, strength / 3) * calcBurnoutPercent(target);
-
-			if (getTargetPosition() == null)
-				target.motionZ += target.isCollidedVertically ? target.getLookVec().zCoord : target.getLookVec().zCoord / 2.0;
-			else
-				target.motionZ += target.isCollidedVertically ? getTargetPosition().zCoord : getTargetPosition().zCoord / 2.0;
 
 			target.velocityChanged = true;
 			target.fallDistance /= 2 * calcBurnoutPercent(target);

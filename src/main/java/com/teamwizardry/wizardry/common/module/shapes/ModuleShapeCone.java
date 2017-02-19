@@ -108,52 +108,19 @@ public class ModuleShapeCone extends Module implements IParticleDanger {
 
 			Matrix4 matrix2 = new Matrix4();
 			matrix2.rotate(Math.toRadians(ThreadLocalRandom.current().nextDouble(-range * 10, range * 10)), normal);
-			Vec3d target = matrix2.apply(lookVec).scale(ThreadLocalRandom.current().nextDouble(range)).add(origin);
+			Vec3d target = matrix2.apply(lookVec).scale(ThreadLocalRandom.current().nextDouble(range)).add(origin).add(position);
 
 			Spell newSpell = spell.copy();
 
 			newSpell.addData(TARGET_HIT, target);
-			nextModule.run(spell);
+			nextModule.run(newSpell);
 
 			List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(target)));
 			if (entityList.isEmpty()) continue;
 			for (Entity entity : entityList) {
 				if (entity == null) continue;
 				newSpell.crunchData(entity, false);
-				nextModule.run(spell);
-			}
-		}
-		return true;
-	}
-
-	@Override
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
-		if (caster == null) return false;
-		if (nextModule == null) return true;
-
-		double range = 5;
-		if (attributes.hasKey(Attributes.EXTEND)) range += attributes.getDouble(Attributes.EXTEND);
-		float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - caster.rotationYaw));
-		float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - caster.rotationYaw));
-		Vec3d origin = new Vec3d(offX, caster.getEyeHeight(), offZ).add(caster.getPositionVector());
-
-		setTargetPosition(this, caster.getLookVec());
-		for (int i = 0; i < range * 10; i++) {
-			Matrix4 matrix = new Matrix4();
-			Vec3d cross = caster.getLookVec().crossProduct(new Vec3d(0, 1, 0));
-			matrix.rotate(Math.toRadians(ThreadLocalRandom.current().nextDouble(-range * 10, range * 10)), caster.getLookVec());
-			Vec3d normal = matrix.apply(cross).normalize();
-
-			Matrix4 matrix2 = new Matrix4();
-			matrix2.rotate(Math.toRadians(ThreadLocalRandom.current().nextDouble(-range * 10, range * 10)), normal);
-			Vec3d target = matrix2.apply(caster.getLookVec()).scale(ThreadLocalRandom.current().nextDouble(range)).add(origin);
-			nextModule.run(world, caster, target);
-
-			List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(target)));
-			if (entityList.isEmpty()) continue;
-			for (Entity entity : entityList) {
-				if (entity == null) continue;
-				nextModule.run(world, caster, entity);
+				nextModule.run(newSpell);
 			}
 		}
 		return true;

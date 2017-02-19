@@ -4,12 +4,10 @@ import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.Spell;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +15,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 
-import static com.teamwizardry.wizardry.api.spell.Spell.DefaultKeys.*;
+import static com.teamwizardry.wizardry.api.spell.Spell.DefaultKeys.CASTER;
+import static com.teamwizardry.wizardry.api.spell.Spell.DefaultKeys.TARGET_HIT;
 
 /**
  * Created by LordSaad.
@@ -76,70 +75,43 @@ public class ModuleEffectFling extends Module {
 
 	@Override
 	public boolean run(@NotNull Spell spell) {
-		World world = spell.world;
-		float yaw = spell.getData(YAW, 0F);
-		float pitch = spell.getData(PITCH, 0F);
-		Entity target = spell.getData(ENTITY_HIT);
+		Entity targetEntity = spell.getData(CASTER);
+		Vec3d to = spell.getData(TARGET_HIT);
 
-		if (target == null) return false;
+		if (targetEntity == null || to == null) return false;
 
-		Vec3d origin = target.getPositionVector();
-		double v = 32;
-		double g = 32;
-		double distSquared = MathHelper.sqrt(
-				(target.posX - origin.xCoord) * (target.posX - origin.xCoord)
-						+ (target.posZ - origin.zCoord) * (target.posZ - origin.zCoord));
-		double distSqrt = MathHelper.sqrt(distSquared);
-		double det = (v * v * v * v) - (g * (g * distSquared + (2 * v * v * (target.posY - origin.yCoord))));
-		double tan = ((v * v) + MathHelper.sqrt(det)) / (g * distSqrt);
+		Vec3d from = targetEntity.getPositionVector();
 
-		double y = tan / (MathHelper.sqrt((tan * tan) + 1));
+		double gravity = 1;
+		int heightGain = 5;
 
-		Vec3d axis = target.getPositionVector().subtract(origin);
-		axis = new Vec3d(axis.xCoord, 0, axis.zCoord).normalize();
-		double x = axis.xCoord;
-		double z = axis.zCoord;
+		double endGain = to.yCoord - from.yCoord;
+		double horizDist = Math.sqrt(to.squareDistanceTo(from));
 
-		Minecraft.getMinecraft().player.sendChatMessage(x * v + ", " + y * v + ", " + z * v);
-		target.motionX = x * v / 20;
-		target.motionY = y * v / 20;
-		target.motionZ = z * v / 20;
-		target.velocityChanged = true;
+		double maxGain = heightGain > (endGain + heightGain) ? heightGain : (endGain + heightGain);
 
-		return true;
-	}
+		double a = -horizDist * horizDist / (4 * maxGain);
+		double c = -endGain;
 
-	@Override
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Vec3d target) {
-		if (caster == null) return false;
-		Vec3d origin = caster.getPositionVector();
-		double v = 32;
-		double g = 32;
-		double distSquared = MathHelper.sqrt(
-				(target.xCoord - origin.xCoord) * (target.xCoord - origin.xCoord)
-						+ (target.zCoord - origin.zCoord) * (target.zCoord - origin.zCoord));
-		double distSqrt = MathHelper.sqrt(distSquared);
-		double det = (v * v * v * v) - (g * (g * distSquared + (2 * v * v * (target.yCoord - origin.yCoord))));
-		double tan = ((v * v) + MathHelper.sqrt(det)) / (g * distSqrt);
+		double slope = -horizDist / (2 * a) - Math.sqrt(horizDist * horizDist - 4 * a * c) / (2 * a);
 
-		double y = tan / (MathHelper.sqrt((tan * tan) + 1));
+		double vy = Math.sqrt(maxGain * gravity);
 
-		Vec3d axis = target.subtract(origin);
-		axis = new Vec3d(axis.xCoord, 0, axis.zCoord).normalize();
-		double x = axis.xCoord;
-		double z = axis.zCoord;
+		double vh = vy / slope;
 
-		Minecraft.getMinecraft().player.sendChatMessage(x * v + ", " + y * v + ", " + z * v);
-		caster.motionX = x * v / 20;
-		caster.motionY = y * v / 20;
-		caster.motionZ = z * v / 20;
-		caster.velocityChanged = true;
+		double dx = to.xCoord - from.xCoord;
+		double dz = to.zCoord - from.zCoord;
+		double mag = Math.sqrt(dx * dx + dz * dz);
+		double dirx = dx / mag;
+		double dirz = dz / mag;
 
-		return true;
-	}
+		double vx = vh * dirx;
+		double vz = vh * dirz;
 
-	@Override
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Entity target) {
+		targetEntity.motionX = vx;
+		targetEntity.motionY = vy;
+		targetEntity.motionZ = vz;
+		targetEntity.velocityChanged = true;
 
 		return true;
 	}

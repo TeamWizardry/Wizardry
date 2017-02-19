@@ -116,40 +116,6 @@ public class ModuleEffectBurn extends Module implements IContinousSpell {
 	}
 
 	@Override
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Entity target) {
-		if (!(target instanceof EntityLivingBase)) return false;
-		int strength = 1;
-		if (attributes.hasKey(Attributes.EXTEND))
-			strength += Math.min(80, attributes.getDouble(Attributes.EXTEND));
-		strength *= calcBurnoutPercent(caster);
-
-		target.setFire(strength);
-		return true;
-	}
-
-	@Override
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Vec3d target) {
-		double chance = 80;
-		if (attributes.hasKey(Attributes.EXTEND))
-			chance -= Math.min(20, attributes.getDouble(Attributes.EXTEND));
-		chance *= calcBurnoutPercent(caster);
-		if ((int) chance <= 0) return false;
-		if (ThreadLocalRandom.current().nextInt((int) chance) != 0) return false;
-
-		BlockPos pos = new BlockPos(target);
-		if (world.isAirBlock(pos)) {
-			for (EnumFacing facing : EnumFacing.VALUES) {
-				if (world.isAirBlock(pos.offset(facing)) || world.getBlockState(pos.offset(facing)).getBlock() == Blocks.FIRE) {
-					world.setBlockState(pos, Blocks.FIRE.getDefaultState());
-					return true;
-				}
-			}
-		}
-
-		return true;
-	}
-
-	@Override
 	public void runClient(@NotNull World world, @Nullable ItemStack stack, @Nullable EntityLivingBase caster, @NotNull Vec3d pos) {
 		Color color = getColor();
 		if (ThreadLocalRandom.current().nextBoolean()) color = getSecondaryColor();

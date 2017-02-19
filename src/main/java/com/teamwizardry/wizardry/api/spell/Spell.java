@@ -94,6 +94,6 @@ public class Spell {
 		@NotNull
 		public static final Pair<String, Class<BlockPos>> BLOCK_HIT = constructPair("block_hit", BlockPos.class);
 		@NotNull
-		public static final Pair<String, Class<Vec3d>> TARGET_HIT = constructPair("target_hit", BlockPos.class);
+		public static final Pair<String, Class<Vec3d>> TARGET_HIT = constructPair("target_hit", Vec3d.class);
 	}
 }

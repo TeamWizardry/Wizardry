@@ -53,7 +53,8 @@ public class EntitySpellProjectile extends EntityThrowable {
 		List<EntitySpellProjectile> projectiles = world.getEntitiesWithinAABB(EntitySpellProjectile.class, new AxisAlignedBB(getPosition()).expand(0.5, 0.5, 0.5));
 		if (!projectiles.isEmpty())
 			for (EntitySpellProjectile projectile : projectiles)
-				if (projectile.module.equals(module) && getEntityId() % 2 == 0) setDead();
+				if (projectile != null && projectile.module != null && module != null)
+					if (projectile.module.equals(module) && getEntityId() % 2 == 0) setDead();
 
 		if (module.getColor() != null) {
 			ParticleBuilder glitter = new ParticleBuilder(10);
@@ -82,15 +83,23 @@ public class EntitySpellProjectile extends EntityThrowable {
 		if (module != null && module.nextModule != null) {
 			Module nextModule = module.nextModule;
 
+			Spell newSpell = new Spell(world);
+			newSpell.addData(Spell.DefaultKeys.ORIGIN, spell.getData(Spell.DefaultKeys.ORIGIN));
+			newSpell.addData(Spell.DefaultKeys.CASTER, spell.getData(Spell.DefaultKeys.CASTER));
 			if (result.typeOfHit == RayTraceResult.Type.ENTITY)
-				spell.crunchData(result.entityHit, false);
+				newSpell.crunchData(result.entityHit, false);
 			else if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
-				spell.addData(Spell.DefaultKeys.BLOCK_HIT, result.getBlockPos());
-				spell.addData(Spell.DefaultKeys.TARGET_HIT, result.hitVec);
+				newSpell.addData(Spell.DefaultKeys.BLOCK_HIT, result.getBlockPos());
+				newSpell.addData(Spell.DefaultKeys.TARGET_HIT, result.hitVec);
 			}
-			nextModule.run(spell);
+			nextModule.run(newSpell);
 			setDead();
 		}
+	}
+
+	@Override
+	public boolean canBeCollidedWith() {
+		return true;
 	}
 
 	@Override

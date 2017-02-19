@@ -91,19 +91,6 @@ public class ModuleEffectNullGrav extends Module {
 	}
 
 	@Override
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Entity target) {
-		if (target instanceof EntityLivingBase) {
-			double length = 100;
-			if (attributes.hasKey(Attributes.EXTEND))
-				length *= Math.min(100, attributes.getDouble(Attributes.EXTEND) * 10);
-			length *= calcBurnoutPercent(caster);
-			((EntityLivingBase) target).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, (int) length, 3, false, false));
-			return true;
-		}
-		return false;
-	}
-
-	@Override
 	public void runClient(@NotNull World world, @Nullable ItemStack stack, @Nullable EntityLivingBase caster, @NotNull Vec3d pos) {
 		LibParticles.EFFECT_NULL_GRAV(world, pos, caster, getColor());
 	}

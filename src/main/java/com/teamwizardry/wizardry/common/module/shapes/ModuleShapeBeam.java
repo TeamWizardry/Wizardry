@@ -9,7 +9,6 @@ import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -101,30 +100,6 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 			spell.addData(TARGET_HIT, trace.hitVec);
 		}
 		return nextModule.run(spell);
-	}
-
-	@Override
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
-		if (nextModule == null) return true;
-
-		nextModule.run(world, caster);
-
-		double range = 10;
-		if (attributes.hasKey(Attributes.EXTEND)) range += attributes.getDouble(Attributes.EXTEND);
-
-		if (!(caster instanceof EntityPlayer)) return false;
-		RayTraceResult trace = Utils.raytrace(world, caster.getLookVec(), caster.getPositionVector().addVector(0, caster.getEyeHeight(), 0), range, caster);
-
-		if (trace == null) return false;
-		// TODO: eventAlongPath for trace here
-		setTargetPosition(this, trace.hitVec);
-		if (nextModule == null) return false;
-		if (trace.typeOfHit == RayTraceResult.Type.ENTITY)
-			return nextModule.run(world, caster, trace.entityHit);
-		else if (trace.typeOfHit == RayTraceResult.Type.BLOCK)
-			return nextModule.run(world, caster, trace.hitVec);
-
-		return true;
 	}
 
 	@Override

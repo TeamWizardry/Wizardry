@@ -15,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.*;
 
 import static com.teamwizardry.wizardry.api.spell.Spell.DefaultKeys.CASTER;
-import static com.teamwizardry.wizardry.api.spell.Spell.DefaultKeys.ORIGIN;
+import static com.teamwizardry.wizardry.api.spell.Spell.DefaultKeys.TARGET_HIT;
 
 /**
  * Created by LordSaad.
@@ -75,7 +75,7 @@ public class ModuleEffectGravityWell extends Module {
 	@Override
 	public boolean run(@NotNull Spell spell) {
 		World world = spell.world;
-		Vec3d position = spell.getData(ORIGIN);
+		Vec3d position = spell.getData(TARGET_HIT);
 		Entity caster = spell.getData(CASTER);
 
 		if (position == null) return false;
@@ -87,32 +87,6 @@ public class ModuleEffectGravityWell extends Module {
 		well.setPosition(position.xCoord, position.yCoord, position.zCoord);
 		world.spawnEntity(well);
 		setTargetPosition(this, position);
-		return world.spawnEntity(well);
-	}
-
-	@Override
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Vec3d target) {
-		double strength = 20;
-		if (attributes.hasKey(Attributes.EXTEND))
-			strength += attributes.getDouble(Attributes.EXTEND);
-		EntitySpellGravityWell well = new EntitySpellGravityWell(world, caster, target, (int) (strength * 20), strength, false);
-		well.setPosition(target.xCoord, target.yCoord, target.zCoord);
-		world.spawnEntity(well);
-		setTargetPosition(this, target);
-		return world.spawnEntity(well);
-	}
-
-	@Override
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Entity target) {
-		double strength = 20;
-		if (attributes.hasKey(Attributes.EXTEND))
-			strength += attributes.getDouble(Attributes.EXTEND);
-		if (target instanceof EntityLivingBase)
-			strength *= calcBurnoutPercent(target);
-		EntitySpellGravityWell well = new EntitySpellGravityWell(world, caster, target.getPositionVector(), (int) (strength * 20), strength, false);
-		well.setPosition(target.posX, target.posY, target.posZ);
-		world.spawnEntity(well);
-		setTargetPosition(this, target.getPositionVector());
 		return world.spawnEntity(well);
 	}
 

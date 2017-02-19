@@ -91,32 +91,6 @@ public class ModuleEffectAntiGravityWell extends Module {
 	}
 
 	@Override
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Vec3d target) {
-		double strength = 20;
-		if (attributes.hasKey(Attributes.EXTEND))
-			strength += attributes.getDouble(Attributes.EXTEND);
-		EntitySpellGravityWell well = new EntitySpellGravityWell(world, caster, target, (int) (strength * 20), strength, true);
-		well.setPosition(target.xCoord, target.yCoord, target.zCoord);
-		world.spawnEntity(well);
-		setTargetPosition(this, target);
-		return world.spawnEntity(well);
-	}
-
-	@Override
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Entity target) {
-		double strength = 20;
-		if (attributes.hasKey(Attributes.EXTEND))
-			strength += attributes.getDouble(Attributes.EXTEND);
-		if (target instanceof EntityLivingBase)
-			strength *= calcBurnoutPercent(target);
-		EntitySpellGravityWell well = new EntitySpellGravityWell(world, caster, target.getPositionVector(), (int) (strength * 20), strength, true);
-		well.setPosition(target.posX, target.posY, target.posZ);
-		world.spawnEntity(well);
-		setTargetPosition(this, target.getPositionVector());
-		return world.spawnEntity(well);
-	}
-
-	@Override
 	public void runClient(@NotNull World world, @Nullable ItemStack stack, @Nullable EntityLivingBase caster, @NotNull Vec3d pos) {
 	}
 

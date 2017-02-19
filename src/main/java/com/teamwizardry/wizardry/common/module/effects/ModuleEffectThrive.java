@@ -109,34 +109,6 @@ public class ModuleEffectThrive extends Module implements IContinousSpell {
 	}
 
 	@Override
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Entity target) {
-		if (!(target instanceof EntityLivingBase)) return false;
-		double strength = 0.3;
-		if (attributes.hasKey(Attributes.EXTEND))
-			strength += Math.min(20.0 / 10.0, attributes.getDouble(Attributes.EXTEND) / 10.0);
-		strength *= calcBurnoutPercent(caster);
-
-		((EntityLivingBase) target).setHealth((float) (((EntityLivingBase) target).getHealth() + strength));
-		return true;
-	}
-
-	@Override
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Vec3d target) {
-		int chance = 80;
-		if (attributes.hasKey(Attributes.EXTEND))
-			chance -= Math.min(50, attributes.getDouble(Attributes.EXTEND));
-		chance *= calcBurnoutPercent(caster);
-		if (chance <= 0) return false;
-		if (ThreadLocalRandom.current().nextInt(chance) != 0) return false;
-
-		BlockPos pos = new BlockPos(target);
-		if (world.getBlockState(pos).getBlock() instanceof IGrowable)
-			ItemDye.applyBonemeal(new ItemStack(Items.DYE), world, pos);
-
-		return true;
-	}
-
-	@Override
 	public void runClient(@NotNull World world, @Nullable ItemStack stack, @Nullable EntityLivingBase caster, @NotNull Vec3d pos) {
 		if (ThreadLocalRandom.current().nextInt(15) != 0) return;
 
