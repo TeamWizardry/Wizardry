@@ -3,14 +3,9 @@ package com.teamwizardry.wizardry.common.module.events;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.RegisterModule;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Created by LordSaad.
@@ -49,16 +44,6 @@ public class ModuleEventCollideEntity extends Module {
 	@Override
 	public String getDescription() {
 		return "Triggered when the spell collides with an entity";
-	}
-
-	@Override
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Vec3d target) {
-		return false;
-	}
-
-	@Override
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Entity target) {
-		return nextModule != null && nextModule.run(world, caster, target);
 	}
 
 	@NotNull

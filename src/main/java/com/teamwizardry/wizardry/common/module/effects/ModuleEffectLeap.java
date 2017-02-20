@@ -14,13 +14,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 
-import static com.teamwizardry.wizardry.api.spell.Spell.DefaultKeys.*;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
 /**
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEffectLeap extends Module {
+public class ModuleEffectLeap extends Module implements IParticleDanger {
 
 	public ModuleEffectLeap() {
 	}
@@ -72,7 +72,7 @@ public class ModuleEffectLeap extends Module {
 	}
 
 	@Override
-	public boolean run(@NotNull Spell spell) {
+	public boolean run(@NotNull SpellData spell) {
 		float yaw = spell.getData(YAW, 0F);
 		float pitch = spell.getData(PITCH, 0F);
 		Vec3d pos = spell.getData(TARGET_HIT);
@@ -113,5 +113,10 @@ public class ModuleEffectLeap extends Module {
 		module.deserializeNBT(serializeNBT());
 		process(module);
 		return module;
+	}
+
+	@Override
+	public int chanceOfParticles() {
+		return 3;
 	}
 }

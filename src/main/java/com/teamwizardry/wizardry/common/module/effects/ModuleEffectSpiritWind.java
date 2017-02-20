@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.common.module.effects;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.RegisterModule;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -67,12 +66,6 @@ public class ModuleEffectSpiritWind extends Module {
 	@Override
 	public Color getColor() {
 		return Color.MAGENTA;
-	}
-
-	@Override
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Entity target) {
-		// TODO
-		return false;
 	}
 
 	@Override

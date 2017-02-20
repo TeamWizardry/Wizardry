@@ -177,27 +177,7 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 		return 0;
 	}
 
-	/**
-	 * Run the whatever is required on the SpellStack and then trigger the next step.
-	 *
-	 * @return whether this spell has succeeded or failed this step.
-	 */
-	@Deprecated
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
-		return false;
-	}
-
-	public boolean run(@NotNull Spell spell) {
-		return false;
-	}
-
-	@Deprecated
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Vec3d target) {
-		return false;
-	}
-
-	@Deprecated
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Entity target) {
+	public boolean run(@NotNull SpellData spell) {
 		return false;
 	}
 

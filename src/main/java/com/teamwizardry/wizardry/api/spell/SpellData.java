@@ -2,7 +2,6 @@ package com.teamwizardry.wizardry.api.spell;
 
 import kotlin.Pair;
 import net.minecraft.entity.Entity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -14,14 +13,14 @@ import java.util.HashMap;
 /**
  * Created by LordSaad.
  */
-public class Spell {
+public class SpellData {
 
 	@NotNull
 	public World world;
 	@NotNull
 	private HashMap<Pair, Object> data = new HashMap<>();
 
-	public Spell(@NotNull World world) {
+	public SpellData(@NotNull World world) {
 		this.world = world;
 	}
 
@@ -72,15 +71,13 @@ public class Spell {
 		}
 	}
 
-	public Spell copy() {
-		Spell spell = new Spell(world);
+	public SpellData copy() {
+		SpellData spell = new SpellData(world);
 		spell.addAllData(data);
 		return spell;
 	}
 
 	public static class DefaultKeys {
-		@NotNull
-		public static final Pair<String, Class<ItemStack>> ITEM_STACK = constructPair("item_stack", ItemStack.class);
 		@NotNull
 		public static final Pair<String, Class<Entity>> CASTER = constructPair("caster", Entity.class);
 		@NotNull

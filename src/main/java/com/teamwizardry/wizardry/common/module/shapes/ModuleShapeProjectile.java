@@ -3,7 +3,8 @@ package com.teamwizardry.wizardry.common.module.shapes;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.RegisterModule;
-import com.teamwizardry.wizardry.api.spell.Spell;
+import com.teamwizardry.wizardry.api.spell.SpellData;
+import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.common.entity.EntitySpellProjectile;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Items;
@@ -12,7 +13,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
-import static com.teamwizardry.wizardry.api.spell.Spell.DefaultKeys.*;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
 /**
  * Created by LordSaad.
@@ -55,7 +56,7 @@ public class ModuleShapeProjectile extends Module {
 	}
 
 	@Override
-	public boolean run(@NotNull Spell spell) {
+	public boolean run(@NotNull SpellData spell) {
 		if (nextModule == null) return true;
 		World world = spell.world;
 		float yaw = spell.getData(YAW, 0F);
@@ -65,10 +66,10 @@ public class ModuleShapeProjectile extends Module {
 		if (caster == null) return false;
 		Vec3d position = caster.getPositionVector();
 		position = position.addVector(0, caster.getEyeHeight(), 0);
-
 		EntitySpellProjectile proj = new EntitySpellProjectile(world, this, spell);
 		proj.setPosition(position.xCoord, position.yCoord, position.xCoord);
-		proj.setHeadingFromThrower(caster, pitch, yaw, 0.0f, 1.5f, 1.0f);
+		Vec3d dir = PosUtils.vecFromRotations(pitch, yaw);
+		proj.setThrowableHeading(dir.xCoord, dir.yCoord, dir.zCoord, 1.5f, 0.0f);
 		proj.velocityChanged = true;
 		world.spawnEntity(proj);
 		return true;

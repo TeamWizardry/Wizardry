@@ -106,7 +106,7 @@ public class SpellStack {
 		return branches;
 	}
 
-	public static void runModules(@NotNull ItemStack spellHolder, Spell spell) {
+	public static void runModules(@NotNull ItemStack spellHolder, SpellData spell) {
 		boolean particleDanger = false;
 		boolean continuousSpell = false;
 		int chance = 1;
@@ -119,19 +119,18 @@ public class SpellStack {
 			if (check instanceof IContinousSpell) continuousSpell = true;
 		}
 
-		Entity caster = spell.getData(Spell.DefaultKeys.CASTER);
+		Entity caster = spell.getData(SpellData.DefaultKeys.CASTER);
 
 		for (Module module : getModules(spellHolder)) {
 			if (caster instanceof EntityPlayer && !((EntityPlayer) caster).isCreative()) {
 				if (WizardManager.getMana((EntityLivingBase) caster) < module.finalManaCost) {
 					WizardManager.removeMana((int) module.finalManaCost, (EntityLivingBase) caster);
 					WizardManager.addBurnout((int) module.finalBurnoutCost, (EntityLivingBase) caster);
-					//return;
 				}
 			}
 			module.run(spell);
 
-			Vec3d pos = spell.getData(Spell.DefaultKeys.ORIGIN, caster != null ? caster.getPositionVector() : spell.getData(Spell.DefaultKeys.TARGET_HIT, Vec3d.ZERO));
+			Vec3d pos = spell.getData(SpellData.DefaultKeys.ORIGIN, caster != null ? caster.getPositionVector() : spell.getData(SpellData.DefaultKeys.TARGET_HIT, Vec3d.ZERO));
 
 			if (!(particleDanger && continuousSpell) || ThreadLocalRandom.current().nextInt(chance) == 0) {
 				if (module.getTargetPosition() == null) {

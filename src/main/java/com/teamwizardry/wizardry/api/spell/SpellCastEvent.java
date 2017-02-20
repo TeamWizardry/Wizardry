@@ -10,9 +10,9 @@ public class SpellCastEvent extends Event {
 
 	public ItemStack stack;
 	public Module module;
-	public Spell spell;
+	public SpellData spell;
 
-	public SpellCastEvent(ItemStack stack, Module module, Spell spell) {
+	public SpellCastEvent(ItemStack stack, Module module, SpellData spell) {
 		this.stack = stack;
 		this.module = module;
 		this.spell = spell;

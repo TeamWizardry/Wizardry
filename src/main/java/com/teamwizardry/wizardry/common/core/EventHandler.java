@@ -4,8 +4,8 @@ import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants.MISC;
 import com.teamwizardry.wizardry.api.WizardManager;
-import com.teamwizardry.wizardry.api.spell.Spell;
 import com.teamwizardry.wizardry.api.spell.SpellCastEvent;
+import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.TeleportUtil;
 import com.teamwizardry.wizardry.common.achievement.Achievements;
@@ -102,6 +102,10 @@ public class EventHandler {
 			event.getEntity().fallDistance = -500;
 			event.setCanceled(true);
 		}
+		if (event.getEntity().getEntityWorld().provider.getDimension() == Wizardry.underWorld.getId()) {
+			event.getEntity().fallDistance = 0;
+			event.setCanceled(true);
+		}
 	}
 
 	@SubscribeEvent
@@ -163,7 +167,7 @@ public class EventHandler {
 
 	@SubscribeEvent
 	public void fairyAmbush(SpellCastEvent event) {
-		Entity caster = event.spell.getData(Spell.DefaultKeys.CASTER);
+		Entity caster = event.spell.getData(SpellData.DefaultKeys.CASTER);
 		if (caster != null) {
 			List<EntityFairy> fairyList = event.spell.world.getEntitiesWithinAABB(EntityFairy.class, new AxisAlignedBB(caster.getPosition()).expand(64, 64, 64));
 			for (EntityFairy fairy : fairyList) {

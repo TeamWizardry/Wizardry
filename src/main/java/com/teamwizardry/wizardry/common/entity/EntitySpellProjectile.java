@@ -9,7 +9,7 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleRegistry;
-import com.teamwizardry.wizardry.api.spell.Spell;
+import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.common.module.events.ModuleEventAlongPath;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.nbt.NBTTagCompound;
@@ -29,14 +29,14 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class EntitySpellProjectile extends EntityThrowable {
 
-	private Spell spell;
+	private SpellData spell;
 	private Module module;
 
 	public EntitySpellProjectile(World worldIn) {
 		super(worldIn);
 	}
 
-	public EntitySpellProjectile(World world, Module module, Spell spell) {
+	public EntitySpellProjectile(World world, Module module, SpellData spell) {
 		super(world);
 		this.spell = spell;
 		setSize(0.1F, 0.1F);
@@ -83,14 +83,14 @@ public class EntitySpellProjectile extends EntityThrowable {
 		if (module != null && module.nextModule != null) {
 			Module nextModule = module.nextModule;
 
-			Spell newSpell = new Spell(world);
-			newSpell.addData(Spell.DefaultKeys.ORIGIN, spell.getData(Spell.DefaultKeys.ORIGIN));
-			newSpell.addData(Spell.DefaultKeys.CASTER, spell.getData(Spell.DefaultKeys.CASTER));
+			SpellData newSpell = new SpellData(world);
+			newSpell.addData(SpellData.DefaultKeys.ORIGIN, spell.getData(SpellData.DefaultKeys.ORIGIN));
+			newSpell.addData(SpellData.DefaultKeys.CASTER, spell.getData(SpellData.DefaultKeys.CASTER));
 			if (result.typeOfHit == RayTraceResult.Type.ENTITY)
 				newSpell.crunchData(result.entityHit, false);
 			else if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
-				newSpell.addData(Spell.DefaultKeys.BLOCK_HIT, result.getBlockPos());
-				newSpell.addData(Spell.DefaultKeys.TARGET_HIT, result.hitVec);
+				newSpell.addData(SpellData.DefaultKeys.BLOCK_HIT, result.getBlockPos());
+				newSpell.addData(SpellData.DefaultKeys.TARGET_HIT, result.hitVec);
 			}
 			nextModule.run(newSpell);
 			setDead();

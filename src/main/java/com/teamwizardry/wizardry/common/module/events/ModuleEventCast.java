@@ -4,11 +4,8 @@ import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.RegisterModule;
 import com.teamwizardry.wizardry.init.ModItems;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Created by LordSaad.
@@ -41,19 +38,13 @@ public class ModuleEventCast extends Module {
     @NotNull
     @Override
     public String getReadableName() {
-        return "On Spell Cast";
+        return "On SpellData Cast";
     }
 
     @NotNull
     @Override
     public String getDescription() {
         return "Triggered when this spell is ran";
-    }
-
-
-    @Override
-    public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
-        return false;
     }
 
     @NotNull

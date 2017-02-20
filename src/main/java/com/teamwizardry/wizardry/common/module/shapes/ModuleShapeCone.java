@@ -28,7 +28,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static com.teamwizardry.wizardry.api.spell.Spell.DefaultKeys.*;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
 
 /**
@@ -81,7 +81,7 @@ public class ModuleShapeCone extends Module implements IParticleDanger {
 	}
 
 	@Override
-	public boolean run(@NotNull Spell spell) {
+	public boolean run(@NotNull SpellData spell) {
 		if (nextModule == null) return true;
 		World world = spell.world;
 		float yaw = spell.getData(YAW, 0F);
@@ -110,7 +110,7 @@ public class ModuleShapeCone extends Module implements IParticleDanger {
 			matrix2.rotate(Math.toRadians(ThreadLocalRandom.current().nextDouble(-range * 10, range * 10)), normal);
 			Vec3d target = matrix2.apply(lookVec).scale(ThreadLocalRandom.current().nextDouble(range)).add(origin).add(position);
 
-			Spell newSpell = spell.copy();
+			SpellData newSpell = spell.copy();
 
 			newSpell.addData(TARGET_HIT, target);
 			nextModule.run(newSpell);

@@ -20,7 +20,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static com.teamwizardry.wizardry.api.spell.Spell.DefaultKeys.*;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
 /**
  * Created by LordSaad.
@@ -78,7 +78,7 @@ public class ModuleEffectThrive extends Module implements IContinousSpell {
 	}
 
 	@Override
-	public boolean run(@NotNull Spell spell) {
+	public boolean run(@NotNull SpellData spell) {
 		World world = spell.world;
 		BlockPos targetPos = spell.getData(BLOCK_HIT);
 		Entity targetEntity = spell.getData(ENTITY_HIT);

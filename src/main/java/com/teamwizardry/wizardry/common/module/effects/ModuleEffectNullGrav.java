@@ -15,8 +15,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 
-import static com.teamwizardry.wizardry.api.spell.Spell.DefaultKeys.CASTER;
-import static com.teamwizardry.wizardry.api.spell.Spell.DefaultKeys.ENTITY_HIT;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ENTITY_HIT;
 
 /**
  * Created by LordSaad.
@@ -74,7 +74,7 @@ public class ModuleEffectNullGrav extends Module {
 	}
 
 	@Override
-	public boolean run(@NotNull Spell spell) {
+	public boolean run(@NotNull SpellData spell) {
 		Entity target = spell.getData(ENTITY_HIT);
 		Entity caster = spell.getData(CASTER);
 

@@ -39,7 +39,7 @@ public class ItemStaff extends ItemWizardry implements INacreColorable {
 	public ActionResult<ItemStack> onItemRightClick(@NotNull ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
 		if (getItemUseAction(stack) == EnumAction.NONE) {
 			if (!world.isRemote) {
-				Spell spell = new Spell(world);
+				SpellData spell = new SpellData(world);
 				spell.crunchData(player, true);
 				SpellStack.runModules(stack, spell);
 			}
@@ -87,7 +87,7 @@ public class ItemStaff extends ItemWizardry implements INacreColorable {
 		for (Module module : SpellStack.getAllModules(stack))
 			if (module.getChargeUpTime() > 0) {
 				if (count <= 1) {
-					Spell spell = new Spell(player.world);
+					SpellData spell = new SpellData(player.world);
 					spell.crunchData(player, true);
 					SpellStack.runModules(stack, spell);
 					player.swingArm(EnumHand.MAIN_HAND);
@@ -96,7 +96,7 @@ public class ItemStaff extends ItemWizardry implements INacreColorable {
 				} else return;
 			}
 		if (((count > 0) && (count < (getMaxItemUseDuration(stack) - 20)) && (player instanceof EntityPlayer))) {
-			Spell spell = new Spell(((EntityPlayer) player).world);
+			SpellData spell = new SpellData(((EntityPlayer) player).world);
 			spell.crunchData(player, true);
 			SpellStack.runModules(stack, spell);
 		}

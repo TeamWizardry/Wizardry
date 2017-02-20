@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.common.module.effects;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.RegisterModule;
-import com.teamwizardry.wizardry.api.spell.Spell;
+import com.teamwizardry.wizardry.api.spell.SpellData;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
@@ -15,8 +15,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 
-import static com.teamwizardry.wizardry.api.spell.Spell.DefaultKeys.CASTER;
-import static com.teamwizardry.wizardry.api.spell.Spell.DefaultKeys.TARGET_HIT;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.TARGET_HIT;
 
 /**
  * Created by LordSaad.
@@ -74,7 +74,7 @@ public class ModuleEffectFling extends Module {
 	}
 
 	@Override
-	public boolean run(@NotNull Spell spell) {
+	public boolean run(@NotNull SpellData spell) {
 		Entity targetEntity = spell.getData(CASTER);
 		Vec3d to = spell.getData(TARGET_HIT);
 

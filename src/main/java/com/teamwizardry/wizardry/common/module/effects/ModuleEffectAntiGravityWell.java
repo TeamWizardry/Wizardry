@@ -14,8 +14,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 
-import static com.teamwizardry.wizardry.api.spell.Spell.DefaultKeys.CASTER;
-import static com.teamwizardry.wizardry.api.spell.Spell.DefaultKeys.ORIGIN;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ORIGIN;
 
 /**
  * Created by LordSaad.
@@ -73,7 +73,7 @@ public class ModuleEffectAntiGravityWell extends Module {
 	}
 
 	@Override
-	public boolean run(@NotNull Spell spell) {
+	public boolean run(@NotNull SpellData spell) {
 		World world = spell.world;
 		Vec3d position = spell.getData(ORIGIN);
 		Entity caster = spell.getData(CASTER);

@@ -3,12 +3,9 @@ package com.teamwizardry.wizardry.common.module.events;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.RegisterModule;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Created by LordSaad.
@@ -48,11 +45,6 @@ public class ModuleEventAlongPath extends Module {
     @Override
     public String getDescription() {
         return "Triggered throughout the journey of a spell, like a projectile shape whilst airborne or across an entire beam shape";
-    }
-
-    @Override
-    public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
-        return super.run(world, caster);
     }
 
 	@NotNull
