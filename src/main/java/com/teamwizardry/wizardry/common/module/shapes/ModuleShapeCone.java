@@ -12,7 +12,6 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -99,7 +98,6 @@ public class ModuleShapeCone extends Module implements IParticleDanger {
 		float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - yaw));
 		Vec3d origin = new Vec3d(offX, caster == null ? 0 : caster.getEyeHeight(), offZ).add(lookVec);
 
-		setTargetPosition(this, lookVec);
 		for (int i = 0; i < range * 10; i++) {
 			Matrix4 matrix = new Matrix4();
 			Vec3d cross = caster != null ? lookVec.crossProduct(new Vec3d(0, 1, 0)) : lookVec;
@@ -127,15 +125,21 @@ public class ModuleShapeCone extends Module implements IParticleDanger {
 	}
 
 	@Override
-	public void runClient(@NotNull World world, @Nullable ItemStack stack, @Nullable EntityLivingBase caster, @NotNull Vec3d pos) {
-		if (caster == null) return;
+	public void runClient(@Nullable ItemStack stack, @NotNull SpellData spell) {
+		float pitch = spell.getData(PITCH, 0F), yaw = spell.getData(YAW, 0F);
+		Entity caster = spell.getData(CASTER);
+		Vec3d position = spell.getData(ORIGIN);
+		Vec3d lookVec = PosUtils.vecFromRotations(pitch, yaw);
+
+		if (position == null) return;
+
 		Color color = getColor();
 		if (color == null) color = Color.WHITE;
 		double range = 5;
 		if (attributes.hasKey(Attributes.EXTEND)) range += attributes.getDouble(Attributes.EXTEND);
-		float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - caster.rotationYaw));
-		float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - caster.rotationYaw));
-		Vec3d origin = new Vec3d(offX, caster.getEyeHeight(), offZ).add(caster.getPositionVector());
+		float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - yaw));
+		float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - yaw));
+		Vec3d origin = new Vec3d(offX, caster == null ? 0 : caster.getEyeHeight(), offZ).add(position);
 
 		ParticleBuilder glitter = new ParticleBuilder(25);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
@@ -143,7 +147,7 @@ public class ModuleShapeCone extends Module implements IParticleDanger {
 
 		double finalRange = range;
 		Color finalColor = color;
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(origin), (int) (range * 50), 0, (aFloat, particleBuilder) -> {
+		ParticleSpawner.spawn(glitter, spell.world, new StaticInterp<>(origin), (int) (range * 50), 0, (aFloat, particleBuilder) -> {
 			double radius = 0.5;
 			double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
 			double r = radius * ThreadLocalRandom.current().nextFloat();
@@ -157,9 +161,10 @@ public class ModuleShapeCone extends Module implements IParticleDanger {
 					100));
 			glitter.setScale(1);
 			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, (float) ThreadLocalRandom.current().nextDouble(0.3, 1)));
-			InterpCircle circle = new InterpCircle(caster.getLookVec().scale(finalRange), caster.getLookVec(), (float) finalRange, 1, ThreadLocalRandom.current().nextFloat());
+			InterpCircle circle = new InterpCircle(lookVec.scale(finalRange), lookVec, (float) finalRange, 1, ThreadLocalRandom.current().nextFloat());
 			glitter.setPositionFunction(new InterpLine(Vec3d.ZERO, circle.get(0)));
 		});
+		super.runClient(stack, spell);
 	}
 
 	@NotNull

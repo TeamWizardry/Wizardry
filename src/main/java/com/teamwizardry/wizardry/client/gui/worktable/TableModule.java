@@ -37,12 +37,14 @@ public class TableModule {
 
 		sprite.BUS.hook(GuiComponent.MouseDownEvent.class, (event) -> {
 			if (event.getButton() == EnumMouseButton.LEFT) {
-				if (!draggable) {
+				if (!draggable && sprite.getMouseOver()) {
 					TableModule item = new TableModule(table, module, true);
 					item.component.addTag("on_paper");
 					table.paper.add(item.component);
 
-					DragMixin drag = new DragMixin<>(item.component, vec2d -> vec2d.sub(6, 6));
+					DragMixin drag = new DragMixin<>(item.component, vec2d -> {
+						return vec2d.sub(6, 6);
+					});
 					drag.setMouseDown(event.getButton());
 					event.cancel();
 				}

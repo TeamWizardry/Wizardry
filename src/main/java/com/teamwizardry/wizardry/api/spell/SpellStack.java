@@ -133,12 +133,13 @@ public class SpellStack {
 			Vec3d pos = spell.getData(SpellData.DefaultKeys.ORIGIN, caster != null ? caster.getPositionVector() : spell.getData(SpellData.DefaultKeys.TARGET_HIT, Vec3d.ZERO));
 
 			if (!(particleDanger && continuousSpell) || ThreadLocalRandom.current().nextInt(chance) == 0) {
-				if (module.getTargetPosition() == null) {
-					PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(spellHolder, caster == null ? -1 : caster.getEntityId(), pos),
+				if (spell.getData(SpellData.DefaultKeys.TARGET_HIT) == null) {
+					PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(spellHolder, spell),
 							new NetworkRegistry.TargetPoint(spell.world.provider.getDimension(), pos.xCoord, pos.yCoord, pos.zCoord, 60));
 				} else {
-					PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(spellHolder, caster == null ? -1 : caster.getEntityId(), module.getTargetPosition()),
-							new NetworkRegistry.TargetPoint(spell.world.provider.getDimension(), module.getTargetPosition().xCoord, module.getTargetPosition().yCoord, module.getTargetPosition().zCoord, 60));
+					Vec3d target = spell.getData(SpellData.DefaultKeys.TARGET_HIT);
+					PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(spellHolder, spell),
+							new NetworkRegistry.TargetPoint(spell.world.provider.getDimension(), target.xCoord, target.yCoord, target.zCoord, 60));
 				}
 			}
 

@@ -101,6 +101,20 @@ public class ModuleEffectLeap extends Module implements IParticleDanger {
 	}
 
 	@Override
+	public void runClient(@Nullable ItemStack stack, @NotNull SpellData spell) {
+		Entity caster = spell.getData(CASTER);
+		Vec3d position = spell.getData(TARGET_HIT);
+
+		if (position == null) return;
+
+		if (caster != null) {
+			if (!caster.hasNoGravity())
+				LibParticles.AIR_THROTTLE(spell.world, position, caster, getColor(), Color.WHITE, 0.5, true);
+		} else LibParticles.AIR_THROTTLE(spell.world, position, position, getColor(), Color.WHITE, 0.5, true);
+
+	}
+
+	@Override
 	public void runClient(@NotNull World world, @Nullable ItemStack stack, @Nullable EntityLivingBase caster, @NotNull Vec3d pos) {
 		if (caster != null && !caster.hasNoGravity())
 			LibParticles.AIR_THROTTLE(world, pos, caster, getColor(), Color.WHITE, 0.5, true);

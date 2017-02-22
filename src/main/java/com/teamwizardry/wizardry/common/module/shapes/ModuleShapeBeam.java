@@ -91,14 +91,12 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 		RayTraceResult trace = Utils.raytrace(world, PosUtils.vecFromRotations(pitch, yaw), caster != null ? position.addVector(0, caster.getEyeHeight(), 0) : position, range, caster);
 		if (trace == null) return false;
 
-		setTargetPosition(this, trace.hitVec);
-
 		if (trace.typeOfHit == RayTraceResult.Type.ENTITY)
 			spell.crunchData(trace.entityHit, false);
 		else if (trace.typeOfHit == RayTraceResult.Type.BLOCK) {
 			spell.addData(BLOCK_HIT, trace.getBlockPos());
 			spell.addData(TARGET_HIT, trace.hitVec);
-		}
+		} else spell.addData(TARGET_HIT, trace.hitVec);
 		return nextModule.run(spell);
 	}
 

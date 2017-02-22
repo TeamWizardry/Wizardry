@@ -34,12 +34,6 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	public Module nextModule = null;
 
 	/**
-	 * The module that ran this module.
-	 */
-	@Nullable
-	public Module prevModule = null;
-
-	/**
 	 * The final calculated cost of mana this spell consumes.
 	 */
 	public double finalManaCost = 10;
@@ -48,14 +42,6 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	 * The final calculated cost of burnout this spell fills.
 	 */
 	public double finalBurnoutCost = 10;
-
-	/**
-	 * The target position of this spell. It would be really nice if you set this value in your shape attributes.
-	 * It improves particle positioning in runClient methods because there's no way to tell
-	 * otherwise.
-	 */
-	@Nullable
-	private Vec3d targetPosition = null;
 
 	/**
 	 * The summative final calculated/merged/mixed color from this module's children attributes.
@@ -97,19 +83,6 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 		processBurnout(module);
 		processMana(module);
 		processColor(module);
-	}
-
-	/**
-	 * The target position of this spell. It would be really nice if you set this value in your run methods.
-	 * It improves particle positioning in runClient methods because there's no way to tell
-	 * otherwise.
-	 */
-	public static void setTargetPosition(@NotNull Module module, @Nullable Vec3d targetPosition) {
-		Module tempModule = module;
-		while (tempModule != null) {
-			tempModule.targetPosition = targetPosition;
-			tempModule = tempModule.nextModule;
-		}
 	}
 
 	/**
@@ -177,6 +150,13 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 		return 0;
 	}
 
+	/**
+	 * The amount of time in ticks the item needs to cooldown for in order to run again.
+	 */
+	public int getCooldownTime() {
+		return 0;
+	}
+
 	public boolean run(@NotNull SpellData spell) {
 		return false;
 	}
@@ -189,7 +169,15 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	 * @param caster The caster running the spell
 	 * @param pos    The position the spell runs at, in case the caster is null.
 	 */
+	@Deprecated
 	public void runClient(@NotNull World world, @Nullable ItemStack stack, @Nullable EntityLivingBase caster, @NotNull Vec3d pos) {
+
+	}
+
+	/**
+	 * This method runs client side when the spell runs. Spawn particles here.
+	 */
+	public void runClient(@Nullable ItemStack stack, @NotNull SpellData spell) {
 
 	}
 
@@ -220,16 +208,6 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	@Nullable
 	public Color getSecondaryColor() {
 		return null;
-	}
-
-	/**
-	 * The target position of this spell. It would be really nice if you set this value in your run methods.
-	 * It improves particle positioning in runClient methods because there's no way to tell
-	 * otherwise.
-	 */
-	@Nullable
-	public Vec3d getTargetPosition() {
-		return targetPosition;
 	}
 
 	/**
@@ -265,11 +243,6 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 		NBTTagCompound compound = new NBTTagCompound();
 		compound.setString("id", getID());
 		compound.setTag("attributes", attributes);
-		if (targetPosition != null) {
-			compound.setDouble("target_pos_x", targetPosition.xCoord);
-			compound.setDouble("target_pos_y", targetPosition.yCoord);
-			compound.setDouble("target_pos_z", targetPosition.zCoord);
-		}
 		if (nextModule != null) compound.setTag("next_module", nextModule.serializeNBT());
 		return compound;
 	}
@@ -277,9 +250,6 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	@Override
 	public void deserializeNBT(NBTTagCompound nbt) {
 		attributes = nbt.getCompoundTag("attributes");
-		if (nbt.hasKey("target_pos_x") && nbt.hasKey("target_pos_y") && nbt.hasKey("target_pos_z")) {
-			targetPosition = new Vec3d(nbt.getDouble("target_pos_x"), nbt.getDouble("target_pos_y"), nbt.getDouble("target_pos_z"));
-		}
 		if (nbt.hasKey("next_module")) {
 			nextModule = ModuleRegistry.INSTANCE.getModule(nbt.getCompoundTag("next_module").getString("id"));
 			if (nextModule != null) nextModule.deserializeNBT(nbt.getCompoundTag("next_module"));

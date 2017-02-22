@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.common.module.events;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.SpellData;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -44,6 +45,14 @@ public class ModuleEventCollideEntity extends Module {
 	@Override
 	public String getDescription() {
 		return "Triggered when the spell collides with an entity";
+	}
+
+	@Override
+	public boolean run(@NotNull SpellData spell) {
+		if (!spell.hasData(SpellData.DefaultKeys.ENTITY_HIT)) return false;
+		if (nextModule == null) return false;
+		nextModule.run(spell);
+		return true;
 	}
 
 	@NotNull

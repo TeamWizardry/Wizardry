@@ -86,7 +86,6 @@ public class ModuleEffectGravityWell extends Module {
 		EntitySpellGravityWell well = new EntitySpellGravityWell(world, caster instanceof EntityPlayer ? (EntityLivingBase) caster : null, position, (int) (strength * 20), strength, false);
 		well.setPosition(position.xCoord, position.yCoord, position.zCoord);
 		world.spawnEntity(well);
-		setTargetPosition(this, position);
 		return world.spawnEntity(well);
 	}
 
