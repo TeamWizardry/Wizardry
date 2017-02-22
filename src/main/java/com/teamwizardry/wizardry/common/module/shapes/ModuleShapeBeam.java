@@ -8,7 +8,6 @@ import com.teamwizardry.wizardry.api.util.Utils;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -101,17 +100,26 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 	}
 
 	@Override
-	public void runClient(@NotNull World world, @Nullable ItemStack stack, @Nullable EntityLivingBase caster, @NotNull Vec3d pos) {
-		if (caster == null) return;
+	public void runClient(@Nullable ItemStack stack, @NotNull SpellData spell) {
+		World world = spell.world;
+		float yaw = spell.getData(YAW, 0F);
+		float pitch = spell.getData(PITCH, 0F);
+		Vec3d position = spell.getData(ORIGIN);
+		Entity caster = spell.getData(CASTER);
+		Vec3d lookVec = PosUtils.vecFromRotations(pitch, yaw);
+
+		if (position == null) return;
+
 		double range = 10;
 		if (attributes.hasKey(Attributes.EXTEND)) range += attributes.getDouble(Attributes.EXTEND);
-		float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - caster.rotationYaw));
-		float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - caster.rotationYaw));
-		Vec3d vec = new Vec3d(offX, caster.getEyeHeight(), offZ).add(caster.getPositionVector());
-
-		LibParticles.SHAPE_BEAM(world, pos, vec, (int) range, getColor() == null ? Color.WHITE : getColor());
+		Vec3d origin = position;
+		if (caster != null) {
+			float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - yaw));
+			float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - yaw));
+			origin = new Vec3d(offX, caster.getEyeHeight(), offZ).add(position);
+		}
+		LibParticles.SHAPE_BEAM(world, origin, lookVec, (int) range, getColor() == null ? Color.WHITE : getColor());
 	}
-
 	@NotNull
 	@Override
 	public ModuleShapeBeam copy() {

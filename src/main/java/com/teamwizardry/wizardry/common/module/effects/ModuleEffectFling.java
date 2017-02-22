@@ -5,11 +5,9 @@ import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -114,10 +112,6 @@ public class ModuleEffectFling extends Module {
 		targetEntity.velocityChanged = true;
 
 		return true;
-	}
-
-	@Override
-	public void runClient(@NotNull World world, @Nullable ItemStack stack, @Nullable EntityLivingBase caster, @NotNull Vec3d pos) {
 	}
 
 	@NotNull

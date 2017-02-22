@@ -89,10 +89,6 @@ public class ModuleEffectGravityWell extends Module {
 		return world.spawnEntity(well);
 	}
 
-	@Override
-	public void runClient(@NotNull World world, @Nullable ItemStack stack, @Nullable EntityLivingBase caster, @NotNull Vec3d pos) {
-	}
-
 	@NotNull
 	@Override
 	public ModuleEffectGravityWell copy() {

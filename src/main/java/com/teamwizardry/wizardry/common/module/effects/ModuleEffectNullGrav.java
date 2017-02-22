@@ -15,8 +15,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ENTITY_HIT;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
 /**
  * Created by LordSaad.
@@ -91,8 +90,15 @@ public class ModuleEffectNullGrav extends Module {
 	}
 
 	@Override
-	public void runClient(@NotNull World world, @Nullable ItemStack stack, @Nullable EntityLivingBase caster, @NotNull Vec3d pos) {
-		LibParticles.EFFECT_NULL_GRAV(world, pos, caster, getColor());
+	public void runClient(@Nullable ItemStack stack, @NotNull SpellData spell) {
+		World world = spell.world;
+		Vec3d position = spell.getData(ORIGIN);
+		Entity caster = spell.getData(CASTER);
+
+		if (caster == null || position == null) return;
+		if (!(caster instanceof EntityLivingBase)) return;
+
+		LibParticles.EFFECT_NULL_GRAV(world, position, (EntityLivingBase) caster, getColor());
 	}
 
 	@NotNull

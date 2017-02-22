@@ -109,16 +109,21 @@ public class ModuleEffectThrive extends Module implements IContinousSpell {
 	}
 
 	@Override
-	public void runClient(@NotNull World world, @Nullable ItemStack stack, @Nullable EntityLivingBase caster, @NotNull Vec3d pos) {
+	public void runClient(@Nullable ItemStack stack, @NotNull SpellData spell) {
 		if (ThreadLocalRandom.current().nextInt(15) != 0) return;
 
-		List<EntityLivingBase> entities = world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(new BlockPos(pos)));
+		World world = spell.world;
+		Vec3d position = spell.getData(ORIGIN);
+
+		if (position == null) return;
+
+		List<EntityLivingBase> entities = world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(new BlockPos(position)));
 		if (!entities.isEmpty())
 			LibParticles.EFFECT_REGENERATE(world, entities.get(0).getPositionVector().addVector(0, entities.get(0).height / 2, 0), getColor());
 		else {
-			BlockPos plant = new BlockPos(pos);
+			BlockPos plant = new BlockPos(position);
 			if (world.getBlockState(plant).getBlock() instanceof IGrowable)
-				LibParticles.EFFECT_REGENERATE(world, pos, getColor());
+				LibParticles.EFFECT_REGENERATE(world, position, getColor());
 		}
 	}
 

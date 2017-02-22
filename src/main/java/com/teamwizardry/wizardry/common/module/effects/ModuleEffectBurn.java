@@ -116,14 +116,19 @@ public class ModuleEffectBurn extends Module implements IContinousSpell {
 	}
 
 	@Override
-	public void runClient(@NotNull World world, @Nullable ItemStack stack, @Nullable EntityLivingBase caster, @NotNull Vec3d pos) {
+	public void runClient(@Nullable ItemStack stack, @NotNull SpellData spell) {
+		World world = spell.world;
+		Vec3d position = spell.getData(ORIGIN);
+
+		if (position == null) return;
+
 		Color color = getColor();
 		if (ThreadLocalRandom.current().nextBoolean()) color = getSecondaryColor();
 
-		List<EntityLivingBase> entities = world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(new BlockPos(pos)));
+		List<EntityLivingBase> entities = world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(new BlockPos(position)));
 		if (!entities.isEmpty())
 			LibParticles.EFFECT_BURN(world, entities.get(0).getPositionVector().addVector(0, entities.get(0).height / 2, 0), color);
-		else LibParticles.EFFECT_BURN(world, pos.addVector(0, 0.5, 0), color);
+		else LibParticles.EFFECT_BURN(world, position.addVector(0, 0.5, 0), color);
 	}
 
 	@NotNull

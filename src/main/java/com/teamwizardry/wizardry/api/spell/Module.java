@@ -7,8 +7,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -159,19 +157,6 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 
 	public boolean run(@NotNull SpellData spell) {
 		return false;
-	}
-
-	/**
-	 * This method runs client side when the spell runs. Spawn particles here.
-	 *
-	 * @param world  The world obj.
-	 * @param stack  The itemStack running th spell
-	 * @param caster The caster running the spell
-	 * @param pos    The position the spell runs at, in case the caster is null.
-	 */
-	@Deprecated
-	public void runClient(@NotNull World world, @Nullable ItemStack stack, @Nullable EntityLivingBase caster, @NotNull Vec3d pos) {
-
 	}
 
 	/**

@@ -94,9 +94,12 @@ public class ModuleShapeCone extends Module implements IParticleDanger {
 
 		double range = 5;
 		if (attributes.hasKey(Attributes.EXTEND)) range += attributes.getDouble(Attributes.EXTEND);
-		float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - yaw));
-		float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - yaw));
-		Vec3d origin = new Vec3d(offX, caster == null ? 0 : caster.getEyeHeight(), offZ).add(lookVec);
+		Vec3d origin = position;
+		if (caster != null) {
+			float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - yaw));
+			float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - yaw));
+			origin = new Vec3d(offX, caster.getEyeHeight(), offZ).add(position);
+		}
 
 		for (int i = 0; i < range * 10; i++) {
 			Matrix4 matrix = new Matrix4();

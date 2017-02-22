@@ -3,6 +3,8 @@ package com.teamwizardry.wizardry.common.tile;
 import com.teamwizardry.librarianlib.common.base.block.TileMod;
 import com.teamwizardry.librarianlib.common.util.autoregister.TileRegister;
 import com.teamwizardry.librarianlib.common.util.saving.Save;
+import com.teamwizardry.wizardry.api.spell.IContinousSpell;
+import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellStack;
 import com.teamwizardry.wizardry.api.util.PosUtils;
@@ -17,7 +19,7 @@ import net.minecraft.world.WorldServer;
 
 import javax.annotation.Nullable;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ORIGIN;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
 /**
  * Created by Saad on 5/7/2016.
@@ -29,15 +31,32 @@ public class TileStaff extends TileMod implements ITickable {
 	@Save
 	public ItemStack pearl;
 	private EntityStaffFakePlayer fakePlayer = null;
+	@Save
+	private int cooldown = 0;
 
 	@Override
 	public void update() {
 		if (world.isRemote) return;
 		if (pearl == null) return;
-		if (pearl.getItem() == ModItems.PEARL_NACRE)
-			for (int i = -3; i < 3; i++)
-				for (int j = -3; j < 3; j++)
-					for (int k = -3; k < 3; k++) {
+		if (pearl.getItem() == ModItems.PEARL_NACRE) {
+
+			if (cooldown <= 0) {
+				int itemHoldDown = 0;
+				boolean flag = false;
+				for (Module module : SpellStack.getAllModules(pearl))
+					if (!(module instanceof IContinousSpell))
+						itemHoldDown += module.getChargeUpTime();
+					else flag = true;
+
+				if (itemHoldDown == 0 && !flag) cooldown = 10;
+				else cooldown = itemHoldDown;
+			} else {
+				cooldown--;
+				return;
+			}
+			for (int i = -4; i < 4; i++)
+				for (int j = -4; j < 4; j++)
+					for (int k = -4; k < 4; k++) {
 						BlockPos pos = new BlockPos(getPos().getX() + i, getPos().getY() + j, getPos().getZ() + k);
 						if (world.getBlockState(pos).getBlock() != ModBlocks.MANA_MAGNET) continue;
 
@@ -45,17 +64,18 @@ public class TileStaff extends TileMod implements ITickable {
 							fakePlayer = new EntityStaffFakePlayer((WorldServer) getWorld());
 						fakePlayer.setPosition(getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5);
 
-						Vec3d direction = new Vec3d(getPos().subtract(pos)).normalize();
+						Vec3d direction = new Vec3d(getPos()).addVector(0.5, 0.5, 0.5).subtract(new Vec3d(pos).addVector(0.5, 0.5, 0.5)).normalize();
 						float[] rotations = PosUtils.vecToRotations(direction);
 						fakePlayer.rotationPitch = rotations[0];
 						fakePlayer.rotationYaw = rotations[1];
 
 						SpellData spell = new SpellData(getWorld());
-						spell.crunchData(fakePlayer, true);
+						spell.addData(YAW, rotations[1]);
+						spell.addData(PITCH, rotations[0]);
 						spell.addData(ORIGIN, new Vec3d(getPos()).addVector(0.5, 0.5, 0.5));
 						SpellStack.runModules(pearl, spell);
 						break;
 					}
-
+		}
 	}
 }
