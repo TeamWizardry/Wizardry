@@ -103,23 +103,22 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 	public void runClient(@Nullable ItemStack stack, @NotNull SpellData spell) {
 		World world = spell.world;
 		float yaw = spell.getData(YAW, 0F);
-		float pitch = spell.getData(PITCH, 0F);
 		Vec3d position = spell.getData(ORIGIN);
 		Entity caster = spell.getData(CASTER);
-		Vec3d lookVec = PosUtils.vecFromRotations(pitch, yaw);
+		Vec3d target = spell.getData(TARGET_HIT);
 
 		if (position == null) return;
+		if (target == null) return;
 
-		double range = 10;
-		if (attributes.hasKey(Attributes.EXTEND)) range += attributes.getDouble(Attributes.EXTEND);
 		Vec3d origin = position;
 		if (caster != null) {
 			float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - yaw));
 			float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - yaw));
 			origin = new Vec3d(offX, caster.getEyeHeight(), offZ).add(position);
 		}
-		LibParticles.SHAPE_BEAM(world, origin, lookVec, (int) range, getColor() == null ? Color.WHITE : getColor());
+		LibParticles.SHAPE_BEAM(world, target, origin, getColor() == null ? Color.WHITE : getColor());
 	}
+
 	@NotNull
 	@Override
 	public ModuleShapeBeam copy() {

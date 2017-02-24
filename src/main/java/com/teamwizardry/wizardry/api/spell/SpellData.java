@@ -71,7 +71,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			addData(DefaultKeys.YAW, entity.rotationYaw);
 			addData(DefaultKeys.PITCH, entity.rotationPitch);
 		} else {
-			addData(DefaultKeys.TARGET_HIT, entity.getPositionVector());
+			addData(DefaultKeys.TARGET_HIT, entity.getPositionVector().addVector(0, entity.height / 2, 0));
 			addData(DefaultKeys.ENTITY_HIT, entity);
 		}
 	}

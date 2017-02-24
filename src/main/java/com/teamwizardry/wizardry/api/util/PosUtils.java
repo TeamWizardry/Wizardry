@@ -56,18 +56,13 @@ public final class PosUtils {
 	}
 
 	public static Vec3d vecFromRotations(float rotationPitch, float rotationYaw) {
-		double sinPitch = Math.sin(rotationPitch);
-		double cosPitch = Math.cos(rotationPitch);
-		double sinYaw = Math.sin(rotationYaw);
-		double cosYaw = Math.cos(rotationYaw);
-
-		return new Vec3d(-cosPitch * sinYaw, -sinPitch, -cosPitch * cosYaw);
+		return Vec3d.fromPitchYaw(rotationPitch, rotationYaw);
 	}
 
 	public static float[] vecToRotations(Vec3d vec) {
 		float yaw = (float) MathHelper.atan2(vec.xCoord, vec.zCoord);
 		float pitch = (float) Math.asin(vec.yCoord / vec.lengthSquared());
-		return new float[]{pitch, yaw};
+		return new float[]{(float) Math.toDegrees(pitch), (float) Math.toDegrees(yaw)};
 	}
 
 	public static class ManaBatteryPositions {

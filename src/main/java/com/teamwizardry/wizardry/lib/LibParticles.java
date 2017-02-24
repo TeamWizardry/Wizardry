@@ -453,7 +453,7 @@ public class LibParticles {
 		});
 	}
 
-	public static void SHAPE_BEAM(World world, Vec3d target, Vec3d origin, int distance, Color color) {
+	public static void SHAPE_BEAM(World world, Vec3d target, Vec3d origin, Color color) {
 		ParticleBuilder glitter = new ParticleBuilder(10);
 		glitter.setColor(new Color(1.0f, 1.0f, 1.0f, 0.1f));
 		glitter.setPositionFunction(new InterpHelix(Vec3d.ZERO, target.subtract(origin), 0.0f, 0.15f, 1.0F, 0));
@@ -465,7 +465,7 @@ public class LibParticles {
 				Math.min(255, color.getBlue() + ThreadLocalRandom.current().nextInt(5, 20)),
 				color.getAlpha()));
 
-		ParticleSpawner.spawn(glitter, world, new InterpHelix(target, origin, 0.0f, 0.15f, 1.0f, 0), distance, 0, (aFloat, particleBuilder) -> {
+		ParticleSpawner.spawn(glitter, world, new InterpHelix(target.subtract(origin), origin, 0.0f, 0.15f, 1.0f, 0), (int) origin.distanceTo(target), 0, (aFloat, particleBuilder) -> {
 			glitter.setScale((float) ThreadLocalRandom.current().nextDouble(0.3, 0.8));
 			glitter.setLifetime(ThreadLocalRandom.current().nextInt(10, 20));
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
