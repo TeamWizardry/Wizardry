@@ -11,6 +11,7 @@ import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -84,7 +85,7 @@ public class EntityHallowedSpirit extends EntityMob {
 			motionX = direction.xCoord * -0.05;
 			motionY = direction.yCoord * -0.05;
 			motionZ = direction.zCoord * -0.05;
-			rotationYaw = (float) (((-StrictMath.atan2(direction.xCoord, direction.zCoord) * 180) / Math.PI) - 180) / 2;
+			rotationYaw = (float) (((-MathHelper.atan2(direction.xCoord, direction.zCoord) * 180) / Math.PI) - 180) / 2;
 		} else noClip = false;
 
 		EntityPlayer player = getAttackTarget() == null ? null : world.getNearestPlayerNotCreative(this, 2);

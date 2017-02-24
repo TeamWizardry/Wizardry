@@ -11,6 +11,7 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.api.util.PosUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -92,6 +93,7 @@ public class ModuleShapeCone extends Module implements IParticleDanger {
 
 		Vec3d lookVec = PosUtils.vecFromRotations(pitch, yaw);
 
+		Minecraft.getMinecraft().player.sendChatMessage(yaw + " - " + pitch + " - " + lookVec);
 		double range = 5;
 		if (attributes.hasKey(Attributes.EXTEND)) range += attributes.getDouble(Attributes.EXTEND);
 		Vec3d origin = position;
@@ -103,7 +105,7 @@ public class ModuleShapeCone extends Module implements IParticleDanger {
 
 		for (int i = 0; i < range * 10; i++) {
 			Matrix4 matrix = new Matrix4();
-			Vec3d cross = caster != null ? lookVec.crossProduct(new Vec3d(0, 1, 0)) : lookVec;
+			Vec3d cross = lookVec.crossProduct(new Vec3d(0, 1, 0));
 			matrix.rotate(Math.toRadians(ThreadLocalRandom.current().nextDouble(-range * 10, range * 10)), lookVec);
 			Vec3d normal = matrix.apply(cross).normalize();
 
