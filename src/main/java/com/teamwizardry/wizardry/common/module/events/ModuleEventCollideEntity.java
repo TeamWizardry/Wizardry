@@ -4,9 +4,12 @@ import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
+import net.minecraft.entity.Entity;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ENTITY_HIT;
 
 /**
  * Created by LordSaad.
@@ -49,10 +52,8 @@ public class ModuleEventCollideEntity extends Module {
 
 	@Override
 	public boolean run(@NotNull SpellData spell) {
-		if (!spell.hasData(SpellData.DefaultKeys.ENTITY_HIT)) return false;
-		if (nextModule == null) return false;
-		nextModule.run(spell);
-		return true;
+		Entity entity = spell.getData(ENTITY_HIT);
+		return entity != null && nextModule != null && nextModule.run(spell);
 	}
 
 	@NotNull

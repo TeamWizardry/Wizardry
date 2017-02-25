@@ -52,12 +52,11 @@ public class ModuleShapeSelf extends Module {
 
 	@Override
 	public boolean run(@NotNull SpellData spell) {
-		if (nextModule == null) return false;
 		Entity caster = spell.getData(CASTER);
 		if (caster == null) return false;
 		spell.crunchData(caster, true);
 		spell.crunchData(caster, false);
-		return nextModule.run(spell);
+		return runNextModule(spell);
 	}
 
 	@NotNull

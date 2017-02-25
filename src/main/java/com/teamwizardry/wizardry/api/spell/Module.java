@@ -2,6 +2,8 @@ package com.teamwizardry.wizardry.api.spell;
 
 import com.teamwizardry.wizardry.api.WizardManager;
 import com.teamwizardry.wizardry.api.util.Utils;
+import com.teamwizardry.wizardry.common.core.SpellTicker;
+import kotlin.Pair;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
@@ -46,7 +48,8 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	 */
 	private Color color = null;
 
-	public Module() {}
+	public Module() {
+	}
 
 	@Nullable
 	public static Color processColor(Module module) {
@@ -193,6 +196,13 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	@Nullable
 	public Color getSecondaryColor() {
 		return null;
+	}
+
+	public boolean runNextModule(SpellData spell) {
+		if (this instanceof IlingeringModule)
+			if (!SpellTicker.INSTANCE.ticker.containsKey(this))
+				SpellTicker.INSTANCE.ticker.put(this, new Pair<>(spell, ((IlingeringModule) this).lingeringTime(spell)));
+		return nextModule != null && nextModule.run(spell);
 	}
 
 	/**

@@ -4,6 +4,7 @@ import com.teamwizardry.librarianlib.client.gui.EnumMouseButton;
 import com.teamwizardry.librarianlib.client.gui.GuiComponent;
 import com.teamwizardry.librarianlib.client.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.client.gui.mixin.DragMixin;
+import com.teamwizardry.librarianlib.common.util.math.Vec2d;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.lib.LibSprites;
 import net.minecraft.util.text.TextFormatting;
@@ -42,10 +43,18 @@ public class TableModule {
 					item.component.addTag("on_paper");
 					table.paper.add(item.component);
 
-					DragMixin drag = new DragMixin<>(item.component, vec2d -> {
-						return vec2d.sub(6, 6);
-					});
+					DragMixin drag = new DragMixin<>(item.component, vec2d -> vec2d);
+					drag.setClickPos(new Vec2d(6, 6));
 					drag.setMouseDown(event.getButton());
+					event.cancel();
+				}
+			}
+		});
+
+		sprite.BUS.hook(GuiComponent.MouseDragEvent.class, (event) -> {
+			if (event.getButton() == EnumMouseButton.RIGHT) {
+				if (draggable && sprite.getMouseOver()) {
+
 					event.cancel();
 				}
 			}

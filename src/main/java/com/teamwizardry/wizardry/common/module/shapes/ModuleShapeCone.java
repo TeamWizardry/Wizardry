@@ -82,7 +82,6 @@ public class ModuleShapeCone extends Module implements IParticleDanger {
 
 	@Override
 	public boolean run(@NotNull SpellData spell) {
-		if (nextModule == null) return true;
 		World world = spell.world;
 		float yaw = spell.getData(YAW, 0F);
 		float pitch = spell.getData(PITCH, 0F);
@@ -116,14 +115,14 @@ public class ModuleShapeCone extends Module implements IParticleDanger {
 			SpellData newSpell = spell.copy();
 
 			newSpell.addData(TARGET_HIT, target);
-			nextModule.run(newSpell);
+			runNextModule(newSpell);
 
 			List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(target)));
 			if (entityList.isEmpty()) continue;
 			for (Entity entity : entityList) {
 				if (entity == null) continue;
 				newSpell.crunchData(entity, false);
-				nextModule.run(newSpell);
+				runNextModule(newSpell);
 			}
 		}
 		return true;

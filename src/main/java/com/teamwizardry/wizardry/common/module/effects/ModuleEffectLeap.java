@@ -4,8 +4,10 @@ import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -93,6 +95,9 @@ public class ModuleEffectLeap extends Module implements IParticleDanger {
 
 			target.velocityChanged = true;
 			target.fallDistance /= 2 * calcBurnoutPercent(target);
+
+			if (target instanceof EntityPlayerMP)
+				((EntityPlayerMP) target).connection.sendPacket(new SPacketEntityVelocity(target));
 			return true;
 		}
 		return false;

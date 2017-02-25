@@ -3,9 +3,13 @@ package com.teamwizardry.wizardry.common.module.events;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.SpellData;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
+
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.BLOCK_HIT;
 
 /**
  * Created by LordSaad.
@@ -45,6 +49,12 @@ public class ModuleEventCollideBlock extends Module {
 	@Override
 	public String getDescription() {
 		return "Triggered when the spell collides with a block";
+	}
+
+	@Override
+	public boolean run(@NotNull SpellData spell) {
+		BlockPos pos = spell.getData(BLOCK_HIT);
+		return pos != null && nextModule != null && nextModule.run(spell);
 	}
 
 	@NotNull

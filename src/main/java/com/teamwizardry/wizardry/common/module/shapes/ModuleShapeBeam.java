@@ -74,8 +74,6 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 
 	@Override
 	public boolean run(@NotNull SpellData spell) {
-		if (nextModule == null) return false;
-
 		World world = spell.world;
 		float yaw = spell.getData(YAW, 0F);
 		float pitch = spell.getData(PITCH, 0F);
@@ -96,7 +94,7 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 			spell.addData(BLOCK_HIT, trace.getBlockPos());
 			spell.addData(TARGET_HIT, trace.hitVec);
 		} else spell.addData(TARGET_HIT, trace.hitVec);
-		return nextModule.run(spell);
+		return runNextModule(spell);
 	}
 
 	@Override

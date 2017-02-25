@@ -474,7 +474,7 @@ public class LibParticles {
 
 	public static void EFFECT_NULL_GRAV(World world, @NotNull Vec3d pos, @Nullable EntityLivingBase caster, Color color) {
 		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(20, 30));
-		glitter.setColor(color);
+		glitter.setColor(color == null ? Color.WHITE : color);
 		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(5, 10), ThreadLocalRandom.current().nextInt(0, 30), (aFloat, particleBuilder) -> {

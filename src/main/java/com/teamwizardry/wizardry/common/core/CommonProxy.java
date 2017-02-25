@@ -56,6 +56,7 @@ public class CommonProxy {
 		MinecraftForge.EVENT_BUS.register(new EventHandler());
 		MinecraftForge.EVENT_BUS.register(new AchievementEvents());
 		MinecraftForge.EVENT_BUS.register(new ModCapabilities());
+		SpellTicker.INSTANCE.getClass();
 
 		PacketHandler.register(PacketParticleMagicDot.class, Side.CLIENT);
 		PacketHandler.register(PacketParticleAmbientFizz.class, Side.CLIENT);
