@@ -93,7 +93,7 @@ public class EntityFairy extends EntityFlying {
 		if (world.isRemote) return;
 
 		LibParticles.FAIRY_HEAD(world, getPositionVector().addVector(0, 0.25, 0), color);
-		LibParticles.FAIRY_TRAIL(world, getPositionVector().addVector(0, 0.25, 0), color, sad, new Random(getUniqueID().hashCode()).nextInt(300));
+		LibParticles.FAIRY_TRAIL(world, getPositionVector().addVector(0, 0.25, 0), color, sad, new Random(getUniqueID().hashCode()).nextInt(150));
 
 		if (ambush) {
 			List<Entity> entities = world.getEntitiesInAABBexcluding(this, new AxisAlignedBB(getPosition()).expand(64, 64, 64), null);
@@ -123,6 +123,7 @@ public class EntityFairy extends EntityFlying {
 		List<Entity> entities = world.getEntitiesInAABBexcluding(this, new AxisAlignedBB(getPosition()).expand(5, 5, 5), null);
 		for (Entity entity : entities)
 			if (entity instanceof EntityLivingBase) {
+				if (entity.isSneaking()) continue;
 				nopeOut = true;
 
 				Vec3d sub = getPositionVector().subtract(entity.getPositionVector().addVector(0, entity.height / 2, 0)).normalize();
@@ -190,7 +191,8 @@ public class EntityFairy extends EntityFlying {
 	@Override
 	public boolean attackEntityFrom(@NotNull DamageSource source, float amount) {
 		super.attackEntityFrom(source, amount);
-		LibParticles.FAIRY_EXPLODE(world, getPositionVector().addVector(0, 0.25, 0), color);
+		if (getHealth() < 0.1)
+			LibParticles.FAIRY_EXPLODE(world, getPositionVector().addVector(0, 0.25, 0), color);
 		return true;
 	}
 

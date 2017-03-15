@@ -106,11 +106,11 @@ public class SpellStack {
 		return branches;
 	}
 
-	public static void runModules(@NotNull ItemStack spellHolder, SpellData spell) {
+	public static void runModules(@NotNull Module mainModule, SpellData spell) {
 		boolean particleDanger = false;
 		boolean continuousSpell = false;
 		int chance = 1;
-		for (Module check : getAllModules(spellHolder)) {
+		for (Module check : getAllModules(mainModule)) {
 			if (check instanceof IParticleDanger) {
 				particleDanger = true;
 				if (((IParticleDanger) check).chanceOfParticles() > chance)
@@ -118,6 +118,43 @@ public class SpellStack {
 			}
 			if (check instanceof IContinousSpell) continuousSpell = true;
 		}
+
+		Entity caster = spell.getData(SpellData.DefaultKeys.CASTER);
+
+		for (Module module : getAllModules(mainModule)) {
+			if (caster instanceof EntityPlayer && !((EntityPlayer) caster).isCreative()) {
+				if (WizardManager.getMana((EntityLivingBase) caster) < module.finalManaCost) {
+					WizardManager.removeMana((int) module.finalManaCost, (EntityLivingBase) caster);
+					WizardManager.addBurnout((int) module.finalBurnoutCost, (EntityLivingBase) caster);
+				}
+			}
+			module.run(spell);
+
+			Vec3d pos = spell.getData(SpellData.DefaultKeys.ORIGIN, caster != null ? caster.getPositionVector() : spell.getData(SpellData.DefaultKeys.TARGET_HIT, Vec3d.ZERO));
+
+			if (!(particleDanger && continuousSpell) || ThreadLocalRandom.current().nextInt(chance) == 0) {
+				if (spell.getData(SpellData.DefaultKeys.TARGET_HIT) == null) {
+					PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(module, spell),
+							new NetworkRegistry.TargetPoint(spell.world.provider.getDimension(), pos.xCoord, pos.yCoord, pos.zCoord, 60));
+				} else {
+					Vec3d target = spell.getData(SpellData.DefaultKeys.TARGET_HIT);
+					PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(module, spell),
+							new NetworkRegistry.TargetPoint(spell.world.provider.getDimension(), target.xCoord, target.yCoord, target.zCoord, 60));
+				}
+			}
+
+			if (caster instanceof EntityPlayer && !((EntityPlayer) caster).isCreative()) {
+				WizardManager.removeMana((int) module.finalManaCost, (EntityLivingBase) caster);
+				WizardManager.addBurnout((int) module.finalBurnoutCost, (EntityLivingBase) caster);
+			}
+
+			SpellCastEvent event = new SpellCastEvent(null, module, spell);
+			MinecraftForge.EVENT_BUS.post(event);
+		}
+	}
+
+	public static void runModules(@NotNull ItemStack spellHolder, SpellData spell) {
+		if (spell.world.isRemote) return;
 
 		Entity caster = spell.getData(SpellData.DefaultKeys.CASTER);
 
@@ -132,15 +169,13 @@ public class SpellStack {
 
 			Vec3d pos = spell.getData(SpellData.DefaultKeys.ORIGIN, caster != null ? caster.getPositionVector() : spell.getData(SpellData.DefaultKeys.TARGET_HIT, Vec3d.ZERO));
 
-			if (!(particleDanger && continuousSpell) || ThreadLocalRandom.current().nextInt(chance) == 0) {
-				if (spell.getData(SpellData.DefaultKeys.TARGET_HIT) == null) {
-					PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(spellHolder, spell),
-							new NetworkRegistry.TargetPoint(spell.world.provider.getDimension(), pos.xCoord, pos.yCoord, pos.zCoord, 60));
-				} else {
-					Vec3d target = spell.getData(SpellData.DefaultKeys.TARGET_HIT);
-					PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(spellHolder, spell),
-							new NetworkRegistry.TargetPoint(spell.world.provider.getDimension(), target.xCoord, target.yCoord, target.zCoord, 60));
-				}
+			if (spell.getData(SpellData.DefaultKeys.TARGET_HIT) == null) {
+				PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(spellHolder, spell),
+						new NetworkRegistry.TargetPoint(spell.world.provider.getDimension(), pos.xCoord, pos.yCoord, pos.zCoord, 60));
+			} else {
+				Vec3d target = spell.getData(SpellData.DefaultKeys.TARGET_HIT);
+				PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(spellHolder, spell),
+						new NetworkRegistry.TargetPoint(spell.world.provider.getDimension(), target.xCoord, target.yCoord, target.zCoord, 60));
 			}
 
 			if (caster instanceof EntityPlayer && !((EntityPlayer) caster).isCreative()) {

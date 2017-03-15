@@ -15,7 +15,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.WorldServer;
 
 import javax.annotation.Nullable;
 
@@ -60,14 +59,8 @@ public class TileStaff extends TileMod implements ITickable {
 						BlockPos pos = new BlockPos(getPos().getX() + i, getPos().getY() + j, getPos().getZ() + k);
 						if (world.getBlockState(pos).getBlock() != ModBlocks.MANA_MAGNET) continue;
 
-						if (fakePlayer == null)
-							fakePlayer = new EntityStaffFakePlayer((WorldServer) getWorld());
-						fakePlayer.setPosition(getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5);
-
 						Vec3d direction = new Vec3d(getPos()).addVector(0.5, 0.5, 0.5).subtract(new Vec3d(pos).addVector(0.5, 0.5, 0.5)).normalize();
 						float[] rotations = PosUtils.vecToRotations(direction);
-						fakePlayer.rotationPitch = rotations[0];
-						fakePlayer.rotationYaw = rotations[1];
 
 						SpellData spell = new SpellData(getWorld());
 						spell.addData(YAW, rotations[1]);

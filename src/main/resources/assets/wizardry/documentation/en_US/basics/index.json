@@ -9,7 +9,7 @@
       "info": "Welcome To Wizardry."
     },
     {
-      "icon": "wizardry:textures/items/mana_pearl.png",
+      "icon": "wizardry:textures/items/mana_orb.png",
       "text": "Mana",
       "link": "/basics/mana.json",
       "info": "Learn about what mana is and why you want it so badly."

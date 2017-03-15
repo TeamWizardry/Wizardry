@@ -47,10 +47,9 @@ public class ItemJar extends ItemWizardry implements IItemColorProvider {
 	@Override
 	public ItemStack onItemUseFinish(@NotNull ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
 		--stack.stackSize;
-		if (entityLiving instanceof EntityPlayer)
-			((EntityPlayer) entityLiving).getFoodStats().addStats(4, 7f);
 		if (entityLiving instanceof EntityPlayer) {
 			EntityPlayer entityplayer = (EntityPlayer) entityLiving;
+			entityplayer.getFoodStats().addStats(4, 7f);
 			worldIn.playSound(null, entityplayer.posX, entityplayer.posY, entityplayer.posZ, SoundEvents.ENTITY_PLAYER_BURP, SoundCategory.PLAYERS, 0.5F, worldIn.rand.nextFloat() * 0.1F + 0.9F);
 			entityLiving.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 200, 2, false, false));
 		}

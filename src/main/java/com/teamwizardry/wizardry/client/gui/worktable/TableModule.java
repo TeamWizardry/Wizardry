@@ -55,7 +55,6 @@ public class TableModule {
 			if (event.getButton() == EnumMouseButton.RIGHT) {
 				if (draggable && sprite.getMouseOver()) {
 
-					event.cancel();
 				}
 			}
 		});

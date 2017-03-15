@@ -84,6 +84,7 @@ public class ItemStaff extends ItemWizardry implements INacreColorable {
 
 	@Override
 	public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
+		if (player.world.isRemote) return;
 		for (Module module : SpellStack.getAllModules(stack))
 			if (module.getChargeUpTime() > 0) {
 				if (count <= 1) {

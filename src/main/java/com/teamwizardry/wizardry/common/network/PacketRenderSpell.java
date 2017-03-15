@@ -2,6 +2,9 @@ package com.teamwizardry.wizardry.common.network;
 
 import com.teamwizardry.librarianlib.common.network.PacketBase;
 import com.teamwizardry.librarianlib.common.util.saving.Save;
+import com.teamwizardry.librarianlib.common.util.saving.SaveMethodGetter;
+import com.teamwizardry.librarianlib.common.util.saving.SaveMethodSetter;
+import com.teamwizardry.wizardry.api.spell.IParticleDanger;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import net.minecraft.client.Minecraft;
@@ -10,6 +13,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
+import java.util.concurrent.ThreadLocalRandom;
+
+import static com.teamwizardry.wizardry.api.spell.SpellStack.getAllModules;
 import static com.teamwizardry.wizardry.api.spell.SpellStack.getModules;
 
 /**
@@ -17,6 +23,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellStack.getModules;
  */
 public class PacketRenderSpell extends PacketBase {
 
+	private Module module;
 	@Save
 	private ItemStack stack;
 	@Save
@@ -30,6 +37,26 @@ public class PacketRenderSpell extends PacketBase {
 		this.data = data.serializeNBT();
 	}
 
+	public PacketRenderSpell(Module module, SpellData data) {
+		this.module = module;
+		this.data = data.serializeNBT();
+	}
+
+	@SaveMethodGetter(saveName = "module")
+	public NBTTagCompound getter() {
+		if (module != null)
+			return module.serializeNBT();
+		return null;
+	}
+
+	@SaveMethodSetter(saveName = "module")
+	public void setter(NBTTagCompound compound) {
+		if (compound != null) {
+			this.module = new Module();
+			this.module.deserializeNBT(compound);
+		}
+	}
+
 	@Override
 	public void handle(MessageContext messageContext) {
 		if (messageContext.side.isServer()) return;
@@ -38,12 +65,47 @@ public class PacketRenderSpell extends PacketBase {
 
 		SpellData data = new SpellData(world);
 		data.deserializeNBT(this.data);
-		for (Module module : getModules(stack)) {
-			if (module != null) {
-				Module tempModule = module;
-				while (tempModule != null) {
-					tempModule.runClient(stack, data);
-					tempModule = tempModule.nextModule;
+
+		if (stack != null) {
+			for (Module module : getModules(stack)) {
+				if (module != null) {
+					Module tempModule = module;
+					while (tempModule != null) {
+
+						int chance = -1;
+						if (tempModule instanceof IParticleDanger) {
+							if (((IParticleDanger) tempModule).chanceOfParticles() > chance)
+								chance = ((IParticleDanger) tempModule).chanceOfParticles();
+						}
+
+						if (chance <= 0)
+							tempModule.runClient(stack, data);
+						else if (ThreadLocalRandom.current().nextInt(chance) == 0)
+							tempModule.runClient(stack, data);
+
+						tempModule = tempModule.nextModule;
+					}
+				}
+			}
+		} else if (module != null) {
+			for (Module module : getAllModules(module)) {
+				if (module != null) {
+					Module tempModule = module;
+					while (tempModule != null) {
+
+						int chance = -1;
+						if (tempModule instanceof IParticleDanger) {
+							if (((IParticleDanger) tempModule).chanceOfParticles() > chance)
+								chance = ((IParticleDanger) tempModule).chanceOfParticles();
+						}
+
+						if (chance <= 0)
+							tempModule.runClient(null, data);
+						else if (ThreadLocalRandom.current().nextInt(chance) == 0)
+							tempModule.runClient(null, data);
+
+						tempModule = tempModule.nextModule;
+					}
 				}
 			}
 		}

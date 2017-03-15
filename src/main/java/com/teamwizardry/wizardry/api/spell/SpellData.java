@@ -171,6 +171,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 		public static final Pair<String, Class<Entity>> ENTITY_HIT = constructPair("entity_hit", Entity.class, new ProcessData.Process<NBTTagInt, Entity>() {
 			@Override
 			public NBTTagInt serialize(Entity object) {
+				if (object == null) return new NBTTagInt(-1);
 				return new NBTTagInt(object.getEntityId());
 			}
 

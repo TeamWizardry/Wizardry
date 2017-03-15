@@ -9,7 +9,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -17,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
@@ -113,18 +111,11 @@ public class ModuleEffectThrive extends Module implements IContinousSpell {
 		if (ThreadLocalRandom.current().nextInt(15) != 0) return;
 
 		World world = spell.world;
-		Vec3d position = spell.getData(ORIGIN);
+		Vec3d position = spell.getData(TARGET_HIT);
 
 		if (position == null) return;
 
-		List<EntityLivingBase> entities = world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(new BlockPos(position)));
-		if (!entities.isEmpty())
-			LibParticles.EFFECT_REGENERATE(world, entities.get(0).getPositionVector().addVector(0, entities.get(0).height / 2, 0), getColor());
-		else {
-			BlockPos plant = new BlockPos(position);
-			if (world.getBlockState(plant).getBlock() instanceof IGrowable)
-				LibParticles.EFFECT_REGENERATE(world, position, getColor());
-		}
+		LibParticles.EFFECT_REGENERATE(world, position, getColor());
 	}
 
 	@NotNull

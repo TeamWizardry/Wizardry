@@ -2,7 +2,6 @@ package com.teamwizardry.wizardry.common.module.effects;
 
 import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.lib.LibParticles;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
@@ -17,8 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.TARGET_HIT;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
 /**
  * Created by LordSaad.
@@ -87,12 +85,13 @@ public class ModuleEffectGravityWell extends Module implements IlingeringModule 
 		if (attributes.hasKey(Attributes.EXTEND))
 			strength += attributes.getDouble(Attributes.EXTEND);
 
-		for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(position)).expand(strength, strength, strength))) {
-			Minecraft.getMinecraft().player.sendChatMessage(entity + "");
+		for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(position)).expand(strength, strength, strength))) {
 			if (entity == null) continue;
-			if (entity.getPositionVector().distanceTo(position) > strength) continue;
+			double dist = entity.getPositionVector().distanceTo(position);
+			if (dist > strength) continue;
 
 			Vec3d dir1 = position.subtract(entity.getPositionVector());
+			dir1.scale(1 / dist);
 			Vec3d dir = dir1.scale(1 / strength);
 			entity.motionX += (dir.xCoord) / 10.0;
 			entity.motionY += (dir.yCoord) / 10.0;
@@ -100,16 +99,19 @@ public class ModuleEffectGravityWell extends Module implements IlingeringModule 
 			entity.fallDistance = 0;
 			entity.velocityChanged = true;
 
+			spell.addData(ENTITY_HIT, entity);
 			if (entity instanceof EntityPlayerMP)
 				((EntityPlayerMP) entity).connection.sendPacket(new SPacketEntityVelocity(entity));
+
+			runNextModule(spell);
 		}
 
-		return runNextModule(spell);
+		return true;
 	}
 
 	@Override
 	public void runClient(@Nullable ItemStack stack, @NotNull SpellData spell) {
-		Vec3d position = spell.getData(TARGET_HIT);
+		Vec3d position = spell.getData(ORIGIN);
 
 		if (position == null) return;
 		LibParticles.EFFECT_NULL_GRAV(spell.world, position, null, getColor());
@@ -126,10 +128,10 @@ public class ModuleEffectGravityWell extends Module implements IlingeringModule 
 
 	@Override
 	public int lingeringTime(SpellData spell) {
-		int strength = 50;
+		int strength = 500;
 		if (attributes.hasKey(Attributes.EXTEND))
 			strength += attributes.getDouble(Attributes.EXTEND);
 
-		return strength * 10;
+		return strength;
 	}
 }

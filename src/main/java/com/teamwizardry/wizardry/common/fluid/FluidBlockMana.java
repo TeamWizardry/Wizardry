@@ -3,16 +3,19 @@ package com.teamwizardry.wizardry.common.fluid;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.Explodable;
 import com.teamwizardry.wizardry.common.achievement.Achievements;
+import com.teamwizardry.wizardry.init.ModPotions;
 import com.teamwizardry.wizardry.init.ModSounds;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
@@ -54,6 +57,22 @@ public class FluidBlockMana extends BlockFluidClassic {
 	@Override
 	public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
 		if (!worldIn.isRemote) {
+
+			if (entityIn instanceof EntityLivingBase)
+				((EntityLivingBase) entityIn).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 1, true, false));
+
+			if (entityIn instanceof EntityPlayer) {
+				EntityPlayer player = (EntityPlayer) entityIn;
+				if (ThreadLocalRandom.current().nextInt(20) == 0) {
+					if (player.getFoodStats().getFoodLevel() > 0)
+						player.getFoodStats().addStats(-1, 0);
+					if (player.getFoodStats().getSaturationLevel() > 0)
+						player.getFoodStats().addStats(0, -1);
+				}
+				if (ThreadLocalRandom.current().nextInt(50) == 0) {
+					player.setHealth((float) Math.max(0, player.getHealth() - 0.1));
+				}
+			}
 
 			LibParticles.FIZZING_AMBIENT(worldIn, entityIn.getPositionVector());
 
