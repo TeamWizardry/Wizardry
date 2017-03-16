@@ -1,13 +1,17 @@
 package com.teamwizardry.wizardry.client.gui.book;
 
+import com.teamwizardry.librarianlib.client.core.ClientTickHandler;
 import com.teamwizardry.librarianlib.client.gui.GuiComponent;
 import com.teamwizardry.librarianlib.client.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.client.gui.components.ComponentText;
 import com.teamwizardry.librarianlib.client.gui.components.ComponentVoid;
 import com.teamwizardry.librarianlib.client.sprite.Sprite;
 import com.teamwizardry.librarianlib.client.sprite.Texture;
+import com.teamwizardry.librarianlib.common.util.math.Vec2d;
 import com.teamwizardry.wizardry.Wizardry;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 
 /**
  * Created by LordSaad.
@@ -35,20 +39,49 @@ public class Slider {
 		compText.getWrap().setValue(120);
 		component.add(compText);
 
-
 		component.BUS.hook(GuiComponent.ComponentTickEvent.class, componentTickEvent -> {
-			//if (component.hasTag("kill")) {
-			//	if (component.getPos().getXi() < 0)
-			//		component.setPos(component.getPos().add(5, 0));
-			//	else component.invalidate();
-//
-			//	return;
-			//}
-			//if (component.getPos().getXi() > -130) {
-			//	double t = Math.abs(component.getPos().getXi());
-			//	double x = (-130) * (MathHelper.sin((float) (t * Math.PI / 2)));
-			//	component.setPos(new Vec2d(x, 0));
-			//}
+			double t = -1, tmax = 5;
+			float finalLoc = -130;
+			float x;
+			if (!component.hasTag("kill")) {
+				for (Object tag : component.getTags()) {
+					Minecraft.getMinecraft().player.sendChatMessage(tag + "");
+					if (tag instanceof String && ((String) tag).startsWith("t:")) {
+						t = Double.parseDouble(((String) tag).split(":")[1]);
+						if (t < tmax) {
+							component.removeTag(tag);
+							component.addTag("t:" + (t + 0.5));
+						}
+						break;
+					}
+				}
+				if (t == -1) {
+					component.addTag("t:" + 0);
+					t = 0;
+				}
+				if (t >= tmax) return;
+
+				x = finalLoc * MathHelper.sin((float) (Math.PI / 2 * ((t + ClientTickHandler.getPartialTicks()) / tmax)));
+
+			} else {
+				for (Object tag : component.getTags()) {
+					Minecraft.getMinecraft().player.sendChatMessage(tag + "");
+					if (tag instanceof String && ((String) tag).startsWith("t:")) {
+						t = Float.parseFloat(((String) tag).split(":")[1]);
+						if (t < tmax) {
+							component.removeTag(tag);
+							component.addTag("t:" + (t - 0.5));
+						}
+						break;
+					}
+				}
+				if (t == -1) component.addTag("t:" + tmax);
+				if (t <= 0) return;
+
+				x = finalLoc * MathHelper.sin((float) (Math.PI / 2 * ((t + ClientTickHandler.getPartialTicks()) / tmax)));
+			}
+
+			component.setPos(new Vec2d(x, component.getPos().getY()));
 		});
 	}
 }

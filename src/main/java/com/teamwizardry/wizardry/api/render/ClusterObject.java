@@ -44,17 +44,17 @@ public class ClusterObject implements INBTSerializable<NBTTagCompound> {
 		if ((world.getTotalWorldTime() - worldTime) >= destTime) {
 			double t = (plate.craftingTimeLeft * 1.0) / plate.craftingTime;
 
-			double radius = ThreadLocalRandom.current().nextDouble(7, 8) * t;
+			double radius = ThreadLocalRandom.current().nextDouble(5, 8) * t;
 
 			angle += ThreadLocalRandom.current().nextDouble(-1, 1);
 			double x = MathHelper.cos((float) angle) * radius;
 			double z = MathHelper.sin((float) angle) * radius;
 
-			Vec3d newDest = new Vec3d(x, (5 + (random.nextFloat() * 3)) * t, z);
+			Vec3d newDest = new Vec3d(x, (2 + (random.nextFloat() * 7)) * t, z);
 			origin = dest;
 			dest = newDest;
 			worldTime = world.getTotalWorldTime();
-			destTime = ThreadLocalRandom.current().nextDouble(10, 30) * (1 / t);
+			destTime = ThreadLocalRandom.current().nextDouble(10, 30);
 		}
 	}
 

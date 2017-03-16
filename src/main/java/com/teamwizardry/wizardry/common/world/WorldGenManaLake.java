@@ -21,9 +21,6 @@ public class WorldGenManaLake {
 	public boolean generate(World worldIn, Random rand, BlockPos position) {
 		int chance = rand.nextInt(Config.manaPoolRarity);
 		if (chance == 1) {
-			for (position = position.add(-8, 0, -8); position.getY() > 5 && worldIn.isAirBlock(position); position = position.down()) {
-			}
-
 			if (position.getY() <= 4) {
 				return false;
 			} else {
@@ -104,8 +101,6 @@ public class WorldGenManaLake {
 						}
 					}
 				}
-
-
 			}
 		}
 		return true;

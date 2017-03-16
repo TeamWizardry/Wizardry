@@ -233,17 +233,22 @@ public class LibParticles {
 		ParticleBuilder glitter = new ParticleBuilder(30);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		glitter.setAlphaFunction(new InterpFadeInOut(1f, 1f));
-		glitter.disableRandom();
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 10, 0, (i, build) -> {
-			double radius = 0.2;
+			double radius = 0.1;
 			double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
 			double r = radius * ThreadLocalRandom.current().nextFloat();
 			double x = r * MathHelper.cos((float) theta);
 			double z = r * MathHelper.sin((float) theta);
 
+			glitter.setLifetime(ThreadLocalRandom.current().nextInt(10, 40));
 			glitter.setColor(new Color(0x4DFFFFFF, true));
-			glitter.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(0, 0.4), z));
+			glitter.setScaleFunction(new InterpScale(0, (float) ThreadLocalRandom.current().nextDouble(3, 4)));
+			glitter.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(0, 0.2), z));
+			if (ThreadLocalRandom.current().nextInt(15) == 0)
+				glitter.addMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.01, 0.01),
+						ThreadLocalRandom.current().nextDouble(0, 0.03),
+						ThreadLocalRandom.current().nextDouble(-0.01, 0.01)));
 		});
 	}
 
@@ -377,13 +382,13 @@ public class LibParticles {
 		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 		glitter.enableMotionCalculation();
 
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(5, 20), 0, (aFloat, particleBuilder) -> {
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(5, 10), 0, (aFloat, particleBuilder) -> {
 			glitter.setColor(new Color(ThreadLocalRandom.current().nextInt(0, 100), ThreadLocalRandom.current().nextInt(0, 100), ThreadLocalRandom.current().nextInt(50, 255)));
 			glitter.setScale(ThreadLocalRandom.current().nextFloat());
 			glitter.addMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.01, 0.01),
 					ThreadLocalRandom.current().nextDouble(-0.01, 0.01),
 					ThreadLocalRandom.current().nextDouble(-0.01, 0.01)));
-			glitter.setLifetime(ThreadLocalRandom.current().nextInt(20, 50));
+			glitter.setLifetime(ThreadLocalRandom.current().nextInt(30, 60));
 		});
 	}
 

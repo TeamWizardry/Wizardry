@@ -15,11 +15,9 @@ import com.teamwizardry.librarianlib.client.sprite.Sprite;
 import com.teamwizardry.librarianlib.client.sprite.Texture;
 import com.teamwizardry.librarianlib.common.util.math.Vec2d;
 import com.teamwizardry.wizardry.Wizardry;
-import kotlin.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
 import java.io.InputStream;
@@ -34,7 +32,7 @@ public class BookGui extends GuiBase {
 	public static Texture SPRITE_SHEET = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/book/book.png"));
 	private static Sprite background = SPRITE_SHEET.getSprite("background", 145, 179);
 	public ComponentVoid mainIndex;
-	private HashMap<ComponentVoid, Pair<Long, Boolean>> sliders = new HashMap<>();
+	private HashMap<ComponentVoid, String> sliders = new HashMap<>();
 
 	public BookGui() {
 		super(145, 179);
@@ -105,50 +103,14 @@ public class BookGui extends GuiBase {
 		Slider slider = new Slider(text);
 		slider.component.setPos(new Vec2d(-component.getPos().getX(), component.getPos().getY()));
 		slider.component.setEnabled(false);
-		component.add(slider.component);
-		GlMixin.INSTANCE.transform(slider.component).setValue(new Vec3d(slider.component.getPos().getX(), slider.component.getPos().getY(), -10));
+		component.BUS.hook(GuiComponent.MouseInEvent.class, componentMouseIn -> {
+			if (slider.component.hasTag("kill")) slider.component.removeTag("kill");
+			component.add(slider.component);
+			GlMixin.INSTANCE.transform(slider.component).setValue(new Vec3d(slider.component.getPos().getX(), slider.component.getPos().getY(), -10));
+		});
 
-		component.BUS.hook(GuiComponent.ComponentTickEvent.class, componentTickEvent -> {
-			float t = -1, tmax = 1;
-			float finalLoc = -130, initialLoc = 0;
-			float x;
-			if (component.getMouseOver()) {
-				for (Object tag : component.getTags()) {
-					Minecraft.getMinecraft().player.sendChatMessage(tag + "");
-					if (tag instanceof String && ((String) tag).startsWith("t:")) {
-						t = Float.parseFloat(((String) tag).split(":")[1]);
-						if (t > 0) {
-							component.removeTag(tag);
-							component.addTag("t:" + (t - 0.1));
-						}
-						break;
-					}
-				}
-				if (t == -1) component.addTag("t:" + tmax);
-				if (t <= 0) return;
-
-				x = (finalLoc - initialLoc) * MathHelper.cos((float) (Math.PI / 2 * t / tmax)) + initialLoc;
-
-			} else {
-				for (Object tag : component.getTags()) {
-					Minecraft.getMinecraft().player.sendChatMessage(tag + "");
-					if (tag instanceof String && ((String) tag).startsWith("t:")) {
-						t = Float.parseFloat(((String) tag).split(":")[1]);
-						if (t < tmax) {
-							component.removeTag(tag);
-							component.addTag("t:" + (t + 0.1));
-						}
-						break;
-					}
-				}
-				if (t == -1) component.addTag("t:" + 0);
-				if (t > tmax) return;
-
-
-				x = (initialLoc - finalLoc) * MathHelper.sin((float) (Math.PI / 2 * t / tmax)) + finalLoc;
-			}
-
-			slider.component.setPos(new Vec2d(x, component.getPos().getY()));
+		component.BUS.hook(GuiComponent.MouseOutEvent.class, componentMouseOut -> {
+			slider.component.addTag("kill");
 		});
 	}
 }

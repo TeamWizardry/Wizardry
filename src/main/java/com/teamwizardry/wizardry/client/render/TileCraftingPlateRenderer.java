@@ -25,11 +25,12 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
 		if (te.getBlockType() instanceof IStructure)
 			if (!((IStructure) te.getBlockType()).renderBoundries(te.getWorld(), te.getPos())) return;
 
+		int count = te.inventory.size();
 		for (ClusterObject cluster : te.inventory) {
 			double timeDifference = (te.getWorld().getTotalWorldTime() - cluster.worldTime + partialTicks) / cluster.destTime;
 			Vec3d current = cluster.origin.add(cluster.dest.subtract(cluster.origin).scale(MathHelper.sin((float) (timeDifference * Math.PI / 2))));
 
-			if (!te.isCrafting && ThreadLocalRandom.current().nextInt(20) == 0)
+			if (!te.isCrafting && ThreadLocalRandom.current().nextInt(count > 0 && count / 2 > 0 ? count / 2 : 1) == 0)
 				LibParticles.CLUSTER_DRAPE(te.getWorld(), new Vec3d(te.getPos()).addVector(0.5, 0.5, 0.5).add(current));
 
 			if (te.isCrafting && (te.output != null)) {
