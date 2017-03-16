@@ -22,9 +22,9 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Created by Saad on 8/17/2016.
  */
-public class EntityHallowedSpirit extends EntityMob {
+public class EntitySpiritWight extends EntityMob {
 
-	public EntityHallowedSpirit(World worldIn) {
+	public EntitySpiritWight(World worldIn) {
 		super(worldIn);
 		setSize(0.6F, 1.95F);
 		experienceValue = 5;
@@ -93,10 +93,10 @@ public class EntityHallowedSpirit extends EntityMob {
 		boolean angry = player != null;
 
 		if ((closePlayer != null) && !angry)
-			LibParticles.HALLOWED_SPIRIT_FLAME_FAR(world, getPositionVector().addVector(0, getEyeHeight(), 0));
+			LibParticles.SPIRIT_WIGHT_FLAME_FAR(world, getPositionVector().addVector(0, getEyeHeight(), 0));
 		else if (angry)
-			LibParticles.HALLOWED_SPIRIT_FLAME_CLOSE(world, getPositionVector().addVector(0, getEyeHeight(), 0));
-		else LibParticles.HALLOWED_SPIRIT_FLAME_NORMAL(world, getPositionVector().addVector(0, getEyeHeight(), 0));
+			LibParticles.SPIRIT_WIGHT_FLAME_CLOSE(world, getPositionVector().addVector(0, getEyeHeight(), 0));
+		else LibParticles.SPIRIT_WIGHT_FLAME_NORMAL(world, getPositionVector().addVector(0, getEyeHeight(), 0));
 
 		if (angry) {
 			player.attackEntityFrom(DamageSource.magic, 0.15f);
@@ -118,7 +118,7 @@ public class EntityHallowedSpirit extends EntityMob {
 	public boolean attackEntityFrom(@NotNull DamageSource source, float amount) {
 		if (source.isMagicDamage()) {
 			super.attackEntityFrom(source, amount);
-			LibParticles.HALLOWED_SPIRIT_HURT(world, getPositionVector());
+			LibParticles.SPIRIT_WIGHT_HURT(world, getPositionVector());
 			return true;
 		} else return false;
 	}

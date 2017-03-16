@@ -13,7 +13,7 @@ import com.teamwizardry.librarianlib.common.util.math.interpolate.position.Inter
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.Constants.MISC;
-import com.teamwizardry.wizardry.api.InterpScale;
+import com.teamwizardry.wizardry.api.util.InterpScale;
 import com.teamwizardry.wizardry.api.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -192,7 +192,7 @@ public class LibParticles {
 		});
 	}
 
-	public static void HALLOWED_SPIRIT_FLAME_FAR(World world, Vec3d pos) {
+	public static void SPIRIT_WIGHT_FLAME_FAR(World world, Vec3d pos) {
 		ParticleBuilder glitter = new ParticleBuilder(30);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
@@ -210,7 +210,7 @@ public class LibParticles {
 		});
 	}
 
-	public static void HALLOWED_SPIRIT_FLAME_CLOSE(World world, Vec3d pos) {
+	public static void SPIRIT_WIGHT_FLAME_CLOSE(World world, Vec3d pos) {
 		ParticleBuilder glitter = new ParticleBuilder(30);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
@@ -228,7 +228,7 @@ public class LibParticles {
 		});
 	}
 
-	public static void HALLOWED_SPIRIT_FLAME_NORMAL(World world, Vec3d pos) {
+	public static void SPIRIT_WIGHT_FLAME_NORMAL(World world, Vec3d pos) {
 		ParticleBuilder glitter = new ParticleBuilder(30);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		glitter.setAlphaFunction(new InterpFadeInOut(1f, 1f));
@@ -274,7 +274,7 @@ public class LibParticles {
 		});
 	}
 
-	public static void HALLOWED_SPIRIT_HURT(World world, Vec3d pos) {
+	public static void SPIRIT_WIGHT_HURT(World world, Vec3d pos) {
 		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(100, 150));
 		glitter.setColorFunction(new InterpColorHSV(Color.BLUE, 50, 20.0F));
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));

@@ -13,6 +13,7 @@ import com.teamwizardry.wizardry.init.ModEntities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.entity.RenderPlayer;
+import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraftforge.client.model.obj.OBJLoader;
@@ -67,6 +68,8 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 	@Override
 	public void postInit(FMLPostInitializationEvent event) {
 		super.postInit(event);
+		if (Minecraft.getMinecraft().getResourceManager() instanceof IReloadableResourceManager)
+			((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(this);
 	}
 
 	@Override

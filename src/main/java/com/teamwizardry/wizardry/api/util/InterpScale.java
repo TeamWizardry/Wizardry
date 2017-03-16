@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.api;
+package com.teamwizardry.wizardry.api.util;
 
 import com.teamwizardry.librarianlib.common.util.math.interpolate.InterpFunction;
 import org.jetbrains.annotations.NotNull;

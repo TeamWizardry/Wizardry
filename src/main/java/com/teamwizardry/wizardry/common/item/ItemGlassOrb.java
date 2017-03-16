@@ -13,7 +13,6 @@ public class ItemGlassOrb extends ItemWizardry implements Explodable {
 
 	public ItemGlassOrb() {
 		super("glass_orb");
-		setMaxStackSize(1);
 	}
 
 	@Override

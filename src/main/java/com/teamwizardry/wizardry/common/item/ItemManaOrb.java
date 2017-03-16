@@ -19,7 +19,6 @@ public class ItemManaOrb extends ItemWizardry {
 
 	public ItemManaOrb() {
 		super("mana_orb");
-		setMaxStackSize(1);
 	}
 
 	@NotNull

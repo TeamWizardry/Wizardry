@@ -17,7 +17,7 @@ public class ModEntities {
 	private static int i = 0;
 
 	public static void init() {
-		registerEntity(EntityHallowedSpirit.class, "hallowed_spirit", 64, 3, true);
+		registerEntity(EntitySpiritWight.class, "spirit_wight", 64, 3, true);
 		registerEntity(EntityFairy.class, "fairy", 64, 3, true);
 		registerEntity(EntityDevilDust.class, "dust_tracker", 64, 1, false);
 		registerEntity(EntitySpellCodex.class, "book_tracker", 64, 1, false);
@@ -37,7 +37,7 @@ public class ModEntities {
 	}
 
 	public static void initModels() {
-		RenderingRegistry.registerEntityRenderingHandler(EntityHallowedSpirit.class, manager -> new RenderHallowedSpirit(manager, new ModelHallowedSpirit()));
+		RenderingRegistry.registerEntityRenderingHandler(EntitySpiritWight.class, manager -> new RenderHallowedSpirit(manager, new ModelHallowedSpirit()));
 		RenderingRegistry.registerEntityRenderingHandler(EntityFairy.class, manager -> new RenderFairy(manager, new ModelNull()));
 		RenderingRegistry.registerEntityRenderingHandler(EntityUnicorn.class, manager -> new RenderUnicorn(manager, new ModelUnicorn()));
 		RenderingRegistry.registerEntityRenderingHandler(EntityJumpPad.class, manager -> new RenderJumpPad(manager, new ModelNull()));
