@@ -20,7 +20,6 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by LordSaad.
@@ -107,18 +106,6 @@ public class SpellStack {
 	}
 
 	public static void runModules(@NotNull Module mainModule, SpellData spell) {
-		boolean particleDanger = false;
-		boolean continuousSpell = false;
-		int chance = 1;
-		for (Module check : getAllModules(mainModule)) {
-			if (check instanceof IParticleDanger) {
-				particleDanger = true;
-				if (((IParticleDanger) check).chanceOfParticles() > chance)
-					chance = ((IParticleDanger) check).chanceOfParticles();
-			}
-			if (check instanceof IContinousSpell) continuousSpell = true;
-		}
-
 		Entity caster = spell.getData(SpellData.DefaultKeys.CASTER);
 
 		for (Module module : getAllModules(mainModule)) {
@@ -132,15 +119,13 @@ public class SpellStack {
 
 			Vec3d pos = spell.getData(SpellData.DefaultKeys.ORIGIN, caster != null ? caster.getPositionVector() : spell.getData(SpellData.DefaultKeys.TARGET_HIT, Vec3d.ZERO));
 
-			if (!(particleDanger && continuousSpell) || ThreadLocalRandom.current().nextInt(chance) == 0) {
-				if (spell.getData(SpellData.DefaultKeys.TARGET_HIT) == null) {
-					PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(module, spell),
-							new NetworkRegistry.TargetPoint(spell.world.provider.getDimension(), pos.xCoord, pos.yCoord, pos.zCoord, 60));
-				} else {
-					Vec3d target = spell.getData(SpellData.DefaultKeys.TARGET_HIT);
-					PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(module, spell),
-							new NetworkRegistry.TargetPoint(spell.world.provider.getDimension(), target.xCoord, target.yCoord, target.zCoord, 60));
-				}
+			if (spell.getData(SpellData.DefaultKeys.TARGET_HIT) == null) {
+				PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(mainModule, spell),
+						new NetworkRegistry.TargetPoint(spell.world.provider.getDimension(), pos.xCoord, pos.yCoord, pos.zCoord, 60));
+			} else {
+				Vec3d target = spell.getData(SpellData.DefaultKeys.TARGET_HIT);
+				PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(mainModule, spell),
+						new NetworkRegistry.TargetPoint(spell.world.provider.getDimension(), target.xCoord, target.yCoord, target.zCoord, 60));
 			}
 
 			if (caster instanceof EntityPlayer && !((EntityPlayer) caster).isCreative()) {

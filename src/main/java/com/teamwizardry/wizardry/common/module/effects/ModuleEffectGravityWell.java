@@ -89,10 +89,8 @@ public class ModuleEffectGravityWell extends Module implements IlingeringModule 
 			if (entity == null) continue;
 			double dist = entity.getPositionVector().distanceTo(position);
 			if (dist > strength) continue;
-
-			Vec3d dir1 = position.subtract(entity.getPositionVector());
-			dir1.scale(1 / dist);
-			Vec3d dir = dir1.scale(1 / strength);
+			Vec3d direction = position.subtract(entity.getPositionVector()).normalize();
+			Vec3d dir = direction.scale(1 / dist);
 			entity.motionX += (dir.xCoord) / 10.0;
 			entity.motionY += (dir.yCoord) / 10.0;
 			entity.motionZ += (dir.zCoord) / 10.0;
@@ -111,10 +109,10 @@ public class ModuleEffectGravityWell extends Module implements IlingeringModule 
 
 	@Override
 	public void runClient(@Nullable ItemStack stack, @NotNull SpellData spell) {
-		Vec3d position = spell.getData(ORIGIN);
+		Vec3d position = spell.getData(TARGET_HIT);
 
 		if (position == null) return;
-		LibParticles.EFFECT_NULL_GRAV(spell.world, position, null, getColor());
+		LibParticles.FAIRY_TRAIL(spell.world, position, getColor(), false, 50);
 	}
 
 	@NotNull
@@ -128,7 +126,7 @@ public class ModuleEffectGravityWell extends Module implements IlingeringModule 
 
 	@Override
 	public int lingeringTime(SpellData spell) {
-		int strength = 500;
+		int strength = 3000;
 		if (attributes.hasKey(Attributes.EXTEND))
 			strength += attributes.getDouble(Attributes.EXTEND);
 

@@ -6,6 +6,7 @@ import com.teamwizardry.librarianlib.common.util.saving.SaveMethodGetter;
 import com.teamwizardry.librarianlib.common.util.saving.SaveMethodSetter;
 import com.teamwizardry.wizardry.api.spell.IParticleDanger;
 import com.teamwizardry.wizardry.api.spell.Module;
+import com.teamwizardry.wizardry.api.spell.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
@@ -52,8 +53,9 @@ public class PacketRenderSpell extends PacketBase {
 	@SaveMethodSetter(saveName = "module")
 	public void setter(NBTTagCompound compound) {
 		if (compound != null) {
-			this.module = new Module();
-			this.module.deserializeNBT(compound);
+			this.module = ModuleRegistry.INSTANCE.getModule(compound.getString("id"));
+			if (module != null)
+				this.module.deserializeNBT(compound);
 		}
 	}
 
