@@ -21,6 +21,7 @@ public class ClusterObject implements INBTSerializable<NBTTagCompound> {
 	public long worldTime;
 	public double destTime;
 	public double angle;
+	public int tick = 0;
 	private TileCraftingPlate plate;
 
 	public ClusterObject(TileCraftingPlate plate, ItemStack stack, World world, Random random) {
@@ -41,6 +42,7 @@ public class ClusterObject implements INBTSerializable<NBTTagCompound> {
 	}
 
 	public void tick(World world, Random random) {
+		tick++;
 		if ((world.getTotalWorldTime() - worldTime) >= destTime) {
 			double t = (plate.craftingTimeLeft * 1.0) / plate.craftingTime;
 
@@ -54,7 +56,7 @@ public class ClusterObject implements INBTSerializable<NBTTagCompound> {
 			origin = dest;
 			dest = newDest;
 			worldTime = world.getTotalWorldTime();
-			destTime = ThreadLocalRandom.current().nextDouble(10, 30);
+			destTime = ThreadLocalRandom.current().nextDouble(10, 30) * t;
 		}
 	}
 
@@ -70,6 +72,7 @@ public class ClusterObject implements INBTSerializable<NBTTagCompound> {
 		compound.setDouble("origin_z", origin.zCoord);
 		compound.setDouble("dest_time", destTime);
 		compound.setLong("world_time", worldTime);
+		compound.setDouble("tick", tick);
 		return compound;
 	}
 
@@ -80,5 +83,6 @@ public class ClusterObject implements INBTSerializable<NBTTagCompound> {
 		origin = new Vec3d(nbt.getDouble("origin_x"), nbt.getDouble("origin_y"), nbt.getDouble("origin_z"));
 		destTime = nbt.getDouble("dest_time");
 		worldTime = nbt.getLong("world_time");
+		tick = nbt.getInteger("tick");
 	}
 }

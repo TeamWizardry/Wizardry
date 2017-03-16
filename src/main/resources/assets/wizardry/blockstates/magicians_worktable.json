@@ -1,18 +1,18 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "wizardry:magicians_worktable.obj"
+    "model": "wizardry:research_table_left"
   },
   "variants": {
     "inventory": {
-      "model": "wizardry:table_left"
+      "model": "wizardry:research_table_left"
     },
     "is_left_side": {
       "true": {
-        "model": "wizardry:Empty"
+        "model": "wizardry:research_table_right"
       },
       "false": {
-        "model": "wizardry:magicians_worktable.obj",
+        "model": "wizardry:research_table_left",
         "uvlock": false
       }
     },

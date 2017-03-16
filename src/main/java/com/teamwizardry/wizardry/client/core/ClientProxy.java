@@ -13,16 +13,20 @@ import com.teamwizardry.wizardry.init.ModEntities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.entity.RenderPlayer;
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.Event;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
-public class ClientProxy extends CommonProxy {
+public class ClientProxy extends CommonProxy implements IResourceManagerReloadListener {
 
 	@Override
 	public void preInit(FMLPreInitializationEvent event) {
@@ -68,5 +72,18 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void openGUI(Object gui) {
 		Minecraft.getMinecraft().displayGuiScreen((GuiScreen) gui);
+	}
+
+	@Override
+	public void onResourceManagerReload(@NotNull IResourceManager resourceManager) {
+		MinecraftForge.EVENT_BUS.post(new ResourceReloadEvent(resourceManager));
+	}
+
+	public static class ResourceReloadEvent extends Event {
+		public final IResourceManager resourceManager;
+
+		public ResourceReloadEvent(IResourceManager manager) {
+			resourceManager = manager;
+		}
 	}
 }

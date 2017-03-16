@@ -41,13 +41,17 @@ public class BlockCraftingPlate extends BlockModContainer implements IManaSink, 
 	public BlockCraftingPlate() {
 		super("crafting_plate", Material.ROCK);
 		setHardness(1.0F);
-		setLightLevel(15);
 		setSoundType(SoundType.STONE);
 	}
 
 	@SideOnly(Side.CLIENT)
 	public void initModel() {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileCraftingPlate.class, new TileCraftingPlateRenderer());
+	}
+
+	@Override
+	public int getLightValue(@NotNull IBlockState state, IBlockAccess world, @NotNull BlockPos pos) {
+		return 15;
 	}
 
 	@Nullable

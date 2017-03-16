@@ -34,18 +34,22 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
 				LibParticles.CLUSTER_DRAPE(te.getWorld(), new Vec3d(te.getPos()).addVector(0.5, 0.5, 0.5).add(current));
 
 			if (te.isCrafting && (te.output != null)) {
-				if (ThreadLocalRandom.current().nextInt(20) == 0)
-					LibParticles.CRAFTING_ALTAR_HELIX(te.getWorld(), new Vec3d(te.getPos()).addVector(0.5, 0.25, 0.5));
-				if (((ThreadLocalRandom.current().nextInt(10)) != 0)) continue;
-				LibParticles.CRAFTING_ALTAR_CLUSTER_SUCTION(te.getWorld(), new Vec3d(te.getPos()).addVector(0.5, 0.5, 0.5), new InterpBezier3D(current, new Vec3d(0, 0, 0)));
+				if (((ThreadLocalRandom.current().nextInt(10)) != 0)) {
+					LibParticles.CRAFTING_ALTAR_CLUSTER_SUCTION(te.getWorld(), new Vec3d(te.getPos()).addVector(0.5, 0.75, 0.5), new InterpBezier3D(current, new Vec3d(0, 0, 0)));
+				}
 			}
 
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(x + 0.5 + current.xCoord, y + 0.5 + current.yCoord, z + 0.5 + current.zCoord);
 			GlStateManager.scale(0.3, 0.3, 0.3);
-			GlStateManager.rotate((float) ClientTickHandler.getTicksInGame(), 0, 1, 0);
+			GlStateManager.rotate((cluster.tick) + ClientTickHandler.getPartialTicks(), 0, 1, 0);
 			Minecraft.getMinecraft().getRenderItem().renderItem(cluster.stack, TransformType.NONE);
 			GlStateManager.popMatrix();
+			//Minecraft.getMinecraft().player.sendChatMessage((luster.stack.hashCode()) / 100000000.0 + "");
+		}
+
+		if (te.isCrafting && (te.output != null)) {
+			LibParticles.CRAFTING_ALTAR_HELIX(te.getWorld(), new Vec3d(te.getPos()).addVector(0.5, 0.25, 0.5));
 		}
 
 		if (!te.isCrafting && (te.output != null)) {
@@ -55,7 +59,8 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
 			GlStateManager.rotate(te.tick, 0, 1, 0);
 			Minecraft.getMinecraft().getRenderItem().renderItem(te.output, TransformType.NONE);
 			GlStateManager.popMatrix();
+		} else {
+			LibParticles.CRAFTING_ALTAR_IDLE(te.getWorld(), new Vec3d(te.getPos()).addVector(0.5, 0.85, 0.5));
 		}
 	}
-
 }
