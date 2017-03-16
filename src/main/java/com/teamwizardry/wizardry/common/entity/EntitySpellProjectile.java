@@ -11,17 +11,16 @@ import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.common.module.events.ModuleEventAlongPath;
+import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
-import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -38,25 +37,24 @@ public class EntitySpellProjectile extends EntityThrowable {
 
 	public EntitySpellProjectile(World world, Module module, SpellData spell) {
 		super(world);
-		this.spell = spell;
 		setSize(0.1F, 0.1F);
 		isImmuneToFire = true;
 
 		this.module = module;
+		this.spell = spell;
 	}
 
 	@Override
 	public void onUpdate() {
 		super.onUpdate();
-		if (ticksExisted > 500) setDead();
+		if (ticksExisted > 1000) {
+			setDead();
+			return;
+		}
 		if (module == null) return;
-		List<EntitySpellProjectile> projectiles = world.getEntitiesWithinAABB(EntitySpellProjectile.class, new AxisAlignedBB(getPosition()).expand(0.5, 0.5, 0.5));
-		if (!projectiles.isEmpty())
-			for (EntitySpellProjectile projectile : projectiles)
-				if (projectile != null && projectile.module != null && module != null)
-					if (projectile.module.equals(module) && getEntityId() % 2 == 0) setDead();
 
 		if (module.getColor() != null) {
+			// TODO: Particle side
 			ParticleBuilder glitter = new ParticleBuilder(10);
 			glitter.setColor(new Color(1.0f, 1.0f, 1.0f, 0.1f));
 			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
@@ -68,6 +66,7 @@ public class EntitySpellProjectile extends EntityThrowable {
 				glitter.setLifetime(ThreadLocalRandom.current().nextInt(10, 20));
 				glitter.setPositionFunction(new InterpHelix(Vec3d.ZERO, getLook(0), 0.3f, 0.3f, 1F, ThreadLocalRandom.current().nextFloat()));
 			});
+			LibParticles.FAIRY_HEAD(world, getPositionVector(), module.getColor());
 		}
 
 		if (module.nextModule != null) {
@@ -83,9 +82,7 @@ public class EntitySpellProjectile extends EntityThrowable {
 		if (module != null && module.nextModule != null) {
 			Module nextModule = module.nextModule;
 
-			SpellData newSpell = new SpellData(world);
-			newSpell.addData(SpellData.DefaultKeys.ORIGIN, spell.getData(SpellData.DefaultKeys.ORIGIN));
-			newSpell.addData(SpellData.DefaultKeys.CASTER, spell.getData(SpellData.DefaultKeys.CASTER));
+			SpellData newSpell = spell.copy();
 			if (result.typeOfHit == RayTraceResult.Type.ENTITY)
 				newSpell.crunchData(result.entityHit, false);
 			else if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
@@ -94,6 +91,7 @@ public class EntitySpellProjectile extends EntityThrowable {
 			}
 			nextModule.run(newSpell);
 			setDead();
+			LibParticles.FAIRY_EXPLODE(world, result.hitVec, module.getColor() == null ? Color.WHITE : module.getColor());
 		}
 	}
 
@@ -105,16 +103,22 @@ public class EntitySpellProjectile extends EntityThrowable {
 	@Override
 	public void readEntityFromNBT(@NotNull NBTTagCompound compound) {
 		super.readEntityFromNBT(compound);
-		Module module = ModuleRegistry.INSTANCE.getModule(compound.getString("id"));
-		if (module == null) return;
-		module.deserializeNBT(compound);
-		Module.process(module);
-		this.module = module;
+		NBTTagCompound moduleCompound = compound.getCompoundTag("module");
+		Module module = ModuleRegistry.INSTANCE.getModule(moduleCompound.getString("id"));
+		if (module != null) {
+			module.deserializeNBT(compound);
+			Module.process(module);
+			this.module = module;
+		}
+
+		spell = new SpellData(world);
+		spell.deserializeNBT(compound.getCompoundTag("spell_data"));
 	}
 
 	@Override
 	public void writeEntityToNBT(@NotNull NBTTagCompound compound) {
 		super.writeEntityToNBT(compound);
 		compound.setTag("module", module.serializeNBT());
+		compound.setTag("spell_data", spell.serializeNBT());
 	}
 }

@@ -6,6 +6,7 @@ import com.teamwizardry.wizardry.common.core.SpellTicker;
 import kotlin.Pair;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -222,6 +223,7 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 
 	public double calcBurnoutPercent(@Nullable Entity player) {
 		if (!(player instanceof EntityLivingBase)) return 1;
+		if (player instanceof EntityPlayer && ((EntityPlayer) player).isCreative()) return 1;
 		return ((WizardManager.getMaxBurnout((EntityLivingBase) player) - WizardManager.getBurnout((EntityLivingBase) player)) / (WizardManager.getMaxBurnout((EntityLivingBase) player) * 1.0));
 	}
 

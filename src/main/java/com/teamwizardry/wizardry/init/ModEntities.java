@@ -22,7 +22,6 @@ public class ModEntities {
 		registerEntity(EntityDevilDust.class, "dust_tracker", 64, 1, false);
 		registerEntity(EntitySpellCodex.class, "book_tracker", 64, 1, false);
 		registerEntity(EntitySpellProjectile.class, "spell_projectile", 64, 1, false);
-		registerEntity(EntitySpellGravityWell.class, "gravity_well", 64, 1, false);
 		registerEntity(EntityJumpPad.class, "jump_pad", 64, 1, false);
 		registerEntity(EntityUnicorn.class, "unicorn");
 	}

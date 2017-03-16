@@ -8,7 +8,6 @@ import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellStack;
 import com.teamwizardry.wizardry.api.util.PosUtils;
-import com.teamwizardry.wizardry.common.entity.EntityStaffFakePlayer;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.item.ItemStack;
@@ -29,7 +28,6 @@ public class TileStaff extends TileMod implements ITickable {
 	@Nullable
 	@Save
 	public ItemStack pearl;
-	private EntityStaffFakePlayer fakePlayer = null;
 	@Save
 	private int cooldown = 0;
 
@@ -59,7 +57,7 @@ public class TileStaff extends TileMod implements ITickable {
 						BlockPos pos = new BlockPos(getPos().getX() + i, getPos().getY() + j, getPos().getZ() + k);
 						if (world.getBlockState(pos).getBlock() != ModBlocks.MANA_MAGNET) continue;
 
-						Vec3d direction = new Vec3d(getPos()).addVector(0.5, 0.5, 0.5).subtract(new Vec3d(pos).addVector(0.5, 0.5, 0.5)).normalize();
+						Vec3d direction = new Vec3d(getPos()).subtract(new Vec3d(pos)).normalize();
 						float[] rotations = PosUtils.vecToRotations(direction);
 
 						SpellData spell = new SpellData(getWorld());

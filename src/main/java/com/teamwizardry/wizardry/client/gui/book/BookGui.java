@@ -108,31 +108,47 @@ public class BookGui extends GuiBase {
 		component.add(slider.component);
 		GlMixin.INSTANCE.transform(slider.component).setValue(new Vec3d(slider.component.getPos().getX(), slider.component.getPos().getY(), -10));
 
-		slider.component.BUS.hook(GuiComponent.ComponentTickEvent.class, componentTickEvent -> {
-			if (sliders.containsKey(slider.component)) {
-				slider.component.setVisible(true);
-				double t = (System.currentTimeMillis() - sliders.get(slider.component).getFirst()) / 700.0;
-				if (sliders.get(slider.component).getSecond()) {
-					double x = -130 * MathHelper.sin((float) ((Math.PI * t)));
-					Minecraft.getMinecraft().player.sendChatMessage(x + " - " + MathHelper.sin((float) ((Math.PI * t) + 0.5)) + " - " + t);
-					slider.component.setPos(new Vec2d(x, slider.component.getPos().getY()));
-				} else {
-					double x = -130 * MathHelper.sin((float) ((Math.PI * t) + 0.5));
-					slider.component.setPos(new Vec2d(x, slider.component.getPos().getY()));
+		component.BUS.hook(GuiComponent.ComponentTickEvent.class, componentTickEvent -> {
+			float t = -1, tmax = 1;
+			float finalLoc = -130, initialLoc = 0;
+			float x;
+			if (component.getMouseOver()) {
+				for (Object tag : component.getTags()) {
+					Minecraft.getMinecraft().player.sendChatMessage(tag + "");
+					if (tag instanceof String && ((String) tag).startsWith("t:")) {
+						t = Float.parseFloat(((String) tag).split(":")[1]);
+						if (t > 0) {
+							component.removeTag(tag);
+							component.addTag("t:" + (t - 0.1));
+						}
+						break;
+					}
 				}
+				if (t == -1) component.addTag("t:" + tmax);
+				if (t <= 0) return;
+
+				x = (finalLoc - initialLoc) * MathHelper.cos((float) (Math.PI / 2 * t / tmax)) + initialLoc;
+
 			} else {
-				slider.component.setVisible(false);
+				for (Object tag : component.getTags()) {
+					Minecraft.getMinecraft().player.sendChatMessage(tag + "");
+					if (tag instanceof String && ((String) tag).startsWith("t:")) {
+						t = Float.parseFloat(((String) tag).split(":")[1]);
+						if (t < tmax) {
+							component.removeTag(tag);
+							component.addTag("t:" + (t + 0.1));
+						}
+						break;
+					}
+				}
+				if (t == -1) component.addTag("t:" + 0);
+				if (t > tmax) return;
+
+
+				x = (initialLoc - finalLoc) * MathHelper.sin((float) (Math.PI / 2 * t / tmax)) + finalLoc;
 			}
-		});
 
-		component.BUS.hook(GuiComponent.MouseInEvent.class, mouseOverEvent -> {
-			if (!sliders.containsKey(slider.component))
-				sliders.put(slider.component, new Pair<>(System.currentTimeMillis(), true));
-		});
-
-		component.BUS.hook(GuiComponent.MouseOutEvent.class, mouseOverEvent -> {
-			if (sliders.containsKey(slider.component))
-				sliders.put(slider.component, new Pair<>(System.currentTimeMillis(), false));
+			slider.component.setPos(new Vec2d(x, component.getPos().getY()));
 		});
 	}
 }

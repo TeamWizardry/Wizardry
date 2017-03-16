@@ -14,6 +14,7 @@ import com.teamwizardry.librarianlib.common.util.math.interpolate.position.Inter
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.Constants.MISC;
+import com.teamwizardry.wizardry.api.InterpScale;
 import com.teamwizardry.wizardry.api.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -515,27 +516,72 @@ public class LibParticles {
 	}
 
 	public static void EFFECT_BURN(World world, @NotNull Vec3d pos, Color color) {
-		ParticleBuilder glitter = new ParticleBuilder(50);
+		ParticleBuilder glitter = new ParticleBuilder(3);
 		glitter.setScale(1);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 20, 0, (aFloat, particleBuilder) -> {
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 4, 0, (aFloat, particleBuilder) -> {
 			glitter.setColor(Utils.changeColorAlpha(color, ThreadLocalRandom.current().nextInt(200, 255)));
 
-			glitter.setLifetime(ThreadLocalRandom.current().nextInt(10, 40));
-			glitter.setScale(ThreadLocalRandom.current().nextFloat());
+			glitter.setLifetime(ThreadLocalRandom.current().nextInt(10, 30));
+			glitter.setScaleFunction(new InterpScale((float) ThreadLocalRandom.current().nextDouble(3, 10), 0f));
 			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, ThreadLocalRandom.current().nextFloat()));
-
-			double radius = 3;
-			double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
-			double r = radius * ThreadLocalRandom.current().nextFloat();
-			double x = r * MathHelper.cos((float) theta);
-			double z = r * MathHelper.sin((float) theta);
-			Vec3d dest = new Vec3d(x, ThreadLocalRandom.current().nextDouble(-1, 1), z);
-			glitter.setPositionFunction(new InterpBezier3D(Vec3d.ZERO, dest,
-					new Vec3d(0, ThreadLocalRandom.current().nextDouble(0, 1), 0),
-					new Vec3d(0, ThreadLocalRandom.current().nextDouble(-2, 0), 0)));
+			glitter.addMotion(new Vec3d(
+					ThreadLocalRandom.current().nextDouble(-0.05, 0.05),
+					ThreadLocalRandom.current().nextDouble(0.05),
+					ThreadLocalRandom.current().nextDouble(-0.05, 0.05)
+			));
+			glitter.setPositionOffset(new Vec3d(
+					ThreadLocalRandom.current().nextDouble(-0.3, 0.3),
+					ThreadLocalRandom.current().nextDouble(-0.3, 0.3),
+					ThreadLocalRandom.current().nextDouble(-0.3, 0.3)
+			));
 		});
+
+
+		ParticleBuilder dust = new ParticleBuilder(3);
+		dust.setScale(1);
+		dust.setRenderNormalLayer(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+
+		ParticleSpawner.spawn(dust, world, new StaticInterp<>(pos), 3, 0, (aFloat, particleBuilder) -> {
+
+			dust.setLifetime(ThreadLocalRandom.current().nextInt(10, 30));
+			dust.setScaleFunction(new InterpScale(3f, 0.5f));
+			dust.setAlphaFunction(new InterpFadeInOut(1, 1));
+			dust.setColor(Color.DARK_GRAY);
+			dust.addMotion(new Vec3d(
+					ThreadLocalRandom.current().nextDouble(-0.05, 0.05),
+					ThreadLocalRandom.current().nextDouble(0.05),
+					ThreadLocalRandom.current().nextDouble(-0.05, 0.05)
+			));
+		});
+
+		//ParticleBuilder dust = new ParticleBuilder(3);
+		//dust.setScale(1);
+		//dust.setRenderNormalLayer(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+//
+		//ParticleSpawner.spawn(dust, world, new StaticInterp<>(pos), 10, 0, (aFloat, particleBuilder) -> {
+		//	dust.setColor(Color.DARK_GRAY);
+		//	dust.setLifetime(ThreadLocalRandom.current().nextInt(20, 30));
+		//	dust.setScale(1);
+		//	dust.setScaleFunction(new InterpFadeInOut(0, 0.9f));
+		//	//dust.setAlphaFunction(new InterpFadeInOut(0.3f, ThreadLocalRandom.current().nextFloat()));
+		//	double x = ThreadLocalRandom.current().nextDouble(-4, 4),
+		//			z = ThreadLocalRandom.current().nextDouble(-4, 4);
+		//	dust.setPositionFunction(new InterpBezier3D(Vec3d.ZERO,
+		//			new Vec3d(x, ThreadLocalRandom.current().nextDouble(4), z),
+		//			new Vec3d(x, -5, z), new Vec3d(0, 1, 0)));
+//
+		//	//double radius = 3;
+		//	//double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
+		//	//double r = radius * ThreadLocalRandom.current().nextFloat();
+		//	//double x = r * MathHelper.cos((float) theta);
+		//	//double z = r * MathHelper.sin((float) theta);
+		//	//Vec3d dest = new Vec3d(x, ThreadLocalRandom.current().nextDouble(-1, 1), z);
+		//	//glitter.setPositionFunction(new InterpBezier3D(Vec3d.ZERO, dest,
+		//	//		new Vec3d(0, ThreadLocalRandom.current().nextDouble(0, 1), 0),
+		//	//		new Vec3d(0, ThreadLocalRandom.current().nextDouble(-2, 0), 0)));
+		//});
 	}
 
 	public static void STRUCTURE_BOUNDS(World world, Vec3d pos, Color color) {

@@ -95,20 +95,19 @@ public class ModuleEffectBurn extends Module implements IContinousSpell {
 		strength *= calcBurnoutPercent(caster);
 
 		if (targetEntity != null) targetEntity.setFire(strength);
+
 		if (targetPos != null) {
-			double chance = 50;
+			double chance = 35;
 			if (attributes.hasKey(Attributes.EXTEND))
-				chance -= Math.min(20, attributes.getDouble(Attributes.EXTEND));
+				chance -= Math.min(5, attributes.getDouble(Attributes.EXTEND));
 			chance *= calcBurnoutPercent(caster);
 			if ((int) chance <= 0) return false;
 			if (ThreadLocalRandom.current().nextInt((int) chance) != 0) return false;
 
-			if (world.isAirBlock(targetPos)) {
-				for (EnumFacing facing : EnumFacing.VALUES) {
-					if (world.isAirBlock(targetPos.offset(facing)) || world.getBlockState(targetPos.offset(facing)).getBlock() == Blocks.FIRE) {
-						world.setBlockState(targetPos, Blocks.FIRE.getDefaultState());
-						return true;
-					}
+			for (EnumFacing facing : EnumFacing.VALUES) {
+				if (world.isAirBlock(targetPos.offset(facing)) || world.getBlockState(targetPos.offset(facing)).getBlock() == Blocks.FIRE) {
+					world.setBlockState(targetPos.offset(facing), Blocks.FIRE.getDefaultState(), 11);
+					return true;
 				}
 			}
 		}

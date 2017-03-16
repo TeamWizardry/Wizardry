@@ -59,20 +59,27 @@ public class ModuleShapeProjectile extends Module {
 	public boolean run(@NotNull SpellData spell) {
 		if (nextModule == null) return true;
 		World world = spell.world;
+		if (world.isRemote) return false;
+
 		float yaw = spell.getData(YAW, 0F);
 		float pitch = spell.getData(PITCH, 0F);
+		Vec3d origin = spell.getData(ORIGIN);
 		Entity caster = spell.getData(CASTER);
 
-		if (caster == null) return false;
-		Vec3d position = caster.getPositionVector();
-		position = position.addVector(0, caster.getEyeHeight(), 0);
+		if (origin == null) return false;
+
+		if (caster != null) {
+			float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - yaw));
+			float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - yaw));
+			origin = new Vec3d(offX, caster.getEyeHeight(), offZ).add(origin);
+		}
+
 		EntitySpellProjectile proj = new EntitySpellProjectile(world, this, spell);
-		proj.setPosition(position.xCoord, position.yCoord, position.xCoord);
+		proj.setPosition(origin.xCoord, origin.yCoord, origin.xCoord);
 		Vec3d dir = PosUtils.vecFromRotations(pitch, yaw);
 		proj.setThrowableHeading(dir.xCoord, dir.yCoord, dir.zCoord, 1.5f, 0.0f);
 		proj.velocityChanged = true;
-		world.spawnEntity(proj);
-		return true;
+		return world.spawnEntity(proj);
 	}
 
 	@Override
