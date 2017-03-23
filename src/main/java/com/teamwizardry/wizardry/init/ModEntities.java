@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.init;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.client.render.entity.*;
 import com.teamwizardry.wizardry.common.entity.*;
+import com.teamwizardry.wizardry.common.entity.gods.EntityGavreel;
 import net.minecraft.entity.Entity;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
@@ -18,6 +19,7 @@ public class ModEntities {
 
 	public static void init() {
 		registerEntity(EntitySpiritWight.class, "spirit_wight", 64, 3, true);
+		registerEntity(EntityGavreel.class, "gavreel", 64, 3, true);
 		registerEntity(EntityFairy.class, "fairy", 64, 3, true);
 		registerEntity(EntityDevilDust.class, "dust_tracker", 64, 1, false);
 		registerEntity(EntitySpellCodex.class, "book_tracker", 64, 1, false);
@@ -37,7 +39,8 @@ public class ModEntities {
 	}
 
 	public static void initModels() {
-		RenderingRegistry.registerEntityRenderingHandler(EntitySpiritWight.class, manager -> new RenderHallowedSpirit(manager, new ModelHallowedSpirit()));
+		RenderingRegistry.registerEntityRenderingHandler(EntityGavreel.class, manager -> new RenderGavreel(manager, new ModelGavreel()));
+		RenderingRegistry.registerEntityRenderingHandler(EntitySpiritWight.class, manager -> new RenderSpiritWight(manager, new ModelSpiritWight()));
 		RenderingRegistry.registerEntityRenderingHandler(EntityFairy.class, manager -> new RenderFairy(manager, new ModelNull()));
 		RenderingRegistry.registerEntityRenderingHandler(EntityUnicorn.class, manager -> new RenderUnicorn(manager, new ModelUnicorn()));
 		RenderingRegistry.registerEntityRenderingHandler(EntityJumpPad.class, manager -> new RenderJumpPad(manager, new ModelNull()));

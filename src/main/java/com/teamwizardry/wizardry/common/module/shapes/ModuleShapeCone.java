@@ -37,9 +37,6 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 @RegisterModule
 public class ModuleShapeCone extends Module implements IParticleDanger {
 
-	public ModuleShapeCone() {
-	}
-
 	@NotNull
 	@Override
 	public ItemStack getRequiredStack() {
@@ -125,6 +122,8 @@ public class ModuleShapeCone extends Module implements IParticleDanger {
 				runNextModule(newSpell);
 			}
 		}
+
+		usedShape = this;
 		return true;
 	}
 

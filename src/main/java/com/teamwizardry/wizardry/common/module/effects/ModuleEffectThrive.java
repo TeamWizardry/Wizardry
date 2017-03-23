@@ -91,17 +91,9 @@ public class ModuleEffectThrive extends Module implements IContinousSpell {
 			((EntityLivingBase) targetEntity).setHealth((float) (((EntityLivingBase) targetEntity).getHealth() + strength));
 		}
 		if (targetPos != null) {
-			int chance = 80;
-			if (attributes.hasKey(Attributes.EXTEND))
-				chance -= Math.min(50, attributes.getDouble(Attributes.EXTEND));
-			chance *= calcBurnoutPercent(caster);
-			if (chance <= 0) return false;
-			if (ThreadLocalRandom.current().nextInt(chance) != 0) return false;
-
 			BlockPos pos = new BlockPos(targetPos);
 			if (world.getBlockState(pos).getBlock() instanceof IGrowable)
 				ItemDye.applyBonemeal(new ItemStack(Items.DYE), world, pos);
-
 		}
 		return true;
 	}

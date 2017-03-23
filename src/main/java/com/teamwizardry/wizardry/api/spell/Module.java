@@ -35,6 +35,12 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	public Module nextModule = null;
 
 	/**
+	 * Shape modifiers should set this so other modules can adjust to it.
+	 */
+	@Nullable
+	public Module usedShape = null;
+
+	/**
 	 * The final calculated cost of mana this spell consumes.
 	 */
 	public double finalManaCost = 10;
@@ -241,6 +247,9 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 		compound.setString("id", getID());
 		compound.setTag("attributes", attributes);
 		if (nextModule != null) compound.setTag("next_module", nextModule.serializeNBT());
+
+		if (usedShape != null)
+			compound.setTag("used_shape", usedShape.serializeNBT());
 		return compound;
 	}
 
@@ -251,5 +260,7 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 			nextModule = ModuleRegistry.INSTANCE.getModule(nbt.getCompoundTag("next_module").getString("id"));
 			if (nextModule != null) nextModule.deserializeNBT(nbt.getCompoundTag("next_module"));
 		}
+
+		usedShape = ModuleRegistry.INSTANCE.getModule(nbt.getCompoundTag("used_shape").getString("id"));
 	}
 }

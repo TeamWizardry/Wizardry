@@ -21,10 +21,6 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 @RegisterModule
 public class ModuleShapeProjectile extends Module {
 
-	public ModuleShapeProjectile() {
-		process(this);
-	}
-
 	@NotNull
 	@Override
 	public ItemStack getRequiredStack() {
@@ -79,6 +75,8 @@ public class ModuleShapeProjectile extends Module {
 		Vec3d dir = PosUtils.vecFromRotations(pitch, yaw);
 		proj.setThrowableHeading(dir.xCoord, dir.yCoord, dir.zCoord, 1.5f, 0.0f);
 		proj.velocityChanged = true;
+
+		usedShape = this;
 		return world.spawnEntity(proj);
 	}
 

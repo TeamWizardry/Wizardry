@@ -12,12 +12,14 @@ import com.teamwizardry.wizardry.api.render.ClusterObject;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.SpellStack;
 import com.teamwizardry.wizardry.init.ModItems;
+import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -100,6 +102,8 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink {
 				List<ItemStack> stacks = new ArrayList<>();
 				for (ClusterObject cluster : inventory) stacks.add(cluster.stack);
 				SpellStack spellStack = new SpellStack(stacks);
+
+				LibParticles.CRAFTING_ALTAR_PEARL_EXPLODE(world, new Vec3d(pos).addVector(0, 0.75, 0));
 
 				ItemStack stack = new ItemStack(ModItems.PEARL_NACRE);
 				ItemNBTHelper.setString(stack, "type", PearlType.INFUSED.toString());

@@ -17,9 +17,6 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
 @RegisterModule
 public class ModuleShapeSelf extends Module {
 
-	public ModuleShapeSelf() {
-	}
-
 	@NotNull
 	@Override
 	public ItemStack getRequiredStack() {
@@ -56,6 +53,8 @@ public class ModuleShapeSelf extends Module {
 		if (caster == null) return false;
 		spell.crunchData(caster, true);
 		spell.crunchData(caster, false);
+
+		usedShape = this;
 		return runNextModule(spell);
 	}
 

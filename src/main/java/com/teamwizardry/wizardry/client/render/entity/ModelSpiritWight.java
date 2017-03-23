@@ -13,13 +13,9 @@ import org.lwjgl.opengl.GL11;
  * Created by Saad on 8/21/2016.
  */
 @SideOnly(Side.CLIENT)
-public class ModelHallowedSpirit extends ModelBiped {
+public class ModelSpiritWight extends ModelBiped {
 
-	//public ModelRenderer arm_right;
-	//public ModelRenderer chest;
-	//public ModelRenderer arm_left;
-
-	public ModelHallowedSpirit() {
+	public ModelSpiritWight() {
 		textureWidth = 64;
 		textureHeight = 64;
 		bipedHead.showModel = false;

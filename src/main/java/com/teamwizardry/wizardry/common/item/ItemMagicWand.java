@@ -8,7 +8,7 @@ import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
 import com.teamwizardry.wizardry.api.item.GlowingOverlayHelper;
 import com.teamwizardry.wizardry.api.item.IGlowOverlayable;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
-import com.teamwizardry.wizardry.common.entity.EntitySpiritWight;
+import com.teamwizardry.wizardry.common.entity.gods.EntityGavreel;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -52,7 +52,7 @@ public class ItemMagicWand extends ItemWizardry implements IGlowOverlayable {
 					entity.setPosition(playerIn.posX, playerIn.posY, playerIn.posZ);
 					worldIn.spawnEntity(entity);
 				} else {
-					EntitySpiritWight entity = new EntitySpiritWight(worldIn);
+					EntityGavreel entity = new EntityGavreel(worldIn);
 					entity.setPosition(playerIn.posX, playerIn.posY, playerIn.posZ);
 					worldIn.spawnEntity(entity);
 				}

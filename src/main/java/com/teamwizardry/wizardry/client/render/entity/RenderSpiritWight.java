@@ -11,11 +11,11 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Created by Saad on 8/21/2016.
  */
-public class RenderHallowedSpirit extends RenderLiving<EntitySpiritWight> {
+public class RenderSpiritWight extends RenderLiving<EntitySpiritWight> {
 
-	public static final ResourceLocation SPIRIT_TEX = new ResourceLocation(Wizardry.MODID, "textures/entity/hallowed_spirit.png");
+	public static final ResourceLocation SPIRIT_TEX = new ResourceLocation(Wizardry.MODID, "textures/entity/spirit_wight.png");
 
-	public RenderHallowedSpirit(RenderManager renderManager, ModelBase modelBase) {
+	public RenderSpiritWight(RenderManager renderManager, ModelBase modelBase) {
 		super(renderManager, modelBase, 0.0f);
 	}
 

@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
@@ -27,10 +28,6 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 
 	@ConfigPropertyDouble(modid = Wizardry.MODID, category = "attributes", id = "shape_beam_default_range", comment = "The default range of a pure beam spell shape", defaultValue = 10)
 	public static double defaultRange;
-
-	public ModuleShapeBeam() {
-		process(this);
-	}
 
 	@NotNull
 	@Override
@@ -85,6 +82,9 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 		double range = 10;
 		if (attributes.hasKey(Attributes.EXTEND)) range += attributes.getDouble(Attributes.EXTEND);
 
+		int chance = 100;
+		if (attributes.hasKey(Attributes.EXTEND)) range = Math.min(1, chance - attributes.getDouble(Attributes.EXTEND));
+
 		RayTraceResult trace = Utils.raytrace(world, PosUtils.vecFromRotations(pitch, yaw), caster != null ? position.addVector(0, caster.getEyeHeight(), 0) : position, range, caster);
 		if (trace == null) return false;
 
@@ -94,7 +94,9 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 			spell.addData(BLOCK_HIT, trace.getBlockPos());
 			spell.addData(TARGET_HIT, trace.hitVec);
 		} else spell.addData(TARGET_HIT, trace.hitVec);
-		return runNextModule(spell);
+
+		usedShape = this;
+		return ThreadLocalRandom.current().nextInt(chance) == 0 && runNextModule(spell);
 	}
 
 	@Override
