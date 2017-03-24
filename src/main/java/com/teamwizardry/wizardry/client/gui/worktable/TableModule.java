@@ -10,11 +10,16 @@ import com.teamwizardry.wizardry.lib.LibSprites;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class TableModule {
 
+	private static Set<ComponentSprite> modules = new HashSet<>();
+
 	public ComponentSprite component;
+	private int i = 0;
 
 	public TableModule(WorktableGui table, Module module, boolean draggable) {
 		ComponentSprite sprite = new ComponentSprite(LibSprites.Worktable.MODULE_DEFAULT, 0, 0, 12, 12);
@@ -43,7 +48,7 @@ public class TableModule {
 					item.component.addTag("on_paper");
 					table.paper.add(item.component);
 
-					DragMixin drag = new DragMixin<>(item.component, vec2d -> vec2d);
+					DragMixin<ComponentSprite> drag = new DragMixin<>(item.component, vec2d -> vec2d);
 					drag.setClickPos(new Vec2d(6, 6));
 					drag.setMouseDown(event.getButton());
 					event.cancel();
@@ -51,10 +56,72 @@ public class TableModule {
 			}
 		});
 
-		sprite.BUS.hook(GuiComponent.MouseDragEvent.class, (event) -> {
+		sprite.BUS.hook(DragMixin.DragPickupEvent.class, (event) -> {
 			if (event.getButton() == EnumMouseButton.RIGHT) {
-				if (draggable && sprite.getMouseOver()) {
 
+				ComponentModuleLine line = new ComponentModuleLine(sprite.getPos(), event.getMousePos());
+				line.setEnabled(false);
+				sprite.setData(ComponentModuleLine.class, "dragging", line);
+				table.paper.add(line);
+
+				event.cancel();
+			}
+		});
+
+		sprite.BUS.hook(DragMixin.DragDropEvent.class, (event) -> {
+			if (event.getButton() == EnumMouseButton.LEFT) {
+				Vec2d size = table.paper.getSize();
+				Vec2d pos = event.getComponent().getPos();
+				boolean b = pos.getX() >= 0 && pos.getX() <= size.getX() && pos.getY() >= 0 && pos.getY() <= size.getY();
+				if (!b) sprite.invalidate();
+
+			} else if (event.getButton() == EnumMouseButton.RIGHT) {
+
+				for (ComponentSprite comp : modules) {
+					if (comp.getMouseOver()) {
+						if (!sprite.hasData(ComponentModuleLine.class, comp.hashCode() + "")
+								&& !comp.hasData(ComponentModuleLine.class, sprite.hashCode() + "")) {
+							ComponentModuleLine line = new ComponentModuleLine(sprite.getPos(), comp.getPos());
+							line.setEnabled(false);
+							sprite.setData(ComponentModuleLine.class, comp.hashCode() + "", line);
+							table.paper.add(line);
+
+						} else {
+							if (sprite.hasData(ComponentModuleLine.class, comp.hashCode() + "")) {
+								ComponentModuleLine remove = sprite.getData(ComponentModuleLine.class, comp.hashCode() + "");
+								if (remove != null) {
+									table.paper.remove(remove);
+									remove.invalidate();
+									sprite.removeData(ComponentModuleLine.class, comp.hashCode() + "");
+								}
+							}
+							if (comp.hasData(ComponentModuleLine.class, sprite.hashCode() + "")) {
+								ComponentModuleLine remove = comp.getData(ComponentModuleLine.class, sprite.hashCode() + "");
+								if (remove != null) {
+									table.paper.remove(remove);
+									remove.invalidate();
+									sprite.removeData(ComponentModuleLine.class, comp.hashCode() + "");
+								}
+							}
+
+						}
+
+						break;
+					}
+				}
+
+				ComponentModuleLine dragging = sprite.getData(ComponentModuleLine.class, "dragging");
+				if (dragging != null) dragging.invalidate();
+				sprite.removeData(ComponentModuleLine.class, "dragging");
+			}
+		});
+
+		sprite.BUS.hook(DragMixin.DragMoveEvent.class, (event) -> {
+			if (event.getComponent().getMouseOver()) {
+				if (event.getButton() == EnumMouseButton.RIGHT) {
+					ComponentModuleLine line = sprite.getData(ComponentModuleLine.class, "dragging");
+					if (line != null)
+						line.set(event.getComponent().getPos(), event.getMousePos());
 				}
 			}
 		});
@@ -68,5 +135,7 @@ public class TableModule {
 		});
 
 		component = sprite;
+
+		modules.add(sprite);
 	}
 }
