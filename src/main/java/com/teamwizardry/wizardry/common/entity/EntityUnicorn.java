@@ -34,7 +34,6 @@ public class EntityUnicorn extends EntityHorse {
 		super(worldIn);
 		this.setSize(1.3964844F, 1.6F);
 		this.isImmuneToFire = false;
-		this.setChested(false);
 		this.stepHeight = 1.0F;
 	}
 

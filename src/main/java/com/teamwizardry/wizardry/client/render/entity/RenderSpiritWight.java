@@ -6,7 +6,8 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 /**
  * Created by Saad on 8/21/2016.
@@ -24,9 +25,9 @@ public class RenderSpiritWight extends RenderLiving<EntitySpiritWight> {
 		return false;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	protected ResourceLocation getEntityTexture(@NotNull EntitySpiritWight entity) {
+	protected ResourceLocation getEntityTexture(@Nonnull EntitySpiritWight entity) {
 		return SPIRIT_TEX;
 	}
 }

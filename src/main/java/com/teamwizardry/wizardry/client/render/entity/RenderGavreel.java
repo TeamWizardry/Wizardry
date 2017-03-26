@@ -6,7 +6,8 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 /**
  * Created by Saad on 8/21/2016.
@@ -24,9 +25,9 @@ public class RenderGavreel extends RenderLiving<EntityGavreel> {
 		return true;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	protected ResourceLocation getEntityTexture(@NotNull EntityGavreel entity) {
+	protected ResourceLocation getEntityTexture(@Nonnull EntityGavreel entity) {
 		return SPIRIT_TEX;
 	}
 }

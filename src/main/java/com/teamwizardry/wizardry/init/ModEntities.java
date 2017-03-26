@@ -5,6 +5,7 @@ import com.teamwizardry.wizardry.client.render.entity.*;
 import com.teamwizardry.wizardry.common.entity.*;
 import com.teamwizardry.wizardry.common.entity.gods.EntityGavreel;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 
@@ -18,23 +19,23 @@ public class ModEntities {
 	private static int i = 0;
 
 	public static void init() {
-		registerEntity(EntitySpiritWight.class, "spirit_wight", 64, 3, true);
-		registerEntity(EntityGavreel.class, "gavreel", 64, 3, true);
-		registerEntity(EntityFairy.class, "fairy", 64, 3, true);
-		registerEntity(EntityDevilDust.class, "dust_tracker", 64, 1, false);
-		registerEntity(EntitySpellCodex.class, "book_tracker", 64, 1, false);
-		registerEntity(EntitySpellProjectile.class, "spell_projectile", 64, 1, false);
-		registerEntity(EntityJumpPad.class, "jump_pad", 64, 1, false);
-		registerEntity(EntityUnicorn.class, "unicorn");
+		registerEntity(new ResourceLocation(Wizardry.MODID, "spirit_wight"), EntitySpiritWight.class, "spirit_wight", 64, 3, true);
+		registerEntity(new ResourceLocation(Wizardry.MODID, "gavreel"), EntityGavreel.class, "gavreel", 64, 3, true);
+		registerEntity(new ResourceLocation(Wizardry.MODID, "fairy"), EntityFairy.class, "fairy", 64, 3, true);
+		registerEntity(new ResourceLocation(Wizardry.MODID, "dust_tracker"), EntityDevilDust.class, "dust_tracker", 64, 1, false);
+		registerEntity(new ResourceLocation(Wizardry.MODID, "book_tracker"), EntitySpellCodex.class, "book_tracker", 64, 1, false);
+		registerEntity(new ResourceLocation(Wizardry.MODID, "spell_projectile"), EntitySpellProjectile.class, "spell_projectile", 64, 1, false);
+		registerEntity(new ResourceLocation(Wizardry.MODID, "jump_pad"), EntityJumpPad.class, "jump_pad", 64, 1, false);
+		registerEntity(new ResourceLocation(Wizardry.MODID, "unicorn"), EntityUnicorn.class, "unicorn");
 	}
-	
-	public static void registerEntity(Class<? extends Entity> entityClass, String entityName) {
-		registerEntity(entityClass, entityName, 64, 1, true);
+
+	public static void registerEntity(ResourceLocation loc, Class<? extends Entity> entityClass, String entityName) {
+		registerEntity(loc, entityClass, entityName, 64, 1, true);
 	}
-	
+
 	//Use when default parameters are not sufficient, e.g fast-moving projectiles
-	public static void registerEntity(Class<? extends Entity> entityClass, String entityName, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates) {
-		EntityRegistry.registerModEntity(entityClass, entityName, i, Wizardry.instance, trackingRange, updateFrequency, sendsVelocityUpdates);
+	public static void registerEntity(ResourceLocation loc, Class<? extends Entity> entityClass, String entityName, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates) {
+		EntityRegistry.registerModEntity(loc, entityClass, entityName, i, Wizardry.instance, trackingRange, updateFrequency, sendsVelocityUpdates);
 		i++;
 	}
 

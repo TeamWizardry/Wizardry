@@ -9,9 +9,9 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.util.math.Vec3d;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
@@ -25,31 +25,31 @@ public class ModuleEffectLeap extends Module implements IParticleDanger {
 	public ModuleEffectLeap() {
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ItemStack getRequiredStack() {
 		return new ItemStack(Items.RABBIT_FOOT);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleType getModuleType() {
 		return ModuleType.EFFECT;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getID() {
 		return "effect_leap";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getReadableName() {
 		return "Leap";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDescription() {
 		return "Will throttle you upwards and forwards";
@@ -72,7 +72,7 @@ public class ModuleEffectLeap extends Module implements IParticleDanger {
 	}
 
 	@Override
-	public boolean run(@NotNull SpellData spell) {
+	public boolean run(@Nonnull SpellData spell) {
 		float yaw = spell.getData(YAW, 0F);
 		float pitch = spell.getData(PITCH, 0F);
 		Vec3d pos = spell.getData(TARGET_HIT);
@@ -104,7 +104,7 @@ public class ModuleEffectLeap extends Module implements IParticleDanger {
 	}
 
 	@Override
-	public void runClient(@Nullable ItemStack stack, @NotNull SpellData spell) {
+	public void runClient(@Nullable ItemStack stack, @Nonnull SpellData spell) {
 		Entity caster = spell.getData(CASTER);
 		Vec3d position = spell.getData(TARGET_HIT);
 
@@ -117,7 +117,7 @@ public class ModuleEffectLeap extends Module implements IParticleDanger {
 
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleEffectLeap copy() {
 		ModuleEffectLeap module = new ModuleEffectLeap();

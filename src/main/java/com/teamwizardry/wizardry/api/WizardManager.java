@@ -4,7 +4,8 @@ import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 /**
  * Created by LordSaad.

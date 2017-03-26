@@ -12,9 +12,9 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -30,31 +30,31 @@ public class ModuleEffectBurn extends Module implements IContinousSpell {
 	public ModuleEffectBurn() {
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ItemStack getRequiredStack() {
 		return new ItemStack(Items.BLAZE_POWDER);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleType getModuleType() {
 		return ModuleType.EFFECT;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getID() {
 		return "burn";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getReadableName() {
 		return "Burn";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDescription() {
 		return "Will burn the target block or entity.";
@@ -83,7 +83,7 @@ public class ModuleEffectBurn extends Module implements IContinousSpell {
 	}
 
 	@Override
-	public boolean run(@NotNull SpellData spell) {
+	public boolean run(@Nonnull SpellData spell) {
 		World world = spell.world;
 		Entity targetEntity = spell.getData(ENTITY_HIT);
 		BlockPos targetPos = spell.getData(BLOCK_HIT);
@@ -109,7 +109,7 @@ public class ModuleEffectBurn extends Module implements IContinousSpell {
 	}
 
 	@Override
-	public void runClient(@Nullable ItemStack stack, @NotNull SpellData spell) {
+	public void runClient(@Nullable ItemStack stack, @Nonnull SpellData spell) {
 		World world = spell.world;
 		Vec3d position = spell.getData(TARGET_HIT);
 
@@ -124,7 +124,7 @@ public class ModuleEffectBurn extends Module implements IContinousSpell {
 		else LibParticles.EFFECT_BURN(world, position.addVector(0, 0.5, 0), color);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleEffectBurn copy() {
 		ModuleEffectBurn module = new ModuleEffectBurn();

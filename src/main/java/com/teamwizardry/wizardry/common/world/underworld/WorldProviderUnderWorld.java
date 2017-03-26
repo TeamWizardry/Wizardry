@@ -21,28 +21,29 @@ import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraftforge.client.IRenderHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 /**
  * Created by LordSaad44
  */
 public class WorldProviderUnderWorld extends WorldProvider {
 
-	@NotNull
+	@Nonnull
 	@Override
 	public IChunkGenerator createChunkGenerator() {
 		return new ChunkGeneratorUnderWorld(world);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public DimensionType getDimensionType() {
 		return Wizardry.underWorld;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public Biome getBiomeForCoords(@NotNull BlockPos pos) {
+	public Biome getBiomeForCoords(@Nonnull BlockPos pos) {
 		return new BiomeUnderWorld(new Biome.BiomeProperties("underworld"));
 	}
 
@@ -88,28 +89,28 @@ public class WorldProviderUnderWorld extends WorldProvider {
 		return 0;
 	}
 
-	@NotNull
+	@Nonnull
 	@SideOnly(Side.CLIENT)
 	@Override
 	public Vec3d getFogColor(float p1, float p2) {
 		return new Vec3d(0.1, 0.1, 0.2);
 	}
 
-	@NotNull
+	@Nonnull
 	@SideOnly(Side.CLIENT)
 	@Override
-	public Vec3d getSkyColor(@NotNull Entity cameraEntity, float partialTicks) {
+	public Vec3d getSkyColor(@Nonnull Entity cameraEntity, float partialTicks) {
 		return new Vec3d(0.1, 0.1, 0.2);
 	}
 
-	@NotNull
+	@Nonnull
 	@SideOnly(Side.CLIENT)
 	@Override
 	public IRenderHandler getSkyRenderer() {
 		return UnderworldSky.INSTANCE;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getSaveFolder() {
 		return "underworld";

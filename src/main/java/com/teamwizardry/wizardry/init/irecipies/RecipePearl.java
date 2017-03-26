@@ -7,10 +7,11 @@ import com.teamwizardry.wizardry.common.item.ItemStaff;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -18,47 +19,41 @@ import javax.annotation.Nullable;
  */
 public class RecipePearl implements IRecipe {
 	@Override
-	public boolean matches(@NotNull InventoryCrafting inv, @NotNull World worldIn) {
+	public boolean matches(@Nonnull InventoryCrafting inv, @Nonnull World worldIn) {
 		boolean foundBaseItem = false;
 		boolean foundPearl = false;
 
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);
-			if (stack != null) {
-				if (stack.getItem() instanceof ItemRing
-						|| stack.getItem() instanceof ItemStaff) {
+			if (stack.getItem() instanceof ItemRing
+					|| stack.getItem() instanceof ItemStaff) {
 
-					if (stack.getItemDamage() == 0)
-						foundBaseItem = true;
-				}
-				if (stack.getItem() instanceof ItemNacrePearl)
-					foundPearl = true;
+				if (stack.getItemDamage() == 0)
+					foundBaseItem = true;
 			}
+			if (stack.getItem() instanceof ItemNacrePearl)
+				foundPearl = true;
+
 		}
 		return foundBaseItem && foundPearl;
 	}
 
-	@Nullable
+	@Nonnull
 	@Override
-	public ItemStack getCraftingResult(@NotNull InventoryCrafting inv) {
-		ItemStack pearl = null;
-		ItemStack baseItem = null;
+	public ItemStack getCraftingResult(@Nonnull InventoryCrafting inv) {
+		ItemStack pearl = ItemStack.EMPTY;
+		ItemStack baseItem = ItemStack.EMPTY;
 
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);
-			if (stack != null) {
-				if (stack.getItem() instanceof ItemRing
-						|| stack.getItem() instanceof ItemStaff) {
-					if (stack.getItemDamage() == 0)
-						baseItem = stack;
-				}
-				if (stack.getItem() instanceof Infusable)
-					pearl = stack;
+			if (stack.getItem() instanceof ItemRing
+					|| stack.getItem() instanceof ItemStaff) {
+				if (stack.getItemDamage() == 0)
+					baseItem = stack;
 			}
+			if (stack.getItem() instanceof Infusable)
+				pearl = stack;
 		}
-
-		if (pearl == null || baseItem == null)
-			return null;
 
 		ItemStack baseItemCopy = baseItem.copy();
 		baseItemCopy.setItemDamage(1);
@@ -72,15 +67,15 @@ public class RecipePearl implements IRecipe {
 		return 10;
 	}
 
-	@Nullable
 	@Override
+	@Nonnull
 	public ItemStack getRecipeOutput() {
-		return null;
+		return ItemStack.EMPTY;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public ItemStack[] getRemainingItems(@NotNull InventoryCrafting inv) {
+	public NonNullList<ItemStack> getRemainingItems(@Nonnull InventoryCrafting inv) {
 		return ForgeHooks.defaultRecipeGetRemainingItems(inv);
 	}
 }

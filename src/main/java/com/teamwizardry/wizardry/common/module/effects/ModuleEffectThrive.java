@@ -12,9 +12,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -29,31 +29,31 @@ public class ModuleEffectThrive extends Module implements IContinousSpell {
 	public ModuleEffectThrive() {
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ItemStack getRequiredStack() {
 		return new ItemStack(Blocks.BONE_BLOCK);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleType getModuleType() {
 		return ModuleType.EFFECT;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getID() {
 		return "thrive";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getReadableName() {
 		return "Thrive";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDescription() {
 		return "Will heal entities & speed up plant growth";
@@ -76,7 +76,7 @@ public class ModuleEffectThrive extends Module implements IContinousSpell {
 	}
 
 	@Override
-	public boolean run(@NotNull SpellData spell) {
+	public boolean run(@Nonnull SpellData spell) {
 		World world = spell.world;
 		BlockPos targetPos = spell.getData(BLOCK_HIT);
 		Entity targetEntity = spell.getData(ENTITY_HIT);
@@ -99,7 +99,7 @@ public class ModuleEffectThrive extends Module implements IContinousSpell {
 	}
 
 	@Override
-	public void runClient(@Nullable ItemStack stack, @NotNull SpellData spell) {
+	public void runClient(@Nullable ItemStack stack, @Nonnull SpellData spell) {
 		if (ThreadLocalRandom.current().nextInt(15) != 0) return;
 
 		World world = spell.world;
@@ -110,7 +110,7 @@ public class ModuleEffectThrive extends Module implements IContinousSpell {
 		LibParticles.EFFECT_REGENERATE(world, position, getColor());
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleEffectThrive copy() {
 		ModuleEffectThrive module = new ModuleEffectThrive();

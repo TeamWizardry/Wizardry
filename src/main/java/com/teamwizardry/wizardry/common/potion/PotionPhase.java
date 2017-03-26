@@ -5,7 +5,8 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.GameType;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 /**
  * Created by LordSaad.
@@ -17,7 +18,7 @@ public class PotionPhase extends PotionMod {
 	}
 
 	@Override
-	public void applyAttributesModifiersToEntity(EntityLivingBase entityLivingBaseIn, @NotNull AbstractAttributeMap attributeMapIn, int amplifier) {
+	public void applyAttributesModifiersToEntity(EntityLivingBase entityLivingBaseIn, @Nonnull AbstractAttributeMap attributeMapIn, int amplifier) {
 		if (entityLivingBaseIn instanceof EntityPlayer) {
 			entityLivingBaseIn.getEntityData().setInteger("prev-gamemode", ((EntityPlayer) entityLivingBaseIn).isCreative() ? 1 : ((EntityPlayer) entityLivingBaseIn).isSpectator() ? 3 : 0);
 			((EntityPlayer) entityLivingBaseIn).setGameType(GameType.SPECTATOR);
@@ -27,7 +28,7 @@ public class PotionPhase extends PotionMod {
 	}
 
 	@Override
-	public void removeAttributesModifiersFromEntity(EntityLivingBase entityLivingBaseIn, @NotNull AbstractAttributeMap attributeMapIn, int amplifier) {
+	public void removeAttributesModifiersFromEntity(EntityLivingBase entityLivingBaseIn, @Nonnull AbstractAttributeMap attributeMapIn, int amplifier) {
 		if (entityLivingBaseIn instanceof EntityPlayer) {
 			int type = entityLivingBaseIn.getEntityData().getInteger("prev-gamemode");
 			switch (type) {

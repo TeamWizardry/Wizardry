@@ -94,7 +94,7 @@ public class EventHandler {
 	@SubscribeEvent
 	public void onFallDamage(LivingHurtEvent event) {
 		if (!(event.getEntity() instanceof EntityPlayer)) return;
-		if (event.getSource() == EntityDamageSource.outOfWorld) {
+		if (event.getSource() == EntityDamageSource.OUT_OF_WORLD) {
 			EntityPlayer player = ((EntityPlayer) event.getEntityLiving());
 			BlockPos spawn = player.isSpawnForced(0) ? player.getBedLocation(0) : player.world.getSpawnPoint().add(player.world.rand.nextGaussian() * 16, 0, player.world.rand.nextGaussian() * 16);
 			BlockPos teleportTo = spawn.add(0, 300 - spawn.getY(), 0);

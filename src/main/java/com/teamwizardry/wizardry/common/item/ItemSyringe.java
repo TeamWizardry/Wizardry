@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.item;
 
+import com.teamwizardry.librarianlib.common.base.item.ItemMod;
 import com.teamwizardry.wizardry.api.WizardManager;
 import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.client.Minecraft;
@@ -14,23 +15,24 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
  * Created by LordSaad.
  */
-public class ItemSyringe extends ItemWizardry {
+public class ItemSyringe extends ItemMod {
 
 	public ItemSyringe() {
 		super("syringe", "syringe", "syringe_mana", "syringe_steroid");
 		setMaxStackSize(1);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(@NotNull ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, @Nonnull EnumHand hand) {
+		ItemStack stack = player.getHeldItem(hand);
 		if (getItemUseAction(stack) == EnumAction.BOW) {
 			if (world.isRemote && (Minecraft.getMinecraft().currentScreen != null)) {
 				return new ActionResult<>(EnumActionResult.FAIL, stack);
@@ -41,7 +43,7 @@ public class ItemSyringe extends ItemWizardry {
 		} else return new ActionResult<>(EnumActionResult.FAIL, stack);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public EnumAction getItemUseAction(ItemStack stack) {
 		return stack.getItemDamage() == 0 ? EnumAction.NONE : EnumAction.BOW;

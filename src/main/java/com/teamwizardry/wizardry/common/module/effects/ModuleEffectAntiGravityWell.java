@@ -11,9 +11,9 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
@@ -33,31 +33,31 @@ public class ModuleEffectAntiGravityWell extends Module implements IlingeringMod
 		return Color.MAGENTA;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ItemStack getRequiredStack() {
 		return new ItemStack(Items.MAGMA_CREAM);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleType getModuleType() {
 		return ModuleType.EFFECT;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getID() {
 		return "effect_anti_gravity_well";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getReadableName() {
 		return "Anti Gravity Well";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDescription() {
 		return "Will disperse in all entities around the target.";
@@ -74,7 +74,7 @@ public class ModuleEffectAntiGravityWell extends Module implements IlingeringMod
 	}
 
 	@Override
-	public boolean run(@NotNull SpellData spell) {
+	public boolean run(@Nonnull SpellData spell) {
 		World world = spell.world;
 		Vec3d position = spell.getData(TARGET_HIT);
 		Entity caster = spell.getData(CASTER);
@@ -110,14 +110,14 @@ public class ModuleEffectAntiGravityWell extends Module implements IlingeringMod
 	}
 
 	@Override
-	public void runClient(@Nullable ItemStack stack, @NotNull SpellData spell) {
+	public void runClient(@Nullable ItemStack stack, @Nonnull SpellData spell) {
 		Vec3d position = spell.getData(ORIGIN);
 
 		if (position == null) return;
 		LibParticles.EFFECT_NULL_GRAV(spell.world, position, null, getColor());
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleEffectAntiGravityWell copy() {
 		ModuleEffectAntiGravityWell module = new ModuleEffectAntiGravityWell();

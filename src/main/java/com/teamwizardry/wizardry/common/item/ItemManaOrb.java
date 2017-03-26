@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.item;
 
+import com.teamwizardry.librarianlib.common.base.item.ItemMod;
 import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -10,18 +11,19 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 /**
  * Created by Saad on 6/21/2016.
  */
-public class ItemManaOrb extends ItemWizardry {
+public class ItemManaOrb extends ItemMod {
 
 	public ItemManaOrb() {
 		super("mana_orb");
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public EnumAction getItemUseAction(ItemStack stack) {
 		return EnumAction.EAT;
@@ -33,17 +35,18 @@ public class ItemManaOrb extends ItemWizardry {
 	}
 
 	@Override
-	public ItemStack onItemUseFinish(@NotNull ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
-		--stack.stackSize;
+	@Nonnull
+	public ItemStack onItemUseFinish(@Nonnull ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
+		stack.setCount(stack.getCount() - 1);
 		entityLiving.addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 1, true, false));
 
 		return stack;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(@NotNull ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
-		playerIn.setActiveHand(hand);
-		return new ActionResult(EnumActionResult.SUCCESS, itemStackIn);
+	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, @Nonnull EnumHand hand) {
+		player.setActiveHand(hand);
+		return new ActionResult(EnumActionResult.SUCCESS, player.getHeldItem(hand));
 	}
 }

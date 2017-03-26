@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.item;
 
+import com.teamwizardry.librarianlib.common.base.item.ItemMod;
 import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants.NBT;
@@ -9,6 +10,7 @@ import com.teamwizardry.wizardry.api.item.GlowingOverlayHelper;
 import com.teamwizardry.wizardry.api.item.IGlowOverlayable;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.common.entity.gods.EntityGavreel;
+import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -18,9 +20,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
 
-public class ItemMagicWand extends ItemWizardry implements IGlowOverlayable {
+import javax.annotation.Nonnull;
+
+public class ItemMagicWand extends ItemMod implements IGlowOverlayable {
 
 	public ItemMagicWand() {
 		super("magic_wand");
@@ -28,33 +31,34 @@ public class ItemMagicWand extends ItemWizardry implements IGlowOverlayable {
 		addPropertyOverride(new ResourceLocation(Wizardry.MODID, NBT.TAG_OVERLAY), GlowingOverlayHelper.OVERLAY_OVERRIDE);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-		if (playerIn.isSneaking()) {
+	public EnumActionResult onItemUse(EntityPlayer entityPlayer, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+		if (entityPlayer.isSneaking()) {
 			if (GuiScreen.isCtrlKeyDown()) {
-				WizardryCapabilityProvider.get(playerIn).setMana(10, playerIn);
+				WizardryCapabilityProvider.get(entityPlayer).setMana(10, entityPlayer);
 			} else {
-				WizardryCapabilityProvider.get(playerIn).setMana(0, playerIn);
+				WizardryCapabilityProvider.get(entityPlayer).setMana(0, entityPlayer);
 			}
 		}
 
-		ItemStack cape = playerIn.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-		if (cape != null) {
+		ItemStack cape = entityPlayer.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+		if (cape.getItem() == ModItems.CAPE) {
 			ItemNBTHelper.setInt(cape, "time", ItemNBTHelper.getInt(cape, "time", 0) + 100);
 			Minecraft.getMinecraft().player.sendChatMessage(ItemNBTHelper.getInt(cape, "time", 0) + "");
 		}
-		IBlockState state = worldIn.getBlockState(pos);
+
+		IBlockState state = world.getBlockState(pos);
 		if (!(state.getBlock() instanceof IStructure)) {
-			if (!worldIn.isRemote)
+			if (!world.isRemote)
 				if (GuiScreen.isShiftKeyDown()) {
-					EntityFairy entity = new EntityFairy(worldIn);
-					entity.setPosition(playerIn.posX, playerIn.posY, playerIn.posZ);
-					worldIn.spawnEntity(entity);
+					EntityFairy entity = new EntityFairy(world);
+					entity.setPosition(entityPlayer.posX, entityPlayer.posY, entityPlayer.posZ);
+					world.spawnEntity(entity);
 				} else {
-					EntityGavreel entity = new EntityGavreel(worldIn);
-					entity.setPosition(playerIn.posX, playerIn.posY, playerIn.posZ);
-					worldIn.spawnEntity(entity);
+					EntityGavreel entity = new EntityGavreel(world);
+					entity.setPosition(entityPlayer.posX, entityPlayer.posY, entityPlayer.posZ);
+					world.spawnEntity(entity);
 				}
 			return EnumActionResult.FAIL;
 		} else {
@@ -69,12 +73,13 @@ public class ItemMagicWand extends ItemWizardry implements IGlowOverlayable {
 	}
 
 
-	@NotNull
+	@Nonnull
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(@NotNull ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
-		if (worldIn.isRemote) return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
+	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, @Nonnull EnumHand hand) {
+		ItemStack stack = player.getHeldItem(hand);
 
+		if (world.isRemote) return new ActionResult<>(EnumActionResult.SUCCESS, stack);
 
-		return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
+		return new ActionResult<>(EnumActionResult.SUCCESS, stack);
 	}
 }

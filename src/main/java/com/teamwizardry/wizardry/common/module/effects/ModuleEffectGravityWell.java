@@ -11,9 +11,9 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
@@ -33,31 +33,31 @@ public class ModuleEffectGravityWell extends Module implements IlingeringModule 
 		return Color.BLUE;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ItemStack getRequiredStack() {
 		return new ItemStack(Items.SLIME_BALL);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleType getModuleType() {
 		return ModuleType.EFFECT;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getID() {
 		return "effect_gravity_well";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getReadableName() {
 		return "Gravity Well";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDescription() {
 		return "Will suck in all entities around the target.";
@@ -74,7 +74,7 @@ public class ModuleEffectGravityWell extends Module implements IlingeringModule 
 	}
 
 	@Override
-	public boolean run(@NotNull SpellData spell) {
+	public boolean run(@Nonnull SpellData spell) {
 		World world = spell.world;
 		Vec3d position = spell.getData(TARGET_HIT);
 		Entity caster = spell.getData(CASTER);
@@ -108,14 +108,14 @@ public class ModuleEffectGravityWell extends Module implements IlingeringModule 
 	}
 
 	@Override
-	public void runClient(@Nullable ItemStack stack, @NotNull SpellData spell) {
+	public void runClient(@Nullable ItemStack stack, @Nonnull SpellData spell) {
 		Vec3d position = spell.getData(TARGET_HIT);
 
 		if (position == null) return;
 		LibParticles.FAIRY_TRAIL(spell.world, position, getColor(), false, 50);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleEffectGravityWell copy() {
 		ModuleEffectGravityWell module = new ModuleEffectGravityWell();

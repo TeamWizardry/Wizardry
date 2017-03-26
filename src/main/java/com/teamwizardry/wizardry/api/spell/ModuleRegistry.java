@@ -5,9 +5,9 @@ import com.teamwizardry.librarianlib.common.util.AnnotationHelper;
 import com.teamwizardry.librarianlib.common.util.UnsafeKt;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -55,7 +55,7 @@ public class ModuleRegistry {
 		return null;
 	}
 
-	@NotNull
+	@Nonnull
 	public Set<Module> getModules(ModuleType type) {
 		Set<Module> modules = new HashSet<>();
 		for (Module module : this.modules) if (module.getModuleType() == type) modules.add(module.copy());

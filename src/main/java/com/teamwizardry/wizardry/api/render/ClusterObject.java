@@ -48,7 +48,7 @@ public class ClusterObject implements INBTSerializable<NBTTagCompound> {
 
 			double radius = ThreadLocalRandom.current().nextDouble(5, 8) * t;
 
-			angle += ThreadLocalRandom.current().nextDouble(-1, 1);
+			angle += ThreadLocalRandom.current().nextDouble(-1.5, 1.5);
 			double x = MathHelper.cos((float) angle) * radius;
 			double z = MathHelper.sin((float) angle) * radius;
 
@@ -78,7 +78,8 @@ public class ClusterObject implements INBTSerializable<NBTTagCompound> {
 
 	@Override
 	public void deserializeNBT(NBTTagCompound nbt) {
-		stack = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("stack"));
+		stack = ItemStack.EMPTY;
+		stack.deserializeNBT(nbt.getCompoundTag("stack"));
 		dest = new Vec3d(nbt.getDouble("dest_x"), nbt.getDouble("dest_y"), nbt.getDouble("dest_z"));
 		origin = new Vec3d(nbt.getDouble("origin_x"), nbt.getDouble("origin_y"), nbt.getDouble("origin_z"));
 		destTime = nbt.getDouble("dest_time");

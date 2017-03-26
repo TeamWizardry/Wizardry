@@ -6,7 +6,8 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 /**
  * Created by LordSaad.
@@ -24,7 +25,7 @@ public class PotionSteroid extends PotionMod {
 	}
 
 	@Override
-	public void performEffect(@NotNull EntityLivingBase entityLivingBaseIn, int p_76394_2_) {
+	public void performEffect(@Nonnull EntityLivingBase entityLivingBaseIn, int p_76394_2_) {
 		if (!hasEffect(entityLivingBaseIn)) return;
 
 		WizardManager.setMana(WizardManager.getMaxMana(entityLivingBaseIn), entityLivingBaseIn);
@@ -32,7 +33,7 @@ public class PotionSteroid extends PotionMod {
 	}
 
 	@Override
-	public void removeAttributesModifiersFromEntity(EntityLivingBase entityLivingBaseIn, @NotNull AbstractAttributeMap attributeMapIn, int amplifier) {
+	public void removeAttributesModifiersFromEntity(EntityLivingBase entityLivingBaseIn, @Nonnull AbstractAttributeMap attributeMapIn, int amplifier) {
 		WizardManager.setMana(0, entityLivingBaseIn);
 		WizardManager.setBurnout(WizardManager.getMaxBurnout(entityLivingBaseIn), entityLivingBaseIn);
 		entityLivingBaseIn.addPotionEffect(new PotionEffect(MobEffects.MINING_FATIGUE, 200, 4, true, false));

@@ -6,8 +6,8 @@ import com.teamwizardry.librarianlib.common.util.math.Matrix4;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -288,7 +288,7 @@ public class Cloth {
 		double m = 0.5;
 		AxisAlignedBB checkAABB = new AxisAlignedBB(minX - m, minY - m, minZ - m, maxX + m, maxY + m, maxZ + m);
 
-		return e.world.getCollisionBoxes(checkAABB);
+		return e.world.getCollisionBoxes(e, checkAABB);
 	}
 
 	public void tick(Entity e, List<Sphere> spheres) {

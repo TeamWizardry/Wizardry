@@ -1,8 +1,8 @@
 package com.teamwizardry.wizardry.api.util;
 
 import com.teamwizardry.librarianlib.common.util.math.interpolate.InterpFunction;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -24,13 +24,13 @@ public class InterpScale implements InterpFunction<Float> {
 		return Math.abs((start * (1 - v)) + (finish * v));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public InterpFunction<Float> reverse() {
 		return null;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<Float> list(int i) {
 		return null;

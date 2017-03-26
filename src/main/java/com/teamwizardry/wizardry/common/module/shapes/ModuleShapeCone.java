@@ -21,9 +21,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -37,7 +37,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 @RegisterModule
 public class ModuleShapeCone extends Module implements IParticleDanger {
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ItemStack getRequiredStack() {
 		return new ItemStack(Items.GUNPOWDER);
@@ -53,32 +53,32 @@ public class ModuleShapeCone extends Module implements IParticleDanger {
 		return 80;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleType getModuleType() {
 		return ModuleType.SHAPE;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getID() {
 		return "shape_cone";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getReadableName() {
 		return "Cone";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDescription() {
 		return "Will run the spell in a circular arc in front of the caster";
 	}
 
 	@Override
-	public boolean run(@NotNull SpellData spell) {
+	public boolean run(@Nonnull SpellData spell) {
 		World world = spell.world;
 		float yaw = spell.getData(YAW, 0F);
 		float pitch = spell.getData(PITCH, 0F);
@@ -128,7 +128,7 @@ public class ModuleShapeCone extends Module implements IParticleDanger {
 	}
 
 	@Override
-	public void runClient(@Nullable ItemStack stack, @NotNull SpellData spell) {
+	public void runClient(@Nullable ItemStack stack, @Nonnull SpellData spell) {
 		float pitch = spell.getData(PITCH, 0F), yaw = spell.getData(YAW, 0F);
 		Entity caster = spell.getData(CASTER);
 		Vec3d position = spell.getData(ORIGIN);
@@ -170,7 +170,7 @@ public class ModuleShapeCone extends Module implements IParticleDanger {
 		super.runClient(stack, spell);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleShapeCone copy() {
 		ModuleShapeCone module = new ModuleShapeCone();

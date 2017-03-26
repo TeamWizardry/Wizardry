@@ -5,9 +5,9 @@ import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.RegisterModule;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 
 /**
@@ -19,31 +19,31 @@ public class ModuleEffectSpiritWind extends Module {
 	public ModuleEffectSpiritWind() {
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ItemStack getRequiredStack() {
 		return new ItemStack(Items.CLAY_BALL);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleType getModuleType() {
 		return ModuleType.EFFECT;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getID() {
 		return "effect_spirit_wind";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getReadableName() {
 		return "Spirit Wind";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDescription() {
 		return "Spirits will move you to the target location ignoring gravity.";
@@ -65,7 +65,7 @@ public class ModuleEffectSpiritWind extends Module {
 		return Color.MAGENTA;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleEffectSpiritWind copy() {
 		ModuleEffectSpiritWind module = new ModuleEffectSpiritWind();

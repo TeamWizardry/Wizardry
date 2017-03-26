@@ -33,7 +33,7 @@ public interface IStructure {
 	default boolean tickStructure(World world, EntityPlayer player, BlockPos pos) {
 		if (!world.isRemote) {
 
-			if (player.getHeldItemMainhand() != null && player.getHeldItemMainhand().getItem() == ModItems.MAGIC_WAND) {
+			if (player.getHeldItemMainhand().getItem() == ModItems.MAGIC_WAND) {
 				boolean complete = true;
 				for (Template.BlockInfo info : getStructure().blockInfos()) {
 					BlockPos newPos = info.pos.add(pos).subtract(offsetToCenter());
@@ -54,7 +54,7 @@ public interface IStructure {
 							if (invStack != null
 									&& invStack.isItemEqual(new ItemStack(info.blockState.getBlock()))) {
 								blockAvailable = true;
-								invStack.stackSize--;
+								invStack.setCount(invStack.getCount() - 1);
 								break;
 							}
 					if (!blockAvailable && !player.isCreative()) continue;

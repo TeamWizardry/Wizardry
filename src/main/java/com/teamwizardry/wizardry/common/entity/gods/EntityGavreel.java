@@ -9,8 +9,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 
 /**
@@ -62,7 +62,7 @@ public class EntityGavreel extends EntityLiving {
 	}
 
 	@Override
-	public void dropLoot(boolean wasRecentlyHit, int lootingModifier, @NotNull DamageSource source) {
+	public void dropLoot(boolean wasRecentlyHit, int lootingModifier, @Nonnull DamageSource source) {
 		super.dropLoot(wasRecentlyHit, lootingModifier, source);
 	}
 

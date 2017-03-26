@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.item;
 
+import com.teamwizardry.librarianlib.common.base.item.ItemMod;
 import com.teamwizardry.wizardry.api.item.INacreColorable;
 import com.teamwizardry.wizardry.api.spell.*;
 import net.minecraft.client.Minecraft;
@@ -19,24 +20,26 @@ import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Set;
 
 /**
  * Created by Saad on 6/7/2016.
  */
-public class ItemStaff extends ItemWizardry implements INacreColorable {
+public class ItemStaff extends ItemMod implements INacreColorable {
 
 	public ItemStaff() {
 		super("staff", "staff", "staff_pearl");
 		setMaxStackSize(1);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(@NotNull ItemStack stack, World world, EntityPlayer player, EnumHand hand) {
+	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, @Nonnull EnumHand hand) {
+		ItemStack stack = player.getHeldItem(hand);
+
 		if (getItemUseAction(stack) == EnumAction.NONE) {
 			if (!world.isRemote) {
 				SpellData spell = new SpellData(world);
@@ -56,7 +59,7 @@ public class ItemStaff extends ItemWizardry implements INacreColorable {
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public EnumAction getItemUseAction(ItemStack stack) {
 		for (Module module : SpellStack.getAllModules(stack))
@@ -76,9 +79,9 @@ public class ItemStaff extends ItemWizardry implements INacreColorable {
 		return i > 0 ? i : 72000;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public EnumActionResult onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
+	public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
 		return EnumActionResult.PASS;
 	}
 
@@ -119,9 +122,9 @@ public class ItemStaff extends ItemWizardry implements INacreColorable {
 		return super.onEntityItemUpdate(entityItem);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public String getItemStackDisplayName(@NotNull ItemStack stack) {
+	public String getItemStackDisplayName(@Nonnull ItemStack stack) {
 		String finalName = null;
 		Set<Module> modules = SpellStack.getModules(stack);
 		for (Module module : modules) {

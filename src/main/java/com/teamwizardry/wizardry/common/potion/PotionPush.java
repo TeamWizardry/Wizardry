@@ -4,7 +4,8 @@ import com.teamwizardry.librarianlib.common.base.PotionMod;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.util.math.Vec3d;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 /**
  * Created by LordSaad.
@@ -16,7 +17,7 @@ public class PotionPush extends PotionMod {
 	}
 
 	@Override
-	public void removeAttributesModifiersFromEntity(EntityLivingBase entityLivingBaseIn, @NotNull AbstractAttributeMap attributeMapIn, int amplifier) {
+	public void removeAttributesModifiersFromEntity(EntityLivingBase entityLivingBaseIn, @Nonnull AbstractAttributeMap attributeMapIn, int amplifier) {
 		Vec3d dist = entityLivingBaseIn.getLook(0).scale(amplifier);
 		entityLivingBaseIn.motionX += dist.xCoord;
 		entityLivingBaseIn.motionY += dist.yCoord;

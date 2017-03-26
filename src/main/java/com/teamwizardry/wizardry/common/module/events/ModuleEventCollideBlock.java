@@ -7,7 +7,8 @@ import com.teamwizardry.wizardry.api.spell.SpellData;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.BLOCK_HIT;
 
@@ -21,43 +22,43 @@ public class ModuleEventCollideBlock extends Module {
 		process(this);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ItemStack getRequiredStack() {
 		return new ItemStack(Items.COAL);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleType getModuleType() {
 		return ModuleType.EVENT;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getID() {
 		return "on_collide_block";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getReadableName() {
 		return "On Collide Block";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDescription() {
 		return "Triggered when the spell collides with a block";
 	}
 
 	@Override
-	public boolean run(@NotNull SpellData spell) {
+	public boolean run(@Nonnull SpellData spell) {
 		BlockPos pos = spell.getData(BLOCK_HIT);
 		return pos != null && nextModule != null && nextModule.run(spell);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleEventCollideBlock copy() {
 		ModuleEventCollideBlock module = new ModuleEventCollideBlock();

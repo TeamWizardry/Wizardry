@@ -8,8 +8,8 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenAbstractTree;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.Random;
 
 /**
@@ -25,7 +25,7 @@ public class WorldGeneratorWisdomTree extends WorldGenAbstractTree {
 	}
 
 	@Override
-	public boolean generate(@NotNull World worldIn, @NotNull Random rand, @NotNull BlockPos position) {
+	public boolean generate(@Nonnull World worldIn, @Nonnull Random rand, @Nonnull BlockPos position) {
 		int height = rand.nextInt(3) + 5;
 
 		boolean flag = true;

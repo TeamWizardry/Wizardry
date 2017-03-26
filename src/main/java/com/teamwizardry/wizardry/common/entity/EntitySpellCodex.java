@@ -11,8 +11,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -22,6 +22,10 @@ public class EntitySpellCodex extends Entity {
 
 	private EntityItem book;
 	private int expiry;
+
+	public EntitySpellCodex(World worldIn) {
+		super(worldIn);
+	}
 
 	public EntitySpellCodex(World world, EntityItem book) {
 		super(world);
@@ -58,7 +62,7 @@ public class EntitySpellCodex extends Entity {
 				codex.motionX = 0;
 				codex.motionZ = 0;
 				codex.forceSpawn = true;
-				book.getEntityItem().stackSize--;
+				book.getEntityItem().setCount(book.getEntityItem().getCount() - 1);
 				world.spawnEntity(codex);
 				world.removeEntity(this);
 
@@ -76,7 +80,7 @@ public class EntitySpellCodex extends Entity {
 	}
 
 	@Override
-	public boolean attackEntityFrom(@NotNull DamageSource source, float amount) {
+	public boolean attackEntityFrom(@Nonnull DamageSource source, float amount) {
 		return false;
 	}
 
@@ -85,10 +89,10 @@ public class EntitySpellCodex extends Entity {
 	}
 
 	@Override
-	protected void readEntityFromNBT(@NotNull NBTTagCompound compound) {
+	protected void readEntityFromNBT(@Nonnull NBTTagCompound compound) {
 	}
 
 	@Override
-	protected void writeEntityToNBT(@NotNull NBTTagCompound compound) {
+	protected void writeEntityToNBT(@Nonnull NBTTagCompound compound) {
 	}
 }

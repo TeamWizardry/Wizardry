@@ -12,9 +12,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -29,7 +29,7 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 	@ConfigPropertyDouble(modid = Wizardry.MODID, category = "attributes", id = "shape_beam_default_range", comment = "The default range of a pure beam spell shape", defaultValue = 10)
 	public static double defaultRange;
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ItemStack getRequiredStack() {
 		return new ItemStack(ModItems.UNICORN_HORN);
@@ -45,32 +45,32 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 		return 10;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleType getModuleType() {
 		return ModuleType.SHAPE;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getID() {
 		return "shape_beam";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getReadableName() {
 		return "Beam";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDescription() {
 		return "Will run the spell via a beam emanating from the caster";
 	}
 
 	@Override
-	public boolean run(@NotNull SpellData spell) {
+	public boolean run(@Nonnull SpellData spell) {
 		World world = spell.world;
 		float yaw = spell.getData(YAW, 0F);
 		float pitch = spell.getData(PITCH, 0F);
@@ -100,7 +100,7 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 	}
 
 	@Override
-	public void runClient(@Nullable ItemStack stack, @NotNull SpellData spell) {
+	public void runClient(@Nullable ItemStack stack, @Nonnull SpellData spell) {
 		World world = spell.world;
 		float yaw = spell.getData(YAW, 0F);
 		Vec3d position = spell.getData(ORIGIN);
@@ -119,7 +119,7 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 		LibParticles.SHAPE_BEAM(world, target, origin, getColor() == null ? Color.WHITE : getColor());
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleShapeBeam copy() {
 		ModuleShapeBeam module = new ModuleShapeBeam();

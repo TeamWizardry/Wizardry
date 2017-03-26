@@ -17,7 +17,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 /**
  * Created by Saad on 5/7/2016.
@@ -30,22 +31,24 @@ public class BlockStaff extends BlockModContainer implements IManaSink {
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-		if (!world.isRemote) {
-			TileStaff te = getTE(world, pos);
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+		ItemStack heldItem = playerIn.getHeldItem(hand);
 
-			if ((te.pearl == null) && (heldItem != null) && (heldItem.getItem() == ModItems.MANA_ORB || heldItem.getItem() == ModItems.PEARL_NACRE)) {
+		if (!worldIn.isRemote) {
+			TileStaff te = getTE(worldIn, pos);
+
+			if (te.pearl == null && (heldItem.getItem() == ModItems.MANA_ORB || heldItem.getItem() == ModItems.PEARL_NACRE)) {
 				te.pearl = heldItem.copy();
-				te.pearl.stackSize = 1;
-				heldItem.stackSize--;
+				te.pearl.setCount(1);
+				heldItem.setCount(heldItem.getCount() - 1);
 
 			} else if ((te.pearl != null)) {
 				ItemStack stack = te.pearl.copy();
 				te.pearl = null;
-				if (player.inventory.addItemStackToInventory(stack)) player.openContainer.detectAndSendChanges();
+				if (playerIn.inventory.addItemStackToInventory(stack)) playerIn.openContainer.detectAndSendChanges();
 				else {
-					EntityItem entityItem = new EntityItem(world, pos.getX(), pos.getY() + 1, pos.getZ(), stack);
-					world.spawnEntity(entityItem);
+					EntityItem entityItem = new EntityItem(worldIn, pos.getX(), pos.getY() + 1, pos.getZ(), stack);
+					worldIn.spawnEntity(entityItem);
 				}
 			}
 			te.markDirty();
@@ -64,7 +67,7 @@ public class BlockStaff extends BlockModContainer implements IManaSink {
 	}
 
 	@Override
-	public boolean canRenderInLayer(BlockRenderLayer layer) {
+	public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
 		return layer == BlockRenderLayer.CUTOUT;
 	}
 

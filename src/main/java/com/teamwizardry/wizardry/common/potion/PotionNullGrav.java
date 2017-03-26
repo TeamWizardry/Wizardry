@@ -3,7 +3,8 @@ package com.teamwizardry.wizardry.common.potion;
 import com.teamwizardry.librarianlib.common.base.PotionMod;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 /**
  * Created by LordSaad.
@@ -15,13 +16,13 @@ public class PotionNullGrav extends PotionMod {
 	}
 
 	@Override
-	public void applyAttributesModifiersToEntity(EntityLivingBase entityLivingBaseIn, @NotNull AbstractAttributeMap attributeMapIn, int amplifier) {
+	public void applyAttributesModifiersToEntity(EntityLivingBase entityLivingBaseIn, @Nonnull AbstractAttributeMap attributeMapIn, int amplifier) {
 		entityLivingBaseIn.setNoGravity(true);
 		super.applyAttributesModifiersToEntity(entityLivingBaseIn, attributeMapIn, amplifier);
 	}
 
 	@Override
-	public void removeAttributesModifiersFromEntity(EntityLivingBase entityLivingBaseIn, @NotNull AbstractAttributeMap attributeMapIn, int amplifier) {
+	public void removeAttributesModifiersFromEntity(EntityLivingBase entityLivingBaseIn, @Nonnull AbstractAttributeMap attributeMapIn, int amplifier) {
 		entityLivingBaseIn.setNoGravity(false);
 		super.removeAttributesModifiersFromEntity(entityLivingBaseIn, attributeMapIn, amplifier);
 	}

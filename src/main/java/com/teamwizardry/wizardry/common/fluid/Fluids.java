@@ -9,7 +9,8 @@ import net.minecraft.item.Item;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 public class Fluids {
 	private static ModelResourceLocation manafluidLocation = new ModelResourceLocation(Wizardry.MODID + ":" + "mana", "fluid");
@@ -25,9 +26,9 @@ public class Fluids {
 		if (item != null) ModelLoader.setCustomMeshDefinition(item, stack -> resource);
 
 		ModelLoader.setCustomStateMapper(block, new StateMapperBase() {
-			@NotNull
+			@Nonnull
 			@Override
-			protected ModelResourceLocation getModelResourceLocation(@NotNull IBlockState state) {
+			protected ModelResourceLocation getModelResourceLocation(@Nonnull IBlockState state) {
 				return resource;
 			}
 		});

@@ -9,7 +9,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Teleporter;
 import net.minecraft.world.WorldServer;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 /**
  * Class provided by MCJty
@@ -68,7 +69,7 @@ public class TeleportUtil {
 		}
 
 		@Override
-		public void placeInPortal(@NotNull Entity entity, float rotationYaw) {
+		public void placeInPortal(@Nonnull Entity entity, float rotationYaw) {
 			worldServer.getBlockState(new BlockPos((int) x, (int) y, (int) z));
 
 			entity.setPosition(x, y, z);

@@ -8,8 +8,8 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;

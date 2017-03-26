@@ -7,8 +7,9 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Created by Saad on 8/27/2016.
@@ -21,7 +22,7 @@ public class BlockCloud extends BlockMod {
 	}
 
 	@Override
-	public int getLightValue(@NotNull IBlockState state, IBlockAccess world, @NotNull BlockPos pos) {
+	public int getLightValue(@Nonnull IBlockState state, IBlockAccess world, @Nonnull BlockPos pos) {
 		return canProduceLight(world, pos) ? 15 : 0;
 	}
 

@@ -12,8 +12,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Random;
 
@@ -26,7 +26,7 @@ public class BlockTorikkiGrass extends BlockMod implements IGrowable {
 		super("torikki_grass", Material.GRASS);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	@SideOnly(Side.CLIENT)
 	public BlockRenderLayer getBlockLayer() {
@@ -40,17 +40,17 @@ public class BlockTorikkiGrass extends BlockMod implements IGrowable {
 	}
 
 	@Override
-	public boolean canGrow(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state, boolean isClient) {
+	public boolean canGrow(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state, boolean isClient) {
 		return Blocks.GRASS.canGrow(worldIn, pos, state, isClient);
 	}
 
 	@Override
-	public boolean canUseBonemeal(@NotNull World worldIn, @NotNull Random rand, @NotNull BlockPos pos, @NotNull IBlockState state) {
+	public boolean canUseBonemeal(@Nonnull World worldIn, @Nonnull Random rand, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
 		return Blocks.GRASS.canUseBonemeal(worldIn, rand, pos, state);
 	}
 
 	@Override
-	public void grow(@NotNull World worldIn, @NotNull Random rand, @NotNull BlockPos pos, @NotNull IBlockState state) {
+	public void grow(@Nonnull World worldIn, @Nonnull Random rand, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
 		Blocks.GRASS.grow(worldIn, rand, pos, state);
 	}
 }

@@ -7,7 +7,8 @@ import com.teamwizardry.wizardry.api.spell.SpellData;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ENTITY_HIT;
 
@@ -20,43 +21,43 @@ public class ModuleEventCollideEntity extends Module {
 	public ModuleEventCollideEntity() {
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ItemStack getRequiredStack() {
 		return new ItemStack(Items.BEEF);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleType getModuleType() {
 		return ModuleType.EVENT;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getID() {
 		return "on_collide_entity";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getReadableName() {
 		return "On Collide Entity";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDescription() {
 		return "Triggered when the spell collides with an entity";
 	}
 
 	@Override
-	public boolean run(@NotNull SpellData spell) {
+	public boolean run(@Nonnull SpellData spell) {
 		Entity entity = spell.getData(ENTITY_HIT);
 		return entity != null && nextModule != null && nextModule.run(spell);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleEventCollideEntity copy() {
 		ModuleEventCollideEntity module = new ModuleEventCollideEntity();

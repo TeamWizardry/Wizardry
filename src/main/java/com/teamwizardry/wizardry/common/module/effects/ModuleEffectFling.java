@@ -8,9 +8,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
@@ -31,31 +31,31 @@ public class ModuleEffectFling extends Module {
 		return Color.MAGENTA;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ItemStack getRequiredStack() {
 		return new ItemStack(Items.CHORUS_FRUIT_POPPED);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleType getModuleType() {
 		return ModuleType.EFFECT;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getID() {
 		return "effect_fling";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getReadableName() {
 		return "Fling";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDescription() {
 		return "Will send the caster flying to the target location";
@@ -72,7 +72,7 @@ public class ModuleEffectFling extends Module {
 	}
 
 	@Override
-	public boolean run(@NotNull SpellData spell) {
+	public boolean run(@Nonnull SpellData spell) {
 		Entity targetEntity = spell.getData(CASTER);
 		Vec3d to = spell.getData(TARGET_HIT);
 
@@ -114,7 +114,7 @@ public class ModuleEffectFling extends Module {
 		return true;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleEffectFling copy() {
 		ModuleEffectFling module = new ModuleEffectFling();

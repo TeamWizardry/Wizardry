@@ -24,8 +24,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class BlockManaBattery extends BlockModContainer implements IManaSink, IStructure {
 
@@ -45,18 +46,18 @@ public class BlockManaBattery extends BlockModContainer implements IManaSink, IS
 	}
 
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		tickStructure(worldIn, playerIn, pos);
 		return false;
 	}
 
 	@Override
-	public int getLightValue(@NotNull IBlockState state, IBlockAccess world, @NotNull BlockPos pos) {
+	public int getLightValue(@Nonnull IBlockState state, IBlockAccess world, @Nonnull BlockPos pos) {
 		return 15;
 	}
 
 	@Override
-	public boolean canRenderInLayer(BlockRenderLayer layer) {
+	public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
 		return layer == BlockRenderLayer.TRANSLUCENT;
 	}
 

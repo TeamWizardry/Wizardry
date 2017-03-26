@@ -22,9 +22,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -517,7 +517,7 @@ public class LibParticles {
 		});
 	}
 
-	public static void EFFECT_NULL_GRAV(World world, @NotNull Vec3d pos, @Nullable EntityLivingBase caster, Color color) {
+	public static void EFFECT_NULL_GRAV(World world, @Nonnull Vec3d pos, @Nullable EntityLivingBase caster, Color color) {
 		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(20, 30));
 		glitter.setColor(color == null ? Color.WHITE : color);
 		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
@@ -537,7 +537,7 @@ public class LibParticles {
 		});
 	}
 
-	public static void EFFECT_REGENERATE(World world, @NotNull Vec3d pos, Color color) {
+	public static void EFFECT_REGENERATE(World world, @Nonnull Vec3d pos, Color color) {
 		ParticleBuilder glitter = new ParticleBuilder(50);
 		glitter.setColor(Utils.changeColorAlpha(color, ThreadLocalRandom.current().nextInt(200, 255)));
 		glitter.setScale(1);
@@ -559,7 +559,7 @@ public class LibParticles {
 		});
 	}
 
-	public static void EFFECT_BURN(World world, @NotNull Vec3d pos, Color color) {
+	public static void EFFECT_BURN(World world, @Nonnull Vec3d pos, Color color) {
 		ParticleBuilder glitter = new ParticleBuilder(3);
 		glitter.setScale(1);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));

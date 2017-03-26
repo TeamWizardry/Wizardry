@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.item;
 
+import com.teamwizardry.librarianlib.common.base.item.ItemMod;
 import com.teamwizardry.wizardry.api.item.Explodable;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
@@ -9,7 +10,7 @@ import net.minecraft.item.ItemStack;
 /**
  * Created by Saad on 6/20/2016.
  */
-public class ItemGlassOrb extends ItemWizardry implements Explodable {
+public class ItemGlassOrb extends ItemMod implements Explodable {
 
 	public ItemGlassOrb() {
 		super("glass_orb");

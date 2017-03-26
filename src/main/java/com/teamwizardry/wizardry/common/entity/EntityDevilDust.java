@@ -14,8 +14,8 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -30,6 +30,10 @@ public class EntityDevilDust extends Entity {
 	private int expiry;
 	private int stackSize = 1;
 	private boolean consumed;
+
+	public EntityDevilDust(World worldIn) {
+		super(worldIn);
+	}
 
 	public EntityDevilDust(World world, EntityItem redstone) {
 		super(world);
@@ -69,7 +73,7 @@ public class EntityDevilDust extends Entity {
 			BlockPos fire = PosUtils.checkNeighbor(world, redstone.getPosition(), Blocks.FIRE);
 			if ((world.getBlockState(fire).getBlock() == Blocks.FIRE)
 					&& world.isMaterialInBB(redstone.getEntityBoundingBox().expand(0.1, 0.1, 0.1), Material.FIRE)) {
-				stackSize = redstone.getEntityItem().stackSize;
+				stackSize = redstone.getEntityItem().getCount();
 				if (!redstone.isDead) redstone.setDead();
 				consumed = true;
 				setPosition(fire.getX() + 0.5, fire.getY(), fire.getZ() + 0.5);
@@ -84,7 +88,7 @@ public class EntityDevilDust extends Entity {
 	}
 
 	@Override
-	public boolean attackEntityFrom(@NotNull DamageSource source, float amount) {
+	public boolean attackEntityFrom(@Nonnull DamageSource source, float amount) {
 		return false;
 	}
 
@@ -93,14 +97,14 @@ public class EntityDevilDust extends Entity {
 	}
 
 	@Override
-	protected void readEntityFromNBT(@NotNull NBTTagCompound compound) {
+	protected void readEntityFromNBT(@Nonnull NBTTagCompound compound) {
 		if (compound.hasKey(EXPIRY)) expiry = compound.getInteger(EXPIRY);
 		if (compound.hasKey(CONSUMED)) consumed = compound.getBoolean(CONSUMED);
 		if (compound.hasKey(STACK_SIZE)) stackSize = compound.getInteger(STACK_SIZE);
 	}
 
 	@Override
-	protected void writeEntityToNBT(@NotNull NBTTagCompound compound) {
+	protected void writeEntityToNBT(@Nonnull NBTTagCompound compound) {
 		compound.setInteger(EXPIRY, expiry);
 		compound.setInteger(STACK_SIZE, stackSize);
 		compound.setBoolean(CONSUMED, consumed);

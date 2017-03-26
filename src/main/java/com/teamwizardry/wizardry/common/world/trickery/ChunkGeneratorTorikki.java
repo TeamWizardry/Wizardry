@@ -12,8 +12,8 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.chunk.IChunkGenerator;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -86,7 +86,7 @@ public class ChunkGeneratorTorikki implements IChunkGenerator {
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public Chunk provideChunk(int x, int z) {
 		ChunkPrimer chunkprimer = new ChunkPrimer();
@@ -115,13 +115,13 @@ public class ChunkGeneratorTorikki implements IChunkGenerator {
 	}
 
 	@Override
-	public boolean generateStructures(@NotNull Chunk chunkIn, int x, int z) {
+	public boolean generateStructures(@Nonnull Chunk chunkIn, int x, int z) {
 		return false;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public List<Biome.SpawnListEntry> getPossibleCreatures(@NotNull EnumCreatureType creatureType, @NotNull BlockPos pos) {
+	public List<Biome.SpawnListEntry> getPossibleCreatures(@Nonnull EnumCreatureType creatureType, @Nonnull BlockPos pos) {
 		ArrayList<Biome.SpawnListEntry> list = new ArrayList<>();
 		list.add(new Biome.SpawnListEntry(EntityFairy.class, 1, 1, 3));
 		return list;
@@ -129,12 +129,12 @@ public class ChunkGeneratorTorikki implements IChunkGenerator {
 
 	@Nullable
 	@Override
-	public BlockPos getStrongholdGen(@NotNull World worldIn, @NotNull String structureName, @NotNull BlockPos position) {
+	public BlockPos getStrongholdGen(World worldIn, String structureName, BlockPos position, boolean p_180513_4_) {
 		return null;
 	}
 
 	@Override
-	public void recreateStructures(@NotNull Chunk chunkIn, int x, int z) {
+	public void recreateStructures(@Nonnull Chunk chunkIn, int x, int z) {
 
 	}
 }

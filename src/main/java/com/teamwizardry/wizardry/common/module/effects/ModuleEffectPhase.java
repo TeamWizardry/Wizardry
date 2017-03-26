@@ -14,9 +14,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
@@ -31,31 +31,31 @@ public class ModuleEffectPhase extends Module {
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ItemStack getRequiredStack() {
 		return new ItemStack(Items.ENDER_PEARL);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleType getModuleType() {
 		return ModuleType.EFFECT;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getID() {
 		return "phase";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getReadableName() {
 		return "Phase";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDescription() {
 		return "Will short-range blink-trace you forwards";
@@ -77,7 +77,7 @@ public class ModuleEffectPhase extends Module {
 	}
 
 	@Override
-	public boolean run(@NotNull SpellData spell) {
+	public boolean run(@Nonnull SpellData spell) {
 		Entity caster = spell.getData(CASTER);
 		Entity targetEntity = spell.getData(ENTITY_HIT);
 		Vec3d targetHit = spell.getData(TARGET_HIT);
@@ -109,7 +109,7 @@ public class ModuleEffectPhase extends Module {
 		return new Color(0x9595AA, true);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleEffectPhase copy() {
 		ModuleEffectPhase module = new ModuleEffectPhase();

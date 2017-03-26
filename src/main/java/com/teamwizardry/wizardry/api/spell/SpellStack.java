@@ -17,8 +17,8 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 /**
@@ -91,7 +91,7 @@ public class SpellStack {
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	public static List<List<ItemStack>> brancher(List<ItemStack> inventory, Item identifier) {
 		List<List<ItemStack>> branches = new ArrayList<>();
 		List<ItemStack> temp = new ArrayList<>();
@@ -105,7 +105,7 @@ public class SpellStack {
 		return branches;
 	}
 
-	public static void runModules(@NotNull Module mainModule, SpellData spell) {
+	public static void runModules(@Nonnull Module mainModule, SpellData spell) {
 		Entity caster = spell.getData(SpellData.DefaultKeys.CASTER);
 
 		for (Module module : getAllModules(mainModule)) {
@@ -138,7 +138,7 @@ public class SpellStack {
 		}
 	}
 
-	public static void runModules(@NotNull ItemStack spellHolder, SpellData spell) {
+	public static void runModules(@Nonnull ItemStack spellHolder, SpellData spell) {
 		if (spell.world.isRemote) return;
 
 		Entity caster = spell.getData(SpellData.DefaultKeys.CASTER);
@@ -173,22 +173,22 @@ public class SpellStack {
 		}
 	}
 
-	public static Set<Module> getModules(@NotNull ItemStack spellHolder) {
+	public static Set<Module> getModules(@Nonnull ItemStack spellHolder) {
 		Set<Module> modules = new HashSet<>();
 
-		NBTTagList list = ItemNBTHelper.getList(spellHolder, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND, false);
+		NBTTagList list = ItemNBTHelper.getList(spellHolder, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
 		if (list == null) return modules;
 
 		return getModules(list);
 	}
 
-	public static Set<Module> getModules(@NotNull NBTTagCompound compound) {
+	public static Set<Module> getModules(@Nonnull NBTTagCompound compound) {
 		if (compound.hasKey(Constants.NBT.SPELL))
 			return getModules(compound.getTagList(Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND));
 		else return new HashSet<>();
 	}
 
-	public static Set<Module> getModules(@NotNull NBTTagList list) {
+	public static Set<Module> getModules(@Nonnull NBTTagList list) {
 		Set<Module> modules = new HashSet<>();
 		for (int i = 0; i < list.tagCount(); i++) {
 			NBTTagCompound compound = list.getCompoundTagAt(i);
@@ -201,7 +201,7 @@ public class SpellStack {
 		return modules;
 	}
 
-	public static Set<Module> getAllModules(@NotNull NBTTagCompound compound) {
+	public static Set<Module> getAllModules(@Nonnull NBTTagCompound compound) {
 		Set<Module> modules = new HashSet<>();
 		Set<Module> heads = getModules(compound);
 		for (Module module : heads) {
@@ -214,7 +214,7 @@ public class SpellStack {
 		return modules;
 	}
 
-	public static Set<Module> getAllModules(@NotNull Module module) {
+	public static Set<Module> getAllModules(@Nonnull Module module) {
 		Set<Module> modules = new HashSet<>();
 		Module tempModule = module;
 		while (tempModule != null) {
@@ -224,7 +224,7 @@ public class SpellStack {
 		return modules;
 	}
 
-	public static Set<Module> getAllModules(@NotNull ItemStack spellHolder) {
+	public static Set<Module> getAllModules(@Nonnull ItemStack spellHolder) {
 		Set<Module> modules = new HashSet<>();
 		Set<Module> heads = getModules(spellHolder);
 		for (Module module : heads) {

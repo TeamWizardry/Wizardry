@@ -23,9 +23,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -68,7 +68,7 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink {
 		compound.setTag("clusters", list);
 	}
 
-	@NotNull
+	@Nonnull
 	@SideOnly(Side.CLIENT)
 	@Override
 	public AxisAlignedBB getRenderBoundingBox() {

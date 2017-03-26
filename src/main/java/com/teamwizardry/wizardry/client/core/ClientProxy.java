@@ -23,8 +23,8 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 
 public class ClientProxy extends CommonProxy implements IResourceManagerReloadListener {
@@ -78,7 +78,7 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 	}
 
 	@Override
-	public void onResourceManagerReload(@NotNull IResourceManager resourceManager) {
+	public void onResourceManagerReload(@Nonnull IResourceManager resourceManager) {
 		MinecraftForge.EVENT_BUS.post(new ResourceReloadEvent(resourceManager));
 	}
 

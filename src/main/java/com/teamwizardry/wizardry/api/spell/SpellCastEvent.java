@@ -2,7 +2,8 @@ package com.teamwizardry.wizardry.api.spell;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 /**
  * Created by LordSaad.

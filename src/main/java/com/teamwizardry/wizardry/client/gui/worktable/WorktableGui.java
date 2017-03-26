@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.client.gui.worktable;
 
-import com.google.common.collect.BiMap;
 import com.google.common.collect.HashMultimap;
 import com.teamwizardry.librarianlib.client.gui.GuiBase;
 import com.teamwizardry.librarianlib.client.gui.GuiComponent;

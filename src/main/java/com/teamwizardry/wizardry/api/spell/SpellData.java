@@ -7,9 +7,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashMap;
 
 /**
@@ -18,18 +18,18 @@ import java.util.HashMap;
 public class SpellData implements INBTSerializable<NBTTagCompound> {
 
 	private static HashMap<Pair, ProcessData.Process> dataProcessor = new HashMap<>();
-	@NotNull
+	@Nonnull
 	public World world;
-	@NotNull
+	@Nonnull
 	private HashMap<Pair, Object> data = new HashMap<>();
 
-	public SpellData(@NotNull World world) {
+	public SpellData(@Nonnull World world) {
 		this.world = world;
 	}
 
 	@SuppressWarnings("unchecked")
-	@NotNull
-	public static <T, E extends NBTBase> Pair<String, Class<T>> constructPair(@NotNull String key, @NotNull Class<?> type, ProcessData.Process<E, T> data) {
+	@Nonnull
+	public static <T, E extends NBTBase> Pair<String, Class<T>> constructPair(@Nonnull String key, @Nonnull Class<?> type, ProcessData.Process<E, T> data) {
 		Pair<String, Class<T>> pair = new Pair(key, type);
 		dataProcessor.put(pair, data);
 		return pair;
@@ -39,32 +39,32 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 		this.data.putAll(data);
 	}
 
-	public <T> void addData(@NotNull Pair<String, Class<T>> key, @Nullable T value) {
+	public <T> void addData(@Nonnull Pair<String, Class<T>> key, @Nullable T value) {
 		this.data.put(key, value);
 	}
 
 	@Nullable
 	@SuppressWarnings("unchecked")
-	public <T> T getData(@NotNull Pair<String, Class<T>> pair) {
+	public <T> T getData(@Nonnull Pair<String, Class<T>> pair) {
 		if (data.containsKey(pair) && pair.getSecond().isInstance(data.get(pair)))
 			return (T) data.get(pair);
 		return null;
 	}
 
-	@NotNull
+	@Nonnull
 	@SuppressWarnings("unchecked")
-	public <T> T getData(@NotNull Pair<String, Class<T>> pair, @NotNull T def) {
+	public <T> T getData(@Nonnull Pair<String, Class<T>> pair, @Nonnull T def) {
 		if (data.containsKey(pair) && pair.getSecond().isInstance(data.get(pair)))
 			return (T) data.get(pair);
 		return def;
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T> boolean hasData(@NotNull Pair<String, Class<T>> pair) {
+	public <T> boolean hasData(@Nonnull Pair<String, Class<T>> pair) {
 		return data.containsKey(pair) && data.get(pair) != null;
 	}
 
-	public void crunchData(@NotNull Entity entity, boolean asCaster) {
+	public void crunchData(@Nonnull Entity entity, boolean asCaster) {
 		if (asCaster) {
 			addData(DefaultKeys.ORIGIN, entity.getPositionVector());
 			addData(DefaultKeys.CASTER, entity);
@@ -108,7 +108,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 	}
 
 	public static class DefaultKeys {
-		@NotNull
+		@Nonnull
 		public static final Pair<String, Class<Entity>> CASTER = constructPair("caster", Entity.class, new ProcessData.Process<NBTTagInt, Entity>() {
 			@Override
 			public NBTTagInt serialize(Entity object) {
@@ -121,7 +121,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			}
 		});
 
-		@NotNull
+		@Nonnull
 		public static final Pair<String, Class<Float>> YAW = constructPair("yaw", Float.class, new ProcessData.Process<NBTTagFloat, Float>() {
 			@Override
 			public NBTTagFloat serialize(Float object) {
@@ -134,7 +134,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			}
 		});
 
-		@NotNull
+		@Nonnull
 		public static final Pair<String, Class<Float>> PITCH = constructPair("pitch", Float.class, new ProcessData.Process<NBTTagFloat, Float>() {
 			@Override
 			public NBTTagFloat serialize(Float object) {
@@ -147,7 +147,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			}
 		});
 
-		@NotNull
+		@Nonnull
 		public static final Pair<String, Class<Vec3d>> ORIGIN = constructPair("origin", Vec3d.class, new ProcessData.Process<NBTTagCompound, Vec3d>() {
 			@Override
 			public NBTTagCompound serialize(Vec3d object) {
@@ -167,7 +167,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			}
 		});
 
-		@NotNull
+		@Nonnull
 		public static final Pair<String, Class<Entity>> ENTITY_HIT = constructPair("entity_hit", Entity.class, new ProcessData.Process<NBTTagInt, Entity>() {
 			@Override
 			public NBTTagInt serialize(Entity object) {
@@ -181,7 +181,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			}
 		});
 
-		@NotNull
+		@Nonnull
 		public static final Pair<String, Class<BlockPos>> BLOCK_HIT = constructPair("block_hit", BlockPos.class, new ProcessData.Process<NBTTagLong, BlockPos>() {
 			@Override
 			public NBTTagLong serialize(BlockPos object) {
@@ -194,7 +194,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			}
 		});
 
-		@NotNull
+		@Nonnull
 		public static final Pair<String, Class<Vec3d>> TARGET_HIT = constructPair("target_hit", Vec3d.class, new ProcessData.Process<NBTTagCompound, Vec3d>() {
 			@Override
 			public NBTTagCompound serialize(Vec3d object) {

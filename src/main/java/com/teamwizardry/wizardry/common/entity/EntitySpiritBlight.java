@@ -12,8 +12,8 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 
 /**
@@ -93,7 +93,7 @@ public class EntitySpiritBlight extends EntityMob {
 		else LibParticles.SPIRIT_WIGHT_FLAME_NORMAL(world, getPositionVector().addVector(0, getEyeHeight(), 0));
 
 		if (angry) {
-			player.attackEntityFrom(DamageSource.magic, 0.15f);
+			player.attackEntityFrom(DamageSource.MAGIC, 0.15f);
 			player.hurtResistantTime = 0;
 		}
 	}
@@ -104,12 +104,12 @@ public class EntitySpiritBlight extends EntityMob {
 	}
 
 	@Override
-	public void dropLoot(boolean wasRecentlyHit, int lootingModifier, @NotNull DamageSource source) {
+	public void dropLoot(boolean wasRecentlyHit, int lootingModifier, @Nonnull DamageSource source) {
 		super.dropLoot(wasRecentlyHit, lootingModifier, source);
 	}
 
 	@Override
-	public boolean attackEntityFrom(@NotNull DamageSource source, float amount) {
+	public boolean attackEntityFrom(@Nonnull DamageSource source, float amount) {
 		if (source.isMagicDamage()) {
 			super.attackEntityFrom(source, amount);
 			LibParticles.SPIRIT_WIGHT_HURT(world, getPositionVector());

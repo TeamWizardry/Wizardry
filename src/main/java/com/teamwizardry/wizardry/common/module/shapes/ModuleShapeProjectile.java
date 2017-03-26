@@ -11,7 +11,8 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
@@ -21,38 +22,38 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 @RegisterModule
 public class ModuleShapeProjectile extends Module {
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ItemStack getRequiredStack() {
 		return new ItemStack(Items.NETHER_WART);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleType getModuleType() {
 		return ModuleType.SHAPE;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getID() {
 		return "shape_projectile";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getReadableName() {
 		return "Projectile";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDescription() {
 		return "Will launch the spell as a projectile in the direction the caster is looking.";
 	}
 
 	@Override
-	public boolean run(@NotNull SpellData spell) {
+	public boolean run(@Nonnull SpellData spell) {
 		if (nextModule == null) return true;
 		World world = spell.world;
 		if (world.isRemote) return false;
@@ -85,7 +86,7 @@ public class ModuleShapeProjectile extends Module {
 		return 50;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleShapeProjectile copy() {
 		ModuleShapeProjectile module = new ModuleShapeProjectile();

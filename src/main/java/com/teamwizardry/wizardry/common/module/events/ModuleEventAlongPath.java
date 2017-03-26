@@ -5,7 +5,8 @@ import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.RegisterModule;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 /**
  * Created by LordSaad.
@@ -13,46 +14,46 @@ import org.jetbrains.annotations.NotNull;
 @RegisterModule
 public class ModuleEventAlongPath extends Module {
 
-    public ModuleEventAlongPath() {
-        process(this);
-    }
+	public ModuleEventAlongPath() {
+		process(this);
+	}
 
-    @NotNull
-    @Override
-    public ItemStack getRequiredStack() {
-        return new ItemStack(Items.FEATHER);
-    }
+	@Nonnull
+	@Override
+	public ItemStack getRequiredStack() {
+		return new ItemStack(Items.FEATHER);
+	}
 
-    @NotNull
-    @Override
-    public ModuleType getModuleType() {
-        return ModuleType.EVENT;
-    }
+	@Nonnull
+	@Override
+	public ModuleType getModuleType() {
+		return ModuleType.EVENT;
+	}
 
-    @NotNull
-    @Override
-    public String getID() {
-        return "while_along_path";
-    }
+	@Nonnull
+	@Override
+	public String getID() {
+		return "while_along_path";
+	}
 
-    @NotNull
-    @Override
-    public String getReadableName() {
-        return "While Along Path";
-    }
+	@Nonnull
+	@Override
+	public String getReadableName() {
+		return "While Along Path";
+	}
 
-    @NotNull
-    @Override
-    public String getDescription() {
-        return "Triggered throughout the journey of a spell, like a projectile shape whilst airborne or across an entire beam shape";
-    }
+	@Nonnull
+	@Override
+	public String getDescription() {
+		return "Triggered throughout the journey of a spell, like a projectile shape whilst airborne or across an entire beam shape";
+	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleEventAlongPath copy() {
 		ModuleEventAlongPath module = new ModuleEventAlongPath();
 		module.deserializeNBT(serializeNBT());
-        process(module);
-        return module;
-    }
+		process(module);
+		return module;
+	}
 }

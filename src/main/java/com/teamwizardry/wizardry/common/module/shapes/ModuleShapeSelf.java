@@ -7,7 +7,8 @@ import com.teamwizardry.wizardry.api.spell.SpellData;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
 
@@ -17,38 +18,38 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
 @RegisterModule
 public class ModuleShapeSelf extends Module {
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ItemStack getRequiredStack() {
 		return new ItemStack(Items.DIAMOND);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleType getModuleType() {
 		return ModuleType.SHAPE;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getID() {
 		return "shape_self";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getReadableName() {
 		return "Self";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDescription() {
 		return "Will run the spell on the caster";
 	}
 
 	@Override
-	public boolean run(@NotNull SpellData spell) {
+	public boolean run(@Nonnull SpellData spell) {
 		Entity caster = spell.getData(CASTER);
 		if (caster == null) return false;
 		spell.crunchData(caster, true);
@@ -58,7 +59,7 @@ public class ModuleShapeSelf extends Module {
 		return runNextModule(spell);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleShapeSelf copy() {
 		ModuleShapeSelf module = new ModuleShapeSelf();

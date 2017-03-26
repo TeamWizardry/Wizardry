@@ -11,9 +11,9 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.List;
 
@@ -98,7 +98,7 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	 *
 	 * @return An itemstack representing the price.
 	 */
-	@NotNull
+	@Nonnull
 	public ItemStack getRequiredStack() {
 		return new ItemStack(Blocks.STONE);
 	}
@@ -108,7 +108,7 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	 *
 	 * @return A ModuleType representing the type of module this is.
 	 */
-	@NotNull
+	@Nonnull
 	public ModuleType getModuleType() {
 		return ModuleType.EFFECT;
 	}
@@ -118,7 +118,7 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	 *
 	 * @return A lower case snake_case string.
 	 */
-	@NotNull
+	@Nonnull
 	public String getID() {
 		return "null_id";
 	}
@@ -128,7 +128,7 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	 *
 	 * @return A readable string representing it's name or title.
 	 */
-	@NotNull
+	@Nonnull
 	public String getReadableName() {
 		return "Null Module";
 	}
@@ -138,7 +138,7 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	 *
 	 * @return A string representing what this module does.
 	 */
-	@NotNull
+	@Nonnull
 	public String getDescription() {
 		return "This module is null";
 	}
@@ -165,14 +165,14 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 		return 0;
 	}
 
-	public boolean run(@NotNull SpellData spell) {
+	public boolean run(@Nonnull SpellData spell) {
 		return false;
 	}
 
 	/**
 	 * This method runs client side when the spell runs. Spawn particles here.
 	 */
-	public void runClient(@Nullable ItemStack stack, @NotNull SpellData spell) {
+	public void runClient(@Nullable ItemStack stack, @Nonnull SpellData spell) {
 
 	}
 
@@ -233,7 +233,7 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 		return ((WizardManager.getMaxBurnout((EntityLivingBase) player) - WizardManager.getBurnout((EntityLivingBase) player)) / (WizardManager.getMaxBurnout((EntityLivingBase) player) * 1.0));
 	}
 
-	@NotNull
+	@Nonnull
 	public Module copy() {
 		Module clone = new Module();
 		clone.deserializeNBT(serializeNBT());

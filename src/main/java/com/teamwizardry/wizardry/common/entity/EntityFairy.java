@@ -20,8 +20,8 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.List;
@@ -175,10 +175,11 @@ public class EntityFairy extends EntityFlying {
 		}
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public EnumActionResult applyPlayerInteraction(EntityPlayer player, Vec3d vec, @Nullable ItemStack stack, EnumHand hand) {
-		if ((stack != null) && (stack.getItem() == ModItems.JAR)) {
+	public EnumActionResult applyPlayerInteraction(EntityPlayer player, Vec3d vec, EnumHand hand)  {
+		ItemStack stack = player.getHeldItem(hand);
+		if (stack.getItem() == ModItems.JAR) {
 			ItemNBTHelper.setBoolean(stack, NBT.FAIRY_INSIDE, true);
 			ItemNBTHelper.setInt(stack, NBT.FAIRY_COLOR, color.getRGB());
 			ItemNBTHelper.setInt(stack, NBT.FAIRY_AGE, age);
@@ -189,7 +190,7 @@ public class EntityFairy extends EntityFlying {
 	}
 
 	@Override
-	public boolean attackEntityFrom(@NotNull DamageSource source, float amount) {
+	public boolean attackEntityFrom(@Nonnull DamageSource source, float amount) {
 		super.attackEntityFrom(source, amount);
 		if (getHealth() < 0.1)
 			LibParticles.FAIRY_EXPLODE(world, getPositionVector().addVector(0, 0.25, 0), color);
@@ -202,7 +203,7 @@ public class EntityFairy extends EntityFlying {
 	}
 
 	@Override
-	public void dropLoot(boolean wasRecentlyHit, int lootingModifier, @NotNull DamageSource source) {
+	public void dropLoot(boolean wasRecentlyHit, int lootingModifier, @Nonnull DamageSource source) {
 		//super.dropLoot(wasRecentlyHit, lootingModifier, source);
 		ItemStack fairyWings = new ItemStack(ModItems.FAIRY_WINGS);
 		ItemStack fairyDust = new ItemStack(ModItems.FAIRY_DUST);

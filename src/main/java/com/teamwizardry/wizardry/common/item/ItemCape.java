@@ -16,8 +16,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.UUID;
 
@@ -48,8 +48,8 @@ public class ItemCape extends ItemModArmor {
 
 			int time = ItemNBTHelper.getInt(stack, "time", 0);
 			int buffer = ItemNBTHelper.getInt(stack, "buffer", 0);
-			UUID owner = ItemNBTHelper.getUUID(stack, "owner", true);
-			UUID thief = ItemNBTHelper.getUUID(stack, "thief", true);
+			UUID owner = ItemNBTHelper.getUUID(stack, "owner");
+			UUID thief = ItemNBTHelper.getUUID(stack, "thief");
 
 			if (owner == null) {
 				ItemNBTHelper.setUUID(stack, "owner", entityIn.getUniqueID());
@@ -75,26 +75,28 @@ public class ItemCape extends ItemModArmor {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
-		Entity owner = player.world.getPlayerEntityByUUID(ItemNBTHelper.getUUID(stack, "owner", false));
-		Entity thief = player.world.getPlayerEntityByUUID(ItemNBTHelper.getUUID(stack, "thief", false));
+		if (ItemNBTHelper.verifyUUIDExistence(stack, "owner")) {
+			Entity owner = player.world.getPlayerEntityByUUID(ItemNBTHelper.getUUID(stack, "owner"));
+			tooltip.add("owner: " + (owner == null ? "null" : owner.getName()));
+		}
+
+		if (ItemNBTHelper.verifyUUIDExistence(stack, "thief")) {
+			Entity thief = player.world.getPlayerEntityByUUID(ItemNBTHelper.getUUID(stack, "thief"));
+			tooltip.add("thief: " + (thief == null ? "null" : thief.getName()));
+		}
+
 		tooltip.add("time: " + ItemNBTHelper.getInt(stack, "time", 0));
 		tooltip.add("buffer: " + ItemNBTHelper.getInt(stack, "buffer", 0));
-		tooltip.add("owner: " + (owner == null ? "null" : owner.getName()));
-		tooltip.add("thief: " + (thief == null ? "null" : thief.getName()));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
-		ItemStack itemstack = playerIn.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, @Nonnull EnumHand hand) {
+		ItemStack stack = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
 
-		if (itemstack == null) {
-			playerIn.setItemStackToSlot(EntityEquipmentSlot.CHEST, itemStackIn.copy());
-			itemStackIn.stackSize = 0;
-			return new ActionResult(EnumActionResult.SUCCESS, itemStackIn);
-		} else {
-			return new ActionResult(EnumActionResult.FAIL, itemStackIn);
-		}
+		player.setItemStackToSlot(EntityEquipmentSlot.CHEST, stack.copy());
+		stack.setCount(0);
+		return new ActionResult(EnumActionResult.SUCCESS, stack);
 	}
 
 	@Override

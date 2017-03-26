@@ -61,6 +61,53 @@ public class TableModule {
 
 				ComponentModuleLine line = new ComponentModuleLine(sprite.getPos(), event.getMousePos());
 				line.setEnabled(false);
+
+				DragMixin<ComponentModuleLine> drag = new DragMixin<>(line, vec2d -> vec2d);
+				drag.setClickPos(new Vec2d(6, 6));
+				drag.setMouseDown(event.getButton());
+
+				line.BUS.hook(DragMixin.DragMoveEvent.class, (event2) -> {
+					line.set(sprite.getPos(), event2.getMousePos());
+				});
+
+				line.BUS.hook(DragMixin.DragDropEvent.class, (event2) -> {
+					for (ComponentSprite comp : modules) {
+						if (comp.getMouseOver()) {
+							if (!sprite.hasData(ComponentModuleLine.class, comp.hashCode() + "")
+									&& !comp.hasData(ComponentModuleLine.class, sprite.hashCode() + "")) {
+								ComponentModuleLine line2 = new ComponentModuleLine(sprite.getPos(), comp.getPos());
+								line2.setEnabled(false);
+								sprite.setData(ComponentModuleLine.class, comp.hashCode() + "", line2);
+								table.paper.add(line2);
+
+							} else {
+								if (sprite.hasData(ComponentModuleLine.class, comp.hashCode() + "")) {
+									ComponentModuleLine remove = sprite.getData(ComponentModuleLine.class, comp.hashCode() + "");
+									if (remove != null) {
+										table.paper.remove(remove);
+										remove.invalidate();
+										sprite.removeData(ComponentModuleLine.class, comp.hashCode() + "");
+									}
+								}
+								if (comp.hasData(ComponentModuleLine.class, sprite.hashCode() + "")) {
+									ComponentModuleLine remove = comp.getData(ComponentModuleLine.class, sprite.hashCode() + "");
+									if (remove != null) {
+										table.paper.remove(remove);
+										remove.invalidate();
+										sprite.removeData(ComponentModuleLine.class, comp.hashCode() + "");
+									}
+								}
+
+							}
+
+							break;
+						}
+					}
+
+					line.invalidate();
+					sprite.removeData(ComponentModuleLine.class, "dragging");
+				});
+
 				sprite.setData(ComponentModuleLine.class, "dragging", line);
 				table.paper.add(line);
 
@@ -76,47 +123,10 @@ public class TableModule {
 				if (!b) sprite.invalidate();
 
 			} else if (event.getButton() == EnumMouseButton.RIGHT) {
-
-				for (ComponentSprite comp : modules) {
-					if (comp.getMouseOver()) {
-						if (!sprite.hasData(ComponentModuleLine.class, comp.hashCode() + "")
-								&& !comp.hasData(ComponentModuleLine.class, sprite.hashCode() + "")) {
-							ComponentModuleLine line = new ComponentModuleLine(sprite.getPos(), comp.getPos());
-							line.setEnabled(false);
-							sprite.setData(ComponentModuleLine.class, comp.hashCode() + "", line);
-							table.paper.add(line);
-
-						} else {
-							if (sprite.hasData(ComponentModuleLine.class, comp.hashCode() + "")) {
-								ComponentModuleLine remove = sprite.getData(ComponentModuleLine.class, comp.hashCode() + "");
-								if (remove != null) {
-									table.paper.remove(remove);
-									remove.invalidate();
-									sprite.removeData(ComponentModuleLine.class, comp.hashCode() + "");
-								}
-							}
-							if (comp.hasData(ComponentModuleLine.class, sprite.hashCode() + "")) {
-								ComponentModuleLine remove = comp.getData(ComponentModuleLine.class, sprite.hashCode() + "");
-								if (remove != null) {
-									table.paper.remove(remove);
-									remove.invalidate();
-									sprite.removeData(ComponentModuleLine.class, comp.hashCode() + "");
-								}
-							}
-
-						}
-
-						break;
-					}
-				}
-
-				ComponentModuleLine dragging = sprite.getData(ComponentModuleLine.class, "dragging");
-				if (dragging != null) dragging.invalidate();
-				sprite.removeData(ComponentModuleLine.class, "dragging");
 			}
 		});
 
-		sprite.BUS.hook(DragMixin.DragMoveEvent.class, (event) -> {
+		/*sprite.BUS.hook(DragMixin.DragMoveEvent.class, (event) -> {
 			if (event.getComponent().getMouseOver()) {
 				if (event.getButton() == EnumMouseButton.RIGHT) {
 					ComponentModuleLine line = sprite.getData(ComponentModuleLine.class, "dragging");
@@ -124,7 +134,7 @@ public class TableModule {
 						line.set(event.getComponent().getPos(), event.getMousePos());
 				}
 			}
-		});
+		});*/
 
 		sprite.BUS.hook(GuiComponent.PostDrawEvent.class, (event) -> {
 			if (event.getComponent().getMouseOver()) {

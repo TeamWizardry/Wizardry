@@ -18,8 +18,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -78,7 +78,7 @@ public class EntitySpellProjectile extends EntityThrowable {
 	}
 
 	@Override
-	protected void onImpact(@NotNull RayTraceResult result) {
+	protected void onImpact(@Nonnull RayTraceResult result) {
 		if (module != null && module.nextModule != null) {
 			Module nextModule = module.nextModule;
 
@@ -101,7 +101,7 @@ public class EntitySpellProjectile extends EntityThrowable {
 	}
 
 	@Override
-	public void readEntityFromNBT(@NotNull NBTTagCompound compound) {
+	public void readEntityFromNBT(@Nonnull NBTTagCompound compound) {
 		super.readEntityFromNBT(compound);
 		NBTTagCompound moduleCompound = compound.getCompoundTag("module");
 		Module module = ModuleRegistry.INSTANCE.getModule(moduleCompound.getString("id"));
@@ -116,7 +116,7 @@ public class EntitySpellProjectile extends EntityThrowable {
 	}
 
 	@Override
-	public void writeEntityToNBT(@NotNull NBTTagCompound compound) {
+	public void writeEntityToNBT(@Nonnull NBTTagCompound compound) {
 		super.writeEntityToNBT(compound);
 		compound.setTag("module", module.serializeNBT());
 		compound.setTag("spell_data", spell.serializeNBT());

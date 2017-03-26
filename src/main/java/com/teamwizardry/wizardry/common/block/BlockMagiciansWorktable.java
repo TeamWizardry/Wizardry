@@ -22,8 +22,9 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Created by Saad on 6/12/2016.
@@ -39,7 +40,7 @@ public class BlockMagiciansWorktable extends BlockModContainer {
 		setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(ISLEFTSIDE, true));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
 		EnumFacing placerFacing = placer.getHorizontalFacing();
@@ -70,7 +71,7 @@ public class BlockMagiciansWorktable extends BlockModContainer {
 	}
 
 	@Override
-	public void breakBlock(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state) {
+	public void breakBlock(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
 		super.breakBlock(worldIn, pos, state);
 		worldIn.destroyBlock(getOtherTableBlock(state, pos), false);
 	}
@@ -80,18 +81,18 @@ public class BlockMagiciansWorktable extends BlockModContainer {
 	}
 
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		playerIn.openGui(Wizardry.instance, 0, worldIn, (int) playerIn.posX, (int) playerIn.posY, (int) playerIn.posZ);
 		return true;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	protected BlockStateContainer createBlockState() {
 		return new BlockStateContainer(this, FACING, ISLEFTSIDE);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
 		return getDefaultState().withProperty(ISLEFTSIDE, (meta & 4) != 0).withProperty(FACING, EnumFacing.getHorizontal(meta & 3));
@@ -104,7 +105,7 @@ public class BlockMagiciansWorktable extends BlockModContainer {
 	}
 
 	@Override
-	public boolean canRenderInLayer(BlockRenderLayer layer) {
+	public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
 		return (layer == BlockRenderLayer.CUTOUT) || (layer == BlockRenderLayer.TRANSLUCENT);
 	}
 
