@@ -5,6 +5,7 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.client.core.ClientProxy;
+import com.teamwizardry.wizardry.common.fluid.FluidBlockMana;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.client.Minecraft;
@@ -80,6 +81,12 @@ public class TileManaBatteryRenderer extends TileEntitySpecialRenderer<TileManaB
 	public void renderTileEntityAt(TileManaBattery te, double x, double y, double z, float partialTicks, int destroyStage) {
 		World world = te.getWorld();
 
+		int count = 0;
+		for (int i = -4; i < 4; i++)
+			for (int j = -4; j < 4; j++)
+				if (world.getBlockState(te.getPos().add(i, -3, j)) == FluidBlockMana.instance.getDefaultState())
+					count++;
+
 		GlStateManager.pushMatrix();
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -122,10 +129,11 @@ public class TileManaBatteryRenderer extends TileEntitySpecialRenderer<TileManaB
 
 		for (BlockPos pos : positions.missingSymmetry)
 			if (ThreadLocalRandom.current().nextInt(10) == 0)
-				LibParticles.MAGIC_DOT(world, new Vec3d(pos).addVector(0.5, 0.5, 0.5), (float) ThreadLocalRandom.current().nextDouble(1, 4));
+				LibParticles.MAGIC_DOT(world, new Vec3d(pos).addVector(0.5, 0.5, 0.5), (float) ThreadLocalRandom.current().nextDouble(2, 3));
 
-		for (BlockPos pos : positions.takenPoses)
-			if (ThreadLocalRandom.current().nextInt(10) == 0)
-				LibParticles.COLORFUL_BATTERY_BEZIER(world, pos, te.getPos());
+		if (count >= 21)
+			for (BlockPos pos : positions.takenPoses)
+				if (ThreadLocalRandom.current().nextInt(5) == 0)
+					LibParticles.COLORFUL_BATTERY_BEZIER(world, pos, te.getPos());
 	}
 }

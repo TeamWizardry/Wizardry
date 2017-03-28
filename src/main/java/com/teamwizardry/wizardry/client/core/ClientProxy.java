@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.client.core;
 
+import com.teamwizardry.librarianlib.client.util.CustomBlockMapSprites;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.client.fx.Shaders;
 import com.teamwizardry.wizardry.client.render.BloodRenderLayer;
@@ -16,6 +17,7 @@ import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -42,6 +44,10 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 
 		ModBlocks.initModel();
 		ModEntities.initModels();
+
+		CustomBlockMapSprites.INSTANCE.register(new ResourceLocation(Wizardry.MODID, "blocks/mana_crystal_ring"));
+		CustomBlockMapSprites.INSTANCE.register(new ResourceLocation(Wizardry.MODID, "blocks/mana_crystal_ring_outer"));
+		CustomBlockMapSprites.INSTANCE.register(new ResourceLocation(Wizardry.MODID, "blocks/mana_crystal"));
 	}
 
 	@Override

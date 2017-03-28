@@ -25,9 +25,8 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 @TileRegister("pedestal")
 public class TileStaff extends TileMod implements ITickable {
 
-	@Nullable
 	@Save
-	public ItemStack pearl;
+	public ItemStack pearl = ItemStack.EMPTY;
 	@Save
 	private int cooldown = 0;
 

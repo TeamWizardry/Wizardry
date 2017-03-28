@@ -424,8 +424,9 @@ public class LibParticles {
 			glitter.setColor(new Color(ThreadLocalRandom.current().nextInt(0, 100), ThreadLocalRandom.current().nextInt(0, 100), ThreadLocalRandom.current().nextInt(50, 255)));
 			if (scale == -1) glitter.setScale(ThreadLocalRandom.current().nextFloat());
 			else {
+				glitter.setAlphaFunction(new InterpFadeInOut(1f, 1f));
 				glitter.setMotion(new Vec3d(0, ThreadLocalRandom.current().nextDouble(0.3), 0));
-				glitter.setLifetime(ThreadLocalRandom.current().nextInt(10));
+				glitter.setLifetime(ThreadLocalRandom.current().nextInt(30));
 				glitter.setScale(scale);
 			}
 		});
@@ -481,20 +482,15 @@ public class LibParticles {
 	}
 
 	public static void COLORFUL_BATTERY_BEZIER(World world, BlockPos pedestal, BlockPos center) {
-		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(10, 50));
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-		glitter.setAlphaFunction(new InterpFadeInOut(0.5f, 0.1f));
+		ParticleBuilder helix = new ParticleBuilder(200);
+		helix.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
+		helix.setAlphaFunction(new InterpFadeInOut(0.1f, 0.1f));
 
-		Vec3d sub = new Vec3d(center).addVector(0.5, 0.5, 0.5).subtract(new Vec3d(pedestal).addVector(0.5, 0.5, 0.5));
-
-		Matrix4 matrix = new Matrix4();
-		InterpBezier3D bezier3D = new InterpBezier3D(Vec3d.ZERO, sub,
-				matrix.rotate(Math.toRadians(90), new Vec3d(0, 1, 0)).apply(sub).addVector(0, 5, 0),
-				matrix.rotate(Math.toRadians(-90), new Vec3d(0, 1, 0)).apply(sub));
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(pedestal).addVector(0.5, 0.5, 0.5)), 3, 0, (aFloat, particleBuilder) -> {
-			glitter.setColor(new Color(0, ThreadLocalRandom.current().nextInt(30, 100), ThreadLocalRandom.current().nextInt(50, 255), ThreadLocalRandom.current().nextInt(10, 255)));
-			glitter.setScale(ThreadLocalRandom.current().nextFloat());
-			glitter.setPositionFunction(bezier3D);
+		ParticleSpawner.spawn(helix, world, new StaticInterp<>(new Vec3d(pedestal).addVector(0.5, 0.5, 0.5)), 1, 0, (aFloat, particleBuilder) -> {
+			helix.setColor(Utils.changeColorAlpha(new Color(0x0097FF), ThreadLocalRandom.current().nextInt(50, 200)));
+			helix.setScale(ThreadLocalRandom.current().nextFloat());
+			helix.setPositionFunction(new InterpBezier3D(Vec3d.ZERO, new Vec3d(center.subtract(pedestal)), new Vec3d(0, 6, 0), new Vec3d(center.subtract(pedestal)).subtract(0, 5, 0)));
+			helix.setLifetime(ThreadLocalRandom.current().nextInt(10, 50));
 		});
 	}
 

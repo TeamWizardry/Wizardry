@@ -2,6 +2,8 @@ package com.teamwizardry.wizardry.api.util;
 
 import com.teamwizardry.wizardry.common.tile.TileStaff;
 import com.teamwizardry.wizardry.init.ModBlocks;
+import com.teamwizardry.wizardry.init.ModItems;
+import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
@@ -12,6 +14,7 @@ import net.minecraft.world.World;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by Saad on 8/27/2016.
@@ -79,19 +82,20 @@ public final class PosUtils {
 				BlockPos staffPos = new BlockPos(battery.getX() + cX + 0.5, battery.getY() - 2, battery.getZ() + cZ + 0.5);
 
 				if (world.getBlockState(staffPos.down()).getBlock() != ModBlocks.WISDOM_WOOD_PIGMENTED_PLANKS) continue;
-				fullCircle.add(staffPos);
+
+				if (!fullCircle.contains(staffPos)) fullCircle.add(staffPos);
 
 				if (takenPoses.contains(staffPos)) continue;
 				IBlockState block = world.getBlockState(staffPos);
 				if (block.getBlock() != ModBlocks.STAFF_BLOCK) continue;
 				TileStaff staff = (TileStaff) world.getTileEntity(staffPos);
 				if (staff == null) continue;
-				if (staff.pearl == null) continue;
+				if (staff.pearl.getItem() != ModItems.MANA_ORB) continue;
 
 				int j = (180 + i) % 360;
 				double newAngle = Math.toRadians(j);
-				double oppX = 0.5 + Math.cos(newAngle) * 6;
-				double oppZ = 0.5 + Math.sin(newAngle) * 6;
+				double oppX = Math.cos(newAngle) * 6;
+				double oppZ = Math.sin(newAngle) * 6;
 				BlockPos oppPos = new BlockPos(battery.getX() + oppX + 0.5, battery.getY() - 2, battery.getZ() + oppZ + 0.5);
 
 				if (world.getBlockState(oppPos.down()).getBlock() != ModBlocks.WISDOM_WOOD_PIGMENTED_PLANKS) continue;
@@ -107,15 +111,14 @@ public final class PosUtils {
 					missingSymmetry.add(oppPos);
 					continue;
 				}
-				if (oppPed.pearl == null) {
-					missingSymmetry.add(oppPos);
-					continue;
-				}
+				if (oppPed.pearl.getItem() != ModItems.MANA_ORB) continue;
 
 				takenPoses.add(staffPos);
 				takenPoses.add(oppPos);
 			}
+
 			fullCircle.removeAll(takenPoses);
+			fullCircle.removeAll(missingSymmetry);
 		}
 	}
 }

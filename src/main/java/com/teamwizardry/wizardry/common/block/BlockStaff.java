@@ -42,7 +42,7 @@ public class BlockStaff extends BlockModContainer implements IManaSink {
 				te.pearl.setCount(1);
 				heldItem.setCount(heldItem.getCount() - 1);
 
-			} else if ((te.pearl != null)) {
+			} else if (!te.pearl.isEmpty()) {
 				ItemStack stack = te.pearl.copy();
 				te.pearl = null;
 				if (playerIn.inventory.addItemStackToInventory(stack)) playerIn.openContainer.detectAndSendChanges();

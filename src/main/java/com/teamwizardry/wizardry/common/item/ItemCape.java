@@ -38,7 +38,6 @@ public class ItemCape extends ItemModArmor {
 		if (!(entityIn instanceof EntityLivingBase)) return;
 
 		ItemStack cape = ((EntityLivingBase) entityIn).getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-		if (cape == null) return;
 		if (!(ItemStack.areItemStacksEqual(stack, cape))) return;
 
 		int tick = ItemNBTHelper.getInt(stack, "tick", 0);
@@ -76,13 +75,19 @@ public class ItemCape extends ItemModArmor {
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
 		if (ItemNBTHelper.verifyUUIDExistence(stack, "owner")) {
-			Entity owner = player.world.getPlayerEntityByUUID(ItemNBTHelper.getUUID(stack, "owner"));
-			tooltip.add("owner: " + (owner == null ? "null" : owner.getName()));
+			UUID uuid = ItemNBTHelper.getUUID(stack, "owner");
+			if (uuid != null) {
+				Entity owner = player.world.getPlayerEntityByUUID(uuid);
+				tooltip.add("owner: " + (owner == null ? "null" : owner.getName()));
+			}
 		}
 
 		if (ItemNBTHelper.verifyUUIDExistence(stack, "thief")) {
-			Entity thief = player.world.getPlayerEntityByUUID(ItemNBTHelper.getUUID(stack, "thief"));
-			tooltip.add("thief: " + (thief == null ? "null" : thief.getName()));
+			UUID uuid = ItemNBTHelper.getUUID(stack, "thief");
+			if (uuid != null) {
+				Entity thief = player.world.getPlayerEntityByUUID(uuid);
+				tooltip.add("thief: " + (thief == null ? "null" : thief.getName()));
+			}
 		}
 
 		tooltip.add("time: " + ItemNBTHelper.getInt(stack, "time", 0));

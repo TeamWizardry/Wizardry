@@ -7,6 +7,7 @@ import com.teamwizardry.librarianlib.client.gui.mixin.DragMixin;
 import com.teamwizardry.librarianlib.common.util.math.Vec2d;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.lib.LibSprites;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.ArrayList;
@@ -61,13 +62,15 @@ public class TableModule {
 
 				ComponentModuleLine line = new ComponentModuleLine(sprite.getPos(), event.getMousePos());
 				line.setEnabled(false);
+				line.setPos(sprite.getPos().add(6, 6));
 
 				DragMixin<ComponentModuleLine> drag = new DragMixin<>(line, vec2d -> vec2d);
 				drag.setClickPos(new Vec2d(6, 6));
 				drag.setMouseDown(event.getButton());
 
+
 				line.BUS.hook(DragMixin.DragMoveEvent.class, (event2) -> {
-					line.set(sprite.getPos(), event2.getMousePos());
+					line.set(sprite.getPos().add(6, 6), line.getPos());
 				});
 
 				line.BUS.hook(DragMixin.DragDropEvent.class, (event2) -> {
@@ -75,7 +78,7 @@ public class TableModule {
 						if (comp.getMouseOver()) {
 							if (!sprite.hasData(ComponentModuleLine.class, comp.hashCode() + "")
 									&& !comp.hasData(ComponentModuleLine.class, sprite.hashCode() + "")) {
-								ComponentModuleLine line2 = new ComponentModuleLine(sprite.getPos(), comp.getPos());
+								ComponentModuleLine line2 = new ComponentModuleLine(sprite.getPos().add(6, 6), comp.getPos().add(6, 6));
 								line2.setEnabled(false);
 								sprite.setData(ComponentModuleLine.class, comp.hashCode() + "", line2);
 								table.paper.add(line2);
@@ -126,15 +129,26 @@ public class TableModule {
 			}
 		});
 
-		/*sprite.BUS.hook(DragMixin.DragMoveEvent.class, (event) -> {
+		sprite.BUS.hook(DragMixin.DragMoveEvent.class, (event) -> {
 			if (event.getComponent().getMouseOver()) {
 				if (event.getButton() == EnumMouseButton.RIGHT) {
 					ComponentModuleLine line = sprite.getData(ComponentModuleLine.class, "dragging");
 					if (line != null)
 						line.set(event.getComponent().getPos(), event.getMousePos());
+				} else {
+					//for (ComponentModuleLine lines : sprite.getData(ComponentModuleLine.class)) {
+//
+					//}
+					//if (!sprite.hasData(ComponentModuleLine.class, comp.hashCode() + "")
+					//		&& !comp.hasData(ComponentModuleLine.class, sprite.hashCode() + "")) {
+					//	ComponentModuleLine line2 = new ComponentModuleLine(sprite.getPos().add(6, 6), comp.getPos().add(6, 6));
+					//	line2.setEnabled(false);
+					//	sprite.setData(ComponentModuleLine.class, comp.hashCode() + "", line2);
+					//	table.paper.add(line2);
+					//}
 				}
 			}
-		});*/
+		});
 
 		sprite.BUS.hook(GuiComponent.PostDrawEvent.class, (event) -> {
 			if (event.getComponent().getMouseOver()) {
