@@ -89,7 +89,7 @@ public final class PosUtils {
 				IBlockState block = world.getBlockState(staffPos);
 				if (block.getBlock() != ModBlocks.STAFF_BLOCK) continue;
 				TileStaff staff = (TileStaff) world.getTileEntity(staffPos);
-				if (staff == null) continue;
+				if (staff == null || staff.pearl == null) continue;
 				if (staff.pearl.getItem() != ModItems.MANA_ORB) continue;
 
 				int j = (180 + i) % 360;
@@ -111,6 +111,7 @@ public final class PosUtils {
 					missingSymmetry.add(oppPos);
 					continue;
 				}
+				if (oppPed.pearl == null) continue;
 				if (oppPed.pearl.getItem() != ModItems.MANA_ORB) continue;
 
 				takenPoses.add(staffPos);

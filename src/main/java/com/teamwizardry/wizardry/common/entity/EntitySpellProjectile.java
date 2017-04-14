@@ -12,6 +12,9 @@ import com.teamwizardry.wizardry.api.spell.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.common.module.events.ModuleEventAlongPath;
 import com.teamwizardry.wizardry.lib.LibParticles;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
@@ -26,10 +29,10 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Created by LordSaad.
  */
-public class EntitySpellProjectile extends EntityThrowable {
+public class EntitySpellProjectile extends EntityLiving {
 
-	private SpellData spell;
-	private Module module;
+	public SpellData spell;
+	public Module module;
 
 	public EntitySpellProjectile(World worldIn) {
 		super(worldIn);
@@ -53,22 +56,6 @@ public class EntitySpellProjectile extends EntityThrowable {
 		}
 		if (module == null) return;
 
-		if (module.getColor() != null) {
-			// TODO: Particle side
-			ParticleBuilder glitter = new ParticleBuilder(10);
-			glitter.setColor(new Color(1.0f, 1.0f, 1.0f, 0.1f));
-			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
-			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-			glitter.setColor(module.getColor());
-
-			ParticleSpawner.spawn(glitter, world, new StaticInterp<>(getPositionVector()), 10, 0, (aFloat, particleBuilder) -> {
-				glitter.setScale((float) ThreadLocalRandom.current().nextDouble(0.3, 0.8));
-				glitter.setLifetime(ThreadLocalRandom.current().nextInt(10, 20));
-				glitter.setPositionFunction(new InterpHelix(Vec3d.ZERO, getLook(0), 0.3f, 0.3f, 1F, ThreadLocalRandom.current().nextFloat()));
-			});
-			LibParticles.FAIRY_HEAD(world, getPositionVector(), module.getColor());
-		}
-
 		if (module.nextModule != null) {
 			Module nextModule = module.nextModule;
 			if (nextModule instanceof ModuleEventAlongPath) {
@@ -77,23 +64,23 @@ public class EntitySpellProjectile extends EntityThrowable {
 		}
 	}
 
-	@Override
-	protected void onImpact(@Nonnull RayTraceResult result) {
-		if (module != null && module.nextModule != null) {
-			Module nextModule = module.nextModule;
-
-			SpellData newSpell = spell.copy();
-			if (result.typeOfHit == RayTraceResult.Type.ENTITY)
-				newSpell.crunchData(result.entityHit, false);
-			else if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
-				newSpell.addData(SpellData.DefaultKeys.BLOCK_HIT, result.getBlockPos());
-				newSpell.addData(SpellData.DefaultKeys.TARGET_HIT, result.hitVec);
-			}
-			nextModule.run(newSpell);
-			setDead();
-			LibParticles.FAIRY_EXPLODE(world, result.hitVec, module.getColor() == null ? Color.WHITE : module.getColor());
-		}
-	}
+	//@Override
+	//protected void onImpact(@Nonnull RayTraceResult result) {
+	//	if (module != null && module.nextModule != null) {
+	//		Module nextModule = module.nextModule;
+//
+	//		SpellData newSpell = spell.copy();
+	//		if (result.typeOfHit == RayTraceResult.Type.ENTITY)
+	//			newSpell.crunchData(result.entityHit, false);
+	//		else if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
+	//			newSpell.addData(SpellData.DefaultKeys.BLOCK_HIT, result.getBlockPos());
+	//			newSpell.addData(SpellData.DefaultKeys.TARGET_HIT, result.hitVec);
+	//		}
+	//		nextModule.run(newSpell);
+	//		setDead();
+	//		LibParticles.FAIRY_EXPLODE(world, result.hitVec, module.getColor() == null ? Color.WHITE : module.getColor());
+	//	}
+	//}
 
 	@Override
 	public boolean canBeCollidedWith() {

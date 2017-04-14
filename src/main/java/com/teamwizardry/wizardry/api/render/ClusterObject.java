@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.api.render;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -78,8 +79,7 @@ public class ClusterObject implements INBTSerializable<NBTTagCompound> {
 
 	@Override
 	public void deserializeNBT(NBTTagCompound nbt) {
-		stack = ItemStack.EMPTY;
-		stack.deserializeNBT(nbt.getCompoundTag("stack"));
+		stack = new ItemStack(nbt.getCompoundTag("stack"));
 		dest = new Vec3d(nbt.getDouble("dest_x"), nbt.getDouble("dest_y"), nbt.getDouble("dest_z"));
 		origin = new Vec3d(nbt.getDouble("origin_x"), nbt.getDouble("origin_y"), nbt.getDouble("origin_z"));
 		destTime = nbt.getDouble("dest_time");

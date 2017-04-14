@@ -74,7 +74,7 @@ public class ModuleShapeProjectile extends Module {
 		EntitySpellProjectile proj = new EntitySpellProjectile(world, this, spell);
 		proj.setPosition(origin.xCoord, origin.yCoord, origin.xCoord);
 		Vec3d dir = PosUtils.vecFromRotations(pitch, yaw);
-		proj.setThrowableHeading(dir.xCoord, dir.yCoord, dir.zCoord, 1.5f, 0.0f);
+		//proj.setThrowableHeading(dir.xCoord, dir.yCoord, dir.zCoord, 1.5f, 0.0f);
 		proj.velocityChanged = true;
 
 		usedShape = this;
