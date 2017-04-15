@@ -11,6 +11,7 @@ import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.common.entity.EntitySpellProjectile;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
@@ -21,31 +22,31 @@ import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static com.teamwizardry.wizardry.common.entity.EntitySpellProjectile.DATA_COLOR;
+
 /**
  * Created by Saad on 8/25/2016.
  */
-public class RenderSpellProjectile extends RenderLiving<EntitySpellProjectile> {
+public class RenderSpellProjectile extends Render<EntitySpellProjectile> {
 
-	public RenderSpellProjectile(RenderManager renderManager, ModelBase modelBase) {
-		super(renderManager, modelBase, 0.0f);
+	public RenderSpellProjectile(RenderManager renderManager) {
+		super(renderManager);
 	}
 
 	@Override
 	public void doRender(@Nonnull EntitySpellProjectile entity, double x, double y, double z, float entityYaw, float partialTicks) {
-		if (entity.module == null) return;
-		if (entity.module.getColor() == null) return;
+		super.doRender(entity, x, y, z, entityYaw, partialTicks);
+		Color color = new Color(entity.getDataManager().get(DATA_COLOR), true);
 		ParticleBuilder glitter = new ParticleBuilder(10);
-		glitter.setColor(new Color(1.0f, 1.0f, 1.0f, 0.1f));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-		glitter.setColor(entity.module.getColor());
-
-		ParticleSpawner.spawn(glitter, entity.world, new StaticInterp<>(entity.getPositionVector()), 10, 0, (aFloat, particleBuilder) -> {
+		glitter.setColor(color);
+		glitter.enableMotionCalculation();
+		glitter.setCollision(true);
+		ParticleSpawner.spawn(glitter, entity.world, new StaticInterp<>(entity.getPositionVector()), 1, 0, (aFloat, particleBuilder) -> {
 			glitter.setScale((float) ThreadLocalRandom.current().nextDouble(0.3, 0.8));
 			glitter.setLifetime(ThreadLocalRandom.current().nextInt(10, 20));
-			glitter.setPositionFunction(new InterpHelix(Vec3d.ZERO, entity.getLook(0), 0.3f, 0.3f, 1F, ThreadLocalRandom.current().nextFloat()));
 		});
-		LibParticles.FAIRY_HEAD(entity.world, entity.getPositionVector(), entity.module.getColor());
 	}
 
 	@Nullable

@@ -1,41 +1,35 @@
 package com.teamwizardry.wizardry.common.entity;
 
-import com.teamwizardry.librarianlib.client.fx.particle.ParticleBuilder;
-import com.teamwizardry.librarianlib.client.fx.particle.ParticleSpawner;
-import com.teamwizardry.librarianlib.client.fx.particle.functions.InterpFadeInOut;
-import com.teamwizardry.librarianlib.common.util.math.interpolate.StaticInterp;
-import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpHelix;
-import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.common.module.events.ModuleEventAlongPath;
 import com.teamwizardry.wizardry.lib.LibParticles;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by LordSaad.
  */
-public class EntitySpellProjectile extends EntityLiving {
+public class EntitySpellProjectile extends EntityThrowable {
 
+	public static final DataParameter<Integer> DATA_COLOR = EntityDataManager.createKey(EntitySpellProjectile.class, DataSerializers.VARINT);
 	public SpellData spell;
 	public Module module;
 
 	public EntitySpellProjectile(World worldIn) {
 		super(worldIn);
+		setSize(0.1F, 0.1F);
+		isImmuneToFire = true;
+		applyColor(Color.WHITE);
 	}
 
 	public EntitySpellProjectile(World world, Module module, SpellData spell) {
@@ -45,6 +39,20 @@ public class EntitySpellProjectile extends EntityLiving {
 
 		this.module = module;
 		this.spell = spell;
+
+		if (module != null && module.getColor() != null) applyColor(module.getColor());
+		else applyColor(Color.WHITE);
+	}
+
+	@Override
+	protected void entityInit() {
+		super.entityInit();
+		this.getDataManager().register(DATA_COLOR, 0);
+	}
+
+	private void applyColor(Color color) {
+		this.getDataManager().set(DATA_COLOR, color.getRGB());
+		this.getDataManager().setDirty(DATA_COLOR);
 	}
 
 	@Override
@@ -54,6 +62,8 @@ public class EntitySpellProjectile extends EntityLiving {
 			setDead();
 			return;
 		}
+
+		if (world.isRemote) return;
 		if (module == null) return;
 
 		if (module.nextModule != null) {
@@ -64,23 +74,22 @@ public class EntitySpellProjectile extends EntityLiving {
 		}
 	}
 
-	//@Override
-	//protected void onImpact(@Nonnull RayTraceResult result) {
-	//	if (module != null && module.nextModule != null) {
-	//		Module nextModule = module.nextModule;
-//
-	//		SpellData newSpell = spell.copy();
-	//		if (result.typeOfHit == RayTraceResult.Type.ENTITY)
-	//			newSpell.crunchData(result.entityHit, false);
-	//		else if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
-	//			newSpell.addData(SpellData.DefaultKeys.BLOCK_HIT, result.getBlockPos());
-	//			newSpell.addData(SpellData.DefaultKeys.TARGET_HIT, result.hitVec);
-	//		}
-	//		nextModule.run(newSpell);
-	//		setDead();
-	//		LibParticles.FAIRY_EXPLODE(world, result.hitVec, module.getColor() == null ? Color.WHITE : module.getColor());
-	//	}
-	//}
+	@Override
+	protected void onImpact(@Nonnull RayTraceResult result) {
+		if (module != null && module.nextModule != null) {
+			Module nextModule = module.nextModule;
+			SpellData newSpell = spell.copy();
+			if (result.typeOfHit == RayTraceResult.Type.ENTITY)
+				newSpell.crunchData(result.entityHit, false);
+			else if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
+				newSpell.addData(SpellData.DefaultKeys.BLOCK_HIT, result.getBlockPos());
+				newSpell.addData(SpellData.DefaultKeys.TARGET_HIT, result.hitVec);
+			}
+			nextModule.run(newSpell);
+			setDead();
+			LibParticles.FAIRY_EXPLODE(world, result.hitVec, module.getColor() == null ? Color.WHITE : module.getColor());
+		}
+	}
 
 	@Override
 	public boolean canBeCollidedWith() {
@@ -100,6 +109,7 @@ public class EntitySpellProjectile extends EntityLiving {
 
 		spell = new SpellData(world);
 		spell.deserializeNBT(compound.getCompoundTag("spell_data"));
+		applyColor(new Color(compound.getInteger("color")));
 	}
 
 	@Override
@@ -107,5 +117,6 @@ public class EntitySpellProjectile extends EntityLiving {
 		super.writeEntityToNBT(compound);
 		compound.setTag("module", module.serializeNBT());
 		compound.setTag("spell_data", spell.serializeNBT());
+		compound.setInteger("color", getDataManager().get(DATA_COLOR));
 	}
 }

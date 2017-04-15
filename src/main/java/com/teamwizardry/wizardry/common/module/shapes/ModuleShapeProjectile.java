@@ -9,6 +9,7 @@ import com.teamwizardry.wizardry.common.entity.EntitySpellProjectile;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -73,8 +74,16 @@ public class ModuleShapeProjectile extends Module {
 
 		EntitySpellProjectile proj = new EntitySpellProjectile(world, this, spell);
 		proj.setPosition(origin.xCoord, origin.yCoord, origin.xCoord);
-		Vec3d dir = PosUtils.vecFromRotations(pitch, yaw);
-		//proj.setThrowableHeading(dir.xCoord, dir.yCoord, dir.zCoord, 1.5f, 0.0f);
+		float f = -MathHelper.sin(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F);
+		float f1 = -MathHelper.sin((pitch) * 0.017453292F);
+		float f2 = MathHelper.cos(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F);
+		proj.setThrowableHeading((double) f, (double) f1, (double) f2, 1.5f, 1.0f);
+		if (caster != null) {
+			proj.motionX += caster.motionX;
+			proj.motionZ += caster.motionZ;
+
+			if (!caster.onGround) proj.motionY += caster.motionY;
+		}
 		proj.velocityChanged = true;
 
 		usedShape = this;
