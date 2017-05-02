@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.common.item;
 
-import com.teamwizardry.librarianlib.common.base.item.ItemMod;
+
+import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 
 /**
  * Created by Saad on 8/28/2016.

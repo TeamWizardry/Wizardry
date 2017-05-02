@@ -1,8 +1,8 @@
 package com.teamwizardry.wizardry.api.spell;
 
-import com.teamwizardry.librarianlib.LibrarianLib;
-import com.teamwizardry.librarianlib.common.util.AnnotationHelper;
-import com.teamwizardry.librarianlib.common.util.UnsafeKt;
+import com.teamwizardry.librarianlib.core.LibrarianLib;
+import com.teamwizardry.librarianlib.features.utilities.AnnotationHelper;
+import com.teamwizardry.librarianlib.features.utilities.UnsafeKt;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 

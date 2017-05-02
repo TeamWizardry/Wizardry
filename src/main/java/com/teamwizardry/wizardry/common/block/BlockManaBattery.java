@@ -1,8 +1,8 @@
 package com.teamwizardry.wizardry.common.block;
 
-import com.teamwizardry.librarianlib.common.base.ModCreativeTab;
-import com.teamwizardry.librarianlib.common.base.block.BlockModContainer;
-import com.teamwizardry.librarianlib.common.structure.Structure;
+import com.teamwizardry.librarianlib.features.base.ModCreativeTab;
+import com.teamwizardry.librarianlib.features.base.block.BlockModContainer;
+import com.teamwizardry.librarianlib.features.structure.Structure;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.block.IManaSink;
 import com.teamwizardry.wizardry.api.block.IStructure;

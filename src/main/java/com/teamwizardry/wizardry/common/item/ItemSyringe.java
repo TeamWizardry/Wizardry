@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.common.item;
 
-import com.teamwizardry.librarianlib.common.base.item.ItemMod;
+import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.wizardry.api.WizardManager;
 import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.client.Minecraft;

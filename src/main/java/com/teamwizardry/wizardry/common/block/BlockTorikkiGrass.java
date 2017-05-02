@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.common.block;
 
-import com.teamwizardry.librarianlib.common.base.block.BlockMod;
+import com.teamwizardry.librarianlib.features.base.block.BlockMod;
 import net.minecraft.block.BlockDirt;
 import net.minecraft.block.IGrowable;
 import net.minecraft.block.material.Material;

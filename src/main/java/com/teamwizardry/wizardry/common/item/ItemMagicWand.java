@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.common.item;
 
-import com.teamwizardry.librarianlib.common.base.item.ItemMod;
-import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.base.item.ItemMod;
+import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants.NBT;
 import com.teamwizardry.wizardry.api.block.IStructure;

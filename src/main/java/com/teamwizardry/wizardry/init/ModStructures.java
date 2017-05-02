@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.init;
 
-import com.teamwizardry.librarianlib.common.structure.Structure;
+import com.teamwizardry.librarianlib.features.structure.Structure;
 import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.util.ResourceLocation;
 

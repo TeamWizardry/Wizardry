@@ -1,13 +1,13 @@
 package com.teamwizardry.wizardry.client.gui.worktable;
 
 import com.google.common.collect.HashMultimap;
-import com.teamwizardry.librarianlib.client.gui.GuiBase;
-import com.teamwizardry.librarianlib.client.gui.GuiComponent;
-import com.teamwizardry.librarianlib.client.gui.components.ComponentGrid;
-import com.teamwizardry.librarianlib.client.gui.components.ComponentSprite;
-import com.teamwizardry.librarianlib.client.gui.components.ComponentVoid;
-import com.teamwizardry.librarianlib.client.sprite.Sprite;
-import com.teamwizardry.librarianlib.client.sprite.Texture;
+import com.teamwizardry.librarianlib.features.gui.GuiBase;
+import com.teamwizardry.librarianlib.features.gui.GuiComponent;
+import com.teamwizardry.librarianlib.features.gui.components.ComponentGrid;
+import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
+import com.teamwizardry.librarianlib.features.gui.components.ComponentVoid;
+import com.teamwizardry.librarianlib.features.sprite.Sprite;
+import com.teamwizardry.librarianlib.features.sprite.Texture;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleRegistry;

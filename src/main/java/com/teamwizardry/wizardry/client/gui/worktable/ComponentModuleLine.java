@@ -1,8 +1,8 @@
 package com.teamwizardry.wizardry.client.gui.worktable;
 
-import com.teamwizardry.librarianlib.client.gui.GuiComponent;
-import com.teamwizardry.librarianlib.common.util.math.Vec2d;
-import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpBezier2D;
+import com.teamwizardry.librarianlib.features.gui.GuiComponent;
+import com.teamwizardry.librarianlib.features.math.Vec2d;
+import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBezier2D;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;

@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.client.render;
 
-import com.teamwizardry.librarianlib.client.core.ClientTickHandler;
+import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.wizardry.common.tile.TileStaff;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;

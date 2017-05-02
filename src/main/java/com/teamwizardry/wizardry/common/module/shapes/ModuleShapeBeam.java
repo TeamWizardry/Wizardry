@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.common.module.shapes;
 
-import com.teamwizardry.librarianlib.common.util.ConfigPropertyDouble;
+import com.teamwizardry.librarianlib.features.config.ConfigPropertyDouble;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.api.util.PosUtils;

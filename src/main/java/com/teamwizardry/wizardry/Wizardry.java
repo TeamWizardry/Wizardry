@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry;
 
-import com.teamwizardry.librarianlib.LibrarianLog;
-import com.teamwizardry.librarianlib.common.base.ModCreativeTab;
+import com.teamwizardry.librarianlib.core.LibrarianLog;
+import com.teamwizardry.librarianlib.features.base.ModCreativeTab;
 import com.teamwizardry.wizardry.common.core.CommonProxy;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.item.ItemStack;

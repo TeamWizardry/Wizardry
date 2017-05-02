@@ -1,10 +1,6 @@
 package com.teamwizardry.wizardry.common.block.wisdomwood;
 
-import com.teamwizardry.librarianlib.common.base.ModCreativeTab;
-import com.teamwizardry.librarianlib.common.base.block.BlockModPlanks;
-import com.teamwizardry.wizardry.Wizardry;
-
-import javax.annotation.Nullable;
+import com.teamwizardry.librarianlib.features.base.block.BlockModPlanks;
 
 /**
  * Created by LordSaad.

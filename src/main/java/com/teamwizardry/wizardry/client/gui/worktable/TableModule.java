@@ -1,13 +1,12 @@
 package com.teamwizardry.wizardry.client.gui.worktable;
 
-import com.teamwizardry.librarianlib.client.gui.EnumMouseButton;
-import com.teamwizardry.librarianlib.client.gui.GuiComponent;
-import com.teamwizardry.librarianlib.client.gui.components.ComponentSprite;
-import com.teamwizardry.librarianlib.client.gui.mixin.DragMixin;
-import com.teamwizardry.librarianlib.common.util.math.Vec2d;
+import com.teamwizardry.librarianlib.features.gui.EnumMouseButton;
+import com.teamwizardry.librarianlib.features.gui.GuiComponent;
+import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
+import com.teamwizardry.librarianlib.features.gui.mixin.DragMixin;
+import com.teamwizardry.librarianlib.features.math.Vec2d;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.lib.LibSprites;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.ArrayList;

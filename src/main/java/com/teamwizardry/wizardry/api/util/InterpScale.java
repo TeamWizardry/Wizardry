@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.api.util;
 
-import com.teamwizardry.librarianlib.common.util.math.interpolate.InterpFunction;
+
+import com.teamwizardry.librarianlib.features.math.interpolate.InterpFunction;
 
 import javax.annotation.Nonnull;
 import java.util.List;

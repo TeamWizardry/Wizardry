@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.client.core;
 
-import com.teamwizardry.librarianlib.client.util.CustomBlockMapSprites;
+import com.teamwizardry.librarianlib.features.utilities.client.CustomBlockMapSprites;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.client.fx.Shaders;
 import com.teamwizardry.wizardry.client.render.BloodRenderLayer;

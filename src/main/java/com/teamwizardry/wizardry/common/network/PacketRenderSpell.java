@@ -1,9 +1,9 @@
 package com.teamwizardry.wizardry.common.network;
 
-import com.teamwizardry.librarianlib.common.network.PacketBase;
-import com.teamwizardry.librarianlib.common.util.saving.Save;
-import com.teamwizardry.librarianlib.common.util.saving.SaveMethodGetter;
-import com.teamwizardry.librarianlib.common.util.saving.SaveMethodSetter;
+import com.teamwizardry.librarianlib.features.network.PacketBase;
+import com.teamwizardry.librarianlib.features.saving.Save;
+import com.teamwizardry.librarianlib.features.saving.SaveMethodGetter;
+import com.teamwizardry.librarianlib.features.saving.SaveMethodSetter;
 import com.teamwizardry.wizardry.api.spell.IParticleDanger;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleRegistry;

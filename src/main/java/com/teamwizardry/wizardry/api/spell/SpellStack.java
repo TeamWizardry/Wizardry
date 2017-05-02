@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.api.spell;
 
-import com.teamwizardry.librarianlib.common.network.PacketHandler;
-import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.WizardManager;
 import com.teamwizardry.wizardry.common.network.PacketRenderSpell;

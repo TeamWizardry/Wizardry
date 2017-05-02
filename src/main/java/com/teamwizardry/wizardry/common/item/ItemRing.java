@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.common.item;
 
-import com.teamwizardry.librarianlib.common.base.item.ItemMod;
+import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.wizardry.api.item.INacreColorable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;

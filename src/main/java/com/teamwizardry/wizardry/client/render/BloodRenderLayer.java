@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.client.render;
 
-import com.teamwizardry.librarianlib.client.fx.shader.ShaderHelper;
-import com.teamwizardry.librarianlib.client.util.ClientUtilMethods;
+import com.teamwizardry.librarianlib.features.kotlin.ClientUtilMethods;
+import com.teamwizardry.librarianlib.features.shader.ShaderHelper;
 import com.teamwizardry.wizardry.api.capability.EnumBloodType;
 import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
 import com.teamwizardry.wizardry.client.fx.Shaders;

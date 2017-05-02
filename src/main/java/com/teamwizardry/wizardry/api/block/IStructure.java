@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.api.block;
 
-import com.teamwizardry.librarianlib.common.structure.Structure;
+import com.teamwizardry.librarianlib.features.structure.Structure;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.block.state.IBlockState;

@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.client.render;
 
-import com.teamwizardry.librarianlib.client.core.ClientTickHandler;
-import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpBezier3D;
+import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
+import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBezier3D;
 import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.api.render.ClusterObject;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;

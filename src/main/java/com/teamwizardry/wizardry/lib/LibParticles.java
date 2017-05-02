@@ -1,15 +1,14 @@
 package com.teamwizardry.wizardry.lib;
 
-import com.teamwizardry.librarianlib.client.fx.particle.ParticleBuilder;
-import com.teamwizardry.librarianlib.client.fx.particle.ParticleSpawner;
-import com.teamwizardry.librarianlib.client.fx.particle.functions.InterpColorHSV;
-import com.teamwizardry.librarianlib.client.fx.particle.functions.InterpFadeInOut;
-import com.teamwizardry.librarianlib.common.util.math.Matrix4;
-import com.teamwizardry.librarianlib.common.util.math.interpolate.InterpFunction;
-import com.teamwizardry.librarianlib.common.util.math.interpolate.StaticInterp;
-import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpBezier3D;
-import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpHelix;
-import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpLine;
+import com.teamwizardry.librarianlib.features.math.interpolate.InterpFunction;
+import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
+import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBezier3D;
+import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpHelix;
+import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpLine;
+import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
+import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
+import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
+import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.Constants.MISC;

@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.api.capability;
 
-import com.teamwizardry.librarianlib.client.core.ClientTickHandler;
+import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;

@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.common.block.wisdomwood;
 
-import com.teamwizardry.librarianlib.common.base.block.BlockModSlab;
+import com.teamwizardry.librarianlib.features.base.block.BlockModSlab;
 import com.teamwizardry.wizardry.init.ModBlocks;
 
 /**

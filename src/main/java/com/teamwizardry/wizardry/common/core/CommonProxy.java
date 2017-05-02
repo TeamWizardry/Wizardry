@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.common.core;
 
-import com.teamwizardry.librarianlib.LibrarianLib;
-import com.teamwizardry.librarianlib.common.network.PacketHandler;
+import com.teamwizardry.librarianlib.core.LibrarianLib;
+import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Config;
 import com.teamwizardry.wizardry.api.spell.ModuleRegistry;

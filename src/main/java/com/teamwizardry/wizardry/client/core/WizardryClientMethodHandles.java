@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.client.core;
 
 import com.google.common.base.Throwables;
-import com.teamwizardry.librarianlib.LibrarianLog;
+import com.teamwizardry.librarianlib.core.LibrarianLog;
 import com.teamwizardry.wizardry.lib.LibObfuscation;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.item.ItemStack;

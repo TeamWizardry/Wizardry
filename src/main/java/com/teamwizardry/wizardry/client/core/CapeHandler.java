@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.client.core;
 
-import com.teamwizardry.librarianlib.client.core.ClientTickHandler;
-import com.teamwizardry.librarianlib.common.util.math.Matrix4;
+import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
+import com.teamwizardry.librarianlib.features.math.Matrix4;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.client.cloth.Cloth;
 import com.teamwizardry.wizardry.client.cloth.PointMass3D;

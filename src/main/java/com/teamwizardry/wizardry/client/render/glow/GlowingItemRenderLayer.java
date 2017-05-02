@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.client.render.glow;
 
-import com.teamwizardry.librarianlib.client.fx.shader.ShaderHelper;
+import com.teamwizardry.librarianlib.features.shader.ShaderHelper;
 import com.teamwizardry.wizardry.api.item.GlowingOverlayHelper;
 import com.teamwizardry.wizardry.api.item.IGlowOverlayable;
 import com.teamwizardry.wizardry.client.fx.Shaders;
@@ -30,51 +30,49 @@ public class GlowingItemRenderLayer implements LayerRenderer<EntityLivingBase> {
 		ItemStack left = flag ? entity.getHeldItemOffhand() : entity.getHeldItemMainhand();
 		ItemStack right = flag ? entity.getHeldItemMainhand() : entity.getHeldItemOffhand();
 
-		if ((left != null) || (right != null)) {
-			GlStateManager.pushMatrix();
+		GlStateManager.pushMatrix();
 
-			if (render.getMainModel().isChild) {
-				GlStateManager.translate(0.0F, 0.625F, 0.0F);
-				GlStateManager.rotate(-20.0F, -1.0F, 0.0F, 0.0F);
-				GlStateManager.scale(0.5F, 0.5F, 0.5F);
-			}
-
-			if ((right != null) && (right.getItem() instanceof IGlowOverlayable)) {
-				IGlowOverlayable item = (IGlowOverlayable) right.getItem();
-				if (item.useOverlay(right)) {
-					if (item.useShader(right))
-						ShaderHelper.INSTANCE.useShader(Shaders.rawColor);
-					if (item.disableLighting(right))
-						GlStateManager.disableLighting();
-
-					renderHeldItem(entity, right, TransformType.THIRD_PERSON_RIGHT_HAND, EnumHandSide.RIGHT);
-
-					if (item.useShader(right))
-						ShaderHelper.INSTANCE.releaseShader();
-					if (item.disableLighting(right))
-						GlStateManager.enableLighting();
-				}
-			}
-
-			if ((left != null) && (left.getItem() instanceof IGlowOverlayable)) {
-				IGlowOverlayable item = (IGlowOverlayable) left.getItem();
-				if (item.useOverlay(left)) {
-					if (item.useShader(left))
-						ShaderHelper.INSTANCE.useShader(Shaders.rawColor);
-					if (item.disableLighting(left))
-						GlStateManager.disableLighting();
-
-					renderHeldItem(entity, left, TransformType.THIRD_PERSON_LEFT_HAND, EnumHandSide.LEFT);
-
-					if (item.useShader(left))
-						ShaderHelper.INSTANCE.releaseShader();
-					if (item.disableLighting(left))
-						GlStateManager.enableLighting();
-				}
-			}
-
-			GlStateManager.popMatrix();
+		if (render.getMainModel().isChild) {
+			GlStateManager.translate(0.0F, 0.625F, 0.0F);
+			GlStateManager.rotate(-20.0F, -1.0F, 0.0F, 0.0F);
+			GlStateManager.scale(0.5F, 0.5F, 0.5F);
 		}
+
+		if (right.getItem() instanceof IGlowOverlayable) {
+			IGlowOverlayable item = (IGlowOverlayable) right.getItem();
+			if (item.useOverlay(right)) {
+				if (item.useShader(right))
+					ShaderHelper.INSTANCE.useShader(Shaders.rawColor);
+				if (item.disableLighting(right))
+					GlStateManager.disableLighting();
+
+				renderHeldItem(entity, right, TransformType.THIRD_PERSON_RIGHT_HAND, EnumHandSide.RIGHT);
+
+				if (item.useShader(right))
+					ShaderHelper.INSTANCE.releaseShader();
+				if (item.disableLighting(right))
+					GlStateManager.enableLighting();
+			}
+		}
+
+		if (left.getItem() instanceof IGlowOverlayable) {
+			IGlowOverlayable item = (IGlowOverlayable) left.getItem();
+			if (item.useOverlay(left)) {
+				if (item.useShader(left))
+					ShaderHelper.INSTANCE.useShader(Shaders.rawColor);
+				if (item.disableLighting(left))
+					GlStateManager.disableLighting();
+
+				renderHeldItem(entity, left, TransformType.THIRD_PERSON_LEFT_HAND, EnumHandSide.LEFT);
+
+				if (item.useShader(left))
+					ShaderHelper.INSTANCE.releaseShader();
+				if (item.disableLighting(left))
+					GlStateManager.enableLighting();
+			}
+		}
+
+		GlStateManager.popMatrix();
 		GlStateManager.disableBlend();
 	}
 
