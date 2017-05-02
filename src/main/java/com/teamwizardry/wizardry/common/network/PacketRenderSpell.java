@@ -43,14 +43,14 @@ public class PacketRenderSpell extends PacketBase {
 		this.data = data.serializeNBT();
 	}
 
-	@SaveMethodGetter(saveName = "module")
+	@SaveMethodGetter(saveName = "module_saver")
 	public NBTTagCompound getter() {
 		if (module != null)
 			return module.serializeNBT();
 		return null;
 	}
 
-	@SaveMethodSetter(saveName = "module")
+	@SaveMethodSetter(saveName = "module_saver")
 	public void setter(NBTTagCompound compound) {
 		if (compound != null) {
 			this.module = ModuleRegistry.INSTANCE.getModule(compound.getString("id"));
