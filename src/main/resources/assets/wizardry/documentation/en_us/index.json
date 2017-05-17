@@ -13,7 +13,7 @@
     {
       "icon": "wizardry:textures/gui/book/icons/fangs.png",
       "text": "Learn about all the mobs present in the mod.",
-      "link": "/basics/spells.json"
+      "link": "/mobs/index.json"
     },
     {
       "icon": "wizardry:textures/gui/book/icons/magic_potion.png",

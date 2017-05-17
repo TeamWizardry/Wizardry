@@ -203,7 +203,7 @@ public class Page {
 							bookGui.mainIndex.setVisible(true);
 							bookGui.mainIndex.setEnabled(true);
 						});
-						//component.add(home);
+						component.add(home);
 
 						ComponentSprite back = new ComponentSprite(NAV_BAR_BACK_HIGHLIGHTED, (width / 2) - (NAV_BAR_BACK.getWidth() / 2) - 40, height - 20);
 						back.BUS.hook(GuiComponent.ComponentTickEvent.class, componentTickEvent -> {
@@ -217,7 +217,7 @@ public class Page {
 								for (ComponentVoid listItem : pages.get(pageID)) list.add(listItem);
 							}
 						});
-						//component.add(back);
+						component.add(back);
 
 						ComponentSprite next = new ComponentSprite(NAV_BAR_NEXT_HIGHLIGHTED, (width / 2) - (NAV_BAR_NEXT.getWidth() / 2) + 40, height - 20);
 						next.BUS.hook(GuiComponent.ComponentTickEvent.class, componentTickEvent -> {
@@ -231,7 +231,7 @@ public class Page {
 								for (ComponentVoid listItem : pages.get(pageID)) list.add(listItem);
 							}
 						});
-						//component.add(next);
+						component.add(next);
 						// NAV BAR //
 
 						component.add(list);
