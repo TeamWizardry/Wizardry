@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.client.gui.book;
 
-import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.gui.GuiComponent;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentText;
@@ -11,7 +10,6 @@ import com.teamwizardry.librarianlib.features.sprite.Texture;
 import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
 
 /**
  * Created by LordSaad.
@@ -58,9 +56,12 @@ public class Slider {
 					component.addTag("t:" + 0);
 					t = 0;
 				}
-				if (t >= tmax) return;
+				if (t > tmax) return;
 
-				x = (float) (Math.sin(t / tmax) * 10);
+				double delta = t / tmax;
+
+				x = (float) (50f * (1 * (1 - delta) + 0.1 * delta));
+				Minecraft.getMinecraft().player.sendChatMessage(delta + " - " + x);
 
 			} else {
 				for (Object tag : component.getTags()) {
