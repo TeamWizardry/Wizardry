@@ -49,8 +49,8 @@ public class BookGui extends GuiBase {
 			stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "documentation/" + langname + "/index.json");
 			path = "documentation/" + langname;
 		} catch (Throwable e) {
-			stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "documentation/en_US/index.json");
-			path = "documentation/en_US";
+			stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "documentation/en_us/index.json");
+			path = "documentation/en_us";
 		}
 
 		if (stream != null) {
@@ -77,7 +77,7 @@ public class BookGui extends GuiBase {
 								icon.draw((int) ClientTickHandler.getPartialTicks(), category.getPos().getXi(), category.getPos().getYi(), 32, 32);
 								GlStateManager.popMatrix();
 							});
-							hookSlider(category, "TEEEEEEEEEEEEEEEEEST IIIIIIIIIIIIIIIIING");
+							//hookSlider(category, "TEEEEEEEEEEEEEEEEEST IIIIIIIIIIIIIIIIING");
 							final String finalPath = path + chunk.get("link").getAsString();
 							category.BUS.hook(GuiComponent.MouseClickEvent.class, mouseClickEvent -> {
 								Page page = new Page(this, finalPath, background.getWidth(), background.getHeight(), 0);
@@ -101,15 +101,16 @@ public class BookGui extends GuiBase {
 
 	public void hookSlider(GuiComponent<?> component, String text) {
 		Slider slider = new Slider(text);
-		slider.component.setPos(new Vec2d(-component.getPos().getX(), component.getPos().getY()));
+		slider.component.setPos(new Vec2d(component.getPos().getX() - component.getSize().getX(), component.getPos().getY()));
 		slider.component.setEnabled(false);
 		component.BUS.hook(GuiComponent.MouseInEvent.class, componentMouseIn -> {
-			if (slider.component.hasTag("kill")) slider.component.removeTag("kill");
+			if (!component.getMouseOver()) return;
 			component.add(slider.component);
 			GlMixin.INSTANCE.transform(slider.component).setValue(new Vec3d(slider.component.getPos().getX(), slider.component.getPos().getY(), -10));
 		});
 
 		component.BUS.hook(GuiComponent.MouseOutEvent.class, componentMouseOut -> {
+			if (component.getMouseOver()) return;
 			slider.component.addTag("kill");
 		});
 	}

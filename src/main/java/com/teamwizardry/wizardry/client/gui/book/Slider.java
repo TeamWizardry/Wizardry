@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.client.gui.book;
 
+import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.gui.GuiComponent;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentText;
@@ -10,6 +11,7 @@ import com.teamwizardry.librarianlib.features.sprite.Texture;
 import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 
 /**
  * Created by LordSaad.
@@ -38,17 +40,16 @@ public class Slider {
 		component.add(compText);
 
 		component.BUS.hook(GuiComponent.ComponentTickEvent.class, componentTickEvent -> {
-			double t = -1, tmax = 1;
+			double t = -1, tmax = 60;
 			float finalLoc = -130;
 			float x;
 			if (!component.hasTag("kill")) {
 				for (Object tag : component.getTags()) {
-					Minecraft.getMinecraft().player.sendChatMessage(tag + "");
 					if (tag instanceof String && ((String) tag).startsWith("t:")) {
 						t = Double.parseDouble(((String) tag).split(":")[1]);
 						if (t < tmax) {
 							component.removeTag(tag);
-							component.addTag("t:" + (t + 0.01));
+							component.addTag("t:" + (t + 1));
 						}
 						break;
 					}
@@ -59,18 +60,15 @@ public class Slider {
 				}
 				if (t >= tmax) return;
 
-				x = (float) (finalLoc * (1.3 * Math.pow(t, 3) - 0.3 * Math.pow(t, 2)));
-				//x = (float) (finalLoc * (-0.75 * Math.pow(t / tmax, 3) + 0.5 * Math.pow(t / tmax, 2) + 1));
-				//x = finalLoc * MathHelper.sin((float) (Math.PI / 2 * ((t + ClientTickHandler.getPartialTicks()) / tmax)));
+				x = (float) (Math.sin(t / tmax) * 10);
 
 			} else {
 				for (Object tag : component.getTags()) {
-					Minecraft.getMinecraft().player.sendChatMessage(tag + "");
 					if (tag instanceof String && ((String) tag).startsWith("t:")) {
 						t = Float.parseFloat(((String) tag).split(":")[1]);
-						if (t < tmax) {
+						if (t > 0) {
 							component.removeTag(tag);
-							component.addTag("t:" + (t - 0.01));
+							component.addTag("t:" + (t - 1));
 						}
 						break;
 					}
@@ -78,7 +76,7 @@ public class Slider {
 				if (t == -1) component.addTag("t:" + tmax);
 				if (t <= 0) return;
 
-				x = (float) (finalLoc * (-0.75 * Math.pow(t / tmax, 3) + 0.5 * Math.pow(t / tmax, 2) + 1));
+				x = (float) (Math.sin(t / tmax) * 10);
 			}
 
 			component.setPos(new Vec2d(x, component.getPos().getY()));

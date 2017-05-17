@@ -41,7 +41,7 @@ public class ItemCape extends ItemModArmor {
 		if (!(ItemStack.areItemStacksEqual(stack, cape))) return;
 
 		int tick = ItemNBTHelper.getInt(stack, "tick", 0);
-		if (tick < 1200) ItemNBTHelper.setInt(stack, "tick", tick + 1);
+		if (tick < 600) ItemNBTHelper.setInt(stack, "tick", tick + 1);
 		else {
 			ItemNBTHelper.setInt(stack, "tick", 0);
 
@@ -89,9 +89,9 @@ public class ItemCape extends ItemModArmor {
 				tooltip.add("thief: " + (thief == null ? "null" : thief.getName()));
 			}
 		}
-
 		tooltip.add("time: " + ItemNBTHelper.getInt(stack, "time", 0));
 		tooltip.add("buffer: " + ItemNBTHelper.getInt(stack, "buffer", 0));
+		tooltip.add("tick: " + ItemNBTHelper.getInt(stack, "tick", 0));
 	}
 
 	@Nonnull

@@ -152,7 +152,7 @@ public class EventHandler {
 		WizardManager.removeBurnout(WizardManager.getMaxBurnout(event.player) / 1000, event.player);
 
 		ItemStack cape = event.player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-		if (cape == null || cape.getItem() != ModItems.CAPE) {
+		if (cape.isEmpty() || cape.getItem() != ModItems.CAPE) {
 			if (WizardManager.getMaxMana(event.player) != 100)
 				WizardManager.setMaxMana(100, event.player);
 			if (WizardManager.getMaxBurnout(event.player) != 100)
