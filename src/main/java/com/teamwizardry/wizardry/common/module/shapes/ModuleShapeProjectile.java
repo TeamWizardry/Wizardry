@@ -4,8 +4,8 @@ import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
-import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.common.entity.EntitySpellProjectile;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -56,34 +56,15 @@ public class ModuleShapeProjectile extends Module {
 	@Override
 	public boolean run(@Nonnull SpellData spell) {
 		if (nextModule == null) return true;
+
 		World world = spell.world;
 		if (world.isRemote) return false;
 
-		float yaw = spell.getData(YAW, 0F);
-		float pitch = spell.getData(PITCH, 0F);
-		Vec3d origin = spell.getData(ORIGIN);
 		Entity caster = spell.getData(CASTER);
-
-		if (origin == null) return false;
-
-		if (caster != null) {
-			float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - yaw));
-			float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - yaw));
-			origin = new Vec3d(offX, caster.getEyeHeight(), offZ).add(origin);
-		}
+		if (caster == null) return false;
 
 		EntitySpellProjectile proj = new EntitySpellProjectile(world, this, spell);
-		proj.setPosition(origin.xCoord, origin.yCoord, origin.xCoord);
-		float f = -MathHelper.sin(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F);
-		float f1 = -MathHelper.sin((pitch) * 0.017453292F);
-		float f2 = MathHelper.cos(yaw * 0.017453292F) * MathHelper.cos(pitch * 0.017453292F);
-		proj.setThrowableHeading((double) f, (double) f1, (double) f2, 1.5f, 1.0f);
-		if (caster != null) {
-			proj.motionX += caster.motionX;
-			proj.motionZ += caster.motionZ;
-
-			if (!caster.onGround) proj.motionY += caster.motionY;
-		}
+		proj.setPosition(caster.posX + (caster.width / 2), caster.posY + caster.getEyeHeight(), caster.posZ + (caster.width / 2));
 		proj.velocityChanged = true;
 
 		usedShape = this;

@@ -5,6 +5,9 @@ import com.teamwizardry.wizardry.api.spell.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.common.module.events.ModuleEventAlongPath;
 import com.teamwizardry.wizardry.lib.LibParticles;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
@@ -19,7 +22,7 @@ import java.awt.*;
 /**
  * Created by LordSaad.
  */
-public class EntitySpellProjectile extends EntityThrowable {
+public class EntitySpellProjectile extends Entity {
 
 	public static final DataParameter<Integer> DATA_COLOR = EntityDataManager.createKey(EntitySpellProjectile.class, DataSerializers.VARINT);
 	public SpellData spell;
@@ -46,7 +49,6 @@ public class EntitySpellProjectile extends EntityThrowable {
 
 	@Override
 	protected void entityInit() {
-		super.entityInit();
 		this.getDataManager().register(DATA_COLOR, 0);
 	}
 
@@ -57,7 +59,8 @@ public class EntitySpellProjectile extends EntityThrowable {
 
 	@Override
 	public void onUpdate() {
-		super.onUpdate();
+		//super.onUpdate();
+
 		if (ticksExisted > 1000) {
 			setDead();
 			return;
@@ -66,28 +69,29 @@ public class EntitySpellProjectile extends EntityThrowable {
 		if (world.isRemote) return;
 		if (module == null) return;
 
-		if (module.nextModule != null) {
-			Module nextModule = module.nextModule;
-			if (nextModule instanceof ModuleEventAlongPath) {
-				nextModule.run(spell);
-			}
-		}
-	}
+		//if (module.nextModule != null) {
+		//	Module nextModule = module.nextModule;
+		//	if (nextModule instanceof ModuleEventAlongPath) {
+		//		nextModule.run(spell);
+		//	}
+		//}
 
-	@Override
-	protected void onImpact(@Nonnull RayTraceResult result) {
-		if (module != null && module.nextModule != null) {
-			Module nextModule = module.nextModule;
-			SpellData newSpell = spell.copy();
-			if (result.typeOfHit == RayTraceResult.Type.ENTITY)
-				newSpell.crunchData(result.entityHit, false);
-			else if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
-				newSpell.addData(SpellData.DefaultKeys.BLOCK_HIT, result.getBlockPos());
-				newSpell.addData(SpellData.DefaultKeys.TARGET_HIT, result.hitVec);
-			}
-			nextModule.run(newSpell);
-			setDead();
-			LibParticles.FAIRY_EXPLODE(world, result.hitVec, module.getColor() == null ? Color.WHITE : module.getColor());
+		if (isCollided) {
+
+
+			/*if (module != null && module.nextModule != null) {
+				Module nextModule = module.nextModule;
+				SpellData newSpell = spell.copy();
+				if (result.typeOfHit == RayTraceResult.Type.ENTITY)
+					newSpell.crunchData(result.entityHit, false);
+				else if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
+					newSpell.addData(SpellData.DefaultKeys.BLOCK_HIT, result.getBlockPos());
+					newSpell.addData(SpellData.DefaultKeys.TARGET_HIT, result.hitVec);
+				}
+				nextModule.run(newSpell);
+				setDead();
+				LibParticles.FAIRY_EXPLODE(world, result.hitVec, module.getColor() == null ? Color.WHITE : module.getColor());
+			}*/
 		}
 	}
 
@@ -98,7 +102,6 @@ public class EntitySpellProjectile extends EntityThrowable {
 
 	@Override
 	public void readEntityFromNBT(@Nonnull NBTTagCompound compound) {
-		super.readEntityFromNBT(compound);
 		NBTTagCompound moduleCompound = compound.getCompoundTag("module");
 		Module module = ModuleRegistry.INSTANCE.getModule(moduleCompound.getString("id"));
 		if (module != null) {
@@ -114,7 +117,6 @@ public class EntitySpellProjectile extends EntityThrowable {
 
 	@Override
 	public void writeEntityToNBT(@Nonnull NBTTagCompound compound) {
-		super.writeEntityToNBT(compound);
 		compound.setTag("module", module.serializeNBT());
 		compound.setTag("spell_data", spell.serializeNBT());
 		compound.setInteger("color", getDataManager().get(DATA_COLOR));

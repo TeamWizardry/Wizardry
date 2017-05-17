@@ -15,8 +15,6 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
-import javax.annotation.Nullable;
-
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
 /**

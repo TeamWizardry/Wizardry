@@ -103,6 +103,8 @@ public class ItemStaff extends ItemMod implements INacreColorable {
 			SpellData spell = new SpellData(((EntityPlayer) player).world);
 			spell.crunchData(player, true);
 			SpellStack.runModules(stack, spell);
+			player.swingArm(EnumHand.MAIN_HAND);
+			((EntityPlayer) player).getCooldownTracker().setCooldown(this, 10);
 		}
 	}
 

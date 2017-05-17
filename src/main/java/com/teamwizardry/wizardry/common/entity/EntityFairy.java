@@ -22,7 +22,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.List;
 import java.util.Random;
@@ -177,7 +176,7 @@ public class EntityFairy extends EntityFlying {
 
 	@Nonnull
 	@Override
-	public EnumActionResult applyPlayerInteraction(EntityPlayer player, Vec3d vec, EnumHand hand)  {
+	public EnumActionResult applyPlayerInteraction(EntityPlayer player, Vec3d vec, EnumHand hand) {
 		ItemStack stack = player.getHeldItem(hand);
 		if (stack.getItem() == ModItems.JAR) {
 			ItemNBTHelper.setBoolean(stack, NBT.FAIRY_INSIDE, true);

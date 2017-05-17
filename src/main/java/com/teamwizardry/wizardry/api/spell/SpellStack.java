@@ -163,11 +163,6 @@ public class SpellStack {
 						new NetworkRegistry.TargetPoint(spell.world.provider.getDimension(), target.xCoord, target.yCoord, target.zCoord, 60));
 			}
 
-			if (caster instanceof EntityPlayer && !((EntityPlayer) caster).isCreative()) {
-				WizardManager.removeMana((int) module.finalManaCost, (EntityLivingBase) caster);
-				WizardManager.addBurnout((int) module.finalBurnoutCost, (EntityLivingBase) caster);
-			}
-
 			SpellCastEvent event = new SpellCastEvent(spellHolder, module, spell);
 			MinecraftForge.EVENT_BUS.post(event);
 		}

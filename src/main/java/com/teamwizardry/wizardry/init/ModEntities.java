@@ -9,8 +9,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 
-//github.com/TeamWizardry/Wizardry
-
 /**
  * Created by Saad on 8/17/2016.
  */
@@ -19,18 +17,18 @@ public class ModEntities {
 	private static int i = 0;
 
 	public static void init() {
-		registerEntity(new ResourceLocation(Wizardry.MODID, "spirit_wight"), EntitySpiritWight.class, "spirit_wight", 64, 3, true);
-		registerEntity(new ResourceLocation(Wizardry.MODID, "gavreel"), EntityGavreel.class, "gavreel", 64, 3, true);
-		registerEntity(new ResourceLocation(Wizardry.MODID, "fairy"), EntityFairy.class, "fairy", 64, 3, true);
-		registerEntity(new ResourceLocation(Wizardry.MODID, "dust_tracker"), EntityDevilDust.class, "dust_tracker", 64, 1, false);
-		registerEntity(new ResourceLocation(Wizardry.MODID, "book_tracker"), EntitySpellCodex.class, "book_tracker", 64, 1, false);
-		registerEntity(new ResourceLocation(Wizardry.MODID, "spell_projectile"), EntitySpellProjectile.class, "spell_projectile", 64, 1, false);
+		registerEntity(new ResourceLocation(Wizardry.MODID, "spirit_wight"), EntitySpiritWight.class, "spirit_wight");
+		registerEntity(new ResourceLocation(Wizardry.MODID, "gavreel"), EntityGavreel.class, "gavreel");
+		registerEntity(new ResourceLocation(Wizardry.MODID, "fairy"), EntityFairy.class, "fairy");
+		registerEntity(new ResourceLocation(Wizardry.MODID, "dust_tracker"), EntityDevilDust.class, "dust_tracker", 256, 1, false);
+		registerEntity(new ResourceLocation(Wizardry.MODID, "book_tracker"), EntitySpellCodex.class, "book_tracker", 256, 1, false);
+		registerEntity(new ResourceLocation(Wizardry.MODID, "spell_projectile"), EntitySpellProjectile.class, "spell_projectile", 256, 1, true);
 		registerEntity(new ResourceLocation(Wizardry.MODID, "jump_pad"), EntityJumpPad.class, "jump_pad", 64, 1, false);
 		registerEntity(new ResourceLocation(Wizardry.MODID, "unicorn"), EntityUnicorn.class, "unicorn");
 	}
 
 	public static void registerEntity(ResourceLocation loc, Class<? extends Entity> entityClass, String entityName) {
-		registerEntity(loc, entityClass, entityName, 64, 1, true);
+		registerEntity(loc, entityClass, entityName, 256, 1, true);
 	}
 
 	//Use when default parameters are not sufficient, e.g fast-moving projectiles

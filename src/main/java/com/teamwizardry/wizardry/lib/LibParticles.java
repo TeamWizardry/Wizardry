@@ -488,7 +488,7 @@ public class LibParticles {
 		ParticleSpawner.spawn(helix, world, new StaticInterp<>(new Vec3d(pedestal).addVector(0.5, 0.5, 0.5)), 1, 0, (aFloat, particleBuilder) -> {
 			helix.setColor(Utils.changeColorAlpha(new Color(0x0097FF), ThreadLocalRandom.current().nextInt(50, 200)));
 			helix.setScale(ThreadLocalRandom.current().nextFloat());
-			helix.setPositionFunction(new InterpBezier3D(Vec3d.ZERO, new Vec3d(center.subtract(pedestal)), new Vec3d(0, 6, 0), new Vec3d(center.subtract(pedestal)).subtract(0, 5, 0)));
+			helix.setPositionFunction(new InterpBezier3D(Vec3d.ZERO, new Vec3d(center.subtract(pedestal)), new Vec3d(0, 6, 0), new Vec3d(0, -5, 0)));
 			helix.setLifetime(ThreadLocalRandom.current().nextInt(10, 50));
 		});
 	}

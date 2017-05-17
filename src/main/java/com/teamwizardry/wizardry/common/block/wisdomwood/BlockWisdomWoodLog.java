@@ -3,8 +3,6 @@ package com.teamwizardry.wizardry.common.block.wisdomwood;
 import com.teamwizardry.librarianlib.features.base.block.BlockModLog;
 import com.teamwizardry.wizardry.Wizardry;
 
-import javax.annotation.Nullable;
-
 /**
  * Created by LordSaad.
  */

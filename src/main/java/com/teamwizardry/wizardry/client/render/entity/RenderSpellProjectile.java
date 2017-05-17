@@ -6,15 +6,10 @@ import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.common.entity.EntitySpellProjectile;
-import com.teamwizardry.wizardry.lib.LibParticles;
-import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.Vec3d;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

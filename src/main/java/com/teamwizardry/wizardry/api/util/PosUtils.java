@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.api.util;
 import com.teamwizardry.wizardry.common.tile.TileStaff;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
-import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
@@ -14,7 +13,6 @@ import net.minecraft.world.World;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by Saad on 8/27/2016.

@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.api.render;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
