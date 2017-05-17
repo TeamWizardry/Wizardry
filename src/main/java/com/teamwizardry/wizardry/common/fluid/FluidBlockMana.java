@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.common.fluid;
 
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.item.Explodable;
+import com.teamwizardry.wizardry.api.item.IExplodable;
 import com.teamwizardry.wizardry.common.achievement.Achievements;
 import com.teamwizardry.wizardry.init.ModPotions;
 import com.teamwizardry.wizardry.init.ModSounds;
@@ -80,7 +80,7 @@ public class FluidBlockMana extends BlockFluidClassic {
 				EntityItem ei = (EntityItem) entityIn;
 				ItemStack stack = ei.getEntityItem();
 
-				if (stack.getItem() instanceof Explodable) {
+				if (stack.getItem() instanceof IExplodable) {
 
 					LibParticles.FIZZING_ITEM(worldIn, ei.getPositionVector());
 
@@ -92,7 +92,7 @@ public class FluidBlockMana extends BlockFluidClassic {
 									compound.setInteger(REACTION_COOLDOWN, 0);
 
 									ei.setDead();
-									((Explodable) stack.getItem()).explode(entityIn);
+									((IExplodable) stack.getItem()).explode(entityIn);
 									worldIn.setBlockState(pos, Blocks.AIR.getDefaultState());
 									worldIn.playSound(null, ei.posX, ei.posY, ei.posZ, ModSounds.GLASS_BREAK, SoundCategory.BLOCKS, 0.5F, (ThreadLocalRandom.current().nextFloat() * 0.4F) + 0.8F);
 

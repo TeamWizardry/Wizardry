@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.init.irecipies;
 
-import com.teamwizardry.wizardry.api.item.Infusable;
+import com.teamwizardry.wizardry.api.item.IInfusable;
 import com.teamwizardry.wizardry.common.item.ItemNacrePearl;
 import com.teamwizardry.wizardry.common.item.ItemRing;
 import com.teamwizardry.wizardry.common.item.ItemStaff;
@@ -50,7 +50,7 @@ public class RecipePearl implements IRecipe {
 				if (stack.getItemDamage() == 0)
 					baseItem = stack;
 			}
-			if (stack.getItem() instanceof Infusable)
+			if (stack.getItem() instanceof IInfusable)
 				pearl = stack;
 		}
 

@@ -14,7 +14,7 @@ import java.util.Random;
 /**
  * Created by Saad on 6/30/2016.
  */
-public interface Explodable {
+public interface IExplodable {
 
 	List<Integer> potions = new ArrayList<>();
 

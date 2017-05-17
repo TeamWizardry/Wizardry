@@ -6,8 +6,8 @@ import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.IManaSink;
-import com.teamwizardry.wizardry.api.item.Infusable;
-import com.teamwizardry.wizardry.api.item.PearlType;
+import com.teamwizardry.wizardry.api.item.IInfusable;
+import com.teamwizardry.wizardry.api.item.EnumPearlType;
 import com.teamwizardry.wizardry.api.render.ClusterObject;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.SpellStack;
@@ -86,7 +86,7 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink {
 		}
 		markDirty();
 
-		if ((output == null) && !isCrafting && !inventory.isEmpty() && (inventory.get(inventory.size() - 1).stack.getItem() instanceof Infusable)) {
+		if ((output == null) && !isCrafting && !inventory.isEmpty() && (inventory.get(inventory.size() - 1).stack.getItem() instanceof IInfusable)) {
 			isCrafting = true;
 			craftingTimeLeft = craftingTime;
 			output = inventory.remove(inventory.size() - 1).stack;
@@ -106,7 +106,7 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink {
 				LibParticles.CRAFTING_ALTAR_PEARL_EXPLODE(world, new Vec3d(pos).addVector(0, 0.75, 0));
 
 				ItemStack stack = new ItemStack(ModItems.PEARL_NACRE);
-				ItemNBTHelper.setString(stack, "type", PearlType.INFUSED.toString());
+				ItemNBTHelper.setString(stack, "type", EnumPearlType.INFUSED.toString());
 
 				NBTTagList list = new NBTTagList();
 				for (Module module : spellStack.compiled) list.appendTag(module.serializeNBT());

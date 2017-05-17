@@ -1,9 +1,9 @@
 package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
-import com.teamwizardry.wizardry.api.item.Explodable;
+import com.teamwizardry.wizardry.api.item.IExplodable;
 import com.teamwizardry.wizardry.api.item.INacreColorable;
-import com.teamwizardry.wizardry.api.item.Infusable;
+import com.teamwizardry.wizardry.api.item.IInfusable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -12,7 +12,7 @@ import net.minecraft.world.World;
 /**
  * Created by Saad on 6/28/2016.
  */
-public class ItemNacrePearl extends ItemMod implements Infusable, Explodable, INacreColorable {
+public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, INacreColorable {
 
 	public ItemNacrePearl() {
 		super("nacre_pearl");
