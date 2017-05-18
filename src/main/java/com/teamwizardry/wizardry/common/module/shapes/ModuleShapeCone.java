@@ -9,6 +9,7 @@ import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.util.InterpScale;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.Utils;
 import net.minecraft.entity.Entity;
@@ -140,7 +141,7 @@ public class ModuleShapeCone extends Module implements IParticleDanger {
 		ParticleBuilder glitter = new ParticleBuilder(25);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 		glitter.setCollision(true);
-
+		glitter.setScaleFunction(new InterpScale(1, 0));
 		double finalRange = range;
 		Color finalColor = color;
 		ParticleSpawner.spawn(glitter, spell.world, new StaticInterp<>(origin), (int) (range * 50), 0, (aFloat, particleBuilder) -> {
@@ -155,7 +156,6 @@ public class ModuleShapeCone extends Module implements IParticleDanger {
 					Math.min(255, finalColor.getGreen() + ThreadLocalRandom.current().nextInt(20, 50)),
 					Math.min(255, finalColor.getBlue() + ThreadLocalRandom.current().nextInt(20, 50)),
 					100));
-			glitter.setScale(1);
 			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, (float) ThreadLocalRandom.current().nextDouble(0.3, 1)));
 			InterpCircle circle = new InterpCircle(lookVec.scale(finalRange), lookVec, (float) finalRange, 1, ThreadLocalRandom.current().nextFloat());
 			glitter.setPositionFunction(new InterpLine(Vec3d.ZERO, circle.get(0)));
@@ -173,6 +173,6 @@ public class ModuleShapeCone extends Module implements IParticleDanger {
 
 	@Override
 	public int chanceOfParticles() {
-		return 10;
+		return 5;
 	}
 }

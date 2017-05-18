@@ -3,21 +3,27 @@ package com.teamwizardry.wizardry.common.entity;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.SpellData;
+import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.common.module.events.ModuleEventAlongPath;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.MoverType;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
+
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.PITCH;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.YAW;
 
 /**
  * Created by LordSaad.
@@ -66,8 +72,20 @@ public class EntitySpellProjectile extends Entity {
 			return;
 		}
 
-		if (world.isRemote) return;
 		if (module == null) return;
+
+		float yaw = spell.getData(YAW, 0F);
+		float pitch = spell.getData(PITCH, 0F);
+		rotationPitch = pitch;
+		rotationYaw = yaw;
+
+		Vec3d look = PosUtils.vecFromRotations(pitch, yaw);
+
+		motionX = look.xCoord;
+		motionY = look.yCoord;
+		motionZ = look.zCoord;
+
+		move(MoverType.SELF, motionX, motionY, motionZ);
 
 		//if (module.nextModule != null) {
 		//	Module nextModule = module.nextModule;
@@ -77,11 +95,11 @@ public class EntitySpellProjectile extends Entity {
 		//}
 
 		if (isCollided) {
-
-
-			/*if (module != null && module.nextModule != null) {
+			if (module != null && module.nextModule != null) {
 				Module nextModule = module.nextModule;
 				SpellData newSpell = spell.copy();
+
+				RayTraceResult result = new RayTraceResult(this);
 				if (result.typeOfHit == RayTraceResult.Type.ENTITY)
 					newSpell.crunchData(result.entityHit, false);
 				else if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
@@ -91,7 +109,7 @@ public class EntitySpellProjectile extends Entity {
 				nextModule.run(newSpell);
 				setDead();
 				LibParticles.FAIRY_EXPLODE(world, result.hitVec, module.getColor() == null ? Color.WHITE : module.getColor());
-			}*/
+			}
 		}
 	}
 
