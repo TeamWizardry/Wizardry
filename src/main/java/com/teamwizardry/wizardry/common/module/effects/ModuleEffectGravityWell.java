@@ -91,9 +91,9 @@ public class ModuleEffectGravityWell extends Module implements IlingeringModule 
 			if (dist > strength) continue;
 			Vec3d direction = position.subtract(entity.getPositionVector());
 			Vec3d dir = direction.subtract(entity.getPositionVector());
-			entity.motionX += (dir.xCoord);
-			entity.motionY += (dir.yCoord);
-			entity.motionZ += (dir.zCoord);
+			entity.motionX = (dir.xCoord);
+			entity.motionY = (dir.yCoord);
+			entity.motionZ = (dir.zCoord);
 			entity.fallDistance = 0;
 			entity.velocityChanged = true;
 

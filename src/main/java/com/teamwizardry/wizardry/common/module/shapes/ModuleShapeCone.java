@@ -33,7 +33,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleShapeCone extends Module implements IParticleDanger {
+public class ModuleShapeCone extends Module {
 
 	@Nonnull
 	@Override
@@ -172,7 +172,7 @@ public class ModuleShapeCone extends Module implements IParticleDanger {
 	}
 
 	@Override
-	public int chanceOfParticles() {
-		return 5;
+	public int getChargeUpTime() {
+		return 50;
 	}
 }

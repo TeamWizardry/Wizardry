@@ -1,9 +1,11 @@
 package com.teamwizardry.wizardry.common.entity;
 
+import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.util.PosUtils;
+import com.teamwizardry.wizardry.common.network.PacketParticleFairyExplode;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,6 +15,7 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -28,7 +31,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.YAW;
 public class EntitySpellProjectile extends Entity {
 
 	public static final DataParameter<Integer> DATA_COLOR = EntityDataManager.createKey(EntitySpellProjectile.class, DataSerializers.VARINT);
-	public static final DataParameter<Integer> DATA_DEATH_BUFFER = EntityDataManager.createKey(EntitySpellProjectile.class, DataSerializers.VARINT);
+	public static final DataParameter<Boolean> DATA_COLLIDED = EntityDataManager.createKey(EntitySpellProjectile.class, DataSerializers.BOOLEAN);
 	public SpellData spell;
 	public Module module;
 
@@ -37,7 +40,7 @@ public class EntitySpellProjectile extends Entity {
 		setSize(0.1F, 0.1F);
 		isImmuneToFire = true;
 		applyColor(Color.WHITE);
-		applyDeathBuffer(5);
+		applyCollided(false);
 
 		setRenderDistanceWeight(10);
 	}
@@ -52,7 +55,7 @@ public class EntitySpellProjectile extends Entity {
 
 		if (module != null && module.getColor() != null) applyColor(module.getColor());
 		else applyColor(Color.WHITE);
-		applyDeathBuffer(5);
+		applyCollided(false);
 
 		setRenderDistanceWeight(10);
 	}
@@ -60,7 +63,7 @@ public class EntitySpellProjectile extends Entity {
 	@Override
 	protected void entityInit() {
 		this.getDataManager().register(DATA_COLOR, 0);
-		this.getDataManager().register(DATA_DEATH_BUFFER, 5);
+		this.getDataManager().register(DATA_COLLIDED, false);
 	}
 
 	private void applyColor(Color color) {
@@ -68,9 +71,9 @@ public class EntitySpellProjectile extends Entity {
 		this.getDataManager().setDirty(DATA_COLOR);
 	}
 
-	private void applyDeathBuffer(int buffer) {
-		this.getDataManager().set(DATA_DEATH_BUFFER, buffer);
-		this.getDataManager().setDirty(DATA_DEATH_BUFFER);
+	private void applyCollided(boolean collided) {
+		this.getDataManager().set(DATA_COLLIDED, collided);
+		this.getDataManager().setDirty(DATA_COLLIDED);
 	}
 
 	@Override
@@ -100,24 +103,24 @@ public class EntitySpellProjectile extends Entity {
 			motionY = 0;
 			motionZ = 0;
 
-			if (getDataManager().get(DATA_DEATH_BUFFER) >= 5) {
-				if (module != null && module.nextModule != null) {
-					Module nextModule = module.nextModule;
-					SpellData newSpell = spell.copy();
+			applyCollided(true);
+			PacketHandler.NETWORK.sendToAllAround(new PacketParticleFairyExplode(getPositionVector(), new Color(getDataManager().get(DATA_COLOR))),
+					new NetworkRegistry.TargetPoint(world.provider.getDimension(), posX, posY, posZ, 512));
 
-					RayTraceResult result = new RayTraceResult(this);
-					if (result.typeOfHit == RayTraceResult.Type.ENTITY)
-						newSpell.crunchData(result.entityHit, false);
-					else if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
-						newSpell.addData(SpellData.DefaultKeys.BLOCK_HIT, result.getBlockPos());
-						newSpell.addData(SpellData.DefaultKeys.TARGET_HIT, result.hitVec);
-					}
-					nextModule.run(newSpell);
+			if (module != null && module.nextModule != null) {
+				Module nextModule = module.nextModule;
+				SpellData newSpell = spell.copy();
+
+				RayTraceResult result = new RayTraceResult(this);
+				if (result.typeOfHit == RayTraceResult.Type.ENTITY)
+					newSpell.crunchData(result.entityHit, false);
+				else if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
+					newSpell.addData(SpellData.DefaultKeys.BLOCK_HIT, result.getBlockPos());
+					newSpell.addData(SpellData.DefaultKeys.TARGET_HIT, result.hitVec);
 				}
+				nextModule.run(newSpell);
 			}
-
-			if (getDataManager().get(DATA_DEATH_BUFFER) > 0) applyDeathBuffer(getDataManager().get(DATA_DEATH_BUFFER) - 1);
-			else setDead();
+			setDead();
 		}
 	}
 
@@ -150,7 +153,7 @@ public class EntitySpellProjectile extends Entity {
 		spell.deserializeNBT(compound.getCompoundTag("spell_data"));
 		applyColor(new Color(compound.getInteger("color")));
 
-		applyDeathBuffer(compound.getInteger("death_buffer"));
+		applyCollided(compound.getBoolean("collided"));
 	}
 
 	@Override
@@ -158,6 +161,6 @@ public class EntitySpellProjectile extends Entity {
 		compound.setTag("module", module.serializeNBT());
 		compound.setTag("spell_data", spell.serializeNBT());
 		compound.setInteger("color", getDataManager().get(DATA_COLOR));
-		compound.setInteger("death_buffer", getDataManager().get(DATA_DEATH_BUFFER));
+		compound.setBoolean("collided", getDataManager().get(DATA_COLLIDED));
 	}
 }
