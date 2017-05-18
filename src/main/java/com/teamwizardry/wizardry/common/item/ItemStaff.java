@@ -87,7 +87,6 @@ public class ItemStaff extends ItemMod implements INacreColorable {
 
 	@Override
 	public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
-		if (player.world.isRemote) return;
 		for (Module module : SpellStack.getAllModules(stack))
 			if (module.getChargeUpTime() > 0) {
 				if (count <= 1) {
@@ -127,22 +126,22 @@ public class ItemStaff extends ItemMod implements INacreColorable {
 	@Nonnull
 	@Override
 	public String getItemStackDisplayName(@Nonnull ItemStack stack) {
-		String finalName = null;
+		StringBuilder finalName = null;
 		Set<Module> modules = SpellStack.getModules(stack);
 		for (Module module : modules) {
 			if (module != null) {
 				Module tempModule = module;
 				while (tempModule != null) {
 					if (tempModule.getModuleType() == ModuleType.EFFECT)
-						if (finalName == null) finalName = tempModule.getReadableName();
-						else finalName += " & " + tempModule.getReadableName();
+						if (finalName == null) finalName = new StringBuilder(tempModule.getReadableName());
+						else finalName.append(" & ").append(tempModule.getReadableName());
 					tempModule = tempModule.nextModule;
 				}
 			}
 		}
 		if (finalName == null)
 			return ("" + I18n.translateToLocal(this.getUnlocalizedNameInefficiently(stack) + ".name")).trim();
-		else return finalName;
+		else return finalName.toString();
 	}
 
 	@Override

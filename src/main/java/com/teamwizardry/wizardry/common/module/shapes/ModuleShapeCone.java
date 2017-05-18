@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.module.shapes;
 
-import com.teamwizardry.librarianlib.features.math.Matrix4;
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpCircle;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpLine;
@@ -11,21 +10,19 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.api.util.PosUtils;
-import net.minecraft.client.Minecraft;
+import com.teamwizardry.wizardry.api.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
-import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
@@ -87,9 +84,6 @@ public class ModuleShapeCone extends Module implements IParticleDanger {
 
 		if (position == null) return false;
 
-		Vec3d lookVec = PosUtils.vecFromRotations(pitch, yaw);
-
-		Minecraft.getMinecraft().player.sendChatMessage(yaw + " - " + pitch + " - " + lookVec);
 		double range = 5;
 		if (attributes.hasKey(Attributes.EXTEND)) range += attributes.getDouble(Attributes.EXTEND);
 		Vec3d origin = position;
@@ -98,29 +92,28 @@ public class ModuleShapeCone extends Module implements IParticleDanger {
 			float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - yaw));
 			origin = new Vec3d(offX, caster.getEyeHeight(), offZ).add(position);
 		}
+		int chance = 30;
+		if (attributes.hasKey(Attributes.EXTEND)) range = Math.min(1, chance - attributes.getDouble(Attributes.EXTEND));
 
 		for (int i = 0; i < range * 10; i++) {
-			Matrix4 matrix = new Matrix4();
-			Vec3d cross = lookVec.crossProduct(new Vec3d(0, 1, 0));
-			matrix.rotate(Math.toRadians(ThreadLocalRandom.current().nextDouble(-range * 10, range * 10)), lookVec);
-			Vec3d normal = matrix.apply(cross).normalize();
+			if (ThreadLocalRandom.current().nextInt(chance) != 0) continue;
 
-			Matrix4 matrix2 = new Matrix4();
-			matrix2.rotate(Math.toRadians(ThreadLocalRandom.current().nextDouble(-range * 10, range * 10)), normal);
-			Vec3d target = matrix2.apply(lookVec).scale(ThreadLocalRandom.current().nextDouble(range)).add(origin).add(position);
+			float newPitch = (float) (pitch + ThreadLocalRandom.current().nextDouble(-range * 6, range * 6));
+			float newYaw = (float) (yaw + ThreadLocalRandom.current().nextDouble(-range * 6, range * 6));
+
+			Vec3d target = PosUtils.vecFromRotations(newPitch, newYaw);
 
 			SpellData newSpell = spell.copy();
-
-			newSpell.addData(TARGET_HIT, target);
 			runNextModule(newSpell);
+			newSpell.addData(TARGET_HIT, target);
 
-			List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(target)));
-			if (entityList.isEmpty()) continue;
-			for (Entity entity : entityList) {
-				if (entity == null) continue;
-				newSpell.crunchData(entity, false);
-				runNextModule(newSpell);
+			RayTraceResult result = Utils.raytrace(world, target.normalize(), origin, range, caster);
+			if (result.entityHit != null) {
+				newSpell.crunchData(result.entityHit, false);
 			}
+			newSpell.addData(BLOCK_HIT, result.getBlockPos());
+
+			runNextModule(newSpell);
 		}
 
 		usedShape = this;
@@ -167,7 +160,6 @@ public class ModuleShapeCone extends Module implements IParticleDanger {
 			InterpCircle circle = new InterpCircle(lookVec.scale(finalRange), lookVec, (float) finalRange, 1, ThreadLocalRandom.current().nextFloat());
 			glitter.setPositionFunction(new InterpLine(Vec3d.ZERO, circle.get(0)));
 		});
-		super.runClient(stack, spell);
 	}
 
 	@Nonnull
