@@ -73,10 +73,10 @@ public class ItemStaff extends ItemMod implements INacreColorable {
 		int i = 0;
 		for (Module module : SpellStack.getAllModules(stack))
 			if (module instanceof IContinousSpell) {
-				if (module.getChargeUpTime() == 0) i += 72000;
+				if (module.getChargeUpTime() == 0) i += 10;
 				else i += module.getChargeUpTime();
 			} else i += module.getChargeUpTime();
-		return i > 0 ? i : 72000;
+		return i > 0 ? i : 10;
 	}
 
 	@Nonnull
@@ -89,6 +89,7 @@ public class ItemStaff extends ItemMod implements INacreColorable {
 	public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
 		for (Module module : SpellStack.getAllModules(stack))
 			if (module.getChargeUpTime() > 0) {
+			Minecraft.getMinecraft().player.sendChatMessage(count + "");
 				if (count <= 1) {
 					SpellData spell = new SpellData(player.world);
 					spell.crunchData(player, true);

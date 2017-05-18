@@ -173,6 +173,6 @@ public class ModuleShapeCone extends Module {
 
 	@Override
 	public int getChargeUpTime() {
-		return 50;
+		return 5;
 	}
 }
