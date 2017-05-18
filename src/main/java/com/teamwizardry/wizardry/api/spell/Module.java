@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.api.spell;
 
 import com.teamwizardry.wizardry.api.WizardManager;
-import com.teamwizardry.wizardry.api.util.Utils;
+import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.common.core.SpellTicker;
 import kotlin.Pair;
 import net.minecraft.entity.Entity;
@@ -66,7 +66,7 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 			if (childColor == null) {
 				color = module.getColor();
 			} else {
-				if (module.getColor() != null) color = Utils.mixColors(childColor, module.getColor());
+				if (module.getColor() != null) color = ColorUtils.mixColors(childColor, module.getColor());
 				else color = childColor;
 			}
 		} else color = module.getColor();
