@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.client.gui.book;
 
+import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.gui.GuiComponent;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentText;
@@ -8,7 +9,7 @@ import com.teamwizardry.librarianlib.features.math.Vec2d;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.librarianlib.features.sprite.Texture;
 import com.teamwizardry.wizardry.Wizardry;
-import net.minecraft.client.Minecraft;
+import com.teamwizardry.wizardry.api.util.CubicBezier;
 import net.minecraft.util.ResourceLocation;
 
 /**
@@ -20,6 +21,8 @@ public class Slider {
 	private static Sprite bg = sliders.getSprite("blue", 133, 37);
 
 	public ComponentVoid component;
+
+	public CubicBezier bezier = new CubicBezier(0.14f, 1.14f, 0.92f, 0.98f);
 
 	public Slider(String text) {
 		component = new ComponentVoid(0, 0, bg.getWidth(), bg.getHeight());
@@ -38,8 +41,7 @@ public class Slider {
 		component.add(compText);
 
 		component.BUS.hook(GuiComponent.ComponentTickEvent.class, componentTickEvent -> {
-			double t = -1, tmax = 60;
-			float finalLoc = -130;
+			double t = -1, tmax = 20;
 			float x;
 			if (!component.hasTag("kill")) {
 				for (Object tag : component.getTags()) {
@@ -58,10 +60,9 @@ public class Slider {
 				}
 				if (t > tmax) return;
 
-				double delta = t / tmax;
+				float delta = (float) ((t + ClientTickHandler.getPartialTicks()) / tmax);
 
-				x = (float) (50f * (1 * (1 - delta) + 0.1 * delta));
-				Minecraft.getMinecraft().player.sendChatMessage(delta + " - " + x);
+				x = -bg.getWidth() * bezier.eval(delta);
 
 			} else {
 				for (Object tag : component.getTags()) {
@@ -77,7 +78,9 @@ public class Slider {
 				if (t == -1) component.addTag("t:" + tmax);
 				if (t <= 0) return;
 
-				x = (float) (Math.sin(t / tmax) * 10);
+				float delta = (float) ((t + ClientTickHandler.getPartialTicks()) / tmax);
+
+				x = -bg.getWidth() * (1 - bezier.eval(1 - delta));
 			}
 
 			component.setPos(new Vec2d(x, component.getPos().getY()));
