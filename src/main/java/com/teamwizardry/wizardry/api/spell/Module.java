@@ -224,13 +224,11 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 				SpellTicker.INSTANCE.ticker.put(this, new Pair<>(data, ((IlingeringModule) this).lingeringTime(data)));
 
 		boolean success = run(data);
-		if (success) {
-			castParticles(data);
-		}
+		if (success) castParticles(data);
 		return success;
 	}
 
-	public boolean castParticles(@NotNull SpellData data) {
+	public void castParticles(@NotNull SpellData data) {
 		Entity caster = data.getData(SpellData.DefaultKeys.CASTER);
 		Vec3d target = data.hasData(SpellData.DefaultKeys.ORIGIN) ?
 				data.getData(SpellData.DefaultKeys.ORIGIN) : data.hasData(SpellData.DefaultKeys.TARGET_HIT) ?
@@ -239,7 +237,6 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 		if (target != null)
 			PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(this, data),
 					new NetworkRegistry.TargetPoint(data.world.provider.getDimension(), target.xCoord, target.yCoord, target.zCoord, 60));
-		return true;
 	}
 
 	/**

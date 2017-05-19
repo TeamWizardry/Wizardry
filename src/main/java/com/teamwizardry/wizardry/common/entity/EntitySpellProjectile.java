@@ -119,7 +119,7 @@ public class EntitySpellProjectile extends Entity {
 					newSpell.addData(SpellData.DefaultKeys.BLOCK_HIT, result.getBlockPos());
 					newSpell.addData(SpellData.DefaultKeys.TARGET_HIT, result.hitVec);
 				}
-				nextModule.run(newSpell);
+				nextModule.castSpell(newSpell);
 			}
 			setDead();
 		}
