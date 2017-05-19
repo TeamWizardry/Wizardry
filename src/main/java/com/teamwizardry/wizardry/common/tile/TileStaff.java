@@ -61,7 +61,7 @@ public class TileStaff extends TileMod implements ITickable {
 						spell.addData(YAW, rotations[1]);
 						spell.addData(PITCH, rotations[0]);
 						spell.addData(ORIGIN, new Vec3d(getPos()).addVector(0.5, 2.5, 0.5));
-						SpellStack.runModules(pearl, spell);
+						SpellStack.runSpell(pearl, spell);
 						break;
 					}
 		}

@@ -110,7 +110,7 @@ public class ModuleEffectAntiGravityWell extends Module implements IlingeringMod
 	}
 
 	@Override
-	public void runClient(@Nullable ItemStack stack, @Nonnull SpellData spell) {
+	public void runClient(@Nonnull SpellData spell) {
 		Vec3d position = spell.getData(ORIGIN);
 
 		if (position == null) return;

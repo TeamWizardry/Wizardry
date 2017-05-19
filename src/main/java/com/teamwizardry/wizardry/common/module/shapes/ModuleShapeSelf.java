@@ -55,7 +55,6 @@ public class ModuleShapeSelf extends Module {
 		spell.crunchData(caster, true);
 		spell.crunchData(caster, false);
 
-		usedShape = this;
 		return runNextModule(spell);
 	}
 

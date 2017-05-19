@@ -109,7 +109,7 @@ public class ModuleEffectBurn extends Module implements IContinousSpell {
 	}
 
 	@Override
-	public void runClient(@Nullable ItemStack stack, @Nonnull SpellData spell) {
+	public void runClient(@Nonnull SpellData spell) {
 		World world = spell.world;
 		Vec3d position = spell.getData(TARGET_HIT);
 

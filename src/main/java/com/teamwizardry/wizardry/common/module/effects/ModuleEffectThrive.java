@@ -16,7 +16,6 @@ import net.minecraft.world.World;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
@@ -99,9 +98,7 @@ public class ModuleEffectThrive extends Module implements IContinousSpell {
 	}
 
 	@Override
-	public void runClient(@Nullable ItemStack stack, @Nonnull SpellData spell) {
-		if (ThreadLocalRandom.current().nextInt(15) != 0) return;
-
+	public void runClient(@Nonnull SpellData spell) {
 		World world = spell.world;
 		Vec3d position = spell.getData(TARGET_HIT);
 

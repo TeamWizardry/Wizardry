@@ -104,7 +104,7 @@ public class ModuleEffectLeap extends Module implements IParticleDanger {
 	}
 
 	@Override
-	public void runClient(@Nullable ItemStack stack, @Nonnull SpellData spell) {
+	public void runClient(@Nonnull SpellData spell) {
 		Entity caster = spell.getData(CASTER);
 		Vec3d position = spell.getData(TARGET_HIT);
 

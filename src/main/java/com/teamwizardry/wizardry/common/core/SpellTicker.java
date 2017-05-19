@@ -2,7 +2,6 @@ package com.teamwizardry.wizardry.common.core;
 
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.SpellData;
-import com.teamwizardry.wizardry.api.spell.SpellStack;
 import kotlin.Pair;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -29,7 +28,7 @@ public class SpellTicker {
 			int time = ticker.get(module).getSecond();
 			if (time > 0) {
 				ticker.put(module, new Pair<>(ticker.get(module).getFirst().copy(), --time));
-				SpellStack.runModules(module, ticker.get(module).getFirst());
+				module.castSpell(ticker.get(module).getFirst());
 				return false;
 			} else return true;
 		});

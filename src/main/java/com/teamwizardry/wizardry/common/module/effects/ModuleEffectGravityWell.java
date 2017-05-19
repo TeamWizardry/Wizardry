@@ -89,8 +89,13 @@ public class ModuleEffectGravityWell extends Module implements IlingeringModule 
 			if (entity == null) continue;
 			double dist = entity.getPositionVector().distanceTo(position);
 			if (dist > strength) continue;
-			Vec3d direction = position.subtract(entity.getPositionVector());
-			Vec3d dir = direction.subtract(entity.getPositionVector());
+
+			final double upperMag = dist;
+			final double scale = strength;
+			double mag = upperMag * (scale * dist / (-scale * dist - 1) + 1);
+
+			Vec3d dir = position.subtract(entity.getPositionVector()).normalize().scale(mag);
+
 			entity.motionX = (dir.xCoord);
 			entity.motionY = (dir.yCoord);
 			entity.motionZ = (dir.zCoord);
@@ -108,7 +113,7 @@ public class ModuleEffectGravityWell extends Module implements IlingeringModule 
 	}
 
 	@Override
-	public void runClient(@Nullable ItemStack stack, @Nonnull SpellData spell) {
+	public void runClient(@Nonnull SpellData spell) {
 		Vec3d position = spell.getData(TARGET_HIT);
 
 		if (position == null) return;

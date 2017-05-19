@@ -9,7 +9,9 @@ import com.teamwizardry.wizardry.client.gui.GuiHandler;
 import com.teamwizardry.wizardry.common.achievement.AchievementEvents;
 import com.teamwizardry.wizardry.common.achievement.Achievements;
 import com.teamwizardry.wizardry.common.fluid.Fluids;
-import com.teamwizardry.wizardry.common.network.*;
+import com.teamwizardry.wizardry.common.network.PacketParticleFairyExplode;
+import com.teamwizardry.wizardry.common.network.PacketRenderSpell;
+import com.teamwizardry.wizardry.common.network.WizardryPacketHandler;
 import com.teamwizardry.wizardry.common.world.GenHandler;
 import com.teamwizardry.wizardry.common.world.underworld.WorldProviderUnderWorld;
 import com.teamwizardry.wizardry.init.*;
@@ -55,8 +57,6 @@ public class CommonProxy {
 		MinecraftForge.EVENT_BUS.register(new ModCapabilities());
 		SpellTicker.INSTANCE.getClass();
 
-		PacketHandler.register(PacketParticleMagicDot.class, Side.CLIENT);
-		PacketHandler.register(PacketParticleAmbientFizz.class, Side.CLIENT);
 		PacketHandler.register(PacketRenderSpell.class, Side.CLIENT);
 		PacketHandler.register(PacketParticleFairyExplode.class, Side.CLIENT);
 	}

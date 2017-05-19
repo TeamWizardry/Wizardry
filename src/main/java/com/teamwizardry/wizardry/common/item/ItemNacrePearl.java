@@ -2,8 +2,8 @@ package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.wizardry.api.item.IExplodable;
-import com.teamwizardry.wizardry.api.item.INacreColorable;
 import com.teamwizardry.wizardry.api.item.IInfusable;
+import com.teamwizardry.wizardry.api.item.INacreColorable;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.SpellStack;
@@ -52,17 +52,30 @@ public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, 
 	public String getItemStackDisplayName(@Nonnull ItemStack stack) {
 		StringBuilder finalName = null;
 		Set<Module> modules = SpellStack.getModules(stack);
+		Module lastModule = null;
 		for (Module module : modules) {
 			if (module != null) {
 				Module tempModule = module;
 				while (tempModule != null) {
-					if (tempModule.getModuleType() == ModuleType.EFFECT)
-						if (finalName == null) finalName = new StringBuilder(tempModule.getReadableName());
-						else finalName.append(" & ").append(tempModule.getReadableName());
+
+					if (finalName == null) {
+						finalName = new StringBuilder(tempModule.getReadableName());
+					} else {
+						if (lastModule.getModuleType() == tempModule.getModuleType()) {
+							finalName.append(" & ").append(tempModule.getReadableName());
+						} else {
+							finalName.append(" ").append(tempModule.getReadableName());
+						}
+					}
+
+					if (tempModule.getModuleType() == ModuleType.SHAPE) finalName.append(" of");
+
+					lastModule = tempModule;
 					tempModule = tempModule.nextModule;
 				}
 			}
 		}
+
 		if (finalName == null)
 			return ("" + I18n.translateToLocal(this.getUnlocalizedNameInefficiently(stack) + ".name")).trim();
 		else return finalName.toString();

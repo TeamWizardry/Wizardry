@@ -104,6 +104,7 @@ public class EntitySpellProjectile extends Entity {
 			motionZ = 0;
 
 			applyCollided(true);
+			// TODO: not here
 			PacketHandler.NETWORK.sendToAllAround(new PacketParticleFairyExplode(getPositionVector(), new Color(getDataManager().get(DATA_COLOR))),
 					new NetworkRegistry.TargetPoint(world.provider.getDimension(), posX, posY, posZ, 512));
 

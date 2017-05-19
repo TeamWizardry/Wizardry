@@ -1,22 +1,13 @@
 package com.teamwizardry.wizardry.api.spell;
 
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
-import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.WizardManager;
-import com.teamwizardry.wizardry.common.network.PacketRenderSpell;
 import com.teamwizardry.wizardry.init.ModItems;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -28,6 +19,7 @@ public class SpellStack {
 
 	public static Set<Item> identifiers = new HashSet<>();
 
+	// TODO: no...
 	static {
 		identifiers.add(Items.GOLD_NUGGET);
 		identifiers.add(Items.ROTTEN_FLESH);
@@ -105,66 +97,15 @@ public class SpellStack {
 		return branches;
 	}
 
-	public static void runModules(@Nonnull Module mainModule, SpellData spell) {
-		Entity caster = spell.getData(SpellData.DefaultKeys.CASTER);
-
-		for (Module module : getAllModules(mainModule)) {
-			if (caster instanceof EntityPlayer && !((EntityPlayer) caster).isCreative()) {
-				if (WizardManager.getMana((EntityLivingBase) caster) < module.finalManaCost) {
-					WizardManager.removeMana((int) module.finalManaCost, (EntityLivingBase) caster);
-					WizardManager.addBurnout((int) module.finalBurnoutCost, (EntityLivingBase) caster);
-				}
-			}
-			module.run(spell);
-
-			Vec3d pos = spell.getData(SpellData.DefaultKeys.ORIGIN, caster != null ? caster.getPositionVector() : spell.getData(SpellData.DefaultKeys.TARGET_HIT, Vec3d.ZERO));
-
-			if (spell.getData(SpellData.DefaultKeys.TARGET_HIT) == null) {
-				PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(mainModule, spell),
-						new NetworkRegistry.TargetPoint(spell.world.provider.getDimension(), pos.xCoord, pos.yCoord, pos.zCoord, 60));
-			} else {
-				Vec3d target = spell.getData(SpellData.DefaultKeys.TARGET_HIT);
-				PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(mainModule, spell),
-						new NetworkRegistry.TargetPoint(spell.world.provider.getDimension(), target.xCoord, target.yCoord, target.zCoord, 60));
-			}
-
-			if (caster instanceof EntityPlayer && !((EntityPlayer) caster).isCreative()) {
-				WizardManager.removeMana((int) module.finalManaCost, (EntityLivingBase) caster);
-				WizardManager.addBurnout((int) module.finalBurnoutCost, (EntityLivingBase) caster);
-			}
-
-			SpellCastEvent event = new SpellCastEvent(null, module, spell);
-			MinecraftForge.EVENT_BUS.post(event);
-		}
+	public static void runSpell(@Nonnull Module module, SpellData spell) {
+		module.castSpell(spell);
 	}
 
-	public static void runModules(@Nonnull ItemStack spellHolder, SpellData spell) {
+	public static void runSpell(@Nonnull ItemStack spellHolder, SpellData spell) {
 		if (spell.world.isRemote) return;
 
-		Entity caster = spell.getData(SpellData.DefaultKeys.CASTER);
-
 		for (Module module : getModules(spellHolder)) {
-			if (caster instanceof EntityPlayer && !((EntityPlayer) caster).isCreative()) {
-				if (WizardManager.getMana((EntityLivingBase) caster) < module.finalManaCost) {
-					WizardManager.removeMana((int) module.finalManaCost, (EntityLivingBase) caster);
-					WizardManager.addBurnout((int) module.finalBurnoutCost, (EntityLivingBase) caster);
-				}
-			}
-			module.run(spell);
-
-			Vec3d pos = spell.getData(SpellData.DefaultKeys.ORIGIN, caster != null ? caster.getPositionVector() : spell.getData(SpellData.DefaultKeys.TARGET_HIT, Vec3d.ZERO));
-
-			if (spell.getData(SpellData.DefaultKeys.TARGET_HIT) == null) {
-				PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(spellHolder, spell),
-						new NetworkRegistry.TargetPoint(spell.world.provider.getDimension(), pos.xCoord, pos.yCoord, pos.zCoord, 60));
-			} else {
-				Vec3d target = spell.getData(SpellData.DefaultKeys.TARGET_HIT);
-				PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(spellHolder, spell),
-						new NetworkRegistry.TargetPoint(spell.world.provider.getDimension(), target.xCoord, target.yCoord, target.zCoord, 60));
-			}
-
-			SpellCastEvent event = new SpellCastEvent(spellHolder, module, spell);
-			MinecraftForge.EVENT_BUS.post(event);
+			runSpell(module, spell);
 		}
 	}
 

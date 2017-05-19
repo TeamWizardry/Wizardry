@@ -14,7 +14,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -95,12 +94,11 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 			spell.addData(TARGET_HIT, trace.hitVec);
 		} else spell.addData(TARGET_HIT, trace.hitVec);
 
-		usedShape = this;
 		return ThreadLocalRandom.current().nextInt(chance) == 0 && runNextModule(spell);
 	}
 
 	@Override
-	public void runClient(@Nullable ItemStack stack, @Nonnull SpellData spell) {
+	public void runClient(@Nonnull SpellData spell) {
 		World world = spell.world;
 		float yaw = spell.getData(YAW, 0F);
 		Vec3d position = spell.getData(ORIGIN);

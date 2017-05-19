@@ -5,17 +5,14 @@ import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.common.entity.EntitySpellProjectile;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
 
 /**
  * Created by LordSaad.
@@ -67,7 +64,6 @@ public class ModuleShapeProjectile extends Module {
 		proj.setPosition(caster.posX + (caster.width / 2), caster.posY + caster.getEyeHeight(), caster.posZ + (caster.width / 2));
 		proj.velocityChanged = true;
 
-		usedShape = this;
 		return world.spawnEntity(proj);
 	}
 

@@ -1,8 +1,10 @@
 package com.teamwizardry.wizardry.api.spell;
 
+import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.WizardManager;
 import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.common.core.SpellTicker;
+import com.teamwizardry.wizardry.common.network.PacketRenderSpell;
 import kotlin.Pair;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -10,7 +12,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -35,12 +40,6 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	public Module nextModule = null;
 
 	/**
-	 * Shape modifiers should set this so other modules can adjust to it.
-	 */
-	@Nullable
-	public Module usedShape = null;
-
-	/**
 	 * The final calculated cost of mana this spell consumes.
 	 */
 	public double finalManaCost = 10;
@@ -51,37 +50,32 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	public double finalBurnoutCost = 10;
 
 	/**
-	 * The summative final calculated/merged/mixed color from this module's children attributes.
+	 * The summative final calculated/merged/mixed color from this module's children.
 	 */
 	private Color color = null;
 
 	public Module() {
 	}
 
-	@Nullable
-	public static Color processColor(Module module) {
-		Color color;
-		if (module.nextModule != null) {
-			Color childColor = processColor(module.nextModule);
-			if (childColor == null) {
-				color = module.getColor();
-			} else {
-				if (module.getColor() != null) color = ColorUtils.mixColors(childColor, module.getColor());
-				else color = childColor;
-			}
-		} else color = module.getColor();
+	private static void processColor(Module module) {
+		Color color = null;
+		for (Module module1 : SpellStack.getAllModules(module)) {
+			if (module1.getColor() == null) continue;
+			if (color == null) color = module1.getColor();
+			else color = ColorUtils.mixColors(color, module1.getColor());
+		}
+		if (color == null) color = new Color(0, 0, 0, 0);
 		module.setColor(color);
-		return color;
 	}
 
-	public static double processMana(Module module) {
+	private static double processMana(Module module) {
 		double mana = module.getManaToConsume();
 		for (String key : module.attributes.getKeySet()) mana += module.attributes.getDouble(key);
 
 		return module.finalManaCost = mana + (module.nextModule != null ? processMana(module.nextModule) : 0);
 	}
 
-	public static double processBurnout(Module module) {
+	private static double processBurnout(Module module) {
 		double burnout = module.getBurnoutToFill();
 		for (String key : module.attributes.getKeySet()) burnout += module.attributes.getDouble(key);
 		return module.finalBurnoutCost = burnout + (module.nextModule != null ? processBurnout(module.nextModule) : 0);
@@ -172,8 +166,7 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	/**
 	 * This method runs client side when the spell runs. Spawn particles here.
 	 */
-	public void runClient(@Nullable ItemStack stack, @Nonnull SpellData spell) {
-
+	public void runClient(@Nonnull SpellData spell) {
 	}
 
 	/**
@@ -205,11 +198,48 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 		return null;
 	}
 
-	public boolean runNextModule(SpellData spell) {
+	protected boolean runNextModule(@NotNull SpellData data) {
+		return nextModule != null && nextModule.castSpell(data);
+	}
+
+	/**
+	 * Use this to effectively spawn the entire module, rendering and all.
+	 *
+	 * @param data The spellData associated with it.
+	 * @return If the spell has succeeded.
+	 */
+	public boolean castSpell(@NotNull SpellData data) {
+		Entity caster = data.getData(SpellData.DefaultKeys.CASTER);
+
+		// TODO: redo. bad
+		if (caster instanceof EntityPlayer && !((EntityPlayer) caster).isCreative()) {
+			if (WizardManager.getMana((EntityLivingBase) caster) < finalManaCost) {
+				WizardManager.removeMana((int) finalManaCost, (EntityLivingBase) caster);
+				WizardManager.addBurnout((int) finalBurnoutCost, (EntityLivingBase) caster);
+			}
+		}
+
 		if (this instanceof IlingeringModule)
 			if (!SpellTicker.INSTANCE.ticker.containsKey(this))
-				SpellTicker.INSTANCE.ticker.put(this, new Pair<>(spell, ((IlingeringModule) this).lingeringTime(spell)));
-		return nextModule != null && nextModule.run(spell);
+				SpellTicker.INSTANCE.ticker.put(this, new Pair<>(data, ((IlingeringModule) this).lingeringTime(data)));
+
+		boolean success = run(data);
+		if (success) {
+			castParticles(data);
+		}
+		return success;
+	}
+
+	public boolean castParticles(@NotNull SpellData data) {
+		Entity caster = data.getData(SpellData.DefaultKeys.CASTER);
+		Vec3d target = data.hasData(SpellData.DefaultKeys.ORIGIN) ?
+				data.getData(SpellData.DefaultKeys.ORIGIN) : data.hasData(SpellData.DefaultKeys.TARGET_HIT) ?
+				data.getData(SpellData.DefaultKeys.TARGET_HIT) : caster != null ?
+				caster.getPositionVector() : null;
+		if (target != null)
+			PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(this, data),
+					new NetworkRegistry.TargetPoint(data.world.provider.getDimension(), target.xCoord, target.yCoord, target.zCoord, 60));
+		return true;
 	}
 
 	/**
@@ -217,7 +247,7 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 	 *
 	 * @param modifiers The list of itemstacks representing a stream of modifiers to apply.
 	 */
-	public void processModifiers(List<ItemStack> modifiers) {
+	void processModifiers(List<ItemStack> modifiers) {
 		for (ItemStack stack : modifiers) {
 			Module modifier = ModuleRegistry.INSTANCE.getModule(stack);
 			if (modifier == null) continue;
@@ -227,7 +257,7 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 		}
 	}
 
-	public double calcBurnoutPercent(@Nullable Entity player) {
+	protected double calcBurnoutPercent(@Nullable Entity player) {
 		if (!(player instanceof EntityLivingBase)) return 1;
 		if (player instanceof EntityPlayer && ((EntityPlayer) player).isCreative()) return 1;
 		return ((WizardManager.getMaxBurnout((EntityLivingBase) player) - WizardManager.getBurnout((EntityLivingBase) player)) / (WizardManager.getMaxBurnout((EntityLivingBase) player) * 1.0));
@@ -247,9 +277,6 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 		compound.setString("id", getID());
 		compound.setTag("attributes", attributes);
 		if (nextModule != null) compound.setTag("next_module", nextModule.serializeNBT());
-
-		if (usedShape != null)
-			compound.setTag("used_shape", usedShape.serializeNBT());
 		return compound;
 	}
 
@@ -260,7 +287,5 @@ public class Module implements INBTSerializable<NBTTagCompound> {
 			nextModule = ModuleRegistry.INSTANCE.getModule(nbt.getCompoundTag("next_module").getString("id"));
 			if (nextModule != null) nextModule.deserializeNBT(nbt.getCompoundTag("next_module"));
 		}
-
-		usedShape = ModuleRegistry.INSTANCE.getModule(nbt.getCompoundTag("used_shape").getString("id"));
 	}
 }

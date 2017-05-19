@@ -44,7 +44,7 @@ public class ItemStaff extends ItemMod implements INacreColorable {
 			if (!world.isRemote) {
 				SpellData spell = new SpellData(world);
 				spell.crunchData(player, true);
-				SpellStack.runModules(stack, spell);
+				SpellStack.runSpell(stack, spell);
 			}
 			player.swingArm(EnumHand.MAIN_HAND);
 			player.getCooldownTracker().setCooldown(this, 10);
@@ -89,11 +89,10 @@ public class ItemStaff extends ItemMod implements INacreColorable {
 	public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
 		for (Module module : SpellStack.getAllModules(stack))
 			if (module.getChargeUpTime() > 0) {
-			Minecraft.getMinecraft().player.sendChatMessage(count + "");
 				if (count <= 1) {
 					SpellData spell = new SpellData(player.world);
 					spell.crunchData(player, true);
-					SpellStack.runModules(stack, spell);
+					SpellStack.runSpell(stack, spell);
 					player.swingArm(EnumHand.MAIN_HAND);
 					((EntityPlayer) player).getCooldownTracker().setCooldown(this, 10);
 					return;
@@ -102,7 +101,7 @@ public class ItemStaff extends ItemMod implements INacreColorable {
 		if (((count > 0) && (count < (getMaxItemUseDuration(stack) - 20)) && (player instanceof EntityPlayer))) {
 			SpellData spell = new SpellData(((EntityPlayer) player).world);
 			spell.crunchData(player, true);
-			SpellStack.runModules(stack, spell);
+			SpellStack.runSpell(stack, spell);
 			player.swingArm(EnumHand.MAIN_HAND);
 			((EntityPlayer) player).getCooldownTracker().setCooldown(this, 10);
 		}
@@ -129,17 +128,30 @@ public class ItemStaff extends ItemMod implements INacreColorable {
 	public String getItemStackDisplayName(@Nonnull ItemStack stack) {
 		StringBuilder finalName = null;
 		Set<Module> modules = SpellStack.getModules(stack);
+		Module lastModule = null;
 		for (Module module : modules) {
 			if (module != null) {
 				Module tempModule = module;
 				while (tempModule != null) {
-					if (tempModule.getModuleType() == ModuleType.EFFECT)
-						if (finalName == null) finalName = new StringBuilder(tempModule.getReadableName());
-						else finalName.append(" & ").append(tempModule.getReadableName());
+
+					if (finalName == null) {
+						finalName = new StringBuilder(tempModule.getReadableName());
+					} else {
+						if (lastModule.getModuleType() == tempModule.getModuleType()) {
+							finalName.append(" & ").append(tempModule.getReadableName());
+						} else {
+							finalName.append(" ").append(tempModule.getReadableName());
+						}
+					}
+
+					if (tempModule.getModuleType() == ModuleType.SHAPE) finalName.append(" of");
+
+					lastModule = tempModule;
 					tempModule = tempModule.nextModule;
 				}
 			}
 		}
+
 		if (finalName == null)
 			return ("" + I18n.translateToLocal(this.getUnlocalizedNameInefficiently(stack) + ".name")).trim();
 		else return finalName.toString();
