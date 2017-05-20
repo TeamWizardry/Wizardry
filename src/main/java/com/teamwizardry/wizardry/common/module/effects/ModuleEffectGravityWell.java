@@ -98,20 +98,21 @@ public class ModuleEffectGravityWell extends Module implements IlingeringModule 
 		if (attributes.hasKey(Attributes.EXTEND))
 			strength += attributes.getDouble(Attributes.EXTEND);
 
-		for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(position)).expand(strength, strength, strength))) {
+		for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(position)).expand(strength, strength, strength))) {
 			if (entity == null) continue;
 			double dist = entity.getPositionVector().distanceTo(position);
+			if (dist < 2) continue;
 			if (dist > strength) continue;
 
-			final double upperMag = 2;
-			final double scale = 0.3;
+			final double upperMag = (strength / 100);
+			final double scale = 3.5;
 			double mag = upperMag * (scale * dist / (-scale * dist - 1) + 1);
 
 			Vec3d dir = position.subtract(entity.getPositionVector()).normalize().scale(mag);
 
-			entity.motionX = (dir.xCoord);
-			entity.motionY = (dir.yCoord);
-			entity.motionZ = (dir.zCoord);
+			entity.motionX += (dir.xCoord);
+			entity.motionY += (dir.yCoord);
+			entity.motionZ += (dir.zCoord);
 			entity.fallDistance = 0;
 			entity.velocityChanged = true;
 
