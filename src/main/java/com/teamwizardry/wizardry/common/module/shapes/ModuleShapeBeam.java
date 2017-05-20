@@ -1,7 +1,5 @@
 package com.teamwizardry.wizardry.common.module.shapes;
 
-import com.teamwizardry.librarianlib.features.config.ConfigPropertyDouble;
-import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.Utils;
@@ -14,7 +12,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
@@ -25,9 +22,6 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 @RegisterModule
 public class ModuleShapeBeam extends Module implements IContinousSpell {
 
-	@ConfigPropertyDouble(modid = Wizardry.MODID, category = "attributes", id = "shape_beam_default_range", comment = "The default range of a pure beam spell shape", defaultValue = 10)
-	public static double defaultRange;
-
 	@Nonnull
 	@Override
 	public ItemStack getRequiredStack() {
@@ -35,12 +29,12 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 	}
 
 	@Override
-	public double getManaToConsume() {
+	public double getManaDrain() {
 		return 5;
 	}
 
 	@Override
-	public double getBurnoutToFill() {
+	public double getBurnoutFill() {
 		return 10;
 	}
 
@@ -88,7 +82,7 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 		if (trace == null) return false;
 
 		if (trace.typeOfHit == RayTraceResult.Type.ENTITY)
-			spell.crunchData(trace.entityHit, false);
+			spell.processEntity(trace.entityHit, false);
 		else if (trace.typeOfHit == RayTraceResult.Type.BLOCK) {
 			spell.addData(BLOCK_HIT, trace.getBlockPos());
 			spell.addData(TARGET_HIT, trace.hitVec);
@@ -114,15 +108,17 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 			float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - yaw));
 			origin = new Vec3d(offX, caster.getEyeHeight(), offZ).add(position);
 		}
-		LibParticles.SHAPE_BEAM(world, target, origin, getColor() == null ? Color.WHITE : getColor());
+		LibParticles.SHAPE_BEAM(world, target, origin, getPrimaryColor());
+	}
+
+	@Override
+	public double getManaMultiplier() {
+		return 0.1;
 	}
 
 	@Nonnull
 	@Override
-	public ModuleShapeBeam copy() {
-		ModuleShapeBeam module = new ModuleShapeBeam();
-		module.deserializeNBT(serializeNBT());
-		process(module);
-		return module;
+	public Module copy() {
+		return cloneModule(new ModuleShapeBeam());
 	}
 }

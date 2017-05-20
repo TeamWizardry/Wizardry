@@ -64,7 +64,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 		return data.containsKey(pair) && data.get(pair) != null;
 	}
 
-	public void crunchData(@Nonnull Entity entity, boolean asCaster) {
+	public void processEntity(@Nonnull Entity entity, boolean asCaster) {
 		if (asCaster) {
 			addData(DefaultKeys.ORIGIN, entity.getPositionVector());
 			addData(DefaultKeys.CASTER, entity);

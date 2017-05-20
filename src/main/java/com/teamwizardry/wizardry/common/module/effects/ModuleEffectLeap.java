@@ -22,9 +22,6 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 @RegisterModule
 public class ModuleEffectLeap extends Module implements IParticleDanger {
 
-	public ModuleEffectLeap() {
-	}
-
 	@Nonnull
 	@Override
 	public ItemStack getRequiredStack() {
@@ -56,18 +53,18 @@ public class ModuleEffectLeap extends Module implements IParticleDanger {
 	}
 
 	@Override
-	public double getManaToConsume() {
+	public double getManaDrain() {
 		return 150;
 	}
 
 	@Override
-	public double getBurnoutToFill() {
+	public double getBurnoutFill() {
 		return 100;
 	}
 
 	@Nullable
 	@Override
-	public Color getColor() {
+	public Color getPrimaryColor() {
 		return Color.YELLOW;
 	}
 
@@ -112,18 +109,15 @@ public class ModuleEffectLeap extends Module implements IParticleDanger {
 
 		if (caster != null) {
 			if (!caster.hasNoGravity())
-				LibParticles.AIR_THROTTLE(spell.world, position, caster, getColor(), Color.WHITE, 0.5, true);
-		} else LibParticles.AIR_THROTTLE(spell.world, position, position, getColor(), Color.WHITE, 0.5, true);
+				LibParticles.AIR_THROTTLE(spell.world, position, caster, getPrimaryColor(), Color.WHITE, 0.5, true);
+		} else LibParticles.AIR_THROTTLE(spell.world, position, position, getPrimaryColor(), Color.WHITE, 0.5, true);
 
 	}
 
 	@Nonnull
 	@Override
-	public ModuleEffectLeap copy() {
-		ModuleEffectLeap module = new ModuleEffectLeap();
-		module.deserializeNBT(serializeNBT());
-		process(module);
-		return module;
+	public Module copy() {
+		return cloneModule(new ModuleEffectLeap());
 	}
 
 	@Override

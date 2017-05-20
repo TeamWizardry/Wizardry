@@ -43,11 +43,15 @@ public class ItemStaff extends ItemMod implements INacreColorable {
 		if (getItemUseAction(stack) == EnumAction.NONE) {
 			if (!world.isRemote) {
 				SpellData spell = new SpellData(world);
-				spell.crunchData(player, true);
+				spell.processEntity(player, true);
 				SpellStack.runSpell(stack, spell);
+
+				int maxCooldown = 0;
+				for (Module module : SpellStack.getAllModules(stack))
+					if (module.getCooldownTime() > maxCooldown) maxCooldown = module.getCooldownTime();
+				player.getCooldownTracker().setCooldown(this, maxCooldown);
 			}
 			player.swingArm(EnumHand.MAIN_HAND);
-			player.getCooldownTracker().setCooldown(this, 10);
 			return new ActionResult<>(EnumActionResult.PASS, stack);
 		} else {
 			if (world.isRemote && (Minecraft.getMinecraft().currentScreen != null)) {
@@ -63,20 +67,20 @@ public class ItemStaff extends ItemMod implements INacreColorable {
 	@Override
 	public EnumAction getItemUseAction(ItemStack stack) {
 		for (Module module : SpellStack.getAllModules(stack))
-			if (module instanceof IContinousSpell || (module.getChargeUpTime() > 0))
+			if (module instanceof IContinousSpell || module.getChargeUpTime() > 0)
 				return EnumAction.BOW;
 		return EnumAction.NONE;
 	}
 
 	@Override
 	public int getMaxItemUseDuration(ItemStack stack) {
-		int i = 0;
-		for (Module module : SpellStack.getAllModules(stack))
-			if (module instanceof IContinousSpell) {
-				if (module.getChargeUpTime() == 0) i += 10;
-				else i += module.getChargeUpTime();
-			} else i += module.getChargeUpTime();
-		return i > 0 ? i : 10;
+		int maxChargeUp = 0;
+		for (Module module : SpellStack.getAllModules(stack)) {
+			if (module instanceof IContinousSpell) return 72000;
+			if (module.getChargeUpTime() > maxChargeUp) maxChargeUp = module.getChargeUpTime();
+		}
+
+		return maxChargeUp;
 	}
 
 	@Nonnull
@@ -87,24 +91,27 @@ public class ItemStaff extends ItemMod implements INacreColorable {
 
 	@Override
 	public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
+		boolean isContinuous = false;
 		for (Module module : SpellStack.getAllModules(stack))
-			if (module.getChargeUpTime() > 0) {
-				if (count <= 1) {
-					SpellData spell = new SpellData(player.world);
-					spell.crunchData(player, true);
-					SpellStack.runSpell(stack, spell);
-					player.swingArm(EnumHand.MAIN_HAND);
-					((EntityPlayer) player).getCooldownTracker().setCooldown(this, 10);
-					return;
-				} else return;
+			if (module instanceof IContinousSpell) {
+				isContinuous = true;
+				break;
 			}
-		if (((count > 0) && (count < (getMaxItemUseDuration(stack) - 20)) && (player instanceof EntityPlayer))) {
-			SpellData spell = new SpellData(((EntityPlayer) player).world);
-			spell.crunchData(player, true);
-			SpellStack.runSpell(stack, spell);
-			player.swingArm(EnumHand.MAIN_HAND);
-			((EntityPlayer) player).getCooldownTracker().setCooldown(this, 10);
+
+		if (!isContinuous && count > 1) return;
+
+		SpellData spell = new SpellData(player.world);
+		spell.processEntity(player, true);
+		SpellStack.runSpell(stack, spell);
+
+		int maxCooldown = 0;
+		for (Module module : SpellStack.getAllModules(stack)) {
+			if (module instanceof IContinousSpell) return;
+			if (module.getCooldownTime() > maxCooldown) maxCooldown = module.getCooldownTime();
 		}
+		((EntityPlayer) player).getCooldownTracker().setCooldown(this, maxCooldown);
+
+		player.swingArm(player.getActiveHand());
 	}
 
 	@Override
@@ -163,11 +170,11 @@ public class ItemStaff extends ItemMod implements INacreColorable {
 		Set<Module> modules = SpellStack.getModules(stack);
 		for (Module module : modules) {
 			if (module != null) {
-				tooltip.add("Final " + TextFormatting.BLUE + "Mana" + TextFormatting.GRAY + "/" + TextFormatting.RED + "Burnout" + TextFormatting.GRAY + " Cost: " + TextFormatting.BLUE + module.finalManaCost + TextFormatting.GRAY + "/" + TextFormatting.RED + module.finalBurnoutCost);
+				tooltip.add("Final " + TextFormatting.BLUE + "Mana" + TextFormatting.GRAY + "/" + TextFormatting.RED + "Burnout" + TextFormatting.GRAY + " Cost: " + TextFormatting.BLUE + module.finalManaDrain + TextFormatting.GRAY + "/" + TextFormatting.RED + module.finalBurnoutFill);
 				Module tempModule = module;
 				int i = 0;
 				while (tempModule != null) {
-					tooltip.add(new String(new char[i]).replace("\0", "-") + "> " + TextFormatting.BLUE + tempModule.getManaToConsume() + TextFormatting.GRAY + "/" + TextFormatting.RED + tempModule.getBurnoutToFill() + TextFormatting.GRAY + " - " + tempModule.getReadableName());
+					tooltip.add(new String(new char[i]).replace("\0", "-") + "> " + TextFormatting.BLUE + tempModule.getManaDrain() + TextFormatting.GRAY + "/" + TextFormatting.RED + tempModule.getBurnoutFill() + TextFormatting.GRAY + " - " + tempModule.getReadableName());
 					for (String key : tempModule.attributes.getKeySet())
 						tooltip.add(new String(new char[i]).replace("\0", "-") + "^ " + TextFormatting.YELLOW + key + TextFormatting.GRAY + " * " + TextFormatting.GREEN + tempModule.attributes.getDouble(key));
 					tempModule = tempModule.nextModule;

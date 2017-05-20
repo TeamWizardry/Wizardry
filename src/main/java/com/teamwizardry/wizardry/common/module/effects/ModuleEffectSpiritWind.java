@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.common.module.effects;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.SpellData;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
@@ -15,9 +16,6 @@ import java.awt.*;
  */
 @RegisterModule
 public class ModuleEffectSpiritWind extends Module {
-
-	public ModuleEffectSpiritWind() {
-	}
 
 	@Nonnull
 	@Override
@@ -50,27 +48,34 @@ public class ModuleEffectSpiritWind extends Module {
 	}
 
 	@Override
-	public double getManaToConsume() {
+	public double getManaDrain() {
 		return 1000;
 	}
 
 	@Override
-	public double getBurnoutToFill() {
+	public double getBurnoutFill() {
 		return 1000;
+	}
+
+	@Override
+	public boolean run(@Nonnull SpellData spell) {
+		return true;
+	}
+
+	@Override
+	public void runClient(@Nonnull SpellData spell) {
+
 	}
 
 	@Nullable
 	@Override
-	public Color getColor() {
+	public Color getPrimaryColor() {
 		return Color.MAGENTA;
 	}
 
 	@Nonnull
 	@Override
-	public ModuleEffectSpiritWind copy() {
-		ModuleEffectSpiritWind module = new ModuleEffectSpiritWind();
-		module.deserializeNBT(serializeNBT());
-		process(module);
-		return module;
+	public Module copy() {
+		return cloneModule(new ModuleEffectSpiritWind());
 	}
 }

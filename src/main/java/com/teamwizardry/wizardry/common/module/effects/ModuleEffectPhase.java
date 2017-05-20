@@ -28,6 +28,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 public class ModuleEffectPhase extends Module {
 
 	public ModuleEffectPhase() {
+		super();
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
@@ -62,12 +63,12 @@ public class ModuleEffectPhase extends Module {
 	}
 
 	@Override
-	public double getManaToConsume() {
+	public double getManaDrain() {
 		return 30;
 	}
 
 	@Override
-	public double getBurnoutToFill() {
+	public double getBurnoutFill() {
 		return 30;
 	}
 
@@ -103,19 +104,21 @@ public class ModuleEffectPhase extends Module {
 		return true;
 	}
 
+	@Override
+	public void runClient(@Nonnull SpellData spell) {
+
+	}
+
 	@Nullable
 	@Override
-	public Color getColor() {
+	public Color getPrimaryColor() {
 		return new Color(0x9595AA, true);
 	}
 
 	@Nonnull
 	@Override
-	public ModuleEffectPhase copy() {
-		ModuleEffectPhase module = new ModuleEffectPhase();
-		module.deserializeNBT(serializeNBT());
-		process(module);
-		return module;
+	public Module copy() {
+		return cloneModule(new ModuleEffectPhase());
 	}
 
 	@SubscribeEvent

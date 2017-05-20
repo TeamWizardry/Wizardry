@@ -56,7 +56,14 @@ public class SpellStack {
 			if (head == null) continue;
 			if (head instanceof IModifier) continue;
 
-			head.processModifiers(new ArrayList<>(queue)); // Everything else gets processed as a modifier.
+			// Everything else gets processed as a modifier to the head.
+			for (ItemStack modifierStack : queue) {
+				Module modifier = ModuleRegistry.INSTANCE.getModule(modifierStack);
+				if (modifier == null) continue;
+				if (!(modifier instanceof IModifier)) continue;
+
+				((IModifier) modifier).apply(head);
+			}
 
 			fields.put(stack.getItem(), head);
 		}
@@ -131,7 +138,6 @@ public class SpellStack {
 			Module module = ModuleRegistry.INSTANCE.getModule(compound.getString("id"));
 			if (module == null) continue;
 			module.deserializeNBT(compound);
-			Module.process(module);
 			modules.add(module);
 		}
 		return modules;

@@ -12,9 +12,6 @@ import javax.annotation.Nonnull;
 @RegisterModule
 public class ModuleModifierExtend extends Module implements IModifier {
 
-	public ModuleModifierExtend() {
-	}
-
 	@Nonnull
 	@Override
 	public ItemStack getRequiredStack() {
@@ -46,13 +43,23 @@ public class ModuleModifierExtend extends Module implements IModifier {
 	}
 
 	@Override
-	public double getManaToConsume() {
+	public double getManaDrain() {
 		return 50;
 	}
 
 	@Override
-	public double getBurnoutToFill() {
+	public double getBurnoutFill() {
 		return 50;
+	}
+
+	@Override
+	public boolean run(@Nonnull SpellData spell) {
+		return true;
+	}
+
+	@Override
+	public void runClient(@Nonnull SpellData spell) {
+
 	}
 
 	@Override
@@ -63,10 +70,7 @@ public class ModuleModifierExtend extends Module implements IModifier {
 
 	@Nonnull
 	@Override
-	public ModuleModifierExtend copy() {
-		ModuleModifierExtend module = new ModuleModifierExtend();
-		module.deserializeNBT(serializeNBT());
-		process(module);
-		return module;
+	public Module copy() {
+		return cloneModule(new ModuleModifierExtend());
 	}
 }

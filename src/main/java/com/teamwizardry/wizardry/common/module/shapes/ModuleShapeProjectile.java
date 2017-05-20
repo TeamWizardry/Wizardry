@@ -68,16 +68,18 @@ public class ModuleShapeProjectile extends Module {
 	}
 
 	@Override
+	public void runClient(@Nonnull SpellData spell) {
+
+	}
+
+	@Override
 	public int getChargeUpTime() {
 		return 50;
 	}
 
 	@Nonnull
 	@Override
-	public ModuleShapeProjectile copy() {
-		ModuleShapeProjectile module = new ModuleShapeProjectile();
-		module.deserializeNBT(serializeNBT());
-		process(module);
-		return module;
+	public Module copy() {
+		return cloneModule(new ModuleShapeProjectile());
 	}
 }

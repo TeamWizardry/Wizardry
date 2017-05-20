@@ -18,10 +18,6 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.BLOCK_HI
 @RegisterModule
 public class ModuleEventCollideBlock extends Module {
 
-	public ModuleEventCollideBlock() {
-		process(this);
-	}
-
 	@Nonnull
 	@Override
 	public ItemStack getRequiredStack() {
@@ -58,12 +54,14 @@ public class ModuleEventCollideBlock extends Module {
 		return pos != null && nextModule != null && nextModule.run(spell);
 	}
 
+	@Override
+	public void runClient(@Nonnull SpellData spell) {
+
+	}
+
 	@Nonnull
 	@Override
-	public ModuleEventCollideBlock copy() {
-		ModuleEventCollideBlock module = new ModuleEventCollideBlock();
-		module.deserializeNBT(serializeNBT());
-		process(module);
-		return module;
+	public Module copy() {
+		return cloneModule(new ModuleEventCollideBlock());
 	}
 }

@@ -25,10 +25,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEffectBurn extends Module implements IContinousSpell {
-
-	public ModuleEffectBurn() {
-	}
+public class ModuleEffectBurn extends Module implements IContinousSpell, IParticleSpammable {
 
 	@Nonnull
 	@Override
@@ -61,18 +58,18 @@ public class ModuleEffectBurn extends Module implements IContinousSpell {
 	}
 
 	@Override
-	public double getManaToConsume() {
+	public double getManaDrain() {
 		return 100;
 	}
 
 	@Override
-	public double getBurnoutToFill() {
+	public double getBurnoutFill() {
 		return 500;
 	}
 
 	@Nullable
 	@Override
-	public Color getColor() {
+	public Color getPrimaryColor() {
 		return new Color(0xFF3C00);
 	}
 
@@ -115,7 +112,7 @@ public class ModuleEffectBurn extends Module implements IContinousSpell {
 
 		if (position == null) return;
 
-		Color color = getColor();
+		Color color = getPrimaryColor();
 		if (ThreadLocalRandom.current().nextBoolean()) color = getSecondaryColor();
 
 		List<EntityLivingBase> entities = world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(new BlockPos(position)));
@@ -126,10 +123,7 @@ public class ModuleEffectBurn extends Module implements IContinousSpell {
 
 	@Nonnull
 	@Override
-	public ModuleEffectBurn copy() {
-		ModuleEffectBurn module = new ModuleEffectBurn();
-		module.deserializeNBT(serializeNBT());
-		process(module);
-		return module;
+	public Module copy() {
+		return cloneModule(new ModuleEffectBurn());
 	}
 }

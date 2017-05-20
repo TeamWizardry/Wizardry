@@ -20,7 +20,8 @@ public class PotionPhase extends PotionMod {
 	@Override
 	public void applyAttributesModifiersToEntity(EntityLivingBase entityLivingBaseIn, @Nonnull AbstractAttributeMap attributeMapIn, int amplifier) {
 		if (entityLivingBaseIn instanceof EntityPlayer) {
-			entityLivingBaseIn.getEntityData().setInteger("prev-gamemode", ((EntityPlayer) entityLivingBaseIn).isCreative() ? 1 : ((EntityPlayer) entityLivingBaseIn).isSpectator() ? 3 : 0);
+			entityLivingBaseIn.getEntityData().setInteger("prev_gamemode", ((EntityPlayer) entityLivingBaseIn).isCreative() ? 1 : ((EntityPlayer) entityLivingBaseIn).isSpectator() ? 3 : 0);
+			entityLivingBaseIn.getEntityData().setBoolean("was_flying", ((EntityPlayer) entityLivingBaseIn).capabilities.isFlying);
 			((EntityPlayer) entityLivingBaseIn).setGameType(GameType.SPECTATOR);
 		}
 
@@ -30,7 +31,7 @@ public class PotionPhase extends PotionMod {
 	@Override
 	public void removeAttributesModifiersFromEntity(EntityLivingBase entityLivingBaseIn, @Nonnull AbstractAttributeMap attributeMapIn, int amplifier) {
 		if (entityLivingBaseIn instanceof EntityPlayer) {
-			int type = entityLivingBaseIn.getEntityData().getInteger("prev-gamemode");
+			int type = entityLivingBaseIn.getEntityData().getInteger("prev_gamemode");
 			switch (type) {
 				case 0:
 					((EntityPlayer) entityLivingBaseIn).setGameType(GameType.SURVIVAL);
@@ -42,6 +43,9 @@ public class PotionPhase extends PotionMod {
 					((EntityPlayer) entityLivingBaseIn).setGameType(GameType.SURVIVAL);
 					break;
 			}
+
+			if (entityLivingBaseIn.getEntityData().getBoolean("was_flying"))
+				((EntityPlayer) entityLivingBaseIn).capabilities.isFlying = true;
 		}
 		super.removeAttributesModifiersFromEntity(entityLivingBaseIn, attributeMapIn, amplifier);
 	}

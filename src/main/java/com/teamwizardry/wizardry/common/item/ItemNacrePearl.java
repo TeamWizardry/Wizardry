@@ -87,11 +87,11 @@ public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, 
 		Set<Module> modules = SpellStack.getModules(stack);
 		for (Module module : modules) {
 			if (module != null) {
-				tooltip.add("Final " + TextFormatting.BLUE + "Mana" + TextFormatting.GRAY + "/" + TextFormatting.RED + "Burnout" + TextFormatting.GRAY + " Cost: " + TextFormatting.BLUE + module.finalManaCost + TextFormatting.GRAY + "/" + TextFormatting.RED + module.finalBurnoutCost);
+				tooltip.add("Final " + TextFormatting.BLUE + "Mana" + TextFormatting.GRAY + "/" + TextFormatting.RED + "Burnout" + TextFormatting.GRAY + " Cost: " + TextFormatting.BLUE + module.finalManaDrain + TextFormatting.GRAY + "/" + TextFormatting.RED + module.finalBurnoutFill);
 				Module tempModule = module;
 				int i = 0;
 				while (tempModule != null) {
-					tooltip.add(new String(new char[i]).replace("\0", "-") + "> " + TextFormatting.BLUE + tempModule.getManaToConsume() + TextFormatting.GRAY + "/" + TextFormatting.RED + tempModule.getBurnoutToFill() + TextFormatting.GRAY + " - " + tempModule.getReadableName());
+					tooltip.add(new String(new char[i]).replace("\0", "-") + "> " + TextFormatting.BLUE + tempModule.getManaDrain() + TextFormatting.GRAY + "/" + TextFormatting.RED + tempModule.getBurnoutFill() + TextFormatting.GRAY + " - " + tempModule.getReadableName());
 					for (String key : tempModule.attributes.getKeySet())
 						tooltip.add(new String(new char[i]).replace("\0", "-") + "^ " + TextFormatting.YELLOW + key + TextFormatting.GRAY + " * " + TextFormatting.GREEN + tempModule.attributes.getDouble(key));
 					tempModule = tempModule.nextModule;

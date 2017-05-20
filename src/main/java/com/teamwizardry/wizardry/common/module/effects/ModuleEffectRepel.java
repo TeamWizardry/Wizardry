@@ -23,9 +23,6 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 @RegisterModule
 public class ModuleEffectRepel extends Module implements IContinousSpell {
 
-	public ModuleEffectRepel() {
-	}
-
 	@Nonnull
 	@Override
 	public ItemStack getRequiredStack() {
@@ -57,18 +54,18 @@ public class ModuleEffectRepel extends Module implements IContinousSpell {
 	}
 
 	@Override
-	public double getManaToConsume() {
+	public double getManaDrain() {
 		return 100;
 	}
 
 	@Override
-	public double getBurnoutToFill() {
+	public double getBurnoutFill() {
 		return 500;
 	}
 
 	@Nullable
 	@Override
-	public Color getColor() {
+	public Color getPrimaryColor() {
 		return Color.BLUE;
 	}
 
@@ -107,15 +104,12 @@ public class ModuleEffectRepel extends Module implements IContinousSpell {
 
 		Vec3d position = targetEntity.getPositionVector().addVector(targetEntity.width / 2, targetEntity.height / 2, targetEntity.width / 2);
 
-		LibParticles.AIR_THROTTLE(world, position, PosUtils.vecFromRotations(pitch, yaw), getColor(), ColorUtils.shiftColorHueRandomly(getColor(), 50), 1, true);
+		LibParticles.AIR_THROTTLE(world, position, PosUtils.vecFromRotations(pitch, yaw), getPrimaryColor(), ColorUtils.shiftColorHueRandomly(getPrimaryColor(), 50), 1, true);
 	}
 
 	@Nonnull
 	@Override
-	public ModuleEffectRepel copy() {
-		ModuleEffectRepel module = new ModuleEffectRepel();
-		module.deserializeNBT(serializeNBT());
-		process(module);
-		return module;
+	public Module copy() {
+		return cloneModule(new ModuleEffectRepel());
 	}
 }

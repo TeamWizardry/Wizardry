@@ -34,12 +34,9 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 @RegisterModule
 public class ModuleEffectGravityWell extends Module implements IlingeringModule {
 
-	public ModuleEffectGravityWell() {
-	}
-
 	@Nullable
 	@Override
-	public Color getColor() {
+	public Color getPrimaryColor() {
 		return Color.BLUE;
 	}
 
@@ -80,12 +77,12 @@ public class ModuleEffectGravityWell extends Module implements IlingeringModule 
 	}
 
 	@Override
-	public double getManaToConsume() {
+	public double getManaDrain() {
 		return 1000;
 	}
 
 	@Override
-	public double getBurnoutToFill() {
+	public double getBurnoutFill() {
 		return 1000;
 	}
 
@@ -135,8 +132,8 @@ public class ModuleEffectGravityWell extends Module implements IlingeringModule 
 		if (position == null) return;
 
 		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(20, 30));
-		glitter.setColorFunction(new InterpColorHSV(getColor(), getSecondaryColor()));
-		ParticleSpawner.spawn(glitter, spell.world, new StaticInterp<>(position), 10, ThreadLocalRandom.current().nextInt(0, 30), (aFloat, particleBuilder) -> {
+		glitter.setColorFunction(new InterpColorHSV(getPrimaryColor(), getSecondaryColor()));
+		ParticleSpawner.spawn(glitter, spell.world, new StaticInterp<>(position), 5, ThreadLocalRandom.current().nextInt(0, 30), (aFloat, particleBuilder) -> {
 			glitter.setScale((float) ThreadLocalRandom.current().nextDouble(0.3, 1));
 			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, (float) ThreadLocalRandom.current().nextDouble(0.6, 1)));
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
@@ -158,11 +155,8 @@ public class ModuleEffectGravityWell extends Module implements IlingeringModule 
 
 	@Nonnull
 	@Override
-	public ModuleEffectGravityWell copy() {
-		ModuleEffectGravityWell module = new ModuleEffectGravityWell();
-		module.deserializeNBT(serializeNBT());
-		process(module);
-		return module;
+	public Module copy() {
+		return cloneModule(new ModuleEffectGravityWell());
 	}
 
 	@Override

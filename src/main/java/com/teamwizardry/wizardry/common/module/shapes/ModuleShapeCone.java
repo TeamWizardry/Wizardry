@@ -20,6 +20,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
+import java.awt.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
@@ -38,12 +39,12 @@ public class ModuleShapeCone extends Module {
 	}
 
 	@Override
-	public double getManaToConsume() {
+	public double getManaDrain() {
 		return 50;
 	}
 
 	@Override
-	public double getBurnoutToFill() {
+	public double getBurnoutFill() {
 		return 80;
 	}
 
@@ -108,7 +109,7 @@ public class ModuleShapeCone extends Module {
 			RayTraceResult result = Utils.raytrace(world, target.normalize(), origin, range / 2, caster);
 			newSpell.addData(TARGET_HIT, result.hitVec);
 			newSpell.addData(BLOCK_HIT, result.getBlockPos());
-			if (result.entityHit != null) spell.crunchData(result.entityHit, false);
+			if (result.entityHit != null) spell.processEntity(result.entityHit, false);
 
 			castParticles(newSpell);
 			runNextModule(newSpell);
@@ -136,21 +137,23 @@ public class ModuleShapeCone extends Module {
 		ParticleSpawner.spawn(lines, spell.world, new InterpLine(origin, target), (int) target.distanceTo(origin) * 4, 0, (aFloat, particleBuilder) -> {
 			lines.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 			lines.setLifetime(ThreadLocalRandom.current().nextInt(10, 20));
-			lines.setColor(ColorUtils.changeColorAlpha(getColor(), ThreadLocalRandom.current().nextInt(50, 150)));
+			lines.setColor(ColorUtils.changeColorAlpha(getPrimaryColor() != null ? getPrimaryColor() : Color.WHITE, ThreadLocalRandom.current().nextInt(50, 150)));
 		});
 	}
 
 	@Nonnull
 	@Override
-	public ModuleShapeCone copy() {
-		ModuleShapeCone module = new ModuleShapeCone();
-		module.deserializeNBT(serializeNBT());
-		process(module);
-		return module;
+	public Module copy() {
+		return cloneModule(new ModuleShapeCone());
+	}
+
+	@Override
+	public int getCooldownTime() {
+		return 5;
 	}
 
 	@Override
 	public int getChargeUpTime() {
-		return 5;
+		return 50;
 	}
 }

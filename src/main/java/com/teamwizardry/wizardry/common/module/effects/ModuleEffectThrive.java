@@ -23,10 +23,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEffectThrive extends Module implements IContinousSpell {
-
-	public ModuleEffectThrive() {
-	}
+public class ModuleEffectThrive extends Module {
 
 	@Nonnull
 	@Override
@@ -59,18 +56,18 @@ public class ModuleEffectThrive extends Module implements IContinousSpell {
 	}
 
 	@Override
-	public double getManaToConsume() {
+	public double getManaDrain() {
 		return 100;
 	}
 
 	@Override
-	public double getBurnoutToFill() {
+	public double getBurnoutFill() {
 		return 500;
 	}
 
 	@Nullable
 	@Override
-	public Color getColor() {
+	public Color getPrimaryColor() {
 		return Color.RED;
 	}
 
@@ -104,15 +101,12 @@ public class ModuleEffectThrive extends Module implements IContinousSpell {
 
 		if (position == null) return;
 
-		LibParticles.EFFECT_REGENERATE(world, position, getColor());
+		LibParticles.EFFECT_REGENERATE(world, position, getPrimaryColor());
 	}
 
 	@Nonnull
 	@Override
-	public ModuleEffectThrive copy() {
-		ModuleEffectThrive module = new ModuleEffectThrive();
-		module.deserializeNBT(serializeNBT());
-		process(module);
-		return module;
+	public Module copy() {
+		return cloneModule(new ModuleEffectThrive());
 	}
 }

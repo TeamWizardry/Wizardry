@@ -53,7 +53,7 @@ public class EntitySpellProjectile extends Entity {
 		this.module = module;
 		this.spell = spell;
 
-		if (module != null && module.getColor() != null) applyColor(module.getColor());
+		if (module != null && module.getPrimaryColor() != null) applyColor(module.getPrimaryColor());
 		else applyColor(Color.WHITE);
 		applyCollided(false);
 
@@ -114,7 +114,7 @@ public class EntitySpellProjectile extends Entity {
 
 				RayTraceResult result = new RayTraceResult(this);
 				if (result.typeOfHit == RayTraceResult.Type.ENTITY)
-					newSpell.crunchData(result.entityHit, false);
+					newSpell.processEntity(result.entityHit, false);
 				else if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
 					newSpell.addData(SpellData.DefaultKeys.BLOCK_HIT, result.getBlockPos());
 					newSpell.addData(SpellData.DefaultKeys.TARGET_HIT, result.hitVec);
@@ -143,11 +143,13 @@ public class EntitySpellProjectile extends Entity {
 	@Override
 	public void readEntityFromNBT(@Nonnull NBTTagCompound compound) {
 		NBTTagCompound moduleCompound = compound.getCompoundTag("module");
-		Module module = ModuleRegistry.INSTANCE.getModule(moduleCompound.getString("id"));
-		if (module != null) {
-			module.deserializeNBT(compound);
-			Module.process(module);
-			this.module = module;
+		Module tempModule = ModuleRegistry.INSTANCE.getModule(moduleCompound.getString("id"));
+		if (tempModule != null) {
+			Module module = tempModule.copy();
+			if (module != null) {
+				this.module = module;
+				this.module.deserializeNBT(compound);
+			}
 		}
 
 		spell = new SpellData(world);

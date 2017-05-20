@@ -18,9 +18,6 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ENTITY_H
 @RegisterModule
 public class ModuleEventCollideEntity extends Module {
 
-	public ModuleEventCollideEntity() {
-	}
-
 	@Nonnull
 	@Override
 	public ItemStack getRequiredStack() {
@@ -57,12 +54,14 @@ public class ModuleEventCollideEntity extends Module {
 		return entity != null && nextModule != null && nextModule.run(spell);
 	}
 
+	@Override
+	public void runClient(@Nonnull SpellData spell) {
+
+	}
+
 	@Nonnull
 	@Override
-	public ModuleEventCollideEntity copy() {
-		ModuleEventCollideEntity module = new ModuleEventCollideEntity();
-		module.deserializeNBT(serializeNBT());
-		process(module);
-		return module;
+	public Module copy() {
+		return cloneModule(new ModuleEventCollideEntity());
 	}
 }

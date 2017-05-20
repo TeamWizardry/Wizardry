@@ -22,12 +22,9 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.TARGET_H
 @RegisterModule
 public class ModuleEffectFling extends Module {
 
-	public ModuleEffectFling() {
-	}
-
 	@Nullable
 	@Override
-	public Color getColor() {
+	public Color getPrimaryColor() {
 		return Color.MAGENTA;
 	}
 
@@ -62,12 +59,12 @@ public class ModuleEffectFling extends Module {
 	}
 
 	@Override
-	public double getManaToConsume() {
+	public double getManaDrain() {
 		return 1000;
 	}
 
 	@Override
-	public double getBurnoutToFill() {
+	public double getBurnoutFill() {
 		return 500;
 	}
 
@@ -114,12 +111,14 @@ public class ModuleEffectFling extends Module {
 		return true;
 	}
 
+	@Override
+	public void runClient(@Nonnull SpellData spell) {
+
+	}
+
 	@Nonnull
 	@Override
-	public ModuleEffectFling copy() {
-		ModuleEffectFling module = new ModuleEffectFling();
-		module.deserializeNBT(serializeNBT());
-		process(module);
-		return module;
+	public Module copy() {
+		return cloneModule(new ModuleEffectFling());
 	}
 }

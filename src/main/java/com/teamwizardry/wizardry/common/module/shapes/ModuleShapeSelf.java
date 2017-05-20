@@ -52,18 +52,20 @@ public class ModuleShapeSelf extends Module {
 	public boolean run(@Nonnull SpellData spell) {
 		Entity caster = spell.getData(CASTER);
 		if (caster == null) return false;
-		spell.crunchData(caster, true);
-		spell.crunchData(caster, false);
+		spell.processEntity(caster, true);
+		spell.processEntity(caster, false);
 
 		return runNextModule(spell);
 	}
 
+	@Override
+	public void runClient(@Nonnull SpellData spell) {
+
+	}
+
 	@Nonnull
 	@Override
-	public ModuleShapeSelf copy() {
-		ModuleShapeSelf module = new ModuleShapeSelf();
-		module.deserializeNBT(serializeNBT());
-		process(module);
-		return module;
+	public Module copy() {
+		return cloneModule(new ModuleShapeSelf());
 	}
 }

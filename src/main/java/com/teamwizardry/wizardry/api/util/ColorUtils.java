@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.api.util;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -8,20 +9,26 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class ColorUtils {
 
-	public static Color mixColors(Color color1, Color color2) {
-		double inverse_percent = 1.0 - 0.9;
-		double redPart = color1.getRed() * 0.9 + color2.getRed() * inverse_percent;
-		double greenPart = color1.getGreen() * 0.9 + color2.getGreen() * inverse_percent;
-		double bluePart = color1.getBlue() * 0.9 + color2.getBlue() * inverse_percent;
-		double alphaPart = color1.getAlpha() * 0.9 + color2.getAlpha() * inverse_percent;
-		return new Color((int) redPart, (int) greenPart, (int) bluePart, (int) alphaPart);
+	public static Color mixColors(@Nonnull Color color1, @Nonnull Color color2) {
+
+		float r = ((color1.getRed() / 255f) + (color2.getRed() / 255f)) / 2f;
+		float g = ((color1.getGreen() / 255f) + (color2.getGreen() / 255f)) / 2f;
+		float b = ((color1.getBlue() / 255f) + (color2.getBlue() / 255f)) / 2f;
+		float a = ((color1.getAlpha() / 255f) + (color2.getAlpha() / 255f)) / 2f;
+
+		if (Math.round(r * 255f) == color2.getRed()) r = color2.getRed() / 255f;
+		if (Math.round(g * 255f) == color2.getGreen()) g = color2.getGreen() / 255f;
+		if (Math.round(b * 255f) == color2.getBlue()) b = color2.getBlue() / 255f;
+		if (Math.round(a * 255f) == color2.getAlpha()) a = color2.getAlpha() / 255f;
+
+		return new Color(r, g, b, a);
 	}
 
-	public static Color changeColorAlpha(Color color, int newAlpha) {
+	public static Color changeColorAlpha(@Nonnull Color color, int newAlpha) {
 		return new Color(color.getRed(), color.getGreen(), color.getBlue(), newAlpha);
 	}
 
-	public static Color shiftColorHueRandomly(Color color, double shiftAmount) {
+	public static Color shiftColorHueRandomly(@Nonnull Color color, double shiftAmount) {
 		return new Color(
 				(int) Math.max(0, Math.min(color.getRed() + ThreadLocalRandom.current().nextDouble(-shiftAmount, shiftAmount), 255)),
 				(int) Math.max(0, Math.min(color.getGreen() + ThreadLocalRandom.current().nextDouble(-shiftAmount, shiftAmount), 255)),

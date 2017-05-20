@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.common.module.events;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.SpellData;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
@@ -13,10 +14,6 @@ import javax.annotation.Nonnull;
  */
 @RegisterModule
 public class ModuleEventAlongPath extends Module {
-
-	public ModuleEventAlongPath() {
-		process(this);
-	}
 
 	@Nonnull
 	@Override
@@ -48,12 +45,19 @@ public class ModuleEventAlongPath extends Module {
 		return "Triggered throughout the journey of a spell, like a projectile shape whilst airborne or across an entire beam shape";
 	}
 
+	@Override
+	public boolean run(@Nonnull SpellData spell) {
+		return true;
+	}
+
+	@Override
+	public void runClient(@Nonnull SpellData spell) {
+
+	}
+
 	@Nonnull
 	@Override
-	public ModuleEventAlongPath copy() {
-		ModuleEventAlongPath module = new ModuleEventAlongPath();
-		module.deserializeNBT(serializeNBT());
-		process(module);
-		return module;
+	public Module copy() {
+		return cloneModule(new ModuleEventAlongPath());
 	}
 }
