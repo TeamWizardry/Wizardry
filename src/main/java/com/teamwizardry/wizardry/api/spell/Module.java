@@ -170,16 +170,6 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	 * @return If the spell has succeeded.
 	 */
 	public final boolean castSpell(@NotNull SpellData data) {
-		Entity caster = data.getData(SpellData.DefaultKeys.CASTER);
-
-		// TODO: redo. bad
-		if (caster instanceof EntityPlayer && !((EntityPlayer) caster).isCreative()) {
-			if (WizardManager.getMana((EntityLivingBase) caster) < finalManaDrain) {
-				WizardManager.removeMana((int) finalManaDrain, (EntityLivingBase) caster);
-				WizardManager.addBurnout((int) finalBurnoutFill, (EntityLivingBase) caster);
-			}
-		}
-
 		processModule();
 
 		if (this instanceof IlingeringModule)
@@ -230,7 +220,11 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	}
 
 	private void processModule() {
-		if (nextModule == null) return;
+		if (nextModule == null) {
+			finalManaDrain = getManaDrain();
+			finalBurnoutFill = getBurnoutFill();
+			return;
+		}
 		nextModule.processModule();
 
 		if (getPrimaryColor() == null) setPrimaryColor(nextModule.getPrimaryColor());
