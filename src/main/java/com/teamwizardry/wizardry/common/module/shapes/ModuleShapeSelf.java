@@ -30,6 +30,16 @@ public class ModuleShapeSelf extends Module {
 		return ModuleType.SHAPE;
 	}
 
+	@Override
+	public double getManaDrain() {
+		return 100;
+	}
+
+	@Override
+	public double getBurnoutFill() {
+		return 50;
+	}
+
 	@Nonnull
 	@Override
 	public String getID() {

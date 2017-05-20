@@ -13,16 +13,16 @@ import javax.annotation.Nullable;
  */
 public class DefaultWizardryCapability implements IWizardryCapability {
 
-	int mana = 0, maxMana = 100, burnout = 100, maxBurnout = 100;
+	double mana = 0, maxMana = 100, burnout = 100, maxBurnout = 100;
 	EnumBloodType bloodType;
 
 	@Override
-	public int getMana() {
+	public double getMana() {
 		return mana;
 	}
 
 	@Override
-	public void setMana(int mana, EntityPlayer player) {
+	public void setMana(double mana, EntityPlayer player) {
 		this.mana = mana;
 		if (mana < 0) {
 			this.mana = 0;
@@ -34,23 +34,23 @@ public class DefaultWizardryCapability implements IWizardryCapability {
 	}
 
 	@Override
-	public int getMaxMana() {
+	public double getMaxMana() {
 		return maxMana;
 	}
 
 	@Override
-	public void setMaxMana(int maxMana, EntityPlayer player) {
+	public void setMaxMana(double maxMana, EntityPlayer player) {
 		this.maxMana = maxMana;
 		dataChanged(player);
 	}
 
 	@Override
-	public int getBurnout() {
+	public double getBurnout() {
 		return burnout;
 	}
 
 	@Override
-	public void setBurnout(int burnout, EntityPlayer player) {
+	public void setBurnout(double burnout, EntityPlayer player) {
 		this.burnout = burnout;
 		if (burnout < 0) {
 			this.burnout = 0;
@@ -62,12 +62,12 @@ public class DefaultWizardryCapability implements IWizardryCapability {
 	}
 
 	@Override
-	public int getMaxBurnout() {
+	public double getMaxBurnout() {
 		return maxBurnout;
 	}
 
 	@Override
-	public void setMaxBurnout(int maxBurnout, EntityPlayer player) {
+	public void setMaxBurnout(double maxBurnout, EntityPlayer player) {
 		this.maxBurnout = maxBurnout;
 		dataChanged(player);
 	}

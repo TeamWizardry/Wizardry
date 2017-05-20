@@ -8,21 +8,21 @@ import net.minecraft.nbt.NBTTagCompound;
  */
 public interface IWizardryCapability {
 
-	int getMana();
+	double getMana();
 
-	void setMana(int mana, EntityPlayer player);
+	void setMana(double mana, EntityPlayer player);
 
-	int getMaxMana();
+	double getMaxMana();
 
-	void setMaxMana(int maxMana, EntityPlayer player);
+	void setMaxMana(double maxMana, EntityPlayer player);
 
-	int getBurnout();
+	double getBurnout();
 
-	void setBurnout(int burnout, EntityPlayer player);
+	void setBurnout(double burnout, EntityPlayer player);
 
-	int getMaxBurnout();
+	double getMaxBurnout();
 
-	void setMaxBurnout(int maxBurnout, EntityPlayer player);
+	void setMaxBurnout(double maxBurnout, EntityPlayer player);
 
 	EnumBloodType getBloodType();
 

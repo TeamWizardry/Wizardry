@@ -159,10 +159,12 @@ public class EventHandler {
 				WizardManager.setMaxBurnout(100, event.player);
 
 		} else if (cape.getItem() == ModItems.CAPE) {
-			WizardManager.setMaxMana((int) Math.log(ItemNBTHelper.getInt(cape, "time", 0)) * 1000, event.player);
-			WizardManager.setMaxBurnout((int) Math.log(ItemNBTHelper.getInt(cape, "time", 0)) * 1000, event.player);
+			double x = ItemNBTHelper.getInt(cape, "time", 0) / 1000.0;
+			double buffer = (1 - (Math.exp(-x))) * 3 * 1000;
+			WizardManager.setMaxMana(buffer, event.player);
+			WizardManager.setMaxBurnout(buffer, event.player);
 		}
-		//Minecraft.getMinecraft().player.sendChatMessage(WizardManager.getMaxMana(event.player)+ "");
+//		Minecraft.getMinecraft().player.sendChatMessage(WizardManager.getMaxMana(event.player) + "");
 	}
 
 	@SubscribeEvent

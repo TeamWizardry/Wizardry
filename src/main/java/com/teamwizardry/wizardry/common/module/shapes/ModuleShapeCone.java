@@ -40,12 +40,12 @@ public class ModuleShapeCone extends Module {
 
 	@Override
 	public double getManaDrain() {
-		return 50;
+		return 300;
 	}
 
 	@Override
 	public double getBurnoutFill() {
-		return 80;
+		return 100;
 	}
 
 	@Nonnull
@@ -141,6 +141,16 @@ public class ModuleShapeCone extends Module {
 		});
 	}
 
+	@Override
+	public double getManaMultiplier() {
+		return 2;
+	}
+
+	@Override
+	public double getBurnoutMultiplier() {
+		return 2;
+	}
+
 	@Nonnull
 	@Override
 	public Module copy() {
@@ -154,6 +164,6 @@ public class ModuleShapeCone extends Module {
 
 	@Override
 	public int getChargeUpTime() {
-		return 50;
+		return 20;
 	}
 }

@@ -32,6 +32,16 @@ public class ModuleShapeProjectile extends Module {
 		return ModuleType.SHAPE;
 	}
 
+	@Override
+	public double getManaDrain() {
+		return 200;
+	}
+
+	@Override
+	public double getBurnoutFill() {
+		return 300;
+	}
+
 	@Nonnull
 	@Override
 	public String getID() {

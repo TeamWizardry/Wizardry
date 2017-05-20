@@ -54,12 +54,12 @@ public class ModuleEffectLeap extends Module implements IParticleDanger {
 
 	@Override
 	public double getManaDrain() {
-		return 150;
+		return 50;
 	}
 
 	@Override
 	public double getBurnoutFill() {
-		return 100;
+		return 20;
 	}
 
 	@Nullable

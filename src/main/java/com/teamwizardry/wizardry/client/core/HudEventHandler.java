@@ -58,12 +58,13 @@ public class HudEventHandler extends Gui {
 			GlStateManager.pushMatrix();
 			GlStateManager.color(1.0F, 1.0F, 1.0F);
 			int visualManaLength = 0;
-			if (data.getMana() > 0) visualManaLength = ((data.getMana() * 100) / data.getMaxMana()) % 101;
+			if (data.getMana() > 0) visualManaLength = (int) (((data.getMana() * 100) / data.getMaxMana()) % 101);
 			fullManaBar.drawClipped(ClientTickHandler.getTicks(), right, top, visualManaLength, 5);
 
 			GlStateManager.color(1.0F, 1.0F, 1.0F);
 			int visualBurnoutLength = 0;
-			if (data.getBurnout() > 0) visualBurnoutLength = ((data.getBurnout() * 100) / data.getMaxBurnout()) % 101;
+			if (data.getBurnout() > 0)
+				visualBurnoutLength = (int) (((data.getBurnout() * 100) / data.getMaxBurnout()) % 101);
 			fullBurnoutBar.drawClipped(ClientTickHandler.getTicks(), right, top + 6, visualBurnoutLength, 5);
 			GlStateManager.popMatrix();
 		}

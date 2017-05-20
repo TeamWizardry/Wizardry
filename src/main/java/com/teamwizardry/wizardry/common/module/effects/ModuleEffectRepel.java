@@ -21,7 +21,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEffectRepel extends Module implements IContinousSpell {
+public class ModuleEffectRepel extends Module {
 
 	@Nonnull
 	@Override
@@ -55,12 +55,12 @@ public class ModuleEffectRepel extends Module implements IContinousSpell {
 
 	@Override
 	public double getManaDrain() {
-		return 100;
+		return 300;
 	}
 
 	@Override
 	public double getBurnoutFill() {
-		return 500;
+		return 200;
 	}
 
 	@Nullable

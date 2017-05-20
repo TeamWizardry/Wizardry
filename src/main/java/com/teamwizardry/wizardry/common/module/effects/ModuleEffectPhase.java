@@ -64,12 +64,12 @@ public class ModuleEffectPhase extends Module {
 
 	@Override
 	public double getManaDrain() {
-		return 30;
+		return 200;
 	}
 
 	@Override
 	public double getBurnoutFill() {
-		return 30;
+		return 100;
 	}
 
 	@Override

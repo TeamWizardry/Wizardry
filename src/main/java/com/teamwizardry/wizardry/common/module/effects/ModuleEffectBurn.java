@@ -64,7 +64,7 @@ public class ModuleEffectBurn extends Module implements IContinousSpell, IPartic
 
 	@Override
 	public double getBurnoutFill() {
-		return 500;
+		return 100;
 	}
 
 	@Nullable

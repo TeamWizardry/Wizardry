@@ -35,7 +35,7 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 
 	@Override
 	public double getBurnoutFill() {
-		return 10;
+		return 5;
 	}
 
 	@Nonnull
@@ -113,6 +113,11 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 
 	@Override
 	public double getManaMultiplier() {
+		return 0.1;
+	}
+
+	@Override
+	public double getBurnoutMultiplier() {
 		return 0.1;
 	}
 
