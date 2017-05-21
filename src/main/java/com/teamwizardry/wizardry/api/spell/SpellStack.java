@@ -92,6 +92,9 @@ public class SpellStack {
 			if (queue.peekFirst() != null && fields.containsKey(queue.peekFirst().getItem()))
 				compiled.add(fields.get(queue.peekFirst().getItem()));
 		}
+
+		// PROCESS THEM
+		for (Module module : compiled) module.processModule();
 	}
 
 	@Nonnull

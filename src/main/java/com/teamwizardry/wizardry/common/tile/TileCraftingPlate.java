@@ -6,18 +6,20 @@ import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.IManaSink;
-import com.teamwizardry.wizardry.api.item.IInfusable;
 import com.teamwizardry.wizardry.api.item.EnumPearlType;
+import com.teamwizardry.wizardry.api.item.IInfusable;
 import com.teamwizardry.wizardry.api.render.ClusterObject;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.SpellStack;
 import com.teamwizardry.wizardry.init.ModItems;
+import com.teamwizardry.wizardry.init.ModSounds;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -29,6 +31,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by Saad on 6/10/2016.
@@ -103,7 +106,10 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink {
 				for (ClusterObject cluster : inventory) stacks.add(cluster.stack);
 				SpellStack spellStack = new SpellStack(stacks);
 
+				// TODO. no
 				LibParticles.CRAFTING_ALTAR_PEARL_EXPLODE(world, new Vec3d(pos).addVector(0, 0.75, 0));
+
+				world.playSound(null, getPos(), ModSounds.EXPLOSION_BOOM, SoundCategory.BLOCKS, 1f, (float) ThreadLocalRandom.current().nextDouble(1, 1.5));
 
 				ItemStack stack = new ItemStack(ModItems.PEARL_NACRE);
 				ItemNBTHelper.setString(stack, "type", EnumPearlType.INFUSED.toString());

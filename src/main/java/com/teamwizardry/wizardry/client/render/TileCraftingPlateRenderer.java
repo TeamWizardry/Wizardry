@@ -60,7 +60,7 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
 			Minecraft.getMinecraft().getRenderItem().renderItem(te.output, TransformType.NONE);
 			GlStateManager.popMatrix();
 		} else {
-			LibParticles.CRAFTING_ALTAR_IDLE(te.getWorld(), new Vec3d(te.getPos()).addVector(0.5, 0.85, 0.5));
+			LibParticles.CRAFTING_ALTAR_IDLE(te.getWorld(), new Vec3d(te.getPos()).addVector(0.5, 0.7, 0.5));
 		}
 	}
 }

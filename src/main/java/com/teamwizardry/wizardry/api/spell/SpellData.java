@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.api.spell;
 import kotlin.Pair;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.*;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -74,6 +75,12 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			addData(DefaultKeys.TARGET_HIT, entity.getPositionVector().addVector(entity.width / 2, entity.height / 2, entity.width / 2));
 			addData(DefaultKeys.ENTITY_HIT, entity);
 		}
+	}
+
+	public void processBlock(@Nullable BlockPos pos, @Nullable EnumFacing facing, @Nullable Vec3d targetHit) {
+		if (pos != null) addData(DefaultKeys.BLOCK_HIT, pos);
+		if (targetHit != null) addData(DefaultKeys.TARGET_HIT, targetHit);
+		if (facing != null) addData(DefaultKeys.FACE_HIT, facing);
 	}
 
 	public SpellData copy() {
@@ -191,6 +198,19 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			@Override
 			public BlockPos deserialize(World world, NBTTagLong object) {
 				return BlockPos.fromLong(object.getLong());
+			}
+		});
+
+		@Nonnull
+		public static final Pair<String, Class<EnumFacing>> FACE_HIT = constructPair("face_hit", BlockPos.class, new ProcessData.Process<NBTTagInt, EnumFacing>() {
+			@Override
+			public NBTTagInt serialize(EnumFacing object) {
+				return new NBTTagInt(object.getIndex());
+			}
+
+			@Override
+			public EnumFacing deserialize(World world, NBTTagInt object) {
+				return EnumFacing.getFront(object.getInt());
 			}
 		});
 

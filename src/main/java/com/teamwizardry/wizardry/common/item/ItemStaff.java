@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.common.item;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.wizardry.api.item.INacreColorable;
 import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -10,6 +11,8 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
@@ -37,11 +40,34 @@ public class ItemStaff extends ItemMod implements INacreColorable {
 
 	@Nonnull
 	@Override
+	public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float par8, float par9, float par10) {
+		ItemStack stack = player.getHeldItem(hand);
+
+		if (player.isSneaking()) {
+			if (stack.getItem() == ModItems.STAFF) {
+
+				Set<Module> modules = SpellStack.getAllModules(stack);
+				if (!modules.isEmpty()) {
+
+					for (Module module : modules) {
+						if (!module.getID().equals("effect_substitution")) continue;
+						player.getEntityData().setTag("substitution_block", NBTUtil.writeBlockState(new NBTTagCompound(), player.world.getBlockState(pos)));
+						return EnumActionResult.FAIL;
+					}
+				}
+			}
+			return EnumActionResult.FAIL;
+		}
+		return EnumActionResult.PASS;
+	}
+
+	@Nonnull
+	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, @Nonnull EnumHand hand) {
 		ItemStack stack = player.getHeldItem(hand);
 
 		if (getItemUseAction(stack) == EnumAction.NONE) {
-			if (!world.isRemote) {
+			if (!player.isSneaking() && !world.isRemote) {
 				SpellData spell = new SpellData(world);
 				spell.processEntity(player, true);
 				SpellStack.runSpell(stack, spell);

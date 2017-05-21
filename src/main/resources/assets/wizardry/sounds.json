@@ -13,6 +13,20 @@
     ],
     "subtitle": "wizardry.subtitle.fizz"
   },
+  "expl_boom": {
+    "category": "block",
+    "sounds": [
+      "wizardry:expl_boom"
+    ],
+    "subtitle": "wizardry.subtitle.boom"
+  },
+  "proj_launch": {
+    "category": "block",
+    "sounds": [
+      "wizardry:proj_launch"
+    ],
+    "subtitle": "wizardry.subtitle.proj_launch"
+  },
   "harp1": {
     "category": "block",
     "sounds": [

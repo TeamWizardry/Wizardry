@@ -19,13 +19,16 @@ public class PacketParticleFairyExplode extends PacketBase {
 	private Vec3d pos;
 	@Save
 	private Color color;
+	@Save
+	private Color color2;
 
 	public PacketParticleFairyExplode() {
 	}
 
-	public PacketParticleFairyExplode(Vec3d pos, Color color) {
+	public PacketParticleFairyExplode(Vec3d pos, Color color, Color color2) {
 		this.pos = pos;
 		this.color = color;
+		this.color2 = color2;
 	}
 
 	@Override
@@ -35,6 +38,6 @@ public class PacketParticleFairyExplode extends PacketBase {
 
 		World world = Minecraft.getMinecraft().player.world;
 
-		LibParticles.FAIRY_EXPLODE(world, pos, color);
+		LibParticles.FAIRY_EXPLODE(world, pos, color, color2);
 	}
 }

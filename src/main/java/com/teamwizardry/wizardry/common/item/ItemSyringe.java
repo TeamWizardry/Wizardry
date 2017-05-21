@@ -1,9 +1,11 @@
 package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
+import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.api.WizardManager;
 import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
@@ -25,7 +27,7 @@ import java.util.List;
 public class ItemSyringe extends ItemMod {
 
 	public ItemSyringe() {
-		super("syringe", "syringe", "syringe_mana", "syringe_steroid");
+		super("syringe", "syringe", "syringe_mana", "syringe_steroid", "syringe_blood");
 		setMaxStackSize(1);
 	}
 
@@ -68,8 +70,24 @@ public class ItemSyringe extends ItemMod {
 				WizardManager.addMana(WizardManager.getMaxMana(player) / 2, player);
 				player.setHealth(player.getHealth() - 2);
 				stack.setItemDamage(0);
+			} else if (stack.getItemDamage() == 0) {
+				player.setHealth(player.getHealth() - 2);
+				stack.setItemDamage(3);
+				ItemNBTHelper.setUUID(stack, "ignore_uuid", player.getUniqueID());
 			}
 		}
+	}
+
+	@Override
+	public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
+		if (stack.getItemDamage() == 0) {
+			player.setHealth(player.getHealth() - 2);
+			stack.setItemDamage(3);
+			if (entity instanceof EntityPlayer)
+				ItemNBTHelper.setUUID(stack, "ignore_uuid", entity.getUniqueID());
+			else ItemNBTHelper.setString(stack, "ignore_entity", entity.getName());
+		}
+		return true;
 	}
 
 	@Override

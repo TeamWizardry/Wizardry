@@ -11,6 +11,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,9 +20,19 @@ import java.util.Set;
  */
 public final class PosUtils {
 
+	public static final ArrayList<EnumFacing> symmetricFacingValues = new ArrayList<>();
 	private static final EnumFacing[] northSouth = {EnumFacing.NORTH, EnumFacing.SOUTH};
 	private static final EnumFacing[] eastWest = {EnumFacing.EAST, EnumFacing.WEST};
 	private static final EnumFacing[] upDown = {EnumFacing.UP, EnumFacing.DOWN};
+
+	static {
+		symmetricFacingValues.add(EnumFacing.UP);
+		symmetricFacingValues.add(EnumFacing.DOWN);
+		symmetricFacingValues.add(EnumFacing.EAST);
+		symmetricFacingValues.add(EnumFacing.WEST);
+		symmetricFacingValues.add(EnumFacing.SOUTH);
+		symmetricFacingValues.add(EnumFacing.NORTH);
+	}
 
 	public static BlockPos checkNeighbor(World world, BlockPos origin, Block desiredBlockToFind) {
 		if (world.getBlockState(origin).getBlock() == desiredBlockToFind) return origin;

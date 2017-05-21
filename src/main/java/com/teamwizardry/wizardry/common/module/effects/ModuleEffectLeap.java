@@ -110,7 +110,7 @@ public class ModuleEffectLeap extends Module implements IParticleDanger {
 		if (caster != null) {
 			if (!caster.hasNoGravity())
 				LibParticles.AIR_THROTTLE(spell.world, position, caster, getPrimaryColor(), Color.WHITE, 0.5, true);
-		} else LibParticles.AIR_THROTTLE(spell.world, position, position, getPrimaryColor(), Color.WHITE, 0.5, true);
+		} else LibParticles.AIR_THROTTLE(spell.world, position, position, getPrimaryColor(), Color.WHITE, 0.5);
 
 	}
 

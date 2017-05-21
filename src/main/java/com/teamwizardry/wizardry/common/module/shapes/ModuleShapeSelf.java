@@ -73,6 +73,11 @@ public class ModuleShapeSelf extends Module {
 
 	}
 
+	@Override
+	public int getCooldownTime() {
+		return 10;
+	}
+
 	@Nonnull
 	@Override
 	public Module copy() {

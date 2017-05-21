@@ -86,7 +86,7 @@ public class EntityJumpPad extends EntityLiving {
 				glitter.setMotion(new Vec3d(0, ThreadLocalRandom.current().nextDouble(0.2), 0));
 		});
 		if (ThreadLocalRandom.current().nextInt(30) == 0)
-			LibParticles.AIR_THROTTLE(world, getPositionVector(), new Vec3d(0, ThreadLocalRandom.current().nextDouble(0.5), 0), color1, color2, 0.5, true);
+			LibParticles.AIR_THROTTLE(world, getPositionVector(), new Vec3d(0, ThreadLocalRandom.current().nextDouble(0.5), 0), color1, color2, 0.5);
 	}
 
 	@Override

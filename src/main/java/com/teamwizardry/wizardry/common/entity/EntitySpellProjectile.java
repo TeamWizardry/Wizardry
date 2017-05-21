@@ -5,6 +5,7 @@ import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.util.PosUtils;
+import com.teamwizardry.wizardry.api.util.Utils;
 import com.teamwizardry.wizardry.common.network.PacketParticleFairyExplode;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
@@ -12,6 +13,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -20,10 +22,11 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
+import java.util.List;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.PITCH;
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.YAW;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
 /**
  * Created by LordSaad.
@@ -31,15 +34,17 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.YAW;
 public class EntitySpellProjectile extends Entity {
 
 	public static final DataParameter<Integer> DATA_COLOR = EntityDataManager.createKey(EntitySpellProjectile.class, DataSerializers.VARINT);
+	public static final DataParameter<Integer> DATA_COLOR2 = EntityDataManager.createKey(EntitySpellProjectile.class, DataSerializers.VARINT);
 	public static final DataParameter<Boolean> DATA_COLLIDED = EntityDataManager.createKey(EntitySpellProjectile.class, DataSerializers.BOOLEAN);
 	public SpellData spell;
 	public Module module;
 
 	public EntitySpellProjectile(World worldIn) {
 		super(worldIn);
-		setSize(0.1F, 0.1F);
+		setSize(0.3F, 0.3F);
 		isImmuneToFire = true;
 		applyColor(Color.WHITE);
+		applyColor2(Color.WHITE);
 		applyCollided(false);
 
 		setRenderDistanceWeight(10);
@@ -47,28 +52,48 @@ public class EntitySpellProjectile extends Entity {
 
 	public EntitySpellProjectile(World world, Module module, SpellData spell) {
 		super(world);
-		setSize(0.1F, 0.1F);
+		setSize(0.3F, 0.3F);
 		isImmuneToFire = true;
 
 		this.module = module;
 		this.spell = spell;
 
-		if (module != null && module.getPrimaryColor() != null) applyColor(module.getPrimaryColor());
-		else applyColor(Color.WHITE);
+		if (module != null) {
+			if (module.getPrimaryColor() != null) applyColor(module.getPrimaryColor());
+			else applyColor(Color.WHITE);
+
+			if (module.getSecondaryColor() != null) applyColor2(module.getSecondaryColor());
+			else {
+				Color color = module.getPrimaryColor();
+				applyColor2(new Color(Math.min(255, color.getRed() + 40), Math.min(255, color.getGreen() + 40), Math.min(255, color.getBlue() + 40)));
+			}
+		}
 		applyCollided(false);
 
 		setRenderDistanceWeight(10);
 	}
 
+	@Nullable
+	@Override
+	public AxisAlignedBB getCollisionBox(Entity entityIn) {
+		return getEntityBoundingBox();
+	}
+
 	@Override
 	protected void entityInit() {
 		this.getDataManager().register(DATA_COLOR, 0);
+		this.getDataManager().register(DATA_COLOR2, 0);
 		this.getDataManager().register(DATA_COLLIDED, false);
 	}
 
 	private void applyColor(Color color) {
 		this.getDataManager().set(DATA_COLOR, color.getRGB());
 		this.getDataManager().setDirty(DATA_COLOR);
+	}
+
+	private void applyColor2(Color color) {
+		this.getDataManager().set(DATA_COLOR2, color.getRGB());
+		this.getDataManager().setDirty(DATA_COLOR2);
 	}
 
 	private void applyCollided(boolean collided) {
@@ -78,6 +103,8 @@ public class EntitySpellProjectile extends Entity {
 
 	@Override
 	public void onUpdate() {
+		super.onUpdate();
+
 		if (ticksExisted > 1000) {
 			setDead();
 			return;
@@ -99,30 +126,50 @@ public class EntitySpellProjectile extends Entity {
 
 			move(MoverType.SELF, motionX, motionY, motionZ);
 		} else {
-			motionX = 0;
-			motionY = 0;
-			motionZ = 0;
+			SpellData data = spell.copy();
 
-			applyCollided(true);
-			// TODO: not here
-			PacketHandler.NETWORK.sendToAllAround(new PacketParticleFairyExplode(getPositionVector(), new Color(getDataManager().get(DATA_COLOR))),
-					new NetworkRegistry.TargetPoint(world.provider.getDimension(), posX, posY, posZ, 512));
+			RayTraceResult result = Utils.raytrace(world, look, getPositionVector(), 1, this);
+			if (result != null && result.typeOfHit == RayTraceResult.Type.BLOCK) {
+				data.processBlock(result.getBlockPos(), result.sideHit, result.hitVec);
+			} else data.processBlock(getPosition(), result != null ? result.sideHit : null, getPositionVector());
 
-			if (module != null && module.nextModule != null) {
-				Module nextModule = module.nextModule;
-				SpellData newSpell = spell.copy();
-
-				RayTraceResult result = new RayTraceResult(this);
-				if (result.typeOfHit == RayTraceResult.Type.ENTITY)
-					newSpell.processEntity(result.entityHit, false);
-				else if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
-					newSpell.addData(SpellData.DefaultKeys.BLOCK_HIT, result.getBlockPos());
-					newSpell.addData(SpellData.DefaultKeys.TARGET_HIT, result.hitVec);
-				}
-				nextModule.castSpell(newSpell);
-			}
-			setDead();
+			goBoom(data);
+			return;
 		}
+
+		List<Entity> entities = world.getEntitiesInAABBexcluding(this, getEntityBoundingBox(), null);
+		if (!entities.isEmpty()) {
+
+			Entity caster = spell.getData(CASTER);
+			if (caster != null && entities.contains(caster)) return;
+
+			SpellData data = spell.copy();
+
+			RayTraceResult result = Utils.raytrace(world, look, getPositionVector(), 1, this);
+			if (result != null && result.typeOfHit == RayTraceResult.Type.ENTITY && result.entityHit != null) {
+				data.processEntity(result.entityHit, false);
+			} else if (entities.get(0) != null) data.processEntity(entities.get(0), false);
+
+			goBoom(data);
+		}
+	}
+
+	public void goBoom(SpellData data) {
+		motionX = 0;
+		motionY = 0;
+		motionZ = 0;
+
+		applyCollided(true);
+
+		if (module != null && module.nextModule != null) {
+			Module nextModule = module.nextModule;
+			nextModule.castSpell(data);
+		}
+
+		PacketHandler.NETWORK.sendToAllAround(new PacketParticleFairyExplode(getPositionVector(), new Color(getDataManager().get(DATA_COLOR)), new Color(getDataManager().get(DATA_COLOR2))),
+				new NetworkRegistry.TargetPoint(world.provider.getDimension(), posX, posY, posZ, 512));
+
+		setDead();
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -155,6 +202,7 @@ public class EntitySpellProjectile extends Entity {
 		spell = new SpellData(world);
 		spell.deserializeNBT(compound.getCompoundTag("spell_data"));
 		applyColor(new Color(compound.getInteger("color")));
+		applyColor2(new Color(compound.getInteger("color2")));
 
 		applyCollided(compound.getBoolean("collided"));
 	}
@@ -164,6 +212,7 @@ public class EntitySpellProjectile extends Entity {
 		compound.setTag("module", module.serializeNBT());
 		compound.setTag("spell_data", spell.serializeNBT());
 		compound.setInteger("color", getDataManager().get(DATA_COLOR));
+		compound.setInteger("color2", getDataManager().get(DATA_COLOR2));
 		compound.setBoolean("collided", getDataManager().get(DATA_COLLIDED));
 	}
 }

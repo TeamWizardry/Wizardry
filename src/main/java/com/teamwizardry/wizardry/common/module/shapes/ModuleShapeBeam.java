@@ -88,6 +88,7 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 			spell.addData(TARGET_HIT, trace.hitVec);
 		} else spell.addData(TARGET_HIT, trace.hitVec);
 
+		forceCastNextModuleParticles(spell);
 		return ThreadLocalRandom.current().nextInt(chance) == 0 && runNextModule(spell);
 	}
 

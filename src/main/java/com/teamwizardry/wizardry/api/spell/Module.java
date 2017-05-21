@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.api.spell;
 
+import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.WizardManager;
 import com.teamwizardry.wizardry.common.core.SpellTicker;
@@ -170,7 +171,7 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	 * @return If the spell has succeeded.
 	 */
 	public final boolean castSpell(@NotNull SpellData data) {
-		processModule();
+		if (LibrarianLib.DEV_ENVIRONMENT) processModule();
 
 		if (this instanceof IlingeringModule)
 			if (!SpellTicker.INSTANCE.ticker.containsKey(this))
@@ -219,7 +220,12 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 		return nextModule != null && nextModule.castSpell(data);
 	}
 
-	private void processModule() {
+	protected final void forceCastNextModuleParticles(@NotNull SpellData data) {
+		if (nextModule != null) nextModule.castParticles(data);
+	}
+
+	public void processModule() {
+
 		if (nextModule == null) {
 			finalManaDrain = getManaDrain();
 			finalBurnoutFill = getBurnoutFill();
@@ -228,7 +234,7 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 		nextModule.processModule();
 
 		if (getPrimaryColor() == null) setPrimaryColor(nextModule.getPrimaryColor());
-		if (getSecondaryColor() == null) setPrimaryColor(nextModule.getSecondaryColor());
+		if (getSecondaryColor() == null) setSecondaryColor(nextModule.getSecondaryColor());
 
 		finalManaDrain = (getManaDrain() + nextModule.finalManaDrain) * getManaMultiplier();
 		finalBurnoutFill = (getBurnoutFill() + nextModule.finalBurnoutFill) * getBurnoutMultiplier();
@@ -250,30 +256,31 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	public NBTTagCompound serializeNBT() {
 		NBTTagCompound compound = new NBTTagCompound();
 		compound.setString("id", getID());
-		compound.setTag("attributes", attributes);
-		if (nextModule != null) {
-			compound.setTag("next_module", nextModule.serializeNBT());
-		}
-		compound.setDouble("final_mana_drain", finalManaDrain);
-		compound.setDouble("final_burnout_fill", finalBurnoutFill);
+		if (attributes != null) compound.setTag("attributes", attributes);
+		if (nextModule != null) compound.setTag("next_module", nextModule.serializeNBT());
 		if (primaryColor != null) compound.setInteger("primary_color", primaryColor.getRGB());
 		if (secondaryColor != null) compound.setInteger("secondary_color", secondaryColor.getRGB());
+		compound.setDouble("final_mana_drain", finalManaDrain);
+		compound.setDouble("final_burnout_fill", finalBurnoutFill);
 		return compound;
 	}
 
 	@Override
 	public void deserializeNBT(NBTTagCompound nbt) {
-		attributes = nbt.getCompoundTag("attributes");
 		if (nbt.hasKey("next_module")) {
 			Module tempModule = ModuleRegistry.INSTANCE.getModule(nbt.getCompoundTag("next_module").getString("id"));
 			if (tempModule != null) {
 				nextModule = tempModule.copy();
 				if (nextModule != null) nextModule.deserializeNBT(nbt.getCompoundTag("next_module"));
-			}
-		}
+			} else nextModule = null;
+		} else nextModule = null;
+		if (nbt.hasKey("attributes")) attributes = nbt.getCompoundTag("attributes");
+		else attributes = new NBTTagCompound();
+		if (nbt.hasKey("final_mana_drain")) finalManaDrain = nbt.getDouble("final_mana_drain");
+		if (nbt.hasKey("final_burnout_fill")) finalBurnoutFill = nbt.getDouble("final_burnout_fill");
 		if (nbt.hasKey("primary_color")) setPrimaryColor(new Color(nbt.getInteger("primary_color")));
 		if (nbt.hasKey("secondary_color")) setSecondaryColor(new Color(nbt.getInteger("secondary_color")));
 
-		processModule();
+		if (LibrarianLib.DEV_ENVIRONMENT) processModule();
 	}
 }

@@ -1,16 +1,17 @@
 package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
-import com.teamwizardry.wizardry.api.item.IExplodable;
-import com.teamwizardry.wizardry.init.ModBlocks;
+import com.teamwizardry.wizardry.common.fluid.FluidMana;
+import com.teamwizardry.wizardry.common.fluid.FluidNacre;
 import com.teamwizardry.wizardry.init.ModItems;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 
 /**
  * Created by Saad on 6/20/2016.
  */
-public class ItemGlassOrb extends ItemMod implements IExplodable {
+public class ItemGlassOrb extends ItemMod {
 
 	public ItemGlassOrb() {
 		super("glass_orb");
@@ -18,10 +19,11 @@ public class ItemGlassOrb extends ItemMod implements IExplodable {
 
 	@Override
 	public boolean onEntityItemUpdate(EntityItem entityItem) {
-		if (entityItem.isInsideOfMaterial(ModBlocks.NACRE_MATERIAL)) {
+		IBlockState state = entityItem.world.getBlockState(entityItem.getPosition());
+		if (state.getBlock() == FluidNacre.instance.getBlock()) {
 			ItemStack newStack = new ItemStack(ModItems.PEARL_NACRE);
 			entityItem.setEntityItemStack(newStack);
-		} else if (entityItem.isInsideOfMaterial(ModBlocks.MANA_MATERIAL)) {
+		} else if (state.getBlock() == FluidMana.instance.getBlock()) {
 			ItemStack newStack = new ItemStack(ModItems.MANA_ORB);
 			entityItem.setEntityItemStack(newStack);
 		}

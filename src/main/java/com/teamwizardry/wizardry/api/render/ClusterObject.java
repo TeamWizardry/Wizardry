@@ -63,13 +63,17 @@ public class ClusterObject implements INBTSerializable<NBTTagCompound> {
 	@Override
 	public NBTTagCompound serializeNBT() {
 		NBTTagCompound compound = new NBTTagCompound();
-		compound.setTag("stack", stack.serializeNBT());
-		compound.setDouble("dest_x", dest.xCoord);
-		compound.setDouble("dest_y", dest.yCoord);
-		compound.setDouble("dest_z", dest.zCoord);
-		compound.setDouble("origin_x", origin.xCoord);
-		compound.setDouble("origin_y", origin.yCoord);
-		compound.setDouble("origin_z", origin.zCoord);
+		if (stack != null && !stack.isEmpty()) compound.setTag("stack", stack.serializeNBT());
+		if (dest != null) {
+			compound.setDouble("dest_x", dest.xCoord);
+			compound.setDouble("dest_y", dest.yCoord);
+			compound.setDouble("dest_z", dest.zCoord);
+		}
+		if (origin != null) {
+			compound.setDouble("origin_x", origin.xCoord);
+			compound.setDouble("origin_y", origin.yCoord);
+			compound.setDouble("origin_z", origin.zCoord);
+		}
 		compound.setDouble("dest_time", destTime);
 		compound.setLong("world_time", worldTime);
 		compound.setDouble("tick", tick);
@@ -78,11 +82,24 @@ public class ClusterObject implements INBTSerializable<NBTTagCompound> {
 
 	@Override
 	public void deserializeNBT(NBTTagCompound nbt) {
-		stack = new ItemStack(nbt.getCompoundTag("stack"));
-		dest = new Vec3d(nbt.getDouble("dest_x"), nbt.getDouble("dest_y"), nbt.getDouble("dest_z"));
-		origin = new Vec3d(nbt.getDouble("origin_x"), nbt.getDouble("origin_y"), nbt.getDouble("origin_z"));
-		destTime = nbt.getDouble("dest_time");
-		worldTime = nbt.getLong("world_time");
-		tick = nbt.getInteger("tick");
+		if (nbt.hasKey("stack")) stack = new ItemStack(nbt.getCompoundTag("stack"));
+		else stack = ItemStack.EMPTY;
+
+		if (nbt.hasKey("dest_x") && nbt.hasKey("dest_y") && nbt.hasKey("dest_z"))
+			dest = new Vec3d(nbt.getDouble("dest_x"), nbt.getDouble("dest_y"), nbt.getDouble("dest_z"));
+		else dest = Vec3d.ZERO;
+
+		if (nbt.hasKey("origin_x") && nbt.hasKey("origin_y") && nbt.hasKey("origin_z"))
+			origin = new Vec3d(nbt.getDouble("origin_x"), nbt.getDouble("origin_y"), nbt.getDouble("origin_z"));
+		else origin = Vec3d.ZERO;
+
+		if (nbt.hasKey("dest_time")) destTime = nbt.getDouble("dest_time");
+		else destTime = 0;
+
+		if (nbt.hasKey("world_time")) worldTime = nbt.getLong("world_time");
+		else worldTime = 0;
+
+		if (nbt.hasKey("tick")) tick = nbt.getInteger("tick");
+		else tick = 0;
 	}
 }

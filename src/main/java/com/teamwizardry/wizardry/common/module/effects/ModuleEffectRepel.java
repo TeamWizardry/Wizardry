@@ -66,7 +66,7 @@ public class ModuleEffectRepel extends Module {
 	@Nullable
 	@Override
 	public Color getPrimaryColor() {
-		return Color.BLUE;
+		return Color.YELLOW;
 	}
 
 	@Override
@@ -104,7 +104,7 @@ public class ModuleEffectRepel extends Module {
 
 		Vec3d position = targetEntity.getPositionVector().addVector(targetEntity.width / 2, targetEntity.height / 2, targetEntity.width / 2);
 
-		LibParticles.AIR_THROTTLE(world, position, PosUtils.vecFromRotations(pitch, yaw), getPrimaryColor(), ColorUtils.shiftColorHueRandomly(getPrimaryColor(), 50), 1, true);
+		LibParticles.AIR_THROTTLE(world, position, PosUtils.vecFromRotations(pitch, yaw), getPrimaryColor(), ColorUtils.shiftColorHueRandomly(getPrimaryColor(), 50), 1);
 	}
 
 	@Nonnull

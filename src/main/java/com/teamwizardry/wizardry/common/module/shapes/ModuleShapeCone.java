@@ -159,11 +159,11 @@ public class ModuleShapeCone extends Module {
 
 	@Override
 	public int getCooldownTime() {
-		return 5;
+		return 20;
 	}
 
 	@Override
 	public int getChargeUpTime() {
-		return 20;
+		return 5;
 	}
 }

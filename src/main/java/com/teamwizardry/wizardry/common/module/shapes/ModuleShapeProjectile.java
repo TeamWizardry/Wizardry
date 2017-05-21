@@ -5,12 +5,16 @@ import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.common.entity.EntitySpellProjectile;
+import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
 
@@ -70,11 +74,18 @@ public class ModuleShapeProjectile extends Module {
 		Entity caster = spell.getData(CASTER);
 		if (caster == null) return false;
 
+		float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - caster.rotationYaw));
+		float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - caster.rotationYaw));
+		Vec3d origin = new Vec3d(offX, caster.getEyeHeight() - 0.3, offZ).add(caster.getPositionVector());
+
 		EntitySpellProjectile proj = new EntitySpellProjectile(world, this, spell);
-		proj.setPosition(caster.posX + (caster.width / 2), caster.posY + caster.getEyeHeight(), caster.posZ + (caster.width / 2));
+		proj.setPosition(origin.xCoord, origin.yCoord, origin.zCoord);
 		proj.velocityChanged = true;
 
-		return world.spawnEntity(proj);
+		boolean success = world.spawnEntity(proj);
+		if (success)
+			world.playSound(null, caster.getPosition(), ModSounds.PROJECTILE_LAUNCH, SoundCategory.PLAYERS, 1f, (float) ThreadLocalRandom.current().nextDouble(1, 1.5));
+		return success;
 	}
 
 	@Override
@@ -83,8 +94,8 @@ public class ModuleShapeProjectile extends Module {
 	}
 
 	@Override
-	public int getChargeUpTime() {
-		return 50;
+	public int getCooldownTime() {
+		return 20;
 	}
 
 	@Nonnull
