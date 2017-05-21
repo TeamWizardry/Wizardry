@@ -95,10 +95,12 @@ public class TilePearlHolderRenderer extends TileEntitySpecialRenderer<TilePearl
 						break;
 					}
 
-			GlStateManager.translate(0.5, 0.5, 0.5);
-			GlStateManager.translate(sin * direction.xCoord / 8.0, sin * direction.yCoord / 8.0, sin * direction.zCoord / 8.0);
-			GlStateManager.translate(-direction.xCoord / 3.0, -direction.yCoord / 3.0, -direction.zCoord / 3.0);
-			GlStateManager.translate(-0.5, -0.5, -0.5);
+			if (isPearl) {
+				GlStateManager.translate(0.5, 0.5, 0.5);
+				GlStateManager.translate(sin * direction.xCoord / 8.0, sin * direction.yCoord / 8.0, sin * direction.zCoord / 8.0);
+				GlStateManager.translate(-direction.xCoord / 3.0, -direction.yCoord / 3.0, -direction.zCoord / 3.0);
+				GlStateManager.translate(-0.5, -0.5, -0.5);
+			}
 
 			if (!isPearl || !magnetFound)
 				GlStateManager.translate(0, sin / 10.0, 0);
@@ -123,7 +125,7 @@ public class TilePearlHolderRenderer extends TileEntitySpecialRenderer<TilePearl
 				GlStateManager.translate(-0.5, 0.5, -0.5);
 
 				GlStateManager.translate(0.5, 0.5, 0.5);
-				GlStateManager.rotate(45f, 1, 0, 1);
+				GlStateManager.rotate(43f, 1, 0, 1);
 				GlStateManager.translate(-0.5, -0.5, -0.5);
 			}
 

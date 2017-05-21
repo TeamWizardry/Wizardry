@@ -35,15 +35,12 @@ public class TilePearlHolder extends TileMod implements ITickable {
 		if (pearl.getItem() == ModItems.PEARL_NACRE) {
 
 			if (cooldown <= 0) {
-				int itemHoldDown = 0;
-				boolean flag = false;
-				for (Module module : SpellStack.getAllModules(pearl))
-					if (!(module instanceof IContinousSpell))
-						itemHoldDown += module.getChargeUpTime();
-					else flag = true;
-
-				if (itemHoldDown == 0 && !flag) cooldown = 10;
-				else cooldown = itemHoldDown;
+				int maxCooldown = 0;
+				for (Module module : SpellStack.getAllModules(pearl)) {
+					if (module instanceof IContinousSpell) return;
+					if (module.getCooldownTime() > maxCooldown) maxCooldown = module.getCooldownTime();
+				}
+				cooldown = maxCooldown;
 			} else {
 				cooldown--;
 				return;
