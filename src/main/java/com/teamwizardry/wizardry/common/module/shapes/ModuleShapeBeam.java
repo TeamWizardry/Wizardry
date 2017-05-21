@@ -75,7 +75,7 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 		double range = 10;
 		if (attributes.hasKey(Attributes.EXTEND)) range += attributes.getDouble(Attributes.EXTEND);
 
-		int chance = 100;
+		int chance = 30;
 		if (attributes.hasKey(Attributes.EXTEND)) range = Math.min(1, chance - attributes.getDouble(Attributes.EXTEND));
 
 		RayTraceResult trace = Utils.raytrace(world, PosUtils.vecFromRotations(pitch, yaw), caster != null ? position.addVector(0, caster.getEyeHeight(), 0) : position, range, caster);

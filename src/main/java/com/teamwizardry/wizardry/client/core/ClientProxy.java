@@ -4,11 +4,11 @@ import com.teamwizardry.librarianlib.features.utilities.client.CustomBlockMapSpr
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.client.fx.Shaders;
 import com.teamwizardry.wizardry.client.render.BloodRenderLayer;
-import com.teamwizardry.wizardry.client.render.TileStaffRenderer;
+import com.teamwizardry.wizardry.client.render.block.TilePearlHolderRenderer;
 import com.teamwizardry.wizardry.client.render.glow.GlowingItemEventHandler;
 import com.teamwizardry.wizardry.client.render.glow.GlowingItemRenderLayer;
 import com.teamwizardry.wizardry.common.core.CommonProxy;
-import com.teamwizardry.wizardry.common.tile.TileStaff;
+import com.teamwizardry.wizardry.common.tile.TilePearlHolder;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModEntities;
 import net.minecraft.client.Minecraft;
@@ -48,13 +48,15 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 		CustomBlockMapSprites.INSTANCE.register(new ResourceLocation(Wizardry.MODID, "blocks/mana_crystal_ring"));
 		CustomBlockMapSprites.INSTANCE.register(new ResourceLocation(Wizardry.MODID, "blocks/mana_crystal_ring_outer"));
 		CustomBlockMapSprites.INSTANCE.register(new ResourceLocation(Wizardry.MODID, "blocks/mana_crystal"));
+		CustomBlockMapSprites.INSTANCE.register(new ResourceLocation(Wizardry.MODID, "blocks/pearl"));
+		CustomBlockMapSprites.INSTANCE.register(new ResourceLocation(Wizardry.MODID, "blocks/mana_orb"));
 	}
 
 	@Override
 	public void init(FMLInitializationEvent event) {
 		super.init(event);
 
-		ClientRegistry.bindTileEntitySpecialRenderer(TileStaff.class, new TileStaffRenderer());
+		ClientRegistry.bindTileEntitySpecialRenderer(TilePearlHolder.class, new TilePearlHolderRenderer());
 
 		//Shaders.INSTANCE.getClass(); // ...
 		//MagicBurstFX.class.getName(); // ...

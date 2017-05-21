@@ -1,12 +1,16 @@
 package com.teamwizardry.wizardry.common.item;
 
+import com.teamwizardry.librarianlib.features.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.fluid.FluidMana;
 import com.teamwizardry.wizardry.common.fluid.FluidNacre;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
+
+import javax.annotation.Nullable;
 
 /**
  * Created by Saad on 6/20/2016.
@@ -28,5 +32,11 @@ public class ItemGlassOrb extends ItemMod {
 			entityItem.setEntityItemStack(newStack);
 		}
 		return super.onEntityItemUpdate(entityItem);
+	}
+
+	@Nullable
+	@Override
+	public ModCreativeTab getCreativeTab() {
+		return Wizardry.tab;
 	}
 }

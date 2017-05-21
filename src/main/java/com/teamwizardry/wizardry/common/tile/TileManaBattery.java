@@ -53,8 +53,8 @@ public class TileManaBattery extends TileMod implements ITickable, IManaSink {
 			int r = Math.max(0, poses.size() - 1);
 			BlockPos target = poses.get(r <= 0 ? 0 : ThreadLocalRandom.current().nextInt(r));
 			IBlockState state = world.getBlockState(target);
-			if (state.getBlock() == ModBlocks.STAFF_BLOCK) {
-				TileStaff staff = (TileStaff) world.getTileEntity(target);
+			if (state.getBlock() == ModBlocks.PEARL_HOLDER) {
+				TilePearlHolder staff = (TilePearlHolder) world.getTileEntity(target);
 				if (staff != null && !staff.pearl.isEmpty() && staff.pearl.getItem() == ModItems.MANA_ORB) {
 					staff.pearl = new ItemStack(ModItems.GLASS_ORB);
 					currentMana += 1000;

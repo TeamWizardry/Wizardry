@@ -202,6 +202,19 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 		});
 
 		@Nonnull
+		public static final Pair<String, Class<BlockPos>> BLOCK_TOUCHED = constructPair("block_touched", BlockPos.class, new ProcessData.Process<NBTTagLong, BlockPos>() {
+			@Override
+			public NBTTagLong serialize(BlockPos object) {
+				return new NBTTagLong(object.toLong());
+			}
+
+			@Override
+			public BlockPos deserialize(World world, NBTTagLong object) {
+				return BlockPos.fromLong(object.getLong());
+			}
+		});
+
+		@Nonnull
 		public static final Pair<String, Class<EnumFacing>> FACE_HIT = constructPair("face_hit", BlockPos.class, new ProcessData.Process<NBTTagInt, EnumFacing>() {
 			@Override
 			public NBTTagInt serialize(EnumFacing object) {

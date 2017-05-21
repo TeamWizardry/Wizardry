@@ -6,7 +6,7 @@ import com.teamwizardry.librarianlib.features.structure.Structure;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.block.IManaSink;
 import com.teamwizardry.wizardry.api.block.IStructure;
-import com.teamwizardry.wizardry.client.render.TileManaBatteryRenderer;
+import com.teamwizardry.wizardry.client.render.block.TileManaBatteryRenderer;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
 import com.teamwizardry.wizardry.init.ModStructures;
 import net.minecraft.block.material.Material;

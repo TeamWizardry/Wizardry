@@ -1,6 +1,8 @@
 package com.teamwizardry.wizardry.common.item;
 
+import com.teamwizardry.librarianlib.features.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.entity.EntityJumpPad;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumActionResult;
@@ -10,6 +12,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Created by Saad on 8/28/2016.
@@ -29,5 +32,11 @@ public class ItemFairyDust extends ItemMod {
 		world.spawnEntity(pad);
 		entityPlayer.getHeldItem(hand).setCount(entityPlayer.getHeldItem(hand).getCount() - 1);
 		return EnumActionResult.SUCCESS;
+	}
+
+	@Nullable
+	@Override
+	public ModCreativeTab getCreativeTab() {
+		return Wizardry.tab;
 	}
 }

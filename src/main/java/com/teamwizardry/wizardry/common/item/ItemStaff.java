@@ -1,6 +1,8 @@
 package com.teamwizardry.wizardry.common.item;
 
+import com.teamwizardry.librarianlib.features.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.INacreColorable;
 import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.init.ModItems;
@@ -18,6 +20,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
@@ -25,6 +28,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Set;
 
@@ -50,10 +54,31 @@ public class ItemStaff extends ItemMod implements INacreColorable {
 				if (!modules.isEmpty()) {
 
 					for (Module module : modules) {
-						if (!module.getID().equals("effect_substitution")) continue;
-						player.getEntityData().setTag("substitution_block", NBTUtil.writeBlockState(new NBTTagCompound(), player.world.getBlockState(pos)));
-						return EnumActionResult.FAIL;
+						if (module.getID().equals("effect_substitution")) {
+							player.getEntityData().setTag("substitution_block", NBTUtil.writeBlockState(new NBTTagCompound(), player.world.getBlockState(pos)));
+							return EnumActionResult.FAIL;
+						}
 					}
+
+					boolean isContinuous = false;
+					for (Module module : SpellStack.getAllModules(stack))
+						if (module instanceof IContinousSpell) {
+							isContinuous = true;
+							break;
+						}
+					if (isContinuous) return EnumActionResult.FAIL;
+
+					SpellData spell = new SpellData(world);
+					spell.processEntity(player, true);
+					spell.addData(SpellData.DefaultKeys.BLOCK_TOUCHED, pos);
+					spell.processBlock(pos, side, new Vec3d(pos).addVector(0.5, 0.5, 0.5));
+					SpellStack.runSpell(stack, spell);
+
+					int maxCooldown = 0;
+					for (Module module : SpellStack.getAllModules(stack))
+						if (module.getCooldownTime() > maxCooldown) maxCooldown = module.getCooldownTime();
+					player.getCooldownTracker().setCooldown(this, maxCooldown);
+					player.swingArm(EnumHand.MAIN_HAND);
 				}
 			}
 			return EnumActionResult.FAIL;
@@ -208,5 +233,11 @@ public class ItemStaff extends ItemMod implements INacreColorable {
 				}
 			}
 		}
+	}
+
+	@Nullable
+	@Override
+	public ModCreativeTab getCreativeTab() {
+		return Wizardry.tab;
 	}
 }

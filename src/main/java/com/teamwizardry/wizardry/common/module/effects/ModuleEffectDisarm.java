@@ -7,6 +7,7 @@ import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
@@ -68,7 +69,7 @@ public class ModuleEffectDisarm extends Module {
 	@Nullable
 	@Override
 	public Color getPrimaryColor() {
-		return Color.MAGENTA;
+		return Color.YELLOW;
 	}
 
 	@Override
@@ -76,11 +77,20 @@ public class ModuleEffectDisarm extends Module {
 		Entity targetEntity = spell.getData(ENTITY_HIT);
 
 		if (targetEntity instanceof EntityLivingBase) {
-			ItemStack held = ((EntityLivingBase) targetEntity).getHeldItemMainhand();
-			targetEntity.entityDropItem(held, 0);
+			if (!spell.world.isRemote) {
+
+				ItemStack held = ((EntityLivingBase) targetEntity).getHeldItemMainhand();
+				ItemStack stack = held.copy();
+				stack.setCount(1);
+				held.shrink(1);
+
+				EntityItem item = new EntityItem(spell.world, targetEntity.posX, targetEntity.posY + 1, targetEntity.posZ, stack);
+				item.setDefaultPickupDelay();
+				return spell.world.spawnEntity(item);
+			}
 		}
 
-		return true;
+		return false;
 	}
 
 	@Override

@@ -1,8 +1,10 @@
 package com.teamwizardry.wizardry.common.item;
 
+import com.teamwizardry.librarianlib.features.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.features.base.item.IItemColorProvider;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import kotlin.jvm.functions.Function2;
@@ -86,5 +88,11 @@ public class ItemJar extends ItemMod implements IItemColorProvider {
 	@Override
 	public Function2<ItemStack, Integer, Integer> getItemColorFunction() {
 		return (stack, tintIndex) -> ((tintIndex == 0) && (stack.getItemDamage() != 0)) ? ItemNBTHelper.getInt(stack, Constants.NBT.FAIRY_COLOR, 0xFFFFFF) : 0xFFFFFF;
+	}
+
+	@Nullable
+	@Override
+	public ModCreativeTab getCreativeTab() {
+		return Wizardry.tab;
 	}
 }

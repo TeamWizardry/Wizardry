@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.api.util;
 
-import com.teamwizardry.wizardry.common.tile.TileStaff;
+import com.teamwizardry.wizardry.common.tile.TilePearlHolder;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.block.Block;
@@ -96,8 +96,8 @@ public final class PosUtils {
 
 				if (takenPoses.contains(staffPos)) continue;
 				IBlockState block = world.getBlockState(staffPos);
-				if (block.getBlock() != ModBlocks.STAFF_BLOCK) continue;
-				TileStaff staff = (TileStaff) world.getTileEntity(staffPos);
+				if (block.getBlock() != ModBlocks.PEARL_HOLDER) continue;
+				TilePearlHolder staff = (TilePearlHolder) world.getTileEntity(staffPos);
 				if (staff == null || staff.pearl == null) continue;
 				if (staff.pearl.getItem() != ModItems.MANA_ORB) continue;
 
@@ -111,11 +111,11 @@ public final class PosUtils {
 				if (takenPoses.contains(oppPos)) continue;
 
 				IBlockState oppBlock = world.getBlockState(oppPos);
-				if (oppBlock.getBlock() != ModBlocks.STAFF_BLOCK) {
+				if (oppBlock.getBlock() != ModBlocks.PEARL_HOLDER) {
 					missingSymmetry.add(oppPos);
 					continue;
 				}
-				TileStaff oppPed = (TileStaff) world.getTileEntity(oppPos);
+				TilePearlHolder oppPed = (TilePearlHolder) world.getTileEntity(oppPos);
 				if (oppPed == null) {
 					missingSymmetry.add(oppPos);
 					continue;

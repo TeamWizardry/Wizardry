@@ -4,7 +4,8 @@ import com.teamwizardry.librarianlib.features.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.features.base.block.BlockModContainer;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.block.IManaSink;
-import com.teamwizardry.wizardry.common.tile.TileStaff;
+import com.teamwizardry.wizardry.client.render.block.TilePearlHolderRenderer;
+import com.teamwizardry.wizardry.common.tile.TilePearlHolder;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -17,17 +18,24 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 
 /**
  * Created by Saad on 5/7/2016.
  */
-public class BlockStaff extends BlockModContainer implements IManaSink {
+public class BlockPearlHolder extends BlockModContainer implements IManaSink {
 
-	public BlockStaff() {
-		super("staff_block", Material.ROCK);
-		setCreativeTab(Wizardry.tab);
+	public BlockPearlHolder() {
+		super("pearl_holder", Material.WOOD);
+	}
+
+	@SideOnly(Side.CLIENT)
+	public void initModel() {
+		ClientRegistry.bindTileEntitySpecialRenderer(TilePearlHolder.class, new TilePearlHolderRenderer());
 	}
 
 	@Override
@@ -35,14 +43,16 @@ public class BlockStaff extends BlockModContainer implements IManaSink {
 		ItemStack heldItem = playerIn.getHeldItem(hand);
 
 		if (!worldIn.isRemote) {
-			TileStaff te = getTE(worldIn, pos);
+			TilePearlHolder te = getTE(worldIn, pos);
 
-			if (te.pearl == null && (heldItem.getItem() == ModItems.MANA_ORB || heldItem.getItem() == ModItems.PEARL_NACRE)) {
-				te.pearl = heldItem.copy();
-				te.pearl.setCount(1);
-				heldItem.setCount(heldItem.getCount() - 1);
+			if ((te.pearl == null || te.pearl.isEmpty())) {
+				if (heldItem.getItem() == ModItems.MANA_ORB || heldItem.getItem() == ModItems.PEARL_NACRE) {
+					te.pearl = heldItem.copy();
+					te.pearl.setCount(1);
+					heldItem.shrink(1);
+				} else return false;
 
-			} else if (!te.pearl.isEmpty()) {
+			} else {
 				ItemStack stack = te.pearl.copy();
 				te.pearl = null;
 				if (playerIn.inventory.addItemStackToInventory(stack)) playerIn.openContainer.detectAndSendChanges();
@@ -56,14 +66,14 @@ public class BlockStaff extends BlockModContainer implements IManaSink {
 		return true;
 	}
 
-	private TileStaff getTE(World world, BlockPos pos) {
-		return (TileStaff) world.getTileEntity(pos);
+	private TilePearlHolder getTE(World world, BlockPos pos) {
+		return (TilePearlHolder) world.getTileEntity(pos);
 	}
 
 	@Nullable
 	@Override
 	public TileEntity createTileEntity(World world, IBlockState iBlockState) {
-		return new TileStaff();
+		return new TilePearlHolder();
 	}
 
 	@Override

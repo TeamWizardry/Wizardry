@@ -17,7 +17,7 @@ public class ModBlocks {
 	public static BlockCraftingPlate CRAFTING_PLATE;
 	public static BlockMagiciansWorktable MAGICIANS_WORKTABLE;
 	public static BlockManaBattery MANA_BATTERY;
-	public static BlockStaff STAFF_BLOCK;
+	public static BlockPearlHolder PEARL_HOLDER;
 	public static BlockCloud CLOUD;
 	public static BlockManaMagnet MANA_MAGNET;
 
@@ -40,7 +40,7 @@ public class ModBlocks {
 		CRAFTING_PLATE = new BlockCraftingPlate();
 		MAGICIANS_WORKTABLE = new BlockMagiciansWorktable();
 		MANA_BATTERY = new BlockManaBattery();
-		STAFF_BLOCK = new BlockStaff();
+		PEARL_HOLDER = new BlockPearlHolder();
 		CLOUD = new BlockCloud();
 		NACRE = new BlockNacre();
 		NACRE_BRICK = new BlockNacreBrick();
@@ -62,5 +62,6 @@ public class ModBlocks {
 	public static void initModel() {
 		CRAFTING_PLATE.initModel();
 		MANA_BATTERY.initModel();
+		PEARL_HOLDER.initModel();
 	}
 }

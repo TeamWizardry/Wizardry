@@ -12,7 +12,7 @@ import com.teamwizardry.wizardry.common.achievement.Achievements;
 import com.teamwizardry.wizardry.common.entity.EntityDevilDust;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.common.entity.EntitySpellCodex;
-import com.teamwizardry.wizardry.common.tile.TileStaff;
+import com.teamwizardry.wizardry.common.tile.TilePearlHolder;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModPotions;
@@ -76,8 +76,8 @@ public class EventHandler {
 
 	@SubscribeEvent
 	public void onBlockBreak(BreakEvent event) {
-		if (event.getWorld().getBlockState(event.getPos()).getBlock() == ModBlocks.STAFF_BLOCK) {
-			TileStaff pedestal = (TileStaff) event.getWorld().getTileEntity(event.getPos());
+		if (event.getWorld().getBlockState(event.getPos()).getBlock() == ModBlocks.PEARL_HOLDER) {
+			TilePearlHolder pedestal = (TilePearlHolder) event.getWorld().getTileEntity(event.getPos());
 			//for (pedestal.getLinkedPedestals())
 		}
 	}

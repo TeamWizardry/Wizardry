@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.client.render;
+package com.teamwizardry.wizardry.client.render.block;
 
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.wizardry.Wizardry;
