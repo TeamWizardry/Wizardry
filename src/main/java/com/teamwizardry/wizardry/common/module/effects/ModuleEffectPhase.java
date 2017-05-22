@@ -7,8 +7,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.MinecraftForge;
@@ -16,8 +14,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.awt.*;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
@@ -28,14 +24,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 public class ModuleEffectPhase extends Module {
 
 	public ModuleEffectPhase() {
-		super();
 		MinecraftForge.EVENT_BUS.register(this);
-	}
-
-	@Nonnull
-	@Override
-	public ItemStack getRequiredStack() {
-		return new ItemStack(Items.ENDER_PEARL);
 	}
 
 	@Nonnull
@@ -47,7 +36,7 @@ public class ModuleEffectPhase extends Module {
 	@Nonnull
 	@Override
 	public String getID() {
-		return "phase";
+		return "effect_phase";
 	}
 
 	@Nonnull
@@ -60,21 +49,6 @@ public class ModuleEffectPhase extends Module {
 	@Override
 	public String getDescription() {
 		return "Will short-range blink-trace you forwards";
-	}
-
-	@Override
-	public double getManaDrain() {
-		return 200;
-	}
-
-	@Override
-	public double getBurnoutFill() {
-		return 100;
-	}
-
-	@Override
-	public int getChargeUpTime() {
-		return 10;
 	}
 
 	@Override
@@ -107,12 +81,6 @@ public class ModuleEffectPhase extends Module {
 	@Override
 	public void runClient(@Nonnull SpellData spell) {
 
-	}
-
-	@Nullable
-	@Override
-	public Color getPrimaryColor() {
-		return new Color(0x9595AA, true);
 	}
 
 	@Nonnull

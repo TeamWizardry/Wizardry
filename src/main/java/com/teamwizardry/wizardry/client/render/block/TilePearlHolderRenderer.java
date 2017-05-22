@@ -1,10 +1,10 @@
 package com.teamwizardry.wizardry.client.render.block;
 
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.client.core.ClientProxy;
 import com.teamwizardry.wizardry.common.tile.TilePearlHolder;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
+import com.teamwizardry.wizardry.proxy.ClientProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.IBakedModel;

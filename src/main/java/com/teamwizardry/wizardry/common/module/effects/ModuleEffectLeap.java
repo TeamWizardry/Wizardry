@@ -5,13 +5,10 @@ import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.util.math.Vec3d;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.awt.*;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
@@ -21,12 +18,6 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  */
 @RegisterModule
 public class ModuleEffectLeap extends Module implements IParticleDanger {
-
-	@Nonnull
-	@Override
-	public ItemStack getRequiredStack() {
-		return new ItemStack(Items.RABBIT_FOOT);
-	}
 
 	@Nonnull
 	@Override
@@ -50,22 +41,6 @@ public class ModuleEffectLeap extends Module implements IParticleDanger {
 	@Override
 	public String getDescription() {
 		return "Will throttle you upwards and forwards";
-	}
-
-	@Override
-	public double getManaDrain() {
-		return 50;
-	}
-
-	@Override
-	public double getBurnoutFill() {
-		return 20;
-	}
-
-	@Nullable
-	@Override
-	public Color getPrimaryColor() {
-		return Color.YELLOW;
 	}
 
 	@Override

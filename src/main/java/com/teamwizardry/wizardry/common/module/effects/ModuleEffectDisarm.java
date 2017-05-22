@@ -8,14 +8,11 @@ import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.awt.*;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ENTITY_HIT;
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.TARGET_HIT;
@@ -25,12 +22,6 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.TARGET_H
  */
 @RegisterModule
 public class ModuleEffectDisarm extends Module {
-
-	@Nonnull
-	@Override
-	public ItemStack getRequiredStack() {
-		return new ItemStack(Items.BLAZE_ROD);
-	}
 
 	@Nonnull
 	@Override
@@ -54,22 +45,6 @@ public class ModuleEffectDisarm extends Module {
 	@Override
 	public String getDescription() {
 		return "Will drop the target's held item on the ground";
-	}
-
-	@Override
-	public double getManaDrain() {
-		return 400;
-	}
-
-	@Override
-	public double getBurnoutFill() {
-		return 300;
-	}
-
-	@Nullable
-	@Override
-	public Color getPrimaryColor() {
-		return Color.YELLOW;
 	}
 
 	@Override

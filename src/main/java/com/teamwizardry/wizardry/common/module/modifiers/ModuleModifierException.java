@@ -1,8 +1,6 @@
 package com.teamwizardry.wizardry.common.module.modifiers;
 
 import com.teamwizardry.wizardry.api.spell.*;
-import com.teamwizardry.wizardry.init.ModItems;
-import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
@@ -11,12 +9,6 @@ import javax.annotation.Nonnull;
  */
 @RegisterModule
 public class ModuleModifierException extends Module implements IModifier {
-
-	@Nonnull
-	@Override
-	public ItemStack getRequiredStack() {
-		return new ItemStack(ModItems.SYRINGE, 1, 3);
-	}
 
 	@Nonnull
 	@Override
@@ -40,16 +32,6 @@ public class ModuleModifierException extends Module implements IModifier {
 	@Override
 	public String getDescription() {
 		return "Will ignore the entity chosen";
-	}
-
-	@Override
-	public double getManaDrain() {
-		return 5;
-	}
-
-	@Override
-	public double getBurnoutFill() {
-		return 5;
 	}
 
 	@Override

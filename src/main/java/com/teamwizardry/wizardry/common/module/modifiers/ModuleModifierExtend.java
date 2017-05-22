@@ -1,8 +1,6 @@
 package com.teamwizardry.wizardry.common.module.modifiers;
 
 import com.teamwizardry.wizardry.api.spell.*;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
@@ -11,12 +9,6 @@ import javax.annotation.Nonnull;
  */
 @RegisterModule
 public class ModuleModifierExtend extends Module implements IModifier {
-
-	@Nonnull
-	@Override
-	public ItemStack getRequiredStack() {
-		return new ItemStack(Items.PRISMARINE_CRYSTALS);
-	}
 
 	@Nonnull
 	@Override
@@ -40,16 +32,6 @@ public class ModuleModifierExtend extends Module implements IModifier {
 	@Override
 	public String getDescription() {
 		return "Can increase range or time on shapes and effects.";
-	}
-
-	@Override
-	public double getManaDrain() {
-		return 50;
-	}
-
-	@Override
-	public double getBurnoutFill() {
-		return 50;
 	}
 
 	@Override

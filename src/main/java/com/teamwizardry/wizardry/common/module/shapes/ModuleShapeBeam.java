@@ -3,10 +3,8 @@ package com.teamwizardry.wizardry.common.module.shapes;
 import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.Utils;
-import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -21,22 +19,6 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  */
 @RegisterModule
 public class ModuleShapeBeam extends Module implements IContinousSpell {
-
-	@Nonnull
-	@Override
-	public ItemStack getRequiredStack() {
-		return new ItemStack(ModItems.UNICORN_HORN);
-	}
-
-	@Override
-	public double getManaDrain() {
-		return 5;
-	}
-
-	@Override
-	public double getBurnoutFill() {
-		return 5;
-	}
 
 	@Nonnull
 	@Override
@@ -110,16 +92,6 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 			origin = new Vec3d(offX, caster.getEyeHeight(), offZ).add(position);
 		}
 		LibParticles.SHAPE_BEAM(world, target, origin, getPrimaryColor());
-	}
-
-	@Override
-	public double getManaMultiplier() {
-		return 0.1;
-	}
-
-	@Override
-	public double getBurnoutMultiplier() {
-		return 0.1;
 	}
 
 	@Nonnull

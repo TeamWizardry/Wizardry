@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.tile;
 
 import com.teamwizardry.librarianlib.features.autoregister.TileRegister;
 import com.teamwizardry.librarianlib.features.base.block.TileMod;
+import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.wizardry.api.spell.IContinousSpell;
 import com.teamwizardry.wizardry.api.spell.Module;
@@ -32,6 +33,10 @@ public class TilePearlHolder extends TileMod implements ITickable {
 	public void update() {
 		if (world.isRemote) return;
 		if (pearl == null) return;
+		if (pearl.getItem() == ModItems.MANA_ORB) {
+			ItemNBTHelper.setInt(pearl, "orb_tick", ItemNBTHelper.getInt(pearl, "orb_tick", 0) + 1);
+		} else ItemNBTHelper.removeEntry(pearl, "orb_tick");
+
 		if (pearl.getItem() == ModItems.PEARL_NACRE) {
 
 			if (cooldown <= 0) {

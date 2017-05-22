@@ -5,7 +5,6 @@ import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.block.IGrowable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
@@ -14,8 +13,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.awt.*;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
@@ -27,12 +24,6 @@ public class ModuleEffectThrive extends Module {
 
 	@Nonnull
 	@Override
-	public ItemStack getRequiredStack() {
-		return new ItemStack(Blocks.BONE_BLOCK);
-	}
-
-	@Nonnull
-	@Override
 	public ModuleType getModuleType() {
 		return ModuleType.EFFECT;
 	}
@@ -40,7 +31,7 @@ public class ModuleEffectThrive extends Module {
 	@Nonnull
 	@Override
 	public String getID() {
-		return "thrive";
+		return "effect_thrive";
 	}
 
 	@Nonnull
@@ -53,22 +44,6 @@ public class ModuleEffectThrive extends Module {
 	@Override
 	public String getDescription() {
 		return "Will heal entities & speed up plant growth";
-	}
-
-	@Override
-	public double getManaDrain() {
-		return 100;
-	}
-
-	@Override
-	public double getBurnoutFill() {
-		return 500;
-	}
-
-	@Nullable
-	@Override
-	public Color getPrimaryColor() {
-		return Color.RED;
 	}
 
 	@Override

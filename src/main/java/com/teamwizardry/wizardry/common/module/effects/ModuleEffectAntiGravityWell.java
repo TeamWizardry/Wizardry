@@ -12,8 +12,6 @@ import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.api.util.InterpScale;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -22,8 +20,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.awt.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
@@ -33,24 +29,6 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  */
 @RegisterModule
 public class ModuleEffectAntiGravityWell extends Module implements IlingeringModule {
-
-	@Nullable
-	@Override
-	public Color getPrimaryColor() {
-		return Color.RED;
-	}
-
-	@Nullable
-	@Override
-	public Color getSecondaryColor() {
-		return Color.ORANGE;
-	}
-
-	@Nonnull
-	@Override
-	public ItemStack getRequiredStack() {
-		return new ItemStack(Items.MAGMA_CREAM);
-	}
 
 	@Nonnull
 	@Override
@@ -74,16 +52,6 @@ public class ModuleEffectAntiGravityWell extends Module implements IlingeringMod
 	@Override
 	public String getDescription() {
 		return "Will disperse in all entities around the target.";
-	}
-
-	@Override
-	public double getManaDrain() {
-		return 1000;
-	}
-
-	@Override
-	public double getBurnoutFill() {
-		return 1000;
 	}
 
 	@Override

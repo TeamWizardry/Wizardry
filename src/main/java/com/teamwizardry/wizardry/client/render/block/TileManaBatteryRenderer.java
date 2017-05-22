@@ -1,13 +1,18 @@
 package com.teamwizardry.wizardry.client.render.block;
 
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
+import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
+import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
+import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
+import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.api.util.PosUtils;
-import com.teamwizardry.wizardry.client.core.ClientProxy;
 import com.teamwizardry.wizardry.common.fluid.FluidBlockMana;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
 import com.teamwizardry.wizardry.lib.LibParticles;
+import com.teamwizardry.wizardry.proxy.ClientProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -24,6 +29,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
 
+import java.awt.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -133,7 +139,24 @@ public class TileManaBatteryRenderer extends TileEntitySpecialRenderer<TileManaB
 
 		if (count >= 21)
 			for (BlockPos pos : positions.takenPoses)
-				if (ThreadLocalRandom.current().nextInt(5) == 0)
+				if (ThreadLocalRandom.current().nextInt(7) == 0)
 					LibParticles.COLORFUL_BATTERY_BEZIER(world, pos, te.getPos());
+
+		if (ThreadLocalRandom.current().nextInt(10) == 0) {
+			ParticleBuilder glitter = new ParticleBuilder(3);
+			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+			glitter.setAlphaFunction(new InterpFadeInOut(1f, 1f));
+			ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(te.getPos()).addVector(0.5, 0.5, 0.5)), ThreadLocalRandom.current().nextInt(10), 0, (aFloat, particleBuilder) -> {
+				glitter.setColor(new Color(ThreadLocalRandom.current().nextInt(0, 100), ThreadLocalRandom.current().nextInt(0, 100), ThreadLocalRandom.current().nextInt(50, 255)));
+				glitter.setAlphaFunction(new InterpFadeInOut(1f, 1f));
+				glitter.setMotion(new Vec3d(
+						ThreadLocalRandom.current().nextDouble(-0.05, 0.05),
+						ThreadLocalRandom.current().nextDouble(-0.1, 0.1),
+						ThreadLocalRandom.current().nextDouble(-0.05, 0.05)
+				));
+				glitter.setLifetime(ThreadLocalRandom.current().nextInt(30));
+				glitter.setScale((float) ThreadLocalRandom.current().nextDouble(3));
+			});
+		}
 	}
 }

@@ -503,11 +503,11 @@ public class LibParticles {
 		helix.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		helix.setAlphaFunction(new InterpFadeInOut(0.1f, 0.1f));
 
-		ParticleSpawner.spawn(helix, world, new StaticInterp<>(new Vec3d(pedestal).addVector(0.5, 0.5, 0.5)), 1, 0, (aFloat, particleBuilder) -> {
+		ParticleSpawner.spawn(helix, world, new StaticInterp<>(new Vec3d(pedestal).addVector(0.5, 1, 0.5)), 1, 0, (aFloat, particleBuilder) -> {
 			helix.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), ThreadLocalRandom.current().nextInt(50, 200)));
 			helix.setScale(ThreadLocalRandom.current().nextFloat());
 			helix.setPositionFunction(new InterpBezier3D(Vec3d.ZERO, new Vec3d(center.subtract(pedestal)), new Vec3d(0, 6, 0), new Vec3d(0, -5, 0)));
-			helix.setLifetime(ThreadLocalRandom.current().nextInt(10, 50));
+			helix.setLifetime(ThreadLocalRandom.current().nextInt(10, 40));
 		});
 	}
 

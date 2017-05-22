@@ -4,8 +4,6 @@ import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nonnull;
@@ -20,12 +18,6 @@ public class ModuleEventCollideBlock extends Module {
 
 	@Nonnull
 	@Override
-	public ItemStack getRequiredStack() {
-		return new ItemStack(Items.COAL);
-	}
-
-	@Nonnull
-	@Override
 	public ModuleType getModuleType() {
 		return ModuleType.EVENT;
 	}
@@ -33,7 +25,7 @@ public class ModuleEventCollideBlock extends Module {
 	@Nonnull
 	@Override
 	public String getID() {
-		return "on_collide_block";
+		return "event_collide_block";
 	}
 
 	@Nonnull

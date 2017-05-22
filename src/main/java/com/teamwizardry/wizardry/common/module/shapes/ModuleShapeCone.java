@@ -12,8 +12,6 @@ import com.teamwizardry.wizardry.api.util.InterpScale;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.Utils;
 import net.minecraft.entity.Entity;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -31,22 +29,6 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  */
 @RegisterModule
 public class ModuleShapeCone extends Module {
-
-	@Nonnull
-	@Override
-	public ItemStack getRequiredStack() {
-		return new ItemStack(Items.GUNPOWDER);
-	}
-
-	@Override
-	public double getManaDrain() {
-		return 300;
-	}
-
-	@Override
-	public double getBurnoutFill() {
-		return 100;
-	}
 
 	@Nonnull
 	@Override
@@ -141,29 +123,9 @@ public class ModuleShapeCone extends Module {
 		});
 	}
 
-	@Override
-	public double getManaMultiplier() {
-		return 2;
-	}
-
-	@Override
-	public double getBurnoutMultiplier() {
-		return 2;
-	}
-
 	@Nonnull
 	@Override
 	public Module copy() {
 		return cloneModule(new ModuleShapeCone());
-	}
-
-	@Override
-	public int getCooldownTime() {
-		return 20;
-	}
-
-	@Override
-	public int getChargeUpTime() {
-		return 5;
 	}
 }

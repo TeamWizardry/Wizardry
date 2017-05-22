@@ -1,0 +1,149 @@
+{
+  "shapes": [
+    {
+      "id": "shape_beam",
+      "mana_drain": 5.0,
+      "burnout_fill": 5.0,
+      "mana_drain_multiplier": 0.1,
+      "burnout_fill_multiplier": 0.1,
+      "item": "wizardry:unicorn_horn"
+    },
+    {
+      "id": "shape_touch",
+      "mana_drain": 100.0,
+      "burnout_fill": 50.0,
+      "item": "minecraft:beef",
+      "cooldown_time": 10.0
+    },
+    {
+      "id": "shape_self",
+      "mana_drain": 100.0,
+      "burnout_fill": 50.0,
+      "item": "minecraft:diamond",
+      "cooldown_time": 10.0
+    },
+    {
+      "id": "shape_projectile",
+      "mana_drain": 200.0,
+      "burnout_fill": 300.0,
+      "item": "minecraft:nether_wart",
+      "cooldown_time": 10
+    },
+    {
+      "id": "shape_cone",
+      "mana_drain": 300.0,
+      "burnout_fill": 200.0,
+      "item": "minecraft:gun_powder",
+      "cooldown_time": 20,
+      "chargeup_time": 5
+    }
+  ],
+  "effects": [
+    {
+      "id": "effect_anti_gravity_well",
+      "mana_drain": 1000.0,
+      "burnout_fill": 1000.0,
+      "item": "minecraft:magma_cream",
+      "primary_color": "FF0000",
+      "secondary_color": "FFA500"
+    },
+    {
+      "id": "effect_gravity_well",
+      "mana_drain": 1000.0,
+      "burnout_fill": 1000.0,
+      "item": "minecraft:slime_ball",
+      "primary_color": "0000FF",
+      "secondary_color": "00FFFF"
+    },
+    {
+      "id": "effect_burn",
+      "mana_drain": 200.0,
+      "burnout_fill": 100.0,
+      "item": "minecraft:blaze_powder",
+      "primary_color": "FF3C00",
+      "secondary_color": "A10000"
+    },
+    {
+      "id": "effect_disarm",
+      "mana_drain": 400.0,
+      "burnout_fill": 300.0,
+      "item": "minecraft:blaze_rod",
+      "primary_color": "FFFF00",
+      "secondary_color": "FF0000"
+    },
+    {
+      "id": "effect_fling",
+      "mana_drain": 300.0,
+      "burnout_fill": 200.0,
+      "item": "minecraft:chorus_fruit_popped",
+      "primary_color": "FF00FF",
+      "secondary_color": "FFFF00"
+    },
+    {
+      "id": "effect_leap",
+      "mana_drain": 50.0,
+      "burnout_fill": 20.0,
+      "item": "minecraft:rabbit_foot",
+      "primary_color": "FFFF00",
+      "secondary_color": "FFFFFF"
+    },
+    {
+      "id": "effect_phase",
+      "mana_drain": 200.0,
+      "burnout_fill": 300.0,
+      "item": "minecraft:ender_pearl",
+      "primary_color": "800080",
+      "secondary_color": "FF00FF",
+      "cooldown_time": 10
+    },
+    {
+      "id": "effect_substitution",
+      "mana_drain": 200.0,
+      "burnout_fill": 100.0,
+      "item": "minecraft:ender_eye",
+      "primary_color": "FF00FF",
+      "secondary_color": "00FFFF"
+    },
+    {
+      "id": "effect_thrive",
+      "mana_drain": 100.0,
+      "burnout_fill": 400.0,
+      "item": "minecraft:bone",
+      "primary_color": "FF0000"
+    }
+  ],
+  "events": [
+    {
+      "id": "event_along_path",
+      "mana_drain": 5.0,
+      "burnout_fill": 5.0,
+      "item": "minecraft:arrow"
+    },
+    {
+      "id": "event_collide_block",
+      "mana_drain": 10.0,
+      "burnout_fill": 5.0,
+      "item": "minecraft:coal"
+    },
+    {
+      "id": "event_collide_entity",
+      "mana_drain": 10.0,
+      "burnout_fill": 5.0,
+      "item": "minecraft:apple"
+    }
+  ],
+  "modifiers": [
+    {
+      "id": "modifier_extend",
+      "mana_drain": 50.0,
+      "burnout_fill": 50.0,
+      "item": "minecraft:prismarine_crystals"
+    },
+    {
+      "id": "modifier_exception",
+      "mana_drain": 5.0,
+      "burnout_fill": 5.0,
+      "item": "minecraft:syringe_blood"
+    }
+  ]
+}

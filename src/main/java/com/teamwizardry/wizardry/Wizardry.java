@@ -1,9 +1,8 @@
 package com.teamwizardry.wizardry;
 
-import com.teamwizardry.librarianlib.core.LibrarianLog;
 import com.teamwizardry.librarianlib.features.base.ModCreativeTab;
-import com.teamwizardry.wizardry.common.core.CommonProxy;
 import com.teamwizardry.wizardry.init.ModItems;
+import com.teamwizardry.wizardry.proxy.CommonProxy;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -27,8 +26,8 @@ public class Wizardry {
 	public static final String MODID = "wizardry";
 	public static final String MODNAME = "Wizardry";
 	public static final String VERSION = "1.0";
-	public static final String CLIENT = "com.teamwizardry.wizardry.client.core.ClientProxy";
-	public static final String SERVER = "com.teamwizardry.wizardry.common.core.CommonProxy";
+	public static final String CLIENT = "com.teamwizardry.wizardry.proxy.ClientProxy";
+	public static final String SERVER = "com.teamwizardry.wizardry.proxy.ServerProxy";
 	public static PacketLoggingHandler packetHandler;
 	public static Logger logger;
 	public static DimensionType underWorld;
@@ -58,7 +57,9 @@ public class Wizardry {
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
-		LibrarianLog.INSTANCE.info("o͡͡͡╮༼ ಠДಠ ༽╭o͡͡͡━☆ﾟ.*･｡ﾟ IT'S LEVI-OH-SA, NOT LEVIOSAA");
+		logger = event.getModLog();
+
+		Wizardry.logger.info("o͡͡͡╮༼ ಠДಠ ༽╭o͡͡͡━☆ﾟ.*･｡ﾟ IT'S LEVI-OH-SA, NOT LEVIOSAA");
 
 		logger = event.getModLog();
 

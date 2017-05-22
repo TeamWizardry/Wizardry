@@ -16,7 +16,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTUtil;
@@ -25,10 +24,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.awt.*;
 import java.util.HashSet;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -41,12 +39,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 public class ModuleEffectSubstitution extends Module {
 
 	public ModuleEffectSubstitution() {
-	}
-
-	@Nonnull
-	@Override
-	public ItemStack getRequiredStack() {
-		return new ItemStack(Items.ENDER_EYE);
+		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	@Nonnull
@@ -71,28 +64,6 @@ public class ModuleEffectSubstitution extends Module {
 	@Override
 	public String getDescription() {
 		return "Will swap the caster's position with that of the target. Also applies to blocks from the caster's inventory on the target block";
-	}
-
-	@Override
-	public double getManaDrain() {
-		return 200;
-	}
-
-	@Override
-	public double getBurnoutFill() {
-		return 100;
-	}
-
-	@Nullable
-	@Override
-	public Color getPrimaryColor() {
-		return Color.MAGENTA;
-	}
-
-	@Nullable
-	@Override
-	public Color getSecondaryColor() {
-		return Color.CYAN;
 	}
 
 	@Override

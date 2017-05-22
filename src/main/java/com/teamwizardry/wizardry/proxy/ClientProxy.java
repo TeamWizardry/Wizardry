@@ -1,18 +1,19 @@
-package com.teamwizardry.wizardry.client.core;
+package com.teamwizardry.wizardry.proxy;
 
 import com.teamwizardry.librarianlib.features.utilities.client.CustomBlockMapSprites;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.client.core.CapeHandler;
+import com.teamwizardry.wizardry.client.core.HudEventHandler;
+import com.teamwizardry.wizardry.client.core.WizardryClientMethodHandles;
 import com.teamwizardry.wizardry.client.fx.Shaders;
 import com.teamwizardry.wizardry.client.render.BloodRenderLayer;
 import com.teamwizardry.wizardry.client.render.block.TilePearlHolderRenderer;
 import com.teamwizardry.wizardry.client.render.glow.GlowingItemEventHandler;
 import com.teamwizardry.wizardry.client.render.glow.GlowingItemRenderLayer;
-import com.teamwizardry.wizardry.common.core.CommonProxy;
 import com.teamwizardry.wizardry.common.tile.TilePearlHolder;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModEntities;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourceManager;
@@ -78,11 +79,6 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 		super.postInit(event);
 		if (Minecraft.getMinecraft().getResourceManager() instanceof IReloadableResourceManager)
 			((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(this);
-	}
-
-	@Override
-	public void openGUI(Object gui) {
-		Minecraft.getMinecraft().displayGuiScreen((GuiScreen) gui);
 	}
 
 	@Override

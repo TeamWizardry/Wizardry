@@ -118,7 +118,7 @@ public class ItemStaff extends ItemMod implements INacreColorable {
 	@Override
 	public EnumAction getItemUseAction(ItemStack stack) {
 		for (Module module : SpellStack.getAllModules(stack))
-			if (module instanceof IContinousSpell || module.getChargeUpTime() > 0)
+			if (module instanceof IContinousSpell || module.getChargeupTime() > 0)
 				return EnumAction.BOW;
 		return EnumAction.NONE;
 	}
@@ -128,7 +128,7 @@ public class ItemStaff extends ItemMod implements INacreColorable {
 		int maxChargeUp = 0;
 		for (Module module : SpellStack.getAllModules(stack)) {
 			if (module instanceof IContinousSpell) return 72000;
-			if (module.getChargeUpTime() > maxChargeUp) maxChargeUp = module.getChargeUpTime();
+			if (module.getChargeupTime() > maxChargeUp) maxChargeUp = module.getChargeupTime();
 		}
 
 		return maxChargeUp;

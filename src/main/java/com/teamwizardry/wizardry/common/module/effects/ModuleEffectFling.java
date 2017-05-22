@@ -5,13 +5,9 @@ import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import net.minecraft.entity.Entity;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.awt.*;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.TARGET_HIT;
@@ -21,18 +17,6 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.TARGET_H
  */
 @RegisterModule
 public class ModuleEffectFling extends Module {
-
-	@Nullable
-	@Override
-	public Color getPrimaryColor() {
-		return Color.MAGENTA;
-	}
-
-	@Nonnull
-	@Override
-	public ItemStack getRequiredStack() {
-		return new ItemStack(Items.CHORUS_FRUIT_POPPED);
-	}
 
 	@Nonnull
 	@Override
@@ -56,16 +40,6 @@ public class ModuleEffectFling extends Module {
 	@Override
 	public String getDescription() {
 		return "Will send the caster flying to the target location";
-	}
-
-	@Override
-	public double getManaDrain() {
-		return 1000;
-	}
-
-	@Override
-	public double getBurnoutFill() {
-		return 500;
 	}
 
 	@Override

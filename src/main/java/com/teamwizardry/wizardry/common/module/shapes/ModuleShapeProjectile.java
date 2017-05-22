@@ -7,8 +7,6 @@ import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.common.entity.EntitySpellProjectile;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -26,24 +24,8 @@ public class ModuleShapeProjectile extends Module {
 
 	@Nonnull
 	@Override
-	public ItemStack getRequiredStack() {
-		return new ItemStack(Items.NETHER_WART);
-	}
-
-	@Nonnull
-	@Override
 	public ModuleType getModuleType() {
 		return ModuleType.SHAPE;
-	}
-
-	@Override
-	public double getManaDrain() {
-		return 200;
-	}
-
-	@Override
-	public double getBurnoutFill() {
-		return 300;
 	}
 
 	@Nonnull
@@ -91,11 +73,6 @@ public class ModuleShapeProjectile extends Module {
 	@Override
 	public void runClient(@Nonnull SpellData spell) {
 
-	}
-
-	@Override
-	public int getCooldownTime() {
-		return 20;
 	}
 
 	@Nonnull
