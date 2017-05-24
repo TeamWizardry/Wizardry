@@ -57,6 +57,9 @@ public class ModuleEffectThrive extends Module {
 			double strength = 0.3;
 			if (attributes.hasKey(Attributes.EXTEND))
 				strength += Math.min(20.0 / 10.0, attributes.getDouble(Attributes.EXTEND) / 10.0);
+
+			if (!processCost(strength, spell)) return false;
+
 			strength *= calcBurnoutPercent(caster);
 
 			((EntityLivingBase) targetEntity).setHealth((float) (((EntityLivingBase) targetEntity).getHealth() + strength));

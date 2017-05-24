@@ -1,11 +1,10 @@
 package com.teamwizardry.wizardry.common.tile;
 
 import com.teamwizardry.librarianlib.features.autoregister.TileRegister;
-import com.teamwizardry.librarianlib.features.base.block.TileMod;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.block.IManaSink;
+import com.teamwizardry.wizardry.api.block.TileManaSink;
 import com.teamwizardry.wizardry.api.item.EnumPearlType;
 import com.teamwizardry.wizardry.api.item.IInfusable;
 import com.teamwizardry.wizardry.api.render.ClusterObject;
@@ -18,7 +17,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ITickable;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
@@ -37,7 +35,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * Created by Saad on 6/10/2016.
  */
 @TileRegister("crafting_plate")
-public class TileCraftingPlate extends TileMod implements ITickable, IManaSink {
+public class TileCraftingPlate extends TileManaSink {
 
 	@Save
 	public int craftingTime = 300;
@@ -80,6 +78,7 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink {
 
 	@Override
 	public void update() {
+		super.update();
 		if (world.isRemote) return;
 		if (tick < 360) tick += 10;
 		else tick = 0;
@@ -109,7 +108,7 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink {
 				// TODO. no
 				LibParticles.CRAFTING_ALTAR_PEARL_EXPLODE(world, new Vec3d(pos).addVector(0, 0.75, 0));
 
-				world.playSound(null, getPos(), ModSounds.EXPLOSION_BOOM, SoundCategory.BLOCKS, 1f, (float) ThreadLocalRandom.current().nextDouble(1, 1.5));
+				world.playSound(null, getPos(), ModSounds.BASS_BOOM, SoundCategory.BLOCKS, 1f, (float) ThreadLocalRandom.current().nextDouble(1, 1.5));
 
 				ItemStack stack = new ItemStack(ModItems.PEARL_NACRE);
 				ItemNBTHelper.setString(stack, "type", EnumPearlType.INFUSED.toString());

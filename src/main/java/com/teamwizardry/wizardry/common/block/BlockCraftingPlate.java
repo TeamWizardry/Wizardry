@@ -4,10 +4,9 @@ import com.teamwizardry.librarianlib.features.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.features.base.block.BlockModContainer;
 import com.teamwizardry.librarianlib.features.structure.Structure;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.block.IManaSink;
 import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.api.render.ClusterObject;
-import com.teamwizardry.wizardry.client.render.TileCraftingPlateRenderer;
+import com.teamwizardry.wizardry.client.render.block.TileCraftingPlateRenderer;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModStructures;
@@ -35,7 +34,7 @@ import javax.annotation.Nullable;
 /**
  * Created by Saad on 6/10/2016.
  */
-public class BlockCraftingPlate extends BlockModContainer implements IManaSink, IStructure {
+public class BlockCraftingPlate extends BlockModContainer implements IStructure {
 
 	public static final AxisAlignedBB AABB = new AxisAlignedBB(0.125, 0, 0.125, 0.875, 0.625, 0.875);
 

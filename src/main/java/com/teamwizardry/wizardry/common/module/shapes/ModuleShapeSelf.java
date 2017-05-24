@@ -47,6 +47,8 @@ public class ModuleShapeSelf extends Module {
 		spell.processEntity(caster, true);
 		spell.processEntity(caster, false);
 
+		if (!processCost(1, spell)) return false;
+
 		return runNextModule(spell);
 	}
 

@@ -2,15 +2,15 @@ package com.teamwizardry.wizardry.proxy;
 
 import com.teamwizardry.librarianlib.features.utilities.client.CustomBlockMapSprites;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.client.core.CapeHandler;
 import com.teamwizardry.wizardry.client.core.HudEventHandler;
 import com.teamwizardry.wizardry.client.core.WizardryClientMethodHandles;
 import com.teamwizardry.wizardry.client.fx.Shaders;
 import com.teamwizardry.wizardry.client.render.BloodRenderLayer;
-import com.teamwizardry.wizardry.client.render.block.TilePearlHolderRenderer;
 import com.teamwizardry.wizardry.client.render.glow.GlowingItemEventHandler;
 import com.teamwizardry.wizardry.client.render.glow.GlowingItemRenderLayer;
-import com.teamwizardry.wizardry.common.tile.TilePearlHolder;
+import com.teamwizardry.wizardry.common.core.version.VersionChecker;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModEntities;
 import net.minecraft.client.Minecraft;
@@ -21,7 +21,6 @@ import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -57,10 +56,6 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 	public void init(FMLInitializationEvent event) {
 		super.init(event);
 
-		ClientRegistry.bindTileEntitySpecialRenderer(TilePearlHolder.class, new TilePearlHolderRenderer());
-
-		//Shaders.INSTANCE.getClass(); // ...
-		//MagicBurstFX.class.getName(); // ...
 		CapeHandler.INSTANCE.getClass(); // ...
 		OBJLoader.INSTANCE.addDomain(Wizardry.MODID);
 
@@ -72,6 +67,9 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 		render = skinMap.get("slim");
 		render.addLayer(new GlowingItemRenderLayer(render));
 		render.addLayer(new BloodRenderLayer(render));
+
+		if (ConfigValues.versionChecker)
+			VersionChecker.init();
 	}
 
 	@Override

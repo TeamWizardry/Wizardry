@@ -60,6 +60,8 @@ public class ModuleShapeProjectile extends Module {
 		float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - caster.rotationYaw));
 		Vec3d origin = new Vec3d(offX, caster.getEyeHeight() - 0.3, offZ).add(caster.getPositionVector());
 
+		if (!processCost(spell)) return false;
+
 		EntitySpellProjectile proj = new EntitySpellProjectile(world, this, spell);
 		proj.setPosition(origin.xCoord, origin.yCoord, origin.zCoord);
 		proj.velocityChanged = true;

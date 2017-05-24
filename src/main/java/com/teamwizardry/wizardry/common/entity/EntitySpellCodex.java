@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.common.entity;
 import com.teamwizardry.wizardry.common.fluid.FluidMana;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
-import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -20,8 +19,8 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class EntitySpellCodex extends Entity {
 
+	public int expiry;
 	private EntityItem book;
-	private int expiry;
 
 	public EntitySpellCodex(World worldIn) {
 		super(worldIn);
@@ -49,9 +48,6 @@ public class EntitySpellCodex extends Entity {
 			if (expiry > 0) {
 				expiry--;
 
-				LibParticles.BOOK_BEAM_NORMAL(world, getPositionVector());
-				LibParticles.BOOK_BEAM_HELIX(world, getPositionVector());
-
 				if ((expiry % 5) == 0)
 					world.playSound(null, posX, posY, posZ, ModSounds.FIZZING_LOOP, SoundCategory.AMBIENT, 0.7F, (ThreadLocalRandom.current().nextFloat() * 0.4F) + 0.8F);
 
@@ -67,8 +63,6 @@ public class EntitySpellCodex extends Entity {
 				world.removeEntity(this);
 
 				world.playSound(null, posX, posY, posZ, ModSounds.HARP1, SoundCategory.AMBIENT, 0.3F, 1.0F);
-
-				LibParticles.BOOK_LARGE_EXPLOSION(world, getPositionVector());
 				return;
 			}
 		} else {
@@ -90,9 +84,11 @@ public class EntitySpellCodex extends Entity {
 
 	@Override
 	protected void readEntityFromNBT(@Nonnull NBTTagCompound compound) {
+		expiry = compound.getInteger("expiry");
 	}
 
 	@Override
 	protected void writeEntityToNBT(@Nonnull NBTTagCompound compound) {
+		compound.setInteger("expiry", expiry);
 	}
 }

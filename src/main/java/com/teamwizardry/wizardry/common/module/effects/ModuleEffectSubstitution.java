@@ -76,6 +76,8 @@ public class ModuleEffectSubstitution extends Module {
 		if (caster == null) return false;
 
 		if (targetEntity != null && targetEntity instanceof EntityLivingBase) {
+			if (!processCost(spell)) return false;
+
 			Vec3d posTarget = targetEntity.getPositionVector(), posCaster = caster.getPositionVector();
 			float yawTarget = targetEntity.rotationYaw,
 					pitchTarget = targetEntity.rotationPitch,
@@ -102,6 +104,9 @@ public class ModuleEffectSubstitution extends Module {
 				int strength = 10;
 				if (attributes.hasKey(Attributes.EXTEND))
 					strength += Math.min(32, attributes.getDouble(Attributes.EXTEND));
+
+				if (!processCost(strength / 10.0, spell)) return false;
+
 				strength *= calcBurnoutPercent(caster);
 
 				ItemStack stackBlock = null;

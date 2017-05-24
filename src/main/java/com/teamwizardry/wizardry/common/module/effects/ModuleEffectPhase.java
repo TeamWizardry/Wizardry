@@ -60,6 +60,9 @@ public class ModuleEffectPhase extends Module {
 		int strength = 10;
 		if (attributes.hasKey(Attributes.EXTEND))
 			strength += Math.min(50, attributes.getDouble(Attributes.EXTEND));
+
+		if (!processCost(strength / 10.0, spell)) return false;
+
 		strength *= calcBurnoutPercent(caster);
 
 		if (caster != null && targetEntity != null) {

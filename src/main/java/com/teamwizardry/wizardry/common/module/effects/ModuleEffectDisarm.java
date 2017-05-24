@@ -53,6 +53,7 @@ public class ModuleEffectDisarm extends Module {
 
 		if (targetEntity instanceof EntityLivingBase) {
 			if (!spell.world.isRemote) {
+				if (!processCost(spell)) return false;
 
 				ItemStack held = ((EntityLivingBase) targetEntity).getHeldItemMainhand();
 				ItemStack stack = held.copy();

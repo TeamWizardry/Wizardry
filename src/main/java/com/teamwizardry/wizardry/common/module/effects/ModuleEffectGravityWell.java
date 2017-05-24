@@ -66,6 +66,8 @@ public class ModuleEffectGravityWell extends Module implements IlingeringModule 
 		if (attributes.hasKey(Attributes.EXTEND))
 			strength += attributes.getDouble(Attributes.EXTEND);
 
+		if (!processCost(strength / 100.0, spell)) return false;
+
 		for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(position)).expand(strength, strength, strength))) {
 			if (entity == null) continue;
 			double dist = entity.getPositionVector().distanceTo(position);

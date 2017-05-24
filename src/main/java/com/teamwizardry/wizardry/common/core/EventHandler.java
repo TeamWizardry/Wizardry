@@ -3,7 +3,9 @@ package com.teamwizardry.wizardry.common.core;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants.MISC;
-import com.teamwizardry.wizardry.api.WizardManager;
+import com.teamwizardry.wizardry.api.capability.WizardManager;
+import com.teamwizardry.wizardry.api.spell.IContinousSpell;
+import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.SpellCastEvent;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.util.PosUtils;
@@ -12,8 +14,6 @@ import com.teamwizardry.wizardry.common.achievement.Achievements;
 import com.teamwizardry.wizardry.common.entity.EntityDevilDust;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.common.entity.EntitySpellCodex;
-import com.teamwizardry.wizardry.common.tile.TilePearlHolder;
-import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.entity.Entity;
@@ -33,7 +33,6 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
-import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
@@ -71,14 +70,6 @@ public class EventHandler {
 				event.getWorld().spawnEntity(new EntityDevilDust(event.getWorld(), item));
 			else if (item.getEntityItem().getItem() == Items.BOOK)
 				event.getWorld().spawnEntity(new EntitySpellCodex(event.getWorld(), item));
-		}
-	}
-
-	@SubscribeEvent
-	public void onBlockBreak(BreakEvent event) {
-		if (event.getWorld().getBlockState(event.getPos()).getBlock() == ModBlocks.PEARL_HOLDER) {
-			TilePearlHolder pedestal = (TilePearlHolder) event.getWorld().getTileEntity(event.getPos());
-			//for (pedestal.getLinkedPedestals())
 		}
 	}
 
@@ -148,21 +139,22 @@ public class EventHandler {
 
 	@SubscribeEvent
 	public void capTick(TickEvent.PlayerTickEvent event) {
-		WizardManager.addMana(WizardManager.getMaxMana(event.player) / 1000, event.player);
-		WizardManager.removeBurnout(WizardManager.getMaxBurnout(event.player) / 1000, event.player);
+		WizardManager manager = new WizardManager(event.player);
+		manager.addMana(manager.getMaxMana() / 1000);
+		manager.removeBurnout(manager.getMaxBurnout() / 1000);
 
 		ItemStack cape = event.player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
 		if (cape.isEmpty() || cape.getItem() != ModItems.CAPE) {
-			if (WizardManager.getMaxMana(event.player) != 100)
-				WizardManager.setMaxMana(100, event.player);
-			if (WizardManager.getMaxBurnout(event.player) != 100)
-				WizardManager.setMaxBurnout(100, event.player);
+			if (manager.getMaxMana() != 100)
+				manager.setMaxMana(100);
+			if (manager.getMaxBurnout() != 100)
+				manager.setMaxBurnout(100);
 
 		} else if (cape.getItem() == ModItems.CAPE) {
 			double x = ItemNBTHelper.getInt(cape, "time", 0) / 1000.0;
 			double buffer = (1 - (Math.exp(-x))) * 3 * 1000;
-			WizardManager.setMaxMana(buffer, event.player);
-			WizardManager.setMaxBurnout(buffer, event.player);
+			manager.setMaxMana(buffer);
+			manager.setMaxBurnout(buffer);
 		}
 //		Minecraft.getMinecraft().player.sendChatMessage(WizardManager.getMaxMana(event.player) + "");
 	}
@@ -170,10 +162,16 @@ public class EventHandler {
 	@SubscribeEvent
 	public void fairyAmbush(SpellCastEvent event) {
 		Entity caster = event.spell.getData(SpellData.DefaultKeys.CASTER);
+		int chance = 5;
+		for (Module module : event.module.getAllChildModules())
+			if (module instanceof IContinousSpell) {
+				chance = 100;
+				break;
+			}
 		if (caster != null) {
 			List<EntityFairy> fairyList = event.spell.world.getEntitiesWithinAABB(EntityFairy.class, new AxisAlignedBB(caster.getPosition()).expand(64, 64, 64));
 			for (EntityFairy fairy : fairyList) {
-				if (ThreadLocalRandom.current().nextInt(5) == 0) fairy.ambush = true;
+				if (ThreadLocalRandom.current().nextInt(chance) == 0) fairy.ambush = true;
 			}
 		}
 	}

@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.common.block;
 import com.teamwizardry.librarianlib.features.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.features.base.block.BlockModContainer;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.block.IManaSink;
 import com.teamwizardry.wizardry.client.render.block.TilePearlHolderRenderer;
 import com.teamwizardry.wizardry.common.tile.TilePearlHolder;
 import com.teamwizardry.wizardry.init.ModItems;
@@ -27,7 +26,7 @@ import javax.annotation.Nullable;
 /**
  * Created by Saad on 5/7/2016.
  */
-public class BlockPearlHolder extends BlockModContainer implements IManaSink {
+public class BlockPearlHolder extends BlockModContainer {
 
 	public BlockPearlHolder() {
 		super("pearl_holder", Material.WOOD);

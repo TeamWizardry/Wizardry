@@ -1,7 +1,10 @@
 package com.teamwizardry.wizardry.api.capability;
 
+import com.teamwizardry.librarianlib.features.saving.Savable;
+import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.wizardry.common.network.MessageUpdateCapabilities;
 import com.teamwizardry.wizardry.common.network.WizardryPacketHandler;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -11,9 +14,12 @@ import javax.annotation.Nullable;
 /**
  * Created by Saad on 8/16/2016.
  */
+@Savable
 public class DefaultWizardryCapability implements IWizardryCapability {
 
+	@Save
 	double mana = 0, maxMana = 100, burnout = 100, maxBurnout = 100;
+	@Save
 	EnumBloodType bloodType;
 
 	@Override
@@ -22,7 +28,7 @@ public class DefaultWizardryCapability implements IWizardryCapability {
 	}
 
 	@Override
-	public void setMana(double mana, EntityPlayer player) {
+	public void setMana(double mana) {
 		this.mana = mana;
 		if (mana < 0) {
 			this.mana = 0;
@@ -30,7 +36,6 @@ public class DefaultWizardryCapability implements IWizardryCapability {
 		if (mana > maxMana) {
 			this.mana = maxMana;
 		}
-		dataChanged(player);
 	}
 
 	@Override
@@ -39,9 +44,8 @@ public class DefaultWizardryCapability implements IWizardryCapability {
 	}
 
 	@Override
-	public void setMaxMana(double maxMana, EntityPlayer player) {
+	public void setMaxMana(double maxMana) {
 		this.maxMana = maxMana;
-		dataChanged(player);
 	}
 
 	@Override
@@ -50,7 +54,7 @@ public class DefaultWizardryCapability implements IWizardryCapability {
 	}
 
 	@Override
-	public void setBurnout(double burnout, EntityPlayer player) {
+	public void setBurnout(double burnout) {
 		this.burnout = burnout;
 		if (burnout < 0) {
 			this.burnout = 0;
@@ -58,7 +62,6 @@ public class DefaultWizardryCapability implements IWizardryCapability {
 		if (burnout > maxBurnout) {
 			this.burnout = maxBurnout;
 		}
-		dataChanged(player);
 	}
 
 	@Override
@@ -67,9 +70,8 @@ public class DefaultWizardryCapability implements IWizardryCapability {
 	}
 
 	@Override
-	public void setMaxBurnout(double maxBurnout, EntityPlayer player) {
+	public void setMaxBurnout(double maxBurnout) {
 		this.maxBurnout = maxBurnout;
-		dataChanged(player);
 	}
 
 	@Override
@@ -79,9 +81,8 @@ public class DefaultWizardryCapability implements IWizardryCapability {
 	}
 
 	@Override
-	public void setBloodType(@Nullable EnumBloodType bloodType, EntityPlayer player) {
+	public void setBloodType(EnumBloodType bloodType) {
 		this.bloodType = bloodType;
-		dataChanged(player);
 	}
 
 	@Override
@@ -95,8 +96,8 @@ public class DefaultWizardryCapability implements IWizardryCapability {
 	}
 
 	@Override
-	public void dataChanged(EntityPlayer player) {
-		if ((player != null) && !player.getEntityWorld().isRemote)
-			WizardryPacketHandler.INSTANCE.sendTo(new MessageUpdateCapabilities(saveNBTData()), (EntityPlayerMP) player);
+	public void dataChanged(Entity entity) {
+		if ((entity != null) && entity instanceof EntityPlayer && !entity.getEntityWorld().isRemote)
+			WizardryPacketHandler.INSTANCE.sendTo(new MessageUpdateCapabilities(saveNBTData()), (EntityPlayerMP) entity);
 	}
 }

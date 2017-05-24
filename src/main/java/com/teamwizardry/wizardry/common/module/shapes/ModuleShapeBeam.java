@@ -57,6 +57,8 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 		double range = 10;
 		if (attributes.hasKey(Attributes.EXTEND)) range += attributes.getDouble(Attributes.EXTEND);
 
+		if (!processCost(range / 100.0, spell)) return false;
+
 		int chance = 30;
 		if (attributes.hasKey(Attributes.EXTEND)) range = Math.min(1, chance - attributes.getDouble(Attributes.EXTEND));
 

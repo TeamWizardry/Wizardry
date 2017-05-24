@@ -78,6 +78,8 @@ public class ModuleShapeCone extends Module {
 			chance = (int) Math.min(3, chance + attributes.getDouble(Attributes.EXTEND));
 
 		for (int i = 0; i < range; i++) {
+			if (!processCost(range / 10.0, spell)) return false;
+
 			if (chance > 0 && ThreadLocalRandom.current().nextInt(chance) != 0) continue;
 
 			double angle = Math.min(8, range);

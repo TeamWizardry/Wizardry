@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.common.world;
 
-import com.teamwizardry.wizardry.api.Config;
+import com.teamwizardry.wizardry.api.ConfigValues;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
@@ -19,7 +19,7 @@ public class WorldGenManaLake {
 	}
 
 	public boolean generate(World worldIn, Random rand, BlockPos position) {
-		int chance = rand.nextInt(Config.manaPoolRarity);
+		int chance = rand.nextInt(ConfigValues.manaPoolRarity);
 		if (chance == 1) {
 			if (position.getY() <= 4) {
 				return false;

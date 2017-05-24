@@ -43,6 +43,7 @@ public class ModuleEventCollideBlock extends Module {
 	@Override
 	public boolean run(@Nonnull SpellData spell) {
 		BlockPos pos = spell.getData(BLOCK_HIT);
+		if (!processCost(spell)) return false;
 		return pos != null && nextModule != null && nextModule.run(spell);
 	}
 

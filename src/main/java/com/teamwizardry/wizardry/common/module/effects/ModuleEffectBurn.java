@@ -58,6 +58,9 @@ public class ModuleEffectBurn extends Module implements IContinousSpell {
 		int strength = 3;
 		if (attributes.hasKey(Attributes.EXTEND))
 			strength += Math.min(30, attributes.getDouble(Attributes.EXTEND));
+
+		if (!processCost(strength / 10.0, spell)) return false;
+
 		strength *= calcBurnoutPercent(caster);
 
 		if (targetEntity != null) targetEntity.setFire(strength);

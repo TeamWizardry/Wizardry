@@ -2,11 +2,7 @@ package com.teamwizardry.wizardry.api.spell;
 
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.WizardManager;
 import com.teamwizardry.wizardry.init.ModItems;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -94,7 +90,8 @@ public class SpellStack {
 		}
 
 		// PROCESS THEM
-		for (Module module : compiled) module.processModule();
+		for (Module module : compiled)
+			module.processcolor();
 	}
 
 	@Nonnull
@@ -112,19 +109,7 @@ public class SpellStack {
 	}
 
 	public static void runSpell(@Nonnull Module module, SpellData spell) {
-		Entity caster = spell.getData(SpellData.DefaultKeys.CASTER);
-
-		double finalManaDrain = module.finalManaDrain;
-		double finalBurnoutFill = module.finalBurnoutFill;
-
-		if (WizardManager.getMana((EntityLivingBase) caster) >= finalManaDrain)
-			module.castSpell(spell);
-
-		if (caster instanceof EntityPlayer && !((EntityPlayer) caster).isCreative()) {
-			WizardManager.removeMana((int) finalManaDrain, (EntityLivingBase) caster);
-			WizardManager.addBurnout((int) finalBurnoutFill, (EntityLivingBase) caster);
-		}
-
+		module.castSpell(spell);
 	}
 
 	public static void runSpell(@Nonnull ItemStack spellHolder, SpellData spell) {

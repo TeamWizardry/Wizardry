@@ -1,5 +1,7 @@
 package com.teamwizardry.wizardry.common.item;
 
+import baubles.api.BaubleType;
+import baubles.api.IBauble;
 import com.teamwizardry.librarianlib.features.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.features.base.item.ItemModArmor;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
@@ -26,7 +28,7 @@ import java.util.UUID;
 /**
  * Created by Saad on 8/30/2016.
  */
-public class ItemCape extends ItemModArmor {
+public class ItemCape extends ItemModArmor implements IBauble {
 
 	public ItemCape() {
 		super("cape", ArmorMaterial.LEATHER, EntityEquipmentSlot.CHEST);
@@ -115,5 +117,10 @@ public class ItemCape extends ItemModArmor {
 	@Override
 	public ModCreativeTab getCreativeTab() {
 		return Wizardry.tab;
+	}
+
+	@Override
+	public BaubleType getBaubleType(ItemStack itemStack) {
+		return BaubleType.BODY;
 	}
 }

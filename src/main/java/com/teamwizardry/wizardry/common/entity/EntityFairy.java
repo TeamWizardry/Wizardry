@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.common.entity;
 
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.saving.AbstractSaveHandler;
 import com.teamwizardry.wizardry.api.Constants.NBT;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.lib.LibParticles;
@@ -36,7 +37,6 @@ public class EntityFairy extends EntityFlying {
 	private Color color;
 	private boolean sad;
 	private int age;
-	private boolean isFlying = false;
 	private boolean changingCourse = false;
 	private int changeCourseTick = 0;
 	private float tickPitch = 0;
@@ -159,6 +159,7 @@ public class EntityFairy extends EntityFlying {
 				changeCourseTick = ThreadLocalRandom.current().nextInt(50);
 				tickPitch = (float) ThreadLocalRandom.current().nextDouble(-10, 10);
 				tickYaw = (float) ThreadLocalRandom.current().nextDouble(-10, 10);
+
 			}
 			if (changingCourse) {
 				if (changeCourseTick > 0) {
@@ -214,29 +215,13 @@ public class EntityFairy extends EntityFlying {
 	@Override
 	public void readEntityFromNBT(NBTTagCompound compound) {
 		super.readEntityFromNBT(compound);
-		color = new Color(compound.getInteger(NBT.COLOR));
-		sad = compound.getBoolean("sad");
-		age = compound.getInteger("age");
-		isFlying = compound.getBoolean("is_flying");
-		changingCourse = compound.getBoolean("changing_course");
-		ambush = compound.getBoolean("ambush");
-		changeCourseTick = compound.getInteger("changing_course_tick");
-		tickPitch = compound.getFloat("tick_pitch");
-		tickYaw = compound.getFloat("tick_yaw");
+		AbstractSaveHandler.readAutoNBT(this, compound.getCompoundTag("save"), true);
 	}
 
 	@Override
 	public void writeEntityToNBT(NBTTagCompound compound) {
 		super.writeEntityToNBT(compound);
-		compound.setInteger(NBT.COLOR, color.getRGB());
-		compound.setBoolean("sad", sad);
-		compound.setInteger("age", age);
-		compound.setBoolean("is_flying", isFlying);
-		compound.setBoolean("changing_course", changingCourse);
-		compound.setBoolean("ambush", ambush);
-		compound.setInteger("changing_course_tick", changeCourseTick);
-		compound.setFloat("tick_pitch", tickPitch);
-		compound.setFloat("tick_yaw", tickYaw);
+		compound.setTag("save", AbstractSaveHandler.writeAutoNBT(this, true));
 	}
 
 	public Color getColor() {

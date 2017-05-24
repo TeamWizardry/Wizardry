@@ -266,7 +266,7 @@ public class CapeHandler {
 
 		float partialTicks = ClientTickHandler.getPartialTicks();
 
-//		models.put(event.getEntity(), ImmutableList.of());//getBoxes(event.getEntity().getPositionVector(), event.getRenderer().getMainModel(), event.getEntity().renderYawOffset));
+//		models.put(event.getCap(), ImmutableList.of());//getBoxes(event.getCap().getPositionVector(), event.getRenderer().getMainModel(), event.getCap().renderYawOffset));
 
 		if (!cloths.containsKey(event.getEntity())) {
 			Vec3d[] shoulderPoints = new Vec3d[basePoints.length];

@@ -22,7 +22,6 @@ public class RenderFairy extends RenderLiving<EntityFairy> {
 		return false;
 	}
 
-	@Nonnull
 	@Override
 	protected ResourceLocation getEntityTexture(@Nonnull EntityFairy entity) {
 		return null;
@@ -30,5 +29,8 @@ public class RenderFairy extends RenderLiving<EntityFairy> {
 
 	@Override
 	public void doRender(@Nonnull EntityFairy entity, double x, double y, double z, float entityYaw, float partialTicks) {
+		super.doRender(entity, x, y, z, entityYaw, partialTicks);
+
+
 	}
 }

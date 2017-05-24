@@ -4,8 +4,6 @@
       "id": "shape_beam",
       "mana_drain": 5.0,
       "burnout_fill": 5.0,
-      "mana_drain_multiplier": 0.1,
-      "burnout_fill_multiplier": 0.1,
       "item": "wizardry:unicorn_horn"
     },
     {

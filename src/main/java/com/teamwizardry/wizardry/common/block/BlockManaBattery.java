@@ -4,7 +4,6 @@ import com.teamwizardry.librarianlib.features.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.features.base.block.BlockModContainer;
 import com.teamwizardry.librarianlib.features.structure.Structure;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.block.IManaSink;
 import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.client.render.block.TileManaBatteryRenderer;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
@@ -27,7 +26,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class BlockManaBattery extends BlockModContainer implements IManaSink, IStructure {
+public class BlockManaBattery extends BlockModContainer implements IStructure {
 
 	public BlockManaBattery() {
 		super("mana_battery", Material.GROUND);

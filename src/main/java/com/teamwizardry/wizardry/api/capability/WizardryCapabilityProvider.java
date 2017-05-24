@@ -1,13 +1,17 @@
 package com.teamwizardry.wizardry.api.capability;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.INBTSerializable;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -27,17 +31,26 @@ public class WizardryCapabilityProvider implements ICapabilityProvider, INBTSeri
 		this.capability = capability;
 	}
 
-	public static IWizardryCapability get(EntityPlayer player) {
-		return ((player != null) && player.hasCapability(wizardryCapability, null)) ? player.getCapability(wizardryCapability, null) : null;
+	@Nullable
+	public static IWizardryCapability getCap(Entity entity) {
+		return entity.getCapability(wizardryCapability, null);
+	}
+
+	@Nullable
+	public static IWizardryCapability getCap(World world, BlockPos pos, EnumFacing facing) {
+		if (!world.isBlockLoaded(pos)) return null;
+		TileEntity tile = world.getTileEntity(pos);
+		if (tile == null) return null;
+		return tile.getCapability(wizardryCapability, facing);
 	}
 
 	@Override
-	public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+	public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
 		return capability == wizardryCapability;
 	}
 
 	@Override
-	public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+	public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
 		if ((wizardryCapability != null) && (capability == wizardryCapability)) return (T) this.capability;
 		return null;
 	}

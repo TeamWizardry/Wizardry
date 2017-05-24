@@ -82,24 +82,44 @@ public class TilePearlHolderRenderer extends TileEntitySpecialRenderer<TilePearl
 			GlStateManager.disableRescaleNormal();
 
 			float sin = (float) Math.sin((te.getWorld().getTotalWorldTime() + partialTicks) / 10.0);
-
-			Vec3d direction = Vec3d.ZERO;
 			boolean magnetFound = false;
-			for (int i = -4; i < 4; i++)
-				for (int j = -4; j < 4; j++)
-					for (int k = -4; k < 4; k++) {
-						BlockPos pos = new BlockPos(te.getPos().getX() + i, te.getPos().getY() + j, te.getPos().getZ() + k);
-						if (te.getWorld().getBlockState(pos).getBlock() != ModBlocks.MANA_MAGNET) continue;
-						direction = new Vec3d(te.getPos()).subtract(new Vec3d(pos)).normalize();
-						magnetFound = true;
-						break;
-					}
 
 			if (isPearl) {
-				GlStateManager.translate(0.5, 0.5, 0.5);
-				GlStateManager.translate(sin * direction.xCoord / 8.0, sin * direction.yCoord / 8.0, sin * direction.zCoord / 8.0);
-				GlStateManager.translate(-direction.xCoord / 3.0, -direction.yCoord / 3.0, -direction.zCoord / 3.0);
-				GlStateManager.translate(-0.5, -0.5, -0.5);
+				Vec3d direction = Vec3d.ZERO;
+				for (int i = -4; i < 4; i++)
+					for (int j = -4; j < 4; j++)
+						for (int k = -4; k < 4; k++) {
+							BlockPos pos = new BlockPos(te.getPos().getX() + i, te.getPos().getY() + j, te.getPos().getZ() + k);
+							if (te.getWorld().getBlockState(pos).getBlock() != ModBlocks.MANA_MAGNET) continue;
+							direction = new Vec3d(te.getPos()).subtract(new Vec3d(pos)).normalize();
+							magnetFound = true;
+							break;
+						}
+
+				if (magnetFound) {
+					GlStateManager.translate(0.5, 0.5, 0.5);
+					GlStateManager.translate(sin * direction.xCoord / 8.0, sin * direction.yCoord / 8.0, sin * direction.zCoord / 8.0);
+					GlStateManager.translate(-direction.xCoord / 3.0, -direction.yCoord / 3.0, -direction.zCoord / 3.0);
+					GlStateManager.translate(-0.5, -0.5, -0.5);
+				}
+			} else {
+				Vec3d directionBattery = Vec3d.ZERO;
+				boolean batteryFound = false;
+				for (int i = -6; i < 6; i++)
+					for (int j = -6; j < 6; j++)
+						for (int k = -6; k < 6; k++) {
+							BlockPos pos = new BlockPos(te.getPos().getX() + i, te.getPos().getY() + j, te.getPos().getZ() + k);
+							if (te.getWorld().getBlockState(pos).getBlock() != ModBlocks.MANA_BATTERY) continue;
+							directionBattery = new Vec3d(te.getPos()).subtract(new Vec3d(pos)).normalize();
+							batteryFound = true;
+							break;
+						}
+				if (batteryFound) {
+					GlStateManager.translate(0.5, 0.5, 0.5);
+					GlStateManager.translate(sin * directionBattery.xCoord / 8.0, sin * directionBattery.yCoord / 8.0, sin * directionBattery.zCoord / 8.0);
+					GlStateManager.translate(-directionBattery.xCoord / 3.0, -directionBattery.yCoord / 3.0, -directionBattery.zCoord / 3.0);
+					GlStateManager.translate(-0.5, -0.5, -0.5);
+				}
 			}
 
 			if (!isPearl || !magnetFound)

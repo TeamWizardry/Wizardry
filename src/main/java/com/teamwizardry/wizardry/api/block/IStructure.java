@@ -24,6 +24,7 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Created by LordSaad.
  */
+// TODO: a mess of bad sides
 public interface IStructure {
 
 	Structure getStructure();
@@ -106,7 +107,7 @@ public interface IStructure {
 	default boolean renderBoundries(World world, BlockPos pos) {
 		EntityPlayer player = Minecraft.getMinecraft().player;
 		if (player.getDistanceSqToCenter(pos) <= 500)
-			if (player.getHeldItemMainhand() != null && player.getHeldItemMainhand().getItem() == ModItems.MAGIC_WAND) {
+			if (!player.getHeldItemMainhand().isEmpty() && player.getHeldItemMainhand().getItem() == ModItems.MAGIC_WAND) {
 				for (BlockPos outline : getStructureBoundries())
 					if (ThreadLocalRandom.current().nextInt(80) == 0)
 						LibParticles.STRUCTURE_BOUNDS(world, new Vec3d(pos.add(outline)).addVector(0.5, 0.5, 0.5), Color.CYAN);

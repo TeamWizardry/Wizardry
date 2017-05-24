@@ -39,7 +39,7 @@ public class MessageUpdateCapabilities implements IMessage {
 		@Override
 		public IMessage onMessage(final MessageUpdateCapabilities message, final MessageContext ctx) {
 			IThreadListener mainThread = (ctx.side.isClient()) ? Minecraft.getMinecraft() : (IThreadListener) ctx.getServerHandler().playerEntity.world;
-			mainThread.addScheduledTask(() -> WizardryCapabilityProvider.get(Minecraft.getMinecraft().player).loadNBTData(message.tags));
+			mainThread.addScheduledTask(() -> WizardryCapabilityProvider.getCap(Minecraft.getMinecraft().player).loadNBTData(message.tags));
 			return null;
 		}
 	}

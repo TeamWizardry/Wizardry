@@ -1,5 +1,8 @@
 package com.teamwizardry.wizardry.api.spell;
 
+import com.teamwizardry.wizardry.api.capability.DefaultWizardryCapability;
+import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
+import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
 import kotlin.Pair;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.*;
@@ -71,6 +74,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			addData(DefaultKeys.CASTER, entity);
 			addData(DefaultKeys.YAW, entity.rotationYaw);
 			addData(DefaultKeys.PITCH, entity.rotationPitch);
+			addData(DefaultKeys.CAPABILITY, WizardryCapabilityProvider.getCap(entity));
 		} else {
 			addData(DefaultKeys.TARGET_HIT, entity.getPositionVector().addVector(entity.width / 2, entity.height / 2, entity.width / 2));
 			addData(DefaultKeys.ENTITY_HIT, entity);
@@ -224,6 +228,21 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			@Override
 			public EnumFacing deserialize(World world, NBTTagInt object) {
 				return EnumFacing.getFront(object.getInt());
+			}
+		});
+
+		@Nonnull
+		public static final Pair<String, Class<IWizardryCapability>> CAPABILITY = constructPair("capability", IWizardryCapability.class, new ProcessData.Process<NBTTagCompound, IWizardryCapability>() {
+			@Override
+			public NBTTagCompound serialize(IWizardryCapability object) {
+				return object.saveNBTData();
+			}
+
+			@Override
+			public IWizardryCapability deserialize(World world, NBTTagCompound object) {
+				DefaultWizardryCapability cap = new DefaultWizardryCapability();
+				cap.loadNBTData(object);
+				return cap;
 			}
 		});
 

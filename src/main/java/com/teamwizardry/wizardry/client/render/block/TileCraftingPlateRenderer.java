@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.client.render;
+package com.teamwizardry.wizardry.client.render.block;
 
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBezier3D;
@@ -45,7 +45,7 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
 			GlStateManager.rotate((cluster.tick) + ClientTickHandler.getPartialTicks(), 0, 1, 0);
 			Minecraft.getMinecraft().getRenderItem().renderItem(cluster.stack, TransformType.NONE);
 			GlStateManager.popMatrix();
-			//Minecraft.getMinecraft().player.sendChatMessage((luster.stack.hashCode()) / 100000000.0 + "");
+			//Minecraft.getMinecraft().player.sendChatMessage((cluster.stack.hashCode()) / 100000000.0 + "");
 		}
 
 		if (te.isCrafting && (te.output != null)) {

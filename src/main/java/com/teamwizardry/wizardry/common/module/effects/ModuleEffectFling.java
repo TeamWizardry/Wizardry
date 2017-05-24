@@ -48,6 +48,7 @@ public class ModuleEffectFling extends Module {
 		Vec3d to = spell.getData(TARGET_HIT);
 
 		if (targetEntity == null || to == null) return false;
+		if (!processCost(spell)) return false;
 
 		Vec3d from = targetEntity.getPositionVector();
 

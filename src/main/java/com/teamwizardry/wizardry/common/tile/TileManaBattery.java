@@ -3,8 +3,12 @@ package com.teamwizardry.wizardry.common.tile;
 import com.teamwizardry.librarianlib.features.autoregister.TileRegister;
 import com.teamwizardry.librarianlib.features.base.block.TileMod;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.saving.CapabilityProvide;
 import com.teamwizardry.librarianlib.features.saving.Save;
-import com.teamwizardry.wizardry.api.block.IManaSink;
+import com.teamwizardry.wizardry.api.block.IManaFaucet;
+import com.teamwizardry.wizardry.api.capability.DefaultWizardryCapability;
+import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
+import com.teamwizardry.wizardry.api.capability.WizardManager;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.common.fluid.FluidBlockMana;
 import com.teamwizardry.wizardry.init.ModBlocks;
@@ -21,12 +25,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 
-@TileRegister("mana_battery")
-public class TileManaBattery extends TileMod implements ITickable, IManaSink {
+import static net.minecraft.util.EnumFacing.*;
 
-	public int maxMana = 21000;
+@TileRegister("mana_battery")
+public class TileManaBattery extends TileMod implements ITickable, IManaFaucet {
+
 	@Save
-	public int currentMana;
+	@CapabilityProvide(sides = {DOWN, UP, NORTH, SOUTH, WEST, EAST})
+	public IWizardryCapability cap = new DefaultWizardryCapability();
 
 	@Nonnull
 	@SideOnly(Side.CLIENT)
@@ -44,7 +50,9 @@ public class TileManaBattery extends TileMod implements ITickable, IManaSink {
 					count++;
 
 		if (count < 21) return;
-		if (maxMana <= currentMana) return;
+
+		WizardManager manager = new WizardManager(cap);
+		if (manager.isManaFull()) return;
 
 		PosUtils.ManaBatteryPositions positions = new PosUtils.ManaBatteryPositions(world, pos);
 		ArrayList<BlockPos> poses = new ArrayList<>(positions.takenPoses);
@@ -55,7 +63,7 @@ public class TileManaBattery extends TileMod implements ITickable, IManaSink {
 				TilePearlHolder holder = (TilePearlHolder) world.getTileEntity(target);
 				if (holder != null && !holder.pearl.isEmpty() && holder.pearl.getItem() == ModItems.MANA_ORB && ItemNBTHelper.getInt(holder.pearl, "orb_tick", 0) >= 50000) {
 					holder.pearl = new ItemStack(ModItems.GLASS_ORB);
-					currentMana += 1000;
+					manager.addMana(manager.getMaxMana() / 1000.0);
 				}
 			}
 		}

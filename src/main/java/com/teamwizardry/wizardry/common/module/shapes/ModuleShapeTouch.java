@@ -47,6 +47,9 @@ public class ModuleShapeTouch extends Module {
 		spell.processEntity(caster, true);
 		spell.processEntity(caster, false);
 
+		if (!processCost(spell)) return false;
+
+
 		return runNextModule(spell);
 	}
 
