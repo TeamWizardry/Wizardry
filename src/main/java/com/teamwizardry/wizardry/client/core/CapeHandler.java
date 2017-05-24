@@ -14,7 +14,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -249,8 +248,7 @@ public class CapeHandler {
 	@SuppressWarnings({"rawtypes"})
 	@SubscribeEvent
 	public void drawPlayer(RenderLivingEvent.Post event) {
-		if (!((event.getEntity() instanceof EntityVillager) || (event.getEntity() instanceof EntityPlayer)))
-			return;
+		if (!(event.getEntity() instanceof EntityPlayer)) return;
 
 		if (event.getEntity() instanceof EntityPlayer) {
 			boolean match = false;

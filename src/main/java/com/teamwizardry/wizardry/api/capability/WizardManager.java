@@ -14,8 +14,10 @@ public final class WizardManager {
 
 	@Nullable
 	private IWizardryCapability cap;
+	private Entity entity;
 
 	public WizardManager(@Nullable Entity entity) {
+		this.entity = entity;
 		cap = WizardryCapabilityProvider.getCap(entity);
 	}
 
@@ -50,7 +52,7 @@ public final class WizardManager {
 
 	public void setMaxMana(double mana) {
 		if (cap == null) return;
-		cap.setMaxMana(mana);
+		cap.setMaxMana(mana, entity);
 		if (getMana() > mana) setMana(mana);
 	}
 
@@ -61,7 +63,7 @@ public final class WizardManager {
 
 	public void setMana(double mana) {
 		if (cap == null) return;
-		cap.setMana(Math.min(Math.max(0, mana), getMaxMana()));
+		cap.setMana(Math.min(Math.max(0, mana), getMaxMana()), entity);
 	}
 
 	public double getBurnout() {
@@ -70,9 +72,8 @@ public final class WizardManager {
 	}
 
 	public void setBurnout(double burnout) {
-
 		if (cap == null) return;
-		cap.setBurnout(Math.max(0, Math.min(burnout, getMaxBurnout())));
+		cap.setBurnout(Math.max(0, Math.min(burnout, getMaxBurnout())), entity);
 	}
 
 	public double getMaxBurnout() {
@@ -82,7 +83,7 @@ public final class WizardManager {
 
 	public void setMaxBurnout(double burnout) {
 		if (cap == null) return;
-		cap.setMaxBurnout(burnout);
+		cap.setMaxBurnout(burnout, entity);
 		if (getBurnout() > burnout) setBurnout(burnout);
 	}
 

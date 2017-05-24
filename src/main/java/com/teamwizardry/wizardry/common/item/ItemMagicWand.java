@@ -11,6 +11,7 @@ import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.api.block.TileManaSink;
 import com.teamwizardry.wizardry.api.item.GlowingOverlayHelper;
 import com.teamwizardry.wizardry.api.item.IGlowOverlayable;
+import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -23,6 +24,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.awt.*;
 
 public class ItemMagicWand extends ItemMod implements IGlowOverlayable {
 
@@ -36,6 +38,15 @@ public class ItemMagicWand extends ItemMod implements IGlowOverlayable {
 	@Override
 	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		ItemStack stack = player.getHeldItemMainhand();
+
+		if (player.isSneaking()) {
+			if (!worldIn.isRemote) {
+				EntityFairy fairy = new EntityFairy(worldIn, Color.RED, 10);
+				fairy.setPosition(player.posX, player.posY, player.posZ);
+				worldIn.spawnEntity(fairy);
+			}
+		}
+
 		TileEntity tile = worldIn.getTileEntity(pos);
 		if (tile == null || (!(tile instanceof TileManaSink) && !(tile instanceof IStructure) && !(tile instanceof IManaFaucet))) {
 			ItemNBTHelper.removeEntry(stack, "link_block");

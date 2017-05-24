@@ -195,7 +195,10 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	 * @return If the spell can continue or not.
 	 */
 	protected final boolean processCost(double multiplier, SpellData data) {
-		WizardManager manager = new WizardManager(data.getData(SpellData.DefaultKeys.CAPABILITY));
+		Entity caster = data.getData(SpellData.DefaultKeys.CASTER);
+		WizardManager manager;
+		if (caster == null) manager = new WizardManager(data.getData(SpellData.DefaultKeys.CAPABILITY));
+		else manager = new WizardManager(caster);
 
 		double manaDrain = getManaDrain() * multiplier;
 		double burnoutFill = getBurnoutFill() * multiplier;
@@ -205,7 +208,11 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 			manager.removeMana(manaDrain);
 			manager.addBurnout(burnoutFill);
 			return false;
-		} else return true;
+		} else {
+			manager.removeMana(manaDrain);
+			manager.addBurnout(burnoutFill);
+			return true;
+		}
 	}
 
 	/**

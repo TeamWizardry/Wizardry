@@ -20,6 +20,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -47,6 +48,7 @@ public class ItemJar extends ItemMod implements IItemColorProvider {
 		return 32;
 	}
 
+	@NotNull
 	@Override
 	public ItemStack onItemUseFinish(@Nonnull ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
 		stack.setCount(stack.getCount() - 1);
@@ -66,7 +68,7 @@ public class ItemJar extends ItemMod implements IItemColorProvider {
 		ItemStack stack = player.getHeldItem(hand);
 		if (stack.getItemDamage() == 2) {
 			player.setActiveHand(hand);
-			return new ActionResult(EnumActionResult.SUCCESS, stack);
+			return new ActionResult<>(EnumActionResult.SUCCESS, stack);
 		} else {
 			if (!world.isRemote) {
 				if (player.isSneaking() && (stack.getItemDamage() == 1)) {
@@ -74,13 +76,12 @@ public class ItemJar extends ItemMod implements IItemColorProvider {
 						ItemNBTHelper.setBoolean(stack, Constants.NBT.FAIRY_INSIDE, false);
 						EntityFairy entity = new EntityFairy(world, new Color(ItemNBTHelper.getInt(stack, Constants.NBT.FAIRY_COLOR, 0xFFFFFF)), ItemNBTHelper.getInt(stack, Constants.NBT.FAIRY_AGE, 0));
 						entity.setPosition(player.posX, player.posY, player.posZ);
-						entity.setSad(true);
 						world.spawnEntity(entity);
 						stack.setItemDamage(0);
 					}
 				}
 			}
-			return new ActionResult(EnumActionResult.FAIL, stack);
+			return new ActionResult<>(EnumActionResult.FAIL, stack);
 		}
 	}
 

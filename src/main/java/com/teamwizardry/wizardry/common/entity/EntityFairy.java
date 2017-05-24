@@ -1,12 +1,15 @@
 package com.teamwizardry.wizardry.common.entity;
 
+import com.teamwizardry.librarianlib.features.base.entity.FlyingEntityMod;
+import com.teamwizardry.librarianlib.features.base.entity.IModEntity;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.saving.AbstractSaveHandler;
 import com.teamwizardry.wizardry.api.Constants.NBT;
+import com.teamwizardry.wizardry.common.network.PacketParticleFairyExplode;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityFlying;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,6 +24,8 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -31,7 +36,7 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Created by Saad on 8/21/2016.
  */
-public class EntityFairy extends EntityFlying {
+public class EntityFairy extends FlyingEntityMod {
 
 	public boolean ambush = false;
 	private Color color;
@@ -50,6 +55,7 @@ public class EntityFairy extends EntityFlying {
 		color = new Color(ThreadLocalRandom.current().nextFloat(), ThreadLocalRandom.current().nextFloat(), ThreadLocalRandom.current().nextFloat());
 		color = color.brighter();
 		age = ThreadLocalRandom.current().nextInt(1, 100);
+		IModEntity.DefaultImpls.dispatchEntityToNearbyPlayers(this);
 	}
 
 	public EntityFairy(World worldIn, Color color, int age) {
@@ -59,6 +65,7 @@ public class EntityFairy extends EntityFlying {
 		experienceValue = 5;
 		this.color = color;
 		this.age = age;
+		IModEntity.DefaultImpls.dispatchEntityToNearbyPlayers(this);
 	}
 
 	@Override
@@ -90,9 +97,6 @@ public class EntityFairy extends EntityFlying {
 	public void onUpdate() {
 		super.onUpdate();
 		if (world.isRemote) return;
-
-		LibParticles.FAIRY_HEAD(world, getPositionVector().addVector(0, 0.25, 0), color);
-		LibParticles.FAIRY_TRAIL(world, getPositionVector().addVector(0, 0.25, 0), color, sad, new Random(getUniqueID().hashCode()).nextInt(150));
 
 		if (ambush) {
 			List<Entity> entities = world.getEntitiesInAABBexcluding(this, new AxisAlignedBB(getPosition()).expand(64, 64, 64), null);
@@ -159,7 +163,6 @@ public class EntityFairy extends EntityFlying {
 				changeCourseTick = ThreadLocalRandom.current().nextInt(50);
 				tickPitch = (float) ThreadLocalRandom.current().nextDouble(-10, 10);
 				tickYaw = (float) ThreadLocalRandom.current().nextDouble(-10, 10);
-
 			}
 			if (changingCourse) {
 				if (changeCourseTick > 0) {
@@ -190,11 +193,11 @@ public class EntityFairy extends EntityFlying {
 	}
 
 	@Override
-	public boolean attackEntityFrom(@Nonnull DamageSource source, float amount) {
-		super.attackEntityFrom(source, amount);
-		if (getHealth() < 0.1)
-			LibParticles.FAIRY_EXPLODE(world, getPositionVector().addVector(0, 0.25, 0), color);
-		return true;
+	public void onDeath(@NotNull DamageSource cause) {
+		super.onDeath(cause);
+		if (getHealth() <= 0)
+			PacketHandler.NETWORK.sendToAllAround(new PacketParticleFairyExplode(getPositionVector().addVector(0, 0.25, 0), color, color),
+					new NetworkRegistry.TargetPoint(world.provider.getDimension(), posX, posY, posZ, 512));
 	}
 
 	@Override

@@ -8,7 +8,6 @@ import com.teamwizardry.librarianlib.features.config.EasyConfigHandler;
 import com.teamwizardry.librarianlib.features.kotlin.JsonMaker;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.spell.ModuleRegistry;
 import com.teamwizardry.wizardry.client.gui.GuiHandler;
 import com.teamwizardry.wizardry.common.achievement.AchievementEvents;
@@ -45,8 +44,8 @@ public class CommonProxy {
 	public static File directory;
 
 	public void preInit(FMLPreInitializationEvent event) {
-		EasyConfigHandler.init();
 
+		int tempFix = 42;
 		directory = event.getModConfigurationDirectory();
 
 		ModSounds.init();
@@ -64,8 +63,8 @@ public class CommonProxy {
 
 		ModStructures.INSTANCE.getClass();
 
-		Wizardry.underWorld = DimensionType.register("underworld", "_dim", ConfigValues.underworldID, WorldProviderUnderWorld.class, false);
-		DimensionManager.registerDimension(ConfigValues.underworldID, Wizardry.underWorld);
+		Wizardry.underWorld = DimensionType.register("underworld", "_dim", tempFix, WorldProviderUnderWorld.class, false);
+		DimensionManager.registerDimension(tempFix, Wizardry.underWorld);
 
 		MinecraftForge.EVENT_BUS.register(new WorldProviderUnderWorld());
 		MinecraftForge.EVENT_BUS.register(new EventHandler());
@@ -80,6 +79,7 @@ public class CommonProxy {
 	}
 
 	public void init(FMLInitializationEvent event) {
+		EasyConfigHandler.init();
 		GameRegistry.registerWorldGenerator(new GenHandler(), 0);
 		ModRecipes.initCrafting();
 
