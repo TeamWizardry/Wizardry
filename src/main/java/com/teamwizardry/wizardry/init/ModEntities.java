@@ -44,5 +44,7 @@ public class ModEntities {
 		RenderingRegistry.registerEntityRenderingHandler(EntityUnicorn.class, manager -> new RenderUnicorn(manager, new ModelUnicorn()));
 		RenderingRegistry.registerEntityRenderingHandler(EntityJumpPad.class, manager -> new RenderJumpPad(manager, new ModelNull()));
 		RenderingRegistry.registerEntityRenderingHandler(EntitySpellProjectile.class, RenderSpellProjectile::new);
+		RenderingRegistry.registerEntityRenderingHandler(EntitySpellCodex.class, RenderSpellCodex::new);
+		RenderingRegistry.registerEntityRenderingHandler(EntityDevilDust.class, RenderDevilDust::new);
 	}
 }

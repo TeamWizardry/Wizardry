@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.common.module.modifiers;
 
 import com.teamwizardry.wizardry.api.spell.*;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -45,7 +46,7 @@ public class ModuleModifierException extends Module implements IModifier {
 	}
 
 	@Override
-	public void apply(Module module) {
+	public void apply(@NotNull Module module) {
 		// TODO
 	}
 

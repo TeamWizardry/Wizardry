@@ -38,7 +38,7 @@ public class EntityAIUnicornCharge extends EntityAIBase {
 	}
 
 	@Override
-	public boolean continueExecuting() {
+	public boolean shouldContinueExecuting() {
 		EntityLivingBase target = this.unicorn.getAttackTarget();
 		if (target == null || !target.isEntityAlive() || unicorn.getDistanceToEntity(target) >= maxRange * 1.5)
 			return false;

@@ -1,13 +1,8 @@
 package com.teamwizardry.wizardry.common.tile;
 
 import com.teamwizardry.librarianlib.features.autoregister.TileRegister;
-import com.teamwizardry.librarianlib.features.base.block.TileMod;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
-import com.teamwizardry.librarianlib.features.saving.CapabilityProvide;
-import com.teamwizardry.librarianlib.features.saving.Save;
-import com.teamwizardry.wizardry.api.block.IManaFaucet;
-import com.teamwizardry.wizardry.api.capability.DefaultWizardryCapability;
-import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
+import com.teamwizardry.wizardry.api.block.TileManaFaucet;
 import com.teamwizardry.wizardry.api.capability.WizardManager;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.common.fluid.FluidBlockMana;
@@ -25,14 +20,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 
-import static net.minecraft.util.EnumFacing.*;
-
 @TileRegister("mana_battery")
-public class TileManaBattery extends TileMod implements ITickable, IManaFaucet {
+public class TileManaBattery extends TileManaFaucet implements ITickable {
 
-	@Save
-	@CapabilityProvide(sides = {DOWN, UP, NORTH, SOUTH, WEST, EAST})
-	public IWizardryCapability cap = new DefaultWizardryCapability();
+	public TileManaBattery() {
+		super(100000, 100000);
+	}
 
 	@Nonnull
 	@SideOnly(Side.CLIENT)
@@ -61,9 +54,13 @@ public class TileManaBattery extends TileMod implements ITickable, IManaFaucet {
 			IBlockState state = world.getBlockState(target);
 			if (state.getBlock() == ModBlocks.PEARL_HOLDER) {
 				TilePearlHolder holder = (TilePearlHolder) world.getTileEntity(target);
-				if (holder != null && !holder.pearl.isEmpty() && holder.pearl.getItem() == ModItems.MANA_ORB && ItemNBTHelper.getInt(holder.pearl, "orb_tick", 0) >= 50000) {
-					holder.pearl = new ItemStack(ModItems.GLASS_ORB);
-					manager.addMana(manager.getMaxMana() / 1000.0);
+				if (holder != null && !holder.pearl.isEmpty() && holder.pearl.getItem() == ModItems.MANA_ORB) {
+					if (ItemNBTHelper.getInt(holder.pearl, "orb_tick", 0) >= 50000) {
+						holder.pearl = new ItemStack(ModItems.GLASS_ORB);
+					} else {
+						ItemNBTHelper.setInt(holder.pearl, "orb_tick", ItemNBTHelper.getInt(holder.pearl, "orb_tick", 0) - 1);
+						if (!addMana(manager.getMaxMana() / 1000.0)) break;
+					}
 				}
 			}
 		}

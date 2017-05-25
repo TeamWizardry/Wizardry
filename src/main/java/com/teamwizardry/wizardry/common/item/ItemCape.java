@@ -45,7 +45,7 @@ public class ItemCape extends ItemModArmor implements IBauble {
 		if (!(ItemStack.areItemStacksEqual(stack, cape))) return;
 
 		int tick = ItemNBTHelper.getInt(stack, "tick", 0);
-		if (tick < 600) ItemNBTHelper.setInt(stack, "tick", tick + 1);
+		if (tick < 300) ItemNBTHelper.setInt(stack, "tick", tick + 1);
 		else {
 			ItemNBTHelper.setInt(stack, "tick", 0);
 

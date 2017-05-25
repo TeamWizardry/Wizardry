@@ -30,6 +30,7 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	 * Extra information that can be edited and read by the module.
 	 * Used by modifiers.
 	 */
+	@Nonnull
 	public NBTTagCompound attributes = new NBTTagCompound();
 
 	/**
@@ -173,7 +174,7 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 		return success;
 	}
 
-	public final void castParticles(@NotNull SpellData data) {
+	protected final void castParticles(@NotNull SpellData data) {
 		Entity caster = data.getData(SpellData.DefaultKeys.CASTER);
 		Vec3d target = data.hasData(SpellData.DefaultKeys.ORIGIN) ?
 				data.getData(SpellData.DefaultKeys.ORIGIN) : data.hasData(SpellData.DefaultKeys.TARGET_HIT) ?
@@ -254,7 +255,7 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	}
 
 	protected final <T extends Module> Module cloneModule(T toCloneTo) {
-		toCloneTo.attributes = attributes;
+		toCloneTo.attributes = new NBTTagCompound();
 		toCloneTo.nextModule = nextModule;
 		toCloneTo.finalManaDrain = finalManaDrain;
 		toCloneTo.finalBurnoutFill = finalBurnoutFill;
@@ -274,7 +275,7 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	public NBTTagCompound serializeNBT() {
 		NBTTagCompound compound = new NBTTagCompound();
 
-		if (attributes != null) compound.setTag("attributes", attributes);
+		compound.setTag("attributes", attributes);
 		if (nextModule != null) compound.setTag("next_module", nextModule.serializeNBT());
 
 		compound.setString("id", getID());

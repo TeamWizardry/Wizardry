@@ -1,12 +1,11 @@
 package com.teamwizardry.wizardry.common.entity;
 
 import com.teamwizardry.librarianlib.features.base.entity.FlyingEntityMod;
-import com.teamwizardry.librarianlib.features.base.entity.IModEntity;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.saving.AbstractSaveHandler;
 import com.teamwizardry.wizardry.api.Constants.NBT;
-import com.teamwizardry.wizardry.common.network.PacketParticleFairyExplode;
+import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
@@ -55,7 +54,6 @@ public class EntityFairy extends FlyingEntityMod {
 		color = new Color(ThreadLocalRandom.current().nextFloat(), ThreadLocalRandom.current().nextFloat(), ThreadLocalRandom.current().nextFloat());
 		color = color.brighter();
 		age = ThreadLocalRandom.current().nextInt(1, 100);
-		IModEntity.DefaultImpls.dispatchEntityToNearbyPlayers(this);
 	}
 
 	public EntityFairy(World worldIn, Color color, int age) {
@@ -65,7 +63,6 @@ public class EntityFairy extends FlyingEntityMod {
 		experienceValue = 5;
 		this.color = color;
 		this.age = age;
-		IModEntity.DefaultImpls.dispatchEntityToNearbyPlayers(this);
 	}
 
 	@Override
@@ -196,8 +193,8 @@ public class EntityFairy extends FlyingEntityMod {
 	public void onDeath(@NotNull DamageSource cause) {
 		super.onDeath(cause);
 		if (getHealth() <= 0)
-			PacketHandler.NETWORK.sendToAllAround(new PacketParticleFairyExplode(getPositionVector().addVector(0, 0.25, 0), color, color),
-					new NetworkRegistry.TargetPoint(world.provider.getDimension(), posX, posY, posZ, 512));
+			PacketHandler.NETWORK.sendToAllAround(new PacketExplode(getPositionVector().addVector(0, 0.25, 0), color, color, 0.9, 0.9, ThreadLocalRandom.current().nextInt(100, 200)),
+					new NetworkRegistry.TargetPoint(world.provider.getDimension(), posX, posY, posZ, 256));
 	}
 
 	@Override

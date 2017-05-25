@@ -6,7 +6,7 @@ import com.teamwizardry.wizardry.api.spell.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.Utils;
-import com.teamwizardry.wizardry.common.network.PacketParticleFairyExplode;
+import com.teamwizardry.wizardry.common.network.PacketExplode;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.nbt.NBTTagCompound;
@@ -25,6 +25,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
@@ -35,7 +36,6 @@ public class EntitySpellProjectile extends Entity {
 
 	public static final DataParameter<Integer> DATA_COLOR = EntityDataManager.createKey(EntitySpellProjectile.class, DataSerializers.VARINT);
 	public static final DataParameter<Integer> DATA_COLOR2 = EntityDataManager.createKey(EntitySpellProjectile.class, DataSerializers.VARINT);
-	public static final DataParameter<Boolean> DATA_COLLIDED = EntityDataManager.createKey(EntitySpellProjectile.class, DataSerializers.BOOLEAN);
 	public SpellData spell;
 	public Module module;
 
@@ -45,7 +45,6 @@ public class EntitySpellProjectile extends Entity {
 		isImmuneToFire = true;
 		applyColor(Color.WHITE);
 		applyColor2(Color.WHITE);
-		applyCollided(false);
 
 		setRenderDistanceWeight(10);
 	}
@@ -68,7 +67,6 @@ public class EntitySpellProjectile extends Entity {
 				applyColor2(new Color(Math.min(255, color.getRed() + 40), Math.min(255, color.getGreen() + 40), Math.min(255, color.getBlue() + 40)));
 			}
 		}
-		applyCollided(false);
 
 		setRenderDistanceWeight(10);
 	}
@@ -83,7 +81,6 @@ public class EntitySpellProjectile extends Entity {
 	protected void entityInit() {
 		this.getDataManager().register(DATA_COLOR, 0);
 		this.getDataManager().register(DATA_COLOR2, 0);
-		this.getDataManager().register(DATA_COLLIDED, false);
 	}
 
 	private void applyColor(Color color) {
@@ -94,11 +91,6 @@ public class EntitySpellProjectile extends Entity {
 	private void applyColor2(Color color) {
 		this.getDataManager().set(DATA_COLOR2, color.getRGB());
 		this.getDataManager().setDirty(DATA_COLOR2);
-	}
-
-	private void applyCollided(boolean collided) {
-		this.getDataManager().set(DATA_COLLIDED, collided);
-		this.getDataManager().setDirty(DATA_COLLIDED);
 	}
 
 	@Override
@@ -159,14 +151,12 @@ public class EntitySpellProjectile extends Entity {
 		motionY = 0;
 		motionZ = 0;
 
-		applyCollided(true);
-
 		if (module != null && module.nextModule != null) {
 			Module nextModule = module.nextModule;
 			nextModule.castSpell(data);
 		}
 
-		PacketHandler.NETWORK.sendToAllAround(new PacketParticleFairyExplode(getPositionVector(), new Color(getDataManager().get(DATA_COLOR)), new Color(getDataManager().get(DATA_COLOR2))),
+		PacketHandler.NETWORK.sendToAllAround(new PacketExplode(getPositionVector(), new Color(getDataManager().get(DATA_COLOR)), new Color(getDataManager().get(DATA_COLOR2)), 0.9, 0.9, ThreadLocalRandom.current().nextInt(100, 200)),
 				new NetworkRegistry.TargetPoint(world.provider.getDimension(), posX, posY, posZ, 512));
 
 		setDead();
@@ -203,8 +193,6 @@ public class EntitySpellProjectile extends Entity {
 		spell.deserializeNBT(compound.getCompoundTag("spell_data"));
 		applyColor(new Color(compound.getInteger("color")));
 		applyColor2(new Color(compound.getInteger("color2")));
-
-		applyCollided(compound.getBoolean("collided"));
 	}
 
 	@Override
@@ -213,6 +201,5 @@ public class EntitySpellProjectile extends Entity {
 		compound.setTag("spell_data", spell.serializeNBT());
 		compound.setInteger("color", getDataManager().get(DATA_COLOR));
 		compound.setInteger("color2", getDataManager().get(DATA_COLOR2));
-		compound.setBoolean("collided", getDataManager().get(DATA_COLLIDED));
 	}
 }

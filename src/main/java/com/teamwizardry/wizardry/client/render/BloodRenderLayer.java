@@ -57,13 +57,13 @@ public class BloodRenderLayer implements LayerRenderer<AbstractClientPlayer> {
 		ModelPlayer modelplayer = render.getMainModel();
 
 		if (clientPlayer.isSpectator()) {
-			modelplayer.setInvisible(false);
+			modelplayer.setVisible(true);
 			modelplayer.bipedHead.showModel = true;
 			modelplayer.bipedHeadwear.showModel = true;
 		} else {
 			ItemStack stackMain = clientPlayer.getHeldItemMainhand();
 			ItemStack stackOff = clientPlayer.getHeldItemOffhand();
-			modelplayer.setInvisible(true);
+			modelplayer.setVisible(false);
 			modelplayer.bipedHeadwear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.HAT);
 			modelplayer.bipedBodyWear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.JACKET);
 			modelplayer.bipedLeftLegwear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.LEFT_PANTS_LEG);

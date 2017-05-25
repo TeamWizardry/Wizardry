@@ -322,38 +322,24 @@ public class LibParticles {
 		ParticleSpawner.spawn(glitter2, world, new StaticInterp<>(pos), 3);
 	}
 
-	public static void FAIRY_EXPLODE(World world, Vec3d pos, Color color) {
+	public static void EXPLODE(World world, Vec3d pos, Color color1, Color color2, double strengthUpwards, double strengthSideways, int amount) {
 		ParticleBuilder glitter = new ParticleBuilder(10);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		glitter.setCollision(true);
 		glitter.enableMotionCalculation();
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(100, 150), 0, (i, build) -> {
-			double radius = ThreadLocalRandom.current().nextDouble(1, 5);
+		glitter.setColorFunction(new InterpColorHSV(color1, color2));
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), amount, 0, (i, build) -> {
+			double radius = ThreadLocalRandom.current().nextDouble(1, 2);
 			double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
 			double r = radius * ThreadLocalRandom.current().nextFloat();
 			double x = r * MathHelper.cos((float) theta);
 			double z = r * MathHelper.sin((float) theta);
-			glitter.setMotion(new Vec3d(x / 2, ThreadLocalRandom.current().nextDouble(-5, 5) / 2, z / 2));
-			glitter.setAlphaFunction(new InterpFadeInOut(0.0f, ThreadLocalRandom.current().nextFloat()));
-			glitter.setColor(ColorUtils.shiftColorHueRandomly(ColorUtils.changeColorAlpha(color, ThreadLocalRandom.current().nextInt(100, 200)), 30).brighter());
-			glitter.setLifetime(ThreadLocalRandom.current().nextInt(150, 200));
-			glitter.setScale(ThreadLocalRandom.current().nextFloat());
-		});
-	}
-
-	public static void FAIRY_EXPLODE(World world, Vec3d pos, Color color, Color color2) {
-		ParticleBuilder glitter = new ParticleBuilder(10);
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
-		glitter.setCollision(true);
-		glitter.enableMotionCalculation();
-		glitter.setColorFunction(new InterpColorHSV(color, color2));
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(100, 150), 0, (i, build) -> {
-			double radius = ThreadLocalRandom.current().nextDouble(1, 5);
-			double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
-			double r = radius * ThreadLocalRandom.current().nextFloat();
-			double x = r * MathHelper.cos((float) theta);
-			double z = r * MathHelper.sin((float) theta);
-			glitter.setMotion(new Vec3d(x / 2, ThreadLocalRandom.current().nextDouble(-5, 5) / 2, z / 2));
+			Vec3d normalize = new Vec3d(x, 0, z).normalize();
+			glitter.setMotion(new Vec3d(
+					normalize.xCoord * ThreadLocalRandom.current().nextDouble(-strengthSideways, strengthSideways),
+					ThreadLocalRandom.current().nextDouble(-strengthUpwards, strengthUpwards),
+					normalize.zCoord * ThreadLocalRandom.current().nextDouble(-strengthSideways, strengthSideways)
+			));
 			glitter.setAlphaFunction(new InterpFadeInOut(0.0f, ThreadLocalRandom.current().nextFloat()));
 			glitter.setLifetime(ThreadLocalRandom.current().nextInt(150, 200));
 			glitter.setScale(ThreadLocalRandom.current().nextFloat());

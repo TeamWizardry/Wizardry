@@ -12,17 +12,28 @@ import net.minecraft.nbt.NBTTagCompound;
 import javax.annotation.Nullable;
 
 /**
- * Created by Saad on 8/16/2016.
+ * Created by LordSaad.
  */
 @Savable
-public class DefaultWizardryCapability implements IWizardryCapability {
+public class CustomWizardryCapability implements IWizardryCapability {
 
 	@Save
-	double mana = 0, maxMana = 100, burnout = 100, maxBurnout = 100;
+	double mana = 0;
+	@Save
+	double maxMana = 100;
+	@Save
+	double burnout = 100;
+	@Save
+	double maxBurnout = 100;
 	@Save
 	EnumBloodType bloodType;
 
-	public DefaultWizardryCapability() {
+	CustomWizardryCapability() {
+	}
+
+	public CustomWizardryCapability(double maxMana, double maxBurnout) {
+		this.maxMana = maxMana;
+		this.maxBurnout = maxBurnout;
 	}
 
 	@Override

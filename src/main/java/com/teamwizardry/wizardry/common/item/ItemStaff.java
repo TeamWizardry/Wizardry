@@ -54,8 +54,8 @@ public class ItemStaff extends ItemMod implements INacreColorable {
 				if (!modules.isEmpty()) {
 
 					for (Module module : modules) {
-						if (module.getID().equals("effect_substitution")) {
-							player.getEntityData().setTag("substitution_block", NBTUtil.writeBlockState(new NBTTagCompound(), player.world.getBlockState(pos)));
+						if (module instanceof IBlockSelectable) {
+							player.getEntityData().setTag("selected", NBTUtil.writeBlockState(new NBTTagCompound(), world.getBlockState(pos)));
 							return EnumActionResult.FAIL;
 						}
 					}
@@ -70,7 +70,6 @@ public class ItemStaff extends ItemMod implements INacreColorable {
 
 					SpellData spell = new SpellData(world);
 					spell.processEntity(player, true);
-					spell.addData(SpellData.DefaultKeys.BLOCK_TOUCHED, pos);
 					spell.processBlock(pos, side, new Vec3d(pos).addVector(0.5, 0.5, 0.5));
 					SpellStack.runSpell(stack, spell);
 

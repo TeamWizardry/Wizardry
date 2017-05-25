@@ -56,7 +56,7 @@ public class Page {
 				JsonObject object = json.getAsJsonObject();
 				if (object.has("title") && object.has("type") && object.get("title").isJsonPrimitive() && object.get("type").isJsonPrimitive()) {
 					String title = object.get("title").getAsString();
-					int titleWidth = Minecraft.getMinecraft().fontRendererObj.getStringWidth(title);
+					int titleWidth = Minecraft.getMinecraft().fontRenderer.getStringWidth(title);
 					ComponentText componentTitle = new ComponentText((width / 2) - (titleWidth / 2), -20, ComponentText.TextAlignH.CENTER, ComponentText.TextAlignV.MIDDLE);
 					componentTitle.getText().setValue(title);
 					component.add(componentTitle);
@@ -75,7 +75,7 @@ public class Page {
 										for (JsonElement lineElement : contObj.get("text").getAsJsonArray()) {
 											if (lineElement.isJsonPrimitive()) {
 
-												List<String> chunk = Minecraft.getMinecraft().fontRendererObj.listFormattedStringToWidth(lineElement.getAsString(), 2100);
+												List<String> chunk = Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(lineElement.getAsString(), 2100);
 
 												for (String subChunk : chunk) pages.put(i++, subChunk);
 											}

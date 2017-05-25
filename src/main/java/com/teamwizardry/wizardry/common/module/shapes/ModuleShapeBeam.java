@@ -55,7 +55,7 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 		if (position == null) return false;
 
 		double range = 10;
-		if (attributes.hasKey(Attributes.EXTEND)) range += attributes.getDouble(Attributes.EXTEND);
+		if (attributes.hasKey(Attributes.EXTEND)) range = Math.min(64, attributes.getDouble(Attributes.EXTEND));
 
 		if (!processCost(range / 100.0, spell)) return false;
 
@@ -68,8 +68,7 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 		if (trace.typeOfHit == RayTraceResult.Type.ENTITY)
 			spell.processEntity(trace.entityHit, false);
 		else if (trace.typeOfHit == RayTraceResult.Type.BLOCK) {
-			spell.addData(BLOCK_HIT, trace.getBlockPos());
-			spell.addData(TARGET_HIT, trace.hitVec);
+			spell.processBlock(trace.getBlockPos(), trace.sideHit, trace.hitVec);
 		} else spell.addData(TARGET_HIT, trace.hitVec);
 
 		forceCastNextModuleParticles(spell);

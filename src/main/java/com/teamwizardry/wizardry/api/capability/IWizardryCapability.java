@@ -1,13 +1,11 @@
 package com.teamwizardry.wizardry.api.capability;
 
-import com.teamwizardry.librarianlib.features.saving.Savable;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 
 /**
  * Created by Saad on 8/16/2016.
  */
-@Savable
 public interface IWizardryCapability {
 
 	double getMana();

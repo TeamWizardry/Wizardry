@@ -1,18 +1,12 @@
 package com.teamwizardry.wizardry.common.entity;
 
-import com.teamwizardry.wizardry.common.fluid.FluidMana;
-import com.teamwizardry.wizardry.init.ModItems;
-import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by Saad on 8/29/2016.
@@ -37,40 +31,7 @@ public class EntitySpellCodex extends Entity {
 
 	@Override
 	public void onUpdate() {
-		super.onUpdate();
-		if (world.isRemote) return;
-
-		posX = book.posX;
-		posY = book.posY;
-		posZ = book.posZ;
-
-		if (world.getBlockState(getPosition()).getBlock() == FluidMana.instance.getBlock()) {
-			if (expiry > 0) {
-				expiry--;
-
-				if ((expiry % 5) == 0)
-					world.playSound(null, posX, posY, posZ, ModSounds.FIZZING_LOOP, SoundCategory.AMBIENT, 0.7F, (ThreadLocalRandom.current().nextFloat() * 0.4F) + 0.8F);
-
-			} else {
-				EntityItem codex = new EntityItem(world, posX, posY, posZ, new ItemStack(ModItems.BOOK, 1));
-				codex.setPickupDelay(0);
-				codex.motionY = 0;
-				codex.motionX = 0;
-				codex.motionZ = 0;
-				codex.forceSpawn = true;
-				book.getEntityItem().setCount(book.getEntityItem().getCount() - 1);
-				world.spawnEntity(codex);
-				world.removeEntity(this);
-
-				world.playSound(null, posX, posY, posZ, ModSounds.HARP1, SoundCategory.AMBIENT, 0.3F, 1.0F);
-				return;
-			}
-		} else {
-			expiry = 200;
-			return;
-		}
-
-		if (book.isDead) world.removeEntity(this);
+		world.removeEntity(this);
 	}
 
 	@Override

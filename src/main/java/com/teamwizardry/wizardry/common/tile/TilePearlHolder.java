@@ -28,6 +28,10 @@ public class TilePearlHolder extends TileManaSink {
 	@Save
 	private int cooldown = 0;
 
+	public TilePearlHolder() {
+		super(10000, 10000);
+	}
+
 	@Override
 	public void update() {
 		super.update();

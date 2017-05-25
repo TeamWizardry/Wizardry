@@ -15,7 +15,7 @@ import com.teamwizardry.wizardry.common.achievement.Achievements;
 import com.teamwizardry.wizardry.common.core.EventHandler;
 import com.teamwizardry.wizardry.common.core.SpellTicker;
 import com.teamwizardry.wizardry.common.fluid.Fluids;
-import com.teamwizardry.wizardry.common.network.PacketParticleFairyExplode;
+import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.common.network.PacketRenderSpell;
 import com.teamwizardry.wizardry.common.network.PacketSyncModuleRegistry;
 import com.teamwizardry.wizardry.common.network.WizardryPacketHandler;
@@ -74,7 +74,7 @@ public class CommonProxy {
 		SpellTicker.INSTANCE.getClass();
 
 		PacketHandler.register(PacketRenderSpell.class, Side.CLIENT);
-		PacketHandler.register(PacketParticleFairyExplode.class, Side.CLIENT);
+		PacketHandler.register(PacketExplode.class, Side.CLIENT);
 		PacketHandler.register(PacketSyncModuleRegistry.class, Side.CLIENT);
 	}
 

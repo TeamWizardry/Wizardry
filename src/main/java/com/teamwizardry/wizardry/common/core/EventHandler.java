@@ -13,7 +13,6 @@ import com.teamwizardry.wizardry.api.util.TeleportUtil;
 import com.teamwizardry.wizardry.common.achievement.Achievements;
 import com.teamwizardry.wizardry.common.entity.EntityDevilDust;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
-import com.teamwizardry.wizardry.common.entity.EntitySpellCodex;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.entity.Entity;
@@ -68,8 +67,6 @@ public class EventHandler {
 			EntityItem item = (EntityItem) event.getEntity();
 			if (item.getEntityItem().getItem() == Items.REDSTONE)
 				event.getWorld().spawnEntity(new EntityDevilDust(event.getWorld(), item));
-			else if (item.getEntityItem().getItem() == Items.BOOK)
-				event.getWorld().spawnEntity(new EntitySpellCodex(event.getWorld(), item));
 		}
 	}
 
@@ -144,15 +141,15 @@ public class EventHandler {
 		manager.removeBurnout(manager.getMaxBurnout() / 1000);
 
 		ItemStack cape = event.player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-		if (cape.isEmpty() || cape.getItem() != ModItems.CAPE) {
-			if (manager.getMaxMana() != 100)
-				manager.setMaxMana(100);
-			if (manager.getMaxBurnout() != 100)
-				manager.setMaxBurnout(100);
+		if (manager.getMaxMana() < 100)
+			manager.setMaxMana(100);
+		if (manager.getMaxBurnout() < 100)
+			manager.setMaxBurnout(100);
 
-		} else if (cape.getItem() == ModItems.CAPE) {
+		if (!cape.isEmpty() && cape.getItem() == ModItems.CAPE) {
 			double x = ItemNBTHelper.getInt(cape, "time", 0) / 1000.0;
 			double buffer = (1 - (Math.exp(-x))) * 3 * 1000;
+			if (buffer < 100) return;
 			manager.setMaxMana(buffer);
 			manager.setMaxBurnout(buffer);
 		}

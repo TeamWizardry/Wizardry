@@ -24,7 +24,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
@@ -36,11 +35,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEffectSubstitution extends Module {
-
-	public ModuleEffectSubstitution() {
-		MinecraftForge.EVENT_BUS.register(this);
-	}
+public class ModuleEffectSubstitution extends Module implements IBlockSelectable {
 
 	@Nonnull
 	@Override
@@ -95,8 +90,8 @@ public class ModuleEffectSubstitution extends Module {
 			return true;
 
 		} else if (targetBlock != null && caster instanceof EntityPlayer) {
-			if (caster.getEntityData().hasKey("substitution_block")) {
-				IBlockState state = NBTUtil.readBlockState(caster.getEntityData().getCompoundTag("substitution_block"));
+			if (caster.getEntityData().hasKey("selected")) {
+				IBlockState state = NBTUtil.readBlockState(caster.getEntityData().getCompoundTag("selected"));
 				IBlockState touchedBlock = spell.world.getBlockState(targetBlock);
 
 				if (touchedBlock.getBlock() == state.getBlock()) return false;
@@ -104,9 +99,6 @@ public class ModuleEffectSubstitution extends Module {
 				int strength = 10;
 				if (attributes.hasKey(Attributes.EXTEND))
 					strength += Math.min(32, attributes.getDouble(Attributes.EXTEND));
-
-				if (!processCost(strength / 10.0, spell)) return false;
-
 				strength *= calcBurnoutPercent(caster);
 
 				ItemStack stackBlock = null;
@@ -130,7 +122,7 @@ public class ModuleEffectSubstitution extends Module {
 				if (blocks.isEmpty()) return true;
 
 				for (int q = 0; q < blocks.size(); q++) {
-
+					if (!processCost(strength / 10.0, spell)) break;
 					BlockPos nearest = null;
 					for (BlockPos pos : blocks) {
 						if (spell.world.getBlockState(pos).getBlock() == state.getBlock()) continue;

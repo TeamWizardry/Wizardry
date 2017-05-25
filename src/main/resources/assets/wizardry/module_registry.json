@@ -54,6 +54,22 @@
       "secondary_color": "00FFFF"
     },
     {
+      "id": "effect_break",
+      "mana_drain": 100.0,
+      "burnout_fill": 100.0,
+      "item": "minecraft:sand",
+      "primary_color": "A52A2A",
+      "secondary_color": "FFA700"
+    },
+    {
+      "id": "effect_place",
+      "mana_drain": 100.0,
+      "burnout_fill": 100.0,
+      "item": "minecraft:clay",
+      "primary_color": "F27D0C",
+      "secondary_color": "E45664"
+    },
+    {
       "id": "effect_burn",
       "mana_drain": 200.0,
       "burnout_fill": 100.0,

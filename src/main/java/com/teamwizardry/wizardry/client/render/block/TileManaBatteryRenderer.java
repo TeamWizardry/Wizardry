@@ -8,6 +8,7 @@ import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.IStructure;
+import com.teamwizardry.wizardry.api.capability.WizardManager;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.common.fluid.FluidBlockMana;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
@@ -137,10 +138,13 @@ public class TileManaBatteryRenderer extends TileEntitySpecialRenderer<TileManaB
 			if (ThreadLocalRandom.current().nextInt(10) == 0)
 				LibParticles.MAGIC_DOT(world, new Vec3d(pos).addVector(0.5, 0.5, 0.5), (float) ThreadLocalRandom.current().nextDouble(2, 3));
 
-		if (count >= 21)
-			for (BlockPos pos : positions.takenPoses)
-				if (ThreadLocalRandom.current().nextInt(7) == 0)
-					LibParticles.COLORFUL_BATTERY_BEZIER(world, pos, te.getPos());
+		WizardManager manager = new WizardManager(te.cap);
+		if (!manager.isManaFull()) {
+			if (count >= 21)
+				for (BlockPos pos : positions.takenPoses)
+					if (ThreadLocalRandom.current().nextInt(7) == 0)
+						LibParticles.COLORFUL_BATTERY_BEZIER(world, pos, te.getPos());
+		}
 
 		if (ThreadLocalRandom.current().nextInt(10) == 0) {
 			ParticleBuilder glitter = new ParticleBuilder(3);

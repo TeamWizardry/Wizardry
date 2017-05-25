@@ -13,22 +13,31 @@ import java.awt.*;
 /**
  * Created by LordSaad.
  */
-public class PacketParticleFairyExplode extends PacketBase {
+public class PacketExplode extends PacketBase {
 
 	@Save
 	private Vec3d pos;
 	@Save
-	private Color color;
+	private Color color1;
 	@Save
 	private Color color2;
+	@Save
+	private double strengthUpwards;
+	@Save
+	private double strengthSideways;
+	@Save
+	private int amount;
 
-	public PacketParticleFairyExplode() {
+	public PacketExplode() {
 	}
 
-	public PacketParticleFairyExplode(Vec3d pos, Color color, Color color2) {
+	public PacketExplode(Vec3d pos, Color color1, Color color2, double strengthUpwards, double strengthSideways, int amount) {
 		this.pos = pos;
-		this.color = color;
+		this.color1 = color1;
 		this.color2 = color2;
+		this.strengthUpwards = strengthUpwards;
+		this.strengthSideways = strengthSideways;
+		this.amount = amount;
 	}
 
 	@Override
@@ -38,6 +47,6 @@ public class PacketParticleFairyExplode extends PacketBase {
 
 		World world = Minecraft.getMinecraft().player.world;
 
-		LibParticles.FAIRY_EXPLODE(world, pos, color, color2);
+		LibParticles.EXPLODE(world, pos, color1, color2, strengthSideways, strengthUpwards, amount);
 	}
 }

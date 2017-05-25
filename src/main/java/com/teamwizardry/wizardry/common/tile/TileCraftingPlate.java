@@ -13,9 +13,12 @@ import com.teamwizardry.wizardry.api.spell.SpellStack;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
 import com.teamwizardry.wizardry.lib.LibParticles;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -38,9 +41,9 @@ import java.util.concurrent.ThreadLocalRandom;
 public class TileCraftingPlate extends TileManaSink {
 
 	@Save
-	public int craftingTime = 300;
+	public int craftingTime = (int) cap.getMaxMana();
 	@Save
-	public int craftingTimeLeft = 300;
+	public int craftingTimeLeft = (int) cap.getMaxMana();
 	@Save
 	public int tick;
 	@Save
@@ -50,6 +53,10 @@ public class TileCraftingPlate extends TileManaSink {
 	public ItemStack output;
 	public List<ClusterObject> inventory = new ArrayList<>();
 	public Random random = new Random(getPos().toLong());
+
+	public TileCraftingPlate() {
+		super(10000, 10000);
+	}
 
 	@Override
 	public void readCustomNBT(NBTTagCompound compound) {
@@ -96,6 +103,10 @@ public class TileCraftingPlate extends TileManaSink {
 		}
 
 		if (isCrafting) {
+			if (!consumeMana(100)) {
+				craftingTimeLeft = Math.min(300, craftingTimeLeft++);
+				return;
+			}
 			if (craftingTimeLeft > 0) craftingTimeLeft--;
 			else {
 				isCrafting = false;
@@ -121,6 +132,24 @@ public class TileCraftingPlate extends TileManaSink {
 				inventory.clear();
 				craftingTimeLeft = craftingTime;
 				markDirty();
+
+				List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(pos).expand(32, 32, 32));
+				for (Entity entity1 : entityList) {
+					double dist = entity1.getDistance(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+					final double upperMag = 20;
+					final double scale = 3.5;
+					double mag = upperMag * (scale * dist / (-scale * dist - 1) + 1);
+					Vec3d dir = entity1.getPositionVector().subtract(new Vec3d(pos).addVector(0.5, 0.5, 0.5)).normalize().scale(mag);
+
+					entity1.motionX += (dir.xCoord);
+					entity1.motionY += (dir.yCoord);
+					entity1.motionZ += (dir.zCoord);
+					entity1.fallDistance = 0;
+					entity1.velocityChanged = true;
+
+					if (entity1 instanceof EntityPlayerMP)
+						((EntityPlayerMP) entity1).connection.sendPacket(new SPacketEntityVelocity(entity1));
+				}
 			}
 		} else {
 			if (craftingTimeLeft != craftingTime) {

@@ -13,13 +13,15 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static com.teamwizardry.wizardry.common.entity.EntitySpellProjectile.*;
+import static com.teamwizardry.wizardry.common.entity.EntitySpellProjectile.DATA_COLOR;
+import static com.teamwizardry.wizardry.common.entity.EntitySpellProjectile.DATA_COLOR2;
 
 /**
  * Created by Saad on 8/25/2016.
@@ -35,29 +37,26 @@ public class RenderSpellProjectile extends Render<EntitySpellProjectile> {
 		super.doRender(entity, x, y, z, entityYaw, partialTicks);
 		Color color = new Color(entity.getDataManager().get(DATA_COLOR), true);
 		Color color2 = new Color(entity.getDataManager().get(DATA_COLOR2), true);
-		boolean collided = entity.getDataManager().get(DATA_COLLIDED);
 
-		if (!collided) {
-			ParticleBuilder glitter = new ParticleBuilder(10);
-			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
-			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-			glitter.setCollision(true);
-			glitter.setColorFunction(new InterpColorHSV(color, color2));
-			ParticleSpawner.spawn(glitter, entity.world, new StaticInterp<>(entity.getPositionVector()), 5, 0, (aFloat, particleBuilder) -> {
-				glitter.setScaleFunction(new InterpScale((float) ThreadLocalRandom.current().nextDouble(0.3, 0.8), 0));
-				glitter.setLifetime(ThreadLocalRandom.current().nextInt(10, 100));
-				glitter.addMotion(new Vec3d(
-						ThreadLocalRandom.current().nextDouble(-0.01, 0.01),
-						ThreadLocalRandom.current().nextDouble(-0.01, 0.01),
-						ThreadLocalRandom.current().nextDouble(-0.01, 0.01)
-				));
-			});
-		}
+		ParticleBuilder glitter = new ParticleBuilder(10);
+		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+		glitter.setCollision(true);
+		glitter.setColorFunction(new InterpColorHSV(color, color2));
+		ParticleSpawner.spawn(glitter, entity.world, new StaticInterp<>(entity.getPositionVector()), 5, 0, (aFloat, particleBuilder) -> {
+			glitter.setScaleFunction(new InterpScale((float) ThreadLocalRandom.current().nextDouble(0.3, 0.8), 0));
+			glitter.setLifetime(ThreadLocalRandom.current().nextInt(10, 100));
+			glitter.addMotion(new Vec3d(
+					ThreadLocalRandom.current().nextDouble(-0.01, 0.01),
+					ThreadLocalRandom.current().nextDouble(-0.01, 0.01),
+					ThreadLocalRandom.current().nextDouble(-0.01, 0.01)
+			));
+		});
 	}
 
 	@Nullable
 	@Override
-	protected ResourceLocation getEntityTexture(EntitySpellProjectile entity) {
+	protected ResourceLocation getEntityTexture(@NotNull EntitySpellProjectile entity) {
 		return null;
 	}
 }
