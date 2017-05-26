@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.api.render;
 
+import com.teamwizardry.wizardry.api.capability.WizardManager;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -26,6 +27,15 @@ public class ClusterObject implements INBTSerializable<NBTTagCompound> {
 
 	public ClusterObject(TileCraftingPlate plate, ItemStack stack, World world, Random random) {
 		this.plate = plate;
+
+		WizardManager manager = new WizardManager(plate.cap);
+		if (manager.isManaEmpty()) {
+			dest = Vec3d.ZERO;
+			this.stack = stack;
+			origin = Vec3d.ZERO;
+			worldTime = world.getTotalWorldTime();
+			return;
+		}
 		double angle = Math.toDegrees(Math.random() * Math.PI * 2);
 		double x = MathHelper.cos((float) angle) * ThreadLocalRandom.current().nextDouble(6, 8);
 		double z = MathHelper.sin((float) angle) * ThreadLocalRandom.current().nextDouble(6, 8);
@@ -44,6 +54,15 @@ public class ClusterObject implements INBTSerializable<NBTTagCompound> {
 	public void tick(World world, Random random) {
 		tick++;
 		if ((world.getTotalWorldTime() - worldTime) >= destTime) {
+			WizardManager manager = new WizardManager(plate.cap);
+			if (manager.isManaEmpty()) {
+				origin = dest;
+				dest = Vec3d.ZERO;
+				worldTime = world.getTotalWorldTime();
+				destTime = ThreadLocalRandom.current().nextDouble(10, 30);
+				return;
+			}
+
 			double t = (plate.craftingTimeLeft * 1.0) / plate.craftingTime;
 
 			double radius = ThreadLocalRandom.current().nextDouble(5, 8) * t;

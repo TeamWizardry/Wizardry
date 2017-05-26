@@ -1,9 +1,6 @@
 package com.teamwizardry.wizardry.init;
 
-import com.teamwizardry.wizardry.common.potion.PotionNullGrav;
-import com.teamwizardry.wizardry.common.potion.PotionPhase;
-import com.teamwizardry.wizardry.common.potion.PotionPush;
-import com.teamwizardry.wizardry.common.potion.PotionSteroid;
+import com.teamwizardry.wizardry.common.potion.*;
 
 /**
  * Created by LordSaad.
@@ -11,6 +8,7 @@ import com.teamwizardry.wizardry.common.potion.PotionSteroid;
 public class ModPotions {
 
 	public static PotionNullGrav NULLIFY_GRAVITY;
+	public static PotionNullMovement NULL_MOVEMENT;
 	public static PotionSteroid STEROID;
 	public static PotionPhase PHASE;
 	public static PotionPush PUSH;
@@ -20,5 +18,6 @@ public class ModPotions {
 		STEROID = new PotionSteroid();
 		PHASE = new PotionPhase();
 		PUSH = new PotionPush();
+		NULL_MOVEMENT = new PotionNullMovement();
 	}
 }

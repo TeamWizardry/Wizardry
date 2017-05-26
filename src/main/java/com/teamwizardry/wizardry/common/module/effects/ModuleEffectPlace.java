@@ -1,6 +1,8 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
 import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.util.PosUtils;
+import com.teamwizardry.wizardry.api.util.Utils;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -11,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -52,9 +55,19 @@ public class ModuleEffectPlace extends Module implements IBlockSelectable {
 	public boolean run(@Nonnull SpellData spell) {
 		World world = spell.world;
 		BlockPos targetPos = spell.getData(BLOCK_HIT);
+		Vec3d originPos = spell.getData(ORIGIN);
 		Entity targetEntity = spell.getData(ENTITY_HIT);
 		Entity caster = spell.getData(CASTER);
 		EnumFacing facing = spell.getData(FACE_HIT);
+		float yaw = spell.getData(YAW, 0F);
+		float pitch = spell.getData(PITCH, 0F);
+
+		if (facing == null) {
+			RayTraceResult trace = Utils.raytrace(world, PosUtils.vecFromRotations(pitch, yaw), originPos, 64, caster);
+			if (trace == null) return false;
+			if (trace.typeOfHit != RayTraceResult.Type.BLOCK) return false;
+			facing = trace.sideHit;
+		}
 
 		double strength = 1;
 		if (attributes.hasKey(Attributes.EXTEND))
@@ -80,6 +93,7 @@ public class ModuleEffectPlace extends Module implements IBlockSelectable {
 			stackBlock.shrink(1);
 
 			targetPos = targetPos.offset(facing);
+			if (!world.isAirBlock(targetPos)) return false;
 			IBlockState oldState = spell.world.getBlockState(targetPos);
 			spell.world.setBlockState(targetPos, state);
 			((EntityPlayer) caster).inventory.addItemStackToInventory(new ItemStack(oldState.getBlock().getItemDropped(oldState, spell.world.rand, 0)));

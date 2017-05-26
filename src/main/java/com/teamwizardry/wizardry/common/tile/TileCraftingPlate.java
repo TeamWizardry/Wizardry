@@ -41,9 +41,9 @@ import java.util.concurrent.ThreadLocalRandom;
 public class TileCraftingPlate extends TileManaSink {
 
 	@Save
-	public int craftingTime = (int) cap.getMaxMana();
+	public int craftingTime = 300;
 	@Save
-	public int craftingTimeLeft = (int) cap.getMaxMana();
+	public int craftingTimeLeft = 300;
 	@Save
 	public int tick;
 	@Save

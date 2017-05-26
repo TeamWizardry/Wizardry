@@ -70,6 +70,14 @@
       "secondary_color": "E45664"
     },
     {
+      "id": "effect_time_slow",
+      "mana_drain": 400.0,
+      "burnout_fill": 600.0,
+      "item": "minecraft:red_flower",
+      "primary_color": "8D0000",
+      "secondary_color": "FFA500"
+    },
+    {
       "id": "effect_burn",
       "mana_drain": 200.0,
       "burnout_fill": 100.0,
