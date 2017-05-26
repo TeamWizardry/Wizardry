@@ -70,23 +70,32 @@ public class SpellStack {
 
 		List<List<ItemStack>> lines = brancher(branches.get(1), ModItems.DEVIL_DUST); // Get all the code lines of the second half of the spell.
 
-		// PROCESS CHILDREN OF LINE HEADS
+		ArrayList<ArrayList<Module>> convertedLines = new ArrayList<>();
 		for (List<ItemStack> line : lines) {
-			Deque<ItemStack> queue = new ArrayDeque<>(line);
 
-			for (ItemStack ignored : line) {
-				if (queue.size() <= 1) break;
-				if (fields.containsKey(queue.peekLast().getItem())) {
-					Module lastField = fields.get(queue.pollLast().getItem());
-					if (fields.containsKey(queue.peekLast().getItem())) {
-						Module beforeLastField = fields.get(queue.peekLast().getItem());
-						beforeLastField.nextModule = lastField;
+			ArrayList<Module> lineModules = new ArrayList<>();
+			for (ItemStack stack : line) lineModules.add(fields.get(stack.getItem()).copy());
+
+			convertedLines.add(lineModules);
+		}
+
+		for (ArrayList<Module> modules : convertedLines) {
+			Deque<Module> deque = new ArrayDeque<>();
+			deque.addAll(modules);
+
+			for (Module ignored : modules) {
+				if (deque.peekFirst() == deque.peekLast()) {
+					compiled.add(deque.peekLast());
+					break;
+				}
+				if (deque.peekLast() != null) {
+					Module last = deque.pollLast();
+					if (deque.peekLast() != null) {
+						Module beforeLast = deque.peekLast();
+						beforeLast.nextModule = last;
 					}
 				}
 			}
-
-			if (queue.peekFirst() != null && fields.containsKey(queue.peekFirst().getItem()))
-				compiled.add(fields.get(queue.peekFirst().getItem()));
 		}
 
 		// PROCESS THEM

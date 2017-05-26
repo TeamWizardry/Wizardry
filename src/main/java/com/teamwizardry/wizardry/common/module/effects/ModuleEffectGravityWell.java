@@ -66,7 +66,8 @@ public class ModuleEffectGravityWell extends Module implements IlingeringModule 
 		if (attributes.hasKey(Attributes.EXTEND))
 			strength += attributes.getDouble(Attributes.EXTEND);
 
-		if (!processCost(strength / 100.0, spell)) return false;
+		if (!processCost(strength / 2000.0, spell)) return false;
+		strength *= calcBurnoutPercent(caster);
 
 		for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(position)).expand(strength, strength, strength))) {
 			if (entity == null) continue;
@@ -132,9 +133,11 @@ public class ModuleEffectGravityWell extends Module implements IlingeringModule 
 
 	@Override
 	public int lingeringTime(SpellData spell) {
-		int strength = 3000;
+		Entity caster = spell.getData(CASTER);
+		int strength = 1000;
 		if (attributes.hasKey(Attributes.EXTEND))
-			strength += attributes.getDouble(Attributes.EXTEND);
+			strength += attributes.getDouble(Attributes.EXTEND) * 10;
+		strength *= calcBurnoutPercent(caster);
 
 		return strength;
 	}

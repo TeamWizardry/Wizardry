@@ -129,10 +129,21 @@ public class EntitySpellProjectile extends Entity {
 			return;
 		}
 
-		List<Entity> entities = world.getEntitiesInAABBexcluding(this, getEntityBoundingBox(), null);
+		List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(this, getEntityBoundingBox());
 		if (!entities.isEmpty()) {
-
 			Entity caster = spell.getData(CASTER);
+
+			if (caster != null && entities.size() == 1 && entities.get(0) instanceof EntitySpellProjectile) {
+				EntitySpellProjectile spellProjectile = (EntitySpellProjectile) entities.get(0);
+				SpellData otherData = spellProjectile.spell;
+				if (otherData != null && otherData.hasData(CASTER)) {
+					Entity otherCaster = spell.getData(CASTER);
+					if (otherCaster != null && otherCaster.getUniqueID().equals(caster.getUniqueID())) {
+						return;
+					}
+				}
+			}
+
 			if (caster != null && entities.contains(caster)) return;
 
 			SpellData data = spell.copy();

@@ -51,7 +51,7 @@ public class TileManaSink extends TileMod implements ITickable {
 
 			if (sink.isManaFull()) return;
 
-			double idealAmount = 10;
+			double idealAmount = 50;
 			if (faucet.getMana() < idealAmount) return;
 			faucet.removeMana(idealAmount);
 			sink.addMana(idealAmount);

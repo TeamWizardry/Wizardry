@@ -24,7 +24,8 @@ public class PotionNullMovement extends PotionMod {
 	public void onTick(TickEvent.ClientTickEvent event) {
 		Minecraft mc = Minecraft.getMinecraft();
 		EntityPlayerSP player = mc.player;
-		if (mc.player != null && mc.player.isPotionActive(ModPotions.NULL_MOVEMENT)) {
+		if (player == null) return;
+		if (player.isPotionActive(ModPotions.NULL_MOVEMENT)) {
 			if (!(player.movementInput instanceof NullMovementInput))
 				player.movementInput = new NullMovementInput(player.movementInput);
 		} else if (!(player.movementInput instanceof MovementInputFromOptions))

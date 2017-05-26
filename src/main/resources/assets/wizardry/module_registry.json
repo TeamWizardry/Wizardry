@@ -31,27 +31,36 @@
       "id": "shape_cone",
       "mana_drain": 300.0,
       "burnout_fill": 200.0,
-      "item": "minecraft:gun_powder",
+      "item": "minecraft:gunpowder",
       "cooldown_time": 20,
       "chargeup_time": 5
+    },
+    {
+      "id": "shape_zone",
+      "mana_drain": 1,
+      "burnout_fill": 1,
+      "item": "minecraft:glass",
+      "cooldown_time": 100
     }
   ],
   "effects": [
     {
       "id": "effect_anti_gravity_well",
-      "mana_drain": 1000.0,
-      "burnout_fill": 1000.0,
+      "mana_drain": 0.5,
+      "burnout_fill": 0.5,
       "item": "minecraft:magma_cream",
       "primary_color": "FF0000",
-      "secondary_color": "FFA500"
+      "secondary_color": "FFA500",
+      "cooldown_time": 100
     },
     {
       "id": "effect_gravity_well",
-      "mana_drain": 1000.0,
-      "burnout_fill": 1000.0,
+      "mana_drain": 0.5,
+      "burnout_fill": 0.5,
       "item": "minecraft:slime_ball",
       "primary_color": "0000FF",
-      "secondary_color": "00FFFF"
+      "secondary_color": "00FFFF",
+      "cooldown_time": 100
     },
     {
       "id": "effect_break",
