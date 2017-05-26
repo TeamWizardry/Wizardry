@@ -148,7 +148,7 @@ public class EventHandler {
 
 		if (!cape.isEmpty() && cape.getItem() == ModItems.CAPE) {
 			double x = ItemNBTHelper.getInt(cape, "time", 0) / 1000.0;
-			double buffer = (1 - (Math.exp(-x))) * 3 * 1000;
+			double buffer = (1 - (Math.exp(-x))) * 5000;
 			if (buffer < 100) return;
 			manager.setMaxMana(buffer);
 			manager.setMaxBurnout(buffer);

@@ -28,8 +28,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by Saad on 6/7/2016.
@@ -47,7 +47,7 @@ public class ItemStaff extends ItemMod implements INacreColorable {
 		ItemStack stack = player.getHeldItem(hand);
 
 		if (player.isSneaking()) {
-			Set<Module> modules = SpellStack.getAllModules(stack);
+			ArrayList<Module> modules = SpellStack.getAllModules(stack);
 			if (!modules.isEmpty()) {
 				for (Module module : modules) {
 					if (module instanceof IBlockSelectable) {
@@ -179,26 +179,27 @@ public class ItemStaff extends ItemMod implements INacreColorable {
 	@Override
 	public String getItemStackDisplayName(@Nonnull ItemStack stack) {
 		StringBuilder finalName = null;
-		Set<Module> modules = SpellStack.getModules(stack);
+		ArrayList<Module> modules = SpellStack.getModules(stack);
 		Module lastModule = null;
 		for (Module module : modules) {
+			if (lastModule == null) lastModule = module;
 			if (module != null) {
 				Module tempModule = module;
 				while (tempModule != null) {
 
-					if (finalName == null) {
-						finalName = new StringBuilder(tempModule.getReadableName());
-					} else {
-						if (lastModule.getModuleType() == tempModule.getModuleType()) {
-							finalName.append(" & ").append(tempModule.getReadableName());
-						} else {
-							finalName.append(" ").append(tempModule.getReadableName());
-						}
+					boolean next = false;
+					if (lastModule != module) {
+						lastModule = module;
+						finalName.append(" || ");
+						next = true;
 					}
 
-					if (tempModule.getModuleType() == ModuleType.SHAPE) finalName.append(" of");
+					if (finalName == null) finalName = new StringBuilder(tempModule.getReadableName());
+					else {
+						if (!next) finalName.append(" -> ");
+						finalName.append(tempModule.getReadableName());
+					}
 
-					lastModule = tempModule;
 					tempModule = tempModule.nextModule;
 				}
 			}
@@ -212,14 +213,18 @@ public class ItemStaff extends ItemMod implements INacreColorable {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
-		Set<Module> modules = SpellStack.getModules(stack);
+		ArrayList<Module> modules = SpellStack.getModules(stack);
+		Module lastModule = null;
 		for (Module module : modules) {
+			if (lastModule == null) lastModule = module;
+
 			if (module != null) {
+				if (module != lastModule) tooltip.add("");
 				tooltip.add("Final " + TextFormatting.BLUE + "Mana" + TextFormatting.GRAY + "/" + TextFormatting.RED + "Burnout" + TextFormatting.GRAY + " Cost: " + TextFormatting.BLUE + module.finalManaDrain + TextFormatting.GRAY + "/" + TextFormatting.RED + module.finalBurnoutFill);
 				Module tempModule = module;
 				int i = 0;
 				while (tempModule != null) {
-					tooltip.add(new String(new char[i]).replace("\0", "-") + "> " + TextFormatting.BLUE + tempModule.getManaDrain() + TextFormatting.GRAY + "/" + TextFormatting.RED + tempModule.getBurnoutFill() + TextFormatting.GRAY + " - " + tempModule.getReadableName());
+					tooltip.add(new String(new char[i]).replace("\0", "-") + "> " + TextFormatting.GRAY + tempModule.getReadableName() + " - " + TextFormatting.BLUE + tempModule.getManaDrain() + TextFormatting.GRAY + "/" + TextFormatting.RED + tempModule.getBurnoutFill());
 					for (String key : tempModule.attributes.getKeySet())
 						tooltip.add(new String(new char[i]).replace("\0", "-") + "^ " + TextFormatting.YELLOW + key + TextFormatting.GRAY + " * " + TextFormatting.GREEN + tempModule.attributes.getDouble(key));
 					tempModule = tempModule.nextModule;

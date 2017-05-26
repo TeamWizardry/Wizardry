@@ -302,7 +302,7 @@ public class LibParticles {
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.2f, 1f));
 
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(5, 10), 0, (i, build) -> {
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(1, 5), 0, (i, build) -> {
 			glitter.setMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.02, 0.02), ThreadLocalRandom.current().nextDouble(-0.02, 0.02), ThreadLocalRandom.current().nextDouble(-0.02, 0.02)));
 			if (sad) {
 				glitter.setCollision(true);
@@ -327,7 +327,7 @@ public class LibParticles {
 		ParticleSpawner.spawn(glitter2, world, new StaticInterp<>(pos), 3);
 	}
 
-	public static void EXPLODE(World world, Vec3d pos, Color color1, Color color2, double strengthUpwards, double strengthSideways, int amount) {
+	public static void EXPLODE(World world, Vec3d pos, Color color1, Color color2, double strengthUpwards, double strengthSideways, int amount, int lifeTime, int lifeTimeRange) {
 		ParticleBuilder glitter = new ParticleBuilder(10);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		glitter.setCollision(true);
@@ -346,7 +346,7 @@ public class LibParticles {
 					normalize.zCoord * ThreadLocalRandom.current().nextDouble(-strengthSideways, strengthSideways)
 			));
 			glitter.setAlphaFunction(new InterpFadeInOut(0.0f, ThreadLocalRandom.current().nextFloat()));
-			glitter.setLifetime(ThreadLocalRandom.current().nextInt(150, 200));
+			glitter.setLifetime(ThreadLocalRandom.current().nextInt(lifeTime - lifeTimeRange, lifeTime + lifeTimeRange));
 			glitter.setScale(ThreadLocalRandom.current().nextFloat());
 		});
 	}

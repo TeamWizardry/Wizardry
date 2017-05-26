@@ -89,6 +89,7 @@ public class ModuleShapeZone extends Module implements IlingeringModule {
 					BlockPos newPos = new BlockPos(targetPos).add(i, j, k);
 					if (ThreadLocalRandom.current().nextInt((int) Math.abs(50000 - (radius * 1000))) != 0) continue;
 					if (newPos.getDistance((int) targetPos.xCoord, (int) targetPos.yCoord, (int) targetPos.zCoord) <= radius) {
+						if (!processCost(radius, spell)) return false;
 						SpellData copy = spell.copy();
 						copy.processBlock(newPos, EnumFacing.VALUES[ThreadLocalRandom.current().nextInt(EnumFacing.VALUES.length - 1)], new Vec3d(newPos).addVector(0.5, 0.5, 0.5));
 						copy.addData(YAW, 0f);

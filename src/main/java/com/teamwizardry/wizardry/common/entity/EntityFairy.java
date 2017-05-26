@@ -4,6 +4,7 @@ import com.teamwizardry.librarianlib.features.base.entity.FlyingEntityMod;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.saving.AbstractSaveHandler;
+import com.teamwizardry.librarianlib.features.saving.Savable;
 import com.teamwizardry.wizardry.api.Constants.NBT;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.init.ModItems;
@@ -35,6 +36,7 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Created by Saad on 8/21/2016.
  */
+@Savable
 public class EntityFairy extends FlyingEntityMod {
 
 	public boolean ambush = false;
@@ -193,7 +195,7 @@ public class EntityFairy extends FlyingEntityMod {
 	public void onDeath(@NotNull DamageSource cause) {
 		super.onDeath(cause);
 		if (getHealth() <= 0)
-			PacketHandler.NETWORK.sendToAllAround(new PacketExplode(getPositionVector().addVector(0, 0.25, 0), color, color, 0.9, 0.9, ThreadLocalRandom.current().nextInt(100, 200)),
+			PacketHandler.NETWORK.sendToAllAround(new PacketExplode(getPositionVector().addVector(0, 0.25, 0), color, color, 0.9, 0.9, ThreadLocalRandom.current().nextInt(100, 200), 75, 25),
 					new NetworkRegistry.TargetPoint(world.provider.getDimension(), posX, posY, posZ, 256));
 	}
 

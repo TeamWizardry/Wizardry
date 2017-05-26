@@ -49,7 +49,7 @@ public class ItemMagicWand extends ItemMod implements IGlowOverlayable {
 		if (GuiScreen.isAltKeyDown()) {
 			ItemStack cape = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
 			if (!cape.isEmpty() && cape.getItem() == ModItems.CAPE) {
-				ItemNBTHelper.setInt(cape, "time", ItemNBTHelper.getInt(cape, "time", 0) + 1000);
+				ItemNBTHelper.setInt(cape, "time", ItemNBTHelper.getInt(cape, "time", 0) + 100);
 				player.sendMessage(new TextComponentString(new WizardManager(player).getMana() + "/" + new WizardManager(player).getMaxMana()));
 			}
 		}

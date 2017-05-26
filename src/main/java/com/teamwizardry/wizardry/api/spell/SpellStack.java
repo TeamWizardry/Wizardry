@@ -17,7 +17,7 @@ import java.util.*;
  */
 public class SpellStack {
 
-	public static Set<Item> identifiers = new HashSet<>();
+	public static ArrayList<Item> identifiers = new ArrayList<>();
 
 	// TODO: no...
 	static {
@@ -129,8 +129,8 @@ public class SpellStack {
 		}
 	}
 
-	public static Set<Module> getModules(@Nonnull ItemStack spellHolder) {
-		Set<Module> modules = new HashSet<>();
+	public static ArrayList<Module> getModules(@Nonnull ItemStack spellHolder) {
+		ArrayList<Module> modules = new ArrayList<>();
 
 		NBTTagList list = ItemNBTHelper.getList(spellHolder, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
 		if (list == null) return modules;
@@ -138,14 +138,14 @@ public class SpellStack {
 		return getModules(list);
 	}
 
-	public static Set<Module> getModules(@Nonnull NBTTagCompound compound) {
+	public static ArrayList<Module> getModules(@Nonnull NBTTagCompound compound) {
 		if (compound.hasKey(Constants.NBT.SPELL))
 			return getModules(compound.getTagList(Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND));
-		else return new HashSet<>();
+		else return new ArrayList<>();
 	}
 
-	public static Set<Module> getModules(@Nonnull NBTTagList list) {
-		Set<Module> modules = new HashSet<>();
+	public static ArrayList<Module> getModules(@Nonnull NBTTagList list) {
+		ArrayList<Module> modules = new ArrayList<>();
 		for (int i = 0; i < list.tagCount(); i++) {
 			NBTTagCompound compound = list.getCompoundTagAt(i);
 			Module module = ModuleRegistry.INSTANCE.getModule(compound.getString("id"));
@@ -156,9 +156,9 @@ public class SpellStack {
 		return modules;
 	}
 
-	public static Set<Module> getAllModules(@Nonnull NBTTagCompound compound) {
-		Set<Module> modules = new HashSet<>();
-		Set<Module> heads = getModules(compound);
+	public static ArrayList<Module> getAllModules(@Nonnull NBTTagCompound compound) {
+		ArrayList<Module> modules = new ArrayList<>();
+		ArrayList<Module> heads = getModules(compound);
 		for (Module module : heads) {
 			Module tempModule = module;
 			while (tempModule != null) {
@@ -169,8 +169,8 @@ public class SpellStack {
 		return modules;
 	}
 
-	public static Set<Module> getAllModules(@Nonnull Module module) {
-		Set<Module> modules = new HashSet<>();
+	public static ArrayList<Module> getAllModules(@Nonnull Module module) {
+		ArrayList<Module> modules = new ArrayList<>();
 		Module tempModule = module;
 		while (tempModule != null) {
 			modules.add(tempModule);
@@ -179,9 +179,9 @@ public class SpellStack {
 		return modules;
 	}
 
-	public static Set<Module> getAllModules(@Nonnull ItemStack spellHolder) {
-		Set<Module> modules = new HashSet<>();
-		Set<Module> heads = getModules(spellHolder);
+	public static ArrayList<Module> getAllModules(@Nonnull ItemStack spellHolder) {
+		ArrayList<Module> modules = new ArrayList<>();
+		ArrayList<Module> heads = getModules(spellHolder);
 		for (Module module : heads) {
 			Module tempModule = module;
 			while (tempModule != null) {
