@@ -71,13 +71,13 @@ public class ModuleShapeZone extends Module implements IlingeringModule {
 
 		for (Entity entity : entities) {
 			if (entity.getDistance(targetPos.xCoord, targetPos.yCoord, targetPos.zCoord) <= radius) {
-				if (ThreadLocalRandom.current().nextInt((int) Math.abs(32 - radius)) != 0) continue;
+				if (ThreadLocalRandom.current().nextInt((int) Math.abs(50000 - (radius * 1000))) != 0) continue;
 				if (!processCost(radius, spell)) return false;
 
 				SpellData copy = spell.copy();
 				copy.processEntity(entity, false);
-				copy.addData(YAW, entity.rotationYaw);
-				copy.addData(PITCH, entity.rotationPitch);
+				copy.addData(YAW, 0f);
+				copy.addData(PITCH, -90f);
 				copy.addData(ORIGIN, entity.getPositionVector());
 				runNextModule(copy);
 			}
@@ -87,9 +87,13 @@ public class ModuleShapeZone extends Module implements IlingeringModule {
 			for (int j = (int) -radius; j < radius; j++)
 				for (int k = (int) -radius; k < radius; k++) {
 					BlockPos newPos = new BlockPos(targetPos).add(i, j, k);
+					if (ThreadLocalRandom.current().nextInt((int) Math.abs(50000 - (radius * 1000))) != 0) continue;
 					if (newPos.getDistance((int) targetPos.xCoord, (int) targetPos.yCoord, (int) targetPos.zCoord) <= radius) {
 						SpellData copy = spell.copy();
 						copy.processBlock(newPos, EnumFacing.VALUES[ThreadLocalRandom.current().nextInt(EnumFacing.VALUES.length - 1)], new Vec3d(newPos).addVector(0.5, 0.5, 0.5));
+						copy.addData(YAW, 0f);
+						copy.addData(PITCH, -90f);
+						runNextModule(copy);
 					}
 				}
 
@@ -101,6 +105,8 @@ public class ModuleShapeZone extends Module implements IlingeringModule {
 		Vec3d target = spell.getData(TARGET_HIT);
 
 		if (target == null) return;
+		if (ThreadLocalRandom.current().nextInt(10) != 0) return;
+
 		double radius = 5;
 		if (attributes.hasKey(Attributes.EXTEND))
 			radius += Math.min(32, attributes.getDouble(Attributes.EXTEND));

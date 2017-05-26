@@ -197,6 +197,9 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	 */
 	protected final boolean processCost(double multiplier, SpellData data) {
 		Entity caster = data.getData(SpellData.DefaultKeys.CASTER);
+
+		if (caster != null && caster instanceof EntityPlayer && ((EntityPlayer) caster).isCreative()) return true;
+
 		WizardManager manager;
 		if (caster == null) manager = new WizardManager(data.getData(SpellData.DefaultKeys.CAPABILITY));
 		else manager = new WizardManager(caster);

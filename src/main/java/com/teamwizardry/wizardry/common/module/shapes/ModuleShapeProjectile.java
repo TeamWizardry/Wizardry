@@ -6,7 +6,6 @@ import com.teamwizardry.wizardry.api.spell.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.common.entity.EntitySpellProjectile;
 import com.teamwizardry.wizardry.init.ModSounds;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.Vec3d;
@@ -52,7 +51,6 @@ public class ModuleShapeProjectile extends Module {
 		World world = spell.world;
 		if (world.isRemote) return false;
 
-		Minecraft.getMinecraft().player.sendChatMessage(".");
 		Entity caster = spell.getData(CASTER);
 		if (caster == null) return false;
 

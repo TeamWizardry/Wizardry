@@ -1,18 +1,15 @@
 package com.teamwizardry.wizardry.api.util;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nullable;
-import java.awt.*;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by LordSaad.
@@ -61,83 +58,15 @@ public class Utils {
 		return result;
 	}
 
-	public static ItemStack getItemInHand(EntityPlayer player, Item item) {
-		ItemStack stack = player.getHeldItemMainhand();
-		if (stack.isEmpty())
-			stack = player.getHeldItemOffhand();
-
-		if (stack.isEmpty())
-			return ItemStack.EMPTY;
-		if (stack.getItem() != item)
-			return ItemStack.EMPTY;
-
-		return stack;
-	}
-
-	public static Vec3d getProjectileSlope(Vec3d origin, Vec3d target) {
-		double payloadFrictionY = 0.98D;
-		double payloadFrictionX = 0.98D;
-		double payloadGravity = 0.04D;
-
-		double deltaX = origin.xCoord - target.xCoord;
-		double deltaZ = origin.zCoord - target.zCoord;
-		float calculatedRotationAngle;
-		if (deltaX >= 0 && deltaZ < 0) {
-			calculatedRotationAngle = (float) (Math.atan(Math.abs(deltaX / deltaZ)) / Math.PI * 180D);
-		} else if (deltaX >= 0 && deltaZ >= 0) {
-			calculatedRotationAngle = (float) (Math.atan(Math.abs(deltaZ / deltaX)) / Math.PI * 180D) + 90;
-		} else if (deltaX < 0 && deltaZ >= 0) {
-			calculatedRotationAngle = (float) (Math.atan(Math.abs(deltaX / deltaZ)) / Math.PI * 180D) + 180;
-		} else calculatedRotationAngle = (float) (Math.atan(Math.abs(deltaZ / deltaX)) / Math.PI * 180D) + 270;
-
-		double distance = Math.sqrt(deltaX * deltaX + deltaZ * deltaZ);
-		double deltaY = origin.yCoord - target.yCoord;
-		float calculatedHeightAngle = calculateBestHeightAngle(distance, deltaY, 1f, payloadGravity, payloadFrictionX, payloadFrictionY);
-
-		double[] set = getVelocityVector(calculatedRotationAngle, calculatedHeightAngle, 1f);
-		return new Vec3d(set[0], set[1], set[2]);
-	}
-
-	private static float calculateBestHeightAngle(double distance, double deltaY, float force, double payloadGravity, double payloadFrictionX, double payloadFrictionY) {
-		double bestAngle = 0;
-		double bestDistance = Float.MAX_VALUE;
-		if (payloadGravity == 0D) {
-			return 90F - (float) (Math.atan(deltaY / distance) * 180F / Math.PI);
-		}
-		for (double i = Math.PI * 0.25D; i < Math.PI * 0.50D; i += 0.001D) {
-			double motionX = Math.cos(i) * force;
-			double motionY = Math.sin(i) * force;
-			double posX = 0;
-			double posY = 0;
-			while (posY > deltaY || motionY > 0) {
-				posX += motionX;
-				posY += motionY;
-				motionY -= payloadGravity;
-				motionX *= payloadFrictionX;
-				motionY *= payloadFrictionY;
-			}
-			double distanceToTarget = Math.abs(distance - posX);
-			if (distanceToTarget < bestDistance) {
-				bestDistance = distanceToTarget;
-				bestAngle = i;
+	public static boolean hasOreDictPrefix(ItemStack stack, String dict) {
+		int[] ids = OreDictionary.getOreIDs(stack);
+		for (int id : ids) {
+			if (OreDictionary.getOreName(id).length() >= dict.length()) {
+				if (OreDictionary.getOreName(id).substring(0, dict.length()).compareTo(dict.substring(0, dict.length())) == 0) {
+					return true;
+				}
 			}
 		}
-		return 90F - (float) (bestAngle * 180D / Math.PI);
-	}
-
-	public static double[] getVelocityVector(float angleX, float angleZ, float force) {
-		double[] velocities = new double[3];
-		velocities[0] = Math.sin((double) angleZ / 180 * Math.PI);
-		velocities[1] = Math.cos((double) angleX / 180 * Math.PI);
-		velocities[2] = Math.cos((double) angleZ / 180 * Math.PI) * -1;
-
-		velocities[0] *= Math.sin((double) angleX / 180 * Math.PI);
-		velocities[2] *= Math.sin((double) angleX / 180 * Math.PI);
-		double vectorTotal = velocities[0] * velocities[0] + velocities[1] * velocities[1] + velocities[2] * velocities[2];
-		vectorTotal = force / vectorTotal;
-		for (int i = 0; i < 3; i++) {
-			velocities[i] *= vectorTotal;
-		}
-		return velocities;
+		return false;
 	}
 }

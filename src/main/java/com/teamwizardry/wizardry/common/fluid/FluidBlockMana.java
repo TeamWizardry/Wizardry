@@ -4,8 +4,10 @@ import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.IExplodable;
+import com.teamwizardry.wizardry.api.util.Utils;
 import com.teamwizardry.wizardry.common.achievement.Achievements;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
+import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModPotions;
 import com.teamwizardry.wizardry.init.ModSounds;
@@ -71,11 +73,14 @@ public class FluidBlockMana extends BlockFluidClassic {
 	@Override
 	public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
 		run(entityIn,
-				entity -> entity instanceof EntityLivingBase,
+				entity -> true,
 				entity -> {
-					((EntityLivingBase) entityIn).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 1, true, false));
 					if (worldIn.isRemote) LibParticles.FIZZING_AMBIENT(worldIn, entityIn.getPositionVector());
 				});
+
+		run(entityIn,
+				entity -> entity instanceof EntityLivingBase,
+				entity -> ((EntityLivingBase) entityIn).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 1, true, false)));
 
 		run(entityIn,
 				entity -> entity instanceof EntityPlayer,
@@ -90,6 +95,46 @@ public class FluidBlockMana extends BlockFluidClassic {
 					}
 					if (ThreadLocalRandom.current().nextInt(50) == 0) {
 						((EntityPlayer) entity).setHealth((float) Math.max(0, ((EntityPlayer) entity).getHealth() - 0.1));
+					}
+				});
+
+		run(entityIn,
+				entity -> entity instanceof EntityItem && Utils.hasOreDictPrefix(((EntityItem) entity).getEntityItem(), "plank"),
+				entity -> {
+					EntityItem item = (EntityItem) entity;
+					item.setEntityItemStack(new ItemStack(ModBlocks.WISDOM_WOOD_PLANKS, item.getEntityItem().getCount()));
+					if (worldIn.isRemote) {
+						LibParticles.FIZZING_AMBIENT(worldIn, item.getPositionVector());
+					}
+				});
+
+		run(entityIn,
+				entity -> entity instanceof EntityItem && Utils.hasOreDictPrefix(((EntityItem) entity).getEntityItem(), "log"),
+				entity -> {
+					EntityItem item = (EntityItem) entity;
+					item.setEntityItemStack(new ItemStack(ModBlocks.WISDOM_WOOD_LOG, item.getEntityItem().getCount()));
+					if (worldIn.isRemote) {
+						LibParticles.FIZZING_AMBIENT(worldIn, item.getPositionVector());
+					}
+				});
+
+		run(entityIn,
+				entity -> entity instanceof EntityItem && Utils.hasOreDictPrefix(((EntityItem) entity).getEntityItem(), "stairs"),
+				entity -> {
+					EntityItem item = (EntityItem) entity;
+					item.setEntityItemStack(new ItemStack(ModBlocks.WISDOM_WOOD_STAIRS, item.getEntityItem().getCount()));
+					if (worldIn.isRemote) {
+						LibParticles.FIZZING_AMBIENT(worldIn, item.getPositionVector());
+					}
+				});
+
+		run(entityIn,
+				entity -> entity instanceof EntityItem && Utils.hasOreDictPrefix(((EntityItem) entity).getEntityItem(), "slabs"),
+				entity -> {
+					EntityItem item = (EntityItem) entity;
+					item.setEntityItemStack(new ItemStack(ModBlocks.WISDOM_WOOD_SLAB, item.getEntityItem().getCount()));
+					if (worldIn.isRemote) {
+						LibParticles.FIZZING_AMBIENT(worldIn, item.getPositionVector());
 					}
 				});
 

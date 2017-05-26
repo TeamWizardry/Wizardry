@@ -39,7 +39,7 @@ public class LibParticles {
 		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(pos.xCoord + ThreadLocalRandom.current().nextDouble(-0.5, 0.5), pos.yCoord + ThreadLocalRandom.current().nextDouble(-0.5, 0.5), pos.zCoord + ThreadLocalRandom.current().nextDouble(-0.5, 0.5))), 1, 0, (aFloat, particleBuilder) -> {
-			glitter.setColor(new Color(255, 255, 255, ThreadLocalRandom.current().nextInt(50, 150)));
+			glitter.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), ThreadLocalRandom.current().nextInt(100, 255)));
 			glitter.setLifetime(ThreadLocalRandom.current().nextInt(20, 30));
 			glitter.setMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.05, 0.05), ThreadLocalRandom.current().nextDouble(0.05, 0.1), ThreadLocalRandom.current().nextDouble(-0.05, 0.05)));
 		});
@@ -52,8 +52,13 @@ public class LibParticles {
 		fizz.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 
 		ParticleSpawner.spawn(fizz, world, new StaticInterp<>(pos.addVector(0, 0.5, 0)), 10, 0, (aFloat, particleBuilder) -> {
-			fizz.setColor(new Color(255, 255, 255, ThreadLocalRandom.current().nextInt(50, 150)));
+			fizz.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), ThreadLocalRandom.current().nextInt(100, 255)));
 			fizz.setLifetime(ThreadLocalRandom.current().nextInt(20, 30));
+			fizz.setPositionOffset(new Vec3d(
+					ThreadLocalRandom.current().nextDouble(-0.1, 0.1),
+					ThreadLocalRandom.current().nextDouble(-0.1, 0.1),
+					ThreadLocalRandom.current().nextDouble(-0.1, 0.1)
+			));
 			fizz.setMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.005, 0.005), ThreadLocalRandom.current().nextDouble(0.04, 0.08), ThreadLocalRandom.current().nextDouble(-0.005, 0.005)));
 		});
 	}
@@ -66,7 +71,7 @@ public class LibParticles {
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 300, 0, (aFloat, particleBuilder) -> {
 			glitter.setLifetime(ThreadLocalRandom.current().nextInt(20, 30));
-			glitter.setColor(new Color(255, 255, 255, ThreadLocalRandom.current().nextInt(100, 150)));
+			glitter.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), ThreadLocalRandom.current().nextInt(100, 255)));
 			glitter.setMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.5, 0.5), ThreadLocalRandom.current().nextDouble(-0.5, 0.5), ThreadLocalRandom.current().nextDouble(-0.5, 0.5)));
 		});
 	}
