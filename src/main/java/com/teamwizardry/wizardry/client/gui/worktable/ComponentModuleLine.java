@@ -21,7 +21,7 @@ public class ComponentModuleLine extends GuiComponent<ComponentModuleLine> {
 
 	public void set(Vec2d start, Vec2d end) {
 		this.end = end;
-		this.start = start;
+		this.start = Vec2d.ZERO;
 		setPos(start);
 	}
 

@@ -33,8 +33,8 @@ public class LibSprites {
 		/**
 		 * http://i.imgur.com/0q9uLmn.png
 		 */
-		public static final Sprite MODULE_DEFAULT = SPRITE_SHEET.getSprite("module_default", 24, 24);
-		public static final Sprite MODULE_DEFAULT_GLOW = SPRITE_SHEET.getSprite("module_default_glow", 24, 24);
+		public static final Sprite MODULE_DEFAULT = SPRITE_SHEET.getSprite("module_default", 16, 16);
+		public static final Sprite MODULE_DEFAULT_GLOW = SPRITE_SHEET.getSprite("module_default_glow", 16, 16);
 		public static final Sprite MODULE_ICON_MISSING = SPRITE_SHEET.getSprite("module_icon_missing", 16, 16);
 
 		/**

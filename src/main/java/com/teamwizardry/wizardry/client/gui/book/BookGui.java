@@ -77,7 +77,7 @@ public class BookGui extends GuiBase {
 								icon.draw((int) ClientTickHandler.getPartialTicks(), category.getPos().getXi(), category.getPos().getYi(), 32, 32);
 								GlStateManager.popMatrix();
 							});
-							hookSlider(category, "TEEEEEEEEEEEEEEEEEST IIIIIIIIIIIIIIIIING");
+							//hookSlider(category, "TEEEEEEEEEEEEEEEEEST IIIIIIIIIIIIIIIIING");
 							final String finalPath = path + chunk.get("link").getAsString();
 							category.BUS.hook(GuiComponent.MouseClickEvent.class, mouseClickEvent -> {
 								Page page = new Page(this, finalPath, background.getWidth(), background.getHeight(), 0);

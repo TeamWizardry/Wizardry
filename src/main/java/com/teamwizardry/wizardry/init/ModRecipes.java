@@ -8,6 +8,7 @@ import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 /**
@@ -36,5 +37,7 @@ public class ModRecipes {
 				UniversalBucket.getFilledBucket(ForgeModContainer.getInstance().universalBucket, FluidRegistry.getFluid("wizardry.nacre_fluid")),
 				Items.LAVA_BUCKET,
 				ModItems.MANA_ORB));
+
+		GameRegistry.addRecipe(new ShapedOreRecipe(ModItems.CAPE, " AA", " AA", " AA", 'A', Items.LEATHER));
 	}
 }

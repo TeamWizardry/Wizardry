@@ -38,6 +38,12 @@ public class ItemCape extends ItemModArmor implements IBauble {
 	}
 
 	@Override
+	public void onCreated(ItemStack stack, World worldIn, EntityPlayer playerIn) {
+		super.onCreated(stack, worldIn, playerIn);
+		ItemNBTHelper.setUUID(stack, "uuid", UUID.randomUUID());
+	}
+
+	@Override
 	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 		if (!(entityIn instanceof EntityLivingBase)) return;
 

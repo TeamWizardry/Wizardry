@@ -125,7 +125,8 @@
       "item": "minecraft:ender_pearl",
       "primary_color": "800080",
       "secondary_color": "FF00FF",
-      "cooldown_time": 10
+      "cooldown_time": 40,
+      "chargeup_time": 10
     },
     {
       "id": "effect_substitution",

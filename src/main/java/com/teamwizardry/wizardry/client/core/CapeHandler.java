@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.client.core;
 
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
+import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.math.Matrix4;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.client.cloth.Cloth;
@@ -27,11 +28,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import org.lwjgl.opengl.GL11;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.WeakHashMap;
 
 public class CapeHandler {
 
@@ -250,17 +248,23 @@ public class CapeHandler {
 	public void drawPlayer(RenderLivingEvent.Post event) {
 		if (!(event.getEntity() instanceof EntityPlayer)) return;
 
-		if (event.getEntity() instanceof EntityPlayer) {
-			boolean match = false;
-			EntityPlayer player = (EntityPlayer) event.getEntity();
-			for (ItemStack eq : player.getArmorInventoryList()) {
-				if ((eq != null) && (eq.getItem() == ModItems.CAPE)) {
-					match = true;
-					break;
-				}
+		boolean match = false;
+		ItemStack stack = null;
+		EntityPlayer player = (EntityPlayer) event.getEntity();
+		for (ItemStack eq : player.getArmorInventoryList()) {
+			if ((eq != null) && (eq.getItem() == ModItems.CAPE)) {
+				match = true;
+				stack = eq;
+				break;
 			}
-			if (!match) return;
 		}
+		if (!match) return;
+
+
+		if (!ItemNBTHelper.verifyUUIDExistence(stack, "uuid")) return;
+		UUID uuid = ItemNBTHelper.getUUID(stack, "uuid");
+		if (uuid == null) return;
+
 
 		float partialTicks = ClientTickHandler.getPartialTicks();
 
@@ -283,7 +287,6 @@ public class CapeHandler {
 					new Vec3d(0, 0.1, 0)
 			));
 		}
-
 
 		Cloth c = cloths.get(event.getEntity());
 
@@ -310,7 +313,9 @@ public class CapeHandler {
 		vb.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
 		tess.draw();
 
-		Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/capes/template.png"));
+		Random r = new Random(uuid.clockSequence());
+		String cape = "cape_normal_" + (1 + r.nextInt(3)) + ".png";
+		Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/capes/" + cape));
 		GlStateManager.enableTexture2D();
 
 		vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);

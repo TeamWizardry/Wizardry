@@ -297,12 +297,12 @@ public class LibParticles {
 
 	public static void FAIRY_TRAIL(World world, Vec3d pos, Color color, boolean sad, int age) {
 		if (((age / 4) >= (age / 2)) || (age == 0)) return;
-		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(age / 4, age / 2));
+		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(age / 8, age / 4));
 		glitter.setColor(color);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.2f, 1f));
 
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(1, 5), 0, (i, build) -> {
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(1, 3), 0, (i, build) -> {
 			glitter.setMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.02, 0.02), ThreadLocalRandom.current().nextDouble(-0.02, 0.02), ThreadLocalRandom.current().nextDouble(-0.02, 0.02)));
 			if (sad) {
 				glitter.setCollision(true);

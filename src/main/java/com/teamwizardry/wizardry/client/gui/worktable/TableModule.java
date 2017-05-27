@@ -2,53 +2,41 @@ package com.teamwizardry.wizardry.client.gui.worktable;
 
 import com.teamwizardry.librarianlib.features.gui.EnumMouseButton;
 import com.teamwizardry.librarianlib.features.gui.GuiComponent;
-import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
+import com.teamwizardry.librarianlib.features.gui.components.ComponentVoid;
 import com.teamwizardry.librarianlib.features.gui.mixin.DragMixin;
 import com.teamwizardry.librarianlib.features.math.Vec2d;
+import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBezier2D;
+import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.lib.LibSprites;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.text.TextFormatting;
+import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.UUID;
 
 public class TableModule {
 
-	private static Set<ComponentSprite> modules = new HashSet<>();
+	private static final Sprite plate = LibSprites.Worktable.MODULE_DEFAULT;
+	private static final Sprite plate_highlighted = LibSprites.Worktable.MODULE_DEFAULT_GLOW;
 
-	public ComponentSprite component;
-	private int i = 0;
+	public ComponentVoid component;
 
 	public TableModule(WorktableGui table, Module module, boolean draggable) {
-		ComponentSprite sprite = new ComponentSprite(LibSprites.Worktable.MODULE_DEFAULT, 0, 0, 12, 12);
-		sprite.addTag(module.getID());
+		ComponentVoid base = new ComponentVoid(0, 0, 16, 16);
 
-		ComponentSprite glow = new ComponentSprite(LibSprites.Worktable.MODULE_DEFAULT_GLOW, 0, 0, 12, 12);
-		glow.setVisible(false);
-		sprite.add(glow);
-
-		// TODO: The thing's icon here
-		ComponentSprite icon = new ComponentSprite(LibSprites.Worktable.MODULE_DEFAULT, 2, 2, 8, 8);
-		sprite.add(icon);
-
-		sprite.BUS.hook(GuiComponent.MouseInEvent.class, (event) -> {
-			glow.setVisible(true);
-		});
-
-		sprite.BUS.hook(GuiComponent.MouseOutEvent.class, (event) -> {
-			glow.setVisible(false);
-		});
-
-		sprite.BUS.hook(GuiComponent.MouseDownEvent.class, (event) -> {
+		base.BUS.hook(GuiComponent.MouseDownEvent.class, (event) -> {
 			if (event.getButton() == EnumMouseButton.LEFT) {
-				if (!draggable && sprite.getMouseOver()) {
+				if (!draggable && event.getComponent().getMouseOver()) {
 					TableModule item = new TableModule(table, module, true);
-					item.component.addTag("on_paper");
 					table.paper.add(item.component);
 
-					DragMixin<ComponentSprite> drag = new DragMixin<>(item.component, vec2d -> vec2d);
+					DragMixin<ComponentVoid> drag = new DragMixin<>(item.component, vec2d -> vec2d);
 					drag.setClickPos(new Vec2d(6, 6));
 					drag.setMouseDown(event.getButton());
 					event.cancel();
@@ -56,109 +44,123 @@ public class TableModule {
 			}
 		});
 
-		sprite.BUS.hook(DragMixin.DragPickupEvent.class, (event) -> {
+		base.BUS.hook(DragMixin.DragPickupEvent.class, (event) -> {
 			if (event.getButton() == EnumMouseButton.RIGHT) {
+				event.getComponent().setData(Vec2d.class, "origin_pos", event.getComponent().getPos());
+			}
+		});
 
-				ComponentModuleLine line = new ComponentModuleLine(sprite.getPos(), event.getMousePos());
-				line.setEnabled(false);
-				line.setPos(sprite.getPos().add(6, 6));
-
-				DragMixin<ComponentModuleLine> drag = new DragMixin<>(line, vec2d -> vec2d);
-				drag.setClickPos(new Vec2d(6, 6));
-				drag.setMouseDown(event.getButton());
-
-
-				line.BUS.hook(DragMixin.DragMoveEvent.class, (event2) -> {
-					line.set(sprite.getPos().add(6, 6), line.getPos());
-				});
-
-				line.BUS.hook(DragMixin.DragDropEvent.class, (event2) -> {
-					for (ComponentSprite comp : modules) {
-						if (comp.getMouseOver()) {
-							if (!sprite.hasData(ComponentModuleLine.class, comp.hashCode() + "")
-									&& !comp.hasData(ComponentModuleLine.class, sprite.hashCode() + "")) {
-								ComponentModuleLine line2 = new ComponentModuleLine(sprite.getPos().add(6, 6), comp.getPos().add(6, 6));
-								line2.setEnabled(false);
-								sprite.setData(ComponentModuleLine.class, comp.hashCode() + "", line2);
-								table.paper.add(line2);
-
-							} else {
-								if (sprite.hasData(ComponentModuleLine.class, comp.hashCode() + "")) {
-									ComponentModuleLine remove = sprite.getData(ComponentModuleLine.class, comp.hashCode() + "");
-									if (remove != null) {
-										table.paper.remove(remove);
-										remove.invalidate();
-										sprite.removeData(ComponentModuleLine.class, comp.hashCode() + "");
-									}
-								}
-								if (comp.hasData(ComponentModuleLine.class, sprite.hashCode() + "")) {
-									ComponentModuleLine remove = comp.getData(ComponentModuleLine.class, sprite.hashCode() + "");
-									if (remove != null) {
-										table.paper.remove(remove);
-										remove.invalidate();
-										sprite.removeData(ComponentModuleLine.class, comp.hashCode() + "");
-									}
-								}
-
-							}
-
-							break;
+		base.BUS.hook(DragMixin.DragDropEvent.class, (event) -> {
+			if (event.getButton() == EnumMouseButton.LEFT) {
+				if (!table.paper.getMouseOver()) {
+					UUID uuid = table.paperComponents.get(event.getComponent());
+					for (UUID connectedUUID : table.componentLinks.get(event.getComponent())) {
+						GuiComponent connectedComponent = table.paperComponents.inverse().get(connectedUUID);
+						if (table.componentLinks.get(connectedComponent).contains(uuid)) {
+							table.componentLinks.remove(connectedComponent, uuid);
 						}
 					}
+					table.componentLinks.removeAll(event.getComponent());
+					table.paperComponents.remove(event.getComponent());
 
-					line.invalidate();
-					sprite.removeData(ComponentModuleLine.class, "dragging");
-				});
-
-				sprite.setData(ComponentModuleLine.class, "dragging", line);
-				table.paper.add(line);
-
-				event.cancel();
-			}
-		});
-
-		sprite.BUS.hook(DragMixin.DragDropEvent.class, (event) -> {
-			if (event.getButton() == EnumMouseButton.LEFT) {
-				Vec2d size = table.paper.getSize();
-				Vec2d pos = event.getComponent().getPos();
-				boolean b = pos.getX() >= 0 && pos.getX() <= size.getX() && pos.getY() >= 0 && pos.getY() <= size.getY();
-				if (!b) sprite.invalidate();
+					event.getComponent().invalidate();
+				}
 
 			} else if (event.getButton() == EnumMouseButton.RIGHT) {
-			}
-		});
+				Vec2d position = null;
+				if (event.getComponent().hasData(Vec2d.class, "origin_pos")) {
+					position = (Vec2d) event.getComponent().getData(Vec2d.class, "origin_pos");
+					event.getComponent().removeData(Vec2d.class, "origin_pos");
+				}
+				if (position != null) event.getComponent().setPos(position);
 
-		sprite.BUS.hook(DragMixin.DragMoveEvent.class, (event) -> {
-			if (event.getComponent().getMouseOver()) {
-				if (event.getButton() == EnumMouseButton.RIGHT) {
-					ComponentModuleLine line = sprite.getData(ComponentModuleLine.class, "dragging");
-					if (line != null)
-						line.set(event.getComponent().getPos(), event.getMousePos());
-				} else {
-					//for (ComponentModuleLine lines : sprite.getData(ComponentModuleLine.class)) {
-//
-					//}
-					//if (!sprite.hasData(ComponentModuleLine.class, comp.hashCode() + "")
-					//		&& !comp.hasData(ComponentModuleLine.class, sprite.hashCode() + "")) {
-					//	ComponentModuleLine line2 = new ComponentModuleLine(sprite.getPos().add(6, 6), comp.getPos().add(6, 6));
-					//	line2.setEnabled(false);
-					//	sprite.setData(ComponentModuleLine.class, comp.hashCode() + "", line2);
-					//	table.paper.add(line2);
-					//}
+				for (GuiComponent component : table.paper.getChildren()) {
+					if (component.getMouseOver()) {
+						if (component == event.getComponent()) continue;
+						table.componentLinks.put(event.getComponent(), table.paperComponents.get(component));
+						return;
+					}
 				}
 			}
 		});
 
-		sprite.BUS.hook(GuiComponent.PostDrawEvent.class, (event) -> {
+		base.BUS.hook(GuiComponent.PreDrawEvent.class, (event) -> {
+			Vec2d position = event.getComponent().getPos();
+
+			if (event.getComponent().hasData(Vec2d.class, "origin_pos")) {
+				position = (Vec2d) event.getComponent().getData(Vec2d.class, "origin_pos");
+
+				if (position != null) {
+					GlStateManager.pushMatrix();
+					GlStateManager.disableTexture2D();
+					GlStateManager.color(0, 0, 0, 1);
+					GlStateManager.translate(0, 0, 10);
+					Tessellator tessellator = Tessellator.getInstance();
+					VertexBuffer vb = tessellator.getBuffer();
+					vb.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
+					Vec2d lastPos = null;
+					for (Vec2d point : new InterpBezier2D(position.add(8, 8), event.getComponent().getParent().unTransformChildPos(event.getComponent(), event.getMousePos())).list(50)) {
+						vb.pos(point.getX(), point.getY(), 0).endVertex();
+						if (lastPos != null) vb.pos(lastPos.getX(), lastPos.getY(), 0).endVertex();
+						lastPos = point;
+					}
+					tessellator.draw();
+
+					GlStateManager.enableTexture2D();
+					GlStateManager.popMatrix();
+				}
+			}
+
+			if (position == null) position = event.getComponent().getPos();
+
+			GlStateManager.pushMatrix();
+			GlStateManager.color(1, 1, 1, 1);
+			GlStateManager.translate(position.getXf(), position.getYf(), 100);
+			plate.getTex().bind();
+			plate.draw((int) event.getPartialTicks(), 0, 0);
+
 			if (event.getComponent().getMouseOver()) {
+				plate_highlighted.getTex().bind();
+				plate_highlighted.draw((int) event.getPartialTicks(), 0, 0);
+			}
+			GlStateManager.popMatrix();
+
+			for (UUID uuid : table.componentLinks.get(event.getComponent())) {
+				GuiComponent component = table.paperComponents.inverse().get(uuid);
+				if (component == null) continue;
+
+				Vec2d toPos = component.getPos();
+
+				GlStateManager.pushMatrix();
+				GlStateManager.disableTexture2D();
+				GlStateManager.color(0, 0, 0, 1);
+				GlStateManager.translate(0, 0, 10);
+				Tessellator tessellator = Tessellator.getInstance();
+				VertexBuffer vb = tessellator.getBuffer();
+				vb.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
+				Vec2d lastPos = null;
+				for (Vec2d point : new InterpBezier2D(event.getComponent().getPos().add(8, 8), toPos.add(8, 8)).list(50)) {
+					vb.pos(point.getX(), point.getY(), 0).endVertex();
+					if (lastPos != null) vb.pos(lastPos.getX(), lastPos.getY(), 0).endVertex();
+					lastPos = point;
+				}
+				tessellator.draw();
+
+				GlStateManager.enableTexture2D();
+				GlStateManager.popMatrix();
+			}
+
+			if (event.getComponent().getMouseOver() && !draggable) {
 				List<String> txt = new ArrayList<>();
 				txt.add(TextFormatting.GOLD + module.getReadableName());
+				txt.add(TextFormatting.GRAY + module.getDescription());
 				event.getComponent().setTooltip(txt);
 			}
 		});
 
-		component = sprite;
+		if (draggable)
+			table.paperComponents.put(base, UUID.randomUUID());
 
-		modules.add(sprite);
+		this.component = base;
 	}
 }
