@@ -20,4 +20,7 @@ public class ConfigValues {
 
 	@ConfigPropertyInt(modid = Wizardry.MODID, category = "world", id = "mana_battery_link_distance", comment = "The maximum possible distance required to link a battery with a mana consuming block", defaultValue = 64)
 	public static int manaBatteryDistance;
+
+	@ConfigPropertyInt(modid = Wizardry.MODID, category = "items", id = "max_cape_cap", comment = "The maximum limit a cape can give a player in terms of mana/burnout buffers", defaultValue = 5000)
+	public static int capeCap;
 }

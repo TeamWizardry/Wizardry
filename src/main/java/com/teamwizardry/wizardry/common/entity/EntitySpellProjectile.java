@@ -167,7 +167,7 @@ public class EntitySpellProjectile extends Entity {
 			nextModule.castSpell(data);
 		}
 
-		PacketHandler.NETWORK.sendToAllAround(new PacketExplode(getPositionVector(), new Color(getDataManager().get(DATA_COLOR)), new Color(getDataManager().get(DATA_COLOR2)), 0.9, 0.9, ThreadLocalRandom.current().nextInt(100, 200)),
+		PacketHandler.NETWORK.sendToAllAround(new PacketExplode(getPositionVector(), new Color(getDataManager().get(DATA_COLOR)), new Color(getDataManager().get(DATA_COLOR2)), 0.3, 0.3, ThreadLocalRandom.current().nextInt(100, 200), 75, 25),
 				new NetworkRegistry.TargetPoint(world.provider.getDimension(), posX, posY, posZ, 512));
 
 		setDead();

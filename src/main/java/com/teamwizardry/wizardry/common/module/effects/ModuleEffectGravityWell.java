@@ -65,17 +65,16 @@ public class ModuleEffectGravityWell extends Module implements IlingeringModule 
 		double strength = 20;
 		if (attributes.hasKey(Attributes.EXTEND))
 			strength += attributes.getDouble(Attributes.EXTEND);
-
-		if (!processCost(strength / 2000.0, spell)) return false;
 		strength *= calcBurnoutPercent(caster);
 
 		for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(position)).expand(strength, strength, strength))) {
+			if (!processCost(strength / 5, spell)) return false;
 			if (entity == null) continue;
 			double dist = entity.getPositionVector().distanceTo(position);
 			if (dist < 2) continue;
 			if (dist > strength) continue;
 
-			final double upperMag = (strength / 100);
+			final double upperMag = (strength / 200);
 			final double scale = 3.5;
 			double mag = upperMag * (scale * dist / (-scale * dist - 1) + 1);
 
@@ -102,6 +101,7 @@ public class ModuleEffectGravityWell extends Module implements IlingeringModule 
 		Vec3d position = spell.getData(TARGET_HIT);
 
 		if (position == null) return;
+		if (ThreadLocalRandom.current().nextInt(2) != 0) return;
 
 		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(20, 30));
 		glitter.setColorFunction(new InterpColorHSV(getPrimaryColor(), getSecondaryColor()));

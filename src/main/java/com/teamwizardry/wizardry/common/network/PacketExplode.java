@@ -27,17 +27,23 @@ public class PacketExplode extends PacketBase {
 	private double strengthSideways;
 	@Save
 	private int amount;
+	@Save
+	private int lifeTime;
+	@Save
+	private int lifeTimeRange;
 
 	public PacketExplode() {
 	}
 
-	public PacketExplode(Vec3d pos, Color color1, Color color2, double strengthUpwards, double strengthSideways, int amount) {
+	public PacketExplode(Vec3d pos, Color color1, Color color2, double strengthUpwards, double strengthSideways, int amount, int lifeTime, int lifeTimeRange) {
 		this.pos = pos;
 		this.color1 = color1;
 		this.color2 = color2;
 		this.strengthUpwards = strengthUpwards;
 		this.strengthSideways = strengthSideways;
 		this.amount = amount;
+		this.lifeTime = lifeTime;
+		this.lifeTimeRange = lifeTimeRange;
 	}
 
 	@Override
@@ -47,6 +53,6 @@ public class PacketExplode extends PacketBase {
 
 		World world = Minecraft.getMinecraft().player.world;
 
-		LibParticles.EXPLODE(world, pos, color1, color2, strengthSideways, strengthUpwards, amount);
+		LibParticles.EXPLODE(world, pos, color1, color2, strengthSideways, strengthUpwards, amount, lifeTime, lifeTimeRange);
 	}
 }
