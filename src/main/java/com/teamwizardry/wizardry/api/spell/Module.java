@@ -165,12 +165,7 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 				SpellTicker.INSTANCE.ticker.put(this, new Pair<>(data, ((IlingeringModule) this).lingeringTime(data)));
 
 		boolean success = run(data);
-
 		castParticles(data);
-
-		if (!success && nextModule instanceof IParticleSpammable)
-			nextModule.castParticles(data);
-
 		return success;
 	}
 
@@ -227,6 +222,10 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	}
 
 	protected final boolean runNextModule(@NotNull SpellData data) {
+		return nextModule != null && nextModule.castSpell(data);
+	}
+
+	protected final boolean runNextModule(@NotNull SpellData data, double costMultiplier) {
 		return nextModule != null && nextModule.castSpell(data);
 	}
 

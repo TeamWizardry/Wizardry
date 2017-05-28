@@ -25,6 +25,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -75,9 +76,9 @@ public class ModuleEffectTimeSlow extends Module {
 		Entity caster = spell.getData(CASTER);
 
 		if (targetEntity instanceof EntityLivingBase) {
-			double strength = 100.0;
+			double strength = 50.0;
 			if (attributes.hasKey(Attributes.EXTEND))
-				strength += Math.min(300.0, attributes.getDouble(Attributes.EXTEND) * 4.6875);
+				strength += Math.min(200.0, attributes.getDouble(Attributes.EXTEND) * 4.6875);
 
 			//	if (!processCost(strength, spell)) return false;
 			strength *= calcBurnoutPercent(caster);
@@ -89,8 +90,6 @@ public class ModuleEffectTimeSlow extends Module {
 			targetEntity.getEntityData().setInteger("skip_tick", (int) strength);
 			targetEntity.getEntityData().setInteger("skip_tick_interval", interval);
 			targetEntity.getEntityData().setInteger("skip_tick_interval_save", interval);
-			targetEntity.getEntityData().setFloat("rot_yaw", targetEntity.rotationYaw);
-			targetEntity.getEntityData().setFloat("rot_pitch", targetEntity.rotationPitch);
 
 			if (targetEntity instanceof EntityPlayer)
 				PacketHandler.NETWORK.sendTo(new PacketFreezePlayer((int) strength, interval), (EntityPlayerMP) targetEntity);
@@ -153,7 +152,6 @@ public class ModuleEffectTimeSlow extends Module {
 					event.getEntity().getEntityData().removeTag("skip_tick_interval");
 					event.getEntity().getEntityData().removeTag("skip_tick_interval_save");
 				} else {
-					Minecraft.getMinecraft().player.sendChatMessage(tickInterval + " - " + tickCountdown + " -  stop ticking");
 					event.getEntity().getEntityData().setInteger("skip_tick", --tickCountdown);
 					event.setCanceled(true);
 				}
@@ -176,8 +174,8 @@ public class ModuleEffectTimeSlow extends Module {
 			event.player.motionX = 0;
 			event.player.motionY = 0;
 			event.player.motionZ = 0;
-			event.player.rotationPitch = event.player.getEntityData().getFloat("rot_pitch");
-			event.player.rotationYaw = event.player.getEntityData().getFloat("rot_yaw");
+			//event.player.rotationPitch = event.player.getEntityData().getFloat("rot_pitch");
+			//event.player.rotationYaw = event.player.getEntityData().getFloat("rot_yaw");
 			event.player.velocityChanged = true;
 
 			if (tickInterval <= 0) {
@@ -195,6 +193,15 @@ public class ModuleEffectTimeSlow extends Module {
 			} else {
 				event.player.getEntityData().setInteger("skip_tick_interval", --tickInterval);
 			}
+		}
+	}
+
+	@SubscribeEvent
+	public void interact(PlayerInteractEvent event) {
+		if (event.getEntity().getEntityData().hasKey("skip_tick")
+				&& event.getEntity().getEntityData().hasKey("skip_tick_interval")
+				&& event.getEntity().getEntityData().hasKey("skip_tick_interval_save")) {
+			event.setCanceled(true);
 		}
 	}
 }

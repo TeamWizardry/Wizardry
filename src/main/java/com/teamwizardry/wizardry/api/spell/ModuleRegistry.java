@@ -15,6 +15,7 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,12 +26,12 @@ public class ModuleRegistry {
 
 	public static ModuleRegistry INSTANCE = new ModuleRegistry();
 
-	public HashSet<Module> modules = new HashSet<>();
+	public ArrayList<Module> modules = new ArrayList<>();
 
 	private ModuleRegistry() {
 		AnnotationHelper.INSTANCE.findAnnotatedClasses(LibrarianLib.PROXY.getAsmDataTable(), Module.class, RegisterModule.class, (clazz, info) -> {
 			try {
-				registerModule((Module) UnsafeKt.getUnsafeSafely(0).allocateInstance(clazz));
+				registerModule((Module) UnsafeKt.getUnsafeSafely().allocateInstance(clazz));
 			} catch (InstantiationException e) {
 				e.printStackTrace();
 			}

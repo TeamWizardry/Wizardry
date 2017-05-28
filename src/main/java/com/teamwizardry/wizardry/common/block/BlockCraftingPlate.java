@@ -36,7 +36,7 @@ import javax.annotation.Nullable;
  */
 public class BlockCraftingPlate extends BlockModContainer implements IStructure {
 
-	public static final AxisAlignedBB AABB = new AxisAlignedBB(0.125, 0, 0.125, 0.875, 0.625, 0.875);
+	public static final AxisAlignedBB AABB = new AxisAlignedBB(0.125, 0, 0.125, 0.875, 0.725, 0.875);
 
 	public BlockCraftingPlate() {
 		super("crafting_plate", Material.ROCK);

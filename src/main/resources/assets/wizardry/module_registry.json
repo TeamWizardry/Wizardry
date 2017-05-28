@@ -2,8 +2,8 @@
   "shapes": [
     {
       "id": "shape_beam",
-      "mana_drain": 5.0,
-      "burnout_fill": 5.0,
+      "mana_drain": 1,
+      "burnout_fill": 1,
       "item": "wizardry:unicorn_horn"
     },
     {
@@ -44,6 +44,14 @@
     }
   ],
   "effects": [
+    {
+      "id": "effect_telekinesis",
+      "mana_drain": 10,
+      "burnout_fill": 10,
+      "item": "minecraft:feather",
+      "primary_color": "FFFFFF",
+      "secondary_color": "FFFF00"
+    },
     {
       "id": "effect_anti_gravity_well",
       "mana_drain": 0.5,

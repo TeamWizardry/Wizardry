@@ -20,6 +20,7 @@ public class ModBlocks {
 	public static BlockPearlHolder PEARL_HOLDER;
 	public static BlockCloud CLOUD;
 	public static BlockManaMagnet MANA_MAGNET;
+	public static BlockLight LIGHT;
 
 	public static BlockNacre NACRE;
 	public static BlockNacreBrick NACRE_BRICK;
@@ -45,6 +46,7 @@ public class ModBlocks {
 		NACRE = new BlockNacre();
 		NACRE_BRICK = new BlockNacreBrick();
 		MANA_MAGNET = new BlockManaMagnet();
+		LIGHT = new BlockLight();
 
 		WISDOM_WOOD_LOG = new BlockWisdomWoodLog();
 		WISDOM_WOOD_PLANKS = new BlockWisdomWoodPlanks();

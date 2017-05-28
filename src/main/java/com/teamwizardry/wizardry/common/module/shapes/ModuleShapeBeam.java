@@ -10,7 +10,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
-import java.util.concurrent.ThreadLocalRandom;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
@@ -57,10 +56,8 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 		double range = 10;
 		if (attributes.hasKey(Attributes.EXTEND)) range = Math.min(64, attributes.getDouble(Attributes.EXTEND));
 
-		if (!processCost(range / 100.0, spell)) return false;
-
-		int chance = 30;
-		if (attributes.hasKey(Attributes.EXTEND)) range = Math.min(1, chance - attributes.getDouble(Attributes.EXTEND));
+		//int chance = 30;
+		//if (attributes.hasKey(Attributes.EXTEND)) range = Math.min(1, chance - attributes.getDouble(Attributes.EXTEND));
 
 		RayTraceResult trace = Utils.raytrace(world, PosUtils.vecFromRotations(pitch, yaw), caster != null ? position.addVector(0, caster.getEyeHeight(), 0) : position, range, caster);
 		if (trace == null) return false;
@@ -69,10 +66,11 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 			spell.processEntity(trace.entityHit, false);
 		else if (trace.typeOfHit == RayTraceResult.Type.BLOCK) {
 			spell.processBlock(trace.getBlockPos(), trace.sideHit, trace.hitVec);
-		} else spell.addData(TARGET_HIT, trace.hitVec);
+		}
+		if (trace.hitVec != null) spell.addData(TARGET_HIT, trace.hitVec);
 
 		forceCastNextModuleParticles(spell);
-		return ThreadLocalRandom.current().nextInt(chance) == 0 && runNextModule(spell);
+		return runNextModule(spell);
 	}
 
 	@Override

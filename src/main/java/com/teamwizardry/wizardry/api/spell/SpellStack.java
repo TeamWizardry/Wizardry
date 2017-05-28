@@ -74,7 +74,11 @@ public class SpellStack {
 		for (List<ItemStack> line : lines) {
 
 			ArrayList<Module> lineModules = new ArrayList<>();
-			for (ItemStack stack : line) lineModules.add(fields.get(stack.getItem()).copy());
+			for (ItemStack stack : line) {
+				Module module = fields.get(stack.getItem());
+				if (module == null) continue;
+				lineModules.add(module.copy());
+			}
 
 			convertedLines.add(lineModules);
 		}

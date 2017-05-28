@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry;
 
 import com.teamwizardry.librarianlib.features.base.ModCreativeTab;
+import com.teamwizardry.librarianlib.features.utilities.UnsafeKt;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.proxy.CommonProxy;
 import net.minecraft.item.ItemStack;
@@ -53,6 +54,7 @@ public class Wizardry {
 
 	static {
 		FluidRegistry.enableUniversalBucket();
+		UnsafeKt.hookIntoUnsafe();
 	}
 
 	@Mod.EventHandler

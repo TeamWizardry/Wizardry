@@ -35,7 +35,7 @@ public final class VersionChecker {
 				double onlineBuild = NumberUtils.isNumber(onlineVersion) ? Double.parseDouble(onlineVersion) : -1;
 				if (onlineBuild == -1) return;
 				double clientBuild = Double.parseDouble(Wizardry.VERSION);
-				//if (onlineBuild > clientBuild) {
+				if (onlineBuild > clientBuild) {
 					ArrayList<String> messages = new ArrayList<>();
 					messages.add("Don't let your bugs be thugs! Use our patented Magic-ogon spray for only $9.99");
 					messages.add("What? A new update? Looks like magic...");
@@ -45,15 +45,15 @@ public final class VersionChecker {
 					messages.add("(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧");
 					messages.add("before updating (◡‿◡✿) after updating (⊙ω⊙✿)");
 					messages.add("(☞ﾟ∀ﾟ)☞ you're outdated my dude");
-				messages.add("yo do ya got any of that changelog shit? シ");
+					messages.add("yo do ya got any of that changelog shit? シ");
 					messages.add("yo dawg we heard you like changelogs so we put changelogs in your changelogs so you can change while you log");
 					messages.add("SASAAAAGEYOOO, SASAAAGEYOOO, WIZARDRY BUGS FIXED, SASAAAAGEYOOOOO");
 					messages.add("⊙ω⊙ what's this?");
 					messages.add("(^з^)-☆ ~bug fixes and shit~");
 					messages.add("◔_◔ looks like youre out of date");
 					messages.add("ಠ~ಠ why aren't you up to date yet");
-				messages.add("GET IN THE UPDATE, SHINJI");
-				messages.add("( ﾟ,_ゝﾟ) is that.. ( ﾟ,_ゝﾟ) ..a mod update i see?");
+					messages.add("GET IN THE UPDATE, SHINJI");
+					messages.add("( ﾟ,_ゝﾟ) is that.. ( ﾟ,_ゝﾟ) ..a mod update i see?");
 					messages.add("ಠ_ರೃ Watson, I believe they have an outdated jar.");
 					messages.add("╚(•⌂•)╝ update your jars, dammit!");
 					messages.add("(」ﾟヘﾟ)」y u no update?!");
@@ -62,9 +62,9 @@ public final class VersionChecker {
 					messages.add("v(ಥ ̯ ಥ)v mfw not up-to-date");
 
 					player.sendMessage(new TextComponentString(TextFormatting.YELLOW + messages.get(ThreadLocalRandom.current().nextInt(messages.size() - 1))));
-				player.sendMessage(new TextComponentString(TextFormatting.GREEN + "There's a new Wizardry update available! your version: '" + TextFormatting.RED + clientBuild + TextFormatting.GREEN + "' new version: '" + TextFormatting.YELLOW + onlineBuild + TextFormatting.GREEN + "'"));
+					player.sendMessage(new TextComponentString(TextFormatting.GREEN + "There's a new Wizardry update available! your version: '" + TextFormatting.RED + clientBuild + TextFormatting.GREEN + "' new version: '" + TextFormatting.YELLOW + onlineBuild + TextFormatting.GREEN + "'"));
 
-				//	}
+				}
 			}
 
 			triedToWarnPlayer = true;

@@ -43,20 +43,16 @@ public class WorktableGui extends GuiBase {
 		getMainComponents().add(effects);
 
 		ComponentVoid shapes = new ComponentVoid(96, 35, 48, 80);
-		addModules(effects, ModuleType.EFFECT);
+		addModules(shapes, ModuleType.EFFECT);
 		getMainComponents().add(shapes);
 
 		ComponentVoid events = new ComponentVoid(32, 127, 48, 80);
 		addModules(events, ModuleType.EVENT);
 		getMainComponents().add(events);
 
-		ComponentVoid modiifers = new ComponentVoid(96, 127, 48, 80);
-		addModules(modiifers, ModuleType.MODIFIER);
-		getMainComponents().add(modiifers);
-
-		ComponentVoid selected = new ComponentVoid(0, 0, 16, 16);
-		selected.addTag("selected");
-		paper.add(selected);
+		ComponentVoid modifiers = new ComponentVoid(96, 127, 48, 80);
+		addModules(modifiers, ModuleType.MODIFIER);
+		getMainComponents().add(modifiers);
 	}
 
 	private void addModules(ComponentVoid parent, ModuleType type) {

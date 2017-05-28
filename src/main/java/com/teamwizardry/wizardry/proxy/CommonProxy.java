@@ -26,7 +26,6 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -80,8 +79,6 @@ public class CommonProxy {
 		EasyConfigHandler.init();
 		GameRegistry.registerWorldGenerator(new GenHandler(), 0);
 		ModRecipes.initCrafting();
-
-		FMLInterModComms.sendMessage(LibrarianLib.MODID, "unsafe", "librarianliblate");
 	}
 
 	public void postInit(FMLPostInitializationEvent event) {
