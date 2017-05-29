@@ -46,6 +46,8 @@ public class PotionNullMovement extends PotionMod {
 		if (player.isPotionActive(ModPotions.NULL_MOVEMENT)) {
 			player.rotationYaw = player.getEntityData().getFloat("rot_yaw");
 			player.rotationPitch = player.getEntityData().getFloat("rot_pitch");
+			player.prevRotationYaw = player.getEntityData().getFloat("rot_yaw");
+			player.prevRotationPitch = player.getEntityData().getFloat("rot_pitch");
 
 			if (!(player.movementInput instanceof NullMovementInput))
 				player.movementInput = new NullMovementInput(player.movementInput);
@@ -58,6 +60,8 @@ public class PotionNullMovement extends PotionMod {
 		if (event.player.isPotionActive(ModPotions.NULL_MOVEMENT)) {
 			event.player.rotationYaw = event.player.getEntityData().getFloat("rot_yaw");
 			event.player.rotationPitch = event.player.getEntityData().getFloat("rot_pitch");
+			event.player.prevRotationYaw = event.player.getEntityData().getFloat("rot_yaw");
+			event.player.prevRotationPitch = event.player.getEntityData().getFloat("rot_pitch");
 		}
 	}
 }

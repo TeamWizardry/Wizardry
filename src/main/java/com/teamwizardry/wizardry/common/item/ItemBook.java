@@ -30,7 +30,10 @@ public class ItemBook extends ItemMod implements IPickupAchievement {
 	@Nonnull
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, @Nonnull EnumHand hand) {
-		playerIn.openGui(Wizardry.instance, 1, worldIn, (int) playerIn.posX, (int) playerIn.posY, (int) playerIn.posZ);
+		ItemStack stack = playerIn.getHeldItemMainhand();
+		int slot = playerIn.inventory.getSlotFor(stack);
+		if (worldIn.isRemote)
+			playerIn.openGui(Wizardry.instance, 1, worldIn, slot, 0, 0);
 		return ActionResult.newResult(EnumActionResult.SUCCESS, playerIn.getHeldItem(hand));
 	}
 

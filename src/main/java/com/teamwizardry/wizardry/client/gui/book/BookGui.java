@@ -1,24 +1,27 @@
 package com.teamwizardry.wizardry.client.gui.book;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.gui.GuiBase;
 import com.teamwizardry.librarianlib.features.gui.GuiComponent;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
+import com.teamwizardry.librarianlib.features.gui.components.ComponentStack;
+import com.teamwizardry.librarianlib.features.gui.components.ComponentText;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentVoid;
 import com.teamwizardry.librarianlib.features.gui.mixin.gl.GlMixin;
+import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.math.Vec2d;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.librarianlib.features.sprite.Texture;
 import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -30,16 +33,17 @@ import java.util.HashMap;
 public class BookGui extends GuiBase {
 
 	public static Texture SPRITE_SHEET = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/book/book.png"));
-	private static Sprite background = SPRITE_SHEET.getSprite("background", 145, 179);
+	private static Sprite SPRITE_BACKGROUND = SPRITE_SHEET.getSprite("background", 145, 179);
+	private static Sprite SPRITE_NEXT = SPRITE_SHEET.getSprite("next", 18, 9);
 	public ComponentVoid mainIndex;
 	private HashMap<ComponentVoid, String> sliders = new HashMap<>();
 
-	public BookGui() {
+	public BookGui(ItemStack book) {
 		super(145, 179);
-		ComponentSprite componentBackground = new ComponentSprite(background, 0, 0);
+		ComponentSprite componentBackground = new ComponentSprite(SPRITE_BACKGROUND, 0, 0);
 		getMainComponents().add(componentBackground);
 
-		mainIndex = new ComponentVoid(0, 0, background.getWidth(), background.getHeight());
+		mainIndex = new ComponentVoid(0, 0, SPRITE_BACKGROUND.getWidth(), SPRITE_BACKGROUND.getHeight());
 		componentBackground.add(mainIndex);
 
 		String langname = Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode();
@@ -80,7 +84,7 @@ public class BookGui extends GuiBase {
 							//hookSlider(category, "TEEEEEEEEEEEEEEEEEST IIIIIIIIIIIIIIIIING");
 							final String finalPath = path + chunk.get("link").getAsString();
 							category.BUS.hook(GuiComponent.MouseClickEvent.class, mouseClickEvent -> {
-								Page page = new Page(this, finalPath, background.getWidth(), background.getHeight(), 0);
+								Page page = new Page(this, finalPath, SPRITE_BACKGROUND.getWidth(), SPRITE_BACKGROUND.getHeight(), 0);
 								mainIndex.setVisible(false);
 								mainIndex.setEnabled(false);
 								getMainComponents().add(page.component);
@@ -91,6 +95,41 @@ public class BookGui extends GuiBase {
 					}
 				}
 			}
+		}
+
+		if (ItemNBTHelper.getBoolean(book, "has_recipe", false)) {
+			ComponentSprite componentPaper = new ComponentSprite(new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/book/paper.png")), componentBackground.getSize().getXi() + 5, (componentBackground.getSize().getYi() / 2) - (148 / 2), 143, 148);
+
+			JsonObject object = new Gson().fromJson(ItemNBTHelper.getString(book, "spell_recipe", null), JsonObject.class);
+
+			String spellName = object.getAsJsonPrimitive("name").getAsString();
+			int width = Minecraft.getMinecraft().fontRenderer.getStringWidth(spellName);
+			ComponentText title = new ComponentText((componentPaper.getSize().getXi() / 2) - (width / 2), 4);
+			title.getText().setValue(spellName);
+			componentPaper.add(title);
+
+			JsonArray array = object.getAsJsonArray("list");
+			int row = 0;
+			for (int i = 0; i < array.size() - 1; i++) {
+				if (i > 0 && i % 6 == 0) row++;
+
+				JsonElement element = array.get(i);
+				if (!element.isJsonPrimitive()) continue;
+				String name = element.getAsString();
+				Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(name));
+				if (item == null) continue;
+				ItemStack stack = new ItemStack(item);
+
+				ComponentStack componentStack = new ComponentStack(4 + 24 * (i % 6), 14 + 24 * row);
+				componentStack.getStack().setValue(stack);
+				componentPaper.add(componentStack);
+
+				if (i % 6 == 0) continue;
+				ComponentSprite next = new ComponentSprite(SPRITE_NEXT, -4 + 24 * (i % 6), 20 + 24 * row, 9, 4);
+				componentPaper.add(next);
+			}
+
+			getMainComponents().add(componentPaper);
 		}
 	}
 

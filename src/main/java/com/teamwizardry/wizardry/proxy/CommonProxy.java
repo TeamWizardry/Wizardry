@@ -73,6 +73,7 @@ public class CommonProxy {
 		PacketHandler.register(PacketExplode.class, Side.CLIENT);
 		PacketHandler.register(PacketSyncModuleRegistry.class, Side.CLIENT);
 		PacketHandler.register(PacketFreezePlayer.class, Side.CLIENT);
+		PacketHandler.register(PacketSendSpellToBook.class, Side.SERVER);
 	}
 
 	public void init(FMLInitializationEvent event) {

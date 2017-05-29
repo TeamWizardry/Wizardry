@@ -17,6 +17,10 @@ import java.util.*;
  */
 public class SpellStack {
 
+	public static Item fieldLineBreak = Items.WHEAT_SEEDS;
+	public static Item fieldCodeSplitter = ModItems.FAIRY_DUST;
+	public static Item codeLineBreak = ModItems.DEVIL_DUST;
+
 	public static ArrayList<Item> identifiers = new ArrayList<>();
 
 	// TODO: no...
@@ -38,11 +42,11 @@ public class SpellStack {
 	public ArrayList<Module> compiled = new ArrayList<>();
 
 	public SpellStack(List<ItemStack> inventory) {
-		List<List<ItemStack>> branches = brancher(inventory, ModItems.FAIRY_DUST);
+		List<List<ItemStack>> branches = brancher(inventory, fieldCodeSplitter);
 		if (branches.size() != 2) return; // If no fairy dust was found to split the spell twice, stop.
 
 		// PROCESS FIELDS
-		List<List<ItemStack>> fieldLines = brancher(branches.get(0), Items.WHEAT_SEEDS); // Get all the fields before the fairy dust.
+		List<List<ItemStack>> fieldLines = brancher(branches.get(0), fieldLineBreak); // Get all the fields before the fairy dust.
 		if (fieldLines.isEmpty()) return; // If no fields where found stop.
 
 		for (List<ItemStack> fieldLine : fieldLines) {
@@ -68,7 +72,7 @@ public class SpellStack {
 			fields.put(stack.getItem(), head);
 		}
 
-		List<List<ItemStack>> lines = brancher(branches.get(1), ModItems.DEVIL_DUST); // Get all the code lines of the second half of the spell.
+		List<List<ItemStack>> lines = brancher(branches.get(1), codeLineBreak); // Get all the code lines of the second half of the spell.
 
 		ArrayList<ArrayList<Module>> convertedLines = new ArrayList<>();
 		for (List<ItemStack> line : lines) {

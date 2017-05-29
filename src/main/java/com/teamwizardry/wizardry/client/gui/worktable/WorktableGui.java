@@ -7,12 +7,18 @@ import com.teamwizardry.librarianlib.features.gui.GuiComponent;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentGrid;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentVoid;
+import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.librarianlib.features.sprite.Texture;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.spell.SpellRecipeConstructor;
+import com.teamwizardry.wizardry.common.network.PacketSendSpellToBook;
+import com.teamwizardry.wizardry.init.ModItems;
+import net.minecraft.client.Minecraft;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
@@ -65,6 +71,15 @@ public class WorktableGui extends GuiBase {
 				Module module = compileModule(component);
 				if (module == null) continue;
 				compiledSpell.add(module);
+			}
+
+			SpellRecipeConstructor recipe = new SpellRecipeConstructor(compiledSpell);
+
+			for (ItemStack stack : Minecraft.getMinecraft().player.inventory.mainInventory) {
+				if (stack.getItem() == ModItems.BOOK) {
+					int slot = Minecraft.getMinecraft().player.inventory.getSlotFor(stack);
+					PacketHandler.NETWORK.sendToServer(new PacketSendSpellToBook(slot, recipe.getRecipeJson().toString()));
+				}
 			}
 		});
 		getMainComponents().add(save);
