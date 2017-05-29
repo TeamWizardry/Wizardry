@@ -2,7 +2,6 @@ package com.teamwizardry.wizardry.client.gui.worktable;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.google.common.collect.HashMultimap;
 import com.teamwizardry.librarianlib.features.gui.GuiBase;
 import com.teamwizardry.librarianlib.features.gui.GuiComponent;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentGrid;
@@ -16,6 +15,9 @@ import com.teamwizardry.wizardry.api.spell.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import net.minecraft.util.ResourceLocation;
 
+import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.UUID;
 
 /**
@@ -24,10 +26,10 @@ import java.util.UUID;
 public class WorktableGui extends GuiBase {
 	private static final Texture BACKGROUND_TEXTURE = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/table_background.png"));
 	private static final Sprite BACKGROUND_SPRITE = BACKGROUND_TEXTURE.getSprite("bg", 480, 224);
-
+	public HashSet<Module> compiledSpell = new HashSet<>();
 	ComponentVoid paper;
 	BiMap<GuiComponent, UUID> paperComponents = HashBiMap.create();
-	HashMultimap<GuiComponent, UUID> componentLinks = HashMultimap.create();
+	HashMap<UUID, UUID> componentLinks = new HashMap<>();
 
 	public WorktableGui() {
 		super(480, 224);
@@ -53,6 +55,69 @@ public class WorktableGui extends GuiBase {
 		ComponentVoid modifiers = new ComponentVoid(96, 127, 48, 80);
 		addModules(modifiers, ModuleType.MODIFIER);
 		getMainComponents().add(modifiers);
+
+		ComponentSprite save = new ComponentSprite(new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/icons/modifier_extend.png")), 370, 19, 50, 50);
+		save.BUS.hook(GuiComponent.MouseClickEvent.class, (event) -> {
+
+			HashSet<GuiComponent> heads = getHeads();
+			compiledSpell.clear();
+			for (GuiComponent component : heads) {
+				Module module = compileModule(component);
+				if (module == null) continue;
+				compiledSpell.add(module);
+			}
+		});
+		getMainComponents().add(save);
+	}
+
+	public UUID getUUID(GuiComponent component) {
+		return paperComponents.get(component);
+	}
+
+	public GuiComponent getComponent(UUID uuid) {
+		return paperComponents.inverse().get(uuid);
+	}
+
+	@Nullable
+	private Module compileModule(@Nullable GuiComponent component) {
+		if (component == null) return null;
+
+		Module module = getModule(component);
+		if (module == null) return null;
+
+		if (!componentLinks.containsKey(getUUID(component))) return module;
+		UUID uuidChild = componentLinks.get(getUUID(component));
+
+		GuiComponent childComp = getComponent(uuidChild);
+		if (childComp == null) return module;
+
+		Module child = getModule(childComp);
+		if (child == null) return module;
+
+		module.nextModule = compileModule(childComp);
+
+		return module;
+	}
+
+	private HashSet<GuiComponent> getHeads() {
+		HashSet<GuiComponent> heads = new HashSet<>();
+		for (GuiComponent component : paperComponents.keySet()) {
+			if (componentLinks.containsValue(getUUID(component))) continue;
+			heads.add(component);
+		}
+
+		return heads;
+	}
+
+	public int getLinksTo(GuiComponent comp) {
+		UUID main = paperComponents.get(comp);
+		int count = 0;
+		for (UUID uuid : componentLinks.values()) {
+			if (main.equals(uuid)) {
+				count++;
+			}
+		}
+		return count;
 	}
 
 	private void addModules(ComponentVoid parent, ModuleType type) {
@@ -60,9 +125,18 @@ public class WorktableGui extends GuiBase {
 		parent.add(grid);
 
 		for (Module module : ModuleRegistry.INSTANCE.getModules(type)) {
-			TableModule item = new TableModule(this, module, false);
+			TableModule item = new TableModule(this, module.copy(), false);
 			grid.add(item.component);
 		}
+	}
+
+	@Nullable
+	private Module getModule(@Nullable GuiComponent component) {
+		if (component == null) return null;
+		for (Object object : component.getTags()) {
+			if (object instanceof Module) return ((Module) object).copy();
+		}
+		return null;
 	}
 
 	@Override

@@ -20,9 +20,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.opengl.GL11;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
 
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
@@ -33,13 +35,17 @@ public class TableModule {
 	private static final Sprite plate_highlighted = LibSprites.Worktable.MODULE_DEFAULT_GLOW;
 	private static final Sprite streak = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/streak.png"));
 	private static final Sprite dot = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/dot.png"));
+	public final Module module;
 	public ComponentVoid component;
 	private Sprite icon;
 
 	public TableModule(WorktableGui table, Module module, boolean draggable) {
+		this.module = module;
+
 		icon = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/icons/" + module.getID() + ".png"));
 
 		ComponentVoid base = new ComponentVoid(0, 0, 16, 16);
+		base.addTag(module);
 
 		base.BUS.hook(GuiComponent.MouseDownEvent.class, (event) -> {
 			if (event.getButton() == EnumMouseButton.LEFT) {
@@ -68,14 +74,15 @@ public class TableModule {
 				Vec2d pos = event.getComponent().getPos();
 				boolean b = pos.getX() >= 0 && pos.getX() <= size.getX() && pos.getY() >= 0 && pos.getY() <= size.getY();
 				if (!b) {
-					UUID uuid = table.paperComponents.get(event.getComponent());
-					for (UUID connectedUUID : table.componentLinks.get(event.getComponent())) {
-						GuiComponent connectedComponent = table.paperComponents.inverse().get(connectedUUID);
-						if (table.componentLinks.get(connectedComponent).contains(uuid)) {
-							table.componentLinks.remove(connectedComponent, uuid);
-						}
+					UUID uuid1 = table.getUUID(event.getComponent());
+					if (table.componentLinks.containsKey(uuid1)) {
+						table.componentLinks.remove(uuid1);
 					}
-					table.componentLinks.removeAll(event.getComponent());
+					if (table.componentLinks.containsValue(uuid1)) {
+						UUID uuid2 = table.componentLinks.get(uuid1);
+						table.componentLinks.remove(uuid2, uuid1);
+					}
+
 					table.paperComponents.remove(event.getComponent());
 
 					event.getComponent().invalidate();
@@ -91,23 +98,37 @@ public class TableModule {
 				}
 				if (position != null) event.getComponent().setPos(position);
 
-				UUID uuid1 = table.paperComponents.get(event.getComponent());
+				UUID uuid1 = table.getUUID(event.getComponent());
 
 				for (GuiComponent component : table.paper.getChildren()) {
 					if (component.getMouseOver()) {
 						if (component == event.getComponent()) continue;
-						UUID uuid2 = table.paperComponents.get(component);
+						UUID uuid2 = table.getUUID(component);
 
-						if (table.componentLinks.get(event.getComponent()).contains(uuid2)) {
-							table.componentLinks.get(event.getComponent()).remove(uuid2);
-							return;
+						if (table.componentLinks.containsKey(uuid1) && table.componentLinks.get(uuid1).equals(uuid2)) {
+							table.componentLinks.remove(uuid1);
 						}
-						if (table.componentLinks.get(component).contains(uuid1)) {
-							table.componentLinks.get(component).remove(uuid1);
-							return;
+						if (table.componentLinks.containsKey(uuid2) && table.componentLinks.get(uuid2).equals(uuid1)) {
+							table.componentLinks.remove(uuid2);
 						}
 
-						table.componentLinks.put(event.getComponent(), table.paperComponents.get(component));
+						if (table.componentLinks.containsValue(uuid2)) {
+							for (GuiComponent component1 : table.paper.getChildren()) {
+								UUID uuid3 = table.getUUID(component1);
+								if (table.componentLinks.containsKey(uuid3) && table.componentLinks.get(uuid3).equals(uuid2)) {
+									table.componentLinks.remove(uuid3);
+									break;
+								}
+							}
+						}
+
+						if (table.componentLinks.containsKey(uuid2))
+							table.componentLinks.remove(uuid2);
+						if (table.componentLinks.containsKey(uuid1)) {
+							table.componentLinks.remove(uuid1);
+						}
+
+						table.componentLinks.put(uuid1, uuid2);
 						return;
 					}
 				}
@@ -122,68 +143,10 @@ public class TableModule {
 				position = (Vec2d) event.getComponent().getData(Vec2d.class, "origin_pos");
 
 				if (position != null) {
-					GlStateManager.pushMatrix();
-					GlStateManager.enableBlend();
-					GlStateManager.disableCull();
-					GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-					GlStateManager.color(1, 1, 1, 1);
-					streak.getTex().bind();
 					Vec2d start = position.add(8, 8);
 					Vec2d end = event.getComponent().getParent().unTransformChildPos(event.getComponent(), event.getMousePos());
-					InterpBezier2D bezier = new InterpBezier2D(start, end);
-					List<Vec2d> list = bezier.list(50);
 
-					Tessellator tessellator = Tessellator.getInstance();
-					VertexBuffer vb = tessellator.getBuffer();
-					vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-					Vec2d lastPoint = null;
-					Vec2d behind = null, behindThat = null;
-					for (int i = 0; i < list.size() - 1; i++) {
-						Vec2d point = list.get(i);
-						if (lastPoint == null) {
-							lastPoint = point;
-							continue;
-						}
-
-						Vec2d normal = point.sub(lastPoint).normalize();
-						Vec2d perp = new Vec2d(-normal.getYf(), normal.getXf());
-						Vec2d point1 = lastPoint.sub(normal.mul(0.5)).add(perp);
-						Vec2d point2 = point.add(normal.mul(0.5)).add(perp);
-						Vec2d point3 = point.add(normal.mul(0.5)).sub(perp);
-						Vec2d point4 = lastPoint.sub(normal.mul(0.5)).sub(perp);
-
-						vb.pos(point1.getXf(), point1.getYf(), 0).tex(0, 0).endVertex();
-						vb.pos(point2.getXf(), point2.getYf(), 0).tex(0, 1).endVertex();
-						vb.pos(point3.getXf(), point3.getYf(), 0).tex(1, 0).endVertex();
-						vb.pos(point4.getXf(), point4.getYf(), 0).tex(1, 1).endVertex();
-
-						lastPoint = point;
-
-						if (i == (int) ((Math.sin(((end.length() / 10f) + ClientTickHandler.getTicks() + ClientTickHandler.getPartialTicks()) / 10f) / 2f + 0.5f) * 50f)) {
-							behind = list.get(i);
-							if (i > 0) behindThat = list.get(i - 1);
-						}
-
-					}
-					tessellator.draw();
-
-					if (behind != null && behindThat != null) {
-						GlStateManager.disableTexture2D();
-						GlStateManager.color(0, 0, 0, 1);
-						Vec2d normal = behindThat.sub(behind).normalize();
-						Vec2d perp = new Vec2d(-normal.getYf(), normal.getXf());
-						Vec2d point1 = behind.add(normal.mul(5)).sub(perp.mul(5));
-						Vec2d point2 = behind.add(normal.mul(5)).add(perp.mul(5));
-
-						vb.begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION);
-						vb.pos(behind.getXf(), behind.getYf(), 0).endVertex();
-						vb.pos(point1.getXf(), point1.getYf(), 0).endVertex();
-						vb.pos(point2.getXf(), point2.getYf(), 0).endVertex();
-						tessellator.draw();
-					}
-
-					GlStateManager.enableTexture2D();
-					GlStateManager.popMatrix();
+					drawWire(start, end, Color.BLUE, Color.CYAN);
 				}
 			}
 
@@ -212,10 +175,12 @@ public class TableModule {
 			}
 			GlStateManager.popMatrix();
 
-			for (UUID uuid : table.componentLinks.get(event.getComponent())) {
-				GuiComponent component = table.paperComponents.inverse().get(uuid);
-				if (component == null) continue;
-				if (uuid == table.paperComponents.get(event.getComponent())) continue;
+			UUID linkedUuid = table.componentLinks.get(table.getUUID(event.getComponent()));
+
+			{
+				GuiComponent component = table.getComponent(linkedUuid);
+				if (component == null) return;
+				if (linkedUuid == table.getUUID(event.getComponent())) return;
 
 				Vec2d toPos = null;
 				if (component.hasData(Vec2d.class, "origin_pos"))
@@ -229,76 +194,20 @@ public class TableModule {
 				if (fromPos == null) fromPos = event.getComponent().getPos();
 				fromPos = fromPos.add(8, 8);
 
-				GlStateManager.pushMatrix();
-				GlStateManager.enableBlend();
-				GlStateManager.disableCull();
-				GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-				GlStateManager.color(1, 1, 1, 1);
-				streak.getTex().bind();
-				InterpBezier2D bezier = new InterpBezier2D(fromPos, toPos);
-				List<Vec2d> list = bezier.list(50);
 
-				Tessellator tessellator = Tessellator.getInstance();
-				VertexBuffer vb = tessellator.getBuffer();
-				vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-				Vec2d lastPoint = null;
-				Vec2d behind = null, behindThat = null;
-				for (int i = 0; i < list.size() - 1; i++) {
-					Vec2d point = list.get(i);
-					if (lastPoint == null) {
-						lastPoint = point;
-						continue;
-					}
-
-					Vec2d normal = point.sub(lastPoint).normalize();
-					Vec2d perp = new Vec2d(-normal.getYf(), normal.getXf());
-					Vec2d point1 = lastPoint.sub(normal.mul(0.5)).add(perp);
-					Vec2d point2 = point.add(normal.mul(0.5)).add(perp);
-					Vec2d point3 = point.add(normal.mul(0.5)).sub(perp);
-					Vec2d point4 = lastPoint.sub(normal.mul(0.5)).sub(perp);
-
-					vb.pos(point1.getXf(), point1.getYf(), 0).tex(0, 0).endVertex();
-					vb.pos(point2.getXf(), point2.getYf(), 0).tex(0, 1).endVertex();
-					vb.pos(point3.getXf(), point3.getYf(), 0).tex(1, 0).endVertex();
-					vb.pos(point4.getXf(), point4.getYf(), 0).tex(1, 1).endVertex();
-
-					lastPoint = point;
-
-					if (i == (int) ((Math.sin(((fromPos.length() / 10f) + ClientTickHandler.getTicks() + ClientTickHandler.getPartialTicks()) / 10f) / 2f + 0.5f) * 50f)) {
-						behind = list.get(i);
-						if (i > 0) behindThat = list.get(i - 1);
-					}
-
-				}
-				tessellator.draw();
-
-				if (behind != null && behindThat != null) {
-					GlStateManager.disableTexture2D();
-					GlStateManager.color(0, 0, 0, 1);
-
-					Vec2d normal = behindThat.sub(behind).normalize();
-					Vec2d perp = new Vec2d(-normal.getYf(), normal.getXf());
-					Vec2d point1 = behind.add(normal.mul(5)).sub(perp.mul(5));
-					Vec2d point2 = behind.add(normal.mul(5)).add(perp.mul(5));
-
-					vb.begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION);
-					vb.pos(behind.getXf(), behind.getYf(), 0).endVertex();
-					vb.pos(point1.getXf(), point1.getYf(), 0).endVertex();
-					vb.pos(point2.getXf(), point2.getYf(), 0).endVertex();
-					tessellator.draw();
-				}
-
-				GlStateManager.enableTexture2D();
-				GlStateManager.popMatrix();
+				drawWire(fromPos, toPos, Color.BLACK, Color.BLACK);
 			}
+		});
 
-			if (event.getComponent().getMouseOver() && !hasPos) {
-				List<String> txt = new ArrayList<>();
-				txt.add(TextFormatting.GOLD + module.getReadableName());
-				if (GuiScreen.isShiftKeyDown())
-					txt.add(TextFormatting.GRAY + module.getDescription());
-				event.getComponent().setTooltip(txt);
-			}
+		base.getTooltip().func((Function<GuiComponent<ComponentVoid>, List<String>>) t -> {
+			List<String> txt = new ArrayList<>();
+
+			if (t.hasData(Vec2d.class, "origin_pos")) return txt;
+
+			txt.add(TextFormatting.GOLD + module.getReadableName());
+			if (GuiScreen.isShiftKeyDown())
+				txt.add(TextFormatting.GRAY + module.getDescription());
+			return txt;
 		});
 
 		if (draggable)
@@ -307,7 +216,68 @@ public class TableModule {
 		this.component = base;
 	}
 
-	private float lerp(float a, float b, float f) {
-		return a + f * (b - a);
+	public void drawWire(Vec2d start, Vec2d end, Color primary, Color secondary) {
+		GlStateManager.pushMatrix();
+		GlStateManager.enableBlend();
+		GlStateManager.disableCull();
+		GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		GlStateManager.color(1, 1, 1, 1);
+		streak.getTex().bind();
+		InterpBezier2D bezier = new InterpBezier2D(start, end);
+		List<Vec2d> list = bezier.list(50);
+
+		Tessellator tessellator = Tessellator.getInstance();
+		VertexBuffer vb = tessellator.getBuffer();
+		vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+		Vec2d lastPoint = null;
+		Vec2d behind = null, behindThat = null;
+		for (int i = 0; i < list.size() - 1; i++) {
+			Vec2d point = list.get(i);
+			if (lastPoint == null) {
+				lastPoint = point;
+				continue;
+			}
+
+			Vec2d normal = point.sub(lastPoint).normalize();
+			Vec2d perp = new Vec2d(-normal.getYf(), normal.getXf());
+			Vec2d point1 = lastPoint.sub(normal.mul(0.5)).add(perp);
+			Vec2d point2 = point.add(normal.mul(0.5)).add(perp);
+			Vec2d point3 = point.add(normal.mul(0.5)).sub(perp);
+			Vec2d point4 = lastPoint.sub(normal.mul(0.5)).sub(perp);
+
+			vb.pos(point1.getXf(), point1.getYf(), 0).tex(0, 0).endVertex();
+			vb.pos(point2.getXf(), point2.getYf(), 0).tex(0, 1).endVertex();
+			vb.pos(point3.getXf(), point3.getYf(), 0).tex(1, 0).endVertex();
+			vb.pos(point4.getXf(), point4.getYf(), 0).tex(1, 1).endVertex();
+
+			lastPoint = point;
+
+			float x = (float) (start.length() + ClientTickHandler.getTicks() + ClientTickHandler.getPartialTicks()) / 30f;
+			if (i == (int) ((x - Math.floor(x)) * 50f)) {
+				behind = list.get(i);
+				if (i > 0) behindThat = list.get(i - 1);
+			}
+
+		}
+		tessellator.draw();
+
+		if (behind != null && behindThat != null) {
+			GlStateManager.disableTexture2D();
+			GlStateManager.color(0, 0, 0, 1);
+
+			Vec2d normal = behindThat.sub(behind).normalize();
+			Vec2d perp = new Vec2d(-normal.getYf(), normal.getXf());
+			Vec2d point1 = behind.add(normal.mul(5)).sub(perp.mul(5));
+			Vec2d point2 = behind.add(normal.mul(5)).add(perp.mul(5));
+
+			vb.begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION);
+			vb.pos(behind.getXf(), behind.getYf(), 0).endVertex();
+			vb.pos(point1.getXf(), point1.getYf(), 0).endVertex();
+			vb.pos(point2.getXf(), point2.getYf(), 0).endVertex();
+			tessellator.draw();
+		}
+
+		GlStateManager.enableTexture2D();
+		GlStateManager.popMatrix();
 	}
 }
