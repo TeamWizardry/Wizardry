@@ -228,7 +228,7 @@ public class TableModule {
 
 		Tessellator tessellator = Tessellator.getInstance();
 		VertexBuffer vb = tessellator.getBuffer();
-		vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+		vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
 		Vec2d lastPoint = null;
 		Vec2d behind = null, behindThat = null;
 		for (int i = 0; i < list.size() - 1; i++) {
@@ -238,6 +238,13 @@ public class TableModule {
 				continue;
 			}
 
+			float dist = i / (list.size() - 1);
+			float inter = 0.01f * ClientTickHandler.getTicks() + dist;
+			float frac = inter - ((int) inter);
+			float r = lerp(primary.getRed(), secondary.getRed(), frac) / 255f;
+			float g = lerp(primary.getGreen(), secondary.getGreen(), frac) / 255f;
+			float b = lerp(primary.getBlue(), secondary.getBlue(), frac) / 255f;
+
 			Vec2d normal = point.sub(lastPoint).normalize();
 			Vec2d perp = new Vec2d(-normal.getYf(), normal.getXf());
 			Vec2d point1 = lastPoint.sub(normal.mul(0.5)).add(perp);
@@ -245,10 +252,10 @@ public class TableModule {
 			Vec2d point3 = point.add(normal.mul(0.5)).sub(perp);
 			Vec2d point4 = lastPoint.sub(normal.mul(0.5)).sub(perp);
 
-			vb.pos(point1.getXf(), point1.getYf(), 0).tex(0, 0).endVertex();
-			vb.pos(point2.getXf(), point2.getYf(), 0).tex(0, 1).endVertex();
-			vb.pos(point3.getXf(), point3.getYf(), 0).tex(1, 0).endVertex();
-			vb.pos(point4.getXf(), point4.getYf(), 0).tex(1, 1).endVertex();
+			vb.pos(point1.getXf(), point1.getYf(), 0).tex(0, 0).color(r, g, b, 1).endVertex();
+			vb.pos(point2.getXf(), point2.getYf(), 0).tex(0, 1).color(r, g, b, 1).endVertex();
+			vb.pos(point3.getXf(), point3.getYf(), 0).tex(1, 0).color(r, g, b, 1).endVertex();
+			vb.pos(point4.getXf(), point4.getYf(), 0).tex(1, 1).color(r, g, b, 1).endVertex();
 
 			lastPoint = point;
 
@@ -279,5 +286,9 @@ public class TableModule {
 
 		GlStateManager.enableTexture2D();
 		GlStateManager.popMatrix();
+	}
+
+	private float lerp(float a, float b, float f) {
+		return a + f * (b - a);
 	}
 }

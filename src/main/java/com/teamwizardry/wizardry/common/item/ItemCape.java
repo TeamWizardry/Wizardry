@@ -6,7 +6,6 @@ import com.teamwizardry.librarianlib.features.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.features.base.item.ItemModArmor;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -38,12 +37,6 @@ public class ItemCape extends ItemModArmor implements IBauble {
 	}
 
 	@Override
-	public void onCreated(ItemStack stack, World worldIn, EntityPlayer playerIn) {
-		super.onCreated(stack, worldIn, playerIn);
-		ItemNBTHelper.setUUID(stack, "uuid", UUID.randomUUID());
-	}
-
-	@Override
 	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 		if (!(entityIn instanceof EntityLivingBase)) return;
 
@@ -64,19 +57,25 @@ public class ItemCape extends ItemModArmor implements IBauble {
 				ItemNBTHelper.setUUID(stack, "owner", entityIn.getUniqueID());
 				owner = entityIn.getUniqueID();
 			}
-			if (!owner.equals(entityIn.getUniqueID())) {
-				Minecraft.getMinecraft().player.sendChatMessage("DIFFERENT OWNERS DETECTED");
+
+			UUID entity = entityIn.getUniqueID();
+			if (!owner.equals(entity)) {
+				//Minecraft.getMinecraft().player.sendChatMessage("DIFFERENT OWNERS DETECTED");
 				if (buffer >= 30) {
 					ItemNBTHelper.setUUID(stack, "owner", entityIn.getUniqueID());
 					ItemNBTHelper.setInt(stack, "time", (int) (time / 1.5));
-					ItemNBTHelper.setInt(stack, "buffer", 0);
+					ItemNBTHelper.removeEntry(stack, "buffer");
 				} else {
 					if (thief != entityIn.getUniqueID()) {
 						ItemNBTHelper.setInt(stack, "buffer", 0);
 						ItemNBTHelper.setUUID(stack, "thief", entityIn.getUniqueID());
 					} else ItemNBTHelper.setInt(stack, "buffer", buffer + 1);
 				}
-			} else ItemNBTHelper.setInt(stack, "time", time + 1);
+			} else {
+				ItemNBTHelper.setInt(stack, "time", time + 1);
+				ItemNBTHelper.removeEntry(stack, "thief");
+				ItemNBTHelper.removeEntry(stack, "buffer");
+			}
 			//Minecraft.getMinecraft().player.sendChatMessage(time + " -- " + buffer + " -- " + owner + " -- " + thief);
 		}
 	}
@@ -84,7 +83,7 @@ public class ItemCape extends ItemModArmor implements IBauble {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
-		if (ItemNBTHelper.verifyUUIDExistence(stack, "owner")) {
+		if (ItemNBTHelper.verifyExistence(stack, "owner")) {
 			UUID uuid = ItemNBTHelper.getUUID(stack, "owner");
 			if (uuid != null) {
 				Entity owner = player.world.getPlayerEntityByUUID(uuid);
@@ -92,7 +91,7 @@ public class ItemCape extends ItemModArmor implements IBauble {
 			}
 		}
 
-		if (ItemNBTHelper.verifyUUIDExistence(stack, "thief")) {
+		if (ItemNBTHelper.verifyExistence(stack, "thief")) {
 			UUID uuid = ItemNBTHelper.getUUID(stack, "thief");
 			if (uuid != null) {
 				Entity thief = player.world.getPlayerEntityByUUID(uuid);

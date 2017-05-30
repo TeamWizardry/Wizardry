@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.client.core;
 
+import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.math.Matrix4;
@@ -260,12 +261,6 @@ public class CapeHandler {
 		}
 		if (!match) return;
 
-
-		if (!ItemNBTHelper.verifyUUIDExistence(stack, "uuid")) return;
-		UUID uuid = ItemNBTHelper.getUUID(stack, "uuid");
-		if (uuid == null) return;
-
-
 		float partialTicks = ClientTickHandler.getPartialTicks();
 
 //		models.put(event.getCap(), ImmutableList.of());//getBoxes(event.getCap().getPositionVector(), event.getRenderer().getMainModel(), event.getCap().renderYawOffset));
@@ -313,9 +308,20 @@ public class CapeHandler {
 		vb.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
 		tess.draw();
 
-		Random r = new Random(uuid.clockSequence());
-		String cape = "cape_normal_" + (1 + r.nextInt(3)) + ".png";
-		Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/capes/" + cape));
+		String cape;
+		if (LibrarianLib.PROXY.getResource(Wizardry.MODID, "textures/capes/cape_" + player.getName().toLowerCase() + ".png") == null) {
+			UUID uuid = ItemNBTHelper.getUUID(stack, "uuid");
+			if (uuid == null) {
+				uuid = UUID.randomUUID();
+				ItemNBTHelper.setUUID(stack, "uuid", uuid);
+			}
+			Random r = new Random(uuid.hashCode());
+			cape = "cape_normal_" + (1 + r.nextInt(3));
+		} else {
+			cape = "cape_" + player.getName();
+		}
+
+		Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/capes/" + cape + ".png"));
 		GlStateManager.enableTexture2D();
 
 		vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
