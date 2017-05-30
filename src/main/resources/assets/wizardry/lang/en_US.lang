@@ -1,10 +1,10 @@
 tile.wizardry:crafting_plate.name=Crafting Plate
 tile.wizardry:magicians_worktable.name=Magician's Worktable
 tile.wizardry:mana_battery.name=Mana Battery
-tile.wizardry:pedestal.name=Pedestal
 tile.wizardry:nacre.name=Liquid Nacre
 tile.wizardry:mana.name=Liquid Mana
 tile.wizardry:cloud.name=Cloud
+item.wizardry:pearl_holder.name=Pearl Holder
 
 item.wizardry:book.name=Spellforger's Codex
 item.wizardry:ring.name=Golden Ring
@@ -29,6 +29,21 @@ item.wizardry:syringe_mana.name=ManaBooster Lite™
 item.wizardry:syringe_steroid.name=ManaBuilder Serum Premium Plus™
 item.wizardry:mana_orb.name=Mana Orb
 item.wizardry:glass_orb.name=Glass Orb
+item.wizardry:cape.name=Cape
+item.wizardry:magic_wand.name=Magic Wand
+item.wizardry:syringe_blood.name=Blood Syringe
+item.wizardry:light.name=Light
+
+item.wizardry:wisdom_wood_log.name=Wisdom Wood Log
+item.wizardry:wisdom_wood_planks.name=Wisdom Wood Planks
+item.wizardry:wisdom_wood_pigmented_planks.name=Wisdom Wood Pigmented Planks
+item.wizardry:wisdom_wood_slab.name=Wisdom Wood Slab
+item.wizardry:wisdom_wood_stairs.name=Wisdom Wood Stairs
+item.wizardry:wisdom_wood_trapdoor.name=Wisdom Wood Trapdoor
+item.wizardry:wisdom_wood_fence.name=Wisdom Wood Fence
+item.wizardry:wisdom_wood_fence_gate.name=Wisdom Wood Fence Gate
+item.wizardry:wisdom_wood_door.name=Wisdom Wood Door
+item.wizardry:wisdom_wood.name=Wisdom Wood
 
 gui.physicsbook.defaulttitle=Physics Book
 

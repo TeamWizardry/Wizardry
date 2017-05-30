@@ -58,7 +58,7 @@ public class ModuleEffectSubstitution extends Module implements IBlockSelectable
 	@Nonnull
 	@Override
 	public String getDescription() {
-		return "Will swap the caster's position with that of the target. Also applies to blocks from the caster's inventory on the target block";
+		return "Will swap the caster's position with that of the target. Also works on blocks, ie: will swap connected blocks of the target block with that shift shift right-clicked block.";
 	}
 
 	@Override

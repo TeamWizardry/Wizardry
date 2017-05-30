@@ -66,7 +66,7 @@ public class ModuleEffectTelekinesis extends Module implements IContinousSpell {
 		Vec3d targetPos = spell.getData(TARGET_HIT);
 		Entity caster = spell.getData(CASTER);
 
-		double strength = 5;
+		double strength = 3;
 		if (attributes.hasKey(Attributes.EXTEND))
 			strength += Math.min(8.0, attributes.getDouble(Attributes.EXTEND));
 		if (!processCost(strength, spell)) return false;
