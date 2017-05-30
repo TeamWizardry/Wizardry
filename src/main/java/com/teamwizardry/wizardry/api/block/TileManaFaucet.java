@@ -3,8 +3,8 @@ package com.teamwizardry.wizardry.api.block;
 import com.teamwizardry.librarianlib.features.base.block.TileMod;
 import com.teamwizardry.librarianlib.features.saving.CapabilityProvide;
 import com.teamwizardry.librarianlib.features.saving.Save;
+import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.capability.CustomWizardryCapability;
-import com.teamwizardry.wizardry.api.capability.WizardManager;
 
 import static net.minecraft.util.EnumFacing.*;
 
@@ -22,7 +22,7 @@ public class TileManaFaucet extends TileMod {
 	}
 
 	protected final boolean addMana(double amount) {
-		WizardManager manager = new WizardManager(cap);
+		CapManager manager = new CapManager(cap);
 		if (amount > cap.getMaxMana() - cap.getMana()) {
 			manager.setMana(manager.getMaxMana());
 			return false;

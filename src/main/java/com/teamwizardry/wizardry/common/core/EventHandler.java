@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.common.core;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants.MISC;
-import com.teamwizardry.wizardry.api.capability.WizardManager;
+import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.spell.IContinousSpell;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.SpellCastEvent;
@@ -136,7 +136,7 @@ public class EventHandler {
 
 	@SubscribeEvent
 	public void capTick(TickEvent.PlayerTickEvent event) {
-		WizardManager manager = new WizardManager(event.player);
+		CapManager manager = new CapManager(event.player);
 		manager.addMana(manager.getMaxMana() / 1000);
 		manager.removeBurnout(manager.getMaxBurnout() / 1000);
 
@@ -153,7 +153,7 @@ public class EventHandler {
 			manager.setMaxMana(buffer);
 			manager.setMaxBurnout(buffer);
 		}
-//		Minecraft.getMinecraft().player.sendChatMessage(WizardManager.getMaxMana(event.player) + "");
+//		Minecraft.getMinecraft().player.sendChatMessage(CapManager.getMaxMana(event.player) + "");
 	}
 
 	@SubscribeEvent

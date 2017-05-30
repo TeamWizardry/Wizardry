@@ -9,7 +9,7 @@ import com.teamwizardry.wizardry.api.Constants.NBT;
 import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.api.block.TileManaFaucet;
 import com.teamwizardry.wizardry.api.block.TileManaSink;
-import com.teamwizardry.wizardry.api.capability.WizardManager;
+import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.item.GlowingOverlayHelper;
 import com.teamwizardry.wizardry.api.item.IGlowOverlayable;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
@@ -50,7 +50,7 @@ public class ItemMagicWand extends ItemMod implements IGlowOverlayable {
 			ItemStack cape = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
 			if (!cape.isEmpty() && cape.getItem() == ModItems.CAPE) {
 				ItemNBTHelper.setInt(cape, "time", ItemNBTHelper.getInt(cape, "time", 0) + 100);
-				player.sendMessage(new TextComponentString(new WizardManager(player).getMana() + "/" + new WizardManager(player).getMaxMana()));
+				player.sendMessage(new TextComponentString(new CapManager(player).getMana() + "/" + new CapManager(player).getMaxMana()));
 			}
 		}
 

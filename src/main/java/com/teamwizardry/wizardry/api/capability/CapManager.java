@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.api.capability;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -10,22 +11,26 @@ import javax.annotation.Nullable;
 /**
  * Created by LordSaad.
  */
-public final class WizardManager {
+public final class CapManager {
 
 	@Nullable
 	private IWizardryCapability cap;
 	private Entity entity;
 
-	public WizardManager(@Nullable Entity entity) {
+	public CapManager(@Nullable Entity entity) {
 		this.entity = entity;
 		cap = WizardryCapabilityProvider.getCap(entity);
 	}
 
-	public WizardManager(@Nullable IWizardryCapability cap) {
+	public CapManager(@Nullable ItemStack stack) {
+		cap = WizardryCapabilityProvider.getCap(stack);
+	}
+
+	public CapManager(@Nullable IWizardryCapability cap) {
 		this.cap = cap;
 	}
 
-	public WizardManager(World world, BlockPos pos, @Nullable EnumFacing facing) {
+	public CapManager(World world, BlockPos pos, @Nullable EnumFacing facing) {
 		cap = WizardryCapabilityProvider.getCap(world, pos, facing);
 	}
 

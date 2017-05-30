@@ -4,7 +4,7 @@ import com.teamwizardry.librarianlib.features.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.capability.WizardManager;
+import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -70,7 +70,7 @@ public class ItemSyringe extends ItemMod {
 				player.addPotionEffect(new PotionEffect(ModPotions.STEROID, 500, 1, true, false));
 				stack.setItemDamage(0);
 			} else if (stack.getItemDamage() == 1) {
-				WizardManager manager = new WizardManager(player);
+				CapManager manager = new CapManager(player);
 				manager.addMana(manager.getMaxMana() / 2);
 				player.setHealth(player.getHealth() - 2);
 				stack.setItemDamage(0);

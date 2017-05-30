@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.api.spell;
 
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
-import com.teamwizardry.wizardry.api.capability.WizardManager;
+import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.common.core.SpellTicker;
 import com.teamwizardry.wizardry.common.network.PacketRenderSpell;
 import kotlin.Pair;
@@ -183,7 +183,7 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	protected final double calcBurnoutPercent(@Nullable Entity player) {
 		if (!(player instanceof EntityLivingBase)) return 1;
 		if (player instanceof EntityPlayer && ((EntityPlayer) player).isCreative()) return 1;
-		WizardManager manager = new WizardManager(player);
+		CapManager manager = new CapManager(player);
 		return ((manager.getMaxBurnout() - manager.getBurnout()) / (manager.getMaxBurnout() * 1.0));
 	}
 
@@ -195,9 +195,9 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 
 		//if (caster != null && caster instanceof EntityPlayer && ((EntityPlayer) caster).isCreative()) return true;
 
-		WizardManager manager;
-		if (caster == null) manager = new WizardManager(data.getData(SpellData.DefaultKeys.CAPABILITY));
-		else manager = new WizardManager(caster);
+		CapManager manager;
+		if (caster == null) manager = new CapManager(data.getData(SpellData.DefaultKeys.CAPABILITY));
+		else manager = new CapManager(caster);
 
 		double manaDrain = getManaDrain() * multiplier;
 		double burnoutFill = getBurnoutFill() * multiplier;

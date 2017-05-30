@@ -98,37 +98,13 @@ public final class PosUtils {
 				IBlockState block = world.getBlockState(staffPos);
 				if (block.getBlock() != ModBlocks.PEARL_HOLDER) continue;
 				TilePearlHolder staff = (TilePearlHolder) world.getTileEntity(staffPos);
-				if (staff == null || staff.pearl == null) continue;
-				if (staff.pearl.getItem() != ModItems.MANA_ORB) continue;
-
-				int j = (180 + i) % 360;
-				double newAngle = Math.toRadians(j);
-				double oppX = Math.cos(newAngle) * 6;
-				double oppZ = Math.sin(newAngle) * 6;
-				BlockPos oppPos = new BlockPos(battery.getX() + oppX + 0.5, battery.getY() - 2, battery.getZ() + oppZ + 0.5);
-
-				if (world.getBlockState(oppPos.down()).getBlock() != ModBlocks.WISDOM_WOOD_PIGMENTED_PLANKS) continue;
-				if (takenPoses.contains(oppPos)) continue;
-
-				IBlockState oppBlock = world.getBlockState(oppPos);
-				if (oppBlock.getBlock() != ModBlocks.PEARL_HOLDER) {
-					missingSymmetry.add(oppPos);
+				if (staff == null || staff.pearl == null || staff.pearl.isEmpty() || staff.pearl.getItem() != ModItems.MANA_ORB)
 					continue;
-				}
-				TilePearlHolder oppPed = (TilePearlHolder) world.getTileEntity(oppPos);
-				if (oppPed == null) {
-					missingSymmetry.add(oppPos);
-					continue;
-				}
-				if (oppPed.pearl == null) continue;
-				if (oppPed.pearl.getItem() != ModItems.MANA_ORB) continue;
 
 				takenPoses.add(staffPos);
-				takenPoses.add(oppPos);
 			}
 
 			fullCircle.removeAll(takenPoses);
-			fullCircle.removeAll(missingSymmetry);
 		}
 	}
 }

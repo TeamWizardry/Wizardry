@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.api.capability;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -42,6 +43,11 @@ public class WizardryCapabilityProvider implements ICapabilityProvider, INBTSeri
 		TileEntity tile = world.getTileEntity(pos);
 		if (tile == null) return null;
 		return tile.getCapability(wizardryCapability, facing);
+	}
+
+	@Nullable
+	public static IWizardryCapability getCap(ItemStack stack) {
+		return stack.getCapability(wizardryCapability, null);
 	}
 
 	@Override

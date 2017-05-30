@@ -4,7 +4,7 @@ import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.librarianlib.features.sprite.Texture;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.capability.WizardManager;
+import com.teamwizardry.wizardry.api.capability.CapManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
@@ -49,7 +49,7 @@ public class HudEventHandler extends Gui {
 			emptyBurnoutBar.draw(ClientTickHandler.getTicks(), right, top + 6);
 			GlStateManager.popMatrix();
 
-			WizardManager manager = new WizardManager(player);
+			CapManager manager = new CapManager(player);
 
 			GlStateManager.pushMatrix();
 			GlStateManager.color(1.0F, 1.0F, 1.0F);

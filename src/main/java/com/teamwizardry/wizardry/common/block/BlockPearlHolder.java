@@ -53,7 +53,7 @@ public class BlockPearlHolder extends BlockModContainer {
 
 			} else {
 				ItemStack stack = te.pearl.copy();
-				te.pearl = null;
+				te.pearl = ItemStack.EMPTY;
 				if (playerIn.inventory.addItemStackToInventory(stack)) playerIn.openContainer.detectAndSendChanges();
 				else {
 					EntityItem entityItem = new EntityItem(worldIn, pos.getX(), pos.getY() + 1, pos.getZ(), stack);

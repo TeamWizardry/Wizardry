@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.api.render;
 
-import com.teamwizardry.wizardry.api.capability.WizardManager;
+import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -28,11 +28,11 @@ public class ClusterObject implements INBTSerializable<NBTTagCompound> {
 	public ClusterObject(TileCraftingPlate plate, ItemStack stack, World world, Random random) {
 		this.plate = plate;
 
-		WizardManager manager = new WizardManager(plate.cap);
+		CapManager manager = new CapManager(plate.cap);
 		if (manager.isManaEmpty()) {
-			dest = Vec3d.ZERO;
+			dest = new Vec3d(0, 0.85, 0);
 			this.stack = stack;
-			origin = Vec3d.ZERO;
+			origin = new Vec3d(ThreadLocalRandom.current().nextDouble(-0.3, 0.3), ThreadLocalRandom.current().nextDouble(0.5, 0.6), ThreadLocalRandom.current().nextDouble(-0.3, 0.3));
 			worldTime = world.getTotalWorldTime();
 			return;
 		}
@@ -42,7 +42,7 @@ public class ClusterObject implements INBTSerializable<NBTTagCompound> {
 
 		dest = new Vec3d(x, 5 + (random.nextFloat() * 3), z);
 		this.stack = stack;
-		origin = Vec3d.ZERO;
+		origin = new Vec3d(ThreadLocalRandom.current().nextDouble(-0.3, 0.3), ThreadLocalRandom.current().nextDouble(0.5, 0.6), ThreadLocalRandom.current().nextDouble(-0.3, 0.3));
 		worldTime = world.getTotalWorldTime();
 		destTime = ThreadLocalRandom.current().nextDouble(10, 30);
 	}
@@ -54,10 +54,10 @@ public class ClusterObject implements INBTSerializable<NBTTagCompound> {
 	public void tick(World world, Random random) {
 		tick++;
 		if ((world.getTotalWorldTime() - worldTime) >= destTime) {
-			WizardManager manager = new WizardManager(plate.cap);
+			CapManager manager = new CapManager(plate.cap);
 			if (manager.isManaEmpty()) {
 				origin = dest;
-				dest = Vec3d.ZERO;
+				dest = new Vec3d(ThreadLocalRandom.current().nextDouble(-0.3, 0.3), ThreadLocalRandom.current().nextDouble(0.5, 0.6), ThreadLocalRandom.current().nextDouble(-0.3, 0.3));
 				worldTime = world.getTotalWorldTime();
 				destTime = ThreadLocalRandom.current().nextDouble(10, 30);
 				return;
@@ -106,11 +106,13 @@ public class ClusterObject implements INBTSerializable<NBTTagCompound> {
 
 		if (nbt.hasKey("dest_x") && nbt.hasKey("dest_y") && nbt.hasKey("dest_z"))
 			dest = new Vec3d(nbt.getDouble("dest_x"), nbt.getDouble("dest_y"), nbt.getDouble("dest_z"));
-		else dest = Vec3d.ZERO;
+		else
+			dest = new Vec3d(ThreadLocalRandom.current().nextDouble(-0.3, 0.3), ThreadLocalRandom.current().nextDouble(0.5, 0.6), ThreadLocalRandom.current().nextDouble(-0.3, 0.3));
 
 		if (nbt.hasKey("origin_x") && nbt.hasKey("origin_y") && nbt.hasKey("origin_z"))
 			origin = new Vec3d(nbt.getDouble("origin_x"), nbt.getDouble("origin_y"), nbt.getDouble("origin_z"));
-		else origin = Vec3d.ZERO;
+		else
+			origin = new Vec3d(ThreadLocalRandom.current().nextDouble(-0.3, 0.3), ThreadLocalRandom.current().nextDouble(0.5, 0.6), ThreadLocalRandom.current().nextDouble(-0.3, 0.3));
 
 		if (nbt.hasKey("dest_time")) destTime = nbt.getDouble("dest_time");
 		else destTime = 0;

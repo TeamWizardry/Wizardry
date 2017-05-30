@@ -36,6 +36,13 @@ public class CustomWizardryCapability implements IWizardryCapability {
 		this.maxBurnout = maxBurnout;
 	}
 
+	public CustomWizardryCapability(double maxMana, double maxBurnout, double mana, double burnout) {
+		this.maxMana = maxMana;
+		this.maxBurnout = maxBurnout;
+		this.mana = mana;
+		this.burnout = burnout;
+	}
+
 	@Override
 	public double getMana() {
 		return mana;

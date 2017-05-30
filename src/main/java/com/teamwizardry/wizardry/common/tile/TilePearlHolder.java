@@ -1,7 +1,6 @@
 package com.teamwizardry.wizardry.common.tile;
 
 import com.teamwizardry.librarianlib.features.autoregister.TileRegister;
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.wizardry.api.block.TileManaSink;
 import com.teamwizardry.wizardry.api.spell.IContinousSpell;
@@ -36,10 +35,7 @@ public class TilePearlHolder extends TileManaSink {
 	public void update() {
 		super.update();
 		if (world.isRemote) return;
-		if (pearl == null) return;
-		if (pearl.getItem() == ModItems.MANA_ORB) {
-			ItemNBTHelper.setInt(pearl, "orb_tick", ItemNBTHelper.getInt(pearl, "orb_tick", 0) + 1);
-		} else ItemNBTHelper.removeEntry(pearl, "orb_tick");
+		if (pearl == null) pearl = ItemStack.EMPTY;
 
 		if (pearl.getItem() == ModItems.PEARL_NACRE) {
 

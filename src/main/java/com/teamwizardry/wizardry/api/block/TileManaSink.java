@@ -10,8 +10,8 @@ import com.teamwizardry.librarianlib.features.saving.CapabilityProvide;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.capability.CustomWizardryCapability;
-import com.teamwizardry.wizardry.api.capability.WizardManager;
 import com.teamwizardry.wizardry.api.util.ColorUtils;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
@@ -42,16 +42,16 @@ public class TileManaSink extends TileMod implements ITickable {
 	@Override
 	public void update() {
 		if (faucetPos != null) {
-			WizardManager sink = new WizardManager(cap);
+			CapManager sink = new CapManager(cap);
 
 			TileManaFaucet tileFaucet = (TileManaFaucet) world.getTileEntity(faucetPos);
 			if (tileFaucet == null) return;
 
-			WizardManager faucet = new WizardManager(tileFaucet.cap);
+			CapManager faucet = new CapManager(tileFaucet.cap);
 
 			if (sink.isManaFull()) return;
 
-			double idealAmount = 50;
+			double idealAmount = 100;
 			if (faucet.getMana() < idealAmount) return;
 			faucet.removeMana(idealAmount);
 			sink.addMana(idealAmount);
@@ -73,7 +73,7 @@ public class TileManaSink extends TileMod implements ITickable {
 	}
 
 	protected final boolean consumeMana(double amount) {
-		WizardManager manager = new WizardManager(cap);
+		CapManager manager = new CapManager(cap);
 
 		if (amount <= manager.getMana()) {
 			manager.removeMana(amount);

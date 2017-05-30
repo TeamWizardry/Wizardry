@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.client.render.block;
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBezier3D;
 import com.teamwizardry.wizardry.api.block.IStructure;
-import com.teamwizardry.wizardry.api.capability.WizardManager;
+import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.render.ClusterObject;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
 import com.teamwizardry.wizardry.lib.LibParticles;
@@ -26,7 +26,7 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
 		if (te.getBlockType() instanceof IStructure)
 			if (!((IStructure) te.getBlockType()).renderBoundries(te.getWorld(), te.getPos())) return;
 
-		WizardManager manager = new WizardManager(te.cap);
+		CapManager manager = new CapManager(te.cap);
 
 		int count = te.inventory.size();
 		for (ClusterObject cluster : te.inventory) {
@@ -38,7 +38,7 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
 					LibParticles.CLUSTER_DRAPE(te.getWorld(), new Vec3d(te.getPos()).addVector(0.5, 0.5, 0.5).add(current));
 
 				if (te.isCrafting && (te.output != null)) {
-					if (((ThreadLocalRandom.current().nextInt(10)) != 0)) {
+					if (ThreadLocalRandom.current().nextInt(count > 0 && count / 4 > 0 ? count / 4 : 1) == 0) {
 						LibParticles.CRAFTING_ALTAR_CLUSTER_SUCTION(te.getWorld(), new Vec3d(te.getPos()).addVector(0.5, 0.75, 0.5), new InterpBezier3D(current, new Vec3d(0, 0, 0)));
 					}
 				}
@@ -53,9 +53,9 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
 			//Minecraft.getMinecraft().player.sendChatMessage((cluster.stack.hashCode()) / 100000000.0 + "");
 		}
 
-		if (!manager.isManaEmpty() && te.isCrafting && (te.output != null)) {
-			LibParticles.CRAFTING_ALTAR_HELIX(te.getWorld(), new Vec3d(te.getPos()).addVector(0.5, 0.25, 0.5));
-		}
+		//if (!manager.isManaEmpty() && te.isCrafting && (te.output != null)) {
+		//	LibParticles.CRAFTING_ALTAR_HELIX(te.getWorld(), new Vec3d(te.getPos()).addVector(0.5, 0.25, 0.5));
+		//}
 
 		if (!te.isCrafting && (te.output != null)) {
 			GlStateManager.pushMatrix();
@@ -64,7 +64,7 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
 			GlStateManager.rotate(te.tick, 0, 1, 0);
 			Minecraft.getMinecraft().getRenderItem().renderItem(te.output, TransformType.NONE);
 			GlStateManager.popMatrix();
-		} else if (!manager.isManaEmpty()) {
+		} else if (!manager.isManaEmpty() && ThreadLocalRandom.current().nextInt(4) == 0) {
 			LibParticles.CRAFTING_ALTAR_IDLE(te.getWorld(), new Vec3d(te.getPos()).addVector(0.5, 0.7, 0.5));
 		}
 	}

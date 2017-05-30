@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.tile;
 
 import com.teamwizardry.librarianlib.features.autoregister.TileRegister;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.TileManaSink;
@@ -10,9 +11,9 @@ import com.teamwizardry.wizardry.api.item.IInfusable;
 import com.teamwizardry.wizardry.api.render.ClusterObject;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.SpellStack;
+import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
-import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -24,11 +25,13 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -103,7 +106,7 @@ public class TileCraftingPlate extends TileManaSink {
 		}
 
 		if (isCrafting) {
-			if (!consumeMana(100)) {
+			if (!consumeMana(50)) {
 				craftingTimeLeft = Math.min(300, craftingTimeLeft++);
 				return;
 			}
@@ -116,8 +119,9 @@ public class TileCraftingPlate extends TileManaSink {
 				for (ClusterObject cluster : inventory) stacks.add(cluster.stack);
 				SpellStack spellStack = new SpellStack(stacks);
 
-				// TODO. no
-				LibParticles.CRAFTING_ALTAR_PEARL_EXPLODE(world, new Vec3d(pos).addVector(0, 0.75, 0));
+
+				PacketHandler.NETWORK.sendToAllAround(new PacketExplode(new Vec3d(pos).addVector(0.5, 0.5, 0.5), Color.CYAN, Color.BLUE, 2, 2, 500, 300, 20),
+						new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
 
 				world.playSound(null, getPos(), ModSounds.BASS_BOOM, SoundCategory.BLOCKS, 1f, (float) ThreadLocalRandom.current().nextDouble(1, 1.5));
 
@@ -136,8 +140,8 @@ public class TileCraftingPlate extends TileManaSink {
 				List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(pos).expand(32, 32, 32));
 				for (Entity entity1 : entityList) {
 					double dist = entity1.getDistance(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
-					final double upperMag = 20;
-					final double scale = 3.5;
+					final double upperMag = 5;
+					final double scale = 0.45;
 					double mag = upperMag * (scale * dist / (-scale * dist - 1) + 1);
 					Vec3d dir = entity1.getPositionVector().subtract(new Vec3d(pos).addVector(0.5, 0.5, 0.5)).normalize().scale(mag);
 
