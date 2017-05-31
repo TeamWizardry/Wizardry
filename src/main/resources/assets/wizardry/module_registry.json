@@ -45,6 +45,14 @@
   ],
   "effects": [
     {
+      "id": "effect_lightning",
+      "mana_drain": 200,
+      "burnout_fill": 300,
+      "item": "minecraft:ice",
+      "primary_color": "f2ff00",
+      "secondary_color": "FFFFFF"
+    },
+    {
       "id": "effect_telekinesis",
       "mana_drain": 10,
       "burnout_fill": 10,

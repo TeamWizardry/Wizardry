@@ -62,7 +62,7 @@ public class ModuleEffectAntiGravityWell extends Module implements IlingeringMod
 
 		if (position == null) return false;
 
-		double strength = 20;
+		double strength = 10;
 		if (attributes.hasKey(Attributes.EXTEND))
 			strength += attributes.getDouble(Attributes.EXTEND);
 

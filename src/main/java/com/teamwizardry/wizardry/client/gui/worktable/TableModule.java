@@ -196,7 +196,7 @@ public class TableModule {
 				fromPos = fromPos.add(8, 8);
 
 
-				drawWire(fromPos, toPos, new Color(0x4286f4), new Color(0x41b8f4));
+				drawWire(fromPos, toPos, Color.CYAN, Color.ORANGE);
 			}
 		});
 
@@ -227,11 +227,21 @@ public class TableModule {
 		InterpBezier2D bezier = new InterpBezier2D(start, end);
 		List<Vec2d> list = bezier.list(50);
 
+		Vec2d pointerPos = null, behindPointer = null;
+		float p = 0;
+		for (int i = 0; i < list.size() - 1; i++) {
+			float x = (float) (start.length() + ClientTickHandler.getTicks() + ClientTickHandler.getPartialTicks()) / 30f;
+			if (i == (int) ((x - Math.floor(x)) * 50f)) {
+				pointerPos = list.get(i);
+				if (i > 0) behindPointer = list.get(i - 1);
+				p = i / (list.size() - 1.0f);
+			}
+		}
+
 		Tessellator tessellator = Tessellator.getInstance();
 		VertexBuffer vb = tessellator.getBuffer();
-		vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+		vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
 		Vec2d lastPoint = null;
-		Vec2d behind = null, behindThat = null;
 		for (int i = 0; i < list.size() - 1; i++) {
 			Vec2d point = list.get(i);
 			if (lastPoint == null) {
@@ -239,52 +249,46 @@ public class TableModule {
 				continue;
 			}
 
-			float dist = i / (list.size() - 1.0f);
-			float inter = 0.01f * ClientTickHandler.getTicks() + dist;
+			float dist = (i / (list.size() - 1.0f));
+			float inter = 0.05f * ClientTickHandler.getTicks() + dist;
 			float frac = (inter - ((int) inter));
-			frac = 1.0f - 2.0f * Math.abs(frac - 0.5f);
+			//frac = 1.0f - 2.0f * Math.abs(frac - 0.5f);
+			float wire = 256.0f / 27.0f * (p * p * p - p * p * p * p);
 			float r = lerp(primary.getRed(), secondary.getRed(), frac) / 255f;
 			float g = lerp(primary.getGreen(), secondary.getGreen(), frac) / 255f;
 			float b = lerp(primary.getBlue(), secondary.getBlue(), frac) / 255f;
-			float a = lerp(255, 100, frac) / 255f;
+			//float a = lerp(255, 100, frac) / 255f;
 
 			Vec2d normal = point.sub(lastPoint).normalize();
-			Vec2d perp = new Vec2d(-normal.getYf(), normal.getXf()).mul(Math.min(1.2, a + 0.3));
+			Vec2d perp = new Vec2d(-normal.getYf(), normal.getXf()).mul((1.0f - 2.0f * Math.abs(dist - 0.5f) + 0.3f));
 			Vec2d point1 = lastPoint.sub(normal.mul(0.5)).add(perp);
 			Vec2d point2 = point.add(normal.mul(0.5)).add(perp);
 			Vec2d point3 = point.add(normal.mul(0.5)).sub(perp);
 			Vec2d point4 = lastPoint.sub(normal.mul(0.5)).sub(perp);
 
-			vb.pos(point1.getXf(), point1.getYf(), 0).tex(0, 0).endVertex();
-			vb.pos(point2.getXf(), point2.getYf(), 0).tex(0, 1).endVertex();
-			vb.pos(point3.getXf(), point3.getYf(), 0).tex(1, 0).endVertex();
-			vb.pos(point4.getXf(), point4.getYf(), 0).tex(1, 1).endVertex();
+			vb.pos(point1.getXf(), point1.getYf(), 0).tex(0, 0).color(r, g, b, 1f).endVertex();
+			vb.pos(point2.getXf(), point2.getYf(), 0).tex(0, 1).color(r, g, b, 1f).endVertex();
+			vb.pos(point3.getXf(), point3.getYf(), 0).tex(1, 0).color(r, g, b, 1f).endVertex();
+			vb.pos(point4.getXf(), point4.getYf(), 0).tex(1, 1).color(r, g, b, 1f).endVertex();
 
 			lastPoint = point;
-
-			float x = (float) (start.length() + ClientTickHandler.getTicks() + ClientTickHandler.getPartialTicks()) / 30f;
-			if (i == (int) ((x - Math.floor(x)) * 50f)) {
-				behind = list.get(i);
-				if (i > 0) behindThat = list.get(i - 1);
-			}
-
 		}
 		tessellator.draw();
 
-		if (behind != null && behindThat != null) {
+		if (pointerPos != null && behindPointer != null) {
 			GlStateManager.disableTexture2D();
 			GlStateManager.color(0, 0, 0, 1);
 
-			Vec2d normal = behindThat.sub(behind).normalize();
-			Vec2d perp = new Vec2d(-normal.getYf(), normal.getXf());
-			Vec2d point1 = behind.add(normal.mul(5)).sub(perp.mul(5));
-			Vec2d point2 = behind.add(normal.mul(5)).add(perp.mul(5));
+			Vec2d normal = behindPointer.sub(pointerPos).normalize();
+			Vec2d perp = new Vec2d(-normal.getYf(), normal.getXf()).mul(0.7);
+			Vec2d point1 = pointerPos.add(normal.mul(5)).sub(perp.mul(5));
+			Vec2d point2 = pointerPos.add(normal.mul(5)).add(perp.mul(5));
 
-			vb.begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION);
-			vb.pos(behind.getXf(), behind.getYf(), 0).endVertex();
-			vb.pos(point1.getXf(), point1.getYf(), 0).endVertex();
-			vb.pos(point2.getXf(), point2.getYf(), 0).endVertex();
-			tessellator.draw();
+			//vb.begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION);
+			//vb.pos(pointerPos.getXf(), pointerPos.getYf(), 0).endVertex();
+			//vb.pos(point1.getXf(), point1.getYf(), 0).endVertex();
+			//vb.pos(point2.getXf(), point2.getYf(), 0).endVertex();
+			//tessellator.draw();
 		}
 
 		GlStateManager.enableTexture2D();

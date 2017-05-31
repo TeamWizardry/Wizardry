@@ -4,6 +4,7 @@ import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.achievement.Achievements;
 import com.teamwizardry.wizardry.common.achievement.IPickupAchievement;
+import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -28,8 +29,10 @@ public class ItemBook extends ItemMod implements IPickupAchievement {
 	@Nonnull
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, @Nonnull EnumHand hand) {
-		ItemStack stack = playerIn.getHeldItemMainhand();
+		ItemStack stack = playerIn.getHeldItem(hand);
+		if (stack.getItem() != ModItems.BOOK) return ActionResult.newResult(EnumActionResult.FAIL, stack);
 		int slot = playerIn.inventory.getSlotFor(stack);
+		if (slot == -1) return ActionResult.newResult(EnumActionResult.FAIL, stack);
 		if (worldIn.isRemote)
 			playerIn.openGui(Wizardry.instance, 1, worldIn, slot, 0, 0);
 		return ActionResult.newResult(EnumActionResult.SUCCESS, playerIn.getHeldItem(hand));

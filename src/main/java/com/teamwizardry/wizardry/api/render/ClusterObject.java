@@ -8,6 +8,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -25,24 +26,18 @@ public class ClusterObject implements INBTSerializable<NBTTagCompound> {
 	public int tick = 0;
 	private TileCraftingPlate plate;
 
-	public ClusterObject(TileCraftingPlate plate, ItemStack stack, World world, Random random) {
+	public ClusterObject(TileCraftingPlate plate, ItemStack stack, World world, @Nullable Vec3d origin) {
 		this.plate = plate;
-
-		CapManager manager = new CapManager(plate.cap);
-		if (manager.isManaEmpty()) {
-			dest = new Vec3d(0, 0.85, 0);
-			this.stack = stack;
-			origin = new Vec3d(ThreadLocalRandom.current().nextDouble(-0.3, 0.3), ThreadLocalRandom.current().nextDouble(0.5, 0.6), ThreadLocalRandom.current().nextDouble(-0.3, 0.3));
-			worldTime = world.getTotalWorldTime();
-			return;
-		}
-		double angle = Math.toDegrees(Math.random() * Math.PI * 2);
-		double x = MathHelper.cos((float) angle) * ThreadLocalRandom.current().nextDouble(6, 8);
-		double z = MathHelper.sin((float) angle) * ThreadLocalRandom.current().nextDouble(6, 8);
-
-		dest = new Vec3d(x, 5 + (random.nextFloat() * 3), z);
 		this.stack = stack;
-		origin = new Vec3d(ThreadLocalRandom.current().nextDouble(-0.3, 0.3), ThreadLocalRandom.current().nextDouble(0.5, 0.6), ThreadLocalRandom.current().nextDouble(-0.3, 0.3));
+
+		if (origin != null) {
+			this.origin = origin;
+			dest = new Vec3d(0, 0.5, 0);
+		} else {
+			this.origin = new Vec3d(0, 0.5, 0);
+			dest = new Vec3d(0, 1.5, 0);
+		}
+
 		worldTime = world.getTotalWorldTime();
 		destTime = ThreadLocalRandom.current().nextDouble(10, 30);
 	}

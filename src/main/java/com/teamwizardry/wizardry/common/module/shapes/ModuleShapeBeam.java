@@ -50,6 +50,7 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 		float pitch = spell.getData(PITCH, 0F);
 		Vec3d position = spell.getData(ORIGIN);
 		Entity caster = spell.getData(CASTER);
+		float strength = spell.getData(STRENGTH, 1f);
 
 		if (position == null) return false;
 
@@ -69,9 +70,11 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 		}
 		if (trace.hitVec != null) spell.addData(TARGET_HIT, trace.hitVec);
 
+		setStrengthMultiplier(0.1f);
 		forceCastNextModuleParticles(spell);
 		return runNextModule(spell);
 	}
+
 
 	@Override
 	public void runClient(@Nonnull SpellData spell) {

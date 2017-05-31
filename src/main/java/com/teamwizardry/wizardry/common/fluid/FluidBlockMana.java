@@ -157,8 +157,8 @@ public class FluidBlockMana extends BlockFluidClassic {
 						List<Entity> entityList = worldIn.getEntitiesWithinAABBExcludingEntity(entity, new AxisAlignedBB(entity.getPosition()).expand(32, 32, 32));
 						for (Entity entity1 : entityList) {
 							double dist = entity1.getDistanceToEntity(entity);
-							final double upperMag = 20;
-							final double scale = 3.5;
+							final double upperMag = 3;
+							final double scale = 0.8;
 							double mag = upperMag * (scale * dist / (-scale * dist - 1) + 1);
 							Vec3d dir = entity1.getPositionVector().subtract(entity.getPositionVector()).normalize().scale(mag);
 

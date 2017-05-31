@@ -73,6 +73,8 @@ public class ModuleShapeCone extends Module {
 			origin = new Vec3d(offX, caster.getEyeHeight(), offZ).add(position);
 		}
 
+		setStrengthMultiplier((float) (1 / range));
+
 		int chance = 0;
 		if (attributes.hasKey(Attributes.EXTEND))
 			chance = (int) Math.min(3, chance + attributes.getDouble(Attributes.EXTEND));

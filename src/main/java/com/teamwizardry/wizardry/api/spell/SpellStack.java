@@ -108,7 +108,7 @@ public class SpellStack {
 
 		// PROCESS THEM
 		for (Module module : compiled)
-			module.processcolor();
+			module.processColor();
 	}
 
 	@Nonnull
@@ -126,6 +126,7 @@ public class SpellStack {
 	}
 
 	public static void runSpell(@Nonnull Module module, SpellData spell) {
+		spell.addData(SpellData.DefaultKeys.STRENGTH, module.calculateStrength(spell));
 		module.castSpell(spell);
 	}
 

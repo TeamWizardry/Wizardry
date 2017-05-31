@@ -15,6 +15,7 @@ import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -89,6 +90,15 @@ public class TileCraftingPlate extends TileManaSink {
 	@Override
 	public void update() {
 		super.update();
+
+		for (EntityItem entityItem : world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos).expand(2, 2, 2))) {
+			ItemStack stack = entityItem.getEntityItem().copy();
+			stack.setCount(1);
+			entityItem.getEntityItem().shrink(1);
+			inventory.add(new ClusterObject(this, stack, world, entityItem.getPositionVector().subtract(new Vec3d(pos))));
+			markDirty();
+		}
+
 		if (world.isRemote) return;
 		if (tick < 360) tick += 10;
 		else tick = 0;
@@ -119,7 +129,6 @@ public class TileCraftingPlate extends TileManaSink {
 				for (ClusterObject cluster : inventory) stacks.add(cluster.stack);
 				SpellStack spellStack = new SpellStack(stacks);
 
-
 				PacketHandler.NETWORK.sendToAllAround(new PacketExplode(new Vec3d(pos).addVector(0.5, 0.5, 0.5), Color.CYAN, Color.BLUE, 2, 2, 500, 300, 20),
 						new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
 
@@ -140,8 +149,8 @@ public class TileCraftingPlate extends TileManaSink {
 				List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(pos).expand(32, 32, 32));
 				for (Entity entity1 : entityList) {
 					double dist = entity1.getDistance(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
-					final double upperMag = 5;
-					final double scale = 0.45;
+					final double upperMag = 3;
+					final double scale = 0.8;
 					double mag = upperMag * (scale * dist / (-scale * dist - 1) + 1);
 					Vec3d dir = entity1.getPositionVector().subtract(new Vec3d(pos).addVector(0.5, 0.5, 0.5)).normalize().scale(mag);
 

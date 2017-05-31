@@ -1,8 +1,10 @@
 package com.teamwizardry.wizardry.api;
 
+import com.teamwizardry.wizardry.api.util.PosUtils;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -18,44 +20,53 @@ public class LightningGenerator {
 		this.point2 = point2;
 	}
 
-	private ArrayList<Vec3d> offsetRandomPoints() {
+	public ArrayList<Vec3d> generate() {
 		ArrayList<Vec3d> results = new ArrayList<>();
-		Vec3d tangent = point2.subtract(point1);
-		Vec3d normal = tangent.normalize();
-		float length = (float) tangent.lengthVector();
+		Vec3d sub = point2.subtract(point1);
+		Vec3d normal = sub.normalize();
+		double dist = sub.lengthVector();
 
-		ArrayList<Float> positions = new ArrayList<>();
-		positions.add(0f);
-
-		for (int i = 0; i < length / 4; i++)
-			positions.add(ThreadLocalRandom.current().nextFloat());
-
-		float Sway = 80;
-		float Jaggedness = 1 / Sway;
-
-		Vec3d prevPoint = point1;
-		float prevDisplacement = 0;
-		for (int i = 1; i < positions.size() - 1; i++) {
-			float pos = positions.get(i);
-
-			// used to prevent sharp angles by ensuring very close positions also have small perpendicular variation.
-			float scale = (length * Jaggedness) * (pos - positions.get(i - 1));
-
-			// defines an envelope. Points near the middle of the bolt can be further from the central line.
-			float envelope = pos > 0.95f ? 20 * (1 - pos) : 1;
-
-			float displacement = (float) ThreadLocalRandom.current().nextDouble(-Sway, Sway);
-			displacement -= (displacement - prevDisplacement) * (1 - scale);
-			displacement *= envelope;
-
-			Vec3d point = point1.add(tangent.scale(pos).add(normal.scale(displacement)));
-			//results.add(new Line(prevPoint, point, 8f));
-			prevPoint = point;
-			prevDisplacement = displacement;
+		ArrayList<Float> points = new ArrayList<>();
+		points.add(0f);
+		for (int i = 0; i < dist * 4; i++) {
+			points.add(ThreadLocalRandom.current().nextFloat());
 		}
 
-		//results.add(new Line(prevPoint, point2, 8f));
+		Collections.sort(points);
 
+		Vec3d prevPoint = point1;
+		double prevScale = 0;
+		for (int i = 1; i < points.size(); i++) {
+
+			float point = points.get(i);
+			Vec3d vec = sub.scale(point);
+
+			double scale = dist * 0.02 + (point - (points.get(i - 1)));
+			prevScale = scale;
+
+			vec = new Vec3d(
+					vec.xCoord + ThreadLocalRandom.current().nextDouble(-scale, scale),
+					vec.yCoord + ThreadLocalRandom.current().nextDouble(-scale, scale),
+					vec.zCoord + ThreadLocalRandom.current().nextDouble(-scale, scale)
+			);
+
+			if (ThreadLocalRandom.current().nextInt(10) == 0) {
+				float[] pitchyaw = PosUtils.vecToRotations(normal);
+				float pitch = pitchyaw[0];
+				float yaw = pitchyaw[1];
+				double angle = 270;
+				float newPitch = (float) (pitch + ThreadLocalRandom.current().nextDouble(-angle, angle));
+				float newYaw = (float) (yaw + ThreadLocalRandom.current().nextDouble(-angle, angle));
+				Vec3d offset = PosUtils.vecFromRotations(newPitch, newYaw).scale(dist / 3);
+
+				results.addAll(new LightningGenerator(point1.add(vec), point1.add(vec).add(offset)).generate());
+			}
+
+			results.add(point1.add(vec));
+			prevPoint = vec;
+		}
+
+		results.add(point2);
 		return results;
 	}
 }

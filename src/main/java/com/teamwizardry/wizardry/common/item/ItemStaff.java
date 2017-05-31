@@ -38,6 +38,16 @@ public class ItemStaff extends ItemMod implements INacreColorable {
 		setMaxStackSize(1);
 	}
 
+	@Override
+	public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer playerIn, EntityLivingBase target, EnumHand hand) {
+		SpellData spell = new SpellData(playerIn.world);
+		spell.processEntity(playerIn, true);
+		spell.processEntity(target, false);
+		SpellStack.runSpell(stack, spell);
+
+		return true;
+	}
+
 	@Nonnull
 	@Override
 	public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float par8, float par9, float par10) {

@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.api.spell;
 
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.capability.CapManager;
+import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
 import com.teamwizardry.wizardry.common.core.SpellTicker;
 import com.teamwizardry.wizardry.common.network.PacketRenderSpell;
 import kotlin.Pair;
@@ -56,6 +57,7 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	private int cooldownTime = 0;
 	private int chargeupTime = 0;
 	private ItemStack itemStack = ItemStack.EMPTY;
+	private float strengthMultiplier = 1;
 
 	public Module() {
 	}
@@ -145,12 +147,20 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 		this.chargeupTime = chargeupTime;
 	}
 
-	public ItemStack getItemStack() {
+	public final ItemStack getItemStack() {
 		return itemStack;
 	}
 
-	public void setItemStack(ItemStack itemStack) {
+	public final void setItemStack(ItemStack itemStack) {
 		this.itemStack = itemStack;
+	}
+
+	public final float getStrengthMultiplier() {
+		return strengthMultiplier;
+	}
+
+	public final void setStrengthMultiplier(float strengthMultiplier) {
+		this.strengthMultiplier = strengthMultiplier;
 	}
 
 	/**
@@ -163,6 +173,8 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 		if (this instanceof IlingeringModule)
 			if (!SpellTicker.INSTANCE.ticker.containsKey(this))
 				SpellTicker.INSTANCE.ticker.put(this, new Pair<>(data, ((IlingeringModule) this).lingeringTime(data)));
+
+		data.addData(SpellData.DefaultKeys.STRENGTH, calculateStrength(data) * getStrengthMultiplier());
 
 		boolean success = run(data);
 		castParticles(data);
@@ -225,22 +237,28 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 		return nextModule != null && nextModule.castSpell(data);
 	}
 
-	protected final boolean runNextModule(@NotNull SpellData data, double costMultiplier) {
-		return nextModule != null && nextModule.castSpell(data);
-	}
-
 	protected final void forceCastNextModuleParticles(@NotNull SpellData data) {
 		if (nextModule != null) nextModule.castParticles(data);
 	}
 
-	public void processcolor() {
+	public final void processColor() {
 		if (nextModule == null) return;
 
-		nextModule.processcolor();
+		nextModule.processColor();
 
 		if (getPrimaryColor() == null) setPrimaryColor(nextModule.getPrimaryColor());
 		if (getSecondaryColor() == null) setSecondaryColor(nextModule.getSecondaryColor());
 
+	}
+
+	public final float calculateStrength(SpellData data) {
+		IWizardryCapability cap = data.getData(SpellData.DefaultKeys.CAPABILITY);
+		float strength = 1;
+		if (cap != null) {
+			CapManager manager = new CapManager(cap);
+			strength *= ((manager.getMaxBurnout() - manager.getBurnout()) / (manager.getMaxBurnout() * 1.0));
+		}
+		return strength;
 	}
 
 	/**
@@ -268,6 +286,7 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 		toCloneTo.setCooldownTime(getCooldownTime());
 		toCloneTo.setChargeupTime(getChargeupTime());
 		toCloneTo.setItemStack(getItemStack());
+		toCloneTo.setStrengthMultiplier(getStrengthMultiplier());
 		return toCloneTo;
 	}
 
@@ -288,6 +307,7 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 		compound.setDouble("chargeup_time", getChargeupTime());
 		compound.setDouble("cooldown_time", getCooldownTime());
 		compound.setTag("item_stack", getItemStack().serializeNBT());
+		compound.setFloat("strength_multiplier", getStrengthMultiplier());
 
 		if (getPrimaryColor() != null) compound.setInteger("primary_color", getPrimaryColor().getRGB());
 		if (getSecondaryColor() != null) compound.setInteger("secondary_color", getSecondaryColor().getRGB());
@@ -315,5 +335,7 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 		if (nbt.hasKey("chargeup_time")) setChargeupTime(nbt.getInteger("chargeup_time"));
 		if (nbt.hasKey("cooldown_time")) setCooldownTime(nbt.getInteger("cooldown_time"));
 		if (nbt.hasKey("item_stack")) setItemStack(new ItemStack(nbt.getCompoundTag("item_stack")));
+		if (nbt.hasKey("strength_multiplier")) setStrengthMultiplier(nbt.getFloat("strength_multiplier"));
+		else setStrengthMultiplier(1);
 	}
 }

@@ -44,8 +44,6 @@ public class ModuleShapeTouch extends Module {
 	public boolean run(@Nonnull SpellData spell) {
 		Entity caster = spell.getData(CASTER);
 		if (caster == null) return false;
-		spell.processEntity(caster, true);
-		spell.processEntity(caster, false);
 
 		if (!processCost(spell)) return false;
 

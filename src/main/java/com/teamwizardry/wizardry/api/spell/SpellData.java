@@ -100,9 +100,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 		NBTTagCompound compound = new NBTTagCompound();
 		for (Pair pair : data.keySet()) {
 			NBTBase nbtClass = dataProcessor.get(pair).serialize(data.get(pair));
-			if (nbtClass != null) {
-				compound.setTag(pair.getFirst() + "", nbtClass);
-			}
+			compound.setTag(pair.getFirst() + "", nbtClass);
 		}
 		return compound;
 	}
@@ -120,6 +118,21 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 	}
 
 	public static class DefaultKeys {
+		public static final Pair<String, Class<Float>> STRENGTH = constructPair("strength", Float.class, new ProcessData.Process<NBTTagFloat, Float>() {
+			@NotNull
+			@Override
+			public NBTTagFloat serialize(@Nullable Float object) {
+				if (object == null) return new NBTTagFloat(1f);
+				return new NBTTagFloat(object);
+			}
+
+			@NotNull
+			@Override
+			public Float deserialize(@NotNull World world, @NotNull NBTTagFloat object) {
+				return object.getFloat();
+			}
+		});
+
 		public static final Pair<String, Class<Entity>> CASTER = constructPair("caster", Entity.class, new ProcessData.Process<NBTTagInt, Entity>() {
 			@NotNull
 			@Override

@@ -8,6 +8,7 @@ import com.teamwizardry.wizardry.client.core.HudEventHandler;
 import com.teamwizardry.wizardry.client.core.WizardryClientMethodHandles;
 import com.teamwizardry.wizardry.client.fx.Shaders;
 import com.teamwizardry.wizardry.client.render.BloodRenderLayer;
+import com.teamwizardry.wizardry.client.render.LightningRenderer;
 import com.teamwizardry.wizardry.client.render.glow.GlowingItemEventHandler;
 import com.teamwizardry.wizardry.client.render.glow.GlowingItemRenderLayer;
 import com.teamwizardry.wizardry.common.core.version.VersionChecker;
@@ -35,8 +36,9 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 	public void preInit(FMLPreInitializationEvent event) {
 		super.preInit(event);
 
-		OBJLoader.INSTANCE.addDomain(Wizardry.MODID);
+		LightningRenderer.INSTANCE.getClass();
 		MinecraftForge.EVENT_BUS.register(new HudEventHandler());
+
 		new WizardryClientMethodHandles(); // Load the class
 		GlowingItemEventHandler.init();
 
