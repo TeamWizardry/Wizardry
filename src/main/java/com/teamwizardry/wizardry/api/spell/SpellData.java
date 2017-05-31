@@ -11,6 +11,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -119,47 +120,50 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 	}
 
 	public static class DefaultKeys {
-		@Nonnull
 		public static final Pair<String, Class<Entity>> CASTER = constructPair("caster", Entity.class, new ProcessData.Process<NBTTagInt, Entity>() {
+			@NotNull
 			@Override
 			public NBTTagInt serialize(Entity object) {
 				return new NBTTagInt(object.getEntityId());
 			}
 
+			@NotNull
 			@Override
-			public Entity deserialize(World world, NBTTagInt object) {
+			public Entity deserialize(@NotNull World world, @NotNull NBTTagInt object) {
 				return world.getEntityByID(object.getInt());
 			}
 		});
 
-		@Nonnull
 		public static final Pair<String, Class<Float>> YAW = constructPair("yaw", Float.class, new ProcessData.Process<NBTTagFloat, Float>() {
+			@NotNull
 			@Override
 			public NBTTagFloat serialize(Float object) {
 				return new NBTTagFloat(object);
 			}
 
+			@NotNull
 			@Override
-			public Float deserialize(World world, NBTTagFloat object) {
+			public Float deserialize(@NotNull World world, @NotNull NBTTagFloat object) {
 				return object.getFloat();
 			}
 		});
 
-		@Nonnull
 		public static final Pair<String, Class<Float>> PITCH = constructPair("pitch", Float.class, new ProcessData.Process<NBTTagFloat, Float>() {
+			@NotNull
 			@Override
 			public NBTTagFloat serialize(Float object) {
 				return new NBTTagFloat(object);
 			}
 
+			@NotNull
 			@Override
-			public Float deserialize(World world, NBTTagFloat object) {
+			public Float deserialize(@NotNull World world, @NotNull NBTTagFloat object) {
 				return object.getFloat();
 			}
 		});
 
-		@Nonnull
 		public static final Pair<String, Class<Vec3d>> ORIGIN = constructPair("origin", Vec3d.class, new ProcessData.Process<NBTTagCompound, Vec3d>() {
+			@NotNull
 			@Override
 			public NBTTagCompound serialize(Vec3d object) {
 				NBTTagCompound compound = new NBTTagCompound();
@@ -169,8 +173,9 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 				return compound;
 			}
 
+			@NotNull
 			@Override
-			public Vec3d deserialize(World world, NBTTagCompound object) {
+			public Vec3d deserialize(@NotNull World world, @NotNull NBTTagCompound object) {
 				double x = object.getDouble("x");
 				double y = object.getDouble("y");
 				double z = object.getDouble("z");
@@ -178,68 +183,64 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			}
 		});
 
-		@Nonnull
 		public static final Pair<String, Class<Entity>> ENTITY_HIT = constructPair("entity_hit", Entity.class, new ProcessData.Process<NBTTagInt, Entity>() {
+			@NotNull
 			@Override
 			public NBTTagInt serialize(Entity object) {
 				if (object == null) return new NBTTagInt(-1);
 				return new NBTTagInt(object.getEntityId());
 			}
 
+			@NotNull
 			@Override
-			public Entity deserialize(World world, NBTTagInt object) {
+			public Entity deserialize(@NotNull World world, @NotNull NBTTagInt object) {
 				return world.getEntityByID(object.getInt());
 			}
 		});
 
-		@Nonnull
 		public static final Pair<String, Class<BlockPos>> BLOCK_HIT = constructPair("block_hit", BlockPos.class, new ProcessData.Process<NBTTagLong, BlockPos>() {
+			@NotNull
 			@Override
 			public NBTTagLong serialize(BlockPos object) {
+				if (object == null) return new NBTTagLong(-1L);
 				return new NBTTagLong(object.toLong());
 			}
 
+			@NotNull
 			@Override
-			public BlockPos deserialize(World world, NBTTagLong object) {
-				return BlockPos.fromLong(object.getLong());
-			}
-		});
-
-		@Nonnull
-		public static final Pair<String, Class<BlockPos>> BLOCK_TOUCHED = constructPair("block_touched", BlockPos.class, new ProcessData.Process<NBTTagLong, BlockPos>() {
-			@Override
-			public NBTTagLong serialize(BlockPos object) {
-				return new NBTTagLong(object.toLong());
-			}
-
-			@Override
-			public BlockPos deserialize(World world, NBTTagLong object) {
+			public BlockPos deserialize(@NotNull World world, @NotNull NBTTagLong object) {
 				return BlockPos.fromLong(object.getLong());
 			}
 		});
 
 		@Nonnull
 		public static final Pair<String, Class<EnumFacing>> FACE_HIT = constructPair("face_hit", BlockPos.class, new ProcessData.Process<NBTTagInt, EnumFacing>() {
+			@NotNull
 			@Override
 			public NBTTagInt serialize(EnumFacing object) {
+				if (object == null) return new NBTTagInt(-1);
 				return new NBTTagInt(object.getIndex());
 			}
 
+			@NotNull
 			@Override
-			public EnumFacing deserialize(World world, NBTTagInt object) {
+			public EnumFacing deserialize(@NotNull World world, @NotNull NBTTagInt object) {
 				return EnumFacing.getFront(object.getInt());
 			}
 		});
 
 		@Nonnull
 		public static final Pair<String, Class<IWizardryCapability>> CAPABILITY = constructPair("capability", IWizardryCapability.class, new ProcessData.Process<NBTTagCompound, IWizardryCapability>() {
+			@NotNull
 			@Override
 			public NBTTagCompound serialize(IWizardryCapability object) {
+				if (object == null) return new NBTTagCompound();
 				return object.saveNBTData();
 			}
 
+			@NotNull
 			@Override
-			public IWizardryCapability deserialize(World world, NBTTagCompound object) {
+			public IWizardryCapability deserialize(@NotNull World world, @NotNull NBTTagCompound object) {
 				DefaultWizardryCapability cap = new DefaultWizardryCapability();
 				cap.loadNBTData(object);
 				return cap;
@@ -248,8 +249,10 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 
 		@Nonnull
 		public static final Pair<String, Class<Vec3d>> TARGET_HIT = constructPair("target_hit", Vec3d.class, new ProcessData.Process<NBTTagCompound, Vec3d>() {
+			@NotNull
 			@Override
 			public NBTTagCompound serialize(Vec3d object) {
+				if (object == null) return new NBTTagCompound();
 				NBTTagCompound compound = new NBTTagCompound();
 				compound.setDouble("x", object.xCoord);
 				compound.setDouble("y", object.yCoord);
@@ -257,8 +260,10 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 				return compound;
 			}
 
+			@NotNull
 			@Override
-			public Vec3d deserialize(World world, NBTTagCompound object) {
+			public Vec3d deserialize(@NotNull World world, @NotNull NBTTagCompound object) {
+				if (!object.hasKey("x") || !object.hasKey("y") || !object.hasKey("z")) return Vec3d.ZERO;
 				double x = object.getDouble("x");
 				double y = object.getDouble("y");
 				double z = object.getDouble("z");

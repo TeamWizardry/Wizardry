@@ -5,6 +5,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.teamwizardry.wizardry.init.ModItems;
+import kotlin.Pair;
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -23,51 +25,74 @@ public class SpellRecipeConstructor {
 
 	public SpellRecipeConstructor(HashSet<Module> moduleHeads) {
 		this.moduleHeads = moduleHeads;
-		HashBiMap<Item, Item> fieldParser = HashBiMap.create();
-		ArrayList<ItemStack> baseIngredients = new ArrayList<>();
-		ArrayList<ArrayList<ItemStack>> fields = new ArrayList<>();
-		ArrayList<ArrayList<Item>> codeLines = new ArrayList<>();
+		HashBiMap<Module, Pair<ItemStack, ItemStack>> baseIngredients = HashBiMap.create();
 		ArrayDeque<Item> identifiers = new ArrayDeque<>();
 		identifiers.addAll(SpellStack.identifiers);
 
+		ArrayList<Module> temp = new ArrayList<>();
+		temp.addAll(moduleHeads);
+		ArrayList<Module> prunedModules = prune(temp);
+
+		for (Module module : prunedModules) {
+			if (module instanceof IModifier) continue; // TODO
+
+			if (identifiers.isEmpty()) break;
+			ItemStack identifier = new ItemStack(identifiers.poll());
+			baseIngredients.put(module, new Pair<>(identifier, module.getItemStack().copy())); // Add the itemstack of each module to baseIngredients
+		}
+
+		// Add all the fileds
+		for (Module module : baseIngredients.keySet()) {
+			Pair<ItemStack, ItemStack> pair = baseIngredients.get(module);
+			if (pair == null) continue;
+			finalList.add(pair.getFirst());
+			finalList.add(pair.getSecond());
+			finalList.add(new ItemStack(SpellStack.fieldLineBreak));
+		}
+		finalList.add(new ItemStack(SpellStack.fieldCodeSplitter));
+
+		// Add the code lines.
 		for (Module head : moduleHeads) {
 			for (Module module : SpellStack.getAllModules(head)) {
-				if (module instanceof IModifier) continue; // TODO
-				baseIngredients.add(module.getItemStack().copy());
+
+				Pair<ItemStack, ItemStack> pair = null;
+				for (Module module1 : baseIngredients.keySet()) {
+					if (module1.getID().equals(module.getID())) {
+						pair = baseIngredients.get(module1);
+						break;
+					}
+				}
+
+				if (pair == null) continue;
+				finalList.add(pair.getFirst());
 			}
+			finalList.add(new ItemStack(SpellStack.codeLineBreak));
 		}
 
-		for (ItemStack base : baseIngredients) {
-			ArrayList<ItemStack> field = new ArrayList<>();
-			if (identifiers.peekFirst() == null) break;
-			field.add(new ItemStack(identifiers.peek()));
-			field.add(base); // TODO modifiers
-			field.add(new ItemStack(SpellStack.fieldLineBreak));
-
-			fields.add(field);
-			fieldParser.put(identifiers.poll(), base.getItem());
-		}
-
-		for (Module head : moduleHeads) {
-			ArrayList<Item> codeLine = new ArrayList<>();
-			Module tempModule = head;
-			while (tempModule != null) {
-				Item identifier = fieldParser.inverse().get(tempModule.getItemStack().getItem());
-				codeLine.add(identifier);
-				tempModule = tempModule.nextModule;
-			}
-			codeLine.add(SpellStack.codeLineBreak);
-			codeLines.add(codeLine);
-		}
-
-		for (ArrayList<ItemStack> field : fields) finalList.addAll(field);
-		finalList.add(new ItemStack(SpellStack.fieldCodeSplitter));
-		for (ArrayList<Item> codeLine : codeLines) {
-			for (Item item : codeLine) {
-				finalList.add(new ItemStack(item));
-			}
-		}
 		finalList.add(new ItemStack(ModItems.PEARL_NACRE));
+	}
+
+	private ArrayList<Module> prune(ArrayList<Module> modules) {
+		ArrayList<Module> prunedModules = new ArrayList<>();
+		for (Module head : modules) {
+			if (head.getID().equals("shape_projectile"))
+				Minecraft.getMinecraft().player.sendChatMessage("projectile found in addall");
+			prunedModules.addAll(SpellStack.getAllModules(head));
+		}
+
+		ArrayList<Module> temp = new ArrayList<>();
+		temp.addAll(prunedModules);
+		for (Module module : temp) {
+			for (Module module1 : temp) {
+				if (module != module1 && module.getID().equals(module1.getID())) {
+					prunedModules.remove(module);
+					if (module1.getID().equals("shape_projectile"))
+						Minecraft.getMinecraft().player.sendChatMessage("projectile pruned. repruning");
+					return prune(prunedModules);
+				}
+			}
+		}
+		return prunedModules;
 	}
 
 	public JsonObject getRecipeJson() {
@@ -75,8 +100,7 @@ public class SpellRecipeConstructor {
 		JsonObject object = new JsonObject();
 		JsonArray array = new JsonArray();
 
-		for (int i = 0; i < finalList.size() - 1; i++) {
-			ItemStack stack = finalList.get(i);
+		for (ItemStack stack : finalList) {
 			ResourceLocation location = stack.getItem().getRegistryName();
 			if (location == null) continue;
 			array.add(new JsonPrimitive(location.toString()));

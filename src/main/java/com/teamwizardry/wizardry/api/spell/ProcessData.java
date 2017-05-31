@@ -2,6 +2,9 @@ package com.teamwizardry.wizardry.api.spell;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nullable;
 
 /**
  * Created by LordSaad.
@@ -9,8 +12,10 @@ import net.minecraft.world.World;
 public class ProcessData {
 
 	public interface Process<T extends NBTBase, E> {
-		T serialize(E object);
+		@NotNull
+		T serialize(@Nullable E object);
 
-		E deserialize(World world, T object);
+		@NotNull
+		E deserialize(@NotNull World world, @NotNull T object);
 	}
 }

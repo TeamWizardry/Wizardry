@@ -110,7 +110,7 @@ public class BookGui extends GuiBase {
 
 			JsonArray array = object.getAsJsonArray("list");
 			int row = 0;
-			for (int i = 0; i < array.size() - 1; i++) {
+			for (int i = 0; i < array.size(); i++) {
 				if (i > 0 && i % 6 == 0) row++;
 
 				JsonElement element = array.get(i);

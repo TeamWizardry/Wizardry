@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.item;
 
-import com.teamwizardry.librarianlib.features.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
@@ -30,7 +29,6 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.awt.*;
 
 public class ItemMagicWand extends ItemMod implements IGlowOverlayable {
@@ -102,13 +100,6 @@ public class ItemMagicWand extends ItemMod implements IGlowOverlayable {
 				}
 			}
 		}
-
 		return EnumActionResult.PASS;
-	}
-
-	@Nullable
-	@Override
-	public ModCreativeTab getCreativeTab() {
-		return Wizardry.tab;
 	}
 }

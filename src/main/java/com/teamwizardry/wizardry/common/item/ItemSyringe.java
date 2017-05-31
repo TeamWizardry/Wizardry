@@ -1,9 +1,7 @@
 package com.teamwizardry.wizardry.common.item;
 
-import com.teamwizardry.librarianlib.features.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
-import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.client.Minecraft;
@@ -21,7 +19,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -103,11 +100,5 @@ public class ItemSyringe extends ItemMod {
 		} else if (stack.getItemDamage() == 1) {
 			tooltip.add("Will fill your mana bar by 30%");
 		}
-	}
-
-	@Nullable
-	@Override
-	public ModCreativeTab getCreativeTab() {
-		return Wizardry.tab;
 	}
 }

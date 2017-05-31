@@ -1,8 +1,6 @@
 package com.teamwizardry.wizardry.common.block;
 
-import com.teamwizardry.librarianlib.features.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.features.base.block.BlockModContainer;
-import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.client.render.block.TilePearlHolderRenderer;
 import com.teamwizardry.wizardry.common.tile.TilePearlHolder;
 import com.teamwizardry.wizardry.init.ModItems;
@@ -88,11 +86,5 @@ public class BlockPearlHolder extends BlockModContainer {
 	@Override
 	public boolean isOpaqueCube(IBlockState blockState) {
 		return false;
-	}
-
-	@Nullable
-	@Override
-	public ModCreativeTab getCreativeTab() {
-		return Wizardry.tab;
 	}
 }

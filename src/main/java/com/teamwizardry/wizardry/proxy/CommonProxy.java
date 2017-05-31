@@ -44,6 +44,7 @@ public class CommonProxy {
 		int tempFix = 42;
 		directory = event.getModConfigurationDirectory();
 
+		new ModTab();
 		ModSounds.init();
 		ModItems.init();
 		ModBlocks.init();

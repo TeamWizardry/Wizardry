@@ -12,9 +12,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Random;
 
 /**
@@ -33,7 +33,7 @@ public class BlockTorikkiGrass extends BlockMod implements IGrowable {
 		return BlockRenderLayer.CUTOUT_MIPPED;
 	}
 
-	@Nullable
+	@NotNull
 	@Override
 	public Item getItemDropped(IBlockState state, Random rand, int fortune) {
 		return Blocks.DIRT.getItemDropped(Blocks.DIRT.getDefaultState().withProperty(BlockDirt.VARIANT, BlockDirt.DirtType.DIRT), rand, fortune);

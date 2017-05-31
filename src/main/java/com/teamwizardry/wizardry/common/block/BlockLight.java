@@ -1,8 +1,6 @@
 package com.teamwizardry.wizardry.common.block;
 
-import com.teamwizardry.librarianlib.features.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.features.base.block.BlockModContainer;
-import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.tile.TileLight;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -55,12 +53,6 @@ public class BlockLight extends BlockModContainer {
 	@Override
 	public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
 		return 15;
-	}
-
-	@Nullable
-	@Override
-	public ModCreativeTab getCreativeTab() {
-		return Wizardry.tab;
 	}
 
 	@Nullable

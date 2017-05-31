@@ -1,8 +1,6 @@
 package com.teamwizardry.wizardry.common.item;
 
-import com.teamwizardry.librarianlib.features.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
-import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.INacreColorable;
 import com.teamwizardry.wizardry.api.spell.*;
 import net.minecraft.client.Minecraft;
@@ -27,7 +25,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -232,11 +229,5 @@ public class ItemStaff extends ItemMod implements INacreColorable {
 				}
 			}
 		}
-	}
-
-	@Nullable
-	@Override
-	public ModCreativeTab getCreativeTab() {
-		return Wizardry.tab;
 	}
 }

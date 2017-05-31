@@ -1,8 +1,6 @@
 package com.teamwizardry.wizardry.common.item;
 
-import com.teamwizardry.librarianlib.features.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
-import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.IExplodable;
 import com.teamwizardry.wizardry.api.item.IInfusable;
 import com.teamwizardry.wizardry.api.item.INacreColorable;
@@ -19,7 +17,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -106,11 +103,5 @@ public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, 
 				}
 			}
 		}
-	}
-
-	@Nullable
-	@Override
-	public ModCreativeTab getCreativeTab() {
-		return Wizardry.tab;
 	}
 }

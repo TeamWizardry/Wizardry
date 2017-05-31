@@ -91,8 +91,7 @@ public class ModuleShapeCone extends Module {
 			SpellData newSpell = spell.copy();
 
 			RayTraceResult result = Utils.raytrace(world, target.normalize(), origin, range / 2, caster);
-			newSpell.addData(TARGET_HIT, result.hitVec);
-			newSpell.addData(BLOCK_HIT, result.getBlockPos());
+			newSpell.processBlock(result.getBlockPos(), result.sideHit, result.hitVec);
 			if (result.entityHit != null) spell.processEntity(result.entityHit, false);
 
 			castParticles(newSpell);

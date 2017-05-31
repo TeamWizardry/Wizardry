@@ -62,7 +62,7 @@ public class WorktableGui extends GuiBase {
 		addModules(modifiers, ModuleType.MODIFIER);
 		getMainComponents().add(modifiers);
 
-		ComponentSprite save = new ComponentSprite(new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/icons/modifier_extend.png")), 370, 19, 50, 50);
+		ComponentSprite save = new ComponentSprite(new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/icons/modifier_extend.png")), 410, 89, 20, 20);
 		save.BUS.hook(GuiComponent.MouseClickEvent.class, (event) -> {
 
 			HashSet<GuiComponent> heads = getHeads();
@@ -81,6 +81,26 @@ public class WorktableGui extends GuiBase {
 					PacketHandler.NETWORK.sendToServer(new PacketSendSpellToBook(slot, recipe.getRecipeJson().toString()));
 				}
 			}
+
+			//long time = System.currentTimeMillis();
+			//for (GuiComponent component : paperComponents.keySet()) {
+			//	component.setData(Vec2d.class, "pre_move_pos", component.getPos());
+			//	component.BUS.hook(GuiComponent.ComponentTickEvent.class, (event2) -> {
+			//		long delta = System.currentTimeMillis() - time;
+//
+			//		Vec2d origin = (Vec2d) event2.getComponent().getData(Vec2d.class, "pre_move_pos");
+			//		if (origin == null) return;
+//
+			//		Vec2d target = event.getComponent().getPos().add(event2.getComponent().getSize().getX() / 2, event2.getComponent().getSize().getY() / 2);
+			//		Vec2d sub = target.sub(origin);
+//
+			//		float q = new CubicBezier(0.18f, -0.16f, 0.88f, -0.37f).eval((delta / 1000.0f) + ClientTickHandler.getPartialTicks());
+			//		Vec2d newLoc = sub.mul(q);
+//
+			//		event2.getComponent().setPos(newLoc);
+			//	});
+			//}
+
 		});
 		getMainComponents().add(save);
 	}
@@ -156,6 +176,6 @@ public class WorktableGui extends GuiBase {
 
 	@Override
 	public boolean doesGuiPauseGame() {
-		return true;
+		return false;
 	}
 }

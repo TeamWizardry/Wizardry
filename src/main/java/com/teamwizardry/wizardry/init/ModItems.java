@@ -1,6 +1,8 @@
 package com.teamwizardry.wizardry.init;
 
 import com.teamwizardry.wizardry.common.item.*;
+import net.minecraft.item.Item;
+import net.minecraftforge.fml.common.Loader;
 
 /**
  * Created by Saad on 4/9/2016.
@@ -24,7 +26,7 @@ public class ModItems {
 
 	public static ItemJar JAR;
 	public static ItemUnicornHorn UNICORN_HORN;
-	public static ItemCape CAPE;
+	public static Item CAPE;
 
 	public static ItemMagicWand MAGIC_WAND;
 
@@ -47,6 +49,8 @@ public class ModItems {
 
 		JAR = new ItemJar();
 		UNICORN_HORN = new ItemUnicornHorn();
-		CAPE = new ItemCape();
+
+		if (Loader.isModLoaded("baubles")) CAPE = new ItemCapeBauble();
+		else CAPE = new ItemCapeChest();
 	}
 }

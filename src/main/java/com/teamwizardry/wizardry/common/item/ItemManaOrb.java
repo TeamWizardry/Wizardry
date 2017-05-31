@@ -1,8 +1,6 @@
 package com.teamwizardry.wizardry.common.item;
 
-import com.teamwizardry.librarianlib.features.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
-import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.capability.CustomWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
 import com.teamwizardry.wizardry.init.ModPotions;
@@ -60,11 +58,5 @@ public class ItemManaOrb extends ItemMod {
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, @Nonnull EnumHand hand) {
 		player.setActiveHand(hand);
 		return new ActionResult(EnumActionResult.SUCCESS, player.getHeldItem(hand));
-	}
-
-	@Nullable
-	@Override
-	public ModCreativeTab getCreativeTab() {
-		return Wizardry.tab;
 	}
 }

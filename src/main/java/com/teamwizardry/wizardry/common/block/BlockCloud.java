@@ -1,15 +1,12 @@
 package com.teamwizardry.wizardry.common.block;
 
-import com.teamwizardry.librarianlib.features.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.features.base.block.BlockMod;
-import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * Created by Saad on 8/27/2016.
@@ -34,11 +31,5 @@ public class BlockCloud extends BlockMod {
 			if (!world.isAirBlock(pos.up(i))) return true;
 
 		return true;
-	}
-
-	@Nullable
-	@Override
-	public ModCreativeTab getCreativeTab() {
-		return Wizardry.tab;
 	}
 }

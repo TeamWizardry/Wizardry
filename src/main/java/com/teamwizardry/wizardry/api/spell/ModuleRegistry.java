@@ -16,8 +16,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by LordSaad.
@@ -57,9 +57,11 @@ public class ModuleRegistry {
 	}
 
 	@Nonnull
-	public Set<Module> getModules(ModuleType type) {
-		Set<Module> modules = new HashSet<>();
+	public ArrayList<Module> getModules(ModuleType type) {
+		ArrayList<Module> modules = new ArrayList<>();
 		for (Module module : this.modules) if (module.getModuleType() == type) modules.add(module.copy());
+
+		modules.sort(Comparator.comparing(Module::getReadableName));
 		return modules;
 	}
 
