@@ -2,7 +2,6 @@ package com.teamwizardry.wizardry.api.util;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by LordSaad.
@@ -30,9 +29,9 @@ public class ColorUtils {
 
 	public static Color shiftColorHueRandomly(@Nonnull Color color, double shiftAmount) {
 		return new Color(
-				(int) Math.max(0, Math.min(color.getRed() + ThreadLocalRandom.current().nextDouble(-shiftAmount, shiftAmount), 255)),
-				(int) Math.max(0, Math.min(color.getGreen() + ThreadLocalRandom.current().nextDouble(-shiftAmount, shiftAmount), 255)),
-				(int) Math.max(0, Math.min(color.getBlue() + ThreadLocalRandom.current().nextDouble(-shiftAmount, shiftAmount), 255)));
+				(int) Math.max(0, Math.min(color.getRed() + RandUtil.nextDouble(-shiftAmount, shiftAmount), 255)),
+				(int) Math.max(0, Math.min(color.getGreen() + RandUtil.nextDouble(-shiftAmount, shiftAmount), 255)),
+				(int) Math.max(0, Math.min(color.getBlue() + RandUtil.nextDouble(-shiftAmount, shiftAmount), 255)));
 	}
 
 	public static float[] getHSVFromColor(Color color) {

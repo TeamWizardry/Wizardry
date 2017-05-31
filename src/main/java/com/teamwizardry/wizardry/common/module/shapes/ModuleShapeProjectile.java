@@ -4,6 +4,7 @@ import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.api.spell.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.entity.EntitySpellProjectile;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
@@ -12,7 +13,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
-import java.util.concurrent.ThreadLocalRandom;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
 
@@ -66,7 +66,7 @@ public class ModuleShapeProjectile extends Module {
 
 		boolean success = world.spawnEntity(proj);
 		if (success)
-			world.playSound(null, caster.getPosition(), ModSounds.PROJECTILE_LAUNCH, SoundCategory.PLAYERS, 1f, (float) ThreadLocalRandom.current().nextDouble(1, 1.5));
+			world.playSound(null, caster.getPosition(), ModSounds.PROJECTILE_LAUNCH, SoundCategory.PLAYERS, 1f, (float) RandUtil.nextDouble(1, 1.5));
 		return success;
 	}
 

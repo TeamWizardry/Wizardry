@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.common.core.version;
 
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextComponentString;
@@ -11,7 +12,6 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.ArrayList;
-import java.util.concurrent.ThreadLocalRandom;
 
 public final class VersionChecker {
 
@@ -61,7 +61,7 @@ public final class VersionChecker {
 					messages.add("hey friend, could you update me please? ( /)w(\\✿)");
 					messages.add("v(ಥ ̯ ಥ)v mfw not up-to-date");
 
-					player.sendMessage(new TextComponentString(TextFormatting.YELLOW + messages.get(ThreadLocalRandom.current().nextInt(messages.size() - 1))));
+					player.sendMessage(new TextComponentString(TextFormatting.YELLOW + messages.get(RandUtil.nextInt(messages.size() - 1))));
 					player.sendMessage(new TextComponentString(TextFormatting.GREEN + "There's a new Wizardry update available! your version: '" + TextFormatting.RED + clientBuild + TextFormatting.GREEN + "' new version: '" + TextFormatting.YELLOW + onlineBuild + TextFormatting.GREEN + "'"));
 
 				}

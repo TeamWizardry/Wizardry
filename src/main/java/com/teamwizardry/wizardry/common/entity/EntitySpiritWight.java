@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.entity;
 
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.init.ModSounds;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
@@ -17,7 +18,6 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by Saad on 8/17/2016.
@@ -72,8 +72,8 @@ public class EntitySpiritWight extends EntityMob {
 		super.onUpdate();
 		if (world.isRemote) return;
 
-		if ((ticksExisted % ThreadLocalRandom.current().nextInt(100, 200)) == 0)
-			playSound(ModSounds.HALLOWED_SPIRIT, ThreadLocalRandom.current().nextFloat(), ThreadLocalRandom.current().nextFloat());
+		if ((ticksExisted % RandUtil.nextInt(100, 200)) == 0)
+			playSound(ModSounds.HALLOWED_SPIRIT, RandUtil.nextFloat(), RandUtil.nextFloat());
 
 		fallDistance = 0;
 

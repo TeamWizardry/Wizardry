@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.entity;
 
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
@@ -11,8 +12,6 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-
-import java.util.concurrent.ThreadLocalRandom;
 
 public class EntityUnicorn extends EntityHorse {
 
@@ -40,7 +39,7 @@ public class EntityUnicorn extends EntityHorse {
 	@Override
 	protected void entityInit() {
 		super.entityInit();
-		flatulenceTicker = ThreadLocalRandom.current().nextInt(20, 200);
+		flatulenceTicker = RandUtil.nextInt(20, 200);
 	}
 
 	@Override
@@ -115,13 +114,13 @@ public class EntityUnicorn extends EntityHorse {
 		if (flatulenceTicker <= 0) {
 			Vec3d fartPos = this.getLookVec().subtract(this.getPositionVector()).rotateYaw((float) Math.PI);
 			for (int p = 0; p < 64; p++) {
-				this.world.spawnParticle(EnumParticleTypes.REDSTONE, fartPos.xCoord + ThreadLocalRandom.current().nextDouble(-FART_SIZE, FART_SIZE),
-						this.posY + this.getEyeHeight() - FART_OFFSET + ThreadLocalRandom.current().nextDouble(-FART_SIZE, FART_SIZE),
-						fartPos.zCoord + ThreadLocalRandom.current().nextDouble(-FART_SIZE, FART_SIZE),
+				this.world.spawnParticle(EnumParticleTypes.REDSTONE, fartPos.xCoord + RandUtil.nextDouble(-FART_SIZE, FART_SIZE),
+						this.posY + this.getEyeHeight() - FART_OFFSET + RandUtil.nextDouble(-FART_SIZE, FART_SIZE),
+						fartPos.zCoord + RandUtil.nextDouble(-FART_SIZE, FART_SIZE),
 						this.world.rand.nextFloat(), this.world.rand.nextFloat(), this.world.rand.nextFloat()
 				);
 			}
-			flatulenceTicker = ThreadLocalRandom.current().nextInt(200, 6000);
+			flatulenceTicker = RandUtil.nextInt(200, 6000);
 		}
 	}
 

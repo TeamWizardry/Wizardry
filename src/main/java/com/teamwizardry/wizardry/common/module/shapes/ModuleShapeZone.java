@@ -9,6 +9,7 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.api.util.InterpScale;
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -19,7 +20,6 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
@@ -71,7 +71,7 @@ public class ModuleShapeZone extends Module implements IlingeringModule {
 
 		for (Entity entity : entities) {
 			if (entity.getDistance(targetPos.xCoord, targetPos.yCoord, targetPos.zCoord) <= radius) {
-				if (ThreadLocalRandom.current().nextInt((int) Math.abs(50000 - (radius * 1000))) != 0) continue;
+				if (RandUtil.nextInt((int) Math.abs(50000 - (radius * 1000))) != 0) continue;
 				if (!processCost(radius, spell)) return false;
 
 				SpellData copy = spell.copy();
@@ -87,11 +87,11 @@ public class ModuleShapeZone extends Module implements IlingeringModule {
 			for (int j = (int) -radius; j < radius; j++)
 				for (int k = (int) -radius; k < radius; k++) {
 					BlockPos newPos = new BlockPos(targetPos).add(i, j, k);
-					if (ThreadLocalRandom.current().nextInt((int) Math.abs(50000 - (radius * 1000))) != 0) continue;
+					if (RandUtil.nextInt((int) Math.abs(50000 - (radius * 1000))) != 0) continue;
 					if (newPos.getDistance((int) targetPos.xCoord, (int) targetPos.yCoord, (int) targetPos.zCoord) <= radius) {
 						if (!processCost(radius, spell)) return false;
 						SpellData copy = spell.copy();
-						copy.processBlock(newPos, EnumFacing.VALUES[ThreadLocalRandom.current().nextInt(EnumFacing.VALUES.length - 1)], new Vec3d(newPos).addVector(0.5, 0.5, 0.5));
+						copy.processBlock(newPos, EnumFacing.VALUES[RandUtil.nextInt(EnumFacing.VALUES.length - 1)], new Vec3d(newPos).addVector(0.5, 0.5, 0.5));
 						copy.addData(YAW, 0f);
 						copy.addData(PITCH, -90f);
 						runNextModule(copy);
@@ -106,7 +106,7 @@ public class ModuleShapeZone extends Module implements IlingeringModule {
 		Vec3d target = spell.getData(TARGET_HIT);
 
 		if (target == null) return;
-		if (ThreadLocalRandom.current().nextInt(10) != 0) return;
+		if (RandUtil.nextInt(10) != 0) return;
 
 		double radius = 5;
 		if (attributes.hasKey(Attributes.EXTEND))
@@ -116,14 +116,14 @@ public class ModuleShapeZone extends Module implements IlingeringModule {
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 		glitter.setScaleFunction(new InterpScale(1, 0));
 		glitter.setCollision(true);
-		ParticleSpawner.spawn(glitter, spell.world, new InterpCircle(target, new Vec3d(0, 1, 0), (float) radius, 1, ThreadLocalRandom.current().nextFloat()), (int) (radius * 2), 0, (aFloat, particleBuilder) -> {
+		ParticleSpawner.spawn(glitter, spell.world, new InterpCircle(target, new Vec3d(0, 1, 0), (float) radius, 1, RandUtil.nextFloat()), (int) (radius * 2), 0, (aFloat, particleBuilder) -> {
 			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
-			glitter.setLifetime(ThreadLocalRandom.current().nextInt(10, 20));
+			glitter.setLifetime(RandUtil.nextInt(10, 20));
 			glitter.setColorFunction(new InterpColorHSV(getPrimaryColor(), getSecondaryColor()));
 			glitter.addMotion(new Vec3d(
-					ThreadLocalRandom.current().nextDouble(-0.001, 0.001),
-					ThreadLocalRandom.current().nextDouble(-0.1, 0.1),
-					ThreadLocalRandom.current().nextDouble(-0.001, 0.001)
+					RandUtil.nextDouble(-0.001, 0.001),
+					RandUtil.nextDouble(-0.1, 0.1),
+					RandUtil.nextDouble(-0.001, 0.001)
 			));
 		});
 	}

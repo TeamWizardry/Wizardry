@@ -10,12 +10,12 @@ import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.util.InterpScale;
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 
 import java.awt.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by LordSaad.
@@ -25,17 +25,17 @@ public class TileLight extends TileMod implements ITickable {
 
 	@Override
 	public void update() {
-		if (world.isRemote && ThreadLocalRandom.current().nextInt(4) == 0) {
+		if (world.isRemote && RandUtil.nextInt(4) == 0) {
 			ParticleBuilder glitter = new ParticleBuilder(30);
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 			glitter.setColorFunction(new InterpColorHSV(Color.CYAN, Color.BLUE));
-			glitter.setScaleFunction(new InterpScale((float) ThreadLocalRandom.current().nextDouble(1, 3), 0));
+			glitter.setScaleFunction(new InterpScale((float) RandUtil.nextDouble(1, 3), 0));
 			ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(pos).addVector(0.5, 0.5, 0.5)), 1, 0, (i, build) -> {
 				glitter.setMotion(new Vec3d(
-						ThreadLocalRandom.current().nextDouble(-0.01, 0.01),
-						ThreadLocalRandom.current().nextDouble(0, 0.03),
-						ThreadLocalRandom.current().nextDouble(-0.01, 0.01)));
+						RandUtil.nextDouble(-0.01, 0.01),
+						RandUtil.nextDouble(0, 0.03),
+						RandUtil.nextDouble(-0.01, 0.01)));
 			});
 		}
 	}

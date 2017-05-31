@@ -11,6 +11,7 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.api.util.InterpScale;
 import com.teamwizardry.wizardry.api.util.PosUtils;
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -27,7 +28,6 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
-import java.util.concurrent.ThreadLocalRandom;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
@@ -195,46 +195,46 @@ public class ModuleEffectSubstitution extends Module implements IBlockSelectable
 
 		if (targetEntity != null && caster != null) {
 
-			ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(20, 30));
+			ParticleBuilder glitter = new ParticleBuilder(RandUtil.nextInt(20, 30));
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 			glitter.setColorFunction(new InterpColorHSV(getPrimaryColor(), getSecondaryColor()));
-			ParticleSpawner.spawn(glitter, spell.world, new StaticInterp<>(new Vec3d(targetEntity.posX, targetEntity.posY, targetEntity.posZ)), 50, ThreadLocalRandom.current().nextInt(20, 30), (aFloat, particleBuilder) -> {
-				glitter.setScale((float) ThreadLocalRandom.current().nextDouble(0.3, 1));
-				glitter.setAlphaFunction(new InterpFadeInOut(0.3f, (float) ThreadLocalRandom.current().nextDouble(0.6, 1)));
-				glitter.setLifetime(ThreadLocalRandom.current().nextInt(10, 20));
+			ParticleSpawner.spawn(glitter, spell.world, new StaticInterp<>(new Vec3d(targetEntity.posX, targetEntity.posY, targetEntity.posZ)), 50, RandUtil.nextInt(20, 30), (aFloat, particleBuilder) -> {
+				glitter.setScale((float) RandUtil.nextDouble(0.3, 1));
+				glitter.setAlphaFunction(new InterpFadeInOut(0.3f, (float) RandUtil.nextDouble(0.6, 1)));
+				glitter.setLifetime(RandUtil.nextInt(10, 20));
 				glitter.setScaleFunction(new InterpScale(1, 0));
 				glitter.setPositionFunction(new InterpHelix(
 						new Vec3d(0, 0, 0),
 						new Vec3d(0, 2, 0),
-						0.5f, 0f, 1, ThreadLocalRandom.current().nextFloat()
+						0.5f, 0f, 1, RandUtil.nextFloat()
 				));
 			});
 
 			glitter.setColorFunction(new InterpColorHSV(getSecondaryColor(), getPrimaryColor()));
-			ParticleSpawner.spawn(glitter, spell.world, new StaticInterp<>(new Vec3d(caster.posX, caster.posY, caster.posZ)), 50, ThreadLocalRandom.current().nextInt(20, 30), (aFloat, particleBuilder) -> {
-				glitter.setScale((float) ThreadLocalRandom.current().nextDouble(0.3, 1));
-				glitter.setAlphaFunction(new InterpFadeInOut(0.3f, (float) ThreadLocalRandom.current().nextDouble(0.6, 1)));
-				glitter.setLifetime(ThreadLocalRandom.current().nextInt(10, 20));
+			ParticleSpawner.spawn(glitter, spell.world, new StaticInterp<>(new Vec3d(caster.posX, caster.posY, caster.posZ)), 50, RandUtil.nextInt(20, 30), (aFloat, particleBuilder) -> {
+				glitter.setScale((float) RandUtil.nextDouble(0.3, 1));
+				glitter.setAlphaFunction(new InterpFadeInOut(0.3f, (float) RandUtil.nextDouble(0.6, 1)));
+				glitter.setLifetime(RandUtil.nextInt(10, 20));
 				glitter.setScaleFunction(new InterpScale(1, 0));
 				glitter.setPositionFunction(new InterpHelix(
 						new Vec3d(0, 0, 0),
 						new Vec3d(0, 4, 0),
-						1f, 0f, 1, ThreadLocalRandom.current().nextFloat()
+						1f, 0f, 1, RandUtil.nextFloat()
 				));
 			});
 		} else if (targetBlock != null) {
-			ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(20, 30));
+			ParticleBuilder glitter = new ParticleBuilder(RandUtil.nextInt(20, 30));
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 			glitter.setColorFunction(new InterpColorHSV(getPrimaryColor(), getSecondaryColor()));
-			ParticleSpawner.spawn(glitter, spell.world, new StaticInterp<>(new Vec3d(targetBlock).addVector(0.5, 0.5, 0.5)), 20, ThreadLocalRandom.current().nextInt(20, 30), (aFloat, particleBuilder) -> {
-				glitter.setScale((float) ThreadLocalRandom.current().nextDouble(0.3, 1));
-				glitter.setAlphaFunction(new InterpFadeInOut(0.3f, (float) ThreadLocalRandom.current().nextDouble(0.6, 1)));
-				glitter.setLifetime(ThreadLocalRandom.current().nextInt(10, 20));
+			ParticleSpawner.spawn(glitter, spell.world, new StaticInterp<>(new Vec3d(targetBlock).addVector(0.5, 0.5, 0.5)), 20, RandUtil.nextInt(20, 30), (aFloat, particleBuilder) -> {
+				glitter.setScale((float) RandUtil.nextDouble(0.3, 1));
+				glitter.setAlphaFunction(new InterpFadeInOut(0.3f, (float) RandUtil.nextDouble(0.6, 1)));
+				glitter.setLifetime(RandUtil.nextInt(10, 20));
 				glitter.setScaleFunction(new InterpScale(1, 0));
 				glitter.setMotion(new Vec3d(
-						ThreadLocalRandom.current().nextDouble(-0.001, 0.001),
-						ThreadLocalRandom.current().nextDouble(-0.001, 0.001),
-						ThreadLocalRandom.current().nextDouble(-0.001, 0.001)
+						RandUtil.nextDouble(-0.001, 0.001),
+						RandUtil.nextDouble(-0.001, 0.001),
+						RandUtil.nextDouble(-0.001, 0.001)
 				));
 			});
 		}

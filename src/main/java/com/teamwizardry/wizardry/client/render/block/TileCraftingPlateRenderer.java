@@ -5,6 +5,7 @@ import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBe
 import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.render.ClusterObject;
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.client.Minecraft;
@@ -13,8 +14,6 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformT
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by Saad on 6/11/2016.
@@ -34,11 +33,11 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
 			Vec3d current = cluster.origin.add(cluster.dest.subtract(cluster.origin).scale(MathHelper.sin((float) (timeDifference * Math.PI / 2))));
 
 			if (!manager.isManaEmpty()) {
-				if (!te.isCrafting && ThreadLocalRandom.current().nextInt(count > 0 && count / 2 > 0 ? count / 2 : 1) == 0)
+				if (!te.isCrafting && RandUtil.nextInt(count > 0 && count / 2 > 0 ? count / 2 : 1) == 0)
 					LibParticles.CLUSTER_DRAPE(te.getWorld(), new Vec3d(te.getPos()).addVector(0.5, 0.5, 0.5).add(current));
 
 				if (te.isCrafting && (te.output != null)) {
-					if (ThreadLocalRandom.current().nextInt(count > 0 && count / 4 > 0 ? count / 4 : 1) == 0) {
+					if (RandUtil.nextInt(count > 0 && count / 4 > 0 ? count / 4 : 1) == 0) {
 						LibParticles.CRAFTING_ALTAR_CLUSTER_SUCTION(te.getWorld(), new Vec3d(te.getPos()).addVector(0.5, 0.75, 0.5), new InterpBezier3D(current, new Vec3d(0, 0, 0)));
 					}
 				}
@@ -64,7 +63,7 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
 			GlStateManager.rotate(te.tick, 0, 1, 0);
 			Minecraft.getMinecraft().getRenderItem().renderItem(te.output, TransformType.NONE);
 			GlStateManager.popMatrix();
-		} else if (!manager.isManaEmpty() && ThreadLocalRandom.current().nextInt(4) == 0) {
+		} else if (!manager.isManaEmpty() && RandUtil.nextInt(4) == 0) {
 			LibParticles.CRAFTING_ALTAR_IDLE(te.getWorld(), new Vec3d(te.getPos()).addVector(0.5, 0.7, 0.5));
 		}
 	}

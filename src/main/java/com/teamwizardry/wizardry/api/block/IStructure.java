@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.api.block;
 
 import com.teamwizardry.librarianlib.features.structure.Structure;
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.block.state.IBlockState;
@@ -19,7 +20,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.awt.*;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by LordSaad.
@@ -109,7 +109,7 @@ public interface IStructure {
 		if (player.getDistanceSqToCenter(pos) <= 500)
 			if (!player.getHeldItemMainhand().isEmpty() && player.getHeldItemMainhand().getItem() == ModItems.MAGIC_WAND) {
 				for (BlockPos outline : getStructureBoundries())
-					if (ThreadLocalRandom.current().nextInt(80) == 0)
+					if (RandUtil.nextInt(80) == 0)
 						LibParticles.STRUCTURE_BOUNDS(world, new Vec3d(pos.add(outline)).addVector(0.5, 0.5, 0.5), Color.CYAN);
 				return false;
 			}

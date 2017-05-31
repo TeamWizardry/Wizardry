@@ -7,10 +7,7 @@ import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.*;
-import com.teamwizardry.wizardry.api.util.ColorUtils;
-import com.teamwizardry.wizardry.api.util.InterpScale;
-import com.teamwizardry.wizardry.api.util.PosUtils;
-import com.teamwizardry.wizardry.api.util.Utils;
+import com.teamwizardry.wizardry.api.util.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.RayTraceResult;
@@ -19,7 +16,6 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
@@ -82,11 +78,11 @@ public class ModuleShapeCone extends Module {
 		for (int i = 0; i < range; i++) {
 			if (!processCost(range / 10.0, spell)) return false;
 
-			if (chance > 0 && ThreadLocalRandom.current().nextInt(chance) != 0) continue;
+			if (chance > 0 && RandUtil.nextInt(chance) != 0) continue;
 
 			double angle = Math.min(8, range);
-			float newPitch = (float) (pitch + ThreadLocalRandom.current().nextDouble(-angle * 6, angle * 6));
-			float newYaw = (float) (yaw + ThreadLocalRandom.current().nextDouble(-angle * 6, angle * 6));
+			float newPitch = (float) (pitch + RandUtil.nextDouble(-angle * 6, angle * 6));
+			float newYaw = (float) (yaw + RandUtil.nextDouble(-angle * 6, angle * 6));
 
 			Vec3d target = PosUtils.vecFromRotations(newPitch, newYaw);
 
@@ -121,8 +117,8 @@ public class ModuleShapeCone extends Module {
 		lines.setScaleFunction(new InterpScale(0.5f, 0));
 		ParticleSpawner.spawn(lines, spell.world, new InterpLine(origin, target), (int) target.distanceTo(origin) * 4, 0, (aFloat, particleBuilder) -> {
 			lines.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
-			lines.setLifetime(ThreadLocalRandom.current().nextInt(10, 20));
-			lines.setColor(ColorUtils.changeColorAlpha(getPrimaryColor() != null ? getPrimaryColor() : Color.WHITE, ThreadLocalRandom.current().nextInt(50, 150)));
+			lines.setLifetime(RandUtil.nextInt(10, 20));
+			lines.setColor(ColorUtils.changeColorAlpha(getPrimaryColor() != null ? getPrimaryColor() : Color.WHITE, RandUtil.nextInt(50, 150)));
 		});
 	}
 

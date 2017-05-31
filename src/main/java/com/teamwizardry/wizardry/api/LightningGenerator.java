@@ -1,11 +1,11 @@
 package com.teamwizardry.wizardry.api;
 
 import com.teamwizardry.wizardry.api.util.PosUtils;
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by LordSaad.
@@ -29,7 +29,7 @@ public class LightningGenerator {
 		ArrayList<Float> points = new ArrayList<>();
 		points.add(0f);
 		for (int i = 0; i < dist * 4; i++) {
-			points.add(ThreadLocalRandom.current().nextFloat());
+			points.add(RandUtil.nextFloat());
 		}
 
 		Collections.sort(points);
@@ -45,18 +45,18 @@ public class LightningGenerator {
 			prevScale = scale;
 
 			vec = new Vec3d(
-					vec.xCoord + ThreadLocalRandom.current().nextDouble(-scale, scale),
-					vec.yCoord + ThreadLocalRandom.current().nextDouble(-scale, scale),
-					vec.zCoord + ThreadLocalRandom.current().nextDouble(-scale, scale)
+					vec.xCoord + RandUtil.nextDouble(-scale, scale),
+					vec.yCoord + RandUtil.nextDouble(-scale, scale),
+					vec.zCoord + RandUtil.nextDouble(-scale, scale)
 			);
 
-			if (ThreadLocalRandom.current().nextInt(10) == 0) {
+			if (RandUtil.nextInt(10) == 0) {
 				float[] pitchyaw = PosUtils.vecToRotations(normal);
 				float pitch = pitchyaw[0];
 				float yaw = pitchyaw[1];
 				double angle = 270;
-				float newPitch = (float) (pitch + ThreadLocalRandom.current().nextDouble(-angle, angle));
-				float newYaw = (float) (yaw + ThreadLocalRandom.current().nextDouble(-angle, angle));
+				float newPitch = (float) (pitch + RandUtil.nextDouble(-angle, angle));
+				float newYaw = (float) (yaw + RandUtil.nextDouble(-angle, angle));
 				Vec3d offset = PosUtils.vecFromRotations(newPitch, newYaw).scale(dist / 3);
 
 				results.addAll(new LightningGenerator(point1.add(vec), point1.add(vec).add(offset)).generate());

@@ -9,6 +9,7 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.api.util.InterpScale;
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -21,7 +22,6 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.TARGET_HIT;
@@ -109,14 +109,14 @@ public class ModuleEffectTelekinesis extends Module implements IContinousSpell {
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(position), 5, 0, (aFloat, particleBuilder) -> {
-			glitter.setLifetime(ThreadLocalRandom.current().nextInt(10, 20));
-			glitter.setScale(ThreadLocalRandom.current().nextFloat());
+			glitter.setLifetime(RandUtil.nextInt(10, 20));
+			glitter.setScale(RandUtil.nextFloat());
 			glitter.setScaleFunction(new InterpScale(1, 0));
-			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, ThreadLocalRandom.current().nextFloat()));
+			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, RandUtil.nextFloat()));
 			glitter.setMotion(new Vec3d(
-					ThreadLocalRandom.current().nextDouble(-0.1, 0.1),
-					ThreadLocalRandom.current().nextDouble(-0.1, 0.1),
-					ThreadLocalRandom.current().nextDouble(-0.1, 0.1)
+					RandUtil.nextDouble(-0.1, 0.1),
+					RandUtil.nextDouble(-0.1, 0.1),
+					RandUtil.nextDouble(-0.1, 0.1)
 			));
 		});
 	}

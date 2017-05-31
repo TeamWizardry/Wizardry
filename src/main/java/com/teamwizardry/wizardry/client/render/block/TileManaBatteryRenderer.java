@@ -12,6 +12,7 @@ import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.api.util.PosUtils;
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.fluid.FluidBlockMana;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
 import com.teamwizardry.wizardry.lib.LibParticles;
@@ -33,7 +34,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by LordSaad.
@@ -133,31 +133,31 @@ public class TileManaBatteryRenderer extends TileEntitySpecialRenderer<TileManaB
 
 		PosUtils.ManaBatteryPositions positions = new PosUtils.ManaBatteryPositions(world, te.getPos());
 		for (BlockPos pos : positions.fullCircle)
-			if (ThreadLocalRandom.current().nextInt(5) == 0)
+			if (RandUtil.nextInt(5) == 0)
 				LibParticles.MAGIC_DOT(world, new Vec3d(pos).addVector(0.5, 0.5, 0.5), -1);
 
 		CapManager manager = new CapManager(te.cap);
 		if (!manager.isManaFull()) {
 			if (count >= 21)
 				for (BlockPos pos : positions.takenPoses) {
-					if (ThreadLocalRandom.current().nextInt(7) == 0)
+					if (RandUtil.nextInt(7) == 0)
 						LibParticles.COLORFUL_BATTERY_BEZIER(world, pos, te.getPos());
 				}
 		}
 
-		if (ThreadLocalRandom.current().nextInt(10) == 0) {
+		if (RandUtil.nextInt(10) == 0) {
 			ParticleBuilder glitter = new ParticleBuilder(3);
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-			glitter.setColorFunction(new InterpColorHSV(ColorUtils.changeColorAlpha(Color.CYAN, ThreadLocalRandom.current().nextInt(50, 150)), ColorUtils.changeColorAlpha(Color.BLUE, ThreadLocalRandom.current().nextInt(50, 150))));
-			ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(te.getPos()).addVector(0.5, 0.5, 0.5)), ThreadLocalRandom.current().nextInt(1, 3), 0, (aFloat, particleBuilder) -> {
+			glitter.setColorFunction(new InterpColorHSV(ColorUtils.changeColorAlpha(Color.CYAN, RandUtil.nextInt(50, 150)), ColorUtils.changeColorAlpha(Color.BLUE, RandUtil.nextInt(50, 150))));
+			ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(te.getPos()).addVector(0.5, 0.5, 0.5)), RandUtil.nextInt(1, 3), 0, (aFloat, particleBuilder) -> {
 				glitter.setAlphaFunction(new InterpFadeInOut(1f, 1f));
 				glitter.setMotion(new Vec3d(
-						ThreadLocalRandom.current().nextDouble(-0.05, 0.05),
-						ThreadLocalRandom.current().nextDouble(-0.1, 0.1),
-						ThreadLocalRandom.current().nextDouble(-0.05, 0.05)
+						RandUtil.nextDouble(-0.05, 0.05),
+						RandUtil.nextDouble(-0.1, 0.1),
+						RandUtil.nextDouble(-0.05, 0.05)
 				));
-				glitter.setLifetime(ThreadLocalRandom.current().nextInt(30));
-				glitter.setScale((float) ThreadLocalRandom.current().nextDouble(3));
+				glitter.setLifetime(RandUtil.nextInt(30));
+				glitter.setScale((float) RandUtil.nextDouble(3));
 			});
 		}
 	}

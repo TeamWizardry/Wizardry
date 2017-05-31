@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
 import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -14,7 +15,6 @@ import net.minecraft.world.World;
 import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
@@ -85,7 +85,7 @@ public class ModuleEffectBurn extends Module {
 		if (position == null) return;
 
 		Color color = getPrimaryColor();
-		if (ThreadLocalRandom.current().nextBoolean()) color = getSecondaryColor();
+		if (RandUtil.nextBoolean()) color = getSecondaryColor();
 
 		List<EntityLivingBase> entities = world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(new BlockPos(position)));
 		if (!entities.isEmpty())

@@ -6,6 +6,7 @@ import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -18,7 +19,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.awt.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by LordSaad.
@@ -43,15 +43,15 @@ public class EntityJumpPad extends EntityLiving {
 		((EntityLivingBase) entity).motionY += 0.4;
 		entity.fallDistance = 0;
 		Color color1 = new Color(
-				ThreadLocalRandom.current().nextInt(100, 255),
-				ThreadLocalRandom.current().nextInt(100, 255),
-				ThreadLocalRandom.current().nextInt(100, 255),
-				ThreadLocalRandom.current().nextInt(100, 255));
+				RandUtil.nextInt(100, 255),
+				RandUtil.nextInt(100, 255),
+				RandUtil.nextInt(100, 255),
+				RandUtil.nextInt(100, 255));
 		Color color2 = new Color(
-				ThreadLocalRandom.current().nextInt(100, 255),
-				ThreadLocalRandom.current().nextInt(100, 255),
-				ThreadLocalRandom.current().nextInt(100, 255),
-				ThreadLocalRandom.current().nextInt(100, 255));
+				RandUtil.nextInt(100, 255),
+				RandUtil.nextInt(100, 255),
+				RandUtil.nextInt(100, 255),
+				RandUtil.nextInt(100, 255));
 		LibParticles.AIR_THROTTLE(world, entity.getPositionVector(), entity, color1, color2, 0.5, true);
 	}
 
@@ -59,34 +59,34 @@ public class EntityJumpPad extends EntityLiving {
 	public void onUpdate() {
 		super.onUpdate();
 		if (ticksExisted > 100) setDead();
-		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(30, 50));
+		ParticleBuilder glitter = new ParticleBuilder(RandUtil.nextInt(30, 50));
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.9f, 0.9f));
 		glitter.enableMotionCalculation();
 		Color color1 = new Color(
-				ThreadLocalRandom.current().nextInt(100, 255),
-				ThreadLocalRandom.current().nextInt(100, 255),
-				ThreadLocalRandom.current().nextInt(100, 255),
-				ThreadLocalRandom.current().nextInt(100, 255));
+				RandUtil.nextInt(100, 255),
+				RandUtil.nextInt(100, 255),
+				RandUtil.nextInt(100, 255),
+				RandUtil.nextInt(100, 255));
 		Color color2 = new Color(
-				ThreadLocalRandom.current().nextInt(100, 255),
-				ThreadLocalRandom.current().nextInt(100, 255),
-				ThreadLocalRandom.current().nextInt(100, 255),
-				ThreadLocalRandom.current().nextInt(100, 255));
+				RandUtil.nextInt(100, 255),
+				RandUtil.nextInt(100, 255),
+				RandUtil.nextInt(100, 255),
+				RandUtil.nextInt(100, 255));
 		glitter.setCollision(true);
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(getPositionVector()), 1, 1, (i, build) -> {
-			if (ThreadLocalRandom.current().nextBoolean()) glitter.setColor(color1);
+			if (RandUtil.nextBoolean()) glitter.setColor(color1);
 			else glitter.setColor(color2);
-			double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
-			double r = 1 * ThreadLocalRandom.current().nextFloat();
+			double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
+			double r = 1 * RandUtil.nextFloat();
 			double x = r * MathHelper.cos((float) theta);
 			double z = r * MathHelper.sin((float) theta);
 			glitter.setPositionOffset(new Vec3d(x, 0.3, z));
-			if (ThreadLocalRandom.current().nextBoolean())
-				glitter.setMotion(new Vec3d(0, ThreadLocalRandom.current().nextDouble(0.2), 0));
+			if (RandUtil.nextBoolean())
+				glitter.setMotion(new Vec3d(0, RandUtil.nextDouble(0.2), 0));
 		});
-		if (ThreadLocalRandom.current().nextInt(30) == 0)
-			LibParticles.AIR_THROTTLE(world, getPositionVector(), new Vec3d(0, ThreadLocalRandom.current().nextDouble(0.5), 0), color1, color2, 0.5);
+		if (RandUtil.nextInt(30) == 0)
+			LibParticles.AIR_THROTTLE(world, getPositionVector(), new Vec3d(0, RandUtil.nextDouble(0.5), 0), color1, color2, 0.5);
 	}
 
 	@Override

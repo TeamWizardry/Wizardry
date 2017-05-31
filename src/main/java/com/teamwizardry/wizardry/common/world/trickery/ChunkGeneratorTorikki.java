@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.world.trickery;
 
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import net.minecraft.block.state.IBlockState;
@@ -16,7 +17,6 @@ import net.minecraft.world.chunk.IChunkGenerator;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by LordSaad44
@@ -44,7 +44,7 @@ public class ChunkGeneratorTorikki implements IChunkGenerator {
 				int i = seed.nextInt(directions.size());
 				EnumFacing dir;
 				if (horizontals.contains(directions.get(i))) {
-					if (ThreadLocalRandom.current().nextBoolean()) dir = directions.get(i);
+					if (RandUtil.nextBoolean()) dir = directions.get(i);
 					else dir = directions.remove(i);
 				} else dir = directions.remove(i);
 				generateCloud(poses, center.offset(dir), weight - seed.nextFloat() - 1, seed);

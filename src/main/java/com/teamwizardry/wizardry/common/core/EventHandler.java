@@ -9,6 +9,7 @@ import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.SpellCastEvent;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.util.PosUtils;
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.TeleportUtil;
 import com.teamwizardry.wizardry.common.achievement.Achievements;
 import com.teamwizardry.wizardry.common.entity.EntityDevilDust;
@@ -40,7 +41,6 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class EventHandler {
 
@@ -168,7 +168,7 @@ public class EventHandler {
 		if (caster != null) {
 			List<EntityFairy> fairyList = event.spell.world.getEntitiesWithinAABB(EntityFairy.class, new AxisAlignedBB(caster.getPosition()).expand(64, 64, 64));
 			for (EntityFairy fairy : fairyList) {
-				if (ThreadLocalRandom.current().nextInt(chance) == 0) fairy.ambush = true;
+				if (RandUtil.nextInt(chance) == 0) fairy.ambush = true;
 			}
 		}
 	}

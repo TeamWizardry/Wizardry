@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.common.entity;
 
 import com.teamwizardry.wizardry.api.util.PosUtils;
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
 import com.teamwizardry.wizardry.lib.LibParticles;
@@ -16,7 +17,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by Saad on 8/29/2016.
@@ -58,7 +58,7 @@ public class EntityDevilDust extends Entity {
 				LibParticles.DEVIL_DUST_SMALL_CRACKLES(world, getPositionVector());
 
 				if ((expiry % 5) == 0)
-					world.playSound(null, posX, posY, posZ, ModSounds.FRYING_SIZZLE, SoundCategory.BLOCKS, 0.7F, (float) ThreadLocalRandom.current().nextDouble(0.8, 1.3));
+					world.playSound(null, posX, posY, posZ, ModSounds.FRYING_SIZZLE, SoundCategory.BLOCKS, 0.7F, (float) RandUtil.nextDouble(0.8, 1.3));
 
 			} else {
 				EntityItem devilDust = new EntityItem(world, posX, posY, posZ, new ItemStack(ModItems.DEVIL_DUST, stackSize));

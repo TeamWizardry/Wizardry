@@ -38,38 +38,6 @@ public final class CubicBezier {
 		}
 	}
 
-	public float eval(float x) {
-		if (x1 == y1 && x2 == y2) {
-			return x;
-		}
-		if (x == 0) {
-			return 0;
-		}
-		if (x == 1) {
-			return 1;
-		}
-		return calcBezier(getTForX(x), y1, y2);
-	}
-
-	public float getTForX(float x) {
-		float intervalStart = 0;
-		int currentSample = 1;
-		for (int lastSample = SPLINE_TABLE_SIZE - 1; currentSample != lastSample && sampleValues[currentSample] <= x; currentSample++) {
-			intervalStart += SAMPLE_STEP_SIZE;
-		}
-		currentSample--;
-		float dist = (x - sampleValues[currentSample]) / (sampleValues[currentSample + 1] - sampleValues[currentSample]);
-		float guessForT = intervalStart + dist * SAMPLE_STEP_SIZE;
-		float intialSlope = getSlope(guessForT, x1, x2);
-		if (intialSlope >= NEWTON_MIN_SLOPE) {
-			return newtonRaphsonIterate(x, guessForT, x1, x2);
-		}
-		if (intialSlope == 0) {
-			return guessForT;
-		}
-		return binarySubdivide(x, intervalStart, intervalStart + SAMPLE_STEP_SIZE, x1, x2);
-	}
-
 	private static float binarySubdivide(float x, float a, float b, float x1, float x2) {
 		float currentX, currentT;
 		int i = 0;
@@ -115,5 +83,37 @@ public final class CubicBezier {
 
 	private static float getC(float a1) {
 		return 3 * a1;
+	}
+
+	public float eval(float x) {
+		if (x1 == y1 && x2 == y2) {
+			return x;
+		}
+		if (x == 0) {
+			return 0;
+		}
+		if (x == 1) {
+			return 1;
+		}
+		return calcBezier(getTForX(x), y1, y2);
+	}
+
+	public float getTForX(float x) {
+		float intervalStart = 0;
+		int currentSample = 1;
+		for (int lastSample = SPLINE_TABLE_SIZE - 1; currentSample != lastSample && sampleValues[currentSample] <= x; currentSample++) {
+			intervalStart += SAMPLE_STEP_SIZE;
+		}
+		currentSample--;
+		float dist = (x - sampleValues[currentSample]) / (sampleValues[currentSample + 1] - sampleValues[currentSample]);
+		float guessForT = intervalStart + dist * SAMPLE_STEP_SIZE;
+		float intialSlope = getSlope(guessForT, x1, x2);
+		if (intialSlope >= NEWTON_MIN_SLOPE) {
+			return newtonRaphsonIterate(x, guessForT, x1, x2);
+		}
+		if (intialSlope == 0) {
+			return guessForT;
+		}
+		return binarySubdivide(x, intervalStart, intervalStart + SAMPLE_STEP_SIZE, x1, x2);
 	}
 }

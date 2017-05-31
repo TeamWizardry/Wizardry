@@ -13,13 +13,13 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.capability.CustomWizardryCapability;
 import com.teamwizardry.wizardry.api.util.ColorUtils;
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 import java.awt.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 import static net.minecraft.util.EnumFacing.*;
 
@@ -62,10 +62,10 @@ public class TileManaSink extends TileMod implements ITickable {
 				helix.setAlphaFunction(new InterpFadeInOut(0.1f, 0.1f));
 
 				ParticleSpawner.spawn(helix, world, new StaticInterp<>(new Vec3d(faucetPos).addVector(0.5, 1, 0.5)), 1, 0, (aFloat, particleBuilder) -> {
-					helix.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), ThreadLocalRandom.current().nextInt(50, 200)));
-					helix.setScale(ThreadLocalRandom.current().nextFloat());
+					helix.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), RandUtil.nextInt(50, 200)));
+					helix.setScale(RandUtil.nextFloat());
 					helix.setPositionFunction(new InterpBezier3D(Vec3d.ZERO, new Vec3d(getPos().subtract(faucetPos)), new Vec3d(0, 20, 0), new Vec3d(0, 5, 0)));
-					helix.setLifetime(ThreadLocalRandom.current().nextInt(10, 40));
+					helix.setLifetime(RandUtil.nextInt(10, 40));
 				});
 			}
 

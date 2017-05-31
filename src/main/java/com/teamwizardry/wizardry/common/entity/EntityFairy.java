@@ -6,6 +6,7 @@ import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.saving.AbstractSaveHandler;
 import com.teamwizardry.librarianlib.features.saving.Savable;
 import com.teamwizardry.wizardry.api.Constants.NBT;
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.lib.LibParticles;
@@ -31,7 +32,6 @@ import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by Saad on 8/21/2016.
@@ -53,9 +53,9 @@ public class EntityFairy extends FlyingEntityMod {
 		setSize(1F, 1F);
 		isAirBorne = true;
 		experienceValue = 5;
-		color = new Color(ThreadLocalRandom.current().nextFloat(), ThreadLocalRandom.current().nextFloat(), ThreadLocalRandom.current().nextFloat());
+		color = new Color(RandUtil.nextFloat(), RandUtil.nextFloat(), RandUtil.nextFloat());
 		color = color.brighter();
-		age = ThreadLocalRandom.current().nextInt(1, 100);
+		age = RandUtil.nextInt(1, 100);
 	}
 
 	public EntityFairy(World worldIn, Color color, int age) {
@@ -110,7 +110,7 @@ public class EntityFairy extends FlyingEntityMod {
 					motionZ = sub.zCoord;
 					velocityChanged = true;
 
-					if ((int) dist <= 0 || ThreadLocalRandom.current().nextInt((int) (dist * 20.0)) == 0)
+					if ((int) dist <= 0 || RandUtil.nextInt((int) (dist * 20.0)) == 0)
 						ambush = false;
 
 					if (entity instanceof EntityPlayerMP)
@@ -157,11 +157,11 @@ public class EntityFairy extends FlyingEntityMod {
 
 		if (!nopeOut) {
 			int r = Math.abs(new Random(getPosition().toLong()).nextInt(20)) + 1;
-			if (ThreadLocalRandom.current().nextInt(r) == 0) {
+			if (RandUtil.nextInt(r) == 0) {
 				changingCourse = true;
-				changeCourseTick = ThreadLocalRandom.current().nextInt(50);
-				tickPitch = (float) ThreadLocalRandom.current().nextDouble(-10, 10);
-				tickYaw = (float) ThreadLocalRandom.current().nextDouble(-10, 10);
+				changeCourseTick = RandUtil.nextInt(50);
+				tickPitch = (float) RandUtil.nextDouble(-10, 10);
+				tickYaw = (float) RandUtil.nextDouble(-10, 10);
 			}
 			if (changingCourse) {
 				if (changeCourseTick > 0) {
@@ -195,7 +195,7 @@ public class EntityFairy extends FlyingEntityMod {
 	public void onDeath(@NotNull DamageSource cause) {
 		super.onDeath(cause);
 		if (getHealth() <= 0)
-			PacketHandler.NETWORK.sendToAllAround(new PacketExplode(getPositionVector().addVector(0, 0.25, 0), color, color, 0.9, 0.9, ThreadLocalRandom.current().nextInt(100, 200), 75, 25),
+			PacketHandler.NETWORK.sendToAllAround(new PacketExplode(getPositionVector().addVector(0, 0.25, 0), color, color, 0.9, 0.9, RandUtil.nextInt(100, 200), 75, 25),
 					new NetworkRegistry.TargetPoint(world.provider.getDimension(), posX, posY, posZ, 256));
 	}
 
@@ -210,8 +210,8 @@ public class EntityFairy extends FlyingEntityMod {
 		ItemStack fairyWings = new ItemStack(ModItems.FAIRY_WINGS);
 		ItemStack fairyDust = new ItemStack(ModItems.FAIRY_DUST);
 		ItemNBTHelper.setInt(fairyWings, NBT.FAIRY_COLOR, color.getRGB());
-		entityDropItem(fairyDust, ThreadLocalRandom.current().nextFloat());
-		entityDropItem(fairyWings, ThreadLocalRandom.current().nextFloat());
+		entityDropItem(fairyDust, RandUtil.nextFloat());
+		entityDropItem(fairyWings, RandUtil.nextFloat());
 	}
 
 	@Override

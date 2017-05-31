@@ -10,6 +10,7 @@ import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.network.PacketFreezePlayer;
 import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.client.Minecraft;
@@ -30,7 +31,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import javax.annotation.Nonnull;
-import java.util.concurrent.ThreadLocalRandom;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
@@ -113,14 +113,14 @@ public class ModuleEffectTimeSlow extends Module {
 		glitter.setColorFunction(new InterpColorHSV(getPrimaryColor(), getSecondaryColor()));
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(position), ThreadLocalRandom.current().nextInt(20, 50), 0, (aFloat, particleBuilder) -> {
-			glitter.setLifetime(ThreadLocalRandom.current().nextInt(10, 40));
-			glitter.setScale(ThreadLocalRandom.current().nextFloat());
-			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, ThreadLocalRandom.current().nextFloat()));
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(position), RandUtil.nextInt(20, 50), 0, (aFloat, particleBuilder) -> {
+			glitter.setLifetime(RandUtil.nextInt(10, 40));
+			glitter.setScale(RandUtil.nextFloat());
+			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, RandUtil.nextFloat()));
 
-			double radius = ThreadLocalRandom.current().nextDouble(2, 3);
-			double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
-			double r = radius * ThreadLocalRandom.current().nextFloat();
+			double radius = RandUtil.nextDouble(2, 3);
+			double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
+			double r = radius * RandUtil.nextFloat();
 			double x = r * MathHelper.cos((float) theta);
 			double z = r * MathHelper.sin((float) theta);
 			Vec3d dest = new Vec3d(x, radius, z);

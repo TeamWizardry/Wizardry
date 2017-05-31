@@ -4,6 +4,7 @@ import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.IExplodable;
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.Utils;
 import com.teamwizardry.wizardry.common.achievement.Achievements;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
@@ -41,7 +42,6 @@ import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -87,13 +87,13 @@ public class FluidBlockMana extends BlockFluidClassic {
 				entity -> {
 					((EntityPlayer) entityIn).addStat(Achievements.MANAPOOL);
 
-					if (ThreadLocalRandom.current().nextInt(50) == 0) {
+					if (RandUtil.nextInt(50) == 0) {
 						if (((EntityPlayer) entity).getFoodStats().getFoodLevel() > 0)
 							((EntityPlayer) entity).getFoodStats().addStats(-1, 0);
 						if (((EntityPlayer) entity).getFoodStats().getSaturationLevel() > 0)
 							((EntityPlayer) entity).getFoodStats().addStats(0, -1);
 					}
-					if (ThreadLocalRandom.current().nextInt(50) == 0) {
+					if (RandUtil.nextInt(50) == 0) {
 						((EntityPlayer) entity).setHealth((float) Math.max(0, ((EntityPlayer) entity).getHealth() - 0.1));
 					}
 				});
@@ -149,7 +149,7 @@ public class FluidBlockMana extends BlockFluidClassic {
 
 						ItemNBTHelper.setInt(stack, REACTION_COOLDOWN, --expiry);
 						if ((expiry % 5) == 0)
-							worldIn.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (ThreadLocalRandom.current().nextFloat() * 0.4F) + 0.8F);
+							worldIn.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
 					} else {
 						PacketHandler.NETWORK.sendToAllAround(new PacketExplode(entity.getPositionVector(), Color.CYAN, Color.BLUE, 0.9, 2, 500, 100, 50),
 								new NetworkRegistry.TargetPoint(worldIn.provider.getDimension(), entity.posX, entity.posY, entity.posZ, 256));
@@ -185,14 +185,14 @@ public class FluidBlockMana extends BlockFluidClassic {
 					if (expiry > 0) {
 						ItemNBTHelper.setInt(stack, REACTION_COOLDOWN, --expiry);
 						if ((expiry % 5) == 0)
-							worldIn.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.BUBBLING, SoundCategory.AMBIENT, 0.7F, (ThreadLocalRandom.current().nextFloat() * 0.4F) + 0.8F);
+							worldIn.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.BUBBLING, SoundCategory.AMBIENT, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
 					} else {
 						if (worldIn.isRemote) LibParticles.FIZZING_ITEM(worldIn, entity.getPositionVector());
 
 						((IExplodable) stack.getItem()).explode(entityIn);
 						worldIn.setBlockState(entity.getPosition(), Blocks.AIR.getDefaultState());
 						worldIn.removeEntity(entity);
-						worldIn.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.GLASS_BREAK, SoundCategory.AMBIENT, 0.5F, (ThreadLocalRandom.current().nextFloat() * 0.4F) + 0.8F);
+						worldIn.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.GLASS_BREAK, SoundCategory.AMBIENT, 0.5F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
 					}
 				});
 	}

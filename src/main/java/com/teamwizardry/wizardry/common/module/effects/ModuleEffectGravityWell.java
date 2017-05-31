@@ -10,6 +10,7 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.api.util.InterpScale;
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
@@ -20,7 +21,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
-import java.util.concurrent.ThreadLocalRandom;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
@@ -101,26 +101,26 @@ public class ModuleEffectGravityWell extends Module implements IlingeringModule 
 		Vec3d position = spell.getData(TARGET_HIT);
 
 		if (position == null) return;
-		if (ThreadLocalRandom.current().nextInt(2) != 0) return;
+		if (RandUtil.nextInt(2) != 0) return;
 
-		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(20, 30));
+		ParticleBuilder glitter = new ParticleBuilder(RandUtil.nextInt(20, 30));
 		glitter.setColorFunction(new InterpColorHSV(getPrimaryColor(), getSecondaryColor()));
-		ParticleSpawner.spawn(glitter, spell.world, new StaticInterp<>(position), 5, ThreadLocalRandom.current().nextInt(0, 30), (aFloat, particleBuilder) -> {
-			glitter.setScale((float) ThreadLocalRandom.current().nextDouble(0.3, 1));
-			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, (float) ThreadLocalRandom.current().nextDouble(0.6, 1)));
+		ParticleSpawner.spawn(glitter, spell.world, new StaticInterp<>(position), 5, RandUtil.nextInt(0, 30), (aFloat, particleBuilder) -> {
+			glitter.setScale((float) RandUtil.nextDouble(0.3, 1));
+			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, (float) RandUtil.nextDouble(0.6, 1)));
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-			glitter.setLifetime(ThreadLocalRandom.current().nextInt(10, 40));
+			glitter.setLifetime(RandUtil.nextInt(10, 40));
 			glitter.setScaleFunction(new InterpScale(1, 0));
-			if (ThreadLocalRandom.current().nextBoolean())
+			if (RandUtil.nextBoolean())
 				glitter.setPositionFunction(new InterpHelix(
 						new Vec3d(0, 0, 0),
 						new Vec3d(0, 2, 0),
-						0.5f, 0, 1, ThreadLocalRandom.current().nextFloat()
+						0.5f, 0, 1, RandUtil.nextFloat()
 				));
 			else glitter.setPositionFunction(new InterpHelix(
 					new Vec3d(0, 0, 0),
 					new Vec3d(0, -2, 0),
-					0.5f, 0, 1, ThreadLocalRandom.current().nextFloat()
+					0.5f, 0, 1, RandUtil.nextFloat()
 			));
 		});
 	}
