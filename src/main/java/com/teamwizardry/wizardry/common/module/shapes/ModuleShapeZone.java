@@ -67,17 +67,17 @@ public class ModuleShapeZone extends Module implements IlingeringModule {
 		if (attributes.hasKey(Attributes.EXTEND))
 			radius += Math.min(32, attributes.getDouble(Attributes.EXTEND));
 
-		List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(targetPos)).expand(radius, 0, radius).expand(0, 1, 0));
+		List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(targetPos)).expand(radius, 0, radius).expand(0, 1, 0));
 
 		for (Entity entity : entities) {
 			if (entity.getDistance(targetPos.xCoord, targetPos.yCoord, targetPos.zCoord) <= radius) {
-				if (RandUtil.nextInt((int) Math.abs(50000 - (radius * 1000))) != 0) continue;
+				if (RandUtil.nextInt((int) Math.abs(320 - (radius * 10))) != 0) continue;
 				if (!processCost(radius, spell)) return false;
 
 				SpellData copy = spell.copy();
 				copy.processEntity(entity, false);
-				copy.addData(YAW, 0f);
-				copy.addData(PITCH, -90f);
+				copy.addData(YAW, entity.rotationYaw);
+				copy.addData(PITCH, entity.rotationPitch);
 				copy.addData(ORIGIN, entity.getPositionVector());
 				runNextModule(copy);
 			}
@@ -87,7 +87,7 @@ public class ModuleShapeZone extends Module implements IlingeringModule {
 			for (int j = (int) -radius; j < radius; j++)
 				for (int k = (int) -radius; k < radius; k++) {
 					BlockPos newPos = new BlockPos(targetPos).add(i, j, k);
-					if (RandUtil.nextInt((int) Math.abs(50000 - (radius * 1000))) != 0) continue;
+					if (RandUtil.nextInt((int) Math.abs(32000 - (radius * 1000))) != 0) continue;
 					if (newPos.getDistance((int) targetPos.xCoord, (int) targetPos.yCoord, (int) targetPos.zCoord) <= radius) {
 						if (!processCost(radius, spell)) return false;
 						SpellData copy = spell.copy();

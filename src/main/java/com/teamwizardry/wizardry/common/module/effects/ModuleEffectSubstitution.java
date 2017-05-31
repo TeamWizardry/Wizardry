@@ -125,6 +125,7 @@ public class ModuleEffectSubstitution extends Module implements IBlockSelectable
 					if (!processCost(strength / 10.0, spell)) break;
 					BlockPos nearest = null;
 					for (BlockPos pos : blocks) {
+						if (spell.world.isAirBlock(pos)) continue;
 						if (spell.world.getBlockState(pos).getBlock() == state.getBlock()) continue;
 
 						if (nearest == null) {

@@ -8,6 +8,7 @@ import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -56,13 +57,29 @@ public class ModuleEffectDisarm extends Module {
 				if (!processCost(spell)) return false;
 
 				ItemStack held = ((EntityLivingBase) targetEntity).getHeldItemMainhand();
-				ItemStack stack = held.copy();
-				stack.setCount(1);
-				held.shrink(1);
 
-				EntityItem item = new EntityItem(spell.world, targetEntity.posX, targetEntity.posY + 1, targetEntity.posZ, stack);
-				item.setDefaultPickupDelay();
-				return spell.world.spawnEntity(item);
+				if (targetEntity instanceof EntityPlayer) {
+					for (int i = 9; i < ((EntityPlayer) targetEntity).inventory.getSizeInventory(); i++) {
+						if (((EntityPlayer) targetEntity).inventory.getStackInSlot(i) == ItemStack.EMPTY) {
+							((EntityPlayer) targetEntity).inventory.setInventorySlotContents(i, held.copy());
+							held.setCount(0);
+							return true;
+						}
+					}
+
+					ItemStack copy = held.copy();
+					held.setCount(0);
+					EntityItem item = new EntityItem(spell.world, targetEntity.posX, targetEntity.posY + 1, targetEntity.posZ, copy);
+					item.setPickupDelay(5);
+					return spell.world.spawnEntity(item);
+				} else {
+					ItemStack stack = held.copy();
+					held.setCount(0);
+
+					EntityItem item = new EntityItem(spell.world, targetEntity.posX, targetEntity.posY + 1, targetEntity.posZ, stack);
+					item.setPickupDelay(5);
+					return spell.world.spawnEntity(item);
+				}
 			}
 		}
 
