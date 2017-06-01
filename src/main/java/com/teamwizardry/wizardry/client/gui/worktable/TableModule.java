@@ -148,7 +148,11 @@ public class TableModule {
 					Vec2d start = position.add(8, 8);
 					Vec2d end = event.getComponent().getParent().unTransformChildPos(event.getComponent(), event.getMousePos());
 
-					drawWire(start, end, Color.BLUE, Color.CYAN);
+
+					Module module1 = table.getModule(event.getComponent());
+					if (module1 == null) return;
+
+					drawWire(start, end, getColorForModule(module1.getModuleType()), Color.WHITE);
 				}
 			}
 
@@ -202,7 +206,7 @@ public class TableModule {
 				Module module2 = table.getModule(event.getComponent());
 				if (module2 == null) return;
 
-				drawWire(fromPos, toPos, getColorForModule(module1.getModuleType()), getColorForModule(module2.getModuleType()));
+				drawWire(fromPos, toPos, getColorForModule(module2.getModuleType()), getColorForModule(module1.getModuleType()));
 			}
 		});
 

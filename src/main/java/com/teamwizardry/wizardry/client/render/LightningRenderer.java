@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.client.render;
 
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -20,9 +21,6 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 import java.util.ArrayList;
 
-import static org.lwjgl.opengl.GL11.GL_ONE;
-import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
-
 /**
  * Created by LordSaad.
  */
@@ -30,10 +28,12 @@ public class LightningRenderer {
 
 	public static LightningRenderer INSTANCE = new LightningRenderer();
 	private static Sprite sprite = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/particles/h_streak.png"));
-	public int renderTick = 0;
-	public ArrayList<Vec3d> points = new ArrayList<>();
+	private static Sprite streakBase = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/particles/streak_base.png"));
+	private static Sprite streakCorner = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/particles/streak_corner.png"));
+	private ArrayList<LightningBolt> bolts = new ArrayList<>();
+	private ArrayList<LightningBolt> clear = new ArrayList<>();
 
-	public LightningRenderer() {
+	private LightningRenderer() {
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
@@ -41,69 +41,140 @@ public class LightningRenderer {
 		return vb.pos(pos.xCoord, pos.yCoord, pos.zCoord);
 	}
 
+	public void addBolt(ArrayList<Vec3d> points, int maxTick) {
+		bolts.add(new LightningBolt(points, maxTick));
+	}
+
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void render(RenderWorldLastEvent event) {
-		if (points.isEmpty()) return;
+		ArrayList<LightningBolt> temp = new ArrayList<>();
+		temp.addAll(bolts);
+		for (LightningBolt bolt : temp) {
+			if (--bolt.tick <= 0) clear.add(bolt);
 
-		if (--renderTick < 0) {
-			points.clear();
-			return;
 		}
 
-		GlStateManager.pushMatrix();
-		EntityPlayer player = Minecraft.getMinecraft().player;
-
-		double interpPosX = player.lastTickPosX + (player.posX - player.lastTickPosX) * event.getPartialTicks();
-		double interpPosY = player.lastTickPosY + (player.posY - player.lastTickPosY) * event.getPartialTicks();
-		double interpPosZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * event.getPartialTicks();
-
-		GlStateManager.translate(-interpPosX, -interpPosY, -interpPosZ);
-
-		GlStateManager.disableCull();
-		GlStateManager.enableAlpha();
-		GlStateManager.enableBlend();
-		GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE);
-
-		sprite.bind();
-
-		Tessellator tessellator = Tessellator.getInstance();
-		VertexBuffer vb = tessellator.getBuffer();
-
-		for (int i = 1; i < points.size() - 1; i++) {
-			Vec3d to = points.get(i);
-			Vec3d from = points.get(i - 1);
-			double dist = to.distanceTo(from);
-
-			Color color = Color.WHITE;
-			Vec3d d = new Vec3d(0.05, 0, 0);
-			Vec3d d2 = new Vec3d(0, 0.05, 0);
-			Vec3d d3 = new Vec3d(0, 0, 0.05);
-
-			vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-			pos(vb, from.add(d)).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), Math.max(128, color.getAlpha())).endVertex();
-			pos(vb, from.subtract(d)).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), Math.max(128, color.getAlpha())).endVertex();
-			pos(vb, to.subtract(d)).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), Math.max(128, color.getAlpha())).endVertex();
-			pos(vb, to.add(d)).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), Math.max(128, color.getAlpha())).endVertex();
-			tessellator.draw();
-
-			vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-			pos(vb, from.add(d2)).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), Math.max(128, color.getAlpha())).endVertex();
-			pos(vb, from.subtract(d2)).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), Math.max(128, color.getAlpha())).endVertex();
-			pos(vb, to.subtract(d2)).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), Math.max(128, color.getAlpha())).endVertex();
-			pos(vb, to.add(d2)).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), Math.max(128, color.getAlpha())).endVertex();
-			tessellator.draw();
-
-			vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-			pos(vb, from.add(d3)).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), Math.max(128, color.getAlpha())).endVertex();
-			pos(vb, from.subtract(d3)).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), Math.max(128, color.getAlpha())).endVertex();
-			pos(vb, to.subtract(d2)).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), Math.max(128, color.getAlpha())).endVertex();
-			pos(vb, to.add(d2)).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), Math.max(128, color.getAlpha())).endVertex();
-			tessellator.draw();
-
-			//sprite.draw(0, (float) from.xCoord, (float) from.yCoord, (float) dist, sprite.getHeight());
+		for (LightningBolt bolt : clear) {
+			if (bolts.contains(bolt)) {
+				bolts.remove(bolt);
+			}
 		}
+		clear.clear();
 
-		GlStateManager.popMatrix();
+		for (LightningBolt bolt : bolts) {
+			ArrayList<Vec3d> points = bolt.points;
+
+			if (points.isEmpty()) return;
+
+			GlStateManager.pushMatrix();
+			EntityPlayer player = Minecraft.getMinecraft().player;
+
+			double interpPosX = player.lastTickPosX + (player.posX - player.lastTickPosX) * event.getPartialTicks();
+			double interpPosY = player.lastTickPosY + (player.posY - player.lastTickPosY) * event.getPartialTicks();
+			double interpPosZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * event.getPartialTicks();
+
+			GlStateManager.translate(-interpPosX, -interpPosY, -interpPosZ);
+
+			GlStateManager.depthMask(false);
+
+			GlStateManager.disableCull();
+			GlStateManager.enableAlpha();
+			GlStateManager.enableBlend();
+
+			Tessellator tessellator = Tessellator.getInstance();
+			VertexBuffer vb = tessellator.getBuffer();
+
+			for (int i = 1; i < points.size() - 1; i++) {
+
+				float progress = (bolt.tick / (bolt.maxTick * 1.0f));
+				float beamProgress = 1f - (i / (points.size() - 1.0f));
+
+				if (beamProgress < progress) continue;
+
+				Vec3d to = points.get(i);
+				Vec3d from = points.get(i - 1);
+
+				Vec3d playerEyes = Minecraft.getMinecraft().player.getPositionEyes(event.getPartialTicks());
+				Vec3d normal = (from.subtract(to)).crossProduct(playerEyes.subtract(to)).normalize(); //(b.subtract(a)).crossProduct(c.subtract(a));
+				if (normal.yCoord < 0)
+					normal = normal.scale(-1);
+
+				Color color = new Color(0xcfa0ff);
+				int a = (int) (color.getAlpha() * progress);
+				Vec3d x = normal.scale(0.08 * RandUtil.nextDouble(0.8, 1));
+
+				streakBase.bind();
+				vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+				pos(vb, from.add(x)).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+				pos(vb, from.subtract(x)).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+				pos(vb, to.subtract(x)).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+				pos(vb, to.add(x)).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+				tessellator.draw();
+
+				streakCorner.bind();
+				Vec3d moreFrom = from.add(from.subtract(to).normalize().scale(0.1));
+				vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+				pos(vb, from.add(x)).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+				pos(vb, from.subtract(x)).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+				pos(vb, moreFrom.subtract(x)).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+				pos(vb, moreFrom.add(x)).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+				tessellator.draw();
+
+				Vec3d moreTo = to.add(to.subtract(from).normalize().scale(0.1));
+				vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+				pos(vb, to.add(x)).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+				pos(vb, to.subtract(x)).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+				pos(vb, moreTo.subtract(x)).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+				pos(vb, moreTo.add(x)).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+				tessellator.draw();
+
+				streakBase.bind();
+				color = Color.WHITE;
+				x = normal.scale(0.05 * RandUtil.nextDouble(0.3, 0.5));
+				//from = from.add(normal.scale(0.001));
+				//to = to.add(normal.scale(0.001));
+
+				vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+				pos(vb, from.add(x)).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+				pos(vb, from.subtract(x)).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+				pos(vb, to.subtract(x)).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+				pos(vb, to.add(x)).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+				tessellator.draw();
+
+				Vec3d moreFromCore = from.add(from.subtract(to).normalize().scale(0.01));
+				vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+				pos(vb, from.add(x)).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+				pos(vb, from.subtract(x)).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+				pos(vb, moreFromCore.subtract(x)).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+				pos(vb, moreFromCore.add(x)).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+				tessellator.draw();
+
+				Vec3d moreToCore = to.add(to.subtract(from).normalize().scale(0.01));
+				vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+				pos(vb, to.add(x)).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+				pos(vb, to.subtract(x)).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+				pos(vb, moreToCore.subtract(x)).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+				pos(vb, moreToCore.add(x)).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+				tessellator.draw();
+			}
+
+			GlStateManager.depthMask(true);
+
+			GlStateManager.popMatrix();
+		}
+	}
+
+	public class LightningBolt {
+
+		public final ArrayList<Vec3d> points;
+		public final int maxTick;
+		public int tick;
+
+		public LightningBolt(ArrayList<Vec3d> points, int maxTick) {
+			this.points = points;
+			this.maxTick = maxTick;
+			this.tick = maxTick;
+		}
 	}
 }

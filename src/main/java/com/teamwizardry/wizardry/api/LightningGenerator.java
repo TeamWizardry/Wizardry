@@ -28,21 +28,18 @@ public class LightningGenerator {
 
 		ArrayList<Float> points = new ArrayList<>();
 		points.add(0f);
-		for (int i = 0; i < dist * 4; i++) {
+		for (int i = 0; i < dist * 6; i++) {
 			points.add(RandUtil.nextFloat());
 		}
 
 		Collections.sort(points);
 
-		Vec3d prevPoint = point1;
-		double prevScale = 0;
 		for (int i = 1; i < points.size(); i++) {
 
 			float point = points.get(i);
 			Vec3d vec = sub.scale(point);
 
-			double scale = dist * 0.02 + (point - (points.get(i - 1)));
-			prevScale = scale;
+			double scale = dist * 0.005 + (point - (points.get(i - 1)));
 
 			vec = new Vec3d(
 					vec.xCoord + RandUtil.nextDouble(-scale, scale),
@@ -54,16 +51,15 @@ public class LightningGenerator {
 				float[] pitchyaw = PosUtils.vecToRotations(normal);
 				float pitch = pitchyaw[0];
 				float yaw = pitchyaw[1];
-				double angle = 270;
+				double angle = 340;
 				float newPitch = (float) (pitch + RandUtil.nextDouble(-angle, angle));
 				float newYaw = (float) (yaw + RandUtil.nextDouble(-angle, angle));
-				Vec3d offset = PosUtils.vecFromRotations(newPitch, newYaw).scale(dist / 3);
+				Vec3d offset = PosUtils.vecFromRotations(newPitch, newYaw).scale(dist / 3.5f);
 
 				results.addAll(new LightningGenerator(point1.add(vec), point1.add(vec).add(offset)).generate());
 			}
 
 			results.add(point1.add(vec));
-			prevPoint = vec;
 		}
 
 		results.add(point2);

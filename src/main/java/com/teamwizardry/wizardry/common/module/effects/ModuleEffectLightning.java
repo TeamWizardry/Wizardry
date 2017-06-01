@@ -73,7 +73,12 @@ public class ModuleEffectLightning extends Module {
 		RayTraceResult traceResult = Utils.raytrace(world, PosUtils.vecFromRotations(pitch, yaw), position, 10, entity);
 		if (traceResult == null) return;
 
-		PacketHandler.NETWORK.sendToAllAround(new PacketLightningBolt(entity.getPositionVector(), traceResult.hitVec),
+		Vec3d origin = position;
+		float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - yaw));
+		float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - yaw));
+		origin = new Vec3d(offX, entity.getEyeHeight(), offZ).add(position);
+
+		PacketHandler.NETWORK.sendToAllAround(new PacketLightningBolt(origin, traceResult.hitVec),
 				new NetworkRegistry.TargetPoint(world.provider.getDimension(), entity.posX, entity.posY, entity.posZ, 256));
 	}
 

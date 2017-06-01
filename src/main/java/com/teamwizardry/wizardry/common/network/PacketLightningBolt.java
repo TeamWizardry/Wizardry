@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.common.network;
 import com.teamwizardry.librarianlib.features.network.PacketBase;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.wizardry.api.LightningGenerator;
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.render.LightningRenderer;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -28,7 +29,6 @@ public class PacketLightningBolt extends PacketBase {
 
 	@Override
 	public void handle(@NotNull MessageContext messageContext) {
-		LightningRenderer.INSTANCE.points = new LightningGenerator(point1, point2).generate();
-		LightningRenderer.INSTANCE.renderTick = 500;
+		LightningRenderer.INSTANCE.addBolt(new LightningGenerator(point1, point2).generate(), RandUtil.nextInt(40, 60));
 	}
 }
