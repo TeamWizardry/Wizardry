@@ -1,6 +1,8 @@
 package com.teamwizardry.wizardry.client.core;
 
-import com.teamwizardry.librarianlib.core.LibrarianLib;
+import baubles.api.BaubleType;
+import baubles.api.BaublesApi;
+import baubles.api.cap.IBaublesItemHandler;
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.math.Matrix4;
@@ -24,6 +26,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
@@ -259,6 +262,19 @@ public class CapeHandler {
 				break;
 			}
 		}
+		if (stack == null) {
+			if (Loader.isModLoaded("baubles")) {
+				IBaublesItemHandler inv = BaublesApi.getBaublesHandler(player);
+				for (int i : BaubleType.BODY.getValidSlots()) {
+					ItemStack stack1 = inv.getStackInSlot(i);
+					if (stack1.getItem() == ModItems.CAPE) {
+						stack = stack1;
+						match = true;
+						break;
+					}
+				}
+			}
+		}
 		if (!match) return;
 
 		float partialTicks = ClientTickHandler.getPartialTicks();
@@ -298,7 +314,6 @@ public class CapeHandler {
 		);
 		GlStateManager.translate(-event.getEntity().lastTickPosX, -event.getEntity().lastTickPosY, -event.getEntity().lastTickPosZ);
 
-
 		GlStateManager.disableTexture2D();
 		GlStateManager.glLineWidth(1.0f);
 		GlStateManager.disableCull();
@@ -309,7 +324,7 @@ public class CapeHandler {
 		tess.draw();
 
 		String cape;
-		if (LibrarianLib.PROXY.getResource(Wizardry.MODID, "textures/capes/cape_" + player.getName().toLowerCase() + ".png") == null) {
+		//if (LibrarianLib.PROXY.getResource(Wizardry.MODID, "textures/capes/cape_" + player.getName().toLowerCase() + ".png") == null) {
 			UUID uuid = ItemNBTHelper.getUUID(stack, "uuid");
 			if (uuid == null) {
 				uuid = UUID.randomUUID();
@@ -317,9 +332,9 @@ public class CapeHandler {
 			}
 			Random r = new Random(uuid.hashCode());
 			cape = "cape_normal_" + (1 + r.nextInt(3));
-		} else {
-			cape = "cape_" + player.getName();
-		}
+		//} else {
+		//	cape = "cape_" + player.getName();
+		//}
 
 		Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/capes/" + cape + ".png"));
 		GlStateManager.enableTexture2D();

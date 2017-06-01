@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.teamwizardry.wizardry.init.ModItems;
 import kotlin.Pair;
-import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -75,8 +74,6 @@ public class SpellRecipeConstructor {
 	private ArrayList<Module> prune(ArrayList<Module> modules) {
 		ArrayList<Module> prunedModules = new ArrayList<>();
 		for (Module head : modules) {
-			if (head.getID().equals("shape_projectile"))
-				Minecraft.getMinecraft().player.sendChatMessage("projectile found in addall");
 			prunedModules.addAll(SpellStack.getAllModules(head));
 		}
 
@@ -86,8 +83,6 @@ public class SpellRecipeConstructor {
 			for (Module module1 : temp) {
 				if (module != module1 && module.getID().equals(module1.getID())) {
 					prunedModules.remove(module);
-					if (module1.getID().equals("shape_projectile"))
-						Minecraft.getMinecraft().player.sendChatMessage("projectile pruned. repruning");
 					return prune(prunedModules);
 				}
 			}

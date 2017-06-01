@@ -2,7 +2,6 @@ package com.teamwizardry.wizardry.api.item;
 
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 
 import java.util.UUID;
@@ -13,9 +12,6 @@ import java.util.UUID;
 public interface ICape {
 
 	default void tickCape(ItemStack stack, EntityLivingBase entityIn) {
-		ItemStack cape = entityIn.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-		if (!(ItemStack.areItemStacksEqual(stack, cape))) return;
-
 		int tick = ItemNBTHelper.getInt(stack, "tick", 0);
 		if (tick < 300) ItemNBTHelper.setInt(stack, "tick", tick + 1);
 		else {

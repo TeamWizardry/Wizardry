@@ -16,7 +16,6 @@ import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
@@ -45,10 +44,12 @@ public class ItemMagicWand extends ItemMod implements IGlowOverlayable {
 		ItemStack stack = player.getHeldItemMainhand();
 
 		if (GuiScreen.isAltKeyDown()) {
-			ItemStack cape = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-			if (!cape.isEmpty() && cape.getItem() == ModItems.CAPE) {
-				ItemNBTHelper.setInt(cape, "time", ItemNBTHelper.getInt(cape, "time", 0) + 100);
-				player.sendMessage(new TextComponentString(new CapManager(player).getMana() + "/" + new CapManager(player).getMaxMana()));
+			for (ItemStack stack1 : player.inventory.mainInventory) {
+				if (stack1.getItem() != ModItems.CAPE) continue;
+				if (!stack1.isEmpty() && stack1.getItem() == ModItems.CAPE) {
+					ItemNBTHelper.setInt(stack1, "time", ItemNBTHelper.getInt(stack1, "time", 0) + 100);
+					player.sendMessage(new TextComponentString(new CapManager(player).getMana() + "/" + new CapManager(player).getMaxMana()));
+				}
 			}
 		}
 

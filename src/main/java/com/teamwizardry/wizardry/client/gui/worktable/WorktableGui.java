@@ -6,6 +6,7 @@ import com.teamwizardry.librarianlib.features.gui.GuiBase;
 import com.teamwizardry.librarianlib.features.gui.GuiComponent;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentGrid;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
+import com.teamwizardry.librarianlib.features.gui.components.ComponentText;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentVoid;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
@@ -62,7 +63,11 @@ public class WorktableGui extends GuiBase {
 		addModules(modifiers, ModuleType.MODIFIER);
 		getMainComponents().add(modifiers);
 
-		ComponentSprite save = new ComponentSprite(new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/icons/modifier_extend.png")), 410, 89, 20, 20);
+		ComponentSprite save = new ComponentSprite(new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/button.png")), 395, 30, (int) (88 / 1.5), (int) (24 / 1.5));
+		int width = Minecraft.getMinecraft().fontRenderer.getStringWidth("SAVE");
+		int height = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT;
+		ComponentText textSave = new ComponentText(395 + (save.getSize().getXi() / 2) - width / 2, 30 + (save.getSize().getYi() / 2) - height / 2);
+		textSave.getText().setValue("SAVE");
 		save.BUS.hook(GuiComponent.MouseClickEvent.class, (event) -> {
 
 			HashSet<GuiComponent> heads = getHeads();
@@ -103,6 +108,7 @@ public class WorktableGui extends GuiBase {
 
 		});
 		getMainComponents().add(save);
+		getMainComponents().add(textSave);
 	}
 
 	public UUID getUUID(GuiComponent component) {
