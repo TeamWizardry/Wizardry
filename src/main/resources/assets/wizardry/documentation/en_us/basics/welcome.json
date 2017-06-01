@@ -9,12 +9,6 @@
         "Finally, there is the Underworld. Dark creatures travel in that void, and the smallest misstep can cost you your life. The spirits there are slow and seem to pose little threat to a cautious adventurer, but once they have your scent you will find no shelter to hide from them, no wall to stop them. Unicorns may be beautiful – from a distance – but more than one wizard has perished on those sharp, spiral horns.",
         "All that is still to come, however, for now it is time to take your first steps. Good luck, young wizard."
       ]
-    },
-    {
-      "text": [
-        "FLUFF"
-      ],
-      "image": "textures/gui/book/error/error.png"
     }
   ]
 }

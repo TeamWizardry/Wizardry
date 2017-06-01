@@ -10,6 +10,7 @@ import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBe
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.Module;
+import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.lib.LibSprites;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
@@ -195,8 +196,13 @@ public class TableModule {
 				if (fromPos == null) fromPos = event.getComponent().getPos();
 				fromPos = fromPos.add(8, 8);
 
+				Module module1 = table.getModule(component);
+				if (module1 == null) return;
 
-				drawWire(fromPos, toPos, Color.CYAN, Color.ORANGE);
+				Module module2 = table.getModule(event.getComponent());
+				if (module2 == null) return;
+
+				drawWire(fromPos, toPos, getColorForModule(module1.getModuleType()), getColorForModule(module2.getModuleType()));
 			}
 		});
 
@@ -297,5 +303,20 @@ public class TableModule {
 
 	private float lerp(float a, float b, float f) {
 		return a + f * (b - a);
+	}
+
+	private Color getColorForModule(ModuleType type) {
+		switch (type) {
+			case EVENT:
+				return Color.RED;
+			case SHAPE:
+				return Color.CYAN;
+			case EFFECT:
+				return Color.ORANGE;
+			case MODIFIER:
+				return Color.GREEN;
+		}
+
+		return Color.BLACK;
 	}
 }

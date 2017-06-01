@@ -15,7 +15,7 @@ public class ProcessData {
 		@NotNull
 		T serialize(@Nullable E object);
 
-		@NotNull
+		@Nullable
 		E deserialize(@NotNull World world, @NotNull T object);
 	}
 }

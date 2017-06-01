@@ -84,7 +84,7 @@ public class BookGui extends GuiBase {
 							//hookSlider(category, "TEEEEEEEEEEEEEEEEEST IIIIIIIIIIIIIIIIING");
 							final String finalPath = path + chunk.get("link").getAsString();
 							category.BUS.hook(GuiComponent.MouseClickEvent.class, mouseClickEvent -> {
-								Page page = new Page(this, finalPath, SPRITE_BACKGROUND.getWidth(), SPRITE_BACKGROUND.getHeight(), 0);
+								SubIndex page = new SubIndex(this, finalPath, SPRITE_BACKGROUND.getWidth(), SPRITE_BACKGROUND.getHeight(), 0);
 								mainIndex.setVisible(false);
 								mainIndex.setEnabled(false);
 								getMainComponents().add(page.component);

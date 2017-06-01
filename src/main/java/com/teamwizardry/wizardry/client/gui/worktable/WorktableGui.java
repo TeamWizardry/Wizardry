@@ -166,7 +166,7 @@ public class WorktableGui extends GuiBase {
 	}
 
 	@Nullable
-	private Module getModule(@Nullable GuiComponent component) {
+	public Module getModule(@Nullable GuiComponent component) {
 		if (component == null) return null;
 		for (Object object : component.getTags()) {
 			if (object instanceof Module) return ((Module) object).copy();
