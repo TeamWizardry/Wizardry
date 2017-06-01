@@ -256,14 +256,19 @@ public class TableModule {
 			}
 
 			float dist = (i / (list.size() - 1.0f));
-			float inter = 0.05f * ClientTickHandler.getTicks() + dist;
-			float frac = (inter - ((int) inter));
-			//frac = 1.0f - 2.0f * Math.abs(frac - 0.5f);
-			float wire = 256.0f / 27.0f * (p * p * p - p * p * p * p);
-			float r = lerp(primary.getRed(), secondary.getRed(), frac) / 255f;
-			float g = lerp(primary.getGreen(), secondary.getGreen(), frac) / 255f;
-			float b = lerp(primary.getBlue(), secondary.getBlue(), frac) / 255f;
-			//float a = lerp(255, 100, frac) / 255f;
+
+			float wire;
+			if (dist < p) {
+				float z = Math.abs(dist - p);
+				wire = 256.0f / 27.0f * (z * z * z - z * z * z * z);
+			} else {
+				float z = Math.abs(dist - (p + 1f));
+				wire = 256.0f / 27.0f * (z * z * z - z * z * z * z);
+			}
+
+			float r = lerp(primary.getRed(), secondary.getRed(), wire) / 255f;
+			float g = lerp(primary.getGreen(), secondary.getGreen(), wire) / 255f;
+			float b = lerp(primary.getBlue(), secondary.getBlue(), wire) / 255f;
 
 			Vec2d normal = point.sub(lastPoint).normalize();
 			Vec2d perp = new Vec2d(-normal.getYf(), normal.getXf()).mul((1.0f - 2.0f * Math.abs(dist - 0.5f) + 0.3f));
@@ -281,22 +286,6 @@ public class TableModule {
 		}
 		tessellator.draw();
 
-		if (pointerPos != null && behindPointer != null) {
-			GlStateManager.disableTexture2D();
-			GlStateManager.color(0, 0, 0, 1);
-
-			Vec2d normal = behindPointer.sub(pointerPos).normalize();
-			Vec2d perp = new Vec2d(-normal.getYf(), normal.getXf()).mul(0.7);
-			Vec2d point1 = pointerPos.add(normal.mul(5)).sub(perp.mul(5));
-			Vec2d point2 = pointerPos.add(normal.mul(5)).add(perp.mul(5));
-
-			//vb.begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION);
-			//vb.pos(pointerPos.getXf(), pointerPos.getYf(), 0).endVertex();
-			//vb.pos(point1.getXf(), point1.getYf(), 0).endVertex();
-			//vb.pos(point2.getXf(), point2.getYf(), 0).endVertex();
-			//tessellator.draw();
-		}
-
 		GlStateManager.enableTexture2D();
 		GlStateManager.popMatrix();
 	}
@@ -308,7 +297,7 @@ public class TableModule {
 	private Color getColorForModule(ModuleType type) {
 		switch (type) {
 			case EVENT:
-				return Color.RED;
+				return Color.PINK;
 			case SHAPE:
 				return Color.CYAN;
 			case EFFECT:

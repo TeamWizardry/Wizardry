@@ -20,6 +20,9 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 import java.util.ArrayList;
 
+import static org.lwjgl.opengl.GL11.GL_ONE;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+
 /**
  * Created by LordSaad.
  */
@@ -60,6 +63,7 @@ public class LightningRenderer {
 		GlStateManager.disableCull();
 		GlStateManager.enableAlpha();
 		GlStateManager.enableBlend();
+		GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE);
 
 		sprite.bind();
 
@@ -72,13 +76,29 @@ public class LightningRenderer {
 			double dist = to.distanceTo(from);
 
 			Color color = Color.WHITE;
-			Vec3d d = new Vec3d(0, (0.25 * color.getAlpha() / 255f) / 2.0, 0);
+			Vec3d d = new Vec3d(0.05, 0, 0);
+			Vec3d d2 = new Vec3d(0, 0.05, 0);
+			Vec3d d3 = new Vec3d(0, 0, 0.05);
 
 			vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
 			pos(vb, from.add(d)).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), Math.max(128, color.getAlpha())).endVertex();
-			pos(vb, from.subtract(d)).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), Math.max(128, color.getAlpha())).endVertex();
-			pos(vb, to.add(d)).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), Math.max(128, color.getAlpha())).endVertex();
-			pos(vb, to.subtract(d)).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), Math.max(128, color.getAlpha())).endVertex();
+			pos(vb, from.subtract(d)).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), Math.max(128, color.getAlpha())).endVertex();
+			pos(vb, to.subtract(d)).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), Math.max(128, color.getAlpha())).endVertex();
+			pos(vb, to.add(d)).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), Math.max(128, color.getAlpha())).endVertex();
+			tessellator.draw();
+
+			vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+			pos(vb, from.add(d2)).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), Math.max(128, color.getAlpha())).endVertex();
+			pos(vb, from.subtract(d2)).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), Math.max(128, color.getAlpha())).endVertex();
+			pos(vb, to.subtract(d2)).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), Math.max(128, color.getAlpha())).endVertex();
+			pos(vb, to.add(d2)).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), Math.max(128, color.getAlpha())).endVertex();
+			tessellator.draw();
+
+			vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+			pos(vb, from.add(d3)).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), Math.max(128, color.getAlpha())).endVertex();
+			pos(vb, from.subtract(d3)).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), Math.max(128, color.getAlpha())).endVertex();
+			pos(vb, to.subtract(d2)).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), Math.max(128, color.getAlpha())).endVertex();
+			pos(vb, to.add(d2)).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), Math.max(128, color.getAlpha())).endVertex();
 			tessellator.draw();
 
 			//sprite.draw(0, (float) from.xCoord, (float) from.yCoord, (float) dist, sprite.getHeight());
