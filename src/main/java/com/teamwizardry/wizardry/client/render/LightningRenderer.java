@@ -94,7 +94,7 @@ public class LightningRenderer {
 				float progress = (bolt.tick / (bolt.maxTick * 1.0f));
 				float beamProgress = 1f - (i / (points.size() - 1.0f));
 
-				if (beamProgress < progress) continue;
+				if (beamProgress < progress / 2) continue;
 
 				Vec3d to = points.get(i);
 				Vec3d from = points.get(i - 1);
