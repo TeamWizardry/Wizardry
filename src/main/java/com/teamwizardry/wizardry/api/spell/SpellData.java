@@ -273,5 +273,22 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 				return new Vec3d(x, y, z);
 			}
 		});
+
+		@Nonnull
+		public static final Pair<String, Class<Long>> SEED = constructPair("seed", Long.class, new ProcessData.Process<NBTTagLong, Long>() {
+
+			@NotNull
+			@Override
+			public NBTTagLong serialize(@Nullable Long object) {
+				if (object == null) return new NBTTagLong(0);
+				return new NBTTagLong(object);
+			}
+
+			@NotNull
+			@Override
+			public Long deserialize(@NotNull World world, @NotNull NBTTagLong object) {
+				return object.getLong();
+			}
+		});
 	}
 }

@@ -21,6 +21,9 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 import java.util.ArrayList;
 
+import static org.lwjgl.opengl.GL11.GL_ONE;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+
 /**
  * Created by LordSaad.
  */
@@ -81,6 +84,7 @@ public class LightningRenderer {
 			GlStateManager.disableCull();
 			GlStateManager.enableAlpha();
 			GlStateManager.enableBlend();
+			GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE);
 
 			Tessellator tessellator = Tessellator.getInstance();
 			VertexBuffer vb = tessellator.getBuffer();
@@ -100,9 +104,9 @@ public class LightningRenderer {
 				if (normal.yCoord < 0)
 					normal = normal.scale(-1);
 
-				Color color = new Color(0xcfa0ff);
+				Color color = new Color(0xDA83FF);
 				int a = (int) (color.getAlpha() * progress);
-				Vec3d x = normal.scale(0.08 * RandUtil.nextDouble(0.8, 1));
+				Vec3d x = normal.scale(0.08 * RandUtil.nextDouble(1, 1.5));
 
 				streakBase.bind();
 				vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);

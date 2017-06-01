@@ -17,7 +17,19 @@ public class RandUtil {
 		return (random.nextDouble() * (bound));
 	}
 
-	public static double nextDouble() {
+	public static long nextDouble() {
+		return (long) random.nextDouble();
+	}
+
+	public static long nextLong(long min, long max) {
+		return (long) ((random.nextDouble() * (max - min)) + min);
+	}
+
+	public static long nextLong(long bound) {
+		return (long) (random.nextDouble() * (bound));
+	}
+
+	public static double nextLong() {
 		return random.nextDouble();
 	}
 

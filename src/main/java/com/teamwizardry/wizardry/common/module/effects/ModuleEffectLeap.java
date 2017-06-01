@@ -49,6 +49,7 @@ public class ModuleEffectLeap extends Module implements IParticleDanger {
 		float pitch = spell.getData(PITCH, 0F);
 		Vec3d pos = spell.getData(TARGET_HIT);
 		Entity target = spell.getData(ENTITY_HIT);
+		Entity caster = spell.getData(CASTER);
 
 		if (target == null) return false;
 
@@ -61,7 +62,7 @@ public class ModuleEffectLeap extends Module implements IParticleDanger {
 
 			if (!processCost(strength, spell)) return false;
 
-			strength *= calcBurnoutPercent(target);
+			strength *= calcBurnoutPercent(caster);
 
 			target.motionX += target.isCollidedVertically ? lookVec.xCoord : lookVec.xCoord / 2.0;
 
