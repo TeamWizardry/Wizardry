@@ -1,9 +1,6 @@
 package com.teamwizardry.wizardry.common.module.shapes;
 
-import com.teamwizardry.wizardry.api.spell.Module;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.api.spell.RegisterModule;
-import com.teamwizardry.wizardry.api.spell.SpellData;
+import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.entity.EntitySpellProjectile;
 import com.teamwizardry.wizardry.init.ModSounds;
@@ -20,7 +17,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleShapeProjectile extends Module {
+public class ModuleShapeProjectile extends Module implements ICostModifier {
 
 	@Nonnull
 	@Override
@@ -57,8 +54,6 @@ public class ModuleShapeProjectile extends Module {
 		float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - caster.rotationYaw));
 		float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - caster.rotationYaw));
 		Vec3d origin = new Vec3d(offX, caster.getEyeHeight() - 0.3, offZ).add(caster.getPositionVector());
-
-		if (!processCost(spell)) return false;
 
 		EntitySpellProjectile proj = new EntitySpellProjectile(world, this, spell);
 		proj.setPosition(origin.xCoord, origin.yCoord, origin.zCoord);

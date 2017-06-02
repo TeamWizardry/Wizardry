@@ -43,7 +43,6 @@ public class ModuleEventCollideEntity extends Module {
 	@Override
 	public boolean run(@Nonnull SpellData spell) {
 		Entity entity = spell.getData(ENTITY_HIT);
-		if (!processCost(spell)) return false;
 		return entity != null && nextModule != null && nextModule.run(spell);
 	}
 

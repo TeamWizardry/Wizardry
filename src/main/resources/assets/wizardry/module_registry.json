@@ -47,7 +47,7 @@
     {
       "id": "effect_lightning",
       "mana_drain": 200,
-      "burnout_fill": 300,
+      "burnout_fill": 100,
       "item": "minecraft:ice",
       "primary_color": "f2ff00",
       "secondary_color": "FFFFFF"

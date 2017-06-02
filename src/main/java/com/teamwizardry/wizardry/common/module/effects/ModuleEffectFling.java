@@ -1,9 +1,6 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
-import com.teamwizardry.wizardry.api.spell.Module;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.api.spell.RegisterModule;
-import com.teamwizardry.wizardry.api.spell.SpellData;
+import com.teamwizardry.wizardry.api.spell.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
 
@@ -16,7 +13,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.TARGET_H
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEffectFling extends Module {
+public class ModuleEffectFling extends Module implements ITaxing {
 
 	@Nonnull
 	@Override
@@ -48,7 +45,7 @@ public class ModuleEffectFling extends Module {
 		Vec3d to = spell.getData(TARGET_HIT);
 
 		if (targetEntity == null || to == null) return false;
-		if (!processCost(spell)) return false;
+		if (!tax(this, spell)) return false;
 
 		Vec3d from = targetEntity.getPositionVector();
 

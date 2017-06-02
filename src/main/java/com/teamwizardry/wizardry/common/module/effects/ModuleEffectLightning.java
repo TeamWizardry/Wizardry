@@ -28,7 +28,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEffectLightning extends Module {
+public class ModuleEffectLightning extends Module implements ITaxing {
 
 	@Nonnull
 	@Override
@@ -71,11 +71,11 @@ public class ModuleEffectLightning extends Module {
 			origin = new Vec3d(offX, caster.getEyeHeight(), offZ).add(target);
 		}
 
-		double strength = 10;
+		double strength = 10 * getMultiplier();
 		if (attributes.hasKey(Attributes.EXTEND))
 			strength += Math.min(32, attributes.getDouble(Attributes.EXTEND));
 
-		if (!processCost(strength / 5, spell)) return false;
+		if (!tax(this, spell)) return false;
 
 		strength *= calcBurnoutPercent(caster);
 

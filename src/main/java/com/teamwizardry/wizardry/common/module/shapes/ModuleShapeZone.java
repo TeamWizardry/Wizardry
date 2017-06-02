@@ -10,6 +10,7 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.api.util.InterpScale;
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.api.util.RandUtilSeed;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -28,7 +29,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleShapeZone extends Module implements IlingeringModule {
+public class ModuleShapeZone extends Module implements IlingeringModule, ICostModifier {
 
 	@Nonnull
 	@Override
@@ -60,6 +61,10 @@ public class ModuleShapeZone extends Module implements IlingeringModule {
 		Vec3d position = spell.getData(ORIGIN);
 		Entity caster = spell.getData(CASTER);
 		Vec3d targetPos = spell.hasData(BLOCK_HIT) ? new Vec3d(spell.getData(BLOCK_HIT, BlockPos.ORIGIN)) : spell.getData(TARGET_HIT);
+		long seed = RandUtil.nextLong(100, 1000000);
+		spell.addData(SEED, seed);
+
+		RandUtilSeed r = new RandUtilSeed(seed);
 
 		if (targetPos == null) return false;
 
@@ -71,8 +76,7 @@ public class ModuleShapeZone extends Module implements IlingeringModule {
 
 		for (Entity entity : entities) {
 			if (entity.getDistance(targetPos.xCoord, targetPos.yCoord, targetPos.zCoord) <= radius) {
-				if (RandUtil.nextInt((int) Math.abs(320 - (radius * 10))) != 0) continue;
-				if (!processCost(radius, spell)) return false;
+				if (r.nextInt((int) Math.abs(320 - (radius * 10))) != 0) continue;
 
 				SpellData copy = spell.copy();
 				copy.processEntity(entity, false);
@@ -87,9 +91,8 @@ public class ModuleShapeZone extends Module implements IlingeringModule {
 			for (int j = (int) -radius; j < radius; j++)
 				for (int k = (int) -radius; k < radius; k++) {
 					BlockPos newPos = new BlockPos(targetPos).add(i, j, k);
-					if (RandUtil.nextInt((int) Math.abs(32000 - (radius * 1000))) != 0) continue;
+					if (r.nextInt((int) Math.abs(32000 - (radius * 1000))) != 0) continue;
 					if (newPos.getDistance((int) targetPos.xCoord, (int) targetPos.yCoord, (int) targetPos.zCoord) <= radius) {
-						if (!processCost(radius, spell)) return false;
 						SpellData copy = spell.copy();
 						copy.processBlock(newPos, EnumFacing.VALUES[RandUtil.nextInt(EnumFacing.VALUES.length - 1)], new Vec3d(newPos).addVector(0.5, 0.5, 0.5));
 						copy.addData(YAW, 0f);

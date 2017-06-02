@@ -8,4 +8,6 @@ import javax.annotation.Nonnull;
 public interface IModifier {
 
 	void apply(@Nonnull Module module);
+
+	double costMultiplier();
 }

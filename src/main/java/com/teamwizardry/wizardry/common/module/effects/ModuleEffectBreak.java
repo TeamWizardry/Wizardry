@@ -17,7 +17,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEffectBreak extends Module {
+public class ModuleEffectBreak extends Module implements ITaxing {
 
 	@Nonnull
 	@Override
@@ -50,11 +50,12 @@ public class ModuleEffectBreak extends Module {
 		Entity targetEntity = spell.getData(ENTITY_HIT);
 		Entity caster = spell.getData(CASTER);
 
-		double strength = 1;
+		double strength = 1 * getMultiplier();
 		if (attributes.hasKey(Attributes.EXTEND))
 			strength += Math.min(64.0, attributes.getDouble(Attributes.EXTEND));
-		if (!processCost(strength, spell)) return false;
 		strength *= calcBurnoutPercent(caster);
+
+		if (!tax(this, spell)) return false;
 
 		if (targetEntity != null && targetEntity instanceof EntityLivingBase) {
 

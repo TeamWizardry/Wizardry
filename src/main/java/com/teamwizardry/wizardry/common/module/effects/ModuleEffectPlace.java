@@ -25,7 +25,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEffectPlace extends Module implements IBlockSelectable {
+public class ModuleEffectPlace extends Module implements IBlockSelectable, ITaxing {
 
 	@Nonnull
 	@Override
@@ -69,10 +69,9 @@ public class ModuleEffectPlace extends Module implements IBlockSelectable {
 			facing = trace.sideHit;
 		}
 
-		double strength = 1;
+		double strength = 1 * getMultiplier();
 		if (attributes.hasKey(Attributes.EXTEND))
 			strength += Math.min(64.0, attributes.getDouble(Attributes.EXTEND));
-		if (!processCost(strength, spell)) return false;
 		strength *= calcBurnoutPercent(caster);
 
 		if (caster != null && facing != null && targetPos != null && caster.getEntityData().hasKey("selected")) {
@@ -90,10 +89,10 @@ public class ModuleEffectPlace extends Module implements IBlockSelectable {
 
 			if (stackBlock == null) return false;
 
-			stackBlock.shrink(1);
-
 			targetPos = targetPos.offset(facing);
 			if (!world.isAirBlock(targetPos)) return false;
+			if (!tax(this, spell)) return false;
+			stackBlock.shrink(1);
 			IBlockState oldState = spell.world.getBlockState(targetPos);
 			spell.world.setBlockState(targetPos, state);
 			((EntityPlayer) caster).inventory.addItemStackToInventory(new ItemStack(oldState.getBlock().getItemDropped(oldState, spell.world.rand, 0)));

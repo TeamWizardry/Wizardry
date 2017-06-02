@@ -67,6 +67,7 @@ public class SpellStack {
 				if (!(modifier instanceof IModifier)) continue;
 
 				((IModifier) modifier).apply(head);
+				head.setMultiplier(head.getMultiplier() * ((IModifier) modifier).costMultiplier());
 			}
 
 			fields.put(stack.getItem(), head);
@@ -106,9 +107,27 @@ public class SpellStack {
 			}
 		}
 
-		// PROCESS THEM
+		// PROCESS COST
+		//for (Module module : compiled) {
+		//	ArrayList<Module> effects = new ArrayList<>();
+		//	double finalMul = 1;
+		//	Module temp = module;
+		//	while (temp != null) {
+		//		if (!(temp instanceof ICostModifier)) {
+		//			effects.add(temp);
+		//		} else finalMul *= ((ICostModifier) temp).costMultiplier();
+//
+		//		temp = temp.nextModule;
+		//	}
+//
+		//	for (Module module1 : effects) {
+		//		module1.setMultiplier(finalMul);
+		//	}
+		//}
+
+		// PROCESS COLOR
 		for (Module module : compiled)
-			module.processColor();
+			processColor(module, module.nextModule);
 	}
 
 	@Nonnull
@@ -199,5 +218,15 @@ public class SpellStack {
 			}
 		}
 		return modules;
+	}
+
+	private void processColor(Module module, Module nextModule) {
+		if (nextModule == null) return;
+
+		processColor(nextModule, nextModule.nextModule);
+
+		if (module.getPrimaryColor() == null) module.setPrimaryColor(nextModule.getPrimaryColor());
+		if (module.getSecondaryColor() == null) module.setSecondaryColor(nextModule.getSecondaryColor());
+
 	}
 }

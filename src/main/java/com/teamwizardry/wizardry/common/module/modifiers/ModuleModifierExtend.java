@@ -51,6 +51,11 @@ public class ModuleModifierExtend extends Module implements IModifier {
 		module.attributes.setDouble(Attributes.EXTEND, module.attributes.getDouble(Attributes.EXTEND) + power);
 	}
 
+	@Override
+	public double costMultiplier() {
+		return 1.2;
+	}
+
 	@Nonnull
 	@Override
 	public Module copy() {

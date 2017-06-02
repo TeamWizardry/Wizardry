@@ -22,7 +22,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEffectBurn extends Module {
+public class ModuleEffectBurn extends Module implements ITaxing {
 
 	@Nonnull
 	@Override
@@ -55,15 +55,14 @@ public class ModuleEffectBurn extends Module {
 		BlockPos targetPos = spell.getData(BLOCK_HIT);
 		Entity caster = spell.getData(CASTER);
 
-		int strength = 3;
+		double strength = 3 * getMultiplier();
 		if (attributes.hasKey(Attributes.EXTEND))
 			strength += Math.min(30, attributes.getDouble(Attributes.EXTEND));
-
-		if (!processCost(strength / 10.0, spell)) return false;
-
 		strength *= calcBurnoutPercent(caster);
 
-		if (targetEntity != null) targetEntity.setFire(strength);
+		if (!tax(this, spell)) return false;
+
+		if (targetEntity != null) targetEntity.setFire((int) strength);
 
 		if (targetPos != null) {
 			// TODO: increase radius with strength

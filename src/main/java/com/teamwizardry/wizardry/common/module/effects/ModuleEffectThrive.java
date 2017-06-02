@@ -20,7 +20,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEffectThrive extends Module {
+public class ModuleEffectThrive extends Module implements ITaxing {
 
 	@Nonnull
 	@Override
@@ -54,11 +54,11 @@ public class ModuleEffectThrive extends Module {
 		Entity caster = spell.getData(CASTER);
 
 		if (targetEntity instanceof EntityLivingBase) {
-			double strength = 0.3;
+			double strength = 0.3 * getMultiplier();
 			if (attributes.hasKey(Attributes.EXTEND))
 				strength += Math.min(20.0 / 10.0, attributes.getDouble(Attributes.EXTEND) / 10.0);
 
-			if (!processCost(strength, spell)) return false;
+			if (!tax(this, spell)) return false;
 
 			strength *= calcBurnoutPercent(caster);
 
@@ -66,8 +66,10 @@ public class ModuleEffectThrive extends Module {
 		}
 		if (targetPos != null) {
 			BlockPos pos = new BlockPos(targetPos);
-			if (world.getBlockState(pos).getBlock() instanceof IGrowable)
+			if (world.getBlockState(pos).getBlock() instanceof IGrowable) {
+				if (!tax(this, spell)) return false;
 				ItemDye.applyBonemeal(new ItemStack(Items.DYE), world, pos);
+			}
 		}
 		return true;
 	}

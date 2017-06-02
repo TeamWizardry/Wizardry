@@ -50,6 +50,11 @@ public class ModuleModifierException extends Module implements IModifier {
 		// TODO
 	}
 
+	@Override
+	public double costMultiplier() {
+		return 1.2;
+	}
+
 	@Nonnull
 	@Override
 	public Module copy() {

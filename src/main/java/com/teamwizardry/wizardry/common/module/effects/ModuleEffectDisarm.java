@@ -1,9 +1,6 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
-import com.teamwizardry.wizardry.api.spell.Module;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.api.spell.RegisterModule;
-import com.teamwizardry.wizardry.api.spell.SpellData;
+import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -22,7 +19,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.TARGET_H
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEffectDisarm extends Module {
+public class ModuleEffectDisarm extends Module implements ITaxing {
 
 	@Nonnull
 	@Override
@@ -54,7 +51,7 @@ public class ModuleEffectDisarm extends Module {
 
 		if (targetEntity instanceof EntityLivingBase) {
 			if (!spell.world.isRemote) {
-				if (!processCost(spell)) return false;
+				if (!tax(this, spell)) return false;
 
 				ItemStack held = ((EntityLivingBase) targetEntity).getHeldItemMainhand();
 

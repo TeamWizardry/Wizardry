@@ -4,10 +4,8 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.teamwizardry.librarianlib.features.gui.GuiBase;
 import com.teamwizardry.librarianlib.features.gui.GuiComponent;
-import com.teamwizardry.librarianlib.features.gui.components.ComponentGrid;
-import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
-import com.teamwizardry.librarianlib.features.gui.components.ComponentText;
-import com.teamwizardry.librarianlib.features.gui.components.ComponentVoid;
+import com.teamwizardry.librarianlib.features.gui.components.*;
+import com.teamwizardry.librarianlib.features.gui.mixin.gl.GlMixin;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.librarianlib.features.sprite.Texture;
@@ -21,8 +19,10 @@ import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.Vec3d;
 
 import javax.annotation.Nullable;
+import java.awt.*;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
@@ -40,6 +40,11 @@ public class WorktableGui extends GuiBase {
 
 	public WorktableGui() {
 		super(480, 224);
+
+		ComponentRect rect = new ComponentRect(0, 0, 40000, 40000);
+		rect.getColor().setValue(new Color(0xB3000000, true));
+		GlMixin.INSTANCE.transform(rect).setValue(new Vec3d(0, 0, -10));
+		getFullscreenComponents().add(rect);
 
 		ComponentSprite background = new ComponentSprite(BACKGROUND_SPRITE, 0, 0);
 		getMainComponents().add(background);

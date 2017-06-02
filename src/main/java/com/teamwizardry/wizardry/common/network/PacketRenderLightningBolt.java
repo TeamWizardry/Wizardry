@@ -33,6 +33,6 @@ public class PacketRenderLightningBolt extends PacketBase {
 
 	@Override
 	public void handle(@NotNull MessageContext messageContext) {
-		LightningRenderer.INSTANCE.addBolt(new LightningGenerator(point1, point2, new RandUtilSeed(seed)).generate(), RandUtil.nextInt(40, 60));
+		LightningRenderer.INSTANCE.addBolt(new LightningGenerator(point1, point2, new RandUtilSeed(seed)).generate(), RandUtil.nextInt(30, 40));
 	}
 }

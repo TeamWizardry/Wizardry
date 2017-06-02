@@ -17,7 +17,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEffectLeap extends Module implements IParticleDanger {
+public class ModuleEffectLeap extends Module implements IParticleDanger, ITaxing {
 
 	@Nonnull
 	@Override
@@ -56,11 +56,11 @@ public class ModuleEffectLeap extends Module implements IParticleDanger {
 		Vec3d lookVec = PosUtils.vecFromRotations(pitch, yaw);
 
 		if (!target.hasNoGravity()) {
-			double strength = 0.75;
+			double strength = 0.75 * getMultiplier();
 			if (attributes.hasKey(Attributes.EXTEND))
 				strength += Math.min(128.0 / 100.0, attributes.getDouble(Attributes.EXTEND) / 100.0);
 
-			if (!processCost(strength, spell)) return false;
+			if (!tax(this, spell)) return false;
 
 			strength *= calcBurnoutPercent(caster);
 

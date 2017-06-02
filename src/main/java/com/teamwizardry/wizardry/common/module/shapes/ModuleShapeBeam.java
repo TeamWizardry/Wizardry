@@ -17,7 +17,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleShapeBeam extends Module implements IContinousSpell {
+public class ModuleShapeBeam extends Module implements IContinousSpell, ICostModifier {
 
 	@Nonnull
 	@Override
@@ -57,8 +57,7 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 		double range = 10;
 		if (attributes.hasKey(Attributes.EXTEND)) range = Math.min(64, attributes.getDouble(Attributes.EXTEND));
 
-		//int chance = 30;
-		//if (attributes.hasKey(Attributes.EXTEND)) range = Math.min(1, chance - attributes.getDouble(Attributes.EXTEND));
+		setCostMultiplier(this, 0.1);
 
 		RayTraceResult trace = Utils.raytrace(world, PosUtils.vecFromRotations(pitch, yaw), caster != null ? position.addVector(0, caster.getEyeHeight(), 0) : position, range, caster);
 		if (trace == null) return false;
@@ -70,7 +69,6 @@ public class ModuleShapeBeam extends Module implements IContinousSpell {
 		}
 		if (trace.hitVec != null) spell.addData(TARGET_HIT, trace.hitVec);
 
-		setStrengthMultiplier(0.1f);
 		forceCastNextModuleParticles(spell);
 		return runNextModule(spell);
 	}

@@ -4,7 +4,6 @@ import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.block.IGrowable;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
@@ -20,7 +19,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEffectLight extends Module {
+public class ModuleEffectLight extends Module implements ITaxing {
 
 	@Nonnull
 	@Override
@@ -53,17 +52,8 @@ public class ModuleEffectLight extends Module {
 		Entity targetEntity = spell.getData(ENTITY_HIT);
 		Entity caster = spell.getData(CASTER);
 
-		if (targetEntity instanceof EntityLivingBase) {
-			double strength = 0.3;
-			if (attributes.hasKey(Attributes.EXTEND))
-				strength += Math.min(20.0 / 10.0, attributes.getDouble(Attributes.EXTEND) / 10.0);
+		// TODO
 
-			if (!processCost(strength, spell)) return false;
-
-			strength *= calcBurnoutPercent(caster);
-
-			((EntityLivingBase) targetEntity).setHealth((float) (((EntityLivingBase) targetEntity).getHealth() + strength));
-		}
 		if (targetPos != null) {
 			BlockPos pos = new BlockPos(targetPos);
 			if (world.getBlockState(pos).getBlock() instanceof IGrowable)

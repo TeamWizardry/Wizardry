@@ -137,6 +137,17 @@ public class ModuleRegistry {
 			}
 		}
 
+		ArrayList<Module> left = new ArrayList<>();
+		primary:
+		for (Module module1 : modules) {
+			for (Module module2 : processed)
+				if (module1.getID().equals(module2.getID())) continue primary;
+
+			left.add(module1);
+		}
+
+		// TODO update json
+
 		modules.clear();
 		modules.addAll(processed);
 	}

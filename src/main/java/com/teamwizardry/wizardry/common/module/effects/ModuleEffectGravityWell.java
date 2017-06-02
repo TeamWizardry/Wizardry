@@ -28,7 +28,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEffectGravityWell extends Module implements IlingeringModule {
+public class ModuleEffectGravityWell extends Module implements IlingeringModule, ITaxing {
 
 	@Nonnull
 	@Override
@@ -62,19 +62,19 @@ public class ModuleEffectGravityWell extends Module implements IlingeringModule 
 
 		if (position == null) return false;
 
-		double strength = 20;
+		double strength = 20 * getMultiplier();
 		if (attributes.hasKey(Attributes.EXTEND))
 			strength += attributes.getDouble(Attributes.EXTEND);
 		strength *= calcBurnoutPercent(caster);
 
-		for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(position)).expand(strength, strength, strength))) {
-			if (!processCost(strength / 5, spell)) return false;
+		for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(position)).expand(strength, strength, strength))) {
 			if (entity == null) continue;
 			double dist = entity.getPositionVector().distanceTo(position);
 			if (dist < 2) continue;
 			if (dist > strength) continue;
+			if (!tax(this, spell)) return false;
 
-			final double upperMag = (strength / 200);
+			final double upperMag = (strength / 20);
 			final double scale = 3.5;
 			double mag = upperMag * (scale * dist / (-scale * dist - 1) + 1);
 

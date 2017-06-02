@@ -38,7 +38,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEffectTimeSlow extends Module {
+public class ModuleEffectTimeSlow extends Module implements ITaxing {
 
 	public ModuleEffectTimeSlow() {
 		MinecraftForge.EVENT_BUS.register(this);
@@ -76,13 +76,14 @@ public class ModuleEffectTimeSlow extends Module {
 		Entity caster = spell.getData(CASTER);
 
 		if (targetEntity instanceof EntityLivingBase) {
-			double strength = 50.0;
+			double strength = 50.0 * getMultiplier();
 			if (attributes.hasKey(Attributes.EXTEND))
 				strength += Math.min(200.0, attributes.getDouble(Attributes.EXTEND) * 4.6875);
 
 			//	if (!processCost(strength, spell)) return false;
 			strength *= calcBurnoutPercent(caster);
 
+			if (!tax(this, spell)) return false;
 			int interval = (int) (50000 - (strength * 166.6666667));
 			if (targetEntity instanceof EntityPlayer) interval /= 10.0;
 

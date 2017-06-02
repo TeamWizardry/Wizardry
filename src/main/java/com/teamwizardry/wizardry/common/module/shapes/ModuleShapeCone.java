@@ -24,7 +24,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleShapeCone extends Module {
+public class ModuleShapeCone extends Module implements ICostModifier {
 
 	@Nonnull
 	@Override
@@ -62,6 +62,9 @@ public class ModuleShapeCone extends Module {
 
 		double range = 5;
 		if (attributes.hasKey(Attributes.EXTEND)) range += attributes.getDouble(Attributes.EXTEND);
+
+		setCostMultiplier(this, range / 16.0);
+
 		Vec3d origin = position;
 		if (caster != null) {
 			float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - yaw));
@@ -69,15 +72,13 @@ public class ModuleShapeCone extends Module {
 			origin = new Vec3d(offX, caster.getEyeHeight(), offZ).add(position);
 		}
 
-		setStrengthMultiplier((float) (1 / range));
+		setMultiplier((float) (1 / range));
 
 		int chance = 0;
 		if (attributes.hasKey(Attributes.EXTEND))
 			chance = (int) Math.min(3, chance + attributes.getDouble(Attributes.EXTEND));
 
 		for (int i = 0; i < range; i++) {
-			if (!processCost(range / 10.0, spell)) return false;
-
 			if (chance > 0 && RandUtil.nextInt(chance) != 0) continue;
 
 			double angle = Math.min(8, range);
@@ -127,4 +128,5 @@ public class ModuleShapeCone extends Module {
 	public Module copy() {
 		return cloneModule(new ModuleShapeCone());
 	}
+
 }

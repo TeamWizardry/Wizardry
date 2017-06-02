@@ -30,7 +30,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.TARGET_H
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEffectTelekinesis extends Module implements IContinousSpell {
+public class ModuleEffectTelekinesis extends Module implements IContinousSpell, ITaxing {
 
 	public ModuleEffectTelekinesis() {
 		MinecraftForge.EVENT_BUS.register(this);
@@ -66,10 +66,10 @@ public class ModuleEffectTelekinesis extends Module implements IContinousSpell {
 		Vec3d targetPos = spell.getData(TARGET_HIT);
 		Entity caster = spell.getData(CASTER);
 
-		double strength = 3;
+		double strength = 3 * getMultiplier();
 		if (attributes.hasKey(Attributes.EXTEND))
 			strength += Math.min(8.0, attributes.getDouble(Attributes.EXTEND));
-		if (!processCost(strength, spell)) return false;
+		if (!tax(this, spell)) return false;
 		strength *= calcBurnoutPercent(caster);
 
 		if (targetPos == null) return false;

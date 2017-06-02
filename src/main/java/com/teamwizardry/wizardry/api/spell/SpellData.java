@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.api.spell;
 
+import com.teamwizardry.librarianlib.features.saving.Savable;
 import com.teamwizardry.wizardry.api.capability.DefaultWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
@@ -20,9 +21,11 @@ import java.util.HashMap;
 /**
  * Created by LordSaad.
  */
+@Savable
 public class SpellData implements INBTSerializable<NBTTagCompound> {
 
 	private static HashMap<Pair, ProcessData.Process> dataProcessor = new HashMap<>();
+
 	@Nonnull
 	public World world;
 	@Nonnull

@@ -16,7 +16,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEffectPhase extends Module {
+public class ModuleEffectPhase extends Module implements ITaxing {
 
 	public ModuleEffectPhase() {
 		MinecraftForge.EVENT_BUS.register(this);
@@ -52,26 +52,26 @@ public class ModuleEffectPhase extends Module {
 		Entity targetEntity = spell.getData(ENTITY_HIT);
 		Vec3d targetHit = spell.getData(TARGET_HIT);
 
-		int strength = 10;
+		double strength = 10 * getMultiplier();
 		if (attributes.hasKey(Attributes.EXTEND))
 			strength += Math.min(50, attributes.getDouble(Attributes.EXTEND));
 
-		if (!processCost(strength / 10.0, spell)) return false;
+		if (!tax(this, spell)) return false;
 
 		strength *= calcBurnoutPercent(caster);
 
 		if (caster != null && targetEntity != null) {
 			if (caster.getUniqueID().equals(targetEntity.getUniqueID())) {
 				if (caster instanceof EntityLivingBase) {
-					((EntityLivingBase) caster).addPotionEffect(new PotionEffect(ModPotions.PHASE, strength, 1, true, false));
+					((EntityLivingBase) caster).addPotionEffect(new PotionEffect(ModPotions.PHASE, (int) strength, 1, true, false));
 					((EntityLivingBase) caster).addPotionEffect(new PotionEffect(ModPotions.PUSH, 1, 1, true, false));
-					((EntityLivingBase) caster).addPotionEffect(new PotionEffect(ModPotions.NULL_MOVEMENT, strength, 1, true, false));
+					((EntityLivingBase) caster).addPotionEffect(new PotionEffect(ModPotions.NULL_MOVEMENT, (int) strength, 1, true, false));
 				}
 			} else {
 				if (caster instanceof EntityLivingBase) {
-					((EntityLivingBase) caster).addPotionEffect(new PotionEffect(ModPotions.PHASE, strength, 1, true, false));
+					((EntityLivingBase) caster).addPotionEffect(new PotionEffect(ModPotions.PHASE, (int) strength, 1, true, false));
 					((EntityLivingBase) caster).addPotionEffect(new PotionEffect(ModPotions.PUSH, 1, 1, true, false));
-					((EntityLivingBase) caster).addPotionEffect(new PotionEffect(ModPotions.NULL_MOVEMENT, strength, 1, true, false));
+					((EntityLivingBase) caster).addPotionEffect(new PotionEffect(ModPotions.NULL_MOVEMENT, (int) strength, 1, true, false));
 				}
 			}
 		}

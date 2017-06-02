@@ -35,7 +35,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEffectSubstitution extends Module implements IBlockSelectable {
+public class ModuleEffectSubstitution extends Module implements IBlockSelectable, ITaxing {
 
 	@Nonnull
 	@Override
@@ -71,7 +71,7 @@ public class ModuleEffectSubstitution extends Module implements IBlockSelectable
 		if (caster == null) return false;
 
 		if (targetEntity != null && targetEntity instanceof EntityLivingBase) {
-			if (!processCost(spell)) return false;
+			if (!tax(this, spell)) return false;
 
 			Vec3d posTarget = targetEntity.getPositionVector(), posCaster = caster.getPositionVector();
 			float yawTarget = targetEntity.rotationYaw,
@@ -96,7 +96,7 @@ public class ModuleEffectSubstitution extends Module implements IBlockSelectable
 
 				if (touchedBlock.getBlock() == state.getBlock()) return false;
 
-				int strength = 10;
+				double strength = 10 * getMultiplier();
 				if (attributes.hasKey(Attributes.EXTEND))
 					strength += Math.min(32, attributes.getDouble(Attributes.EXTEND));
 				strength *= calcBurnoutPercent(caster);
@@ -117,12 +117,12 @@ public class ModuleEffectSubstitution extends Module implements IBlockSelectable
 				HashSet<BlockPos> branch = new HashSet<>();
 				branch.add(targetBlock);
 				blocks.add(targetBlock);
-				getBlocks(spell.world, touchedBlock.getBlock(), strength, branch, blocks);
+				getBlocks(spell.world, touchedBlock.getBlock(), (int) strength, branch, blocks);
 
 				if (blocks.isEmpty()) return true;
 
 				for (int q = 0; q < blocks.size(); q++) {
-					if (!processCost(strength / 30.0, spell)) break;
+					if (!tax(this, spell)) return false;
 					BlockPos nearest = null;
 					for (BlockPos pos : blocks) {
 						if (spell.world.isAirBlock(pos)) continue;

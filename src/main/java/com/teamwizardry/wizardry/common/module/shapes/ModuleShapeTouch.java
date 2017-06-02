@@ -1,9 +1,6 @@
 package com.teamwizardry.wizardry.common.module.shapes;
 
-import com.teamwizardry.wizardry.api.spell.Module;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.api.spell.RegisterModule;
-import com.teamwizardry.wizardry.api.spell.SpellData;
+import com.teamwizardry.wizardry.api.spell.*;
 import net.minecraft.entity.Entity;
 
 import javax.annotation.Nonnull;
@@ -14,7 +11,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleShapeTouch extends Module {
+public class ModuleShapeTouch extends Module implements ICostModifier {
 
 	@Nonnull
 	@Override
@@ -44,9 +41,6 @@ public class ModuleShapeTouch extends Module {
 	public boolean run(@Nonnull SpellData spell) {
 		Entity caster = spell.getData(CASTER);
 		if (caster == null) return false;
-
-		if (!processCost(spell)) return false;
-
 
 		return runNextModule(spell);
 	}
