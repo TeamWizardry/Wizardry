@@ -6,11 +6,12 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 /**
  * Created by LordSaad.
  */
-public class PlayerCollideEvent extends Event {
+public class PlayerClipEvent extends Event {
 
-	private EntityPlayer player;
+	public EntityPlayer player;
+	public boolean noClip = false;
 
-	public PlayerCollideEvent(EntityPlayer player) {
+	public PlayerClipEvent(EntityPlayer player) {
 		this.player = player;
 	}
 }

@@ -8,11 +8,13 @@ import java.util.Map;
 /**
  * Created by LordSaad.
  */
-public class WizardryLoadingPlugin implements IFMLLoadingPlugin {
+@IFMLLoadingPlugin.Name("Wizardry Plugin")
+@IFMLLoadingPlugin.TransformerExclusions("com.teamwizardry.wizardry.asm")
+public class WizardryCorePlugin implements IFMLLoadingPlugin {
 
 	@Override
 	public String[] getASMTransformerClass() {
-		return new String[]{WizardryTransformer.class.getName()};
+		return new String[]{"com.teamwizardry.wizardry.asm.WizardryTransformer"};
 	}
 
 	@Override

@@ -24,6 +24,9 @@ minecraft {
     version = "1.11.2-13.20.0.2303"
     runDir = "run"
     mappings = "snapshot_20170525"
+
+    clientJvmArgs = ["-Dfml.coreMods.load=$core_plugin"]
+    serverJvmArgs = ["-Dfml.coreMods.load=$core_plugin"]
 }
 
 repositories {
