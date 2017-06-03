@@ -60,20 +60,11 @@ public class ModuleEffectPhase extends Module implements ITaxing {
 
 		strength *= calcBurnoutPercent(caster);
 
-		if (caster != null && targetEntity != null) {
-			if (caster.getUniqueID().equals(targetEntity.getUniqueID())) {
-				if (caster instanceof EntityLivingBase) {
-					((EntityLivingBase) caster).addPotionEffect(new PotionEffect(ModPotions.PHASE, (int) strength, 1, true, false));
-					((EntityLivingBase) caster).addPotionEffect(new PotionEffect(ModPotions.PUSH, 1, 1, true, false));
-					((EntityLivingBase) caster).addPotionEffect(new PotionEffect(ModPotions.NULL_MOVEMENT, (int) strength, 1, true, false));
-				}
-			} else {
-				if (caster instanceof EntityLivingBase) {
-					((EntityLivingBase) caster).addPotionEffect(new PotionEffect(ModPotions.PHASE, (int) strength, 1, true, false));
-					((EntityLivingBase) caster).addPotionEffect(new PotionEffect(ModPotions.PUSH, 1, 1, true, false));
-					((EntityLivingBase) caster).addPotionEffect(new PotionEffect(ModPotions.NULL_MOVEMENT, (int) strength, 1, true, false));
-				}
-			}
+		if (targetEntity != null && targetEntity instanceof EntityLivingBase) {
+			EntityLivingBase entity = (EntityLivingBase) targetEntity;
+			entity.addPotionEffect(new PotionEffect(ModPotions.PHASE, (int) strength, 1, true, false));
+			entity.addPotionEffect(new PotionEffect(ModPotions.PUSH, 1, 1, true, false));
+			//entity.addPotionEffect(new PotionEffect(ModPotions.NULL_MOVEMENT, (int) strength, 1, true, false));
 		}
 		return true;
 	}

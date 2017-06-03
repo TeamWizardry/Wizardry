@@ -5,7 +5,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.utilities.AnnotationHelper;
-import com.teamwizardry.librarianlib.features.utilities.UnsafeKt;
 import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -15,6 +14,8 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -31,8 +32,10 @@ public class ModuleRegistry {
 	private ModuleRegistry() {
 		AnnotationHelper.INSTANCE.findAnnotatedClasses(LibrarianLib.PROXY.getAsmDataTable(), Module.class, RegisterModule.class, (clazz, info) -> {
 			try {
-				registerModule((Module) UnsafeKt.getUnsafeSafely().allocateInstance(clazz));
-			} catch (InstantiationException e) {
+				Constructor<?> ctor = clazz.getConstructor();
+				Object object = ctor.newInstance();
+				if (object instanceof Module) registerModule((Module) object);
+			} catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 				e.printStackTrace();
 			}
 			return null;
@@ -52,7 +55,9 @@ public class ModuleRegistry {
 	@Nullable
 	public Module getModule(ItemStack itemStack) {
 		for (Module module : modules)
-			if (ItemStack.areItemStacksEqual(itemStack, module.getItemStack())) return module.copy();
+			if (ItemStack.areItemStacksEqual(itemStack, module.getItemStack())) {
+				return module.copy();
+			}
 		return null;
 	}
 

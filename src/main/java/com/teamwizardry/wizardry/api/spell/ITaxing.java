@@ -32,6 +32,6 @@ public interface ITaxing {
 		manager.removeMana(manaCost);
 		manager.addBurnout(burnoutCost);
 
-		return fail;
+		return !fail;
 	}
 }

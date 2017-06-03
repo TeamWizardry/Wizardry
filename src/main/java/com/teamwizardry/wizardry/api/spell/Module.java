@@ -1,8 +1,11 @@
 package com.teamwizardry.wizardry.api.spell;
 
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
+import com.teamwizardry.librarianlib.features.saving.SaveMethodGetter;
+import com.teamwizardry.librarianlib.features.saving.SaveMethodSetter;
 import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
+import com.teamwizardry.wizardry.api.events.SpellCastEvent;
 import com.teamwizardry.wizardry.common.core.SpellTicker;
 import com.teamwizardry.wizardry.common.network.PacketRenderSpell;
 import kotlin.Pair;
@@ -12,6 +15,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -33,33 +37,49 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	 */
 	@Nonnull
 	public NBTTagCompound attributes = new NBTTagCompound();
-
-	/**
-	 * The module that is to be ran from the run methods of the current module.
-	 */
 	@Nullable
 	public Module nextModule = null;
-
-	/**
-	 * The final calculated cost of mana this spell consumes.
-	 */
-	public double finalManaDrain = 10;
-
-	/**
-	 * The final calculated cost of burnout this spell fills.
-	 */
-	public double finalBurnoutFill = 10;
-
+	//@Save
 	private double manaDrain = 0;
+	//@Save
 	private double burnoutFill = 0;
+	//@Save
 	private Color primaryColor = null;
+	//@Save
 	private Color secondaryColor = null;
+	//@Save
 	private int cooldownTime = 0;
+	//@Save
 	private int chargeupTime = 0;
+	//@Save
 	private ItemStack itemStack = ItemStack.EMPTY;
+	//@Save
 	private double multiplier = 1;
 
 	public Module() {
+	}
+
+	@SaveMethodSetter(saveName = "manual_saver")
+	private void manualSaveSetter(NBTTagCompound compound) {
+		compound.setTag("attributes", attributes);
+		if (nextModule != null) compound.setTag("next_module", nextModule.serializeNBT());
+	}
+
+	@SaveMethodGetter(saveName = "manual_saver")
+	private NBTTagCompound manualSaveGetter() {
+		NBTTagCompound nbt = new NBTTagCompound();
+
+		if (nbt.hasKey("next_module")) {
+			Module tempModule = ModuleRegistry.INSTANCE.getModule(nbt.getCompoundTag("next_module").getString("id"));
+			if (tempModule != null) {
+				nextModule = tempModule.copy();
+				if (nextModule != null) nextModule.deserializeNBT(nbt.getCompoundTag("next_module"));
+			} else nextModule = null;
+		} else nextModule = null;
+		if (nbt.hasKey("attributes")) attributes = nbt.getCompoundTag("attributes");
+		else attributes = new NBTTagCompound();
+
+		return nbt;
 	}
 
 	/**
@@ -176,9 +196,19 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 
 		//data.addData(SpellData.DefaultKeys.STRENGTH, calculateStrength(data) * getMultiplier());
 
-		boolean success = run(data);
-		castParticles(data);
-		return success;
+		SpellCastEvent event = new SpellCastEvent(this, data);
+		MinecraftForge.EVENT_BUS.post(event);
+
+		if (!event.isCanceled()) {
+			boolean success = run(data);
+			if (event.castParticles)
+				castParticles(data);
+			return success;
+		} else {
+			if (event.castParticles)
+				castParticles(data);
+			return false;
+		}
 	}
 
 	protected final void castParticles(@NotNull SpellData data) {
@@ -199,7 +229,7 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 		return ((manager.getMaxBurnout() - manager.getBurnout()) / (manager.getMaxBurnout() * 1.0));
 	}
 
-	protected final boolean runNextModule(@NotNull SpellData data) {
+	public final boolean runNextModule(@NotNull SpellData data) {
 		if (nextModule != null) {
 			nextModule.setMultiplier(nextModule.getMultiplier() * getMultiplier());
 		}
@@ -234,10 +264,8 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	}
 
 	protected final <T extends Module> Module cloneModule(T toCloneTo) {
-		toCloneTo.attributes = new NBTTagCompound();
+		toCloneTo.attributes = attributes;
 		toCloneTo.nextModule = nextModule;
-		toCloneTo.finalManaDrain = finalManaDrain;
-		toCloneTo.finalBurnoutFill = finalBurnoutFill;
 		toCloneTo.setPrimaryColor(getPrimaryColor());
 		toCloneTo.setSecondaryColor(getSecondaryColor());
 		toCloneTo.setBurnoutFill(getBurnoutFill());
@@ -259,15 +287,13 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 		if (nextModule != null) compound.setTag("next_module", nextModule.serializeNBT());
 
 		compound.setString("id", getID());
-		compound.setDouble("final_mana_drain", finalManaDrain);
-		compound.setDouble("final_burnout_fill", finalBurnoutFill);
 		compound.setDouble("mana_drain", getManaDrain());
 		compound.setDouble("burnout_fill", getBurnoutFill());
 		compound.setDouble("chargeup_time", getChargeupTime());
 		compound.setDouble("cooldown_time", getCooldownTime());
-		compound.setTag("item_stack", getItemStack().serializeNBT());
 		compound.setDouble("multiplier", getMultiplier());
 
+		if (getItemStack() != null) compound.setTag("item_stack", getItemStack().serializeNBT());
 		if (getPrimaryColor() != null) compound.setInteger("primary_color", getPrimaryColor().getRGB());
 		if (getSecondaryColor() != null) compound.setInteger("secondary_color", getSecondaryColor().getRGB());
 		return compound;
@@ -285,8 +311,6 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 		if (nbt.hasKey("attributes")) attributes = nbt.getCompoundTag("attributes");
 		else attributes = new NBTTagCompound();
 
-		if (nbt.hasKey("final_mana_drain")) finalManaDrain = nbt.getDouble("final_mana_drain");
-		if (nbt.hasKey("final_burnout_fill")) finalBurnoutFill = nbt.getDouble("final_burnout_fill");
 		if (nbt.hasKey("primary_color")) setPrimaryColor(new Color(nbt.getInteger("primary_color")));
 		if (nbt.hasKey("secondary_color")) setSecondaryColor(new Color(nbt.getInteger("secondary_color")));
 		if (nbt.hasKey("mana_drain")) setManaDrain(nbt.getDouble("mana_drain"));
@@ -295,6 +319,5 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 		if (nbt.hasKey("cooldown_time")) setCooldownTime(nbt.getInteger("cooldown_time"));
 		if (nbt.hasKey("item_stack")) setItemStack(new ItemStack(nbt.getCompoundTag("item_stack")));
 		if (nbt.hasKey("multiplier")) setMultiplier(nbt.getDouble("multiplier"));
-		else setMultiplier(1);
 	}
 }

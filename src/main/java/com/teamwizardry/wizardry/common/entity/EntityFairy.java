@@ -9,7 +9,6 @@ import com.teamwizardry.wizardry.api.Constants.NBT;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.init.ModItems;
-import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -89,7 +88,8 @@ public class EntityFairy extends FlyingEntityMod {
 		}
 		entity.fallDistance = 0;
 
-		LibParticles.AIR_THROTTLE(world, getPositionVector(), entity, color, color.brighter(), -1, true);
+		//if (entity.world.isRemote)
+		//	LibParticles.AIR_THROTTLE(world, getPositionVector(), entity, color, color.brighter(), -1);
 	}
 
 	@Override
@@ -195,7 +195,7 @@ public class EntityFairy extends FlyingEntityMod {
 	public void onDeath(@NotNull DamageSource cause) {
 		super.onDeath(cause);
 		if (getHealth() <= 0)
-			PacketHandler.NETWORK.sendToAllAround(new PacketExplode(getPositionVector().addVector(0, 0.25, 0), color, color, 0.9, 0.9, RandUtil.nextInt(100, 200), 75, 25),
+			PacketHandler.NETWORK.sendToAllAround(new PacketExplode(getPositionVector().addVector(0, 0.25, 0), color, color, 0.9, 0.9, RandUtil.nextInt(100, 200), 75, 25, true),
 					new NetworkRegistry.TargetPoint(world.provider.getDimension(), posX, posY, posZ, 256));
 	}
 
@@ -215,14 +215,14 @@ public class EntityFairy extends FlyingEntityMod {
 	}
 
 	@Override
-	public void readEntityFromNBT(NBTTagCompound compound) {
-		super.readEntityFromNBT(compound);
+	public void readCustomNBT(NBTTagCompound compound) {
+		super.readCustomNBT(compound);
 		AbstractSaveHandler.readAutoNBT(this, compound.getCompoundTag("save"), true);
 	}
 
 	@Override
-	public void writeEntityToNBT(NBTTagCompound compound) {
-		super.writeEntityToNBT(compound);
+	public void writeCustomNBT(NBTTagCompound compound) {
+		super.writeCustomNBT(compound);
 		compound.setTag("save", AbstractSaveHandler.writeAutoNBT(this, true));
 	}
 

@@ -6,18 +6,19 @@ import com.teamwizardry.wizardry.common.entity.EntitySpellProjectile;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
 /**
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleShapeProjectile extends Module implements ICostModifier {
+public class ModuleShapeProjectile extends Module implements ICostModifier, ITaxing {
 
 	@Nonnull
 	@Override
@@ -48,12 +49,16 @@ public class ModuleShapeProjectile extends Module implements ICostModifier {
 		World world = spell.world;
 		if (world.isRemote) return false;
 
+		Vec3d target = spell.getData(TARGET_HIT);
+		Vec3d origin = spell.getData(ORIGIN);
 		Entity caster = spell.getData(CASTER);
-		if (caster == null) return false;
+		if (origin == null) return false;
+		//	if (caster == null) return false;
+		if (!tax(this, spell)) return false;
 
-		float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - caster.rotationYaw));
-		float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - caster.rotationYaw));
-		Vec3d origin = new Vec3d(offX, caster.getEyeHeight() - 0.3, offZ).add(caster.getPositionVector());
+		//float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - caster.rotationYaw));
+		//float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - caster.rotationYaw));
+		//Vec3d origin = new Vec3d(offX, caster.getEyeHeight() - 0.3, offZ).add(caster.getPositionVector());
 
 		EntitySpellProjectile proj = new EntitySpellProjectile(world, this, spell);
 		proj.setPosition(origin.xCoord, origin.yCoord, origin.zCoord);
@@ -61,7 +66,7 @@ public class ModuleShapeProjectile extends Module implements ICostModifier {
 
 		boolean success = world.spawnEntity(proj);
 		if (success)
-			world.playSound(null, caster.getPosition(), ModSounds.PROJECTILE_LAUNCH, SoundCategory.PLAYERS, 1f, (float) RandUtil.nextDouble(1, 1.5));
+			world.playSound(null, new BlockPos(origin), ModSounds.PROJECTILE_LAUNCH, SoundCategory.PLAYERS, 1f, (float) RandUtil.nextDouble(1, 1.5));
 		return success;
 	}
 

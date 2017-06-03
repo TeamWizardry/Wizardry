@@ -80,7 +80,6 @@ public class ModuleEffectTimeSlow extends Module implements ITaxing {
 			if (attributes.hasKey(Attributes.EXTEND))
 				strength += Math.min(200.0, attributes.getDouble(Attributes.EXTEND) * 4.6875);
 
-			//	if (!processCost(strength, spell)) return false;
 			strength *= calcBurnoutPercent(caster);
 
 			if (!tax(this, spell)) return false;

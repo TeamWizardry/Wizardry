@@ -15,7 +15,6 @@ import com.teamwizardry.wizardry.api.Constants.MISC;
 import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.api.util.InterpScale;
 import com.teamwizardry.wizardry.api.util.RandUtil;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -152,40 +151,18 @@ public class LibParticles {
 		});
 	}
 
-	public static void AIR_THROTTLE(World world, Vec3d pos, Entity collided, Color color1, Color color2, double scatter, boolean enableCollision) {
-		ParticleBuilder glitter = new ParticleBuilder(RandUtil.nextInt(30, 50));
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
-		glitter.setAlphaFunction(new InterpFadeInOut(0.1f, 0.3f));
-		glitter.enableMotionCalculation();
-		Color color3 = new Color(color1.getRed(), color1.getGreen(), color1.getBlue(), RandUtil.nextInt(50, 100));
-		Color color4 = new Color(color2.getRed(), color2.getGreen(), color2.getBlue(), RandUtil.nextInt(50, 100));
-		glitter.setCollision(enableCollision);
-		ParticleSpawner.spawn(glitter, world, new InterpLine(pos, pos.addVector(collided.posX - collided.prevPosX, collided.posY - collided.prevPosY, collided.posZ - collided.prevPosZ)), RandUtil.nextInt(50, 80), 1, (i, build) -> {
-			glitter.setMotion(new Vec3d(collided.motionX + RandUtil.nextDouble(-0.01, 0.01), (collided.motionY / 2.0) + RandUtil.nextDouble(-0.01, 0.01), collided.motionZ + RandUtil.nextDouble(-0.01, 0.01)));
-			if (RandUtil.nextBoolean()) glitter.setColor(color3);
-			else glitter.setColor(color4);
-			if (scatter > 0) {
-				double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
-				double r = scatter * RandUtil.nextFloat();
-				double x = r * MathHelper.cos((float) theta);
-				double z = r * MathHelper.sin((float) theta);
-				glitter.setPositionOffset(new Vec3d(x, RandUtil.nextDouble(-scatter, scatter), z));
-			}
-		});
-	}
-
 	public static void AIR_THROTTLE(World world, Vec3d pos, Vec3d normal, Color color1, Color color2, double scatter) {
 		ParticleBuilder glitter = new ParticleBuilder(RandUtil.nextInt(30, 50));
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.1f, 0.3f));
 		glitter.enableMotionCalculation();
-		Color color3 = new Color(color1.getRed(), color1.getGreen(), color1.getBlue(), RandUtil.nextInt(50, 100));
-		Color color4 = new Color(color2.getRed(), color2.getGreen(), color2.getBlue(), RandUtil.nextInt(50, 100));
 		glitter.setCollision(true);
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), RandUtil.nextInt(50, 80), 1, (i, build) -> {
-			glitter.setMotion(normal);
-			if (RandUtil.nextBoolean()) glitter.setColor(color3);
-			else glitter.setColor(color4);
+		glitter.setAcceleration(new Vec3d(0, -0.01, 0));
+		glitter.setScaleFunction(new InterpScale(1, 0));
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), RandUtil.nextInt(40, 50), 1, (i, build) -> {
+			glitter.setMotion(new Vec3d(normal.xCoord + RandUtil.nextDouble(-0.01, 0.01), normal.yCoord + RandUtil.nextDouble(-0.01, 0.01), normal.zCoord + RandUtil.nextDouble(-0.01, 0.01)));
+			if (RandUtil.nextBoolean()) glitter.setColor(color1);
+			else glitter.setColor(color2);
 			if (scatter > 0) {
 				double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
 				double r = scatter * RandUtil.nextFloat();
@@ -327,12 +304,14 @@ public class LibParticles {
 		ParticleSpawner.spawn(glitter2, world, new StaticInterp<>(pos), 3);
 	}
 
-	public static void EXPLODE(World world, Vec3d pos, Color color1, Color color2, double strengthUpwards, double strengthSideways, int amount, int lifeTime, int lifeTimeRange) {
+	public static void EXPLODE(World world, Vec3d pos, Color color1, Color color2, double strengthUpwards, double strengthSideways, int amount, int lifeTime, int lifeTimeRange, boolean bounce) {
 		ParticleBuilder glitter = new ParticleBuilder(10);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		glitter.setCollision(true);
 		glitter.enableMotionCalculation();
 		glitter.setColorFunction(new InterpColorHSV(ColorUtils.changeColorAlpha(color1, RandUtil.nextInt(50, 150)), ColorUtils.changeColorAlpha(color2, RandUtil.nextInt(50, 150))));
+		glitter.setAcceleration(new Vec3d(0, RandUtil.nextDouble(-0.04, -0.025), 0));
+		if (bounce) glitter.setCanBounce(true);
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), amount, 0, (i, build) -> {
 			double radius = RandUtil.nextDouble(1, 2);
 			double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();

@@ -20,9 +20,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 
-import static com.teamwizardry.wizardry.common.entity.EntitySpellProjectile.DATA_COLOR;
-import static com.teamwizardry.wizardry.common.entity.EntitySpellProjectile.DATA_COLOR2;
-
 /**
  * Created by Saad on 8/25/2016.
  */
@@ -35,14 +32,15 @@ public class RenderSpellProjectile extends Render<EntitySpellProjectile> {
 	@Override
 	public void doRender(@Nonnull EntitySpellProjectile entity, double x, double y, double z, float entityYaw, float partialTicks) {
 		super.doRender(entity, x, y, z, entityYaw, partialTicks);
-		Color color = new Color(entity.getDataManager().get(DATA_COLOR), true);
-		Color color2 = new Color(entity.getDataManager().get(DATA_COLOR2), true);
+		Color color = entity.primaryColor;
+		Color color2 = entity.secondaryColor;
 
 		ParticleBuilder glitter = new ParticleBuilder(10);
 		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 		glitter.setCollision(true);
 		glitter.setColorFunction(new InterpColorHSV(color, color2));
+		glitter.setAcceleration(new Vec3d(0, RandUtil.nextDouble(-0.005, -0.001), 0));
 		ParticleSpawner.spawn(glitter, entity.world, new StaticInterp<>(entity.getPositionVector()), 5, 0, (aFloat, particleBuilder) -> {
 			glitter.setScaleFunction(new InterpScale((float) RandUtil.nextDouble(0.3, 0.8), 0));
 			glitter.setLifetime(RandUtil.nextInt(10, 100));

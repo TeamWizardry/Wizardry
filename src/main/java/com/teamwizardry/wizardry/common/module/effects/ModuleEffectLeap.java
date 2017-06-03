@@ -9,7 +9,6 @@ import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.util.math.Vec3d;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
@@ -84,14 +83,17 @@ public class ModuleEffectLeap extends Module implements IParticleDanger, ITaxing
 	public void runClient(@Nonnull SpellData spell) {
 		Entity caster = spell.getData(CASTER);
 		Vec3d position = spell.getData(TARGET_HIT);
+		Entity entityHit = spell.getData(ENTITY_HIT);
 
 		if (position == null) return;
+		if (entityHit == null) return;
 
-		if (caster != null) {
-			if (!caster.hasNoGravity())
-				LibParticles.AIR_THROTTLE(spell.world, position, caster, getPrimaryColor(), Color.WHITE, 0.5, true);
-		} else LibParticles.AIR_THROTTLE(spell.world, position, position, getPrimaryColor(), Color.WHITE, 0.5);
+		if (!entityHit.hasNoGravity()) {
+			Vec3d normal = new Vec3d(entityHit.motionX, entityHit.motionY, entityHit.motionZ).normalize().scale(1 / 2.0);
 
+			LibParticles.AIR_THROTTLE(spell.world, position, normal, getPrimaryColor(), getSecondaryColor(), 0.5);
+
+		}
 	}
 
 	@Nonnull

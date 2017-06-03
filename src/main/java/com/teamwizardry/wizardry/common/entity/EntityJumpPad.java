@@ -52,7 +52,8 @@ public class EntityJumpPad extends EntityLiving {
 				RandUtil.nextInt(100, 255),
 				RandUtil.nextInt(100, 255),
 				RandUtil.nextInt(100, 255));
-		LibParticles.AIR_THROTTLE(world, entity.getPositionVector(), entity, color1, color2, 0.5, true);
+		Vec3d normal = new Vec3d(entity.motionX, entity.motionY, entity.motionZ).normalize().scale(1 / 2.0);
+		LibParticles.AIR_THROTTLE(world, entity.getPositionVector(), normal, color1, color2, 0.5);
 	}
 
 	@Override

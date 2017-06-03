@@ -76,7 +76,7 @@ public class TileManaBattery extends TileManaFaucet implements ITickable {
 					holder.markDirty();
 
 					world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), ModSounds.GLASS_BREAK, SoundCategory.AMBIENT, 0.5F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
-					PacketHandler.NETWORK.sendToAllAround(new PacketExplode(new Vec3d(target).addVector(0.5, 0.5, 0.5), Color.CYAN, Color.BLUE, 0.5, 0.5, 50, 50, 10),
+					PacketHandler.NETWORK.sendToAllAround(new PacketExplode(new Vec3d(target).addVector(0.5, 0.5, 0.5), Color.CYAN, Color.BLUE, 0.5, 0.5, 50, 50, 10, true),
 							new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
 				} else {
 					if (!addMana(10)) break;

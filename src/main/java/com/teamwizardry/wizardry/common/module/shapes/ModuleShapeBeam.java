@@ -57,9 +57,9 @@ public class ModuleShapeBeam extends Module implements IContinousSpell, ICostMod
 		double range = 10;
 		if (attributes.hasKey(Attributes.EXTEND)) range = Math.min(64, attributes.getDouble(Attributes.EXTEND));
 
-		setCostMultiplier(this, 0.1);
+		setCostMultiplier(this, 1);
 
-		RayTraceResult trace = Utils.raytrace(world, PosUtils.vecFromRotations(pitch, yaw), caster != null ? position.addVector(0, caster.getEyeHeight(), 0) : position, range, caster);
+		RayTraceResult trace = Utils.raytrace(world, PosUtils.vecFromRotations(pitch, yaw), position, range, caster);
 		if (trace == null) return false;
 
 		if (trace.typeOfHit == RayTraceResult.Type.ENTITY)
@@ -89,7 +89,7 @@ public class ModuleShapeBeam extends Module implements IContinousSpell, ICostMod
 		if (caster != null) {
 			float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - yaw));
 			float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - yaw));
-			origin = new Vec3d(offX, caster.getEyeHeight(), offZ).add(position);
+			origin = new Vec3d(offX, 0, offZ).add(position);
 		}
 		LibParticles.SHAPE_BEAM(world, target, origin, getPrimaryColor());
 	}

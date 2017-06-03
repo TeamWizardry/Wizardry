@@ -1,6 +1,9 @@
 package com.teamwizardry.wizardry.common.entity;
 
+import com.teamwizardry.librarianlib.features.base.entity.EntityMod;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
+import com.teamwizardry.librarianlib.features.saving.AbstractSaveHandler;
+import com.teamwizardry.librarianlib.features.saving.Savable;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.SpellData;
@@ -11,9 +14,6 @@ import com.teamwizardry.wizardry.common.network.PacketExplode;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -32,10 +32,11 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 /**
  * Created by LordSaad.
  */
-public class EntitySpellProjectile extends Entity {
+@Savable
+public class EntitySpellProjectile extends EntityMod {
 
-	public static final DataParameter<Integer> DATA_COLOR = EntityDataManager.createKey(EntitySpellProjectile.class, DataSerializers.VARINT);
-	public static final DataParameter<Integer> DATA_COLOR2 = EntityDataManager.createKey(EntitySpellProjectile.class, DataSerializers.VARINT);
+	public Color primaryColor = Color.WHITE;
+	public Color secondaryColor = Color.WHITE;
 	public SpellData spell;
 	public Module module;
 
@@ -43,10 +44,9 @@ public class EntitySpellProjectile extends Entity {
 		super(worldIn);
 		setSize(0.3F, 0.3F);
 		isImmuneToFire = true;
-		applyColor(Color.WHITE);
-		applyColor2(Color.WHITE);
 
 		setRenderDistanceWeight(10);
+		dispatchEntityToNearbyPlayers();
 	}
 
 	public EntitySpellProjectile(World world, Module module, SpellData spell) {
@@ -58,39 +58,31 @@ public class EntitySpellProjectile extends Entity {
 		this.spell = spell;
 
 		if (module != null) {
-			if (module.getPrimaryColor() != null) applyColor(module.getPrimaryColor());
-			else applyColor(Color.WHITE);
+			if (module.getPrimaryColor() != null) {
+				primaryColor = module.getPrimaryColor();
+			}
 
-			if (module.getSecondaryColor() != null) applyColor2(module.getSecondaryColor());
+			if (module.getSecondaryColor() != null) secondaryColor = module.getSecondaryColor();
 			else {
-				Color color = module.getPrimaryColor();
-				applyColor2(new Color(Math.min(255, color.getRed() + 40), Math.min(255, color.getGreen() + 40), Math.min(255, color.getBlue() + 40)));
+				Color color = primaryColor;
+				secondaryColor = new Color(Math.min(255, color.getRed() + 40), Math.min(255, color.getGreen() + 40), Math.min(255, color.getBlue() + 40));
 			}
 		}
 
 		setRenderDistanceWeight(10);
+
+		dispatchEntityToNearbyPlayers();
+	}
+
+	@Override
+	protected void entityInit() {
+
 	}
 
 	@Nullable
 	@Override
 	public AxisAlignedBB getCollisionBox(Entity entityIn) {
 		return getEntityBoundingBox();
-	}
-
-	@Override
-	protected void entityInit() {
-		this.getDataManager().register(DATA_COLOR, 0);
-		this.getDataManager().register(DATA_COLOR2, 0);
-	}
-
-	private void applyColor(Color color) {
-		this.getDataManager().set(DATA_COLOR, color.getRGB());
-		this.getDataManager().setDirty(DATA_COLOR);
-	}
-
-	private void applyColor2(Color color) {
-		this.getDataManager().set(DATA_COLOR2, color.getRGB());
-		this.getDataManager().setDirty(DATA_COLOR2);
 	}
 
 	@Override
@@ -162,12 +154,10 @@ public class EntitySpellProjectile extends Entity {
 		motionY = 0;
 		motionZ = 0;
 
-		if (module != null && module.nextModule != null) {
-			Module nextModule = module.nextModule;
-			nextModule.castSpell(data);
-		}
+		if (module != null)
+			module.runNextModule(data);
 
-		PacketHandler.NETWORK.sendToAllAround(new PacketExplode(getPositionVector(), new Color(getDataManager().get(DATA_COLOR)), new Color(getDataManager().get(DATA_COLOR2)), 0.3, 0.3, RandUtil.nextInt(100, 200), 75, 25),
+		PacketHandler.NETWORK.sendToAllAround(new PacketExplode(getPositionVector(), primaryColor, secondaryColor, 0.3, 0.3, RandUtil.nextInt(100, 200), 75, 25, true),
 				new NetworkRegistry.TargetPoint(world.provider.getDimension(), posX, posY, posZ, 512));
 
 		setDead();
@@ -189,7 +179,8 @@ public class EntitySpellProjectile extends Entity {
 	}
 
 	@Override
-	public void readEntityFromNBT(@Nonnull NBTTagCompound compound) {
+	public void readCustomNBT(@Nonnull NBTTagCompound compound) {
+		super.readCustomNBT(compound);
 		NBTTagCompound moduleCompound = compound.getCompoundTag("module");
 		Module tempModule = ModuleRegistry.INSTANCE.getModule(moduleCompound.getString("id"));
 		if (tempModule != null) {
@@ -202,15 +193,16 @@ public class EntitySpellProjectile extends Entity {
 
 		spell = new SpellData(world);
 		spell.deserializeNBT(compound.getCompoundTag("spell_data"));
-		applyColor(new Color(compound.getInteger("color")));
-		applyColor2(new Color(compound.getInteger("color2")));
+
+		AbstractSaveHandler.readAutoNBT(this, compound.getCompoundTag("save"), true);
 	}
 
 	@Override
-	public void writeEntityToNBT(@Nonnull NBTTagCompound compound) {
+	public void writeCustomNBT(@Nonnull NBTTagCompound compound) {
+		super.writeCustomNBT(compound);
 		compound.setTag("module", module.serializeNBT());
 		compound.setTag("spell_data", spell.serializeNBT());
-		compound.setInteger("color", getDataManager().get(DATA_COLOR));
-		compound.setInteger("color2", getDataManager().get(DATA_COLOR2));
+
+		compound.setTag("save", AbstractSaveHandler.writeAutoNBT(this, true));
 	}
 }

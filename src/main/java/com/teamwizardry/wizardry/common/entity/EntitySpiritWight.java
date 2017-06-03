@@ -64,7 +64,9 @@ public class EntitySpiritWight extends EntityMob {
 		}
 		entity.fallDistance = 0;
 
-		LibParticles.AIR_THROTTLE(world, getPositionVector().addVector(0, getEyeHeight(), 0), entity, Color.WHITE, Color.YELLOW, -1, false);
+		Vec3d normal = new Vec3d(RandUtil.nextDouble(-0.01, 0.01), RandUtil.nextDouble(0.1, 0.4), RandUtil.nextDouble(-0.01, 0.01));
+
+		LibParticles.AIR_THROTTLE(world, getPositionVector().addVector(0, getEyeHeight(), 0), normal, Color.WHITE, Color.YELLOW, RandUtil.nextDouble(0.2, 1.0));
 	}
 
 	@Override

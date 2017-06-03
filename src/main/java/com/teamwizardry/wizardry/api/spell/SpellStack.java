@@ -107,24 +107,6 @@ public class SpellStack {
 			}
 		}
 
-		// PROCESS COST
-		//for (Module module : compiled) {
-		//	ArrayList<Module> effects = new ArrayList<>();
-		//	double finalMul = 1;
-		//	Module temp = module;
-		//	while (temp != null) {
-		//		if (!(temp instanceof ICostModifier)) {
-		//			effects.add(temp);
-		//		} else finalMul *= ((ICostModifier) temp).costMultiplier();
-//
-		//		temp = temp.nextModule;
-		//	}
-//
-		//	for (Module module1 : effects) {
-		//		module1.setMultiplier(finalMul);
-		//	}
-		//}
-
 		// PROCESS COLOR
 		for (Module module : compiled)
 			processColor(module, module.nextModule);
@@ -178,6 +160,7 @@ public class SpellStack {
 			NBTTagCompound compound = list.getCompoundTagAt(i);
 			Module module = ModuleRegistry.INSTANCE.getModule(compound.getString("id"));
 			if (module == null) continue;
+			module = module.copy();
 			module.deserializeNBT(compound);
 			modules.add(module);
 		}

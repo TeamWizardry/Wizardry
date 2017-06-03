@@ -31,11 +31,13 @@ public class PacketExplode extends PacketBase {
 	private int lifeTime;
 	@Save
 	private int lifeTimeRange;
+	@Save
+	private boolean bounce;
 
 	public PacketExplode() {
 	}
 
-	public PacketExplode(Vec3d pos, Color color1, Color color2, double strengthUpwards, double strengthSideways, int amount, int lifeTime, int lifeTimeRange) {
+	public PacketExplode(Vec3d pos, Color color1, Color color2, double strengthUpwards, double strengthSideways, int amount, int lifeTime, int lifeTimeRange, boolean bounce) {
 		this.pos = pos;
 		this.color1 = color1;
 		this.color2 = color2;
@@ -44,6 +46,7 @@ public class PacketExplode extends PacketBase {
 		this.amount = amount;
 		this.lifeTime = lifeTime;
 		this.lifeTimeRange = lifeTimeRange;
+		this.bounce = bounce;
 	}
 
 	@Override
@@ -53,6 +56,6 @@ public class PacketExplode extends PacketBase {
 
 		World world = Minecraft.getMinecraft().player.world;
 
-		LibParticles.EXPLODE(world, pos, color1, color2, strengthSideways, strengthUpwards, amount, lifeTime, lifeTimeRange);
+		LibParticles.EXPLODE(world, pos, color1, color2, strengthSideways, strengthUpwards, amount, lifeTime, lifeTimeRange, bounce);
 	}
 }

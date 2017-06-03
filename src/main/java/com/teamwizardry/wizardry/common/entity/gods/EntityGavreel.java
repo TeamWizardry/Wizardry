@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.entity.gods;
 
-import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -11,7 +10,6 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
 
 /**
  * Created by LordSaad.
@@ -49,7 +47,7 @@ public class EntityGavreel extends EntityLiving {
 	public void collideWithEntity(Entity entity) {
 		entity.fallDistance = 0;
 
-		LibParticles.AIR_THROTTLE(world, getPositionVector().addVector(0, getEyeHeight(), 0), entity, Color.WHITE, Color.YELLOW, -1, false);
+		//LibParticles.AIR_THROTTLE(world, getPositionVector().addVector(0, getEyeHeight(), 0), entity, Color.WHITE, Color.YELLOW, -1);
 	}
 
 	@Override

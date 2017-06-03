@@ -74,13 +74,13 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 
 	public void processEntity(@Nonnull Entity entity, boolean asCaster) {
 		if (asCaster) {
-			addData(DefaultKeys.ORIGIN, entity.getPositionVector());
+			addData(DefaultKeys.ORIGIN, entity.getPositionVector().addVector(0, entity.getEyeHeight(), 0));
 			addData(DefaultKeys.CASTER, entity);
 			addData(DefaultKeys.YAW, entity.rotationYaw);
 			addData(DefaultKeys.PITCH, entity.rotationPitch);
 			addData(DefaultKeys.CAPABILITY, WizardryCapabilityProvider.getCap(entity));
 		} else {
-			addData(DefaultKeys.TARGET_HIT, entity.getPositionVector().addVector(entity.width / 2, entity.height / 2, entity.width / 2));
+			addData(DefaultKeys.TARGET_HIT, entity.getPositionVector().addVector(0, entity.height / 2.0, 0));
 			addData(DefaultKeys.ENTITY_HIT, entity);
 		}
 	}

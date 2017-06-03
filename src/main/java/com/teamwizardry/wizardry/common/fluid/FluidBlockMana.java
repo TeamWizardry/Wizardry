@@ -151,7 +151,7 @@ public class FluidBlockMana extends BlockFluidClassic {
 						if ((expiry % 5) == 0)
 							worldIn.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
 					} else {
-						PacketHandler.NETWORK.sendToAllAround(new PacketExplode(entity.getPositionVector(), Color.CYAN, Color.BLUE, 0.9, 2, 500, 100, 50),
+						PacketHandler.NETWORK.sendToAllAround(new PacketExplode(entity.getPositionVector(), Color.CYAN, Color.BLUE, 0.9, 2, 500, 100, 50, true),
 								new NetworkRegistry.TargetPoint(worldIn.provider.getDimension(), entity.posX, entity.posY, entity.posZ, 256));
 
 						List<Entity> entityList = worldIn.getEntitiesWithinAABBExcludingEntity(entity, new AxisAlignedBB(entity.getPosition()).expand(32, 32, 32));
