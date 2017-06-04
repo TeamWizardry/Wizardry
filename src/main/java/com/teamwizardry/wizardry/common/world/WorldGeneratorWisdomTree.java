@@ -1,8 +1,6 @@
 package com.teamwizardry.wizardry.common.world;
 
-import net.minecraft.block.BlockOldLeaf;
-import net.minecraft.block.BlockOldLog;
-import net.minecraft.block.BlockPlanks;
+import com.teamwizardry.wizardry.init.ModBlocks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
@@ -17,8 +15,8 @@ import java.util.Random;
  */
 public class WorldGeneratorWisdomTree extends WorldGenAbstractTree {
 
-	private static final IBlockState LOG = Blocks.LOG.getDefaultState().withProperty(BlockOldLog.VARIANT, BlockPlanks.EnumType.BIRCH);
-	private static final IBlockState LEAF = Blocks.LEAVES.getDefaultState().withProperty(BlockOldLeaf.VARIANT, BlockPlanks.EnumType.BIRCH).withProperty(BlockOldLeaf.CHECK_DECAY, Boolean.valueOf(false));
+	private static final IBlockState LOG = ModBlocks.WISDOM_WOOD_LOG.getDefaultState();
+	private static final IBlockState LEAF = Blocks.LEAVES.getDefaultState();
 
 	public WorldGeneratorWisdomTree(boolean notify) {
 		super(notify);
@@ -26,38 +24,37 @@ public class WorldGeneratorWisdomTree extends WorldGenAbstractTree {
 
 	@Override
 	public boolean generate(@Nonnull World worldIn, @Nonnull Random rand, @Nonnull BlockPos position) {
-		int height = rand.nextInt(3) + 5;
+		int height = rand.nextInt(5) + 5;
 
-		boolean flag = true;
+		boolean canFit = true;
 
 		if (position.getY() >= 1 && position.getY() + height + 1 <= 256) {
-			for (int i = position.getY(); i <= position.getY() + 1 + height; ++i) {
-				int k = 1;
+			for (int currentY = position.getY(); currentY <= position.getY() + 1 + height; ++currentY) {
+				int leafWidth = 0;
 
-				if (i == position.getY()) {
-					k = 0;
-				}
+				if (currentY >= position.getY() + (height / 2))
+					leafWidth = 2;
 
-				if (i >= position.getY() + 1 + height - 2) {
-					k = 2;
+				if (currentY >= position.getY() + height - 2) {
+					leafWidth = 1;
 				}
 
 				BlockPos.MutableBlockPos poses = new BlockPos.MutableBlockPos();
 
-				for (int l = position.getX() - k; l <= position.getX() + k && flag; ++l) {
-					for (int i1 = position.getZ() - k; i1 <= position.getZ() + k && flag; ++i1) {
-						if (i >= 0 && i < worldIn.getHeight()) {
-							if (!this.isReplaceable(worldIn, poses.setPos(l, i, i1))) {
-								flag = false;
+				for (int searchX = position.getX() - leafWidth; searchX <= position.getX() + leafWidth && canFit; ++searchX) {
+					for (int searchZ = position.getZ() - leafWidth; searchZ <= position.getZ() + leafWidth && canFit; ++searchZ) {
+						if (currentY >= 0 && currentY < worldIn.getHeight()) {
+							if (!this.isReplaceable(worldIn, poses.setPos(searchX, currentY, searchZ))) {
+								canFit = false;
 							}
 						} else {
-							flag = false;
+							canFit = false;
 						}
 					}
 				}
 			}
 
-			if (!flag) {
+			if (!canFit) {
 				return false;
 			} else {
 				BlockPos down = position.down();

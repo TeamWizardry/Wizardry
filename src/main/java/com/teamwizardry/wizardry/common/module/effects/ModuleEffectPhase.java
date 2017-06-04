@@ -62,10 +62,7 @@ public class ModuleEffectPhase extends Module implements ITaxing {
 
 		if (targetEntity != null && targetEntity instanceof EntityLivingBase) {
 			EntityLivingBase entity = (EntityLivingBase) targetEntity;
-			entity.addPotionEffect(new PotionEffect(ModPotions.PHASE, (int) strength, 1, true, false));
-			entity.addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, (int) strength, 1, true, false));
-			entity.addPotionEffect(new PotionEffect(ModPotions.PUSH, 1, 1, true, false));
-			//entity.addPotionEffect(new PotionEffect(ModPotions.NULL_MOVEMENT, (int) strength, 1, true, false));
+			entity.addPotionEffect(new PotionEffect(ModPotions.PHASE, 100, 1, true, false));
 		}
 		return true;
 	}

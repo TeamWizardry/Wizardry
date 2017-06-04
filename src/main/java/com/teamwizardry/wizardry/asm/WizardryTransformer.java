@@ -14,6 +14,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -27,13 +28,41 @@ import static org.objectweb.asm.Opcodes.*;
 public class WizardryTransformer implements IClassTransformer {
 
 	public static final ClassnameMap CLASS_MAPPINGS = new ClassnameMap(
-			"net/minecraft/entity/player/EntityPlayer", "aax"
+			"net/minecraft/entity/player/EntityPlayer", "aax",
+			"net/minecraft/entity/Entity", "sm"
 	);
 	private static final String ASM_HOOKS = "com/teamwizardry/wizardry/asm/WizardryASMHooks";
 	private static final Map<String, Transformer> transformers = new HashMap<>();
 
 	static {
 		transformers.put("net.minecraft.entity.player.EntityPlayer", WizardryTransformer::transformPlayerClipping);
+		transformers.put("net.minecraft.entity.Entity", WizardryTransformer::transformEntity);
+	}
+
+	private static byte[] transformEntity(byte[] basicClass) {
+		MethodSignature sig = new MethodSignature("move", "func_70091_d", "a",
+				"(Lnet/minecraft/entity/MoverType;DDD)V");
+
+		return transform(basicClass, sig, "Entity Pre Move Action Event",
+				combineBackFocus(
+						(AbstractInsnNode node) -> node.getOpcode() == RETURN,
+						(AbstractInsnNode node) -> node instanceof LabelNode,
+						(MethodNode method, AbstractInsnNode node) -> {
+							InsnList newInstructions = new InsnList();
+
+							newInstructions.add(new VarInsnNode(ALOAD, 0));
+							newInstructions.add(new VarInsnNode(ALOAD, 1));
+							newInstructions.add(new VarInsnNode(DLOAD, 2));
+							newInstructions.add(new VarInsnNode(DLOAD, 4));
+							newInstructions.add(new VarInsnNode(DLOAD, 6));
+							newInstructions.add(new MethodInsnNode(INVOKESTATIC, ASM_HOOKS, "entityPreMoveHook",
+									"(Lnet/minecraft/entity/Entity;Lnet/minecraft/entity/MoverType;DDD)Z", false));
+
+							newInstructions.add(new JumpInsnNode(IFNE, (LabelNode) node));
+
+							method.instructions.insertBefore(method.instructions.getFirst(), newInstructions);
+							return true;
+						}));
 	}
 
 	private static byte[] transformPlayerClipping(byte[] basicClass) {
@@ -93,6 +122,26 @@ public class WizardryTransformer implements IClassTransformer {
 		return (MethodNode node) -> applyOnNode(node, filter, action);
 	}
 
+	public static MethodAction combineByLast(NodeFilter filter, NodeAction action) {
+		return (MethodNode node) -> applyOnNodeByLast(node, filter, action);
+	}
+
+	public static boolean applyOnNodeByLast(MethodNode method, NodeFilter filter, NodeAction action) {
+		ListIterator<AbstractInsnNode> iterator = method.instructions.iterator(method.instructions.size());
+
+		boolean didAny = false;
+		while (iterator.hasPrevious()) {
+			AbstractInsnNode anode = iterator.previous();
+			if (filter.test(anode)) {
+				didAny = true;
+				if (action.test(method, anode))
+					break;
+			}
+		}
+
+		return didAny;
+	}
+
 	public static boolean applyOnNode(MethodNode method, NodeFilter filter, NodeAction action) {
 		Iterator<AbstractInsnNode> iterator = method.instructions.iterator();
 
@@ -103,6 +152,114 @@ public class WizardryTransformer implements IClassTransformer {
 				didAny = true;
 				if (action.test(method, anode))
 					break;
+			}
+		}
+
+		return didAny;
+	}
+
+	public static MethodAction combineFrontPivot(NodeFilter pivot, NodeFilter filter, NodeAction action) {
+		return (MethodNode node) -> applyOnNodeFrontPivot(node, pivot, filter, action);
+	}
+
+	public static boolean applyOnNodeFrontPivot(MethodNode method, NodeFilter pivot, NodeFilter filter, NodeAction action) {
+		ListIterator<AbstractInsnNode> iterator = method.instructions.iterator();
+
+		boolean didAny = false;
+		while (iterator.hasNext()) {
+			AbstractInsnNode pivotTest = iterator.next();
+			if (pivot.test(pivotTest)) {
+				log("Found pivot:");
+				prettyPrint(pivotTest);
+				while (iterator.hasPrevious()) {
+					AbstractInsnNode anode = iterator.previous();
+					if (filter.test(anode)) {
+						didAny = true;
+						if (action.test(method, anode))
+							break;
+					}
+				}
+			}
+		}
+
+		return didAny;
+	}
+
+	public static MethodAction combineBackPivot(NodeFilter pivot, NodeFilter filter, NodeAction action) {
+		return (MethodNode node) -> applyOnNodeBackPivot(node, pivot, filter, action);
+	}
+
+	public static boolean applyOnNodeBackPivot(MethodNode method, NodeFilter pivot, NodeFilter filter, NodeAction action) {
+		ListIterator<AbstractInsnNode> iterator = method.instructions.iterator(method.instructions.size());
+
+		boolean didAny = false;
+		while (iterator.hasPrevious()) {
+			AbstractInsnNode pivotTest = iterator.previous();
+			if (pivot.test(pivotTest)) {
+				log("Found pivot:");
+				prettyPrint(pivotTest);
+				while (iterator.hasNext()) {
+					AbstractInsnNode anode = iterator.next();
+					if (filter.test(anode)) {
+						didAny = true;
+						if (action.test(method, anode))
+							break;
+					}
+				}
+			}
+		}
+
+		return didAny;
+	}
+
+	public static MethodAction combineFrontFocus(NodeFilter focus, NodeFilter filter, NodeAction action) {
+		return (MethodNode node) -> applyOnNodeFrontFocus(node, focus, filter, action);
+	}
+
+	public static boolean applyOnNodeFrontFocus(MethodNode method, NodeFilter focus, NodeFilter filter, NodeAction action) {
+		ListIterator<AbstractInsnNode> iterator = method.instructions.iterator();
+
+		boolean didAny = false;
+		while (iterator.hasNext()) {
+			AbstractInsnNode focusTest = iterator.next();
+			if (focus.test(focusTest)) {
+				log("Found focus:");
+				prettyPrint(focusTest);
+				while (iterator.hasNext()) {
+					AbstractInsnNode anode = iterator.next();
+					if (filter.test(anode)) {
+						didAny = true;
+						if (action.test(method, anode))
+							break;
+					}
+				}
+			}
+		}
+
+		return didAny;
+	}
+
+	public static MethodAction combineBackFocus(NodeFilter focus, NodeFilter filter, NodeAction action) {
+		return (MethodNode node) -> applyOnNodeBackFocus(node, focus, filter, action);
+	}
+
+	public static boolean applyOnNodeBackFocus(MethodNode method, NodeFilter focus, NodeFilter filter, NodeAction action) {
+		ListIterator<AbstractInsnNode> iterator = method.instructions.iterator(method.instructions.size());
+
+		boolean didAny = false;
+		while (iterator.hasPrevious()) {
+			AbstractInsnNode focusTest = iterator.previous();
+			if (focus.test(focusTest)) {
+				log("Found focus:");
+				prettyPrint(focusTest);
+				while (iterator.hasPrevious()) {
+					AbstractInsnNode anode = iterator.previous();
+					if (filter.test(anode)) {
+						didAny = true;
+						if (action.test(method, anode))
+							break;
+					}
+				}
 			}
 		}
 
