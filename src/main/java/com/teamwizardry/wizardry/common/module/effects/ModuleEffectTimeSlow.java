@@ -2,7 +2,6 @@ package com.teamwizardry.wizardry.common.module.effects;
 
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBezier3D;
-import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
@@ -11,13 +10,9 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.api.util.RandUtil;
-import com.teamwizardry.wizardry.common.network.PacketFreezePlayer;
 import com.teamwizardry.wizardry.init.ModPotions;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -76,7 +71,7 @@ public class ModuleEffectTimeSlow extends Module implements ITaxing {
 		Entity caster = spell.getData(CASTER);
 
 		if (targetEntity instanceof EntityLivingBase) {
-			double strength = 50.0 * getMultiplier();
+			double strength = 20.0 * getMultiplier();
 			if (attributes.hasKey(Attributes.EXTEND))
 				strength += Math.min(200.0, attributes.getDouble(Attributes.EXTEND) * 4.6875);
 
@@ -84,15 +79,17 @@ public class ModuleEffectTimeSlow extends Module implements ITaxing {
 
 			if (!tax(this, spell)) return false;
 			int interval = (int) (50000 - (strength * 166.6666667));
-			if (targetEntity instanceof EntityPlayer) interval /= 10.0;
+			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.TIME_SLOW, 100, (int) (strength / 10.0), true, false));
 
-			targetEntity.getEntityData().setInteger("strength", (int) strength);
-			targetEntity.getEntityData().setInteger("skip_tick", (int) strength);
-			targetEntity.getEntityData().setInteger("skip_tick_interval", interval);
-			targetEntity.getEntityData().setInteger("skip_tick_interval_save", interval);
+			//if (targetEntity instanceof EntityPlayer) interval /= 10.0;
+//
+			//targetEntity.getEntityData().setInteger("strength", (int) strength);
+			//targetEntity.getEntityData().setInteger("skip_tick", (int) strength);
+			//targetEntity.getEntityData().setInteger("skip_tick_interval", interval);
+			//targetEntity.getEntityData().setInteger("skip_tick_interval_save", interval);
 
-			if (targetEntity instanceof EntityPlayer)
-				PacketHandler.NETWORK.sendTo(new PacketFreezePlayer((int) strength, interval), (EntityPlayerMP) targetEntity);
+			//if (targetEntity instanceof EntityPlayer)
+			//	PacketHandler.NETWORK.sendTo(new PacketFreezePlayer((int) strength, interval), (EntityPlayerMP) targetEntity);
 		}
 		if (targetPos != null) {
 			//BlockPos pos = new BlockPos(targetPos);
@@ -163,45 +160,45 @@ public class ModuleEffectTimeSlow extends Module implements ITaxing {
 
 	@SubscribeEvent
 	public void skipPlayerTick(TickEvent.PlayerTickEvent event) {
-		if (event.player.getEntityData().hasKey("skip_tick")
-				&& event.player.getEntityData().hasKey("skip_tick_interval")
-				&& event.player.getEntityData().hasKey("skip_tick_interval_save")) {
-			int tickCountdown = event.player.getEntityData().getInteger("skip_tick");
-			int tickInterval = event.player.getEntityData().getInteger("skip_tick_interval");
-
-			event.player.addPotionEffect(new PotionEffect(ModPotions.NULL_MOVEMENT, 5, 1, true, false));
-			event.player.addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 1, true, false));
-			event.player.motionX = 0;
-			event.player.motionY = 0;
-			event.player.motionZ = 0;
-			//event.player.rotationPitch = event.player.getEntityData().getFloat("rot_pitch");
-			//event.player.rotationYaw = event.player.getEntityData().getFloat("rot_yaw");
-			event.player.velocityChanged = true;
-
-			if (tickInterval <= 0) {
-				event.player.getEntityData().setInteger("skip_tick_interval", event.player.getEntityData().getInteger("skip_tick_interval_save"));
-
-				if (tickCountdown <= 0) {
-					event.player.getEntityData().removeTag("skip_tick");
-					event.player.getEntityData().removeTag("skip_tick_interval");
-					event.player.getEntityData().removeTag("skip_tick_interval_save");
-					event.player.getEntityData().removeTag("strength");
-				} else {
-					Minecraft.getMinecraft().player.sendChatMessage(tickInterval + " - " + tickCountdown + " -  stop ticking");
-					event.player.getEntityData().setInteger("skip_tick", --tickCountdown);
-				}
-			} else {
-				event.player.getEntityData().setInteger("skip_tick_interval", --tickInterval);
-			}
-		}
+		//if (event.player.getEntityData().hasKey("skip_tick")
+		//		&& event.player.getEntityData().hasKey("skip_tick_interval")
+		//		&& event.player.getEntityData().hasKey("skip_tick_interval_save")) {
+		//	int tickCountdown = event.player.getEntityData().getInteger("skip_tick");
+		//	int tickInterval = event.player.getEntityData().getInteger("skip_tick_interval");
+//
+		//	event.player.addPotionEffect(new PotionEffect(ModPotions.NULL_MOVEMENT, 5, 1, true, false));
+		//	event.player.addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 1, true, false));
+		//	event.player.motionX = 0;
+		//	event.player.motionY = 0;
+		//	event.player.motionZ = 0;
+		//	//event.player.rotationPitch = event.player.getEntityData().getFloat("rot_pitch");
+		//	//event.player.rotationYaw = event.player.getEntityData().getFloat("rot_yaw");
+		//	event.player.velocityChanged = true;
+//
+		//	if (tickInterval <= 0) {
+		//		event.player.getEntityData().setInteger("skip_tick_interval", event.player.getEntityData().getInteger("skip_tick_interval_save"));
+//
+		//		if (tickCountdown <= 0) {
+		//			event.player.getEntityData().removeTag("skip_tick");
+		//			event.player.getEntityData().removeTag("skip_tick_interval");
+		//			event.player.getEntityData().removeTag("skip_tick_interval_save");
+		//			event.player.getEntityData().removeTag("strength");
+		//		} else {
+		//			Minecraft.getMinecraft().player.sendChatMessage(tickInterval + " - " + tickCountdown + " -  stop ticking");
+		//			event.player.getEntityData().setInteger("skip_tick", --tickCountdown);
+		//		}
+		//	} else {
+		//		event.player.getEntityData().setInteger("skip_tick_interval", --tickInterval);
+		//	}
+		//}
 	}
 
 	@SubscribeEvent
 	public void interact(PlayerInteractEvent event) {
-		if (event.getEntity().getEntityData().hasKey("skip_tick")
-				&& event.getEntity().getEntityData().hasKey("skip_tick_interval")
-				&& event.getEntity().getEntityData().hasKey("skip_tick_interval_save")) {
-			event.setCanceled(true);
-		}
+		//if (event.getEntity().getEntityData().hasKey("skip_tick")
+		//		&& event.getEntity().getEntityData().hasKey("skip_tick_interval")
+		//		&& event.getEntity().getEntityData().hasKey("skip_tick_interval_save")) {
+		//	event.setCanceled(true);
+		//}
 	}
 }

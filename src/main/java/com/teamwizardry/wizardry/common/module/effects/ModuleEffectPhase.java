@@ -52,7 +52,7 @@ public class ModuleEffectPhase extends Module implements ITaxing {
 		Entity targetEntity = spell.getData(ENTITY_HIT);
 		Vec3d targetHit = spell.getData(TARGET_HIT);
 
-		double strength = 10 * getMultiplier();
+		double strength = 30 * getMultiplier();
 		if (attributes.hasKey(Attributes.EXTEND))
 			strength += Math.min(50, attributes.getDouble(Attributes.EXTEND));
 
@@ -62,7 +62,7 @@ public class ModuleEffectPhase extends Module implements ITaxing {
 
 		if (targetEntity != null && targetEntity instanceof EntityLivingBase) {
 			EntityLivingBase entity = (EntityLivingBase) targetEntity;
-			entity.addPotionEffect(new PotionEffect(ModPotions.PHASE, 100, 1, true, false));
+			entity.addPotionEffect(new PotionEffect(ModPotions.PHASE, (int) strength, 1, true, false));
 		}
 		return true;
 	}

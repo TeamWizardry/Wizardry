@@ -22,10 +22,8 @@ import net.minecraft.util.ReportedException;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -55,29 +53,6 @@ public class PotionPhase extends PotionMod {
 	public void playerClipEvent(PlayerClipEvent event) {
 		if (event.player.isPotionActive(ModPotions.PHASE)) {
 			event.noClip = true;
-		}
-	}
-
-	@SubscribeEvent
-	public void playerTick(TickEvent.PlayerTickEvent event) {
-		if (event.player.isPotionActive(ModPotions.PHASE)) {
-			Vec3d inside = event.player.getPositionVector().addVector(0.5, 0, 0.5);
-			Vec3d upperInside = event.player.getPositionVector().addVector(0.5, 0.4, 0.5);
-			Vec3d vec = event.player.getPositionVector().addVector(0.5, -0.05, 0.5);
-			BlockPos insidePos = new BlockPos(inside);
-			BlockPos upperInsidePos = new BlockPos(upperInside);
-			BlockPos pos = new BlockPos(vec);
-
-			//if (!event.player.world.isAirBlock(insidePos) && event.player.world.isAirBlock(upperInsidePos)) {
-			//	if (event.player.motionY >= 0.5) {
-			//		event.player.motionY = 1;
-			//	} else event.player.motionY += 0.1;
-			//}
-//
-			//World world = event.player.world;
-			//if (!world.getCollisionBoxes(event.player, event.player.getEntityBoundingBox().offset(event.player.posX, (double) (-event.player.stepHeight), event.player.posZ)).isEmpty())
-			//	event.player.motionY = event.player.motionY < 0 ? 0.1 : 0;
-
 		}
 	}
 
