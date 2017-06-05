@@ -4,7 +4,7 @@ import com.teamwizardry.librarianlib.features.base.entity.FlyingEntityMod;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.saving.AbstractSaveHandler;
-import com.teamwizardry.librarianlib.features.saving.Savable;
+import com.teamwizardry.librarianlib.features.saving.SaveInPlace;
 import com.teamwizardry.wizardry.api.Constants.NBT;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
@@ -35,7 +35,7 @@ import java.util.Random;
 /**
  * Created by Saad on 8/21/2016.
  */
-@Savable
+@SaveInPlace
 public class EntityFairy extends FlyingEntityMod {
 
 	public boolean ambush = false;

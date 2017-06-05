@@ -52,19 +52,19 @@ public class WorktableGui extends GuiBase {
 		paper = new ComponentVoid(180, 19, 180, 188);
 		getMainComponents().add(paper);
 
-		ComponentVoid effects = new ComponentVoid(32, 35, 48, 80);
+		ComponentVoid effects = new ComponentVoid(29, 31, 48, 80);
 		addModules(effects, ModuleType.SHAPE);
 		getMainComponents().add(effects);
 
-		ComponentVoid shapes = new ComponentVoid(96, 35, 48, 80);
+		ComponentVoid shapes = new ComponentVoid(93, 31, 48, 80);
 		addModules(shapes, ModuleType.EFFECT);
 		getMainComponents().add(shapes);
 
-		ComponentVoid events = new ComponentVoid(32, 127, 48, 80);
+		ComponentVoid events = new ComponentVoid(29, 123, 48, 80);
 		addModules(events, ModuleType.EVENT);
 		getMainComponents().add(events);
 
-		ComponentVoid modifiers = new ComponentVoid(96, 127, 48, 80);
+		ComponentVoid modifiers = new ComponentVoid(93, 123, 48, 80);
 		addModules(modifiers, ModuleType.MODIFIER);
 		getMainComponents().add(modifiers);
 

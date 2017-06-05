@@ -3,9 +3,11 @@ package com.teamwizardry.wizardry.api.spell;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.utilities.AnnotationHelper;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.proxy.CommonProxy;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -14,11 +16,14 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
+import java.util.*;
+
+import static com.teamwizardry.wizardry.proxy.CommonProxy.createModuleRegistryFile;
 
 /**
  * Created by LordSaad.
@@ -28,6 +33,10 @@ public class ModuleRegistry {
 	public static ModuleRegistry INSTANCE = new ModuleRegistry();
 
 	public ArrayList<Module> modules = new ArrayList<>();
+
+	private JsonObject object;
+
+	private Deque<Module> left = new ArrayDeque<>();
 
 	private ModuleRegistry() {
 		AnnotationHelper.INSTANCE.findAnnotatedClasses(LibrarianLib.PROXY.getAsmDataTable(), Module.class, RegisterModule.class, (clazz, info) -> {
@@ -70,7 +79,7 @@ public class ModuleRegistry {
 		return modules;
 	}
 
-	public void processModules(JsonObject object) {
+	public void processModules() {
 		String[] typeArray = new String[]{"shapes", "events", "effects", "modifiers"};
 
 		HashSet<Module> processed = new HashSet<>();
@@ -142,7 +151,6 @@ public class ModuleRegistry {
 			}
 		}
 
-		ArrayList<Module> left = new ArrayList<>();
 		primary:
 		for (Module module1 : modules) {
 			for (Module module2 : processed)
@@ -151,9 +159,84 @@ public class ModuleRegistry {
 			left.add(module1);
 		}
 
-		// TODO update json
+		if (!left.isEmpty()) {
+			Wizardry.logger.error("Missing modules detected in module_registry.json:");
+			for (Module module : left) Wizardry.logger.error("    - " + module.getID());
+			long currentTime = System.currentTimeMillis();
+
+			HashMap<ModuleType, JsonArray> arrays = new HashMap<>();
+			while (!left.isEmpty()) {
+				Module module = left.pop();
+				Wizardry.logger.info("Attempting to add default module " + module.getID() + " into module_registry.json");
+
+				JsonArray array;
+
+				if (arrays.containsKey(module.getModuleType())) {
+					array = arrays.get(module.getModuleType());
+				} else {
+					array = object.getAsJsonArray(module.getModuleType().name().toLowerCase());
+					arrays.put(module.getModuleType(), array);
+				}
+
+				if (object.has(module.getModuleType().name().toLowerCase()) && object.get(module.getModuleType().name().toLowerCase()).isJsonArray()) {
+
+					JsonArray originalArray = CommonProxy.originalModuleRegistryObject.get(module.getModuleType().name().toLowerCase()).getAsJsonArray();
+
+					for (JsonElement element : originalArray) {
+						if (!element.isJsonObject()) continue;
+						JsonObject originalObject = element.getAsJsonObject();
+						if (originalObject.has("id") && originalObject.get("id").isJsonPrimitive()) {
+							if (module.getID().equals(originalObject.get("id").getAsString())) {
+								array.add(originalObject);
+								Wizardry.logger.info(module.getID() + " added successfully into module_registry.json!");
+								break;
+							}
+						}
+					}
+				}
+			}
+
+			Set<ModuleType> typesIncluded = arrays.keySet();
+			for (ModuleType type : ModuleType.values()) {
+				if (typesIncluded.contains(type)) continue;
+
+				Wizardry.logger.info("Adding original modules of type " + type.name() + " back into new config.");
+				arrays.put(type, object.getAsJsonArray(type.name().toLowerCase()));
+			}
+
+			File config = new File(CommonProxy.directory.getPath() + "/" + Wizardry.MODID, "module_registry.json");
+
+			if (config.exists())
+				if (!config.delete()) {
+					Wizardry.logger.error("SOMETHING WENT WRONG! Could not delete old module_registry.json");
+					return;
+				} else Wizardry.logger.info("Old module_registry.json deleted successfully!");
+
+
+			if (!createModuleRegistryFile(config.getParentFile())) {
+				Wizardry.logger.error("SOMETHING WENT WRONG! Could not create new module_registry.json");
+				return;
+			} else Wizardry.logger.info("New module_registry.json has been created successfully!");
+
+			JsonParser parser = new JsonParser();
+			try {
+				JsonElement element = parser.parse(new FileReader(config));
+				JsonObject obj = element.getAsJsonObject();
+
+				setJsonObject(obj);
+				Wizardry.logger.info("module_registry.json updated successfully! It took " + (System.currentTimeMillis() - currentTime) / 1000.0 + " seconds.");
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+		} else {
+			Wizardry.logger.info("No missing modules found! Your module_registry.json is update to date! huzzah! (ﾉ≧∀≦)ﾉ・‥…━━━★");
+		}
 
 		modules.clear();
 		modules.addAll(processed);
+	}
+
+	public void setJsonObject(JsonObject object) {
+		this.object = object;
 	}
 }

@@ -4,17 +4,14 @@ import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
-import java.util.List;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
@@ -55,23 +52,27 @@ public class ModuleEffectBurn extends Module implements ITaxing {
 		BlockPos targetPos = spell.getData(BLOCK_HIT);
 		Entity caster = spell.getData(CASTER);
 
-		double strength = 3 * getMultiplier();
+		double strength = 1 * getMultiplier();
 		if (attributes.hasKey(Attributes.EXTEND))
 			strength += Math.min(30, attributes.getDouble(Attributes.EXTEND));
 		strength *= calcBurnoutPercent(caster);
 
 		if (!tax(this, spell)) return false;
 
-		if (targetEntity != null) targetEntity.setFire((int) strength);
+		if (targetEntity != null) targetEntity.setFire((int) strength * 3);
 
 		if (targetPos != null) {
-			// TODO: increase radius with strength
-			for (EnumFacing facing : EnumFacing.VALUES) {
-				if (world.isAirBlock(targetPos.offset(facing)) || world.getBlockState(targetPos.offset(facing)).getBlock() == Blocks.FIRE) {
-					world.setBlockState(targetPos.offset(facing), Blocks.FIRE.getDefaultState(), 11);
-					return true;
-				}
-			}
+			strength /= 2.0;
+			for (int x = (int) strength; x >= -strength; x--)
+				for (int y = (int) strength; y >= -strength; y--)
+					for (int z = (int) strength; z >= -strength; z--) {
+						BlockPos pos = targetPos.add(x, y, z);
+						for (EnumFacing facing : EnumFacing.VALUES) {
+							if (world.isAirBlock(pos.offset(facing)) || world.getBlockState(pos.offset(facing)).getBlock() == Blocks.FIRE) {
+								world.setBlockState(pos.offset(facing), Blocks.FIRE.getDefaultState(), 3);
+							}
+						}
+					}
 		}
 		return true;
 	}
@@ -86,10 +87,7 @@ public class ModuleEffectBurn extends Module implements ITaxing {
 		Color color = getPrimaryColor();
 		if (RandUtil.nextBoolean()) color = getSecondaryColor();
 
-		List<EntityLivingBase> entities = world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(new BlockPos(position)));
-		if (!entities.isEmpty())
-			LibParticles.EFFECT_BURN(world, entities.get(0).getPositionVector().addVector(0, entities.get(0).height / 2, 0), color);
-		else LibParticles.EFFECT_BURN(world, position.addVector(0, 0.5, 0), color);
+		LibParticles.EFFECT_BURN(world, position, color);
 	}
 
 	@Nonnull

@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry;
 
 import com.teamwizardry.librarianlib.features.utilities.UnsafeKt;
+import com.teamwizardry.wizardry.common.command.CommandWizardry;
 import com.teamwizardry.wizardry.proxy.CommonProxy;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -9,6 +10,7 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import org.apache.logging.log4j.Logger;
 
 
@@ -55,5 +57,10 @@ public class Wizardry {
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent e) {
 		proxy.postInit(e);
+	}
+
+	@Mod.EventHandler
+	public void serverLoad(FMLServerStartingEvent event) {
+		event.registerServerCommand(new CommandWizardry());
 	}
 }

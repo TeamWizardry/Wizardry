@@ -53,6 +53,14 @@
       "secondary_color": "FFFFFF"
     },
     {
+      "id": "effect_freeze",
+      "mana_drain": 200,
+      "burnout_fill": 100,
+      "item": "minecraft:snowball",
+      "primary_color": "FFFFFF",
+      "secondary_color": "FFFFFF"
+    },
+    {
       "id": "effect_telekinesis",
       "mana_drain": 10,
       "burnout_fill": 10,
@@ -191,7 +199,7 @@
       "id": "modifier_exception",
       "mana_drain": 5.0,
       "burnout_fill": 5.0,
-      "item": "minecraft:syringe_blood"
+      "item": "wizardry:syringe_blood"
     }
   ]
 }

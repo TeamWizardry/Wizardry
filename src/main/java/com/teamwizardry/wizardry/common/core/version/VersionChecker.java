@@ -28,7 +28,7 @@ public final class VersionChecker {
 	}
 
 	@SubscribeEvent
-	public static void onTick(TickEvent.ClientTickEvent event) {
+	public void onTick(TickEvent.ClientTickEvent event) {
 		if (doneChecking && event.phase == TickEvent.Phase.END && Minecraft.getMinecraft().player != null && !triedToWarnPlayer) {
 			if (!onlineVersion.isEmpty()) {
 				EntityPlayer player = Minecraft.getMinecraft().player;
@@ -70,5 +70,4 @@ public final class VersionChecker {
 			triedToWarnPlayer = true;
 		}
 	}
-
 }
