@@ -74,6 +74,5 @@ public class Constants {
 		public static final String PURITY = "purity";
 		public static final String COMPLETE = "complete";
 		public static final int NACRE_PURITY_CONVERSION = 30 * 20; // 30 seconds for max purity, 0/60 for no purity
-		public static final int COLOR_CYCLE_LENGTH = 50 * 20; // 50 seconds
 	}
 }
