@@ -26,7 +26,7 @@ public interface INacreColorable extends IItemColorProvider {
 	default void colorableOnUpdate(ItemStack stack, World world) {
 		if (!world.isRemote) {
 			if (!ItemNBTHelper.verifyExistence(stack, NBT.RAND))
-				ItemNBTHelper.setInt(stack, NBT.RAND, world.rand.nextInt(Integer.MAX_VALUE));
+				ItemNBTHelper.setFloat(stack, NBT.RAND, world.rand.nextFloat());
 
 			if (!ItemNBTHelper.verifyExistence(stack, NBT.PURITY))
 				ItemNBTHelper.setInt(stack, NBT.PURITY, NBT.NACRE_PURITY_CONVERSION);
@@ -40,7 +40,7 @@ public interface INacreColorable extends IItemColorProvider {
 		ItemStack stack = entityItem.getEntityItem();
 
 		if (!ItemNBTHelper.verifyExistence(stack, NBT.RAND))
-			ItemNBTHelper.setInt(stack, NBT.RAND, entityItem.world.rand.nextInt(Integer.MAX_VALUE));
+			ItemNBTHelper.setFloat(stack, NBT.RAND, entityItem.world.rand.nextFloat());
 
 		if (entityItem.isInsideOfMaterial(ModBlocks.NACRE_MATERIAL) && !ItemNBTHelper.getBoolean(stack, NBT.COMPLETE, false)) {
 			int purity = ItemNBTHelper.getInt(stack, NBT.PURITY, 0);
@@ -57,8 +57,8 @@ public interface INacreColorable extends IItemColorProvider {
 	default Function2<ItemStack, Integer, Integer> getItemColorFunction() {
 		return (stack, tintIndex) -> {
 			if (tintIndex != 0) return 0xFFFFFF;
-			int rand = ItemNBTHelper.getInt(stack, NBT.RAND, -1);
-			float hue = rand == -1 ? MathHelper.sin(Minecraft.getMinecraft().world.getTotalWorldTime() / 140f) : new Random(rand).nextFloat();
+			float rand = ItemNBTHelper.getFloat(stack, NBT.RAND, -1);
+			float hue = rand < 0 ? MathHelper.sin(Minecraft.getMinecraft().world.getTotalWorldTime() / 140f) : rand;
 			int purity = ItemNBTHelper.getInt(stack, NBT.PURITY, NBT.NACRE_PURITY_CONVERSION);
 			float pow = purity / (float) NBT.NACRE_PURITY_CONVERSION;
 			if (purity > NBT.NACRE_PURITY_CONVERSION) pow = 1 - pow;
