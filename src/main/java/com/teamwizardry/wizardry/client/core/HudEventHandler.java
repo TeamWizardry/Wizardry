@@ -1,11 +1,10 @@
 package com.teamwizardry.wizardry.client.core;
 
-import com.teamwizardry.librarianlib.client.core.ClientTickHandler;
-import com.teamwizardry.librarianlib.client.sprite.Sprite;
-import com.teamwizardry.librarianlib.client.sprite.Texture;
+import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
+import com.teamwizardry.librarianlib.features.sprite.Sprite;
+import com.teamwizardry.librarianlib.features.sprite.Texture;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
-import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
+import com.teamwizardry.wizardry.api.capability.CapManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
@@ -50,20 +49,19 @@ public class HudEventHandler extends Gui {
 			emptyBurnoutBar.draw(ClientTickHandler.getTicks(), right, top + 6);
 			GlStateManager.popMatrix();
 
-			//WizardryData data = DataFactory.INSTANCE.getPlayerData(player)
-			IWizardryCapability data = WizardryCapabilityProvider.get(player);
-
-			//if (data == null) return;
+			CapManager manager = new CapManager(player);
 
 			GlStateManager.pushMatrix();
 			GlStateManager.color(1.0F, 1.0F, 1.0F);
 			int visualManaLength = 0;
-			if (data.getMana() > 0) visualManaLength = ((data.getMana() * 100) / data.getMaxMana()) % 101;
+			if (manager.getMana() > 0)
+				visualManaLength = (int) (((manager.getMana() * 100) / manager.getMaxMana()) % 101);
 			fullManaBar.drawClipped(ClientTickHandler.getTicks(), right, top, visualManaLength, 5);
 
 			GlStateManager.color(1.0F, 1.0F, 1.0F);
 			int visualBurnoutLength = 0;
-			if (data.getBurnout() > 0) visualBurnoutLength = ((data.getBurnout() * 100) / data.getMaxBurnout()) % 101;
+			if (manager.getBurnout() > 0)
+				visualBurnoutLength = (int) (((manager.getBurnout() * 100) / manager.getMaxBurnout()) % 101);
 			fullBurnoutBar.drawClipped(ClientTickHandler.getTicks(), right, top + 6, visualBurnoutLength, 5);
 			GlStateManager.popMatrix();
 		}

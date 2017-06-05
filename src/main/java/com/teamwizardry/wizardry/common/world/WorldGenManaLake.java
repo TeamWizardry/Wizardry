@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.world;
 
-import com.teamwizardry.wizardry.api.Config;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
@@ -18,15 +17,10 @@ public class WorldGenManaLake {
 		this.block = blockIn;
 	}
 
-	public boolean generate(World worldIn, Random rand, BlockPos position) {
-		int chance = rand.nextInt(Config.manaPoolRarity);
-		if (chance == 1) {
-			for (position = position.add(-8, 0, -8); position.getY() > 5 && worldIn.isAirBlock(position); position = position.down()) {
-			}
-
-			if (position.getY() <= 4) {
-				return false;
-			} else {
+	public void generate(World worldIn, Random rand, BlockPos position) {
+		int chance = 0;//rand.nextInt(ConfigValues.manaPoolRarity);
+		if (chance == 0) {
+			if (position.getY() > 4) {
 				position = position.down(4);
 				boolean[] aboolean = new boolean[2048];
 				int i = rand.nextInt(4) + 4;
@@ -64,11 +58,11 @@ public class WorldGenManaLake {
 								Material material = worldIn.getBlockState(position.add(k1, k, l2)).getMaterial();
 
 								if (k >= 4 && material.isLiquid()) {
-									return false;
+									return;
 								}
 
 								if (k < 4 && !material.isSolid() && worldIn.getBlockState(position.add(k1, k, l2)).getBlock() != this.block) {
-									return false;
+									return;
 								}
 							}
 						}
@@ -98,16 +92,18 @@ public class WorldGenManaLake {
 										worldIn.setBlockState(blockpos, Blocks.MYCELIUM.getDefaultState(), 2);
 									} else {
 										worldIn.setBlockState(blockpos, Blocks.GRASS.getDefaultState(), 2);
+
+										if (rand.nextInt(3) == 0) {
+											WorldGeneratorWisdomTree tree = new WorldGeneratorWisdomTree(true);
+											tree.generate(worldIn, rand, blockpos);
+										}
 									}
 								}
 							}
 						}
 					}
 				}
-
-
 			}
 		}
-		return true;
 	}
 }

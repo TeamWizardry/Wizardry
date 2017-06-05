@@ -19,7 +19,7 @@ public class Achievements {
 	public static AchievementPage PAGE;
 
 	public static void init() {
-		MANAPOOL = new ModAchievement("manapool", 1, -2, ModItems.PEARL_MANA, null);
+		MANAPOOL = new ModAchievement("manapool", 1, -2, ModItems.MANA_ORB, null);
 		BOOK = new ModAchievement("book", 3, 0, ModItems.BOOK, MANAPOOL);
 		DEVILDUST = new ModAchievement("devildust", -1, 0, ModItems.DEVIL_DUST, null);
 		CRUNCH = new ModAchievement("crunch", 1, 2, Blocks.BEDROCK, null);

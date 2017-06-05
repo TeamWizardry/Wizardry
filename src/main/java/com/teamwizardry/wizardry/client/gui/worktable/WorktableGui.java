@@ -1,170 +1,192 @@
 package com.teamwizardry.wizardry.client.gui.worktable;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import com.teamwizardry.librarianlib.client.gui.GuiBase;
-import com.teamwizardry.librarianlib.client.gui.GuiComponent;
-import com.teamwizardry.librarianlib.client.gui.components.ComponentGrid;
-import com.teamwizardry.librarianlib.client.gui.components.ComponentSprite;
-import com.teamwizardry.librarianlib.client.gui.components.ComponentVoid;
-import com.teamwizardry.librarianlib.client.sprite.Sprite;
-import com.teamwizardry.librarianlib.client.sprite.Texture;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.teamwizardry.librarianlib.features.gui.GuiBase;
+import com.teamwizardry.librarianlib.features.gui.GuiComponent;
+import com.teamwizardry.librarianlib.features.gui.components.*;
+import com.teamwizardry.librarianlib.features.gui.mixin.gl.GlMixin;
+import com.teamwizardry.librarianlib.features.network.PacketHandler;
+import com.teamwizardry.librarianlib.features.sprite.Sprite;
+import com.teamwizardry.librarianlib.features.sprite.Texture;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
+import com.teamwizardry.wizardry.api.spell.SpellRecipeConstructor;
+import com.teamwizardry.wizardry.common.network.PacketSendSpellToBook;
+import com.teamwizardry.wizardry.init.ModItems;
+import net.minecraft.client.Minecraft;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.Vec3d;
+
+import javax.annotation.Nullable;
+import java.awt.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.UUID;
 
 /**
  * Created by Saad on 6/17/2016.
  */
 public class WorktableGui extends GuiBase {
-	public static final Texture BACKGROUND_TEXTURE = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/table_background.png"));
-	public static final Sprite BACKGROUND_SPRITE = BACKGROUND_TEXTURE.getSprite("bg", 512, 256);
-
-	public static final Texture SPRITE_SHEET = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sprite_sheet.png"));
-
-	static final int iconSize = 12;
-	public Multimap<ModuleType, Module> modulesByType = HashMultimap.create();
-	public GuiComponent<?> paper;
-	public GuiComponent<?> selected;
+	private static final Texture BACKGROUND_TEXTURE = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/table_background.png"));
+	private static final Sprite BACKGROUND_SPRITE = BACKGROUND_TEXTURE.getSprite("bg", 480, 224);
+	public HashSet<Module> compiledSpell = new HashSet<>();
+	ComponentVoid paper;
+	BiMap<GuiComponent, UUID> paperComponents = HashBiMap.create();
+	HashMap<UUID, UUID> componentLinks = new HashMap<>();
 
 	public WorktableGui() {
-		super(512, 256);
+		super(480, 224);
 
-		for (Module module : ModuleRegistry.INSTANCE.modules)
-			modulesByType.get(module.getModuleType()).add(module);
+		ComponentRect rect = new ComponentRect(0, 0, 40000, 40000);
+		rect.getColor().setValue(new Color(0xB3000000, true));
+		GlMixin.INSTANCE.transform(rect).setValue(new Vec3d(0, 0, -10));
+		getFullscreenComponents().add(rect);
 
 		ComponentSprite background = new ComponentSprite(BACKGROUND_SPRITE, 0, 0);
 		getMainComponents().add(background);
 
-		paper = new ComponentVoid(160, 0, 191, 202);
-		paper.setZIndex(100);
+		paper = new ComponentVoid(180, 19, 180, 188);
 		getMainComponents().add(paper);
 
-		ComponentVoid effects = new ComponentVoid(92, 32, 52, 158);
-		addModules(effects, ModuleType.EFFECT, 7, 7, 3, 12);
+		ComponentVoid effects = new ComponentVoid(29, 31, 48, 80);
+		addModules(effects, ModuleType.SHAPE);
 		getMainComponents().add(effects);
 
-		ComponentVoid shapes = new ComponentVoid(32, 32, 52, 74);
-		addModules(shapes, ModuleType.SHAPE, 7, 7, 3, 5);
+		ComponentVoid shapes = new ComponentVoid(93, 31, 48, 80);
+		addModules(shapes, ModuleType.EFFECT);
 		getMainComponents().add(shapes);
 
-		ComponentVoid booleans = new ComponentVoid(32, 116, 52, 74);
-		addModules(booleans, ModuleType.BOOLEAN, 7, 7, 3, 5);
-		getMainComponents().add(booleans);
-
-		ComponentVoid events = new ComponentVoid(368, 31, 52, 87);
-		addModules(events, ModuleType.EVENT, 7, 7, 3, 6);
+		ComponentVoid events = new ComponentVoid(29, 123, 48, 80);
+		addModules(events, ModuleType.EVENT);
 		getMainComponents().add(events);
 
-		ComponentVoid modifiers = new ComponentVoid(428, 31, 52, 87);
-		addModules(modifiers, ModuleType.MODIFIER, 7, 7, 3, 6);
+		ComponentVoid modifiers = new ComponentVoid(93, 123, 48, 80);
+		addModules(modifiers, ModuleType.MODIFIER);
 		getMainComponents().add(modifiers);
 
-		getMainComponents().add(selected);
+		ComponentSprite save = new ComponentSprite(new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/button.png")), 395, 30, (int) (88 / 1.5), (int) (24 / 1.5));
+		int width = Minecraft.getMinecraft().fontRenderer.getStringWidth("SAVE");
+		int height = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT;
+		ComponentText textSave = new ComponentText(395 + (save.getSize().getXi() / 2) - width / 2, 30 + (save.getSize().getYi() / 2) - height / 2);
+		textSave.getText().setValue("SAVE");
+		save.BUS.hook(GuiComponent.MouseClickEvent.class, (event) -> {
 
-		int boxHeight = 200, boxWidth = 100;
-		Sprite ringTexture = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/items/ring_base.png"));
-		Sprite staffTexture = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/items/staff.png"));
-
-		/*ComponentRect menu = new ComponentRect(0, 0, getGuiWidth(), getGuiHeight());
-		menu.getColor().setValue(new Color(0x804A4A4A));
-
-
-		ComponentRect ring = new ComponentRect((getGuiWidth() / 2) - (boxWidth / 2) - 55, (getGuiHeight() / 2) - (boxHeight / 2), boxWidth, boxHeight);
-
-		ComponentSprite sprite = new ComponentSprite(ringTexture, (boxWidth / 2) - (ringTexture.getWidth() / 2), (boxHeight / 2) - (ringTexture.getHeight() / 2));
-		ring.add(sprite);
-
-		new ButtonMixin<>(ring, () -> {
-		});
-
-		ring.BUS.hook(ButtonMixin.ButtonStateChangeEvent.class, (event) -> {
-			switch (event.getNewState()) {
-				case NORMAL:
-					sprite.setSize(new Vec2d(ringTexture.getWidth(), ringTexture.getHeight()).mul(2));
-					sprite.setPos(new Vec2d((boxWidth / 2.0) - ((ringTexture.getWidth() * 2.0) / 2.0), (boxHeight / 2.0) - ((ringTexture.getHeight() * 2.0) / 2.0)));
-					ring.getColor().setValue(new Color(0x804A4A4A));
-					ring.setSize(new Vec2d(boxWidth, boxHeight));
-					ring.setPos(new Vec2d((getGuiWidth() / 2) - (boxWidth / 2) - 55, (getGuiHeight() / 2.0) - (boxHeight / 2.0)));
-					break;
-				case HOVER:
-					sprite.setSize(new Vec2d(ringTexture.getWidth(), ringTexture.getHeight()).mul(4));
-					sprite.setPos(new Vec2d((boxWidth / 2.0) - ((ringTexture.getWidth() * 4.0) / 2.0), (boxHeight / 2.0) - ((ringTexture.getHeight() * 4.0) / 2.0)));
-					ring.getColor().setValue(new Color(0x809A9A9A));
-					ring.setSize(new Vec2d(boxWidth + 20, boxHeight + 20));
-					ring.setPos(new Vec2d((getGuiWidth() / 2) - (boxWidth / 2) - 55 - 10, (getGuiHeight() / 2.0) - (boxHeight / 2.0)));
-					break;
-				case DISABLED:
-					sprite.setSize(new Vec2d(ringTexture.getWidth(), ringTexture.getHeight()));
-					sprite.setPos(new Vec2d((boxWidth / 2.0) - (ringTexture.getWidth() / 2.0), (boxHeight / 2.0) - (ringTexture.getHeight() / 2.0)));
-					ring.getColor().setValue(new Color(0x80222222));
-					ring.setSize(new Vec2d(boxWidth, boxHeight));
-					ring.setPos(new Vec2d((getGuiWidth() / 2) - (boxWidth / 2) - 55, (getGuiHeight() / 2.0) - (boxHeight / 2.0)));
-					break;
+			HashSet<GuiComponent> heads = getHeads();
+			compiledSpell.clear();
+			for (GuiComponent component : heads) {
+				Module module = compileModule(component);
+				if (module == null) continue;
+				compiledSpell.add(module);
 			}
-		});
-		ring.BUS.hook(ButtonMixin.ButtonClickEvent.class, (event) -> {
-			getMainComponents().remove(shapes);
-			menu.invalidate();
-		});
 
+			SpellRecipeConstructor recipe = new SpellRecipeConstructor(compiledSpell);
 
-		ComponentRect staff = new ComponentRect(((getGuiWidth() / 2) - (boxWidth / 2)) + 55, (getGuiHeight() / 2) - (boxHeight / 2), boxWidth, boxHeight);
-
-		ComponentSprite sprite2 = new ComponentSprite(staffTexture, (boxWidth / 2) - (staffTexture.getWidth() / 2), (boxHeight / 2) - (staffTexture.getHeight() / 2));
-		staff.add(sprite2);
-
-		new ButtonMixin<>(staff, () -> {
-		});
-
-		staff.BUS.hook(ButtonMixin.ButtonStateChangeEvent.class, (event) -> {
-			switch (event.getNewState()) {
-				case NORMAL:
-					sprite2.setSize(new Vec2d(staffTexture.getWidth(), staffTexture.getHeight()).mul(2));
-					sprite2.setPos(new Vec2d((boxWidth / 2.0) - ((staffTexture.getWidth() * 2.0) / 2.0), (boxHeight / 2.0) - ((staffTexture.getHeight() * 2.0) / 2.0)));
-					staff.getColor().setValue(new Color(0x804A4A4A));
-					staff.setSize(new Vec2d(boxWidth, boxHeight));
-					staff.setPos(new Vec2d(((getGuiWidth() / 2.0) - (boxWidth / 2.0)) + 55, (getGuiHeight() / 2.0) - (boxHeight / 2.0)));
-					break;
-				case HOVER:
-					sprite2.setSize(new Vec2d(staffTexture.getWidth(), staffTexture.getHeight()).mul(4));
-					sprite2.setPos(new Vec2d((boxWidth / 2.0) - ((staffTexture.getWidth() * 4.0) / 2.0), (boxHeight / 2.0) - ((staffTexture.getHeight() * 4.0) / 2.0)));
-					staff.getColor().setValue(new Color(0x809A9A9A));
-					staff.setSize(new Vec2d(boxWidth + 20, boxHeight + 20));
-					staff.setPos(new Vec2d(((getGuiWidth() / 2.0) - (boxWidth + (20.0 / 2.0))) + 55, (getGuiHeight() / 2.0) - (boxHeight / 2.0)));
-					break;
-				case DISABLED:
-					sprite2.setSize(new Vec2d(staffTexture.getWidth(), staffTexture.getHeight()));
-					sprite2.setPos(new Vec2d((boxWidth / 2.0) - (staffTexture.getWidth() / 2.0), (boxHeight / 2.0) - (staffTexture.getHeight() / 2.0)));
-					staff.getColor().setValue(new Color(0x80222222));
-					staff.setSize(new Vec2d(boxWidth, boxHeight));
-					staff.setPos(new Vec2d(((getGuiWidth() / 2.0) - (boxWidth / 2.0)) + 55, (getGuiHeight() / 2.0) - (boxHeight / 2.0)));
+			for (ItemStack stack : Minecraft.getMinecraft().player.inventory.mainInventory) {
+				if (stack.getItem() == ModItems.BOOK) {
+					int slot = Minecraft.getMinecraft().player.inventory.getSlotFor(stack);
+					PacketHandler.NETWORK.sendToServer(new PacketSendSpellToBook(slot, recipe.getRecipeJson().toString()));
+				}
 			}
-		});
 
-		staff.BUS.hook(ButtonMixin.ButtonClickEvent.class, (event) -> {
-			getMainComponents().remove(shapes);
-			menu.invalidate();
-		});
+			//long time = System.currentTimeMillis();
+			//for (GuiComponent component : paperComponents.keySet()) {
+			//	component.setData(Vec2d.class, "pre_move_pos", component.getPos());
+			//	component.BUS.hook(GuiComponent.ComponentTickEvent.class, (event2) -> {
+			//		long delta = System.currentTimeMillis() - time;
+//
+			//		Vec2d origin = (Vec2d) event2.getComponent().getData(Vec2d.class, "pre_move_pos");
+			//		if (origin == null) return;
+//
+			//		Vec2d target = event.getComponent().getPos().add(event2.getComponent().getSize().getX() / 2, event2.getComponent().getSize().getY() / 2);
+			//		Vec2d sub = target.sub(origin);
+//
+			//		float q = new CubicBezier(0.18f, -0.16f, 0.88f, -0.37f).eval((delta / 1000.0f) + ClientTickHandler.getPartialTicks());
+			//		Vec2d newLoc = sub.mul(q);
+//
+			//		event2.getComponent().setPos(newLoc);
+			//	});
+			//}
 
-		menu.add(staff);
-		menu.add(ring);*/
+		});
+		getMainComponents().add(save);
+		getMainComponents().add(textSave);
 	}
 
-	private void addModules(ComponentVoid parent, ModuleType type, int x, int y, int columns, int rows) {
-		ComponentGrid grid = new ComponentGrid(x, y, 12, 12, columns);
+	public UUID getUUID(GuiComponent component) {
+		return paperComponents.get(component);
+	}
+
+	public GuiComponent getComponent(UUID uuid) {
+		return paperComponents.inverse().get(uuid);
+	}
+
+	@Nullable
+	private Module compileModule(@Nullable GuiComponent component) {
+		if (component == null) return null;
+
+		Module module = getModule(component);
+		if (module == null) return null;
+
+		if (!componentLinks.containsKey(getUUID(component))) return module;
+		UUID uuidChild = componentLinks.get(getUUID(component));
+
+		GuiComponent childComp = getComponent(uuidChild);
+		if (childComp == null) return module;
+
+		Module child = getModule(childComp);
+		if (child == null) return module;
+
+		module.nextModule = compileModule(childComp);
+
+		return module;
+	}
+
+	private HashSet<GuiComponent> getHeads() {
+		HashSet<GuiComponent> heads = new HashSet<>();
+		for (GuiComponent component : paperComponents.keySet()) {
+			if (componentLinks.containsValue(getUUID(component))) continue;
+			heads.add(component);
+		}
+
+		return heads;
+	}
+
+	public int getLinksTo(GuiComponent comp) {
+		UUID main = paperComponents.get(comp);
+		int count = 0;
+		for (UUID uuid : componentLinks.values()) {
+			if (main.equals(uuid)) {
+				count++;
+			}
+		}
+		return count;
+	}
+
+	private void addModules(ComponentVoid parent, ModuleType type) {
+		ComponentGrid grid = new ComponentGrid(0, 0, 16, 16, 3);
 		parent.add(grid);
 
-		for (Module module : modulesByType.get(type)) {
-			TableModule item = new TableModule(this, module, false);
+		for (Module module : ModuleRegistry.INSTANCE.getModules(type)) {
+			TableModule item = new TableModule(this, module.copy(), false);
 			grid.add(item.component);
 		}
 	}
 
+	@Nullable
+	public Module getModule(@Nullable GuiComponent component) {
+		if (component == null) return null;
+		for (Object object : component.getTags()) {
+			if (object instanceof Module) return ((Module) object).copy();
+		}
+		return null;
+	}
+
 	@Override
 	public boolean doesGuiPauseGame() {
-		return true;
+		return false;
 	}
 }

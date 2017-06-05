@@ -2,12 +2,12 @@ package com.teamwizardry.wizardry.client.cloth;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
-import com.teamwizardry.librarianlib.common.util.math.Matrix4;
+import com.teamwizardry.librarianlib.features.math.Matrix4;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,15 +17,15 @@ import java.util.Map.Entry;
 public class Cloth {
 
 	public PointMass3D[][] masses;
-	public List<Link3D> links = new ArrayList<>();
-	public List<Link3D> hardLinks = new ArrayList<>();
-	public int solvePasses = 5;
 	public Vec3d[] top;
-	public int height;
 	public Vec3d size;
-	public float stretch = 1, shear = 1, flex = 1.0f, air = 1.5f;
-	public Vec3d gravity = new Vec3d(0, -0.01, 0);
-	public Map<PointMass3D, Vec3d> relativePositions = new HashMap<>();
+	private List<Link3D> links = new ArrayList<>();
+	private List<Link3D> hardLinks = new ArrayList<>();
+	private int solvePasses = 5;
+	private int height;
+	private float stretch = 1, shear = 1, flex = 1.0f, air = 1.5f;
+	private Vec3d gravity = new Vec3d(0, -0.01, 0);
+	private Map<PointMass3D, Vec3d> relativePositions = new HashMap<>();
 
 	public Cloth(Vec3d[] top, int height, Vec3d size) {
 		this.top = top;
@@ -242,7 +242,7 @@ public class Cloth {
 			normal = normal.scale(-1);
 
 		// https://books.google.com/books?id=x5cLAQAAIAAJ&pg=PA5&lpg=PA5&dq=wind+pressure+on+a+flat+angled+surface&source=bl&ots=g090hiOfxv&sig=MqZQhLMozsMNndJtkA1R_bk5KiA&hl=en&sa=X&ved=0ahUKEwiozMW2z_vNAhUD7yYKHeqvBVcQ6AEILjAC#v=onepage&q&f=false
-		// page 5-6. I'm using formula (5)
+		// component 5-6. I'm using formula (5)
 		// wind vector length squared is flat pressure. All the other terms can
 		// be changed in the air coefficent.
 		Vec3d force = normal.add(windNormal).normalize().scale((StrictMath.pow(wind.lengthVector(), 2) * angle) / (Math.PI / 4));
@@ -256,9 +256,8 @@ public class Cloth {
 		double minX = Double.MAX_VALUE, minY = Double.MAX_VALUE, minZ = Double.MAX_VALUE;
 		double maxX = -Double.MAX_VALUE, maxY = -Double.MAX_VALUE, maxZ = -Double.MAX_VALUE;
 
-		for (int x = 0; x < masses.length; x++) {
-			for (int y = 0; y < masses[x].length; y++) {
-				PointMass3D mass = masses[x][y];
+		for (PointMass3D[] mass1 : masses) {
+			for (PointMass3D mass : mass1) {
 				if (mass.origPos == null)
 					mass.origPos = mass.pos;
 				if (mass.pos != null) {
@@ -288,7 +287,7 @@ public class Cloth {
 		double m = 0.5;
 		AxisAlignedBB checkAABB = new AxisAlignedBB(minX - m, minY - m, minZ - m, maxX + m, maxY + m, maxZ + m);
 
-		return e.world.getCollisionBoxes(checkAABB);
+		return e.world.getCollisionBoxes(e, checkAABB);
 	}
 
 	public void tick(Entity e, List<Sphere> spheres) {
@@ -337,7 +336,7 @@ public class Cloth {
 	}
 
 	@Nullable
-	public Vec3d calculateIntercept(AxisAlignedBB aabb, PointMass3D point, boolean yOnly) {
+	private Vec3d calculateIntercept(AxisAlignedBB aabb, PointMass3D point, boolean yOnly) {
 		Vec3d vecA = point.origPos, vecB = point.pos;
 
 		Vec3d vecY = null;
@@ -396,39 +395,39 @@ public class Cloth {
 
 	@Nullable
 	@VisibleForTesting
-	Vec3d collideWithXPlane(AxisAlignedBB aabb, double p_186671_1_, Vec3d p_186671_3_, Vec3d p_186671_4_) {
+	private Vec3d collideWithXPlane(AxisAlignedBB aabb, double p_186671_1_, Vec3d p_186671_3_, Vec3d p_186671_4_) {
 		Vec3d vec3d = p_186671_3_.getIntermediateWithXValue(p_186671_4_, p_186671_1_);
 		return ((vec3d != null) && intersectsWithYZ(aabb, vec3d)) ? vec3d : null;
 	}
 
 	@Nullable
 	@VisibleForTesting
-	Vec3d collideWithYPlane(AxisAlignedBB aabb, double p_186663_1_, Vec3d p_186663_3_, Vec3d p_186663_4_) {
+	private Vec3d collideWithYPlane(AxisAlignedBB aabb, double p_186663_1_, Vec3d p_186663_3_, Vec3d p_186663_4_) {
 		Vec3d vec3d = p_186663_3_.getIntermediateWithYValue(p_186663_4_, p_186663_1_);
 		return ((vec3d != null) && intersectsWithXZ(aabb, vec3d)) ? vec3d : null;
 	}
 
 	@Nullable
 	@VisibleForTesting
-	Vec3d collideWithZPlane(AxisAlignedBB aabb, double p_186665_1_, Vec3d p_186665_3_, Vec3d p_186665_4_) {
+	private Vec3d collideWithZPlane(AxisAlignedBB aabb, double p_186665_1_, Vec3d p_186665_3_, Vec3d p_186665_4_) {
 		Vec3d vec3d = p_186665_3_.getIntermediateWithZValue(p_186665_4_, p_186665_1_);
 		return ((vec3d != null) && intersectsWithXY(aabb, vec3d)) ? vec3d : null;
 	}
 
 	@VisibleForTesting
-	public boolean intersectsWithYZ(AxisAlignedBB aabb, Vec3d vec) {
+	private boolean intersectsWithYZ(AxisAlignedBB aabb, Vec3d vec) {
 		double m = -0.0;
 		return (vec.yCoord > (aabb.minY + m)) && (vec.yCoord < (aabb.maxY - m)) && (vec.zCoord > (aabb.minZ + m)) && (vec.zCoord < (aabb.maxZ - m));
 	}
 
 	@VisibleForTesting
-	public boolean intersectsWithXZ(AxisAlignedBB aabb, Vec3d vec) {
+	private boolean intersectsWithXZ(AxisAlignedBB aabb, Vec3d vec) {
 		double m = -0.0;
 		return (vec.xCoord > (aabb.minX + m)) && (vec.xCoord < (aabb.maxX - m)) && (vec.zCoord > (aabb.minZ + m)) && (vec.zCoord < (aabb.maxZ - m));
 	}
 
 	@VisibleForTesting
-	public boolean intersectsWithXY(AxisAlignedBB aabb, Vec3d vec) {
+	private boolean intersectsWithXY(AxisAlignedBB aabb, Vec3d vec) {
 		return (vec.xCoord > aabb.minX) && (vec.xCoord < aabb.maxX) && (vec.yCoord > aabb.minY) && (vec.yCoord < aabb.maxY);
 	}
 

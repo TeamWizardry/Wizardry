@@ -1,53 +1,72 @@
 package com.teamwizardry.wizardry.common.block;
 
-import com.teamwizardry.librarianlib.common.base.ModCreativeTab;
-import com.teamwizardry.librarianlib.common.base.block.BlockModContainer;
-import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.block.IManaSink;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.teamwizardry.librarianlib.features.base.block.BlockModContainer;
+import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.network.PacketHandler;
+import com.teamwizardry.librarianlib.features.structure.Structure;
+import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.api.render.ClusterObject;
-import com.teamwizardry.wizardry.client.render.TileCraftingPlateRenderer;
+import com.teamwizardry.wizardry.api.spell.Module;
+import com.teamwizardry.wizardry.api.spell.SpellStack;
+import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.client.render.block.TileCraftingPlateRenderer;
+import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
+import com.teamwizardry.wizardry.init.ModItems;
+import com.teamwizardry.wizardry.init.ModSounds;
+import com.teamwizardry.wizardry.init.ModStructures;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.gen.structure.template.Template;
-import net.minecraft.world.gen.structure.template.TemplateManager;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.awt.*;
+import java.util.ArrayList;
 
 /**
  * Created by Saad on 6/10/2016.
  */
-public class BlockCraftingPlate extends BlockModContainer implements IManaSink {
+public class BlockCraftingPlate extends BlockModContainer implements IStructure {
 
-	public static final AxisAlignedBB AABB = new AxisAlignedBB(0.125, 0, 0.125, 0.875, 0.625, 0.875);
+	public static final AxisAlignedBB AABB = new AxisAlignedBB(0.125, 0, 0.125, 0.875, 0.725, 0.875);
 
 	public BlockCraftingPlate() {
 		super("crafting_plate", Material.ROCK);
 		setHardness(1.0F);
-		setLightLevel(15);
 		setSoundType(SoundType.STONE);
 	}
 
 	@SideOnly(Side.CLIENT)
 	public void initModel() {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileCraftingPlate.class, new TileCraftingPlateRenderer());
+	}
+
+	@Override
+	public int getLightValue(@Nonnull IBlockState state, IBlockAccess world, @Nonnull BlockPos pos) {
+		return 15;
 	}
 
 	@Nullable
@@ -61,58 +80,84 @@ public class BlockCraftingPlate extends BlockModContainer implements IManaSink {
 	}
 
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+		ItemStack heldItem = playerIn.getHeldItem(hand);
+
 		if (!worldIn.isRemote) {
+			if (tickStructure(worldIn, playerIn, pos)) {
+				if (!(playerIn.getHeldItemMainhand().getItem() == ModItems.MAGIC_WAND)) {
+					TileCraftingPlate plate = getTE(worldIn, pos);
+					if (plate.isCrafting) return false;
+					if (!heldItem.isEmpty()) {
+						if (heldItem.getItem() == ModItems.BOOK && playerIn.isCreative()) {
+							ItemStack pearl = new ItemStack(ModItems.PEARL_NACRE);
 
-			TileCraftingPlate plate = getTE(worldIn, pos);
-			WorldServer worldserver = (WorldServer) worldIn;
-			MinecraftServer minecraftserver = worldIn.getMinecraftServer();
-			TemplateManager templatemanager = worldserver.getStructureTemplateManager();
-			Template template = templatemanager.getTemplate(minecraftserver, new ResourceLocation("crafting_altar"));
-			// TODO
-			//if (ModStructures.matchTemplateToPos(template, worldIn, pos.subtract(new Vec3i(6, 3, 6)))) {
-			//	if (!plate.structureComplete) {
-			//		plate.structureComplete = true;
-			//		Random r = new Random();
-			//		LibParticles.FAIRY_EXPLODE(worldIn, new Vec3d(pos).addVector(0.5, 0.5, 0.5), new Color(r.nextFloat(), r.nextFloat(), r.nextFloat()));
-			//		return true;
-			//	}
-			//} else {
-			//	LibParticles.TEMPLATE_BLOCK_ERROR(worldIn, new Vec3d(pos).addVector(0.5, 0.5, 0.5));
-			//	plate.structureComplete = false;
-			//	return true;
-			//}
+							JsonObject object = new Gson().fromJson(ItemNBTHelper.getString(heldItem, "spell_recipe", null), JsonObject.class);
+							if (object == null) return false;
 
-			if (plate.isCrafting) return false;
-			if ((heldItem != null) && (heldItem.stackSize > 0)) {
-				ItemStack stack = heldItem.copy();
-				stack.stackSize = 1;
-				--heldItem.stackSize;
-				plate.inventory.add(new ClusterObject(plate, stack, worldIn, plate.random));
-				playerIn.openContainer.detectAndSendChanges();
+							ArrayList<ItemStack> inventory = new ArrayList<>();
+							JsonArray array = object.getAsJsonArray("list");
+							for (int i = 0; i < array.size(); i++) {
+								JsonElement element = array.get(i);
+								if (!element.isJsonPrimitive()) continue;
+								String name = element.getAsString();
+								Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(name));
+								if (item == null) continue;
+								inventory.add(new ItemStack(item));
 
-			} else if (plate.output != null) {
-				playerIn.setHeldItem(hand, plate.output.copy());
-				plate.output = null;
-				playerIn.openContainer.detectAndSendChanges();
+							}
+							SpellStack spellStack = new SpellStack(inventory);
+							NBTTagList list = new NBTTagList();
+							for (Module module : spellStack.compiled) list.appendTag(module.serializeNBT());
+							ItemNBTHelper.setList(pearl, Constants.NBT.SPELL, list);
 
-			} else if (!plate.inventory.isEmpty()) {
-				playerIn.setHeldItem(hand, plate.inventory.remove(plate.inventory.size() - 1).stack);
-				playerIn.openContainer.detectAndSendChanges();
-			}
+							plate.output = pearl;
+							plate.markDirty();
+							PacketHandler.NETWORK.sendToAllAround(new PacketExplode(new Vec3d(pos).addVector(0.5, 0.5, 0.5), Color.CYAN, Color.BLUE, 2, 2, 500, 300, 20, false),
+									new NetworkRegistry.TargetPoint(worldIn.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
+
+							worldIn.playSound(null, pos, ModSounds.BASS_BOOM, SoundCategory.BLOCKS, 1f, (float) RandUtil.nextDouble(1, 1.5));
+							return true;
+						}
+
+						ItemStack stack = heldItem.copy();
+						stack.setCount(1);
+						heldItem.setCount(heldItem.getCount() - 1);
+
+						float yaw = playerIn.rotationYaw;
+						float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - yaw));
+						float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - yaw));
+						Vec3d origin = new Vec3d(offX, playerIn.getEyeHeight(), offZ).add(playerIn.getPositionVector());
+
+						plate.inventory.add(new ClusterObject(plate, stack, worldIn, origin.subtract(new Vec3d(pos))));
+						playerIn.openContainer.detectAndSendChanges();
+
+					} else if (plate.output != null) {
+						playerIn.setHeldItem(hand, plate.output.copy());
+						plate.output = null;
+						playerIn.openContainer.detectAndSendChanges();
+
+					} else if (!plate.inventory.isEmpty()) {
+						playerIn.setHeldItem(hand, plate.inventory.remove(plate.inventory.size() - 1).stack);
+						playerIn.openContainer.detectAndSendChanges();
+					}
+					worldIn.notifyBlockUpdate(pos, state, state, 3);
+					return true;
+				}
+				return false;
+			} else return false;
 		}
-		worldIn.notifyBlockUpdate(pos, state, state, 3);
 		return true;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos) {
 		return AABB;
 	}
 
 	@Override
-	public boolean canRenderInLayer(BlockRenderLayer layer) {
+	public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
 		return layer == BlockRenderLayer.CUTOUT;
 	}
 
@@ -126,9 +171,13 @@ public class BlockCraftingPlate extends BlockModContainer implements IManaSink {
 		return false;
 	}
 
-	@Nullable
 	@Override
-	public ModCreativeTab getCreativeTab() {
-		return Wizardry.tab;
+	public Structure getStructure() {
+		return ModStructures.INSTANCE.structures.get("crafting_altar");
+	}
+
+	@Override
+	public Vec3i offsetToCenter() {
+		return new Vec3i(6, 2, 6);
 	}
 }

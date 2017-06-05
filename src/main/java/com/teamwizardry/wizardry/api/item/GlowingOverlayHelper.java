@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.api.item;
 
-import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.api.Constants.NBT;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.ItemStack;

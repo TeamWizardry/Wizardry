@@ -1,16 +1,23 @@
 [
-{
-  "modid": "wizardry",
-  "name": "Wizardry",
-  "description": "Delve into the creation of magical spells and wizardry",
-  "version": "${version}",
-  "mcversion": "${mcversion}",
-  "url": "",
-  "updateUrl": "",
-  "authorList": ["LordSaad44", "Elucent", "thecodewarrior", "murapix", "werty1124", "Leviathan143"],
-  "credits": "Team Wizardry",
-  "logoFile": "",
-  "screenshots": [],
-  "dependencies": []
-}
+  {
+    "modid": "wizardry",
+    "name": "Wizardry",
+    "description": "Delve into the creation of magical spells and wizardry",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "",
+    "updateUrl": "",
+    "authorList": [
+      "LordSaad44",
+      "Elucent",
+      "thecodewarrior",
+      "murapix",
+      "werty1124",
+      "Leviathan143"
+    ],
+    "credits": "Team Wizardry",
+    "logoFile": "",
+    "screenshots": [],
+    "dependencies": []
+  }
 ]

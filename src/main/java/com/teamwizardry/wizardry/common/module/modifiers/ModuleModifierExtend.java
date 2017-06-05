@@ -1,13 +1,9 @@
 package com.teamwizardry.wizardry.common.module.modifiers;
 
-import com.teamwizardry.wizardry.api.Attributes;
-import com.teamwizardry.wizardry.api.spell.IModifier;
-import com.teamwizardry.wizardry.api.spell.Module;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.api.spell.RegisterModule;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
+import com.teamwizardry.wizardry.api.spell.*;
 import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 /**
  * Created by LordSaad.
@@ -15,62 +11,54 @@ import org.jetbrains.annotations.NotNull;
 @RegisterModule
 public class ModuleModifierExtend extends Module implements IModifier {
 
-	public ModuleModifierExtend() {
-		process(this);
-	}
-
-	@NotNull
-	@Override
-	public ItemStack getRequiredStack() {
-		return new ItemStack(Items.PRISMARINE_CRYSTALS);
-	}
-
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleType getModuleType() {
 		return ModuleType.MODIFIER;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getID() {
 		return "modifier_extend";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getReadableName() {
 		return "Extend";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDescription() {
 		return "Can increase range or time on shapes and effects.";
 	}
 
 	@Override
-	public double getManaToConsume() {
-		return 0;
+	public boolean run(@Nonnull SpellData spell) {
+		return true;
 	}
 
 	@Override
-	public double getBurnoutToFill() {
-		return 0;
+	public void runClient(@Nonnull SpellData spell) {
+
 	}
 
 	@Override
-	public void apply(Module module) {
+	public void apply(@NotNull Module module) {
 		int power = 2;
 		module.attributes.setDouble(Attributes.EXTEND, module.attributes.getDouble(Attributes.EXTEND) + power);
 	}
 
-	@NotNull
 	@Override
-	public ModuleModifierExtend copy() {
-		ModuleModifierExtend module = new ModuleModifierExtend();
-		module.deserializeNBT(serializeNBT());
-		process(module);
-		return module;
+	public double costMultiplier() {
+		return 1.2;
+	}
+
+	@Nonnull
+	@Override
+	public Module copy() {
+		return cloneModule(new ModuleModifierExtend());
 	}
 }

@@ -1,10 +1,10 @@
-tile.wizardry:crafting_plate.name=Sorcerer's Plate
+tile.wizardry:crafting_plate.name=Crafting Plate
 tile.wizardry:magicians_worktable.name=Magician's Worktable
 tile.wizardry:mana_battery.name=Mana Battery
-tile.wizardry:pedestal.name=Pedestal
 tile.wizardry:nacre.name=Liquid Nacre
 tile.wizardry:mana.name=Liquid Mana
 tile.wizardry:cloud.name=Cloud
+item.wizardry:pearl_holder.name=Pearl Holder
 
 item.wizardry:book.name=Spellforger's Codex
 item.wizardry:ring.name=Golden Ring
@@ -14,11 +14,9 @@ item.wizardry:mana_pearl.name=Mana Pearl
 item.wizardry:glass_pearl.name=Glass Pearl
 item.wizardry:nacre_pearl.name=Nacre Pearl
 item.wizardry:quartz_pearl.name=Quartz Pearl
-item.wizardry:mana_cake.name=Mana Muffin
 item.wizardry:debugger.name=Wand of Creativity
-item.wizardry:wood_staff.name=Wooden Staff
-item.wizardry:wood_staff_pearl.name=Wooden Staff
-item.wizardry:gold_staff.name=Golden Staff
+item.wizardry:staff.name=Staff
+item.wizardry:staff_pearl.name=Staff With Pearl
 item.wizardry:fairy_dust.name=Fairy Dust
 item.wizardry:fairy_imbued_apple.name=Fairy Imbued Apple
 item.wizardry:fairy_wings.name=Fairy Wings
@@ -26,6 +24,26 @@ item.wizardry:unicorn_horn.name=Unicorn Horn
 item.wizardry:jar.name=Jar
 item.wizardry:jar_fairy.name=Fairy in a Jar
 item.wizardry:jar_jam.name=Fairy Jam
+item.wizardry:syringe.name=Empty Syringe
+item.wizardry:syringe_mana.name=ManaBooster Lite™
+item.wizardry:syringe_steroid.name=ManaBuilder Serum Premium Plus™
+item.wizardry:mana_orb.name=Mana Orb
+item.wizardry:glass_orb.name=Glass Orb
+item.wizardry:cape.name=Cape
+item.wizardry:magic_wand.name=Magic Wand
+item.wizardry:syringe_blood.name=Blood Syringe
+item.wizardry:light.name=Light
+
+tile.wizardry:wisdom_wood_log.name=Wisdom Wood Log
+tile.wizardry:wisdom_wood_planks.name=Wisdom Wood Planks
+tile.wizardry:wisdom_wood_pigmented_planks.name=Wisdom Wood Pigmented Planks
+tile.wizardry:wisdom_wood_slab.name=Wisdom Wood Slab
+tile.wizardry:wisdom_wood_stairs.name=Wisdom Wood Stairs
+tile.wizardry:wisdom_wood_trapdoor.name=Wisdom Wood Trapdoor
+tile.wizardry:wisdom_wood_fence.name=Wisdom Wood Fence
+tile.wizardry:wisdom_wood_fence_gate.name=Wisdom Wood Fence Gate
+tile.wizardry:wisdom_wood_door.name=Wisdom Wood Door
+tile.wizardry:wisdom_wood.name=Wisdom Wood
 
 gui.physicsbook.defaulttitle=Physics Book
 
@@ -49,6 +67,6 @@ wizardry.subtitle.bell=Bell tolls
 wizardry.subtitle.bubbling=Liquid bubbles
 wizardry.subtitle.spirit=Spirit whispers
 
-itemGroup.wizardry.Wizardry=Wizardry
+item_group.wizardry=Wizardry
 
-wizardry.misc.spell=Spell:
+wizardry.misc.module=Spell:

@@ -1,7 +1,11 @@
 package com.teamwizardry.wizardry.client.core;
 
-import com.teamwizardry.librarianlib.client.core.ClientTickHandler;
-import com.teamwizardry.librarianlib.common.util.math.Matrix4;
+import baubles.api.BaubleType;
+import baubles.api.BaublesApi;
+import baubles.api.cap.IBaublesItemHandler;
+import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
+import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.math.Matrix4;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.client.cloth.Cloth;
 import com.teamwizardry.wizardry.client.cloth.PointMass3D;
@@ -14,7 +18,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -23,16 +26,14 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import org.lwjgl.opengl.GL11;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.WeakHashMap;
 
 public class CapeHandler {
 
@@ -249,24 +250,36 @@ public class CapeHandler {
 	@SuppressWarnings({"rawtypes"})
 	@SubscribeEvent
 	public void drawPlayer(RenderLivingEvent.Post event) {
-		if (!((event.getEntity() instanceof EntityVillager) || (event.getEntity() instanceof EntityPlayer)))
-			return;
+		if (!(event.getEntity() instanceof EntityPlayer)) return;
 
-		if (event.getEntity() instanceof EntityPlayer) {
-			boolean match = false;
-			EntityPlayer player = (EntityPlayer) event.getEntity();
-			for (ItemStack eq : player.getArmorInventoryList()) {
-				if ((eq != null) && (eq.getItem() == ModItems.CAPE)) {
-					match = true;
-					break;
+		boolean match = false;
+		ItemStack stack = null;
+		EntityPlayer player = (EntityPlayer) event.getEntity();
+		for (ItemStack eq : player.getArmorInventoryList()) {
+			if ((eq != null) && (eq.getItem() == ModItems.CAPE)) {
+				match = true;
+				stack = eq;
+				break;
+			}
+		}
+		if (stack == null) {
+			if (Loader.isModLoaded("baubles")) {
+				IBaublesItemHandler inv = BaublesApi.getBaublesHandler(player);
+				for (int i : BaubleType.BODY.getValidSlots()) {
+					ItemStack stack1 = inv.getStackInSlot(i);
+					if (stack1.getItem() == ModItems.CAPE) {
+						stack = stack1;
+						match = true;
+						break;
+					}
 				}
 			}
-			if (!match) return;
 		}
+		if (!match) return;
 
 		float partialTicks = ClientTickHandler.getPartialTicks();
 
-//		models.put(event.getEntity(), ImmutableList.of());//getBoxes(event.getEntity().getPositionVector(), event.getRenderer().getMainModel(), event.getEntity().renderYawOffset));
+//		models.put(event.getCap(), ImmutableList.of());//getBoxes(event.getCap().getPositionVector(), event.getRenderer().getMainModel(), event.getCap().renderYawOffset));
 
 		if (!cloths.containsKey(event.getEntity())) {
 			Vec3d[] shoulderPoints = new Vec3d[basePoints.length];
@@ -286,7 +299,6 @@ public class CapeHandler {
 			));
 		}
 
-
 		Cloth c = cloths.get(event.getEntity());
 
 		Tessellator tess = Tessellator.getInstance();
@@ -302,7 +314,6 @@ public class CapeHandler {
 		);
 		GlStateManager.translate(-event.getEntity().lastTickPosX, -event.getEntity().lastTickPosY, -event.getEntity().lastTickPosZ);
 
-
 		GlStateManager.disableTexture2D();
 		GlStateManager.glLineWidth(1.0f);
 		GlStateManager.disableCull();
@@ -312,7 +323,20 @@ public class CapeHandler {
 		vb.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
 		tess.draw();
 
-		Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/capes/template.png"));
+		String cape;
+		//if (LibrarianLib.PROXY.getResource(Wizardry.MODID, "textures/capes/cape_" + player.getName().toLowerCase() + ".png") == null) {
+			UUID uuid = ItemNBTHelper.getUUID(stack, "uuid");
+			if (uuid == null) {
+				uuid = UUID.randomUUID();
+				ItemNBTHelper.setUUID(stack, "uuid", uuid);
+			}
+			Random r = new Random(uuid.hashCode());
+			cape = "cape_normal_" + (1 + r.nextInt(3));
+		//} else {
+		//	cape = "cape_" + player.getName();
+		//}
+
+		Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/capes/" + cape + ".png"));
 		GlStateManager.enableTexture2D();
 
 		vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);

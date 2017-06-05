@@ -1,7 +1,8 @@
 package com.teamwizardry.wizardry.client.cloth;
 
 import net.minecraft.util.math.Vec3d;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nullable;
 
 public class PointMass3D {
 	@Nullable

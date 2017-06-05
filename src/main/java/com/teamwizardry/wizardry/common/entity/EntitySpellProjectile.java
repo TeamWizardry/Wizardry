@@ -1,135 +1,208 @@
 package com.teamwizardry.wizardry.common.entity;
 
-import com.teamwizardry.librarianlib.client.fx.particle.ParticleBuilder;
-import com.teamwizardry.librarianlib.client.fx.particle.ParticleSpawner;
-import com.teamwizardry.librarianlib.client.fx.particle.functions.InterpFadeInOut;
-import com.teamwizardry.librarianlib.common.util.math.interpolate.StaticInterp;
-import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpHelix;
-import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.spell.ITargettable;
+import com.teamwizardry.librarianlib.features.base.entity.EntityMod;
+import com.teamwizardry.librarianlib.features.network.PacketHandler;
+import com.teamwizardry.librarianlib.features.saving.AbstractSaveHandler;
+import com.teamwizardry.librarianlib.features.saving.SaveInPlace;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleRegistry;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.common.module.events.ModuleEventAlongPath;
-import com.teamwizardry.wizardry.common.module.events.ModuleEventCast;
-import com.teamwizardry.wizardry.common.module.events.ModuleEventCollideBlock;
-import com.teamwizardry.wizardry.common.module.events.ModuleEventCollideEntity;
-import com.teamwizardry.wizardry.common.module.shapes.ModuleShapeProjectile;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.projectile.EntityThrowable;
+import com.teamwizardry.wizardry.api.spell.SpellData;
+import com.teamwizardry.wizardry.api.util.PosUtils;
+import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.api.util.Utils;
+import com.teamwizardry.wizardry.common.network.PacketExplode;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.MoverType;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
+
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
 /**
  * Created by LordSaad.
  */
-public class EntitySpellProjectile extends EntityThrowable {
+@SaveInPlace
+public class EntitySpellProjectile extends EntityMod {
 
-	private EntityLivingBase caster;
-	private Module spell;
+	public Color primaryColor = Color.WHITE;
+	public Color secondaryColor = Color.WHITE;
+	public SpellData spell;
+	public Module module;
 
 	public EntitySpellProjectile(World worldIn) {
 		super(worldIn);
-	}
-
-	public EntitySpellProjectile(World world, EntityLivingBase caster, Module spell) {
-		super(world);
-		setSize(0.1F, 0.1F);
+		setSize(0.3F, 0.3F);
 		isImmuneToFire = true;
 
-		this.caster = caster;
+		setRenderDistanceWeight(10);
+		dispatchEntityToNearbyPlayers();
+	}
+
+	public EntitySpellProjectile(World world, Module module, SpellData spell) {
+		super(world);
+		setSize(0.3F, 0.3F);
+		isImmuneToFire = true;
+
+		this.module = module;
 		this.spell = spell;
 
-		if (spell instanceof ModuleShapeProjectile) {
-			if (spell.nextModule != null && spell.nextModule.getModuleType() == ModuleType.EVENT) {
-				Module nextModule = spell.nextModule;
-				if (nextModule instanceof ModuleEventCast) {
-					nextModule.run(world, caster);
-					if (nextModule instanceof ITargettable)
-						((ITargettable) nextModule).run(world, caster, getPositionVector());
-				}
+		if (module != null) {
+			if (module.getPrimaryColor() != null) {
+				primaryColor = module.getPrimaryColor();
+			}
+
+			if (module.getSecondaryColor() != null) secondaryColor = module.getSecondaryColor();
+			else {
+				Color color = primaryColor;
+				secondaryColor = new Color(Math.min(255, color.getRed() + 40), Math.min(255, color.getGreen() + 40), Math.min(255, color.getBlue() + 40));
 			}
 		}
+
+		setRenderDistanceWeight(10);
+
+		dispatchEntityToNearbyPlayers();
+	}
+
+	@Override
+	protected void entityInit() {
+
+	}
+
+	@Nullable
+	@Override
+	public AxisAlignedBB getCollisionBox(Entity entityIn) {
+		return getEntityBoundingBox();
 	}
 
 	@Override
 	public void onUpdate() {
 		super.onUpdate();
-		if (ticksExisted > 500) setDead();
-		if (spell == null) return;
-		List<EntitySpellProjectile> projectiles = world.getEntitiesWithinAABB(EntitySpellProjectile.class, new AxisAlignedBB(getPosition()).expand(0.5, 0.5, 0.5));
-		if (!projectiles.isEmpty())
-			for (EntitySpellProjectile projectile : projectiles)
-				if (projectile.spell.equals(spell) && getEntityId() % 2 == 0) setDead();
 
-		if (spell.getColor() != null) {
-			ParticleBuilder glitter = new ParticleBuilder(10);
-			glitter.setColor(new Color(1.0f, 1.0f, 1.0f, 0.1f));
-			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
-			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-			glitter.setColor(spell.getColor());
-
-			ParticleSpawner.spawn(glitter, world, new StaticInterp<>(getPositionVector()), 10, 0, (aFloat, particleBuilder) -> {
-				glitter.setScale((float) ThreadLocalRandom.current().nextDouble(0.3, 0.8));
-				glitter.setLifetime(ThreadLocalRandom.current().nextInt(10, 20));
-				glitter.setPositionFunction(new InterpHelix(Vec3d.ZERO, getLook(0), 0.3f, 0.3f, 1F, ThreadLocalRandom.current().nextFloat()));
-			});
+		if (ticksExisted > 1000) {
+			setDead();
+			return;
 		}
 
-		if (spell instanceof ModuleShapeProjectile) {
-			if (spell.nextModule != null && spell.nextModule.getModuleType() == ModuleType.EVENT) {
-				Module nextModule = spell.nextModule;
-				if (nextModule instanceof ModuleEventAlongPath) {
-					nextModule.run(world, caster);
-					if (nextModule instanceof ITargettable)
-						((ITargettable) nextModule).run(world, caster, getPositionVector());
-				}
-			}
-		}
-	}
-
-	@Override
-	protected void onImpact(@NotNull RayTraceResult result) {
-		if (spell instanceof ModuleShapeProjectile) {
-			if (spell.nextModule != null && spell.nextModule.getModuleType() == ModuleType.EVENT) {
-				Module nextModule = spell.nextModule;
-
-				if (result.typeOfHit == RayTraceResult.Type.ENTITY && nextModule instanceof ModuleEventCollideEntity) {
-					nextModule.run(world, caster);
-					((ITargettable) nextModule).run(world, caster, result.entityHit);
-					setDead();
-				} else if (result.typeOfHit == RayTraceResult.Type.BLOCK && nextModule instanceof ModuleEventCollideBlock) {
-					nextModule.run(world, caster);
-					((ITargettable) nextModule).run(world, caster, getPositionVector());
-					setDead();
-				}
-			}
-		}
-	}
-
-	@Override
-	public void readEntityFromNBT(@NotNull NBTTagCompound compound) {
-		super.readEntityFromNBT(compound);
-		Module module = ModuleRegistry.INSTANCE.getModule(compound.getString("id"));
 		if (module == null) return;
-		module.deserializeNBT(compound);
-		Module.process(module);
-		spell = module;
+
+		float yaw = spell.getData(YAW, 0F);
+		float pitch = spell.getData(PITCH, 0F);
+		rotationPitch = pitch;
+		rotationYaw = yaw;
+
+		Vec3d look = PosUtils.vecFromRotations(pitch, yaw);
+
+		if (!isCollided) {
+			motionX = look.xCoord;
+			motionY = look.yCoord;
+			motionZ = look.zCoord;
+
+			move(MoverType.SELF, motionX, motionY, motionZ);
+		} else {
+			SpellData data = spell.copy();
+
+			RayTraceResult result = Utils.raytrace(world, look, getPositionVector(), 1, this);
+			if (result != null && result.typeOfHit == RayTraceResult.Type.BLOCK) {
+				data.processBlock(result.getBlockPos(), result.sideHit, result.hitVec);
+			} else data.processBlock(getPosition(), result != null ? result.sideHit : null, getPositionVector());
+
+			goBoom(data);
+			return;
+		}
+
+		List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(this, getEntityBoundingBox());
+		if (!entities.isEmpty()) {
+			Entity caster = spell.getData(CASTER);
+
+			if (caster != null && entities.size() == 1 && entities.get(0) instanceof EntitySpellProjectile) {
+				EntitySpellProjectile spellProjectile = (EntitySpellProjectile) entities.get(0);
+				SpellData otherData = spellProjectile.spell;
+				if (otherData != null && otherData.hasData(CASTER)) {
+					Entity otherCaster = spell.getData(CASTER);
+					if (otherCaster != null && otherCaster.getUniqueID().equals(caster.getUniqueID())) {
+						return;
+					}
+				}
+			}
+
+			if (caster != null && entities.contains(caster)) return;
+
+			SpellData data = spell.copy();
+
+			RayTraceResult result = Utils.raytrace(world, look, getPositionVector(), 1, this);
+			if (result != null && result.typeOfHit == RayTraceResult.Type.ENTITY && result.entityHit != null) {
+				data.processEntity(result.entityHit, false);
+			} else if (entities.get(0) != null) data.processEntity(entities.get(0), false);
+
+			goBoom(data);
+		}
+	}
+
+	public void goBoom(SpellData data) {
+		motionX = 0;
+		motionY = 0;
+		motionZ = 0;
+
+		if (module != null)
+			module.runNextModule(data);
+
+		PacketHandler.NETWORK.sendToAllAround(new PacketExplode(getPositionVector(), primaryColor, secondaryColor, 0.3, 0.3, RandUtil.nextInt(100, 200), 75, 25, true),
+				new NetworkRegistry.TargetPoint(world.provider.getDimension(), posX, posY, posZ, 512));
+
+		setDead();
+	}
+
+	@SideOnly(Side.CLIENT)
+	public boolean isInRangeToRenderDist(double distance) {
+		return distance < 4096.0D;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public boolean isInRangeToRender3d(double x, double y, double z) {
+		return super.isInRangeToRender3d(x, y, z);
 	}
 
 	@Override
-	public void writeEntityToNBT(@NotNull NBTTagCompound compound) {
-		super.writeEntityToNBT(compound);
-		compound.setTag("spell", spell.serializeNBT());
+	public boolean canBeCollidedWith() {
+		return true;
+	}
+
+	@Override
+	public void readCustomNBT(@Nonnull NBTTagCompound compound) {
+		super.readCustomNBT(compound);
+		NBTTagCompound moduleCompound = compound.getCompoundTag("module");
+		Module tempModule = ModuleRegistry.INSTANCE.getModule(moduleCompound.getString("id"));
+		if (tempModule != null) {
+			Module module = tempModule.copy();
+			if (module != null) {
+				this.module = module;
+				this.module.deserializeNBT(compound);
+			}
+		}
+
+		spell = new SpellData(world);
+		spell.deserializeNBT(compound.getCompoundTag("spell_data"));
+
+		AbstractSaveHandler.readAutoNBT(this, compound.getCompoundTag("save"), true);
+	}
+
+	@Override
+	public void writeCustomNBT(@Nonnull NBTTagCompound compound) {
+		super.writeCustomNBT(compound);
+		compound.setTag("module", module.serializeNBT());
+		compound.setTag("spell_data", spell.serializeNBT());
+
+		compound.setTag("save", AbstractSaveHandler.writeAutoNBT(this, true));
 	}
 }

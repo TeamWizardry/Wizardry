@@ -1,32 +1,39 @@
 package com.teamwizardry.wizardry.common.tile;
 
-import com.teamwizardry.librarianlib.common.base.block.TileMod;
-import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
-import com.teamwizardry.librarianlib.common.util.autoregister.TileRegister;
-import com.teamwizardry.librarianlib.common.util.saving.Save;
+import com.teamwizardry.librarianlib.features.autoregister.TileRegister;
+import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.network.PacketHandler;
+import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.block.IManaSink;
-import com.teamwizardry.wizardry.api.block.IStructure;
-import com.teamwizardry.wizardry.api.item.Infusable;
-import com.teamwizardry.wizardry.api.item.PearlType;
+import com.teamwizardry.wizardry.api.block.TileManaSink;
+import com.teamwizardry.wizardry.api.item.EnumPearlType;
+import com.teamwizardry.wizardry.api.item.IInfusable;
 import com.teamwizardry.wizardry.api.render.ClusterObject;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.SpellStack;
+import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.init.ModItems;
-import com.teamwizardry.wizardry.lib.LibParticles;
+import com.teamwizardry.wizardry.init.ModSounds;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ITickable;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.util.Constants.NBT;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -35,7 +42,7 @@ import java.util.Random;
  * Created by Saad on 6/10/2016.
  */
 @TileRegister("crafting_plate")
-public class TileCraftingPlate extends TileMod implements ITickable, IManaSink, IStructure {
+public class TileCraftingPlate extends TileManaSink {
 
 	@Save
 	public int craftingTime = 300;
@@ -48,10 +55,12 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink, 
 	@Save
 	@Nullable
 	public ItemStack output;
-	@Save
-	public boolean structureComplete;
 	public List<ClusterObject> inventory = new ArrayList<>();
 	public Random random = new Random(getPos().toLong());
+
+	public TileCraftingPlate() {
+		super(10000, 10000);
+	}
 
 	@Override
 	public void readCustomNBT(NBTTagCompound compound) {
@@ -71,7 +80,7 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink, 
 		compound.setTag("clusters", list);
 	}
 
-	@NotNull
+	@Nonnull
 	@SideOnly(Side.CLIENT)
 	@Override
 	public AxisAlignedBB getRenderBoundingBox() {
@@ -80,6 +89,16 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink, 
 
 	@Override
 	public void update() {
+		super.update();
+
+		for (EntityItem entityItem : world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos).expand(2, 2, 2))) {
+			ItemStack stack = entityItem.getEntityItem().copy();
+			stack.setCount(1);
+			entityItem.getEntityItem().shrink(1);
+			inventory.add(new ClusterObject(this, stack, world, entityItem.getPositionVector().subtract(new Vec3d(pos))));
+			markDirty();
+		}
+
 		if (world.isRemote) return;
 		if (tick < 360) tick += 10;
 		else tick = 0;
@@ -89,7 +108,7 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink, 
 		}
 		markDirty();
 
-		if ((output == null) && !isCrafting && !inventory.isEmpty() && (inventory.get(inventory.size() - 1).stack.getItem() instanceof Infusable)) {
+		if ((output == null) && !isCrafting && !inventory.isEmpty() && (inventory.get(inventory.size() - 1).stack.getItem() instanceof IInfusable)) {
 			isCrafting = true;
 			craftingTimeLeft = craftingTime;
 			output = inventory.remove(inventory.size() - 1).stack;
@@ -97,23 +116,26 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink, 
 		}
 
 		if (isCrafting) {
+			if (!consumeMana(50)) {
+				craftingTimeLeft = Math.min(300, craftingTimeLeft++);
+				return;
+			}
 			if (craftingTimeLeft > 0) craftingTimeLeft--;
 			else {
 				isCrafting = false;
 				markDirty();
 
-				// TODO PACKET
-				LibParticles.CRAFTING_ALTAR_PEARL_EXPLODE(world, new Vec3d(pos).addVector(0.5, 1, 0.5));
-
-//                LibParticles.CRAFTING_ALTAR_CLUSTER_EXPLODE(te.getWorld(), new Vec3d(te.getPos()).addVector(0.5, 0.5, 0.5).add(current));
-
-
 				List<ItemStack> stacks = new ArrayList<>();
 				for (ClusterObject cluster : inventory) stacks.add(cluster.stack);
 				SpellStack spellStack = new SpellStack(stacks);
 
+				PacketHandler.NETWORK.sendToAllAround(new PacketExplode(new Vec3d(pos).addVector(0.5, 0.5, 0.5), Color.CYAN, Color.BLUE, 2, 2, 500, 300, 20, false),
+						new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
+
+				world.playSound(null, getPos(), ModSounds.BASS_BOOM, SoundCategory.BLOCKS, 1f, (float) RandUtil.nextDouble(1, 1.5));
+
 				ItemStack stack = new ItemStack(ModItems.PEARL_NACRE);
-				ItemNBTHelper.setString(stack, "type", PearlType.INFUSED.toString());
+				ItemNBTHelper.setString(stack, "type", EnumPearlType.INFUSED.toString());
 
 				NBTTagList list = new NBTTagList();
 				for (Module module : spellStack.compiled) list.appendTag(module.serializeNBT());
@@ -123,6 +145,24 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink, 
 				inventory.clear();
 				craftingTimeLeft = craftingTime;
 				markDirty();
+
+				List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(pos).expand(32, 32, 32));
+				for (Entity entity1 : entityList) {
+					double dist = entity1.getDistance(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+					final double upperMag = 3;
+					final double scale = 0.8;
+					double mag = upperMag * (scale * dist / (-scale * dist - 1) + 1);
+					Vec3d dir = entity1.getPositionVector().subtract(new Vec3d(pos).addVector(0.5, 0.5, 0.5)).normalize().scale(mag);
+
+					entity1.motionX += (dir.xCoord);
+					entity1.motionY += (dir.yCoord);
+					entity1.motionZ += (dir.zCoord);
+					entity1.fallDistance = 0;
+					entity1.velocityChanged = true;
+
+					if (entity1 instanceof EntityPlayerMP)
+						((EntityPlayerMP) entity1).connection.sendPacket(new SPacketEntityVelocity(entity1));
+				}
 			}
 		} else {
 			if (craftingTimeLeft != craftingTime) {
@@ -130,10 +170,5 @@ public class TileCraftingPlate extends TileMod implements ITickable, IManaSink, 
 				markDirty();
 			}
 		}
-	}
-
-	@Override
-	public String structureName() {
-		return "crafting_altar";
 	}
 }

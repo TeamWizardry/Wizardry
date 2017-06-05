@@ -1,36 +1,46 @@
 package com.teamwizardry.wizardry.common.network;
 
-import com.teamwizardry.librarianlib.common.network.PacketBase;
-import com.teamwizardry.librarianlib.common.util.saving.Save;
+import com.teamwizardry.librarianlib.features.network.PacketBase;
+import com.teamwizardry.librarianlib.features.saving.Save;
+import com.teamwizardry.librarianlib.features.saving.SaveMethodGetter;
+import com.teamwizardry.librarianlib.features.saving.SaveMethodSetter;
 import com.teamwizardry.wizardry.api.spell.Module;
+import com.teamwizardry.wizardry.api.spell.ModuleRegistry;
+import com.teamwizardry.wizardry.api.spell.SpellData;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-
-import static com.teamwizardry.wizardry.api.spell.SpellStack.getModules;
 
 /**
  * Created by LordSaad.
  */
 public class PacketRenderSpell extends PacketBase {
 
+	private Module module;
 	@Save
-	private ItemStack stack;
-	@Save
-	private int casterID;
-	@Save
-	private Vec3d pos;
+	private NBTTagCompound data;
 
 	public PacketRenderSpell() {
 	}
 
-	public PacketRenderSpell(ItemStack stack, int casterID, Vec3d pos) {
-		this.stack = stack;
-		this.casterID = casterID;
-		this.pos = pos;
+	public PacketRenderSpell(Module module, SpellData data) {
+		this.module = module;
+		this.data = data.serializeNBT();
+	}
+
+	@SaveMethodGetter(saveName = "module_saver")
+	public NBTTagCompound getter() {
+		return module != null ? module.serializeNBT() : null;
+	}
+
+	@SaveMethodSetter(saveName = "module_saver")
+	public void setter(NBTTagCompound compound) {
+		if (compound != null) {
+			this.module = ModuleRegistry.INSTANCE.getModule(compound.getString("id"));
+			if (module != null)
+				this.module.deserializeNBT(compound);
+		}
 	}
 
 	@Override
@@ -39,19 +49,11 @@ public class PacketRenderSpell extends PacketBase {
 		if (Minecraft.getMinecraft().player == null) return;
 		World world = Minecraft.getMinecraft().player.world;
 
-		EntityLivingBase caster;
-		if (casterID != -1 && world.getEntityByID(casterID) instanceof EntityLivingBase)
-			caster = (EntityLivingBase) world.getEntityByID(casterID);
-		else caster = null;
+		SpellData data = new SpellData(world);
+		data.deserializeNBT(this.data);
 
-		for (Module module : getModules(stack)) {
-			if (module != null) {
-				Module tempModule = module;
-				while (tempModule != null) {
-					tempModule.runClient(world, stack, caster, pos);
-					tempModule = tempModule.nextModule;
-				}
-			}
-		}
+		if (module == null) return;
+
+		module.runClient(data);
 	}
 }

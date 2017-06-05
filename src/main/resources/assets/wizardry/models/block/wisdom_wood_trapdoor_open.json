@@ -1,0 +1,6 @@
+{
+  "parent": "block/trapdoor_open",
+  "textures": {
+    "texture": "wizardry:blocks/wisdom_wood_planks"
+  }
+}

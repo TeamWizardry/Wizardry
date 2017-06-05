@@ -1,31 +1,31 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "wizardry:magicians_worktable.obj"
+    "model": "wizardry:research_table_right"
   },
   "variants": {
     "inventory": {
-      "model": "wizardry:table_left"
+      "model": "wizardry:research_table_right"
     },
     "is_left_side": {
       "true": {
-        "model": "wizardry:Empty"
+        "model": "wizardry:research_table_left"
       },
       "false": {
-        "model": "wizardry:magicians_worktable.obj",
+        "model": "wizardry:research_table_right",
         "uvlock": false
       }
     },
     "facing": {
-      "north": {},
-      "south": {
+      "south": {},
+      "north": {
         "y": 180
       },
       "east": {
-        "y": 90
+        "y": 270
       },
       "west": {
-        "y": 270
+        "y": 90
       },
       "up": {},
       "down": {}

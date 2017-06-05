@@ -51,13 +51,6 @@ public class Constants {
 		public static final int SCHEMATIC_DOWN_LAYER = 6;
 	}
 
-	public static class PageNumbers {
-		public static final int GUIDE = 0;
-		public static final int WORKTABLE = 1;
-		public static final int BASICS = 2;
-		public static final int BASICS_GETTING_STARTED = 3;
-	}
-
 	public static class WorkTable {
 		public static final int DONE_BUTTON = 0;
 		public static final int CONFIRM_BUTTON = 1;

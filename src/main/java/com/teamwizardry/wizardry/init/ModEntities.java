@@ -3,11 +3,11 @@ package com.teamwizardry.wizardry.init;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.client.render.entity.*;
 import com.teamwizardry.wizardry.common.entity.*;
+import com.teamwizardry.wizardry.common.entity.gods.EntityGavreel;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
-
-//github.com/TeamWizardry/Wizardry
 
 /**
  * Created by Saad on 8/17/2016.
@@ -17,28 +17,34 @@ public class ModEntities {
 	private static int i = 0;
 
 	public static void init() {
-		registerEntity(EntityHallowedSpirit.class, "hallowed_spirit", 64, 3, true);
-		registerEntity(EntityFairy.class, "fairy", 64, 3, true);
-		registerEntity(EntityDevilDust.class, "dust_tracker", 64, 1, false);
-		registerEntity(EntitySpellCodex.class, "book_tracker", 64, 1, false);
-		registerEntity(EntitySpellProjectile.class, "spell_projectile", 64, 1, false);
-		registerEntity(EntitySpellGravityWell.class, "gravity_well", 64, 1, false);
-		registerEntity(EntityUnicorn.class, "unicorn");
+		registerEntity(new ResourceLocation(Wizardry.MODID, "spirit_wight"), EntitySpiritWight.class, "spirit_wight");
+		registerEntity(new ResourceLocation(Wizardry.MODID, "gavreel"), EntityGavreel.class, "gavreel");
+		registerEntity(new ResourceLocation(Wizardry.MODID, "fairy"), EntityFairy.class, "fairy");
+		registerEntity(new ResourceLocation(Wizardry.MODID, "dust_tracker"), EntityDevilDust.class, "dust_tracker", 256, 1, false);
+		registerEntity(new ResourceLocation(Wizardry.MODID, "book_tracker"), EntitySpellCodex.class, "book_tracker", 256, 1, false);
+		registerEntity(new ResourceLocation(Wizardry.MODID, "spell_projectile"), EntitySpellProjectile.class, "spell_projectile", 256, 1, true);
+		registerEntity(new ResourceLocation(Wizardry.MODID, "jump_pad"), EntityJumpPad.class, "jump_pad", 64, 1, false);
+		registerEntity(new ResourceLocation(Wizardry.MODID, "unicorn"), EntityUnicorn.class, "unicorn");
 	}
-	
-	public static void registerEntity(Class<? extends Entity> entityClass, String entityName) {
-		registerEntity(entityClass, entityName, 64, 1, true);
+
+	public static void registerEntity(ResourceLocation loc, Class<? extends Entity> entityClass, String entityName) {
+		registerEntity(loc, entityClass, entityName, 256, 1, true);
 	}
-	
+
 	//Use when default parameters are not sufficient, e.g fast-moving projectiles
-	public static void registerEntity(Class<? extends Entity> entityClass, String entityName, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates) {
-		EntityRegistry.registerModEntity(entityClass, entityName, i, Wizardry.instance, trackingRange, updateFrequency, sendsVelocityUpdates);
+	public static void registerEntity(ResourceLocation loc, Class<? extends Entity> entityClass, String entityName, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates) {
+		EntityRegistry.registerModEntity(loc, entityClass, entityName, i, Wizardry.instance, trackingRange, updateFrequency, sendsVelocityUpdates);
 		i++;
 	}
 
 	public static void initModels() {
-		RenderingRegistry.registerEntityRenderingHandler(EntityHallowedSpirit.class, manager -> new RenderHallowedSpirit(manager, new ModelHallowedSpirit()));
-		RenderingRegistry.registerEntityRenderingHandler(EntityFairy.class, manager -> new RenderFairy(manager, new ModelFairy()));
+		RenderingRegistry.registerEntityRenderingHandler(EntityGavreel.class, manager -> new RenderGavreel(manager, new ModelGavreel()));
+		RenderingRegistry.registerEntityRenderingHandler(EntitySpiritWight.class, manager -> new RenderSpiritWight(manager, new ModelSpiritWight()));
+		RenderingRegistry.registerEntityRenderingHandler(EntityFairy.class, manager -> new RenderFairy(manager, new ModelNull()));
 		RenderingRegistry.registerEntityRenderingHandler(EntityUnicorn.class, manager -> new RenderUnicorn(manager, new ModelUnicorn()));
+		RenderingRegistry.registerEntityRenderingHandler(EntityJumpPad.class, manager -> new RenderJumpPad(manager, new ModelNull()));
+		RenderingRegistry.registerEntityRenderingHandler(EntitySpellProjectile.class, RenderSpellProjectile::new);
+		RenderingRegistry.registerEntityRenderingHandler(EntitySpellCodex.class, RenderSpellCodex::new);
+		RenderingRegistry.registerEntityRenderingHandler(EntityDevilDust.class, RenderDevilDust::new);
 	}
 }

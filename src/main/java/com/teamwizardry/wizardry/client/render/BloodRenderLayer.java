@@ -1,9 +1,10 @@
 package com.teamwizardry.wizardry.client.render;
 
-import com.teamwizardry.librarianlib.client.fx.shader.ShaderHelper;
-import com.teamwizardry.librarianlib.client.util.ClientUtilMethods;
+import com.teamwizardry.librarianlib.features.kotlin.ClientUtilMethods;
+import com.teamwizardry.librarianlib.features.shader.ShaderHelper;
+import com.teamwizardry.wizardry.api.capability.EnumBloodType;
+import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
-import com.teamwizardry.wizardry.api.capability.bloods.IBloodType;
 import com.teamwizardry.wizardry.client.fx.Shaders;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelBiped.ArmPose;
@@ -29,29 +30,26 @@ public class BloodRenderLayer implements LayerRenderer<AbstractClientPlayer> {
 
 	@Override
 	public void doRenderLayer(@Nonnull AbstractClientPlayer entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-		IBloodType type = WizardryCapabilityProvider.get(entity).getBloodType();
-		if (type != null) {
-			render.bindTexture(type.getBloodTexture(entity));
-			ClientUtilMethods.glColor(type.getBloodColor(entity));
-			setModelVisibilities(entity);
-			GlStateManager.enableBlendProfile(Profile.PLAYER_SKIN);
+		IWizardryCapability cap = WizardryCapabilityProvider.getCap(entity);
+		if (cap != null) {
+			EnumBloodType type = cap.getBloodType();
+			if (type != null && type != EnumBloodType.NONE) {
+				render.bindTexture(EnumBloodType.getResourceLocation(type));
+				ClientUtilMethods.glColor(type.color);
+				setModelVisibilities(entity);
+				GlStateManager.enableBlendProfile(Profile.PLAYER_SKIN);
 
-			boolean glowing = type.isGlowing(entity);
-
-			if (glowing) {
 				GlStateManager.disableLighting();
 				ShaderHelper.INSTANCE.useShader(Shaders.rawColor);
-			}
 
-			render.getMainModel().render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
+				render.getMainModel().render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
 
-			if (glowing) {
 				GlStateManager.enableLighting();
 				ShaderHelper.INSTANCE.releaseShader();
-			}
 
-			GlStateManager.disableBlendProfile(Profile.PLAYER_SKIN);
-			GlStateManager.color(1.0F, 1.0F, 1.0F);
+				GlStateManager.disableBlendProfile(Profile.PLAYER_SKIN);
+				GlStateManager.color(1.0F, 1.0F, 1.0F);
+			}
 		}
 	}
 
@@ -59,13 +57,13 @@ public class BloodRenderLayer implements LayerRenderer<AbstractClientPlayer> {
 		ModelPlayer modelplayer = render.getMainModel();
 
 		if (clientPlayer.isSpectator()) {
-			modelplayer.setInvisible(false);
+			modelplayer.setVisible(true);
 			modelplayer.bipedHead.showModel = true;
 			modelplayer.bipedHeadwear.showModel = true;
 		} else {
 			ItemStack stackMain = clientPlayer.getHeldItemMainhand();
 			ItemStack stackOff = clientPlayer.getHeldItemOffhand();
-			modelplayer.setInvisible(true);
+			modelplayer.setVisible(false);
 			modelplayer.bipedHeadwear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.HAT);
 			modelplayer.bipedBodyWear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.JACKET);
 			modelplayer.bipedLeftLegwear.showModel = clientPlayer.isWearing(EnumPlayerModelParts.LEFT_PANTS_LEG);
@@ -75,7 +73,7 @@ public class BloodRenderLayer implements LayerRenderer<AbstractClientPlayer> {
 			modelplayer.isSneak = clientPlayer.isSneaking();
 			ArmPose poseMain = ArmPose.EMPTY;
 
-			if (stackMain != null) {
+			if (!stackMain.isEmpty()) {
 				poseMain = ArmPose.ITEM;
 
 				if (clientPlayer.getItemInUseCount() > 0) {
@@ -90,7 +88,7 @@ public class BloodRenderLayer implements LayerRenderer<AbstractClientPlayer> {
 			}
 
 			ArmPose poseOff = ArmPose.EMPTY;
-			if (stackOff != null) {
+			if (!stackOff.isEmpty()) {
 				poseOff = ArmPose.ITEM;
 
 				if (clientPlayer.getItemInUseCount() > 0) {

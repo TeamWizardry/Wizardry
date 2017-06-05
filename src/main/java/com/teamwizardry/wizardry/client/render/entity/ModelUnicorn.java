@@ -5,8 +5,9 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.passive.AbstractChestHorse;
+import net.minecraft.entity.passive.AbstractHorse;
 import net.minecraft.entity.passive.EntityHorse;
-import net.minecraft.entity.passive.HorseType;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -186,13 +187,13 @@ public class ModelUnicorn extends ModelBase {
 
 	@Override
 	public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-		EntityHorse entityhorse = (EntityHorse) entityIn;
-		HorseType horsetype = entityhorse.getType();
-		float f = entityhorse.getGrassEatingAmount(0.0F);
-		boolean flag = entityhorse.isAdultHorse();
-		boolean flag1 = flag && entityhorse.isHorseSaddled();
-		float f1 = entityhorse.getHorseSize();
-		boolean flag4 = entityhorse.isBeingRidden();
+		AbstractHorse abstracthorse = (AbstractHorse) entityIn;
+		float f = abstracthorse.getGrassEatingAmount(0.0F);
+		boolean flag = abstracthorse.isChild();
+		boolean flag1 = !flag && abstracthorse.isHorseSaddled();
+		boolean flag2 = abstracthorse instanceof AbstractChestHorse;
+		float f1 = abstracthorse.getHorseSize();
+		boolean flag4 = abstracthorse.isBeingRidden();
 
 		if (flag1) {
 			this.horseFaceRopes.render(scale);

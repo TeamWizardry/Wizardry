@@ -17,6 +17,9 @@ public class ModSounds {
 	public static SoundEvent HARP2;
 	public static SoundEvent BELL;
 	public static SoundEvent HALLOWED_SPIRIT;
+	public static SoundEvent EXPLOSION_BOOM;
+	public static SoundEvent PROJECTILE_LAUNCH;
+	public static SoundEvent BASS_BOOM;
 
 	public static void init() {
 		GLASS_BREAK = registerSound("glassbreak");
@@ -27,6 +30,9 @@ public class ModSounds {
 		BELL = registerSound("bell");
 		BUBBLING = registerSound("bubbling");
 		HALLOWED_SPIRIT = registerSound("hallowed_spirit_shriek");
+		EXPLOSION_BOOM = registerSound("expl_boom");
+		PROJECTILE_LAUNCH = registerSound("proj_launch");
+		BASS_BOOM = registerSound("bass_boom");
 	}
 
 	private static SoundEvent registerSound(String soundName) {

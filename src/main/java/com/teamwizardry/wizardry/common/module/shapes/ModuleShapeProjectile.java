@@ -1,80 +1,83 @@
 package com.teamwizardry.wizardry.common.module.shapes;
 
-import com.teamwizardry.wizardry.api.spell.Module;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.api.spell.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.entity.EntitySpellProjectile;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
+import com.teamwizardry.wizardry.init.ModSounds;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
+
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
 /**
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleShapeProjectile extends Module {
+public class ModuleShapeProjectile extends Module implements ICostModifier, ITaxing {
 
-	public ModuleShapeProjectile() {
-		process(this);
-	}
-
-	@NotNull
-	@Override
-	public ItemStack getRequiredStack() {
-		return new ItemStack(Items.NETHER_WART);
-	}
-
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleType getModuleType() {
 		return ModuleType.SHAPE;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getID() {
 		return "shape_projectile";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getReadableName() {
 		return "Projectile";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDescription() {
 		return "Will launch the spell as a projectile in the direction the caster is looking.";
 	}
 
 	@Override
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
-		if (caster == null) return false;
-		EntitySpellProjectile proj = new EntitySpellProjectile(world, caster, this);
-		Vec3d pos = caster.getPositionVector().addVector(0, caster.getEyeHeight(), 0);
-		proj.setPosition(pos.xCoord, pos.yCoord, pos.zCoord);
-		proj.setHeadingFromThrower(caster, caster.rotationPitch, caster.rotationYaw, 0.0f, 1.5f, 1.0f);
+	public boolean run(@Nonnull SpellData spell) {
+		World world = spell.world;
+		if (world.isRemote) return false;
+
+		Vec3d target = spell.getData(TARGET_HIT);
+		Vec3d origin = spell.getData(ORIGIN);
+		Entity caster = spell.getData(CASTER);
+		if (origin == null) return false;
+		//	if (caster == null) return false;
+		if (!tax(this, spell)) return false;
+
+		//float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - caster.rotationYaw));
+		//float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - caster.rotationYaw));
+		//Vec3d origin = new Vec3d(offX, caster.getEyeHeight() - 0.3, offZ).add(caster.getPositionVector());
+
+		EntitySpellProjectile proj = new EntitySpellProjectile(world, this, spell);
+		proj.setPosition(origin.xCoord, origin.yCoord, origin.zCoord);
 		proj.velocityChanged = true;
-		world.spawnEntity(proj);
-		return true;
+
+		boolean success = world.spawnEntity(proj);
+		if (success)
+			world.playSound(null, new BlockPos(origin), ModSounds.PROJECTILE_LAUNCH, SoundCategory.PLAYERS, 1f, (float) RandUtil.nextDouble(1, 1.5));
+		return success;
 	}
 
 	@Override
-	public int getChargeUpTime() {
-		return 50;
+	public void runClient(@Nonnull SpellData spell) {
+
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public ModuleShapeProjectile copy() {
-		ModuleShapeProjectile module = new ModuleShapeProjectile();
-		module.deserializeNBT(serializeNBT());
-		process(module);
-		return module;
+	public Module copy() {
+		return cloneModule(new ModuleShapeProjectile());
 	}
 }

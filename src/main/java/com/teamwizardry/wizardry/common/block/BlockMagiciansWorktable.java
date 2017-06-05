@@ -1,9 +1,7 @@
 package com.teamwizardry.wizardry.common.block;
 
-import com.teamwizardry.librarianlib.common.base.ModCreativeTab;
-import com.teamwizardry.librarianlib.common.base.block.BlockModContainer;
+import com.teamwizardry.librarianlib.features.base.block.BlockModContainer;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.Constants.PageNumbers;
 import com.teamwizardry.wizardry.common.tile.TileMagiciansWorktable;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -15,7 +13,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
@@ -23,8 +20,9 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Created by Saad on 6/12/2016.
@@ -40,7 +38,7 @@ public class BlockMagiciansWorktable extends BlockModContainer {
 		setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(ISLEFTSIDE, true));
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
 		EnumFacing placerFacing = placer.getHorizontalFacing();
@@ -71,7 +69,7 @@ public class BlockMagiciansWorktable extends BlockModContainer {
 	}
 
 	@Override
-	public void breakBlock(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state) {
+	public void breakBlock(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
 		super.breakBlock(worldIn, pos, state);
 		worldIn.destroyBlock(getOtherTableBlock(state, pos), false);
 	}
@@ -81,18 +79,18 @@ public class BlockMagiciansWorktable extends BlockModContainer {
 	}
 
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-		playerIn.openGui(Wizardry.instance, PageNumbers.WORKTABLE, worldIn, (int) playerIn.posX, (int) playerIn.posY, (int) playerIn.posZ);
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+		playerIn.openGui(Wizardry.instance, 0, worldIn, (int) playerIn.posX, (int) playerIn.posY, (int) playerIn.posZ);
 		return true;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	protected BlockStateContainer createBlockState() {
 		return new BlockStateContainer(this, FACING, ISLEFTSIDE);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
 		return getDefaultState().withProperty(ISLEFTSIDE, (meta & 4) != 0).withProperty(FACING, EnumFacing.getHorizontal(meta & 3));
@@ -105,7 +103,7 @@ public class BlockMagiciansWorktable extends BlockModContainer {
 	}
 
 	@Override
-	public boolean canRenderInLayer(BlockRenderLayer layer) {
+	public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
 		return (layer == BlockRenderLayer.CUTOUT) || (layer == BlockRenderLayer.TRANSLUCENT);
 	}
 
@@ -122,12 +120,6 @@ public class BlockMagiciansWorktable extends BlockModContainer {
 	@Override
 	public boolean isOpaqueCube(IBlockState blockState) {
 		return false;
-	}
-
-	@Nullable
-	@Override
-	public ModCreativeTab getCreativeTab() {
-		return Wizardry.tab;
 	}
 
 	@Nullable

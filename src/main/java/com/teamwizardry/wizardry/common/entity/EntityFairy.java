@@ -1,71 +1,77 @@
 package com.teamwizardry.wizardry.common.entity;
 
-import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.base.entity.FlyingEntityMod;
+import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.network.PacketHandler;
+import com.teamwizardry.librarianlib.features.saving.AbstractSaveHandler;
+import com.teamwizardry.librarianlib.features.saving.SaveInPlace;
 import com.teamwizardry.wizardry.api.Constants.NBT;
+import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.init.ModItems;
-import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityFlying;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 import java.awt.*;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.List;
+import java.util.Random;
 
 /**
  * Created by Saad on 8/21/2016.
  */
-public class EntityFairy extends EntityFlying {
+@SaveInPlace
+public class EntityFairy extends FlyingEntityMod {
 
-	private boolean readjustingComplete = true;
-	private boolean dirYawAdd;
-	private boolean dirPitchAdd;
+	public boolean ambush = false;
 	private Color color;
-	private double pitchAmount;
-	private double yawAmount;
 	private boolean sad;
 	private int age;
+	private boolean changingCourse = false;
+	private int changeCourseTick = 0;
+	private float tickPitch = 0;
+	private float tickYaw = 0;
 
 	public EntityFairy(World worldIn) {
 		super(worldIn);
-		setSize(0.5F, 0.5F);
+		setSize(1F, 1F);
 		isAirBorne = true;
 		experienceValue = 5;
-		color = new Color(ThreadLocalRandom.current().nextFloat(), ThreadLocalRandom.current().nextFloat(), ThreadLocalRandom.current().nextFloat());
+		color = new Color(RandUtil.nextFloat(), RandUtil.nextFloat(), RandUtil.nextFloat());
 		color = color.brighter();
-		rotationPitch = (float) ThreadLocalRandom.current().nextDouble(-90, 90);
-		rotationYaw = (float) ThreadLocalRandom.current().nextDouble(-180, 180);
-		age = ThreadLocalRandom.current().nextInt(1, 100);
+		age = RandUtil.nextInt(1, 100);
 	}
 
 	public EntityFairy(World worldIn, Color color, int age) {
 		super(worldIn);
-		setSize(0.5F, 0.5F);
+		setSize(1F, 1F);
 		isAirBorne = true;
 		experienceValue = 5;
 		this.color = color;
-		rotationPitch = (float) ThreadLocalRandom.current().nextDouble(-90, 90);
-		rotationYaw = (float) ThreadLocalRandom.current().nextDouble(-180, 180);
 		this.age = age;
 	}
 
 	@Override
-	public boolean isAIDisabled() {
-		return false;
+	public boolean getCanSpawnHere() {
+		return true;
 	}
 
+	@Override
 	protected void applyEntityAttributes() {
 		super.applyEntityAttributes();
 		getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(0.1D);
@@ -82,7 +88,8 @@ public class EntityFairy extends EntityFlying {
 		}
 		entity.fallDistance = 0;
 
-		LibParticles.AIR_THROTTLE(world, getPositionVector(), entity, color, color.brighter(), -1);
+		//if (entity.world.isRemote)
+		//	LibParticles.AIR_THROTTLE(world, getPositionVector(), entity, color, color.brighter(), -1);
 	}
 
 	@Override
@@ -90,77 +97,91 @@ public class EntityFairy extends EntityFlying {
 		super.onUpdate();
 		if (world.isRemote) return;
 
-		if (age <= 0) age = 2;
-		if (((ticksExisted % ThreadLocalRandom.current().nextInt(200, 400)) == 0) && (age < 100)) age++;
+		if (ambush) {
+			List<Entity> entities = world.getEntitiesInAABBexcluding(this, new AxisAlignedBB(getPosition()).expand(64, 64, 64), null);
+			for (Entity entity : entities)
+				if (entity instanceof EntityPlayer) {
 
-		if (((age / 4) >= (age / 2)) || (age == 0)) return;
-		LibParticles.FAIRY_HEAD(world, getPositionVector().addVector(0, 0.25, 0), color);
-		LibParticles.FAIRY_TRAIL(world, getPositionVector().addVector(0, 0.25, 0), color, sad, age);
+					double dist = entity.getPositionVector().distanceTo(getPositionVector());
+					Vec3d sub = entity.getPositionVector().addVector(0, entity.height / 2, 0).subtract(getPositionVector()).normalize().scale(dist / 3.0);
 
-		boolean match = true;
-		for (int i = -3; i < 3; i++)
-			for (int j = -3; j < 0; j++)
-				for (int k = -3; k < 3; k++)
-					if (world.getBlockState(new BlockPos(posX + i, posY + j, posZ + k)).getBlock() != Blocks.AIR) {
-						if (pitchAmount < 90) {
-							dirPitchAdd = false;
-							pitchAmount += 0.2;
-							readjustingComplete = false;
-						}
-						match = false;
-						break;
-					}
-		EntityPlayer player = world.getNearestPlayerNotCreative(this, 2);
-		if (player != null) {
-			if (pitchAmount < 90) {
-				dirPitchAdd = false;
-				pitchAmount += 0.2;
-				readjustingComplete = false;
-			}
-			match = false;
-		}
+					motionX = sub.xCoord;
+					motionY = sub.yCoord;
+					motionZ = sub.zCoord;
+					velocityChanged = true;
 
-		if (match) {
-			if (readjustingComplete) {
-				if (ThreadLocalRandom.current().nextInt(0, 20) == 0) {
-					boolean prevDirYawAdd = dirYawAdd;
-					boolean prevDirPitchAdd = dirPitchAdd;
+					if ((int) dist <= 0 || RandUtil.nextInt((int) (dist * 20.0)) == 0)
+						ambush = false;
 
-					dirYawAdd = ThreadLocalRandom.current().nextBoolean();
-					dirPitchAdd = ThreadLocalRandom.current().nextBoolean();
-
-					if (rotationPitch > 89) rotationPitch = -89;
-					if (rotationPitch < -89) rotationPitch = 89;
-					if (rotationYaw > 179) rotationYaw = -179;
-					if (rotationYaw < -179) rotationYaw = 179;
-
-					pitchAmount += (prevDirPitchAdd == dirPitchAdd) ? ThreadLocalRandom.current().nextDouble(-4, 4) : (-pitchAmount / 5);
-					yawAmount += (prevDirYawAdd == dirYawAdd) ? ThreadLocalRandom.current().nextDouble(-1, 1) : (-yawAmount / 5);
+					if (entity instanceof EntityPlayerMP)
+						((EntityPlayerMP) entity).connection.sendPacket(new SPacketEntityVelocity(this));
 				}
-			} else {
-				if (pitchAmount > ThreadLocalRandom.current().nextInt(-20, 20)) {
-					dirPitchAdd = false;
-					pitchAmount -= ThreadLocalRandom.current().nextDouble(0.5, 5);
-				} else readjustingComplete = true;
-			}
+			return;
 		}
 
-		if (dirYawAdd) rotationYaw += yawAmount;
-		else rotationYaw -= yawAmount;
+		if (!getNavigator().noPath()) return;
 
-		if (dirPitchAdd) rotationPitch += pitchAmount;
-		else rotationPitch -= pitchAmount;
+		boolean nopeOut = false;
+		List<Entity> entities = world.getEntitiesInAABBexcluding(this, new AxisAlignedBB(getPosition()).expand(5, 5, 5), null);
+		for (Entity entity : entities)
+			if (entity instanceof EntityLivingBase) {
+				if (entity.isSneaking()) continue;
+				nopeOut = true;
 
-		Vec3d rot = getVectorForRotation(rotationPitch, rotationYaw);
-		motionX = rot.xCoord / ThreadLocalRandom.current().nextDouble(5, 10);
-		motionY = rot.yCoord / ThreadLocalRandom.current().nextDouble(5, 10);
-		motionZ = rot.zCoord / ThreadLocalRandom.current().nextDouble(5, 10);
+				Vec3d sub = getPositionVector().subtract(entity.getPositionVector().addVector(0, entity.height / 2, 0)).normalize();
+
+				Random rand = new Random(hashCode());
+				double speed = rand.nextInt(9) + 1;
+				motionX += sub.xCoord / speed;
+				motionY += sub.yCoord / speed;
+				motionZ += sub.zCoord / speed;
+			}
+
+		if (nopeOut) {
+			for (int i = -2; i < 2; i++)
+				for (int k = -2; k < 2; k++)
+					for (int j = -2; j < 2; j++) {
+						BlockPos pos = new BlockPos(getPositionVector()).add(i, j, k);
+						if (!world.isAirBlock(pos)) {
+							Vec3d center = new Vec3d(pos).addVector(0.5, 0.5, 0.5);
+							Vec3d sub = getPositionVector().addVector(0, height / 2, 0).subtract(center).normalize();
+
+							Random rand = new Random(hashCode());
+							double speed = rand.nextInt(9) + 1;
+							motionX += sub.xCoord / speed;
+							motionY += sub.yCoord / speed;
+							motionZ += sub.zCoord / speed;
+						}
+					}
+		}
+
+		if (!nopeOut) {
+			int r = Math.abs(new Random(getPosition().toLong()).nextInt(20)) + 1;
+			if (RandUtil.nextInt(r) == 0) {
+				changingCourse = true;
+				changeCourseTick = RandUtil.nextInt(50);
+				tickPitch = (float) RandUtil.nextDouble(-10, 10);
+				tickYaw = (float) RandUtil.nextDouble(-10, 10);
+			}
+			if (changingCourse) {
+				if (changeCourseTick > 0) {
+					changeCourseTick--;
+					Vec3d dir = getVectorForRotation(rotationPitch += tickPitch, rotationYaw += tickYaw).normalize();
+					Random rand = new Random(hashCode());
+					double speed = rand.nextInt(9) + 1;
+					motionX = dir.xCoord / speed;
+					motionY = dir.yCoord / speed;
+					motionZ = dir.zCoord / speed;
+				} else changingCourse = false;
+			}
+		}
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public EnumActionResult applyPlayerInteraction(EntityPlayer player, Vec3d vec, @Nullable ItemStack stack, EnumHand hand) {
-		if ((stack != null) && (stack.getItem() == ModItems.JAR)) {
+	public EnumActionResult applyPlayerInteraction(EntityPlayer player, Vec3d vec, EnumHand hand) {
+		ItemStack stack = player.getHeldItem(hand);
+		if (stack.getItem() == ModItems.JAR) {
 			ItemNBTHelper.setBoolean(stack, NBT.FAIRY_INSIDE, true);
 			ItemNBTHelper.setInt(stack, NBT.FAIRY_COLOR, color.getRGB());
 			ItemNBTHelper.setInt(stack, NBT.FAIRY_AGE, age);
@@ -171,10 +192,11 @@ public class EntityFairy extends EntityFlying {
 	}
 
 	@Override
-	public boolean attackEntityFrom(@NotNull DamageSource source, float amount) {
-		super.attackEntityFrom(source, amount);
-		LibParticles.FAIRY_EXPLODE(world, getPositionVector().addVector(0, 0.25, 0), color);
-		return true;
+	public void onDeath(@NotNull DamageSource cause) {
+		super.onDeath(cause);
+		if (getHealth() <= 0)
+			PacketHandler.NETWORK.sendToAllAround(new PacketExplode(getPositionVector().addVector(0, 0.25, 0), color, color, 0.9, 0.9, RandUtil.nextInt(100, 200), 75, 25, true),
+					new NetworkRegistry.TargetPoint(world.provider.getDimension(), posX, posY, posZ, 256));
 	}
 
 	@Override
@@ -183,29 +205,25 @@ public class EntityFairy extends EntityFlying {
 	}
 
 	@Override
-	public void dropLoot(boolean wasRecentlyHit, int lootingModifier, @NotNull DamageSource source) {
+	public void dropLoot(boolean wasRecentlyHit, int lootingModifier, @Nonnull DamageSource source) {
 		//super.dropLoot(wasRecentlyHit, lootingModifier, source);
 		ItemStack fairyWings = new ItemStack(ModItems.FAIRY_WINGS);
 		ItemStack fairyDust = new ItemStack(ModItems.FAIRY_DUST);
 		ItemNBTHelper.setInt(fairyWings, NBT.FAIRY_COLOR, color.getRGB());
-		entityDropItem(fairyDust, ThreadLocalRandom.current().nextFloat());
-		entityDropItem(fairyWings, ThreadLocalRandom.current().nextFloat());
+		entityDropItem(fairyDust, RandUtil.nextFloat());
+		entityDropItem(fairyWings, RandUtil.nextFloat());
 	}
 
 	@Override
-	public void readEntityFromNBT(NBTTagCompound compound) {
-		super.readEntityFromNBT(compound);
-		if (compound.hasKey(NBT.COLOR)) color = new Color(compound.getInteger(NBT.COLOR));
-		if (compound.hasKey("sad")) sad = compound.getBoolean("sad");
-		if (compound.hasKey("age")) age = compound.getInteger("age");
+	public void readCustomNBT(NBTTagCompound compound) {
+		super.readCustomNBT(compound);
+		AbstractSaveHandler.readAutoNBT(this, compound.getCompoundTag("save"), true);
 	}
 
 	@Override
-	public void writeEntityToNBT(NBTTagCompound compound) {
-		super.writeEntityToNBT(compound);
-		compound.setInteger(NBT.COLOR, color.getRGB());
-		compound.setBoolean("sad", sad);
-		compound.setInteger("age", age);
+	public void writeCustomNBT(NBTTagCompound compound) {
+		super.writeCustomNBT(compound);
+		compound.setTag("save", AbstractSaveHandler.writeAutoNBT(this, true));
 	}
 
 	public Color getColor() {

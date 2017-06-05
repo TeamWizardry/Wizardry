@@ -1,49 +1,61 @@
 package com.teamwizardry.wizardry.api.capability;
 
-import com.teamwizardry.wizardry.api.capability.bloods.IBloodType;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
-
-import java.util.Map;
 
 /**
  * Created by Saad on 8/16/2016.
  */
 public interface IWizardryCapability {
 
-	int getMana();
+	double getMana();
 
-	void setMana(int mana, EntityPlayer player);
+	void setMana(double mana);
 
-	int getMaxMana();
+	default void setMana(double mana, Entity player) {
+		setMana(mana);
+		dataChanged(player);
+	}
 
-	void setMaxMana(int maxMana, EntityPlayer player);
+	double getMaxMana();
 
-	int getBurnout();
+	void setMaxMana(double maxMana);
 
-	void setBurnout(int burnout, EntityPlayer player);
+	default void setMaxMana(double maxMana, Entity player) {
+		setMaxMana(maxMana);
+		dataChanged(player);
+	}
 
-	int getMaxBurnout();
+	double getBurnout();
 
-	void setMaxBurnout(int maxBurnout, EntityPlayer player);
+	void setBurnout(double burnout);
 
-	IBloodType getBloodType();
+	default void setBurnout(double burnout, Entity player) {
+		setBurnout(burnout);
+		dataChanged(player);
+	}
 
-	void setBloodType(IBloodType bloodType, EntityPlayer player);
+	double getMaxBurnout();
 
-	int getBloodLevel(IBloodType bloodType);
+	void setMaxBurnout(double maxBurnout);
 
-	Map<IBloodType, Integer> getBloodLevels();
+	default void setMaxBurnout(double maxBurnout, Entity player) {
+		setMaxBurnout(maxBurnout);
+		dataChanged(player);
+	}
 
-	void setBloodLevel(IBloodType bloodType, int level, EntityPlayer player);
+	EnumBloodType getBloodType();
 
-	void setBloodLevels(Map<IBloodType, Integer> levels, EntityPlayer player);
+	void setBloodType(EnumBloodType bloodType);
 
-	void incrementBloodLevel(IBloodType bloodType, EntityPlayer player);
+	default void setBloodType(EnumBloodType bloodType, Entity player) {
+		setBloodType(bloodType);
+		dataChanged(player);
+	}
 
 	NBTTagCompound saveNBTData();
 
 	void loadNBTData(NBTTagCompound compound);
 
-	void dataChanged(EntityPlayer player);
+	void dataChanged(Entity player);
 }

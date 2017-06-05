@@ -1,7 +1,8 @@
 package com.teamwizardry.wizardry.common.item;
 
-import com.teamwizardry.librarianlib.common.base.item.IItemColorProvider;
-import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.base.item.IItemColorProvider;
+import com.teamwizardry.librarianlib.features.base.item.ItemMod;
+import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import kotlin.jvm.functions.Function2;
@@ -18,21 +19,22 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 
 /**
  * Created by Saad on 8/27/2016.
  */
-public class ItemJar extends ItemWizardry implements IItemColorProvider {
+public class ItemJar extends ItemMod implements IItemColorProvider {
 
 	public ItemJar() {
 		super("jar", "jar", "jar_fairy", "jar_jam");
 		setMaxStackSize(1);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public EnumAction getItemUseAction(ItemStack stack) {
 		if (stack.getItemDamage() == 2) return EnumAction.DRINK;
@@ -44,13 +46,13 @@ public class ItemJar extends ItemWizardry implements IItemColorProvider {
 		return 32;
 	}
 
+	@NotNull
 	@Override
-	public ItemStack onItemUseFinish(@NotNull ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
-		--stack.stackSize;
-		if (entityLiving instanceof EntityPlayer)
-			((EntityPlayer) entityLiving).getFoodStats().addStats(4, 7f);
+	public ItemStack onItemUseFinish(@Nonnull ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
+		stack.setCount(stack.getCount() - 1);
 		if (entityLiving instanceof EntityPlayer) {
 			EntityPlayer entityplayer = (EntityPlayer) entityLiving;
+			entityplayer.getFoodStats().addStats(4, 7f);
 			worldIn.playSound(null, entityplayer.posX, entityplayer.posY, entityplayer.posZ, SoundEvents.ENTITY_PLAYER_BURP, SoundCategory.PLAYERS, 0.5F, worldIn.rand.nextFloat() * 0.1F + 0.9F);
 			entityLiving.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 200, 2, false, false));
 		}
@@ -58,26 +60,26 @@ public class ItemJar extends ItemWizardry implements IItemColorProvider {
 		return stack;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(@NotNull ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand) {
-		if (itemStackIn.getItemDamage() == 2) {
-			playerIn.setActiveHand(hand);
-			return new ActionResult(EnumActionResult.SUCCESS, itemStackIn);
+	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, @Nonnull EnumHand hand) {
+		ItemStack stack = player.getHeldItem(hand);
+		if (stack.getItemDamage() == 2) {
+			player.setActiveHand(hand);
+			return new ActionResult<>(EnumActionResult.SUCCESS, stack);
 		} else {
-			if (!worldIn.isRemote) {
-				if (playerIn.isSneaking() && (itemStackIn.getItemDamage() == 1)) {
-					if (ItemNBTHelper.getBoolean(itemStackIn, Constants.NBT.FAIRY_INSIDE, false)) {
-						ItemNBTHelper.setBoolean(itemStackIn, Constants.NBT.FAIRY_INSIDE, false);
-						EntityFairy entity = new EntityFairy(worldIn, new Color(ItemNBTHelper.getInt(itemStackIn, Constants.NBT.FAIRY_COLOR, 0xFFFFFF)), ItemNBTHelper.getInt(itemStackIn, Constants.NBT.FAIRY_AGE, 0));
-						entity.setPosition(playerIn.posX, playerIn.posY, playerIn.posZ);
-						entity.setSad(true);
-						worldIn.spawnEntity(entity);
-						itemStackIn.setItemDamage(0);
+			if (!world.isRemote) {
+				if (player.isSneaking() && (stack.getItemDamage() == 1)) {
+					if (ItemNBTHelper.getBoolean(stack, Constants.NBT.FAIRY_INSIDE, false)) {
+						ItemNBTHelper.setBoolean(stack, Constants.NBT.FAIRY_INSIDE, false);
+						EntityFairy entity = new EntityFairy(world, new Color(ItemNBTHelper.getInt(stack, Constants.NBT.FAIRY_COLOR, 0xFFFFFF)), ItemNBTHelper.getInt(stack, Constants.NBT.FAIRY_AGE, 0));
+						entity.setPosition(player.posX, player.posY, player.posZ);
+						world.spawnEntity(entity);
+						stack.setItemDamage(0);
 					}
 				}
 			}
-			return new ActionResult(EnumActionResult.FAIL, itemStackIn);
+			return new ActionResult<>(EnumActionResult.FAIL, stack);
 		}
 	}
 

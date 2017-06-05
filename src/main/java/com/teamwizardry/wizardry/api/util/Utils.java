@@ -1,44 +1,20 @@
 package com.teamwizardry.wizardry.api.util;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
+import net.minecraftforge.oredict.OreDictionary;
 
-import java.awt.*;
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
  * Created by LordSaad.
  */
 public class Utils {
-
-	public static Color mixColors(Color color1, Color color2) {
-		double inverse_percent = 1.0 - 0.9;
-		double redPart = color1.getRed() * 0.9 + color2.getRed() * inverse_percent;
-		double greenPart = color1.getGreen() * 0.9 + color2.getGreen() * inverse_percent;
-		double bluePart = color1.getBlue() * 0.9 + color2.getBlue() * inverse_percent;
-		double alphaPart = color1.getAlpha() * 0.9 + color2.getAlpha() * inverse_percent;
-		return new Color((int) redPart, (int) greenPart, (int) bluePart, (int) alphaPart);
-	}
-
-	public static void blink(EntityLivingBase entity, double dist) {
-		if (entity == null) return;
-		Vec3d look = entity.getLookVec();
-
-		double x = entity.posX += look.xCoord * dist;
-		double y = entity.posY += Math.max(0, look.yCoord * dist);
-		double z = entity.posZ += look.zCoord * dist;
-
-		if (entity instanceof EntityPlayerMP) {
-			EntityPlayerMP mp = (EntityPlayerMP) entity;
-			mp.connection.setPlayerLocation(x, y, z, entity.rotationYaw, entity.rotationPitch);
-		} else entity.setPosition(x, y, z);
-	}
 
 	/**
 	 * Credits to Masa on discord for providing the base of the code. I heavily editted it.
@@ -80,5 +56,17 @@ public class Utils {
 		if (targetEntity != null) result = new RayTraceResult(targetEntity, entityTrace.hitVec);
 
 		return result;
+	}
+
+	public static boolean hasOreDictPrefix(ItemStack stack, String dict) {
+		int[] ids = OreDictionary.getOreIDs(stack);
+		for (int id : ids) {
+			if (OreDictionary.getOreName(id).length() >= dict.length()) {
+				if (OreDictionary.getOreName(id).substring(0, dict.length()).compareTo(dict.substring(0, dict.length())) == 0) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

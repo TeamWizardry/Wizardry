@@ -1,0 +1,27 @@
+{
+  "index": [
+    {
+      "icon": "wizardry:textures/gui/book/icons/pointy_hat.png",
+      "text": "Learn everything you need to know to get started here.",
+      "link": "/basics/index.json"
+    },
+    {
+      "icon": "wizardry:textures/gui/book/icons/embrassed_energy.png",
+      "text": "Learn about all the multi-block structures here.",
+      "link": "/basics/mana.json"
+    },
+    {
+      "icon": "wizardry:textures/gui/book/icons/fangs.png",
+      "text": "Learn about all the mobs present in the mod.",
+      "link": "/mobs/index.json"
+    },
+    {
+      "icon": "wizardry:textures/gui/book/icons/magic_potion.png",
+      "text": "Learn how the brewing system works."
+    },
+    {
+      "icon": "wizardry:textures/gui/book/icons/hot_spices.png",
+      "text": "Learn more misc crap."
+    }
+  ]
+}

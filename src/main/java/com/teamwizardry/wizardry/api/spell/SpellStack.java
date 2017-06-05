@@ -1,25 +1,15 @@
 package com.teamwizardry.wizardry.api.spell;
 
-import com.teamwizardry.librarianlib.common.network.PacketHandler;
-import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
-import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
-import com.teamwizardry.wizardry.common.network.PacketRenderSpell;
 import com.teamwizardry.wizardry.init.ModItems;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 /**
@@ -27,8 +17,13 @@ import java.util.*;
  */
 public class SpellStack {
 
-	public static Set<Item> identifiers = new HashSet<>();
+	public static Item fieldLineBreak = Items.WHEAT_SEEDS;
+	public static Item fieldCodeSplitter = ModItems.FAIRY_DUST;
+	public static Item codeLineBreak = ModItems.DEVIL_DUST;
 
+	public static ArrayList<Item> identifiers = new ArrayList<>();
+
+	// TODO: no...
 	static {
 		identifiers.add(Items.GOLD_NUGGET);
 		identifiers.add(Items.ROTTEN_FLESH);
@@ -47,11 +42,11 @@ public class SpellStack {
 	public ArrayList<Module> compiled = new ArrayList<>();
 
 	public SpellStack(List<ItemStack> inventory) {
-		List<List<ItemStack>> branches = brancher(inventory, ModItems.FAIRY_DUST);
+		List<List<ItemStack>> branches = brancher(inventory, fieldCodeSplitter);
 		if (branches.size() != 2) return; // If no fairy dust was found to split the spell twice, stop.
 
 		// PROCESS FIELDS
-		List<List<ItemStack>> fieldLines = brancher(branches.get(0), Items.WHEAT_SEEDS); // Get all the fields before the fairy dust.
+		List<List<ItemStack>> fieldLines = brancher(branches.get(0), fieldLineBreak); // Get all the fields before the fairy dust.
 		if (fieldLines.isEmpty()) return; // If no fields where found stop.
 
 		for (List<ItemStack> fieldLine : fieldLines) {
@@ -65,34 +60,59 @@ public class SpellStack {
 			if (head == null) continue;
 			if (head instanceof IModifier) continue;
 
-			head.processModifiers(new ArrayList<>(queue)); // Everything else gets processed as a modifier.
+			// Everything else gets processed as a modifier to the head.
+			for (ItemStack modifierStack : queue) {
+				Module modifier = ModuleRegistry.INSTANCE.getModule(modifierStack);
+				if (modifier == null) continue;
+				if (!(modifier instanceof IModifier)) continue;
+
+				((IModifier) modifier).apply(head);
+				head.setMultiplier(head.getMultiplier() * ((IModifier) modifier).costMultiplier());
+			}
 
 			fields.put(stack.getItem(), head);
 		}
 
-		List<List<ItemStack>> lines = brancher(branches.get(1), ModItems.DEVIL_DUST); // Get all the code lines of the second half of the spell.
+		List<List<ItemStack>> lines = brancher(branches.get(1), codeLineBreak); // Get all the code lines of the second half of the spell.
 
-		// PROCESS CHILDREN OF LINE HEADS
+		ArrayList<ArrayList<Module>> convertedLines = new ArrayList<>();
 		for (List<ItemStack> line : lines) {
-			Deque<ItemStack> queue = new ArrayDeque<>(line);
 
-			for (ItemStack ignored : line) {
-				if (queue.size() <= 1) break;
-				if (fields.containsKey(queue.peekLast().getItem())) {
-					Module lastField = fields.get(queue.pollLast().getItem());
-					if (fields.containsKey(queue.peekLast().getItem())) {
-						Module beforeLastField = fields.get(queue.peekLast().getItem());
-						beforeLastField.nextModule = lastField;
+			ArrayList<Module> lineModules = new ArrayList<>();
+			for (ItemStack stack : line) {
+				Module module = fields.get(stack.getItem());
+				if (module == null) continue;
+				lineModules.add(module.copy());
+			}
+
+			convertedLines.add(lineModules);
+		}
+
+		for (ArrayList<Module> modules : convertedLines) {
+			Deque<Module> deque = new ArrayDeque<>();
+			deque.addAll(modules);
+
+			for (Module ignored : modules) {
+				if (deque.peekFirst() == deque.peekLast()) {
+					compiled.add(deque.peekLast());
+					break;
+				}
+				if (deque.peekLast() != null) {
+					Module last = deque.pollLast();
+					if (deque.peekLast() != null) {
+						Module beforeLast = deque.peekLast();
+						beforeLast.nextModule = last;
 					}
 				}
 			}
-
-			if (queue.peekFirst() != null && fields.containsKey(queue.peekFirst().getItem()))
-				compiled.add(fields.get(queue.peekFirst().getItem()));
 		}
+
+		// PROCESS COLOR
+		for (Module module : compiled)
+			processColor(module, module.nextModule);
 	}
 
-	@NotNull
+	@Nonnull
 	public static List<List<ItemStack>> brancher(List<ItemStack> inventory, Item identifier) {
 		List<List<ItemStack>> branches = new ArrayList<>();
 		List<ItemStack> temp = new ArrayList<>();
@@ -106,60 +126,50 @@ public class SpellStack {
 		return branches;
 	}
 
-	public static void runModules(@NotNull ItemStack spellHolder, @NotNull World world, @Nullable EntityLivingBase caster, Vec3d pos) {
-		for (Module module : getModules(spellHolder)) {
-			if (caster instanceof EntityPlayer && !((EntityPlayer) caster).isCreative()) {
-				IWizardryCapability cap = WizardryCapabilityProvider.get((EntityPlayer) caster);
-				if (cap.getMana() < module.finalManaCost) return;
-			}
-			module.run(world, caster);
-			if (module.getTargetPosition() == null) {
-				PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(spellHolder, caster == null ? -1 : caster.getEntityId(), pos),
-						new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.xCoord, pos.yCoord, pos.zCoord, 60));
-			} else {
-				PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(spellHolder, caster == null ? -1 : caster.getEntityId(), module.getTargetPosition()),
-						new NetworkRegistry.TargetPoint(world.provider.getDimension(), module.getTargetPosition().xCoord, module.getTargetPosition().yCoord, module.getTargetPosition().zCoord, 60));
-			}
+	public static void runSpell(@Nonnull Module module, SpellData spell) {
+		spell.addData(SpellData.DefaultKeys.STRENGTH, module.calculateStrength(spell));
+		module.castSpell(spell);
+	}
 
-			if (caster instanceof EntityPlayer && !((EntityPlayer) caster).isCreative()) {
-				IWizardryCapability cap = WizardryCapabilityProvider.get((EntityPlayer) caster);
-				cap.setMana((int) Math.max(0, cap.getMana() - module.finalManaCost), (EntityPlayer) caster);
-				cap.setBurnout((int) Math.max(0, cap.getBurnout() + module.finalBurnoutCost), (EntityPlayer) caster);
-			}
+	public static void runSpell(@Nonnull ItemStack spellHolder, SpellData spell) {
+		if (spell.world.isRemote) return;
+
+		for (Module module : getModules(spellHolder)) {
+			runSpell(module, spell);
 		}
 	}
 
-	public static Set<Module> getModules(@NotNull ItemStack spellHolder) {
-		Set<Module> modules = new HashSet<>();
+	public static ArrayList<Module> getModules(@Nonnull ItemStack spellHolder) {
+		ArrayList<Module> modules = new ArrayList<>();
 
-		NBTTagList list = ItemNBTHelper.getList(spellHolder, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND, false);
+		NBTTagList list = ItemNBTHelper.getList(spellHolder, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
 		if (list == null) return modules;
 
 		return getModules(list);
 	}
 
-	public static Set<Module> getModules(@NotNull NBTTagCompound compound) {
+	public static ArrayList<Module> getModules(@Nonnull NBTTagCompound compound) {
 		if (compound.hasKey(Constants.NBT.SPELL))
 			return getModules(compound.getTagList(Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND));
-		else return new HashSet<>();
+		else return new ArrayList<>();
 	}
 
-	public static Set<Module> getModules(@NotNull NBTTagList list) {
-		Set<Module> modules = new HashSet<>();
+	public static ArrayList<Module> getModules(@Nonnull NBTTagList list) {
+		ArrayList<Module> modules = new ArrayList<>();
 		for (int i = 0; i < list.tagCount(); i++) {
 			NBTTagCompound compound = list.getCompoundTagAt(i);
 			Module module = ModuleRegistry.INSTANCE.getModule(compound.getString("id"));
 			if (module == null) continue;
+			module = module.copy();
 			module.deserializeNBT(compound);
-			Module.process(module);
 			modules.add(module);
 		}
 		return modules;
 	}
 
-	public static Set<Module> getAllModules(@NotNull NBTTagCompound compound) {
-		Set<Module> modules = new HashSet<>();
-		Set<Module> heads = getModules(compound);
+	public static ArrayList<Module> getAllModules(@Nonnull NBTTagCompound compound) {
+		ArrayList<Module> modules = new ArrayList<>();
+		ArrayList<Module> heads = getModules(compound);
 		for (Module module : heads) {
 			Module tempModule = module;
 			while (tempModule != null) {
@@ -170,8 +180,8 @@ public class SpellStack {
 		return modules;
 	}
 
-	public static Set<Module> getAllModules(@NotNull Module module) {
-		Set<Module> modules = new HashSet<>();
+	public static ArrayList<Module> getAllModules(@Nonnull Module module) {
+		ArrayList<Module> modules = new ArrayList<>();
 		Module tempModule = module;
 		while (tempModule != null) {
 			modules.add(tempModule);
@@ -180,9 +190,9 @@ public class SpellStack {
 		return modules;
 	}
 
-	public static Set<Module> getAllModules(@NotNull ItemStack spellHolder) {
-		Set<Module> modules = new HashSet<>();
-		Set<Module> heads = getModules(spellHolder);
+	public static ArrayList<Module> getAllModules(@Nonnull ItemStack spellHolder) {
+		ArrayList<Module> modules = new ArrayList<>();
+		ArrayList<Module> heads = getModules(spellHolder);
 		for (Module module : heads) {
 			Module tempModule = module;
 			while (tempModule != null) {
@@ -191,5 +201,15 @@ public class SpellStack {
 			}
 		}
 		return modules;
+	}
+
+	private void processColor(Module module, Module nextModule) {
+		if (nextModule == null) return;
+
+		processColor(nextModule, nextModule.nextModule);
+
+		if (module.getPrimaryColor() == null) module.setPrimaryColor(nextModule.getPrimaryColor());
+		if (module.getSecondaryColor() == null) module.setSecondaryColor(nextModule.getSecondaryColor());
+
 	}
 }

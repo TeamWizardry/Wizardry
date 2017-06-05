@@ -1,5 +1,5 @@
 {
-  "parent": "item/generated",
+  "parent": "item/handheld",
   "textures": {
     "layer0": "wizardry:items/staff_pearl",
     "layer1": "wizardry:items/staff",

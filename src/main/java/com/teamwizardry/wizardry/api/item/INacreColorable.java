@@ -1,8 +1,8 @@
 package com.teamwizardry.wizardry.api.item;
 
-import com.teamwizardry.librarianlib.client.core.ClientTickHandler;
-import com.teamwizardry.librarianlib.common.base.item.IItemColorProvider;
-import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
+import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
+import com.teamwizardry.librarianlib.features.base.item.IItemColorProvider;
+import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.api.Constants.NBT;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import kotlin.jvm.functions.Function2;
@@ -13,8 +13,8 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.Random;
 

@@ -1,38 +1,45 @@
 package com.teamwizardry.wizardry.common.core;
 
-import com.teamwizardry.librarianlib.common.util.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants.MISC;
-import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
-import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
+import com.teamwizardry.wizardry.api.capability.CapManager;
+import com.teamwizardry.wizardry.api.events.SpellCastEvent;
+import com.teamwizardry.wizardry.api.spell.IContinousSpell;
+import com.teamwizardry.wizardry.api.spell.Module;
+import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.util.PosUtils;
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.TeleportUtil;
 import com.teamwizardry.wizardry.common.achievement.Achievements;
 import com.teamwizardry.wizardry.common.entity.EntityDevilDust;
-import com.teamwizardry.wizardry.common.entity.EntitySpellCodex;
-import com.teamwizardry.wizardry.common.tile.TilePedestal;
-import com.teamwizardry.wizardry.init.ModBlocks;
+import com.teamwizardry.wizardry.common.entity.EntityFairy;
+import com.teamwizardry.wizardry.init.ModItems;
+import com.teamwizardry.wizardry.init.ModPotions;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.event.TextureStitchEvent.Pre;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
-import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class EventHandler {
@@ -60,16 +67,6 @@ public class EventHandler {
 			EntityItem item = (EntityItem) event.getEntity();
 			if (item.getEntityItem().getItem() == Items.REDSTONE)
 				event.getWorld().spawnEntity(new EntityDevilDust(event.getWorld(), item));
-			else if (item.getEntityItem().getItem() == Items.BOOK)
-				event.getWorld().spawnEntity(new EntitySpellCodex(event.getWorld(), item));
-		}
-	}
-
-	@SubscribeEvent
-	public void onBlockBreak(BreakEvent event) {
-		if (event.getWorld().getBlockState(event.getPos()).getBlock() == ModBlocks.PEDESTAL) {
-			TilePedestal pedestal = (TilePedestal) event.getWorld().getTileEntity(event.getPos());
-			//for (pedestal.getLinkedPedestals())
 		}
 	}
 
@@ -85,12 +82,16 @@ public class EventHandler {
 	@SubscribeEvent
 	public void onFallDamage(LivingHurtEvent event) {
 		if (!(event.getEntity() instanceof EntityPlayer)) return;
-		if (event.getSource() == EntityDamageSource.outOfWorld) {
+		if (event.getSource() == EntityDamageSource.OUT_OF_WORLD) {
 			EntityPlayer player = ((EntityPlayer) event.getEntityLiving());
 			BlockPos spawn = player.isSpawnForced(0) ? player.getBedLocation(0) : player.world.getSpawnPoint().add(player.world.rand.nextGaussian() * 16, 0, player.world.rand.nextGaussian() * 16);
-			BlockPos teleportTo = spawn.add(0, 255 - spawn.getY(), 0);
+			BlockPos teleportTo = spawn.add(0, 300 - spawn.getY(), 0);
 			TeleportUtil.teleportToDimension((EntityPlayer) event.getEntity(), 0, teleportTo.getX(), teleportTo.getY(), teleportTo.getZ());
 			event.getEntity().fallDistance = -500;
+			event.setCanceled(true);
+		}
+		if (event.getEntity().getEntityWorld().provider.getDimension() == Wizardry.underWorld.getId()) {
+			event.getEntity().fallDistance = 0;
 			event.setCanceled(true);
 		}
 	}
@@ -104,7 +105,8 @@ public class EventHandler {
 				BlockPos bedrock = PosUtils.checkNeighbor(event.getEntity().getEntityWorld(), location, Blocks.BEDROCK);
 				if (bedrock != null) {
 					if (event.getEntity().getEntityWorld().getBlockState(bedrock).getBlock() == Blocks.BEDROCK) {
-						TeleportUtil.teleportToDimension((EntityPlayer) event.getEntity(), Wizardry.underWorld.getId(), 0, 100, 0);
+						TeleportUtil.teleportToDimension((EntityPlayer) event.getEntity(), Wizardry.underWorld.getId(), 0, 300, 0);
+						((EntityPlayer) event.getEntity()).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 1, false, false));
 						fallResetUUIDs.add(event.getEntity().getUniqueID());
 						((EntityPlayer) event.getEntity()).addStat(Achievements.CRUNCH);
 						event.setCanceled(true);
@@ -122,7 +124,8 @@ public class EventHandler {
 				BlockPos bedrock = PosUtils.checkNeighbor(event.getEntity().getEntityWorld(), location, Blocks.BEDROCK);
 				if (bedrock != null) {
 					if (event.getEntity().getEntityWorld().getBlockState(bedrock).getBlock() == Blocks.BEDROCK) {
-						TeleportUtil.teleportToDimension(event.getEntityPlayer(), Wizardry.underWorld.getId(), 0, 100, 0);
+						TeleportUtil.teleportToDimension(event.getEntityPlayer(), Wizardry.underWorld.getId(), 0, 300, 0);
+						((EntityPlayer) event.getEntity()).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 1, false, false));
 						fallResetUUIDs.add(event.getEntityPlayer().getUniqueID());
 						event.getEntityPlayer().addStat(Achievements.CRUNCH);
 					}
@@ -133,14 +136,40 @@ public class EventHandler {
 
 	@SubscribeEvent
 	public void capTick(TickEvent.PlayerTickEvent event) {
-		IWizardryCapability cap = WizardryCapabilityProvider.get(event.player);
-		if (cap != null) {
-			cap.setMana(cap.getMana() + 1, event.player);
-			cap.setBurnout(cap.getBurnout() - 1, event.player);
-			ItemStack cape = event.player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-			if (cape == null) return;
-			cap.setMaxMana(ItemNBTHelper.getInt(cape, "time", 0), event.player);
-			cap.setMaxBurnout(ItemNBTHelper.getInt(cape, "time", 0), event.player);
+		CapManager manager = new CapManager(event.player);
+		manager.addMana(manager.getMaxMana() / 1000);
+		manager.removeBurnout(manager.getMaxBurnout() / 1000);
+
+		ItemStack cape = event.player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+		if (manager.getMaxMana() < 100)
+			manager.setMaxMana(100);
+		if (manager.getMaxBurnout() < 100)
+			manager.setMaxBurnout(100);
+
+		if (!cape.isEmpty() && cape.getItem() == ModItems.CAPE) {
+			double x = ItemNBTHelper.getInt(cape, "time", 0) / 1000.0;
+			double buffer = (1 - (Math.exp(-x))) * 5000;
+			if (buffer < 100) return;
+			manager.setMaxMana(buffer);
+			manager.setMaxBurnout(buffer);
+		}
+//		Minecraft.getMinecraft().player.sendChatMessage(CapManager.getMaxMana(event.player) + "");
+	}
+
+	@SubscribeEvent
+	public void fairyAmbush(SpellCastEvent event) {
+		Entity caster = event.spell.getData(SpellData.DefaultKeys.CASTER);
+		int chance = 5;
+		for (Module module : event.module.getAllChildModules())
+			if (module instanceof IContinousSpell) {
+				chance = 100;
+				break;
+			}
+		if (caster != null) {
+			List<EntityFairy> fairyList = event.spell.world.getEntitiesWithinAABB(EntityFairy.class, new AxisAlignedBB(caster.getPosition()).expand(64, 64, 64));
+			for (EntityFairy fairy : fairyList) {
+				if (RandUtil.nextInt(chance) == 0) fairy.ambush = true;
+			}
 		}
 	}
 }

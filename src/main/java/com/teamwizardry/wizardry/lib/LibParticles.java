@@ -1,32 +1,30 @@
 package com.teamwizardry.wizardry.lib;
 
-import com.teamwizardry.librarianlib.client.fx.particle.ParticleBuilder;
-import com.teamwizardry.librarianlib.client.fx.particle.ParticleSpawner;
-import com.teamwizardry.librarianlib.client.fx.particle.functions.InterpColorFade;
-import com.teamwizardry.librarianlib.client.fx.particle.functions.InterpColorHSV;
-import com.teamwizardry.librarianlib.client.fx.particle.functions.InterpFadeInOut;
-import com.teamwizardry.librarianlib.common.util.math.Matrix4;
-import com.teamwizardry.librarianlib.common.util.math.interpolate.InterpFunction;
-import com.teamwizardry.librarianlib.common.util.math.interpolate.StaticInterp;
-import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpBezier3D;
-import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpHelix;
-import com.teamwizardry.librarianlib.common.util.math.interpolate.position.InterpLine;
+import com.teamwizardry.librarianlib.features.math.interpolate.InterpFunction;
+import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
+import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBezier3D;
+import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpHelix;
+import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpLine;
+import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
+import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
+import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
+import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.Constants.MISC;
-import net.minecraft.entity.Entity;
+import com.teamwizardry.wizardry.api.util.ColorUtils;
+import com.teamwizardry.wizardry.api.util.InterpScale;
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by Saad on 8/29/2016.
@@ -39,10 +37,10 @@ public class LibParticles {
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(pos.xCoord + ThreadLocalRandom.current().nextDouble(-0.5, 0.5), pos.yCoord + ThreadLocalRandom.current().nextDouble(-0.5, 0.5), pos.zCoord + ThreadLocalRandom.current().nextDouble(-0.5, 0.5))), 1, 0, (aFloat, particleBuilder) -> {
-			glitter.setColor(new Color(255, 255, 255, ThreadLocalRandom.current().nextInt(50, 150)));
-			glitter.setLifetime(ThreadLocalRandom.current().nextInt(20, 30));
-			glitter.setMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.05, 0.05), ThreadLocalRandom.current().nextDouble(0.05, 0.1), ThreadLocalRandom.current().nextDouble(-0.05, 0.05)));
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(pos.xCoord + RandUtil.nextDouble(-0.5, 0.5), pos.yCoord + RandUtil.nextDouble(-0.5, 0.5), pos.zCoord + RandUtil.nextDouble(-0.5, 0.5))), 1, 0, (aFloat, particleBuilder) -> {
+			glitter.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), RandUtil.nextInt(100, 255)));
+			glitter.setLifetime(RandUtil.nextInt(20, 30));
+			glitter.setMotion(new Vec3d(RandUtil.nextDouble(-0.05, 0.05), RandUtil.nextDouble(0.05, 0.1), RandUtil.nextDouble(-0.05, 0.05)));
 		});
 	}
 
@@ -53,9 +51,14 @@ public class LibParticles {
 		fizz.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 
 		ParticleSpawner.spawn(fizz, world, new StaticInterp<>(pos.addVector(0, 0.5, 0)), 10, 0, (aFloat, particleBuilder) -> {
-			fizz.setColor(new Color(255, 255, 255, ThreadLocalRandom.current().nextInt(50, 150)));
-			fizz.setLifetime(ThreadLocalRandom.current().nextInt(20, 30));
-			fizz.setMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.005, 0.005), ThreadLocalRandom.current().nextDouble(0.04, 0.08), ThreadLocalRandom.current().nextDouble(-0.005, 0.005)));
+			fizz.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), RandUtil.nextInt(100, 255)));
+			fizz.setLifetime(RandUtil.nextInt(20, 30));
+			fizz.setPositionOffset(new Vec3d(
+					RandUtil.nextDouble(-0.1, 0.1),
+					RandUtil.nextDouble(-0.1, 0.1),
+					RandUtil.nextDouble(-0.1, 0.1)
+			));
+			fizz.setMotion(new Vec3d(RandUtil.nextDouble(-0.005, 0.005), RandUtil.nextDouble(0.04, 0.08), RandUtil.nextDouble(-0.005, 0.005)));
 		});
 	}
 
@@ -66,37 +69,37 @@ public class LibParticles {
 		glitter.setAlphaFunction(new InterpFadeInOut(0.0f, 0.3f));
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 300, 0, (aFloat, particleBuilder) -> {
-			glitter.setLifetime(ThreadLocalRandom.current().nextInt(20, 30));
-			glitter.setColor(new Color(255, 255, 255, ThreadLocalRandom.current().nextInt(100, 150)));
-			glitter.setMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.5, 0.5), ThreadLocalRandom.current().nextDouble(-0.5, 0.5), ThreadLocalRandom.current().nextDouble(-0.5, 0.5)));
+			glitter.setLifetime(RandUtil.nextInt(20, 30));
+			glitter.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), RandUtil.nextInt(100, 255)));
+			glitter.setMotion(new Vec3d(RandUtil.nextDouble(-0.5, 0.5), RandUtil.nextDouble(-0.5, 0.5), RandUtil.nextDouble(-0.5, 0.5)));
 		});
 	}
 
 	public static void DEVIL_DUST_BIG_CRACKLES(World world, Vec3d pos) {
 		ParticleBuilder glitter = new ParticleBuilder(30);
-		glitter.setScale(ThreadLocalRandom.current().nextFloat());
-		glitter.setColor(new Color(ThreadLocalRandom.current().nextFloat(), 0, 0));
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE));
+		glitter.setScale(RandUtil.nextFloat());
+		glitter.setColor(new Color(RandUtil.nextFloat(), 0, 0));
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.0f, 0.3f));
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 1, 0, (i, builder) -> {
-			Vec3d offset = new Vec3d(ThreadLocalRandom.current().nextDouble(-0.5, 0.5), ThreadLocalRandom.current().nextDouble(-0.5, 0.5), ThreadLocalRandom.current().nextDouble(-0.5, 0.5));
+			Vec3d offset = new Vec3d(RandUtil.nextDouble(-0.5, 0.5), RandUtil.nextDouble(-0.5, 0.5), RandUtil.nextDouble(-0.5, 0.5));
 			glitter.setPositionOffset(offset);
-			glitter.setLifetime(ThreadLocalRandom.current().nextInt(30, 50));
-			glitter.setMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.01, 0.01), ThreadLocalRandom.current().nextDouble(0.04, 0.06), ThreadLocalRandom.current().nextDouble(-0.01, 0.01)));
+			glitter.setLifetime(RandUtil.nextInt(30, 50));
+			glitter.setMotion(new Vec3d(RandUtil.nextDouble(-0.01, 0.01), RandUtil.nextDouble(0.04, 0.06), RandUtil.nextDouble(-0.01, 0.01)));
 		});
 	}
 
 	public static void DEVIL_DUST_SMALL_CRACKLES(World world, Vec3d pos) {
 		ParticleBuilder glitter = new ParticleBuilder(10);
-		glitter.setColor(new Color(ThreadLocalRandom.current().nextFloat(), 0, 0).darker());
-		glitter.setScale((float) ThreadLocalRandom.current().nextDouble(0, 0.5));
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE));
+		glitter.setColor(new Color(RandUtil.nextFloat(), 0, 0).darker());
+		glitter.setScale((float) RandUtil.nextDouble(0, 0.5));
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.0f, 0.3f));
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 5, 0, (i, builder) -> {
-			glitter.setLifetime(ThreadLocalRandom.current().nextInt(10, 30));
-			glitter.setMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.03, 0.03), ThreadLocalRandom.current().nextDouble(0.07, 0.2), ThreadLocalRandom.current().nextDouble(-0.03, 0.03)));
+			glitter.setLifetime(RandUtil.nextInt(10, 30));
+			glitter.setMotion(new Vec3d(RandUtil.nextDouble(-0.03, 0.03), RandUtil.nextDouble(0.07, 0.2), RandUtil.nextDouble(-0.03, 0.03)));
 		});
 	}
 
@@ -106,10 +109,10 @@ public class LibParticles {
 		glitter.setAlphaFunction(new InterpFadeInOut(0.0f, 0.3f));
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 10, 0, (aFloat, particleBuilder) -> {
-			glitter.setMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.02, 0.02), ThreadLocalRandom.current().nextDouble(0, 1.0), ThreadLocalRandom.current().nextDouble(-0.02, 0.02)));
-			glitter.setColor(new Color(255, 255, 255, ThreadLocalRandom.current().nextInt(0, 255)));
-			glitter.setScale(ThreadLocalRandom.current().nextFloat());
-			glitter.setLifetime(ThreadLocalRandom.current().nextInt(0, 50));
+			glitter.setMotion(new Vec3d(RandUtil.nextDouble(-0.02, 0.02), RandUtil.nextDouble(0, 1.0), RandUtil.nextDouble(-0.02, 0.02)));
+			glitter.setColor(new Color(255, 255, 255, RandUtil.nextInt(0, 255)));
+			glitter.setScale(RandUtil.nextFloat());
+			glitter.setLifetime(RandUtil.nextInt(0, 50));
 		});
 	}
 
@@ -119,10 +122,10 @@ public class LibParticles {
 		helix.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 
 		ParticleSpawner.spawn(helix, world, new StaticInterp<>(pos), 30, 0, (aFloat, particleBuilder) -> {
-			helix.setColor(new Color(255, 255, 255, ThreadLocalRandom.current().nextInt(0, 255)));
-			helix.setScale(ThreadLocalRandom.current().nextFloat());
-			helix.setPositionFunction(new InterpHelix(Vec3d.ZERO, new Vec3d(0, ThreadLocalRandom.current().nextDouble(1.0, 255.0), 0), 0, ThreadLocalRandom.current().nextInt(1, 5), ThreadLocalRandom.current().nextInt(1, 5), 0));
-			helix.setLifetime(ThreadLocalRandom.current().nextInt(0, 200));
+			helix.setColor(new Color(255, 255, 255, RandUtil.nextInt(0, 255)));
+			helix.setScale(RandUtil.nextFloat());
+			helix.setPositionFunction(new InterpHelix(Vec3d.ZERO, new Vec3d(0, RandUtil.nextDouble(1.0, 255.0), 0), 0, RandUtil.nextInt(1, 5), RandUtil.nextInt(1, 5), 0));
+			helix.setLifetime(RandUtil.nextInt(0, 200));
 		});
 	}
 
@@ -134,127 +137,154 @@ public class LibParticles {
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 1000, 0, (i, build) -> {
 
 			double radius = 1.0;
-			double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
-			double r = radius * ThreadLocalRandom.current().nextFloat();
+			double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
+			double r = radius * RandUtil.nextFloat();
 			double x = r * MathHelper.cos((float) theta);
 			double z = r * MathHelper.sin((float) theta);
 
-			glitter.setPositionOffset(new Vec3d(0, ThreadLocalRandom.current().nextDouble(0, 255.0), 0));
+			glitter.setPositionOffset(new Vec3d(0, RandUtil.nextDouble(0, 255.0), 0));
 			glitter.setMotion(new Vec3d(x, 0, z));
-			glitter.setJitter(10, new Vec3d(ThreadLocalRandom.current().nextDouble(-0.05, 0.05), ThreadLocalRandom.current().nextDouble(-0.05, -0.01), ThreadLocalRandom.current().nextDouble(-0.05, 0.05)));
+			glitter.setJitter(10, new Vec3d(RandUtil.nextDouble(-0.05, 0.05), RandUtil.nextDouble(-0.05, -0.01), RandUtil.nextDouble(-0.05, 0.05)));
 			glitter.enableMotionCalculation();
-			glitter.setColor(new Color(255, 255, 255, ThreadLocalRandom.current().nextInt(70, 170)));
-			glitter.setScale((float) ThreadLocalRandom.current().nextDouble(0.3, 0.5));
+			glitter.setColor(new Color(255, 255, 255, RandUtil.nextInt(70, 170)));
+			glitter.setScale((float) RandUtil.nextDouble(0.3, 0.5));
 		});
 	}
 
-	public static void AIR_THROTTLE(World world, Vec3d pos, Entity collided, Color color1, Color color2, double scatter) {
-		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(30, 50));
+	public static void AIR_THROTTLE(World world, Vec3d pos, Vec3d normal, Color color1, Color color2, double scatter) {
+		ParticleBuilder glitter = new ParticleBuilder(RandUtil.nextInt(30, 50));
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.1f, 0.3f));
 		glitter.enableMotionCalculation();
-		Color color3 = new Color(color1.getRed(), color1.getGreen(), color1.getBlue(), ThreadLocalRandom.current().nextInt(50, 100));
-		Color color4 = new Color(color2.getRed(), color2.getGreen(), color2.getBlue(), ThreadLocalRandom.current().nextInt(50, 100));
-
-		ParticleSpawner.spawn(glitter, world, new InterpLine(pos, pos.addVector(collided.posX - collided.prevPosX, collided.posY - collided.prevPosY, collided.posZ - collided.prevPosZ)), ThreadLocalRandom.current().nextInt(50, 80), 1, (i, build) -> {
-			glitter.setMotion(new Vec3d(collided.motionX + ThreadLocalRandom.current().nextDouble(-0.01, 0.01), (collided.motionY / 2.0) + ThreadLocalRandom.current().nextDouble(-0.01, 0.01), collided.motionZ + ThreadLocalRandom.current().nextDouble(-0.01, 0.01)));
-			if (ThreadLocalRandom.current().nextBoolean()) glitter.setColor(color3);
-			else glitter.setColor(color4);
+		glitter.setCollision(true);
+		glitter.setAcceleration(new Vec3d(0, -0.01, 0));
+		glitter.setScaleFunction(new InterpScale(1, 0));
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), RandUtil.nextInt(40, 50), 1, (i, build) -> {
+			glitter.setMotion(new Vec3d(normal.xCoord + RandUtil.nextDouble(-0.01, 0.01), normal.yCoord + RandUtil.nextDouble(-0.01, 0.01), normal.zCoord + RandUtil.nextDouble(-0.01, 0.01)));
+			if (RandUtil.nextBoolean()) glitter.setColor(color1);
+			else glitter.setColor(color2);
 			if (scatter > 0) {
-				double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
-				double r = scatter * ThreadLocalRandom.current().nextFloat();
+				double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
+				double r = scatter * RandUtil.nextFloat();
 				double x = r * MathHelper.cos((float) theta);
 				double z = r * MathHelper.sin((float) theta);
-				glitter.setPositionOffset(new Vec3d(
-						x,
-						ThreadLocalRandom.current().nextDouble(scatter),
-						z));
+				glitter.setPositionOffset(new Vec3d(x, RandUtil.nextDouble(-scatter, scatter), z));
 			}
 		});
 	}
 
-	public static void HALLOWED_SPIRIT_FLAME_FAR(World world, Vec3d pos) {
+	public static void SPIRIT_WIGHT_FLAME_FAR(World world, Vec3d pos) {
 		ParticleBuilder glitter = new ParticleBuilder(30);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 5, 0, (i, build) -> {
 			double radius = 0.15;
-			double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
-			double r = radius * ThreadLocalRandom.current().nextFloat();
+			double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
+			double r = radius * RandUtil.nextFloat();
 			double x = r * MathHelper.cos((float) theta);
 			double z = r * MathHelper.sin((float) theta);
 
 			glitter.setColorFunction(new InterpColorHSV(Color.RED, 50, 20.0F));
-			glitter.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(0, 0.5), z));
-			glitter.addMotion(new Vec3d(0, ThreadLocalRandom.current().nextDouble(0, 0.02), 0));
+			glitter.setPositionOffset(new Vec3d(x, RandUtil.nextDouble(0, 0.5), z));
+			glitter.addMotion(new Vec3d(0, RandUtil.nextDouble(0, 0.02), 0));
 		});
 	}
 
-	public static void HALLOWED_SPIRIT_FLAME_CLOSE(World world, Vec3d pos) {
+	public static void SPIRIT_WIGHT_FLAME_CLOSE(World world, Vec3d pos) {
 		ParticleBuilder glitter = new ParticleBuilder(30);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 20, 0, (i, build) -> {
 			double radius = 0.2;
-			double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
-			double r = radius * ThreadLocalRandom.current().nextFloat();
+			double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
+			double r = radius * RandUtil.nextFloat();
 			double x = r * MathHelper.cos((float) theta);
 			double z = r * MathHelper.sin((float) theta);
 
 			glitter.setColor(Color.RED);
-			glitter.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(0, 0.5), z));
-			glitter.addMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.02, 0.02), ThreadLocalRandom.current().nextDouble(0, 0.03), ThreadLocalRandom.current().nextDouble(-0.02, 0.02)));
+			glitter.setPositionOffset(new Vec3d(x, RandUtil.nextDouble(0, 0.5), z));
+			glitter.addMotion(new Vec3d(RandUtil.nextDouble(-0.02, 0.02), RandUtil.nextDouble(0, 0.03), RandUtil.nextDouble(-0.02, 0.02)));
 		});
 	}
 
-	public static void HALLOWED_SPIRIT_FLAME_NORMAL(World world, Vec3d pos) {
+	public static void SPIRIT_WIGHT_FLAME_NORMAL(World world, Vec3d pos) {
 		ParticleBuilder glitter = new ParticleBuilder(30);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
-		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
-		glitter.disableRandom();
+		glitter.setAlphaFunction(new InterpFadeInOut(1f, 1f));
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 10, 0, (i, build) -> {
-			double radius = 0.15;
-			double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
-			double r = radius * ThreadLocalRandom.current().nextFloat();
+			double radius = 0.1;
+			double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
+			double r = radius * RandUtil.nextFloat();
 			double x = r * MathHelper.cos((float) theta);
 			double z = r * MathHelper.sin((float) theta);
 
+			glitter.setLifetime(RandUtil.nextInt(10, 40));
 			glitter.setColor(new Color(0x4DFFFFFF, true));
-			glitter.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(0, 0.4), z));
+			glitter.setScaleFunction(new InterpScale(0, (float) RandUtil.nextDouble(3, 4)));
+			glitter.setPositionOffset(new Vec3d(x, RandUtil.nextDouble(0, 0.2), z));
+			if (RandUtil.nextInt(15) == 0)
+				glitter.addMotion(new Vec3d(RandUtil.nextDouble(-0.01, 0.01),
+						RandUtil.nextDouble(0, 0.03),
+						RandUtil.nextDouble(-0.01, 0.01)));
 		});
 	}
 
-	public static void HALLOWED_SPIRIT_HURT(World world, Vec3d pos) {
-		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(100, 150));
+	public static void CRAFTING_ALTAR_IDLE(World world, Vec3d pos) {
+		ParticleBuilder glitter = new ParticleBuilder(30);
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
+		glitter.setAlphaFunction(new InterpFadeInOut(1f, 1f));
+		glitter.addMotion(new Vec3d(RandUtil.nextDouble(-0.01, 0.01),
+				RandUtil.nextDouble(0, 0.05),
+				RandUtil.nextDouble(-0.01, 0.01)));
+		glitter.setColor(new Color(0x0022FF));
+
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 1, 0, (i, build) -> {
+			double radius = 0.1;
+			double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
+			double r = radius * RandUtil.nextFloat();
+			double x = r * MathHelper.cos((float) theta);
+			double z = r * MathHelper.sin((float) theta);
+			glitter.setScale((float) RandUtil.nextDouble(1, 2));
+			glitter.setLifetime(RandUtil.nextInt(5, 30));
+			glitter.setScaleFunction(new InterpScale((float) RandUtil.nextDouble(1, 1.5), 0));
+			glitter.setPositionOffset(new Vec3d(x, RandUtil.nextDouble(0, 0.3), z));
+		});
+	}
+
+	public static void SPIRIT_WIGHT_HURT(World world, Vec3d pos) {
+		ParticleBuilder glitter = new ParticleBuilder(RandUtil.nextInt(100, 150));
 		glitter.setColorFunction(new InterpColorHSV(Color.BLUE, 50, 20.0F));
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.1f, 0.1f));
 
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(40, 100), 0, (i, build) -> {
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), RandUtil.nextInt(40, 100), 0, (i, build) -> {
 			double radius = 0.2;
-			double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
-			double r = radius * ThreadLocalRandom.current().nextFloat();
+			double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
+			double r = radius * RandUtil.nextFloat();
 			double x = r * MathHelper.cos((float) theta);
 			double z = r * MathHelper.sin((float) theta);
 
-			glitter.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(0, 0.4), z));
-			glitter.setMotion(new Vec3d(0, ThreadLocalRandom.current().nextDouble(0, 0.02), 0));
+			glitter.setPositionOffset(new Vec3d(x, RandUtil.nextDouble(0, 0.4), z));
+			glitter.setMotion(new Vec3d(0, RandUtil.nextDouble(0, 0.02), 0));
 		});
 	}
 
 	public static void FAIRY_TRAIL(World world, Vec3d pos, Color color, boolean sad, int age) {
 		if (((age / 4) >= (age / 2)) || (age == 0)) return;
-		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(age / 4, age / 2));
+		ParticleBuilder glitter = new ParticleBuilder(RandUtil.nextInt(age / 8, age / 4));
 		glitter.setColor(color);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.2f, 1f));
 
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(5, 10), 0, (i, build) -> {
-			glitter.setMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.02, 0.02), ThreadLocalRandom.current().nextDouble(-0.02, 0.02), ThreadLocalRandom.current().nextDouble(-0.02, 0.02)));
-			if (sad) glitter.enableMotionCalculation();
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), RandUtil.nextInt(1, 3), 0, (i, build) -> {
+			glitter.setMotion(new Vec3d(RandUtil.nextDouble(-0.02, 0.02), RandUtil.nextDouble(-0.02, 0.02), RandUtil.nextDouble(-0.02, 0.02)));
+			if (sad) {
+				glitter.setCollision(true);
+				glitter.enableMotionCalculation();
+			}
 		});
 	}
 
@@ -274,65 +304,85 @@ public class LibParticles {
 		ParticleSpawner.spawn(glitter2, world, new StaticInterp<>(pos), 3);
 	}
 
-	public static void FAIRY_EXPLODE(World world, Vec3d pos, Color color) {
-		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(50, 80));
-		glitter.setColor(color.darker());
+	public static void EXPLODE(World world, Vec3d pos, Color color1, Color color2, double strengthUpwards, double strengthSideways, int amount, int lifeTime, int lifeTimeRange, boolean bounce) {
+		ParticleBuilder glitter = new ParticleBuilder(10);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
-		glitter.setAlphaFunction(new InterpFadeInOut(0.0f, 0.3f));
+		glitter.setCollision(true);
 		glitter.enableMotionCalculation();
-
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(50, 100), 0, (i, build) -> {
-			double radius = 0.5;
-			double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
-			double r = radius * ThreadLocalRandom.current().nextFloat();
+		glitter.setColorFunction(new InterpColorHSV(ColorUtils.changeColorAlpha(color1, RandUtil.nextInt(50, 150)), ColorUtils.changeColorAlpha(color2, RandUtil.nextInt(50, 150))));
+		glitter.setAcceleration(new Vec3d(0, RandUtil.nextDouble(-0.04, -0.025), 0));
+		if (bounce) glitter.setCanBounce(true);
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), amount, 0, (i, build) -> {
+			double radius = RandUtil.nextDouble(1, 2);
+			double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
+			double r = radius * RandUtil.nextFloat();
 			double x = r * MathHelper.cos((float) theta);
 			double z = r * MathHelper.sin((float) theta);
-			glitter.setMotion(new Vec3d(x, ThreadLocalRandom.current().nextDouble(-0.3, 0.5), z));
+			Vec3d normalize = new Vec3d(x, 0, z).normalize();
+			glitter.setMotion(new Vec3d(
+					normalize.xCoord * RandUtil.nextDouble(-strengthSideways, strengthSideways),
+					RandUtil.nextDouble(-strengthUpwards, strengthUpwards),
+					normalize.zCoord * RandUtil.nextDouble(-strengthSideways, strengthSideways)
+			));
+			glitter.setAlphaFunction(new InterpFadeInOut(0.0f, RandUtil.nextFloat()));
+			glitter.setLifetime(RandUtil.nextInt(lifeTime - lifeTimeRange, lifeTime + lifeTimeRange));
+			glitter.setScale(RandUtil.nextFloat());
 		});
 	}
 
-	public static void CRAFTING_ALTAR_CLUSTER_EXPLODE(World world, Vec3d pos) {
-		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(30, 80));
+	public static void STRUCTURE_FLAIR(World world, Vec3d pos, Color color) {
+		ParticleBuilder glitter = new ParticleBuilder(10);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
-		glitter.setAlphaFunction(new InterpFadeInOut(0.0f, 1.0f));
-
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(20, 30), 0, (i, build) -> {
-			double radius = 0.3;
-			double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
-			double r = radius * ThreadLocalRandom.current().nextFloat();
+		glitter.setCollision(true);
+		glitter.enableMotionCalculation();
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), RandUtil.nextInt(10, 30), 0, (i, build) -> {
+			double radius = RandUtil.nextDouble(1, 2);
+			double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
+			double r = radius * RandUtil.nextFloat();
 			double x = r * MathHelper.cos((float) theta);
 			double z = r * MathHelper.sin((float) theta);
-			Random random = new Random();
-			glitter.setScale(random.nextFloat());
-			glitter.setColor(new Color(random.nextFloat(), random.nextFloat(), random.nextFloat(), random.nextFloat()).brighter());
-			glitter.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(-0.3, 0.3), z));
-			glitter.setMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.1, 0.1),
-					ThreadLocalRandom.current().nextDouble(-0.1, 0.1),
-					ThreadLocalRandom.current().nextDouble(-0.1, 0.1)));
+			glitter.setMotion(new Vec3d(x / 5, RandUtil.nextDouble(-0.3, 0.3), z / 5));
+			glitter.setAlphaFunction(new InterpFadeInOut(0.0f, RandUtil.nextFloat()));
+			glitter.setColor(ColorUtils.shiftColorHueRandomly(ColorUtils.changeColorAlpha(color, RandUtil.nextInt(180, 255)), 30));
+			glitter.setLifetime(RandUtil.nextInt(50, 80));
+			glitter.setScale(RandUtil.nextFloat());
+		});
+	}
+
+	public static void STRUCTURE_BEACON(World world, Vec3d pos, Color color) {
+		ParticleBuilder beacon = new ParticleBuilder(10);
+		beacon.setRenderNormalLayer(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
+		ParticleSpawner.spawn(beacon, world, new StaticInterp<>(pos), RandUtil.nextInt(10, 30), 0, (i, build) -> {
+			beacon.setMotion(new Vec3d(0, RandUtil.nextDouble(-0.3, 0.3), 0));
+			beacon.setAlphaFunction(new InterpFadeInOut(0.1f, RandUtil.nextFloat()));
+			beacon.setColor(ColorUtils.shiftColorHueRandomly(ColorUtils.changeColorAlpha(color, 255), 30));
+			beacon.setLifetime(RandUtil.nextInt(50, 80));
+			beacon.setScale(RandUtil.nextFloat());
 		});
 	}
 
 	public static void CRAFTING_ALTAR_HELIX(World world, Vec3d pos) {
 		ParticleBuilder beam = new ParticleBuilder(200);
 		beam.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
-		beam.setAlphaFunction(new InterpFadeInOut(0.1f, 0.3f));
+		beam.setAlphaFunction(new InterpFadeInOut(1f, 1f));
 
-		ParticleSpawner.spawn(beam, world, new StaticInterp<>(pos), 10, 0, (aFloat, particleBuilder) -> {
-			beam.setScale(ThreadLocalRandom.current().nextFloat());
-			beam.setColor(new Color(ThreadLocalRandom.current().nextInt(50, 255), ThreadLocalRandom.current().nextInt(50, 255), ThreadLocalRandom.current().nextInt(50, 255), ThreadLocalRandom.current().nextInt(150, 255)).brighter().brighter());
-			beam.setMotion(new Vec3d(0, ThreadLocalRandom.current().nextDouble(0.1, 0.8), 0));
-			beam.setLifetime(ThreadLocalRandom.current().nextInt(0, 200));
+		pos = pos.addVector(0, 0.75, 0);
+		ParticleSpawner.spawn(beam, world, new StaticInterp<>(pos), 1, 0, (aFloat, particleBuilder) -> {
+			beam.setScale(RandUtil.nextFloat());
+			beam.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), RandUtil.nextInt(100, 255)));
+			beam.setMotion(new Vec3d(0, RandUtil.nextDouble(0.1, 0.8), 0));
+			beam.setLifetime(RandUtil.nextInt(0, 40));
 		});
 
 		ParticleBuilder helix = new ParticleBuilder(200);
 		helix.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
-		helix.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
+		helix.setAlphaFunction(new InterpFadeInOut(1f, 1f));
 
-		ParticleSpawner.spawn(helix, world, new StaticInterp<>(pos), 10, 0, (aFloat, particleBuilder) -> {
-			helix.setScale(ThreadLocalRandom.current().nextFloat());
-			helix.setColor(new Color(255, 255, 255, ThreadLocalRandom.current().nextInt(50, 170)));
-			helix.setPositionFunction(new InterpHelix(Vec3d.ZERO, new Vec3d(0, ThreadLocalRandom.current().nextDouble(1.0, 255.0), 0), 0, ThreadLocalRandom.current().nextInt(1, 5), ThreadLocalRandom.current().nextInt(1, 5), 0));
-			helix.setLifetime(ThreadLocalRandom.current().nextInt(0, 200));
+		ParticleSpawner.spawn(helix, world, new StaticInterp<>(pos), 1, 0, (aFloat, particleBuilder) -> {
+			helix.setScale(RandUtil.nextFloat());
+			helix.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), RandUtil.nextInt(200, 255)));
+			helix.setPositionFunction(new InterpHelix(Vec3d.ZERO, new Vec3d(0, RandUtil.nextDouble(0.0, 255.0), 0), 0, RandUtil.nextInt(1, 5), RandUtil.nextInt(1, 5), 0));
+			helix.setLifetime(RandUtil.nextInt(0, 100));
 		});
 	}
 
@@ -342,13 +392,13 @@ public class LibParticles {
 		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 		glitter.enableMotionCalculation();
 
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(5, 20), 0, (aFloat, particleBuilder) -> {
-			glitter.setColor(new Color(ThreadLocalRandom.current().nextInt(0, 100), ThreadLocalRandom.current().nextInt(0, 100), ThreadLocalRandom.current().nextInt(50, 255)));
-			glitter.setScale(ThreadLocalRandom.current().nextFloat());
-			glitter.addMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.01, 0.01),
-					ThreadLocalRandom.current().nextDouble(-0.01, 0.01),
-					ThreadLocalRandom.current().nextDouble(-0.01, 0.01)));
-			glitter.setLifetime(ThreadLocalRandom.current().nextInt(20, 50));
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 1, 0, (aFloat, particleBuilder) -> {
+			glitter.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), RandUtil.nextInt(100, 255)));
+			glitter.setScale(RandUtil.nextFloat());
+			glitter.addMotion(new Vec3d(RandUtil.nextDouble(-0.01, 0.01),
+					RandUtil.nextDouble(-0.01, 0.01),
+					RandUtil.nextDouble(-0.01, 0.01)));
+			glitter.setLifetime(RandUtil.nextInt(30, 60));
 		});
 	}
 
@@ -358,182 +408,215 @@ public class LibParticles {
 		glitter.setAlphaFunction(new InterpFadeInOut(1f, 1f));
 		glitter.enableMotionCalculation();
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 1, 0, (aFloat, particleBuilder) -> {
-			glitter.setColor(new Color(ThreadLocalRandom.current().nextInt(0, 100), ThreadLocalRandom.current().nextInt(0, 100), ThreadLocalRandom.current().nextInt(50, 255)));
-			if (scale == -1) glitter.setScale(ThreadLocalRandom.current().nextFloat());
-			else glitter.setScale(scale);
+			glitter.setColor(new Color(RandUtil.nextInt(0, 100), RandUtil.nextInt(0, 100), RandUtil.nextInt(50, 255)));
+			if (scale == -1) glitter.setScale(RandUtil.nextFloat());
+			else {
+				glitter.setAlphaFunction(new InterpFadeInOut(1f, 1f));
+				glitter.setMotion(new Vec3d(0, RandUtil.nextDouble(0.3), 0));
+				glitter.setLifetime(RandUtil.nextInt(30));
+				glitter.setScale(scale);
+			}
 		});
 	}
 
 	public static void CRAFTING_ALTAR_CLUSTER_SUCTION(World world, Vec3d pos, InterpFunction<Vec3d> bezier3D) {
 		ParticleBuilder helix = new ParticleBuilder(200);
 		helix.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
-		helix.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
+		helix.setAlphaFunction(new InterpFadeInOut(0.5f, 0.3f));
 
-		ParticleSpawner.spawn(helix, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(1, 3), 0, (aFloat, particleBuilder) -> {
-			helix.setColor(new Color(ThreadLocalRandom.current().nextInt(50, 255), ThreadLocalRandom.current().nextInt(50, 255), ThreadLocalRandom.current().nextInt(50, 255), ThreadLocalRandom.current().nextInt(10, 255)));
-			helix.setScale(ThreadLocalRandom.current().nextFloat());
+		ParticleSpawner.spawn(helix, world, new StaticInterp<>(pos), 1, 0, (aFloat, particleBuilder) -> {
+			helix.setColorFunction(new InterpColorHSV(ColorUtils.changeColorAlpha(Color.BLUE, RandUtil.nextInt(100, 150)), ColorUtils.changeColorAlpha(Color.CYAN, RandUtil.nextInt(100, 150))));
+			helix.setScale(RandUtil.nextFloat());
 			helix.setPositionFunction(bezier3D);
-			helix.setLifetime(ThreadLocalRandom.current().nextInt(0, 200));
+			helix.setScaleFunction(new InterpScale(1, 0));
+			helix.setLifetime(RandUtil.nextInt(10, 30));
 		});
 	}
 
 	public static void CRAFTING_ALTAR_PEARL_EXPLODE(World world, Vec3d pos) {
 		ParticleBuilder builder = new ParticleBuilder(1);
-		builder.setAlphaFunction(new InterpFadeInOut(0.0f, 1.0f));
+		builder.setAlphaFunction(new InterpFadeInOut(0.0f, 0.1f));
 		builder.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
-		ParticleSpawner.spawn(builder, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(200, 300), 0, (aFloat, particleBuilder) -> {
-			builder.setColorFunction(new InterpColorFade(new Color(ThreadLocalRandom.current().nextInt(0, 20), ThreadLocalRandom.current().nextInt(100, 255), ThreadLocalRandom.current().nextInt(0, 20)), 1, 255, 1));
-			double radius = 0.1;
-			double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
-			double r = radius * ThreadLocalRandom.current().nextFloat();
+		builder.enableMotionCalculation();
+		ParticleSpawner.spawn(builder, world, new InterpLine(pos, pos.addVector(0, 100, 0)), RandUtil.nextInt(400, 500), 0, (aFloat, particleBuilder) -> {
+			builder.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), RandUtil.nextInt(200, 255)));
+			double radius = 1;
+			double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
+			double r = radius * RandUtil.nextFloat();
 			double x = r * MathHelper.cos((float) theta);
 			double z = r * MathHelper.sin((float) theta);
-			builder.setPositionOffset(new Vec3d(x, ThreadLocalRandom.current().nextDouble(-0.1, 0.1), z));
-			builder.setScale(ThreadLocalRandom.current().nextFloat());
-			builder.setMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.03, 0.03),
-					ThreadLocalRandom.current().nextDouble(-0.03, 0.03),
-					ThreadLocalRandom.current().nextDouble(-0.03, 0.03)));
-			builder.setLifetime(ThreadLocalRandom.current().nextInt(20, 80));
+			builder.setPositionOffset(new Vec3d(x, RandUtil.nextDouble(-0.1, 0.1), z));
+			builder.setScale(RandUtil.nextFloat());
+			builder.setMotion(new Vec3d(x, 0, z));
+			builder.setLifetime(RandUtil.nextInt(400, 600));
+		});
+
+		ParticleBuilder shockwave = new ParticleBuilder(1);
+		shockwave.setAlphaFunction(new InterpFadeInOut(0.0f, 0.1f));
+		shockwave.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
+		shockwave.setCollision(true);
+		shockwave.enableMotionCalculation();
+		ParticleSpawner.spawn(shockwave, world, new StaticInterp<>(pos), RandUtil.nextInt(200, 300), 0, (aFloat, particleBuilder) -> {
+			shockwave.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), RandUtil.nextInt(200, 255)));
+			double radius = 2;
+			double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
+			double r = radius * RandUtil.nextFloat();
+			double x = r * MathHelper.cos((float) theta);
+			double z = r * MathHelper.sin((float) theta);
+			shockwave.setScale(RandUtil.nextFloat());
+			shockwave.setMotion(new Vec3d(x, RandUtil.nextDouble(0.5), z));
+			shockwave.setLifetime(RandUtil.nextInt(50, 100));
 		});
 	}
 
 	public static void COLORFUL_BATTERY_BEZIER(World world, BlockPos pedestal, BlockPos center) {
-		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(10, 50));
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-		glitter.setAlphaFunction(new InterpFadeInOut(0.5f, 0.1f));
+		ParticleBuilder glitter = new ParticleBuilder(200);
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
+		glitter.setAlphaFunction(new InterpFadeInOut(0.5f, 0.3f));
 
-		Vec3d sub = new Vec3d(center).addVector(0.5, 0.5, 0.5).subtract(new Vec3d(pedestal).addVector(0.5, 0.5, 0.5));
-
-		Matrix4 matrix = new Matrix4();
-		InterpBezier3D bezier3D = new InterpBezier3D(Vec3d.ZERO, sub,
-				matrix.rotate(Math.toRadians(90), new Vec3d(0, 1, 0)).apply(sub).addVector(0, 5, 0),
-				matrix.rotate(Math.toRadians(-90), new Vec3d(0, 1, 0)).apply(sub));
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(pedestal).addVector(0.5, 0.5, 0.5)), 3, 0, (aFloat, particleBuilder) -> {
-			glitter.setColor(new Color(0, ThreadLocalRandom.current().nextInt(30, 100), ThreadLocalRandom.current().nextInt(50, 255), ThreadLocalRandom.current().nextInt(10, 255)));
-			glitter.setScale(ThreadLocalRandom.current().nextFloat());
-			glitter.setPositionFunction(bezier3D);
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(pedestal).addVector(0.5, 1, 0.5)), 1, 0, (aFloat, particleBuilder) -> {
+			glitter.setColorFunction(new InterpColorHSV(ColorUtils.changeColorAlpha(Color.BLUE, RandUtil.nextInt(100, 150)), ColorUtils.changeColorAlpha(Color.CYAN, RandUtil.nextInt(100, 150))));
+			glitter.setScale(RandUtil.nextFloat());
+			glitter.setPositionFunction(new InterpBezier3D(Vec3d.ZERO, new Vec3d(center.subtract(pedestal)), new Vec3d(0, 6, 0), new Vec3d(0, -5, 0)));
+			glitter.setScaleFunction(new InterpScale(1, 0));
+			glitter.setLifetime(RandUtil.nextInt(10, 30));
 		});
 	}
 
-	public static void SHAPE_BEAM(World world, Vec3d target, Vec3d origin, int distance, Color color) {
+	public static void SHAPE_BEAM(World world, Vec3d target, Vec3d origin, Color color) {
 		ParticleBuilder glitter = new ParticleBuilder(10);
-		glitter.setColor(new Color(1.0f, 1.0f, 1.0f, 0.1f));
-		glitter.setPositionFunction(new InterpHelix(Vec3d.ZERO, target.subtract(origin), 0.0f, 0.15f, 1.0F, 0));
+		glitter.setPositionFunction(new InterpHelix(Vec3d.ZERO, target.subtract(origin), 0.15f, 0.2f, 1.0F, 0));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 
 		glitter.setColor(new Color(
-				Math.min(255, color.getRed() + ThreadLocalRandom.current().nextInt(5, 20)),
-				Math.min(255, color.getGreen() + ThreadLocalRandom.current().nextInt(5, 20)),
-				Math.min(255, color.getBlue() + ThreadLocalRandom.current().nextInt(5, 20)),
+				Math.min(255, color.getRed() + RandUtil.nextInt(5, 20)),
+				Math.min(255, color.getGreen() + RandUtil.nextInt(5, 20)),
+				Math.min(255, color.getBlue() + RandUtil.nextInt(5, 20)),
 				color.getAlpha()));
 
-		ParticleSpawner.spawn(glitter, world, new InterpHelix(target, origin, 0.0f, 0.15f, 1.0f, 0), distance, 0, (aFloat, particleBuilder) -> {
-			glitter.setScale((float) ThreadLocalRandom.current().nextDouble(0.3, 0.8));
-			glitter.setLifetime(ThreadLocalRandom.current().nextInt(10, 20));
+		ParticleSpawner.spawn(glitter, world, new InterpLine(target, origin), (int) origin.distanceTo(target) * 2, 0, (aFloat, particleBuilder) -> {
+			glitter.setScale((float) RandUtil.nextDouble(0.3, 0.8));
+			glitter.setLifetime(RandUtil.nextInt(10, 20));
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		});
 	}
 
-	public static void EFFECT_NULL_GRAV(World world, @NotNull Vec3d pos, @Nullable EntityLivingBase caster, Color color) {
-		ParticleBuilder glitter = new ParticleBuilder(ThreadLocalRandom.current().nextInt(20, 30));
-		glitter.setColor(color);
+	public static void EFFECT_NULL_GRAV(World world, @Nonnull Vec3d pos, @Nullable EntityLivingBase caster, Color color) {
+		ParticleBuilder glitter = new ParticleBuilder(RandUtil.nextInt(20, 30));
+		glitter.setColor(color == null ? Color.WHITE : color);
 		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), ThreadLocalRandom.current().nextInt(5, 10), ThreadLocalRandom.current().nextInt(0, 30), (aFloat, particleBuilder) -> {
-			glitter.setScale((float) ThreadLocalRandom.current().nextDouble(0.3, 0.8));
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), RandUtil.nextInt(5, 10), RandUtil.nextInt(0, 30), (aFloat, particleBuilder) -> {
+			glitter.setScale((float) RandUtil.nextDouble(0.3, 0.8));
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-			if (ThreadLocalRandom.current().nextBoolean())
+			if (RandUtil.nextBoolean())
 				glitter.setPositionFunction(new InterpHelix(
 						new Vec3d(0, caster == null ? 1 / 2 : caster.height / 2, 0),
 						new Vec3d(0, caster == null ? -1 : -caster.height, 0),
-						1f, 0f, 1f, ThreadLocalRandom.current().nextFloat()));
+						1f, 0f, 1f, RandUtil.nextFloat()));
 			else glitter.setPositionFunction(new InterpHelix(
 					new Vec3d(0, caster == null ? 1 / 2 : caster.height / 2, 0),
 					new Vec3d(0, caster == null ? 1.5 : caster.height + 0.5, 0),
-					1f, 0f, 1f, ThreadLocalRandom.current().nextFloat()));
+					1f, 0f, 1f, RandUtil.nextFloat()));
 		});
 	}
 
-	public static void EFFECT_FIRE(World world, Vec3d pos, Vec3d normal, float power) {
-		ParticleBuilder core = new ParticleBuilder((int) (20.0F * power));
-		core.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
-		ParticleSpawner.spawn(core, world, new StaticInterp<>(pos), (int) (40.0F * power), 0, (aFloat, particleBuilder) -> {
-			double radius = (3.0 * power);
-			double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
-			double r = radius * ThreadLocalRandom.current().nextFloat();
-			double x = r * MathHelper.cos((float) theta);
-			double z = r * MathHelper.sin((float) theta);
-
-			core.setMotion(new Vec3d((x / 10.0) * power, ThreadLocalRandom.current().nextDouble(0.2 * power, 0.3 * power), z / 10.0 * power));
-
-			Color color = Color.RED;
-			float[] hsbVals = new float[3];
-			Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), hsbVals);
-			color = new Color(Color.HSBtoRGB((float) (1.0 / ThreadLocalRandom.current().nextInt(50, 255)), hsbVals[1], hsbVals[2]));
-			core.setColor(color);
-			core.setAlphaFunction(new InterpFadeInOut(0.1f, (float) ThreadLocalRandom.current().nextDouble(0.3, 0.6)));
-		});
-	}
-
-	public static void SHAPE_CONE(World world, Vec3d pos, Vec3d normal) {
-		ParticleBuilder core = new ParticleBuilder(20);
-		core.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
-		ParticleSpawner.spawn(core, world, new StaticInterp<>(pos), 40, 0, (aFloat, particleBuilder) -> {
-			double radius = 3.0;
-			double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
-			double r = radius * ThreadLocalRandom.current().nextFloat();
-			double x = r * MathHelper.cos((float) theta);
-			double z = r * MathHelper.sin((float) theta);
-			core.setMotion(new Vec3d(x + normal.xCoord, z / 10.0, z + normal.yCoord).normalize());
-
-			Color color = Color.RED;
-			float[] hsbVals = new float[3];
-			Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), hsbVals);
-			color = new Color(Color.HSBtoRGB((float) (1.0 / ThreadLocalRandom.current().nextInt(50, 255)), hsbVals[1], hsbVals[2]));
-			core.setColor(color);
-			core.setAlphaFunction(new InterpFadeInOut(0.1f, (float) ThreadLocalRandom.current().nextDouble(0.3, 0.6)));
-		});
-	}
-
-	public static void TEMPLATE_BLOCK_ERROR(World world, Vec3d pos) {
+	public static void EFFECT_REGENERATE(World world, @Nonnull Vec3d pos, Color color) {
 		ParticleBuilder glitter = new ParticleBuilder(50);
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
-		glitter.setColor(Color.RED);
-		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.5f));
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 50, 0, (aFloat, particleBuilder) -> {
-			glitter.setMotion(new Vec3d(0, ThreadLocalRandom.current().nextDouble(0, 0.1), 0));
-			glitter.setPositionOffset(new Vec3d(0, ThreadLocalRandom.current().nextDouble(0, 1), 0));
-		});
-	}
+		glitter.setColor(ColorUtils.changeColorAlpha(color, RandUtil.nextInt(200, 255)));
+		glitter.setScale(1);
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+		glitter.disableRandom();
 
-	public static void MANA_BATTERY_CIRCLE(World world, BlockPos center) {
-		double angle = Math.toRadians(ThreadLocalRandom.current().nextDouble(360)) * Math.PI * 2;
-		double x = Math.cos(angle) * 6;
-		double z = Math.sin(angle) * 6;
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 20, 0, (aFloat, particleBuilder) -> {
+			glitter.setLifetime(RandUtil.nextInt(10, 40));
+			glitter.setScale(RandUtil.nextFloat());
+			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, RandUtil.nextFloat()));
 
-		ParticleBuilder glitter = new ParticleBuilder(20);
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
-		glitter.setColor(new Color(Color.CYAN.getRed(), Color.CYAN.getGreen(), Color.CYAN.getBlue(), ThreadLocalRandom.current().nextInt(255)));
-		glitter.setAlphaFunction(new InterpFadeInOut(1f, 1f));
-
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(center).addVector(x + 0.5, ThreadLocalRandom.current().nextDouble(5) + 0.5, z + 0.5)), 1, 0, (aFloat, particleBuilder) -> {
-			glitter.setMotion(new Vec3d(ThreadLocalRandom.current().nextDouble(-0.02, 0.02), ThreadLocalRandom.current().nextDouble(-0.1, 0.1), ThreadLocalRandom.current().nextDouble(-0.02, 0.02)));
-			glitter.setPositionOffset(new Vec3d(0, ThreadLocalRandom.current().nextDouble(-0.5, 0.5), 0));
-		});
-	}
-
-	public static void EFFECT_LEAP(World world, Color color, Vec3d pos, double strength) {
-		ParticleBuilder glitter = new ParticleBuilder((int) strength / 2);
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
-		glitter.setColor(color);
-		glitter.setAlphaFunction(new InterpFadeInOut(0f, 1f));
-
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 30, 0, (aFloat, particleBuilder) -> {
-			double theta = 2.0f * (float) Math.PI * ThreadLocalRandom.current().nextFloat();
-			double r = (strength / 4) * ThreadLocalRandom.current().nextFloat();
+			double radius = 1;
+			double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
+			double r = radius * RandUtil.nextFloat();
 			double x = r * MathHelper.cos((float) theta);
 			double z = r * MathHelper.sin((float) theta);
-			glitter.setPositionFunction(new InterpLine(Vec3d.ZERO, new Vec3d(x, ThreadLocalRandom.current().nextDouble(0.1, 0.4), z)));
+			Vec3d dest = new Vec3d(x, RandUtil.nextDouble(-1, 1), z);
+			glitter.setPositionFunction(new InterpBezier3D(Vec3d.ZERO, dest, dest.scale(2), new Vec3d(dest.xCoord, RandUtil.nextDouble(-2, 2), dest.zCoord)));
 		});
+	}
+
+	public static void EFFECT_BURN(World world, @Nonnull Vec3d pos, Color color) {
+		ParticleBuilder glitter = new ParticleBuilder(3);
+		glitter.setScale(1);
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 4, 0, (aFloat, particleBuilder) -> {
+			glitter.setColor(ColorUtils.changeColorAlpha(color, RandUtil.nextInt(200, 255)));
+
+			glitter.setLifetime(RandUtil.nextInt(10, 30));
+			glitter.setScaleFunction(new InterpScale((float) RandUtil.nextDouble(3, 10), 0f));
+			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, RandUtil.nextFloat()));
+			glitter.addMotion(new Vec3d(
+					RandUtil.nextDouble(-0.05, 0.05),
+					RandUtil.nextDouble(0.05),
+					RandUtil.nextDouble(-0.05, 0.05)
+			));
+			glitter.setPositionOffset(new Vec3d(
+					RandUtil.nextDouble(-0.3, 0.3),
+					RandUtil.nextDouble(-0.3, 0.3),
+					RandUtil.nextDouble(-0.3, 0.3)
+			));
+		});
+
+
+		ParticleBuilder dust = new ParticleBuilder(3);
+		dust.setScale(1);
+		dust.setRenderNormalLayer(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+
+		ParticleSpawner.spawn(dust, world, new StaticInterp<>(pos), 3, 0, (aFloat, particleBuilder) -> {
+
+			dust.setLifetime(RandUtil.nextInt(10, 30));
+			dust.setScaleFunction(new InterpScale(3f, 0.5f));
+			dust.setAlphaFunction(new InterpFadeInOut(1, 1));
+			dust.setColor(Color.DARK_GRAY);
+			dust.addMotion(new Vec3d(
+					RandUtil.nextDouble(-0.05, 0.05),
+					RandUtil.nextDouble(0.05),
+					RandUtil.nextDouble(-0.05, 0.05)
+			));
+		});
+
+		//ParticleBuilder dust = new ParticleBuilder(3);
+		//dust.setScale(1);
+		//dust.setRenderNormalLayer(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+//
+		//ParticleSpawner.spawn(dust, world, new StaticInterp<>(pos), 10, 0, (aFloat, particleBuilder) -> {
+		//	dust.setColor(Color.DARK_GRAY);
+		//	dust.setLifetime(RandUtil.nextInt(20, 30));
+		//	dust.setScale(1);
+		//	dust.setScaleFunction(new InterpFadeInOut(0, 0.9f));
+		//	//dust.setAlphaFunction(new InterpFadeInOut(0.3f, RandUtil.nextFloat()));
+		//	double x = RandUtil.nextDouble(-4, 4),
+		//			z = RandUtil.nextDouble(-4, 4);
+		//	dust.setPositionFunction(new InterpBezier3D(Vec3d.ZERO,
+		//			new Vec3d(x, RandUtil.nextDouble(4), z),
+		//			new Vec3d(x, -5, z), new Vec3d(0, 1, 0)));
+//
+		//	//double radius = 3;
+		//	//double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
+		//	//double r = radius * RandUtil.nextFloat();
+		//	//double x = r * MathHelper.cos((float) theta);
+		//	//double z = r * MathHelper.sin((float) theta);
+		//	//Vec3d dest = new Vec3d(x, RandUtil.nextDouble(-1, 1), z);
+		//	//glitter.setPositionFunction(new InterpBezier3D(Vec3d.ZERO, dest,
+		//	//		new Vec3d(0, RandUtil.nextDouble(0, 1), 0),
+		//	//		new Vec3d(0, RandUtil.nextDouble(-2, 0), 0)));
+		//});
+	}
+
+	public static void STRUCTURE_BOUNDS(World world, Vec3d pos, Color color) {
+		ParticleBuilder glitter = new ParticleBuilder(RandUtil.nextInt(10));
+		glitter.setScale(RandUtil.nextFloat());
+		glitter.setRenderNormalLayer(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+		glitter.setAlphaFunction(new InterpFadeInOut(0.9F, 0.9F));
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 1, 0, (aFloat, particleBuilder) -> glitter.setColor(ColorUtils.shiftColorHueRandomly(ColorUtils.changeColorAlpha(color, RandUtil.nextInt(50, 200)), 100)));
 	}
 }

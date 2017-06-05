@@ -12,4 +12,9 @@ public class MaterialNacre extends MaterialLiquid {
 		super(color);
 		setNoPushMobility();
 	}
+
+	@Override
+	public boolean blocksMovement() {
+		return true;
+	}
 }

@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.init;
 
-import com.teamwizardry.librarianlib.common.structure.Structure;
+import com.teamwizardry.librarianlib.features.structure.Structure;
 import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.util.ResourceLocation;
 
@@ -13,12 +13,13 @@ public class ModStructures {
 	public HashMap<String, Structure> structures = new HashMap<>();
 
 	public ModStructures() {
-		reload();
+		init();
 	}
 
-	public void reload() {
+	public void init() {
 		structures.clear();
 		structures.put("crafting_altar", new Structure(new ResourceLocation(Wizardry.MODID, "crafting_altar")));
+		structures.put("mana_battery", new Structure(new ResourceLocation(Wizardry.MODID, "mana_battery")));
 	}
 }
 

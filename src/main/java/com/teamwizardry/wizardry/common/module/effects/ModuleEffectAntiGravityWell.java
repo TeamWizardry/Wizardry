@@ -1,113 +1,138 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
-import com.teamwizardry.wizardry.api.Attributes;
-import com.teamwizardry.wizardry.api.spell.ITargettable;
-import com.teamwizardry.wizardry.api.spell.Module;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.api.spell.RegisterModule;
-import com.teamwizardry.wizardry.common.entity.EntitySpellGravityWell;
+import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
+import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpHelix;
+import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
+import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
+import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
+import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
+import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.util.InterpScale;
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.play.server.SPacketEntityVelocity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
+import javax.annotation.Nonnull;
+
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
 /**
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEffectAntiGravityWell extends Module implements ITargettable {
+public class ModuleEffectAntiGravityWell extends Module implements IlingeringModule, ITaxing {
 
-	public ModuleEffectAntiGravityWell() {
-	}
-
-	@Nullable
-	@Override
-	public Color getColor() {
-		return Color.MAGENTA;
-	}
-
-	@NotNull
-	@Override
-	public ItemStack getRequiredStack() {
-		return new ItemStack(Items.MAGMA_CREAM);
-	}
-
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleType getModuleType() {
 		return ModuleType.EFFECT;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getID() {
 		return "effect_anti_gravity_well";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getReadableName() {
 		return "Anti Gravity Well";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDescription() {
 		return "Will disperse in all entities around the target.";
 	}
 
 	@Override
-	public double getManaToConsume() {
-		return 1000;
-	}
+	public boolean run(@Nonnull SpellData spell) {
+		World world = spell.world;
+		Vec3d position = spell.getData(TARGET_HIT);
+		Entity caster = spell.getData(CASTER);
 
-	@Override
-	public double getBurnoutToFill() {
-		return 1000;
-	}
+		if (position == null) return false;
 
-	@Override
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Vec3d target) {
-		double strength = 20;
+		double strength = 10 * getMultiplier();
 		if (attributes.hasKey(Attributes.EXTEND))
 			strength += attributes.getDouble(Attributes.EXTEND);
-		EntitySpellGravityWell well = new EntitySpellGravityWell(world, caster, target, (int) (strength * 20), strength, true);
-		well.setPosition(target.xCoord, target.yCoord, target.zCoord);
-		world.spawnEntity(well);
-		setTargetPosition(this, target);
-		return world.spawnEntity(well);
+
+		for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(position)).expand(strength, strength, strength))) {
+			if (entity == null) continue;
+			double dist = entity.getPositionVector().distanceTo(position);
+			if (dist < 2) continue;
+			if (dist > strength) continue;
+			if (!tax(this, spell)) return false;
+
+			final double upperMag = (strength / 100);
+			final double scale = 3.5;
+			double mag = upperMag * (scale * dist / (-scale * dist - 1) + 1);
+
+			Vec3d dir = position.subtract(entity.getPositionVector()).normalize().scale(mag);
+
+			entity.motionX += (dir.xCoord);
+			entity.motionY += (dir.yCoord);
+			entity.motionZ += (dir.zCoord);
+			entity.fallDistance = 0;
+			entity.velocityChanged = true;
+
+			spell.addData(ENTITY_HIT, entity);
+			if (entity instanceof EntityPlayerMP)
+				((EntityPlayerMP) entity).connection.sendPacket(new SPacketEntityVelocity(entity));
+		}
+
+		return true;
 	}
 
 	@Override
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster, @NotNull Entity target) {
-		double strength = 20;
+	public void runClient(@Nonnull SpellData spell) {
+		Vec3d position = spell.getData(ORIGIN);
+
+		if (position == null) return;
+
+		ParticleBuilder glitter = new ParticleBuilder(RandUtil.nextInt(20, 30));
+		glitter.setColorFunction(new InterpColorHSV(getPrimaryColor(), getSecondaryColor()));
+		ParticleSpawner.spawn(glitter, spell.world, new StaticInterp<>(position), 5, RandUtil.nextInt(0, 30), (aFloat, particleBuilder) -> {
+			glitter.setScale((float) RandUtil.nextDouble(0.3, 1));
+			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, (float) RandUtil.nextDouble(0.6, 1)));
+			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+			glitter.setLifetime(RandUtil.nextInt(10, 40));
+			glitter.setScaleFunction(new InterpScale(1, 0));
+			if (RandUtil.nextBoolean())
+				glitter.setPositionFunction(new InterpHelix(
+						new Vec3d(0, 0, 0),
+						new Vec3d(0, 2, 0),
+						0.5f, 0, 1, RandUtil.nextFloat()
+				));
+			else glitter.setPositionFunction(new InterpHelix(
+					new Vec3d(0, 0, 0),
+					new Vec3d(0, -2, 0),
+					0.5f, 0, 1, RandUtil.nextFloat()
+			));
+		});
+	}
+
+	@Nonnull
+	@Override
+	public Module copy() {
+		return cloneModule(new ModuleEffectAntiGravityWell());
+	}
+
+	@Override
+	public int lingeringTime(SpellData spell) {
+		int strength = 500;
 		if (attributes.hasKey(Attributes.EXTEND))
 			strength += attributes.getDouble(Attributes.EXTEND);
-		if (target instanceof EntityLivingBase)
-			strength *= calcBurnoutPercent(getCap((EntityLivingBase) target));
-		EntitySpellGravityWell well = new EntitySpellGravityWell(world, caster, target.getPositionVector(), (int) (strength * 20), strength, true);
-		well.setPosition(target.posX, target.posY, target.posZ);
-		world.spawnEntity(well);
-		setTargetPosition(this, target.getPositionVector());
-		return world.spawnEntity(well);
-	}
 
-	@Override
-	public void runClient(@NotNull World world, @Nullable ItemStack stack, @Nullable EntityLivingBase caster, @NotNull Vec3d pos) {
-	}
-
-	@NotNull
-	@Override
-	public ModuleEffectAntiGravityWell copy() {
-		ModuleEffectAntiGravityWell module = new ModuleEffectAntiGravityWell();
-		module.deserializeNBT(serializeNBT());
-		process(module);
-		return module;
+		return strength;
 	}
 }

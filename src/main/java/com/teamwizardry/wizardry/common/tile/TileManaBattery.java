@@ -1,86 +1,88 @@
 package com.teamwizardry.wizardry.common.tile;
 
-import com.teamwizardry.librarianlib.common.base.block.TileMod;
-import com.teamwizardry.librarianlib.common.network.PacketHandler;
-import com.teamwizardry.librarianlib.common.util.autoregister.TileRegister;
-import com.teamwizardry.librarianlib.common.util.math.Matrix4;
-import com.teamwizardry.librarianlib.common.util.saving.Save;
-import com.teamwizardry.wizardry.api.block.IManaSink;
+import com.teamwizardry.librarianlib.features.autoregister.TileRegister;
+import com.teamwizardry.librarianlib.features.network.PacketHandler;
+import com.teamwizardry.wizardry.api.block.TileManaFaucet;
+import com.teamwizardry.wizardry.api.capability.CapManager;
+import com.teamwizardry.wizardry.api.util.PosUtils;
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.fluid.FluidBlockMana;
-import com.teamwizardry.wizardry.common.network.PacketParticleAmbientFizz;
+import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.init.ModBlocks;
+import com.teamwizardry.wizardry.init.ModItems;
+import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
+import java.awt.*;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 @TileRegister("mana_battery")
-public class TileManaBattery extends TileMod implements ITickable, IManaSink {
+public class TileManaBattery extends TileManaFaucet implements ITickable {
 
-	public int maxMana = 9000;
-	@Save
-	public int currentMana;
+	public TileManaBattery() {
+		super(100000, 100000);
+	}
+
+	@Nonnull
+	@SideOnly(Side.CLIENT)
+	@Override
+	public AxisAlignedBB getRenderBoundingBox() {
+		return TileEntity.INFINITE_EXTENT_AABB;
+	}
 
 	@Override
 	public void update() {
-		if (!world.isRemote) return;
+		int count = 0;
+		for (int i = -4; i < 4; i++)
+			for (int j = -4; j < 4; j++)
+				if (world.getBlockState(getPos().add(i, -3, j)) == FluidBlockMana.instance.getDefaultState())
+					count++;
 
-		Random rand = new Random();
+		if (count < 21) return;
 
-		if (currentMana < maxMana) {
-			int x = ThreadLocalRandom.current().nextInt(-5, 5);
-			int z = ThreadLocalRandom.current().nextInt(-5, 5);
-			BlockPos mana = getPos().add(x, -3, z);
-			if (world.getBlockState(mana) == FluidBlockMana.instance.getDefaultState()) {
-				PacketHandler.NETWORK.sendToAllAround(new PacketParticleAmbientFizz(new Vec3d(mana).addVector(0.5, 0.5, 0.5)), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 20));
-				int chance = rand.nextInt(50);
-				if (chance == 0) {
-					if (currentMana > maxMana - 1000) currentMana = maxMana;
-					else currentMana += 1000;
-					world.setBlockState(mana, Blocks.AIR.getDefaultState(), 3);
+		CapManager manager = new CapManager(cap);
+		if (manager.isManaFull()) return;
+
+		PosUtils.ManaBatteryPositions positions = new PosUtils.ManaBatteryPositions(world, pos);
+		ArrayList<BlockPos> poses = new ArrayList<>(positions.takenPoses);
+		if (poses.isEmpty()) return;
+		for (BlockPos target : poses) {
+			if (!world.isBlockLoaded(target)) continue;
+			IBlockState state = world.getBlockState(target);
+
+			if (state.getBlock() == ModBlocks.PEARL_HOLDER) {
+				TileEntity tile = world.getTileEntity(target);
+				if (tile == null) continue;
+				if (!(tile instanceof TilePearlHolder)) continue;
+				TilePearlHolder holder = (TilePearlHolder) world.getTileEntity(target);
+
+				if (holder == null || holder.pearl == null || holder.pearl.isEmpty() || holder.pearl.getItem() != ModItems.MANA_ORB)
+					continue;
+
+				CapManager orbManager = new CapManager(holder.pearl);
+				if (orbManager.getMana() <= 0) {
+					holder.pearl = ItemStack.EMPTY;
+					holder.markDirty();
+
+					world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), ModSounds.GLASS_BREAK, SoundCategory.AMBIENT, 0.5F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
+					PacketHandler.NETWORK.sendToAllAround(new PacketExplode(new Vec3d(target).addVector(0.5, 0.5, 0.5), Color.CYAN, Color.BLUE, 0.5, 0.5, 50, 50, 10, true),
+							new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
+				} else {
+					if (!addMana(10)) break;
+					else orbManager.removeMana(10);
 				}
 			}
 		}
-
-		List<BlockPos> pedestals = new ArrayList<>();
-		for (int i = 0; i < 360; i++) {
-			double angle = Math.toRadians(i) * Math.PI * 2;
-			double cX = 0.5 + Math.cos(angle) * 6;
-			double cZ = 0.5 + Math.sin(angle) * 6;
-			BlockPos pedPos = new BlockPos(pos.getX() + cX, pos.getY() - 2, pos.getZ() + cZ);
-
-			if (pedestals.contains(pedPos)) continue;
-			IBlockState block = world.getBlockState(pedPos);
-			if (block.getBlock() != ModBlocks.PEDESTAL) continue;
-			TilePedestal pedestal = (TilePedestal) world.getTileEntity(pedPos);
-			if (pedestal == null) return;
-			if (pedestal.pearl == null) continue;
-
-			Vec3d dist = new Vec3d(pos.subtract(pedPos));
-			Matrix4 matrix = new Matrix4();
-			matrix.rotate(Math.toRadians(180), dist);
-			Vec3d oppVec = dist.add(new Vec3d(pos));
-
-			BlockPos oppPos = new BlockPos(oppVec.xCoord, pedPos.getY(), oppVec.zCoord);
-			if (pedestals.contains(oppPos)) continue;
-			IBlockState oppBlock = world.getBlockState(oppPos);
-			if (oppBlock.getBlock() != ModBlocks.PEDESTAL) {
-				continue;
-			}
-			TilePedestal oppPed = (TilePedestal) world.getTileEntity(oppPos);
-			if (oppPed == null) continue;
-			if (oppPed.pearl == null) continue;
-
-			pedestals.add(pedPos);
-			pedestals.add(oppPos);
-		}
-
 	}
 }

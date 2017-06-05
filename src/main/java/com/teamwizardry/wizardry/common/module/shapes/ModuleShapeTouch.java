@@ -1,86 +1,58 @@
 package com.teamwizardry.wizardry.common.module.shapes;
 
-import com.teamwizardry.wizardry.api.spell.ITargettable;
-import com.teamwizardry.wizardry.api.spell.Module;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.api.spell.RegisterModule;
-import com.teamwizardry.wizardry.api.util.Utils;
-import com.teamwizardry.wizardry.common.module.events.ModuleEventCast;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.teamwizardry.wizardry.api.spell.*;
+import net.minecraft.entity.Entity;
+
+import javax.annotation.Nonnull;
+
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
 
 /**
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleShapeTouch extends Module {
+public class ModuleShapeTouch extends Module implements ICostModifier {
 
-	public ModuleShapeTouch() {
-		process(this);
-	}
-
-	@NotNull
-	@Override
-	public ItemStack getRequiredStack() {
-		return new ItemStack(Items.EGG);
-	}
-
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleType getModuleType() {
 		return ModuleType.SHAPE;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getID() {
 		return "shape_touch";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getReadableName() {
 		return "Touch";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getDescription() {
-		return "Will run the spell on the block hit";
+		return "Will run the spell on the caster";
 	}
 
 	@Override
-	public boolean run(@NotNull World world, @Nullable EntityLivingBase caster) {
-		if (nextModule == null) return false;
+	public boolean run(@Nonnull SpellData spell) {
+		Entity caster = spell.getData(CASTER);
 		if (caster == null) return false;
 
-		if (nextModule instanceof ModuleEventCast) return nextModule.run(world, caster);
-		else if (nextModule instanceof ITargettable) {
-			double range = 5;
-			if (caster instanceof EntityPlayerMP)
-				range = ((EntityPlayerMP) caster).interactionManager.getBlockReachDistance();
-			RayTraceResult result = Utils.raytrace(world, caster.getLookVec(), caster.getPositionVector().addVector(0, caster.getEyeHeight(), 0), range, caster);
-			if (result != null && result.typeOfHit == RayTraceResult.Type.BLOCK)
-				return ((ITargettable) nextModule).run(world, caster, result.hitVec);
-			else if (result != null && result.typeOfHit == RayTraceResult.Type.ENTITY)
-				return ((ITargettable) nextModule).run(world, caster, result.entityHit);
-		}
-
-		return false;
+		return runNextModule(spell);
 	}
 
-	@NotNull
 	@Override
-	public ModuleShapeTouch copy() {
-		ModuleShapeTouch module = new ModuleShapeTouch();
-		module.deserializeNBT(serializeNBT());
-		process(module);
-		return module;
+	public void runClient(@Nonnull SpellData spell) {
+
+	}
+
+	@Nonnull
+	@Override
+	public Module copy() {
+		return cloneModule(new ModuleShapeTouch());
 	}
 }

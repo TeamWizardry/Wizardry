@@ -1,0 +1,38 @@
+{
+  "__comment": "Model generated using MrCrayfish's Model Creator (http://mrcrayfish.com/modelcreator/)",
+  "textures": {
+    "0": "wizardry:blocks/pearl_holder_detail"
+  },
+  "elements": [
+    {
+      "from": [6.5, 6.5, 6.5],
+      "to": [9.5, 9.5, 9.5],
+      "faces": {
+        "down": {
+          "uv": [4, 12, 7, 15],
+          "texture": "#0"
+        },
+        "up": {
+          "uv": [4, 12, 7, 15],
+          "texture": "#0"
+        },
+        "north": {
+          "uv": [4, 12, 7, 15],
+          "texture": "#0"
+        },
+        "south": {
+          "uv": [4, 12, 7, 15],
+          "texture": "#0"
+        },
+        "west": {
+          "uv": [4, 12, 7, 15],
+          "texture": "#0"
+        },
+        "east": {
+          "uv": [4, 12, 7, 15],
+          "texture": "#0"
+        }
+      }
+    }
+  ]
+}

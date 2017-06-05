@@ -5,11 +5,11 @@ import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
-import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
 /**
  * Created by Saad on 8/30/2016.
@@ -17,45 +17,38 @@ import javax.annotation.Nullable;
 public class RecipeJam implements IRecipe {
 
 	@Override
-	public boolean matches(@NotNull InventoryCrafting inv, @NotNull World worldIn) {
+	public boolean matches(@Nonnull InventoryCrafting inv, @Nonnull World worldIn) {
 		boolean foundJar = false;
 		boolean foundSword = false;
 
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);
-			if (stack != null) {
-				if (stack.getItem() == ModItems.JAR) {
+			if (stack.getItem() == ModItems.JAR) {
 
-					if (stack.getItemDamage() == 1)
-						foundJar = true;
-				}
-				if (stack.getItem() == Items.GOLDEN_SWORD)
-					foundSword = true;
+				if (stack.getItemDamage() == 1)
+					foundJar = true;
 			}
+			if (stack.getItem() == Items.GOLDEN_SWORD)
+				foundSword = true;
 		}
 		return foundJar && foundSword;
 	}
 
-	@Nullable
 	@Override
-	public ItemStack getCraftingResult(@NotNull InventoryCrafting inv) {
-		ItemStack sword = null;
-		ItemStack jar = null;
+	@Nonnull
+	public ItemStack getCraftingResult(@Nonnull InventoryCrafting inv) {
+		ItemStack sword = ItemStack.EMPTY;
+		ItemStack jar = ItemStack.EMPTY;
 
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);
-			if (stack != null) {
-				if (stack.getItem() == ModItems.JAR) {
-					if (stack.getItemDamage() == 1)
-						jar = stack;
-				}
-				if (stack.getItem() == Items.GOLDEN_SWORD)
-					sword = stack;
+			if (stack.getItem() == ModItems.JAR) {
+				if (stack.getItemDamage() == 1)
+					jar = stack;
 			}
+			if (stack.getItem() == Items.GOLDEN_SWORD)
+				sword = stack;
 		}
-
-		if (sword == null || jar == null)
-			return null;
 
 		ItemStack baseItemCopy = jar.copy();
 		baseItemCopy.setItemDamage(2);
@@ -69,25 +62,27 @@ public class RecipeJam implements IRecipe {
 		return 10;
 	}
 
-	@Nullable
 	@Override
+	@Nonnull
 	public ItemStack getRecipeOutput() {
-		return null;
+		return ItemStack.EMPTY;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public ItemStack[] getRemainingItems(@NotNull InventoryCrafting inv) {
-		ItemStack[] remainingItems = ForgeHooks.defaultRecipeGetRemainingItems(inv);
+	public NonNullList<ItemStack> getRemainingItems(@Nonnull InventoryCrafting inv) {
+		NonNullList<ItemStack> remainingItems = ForgeHooks.defaultRecipeGetRemainingItems(inv);
 
 		ItemStack sword;
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);
-			if (stack != null && stack.getItem() == Items.GOLDEN_SWORD) {
+			if (stack.getItem() == Items.GOLDEN_SWORD) {
 				sword = stack.copy();
 				sword.setItemDamage(sword.getItemDamage() + 1);
 				if (sword.getItemDamage() > sword.getMaxDamage()) sword = null;
-				remainingItems[i] = sword;
+				if (sword != null) {
+					remainingItems.set(i, sword);
+				}
 				break;
 			}
 		}
