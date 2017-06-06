@@ -1,10 +1,13 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
 import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.block.IGrowable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
@@ -54,9 +57,7 @@ public class ModuleEffectThrive extends Module implements ITaxing {
 		Entity caster = spell.getData(CASTER);
 
 		if (targetEntity instanceof EntityLivingBase) {
-			double strength = 0.3 * getMultiplier();
-			if (attributes.hasKey(Attributes.EXTEND))
-				strength += Math.min(20.0 / 10.0, attributes.getDouble(Attributes.EXTEND) / 10.0);
+			double strength = getModifierPower(spell, Attributes.INCREASE_POTENCY, 3, 20, true, true) / 10.0;
 
 			if (!tax(this, spell)) return false;
 
@@ -68,7 +69,8 @@ public class ModuleEffectThrive extends Module implements ITaxing {
 			BlockPos pos = new BlockPos(targetPos);
 			if (world.getBlockState(pos).getBlock() instanceof IGrowable) {
 				if (!tax(this, spell)) return false;
-				ItemDye.applyBonemeal(new ItemStack(Items.DYE), world, pos);
+				if (caster == null || (caster instanceof EntityPlayer && BlockUtils.hasEditPermission(pos, (EntityPlayerMP) caster)))
+					ItemDye.applyBonemeal(new ItemStack(Items.DYE), world, pos);
 			}
 		}
 		return true;

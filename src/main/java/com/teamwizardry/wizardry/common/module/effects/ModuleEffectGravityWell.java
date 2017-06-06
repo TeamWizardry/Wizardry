@@ -62,19 +62,16 @@ public class ModuleEffectGravityWell extends Module implements IlingeringModule,
 
 		if (position == null) return false;
 
-		double strength = 20 * getMultiplier();
-		if (attributes.hasKey(Attributes.EXTEND))
-			strength += attributes.getDouble(Attributes.EXTEND);
-		strength *= calcBurnoutPercent(caster);
+		double strength = getModifierPower(spell, Attributes.INCREASE_AOE, 10, 32, true, true);
 
-		for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(position)).expand(strength, strength, strength))) {
+		for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(position)).expand(strength, strength, strength))) {
 			if (entity == null) continue;
 			double dist = entity.getPositionVector().distanceTo(position);
 			if (dist < 2) continue;
 			if (dist > strength) continue;
 			if (!tax(this, spell)) return false;
 
-			final double upperMag = (strength / 20);
+			final double upperMag = getModifierPower(spell, Attributes.INCREASE_POTENCY, 10, 50, true, true) / 100.0;
 			final double scale = 3.5;
 			double mag = upperMag * (scale * dist / (-scale * dist - 1) + 1);
 
@@ -133,12 +130,6 @@ public class ModuleEffectGravityWell extends Module implements IlingeringModule,
 
 	@Override
 	public int lingeringTime(SpellData spell) {
-		Entity caster = spell.getData(CASTER);
-		int strength = 1000;
-		if (attributes.hasKey(Attributes.EXTEND))
-			strength += attributes.getDouble(Attributes.EXTEND) * 10;
-		strength *= calcBurnoutPercent(caster);
-
-		return strength;
+		return (int) (getModifierPower(spell, Attributes.EXTEND_TIME, 10, 64, true, true) * 50);
 	}
 }

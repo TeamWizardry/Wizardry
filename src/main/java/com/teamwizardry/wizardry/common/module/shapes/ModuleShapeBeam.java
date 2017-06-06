@@ -55,7 +55,8 @@ public class ModuleShapeBeam extends Module implements IContinousSpell, ICostMod
 		if (position == null) return false;
 
 		double range = 10;
-		if (attributes.hasKey(Attributes.EXTEND)) range = Math.min(64, attributes.getDouble(Attributes.EXTEND));
+		if (attributes.hasKey(Attributes.EXTEND_TIME))
+			range = Math.min(64, attributes.getDouble(Attributes.EXTEND_TIME));
 
 		setCostMultiplier(this, 1);
 

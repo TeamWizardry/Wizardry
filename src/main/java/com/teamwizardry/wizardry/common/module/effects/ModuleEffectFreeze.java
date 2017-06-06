@@ -7,10 +7,14 @@ import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.InterpScale;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import net.minecraft.block.BlockSnow;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -60,10 +64,7 @@ public class ModuleEffectFreeze extends Module implements ITaxing {
 		BlockPos targetPos = spell.getData(BLOCK_HIT);
 		Entity caster = spell.getData(CASTER);
 
-		double strength = 1 * getMultiplier();
-		if (attributes.hasKey(Attributes.EXTEND))
-			strength += Math.min(30, attributes.getDouble(Attributes.EXTEND));
-		strength *= calcBurnoutPercent(caster);
+		double range = getModifierPower(spell, Attributes.INCREASE_AOE, 1, 16, true, true) / 2.0;
 
 		if (!tax(this, spell)) return false;
 
@@ -73,27 +74,27 @@ public class ModuleEffectFreeze extends Module implements ITaxing {
 		}
 
 		if (targetPos != null) {
-			strength /= 2.0;
-			for (int x = (int) strength; x >= -strength; x--)
-				for (int y = (int) strength; y >= -strength; y--)
-					for (int z = (int) strength; z >= -strength; z--) {
+			for (int x = (int) range; x >= -range; x--)
+				for (int y = (int) range; y >= -range; y--)
+					for (int z = (int) range; z >= -range; z--) {
 						BlockPos pos = targetPos.add(x, y, z);
 						double dist = pos.getDistance(targetPos.getX(), targetPos.getY(), targetPos.getZ());
-						if (dist > strength) continue;
+						if (dist > range) continue;
 
 						for (EnumFacing facing : EnumFacing.VALUES) {
-							if (world.getBlockState(pos.offset(facing)).getBlock() == Blocks.FIRE) {
-								world.setBlockToAir(pos.offset(facing));
+							IBlockState state = world.getBlockState(pos.offset(facing));
+							if (state.getBlock() == Blocks.FIRE) {
+								BlockUtils.breakBlock(world, pos.offset(facing), state, caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null, false);
 							}
 						}
 
 						if (world.getBlockState(pos).isTopSolid() && world.isAirBlock(pos.offset(EnumFacing.UP))) {
-							int layerSize = (int) (Math.min(8, Math.max(1, (dist / strength) * 6.0)));
-							world.setBlockState(pos.offset(EnumFacing.UP), Blocks.SNOW_LAYER.getDefaultState().withProperty(BlockSnow.LAYERS, RandUtil.nextInt(Math.max(1, layerSize - 1), layerSize)), 3);
+							int layerSize = (int) (Math.min(8, Math.max(1, (dist / range) * 6.0)));
+							BlockUtils.placeBlock(world, pos.offset(EnumFacing.UP), Blocks.SNOW_LAYER.getDefaultState().withProperty(BlockSnow.LAYERS, RandUtil.nextInt(Math.max(1, layerSize - 1), layerSize)), caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null);
 						}
 
 						if (world.getBlockState(pos).getBlock() == Blocks.WATER) {
-							world.setBlockState(pos, Blocks.ICE.getDefaultState(), 3);
+							BlockUtils.placeBlock(world, pos, Blocks.ICE.getDefaultState(), caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null);
 						}
 					}
 		}

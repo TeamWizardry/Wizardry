@@ -62,9 +62,7 @@ public class ModuleEffectAntiGravityWell extends Module implements IlingeringMod
 
 		if (position == null) return false;
 
-		double strength = 10 * getMultiplier();
-		if (attributes.hasKey(Attributes.EXTEND))
-			strength += attributes.getDouble(Attributes.EXTEND);
+		double strength = getModifierPower(spell, Attributes.INCREASE_AOE, 3, 16, true, true);
 
 		for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(position)).expand(strength, strength, strength))) {
 			if (entity == null) continue;
@@ -73,7 +71,7 @@ public class ModuleEffectAntiGravityWell extends Module implements IlingeringMod
 			if (dist > strength) continue;
 			if (!tax(this, spell)) return false;
 
-			final double upperMag = (strength / 100);
+			final double upperMag = getModifierPower(spell, Attributes.INCREASE_POTENCY, 10, 50, true, true) / 100.0;
 			final double scale = 3.5;
 			double mag = upperMag * (scale * dist / (-scale * dist - 1) + 1);
 
@@ -129,10 +127,6 @@ public class ModuleEffectAntiGravityWell extends Module implements IlingeringMod
 
 	@Override
 	public int lingeringTime(SpellData spell) {
-		int strength = 500;
-		if (attributes.hasKey(Attributes.EXTEND))
-			strength += attributes.getDouble(Attributes.EXTEND);
-
-		return strength;
+		return (int) (getModifierPower(spell, Attributes.EXTEND_TIME, 10, 64, true, true) * 50);
 	}
 }

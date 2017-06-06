@@ -9,6 +9,7 @@ import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.InterpScale;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
@@ -17,6 +18,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTUtil;
@@ -96,10 +98,7 @@ public class ModuleEffectSubstitution extends Module implements IBlockSelectable
 
 				if (touchedBlock.getBlock() == state.getBlock()) return false;
 
-				double strength = 10 * getMultiplier();
-				if (attributes.hasKey(Attributes.EXTEND))
-					strength += Math.min(32, attributes.getDouble(Attributes.EXTEND));
-				strength *= calcBurnoutPercent(caster);
+				double strength = getModifierPower(spell, Attributes.EXTEND_RANGE, 10, 64, true, true);
 
 				ItemStack stackBlock = null;
 				for (ItemStack stack : ((EntityPlayer) caster).inventory.mainInventory) {
@@ -121,7 +120,7 @@ public class ModuleEffectSubstitution extends Module implements IBlockSelectable
 
 				if (blocks.isEmpty()) return true;
 
-				for (int q = 0; q < blocks.size(); q++) {
+				for (BlockPos ignored : blocks) {
 					if (!tax(this, spell)) return false;
 					BlockPos nearest = null;
 					for (BlockPos pos : blocks) {
@@ -139,7 +138,7 @@ public class ModuleEffectSubstitution extends Module implements IBlockSelectable
 					stackBlock.shrink(1);
 
 					IBlockState oldState = spell.world.getBlockState(nearest);
-					spell.world.setBlockState(nearest, state);
+					BlockUtils.placeBlock(spell.world, nearest, state, (EntityPlayerMP) caster);
 					((EntityPlayer) caster).inventory.addItemStackToInventory(new ItemStack(oldState.getBlock().getItemDropped(oldState, spell.world.rand, 0)));
 
 				}

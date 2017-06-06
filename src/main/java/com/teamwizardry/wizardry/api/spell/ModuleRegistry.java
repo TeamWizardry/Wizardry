@@ -116,7 +116,12 @@ public class ModuleRegistry {
 						continue;
 					}
 
-					ItemStack stack = new ItemStack(item);
+					int itemMeta = 0;
+					if (moduleObject.has("item_meta") && moduleObject.get("item_meta").isJsonPrimitive() && moduleObject.getAsJsonPrimitive("item_meta").isNumber()) {
+						itemMeta = moduleObject.getAsJsonPrimitive("item_meta").getAsInt();
+					}
+
+					ItemStack stack = new ItemStack(item, 1, itemMeta);
 
 					module.setItemStack(stack);
 

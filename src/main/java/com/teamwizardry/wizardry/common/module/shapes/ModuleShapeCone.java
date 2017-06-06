@@ -61,7 +61,7 @@ public class ModuleShapeCone extends Module implements ICostModifier {
 		if (position == null) return false;
 
 		double range = 5;
-		if (attributes.hasKey(Attributes.EXTEND)) range += attributes.getDouble(Attributes.EXTEND);
+		if (attributes.hasKey(Attributes.EXTEND_TIME)) range += attributes.getDouble(Attributes.EXTEND_TIME);
 
 		setCostMultiplier(this, range / 16.0);
 
@@ -75,8 +75,8 @@ public class ModuleShapeCone extends Module implements ICostModifier {
 		setMultiplier((float) (1 / range));
 
 		int chance = 0;
-		if (attributes.hasKey(Attributes.EXTEND))
-			chance = (int) Math.min(3, chance + attributes.getDouble(Attributes.EXTEND));
+		if (attributes.hasKey(Attributes.EXTEND_TIME))
+			chance = (int) Math.min(3, chance + attributes.getDouble(Attributes.EXTEND_TIME));
 
 		for (int i = 0; i < range; i++) {
 			if (chance > 0 && RandUtil.nextInt(chance) != 0) continue;

@@ -44,7 +44,7 @@ public class HudEventHandler extends Gui {
 			GlStateManager.pushMatrix();
 			GlStateManager.color(1.0F, 1.0F, 1.0F);
 			int right = ((width / 2) - (100 / 2)) + 145;
-			int top = height - 20;
+			int top = height - 17;
 			emptyManaBar.draw(ClientTickHandler.getTicks(), right, top);
 			emptyBurnoutBar.draw(ClientTickHandler.getTicks(), right, top + 6);
 			GlStateManager.popMatrix();

@@ -26,6 +26,8 @@ import java.awt.*;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
+
 /**
  * Created by LordSaad.
  */
@@ -39,21 +41,13 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	public NBTTagCompound attributes = new NBTTagCompound();
 	@Nullable
 	public Module nextModule = null;
-	//@Save
 	private double manaDrain = 0;
-	//@Save
 	private double burnoutFill = 0;
-	//@Save
 	private Color primaryColor = null;
-	//@Save
 	private Color secondaryColor = null;
-	//@Save
 	private int cooldownTime = 0;
-	//@Save
 	private int chargeupTime = 0;
-	//@Save
 	private ItemStack itemStack = ItemStack.EMPTY;
-	//@Save
 	private double multiplier = 1;
 
 	public Module() {
@@ -212,7 +206,7 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	}
 
 	protected final void castParticles(@NotNull SpellData data) {
-		Entity caster = data.getData(SpellData.DefaultKeys.CASTER);
+		Entity caster = data.getData(CASTER);
 		Vec3d target = data.hasData(SpellData.DefaultKeys.ORIGIN) ?
 				data.getData(SpellData.DefaultKeys.ORIGIN) : data.hasData(SpellData.DefaultKeys.TARGET_HIT) ?
 				data.getData(SpellData.DefaultKeys.TARGET_HIT) : caster != null ?
@@ -261,6 +255,11 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 			tempModule = tempModule.nextModule;
 		}
 		return modules;
+	}
+
+	protected final double getModifierPower(SpellData data, String attribute, double min, double max, boolean multiplyMultiplier, boolean multiplyBurnout) {
+		Entity caster = data.getData(CASTER);
+		return (attributes.hasKey(attribute) ? Math.min(Math.max(min, min + attributes.getDouble(attribute)), max) : min) * (multiplyMultiplier ? getMultiplier() : 1) * (multiplyBurnout ? calcBurnoutPercent(caster) : 1);
 	}
 
 	protected final <T extends Module> Module cloneModule(T toCloneTo) {

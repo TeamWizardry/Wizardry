@@ -88,19 +88,19 @@
     },
     {
       "id": "effect_break",
-      "mana_drain": 100.0,
-      "burnout_fill": 100.0,
+      "mana_drain": 50.0,
+      "burnout_fill": 50.0,
       "item": "minecraft:sand",
       "primary_color": "A52A2A",
       "secondary_color": "FFA700"
     },
     {
       "id": "effect_place",
-      "mana_drain": 100.0,
-      "burnout_fill": 100.0,
+      "mana_drain": 50.0,
+      "burnout_fill": 50.0,
       "item": "minecraft:clay",
-      "primary_color": "F27D0C",
-      "secondary_color": "E45664"
+      "primary_color": "2eff23",
+      "secondary_color": "f3ff22"
     },
     {
       "id": "effect_time_slow",
@@ -190,16 +190,26 @@
   ],
   "modifiers": [
     {
-      "id": "modifier_extend",
-      "mana_drain": 50.0,
-      "burnout_fill": 50.0,
+      "id": "modifier_extend_time",
       "item": "minecraft:prismarine_crystals"
     },
     {
+      "id": "modifier_extend_potency",
+      "item": "minecraft:prismarine_crystals"
+    },
+    {
+      "id": "modifier_extend_range",
+      "item": "minecraft:dye",
+      "item_meta": 4
+    },
+    {
       "id": "modifier_exception",
-      "mana_drain": 5.0,
-      "burnout_fill": 5.0,
-      "item": "wizardry:syringe_blood"
+      "item": "wizardry:syringe_blood",
+      "item_meta": 3
+    },
+    {
+      "id": "modifier_increase_aoe",
+      "item": "wizardry:emerald"
     }
   ]
 }

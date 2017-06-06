@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.common.entity;
 import com.teamwizardry.librarianlib.features.base.entity.EntityMod;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.saving.AbstractSaveHandler;
+import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.librarianlib.features.saving.SaveInPlace;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleRegistry;
@@ -14,6 +15,7 @@ import com.teamwizardry.wizardry.common.network.PacketExplode;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -35,7 +37,9 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 @SaveInPlace
 public class EntitySpellProjectile extends EntityMod {
 
+	@Save
 	public Color primaryColor = Color.WHITE;
+	@Save
 	public Color secondaryColor = Color.WHITE;
 	public SpellData spell;
 	public Module module;
@@ -113,9 +117,13 @@ public class EntitySpellProjectile extends EntityMod {
 			SpellData data = spell.copy();
 
 			RayTraceResult result = Utils.raytrace(world, look, getPositionVector(), 1, this);
+			EnumFacing facing = result != null && result.sideHit != null ? result.sideHit : null;
+			if (facing == null)
+				facing = EnumFacing.getFacingFromVector((float) look.xCoord, (float) look.yCoord, (float) look.zCoord);
+
 			if (result != null && result.typeOfHit == RayTraceResult.Type.BLOCK) {
-				data.processBlock(result.getBlockPos(), result.sideHit, result.hitVec);
-			} else data.processBlock(getPosition(), result != null ? result.sideHit : null, getPositionVector());
+				data.processBlock(result.getBlockPos(), facing, result.hitVec);
+			} else data.processBlock(getPosition(), facing, getPositionVector());
 
 			goBoom(data);
 			return;

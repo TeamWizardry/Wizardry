@@ -69,14 +69,15 @@ public class ModuleShapeZone extends Module implements IlingeringModule, ICostMo
 		if (targetPos == null) return false;
 
 		double radius = 5;
-		if (attributes.hasKey(Attributes.EXTEND))
-			radius += Math.min(32, attributes.getDouble(Attributes.EXTEND));
+		if (attributes.hasKey(Attributes.EXTEND_TIME))
+			radius += Math.min(27, attributes.getDouble(Attributes.EXTEND_TIME));
 
+		setMultiplier(0.1);
 		List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(targetPos)).expand(radius, 0, radius).expand(0, 1, 0));
 
 		for (Entity entity : entities) {
 			if (entity.getDistance(targetPos.xCoord, targetPos.yCoord, targetPos.zCoord) <= radius) {
-				if (r.nextInt((int) Math.abs(320 - (radius * 10))) != 0) continue;
+				if (r.nextInt((int) Math.abs(28 - (radius))) != 0) continue;
 
 				SpellData copy = spell.copy();
 				copy.processEntity(entity, false);
@@ -91,7 +92,7 @@ public class ModuleShapeZone extends Module implements IlingeringModule, ICostMo
 			for (int j = (int) -radius; j < radius; j++)
 				for (int k = (int) -radius; k < radius; k++) {
 					BlockPos newPos = new BlockPos(targetPos).add(i, j, k);
-					if (r.nextInt((int) Math.abs(32000 - (radius * 1000))) != 0) continue;
+					if (r.nextInt((int) Math.abs(280 - (radius * 10))) != 0) continue;
 					if (newPos.getDistance((int) targetPos.xCoord, (int) targetPos.yCoord, (int) targetPos.zCoord) <= radius) {
 						SpellData copy = spell.copy();
 						copy.processBlock(newPos, EnumFacing.VALUES[RandUtil.nextInt(EnumFacing.VALUES.length - 1)], new Vec3d(newPos).addVector(0.5, 0.5, 0.5));
@@ -112,8 +113,8 @@ public class ModuleShapeZone extends Module implements IlingeringModule, ICostMo
 		if (RandUtil.nextInt(10) != 0) return;
 
 		double radius = 5;
-		if (attributes.hasKey(Attributes.EXTEND))
-			radius += Math.min(32, attributes.getDouble(Attributes.EXTEND));
+		if (attributes.hasKey(Attributes.EXTEND_TIME))
+			radius += Math.min(32, attributes.getDouble(Attributes.EXTEND_TIME));
 
 		ParticleBuilder glitter = new ParticleBuilder(10);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
@@ -141,8 +142,8 @@ public class ModuleShapeZone extends Module implements IlingeringModule, ICostMo
 	public int lingeringTime(SpellData spell) {
 		Entity caster = spell.getData(CASTER);
 		int strength = 60;
-		if (attributes.hasKey(Attributes.EXTEND))
-			strength += Math.min(300, attributes.getDouble(Attributes.EXTEND) * 4.6875);
+		if (attributes.hasKey(Attributes.EXTEND_TIME))
+			strength += Math.min(300, attributes.getDouble(Attributes.EXTEND_TIME) * 4.6875);
 		strength *= 30;
 		strength *= calcBurnoutPercent(caster);
 		return strength;

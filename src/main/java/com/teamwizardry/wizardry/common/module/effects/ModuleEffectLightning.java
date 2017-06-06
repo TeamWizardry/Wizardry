@@ -71,13 +71,10 @@ public class ModuleEffectLightning extends Module implements ITaxing {
 			origin = new Vec3d(offX, caster.getEyeHeight(), offZ).add(target);
 		}
 
-		double strength = 10 * getMultiplier();
-		if (attributes.hasKey(Attributes.EXTEND))
-			strength += Math.min(32, attributes.getDouble(Attributes.EXTEND));
+		double range = getModifierPower(spell, Attributes.EXTEND_RANGE, 10, 32, true, true);
+		double strength = getModifierPower(spell, Attributes.INCREASE_POTENCY, 1, 10, true, true);
 
 		if (!tax(this, spell)) return false;
-
-		strength *= calcBurnoutPercent(caster);
 
 		RayTraceResult traceResult = Utils.raytrace(world, PosUtils.vecFromRotations(pitch, yaw), target, strength, caster);
 		if (traceResult == null) return false;
@@ -94,10 +91,10 @@ public class ModuleEffectLightning extends Module implements ITaxing {
 			List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(point)).contract(0.3, 0.3, 0.3));
 			if (!entityList.isEmpty()) {
 				for (Entity entity : entityList) {
-					entity.setFire((int) (strength / 5.0));
+					entity.setFire((int) (strength));
 					if (caster instanceof EntityPlayer)
-						entity.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer) caster), (float) (strength / 5.0));
-					else entity.attackEntityFrom(DamageSource.LIGHTNING_BOLT, (float) (strength / 5.0));
+						entity.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer) caster), (float) (strength));
+					else entity.attackEntityFrom(DamageSource.LIGHTNING_BOLT, (float) (strength));
 				}
 			}
 		}

@@ -223,17 +223,17 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 		});
 
 		@Nonnull
-		public static final Pair<String, Class<EnumFacing>> FACE_HIT = constructPair("face_hit", BlockPos.class, new ProcessData.Process<NBTTagInt, EnumFacing>() {
+		public static final Pair<String, Class<EnumFacing>> FACE_HIT = constructPair("face_hit", EnumFacing.class, new ProcessData.Process<NBTTagString, EnumFacing>() {
 			@NotNull
 			@Override
-			public NBTTagInt serialize(EnumFacing object) {
-				if (object == null) return new NBTTagInt(-1);
-				return new NBTTagInt(object.getIndex());
+			public NBTTagString serialize(EnumFacing object) {
+				if (object == null) return new NBTTagString("UP");
+				return new NBTTagString(object.name());
 			}
 
 			@Override
-			public EnumFacing deserialize(@NotNull World world, @NotNull NBTTagInt object) {
-				return EnumFacing.getFront(object.getInt());
+			public EnumFacing deserialize(@NotNull World world, @NotNull NBTTagString object) {
+				return EnumFacing.valueOf(object.getString());
 			}
 		});
 

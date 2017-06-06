@@ -66,15 +66,11 @@ public class ModuleEffectTelekinesis extends Module implements IContinousSpell, 
 		Vec3d targetPos = spell.getData(TARGET_HIT);
 		Entity caster = spell.getData(CASTER);
 
-		double strength = 3 * getMultiplier();
-		if (attributes.hasKey(Attributes.EXTEND))
-			strength += Math.min(8.0, attributes.getDouble(Attributes.EXTEND));
-		if (!tax(this, spell)) return false;
-		strength *= calcBurnoutPercent(caster);
+		double strength = getModifierPower(spell, Attributes.INCREASE_POTENCY, 1, 10, true, true);
 
 		if (targetPos == null) return false;
 
-		List<Entity> entityList = world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(new BlockPos(targetPos)).expand(strength, strength, strength));
+		List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(targetPos)).expand(strength, strength, strength));
 
 		for (Entity entity : entityList) {
 			double dist = entity.getPositionVector().distanceTo(targetPos);

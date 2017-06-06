@@ -71,30 +71,13 @@ public class ModuleEffectTimeSlow extends Module implements ITaxing {
 		Entity caster = spell.getData(CASTER);
 
 		if (targetEntity instanceof EntityLivingBase) {
-			double strength = 20.0 * getMultiplier();
-			if (attributes.hasKey(Attributes.EXTEND))
-				strength += Math.min(200.0, attributes.getDouble(Attributes.EXTEND) * 4.6875);
-
-			strength *= calcBurnoutPercent(caster);
-
+			double strength = getModifierPower(spell, Attributes.INCREASE_POTENCY, 1, 20, true, true);
+			double duration = getModifierPower(spell, Attributes.INCREASE_POTENCY, 5, 64, true, true) * 10;
 			if (!tax(this, spell)) return false;
-			int interval = (int) (50000 - (strength * 166.6666667));
-			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.TIME_SLOW, 100, (int) (strength / 10.0), true, false));
 
-			//if (targetEntity instanceof EntityPlayer) interval /= 10.0;
-//
-			//targetEntity.getEntityData().setInteger("strength", (int) strength);
-			//targetEntity.getEntityData().setInteger("skip_tick", (int) strength);
-			//targetEntity.getEntityData().setInteger("skip_tick_interval", interval);
-			//targetEntity.getEntityData().setInteger("skip_tick_interval_save", interval);
+			// TODO: readd mobs
 
-			//if (targetEntity instanceof EntityPlayer)
-			//	PacketHandler.NETWORK.sendTo(new PacketFreezePlayer((int) strength, interval), (EntityPlayerMP) targetEntity);
-		}
-		if (targetPos != null) {
-			//BlockPos pos = new BlockPos(targetPos);
-			//if (world.getBlockState(pos).getBlock() instanceof IGrowable)
-			//	ItemDye.applyBonemeal(new ItemStack(Items.DYE), world, pos);
+			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.TIME_SLOW, (int) duration, (int) strength, true, false));
 		}
 		return true;
 	}

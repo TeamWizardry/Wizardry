@@ -1,41 +1,39 @@
 package com.teamwizardry.wizardry.common.item;
 
+import com.teamwizardry.librarianlib.features.base.item.IGlowingItem;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
-import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
-import com.teamwizardry.wizardry.api.Constants.NBT;
 import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.api.block.TileManaFaucet;
 import com.teamwizardry.wizardry.api.block.TileManaSink;
 import com.teamwizardry.wizardry.api.capability.CapManager;
-import com.teamwizardry.wizardry.api.item.GlowingOverlayHelper;
-import com.teamwizardry.wizardry.api.item.IGlowOverlayable;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
 
-public class ItemMagicWand extends ItemMod implements IGlowOverlayable {
+public class ItemMagicWand extends ItemMod implements IGlowingItem {
 
 	public ItemMagicWand() {
 		super("magic_wand");
 		setMaxStackSize(1);
-		addPropertyOverride(new ResourceLocation(Wizardry.MODID, NBT.TAG_OVERLAY), GlowingOverlayHelper.OVERLAY_OVERRIDE);
 	}
 
 	@Nonnull
@@ -102,5 +100,21 @@ public class ItemMagicWand extends ItemMod implements IGlowOverlayable {
 			}
 		}
 		return EnumActionResult.PASS;
+	}
+
+	@Override
+	public int packedGlowCoords(@NotNull ItemStack itemStack, @NotNull IBakedModel iBakedModel) {
+		return 0xf000f0;
+	}
+
+	@Nullable
+	@Override
+	public IBakedModel transformToGlow(@NotNull ItemStack itemStack, @NotNull IBakedModel iBakedModel) {
+		return IGlowingItem.Helper.wrapperBake(iBakedModel, false, 1);
+	}
+
+	@Override
+	public boolean shouldDisableLightingForGlow(@NotNull ItemStack itemStack, @NotNull IBakedModel iBakedModel) {
+		return true;
 	}
 }

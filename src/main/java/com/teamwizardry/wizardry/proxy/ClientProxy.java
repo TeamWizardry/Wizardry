@@ -9,8 +9,6 @@ import com.teamwizardry.wizardry.client.core.WizardryClientMethodHandles;
 import com.teamwizardry.wizardry.client.fx.Shaders;
 import com.teamwizardry.wizardry.client.render.BloodRenderLayer;
 import com.teamwizardry.wizardry.client.render.LightningRenderer;
-import com.teamwizardry.wizardry.client.render.glow.GlowingItemEventHandler;
-import com.teamwizardry.wizardry.client.render.glow.GlowingItemRenderLayer;
 import com.teamwizardry.wizardry.common.core.version.VersionChecker;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModEntities;
@@ -40,7 +38,6 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 		MinecraftForge.EVENT_BUS.register(new HudEventHandler());
 
 		new WizardryClientMethodHandles(); // Load the class
-		GlowingItemEventHandler.init();
 
 		new Shaders();
 
@@ -63,11 +60,9 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 
 		Map<String, RenderPlayer> skinMap = Minecraft.getMinecraft().getRenderManager().getSkinMap();
 		RenderPlayer render = skinMap.get("default");
-		render.addLayer(new GlowingItemRenderLayer(render));
 		render.addLayer(new BloodRenderLayer(render));
 
 		render = skinMap.get("slim");
-		render.addLayer(new GlowingItemRenderLayer(render));
 		render.addLayer(new BloodRenderLayer(render));
 
 		if (ConfigValues.versionChecker)

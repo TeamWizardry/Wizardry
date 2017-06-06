@@ -1,9 +1,7 @@
 package com.teamwizardry.wizardry.common.core;
 
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants.MISC;
-import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.events.SpellCastEvent;
 import com.teamwizardry.wizardry.api.spell.IContinousSpell;
 import com.teamwizardry.wizardry.api.spell.Module;
@@ -14,15 +12,12 @@ import com.teamwizardry.wizardry.api.util.TeleportUtil;
 import com.teamwizardry.wizardry.common.achievement.Achievements;
 import com.teamwizardry.wizardry.common.entity.EntityDevilDust;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
-import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.ResourceLocation;
@@ -34,7 +29,6 @@ import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 
@@ -132,28 +126,6 @@ public class EventHandler {
 				}
 			}
 		}
-	}
-
-	@SubscribeEvent
-	public void capTick(TickEvent.PlayerTickEvent event) {
-		CapManager manager = new CapManager(event.player);
-		manager.addMana(manager.getMaxMana() / 1000);
-		manager.removeBurnout(manager.getMaxBurnout() / 1000);
-
-		ItemStack cape = event.player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-		if (manager.getMaxMana() < 100)
-			manager.setMaxMana(100);
-		if (manager.getMaxBurnout() < 100)
-			manager.setMaxBurnout(100);
-
-		if (!cape.isEmpty() && cape.getItem() == ModItems.CAPE) {
-			double x = ItemNBTHelper.getInt(cape, "time", 0) / 1000.0;
-			double buffer = (1 - (Math.exp(-x))) * 5000;
-			if (buffer < 100) return;
-			manager.setMaxMana(buffer);
-			manager.setMaxBurnout(buffer);
-		}
-//		Minecraft.getMinecraft().player.sendChatMessage(CapManager.getMaxMana(event.player) + "");
 	}
 
 	@SubscribeEvent

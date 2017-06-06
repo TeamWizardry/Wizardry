@@ -55,13 +55,8 @@ public class ModuleEffectLeap extends Module implements IParticleDanger, ITaxing
 		Vec3d lookVec = PosUtils.vecFromRotations(pitch, yaw);
 
 		if (!target.hasNoGravity()) {
-			double strength = 0.75 * getMultiplier();
-			if (attributes.hasKey(Attributes.EXTEND))
-				strength += Math.min(128.0 / 100.0, attributes.getDouble(Attributes.EXTEND) / 100.0);
-
+			double strength = getModifierPower(spell, Attributes.EXTEND_RANGE, 75, 128, true, true) / 100.0;
 			if (!tax(this, spell)) return false;
-
-			strength *= calcBurnoutPercent(caster);
 
 			target.motionX += target.isCollidedVertically ? lookVec.xCoord : lookVec.xCoord / 2.0;
 

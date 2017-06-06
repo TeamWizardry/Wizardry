@@ -9,7 +9,7 @@ import javax.annotation.Nonnull;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleModifierExtend extends Module implements IModifier {
+public class ModuleModifierIncreaseAOE extends Module implements IModifier {
 
 	@Nonnull
 	@Override
@@ -20,19 +20,19 @@ public class ModuleModifierExtend extends Module implements IModifier {
 	@Nonnull
 	@Override
 	public String getID() {
-		return "modifier_extend";
+		return "modifier_aoe";
 	}
 
 	@Nonnull
 	@Override
 	public String getReadableName() {
-		return "Extend";
+		return "Extend Area Of Effect";
 	}
 
 	@Nonnull
 	@Override
 	public String getDescription() {
-		return "Can increase range or time on shapes and effects.";
+		return "Can increase/widen area of effect spells.";
 	}
 
 	@Override
@@ -42,13 +42,12 @@ public class ModuleModifierExtend extends Module implements IModifier {
 
 	@Override
 	public void runClient(@Nonnull SpellData spell) {
-
 	}
 
 	@Override
 	public void apply(@NotNull Module module) {
-		int power = 2;
-		module.attributes.setDouble(Attributes.EXTEND, module.attributes.getDouble(Attributes.EXTEND) + power);
+		int power = 1;
+		module.attributes.setDouble(Attributes.INCREASE_AOE, module.attributes.getDouble(Attributes.INCREASE_AOE) + power);
 	}
 
 	@Override
@@ -59,6 +58,6 @@ public class ModuleModifierExtend extends Module implements IModifier {
 	@Nonnull
 	@Override
 	public Module copy() {
-		return cloneModule(new ModuleModifierExtend());
+		return cloneModule(new ModuleModifierIncreaseAOE());
 	}
 }

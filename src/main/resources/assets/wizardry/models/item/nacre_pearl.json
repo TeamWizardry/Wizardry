@@ -1,6 +1,7 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "wizardry:items/pearl"
+    "layer0": "wizardry:items/pearl",
+    "layer1": "wizardry:items/pearl_highlight"
   }
 }

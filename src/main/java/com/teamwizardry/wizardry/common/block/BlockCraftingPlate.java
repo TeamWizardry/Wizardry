@@ -110,6 +110,7 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 							NBTTagList list = new NBTTagList();
 							for (Module module : spellStack.compiled) list.appendTag(module.serializeNBT());
 							ItemNBTHelper.setList(pearl, Constants.NBT.SPELL, list);
+							ItemNBTHelper.setFloat(pearl, Constants.NBT.RAND, playerIn.world.rand.nextFloat());
 
 							plate.output = pearl;
 							plate.markDirty();

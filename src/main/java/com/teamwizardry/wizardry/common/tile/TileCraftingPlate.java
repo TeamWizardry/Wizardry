@@ -135,6 +135,7 @@ public class TileCraftingPlate extends TileManaSink {
 				world.playSound(null, getPos(), ModSounds.BASS_BOOM, SoundCategory.BLOCKS, 1f, (float) RandUtil.nextDouble(1, 1.5));
 
 				ItemStack stack = new ItemStack(ModItems.PEARL_NACRE);
+				ItemNBTHelper.setFloat(stack, Constants.NBT.RAND, world.rand.nextFloat());
 				ItemNBTHelper.setString(stack, "type", EnumPearlType.INFUSED.toString());
 
 				NBTTagList list = new NBTTagList();
