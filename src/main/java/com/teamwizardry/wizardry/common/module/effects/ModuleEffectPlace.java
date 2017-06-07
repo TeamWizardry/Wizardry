@@ -13,6 +13,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -106,6 +107,7 @@ public class ModuleEffectPlace extends Module implements IBlockSelectable, ITaxi
 				IBlockState oldState = world.getBlockState(pos);
 
 				BlockUtils.placeBlock(world, pos, state, (EntityPlayerMP) caster);
+				world.playSound(null, pos, state.getBlock().getSoundType(state, world, pos, caster).getPlaceSound(), SoundCategory.BLOCKS, 1f, 1f);
 				((EntityPlayer) caster).inventory.addItemStackToInventory(new ItemStack(oldState.getBlock().getItemDropped(oldState, spell.world.rand, 0)));
 			}
 		}

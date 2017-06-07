@@ -49,8 +49,8 @@
       "mana_drain": 200,
       "burnout_fill": 100,
       "item": "minecraft:ice",
-      "primary_color": "f2ff00",
-      "secondary_color": "FFFFFF"
+      "primary_color": "FFFFFF",
+      "secondary_color": "c700ff"
     },
     {
       "id": "effect_freeze",
@@ -145,7 +145,7 @@
     {
       "id": "effect_phase",
       "mana_drain": 200.0,
-      "burnout_fill": 300.0,
+      "burnout_fill": 100.0,
       "item": "minecraft:ender_pearl",
       "primary_color": "800080",
       "secondary_color": "FF00FF",
@@ -165,7 +165,8 @@
       "mana_drain": 100.0,
       "burnout_fill": 400.0,
       "item": "minecraft:bone",
-      "primary_color": "FF0000"
+      "primary_color": "00ff00",
+      "secondary_color": "00ffff"
     }
   ],
   "events": [

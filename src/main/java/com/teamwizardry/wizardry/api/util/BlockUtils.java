@@ -46,7 +46,12 @@ public class BlockUtils {
 
 		BlockEvent.PlaceEvent event = new BlockEvent.PlaceEvent(BlockSnapshot.getBlockSnapshot(world, pos), Blocks.AIR.getDefaultState(), playerMP, playerMP.getActiveHand());
 		MinecraftForge.EVENT_BUS.post(event);
-		return !event.isCanceled() && world.setBlockState(pos, state);
+		if (!event.isCanceled()) {
+			world.setBlockState(pos, state);
+			world.notifyBlockUpdate(pos, state, state, 3);
+			return true;
+		}
+		return false;
 	}
 
 	/**

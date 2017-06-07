@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.api;
 
-import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtilSeed;
 import net.minecraft.util.math.Vec3d;
 
@@ -41,7 +40,7 @@ public class LightningGenerator {
 			float point = points.get(i);
 			Vec3d vec = sub.scale(point);
 
-			double scale = dist * 0.005 + (point - (points.get(i - 1)));
+			double scale = dist * 0.01 + (point - (points.get(i - 1)));
 
 			vec = new Vec3d(
 					vec.xCoord + rand.nextDouble(-scale, scale),
@@ -50,13 +49,8 @@ public class LightningGenerator {
 			);
 
 			if (rand.nextInt(10) == 0) {
-				float[] pitchyaw = PosUtils.vecToRotations(normal);
-				float pitch = pitchyaw[0];
-				float yaw = pitchyaw[1];
-				double angle = 340;
-				float newPitch = (float) (pitch + rand.nextDouble(-angle, angle));
-				float newYaw = (float) (yaw + rand.nextDouble(-angle, angle));
-				Vec3d offset = PosUtils.vecFromRotations(newPitch, newYaw).scale(dist / 3.5f);
+				float angle = 20;
+				Vec3d offset = normal.rotateYaw(rand.nextFloat(-angle, angle)).rotatePitch(rand.nextFloat(-angle, angle));
 
 				results.addAll(new LightningGenerator(point1.add(vec), point1.add(vec).add(offset), rand).generate());
 			}

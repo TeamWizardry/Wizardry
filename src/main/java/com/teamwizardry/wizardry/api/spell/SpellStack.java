@@ -109,7 +109,7 @@ public class SpellStack {
 
 		// PROCESS COLOR
 		for (Module module : compiled)
-			processColor(module, module.nextModule);
+			module.processColor(module.nextModule);
 	}
 
 	@Nonnull
@@ -201,15 +201,5 @@ public class SpellStack {
 			}
 		}
 		return modules;
-	}
-
-	private void processColor(Module module, Module nextModule) {
-		if (nextModule == null) return;
-
-		processColor(nextModule, nextModule.nextModule);
-
-		if (module.getPrimaryColor() == null) module.setPrimaryColor(nextModule.getPrimaryColor());
-		if (module.getSecondaryColor() == null) module.setSecondaryColor(nextModule.getSecondaryColor());
-
 	}
 }

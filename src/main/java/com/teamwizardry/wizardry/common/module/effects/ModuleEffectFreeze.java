@@ -89,8 +89,9 @@ public class ModuleEffectFreeze extends Module implements ITaxing {
 						}
 
 						if (world.getBlockState(pos).isTopSolid() && world.isAirBlock(pos.offset(EnumFacing.UP))) {
-							int layerSize = (int) (Math.min(8, Math.max(1, (dist / range) * 6.0)));
-							BlockUtils.placeBlock(world, pos.offset(EnumFacing.UP), Blocks.SNOW_LAYER.getDefaultState().withProperty(BlockSnow.LAYERS, RandUtil.nextInt(Math.max(1, layerSize - 1), layerSize)), caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null);
+							int layerSize = (int) (Math.max(1, Math.min(8, Math.max(1, (dist / range) * 6.0))));
+							layerSize = Math.max(1, Math.min(layerSize + RandUtil.nextInt(-1, 1), 8));
+							BlockUtils.placeBlock(world, pos.offset(EnumFacing.UP), Blocks.SNOW_LAYER.getDefaultState().withProperty(BlockSnow.LAYERS, layerSize), caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null);
 						}
 
 						if (world.getBlockState(pos).getBlock() == Blocks.WATER) {

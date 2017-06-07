@@ -194,6 +194,7 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 		MinecraftForge.EVENT_BUS.post(event);
 
 		if (!event.isCanceled()) {
+			processColor(nextModule);
 			boolean success = run(data);
 			if (event.castParticles)
 				castParticles(data);
@@ -211,6 +212,7 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 				data.getData(SpellData.DefaultKeys.ORIGIN) : data.hasData(SpellData.DefaultKeys.TARGET_HIT) ?
 				data.getData(SpellData.DefaultKeys.TARGET_HIT) : caster != null ?
 				caster.getPositionVector() : null;
+
 		if (target != null)
 			PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(this, data),
 					new NetworkRegistry.TargetPoint(data.world.provider.getDimension(), target.xCoord, target.yCoord, target.zCoord, 60));
@@ -260,6 +262,16 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	protected final double getModifierPower(SpellData data, String attribute, double min, double max, boolean multiplyMultiplier, boolean multiplyBurnout) {
 		Entity caster = data.getData(CASTER);
 		return (attributes.hasKey(attribute) ? Math.min(Math.max(min, min + attributes.getDouble(attribute)), max) : min) * (multiplyMultiplier ? getMultiplier() : 1) * (multiplyBurnout ? calcBurnoutPercent(caster) : 1);
+	}
+
+	public void processColor(Module nextModule) {
+		if (nextModule == null) return;
+
+		processColor(nextModule.nextModule);
+
+		if (getPrimaryColor() == null) setPrimaryColor(nextModule.getPrimaryColor());
+		if (getSecondaryColor() == null) setSecondaryColor(nextModule.getSecondaryColor());
+
 	}
 
 	protected final <T extends Module> Module cloneModule(T toCloneTo) {

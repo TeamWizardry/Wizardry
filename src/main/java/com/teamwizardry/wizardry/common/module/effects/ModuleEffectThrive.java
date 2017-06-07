@@ -61,16 +61,14 @@ public class ModuleEffectThrive extends Module implements ITaxing {
 
 			if (!tax(this, spell)) return false;
 
-			strength *= calcBurnoutPercent(caster);
-
 			((EntityLivingBase) targetEntity).setHealth((float) (((EntityLivingBase) targetEntity).getHealth() + strength));
 		}
+
 		if (targetPos != null) {
-			BlockPos pos = new BlockPos(targetPos);
-			if (world.getBlockState(pos).getBlock() instanceof IGrowable) {
+			if (world.getBlockState(targetPos).getBlock() instanceof IGrowable) {
 				if (!tax(this, spell)) return false;
-				if (caster == null || (caster instanceof EntityPlayer && BlockUtils.hasEditPermission(pos, (EntityPlayerMP) caster)))
-					ItemDye.applyBonemeal(new ItemStack(Items.DYE), world, pos);
+				if (caster == null || (caster instanceof EntityPlayer && BlockUtils.hasEditPermission(targetPos, (EntityPlayerMP) caster)))
+					ItemDye.applyBonemeal(new ItemStack(Items.DYE), world, targetPos);
 			}
 		}
 		return true;
@@ -82,7 +80,6 @@ public class ModuleEffectThrive extends Module implements ITaxing {
 		Vec3d position = spell.getData(TARGET_HIT);
 
 		if (position == null) return;
-
 		LibParticles.EFFECT_REGENERATE(world, position, getPrimaryColor());
 	}
 

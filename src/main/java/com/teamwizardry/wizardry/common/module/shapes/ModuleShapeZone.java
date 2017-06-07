@@ -20,6 +20,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
@@ -60,7 +61,7 @@ public class ModuleShapeZone extends Module implements IlingeringModule, ICostMo
 		World world = spell.world;
 		Vec3d position = spell.getData(ORIGIN);
 		Entity caster = spell.getData(CASTER);
-		Vec3d targetPos = spell.hasData(BLOCK_HIT) ? new Vec3d(spell.getData(BLOCK_HIT, BlockPos.ORIGIN)) : spell.getData(TARGET_HIT);
+		Vec3d targetPos = spell.getData(TARGET_HIT);
 		long seed = RandUtil.nextLong(100, 1000000);
 		spell.addData(SEED, seed);
 
@@ -68,40 +69,46 @@ public class ModuleShapeZone extends Module implements IlingeringModule, ICostMo
 
 		if (targetPos == null) return false;
 
-		double radius = 5;
-		if (attributes.hasKey(Attributes.EXTEND_TIME))
-			radius += Math.min(27, attributes.getDouble(Attributes.EXTEND_TIME));
+		double aoe = getModifierPower(spell, Attributes.INCREASE_AOE, 3, 10, false, false);
+		double strength = getModifierPower(spell, Attributes.INCREASE_POTENCY, 1, 10, true, true);
+		double range = getModifierPower(spell, Attributes.EXTEND_RANGE, 1, 10, true, true);
 
-		setMultiplier(0.1);
-		List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(targetPos)).expand(radius, 0, radius).expand(0, 1, 0));
+		List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(targetPos)).expand(aoe, 1, aoe));
 
 		for (Entity entity : entities) {
-			if (entity.getDistance(targetPos.xCoord, targetPos.yCoord, targetPos.zCoord) <= radius) {
-				if (r.nextInt((int) Math.abs(28 - (radius))) != 0) continue;
+			if (entity.getDistance(targetPos.xCoord, targetPos.yCoord, targetPos.zCoord) <= aoe) {
+				if (r.nextInt((int) (((11 * 5) - strength * 5))) != 0) continue;
+
+				Vec3d vec = targetPos.addVector(RandUtil.nextDouble(-strength, strength), RandUtil.nextDouble(range), RandUtil.nextDouble(-strength, strength));
 
 				SpellData copy = spell.copy();
 				copy.processEntity(entity, false);
 				copy.addData(YAW, entity.rotationYaw);
 				copy.addData(PITCH, entity.rotationPitch);
-				copy.addData(ORIGIN, entity.getPositionVector());
+				copy.addData(ORIGIN, vec);
 				runNextModule(copy);
 			}
 		}
 
-		for (int i = (int) -radius; i < radius; i++)
-			for (int j = (int) -radius; j < radius; j++)
-				for (int k = (int) -radius; k < radius; k++) {
-					BlockPos newPos = new BlockPos(targetPos).add(i, j, k);
-					if (r.nextInt((int) Math.abs(280 - (radius * 10))) != 0) continue;
-					if (newPos.getDistance((int) targetPos.xCoord, (int) targetPos.yCoord, (int) targetPos.zCoord) <= radius) {
-						SpellData copy = spell.copy();
-						copy.processBlock(newPos, EnumFacing.VALUES[RandUtil.nextInt(EnumFacing.VALUES.length - 1)], new Vec3d(newPos).addVector(0.5, 0.5, 0.5));
-						copy.addData(YAW, 0f);
-						copy.addData(PITCH, -90f);
-						runNextModule(copy);
+		if (r.nextInt((int) ((110 - strength * 10))) != 0) return true;
+
+		ArrayList<Vec3d> blocks = new ArrayList<>();
+		for (int i = (int) -aoe; i < aoe; i++)
+			for (int j = 0; j < 1 + range; j++)
+				for (int k = (int) -aoe; k < aoe; k++) {
+					Vec3d pos = targetPos.addVector(i, j, k);
+					if (pos.distanceTo(targetPos) <= aoe) {
+						blocks.add(pos);
 					}
 				}
 
+		Vec3d pos = blocks.get(RandUtil.nextInt(blocks.size() - 1));
+
+		SpellData copy = spell.copy();
+		copy.processBlock(new BlockPos(pos), EnumFacing.UP, pos);
+		copy.addData(YAW, RandUtil.nextFloat(-180, 180));
+		copy.addData(PITCH, RandUtil.nextFloat(-50, 50));
+		runNextModule(copy);
 		return true;
 	}
 
@@ -112,15 +119,13 @@ public class ModuleShapeZone extends Module implements IlingeringModule, ICostMo
 		if (target == null) return;
 		if (RandUtil.nextInt(10) != 0) return;
 
-		double radius = 5;
-		if (attributes.hasKey(Attributes.EXTEND_TIME))
-			radius += Math.min(32, attributes.getDouble(Attributes.EXTEND_TIME));
+		double aoe = getModifierPower(spell, Attributes.INCREASE_AOE, 3, 10, false, false);
 
 		ParticleBuilder glitter = new ParticleBuilder(10);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 		glitter.setScaleFunction(new InterpScale(1, 0));
 		glitter.setCollision(true);
-		ParticleSpawner.spawn(glitter, spell.world, new InterpCircle(target, new Vec3d(0, 1, 0), (float) radius, 1, RandUtil.nextFloat()), (int) (radius * 2), 0, (aFloat, particleBuilder) -> {
+		ParticleSpawner.spawn(glitter, spell.world, new InterpCircle(target, new Vec3d(0, 1, 0), (float) aoe, 1, RandUtil.nextFloat()), (int) (aoe * 2), 0, (aFloat, particleBuilder) -> {
 			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 			glitter.setLifetime(RandUtil.nextInt(10, 20));
 			glitter.setColorFunction(new InterpColorHSV(getPrimaryColor(), getSecondaryColor()));
@@ -140,12 +145,7 @@ public class ModuleShapeZone extends Module implements IlingeringModule, ICostMo
 
 	@Override
 	public int lingeringTime(SpellData spell) {
-		Entity caster = spell.getData(CASTER);
-		int strength = 60;
-		if (attributes.hasKey(Attributes.EXTEND_TIME))
-			strength += Math.min(300, attributes.getDouble(Attributes.EXTEND_TIME) * 4.6875);
-		strength *= 30;
-		strength *= calcBurnoutPercent(caster);
-		return strength;
+		double strength = getModifierPower(spell, Attributes.EXTEND_TIME, 40, 100, true, true) * 30;
+		return (int) strength;
 	}
 }

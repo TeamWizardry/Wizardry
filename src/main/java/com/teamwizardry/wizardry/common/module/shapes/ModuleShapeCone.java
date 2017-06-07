@@ -3,11 +3,15 @@ package com.teamwizardry.wizardry.common.module.shapes;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpLine;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
+import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.*;
-import com.teamwizardry.wizardry.api.util.*;
+import com.teamwizardry.wizardry.api.util.InterpScale;
+import com.teamwizardry.wizardry.api.util.PosUtils;
+import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.api.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.RayTraceResult;
@@ -15,7 +19,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
@@ -60,8 +63,7 @@ public class ModuleShapeCone extends Module implements ICostModifier {
 
 		if (position == null) return false;
 
-		double range = 5;
-		if (attributes.hasKey(Attributes.EXTEND_TIME)) range += attributes.getDouble(Attributes.EXTEND_TIME);
+		double range = getModifierPower(spell, Attributes.EXTEND_RANGE, 10, 32, true, true);
 
 		setCostMultiplier(this, range / 16.0);
 
@@ -69,19 +71,15 @@ public class ModuleShapeCone extends Module implements ICostModifier {
 		if (caster != null) {
 			float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - yaw));
 			float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - yaw));
-			origin = new Vec3d(offX, caster.getEyeHeight(), offZ).add(position);
+			origin = new Vec3d(offX, 0, offZ).add(position);
 		}
 
-		setMultiplier((float) (1 / range));
+		int chance = (int) (getModifierPower(spell, Attributes.INCREASE_POTENCY, 5, 32, true, true));
 
-		int chance = 0;
-		if (attributes.hasKey(Attributes.EXTEND_TIME))
-			chance = (int) Math.min(3, chance + attributes.getDouble(Attributes.EXTEND_TIME));
+		for (int i = 0; i < chance; i++) {
+			//	if (chance > 0 && RandUtil.nextInt(33 - chance) != 0) continue;
 
-		for (int i = 0; i < range; i++) {
-			if (chance > 0 && RandUtil.nextInt(chance) != 0) continue;
-
-			double angle = Math.min(8, range);
+			double angle = range;
 			float newPitch = (float) (pitch + RandUtil.nextDouble(-angle * 6, angle * 6));
 			float newYaw = (float) (yaw + RandUtil.nextDouble(-angle * 6, angle * 6));
 
@@ -111,15 +109,15 @@ public class ModuleShapeCone extends Module implements ICostModifier {
 
 		float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - yaw));
 		float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - yaw));
-		Vec3d origin = new Vec3d(offX, caster == null ? 0 : caster.getEyeHeight(), offZ).add(position);
+		Vec3d origin = new Vec3d(offX, 0, offZ).add(position);
 
 		ParticleBuilder lines = new ParticleBuilder(10);
 		lines.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 		lines.setScaleFunction(new InterpScale(0.5f, 0));
+		lines.setColorFunction(new InterpColorHSV(getPrimaryColor(), getSecondaryColor()));
 		ParticleSpawner.spawn(lines, spell.world, new InterpLine(origin, target), (int) target.distanceTo(origin) * 4, 0, (aFloat, particleBuilder) -> {
 			lines.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 			lines.setLifetime(RandUtil.nextInt(10, 20));
-			lines.setColor(ColorUtils.changeColorAlpha(getPrimaryColor() != null ? getPrimaryColor() : Color.WHITE, RandUtil.nextInt(50, 150)));
 		});
 	}
 

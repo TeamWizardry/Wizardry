@@ -76,7 +76,7 @@ public class ModuleEffectLightning extends Module implements ITaxing {
 
 		if (!tax(this, spell)) return false;
 
-		RayTraceResult traceResult = Utils.raytrace(world, PosUtils.vecFromRotations(pitch, yaw), target, strength, caster);
+		RayTraceResult traceResult = Utils.raytrace(world, PosUtils.vecFromRotations(pitch, yaw), target, range, caster);
 		if (traceResult == null) return false;
 
 		long seed = RandUtil.nextLong(100, 100000);
@@ -88,7 +88,7 @@ public class ModuleEffectLightning extends Module implements ITaxing {
 		ArrayList<Vec3d> points = generator.generate();
 
 		for (Vec3d point : points) {
-			List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(point)).contract(0.3, 0.3, 0.3));
+			List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(point)).contract(0.2, 0.2, 0.2));
 			if (!entityList.isEmpty()) {
 				for (Entity entity : entityList) {
 					entity.setFire((int) (strength));
@@ -117,7 +117,7 @@ public class ModuleEffectLightning extends Module implements ITaxing {
 		if (caster != null) {
 			float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - yaw));
 			float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - yaw));
-			origin = new Vec3d(offX, caster.getEyeHeight(), offZ).add(target);
+			origin = new Vec3d(offX, 0, offZ).add(target);
 		}
 
 		RayTraceResult traceResult = Utils.raytrace(world, PosUtils.vecFromRotations(pitch, yaw), origin, 10, caster);
