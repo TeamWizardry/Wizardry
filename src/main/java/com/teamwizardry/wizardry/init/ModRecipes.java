@@ -8,6 +8,7 @@ import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
@@ -17,6 +18,8 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 public class ModRecipes {
 
 	public static void initCrafting() {
+		RecipeSorter.register("wizardry:pearl", RecipePearl.class, RecipeSorter.Category.SHAPELESS, "");
+		RecipeSorter.register("wizardry:jam", RecipeJam.class, RecipeSorter.Category.SHAPELESS, "");
 		GameRegistry.addRecipe(new RecipePearl());
 		GameRegistry.addRecipe(new RecipeJam());
 

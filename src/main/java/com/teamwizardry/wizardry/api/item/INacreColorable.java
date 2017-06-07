@@ -68,4 +68,37 @@ public interface INacreColorable extends IItemColorProvider {
 			return Color.HSBtoRGB(hue, saturation, 1f);
 		};
 	}
+
+	interface INacreDecayColorable extends INacreColorable {
+		double decayCurveDelimiter = 1 / 6.0;
+
+		@Nullable
+		@Override
+		@SideOnly(Side.CLIENT)
+		default Function2<ItemStack, Integer, Integer> getItemColorFunction() {
+			return (stack, tintIndex) -> {
+				if (tintIndex != 0) return 0xFFFFFF;
+
+				long lastCast = ItemNBTHelper.getLong(stack, NBT.LAST_CAST, -1);
+				int decayCooldown = ItemNBTHelper.getInt(stack, NBT.LAST_COOLDOWN, -1);
+				long tick = Minecraft.getMinecraft().world.getTotalWorldTime();
+				long timeSinceCooldown = tick - lastCast;
+				float decayStage = (decayCooldown > 0) ? ((float) timeSinceCooldown) / decayCooldown : 1f;
+
+
+				float rand = ItemNBTHelper.getFloat(stack, NBT.RAND, -1);
+				float hue = rand < 0 ? MathHelper.sin(tick / 140f) : rand;
+				int purity = ItemNBTHelper.getInt(stack, NBT.PURITY, NBT.NACRE_PURITY_CONVERSION);
+				float pow = purity / (float) NBT.NACRE_PURITY_CONVERSION;
+				if (purity > NBT.NACRE_PURITY_CONVERSION) pow = 1 - pow;
+
+				double decaySaturation = (lastCast == -1 || decayCooldown <= 0 || decayStage >= 1f) ? 1f :
+						(decayStage < decayCurveDelimiter) ? Math.pow(Math.E, -15 * decayStage) : Math.pow(Math.E, 3 * decayStage - 3);
+
+				float saturation = curveConst * (1 - (float) Math.pow(Math.E, -pow)) * (float) decaySaturation;
+
+				return Color.HSBtoRGB(hue, saturation, 1f);
+			};
+		}
+	}
 }

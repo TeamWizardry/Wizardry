@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * Created by Saad on 6/7/2016.
  */
-public class ItemStaff extends ItemMod implements INacreColorable {
+public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayColorable {
 
 	public ItemStaff() {
 		super("staff", "staff", "staff_pearl");
@@ -43,7 +43,7 @@ public class ItemStaff extends ItemMod implements INacreColorable {
 		SpellData spell = new SpellData(playerIn.world);
 		spell.processEntity(playerIn, true);
 		spell.processEntity(target, false);
-		SpellStack.runSpell(stack, spell);
+		SpellStack.runSpell(stack, spell, playerIn);
 
 		return true;
 	}
@@ -76,13 +76,7 @@ public class ItemStaff extends ItemMod implements INacreColorable {
 		SpellData spell = new SpellData(world);
 		spell.processEntity(player, true);
 		spell.processBlock(pos, side, new Vec3d(pos).addVector(0.5, 0.5, 0.5));
-		SpellStack.runSpell(stack, spell);
-
-		int maxCooldown = 0;
-		for (Module module : SpellStack.getAllModules(stack))
-			if (module.getCooldownTime() > maxCooldown) maxCooldown = module.getCooldownTime();
-		player.getCooldownTracker().setCooldown(this, maxCooldown);
-		player.swingArm(EnumHand.MAIN_HAND);
+		SpellStack.runSpell(stack, spell, player);
 
 		return EnumActionResult.PASS;
 	}
@@ -96,12 +90,7 @@ public class ItemStaff extends ItemMod implements INacreColorable {
 			if (!player.isSneaking() && !world.isRemote) {
 				SpellData spell = new SpellData(world);
 				spell.processEntity(player, true);
-				SpellStack.runSpell(stack, spell);
-
-				int maxCooldown = 0;
-				for (Module module : SpellStack.getAllModules(stack))
-					if (module.getCooldownTime() > maxCooldown) maxCooldown = module.getCooldownTime();
-				player.getCooldownTracker().setCooldown(this, maxCooldown);
+				SpellStack.runSpell(stack, spell, player);
 			}
 			player.swingArm(EnumHand.MAIN_HAND);
 			return new ActionResult<>(EnumActionResult.PASS, stack);
@@ -154,14 +143,8 @@ public class ItemStaff extends ItemMod implements INacreColorable {
 
 		SpellData spell = new SpellData(player.world);
 		spell.processEntity(player, true);
-		SpellStack.runSpell(stack, spell);
+		SpellStack.runSpell(stack, spell, player);
 
-		int maxCooldown = 0;
-		for (Module module : SpellStack.getAllModules(stack)) {
-			if (module instanceof IContinousSpell) return;
-			if (module.getCooldownTime() > maxCooldown) maxCooldown = module.getCooldownTime();
-		}
-		((EntityPlayer) player).getCooldownTracker().setCooldown(this, maxCooldown);
 
 		player.swingArm(player.getActiveHand());
 	}

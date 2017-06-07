@@ -3,13 +3,18 @@ package com.teamwizardry.wizardry.api.spell;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.init.ModItems;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.EnumHand;
+import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 
 /**
@@ -126,16 +131,32 @@ public class SpellStack {
 		return branches;
 	}
 
-	public static void runSpell(@Nonnull Module module, SpellData spell) {
+	public static void runSpell(@Nonnull Module module, @Nonnull SpellData spell) {
 		spell.addData(SpellData.DefaultKeys.STRENGTH, module.calculateStrength(spell));
 		module.castSpell(spell);
 	}
 
-	public static void runSpell(@Nonnull ItemStack spellHolder, SpellData spell) {
+	public static void runSpell(@Nonnull ItemStack spellHolder, @Nonnull SpellData spell) {
+		runSpell(spellHolder, spell, null);
+	}
+
+	public static void runSpell(@Nonnull ItemStack spellHolder, @Nonnull SpellData spell, @Nullable EntityLivingBase player) {
 		if (spell.world.isRemote) return;
 
 		for (Module module : getModules(spellHolder)) {
 			runSpell(module, spell);
+		}
+
+		int maxCooldown = 0;
+		for (Module module : SpellStack.getAllModules(spellHolder))
+			if (module.getCooldownTime() > maxCooldown) maxCooldown = module.getCooldownTime();
+
+		ItemNBTHelper.setInt(spellHolder, Constants.NBT.LAST_COOLDOWN, maxCooldown);
+		ItemNBTHelper.setLong(spellHolder, Constants.NBT.LAST_CAST, spell.world.getTotalWorldTime());
+		if (player != null) {
+			if (player instanceof EntityPlayer)
+				((EntityPlayer) player).getCooldownTracker().setCooldown(spellHolder.getItem(), maxCooldown);
+			player.swingArm(EnumHand.MAIN_HAND);
 		}
 	}
 
