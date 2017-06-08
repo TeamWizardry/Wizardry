@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.client.core;
 import baubles.api.BaubleType;
 import baubles.api.BaublesApi;
 import baubles.api.cap.IBaublesItemHandler;
+import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.math.Matrix4;
@@ -324,7 +325,7 @@ public class CapeHandler {
 		tess.draw();
 
 		String cape;
-		//if (LibrarianLib.PROXY.getResource(Wizardry.MODID, "textures/capes/cape_" + player.getName().toLowerCase() + ".png") == null) {
+		if (LibrarianLib.PROXY.getResource(Wizardry.MODID, "textures/capes/cape_" + player.getName().toLowerCase() + ".png") == null) {
 			UUID uuid = ItemNBTHelper.getUUID(stack, "uuid");
 			if (uuid == null) {
 				uuid = UUID.randomUUID();
@@ -332,9 +333,9 @@ public class CapeHandler {
 			}
 			Random r = new Random(uuid.hashCode());
 			cape = "cape_normal_" + (1 + r.nextInt(3));
-		//} else {
-		//	cape = "cape_" + player.getName();
-		//}
+		} else {
+			cape = "cape_" + player.getName();
+		}
 
 		Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/capes/" + cape + ".png"));
 		GlStateManager.enableTexture2D();

@@ -21,6 +21,7 @@ public class ModBlocks {
 	public static BlockCloud CLOUD;
 	public static BlockManaMagnet MANA_MAGNET;
 	public static BlockLight LIGHT;
+	public static BlockJar JAR;
 
 	public static BlockNacre NACRE;
 	public static BlockNacreBrick NACRE_BRICK;
@@ -47,6 +48,7 @@ public class ModBlocks {
 		NACRE_BRICK = new BlockNacreBrick();
 		MANA_MAGNET = new BlockManaMagnet();
 		LIGHT = new BlockLight();
+		JAR = new BlockJar();
 
 		WISDOM_WOOD_LOG = new BlockWisdomWoodLog();
 		WISDOM_WOOD_PLANKS = new BlockWisdomWoodPlanks();
@@ -65,5 +67,6 @@ public class ModBlocks {
 		CRAFTING_PLATE.initModel();
 		MANA_BATTERY.initModel();
 		PEARL_HOLDER.initModel();
+		JAR.initModel();
 	}
 }

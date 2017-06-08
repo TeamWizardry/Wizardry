@@ -1,11 +1,12 @@
 package com.teamwizardry.wizardry.common.item;
 
+import com.teamwizardry.librarianlib.features.base.block.ItemModBlock;
 import com.teamwizardry.librarianlib.features.base.item.IItemColorProvider;
-import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import kotlin.jvm.functions.Function2;
+import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
@@ -27,10 +28,10 @@ import java.awt.*;
 /**
  * Created by Saad on 8/27/2016.
  */
-public class ItemJar extends ItemMod implements IItemColorProvider {
+public class ItemJar extends ItemModBlock implements IItemColorProvider {
 
-	public ItemJar() {
-		super("jar", "jar", "jar_fairy", "jar_jam");
+	public ItemJar(Block block) {
+		super(block);
 		setMaxStackSize(1);
 	}
 

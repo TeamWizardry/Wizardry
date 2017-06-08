@@ -47,7 +47,6 @@ public class ModItems {
 		FAIRY_DUST = new ItemFairyDust();
 		FAIRY_IMBUED_APPLE = new ItemFairyImbuedApple();
 
-		JAR = new ItemJar();
 		UNICORN_HORN = new ItemUnicornHorn();
 
 		if (Loader.isModLoaded("baubles")) CAPE = new ItemCapeBauble();
