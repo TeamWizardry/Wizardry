@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.api.util;
+package com.teamwizardry.wizardry.api.util.interp;
 
 
 import com.teamwizardry.librarianlib.features.math.interpolate.InterpFunction;

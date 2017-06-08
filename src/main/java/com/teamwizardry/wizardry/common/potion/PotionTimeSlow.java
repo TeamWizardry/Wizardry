@@ -2,6 +2,9 @@ package com.teamwizardry.wizardry.common.potion;
 
 import com.teamwizardry.librarianlib.features.base.PotionMod;
 import com.teamwizardry.wizardry.api.events.EntityPostMoveEvent;
+import com.teamwizardry.wizardry.api.spell.ModuleRegistry;
+import com.teamwizardry.wizardry.api.spell.SpellData;
+import com.teamwizardry.wizardry.common.module.effects.ModuleEffectTimeSlow;
 import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFence;
@@ -56,6 +59,11 @@ public class PotionTimeSlow extends PotionMod {
 		if (!base.isPotionActive(ModPotions.TIME_SLOW)) return;
 		PotionEffect effect = base.getActivePotionEffect(ModPotions.TIME_SLOW);
 		if (effect == null) return;
+
+		ModuleEffectTimeSlow slow = (ModuleEffectTimeSlow) ModuleRegistry.INSTANCE.getModule("effect_time_slow").copy();
+		SpellData data = new SpellData(event.entity.world);
+		data.processEntity(event.entity, false);
+		slow.castParticles(data);
 
 		event.override = true;
 

@@ -8,9 +8,9 @@ import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.*;
-import com.teamwizardry.wizardry.api.util.InterpScale;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RandUtilSeed;
+import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -75,10 +75,10 @@ public class ModuleShapeZone extends Module implements IlingeringModule, ICostMo
 
 		List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(targetPos)).expand(aoe, 1, aoe));
 
+		setMultiplier(0.7);
 		for (Entity entity : entities) {
 			if (entity.getDistance(targetPos.xCoord, targetPos.yCoord, targetPos.zCoord) <= aoe) {
-				if (r.nextInt((int) (((11 * 5) - strength * 5))) != 0) continue;
-
+				if (r.nextInt((int) (((11) - strength))) != 0) continue;
 				Vec3d vec = targetPos.addVector(RandUtil.nextDouble(-strength, strength), RandUtil.nextDouble(range), RandUtil.nextDouble(-strength, strength));
 
 				SpellData copy = spell.copy();

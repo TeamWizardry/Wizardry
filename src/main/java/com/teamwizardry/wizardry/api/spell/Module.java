@@ -206,7 +206,7 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 		}
 	}
 
-	protected final void castParticles(@NotNull SpellData data) {
+	public final void castParticles(@NotNull SpellData data) {
 		Entity caster = data.getData(CASTER);
 		Vec3d target = data.hasData(SpellData.DefaultKeys.ORIGIN) ?
 				data.getData(SpellData.DefaultKeys.ORIGIN) : data.hasData(SpellData.DefaultKeys.TARGET_HIT) ?
