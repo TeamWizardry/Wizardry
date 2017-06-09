@@ -184,9 +184,9 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	 * @return If the spell has succeeded.
 	 */
 	public final boolean castSpell(@NotNull SpellData data) {
-		if (this instanceof IlingeringModule)
+		if (this instanceof ILingeringModule)
 			if (!SpellTicker.INSTANCE.ticker.containsKey(this))
-				SpellTicker.INSTANCE.ticker.put(this, new Pair<>(data, ((IlingeringModule) this).lingeringTime(data)));
+				SpellTicker.INSTANCE.ticker.put(this, new Pair<>(data, ((ILingeringModule) this).lingeringTime(data)));
 
 		//data.addData(SpellData.DefaultKeys.STRENGTH, calculateStrength(data) * getMultiplier());
 

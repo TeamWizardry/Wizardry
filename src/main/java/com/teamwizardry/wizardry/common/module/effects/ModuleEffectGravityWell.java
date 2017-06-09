@@ -28,7 +28,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEffectGravityWell extends Module implements IlingeringModule, ITaxing {
+public class ModuleEffectGravityWell extends Module implements ILingeringModule, ITaxing {
 
 	@Nonnull
 	@Override

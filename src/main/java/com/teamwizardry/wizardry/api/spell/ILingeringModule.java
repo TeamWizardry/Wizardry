@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.api.spell;
 /**
  * Created by LordSaad.
  */
-public interface IlingeringModule {
+public interface ILingeringModule {
 
 	int lingeringTime(SpellData spell);
 }

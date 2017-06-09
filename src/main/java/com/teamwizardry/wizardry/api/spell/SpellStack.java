@@ -151,10 +151,12 @@ public class SpellStack {
 		for (Module module : SpellStack.getAllModules(spellHolder))
 			if (module.getCooldownTime() > maxCooldown) maxCooldown = module.getCooldownTime();
 
-		ItemNBTHelper.setInt(spellHolder, Constants.NBT.LAST_COOLDOWN, maxCooldown);
-		ItemNBTHelper.setLong(spellHolder, Constants.NBT.LAST_CAST, spell.world.getTotalWorldTime());
+		if (maxCooldown > 0) {
+			ItemNBTHelper.setInt(spellHolder, Constants.NBT.LAST_COOLDOWN, maxCooldown);
+			ItemNBTHelper.setLong(spellHolder, Constants.NBT.LAST_CAST, spell.world.getTotalWorldTime());
+		}
 		if (player != null) {
-			if (player instanceof EntityPlayer)
+			if (maxCooldown > 0 && player instanceof EntityPlayer)
 				((EntityPlayer) player).getCooldownTracker().setCooldown(spellHolder.getItem(), maxCooldown);
 			player.swingArm(EnumHand.MAIN_HAND);
 		}
