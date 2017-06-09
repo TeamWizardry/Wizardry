@@ -13,6 +13,7 @@ import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
+import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -24,6 +25,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -88,6 +90,8 @@ public class ModuleEffectSubstitution extends Module implements IBlockSelectable
 			caster.rotationYaw = yawTarget;
 			caster.rotationPitch = pitchTarget;
 			caster.setPositionAndUpdate(posTarget.xCoord, posTarget.yCoord, posTarget.zCoord);
+			spell.world.playSound(null, caster.getPosition(), ModSounds.TELEPORT, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat());
+			spell.world.playSound(null, targetEntity.getPosition(), ModSounds.TELEPORT, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat());
 
 			return true;
 
@@ -140,7 +144,7 @@ public class ModuleEffectSubstitution extends Module implements IBlockSelectable
 					IBlockState oldState = spell.world.getBlockState(nearest);
 					BlockUtils.placeBlock(spell.world, nearest, state, (EntityPlayerMP) caster);
 					((EntityPlayer) caster).inventory.addItemStackToInventory(new ItemStack(oldState.getBlock().getItemDropped(oldState, spell.world.rand, 0)));
-
+					spell.world.playSound(null, nearest, ModSounds.TELEPORT, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat());
 				}
 			}
 			return true;

@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.common.entity;
 import com.teamwizardry.librarianlib.features.base.entity.EntityMod;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.saving.AbstractSaveHandler;
-import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.librarianlib.features.saving.SaveInPlace;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleRegistry;
@@ -37,9 +36,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 @SaveInPlace
 public class EntitySpellProjectile extends EntityMod {
 
-	@Save
 	public Color primaryColor = Color.WHITE;
-	@Save
 	public Color secondaryColor = Color.WHITE;
 	public SpellData spell;
 	public Module module;

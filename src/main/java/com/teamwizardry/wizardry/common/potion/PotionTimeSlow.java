@@ -6,6 +6,7 @@ import com.teamwizardry.wizardry.api.spell.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.common.module.effects.ModuleEffectTimeSlow;
 import com.teamwizardry.wizardry.init.ModPotions;
+import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFence;
 import net.minecraft.block.BlockFenceGate;
@@ -22,6 +23,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ReportedException;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -45,11 +47,13 @@ public class PotionTimeSlow extends PotionMod {
 	@Override
 	public void applyAttributesModifiersToEntity(EntityLivingBase entityLivingBaseIn, @Nonnull AbstractAttributeMap attributeMapIn, int amplifier) {
 		super.applyAttributesModifiersToEntity(entityLivingBaseIn, attributeMapIn, amplifier);
+		entityLivingBaseIn.world.playSound(null, entityLivingBaseIn.getPosition(), ModSounds.SLOW_MOTION_IN, SoundCategory.NEUTRAL, 1f, 1);
 	}
 
 	@Override
 	public void removeAttributesModifiersFromEntity(EntityLivingBase entityLivingBaseIn, @Nonnull AbstractAttributeMap attributeMapIn, int amplifier) {
 		super.removeAttributesModifiersFromEntity(entityLivingBaseIn, attributeMapIn, amplifier);
+		entityLivingBaseIn.world.playSound(null, entityLivingBaseIn.getPosition(), ModSounds.SLOW_MOTION_OUT, SoundCategory.NEUTRAL, 1f, 1);
 	}
 
 	@SubscribeEvent

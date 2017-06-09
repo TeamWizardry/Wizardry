@@ -15,6 +15,7 @@ import com.teamwizardry.wizardry.common.achievement.Achievements;
 import com.teamwizardry.wizardry.common.core.EventHandler;
 import com.teamwizardry.wizardry.common.core.SpellTicker;
 import com.teamwizardry.wizardry.common.fluid.Fluids;
+import com.teamwizardry.wizardry.common.module.effects.ModuleEffectTimeSlow;
 import com.teamwizardry.wizardry.common.network.*;
 import com.teamwizardry.wizardry.common.world.GenHandler;
 import com.teamwizardry.wizardry.common.world.underworld.WorldProviderUnderWorld;
@@ -117,6 +118,7 @@ public class CommonProxy {
 		MinecraftForge.EVENT_BUS.register(new EventHandler());
 		MinecraftForge.EVENT_BUS.register(new AchievementEvents());
 		MinecraftForge.EVENT_BUS.register(new ModCapabilities());
+		MinecraftForge.EVENT_BUS.register(new ModuleEffectTimeSlow());
 		MinecraftForge.EVENT_BUS.register(this);
 		SpellTicker.INSTANCE.getClass();
 

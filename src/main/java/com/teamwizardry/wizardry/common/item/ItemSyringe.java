@@ -12,6 +12,7 @@ import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
@@ -20,6 +21,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by LordSaad.
@@ -48,7 +50,7 @@ public class ItemSyringe extends ItemMod {
 	@Nonnull
 	@Override
 	public EnumAction getItemUseAction(ItemStack stack) {
-		return stack.getItemDamage() == 0 ? EnumAction.NONE : EnumAction.BOW;
+		return stack.getItemDamage() != 3 ? EnumAction.BOW : EnumAction.NONE;
 	}
 
 	@Override
@@ -72,9 +74,9 @@ public class ItemSyringe extends ItemMod {
 				player.setHealth(player.getHealth() - 2);
 				stack.setItemDamage(0);
 			} else if (stack.getItemDamage() == 0) {
-				player.setHealth(player.getHealth() - 2);
+				player.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer) player), 2);
 				stack.setItemDamage(3);
-				ItemNBTHelper.setUUID(stack, "ignore_uuid", player.getUniqueID());
+				ItemNBTHelper.setUUID(stack, "uuid", player.getUniqueID());
 			}
 		}
 	}
@@ -82,13 +84,13 @@ public class ItemSyringe extends ItemMod {
 	@Override
 	public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
 		if (stack.getItemDamage() == 0) {
-			player.setHealth(player.getHealth() - 2);
+			entity.attackEntityFrom(DamageSource.causePlayerDamage(player), 2);
 			stack.setItemDamage(3);
 			if (entity instanceof EntityPlayer)
-				ItemNBTHelper.setUUID(stack, "ignore_uuid", entity.getUniqueID());
-			else ItemNBTHelper.setString(stack, "ignore_entity", entity.getName());
+				ItemNBTHelper.setUUID(stack, "uuid", entity.getUniqueID());
+			else ItemNBTHelper.setString(stack, "entity", entity.getName());
 		}
-		return true;
+		return false;
 	}
 
 	@Override
@@ -99,6 +101,16 @@ public class ItemSyringe extends ItemMod {
 			tooltip.add("Feel the burn.");
 		} else if (stack.getItemDamage() == 1) {
 			tooltip.add("Will fill your mana bar by 30%");
+		} else {
+			UUID uuid = ItemNBTHelper.getUUID(stack, "uuid");
+			String entity = ItemNBTHelper.getString(stack, "entity", null);
+			if (uuid != null) {
+				EntityPlayer player1 = player.world.getPlayerEntityByUUID(uuid);
+				if (player1 != null) tooltip.add(player1.getName());
+			}
+			if (entity != null) {
+				tooltip.add(entity);
+			}
 		}
 	}
 }

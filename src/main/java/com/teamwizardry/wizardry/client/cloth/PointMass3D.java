@@ -16,11 +16,11 @@ public class PointMass3D {
 	}
 
 	public void applyForce(Vec3d force) {
-		pos = pos.add(force.scale(1.0 / mass));
+		pos = pos != null ? pos.add(force.scale(1.0 / mass)) : null;
 	}
 
 	public void applyMotion(Vec3d motion) {
-		pos = pos.add(motion);
+		pos = pos != null ? pos.add(motion) : null;
 	}
 
 	@Override

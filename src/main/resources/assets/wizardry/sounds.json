@@ -13,6 +13,135 @@
     ],
     "subtitle": "wizardry.subtitle.fizz"
   },
+  "chainy_zap": {
+    "category": "block",
+    "sounds": [
+      "wizardry:chainy_zap"
+    ],
+    "subtitle": "wizardry.subtitle.zap"
+  },
+  "chorus_good": {
+    "category": "block",
+    "sounds": [
+      "wizardry:chorus_good"
+    ],
+    "subtitle": "wizardry.subtitle.angelic_chorus"
+  },
+  "cold_wind": {
+    "category": "block",
+    "sounds": [
+      "wizardry:cold_wind"
+    ],
+    "subtitle": "wizardry.subtitle.cold_wind"
+  },
+  "electric_blast": {
+    "category": "block",
+    "sounds": [
+      "wizardry:electric_blast"
+    ],
+    "subtitle": "wizardry.subtitle.electric_blast"
+  },
+  "ethereal_pass_by": {
+    "category": "block",
+    "sounds": [
+      "wizardry:ethereal_pass_by"
+    ],
+    "subtitle": "wizardry.subtitle.ethereal_pass_by"
+  },
+  "fairy_1": {
+    "category": "block",
+    "sounds": [
+      "wizardry:fairy_1"
+    ],
+    "subtitle": "wizardry.subtitle.fairy_1"
+  },
+  "fire": {
+    "category": "block",
+    "sounds": [
+      "wizardry:fire"
+    ],
+    "subtitle": "wizardry.subtitle.fire"
+  },
+  "fireball": {
+    "category": "block",
+    "sounds": [
+      "wizardry:fireball"
+    ],
+    "subtitle": "wizardry.subtitle.fireball"
+  },
+  "fly": {
+    "category": "block",
+    "sounds": [
+      "wizardry:fly_1",
+      "wizardry:fly_2"
+    ],
+    "subtitle": "wizardry.subtitle.fly"
+  },
+  "frost_form": {
+    "category": "block",
+    "sounds": [
+      "wizardry:frost_form"
+    ],
+    "subtitle": "wizardry.subtitle.frost_form"
+  },
+  "heal": {
+    "category": "block",
+    "sounds": [
+      "wizardry:heal"
+    ],
+    "subtitle": "wizardry.subtitle.heal"
+  },
+  "lightning": {
+    "category": "block",
+    "sounds": [
+      "wizardry:lightning"
+    ],
+    "subtitle": "wizardry.subtitle.lightning"
+  },
+  "slow_motion_in": {
+    "category": "block",
+    "sounds": [
+      "wizardry:slow_motion_in"
+    ],
+    "subtitle": "wizardry.subtitle.slow_motion_in"
+  },
+  "slow_motion_out": {
+    "category": "block",
+    "sounds": [
+      "wizardry:slow_motion_out"
+    ],
+    "subtitle": "wizardry.subtitle.slow_motion_out"
+  },
+  "smoke_blast": {
+    "category": "block",
+    "sounds": [
+      "wizardry:smoke_blast"
+    ],
+    "subtitle": "wizardry.subtitle.smoke_blast"
+  },
+  "teleport": {
+    "category": "block",
+    "sounds": [
+      "wizardry:teleport_1",
+      "wizardry:teleport_2",
+      "wizardry:teleport_3"
+    ],
+    "subtitle": "wizardry.subtitle.teleport"
+  },
+  "thunder_blast": {
+    "category": "block",
+    "sounds": [
+      "wizardry:thunderblast"
+    ],
+    "subtitle": "wizardry.subtitle.thunderblast"
+  },
+  "wind": {
+    "category": "block",
+    "sounds": [
+      "wizardry:wind"
+    ],
+    "subtitle": "wizardry.subtitle.wind"
+  },
   "bass_boom": {
     "category": "block",
     "sounds": [

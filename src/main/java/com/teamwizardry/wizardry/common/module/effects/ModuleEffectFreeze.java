@@ -10,6 +10,7 @@ import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
+import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.block.BlockSnow;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -18,6 +19,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -70,10 +72,12 @@ public class ModuleEffectFreeze extends Module implements ITaxing {
 
 		if (targetEntity != null) {
 			targetEntity.setFire(0);
+			spell.world.playSound(null, targetEntity.getPosition(), ModSounds.WIND, SoundCategory.NEUTRAL, 1, 1);
 			// TODO: slippery
 		}
 
 		if (targetPos != null) {
+			spell.world.playSound(null, targetPos, ModSounds.FROST_FORM, SoundCategory.NEUTRAL, 1, 1);
 			for (int x = (int) range; x >= -range; x--)
 				for (int y = (int) range; y >= -range; y--)
 					for (int z = (int) range; z >= -range; z--) {

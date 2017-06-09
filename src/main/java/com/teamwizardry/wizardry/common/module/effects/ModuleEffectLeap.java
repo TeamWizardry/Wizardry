@@ -2,10 +2,12 @@ package com.teamwizardry.wizardry.common.module.effects;
 
 import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.api.util.PosUtils;
+import com.teamwizardry.wizardry.init.ModSounds;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.Vec3d;
 
 import javax.annotation.Nonnull;
@@ -69,6 +71,7 @@ public class ModuleEffectLeap extends Module implements IParticleDanger, ITaxing
 
 			if (target instanceof EntityPlayerMP)
 				((EntityPlayerMP) target).connection.sendPacket(new SPacketEntityVelocity(target));
+			spell.world.playSound(null, target.getPosition(), ModSounds.FLY, SoundCategory.NEUTRAL, 1, 1);
 			return true;
 		}
 		return false;

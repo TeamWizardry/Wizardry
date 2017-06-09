@@ -3,12 +3,14 @@ package com.teamwizardry.wizardry.common.module.effects;
 import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.init.ModSounds;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -62,6 +64,7 @@ public class ModuleEffectBurn extends Module implements ITaxing {
 
 		if (targetEntity != null) {
 			targetEntity.setFire((int) strength * 10);
+			world.playSound(null, targetEntity.getPosition(), ModSounds.FIRE, SoundCategory.NEUTRAL, 1, 1);
 		}
 
 		if (targetPos != null) {
@@ -71,11 +74,13 @@ public class ModuleEffectBurn extends Module implements ITaxing {
 						BlockPos pos = targetPos.add(x, y, z);
 						double dist = pos.getDistance(targetPos.getX(), targetPos.getY(), targetPos.getZ());
 						if (dist > strength) continue;
-						if (facing != null)
+						if (facing != null) {
 							BlockUtils.placeBlock(world, pos.offset(facing), Blocks.FIRE.getDefaultState(), caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null);
-						else for (EnumFacing face : EnumFacing.VALUES) {
+							world.playSound(null, targetPos, ModSounds.FIRE, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat());
+						} else for (EnumFacing face : EnumFacing.VALUES) {
 							if (world.isAirBlock(pos.offset(face)) || world.getBlockState(pos.offset(face)).getBlock() == Blocks.SNOW_LAYER) {
 								BlockUtils.placeBlock(world, pos.offset(face), Blocks.FIRE.getDefaultState(), caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null);
+								world.playSound(null, targetPos, ModSounds.FIRE, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat());
 							}
 						}
 					}

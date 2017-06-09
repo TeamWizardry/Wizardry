@@ -1,12 +1,14 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
 import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.init.ModSounds;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -68,6 +70,7 @@ public class ModuleEffectDisarm extends Module implements ITaxing {
 					held.setCount(0);
 					EntityItem item = new EntityItem(spell.world, targetEntity.posX, targetEntity.posY + 1, targetEntity.posZ, copy);
 					item.setPickupDelay(5);
+					spell.world.playSound(null, targetEntity.getPosition(), ModSounds.ELECTRIC_BLAST, SoundCategory.NEUTRAL, 1, 1);
 					return spell.world.spawnEntity(item);
 				} else {
 					ItemStack stack = held.copy();
@@ -75,6 +78,7 @@ public class ModuleEffectDisarm extends Module implements ITaxing {
 
 					EntityItem item = new EntityItem(spell.world, targetEntity.posX, targetEntity.posY + 1, targetEntity.posZ, stack);
 					item.setPickupDelay(5);
+					spell.world.playSound(null, targetEntity.getPosition(), ModSounds.ELECTRIC_BLAST, SoundCategory.NEUTRAL, 1, 1);
 					return spell.world.spawnEntity(item);
 				}
 			}

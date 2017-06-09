@@ -76,22 +76,22 @@ public class ModuleShapeZone extends Module implements IlingeringModule, ICostMo
 		List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(targetPos)).expand(aoe, 1, aoe));
 
 		setMultiplier(0.7);
-		for (Entity entity : entities) {
-			if (entity.getDistance(targetPos.xCoord, targetPos.yCoord, targetPos.zCoord) <= aoe) {
-				if (r.nextInt((int) (((11) - strength))) != 0) continue;
-				Vec3d vec = targetPos.addVector(RandUtil.nextDouble(-strength, strength), RandUtil.nextDouble(range), RandUtil.nextDouble(-strength, strength));
+		if (r.nextInt((int) (((100) - strength))) == 0) {
+			for (Entity entity : entities) {
+				if (entity.getDistance(targetPos.xCoord, targetPos.yCoord, targetPos.zCoord) <= aoe) {
+					Vec3d vec = targetPos.addVector(RandUtil.nextDouble(-strength, strength), RandUtil.nextDouble(range), RandUtil.nextDouble(-strength, strength));
 
-				SpellData copy = spell.copy();
-				copy.processEntity(entity, false);
-				copy.addData(YAW, entity.rotationYaw);
-				copy.addData(PITCH, entity.rotationPitch);
-				copy.addData(ORIGIN, vec);
-				runNextModule(copy);
+					SpellData copy = spell.copy();
+					copy.processEntity(entity, false);
+					copy.addData(YAW, entity.rotationYaw);
+					copy.addData(PITCH, entity.rotationPitch);
+					copy.addData(ORIGIN, vec);
+					runNextModule(copy);
+				}
 			}
 		}
 
 		if (r.nextInt((int) ((110 - strength * 10))) != 0) return true;
-
 		ArrayList<Vec3d> blocks = new ArrayList<>();
 		for (int i = (int) -aoe; i < aoe; i++)
 			for (int j = 0; j < 1 + range; j++)

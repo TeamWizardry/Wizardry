@@ -8,9 +8,11 @@ import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RandUtilSeed;
 import com.teamwizardry.wizardry.api.util.Utils;
 import com.teamwizardry.wizardry.common.network.PacketRenderLightningBolt;
+import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -87,6 +89,7 @@ public class ModuleEffectLightning extends Module implements ITaxing {
 
 		ArrayList<Vec3d> points = generator.generate();
 
+		spell.world.playSound(null, new BlockPos(traceResult.hitVec), ModSounds.LIGHTNING, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat());
 		for (Vec3d point : points) {
 			List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(point)).contract(0.2, 0.2, 0.2));
 			if (!entityList.isEmpty()) {

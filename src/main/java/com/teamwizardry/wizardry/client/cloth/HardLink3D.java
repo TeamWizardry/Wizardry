@@ -9,8 +9,9 @@ public class HardLink3D extends Link3D {
 	}
 
 	public void resolve() {
-		if (b.pin)
-			return;
+		if (b.pin) return;
+
+		if (a.pos == null || b.pos == null) return;
 
 		Vec3d posDiff = a.pos.subtract(b.pos);
 		double d = posDiff.lengthVector();

@@ -23,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.*;
 
 /**
  * Created by Saad on 8/27/2016.
@@ -47,6 +46,20 @@ public class ItemJar extends ItemModBlock implements IItemColorProvider {
 		return 32;
 	}
 
+	@Override
+	public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer playerIn, EntityLivingBase target, EnumHand hand) {
+		if (target instanceof EntityFairy) {
+			EntityFairy fairy = (EntityFairy) target;
+			ItemNBTHelper.setBoolean(stack, Constants.NBT.FAIRY_INSIDE, true);
+			ItemNBTHelper.setInt(stack, Constants.NBT.FAIRY_COLOR, fairy.getColor().getRGB());
+			ItemNBTHelper.setInt(stack, Constants.NBT.FAIRY_AGE, fairy.getAge());
+			stack.setItemDamage(1);
+			playerIn.world.removeEntity(target);
+			return true;
+		}
+		return false;
+	}
+
 	@NotNull
 	@Override
 	public ItemStack onItemUseFinish(@Nonnull ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
@@ -68,20 +81,8 @@ public class ItemJar extends ItemModBlock implements IItemColorProvider {
 		if (stack.getItemDamage() == 2) {
 			player.setActiveHand(hand);
 			return new ActionResult<>(EnumActionResult.SUCCESS, stack);
-		} else {
-			if (!world.isRemote) {
-				if (player.isSneaking() && (stack.getItemDamage() == 1)) {
-					if (ItemNBTHelper.getBoolean(stack, Constants.NBT.FAIRY_INSIDE, false)) {
-						ItemNBTHelper.setBoolean(stack, Constants.NBT.FAIRY_INSIDE, false);
-						EntityFairy entity = new EntityFairy(world, new Color(ItemNBTHelper.getInt(stack, Constants.NBT.FAIRY_COLOR, 0xFFFFFF)), ItemNBTHelper.getInt(stack, Constants.NBT.FAIRY_AGE, 0));
-						entity.setPosition(player.posX, player.posY, player.posZ);
-						world.spawnEntity(entity);
-						stack.setItemDamage(0);
-					}
-				}
-			}
-			return new ActionResult<>(EnumActionResult.FAIL, stack);
 		}
+		return new ActionResult<>(EnumActionResult.FAIL, stack);
 	}
 
 	@Nullable

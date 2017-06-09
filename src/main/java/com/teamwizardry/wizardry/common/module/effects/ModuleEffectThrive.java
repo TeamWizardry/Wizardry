@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.module.effects;
 
 import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
+import com.teamwizardry.wizardry.init.ModSounds;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.block.IGrowable;
 import net.minecraft.entity.Entity;
@@ -11,6 +12,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -62,9 +64,11 @@ public class ModuleEffectThrive extends Module implements ITaxing {
 			if (!tax(this, spell)) return false;
 
 			((EntityLivingBase) targetEntity).setHealth((float) (((EntityLivingBase) targetEntity).getHealth() + strength));
+			spell.world.playSound(null, targetEntity.getPosition(), ModSounds.HEAL, SoundCategory.NEUTRAL, 1, 1);
 		}
 
 		if (targetPos != null) {
+			spell.world.playSound(null, targetPos, ModSounds.HEAL, SoundCategory.NEUTRAL, 1, 1);
 			if (world.getBlockState(targetPos).getBlock() instanceof IGrowable) {
 				if (!tax(this, spell)) return false;
 				if (caster == null || (caster instanceof EntityPlayer && BlockUtils.hasEditPermission(targetPos, (EntityPlayerMP) caster)))

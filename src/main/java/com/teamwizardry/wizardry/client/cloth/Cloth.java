@@ -54,29 +54,31 @@ public class Cloth {
 		masses = new PointMass3D[height][top.length];
 		links = new ArrayList<>();
 
-		for (int i = 0; i < height; i++) {
-
+		// loop through grid to set masses
+		for (int i = 0; i < height; i++)
 			for (int j = 0; j < top.length; j++) {
-				masses[i][j] = new PointMass3D(top[j].add(size.scale(i)), 0.1f);
-				if (i == 0)
-					masses[0][j].pin = true;
+				masses[i][j] = new PointMass3D(top[j].add(size.scale(i)), 0.1f); // get x (top[j], then add y (size.scale(i))
+				if (i == 0) masses[0][j].pin = true; // pin it if it's on top.
 			}
-
-		}
 
 		for (int x = 0; x < masses.length; x++) {
 			for (int z = 0; z < masses[x].length; z++) {
 
+				// set all the top row's links to immovable ones so it doesn't look like it's held by cloth pins
 				if ((x + 1) < masses.length)
 					hardLinks.add(new HardLink3D(masses[x][z], masses[x + 1][z], 1));
 
+				// set a link on the x-axis to the right of the point
 				if ((x + 1) < masses.length)
 					links.add(new Link3D(masses[x][z], masses[x + 1][z], stretch / solvePasses));
+				// set a link on the z-axis to under the point
 				if (((z + 1) < masses[x].length) && (x != 0))
 					links.add(new Link3D(masses[x][z], masses[x][z + 1], stretch / solvePasses));
 
+				// set a link diagonally downwards right
 				if (((x + 1) < masses.length) && ((z + 1) < masses[x].length))
 					links.add(new Link3D(masses[x][z], masses[x + 1][z + 1], shear / solvePasses));
+				// set a link diagonally downwards left
 				if (((x + 1) < masses.length) && ((z - 1) >= 0))
 					links.add(new Link3D(masses[x][z], masses[x + 1][z - 1], shear / solvePasses));
 			}
@@ -140,11 +142,7 @@ public class Cloth {
 	 * @param spheres
 	 */
 	private void pushOutPoint(PointMass3D point, List<AxisAlignedBB> aabbs, List<Sphere> spheres) {
-		if (point.pin)
-			return;
-		for (AxisAlignedBB aabb : aabbs) {
-//			point.dest = AABBUtils.closestOutsidePoint(aabb, point.dest);
-		}
+		if (point.pin) return;
 		for (Sphere sphere : spheres) {
 			point.pos = sphere.fix(point.pos);
 		}
@@ -330,9 +328,6 @@ public class Cloth {
 					link.resolve();
 			}
 		});
-
-//        collidePoints(ImmutableList.of(), boxes);
-//		pushOutPoints(ImmutableList.of(), boxes);
 	}
 
 	@Nullable

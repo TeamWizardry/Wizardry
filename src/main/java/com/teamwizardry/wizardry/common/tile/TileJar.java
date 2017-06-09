@@ -15,7 +15,7 @@ public class TileJar extends TileMod {
 	@Save
 	public boolean hasFairy = false;
 	@Save
-	public Color priamry = null;
+	public Color color = Color.WHITE;
 	@Save
-	public Color secondary = null;
+	public int age = 0;
 }

@@ -10,15 +10,14 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
+import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -31,10 +30,6 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.TARGET_H
  */
 @RegisterModule
 public class ModuleEffectTelekinesis extends Module implements IContinousSpell, ITaxing {
-
-	public ModuleEffectTelekinesis() {
-		MinecraftForge.EVENT_BUS.register(this);
-	}
 
 	@Nonnull
 	@Override
@@ -72,6 +67,7 @@ public class ModuleEffectTelekinesis extends Module implements IContinousSpell, 
 
 		List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(targetPos)).expand(strength, strength, strength));
 
+		spell.world.playSound(null, new BlockPos(targetPos), ModSounds.ETHEREAL_PASS_BY, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat());
 		for (Entity entity : entityList) {
 			double dist = entity.getPositionVector().distanceTo(targetPos);
 			if (dist > strength) continue;
@@ -121,11 +117,5 @@ public class ModuleEffectTelekinesis extends Module implements IContinousSpell, 
 	@Override
 	public Module copy() {
 		return cloneModule(new ModuleEffectTelekinesis());
-	}
-
-
-	@SubscribeEvent
-	public void tickEntity(TickEvent.WorldTickEvent event) {
-		//if (event.)
 	}
 }

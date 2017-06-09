@@ -19,7 +19,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -34,10 +33,6 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  */
 @RegisterModule
 public class ModuleEffectTimeSlow extends Module implements ITaxing {
-
-	public ModuleEffectTimeSlow() {
-		MinecraftForge.EVENT_BUS.register(this);
-	}
 
 	@Nonnull
 	@Override
@@ -124,7 +119,7 @@ public class ModuleEffectTimeSlow extends Module implements ITaxing {
 
 
 	@SubscribeEvent
-	public void skipTick(LivingEvent.LivingUpdateEvent event) {
+	public static void skipTick(LivingEvent.LivingUpdateEvent event) {
 		if (event.getEntity().getEntityData().hasKey("skip_tick")
 				&& event.getEntity().getEntityData().hasKey("skip_tick_interval")
 				&& event.getEntity().getEntityData().hasKey("skip_tick_interval_save")) {
@@ -149,7 +144,7 @@ public class ModuleEffectTimeSlow extends Module implements ITaxing {
 	}
 
 	@SubscribeEvent
-	public void skipPlayerTick(TickEvent.PlayerTickEvent event) {
+	public static void skipPlayerTick(TickEvent.PlayerTickEvent event) {
 		//if (event.player.getEntityData().hasKey("skip_tick")
 		//		&& event.player.getEntityData().hasKey("skip_tick_interval")
 		//		&& event.player.getEntityData().hasKey("skip_tick_interval_save")) {
@@ -184,7 +179,7 @@ public class ModuleEffectTimeSlow extends Module implements ITaxing {
 	}
 
 	@SubscribeEvent
-	public void interact(PlayerInteractEvent event) {
+	public static void interact(PlayerInteractEvent event) {
 		//if (event.getEntity().getEntityData().hasKey("skip_tick")
 		//		&& event.getEntity().getEntityData().hasKey("skip_tick_interval")
 		//		&& event.getEntity().getEntityData().hasKey("skip_tick_interval_save")) {

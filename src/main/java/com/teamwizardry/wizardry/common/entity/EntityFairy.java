@@ -18,8 +18,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -175,20 +173,6 @@ public class EntityFairy extends FlyingEntityMod {
 				} else changingCourse = false;
 			}
 		}
-	}
-
-	@Nonnull
-	@Override
-	public EnumActionResult applyPlayerInteraction(EntityPlayer player, Vec3d vec, EnumHand hand) {
-		ItemStack stack = player.getHeldItem(hand);
-		if (stack.getItem() == ModItems.JAR) {
-			ItemNBTHelper.setBoolean(stack, NBT.FAIRY_INSIDE, true);
-			ItemNBTHelper.setInt(stack, NBT.FAIRY_COLOR, color.getRGB());
-			ItemNBTHelper.setInt(stack, NBT.FAIRY_AGE, age);
-			stack.setItemDamage(1);
-			world.removeEntity(this);
-		}
-		return EnumActionResult.PASS;
 	}
 
 	@Override

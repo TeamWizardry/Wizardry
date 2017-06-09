@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.common.item;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.wizardry.api.item.INacreColorable;
 import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.common.module.shapes.ModuleShapeTouch;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -40,6 +41,16 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 
 	@Override
 	public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer playerIn, EntityLivingBase target, EnumHand hand) {
+		boolean touch = false;
+		for (Module module : SpellStack.getModules(stack)) {
+			if (module instanceof ModuleShapeTouch) {
+				touch = true;
+				break;
+			}
+		}
+
+		if (!touch) return true;
+
 		SpellData spell = new SpellData(playerIn.world);
 		spell.processEntity(playerIn, true);
 		spell.processEntity(target, false);
@@ -54,24 +65,13 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 		ItemStack stack = player.getHeldItem(hand);
 
 		if (player.isSneaking()) {
-			ArrayList<Module> modules = SpellStack.getAllModules(stack);
-			if (!modules.isEmpty()) {
-				for (Module module : modules) {
-					if (module instanceof IBlockSelectable) {
-						player.getEntityData().setTag("selected", NBTUtil.writeBlockState(new NBTTagCompound(), world.getBlockState(pos)));
-						return EnumActionResult.FAIL;
-					}
+			for (Module module : SpellStack.getAllModules(stack)) {
+				if (module instanceof IBlockSelectable) {
+					player.getEntityData().setTag("selected", NBTUtil.writeBlockState(new NBTTagCompound(), world.getBlockState(pos)));
+					return EnumActionResult.FAIL;
 				}
 			}
 		}
-
-		//boolean isContinuous = false;
-		//for (Module module : SpellStack.getAllModules(stack))
-		//	if (module instanceof IContinousSpell) {
-		//		isContinuous = true;
-		//		break;
-		//	}
-		//if (isContinuous) return EnumActionResult.FAIL;
 
 		SpellData spell = new SpellData(world);
 		spell.processEntity(player, true);
@@ -144,7 +144,6 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 		SpellData spell = new SpellData(player.world);
 		spell.processEntity(player, true);
 		SpellStack.runSpell(stack, spell, player);
-
 
 		player.swingArm(player.getActiveHand());
 	}

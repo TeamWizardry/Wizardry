@@ -11,9 +11,7 @@ import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.tile.TileJar;
 import com.teamwizardry.wizardry.proxy.ClientProxy;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
@@ -23,7 +21,6 @@ import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
@@ -59,24 +56,7 @@ public class TileJarRenderer extends TileEntitySpecialRenderer<TileJar> {
 
 	@Override
 	public void renderTileEntityAt(TileJar te, double x, double y, double z, float partialTicks, int destroyStage) {
-		GlStateManager.pushMatrix();
-		GlStateManager.enableBlend();
-		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		GlStateManager.enableAlpha();
-		GlStateManager.color(1, 1, 1, 1);
-		getBakedModels();
-
-		bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-		if (Minecraft.isAmbientOcclusionEnabled())
-			GlStateManager.shadeModel(GL11.GL_SMOOTH);
-		else GlStateManager.shadeModel(GL11.GL_FLAT);
-
-		GlStateManager.translate(x, y, z);
-		GlStateManager.disableRescaleNormal();
-
-		GlStateManager.depthMask(false);
-		//Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModelBrightnessColor(modelJar, 1, 1, 1, 1);
-
+		if (!te.hasFairy) return;
 		double timeDifference = (ClientTickHandler.getTicks() + partialTicks) / 20.0;
 		Vec3d pos = new Vec3d(te.getPos()).addVector(0.5, 0.35 + 0.2 * MathHelper.sin((float) timeDifference), 0.5);
 
@@ -90,7 +70,7 @@ public class TileJarRenderer extends TileEntitySpecialRenderer<TileJar> {
 
 		if (RandUtil.nextInt(5) == 0) {
 			ParticleBuilder trail = new ParticleBuilder(35);
-			trail.setColor(color);
+			trail.setColor(te.color);
 			trail.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 			trail.setAlphaFunction(new InterpFadeInOut(0.2f, 1f));
 			trail.setScale(0.1f);
@@ -103,8 +83,5 @@ public class TileJarRenderer extends TileEntitySpecialRenderer<TileJar> {
 				));
 			});
 		}
-
-		GlStateManager.depthMask(true);
-		GlStateManager.popMatrix();
 	}
 }

@@ -2,11 +2,12 @@ package com.teamwizardry.wizardry.common.module.effects;
 
 import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.init.ModPotions;
+import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.common.MinecraftForge;
 
 import javax.annotation.Nonnull;
 
@@ -17,10 +18,6 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  */
 @RegisterModule
 public class ModuleEffectPhase extends Module implements ITaxing {
-
-	public ModuleEffectPhase() {
-		MinecraftForge.EVENT_BUS.register(this);
-	}
 
 	@Nonnull
 	@Override
@@ -59,6 +56,8 @@ public class ModuleEffectPhase extends Module implements ITaxing {
 		if (targetEntity != null && targetEntity instanceof EntityLivingBase) {
 			EntityLivingBase entity = (EntityLivingBase) targetEntity;
 			entity.addPotionEffect(new PotionEffect(ModPotions.PHASE, (int) time, 1, true, false));
+			spell.world.playSound(null, targetEntity.getPosition(), ModSounds.ETHEREAL_PASS_BY, SoundCategory.NEUTRAL, 1, 1);
+
 		}
 		return true;
 	}
