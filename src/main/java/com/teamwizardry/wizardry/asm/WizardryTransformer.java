@@ -30,7 +30,8 @@ public class WizardryTransformer implements IClassTransformer {
 	public static final ClassnameMap CLASS_MAPPINGS = new ClassnameMap(
 			"net/minecraft/entity/player/EntityPlayer", "aax",
 			"net/minecraft/entity/Entity", "sm",
-			"net/minecraft/entity/MoverType", "tb"
+			"net/minecraft/entity/MoverType", "tb",
+			"net/minecraft/entity/EntityLivingBase", "sv"
 	);
 	private static final String ASM_HOOKS = "com/teamwizardry/wizardry/asm/WizardryASMHooks";
 	private static final Map<String, Transformer> transformers = new HashMap<>();
@@ -38,6 +39,34 @@ public class WizardryTransformer implements IClassTransformer {
 	static {
 		transformers.put("net.minecraft.entity.player.EntityPlayer", WizardryTransformer::transformPlayerClipping);
 		transformers.put("net.minecraft.entity.Entity", WizardryTransformer::transformEntity);
+		transformers.put("net.minecraft.entity.EntityLivingBase", WizardryTransformer::transformEntityLivingMoveWithHeading);
+	}
+
+	private static byte[] transformEntityLivingMoveWithHeading(byte[] basicClass) {
+		MethodSignature sig = new MethodSignature("moveEntityWithHeading", "func_70612_e", "g", "(FF)V");
+
+		return transform(basicClass, sig, "EntityLivingBase Move With Heading Event",
+				combineBackFocus((AbstractInsnNode node) -> node.getOpcode() == RETURN,
+						(AbstractInsnNode node) -> node instanceof LabelNode,
+						(MethodNode method, AbstractInsnNode node) -> {
+
+							LabelNode node1 = new LabelNode();
+							InsnList newInstructions = new InsnList();
+
+							newInstructions.add(new VarInsnNode(ALOAD, 0));
+							newInstructions.add(new VarInsnNode(FLOAD, 1));
+							newInstructions.add(new VarInsnNode(FLOAD, 2));
+							newInstructions.add(new MethodInsnNode(INVOKESTATIC, ASM_HOOKS, "entityMoveWithHeading",
+									"(Lnet/minecraft/entity/EntityLivingBase;FF)Z", false));
+
+							newInstructions.add(new JumpInsnNode(IFNE, node1));
+							newInstructions.add(new InsnNode(RETURN));
+							newInstructions.add(node1);
+
+							method.instructions.insertBefore(method.instructions.getFirst(), newInstructions);
+							method.instructions.resetLabels();
+							return true;
+						}));
 	}
 
 	private static byte[] transformEntity(byte[] basicClass) {
@@ -50,6 +79,7 @@ public class WizardryTransformer implements IClassTransformer {
 						(AbstractInsnNode node) -> node instanceof LabelNode,
 						(MethodNode method, AbstractInsnNode node) -> {
 							InsnList newInstructions = new InsnList();
+							LabelNode node1 = new LabelNode();
 
 							newInstructions.add(new VarInsnNode(ALOAD, 0));
 							newInstructions.add(new VarInsnNode(ALOAD, 1));
@@ -59,9 +89,12 @@ public class WizardryTransformer implements IClassTransformer {
 							newInstructions.add(new MethodInsnNode(INVOKESTATIC, ASM_HOOKS, "entityPreMoveHook",
 									"(Lnet/minecraft/entity/Entity;Lnet/minecraft/entity/MoverType;DDD)Z", false));
 
-							newInstructions.add(new JumpInsnNode(IFNE, (LabelNode) node));
+							newInstructions.add(new JumpInsnNode(IFNE, node1));
+							newInstructions.add(new InsnNode(RETURN));
+							newInstructions.add(node1);
 
 							method.instructions.insertBefore(method.instructions.getFirst(), newInstructions);
+							method.instructions.resetLabels();
 							return true;
 						}));
 	}

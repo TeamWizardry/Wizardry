@@ -12,6 +12,7 @@ public class ModPotions {
 	public static PotionSteroid STEROID;
 	public static PotionPhase PHASE;
 	public static PotionTimeSlow TIME_SLOW;
+	public static PotionSlippery SLIPPERY;
 
 	public static void init() {
 		NULLIFY_GRAVITY = new PotionNullGrav();
@@ -19,5 +20,6 @@ public class ModPotions {
 		PHASE = new PotionPhase();
 		TIME_SLOW = new PotionTimeSlow();
 		NULL_MOVEMENT = new PotionNullMovement();
+		SLIPPERY = new PotionSlippery();
 	}
 }
