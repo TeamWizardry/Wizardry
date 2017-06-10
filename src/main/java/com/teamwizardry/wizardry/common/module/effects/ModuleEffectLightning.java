@@ -89,7 +89,7 @@ public class ModuleEffectLightning extends Module implements ITaxing {
 
 		ArrayList<Vec3d> points = generator.generate();
 
-		spell.world.playSound(null, new BlockPos(traceResult.hitVec), ModSounds.LIGHTNING, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat());
+		spell.world.playSound(null, new BlockPos(traceResult.hitVec), ModSounds.LIGHTNING, SoundCategory.NEUTRAL, 0.5f, RandUtil.nextFloat(1, 1.5f));
 		for (Vec3d point : points) {
 			List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(point)).contract(0.2, 0.2, 0.2));
 			if (!entityList.isEmpty()) {

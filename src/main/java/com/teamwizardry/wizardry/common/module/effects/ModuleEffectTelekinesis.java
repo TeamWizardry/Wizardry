@@ -29,7 +29,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.TARGET_H
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEffectTelekinesis extends Module implements IContinousSpell, ITaxing {
+public class ModuleEffectTelekinesis extends Module implements ITaxing {
 
 	@Nonnull
 	@Override
@@ -61,16 +61,18 @@ public class ModuleEffectTelekinesis extends Module implements IContinousSpell, 
 		Vec3d targetPos = spell.getData(TARGET_HIT);
 		Entity caster = spell.getData(CASTER);
 
-		double strength = getModifierPower(spell, Attributes.INCREASE_POTENCY, 1, 10, true, true);
+		double strength = getModifierPower(spell, Attributes.INCREASE_POTENCY, 3, 20, true, true);
 
 		if (targetPos == null) return false;
 
 		List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(targetPos)).expand(strength, strength, strength));
 
-		spell.world.playSound(null, new BlockPos(targetPos), ModSounds.ETHEREAL_PASS_BY, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat());
+		if (RandUtil.nextInt(6) == 0)
+			spell.world.playSound(null, new BlockPos(targetPos), ModSounds.ETHEREAL_PASS_BY, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat());
 		for (Entity entity : entityList) {
 			double dist = entity.getPositionVector().distanceTo(targetPos);
 			if (dist > strength) continue;
+			if (!tax(this, spell)) return false;
 
 			final double upperMag = 1;
 			final double scale = 1;

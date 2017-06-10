@@ -11,28 +11,28 @@
       "mana_drain": 100.0,
       "burnout_fill": 50.0,
       "item": "minecraft:beef",
-      "cooldown_time": 10.0
+      "cooldown_time": 30.0
     },
     {
       "id": "shape_self",
       "mana_drain": 100.0,
       "burnout_fill": 50.0,
       "item": "minecraft:diamond",
-      "cooldown_time": 10.0
+      "cooldown_time": 30.0
     },
     {
       "id": "shape_projectile",
       "mana_drain": 200.0,
       "burnout_fill": 300.0,
       "item": "minecraft:nether_wart",
-      "cooldown_time": 10
+      "cooldown_time": 30
     },
     {
       "id": "shape_cone",
       "mana_drain": 300.0,
       "burnout_fill": 200.0,
       "item": "minecraft:gunpowder",
-      "cooldown_time": 20,
+      "cooldown_time": 30,
       "chargeup_time": 5
     },
     {

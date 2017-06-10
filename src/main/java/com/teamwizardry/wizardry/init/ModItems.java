@@ -30,6 +30,8 @@ public class ModItems {
 
 	public static ItemMagicWand MAGIC_WAND;
 
+	public static ItemWisdomStick WISDOM_STICK;
+
 	public static void init() {
 		GLASS_ORB = new ItemGlassOrb();
 		MANA_ORB = new ItemManaOrb();
@@ -48,6 +50,8 @@ public class ModItems {
 		FAIRY_IMBUED_APPLE = new ItemFairyImbuedApple();
 
 		UNICORN_HORN = new ItemUnicornHorn();
+
+		WISDOM_STICK = new ItemWisdomStick();
 
 		if (Loader.isModLoaded("baubles")) CAPE = new ItemCapeBauble();
 		else CAPE = new ItemCapeChest();

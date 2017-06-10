@@ -4,14 +4,11 @@ import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.EnumHand;
-import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -150,16 +147,6 @@ public class SpellStack {
 		int maxCooldown = 0;
 		for (Module module : SpellStack.getAllModules(spellHolder))
 			if (module.getCooldownTime() > maxCooldown) maxCooldown = module.getCooldownTime();
-
-		if (maxCooldown > 0) {
-			ItemNBTHelper.setInt(spellHolder, Constants.NBT.LAST_COOLDOWN, maxCooldown);
-			ItemNBTHelper.setLong(spellHolder, Constants.NBT.LAST_CAST, spell.world.getTotalWorldTime());
-		}
-		if (player != null) {
-			if (maxCooldown > 0 && player instanceof EntityPlayer)
-				((EntityPlayer) player).getCooldownTracker().setCooldown(spellHolder.getItem(), maxCooldown);
-			player.swingArm(EnumHand.MAIN_HAND);
-		}
 	}
 
 	public static ArrayList<Module> getModules(@Nonnull ItemStack spellHolder) {
@@ -169,6 +156,15 @@ public class SpellStack {
 		if (list == null) return modules;
 
 		return getModules(list);
+	}
+
+	public static ArrayList<Module> getModulesSoftly(@Nonnull ItemStack spellHolder) {
+		ArrayList<Module> modules = new ArrayList<>();
+
+		NBTTagList list = ItemNBTHelper.getList(spellHolder, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+		if (list == null) return modules;
+
+		return getModulesSoftly(list);
 	}
 
 	public static ArrayList<Module> getModules(@Nonnull NBTTagCompound compound) {
@@ -185,6 +181,17 @@ public class SpellStack {
 			if (module == null) continue;
 			module = module.copy();
 			module.deserializeNBT(compound);
+			modules.add(module);
+		}
+		return modules;
+	}
+
+	public static ArrayList<Module> getModulesSoftly(@Nonnull NBTTagList list) {
+		ArrayList<Module> modules = new ArrayList<>();
+		for (int i = 0; i < list.tagCount(); i++) {
+			NBTTagCompound compound = list.getCompoundTagAt(i);
+			Module module = ModuleRegistry.INSTANCE.getModule(compound.getString("id"));
+			if (module == null) continue;
 			modules.add(module);
 		}
 		return modules;
@@ -216,6 +223,19 @@ public class SpellStack {
 	public static ArrayList<Module> getAllModules(@Nonnull ItemStack spellHolder) {
 		ArrayList<Module> modules = new ArrayList<>();
 		ArrayList<Module> heads = getModules(spellHolder);
+		for (Module module : heads) {
+			Module tempModule = module;
+			while (tempModule != null) {
+				modules.add(tempModule);
+				tempModule = tempModule.nextModule;
+			}
+		}
+		return modules;
+	}
+
+	public static ArrayList<Module> getAllModulesSoftly(@Nonnull ItemStack spellHolder) {
+		ArrayList<Module> modules = new ArrayList<>();
+		ArrayList<Module> heads = getModulesSoftly(spellHolder);
 		for (Module module : heads) {
 			Module tempModule = module;
 			while (tempModule != null) {

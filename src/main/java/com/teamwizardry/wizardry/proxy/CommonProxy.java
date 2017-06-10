@@ -21,6 +21,8 @@ import com.teamwizardry.wizardry.common.world.GenHandler;
 import com.teamwizardry.wizardry.common.world.underworld.WorldProviderUnderWorld;
 import com.teamwizardry.wizardry.init.*;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
@@ -88,6 +90,9 @@ public class CommonProxy {
 			e.printStackTrace();
 		}
 		return false;
+	}
+
+	public void setItemStackHandHandler(EnumHand hand, ItemStack stack) {
 	}
 
 	public void preInit(FMLPreInitializationEvent event) {
