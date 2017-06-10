@@ -5,7 +5,6 @@ import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.IExplodable;
-import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.Utils;
 import com.teamwizardry.wizardry.common.achievement.Achievements;
@@ -165,23 +164,7 @@ public class FluidBlockMana extends BlockFluidClassic {
 						PacketHandler.NETWORK.sendToAllAround(new PacketExplode(entity.getPositionVector(), Color.CYAN, Color.BLUE, 0.9, 2, 500, 100, 50, true),
 								new NetworkRegistry.TargetPoint(worldIn.provider.getDimension(), entity.posX, entity.posY, entity.posZ, 256));
 
-						List<Entity> entityList = worldIn.getEntitiesWithinAABBExcludingEntity(entity, new AxisAlignedBB(entity.getPosition()).expand(32, 32, 32));
-						for (Entity entity1 : entityList) {
-							double dist = entity1.getDistanceToEntity(entity);
-							final double upperMag = 3;
-							final double scale = 0.8;
-							double mag = upperMag * (scale * dist / (-scale * dist - 1) + 1);
-							Vec3d dir = entity1.getPositionVector().subtract(entity.getPositionVector()).normalize().scale(mag);
-
-							entity1.motionX += (dir.xCoord);
-							entity1.motionY += (dir.yCoord);
-							entity1.motionZ += (dir.zCoord);
-							entity1.fallDistance = 0;
-							entity1.velocityChanged = true;
-
-							if (entity1 instanceof EntityPlayerMP)
-								((EntityPlayerMP) entity1).connection.sendPacket(new SPacketEntityVelocity(entity1));
-						}
+						boom(worldIn, entity);
 
 						((EntityItem) entity).setEntityItemStack(new ItemStack(ModItems.BOOK, stack.getCount()));
 						worldIn.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
@@ -202,7 +185,7 @@ public class FluidBlockMana extends BlockFluidClassic {
 						if (worldIn.isRemote) LibParticles.FIZZING_ITEM(worldIn, entity.getPositionVector());
 
 						((IExplodable) stack.getItem()).explode(entityIn);
-						worldIn.setBlockState(entity.getPosition(), Blocks.AIR.getDefaultState());
+						worldIn.setBlockToAir(entity.getPosition());
 						worldIn.removeEntity(entity);
 						worldIn.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.GLASS_BREAK, SoundCategory.AMBIENT, 0.5F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
 					}
@@ -222,13 +205,10 @@ public class FluidBlockMana extends BlockFluidClassic {
 					else if (entityItem.getEntityItem().getItem() == Item.getItemFromBlock(Blocks.SOUL_SAND))
 						soulSand = entityItem;
 				}
-				EntityPlayer player = worldIn.getNearestAttackablePlayer(pos, 256, 256);
-				if (player != null && !(player instanceof EntityPlayerMP)) return false;
 
 				for (int i = -1; i <= 1; i++)
 					for (int j = -1; j <= 1; j++) {
-						if (worldIn.getBlockState(pos.add(i, 0, j)) != FluidBlockMana.instance.getDefaultState()
-								&& ((player != null && !BlockUtils.hasBreakPermission(worldIn, pos.add(i, 0, j), (EntityPlayerMP) player))))
+						if (worldIn.getBlockState(pos.add(i, 0, j)) != FluidBlockMana.instance.getDefaultState())
 							return false;
 					}
 
@@ -273,15 +253,38 @@ public class FluidBlockMana extends BlockFluidClassic {
 				EntityItem manaBattery = new EntityItem(worldIn, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, new ItemStack(ModBlocks.MANA_BATTERY));
 				worldIn.spawnEntity(manaBattery);
 
-				EntityPlayer player = worldIn.getNearestAttackablePlayer(pos, 256, 256);
 				for (int i = -1; i <= 1; i++)
-					for (int j = -1; j <= 1; j++) {
-						BlockUtils.breakBlock(worldIn, pos.add(i, 0, j), null, player instanceof EntityPlayerMP ? (EntityPlayerMP) player : null, false);
-					}
+					for (int j = -1; j <= 1; j++)
+						worldIn.setBlockToAir(pos.add(i, 0, j));
+
+				PacketHandler.NETWORK.sendToAllAround(new PacketExplode(entity.getPositionVector(), Color.CYAN, Color.BLUE, 0.9, 2, 500, 100, 50, true),
+						new NetworkRegistry.TargetPoint(worldIn.provider.getDimension(), entity.posX, entity.posY, entity.posZ, 256));
+
+				boom(worldIn, entity);
 
 				worldIn.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
 			}
 		});
+	}
+
+	private void boom(World worldIn, Entity entity) {
+		List<Entity> entityList = worldIn.getEntitiesWithinAABBExcludingEntity(entity, new AxisAlignedBB(entity.getPosition()).expand(32, 32, 32));
+		for (Entity entity1 : entityList) {
+			double dist = entity1.getDistanceToEntity(entity);
+			final double upperMag = 3;
+			final double scale = 0.8;
+			double mag = upperMag * (scale * dist / (-scale * dist - 1) + 1);
+			Vec3d dir = entity1.getPositionVector().subtract(entity.getPositionVector()).normalize().scale(mag);
+
+			entity1.motionX += (dir.xCoord);
+			entity1.motionY += (dir.yCoord);
+			entity1.motionZ += (dir.zCoord);
+			entity1.fallDistance = 0;
+			entity1.velocityChanged = true;
+
+			if (entity1 instanceof EntityPlayerMP)
+				((EntityPlayerMP) entity1).connection.sendPacket(new SPacketEntityVelocity(entity1));
+		}
 	}
 
 	public void run(Entity entity, Predicate<Entity> test, Consumer<Entity> process) {

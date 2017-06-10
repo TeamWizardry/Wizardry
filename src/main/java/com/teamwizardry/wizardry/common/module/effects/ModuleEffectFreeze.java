@@ -71,8 +71,8 @@ public class ModuleEffectFreeze extends Module implements ITaxing {
 		if (!tax(this, spell)) return false;
 
 		if (targetEntity != null) {
-			targetEntity.setFire(0);
-			spell.world.playSound(null, targetEntity.getPosition(), ModSounds.WIND, SoundCategory.NEUTRAL, 1, 1);
+			spell.world.playSound(null, targetPos, ModSounds.FROST_FORM, SoundCategory.NEUTRAL, 1, 1);
+			targetEntity.extinguish();
 			// TODO: slippery
 		}
 

@@ -76,11 +76,11 @@ public class ModuleEffectBurn extends Module implements ITaxing {
 						if (dist > strength) continue;
 						if (facing != null) {
 							BlockUtils.placeBlock(world, pos.offset(facing), Blocks.FIRE.getDefaultState(), caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null);
-							world.playSound(null, targetPos, ModSounds.FIRE, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat());
+							world.playSound(null, targetPos, ModSounds.FIRE, SoundCategory.NEUTRAL, 0.5f, RandUtil.nextFloat());
 						} else for (EnumFacing face : EnumFacing.VALUES) {
 							if (world.isAirBlock(pos.offset(face)) || world.getBlockState(pos.offset(face)).getBlock() == Blocks.SNOW_LAYER) {
 								BlockUtils.placeBlock(world, pos.offset(face), Blocks.FIRE.getDefaultState(), caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null);
-								world.playSound(null, targetPos, ModSounds.FIRE, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat());
+								world.playSound(null, targetPos, ModSounds.FIRE, SoundCategory.NEUTRAL, 0.5f, RandUtil.nextFloat());
 							}
 						}
 					}
