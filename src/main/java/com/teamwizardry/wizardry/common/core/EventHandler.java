@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.core;
 
+import com.teamwizardry.librarianlib.features.methodhandles.MethodHandleHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants.MISC;
 import com.teamwizardry.wizardry.api.events.SpellCastEvent;
@@ -12,7 +13,10 @@ import com.teamwizardry.wizardry.api.util.TeleportUtil;
 import com.teamwizardry.wizardry.common.achievement.Achievements;
 import com.teamwizardry.wizardry.common.entity.EntityDevilDust;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
+import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModPotions;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function2;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -40,6 +44,8 @@ public class EventHandler {
 
 	private final ArrayList<UUID> fallResetUUIDs = new ArrayList<>();
 
+	private static Function2<Entity, Object, Unit> entityFireHandler = MethodHandleHelper.wrapperForSetter(Entity.class, "isImmuneToFire", "field_70178_ae", "sm");
+
 	@SubscribeEvent
 	public void onTextureStitchEvent(Pre event) {
 		event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE));
@@ -56,11 +62,16 @@ public class EventHandler {
 	}
 
 	@SubscribeEvent
-	public void redstoneBornEvent(EntityJoinWorldEvent event) {
+	public void redstoneHandler(EntityJoinWorldEvent event) {
 		if (event.getEntity() instanceof EntityItem) {
 			EntityItem item = (EntityItem) event.getEntity();
-			if (item.getEntityItem().getItem() == Items.REDSTONE)
+			if (item.getEntityItem().getItem() == Items.REDSTONE) {
+				entityFireHandler.invoke(item, true);
 				event.getWorld().spawnEntity(new EntityDevilDust(event.getWorld(), item));
+			} else if (item.getEntityItem().getItem() == ModItems.DEVIL_DUST) {
+				entityFireHandler.invoke(item, true);
+				item.extinguish();
+			}
 		}
 	}
 

@@ -47,7 +47,7 @@ public class ModRecipes {
 				" A ", "BBB", "C C", 'A', Items.BOOK, 'B', ModBlocks.WISDOM_WOOD_SLAB, 'C', ModBlocks.WISDOM_WOOD_PLANKS));
 
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.JAR),
-				" A ", " B ", "   ", 'A', "buttonWood", 'B', Blocks.GLASS));
+				" A ", " B ", "   ", 'A', "slabWood", 'B', Blocks.GLASS));
 
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(ModBlocks.CRAFTING_PLATE),
 				" A ", "CBC", "C C", 'A', Items.CLAY_BALL, 'B', ModBlocks.WISDOM_WOOD_PIGMENTED_PLANKS, 'C', ModItems.WISDOM_STICK));

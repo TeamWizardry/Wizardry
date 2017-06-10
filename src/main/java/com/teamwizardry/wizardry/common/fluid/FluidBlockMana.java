@@ -1,20 +1,11 @@
 package com.teamwizardry.wizardry.common.fluid;
 
-import java.awt.Color;
-import java.util.List;
-import java.util.Random;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-
-import javax.annotation.Nonnull;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.google.common.base.Predicates;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.IExplodable;
+import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.Utils;
 import com.teamwizardry.wizardry.common.achievement.Achievements;
@@ -24,7 +15,6 @@ import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModPotions;
 import com.teamwizardry.wizardry.init.ModSounds;
 import com.teamwizardry.wizardry.lib.LibParticles;
-
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -49,6 +39,14 @@ import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
+import java.awt.*;
+import java.util.List;
+import java.util.Random;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public class FluidBlockMana extends BlockFluidClassic {
 
@@ -77,16 +75,19 @@ public class FluidBlockMana extends BlockFluidClassic {
 
 	@Override
 	public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
+		// Fizz all entities in the pool
 		run(entityIn,
 				entity -> true,
 				entity -> {
 					if (worldIn.isRemote) LibParticles.FIZZING_AMBIENT(worldIn, entityIn.getPositionVector());
 				});
 
+		// Nullify gravity of player
 		run(entityIn,
 				entity -> entity instanceof EntityLivingBase,
 				entity -> ((EntityLivingBase) entityIn).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 1, true, false)));
 
+		// Subtract player food
 		run(entityIn,
 				entity -> entity instanceof EntityPlayer,
 				entity -> {
@@ -103,6 +104,7 @@ public class FluidBlockMana extends BlockFluidClassic {
 					}
 				});
 
+		// Turn plank to wisdom plank
 		run(entityIn,
 				entity -> entity instanceof EntityItem && Utils.hasOreDictPrefix(((EntityItem) entity).getEntityItem(), "plank"),
 				entity -> {
@@ -113,6 +115,7 @@ public class FluidBlockMana extends BlockFluidClassic {
 					}
 				});
 
+		// Turn log to wisdom log
 		run(entityIn,
 				entity -> entity instanceof EntityItem && Utils.hasOreDictPrefix(((EntityItem) entity).getEntityItem(), "log"),
 				entity -> {
@@ -123,6 +126,7 @@ public class FluidBlockMana extends BlockFluidClassic {
 					}
 				});
 
+		// Turn stair to wisdom stair
 		run(entityIn,
 				entity -> entity instanceof EntityItem && Utils.hasOreDictPrefix(((EntityItem) entity).getEntityItem(), "stairs"),
 				entity -> {
@@ -133,6 +137,7 @@ public class FluidBlockMana extends BlockFluidClassic {
 					}
 				});
 
+		// Turn slab to wisdom slab
 		run(entityIn,
 				entity -> entity instanceof EntityItem && Utils.hasOreDictPrefix(((EntityItem) entity).getEntityItem(), "slabs"),
 				entity -> {
@@ -143,6 +148,7 @@ public class FluidBlockMana extends BlockFluidClassic {
 					}
 				});
 
+		// Turn book to codex
 		run(entityIn,
 				entity -> entity instanceof EntityItem && ((EntityItem) entity).getEntityItem().getItem() == Items.BOOK,
 				entity -> {
@@ -182,6 +188,7 @@ public class FluidBlockMana extends BlockFluidClassic {
 					}
 				});
 
+		// Explode explodable items
 		run(entityIn,
 				entity -> entity instanceof EntityItem && ((EntityItem) entity).getEntityItem().getItem() instanceof IExplodable,
 				entity -> {
@@ -200,77 +207,81 @@ public class FluidBlockMana extends BlockFluidClassic {
 						worldIn.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.GLASS_BREAK, SoundCategory.AMBIENT, 0.5F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
 					}
 				});
-		
-		// Mana Battery Recipe
-				run(entityIn, entity ->
-				{
-					if (entityIn instanceof EntityItem && !((EntityItem) entity).getEntityItem().isEmpty() && ((EntityItem) entity).getEntityItem().getItem() == Items.DIAMOND)
-					{ // World worldIn, BlockPos pos, IBlockState state, Entity entityIn
-						List<Entity> entities = worldIn.getEntitiesInAABBexcluding(entityIn, new AxisAlignedBB(pos),
-								Predicates.instanceOf(EntityItem.class));
-						EntityItem devilDust = null, soulSand = null;
-						for (Entity e : entities)
-						{
-							EntityItem entityItem = (EntityItem) e;
-							if (entityItem.getEntityItem().getItem() == ModItems.DEVIL_DUST)
-								devilDust = entityItem;
-							else if (entityItem.getEntityItem().getItem() == Item.getItemFromBlock(Blocks.SOUL_SAND))
-								soulSand = entityItem;
-						}
-						for (int i = -1; i <= 1; i++)
-							for (int j = -1; j <= 1; j++)
-								if (worldIn.getBlockState(pos.add(i, 0, j)) != FluidBlockMana.instance.getDefaultState())
-									return false;
-						return devilDust != null && soulSand != null;
-					}
-					return false;
-				}, entity ->
-				{
-					ItemStack stack = ((EntityItem) entity).getEntityItem();
-					int expiry = ItemNBTHelper.getInt(stack, REACTION_COOLDOWN, 200);
-					if (expiry > 0)
-					{
-						if (worldIn.isRemote)
-							LibParticles.CRAFTING_ALTAR_IDLE(worldIn, entity.getPositionVector());
 
-						ItemNBTHelper.setInt(stack, REACTION_COOLDOWN, --expiry);
-						if ((expiry % 5) == 0)
-							worldIn.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
+		// Mana Battery Recipe
+		run(entityIn, entity -> {
+			if (worldIn.isRemote) return false;
+			if (entityIn instanceof EntityItem && !((EntityItem) entity).getEntityItem().isEmpty() && ((EntityItem) entity).getEntityItem().getItem() == Items.DIAMOND) { // World worldIn, BlockPos pos, IBlockState state, Entity entityIn
+				List<Entity> entities = worldIn.getEntitiesInAABBexcluding(entityIn, new AxisAlignedBB(pos),
+						Predicates.instanceOf(EntityItem.class));
+				EntityItem devilDust = null, soulSand = null;
+				for (Entity e : entities) {
+					EntityItem entityItem = (EntityItem) e;
+					if (entityItem.getEntityItem().getItem() == ModItems.DEVIL_DUST)
+						devilDust = entityItem;
+					else if (entityItem.getEntityItem().getItem() == Item.getItemFromBlock(Blocks.SOUL_SAND))
+						soulSand = entityItem;
+				}
+				EntityPlayer player = worldIn.getNearestAttackablePlayer(pos, 256, 256);
+				if (player != null && !(player instanceof EntityPlayerMP)) return false;
+
+				for (int i = -1; i <= 1; i++)
+					for (int j = -1; j <= 1; j++) {
+						if (worldIn.getBlockState(pos.add(i, 0, j)) != FluidBlockMana.instance.getDefaultState()
+								&& ((player != null && !BlockUtils.hasBreakPermission(worldIn, pos.add(i, 0, j), (EntityPlayerMP) player))))
+							return false;
 					}
-					else
-					{
-						List<Entity> entities = worldIn.getEntitiesInAABBexcluding(entityIn, new AxisAlignedBB(pos),
-								Predicates.instanceOf(EntityItem.class));
-						EntityItem devilDust = null, soulSand = null;
-						for (Entity e : entities)
-						{
-							EntityItem entityItem = (EntityItem) e;
-							if (entityItem.getEntityItem().getItem() == ModItems.DEVIL_DUST)
-								devilDust = entityItem;
-							else if (entityItem.getEntityItem().getItem() == Item.getItemFromBlock(Blocks.SOUL_SAND))
-								soulSand = entityItem;
-						}
-						((EntityItem) entity).getEntityItem().shrink(1);
-						if (((EntityItem) entity).getEntityItem().isEmpty())
-							worldIn.removeEntity(entity);
-						devilDust.getEntityItem().shrink(1);
-						if (devilDust.getEntityItem().isEmpty())
-							worldIn.removeEntity(devilDust);
-						soulSand.getEntityItem().shrink(1);
-						if (soulSand.getEntityItem().isEmpty())
-							worldIn.removeEntity(soulSand);
-						if (!worldIn.isRemote)
-						{
-							EntityItem manaBattery = new EntityItem(worldIn, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, new ItemStack(ModBlocks.MANA_BATTERY));
-							worldIn.spawnEntity(manaBattery);
-						}
-						for (int i = -1; i <= 1; i++)
-							for (int j = -1; j <= 1; j++)
-								worldIn.setBlockToAir(pos.add(i, 0, j));
-						
-						worldIn.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
+
+				return devilDust != null && soulSand != null;
+			}
+			return false;
+		}, entity -> {
+			ItemStack stack = ((EntityItem) entity).getEntityItem();
+			int expiry = ItemNBTHelper.getInt(stack, REACTION_COOLDOWN, 200);
+			if (expiry > 0) {
+				if (worldIn.isRemote)
+					LibParticles.CRAFTING_ALTAR_IDLE(worldIn, entity.getPositionVector());
+
+				ItemNBTHelper.setInt(stack, REACTION_COOLDOWN, --expiry);
+				if ((expiry % 5) == 0)
+					worldIn.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
+			} else {
+				if (worldIn.isRemote) return;
+
+				List<Entity> entities = worldIn.getEntitiesInAABBexcluding(entityIn, new AxisAlignedBB(pos), Predicates.instanceOf(EntityItem.class));
+				EntityItem devilDust = null, soulSand = null;
+				for (Entity e : entities) {
+					EntityItem entityItem = (EntityItem) e;
+					if (entityItem.getEntityItem().getItem() == ModItems.DEVIL_DUST)
+						devilDust = entityItem;
+					else if (entityItem.getEntityItem().getItem() == Item.getItemFromBlock(Blocks.SOUL_SAND))
+						soulSand = entityItem;
+				}
+
+				((EntityItem) entity).getEntityItem().shrink(1);
+				if (((EntityItem) entity).getEntityItem().isEmpty())
+					worldIn.removeEntity(entity);
+
+				devilDust.getEntityItem().shrink(1);
+				if (devilDust.getEntityItem().isEmpty())
+					worldIn.removeEntity(devilDust);
+
+				soulSand.getEntityItem().shrink(1);
+				if (soulSand.getEntityItem().isEmpty())
+					worldIn.removeEntity(soulSand);
+
+				EntityItem manaBattery = new EntityItem(worldIn, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, new ItemStack(ModBlocks.MANA_BATTERY));
+				worldIn.spawnEntity(manaBattery);
+
+				EntityPlayer player = worldIn.getNearestAttackablePlayer(pos, 256, 256);
+				for (int i = -1; i <= 1; i++)
+					for (int j = -1; j <= 1; j++) {
+						BlockUtils.breakBlock(worldIn, pos.add(i, 0, j), null, player instanceof EntityPlayerMP ? (EntityPlayerMP) player : null, false);
 					}
-				});
+
+				worldIn.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
+			}
+		});
 	}
 
 	public void run(Entity entity, Predicate<Entity> test, Consumer<Entity> process) {

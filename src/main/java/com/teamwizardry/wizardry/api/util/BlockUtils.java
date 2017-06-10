@@ -42,7 +42,8 @@ public class BlockUtils {
 			playerMP.setPosition(pos.getX(), pos.getY(), pos.getZ());
 		} else playerMP = player;
 
-		if (!hasEditPermission(pos, playerMP)) return false;
+		if (!(player instanceof FakePlayer))
+			if (!hasEditPermission(pos, playerMP)) return false;
 
 		BlockEvent.PlaceEvent event = new BlockEvent.PlaceEvent(BlockSnapshot.getBlockSnapshot(world, pos), Blocks.AIR.getDefaultState(), playerMP, playerMP.getActiveHand());
 		MinecraftForge.EVENT_BUS.post(event);
@@ -68,7 +69,8 @@ public class BlockUtils {
 			playerMP.setPosition(pos.getX(), pos.getY(), pos.getZ());
 		} else playerMP = player;
 
-		if (!hasBreakPermission(world, pos, playerMP)) return false;
+		if (!(player instanceof FakePlayer))
+			if (!hasBreakPermission(world, pos, playerMP)) return false;
 
 		if (oldState == null) oldState = world.getBlockState(pos);
 
