@@ -37,6 +37,7 @@ public class EntityDevilDust extends Entity {
 
 	public EntityDevilDust(World world, EntityItem redstone) {
 		super(world);
+		isImmuneToFire = true;
 		this.redstone = redstone;
 		posX = redstone.posX;
 		posY = redstone.posY;
@@ -54,8 +55,10 @@ public class EntityDevilDust extends Entity {
 			if (expiry > 0) {
 				expiry--;
 
-				LibParticles.DEVIL_DUST_BIG_CRACKLES(world, getPositionVector());
-				LibParticles.DEVIL_DUST_SMALL_CRACKLES(world, getPositionVector());
+				if (world.isRemote) {
+					LibParticles.DEVIL_DUST_BIG_CRACKLES(world, getPositionVector());
+					LibParticles.DEVIL_DUST_SMALL_CRACKLES(world, getPositionVector());
+				}
 
 				if ((expiry % 5) == 0)
 					world.playSound(null, posX, posY, posZ, ModSounds.FRYING_SIZZLE, SoundCategory.BLOCKS, 0.7F, (float) RandUtil.nextDouble(0.8, 1.3));

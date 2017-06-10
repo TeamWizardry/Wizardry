@@ -42,9 +42,8 @@ import java.util.UUID;
 
 public class EventHandler {
 
-	private final ArrayList<UUID> fallResetUUIDs = new ArrayList<>();
-
 	private static Function2<Entity, Object, Unit> entityFireHandler = MethodHandleHelper.wrapperForSetter(Entity.class, "isImmuneToFire", "field_70178_ae", "sm");
+	private final ArrayList<UUID> fallResetUUIDs = new ArrayList<>();
 
 	@SubscribeEvent
 	public void onTextureStitchEvent(Pre event) {
@@ -145,13 +144,13 @@ public class EventHandler {
 		int chance = 5;
 		for (Module module : event.module.getAllChildModules())
 			if (module instanceof IContinousSpell) {
-				chance = 100;
+				chance = 1000;
 				break;
 			}
-		if (caster != null) {
+		if (RandUtil.nextInt(chance) == 0 && caster != null) {
 			List<EntityFairy> fairyList = event.spell.world.getEntitiesWithinAABB(EntityFairy.class, new AxisAlignedBB(caster.getPosition()).expand(64, 64, 64));
 			for (EntityFairy fairy : fairyList) {
-				if (RandUtil.nextInt(chance) == 0) fairy.ambush = true;
+				fairy.ambush = true;
 			}
 		}
 	}
