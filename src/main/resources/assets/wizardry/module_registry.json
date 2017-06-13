@@ -45,6 +45,14 @@
   ],
   "effects": [
     {
+      "id": "effect_low_gravity",
+      "mana_drain": 200,
+      "burnout_fill": 100,
+      "item": "minecraft:feather",
+      "primary_color": "00ff21",
+      "secondary_color": "ff0083"
+    },
+    {
       "id": "effect_lightning",
       "mana_drain": 200,
       "burnout_fill": 100,
@@ -64,7 +72,7 @@
       "id": "effect_telekinesis",
       "mana_drain": 10,
       "burnout_fill": 10,
-      "item": "minecraft:feather",
+      "item": "minecraft:reeds",
       "primary_color": "FFFFFF",
       "secondary_color": "FFFF00"
     },
