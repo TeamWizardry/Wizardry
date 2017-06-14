@@ -4,8 +4,10 @@ import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.base.item.IItemColorProvider;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.api.Constants.NBT;
+import com.teamwizardry.wizardry.common.fluid.FluidNacre;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import kotlin.jvm.functions.Function2;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -37,16 +39,20 @@ public interface INacreColorable extends IItemColorProvider {
 	}
 
 	default void colorableOnEntityItemUpdate(EntityItem entityItem) {
+		if (entityItem.world.isRemote) return;
 		ItemStack stack = entityItem.getEntityItem();
 
 		if (!ItemNBTHelper.verifyExistence(stack, NBT.RAND))
 			ItemNBTHelper.setFloat(stack, NBT.RAND, entityItem.world.rand.nextFloat());
 
-		if (entityItem.isInsideOfMaterial(ModBlocks.NACRE_MATERIAL) && !ItemNBTHelper.getBoolean(stack, NBT.COMPLETE, false)) {
+		IBlockState state = entityItem.world.getBlockState(entityItem.getPosition());
+
+		if (state.getBlock() == FluidNacre.instance.getBlock() && !ItemNBTHelper.getBoolean(stack, NBT.COMPLETE, false)) {
 			int purity = ItemNBTHelper.getInt(stack, NBT.PURITY, 0);
 			purity = Math.min(purity + 1, NBT.NACRE_PURITY_CONVERSION * 2);
 			ItemNBTHelper.setInt(stack, NBT.PURITY, purity);
-		} else ItemNBTHelper.setBoolean(stack, NBT.COMPLETE, true);
+		} else if (ItemNBTHelper.getInt(stack, NBT.PURITY, 0) > 0)
+			ItemNBTHelper.setBoolean(stack, NBT.COMPLETE, true);
 	}
 
 	float curveConst = 0.75F / (1.0F - 1 / (float) Math.E);
@@ -59,9 +65,9 @@ public interface INacreColorable extends IItemColorProvider {
 			if (tintIndex != 0) return 0xFFFFFF;
 			float rand = ItemNBTHelper.getFloat(stack, NBT.RAND, -1);
 			float hue = rand < 0 ? MathHelper.sin(Minecraft.getMinecraft().world.getTotalWorldTime() / 140f) : rand;
-			int purity = ItemNBTHelper.getInt(stack, NBT.PURITY, NBT.NACRE_PURITY_CONVERSION);
+			int purity = Math.max(0, Math.min(NBT.NACRE_PURITY_CONVERSION * 2, ItemNBTHelper.getInt(stack, NBT.PURITY, NBT.NACRE_PURITY_CONVERSION)));
 			float pow = purity / (float) NBT.NACRE_PURITY_CONVERSION;
-			if (purity > NBT.NACRE_PURITY_CONVERSION) pow = 1 - pow;
+			if (pow > 1) pow = 2 - pow;
 
 			float saturation = curveConst * (1 - (float) Math.pow(Math.E, -pow));
 
@@ -88,9 +94,9 @@ public interface INacreColorable extends IItemColorProvider {
 
 				float rand = ItemNBTHelper.getFloat(stack, NBT.RAND, -1);
 				float hue = rand < 0 ? MathHelper.sin(tick / 140f) : rand;
-				int purity = ItemNBTHelper.getInt(stack, NBT.PURITY, NBT.NACRE_PURITY_CONVERSION);
+				int purity = Math.max(0, Math.min(NBT.NACRE_PURITY_CONVERSION * 2, ItemNBTHelper.getInt(stack, NBT.PURITY, NBT.NACRE_PURITY_CONVERSION)));
 				float pow = purity / (float) NBT.NACRE_PURITY_CONVERSION;
-				if (purity > NBT.NACRE_PURITY_CONVERSION) pow = 1 - pow;
+				if (pow > 1) pow = 2 - pow;
 
 				double decaySaturation = (lastCast == -1 || decayCooldown <= 0 || decayStage >= 1f) ? 1f :
 						(decayStage < decayCurveDelimiter) ? Math.pow(Math.E, -15 * decayStage) : Math.pow(Math.E, 3 * decayStage - 3);

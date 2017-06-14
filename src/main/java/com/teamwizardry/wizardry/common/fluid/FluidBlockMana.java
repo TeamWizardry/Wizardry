@@ -92,13 +92,13 @@ public class FluidBlockMana extends BlockFluidClassic {
 				entity -> {
 					((EntityPlayer) entityIn).addStat(Achievements.MANAPOOL);
 
-					if (RandUtil.nextInt(50) == 0) {
+					if (RandUtil.nextInt(50) == 0 && !((EntityPlayer) entity).capabilities.isCreativeMode) {
 						if (((EntityPlayer) entity).getFoodStats().getFoodLevel() > 0)
 							((EntityPlayer) entity).getFoodStats().addStats(-1, 0);
 						if (((EntityPlayer) entity).getFoodStats().getSaturationLevel() > 0)
 							((EntityPlayer) entity).getFoodStats().addStats(0, -1);
 					}
-					if (RandUtil.nextInt(50) == 0) {
+					if (RandUtil.nextInt(50) == 0 && !((EntityPlayer) entity).capabilities.isCreativeMode) {
 						((EntityPlayer) entity).setHealth((float) Math.max(0, ((EntityPlayer) entity).getHealth() - 0.1));
 					}
 				});

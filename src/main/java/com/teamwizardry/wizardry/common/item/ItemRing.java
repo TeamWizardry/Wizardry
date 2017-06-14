@@ -23,8 +23,6 @@ public class ItemRing extends ItemMod implements INacreColorable {
 
 	@Override
 	public boolean onEntityItemUpdate(EntityItem entityItem) {
-		if (!entityItem.world.isRemote) return false;
-
 		colorableOnEntityItemUpdate(entityItem);
 
 		return super.onEntityItemUpdate(entityItem);

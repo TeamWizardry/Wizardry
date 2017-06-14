@@ -37,8 +37,6 @@ public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, 
 
 	@Override
 	public boolean onEntityItemUpdate(EntityItem entityItem) {
-		if (!entityItem.world.isRemote) return false;
-
 		colorableOnEntityItemUpdate(entityItem);
 
 		return super.onEntityItemUpdate(entityItem);

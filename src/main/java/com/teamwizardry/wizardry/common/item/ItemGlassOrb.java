@@ -23,6 +23,7 @@ public class ItemGlassOrb extends ItemMod {
 		if (state.getBlock() == FluidNacre.instance.getBlock()) {
 			ItemStack newStack = new ItemStack(ModItems.PEARL_NACRE);
 			entityItem.setEntityItemStack(newStack);
+			newStack.getItem().onEntityItemUpdate(entityItem);
 		} else if (state.getBlock() == FluidMana.instance.getBlock()) {
 			ItemStack newStack = new ItemStack(ModItems.MANA_ORB);
 			entityItem.setEntityItemStack(newStack);
