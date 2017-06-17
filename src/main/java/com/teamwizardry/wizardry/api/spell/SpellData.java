@@ -67,7 +67,6 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 		return def;
 	}
 
-	@SuppressWarnings("unchecked")
 	public <T> boolean hasData(@Nonnull Pair<String, Class<T>> pair) {
 		return data.containsKey(pair) && data.get(pair) != null;
 	}

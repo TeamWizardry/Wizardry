@@ -30,7 +30,6 @@ import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 public class LightningRenderer {
 
 	public static LightningRenderer INSTANCE = new LightningRenderer();
-	private static Sprite sprite = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/particles/h_streak.png"));
 	private static Sprite streakBase = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/particles/streak_base.png"));
 	private static Sprite streakCorner = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/particles/streak_corner.png"));
 	private ArrayList<LightningBolt> bolts = new ArrayList<>();

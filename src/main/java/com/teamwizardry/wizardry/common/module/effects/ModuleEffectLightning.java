@@ -7,11 +7,10 @@ import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RandUtilSeed;
 import com.teamwizardry.wizardry.api.util.Utils;
+import com.teamwizardry.wizardry.common.core.LightningTracker;
 import com.teamwizardry.wizardry.common.network.PacketRenderLightningBolt;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -94,10 +93,7 @@ public class ModuleEffectLightning extends Module implements ITaxing {
 			List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(point)).contract(0.2, 0.2, 0.2));
 			if (!entityList.isEmpty()) {
 				for (Entity entity : entityList) {
-					entity.setFire((int) (strength));
-					if (caster instanceof EntityPlayer)
-						entity.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer) caster), (float) (strength));
-					else entity.attackEntityFrom(DamageSource.LIGHTNING_BOLT, (float) (strength));
+					LightningTracker.INSTANCE.addEntity(origin, entity, caster, (int) strength);
 				}
 			}
 		}

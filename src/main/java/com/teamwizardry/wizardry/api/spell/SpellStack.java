@@ -94,7 +94,7 @@ public class SpellStack {
 			Deque<Module> deque = new ArrayDeque<>();
 			deque.addAll(modules);
 
-			for (Module ignored : modules) {
+			for (@SuppressWarnings("unused") Module ignored : modules) {
 				if (deque.peekFirst() == deque.peekLast()) {
 					compiled.add(deque.peekLast());
 					break;
