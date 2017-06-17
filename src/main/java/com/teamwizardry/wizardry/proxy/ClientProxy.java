@@ -5,6 +5,7 @@ import com.teamwizardry.librarianlib.features.utilities.client.CustomBlockMapSpr
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.client.core.CapeHandler;
+import com.teamwizardry.wizardry.client.core.CooldownHandler;
 import com.teamwizardry.wizardry.client.core.HudEventHandler;
 import com.teamwizardry.wizardry.client.core.WizardryClientMethodHandles;
 import com.teamwizardry.wizardry.client.fx.Shaders;
@@ -44,6 +45,7 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 		super.preInit(event);
 
 		LightningRenderer.INSTANCE.getClass();
+		CooldownHandler.INSTANCE.getClass();
 		MinecraftForge.EVENT_BUS.register(new HudEventHandler());
 
 		new WizardryClientMethodHandles(); // Load the class

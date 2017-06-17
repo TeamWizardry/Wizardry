@@ -114,16 +114,16 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 	@Nonnull
 	@Override
 	public EnumAction getItemUseAction(ItemStack stack) {
-		for (Module module : SpellStack.getAllModulesSoftly(stack))
-			if (module instanceof IContinousSpell || module.getChargeupTime() > 0) return EnumAction.BOW;
+		for (Module module : SpellStack.getAllModules(stack))
+			if (module instanceof IContinuousSpell || module.getChargeupTime() > 0) return EnumAction.BOW;
 		return EnumAction.NONE;
 	}
 
 	@Override
 	public int getMaxItemUseDuration(ItemStack stack) {
 		int maxChargeUp = 0;
-		for (Module module : SpellStack.getAllModulesSoftly(stack)) {
-			if (module instanceof IContinousSpell) return 72000;
+		for (Module module : SpellStack.getAllModules(stack)) {
+			if (module instanceof IContinuousSpell) return 72000;
 			if (module.getChargeupTime() > maxChargeUp) maxChargeUp = module.getChargeupTime();
 		}
 
@@ -141,7 +141,7 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 		if (!(player instanceof EntityPlayer)) return;
 		boolean isContinuous = false;
 		for (Module module : SpellStack.getAllModules(stack))
-			if (module instanceof IContinousSpell) {
+			if (module instanceof IContinuousSpell) {
 				isContinuous = true;
 				break;
 			}

@@ -80,6 +80,9 @@ public class ModuleRegistry {
 	}
 
 	public void processModules() {
+		Wizardry.logger.info("<<============================================>>");
+		Wizardry.logger.info("> Starting module registration processing.");
+
 		String[] typeArray = new String[]{"shapes", "events", "effects", "modifiers"};
 
 		HashSet<Module> processed = new HashSet<>();
@@ -152,6 +155,7 @@ public class ModuleRegistry {
 					}
 
 					processed.add(module);
+					Wizardry.logger.info("  > module " + module.getID() + " registered successfully.");
 				}
 			}
 		}
@@ -165,14 +169,14 @@ public class ModuleRegistry {
 		}
 
 		if (!left.isEmpty()) {
-			Wizardry.logger.error("Missing modules detected in module_registry.json:");
+			Wizardry.logger.error("  > Missing modules detected in module_registry.json:");
 			for (Module module : left) Wizardry.logger.error("    - " + module.getID());
 			long currentTime = System.currentTimeMillis();
 
 			HashMap<ModuleType, JsonArray> arrays = new HashMap<>();
 			while (!left.isEmpty()) {
 				Module module = left.pop();
-				Wizardry.logger.info("Attempting to add default module " + module.getID() + " into module_registry.json");
+				Wizardry.logger.info("  > Attempting to add default module " + module.getID() + " into module_registry.json");
 
 				JsonArray array;
 
@@ -193,7 +197,7 @@ public class ModuleRegistry {
 						if (originalObject.has("id") && originalObject.get("id").isJsonPrimitive()) {
 							if (module.getID().equals(originalObject.get("id").getAsString())) {
 								array.add(originalObject);
-								Wizardry.logger.info(module.getID() + " added successfully into module_registry.json!");
+								Wizardry.logger.info("  > " + module.getID() + " added successfully into module_registry.json!");
 								break;
 							}
 						}
@@ -205,7 +209,7 @@ public class ModuleRegistry {
 			for (ModuleType type : ModuleType.values()) {
 				if (typesIncluded.contains(type)) continue;
 
-				Wizardry.logger.info("Adding original modules of type " + type.name() + " back into new config.");
+				Wizardry.logger.info("  > Adding original modules of type " + type.name() + " back into new config.");
 				arrays.put(type, object.getAsJsonArray(type.name().toLowerCase()));
 			}
 
@@ -213,15 +217,15 @@ public class ModuleRegistry {
 
 			if (config.exists())
 				if (!config.delete()) {
-					Wizardry.logger.error("SOMETHING WENT WRONG! Could not delete old module_registry.json");
+					Wizardry.logger.error("  > SOMETHING WENT WRONG! Could not delete old module_registry.json");
 					return;
-				} else Wizardry.logger.info("Old module_registry.json deleted successfully!");
+				} else Wizardry.logger.info("  > Old module_registry.json deleted successfully!");
 
 
 			if (!createModuleRegistryFile(config.getParentFile())) {
-				Wizardry.logger.error("SOMETHING WENT WRONG! Could not create new module_registry.json");
+				Wizardry.logger.error("  > SOMETHING WENT WRONG! Could not create new module_registry.json");
 				return;
-			} else Wizardry.logger.info("New module_registry.json has been created successfully!");
+			} else Wizardry.logger.info("  > New module_registry.json has been created successfully!");
 
 			JsonParser parser = new JsonParser();
 			try {
@@ -229,16 +233,19 @@ public class ModuleRegistry {
 				JsonObject obj = element.getAsJsonObject();
 
 				setJsonObject(obj);
-				Wizardry.logger.info("module_registry.json updated successfully! It took " + (System.currentTimeMillis() - currentTime) / 1000.0 + " seconds.");
+				Wizardry.logger.info("  > module_registry.json updated successfully! It took " + (System.currentTimeMillis() - currentTime) / 1000.0 + " seconds.");
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
 		} else {
-			Wizardry.logger.info("No missing modules found! Your module_registry.json is update to date! huzzah! (ﾉ≧∀≦)ﾉ・‥…━━━★");
+			Wizardry.logger.info("  > No missing modules found! Your module_registry.json is update to date! huzzah! (ﾉ≧∀≦)ﾉ・‥…━━━★");
 		}
 
 		modules.clear();
 		modules.addAll(processed);
+
+		Wizardry.logger.info("> Module registration processing complete! (ᵔᴥᵔ)");
+		Wizardry.logger.info("<<============================================>>");
 	}
 
 	public void setJsonObject(JsonObject object) {

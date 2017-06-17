@@ -45,27 +45,27 @@ public class CommonProxy {
 
 	public static boolean createModuleRegistryFile(File directory) {
 		if (!directory.exists()) {
-			Wizardry.logger.info(directory.getName() + " not found. Creating directory...");
+			Wizardry.logger.info("    > " + directory.getName() + " not found. Creating directory...");
 			if (!directory.mkdirs()) {
-				Wizardry.logger.error("SOMETHING WENT WRONG! Could not create config directory " + directory.getName());
+				Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not create config directory " + directory.getName());
 				return false;
 			}
-			Wizardry.logger.info(directory.getName() + " has been created successfully!");
+			Wizardry.logger.info("    > " + directory.getName() + " has been created successfully!");
 		}
 
 		File registryFile = new File(directory, "module_registry.json");
 		try {
 			if (!registryFile.exists()) {
-				Wizardry.logger.info(registryFile.getName() + " file not found. Creating file...");
+				Wizardry.logger.info("    > " + registryFile.getName() + " file not found. Creating file...");
 				if (!registryFile.createNewFile()) {
-					Wizardry.logger.fatal("SOMETHING WENT WRONG! Could not create config file " + registryFile.getName());
+					Wizardry.logger.fatal("    > SOMETHING WENT WRONG! Could not create config file " + registryFile.getName());
 					return false;
 				}
 
 				InputStream stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "module_registry.json");
 
 				if (stream == null) {
-					Wizardry.logger.fatal("SOMETHING WENT WRONG! Module Registry file does not exist in mod jar!");
+					Wizardry.logger.fatal("    > SOMETHING WENT WRONG! Module Registry file does not exist in mod jar!");
 					return false;
 				}
 
@@ -73,7 +73,7 @@ public class CommonProxy {
 				JsonElement element = new JsonParser().parse(reader);
 
 				if (!element.isJsonObject()) {
-					Wizardry.logger.fatal("SOMETHING WENT WRONG! Module Registry's json is not a JsonObject");
+					Wizardry.logger.fatal("    > SOMETHING WENT WRONG! Module Registry's json is not a JsonObject");
 					return false;
 				}
 
@@ -83,7 +83,7 @@ public class CommonProxy {
 				writer.write(JsonMaker.serialize(obj));
 				writer.flush();
 				writer.close();
-				Wizardry.logger.info(registryFile.getName() + " file has been created successfully!");
+				Wizardry.logger.info("    > " + registryFile.getName() + " file has been created successfully!");
 				return true;
 			}
 		} catch (IOException e) {
@@ -133,6 +133,7 @@ public class CommonProxy {
 		PacketHandler.register(PacketFreezePlayer.class, Side.CLIENT);
 		PacketHandler.register(PacketSendSpellToBook.class, Side.SERVER);
 		PacketHandler.register(PacketRenderLightningBolt.class, Side.CLIENT);
+		PacketHandler.register(PacketSyncCooldown.class, Side.CLIENT);
 	}
 
 	public void init(FMLInitializationEvent event) {
@@ -148,7 +149,7 @@ public class CommonProxy {
 
 		if (!config.exists())
 			if (!createModuleRegistryFile(config.getParentFile())) {
-				Wizardry.logger.error("SOMETHING WENT WRONG! Could not create module_registry.json");
+				Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not create module_registry.json");
 				return;
 			}
 

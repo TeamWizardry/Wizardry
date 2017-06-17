@@ -4,7 +4,7 @@ import com.teamwizardry.librarianlib.features.methodhandles.MethodHandleHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants.MISC;
 import com.teamwizardry.wizardry.api.events.SpellCastEvent;
-import com.teamwizardry.wizardry.api.spell.IContinousSpell;
+import com.teamwizardry.wizardry.api.spell.IContinuousSpell;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.util.PosUtils;
@@ -143,7 +143,7 @@ public class EventHandler {
 		Entity caster = event.spell.getData(SpellData.DefaultKeys.CASTER);
 		int chance = 5;
 		for (Module module : event.module.getAllChildModules())
-			if (module instanceof IContinousSpell) {
+			if (module instanceof IContinuousSpell) {
 				chance = 1000;
 				break;
 			}

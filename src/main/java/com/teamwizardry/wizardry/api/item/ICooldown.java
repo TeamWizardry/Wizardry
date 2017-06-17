@@ -1,42 +1,54 @@
 package com.teamwizardry.wizardry.api.item;
 
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
-import com.teamwizardry.librarianlib.features.methodhandles.MethodHandleHelper;
-import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.spell.IContinousSpell;
+import com.teamwizardry.wizardry.api.spell.IContinuousSpell;
+import com.teamwizardry.wizardry.api.spell.INullifyCooldown;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.SpellStack;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function2;
-import net.minecraft.entity.EntityLivingBase;
+import com.teamwizardry.wizardry.common.network.PacketSyncCooldown;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 
 public interface ICooldown {
 
-	Function2<EntityLivingBase, Object, Unit> playerHandler = MethodHandleHelper.wrapperForSetter(EntityLivingBase.class, "aE", "field_184617_aD", "ticksSinceLastSwing");
-
 	default void setCooldown(ItemStack stack, EnumHand hand, EntityPlayer player, World world) {
-		for (Module module : SpellStack.getAllModulesSoftly(stack)) if (module instanceof IContinousSpell) return;
+		for (Module module : SpellStack.getAllModules(stack)) if (module instanceof IContinuousSpell) return;
 
 		int maxCooldown = 0;
-		for (Module module : SpellStack.getAllModulesSoftly(stack)) {
-			if (module instanceof IContinousSpell) return;
+		int countNulls = 0;
+		int countContinuous = 0;
+		int existingCooldowns = 0;
+		for (Module module : SpellStack.getAllModules(stack)) {
+			existingCooldowns++;
+			if (module instanceof IContinuousSpell) {
+				countContinuous++;
+				continue;
+			}
+			if (module instanceof INullifyCooldown) {
+				countNulls++;
+				continue;
+			}
 			if (module.getCooldownTime() > maxCooldown) maxCooldown = module.getCooldownTime();
 		}
+		if (countContinuous > existingCooldowns / 2 || countNulls > existingCooldowns / 2) return;
 
 		ItemNBTHelper.setInt(stack, "cooldown_ticks", maxCooldown);
 		ItemNBTHelper.setInt(stack, Constants.NBT.LAST_COOLDOWN, maxCooldown);
 		ItemNBTHelper.setLong(stack, Constants.NBT.LAST_CAST, world.getTotalWorldTime());
-		playerHandler.invoke(player, 1000);
-		Wizardry.proxy.setItemStackHandHandler(hand, stack);
+
+		if (!world.isRemote)
+			if (hand == EnumHand.MAIN_HAND)
+				PacketHandler.NETWORK.sendTo(new PacketSyncCooldown(true, false), (EntityPlayerMP) player);
+			else PacketHandler.NETWORK.sendTo(new PacketSyncCooldown(false, true), (EntityPlayerMP) player);
 	}
 
 	default void updateCooldown(ItemStack stack, EntityPlayer player) {
-		for (Module module : SpellStack.getAllModulesSoftly(stack)) if (module instanceof IContinousSpell) return;
+		for (Module module : SpellStack.getAllModules(stack)) if (module instanceof IContinuousSpell) return;
 
 		if (ItemNBTHelper.getInt(stack, "cooldown_ticks", 0) > 0)
 			ItemNBTHelper.setInt(stack, "cooldown_ticks", ItemNBTHelper.getInt(stack, "cooldown_ticks", 0) - 1);

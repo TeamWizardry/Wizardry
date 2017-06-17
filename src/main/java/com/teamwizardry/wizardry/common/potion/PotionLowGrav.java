@@ -1,10 +1,13 @@
 package com.teamwizardry.wizardry.common.potion;
 
 import com.teamwizardry.librarianlib.features.base.PotionMod;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -45,5 +48,27 @@ public class PotionLowGrav extends PotionMod {
 			player.fallDistance = 0f;
 			player.onGround = true;
 		}
+	}
+
+	@SubscribeEvent
+	public void jump(LivingEvent.LivingJumpEvent event) {
+		EntityLivingBase entity = event.getEntityLiving();
+		if (!entity.isPotionActive(this)) return;
+
+		PotionEffect effect = entity.getActivePotionEffect(this);
+		if (effect == null) return;
+
+		entity.motionY *= effect.getAmplifier() + 0.5;
+	}
+
+	@SubscribeEvent
+	public void fall(LivingFallEvent event) {
+		EntityLivingBase entity = event.getEntityLiving();
+		if (!entity.isPotionActive(this)) return;
+
+		PotionEffect effect = entity.getActivePotionEffect(this);
+		if (effect == null) return;
+
+		event.setDistance((float) (event.getDistance() / (effect.getAmplifier() + 0.5)));
 	}
 }

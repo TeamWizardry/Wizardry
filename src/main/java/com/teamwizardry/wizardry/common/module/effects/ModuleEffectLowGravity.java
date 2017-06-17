@@ -62,14 +62,14 @@ public class ModuleEffectLowGravity extends Module implements ITaxing {
 		BlockPos targetPos = spell.getData(BLOCK_HIT);
 		Entity caster = spell.getData(CASTER);
 
-		double range = getModifierPower(spell, Attributes.INCREASE_AOE, 1, 16, true, true) / 2.0;
+		double potency = getModifierPower(spell, Attributes.INCREASE_POTENCY, 1, 16, true, true);
 		double time = getModifierPower(spell, Attributes.EXTEND_TIME, 50, 1000, true, true);
 
 		if (!tax(this, spell)) return false;
 
 		if (targetEntity != null) {
 			spell.world.playSound(null, targetEntity.getPosition(), ModSounds.TELEPORT, SoundCategory.NEUTRAL, 1, 1);
-			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.LOW_GRAVITY, (int) time, 1, true, false));
+			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.LOW_GRAVITY, (int) time, (int) potency, true, false));
 		}
 		return true;
 	}

@@ -18,7 +18,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEffectLeap extends Module implements IParticleDanger, ITaxing {
+public class ModuleEffectLeap extends Module implements INullifyCooldown, ITaxing {
 
 	@Nonnull
 	@Override
@@ -57,17 +57,17 @@ public class ModuleEffectLeap extends Module implements IParticleDanger, ITaxing
 		Vec3d lookVec = PosUtils.vecFromRotations(pitch, yaw);
 
 		if (!target.hasNoGravity()) {
-			double strength = getModifierPower(spell, Attributes.EXTEND_RANGE, 75, 128, true, true) / 100.0;
+			double strength = getModifierPower(spell, Attributes.INCREASE_POTENCY, 1, 64, true, true) / 10.0;
 			if (!tax(this, spell)) return false;
 
 			target.motionX += target.isCollidedVertically ? lookVec.xCoord : lookVec.xCoord / 2.0;
 
-			target.motionY += target.isCollidedVertically ? strength : Math.max(0.5, strength / 3) * calcBurnoutPercent(target);
+			target.motionY += target.isCollidedVertically ? strength : Math.max(0.5, strength / 3);
 
 			target.motionZ += target.isCollidedVertically ? lookVec.zCoord : lookVec.zCoord / 2.0;
 
 			target.velocityChanged = true;
-			target.fallDistance /= 2 * calcBurnoutPercent(target);
+			target.fallDistance /= getModifierPower(spell, Attributes.INCREASE_POTENCY, 2, 10, true, true);
 
 			if (target instanceof EntityPlayerMP)
 				((EntityPlayerMP) target).connection.sendPacket(new SPacketEntityVelocity(target));
@@ -100,8 +100,4 @@ public class ModuleEffectLeap extends Module implements IParticleDanger, ITaxing
 		return cloneModule(new ModuleEffectLeap());
 	}
 
-	@Override
-	public int chanceOfParticles() {
-		return 3;
-	}
 }

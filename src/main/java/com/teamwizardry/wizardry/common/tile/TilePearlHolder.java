@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.common.tile;
 import com.teamwizardry.librarianlib.features.autoregister.TileRegister;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.wizardry.api.block.TileManaSink;
-import com.teamwizardry.wizardry.api.spell.IContinousSpell;
+import com.teamwizardry.wizardry.api.spell.IContinuousSpell;
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellStack;
@@ -42,7 +42,7 @@ public class TilePearlHolder extends TileManaSink {
 			if (cooldown <= 0) {
 				int maxCooldown = 0;
 				for (Module module : SpellStack.getAllModules(pearl)) {
-					if (module instanceof IContinousSpell) return;
+					if (module instanceof IContinuousSpell) return;
 					if (module.getCooldownTime() > maxCooldown) maxCooldown = module.getCooldownTime();
 				}
 				cooldown = maxCooldown;

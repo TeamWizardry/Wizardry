@@ -158,15 +158,6 @@ public class SpellStack {
 		return getModules(list);
 	}
 
-	public static ArrayList<Module> getModulesSoftly(@Nonnull ItemStack spellHolder) {
-		ArrayList<Module> modules = new ArrayList<>();
-
-		NBTTagList list = ItemNBTHelper.getList(spellHolder, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
-		if (list == null) return modules;
-
-		return getModulesSoftly(list);
-	}
-
 	public static ArrayList<Module> getModules(@Nonnull NBTTagCompound compound) {
 		if (compound.hasKey(Constants.NBT.SPELL))
 			return getModules(compound.getTagList(Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND));
@@ -181,17 +172,6 @@ public class SpellStack {
 			if (module == null) continue;
 			module = module.copy();
 			module.deserializeNBT(compound);
-			modules.add(module);
-		}
-		return modules;
-	}
-
-	public static ArrayList<Module> getModulesSoftly(@Nonnull NBTTagList list) {
-		ArrayList<Module> modules = new ArrayList<>();
-		for (int i = 0; i < list.tagCount(); i++) {
-			NBTTagCompound compound = list.getCompoundTagAt(i);
-			Module module = ModuleRegistry.INSTANCE.getModule(compound.getString("id"));
-			if (module == null) continue;
 			modules.add(module);
 		}
 		return modules;
@@ -223,19 +203,6 @@ public class SpellStack {
 	public static ArrayList<Module> getAllModules(@Nonnull ItemStack spellHolder) {
 		ArrayList<Module> modules = new ArrayList<>();
 		ArrayList<Module> heads = getModules(spellHolder);
-		for (Module module : heads) {
-			Module tempModule = module;
-			while (tempModule != null) {
-				modules.add(tempModule);
-				tempModule = tempModule.nextModule;
-			}
-		}
-		return modules;
-	}
-
-	public static ArrayList<Module> getAllModulesSoftly(@Nonnull ItemStack spellHolder) {
-		ArrayList<Module> modules = new ArrayList<>();
-		ArrayList<Module> heads = getModulesSoftly(spellHolder);
 		for (Module module : heads) {
 			Module tempModule = module;
 			while (tempModule != null) {

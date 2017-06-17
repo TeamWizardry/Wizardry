@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.api.spell;
 /**
  * Created by LordSaad.
  */
-public interface IParticleDanger {
+public interface INullifyCooldown {
 
-	int chanceOfParticles();
 }
