@@ -93,12 +93,12 @@ public class ModuleEffectTimeSlow extends Module implements ITaxing {
 		glitter.enableMotionCalculation();
 		glitter.setAcceleration(new Vec3d(0, -0.001, 0));
 
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(position.addVector(0, 1.5, 0)), 1, 0, (aFloat, particleBuilder) -> {
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(position.addVector(0, 1, 0)), 3, 0, (aFloat, particleBuilder) -> {
 			glitter.setLifetime(RandUtil.nextInt(30, 40));
 			glitter.setScale(RandUtil.nextFloat());
-			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, RandUtil.nextFloat()));
+			glitter.setAlphaFunction(new InterpFadeInOut(0.5f, RandUtil.nextFloat()));
 
-			double radius = RandUtil.nextDouble(0, 0.5);
+			double radius = RandUtil.nextDouble(0, 1);
 			double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
 			double r = radius * RandUtil.nextFloat();
 			double x = r * MathHelper.cos((float) theta);

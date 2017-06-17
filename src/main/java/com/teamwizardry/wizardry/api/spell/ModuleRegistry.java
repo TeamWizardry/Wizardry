@@ -80,7 +80,7 @@ public class ModuleRegistry {
 	}
 
 	public void processModules() {
-		Wizardry.logger.info("<<============================================>>");
+		Wizardry.logger.info("<<========================================================================>>");
 		Wizardry.logger.info("> Starting module registration processing.");
 
 		String[] typeArray = new String[]{"shapes", "events", "effects", "modifiers"};
@@ -245,7 +245,7 @@ public class ModuleRegistry {
 		modules.addAll(processed);
 
 		Wizardry.logger.info("> Module registration processing complete! (ᵔᴥᵔ)");
-		Wizardry.logger.info("<<============================================>>");
+		Wizardry.logger.info("<<========================================================================>>");
 	}
 
 	public void setJsonObject(JsonObject object) {

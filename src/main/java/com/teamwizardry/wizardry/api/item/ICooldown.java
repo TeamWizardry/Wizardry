@@ -14,16 +14,19 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
+
 public interface ICooldown {
 
 	default void setCooldown(ItemStack stack, EnumHand hand, EntityPlayer player, World world) {
-		for (Module module : SpellStack.getAllModules(stack)) if (module instanceof IContinuousSpell) return;
-
 		int maxCooldown = 0;
 		int countNulls = 0;
 		int countContinuous = 0;
 		int existingCooldowns = 0;
-		for (Module module : SpellStack.getAllModules(stack)) {
+
+		ArrayList<Module> modules = SpellStack.getAllModules(stack);
+
+		for (Module module : modules) {
 			existingCooldowns++;
 			if (module instanceof IContinuousSpell) {
 				countContinuous++;
@@ -35,7 +38,7 @@ public interface ICooldown {
 			}
 			if (module.getCooldownTime() > maxCooldown) maxCooldown = module.getCooldownTime();
 		}
-		if (countContinuous > existingCooldowns / 2 || countNulls > existingCooldowns / 2) return;
+		if (countContinuous >= existingCooldowns / 2.0 || countNulls >= existingCooldowns / 2.0) return;
 
 		ItemNBTHelper.setInt(stack, "cooldown_ticks", maxCooldown);
 		ItemNBTHelper.setInt(stack, Constants.NBT.LAST_COOLDOWN, maxCooldown);

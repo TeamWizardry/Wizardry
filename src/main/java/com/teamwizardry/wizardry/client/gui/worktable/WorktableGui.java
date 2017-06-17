@@ -6,6 +6,7 @@ import com.teamwizardry.librarianlib.features.gui.GuiBase;
 import com.teamwizardry.librarianlib.features.gui.GuiComponent;
 import com.teamwizardry.librarianlib.features.gui.components.*;
 import com.teamwizardry.librarianlib.features.gui.mixin.gl.GlMixin;
+import com.teamwizardry.librarianlib.features.math.Vec2d;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.librarianlib.features.sprite.Texture;
@@ -19,6 +20,7 @@ import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
 import javax.annotation.Nullable;
@@ -33,10 +35,11 @@ import java.util.UUID;
 public class WorktableGui extends GuiBase {
 	private static final Texture BACKGROUND_TEXTURE = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/table_background.png"));
 	private static final Sprite BACKGROUND_SPRITE = BACKGROUND_TEXTURE.getSprite("bg", 480, 224);
-	public HashSet<Module> compiledSpell = new HashSet<>();
+	private static final Sprite SCROLL_BAR = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/scroll_bar.png"));
 	ComponentVoid paper;
 	BiMap<GuiComponent, UUID> paperComponents = HashBiMap.create();
 	HashMap<UUID, UUID> componentLinks = new HashMap<>();
+	private HashSet<Module> compiledSpell = new HashSet<>();
 
 	public WorktableGui() {
 		super(480, 224);
@@ -52,13 +55,23 @@ public class WorktableGui extends GuiBase {
 		paper = new ComponentVoid(180, 19, 180, 188);
 		getMainComponents().add(paper);
 
-		ComponentVoid effects = new ComponentVoid(29, 31, 48, 80);
-		addModules(effects, ModuleType.SHAPE);
-		getMainComponents().add(effects);
-
-		ComponentVoid shapes = new ComponentVoid(93, 31, 48, 80);
-		addModules(shapes, ModuleType.EFFECT);
+		ComponentVoid shapes = new ComponentVoid(29, 31, 48, 80);
+		addModules(shapes, ModuleType.SHAPE);
 		getMainComponents().add(shapes);
+
+		//ScissorMixin.INSTANCE.scissor(shapes);
+		ComponentSprite shapeScrollBar = new ComponentSprite(SCROLL_BAR, 96, 46, 3, 11);
+		shapeScrollBar.BUS.hook(GuiComponent.MouseDragEvent.class, (event) -> {
+			Vec2d mouse = event.getComponent().getParent().unTransformChildPos(event.getComponent(), event.getMousePos());
+			double y = MathHelper.clamp(mouse.getY(), 46, 123);
+			y -= 46;
+			shapes.setPos(new Vec2d(shapes.getPos().getX(), shapes.getPos().getY() + y));
+		});
+		getMainComponents().add(shapeScrollBar);
+
+		ComponentVoid effects = new ComponentVoid(93, 31, 48, 80);
+		addModules(effects, ModuleType.EFFECT);
+		getMainComponents().add(effects);
 
 		ComponentVoid events = new ComponentVoid(29, 123, 48, 80);
 		addModules(events, ModuleType.EVENT);
