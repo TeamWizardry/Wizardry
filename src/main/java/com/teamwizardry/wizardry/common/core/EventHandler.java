@@ -94,10 +94,6 @@ public class EventHandler {
 			event.getEntity().fallDistance = -500;
 			event.setCanceled(true);
 		}
-		if (event.getEntity().getEntityWorld().provider.getDimension() == Wizardry.underWorld.getId()) {
-			event.getEntity().fallDistance = 0;
-			event.setCanceled(true);
-		}
 	}
 
 	@SubscribeEvent
