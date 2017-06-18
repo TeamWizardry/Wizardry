@@ -7,7 +7,7 @@ import java.util.Random;
  */
 public class RandUtil {
 
-	private static Random random = new Random();
+	public static Random random = new Random();
 
 	public static double nextDouble(double min, double max) {
 		return (random.nextDouble() * (max - min)) + min;

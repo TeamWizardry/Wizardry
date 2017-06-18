@@ -7,7 +7,7 @@ import java.util.Random;
  */
 public class RandUtilSeed {
 
-	private Random random;
+	public Random random;
 
 	public RandUtilSeed(long seed) {
 		random = new Random(seed);
