@@ -86,7 +86,7 @@ public class ItemMagicWand extends ItemMod implements IGlowingItem {
 			if (player.isSneaking()) {
 				if (ItemNBTHelper.verifyExistence(stack, "link_block")) {
 					BlockPos sink = BlockPos.fromLong(ItemNBTHelper.getLong(stack, "link_block", 0));
-					if (sink.getDistance(pos.getX(), pos.getY(), pos.getZ()) <= ConfigValues.manaBatteryDistance) {
+					if (sink.getDistance(pos.getX(), pos.getY(), pos.getZ()) <= ConfigValues.manaBatteryLinkDistance) {
 						((TileManaSink) tile).faucetPos = sink;
 						tile.markDirty();
 						ItemNBTHelper.removeEntry(stack, "link_block");

@@ -72,7 +72,7 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 		render = skinMap.get("slim");
 		render.addLayer(new BloodRenderLayer(render));
 
-		if (ConfigValues.versionChecker)
+		if (ConfigValues.versionCheckerEnabled)
 			VersionChecker.init();
 	}
 
