@@ -52,6 +52,14 @@ public interface INacreColorable extends IItemColorProvider {
 			ItemNBTHelper.setBoolean(stack, NBT.COMPLETE, true);
 	}
 
+	default float getQuality(ItemStack stack) {
+		int purity = Math.max(0, Math.min(NBT.NACRE_PURITY_CONVERSION * 2, ItemNBTHelper.getInt(stack, NBT.PURITY, NBT.NACRE_PURITY_CONVERSION)));
+		float quality = purity / (float) NBT.NACRE_PURITY_CONVERSION;
+		if (quality > 1) quality = 2 - quality;
+
+		return quality;
+	}
+
 	float curveConst = 0.75F / (1.0F - 1 / (float) Math.E);
 
 	@Nullable
@@ -62,9 +70,7 @@ public interface INacreColorable extends IItemColorProvider {
 			if (tintIndex != 0) return 0xFFFFFF;
 			float rand = ItemNBTHelper.getFloat(stack, NBT.RAND, -1);
 			float hue = rand < 0 ? MathHelper.sin(Minecraft.getMinecraft().world.getTotalWorldTime() / 140f) : rand;
-			int purity = Math.max(0, Math.min(NBT.NACRE_PURITY_CONVERSION * 2, ItemNBTHelper.getInt(stack, NBT.PURITY, NBT.NACRE_PURITY_CONVERSION)));
-			float pow = purity / (float) NBT.NACRE_PURITY_CONVERSION;
-			if (pow > 1) pow = 2 - pow;
+			float pow = getQuality(stack);
 
 			float saturation = curveConst * (1 - (float) Math.pow(Math.E, -pow));
 
@@ -91,9 +97,7 @@ public interface INacreColorable extends IItemColorProvider {
 
 				float rand = ItemNBTHelper.getFloat(stack, NBT.RAND, -1);
 				float hue = rand < 0 ? MathHelper.sin(tick / 140f) : rand;
-				int purity = Math.max(0, Math.min(NBT.NACRE_PURITY_CONVERSION * 2, ItemNBTHelper.getInt(stack, NBT.PURITY, NBT.NACRE_PURITY_CONVERSION)));
-				float pow = purity / (float) NBT.NACRE_PURITY_CONVERSION;
-				if (pow > 1) pow = 2 - pow;
+				float pow = getQuality(stack);
 
 				double decaySaturation = (lastCast == -1 || decayCooldown <= 0 || decayStage >= 1f) ? 1f :
 						(decayStage < decayCurveDelimiter) ? Math.pow(Math.E, -15 * decayStage) : Math.pow(Math.E, 3 * decayStage - 3);
