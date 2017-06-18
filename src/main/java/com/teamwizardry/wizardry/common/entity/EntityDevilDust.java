@@ -76,7 +76,7 @@ public class EntityDevilDust extends Entity {
 			BlockPos fire = PosUtils.checkNeighbor(world, redstone.getPosition(), Blocks.FIRE);
 			if ((world.getBlockState(fire).getBlock() == Blocks.FIRE)
 					&& world.isMaterialInBB(redstone.getEntityBoundingBox().expand(0.1, 0.1, 0.1), Material.FIRE)) {
-				stackSize = redstone.getEntityItem().getCount();
+				stackSize = redstone.getItem().getCount();
 				if (!redstone.isDead) redstone.setDead();
 				consumed = true;
 				setPosition(fire.getX() + 0.5, fire.getY(), fire.getZ() + 0.5);

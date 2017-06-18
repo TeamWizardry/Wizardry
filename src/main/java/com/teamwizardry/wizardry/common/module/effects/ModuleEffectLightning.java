@@ -6,7 +6,7 @@ import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RandUtilSeed;
-import com.teamwizardry.wizardry.api.util.Utils;
+import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.common.core.LightningTracker;
 import com.teamwizardry.wizardry.common.network.PacketRenderLightningBolt;
 import com.teamwizardry.wizardry.init.ModSounds;
@@ -73,11 +73,11 @@ public class ModuleEffectLightning extends Module implements ITaxing {
 		}
 
 		double range = getModifierPower(spell, Attributes.EXTEND_RANGE, 10, 32, true, true);
-		double strength = getModifierPower(spell, Attributes.INCREASE_POTENCY, 1, 10, true, true);
+		double strength = getModifierPower(spell, Attributes.INCREASE_POTENCY, 4, 20, true, true) / 2.0;
 
 		if (!tax(this, spell)) return false;
 
-		RayTraceResult traceResult = Utils.raytrace(world, PosUtils.vecFromRotations(pitch, yaw), target, range, caster);
+		RayTraceResult traceResult = new RayTrace(world, PosUtils.vecFromRotations(pitch, yaw), target, range).setSkipBlocks(true).setSkipEntities(true).trace();
 		if (traceResult == null) return false;
 
 		long seed = RandUtil.nextLong(100, 100000);
@@ -109,6 +109,7 @@ public class ModuleEffectLightning extends Module implements ITaxing {
 		Entity caster = spell.getData(CASTER);
 		Vec3d target = spell.getData(TARGET_HIT);
 		long seed = spell.getData(SEED, 0L);
+		double range = getModifierPower(spell, Attributes.EXTEND_RANGE, 10, 32, true, true);
 
 		if (target == null) return;
 
@@ -119,11 +120,11 @@ public class ModuleEffectLightning extends Module implements ITaxing {
 			origin = new Vec3d(offX, 0, offZ).add(target);
 		}
 
-		RayTraceResult traceResult = Utils.raytrace(world, PosUtils.vecFromRotations(pitch, yaw), origin, 10, caster);
+		RayTraceResult traceResult = new RayTrace(world, PosUtils.vecFromRotations(pitch, yaw), target, range).setSkipBlocks(true).setSkipEntities(true).trace();
 		if (traceResult == null) return;
 
 		PacketHandler.NETWORK.sendToAllAround(new PacketRenderLightningBolt(origin, traceResult.hitVec, seed),
-				new NetworkRegistry.TargetPoint(world.provider.getDimension(), origin.xCoord, origin.yCoord, origin.zCoord, 256));
+				new NetworkRegistry.TargetPoint(world.provider.getDimension(), origin.x, origin.y, origin.z, 256));
 	}
 
 	@Nonnull

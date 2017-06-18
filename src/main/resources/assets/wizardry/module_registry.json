@@ -116,7 +116,8 @@
       "burnout_fill": 600.0,
       "item": "minecraft:red_flower",
       "primary_color": "8D0000",
-      "secondary_color": "FFA500"
+      "secondary_color": "FFA500",
+      "cooldown_time": 80.0
     },
     {
       "id": "effect_burn",

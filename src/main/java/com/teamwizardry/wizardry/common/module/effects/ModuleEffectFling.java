@@ -52,7 +52,7 @@ public class ModuleEffectFling extends Module implements ITaxing {
 		double gravity = 1;
 		int heightGain = 5;
 
-		double endGain = to.yCoord - from.yCoord;
+		double endGain = to.y - from.y;
 		double horizDist = Math.sqrt(to.squareDistanceTo(from));
 
 		double maxGain = heightGain > (endGain + heightGain) ? heightGain : (endGain + heightGain);
@@ -66,8 +66,8 @@ public class ModuleEffectFling extends Module implements ITaxing {
 
 		double vh = vy / slope;
 
-		double dx = to.xCoord - from.xCoord;
-		double dz = to.zCoord - from.zCoord;
+		double dx = to.x - from.x;
+		double dz = to.z - from.z;
 		double mag = Math.sqrt(dx * dx + dz * dz);
 		double dirx = dx / mag;
 		double dirz = dz / mag;

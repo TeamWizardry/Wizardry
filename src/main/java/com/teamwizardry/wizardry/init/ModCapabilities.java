@@ -5,6 +5,7 @@ import com.teamwizardry.wizardry.api.capability.DefaultWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
 import com.teamwizardry.wizardry.api.capability.WizardryCapabilityStorage;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -21,8 +22,8 @@ public class ModCapabilities {
 	}
 
 	@SubscribeEvent
-	public void onAddCapabilities(AttachCapabilitiesEvent.Entity e) {
-		if (e.getEntity() instanceof EntityPlayer) {
+	public void onAddCapabilities(AttachCapabilitiesEvent<Entity> e) {
+		if (e.getObject() instanceof EntityPlayer) {
 			//if (!e.getCap().hasCapability(WizardryCapabilityProvider.wizardryCapability, null)) {
 			WizardryCapabilityProvider cap = new WizardryCapabilityProvider(new DefaultWizardryCapability());
 			e.addCapability(new ResourceLocation(Wizardry.MODID, "capabilities"), cap);

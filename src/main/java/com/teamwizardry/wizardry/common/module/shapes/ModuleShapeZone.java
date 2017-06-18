@@ -78,7 +78,7 @@ public class ModuleShapeZone extends Module implements ILingeringModule, ICostMo
 		setMultiplier(0.7);
 		if (r.nextInt((int) (((100) - strength))) == 0) {
 			for (Entity entity : entities) {
-				if (entity.getDistance(targetPos.xCoord, targetPos.yCoord, targetPos.zCoord) <= aoe) {
+				if (entity.getDistance(targetPos.x, targetPos.y, targetPos.z) <= aoe) {
 					Vec3d vec = targetPos.addVector(RandUtil.nextDouble(-strength, strength), RandUtil.nextDouble(range), RandUtil.nextDouble(-strength, strength));
 
 					SpellData copy = spell.copy();

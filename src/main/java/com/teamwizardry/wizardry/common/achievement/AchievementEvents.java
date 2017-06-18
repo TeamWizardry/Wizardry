@@ -15,7 +15,7 @@ public class AchievementEvents {
 
 	@SubscribeEvent
 	public void pickup(ItemPickupEvent event) {
-		ItemStack stack = event.pickedUp.getEntityItem();
+		ItemStack stack = event.pickedUp.getItem();
 		if (stack.getItem() instanceof IPickupAchievement) {
 			Achievement achievement = ((IPickupAchievement) stack.getItem()).getAchievementOnPickup(stack, event.player, event.pickedUp);
 			if (achievement != null)

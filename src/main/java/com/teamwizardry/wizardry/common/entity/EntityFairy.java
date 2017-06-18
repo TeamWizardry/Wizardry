@@ -103,9 +103,9 @@ public class EntityFairy extends FlyingEntityMod {
 					double dist = entity.getPositionVector().distanceTo(getPositionVector());
 					Vec3d sub = entity.getPositionVector().addVector(0, entity.height / 2, 0).subtract(getPositionVector()).normalize().scale(dist / 3.0);
 
-					motionX = sub.xCoord;
-					motionY = sub.yCoord;
-					motionZ = sub.zCoord;
+					motionX = sub.x;
+					motionY = sub.y;
+					motionZ = sub.z;
 					velocityChanged = true;
 
 					if ((int) dist <= 0 || RandUtil.nextInt((int) (dist * 20.0)) == 0)
@@ -130,9 +130,9 @@ public class EntityFairy extends FlyingEntityMod {
 
 				Random rand = new Random(hashCode());
 				double speed = rand.nextInt(9) + 1;
-				motionX += sub.xCoord / speed;
-				motionY += sub.yCoord / speed;
-				motionZ += sub.zCoord / speed;
+				motionX += sub.x / speed;
+				motionY += sub.y / speed;
+				motionZ += sub.z / speed;
 			}
 
 		if (nopeOut) {
@@ -146,9 +146,9 @@ public class EntityFairy extends FlyingEntityMod {
 
 							Random rand = new Random(hashCode());
 							double speed = rand.nextInt(9) + 1;
-							motionX += sub.xCoord / speed;
-							motionY += sub.yCoord / speed;
-							motionZ += sub.zCoord / speed;
+							motionX += sub.x / speed;
+							motionY += sub.y / speed;
+							motionZ += sub.z / speed;
 						}
 					}
 		}
@@ -167,9 +167,9 @@ public class EntityFairy extends FlyingEntityMod {
 					Vec3d dir = getVectorForRotation(rotationPitch += tickPitch, rotationYaw += tickYaw).normalize();
 					Random rand = new Random(hashCode());
 					double speed = rand.nextInt(9) + 1;
-					motionX = dir.xCoord / speed;
-					motionY = dir.yCoord / speed;
-					motionZ = dir.zCoord / speed;
+					motionX = dir.x / speed;
+					motionY = dir.y / speed;
+					motionZ = dir.z / speed;
 				} else changingCourse = false;
 			}
 		}

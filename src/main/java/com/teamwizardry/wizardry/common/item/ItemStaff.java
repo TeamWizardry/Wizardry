@@ -57,9 +57,9 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 		SpellData spell = new SpellData(playerIn.world);
 		spell.processEntity(playerIn, true);
 		spell.processEntity(target, false);
-		SpellStack.runSpell(stack, spell, playerIn);
+		SpellStack.runSpell(stack, spell);
 
-		setCooldown(stack, hand, playerIn, playerIn.world);
+		setCooldown(playerIn.world, playerIn, stack, hand, spell);
 		return false;
 	}
 
@@ -89,9 +89,9 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 		SpellData spell = new SpellData(world);
 		spell.processEntity(player, true);
 		spell.processBlock(pos, side, new Vec3d(pos).addVector(0.5, 0.5, 0.5));
-		SpellStack.runSpell(stack, spell, player);
+		SpellStack.runSpell(stack, spell);
 
-		setCooldown(stack, hand, player, world);
+		setCooldown(world, player, stack, hand, spell);
 
 		return EnumActionResult.PASS;
 	}
@@ -102,13 +102,15 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 		ItemStack stack = player.getHeldItem(hand);
 
 		if (getItemUseAction(stack) == EnumAction.NONE) {
-			if (!player.isSneaking() && !world.isRemote && !isCoolingDown(stack)) {
+			if (!isCoolingDown(stack)) {
+
 				SpellData spell = new SpellData(world);
 				spell.processEntity(player, true);
-				SpellStack.runSpell(stack, spell, player);
+				SpellStack.runSpell(stack, spell);
+
+				player.swingArm(EnumHand.MAIN_HAND);
+				setCooldown(world, player, stack, hand, spell);
 			}
-			player.swingArm(EnumHand.MAIN_HAND);
-			setCooldown(stack, hand, player, world);
 			return new ActionResult<>(EnumActionResult.PASS, stack);
 		} else {
 			if (world.isRemote && (Minecraft.getMinecraft().currentScreen != null)) {
@@ -159,11 +161,11 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 
 		SpellData spell = new SpellData(player.world);
 		spell.processEntity(player, true);
-		SpellStack.runSpell(stack, spell, player);
+		SpellStack.runSpell(stack, spell);
 
 		if (!isContinuous) {
 			player.swingArm(player.getActiveHand());
-			setCooldown(stack, player.getActiveHand(), (EntityPlayer) player, player.world);
+			setCooldown(player.world, (EntityPlayer) player, stack, player.getActiveHand(), spell);
 		}
 	}
 
@@ -171,7 +173,7 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 		colorableOnUpdate(stack, worldIn);
 		if (entityIn instanceof EntityPlayer)
-			updateCooldown(stack, (EntityPlayer) entityIn);
+			updateCooldown(stack);
 	}
 
 	@Override

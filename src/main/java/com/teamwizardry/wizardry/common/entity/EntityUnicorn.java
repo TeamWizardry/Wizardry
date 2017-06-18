@@ -94,11 +94,11 @@ public class EntityUnicorn extends EntityHorse {
 		} else {
 			if (getNavigator().noPath() && !givenPath) {
 				Vec3d excess = target.getPositionVector();
-				getNavigator().tryMoveToXYZ(excess.xCoord, excess.yCoord, excess.zCoord, 2);
+				getNavigator().tryMoveToXYZ(excess.x, excess.y, excess.z, 2);
 				givenPath = true;
 			}
 
-			if (getEntityBoundingBox().expand(1, 1, 1).intersectsWith(target.getEntityBoundingBox())) {
+			if (getEntityBoundingBox().expand(1, 1, 1).intersects(target.getEntityBoundingBox())) {
 				target.knockBack(this, 3F, MathHelper.sin(rotationYaw), -MathHelper.cos(rotationYaw));
 				knockBack(this, 1F, -MathHelper.sin(rotationYaw), MathHelper.cos(rotationYaw));
 				target.attackEntityFrom(DamageSource.causeMobDamage(target), (float) this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
@@ -114,9 +114,9 @@ public class EntityUnicorn extends EntityHorse {
 		if (flatulenceTicker <= 0) {
 			Vec3d fartPos = this.getLookVec().subtract(this.getPositionVector()).rotateYaw((float) Math.PI);
 			for (int p = 0; p < 64; p++) {
-				this.world.spawnParticle(EnumParticleTypes.REDSTONE, fartPos.xCoord + RandUtil.nextDouble(-FART_SIZE, FART_SIZE),
+				this.world.spawnParticle(EnumParticleTypes.REDSTONE, fartPos.x + RandUtil.nextDouble(-FART_SIZE, FART_SIZE),
 						this.posY + this.getEyeHeight() - FART_OFFSET + RandUtil.nextDouble(-FART_SIZE, FART_SIZE),
-						fartPos.zCoord + RandUtil.nextDouble(-FART_SIZE, FART_SIZE),
+						fartPos.z + RandUtil.nextDouble(-FART_SIZE, FART_SIZE),
 						this.world.rand.nextFloat(), this.world.rand.nextFloat(), this.world.rand.nextFloat()
 				);
 			}

@@ -137,7 +137,6 @@ public class CommonProxy {
 	}
 
 	public void init(FMLInitializationEvent event) {
-		EasyConfigHandler.init();
 		GameRegistry.registerWorldGenerator(new GenHandler(), 0);
 		ModRecipes.initCrafting();
 	}

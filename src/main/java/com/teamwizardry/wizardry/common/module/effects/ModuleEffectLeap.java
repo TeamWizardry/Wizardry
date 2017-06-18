@@ -18,7 +18,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEffectLeap extends Module implements INullifyCooldown, ITaxing {
+public class ModuleEffectLeap extends Module implements IOverrideCooldown, ITaxing {
 
 	@Nonnull
 	@Override
@@ -45,6 +45,11 @@ public class ModuleEffectLeap extends Module implements INullifyCooldown, ITaxin
 	}
 
 	@Override
+	public int getNewCooldown(@Nonnull SpellData data) {
+		return 5;
+	}
+
+	@Override
 	public boolean run(@Nonnull SpellData spell) {
 		float yaw = spell.getData(YAW, 0F);
 		float pitch = spell.getData(PITCH, 0F);
@@ -60,11 +65,11 @@ public class ModuleEffectLeap extends Module implements INullifyCooldown, ITaxin
 			double strength = getModifierPower(spell, Attributes.INCREASE_POTENCY, 1, 64, true, true) / 10.0;
 			if (!tax(this, spell)) return false;
 
-			target.motionX += target.isCollidedVertically ? lookVec.xCoord : lookVec.xCoord / 2.0;
+			target.motionX += target.isCollidedVertically ? lookVec.x : lookVec.x / 2.0;
 
 			target.motionY += target.isCollidedVertically ? strength : Math.max(0.5, strength / 3);
 
-			target.motionZ += target.isCollidedVertically ? lookVec.zCoord : lookVec.zCoord / 2.0;
+			target.motionZ += target.isCollidedVertically ? lookVec.z : lookVec.z / 2.0;
 
 			target.velocityChanged = true;
 			target.fallDistance /= getModifierPower(spell, Attributes.INCREASE_POTENCY, 2, 10, true, true);
@@ -99,5 +104,4 @@ public class ModuleEffectLeap extends Module implements INullifyCooldown, ITaxin
 	public Module copy() {
 		return cloneModule(new ModuleEffectLeap());
 	}
-
 }

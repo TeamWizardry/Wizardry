@@ -20,7 +20,7 @@ public class ModuleModifierIncreaseAOE extends Module implements IModifier {
 	@Nonnull
 	@Override
 	public String getID() {
-		return "modifier_aoe";
+		return "modifier_increase_aoe";
 	}
 
 	@Nonnull

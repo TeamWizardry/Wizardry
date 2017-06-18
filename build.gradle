@@ -23,7 +23,7 @@ targetCompatibility = 1.8
 minecraft {
     version = "1.11.2-13.20.0.2303"
     runDir = "run"
-    mappings = "snapshot_20170525"
+    mappings = "stable_32"
 
     clientJvmArgs = ["-Dfml.coreMods.load=$core_plugin"]
     serverJvmArgs = ["-Dfml.coreMods.load=$core_plugin"]
@@ -31,9 +31,13 @@ minecraft {
 
 repositories {
     mavenCentral()
+    maven {
+        url = "http://maven.bluexin.be/repository/snapshots/"
+    }
 }
 
 dependencies {
+    compile "com.teamwizardry.librarianlib:librarianlib:3.1.5-SNAPSHOT:deobf"
 }
 
 processResources {

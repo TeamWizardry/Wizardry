@@ -98,8 +98,8 @@ public class TilePearlHolderRenderer extends TileEntitySpecialRenderer<TilePearl
 
 				if (magnetFound) {
 					GlStateManager.translate(0.5, 0.5, 0.5);
-					GlStateManager.translate(sin * direction.xCoord / 8.0, sin * direction.yCoord / 8.0, sin * direction.zCoord / 8.0);
-					GlStateManager.translate(-direction.xCoord / 3.0, -direction.yCoord / 3.0, -direction.zCoord / 3.0);
+					GlStateManager.translate(sin * direction.x / 8.0, sin * direction.y / 8.0, sin * direction.z / 8.0);
+					GlStateManager.translate(-direction.x / 3.0, -direction.y / 3.0, -direction.z / 3.0);
 					GlStateManager.translate(-0.5, -0.5, -0.5);
 				}
 			} else {
@@ -116,8 +116,8 @@ public class TilePearlHolderRenderer extends TileEntitySpecialRenderer<TilePearl
 						}
 				if (batteryFound) {
 					GlStateManager.translate(0.5, 0.5, 0.5);
-					GlStateManager.translate(sin * directionBattery.xCoord / 8.0, sin * directionBattery.yCoord / 8.0, sin * directionBattery.zCoord / 8.0);
-					GlStateManager.translate(-directionBattery.xCoord / 3.0, -directionBattery.yCoord / 3.0, -directionBattery.zCoord / 3.0);
+					GlStateManager.translate(sin * directionBattery.x / 8.0, sin * directionBattery.y / 8.0, sin * directionBattery.z / 8.0);
+					GlStateManager.translate(-directionBattery.x / 3.0, -directionBattery.y / 3.0, -directionBattery.z / 3.0);
 					GlStateManager.translate(-0.5, -0.5, -0.5);
 				}
 			}

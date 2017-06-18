@@ -10,7 +10,7 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
-import com.teamwizardry.wizardry.api.util.Utils;
+import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
@@ -87,7 +87,7 @@ public class ModuleShapeCone extends Module implements ICostModifier {
 
 			SpellData newSpell = spell.copy();
 
-			RayTraceResult result = Utils.raytrace(world, target.normalize(), origin, range / 2, caster);
+			RayTraceResult result = new RayTrace(world, target.normalize(), origin, range / 2).setSkipEntity(caster).trace();
 			newSpell.processBlock(result.getBlockPos(), result.sideHit, result.hitVec);
 			if (result.entityHit != null) spell.processEntity(result.entityHit, false);
 

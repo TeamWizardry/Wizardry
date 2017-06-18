@@ -1,9 +1,10 @@
 package com.teamwizardry.wizardry.api.spell;
 
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.item.INacreColorable;
 import com.teamwizardry.wizardry.init.ModItems;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -11,7 +12,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.*;
 
 /**
@@ -134,19 +134,24 @@ public class SpellStack {
 	}
 
 	public static void runSpell(@Nonnull ItemStack spellHolder, @Nonnull SpellData spell) {
-		runSpell(spellHolder, spell, null);
-	}
-
-	public static void runSpell(@Nonnull ItemStack spellHolder, @Nonnull SpellData spell, @Nullable EntityLivingBase player) {
 		if (spell.world.isRemote) return;
 
-		for (Module module : getModules(spellHolder)) {
-			runSpell(module, spell);
+		if (spellHolder.getItem() instanceof INacreColorable) {
+			float purity = ((INacreColorable) spellHolder.getItem()).getQuality(spellHolder);
+			double multiplier;
+			if (purity >= 1f) multiplier = ConfigValues.perfectPearlMultiplier * purity;
+			else if (purity <= 0f) multiplier = ConfigValues.damagedPearlMultiplier;
+			else {
+				double base = purity - 1;
+				multiplier = 1 - (base * base * base * base);
+			}
+
+			for (Module module : getAllModules(spellHolder))
+				module.setMultiplier(module.getMultiplier() * multiplier);
 		}
 
-		int maxCooldown = 0;
-		for (Module module : SpellStack.getAllModules(spellHolder))
-			if (module.getCooldownTime() > maxCooldown) maxCooldown = module.getCooldownTime();
+		for (Module module : getModules(spellHolder))
+			runSpell(module, spell);
 	}
 
 	public static ArrayList<Module> getModules(@Nonnull ItemStack spellHolder) {

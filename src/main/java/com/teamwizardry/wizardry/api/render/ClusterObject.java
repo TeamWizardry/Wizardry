@@ -79,14 +79,14 @@ public class ClusterObject implements INBTSerializable<NBTTagCompound> {
 		NBTTagCompound compound = new NBTTagCompound();
 		if (stack != null && !stack.isEmpty()) compound.setTag("stack", stack.serializeNBT());
 		if (dest != null) {
-			compound.setDouble("dest_x", dest.xCoord);
-			compound.setDouble("dest_y", dest.yCoord);
-			compound.setDouble("dest_z", dest.zCoord);
+			compound.setDouble("dest_x", dest.x);
+			compound.setDouble("dest_y", dest.y);
+			compound.setDouble("dest_z", dest.z);
 		}
 		if (origin != null) {
-			compound.setDouble("origin_x", origin.xCoord);
-			compound.setDouble("origin_y", origin.yCoord);
-			compound.setDouble("origin_z", origin.zCoord);
+			compound.setDouble("origin_x", origin.x);
+			compound.setDouble("origin_y", origin.y);
+			compound.setDouble("origin_z", origin.z);
 		}
 		compound.setDouble("dest_time", destTime);
 		compound.setLong("world_time", worldTime);

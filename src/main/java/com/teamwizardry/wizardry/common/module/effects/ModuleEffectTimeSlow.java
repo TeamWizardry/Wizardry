@@ -107,7 +107,7 @@ public class ModuleEffectTimeSlow extends Module implements ITaxing {
 			glitter.setPositionOffset(dest);
 
 			//glitter.setPositionFunction(new InterpSlowDown(Vec3d.ZERO, new Vec3d(0, RandUtil.nextDouble(-1, 1), 0)));
-			//glitter.setPositionFunction(new InterpBezier3D(Vec3d.ZERO, position.subtract(dest), dest.scale(2), new Vec3d(position.xCoord, radius, position.zCoord)));
+			//glitter.setPositionFunction(new InterpBezier3D(Vec3d.ZERO, position.subtract(dest), dest.scale(2), new Vec3d(position.x, radius, position.z)));
 		});
 	}
 

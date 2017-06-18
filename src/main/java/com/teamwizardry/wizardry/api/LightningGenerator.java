@@ -45,9 +45,9 @@ public class LightningGenerator {
 			double scale = dist * 0.01 + (point - (points.get(i - 1)));
 
 			vec = new Vec3d(
-					vec.xCoord + rand.nextDouble(-scale, scale),
-					vec.yCoord + rand.nextDouble(-scale, scale),
-					vec.zCoord + rand.nextDouble(-scale, scale)
+					vec.x + rand.nextDouble(-scale, scale),
+					vec.y + rand.nextDouble(-scale, scale),
+					vec.z + rand.nextDouble(-scale, scale)
 			);
 
 			if (rand.nextInt(10) == 0) {
