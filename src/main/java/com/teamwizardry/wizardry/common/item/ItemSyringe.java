@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.common.item;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.api.capability.CapManager;
+import com.teamwizardry.wizardry.common.core.DamageSourceMana;
 import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -71,7 +72,7 @@ public class ItemSyringe extends ItemMod {
 			} else if (stack.getItemDamage() == 1) {
 				CapManager manager = new CapManager(player);
 				manager.addMana(manager.getMaxMana() / 2);
-				player.setHealth(player.getHealth() - 2);
+				player.attackEntityFrom(DamageSourceMana.INSTANCE, 2);
 				stack.setItemDamage(0);
 			} else if (stack.getItemDamage() == 0) {
 				player.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer) player), 2);

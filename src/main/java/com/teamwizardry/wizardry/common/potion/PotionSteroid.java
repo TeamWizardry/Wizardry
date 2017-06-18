@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.potion;
 
 import com.teamwizardry.librarianlib.features.base.PotionMod;
 import com.teamwizardry.wizardry.api.capability.CapManager;
+import com.teamwizardry.wizardry.common.core.DamageSourceMana;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.init.MobEffects;
@@ -43,7 +44,7 @@ public class PotionSteroid extends PotionMod {
 		entityLivingBaseIn.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 200, 4, true, false));
 		entityLivingBaseIn.addPotionEffect(new PotionEffect(MobEffects.HUNGER, 200, 4, true, false));
 		entityLivingBaseIn.addPotionEffect(new PotionEffect(MobEffects.NAUSEA, 200, 4, true, false));
-		entityLivingBaseIn.setHealth(0.5f);
+		entityLivingBaseIn.attackEntityFrom(DamageSourceMana.INSTANCE, entityLivingBaseIn.getHealth() - 0.5f);
 
 		super.removeAttributesModifiersFromEntity(entityLivingBaseIn, attributeMapIn, amplifier);
 	}

@@ -8,6 +8,7 @@ import com.teamwizardry.wizardry.api.item.IExplodable;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.Utils;
 import com.teamwizardry.wizardry.common.achievement.Achievements;
+import com.teamwizardry.wizardry.common.core.DamageSourceMana;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
@@ -84,7 +85,11 @@ public class FluidBlockMana extends BlockFluidClassic {
 		// Nullify gravity of player
 		run(entityIn,
 				entity -> entity instanceof EntityLivingBase,
-				entity -> ((EntityLivingBase) entityIn).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 1, true, false)));
+				entity -> {
+					((EntityLivingBase) entityIn).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 1, true, false));
+
+					if (RandUtil.nextInt(50) == 0) entity.attackEntityFrom(DamageSourceMana.INSTANCE, 0.1f);
+				});
 
 		// Subtract player food
 		run(entityIn,
@@ -92,15 +97,8 @@ public class FluidBlockMana extends BlockFluidClassic {
 				entity -> {
 					((EntityPlayer) entityIn).addStat(Achievements.MANAPOOL);
 
-					if (!((EntityPlayer) entity).capabilities.isCreativeMode) {
-						if (RandUtil.nextInt(50) == 0) {
-							((EntityPlayer) entity).getFoodStats().addExhaustion(1f);
-						}
-
-						if (RandUtil.nextInt(50) == 0) {
-							((EntityPlayer) entity).setHealth((float) Math.max(0, ((EntityPlayer) entity).getHealth() - 0.1));
-						}
-					}
+					if (!((EntityPlayer) entity).capabilities.isCreativeMode && RandUtil.nextInt(50) == 0)
+						((EntityPlayer) entity).getFoodStats().addExhaustion(1f);
 				});
 
 		// Turn plank to wisdom plank

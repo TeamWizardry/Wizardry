@@ -76,7 +76,7 @@ public class ModuleEffectThrive extends Module implements ITaxing {
 
 			if (!tax(this, spell)) return false;
 
-			((EntityLivingBase) targetEntity).setHealth((float) (((EntityLivingBase) targetEntity).getHealth() + strength));
+			((EntityLivingBase) targetEntity).heal((float) strength);
 			spell.world.playSound(null, targetEntity.getPosition(), ModSounds.HEAL, SoundCategory.NEUTRAL, 1, 1);
 		}
 
