@@ -20,7 +20,7 @@ public class ModuleModifierIncreasePotency extends Module implements IModifier {
 	@Nonnull
 	@Override
 	public String getID() {
-		return "modifier_extend_potency";
+		return "modifier_increase_potency";
 	}
 
 	@Nonnull

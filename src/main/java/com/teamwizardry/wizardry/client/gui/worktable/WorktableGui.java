@@ -188,7 +188,7 @@ public class WorktableGui extends GuiBase {
 		});
 		scrollBar.BUS.hook(GuiComponent.MouseWheelEvent.class, (event) -> {
 			if (!event.getComponent().getMouseOver() && !parent.getMouseOver()) return;
-			int dir = event.getDirection().ydirection * 16;
+			int dir = event.getDirection().ydirection * -16;
 			double barPos = bar.getPos().getY();
 			double clamp = MathHelper.clamp(barPos + dir, 0, 68);
 			double extra = (gridView.getChildren().size() % 3) * 16;

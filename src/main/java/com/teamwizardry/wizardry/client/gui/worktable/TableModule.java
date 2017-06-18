@@ -226,6 +226,7 @@ public class TableModule {
 			txt.add(TextFormatting.GOLD + module.getReadableName());
 			if (GuiScreen.isShiftKeyDown())
 				txt.add(TextFormatting.GRAY + module.getDescription());
+			else txt.add(TextFormatting.GRAY + "<Sneak for info>");
 			return txt;
 		});
 
