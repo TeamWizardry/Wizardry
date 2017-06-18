@@ -70,7 +70,7 @@ public interface INacreColorable extends IItemColorProvider {
 			if (tintIndex != 0) return 0xFFFFFF;
 			float rand = ItemNBTHelper.getFloat(stack, NBT.RAND, -1);
 			float hue = rand < 0 ? MathHelper.sin(Minecraft.getMinecraft().world.getTotalWorldTime() / 140f) : rand;
-			float pow = getQuality(stack);
+			float pow = Math.min(1f, Math.max(0f, getQuality(stack)));
 
 			float saturation = curveConst * (1 - (float) Math.pow(Math.E, -pow));
 
@@ -97,7 +97,7 @@ public interface INacreColorable extends IItemColorProvider {
 
 				float rand = ItemNBTHelper.getFloat(stack, NBT.RAND, -1);
 				float hue = rand < 0 ? MathHelper.sin(tick / 140f) : rand;
-				float pow = getQuality(stack);
+				float pow = Math.min(1f, Math.max(0f, getQuality(stack)));
 
 				double decaySaturation = (lastCast == -1 || decayCooldown <= 0 || decayStage >= 1f) ? 1f :
 						(decayStage < decayCurveDelimiter) ? Math.pow(Math.E, -15 * decayStage) : Math.pow(Math.E, 3 * decayStage - 3);
