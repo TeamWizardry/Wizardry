@@ -88,7 +88,7 @@ public class ChunkGeneratorTorikki implements IChunkGenerator {
 
 	@Nonnull
 	@Override
-	public Chunk provideChunk(int x, int z) {
+	public Chunk generateChunk(int x, int z) {
 		ChunkPrimer chunkprimer = new ChunkPrimer();
 
 		generate(x, z, chunkprimer);
@@ -129,7 +129,7 @@ public class ChunkGeneratorTorikki implements IChunkGenerator {
 
 	@Nullable
 	@Override
-	public BlockPos getStrongholdGen(World worldIn, String structureName, BlockPos position, boolean p_180513_4_) {
+	public BlockPos getNearestStructurePos(World worldIn, String structureName, BlockPos position, boolean findUnexplored) {
 		return null;
 	}
 

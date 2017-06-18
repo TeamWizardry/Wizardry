@@ -56,7 +56,7 @@ public class PotionSlippery extends PotionMod {
 
 						Vec3d vec3d = entity.getLookVec();
 						float f = entity.rotationPitch * 0.017453292F;
-						double d6 = Math.sqrt(vec3d.xCoord * vec3d.xCoord + vec3d.zCoord * vec3d.zCoord);
+						double d6 = Math.sqrt(vec3d.x * vec3d.x + vec3d.z * vec3d.z);
 						double d8 = Math.sqrt(entity.motionX * entity.motionX + entity.motionZ * entity.motionZ);
 						double d1 = vec3d.lengthVector();
 						float f4 = MathHelper.cos(f);
@@ -66,20 +66,20 @@ public class PotionSlippery extends PotionMod {
 						if (entity.motionY < 0.0D && d6 > 0.0D) {
 							double d2 = entity.motionY * -0.1D * (double) f4;
 							entity.motionY += d2;
-							entity.motionX += vec3d.xCoord * d2 / d6;
-							entity.motionZ += vec3d.zCoord * d2 / d6;
+							entity.motionX += vec3d.x * d2 / d6;
+							entity.motionZ += vec3d.z * d2 / d6;
 						}
 
 						if (f < 0.0F) {
 							double d9 = d8 * (double) (-MathHelper.sin(f)) * 0.04D;
 							entity.motionY += d9 * 3.2D;
-							entity.motionX -= vec3d.xCoord * d9 / d6;
-							entity.motionZ -= vec3d.zCoord * d9 / d6;
+							entity.motionX -= vec3d.x * d9 / d6;
+							entity.motionZ -= vec3d.z * d9 / d6;
 						}
 
 						if (d6 > 0.0D) {
-							entity.motionX += (vec3d.xCoord / d6 * d8 - entity.motionX) * 0.1D;
-							entity.motionZ += (vec3d.zCoord / d6 * d8 - entity.motionZ) * 0.1D;
+							entity.motionX += (vec3d.x / d6 * d8 - entity.motionX) * 0.1D;
+							entity.motionZ += (vec3d.z / d6 * d8 - entity.motionZ) * 0.1D;
 						}
 
 						entity.motionX *= 0.9900000095367432D;

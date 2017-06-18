@@ -7,7 +7,7 @@ import com.teamwizardry.wizardry.api.spell.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
-import com.teamwizardry.wizardry.api.util.Utils;
+import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
@@ -113,15 +113,15 @@ public class EntitySpellProjectile extends EntityMod {
 		Vec3d look = PosUtils.vecFromRotations(pitch, yaw);
 
 		if (!isCollided) {
-			motionX = look.xCoord;
-			motionY = look.yCoord;
-			motionZ = look.zCoord;
+			motionX = look.x;
+			motionY = look.y;
+			motionZ = look.z;
 
 			move(MoverType.SELF, motionX, motionY, motionZ);
 		} else {
 			SpellData data = spell.copy();
 
-			RayTraceResult result = Utils.raytrace(world, look, getPositionVector(), 1, this);
+			RayTraceResult result = new RayTrace(world, look, getPositionVector(), 1).setSkipEntity(this).trace();
 			if (result != null && result.typeOfHit == RayTraceResult.Type.BLOCK) {
 				data.processBlock(result.getBlockPos(), result.sideHit, result.hitVec);
 			} else data.processBlock(getPosition(), result != null ? result.sideHit : null, getPositionVector());
@@ -149,7 +149,7 @@ public class EntitySpellProjectile extends EntityMod {
 
 			SpellData data = spell.copy();
 
-			RayTraceResult result = Utils.raytrace(world, look, getPositionVector(), 1, this);
+			RayTraceResult result = new RayTrace(world, look, getPositionVector(), 1).setSkipEntity(this).trace();
 			if (result != null && result.typeOfHit == RayTraceResult.Type.ENTITY && result.entityHit != null) {
 				data.processEntity(result.entityHit, false);
 			} else if (entities.get(0) != null) data.processEntity(entities.get(0), false);

@@ -2,7 +2,7 @@ package com.teamwizardry.wizardry.common.module.shapes;
 
 import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.api.util.PosUtils;
-import com.teamwizardry.wizardry.api.util.Utils;
+import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.RayTraceResult;
@@ -60,7 +60,7 @@ public class ModuleShapeBeam extends Module implements IContinuousSpell, ICostMo
 
 		setCostMultiplier(this, 1);
 
-		RayTraceResult trace = Utils.raytrace(world, PosUtils.vecFromRotations(pitch, yaw), position, range, caster);
+		RayTraceResult trace = new RayTrace(world, PosUtils.vecFromRotations(pitch, yaw), position, range).setSkipEntity(caster).trace();
 		if (trace == null) return false;
 
 		if (trace.typeOfHit == RayTraceResult.Type.ENTITY)

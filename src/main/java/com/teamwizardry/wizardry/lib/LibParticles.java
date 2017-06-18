@@ -37,7 +37,7 @@ public class LibParticles {
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(pos.xCoord + RandUtil.nextDouble(-0.5, 0.5), pos.yCoord + RandUtil.nextDouble(-0.5, 0.5), pos.zCoord + RandUtil.nextDouble(-0.5, 0.5))), 1, 0, (aFloat, particleBuilder) -> {
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(pos.x + RandUtil.nextDouble(-0.5, 0.5), pos.y + RandUtil.nextDouble(-0.5, 0.5), pos.z + RandUtil.nextDouble(-0.5, 0.5))), 1, 0, (aFloat, particleBuilder) -> {
 			glitter.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), RandUtil.nextInt(100, 255)));
 			glitter.setLifetime(RandUtil.nextInt(20, 30));
 			glitter.setMotion(new Vec3d(RandUtil.nextDouble(-0.05, 0.05), RandUtil.nextDouble(0.05, 0.1), RandUtil.nextDouble(-0.05, 0.05)));
@@ -160,7 +160,7 @@ public class LibParticles {
 		glitter.setAcceleration(new Vec3d(0, -0.01, 0));
 		glitter.setScaleFunction(new InterpScale(1, 0));
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), RandUtil.nextInt(40, 50), 1, (i, build) -> {
-			glitter.setMotion(new Vec3d(normal.xCoord + RandUtil.nextDouble(-0.01, 0.01), normal.yCoord + RandUtil.nextDouble(-0.01, 0.01), normal.zCoord + RandUtil.nextDouble(-0.01, 0.01)));
+			glitter.setMotion(new Vec3d(normal.x + RandUtil.nextDouble(-0.01, 0.01), normal.y + RandUtil.nextDouble(-0.01, 0.01), normal.z + RandUtil.nextDouble(-0.01, 0.01)));
 			if (RandUtil.nextBoolean()) glitter.setColor(color1);
 			else glitter.setColor(color2);
 			if (scatter > 0) {
@@ -320,9 +320,9 @@ public class LibParticles {
 			double z = r * MathHelper.sin((float) theta);
 			Vec3d normalize = new Vec3d(x, 0, z).normalize();
 			glitter.setMotion(new Vec3d(
-					normalize.xCoord * RandUtil.nextDouble(-strengthSideways, strengthSideways),
+					normalize.x * RandUtil.nextDouble(-strengthSideways, strengthSideways),
 					RandUtil.nextDouble(-strengthUpwards, strengthUpwards),
-					normalize.zCoord * RandUtil.nextDouble(-strengthSideways, strengthSideways)
+					normalize.z * RandUtil.nextDouble(-strengthSideways, strengthSideways)
 			));
 			glitter.setAlphaFunction(new InterpFadeInOut(0.0f, RandUtil.nextFloat()));
 			glitter.setLifetime(RandUtil.nextInt(lifeTime - lifeTimeRange, lifeTime + lifeTimeRange));
@@ -539,7 +539,7 @@ public class LibParticles {
 			double x = r * MathHelper.cos((float) theta);
 			double z = r * MathHelper.sin((float) theta);
 			Vec3d dest = new Vec3d(x, RandUtil.nextDouble(-1, 1), z);
-			glitter.setPositionFunction(new InterpBezier3D(Vec3d.ZERO, dest, dest.scale(2), new Vec3d(dest.xCoord, RandUtil.nextDouble(-2, 2), dest.zCoord)));
+			glitter.setPositionFunction(new InterpBezier3D(Vec3d.ZERO, dest, dest.scale(2), new Vec3d(dest.x, RandUtil.nextDouble(-2, 2), dest.z)));
 		});
 	}
 

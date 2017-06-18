@@ -142,7 +142,7 @@ public class CapeHandler {
 
 	@SubscribeEvent
 	public void damage(ItemTossEvent event) {
-		if (event.getEntityItem().getEntityItem().getItem() == Items.BEEF) {
+		if (event.getEntityItem().getItem().getItem() == Items.BEEF) {
 			cloths.clear();
 		}
 	}
@@ -271,9 +271,9 @@ public class CapeHandler {
 		if (pos == null)
 			pos = lastTick;
 		return vb.pos(
-				lastTick.xCoord + ((pos.xCoord - lastTick.xCoord) * partialTicks),
-				lastTick.yCoord + ((pos.yCoord - lastTick.yCoord) * partialTicks),
-				lastTick.zCoord + ((pos.zCoord - lastTick.zCoord) * partialTicks)
+				lastTick.x + ((pos.x - lastTick.x) * partialTicks),
+				lastTick.y + ((pos.y - lastTick.y) * partialTicks),
+				lastTick.z + ((pos.z - lastTick.z) * partialTicks)
 		);
 	}
 }

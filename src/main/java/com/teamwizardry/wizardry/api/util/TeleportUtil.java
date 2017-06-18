@@ -22,9 +22,9 @@ public class TeleportUtil {
 		int oldDimension = player.world.provider.getDimension();
 		EntityPlayerMP entityPlayerMP = (EntityPlayerMP) player;
 		MinecraftServer server = ((EntityPlayerMP) player).world.getMinecraftServer();
-		WorldServer worldServer = server.worldServerForDimension(dimension);
+		if (server == null) return;
+		WorldServer worldServer = server.getWorld(dimension);
 		player.addExperienceLevel(0);
-
 
 		worldServer.getMinecraftServer().getPlayerList().transferPlayerToDimension(entityPlayerMP, dimension, new CustomTeleporter(worldServer, x, y, z));
 		player.setPositionAndUpdate(x, y, z);
@@ -40,9 +40,9 @@ public class TeleportUtil {
 		if (entity == null) return;
 		Vec3d look = entity.getLookVec();
 
-		double x = entity.posX += look.xCoord * dist;
-		double y = entity.posY += Math.max(0, look.yCoord * dist);
-		double z = entity.posZ += look.zCoord * dist;
+		double x = entity.posX += look.x * dist;
+		double y = entity.posY += Math.max(0, look.y * dist);
+		double z = entity.posZ += look.z * dist;
 
 		if (entity instanceof EntityPlayerMP) {
 			EntityPlayerMP mp = (EntityPlayerMP) entity;

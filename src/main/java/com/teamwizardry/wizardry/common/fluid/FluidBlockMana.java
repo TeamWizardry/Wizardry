@@ -105,10 +105,10 @@ public class FluidBlockMana extends BlockFluidClassic {
 
 		// Turn plank to wisdom plank
 		run(entityIn,
-				entity -> entity instanceof EntityItem && Utils.hasOreDictPrefix(((EntityItem) entity).getEntityItem(), "plank"),
+				entity -> entity instanceof EntityItem && Utils.hasOreDictPrefix(((EntityItem) entity).getItem(), "plank"),
 				entity -> {
 					EntityItem item = (EntityItem) entity;
-					item.setEntityItemStack(new ItemStack(ModBlocks.WISDOM_WOOD_PLANKS, item.getEntityItem().getCount()));
+					item.setItem(new ItemStack(ModBlocks.WISDOM_WOOD_PLANKS, item.getItem().getCount()));
 					if (worldIn.isRemote) {
 						LibParticles.FIZZING_AMBIENT(worldIn, item.getPositionVector());
 					}
@@ -116,10 +116,10 @@ public class FluidBlockMana extends BlockFluidClassic {
 
 		// Turn log to wisdom log
 		run(entityIn,
-				entity -> entity instanceof EntityItem && Utils.hasOreDictPrefix(((EntityItem) entity).getEntityItem(), "log"),
+				entity -> entity instanceof EntityItem && Utils.hasOreDictPrefix(((EntityItem) entity).getItem(), "log"),
 				entity -> {
 					EntityItem item = (EntityItem) entity;
-					item.setEntityItemStack(new ItemStack(ModBlocks.WISDOM_WOOD_LOG, item.getEntityItem().getCount()));
+					item.setItem(new ItemStack(ModBlocks.WISDOM_WOOD_LOG, item.getItem().getCount()));
 					if (worldIn.isRemote) {
 						LibParticles.FIZZING_AMBIENT(worldIn, item.getPositionVector());
 					}
@@ -127,10 +127,10 @@ public class FluidBlockMana extends BlockFluidClassic {
 
 		// Turn stair to wisdom stair
 		run(entityIn,
-				entity -> entity instanceof EntityItem && Utils.hasOreDictPrefix(((EntityItem) entity).getEntityItem(), "stairs"),
+				entity -> entity instanceof EntityItem && Utils.hasOreDictPrefix(((EntityItem) entity).getItem(), "stairs"),
 				entity -> {
 					EntityItem item = (EntityItem) entity;
-					item.setEntityItemStack(new ItemStack(ModBlocks.WISDOM_WOOD_STAIRS, item.getEntityItem().getCount()));
+					item.setItem(new ItemStack(ModBlocks.WISDOM_WOOD_STAIRS, item.getItem().getCount()));
 					if (worldIn.isRemote) {
 						LibParticles.FIZZING_AMBIENT(worldIn, item.getPositionVector());
 					}
@@ -138,10 +138,10 @@ public class FluidBlockMana extends BlockFluidClassic {
 
 		// Turn slab to wisdom slab
 		run(entityIn,
-				entity -> entity instanceof EntityItem && Utils.hasOreDictPrefix(((EntityItem) entity).getEntityItem(), "slabs"),
+				entity -> entity instanceof EntityItem && Utils.hasOreDictPrefix(((EntityItem) entity).getItem(), "slabs"),
 				entity -> {
 					EntityItem item = (EntityItem) entity;
-					item.setEntityItemStack(new ItemStack(ModBlocks.WISDOM_WOOD_SLAB, item.getEntityItem().getCount()));
+					item.setItem(new ItemStack(ModBlocks.WISDOM_WOOD_SLAB, item.getItem().getCount()));
 					if (worldIn.isRemote) {
 						LibParticles.FIZZING_AMBIENT(worldIn, item.getPositionVector());
 					}
@@ -149,9 +149,9 @@ public class FluidBlockMana extends BlockFluidClassic {
 
 		// Turn book to codex
 		run(entityIn,
-				entity -> entity instanceof EntityItem && ((EntityItem) entity).getEntityItem().getItem() == Items.BOOK,
+				entity -> entity instanceof EntityItem && ((EntityItem) entity).getItem().getItem() == Items.BOOK,
 				entity -> {
-					ItemStack stack = ((EntityItem) entity).getEntityItem();
+					ItemStack stack = ((EntityItem) entity).getItem();
 					int expiry = ItemNBTHelper.getInt(stack, REACTION_COOLDOWN, 200);
 					if (expiry > 0) {
 						if (worldIn.isRemote)
@@ -166,16 +166,16 @@ public class FluidBlockMana extends BlockFluidClassic {
 
 						boom(worldIn, entity);
 
-						((EntityItem) entity).setEntityItemStack(new ItemStack(ModItems.BOOK, stack.getCount()));
+						((EntityItem) entity).setItem(new ItemStack(ModItems.BOOK, stack.getCount()));
 						worldIn.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
 					}
 				});
 
 		// Explode explodable items
 		run(entityIn,
-				entity -> entity instanceof EntityItem && ((EntityItem) entity).getEntityItem().getItem() instanceof IExplodable,
+				entity -> entity instanceof EntityItem && ((EntityItem) entity).getItem().getItem() instanceof IExplodable,
 				entity -> {
-					ItemStack stack = ((EntityItem) entity).getEntityItem();
+					ItemStack stack = ((EntityItem) entity).getItem();
 					int expiry = ItemNBTHelper.getInt(stack, REACTION_COOLDOWN, 200);
 					if (expiry > 0) {
 						ItemNBTHelper.setInt(stack, REACTION_COOLDOWN, --expiry);
@@ -194,15 +194,15 @@ public class FluidBlockMana extends BlockFluidClassic {
 		// Mana Battery Recipe
 		run(entityIn, entity -> {
 			if (worldIn.isRemote) return false;
-			if (entityIn instanceof EntityItem && !((EntityItem) entity).getEntityItem().isEmpty() && ((EntityItem) entity).getEntityItem().getItem() == Items.DIAMOND) { // World worldIn, BlockPos pos, IBlockState state, Entity entityIn
+			if (entityIn instanceof EntityItem && !((EntityItem) entity).getItem().isEmpty() && ((EntityItem) entity).getItem().getItem() == Items.DIAMOND) { // World worldIn, BlockPos pos, IBlockState state, Entity entityIn
 				List<Entity> entities = worldIn.getEntitiesInAABBexcluding(entityIn, new AxisAlignedBB(pos),
 						Predicates.instanceOf(EntityItem.class));
 				EntityItem devilDust = null, soulSand = null;
 				for (Entity e : entities) {
 					EntityItem entityItem = (EntityItem) e;
-					if (entityItem.getEntityItem().getItem() == ModItems.DEVIL_DUST)
+					if (entityItem.getItem().getItem() == ModItems.DEVIL_DUST)
 						devilDust = entityItem;
-					else if (entityItem.getEntityItem().getItem() == Item.getItemFromBlock(Blocks.SOUL_SAND))
+					else if (entityItem.getItem().getItem() == Item.getItemFromBlock(Blocks.SOUL_SAND))
 						soulSand = entityItem;
 				}
 
@@ -216,7 +216,7 @@ public class FluidBlockMana extends BlockFluidClassic {
 			}
 			return false;
 		}, entity -> {
-			ItemStack stack = ((EntityItem) entity).getEntityItem();
+			ItemStack stack = ((EntityItem) entity).getItem();
 			int expiry = ItemNBTHelper.getInt(stack, REACTION_COOLDOWN, 200);
 			if (expiry > 0) {
 				if (worldIn.isRemote)
@@ -232,22 +232,22 @@ public class FluidBlockMana extends BlockFluidClassic {
 				EntityItem devilDust = null, soulSand = null;
 				for (Entity e : entities) {
 					EntityItem entityItem = (EntityItem) e;
-					if (entityItem.getEntityItem().getItem() == ModItems.DEVIL_DUST)
+					if (entityItem.getItem().getItem() == ModItems.DEVIL_DUST)
 						devilDust = entityItem;
-					else if (entityItem.getEntityItem().getItem() == Item.getItemFromBlock(Blocks.SOUL_SAND))
+					else if (entityItem.getItem().getItem() == Item.getItemFromBlock(Blocks.SOUL_SAND))
 						soulSand = entityItem;
 				}
 
-				((EntityItem) entity).getEntityItem().shrink(1);
-				if (((EntityItem) entity).getEntityItem().isEmpty())
+				((EntityItem) entity).getItem().shrink(1);
+				if (((EntityItem) entity).getItem().isEmpty())
 					worldIn.removeEntity(entity);
 
-				devilDust.getEntityItem().shrink(1);
-				if (devilDust.getEntityItem().isEmpty())
+				devilDust.getItem().shrink(1);
+				if (devilDust.getItem().isEmpty())
 					worldIn.removeEntity(devilDust);
 
-				soulSand.getEntityItem().shrink(1);
-				if (soulSand.getEntityItem().isEmpty())
+				soulSand.getItem().shrink(1);
+				if (soulSand.getItem().isEmpty())
 					worldIn.removeEntity(soulSand);
 
 				EntityItem manaBattery = new EntityItem(worldIn, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, new ItemStack(ModBlocks.MANA_BATTERY));
@@ -276,9 +276,9 @@ public class FluidBlockMana extends BlockFluidClassic {
 			double mag = upperMag * (scale * dist / (-scale * dist - 1) + 1);
 			Vec3d dir = entity1.getPositionVector().subtract(entity.getPositionVector()).normalize().scale(mag);
 
-			entity1.motionX += (dir.xCoord);
-			entity1.motionY += (dir.yCoord);
-			entity1.motionZ += (dir.zCoord);
+			entity1.motionX += (dir.x);
+			entity1.motionY += (dir.y);
+			entity1.motionZ += (dir.z);
 			entity1.fallDistance = 0;
 			entity1.velocityChanged = true;
 

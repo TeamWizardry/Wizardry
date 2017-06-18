@@ -5,6 +5,7 @@ import com.google.common.collect.HashBiMap;
 import com.teamwizardry.librarianlib.features.gui.GuiBase;
 import com.teamwizardry.librarianlib.features.gui.GuiComponent;
 import com.teamwizardry.librarianlib.features.gui.components.*;
+import com.teamwizardry.librarianlib.features.gui.mixin.ScissorMixin;
 import com.teamwizardry.librarianlib.features.gui.mixin.gl.GlMixin;
 import com.teamwizardry.librarianlib.features.math.Vec2d;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
@@ -57,21 +58,13 @@ public class WorktableGui extends GuiBase {
 
 		ComponentVoid shapes = new ComponentVoid(29, 31, 48, 80);
 		addModules(shapes, ModuleType.SHAPE);
+		addScrollbar(shapes, 96, 113);
 		getMainComponents().add(shapes);
-
-		//ScissorMixin.INSTANCE.scissor(shapes);
-		ComponentSprite shapeScrollBar = new ComponentSprite(SCROLL_BAR, 96, 46, 3, 11);
-		shapeScrollBar.BUS.hook(GuiComponent.MouseDragEvent.class, (event) -> {
-			Vec2d mouse = event.getComponent().getParent().unTransformChildPos(event.getComponent(), event.getMousePos());
-			double y = MathHelper.clamp(mouse.getY(), 46, 123);
-			y -= 46;
-			shapes.setPos(new Vec2d(shapes.getPos().getX(), shapes.getPos().getY() + y));
-		});
-		getMainComponents().add(shapeScrollBar);
 
 		ComponentVoid effects = new ComponentVoid(93, 31, 48, 80);
 		addModules(effects, ModuleType.EFFECT);
 		getMainComponents().add(effects);
+		addScrollbar(shapes, 96, 113);
 
 		ComponentVoid events = new ComponentVoid(29, 123, 48, 80);
 		addModules(events, ModuleType.EVENT);
@@ -187,6 +180,18 @@ public class WorktableGui extends GuiBase {
 			TableModule item = new TableModule(this, module.copy(), false);
 			grid.add(item.component);
 		}
+	}
+
+	private void addScrollbar(ComponentVoid parent, int x, int y) {
+		ScissorMixin.INSTANCE.scissor(parent);
+		ComponentSprite shapeScrollBar = new ComponentSprite(SCROLL_BAR, x, y, 3, 11);
+		shapeScrollBar.BUS.hook(GuiComponent.MouseDragEvent.class, (event) -> {
+			Vec2d mouse = event.getComponent().getParent().unTransformChildPos(event.getComponent(), event.getMousePos());
+			double newY = MathHelper.clamp(mouse.getY(), 46, 123);
+			newY -= 46;
+			parent.setPos(new Vec2d(parent.getPos().getX(), parent.getPos().getY() + newY));
+		});
+		getMainComponents().add(shapeScrollBar);
 	}
 
 	@Nullable

@@ -28,6 +28,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import javax.annotation.Nonnull;
@@ -54,6 +55,17 @@ public class PotionTimeSlow extends PotionMod {
 	public void removeAttributesModifiersFromEntity(EntityLivingBase entityLivingBaseIn, @Nonnull AbstractAttributeMap attributeMapIn, int amplifier) {
 		super.removeAttributesModifiersFromEntity(entityLivingBaseIn, attributeMapIn, amplifier);
 		entityLivingBaseIn.world.playSound(null, entityLivingBaseIn.getPosition(), ModSounds.SLOW_MOTION_OUT, SoundCategory.NEUTRAL, 1f, 1);
+	}
+
+	@SubscribeEvent
+	public void fall(LivingFallEvent event) {
+		EntityLivingBase entity = event.getEntityLiving();
+		if (!entity.isPotionActive(this)) return;
+
+		PotionEffect effect = entity.getActivePotionEffect(this);
+		if (effect == null) return;
+
+		event.setDistance((float) (event.getDistance() / (effect.getAmplifier() + 0.5)));
 	}
 
 	@SubscribeEvent
@@ -134,7 +146,7 @@ public class PotionTimeSlow extends PotionMod {
 				}
 			}
 
-			List<AxisAlignedBB> list1 = entity.world.getCollisionBoxes(entity, entity.getEntityBoundingBox().addCoord(x, y, z));
+			List<AxisAlignedBB> list1 = entity.world.getCollisionBoxes(entity, entity.getEntityBoundingBox().offset(x, y, z));
 			AxisAlignedBB axisalignedbb = entity.getEntityBoundingBox();
 
 			if (y != 0.0D) {
@@ -180,9 +192,9 @@ public class PotionTimeSlow extends PotionMod {
 				AxisAlignedBB axisalignedbb1 = entity.getEntityBoundingBox();
 				entity.setEntityBoundingBox(axisalignedbb);
 				y = (double) entity.stepHeight;
-				List<AxisAlignedBB> list = entity.world.getCollisionBoxes(entity, entity.getEntityBoundingBox().addCoord(d2, y, d4));
+				List<AxisAlignedBB> list = entity.world.getCollisionBoxes(entity, entity.getEntityBoundingBox().offset(d2, y, d4));
 				AxisAlignedBB axisalignedbb2 = entity.getEntityBoundingBox();
-				AxisAlignedBB axisalignedbb3 = axisalignedbb2.addCoord(d2, 0.0D, d4);
+				AxisAlignedBB axisalignedbb3 = axisalignedbb2.offset(d2, 0.0D, d4);
 				double d8 = y;
 				int j1 = 0;
 

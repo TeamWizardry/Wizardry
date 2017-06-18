@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.client.render;
+package com.teamwizardry.wizardry.client.core;
 
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.wizardry.Wizardry;
@@ -40,7 +40,7 @@ public class LightningRenderer {
 	}
 
 	private static VertexBuffer pos(VertexBuffer vb, Vec3d pos) {
-		return vb.pos(pos.xCoord, pos.yCoord, pos.zCoord);
+		return vb.pos(pos.x, pos.y, pos.z);
 	}
 
 	public void addBolt(ArrayList<Vec3d> points, int maxTick) {
@@ -100,7 +100,7 @@ public class LightningRenderer {
 
 				Vec3d playerEyes = Minecraft.getMinecraft().player.getPositionEyes(event.getPartialTicks());
 				Vec3d normal = (from.subtract(to)).crossProduct(playerEyes.subtract(to)).normalize(); //(b.subtract(a)).crossProduct(c.subtract(a));
-				if (normal.yCoord < 0)
+				if (normal.y < 0)
 					normal = normal.scale(-1);
 
 				Color color = new Color(0xDA83FF);

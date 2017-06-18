@@ -124,7 +124,7 @@ public class PotionPhase extends PotionMod {
 			}
 		}
 
-		List<AxisAlignedBB> list1 = entity.world.getCollisionBoxes(entity, entity.getEntityBoundingBox().addCoord(x, y, z));
+		List<AxisAlignedBB> list1 = entity.world.getCollisionBoxes(entity, entity.getEntityBoundingBox().offset(x, y, z));
 		AxisAlignedBB axisalignedbb = entity.getEntityBoundingBox();
 
 		if (y != 0.0D) {
@@ -151,9 +151,9 @@ public class PotionPhase extends PotionMod {
 			AxisAlignedBB axisalignedbb1 = entity.getEntityBoundingBox();
 			entity.setEntityBoundingBox(axisalignedbb);
 			y = (double) entity.stepHeight;
-			List<AxisAlignedBB> list = entity.world.getCollisionBoxes(entity, entity.getEntityBoundingBox().addCoord(d2, y, d4));
+			List<AxisAlignedBB> list = entity.world.getCollisionBoxes(entity, entity.getEntityBoundingBox().offset(d2, y, d4));
 			AxisAlignedBB axisalignedbb2 = entity.getEntityBoundingBox();
-			AxisAlignedBB axisalignedbb3 = axisalignedbb2.addCoord(d2, 0.0D, d4);
+			AxisAlignedBB axisalignedbb3 = axisalignedbb2.offset(d2, 0.0D, d4);
 			double d8 = y;
 			int j1 = 0;
 

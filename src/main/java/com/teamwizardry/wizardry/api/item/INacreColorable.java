@@ -1,11 +1,9 @@
 package com.teamwizardry.wizardry.api.item;
 
-import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.base.item.IItemColorProvider;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.api.Constants.NBT;
 import com.teamwizardry.wizardry.common.fluid.FluidNacre;
-import com.teamwizardry.wizardry.init.ModBlocks;
 import kotlin.jvm.functions.Function2;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -18,7 +16,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.awt.*;
-import java.util.Random;
 
 /**
  * Created by Saad on 6/7/2016.
@@ -40,7 +37,7 @@ public interface INacreColorable extends IItemColorProvider {
 
 	default void colorableOnEntityItemUpdate(EntityItem entityItem) {
 		if (entityItem.world.isRemote) return;
-		ItemStack stack = entityItem.getEntityItem();
+		ItemStack stack = entityItem.getItem();
 
 		if (!ItemNBTHelper.verifyExistence(stack, NBT.RAND))
 			ItemNBTHelper.setFloat(stack, NBT.RAND, entityItem.world.rand.nextFloat());

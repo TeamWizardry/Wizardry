@@ -85,11 +85,11 @@ public class ModuleEffectSubstitution extends Module implements IBlockSelectable
 
 			targetEntity.rotationYaw = yawCaster;
 			targetEntity.rotationPitch = pitchCaster;
-			targetEntity.setPositionAndUpdate(posCaster.xCoord, posCaster.yCoord, posCaster.zCoord);
+			targetEntity.setPositionAndUpdate(posCaster.x, posCaster.y, posCaster.z);
 
 			caster.rotationYaw = yawTarget;
 			caster.rotationPitch = pitchTarget;
-			caster.setPositionAndUpdate(posTarget.xCoord, posTarget.yCoord, posTarget.zCoord);
+			caster.setPositionAndUpdate(posTarget.x, posTarget.y, posTarget.z);
 			spell.world.playSound(null, caster.getPosition(), ModSounds.TELEPORT, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat());
 			spell.world.playSound(null, targetEntity.getPosition(), ModSounds.TELEPORT, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat());
 

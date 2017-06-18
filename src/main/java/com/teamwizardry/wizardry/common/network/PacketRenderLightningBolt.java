@@ -5,7 +5,7 @@ import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.wizardry.api.LightningGenerator;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RandUtilSeed;
-import com.teamwizardry.wizardry.client.render.LightningRenderer;
+import com.teamwizardry.wizardry.client.core.LightningRenderer;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;

@@ -92,9 +92,9 @@ public class TileCraftingPlate extends TileManaSink {
 		super.update();
 
 		for (EntityItem entityItem : world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos).expand(2, 2, 2))) {
-			ItemStack stack = entityItem.getEntityItem().copy();
+			ItemStack stack = entityItem.getItem().copy();
 			stack.setCount(1);
-			entityItem.getEntityItem().shrink(1);
+			entityItem.getItem().shrink(1);
 			inventory.add(new ClusterObject(this, stack, world, entityItem.getPositionVector().subtract(new Vec3d(pos))));
 			markDirty();
 		}
@@ -155,9 +155,9 @@ public class TileCraftingPlate extends TileManaSink {
 					double mag = upperMag * (scale * dist / (-scale * dist - 1) + 1);
 					Vec3d dir = entity1.getPositionVector().subtract(new Vec3d(pos).addVector(0.5, 0.5, 0.5)).normalize().scale(mag);
 
-					entity1.motionX += (dir.xCoord);
-					entity1.motionY += (dir.yCoord);
-					entity1.motionZ += (dir.zCoord);
+					entity1.motionX += (dir.x);
+					entity1.motionY += (dir.y);
+					entity1.motionZ += (dir.z);
 					entity1.fallDistance = 0;
 					entity1.velocityChanged = true;
 

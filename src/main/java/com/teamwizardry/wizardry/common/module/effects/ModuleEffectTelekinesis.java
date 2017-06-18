@@ -80,9 +80,9 @@ public class ModuleEffectTelekinesis extends Module implements ITaxing {
 
 			Vec3d dir = targetPos.subtract(entity.getPositionVector()).normalize().scale(mag);
 
-			entity.motionX = (dir.xCoord);
-			entity.motionY = (dir.yCoord);
-			entity.motionZ = (dir.zCoord);
+			entity.motionX = (dir.x);
+			entity.motionY = (dir.y);
+			entity.motionZ = (dir.z);
 			entity.fallDistance = 0;
 			entity.velocityChanged = true;
 

@@ -3,8 +3,8 @@
 uniform sampler2D bgl_RenderedTexture;
 
 void main() {
-    vec2 texcoord = vec2(gl_TexCoord[0]);
-    vec4 color = texture2D(bgl_RenderedTexture, texcoord);
+    vec2 tex = vec2(gl_Tex[0]);
+    vec4 color = texture2D(bgl_RenderedTexture, tex);
 
     float r = color.r * gl_Color.r;
     float g = color.g * gl_Color.g;

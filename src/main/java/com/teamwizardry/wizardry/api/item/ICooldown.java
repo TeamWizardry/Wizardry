@@ -3,10 +3,7 @@ package com.teamwizardry.wizardry.api.item;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.spell.IContinuousSpell;
-import com.teamwizardry.wizardry.api.spell.INullifyCooldown;
-import com.teamwizardry.wizardry.api.spell.Module;
-import com.teamwizardry.wizardry.api.spell.SpellStack;
+import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.common.network.PacketSyncCooldown;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -14,15 +11,18 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 
 public interface ICooldown {
 
-	default void setCooldown(ItemStack stack, EnumHand hand, EntityPlayer player, World world) {
+	default void setCooldown(World world, EntityPlayer player, ItemStack stack, EnumHand hand, @Nonnull SpellData data) {
 		int maxCooldown = 0;
-		int countNulls = 0;
 		int countContinuous = 0;
 		int existingCooldowns = 0;
+		int overridenCooldown = 0;
+
+		boolean cooldownOverriden = false;
 
 		ArrayList<Module> modules = SpellStack.getAllModules(stack);
 
@@ -32,16 +32,20 @@ public interface ICooldown {
 				countContinuous++;
 				continue;
 			}
-			if (module instanceof INullifyCooldown) {
-				countNulls++;
+			if (module instanceof IOverrideCooldown) {
+				int cooldown = ((IOverrideCooldown) module).getNewCooldown(data);
+				if (cooldown > overridenCooldown) overridenCooldown = cooldown;
+				cooldownOverriden = true;
 				continue;
 			}
 			if (module.getCooldownTime() > maxCooldown) maxCooldown = module.getCooldownTime();
 		}
-		if (countContinuous >= existingCooldowns / 2.0 || countNulls >= existingCooldowns / 2.0) return;
+		if (countContinuous >= existingCooldowns / 2.0) return;
 
-		ItemNBTHelper.setInt(stack, "cooldown_ticks", maxCooldown);
-		ItemNBTHelper.setInt(stack, Constants.NBT.LAST_COOLDOWN, maxCooldown);
+		int finalCooldown = cooldownOverriden ? overridenCooldown : maxCooldown;
+
+		ItemNBTHelper.setInt(stack, "cooldown_ticks", finalCooldown);
+		ItemNBTHelper.setInt(stack, Constants.NBT.LAST_COOLDOWN, finalCooldown);
 		ItemNBTHelper.setLong(stack, Constants.NBT.LAST_CAST, world.getTotalWorldTime());
 
 		if (!world.isRemote)
@@ -50,7 +54,7 @@ public interface ICooldown {
 			else PacketHandler.NETWORK.sendTo(new PacketSyncCooldown(false, true), (EntityPlayerMP) player);
 	}
 
-	default void updateCooldown(ItemStack stack, EntityPlayer player) {
+	default void updateCooldown(ItemStack stack) {
 		for (Module module : SpellStack.getAllModules(stack)) if (module instanceof IContinuousSpell) return;
 
 		if (ItemNBTHelper.getInt(stack, "cooldown_ticks", 0) > 0)

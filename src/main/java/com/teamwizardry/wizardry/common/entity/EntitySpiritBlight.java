@@ -78,10 +78,10 @@ public class EntitySpiritBlight extends EntityMob {
 		if (getAttackTarget() != null) {
 			noClip = true;
 			Vec3d direction = getPositionVector().subtract(getAttackTarget().getPositionVector()).normalize();
-			motionX = direction.xCoord * -0.05;
-			motionY = direction.yCoord * -0.05;
-			motionZ = direction.zCoord * -0.05;
-			rotationYaw = (float) (((-MathHelper.atan2(direction.xCoord, direction.zCoord) * 180) / Math.PI) - 180) / 2;
+			motionX = direction.x * -0.05;
+			motionY = direction.y * -0.05;
+			motionZ = direction.z * -0.05;
+			rotationYaw = (float) (((-MathHelper.atan2(direction.x, direction.z) * 180) / Math.PI) - 180) / 2;
 		} else noClip = false;
 
 		EntityPlayer player = getAttackTarget() == null ? null : world.getNearestPlayerNotCreative(this, 2);

@@ -61,7 +61,7 @@ public class ModuleShapeProjectile extends Module implements ICostModifier, ITax
 		//Vec3d origin = new Vec3d(offX, caster.getEyeHeight() - 0.3, offZ).add(caster.getPositionVector());
 
 		EntitySpellProjectile proj = new EntitySpellProjectile(world, this, spell);
-		proj.setPosition(origin.xCoord, origin.yCoord, origin.zCoord);
+		proj.setPosition(origin.x, origin.y, origin.z);
 		proj.velocityChanged = true;
 
 		boolean success = world.spawnEntity(proj);

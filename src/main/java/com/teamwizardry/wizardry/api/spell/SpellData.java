@@ -178,9 +178,9 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			@Override
 			public NBTTagCompound serialize(Vec3d object) {
 				NBTTagCompound compound = new NBTTagCompound();
-				compound.setDouble("x", object.xCoord);
-				compound.setDouble("y", object.yCoord);
-				compound.setDouble("z", object.zCoord);
+				compound.setDouble("x", object.x);
+				compound.setDouble("y", object.y);
+				compound.setDouble("z", object.z);
 				return compound;
 			}
 
@@ -260,9 +260,9 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			public NBTTagCompound serialize(Vec3d object) {
 				if (object == null) return new NBTTagCompound();
 				NBTTagCompound compound = new NBTTagCompound();
-				compound.setDouble("x", object.xCoord);
-				compound.setDouble("y", object.yCoord);
-				compound.setDouble("z", object.zCoord);
+				compound.setDouble("x", object.x);
+				compound.setDouble("y", object.y);
+				compound.setDouble("z", object.z);
 				return compound;
 			}
 

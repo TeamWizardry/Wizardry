@@ -40,9 +40,9 @@ public class Cloth {
 	public void updateRelative(Vec3d pos, Vec3d rotation) {
 		Matrix4 matrix = new Matrix4();
 		matrix.translate(pos);
-		matrix.rotate(Math.toRadians(rotation.xCoord), new Vec3d(1, 0, 0));
-		matrix.rotate(Math.toRadians(rotation.yCoord), new Vec3d(0, 1, 0));
-		matrix.rotate(Math.toRadians(rotation.zCoord), new Vec3d(0, 0, 1));
+		matrix.rotate(Math.toRadians(rotation.x), new Vec3d(1, 0, 0));
+		matrix.rotate(Math.toRadians(rotation.y), new Vec3d(0, 1, 0));
+		matrix.rotate(Math.toRadians(rotation.z), new Vec3d(0, 0, 1));
 		for (Entry<PointMass3D, Vec3d> entry : relativePositions.entrySet()) {
 			Vec3d trans = matrix.apply(entry.getValue());
 			entry.getKey().origPos = entry.getKey().pos;
@@ -259,9 +259,9 @@ public class Cloth {
 				if (mass.origPos == null)
 					mass.origPos = mass.pos;
 				if (mass.pos != null) {
-					minX = Math.min(minX, Math.min(mass.pos.xCoord, mass.origPos.xCoord));
-					minY = Math.min(minY, Math.min(mass.pos.yCoord, mass.origPos.yCoord));
-					minZ = Math.min(minZ, Math.min(mass.pos.zCoord, mass.origPos.zCoord));
+					minX = Math.min(minX, Math.min(mass.pos.x, mass.origPos.x));
+					minY = Math.min(minY, Math.min(mass.pos.y, mass.origPos.y));
+					minZ = Math.min(minZ, Math.min(mass.pos.z, mass.origPos.z));
 					if ((maxX - minX) > 10)
 						minX = maxX - 10;
 					if ((maxY - minY) > 10)
@@ -269,9 +269,9 @@ public class Cloth {
 					if ((maxZ - minZ) > 10)
 						minZ = maxZ - 10;
 
-					maxX = Math.max(maxX, Math.max(mass.pos.xCoord, mass.origPos.xCoord));
-					maxY = Math.max(maxY, Math.max(mass.pos.yCoord, mass.origPos.yCoord));
-					maxZ = Math.max(maxZ, Math.max(mass.pos.zCoord, mass.origPos.zCoord));
+					maxX = Math.max(maxX, Math.max(mass.pos.x, mass.origPos.x));
+					maxY = Math.max(maxY, Math.max(mass.pos.y, mass.origPos.y));
+					maxZ = Math.max(maxZ, Math.max(mass.pos.z, mass.origPos.z));
 
 					if ((maxX - minX) > 10)
 						maxX = minX + 10;
@@ -337,18 +337,18 @@ public class Cloth {
 		Vec3d vecY = null;
 
 		if ((vecA != null) && (vecB != null)) {
-			if (vecA.yCoord > vecB.yCoord) {
+			if (vecA.y > vecB.y) {
 				vecY = collideWithYPlane(aabb, aabb.maxY, vecA, vecB);
 			}
 
-			if (vecA.yCoord < vecB.yCoord) {
+			if (vecA.y < vecB.y) {
 				vecY = collideWithYPlane(aabb, aabb.minY, vecA, vecB);
 			}
 		}
 
 		if (vecY != null) {
-			point.friction = new Vec3d(vecB.xCoord - vecY.xCoord, 0, vecB.zCoord - vecY.zCoord);
-			return new Vec3d(vecB.xCoord, vecY.yCoord, vecB.zCoord);
+			point.friction = new Vec3d(vecB.x - vecY.x, 0, vecB.z - vecY.z);
+			return new Vec3d(vecB.x, vecY.y, vecB.z);
 		}
 
 		if (yOnly)
@@ -356,33 +356,33 @@ public class Cloth {
 
 		Vec3d vecX = null;
 		if ((vecA != null) && (vecB != null)) {
-			if (vecA.xCoord > vecB.xCoord) {
+			if (vecA.x > vecB.x) {
 				vecX = collideWithXPlane(aabb, aabb.maxX, vecA, vecB);
 			}
 
-			if (vecA.xCoord < vecB.xCoord) {
+			if (vecA.x < vecB.x) {
 				vecX = collideWithXPlane(aabb, aabb.minX, vecA, vecB);
 			}
 		}
 
 		if (vecX != null) {
-			point.friction = new Vec3d(0, vecB.yCoord - vecX.yCoord, vecB.zCoord - vecX.zCoord);
-			return new Vec3d(vecX.xCoord, vecB.yCoord, vecB.zCoord);
+			point.friction = new Vec3d(0, vecB.y - vecX.y, vecB.z - vecX.z);
+			return new Vec3d(vecX.x, vecB.y, vecB.z);
 		}
 
 		Vec3d vecZ = null;
 		if ((vecA != null) && (vecB != null)) {
-			if (vecA.zCoord > vecB.zCoord) {
+			if (vecA.z > vecB.z) {
 				vecZ = collideWithZPlane(aabb, aabb.maxZ, vecA, vecB);
 			}
 
-			if (vecA.zCoord < vecB.zCoord) {
+			if (vecA.z < vecB.z) {
 				vecZ = collideWithZPlane(aabb, aabb.minZ, vecA, vecB);
 			}
 		}
 		if (vecZ != null) {
-			point.friction = new Vec3d(vecB.xCoord - vecZ.xCoord, vecB.yCoord - vecZ.yCoord, 0);
-			return new Vec3d(vecB.xCoord, vecB.yCoord, vecZ.zCoord);
+			point.friction = new Vec3d(vecB.x - vecZ.x, vecB.y - vecZ.y, 0);
+			return new Vec3d(vecB.x, vecB.y, vecZ.z);
 		}
 
 		return null;
@@ -412,18 +412,18 @@ public class Cloth {
 	@VisibleForTesting
 	private boolean intersectsWithYZ(AxisAlignedBB aabb, Vec3d vec) {
 		double m = -0.0;
-		return (vec.yCoord > (aabb.minY + m)) && (vec.yCoord < (aabb.maxY - m)) && (vec.zCoord > (aabb.minZ + m)) && (vec.zCoord < (aabb.maxZ - m));
+		return (vec.y > (aabb.minY + m)) && (vec.y < (aabb.maxY - m)) && (vec.z > (aabb.minZ + m)) && (vec.z < (aabb.maxZ - m));
 	}
 
 	@VisibleForTesting
 	private boolean intersectsWithXZ(AxisAlignedBB aabb, Vec3d vec) {
 		double m = -0.0;
-		return (vec.xCoord > (aabb.minX + m)) && (vec.xCoord < (aabb.maxX - m)) && (vec.zCoord > (aabb.minZ + m)) && (vec.zCoord < (aabb.maxZ - m));
+		return (vec.x > (aabb.minX + m)) && (vec.x < (aabb.maxX - m)) && (vec.z > (aabb.minZ + m)) && (vec.z < (aabb.maxZ - m));
 	}
 
 	@VisibleForTesting
 	private boolean intersectsWithXY(AxisAlignedBB aabb, Vec3d vec) {
-		return (vec.xCoord > aabb.minX) && (vec.xCoord < aabb.maxX) && (vec.yCoord > aabb.minY) && (vec.yCoord < aabb.maxY);
+		return (vec.x > aabb.minX) && (vec.x < aabb.maxX) && (vec.y > aabb.minY) && (vec.y < aabb.maxY);
 	}
 
 }

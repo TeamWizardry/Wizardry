@@ -215,7 +215,7 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 
 		if (target != null)
 			PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(this, data),
-					new NetworkRegistry.TargetPoint(data.world.provider.getDimension(), target.xCoord, target.yCoord, target.zCoord, 60));
+					new NetworkRegistry.TargetPoint(data.world.provider.getDimension(), target.x, target.y, target.z, 60));
 	}
 
 	protected final double calcBurnoutPercent(@Nullable Entity player) {

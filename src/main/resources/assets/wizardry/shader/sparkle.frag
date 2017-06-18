@@ -130,7 +130,7 @@ vec4 particle(vec2 uv) {
 
 void main()
 {
-    vec2 uv = vec2(gl_TexCoord[0]);
+    vec2 uv = vec2(gl_Tex[0]);
     if(uv.x > 1.) {
         randID = int(uv.x);
         uv.x = fract(uv.x);

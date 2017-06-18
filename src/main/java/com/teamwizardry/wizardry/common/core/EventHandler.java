@@ -64,10 +64,10 @@ public class EventHandler {
 	public void redstoneHandler(EntityJoinWorldEvent event) {
 		if (event.getEntity() instanceof EntityItem) {
 			EntityItem item = (EntityItem) event.getEntity();
-			if (item.getEntityItem().getItem() == Items.REDSTONE) {
+			if (item.getItem().getItem() == Items.REDSTONE) {
 				entityFireHandler.invoke(item, true);
 				event.getWorld().spawnEntity(new EntityDevilDust(event.getWorld(), item));
-			} else if (item.getEntityItem().getItem() == ModItems.DEVIL_DUST) {
+			} else if (item.getItem().getItem() == ModItems.DEVIL_DUST) {
 				entityFireHandler.invoke(item, true);
 				item.extinguish();
 			}
