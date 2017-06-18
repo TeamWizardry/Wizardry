@@ -3,8 +3,10 @@ package com.teamwizardry.wizardry.client.gui.worktable;
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.gui.EnumMouseButton;
 import com.teamwizardry.librarianlib.features.gui.GuiComponent;
+import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentVoid;
 import com.teamwizardry.librarianlib.features.gui.mixin.DragMixin;
+import com.teamwizardry.librarianlib.features.gui.mixin.gl.GlMixin;
 import com.teamwizardry.librarianlib.features.math.Vec2d;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBezier2D;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
@@ -18,6 +20,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.opengl.GL11;
 
@@ -35,23 +38,23 @@ public class TableModule {
 	private static final Sprite plate = LibSprites.Worktable.MODULE_DEFAULT;
 	private static final Sprite plate_highlighted = LibSprites.Worktable.MODULE_DEFAULT_GLOW;
 	private static final Sprite streak = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/streak.png"));
-	private static final Sprite dot = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/dot.png"));
 	public final Module module;
 	public ComponentVoid component;
 	private Sprite icon;
 
-	public TableModule(WorktableGui table, Module module, boolean draggable) {
+	public TableModule(WorktableGui table, ComponentSprite parent, Module module, boolean draggable) {
 		this.module = module;
 
 		icon = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/icons/" + module.getID() + ".png"));
 
 		ComponentVoid base = new ComponentVoid(0, 0, 16, 16);
+		if (draggable) GlMixin.INSTANCE.transform(base).setValue(new Vec3d(0, 0, 30));
 		base.addTag(module);
 
 		base.BUS.hook(GuiComponent.MouseDownEvent.class, (event) -> {
 			if (event.getButton() == EnumMouseButton.LEFT) {
 				if (!draggable && event.getComponent().getMouseOver()) {
-					TableModule item = new TableModule(table, module, true);
+					TableModule item = new TableModule(table, parent, module, true);
 					table.paper.add(item.component);
 
 					item.component.setPos(event.getComponent().getParent().unTransformChildPos(event.getComponent(), event.getMousePos()));
@@ -163,16 +166,20 @@ public class TableModule {
 			float posPlate = (event.getComponent().getMouseOver() && !hasPos) ? -4 : 0;
 			float posIcon = (event.getComponent().getMouseOver() && !hasPos) ? -1.5f : 2;
 
+			//---------// RENDER MODULE HERE //---------//
 			GlStateManager.pushMatrix();
 			GlStateManager.color(1, 1, 1, 1);
-			GlStateManager.translate(position.getXf(), position.getYf(), event.getComponent().getMouseOver() ? 150 : 100);
+			GlStateManager.translate(position.getXf(), position.getYf(), event.getComponent().getMouseOver() ? 150 : 5);
 			GlStateManager.enableBlend();
-			plate.getTex().bind();
-			plate.draw((int) event.getPartialTicks(), posPlate, posPlate, size, size);
 
 			if (event.getComponent().getMouseOver() && !hasPos) {
+				plate.getTex().bind();
+				plate.draw((int) event.getPartialTicks(), posPlate, posPlate, size, size);
 				plate_highlighted.getTex().bind();
 				plate_highlighted.draw((int) event.getPartialTicks(), posPlate, posPlate, size, size);
+			} else {
+				plate.getTex().bind();
+				plate.draw((int) event.getPartialTicks(), posPlate, posPlate, size, size);
 			}
 
 			if (icon != null) {
@@ -180,6 +187,7 @@ public class TableModule {
 				icon.draw((int) event.getPartialTicks(), posIcon, posIcon, sizeIcon, sizeIcon);
 			}
 			GlStateManager.popMatrix();
+			//---------// RENDER MODULE HERE //---------//
 
 			UUID linkedUuid = table.componentLinks.get(table.getUUID(event.getComponent()));
 
@@ -233,6 +241,7 @@ public class TableModule {
 		GlStateManager.disableCull();
 		GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		GlStateManager.color(1, 1, 1, 1);
+		GlStateManager.translate(0, 0, 15);
 		streak.getTex().bind();
 		InterpBezier2D bezier = new InterpBezier2D(start, end);
 		List<Vec2d> list = bezier.list(50);
