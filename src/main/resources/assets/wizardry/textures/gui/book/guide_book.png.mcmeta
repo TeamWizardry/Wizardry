@@ -1,0 +1,14 @@
+{
+	"spritesheet":{
+		"textureWidth":812,
+		"textureHeight":812,
+		"sprites":{
+			"background":[0, 0, 508, 360],
+			"index_break":[0, 704, 177, 2],
+			"arrow_next":[4, 386, 36, 20],
+			"arrow_next_pressed":[50, 386, 36, 20],
+			"arrow_prev":[4, 412, 36, 20],
+			"arrow_prev_pressed":[50, 412, 36, 20]
+		}
+	}
+}

@@ -86,9 +86,9 @@ public class TilePearlHolderRenderer extends TileEntitySpecialRenderer<TilePearl
 
 			if (isPearl) {
 				Vec3d direction = Vec3d.ZERO;
-				for (int i = -4; i < 4; i++)
-					for (int j = -4; j < 4; j++)
-						for (int k = -4; k < 4; k++) {
+				for (int i = -6; i < 6; i++)
+					for (int j = -6; j < 6; j++)
+						for (int k = -6; k < 6; k++) {
 							BlockPos pos = new BlockPos(te.getPos().getX() + i, te.getPos().getY() + j, te.getPos().getZ() + k);
 							if (te.getWorld().getBlockState(pos).getBlock() != ModBlocks.MANA_MAGNET) continue;
 							direction = new Vec3d(te.getPos()).subtract(new Vec3d(pos)).normalize();
@@ -153,6 +153,7 @@ public class TilePearlHolderRenderer extends TileEntitySpecialRenderer<TilePearl
 			if (te.pearl.getItem() == ModItems.PEARL_NACRE)
 				color = new Color(Minecraft.getMinecraft().getItemColors().getColorFromItemstack(te.pearl, 0));
 
+			GlStateManager.color(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f);
 			Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModelBrightnessColor(te.pearl.getItem() == ModItems.MANA_ORB ? modelManaOrb : modelPearl, 1.0F, color.getRed() / 255.0f, color.getGreen() / 255.0f, color.getBlue() / 255.0f);
 
 			GlStateManager.disableBlend();

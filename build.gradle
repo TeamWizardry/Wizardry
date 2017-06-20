@@ -20,6 +20,11 @@ archivesBaseName = "wizardry"
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+configurations.all {
+    // check for updates every build
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
+
 minecraft {
     version = "1.11.2-13.20.0.2303"
     runDir = "run"

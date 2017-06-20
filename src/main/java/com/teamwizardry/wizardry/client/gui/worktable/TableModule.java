@@ -12,8 +12,10 @@ import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBe
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.Module;
+import com.teamwizardry.wizardry.api.spell.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.ModuleType;
 import com.teamwizardry.wizardry.lib.LibSprites;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -25,11 +27,13 @@ import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 
+import static com.teamwizardry.wizardry.api.spell.ModuleType.MODIFIER;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 
@@ -41,15 +45,42 @@ public class TableModule {
 	public final Module module;
 	public ComponentVoid component;
 	private Sprite icon;
+	private Vec2d prevPos;
 
 	public TableModule(WorktableGui table, ComponentSprite parent, Module module, boolean draggable) {
 		this.module = module;
-
 		icon = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/icons/" + module.getID() + ".png"));
 
 		ComponentVoid base = new ComponentVoid(0, 0, 16, 16);
+		prevPos = base.getPos();
 		if (draggable) GlMixin.INSTANCE.transform(base).setValue(new Vec3d(0, 0, 30));
 		base.addTag(module);
+
+		base.BUS.hook(GuiComponent.MouseClickEvent.class, (event) -> {
+			if (!event.getComponent().getMouseOver()) return;
+			if (!draggable) return;
+			if (!event.getComponent().hasData(ModuleType.class, "last_modifier_type")) return;
+			ModuleType type = (ModuleType) event.getComponent().getData(ModuleType.class, "last_modifier_type");
+			ArrayDeque<Module> modifiers = new ArrayDeque<>();
+			for (Module modifier : ModuleRegistry.INSTANCE.getModules(type)) {
+				if (event.getComponent().hasData(Integer.class, modifier.getID())) {
+					int x = (int) event.getComponent().getData(Integer.class, modifier.getID());
+					for (int i = 0; i < x; i++) {
+						modifiers.add(modifier.copy());
+					}
+				}
+			}
+			if (modifiers.isEmpty()) return;
+			Module lastModule = modifiers.getLast();
+			int i = event.getComponent().hasData(Integer.class, lastModule.getID()) ? (int) event.getComponent().getData(Integer.class, lastModule.getID()) : 0;
+			if (i <= 0) return;
+
+			if (event.getButton() == EnumMouseButton.LEFT) {
+				event.getComponent().setData(Integer.class, lastModule.getID(), ++i);
+			} else if (event.getButton() == EnumMouseButton.RIGHT) {
+				event.getComponent().setData(Integer.class, lastModule.getID(), --i);
+			}
+		});
 
 		base.BUS.hook(GuiComponent.MouseDownEvent.class, (event) -> {
 			if (event.getButton() == EnumMouseButton.LEFT) {
@@ -67,6 +98,7 @@ public class TableModule {
 		});
 
 		base.BUS.hook(DragMixin.DragPickupEvent.class, (event) -> {
+			prevPos = event.getComponent().unTransform(Vec2d.ZERO, event.getComponent().getRoot());
 			if (event.getButton() == EnumMouseButton.RIGHT) {
 				event.getComponent().setData(Vec2d.class, "origin_pos", event.getComponent().getPos());
 				event.getComponent().setZIndex(-1);
@@ -74,24 +106,65 @@ public class TableModule {
 		});
 
 		base.BUS.hook(DragMixin.DragDropEvent.class, (event) -> {
+			if (prevPos.getXi() == event.getComponent().getPos().getX()
+					&& prevPos.getYi() == event.getComponent().getPos().getYi()) {
+				Module lastModifier = ModuleRegistry.INSTANCE.getModule((String) event.getComponent().getData(String.class, "last_modifier_type"));
+				if (lastModifier != null && event.getComponent().hasData(Integer.class, lastModifier.getID())) {
+					int x = (int) event.getComponent().getData(Integer.class, lastModifier.getID());
+					if (event.getButton() == EnumMouseButton.LEFT) x++;
+					else if (event.getButton() == EnumMouseButton.RIGHT) x--;
+					if (x <= 0) event.getComponent().removeData(Integer.class, lastModifier.getID());
+					else event.getComponent().setData(Integer.class, lastModifier.getID(), x);
+				}
+			}
+
 			if (event.getButton() == EnumMouseButton.LEFT) {
-				Vec2d size = table.paper.getSize();
-				Vec2d pos = event.getComponent().getPos();
-				boolean b = pos.getX() >= 0 && pos.getX() <= size.getX() && pos.getY() >= 0 && pos.getY() <= size.getY();
+
+				Vec2d plateSize = table.paper.getSize();
+				Vec2d platePos = event.getComponent().getPos();
+				boolean b = platePos.getX() >= 0 && platePos.getX() <= plateSize.getX() && platePos.getY() >= 0 && platePos.getY() <= plateSize.getY();
+
+				// MODIFIER ADDING //
+				{
+					if (module.getModuleType() == MODIFIER) {
+						GuiComponent<?> componentHovered = null;
+						for (GuiComponent component : table.paperComponents.keySet()) {
+							Module module2 = table.getModule(component);
+							if (module2 == null) continue;
+							if (!component.getMouseOverNoOcclusion()) continue;
+							if (module2.getID().equals(module.getID())) continue;
+							componentHovered = component;
+						}
+						if (componentHovered != null) {
+							int i = componentHovered.hasData(Integer.class, module.getID()) ? componentHovered.getData(Integer.class, module.getID()) : 0;
+							componentHovered.setData(Integer.class, module.getID(), ++i);
+							componentHovered.setData(String.class, "last_modifier_type", module.getID());
+						}
+
+						table.paperComponents.remove(event.getComponent());
+
+						event.getComponent().invalidate();
+						event.cancel();
+					}
+				}
+				// MODIFIER ADDING //
+
 				if (!b) {
-					UUID uuid1 = table.getUUID(event.getComponent());
-					if (table.componentLinks.containsKey(uuid1)) {
-						table.componentLinks.remove(uuid1);
-					}
-					if (table.componentLinks.containsValue(uuid1)) {
-						UUID uuid2 = table.componentLinks.get(uuid1);
-						table.componentLinks.remove(uuid2, uuid1);
-					}
+					if (module.getModuleType() != MODIFIER) {
+						UUID uuid1 = table.getUUID(event.getComponent());
+						if (table.componentLinks.containsKey(uuid1)) {
+							table.componentLinks.remove(uuid1);
+						}
+						if (table.componentLinks.containsValue(uuid1)) {
+							UUID uuid2 = table.componentLinks.get(uuid1);
+							table.componentLinks.remove(uuid2, uuid1);
+						}
 
-					table.paperComponents.remove(event.getComponent());
+						table.paperComponents.remove(event.getComponent());
 
-					event.getComponent().invalidate();
-					event.cancel();
+						event.getComponent().invalidate();
+						event.cancel();
+					}
 				}
 
 			} else if (event.getButton() == EnumMouseButton.RIGHT) {
@@ -142,56 +215,100 @@ public class TableModule {
 
 		base.BUS.hook(GuiComponent.PreDrawEvent.class, (GuiComponent.PreDrawEvent event) -> {
 			Vec2d position = event.getComponent().getPos();
-
 			boolean hasPos = event.getComponent().hasData(Vec2d.class, "origin_pos");
-			if (hasPos) {
-				position = (Vec2d) event.getComponent().getData(Vec2d.class, "origin_pos");
 
-				if (position != null) {
-					Vec2d start = position.add(8, 8);
-					Vec2d end = event.getComponent().getParent().unTransformChildPos(event.getComponent(), event.getMousePos());
-
-
-					Module module1 = table.getModule(event.getComponent());
-					if (module1 == null) return;
-
-					drawWire(start, end, getColorForModule(module1.getModuleType()), Color.WHITE);
-				}
-			}
-
-			if (position == null) position = event.getComponent().getPos();
-
-			float size = (event.getComponent().getMouseOver() && !hasPos) ? 24 : 16;
-			float sizeIcon = (event.getComponent().getMouseOver() && !hasPos) ? 18 : 12;
-			float posPlate = (event.getComponent().getMouseOver() && !hasPos) ? -4 : 0;
-			float posIcon = (event.getComponent().getMouseOver() && !hasPos) ? -1.5f : 2;
-
-			//---------// RENDER MODULE HERE //---------//
-			GlStateManager.pushMatrix();
-			GlStateManager.color(1, 1, 1, 1);
-			GlStateManager.translate(position.getXf(), position.getYf(), event.getComponent().getMouseOver() ? 150 : 5);
-			GlStateManager.enableBlend();
-
-			if (event.getComponent().getMouseOver() && !hasPos) {
-				plate.getTex().bind();
-				plate.draw((int) event.getPartialTicks(), posPlate, posPlate, size, size);
-				plate_highlighted.getTex().bind();
-				plate_highlighted.draw((int) event.getPartialTicks(), posPlate, posPlate, size, size);
-			} else {
-				plate.getTex().bind();
-				plate.draw((int) event.getPartialTicks(), posPlate, posPlate, size, size);
-			}
-
-			if (icon != null) {
-				icon.getTex().bind();
-				icon.draw((int) event.getPartialTicks(), posIcon, posIcon, sizeIcon, sizeIcon);
-			}
-			GlStateManager.popMatrix();
-			//---------// RENDER MODULE HERE //---------//
-
-			UUID linkedUuid = table.componentLinks.get(table.getUUID(event.getComponent()));
-
+			//---------// DRAW WIRE TO CURSOR //---------//
 			{
+				if (hasPos) {
+					position = (Vec2d) event.getComponent().getData(Vec2d.class, "origin_pos");
+
+					if (position != null) {
+						Vec2d start = position.add(8, 8);
+						Vec2d end = event.getComponent().getParent().unTransformChildPos(event.getComponent(), event.getMousePos());
+
+
+						Module module1 = table.getModule(event.getComponent());
+						if (module1 == null) return;
+
+						drawWire(start, end, getColorForModule(module1.getModuleType()), Color.WHITE);
+					}
+				}
+
+				if (position == null) position = event.getComponent().getPos();
+			}
+			//---------// DRAW WIRE TO CURSOR //---------//
+
+			//---------// RENDER MODULE //---------//
+			{
+				float size = (event.getComponent().getMouseOver() && !hasPos) ? 24 : 16;
+				float sizeIcon = (event.getComponent().getMouseOver() && !hasPos) ? 18 : 12;
+				float posPlate = (event.getComponent().getMouseOver() && !hasPos) ? -4 : 0;
+				float posIcon = (event.getComponent().getMouseOver() && !hasPos) ? -1.5f : 2;
+
+				GlStateManager.pushMatrix();
+				GlStateManager.color(1, 1, 1, 1);
+				GlStateManager.translate(position.getXf(), position.getYf(), event.getComponent().getMouseOver() ? 150 : 5);
+				GlStateManager.enableBlend();
+
+				if (event.getComponent().getMouseOver() && !hasPos) {
+					plate.getTex().bind();
+					plate.draw((int) event.getPartialTicks(), posPlate, posPlate, size, size);
+					plate_highlighted.getTex().bind();
+					plate_highlighted.draw((int) event.getPartialTicks(), posPlate, posPlate, size, size);
+				} else {
+					plate.getTex().bind();
+					plate.draw((int) event.getPartialTicks(), posPlate, posPlate, size, size);
+				}
+
+				if (icon != null) {
+					icon.getTex().bind();
+					icon.draw((int) event.getPartialTicks(), posIcon, posIcon, sizeIcon, sizeIcon);
+				}
+
+				// RENDER MODIFIERS //
+				if (draggable) {
+
+					ArrayList<Module> modifiers = new ArrayList<>();
+					for (Module modifier : ModuleRegistry.INSTANCE.getModules(ModuleType.MODIFIER)) {
+						if (event.getComponent().hasData(Integer.class, modifier.getID())) {
+							modifiers.add(modifier);
+						}
+					}
+
+					double slice = 2 * Math.PI / modifiers.size();
+					for (int i = 0; i < modifiers.size(); i++) {
+						Module modifier = modifiers.get(i);
+						double angle = slice * i + (ClientTickHandler.getTicks() / 20.0);// + event.getPartialTicks();
+						float newX = (float) (5 + 30 * Math.cos(angle));
+						float newY = (float) (5 + 30 * Math.sin(angle));
+						float s = 12;
+						Sprite modifierIcon = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/icons/" + modifier.getID() + ".png"));
+						plate.getTex().bind();
+						plate.draw((int) event.getPartialTicks(), newX, newY, s, s);
+						modifierIcon.bind();
+						modifierIcon.draw((int) event.getPartialTicks(), newX + 2, newY + 2, s - 4, s - 4);
+
+						drawWire(
+								new Vec2d(newX, newY).add(s / 2.0, s / 2.0),
+								Vec2d.ZERO.add(8, 8),
+								getColorForModule(ModuleType.MODIFIER),
+								getColorForModule(table.getModule(event.getComponent()).getModuleType()));
+
+						int x = (int) event.getComponent().getData(Integer.class, modifier.getID());
+						Minecraft.getMinecraft().fontRenderer.drawString("x" + x, newX + s / 2 - Minecraft.getMinecraft().fontRenderer.getStringWidth("x" + x) / 2, newY + s, Color.LIGHT_GRAY.getRGB(), false);
+						GlStateManager.color(1, 1, 1, 1);
+					}
+				}
+				// RENDER MODIFIERS //
+
+				GlStateManager.popMatrix();
+			}
+			//---------// RENDER MODULE //---------//
+
+			//---------// RENDER LINKS BETWEEN MODULES //---------//
+			{
+				UUID linkedUuid = table.componentLinks.get(table.getUUID(event.getComponent()));
+
 				GuiComponent component = table.getComponent(linkedUuid);
 				if (component == null) return;
 				if (linkedUuid == table.getUUID(event.getComponent())) return;
@@ -216,6 +333,7 @@ public class TableModule {
 
 				drawWire(fromPos, toPos, getColorForModule(module2.getModuleType()), getColorForModule(module1.getModuleType()));
 			}
+			//---------// RENDER LINKS BETWEEN MODULES //---------//
 		});
 
 		base.getTooltip().func((Function<GuiComponent<ComponentVoid>, List<String>>) t -> {
@@ -242,7 +360,7 @@ public class TableModule {
 		GlStateManager.disableCull();
 		GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		GlStateManager.color(1, 1, 1, 1);
-		GlStateManager.translate(0, 0, 15);
+		GlStateManager.translate(0, 0, -10);
 		streak.getTex().bind();
 		InterpBezier2D bezier = new InterpBezier2D(start, end);
 		List<Vec2d> list = bezier.list(50);

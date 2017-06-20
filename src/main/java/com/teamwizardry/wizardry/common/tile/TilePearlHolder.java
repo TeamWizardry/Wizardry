@@ -50,9 +50,9 @@ public class TilePearlHolder extends TileManaSink {
 				cooldown--;
 				return;
 			}
-			for (int i = -4; i < 4; i++)
-				for (int j = -4; j < 4; j++)
-					for (int k = -4; k < 4; k++) {
+			for (int i = -6; i < 6; i++)
+				for (int j = -6; j < 6; j++)
+					for (int k = -6; k < 6; k++) {
 						BlockPos pos = new BlockPos(getPos().getX() + i, getPos().getY() + j, getPos().getZ() + k);
 						if (world.getBlockState(pos).getBlock() != ModBlocks.MANA_MAGNET) continue;
 

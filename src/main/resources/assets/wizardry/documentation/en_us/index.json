@@ -2,17 +2,17 @@
   "index": [
     {
       "icon": "wizardry:textures/gui/book/icons/pointy_hat.png",
-      "text": "Learn everything you need to know to get started here.",
+      "text": "Basics",
       "link": "/basics/index.json"
     },
     {
       "icon": "wizardry:textures/gui/book/icons/embrassed_energy.png",
-      "text": "Learn about all the multi-block structures here.",
+      "text": "Mana",
       "link": "/basics/mana.json"
     },
     {
       "icon": "wizardry:textures/gui/book/icons/fangs.png",
-      "text": "Learn about all the mobs present in the mod.",
+      "text": "Mobs",
       "link": "/mobs/index.json"
     },
     {

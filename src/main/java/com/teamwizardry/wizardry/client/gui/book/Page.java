@@ -5,11 +5,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.teamwizardry.librarianlib.core.LibrarianLib;
-import com.teamwizardry.librarianlib.features.gui.GuiComponent;
-import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentText;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentVoid;
-import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.client.Minecraft;
 
@@ -23,13 +20,13 @@ import java.util.List;
  */
 public class Page {
 
-	private static Sprite NAV_BAR_HOME = BookGui.SPRITE_SHEET.getSprite("hard_back", 18, 9);
-	private static Sprite NAV_BAR_BACK = BookGui.SPRITE_SHEET.getSprite("back", 18, 10);
-	private static Sprite NAV_BAR_NEXT = BookGui.SPRITE_SHEET.getSprite("forward", 18, 10);
-
-	private static Sprite NAV_BAR_HOME_HIGHLIGHTED = BookGui.SPRITE_SHEET.getSprite("hard_back_highlighted", 18, 9);
-	private static Sprite NAV_BAR_BACK_HIGHLIGHTED = BookGui.SPRITE_SHEET.getSprite("back_highlighted", 18, 10);
-	private static Sprite NAV_BAR_NEXT_HIGHLIGHTED = BookGui.SPRITE_SHEET.getSprite("forward_highlighted", 18, 10);
+	//private static Sprite NAV_BAR_HOME = BookGui.SPRITE_SHEET.getSprite("hard_back", 18, 9);
+	//private static Sprite NAV_BAR_BACK = BookGui.SPRITE_SHEET.getSprite("back", 18, 10);
+	//private static Sprite NAV_BAR_NEXT = BookGui.SPRITE_SHEET.getSprite("forward", 18, 10);
+//
+	//private static Sprite NAV_BAR_HOME_HIGHLIGHTED = BookGui.SPRITE_SHEET.getSprite("hard_back_highlighted", 18, 9);
+	//private static Sprite NAV_BAR_BACK_HIGHLIGHTED = BookGui.SPRITE_SHEET.getSprite("back_highlighted", 18, 10);
+	//private static Sprite NAV_BAR_NEXT_HIGHLIGHTED = BookGui.SPRITE_SHEET.getSprite("forward_highlighted", 18, 10);
 
 	public ComponentVoid component;
 	public int pageID = 0;
@@ -39,10 +36,10 @@ public class Page {
 		component = new ComponentVoid(0, 0);
 
 		ComponentVoid navBar = new ComponentVoid(0, 0, width, height);
-		ComponentSprite home = new ComponentSprite(NAV_BAR_HOME_HIGHLIGHTED, (width / 2) - (NAV_BAR_HOME.getWidth() / 2), height - 20);
-		ComponentSprite back = new ComponentSprite(NAV_BAR_BACK_HIGHLIGHTED, (width / 2) - (NAV_BAR_BACK.getWidth() / 2) - 40, height - 20);
-		ComponentSprite next = new ComponentSprite(NAV_BAR_NEXT_HIGHLIGHTED, (width / 2) - (NAV_BAR_NEXT.getWidth() / 2) + 40, height - 20);
-		navBar.add(home, back, next);
+		//ComponentSprite home = new ComponentSprite(NAV_BAR_HOME_HIGHLIGHTED, (width / 2) - (NAV_BAR_HOME.getWidth() / 2), height - 20);
+		//ComponentSprite back = new ComponentSprite(NAV_BAR_BACK_HIGHLIGHTED, (width / 2) - (NAV_BAR_BACK.getWidth() / 2) - 40, height - 20);
+		//ComponentSprite next = new ComponentSprite(NAV_BAR_NEXT_HIGHLIGHTED, (width / 2) - (NAV_BAR_NEXT.getWidth() / 2) + 40, height - 20);
+		//navBar.add(home, back, next);
 		component.add(navBar);
 
 		InputStream stream;
@@ -97,35 +94,35 @@ public class Page {
 				//-------------//  TEXT PAGE   //-------------//
 
 				//-------------//  NAV BAR   //-------------//
-				home.BUS.hook(GuiComponent.MouseClickEvent.class, componentTickEvent -> {
-					component.setVisible(false);
-					component.setEnabled(false);
-					bookGui.mainIndex.setVisible(true);
-					bookGui.mainIndex.setEnabled(true);
-				});
-
-				back.BUS.hook(GuiComponent.ComponentTickEvent.class, componentTickEvent -> {
-					if (pageID <= 0) back.setSprite(NAV_BAR_BACK);
-					else back.setSprite(NAV_BAR_BACK_HIGHLIGHTED);
-				});
-				back.BUS.hook(GuiComponent.MouseClickEvent.class, componentTickEvent -> {
-					if (pageID > 0) {
-						pageID--;
-						page.getText().setValue(pages.get(pageID));
-					}
-				});
-
-				next.BUS.hook(GuiComponent.ComponentTickEvent.class, componentTickEvent -> {
-					if (pageID >= pages.keySet().size() - 1) next.setSprite(NAV_BAR_NEXT);
-					else next.setSprite(NAV_BAR_NEXT_HIGHLIGHTED);
-				});
-				next.BUS.hook(GuiComponent.MouseClickEvent.class, componentTickEvent -> {
-					if (pageID < pages.keySet().size() - 1) {
-						pageID++;
-						page.getText().setValue(pages.get(pageID));
-					}
-				});
-				//-------------//  NAV BAR   //-------------//
+				//home.BUS.hook(GuiComponent.MouseClickEvent.class, componentTickEvent -> {
+				//	component.setVisible(false);
+				//	component.setEnabled(false);
+				//	bookGui.mainIndex.setVisible(true);
+				//	bookGui.mainIndex.setEnabled(true);
+				//});
+//
+				//back.BUS.hook(GuiComponent.ComponentTickEvent.class, componentTickEvent -> {
+				//	if (pageID <= 0) back.setSprite(NAV_BAR_BACK);
+				//	else back.setSprite(NAV_BAR_BACK_HIGHLIGHTED);
+				//});
+				//back.BUS.hook(GuiComponent.MouseClickEvent.class, componentTickEvent -> {
+				//	if (pageID > 0) {
+				//		pageID--;
+				//		page.getText().setValue(pages.get(pageID));
+				//	}
+				//});
+//
+				//next.BUS.hook(GuiComponent.ComponentTickEvent.class, componentTickEvent -> {
+				//	if (pageID >= pages.keySet().size() - 1) next.setSprite(NAV_BAR_NEXT);
+				//	else next.setSprite(NAV_BAR_NEXT_HIGHLIGHTED);
+				//});
+				//next.BUS.hook(GuiComponent.MouseClickEvent.class, componentTickEvent -> {
+				//	if (pageID < pages.keySet().size() - 1) {
+				//		pageID++;
+				//		page.getText().setValue(pages.get(pageID));
+				//	}
+				//});
+				////-------------//  NAV BAR   //-------------//
 			}
 		}
 	}

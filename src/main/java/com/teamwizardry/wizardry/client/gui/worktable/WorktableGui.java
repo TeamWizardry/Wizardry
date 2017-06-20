@@ -11,10 +11,7 @@ import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.librarianlib.features.sprite.Texture;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.spell.Module;
-import com.teamwizardry.wizardry.api.spell.ModuleRegistry;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.api.spell.SpellRecipeConstructor;
+import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.common.network.PacketSendSpellToBook;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.Minecraft;
@@ -48,45 +45,51 @@ public class WorktableGui extends GuiBase {
 
 		ComponentRect rect = new ComponentRect(0, 0, 40000, 40000);
 		rect.getColor().setValue(new Color(0xB3000000, true));
-		GlMixin.INSTANCE.transform(rect).setValue(new Vec3d(0, 0, -30));
+		GlMixin.INSTANCE.transform(rect).setValue(new Vec3d(0, 0, -1000));
 		getFullscreenComponents().add(rect);
 
 		ComponentSprite background = new ComponentSprite(BACKGROUND_SPRITE, 0, 0);
-		GlMixin.INSTANCE.transform(background).setValue(new Vec3d(0, 0, 10));
+		GlMixin.INSTANCE.transform(background).setValue(new Vec3d(0, 0, 20));
 		getMainComponents().add(background);
 
 		paper = new ComponentVoid(180, 19, 180, 188);
 		getMainComponents().add(paper);
 
 		ComponentSprite shapes = new ComponentSprite(SIDE_BAR, 29, 31, 48, 80);
-		GlMixin.INSTANCE.transform(shapes).setValue(new Vec3d(0, 0, -10));
+		GlMixin.INSTANCE.transform(shapes).setValue(new Vec3d(0, 0, -15));
 		ComponentGrid scrollShapes = addModules(shapes, ModuleType.SHAPE);
+		GlMixin.INSTANCE.transform(scrollShapes).setValue(new Vec3d(0, 0, 10));
 		addScrollbar(shapes, scrollShapes, 77, 31);
 		getMainComponents().add(shapes);
 
 		ComponentSprite effects = new ComponentSprite(SIDE_BAR, 93, 31, 48, 80);
-		GlMixin.INSTANCE.transform(effects).setValue(new Vec3d(0, 0, -10));
+		GlMixin.INSTANCE.transform(shapes).setValue(new Vec3d(0, 0, -15));
 		ComponentGrid scrollEffects = addModules(effects, ModuleType.EFFECT);
+		GlMixin.INSTANCE.transform(scrollEffects).setValue(new Vec3d(0, 0, 10));
 		addScrollbar(effects, scrollEffects, 141, 31);
 		getMainComponents().add(effects);
 
 		ComponentSprite events = new ComponentSprite(SIDE_BAR, 29, 123, 48, 80);
-		GlMixin.INSTANCE.transform(effects).setValue(new Vec3d(0, 0, -10));
+		GlMixin.INSTANCE.transform(shapes).setValue(new Vec3d(0, 0, -15));
 		ComponentGrid scrollEvents = addModules(events, ModuleType.EVENT);
+		GlMixin.INSTANCE.transform(scrollEvents).setValue(new Vec3d(0, 0, 10));
 		addScrollbar(events, scrollEvents, 77, 123);
 		getMainComponents().add(events);
 
 		ComponentSprite modifiers = new ComponentSprite(SIDE_BAR, 93, 123, 48, 80);
-		GlMixin.INSTANCE.transform(effects).setValue(new Vec3d(0, 0, -10));
+		GlMixin.INSTANCE.transform(shapes).setValue(new Vec3d(0, 0, -15));
 		ComponentGrid scrollModifiers = addModules(modifiers, ModuleType.MODIFIER);
+		GlMixin.INSTANCE.transform(scrollModifiers).setValue(new Vec3d(0, 0, 10));
 		addScrollbar(modifiers, scrollModifiers, 141, 123);
 		getMainComponents().add(modifiers);
 
 		ComponentSprite save = new ComponentSprite(new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/button.png")), 395, 30, (int) (88 / 1.5), (int) (24 / 1.5));
+		GlMixin.INSTANCE.transform(save).setValue(new Vec3d(0, 0, 20));
 		int width = Minecraft.getMinecraft().fontRenderer.getStringWidth("SAVE");
 		int height = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT;
-		ComponentText textSave = new ComponentText(395 + (save.getSize().getXi() / 2) - width / 2, 30 + (save.getSize().getYi() / 2) - height / 2);
+		ComponentText textSave = new ComponentText((save.getSize().getXi() / 2) - width / 2, (save.getSize().getYi() / 2) - height / 2);
 		textSave.getText().setValue("SAVE");
+		save.add(textSave);
 		save.BUS.hook(GuiComponent.MouseClickEvent.class, (event) -> {
 
 			HashSet<GuiComponent> heads = getHeads();
@@ -107,7 +110,6 @@ public class WorktableGui extends GuiBase {
 			}
 		});
 		getMainComponents().add(save);
-		getMainComponents().add(textSave);
 	}
 
 	public UUID getUUID(GuiComponent component) {
@@ -124,6 +126,16 @@ public class WorktableGui extends GuiBase {
 
 		Module module = getModule(component);
 		if (module == null) return null;
+
+		for (Module modifier : ModuleRegistry.INSTANCE.getModules(ModuleType.MODIFIER)) {
+			if (!(modifier instanceof IModifier)) continue;
+			if (component.hasData(Integer.class, modifier.getID())) {
+				int x = (int) component.getData(Integer.class, modifier.getID());
+				for (int i = 0; i < x; i++) {
+					((IModifier) modifier).apply(module);
+				}
+			}
+		}
 
 		if (!componentLinks.containsKey(getUUID(component))) return module;
 		UUID uuidChild = componentLinks.get(getUUID(component));

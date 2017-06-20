@@ -1,23 +1,10 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.BLOCK_HIT;
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ENTITY_HIT;
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.TARGET_HIT;
-
-import javax.annotation.Nonnull;
-
-import com.teamwizardry.wizardry.api.spell.Attributes;
-import com.teamwizardry.wizardry.api.spell.ITaxing;
-import com.teamwizardry.wizardry.api.spell.Module;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.api.spell.RegisterModule;
-import com.teamwizardry.wizardry.api.spell.SpellData;
+import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.init.ModSounds;
 import com.teamwizardry.wizardry.lib.LibParticles;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.IGrowable;
 import net.minecraft.block.state.IBlockState;
@@ -33,6 +20,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IPlantable;
+
+import javax.annotation.Nonnull;
+
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
 /**
  * Created by LordSaad.
@@ -70,32 +61,29 @@ public class ModuleEffectThrive extends Module implements ITaxing {
 		BlockPos targetPos = spell.getData(BLOCK_HIT);
 		Entity targetEntity = spell.getData(ENTITY_HIT);
 		Entity caster = spell.getData(CASTER);
+		Vec3d pos = spell.getData(TARGET_HIT);
 
+		if (pos != null)
+			spell.world.playSound(null, new BlockPos(pos), ModSounds.HEAL, SoundCategory.NEUTRAL, 1, 1);
 		if (targetEntity instanceof EntityLivingBase) {
 			double strength = getModifierPower(spell, Attributes.INCREASE_POTENCY, 3, 20, true, true) / 10.0;
 
 			if (!tax(this, spell)) return false;
 
 			((EntityLivingBase) targetEntity).heal((float) strength);
-			spell.world.playSound(null, targetEntity.getPosition(), ModSounds.HEAL, SoundCategory.NEUTRAL, 1, 1);
 		}
 
 		if (targetPos != null) {
-			spell.world.playSound(null, targetPos, ModSounds.HEAL, SoundCategory.NEUTRAL, 1, 1);
 			if (world.getBlockState(targetPos).getBlock() instanceof IGrowable) {
 				if (!tax(this, spell)) return false;
 				if (caster == null || (caster instanceof EntityPlayer && BlockUtils.hasEditPermission(targetPos, (EntityPlayerMP) caster)))
 					ItemDye.applyBonemeal(new ItemStack(Items.DYE), world, targetPos);
-			}
-			else if (world.getBlockState(targetPos).getBlock() instanceof IPlantable)
-			{
+			} else if (world.getBlockState(targetPos).getBlock() instanceof IPlantable) {
 				IBlockState state = world.getBlockState(targetPos);
 				Block block = state.getBlock();
 				if (!tax(this, spell)) return false;
-				if (caster == null || (caster instanceof EntityPlayer && BlockUtils.hasEditPermission(targetPos, (EntityPlayerMP) caster)))
-				{
-					while (world.getBlockState(targetPos.up()).getBlock() == block)
-					{
+				if (caster == null || (caster instanceof EntityPlayer && BlockUtils.hasEditPermission(targetPos, (EntityPlayerMP) caster))) {
+					while (world.getBlockState(targetPos.up()).getBlock() == block) {
 						targetPos = targetPos.up();
 						state = world.getBlockState(targetPos);
 						block = state.getBlock();
