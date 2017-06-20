@@ -17,6 +17,7 @@ import kotlin.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -85,10 +86,11 @@ public class ComponentIndex extends GuiComponent<ComponentIndex> {
 				});
 
 				double height = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT;
-				ComponentText text = new ComponentText(plateHeight + 10, (int) (plateHeight / 2.0), ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.MIDDLE);
+				ComponentText text = new ComponentText(plateHeight + 10, (int) (plateHeight / 2.0 + height / 2.0), ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.MIDDLE);
 				text.getText().setValue(indexItem.text);
+				text.getScale().setValue(2f);
 				text.BUS.hook(GuiComponent.ComponentTickEvent.class, (event) -> {
-					text.getUnicode().setValue(event.getComponent().getMouseOver());
+					text.getText().setValue((plate.getMouseOver() ? TextFormatting.ITALIC + " " : "") + indexItem.text);
 				});
 				plate.add(text);
 
@@ -144,7 +146,7 @@ public class ComponentIndex extends GuiComponent<ComponentIndex> {
 			if (type.equals("index")) {
 				return new Pair<>(type, getNewIndex(newResource));
 			} else if (type.equals("content")) {
-				return new Pair<>(type, new ComponentContentPage(280, 45, 200, 300, newResource, componentBook));
+				return new Pair<>(type, new ComponentContentPage(220, componentBook.getSize().getYi() - getSize().getYi() - 240, 200, 300, newResource, componentBook));
 			}
 		}
 		return null;

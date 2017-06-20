@@ -28,19 +28,20 @@ public class ComponentContentPage extends GuiComponent<ComponentContentPage> {
 
 		HashMap<Integer, GuiComponent<?>> pages = getContent();
 
-		ComponentNavBar navBar = new ComponentNavBar(0, componentBook.getSize().getYi() - getSize().getYi() + 70, 170, 15, pages.size() - 1);
+		ComponentNavBar navBar = new ComponentNavBar((int) (getSize().getX() / 2.0 - 170 / 2.0), componentBook.getSize().getYi() - getSize().getYi() + 249, 170, 15, pages.size() - 1);
 		add(navBar);
 
 		navBar.BUS.hook(EventNavBarChange.class, eventNavBarChange -> {
 			if (prevComps != null) prevComps.invalidate();
 
+			Minecraft.getMinecraft().player.sendChatMessage(navBar.getPage() + "");
 			if (pages.size() <= navBar.getPage()) return;
 
 			GuiComponent<?> content = pages.get(navBar.getPage());
 			add(content);
 
-			ComponentSprite lineBreak1 = new ComponentSprite(BookGui.LINE_BREAK, 0, 0, 177, 2);
-			ComponentSprite lineBreak2 = new ComponentSprite(BookGui.LINE_BREAK, 0, getSize().getYi(), 177, 2);
+			ComponentSprite lineBreak1 = new ComponentSprite(BookGui.LINE_BREAK, (int) (getSize().getX() / 2.0 - 177.0 / 2.0), -5, 177, 2);
+			ComponentSprite lineBreak2 = new ComponentSprite(BookGui.LINE_BREAK, (int) (getSize().getX() / 2.0 - 177.0 / 2.0), getSize().getYi() - 5, 177, 2);
 			content.add(lineBreak1, lineBreak2);
 			prevComps = content;
 		});
@@ -84,13 +85,13 @@ public class ComponentContentPage extends GuiComponent<ComponentContentPage> {
 								if (!lineElement.isJsonPrimitive()) continue;
 
 								// split each line in json into pages if need be.
-								List<String> chunks = Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(lineElement.getAsString(), 2100);
+								List<String> chunks = Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(lineElement.getAsString(), 1900);
 
 								for (String chunk : chunks) {
 									ComponentText page = new ComponentText(0, 0, ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.TOP);
-									page.setSize(getSize());
+									page.getScale().setValue(2f);
 									page.getUnicode().setValue(true);
-									page.getWrap().setValue(115);
+									page.getWrap().setValue(100);
 									page.getText().setValue(chunk);
 									pages.put(i++, page);
 								}
