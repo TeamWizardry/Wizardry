@@ -32,12 +32,13 @@ public class ComponentContentPage extends GuiComponent<ComponentContentPage> {
 		add(navBar);
 
 		navBar.BUS.hook(EventNavBarChange.class, eventNavBarChange -> {
-			if (prevComps != null) prevComps.invalidate();
+			if (prevComps != null) prevComps.setVisible(false);
 
 			Minecraft.getMinecraft().player.sendChatMessage(navBar.getPage() + "");
 			if (pages.size() <= navBar.getPage()) return;
 
 			GuiComponent<?> content = pages.get(navBar.getPage());
+			content.setVisible(true);
 			add(content);
 
 			ComponentSprite lineBreak1 = new ComponentSprite(BookGui.LINE_BREAK, (int) (getSize().getX() / 2.0 - 177.0 / 2.0), -5, 177, 2);

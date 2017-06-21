@@ -188,6 +188,8 @@ public class WorktableGui extends GuiBase {
 		ComponentSprite bar = new ComponentSprite(SCROLL_BAR, 1, 0, 3, 11);
 		scrollBar.BUS.hook(GuiComponent.MouseDragEvent.class, (event) -> {
 			if (!event.getComponent().getMouseOver() && !parent.getMouseOver()) return;
+			for (GuiComponent<?> comp : paperComponents.keySet()) if (comp.hasTag("dragging")) return;
+
 			Vec2d mouse = event.getComponent().getParent().unTransformChildPos(event.getComponent(), event.getMousePos());
 			double clamp = MathHelper.clamp(mouse.getY(), y + 5.5, y + 79 - 5.5);
 			double extra = (gridView.getChildren().size() % 3) * 16;
@@ -200,11 +202,14 @@ public class WorktableGui extends GuiBase {
 		});
 		scrollBar.BUS.hook(GuiComponent.MouseWheelEvent.class, (event) -> {
 			if (!event.getComponent().getMouseOver() && !parent.getMouseOver()) return;
+			for (GuiComponent<?> comp : paperComponents.keySet()) if (comp.hasTag("dragging")) return;
+
 			int dir = event.getDirection().ydirection * -16;
 			double barPos = bar.getPos().getY();
 			double clamp = MathHelper.clamp(barPos + dir, 0, 68);
 			double extra = (gridView.getChildren().size() % 3) * 16;
 			if (gridView.getChildren().size() <= 15) return;
+
 			bar.setPos(new Vec2d(bar.getPos().getX(), clamp));
 			double sub = bar.getPos().getY() - y;
 			double percent = sub / 68.0;

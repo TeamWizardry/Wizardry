@@ -89,6 +89,7 @@ public class TableModule {
 					table.paper.add(item.component);
 
 					item.component.setPos(event.getComponent().getParent().unTransformChildPos(event.getComponent(), event.getMousePos()));
+					item.component.addTag("dragging");
 					DragMixin<ComponentVoid> drag = new DragMixin<>(item.component, vec2d -> vec2d);
 					drag.setClickPos(new Vec2d(6, 6));
 					drag.setMouseDown(event.getButton());
@@ -102,10 +103,13 @@ public class TableModule {
 			if (event.getButton() == EnumMouseButton.RIGHT) {
 				event.getComponent().setData(Vec2d.class, "origin_pos", event.getComponent().getPos());
 				event.getComponent().setZIndex(-1);
+				event.getComponent().addTag("dragging");
 			}
 		});
 
 		base.BUS.hook(DragMixin.DragDropEvent.class, (event) -> {
+			event.getComponent().removeTag("dragging");
+
 			if (prevPos.getXi() == event.getComponent().getPos().getX()
 					&& prevPos.getYi() == event.getComponent().getPos().getYi()) {
 				Module lastModifier = ModuleRegistry.INSTANCE.getModule((String) event.getComponent().getData(String.class, "last_modifier_type"));
@@ -216,6 +220,12 @@ public class TableModule {
 		base.BUS.hook(GuiComponent.PreDrawEvent.class, (GuiComponent.PreDrawEvent event) -> {
 			Vec2d position = event.getComponent().getPos();
 			boolean hasPos = event.getComponent().hasData(Vec2d.class, "origin_pos");
+			boolean anyDragging = false;
+			for (GuiComponent<?> comp : table.paperComponents.keySet())
+				if (comp.hasTag("dragging")) {
+					anyDragging = true;
+					break;
+				}
 
 			//---------// DRAW WIRE TO CURSOR //---------//
 			{
@@ -253,8 +263,11 @@ public class TableModule {
 				if (event.getComponent().getMouseOver() && !hasPos) {
 					plate.getTex().bind();
 					plate.draw((int) event.getPartialTicks(), posPlate, posPlate, size, size);
-					plate_highlighted.getTex().bind();
-					plate_highlighted.draw((int) event.getPartialTicks(), posPlate, posPlate, size, size);
+
+					if (!anyDragging) {
+						plate_highlighted.getTex().bind();
+						plate_highlighted.draw((int) event.getPartialTicks(), posPlate, posPlate, size, size);
+					}
 				} else {
 					plate.getTex().bind();
 					plate.draw((int) event.getPartialTicks(), posPlate, posPlate, size, size);
@@ -339,7 +352,7 @@ public class TableModule {
 		base.getTooltip().func((Function<GuiComponent<ComponentVoid>, List<String>>) t -> {
 			List<String> txt = new ArrayList<>();
 
-			if (t.hasData(Vec2d.class, "origin_pos")) return txt;
+			for (GuiComponent<?> comp : table.paperComponents.keySet()) if (comp.hasTag("dragging")) return txt;
 
 			txt.add(TextFormatting.GOLD + module.getReadableName());
 			if (GuiScreen.isShiftKeyDown())
