@@ -23,18 +23,8 @@ import javax.annotation.Nonnull;
 public class PotionSlippery extends PotionMod {
 
 	public PotionSlippery() {
-		super("slippery", false, 0xA9F3A9);
+		super("slippery", false, 0xABFCF0);
 		MinecraftForge.EVENT_BUS.register(this);
-	}
-
-	@Override
-	public void applyAttributesModifiersToEntity(EntityLivingBase entityLivingBaseIn, @Nonnull AbstractAttributeMap attributeMapIn, int amplifier) {
-		super.applyAttributesModifiersToEntity(entityLivingBaseIn, attributeMapIn, amplifier);
-	}
-
-	@Override
-	public void removeAttributesModifiersFromEntity(EntityLivingBase entityLivingBaseIn, @Nonnull AbstractAttributeMap attributeMapIn, int amplifier) {
-		super.removeAttributesModifiersFromEntity(entityLivingBaseIn, attributeMapIn, amplifier);
 	}
 
 	@SubscribeEvent

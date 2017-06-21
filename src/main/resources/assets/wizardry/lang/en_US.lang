@@ -60,6 +60,8 @@ achievement.wizardry.crunch=§oCRUNCH.§a
 achievement.wizardry.crunch.desc=Crash straight through Bedrock to the Underworld above
 
 death.attack.wizardry.mana=%s drowned in power
+death.attack.wizardry.crash=%s was pulverized
+death.attack.wizardry.crash.player=%s was pulverized by %s
 
 wizardry.subtitle.glassbreak=Glass shatters
 wizardry.subtitle.fizz=Dust fizzes
@@ -68,6 +70,15 @@ wizardry.subtitle.harp=Harp plays
 wizardry.subtitle.bell=Bell tolls
 wizardry.subtitle.bubbling=Liquid bubbles
 wizardry.subtitle.spirit=Spirit whispers
+
+wizardry.potion.crash=Crash
+wizardry.potion.low_gravity=Feather
+wizardry.potion.nullify_gravity=Ascension
+wizardry.potion.null_movement=Hermetic Seal
+wizardry.potion.phase=Ghostform
+wizardry.potion.slippery=Frictionless
+wizardry.potion.steroid=Overdrive
+wizardry.potion.time_slow=Unwinding
 
 item_group.wizardry=Wizardry
 

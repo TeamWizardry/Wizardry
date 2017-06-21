@@ -1,8 +1,11 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
 import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.init.ModPotions;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -37,17 +40,14 @@ public class ModuleEffectCrasherFall extends ModuleEffect {
 
 	@Override
 	public boolean run(@Nonnull SpellData spell) {
-		World world = spell.world;
-		BlockPos targetPos = spell.getData(BLOCK_HIT);
-		Entity caster = spell.getData(CASTER);
 		Entity targetEntity = spell.getData(ENTITY_HIT);
 
-		double range = getModifierPower(spell, Attributes.INCREASE_AOE, 1, 64, true, true);
-		double strength = getModifierPower(spell, Attributes.INCREASE_POTENCY, 1, 64, true, true);
-		range = 32;
+		if (targetEntity instanceof EntityLivingBase) {
+			double strength = getModifierPower(spell, Attributes.INCREASE_POTENCY, 2, 20, false, true);
+			double duration = getModifierPower(spell, Attributes.EXTEND_TIME, 5, 64, false, true) * 10;
+			if (!tax(this, spell)) return false;
 
-		if (targetEntity != null) {
-			// ASM RenderLivingBase
+			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.CRASH, (int) duration, (int) strength, true, false));
 		}
 		return true;
 	}

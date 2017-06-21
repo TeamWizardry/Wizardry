@@ -17,13 +17,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 public class PotionLowGrav extends PotionMod {
 
 	public PotionLowGrav() {
-		super("low_gravity", false, 0xFFFFFF);
+		super("low_gravity", false, 0x469CD6);
 		MinecraftForge.EVENT_BUS.register(this);
-	}
-
-	@SubscribeEvent
-	public void entityTick(LivingEvent.LivingUpdateEvent event) {
-
 	}
 
 	@SubscribeEvent

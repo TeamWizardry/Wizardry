@@ -20,7 +20,7 @@ import javax.annotation.Nonnull;
 public class PotionNullMovement extends PotionMod {
 
 	public PotionNullMovement() {
-		super("null_movement", false, 0xFFFFFF);
+		super("null_movement", true, 0x111111);
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 

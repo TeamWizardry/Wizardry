@@ -41,7 +41,7 @@ import java.util.List;
 public class PotionTimeSlow extends PotionMod {
 
 	public PotionTimeSlow() {
-		super("time_slow", false, 0xA9F3A9);
+		super("time_slow", false, 0xE8CA0D);
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 

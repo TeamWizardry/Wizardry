@@ -16,8 +16,7 @@ import javax.annotation.Nonnull;
 public class PotionSteroid extends PotionMod {
 
 	public PotionSteroid() {
-		super("steroid", false, 0xFFFFFF);
-		setBeneficial();
+		super("steroid", false, 0xDD5B23);
 	}
 
 	@Override

@@ -35,18 +35,8 @@ import java.util.List;
 public class PotionPhase extends PotionMod {
 
 	public PotionPhase() {
-		super("phase", false, 0xA9F3A9);
+		super("phase", false, 0xDAEFE7);
 		MinecraftForge.EVENT_BUS.register(this);
-	}
-
-	@Override
-	public void applyAttributesModifiersToEntity(EntityLivingBase entityLivingBaseIn, @Nonnull AbstractAttributeMap attributeMapIn, int amplifier) {
-		super.applyAttributesModifiersToEntity(entityLivingBaseIn, attributeMapIn, amplifier);
-	}
-
-	@Override
-	public void removeAttributesModifiersFromEntity(EntityLivingBase entityLivingBaseIn, @Nonnull AbstractAttributeMap attributeMapIn, int amplifier) {
-		super.removeAttributesModifiersFromEntity(entityLivingBaseIn, attributeMapIn, amplifier);
 	}
 
 	@SubscribeEvent
