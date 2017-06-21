@@ -18,13 +18,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEffectLeap extends Module implements IOverrideCooldown, ITaxing {
-
-	@Nonnull
-	@Override
-	public ModuleType getModuleType() {
-		return ModuleType.EFFECT;
-	}
+public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown {
 
 	@Nonnull
 	@Override

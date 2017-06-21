@@ -30,7 +30,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleShapeZone extends Module implements ILingeringModule, ICostModifier {
+public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 
 	@Nonnull
 	@Override

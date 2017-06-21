@@ -18,7 +18,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleShapeProjectile extends Module implements ICostModifier, ITaxing {
+public class ModuleShapeProjectile extends ModuleShape {
 
 	@Nonnull
 	@Override
@@ -54,7 +54,7 @@ public class ModuleShapeProjectile extends Module implements ICostModifier, ITax
 		Entity caster = spell.getData(CASTER);
 		if (origin == null) return false;
 		//	if (caster == null) return false;
-		if (!tax(this, spell)) return false;
+//		if (!tax(this, spell)) return false;
 
 		//float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - caster.rotationYaw));
 		//float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - caster.rotationYaw));

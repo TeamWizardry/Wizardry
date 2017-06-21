@@ -27,7 +27,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleShapeCone extends Module implements ICostModifier {
+public class ModuleShapeCone extends ModuleShape {
 
 	@Nonnull
 	@Override

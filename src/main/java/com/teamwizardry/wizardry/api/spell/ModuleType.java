@@ -7,6 +7,9 @@ public enum ModuleType {
 
 	BOOLEAN("boolean"), EFFECT("effect"), SHAPE("shape"), EVENT("event"), MODIFIER("modifier");
 
-	ModuleType(String name) {
+	public String name;
+	
+	private ModuleType(String name) {
+		this.name = name;
 	}
 }

@@ -9,13 +9,7 @@ import javax.annotation.Nonnull;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleModifierIncreaseAOE extends Module implements IModifier {
-
-	@Nonnull
-	@Override
-	public ModuleType getModuleType() {
-		return ModuleType.MODIFIER;
-	}
+public class ModuleModifierIncreaseAOE extends ModuleModifier {
 
 	@Nonnull
 	@Override

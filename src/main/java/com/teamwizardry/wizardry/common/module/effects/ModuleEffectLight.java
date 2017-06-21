@@ -19,13 +19,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEffectLight extends Module implements ITaxing {
-
-	@Nonnull
-	@Override
-	public ModuleType getModuleType() {
-		return ModuleType.EFFECT;
-	}
+public class ModuleEffectLight extends ModuleEffect {
 
 	@Nonnull
 	@Override

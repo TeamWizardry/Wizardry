@@ -17,7 +17,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleShapeBeam extends Module implements IContinuousSpell, ICostModifier {
+public class ModuleShapeBeam extends ModuleShape implements IContinuousSpell {
 
 	@Nonnull
 	@Override

@@ -11,7 +11,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleShapeSelf extends Module implements ICostModifier {
+public class ModuleShapeSelf extends ModuleShape {
 
 	@Nonnull
 	@Override

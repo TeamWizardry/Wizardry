@@ -9,13 +9,7 @@ import javax.annotation.Nonnull;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleModifierExtendTime extends Module implements IModifier {
-
-	@Nonnull
-	@Override
-	public ModuleType getModuleType() {
-		return ModuleType.MODIFIER;
-	}
+public class ModuleModifierExtendTime extends ModuleModifier {
 
 	@Nonnull
 	@Override

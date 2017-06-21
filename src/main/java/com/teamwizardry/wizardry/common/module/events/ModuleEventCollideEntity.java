@@ -1,26 +1,21 @@
 package com.teamwizardry.wizardry.common.module.events;
 
-import com.teamwizardry.wizardry.api.spell.Module;
-import com.teamwizardry.wizardry.api.spell.ModuleType;
-import com.teamwizardry.wizardry.api.spell.RegisterModule;
-import com.teamwizardry.wizardry.api.spell.SpellData;
-import net.minecraft.entity.Entity;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ENTITY_HIT;
 
 import javax.annotation.Nonnull;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ENTITY_HIT;
+import com.teamwizardry.wizardry.api.spell.Module;
+import com.teamwizardry.wizardry.api.spell.ModuleEvent;
+import com.teamwizardry.wizardry.api.spell.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.SpellData;
+
+import net.minecraft.entity.Entity;
 
 /**
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEventCollideEntity extends Module {
-
-	@Nonnull
-	@Override
-	public ModuleType getModuleType() {
-		return ModuleType.EVENT;
-	}
+public class ModuleEventCollideEntity extends ModuleEvent {
 
 	@Nonnull
 	@Override
