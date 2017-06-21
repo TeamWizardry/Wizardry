@@ -70,13 +70,13 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 		if (targetPos == null) return false;
 
 		double aoe = getModifierPower(spell, Attributes.INCREASE_AOE, 3, 10, false, false);
-		double strength = getModifierPower(spell, Attributes.INCREASE_POTENCY, 1, 10, true, true);
-		double range = getModifierPower(spell, Attributes.EXTEND_RANGE, 1, 10, true, true);
+		double strength = getModifierPower(spell, Attributes.INCREASE_POTENCY, 1, 20, true, true);
+		double range = getModifierPower(spell, Attributes.EXTEND_RANGE, 1, 20, true, true);
 
 		List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(targetPos)).expand(aoe, 1, aoe));
 
 		setMultiplier(0.7);
-		if (r.nextInt((int) (((100) - strength))) == 0) {
+		if (r.nextInt((int) ((30 - strength))) == 0) {
 			for (Entity entity : entities) {
 				if (entity.getDistance(targetPos.x, targetPos.y, targetPos.z) <= aoe) {
 					Vec3d vec = targetPos.addVector(RandUtil.nextDouble(-strength, strength), RandUtil.nextDouble(range), RandUtil.nextDouble(-strength, strength));
@@ -91,17 +91,18 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 			}
 		}
 
-		if (r.nextInt((int) ((110 - strength * 10))) != 0) return true;
+		if (r.nextInt((int) ((25 - strength))) != 0) return true;
 		ArrayList<Vec3d> blocks = new ArrayList<>();
-		for (int i = (int) -aoe; i < aoe; i++)
-			for (int j = 0; j < 1 + range; j++)
-				for (int k = (int) -aoe; k < aoe; k++) {
+		for (double i = -aoe; i < aoe; i++)
+			for (double j = -range; j < range; j++)
+				for (double k = -aoe; k < aoe; k++) {
 					Vec3d pos = targetPos.addVector(i, j, k);
 					if (pos.distanceTo(targetPos) <= aoe) {
+						BlockPos.MutableBlockPos blockPos = new BlockPos.MutableBlockPos(new BlockPos(pos));
 						blocks.add(pos);
 					}
 				}
-
+		if (blocks.isEmpty()) return true;
 		Vec3d pos = blocks.get(RandUtil.nextInt(blocks.size() - 1));
 
 		SpellData copy = spell.copy();

@@ -43,9 +43,9 @@ public class PotionSlippery extends PotionMod {
 		event.override = true;
 
 		EntityLivingBase entity = event.entity;
-		float strafe = event.strafe;
-		float forward = event.forward;
-		float slipperiness = 1f;
+		float strafe = event.strafe / 2.0f;
+		float forward = event.forward / 2.0f;
+		float slipperiness = 1.04f;
 		if (entity.isServerWorld() || entity.canPassengerSteer()) {
 			if (!entity.isInWater() || entity instanceof EntityPlayer && ((EntityPlayer) entity).capabilities.isFlying) {
 				if (!entity.isInLava() || entity instanceof EntityPlayer && ((EntityPlayer) entity).capabilities.isFlying) {

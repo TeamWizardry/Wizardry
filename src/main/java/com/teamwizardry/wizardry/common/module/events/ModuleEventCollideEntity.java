@@ -1,15 +1,15 @@
 package com.teamwizardry.wizardry.common.module.events;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ENTITY_HIT;
-
-import javax.annotation.Nonnull;
-
 import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.ModuleEvent;
 import com.teamwizardry.wizardry.api.spell.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
-
 import net.minecraft.entity.Entity;
+
+import javax.annotation.Nonnull;
+
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.BLOCK_HIT;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ENTITY_HIT;
 
 /**
  * Created by LordSaad.
@@ -38,6 +38,7 @@ public class ModuleEventCollideEntity extends ModuleEvent {
 	@Override
 	public boolean run(@Nonnull SpellData spell) {
 		Entity entity = spell.getData(ENTITY_HIT);
+		spell.removeData(BLOCK_HIT);
 		return entity != null && nextModule != null && nextModule.run(spell);
 	}
 

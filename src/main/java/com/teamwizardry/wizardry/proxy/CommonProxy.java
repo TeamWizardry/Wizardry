@@ -4,7 +4,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.teamwizardry.librarianlib.core.LibrarianLib;
-import com.teamwizardry.librarianlib.features.config.EasyConfigHandler;
 import com.teamwizardry.librarianlib.features.kotlin.JsonMaker;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
@@ -15,6 +14,7 @@ import com.teamwizardry.wizardry.common.achievement.Achievements;
 import com.teamwizardry.wizardry.common.core.EventHandler;
 import com.teamwizardry.wizardry.common.core.SpellTicker;
 import com.teamwizardry.wizardry.common.fluid.Fluids;
+import com.teamwizardry.wizardry.common.module.effects.ModuleEffectLeap;
 import com.teamwizardry.wizardry.common.module.effects.ModuleEffectTimeSlow;
 import com.teamwizardry.wizardry.common.network.*;
 import com.teamwizardry.wizardry.common.world.GenHandler;
@@ -124,6 +124,7 @@ public class CommonProxy {
 		MinecraftForge.EVENT_BUS.register(new AchievementEvents());
 		MinecraftForge.EVENT_BUS.register(new ModCapabilities());
 		MinecraftForge.EVENT_BUS.register(new ModuleEffectTimeSlow());
+		MinecraftForge.EVENT_BUS.register(new ModuleEffectLeap());
 		MinecraftForge.EVENT_BUS.register(this);
 		SpellTicker.INSTANCE.getClass();
 

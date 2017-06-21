@@ -64,7 +64,7 @@ public class ModuleEffectFreeze extends ModuleEffect {
 		Entity caster = spell.getData(CASTER);
 
 		double range = getModifierPower(spell, Attributes.INCREASE_AOE, 1, 16, true, true) / 2.0;
-		double time = getModifierPower(spell, Attributes.EXTEND_TIME, 50, 1000, true, true);
+		double time = getModifierPower(spell, Attributes.EXTEND_TIME, 1, 64, true, true) * 30;
 
 		if (!tax(this, spell)) return false;
 
