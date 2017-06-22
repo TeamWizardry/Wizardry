@@ -53,6 +53,22 @@
       "secondary_color": "ff0083"
     },
     {
+      "id": "effect_crasher_fall",
+      "mana_drain": 200,
+      "burnout_fill": 100,
+      "item": "minecraft:obsidian",
+      "primary_color": "ff00dc",
+      "secondary_color": "ff0000"
+    },
+    {
+      "id": "effect_vanish",
+      "mana_drain": 200,
+      "burnout_fill": 100,
+      "item": "minecraft:fermented_spider_eye",
+      "primary_color": "FFFFFF",
+      "secondary_color": "42d1f4"
+    },
+    {
       "id": "effect_lightning",
       "mana_drain": 200,
       "burnout_fill": 100,

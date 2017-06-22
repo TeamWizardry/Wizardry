@@ -191,6 +191,7 @@ public class ModuleRegistry {
 
 					JsonArray originalArray = CommonProxy.originalModuleRegistryObject.get(module.getModuleType().name().toLowerCase()).getAsJsonArray();
 
+					boolean failedToAdd = false;
 					for (JsonElement element : originalArray) {
 						if (!element.isJsonObject()) continue;
 						JsonObject originalObject = element.getAsJsonObject();
@@ -198,10 +199,13 @@ public class ModuleRegistry {
 							if (module.getID().equals(originalObject.get("id").getAsString())) {
 								array.add(originalObject);
 								Wizardry.logger.info("  > " + module.getID() + " added successfully into module_registry.json!");
+								failedToAdd = true;
 								break;
 							}
 						}
 					}
+					if (failedToAdd)
+						Wizardry.logger.error("  > Failed to add " + module.getID() + " to module_registry.json! PLEASE REPORT THIS TO THE DEVS ON GITHUB!!");
 				}
 			}
 

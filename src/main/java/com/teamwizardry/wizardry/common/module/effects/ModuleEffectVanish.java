@@ -1,8 +1,11 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
 import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.init.ModPotions;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -46,8 +49,8 @@ public class ModuleEffectVanish extends ModuleEffect {
 		double strength = getModifierPower(spell, Attributes.INCREASE_POTENCY, 1, 64, true, true);
 		range = 32;
 
-		if (targetEntity != null) {
-			// ASM RenderLivingBase
+		if (targetEntity != null && targetEntity instanceof EntityLivingBase) {
+			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.VANISH, 100, 1, true, false));
 		}
 		return true;
 	}
@@ -67,4 +70,5 @@ public class ModuleEffectVanish extends ModuleEffect {
 	public Module copy() {
 		return cloneModule(new ModuleEffectVanish());
 	}
+
 }

@@ -31,7 +31,10 @@ public class WizardryTransformer implements IClassTransformer {
 			"net/minecraft/entity/player/EntityPlayer", "aax",
 			"net/minecraft/entity/Entity", "sm",
 			"net/minecraft/entity/MoverType", "tb",
-			"net/minecraft/entity/EntityLivingBase", "sv"
+			"net/minecraft/entity/EntityLivingBase", "sv",
+			"net/minecraft/client/renderer/entity/RenderLivingBase", "bvi",
+			"net/minecraft/client/renderer/entity/Render", "bup"
+
 	);
 	private static final String ASM_HOOKS = "com/teamwizardry/wizardry/asm/WizardryASMHooks";
 	private static final Map<String, Transformer> transformers = new HashMap<>();
@@ -40,6 +43,58 @@ public class WizardryTransformer implements IClassTransformer {
 		transformers.put("net.minecraft.entity.player.EntityPlayer", WizardryTransformer::transformPlayerClipping);
 		transformers.put("net.minecraft.entity.Entity", WizardryTransformer::transformEntity);
 		transformers.put("net.minecraft.entity.EntityLivingBase", WizardryTransformer::transformEntityLivingMoveWithHeading);
+		transformers.put("net.minecraft.client.renderer.entity.RenderLivingBase", WizardryTransformer::transformLivingRenderModel);
+		transformers.put("net.minecraft.client.renderer.entity.Render", WizardryTransformer::transformShadowAndFireRendering);
+	}
+
+	private static byte[] transformShadowAndFireRendering(byte[] basicClass) {
+		MethodSignature sig = new MethodSignature("doRenderShadowAndFire", "func_76979_b", "c", "(Lnet/minecraft/entity/Entity;DDDFF)V");
+
+		return transform(basicClass, sig, "Render Shadow And Fire Event", (MethodNode method) -> {
+			LabelNode node1 = new LabelNode();
+			InsnList newInstructions = new InsnList();
+
+			newInstructions.add(new VarInsnNode(ALOAD, 0));
+			newInstructions.add(new VarInsnNode(ALOAD, 1));
+			newInstructions.add(new MethodInsnNode(INVOKESTATIC, ASM_HOOKS, "entityRenderShadowAndFire",
+					"(Lnet/minecraft/entity/Entity;)Z", false));
+
+			newInstructions.add(new JumpInsnNode(IFNE, node1));
+			newInstructions.add(new InsnNode(RETURN));
+
+			newInstructions.add(node1);
+			method.instructions.insertBefore(method.instructions.getFirst(), newInstructions);
+			method.instructions.resetLabels();
+			return true;
+		});
+	}
+
+	private static byte[] transformLivingRenderModel(byte[] basicClass) {
+		MethodSignature sig = new MethodSignature("renderModel", "func_77036_a", "a", "(Lnet/minecraft/entity/EntityLivingBase;FFFFFF)V");
+
+		return transform(basicClass, sig, "RenderLivingBase Render Model Event", (MethodNode method) -> {
+			LabelNode node1 = new LabelNode();
+			InsnList newInstructions = new InsnList();
+
+			newInstructions.add(new VarInsnNode(ALOAD, 0));
+			newInstructions.add(new VarInsnNode(ALOAD, 1));
+			newInstructions.add(new VarInsnNode(FLOAD, 2));
+			newInstructions.add(new VarInsnNode(FLOAD, 3));
+			newInstructions.add(new VarInsnNode(FLOAD, 4));
+			newInstructions.add(new VarInsnNode(FLOAD, 5));
+			newInstructions.add(new VarInsnNode(FLOAD, 6));
+			newInstructions.add(new VarInsnNode(FLOAD, 7));
+			newInstructions.add(new MethodInsnNode(INVOKESTATIC, ASM_HOOKS, "entityRenderModelToPlayer",
+					"(Lnet/minecraft/client/renderer/entity/RenderLivingBase;Lnet/minecraft/entity/EntityLivingBase;FFFFFF)Z", false));
+
+			newInstructions.add(new JumpInsnNode(IFNE, node1));
+			newInstructions.add(new InsnNode(RETURN));
+
+			newInstructions.add(node1);
+			method.instructions.insertBefore(method.instructions.getFirst(), newInstructions);
+			method.instructions.resetLabels();
+			return true;
+		});
 	}
 
 	private static byte[] transformEntityLivingMoveWithHeading(byte[] basicClass) {

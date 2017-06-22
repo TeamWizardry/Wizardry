@@ -14,6 +14,7 @@ public class ModPotions {
 	public static PotionTimeSlow TIME_SLOW;
 	public static PotionSlippery SLIPPERY;
 	public static PotionLowGrav LOW_GRAVITY;
+	public static PotionVanish VANISH;
 	public static PotionCrash CRASH;
 
 	public static void init() {
@@ -25,5 +26,6 @@ public class ModPotions {
 		SLIPPERY = new PotionSlippery();
 		LOW_GRAVITY = new PotionLowGrav();
 		CRASH = new PotionCrash();
+		VANISH = new PotionVanish();
 	}
 }
