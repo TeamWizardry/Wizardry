@@ -76,7 +76,7 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 		List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(targetPos)).expand(aoe, 1, aoe));
 
 		setMultiplier(0.7);
-		if (r.nextInt((int) ((30 - strength))) == 0) {
+		if (r.nextInt((int) ((70 - strength))) == 0) {
 			for (Entity entity : entities) {
 				if (entity.getDistance(targetPos.x, targetPos.y, targetPos.z) <= aoe) {
 					Vec3d vec = targetPos.addVector(RandUtil.nextDouble(-strength, strength), RandUtil.nextDouble(range), RandUtil.nextDouble(-strength, strength));

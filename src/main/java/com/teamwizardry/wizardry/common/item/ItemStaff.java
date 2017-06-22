@@ -71,7 +71,8 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 			for (Module module : SpellStack.getAllModules(stack)) {
 				if (module instanceof IBlockSelectable) {
 					player.getEntityData().setTag("selected", NBTUtil.writeBlockState(new NBTTagCompound(), world.getBlockState(pos)));
-					return EnumActionResult.FAIL;
+					player.swingArm(hand);
+					return EnumActionResult.PASS;
 				}
 			}
 		}
@@ -100,6 +101,14 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, @Nonnull EnumHand hand) {
 		ItemStack stack = player.getHeldItem(hand);
+
+		if (player.isSneaking()) {
+			for (Module module : SpellStack.getAllModules(stack)) {
+				if (module instanceof IBlockSelectable) {
+					return new ActionResult<>(EnumActionResult.PASS, stack);
+				}
+			}
+		}
 
 		if (getItemUseAction(stack) == EnumAction.NONE) {
 			if (!isCoolingDown(stack)) {

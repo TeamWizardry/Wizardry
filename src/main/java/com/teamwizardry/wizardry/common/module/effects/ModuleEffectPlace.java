@@ -68,7 +68,6 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 		}
 
 		double range = getModifierPower(spell, Attributes.INCREASE_AOE, 1, 64, true, true);
-		range = 64;
 
 		if (caster != null && targetPos != null && caster.getEntityData().hasKey("selected")) {
 			IBlockState state = NBTUtil.readBlockState(caster.getEntityData().getCompoundTag("selected"));

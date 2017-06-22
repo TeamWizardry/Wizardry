@@ -51,7 +51,6 @@ public class ModuleEffectBreak extends ModuleEffect {
 
 		double range = getModifierPower(spell, Attributes.INCREASE_AOE, 1, 64, true, true);
 		double strength = getModifierPower(spell, Attributes.INCREASE_POTENCY, 1, 64, true, true);
-		range = 32;
 
 		if (targetPos != null) {
 			Block block = world.getBlockState(targetPos).getBlock();

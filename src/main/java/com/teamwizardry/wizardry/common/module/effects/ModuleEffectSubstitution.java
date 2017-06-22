@@ -90,13 +90,14 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 			return true;
 
 		} else if (targetBlock != null && caster instanceof EntityPlayer) {
+			spell.world.playSound(null, targetBlock, ModSounds.TELEPORT, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat());
 			if (caster.getEntityData().hasKey("selected")) {
 				IBlockState state = NBTUtil.readBlockState(caster.getEntityData().getCompoundTag("selected"));
 				IBlockState touchedBlock = spell.world.getBlockState(targetBlock);
 
 				if (touchedBlock.getBlock() == state.getBlock()) return false;
 
-				double strength = getModifierPower(spell, Attributes.EXTEND_RANGE, 10, 64, true, true);
+				double strength = getModifierPower(spell, Attributes.INCREASE_AOE, 1, 64, true, true);
 
 				ItemStack stackBlock = null;
 				for (ItemStack stack : ((EntityPlayer) caster).inventory.mainInventory) {
@@ -138,7 +139,6 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 					IBlockState oldState = spell.world.getBlockState(nearest);
 					BlockUtils.placeBlock(spell.world, nearest, state, (EntityPlayerMP) caster);
 					((EntityPlayer) caster).inventory.addItemStackToInventory(new ItemStack(oldState.getBlock().getItemDropped(oldState, spell.world.rand, 0)));
-					spell.world.playSound(null, nearest, ModSounds.TELEPORT, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat());
 				}
 			}
 			return true;
