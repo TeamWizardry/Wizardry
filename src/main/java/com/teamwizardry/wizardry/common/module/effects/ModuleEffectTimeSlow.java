@@ -66,7 +66,7 @@ public class ModuleEffectTimeSlow extends ModuleEffect {
 
 			// TODO: readd mobs
 
-			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.TIME_SLOW, (int) duration, (int) strength, true, true));
+			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.TIME_SLOW, (int) duration, (int) strength, true, false));
 		}
 		return true;
 	}

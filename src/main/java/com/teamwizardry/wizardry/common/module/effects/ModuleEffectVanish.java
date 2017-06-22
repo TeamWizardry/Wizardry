@@ -50,7 +50,7 @@ public class ModuleEffectVanish extends ModuleEffect {
 		range = 32;
 
 		if (targetEntity != null && targetEntity instanceof EntityLivingBase) {
-			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.VANISH, 100, 0, true, true));
+			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.VANISH, 100, 0, true, false));
 		}
 		return true;
 	}

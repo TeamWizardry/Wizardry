@@ -67,7 +67,7 @@ public class ItemSyringe extends ItemMod {
 			((EntityPlayer) player).getCooldownTracker().setCooldown(this, stack.getItemDamage() == 1 ? 100 : 500);
 
 			if (stack.getItemDamage() == 2) {
-				player.addPotionEffect(new PotionEffect(ModPotions.STEROID, 500, 0, true, true));
+				player.addPotionEffect(new PotionEffect(ModPotions.STEROID, 500, 0, true, false));
 				stack.setItemDamage(0);
 			} else if (stack.getItemDamage() == 1) {
 				CapManager manager = new CapManager(player);

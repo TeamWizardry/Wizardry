@@ -25,12 +25,14 @@ public class ComponentNavBar extends GuiComponent<ComponentNavBar> {
 		});
 		prev.BUS.hook(GuiComponent.MouseClickEvent.class, event -> {
 			if (!event.getComponent().getMouseOver()) return;
+
 			int x = MathHelper.clamp(page - 1, 0, maxPages);
 			if (page == x) return;
 
+			page = x;
+
 			EventNavBarChange eventNavBarChange = new EventNavBarChange();
 			BUS.fire(eventNavBarChange);
-			if (!eventNavBarChange.isCanceled()) page = x;
 		});
 
 		next.BUS.hook(GuiComponent.ComponentTickEvent.class, event -> {
@@ -40,12 +42,14 @@ public class ComponentNavBar extends GuiComponent<ComponentNavBar> {
 		});
 		next.BUS.hook(GuiComponent.MouseClickEvent.class, event -> {
 			if (!event.getComponent().getMouseOver()) return;
+
 			int x = MathHelper.clamp(page + 1, 0, maxPages);
 			if (page == x) return;
 
+			page = x;
+
 			EventNavBarChange eventNavBarChange = new EventNavBarChange();
 			BUS.fire(eventNavBarChange);
-			if (!eventNavBarChange.isCanceled()) page = x;
 		});
 	}
 

@@ -47,7 +47,7 @@ public class ItemManaOrb extends ItemMod {
 			stack.shrink(1);
 			((EntityPlayer) entityLiving).inventory.addItemStackToInventory(new ItemStack(ModItems.GLASS_ORB));
 		}
-		entityLiving.addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 0, true, true));
+		entityLiving.addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 0, true, false));
 		return stack;
 	}
 
