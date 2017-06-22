@@ -1,14 +1,18 @@
 package com.teamwizardry.wizardry.common.potion;
 
+import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.base.PotionMod;
 import com.teamwizardry.librarianlib.features.methodhandles.MethodHandleHelper;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.events.EntityRenderShadowAndFireEvent;
-import com.teamwizardry.wizardry.api.events.EntityRenderToPlayerEvent;
 import com.teamwizardry.wizardry.init.ModSounds;
+import kotlin.jvm.functions.Function1;
 import kotlin.jvm.functions.Function2;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
@@ -17,6 +21,7 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -29,9 +34,19 @@ import java.util.List;
 /**
  * Created by LordSaad.
  */
+// TODO: mob ai, other player testing
 public class PotionVanish extends PotionMod {
 
-	private Function2<Render, Object[], Object> bindEntityTextureHandler = MethodHandleHelper.wrapperForMethod(Render.class, new String[]{"d", "func_180548_c", "bindEntityTexture"}, Entity.class);
+	private Function2<RenderLivingBase, Object[], Object> interpolateRotation = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, new String[]{"interpolateRotation", "func_77034_a", "a"}, float.class, float.class, float.class);
+	private Function2<RenderLivingBase, Object[], Object> renderLivingAt = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, new String[]{"renderLivingAt", "func_77039_a", "a"}, EntityLivingBase.class, double.class, double.class, double.class);
+	private Function2<RenderLivingBase, Object[], Object> handleRotationFloat = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, new String[]{"handleRotationFloat", "func_77044_a", "b"}, EntityLivingBase.class, float.class);
+	private Function2<RenderLivingBase, Object[], Object> applyRotations = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, new String[]{"applyRotations", "func_77043_a", "a"}, EntityLivingBase.class, float.class, float.class, float.class);
+	private Function2<RenderLivingBase, Object[], Object> renderModel = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, new String[]{"renderModel", "func_77036_a", "a"}, EntityLivingBase.class, float.class, float.class, float.class, float.class, float.class, float.class);
+	private Function2<RenderLivingBase, Object[], Object> renderLayers = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, new String[]{"renderLayers", "func_177093_a", "a"}, EntityLivingBase.class, float.class, float.class, float.class, float.class, float.class, float.class, float.class);
+	private Function2<RenderLivingBase, Object[], Object> setDoRenderBrightness = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, new String[]{"setDoRenderBrightness", "func_177090_c", "d"}, EntityLivingBase.class, float.class);
+	private Function2<RenderLivingBase, Object[], Object> unsetBrightness = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, new String[]{"unsetBrightness", "func_177091_f", "g"});
+	private Function1<Render, Object> renderOutlines = MethodHandleHelper.wrapperForGetter(Render.class, "renderOutlines", "field_188301_f", "e");
+	private Function1<RenderLivingBase, Object> renderMarker = MethodHandleHelper.wrapperForGetter(RenderLivingBase.class, "renderMarker", "field_188323_j", "i");
 
 	public PotionVanish() {
 		super("vanish", false, 0xA9F3A9);
@@ -68,31 +83,133 @@ public class PotionVanish extends PotionMod {
 
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
-	public void renderModelEvent(EntityRenderToPlayerEvent event) {
+	public void doRenderOverride(RenderLivingEvent.Pre event) {
 		EntityPlayer player = Minecraft.getMinecraft().player;
+		EntityLivingBase entity = event.getEntity();
+		PotionEffect effect = player.getActivePotionEffect(this);
+		if (effect == null) return;
+		float time = effect.getDuration();
+
+		float x = MathHelper.clamp(3 / time, 0, 1);
+
 		if (player.isPotionActive(this)) {
-			PotionEffect effect = player.getActivePotionEffect(this);
-			if (effect == null) return;
-			float time = effect.getDuration();
 			boolean walked = player.posX != player.prevPosX || player.posY != player.prevPosY || player.posZ != player.prevPosZ;
 			if (walked) {
-				event.override = true;
 
-				//if ((Boolean) bindEntityTextureHandler.invoke(event.renderLivingBase, new Object[]{event.entity})) return;
-				GlStateManager.enableBlendProfile(GlStateManager.Profile.TRANSPARENT_MODEL);
+				GlStateManager.pushMatrix();
+				GlStateManager.enableBlend();
+				GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+				GlStateManager.color(1, 1, 1, x);
+				//GlStateManager.disableCull();
+				event.getRenderer().getMainModel().swingProgress = entity.swingProgress;
+				boolean shouldSit = entity.isRiding() && (entity.getRidingEntity() != null && entity.getRidingEntity().shouldRiderSit());
+				event.getRenderer().getMainModel().isRiding = shouldSit;
+				event.getRenderer().getMainModel().isChild = entity.isChild();
 
-				Minecraft.getMinecraft().player.sendChatMessage(1f - (3f / time) + " - " + time);
-				GlStateManager.color(1, 1, 1, MathHelper.clamp(1f - (3f / time), 0, 1));
+				try {
+					float f = (float) interpolateRotation.invoke(event.getRenderer(), new Object[]{entity.prevRenderYawOffset, entity.renderYawOffset, ClientTickHandler.getPartialTicks()});
+					float f1 = (float) interpolateRotation.invoke(event.getRenderer(), new Object[]{entity.prevRotationYawHead, entity.rotationYawHead, ClientTickHandler.getPartialTicks()});
+					float f2 = f1 - f;
 
-				event.renderLivingBase.getMainModel().render(event.entity, event.limbSwing, event.limbSwingAmount, event.ageInTicks, event.netHeadYaw, event.headPitch, event.scaleFactor);
+					if (shouldSit && entity.getRidingEntity() instanceof EntityLivingBase) {
+						EntityLivingBase entitylivingbase = (EntityLivingBase) entity.getRidingEntity();
+						f = (float) interpolateRotation.invoke(event.getRenderer(), new Object[]{entitylivingbase.prevRenderYawOffset, entitylivingbase.renderYawOffset, ClientTickHandler.getPartialTicks()});
+						f2 = f1 - f;
+						float f3 = MathHelper.wrapDegrees(f2);
 
-				GlStateManager.disableBlendProfile(GlStateManager.Profile.TRANSPARENT_MODEL);
+						if (f3 < -85.0F) {
+							f3 = -85.0F;
+						}
+
+						if (f3 >= 85.0F) {
+							f3 = 85.0F;
+						}
+
+						f = f1 - f3;
+
+						if (f3 * f3 > 2500.0F) {
+							f += f3 * 0.2F;
+						}
+						f2 = f1 - f; // Forge: Fix MC-1207
+					}
+
+					float f7 = entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * ClientTickHandler.getPartialTicks();
+					renderLivingAt.invoke(event.getRenderer(), new Object[]{entity, event.getX(), event.getY(), event.getZ()});
+					float f8 = (float) handleRotationFloat.invoke(event.getRenderer(), new Object[]{entity, ClientTickHandler.getPartialTicks()});
+					applyRotations.invoke(event.getRenderer(), new Object[]{entity, f8, f, ClientTickHandler.getPartialTicks()});
+					float f4 = event.getRenderer().prepareScale(entity, ClientTickHandler.getPartialTicks());
+					float f5 = 0.0F;
+					float f6 = 0.0F;
+
+					if (!entity.isRiding()) {
+						f5 = entity.prevLimbSwingAmount + (entity.limbSwingAmount - entity.prevLimbSwingAmount) * ClientTickHandler.getPartialTicks();
+						f6 = entity.limbSwing - entity.limbSwingAmount * (1.0F - ClientTickHandler.getPartialTicks());
+
+						if (entity.isChild()) {
+							f6 *= 3.0F;
+						}
+
+						if (f5 > 1.0F) {
+							f5 = 1.0F;
+						}
+					}
+
+					GlStateManager.enableAlpha();
+					event.getRenderer().getMainModel().setLivingAnimations(entity, f6, f5, ClientTickHandler.getPartialTicks());
+					event.getRenderer().getMainModel().setRotationAngles(f6, f5, f8, f2, f7, f4, entity);
+
+					if ((boolean) renderOutlines.invoke(event.getRenderer())) {
+						// TODO: boolean flag1 = this.setScoreTeamColor(entity);
+						GlStateManager.enableColorMaterial();
+						// TODO: GlStateManager.enableOutlineMode(this.getTeamColor(entity));
+
+						if (!(boolean) renderMarker.invoke(event.getRenderer())) {
+							renderModel.invoke(event.getRenderer(), new Object[]{entity, f6, f5, f8, f2, f7, f4});
+						}
+
+						if (!(entity instanceof EntityPlayer) || !((EntityPlayer) entity).isSpectator()) {
+							renderLayers.invoke(event.getRenderer(), new Object[]{entity, f6, f5, ClientTickHandler.getPartialTicks(), f8, f2, f7, f4});
+						}
+
+						GlStateManager.disableOutlineMode();
+						GlStateManager.disableColorMaterial();
+
+						// TODO: if (flag1) {
+						// TODO: 	this.unsetScoreTeamColor();
+						// TODO: }
+					} else {
+						boolean flag = (boolean) setDoRenderBrightness.invoke(event.getRenderer(), new Object[]{entity, ClientTickHandler.getPartialTicks()});
+						renderModel.invoke(event.getRenderer(), new Object[]{entity, f6, f5, f8, f2, f7, f4});
+
+						if (flag) {
+							unsetBrightness.invoke(event.getRenderer(), new Object[]{});
+						}
+
+						GlStateManager.depthMask(true);
+
+						if (!(entity instanceof EntityPlayer) || !((EntityPlayer) entity).isSpectator()) {
+							renderLayers.invoke(event.getRenderer(), new Object[]{entity, f6, f5, ClientTickHandler.getPartialTicks(), f8, f2, f7, f4});
+						}
+					}
+
+					GlStateManager.disableRescaleNormal();
+				} catch (Exception exception) {
+					Wizardry.logger.error("Couldn\'t render entity", exception);
+				}
+
+				GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+				GlStateManager.enableTexture2D();
+				GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
+				GlStateManager.enableCull();
+				GlStateManager.disableBlend();
+				GlStateManager.popMatrix();
+				event.setCanceled(true);
 			}
 		} else {
-			if (event.entity != null && event.entity.isPotionActive(this)) {
-				boolean walked = event.entity.posX != event.entity.prevPosX || event.entity.posY != event.entity.prevPosY || event.entity.posZ != event.entity.prevPosZ;
-				if (!walked) event.override = true;
-			}
+			//if (entity != null && entity.isPotionActive(this)) {
+			//	boolean walked = entity.posX != event.entity.prevPosX || event.entity.posY != event.entity.prevPosY || event.entity.posZ != event.entity.prevPosZ;
+			//	if (!walked) event.override = true;
+			//}
 		}
 	}
 
