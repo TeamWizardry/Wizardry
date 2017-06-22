@@ -72,7 +72,7 @@ public class ModuleEffectFreeze extends ModuleEffect {
 			spell.world.playSound(null, targetEntity.getPosition(), ModSounds.FROST_FORM, SoundCategory.NEUTRAL, 1, 1);
 			targetEntity.extinguish();
 			if (targetEntity instanceof EntityLivingBase)
-				((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.SLIPPERY, (int) time));
+				((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.SLIPPERY, (int) time, 0, true, true));
 		}
 
 		if (targetPos != null) {

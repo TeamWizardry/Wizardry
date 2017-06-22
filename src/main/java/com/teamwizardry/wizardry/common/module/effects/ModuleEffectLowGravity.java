@@ -63,7 +63,7 @@ public class ModuleEffectLowGravity extends ModuleEffect {
 
 		if (targetEntity != null) {
 			spell.world.playSound(null, targetEntity.getPosition(), ModSounds.TELEPORT, SoundCategory.NEUTRAL, 1, 1);
-			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.LOW_GRAVITY, (int) time, (int) potency));
+			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.LOW_GRAVITY, (int) time, (int) potency, true, true));
 		}
 		return true;
 	}
