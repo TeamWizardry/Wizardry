@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.common.potion;
 
 import com.teamwizardry.librarianlib.features.base.PotionMod;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.MobEffects;
@@ -30,10 +31,6 @@ public class PotionCrash extends PotionMod {
 		return new EntityDamageSource("wizardry.crash", player);
 	}
 
-	public DamageSource damageSourceEarthquake() {
-		return new DamageSource("wizardry.crash");
-	}
-
 	@SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
 	public void fall(LivingFallEvent e) {
 		EntityLivingBase entitySource = e.getEntityLiving();
@@ -42,22 +39,30 @@ public class PotionCrash extends PotionMod {
 
 		PotionEffect jump = entitySource.getActivePotionEffect(MobEffects.JUMP_BOOST);
 		float f = (jump == null) ? 0.0f : (jump.getAmplifier() + 1);
-		float damage = MathHelper.clamp((e.getDistance() - 3.0f - f) * e.getDamageMultiplier() * crash.getAmplifier(), 0, 10f);
+		float damage = MathHelper.clamp((e.getDistance() - 3.0f - f) * e.getDamageMultiplier() * 2, 0, 10f);
+
+		float range = damage / 10f + Math.max(crash.getAmplifier(), 5);
 
 		if (damage > 0.0f) {
-			entitySource.fallDistance /= crash.getAmplifier();
-			List<EntityLivingBase> entities = entitySource.world.getEntitiesWithinAABB(EntityLivingBase.class, entitySource.getEntityBoundingBox().expand(crash.getAmplifier() * 2, crash.getAmplifier() * 2, crash.getAmplifier() * 2));
+			e.setDamageMultiplier(e.getDamageMultiplier() / (crash.getAmplifier() + 2));
+			List<EntityLivingBase> entities = entitySource.world.getEntitiesWithinAABB(EntityLivingBase.class, entitySource.getEntityBoundingBox().grow(range * 2));
 			entities.stream().filter(entity -> entity != entitySource && entity.onGround).forEach(entity -> {
-				entity.attackEntityFrom(damageSourceEarthquake(entitySource), damage);
-				entity.motionY = damage / 10.0;
+ 				entity.attackEntityFrom(damageSourceEarthquake(entitySource), range);
+				entity.motionY = range / 10.0;
 				entity.velocityChanged = true;
 			});
 
-			for (BlockPos pos : BlockPos.getAllInBoxMutable(new BlockPos(entitySource.getPositionVector()).add(-3, -3, -3), new BlockPos(entitySource.getPositionVector()).add(3, -1, 3))) {
+			if (!entitySource.world.isRemote) for (BlockPos pos : BlockPos.getAllInBoxMutable(
+					new BlockPos(entitySource.getPositionVector())
+							.add(-range,
+									-2,
+									-range),
+					new BlockPos(entitySource.getPositionVector())
+							.add(range,
+									0,
+									range))) {
 				IBlockState state = entitySource.world.getBlockState(pos);
-				if (state.isFullCube()) {
-					entitySource.world.playEvent(2001, pos, state.getBlock().getMetaFromState(state));
-				}
+				if (state.isFullCube()) entitySource.world.playEvent(2001, pos.toImmutable(), Block.getStateId(state));
 			}
 		}
 	}
