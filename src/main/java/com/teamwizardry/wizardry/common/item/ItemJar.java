@@ -68,7 +68,7 @@ public class ItemJar extends ItemModBlock implements IItemColorProvider {
 			EntityPlayer entityplayer = (EntityPlayer) entityLiving;
 			entityplayer.getFoodStats().addStats(4, 7f);
 			worldIn.playSound(null, entityplayer.posX, entityplayer.posY, entityplayer.posZ, SoundEvents.ENTITY_PLAYER_BURP, SoundCategory.PLAYERS, 0.5F, worldIn.rand.nextFloat() * 0.1F + 0.9F);
-			entityLiving.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 200, 2, false, false));
+			entityLiving.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 200));
 		}
 
 		return stack;

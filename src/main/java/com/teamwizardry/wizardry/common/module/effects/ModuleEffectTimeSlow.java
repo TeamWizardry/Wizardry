@@ -66,7 +66,7 @@ public class ModuleEffectTimeSlow extends ModuleEffect {
 
 			// TODO: readd mobs
 
-			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.TIME_SLOW, (int) duration, (int) strength, true, false));
+			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.TIME_SLOW, (int) duration, (int) strength));
 		}
 		return true;
 	}
@@ -145,8 +145,8 @@ public class ModuleEffectTimeSlow extends ModuleEffect {
 		//	int tickCountdown = event.player.getEntityData().getInteger("skip_tick");
 		//	int tickInterval = event.player.getEntityData().getInteger("skip_tick_interval");
 //
-		//	event.player.addPotionEffect(new PotionEffect(ModPotions.NULL_MOVEMENT, 5, 1, true, false));
-		//	event.player.addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 1, true, false));
+		//	event.player.addPotionEffect(new PotionEffect(ModPotions.NULL_MOVEMENT, 5, 1));
+		//	event.player.addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 1));
 		//	event.player.motionX = 0;
 		//	event.player.motionY = 0;
 		//	event.player.motionZ = 0;

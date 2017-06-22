@@ -5,6 +5,7 @@ import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.init.Biomes;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -109,7 +110,7 @@ public class ChunkGeneratorUnderWorld implements IChunkGenerator {
 
 		byte[] biomeArray = chunk.getBiomeArray();
 		for (int i = 0; i < biomeArray.length; ++i) {
-			biomeArray[i] = (byte) 42;
+			biomeArray[i] = (byte) Biome.REGISTRY.getIDForObject(Biomes.VOID);
 		}
 
 		chunk.generateSkylightMap();

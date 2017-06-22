@@ -86,7 +86,7 @@ public class FluidBlockMana extends BlockFluidClassic {
 		run(entityIn,
 				entity -> entity instanceof EntityLivingBase,
 				entity -> {
-					((EntityLivingBase) entityIn).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 1, true, false));
+					((EntityLivingBase) entityIn).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100));
 
 					if (RandUtil.nextInt(50) == 0) entity.attackEntityFrom(DamageSourceMana.INSTANCE, 0.1f);
 				});

@@ -47,7 +47,7 @@ public class ModuleEffectCrasherFall extends ModuleEffect {
 			double duration = getModifierPower(spell, Attributes.EXTEND_TIME, 5, 64, false, true) * 10;
 			if (!tax(this, spell)) return false;
 
-			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.CRASH, (int) duration, (int) strength, true, false));
+			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.CRASH, (int) duration, (int) strength));
 		}
 		return true;
 	}

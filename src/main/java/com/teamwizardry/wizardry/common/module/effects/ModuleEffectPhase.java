@@ -49,7 +49,7 @@ public class ModuleEffectPhase extends ModuleEffect {
 
 		if (targetEntity != null && targetEntity instanceof EntityLivingBase) {
 			EntityLivingBase entity = (EntityLivingBase) targetEntity;
-			entity.addPotionEffect(new PotionEffect(ModPotions.PHASE, (int) time, 1, true, false));
+			entity.addPotionEffect(new PotionEffect(ModPotions.PHASE, (int) time));
 			spell.world.playSound(null, targetEntity.getPosition(), ModSounds.ETHEREAL_PASS_BY, SoundCategory.NEUTRAL, 1, 1);
 
 		}

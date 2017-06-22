@@ -39,10 +39,10 @@ public class PotionSteroid extends PotionMod {
 		CapManager manager = new CapManager(entityLivingBaseIn);
 		manager.setMana(0);
 		manager.setBurnout(manager.getMaxBurnout());
-		entityLivingBaseIn.addPotionEffect(new PotionEffect(MobEffects.MINING_FATIGUE, 200, 4, true, false));
-		entityLivingBaseIn.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 200, 4, true, false));
-		entityLivingBaseIn.addPotionEffect(new PotionEffect(MobEffects.HUNGER, 200, 4, true, false));
-		entityLivingBaseIn.addPotionEffect(new PotionEffect(MobEffects.NAUSEA, 200, 4, true, false));
+		entityLivingBaseIn.addPotionEffect(new PotionEffect(MobEffects.MINING_FATIGUE, 200, 3));
+		entityLivingBaseIn.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 200, 3));
+		entityLivingBaseIn.addPotionEffect(new PotionEffect(MobEffects.HUNGER, 200, 3));
+		entityLivingBaseIn.addPotionEffect(new PotionEffect(MobEffects.NAUSEA, 200, 3));
 		if (!(entityLivingBaseIn instanceof EntityPlayer) || !((EntityPlayer) entityLivingBaseIn).capabilities.isCreativeMode)
 			entityLivingBaseIn.setHealth(0.5f);
 

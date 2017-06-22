@@ -43,7 +43,7 @@ public class ItemManaOrb extends ItemMod {
 	@Nonnull
 	public ItemStack onItemUseFinish(@Nonnull ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
 		stack.setCount(stack.getCount() - 1);
-		entityLiving.addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 1, true, false));
+		entityLiving.addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100));
 		return stack;
 	}
 
@@ -57,6 +57,6 @@ public class ItemManaOrb extends ItemMod {
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, @Nonnull EnumHand hand) {
 		player.setActiveHand(hand);
-		return new ActionResult(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+		return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
 	}
 }
