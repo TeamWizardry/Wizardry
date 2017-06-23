@@ -86,6 +86,7 @@ public class ModuleShapeCone extends ModuleShape {
 			SpellData newSpell = spell.copy();
 
 			RayTraceResult result = new RayTrace(world, target.normalize(), origin, range / 2).setSkipEntity(caster).trace();
+			if (result == null) continue;
 			newSpell.processBlock(result.getBlockPos(), result.sideHit, result.hitVec);
 			if (result.entityHit != null) spell.processEntity(result.entityHit, false);
 

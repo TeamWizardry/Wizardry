@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.module.events;
 
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.BLOCK_HIT;
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ENTITY_HIT;
 
 import javax.annotation.Nonnull;
@@ -38,6 +39,7 @@ public class ModuleEventCollideEntity extends ModuleEvent {
 	@Override
 	public boolean run(@Nonnull SpellData spell) {
 		Entity entity = spell.getData(ENTITY_HIT);
+		spell.removeData(BLOCK_HIT);
 		return entity != null && nextModule != null && nextModule.run(spell);
 	}
 

@@ -32,17 +32,15 @@ public class ComponentContentPage extends GuiComponent<ComponentContentPage> {
 		add(navBar);
 
 		navBar.BUS.hook(EventNavBarChange.class, eventNavBarChange -> {
-			if (prevComps != null) prevComps.invalidate();
+			if (prevComps != null) {
+				GuiComponent<?> parent = prevComps.getParent();
+				if (parent != null) parent.remove(prevComps);
+			}
 
-			Minecraft.getMinecraft().player.sendChatMessage(navBar.getPage() + "");
 			if (pages.size() <= navBar.getPage()) return;
 
 			GuiComponent<?> content = pages.get(navBar.getPage());
 			add(content);
-
-			ComponentSprite lineBreak1 = new ComponentSprite(BookGui.LINE_BREAK, (int) (getSize().getX() / 2.0 - 177.0 / 2.0), -5, 177, 2);
-			ComponentSprite lineBreak2 = new ComponentSprite(BookGui.LINE_BREAK, (int) (getSize().getX() / 2.0 - 177.0 / 2.0), getSize().getYi() - 5, 177, 2);
-			content.add(lineBreak1, lineBreak2);
 			prevComps = content;
 		});
 		navBar.BUS.fire(new EventNavBarChange());
@@ -85,7 +83,7 @@ public class ComponentContentPage extends GuiComponent<ComponentContentPage> {
 								if (!lineElement.isJsonPrimitive()) continue;
 
 								// split each line in json into pages if need be.
-								List<String> chunks = Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(lineElement.getAsString(), 1900);
+								List<String> chunks = Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(lineElement.getAsString(), 1950);
 
 								for (String chunk : chunks) {
 									ComponentText page = new ComponentText(0, 0, ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.TOP);
@@ -94,6 +92,10 @@ public class ComponentContentPage extends GuiComponent<ComponentContentPage> {
 									page.getWrap().setValue(100);
 									page.getText().setValue(chunk);
 									pages.put(i++, page);
+
+									ComponentSprite lineBreak1 = new ComponentSprite(BookGui.LINE_BREAK, (int) (getSize().getX() / 2.0 - 177.0 / 2.0), -5, 177, 2);
+									ComponentSprite lineBreak2 = new ComponentSprite(BookGui.LINE_BREAK, (int) (getSize().getX() / 2.0 - 177.0 / 2.0), getSize().getYi() - 5, 177, 2);
+									page.add(lineBreak1, lineBreak2);
 								}
 							}
 						} else {

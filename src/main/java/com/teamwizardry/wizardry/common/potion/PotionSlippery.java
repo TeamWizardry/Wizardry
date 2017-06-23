@@ -23,18 +23,8 @@ import javax.annotation.Nonnull;
 public class PotionSlippery extends PotionMod {
 
 	public PotionSlippery() {
-		super("slippery", false, 0xA9F3A9);
+		super("slippery", false, 0xABFCF0);
 		MinecraftForge.EVENT_BUS.register(this);
-	}
-
-	@Override
-	public void applyAttributesModifiersToEntity(EntityLivingBase entityLivingBaseIn, @Nonnull AbstractAttributeMap attributeMapIn, int amplifier) {
-		super.applyAttributesModifiersToEntity(entityLivingBaseIn, attributeMapIn, amplifier);
-	}
-
-	@Override
-	public void removeAttributesModifiersFromEntity(EntityLivingBase entityLivingBaseIn, @Nonnull AbstractAttributeMap attributeMapIn, int amplifier) {
-		super.removeAttributesModifiersFromEntity(entityLivingBaseIn, attributeMapIn, amplifier);
 	}
 
 	@SubscribeEvent
@@ -43,9 +33,9 @@ public class PotionSlippery extends PotionMod {
 		event.override = true;
 
 		EntityLivingBase entity = event.entity;
-		float strafe = event.strafe;
-		float forward = event.forward;
-		float slipperiness = 1f;
+		float strafe = event.strafe / 2.0f;
+		float forward = event.forward / 2.0f;
+		float slipperiness = 1.04f;
 		if (entity.isServerWorld() || entity.canPassengerSteer()) {
 			if (!entity.isInWater() || entity instanceof EntityPlayer && ((EntityPlayer) entity).capabilities.isFlying) {
 				if (!entity.isInLava() || entity instanceof EntityPlayer && ((EntityPlayer) entity).capabilities.isFlying) {

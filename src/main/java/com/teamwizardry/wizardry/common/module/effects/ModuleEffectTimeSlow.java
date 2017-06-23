@@ -149,8 +149,8 @@ public class ModuleEffectTimeSlow extends ModuleEffect {
 		//	int tickCountdown = event.player.getEntityData().getInteger("skip_tick");
 		//	int tickInterval = event.player.getEntityData().getInteger("skip_tick_interval");
 //
-		//	event.player.addPotionEffect(new PotionEffect(ModPotions.NULL_MOVEMENT, 5, 1, true, false));
-		//	event.player.addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 1, true, false));
+		//	event.player.addPotionEffect(new PotionEffect(ModPotions.NULL_MOVEMENT, 5, 0, true, true));
+		//	event.player.addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 0, true, true));
 		//	event.player.motionX = 0;
 		//	event.player.motionY = 0;
 		//	event.player.motionZ = 0;

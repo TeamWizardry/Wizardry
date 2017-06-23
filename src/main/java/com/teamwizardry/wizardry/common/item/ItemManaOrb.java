@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.common.item;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.wizardry.api.capability.CustomWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
+import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,19 +32,22 @@ public class ItemManaOrb extends ItemMod {
 	@Nonnull
 	@Override
 	public EnumAction getItemUseAction(ItemStack stack) {
-		return EnumAction.EAT;
+		return EnumAction.DRINK;
 	}
 
 	@Override
 	public int getMaxItemUseDuration(ItemStack stack) {
-		return 8;
+		return 32;
 	}
 
 	@Override
 	@Nonnull
 	public ItemStack onItemUseFinish(@Nonnull ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
-		stack.setCount(stack.getCount() - 1);
-		entityLiving.addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 1, true, false));
+		if (entityLiving instanceof EntityPlayer && !((EntityPlayer) entityLiving).capabilities.isCreativeMode) {
+			stack.shrink(1);
+			((EntityPlayer) entityLiving).inventory.addItemStackToInventory(new ItemStack(ModItems.GLASS_ORB));
+		}
+		entityLiving.addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 0, true, false));
 		return stack;
 	}
 

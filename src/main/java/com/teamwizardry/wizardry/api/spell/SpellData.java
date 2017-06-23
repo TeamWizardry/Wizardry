@@ -51,6 +51,11 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 		this.data.put(key, value);
 	}
 
+	public <T> void removeData(@Nonnull Pair<String, Class<T>> key) {
+		if (this.data.containsKey(key))
+			this.data.remove(key);
+	}
+
 	@Nullable
 	@SuppressWarnings("unchecked")
 	public <T> T getData(@Nonnull Pair<String, Class<T>> pair) {

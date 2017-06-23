@@ -76,7 +76,7 @@ public class ModuleEffectFreeze extends ModuleEffect {
 			spell.world.playSound(null, targetEntity.getPosition(), ModSounds.FROST_FORM, SoundCategory.NEUTRAL, 1, 1);
 			targetEntity.extinguish();
 			if (targetEntity instanceof EntityLivingBase)
-				((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.SLIPPERY, (int) time, 1, true, false));
+				((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.SLIPPERY, (int) time, 0, true, false));
 		}
 
 		if (targetPos != null) {
@@ -121,6 +121,9 @@ public class ModuleEffectFreeze extends ModuleEffect {
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 		glitter.enableMotionCalculation();
 		glitter.setScaleFunction(new InterpScale(1, 0));
+		glitter.setAcceleration(new Vec3d(0, -0.1, 0));
+		glitter.setCollision(true);
+		glitter.setCanBounce(true);
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(position), RandUtil.nextInt(5, 15), 0, (aFloat, particleBuilder) -> {
 			double radius = 2;
 			double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
@@ -129,9 +132,9 @@ public class ModuleEffectFreeze extends ModuleEffect {
 			double z = r * MathHelper.sin((float) theta);
 			glitter.setScale(RandUtil.nextFloat());
 			glitter.setPositionOffset(new Vec3d(x, RandUtil.nextDouble(-2, 2), z));
-			glitter.setLifetime(RandUtil.nextInt(30, 40));
+			glitter.setLifetime(RandUtil.nextInt(50, 100));
 			Vec3d direction = position.add(glitter.getPositionOffset()).subtract(position).normalize();
-			glitter.setMotion(direction.scale(RandUtil.nextDouble(0.5, 1.3)));
+			glitter.addMotion(direction.scale(RandUtil.nextDouble(0.5, 1)));
 		});
 
 	}

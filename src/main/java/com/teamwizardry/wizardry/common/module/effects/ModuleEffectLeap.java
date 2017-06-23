@@ -9,10 +9,14 @@ import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.init.ModSounds;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import javax.annotation.Nonnull;
 
@@ -44,7 +48,19 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 
 	@Override
 	public int getNewCooldown(@Nonnull SpellData data) {
-		return 5;
+		Entity target = data.getData(ENTITY_HIT);
+		double strength = getModifierPower(data, Attributes.POTENCY, 1, 10, true, true);
+		if (target == null) return 50;
+		if (target.getEntityData().hasKey("jump_count")) {
+			int jumpCount = target.getEntityData().getInteger("jump_count");
+			if (jumpCount <= 0) {
+				target.getEntityData().removeTag("jump_count");
+				return 50;
+			}
+			target.getEntityData().setInteger("jump_count", jumpCount - 1);
+			return (int) ((strength - jumpCount) * 5);
+		}
+		return 50;
 	}
 
 	@Override
@@ -56,6 +72,7 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 		Entity caster = spell.getData(CASTER);
 
 		if (target == null) return false;
+		if (!(target instanceof EntityLivingBase)) return false;
 
 		Vec3d lookVec = PosUtils.vecFromRotations(pitch, yaw);
 
@@ -63,11 +80,14 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 			double strength = getModifierPower(spell, Attributes.POTENCY, 1, 64, true, true) / 10.0;
 			if (!tax(this, spell)) return false;
 
-			target.motionX += target.isCollidedVertically ? lookVec.x : lookVec.x / 2.0;
+			if (!target.getEntityData().hasKey("jump_count")) {
+				target.getEntityData().setInteger("jump_count", (int) strength);
+				target.getEntityData().setInteger("jump_timer", 200);
+			}
 
-			target.motionY += target.isCollidedVertically ? strength : Math.max(0.5, strength / 3);
-
-			target.motionZ += target.isCollidedVertically ? lookVec.z : lookVec.z / 2.0;
+			target.motionX += lookVec.x;
+			target.motionY += 0.65;
+			target.motionZ += lookVec.z;
 
 			target.velocityChanged = true;
 			target.fallDistance /= getModifierPower(spell, Attributes.POTENCY, 2, 10, true, true);
@@ -101,5 +121,41 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 	@Override
 	public Module copy() {
 		return cloneModule(new ModuleEffectLeap());
+	}
+
+	@SubscribeEvent
+	public void tickPlayer(TickEvent.PlayerTickEvent event) {
+		if (event.player.getEntityData().hasKey("jump_timer")) {
+			int x = event.player.getEntityData().getInteger("jump_timer");
+
+			if (event.player.isCollidedVertically) {
+				event.player.getEntityData().removeTag("jump_timer");
+				event.player.getEntityData().removeTag("jump_count");
+				return;
+			}
+
+			if (x <= 0) {
+				event.player.getEntityData().removeTag("jump_timer");
+				event.player.getEntityData().removeTag("jump_count");
+			} else event.player.getEntityData().setInteger("jump_timer", x - 1);
+		}
+	}
+
+	@SubscribeEvent
+	public void tickEntity(LivingEvent.LivingUpdateEvent event) {
+		if (event.getEntityLiving().getEntityData().hasKey("jump_timer")) {
+			int x = event.getEntityLiving().getEntityData().getInteger("jump_timer");
+
+			if (event.getEntityLiving().isCollidedVertically) {
+				event.getEntityLiving().getEntityData().removeTag("jump_timer");
+				event.getEntityLiving().getEntityData().removeTag("jump_count");
+				return;
+			}
+
+			if (x <= 0) {
+				event.getEntityLiving().getEntityData().removeTag("jump_timer");
+				event.getEntityLiving().getEntityData().removeTag("jump_count");
+			} else event.getEntityLiving().getEntityData().setInteger("jump_timer", x - 1);
+		}
 	}
 }

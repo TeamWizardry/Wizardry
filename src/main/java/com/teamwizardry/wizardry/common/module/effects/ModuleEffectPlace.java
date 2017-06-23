@@ -72,7 +72,6 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 		}
 
 		double range = getModifierPower(spell, Attributes.AREA, 1, 64, true, true);
-		range = 64;
 
 		if (caster != null && targetPos != null && caster.getEntityData().hasKey("selected")) {
 			IBlockState state = NBTUtil.readBlockState(caster.getEntityData().getCompoundTag("selected"));
@@ -156,7 +155,7 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 
 		if (position == null) return;
 
-		LibParticles.EFFECT_REGENERATE(world, position, getPrimaryColor());
+		LibParticles.EXPLODE(world, position, getPrimaryColor(), getSecondaryColor(), 0.2, 0.3, 20, 40, 10, true);
 	}
 
 	@Nonnull

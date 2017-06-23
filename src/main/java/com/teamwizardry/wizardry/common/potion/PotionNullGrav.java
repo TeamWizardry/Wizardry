@@ -12,7 +12,7 @@ import javax.annotation.Nonnull;
 public class PotionNullGrav extends PotionMod {
 
 	public PotionNullGrav() {
-		super("nullify_gravity", false, 0xFFFFFF);
+		super("nullify_gravity", false, 0x38AA9f);
 	}
 
 	@Override

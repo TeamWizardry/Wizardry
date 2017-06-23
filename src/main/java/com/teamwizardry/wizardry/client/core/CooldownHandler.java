@@ -26,6 +26,8 @@ public class CooldownHandler {
 	@SubscribeEvent
 	public void clientTick(TickEvent.ClientTickEvent event) {
 		if (event.phase != TickEvent.Phase.START) return;
+		if (playerHandler == null) return;
+		if (Minecraft.getMinecraft().player == null) return;
 
 		if (resetMain) {
 			playerHandler.invoke(Minecraft.getMinecraft().player, 1000);

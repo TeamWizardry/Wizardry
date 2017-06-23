@@ -55,7 +55,6 @@ public class ModuleEffectBreak extends ModuleEffect {
 
 		double range = getModifierPower(spell, Attributes.AREA, 1, 64, true, true);
 		double strength = getModifierPower(spell, Attributes.POTENCY, 1, 64, true, true);
-		range = 32;
 
 		if (targetPos != null) {
 			Block block = world.getBlockState(targetPos).getBlock();
@@ -120,7 +119,7 @@ public class ModuleEffectBreak extends ModuleEffect {
 
 		if (position == null) return;
 
-		LibParticles.EFFECT_REGENERATE(world, position, getPrimaryColor());
+		LibParticles.EXPLODE(world, position, getPrimaryColor(), getSecondaryColor(), 0.2, 0.3, 20, 40, 10, true);
 	}
 
 	@Nonnull

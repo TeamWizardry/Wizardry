@@ -86,7 +86,7 @@ public class FluidBlockMana extends BlockFluidClassic {
 		run(entityIn,
 				entity -> entity instanceof EntityLivingBase,
 				entity -> {
-					((EntityLivingBase) entityIn).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 1, true, false));
+					((EntityLivingBase) entityIn).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 0, true, false));
 
 					if (RandUtil.nextInt(50) == 0) entity.attackEntityFrom(DamageSourceMana.INSTANCE, 0.1f);
 				});
@@ -249,6 +249,10 @@ public class FluidBlockMana extends BlockFluidClassic {
 					worldIn.removeEntity(soulSand);
 
 				EntityItem manaBattery = new EntityItem(worldIn, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, new ItemStack(ModBlocks.MANA_BATTERY));
+				manaBattery.motionX = 0;
+				manaBattery.motionY = 0;
+				manaBattery.motionZ = 0;
+				manaBattery.forceSpawn = true;
 				worldIn.spawnEntity(manaBattery);
 
 				for (int i = -1; i <= 1; i++)
@@ -258,7 +262,7 @@ public class FluidBlockMana extends BlockFluidClassic {
 				PacketHandler.NETWORK.sendToAllAround(new PacketExplode(entity.getPositionVector(), Color.CYAN, Color.BLUE, 0.9, 2, 500, 100, 50, true),
 						new NetworkRegistry.TargetPoint(worldIn.provider.getDimension(), entity.posX, entity.posY, entity.posZ, 256));
 
-				boom(worldIn, entity);
+				boom(worldIn, manaBattery);
 
 				worldIn.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
 			}

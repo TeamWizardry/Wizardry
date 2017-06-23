@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.asm;
 
 import com.teamwizardry.wizardry.api.events.EntityMoveWithHeadingEvent;
 import com.teamwizardry.wizardry.api.events.EntityPostMoveEvent;
+import com.teamwizardry.wizardry.api.events.EntityRenderShadowAndFireEvent;
 import com.teamwizardry.wizardry.api.events.PlayerClipEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -30,6 +31,12 @@ public class WizardryASMHooks {
 
 	public static boolean entityMoveWithHeading(EntityLivingBase entity, float strafe, float forward) {
 		EntityMoveWithHeadingEvent event = new EntityMoveWithHeadingEvent(entity, strafe, forward);
+		MinecraftForge.EVENT_BUS.post(event);
+		return !event.override;
+	}
+
+	public static boolean entityRenderShadowAndFire(Entity entity) {
+		EntityRenderShadowAndFireEvent event = new EntityRenderShadowAndFireEvent(entity);
 		MinecraftForge.EVENT_BUS.post(event);
 		return !event.override;
 	}
