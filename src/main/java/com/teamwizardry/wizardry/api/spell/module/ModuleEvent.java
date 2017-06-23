@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.api.spell;
+package com.teamwizardry.wizardry.api.spell.module;
 
 public abstract class ModuleEvent extends Module
 {

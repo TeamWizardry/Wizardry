@@ -1,7 +1,8 @@
 package com.teamwizardry.wizardry.api.events;
 
-import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.SpellData;
+import com.teamwizardry.wizardry.api.spell.module.Module;
+
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**

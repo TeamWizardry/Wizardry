@@ -1,6 +1,13 @@
 package com.teamwizardry.wizardry.common.module.modifiers;
 
 import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
+import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
+import com.teamwizardry.wizardry.api.spell.attribute.Operation;
+import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
+import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
+
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -41,12 +48,8 @@ public class ModuleModifierException extends ModuleModifier {
 
 	@Override
 	public void apply(@NotNull Module module) {
-		// TODO
-	}
-
-	@Override
-	public double costMultiplier() {
-		return 1.2;
+		module.modifiers.add(new AttributeModifier(Attributes.MANA, 1.2, Operation.MULTIPLY));
+		module.modifiers.add(new AttributeModifier(Attributes.BURNOUT, 1.2, Operation.MULTIPLY));
 	}
 
 	@Nonnull

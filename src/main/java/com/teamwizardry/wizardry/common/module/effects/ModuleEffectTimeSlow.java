@@ -8,6 +8,10 @@ import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
+import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import com.teamwizardry.wizardry.init.ModPotions;
@@ -60,8 +64,8 @@ public class ModuleEffectTimeSlow extends ModuleEffect {
 		Entity caster = spell.getData(CASTER);
 
 		if (targetEntity instanceof EntityLivingBase) {
-			double strength = getModifierPower(spell, Attributes.INCREASE_POTENCY, 2, 20, false, true);
-			double duration = getModifierPower(spell, Attributes.EXTEND_TIME, 5, 64, false, true) * 10;
+			double strength = getModifierPower(spell, Attributes.POTENCY, 2, 20, false, true);
+			double duration = getModifierPower(spell, Attributes.DURATION, 5, 64, false, true) * 10;
 			if (!tax(this, spell)) return false;
 
 			// TODO: readd mobs

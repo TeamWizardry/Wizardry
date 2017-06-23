@@ -1,29 +1,34 @@
 package com.teamwizardry.wizardry.common.module.shapes;
 
-import com.teamwizardry.wizardry.api.spell.*;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ORIGIN;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.PITCH;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.STRENGTH;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.TARGET_HIT;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.YAW;
+
+import javax.annotation.Nonnull;
+
+import com.teamwizardry.wizardry.api.spell.IContinuousSpell;
+import com.teamwizardry.wizardry.api.spell.SpellData;
+import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
+import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
+import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.lib.LibParticles;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-
-import javax.annotation.Nonnull;
-
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
 /**
  * Created by LordSaad.
  */
 @RegisterModule
 public class ModuleShapeBeam extends ModuleShape implements IContinuousSpell {
-
-	@Nonnull
-	@Override
-	public ModuleType getModuleType() {
-		return ModuleType.SHAPE;
-	}
 
 	@Nonnull
 	@Override
@@ -55,10 +60,10 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousSpell {
 		if (position == null) return false;
 
 		double range = 10;
-		if (attributes.hasKey(Attributes.EXTEND_TIME))
-			range = Math.min(64, attributes.getDouble(Attributes.EXTEND_TIME));
+		if (attributes.hasKey(Attributes.RANGE))
+			range = Math.min(64, attributes.getDouble(Attributes.RANGE));
 
-		setCostMultiplier(this, 1);
+		setCostMultiplier(this, 0.1);
 
 		RayTraceResult trace = new RayTrace(world, PosUtils.vecFromRotations(pitch, yaw), position, range).setSkipEntity(caster).trace();
 		if (trace == null) return false;

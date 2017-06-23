@@ -1,18 +1,26 @@
 package com.teamwizardry.wizardry.api.spell;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.annotation.Nonnull;
+
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.item.INacreColorable;
+import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.init.ModItems;
+
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-
-import javax.annotation.Nonnull;
-import java.util.*;
 
 /**
  * Created by LordSaad.
@@ -69,7 +77,6 @@ public class SpellStack {
 				if (!(modifier instanceof IModifier)) continue;
 
 				((IModifier) modifier).apply(head);
-				head.setMultiplier(head.getMultiplier() * ((IModifier) modifier).costMultiplier());
 			}
 
 			fields.put(stack.getItem(), head);
@@ -109,6 +116,10 @@ public class SpellStack {
 			}
 		}
 
+		// Finalize modifier modifications
+		for (Module module : compiled)
+			module.processModifiers();
+		
 		// PROCESS COLOR
 		for (Module module : compiled)
 			module.processColor(module.nextModule);

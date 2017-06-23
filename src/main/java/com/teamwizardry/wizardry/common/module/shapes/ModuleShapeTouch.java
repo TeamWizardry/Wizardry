@@ -1,6 +1,10 @@
 package com.teamwizardry.wizardry.common.module.shapes;
 
 import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
+import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
+
 import net.minecraft.entity.Entity;
 
 import javax.annotation.Nonnull;
@@ -12,12 +16,6 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
  */
 @RegisterModule
 public class ModuleShapeTouch extends ModuleShape {
-
-	@Nonnull
-	@Override
-	public ModuleType getModuleType() {
-		return ModuleType.SHAPE;
-	}
 
 	@Nonnull
 	@Override

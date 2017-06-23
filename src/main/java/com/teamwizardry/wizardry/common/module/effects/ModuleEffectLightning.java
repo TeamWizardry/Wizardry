@@ -3,6 +3,10 @@ package com.teamwizardry.wizardry.common.module.effects;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.LightningGenerator;
 import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
+import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RandUtilSeed;
@@ -66,8 +70,8 @@ public class ModuleEffectLightning extends ModuleEffect {
 			origin = new Vec3d(offX, caster.getEyeHeight(), offZ).add(target);
 		}
 
-		double range = getModifierPower(spell, Attributes.EXTEND_RANGE, 10, 32, true, true);
-		double strength = getModifierPower(spell, Attributes.INCREASE_POTENCY, 4, 20, true, true) / 2.0;
+		double range = getModifierPower(spell, Attributes.RANGE, 10, 32, true, true);
+		double strength = getModifierPower(spell, Attributes.POTENCY, 4, 20, true, true) / 2.0;
 
 		if (!tax(this, spell)) return false;
 
@@ -103,7 +107,7 @@ public class ModuleEffectLightning extends ModuleEffect {
 		Entity caster = spell.getData(CASTER);
 		Vec3d target = spell.getData(TARGET_HIT);
 		long seed = spell.getData(SEED, 0L);
-		double range = getModifierPower(spell, Attributes.EXTEND_RANGE, 10, 32, true, true);
+		double range = getModifierPower(spell, Attributes.RANGE, 10, 32, true, true);
 
 		if (target == null) return;
 

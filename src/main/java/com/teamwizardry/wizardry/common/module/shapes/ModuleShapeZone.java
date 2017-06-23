@@ -8,6 +8,10 @@ import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
+import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
+import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RandUtilSeed;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
@@ -31,12 +35,6 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  */
 @RegisterModule
 public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
-
-	@Nonnull
-	@Override
-	public ModuleType getModuleType() {
-		return ModuleType.SHAPE;
-	}
 
 	@Nonnull
 	@Override
@@ -69,9 +67,9 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 
 		if (targetPos == null) return false;
 
-		double aoe = getModifierPower(spell, Attributes.INCREASE_AOE, 3, 10, false, false);
-		double strength = getModifierPower(spell, Attributes.INCREASE_POTENCY, 1, 10, true, true);
-		double range = getModifierPower(spell, Attributes.EXTEND_RANGE, 1, 10, true, true);
+		double aoe = getModifierPower(spell, Attributes.AREA, 3, 10, false, false);
+		double strength = getModifierPower(spell, Attributes.POTENCY, 1, 10, true, true);
+		double range = getModifierPower(spell, Attributes.RANGE, 1, 10, true, true);
 
 		List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(targetPos)).expand(aoe, 1, aoe));
 
@@ -119,7 +117,7 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 		if (target == null) return;
 		if (RandUtil.nextInt(10) != 0) return;
 
-		double aoe = getModifierPower(spell, Attributes.INCREASE_AOE, 3, 10, false, false);
+		double aoe = getModifierPower(spell, Attributes.AREA, 3, 10, false, false);
 
 		ParticleBuilder glitter = new ParticleBuilder(10);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
@@ -145,7 +143,7 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 
 	@Override
 	public int lingeringTime(SpellData spell) {
-		double strength = getModifierPower(spell, Attributes.EXTEND_TIME, 40, 100, true, true) * 30;
+		double strength = getModifierPower(spell, Attributes.DURATION, 40, 100, true, true) * 30;
 		return (int) strength;
 	}
 }

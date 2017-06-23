@@ -1,7 +1,8 @@
 package com.teamwizardry.wizardry.common.core;
 
-import com.teamwizardry.wizardry.api.spell.Module;
 import com.teamwizardry.wizardry.api.spell.SpellData;
+import com.teamwizardry.wizardry.api.spell.module.Module;
+
 import kotlin.Pair;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;

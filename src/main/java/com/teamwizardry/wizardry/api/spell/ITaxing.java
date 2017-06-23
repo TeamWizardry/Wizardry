@@ -1,6 +1,8 @@
 package com.teamwizardry.wizardry.api.spell;
 
 import com.teamwizardry.wizardry.api.capability.CapManager;
+import com.teamwizardry.wizardry.api.spell.module.Module;
+
 import net.minecraft.entity.Entity;
 
 /**

@@ -1,6 +1,13 @@
 package com.teamwizardry.wizardry.common.module.modifiers;
 
 import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
+import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
+import com.teamwizardry.wizardry.api.spell.attribute.Operation;
+import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
+import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
+
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -41,13 +48,9 @@ public class ModuleModifierExtendRange extends ModuleModifier {
 
 	@Override
 	public void apply(@NotNull Module module) {
-		int power = 1;
-		module.attributes.setDouble(Attributes.EXTEND_RANGE, module.attributes.getDouble(Attributes.EXTEND_RANGE) + power);
-	}
-
-	@Override
-	public double costMultiplier() {
-		return 1.2;
+		module.modifiers.add(new AttributeModifier(Attributes.RANGE, 1, Operation.ADD));
+		module.modifiers.add(new AttributeModifier(Attributes.MANA, 1.2, Operation.MULTIPLY));
+		module.modifiers.add(new AttributeModifier(Attributes.BURNOUT, 1.2, Operation.MULTIPLY));
 	}
 
 	@Nonnull

@@ -1,5 +1,7 @@
 package com.teamwizardry.wizardry.api.spell;
 
+import com.teamwizardry.wizardry.api.spell.module.Module;
+
 /**
  * Created by LordSaad.
  */

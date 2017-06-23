@@ -1,13 +1,34 @@
-package com.teamwizardry.wizardry.api.spell;
+package com.teamwizardry.wizardry.api.spell.module;
 
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
+
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.jetbrains.annotations.NotNull;
+
+import com.google.common.collect.HashMultimap;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.saving.SaveMethodGetter;
 import com.teamwizardry.librarianlib.features.saving.SaveMethodSetter;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
 import com.teamwizardry.wizardry.api.events.SpellCastEvent;
+import com.teamwizardry.wizardry.api.spell.ILingeringModule;
+import com.teamwizardry.wizardry.api.spell.SpellData;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
+import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
+import com.teamwizardry.wizardry.api.spell.attribute.Operation;
 import com.teamwizardry.wizardry.common.core.SpellTicker;
 import com.teamwizardry.wizardry.common.network.PacketRenderSpell;
+
 import kotlin.Pair;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -18,15 +39,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.awt.*;
-import java.util.HashSet;
-import java.util.Set;
-
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
 
 /**
  * Created by LordSaad.
@@ -39,17 +51,18 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	 */
 	@Nonnull
 	public NBTTagCompound attributes = new NBTTagCompound();
+	@Nonnull
+	public List<AttributeModifier> modifiers = new ArrayList<>();
+
 	@Nullable
 	public Module nextModule = null;
-	private double manaDrain = 0;
-	private double burnoutFill = 0;
 	private Color primaryColor = null;
 	private Color secondaryColor = null;
 	private int cooldownTime = 0;
 	private int chargeupTime = 0;
 	private ItemStack itemStack = ItemStack.EMPTY;
 	private double multiplier = 1;
-
+	
 	public Module() {
 	}
 
@@ -130,19 +143,19 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	}
 
 	public final double getManaDrain() {
-		return manaDrain;
+		return attributes.getDouble(Attributes.MANA);
 	}
 
 	public final void setManaDrain(double manaDrain) {
-		this.manaDrain = manaDrain;
+		attributes.setDouble(Attributes.MANA, manaDrain);;
 	}
 
 	public final double getBurnoutFill() {
-		return burnoutFill;
+		return attributes.getDouble(Attributes.BURNOUT);
 	}
 
 	public final void setBurnoutFill(double burnoutFill) {
-		this.burnoutFill = burnoutFill;
+		attributes.setDouble(Attributes.BURNOUT, burnoutFill);
 	}
 
 	public final int getCooldownTime() {
@@ -265,7 +278,14 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	}
 
 	public void processColor(Module nextModule) {
-		if (nextModule == null) return;
+		if (nextModule == null)
+		{
+			if (this.getPrimaryColor() == null)
+				setPrimaryColor(Color.WHITE);
+			if (this.getSecondaryColor() == null)
+				setSecondaryColor(Color.WHITE);
+			return;
+		}
 
 		processColor(nextModule.nextModule);
 
@@ -273,9 +293,29 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 		if (getSecondaryColor() == null) setSecondaryColor(nextModule.getSecondaryColor());
 
 	}
+	
+	public void processModifiers()
+	{
+		HashMultimap<Operation, AttributeModifier> sortedMap = HashMultimap.create();
+		for (AttributeModifier modifier : modifiers)
+			sortedMap.put(modifier.getOperation(), modifier);
+		
+		for (Operation op : Operation.values())
+		{
+			for (AttributeModifier modifier : sortedMap.get(op))
+			{
+				String attribute = modifier.getAttribute();
+				double current = attributes.getDouble(attribute);
+				double newValue = modifier.apply(current);
+				attributes.setDouble(attribute, newValue);
+				Wizardry.logger.debug("Attribute: " + attribute + ", Old: " + current + ", New: " + newValue);	
+			}
+		}
+	}
 
 	protected final <T extends Module> Module cloneModule(T toCloneTo) {
 		toCloneTo.attributes = attributes;
+		toCloneTo.modifiers = modifiers;
 		toCloneTo.nextModule = nextModule;
 		toCloneTo.setPrimaryColor(getPrimaryColor());
 		toCloneTo.setSecondaryColor(getSecondaryColor());

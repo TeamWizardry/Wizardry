@@ -5,6 +5,7 @@ import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.wizardry.api.item.ICooldown;
 import com.teamwizardry.wizardry.api.item.INacreColorable;
 import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.common.module.shapes.ModuleShapeTouch;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;

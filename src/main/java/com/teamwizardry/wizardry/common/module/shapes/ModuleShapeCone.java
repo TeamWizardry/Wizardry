@@ -8,6 +8,10 @@ import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
+import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
+import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
@@ -28,12 +32,6 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  */
 @RegisterModule
 public class ModuleShapeCone extends ModuleShape {
-
-	@Nonnull
-	@Override
-	public ModuleType getModuleType() {
-		return ModuleType.SHAPE;
-	}
 
 	@Nonnull
 	@Override
@@ -63,7 +61,7 @@ public class ModuleShapeCone extends ModuleShape {
 
 		if (position == null) return false;
 
-		double range = getModifierPower(spell, Attributes.EXTEND_RANGE, 10, 32, true, true);
+		double range = getModifierPower(spell, Attributes.RANGE, 10, 32, true, true);
 
 		setCostMultiplier(this, range / 16.0);
 
@@ -74,7 +72,7 @@ public class ModuleShapeCone extends ModuleShape {
 			origin = new Vec3d(offX, 0, offZ).add(position);
 		}
 
-		int chance = (int) (getModifierPower(spell, Attributes.INCREASE_POTENCY, 5, 32, true, true));
+		int chance = (int) (getModifierPower(spell, Attributes.POTENCY, 5, 32, true, true));
 
 		for (int i = 0; i < chance; i++) {
 			//	if (chance > 0 && RandUtil.nextInt(33 - chance) != 0) continue;

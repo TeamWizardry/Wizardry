@@ -1,9 +1,16 @@
 package com.teamwizardry.wizardry.common.module.modifiers;
 
-import com.teamwizardry.wizardry.api.spell.*;
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
+import com.teamwizardry.wizardry.api.spell.SpellData;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
+import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
+import com.teamwizardry.wizardry.api.spell.attribute.Operation;
+import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
+import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 
 /**
  * Created by LordSaad.
@@ -41,13 +48,9 @@ public class ModuleModifierExtendTime extends ModuleModifier {
 
 	@Override
 	public void apply(@NotNull Module module) {
-		int power = 1;
-		module.attributes.setDouble(Attributes.EXTEND_TIME, module.attributes.getDouble(Attributes.EXTEND_TIME) + power);
-	}
-
-	@Override
-	public double costMultiplier() {
-		return 1.2;
+		module.modifiers.add(new AttributeModifier(Attributes.DURATION, 1, Operation.ADD));
+		module.modifiers.add(new AttributeModifier(Attributes.MANA, 1.2, Operation.MULTIPLY));
+		module.modifiers.add(new AttributeModifier(Attributes.BURNOUT, 1.2, Operation.MULTIPLY));
 	}
 
 	@Nonnull

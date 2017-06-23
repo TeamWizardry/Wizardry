@@ -1,6 +1,10 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
 import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
+import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.init.ModSounds;
@@ -52,7 +56,7 @@ public class ModuleEffectBurn extends ModuleEffect {
 		Entity caster = spell.getData(CASTER);
 		EnumFacing facing = spell.getData(FACE_HIT);
 
-		double strength = getModifierPower(spell, Attributes.INCREASE_AOE, 1, 16, true, true) / 2.0;
+		double strength = getModifierPower(spell, Attributes.AREA, 1, 16, true, true) / 2.0;
 
 		if (!tax(this, spell)) return false;
 

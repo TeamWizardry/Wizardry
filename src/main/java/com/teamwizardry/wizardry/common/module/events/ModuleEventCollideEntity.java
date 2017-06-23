@@ -4,10 +4,10 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ENTITY_H
 
 import javax.annotation.Nonnull;
 
-import com.teamwizardry.wizardry.api.spell.Module;
-import com.teamwizardry.wizardry.api.spell.ModuleEvent;
-import com.teamwizardry.wizardry.api.spell.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
+import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleEvent;
+import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 
 import net.minecraft.entity.Entity;
 

@@ -1,6 +1,10 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
 import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
+import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.init.ModSounds;
 import com.teamwizardry.wizardry.lib.LibParticles;
@@ -56,7 +60,7 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 		Vec3d lookVec = PosUtils.vecFromRotations(pitch, yaw);
 
 		if (!target.hasNoGravity()) {
-			double strength = getModifierPower(spell, Attributes.INCREASE_POTENCY, 1, 64, true, true) / 10.0;
+			double strength = getModifierPower(spell, Attributes.POTENCY, 1, 64, true, true) / 10.0;
 			if (!tax(this, spell)) return false;
 
 			target.motionX += target.isCollidedVertically ? lookVec.x : lookVec.x / 2.0;
@@ -66,7 +70,7 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 			target.motionZ += target.isCollidedVertically ? lookVec.z : lookVec.z / 2.0;
 
 			target.velocityChanged = true;
-			target.fallDistance /= getModifierPower(spell, Attributes.INCREASE_POTENCY, 2, 10, true, true);
+			target.fallDistance /= getModifierPower(spell, Attributes.POTENCY, 2, 10, true, true);
 
 			if (target instanceof EntityPlayerMP)
 				((EntityPlayerMP) target).connection.sendPacket(new SPacketEntityVelocity(target));

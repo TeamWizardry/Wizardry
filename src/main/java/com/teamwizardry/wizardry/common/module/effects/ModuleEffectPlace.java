@@ -1,6 +1,10 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
 import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
+import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.lib.LibParticles;
@@ -67,7 +71,7 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 			facings.add(facing1);
 		}
 
-		double range = getModifierPower(spell, Attributes.INCREASE_AOE, 1, 64, true, true);
+		double range = getModifierPower(spell, Attributes.AREA, 1, 64, true, true);
 		range = 64;
 
 		if (caster != null && targetPos != null && caster.getEntityData().hasKey("selected")) {

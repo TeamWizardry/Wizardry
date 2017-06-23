@@ -8,7 +8,7 @@ import com.teamwizardry.librarianlib.features.config.EasyConfigHandler;
 import com.teamwizardry.librarianlib.features.kotlin.JsonMaker;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.spell.ModuleRegistry;
+import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.client.gui.GuiHandler;
 import com.teamwizardry.wizardry.common.achievement.AchievementEvents;
 import com.teamwizardry.wizardry.common.achievement.Achievements;

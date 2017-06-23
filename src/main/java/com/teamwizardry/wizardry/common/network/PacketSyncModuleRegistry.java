@@ -5,7 +5,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.teamwizardry.librarianlib.features.network.PacketBase;
 import com.teamwizardry.librarianlib.features.saving.Save;
-import com.teamwizardry.wizardry.api.spell.ModuleRegistry;
+import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
+
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 /**
