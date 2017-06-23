@@ -151,7 +151,7 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 
 		if (position == null) return;
 
-		LibParticles.EFFECT_REGENERATE(world, position, getPrimaryColor());
+		LibParticles.EXPLODE(world, position, getPrimaryColor(), getSecondaryColor(), 0.2, 0.3, 20, 40, 10, true);
 	}
 
 	@Nonnull

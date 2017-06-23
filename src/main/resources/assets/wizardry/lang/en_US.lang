@@ -4,6 +4,7 @@ tile.wizardry:mana_battery.name=Mana Battery
 tile.wizardry:nacre.name=Liquid Nacre
 tile.wizardry:mana.name=Liquid Mana
 tile.wizardry:cloud.name=Cloud
+tile.wizardry:jar_block.name=Jar
 item.wizardry:pearl_holder.name=Pearl Holder
 
 item.wizardry:book.name=Spellforger's Codex

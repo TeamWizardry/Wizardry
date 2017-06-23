@@ -40,7 +40,7 @@ public class EntityJumpPad extends EntityLiving {
 	@Override
 	public void collideWithEntity(Entity entity) {
 		if (!(entity instanceof EntityLivingBase)) return;
-		((EntityLivingBase) entity).motionY += 0.4;
+		((EntityLivingBase) entity).motionY += 0.2;
 		entity.fallDistance = 0;
 		Color color1 = new Color(
 				RandUtil.nextInt(100, 255),

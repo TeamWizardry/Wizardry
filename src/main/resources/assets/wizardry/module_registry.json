@@ -49,6 +49,14 @@
       "mana_drain": 200,
       "burnout_fill": 100,
       "item": "minecraft:feather",
+      "primary_color": "FFFFFF",
+      "secondary_color": "00fff6"
+    },
+    {
+      "id": "effect_light",
+      "mana_drain": 100,
+      "burnout_fill": 50,
+      "item": "minecraft:glowstone",
       "primary_color": "00ff21",
       "secondary_color": "ff0083"
     },

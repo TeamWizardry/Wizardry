@@ -7,6 +7,7 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import kotlin.jvm.functions.Function2;
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
@@ -47,14 +48,13 @@ public class ItemJar extends ItemModBlock implements IItemColorProvider {
 	}
 
 	@Override
-	public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer playerIn, EntityLivingBase target, EnumHand hand) {
-		if (target instanceof EntityFairy) {
-			EntityFairy fairy = (EntityFairy) target;
+	public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
+		if (entity instanceof EntityFairy) {
+			EntityFairy fairy = (EntityFairy) entity;
 			ItemNBTHelper.setBoolean(stack, Constants.NBT.FAIRY_INSIDE, true);
 			ItemNBTHelper.setInt(stack, Constants.NBT.FAIRY_COLOR, fairy.getColor().getRGB());
 			ItemNBTHelper.setInt(stack, Constants.NBT.FAIRY_AGE, fairy.getAge());
-			stack.setItemDamage(1);
-			playerIn.world.removeEntity(target);
+			entity.world.removeEntity(entity);
 			return true;
 		}
 		return false;

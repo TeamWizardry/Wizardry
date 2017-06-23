@@ -34,7 +34,7 @@ import java.util.List;
 /**
  * Created by LordSaad.
  */
-// TODO: mob ai, other player testing
+// TODO: mob ai, other player testing, proper in/out fading
 public class PotionVanish extends PotionMod {
 
 	private Function2<RenderLivingBase, Object[], Object> interpolateRotation = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, new String[]{"interpolateRotation", "func_77034_a", "a"}, float.class, float.class, float.class);

@@ -1,12 +1,15 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
-import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.spell.Module;
+import com.teamwizardry.wizardry.api.spell.ModuleEffect;
+import com.teamwizardry.wizardry.api.spell.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.SpellData;
+import com.teamwizardry.wizardry.api.util.BlockUtils;
+import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.lib.LibParticles;
-import net.minecraft.block.IGrowable;
 import net.minecraft.entity.Entity;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemDye;
-import net.minecraft.item.ItemStack;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -24,19 +27,19 @@ public class ModuleEffectLight extends ModuleEffect {
 	@Nonnull
 	@Override
 	public String getID() {
-		return "effect_thrive";
+		return "effect_light";
 	}
 
 	@Nonnull
 	@Override
 	public String getReadableName() {
-		return "Thrive";
+		return "Light";
 	}
 
 	@Nonnull
 	@Override
 	public String getDescription() {
-		return "Will heal entities & speed up plant growth";
+		return "Will place a magical light source at the target location";
 	}
 
 	@Override
@@ -44,14 +47,11 @@ public class ModuleEffectLight extends ModuleEffect {
 		World world = spell.world;
 		BlockPos targetPos = spell.getData(BLOCK_HIT);
 		Entity targetEntity = spell.getData(ENTITY_HIT);
+		EnumFacing facing = spell.getData(FACE_HIT);
 		Entity caster = spell.getData(CASTER);
 
-		// TODO
-
 		if (targetPos != null) {
-			BlockPos pos = new BlockPos(targetPos);
-			if (world.getBlockState(pos).getBlock() instanceof IGrowable)
-				ItemDye.applyBonemeal(new ItemStack(Items.DYE), world, pos);
+			BlockUtils.placeBlock(world, world.isAirBlock(targetPos) ? targetPos : facing != null ? targetPos.offset(facing) : targetPos, ModBlocks.LIGHT.getDefaultState(), caster instanceof EntityPlayerMP ? (EntityPlayerMP) caster : null);
 		}
 		return true;
 	}
@@ -63,7 +63,7 @@ public class ModuleEffectLight extends ModuleEffect {
 
 		if (position == null) return;
 
-		LibParticles.EFFECT_REGENERATE(world, position, getPrimaryColor());
+		LibParticles.EXPLODE(world, position, getPrimaryColor(), getSecondaryColor(), 0.2, 0.3, 20, 40, 10, true);
 	}
 
 	@Nonnull
