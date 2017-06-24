@@ -1,22 +1,19 @@
 package com.teamwizardry.wizardry.api.spell;
 
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.HashMultimap;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
-import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.init.ModItems;
-import kotlin.Pair;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
 
 /**
  * Created by LordSaad.
@@ -24,94 +21,93 @@ import java.util.HashSet;
 public class SpellRecipeConstructor {
 
 	public ArrayList<ItemStack> finalList = new ArrayList<>();
-	private HashSet<Module> moduleHeads;
+	private HashMap<Integer, ArrayList<Module>> moduleHeads;
 
-	public SpellRecipeConstructor(HashSet<Module> moduleHeads) {
+	// TODO: prune similar modules in fields to make spells cheaper
+	public SpellRecipeConstructor(HashMap<Integer, ArrayList<Module>> moduleHeads) {
 		this.moduleHeads = moduleHeads;
-		HashBiMap<Module, Pair<ItemStack, ItemStack>> baseIngredients = HashBiMap.create();
-		ArrayDeque<Item> identifiers = new ArrayDeque<>();
-		identifiers.addAll(SpellStack.identifiers);
+		ArrayDeque<Item> identifiers = new ArrayDeque<>(SpellStack.identifiers);
+		HashBiMap<Module, ItemStack> baseIngredients = HashBiMap.create();
+		HashMultimap<Module, ModuleModifier> modifiers = HashMultimap.create();
 
-		ArrayList<Module> temp = new ArrayList<>();
-		temp.addAll(moduleHeads);
-		ArrayList<Module> prunedModules = prune(temp);
+		Module lastModule = null;
+		for (int i : moduleHeads.keySet())
+			for (Module module : SpellStack.getAllModules(moduleHeads.get(i))) {
+				if (identifiers.isEmpty()) break;
+				if (lastModule == null) lastModule = module;
 
-		for (Module module : prunedModules) {
-			if (identifiers.isEmpty()) break;
-			ItemStack identifier = new ItemStack(identifiers.poll());
-			baseIngredients.put(module, new Pair<>(identifier, module.getItemStack().copy())); // Add the itemstack of each module to baseIngredients
-		}
-
-		// Add all the fileds
-		for (Module module : baseIngredients.keySet()) {
-			Pair<ItemStack, ItemStack> pair = baseIngredients.get(module);
-			if (pair == null) continue;
-			finalList.add(pair.getFirst());
-			finalList.add(pair.getSecond());
-
-			for (AttributeModifier attrib : module.modifiers) {
-				ModuleModifier modifier = Attributes.map.inverse().get(attrib.getAttribute());
-				if (modifier != null) finalList.add(modifier.getItemStack());
+				if (module instanceof ModuleModifier) {
+					modifiers.put(lastModule, (ModuleModifier) module);
+				} else {
+					lastModule = module;
+					baseIngredients.put(module, new ItemStack(identifiers.poll()));
+				}
 			}
 
+		for (Module module : baseIngredients.keySet()) {
+			finalList.add(baseIngredients.get(module));
+			finalList.add(module.getItemStack());
+			if (modifiers.containsKey(module)) {
+				Set<ModuleModifier> moduleModifiers = modifiers.get(module);
+				for (ModuleModifier moduleModifier : moduleModifiers) {
+					ItemStack lastStack = finalList.get(finalList.size() - 1);
+					if (lastStack.getItem() == moduleModifier.getItemStack().getItem()) {
+						lastStack.setCount(lastStack.getCount() + 1);
+					} else finalList.add(moduleModifier.getItemStack());
+				}
+			}
 			finalList.add(new ItemStack(SpellStack.fieldLineBreak));
 		}
+
 		finalList.add(new ItemStack(SpellStack.fieldCodeSplitter));
 
-		// Add the code lines.
-		for (Module head : moduleHeads) {
-			for (Module module : SpellStack.getAllModules(head)) {
-
-				Pair<ItemStack, ItemStack> pair = null;
-				for (Module module1 : baseIngredients.keySet()) {
-					if (module1.getID().equals(module.getID())) {
-						pair = baseIngredients.get(module1);
-						break;
-					}
-				}
-
-				if (pair == null) continue;
-				finalList.add(pair.getFirst());
+		for (int i : moduleHeads.keySet()) {
+			for (Module module2 : SpellStack.getAllModules(moduleHeads.get(i))) {
+				if (module2 instanceof ModuleModifier) continue;
+				finalList.add(baseIngredients.get(module2));
 			}
 			finalList.add(new ItemStack(SpellStack.codeLineBreak));
 		}
-
 		finalList.add(new ItemStack(ModItems.PEARL_NACRE));
 
 		System.out.println(finalList);
 	}
 
-	private ArrayList<Module> prune(ArrayList<Module> modules) {
-		ArrayList<Module> prunedModules = new ArrayList<>();
-		for (Module head : modules) {
-			prunedModules.addAll(SpellStack.getAllModules(head));
-		}
+	private ArrayList<Module> newPrune(ArrayList<Module> modules) {
+		System.out.println("-------------------------------------------------------------");
+		System.out.println(modules);
+		System.out.println("------------");
+		ArrayList<Module> dedup = removeDuplicates(modules);
+		System.out.println(dedup);
+		return dedup;
+	}
 
-		ArrayList<Module> temp = new ArrayList<>();
-		temp.addAll(prunedModules);
-		for (Module module1 : temp) {
-			for (Module module2 : temp) {
-				if (module1 != module2
-						&& module1.getID().equals(module2.getID())
-						&& !(module1 instanceof ModuleModifier)
-						&& !(module2 instanceof ModuleModifier)) {
+	private boolean compareModules(Module module1, Module module2) {
+		if (module2.equals(module1)) return true;
 
-					boolean noMatch = false;
-					primary:
-					for (AttributeModifier attrib1 : module1.modifiers) {
-						for (AttributeModifier attrib2 : module2.modifiers) {
-							if (attrib1.getAttribute().equalsIgnoreCase(attrib2.getAttribute()) && attrib1.getOperation() == attrib2.getOperation())
-								continue primary;
-						}
-						noMatch = true;
-					}
-					if (noMatch) prunedModules.remove(module1);
+		System.out.println(module1.getID() + " -<<  " + module1.modifiers);
+		System.out.println(module2.getID() + " <<-  " + module2.modifiers);
+		List<AttributeModifier> modifiers1 = new ArrayList<>(module1.modifiers);
+		List<AttributeModifier> modifiers2 = new ArrayList<>(module2.modifiers);
+		modifiers1.removeIf(modifiers2::contains);
+		System.out.println(module1.getID() + " ->>  " + modifiers1);
+		System.out.println("======================================");
 
-					return prune(prunedModules);
+		return module1.getID().equals(module2.getID()) && modifiers1.isEmpty();
+	}
+
+	private ArrayList<Module> removeDuplicates(ArrayList<Module> list) {
+		ArrayList<Module> deduplicated = new ArrayList<>();
+		main:
+		for (Module module : list) {
+			for (Module checkAgainst : deduplicated) {
+				if (compareModules(module, checkAgainst)) {
+					continue main;
 				}
 			}
+			deduplicated.add(module);
 		}
-		return prunedModules;
+		return deduplicated;
 	}
 
 	public JsonObject getRecipeJson() {
@@ -129,29 +125,30 @@ public class SpellRecipeConstructor {
 
 		Module lastModule = null;
 		StringBuilder finalName = null;
-		for (Module module : moduleHeads) {
-			if (lastModule == null) lastModule = module;
-			if (module != null) {
-				Module tempModule = module;
-				while (tempModule != null) {
+		for (int i : moduleHeads.keySet())
+			for (Module module : moduleHeads.get(i)) {
+				if (lastModule == null) lastModule = module;
+				if (module != null) {
+					Module tempModule = module;
+					while (tempModule != null) {
 
-					boolean next = false;
-					if (lastModule != module) {
-						lastModule = module;
-						finalName.append(" || ");
-						next = true;
+						boolean next = false;
+						if (lastModule != module) {
+							lastModule = module;
+							finalName.append(" || ");
+							next = true;
+						}
+
+						if (finalName == null) finalName = new StringBuilder(tempModule.getReadableName());
+						else {
+							if (!next) finalName.append(" -> ");
+							finalName.append(tempModule.getReadableName());
+						}
+
+						tempModule = tempModule.nextModule;
 					}
-
-					if (finalName == null) finalName = new StringBuilder(tempModule.getReadableName());
-					else {
-						if (!next) finalName.append(" -> ");
-						finalName.append(tempModule.getReadableName());
-					}
-
-					tempModule = tempModule.nextModule;
 				}
 			}
-		}
 		if (finalName != null) {
 			object.addProperty("name", finalName.toString());
 		}

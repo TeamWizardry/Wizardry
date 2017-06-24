@@ -73,9 +73,9 @@ public class SpellStack {
 
 				((ModuleModifier) modifier).apply(head);
 			}
-			
+
 			head.processModifiers();
-			
+
 			fields.put(stack.getItem(), head);
 		}
 
@@ -115,7 +115,7 @@ public class SpellStack {
 
 		// PROCESS COLOR
 		for (Module module : compiled)
-			module.processColor(module.nextModule);
+			Module.processColor(module.nextModule);
 	}
 
 	@Nonnull
@@ -134,6 +134,7 @@ public class SpellStack {
 
 	public static void runSpell(@Nonnull Module module, @Nonnull SpellData spell) {
 		spell.addData(SpellData.DefaultKeys.STRENGTH, module.calculateStrength(spell));
+		Module.processColor(module);
 		module.castSpell(spell);
 	}
 
@@ -150,12 +151,11 @@ public class SpellStack {
 				multiplier = 1 - (base * base * base * base);
 			}
 
-			for (Module module : getAllModules(spellHolder))
-				module.setMultiplier(module.getMultiplier() * multiplier);
+			for (Module module : getAllModules(spellHolder)) module.setMultiplier(module.getMultiplier() * multiplier);
+
 		}
 
-		for (Module module : getModules(spellHolder))
-			runSpell(module, spell);
+		for (Module module : getModules(spellHolder)) runSpell(module, spell);
 	}
 
 	public static ArrayList<Module> getModules(@Nonnull ItemStack spellHolder) {
@@ -207,6 +207,18 @@ public class SpellStack {
 			tempModule = tempModule.nextModule;
 		}
 		return modules;
+	}
+
+	public static ArrayList<Module> getAllModules(@Nonnull ArrayList<Module> modules) {
+		ArrayList<Module> modules1 = new ArrayList<>();
+		for (Module module : modules) {
+			Module tempModule = module;
+			while (tempModule != null) {
+				modules1.add(tempModule);
+				tempModule = tempModule.nextModule;
+			}
+		}
+		return modules1;
 	}
 
 	public static ArrayList<Module> getAllModules(@Nonnull ItemStack spellHolder) {

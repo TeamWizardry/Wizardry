@@ -19,8 +19,9 @@ public class RayTrace {
 	private final double range;
 
 	private boolean skipBlocks = false;
-	private boolean skipUncollidableBlocks = false;
+	private boolean returnLastUncollidableBlock = true;
 	private boolean skipEntities = false;
+	private boolean ignoreBlocksWithoutBoundingBoxes = false;
 	@Nullable
 	private Entity skipEntity = null;
 
@@ -41,8 +42,13 @@ public class RayTrace {
 		return this;
 	}
 
-	public RayTrace setSkipUncollidableBlocks(boolean skipUncollidableBlocks) {
-		this.skipUncollidableBlocks = skipUncollidableBlocks;
+	public RayTrace setReturnLastUncollidableBlock(boolean returnLastUncollidableBlock) {
+		this.returnLastUncollidableBlock = returnLastUncollidableBlock;
+		return this;
+	}
+
+	public RayTrace setIgnoreBlocksWithoutBoundingBoxes(boolean ignoreBlocksWithoutBoundingBoxes) {
+		this.ignoreBlocksWithoutBoundingBoxes = ignoreBlocksWithoutBoundingBoxes;
 		return this;
 	}
 
@@ -67,7 +73,8 @@ public class RayTrace {
 					lookVec,
 					EnumFacing.getFacingFromVector((float) lookVec.x, (float) lookVec.y, (float) lookVec.z),
 					new BlockPos(lookVec));
-		} else result = world.rayTraceBlocks(origin, lookVec, false, skipUncollidableBlocks, skipUncollidableBlocks);
+		} else
+			result = world.rayTraceBlocks(origin, lookVec, false, ignoreBlocksWithoutBoundingBoxes, returnLastUncollidableBlock);
 
 		if (skipEntities) return result;
 

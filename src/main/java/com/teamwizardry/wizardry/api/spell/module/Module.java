@@ -171,8 +171,6 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	 * @return If the spell has succeeded.
 	 */
 	public final boolean castSpell(@NotNull SpellData data) {
-		processColor(this);
-
 		if (this instanceof ILingeringModule)
 			if (!SpellTicker.INSTANCE.ticker.containsKey(this))
 				SpellTicker.INSTANCE.ticker.put(this, new Pair<>(data, ((ILingeringModule) this).lingeringTime(data)));
@@ -250,22 +248,25 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 		return (attributes.hasKey(attribute) ? Math.min(Math.max(min, min + attributes.getDouble(attribute)), max) : min) * (multiplyMultiplier ? getMultiplier() : 1) * (multiplyBurnout ? calcBurnoutPercent(caster) : 1);
 	}
 
-	public void processColor(Module nextModule) {
-		System.out.println(getID() + " -> " + (nextModule == null ? "null" : nextModule.getID()) + ": " + (nextModule == null ? "null" : nextModule.getPrimaryColor()));
-		if (nextModule == null) {
-			if (this.getPrimaryColor() == null)
-				setPrimaryColor(Color.WHITE);
-			if (this.getSecondaryColor() == null)
-				setSecondaryColor(Color.WHITE);
+	public static void processColor(Module module) {
+		if (module == null) return;
+
+		if (module.nextModule == null) {
+			if (module.getPrimaryColor() == null) {
+				module.setPrimaryColor(Color.WHITE);
+			}
+			if (module.getSecondaryColor() == null) {
+				module.setSecondaryColor(Color.WHITE);
+			}
 			return;
 		}
 
-		processColor(nextModule.nextModule);
+		processColor(module.nextModule);
 
-		if (getPrimaryColor() == null) {
-			setPrimaryColor(nextModule.getPrimaryColor());
+		if (module.getPrimaryColor() == null) {
+			module.setPrimaryColor(module.nextModule.getPrimaryColor());
 		}
-		if (getSecondaryColor() == null) setSecondaryColor(nextModule.getSecondaryColor());
+		if (module.getSecondaryColor() == null) module.setSecondaryColor(module.nextModule.getSecondaryColor());
 
 	}
 

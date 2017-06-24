@@ -46,4 +46,27 @@ public class AttributeModifier implements INBTSerializable<NBTTagCompound> {
 		modifier = nbt.getDouble("modifier");
 		op = Operation.valueOf(nbt.getString("operation"));
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		AttributeModifier modifier1 = (AttributeModifier) o;
+
+		if (Double.compare(modifier1.modifier, modifier) != 0) return false;
+		if (attribute != null ? !attribute.equals(modifier1.attribute) : modifier1.attribute != null) return false;
+		return op == modifier1.op;
+	}
+
+	@Override
+	public int hashCode() {
+		int result;
+		long temp;
+		result = attribute != null ? attribute.hashCode() : 0;
+		temp = Double.doubleToLongBits(modifier);
+		result = 31 * result + (int) (temp ^ (temp >>> 32));
+		result = 31 * result + (op != null ? op.hashCode() : 0);
+		return result;
+	}
 }

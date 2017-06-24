@@ -2,12 +2,12 @@ package com.teamwizardry.wizardry.common.core;
 
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.module.Module;
-
 import kotlin.Pair;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -25,13 +25,15 @@ public class SpellTicker {
 
 	@SubscribeEvent
 	public void tick(TickEvent.WorldTickEvent event) {
-		ticker.keySet().removeIf(module -> {
+		ArrayList<Module> modules = new ArrayList<>(ticker.keySet());
+		modules.forEach(module -> {
 			int time = ticker.get(module).getSecond();
 			if (time > 0) {
 				ticker.put(module, new Pair<>(ticker.get(module).getFirst().copy(), --time));
 				module.castSpell(ticker.get(module).getFirst());
-				return false;
-			} else return true;
+			} else {
+				ticker.remove(module);
+			}
 		});
 	}
 }

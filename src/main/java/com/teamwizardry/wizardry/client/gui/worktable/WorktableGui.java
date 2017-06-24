@@ -26,6 +26,7 @@ import net.minecraft.util.math.Vec3d;
 
 import javax.annotation.Nullable;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
@@ -42,7 +43,7 @@ public class WorktableGui extends GuiBase {
 	ComponentVoid paper;
 	BiMap<GuiComponent, UUID> paperComponents = HashBiMap.create();
 	HashMap<UUID, UUID> componentLinks = new HashMap<>();
-	private HashSet<Module> compiledSpell = new HashSet<>();
+	private HashMap<Integer, ArrayList<Module>> compiledSpell = new HashMap<>();
 
 	public WorktableGui() {
 		super(480, 224);
@@ -99,10 +100,11 @@ public class WorktableGui extends GuiBase {
 			HashSet<GuiComponent> heads = getHeads();
 			if (heads.isEmpty()) return;
 			compiledSpell.clear();
+			int i = 0;
 			for (GuiComponent component : heads) {
-				Module module = compileModule(component);
-				if (module == null) continue;
-				compiledSpell.add(module);
+				ArrayList<Module> stream = new ArrayList<>();
+				compileModule(stream, component);
+				compiledSpell.put(i++, stream);
 			}
 
 			SpellRecipeConstructor recipe = new SpellRecipeConstructor(compiledSpell);
@@ -125,35 +127,33 @@ public class WorktableGui extends GuiBase {
 		return paperComponents.inverse().get(uuid);
 	}
 
-	@Nullable
-	private Module compileModule(@Nullable GuiComponent component) {
-		if (component == null) return null;
+	private void compileModule(ArrayList<Module> stream, @Nullable GuiComponent component) {
+		if (component == null) return;
 
 		Module module = getModule(component);
-		if (module == null) return null;
+		if (module == null) return;
 
+		stream.add(module);
 		for (Module modifier : ModuleRegistry.INSTANCE.getModules(ModuleType.MODIFIER)) {
 			if (!(modifier instanceof ModuleModifier)) continue;
 			if (component.hasData(Integer.class, modifier.getID())) {
 				int x = (int) component.getData(Integer.class, modifier.getID());
 				for (int i = 0; i < x; i++) {
-					((ModuleModifier) modifier).apply(module);
+					stream.add(modifier.copy());
 				}
 			}
 		}
 
-		if (!componentLinks.containsKey(getUUID(component))) return module;
+		if (!componentLinks.containsKey(getUUID(component))) return;
 		UUID uuidChild = componentLinks.get(getUUID(component));
 
 		GuiComponent childComp = getComponent(uuidChild);
-		if (childComp == null) return module;
+		if (childComp == null) return;
 
 		Module child = getModule(childComp);
-		if (child == null) return module;
+		if (child == null) return;
 
-		module.nextModule = compileModule(childComp);
-
-		return module;
+		compileModule(stream, childComp);
 	}
 
 	private HashSet<GuiComponent> getHeads() {

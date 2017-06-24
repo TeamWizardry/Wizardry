@@ -60,7 +60,7 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousSpell {
 
 		setCostMultiplier(this, 0.1);
 
-		RayTraceResult trace = new RayTrace(world, PosUtils.vecFromRotations(pitch, yaw), position, range).setSkipEntity(caster).trace();
+		RayTraceResult trace = new RayTrace(world, PosUtils.vecFromRotations(pitch, yaw), position, range).setSkipEntity(caster).setReturnLastUncollidableBlock(true).setIgnoreBlocksWithoutBoundingBoxes(false).trace();
 		if (trace == null) return false;
 
 		if (trace.typeOfHit == RayTraceResult.Type.ENTITY)
