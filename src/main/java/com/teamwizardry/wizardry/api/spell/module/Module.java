@@ -308,7 +308,7 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 				double current = attributes.getDouble(attribute);
 				double newValue = modifier.apply(current);
 				attributes.setDouble(attribute, newValue);
-				Wizardry.logger.debug("Attribute: " + attribute + ", Old: " + current + ", New: " + newValue);	
+				Wizardry.logger.info("Attribute: " + attribute + ", Old: " + current + ", New: " + newValue);	
 			}
 		}
 	}

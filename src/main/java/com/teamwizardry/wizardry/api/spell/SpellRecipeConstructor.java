@@ -20,7 +20,7 @@ import java.util.HashSet;
  */
 public class SpellRecipeConstructor {
 
-	public ArrayList<ItemStack> finalList = new ArrayList<>();
+	public ArrayList<ItemStack> finalList = new ArrayList<>();;
 	private HashSet<Module> moduleHeads;
 
 	public SpellRecipeConstructor(HashSet<Module> moduleHeads) {
@@ -34,7 +34,7 @@ public class SpellRecipeConstructor {
 		ArrayList<Module> prunedModules = prune(temp);
 
 		for (Module module : prunedModules) {
-			if (module instanceof IModifier) continue; // TODO
+			if (module instanceof IModifier); // TODO
 
 			if (identifiers.isEmpty()) break;
 			ItemStack identifier = new ItemStack(identifiers.poll());
