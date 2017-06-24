@@ -1,0 +1,8 @@
+{
+  "item": "minecraft:slime_ball",
+  "mana_drain": 0.5,
+  "burnout_fill": 0.5,
+  "primary_color": "000000",
+  "secondary_color": "00FFFF",
+  "cooldown_time": 100
+}

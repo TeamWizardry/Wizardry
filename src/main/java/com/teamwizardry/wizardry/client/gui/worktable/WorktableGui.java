@@ -11,7 +11,8 @@ import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.librarianlib.features.sprite.Texture;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.spell.IModifier;
+import com.teamwizardry.wizardry.api.spell.SpellRecipeConstructor;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleType;
@@ -201,7 +202,7 @@ public class WorktableGui extends GuiBase {
 			bar.setPos(new Vec2d(bar.getPos().getX(), (clamp - y - 5.5)));
 			double sub = bar.getPos().getY() - y;
 			double percent = sub / 79.0;
-			gridView.setPos(new Vec2d(0, (extra * (1 - percent) - extra) - 3 - 5.5));
+			gridView.setPos(new Vec2d(0, (extra * (1 - percent) - extra) - 1 - 5.5));
 		});
 		scrollBar.BUS.hook(GuiComponent.MouseWheelEvent.class, (event) -> {
 			if (!event.getComponent().getMouseOver() && !parent.getMouseOver()) return;
@@ -216,7 +217,7 @@ public class WorktableGui extends GuiBase {
 			bar.setPos(new Vec2d(bar.getPos().getX(), clamp));
 			double sub = bar.getPos().getY() - y;
 			double percent = sub / 68.0;
-			gridView.setPos(new Vec2d(0, (extra * (1 - percent) - extra) - 3 - 5.5));
+			gridView.setPos(new Vec2d(0, (extra * (1 - percent) - extra) - 1 - 5.5));
 		});
 		scrollBar.add(bar);
 		getMainComponents().add(scrollBar);

@@ -1,0 +1,6 @@
+{
+  "item": "minecraft:nether_wart",
+  "mana_drain": 200.0,
+  "burnout_fill": 300.0,
+  "cooldown_time": 30
+}

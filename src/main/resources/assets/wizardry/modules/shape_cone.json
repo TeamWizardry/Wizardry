@@ -1,0 +1,7 @@
+{
+  "item": "minecraft:gunpowder",
+  "mana_drain": 300.0,
+  "burnout_fill": 200.0,
+  "cooldown_time": 30,
+  "chargup_time": 5
+}

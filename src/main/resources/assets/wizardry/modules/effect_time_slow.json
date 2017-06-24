@@ -1,0 +1,8 @@
+{
+  "item": "minecraft:red_flower",
+  "mana_drain": 400.0,
+  "burnout_fill": 600.0,
+  "primary_color": "8D0000",
+  "secondary_color": "FFA5A5",
+  "cooldown_time": 80
+}

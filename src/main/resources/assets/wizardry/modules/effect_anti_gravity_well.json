@@ -1,0 +1,8 @@
+{
+  "item": "minecraft:magma_cream",
+  "mana_drain": 0.5,
+  "burnout_fill": 0.5,
+  "primary_color": "FF0000",
+  "secondary_color": "FFA5A5",
+  "cooldown_time": 100
+}

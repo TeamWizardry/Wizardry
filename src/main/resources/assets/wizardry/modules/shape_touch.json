@@ -1,0 +1,6 @@
+{
+  "item": "minecraft:beef",
+  "mana_drain": 100.0,
+  "burnout_fill": 50.0,
+  "cooldown_time": 30
+}

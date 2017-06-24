@@ -1,10 +1,5 @@
 package com.teamwizardry.wizardry.proxy;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.teamwizardry.librarianlib.core.LibrarianLib;
-import com.teamwizardry.librarianlib.features.kotlin.JsonMaker;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
@@ -20,85 +15,35 @@ import com.teamwizardry.wizardry.common.network.*;
 import com.teamwizardry.wizardry.common.world.GenHandler;
 import com.teamwizardry.wizardry.common.world.underworld.WorldProviderUnderWorld;
 import com.teamwizardry.wizardry.init.*;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
-import java.io.*;
+import java.io.File;
 
 public class CommonProxy {
 
 	public static File directory;
-	public static JsonObject moduleRegistryObject;
-	public static JsonObject originalModuleRegistryObject;
-
-	public static boolean createModuleRegistryFile(File directory) {
-		if (!directory.exists()) {
-			Wizardry.logger.info("    > " + directory.getName() + " not found. Creating directory...");
-			if (!directory.mkdirs()) {
-				Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not create config directory " + directory.getName());
-				return false;
-			}
-			Wizardry.logger.info("    > " + directory.getName() + " has been created successfully!");
-		}
-
-		File registryFile = new File(directory, "module_registry.json");
-		try {
-			if (!registryFile.exists()) {
-				Wizardry.logger.info("    > " + registryFile.getName() + " file not found. Creating file...");
-				if (!registryFile.createNewFile()) {
-					Wizardry.logger.fatal("    > SOMETHING WENT WRONG! Could not create config file " + registryFile.getName());
-					return false;
-				}
-
-				InputStream stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "module_registry.json");
-
-				if (stream == null) {
-					Wizardry.logger.fatal("    > SOMETHING WENT WRONG! Module Registry file does not exist in mod jar!");
-					return false;
-				}
-
-				InputStreamReader reader = new InputStreamReader(stream);
-				JsonElement element = new JsonParser().parse(reader);
-
-				if (!element.isJsonObject()) {
-					Wizardry.logger.fatal("    > SOMETHING WENT WRONG! Module Registry's json is not a JsonObject");
-					return false;
-				}
-
-				JsonObject obj = element.getAsJsonObject();
-
-				FileWriter writer = new FileWriter(registryFile);
-				writer.write(JsonMaker.serialize(obj));
-				writer.flush();
-				writer.close();
-				Wizardry.logger.info("    > " + registryFile.getName() + " file has been created successfully!");
-				return true;
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
 
 	public void setItemStackHandHandler(EnumHand hand, ItemStack stack) {
 	}
 
 	public void preInit(FMLPreInitializationEvent event) {
-
 		int tempFix = 42;
-		directory = event.getModConfigurationDirectory();
+
+		directory = new File(event.getModConfigurationDirectory(), Wizardry.MODID);
+		if (!directory.exists()) if (!directory.mkdirs())
+			Wizardry.logger.fatal("    > SOMETHING WENT WRONG! Could not create config folder!!");
 
 		new ModTab();
 		ModSounds.init();
@@ -130,7 +75,7 @@ public class CommonProxy {
 
 		PacketHandler.register(PacketRenderSpell.class, Side.CLIENT);
 		PacketHandler.register(PacketExplode.class, Side.CLIENT);
-		PacketHandler.register(PacketSyncModuleRegistry.class, Side.CLIENT);
+		PacketHandler.register(PacketSyncModules.class, Side.CLIENT);
 		PacketHandler.register(PacketFreezePlayer.class, Side.CLIENT);
 		PacketHandler.register(PacketSendSpellToBook.class, Side.SERVER);
 		PacketHandler.register(PacketRenderLightningBolt.class, Side.CLIENT);
@@ -143,33 +88,22 @@ public class CommonProxy {
 	}
 
 	public void postInit(FMLPostInitializationEvent event) {
-		ModuleRegistry.INSTANCE.getClass();
-
-		File config = new File(directory.getPath() + "/" + Wizardry.MODID, "module_registry.json");
-
-		if (!config.exists())
-			if (!createModuleRegistryFile(config.getParentFile())) {
-				Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not create module_registry.json");
+		File moduleDirectory = new File(directory, "modules");
+		if (!moduleDirectory.exists())
+			if (!moduleDirectory.mkdirs()) {
+				Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not create directory " + moduleDirectory.getPath());
 				return;
 			}
 
-		JsonParser parser = new JsonParser();
-		try {
-			JsonElement element = parser.parse(new FileReader(config));
-			JsonObject obj = element.getAsJsonObject();
-
-			moduleRegistryObject = obj;
-			ModuleRegistry.INSTANCE.setJsonObject(obj);
-			ModuleRegistry.INSTANCE.processModules();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+		ModuleRegistry.INSTANCE.setDirectory(moduleDirectory);
+		ModuleRegistry.INSTANCE.loadUnprocessedModules();
+		ModuleRegistry.INSTANCE.copyMissingModulesFromResources(directory);
+		ModuleRegistry.INSTANCE.processModules();
 	}
 
 	@SubscribeEvent
-	public void worldJoin(EntityJoinWorldEvent event) {
-		if (!(event.getEntity() instanceof EntityPlayerMP)) return;
-
-		PacketHandler.NETWORK.sendTo(new PacketSyncModuleRegistry(moduleRegistryObject), (EntityPlayerMP) event.getEntity());
+	public void worldJoin(PlayerEvent.PlayerLoggedInEvent event) {
+		Wizardry.logger.info("Sending module list to " + event.player.getName());
+		//PacketHandler.NETWORK.sendTo(new PacketSyncModules(ModuleRegistry.INSTANCE.modules), (EntityPlayerMP) event.player);
 	}
 }
