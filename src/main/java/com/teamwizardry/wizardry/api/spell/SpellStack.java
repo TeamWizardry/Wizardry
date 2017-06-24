@@ -9,6 +9,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.item.INacreColorable;
@@ -78,7 +79,9 @@ public class SpellStack {
 
 				((IModifier) modifier).apply(head);
 			}
-
+			
+			head.processModifiers();
+			
 			fields.put(stack.getItem(), head);
 		}
 
@@ -116,10 +119,6 @@ public class SpellStack {
 			}
 		}
 
-		// Finalize modifier modifications
-		for (Module module : compiled)
-			module.processModifiers();
-		
 		// PROCESS COLOR
 		for (Module module : compiled)
 			module.processColor(module.nextModule);
