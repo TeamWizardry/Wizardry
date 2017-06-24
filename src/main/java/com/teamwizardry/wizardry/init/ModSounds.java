@@ -67,7 +67,7 @@ public class ModSounds {
 		SLOW_MOTION_OUT = registerSound("slow_motion_out");
 		SMOKE_BLAST = registerSound("smoke_blast");
 		TELEPORT = registerSound("teleport");
-		THUNDERBLAST = registerSound("thunderblast");
+		THUNDERBLAST = registerSound("thunder_blast");
 		WIND = registerSound("wind");
 	}
 

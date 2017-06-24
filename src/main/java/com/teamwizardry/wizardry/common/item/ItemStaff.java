@@ -4,7 +4,10 @@ import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.wizardry.api.item.ICooldown;
 import com.teamwizardry.wizardry.api.item.INacreColorable;
-import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.spell.IBlockSelectable;
+import com.teamwizardry.wizardry.api.spell.IContinuousSpell;
+import com.teamwizardry.wizardry.api.spell.SpellData;
+import com.teamwizardry.wizardry.api.spell.SpellStack;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.common.module.shapes.ModuleShapeTouch;
 import net.minecraft.client.Minecraft;
@@ -242,9 +245,9 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 				Module tempModule = module;
 				int i = 0;
 				while (tempModule != null) {
-					tooltip.add(new String(new char[i]).replace("\0", "-") + "> " + TextFormatting.GRAY + tempModule.getReadableName() + " - " + TextFormatting.BLUE + tempModule.getManaDrain() + TextFormatting.GRAY + "/" + TextFormatting.RED + tempModule.getBurnoutFill());
+					tooltip.add(new String(new char[i]).replace("\0", "-") + "> " + TextFormatting.GRAY + tempModule.getReadableName() + " - " + TextFormatting.BLUE + (int) Math.round(tempModule.getManaDrain()) + TextFormatting.GRAY + "/" + TextFormatting.RED + (int) Math.round(tempModule.getBurnoutFill()));
 					for (String key : tempModule.attributes.getKeySet())
-						tooltip.add(new String(new char[i]).replace("\0", "-") + "^ " + TextFormatting.YELLOW + key + TextFormatting.GRAY + " * " + TextFormatting.GREEN + tempModule.attributes.getDouble(key));
+						tooltip.add(new String(new char[i]).replace("\0", " ") + " ^ " + TextFormatting.DARK_GRAY + key + " * " + (int) Math.round(tempModule.attributes.getDouble(key)));
 					tempModule = tempModule.nextModule;
 					i++;
 				}

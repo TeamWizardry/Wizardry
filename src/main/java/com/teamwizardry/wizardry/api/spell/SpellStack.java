@@ -1,27 +1,21 @@
 package com.teamwizardry.wizardry.api.spell;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
-import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.item.INacreColorable;
 import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.init.ModItems;
-
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+
+import javax.annotation.Nonnull;
+import java.util.*;
 
 /**
  * Created by LordSaad.
@@ -69,15 +63,15 @@ public class SpellStack {
 
 			Module head = ModuleRegistry.INSTANCE.getModule(queue.pollFirst());
 			if (head == null) continue;
-			if (head instanceof IModifier) continue;
+			if (head instanceof ModuleModifier) continue;
 
 			// Everything else gets processed as a modifier to the head.
 			for (ItemStack modifierStack : queue) {
 				Module modifier = ModuleRegistry.INSTANCE.getModule(modifierStack);
 				if (modifier == null) continue;
-				if (!(modifier instanceof IModifier)) continue;
+				if (!(modifier instanceof ModuleModifier)) continue;
 
-				((IModifier) modifier).apply(head);
+				((ModuleModifier) modifier).apply(head);
 			}
 			
 			head.processModifiers();

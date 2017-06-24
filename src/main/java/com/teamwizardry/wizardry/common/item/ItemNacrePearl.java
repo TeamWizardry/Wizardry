@@ -7,7 +7,6 @@ import com.teamwizardry.wizardry.api.item.IInfusable;
 import com.teamwizardry.wizardry.api.item.INacreColorable;
 import com.teamwizardry.wizardry.api.spell.SpellStack;
 import com.teamwizardry.wizardry.api.spell.module.Module;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -92,9 +91,9 @@ public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, 
 				Module tempModule = module;
 				int i = 0;
 				while (tempModule != null) {
-					tooltip.add(new String(new char[i]).replace("\0", "-") + "> " + TextFormatting.GRAY + tempModule.getReadableName() + " - " + TextFormatting.BLUE + tempModule.getManaDrain() + TextFormatting.GRAY + "/" + TextFormatting.RED + tempModule.getBurnoutFill());
+					tooltip.add(new String(new char[i]).replace("\0", "-") + "> " + TextFormatting.GRAY + tempModule.getReadableName() + " - " + TextFormatting.BLUE + (int) Math.round(tempModule.getManaDrain()) + TextFormatting.GRAY + "/" + TextFormatting.RED + (int) Math.round(tempModule.getBurnoutFill()));
 					for (String key : tempModule.attributes.getKeySet())
-						tooltip.add(new String(new char[i]).replace("\0", "-") + "^ " + TextFormatting.YELLOW + key + TextFormatting.GRAY + " * " + TextFormatting.GREEN + tempModule.attributes.getDouble(key));
+						tooltip.add(new String(new char[i]).replace("\0", " ") + " ^ " + TextFormatting.DARK_GRAY + key + " * " + (int) Math.round(tempModule.attributes.getDouble(key)));
 					tempModule = tempModule.nextModule;
 					i++;
 				}

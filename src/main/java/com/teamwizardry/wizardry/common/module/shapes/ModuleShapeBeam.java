@@ -1,14 +1,5 @@
 package com.teamwizardry.wizardry.common.module.shapes;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ORIGIN;
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.PITCH;
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.STRENGTH;
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.TARGET_HIT;
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.YAW;
-
-import javax.annotation.Nonnull;
-
 import com.teamwizardry.wizardry.api.spell.IContinuousSpell;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
@@ -18,11 +9,14 @@ import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.lib.LibParticles;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+
+import javax.annotation.Nonnull;
+
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
 /**
  * Created by LordSaad.
@@ -59,6 +53,7 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousSpell {
 
 		if (position == null) return false;
 
+		// TODO
 		double range = 10;
 		if (attributes.hasKey(Attributes.RANGE))
 			range = Math.min(64, attributes.getDouble(Attributes.RANGE));

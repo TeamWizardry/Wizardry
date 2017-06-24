@@ -1,12 +1,15 @@
 package com.teamwizardry.wizardry.api.spell.module;
 
-import com.teamwizardry.wizardry.api.spell.IModifier;
+import org.jetbrains.annotations.NotNull;
 
-public abstract class ModuleModifier extends Module implements IModifier
-{
+import javax.annotation.Nonnull;
+
+public abstract class ModuleModifier extends Module {
+	@NotNull
 	@Override
-	public ModuleType getModuleType()
-	{
+	public ModuleType getModuleType() {
 		return ModuleType.MODIFIER;
 	}
+
+	public abstract void apply(@Nonnull Module module);
 }

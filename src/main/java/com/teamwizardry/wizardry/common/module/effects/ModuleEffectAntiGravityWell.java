@@ -8,7 +8,8 @@ import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.spell.ILingeringModule;
+import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
@@ -24,6 +25,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -35,6 +37,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 @RegisterModule
 public class ModuleEffectAntiGravityWell extends ModuleEffect implements ILingeringModule {
 
+	@NotNull
 	@Nonnull
 	@Override
 	public ModuleType getModuleType() {

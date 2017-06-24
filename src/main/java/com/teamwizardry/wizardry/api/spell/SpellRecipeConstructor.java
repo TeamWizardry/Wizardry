@@ -4,7 +4,10 @@ import com.google.common.collect.HashBiMap;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
+import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.init.ModItems;
 import kotlin.Pair;
 import net.minecraft.item.Item;
@@ -20,7 +23,7 @@ import java.util.HashSet;
  */
 public class SpellRecipeConstructor {
 
-	public ArrayList<ItemStack> finalList = new ArrayList<>();;
+	public ArrayList<ItemStack> finalList = new ArrayList<>();
 	private HashSet<Module> moduleHeads;
 
 	public SpellRecipeConstructor(HashSet<Module> moduleHeads) {
@@ -34,8 +37,6 @@ public class SpellRecipeConstructor {
 		ArrayList<Module> prunedModules = prune(temp);
 
 		for (Module module : prunedModules) {
-			if (module instanceof IModifier); // TODO
-
 			if (identifiers.isEmpty()) break;
 			ItemStack identifier = new ItemStack(identifiers.poll());
 			baseIngredients.put(module, new Pair<>(identifier, module.getItemStack().copy())); // Add the itemstack of each module to baseIngredients
@@ -47,6 +48,12 @@ public class SpellRecipeConstructor {
 			if (pair == null) continue;
 			finalList.add(pair.getFirst());
 			finalList.add(pair.getSecond());
+
+			for (AttributeModifier attrib : module.modifiers) {
+				ModuleModifier modifier = Attributes.map.inverse().get(attrib.getAttribute());
+				if (modifier != null) finalList.add(modifier.getItemStack());
+			}
+
 			finalList.add(new ItemStack(SpellStack.fieldLineBreak));
 		}
 		finalList.add(new ItemStack(SpellStack.fieldCodeSplitter));
@@ -70,6 +77,8 @@ public class SpellRecipeConstructor {
 		}
 
 		finalList.add(new ItemStack(ModItems.PEARL_NACRE));
+
+		System.out.println(finalList);
 	}
 
 	private ArrayList<Module> prune(ArrayList<Module> modules) {
@@ -80,10 +89,24 @@ public class SpellRecipeConstructor {
 
 		ArrayList<Module> temp = new ArrayList<>();
 		temp.addAll(prunedModules);
-		for (Module module : temp) {
-			for (Module module1 : temp) {
-				if (module != module1 && module.getID().equals(module1.getID())) {
-					prunedModules.remove(module);
+		for (Module module1 : temp) {
+			for (Module module2 : temp) {
+				if (module1 != module2
+						&& module1.getID().equals(module2.getID())
+						&& !(module1 instanceof ModuleModifier)
+						&& !(module2 instanceof ModuleModifier)) {
+
+					boolean noMatch = false;
+					primary:
+					for (AttributeModifier attrib1 : module1.modifiers) {
+						for (AttributeModifier attrib2 : module2.modifiers) {
+							if (attrib1.getAttribute().equalsIgnoreCase(attrib2.getAttribute()) && attrib1.getOperation() == attrib2.getOperation())
+								continue primary;
+						}
+						noMatch = true;
+					}
+					if (noMatch) prunedModules.remove(module1);
+
 					return prune(prunedModules);
 				}
 			}

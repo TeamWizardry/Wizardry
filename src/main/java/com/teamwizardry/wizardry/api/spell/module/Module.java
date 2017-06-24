@@ -1,22 +1,7 @@
 package com.teamwizardry.wizardry.api.spell.module;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
-
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.google.common.collect.HashMultimap;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
-import com.teamwizardry.librarianlib.features.saving.SaveMethodGetter;
-import com.teamwizardry.librarianlib.features.saving.SaveMethodSetter;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
@@ -28,17 +13,29 @@ import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.attribute.Operation;
 import com.teamwizardry.wizardry.common.core.SpellTicker;
 import com.teamwizardry.wizardry.common.network.PacketRenderSpell;
-
 import kotlin.Pair;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
 
 /**
  * Created by LordSaad.
@@ -62,31 +59,8 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	private int chargeupTime = 0;
 	private ItemStack itemStack = ItemStack.EMPTY;
 	private double multiplier = 1;
-	
+
 	public Module() {
-	}
-
-	@SaveMethodSetter(saveName = "manual_saver")
-	private void manualSaveSetter(NBTTagCompound compound) {
-		compound.setTag("attributes", attributes);
-		if (nextModule != null) compound.setTag("next_module", nextModule.serializeNBT());
-	}
-
-	@SaveMethodGetter(saveName = "manual_saver")
-	private NBTTagCompound manualSaveGetter() {
-		NBTTagCompound nbt = new NBTTagCompound();
-
-		if (nbt.hasKey("next_module")) {
-			Module tempModule = ModuleRegistry.INSTANCE.getModule(nbt.getCompoundTag("next_module").getString("id"));
-			if (tempModule != null) {
-				nextModule = tempModule.copy();
-				if (nextModule != null) nextModule.deserializeNBT(nbt.getCompoundTag("next_module"));
-			} else nextModule = null;
-		} else nextModule = null;
-		if (nbt.hasKey("attributes")) attributes = nbt.getCompoundTag("attributes");
-		else attributes = new NBTTagCompound();
-
-		return nbt;
 	}
 
 	/**
@@ -147,7 +121,7 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	}
 
 	public final void setManaDrain(double manaDrain) {
-		attributes.setDouble(Attributes.MANA, manaDrain);;
+		attributes.setDouble(Attributes.MANA, manaDrain);
 	}
 
 	public final double getBurnoutFill() {
@@ -197,6 +171,8 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	 * @return If the spell has succeeded.
 	 */
 	public final boolean castSpell(@NotNull SpellData data) {
+		processColor(this);
+
 		if (this instanceof ILingeringModule)
 			if (!SpellTicker.INSTANCE.ticker.containsKey(this))
 				SpellTicker.INSTANCE.ticker.put(this, new Pair<>(data, ((ILingeringModule) this).lingeringTime(data)));
@@ -207,14 +183,11 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 		MinecraftForge.EVENT_BUS.post(event);
 
 		if (!event.isCanceled()) {
-			processColor(nextModule);
 			boolean success = run(data);
-			if (event.castParticles)
-				castParticles(data);
+			if (event.castParticles) castParticles(data);
 			return success;
 		} else {
-			if (event.castParticles)
-				castParticles(data);
+			if (event.castParticles) castParticles(data);
 			return false;
 		}
 	}
@@ -278,8 +251,8 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	}
 
 	public void processColor(Module nextModule) {
-		if (nextModule == null)
-		{
+		System.out.println(getID() + " -> " + (nextModule == null ? "null" : nextModule.getID()) + ": " + (nextModule == null ? "null" : nextModule.getPrimaryColor()));
+		if (nextModule == null) {
 			if (this.getPrimaryColor() == null)
 				setPrimaryColor(Color.WHITE);
 			if (this.getSecondaryColor() == null)
@@ -289,26 +262,25 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 
 		processColor(nextModule.nextModule);
 
-		if (getPrimaryColor() == null) setPrimaryColor(nextModule.getPrimaryColor());
+		if (getPrimaryColor() == null) {
+			setPrimaryColor(nextModule.getPrimaryColor());
+		}
 		if (getSecondaryColor() == null) setSecondaryColor(nextModule.getSecondaryColor());
 
 	}
-	
-	public void processModifiers()
-	{
+
+	public void processModifiers() {
 		HashMultimap<Operation, AttributeModifier> sortedMap = HashMultimap.create();
 		for (AttributeModifier modifier : modifiers)
 			sortedMap.put(modifier.getOperation(), modifier);
-		
-		for (Operation op : Operation.values())
-		{
-			for (AttributeModifier modifier : sortedMap.get(op))
-			{
+
+		for (Operation op : Operation.values()) {
+			for (AttributeModifier modifier : sortedMap.get(op)) {
 				String attribute = modifier.getAttribute();
 				double current = attributes.getDouble(attribute);
 				double newValue = modifier.apply(current);
 				attributes.setDouble(attribute, newValue);
-				Wizardry.logger.info("Attribute: " + attribute + ", Old: " + current + ", New: " + newValue);	
+				Wizardry.logger.info("Attribute: " + attribute + ", Old: " + current + ", New: " + newValue);
 			}
 		}
 	}
@@ -335,6 +307,11 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 		NBTTagCompound compound = new NBTTagCompound();
 
 		compound.setTag("attributes", attributes);
+
+		NBTTagList list = new NBTTagList();
+		for (AttributeModifier modifier : modifiers) list.appendTag(modifier.serializeNBT());
+		compound.setTag("modifiers", list);
+
 		if (nextModule != null) compound.setTag("next_module", nextModule.serializeNBT());
 
 		compound.setString("id", getID());
@@ -359,6 +336,16 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 				if (nextModule != null) nextModule.deserializeNBT(nbt.getCompoundTag("next_module"));
 			} else nextModule = null;
 		} else nextModule = null;
+
+		if (nbt.hasKey("modifiers")) {
+			NBTTagList list = nbt.getTagList("list", Constants.NBT.TAG_COMPOUND);
+			for (int i = 0; i < list.tagCount(); i++) {
+				AttributeModifier modifier = new AttributeModifier("null", 0, Operation.MULTIPLY);
+				modifier.deserializeNBT(list.getCompoundTagAt(i));
+				modifiers.add(modifier);
+			}
+		}
+
 		if (nbt.hasKey("attributes")) attributes = nbt.getCompoundTag("attributes");
 		else attributes = new NBTTagCompound();
 

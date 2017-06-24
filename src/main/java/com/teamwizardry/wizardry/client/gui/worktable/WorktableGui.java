@@ -11,9 +11,9 @@ import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.librarianlib.features.sprite.Texture;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.spell.IModifier;
 import com.teamwizardry.wizardry.api.spell.SpellRecipeConstructor;
 import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleType;
 import com.teamwizardry.wizardry.common.network.PacketSendSpellToBook;
@@ -97,6 +97,7 @@ public class WorktableGui extends GuiBase {
 		save.BUS.hook(GuiComponent.MouseClickEvent.class, (event) -> {
 
 			HashSet<GuiComponent> heads = getHeads();
+			if (heads.isEmpty()) return;
 			compiledSpell.clear();
 			for (GuiComponent component : heads) {
 				Module module = compileModule(component);
@@ -132,11 +133,11 @@ public class WorktableGui extends GuiBase {
 		if (module == null) return null;
 
 		for (Module modifier : ModuleRegistry.INSTANCE.getModules(ModuleType.MODIFIER)) {
-			if (!(modifier instanceof IModifier)) continue;
+			if (!(modifier instanceof ModuleModifier)) continue;
 			if (component.hasData(Integer.class, modifier.getID())) {
 				int x = (int) component.getData(Integer.class, modifier.getID());
 				for (int i = 0; i < x; i++) {
-					((IModifier) modifier).apply(module);
+					((ModuleModifier) modifier).apply(module);
 				}
 			}
 		}
