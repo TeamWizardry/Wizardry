@@ -11,7 +11,7 @@ import com.teamwizardry.librarianlib.features.structure.Structure;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.api.render.ClusterObject;
-import com.teamwizardry.wizardry.api.spell.SpellStack;
+import com.teamwizardry.wizardry.api.spell.SpellBuilder;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.render.block.TileCraftingPlateRenderer;
@@ -99,16 +99,19 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 							JsonArray array = object.getAsJsonArray("list");
 							for (int i = 0; i < array.size(); i++) {
 								JsonElement element = array.get(i);
-								if (!element.isJsonPrimitive()) continue;
-								String name = element.getAsString();
+								if (!element.isJsonObject()) continue;
+								JsonObject obj = element.getAsJsonObject();
+								String name = obj.getAsJsonPrimitive("name").getAsString();
 								Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(name));
 								if (item == null) continue;
-								inventory.add(new ItemStack(item));
-
+								ItemStack stack = new ItemStack(item);
+								stack.setItemDamage(obj.getAsJsonPrimitive("meta").getAsInt());
+								stack.setCount(obj.getAsJsonPrimitive("count").getAsInt());
+								inventory.add(stack);
 							}
-							SpellStack spellStack = new SpellStack(inventory);
+							SpellBuilder builder = new SpellBuilder(inventory);
 							NBTTagList list = new NBTTagList();
-							for (Module module : spellStack.compiled) list.appendTag(module.serializeNBT());
+							for (Module module : builder.getSpell()) list.appendTag(module.serializeNBT());
 							ItemNBTHelper.setList(pearl, Constants.NBT.SPELL, list);
 							ItemNBTHelper.setFloat(pearl, Constants.NBT.RAND, playerIn.world.rand.nextFloat());
 

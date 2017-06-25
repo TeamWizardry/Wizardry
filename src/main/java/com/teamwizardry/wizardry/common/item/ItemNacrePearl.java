@@ -5,8 +5,9 @@ import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.wizardry.api.item.IExplodable;
 import com.teamwizardry.wizardry.api.item.IInfusable;
 import com.teamwizardry.wizardry.api.item.INacreColorable;
-import com.teamwizardry.wizardry.api.spell.SpellStack;
+import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.spell.module.Module;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -46,7 +47,7 @@ public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, 
 	@Override
 	public String getItemStackDisplayName(@Nonnull ItemStack stack) {
 		StringBuilder finalName = null;
-		ArrayList<Module> modules = SpellStack.getModules(stack);
+		ArrayList<Module> modules = SpellUtils.getModules(stack);
 		Module lastModule = null;
 		for (Module module : modules) {
 			if (lastModule == null) lastModule = module;
@@ -80,7 +81,7 @@ public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
-		ArrayList<Module> modules = SpellStack.getModules(stack);
+		ArrayList<Module> modules = SpellUtils.getModules(stack);
 		Module lastModule = null;
 		for (Module module : modules) {
 			if (lastModule == null) lastModule = module;
@@ -92,12 +93,18 @@ public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, 
 				int i = 0;
 				while (tempModule != null) {
 					tooltip.add(new String(new char[i]).replace("\0", "-") + "> " + TextFormatting.GRAY + tempModule.getReadableName() + " - " + TextFormatting.BLUE + (int) Math.round(tempModule.getManaDrain()) + TextFormatting.GRAY + "/" + TextFormatting.RED + (int) Math.round(tempModule.getBurnoutFill()));
-					for (String key : tempModule.attributes.getKeySet())
-						tooltip.add(new String(new char[i]).replace("\0", " ") + " ^ " + TextFormatting.DARK_GRAY + key + " * " + (int) Math.round(tempModule.attributes.getDouble(key)));
+					if (GuiScreen.isShiftKeyDown()) {
+						for (String key : tempModule.attributes.getKeySet())
+							tooltip.add(new String(new char[i]).replace("\0", " ") + " ^ " + TextFormatting.DARK_GRAY + key + " * " + (int) Math.round(tempModule.attributes.getDouble(key)));
+					}
 					tempModule = tempModule.nextModule;
 					i++;
 				}
 			}
+		}
+
+		if (!GuiScreen.isShiftKeyDown()) {
+			tooltip.add(TextFormatting.GRAY + "<- " + TextFormatting.DARK_GRAY + "Shift for more info" + TextFormatting.GRAY + " ->");
 		}
 	}
 }

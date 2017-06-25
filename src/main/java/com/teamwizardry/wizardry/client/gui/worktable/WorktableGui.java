@@ -11,7 +11,7 @@ import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.librarianlib.features.sprite.Texture;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.spell.SpellRecipeConstructor;
+import com.teamwizardry.wizardry.api.spell.SpellBuilder;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
@@ -107,12 +107,12 @@ public class WorktableGui extends GuiBase {
 				compiledSpell.put(i++, stream);
 			}
 
-			SpellRecipeConstructor recipe = new SpellRecipeConstructor(compiledSpell);
+			SpellBuilder builder = new SpellBuilder(compiledSpell);
 
 			for (ItemStack stack : Minecraft.getMinecraft().player.inventory.mainInventory) {
 				if (stack.getItem() == ModItems.BOOK) {
 					int slot = Minecraft.getMinecraft().player.inventory.getSlotFor(stack);
-					PacketHandler.NETWORK.sendToServer(new PacketSendSpellToBook(slot, recipe.getRecipeJson().toString()));
+					PacketHandler.NETWORK.sendToServer(new PacketSendSpellToBook(slot, builder.toJson().toString()));
 				}
 			}
 		});

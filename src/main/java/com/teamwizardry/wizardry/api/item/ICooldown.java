@@ -3,7 +3,10 @@ package com.teamwizardry.wizardry.api.item;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.spell.IContinuousSpell;
+import com.teamwizardry.wizardry.api.spell.IOverrideCooldown;
+import com.teamwizardry.wizardry.api.spell.SpellData;
+import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.common.network.PacketSyncCooldown;
 import net.minecraft.entity.player.EntityPlayer;
@@ -25,7 +28,7 @@ public interface ICooldown {
 
 		boolean cooldownOverriden = false;
 
-		ArrayList<Module> modules = SpellStack.getAllModules(stack);
+		ArrayList<Module> modules = SpellUtils.getAllModules(stack);
 
 		for (Module module : modules) {
 			existingCooldowns++;
@@ -56,7 +59,7 @@ public interface ICooldown {
 	}
 
 	default void updateCooldown(ItemStack stack) {
-		for (Module module : SpellStack.getAllModules(stack)) if (module instanceof IContinuousSpell) return;
+		for (Module module : SpellUtils.getAllModules(stack)) if (module instanceof IContinuousSpell) return;
 
 		if (ItemNBTHelper.getInt(stack, "cooldown_ticks", 0) > 0)
 			ItemNBTHelper.setInt(stack, "cooldown_ticks", ItemNBTHelper.getInt(stack, "cooldown_ticks", 0) - 1);

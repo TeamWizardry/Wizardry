@@ -52,7 +52,7 @@ public class PotionPhase extends PotionMod {
 		if (!base.isPotionActive(ModPotions.PHASE)) return;
 
 		event.override = true;
-		event.entity.noClip = true;
+		//event.entity.noClip = true;
 		event.entity.fallDistance = 0;
 		event.entity.isAirBorne = true;
 
@@ -286,7 +286,7 @@ public class PotionPhase extends PotionMod {
 		}
 
 		entity.world.profiler.endSection();
-		event.entity.noClip = false;
+		//event.entity.noClip = false;
 	}
 
 	@Nullable

@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
-import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
@@ -47,7 +47,7 @@ public class ModuleEffectPhase extends ModuleEffect {
 		Entity targetEntity = spell.getData(ENTITY_HIT);
 		Vec3d targetHit = spell.getData(TARGET_HIT);
 
-		double time = getModifierPower(spell, Attributes.DURATION, 30, 100, true, true);
+		double time = getModifierPower(spell, Attributes.DURATION, 10, 100, true, true) * 10;
 
 		if (!tax(this, spell)) return false;
 

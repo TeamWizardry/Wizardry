@@ -25,7 +25,7 @@ import java.util.*;
  */
 public class ModuleRegistry {
 
-	public static ModuleRegistry INSTANCE = new ModuleRegistry();
+	public final static ModuleRegistry INSTANCE = new ModuleRegistry();
 
 	public ArrayList<Module> modules = new ArrayList<>();
 
@@ -48,7 +48,7 @@ public class ModuleRegistry {
 	@Nullable
 	public Module getModule(ItemStack itemStack) {
 		for (Module module : modules)
-			if (ItemStack.areItemStacksEqual(itemStack, module.getItemStack())) {
+			if (ItemStack.areItemsEqual(itemStack, module.getItemStack())) {
 				return module.copy();
 			}
 		return null;

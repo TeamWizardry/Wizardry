@@ -5,7 +5,7 @@ import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.wizardry.api.block.TileManaSink;
 import com.teamwizardry.wizardry.api.spell.IContinuousSpell;
 import com.teamwizardry.wizardry.api.spell.SpellData;
-import com.teamwizardry.wizardry.api.spell.SpellStack;
+import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.init.ModBlocks;
@@ -41,7 +41,7 @@ public class TilePearlHolder extends TileManaSink {
 
 			if (cooldown <= 0) {
 				int maxCooldown = 0;
-				for (Module module : SpellStack.getAllModules(pearl)) {
+				for (Module module : SpellUtils.getAllModules(pearl)) {
 					if (module instanceof IContinuousSpell) return;
 					if (module.getCooldownTime() > maxCooldown) maxCooldown = module.getCooldownTime();
 				}
@@ -64,7 +64,7 @@ public class TilePearlHolder extends TileManaSink {
 						spell.addData(PITCH, rotations[0]);
 						spell.addData(ORIGIN, new Vec3d(getPos()).addVector(0.5, 2.5, 0.5));
 						spell.addData(CAPABILITY, cap);
-						SpellStack.runSpell(pearl, spell);
+						SpellUtils.runSpell(pearl, spell);
 						break;
 					}
 		}

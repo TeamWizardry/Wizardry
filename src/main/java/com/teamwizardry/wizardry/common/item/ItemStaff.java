@@ -7,10 +7,11 @@ import com.teamwizardry.wizardry.api.item.INacreColorable;
 import com.teamwizardry.wizardry.api.spell.IBlockSelectable;
 import com.teamwizardry.wizardry.api.spell.IContinuousSpell;
 import com.teamwizardry.wizardry.api.spell.SpellData;
-import com.teamwizardry.wizardry.api.spell.SpellStack;
+import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.common.module.shapes.ModuleShapeTouch;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -49,7 +50,7 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 		if (isCoolingDown(stack)) return false;
 
 		boolean touch = false;
-		for (Module module : SpellStack.getModules(stack)) {
+		for (Module module : SpellUtils.getModules(stack)) {
 			if (module instanceof ModuleShapeTouch) {
 				touch = true;
 				break;
@@ -61,7 +62,7 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 		SpellData spell = new SpellData(playerIn.world);
 		spell.processEntity(playerIn, true);
 		spell.processEntity(target, false);
-		SpellStack.runSpell(stack, spell);
+		SpellUtils.runSpell(stack, spell);
 
 		setCooldown(playerIn.world, playerIn, stack, hand, spell);
 		return false;
@@ -72,7 +73,7 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 	public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float par8, float par9, float par10) {
 		ItemStack stack = player.getHeldItem(hand);
 		if (player.isSneaking()) {
-			for (Module module : SpellStack.getAllModules(stack)) {
+			for (Module module : SpellUtils.getAllModules(stack)) {
 				if (module instanceof IBlockSelectable) {
 					player.getEntityData().setTag("selected", NBTUtil.writeBlockState(new NBTTagCompound(), world.getBlockState(pos)));
 					player.swingArm(hand);
@@ -83,7 +84,7 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 		if (isCoolingDown(stack)) return EnumActionResult.PASS;
 
 		boolean isOnTouch = false;
-		for (Module module : SpellStack.getAllModules(stack))
+		for (Module module : SpellUtils.getAllModules(stack))
 			if (module instanceof ModuleShapeTouch) {
 				isOnTouch = true;
 				break;
@@ -94,7 +95,7 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 		SpellData spell = new SpellData(world);
 		spell.processEntity(player, true);
 		spell.processBlock(pos, side, new Vec3d(pos).addVector(0.5, 0.5, 0.5));
-		SpellStack.runSpell(stack, spell);
+		SpellUtils.runSpell(stack, spell);
 
 		setCooldown(world, player, stack, hand, spell);
 
@@ -107,7 +108,7 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 		ItemStack stack = player.getHeldItem(hand);
 
 		if (player.isSneaking()) {
-			for (Module module : SpellStack.getAllModules(stack)) {
+			for (Module module : SpellUtils.getAllModules(stack)) {
 				if (module instanceof IBlockSelectable) {
 					return new ActionResult<>(EnumActionResult.PASS, stack);
 				}
@@ -119,7 +120,7 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 
 				SpellData spell = new SpellData(world);
 				spell.processEntity(player, true);
-				SpellStack.runSpell(stack, spell);
+				SpellUtils.runSpell(stack, spell);
 
 				player.swingArm(EnumHand.MAIN_HAND);
 				setCooldown(world, player, stack, hand, spell);
@@ -138,7 +139,7 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 	@Nonnull
 	@Override
 	public EnumAction getItemUseAction(ItemStack stack) {
-		for (Module module : SpellStack.getAllModules(stack))
+		for (Module module : SpellUtils.getAllModules(stack))
 			if (module instanceof IContinuousSpell || module.getChargeupTime() > 0) return EnumAction.BOW;
 		return EnumAction.NONE;
 	}
@@ -146,7 +147,7 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 	@Override
 	public int getMaxItemUseDuration(ItemStack stack) {
 		int maxChargeUp = 0;
-		for (Module module : SpellStack.getAllModules(stack)) {
+		for (Module module : SpellUtils.getAllModules(stack)) {
 			if (module instanceof IContinuousSpell) return 72000;
 			if (module.getChargeupTime() > maxChargeUp) maxChargeUp = module.getChargeupTime();
 		}
@@ -164,7 +165,7 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 	public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
 		if (!(player instanceof EntityPlayer)) return;
 		boolean isContinuous = false;
-		for (Module module : SpellStack.getAllModules(stack))
+		for (Module module : SpellUtils.getAllModules(stack))
 			if (module instanceof IContinuousSpell) {
 				isContinuous = true;
 				break;
@@ -174,7 +175,7 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 
 		SpellData spell = new SpellData(player.world);
 		spell.processEntity(player, true);
-		SpellStack.runSpell(stack, spell);
+		SpellUtils.runSpell(stack, spell);
 
 		if (!isContinuous) {
 			player.swingArm(player.getActiveHand());
@@ -200,7 +201,7 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 	@Override
 	public String getItemStackDisplayName(@Nonnull ItemStack stack) {
 		StringBuilder finalName = null;
-		ArrayList<Module> modules = SpellStack.getModules(stack);
+		ArrayList<Module> modules = SpellUtils.getModules(stack);
 		Module lastModule = null;
 		for (Module module : modules) {
 			if (lastModule == null) lastModule = module;
@@ -234,11 +235,10 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
-		ArrayList<Module> modules = SpellStack.getModules(stack);
+		ArrayList<Module> modules = SpellUtils.getModules(stack);
 		Module lastModule = null;
 		for (Module module : modules) {
 			if (lastModule == null) lastModule = module;
-
 			if (module != null) {
 				if (module != lastModule) tooltip.add("");
 				//tooltip.add("Final " + TextFormatting.BLUE + "Mana" + TextFormatting.GRAY + "/" + TextFormatting.RED + "Burnout" + TextFormatting.GRAY + " Cost: " + TextFormatting.BLUE + module.finalManaDrain + TextFormatting.GRAY + "/" + TextFormatting.RED + module.finalBurnoutFill);
@@ -246,12 +246,18 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 				int i = 0;
 				while (tempModule != null) {
 					tooltip.add(new String(new char[i]).replace("\0", "-") + "> " + TextFormatting.GRAY + tempModule.getReadableName() + " - " + TextFormatting.BLUE + (int) Math.round(tempModule.getManaDrain()) + TextFormatting.GRAY + "/" + TextFormatting.RED + (int) Math.round(tempModule.getBurnoutFill()));
-					for (String key : tempModule.attributes.getKeySet())
-						tooltip.add(new String(new char[i]).replace("\0", " ") + " ^ " + TextFormatting.DARK_GRAY + key + " * " + (int) Math.round(tempModule.attributes.getDouble(key)));
+					if (GuiScreen.isShiftKeyDown()) {
+						for (String key : tempModule.attributes.getKeySet())
+							tooltip.add(new String(new char[i]).replace("\0", " ") + " ^ " + TextFormatting.DARK_GRAY + key + " * " + (int) Math.round(tempModule.attributes.getDouble(key)));
+					}
 					tempModule = tempModule.nextModule;
 					i++;
 				}
 			}
+		}
+
+		if (!GuiScreen.isShiftKeyDown()) {
+			tooltip.add(TextFormatting.GRAY + "<- " + TextFormatting.DARK_GRAY + "Shift for more info" + TextFormatting.GRAY + " ->");
 		}
 	}
 }

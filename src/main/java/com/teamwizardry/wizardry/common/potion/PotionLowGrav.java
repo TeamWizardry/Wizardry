@@ -56,7 +56,7 @@ public class PotionLowGrav extends PotionMod {
 		PotionEffect effect = entity.getActivePotionEffect(this);
 		if (effect == null) return;
 
-		entity.motionY *= effect.getAmplifier() + 0.5;
+		entity.motionY = effect.getAmplifier() / 2.0;
 	}
 
 	@SubscribeEvent

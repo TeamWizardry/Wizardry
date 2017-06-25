@@ -45,6 +45,13 @@ dependencies {
     compile "com.teamwizardry.librarianlib:librarianlib:3.1.5-SNAPSHOT:deobf"
 }
 
+
+jar {
+    manifest {
+        attributes("FMLCorePluginContainsFMLMod": "true", "FMLCorePlugin": "com.teamwizardry.wizardry.asm.WizardryCorePlugin")
+    }
+}
+
 processResources {
     // this will ensure that this task is redone when the versions change.
     inputs.property "version", project.version

@@ -31,6 +31,10 @@ public class AttributeModifier implements INBTSerializable<NBTTagCompound> {
 		return op;
 	}
 
+	public AttributeModifier copy() {
+		return new AttributeModifier(attribute, modifier, op);
+	}
+
 	@Override
 	public NBTTagCompound serializeNBT() {
 		NBTTagCompound compound = new NBTTagCompound();

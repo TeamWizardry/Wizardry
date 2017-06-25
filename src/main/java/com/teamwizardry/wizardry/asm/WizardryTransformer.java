@@ -53,7 +53,6 @@ public class WizardryTransformer implements IClassTransformer {
 			LabelNode node1 = new LabelNode();
 			InsnList newInstructions = new InsnList();
 
-			newInstructions.add(new VarInsnNode(ALOAD, 0));
 			newInstructions.add(new VarInsnNode(ALOAD, 1));
 			newInstructions.add(new MethodInsnNode(INVOKESTATIC, ASM_HOOKS, "entityRenderShadowAndFire",
 					"(Lnet/minecraft/entity/Entity;)Z", false));

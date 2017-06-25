@@ -7,6 +7,7 @@ import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.PosUtils;
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
@@ -53,10 +54,8 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousSpell {
 
 		if (position == null) return false;
 
-		// TODO
-		double range = 10;
-		if (attributes.hasKey(Attributes.RANGE))
-			range = Math.min(64, attributes.getDouble(Attributes.RANGE));
+		double range = getModifierPower(spell, Attributes.RANGE, 10, 100, true, true);
+		double potency = 20 - getModifierPower(spell, Attributes.POTENCY, 1, 19, true, true);
 
 		setCostMultiplier(this, 0.1);
 
@@ -70,8 +69,7 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousSpell {
 		}
 		if (trace.hitVec != null) spell.addData(TARGET_HIT, trace.hitVec);
 
-		forceCastNextModuleParticles(spell);
-		return runNextModule(spell);
+		return RandUtil.nextInt((int) potency) == 0 && runNextModule(spell);
 	}
 
 

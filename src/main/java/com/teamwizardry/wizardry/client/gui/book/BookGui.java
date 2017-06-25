@@ -110,7 +110,7 @@ public class BookGui extends GuiBase {
 		//		ItemStack stack = new ItemStack(item);
 //
 		//		ComponentStack componentStack = new ComponentStack(4 + 24 * (i % 6), 14 + 24 * row);
-		//		componentStack.getStack().setValue(stack);
+		//		componentStack.getItemStack().setValue(stack);
 		//		componentPaper.add(componentStack);
 //
 		//		if (i % 6 == 0) continue;

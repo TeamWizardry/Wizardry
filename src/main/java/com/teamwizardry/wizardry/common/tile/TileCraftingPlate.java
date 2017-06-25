@@ -9,7 +9,7 @@ import com.teamwizardry.wizardry.api.block.TileManaSink;
 import com.teamwizardry.wizardry.api.item.EnumPearlType;
 import com.teamwizardry.wizardry.api.item.IInfusable;
 import com.teamwizardry.wizardry.api.render.ClusterObject;
-import com.teamwizardry.wizardry.api.spell.SpellStack;
+import com.teamwizardry.wizardry.api.spell.SpellBuilder;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
@@ -125,9 +125,9 @@ public class TileCraftingPlate extends TileManaSink {
 				isCrafting = false;
 				markDirty();
 
-				List<ItemStack> stacks = new ArrayList<>();
+				ArrayList<ItemStack> stacks = new ArrayList<>();
 				for (ClusterObject cluster : inventory) stacks.add(cluster.stack);
-				SpellStack spellStack = new SpellStack(stacks);
+				SpellBuilder builder = new SpellBuilder(stacks);
 
 				PacketHandler.NETWORK.sendToAllAround(new PacketExplode(new Vec3d(pos).addVector(0.5, 0.5, 0.5), Color.CYAN, Color.BLUE, 2, 2, 500, 300, 20, false),
 						new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
@@ -139,7 +139,7 @@ public class TileCraftingPlate extends TileManaSink {
 				ItemNBTHelper.setString(stack, "type", EnumPearlType.INFUSED.toString());
 
 				NBTTagList list = new NBTTagList();
-				for (Module module : spellStack.compiled) list.appendTag(module.serializeNBT());
+				for (Module module : builder.getSpell()) list.appendTag(module.serializeNBT());
 				ItemNBTHelper.setList(stack, Constants.NBT.SPELL, list);
 
 				output = stack;

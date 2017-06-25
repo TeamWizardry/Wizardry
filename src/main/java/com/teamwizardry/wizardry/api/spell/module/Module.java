@@ -281,15 +281,16 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 				double current = attributes.getDouble(attribute);
 				double newValue = modifier.apply(current);
 				attributes.setDouble(attribute, newValue);
-				Wizardry.logger.info("Attribute: " + attribute + ", Old: " + current + ", New: " + newValue);
+				Wizardry.logger.info(getID() + ": Attribute: " + attribute + ": " + current + "-> " + newValue);
 			}
 		}
 	}
 
 	protected final <T extends Module> Module cloneModule(T toCloneTo) {
-		toCloneTo.attributes = attributes;
-		toCloneTo.modifiers = modifiers;
-		toCloneTo.nextModule = nextModule;
+		toCloneTo.attributes = attributes.copy();
+		toCloneTo.modifiers = new ArrayList<>();
+		modifiers.forEach(modifier -> toCloneTo.modifiers.add(modifier.copy()));
+		toCloneTo.nextModule = nextModule == null ? null : nextModule.copy();
 		toCloneTo.setPrimaryColor(getPrimaryColor());
 		toCloneTo.setSecondaryColor(getSecondaryColor());
 		toCloneTo.setBurnoutFill(getBurnoutFill());

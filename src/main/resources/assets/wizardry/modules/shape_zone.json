@@ -1,6 +1,6 @@
 {
   "item": "minecraft:glass",
-  "mana_drain": 1.0,
-  "burnout_fill": 1.0,
+  "mana_drain": 100.0,
+  "burnout_fill": 30.0,
   "cooldown_time": 100
 }
