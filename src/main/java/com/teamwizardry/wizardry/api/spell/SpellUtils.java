@@ -12,6 +12,7 @@ import net.minecraft.nbt.NBTTagList;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.List;
 
 public class SpellUtils {
 
@@ -38,7 +39,7 @@ public class SpellUtils {
 		}
 	}
 
-	public static ArrayList<ArrayList<Module>> getModules(@Nonnull ArrayList<Module> moduleHeads) {
+	public static ArrayList<ArrayList<Module>> getModules(@Nonnull List<Module> moduleHeads) {
 		ArrayList<ArrayList<Module>> modules = new ArrayList<>();
 
 		for (Module module : moduleHeads) modules.add(getAllModules(module));

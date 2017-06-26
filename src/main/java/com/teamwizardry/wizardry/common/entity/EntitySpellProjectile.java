@@ -63,10 +63,7 @@ public class EntitySpellProjectile extends EntityMod {
 			else applyColor(Color.WHITE);
 
 			if (module.getSecondaryColor() != null) applyColor2(module.getSecondaryColor());
-			else {
-				Color color = module.getPrimaryColor();
-				applyColor2(new Color(Math.min(255, color.getRed() + 40), Math.min(255, color.getGreen() + 40), Math.min(255, color.getBlue() + 40)));
-			}
+			else applyColor2(Color.WHITE);
 		}
 
 		setRenderDistanceWeight(10);
@@ -111,6 +108,9 @@ public class EntitySpellProjectile extends EntityMod {
 		rotationYaw = yaw;
 
 		Vec3d look = PosUtils.vecFromRotations(pitch, yaw);
+
+		if (world.isRemote) return;
+		if (isDead) return;
 
 		if (!isCollided) {
 			motionX = look.x;
@@ -175,6 +175,7 @@ public class EntitySpellProjectile extends EntityMod {
 				new NetworkRegistry.TargetPoint(world.provider.getDimension(), posX, posY, posZ, 512));
 
 		setDead();
+		world.removeEntity(this);
 	}
 
 	@SideOnly(Side.CLIENT)

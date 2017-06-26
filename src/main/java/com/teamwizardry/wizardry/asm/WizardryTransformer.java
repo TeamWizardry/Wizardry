@@ -50,6 +50,7 @@ public class WizardryTransformer implements IClassTransformer {
 		MethodSignature sig = new MethodSignature("doRenderShadowAndFire", "func_76979_b", "c", "(Lnet/minecraft/entity/Entity;DDDFF)V");
 
 		return transform(basicClass, sig, "Render Shadow And Fire Event", (MethodNode method) -> {
+			System.out.println("########### Render Shadow And Fire Event -> " + method);
 			LabelNode node1 = new LabelNode();
 			InsnList newInstructions = new InsnList();
 
@@ -74,6 +75,8 @@ public class WizardryTransformer implements IClassTransformer {
 				combineBackFocus((AbstractInsnNode node) -> node.getOpcode() == RETURN,
 						(AbstractInsnNode node) -> node instanceof LabelNode,
 						(MethodNode method, AbstractInsnNode node) -> {
+							System.out.println("########### Move With Heading -> " + method);
+							System.out.println("########### Move With Heading -> " + node);
 
 							LabelNode node1 = new LabelNode();
 							InsnList newInstructions = new InsnList();
@@ -103,6 +106,7 @@ public class WizardryTransformer implements IClassTransformer {
 						(AbstractInsnNode node) -> node.getOpcode() == RETURN,
 						(AbstractInsnNode node) -> node instanceof LabelNode,
 						(MethodNode method, AbstractInsnNode node) -> {
+							System.out.println("########### Pre Move Action -> " + node);
 							InsnList newInstructions = new InsnList();
 							LabelNode node1 = new LabelNode();
 
@@ -130,6 +134,7 @@ public class WizardryTransformer implements IClassTransformer {
 		return transform(basicClass, sig, "Player Clipping Event",
 				combine((AbstractInsnNode node) -> node.getOpcode() == PUTFIELD, // Filter
 						(MethodNode method, AbstractInsnNode node) -> { // Action
+							System.out.println("########### Player Clip -> " + node);
 							InsnList newInstructions = new InsnList();
 
 							newInstructions.add(new VarInsnNode(ALOAD, 0));
@@ -142,6 +147,10 @@ public class WizardryTransformer implements IClassTransformer {
 	}
 
 	// BOILERPLATE =====================================================================================================
+
+	public static void log(String str) {
+		FMLLog.info("[Wizardry ASM] %s", str);
+	}
 
 	public static byte[] transform(byte[] basicClass, MethodSignature sig, String simpleDesc, MethodAction action) {
 		ClassReader reader = new ClassReader(basicClass);
@@ -160,6 +169,7 @@ public class WizardryTransformer implements IClassTransformer {
 
 		return basicClass;
 	}
+
 
 	public static boolean findMethodAndTransform(ClassNode node, MethodSignature sig, MethodAction pred) {
 		for (MethodNode method : node.methods) {
@@ -339,11 +349,7 @@ public class WizardryTransformer implements IClassTransformer {
 		return didAny;
 	}
 
-	private static void log(String str) {
-		FMLLog.info("[Wizardry ASM] %s", str);
-	}
-
-	private static void prettyPrint(AbstractInsnNode node) {
+	public static void prettyPrint(MethodNode node) {
 		Printer printer = new Textifier();
 
 		TraceMethodVisitor visitor = new TraceMethodVisitor(printer);
@@ -353,7 +359,20 @@ public class WizardryTransformer implements IClassTransformer {
 		printer.print(new PrintWriter(sw));
 		printer.getText().clear();
 
-		log(sw.toString().replaceAll("\n", ""));
+		log(sw.toString());
+	}
+
+	public static void prettyPrint(AbstractInsnNode node) {
+		Printer printer = new Textifier();
+
+		TraceMethodVisitor visitor = new TraceMethodVisitor(printer);
+		node.accept(visitor);
+
+		StringWriter sw = new StringWriter();
+		printer.print(new PrintWriter(sw));
+		printer.getText().clear();
+
+		log(sw.toString());
 	}
 
 	@Override
@@ -387,8 +406,8 @@ public class WizardryTransformer implements IClassTransformer {
 
 	private static class InsnArrayIterator implements ListIterator<AbstractInsnNode> {
 
-		private final AbstractInsnNode[] array;
 		private int index;
+		private final AbstractInsnNode[] array;
 
 		public InsnArrayIterator(AbstractInsnNode[] array) {
 			this(array, 0);
@@ -460,17 +479,17 @@ public class WizardryTransformer implements IClassTransformer {
 			this.obfDesc = obfuscate(funcDesc);
 		}
 
+		@Override
+		public String toString() {
+			return "Names [" + funcName + ", " + srgName + ", " + obfName + "] Descriptor " + funcDesc + " / " + obfDesc;
+		}
+
 		private static String obfuscate(String desc) {
 			for (String s : CLASS_MAPPINGS.keySet())
 				if (desc.contains(s))
 					desc = desc.replaceAll(s, CLASS_MAPPINGS.get(s));
 
 			return desc;
-		}
-
-		@Override
-		public String toString() {
-			return "Names [" + funcName + ", " + srgName + ", " + obfName + "] Descriptor " + funcDesc + " / " + obfDesc;
 		}
 
 		public boolean matches(String methodName, String methodDesc) {

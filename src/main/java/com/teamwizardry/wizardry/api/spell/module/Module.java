@@ -19,10 +19,8 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -42,15 +40,10 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
  */
 public abstract class Module implements INBTSerializable<NBTTagCompound> {
 
-	/**
-	 * Extra information that can be edited and read by the module.
-	 * Used by modifiers.
-	 */
 	@Nonnull
 	public NBTTagCompound attributes = new NBTTagCompound();
 	@Nonnull
 	public List<AttributeModifier> modifiers = new ArrayList<>();
-
 	@Nullable
 	public Module nextModule = null;
 	private Color primaryColor = null;
@@ -288,9 +281,6 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 
 	protected final <T extends Module> Module cloneModule(T toCloneTo) {
 		toCloneTo.attributes = attributes.copy();
-		toCloneTo.modifiers = new ArrayList<>();
-		modifiers.forEach(modifier -> toCloneTo.modifiers.add(modifier.copy()));
-		toCloneTo.nextModule = nextModule == null ? null : nextModule.copy();
 		toCloneTo.setPrimaryColor(getPrimaryColor());
 		toCloneTo.setSecondaryColor(getSecondaryColor());
 		toCloneTo.setBurnoutFill(getBurnoutFill());
@@ -309,10 +299,6 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 		NBTTagCompound compound = new NBTTagCompound();
 
 		compound.setTag("attributes", attributes);
-
-		NBTTagList list = new NBTTagList();
-		for (AttributeModifier modifier : modifiers) list.appendTag(modifier.serializeNBT());
-		compound.setTag("modifiers", list);
 
 		if (nextModule != null) compound.setTag("next_module", nextModule.serializeNBT());
 
@@ -338,15 +324,6 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 				if (nextModule != null) nextModule.deserializeNBT(nbt.getCompoundTag("next_module"));
 			} else nextModule = null;
 		} else nextModule = null;
-
-		if (nbt.hasKey("modifiers")) {
-			NBTTagList list = nbt.getTagList("list", Constants.NBT.TAG_COMPOUND);
-			for (int i = 0; i < list.tagCount(); i++) {
-				AttributeModifier modifier = new AttributeModifier("null", 0, Operation.MULTIPLY);
-				modifier.deserializeNBT(list.getCompoundTagAt(i));
-				modifiers.add(modifier);
-			}
-		}
 
 		if (nbt.hasKey("attributes")) attributes = nbt.getCompoundTag("attributes");
 		else attributes = new NBTTagCompound();

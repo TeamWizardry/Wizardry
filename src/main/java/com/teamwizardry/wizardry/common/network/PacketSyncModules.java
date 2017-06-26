@@ -29,7 +29,7 @@ public class PacketSyncModules extends PacketBase {
 	@SaveMethodSetter(saveName = "manual_saver")
 	private void manualSaveSetter(NBTTagCompound compound) {
 		if (compound == null) return;
-		NBTTagList list = compound.getTagList("modules", Constants.NBT.TAG_COMPOUND);
+		NBTTagList list = compound.getTagList("list", Constants.NBT.TAG_COMPOUND);
 		for (int i = 0; i < list.tagCount(); i++) {
 			NBTTagCompound compound1 = list.getCompoundTagAt(i);
 			Module module = ModuleRegistry.INSTANCE.getModule(compound1.getString("id"));
