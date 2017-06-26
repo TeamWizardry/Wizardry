@@ -4,7 +4,6 @@ import com.google.common.collect.HashMultimap;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.capability.CapManager;
-import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
 import com.teamwizardry.wizardry.api.events.SpellCastEvent;
 import com.teamwizardry.wizardry.api.spell.ILingeringModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
@@ -211,16 +210,6 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 
 	protected final void forceCastNextModuleParticles(@NotNull SpellData data) {
 		if (nextModule != null) nextModule.castParticles(data);
-	}
-
-	public final float calculateStrength(SpellData data) {
-		IWizardryCapability cap = data.getData(SpellData.DefaultKeys.CAPABILITY);
-		float strength = 1;
-		if (cap != null) {
-			CapManager manager = new CapManager(cap);
-			strength *= ((manager.getMaxBurnout() - manager.getBurnout()) / (manager.getMaxBurnout() * 1.0));
-		}
-		return strength;
 	}
 
 	/**

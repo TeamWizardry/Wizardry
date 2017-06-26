@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
-import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
@@ -73,11 +73,12 @@ public class ModuleEffectBurn extends ModuleEffect {
 						double dist = pos.getDistance(targetPos.getX(), targetPos.getY(), targetPos.getZ());
 						if (dist > strength) continue;
 						if (facing != null) {
+							if (!world.isAirBlock(pos.offset(facing))) return true;
 							BlockUtils.placeBlock(world, pos.offset(facing), Blocks.FIRE.getDefaultState(), caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null);
 							world.playSound(null, targetPos, ModSounds.FIRE, SoundCategory.NEUTRAL, 0.5f, RandUtil.nextFloat());
 						} else for (EnumFacing face : EnumFacing.VALUES) {
 							if (world.isAirBlock(pos.offset(face)) || world.getBlockState(pos.offset(face)).getBlock() == Blocks.SNOW_LAYER) {
-								BlockUtils.placeBlock(world, pos.offset(face), Blocks.FIRE.getDefaultState(), caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null);
+								BlockUtils.placeBlock(world, pos.offset(face), Blocks.AIR.getDefaultState(), caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null);
 								world.playSound(null, targetPos, ModSounds.FIRE, SoundCategory.NEUTRAL, 0.5f, RandUtil.nextFloat());
 							}
 						}

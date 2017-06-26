@@ -50,7 +50,14 @@ public class WizardryTransformer implements IClassTransformer {
 		MethodSignature sig = new MethodSignature("doRenderShadowAndFire", "func_76979_b", "c", "(Lnet/minecraft/entity/Entity;DDDFF)V");
 
 		return transform(basicClass, sig, "Render Shadow And Fire Event", (MethodNode method) -> {
-			System.out.println("########### Render Shadow And Fire Event -> " + method);
+			System.out.println("########### Render Shadow And Fire Event -> Instructions: " + method.instructions);
+			System.out.println("########### Render Shadow And Fire Event -> description: " + method.desc);
+			System.out.println("########### Render Shadow And Fire Event -> name: " + method.name);
+			System.out.println("########### Render Shadow And Fire Event -> signature: " + method.signature);
+			System.out.println("########### Render Shadow And Fire Event -> access: " + method.access);
+			System.out.println("########### Render Shadow And Fire Event -> local variables: " + method.localVariables);
+			System.out.println("########### Render Shadow And Fire Event -> parameters: " + method.parameters);
+
 			LabelNode node1 = new LabelNode();
 			InsnList newInstructions = new InsnList();
 
@@ -75,8 +82,13 @@ public class WizardryTransformer implements IClassTransformer {
 				combineBackFocus((AbstractInsnNode node) -> node.getOpcode() == RETURN,
 						(AbstractInsnNode node) -> node instanceof LabelNode,
 						(MethodNode method, AbstractInsnNode node) -> {
-							System.out.println("########### Move With Heading -> " + method);
-							System.out.println("########### Move With Heading -> " + node);
+							System.out.println("########### Move With Heading -> Instructions: " + method.instructions);
+							System.out.println("########### Move With Heading -> description: " + method.desc);
+							System.out.println("########### Move With Heading -> name: " + method.name);
+							System.out.println("########### Move With Heading -> signature: " + method.signature);
+							System.out.println("########### Move With Heading -> access: " + method.access);
+							System.out.println("########### Move With Heading -> local variables: " + method.localVariables);
+							System.out.println("########### Move With Heading -> parameters: " + method.parameters);
 
 							LabelNode node1 = new LabelNode();
 							InsnList newInstructions = new InsnList();
@@ -106,7 +118,13 @@ public class WizardryTransformer implements IClassTransformer {
 						(AbstractInsnNode node) -> node.getOpcode() == RETURN,
 						(AbstractInsnNode node) -> node instanceof LabelNode,
 						(MethodNode method, AbstractInsnNode node) -> {
-							System.out.println("########### Pre Move Action -> " + node);
+							System.out.println("########### Pre Move Action -> Instructions: " + method.instructions);
+							System.out.println("########### Pre Move Action -> description: " + method.desc);
+							System.out.println("########### Pre Move Action -> name: " + method.name);
+							System.out.println("########### Pre Move Action -> signature: " + method.signature);
+							System.out.println("########### Pre Move Action -> access: " + method.access);
+							System.out.println("########### Pre Move Action -> local variables: " + method.localVariables);
+							System.out.println("########### Pre Move Action -> parameters: " + method.parameters);
 							InsnList newInstructions = new InsnList();
 							LabelNode node1 = new LabelNode();
 
@@ -134,7 +152,13 @@ public class WizardryTransformer implements IClassTransformer {
 		return transform(basicClass, sig, "Player Clipping Event",
 				combine((AbstractInsnNode node) -> node.getOpcode() == PUTFIELD, // Filter
 						(MethodNode method, AbstractInsnNode node) -> { // Action
-							System.out.println("########### Player Clip -> " + node);
+							System.out.println("########### Player Clip -> Instructions: " + method.instructions);
+							System.out.println("########### Player Clip -> description: " + method.desc);
+							System.out.println("########### Player Clip -> name: " + method.name);
+							System.out.println("########### Player Clip -> signature: " + method.signature);
+							System.out.println("########### Player Clip -> access: " + method.access);
+							System.out.println("########### Player Clip -> local variables: " + method.localVariables);
+							System.out.println("########### Player Clip -> parameters: " + method.parameters);
 							InsnList newInstructions = new InsnList();
 
 							newInstructions.add(new VarInsnNode(ALOAD, 0));

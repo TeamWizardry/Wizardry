@@ -80,6 +80,7 @@ public class SpellBuilder {
 					lineModule.add(module);
 				}
 			}
+			lineModule.forEach(Module::processModifiers);
 			compiled.add(lineModule);
 		}
 
