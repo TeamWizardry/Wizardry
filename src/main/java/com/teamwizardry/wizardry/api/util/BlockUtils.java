@@ -4,7 +4,10 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -22,11 +25,14 @@ import java.util.UUID;
 /**
  * Created by LordSaad.
  */
-public class BlockUtils {
+public final class BlockUtils {
 
-	private static UUID uuid = UUID.randomUUID();
-	private static GameProfile breaker = new GameProfile(uuid, "Wizardry Block Breaker");
-	private static GameProfile placer = new GameProfile(uuid, "Wizardry Block Placer");
+	private final static UUID uuid = UUID.randomUUID();
+	private final static GameProfile breaker = new GameProfile(uuid, "Wizardry Block Breaker");
+	private final static GameProfile placer = new GameProfile(uuid, "Wizardry Block Placer");
+
+	private BlockUtils() {
+	}
 
 	/**
 	 * Tries placing a block safely and fires an event for it.
@@ -40,10 +46,10 @@ public class BlockUtils {
 		if (player == null) {
 			playerMP = new FakePlayer((WorldServer) world, placer);
 			playerMP.setPosition(pos.getX(), pos.getY(), pos.getZ());
+			playerMP.setSneaking(true);
 		} else playerMP = player;
 
-		if (!(player instanceof FakePlayer))
-			if (!hasEditPermission(pos, playerMP)) return false;
+		if (!hasEditPermission(pos, playerMP)) return false;
 
 		BlockEvent.PlaceEvent event = new BlockEvent.PlaceEvent(BlockSnapshot.getBlockSnapshot(world, pos), Blocks.AIR.getDefaultState(), playerMP, playerMP.getActiveHand());
 		MinecraftForge.EVENT_BUS.post(event);
@@ -52,6 +58,36 @@ public class BlockUtils {
 			world.notifyBlockUpdate(pos, state, state, 3);
 			return true;
 		}
+		return false;
+	}
+
+	public static boolean placeBlock(@Nonnull World world, @Nonnull BlockPos pos, @Nullable EnumFacing facing, @Nonnull ItemStack stack) {
+		if (!world.isBlockLoaded(pos)) return false;
+
+		FakePlayer player = new FakePlayer((WorldServer) world, placer);
+		player.setPosition(pos.getX(), pos.getY(), pos.getZ());
+		player.setHeldItem(EnumHand.MAIN_HAND, stack);
+		player.setSneaking(true);
+
+		if (!hasEditPermission(pos, player)) return false;
+		if (!world.isBlockLoaded(pos)) return false;
+
+		if (world.getTileEntity(pos) == null) {
+			if (facing == null) {
+				for (EnumFacing enumFacing : EnumFacing.VALUES) {
+					EnumActionResult result = player.interactionManager.processRightClickBlock(
+							player, world, stack, EnumHand.MAIN_HAND,
+							pos, enumFacing, 0, 0, 0);
+					if (result != EnumActionResult.FAIL) return true;
+				}
+			} else {
+				EnumActionResult result = player.interactionManager.processRightClickBlock(
+						player, world, stack, EnumHand.MAIN_HAND,
+						pos, facing, 0, 0, 0);
+				if (result != EnumActionResult.FAIL) return true;
+			}
+		}
+
 		return false;
 	}
 

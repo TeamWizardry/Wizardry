@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
-import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.spell.IBlockSelectable;
+import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
@@ -12,7 +13,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTUtil;
@@ -90,8 +90,8 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 				for (ItemStack stack : ((EntityPlayer) caster).inventory.mainInventory) {
 					if (stack.isEmpty()) continue;
 					if (!(stack.getItem() instanceof ItemBlock)) continue;
-					Block temp = ((ItemBlock) stack.getItem()).getBlock();
-					if (temp != state.getBlock()) continue;
+					ItemStack stack1 = state.getBlock().getItem(world, null, state);
+					if (!ItemStack.areItemsEqual(stack, stack1)) continue;
 					stackBlock = stack;
 					break;
 				}
@@ -100,10 +100,10 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 
 				if (!world.isAirBlock(pos)) continue;
 				if (!tax(this, spell)) continue;
-				stackBlock.shrink(1);
+				//stackBlock.shrink(1);
 				IBlockState oldState = world.getBlockState(pos);
 
-				BlockUtils.placeBlock(world, pos, state, (EntityPlayerMP) caster);
+				BlockUtils.placeBlock(world, pos, facing, stackBlock);
 				world.playSound(null, pos, state.getBlock().getSoundType(state, world, pos, caster).getPlaceSound(), SoundCategory.BLOCKS, 1f, 1f);
 				((EntityPlayer) caster).inventory.addItemStackToInventory(new ItemStack(oldState.getBlock().getItemDropped(oldState, spell.world.rand, 0)));
 			}

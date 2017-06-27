@@ -76,7 +76,8 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 		if (targetEntity != null && targetEntity instanceof EntityLivingBase) {
 			if (!tax(this, spell)) return false;
 
-			Vec3d posTarget = targetEntity.getPositionVector(), posCaster = caster.getPositionVector();
+			Vec3d posTarget = new Vec3d(targetEntity.posX, targetEntity.posY, targetEntity.posZ),
+					posCaster = new Vec3d(caster.posX, caster.posY, caster.posZ);
 			float yawTarget = targetEntity.rotationYaw,
 					pitchTarget = targetEntity.rotationPitch,
 					yawCaster = caster.rotationYaw,

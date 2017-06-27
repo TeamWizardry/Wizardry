@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
-import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.spell.IOverrideCooldown;
+import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
@@ -16,7 +17,6 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import javax.annotation.Nonnull;
 
@@ -58,7 +58,7 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 				return 50;
 			}
 			target.getEntityData().setInteger("jump_count", jumpCount - 1);
-			return (int) ((strength - jumpCount) * 5);
+			return (int) ((strength - jumpCount)) * 2;
 		}
 		return 50;
 	}
@@ -72,7 +72,7 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 		Entity caster = spell.getData(CASTER);
 
 		if (target == null) return false;
-		if (!(target instanceof EntityLivingBase)) return false;
+		if (!(target instanceof EntityLivingBase)) return true;
 
 		Vec3d lookVec = PosUtils.vecFromRotations(pitch, yaw);
 
@@ -95,9 +95,8 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 			if (target instanceof EntityPlayerMP)
 				((EntityPlayerMP) target).connection.sendPacket(new SPacketEntityVelocity(target));
 			spell.world.playSound(null, target.getPosition(), ModSounds.FLY, SoundCategory.NEUTRAL, 1, 1);
-			return true;
 		}
-		return false;
+		return true;
 	}
 
 	@Override
@@ -121,24 +120,6 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 	@Override
 	public Module copy() {
 		return cloneModule(new ModuleEffectLeap());
-	}
-
-	@SubscribeEvent
-	public void tickPlayer(TickEvent.PlayerTickEvent event) {
-		if (event.player.getEntityData().hasKey("jump_timer")) {
-			int x = event.player.getEntityData().getInteger("jump_timer");
-
-			if (event.player.isCollidedVertically) {
-				event.player.getEntityData().removeTag("jump_timer");
-				event.player.getEntityData().removeTag("jump_count");
-				return;
-			}
-
-			if (x <= 0) {
-				event.player.getEntityData().removeTag("jump_timer");
-				event.player.getEntityData().removeTag("jump_count");
-			} else event.player.getEntityData().setInteger("jump_timer", x - 1);
-		}
 	}
 
 	@SubscribeEvent

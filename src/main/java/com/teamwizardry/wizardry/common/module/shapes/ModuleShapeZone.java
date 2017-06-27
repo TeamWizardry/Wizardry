@@ -7,7 +7,8 @@ import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.spell.ILingeringModule;
+import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
@@ -89,7 +90,7 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 			}
 		}
 
-		if (r.nextInt((int) ((25 - strength))) != 0) return true;
+		if (r.nextInt((int) ((40 - strength))) != 0) return true;
 		ArrayList<Vec3d> blocks = new ArrayList<>();
 		for (double i = -aoe; i < aoe; i++)
 			for (double j = -range; j < range; j++)
@@ -104,6 +105,7 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 		Vec3d pos = blocks.get(RandUtil.nextInt(blocks.size() - 1));
 
 		SpellData copy = spell.copy();
+		copy.addData(ORIGIN, pos);
 		copy.processBlock(new BlockPos(pos), EnumFacing.UP, pos);
 		copy.addData(YAW, RandUtil.nextFloat(-180, 180));
 		copy.addData(PITCH, RandUtil.nextFloat(-50, 50));

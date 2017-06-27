@@ -43,7 +43,7 @@ public class WorktableGui extends GuiBase {
 	ComponentVoid paper;
 	BiMap<GuiComponent, UUID> paperComponents = HashBiMap.create();
 	HashMap<UUID, UUID> componentLinks = new HashMap<>();
-	private HashMap<Integer, ArrayList<Module>> compiledSpell = new HashMap<>();
+	private HashSet<ArrayList<Module>> compiledSpell = new HashSet<>();
 
 	public WorktableGui() {
 		super(480, 224);
@@ -100,11 +100,10 @@ public class WorktableGui extends GuiBase {
 			HashSet<GuiComponent> heads = getHeads();
 			if (heads.isEmpty()) return;
 			compiledSpell.clear();
-			int i = 0;
 			for (GuiComponent component : heads) {
 				ArrayList<Module> stream = new ArrayList<>();
 				compileModule(stream, component);
-				compiledSpell.put(i++, stream);
+				compiledSpell.add(stream);
 			}
 
 			SpellBuilder builder = new SpellBuilder(compiledSpell);
@@ -112,7 +111,7 @@ public class WorktableGui extends GuiBase {
 			for (ItemStack stack : Minecraft.getMinecraft().player.inventory.mainInventory) {
 				if (stack.getItem() == ModItems.BOOK) {
 					int slot = Minecraft.getMinecraft().player.inventory.getSlotFor(stack);
-					PacketHandler.NETWORK.sendToServer(new PacketSendSpellToBook(slot, builder.toJson().toString()));
+					PacketHandler.NETWORK.sendToServer(new PacketSendSpellToBook(slot, (ArrayList<ItemStack>) builder.getInventory()));
 				}
 			}
 		});
