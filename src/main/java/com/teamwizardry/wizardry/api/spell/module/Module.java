@@ -62,6 +62,12 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 
 	public Module() {
 	}
+	
+	@Override
+	public String toString()
+	{
+		return getID();
+	}
 
 	/**
 	 * The type of module this module is.
