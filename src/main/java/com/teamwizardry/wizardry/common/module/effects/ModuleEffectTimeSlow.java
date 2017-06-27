@@ -7,7 +7,7 @@ import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
@@ -24,9 +24,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import javax.annotation.Nonnull;
 
@@ -67,8 +65,6 @@ public class ModuleEffectTimeSlow extends ModuleEffect {
 			double strength = getModifierPower(spell, Attributes.POTENCY, 2, 20, false, true);
 			double duration = getModifierPower(spell, Attributes.DURATION, 5, 64, false, true) * 10;
 			if (!tax(this, spell)) return false;
-
-			// TODO: readd mobs
 
 			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.TIME_SLOW, (int) duration, (int) strength, true, false));
 		}
@@ -115,7 +111,6 @@ public class ModuleEffectTimeSlow extends ModuleEffect {
 		return cloneModule(new ModuleEffectTimeSlow());
 	}
 
-
 	@SubscribeEvent
 	public static void skipTick(LivingEvent.LivingUpdateEvent event) {
 		if (event.getEntity().getEntityData().hasKey("skip_tick")
@@ -139,49 +134,5 @@ public class ModuleEffectTimeSlow extends ModuleEffect {
 				event.getEntity().getEntityData().setInteger("skip_tick_interval", --tickInterval);
 			}
 		}
-	}
-
-	@SubscribeEvent
-	public static void skipPlayerTick(TickEvent.PlayerTickEvent event) {
-		//if (event.player.getEntityData().hasKey("skip_tick")
-		//		&& event.player.getEntityData().hasKey("skip_tick_interval")
-		//		&& event.player.getEntityData().hasKey("skip_tick_interval_save")) {
-		//	int tickCountdown = event.player.getEntityData().getInteger("skip_tick");
-		//	int tickInterval = event.player.getEntityData().getInteger("skip_tick_interval");
-//
-		//	event.player.addPotionEffect(new PotionEffect(ModPotions.NULL_MOVEMENT, 5, 0, true, true));
-		//	event.player.addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 0, true, true));
-		//	event.player.motionX = 0;
-		//	event.player.motionY = 0;
-		//	event.player.motionZ = 0;
-		//	//event.player.rotationPitch = event.player.getEntityData().getFloat("rot_pitch");
-		//	//event.player.rotationYaw = event.player.getEntityData().getFloat("rot_yaw");
-		//	event.player.velocityChanged = true;
-//
-		//	if (tickInterval <= 0) {
-		//		event.player.getEntityData().setInteger("skip_tick_interval", event.player.getEntityData().getInteger("skip_tick_interval_save"));
-//
-		//		if (tickCountdown <= 0) {
-		//			event.player.getEntityData().removeTag("skip_tick");
-		//			event.player.getEntityData().removeTag("skip_tick_interval");
-		//			event.player.getEntityData().removeTag("skip_tick_interval_save");
-		//			event.player.getEntityData().removeTag("strength");
-		//		} else {
-		//			Minecraft.getMinecraft().player.sendChatMessage(tickInterval + " - " + tickCountdown + " -  stop ticking");
-		//			event.player.getEntityData().setInteger("skip_tick", --tickCountdown);
-		//		}
-		//	} else {
-		//		event.player.getEntityData().setInteger("skip_tick_interval", --tickInterval);
-		//	}
-		//}
-	}
-
-	@SubscribeEvent
-	public static void interact(PlayerInteractEvent event) {
-		//if (event.getEntity().getEntityData().hasKey("skip_tick")
-		//		&& event.getEntity().getEntityData().hasKey("skip_tick_interval")
-		//		&& event.getEntity().getEntityData().hasKey("skip_tick_interval_save")) {
-		//	event.setCanceled(true);
-		//}
 	}
 }
