@@ -25,6 +25,11 @@ public class SpellBuilder {
 		spell = toSpell(inventory);
 	}
 
+	public SpellBuilder(List<Module> spell, boolean ignored) {
+		this.spell = spell;
+		// TODO: this.inventory
+	}
+
 	public SpellBuilder(HashSet<ArrayList<Module>> moduleHeads) {
 		inventory = new ArrayList<>();
 

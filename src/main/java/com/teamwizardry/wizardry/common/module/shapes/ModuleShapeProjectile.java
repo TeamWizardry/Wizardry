@@ -50,12 +50,6 @@ public class ModuleShapeProjectile extends ModuleShape {
 		Vec3d origin = spell.getData(ORIGIN);
 		Entity caster = spell.getData(CASTER);
 		if (origin == null) return false;
-		//	if (caster == null) return false;
-//		if (!tax(this, spell)) return false;
-
-		//float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - caster.rotationYaw));
-		//float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - caster.rotationYaw));
-		//Vec3d origin = new Vec3d(offX, caster.getEyeHeight() - 0.3, offZ).add(caster.getPositionVector());
 
 		EntitySpellProjectile proj = new EntitySpellProjectile(world, this, spell);
 		proj.setPosition(origin.x, origin.y, origin.z);

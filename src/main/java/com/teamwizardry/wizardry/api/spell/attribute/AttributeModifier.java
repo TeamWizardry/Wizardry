@@ -1,9 +1,6 @@
 package com.teamwizardry.wizardry.api.spell.attribute;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.INBTSerializable;
-
-public class AttributeModifier implements INBTSerializable<NBTTagCompound> {
+public class AttributeModifier {
 
 	private String attribute;
 	private double modifier;
@@ -33,21 +30,5 @@ public class AttributeModifier implements INBTSerializable<NBTTagCompound> {
 
 	public AttributeModifier copy() {
 		return new AttributeModifier(attribute, modifier, op);
-	}
-
-	@Override
-	public NBTTagCompound serializeNBT() {
-		NBTTagCompound compound = new NBTTagCompound();
-		compound.setString("attribute", attribute);
-		compound.setDouble("modifier", modifier);
-		compound.setString("operation", op.name());
-		return compound;
-	}
-
-	@Override
-	public void deserializeNBT(NBTTagCompound nbt) {
-		attribute = nbt.getString("attribute");
-		modifier = nbt.getDouble("modifier");
-		op = Operation.valueOf(nbt.getString("operation"));
 	}
 }

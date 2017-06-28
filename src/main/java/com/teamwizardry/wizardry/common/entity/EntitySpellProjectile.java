@@ -124,8 +124,11 @@ public class EntitySpellProjectile extends EntityMod {
 			RayTraceResult result = new RayTrace(world, look, getPositionVector(), 1).setSkipEntity(this).trace();
 			if (result != null && result.typeOfHit == RayTraceResult.Type.BLOCK) {
 				data.processBlock(result.getBlockPos(), result.sideHit, result.hitVec);
-			} else data.processBlock(getPosition(), result != null ? result.sideHit : null, getPositionVector());
-
+				data.addData(ORIGIN, result.hitVec);
+			} else {
+				data.processBlock(getPosition(), result != null ? result.sideHit : null, getPositionVector());
+				data.addData(ORIGIN, getPositionVector());
+			}
 			goBoom(data);
 			return;
 		}
@@ -152,13 +155,17 @@ public class EntitySpellProjectile extends EntityMod {
 			RayTraceResult result = new RayTrace(world, look, getPositionVector(), 1).setSkipEntity(this).trace();
 			if (result != null && result.typeOfHit == RayTraceResult.Type.ENTITY && result.entityHit != null) {
 				data.processEntity(result.entityHit, false);
-			} else if (entities.get(0) != null) data.processEntity(entities.get(0), false);
+				data.addData(ORIGIN, result.hitVec);
+			} else if (entities.get(0) != null) {
+				data.processEntity(entities.get(0), false);
+				data.addData(ORIGIN, entities.get(0).getPositionVector().addVector(0, entities.get(0).getEyeHeight(), 0));
+			}
 
 			goBoom(data);
 		}
 	}
 
-	public void goBoom(SpellData data) {
+	private void goBoom(SpellData data) {
 		motionX = 0;
 		motionY = 0;
 		motionZ = 0;

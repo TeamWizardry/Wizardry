@@ -54,10 +54,31 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 
 	public Module() {
 	}
-	
+
+	public static void processColor(Module module) {
+		if (module == null) return;
+
+		if (module.nextModule == null) {
+			if (module.getPrimaryColor() == null) {
+				module.setPrimaryColor(Color.WHITE);
+			}
+			if (module.getSecondaryColor() == null) {
+				module.setSecondaryColor(Color.WHITE);
+			}
+			return;
+		}
+
+		processColor(module.nextModule);
+
+		if (module.getPrimaryColor() == null) {
+			module.setPrimaryColor(module.nextModule.getPrimaryColor());
+		}
+		if (module.getSecondaryColor() == null) module.setSecondaryColor(module.nextModule.getSecondaryColor());
+
+	}
+
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return getID();
 	}
 
@@ -234,28 +255,6 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	protected final double getModifierPower(SpellData data, String attribute, double min, double max, boolean multiplyMultiplier, boolean multiplyBurnout) {
 		Entity caster = data.getData(CASTER);
 		return (attributes.hasKey(attribute) ? Math.min(Math.max(min, min + attributes.getDouble(attribute)), max) : min) * (multiplyMultiplier ? getMultiplier() : 1) * (multiplyBurnout ? calcBurnoutPercent(caster) : 1);
-	}
-
-	public static void processColor(Module module) {
-		if (module == null) return;
-
-		if (module.nextModule == null) {
-			if (module.getPrimaryColor() == null) {
-				module.setPrimaryColor(Color.WHITE);
-			}
-			if (module.getSecondaryColor() == null) {
-				module.setSecondaryColor(Color.WHITE);
-			}
-			return;
-		}
-
-		processColor(module.nextModule);
-
-		if (module.getPrimaryColor() == null) {
-			module.setPrimaryColor(module.nextModule.getPrimaryColor());
-		}
-		if (module.getSecondaryColor() == null) module.setSecondaryColor(module.nextModule.getSecondaryColor());
-
 	}
 
 	public void processModifiers() {
