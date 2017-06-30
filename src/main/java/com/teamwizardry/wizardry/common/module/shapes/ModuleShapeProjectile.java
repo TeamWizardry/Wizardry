@@ -40,7 +40,7 @@ public class ModuleShapeProjectile extends ModuleShape implements ITaxing {
 	@Nonnull
 	@Override
 	public String getDescription() {
-		return "Will launch the spell as a projectile in the direction the caster is looking.";
+		return "Will launch the spell as a projectile in the direction the caster is looking";
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class ModuleShapeProjectile extends ModuleShape implements ITaxing {
 		Entity caster = spell.getData(CASTER);
 		if (origin == null) return true;
 
-		double dist = getModifier(spell, Attributes.RANGE, 150, 240);
+		double dist = getModifier(spell, Attributes.RANGE, 20, 240);
 		double speed = getModifier(spell, Attributes.SPEED, 1, 10);
 
 		EntitySpellProjectile proj = new EntitySpellProjectile(world, this, spell, dist, speed, 0.1);

@@ -82,6 +82,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			addData(DefaultKeys.CASTER, entity);
 			addData(DefaultKeys.YAW, entity.rotationYaw);
 			addData(DefaultKeys.PITCH, entity.rotationPitch);
+			addData(DefaultKeys.NORMAL, entity.getLook(1));
 			addData(DefaultKeys.CAPABILITY, WizardryCapabilityProvider.getCap(entity));
 		} else {
 			addData(DefaultKeys.TARGET_HIT, entity.getPositionVector().addVector(0, entity.height / 2.0, 0));
@@ -211,6 +212,26 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			@Override
 			public Float deserialize(@NotNull World world, @NotNull NBTTagFloat object) {
 				return object.getFloat();
+			}
+		});
+
+		public static final Pair<String, Class<Vec3d>> NORMAL = constructPair("normal", Vec3d.class, new ProcessData.Process<NBTTagCompound, Vec3d>() {
+			@NotNull
+			@Override
+			public NBTTagCompound serialize(Vec3d object) {
+				NBTTagCompound compound = new NBTTagCompound();
+				compound.setDouble("x", object.x);
+				compound.setDouble("y", object.y);
+				compound.setDouble("z", object.z);
+				return compound;
+			}
+
+			@Override
+			public Vec3d deserialize(@NotNull World world, @NotNull NBTTagCompound object) {
+				double x = object.getDouble("x");
+				double y = object.getDouble("y");
+				double z = object.getDouble("z");
+				return new Vec3d(x, y, z);
 			}
 		});
 
