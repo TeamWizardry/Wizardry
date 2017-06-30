@@ -1,10 +1,5 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ENTITY_HIT;
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.TARGET_HIT;
-
-import javax.annotation.Nonnull;
-
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
@@ -12,12 +7,16 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.init.ModPotions;
 import com.teamwizardry.wizardry.lib.LibParticles;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+
+import javax.annotation.Nonnull;
+
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ENTITY_HIT;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.TARGET_HIT;
 
 /**
  * Created by LordSaad.
@@ -48,8 +47,8 @@ public class ModuleEffectCrasherFall extends ModuleEffect {
 		Entity targetEntity = spell.getData(ENTITY_HIT);
 
 		if (targetEntity instanceof EntityLivingBase) {
-			double strength = getModifierPower(spell, Attributes.POTENCY, 2, 20, false, true);
-			double duration = getModifierPower(spell, Attributes.DURATION, 5, 64, false, true) * 10;
+			double strength = getModifier(spell, Attributes.POTENCY, 2, 20);
+			double duration = getModifier(spell, Attributes.DURATION, 5, 64) * 10;
 			if (!tax(this, spell)) return false;
 
 			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.CRASH, (int) duration, (int) strength, true, true));

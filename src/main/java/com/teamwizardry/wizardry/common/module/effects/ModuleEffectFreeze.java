@@ -6,7 +6,7 @@ import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
@@ -67,8 +67,8 @@ public class ModuleEffectFreeze extends ModuleEffect {
 		BlockPos targetPos = spell.getData(BLOCK_HIT);
 		Entity caster = spell.getData(CASTER);
 
-		double range = getModifierPower(spell, Attributes.AREA, 1, 16, true, true) / 2.0;
-		double time = getModifierPower(spell, Attributes.DURATION, 50, 1000, true, true);
+		double range = getModifier(spell, Attributes.AREA, 1, 16) / 2.0;
+		double time = getModifier(spell, Attributes.DURATION, 50, 1000);
 
 		if (!tax(this, spell)) return false;
 

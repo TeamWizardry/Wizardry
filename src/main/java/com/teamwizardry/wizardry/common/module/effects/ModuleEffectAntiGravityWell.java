@@ -70,7 +70,7 @@ public class ModuleEffectAntiGravityWell extends ModuleEffect implements ILinger
 
 		if (position == null) return false;
 
-		double strength = getModifierPower(spell, Attributes.AREA, 3, 16, true, true);
+		double strength = getModifier(spell, Attributes.AREA, 3, 16);
 
 		for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(position)).expand(strength, strength, strength))) {
 			if (entity == null) continue;
@@ -79,7 +79,7 @@ public class ModuleEffectAntiGravityWell extends ModuleEffect implements ILinger
 			if (dist > strength) continue;
 			if (!tax(this, spell)) return false;
 
-			final double upperMag = getModifierPower(spell, Attributes.POTENCY, 10, 50, true, true) / 100.0;
+			final double upperMag = getModifier(spell, Attributes.POTENCY, 10, 50) / 100.0;
 			final double scale = 3.5;
 			double mag = upperMag * (scale * dist / (-scale * dist - 1) + 1);
 
@@ -135,6 +135,6 @@ public class ModuleEffectAntiGravityWell extends ModuleEffect implements ILinger
 
 	@Override
 	public int lingeringTime(SpellData spell) {
-		return (int) (getModifierPower(spell, Attributes.DURATION, 10, 64, true, true) * 50);
+		return (int) (getModifier(spell, Attributes.DURATION, 10, 64) * 50);
 	}
 }

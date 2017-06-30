@@ -54,8 +54,8 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousSpell {
 
 		if (position == null) return false;
 
-		double range = getModifierPower(spell, Attributes.RANGE, 10, 100, true, true);
-		double potency = 20 - getModifierPower(spell, Attributes.POTENCY, 1, 19, true, true);
+		double range = getModifier(spell, Attributes.RANGE, 10, 100);
+		double potency = 20 - getModifier(spell, Attributes.POTENCY, 1, 19);
 
 		setCostMultiplier(this, 0.1);
 

@@ -62,8 +62,8 @@ public class ModuleEffectTimeSlow extends ModuleEffect {
 		Entity caster = spell.getData(CASTER);
 
 		if (targetEntity instanceof EntityLivingBase) {
-			double strength = getModifierPower(spell, Attributes.POTENCY, 2, 20, false, true);
-			double duration = getModifierPower(spell, Attributes.DURATION, 5, 64, false, true) * 10;
+			double strength = getModifier(spell, Attributes.POTENCY, 2, 20);
+			double duration = getModifier(spell, Attributes.DURATION, 5, 64) * 10;
 			if (!tax(this, spell)) return false;
 
 			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.TIME_SLOW, (int) duration, (int) strength, true, false));

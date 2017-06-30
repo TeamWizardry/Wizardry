@@ -14,10 +14,9 @@ import com.teamwizardry.wizardry.common.core.SpellTicker;
 import com.teamwizardry.wizardry.common.network.PacketRenderSpell;
 import kotlin.Pair;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -33,14 +32,21 @@ import java.util.List;
 import java.util.Set;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.MAX_TIME;
 
 /**
  * Created by LordSaad.
  */
 public abstract class Module implements INBTSerializable<NBTTagCompound> {
 
+	/**
+	 * Stores the actual modifier data
+	 */
 	@Nonnull
 	public NBTTagCompound attributes = new NBTTagCompound();
+	/**
+	 * Temporarily stores modifiers before spell construction
+	 */
 	@Nonnull
 	public List<AttributeModifier> modifiers = new ArrayList<>();
 	@Nullable
@@ -191,9 +197,10 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	 */
 	public final boolean castSpell(@NotNull SpellData data) {
 		if (this instanceof ILingeringModule)
-			if (!SpellTicker.INSTANCE.ticker.containsKey(this))
+			if (!SpellTicker.INSTANCE.ticker.containsKey(this)) {
+				data.addData(MAX_TIME, ((ILingeringModule) this).lingeringTime(data));
 				SpellTicker.INSTANCE.ticker.put(this, new Pair<>(data, ((ILingeringModule) this).lingeringTime(data)));
-
+			}
 		//data.addData(SpellData.DefaultKeys.STRENGTH, calculateStrength(data) * getMultiplier());
 
 		SpellCastEvent event = new SpellCastEvent(this, data);
@@ -221,22 +228,18 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 					new NetworkRegistry.TargetPoint(data.world.provider.getDimension(), target.x, target.y, target.z, 60));
 	}
 
-	protected final double calcBurnoutPercent(@Nullable Entity player) {
-		if (!(player instanceof EntityLivingBase)) return 1;
-		if (player instanceof EntityPlayer && ((EntityPlayer) player).isCreative()) return 1;
-		CapManager manager = new CapManager(player);
+	protected final double calcBurnoutPercent(@Nullable Entity entity) {
+		if (entity == null) return 1;
+		//if (entity instanceof EntityPlayer && ((EntityPlayer) entity).isCreative()) return 1;
+		CapManager manager = new CapManager(entity);
 		return ((manager.getMaxBurnout() - manager.getBurnout()) / (manager.getMaxBurnout() * 1.0));
 	}
 
-	public final boolean runNextModule(@NotNull SpellData data) {
+	protected final boolean runNextModule(@NotNull SpellData data) {
 		if (nextModule != null) {
 			nextModule.setMultiplier(nextModule.getMultiplier() * getMultiplier());
 		}
 		return nextModule != null && nextModule.castSpell(data);
-	}
-
-	protected final void forceCastNextModuleParticles(@NotNull SpellData data) {
-		if (nextModule != null) nextModule.castParticles(data);
 	}
 
 	/**
@@ -252,9 +255,9 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 		return modules;
 	}
 
-	protected final double getModifierPower(SpellData data, String attribute, double min, double max, boolean multiplyMultiplier, boolean multiplyBurnout) {
+	protected final double getModifier(SpellData data, String attribute, double min, double max) {
 		Entity caster = data.getData(CASTER);
-		return (attributes.hasKey(attribute) ? Math.min(Math.max(min, min + attributes.getDouble(attribute)), max) : min) * (multiplyMultiplier ? getMultiplier() : 1) * (multiplyBurnout ? calcBurnoutPercent(caster) : 1);
+		return (attributes.hasKey(attribute) ? MathHelper.clamp(min + attributes.getDouble(attribute), min, max) : min) * getMultiplier() * calcBurnoutPercent(caster);
 	}
 
 	public void processModifiers() {

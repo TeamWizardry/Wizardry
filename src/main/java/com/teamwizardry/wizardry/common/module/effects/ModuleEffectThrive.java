@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
-import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
@@ -64,7 +64,7 @@ public class ModuleEffectThrive extends ModuleEffect {
 		if (pos != null)
 			spell.world.playSound(null, new BlockPos(pos), ModSounds.HEAL, SoundCategory.NEUTRAL, 1, 1);
 		if (targetEntity instanceof EntityLivingBase) {
-			double strength = getModifierPower(spell, Attributes.POTENCY, 3, 20, true, true) / 10.0;
+			double strength = getModifier(spell, Attributes.POTENCY, 3, 20) / 10.0;
 
 			if (!tax(this, spell)) return false;
 

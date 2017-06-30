@@ -68,9 +68,9 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 
 		if (targetPos == null) return false;
 
-		double aoe = getModifierPower(spell, Attributes.AREA, 3, 10, false, false);
-		double strength = getModifierPower(spell, Attributes.POTENCY, 1, 10, true, true);
-		double range = getModifierPower(spell, Attributes.RANGE, 1, 10, true, true);
+		double aoe = getModifier(spell, Attributes.AREA, 3, 10);
+		double strength = getModifier(spell, Attributes.POTENCY, 1, 10);
+		double range = getModifier(spell, Attributes.RANGE, 1, 20);
 
 		List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(targetPos)).expand(aoe, 1, aoe));
 
@@ -93,7 +93,7 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 		if (r.nextInt((int) ((40 - strength))) != 0) return true;
 		ArrayList<Vec3d> blocks = new ArrayList<>();
 		for (double i = -aoe; i < aoe; i++)
-			for (double j = -range; j < range; j++)
+			for (double j = 0; j < range; j++)
 				for (double k = -aoe; k < aoe; k++) {
 					Vec3d pos = targetPos.addVector(i, j, k);
 					if (pos.distanceTo(targetPos) <= aoe) {
@@ -120,7 +120,7 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 		if (target == null) return;
 		if (RandUtil.nextInt(10) != 0) return;
 
-		double aoe = getModifierPower(spell, Attributes.AREA, 3, 10, false, false);
+		double aoe = getModifier(spell, Attributes.AREA, 3, 10);
 
 		ParticleBuilder glitter = new ParticleBuilder(10);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
@@ -146,7 +146,7 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 
 	@Override
 	public int lingeringTime(SpellData spell) {
-		double strength = getModifierPower(spell, Attributes.DURATION, 40, 100, true, true) * 30;
+		double strength = getModifier(spell, Attributes.DURATION, 40, 100) * 30;
 		return (int) strength;
 	}
 }

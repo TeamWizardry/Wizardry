@@ -15,6 +15,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -39,6 +40,9 @@ public class EntitySpellProjectile extends EntityMod {
 	public static final DataParameter<Integer> DATA_COLOR2 = EntityDataManager.createKey(EntitySpellProjectile.class, DataSerializers.VARINT);
 	public SpellData spell;
 	public Module module;
+	private double dist;
+	private double speed;
+	private double gravity;
 
 	public EntitySpellProjectile(World worldIn) {
 		super(worldIn);
@@ -47,11 +51,14 @@ public class EntitySpellProjectile extends EntityMod {
 		applyColor(Color.WHITE);
 		applyColor2(Color.WHITE);
 
-		setRenderDistanceWeight(10);
+		setRenderDistanceWeight(30);
 	}
 
-	public EntitySpellProjectile(World world, Module module, SpellData spell) {
+	public EntitySpellProjectile(World world, Module module, SpellData spell, double dist, double speed, double gravity) {
 		super(world);
+		this.dist = dist;
+		this.speed = speed;
+		this.gravity = gravity;
 		setSize(0.3F, 0.3F);
 		isImmuneToFire = true;
 
@@ -66,7 +73,7 @@ public class EntitySpellProjectile extends EntityMod {
 			else applyColor2(Color.WHITE);
 		}
 
-		setRenderDistanceWeight(10);
+		setRenderDistanceWeight(30);
 	}
 
 	@Nullable
@@ -95,27 +102,39 @@ public class EntitySpellProjectile extends EntityMod {
 	public void onUpdate() {
 		super.onUpdate();
 
-		if (ticksExisted > 1000) {
+		if (world.isRemote) return;
+
+		if (module == null || spell == null) {
 			setDead();
+			world.removeEntity(this);
 			return;
 		}
 
-		if (module == null) return;
+		Vec3d origin = spell.getData(ORIGIN);
 
 		float yaw = spell.getData(YAW, 0F);
 		float pitch = spell.getData(PITCH, 0F);
 		rotationPitch = pitch;
 		rotationYaw = yaw;
-
 		Vec3d look = PosUtils.vecFromRotations(pitch, yaw);
 
-		if (world.isRemote) return;
+		if (origin == null || dist < getDistance(origin.x, origin.y, origin.z)) {
+			spell.processBlock(getPosition(), EnumFacing.getFacingFromVector((float) look.x, (float) look.y, (float) look.z), getPositionVector());
+			spell.addData(ORIGIN, getPositionVector());
+			goBoom(spell);
+			return;
+		}
+
 		if (isDead) return;
 
 		if (!isCollided) {
-			motionX = look.x;
-			motionY = look.y;
-			motionZ = look.z;
+
+			// MOVE //
+			motionX = look.x * speed;
+			motionY = look.y * speed;
+			motionZ = look.z * speed;
+
+			motionY -= gravity;
 
 			move(MoverType.SELF, motionX, motionY, motionZ);
 		} else {
@@ -213,6 +232,10 @@ public class EntitySpellProjectile extends EntityMod {
 		spell.deserializeNBT(compound.getCompoundTag("spell_data"));
 		applyColor(new Color(compound.getInteger("color")));
 		applyColor2(new Color(compound.getInteger("color2")));
+
+		dist = compound.getDouble("distance");
+		speed = compound.getDouble("speed");
+		gravity = compound.getDouble("gravity");
 	}
 
 	@Override
@@ -221,5 +244,9 @@ public class EntitySpellProjectile extends EntityMod {
 		compound.setTag("spell_data", spell.serializeNBT());
 		compound.setInteger("color", getDataManager().get(DATA_COLOR));
 		compound.setInteger("color2", getDataManager().get(DATA_COLOR2));
+
+		compound.setDouble("distance", dist);
+		compound.setDouble("speed", speed);
+		compound.setDouble("gravity", gravity);
 	}
 }

@@ -7,7 +7,7 @@ import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
@@ -61,7 +61,7 @@ public class ModuleShapeCone extends ModuleShape {
 
 		if (position == null) return false;
 
-		double range = getModifierPower(spell, Attributes.RANGE, 10, 32, true, true);
+		double range = getModifier(spell, Attributes.RANGE, 10, 32);
 
 		setCostMultiplier(this, range / 16.0);
 
@@ -72,7 +72,7 @@ public class ModuleShapeCone extends ModuleShape {
 			origin = new Vec3d(offX, 0, offZ).add(position);
 		}
 
-		int chance = (int) (getModifierPower(spell, Attributes.POTENCY, 5, 32, true, true));
+		int chance = (int) (getModifier(spell, Attributes.POTENCY, 5, 32));
 
 		for (int i = 0; i < chance; i++) {
 			//	if (chance > 0 && RandUtil.nextInt(33 - chance) != 0) continue;
@@ -91,7 +91,10 @@ public class ModuleShapeCone extends ModuleShape {
 			if (result.entityHit != null) spell.processEntity(result.entityHit, false);
 
 			castParticles(newSpell);
-			runNextModule(newSpell);
+
+			newSpell.addData(ORIGIN, result.hitVec);
+
+			return runNextModule(newSpell);
 		}
 
 		return true;

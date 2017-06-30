@@ -8,7 +8,8 @@ import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.spell.ILingeringModule;
+import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
@@ -60,7 +61,7 @@ public class ModuleEffectGravityWell extends ModuleEffect implements ILingeringM
 
 		if (position == null) return false;
 
-		double strength = getModifierPower(spell, Attributes.AREA, 10, 32, true, true);
+		double strength = getModifier(spell, Attributes.AREA, 10, 32);
 
 		for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(position)).expand(strength, strength, strength))) {
 			if (entity == null) continue;
@@ -69,7 +70,7 @@ public class ModuleEffectGravityWell extends ModuleEffect implements ILingeringM
 			if (dist > strength) continue;
 			if (!tax(this, spell)) return false;
 
-			final double upperMag = getModifierPower(spell, Attributes.POTENCY, 10, 50, true, true) / 100.0;
+			final double upperMag = getModifier(spell, Attributes.POTENCY, 10, 50) / 100.0;
 			final double scale = 3.5;
 			double mag = upperMag * (scale * dist / (-scale * dist - 1) + 1);
 
@@ -128,6 +129,6 @@ public class ModuleEffectGravityWell extends ModuleEffect implements ILingeringM
 
 	@Override
 	public int lingeringTime(SpellData spell) {
-		return (int) (getModifierPower(spell, Attributes.DURATION, 10, 64, true, true) * 50);
+		return (int) (getModifier(spell, Attributes.DURATION, 10, 64) * 50);
 	}
 }

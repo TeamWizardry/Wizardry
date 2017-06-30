@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
-import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
@@ -53,8 +53,8 @@ public class ModuleEffectBreak extends ModuleEffect {
 		BlockPos targetPos = spell.getData(BLOCK_HIT);
 		Entity caster = spell.getData(CASTER);
 
-		double range = getModifierPower(spell, Attributes.AREA, 1, 64, true, true);
-		double strength = getModifierPower(spell, Attributes.POTENCY, 1, 64, true, true);
+		double range = getModifier(spell, Attributes.AREA, 1, 64);
+		double strength = getModifier(spell, Attributes.POTENCY, 1, 64);
 
 		if (targetPos != null) {
 			Block block = world.getBlockState(targetPos).getBlock();

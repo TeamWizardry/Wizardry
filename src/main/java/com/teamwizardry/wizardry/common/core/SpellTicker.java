@@ -30,6 +30,8 @@ public class SpellTicker {
 			int time = ticker.get(module).getSecond();
 			if (time > 0) {
 				ticker.put(module, new Pair<>(ticker.get(module).getFirst().copy(), --time));
+				SpellData spell = ticker.get(module).getFirst();
+				spell.addData(SpellData.DefaultKeys.TIME_LEFT, time);
 				module.castSpell(ticker.get(module).getFirst());
 			} else {
 				ticker.remove(module);

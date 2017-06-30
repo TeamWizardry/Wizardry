@@ -47,7 +47,7 @@ public class ModuleEffectPhase extends ModuleEffect {
 		Entity targetEntity = spell.getData(ENTITY_HIT);
 		Vec3d targetHit = spell.getData(TARGET_HIT);
 
-		double time = getModifierPower(spell, Attributes.DURATION, 10, 100, true, true) * 10;
+		double time = getModifier(spell, Attributes.DURATION, 10, 100) * 5;
 
 		if (!tax(this, spell)) return false;
 
@@ -55,7 +55,6 @@ public class ModuleEffectPhase extends ModuleEffect {
 			EntityLivingBase entity = (EntityLivingBase) targetEntity;
 			entity.addPotionEffect(new PotionEffect(ModPotions.PHASE, (int) time, 0, true, false));
 			spell.world.playSound(null, targetEntity.getPosition(), ModSounds.ETHEREAL_PASS_BY, SoundCategory.NEUTRAL, 1, 1);
-
 		}
 		return true;
 	}

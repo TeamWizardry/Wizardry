@@ -49,7 +49,7 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 	@Override
 	public int getNewCooldown(@Nonnull SpellData data) {
 		Entity target = data.getData(ENTITY_HIT);
-		double strength = getModifierPower(data, Attributes.POTENCY, 1, 10, true, true);
+		double strength = getModifier(data, Attributes.POTENCY, 1, 10);
 		if (target == null) return 50;
 		if (target.getEntityData().hasKey("jump_count")) {
 			int jumpCount = target.getEntityData().getInteger("jump_count");
@@ -77,7 +77,7 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 		Vec3d lookVec = PosUtils.vecFromRotations(pitch, yaw);
 
 		if (!target.hasNoGravity()) {
-			double strength = getModifierPower(spell, Attributes.POTENCY, 1, 64, true, true) / 10.0;
+			double strength = getModifier(spell, Attributes.POTENCY, 1, 64) / 10.0;
 			if (!tax(this, spell)) return false;
 
 			if (!target.getEntityData().hasKey("jump_count")) {
@@ -90,7 +90,7 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 			target.motionZ += lookVec.z;
 
 			target.velocityChanged = true;
-			target.fallDistance /= getModifierPower(spell, Attributes.POTENCY, 2, 10, true, true);
+			target.fallDistance /= getModifier(spell, Attributes.POTENCY, 2, 10);
 
 			if (target instanceof EntityPlayerMP)
 				((EntityPlayerMP) target).connection.sendPacket(new SPacketEntityVelocity(target));

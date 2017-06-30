@@ -1,6 +1,8 @@
 package com.teamwizardry.wizardry.common.module.shapes;
 
+import com.teamwizardry.wizardry.api.spell.ITaxing;
 import com.teamwizardry.wizardry.api.spell.SpellData;
+import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
@@ -21,7 +23,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleShapeProjectile extends ModuleShape {
+public class ModuleShapeProjectile extends ModuleShape implements ITaxing {
 
 	@Nonnull
 	@Override
@@ -44,17 +46,21 @@ public class ModuleShapeProjectile extends ModuleShape {
 	@Override
 	public boolean run(@Nonnull SpellData spell) {
 		World world = spell.world;
-		if (world.isRemote) return false;
+		if (world.isRemote) return true;
 
 		Vec3d target = spell.getData(TARGET_HIT);
 		Vec3d origin = spell.getData(ORIGIN);
 		Entity caster = spell.getData(CASTER);
-		if (origin == null) return false;
+		if (origin == null) return true;
 
-		EntitySpellProjectile proj = new EntitySpellProjectile(world, this, spell);
+		double dist = getModifier(spell, Attributes.RANGE, 150, 240);
+		double speed = getModifier(spell, Attributes.SPEED, 1, 10);
+
+		EntitySpellProjectile proj = new EntitySpellProjectile(world, this, spell, dist, speed, 0.1);
 		proj.setPosition(origin.x, origin.y, origin.z);
 		proj.velocityChanged = true;
 
+		if (!tax(this, spell)) return false;
 		boolean success = world.spawnEntity(proj);
 		if (success)
 			world.playSound(null, new BlockPos(origin), ModSounds.PROJECTILE_LAUNCH, SoundCategory.PLAYERS, 1f, (float) RandUtil.nextDouble(1, 1.5));

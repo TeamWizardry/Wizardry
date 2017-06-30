@@ -38,7 +38,6 @@ public class RenderSpellProjectile extends Render<EntitySpellProjectile> {
 		Color color = new Color(entity.getDataManager().get(DATA_COLOR), true);
 		Color color2 = new Color(entity.getDataManager().get(DATA_COLOR2), true);
 
-
 		ParticleBuilder glitter = new ParticleBuilder(10);
 		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));

@@ -22,29 +22,29 @@ public interface ICooldown {
 
 	default void setCooldown(World world, EntityPlayer player, ItemStack stack, EnumHand hand, @Nonnull SpellData data) {
 		int maxCooldown = 0;
-		int countContinuous = 0;
-		int existingCooldowns = 0;
 		int overridenCooldown = 0;
 
 		boolean cooldownOverriden = false;
+		boolean hasNonContinuous = false;
 
-		ArrayList<Module> modules = SpellUtils.getAllModules(stack);
+		ArrayList<Module> modules = SpellUtils.getModules(stack);
 
 		for (Module module : modules) {
-			existingCooldowns++;
-			if (module instanceof IContinuousSpell) {
-				countContinuous++;
-				continue;
-			}
+			if (!(module instanceof IContinuousSpell)) {
+				hasNonContinuous = true;
+			} else continue;
+			if (module.getCooldownTime() > maxCooldown) maxCooldown = module.getCooldownTime();
+		}
+
+		for (Module module : SpellUtils.getAllModules(stack)) {
 			if (module instanceof IOverrideCooldown) {
 				int cooldown = ((IOverrideCooldown) module).getNewCooldown(data);
 				if (cooldown > overridenCooldown) overridenCooldown = cooldown;
 				cooldownOverriden = true;
-				continue;
 			}
-			if (module.getCooldownTime() > maxCooldown) maxCooldown = module.getCooldownTime();
 		}
-		if (countContinuous >= existingCooldowns / 2.0) return;
+
+		if (!hasNonContinuous) return;
 
 		int finalCooldown = cooldownOverriden ? overridenCooldown : maxCooldown;
 

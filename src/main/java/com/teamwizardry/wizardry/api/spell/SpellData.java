@@ -124,7 +124,43 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 		}
 	}
 
+	@Override
+	public String toString() {
+		return "SpellData{" +
+				"world=" + world +
+				", data=" + data +
+				'}';
+	}
+
 	public static class DefaultKeys {
+		public static final Pair<String, Class<Integer>> TIME_LEFT = constructPair("time_left", Integer.class, new ProcessData.Process<NBTTagInt, Integer>() {
+			@NotNull
+			@Override
+			public NBTTagInt serialize(@Nullable Integer object) {
+				if (object == null) return new NBTTagInt(1);
+				return new NBTTagInt(object);
+			}
+
+			@Override
+			public Integer deserialize(@NotNull World world, @NotNull NBTTagInt object) {
+				return object.getInt();
+			}
+		});
+
+		public static final Pair<String, Class<Integer>> MAX_TIME = constructPair("max_time", Integer.class, new ProcessData.Process<NBTTagInt, Integer>() {
+			@NotNull
+			@Override
+			public NBTTagInt serialize(@Nullable Integer object) {
+				if (object == null) return new NBTTagInt(1);
+				return new NBTTagInt(object);
+			}
+
+			@Override
+			public Integer deserialize(@NotNull World world, @NotNull NBTTagInt object) {
+				return object.getInt();
+			}
+		});
+
 		public static final Pair<String, Class<Float>> STRENGTH = constructPair("strength", Float.class, new ProcessData.Process<NBTTagFloat, Float>() {
 			@NotNull
 			@Override

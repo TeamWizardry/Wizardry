@@ -71,7 +71,7 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 			facings.add(facing1);
 		}
 
-		double range = getModifierPower(spell, Attributes.AREA, 1, 64, true, true);
+		double range = getModifier(spell, Attributes.AREA, 1, 64);
 
 		if (caster != null && targetPos != null && caster.getEntityData().hasKey("selected")) {
 			IBlockState state = NBTUtil.readBlockState(caster.getEntityData().getCompoundTag("selected"));

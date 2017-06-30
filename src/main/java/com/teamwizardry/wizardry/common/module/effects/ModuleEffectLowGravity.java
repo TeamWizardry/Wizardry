@@ -6,7 +6,7 @@ import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
@@ -60,8 +60,8 @@ public class ModuleEffectLowGravity extends ModuleEffect {
 		BlockPos targetPos = spell.getData(BLOCK_HIT);
 		Entity caster = spell.getData(CASTER);
 
-		double potency = getModifierPower(spell, Attributes.POTENCY, 1, 16, true, true);
-		double time = getModifierPower(spell, Attributes.DURATION, 50, 1000, true, true);
+		double potency = getModifier(spell, Attributes.POTENCY, 1, 16);
+		double time = getModifier(spell, Attributes.DURATION, 50, 1000);
 
 		if (!tax(this, spell)) return false;
 
