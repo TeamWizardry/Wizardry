@@ -65,7 +65,7 @@ public class ModuleEffectTelekinesis extends ModuleEffect {
 
 		List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(targetPos)).expand(strength, strength, strength));
 
-		if (RandUtil.nextInt(6) == 0)
+		if (RandUtil.nextInt(10) == 0)
 			spell.world.playSound(null, new BlockPos(targetPos), ModSounds.ETHEREAL_PASS_BY, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat());
 		for (Entity entity : entityList) {
 			double dist = entity.getPositionVector().distanceTo(targetPos);

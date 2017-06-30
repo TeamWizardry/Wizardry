@@ -6,6 +6,7 @@ import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
+import com.teamwizardry.wizardry.api.util.CubicBezier;
 import com.teamwizardry.wizardry.init.ModPotions;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import kotlin.Pair;
@@ -80,7 +81,10 @@ public class ModuleEffectZoom extends ModuleEffect implements ILingeringModule {
 
 		Vec3d sub = target.subtract(caster.getPositionVector());
 		double dist = originalLoc.lengthVector();
-		double v = (dist / spell.getData(MAX_TIME, 1)) * spell.getData(TIME_LEFT, 1);
+		double tmax = spell.getData(MAX_TIME, 1);
+		double tleft = spell.getData(TIME_LEFT, 1);
+		float diff = (float) (sub.lengthVector() / dist);
+		double v = (dist / 2) * new CubicBezier(0.05f, 0.78f, 0.58f, 0.99f).eval(diff < 0.05 ? 0 : diff);
 
 		Vec3d norm = sub.normalize();
 		caster.motionX = norm.x * v;
@@ -89,11 +93,15 @@ public class ModuleEffectZoom extends ModuleEffect implements ILingeringModule {
 		caster.velocityChanged = true;
 
 		if (caster instanceof EntityLivingBase) {
-			((EntityLivingBase) caster).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 20, 1, true, false));
-			((EntityLivingBase) caster).addPotionEffect(new PotionEffect(ModPotions.PHASE, 20, 1, true, false));
+			((EntityLivingBase) caster).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 10, 1, true, false));
+			((EntityLivingBase) caster).addPotionEffect(new PotionEffect(ModPotions.PHASE, 10, 1, true, false));
 		}
 
 		return true;
+	}
+
+	private double timePercentage(double t, double tmax) {
+		return t / tmax;
 	}
 
 	@Override
