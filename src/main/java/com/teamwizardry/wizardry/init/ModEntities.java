@@ -25,6 +25,7 @@ public class ModEntities {
 		registerEntity(new ResourceLocation(Wizardry.MODID, "spell_projectile"), EntitySpellProjectile.class, "spell_projectile", 256, 1, true);
 		registerEntity(new ResourceLocation(Wizardry.MODID, "jump_pad"), EntityJumpPad.class, "jump_pad", 64, 1, false);
 		registerEntity(new ResourceLocation(Wizardry.MODID, "unicorn"), EntityUnicorn.class, "unicorn");
+		registerEntity(new ResourceLocation(Wizardry.MODID, "summon_zombie"), EntitySummonZombie.class, "summon_zombie");
 	}
 
 	public static void registerEntity(ResourceLocation loc, Class<? extends Entity> entityClass, String entityName) {
@@ -46,5 +47,6 @@ public class ModEntities {
 		RenderingRegistry.registerEntityRenderingHandler(EntitySpellProjectile.class, RenderSpellProjectile::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntitySpellCodex.class, RenderSpellCodex::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityDevilDust.class, RenderDevilDust::new);
+		RenderingRegistry.registerEntityRenderingHandler(EntitySummonZombie.class, RenderSummonZombie::new);
 	}
 }

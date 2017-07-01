@@ -30,12 +30,12 @@ public class WizardryTransformer implements IClassTransformer {
 	public static final ClassnameMap CLASS_MAPPINGS = new ClassnameMap(
 			"net/minecraft/entity/player/EntityPlayer", "aax",
 			"net/minecraft/entity/Entity", "sm",
-			"net/minecraft/entity/MoverType", "tb",
+			"net/minecraft/entity/MoverType", "tc",
 			"net/minecraft/entity/EntityLivingBase", "sv",
-			"net/minecraft/client/renderer/entity/RenderLivingBase", "bvi",
-			"net/minecraft/client/renderer/entity/Render", "bup"
-
+			"net/minecraft/client/renderer/entity/RenderLivingBase", "bvl",
+			"net/minecraft/client/renderer/entity/Render", "bus"
 	);
+
 	private static final String ASM_HOOKS = "com/teamwizardry/wizardry/asm/WizardryASMHooks";
 	private static final Map<String, Transformer> transformers = new HashMap<>();
 
@@ -50,8 +50,6 @@ public class WizardryTransformer implements IClassTransformer {
 		MethodSignature sig = new MethodSignature("doRenderShadowAndFire", "func_76979_b", "c", "(Lnet/minecraft/entity/Entity;DDDFF)V");
 
 		return transform(basicClass, sig, "Render Shadow And Fire Event", (MethodNode method) -> {
-			System.out.println("########### Shadow And Fire -> description: " + method.desc);
-			System.out.println("########### Shadow And Fire -> name: " + method.name);
 
 			LabelNode node1 = new LabelNode();
 			InsnList newInstructions = new InsnList();
@@ -77,8 +75,6 @@ public class WizardryTransformer implements IClassTransformer {
 				combineBackFocus((AbstractInsnNode node) -> node.getOpcode() == RETURN,
 						(AbstractInsnNode node) -> node instanceof LabelNode,
 						(MethodNode method, AbstractInsnNode node) -> {
-							System.out.println("########### Move With Heading -> description: " + method.desc);
-							System.out.println("########### Move With Heading -> name: " + method.name);
 							LabelNode node1 = new LabelNode();
 							InsnList newInstructions = new InsnList();
 
@@ -107,8 +103,6 @@ public class WizardryTransformer implements IClassTransformer {
 						(AbstractInsnNode node) -> node.getOpcode() == RETURN,
 						(AbstractInsnNode node) -> node instanceof LabelNode,
 						(MethodNode method, AbstractInsnNode node) -> {
-							System.out.println("########### Pre Move -> description: " + method.desc);
-							System.out.println("########### Pre Move -> name: " + method.name);
 							InsnList newInstructions = new InsnList();
 							LabelNode node1 = new LabelNode();
 
@@ -131,13 +125,11 @@ public class WizardryTransformer implements IClassTransformer {
 	}
 
 	private static byte[] transformPlayerClipping(byte[] basicClass) {
-		MethodSignature sig = new MethodSignature("onUpdate", "func_70071_h", "h", "()V");
+		MethodSignature sig = new MethodSignature("onUpdate", "func_70071_h_", "h", "()V");
 
 		return transform(basicClass, sig, "Player Clipping Event",
 				combine((AbstractInsnNode node) -> node.getOpcode() == PUTFIELD, // Filter
 						(MethodNode method, AbstractInsnNode node) -> { // Action
-							System.out.println("########### Player Clip -> description: " + method.desc);
-							System.out.println("########### Player Clip -> name: " + method.name);
 							InsnList newInstructions = new InsnList();
 
 							newInstructions.add(new VarInsnNode(ALOAD, 0));

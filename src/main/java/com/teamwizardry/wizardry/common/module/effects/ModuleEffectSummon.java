@@ -11,22 +11,12 @@ import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
-import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
-import com.teamwizardry.wizardry.init.ModPotions;
-import com.teamwizardry.wizardry.init.ModSounds;
-import net.minecraft.block.BlockSnow;
-import net.minecraft.block.state.IBlockState;
+import com.teamwizardry.wizardry.common.entity.EntitySummonZombie;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -40,24 +30,24 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEffectFreeze extends ModuleEffect {
+public class ModuleEffectSummon extends ModuleEffect {
 
 	@Nonnull
 	@Override
 	public String getID() {
-		return "effect_freeze";
+		return "effect_summon";
 	}
 
 	@Nonnull
 	@Override
 	public String getReadableName() {
-		return "Freeze";
+		return "Summon";
 	}
 
 	@Nonnull
 	@Override
 	public String getDescription() {
-		return "Will slow down opponents, extinguish fires, turn water to ice, lava to stone, etc...";
+		return "Will summon undead mobs to help you out";
 	}
 
 	@Override
@@ -68,44 +58,17 @@ public class ModuleEffectFreeze extends ModuleEffect {
 		Entity caster = spell.getData(CASTER);
 
 		double range = getModifier(spell, Attributes.AREA, 1, 16) / 2.0;
-		double time = getModifier(spell, Attributes.DURATION, 50, 1000);
+		double time = getModifier(spell, Attributes.DURATION, 500, 1000);
 
 		if (!tax(this, spell)) return false;
 
-		if (targetEntity != null) {
-			spell.world.playSound(null, targetEntity.getPosition(), ModSounds.FROST_FORM, SoundCategory.NEUTRAL, 1, 1);
-			targetEntity.extinguish();
-			if (targetEntity instanceof EntityLivingBase)
-				((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.SLIPPERY, (int) time, 0, true, false));
-		}
+		if (!(caster instanceof EntityLivingBase)) return true;
 
-		if (targetPos != null) {
-			spell.world.playSound(null, targetPos, ModSounds.FROST_FORM, SoundCategory.NEUTRAL, 1, 1);
-			for (int x = (int) range; x >= -range; x--)
-				for (int y = (int) range; y >= -range; y--)
-					for (int z = (int) range; z >= -range; z--) {
-						BlockPos pos = targetPos.add(x, y, z);
-						double dist = pos.getDistance(targetPos.getX(), targetPos.getY(), targetPos.getZ());
-						if (dist > range) continue;
+		EntitySummonZombie zombie = new EntitySummonZombie(world, (EntityLivingBase) caster, (int) time);
+		zombie.setPosition(caster.posX, caster.posY, caster.posZ);
+		zombie.forceSpawn = true;
+		world.spawnEntity(zombie);
 
-						for (EnumFacing facing : EnumFacing.VALUES) {
-							IBlockState state = world.getBlockState(pos.offset(facing));
-							if (state.getBlock() == Blocks.FIRE) {
-								BlockUtils.breakBlock(world, pos.offset(facing), state, caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null, false);
-							}
-						}
-
-						if (world.getBlockState(pos).isSideSolid(world, pos, EnumFacing.UP) && world.isAirBlock(pos.offset(EnumFacing.UP))) {
-							int layerSize = (int) (Math.max(1, Math.min(8, Math.max(1, (dist / range) * 6.0))));
-							layerSize = Math.max(1, Math.min(layerSize + RandUtil.nextInt(-1, 1), 8));
-							BlockUtils.placeBlock(world, pos.offset(EnumFacing.UP), Blocks.SNOW_LAYER.getDefaultState().withProperty(BlockSnow.LAYERS, layerSize), caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null);
-						}
-
-						if (world.getBlockState(pos).getBlock() == Blocks.WATER) {
-							BlockUtils.placeBlock(world, pos, Blocks.ICE.getDefaultState(), caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null);
-						}
-					}
-		}
 		return true;
 	}
 
@@ -133,7 +96,7 @@ public class ModuleEffectFreeze extends ModuleEffect {
 			glitter.setScale(RandUtil.nextFloat());
 			glitter.setPositionOffset(new Vec3d(x, RandUtil.nextDouble(-2, 2), z));
 			glitter.setLifetime(RandUtil.nextInt(50, 100));
-			Vec3d direction = position.add(glitter.getPositionOffset()).subtract(position).normalize().scale(1 / 5);
+			Vec3d direction = position.add(glitter.getPositionOffset()).subtract(position).normalize();
 			glitter.addMotion(direction.scale(RandUtil.nextDouble(0.5, 1)));
 		});
 
@@ -142,6 +105,6 @@ public class ModuleEffectFreeze extends ModuleEffect {
 	@Nonnull
 	@Override
 	public Module copy() {
-		return cloneModule(new ModuleEffectFreeze());
+		return cloneModule(new ModuleEffectSummon());
 	}
 }

@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.core.version;
 
+import com.teamwizardry.wizardry.Wizardry;
 import net.minecraftforge.common.MinecraftForge;
 
 import java.io.BufferedReader;
@@ -22,7 +23,7 @@ public class ThreadVersionChecker extends Thread {
 			VersionChecker.onlineVersion = r.readLine();
 			r.close();
 		} catch (Exception e) {
-			e.printStackTrace();
+			Wizardry.logger.error("Failed to check for updates! :(");
 		}
 		VersionChecker.doneChecking = true;
 	}
