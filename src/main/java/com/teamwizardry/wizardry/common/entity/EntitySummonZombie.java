@@ -10,15 +10,19 @@ import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.datafix.DataFixer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
 
 public class EntitySummonZombie extends EntityMob {
 
@@ -29,6 +33,7 @@ public class EntitySummonZombie extends EntityMob {
 
 	public EntitySummonZombie(World worldIn) {
 		super(worldIn);
+		this.setSize(0.6F, 1.95F);
 	}
 
 	public EntitySummonZombie(World worldIn, EntityLivingBase owner, int time) {
@@ -144,4 +149,23 @@ public class EntitySummonZombie extends EntityMob {
 		return 1.74F;
 	}
 
+	public static void registerFixesZombie(DataFixer fixer) {
+		EntityLiving.registerFixesMob(fixer, EntityZombie.class);
+	}
+
+	@Override
+	public void writeEntityToNBT(NBTTagCompound compound) {
+		super.writeEntityToNBT(compound);
+		compound.setInteger("time", time);
+		compound.setUniqueId("owner", owner.getUniqueID());
+	}
+
+	@Override
+	public void readEntityFromNBT(NBTTagCompound compound) {
+		super.readEntityFromNBT(compound);
+		time = compound.getInteger("time");
+		UUID uuid = compound.getUniqueId("owner");
+		if (uuid != null)
+			owner = world.getPlayerEntityByUUID(uuid);
+	}
 }
