@@ -15,7 +15,6 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.datafix.DataFixer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -147,10 +146,6 @@ public class EntitySummonZombie extends EntityMob {
 	@Override
 	public float getEyeHeight() {
 		return 1.74F;
-	}
-
-	public static void registerFixesZombie(DataFixer fixer) {
-		EntityLiving.registerFixesMob(fixer, EntityZombie.class);
 	}
 
 	@Override
