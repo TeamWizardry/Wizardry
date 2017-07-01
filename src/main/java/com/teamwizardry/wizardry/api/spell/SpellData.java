@@ -87,6 +87,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 		} else {
 			addData(DefaultKeys.TARGET_HIT, entity.getPositionVector().addVector(0, entity.height / 2.0, 0));
 			addData(DefaultKeys.ENTITY_HIT, entity);
+			addData(DefaultKeys.BLOCK_HIT, null);
 		}
 	}
 
@@ -94,6 +95,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 		if (pos != null) addData(DefaultKeys.BLOCK_HIT, pos);
 		if (targetHit != null) addData(DefaultKeys.TARGET_HIT, targetHit);
 		if (facing != null) addData(DefaultKeys.FACE_HIT, facing);
+		addData(DefaultKeys.ENTITY_HIT, null);
 	}
 
 	public SpellData copy() {

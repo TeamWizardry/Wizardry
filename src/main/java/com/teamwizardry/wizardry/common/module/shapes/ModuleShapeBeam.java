@@ -64,10 +64,8 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousSpell {
 
 		if (trace.typeOfHit == RayTraceResult.Type.ENTITY)
 			spell.processEntity(trace.entityHit, false);
-		else if (trace.typeOfHit == RayTraceResult.Type.BLOCK) {
+		else if (trace.typeOfHit == RayTraceResult.Type.BLOCK)
 			spell.processBlock(trace.getBlockPos(), trace.sideHit, trace.hitVec);
-		}
-		if (trace.hitVec != null) spell.addData(TARGET_HIT, trace.hitVec);
 
 		return RandUtil.nextInt((int) potency) == 0 && runNextModule(spell);
 	}

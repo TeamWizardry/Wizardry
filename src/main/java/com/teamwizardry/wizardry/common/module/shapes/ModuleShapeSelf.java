@@ -1,15 +1,14 @@
 package com.teamwizardry.wizardry.common.module.shapes;
 
-import com.teamwizardry.wizardry.api.spell.*;
+import javax.annotation.Nonnull;
+
+import com.teamwizardry.wizardry.api.spell.SpellData;
+import com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 
 import net.minecraft.entity.Entity;
-
-import javax.annotation.Nonnull;
-
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
 
 /**
  * Created by LordSaad.
@@ -37,10 +36,8 @@ public class ModuleShapeSelf extends ModuleShape {
 
 	@Override
 	public boolean run(@Nonnull SpellData spell) {
-		Entity caster = spell.getData(CASTER);
+		Entity caster = spell.getData(DefaultKeys.CASTER);
 		if (caster == null) return false;
-		spell.processEntity(caster, true);
-		spell.processEntity(caster, false);
 
 		return runNextModule(spell);
 	}
