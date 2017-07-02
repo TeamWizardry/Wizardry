@@ -22,7 +22,7 @@ public class EntityAIEntityHurtByTarget extends EntityAITarget {
 	public boolean shouldExecute() {
 		EntityLivingBase entitylivingbase = owner;
 
-		if (entitylivingbase == null) {
+		if (entitylivingbase == null || !entitylivingbase.getUniqueID().equals(owner.getUniqueID())) {
 			return false;
 		} else {
 			this.attacker = entitylivingbase.getRevengeTarget();

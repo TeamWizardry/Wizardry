@@ -25,11 +25,6 @@ public class SpellBuilder {
 		spell = toSpell(inventory);
 	}
 
-	public SpellBuilder(List<Module> spell, boolean ignored) {
-		this.spell = spell;
-		// TODO: this.inventory
-	}
-
 	public SpellBuilder(HashSet<ArrayList<Module>> moduleHeads) {
 		inventory = new ArrayList<>();
 
@@ -104,6 +99,7 @@ public class SpellBuilder {
 					if (deque.peekLast() != null) {
 						Module beforeLast = deque.peekLast();
 						beforeLast.nextModule = last;
+						last.prevModule = beforeLast;
 					}
 				}
 			}

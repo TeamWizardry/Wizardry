@@ -21,6 +21,7 @@ import net.minecraft.entity.MoverType;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.SoundCategory;
@@ -30,9 +31,11 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -43,6 +46,12 @@ public class PotionTimeSlow extends PotionMod {
 	public PotionTimeSlow() {
 		super("time_slow", false, 0xE8CA0D);
 		MinecraftForge.EVENT_BUS.register(this);
+	}
+
+	@NotNull
+	@Override
+	public List<ItemStack> getCurativeItems() {
+		return new ArrayList<>();
 	}
 
 	@Override

@@ -6,9 +6,13 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
+import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by LordSaad.
@@ -17,6 +21,12 @@ public class PotionSteroid extends PotionMod {
 
 	public PotionSteroid() {
 		super("steroid", false, 0xDD5B23);
+	}
+
+	@NotNull
+	@Override
+	public List<ItemStack> getCurativeItems() {
+		return new ArrayList<>();
 	}
 
 	@Override

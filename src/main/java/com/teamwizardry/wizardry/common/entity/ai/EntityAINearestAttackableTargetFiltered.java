@@ -19,6 +19,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.UUID;
 
 public class EntityAINearestAttackableTargetFiltered<T extends EntityLivingBase> extends EntityAITarget {
 	protected final Class<T> targetClass;
@@ -30,21 +31,24 @@ public class EntityAINearestAttackableTargetFiltered<T extends EntityLivingBase>
 	private final int targetChance;
 	protected T targetEntity;
 
-	public EntityAINearestAttackableTargetFiltered(EntityCreature creature, Class<T> classTarget, boolean checkSight, EntityLivingBase exclude) {
-		this(creature, classTarget, checkSight, false, exclude);
+	public EntityAINearestAttackableTargetFiltered(EntityCreature creature, Class<T> classTarget, boolean checkSight) {
+		this(creature, classTarget, checkSight, false);
 	}
 
-	public EntityAINearestAttackableTargetFiltered(EntityCreature creature, Class<T> classTarget, boolean checkSight, boolean onlyNearby, EntityLivingBase exclude) {
-		this(creature, classTarget, 10, checkSight, onlyNearby, null, exclude);
+	public EntityAINearestAttackableTargetFiltered(EntityCreature creature, Class<T> classTarget, boolean checkSight, boolean onlyNearby) {
+		this(creature, classTarget, 10, checkSight, onlyNearby, null);
 	}
 
-	public EntityAINearestAttackableTargetFiltered(EntityCreature creature, Class<T> classTarget, int chance, boolean checkSight, boolean onlyNearby, @Nullable final Predicate<? super T> targetSelector, EntityLivingBase exclude) {
+	public EntityAINearestAttackableTargetFiltered(EntityCreature creature, Class<T> classTarget, int chance, boolean checkSight, boolean onlyNearby, @Nullable final Predicate<? super T> targetSelector) {
 		super(creature, checkSight, onlyNearby);
 		this.targetClass = classTarget;
 		this.targetChance = chance;
 		this.sorter = new EntityAINearestAttackableTarget.Sorter(creature);
 		this.setMutexBits(1);
-		this.targetEntitySelector = (Predicate<T>) entity -> (entity != null && !entity.getUniqueID().equals(entity.getUniqueID())) && (targetSelector == null || targetSelector.apply(entity) && (EntitySelectors.NOT_SPECTATING.apply(entity) && EntityAINearestAttackableTargetFiltered.this.isSuitableTarget(entity, false)));
+
+		UUID exclude = creature.getEntityData().getUniqueId("owner");
+
+		this.targetEntitySelector = (Predicate<T>) entity -> (entity != null && !entity.getUniqueID().equals(exclude)) && (targetSelector == null || targetSelector.apply(entity) && (EntitySelectors.NOT_SPECTATING.apply(entity) && EntityAINearestAttackableTargetFiltered.this.isSuitableTarget(entity, false)));
 	}
 
 	/**

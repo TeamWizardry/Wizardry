@@ -50,6 +50,8 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	@Nonnull
 	public List<AttributeModifier> modifiers = new ArrayList<>();
 	@Nullable
+	public Module prevModule = null;
+	@Nullable
 	public Module nextModule = null;
 	private Color primaryColor = null;
 	private Color secondaryColor = null;

@@ -13,6 +13,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
+import java.util.UUID;
+
 public class EntityAIFollowPlayer extends EntityAIBase {
 
 	private final EntityLiving entity;
@@ -21,19 +24,27 @@ public class EntityAIFollowPlayer extends EntityAIBase {
 	private World world;
 	private float maxDist;
 	private float minDist;
+	@Nullable
 	private EntityLivingBase owner;
 	private int timeToRecalcPath;
 	private float oldWaterCost;
 
-	public EntityAIFollowPlayer(EntityLiving entity, EntityLiving owner, double followSpeedIn, float minDistIn, float maxDistIn) {
+	public EntityAIFollowPlayer(EntityLiving entity, double followSpeedIn, float minDistIn, float maxDistIn) {
 		this.entity = entity;
 		this.world = entity.world;
-		this.owner = owner;
 		this.followSpeed = followSpeedIn;
 		this.petPathfinder = entity.getNavigator();
 		this.minDist = minDistIn;
 		this.maxDist = maxDistIn;
 		this.setMutexBits(3);
+
+		UUID exclude = entity.getEntityData().getUniqueId("owner");
+		if (exclude != null) {
+			EntityPlayer owner = world.getPlayerEntityByUUID(exclude);
+			if (owner != null) {
+				this.owner = owner;
+			}
+		}
 
 		if (!(entity.getNavigator() instanceof PathNavigateGround)) {
 			throw new IllegalArgumentException("Unsupported mob type for FollowOwnerGoal");
@@ -64,7 +75,7 @@ public class EntityAIFollowPlayer extends EntityAIBase {
 	 */
 	@Override
 	public boolean shouldContinueExecuting() {
-		return !this.petPathfinder.noPath() && this.entity.getDistanceSqToEntity(this.owner) > (double) (this.maxDist * this.maxDist);
+		return !this.petPathfinder.noPath() && (this.owner != null && this.entity.getDistanceSqToEntity(this.owner) > (double) (this.maxDist * this.maxDist));
 	}
 
 	/**
@@ -97,6 +108,7 @@ public class EntityAIFollowPlayer extends EntityAIBase {
 	 */
 	@Override
 	public void updateTask() {
+		if (this.owner == null) return;
 		this.entity.getLookHelper().setLookPositionWithEntity(this.owner, 10.0F, (float) this.entity.getVerticalFaceSpeed());
 
 		if (--this.timeToRecalcPath <= 0) {

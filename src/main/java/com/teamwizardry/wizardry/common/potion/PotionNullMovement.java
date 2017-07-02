@@ -7,12 +7,16 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovementInputFromOptions;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by LordSaad.
@@ -22,6 +26,12 @@ public class PotionNullMovement extends PotionMod {
 	public PotionNullMovement() {
 		super("null_movement", true, 0x111111);
 		MinecraftForge.EVENT_BUS.register(this);
+	}
+
+	@NotNull
+	@Override
+	public List<ItemStack> getCurativeItems() {
+		return new ArrayList<>();
 	}
 
 	@Override

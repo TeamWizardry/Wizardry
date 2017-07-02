@@ -73,13 +73,15 @@ public class CommonProxy {
 		MinecraftForge.EVENT_BUS.register(this);
 		SpellTicker.INSTANCE.getClass();
 
+		PacketHandler.register(PacketSendSpellToBook.class, Side.SERVER);
+
 		PacketHandler.register(PacketRenderSpell.class, Side.CLIENT);
 		PacketHandler.register(PacketExplode.class, Side.CLIENT);
 		PacketHandler.register(PacketSyncModules.class, Side.CLIENT);
 		PacketHandler.register(PacketFreezePlayer.class, Side.CLIENT);
-		PacketHandler.register(PacketSendSpellToBook.class, Side.SERVER);
 		PacketHandler.register(PacketRenderLightningBolt.class, Side.CLIENT);
 		PacketHandler.register(PacketSyncCooldown.class, Side.CLIENT);
+		PacketHandler.register(PacketVanishPotion.class, Side.CLIENT);
 	}
 
 	public void init(FMLInitializationEvent event) {

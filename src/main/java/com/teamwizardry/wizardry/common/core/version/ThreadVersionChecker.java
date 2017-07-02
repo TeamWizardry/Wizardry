@@ -17,6 +17,7 @@ public class ThreadVersionChecker extends Thread {
 
 	@Override
 	public void run() {
+		Wizardry.logger.info("Checking for new updates...");
 		try {
 			URL url = new URL("https://raw.githubusercontent.com/TeamWizardry/Wizardry/master/version/" + MinecraftForge.MC_VERSION + ".txt");
 			BufferedReader r = new BufferedReader(new InputStreamReader(url.openStream()));

@@ -5,7 +5,10 @@ import com.teamwizardry.wizardry.common.entity.ai.EntityAIFollowPlayer;
 import com.teamwizardry.wizardry.common.entity.ai.EntityAILivingAttack;
 import com.teamwizardry.wizardry.common.entity.ai.EntityAINearestAttackableTargetFiltered;
 import net.minecraft.block.Block;
-import net.minecraft.entity.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.EnumCreatureAttribute;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.*;
 import net.minecraft.entity.player.EntityPlayer;
@@ -39,6 +42,7 @@ public class EntitySummonZombie extends EntityMob {
 		super(worldIn);
 		this.setSize(0.6F, 1.95F);
 		this.owner = owner;
+		getEntityData().setUniqueId("owner", owner.getUniqueID());
 		this.time = time;
 	}
 
@@ -47,7 +51,7 @@ public class EntitySummonZombie extends EntityMob {
 		this.tasks.addTask(0, new EntityAISwimming(this));
 		this.tasks.addTask(2, new EntityAILivingAttack(this, 1.0D, false));
 		this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
-		this.tasks.addTask(6, new EntityAIFollowPlayer(this, (EntityLiving) owner, 1.0D, 10.0F, 2.0F));
+		this.tasks.addTask(6, new EntityAIFollowPlayer(this, 1.0D, 10.0F, 2.0F));
 		this.tasks.addTask(7, new EntityAIWanderAvoidWater(this, 1.0D));
 		this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
 		this.tasks.addTask(8, new EntityAILookIdle(this));
@@ -57,7 +61,7 @@ public class EntitySummonZombie extends EntityMob {
 	protected void applyEntityAI() {
 		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, EntityPigZombie.class));
 		this.targetTasks.addTask(2, new EntityAIEntityHurtByTarget(this, owner));
-		this.targetTasks.addTask(3, new EntityAINearestAttackableTargetFiltered<>(this, EntityPlayer.class, true, owner));
+		this.targetTasks.addTask(3, new EntityAINearestAttackableTargetFiltered<>(this, EntityPlayer.class, true));
 		this.targetTasks.addTask(4, new EntityAINearestAttackableTarget<>(this, EntityZombie.class, true));
 		this.targetTasks.addTask(5, new EntityAINearestAttackableTarget<>(this, EntitySkeleton.class, true));
 		this.targetTasks.addTask(6, new EntityAINearestAttackableTarget<>(this, EntityCreeper.class, true));
@@ -93,6 +97,8 @@ public class EntitySummonZombie extends EntityMob {
 	@Override
 	public void onLivingUpdate() {
 		super.onLivingUpdate();
+
+		if (world.isRemote) return;
 
 		if (ticksExisted >= time) {
 			world.removeEntity(this);
