@@ -28,21 +28,15 @@ public class Utils {
 		final int ROWS = 3;
 		final int COLS = 5;
 		final int SPACES = ROWS * COLS;
-		final double MIN_VISIBLE = 0.25; // Minimum portion of a module to be inside the box to be visible
 
 		if (objects.size() <= ROWS * COLS) return objects;
 
 		int rows = MathHelper.ceil((objects.size() - SPACES) / ((double) COLS));
 		double rowsScrolled = scroll * rows;
-		double scrollMargin = rowsScrolled - (int) rowsScrolled;
 
 		int startIndex = ((int) rowsScrolled) * COLS;
-		if (scrollMargin > 1 - MIN_VISIBLE)
-			startIndex += COLS;
 
 		int endIndex = startIndex + SPACES;
-		if (scrollMargin > MIN_VISIBLE)
-			endIndex += COLS;
 
 		if (startIndex < 0)
 			startIndex = 0;
