@@ -1,19 +1,21 @@
 package com.teamwizardry.wizardry.common.entity;
 
-import com.teamwizardry.wizardry.common.entity.ai.EntityAIEntityHurtByTarget;
+import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 import com.teamwizardry.wizardry.common.entity.ai.EntityAIFollowPlayer;
 import com.teamwizardry.wizardry.common.entity.ai.EntityAILivingAttack;
-import com.teamwizardry.wizardry.common.entity.ai.EntityAINearestAttackableTargetFiltered;
+import com.teamwizardry.wizardry.common.entity.ai.EntityAITargetFiltered;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureAttribute;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
-import net.minecraft.entity.monster.*;
+import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.monster.EntityPigZombie;
+import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -24,14 +26,14 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
 import java.util.UUID;
 
 public class EntitySummonZombie extends EntityMob {
 
 	private static final DataParameter<Boolean> ARMS_RAISED = EntityDataManager.createKey(EntityZombie.class, DataSerializers.BOOLEAN);
-
-	private EntityLivingBase owner;
-	private int time;
+	private static final DataParameter<Integer> TIMER = EntityDataManager.createKey(EntityZombie.class, DataSerializers.VARINT);
+	private static final DataParameter<Optional<UUID>> OWNER = EntityDataManager.createKey(EntitySummonZombie.class, DataSerializers.OPTIONAL_UNIQUE_ID);
 
 	public EntitySummonZombie(World worldIn) {
 		super(worldIn);
@@ -41,9 +43,8 @@ public class EntitySummonZombie extends EntityMob {
 	public EntitySummonZombie(World worldIn, EntityLivingBase owner, int time) {
 		super(worldIn);
 		this.setSize(0.6F, 1.95F);
-		this.owner = owner;
-		getEntityData().setUniqueId("owner", owner.getUniqueID());
-		this.time = time;
+		setTime(time);
+		setOwner(owner.getUniqueID());
 	}
 
 	@Override
@@ -60,12 +61,19 @@ public class EntitySummonZombie extends EntityMob {
 
 	protected void applyEntityAI() {
 		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, EntityPigZombie.class));
-		this.targetTasks.addTask(2, new EntityAIEntityHurtByTarget(this, owner));
-		this.targetTasks.addTask(3, new EntityAINearestAttackableTargetFiltered<>(this, EntityPlayer.class, true));
-		this.targetTasks.addTask(4, new EntityAINearestAttackableTarget<>(this, EntityZombie.class, true));
-		this.targetTasks.addTask(5, new EntityAINearestAttackableTarget<>(this, EntitySkeleton.class, true));
-		this.targetTasks.addTask(6, new EntityAINearestAttackableTarget<>(this, EntityCreeper.class, true));
-		this.targetTasks.addTask(7, new EntityAINearestAttackableTarget<>(this, EntitySpider.class, true));
+		this.targetTasks.addTask(4, new EntityAITargetFiltered<>(this, EntityMob.class, false, new Predicate<Entity>() {
+			public boolean apply(@Nullable Entity entity) {
+				UUID theirOwner = null;
+				if (entity != null)
+					theirOwner = entity.getDataManager().get(OWNER).isPresent() ? entity.getDataManager().get(OWNER).get() : null;
+
+				return entity != null && !(theirOwner != null && getDataManager().get(OWNER).isPresent() && theirOwner.equals(getDataManager().get(OWNER).get()));
+			}
+		}));
+		//this.targetTasks.addTask(4, new EntityAINearestAttackableTarget<>(this, EntityZombie.class, true));
+		//this.targetTasks.addTask(5, new EntityAINearestAttackableTarget<>(this, EntitySkeleton.class, true));
+		//this.targetTasks.addTask(6, new EntityAINearestAttackableTarget<>(this, EntityCreeper.class, true));
+		//this.targetTasks.addTask(7, new EntityAINearestAttackableTarget<>(this, EntitySpider.class, true));
 	}
 
 	protected void applyEntityAttributes() {
@@ -79,6 +87,8 @@ public class EntitySummonZombie extends EntityMob {
 	protected void entityInit() {
 		super.entityInit();
 		this.getDataManager().register(ARMS_RAISED, Boolean.FALSE);
+		this.getDataManager().register(TIMER, 0);
+		this.getDataManager().register(OWNER, Optional.of(UUID.randomUUID()));
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -90,6 +100,15 @@ public class EntitySummonZombie extends EntityMob {
 		this.getDataManager().set(ARMS_RAISED, armsRaised);
 	}
 
+	public void setTime(int time) {
+		this.getDataManager().set(TIMER, time);
+	}
+
+	public void setOwner(UUID owner) {
+		this.getDataManager().set(OWNER, Optional.of(owner));
+	}
+
+	@Override
 	public void notifyDataManagerChange(@NotNull DataParameter<?> key) {
 		super.notifyDataManagerChange(key);
 	}
@@ -100,8 +119,14 @@ public class EntitySummonZombie extends EntityMob {
 
 		if (world.isRemote) return;
 
-		if (ticksExisted >= time) {
+		if (ticksExisted >= getDataManager().get(TIMER)) {
 			world.removeEntity(this);
+		}
+
+		UUID uuid = null;
+		if (getRevengeTarget() != null) uuid = getRevengeTarget().getUniqueID();
+		if (uuid != null && getDataManager().get(OWNER).isPresent() && uuid.equals(getDataManager().get(OWNER).get())) {
+			setRevengeTarget(null);
 		}
 	}
 
@@ -152,21 +177,5 @@ public class EntitySummonZombie extends EntityMob {
 	@Override
 	public float getEyeHeight() {
 		return 1.74F;
-	}
-
-	@Override
-	public void writeEntityToNBT(NBTTagCompound compound) {
-		super.writeEntityToNBT(compound);
-		compound.setInteger("time", time);
-		compound.setUniqueId("owner", owner.getUniqueID());
-	}
-
-	@Override
-	public void readEntityFromNBT(NBTTagCompound compound) {
-		super.readEntityFromNBT(compound);
-		time = compound.getInteger("time");
-		UUID uuid = compound.getUniqueId("owner");
-		if (uuid != null)
-			owner = world.getPlayerEntityByUUID(uuid);
 	}
 }

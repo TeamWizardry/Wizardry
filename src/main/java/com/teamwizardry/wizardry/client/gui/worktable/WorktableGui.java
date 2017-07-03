@@ -16,6 +16,7 @@ import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleType;
+import com.teamwizardry.wizardry.api.util.Utils;
 import com.teamwizardry.wizardry.common.network.PacketSendSpellToBook;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.Minecraft;
@@ -64,28 +65,28 @@ public class WorktableGui extends GuiBase {
 		GlMixin.INSTANCE.transform(shapes).setValue(new Vec3d(0, 0, -15));
 		ComponentGrid scrollShapes = addModules(shapes, ModuleType.SHAPE);
 		GlMixin.INSTANCE.transform(scrollShapes).setValue(new Vec3d(0, 0, 10));
-		addScrollbar(shapes, scrollShapes, 77, 31);
+		addScrollbar(shapes, scrollShapes, 77, 31, ModuleType.SHAPE);
 		getMainComponents().add(shapes);
 
 		ComponentSprite effects = new ComponentSprite(SIDE_BAR, 93, 31, 48, 80);
 		GlMixin.INSTANCE.transform(shapes).setValue(new Vec3d(0, 0, -15));
 		ComponentGrid scrollEffects = addModules(effects, ModuleType.EFFECT);
 		GlMixin.INSTANCE.transform(scrollEffects).setValue(new Vec3d(0, 0, 10));
-		addScrollbar(effects, scrollEffects, 141, 31);
+		addScrollbar(effects, scrollEffects, 141, 31, ModuleType.EFFECT);
 		getMainComponents().add(effects);
 
 		ComponentSprite events = new ComponentSprite(SIDE_BAR, 29, 123, 48, 80);
 		GlMixin.INSTANCE.transform(shapes).setValue(new Vec3d(0, 0, -15));
 		ComponentGrid scrollEvents = addModules(events, ModuleType.EVENT);
 		GlMixin.INSTANCE.transform(scrollEvents).setValue(new Vec3d(0, 0, 10));
-		addScrollbar(events, scrollEvents, 77, 123);
+		addScrollbar(events, scrollEvents, 77, 123, ModuleType.EVENT);
 		getMainComponents().add(events);
 
 		ComponentSprite modifiers = new ComponentSprite(SIDE_BAR, 93, 123, 48, 80);
 		GlMixin.INSTANCE.transform(shapes).setValue(new Vec3d(0, 0, -15));
 		ComponentGrid scrollModifiers = addModules(modifiers, ModuleType.MODIFIER);
 		GlMixin.INSTANCE.transform(scrollModifiers).setValue(new Vec3d(0, 0, 10));
-		addScrollbar(modifiers, scrollModifiers, 141, 123);
+		addScrollbar(modifiers, scrollModifiers, 141, 123, ModuleType.MODIFIER);
 		getMainComponents().add(modifiers);
 
 		ComponentSprite save = new ComponentSprite(new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/button.png")), 395, 30, (int) (88 / 1.5), (int) (24 / 1.5));
@@ -187,7 +188,7 @@ public class WorktableGui extends GuiBase {
 		return grid;
 	}
 
-	private void addScrollbar(ComponentSprite parent, ComponentGrid gridView, int x, int y) {
+	private void addScrollbar(ComponentSprite parent, ComponentGrid gridView, int x, int y, ModuleType type) {
 		ComponentSprite scrollBar = new ComponentSprite(SCROLL_BAR_BAR, x, y, 5, 80);
 		ComponentSprite bar = new ComponentSprite(SCROLL_BAR, 1, 0, 3, 11);
 		scrollBar.BUS.hook(GuiComponent.MouseDragEvent.class, (event) -> {
@@ -196,13 +197,22 @@ public class WorktableGui extends GuiBase {
 
 			Vec2d mouse = event.getComponent().getParent().unTransformChildPos(event.getComponent(), event.getMousePos());
 			double clamp = MathHelper.clamp(mouse.getY(), y + 5.5, y + 79 - 5.5);
-			double extra = (gridView.getChildren().size() / 3) * 16 - (5 * 16);
-			if (gridView.getChildren().size() <= 15 || extra <= 0) return;
 
 			bar.setPos(new Vec2d(bar.getPos().getX(), (clamp - y - 5.5)));
-			double sub = bar.getPos().getY() - y;
-			double percent = sub / 79.0;
-			gridView.setPos(new Vec2d(0, (extra * (1 - percent) - extra) - 1 - 5.5));
+			double percent = MathHelper.clamp((clamp / 79.0) - 0.3, 0, 1);
+
+			ArrayList<GuiComponent<?>> compTmp = new ArrayList<>(gridView.getChildren());
+			compTmp.forEach(gridView::remove);
+
+			ArrayList<GuiComponent<?>> tmp = new ArrayList<>();
+			for (Module module : ModuleRegistry.INSTANCE.getModules(type)) {
+				TableModule item = new TableModule(this, parent, module.copy(), false);
+				tmp.add(item.component);
+			}
+			ArrayList<GuiComponent<?>> scrollable = (ArrayList<GuiComponent<?>>) Utils.getVisibleComponents(tmp, percent);
+			for (GuiComponent<?> component : scrollable) {
+				gridView.add(component);
+			}
 		});
 		scrollBar.BUS.hook(GuiComponent.MouseWheelEvent.class, (event) -> {
 			if (!event.getComponent().getMouseOver() && !parent.getMouseOver()) return;
@@ -210,14 +220,23 @@ public class WorktableGui extends GuiBase {
 
 			int dir = event.getDirection().ydirection * -16;
 			double barPos = bar.getPos().getY();
-			double clamp = MathHelper.clamp(barPos + dir, y + 5.5, y + 79 - 5.5);
-			double extra = (gridView.getChildren().size() / 3) * 16 - (5 * 16);
-			if (gridView.getChildren().size() <= 15 || extra <= 0) return;
+			double clamp = MathHelper.clamp(barPos + dir, 0, 79 - 11);
 
 			bar.setPos(new Vec2d(bar.getPos().getX(), clamp));
-			double sub = bar.getPos().getY() - y;
-			double percent = sub / 68.0;
-			gridView.setPos(new Vec2d(0, (extra * (1 - percent) - extra) - 1 - 5.5));
+			double percent = MathHelper.clamp(clamp / 79.0, 0, 1);
+
+			ArrayList<GuiComponent<?>> compTmp = new ArrayList<>(gridView.getChildren());
+			compTmp.forEach(gridView::remove);
+
+			ArrayList<GuiComponent<?>> tmp = new ArrayList<>();
+			for (Module module : ModuleRegistry.INSTANCE.getModules(type)) {
+				TableModule item = new TableModule(this, parent, module.copy(), false);
+				tmp.add(item.component);
+			}
+			ArrayList<GuiComponent<?>> scrollable = (ArrayList<GuiComponent<?>>) Utils.getVisibleComponents(tmp, percent);
+			for (GuiComponent<?> component : scrollable) {
+				gridView.add(component);
+			}
 		});
 		scrollBar.add(bar);
 		getMainComponents().add(scrollBar);

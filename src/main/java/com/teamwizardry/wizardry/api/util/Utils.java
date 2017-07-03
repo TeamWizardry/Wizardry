@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.api.util;
 
+import com.teamwizardry.librarianlib.features.gui.GuiComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.oredict.OreDictionary;
@@ -24,7 +25,7 @@ public class Utils {
 		return false;
 	}
 
-	public static List<Object> getVisibleModules(List<Object> objects, double scroll) {
+	public static List<GuiComponent<?>> getVisibleComponents(List<GuiComponent<?>> objects, double scroll) {
 		final int ROWS = 3;
 		final int COLS = 5;
 		final int SPACES = ROWS * COLS;
@@ -44,7 +45,7 @@ public class Utils {
 		if (endIndex > objects.size())
 			endIndex = objects.size();
 
-		List<Object> visible = new ArrayList<>();
+		List<GuiComponent<?>> visible = new ArrayList<>();
 		visible.addAll(objects.subList(startIndex, endIndex));
 
 		return visible;

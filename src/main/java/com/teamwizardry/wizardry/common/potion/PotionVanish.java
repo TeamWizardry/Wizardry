@@ -21,8 +21,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -35,7 +37,7 @@ import java.util.List;
 /**
  * Created by LordSaad.
  */
-// TODO: mob ai, other player testing, proper in/out fading
+// TODO: other player testing, proper in/out fading
 public class PotionVanish extends PotionMod {
 
 	private Function2<RenderLivingBase, Object[], Object> interpolateRotation = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, new String[]{"interpolateRotation", "func_77034_a", "a"}, float.class, float.class, float.class);
@@ -85,6 +87,16 @@ public class PotionVanish extends PotionMod {
 			PacketHandler.NETWORK.sendToAll(new PacketVanishPotion(entityLivingBaseIn.getEntityId()));
 	}
 
+	@SubscribeEvent
+	public void ai(LivingEvent.LivingUpdateEvent event) {
+		if (event.getEntityLiving() instanceof EntityPlayer) return;
+
+		EntityLivingBase potentialPotion = event.getEntityLiving().getRevengeTarget();
+		if (potentialPotion != null && potentialPotion.isPotionActive(this)) {
+			event.getEntityLiving().setRevengeTarget(null);
+		}
+	}
+
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void doRenderOverride(RenderLivingEvent.Pre event) {
@@ -94,8 +106,9 @@ public class PotionVanish extends PotionMod {
 		// FIXME: 7/2/2017 FADE SHIT
 		float x = 0;//MathHelper.clamp(3 / time, 0, 1);
 
-		boolean iWalked = player.posX != player.prevPosX || player.posY != player.prevPosY || player.posZ != player.prevPosZ;
-		boolean theyWalked = entity.posX != entity.prevPosX || entity.posY != entity.prevPosY || entity.posZ != entity.prevPosZ;
+		boolean iWalked = new Vec3d(player.posX, player.posY, player.posZ).distanceTo(new Vec3d(player.prevPosX, player.prevPosY, player.prevPosZ)) > 0.1;
+		boolean theyWalked = new Vec3d(event.getEntity().posX, event.getEntity().posY, event.getEntity().posZ).distanceTo(new Vec3d(event.getEntity().prevPosX, event.getEntity().prevPosY, event.getEntity().prevPosZ)) > 0.1;
+
 		boolean amRenderingMyself = event.getEntity().getEntityId() == player.getEntityId();
 
 		boolean override = false;
@@ -246,11 +259,11 @@ public class PotionVanish extends PotionMod {
 	public void renderShadowAndFire(EntityRenderShadowAndFireEvent event) {
 		EntityPlayer player = Minecraft.getMinecraft().player;
 		if (player.isPotionActive(this)) {
-			boolean walked = player.posX != player.prevPosX || player.posY != player.prevPosY || player.posZ != player.prevPosZ;
+			boolean walked = new Vec3d(player.posX, player.posY, player.posZ).distanceTo(new Vec3d(player.prevPosX, player.prevPosY, player.prevPosZ)) > 0.1;
 			if (walked) event.override = true;
 		}
 		if (event.entity instanceof EntityLivingBase && ((EntityLivingBase) event.entity).isPotionActive(this)) {
-			boolean walked = event.entity.posX != event.entity.prevPosX || event.entity.posY != event.entity.prevPosY || event.entity.posZ != event.entity.prevPosZ;
+			boolean walked = new Vec3d(event.entity.posX, event.entity.posY, event.entity.posZ).distanceTo(new Vec3d(event.entity.prevPosX, event.entity.prevPosY, event.entity.prevPosZ)) > 0.1;
 			if (!walked) event.override = true;
 		}
 	}
