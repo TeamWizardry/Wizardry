@@ -67,4 +67,10 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
 			LibParticles.CRAFTING_ALTAR_IDLE(te.getWorld(), new Vec3d(te.getPos()).addVector(0.5, 0.7, 0.5));
 		}
 	}
+
+
+	@Override
+	public boolean isGlobalRenderer(TileCraftingPlate te) {
+		return true;
+	}
 }
