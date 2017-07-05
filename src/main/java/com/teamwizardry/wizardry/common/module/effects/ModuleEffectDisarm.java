@@ -1,24 +1,30 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
-import com.teamwizardry.wizardry.api.spell.*;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ENTITY_HIT;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.TARGET_HIT;
+
+import javax.annotation.Nonnull;
+
+import com.teamwizardry.librarianlib.features.methodhandles.MethodHandleHelper;
+import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.init.ModSounds;
 import com.teamwizardry.wizardry.lib.LibParticles;
+
+import kotlin.jvm.functions.Function1;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-
-import javax.annotation.Nonnull;
-
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ENTITY_HIT;
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.TARGET_HIT;
 
 /**
  * Created by LordSaad.
@@ -73,10 +79,30 @@ public class ModuleEffectDisarm extends ModuleEffect {
 					ItemStack stack = held.copy();
 					held.setCount(0);
 
-					EntityItem item = new EntityItem(spell.world, targetEntity.posX, targetEntity.posY + 1, targetEntity.posZ, stack);
-					item.setPickupDelay(5);
-					spell.world.playSound(null, targetEntity.getPosition(), ModSounds.ELECTRIC_BLAST, SoundCategory.NEUTRAL, 1, 1);
-					return spell.world.spawnEntity(item);
+					float dropChance = 0;
+					
+					if (targetEntity instanceof EntityLiving)
+					{
+						EntityLiving entity = (EntityLiving) targetEntity;
+						
+						Object o = inventoryHandsDropChances.invoke(entity);
+						float[] dropChances;
+						if (o instanceof float[])
+						{
+							dropChances = (float[]) o;
+							dropChance = dropChances[EntityEquipmentSlot.MAINHAND.getIndex()];
+						}
+					}
+					
+					boolean flag = dropChance > 1.0;
+					
+					if (held != null && flag && RandUtil.nextDouble() < dropChance)
+					{
+						EntityItem item = new EntityItem(spell.world, targetEntity.posX, targetEntity.posY + 1, targetEntity.posZ, stack);
+						item.setPickupDelay(5);
+						spell.world.playSound(null, targetEntity.getPosition(), ModSounds.ELECTRIC_BLAST, SoundCategory.NEUTRAL, 1, 1);
+						return spell.world.spawnEntity(item);
+					}
 				}
 			}
 		}
@@ -99,4 +125,6 @@ public class ModuleEffectDisarm extends ModuleEffect {
 	public Module copy() {
 		return cloneModule(new ModuleEffectDisarm());
 	}
+	
+	private Function1<EntityLiving, Object> inventoryHandsDropChances = MethodHandleHelper.wrapperForGetter(EntityLiving.class, "inventoryHandsDropChances", "field_184655_bs", "bs");
 }
