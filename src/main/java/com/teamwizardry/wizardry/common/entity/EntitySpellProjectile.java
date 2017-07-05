@@ -116,7 +116,7 @@ public class EntitySpellProjectile extends EntityMod {
 		float pitch = spell.getData(PITCH, 0F);
 		rotationPitch = pitch;
 		rotationYaw = yaw;
-		Vec3d look = spell.getData(NORMAL, PosUtils.vecFromRotations(pitch, yaw));
+		Vec3d look = spell.getData(LOOK, PosUtils.vecFromRotations(pitch, yaw));
 
 		if (origin == null || dist < getDistance(origin.x, origin.y, origin.z)) {
 			spell.processBlock(getPosition(), EnumFacing.getFacingFromVector((float) look.x, (float) look.y, (float) look.z), getPositionVector());

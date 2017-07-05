@@ -44,6 +44,9 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 		CooldownHandler.INSTANCE.getClass();
 		MinecraftForge.EVENT_BUS.register(new HudEventHandler());
 
+		if (ConfigValues.versionCheckerEnabled)
+			MinecraftForge.EVENT_BUS.register(VersionChecker.INSTANCE);
+
 		new WizardryClientMethodHandles(); // Load the class
 
 		new Shaders();
@@ -72,8 +75,6 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 		render = skinMap.get("slim");
 		render.addLayer(new BloodRenderLayer(render));
 
-		if (ConfigValues.versionCheckerEnabled)
-			VersionChecker.init();
 	}
 
 	@Override

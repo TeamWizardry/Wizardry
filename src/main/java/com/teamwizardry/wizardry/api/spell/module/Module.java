@@ -59,6 +59,7 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	private int chargeupTime = 0;
 	private ItemStack itemStack = ItemStack.EMPTY;
 	private double multiplier = 1;
+	private boolean isHead = false;
 
 	public Module() {
 	}
@@ -191,6 +192,14 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 		this.multiplier = multiplier;
 	}
 
+	public final boolean isHead() {
+		return isHead;
+	}
+
+	public final void setIsHead(boolean isHead) {
+		this.isHead = isHead;
+	}
+
 	/**
 	 * Use this to effectively run the entire module, rendering and all.
 	 *
@@ -307,6 +316,7 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 		compound.setDouble("chargeup_time", getChargeupTime());
 		compound.setDouble("cooldown_time", getCooldownTime());
 		compound.setDouble("multiplier", getMultiplier());
+		compound.setBoolean("is_head", isHead);
 
 		if (getItemStack() != null) compound.setTag("item_stack", getItemStack().serializeNBT());
 		if (getPrimaryColor() != null) compound.setInteger("primary_color", getPrimaryColor().getRGB());
@@ -335,5 +345,6 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 		if (nbt.hasKey("cooldown_time")) setCooldownTime(nbt.getInteger("cooldown_time"));
 		if (nbt.hasKey("item_stack")) setItemStack(new ItemStack(nbt.getCompoundTag("item_stack")));
 		if (nbt.hasKey("multiplier")) setMultiplier(nbt.getDouble("multiplier"));
+		if (nbt.hasKey("is_head")) isHead = nbt.getBoolean("is_head");
 	}
 }

@@ -19,7 +19,7 @@ import net.minecraft.util.math.Vec3d;
 
 import javax.annotation.Nonnull;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ENTITY_HIT;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
 
 /**
  * Created by LordSaad.
@@ -47,21 +47,30 @@ public class ModuleShapeSelf extends ModuleShape {
 
 	@Override
 	public boolean run(@Nonnull SpellData spell) {
-		Entity caster = spell.getData(DefaultKeys.CASTER);
-		if (caster == null) return false;
+		Entity caster = spell.getData(CASTER);
+		Entity target = spell.getData(DefaultKeys.ENTITY_HIT);
+
+		Entity finalEntity = isHead() ? caster == null ? target : caster : target;
+
+		if (finalEntity == null) return true;
+
+		spell.processEntity(finalEntity, false);
 
 		return runNextModule(spell);
 	}
 
 	@Override
 	public void runClient(@Nonnull SpellData spell) {
-		Entity targetEntity = spell.getData(ENTITY_HIT);
+		Entity caster = spell.getData(CASTER);
+		Entity target = spell.getData(DefaultKeys.ENTITY_HIT);
 
-		if (targetEntity == null) return;
+		Entity finalEntity = isHead() ? caster == null ? target : caster : target;
+
+		if (finalEntity == null) return;
 
 		ParticleBuilder glitter = new ParticleBuilder(1);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-		ParticleSpawner.spawn(glitter, spell.world, new InterpCircle(targetEntity.getPositionVector().addVector(0, targetEntity.height / 2.0, 0), new Vec3d(0, 1, 0), 1, 10), 50, RandUtil.nextInt(5, 10), (aFloat, particleBuilder) -> {
+		ParticleSpawner.spawn(glitter, spell.world, new InterpCircle(finalEntity.getPositionVector().addVector(0, finalEntity.height / 2.0, 0), new Vec3d(0, 1, 0), 1, 10), 50, RandUtil.nextInt(10, 15), (aFloat, particleBuilder) -> {
 			if (RandUtil.nextBoolean()) {
 				glitter.setColor(getPrimaryColor());
 				glitter.setMotion(new Vec3d(0, RandUtil.nextDouble(0.01, 0.1), 0));

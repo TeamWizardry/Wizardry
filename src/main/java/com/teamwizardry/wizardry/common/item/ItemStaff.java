@@ -62,11 +62,10 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 		SpellData spell = new SpellData(playerIn.world);
 		spell.processEntity(playerIn, true);
 		spell.processEntity(target, false);
-//		spell.processEntity(target, false);
 		SpellUtils.runSpell(stack, spell);
 
 		setCooldown(playerIn.world, playerIn, stack, hand, spell);
-		return false;
+		return true;
 	}
 
 	@Nonnull
@@ -85,7 +84,7 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 		if (isCoolingDown(stack)) return EnumActionResult.PASS;
 
 		boolean isOnTouch = false;
-		for (Module module : SpellUtils.getAllModules(stack))
+		for (Module module : SpellUtils.getModules(stack))
 			if (module instanceof ModuleShapeTouch) {
 				isOnTouch = true;
 				break;
@@ -95,7 +94,6 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 
 		SpellData spell = new SpellData(world);
 		spell.processEntity(player, true);
-		spell.processEntity(player, false);
 		spell.processBlock(pos, side, new Vec3d(pos).addVector(0.5, 0.5, 0.5));
 		SpellUtils.runSpell(stack, spell);
 
@@ -122,7 +120,6 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 
 				SpellData spell = new SpellData(world);
 				spell.processEntity(player, true);
-				spell.processEntity(player, false);
 				SpellUtils.runSpell(stack, spell);
 
 				player.swingArm(EnumHand.MAIN_HAND);

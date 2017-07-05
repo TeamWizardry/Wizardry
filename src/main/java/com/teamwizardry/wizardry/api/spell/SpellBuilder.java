@@ -106,7 +106,10 @@ public class SpellBuilder {
 		}
 
 		// PROCESS COLOR
-		for (Module module : spellList) Module.processColor(module);
+		for (Module module : spellList) {
+			module.setIsHead(true);
+			Module.processColor(module);
+		}
 		return spellList;
 	}
 

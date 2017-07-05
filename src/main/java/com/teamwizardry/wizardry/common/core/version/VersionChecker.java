@@ -6,7 +6,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -15,6 +14,8 @@ import java.util.ArrayList;
 
 public final class VersionChecker {
 
+	public static VersionChecker INSTANCE = new VersionChecker();
+
 	public static boolean doneChecking = false;
 	public static String onlineVersion = "";
 	private static boolean triedToWarnPlayer = false;
@@ -22,18 +23,14 @@ public final class VersionChecker {
 	private boolean warnedPlayerOfAlpha = false;
 
 	private VersionChecker() {
-	}
-
-	public static void init() {
 		new ThreadVersionChecker();
-		MinecraftForge.EVENT_BUS.register(VersionChecker.class);
 	}
 
 	@SubscribeEvent
 	public void onTick(TickEvent.ClientTickEvent event) {
 		EntityPlayer player = Minecraft.getMinecraft().player;
 
-		if (Minecraft.getMinecraft().player != null && event.phase == TickEvent.Phase.END && !warnedPlayerOfAlpha) {
+		if (doneChecking && Minecraft.getMinecraft().player != null && event.phase == TickEvent.Phase.END && !warnedPlayerOfAlpha) {
 			warnedPlayerOfAlpha = true;
 			player.sendMessage(new TextComponentString(TextFormatting.RED + "" + TextFormatting.BOLD + "WARNING! WIZARDRY IS IN EARLY ALPHA!!!"));
 			player.sendMessage(new TextComponentString(TextFormatting.RED + "The mod still lacks most of its content that's on its way."));
