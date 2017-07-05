@@ -17,7 +17,9 @@ import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import com.teamwizardry.wizardry.common.entity.EntitySummonZombie;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -54,6 +56,7 @@ public class ModuleEffectBackup extends ModuleEffect {
 		World world = spell.world;
 		Entity targetEntity = spell.getData(ENTITY_HIT);
 		Vec3d targetPos = spell.getData(TARGET_HIT);
+		EnumFacing facing = spell.getData(FACE_HIT);
 		Entity caster = spell.getData(CASTER);
 
 		double range = getModifier(spell, Attributes.AREA, 1, 16) / 2.0;
@@ -63,6 +66,9 @@ public class ModuleEffectBackup extends ModuleEffect {
 
 		if (targetPos == null) return true;
 		if (!(caster instanceof EntityLivingBase)) return true;
+		if (facing != null) {
+			targetPos = new Vec3d(new BlockPos(targetPos).offset(facing)).addVector(0.5, 0.5, 0.5);
+		}
 
 		EntitySummonZombie zombie = new EntitySummonZombie(world, (EntityLivingBase) caster, (int) time);
 		zombie.setPosition(targetPos.x, targetPos.y, targetPos.z);

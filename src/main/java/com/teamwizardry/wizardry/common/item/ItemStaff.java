@@ -61,7 +61,7 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 
 		SpellData spell = new SpellData(playerIn.world);
 		spell.processEntity(playerIn, true);
-		spell.processEntity(playerIn, false);
+		spell.processEntity(target, false);
 //		spell.processEntity(target, false);
 		SpellUtils.runSpell(stack, spell);
 
@@ -96,7 +96,7 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 		SpellData spell = new SpellData(world);
 		spell.processEntity(player, true);
 		spell.processEntity(player, false);
-//		spell.processBlock(pos, side, new Vec3d(pos).addVector(0.5, 0.5, 0.5));
+		spell.processBlock(pos, side, new Vec3d(pos).addVector(0.5, 0.5, 0.5));
 		SpellUtils.runSpell(stack, spell);
 
 		setCooldown(world, player, stack, hand, spell);

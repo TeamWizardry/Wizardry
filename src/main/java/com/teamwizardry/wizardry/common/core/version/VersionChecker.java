@@ -19,6 +19,8 @@ public final class VersionChecker {
 	public static String onlineVersion = "";
 	private static boolean triedToWarnPlayer = false;
 
+	private boolean warnedPlayerOfAlpha = false;
+
 	private VersionChecker() {
 	}
 
@@ -29,9 +31,17 @@ public final class VersionChecker {
 
 	@SubscribeEvent
 	public void onTick(TickEvent.ClientTickEvent event) {
+		EntityPlayer player = Minecraft.getMinecraft().player;
+
+		if (Minecraft.getMinecraft().player != null && event.phase == TickEvent.Phase.END && !warnedPlayerOfAlpha) {
+			warnedPlayerOfAlpha = true;
+			player.sendMessage(new TextComponentString(TextFormatting.RED + "" + TextFormatting.BOLD + "WARNING! WIZARDRY IS IN EARLY ALPHA!!!"));
+			player.sendMessage(new TextComponentString(TextFormatting.RED + "The mod still lacks most of its content that's on its way."));
+			player.sendMessage(new TextComponentString(TextFormatting.RED + "Do NOT expect much from the mod in its current state! YOU HAVE BEEN WARNED"));
+		}
+
 		if (doneChecking && event.phase == TickEvent.Phase.END && Minecraft.getMinecraft().player != null && !triedToWarnPlayer) {
 			if (!onlineVersion.isEmpty()) {
-				EntityPlayer player = Minecraft.getMinecraft().player;
 				double onlineBuild = NumberUtils.isNumber(onlineVersion) ? Double.parseDouble(onlineVersion) : -1;
 				if (onlineBuild == -1) return;
 				double clientBuild = Double.parseDouble(Wizardry.VERSION);
