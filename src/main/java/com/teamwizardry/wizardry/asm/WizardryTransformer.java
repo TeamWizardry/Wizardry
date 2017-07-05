@@ -31,7 +31,7 @@ public class WizardryTransformer implements IClassTransformer {
 			"net/minecraft/entity/player/EntityPlayer", "aax",
 			"net/minecraft/entity/Entity", "sm",
 			"net/minecraft/entity/MoverType", "tc",
-			"net/minecraft/entity/EntityLivingBase", "sv",
+			"net/minecraft/entity/EntityLivingBase", "sw",
 			"net/minecraft/client/renderer/entity/RenderLivingBase", "bvl",
 			"net/minecraft/client/renderer/entity/Render", "bus"
 	);
