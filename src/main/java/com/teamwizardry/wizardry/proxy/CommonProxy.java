@@ -74,6 +74,7 @@ public class CommonProxy {
 		SpellTicker.INSTANCE.getClass();
 
 		PacketHandler.register(PacketSendSpellToBook.class, Side.SERVER);
+		PacketHandler.register(PacketSyncCape.class, Side.SERVER);
 
 		PacketHandler.register(PacketRenderSpell.class, Side.CLIENT);
 		PacketHandler.register(PacketExplode.class, Side.CLIENT);

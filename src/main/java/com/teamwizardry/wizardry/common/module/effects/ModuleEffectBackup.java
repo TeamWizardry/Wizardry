@@ -14,7 +14,7 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
-import com.teamwizardry.wizardry.common.entity.EntitySummonZombie;
+import com.teamwizardry.wizardry.common.entity.EntityBackupZombie;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.EnumFacing;
@@ -70,7 +70,7 @@ public class ModuleEffectBackup extends ModuleEffect {
 			targetPos = new Vec3d(new BlockPos(targetPos).offset(facing)).addVector(0.5, 0.5, 0.5);
 		}
 
-		EntitySummonZombie zombie = new EntitySummonZombie(world, (EntityLivingBase) caster, (int) time);
+		EntityBackupZombie zombie = new EntityBackupZombie(world, (EntityLivingBase) caster, (int) time);
 		zombie.setPosition(targetPos.x, targetPos.y, targetPos.z);
 		zombie.forceSpawn = true;
 		world.spawnEntity(zombie);

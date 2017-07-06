@@ -5,7 +5,6 @@ import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
-import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
@@ -112,11 +111,14 @@ public class EntitySpellProjectile extends EntityMod {
 
 		Vec3d origin = spell.getData(ORIGIN);
 
-		float yaw = spell.getData(YAW, 0F);
-		float pitch = spell.getData(PITCH, 0F);
-		rotationPitch = pitch;
-		rotationYaw = yaw;
-		Vec3d look = spell.getData(LOOK, PosUtils.vecFromRotations(pitch, yaw));
+		rotationPitch = spell.getData(PITCH, 0F);
+		rotationYaw = spell.getData(YAW, 0F);
+		Vec3d look = spell.getData(LOOK);
+		if (look == null) {
+			setDead();
+			world.removeEntity(this);
+			return;
+		}
 
 		if (origin == null || dist < getDistance(origin.x, origin.y, origin.z)) {
 			spell.processBlock(getPosition(), EnumFacing.getFacingFromVector((float) look.x, (float) look.y, (float) look.z), getPositionVector());

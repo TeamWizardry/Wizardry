@@ -7,10 +7,12 @@ import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.math.Matrix4;
+import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.client.cloth.Cloth;
 import com.teamwizardry.wizardry.client.cloth.PointMass3D;
 import com.teamwizardry.wizardry.client.cloth.Sphere;
+import com.teamwizardry.wizardry.common.network.PacketSyncCape;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -223,11 +225,12 @@ public class CapeHandler {
 
 		String cape;
 		if (LibrarianLib.PROXY.getResource(Wizardry.MODID, "textures/capes/cape_" + player.getName().toLowerCase() + ".png") == null) {
-			UUID uuid = ItemNBTHelper.getUUID(stack, "uuid");
-			if (uuid == null) {
-				uuid = UUID.randomUUID();
-				ItemNBTHelper.setUUID(stack, "uuid", uuid);
+			if (!ItemNBTHelper.verifyExistence(stack, "uuid")) {
+				PacketHandler.NETWORK.sendToServer(new PacketSyncCape(stack));
+				return;
 			}
+			UUID uuid = ItemNBTHelper.getUUID(stack, "uuid");
+			if (uuid == null) return;
 			Random r = new Random(uuid.hashCode());
 			cape = "cape_normal_" + (1 + r.nextInt(3));
 		} else {

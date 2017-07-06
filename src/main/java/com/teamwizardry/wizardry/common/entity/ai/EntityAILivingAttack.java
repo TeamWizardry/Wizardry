@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.common.entity.ai;
 
-import com.teamwizardry.wizardry.common.entity.EntitySummonZombie;
+import com.teamwizardry.wizardry.common.entity.EntityBackupZombie;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIAttackMelee;
@@ -29,7 +29,7 @@ public class EntityAILivingAttack extends EntityAIAttackMelee {
 	@Override
 	public void resetTask() {
 		super.resetTask();
-		if (entity instanceof EntitySummonZombie) ((EntitySummonZombie) entity).setArmsRaised(false);
+		if (entity instanceof EntityBackupZombie) ((EntityBackupZombie) entity).setArmsRaised(false);
 	}
 
 	/**
@@ -41,9 +41,9 @@ public class EntityAILivingAttack extends EntityAIAttackMelee {
 		++this.raiseArmTicks;
 
 		if (this.raiseArmTicks >= 5 && this.attackTick < 10) {
-			if (entity instanceof EntitySummonZombie) ((EntitySummonZombie) entity).setArmsRaised(true);
+			if (entity instanceof EntityBackupZombie) ((EntityBackupZombie) entity).setArmsRaised(true);
 		} else {
-			if (entity instanceof EntitySummonZombie) ((EntitySummonZombie) entity).setArmsRaised(false);
+			if (entity instanceof EntityBackupZombie) ((EntityBackupZombie) entity).setArmsRaised(false);
 		}
 	}
 }

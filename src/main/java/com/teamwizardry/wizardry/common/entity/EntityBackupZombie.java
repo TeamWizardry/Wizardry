@@ -29,18 +29,18 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.UUID;
 
-public class EntitySummonZombie extends EntityMob {
+public class EntityBackupZombie extends EntityMob {
 
 	private static final DataParameter<Boolean> ARMS_RAISED = EntityDataManager.createKey(EntityZombie.class, DataSerializers.BOOLEAN);
 	private static final DataParameter<Integer> TIMER = EntityDataManager.createKey(EntityZombie.class, DataSerializers.VARINT);
-	private static final DataParameter<Optional<UUID>> OWNER = EntityDataManager.createKey(EntitySummonZombie.class, DataSerializers.OPTIONAL_UNIQUE_ID);
+	private static final DataParameter<Optional<UUID>> OWNER = EntityDataManager.createKey(EntityBackupZombie.class, DataSerializers.OPTIONAL_UNIQUE_ID);
 
-	public EntitySummonZombie(World worldIn) {
+	public EntityBackupZombie(World worldIn) {
 		super(worldIn);
 		this.setSize(0.6F, 1.95F);
 	}
 
-	public EntitySummonZombie(World worldIn, EntityLivingBase owner, int time) {
+	public EntityBackupZombie(World worldIn, EntityLivingBase owner, int time) {
 		super(worldIn);
 		this.setSize(0.6F, 1.95F);
 		setTime(time);
@@ -63,11 +63,10 @@ public class EntitySummonZombie extends EntityMob {
 		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, EntityPigZombie.class));
 		this.targetTasks.addTask(4, new EntityAITargetFiltered<>(this, EntityMob.class, false, new Predicate<Entity>() {
 			public boolean apply(@Nullable Entity entity) {
-				UUID theirOwner = null;
-				if (entity != null)
-					theirOwner = entity.getDataManager().get(OWNER).isPresent() ? entity.getDataManager().get(OWNER).get() : null;
+				if (entity == null) return false;
+				UUID theirOwner = entity.getDataManager().get(OWNER).isPresent() ? entity.getDataManager().get(OWNER).get() : null;
 
-				return entity != null && !(theirOwner != null && getDataManager().get(OWNER).isPresent() && theirOwner.equals(getDataManager().get(OWNER).get()));
+				return !(theirOwner != null && getDataManager().get(OWNER).isPresent() && theirOwner.equals(getDataManager().get(OWNER).get()));
 			}
 		}));
 	}

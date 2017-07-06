@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.client.render.entity;
 
-import com.teamwizardry.wizardry.common.entity.EntitySummonZombie;
+import com.teamwizardry.wizardry.common.entity.EntityBackupZombie;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
@@ -23,7 +23,7 @@ public class ModelSummonZombie extends ModelBiped {
 	@Override
 	public void setRotationAngles(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor, Entity entityIn) {
 		super.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entityIn);
-		boolean flag = ((EntitySummonZombie) entityIn).isArmsRaised();
+		boolean flag = ((EntityBackupZombie) entityIn).isArmsRaised();
 		float f = MathHelper.sin(this.swingProgress * (float) Math.PI);
 		float f1 = MathHelper.sin((1.0F - (1.0F - this.swingProgress) * (1.0F - this.swingProgress)) * (float) Math.PI);
 		this.bipedRightArm.rotateAngleZ = 0.0F;

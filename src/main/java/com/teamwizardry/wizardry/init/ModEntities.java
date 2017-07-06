@@ -21,11 +21,10 @@ public class ModEntities {
 		registerEntity(new ResourceLocation(Wizardry.MODID, "gavreel"), EntityGavreel.class, "gavreel");
 		registerEntity(new ResourceLocation(Wizardry.MODID, "fairy"), EntityFairy.class, "fairy");
 		registerEntity(new ResourceLocation(Wizardry.MODID, "dust_tracker"), EntityDevilDust.class, "dust_tracker", 256, 1, false);
-		registerEntity(new ResourceLocation(Wizardry.MODID, "book_tracker"), EntitySpellCodex.class, "book_tracker", 256, 1, false);
 		registerEntity(new ResourceLocation(Wizardry.MODID, "spell_projectile"), EntitySpellProjectile.class, "spell_projectile", 256, 1, true);
 		registerEntity(new ResourceLocation(Wizardry.MODID, "jump_pad"), EntityJumpPad.class, "jump_pad", 64, 1, false);
 		registerEntity(new ResourceLocation(Wizardry.MODID, "unicorn"), EntityUnicorn.class, "unicorn");
-		registerEntity(new ResourceLocation(Wizardry.MODID, "summon_zombie"), EntitySummonZombie.class, "summon_zombie");
+		registerEntity(new ResourceLocation(Wizardry.MODID, "summon_zombie"), EntityBackupZombie.class, "summon_zombie");
 	}
 
 	public static void registerEntity(ResourceLocation loc, Class<? extends Entity> entityClass, String entityName) {
@@ -45,8 +44,7 @@ public class ModEntities {
 		RenderingRegistry.registerEntityRenderingHandler(EntityUnicorn.class, manager -> new RenderUnicorn(manager, new ModelUnicorn()));
 		RenderingRegistry.registerEntityRenderingHandler(EntityJumpPad.class, manager -> new RenderJumpPad(manager, new ModelNull()));
 		RenderingRegistry.registerEntityRenderingHandler(EntitySpellProjectile.class, RenderSpellProjectile::new);
-		RenderingRegistry.registerEntityRenderingHandler(EntitySpellCodex.class, RenderSpellCodex::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityDevilDust.class, RenderDevilDust::new);
-		RenderingRegistry.registerEntityRenderingHandler(EntitySummonZombie.class, RenderSummonZombie::new);
+		RenderingRegistry.registerEntityRenderingHandler(EntityBackupZombie.class, RenderSummonZombie::new);
 	}
 }
