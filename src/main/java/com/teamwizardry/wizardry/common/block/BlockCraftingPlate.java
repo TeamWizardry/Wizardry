@@ -24,6 +24,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
@@ -45,7 +46,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Saad on 6/10/2016.
@@ -81,17 +81,24 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 	}
 
 	@Override
-	public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
 		ArrayList<ItemStack> stacks = new ArrayList<>();
-		TileCraftingPlate plate = getTE(world, pos);
-		if (plate == null) return stacks;
+		TileCraftingPlate plate = getTE(worldIn, pos);
+		if (plate == null) {
+			super.breakBlock(worldIn, pos, state);
+			return;
+		}
 
 		for (ClusterObject obj : plate.inventory) {
 			stacks.add(obj.stack);
 		}
 
-		stacks.addAll(super.getDrops(world, pos, state, fortune));
-		return stacks;
+		for (ItemStack itemStack : stacks) {
+			if (!itemStack.isEmpty()) {
+				InventoryHelper.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), itemStack);
+			}
+		}
+		super.breakBlock(worldIn, pos, state);
 	}
 
 	@Override

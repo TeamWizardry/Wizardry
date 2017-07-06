@@ -8,6 +8,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
@@ -33,6 +34,21 @@ public class BlockPearlHolder extends BlockModContainer {
 	@SideOnly(Side.CLIENT)
 	public void initModel() {
 		ClientRegistry.bindTileEntitySpecialRenderer(TilePearlHolder.class, new TilePearlHolderRenderer());
+	}
+
+	@Override
+	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+		TilePearlHolder holder = getTE(worldIn, pos);
+		if (holder == null) {
+			super.breakBlock(worldIn, pos, state);
+			return;
+		}
+
+		ItemStack itemStack = holder.pearl;
+		if (itemStack != null && !itemStack.isEmpty()) {
+			InventoryHelper.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), itemStack);
+		}
+		super.breakBlock(worldIn, pos, state);
 	}
 
 	@Override

@@ -29,7 +29,7 @@ public class ItemCapeChest extends ItemModArmor implements ICape {
 
 	@Override
 	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-		if (entityIn instanceof EntityLivingBase)
+		if (entityIn instanceof EntityPlayer && EntityEquipmentSlot.CHEST.getIndex() == itemSlot)
 			tickCape(stack, (EntityLivingBase) entityIn);
 	}
 

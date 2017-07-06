@@ -74,7 +74,8 @@ public class SpellBuilder {
 				if (module == null) continue;
 				if (module instanceof ModuleModifier) {
 					if (lastModule == null) continue;
-					((ModuleModifier) module).apply(lastModule);
+					for (int i = 0; i < stack.getCount(); i++)
+						((ModuleModifier) module).apply(lastModule);
 				} else {
 					lastModule = module;
 					lineModule.add(module);

@@ -181,9 +181,15 @@ public class WorktableGui extends GuiBase {
 		ComponentGrid grid = new ComponentGrid(0, 0, 16, 16, 3);
 		parent.add(grid);
 
+		ArrayList<GuiComponent<?>> tmp = new ArrayList<>();
 		for (Module module : ModuleRegistry.INSTANCE.getModules(type)) {
 			TableModule item = new TableModule(this, parent, module.copy(), false);
-			grid.add(item.component);
+			tmp.add(item.component);
+		}
+
+		ArrayList<GuiComponent<?>> scrollable = (ArrayList<GuiComponent<?>>) Utils.getVisibleComponents(tmp, 0);
+		for (GuiComponent<?> component : scrollable) {
+			grid.add(component);
 		}
 		return grid;
 	}
