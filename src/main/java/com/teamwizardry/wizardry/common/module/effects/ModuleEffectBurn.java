@@ -57,11 +57,12 @@ public class ModuleEffectBurn extends ModuleEffect {
 		EnumFacing facing = spell.getData(FACE_HIT);
 
 		double strength = getModifier(spell, Attributes.AREA, 1, 16) / 2.0;
+		double time = getModifier(spell, Attributes.DURATION, 100, 1000);
 
 		if (!tax(this, spell)) return false;
 
 		if (targetEntity != null) {
-			targetEntity.setFire((int) strength * 10);
+			targetEntity.setFire((int) time);
 			world.playSound(null, targetEntity.getPosition(), ModSounds.FIRE, SoundCategory.NEUTRAL, 1, 1);
 		}
 

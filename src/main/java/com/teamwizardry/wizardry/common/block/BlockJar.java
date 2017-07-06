@@ -7,6 +7,7 @@ import com.teamwizardry.wizardry.client.render.block.TileJarRenderer;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.common.item.ItemJar;
 import com.teamwizardry.wizardry.common.tile.TileJar;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -35,6 +36,7 @@ public class BlockJar extends BlockModContainer {
 
 	public BlockJar() {
 		super("jar_block", Material.GLASS);
+		setSoundType(SoundType.GLASS);
 	}
 
 	@Nullable

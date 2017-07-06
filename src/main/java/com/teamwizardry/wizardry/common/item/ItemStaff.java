@@ -172,7 +172,7 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 	public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
 		if (!(player instanceof EntityPlayer)) return;
 		boolean isContinuous = false;
-		for (Module module : SpellUtils.getAllModules(stack))
+		for (Module module : SpellUtils.getModules(stack))
 			if (module instanceof IContinuousSpell) {
 				isContinuous = true;
 				break;

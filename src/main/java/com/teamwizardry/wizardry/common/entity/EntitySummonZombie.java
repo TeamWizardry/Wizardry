@@ -59,7 +59,7 @@ public class EntitySummonZombie extends EntityMob {
 		this.applyEntityAI();
 	}
 
-	protected void applyEntityAI() {
+	private void applyEntityAI() {
 		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, EntityPigZombie.class));
 		this.targetTasks.addTask(4, new EntityAITargetFiltered<>(this, EntityMob.class, false, new Predicate<Entity>() {
 			public boolean apply(@Nullable Entity entity) {
@@ -70,10 +70,6 @@ public class EntitySummonZombie extends EntityMob {
 				return entity != null && !(theirOwner != null && getDataManager().get(OWNER).isPresent() && theirOwner.equals(getDataManager().get(OWNER).get()));
 			}
 		}));
-		//this.targetTasks.addTask(4, new EntityAINearestAttackableTarget<>(this, EntityZombie.class, true));
-		//this.targetTasks.addTask(5, new EntityAINearestAttackableTarget<>(this, EntitySkeleton.class, true));
-		//this.targetTasks.addTask(6, new EntityAINearestAttackableTarget<>(this, EntityCreeper.class, true));
-		//this.targetTasks.addTask(7, new EntityAINearestAttackableTarget<>(this, EntitySpider.class, true));
 	}
 
 	protected void applyEntityAttributes() {

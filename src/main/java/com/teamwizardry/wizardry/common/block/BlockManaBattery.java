@@ -6,6 +6,7 @@ import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.client.render.block.TileManaBatteryRenderer;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
 import com.teamwizardry.wizardry.init.ModStructures;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,7 +28,8 @@ import javax.annotation.Nullable;
 public class BlockManaBattery extends BlockModContainer implements IStructure {
 
 	public BlockManaBattery() {
-		super("mana_battery", Material.GROUND);
+		super("mana_battery", Material.GLASS);
+		setSoundType(SoundType.GLASS);
 	}
 
 	@SideOnly(Side.CLIENT)

@@ -45,6 +45,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Saad on 6/10/2016.
@@ -54,9 +55,9 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 	public static final AxisAlignedBB AABB = new AxisAlignedBB(0.125, 0, 0.125, 0.875, 0.725, 0.875);
 
 	public BlockCraftingPlate() {
-		super("crafting_plate", Material.ROCK);
+		super("crafting_plate", Material.WOOD);
 		setHardness(1.0F);
-		setSoundType(SoundType.STONE);
+		setSoundType(SoundType.WOOD);
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -75,83 +76,94 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 		return new TileCraftingPlate();
 	}
 
-	private TileCraftingPlate getTE(World world, BlockPos pos) {
+	private TileCraftingPlate getTE(IBlockAccess world, BlockPos pos) {
 		return (TileCraftingPlate) world.getTileEntity(pos);
+	}
+
+	@Override
+	public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+		ArrayList<ItemStack> stacks = new ArrayList<>();
+		TileCraftingPlate plate = getTE(world, pos);
+		if (plate == null) return stacks;
+
+		for (ClusterObject obj : plate.inventory) {
+			stacks.add(obj.stack);
+		}
+
+		stacks.addAll(super.getDrops(world, pos, state, fortune));
+		return stacks;
 	}
 
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		ItemStack heldItem = playerIn.getHeldItem(hand);
 
-		if (!worldIn.isRemote) {
-			if (tickStructure(worldIn, playerIn, pos)) {
-				if (!(playerIn.getHeldItemMainhand().getItem() == ModItems.MAGIC_WAND)) {
-					TileCraftingPlate plate = getTE(worldIn, pos);
-					if (plate.isCrafting) return false;
-					if (!heldItem.isEmpty()) {
-						if (heldItem.getItem() == ModItems.BOOK && playerIn.isCreative()) {
-							ItemStack pearl = new ItemStack(ModItems.PEARL_NACRE);
+		if (tickStructure(worldIn, playerIn, pos)) {
+			if (!(playerIn.getHeldItemMainhand().getItem() == ModItems.MAGIC_WAND)) {
+				TileCraftingPlate plate = getTE(worldIn, pos);
+				if (plate.isCrafting) return false;
+				if (!heldItem.isEmpty()) {
+					if (heldItem.getItem() == ModItems.BOOK && playerIn.isCreative()) {
+						ItemStack pearl = new ItemStack(ModItems.PEARL_NACRE);
 
-							JsonObject object = new Gson().fromJson(ItemNBTHelper.getString(heldItem, "spell_recipe", null), JsonObject.class);
-							if (object == null) return false;
+						JsonObject object = new Gson().fromJson(ItemNBTHelper.getString(heldItem, "spell_recipe", null), JsonObject.class);
+						if (object == null) return false;
 
-							ArrayList<ItemStack> inventory = new ArrayList<>();
-							JsonArray array = object.getAsJsonArray("list");
-							for (int i = 0; i < array.size(); i++) {
-								JsonElement element = array.get(i);
-								if (!element.isJsonObject()) continue;
-								JsonObject obj = element.getAsJsonObject();
-								String name = obj.getAsJsonPrimitive("name").getAsString();
-								Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(name));
-								if (item == null) continue;
-								ItemStack stack = new ItemStack(item);
-								stack.setItemDamage(obj.getAsJsonPrimitive("meta").getAsInt());
-								stack.setCount(obj.getAsJsonPrimitive("count").getAsInt());
-								inventory.add(stack);
-							}
-							SpellBuilder builder = new SpellBuilder(inventory);
-							NBTTagList list = new NBTTagList();
-							for (Module module : builder.getSpell()) list.appendTag(module.serializeNBT());
-							ItemNBTHelper.setList(pearl, Constants.NBT.SPELL, list);
-							ItemNBTHelper.setFloat(pearl, Constants.NBT.RAND, playerIn.world.rand.nextFloat());
-
-							plate.output = pearl;
-							plate.markDirty();
-							PacketHandler.NETWORK.sendToAllAround(new PacketExplode(new Vec3d(pos).addVector(0.5, 0.5, 0.5), Color.CYAN, Color.BLUE, 2, 2, 500, 300, 20, false),
-									new NetworkRegistry.TargetPoint(worldIn.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
-
-							worldIn.playSound(null, pos, ModSounds.BASS_BOOM, SoundCategory.BLOCKS, 1f, (float) RandUtil.nextDouble(1, 1.5));
-							return true;
+						ArrayList<ItemStack> inventory = new ArrayList<>();
+						JsonArray array = object.getAsJsonArray("list");
+						for (int i = 0; i < array.size(); i++) {
+							JsonElement element = array.get(i);
+							if (!element.isJsonObject()) continue;
+							JsonObject obj = element.getAsJsonObject();
+							String name = obj.getAsJsonPrimitive("name").getAsString();
+							Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(name));
+							if (item == null) continue;
+							ItemStack stack = new ItemStack(item);
+							stack.setItemDamage(obj.getAsJsonPrimitive("meta").getAsInt());
+							stack.setCount(obj.getAsJsonPrimitive("count").getAsInt());
+							inventory.add(stack);
 						}
+						SpellBuilder builder = new SpellBuilder(inventory);
+						NBTTagList list = new NBTTagList();
+						for (Module module : builder.getSpell()) list.appendTag(module.serializeNBT());
+						ItemNBTHelper.setList(pearl, Constants.NBT.SPELL, list);
+						ItemNBTHelper.setFloat(pearl, Constants.NBT.RAND, playerIn.world.rand.nextFloat());
 
-						ItemStack stack = heldItem.copy();
-						stack.setCount(1);
-						heldItem.setCount(heldItem.getCount() - 1);
+						plate.output = pearl;
+						plate.markDirty();
+						PacketHandler.NETWORK.sendToAllAround(new PacketExplode(new Vec3d(pos).addVector(0.5, 0.5, 0.5), Color.CYAN, Color.BLUE, 2, 2, 500, 300, 20, false),
+								new NetworkRegistry.TargetPoint(worldIn.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
 
-						float yaw = playerIn.rotationYaw;
-						float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - yaw));
-						float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - yaw));
-						Vec3d origin = new Vec3d(offX, playerIn.getEyeHeight(), offZ).add(playerIn.getPositionVector());
-
-						plate.inventory.add(new ClusterObject(plate, stack, worldIn, origin.subtract(new Vec3d(pos))));
-						playerIn.openContainer.detectAndSendChanges();
-
-					} else if (plate.output != null) {
-						playerIn.setHeldItem(hand, plate.output.copy());
-						plate.output = null;
-						playerIn.openContainer.detectAndSendChanges();
-
-					} else if (!plate.inventory.isEmpty()) {
-						playerIn.setHeldItem(hand, plate.inventory.remove(plate.inventory.size() - 1).stack);
-						playerIn.openContainer.detectAndSendChanges();
+						worldIn.playSound(null, pos, ModSounds.BASS_BOOM, SoundCategory.BLOCKS, 1f, (float) RandUtil.nextDouble(1, 1.5));
+						return true;
 					}
-					worldIn.notifyBlockUpdate(pos, state, state, 3);
-					return true;
+
+					ItemStack stack = heldItem.copy();
+					stack.setCount(1);
+					heldItem.setCount(heldItem.getCount() - 1);
+
+					float yaw = playerIn.rotationYaw;
+					float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - yaw));
+					float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - yaw));
+					Vec3d origin = new Vec3d(offX, playerIn.getEyeHeight(), offZ).add(playerIn.getPositionVector());
+
+					plate.inventory.add(new ClusterObject(plate, stack, worldIn, origin.subtract(new Vec3d(pos))));
+					playerIn.openContainer.detectAndSendChanges();
+
+				} else if (plate.output != null) {
+					playerIn.setHeldItem(hand, plate.output.copy());
+					plate.output = null;
+					playerIn.openContainer.detectAndSendChanges();
+
+				} else if (!plate.inventory.isEmpty()) {
+					playerIn.setHeldItem(hand, plate.inventory.remove(plate.inventory.size() - 1).stack);
+					playerIn.openContainer.detectAndSendChanges();
 				}
-				return false;
-			} else return false;
-		}
-		return true;
+				worldIn.notifyBlockUpdate(pos, state, state, 3);
+				return true;
+			}
+			return true;
+		} else return true;
 	}
 
 	@Nonnull

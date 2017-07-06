@@ -332,32 +332,48 @@ public class LibParticles {
 
 	public static void STRUCTURE_FLAIR(World world, Vec3d pos, Color color) {
 		ParticleBuilder glitter = new ParticleBuilder(10);
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
-		glitter.setCollision(true);
-		glitter.enableMotionCalculation();
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), RandUtil.nextInt(10, 30), 0, (i, build) -> {
-			double radius = RandUtil.nextDouble(1, 2);
-			double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
-			double r = radius * RandUtil.nextFloat();
-			double x = r * MathHelper.cos((float) theta);
-			double z = r * MathHelper.sin((float) theta);
-			glitter.setMotion(new Vec3d(x / 5, RandUtil.nextDouble(-0.3, 0.3), z / 5));
-			glitter.setAlphaFunction(new InterpFadeInOut(0.0f, RandUtil.nextFloat()));
-			glitter.setColor(ColorUtils.shiftColorHueRandomly(ColorUtils.changeColorAlpha(color, RandUtil.nextInt(180, 255)), 30));
-			glitter.setLifetime(RandUtil.nextInt(50, 80));
-			glitter.setScale(RandUtil.nextFloat());
+		glitter.setRenderNormalLayer(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
+
+		glitter.setAlphaFunction(new InterpFadeInOut(0F, 0.9F));
+		glitter.setColor(color);
+		glitter.setLifetime(40);
+		glitter.setScale(2);
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 1, 0, (i, build) -> {
+			build.setScale(5);
+		});
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 10, 0, (i, build) -> {
+			build.setScale(2);
+			int x = RandUtil.nextInt(4);
+			switch (x) {
+				case 0:
+					glitter.setMotion(new Vec3d(0, 0, 0.2));
+					break;
+				case 1:
+					glitter.setMotion(new Vec3d(0, 0, -0.2));
+					break;
+				case 2:
+					glitter.setMotion(new Vec3d(0.2, 0, 0));
+					break;
+				case 3:
+					glitter.setMotion(new Vec3d(-0.2, 0, 0));
+					break;
+			}
 		});
 	}
 
 	public static void STRUCTURE_BEACON(World world, Vec3d pos, Color color) {
 		ParticleBuilder beacon = new ParticleBuilder(10);
 		beacon.setRenderNormalLayer(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
-		ParticleSpawner.spawn(beacon, world, new StaticInterp<>(pos), RandUtil.nextInt(10, 30), 0, (i, build) -> {
-			beacon.setMotion(new Vec3d(0, RandUtil.nextDouble(-0.3, 0.3), 0));
-			beacon.setAlphaFunction(new InterpFadeInOut(0.1f, RandUtil.nextFloat()));
-			beacon.setColor(ColorUtils.shiftColorHueRandomly(ColorUtils.changeColorAlpha(color, 255), 30));
-			beacon.setLifetime(RandUtil.nextInt(50, 80));
-			beacon.setScale(RandUtil.nextFloat());
+		beacon.setScale(2);
+		beacon.setLifetime(40);
+		beacon.setAlphaFunction(new InterpFadeInOut(0F, 0.9F));
+		beacon.setColor(color);
+		ParticleSpawner.spawn(beacon, world, new StaticInterp<>(pos), 10, 0, (aFloat, particleBuilder) -> {
+			if (RandUtil.nextBoolean()) {
+				beacon.setMotion(new Vec3d(0, 0.2, 0));
+			} else {
+				beacon.setMotion(new Vec3d(0, -0.2, 0));
+			}
 		});
 	}
 
@@ -617,6 +633,9 @@ public class LibParticles {
 		glitter.setScale(RandUtil.nextFloat());
 		glitter.setRenderNormalLayer(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.9F, 0.9F));
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 1, 0, (aFloat, particleBuilder) -> glitter.setColor(ColorUtils.shiftColorHueRandomly(ColorUtils.changeColorAlpha(color, RandUtil.nextInt(50, 200)), 100)));
+		glitter.setScale(2);
+		glitter.setLifetime(40);
+		glitter.setColor(color);
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 1);
 	}
 }

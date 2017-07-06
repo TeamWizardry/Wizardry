@@ -28,8 +28,8 @@ import static org.objectweb.asm.Opcodes.*;
 public class WizardryTransformer implements IClassTransformer {
 
 	public static final ClassnameMap CLASS_MAPPINGS = new ClassnameMap(
-			"net/minecraft/entity/player/EntityPlayer", "aax",
-			"net/minecraft/entity/Entity", "sm",
+			"net/minecraft/entity/player/EntityPlayer", "aay",
+			"net/minecraft/entity/Entity", "sn",
 			"net/minecraft/entity/MoverType", "tc",
 			"net/minecraft/entity/EntityLivingBase", "sw",
 			"net/minecraft/client/renderer/entity/RenderLivingBase", "bvl",
@@ -125,7 +125,7 @@ public class WizardryTransformer implements IClassTransformer {
 	}
 
 	private static byte[] transformPlayerClipping(byte[] basicClass) {
-		MethodSignature sig = new MethodSignature("onUpdate", "func_70071_h_", "h", "()V");
+		MethodSignature sig = new MethodSignature("onUpdate", "func_70071_h_", "A_", "()V");
 
 		return transform(basicClass, sig, "Player Clipping Event",
 				combine((AbstractInsnNode node) -> node.getOpcode() == PUTFIELD, // Filter

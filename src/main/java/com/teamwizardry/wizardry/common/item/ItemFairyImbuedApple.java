@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.features.base.item.IItemColorProvider;
-import com.teamwizardry.librarianlib.features.base.item.ItemMod;
+import com.teamwizardry.librarianlib.features.base.item.ItemModFood;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.api.Constants;
 import kotlin.jvm.functions.Function2;
@@ -12,10 +12,10 @@ import javax.annotation.Nullable;
 /**
  * Created by Saad on 8/28/2016.
  */
-public class ItemFairyImbuedApple extends ItemMod implements IItemColorProvider {
+public class ItemFairyImbuedApple extends ItemModFood implements IItemColorProvider {
 
 	public ItemFairyImbuedApple() {
-		super("fairy_imbued_apple");
+		super("fairy_imbued_apple", 10, 10, false);
 		setMaxStackSize(64);
 	}
 
