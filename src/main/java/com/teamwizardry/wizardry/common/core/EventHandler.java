@@ -86,6 +86,7 @@ public class EventHandler {
 	@SubscribeEvent
 	public void onFallDamage(LivingHurtEvent event) {
 		if (!(event.getEntity() instanceof EntityPlayer)) return;
+		if (event.getEntity().getEntityWorld().provider.getDimension() != Wizardry.underWorld.getId()) return;
 		if (event.getSource() == EntityDamageSource.OUT_OF_WORLD) {
 			EntityPlayer player = ((EntityPlayer) event.getEntityLiving());
 			BlockPos spawn = player.isSpawnForced(0) ? player.getBedLocation(0) : player.world.getSpawnPoint().add(player.world.rand.nextGaussian() * 16, 0, player.world.rand.nextGaussian() * 16);
