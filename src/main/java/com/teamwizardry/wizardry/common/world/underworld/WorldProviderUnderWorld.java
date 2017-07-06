@@ -71,7 +71,12 @@ public class WorldProviderUnderWorld extends WorldProvider {
 	@SideOnly(Side.CLIENT)
 	@Override
 	public double getVoidFogYFactor() {
-		return 1.0;
+		return 0;
+	}
+
+	@Override
+	public boolean doesXZShowFog(int x, int z) {
+		return false;
 	}
 
 	@Override
