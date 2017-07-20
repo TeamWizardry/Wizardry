@@ -12,19 +12,21 @@ import java.util.UUID;
 public class PacketSyncCape extends PacketBase {
 
 	@Save
+	private UUID uuid;
+	@Save
 	private ItemStack stack;
 
 	public PacketSyncCape() {
 	}
 
-	public PacketSyncCape(ItemStack stack) {
+	public PacketSyncCape(UUID uuid, ItemStack stack) {
+		this.uuid = uuid;
 		this.stack = stack;
 	}
 
 	@Override
 	public void handle(@NotNull MessageContext ctx) {
 		if (!ItemNBTHelper.verifyExistence(stack, "uuid")) {
-			UUID uuid = UUID.randomUUID();
 			ItemNBTHelper.setUUID(stack, "uuid", uuid);
 		}
 	}

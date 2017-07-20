@@ -226,11 +226,19 @@ public class CapeHandler {
 		String cape;
 		if (LibrarianLib.PROXY.getResource(Wizardry.MODID, "textures/capes/cape_" + player.getName().toLowerCase() + ".png") == null) {
 			if (!ItemNBTHelper.verifyExistence(stack, "uuid")) {
-				PacketHandler.NETWORK.sendToServer(new PacketSyncCape(stack));
+				UUID uuid = UUID.randomUUID();
+				PacketHandler.NETWORK.sendToServer(new PacketSyncCape(uuid, stack));
+				ItemNBTHelper.setUUID(stack, "uuid", uuid);
+				GlStateManager.popMatrix();
+				GlStateManager.popAttrib();
 				return;
 			}
 			UUID uuid = ItemNBTHelper.getUUID(stack, "uuid");
-			if (uuid == null) return;
+			if (uuid == null) {
+				GlStateManager.popMatrix();
+				GlStateManager.popAttrib();
+				return;
+			}
 			Random r = new Random(uuid.hashCode());
 			cape = "cape_normal_" + (1 + r.nextInt(3));
 		} else {
