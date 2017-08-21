@@ -1,85 +1,71 @@
 package com.teamwizardry.wizardry.init;
 
-import com.teamwizardry.wizardry.Wizardry;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.registries.IForgeRegistry;
+import com.teamwizardry.librarianlib.features.base.ModSoundEvent;
 
 /**
  * Created by Saad on 6/29/2016.
  */
-@Mod.EventBusSubscriber
 public class ModSounds {
-	public static SoundEvent GLASS_BREAK;
-	public static SoundEvent FIZZING_LOOP;
-	public static SoundEvent FRYING_SIZZLE;
-	public static SoundEvent BUBBLING;
-	public static SoundEvent HARP1;
-	public static SoundEvent HARP2;
-	public static SoundEvent BELL;
-	public static SoundEvent HALLOWED_SPIRIT;
-	public static SoundEvent EXPLOSION_BOOM;
-	public static SoundEvent PROJECTILE_LAUNCH;
-	public static SoundEvent BASS_BOOM;
-	public static SoundEvent CHAINY_ZAP;
-	public static SoundEvent CHORUS_GOOD;
-	public static SoundEvent COLD_WIND;
-	public static SoundEvent ELECTRIC_BLAST;
-	public static SoundEvent ETHEREAL_PASS_BY;
-	public static SoundEvent FAIRY;
-	public static SoundEvent FIRE;
-	public static SoundEvent FIREBALL;
-	public static SoundEvent FLY;
-	public static SoundEvent FROST_FORM;
-	public static SoundEvent HEAL;
-	public static SoundEvent LIGHTNING;
-	public static SoundEvent SLOW_MOTION_IN;
-	public static SoundEvent SLOW_MOTION_OUT;
-	public static SoundEvent SMOKE_BLAST;
-	public static SoundEvent TELEPORT;
-	public static SoundEvent THUNDERBLAST;
-	public static SoundEvent WIND;
+	public static ModSoundEvent GLASS_BREAK;
+	public static ModSoundEvent FIZZING_LOOP;
+	public static ModSoundEvent FRYING_SIZZLE;
+	public static ModSoundEvent BUBBLING;
+	public static ModSoundEvent HARP1;
+	public static ModSoundEvent HARP2;
+	public static ModSoundEvent BELL;
+	public static ModSoundEvent HALLOWED_SPIRIT;
+	public static ModSoundEvent EXPLOSION_BOOM;
+	public static ModSoundEvent PROJECTILE_LAUNCH;
+	public static ModSoundEvent BASS_BOOM;
+	public static ModSoundEvent CHAINY_ZAP;
+	public static ModSoundEvent CHORUS_GOOD;
+	public static ModSoundEvent COLD_WIND;
+	public static ModSoundEvent ELECTRIC_BLAST;
+	public static ModSoundEvent ETHEREAL_PASS_BY;
+	public static ModSoundEvent FAIRY;
+	public static ModSoundEvent FIRE;
+	public static ModSoundEvent FIREBALL;
+	public static ModSoundEvent FLY;
+	public static ModSoundEvent FROST_FORM;
+	public static ModSoundEvent HEAL;
+	public static ModSoundEvent LIGHTNING;
+	public static ModSoundEvent SLOW_MOTION_IN;
+	public static ModSoundEvent SLOW_MOTION_OUT;
+	public static ModSoundEvent SMOKE_BLAST;
+	public static ModSoundEvent TELEPORT;
+	public static ModSoundEvent THUNDERBLAST;
+	public static ModSoundEvent WIND;
 
-	@SubscribeEvent
-	public static void register(RegistryEvent.Register<SoundEvent> evt) {
-		IForgeRegistry<SoundEvent> r = evt.getRegistry();
-
-		r.register(GLASS_BREAK = registerSound("glassbreak"));
-		r.register(FIZZING_LOOP = registerSound("fizzingloop"));
-		r.register(FRYING_SIZZLE = registerSound("firesizzleloop"));
-		r.register(HARP1 = registerSound("harp1"));
-		r.register(HARP2 = registerSound("harp2"));
-		r.register(BELL = registerSound("bell"));
-		r.register(BUBBLING = registerSound("bubbling"));
-		r.register(HALLOWED_SPIRIT = registerSound("hallowed_spirit_shriek"));
-		r.register(EXPLOSION_BOOM = registerSound("expl_boom"));
-		r.register(PROJECTILE_LAUNCH = registerSound("proj_launch"));
-		r.register(BASS_BOOM = registerSound("bass_boom"));
-		r.register(CHAINY_ZAP = registerSound("chainy_zap"));
-		r.register(CHORUS_GOOD = registerSound("chorus_good"));
-		r.register(COLD_WIND = registerSound("cold_wind"));
-		r.register(ELECTRIC_BLAST = registerSound("electric_blast"));
-		r.register(ETHEREAL_PASS_BY = registerSound("ethereal_pass_by"));
-		r.register(FAIRY = registerSound("fairy_1"));
-		r.register(FIRE = registerSound("fire"));
-		r.register(FIREBALL = registerSound("fireball"));
-		r.register(FLY = registerSound("fly"));
-		r.register(FROST_FORM = registerSound("frost_form"));
-		r.register(HEAL = registerSound("heal"));
-		r.register(LIGHTNING = registerSound("lightning"));
-		r.register(SLOW_MOTION_IN = registerSound("slow_motion_in"));
-		r.register(SLOW_MOTION_OUT = registerSound("slow_motion_out"));
-		r.register(SMOKE_BLAST = registerSound("smoke_blast"));
-		r.register(TELEPORT = registerSound("teleport"));
-		r.register(THUNDERBLAST = registerSound("thunder_blast"));
-		r.register(WIND = registerSound("wind"));
+	public static void init() {
+		GLASS_BREAK = new ModSoundEvent("glassbreak");
+		FIZZING_LOOP = new ModSoundEvent("fizzingloop");
+		FRYING_SIZZLE = new ModSoundEvent("firesizzleloop");
+		HARP1 = new ModSoundEvent("harp1");
+		HARP2 = new ModSoundEvent("harp2");
+		BELL = new ModSoundEvent("bell");
+		BUBBLING = new ModSoundEvent("bubbling");
+		HALLOWED_SPIRIT = new ModSoundEvent("hallowed_spirit_shriek");
+		EXPLOSION_BOOM = new ModSoundEvent("expl_boom");
+		PROJECTILE_LAUNCH = new ModSoundEvent("proj_launch");
+		BASS_BOOM = new ModSoundEvent("bass_boom");
+		CHAINY_ZAP = new ModSoundEvent("chainy_zap");
+		CHORUS_GOOD = new ModSoundEvent("chorus_good");
+		COLD_WIND = new ModSoundEvent("cold_wind");
+		ELECTRIC_BLAST = new ModSoundEvent("electric_blast");
+		ETHEREAL_PASS_BY = new ModSoundEvent("ethereal_pass_by");
+		FAIRY = new ModSoundEvent("fairy_1");
+		FIRE = new ModSoundEvent("fire");
+		FIREBALL = new ModSoundEvent("fireball");
+		FLY = new ModSoundEvent("fly");
+		FROST_FORM = new ModSoundEvent("frost_form");
+		HEAL = new ModSoundEvent("heal");
+		LIGHTNING = new ModSoundEvent("lightning");
+		SLOW_MOTION_IN = new ModSoundEvent("slow_motion_in");
+		SLOW_MOTION_OUT = new ModSoundEvent("slow_motion_out");
+		SMOKE_BLAST = new ModSoundEvent("smoke_blast");
+		TELEPORT = new ModSoundEvent("teleport");
+		THUNDERBLAST = new ModSoundEvent("thunder_blast");
+		WIND = new ModSoundEvent("wind");
 	}
 
-	private static SoundEvent registerSound(String soundName) {
-		final ResourceLocation soundID = new ResourceLocation(Wizardry.MODID, soundName);
-		return new SoundEvent(soundID).setRegistryName(soundID);
-	}
 }

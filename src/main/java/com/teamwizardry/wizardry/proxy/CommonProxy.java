@@ -50,6 +50,9 @@ public class CommonProxy {
 
 		new ModTab();
 		ModBlocks.init();
+		ModItems.init();
+		ModSounds.init();
+		ModPotions.init();
 		ModEntities.init();
 		ModCapabilities.preInit();
 
