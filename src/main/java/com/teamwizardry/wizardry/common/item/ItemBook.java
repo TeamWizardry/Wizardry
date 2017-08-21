@@ -2,13 +2,13 @@ package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.common.achievement.Achievements;
-import com.teamwizardry.wizardry.common.achievement.IPickupAchievement;
+import com.teamwizardry.wizardry.common.advancement.ModAdvancements;
+import com.teamwizardry.wizardry.common.advancement.IPickupAchievement;
 import com.teamwizardry.wizardry.init.ModItems;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.stats.Achievement;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
@@ -38,8 +38,10 @@ public class ItemBook extends ItemMod implements IPickupAchievement {
 		return ActionResult.newResult(EnumActionResult.SUCCESS, playerIn.getHeldItem(hand));
 	}
 
+
+
 	@Override
-	public Achievement getAchievementOnPickup(ItemStack stack, EntityPlayer player, EntityItem item) {
-		return Achievements.BOOK;
+	public Advancement getAdvancementOnPickup(ItemStack stack, EntityPlayer player, EntityItem item) {
+		return ModAdvancements.BOOK;
 	}
 }

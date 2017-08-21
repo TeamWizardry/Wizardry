@@ -6,7 +6,7 @@ import com.teamwizardry.wizardry.api.block.TileManaFaucet;
 import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
-import com.teamwizardry.wizardry.common.fluid.FluidBlockMana;
+import com.teamwizardry.wizardry.common.fluid.BlockFluidMana;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
@@ -22,8 +22,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -34,10 +34,11 @@ public class TileManaBattery extends TileManaFaucet implements ITickable {
 		super(100000, 100000);
 	}
 
-	@Nonnull
+	@NotNull
 	@SideOnly(Side.CLIENT)
 	@Override
-	public AxisAlignedBB getRenderBoundingBox() {
+	public AxisAlignedBB getRenderBoundingBox()
+	{
 		return TileEntity.INFINITE_EXTENT_AABB;
 	}
 
@@ -46,7 +47,7 @@ public class TileManaBattery extends TileManaFaucet implements ITickable {
 		int count = 0;
 		for (int i = -4; i < 4; i++)
 			for (int j = -4; j < 4; j++)
-				if (world.getBlockState(getPos().add(i, -3, j)) == FluidBlockMana.instance.getDefaultState())
+				if (world.getBlockState(getPos().add(i, -3, j)) == BlockFluidMana.instance.getDefaultState())
 					count++;
 
 		if (count < 21) return;

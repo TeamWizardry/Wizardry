@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.asm;
 
-import com.teamwizardry.librarianlib.asm.ClassnameMap;
+import com.teamwizardry.librarianlib.asm.LibLibTransformer;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraftforge.fml.common.FMLLog;
 import org.objectweb.asm.ClassReader;
@@ -27,13 +27,13 @@ import static org.objectweb.asm.Opcodes.*;
  */
 public class WizardryTransformer implements IClassTransformer {
 
-	public static final ClassnameMap CLASS_MAPPINGS = new ClassnameMap(
-			"net/minecraft/entity/player/EntityPlayer", "aay",
-			"net/minecraft/entity/Entity", "sn",
-			"net/minecraft/entity/MoverType", "tc",
-			"net/minecraft/entity/EntityLivingBase", "sw",
-			"net/minecraft/client/renderer/entity/RenderLivingBase", "bvl",
-			"net/minecraft/client/renderer/entity/Render", "bus"
+	public static final LibLibTransformer.ClassnameMap CLASS_MAPPINGS = new LibLibTransformer.ClassnameMap(
+			"net/minecraft/entity/player/EntityPlayer", "aeb",
+			"net/minecraft/entity/Entity", "ve",
+			"net/minecraft/entity/MoverType", "vt",
+			"net/minecraft/entity/EntityLivingBase", "vn",
+			"net/minecraft/client/renderer/entity/RenderLivingBase", "bzy",
+			"net/minecraft/client/renderer/entity/Render", "bze"
 	);
 
 	private static final String ASM_HOOKS = "com/teamwizardry/wizardry/asm/WizardryASMHooks";
@@ -42,7 +42,7 @@ public class WizardryTransformer implements IClassTransformer {
 	static {
 		transformers.put("net.minecraft.entity.player.EntityPlayer", WizardryTransformer::transformPlayerClipping);
 		transformers.put("net.minecraft.entity.Entity", WizardryTransformer::transformEntity);
-		transformers.put("net.minecraft.entity.EntityLivingBase", WizardryTransformer::transformEntityLivingMoveWithHeading);
+		transformers.put("net.minecraft.entity.EntityLivingBase", WizardryTransformer::tranformEntityTravel);
 		transformers.put("net.minecraft.client.renderer.entity.Render", WizardryTransformer::transformShadowAndFireRendering);
 	}
 
@@ -68,10 +68,10 @@ public class WizardryTransformer implements IClassTransformer {
 		});
 	}
 
-	private static byte[] transformEntityLivingMoveWithHeading(byte[] basicClass) {
-		MethodSignature sig = new MethodSignature("moveEntityWithHeading", "func_70612_e", "g", "(FF)V");
+	private static byte[] tranformEntityTravel(byte[] basicClass) {
+		MethodSignature sig = new MethodSignature("travel", "func_191986_a", "a", "(FFF)V");
 
-		return transform(basicClass, sig, "EntityLivingBase Move With Heading Event",
+		return transform(basicClass, sig, "EntityLivingBase Travel Event",
 				combineBackFocus((AbstractInsnNode node) -> node.getOpcode() == RETURN,
 						(AbstractInsnNode node) -> node instanceof LabelNode,
 						(MethodNode method, AbstractInsnNode node) -> {
@@ -81,8 +81,9 @@ public class WizardryTransformer implements IClassTransformer {
 							newInstructions.add(new VarInsnNode(ALOAD, 0));
 							newInstructions.add(new VarInsnNode(FLOAD, 1));
 							newInstructions.add(new VarInsnNode(FLOAD, 2));
-							newInstructions.add(new MethodInsnNode(INVOKESTATIC, ASM_HOOKS, "entityMoveWithHeading",
-									"(Lnet/minecraft/entity/EntityLivingBase;FF)Z", false));
+							newInstructions.add(new VarInsnNode(FLOAD, 3));
+							newInstructions.add(new MethodInsnNode(INVOKESTATIC, ASM_HOOKS, "travel",
+									"(Lnet/minecraft/entity/EntityLivingBase;FFF)Z", false));
 
 							newInstructions.add(new JumpInsnNode(IFNE, node1));
 							newInstructions.add(new InsnNode(RETURN));

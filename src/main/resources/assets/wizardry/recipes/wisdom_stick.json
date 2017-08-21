@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "wizardry:wisdom_wood_planks"
+    }
+  ],
+  "result": {
+    "item": "wizardry:wisdom_stick",
+    "count": 4
+  }
+}

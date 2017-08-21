@@ -24,7 +24,6 @@ import java.util.Set;
 /**
  * Created by LordSaad.
  */
-// TODO: a mess of bad sides
 public interface IStructure {
 
 	Structure getStructure();

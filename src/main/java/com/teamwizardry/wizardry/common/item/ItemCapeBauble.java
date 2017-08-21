@@ -4,13 +4,12 @@ import baubles.api.BaubleType;
 import com.teamwizardry.librarianlib.features.base.item.ItemModBauble;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.api.item.ICape;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Optional;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -41,12 +40,11 @@ public class ItemCapeBauble extends ItemModBauble implements ICape {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
+	public void addInformation(ItemStack stack, World world, List<String> tooltip, ITooltipFlag flag) {
 		if (ItemNBTHelper.verifyExistence(stack, "owner")) {
 			UUID uuid = ItemNBTHelper.getUUID(stack, "owner");
 			if (uuid != null) {
-				Entity owner = player.world.getPlayerEntityByUUID(uuid);
+				Entity owner = world.getPlayerEntityByUUID(uuid);
 				tooltip.add("owner: " + (owner == null ? "null" : owner.getName()));
 			}
 		}
@@ -54,7 +52,7 @@ public class ItemCapeBauble extends ItemModBauble implements ICape {
 		if (ItemNBTHelper.verifyExistence(stack, "thief")) {
 			UUID uuid = ItemNBTHelper.getUUID(stack, "thief");
 			if (uuid != null) {
-				Entity thief = player.world.getPlayerEntityByUUID(uuid);
+				Entity thief = world.getPlayerEntityByUUID(uuid);
 				tooltip.add("thief: " + (thief == null ? "null" : thief.getName()));
 			}
 		}

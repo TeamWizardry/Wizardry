@@ -48,7 +48,7 @@ public class ModuleShapeCone extends ModuleShape {
 	@Nonnull
 	@Override
 	public String getDescription() {
-		return "Will run the spell in a circular arc in front of the caster";
+		return "Will run the spell in a scattered circular arc in front of the caster";
 	}
 
 	@Override

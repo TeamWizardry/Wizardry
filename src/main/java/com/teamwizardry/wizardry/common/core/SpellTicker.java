@@ -13,6 +13,7 @@ import java.util.HashMap;
 /**
  * Created by LordSaad.
  */
+// TODO: use world time instead of ticking
 public class SpellTicker {
 
 	public static SpellTicker INSTANCE = new SpellTicker();

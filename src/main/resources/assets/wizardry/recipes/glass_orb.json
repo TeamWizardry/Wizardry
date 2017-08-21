@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " A ",
+    "A A",
+    " A "
+  ],
+  "key": {
+    "A": {
+      "ore": "glass", "type": "forge:ore_dict"
+    }
+  },
+  "result": {
+    "item": "wizardry:glass_orb"
+  }
+}

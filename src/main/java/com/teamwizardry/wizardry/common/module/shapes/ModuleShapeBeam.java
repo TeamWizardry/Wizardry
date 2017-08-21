@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.common.module.shapes;
 
-import com.teamwizardry.wizardry.api.spell.IContinuousSpell;
+import com.teamwizardry.wizardry.api.spell.IContinuousModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
@@ -23,7 +23,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleShapeBeam extends ModuleShape implements IContinuousSpell {
+public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 
 	@Nonnull
 	@Override

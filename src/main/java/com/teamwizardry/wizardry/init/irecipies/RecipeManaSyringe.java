@@ -1,0 +1,50 @@
+package com.teamwizardry.wizardry.init.irecipies;
+
+import com.teamwizardry.wizardry.init.ModBlocks;
+import com.teamwizardry.wizardry.init.ModItems;
+import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.registries.IForgeRegistryEntry;
+import org.jetbrains.annotations.NotNull;
+
+public class RecipeManaSyringe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
+
+	@Override
+	public boolean matches(@NotNull InventoryCrafting inv, @NotNull World worldIn) {
+		boolean foundSyringe = false;
+		boolean foundBucket = false;
+
+		ItemStack bucket = FluidUtil.getFilledBucket(new FluidStack(ModBlocks.FLUID_MANA.getFluid(), 1));
+
+		for (int i = 0; i < inv.getSizeInventory(); i++) {
+			ItemStack stack = inv.getStackInSlot(i);
+			if (stack.getItem() == ModItems.SYRINGE && stack.getItemDamage() == 0) {
+					foundSyringe = true;
+			}
+			if (ItemStack.areItemStacksEqual(bucket, stack))
+				foundBucket = true;
+		}
+		return foundSyringe && foundBucket;
+	}
+
+	@NotNull
+	@Override
+	public ItemStack getCraftingResult(@NotNull InventoryCrafting inv) {
+		return new ItemStack(ModItems.SYRINGE, 1, 1);
+	}
+
+	@Override
+	public boolean canFit(int width, int height) {
+		return true;
+	}
+
+	@NotNull
+	@Override
+	public ItemStack getRecipeOutput() {
+		return ItemStack.EMPTY;
+	}
+}

@@ -6,6 +6,7 @@ import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.common.core.DamageSourceMana;
 import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,10 +18,9 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
 
@@ -95,8 +95,7 @@ public class ItemSyringe extends ItemMod {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
+	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
 		if (stack.getItemDamage() == 2) {
 			tooltip.add("Will completely saturate your mana bar and deplete your burnout bar for 10 seconds. Severe side-effects included");
 			tooltip.add("Feel the burn.");
@@ -106,7 +105,10 @@ public class ItemSyringe extends ItemMod {
 			UUID uuid = ItemNBTHelper.getUUID(stack, "uuid");
 			String entity = ItemNBTHelper.getString(stack, "entity", null);
 			if (uuid != null) {
-				EntityPlayer player1 = player.world.getPlayerEntityByUUID(uuid);
+				EntityPlayer player1 = null;
+				if (worldIn != null) {
+					player1 = worldIn.getPlayerEntityByUUID(uuid);
+				}
 				if (player1 != null) tooltip.add(player1.getName());
 			}
 			if (entity != null) {

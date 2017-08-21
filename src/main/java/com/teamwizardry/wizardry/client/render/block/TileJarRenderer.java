@@ -55,7 +55,7 @@ public class TileJarRenderer extends TileEntitySpecialRenderer<TileJar> {
 
 
 	@Override
-	public void renderTileEntityAt(TileJar te, double x, double y, double z, float partialTicks, int destroyStage) {
+	public void render(TileJar te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
 		//InterpBezier3D bezier = new InterpBezier3D(new Vec3d(te.getPos().add(-5, 5, 0)), new Vec3d(te.getPos().add(5, 5, 0)), new Vec3d(0, 3, 0), new Vec3d(0, -3, 0));
 		////InterpLine bezier = new InterpLine(new Vec3d(te.getPos().add(-5, 5, 0)), new Vec3d(te.getPos().add(5, 5, 0)));
 		//LightEffectUtil.renderBilinearGradient(bezier.list(50), Color.WHITE, 0.2, new Vec3d(0, 1, 0));
@@ -67,7 +67,7 @@ public class TileJarRenderer extends TileEntitySpecialRenderer<TileJar> {
 		double timeDifference = (ClientTickHandler.getTicks() + partialTicks) / 20.0;
 		Vec3d pos = new Vec3d(te.getPos()).addVector(0.5, 0.35 + 0.2 * MathHelper.sin((float) timeDifference), 0.5);
 
-		Color color = Color.RED;
+		Color color = te.color;
 		ParticleBuilder glitter = new ParticleBuilder(10);
 		glitter.setColor(color);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
@@ -75,8 +75,8 @@ public class TileJarRenderer extends TileEntitySpecialRenderer<TileJar> {
 		glitter.setScale(0.3f);
 		ParticleSpawner.spawn(glitter, te.getWorld(), new StaticInterp<>(pos), 1);
 
-		if (RandUtil.nextInt(5) == 0) {
-			ParticleBuilder trail = new ParticleBuilder(35);
+		if (RandUtil.nextInt(10) == 0) {
+			ParticleBuilder trail = new ParticleBuilder(20);
 			trail.setColor(te.color);
 			trail.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 			trail.setAlphaFunction(new InterpFadeInOut(0.2f, 1f));

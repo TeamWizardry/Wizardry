@@ -7,7 +7,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
 
@@ -26,9 +26,9 @@ configurations.all {
 }
 
 minecraft {
-    version = "1.11.2-13.20.0.2303"
+    version = "1.12-14.21.1.2400"
     runDir = "run"
-    mappings = "stable_32"
+    mappings = "snapshot_20170818"
 
     clientJvmArgs = ["-Dfml.coreMods.load=$core_plugin"]
     serverJvmArgs = ["-Dfml.coreMods.load=$core_plugin"]
@@ -42,7 +42,7 @@ repositories {
 }
 
 dependencies {
-    compile "com.teamwizardry.librarianlib:librarianlib:3.1.5-SNAPSHOT:deobf"
+    compile "com.teamwizardry.librarianlib:librarianlib-1.12:4.0-SNAPSHOT:deobf"
 }
 
 
@@ -68,5 +68,13 @@ processResources {
     // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude "mcmod.info"
+    }
+}
+
+idea {
+    module {
+        inheritOutputDirs = false
+        outputDir = compileJava.destinationDir
+        testOutputDir = compileTestJava.destinationDir
     }
 }

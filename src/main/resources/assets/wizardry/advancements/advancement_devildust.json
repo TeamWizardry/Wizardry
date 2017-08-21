@@ -1,0 +1,12 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:bedrock"
+    },
+    "title": "§oCRUNCH.§a",
+    "description": {
+      "text": "Crash straight through Bedrock to the Underworld above",
+      "italic": true
+    }
+  }
+}

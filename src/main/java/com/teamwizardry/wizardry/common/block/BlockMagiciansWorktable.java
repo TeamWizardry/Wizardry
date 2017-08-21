@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.common.block;
 
-import com.teamwizardry.librarianlib.features.base.block.BlockModContainer;
+import com.teamwizardry.librarianlib.features.base.block.tile.BlockModContainer;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.tile.TileMagiciansWorktable;
 import net.minecraft.block.Block;

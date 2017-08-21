@@ -6,7 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,7 +17,6 @@ import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.IChunkGenerator;
 import net.minecraftforge.client.IRenderHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -29,11 +28,11 @@ import javax.annotation.Nonnull;
  */
 public class WorldProviderUnderWorld extends WorldProvider {
 
-	@Nonnull
-	@Override
-	public IChunkGenerator createChunkGenerator() {
-		return new ChunkGeneratorUnderWorld(world);
-	}
+	//@Nonnull
+	//@Override
+	//public IChunkGenerator createChunkGenerator() {
+	//	return new ChunkGeneratorUnderWorld(world);
+	//}
 
 	@Nonnull
 	@Override
@@ -141,7 +140,7 @@ public class WorldProviderUnderWorld extends WorldProvider {
 
 					GlStateManager.depthMask(false);
 					Tessellator tessellator = Tessellator.getInstance();
-					VertexBuffer vertexbuffer = tessellator.getBuffer();
+					BufferBuilder vertexbuffer = tessellator.getBuffer();
 
 					for (int i = 0; i < 6; ++i) {
 						GlStateManager.pushMatrix();

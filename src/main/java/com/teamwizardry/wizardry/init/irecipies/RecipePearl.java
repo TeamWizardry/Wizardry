@@ -10,13 +10,14 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import javax.annotation.Nonnull;
 
 /**
  * Created by Saad on 6/13/2016.
  */
-public class RecipePearl implements IRecipe {
+public class RecipePearl extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
 	@Override
 	public boolean matches(@Nonnull InventoryCrafting inv, @Nonnull World worldIn) {
 		boolean foundBaseItem = false;
@@ -62,8 +63,8 @@ public class RecipePearl implements IRecipe {
 	}
 
 	@Override
-	public int getRecipeSize() {
-		return 10;
+	public boolean canFit(int width, int height) {
+		return true;
 	}
 
 	@Override

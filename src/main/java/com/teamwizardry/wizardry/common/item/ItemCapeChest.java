@@ -4,6 +4,7 @@ import com.teamwizardry.librarianlib.features.base.item.ItemModArmor;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.ICape;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,9 +12,8 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,12 +34,14 @@ public class ItemCapeChest extends ItemModArmor implements ICape {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
+	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
 		if (ItemNBTHelper.verifyExistence(stack, "owner")) {
 			UUID uuid = ItemNBTHelper.getUUID(stack, "owner");
 			if (uuid != null) {
-				Entity owner = player.world.getPlayerEntityByUUID(uuid);
+				Entity owner = null;
+				if (worldIn != null) {
+					owner = worldIn.getPlayerEntityByUUID(uuid);
+				}
 				tooltip.add("owner: " + (owner == null ? "null" : owner.getName()));
 			}
 		}
@@ -47,7 +49,7 @@ public class ItemCapeChest extends ItemModArmor implements ICape {
 		if (ItemNBTHelper.verifyExistence(stack, "thief")) {
 			UUID uuid = ItemNBTHelper.getUUID(stack, "thief");
 			if (uuid != null) {
-				Entity thief = player.world.getPlayerEntityByUUID(uuid);
+				Entity thief = worldIn != null ? worldIn.getPlayerEntityByUUID(uuid) : null;
 				tooltip.add("thief: " + (thief == null ? "null" : thief.getName()));
 			}
 		}

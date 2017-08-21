@@ -31,6 +31,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import javax.annotation.Nonnull;
 import java.util.Map;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class ClientProxy extends CommonProxy implements IResourceManagerReloadListener {
 
 	private static Function2<ItemRenderer, Object, Unit> itemStackMainHandHandler = MethodHandleHelper.wrapperForSetter(ItemRenderer.class, "d", "field_187467_d", "itemStackMainHand");

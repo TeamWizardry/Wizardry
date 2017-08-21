@@ -101,7 +101,7 @@ public class EntitySpiritBlight extends EntityMob {
 	}
 
 	@Override
-	public int getBrightnessForRender(float partialTicks) {
+	public int getBrightnessForRender() {
 		return 255;
 	}
 

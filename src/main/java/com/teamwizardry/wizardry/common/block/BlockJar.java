@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.common.block;
 
-import com.teamwizardry.librarianlib.features.base.block.BlockModContainer;
+import com.teamwizardry.librarianlib.features.base.block.tile.BlockModContainer;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.client.render.block.TileJarRenderer;
@@ -46,7 +46,7 @@ public class BlockJar extends BlockModContainer {
 	}
 
 	@Override
-	public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
+	public int getLightValue(@NotNull IBlockState state, IBlockAccess world, @NotNull BlockPos pos) {
 		TileJar jar = (TileJar) world.getTileEntity(pos);
 		if (jar == null) return 0;
 		return jar.hasFairy ? 15 : 0;

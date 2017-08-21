@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "AAA",
+    "AAA"
+  ],
+  "key": {
+    "A": {
+      "item": "wizardry:wisdom_wood_planks"
+    }
+  },
+  "result": {
+    "item": "wizardry:wisdom_wood_trapdoor",
+    "count": 3
+  }
+}

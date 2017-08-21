@@ -7,7 +7,6 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.IExplodable;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.Utils;
-import com.teamwizardry.wizardry.common.achievement.Achievements;
 import com.teamwizardry.wizardry.common.core.DamageSourceMana;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.init.ModBlocks;
@@ -15,6 +14,8 @@ import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModPotions;
 import com.teamwizardry.wizardry.init.ModSounds;
 import com.teamwizardry.wizardry.lib.LibParticles;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -28,6 +29,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
@@ -37,8 +39,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -48,14 +51,15 @@ import java.util.Random;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-public class FluidBlockMana extends BlockFluidClassic {
+public class BlockFluidMana extends BlockFluidClassic {
 
-	public static final FluidBlockMana instance = new FluidBlockMana();
+	public static final BlockFluidMana instance = new BlockFluidMana();
 	public static final String REACTION_COOLDOWN = "reaction_cooldown";
 
-	public FluidBlockMana() {
+	public BlockFluidMana() {
 		super(FluidMana.instance, Material.WATER);
-		GameRegistry.register(this, new ResourceLocation(Wizardry.MODID, "mana"));
+		setRegistryName("wizardry_mana");
+		ForgeRegistries.BLOCKS.register(this);
 		setQuantaPerBlock(6);
 		setUnlocalizedName("mana");
 	}
@@ -95,8 +99,16 @@ public class FluidBlockMana extends BlockFluidClassic {
 		run(entityIn,
 				entity -> entity instanceof EntityPlayer,
 				entity -> {
-					((EntityPlayer) entityIn).addStat(Achievements.MANAPOOL);
 
+					if (!worldIn.isRemote) {
+						MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+						Advancement advancement = server.getAdvancementManager().getAdvancement(new ResourceLocation(Wizardry.MODID, "advancements/advancement_crunch.json"));
+						if (advancement == null) return;
+						AdvancementProgress progress = ((EntityPlayerMP) entity).getAdvancements().getProgress(advancement);
+						for (String s : progress.getRemaningCriteria()) {
+							((EntityPlayerMP) entity).getAdvancements().grantCriterion(advancement, s);
+						}
+					}
 					if (!((EntityPlayer) entity).capabilities.isCreativeMode && RandUtil.nextInt(50) == 0)
 						((EntityPlayer) entity).getFoodStats().addExhaustion(1f);
 				});
@@ -206,7 +218,7 @@ public class FluidBlockMana extends BlockFluidClassic {
 
 				for (int i = -1; i <= 1; i++)
 					for (int j = -1; j <= 1; j++) {
-						if (worldIn.getBlockState(pos.add(i, 0, j)) != FluidBlockMana.instance.getDefaultState())
+						if (worldIn.getBlockState(pos.add(i, 0, j)) != BlockFluidMana.instance.getDefaultState())
 							return false;
 					}
 

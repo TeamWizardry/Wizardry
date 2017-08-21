@@ -3,12 +3,11 @@ package com.teamwizardry.wizardry.proxy;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
+import com.teamwizardry.wizardry.client.core.NCapeHandler;
 import com.teamwizardry.wizardry.client.gui.GuiHandler;
-import com.teamwizardry.wizardry.common.achievement.AchievementEvents;
-import com.teamwizardry.wizardry.common.achievement.Achievements;
+import com.teamwizardry.wizardry.common.advancement.AchievementEvents;
 import com.teamwizardry.wizardry.common.core.EventHandler;
 import com.teamwizardry.wizardry.common.core.SpellTicker;
-import com.teamwizardry.wizardry.common.fluid.Fluids;
 import com.teamwizardry.wizardry.common.module.effects.ModuleEffectLeap;
 import com.teamwizardry.wizardry.common.module.effects.ModuleEffectTimeSlow;
 import com.teamwizardry.wizardry.common.network.*;
@@ -20,6 +19,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -38,6 +38,7 @@ public class CommonProxy {
 	public void setItemStackHandHandler(EnumHand hand, ItemStack stack) {
 	}
 
+	@SuppressWarnings("ResultOfMethodCallIgnored")
 	public void preInit(FMLPreInitializationEvent event) {
 		int tempFix = 42;
 
@@ -45,16 +46,12 @@ public class CommonProxy {
 		if (!directory.exists()) if (!directory.mkdirs())
 			Wizardry.logger.fatal("    > SOMETHING WENT WRONG! Could not create config folder!!");
 
+		FluidRegistry.enableUniversalBucket();
+
 		new ModTab();
-		ModSounds.init();
-		ModItems.init();
 		ModBlocks.init();
-		Achievements.init();
-		Fluids.preInit();
 		ModEntities.init();
-		ModPotions.init();
 		ModCapabilities.preInit();
-		ModBiomes.init();
 
 		WizardryPacketHandler.registerMessages();
 		NetworkRegistry.INSTANCE.registerGuiHandler(Wizardry.instance, new GuiHandler());
@@ -64,6 +61,7 @@ public class CommonProxy {
 		Wizardry.underWorld = DimensionType.register("underworld", "_dim", tempFix, WorldProviderUnderWorld.class, false);
 		DimensionManager.registerDimension(tempFix, Wizardry.underWorld);
 
+		NCapeHandler.INSTANCE.getClass();
 		MinecraftForge.EVENT_BUS.register(new WorldProviderUnderWorld());
 		MinecraftForge.EVENT_BUS.register(new EventHandler());
 		MinecraftForge.EVENT_BUS.register(new AchievementEvents());
@@ -87,7 +85,6 @@ public class CommonProxy {
 
 	public void init(FMLInitializationEvent event) {
 		GameRegistry.registerWorldGenerator(new GenHandler(), 0);
-		ModRecipes.initCrafting();
 	}
 
 	public void postInit(FMLPostInitializationEvent event) {

@@ -184,11 +184,6 @@ public class EntityFairy extends FlyingEntityMod {
 	}
 
 	@Override
-	public int getBrightnessForRender(float partialTicks) {
-		return 255;
-	}
-
-	@Override
 	public void dropLoot(boolean wasRecentlyHit, int lootingModifier, @Nonnull DamageSource source) {
 		//super.dropLoot(wasRecentlyHit, lootingModifier, source);
 		ItemStack fairyWings = new ItemStack(ModItems.FAIRY_WINGS);

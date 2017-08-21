@@ -29,8 +29,8 @@ public class WizardryASMHooks {
 		return !event.override;
 	}
 
-	public static boolean entityMoveWithHeading(EntityLivingBase entity, float strafe, float forward) {
-		EntityMoveWithHeadingEvent event = new EntityMoveWithHeadingEvent(entity, strafe, forward);
+	public static boolean travel(EntityLivingBase entity, float strafe, float vertical, float forward) {
+		EntityMoveWithHeadingEvent event = new EntityMoveWithHeadingEvent(entity, strafe, vertical, forward);
 		MinecraftForge.EVENT_BUS.post(event);
 		return !event.override;
 	}

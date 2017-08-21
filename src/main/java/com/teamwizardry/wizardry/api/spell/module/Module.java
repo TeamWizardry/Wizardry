@@ -119,6 +119,9 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	@Nonnull
 	public abstract String getDescription();
 
+	/**
+	 * Only return false if the spell cannot be taxed from mana. Return true otherwise.
+	 */
 	public abstract boolean run(@Nonnull SpellData spell);
 
 	/**

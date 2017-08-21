@@ -12,7 +12,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
-import net.minecraft.world.chunk.IChunkGenerator;
+import net.minecraft.world.gen.IChunkGenerator;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -141,12 +141,17 @@ public class ChunkGeneratorUnderWorld implements IChunkGenerator {
 
 	@Nullable
 	@Override
-	public BlockPos getNearestStructurePos(World worldIn, String structureName, BlockPos position, boolean findUnexplored) {
+	public BlockPos getNearestStructurePos(@NotNull World worldIn, @NotNull String structureName, @NotNull BlockPos position, boolean findUnexplored) {
 		return null;
 	}
 
 	@Override
 	public void recreateStructures(@Nonnull Chunk chunkIn, int x, int z) {
 
+	}
+
+	@Override
+	public boolean isInsideStructure(@NotNull World worldIn, @NotNull String structureName, @NotNull BlockPos pos) {
+		return false;
 	}
 }

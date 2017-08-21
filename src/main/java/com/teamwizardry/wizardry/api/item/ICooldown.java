@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.api.item;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.spell.IContinuousSpell;
+import com.teamwizardry.wizardry.api.spell.IContinuousModule;
 import com.teamwizardry.wizardry.api.spell.IOverrideCooldown;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
@@ -30,7 +30,7 @@ public interface ICooldown {
 		ArrayList<Module> modules = SpellUtils.getModules(stack);
 
 		for (Module module : modules) {
-			if (!(module instanceof IContinuousSpell)) {
+			if (!(module instanceof IContinuousModule)) {
 				hasNonContinuous = true;
 			} else continue;
 			if (module.getCooldownTime() > maxCooldown) maxCooldown = module.getCooldownTime();
@@ -59,8 +59,6 @@ public interface ICooldown {
 	}
 
 	default void updateCooldown(ItemStack stack) {
-		for (Module module : SpellUtils.getAllModules(stack)) if (module instanceof IContinuousSpell) return;
-
 		if (ItemNBTHelper.getInt(stack, "cooldown_ticks", 0) > 0)
 			ItemNBTHelper.setInt(stack, "cooldown_ticks", ItemNBTHelper.getInt(stack, "cooldown_ticks", 0) - 1);
 		else ItemNBTHelper.removeEntry(stack, "cooldown_ticks");

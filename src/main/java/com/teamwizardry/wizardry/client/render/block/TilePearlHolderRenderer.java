@@ -1,23 +1,18 @@
 package com.teamwizardry.wizardry.client.render.block;
 
-import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.tile.TilePearlHolder;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
-import com.teamwizardry.wizardry.proxy.ClientProxy;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.client.model.IModel;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -27,43 +22,11 @@ import java.awt.*;
  */
 public class TilePearlHolderRenderer extends TileEntitySpecialRenderer<TilePearlHolder> {
 
-	private IBakedModel modelManaOrb, modelPearl;
-
-	public TilePearlHolderRenderer() {
-		MinecraftForge.EVENT_BUS.register(this);
-	}
-
-	@SubscribeEvent
-	public void reload(ClientProxy.ResourceReloadEvent event) {
-		modelManaOrb = null;
-		modelPearl = null;
-	}
-
-	private void getBakedModels() {
-		IModel model = null;
-		if (modelManaOrb == null) {
-			try {
-				model = ModelLoaderRegistry.getModel(new ResourceLocation(Wizardry.MODID, "block/mana_orb"));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			modelManaOrb = model.bake(model.getDefaultState(), DefaultVertexFormats.ITEM,
-					location -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString()));
-		}
-
-		if (modelPearl == null) {
-			try {
-				model = ModelLoaderRegistry.getModel(new ResourceLocation(Wizardry.MODID, "block/pearl"));
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			modelPearl = model.bake(model.getDefaultState(), DefaultVertexFormats.ITEM,
-					location -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString()));
-		}
-	}
+	private static ResourceLocation pearlCubeTexture = new ResourceLocation("blocks/pearl_cube.png");
+	private static ResourceLocation manaPearlCubeTexture = new ResourceLocation("blocks/mana_pearl_cube.png");
 
 	@Override
-	public void renderTileEntityAt(TilePearlHolder te, double x, double y, double z, float partialTicks, int destroyStage) {
+	public void render(TilePearlHolder te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
 		if (te.pearl != null && (te.pearl.getItem() == ModItems.MANA_ORB || te.pearl.getItem() == ModItems.PEARL_NACRE)) {
 
 			boolean isPearl = te.pearl.getItem() == ModItems.PEARL_NACRE;
@@ -71,7 +34,6 @@ public class TilePearlHolderRenderer extends TileEntitySpecialRenderer<TilePearl
 			GlStateManager.pushMatrix();
 			GlStateManager.enableBlend();
 			GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-			getBakedModels();
 
 			bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 			if (Minecraft.isAmbientOcclusionEnabled())
@@ -149,12 +111,67 @@ public class TilePearlHolderRenderer extends TileEntitySpecialRenderer<TilePearl
 				GlStateManager.translate(-0.5, -0.5, -0.5);
 			}
 
-			Color color = Color.WHITE;
-			if (te.pearl.getItem() == ModItems.PEARL_NACRE)
-				color = new Color(Minecraft.getMinecraft().getItemColors().getColorFromItemstack(te.pearl, 0));
+			{
+				Color c = Color.WHITE;
+				if (te.pearl.getItem() == ModItems.PEARL_NACRE) {
+					c = new Color(Minecraft.getMinecraft().getItemColors().getColorFromItemstack(te.pearl, 0));
+					Minecraft.getMinecraft().getTextureManager().bindTexture(pearlCubeTexture);
+				} else Minecraft.getMinecraft().getTextureManager().bindTexture(manaPearlCubeTexture);
 
-			GlStateManager.color(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f);
-			Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModelBrightnessColor(te.pearl.getItem() == ModItems.MANA_ORB ? modelManaOrb : modelPearl, 1.0F, color.getRed() / 255.0f, color.getGreen() / 255.0f, color.getBlue() / 255.0f);
+				Tessellator tess = Tessellator.getInstance();
+				BufferBuilder buffer = tess.getBuffer();
+
+				double s = 0.25;
+				// TOP
+				buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+				buffer.pos(-s, s, -s).tex(0, 1).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+				buffer.pos(-s, s, s).tex(1, 1).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+				buffer.pos(s, s, s).tex(1, 0).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+				buffer.pos(s, s, -s).tex(0, 1).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+				tess.draw();
+
+				// BOTTOM
+				buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+				buffer.pos(-s, -s, -s).tex(0, 1).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+				buffer.pos(-s, -s, s).tex(1, 1).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+				buffer.pos(s, -s, s).tex(1, 0).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+				buffer.pos(s, -s, -s).tex(0, 1).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+				tess.draw();
+
+				// TO THE RIGHT
+				buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+				buffer.pos(-s, -s, s).tex(0, 1).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+				buffer.pos(-s, s, s).tex(1, 1).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+				buffer.pos(s, s, s).tex(1, 0).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+				buffer.pos(s, -s, s).tex(0, 1).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+				tess.draw();
+
+				// TO THE LEFT
+				buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+				buffer.pos(-s, -s, -s).tex(0, 1).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+				buffer.pos(-s, s, -s).tex(1, 1).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+				buffer.pos(s, s, -s).tex(1, 0).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+				buffer.pos(s, -s, -s).tex(0, 1).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+				tess.draw();
+
+				// FRONT
+				buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+				buffer.pos(s, -s, -s).tex(0, 1).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+				buffer.pos(s, s, -s).tex(1, 1).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+				buffer.pos(s, s, s).tex(1, 0).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+				buffer.pos(s, -s, s).tex(0, 1).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+				tess.draw();
+
+				// BACK
+				buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+				buffer.pos(-s, -s, -s).tex(0, 1).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+				buffer.pos(-s, s, -s).tex(1, 1).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+				buffer.pos(-s, s, s).tex(1, 0).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+				buffer.pos(-s, -s, s).tex(0, 1).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
+				tess.draw();
+
+				GlStateManager.disableRescaleNormal();
+			}
 
 			GlStateManager.disableBlend();
 			GlStateManager.popMatrix();

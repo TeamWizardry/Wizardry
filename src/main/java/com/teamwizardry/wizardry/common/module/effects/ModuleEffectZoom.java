@@ -6,12 +6,12 @@ import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
-import com.teamwizardry.wizardry.api.util.CubicBezier;
 import com.teamwizardry.wizardry.init.ModPotions;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import kotlin.Pair;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.Vec3d;
@@ -67,41 +67,39 @@ public class ModuleEffectZoom extends ModuleEffect implements ILingeringModule {
 		return "Move swiftly and quickly to the target";
 	}
 
+	// TODO: make it zoom you in the direction ur moving in.
 	@Override
 	public boolean run(@Nonnull SpellData spell) {
 		World world = spell.world;
-		Vec3d target = spell.getData(TARGET_HIT);
-		Entity caster = spell.getData(CASTER);
-		Vec3d originalLoc = spell.getData(ORIGINAL_LOC);
-		//if (!tax(this, spell)) return false;
+		Entity entityHit = spell.getData(ENTITY_HIT);
+		Vec3d look = spell.getData(LOOK);
 
-		if (caster == null) return true;
-		if (target == null) return true;
-		if (originalLoc == null) return true;
+		if (entityHit == null) return true;
+		else {
+			if (!tax(this, spell)) return false;
 
-		Vec3d sub = target.subtract(caster.getPositionVector());
-		double dist = originalLoc.lengthVector();
-		double tmax = spell.getData(MAX_TIME, 1);
-		double tleft = spell.getData(TIME_LEFT, 1);
-		float diff = (float) (sub.lengthVector() / dist);
-		double v = (dist / 2) * new CubicBezier(0.05f, 0.78f, 0.58f, 0.99f).eval(diff < 0.05 ? 0 : diff);
+			Vec3d ranged;
+			if (entityHit instanceof EntityItem && look != null) {
+				ranged = look.scale(5);
+			} else {
+				ranged = entityHit.getLook(0).scale(5);
+			}
 
-		Vec3d norm = sub.normalize();
-		caster.motionX = norm.x * v;
-		caster.motionY = norm.y * v;
-		caster.motionZ = norm.z * v;
-		caster.velocityChanged = true;
+			spell.addData(ORIGINAL_LOC, entityHit.getPositionVector());
 
-		if (caster instanceof EntityLivingBase) {
-			((EntityLivingBase) caster).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 10, 1, true, false));
-			((EntityLivingBase) caster).addPotionEffect(new PotionEffect(ModPotions.PHASE, 10, 1, true, false));
+			entityHit.posX = entityHit.posX + ranged.x;
+			entityHit.posY = entityHit.posY + ranged.y;
+			entityHit.posZ = entityHit.posZ + ranged.z;
+
+			entityHit.motionX = 0;
+			entityHit.motionY = 0;
+			entityHit.motionZ = 0;
+		}
+		if (entityHit instanceof EntityLivingBase) {
+			((EntityLivingBase) entityHit).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 5, 1, true, false));
 		}
 
 		return true;
-	}
-
-	private double timePercentage(double t, double tmax) {
-		return t / tmax;
 	}
 
 	@Override
@@ -110,6 +108,7 @@ public class ModuleEffectZoom extends ModuleEffect implements ILingeringModule {
 		Entity caster = spell.getData(CASTER);
 
 		if (caster == null) return;
+		//TODO
 
 		LibParticles.EFFECT_REGENERATE(world, caster.getPositionVector(), getPrimaryColor());
 	}

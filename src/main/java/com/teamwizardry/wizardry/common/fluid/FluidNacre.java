@@ -11,6 +11,7 @@ public class FluidNacre extends Fluid {
 	public FluidNacre() {
 		super("wizardry.nacre_fluid", new ResourceLocation(Wizardry.MODID, "fluid/nacre_still"), new ResourceLocation(Wizardry.MODID, "fluid/nacre_flowing"));
 		FluidRegistry.registerFluid(this);
+		FluidRegistry.addBucketForFluid(this);
 		setViscosity(500);
 		setDensity(500);
 	}

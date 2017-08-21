@@ -5,13 +5,14 @@ import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.wizardry.api.item.ICooldown;
 import com.teamwizardry.wizardry.api.item.INacreColorable;
 import com.teamwizardry.wizardry.api.spell.IBlockSelectable;
-import com.teamwizardry.wizardry.api.spell.IContinuousSpell;
+import com.teamwizardry.wizardry.api.spell.IContinuousModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.common.module.shapes.ModuleShapeTouch;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -28,10 +29,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -141,7 +141,7 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 	public EnumAction getItemUseAction(ItemStack stack) {
 		boolean anyNotContinuous = false;
 		for (Module module : SpellUtils.getModules(stack))
-			if (!(module instanceof IContinuousSpell && module.getChargeupTime() <= 0)) {
+			if (!(module instanceof IContinuousModule && module.getChargeupTime() <= 0)) {
 				anyNotContinuous = true;
 				break;
 			}
@@ -153,7 +153,7 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 		int maxChargeUp = 0;
 		boolean anyNotContinuous = false;
 		for (Module module : SpellUtils.getModules(stack)) {
-			if (!(module instanceof IContinuousSpell)) {
+			if (!(module instanceof IContinuousModule)) {
 				anyNotContinuous = true;
 				if (module.getChargeupTime() > maxChargeUp) maxChargeUp = module.getChargeupTime();
 			}
@@ -173,7 +173,7 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 		if (!(player instanceof EntityPlayer)) return;
 		boolean isContinuous = false;
 		for (Module module : SpellUtils.getModules(stack))
-			if (module instanceof IContinuousSpell) {
+			if (module instanceof IContinuousModule) {
 				isContinuous = true;
 				break;
 			}
@@ -241,8 +241,7 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
+	public void addInformation(ItemStack stack, @Nullable World playerIn, List<String> tooltip, ITooltipFlag advanced) {
 		ArrayList<Module> modules = SpellUtils.getModules(stack);
 		Module lastModule = null;
 		for (Module module : modules) {

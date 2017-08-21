@@ -4,7 +4,6 @@ import com.teamwizardry.librarianlib.features.utilities.UnsafeKt;
 import com.teamwizardry.wizardry.common.command.CommandWizardry;
 import com.teamwizardry.wizardry.proxy.CommonProxy;
 import net.minecraft.world.DimensionType;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -34,7 +33,6 @@ public class Wizardry {
 	public static Wizardry instance;
 
 	static {
-		FluidRegistry.enableUniversalBucket();
 		UnsafeKt.hookIntoUnsafe();
 	}
 

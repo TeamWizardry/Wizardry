@@ -43,6 +43,7 @@ public class PotionSlippery extends PotionMod {
 		EntityLivingBase entity = event.entity;
 		float strafe = event.strafe / 2.0f;
 		float forward = event.forward / 2.0f;
+		float vertical = event.vertical / 2.0f;
 		float slipperiness = 1.04f;
 		if (entity.isServerWorld() || entity.canPassengerSteer()) {
 			if (!entity.isInWater() || entity instanceof EntityPlayer && ((EntityPlayer) entity).capabilities.isFlying) {
@@ -69,10 +70,10 @@ public class PotionSlippery extends PotionMod {
 						}
 
 						if (f < 0.0F) {
-							double d9 = d8 * (double) (-MathHelper.sin(f)) * 0.04D;
-							entity.motionY += d9 * 3.2D;
-							entity.motionX -= vec3d.x * d9 / d6;
-							entity.motionZ -= vec3d.z * d9 / d6;
+							double d10 = d8 * (double) (-MathHelper.sin(f)) * 0.04D;
+							entity.motionY += d10 * 3.2D;
+							entity.motionX -= vec3d.x * d10 / d6;
+							entity.motionZ -= vec3d.z * d10 / d6;
 						}
 
 						if (d6 > 0.0D) {
@@ -86,8 +87,8 @@ public class PotionSlippery extends PotionMod {
 						entity.move(MoverType.SELF, entity.motionX, entity.motionY, entity.motionZ);
 
 						if (entity.isCollidedHorizontally && !entity.world.isRemote) {
-							double d10 = Math.sqrt(entity.motionX * entity.motionX + entity.motionZ * entity.motionZ);
-							double d3 = d8 - d10;
+							double d11 = Math.sqrt(entity.motionX * entity.motionX + entity.motionZ * entity.motionZ);
+							double d3 = d8 - d11;
 							float f5 = (float) (d3 * 10.0D - 3.0D);
 
 							if (f5 > 0.0F) {
@@ -96,15 +97,15 @@ public class PotionSlippery extends PotionMod {
 							}
 						}
 
-						if (entity.onGround && !entity.world.isRemote) {
-							//entity.setFlag(7, false);
-						}
+						//if (entity.onGround && !entity.world.isRemote) {
+						//	entity.setFlag(7, false);
+						//}
 					} else {
 						float f6 = 0.91F;
 						BlockPos.PooledMutableBlockPos blockpos$pooledmutableblockpos = BlockPos.PooledMutableBlockPos.retain(entity.posX, entity.getEntityBoundingBox().minY - 1.0D, entity.posZ);
 
 						if (entity.onGround) {
-							f6 = slipperiness * 0.91f; //entity.world.getBlockState(blockpos$pooledmutableblockpos).getBlock().slipperiness * 0.91F;
+							f6 = slipperiness * 0.91F;
 						}
 
 						float f7 = 0.16277136F / (f6 * f6 * f6);
@@ -116,11 +117,11 @@ public class PotionSlippery extends PotionMod {
 							f8 = entity.jumpMovementFactor;
 						}
 
-						entity.moveRelative(strafe, forward, f8);
+						entity.moveRelative(strafe, vertical, forward, f8);
 						f6 = 0.91F;
 
 						if (entity.onGround) {
-							f6 = slipperiness * 0.91f; //entity.world.getBlockState(blockpos$pooledmutableblockpos.setPos(entity.posX, entity.getEntityBoundingBox().minY - 1.0D, entity.posZ)).getBlock().slipperiness * 0.91F;
+							f6 = slipperiness * 0.91F;
 						}
 
 						if (entity.isOnLadder()) {
@@ -169,7 +170,7 @@ public class PotionSlippery extends PotionMod {
 					}
 				} else {
 					double d4 = entity.posY;
-					entity.moveRelative(strafe, forward, 0.02F);
+					entity.moveRelative(strafe, vertical, forward, 0.02F);
 					entity.move(MoverType.SELF, entity.motionX, entity.motionY, entity.motionZ);
 					entity.motionX *= 0.5D;
 					entity.motionY *= 0.5D;
@@ -185,7 +186,7 @@ public class PotionSlippery extends PotionMod {
 				}
 			} else {
 				double d0 = entity.posY;
-				float f1 = 0.8f;//entity.getWaterSlowDown();
+				float f1 = 0.8f;
 				float f2 = 0.02F;
 				float f3 = (float) EnchantmentHelper.getDepthStriderModifier(entity);
 
@@ -202,7 +203,7 @@ public class PotionSlippery extends PotionMod {
 					f2 += (entity.getAIMoveSpeed() - f2) * f3 / 3.0F;
 				}
 
-				entity.moveRelative(strafe, forward, f2);
+				entity.moveRelative(strafe, vertical, forward, f2);
 				entity.move(MoverType.SELF, entity.motionX, entity.motionY, entity.motionZ);
 				entity.motionX *= (double) f1;
 				entity.motionY *= 0.800000011920929D;
@@ -221,7 +222,8 @@ public class PotionSlippery extends PotionMod {
 		entity.prevLimbSwingAmount = entity.limbSwingAmount;
 		double d5 = entity.posX - entity.prevPosX;
 		double d7 = entity.posZ - entity.prevPosZ;
-		float f10 = MathHelper.sqrt(d5 * d5 + d7 * d7) * 4.0F;
+		double d9 = entity instanceof net.minecraft.entity.passive.EntityFlying ? entity.posY - entity.prevPosY : 0.0D;
+		float f10 = MathHelper.sqrt(d5 * d5 + d9 * d9 + d7 * d7) * 4.0F;
 
 		if (f10 > 1.0F) {
 			f10 = 1.0F;

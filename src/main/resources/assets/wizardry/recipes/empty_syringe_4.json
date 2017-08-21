@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " A ",
+    "A A",
+    "AA "
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:glass_pane"
+    }
+  },
+  "result": {
+    "item": "wizardry:syringe"
+  }
+}

@@ -6,7 +6,7 @@ import com.teamwizardry.wizardry.api.util.RandUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
@@ -39,7 +39,7 @@ public class LightningRenderer {
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
-	private static VertexBuffer pos(VertexBuffer vb, Vec3d pos) {
+	private static BufferBuilder pos(BufferBuilder vb, Vec3d pos) {
 		return vb.pos(pos.x, pos.y, pos.z);
 	}
 
@@ -86,7 +86,7 @@ public class LightningRenderer {
 			GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE);
 
 			Tessellator tessellator = Tessellator.getInstance();
-			VertexBuffer vb = tessellator.getBuffer();
+			BufferBuilder vb = tessellator.getBuffer();
 
 			for (int i = 1; i < points.size() - 1; i++) {
 

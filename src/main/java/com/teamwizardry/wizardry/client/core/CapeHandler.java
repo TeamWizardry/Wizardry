@@ -15,9 +15,9 @@ import com.teamwizardry.wizardry.client.cloth.Sphere;
 import com.teamwizardry.wizardry.common.network.PacketSyncCape;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,7 +26,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderLivingEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -45,7 +44,7 @@ public class CapeHandler {
 	private final Map<EntityLivingBase, Cloth> cloths = new WeakHashMap<>();
 
 	private CapeHandler() {
-		MinecraftForge.EVENT_BUS.register(this);
+		//MinecraftForge.EVENT_BUS.register(this);
 		basePointsSet();
 	}
 
@@ -202,7 +201,7 @@ public class CapeHandler {
 		Cloth c = cloths.get(event.getEntity());
 
 		Tessellator tess = Tessellator.getInstance();
-		VertexBuffer vb = tess.getBuffer();
+		BufferBuilder vb = tess.getBuffer();
 
 		GlStateManager.pushAttrib();
 		GlStateManager.pushMatrix();
@@ -276,7 +275,7 @@ public class CapeHandler {
 		GlStateManager.popAttrib();
 	}
 
-	private VertexBuffer vecPos(VertexBuffer vb, Vec3d lastTick, Vec3d pos, float partialTicks) {
+	private BufferBuilder vecPos(BufferBuilder vb, Vec3d lastTick, Vec3d pos, float partialTicks) {
 		if (lastTick == null)
 			lastTick = pos;
 		if (pos == null)

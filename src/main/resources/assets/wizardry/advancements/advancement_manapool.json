@@ -1,0 +1,12 @@
+{
+  "display": {
+    "icon": {
+      "item": "wizardry:mana_orb"
+    },
+    "title": "Not a Mana Pool",
+    "description": {
+      "text": "Find a pool of liquid mana in your travels.",
+      "italic": true
+    }
+  }
+}

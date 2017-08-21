@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.common.block;
 
 import com.teamwizardry.librarianlib.features.base.ModCreativeTab;
-import com.teamwizardry.librarianlib.features.base.block.BlockModContainer;
+import com.teamwizardry.librarianlib.features.base.block.tile.BlockModContainer;
 import com.teamwizardry.wizardry.common.tile.TileLight;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;

@@ -21,7 +21,7 @@ import net.minecraft.util.math.Vec3d;
 public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCraftingPlate> {
 
 	@Override
-	public void renderTileEntityAt(TileCraftingPlate te, double x, double y, double z, float partialTicks, int destroyStage) {
+	public void render(TileCraftingPlate te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
 		if (te.getBlockType() instanceof IStructure)
 			if (!((IStructure) te.getBlockType()).renderBoundries(te.getWorld(), te.getPos())) return;
 

@@ -26,6 +26,8 @@ public class TeleportUtil {
 		WorldServer worldServer = server.getWorld(dimension);
 		player.addExperienceLevel(0);
 
+		if (worldServer.getMinecraftServer() == null) return;
+
 		worldServer.getMinecraftServer().getPlayerList().transferPlayerToDimension(entityPlayerMP, dimension, new CustomTeleporter(worldServer, x, y, z));
 		player.setPositionAndUpdate(x, y, z);
 		if (oldDimension == 1) {

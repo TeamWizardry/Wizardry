@@ -4,9 +4,9 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.world.biome.BiomeUnderWorld;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,7 +17,7 @@ import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.IChunkGenerator;
+import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraftforge.client.IRenderHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -134,7 +134,7 @@ public class WorldProviderTorikki extends WorldProvider {
 
 					GlStateManager.depthMask(false);
 					Tessellator tessellator = Tessellator.getInstance();
-					VertexBuffer vertexbuffer = tessellator.getBuffer();
+					BufferBuilder vertexbuffer = tessellator.getBuffer();
 
 					for (int i = 0; i < 6; ++i) {
 						GlStateManager.pushMatrix();

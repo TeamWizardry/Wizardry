@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "wizardry:syringe_steroid"
+    }
+  ],
+  "result": {
+    "item": "wizardry:syringe"
+  }
+}

@@ -3,6 +3,8 @@ package com.teamwizardry.wizardry.init;
 
 import com.teamwizardry.wizardry.common.block.*;
 import com.teamwizardry.wizardry.common.block.wisdomwood.*;
+import com.teamwizardry.wizardry.common.fluid.BlockFluidMana;
+import com.teamwizardry.wizardry.common.fluid.BlockFluidNacre;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 
@@ -13,6 +15,9 @@ public class ModBlocks {
 
 	public static Material NACRE_MATERIAL = new MaterialNacre(MapColor.WATER);
 	public static Material MANA_MATERIAL = new MaterialMana(MapColor.WATER);
+
+	public static BlockFluidMana FLUID_MANA;
+	public static BlockFluidNacre FLUID_NACRE;
 
 	public static BlockCraftingPlate CRAFTING_PLATE;
 	public static BlockMagiciansWorktable MAGICIANS_WORKTABLE;
@@ -39,6 +44,9 @@ public class ModBlocks {
 	public static BlockTorikkiGrass TORIKKI_GRASS;
 
 	public static void init() {
+		FLUID_MANA  = new BlockFluidMana();
+		FLUID_NACRE = new BlockFluidNacre();
+
 		CRAFTING_PLATE = new BlockCraftingPlate();
 		MAGICIANS_WORKTABLE = new BlockMagiciansWorktable();
 		MANA_BATTERY = new BlockManaBattery();

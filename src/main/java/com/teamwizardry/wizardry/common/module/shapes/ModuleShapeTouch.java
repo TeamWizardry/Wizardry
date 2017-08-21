@@ -13,7 +13,6 @@ import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
@@ -64,15 +63,14 @@ public class ModuleShapeTouch extends ModuleShape {
 		if (!isHead() && targetHit == null) return true;
 
 		RayTraceResult result = new RayTrace(
-				spell.world,
-				look,
-				isHead() ? origin : targetHit,
-				finalEntity instanceof EntityPlayerMP ?
-						((EntityPlayerMP) finalEntity).interactionManager.getBlockReachDistance() : 5).setSkipEntity(finalEntity).setReturnLastUncollidableBlock(true).setIgnoreBlocksWithoutBoundingBoxes(false).trace();
+				spell.world, look, isHead() ? origin : targetHit,
+				finalEntity instanceof EntityPlayerMP ? ((EntityPlayerMP) finalEntity).interactionManager.getBlockReachDistance() : 5)
+				.setSkipEntity(finalEntity)
+				.setReturnLastUncollidableBlock(true)
+				.setIgnoreBlocksWithoutBoundingBoxes(false)
+				.trace();
 
 		if (result == null) return true;
-
-		Minecraft.getMinecraft().player.sendChatMessage(finalEntity == null ? "null" : finalEntity.getName() + " - " + (result.entityHit != null ? result.entityHit.getName() : "null") + "");
 
 		spell.processBlock(result.getBlockPos(), result.sideHit, result.hitVec);
 

@@ -51,15 +51,6 @@ gui.physicsbook.defaulttitle=Physics Book
 fluid.wizardry.nacre_fluid=Nacre
 fluid.wizardry.mana_fluid=Mana
 
-achievement.wizardry.book=You're a Wizard, Harry
-achievement.wizardry.book.desc=Create a book to aid in your delve into magic
-achievement.wizardry.manapool=Not a Mana Pool
-achievement.wizardry.manapool.desc=Discover a pool of liquid Mana in your travels
-achievement.wizardry.devildust=Sugar and Spice
-achievement.wizardry.devildust.desc=Melt book in fire to make Devil Dust
-achievement.wizardry.crunch=§oCRUNCH.§a
-achievement.wizardry.crunch.desc=Crash straight through Bedrock to the Underworld above
-
 death.attack.wizardry.mana=%s drowned in power
 death.attack.wizardry.crash=%s was pulverized
 death.attack.wizardry.crash.player=%s was pulverized by %s

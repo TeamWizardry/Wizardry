@@ -9,7 +9,7 @@ public enum ModuleType {
 
 	public String name;
 	
-	private ModuleType(String name) {
+	ModuleType(String name) {
 		this.name = name;
 	}
 }

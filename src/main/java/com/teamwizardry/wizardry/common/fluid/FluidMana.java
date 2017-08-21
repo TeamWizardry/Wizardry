@@ -11,6 +11,7 @@ public class FluidMana extends Fluid {
 	public FluidMana() {
 		super("wizardry.mana_fluid", new ResourceLocation(Wizardry.MODID, "fluid/mana_still"), new ResourceLocation(Wizardry.MODID, "fluid/mana_flowing"));
 		FluidRegistry.registerFluid(this);
+		FluidRegistry.addBucketForFluid(this);
 		setViscosity(500);
 		setTemperature(200);
 		setLuminosity(3);

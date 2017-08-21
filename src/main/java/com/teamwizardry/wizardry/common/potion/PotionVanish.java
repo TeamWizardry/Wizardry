@@ -40,15 +40,15 @@ import java.util.List;
 // TODO: other player testing, proper in/out fading
 public class PotionVanish extends PotionMod {
 
-	private Function2<RenderLivingBase, Object[], Object> interpolateRotation = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, new String[]{"interpolateRotation", "func_77034_a", "a"}, float.class, float.class, float.class);
-	private Function2<RenderLivingBase, Object[], Object> renderLivingAt = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, new String[]{"renderLivingAt", "func_77039_a", "a"}, EntityLivingBase.class, double.class, double.class, double.class);
-	private Function2<RenderLivingBase, Object[], Object> handleRotationFloat = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, new String[]{"handleRotationFloat", "func_77044_a", "b"}, EntityLivingBase.class, float.class);
-	private Function2<RenderLivingBase, Object[], Object> applyRotations = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, new String[]{"applyRotations", "func_77043_a", "a"}, EntityLivingBase.class, float.class, float.class, float.class);
-	private Function2<RenderLivingBase, Object[], Object> renderModel = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, new String[]{"renderModel", "func_77036_a", "a"}, EntityLivingBase.class, float.class, float.class, float.class, float.class, float.class, float.class);
-	private Function2<RenderLivingBase, Object[], Object> renderLayers = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, new String[]{"renderLayers", "func_177093_a", "a"}, EntityLivingBase.class, float.class, float.class, float.class, float.class, float.class, float.class, float.class);
-	private Function2<RenderLivingBase, Object[], Object> setDoRenderBrightness = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, new String[]{"setDoRenderBrightness", "func_177090_c", "d"}, EntityLivingBase.class, float.class);
-	private Function2<RenderLivingBase, Object[], Object> unsetBrightness = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, new String[]{"unsetBrightness", "func_177091_f", "g"});
-	private Function2<RenderLivingBase, Object[], Object> setBrightness = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, new String[]{"setBrightness", "func_177092_a", "a"}, EntityLivingBase.class, float.class, boolean.class);
+	private Function2<RenderLivingBase, Object[], Object> interpolateRotation = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, "interpolateRotation", "func_77034_a", float.class, float.class, float.class);
+	private Function2<RenderLivingBase, Object[], Object> renderLivingAt = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class       , "renderLivingAt", "func_77039_a", EntityLivingBase.class, double.class, double.class, double.class);
+	private Function2<RenderLivingBase, Object[], Object> handleRotationFloat = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class  , "handleRotationFloat", "func_77044_a", EntityLivingBase.class, float.class);
+	private Function2<RenderLivingBase, Object[], Object> applyRotations = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class       , "applyRotations", "func_77043_a", EntityLivingBase.class, float.class, float.class, float.class);
+	private Function2<RenderLivingBase, Object[], Object> renderModel = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class          , "renderModel", "func_77036_a", EntityLivingBase.class, float.class, float.class, float.class, float.class, float.class, float.class);
+	private Function2<RenderLivingBase, Object[], Object> renderLayers = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class         , "renderLayers", "func_177093_a", EntityLivingBase.class, float.class, float.class, float.class, float.class, float.class, float.class, float.class);
+	private Function2<RenderLivingBase, Object[], Object> setDoRenderBrightness = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, "setDoRenderBrightness", "func_177090_c", EntityLivingBase.class, float.class);
+	private Function2<RenderLivingBase, Object[], Object> unsetBrightness = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class      , "unsetBrightness", "func_177091_f");
+	private Function2<RenderLivingBase, Object[], Object> setBrightness = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class        , "setBrightness", "func_177092_a", EntityLivingBase.class, float.class, boolean.class);
 	private Function1<Render, Object> renderOutlines = MethodHandleHelper.wrapperForGetter(Render.class, "renderOutlines", "field_188301_f", "e");
 	private Function1<RenderLivingBase, Object> renderMarker = MethodHandleHelper.wrapperForGetter(RenderLivingBase.class, "renderMarker", "field_188323_j", "i");
 	private Function1<RenderLivingBase, Object> layerRenderers = MethodHandleHelper.wrapperForGetter(RenderLivingBase.class, "layerRenderers", "field_177097_h", "a");
