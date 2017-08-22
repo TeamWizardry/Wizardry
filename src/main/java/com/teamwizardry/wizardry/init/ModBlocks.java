@@ -5,12 +5,18 @@ import com.teamwizardry.wizardry.common.block.*;
 import com.teamwizardry.wizardry.common.block.wisdomwood.*;
 import com.teamwizardry.wizardry.common.fluid.BlockFluidMana;
 import com.teamwizardry.wizardry.common.fluid.BlockFluidNacre;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.registries.IForgeRegistry;
 
 /**
  * Created by Saad on 3/24/2016.
  */
+@Mod.EventBusSubscriber
 public class ModBlocks {
 
 	public static Material NACRE_MATERIAL = new MaterialNacre(MapColor.WATER);
@@ -43,9 +49,15 @@ public class ModBlocks {
 
 	public static BlockTorikkiGrass TORIKKI_GRASS;
 
+	@SubscribeEvent
+	public static void register(RegistryEvent.Register<Block> evt) {
+		IForgeRegistry<Block> r = evt.getRegistry();
+
+		r.register(FLUID_MANA = new BlockFluidMana());
+		r.register(FLUID_NACRE = new BlockFluidNacre());
+	}
+
 	public static void init() {
-		FLUID_MANA  = new BlockFluidMana();
-		FLUID_NACRE = new BlockFluidNacre();
 
 		CRAFTING_PLATE = new BlockCraftingPlate();
 		MAGICIANS_WORKTABLE = new BlockMagiciansWorktable();

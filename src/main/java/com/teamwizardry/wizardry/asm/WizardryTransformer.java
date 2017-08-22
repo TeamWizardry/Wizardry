@@ -2,7 +2,7 @@ package com.teamwizardry.wizardry.asm;
 
 import com.teamwizardry.librarianlib.asm.LibLibTransformer;
 import net.minecraft.launchwrapper.IClassTransformer;
-import org.apache.logging.log4j.LogManager;
+import net.minecraftforge.fml.common.FMLLog;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.*;
@@ -145,7 +145,7 @@ public class WizardryTransformer implements IClassTransformer {
 	// BOILERPLATE =====================================================================================================
 
 	public static void log(String str) {
-		LogManager.getLogger().info("[Wizardry ASM] %s", str);
+		FMLLog.info("[Wizardry ASM] %s", str);
 	}
 
 	public static byte[] transform(byte[] basicClass, MethodSignature sig, String simpleDesc, MethodAction action) {

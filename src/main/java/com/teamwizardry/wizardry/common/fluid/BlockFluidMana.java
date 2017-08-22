@@ -41,7 +41,6 @@ import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -59,7 +58,6 @@ public class BlockFluidMana extends BlockFluidClassic {
 	public BlockFluidMana() {
 		super(FluidMana.instance, Material.WATER);
 		setRegistryName("wizardry_mana");
-		ForgeRegistries.BLOCKS.register(this);
 		setQuantaPerBlock(6);
 		setUnlocalizedName("mana");
 	}

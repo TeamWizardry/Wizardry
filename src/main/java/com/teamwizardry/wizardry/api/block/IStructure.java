@@ -40,12 +40,13 @@ public interface IStructure {
 				IBlockState state = world.getBlockState(newPos);
 				if (state.getBlock() == info.blockState.getBlock()) continue;
 
-				if (world.isRemote)
-					if (state.getBlock() != Blocks.AIR && info.blockState.getBlock() != state.getBlock()) {
+				if (newPos.toLong() != pos.toLong() && state.getBlock() != Blocks.AIR && info.blockState.getBlock() != state.getBlock()) {
+					if (world.isRemote) {
 						LibParticles.STRUCTURE_FLAIR(world, new Vec3d(newPos).addVector(0.5, 0.5, 0.5), Color.RED);
 						LibParticles.STRUCTURE_BEACON(world, new Vec3d(newPos).addVector(0.5, 0.5, 0.5), Color.RED);
-						return false;
 					}
+					return false;
+				}
 
 				boolean blockAvailable = false;
 				if (!player.isCreative())
@@ -58,7 +59,9 @@ public interface IStructure {
 						}
 				if (!blockAvailable && !player.isCreative()) continue;
 
-				world.setBlockState(newPos, info.blockState, 2);
+				if (newPos.toLong() == pos.toLong()) continue;
+
+				world.setBlockState(newPos, info.blockState);
 				if (world.isRemote)
 					LibParticles.STRUCTURE_FLAIR(world, new Vec3d(newPos).addVector(0.5, 0.5, 0.5), Color.BLUE);
 				complete = false;

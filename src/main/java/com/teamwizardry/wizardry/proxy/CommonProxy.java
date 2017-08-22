@@ -59,8 +59,6 @@ public class CommonProxy {
 		WizardryPacketHandler.registerMessages();
 		NetworkRegistry.INSTANCE.registerGuiHandler(Wizardry.instance, new GuiHandler());
 
-		ModStructures.INSTANCE.getClass();
-
 		Wizardry.underWorld = DimensionType.register("underworld", "_dim", tempFix, WorldProviderUnderWorld.class, false);
 		DimensionManager.registerDimension(tempFix, Wizardry.underWorld);
 
@@ -91,6 +89,8 @@ public class CommonProxy {
 	}
 
 	public void postInit(FMLPostInitializationEvent event) {
+		ModStructures.INSTANCE.getClass();
+
 		File moduleDirectory = new File(directory, "modules");
 		if (!moduleDirectory.exists())
 			if (!moduleDirectory.mkdirs()) {

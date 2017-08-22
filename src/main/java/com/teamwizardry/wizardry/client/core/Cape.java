@@ -40,6 +40,20 @@ class Constraint {
 		this.hard = hard;
 	}
 
+	Constraint(Vertex a, Vertex b, boolean hard) {
+		this.a = a;
+		this.b = b;
+		this.length = a.pos.subtract(b.pos).lengthVector();
+		this.hard = hard;
+	}
+
+	Constraint(Vertex a, Vertex b) {
+		this.a = a;
+		this.b = b;
+		this.length = a.pos.subtract(b.pos).lengthVector();
+		this.hard = false;
+	}
+
 	void resolve(double coeff) {
 		if (a.pinned && b.pinned) return;
 		Vec3d delta = b.pos.subtract(a.pos);
@@ -191,16 +205,16 @@ class GridCloth implements ClothDefinition {
 					Vec3d normal() {
 						Vec3d c = this.pos;
 
-						if (!valid(finalW, finalH - 1)) return null;
+						if (!valid(finalW, finalH - 1)) return Vec3d.ZERO;
 						Vec3d u = list.get(getI(finalW, finalH - 1)).pos;
 
-						if (!valid(finalW, finalH + 1)) return null;
+						if (!valid(finalW, finalH + 1)) return Vec3d.ZERO;
 						Vec3d d = list.get(getI(finalW, finalH + 1)).pos;
 
-						if (!valid(finalW - 1, finalH)) return null;
+						if (!valid(finalW - 1, finalH)) return Vec3d.ZERO;
 						Vec3d l = list.get(getI(finalW - 1, finalH)).pos;
 
-						if (!valid(finalW + 1, finalH)) return null;
+						if (!valid(finalW + 1, finalH)) return Vec3d.ZERO;
 						Vec3d r = list.get(getI(finalW + 1, finalH)).pos;
 
 						Vec3d avg = Vec3d.ZERO;
@@ -224,7 +238,6 @@ class GridCloth implements ClothDefinition {
 				};
 
 				list.add(vertex);
-
 			}
 		}
 	}
@@ -235,13 +248,13 @@ class GridCloth implements ClothDefinition {
 		int h = getH(index);
 
 		if (valid(w, h + 1))
-			constraints.add(new Constraint(v, list.get(getI(w, h + 1)), (v.pos.subtract(list.get(getI(w, h + 1)).pos).lengthVector()), true)); // down
+			constraints.add(new Constraint(v, list.get(getI(w, h + 1)), true)); // down
 		if (valid(w + 1, h))
-			constraints.add(new Constraint(v, list.get(getI(w + 1, h)), (v.pos.subtract(list.get(getI(w + 1, h)).pos).lengthVector()), false)); // right
+			constraints.add(new Constraint(v, list.get(getI(w + 1, h)))); // right
 		if (valid(w + 1, h + 1))
-			constraints.add(new Constraint(v, list.get(getI(w + 1, h + 1)), (v.pos.subtract(list.get(getI(w + 1, h + 1)).pos).lengthVector()), false)); // down-right
+			constraints.add(new Constraint(v, list.get(getI(w + 1, h + 1)))); // down-right
 		if (valid(w - 1, h + 1))
-			constraints.add(new Constraint(v, list.get(getI(w - 1, h + 1)), (v.pos.subtract(list.get(getI(w - 1, h + 1)).pos).lengthVector()), false)); // down-left
+			constraints.add(new Constraint(v, list.get(getI(w - 1, h + 1)))); // down-left
 	}
 
 	private int getW(int index) {
@@ -253,11 +266,11 @@ class GridCloth implements ClothDefinition {
 	}
 
 	private int getI(int w, int h) {
-		return w + (width + 1) * h;
+		return w + width * h;
 	}
 
 	private boolean valid(int w, int h) {
-		return (w >= 0 && h >= 0) && (w <= width && h <= height);
+		return (w >= 0 && h >= 0) && (w < width && h < height);
 	}
 }
 
@@ -281,7 +294,7 @@ class LineCloth implements ClothDefinition {
 		addPoints(newPoints);
 
 		for (int i = 0; i < length - 1; i++) {
-			newConstraints.add(new Constraint(newPoints.get(i), newPoints.get(i + 1), (newPoints.get(i).pos.subtract(newPoints.get(i + 1).pos)).lengthVector(), true));
+			newConstraints.add(new Constraint(newPoints.get(i), newPoints.get(i + 1), true));
 		}
 
 		points.addAll(newPoints);
@@ -289,7 +302,7 @@ class LineCloth implements ClothDefinition {
 	}
 
 	private void addPoints(ArrayList<Vertex> list) {
-		for (int i = 0; i < length - 1; i++) {
+		for (int i = 0; i < length; i++) {
 			Vertex vertex = new Vertex(origin.add(unit.scale(i))) {
 				@Override
 				Vec3d normal() {
