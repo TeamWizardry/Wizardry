@@ -13,8 +13,8 @@ import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
-import com.teamwizardry.wizardry.common.fluid.BlockFluidMana;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
+import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import com.teamwizardry.wizardry.proxy.ClientProxy;
 import net.minecraft.client.Minecraft;
@@ -93,7 +93,7 @@ public class TileManaBatteryRenderer extends TileEntitySpecialRenderer<TileManaB
 		int count = 0;
 		for (int i = -4; i < 4; i++)
 			for (int j = -4; j < 4; j++)
-				if (world.getBlockState(te.getPos().add(i, -3, j)) == BlockFluidMana.instance.getDefaultState())
+				if (world.getBlockState(te.getPos().add(i, -3, j)) == ModBlocks.FLUID_MANA.getDefaultState())
 					count++;
 
 		GlStateManager.pushMatrix();

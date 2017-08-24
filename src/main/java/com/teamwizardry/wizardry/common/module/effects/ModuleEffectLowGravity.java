@@ -60,7 +60,7 @@ public class ModuleEffectLowGravity extends ModuleEffect {
 		BlockPos targetPos = spell.getData(BLOCK_HIT);
 		Entity caster = spell.getData(CASTER);
 
-		double potency = getModifier(spell, Attributes.POTENCY, 1, 16);
+		double potency = getModifier(spell, Attributes.POTENCY, 2, 16);
 		double time = getModifier(spell, Attributes.DURATION, 50, 1000);
 
 		if (!tax(this, spell)) return false;
