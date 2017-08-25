@@ -8,5 +8,17 @@
       "text": "Crash straight through Bedrock to the Underworld above",
       "italic": true
     }
+  },
+  "criteria": {
+    "craft_hammer": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "wizardry:devil_dust"
+          }
+        ]
+      }
+    }
   }
 }

@@ -30,7 +30,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -43,7 +42,6 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.List;
 import java.util.Random;
@@ -52,12 +50,11 @@ import java.util.function.Predicate;
 
 public class BlockFluidMana extends BlockFluidClassic {
 
-	public static final BlockFluidMana instance = new BlockFluidMana();
 	public static final String REACTION_COOLDOWN = "reaction_cooldown";
 
 	public BlockFluidMana() {
 		super(FluidMana.instance, Material.WATER);
-		setRegistryName("wizardry_mana");
+		setRegistryName("mana");
 		setQuantaPerBlock(6);
 		setUnlocalizedName("mana");
 	}
@@ -216,7 +213,7 @@ public class BlockFluidMana extends BlockFluidClassic {
 
 				for (int i = -1; i <= 1; i++)
 					for (int j = -1; j <= 1; j++) {
-						if (worldIn.getBlockState(pos.add(i, 0, j)) != BlockFluidMana.instance.getDefaultState())
+						if (worldIn.getBlockState(pos.add(i, 0, j)) != ModBlocks.FLUID_MANA.getDefaultState())
 							return false;
 					}
 
@@ -301,11 +298,5 @@ public class BlockFluidMana extends BlockFluidClassic {
 
 	public void run(Entity entity, Predicate<Entity> test, Consumer<Entity> process) {
 		if (test.test(entity)) process.accept(entity);
-	}
-
-	@Nonnull
-	@Override
-	public EnumBlockRenderType getRenderType(IBlockState state) {
-		return EnumBlockRenderType.MODEL;
 	}
 }

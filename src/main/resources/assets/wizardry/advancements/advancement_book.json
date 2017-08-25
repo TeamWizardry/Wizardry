@@ -8,5 +8,17 @@
       "text": "Create a book to aid in your delve into magic",
       "italic": true
     }
+  },
+  "criteria": {
+    "craft_hammer": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "wizardry:book"
+          }
+        ]
+      }
+    }
   }
 }

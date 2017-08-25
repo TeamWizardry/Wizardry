@@ -136,7 +136,7 @@ public class EntitySpellProjectile extends EntityMod {
 			motionY = look.y * speed;
 			motionZ = look.z * speed;
 
-			if (origin == null || getDistanceSq(origin.x, origin.y, origin.z) > 4)
+			if (getDistanceSq(origin.x, origin.y, origin.z) > 4)
 			motionY -= gravity;
 
 			move(MoverType.SELF, motionX, motionY, motionZ);

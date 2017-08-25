@@ -6,7 +6,6 @@ import com.teamwizardry.wizardry.api.block.TileManaFaucet;
 import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
-import com.teamwizardry.wizardry.common.fluid.BlockFluidMana;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
@@ -47,7 +46,7 @@ public class TileManaBattery extends TileManaFaucet implements ITickable {
 		int count = 0;
 		for (int i = -4; i < 4; i++)
 			for (int j = -4; j < 4; j++)
-				if (world.getBlockState(getPos().add(i, -3, j)) == BlockFluidMana.instance.getDefaultState())
+				if (world.getBlockState(getPos().add(i, -3, j)) == ModBlocks.FLUID_MANA.getDefaultState())
 					count++;
 
 		if (count < 21) return;
