@@ -1,15 +1,17 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    " A ", "BBB", "C C"
-
+    " A ",
+    "BBB",
+    "C C"
   ],
   "key": {
     "A": {
       "item": "minecraft:book"
     },
     "B": {
-      "item": "wizardry:wisdom_wood_slab"
+      "item": "wizardry:wisdom_wood_slab",
+      "data": 0
     },
     "C": {
       "item": "wizardry:wisdom_wood_planks"

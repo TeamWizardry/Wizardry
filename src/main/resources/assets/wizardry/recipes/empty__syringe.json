@@ -11,6 +11,7 @@
     }
   },
   "result": {
-    "item": "wizardry:syringe"
+    "item": "wizardry:syringe",
+    "data": 0
   }
 }

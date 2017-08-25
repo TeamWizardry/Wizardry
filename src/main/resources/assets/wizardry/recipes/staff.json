@@ -14,6 +14,7 @@
     }
   },
   "result": {
-    "item": "wizardry:staff"
+    "item": "wizardry:staff",
+    "data": 0
   }
 }

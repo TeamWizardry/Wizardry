@@ -2,10 +2,12 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
-      "item": "wizardry:syringe_blood"
+      "item": "wizardry:syringe",
+      "data": 2
     }
   ],
   "result": {
-    "item": "wizardry:syringe"
+    "item": "wizardry:syringe",
+    "data": 0
   }
 }
