@@ -19,7 +19,6 @@ import com.teamwizardry.wizardry.init.ModPotions;
 import kotlin.Pair;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
@@ -88,13 +87,8 @@ public class ModuleEffectZoom extends ModuleEffect {
 		else {
 			if (!tax(this, spell)) return false;
 
-			Vec3d ranged;
-			if (entityHit instanceof EntityItem && look != null) {
-				ranged = look;
-			} else {
-				ranged = entityHit.getLook(0);
-			}
-			if (look == null) return false;
+			if (look == null) return true;
+			if (origin == null) return true;
 
 			RayTraceResult trace = new RayTrace(world, look, origin, 10)
 					.setSkipEntity(entityHit)
