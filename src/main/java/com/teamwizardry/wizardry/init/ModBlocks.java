@@ -3,11 +3,11 @@ package com.teamwizardry.wizardry.init;
 
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.block.*;
+import com.teamwizardry.wizardry.common.block.fluid.BlockFluidMana;
+import com.teamwizardry.wizardry.common.block.fluid.BlockFluidNacre;
+import com.teamwizardry.wizardry.common.block.fluid.FluidMana;
+import com.teamwizardry.wizardry.common.block.fluid.FluidNacre;
 import com.teamwizardry.wizardry.common.block.wisdomwood.*;
-import com.teamwizardry.wizardry.common.fluid.BlockFluidMana;
-import com.teamwizardry.wizardry.common.fluid.BlockFluidNacre;
-import com.teamwizardry.wizardry.common.fluid.FluidMana;
-import com.teamwizardry.wizardry.common.fluid.FluidNacre;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;

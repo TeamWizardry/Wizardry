@@ -3,155 +3,66 @@ package com.teamwizardry.wizardry.client.core;
 import baubles.api.BaubleType;
 import baubles.api.BaublesApi;
 import baubles.api.cap.IBaublesItemHandler;
-import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
-import com.teamwizardry.librarianlib.features.math.Matrix4;
-import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.client.cloth.Cloth;
-import com.teamwizardry.wizardry.client.cloth.PointMass3D;
-import com.teamwizardry.wizardry.client.cloth.Sphere;
-import com.teamwizardry.wizardry.common.network.PacketSyncCape;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderLivingEvent;
-import net.minecraftforge.event.entity.item.ItemTossEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
-import java.util.*;
-import java.util.Map.Entry;
+import java.util.HashMap;
+import java.util.Random;
+import java.util.UUID;
+
 
 public class CapeHandler {
 
-	public static final CapeHandler INSTANCE = new CapeHandler();
-	private static Vec3d[] basePoints;
+	public ResourceLocation texture = new ResourceLocation(Wizardry.MODID, "textures/capes/cape_elucent_.png");
 
-	private final Map<EntityLivingBase, Cloth> cloths = new WeakHashMap<>();
+	public static CapeHandler INSTANCE = new CapeHandler();
+
+	public HashMap<UUID, CapeRenderData> capes = new HashMap<>();
 
 	private CapeHandler() {
-		//MinecraftForge.EVENT_BUS.register(this);
-		basePointsSet();
+		MinecraftForge.EVENT_BUS.register(this);
 	}
 
-	private void basePointsSet() {
-		double y = 1.4;
-		double p = 0.058;
-		basePoints = new Vec3d[]{
-				new Vec3d(8 * p, y, -2 * p),
-				new Vec3d(6 * p, y, -2 * p),
-				new Vec3d(4 * p, y, -2 * p),
-				new Vec3d(2 * p, y, -2 * p),
-				new Vec3d(0.0, y, -2 * p),
-				new Vec3d(-2 * p, y, -2 * p),
-				new Vec3d(-4 * p, y, -2 * p),
-				new Vec3d(-6 * p, y, -2 * p),
-				new Vec3d(-8 * p, y, -2 * p),
-		};
-	}
+	private static int CLOTH_WIDTH = 8;
+	private static int CLOTH_HEIGHT = 16;
 
 	@SubscribeEvent
-	public void tick(ClientTickEvent event) {
-		if (event.phase != Phase.END)
-			return;
+	public void tickPlayer(TickEvent.PlayerTickEvent event) {
+		capes.putIfAbsent(event.player.getUniqueID(), new CapeRenderData(event.player));
 
-		basePointsSet();
-
-		List<EntityLivingBase> keysToRemove = new ArrayList<>();
-
-		for (Entry<EntityLivingBase, Cloth> e : cloths.entrySet()) {
-			EntityLivingBase entity = e.getKey();
-			if (entity.isDead) {
-				keysToRemove.add(entity);
-				continue;
-			}
-
-			if ((e.getValue().masses != null) && (e.getValue().masses[0] != null)) {
-
-				Matrix4 matrix = new Matrix4(), inverse = new Matrix4();
-				matrix.translate(entity.getPositionVector());
-				matrix.rotate(Math.toRadians(entity.renderYawOffset), new Vec3d(0, -1, 0));
-
-				inverse.rotate(Math.toRadians(entity.renderYawOffset), new Vec3d(0, 1, 0));
-				inverse.translate(entity.getPositionVector().scale(-1));
-
-				Vec3d[] shoulderPoints = new Vec3d[basePoints.length];
-				for (int i = 0; i < shoulderPoints.length; i++) {
-					shoulderPoints[i] = matrix.apply(basePoints[i]);
-				}
-
-				for (int i = 0; (i < e.getValue().masses[0].length) && (i < shoulderPoints.length); i++) {
-					e.getValue().masses[0][i].origPos = e.getValue().masses[0][i].pos;
-					e.getValue().masses[0][i].pos = shoulderPoints[i];
-				}
-
-				List<Sphere> spheres = new ArrayList<>();
-
-				Vec3d[] vecs = {
-						new Vec3d(0.1, 0, 0),
-						new Vec3d(0.1, 0.25, 0),
-						new Vec3d(0.1, 0.5, 0),
-						new Vec3d(0.1, 0.75, 0),
-						new Vec3d(0.1, 1, 0),
-						new Vec3d(0.1, 1.25, 0),
-						new Vec3d(0.1, 1.5, 0),
-
-						new Vec3d(-0.1, 0, 0),
-						new Vec3d(-0.1, 0.25, 0),
-						new Vec3d(-0.1, 0.5, 0),
-						new Vec3d(-0.1, 0.75, 0),
-						new Vec3d(-0.1, 1, 0),
-						new Vec3d(-0.1, 1.25, 0),
-						new Vec3d(-0.1, 1.5, 0),
-
-						new Vec3d(0.3, 0.75, 0),
-						new Vec3d(0.3, 1, 0),
-						new Vec3d(0.3, 1.25, 0),
-
-						new Vec3d(-0.3, 0.75, 0),
-						new Vec3d(-0.3, 1, 0),
-						new Vec3d(-0.3, 1.25, 0),
-				};
-
-				for (Vec3d vec : vecs) {
-					vec = matrix.apply(vec);
-					spheres.add(new Sphere(vec, 0.25));
-				}
-
-				e.getValue().tick(entity, spheres);
-			}
-		}
-
-		for (EntityLivingBase entity : keysToRemove) {
-			cloths.remove(entity);
+		if (capes.containsKey(event.player.getUniqueID())) {
+			capes.get(event.player.getUniqueID()).update();
 		}
 	}
 
-	@SubscribeEvent
-	public void damage(ItemTossEvent event) {
-		if (event.getEntityItem().getItem().getItem() == Items.BEEF) {
-			cloths.clear();
-		}
-	}
-
-	@SuppressWarnings({"rawtypes"})
+	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void drawPlayer(RenderLivingEvent.Post event) {
 		if (!(event.getEntity() instanceof EntityPlayer)) return;
+		if (!capes.containsKey(event.getEntity().getUniqueID())) return;
+		if (event.getEntity().getHeldItemMainhand().getItem() == Items.BEEF) {
+			if (!capes.isEmpty()) capes.clear();
+			return;
+		}
 
 		boolean match = false;
 		ItemStack stack = null;
@@ -163,6 +74,8 @@ public class CapeHandler {
 				break;
 			}
 		}
+
+		// FIXME: 8/26/2017 clientproxy it
 		if (stack == null) {
 			if (Loader.isModLoaded("baubles")) {
 				IBaublesItemHandler inv = BaublesApi.getBaublesHandler(player);
@@ -178,112 +91,106 @@ public class CapeHandler {
 		}
 		if (!match) return;
 
-		float partialTicks = ClientTickHandler.getPartialTicks();
-
-		if (!cloths.containsKey(event.getEntity())) {
-			Vec3d[] shoulderPoints = new Vec3d[basePoints.length];
-
-			Matrix4 matrix = new Matrix4();
-			matrix.translate(event.getEntity().getPositionVector());
-			matrix.rotate(Math.toRadians(event.getEntity().renderYawOffset), new Vec3d(0, -1, 0));
-
-			for (int i = 0; i < shoulderPoints.length; i++) {
-				shoulderPoints[i] = matrix.apply(basePoints[i]);
-			}
-
-			cloths.put(event.getEntity(), new Cloth(
-					shoulderPoints,
-					16,
-					new Vec3d(0, 0.1, 0)
-			));
-		}
-
-		Cloth c = cloths.get(event.getEntity());
-
-		Tessellator tess = Tessellator.getInstance();
-		BufferBuilder vb = tess.getBuffer();
-
-		GlStateManager.pushAttrib();
 		GlStateManager.pushMatrix();
-		GlStateManager.translate(event.getX(), event.getY(), event.getZ());
-		GlStateManager.translate(
-				-(event.getEntity().posX - event.getEntity().lastTickPosX) * partialTicks,
-				-(event.getEntity().posY - event.getEntity().lastTickPosY) * partialTicks,
-				-(event.getEntity().posZ - event.getEntity().lastTickPosZ) * partialTicks
-		);
-		GlStateManager.translate(-event.getEntity().lastTickPosX, -event.getEntity().lastTickPosY, -event.getEntity().lastTickPosZ);
+		GlStateManager.translate(event.getX() - ((EntityPlayer) event.getEntity()).posX, event.getY() - ((EntityPlayer) event.getEntity()).posY, event.getZ() - ((EntityPlayer) event.getEntity()).posZ);
 
-		GlStateManager.disableTexture2D();
-		GlStateManager.glLineWidth(1.0f);
-		GlStateManager.disableCull();
-		GlStateManager.enableBlend();
-		GlStateManager.color(1, 1, 1, 1.0f);
+		Tessellator tessellator = Tessellator.getInstance();
+		BufferBuilder vb = tessellator.getBuffer();
 
-		vb.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
-		tess.draw();
+		// OpenGL configuration set around `tessellator.draw()` statement at bottom for organization sake
 
-		String cape;
-		if (LibrarianLib.PROXY.getResource(Wizardry.MODID, "textures/capes/cape_" + player.getName().toLowerCase() + ".png") == null) {
-			if (!ItemNBTHelper.verifyExistence(stack, "uuid")) {
-				UUID uuid = UUID.randomUUID();
-				PacketHandler.NETWORK.sendToServer(new PacketSyncCape(uuid, stack));
-				ItemNBTHelper.setUUID(stack, "uuid", uuid);
-				GlStateManager.popMatrix();
-				GlStateManager.popAttrib();
-				return;
-			}
-			UUID uuid = ItemNBTHelper.getUUID(stack, "uuid");
-			if (uuid == null) {
-				GlStateManager.popMatrix();
-				GlStateManager.popAttrib();
-				return;
-			}
-			Random r = new Random(uuid.hashCode());
-			cape = "cape_normal_" + (1 + r.nextInt(3));
-		} else {
-			cape = "cape_" + player.getName();
-		}
-
-		Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation(Wizardry.MODID, "textures/capes/" + cape + ".png"));
-		GlStateManager.enableTexture2D();
+		// VERTEX SETUP ================================================================================================
+		Minecraft.getMinecraft().renderEngine.bindTexture(texture);
 
 		vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
-		for (int x = 0; x < (c.masses.length - 1); x++) {
-			for (int y = 0; y < (c.masses[x].length - 1); y++) {
-				float minU = y / (float) (c.masses[x].length - 1);
-				float minV = x / (float) (c.masses.length - 1);
-				float maxU = (y + 1) / (float) (c.masses[x].length - 1);
-				float maxV = (x + 1) / (float) (c.masses.length - 1);
+		double height = 16 + capes.get(event.getEntity().getUniqueID()).length * 8;
 
-				PointMass3D mass = c.masses[x][y];
-				vecPos(vb, mass.origPos, mass.pos, partialTicks).tex(minU, minV).endVertex();
+		for (int h = 0; h < height; h++)
+			for (int w = 0; w < CLOTH_WIDTH; w++) {
+				vert(w, h, vb, event.getEntity().getUniqueID());
+				vert(w + 1, h, vb, event.getEntity().getUniqueID());
+				vert(w + 1, h + 1, vb, event.getEntity().getUniqueID());
+				vert(w, h + 1, vb, event.getEntity().getUniqueID());
 
-				mass = c.masses[x + 1][y];
-				vecPos(vb, mass.origPos, mass.pos, partialTicks).tex(minU, maxV).endVertex();
-
-				mass = c.masses[x + 1][y + 1];
-				vecPos(vb, mass.origPos, mass.pos, partialTicks).tex(maxU, maxV).endVertex();
-
-				mass = c.masses[x][y + 1];
-				vecPos(vb, mass.origPos, mass.pos, partialTicks).tex(maxU, minV).endVertex();
 			}
-		}
-		tess.draw();
 
+		// OpenGL ======================================================================================================
+
+		// BEGIN OPENGL CONFIGURATION
+		GlStateManager.color(1f, 1f, 1f, 1f);
+		GlStateManager.disableCull();
+
+		tessellator.draw();
 		GlStateManager.popMatrix();
-		GlStateManager.popAttrib();
 	}
 
-	private BufferBuilder vecPos(BufferBuilder vb, Vec3d lastTick, Vec3d pos, float partialTicks) {
-		if (lastTick == null)
-			lastTick = pos;
-		if (pos == null)
-			pos = lastTick;
-		return vb.pos(
-				lastTick.x + ((pos.x - lastTick.x) * partialTicks),
-				lastTick.y + ((pos.y - lastTick.y) * partialTicks),
-				lastTick.z + ((pos.z - lastTick.z) * partialTicks)
-		);
+	public Vec3d pos(int w, int h, UUID uuid) {
+		int i = w + h * (CLOTH_WIDTH + 1);
+
+		if (i >= capes.get(uuid).cloth.points.size()) {
+			return Vec3d.ZERO;
+		}
+
+		Vertex point = capes.get(uuid).cloth.points.get(i);
+
+		return point.lastPos.add(point.pos.subtract(point.lastPos).scale(ClientTickHandler.getPartialTicks()));
+	}
+
+	public void vert(int w, int h, BufferBuilder vb, UUID uuid) {
+		Vec3d vec = pos(w, h, uuid);
+		vb.pos(vec.x, vec.y, vec.z).tex((w + capes.get(uuid).length * 8) / 64.0, h / 64.0).endVertex();
+	}
+
+	public class CapeRenderData {
+
+		private int length = 4;
+		private Cape cloth;
+		private Cape pendulum;
+		private Vec3d down = new Vec3d(0, -1, 0);
+		private EntityPlayer player;
+
+		public CapeRenderData(EntityPlayer player) {
+			this.player = player;
+			length = (int) (Math.min(Math.abs(new Random().nextGaussian() * 2), 4.0));
+			cloth = new Cape(new GridCloth(
+					player.getPositionVector().subtract(new Vec3d(1, 0, 0).scale(1 / 4.0)),
+					new Vec3d(1, 0, 0).scale(1 / 16.0), new Vec3d(0, 0, 1).scale(-1).scale(1 / 16.0),
+					CLOTH_WIDTH, 16 + 8 * length));
+			pendulum = new Cape(new LineCloth(player.getPositionVector(), new Vec3d(0, -1, 0), 2));
+			for (int i = 0; i < CLOTH_WIDTH; i++) {
+				cloth.points.get(i).pinned = true;
+			}
+			pendulum.points.get(0).pinned = true;
+			pendulum.dragDampingCoeff = 1.0;
+			pendulum.gravity = new Vec3d(0, -0.1, 0);
+		}
+
+		public void update() {
+			cloth.gravity = new Vec3d(0, -0.01, 0);
+			cloth.windVelocity = new Vec3d(0, 0, 0);
+			cloth.windForce = 0.1;
+
+
+			pendulum.points.get(0).pos = player.getPositionVector();
+			pendulum.tick();
+
+			Vec3d forward = new Vec3d(player.motionX, player.motionY, player.motionZ).normalize();
+			down = (down.add(pendulum.points.get(1).pos.subtract(pendulum.points.get(0).pos))).normalize();
+
+			Vec3d side = (down.crossProduct(forward));
+			double len = side.lengthVector();
+			if (len == 0.0) side = new Vec3d(1, 0, 0);
+			else side = side.scale(len);
+
+			Vec3d origin = player.getPositionVector().subtract(side.scale(1 / 4.0));
+			Vec3d unit = side.scale(1 / 16.0);
+
+			for (int i = 0; i < CLOTH_WIDTH; i++) {
+				cloth.points.get(i).pos = origin.add(unit.scale(i));
+			}
+
+			cloth.tick();
+		}
 	}
 }

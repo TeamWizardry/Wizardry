@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.fluid;
+package com.teamwizardry.wizardry.common.block.fluid;
 
 import com.google.common.base.Predicates;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;

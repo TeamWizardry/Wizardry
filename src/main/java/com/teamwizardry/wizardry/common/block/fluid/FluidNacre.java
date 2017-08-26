@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.fluid;
+package com.teamwizardry.wizardry.common.block.fluid;
 
 import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.util.ResourceLocation;

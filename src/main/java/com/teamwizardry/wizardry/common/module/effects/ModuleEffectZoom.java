@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
-import com.teamwizardry.wizardry.api.spell.ILingeringModule;
 import com.teamwizardry.wizardry.api.spell.ProcessData;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.module.Module;
@@ -27,7 +26,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.constructPair;
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEffectZoom extends ModuleEffect implements ILingeringModule {
+public class ModuleEffectZoom extends ModuleEffect {
 
 	private static final Pair<String, Class<Vec3d>> ORIGINAL_LOC = constructPair("original_loc", Vec3d.class, new ProcessData.Process<NBTTagCompound, Vec3d>() {
 		@NotNull
@@ -108,7 +107,8 @@ public class ModuleEffectZoom extends ModuleEffect implements ILingeringModule {
 		Entity caster = spell.getData(CASTER);
 
 		if (caster == null) return;
-		//TODO
+		//TODO draw a line
+		Vec3d origin = spell.getData(ORIGINAL_LOC, caster.getPositionVector());
 
 		LibParticles.EFFECT_REGENERATE(world, caster.getPositionVector(), getPrimaryColor());
 	}
@@ -117,19 +117,5 @@ public class ModuleEffectZoom extends ModuleEffect implements ILingeringModule {
 	@Override
 	public Module copy() {
 		return cloneModule(new ModuleEffectZoom());
-	}
-
-	@Override
-	public int lingeringTime(SpellData spell) {
-		Vec3d target = spell.getData(TARGET_HIT);
-		Entity caster = spell.getData(CASTER);
-
-		if (caster == null) return 0;
-		if (target == null) return 0;
-		int time = 200;
-		Vec3d sub = target.subtract(caster.getPositionVector());
-		spell.addData(ORIGINAL_LOC, sub);
-		spell.addData(MAX_TIME, time);
-		return time;
 	}
 }

@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.proxy;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
-import com.teamwizardry.wizardry.client.core.NCapeHandler;
+import com.teamwizardry.wizardry.client.core.CapeHandler;
 import com.teamwizardry.wizardry.client.gui.GuiHandler;
 import com.teamwizardry.wizardry.common.advancement.AchievementEvents;
 import com.teamwizardry.wizardry.common.core.EventHandler;
@@ -59,7 +59,7 @@ public class CommonProxy {
 		Wizardry.underWorld = DimensionType.register("underworld", "_dim", tempFix, WorldProviderUnderWorld.class, false);
 		DimensionManager.registerDimension(tempFix, Wizardry.underWorld);
 
-		NCapeHandler.INSTANCE.getClass();
+		CapeHandler.INSTANCE.getClass();
 		MinecraftForge.EVENT_BUS.register(new WorldProviderUnderWorld());
 		MinecraftForge.EVENT_BUS.register(new EventHandler());
 		MinecraftForge.EVENT_BUS.register(new AchievementEvents());

@@ -1,8 +1,8 @@
 package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
-import com.teamwizardry.wizardry.common.fluid.FluidMana;
-import com.teamwizardry.wizardry.common.fluid.FluidNacre;
+import com.teamwizardry.wizardry.common.block.fluid.FluidMana;
+import com.teamwizardry.wizardry.common.block.fluid.FluidNacre;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;

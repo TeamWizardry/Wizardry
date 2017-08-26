@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.fluid;
+package com.teamwizardry.wizardry.common.block.fluid;
 
 import net.minecraft.block.material.Material;
 import net.minecraftforge.fluids.BlockFluidClassic;

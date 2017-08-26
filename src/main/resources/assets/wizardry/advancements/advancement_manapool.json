@@ -13,7 +13,7 @@
     "manapool": {
       "trigger": "minecraft:enter_block",
       "conditions": {
-        "block": "wizardry:fluid_mana"
+        "block": "wizardry:mana"
       }
     }
   }

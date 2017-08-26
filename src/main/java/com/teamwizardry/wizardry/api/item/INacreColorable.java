@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.api.item;
 import com.teamwizardry.librarianlib.features.base.item.IItemColorProvider;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.api.Constants.NBT;
-import com.teamwizardry.wizardry.common.fluid.FluidNacre;
+import com.teamwizardry.wizardry.common.block.fluid.FluidNacre;
 import kotlin.jvm.functions.Function2;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
