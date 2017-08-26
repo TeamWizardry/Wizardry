@@ -4,8 +4,10 @@ import com.teamwizardry.librarianlib.features.methodhandles.MethodHandleHelper;
 import com.teamwizardry.librarianlib.features.utilities.client.CustomBlockMapSprites;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
-import com.teamwizardry.wizardry.client.core.*;
-import com.teamwizardry.wizardry.client.fx.Shaders;
+import com.teamwizardry.wizardry.client.core.CapeHandler;
+import com.teamwizardry.wizardry.client.core.CooldownHandler;
+import com.teamwizardry.wizardry.client.core.HudEventHandler;
+import com.teamwizardry.wizardry.client.core.LightningRenderer;
 import com.teamwizardry.wizardry.client.render.BloodRenderLayer;
 import com.teamwizardry.wizardry.common.core.version.VersionChecker;
 import com.teamwizardry.wizardry.init.ModBlocks;
@@ -21,7 +23,6 @@ import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -34,6 +35,7 @@ import java.util.Map;
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class ClientProxy extends CommonProxy implements IResourceManagerReloadListener {
 
+	// Trigger hand swinging when on staff cooldowns
 	private static Function2<ItemRenderer, Object, Unit> itemStackMainHandHandler = MethodHandleHelper.wrapperForSetter(ItemRenderer.class, "d", "field_187467_d", "itemStackMainHand");
 	private static Function2<ItemRenderer, Object, Unit> itemStackOffHandHandler = MethodHandleHelper.wrapperForSetter(ItemRenderer.class, "e", "field_187468_e", "itemStackOffHand");
 
@@ -41,19 +43,15 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 	public void preInit(FMLPreInitializationEvent event) {
 		super.preInit(event);
 
-		LightningRenderer.INSTANCE.getClass();
-		CooldownHandler.INSTANCE.getClass();
+		MinecraftForge.EVENT_BUS.register(new ModBlocks());
 		MinecraftForge.EVENT_BUS.register(new HudEventHandler());
-
 		if (ConfigValues.versionCheckerEnabled)
 			MinecraftForge.EVENT_BUS.register(VersionChecker.INSTANCE);
 
-		new WizardryClientMethodHandles(); // Load the class
-
-		new Shaders();
-
-		ModBlocks.initModel();
 		ModEntities.initModels();
+
+		LightningRenderer.INSTANCE.getClass();
+		CooldownHandler.INSTANCE.getClass();
 
 		CustomBlockMapSprites.INSTANCE.register(new ResourceLocation(Wizardry.MODID, "blocks/mana_crystal_ring"));
 		CustomBlockMapSprites.INSTANCE.register(new ResourceLocation(Wizardry.MODID, "blocks/mana_crystal_ring_outer"));
@@ -67,7 +65,6 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 		super.init(event);
 
 		CapeHandler.INSTANCE.getClass(); // ...
-		OBJLoader.INSTANCE.addDomain(Wizardry.MODID);
 
 		Map<String, RenderPlayer> skinMap = Minecraft.getMinecraft().getRenderManager().getSkinMap();
 		RenderPlayer render = skinMap.get("default");
@@ -86,15 +83,15 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 	}
 
 	@Override
-	public void onResourceManagerReload(@Nonnull IResourceManager resourceManager) {
-		MinecraftForge.EVENT_BUS.post(new ResourceReloadEvent(resourceManager));
-	}
-
-	@Override
 	public void setItemStackHandHandler(EnumHand hand, ItemStack stack) {
 		if (hand == EnumHand.MAIN_HAND)
 			itemStackMainHandHandler.invoke(Minecraft.getMinecraft().getItemRenderer(), stack);
 		else itemStackOffHandHandler.invoke(Minecraft.getMinecraft().getItemRenderer(), stack);
+	}
+
+	@Override
+	public void onResourceManagerReload(@Nonnull IResourceManager resourceManager) {
+		MinecraftForge.EVENT_BUS.post(new ResourceReloadEvent(resourceManager));
 	}
 
 	public static class ResourceReloadEvent extends Event {

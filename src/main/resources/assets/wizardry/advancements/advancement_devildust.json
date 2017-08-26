@@ -10,7 +10,7 @@
     }
   },
   "criteria": {
-    "craft_hammer": {
+    "craft_devil_dust": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [

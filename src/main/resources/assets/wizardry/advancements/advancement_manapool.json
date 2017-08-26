@@ -8,5 +8,13 @@
       "text": "Find a pool of liquid mana in your travels.",
       "italic": true
     }
+  },
+  "criteria": {
+    "manapool": {
+      "trigger": "minecraft:enter_block",
+      "conditions": {
+        "block": "wizardry:fluid_mana"
+      }
+    }
   }
 }

@@ -1,16 +1,31 @@
 package com.teamwizardry.wizardry.init;
 
 
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.block.*;
 import com.teamwizardry.wizardry.common.block.wisdomwood.*;
 import com.teamwizardry.wizardry.common.fluid.BlockFluidMana;
 import com.teamwizardry.wizardry.common.fluid.BlockFluidNacre;
+import com.teamwizardry.wizardry.common.fluid.FluidMana;
+import com.teamwizardry.wizardry.common.fluid.FluidNacre;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.ItemMeshDefinition;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.statemap.StateMapperBase;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.registries.IForgeRegistry;
 
 /**
@@ -83,10 +98,49 @@ public class ModBlocks {
 		TORIKKI_GRASS = new BlockTorikkiGrass();
 	}
 
-	public static void initModel() {
+	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
+	public void registerModels(ModelRegistryEvent event) {
 		CRAFTING_PLATE.initModel();
 		MANA_BATTERY.initModel();
 		PEARL_HOLDER.initModel();
 		JAR.initModel();
+		registerFluidRender(FluidMana.instance);
+		registerFluidRender(FluidNacre.instance);
+	}
+
+	@SideOnly(Side.CLIENT)
+	private void registerFluidRender(Fluid f) {
+		FluidCustomModelMapper mapper = new FluidCustomModelMapper(f);
+		Block block = f.getBlock();
+		if (block != null) {
+			Item item = Item.getItemFromBlock(block);
+			if (item != Items.AIR) {
+				ModelLoader.registerItemVariants(item);
+				ModelLoader.setCustomMeshDefinition(item, mapper);
+			} else {
+				ModelLoader.setCustomStateMapper(block, mapper);
+			}
+		}
+	}
+
+	public static class FluidCustomModelMapper extends StateMapperBase implements ItemMeshDefinition {
+
+		private final ModelResourceLocation res;
+
+		public FluidCustomModelMapper(Fluid f) {
+			this.res = new ModelResourceLocation(Wizardry.MODID + ":blockfluids", f.getName());
+		}
+
+		@Override
+		public ModelResourceLocation getModelLocation(ItemStack stack) {
+			return res;
+		}
+
+		@Override
+		public ModelResourceLocation getModelResourceLocation(IBlockState state) {
+			return res;
+		}
+
 	}
 }

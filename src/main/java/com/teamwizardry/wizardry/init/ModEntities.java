@@ -37,6 +37,7 @@ public class ModEntities {
 		i++;
 	}
 
+	// TODO: ModelEvent?
 	public static void initModels() {
 		RenderingRegistry.registerEntityRenderingHandler(EntityGavreel.class, manager -> new RenderGavreel(manager, new ModelGavreel()));
 		RenderingRegistry.registerEntityRenderingHandler(EntitySpiritWight.class, manager -> new RenderSpiritWight(manager, new ModelSpiritWight()));

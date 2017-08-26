@@ -48,8 +48,8 @@ tile.wizardry:wisdom_wood.name=Wisdom Wood
 
 gui.physicsbook.defaulttitle=Physics Book
 
-fluid.wizardry.nacre_fluid=Nacre
-fluid.wizardry.mana_fluid=Mana
+fluid.nacre_fluid=Nacre
+fluid.mana_fluid=Mana
 
 death.attack.wizardry.mana=%s drowned in power
 death.attack.wizardry.crash=%s was pulverized

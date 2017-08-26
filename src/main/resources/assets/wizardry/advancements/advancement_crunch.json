@@ -8,5 +8,14 @@
       "text": "Melt redstone in fire to make Devil Dust",
       "italic": true
     }
+  },
+  "criteria": {
+    "go_to_underworld": {
+      "trigger": "minecraft:changed_dimension",
+      "conditions": {
+        "from": "overworld",
+        "to": "underworld"
+      }
+    }
   }
 }

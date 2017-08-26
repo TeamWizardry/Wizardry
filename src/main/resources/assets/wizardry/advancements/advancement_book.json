@@ -10,7 +10,7 @@
     }
   },
   "criteria": {
-    "craft_hammer": {
+    "craft_book": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
