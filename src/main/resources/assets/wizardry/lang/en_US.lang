@@ -37,8 +37,8 @@ item.wizardry:cape.name=Cape
 item.wizardry:magic_wand.name=Magic Wand
 item.wizardry:syringe_blood.name=Blood Syringe
 item.wizardry:light.name=Light
-item.wizardry:wisdom_stick.name=Light
 
+item.wizardry:wisdom_stick.name=Wisdom Wood Stick
 tile.wizardry:wisdom_wood_log.name=Wisdom Wood Log
 tile.wizardry:wisdom_wood_planks.name=Wisdom Wood Planks
 tile.wizardry:wisdom_wood_pigmented_planks.name=Wisdom Wood Pigmented Planks
