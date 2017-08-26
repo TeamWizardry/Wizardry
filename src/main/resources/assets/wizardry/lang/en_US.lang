@@ -1,4 +1,4 @@
-tile.wizardry:crafting_plate.name=Crafting Plate
+﻿tile.wizardry:crafting_plate.name=Crafting Plate
 tile.wizardry:magicians_worktable.name=Magician's Worktable
 tile.wizardry:mana_battery.name=Mana Battery
 tile.wizardry:nacre.name=Liquid Nacre
@@ -7,7 +7,7 @@ tile.wizardry:cloud.name=Cloud
 tile.wizardry:jar_block.name=Jar
 tile.wizardry:pearl_holder.name=Pearl Holder
 tile.wizardry:nacre_block.name=Nacre Block
-tile.wizardry:nacre_block_brick.name=Nacre Brick Block
+tile.wizardry:nacre_block_brick.name=Nacre Bricks
 tile.wizardry:mana_magnet.name=Mana Magnet
 
 item.wizardry:book.name=Spellforger's Codex
