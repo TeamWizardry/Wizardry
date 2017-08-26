@@ -9,12 +9,16 @@ import com.teamwizardry.librarianlib.features.gui.GuiComponent;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentText;
 import com.teamwizardry.librarianlib.features.math.Vec2d;
+import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.ResourceLocation;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import static net.minecraft.client.gui.FontRenderer.getFormatFromString;
 
@@ -83,8 +87,25 @@ public class ComponentContentPage extends GuiComponent<ComponentContentPage> {
 							for (JsonElement lineElement : contObj.get("text").getAsJsonArray()) {
 								if (!lineElement.isJsonPrimitive()) continue;
 
+								HashSet<GuiComponent<?>> componentsAfterThisPage = new HashSet<>();
+								String s = lineElement.getAsString();
+								String[] mentions = StringUtils.substringsBetween(s, "[image:", "]");
+								if (mentions != null)
+									for (String image : mentions) {
+										ResourceLocation location = new ResourceLocation(Wizardry.MODID, "textures/bookimages/" + image + ".png");
+										Sprite sprite = new Sprite(location);
+
+										ComponentSprite componentSprite = new ComponentSprite(sprite, 0, 45, 200, 200);
+										ComponentSprite lineBreak1 = new ComponentSprite(BookGui.LINE_BREAK, (int) (getSize().getX() / 2.0 - 177.0 / 2.0), -5, 177, 2);
+										ComponentSprite lineBreak2 = new ComponentSprite(BookGui.LINE_BREAK, (int) (getSize().getX() / 2.0 - 177.0 / 2.0), 203, 177, 2);
+										componentSprite.add(lineBreak1, lineBreak2);
+
+										componentsAfterThisPage.add(componentSprite);
+										s = s.replace("[image:" + image + "]", "");
+									}
+
 								// split each line in json into pages if need be.
-								String chunks = wrapFormattedStringToWidth(lineElement.getAsString(), 1850);
+								String chunks = wrapFormattedStringToWidth(s, 1850);
 
 								for (String chunk : chunks.split("/L")) {
 									ComponentText page = new ComponentText(0, 0, ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.TOP);
@@ -98,9 +119,11 @@ public class ComponentContentPage extends GuiComponent<ComponentContentPage> {
 									ComponentSprite lineBreak2 = new ComponentSprite(BookGui.LINE_BREAK, (int) (getSize().getX() / 2.0 - 177.0 / 2.0), getSize().getYi() - 5, 177, 2);
 									page.add(lineBreak1, lineBreak2);
 								}
+
+								for (GuiComponent<?> component : componentsAfterThisPage) {
+									pages.put(i++, component);
+								}
 							}
-						} else {
-							// TODO
 						}
 					}
 				}
