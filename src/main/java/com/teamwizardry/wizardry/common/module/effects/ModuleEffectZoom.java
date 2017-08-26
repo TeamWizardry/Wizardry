@@ -1,18 +1,29 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
+import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
+import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpLine;
+import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
+import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
+import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
+import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
+import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.ProcessData;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
+import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.init.ModPotions;
-import com.teamwizardry.wizardry.lib.LibParticles;
 import kotlin.Pair;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -66,12 +77,12 @@ public class ModuleEffectZoom extends ModuleEffect {
 		return "Move swiftly and quickly to the target";
 	}
 
-	// TODO: make it zoom you in the direction ur moving in.
 	@Override
 	public boolean run(@Nonnull SpellData spell) {
 		World world = spell.world;
 		Entity entityHit = spell.getData(ENTITY_HIT);
 		Vec3d look = spell.getData(LOOK);
+		Vec3d origin = spell.getData(ORIGIN);
 
 		if (entityHit == null) return true;
 		else {
@@ -79,20 +90,26 @@ public class ModuleEffectZoom extends ModuleEffect {
 
 			Vec3d ranged;
 			if (entityHit instanceof EntityItem && look != null) {
-				ranged = look.scale(5);
+				ranged = look;
 			} else {
-				ranged = entityHit.getLook(0).scale(5);
+				ranged = entityHit.getLook(0);
 			}
+			if (look == null) return false;
+
+			RayTraceResult trace = new RayTrace(world, look, origin, 10)
+					.setSkipEntity(entityHit)
+					.setIgnoreBlocksWithoutBoundingBoxes(true)
+					.setReturnLastUncollidableBlock(false)
+					.trace();
 
 			spell.addData(ORIGINAL_LOC, entityHit.getPositionVector());
 
-			entityHit.posX = entityHit.posX + ranged.x;
-			entityHit.posY = entityHit.posY + ranged.y;
-			entityHit.posZ = entityHit.posZ + ranged.z;
+			entityHit.setPositionAndUpdate(trace.hitVec.x, trace.hitVec.y, trace.hitVec.z);
 
 			entityHit.motionX = 0;
 			entityHit.motionY = 0;
 			entityHit.motionZ = 0;
+			entityHit.velocityChanged = true;
 		}
 		if (entityHit instanceof EntityLivingBase) {
 			((EntityLivingBase) entityHit).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 5, 1, true, false));
@@ -104,13 +121,44 @@ public class ModuleEffectZoom extends ModuleEffect {
 	@Override
 	public void runClient(@Nonnull SpellData spell) {
 		World world = spell.world;
-		Entity caster = spell.getData(CASTER);
 
-		if (caster == null) return;
-		//TODO draw a line
-		Vec3d origin = spell.getData(ORIGINAL_LOC, caster.getPositionVector());
+		Entity entity = spell.getData(ENTITY_HIT);
+		if (entity == null) return;
 
-		LibParticles.EFFECT_REGENERATE(world, caster.getPositionVector(), getPrimaryColor());
+		Vec3d origin = spell.getData(ORIGINAL_LOC);
+		if (origin == null) return;
+
+		Vec3d to = entity.getPositionVector();
+
+		ParticleBuilder glitter = new ParticleBuilder(10);
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+		glitter.setAlphaFunction(new InterpFadeInOut(0.0f, 0.3f));
+
+		glitter.enableMotionCalculation();
+		glitter.disableRandom();
+		glitter.setCollision(true);
+		glitter.setTick(particle -> {
+			if (particle.getAge() >= particle.getLifetime() / RandUtil.nextDouble(2, 5)) {
+				if (particle.getAcceleration().y == 0)
+					particle.setAcceleration(new Vec3d(0, RandUtil.nextDouble(-0.05, -0.01), 0));
+			} else if (particle.getAcceleration().x != 0 || particle.getAcceleration().y != 0 || particle.getAcceleration().z != 0) {
+				particle.setAcceleration(Vec3d.ZERO);
+			}
+		});
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(origin.addVector(0, entity.height / 2.0, 0)), 10, 0, (aFloat, particleBuilder) -> {
+			glitter.setPositionOffset(new Vec3d(
+					RandUtil.nextDouble(-0.5, 0.5),
+					RandUtil.nextDouble(-0.5, 0.5),
+					RandUtil.nextDouble(-0.5, 0.5)
+			));
+			ParticleSpawner.spawn(glitter, world, new InterpLine(origin.add(particleBuilder.getPositionOffset()), to.add(particleBuilder.getPositionOffset()).addVector(0, entity.height / 2.0, 0)), (int) origin.distanceTo(to) * 5, 0, (aFloat2, particleBuilder2) -> {
+				glitter.setAlpha(RandUtil.nextFloat(0.5f, 0.8f));
+				glitter.setScale(RandUtil.nextFloat(0.3f, 0.6f));
+				glitter.setLifetime(RandUtil.nextInt(30, 50));
+				glitter.setColorFunction(new InterpColorHSV(getPrimaryColor(), getSecondaryColor()));
+				glitter.setAlphaFunction(new InterpFadeInOut(0f, 1f));
+			});
+		});
 	}
 
 	@Nonnull

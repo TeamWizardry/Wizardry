@@ -6,11 +6,11 @@ import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
-import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -48,24 +48,31 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 		World world = spell.world;
 		float yaw = spell.getData(YAW, 0F);
 		float pitch = spell.getData(PITCH, 0F);
+		Vec3d look = spell.getData(LOOK);
 		Vec3d position = spell.getData(ORIGIN);
 		Entity caster = spell.getData(CASTER);
 		float strength = spell.getData(STRENGTH, 1f);
 
-		if (position == null) return false;
+		if (position == null || look == null) return false;
 
 		double range = getModifier(spell, Attributes.RANGE, 10, 100);
 		double potency = 20 - getModifier(spell, Attributes.POTENCY, 1, 19);
 
 		setCostMultiplier(this, 0.1);
 
-		RayTraceResult trace = new RayTrace(world, PosUtils.vecFromRotations(pitch, yaw), position, range).setSkipEntity(caster).setReturnLastUncollidableBlock(true).setIgnoreBlocksWithoutBoundingBoxes(false).trace();
-		if (trace == null) return false;
+		RayTraceResult trace = new RayTrace(world, look, position, range)
+				.setSkipEntity(caster)
+				.setReturnLastUncollidableBlock(true)
+				.setIgnoreBlocksWithoutBoundingBoxes(true)
+				.trace();
+
+		Vec3d vec = trace.hitVec == null ? look.scale(range) : trace.hitVec;
 
 		if (trace.typeOfHit == RayTraceResult.Type.ENTITY)
 			spell.processEntity(trace.entityHit, false);
 		else if (trace.typeOfHit == RayTraceResult.Type.BLOCK)
 			spell.processBlock(trace.getBlockPos(), trace.sideHit, trace.hitVec);
+		else spell.processBlock(new BlockPos(vec), null, vec);
 
 		return RandUtil.nextInt((int) potency) == 0 && runNextModule(spell);
 	}

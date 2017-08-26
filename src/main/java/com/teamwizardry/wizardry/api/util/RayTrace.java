@@ -64,6 +64,7 @@ public class RayTrace {
 	 *
 	 * @return The RaytraceResult.
 	 */
+	@NotNull
 	public RayTraceResult trace() {
 		Vec3d lookVec = origin.add(slope.scale(range));
 
@@ -77,7 +78,16 @@ public class RayTrace {
 		} else
 			result = world.rayTraceBlocks(origin, lookVec, false, ignoreBlocksWithoutBoundingBoxes, returnLastUncollidableBlock);
 
-		if (skipEntities) return result;
+		if (skipEntities) {
+			if (result == null) {
+				result = new RayTraceResult(
+						RayTraceResult.Type.BLOCK,
+						lookVec,
+						EnumFacing.getFacingFromVector((float) lookVec.x, (float) lookVec.y, (float) lookVec.z),
+						new BlockPos(lookVec));
+			}
+			return result;
+		}
 
 		Entity targetEntity = null;
 		RayTraceResult entityTrace = null;
@@ -105,6 +115,13 @@ public class RayTrace {
 
 		if (targetEntity != null) result = new RayTraceResult(targetEntity, entityTrace.hitVec);
 
+		if (result == null) {
+			result = new RayTraceResult(
+					RayTraceResult.Type.BLOCK,
+					lookVec,
+					EnumFacing.getFacingFromVector((float) lookVec.x, (float) lookVec.y, (float) lookVec.z),
+					new BlockPos(lookVec));
+		}
 		return result;
 	}
 }
