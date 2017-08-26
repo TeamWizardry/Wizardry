@@ -50,7 +50,7 @@ public class ModuleEffectLowGravity extends ModuleEffect {
 	@Nonnull
 	@Override
 	public String getDescription() {
-		return "The target becomes lightweight, falling slowly and walking on water";
+		return "The target becomes lightweight, falling slowly, jumping higher, and walking on water";
 	}
 
 	@Override

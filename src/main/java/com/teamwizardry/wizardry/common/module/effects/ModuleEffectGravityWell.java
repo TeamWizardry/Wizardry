@@ -61,7 +61,7 @@ public class ModuleEffectGravityWell extends ModuleEffect implements ILingeringM
 
 		if (position == null) return false;
 
-		double strength = getModifier(spell, Attributes.AREA, 10, 32);
+		double strength = getModifier(spell, Attributes.AREA, 16, 32);
 
 		for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(position)).expand(strength, strength, strength))) {
 			if (entity == null) continue;
@@ -105,7 +105,7 @@ public class ModuleEffectGravityWell extends ModuleEffect implements ILingeringM
 			glitter.setScale((float) RandUtil.nextDouble(0.3, 1));
 			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, (float) RandUtil.nextDouble(0.6, 1)));
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-			glitter.setLifetime(RandUtil.nextInt(10, 40));
+			glitter.setLifetime(RandUtil.nextInt(10, 20));
 			glitter.setScaleFunction(new InterpScale(1, 0));
 			if (RandUtil.nextBoolean())
 				glitter.setPositionFunction(new InterpHelix(
@@ -129,6 +129,6 @@ public class ModuleEffectGravityWell extends ModuleEffect implements ILingeringM
 
 	@Override
 	public int lingeringTime(SpellData spell) {
-		return (int) (getModifier(spell, Attributes.DURATION, 10, 64) * 50);
+		return (int) (getModifier(spell, Attributes.DURATION, 10, 64) * 100);
 	}
 }

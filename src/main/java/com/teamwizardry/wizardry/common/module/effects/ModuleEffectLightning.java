@@ -76,7 +76,6 @@ public class ModuleEffectLightning extends ModuleEffect {
 		if (!tax(this, spell)) return false;
 
 		RayTraceResult traceResult = new RayTrace(world, PosUtils.vecFromRotations(pitch, yaw), target, range).setSkipBlocks(true).setSkipEntities(true).trace();
-		if (traceResult == null) return false;
 
 		long seed = RandUtil.nextLong(100, 100000);
 

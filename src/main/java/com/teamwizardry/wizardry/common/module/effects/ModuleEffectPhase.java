@@ -38,7 +38,7 @@ public class ModuleEffectPhase extends ModuleEffect {
 	@Nonnull
 	@Override
 	public String getDescription() {
-		return "Will short-range blink-trace you forwards";
+		return "Will enable the target to phase through blocks temporarily.";
 	}
 
 	@Override

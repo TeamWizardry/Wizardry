@@ -111,7 +111,7 @@ public class ModuleEffectAntiGravityWell extends ModuleEffect implements ILinger
 			glitter.setScale((float) RandUtil.nextDouble(0.3, 1));
 			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, (float) RandUtil.nextDouble(0.6, 1)));
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-			glitter.setLifetime(RandUtil.nextInt(10, 40));
+			glitter.setLifetime(RandUtil.nextInt(10, 20));
 			glitter.setScaleFunction(new InterpScale(1, 0));
 			if (RandUtil.nextBoolean())
 				glitter.setPositionFunction(new InterpHelix(
@@ -135,6 +135,6 @@ public class ModuleEffectAntiGravityWell extends ModuleEffect implements ILinger
 
 	@Override
 	public int lingeringTime(SpellData spell) {
-		return (int) (getModifier(spell, Attributes.DURATION, 10, 64) * 50);
+		return (int) (getModifier(spell, Attributes.DURATION, 10, 64) * 100);
 	}
 }
