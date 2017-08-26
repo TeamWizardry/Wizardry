@@ -12,9 +12,9 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
-public class RecipeShapedLiquid extends ShapedOreRecipe
+public class RecipeShapedFluid extends ShapedOreRecipe
 {
-	public RecipeShapedLiquid(ResourceLocation loc, ItemStack result, ShapedPrimer primer)
+	public RecipeShapedFluid(ResourceLocation loc, ItemStack result, ShapedPrimer primer)
 	{
 		super(loc, result, primer);
 	}
@@ -30,7 +30,11 @@ public class RecipeShapedLiquid extends ShapedOreRecipe
 			if (matchedIngredients.get(i) instanceof IngredientFluidStack)
 			{
 				if (!stack.isEmpty())
-					;
+				{
+					ItemStack copy = stack.copy();
+					copy.setCount(1);
+					remains.set(i, copy);
+				}
 				IFluidHandlerItem handler = FluidUtil.getFluidHandler(remains.get(i));
 				if (handler != null)
 				{

@@ -1,5 +1,5 @@
 {
-  "type": "wizardry:liquid_shaped",
+  "type": "wizardry:fluid_shaped",
   "result": {
     "item": "wizardry:nacre_block"
   },

@@ -22,7 +22,7 @@ import net.minecraftforge.common.crafting.CraftingHelper.ShapedPrimer;
 import net.minecraftforge.common.crafting.IRecipeFactory;
 import net.minecraftforge.common.crafting.JsonContext;
 
-public class RecipeShapedLiquidFactory implements IRecipeFactory
+public class RecipeShapedFluidFactory implements IRecipeFactory
 {
 	@Override
 	public IRecipe parse(JsonContext context, JsonObject json)
@@ -82,7 +82,7 @@ public class RecipeShapedLiquidFactory implements IRecipeFactory
 			throw new JsonSyntaxException("Key defineds symbols that aren't used in pattern: " + keys);
 		
 		ItemStack result = CraftingHelper.getItemStack(JsonUtils.getJsonObject(json, "result"), context);
-		RecipeShapedLiquid recipe = new RecipeShapedLiquid(group.isEmpty() ? null : new ResourceLocation(group), result, primer);
+		RecipeShapedFluid recipe = new RecipeShapedFluid(group.isEmpty() ? null : new ResourceLocation(group), result, primer);
 		
 		return recipe;
 	}

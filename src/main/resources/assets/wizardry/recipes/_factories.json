@@ -3,6 +3,7 @@
     "fluid": "com.teamwizardry.wizardry.crafting.IngredientFluidStackFactory"
   },
   "recipes": {
-    "liquid_shaped": "com.teamwizardry.wizardry.crafting.RecipeShapedLiquidFactory"
+    "fluid_shaped": "com.teamwizardry.wizardry.crafting.RecipeShapedFluidFactory",
+    "fluid_shapeless": "com.teamwizardry.wizardry.crafting.RecipeShapelessFluidFactory"
   }
 }
