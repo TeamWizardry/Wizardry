@@ -1,11 +1,7 @@
 package com.teamwizardry.wizardry.client.core;
 
-import baubles.api.BaubleType;
-import baubles.api.BaublesApi;
-import baubles.api.cap.IBaublesItemHandler;
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -18,7 +14,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -64,32 +59,8 @@ public class CapeHandler {
 			return;
 		}
 
-		boolean match = false;
-		ItemStack stack = null;
-		EntityPlayer player = (EntityPlayer) event.getEntity();
-		for (ItemStack eq : player.getArmorInventoryList()) {
-			if ((eq != null) && (eq.getItem() == ModItems.CAPE)) {
-				match = true;
-				stack = eq;
-				break;
-			}
-		}
-
-		// FIXME: 8/26/2017 clientproxy it
-		if (stack == null) {
-			if (Loader.isModLoaded("baubles")) {
-				IBaublesItemHandler inv = BaublesApi.getBaublesHandler(player);
-				for (int i : BaubleType.BODY.getValidSlots()) {
-					ItemStack stack1 = inv.getStackInSlot(i);
-					if (stack1.getItem() == ModItems.CAPE) {
-						stack = stack1;
-						match = true;
-						break;
-					}
-				}
-			}
-		}
-		if (!match) return;
+		ItemStack cape = Wizardry.proxy.getCape((EntityPlayer) event.getEntity());
+		if (cape == null) return;
 
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(event.getX() - ((EntityPlayer) event.getEntity()).posX, event.getY() - ((EntityPlayer) event.getEntity()).posY, event.getZ() - ((EntityPlayer) event.getEntity()).posZ);

@@ -14,6 +14,7 @@ import com.teamwizardry.wizardry.common.network.*;
 import com.teamwizardry.wizardry.common.world.GenHandler;
 import com.teamwizardry.wizardry.common.world.underworld.WorldProviderUnderWorld;
 import com.teamwizardry.wizardry.init.*;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.DimensionType;
@@ -28,6 +29,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
+import javax.annotation.Nullable;
 import java.io.File;
 
 public class CommonProxy {
@@ -99,6 +101,16 @@ public class CommonProxy {
 		ModuleRegistry.INSTANCE.loadUnprocessedModules();
 		ModuleRegistry.INSTANCE.copyMissingModulesFromResources(directory);
 		ModuleRegistry.INSTANCE.processModules();
+	}
+
+	@Nullable
+	public ItemStack getCape(EntityPlayer player) {
+		for (ItemStack eq : player.getArmorInventoryList()) {
+			if ((eq != null) && (eq.getItem() == ModItems.CAPE)) {
+				return eq;
+			}
+		}
+		return null;
 	}
 
 	@SubscribeEvent
