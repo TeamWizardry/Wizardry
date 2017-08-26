@@ -15,7 +15,8 @@ import net.minecraft.client.Minecraft;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
-import java.util.List;
+
+import static net.minecraft.client.gui.FontRenderer.getFormatFromString;
 
 public class ComponentContentPage extends GuiComponent<ComponentContentPage> {
 
@@ -83,9 +84,9 @@ public class ComponentContentPage extends GuiComponent<ComponentContentPage> {
 								if (!lineElement.isJsonPrimitive()) continue;
 
 								// split each line in json into pages if need be.
-								List<String> chunks = Minecraft.getMinecraft().fontRenderer.listFormattedStringToWidth(lineElement.getAsString(), 1950);
+								String chunks = wrapFormattedStringToWidth(lineElement.getAsString(), 1850);
 
-								for (String chunk : chunks) {
+								for (String chunk : chunks.split("/L")) {
 									ComponentText page = new ComponentText(0, 0, ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.TOP);
 									page.getScale().setValue(2f);
 									page.getUnicode().setValue(true);
@@ -111,5 +112,76 @@ public class ComponentContentPage extends GuiComponent<ComponentContentPage> {
 	@Override
 	public void drawComponent(Vec2d mousePos, float partialTicks) {
 
+	}
+
+	private int sizeStringToWidth(String str, int wrapWidth) {
+		int i = str.length();
+		int j = 0;
+		int k = 0;
+		int l = -1;
+
+		for (boolean flag = false; k < i; ++k) {
+			String c0 = str.charAt(k) + "";
+
+			switch (c0) {
+				case "/L":
+					--k;
+					break;
+				case " ":
+					l = k;
+				default:
+					j += Minecraft.getMinecraft().fontRenderer.getStringWidth(c0);
+
+					if (flag) {
+						++j;
+					}
+
+					break;
+				case "\u00a7":
+
+					if (k < i - 1) {
+						++k;
+						char c1 = str.charAt(k);
+
+						if (c1 != 'l' && c1 != 'L') {
+							if (c1 == 'r' || c1 == 'R' || isFormatColor(c1)) {
+								flag = false;
+							}
+						} else {
+							flag = true;
+						}
+					}
+			}
+
+			if (c0.equals("/L")) {
+				++k;
+				l = k;
+				break;
+			}
+
+			if (j > wrapWidth) {
+				break;
+			}
+		}
+
+		return k != i && l != -1 && l < k ? l : k;
+	}
+
+	private boolean isFormatColor(char colorChar) {
+		return colorChar >= '0' && colorChar <= '9' || colorChar >= 'a' && colorChar <= 'f' || colorChar >= 'A' && colorChar <= 'F';
+	}
+
+	private String wrapFormattedStringToWidth(String str, int wrapWidth) {
+		int i = sizeStringToWidth(str, wrapWidth);
+
+		if (str.length() <= i) {
+			return str;
+		} else {
+			String s = str.substring(0, i);
+			String c0 = str.charAt(i) + "";
+			boolean flag = c0.equals(" ") || c0.equals("/L");
+			String s1 = getFormatFromString(s) + str.substring(i + (flag ? 1 : 0));
+			return s + "/L" + this.wrapFormattedStringToWidth(s1, wrapWidth);
+		}
 	}
 }

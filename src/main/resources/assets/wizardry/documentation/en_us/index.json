@@ -6,11 +6,6 @@
       "link": "/basics/index.json"
     },
     {
-      "icon": "wizardry:textures/gui/book/icons/embrassed_energy.png",
-      "text": "Mana",
-      "link": "/basics/mana.json"
-    },
-    {
       "icon": "wizardry:textures/gui/book/icons/fangs.png",
       "text": "Mobs",
       "link": "/mobs/index.json"

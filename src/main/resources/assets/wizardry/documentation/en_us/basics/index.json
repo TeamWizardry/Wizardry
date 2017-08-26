@@ -4,6 +4,12 @@
   "content": [
     {
       "icon": "wizardry:textures/items/physics_book.png",
+      "text": "READ ME!! URGENT!!",
+      "link": "/basics/read_me.json",
+      "info": "Learn the mod here for now."
+    },
+    {
+      "icon": "wizardry:textures/items/physics_book.png",
       "text": "Welcome",
       "link": "/basics/welcome.json",
       "info": "Welcome To Wizardry."

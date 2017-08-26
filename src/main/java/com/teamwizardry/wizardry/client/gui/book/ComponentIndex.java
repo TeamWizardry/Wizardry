@@ -27,7 +27,7 @@ import java.util.HashMap;
 public class ComponentIndex extends GuiComponent<ComponentIndex> {
 
 	private static final int plateWidth = 195;
-	private static final Vec2d pos = new Vec2d(45, 45);
+	private static final Vec2d pos = new Vec2d(45, 35);
 	private static final int buffer = 10;
 	private final GuiComponent<?> componentBook;
 	private final int plateHeight;
@@ -35,7 +35,7 @@ public class ComponentIndex extends GuiComponent<ComponentIndex> {
 	private GuiComponent<?> prevContent;
 
 	public ComponentIndex(GuiComponent<?> componentBook, ArrayList<BookGui.IndexItem> list, int plateHeight, boolean isMainIndex, BookGui bookGui) {
-		super(pos.getXi(), (int) (((list.size() * plateHeight + list.size() * buffer) / 2.0)), plateWidth, list.size() * plateHeight + list.size() * buffer);
+		super(pos.getXi(), pos.getYi(), plateWidth, 120);
 		this.componentBook = componentBook;
 		this.plateHeight = plateHeight;
 
@@ -146,7 +146,7 @@ public class ComponentIndex extends GuiComponent<ComponentIndex> {
 			if (type.equals("index")) {
 				return new Pair<>(type, getNewIndex(newResource));
 			} else if (type.equals("content")) {
-				return new Pair<>(type, new ComponentContentPage(220, componentBook.getSize().getYi() - getSize().getYi() - 240, 200, 300, newResource, componentBook));
+				return new Pair<>(type, new ComponentContentPage(225, -getPos().getYi() + pos.getYi() - 10, 200, 300, newResource, componentBook));
 			}
 		}
 		return null;
