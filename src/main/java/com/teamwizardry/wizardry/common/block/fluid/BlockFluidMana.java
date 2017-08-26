@@ -73,12 +73,12 @@ public class BlockFluidMana extends BlockFluidClassic {
 	}
 
 	@Override
-	public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
+	public void onEntityCollidedWithBlock(World world, BlockPos pos, IBlockState state, Entity entityIn) {
 		// Fizz all entities in the pool
 		run(entityIn,
 				entity -> true,
 				entity -> {
-					if (worldIn.isRemote) LibParticles.FIZZING_AMBIENT(worldIn, entityIn.getPositionVector());
+					if (world.isRemote) LibParticles.FIZZING_AMBIENT(world, entityIn.getPositionVector());
 				});
 
 		// Nullify gravity of player
@@ -95,7 +95,7 @@ public class BlockFluidMana extends BlockFluidClassic {
 				entity -> entity instanceof EntityPlayer,
 				entity -> {
 
-					if (!worldIn.isRemote) {
+					if (!world.isRemote) {
 						MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
 						Advancement advancement = server.getAdvancementManager().getAdvancement(new ResourceLocation(Wizardry.MODID, "advancements/advancement_crunch.json"));
 						if (advancement == null) return;
@@ -114,8 +114,8 @@ public class BlockFluidMana extends BlockFluidClassic {
 				entity -> {
 					EntityItem item = (EntityItem) entity;
 					item.setItem(new ItemStack(ModBlocks.WISDOM_WOOD_PLANKS, item.getItem().getCount()));
-					if (worldIn.isRemote) {
-						LibParticles.FIZZING_AMBIENT(worldIn, item.getPositionVector());
+					if (world.isRemote) {
+						LibParticles.FIZZING_AMBIENT(world, item.getPositionVector());
 					}
 				});
 
@@ -125,8 +125,8 @@ public class BlockFluidMana extends BlockFluidClassic {
 				entity -> {
 					EntityItem item = (EntityItem) entity;
 					item.setItem(new ItemStack(ModBlocks.WISDOM_WOOD_LOG, item.getItem().getCount()));
-					if (worldIn.isRemote) {
-						LibParticles.FIZZING_AMBIENT(worldIn, item.getPositionVector());
+					if (world.isRemote) {
+						LibParticles.FIZZING_AMBIENT(world, item.getPositionVector());
 					}
 				});
 
@@ -136,8 +136,8 @@ public class BlockFluidMana extends BlockFluidClassic {
 				entity -> {
 					EntityItem item = (EntityItem) entity;
 					item.setItem(new ItemStack(ModBlocks.WISDOM_WOOD_STAIRS, item.getItem().getCount()));
-					if (worldIn.isRemote) {
-						LibParticles.FIZZING_AMBIENT(worldIn, item.getPositionVector());
+					if (world.isRemote) {
+						LibParticles.FIZZING_AMBIENT(world, item.getPositionVector());
 					}
 				});
 
@@ -147,8 +147,8 @@ public class BlockFluidMana extends BlockFluidClassic {
 				entity -> {
 					EntityItem item = (EntityItem) entity;
 					item.setItem(new ItemStack(ModBlocks.WISDOM_WOOD_SLAB, item.getItem().getCount()));
-					if (worldIn.isRemote) {
-						LibParticles.FIZZING_AMBIENT(worldIn, item.getPositionVector());
+					if (world.isRemote) {
+						LibParticles.FIZZING_AMBIENT(world, item.getPositionVector());
 					}
 				});
 
@@ -159,23 +159,45 @@ public class BlockFluidMana extends BlockFluidClassic {
 					ItemStack stack = ((EntityItem) entity).getItem();
 					int expiry = ItemNBTHelper.getInt(stack, REACTION_COOLDOWN, 200);
 					if (expiry > 0) {
-						if (worldIn.isRemote)
-							LibParticles.CRAFTING_ALTAR_IDLE(worldIn, entity.getPositionVector());
+						if (world.isRemote)
+							LibParticles.CRAFTING_ALTAR_IDLE(world, entity.getPositionVector());
 
 						ItemNBTHelper.setInt(stack, REACTION_COOLDOWN, --expiry);
 						if ((expiry % 5) == 0)
-							worldIn.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
+							world.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
 					} else {
 						PacketHandler.NETWORK.sendToAllAround(new PacketExplode(entity.getPositionVector(), Color.CYAN, Color.BLUE, 0.9, 2, 500, 100, 50, true),
-								new NetworkRegistry.TargetPoint(worldIn.provider.getDimension(), entity.posX, entity.posY, entity.posZ, 256));
+								new NetworkRegistry.TargetPoint(world.provider.getDimension(), entity.posX, entity.posY, entity.posZ, 256));
 
-						boom(worldIn, entity);
+						boom(world, entity);
 
 						((EntityItem) entity).setItem(new ItemStack(ModItems.BOOK, stack.getCount()));
-						worldIn.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
+						world.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
 					}
 				});
 
+		// Convert mana to nacre
+		run(entityIn,
+				entity -> entity instanceof EntityItem && ((EntityItem) entity).getItem().getItem() == Items.GOLD_NUGGET,
+				entity -> {
+					ItemStack stack = ((EntityItem) entity).getItem();
+					int cooldown = ItemNBTHelper.getInt(stack, REACTION_COOLDOWN, 200);
+					if (cooldown > 0)
+					{
+						ItemNBTHelper.setInt(stack, REACTION_COOLDOWN, --cooldown);
+						if (cooldown % 5 == 0)
+							world.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.BUBBLING, SoundCategory.AMBIENT, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
+					}
+					else
+					{
+						if (world.isRemote) LibParticles.FIZZING_AMBIENT(world, entity.getPositionVector());
+						world.setBlockState(entity.getPosition(), ModBlocks.FLUID_NACRE.getDefaultState());
+						stack.shrink(1);
+						if (stack.isEmpty())
+							world.removeEntity(entity);
+					}
+				});
+		
 		// Explode explodable items
 		run(entityIn,
 				entity -> entity instanceof EntityItem && ((EntityItem) entity).getItem().getItem() instanceof IExplodable,
@@ -185,22 +207,22 @@ public class BlockFluidMana extends BlockFluidClassic {
 					if (expiry > 0) {
 						ItemNBTHelper.setInt(stack, REACTION_COOLDOWN, --expiry);
 						if ((expiry % 5) == 0)
-							worldIn.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.BUBBLING, SoundCategory.AMBIENT, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
+							world.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.BUBBLING, SoundCategory.AMBIENT, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
 					} else {
-						if (worldIn.isRemote) LibParticles.FIZZING_ITEM(worldIn, entity.getPositionVector());
+						if (world.isRemote) LibParticles.FIZZING_ITEM(world, entity.getPositionVector());
 
 						((IExplodable) stack.getItem()).explode(entityIn);
-						worldIn.setBlockToAir(entity.getPosition());
-						worldIn.removeEntity(entity);
-						worldIn.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.GLASS_BREAK, SoundCategory.AMBIENT, 0.5F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
+						world.setBlockToAir(entity.getPosition());
+						world.removeEntity(entity);
+						world.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.GLASS_BREAK, SoundCategory.AMBIENT, 0.5F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
 					}
 				});
 
 		// Mana Battery Recipe
 		run(entityIn, entity -> {
-			if (worldIn.isRemote) return false;
-			if (entityIn instanceof EntityItem && !((EntityItem) entity).getItem().isEmpty() && ((EntityItem) entity).getItem().getItem() == Items.DIAMOND) { // World worldIn, BlockPos pos, IBlockState state, Entity entityIn
-				List<Entity> entities = worldIn.getEntitiesInAABBexcluding(entityIn, new AxisAlignedBB(pos),
+			if (world.isRemote) return false;
+			if (entityIn instanceof EntityItem && !((EntityItem) entity).getItem().isEmpty() && ((EntityItem) entity).getItem().getItem() == Items.DIAMOND) {
+				List<Entity> entities = world.getEntitiesInAABBexcluding(entityIn, new AxisAlignedBB(pos),
 						Predicates.instanceOf(EntityItem.class));
 				EntityItem devilDust = null, soulSand = null;
 				for (Entity e : entities) {
@@ -213,7 +235,7 @@ public class BlockFluidMana extends BlockFluidClassic {
 
 				for (int i = -1; i <= 1; i++)
 					for (int j = -1; j <= 1; j++) {
-						if (worldIn.getBlockState(pos.add(i, 0, j)) != ModBlocks.FLUID_MANA.getDefaultState())
+						if (world.getBlockState(pos.add(i, 0, j)) != ModBlocks.FLUID_MANA.getDefaultState())
 							return false;
 					}
 
@@ -224,16 +246,16 @@ public class BlockFluidMana extends BlockFluidClassic {
 			ItemStack stack = ((EntityItem) entity).getItem();
 			int expiry = ItemNBTHelper.getInt(stack, REACTION_COOLDOWN, 200);
 			if (expiry > 0) {
-				if (worldIn.isRemote)
-					LibParticles.CRAFTING_ALTAR_IDLE(worldIn, entity.getPositionVector());
+				if (world.isRemote)
+					LibParticles.CRAFTING_ALTAR_IDLE(world, entity.getPositionVector());
 
 				ItemNBTHelper.setInt(stack, REACTION_COOLDOWN, --expiry);
 				if ((expiry % 5) == 0)
-					worldIn.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
+					world.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
 			} else {
-				if (worldIn.isRemote) return;
+				if (world.isRemote) return;
 
-				List<Entity> entities = worldIn.getEntitiesInAABBexcluding(entityIn, new AxisAlignedBB(pos), Predicates.instanceOf(EntityItem.class));
+				List<Entity> entities = world.getEntitiesInAABBexcluding(entityIn, new AxisAlignedBB(pos), Predicates.instanceOf(EntityItem.class));
 				EntityItem devilDust = null, soulSand = null;
 				for (Entity e : entities) {
 					EntityItem entityItem = (EntityItem) e;
@@ -245,33 +267,33 @@ public class BlockFluidMana extends BlockFluidClassic {
 
 				((EntityItem) entity).getItem().shrink(1);
 				if (((EntityItem) entity).getItem().isEmpty())
-					worldIn.removeEntity(entity);
+					world.removeEntity(entity);
 
 				devilDust.getItem().shrink(1);
 				if (devilDust.getItem().isEmpty())
-					worldIn.removeEntity(devilDust);
+					world.removeEntity(devilDust);
 
 				soulSand.getItem().shrink(1);
 				if (soulSand.getItem().isEmpty())
-					worldIn.removeEntity(soulSand);
+					world.removeEntity(soulSand);
 
-				EntityItem manaBattery = new EntityItem(worldIn, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, new ItemStack(ModBlocks.MANA_BATTERY));
+				EntityItem manaBattery = new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, new ItemStack(ModBlocks.MANA_BATTERY));
 				manaBattery.motionX = 0;
 				manaBattery.motionY = 0;
 				manaBattery.motionZ = 0;
 				manaBattery.forceSpawn = true;
-				worldIn.spawnEntity(manaBattery);
+				world.spawnEntity(manaBattery);
 
 				for (int i = -1; i <= 1; i++)
 					for (int j = -1; j <= 1; j++)
-						worldIn.setBlockToAir(pos.add(i, 0, j));
+						world.setBlockToAir(pos.add(i, 0, j));
 
 				PacketHandler.NETWORK.sendToAllAround(new PacketExplode(entity.getPositionVector(), Color.CYAN, Color.BLUE, 0.9, 2, 500, 100, 50, true),
-						new NetworkRegistry.TargetPoint(worldIn.provider.getDimension(), entity.posX, entity.posY, entity.posZ, 256));
+						new NetworkRegistry.TargetPoint(world.provider.getDimension(), entity.posX, entity.posY, entity.posZ, 256));
 
-				boom(worldIn, manaBattery);
+				boom(world, manaBattery);
 
-				worldIn.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
+				world.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
 			}
 		});
 	}

@@ -1,0 +1,8 @@
+{
+  "ingredients": {
+    "fluid": "com.teamwizardry.wizardry.crafting.IngredientFluidStackFactory"
+  },
+  "recipes": {
+    "liquid_shaped": "com.teamwizardry.wizardry.crafting.RecipeShapedLiquidFactory"
+  }
+}

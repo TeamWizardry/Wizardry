@@ -5,6 +5,7 @@ import com.teamwizardry.wizardry.init.irecipies.RecipeJam;
 import com.teamwizardry.wizardry.init.irecipies.RecipeManaSyringe;
 import com.teamwizardry.wizardry.init.irecipies.RecipePearl;
 import com.teamwizardry.wizardry.init.irecipies.RecipeSteroidSyringe;
+
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
