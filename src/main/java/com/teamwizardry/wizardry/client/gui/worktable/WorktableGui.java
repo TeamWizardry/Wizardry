@@ -229,7 +229,7 @@ public class WorktableGui extends GuiBase {
 			double clamp = MathHelper.clamp(barPos + dir, 0, 79 - 11);
 
 			bar.setPos(new Vec2d(bar.getPos().getX(), clamp));
-			double percent = MathHelper.clamp(clamp / 79.0, 0, 1);
+			double percent = MathHelper.clamp(clamp / (79.0 - 11), 0, 1);
 
 			ArrayList<GuiComponent<?>> compTmp = new ArrayList<>(gridView.getChildren());
 			compTmp.forEach(gridView::remove);
