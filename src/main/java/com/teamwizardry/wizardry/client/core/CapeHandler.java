@@ -144,7 +144,7 @@ public class CapeHandler {
 
 
 			pendulum.points.get(0).pos = player.getPositionVector();
-			pendulum.tick();
+			//pendulum.tick();
 
 			Vec3d forward = new Vec3d(player.motionX, player.motionY, player.motionZ).normalize();
 			down = (down.add(pendulum.points.get(1).pos.subtract(pendulum.points.get(0).pos))).normalize();
@@ -152,7 +152,7 @@ public class CapeHandler {
 			Vec3d side = (down.crossProduct(forward));
 			double len = side.lengthVector();
 			if (len == 0.0) side = new Vec3d(1, 0, 0);
-			else side = side.scale(len);
+			else side = side.scale(1 / len);
 
 			Vec3d origin = player.getPositionVector().subtract(side.scale(1 / 4.0));
 			Vec3d unit = side.scale(1 / 16.0);
@@ -161,7 +161,7 @@ public class CapeHandler {
 				cloth.points.get(i).pos = origin.add(unit.scale(i));
 			}
 
-			cloth.tick();
+			//cloth.tick();
 		}
 	}
 }

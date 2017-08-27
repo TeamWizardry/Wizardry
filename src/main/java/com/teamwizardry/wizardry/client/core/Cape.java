@@ -204,35 +204,36 @@ class GridCloth implements ClothDefinition {
 					@Override
 					Vec3d normal() {
 						Vec3d c = this.pos;
-
-						if (!valid(finalW, finalH - 1)) return Vec3d.ZERO;
-						Vec3d u = list.get(getI(finalW, finalH - 1)).pos;
-
-						if (!valid(finalW, finalH + 1)) return Vec3d.ZERO;
-						Vec3d d = list.get(getI(finalW, finalH + 1)).pos;
-
-						if (!valid(finalW - 1, finalH)) return Vec3d.ZERO;
-						Vec3d l = list.get(getI(finalW - 1, finalH)).pos;
-
-						if (!valid(finalW + 1, finalH)) return Vec3d.ZERO;
-						Vec3d r = list.get(getI(finalW + 1, finalH)).pos;
+						Vec3d u;
+						if (valid(finalW, finalH - 1)) u = list.get(getI(finalW, finalH - 1)).pos;
+						else u = null;
+						Vec3d d;
+						if (valid(finalW, finalH + 1)) d = list.get(getI(finalW, finalH + 1)).pos;
+						else d = null;
+						Vec3d l;
+						if (valid(finalW - 1, finalH)) l = list.get(getI(finalW - 1, finalH)).pos;
+						else l = null;
+						Vec3d r;
+						if (valid(finalW + 1, finalH)) r = list.get(getI(finalW + 1, finalH)).pos;
+						else r = null;
 
 						Vec3d avg = Vec3d.ZERO;
 
 						if (u != null && l != null) {
-							avg = avg.add(c.subtract(u)).crossProduct(c.subtract(l));
+							avg.add(c.subtract(u).crossProduct(c.subtract(l)));
 						}
 						if (u != null && r != null) {
-							avg = avg.add(c.subtract(r)).crossProduct(c.subtract(u));
+							avg.add(c.subtract(r).crossProduct(c.subtract(u)));
 						}
 						if (d != null && l != null) {
-							avg = avg.add(c.subtract(l)).crossProduct(c.subtract(d));
+							avg.add(c.subtract(l).crossProduct(c.subtract(d)));
 						}
 						if (d != null && r != null) {
-							avg = avg.add(c.subtract(d)).crossProduct(c.subtract(r));
+							avg.add((c.subtract(d)).crossProduct(c.subtract(r)));
 						}
 
-						if (avg.x == 0.0 && avg.y == 0.0 && avg.z == 0.0) return avg;
+						if (avg.x == 0.0 && avg.y == 0.0 && avg.z == 0.0)
+							return avg;
 						return avg.normalize();
 					}
 				};
