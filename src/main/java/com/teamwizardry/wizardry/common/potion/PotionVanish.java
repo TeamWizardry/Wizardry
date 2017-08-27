@@ -39,19 +39,20 @@ import java.util.List;
  */
 // TODO: other player testing, proper in/out fading
 public class PotionVanish extends PotionMod {
-
-	private Function2<RenderLivingBase, Object[], Object> interpolateRotation = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, "interpolateRotation", "func_77034_a", float.class, float.class, float.class);
-	private Function2<RenderLivingBase, Object[], Object> renderLivingAt = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class       , "renderLivingAt", "func_77039_a", EntityLivingBase.class, double.class, double.class, double.class);
-	private Function2<RenderLivingBase, Object[], Object> handleRotationFloat = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class  , "handleRotationFloat", "func_77044_a", EntityLivingBase.class, float.class);
-	private Function2<RenderLivingBase, Object[], Object> applyRotations = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class       , "applyRotations", "func_77043_a", EntityLivingBase.class, float.class, float.class, float.class);
-	private Function2<RenderLivingBase, Object[], Object> renderModel = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class          , "renderModel", "func_77036_a", EntityLivingBase.class, float.class, float.class, float.class, float.class, float.class, float.class);
-	private Function2<RenderLivingBase, Object[], Object> renderLayers = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class         , "renderLayers", "func_177093_a", EntityLivingBase.class, float.class, float.class, float.class, float.class, float.class, float.class, float.class);
-	private Function2<RenderLivingBase, Object[], Object> setDoRenderBrightness = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, "setDoRenderBrightness", "func_177090_c", EntityLivingBase.class, float.class);
-	private Function2<RenderLivingBase, Object[], Object> unsetBrightness = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class      , "unsetBrightness", "func_177091_f");
-	private Function2<RenderLivingBase, Object[], Object> setBrightness = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class        , "setBrightness", "func_177092_a", EntityLivingBase.class, float.class, boolean.class);
-	private Function1<Render, Object> renderOutlines = MethodHandleHelper.wrapperForGetter(Render.class, "renderOutlines", "field_188301_f", "e");
-	private Function1<RenderLivingBase, Object> renderMarker = MethodHandleHelper.wrapperForGetter(RenderLivingBase.class, "renderMarker", "field_188323_j", "i");
-	private Function1<RenderLivingBase, Object> layerRenderers = MethodHandleHelper.wrapperForGetter(RenderLivingBase.class, "layerRenderers", "field_177097_h", "a");
+	private static class ClientStuff {
+		public static Function2<RenderLivingBase, Object[], Object> interpolateRotation = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, "interpolateRotation", "func_77034_a", float.class, float.class, float.class);
+		public static Function2<RenderLivingBase, Object[], Object> renderLivingAt = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, "renderLivingAt", "func_77039_a", EntityLivingBase.class, double.class, double.class, double.class);
+		public static Function2<RenderLivingBase, Object[], Object> handleRotationFloat = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, "handleRotationFloat", "func_77044_a", EntityLivingBase.class, float.class);
+		public static Function2<RenderLivingBase, Object[], Object> applyRotations = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, "applyRotations", "func_77043_a", EntityLivingBase.class, float.class, float.class, float.class);
+		public static Function2<RenderLivingBase, Object[], Object> renderModel = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, "renderModel", "func_77036_a", EntityLivingBase.class, float.class, float.class, float.class, float.class, float.class, float.class);
+		public static Function2<RenderLivingBase, Object[], Object> renderLayers = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, "renderLayers", "func_177093_a", EntityLivingBase.class, float.class, float.class, float.class, float.class, float.class, float.class, float.class);
+		public static Function2<RenderLivingBase, Object[], Object> setDoRenderBrightness = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, "setDoRenderBrightness", "func_177090_c", EntityLivingBase.class, float.class);
+		public static Function2<RenderLivingBase, Object[], Object> unsetBrightness = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, "unsetBrightness", "func_177091_f");
+		public static Function2<RenderLivingBase, Object[], Object> setBrightness = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, "setBrightness", "func_177092_a", EntityLivingBase.class, float.class, boolean.class);
+		public static Function1<Render, Object> renderOutlines = MethodHandleHelper.wrapperForGetter(Render.class, "renderOutlines", "field_188301_f", "e");
+		public static Function1<RenderLivingBase, Object> renderMarker = MethodHandleHelper.wrapperForGetter(RenderLivingBase.class, "renderMarker", "field_188323_j", "i");
+		public static Function1<RenderLivingBase, Object> layerRenderers = MethodHandleHelper.wrapperForGetter(RenderLivingBase.class, "layerRenderers", "field_177097_h", "a");
+	}
 
 	public PotionVanish() {
 		super("vanish", false, 0xA9F3A9);
@@ -154,13 +155,13 @@ public class PotionVanish extends PotionMod {
 		event.getRenderer().getMainModel().isChild = entity.isChild();
 
 		try {
-			float f = (float) interpolateRotation.invoke(event.getRenderer(), new Object[]{entity.prevRenderYawOffset, entity.renderYawOffset, ClientTickHandler.getPartialTicks()});
-			float f1 = (float) interpolateRotation.invoke(event.getRenderer(), new Object[]{entity.prevRotationYawHead, entity.rotationYawHead, ClientTickHandler.getPartialTicks()});
+			float f = (float) ClientStuff.interpolateRotation.invoke(event.getRenderer(), new Object[]{entity.prevRenderYawOffset, entity.renderYawOffset, ClientTickHandler.getPartialTicks()});
+			float f1 = (float) ClientStuff.interpolateRotation.invoke(event.getRenderer(), new Object[]{entity.prevRotationYawHead, entity.rotationYawHead, ClientTickHandler.getPartialTicks()});
 			float f2 = f1 - f;
 
 			if (shouldSit && entity.getRidingEntity() instanceof EntityLivingBase) {
 				EntityLivingBase entitylivingbase = (EntityLivingBase) entity.getRidingEntity();
-				f = (float) interpolateRotation.invoke(event.getRenderer(), new Object[]{entitylivingbase.prevRenderYawOffset, entitylivingbase.renderYawOffset, ClientTickHandler.getPartialTicks()});
+				f = (float) ClientStuff.interpolateRotation.invoke(event.getRenderer(), new Object[]{entitylivingbase.prevRenderYawOffset, entitylivingbase.renderYawOffset, ClientTickHandler.getPartialTicks()});
 				f2 = f1 - f;
 				float f3 = MathHelper.wrapDegrees(f2);
 
@@ -181,9 +182,9 @@ public class PotionVanish extends PotionMod {
 			}
 
 			float f7 = entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * ClientTickHandler.getPartialTicks();
-			renderLivingAt.invoke(event.getRenderer(), new Object[]{entity, event.getX(), event.getY(), event.getZ()});
-			float f8 = (float) handleRotationFloat.invoke(event.getRenderer(), new Object[]{entity, ClientTickHandler.getPartialTicks()});
-			applyRotations.invoke(event.getRenderer(), new Object[]{entity, f8, f, ClientTickHandler.getPartialTicks()});
+			ClientStuff.renderLivingAt.invoke(event.getRenderer(), new Object[]{entity, event.getX(), event.getY(), event.getZ()});
+			float f8 = (float) ClientStuff.handleRotationFloat.invoke(event.getRenderer(), new Object[]{entity, ClientTickHandler.getPartialTicks()});
+			ClientStuff.applyRotations.invoke(event.getRenderer(), new Object[]{entity, f8, f, ClientTickHandler.getPartialTicks()});
 			float f4 = event.getRenderer().prepareScale(entity, ClientTickHandler.getPartialTicks());
 			float f5 = 0.0F;
 			float f6 = 0.0F;
@@ -205,17 +206,17 @@ public class PotionVanish extends PotionMod {
 			event.getRenderer().getMainModel().setLivingAnimations(entity, f6, f5, ClientTickHandler.getPartialTicks());
 			event.getRenderer().getMainModel().setRotationAngles(f6, f5, f8, f2, f7, f4, entity);
 
-			if ((boolean) renderOutlines.invoke(event.getRenderer())) {
+			if ((boolean) ClientStuff.renderOutlines.invoke(event.getRenderer())) {
 				// TODO: boolean flag1 = this.setScoreTeamColor(entity);
 				GlStateManager.enableColorMaterial();
 				// TODO: GlStateManager.enableOutlineMode(this.getTeamColor(entity));
 
-				if (!(boolean) renderMarker.invoke(event.getRenderer())) {
-					renderModel.invoke(event.getRenderer(), new Object[]{entity, f6, f5, f8, f2, f7, f4});
+				if (!(boolean) ClientStuff.renderMarker.invoke(event.getRenderer())) {
+					ClientStuff.renderModel.invoke(event.getRenderer(), new Object[]{entity, f6, f5, f8, f2, f7, f4});
 				}
 
 				if (!(entity instanceof EntityPlayer) || !((EntityPlayer) entity).isSpectator()) {
-					renderLayers.invoke(event.getRenderer(), new Object[]{entity, f6, f5, ClientTickHandler.getPartialTicks(), f8, f2, f7, f4});
+					ClientStuff.renderLayers.invoke(event.getRenderer(), new Object[]{entity, f6, f5, ClientTickHandler.getPartialTicks(), f8, f2, f7, f4});
 				}
 
 				GlStateManager.disableOutlineMode();
@@ -225,18 +226,18 @@ public class PotionVanish extends PotionMod {
 				// TODO: 	this.unsetScoreTeamColor();
 				// TODO: }
 			} else {
-				boolean flag = (boolean) setDoRenderBrightness.invoke(event.getRenderer(), new Object[]{entity, ClientTickHandler.getPartialTicks()});
-				renderModel.invoke(event.getRenderer(), new Object[]{entity, f6, f5, f8, f2, f7, f4});
+				boolean flag = (boolean) ClientStuff.setDoRenderBrightness.invoke(event.getRenderer(), new Object[]{entity, ClientTickHandler.getPartialTicks()});
+				ClientStuff.renderModel.invoke(event.getRenderer(), new Object[]{entity, f6, f5, f8, f2, f7, f4});
 
 				if (flag) {
-					unsetBrightness.invoke(event.getRenderer(), new Object[]{});
+					ClientStuff.unsetBrightness.invoke(event.getRenderer(), new Object[]{});
 				}
 
 				GlStateManager.depthMask(true);
 
 				if (!hide)
 					if (!(entity instanceof EntityPlayer) || !((EntityPlayer) entity).isSpectator()) {
-						renderLayers.invoke(event.getRenderer(), new Object[]{entity, f6, f5, ClientTickHandler.getPartialTicks(), f8, f2, f7, f4});
+						ClientStuff.renderLayers.invoke(event.getRenderer(), new Object[]{entity, f6, f5, ClientTickHandler.getPartialTicks(), f8, f2, f7, f4});
 					}
 			}
 

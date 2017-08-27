@@ -101,6 +101,7 @@ public class BlockJar extends BlockModContainer {
 		return new TileJar();
 	}
 
+	@SideOnly(Side.CLIENT)
 	public void initModel() {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileJar.class, new TileJarRenderer());
 	}

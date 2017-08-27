@@ -12,6 +12,8 @@ import net.minecraft.util.MovementInputFromOptions;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -49,6 +51,7 @@ public class PotionNullMovement extends PotionMod {
 	}
 
 	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
 	public void onTick(TickEvent.ClientTickEvent event) {
 		Minecraft mc = Minecraft.getMinecraft();
 		EntityPlayerSP player = mc.player;
