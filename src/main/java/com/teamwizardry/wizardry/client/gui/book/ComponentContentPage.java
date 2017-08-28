@@ -33,7 +33,7 @@ public class ComponentContentPage extends GuiComponent<ComponentContentPage> {
 
 		HashMap<Integer, GuiComponent<?>> pages = getContent();
 
-		ComponentNavBar navBar = new ComponentNavBar((int) (getSize().getX() / 2.0 - 170 / 2.0), getSize().getYi() + 20, 170, 15, pages.size() - 1);
+		ComponentNavBar navBar = new ComponentNavBar((int) (getSize().getX() / 2.0 - 170 / 2.0), getSize().getYi() + 30, 170, 15, pages.size() - 1);
 		add(navBar);
 
 		navBar.BUS.hook(EventNavBarChange.class, eventNavBarChange -> {

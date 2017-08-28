@@ -4,7 +4,7 @@
   "content": [
     {
       "icon": "wizardry:textures/items/physics_book.png",
-      "text": "READ ME!! URGENT!!",
+      "text": "!!!READ ME!!!",
       "link": "/basics/read_me.json",
       "info": "Learn the mod here for now."
     },

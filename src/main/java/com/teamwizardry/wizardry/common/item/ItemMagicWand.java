@@ -23,6 +23,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -102,17 +104,20 @@ public class ItemMagicWand extends ItemMod implements IGlowingItem {
 		return EnumActionResult.PASS;
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override
 	public int packedGlowCoords(@NotNull ItemStack itemStack, @NotNull IBakedModel iBakedModel) {
 		return 0xf000f0;
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Nullable
 	@Override
 	public IBakedModel transformToGlow(@NotNull ItemStack itemStack, @NotNull IBakedModel iBakedModel) {
 		return IGlowingItem.Helper.wrapperBake(iBakedModel, false, 1);
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override
 	public boolean shouldDisableLightingForGlow(@NotNull ItemStack itemStack, @NotNull IBakedModel iBakedModel) {
 		return true;
