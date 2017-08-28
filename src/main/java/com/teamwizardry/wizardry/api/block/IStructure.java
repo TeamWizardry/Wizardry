@@ -44,6 +44,7 @@ public interface IStructure {
 					if (world.isRemote) {
 						LibParticles.STRUCTURE_FLAIR(world, new Vec3d(newPos).addVector(0.5, 0.5, 0.5), Color.RED);
 						LibParticles.STRUCTURE_BEACON(world, new Vec3d(newPos).addVector(0.5, 0.5, 0.5), Color.RED);
+						LibParticles.BLOCK_HIGHLIGHT(world, newPos, Color.RED);
 					}
 					return false;
 				}
@@ -81,6 +82,7 @@ public interface IStructure {
 					if (world.isRemote) {
 						LibParticles.STRUCTURE_BEACON(world, new Vec3d(newPos).addVector(0.5, 0.5, 0.5), Color.RED);
 						LibParticles.STRUCTURE_FLAIR(world, new Vec3d(newPos).addVector(0.5, 0.5, 0.5), Color.RED);
+						LibParticles.BLOCK_HIGHLIGHT(world, newPos, Color.RED);
 					}
 					return false;
 				} else if (world.getBlockState(newPos) != info.blockState.getBlock())
