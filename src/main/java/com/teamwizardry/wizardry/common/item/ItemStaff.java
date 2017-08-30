@@ -255,7 +255,7 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 					tooltip.add(new String(new char[i]).replace("\0", "-") + "> " + TextFormatting.GRAY + tempModule.getReadableName() + " - " + TextFormatting.BLUE + (int) Math.round(tempModule.getManaDrain() * tempModule.getMultiplier()) + TextFormatting.GRAY + "/" + TextFormatting.RED + (int) Math.round(tempModule.getBurnoutFill() * tempModule.getMultiplier()));
 					if (GuiScreen.isShiftKeyDown()) {
 						for (String key : tempModule.attributes.getKeySet())
-							tooltip.add(new String(new char[i]).replace("\0", " ") + " ^ " + TextFormatting.DARK_GRAY + key + " * " + (int) Math.round(tempModule.attributes.getDouble(key)));
+							tooltip.add(new String(new char[i]).replace("\0", " ") + " | " + TextFormatting.DARK_GRAY + key + " x" + (int) Math.round(tempModule.attributes.getDouble(key)));
 					}
 					tempModule = tempModule.nextModule;
 					i++;

@@ -92,7 +92,7 @@ public class BookGui extends GuiBase {
 
 		int i = 0;
 
-		ComponentBookmark bookmarkIndex = new ComponentBookmark(this, componentBook, i++, new ComponentIndex(componentBook, indexItems, 45, true, this, new Vec2d(35, 45)), "Index", true);
+		ComponentBookmark bookmarkIndex = new ComponentBookmark(this, componentBook, i++, new ComponentIndex(componentBook, indexItems, 45, true, this, new Vec2d(45, 45)), "Index", true);
 		componentBook.add(bookmarkIndex);
 
 		if (ItemNBTHelper.getBoolean(bookItem, "has_recipe", false)) {

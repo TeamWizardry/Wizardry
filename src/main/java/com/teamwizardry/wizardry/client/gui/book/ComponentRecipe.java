@@ -8,14 +8,17 @@ import com.teamwizardry.librarianlib.features.gui.GuiComponent;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentStack;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentText;
+import com.teamwizardry.librarianlib.features.gui.components.ComponentVoid;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.math.Vec2d;
 import com.teamwizardry.wizardry.api.spell.SpellBuilder;
+import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,37 +62,53 @@ public class ComponentRecipe extends GuiComponent<ComponentRecipe> {
 			}
 			SpellBuilder builder = new SpellBuilder(inventory);
 
+			GuiComponent<?> lastComponent = null;
 			List<Module> modules = builder.getSpell();
-			ArrayList<String> lines = new ArrayList<>();
 			Module lastModule = null;
 			for (Module module : modules) {
 				if (lastModule == null) lastModule = module;
 				if (module != null) {
-					if (module != lastModule) lines.add("");
 					Module tempModule = module;
 					int i = 0;
 					while (tempModule != null) {
-						lines.add(new String(new char[i]).replace("\0", "-") + "> " + tempModule.getReadableName());
+
+						ComponentText recipeText = new ComponentText(0, (int) (pos.getY() / 2.0), ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.MIDDLE);
+						recipeText.getWrap().setValue(100);
+						recipeText.getScale().setValue(2f);
+						recipeText.getText().setValue(StringUtils.repeat("-", i) + "> " + tempModule.getReadableName());
+						recipeText.setSize(new Vec2d(200, 16));
+						if (lastComponent != null)
+							recipeText.setPos(new Vec2d(0, lastComponent.getPos().getY() + lastComponent.getSize().getY()));
+						if (lastComponent != null) lastComponent.add(recipeText);
+						else add(recipeText);
+						lastComponent = recipeText;
+
+						for (String key : tempModule.attributes.getKeySet()) {
+							if (!key.equals(Attributes.MANA) && !key.equals(Attributes.BURNOUT)) {
+								ComponentText modifierText = new ComponentText(0, lastComponent.getSize().getYi(), ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.MIDDLE);
+								modifierText.getWrap().setValue(200);
+								modifierText.getText().setValue(StringUtils.repeat(" ", i * 3) + " | "
+										+ key.replace("modifier_", "").replace("_", " ")
+										+ " x" + (int) Math.round(tempModule.attributes.getDouble(key)));
+								modifierText.setSize(new Vec2d(0, 8));
+								lastComponent.add(modifierText);
+								lastComponent = modifierText;
+							}
+						}
+
 						tempModule = tempModule.nextModule;
 						i++;
 					}
 				}
 			}
-			StringBuilder finalString = new StringBuilder();
-			for (String line : lines) {
-				finalString.append("\n").append(line);
-			}
 
-			ComponentText title = new ComponentText(0, pos.getYi(), ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.MIDDLE);
-			title.getWrap().setValue(100);
-			title.getScale().setValue(2f);
-			title.getText().setValue(finalString.toString());
-			add(title);
-
+			ComponentVoid recipe = new ComponentVoid(224, 0, 50, 50);
+			recipe.setChildScale(2);
+			add(recipe);
 			JsonArray array2 = object.getAsJsonArray("list");
 			int row = 0;
 			for (int i = 0; i < array2.size(); i++) {
-				if (i > 0 && i % 6 == 0) row++;
+				if (i > 0 && i % 4 == 0) row++;
 
 				if (array2.get(i).isJsonObject()) {
 					JsonObject object1 = array2.get(i).getAsJsonObject();
@@ -103,13 +122,13 @@ public class ComponentRecipe extends GuiComponent<ComponentRecipe> {
 
 						ItemStack stack = new ItemStack(item, count, meta);
 
-						ComponentStack componentStack = new ComponentStack(220 + 4 + 24 * (i % 6), 14 + 24 * row);
+						ComponentStack componentStack = new ComponentStack(32 * (i % 4), 16 * row);
 						componentStack.getStack().setValue(stack);
-						add(componentStack);
+						recipe.add(componentStack);
 
-						if (i % 6 == 0) continue;
-						ComponentSprite next = new ComponentSprite(ARROW, 220 + -4 + 24 * (i % 6), 20 + 24 * row, 9, 4);
-						add(next);
+						if (i % 4 == 0) continue;
+						ComponentSprite next = new ComponentSprite(ARROW, -13 + 32 * (i % 4), 6 + 16 * row, (int) (ARROW.getWidth() / 2.0), (int) (ARROW.getHeight() / 2.0));
+						recipe.add(next);
 					}
 				}
 			}
