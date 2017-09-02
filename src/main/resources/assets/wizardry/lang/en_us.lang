@@ -39,6 +39,7 @@ item.wizardry:syringe_blood.name=Blood Syringe
 item.wizardry:light.name=Light
 
 item.wizardry:wisdom_stick.name=Wisdom Wood Stick
+item.wizardry:wisdom_wood_door.name=Wisdom Wood Door
 tile.wizardry:wisdom_wood_log.name=Wisdom Wood Log
 tile.wizardry:wisdom_wood_planks.name=Wisdom Wood Planks
 tile.wizardry:wisdom_wood_pigmented_planks.name=Wisdom Wood Pigmented Planks
@@ -47,7 +48,6 @@ tile.wizardry:wisdom_wood_stairs.name=Wisdom Wood Stairs
 tile.wizardry:wisdom_wood_trapdoor.name=Wisdom Wood Trapdoor
 tile.wizardry:wisdom_wood_fence.name=Wisdom Wood Fence
 tile.wizardry:wisdom_wood_fence_gate.name=Wisdom Wood Fence Gate
-tile.wizardry:wisdom_wood_door.name=Wisdom Wood Door
 tile.wizardry:wisdom_wood.name=Wisdom Wood
 
 advancement.wizardry.book=You're a Wizard, Harry
