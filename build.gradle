@@ -39,6 +39,7 @@ repositories {
     maven { url = "http://maven.bluexin.be/repository/snapshots/" }
 	maven { url = "http://dvs1.progwml6.com/files/maven" }
 	maven { url = "http://tehnut.info/maven" }
+    maven { url = "http://maven.tterrag.com/" }
 }
 
 dependencies {
@@ -46,6 +47,7 @@ dependencies {
 	deobfCompile "mezz.jei:jei_1.12:4.7.5.86:api"
 	runtime "mezz.jei:jei_1.12:4.7.5.86"
 	deobfCompile "mcp.mobius.waila:Hwyla:1.8.20-B35_1.12"
+    runtime "team.chisel.ctm:CTM:MC1.12-0.2.2.7"
 }
 
 
