@@ -9,6 +9,7 @@ tile.wizardry:pearl_holder.name=Pearl Holder
 tile.wizardry:nacre_block.name=Nacre Block
 tile.wizardry:nacre_block_brick.name=Nacre Bricks
 tile.wizardry:mana_magnet.name=Mana Magnet
+tile.wizardry:torikki_grass.name=Torikki Grass
 
 item.wizardry:book.name=Spellforger's Codex
 item.wizardry:ring.name=Golden Ring
