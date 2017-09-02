@@ -4,10 +4,10 @@
       "item": "wizardry:book"
     },
     "title": {
-      "translate": "achievement.wizardry.book"
+      "translate": "advancement.wizardry.book"
     },
     "description": {
-      "translate": "achievement.wizardry.book.desc",
+      "translate": "advancement.wizardry.book.desc",
       "italic": true
     }
   },

@@ -4,10 +4,10 @@
       "item": "wizardry:devil_dust"
     },
     "title": {
-      "translate": "achievement.wizardry.crunch"
+      "translate": "advancement.wizardry.crunch"
     },
     "description": {
-      "translate": "achievement.wizardry.book.crunch",
+      "translate": "advancement.wizardry.book.crunch",
       "italic": true
     }
   },

@@ -4,10 +4,10 @@
       "item": "minecraft:bedrock"
     },
     "title": {
-      "translate": "achievement.wizardry.devildust"
+      "translate": "advancement.wizardry.devildust"
     },
     "description": {
-      "translate": "achievement.wizardry.devildust.desc",
+      "translate": "advancement.wizardry.devildust.desc",
       "italic": true
     }
   },

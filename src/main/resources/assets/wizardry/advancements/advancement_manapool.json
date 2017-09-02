@@ -4,10 +4,10 @@
       "item": "wizardry:mana_orb"
     },
     "title": {
-      "translate": "achievement.wizardry.manapool"
+      "translate": "advancement.wizardry.manapool"
     },
     "description": {
-      "translate": "achievement.wizardry.manapool.desc",
+      "translate": "advancement.wizardry.manapool.desc",
       "italic": true
     }
   },
