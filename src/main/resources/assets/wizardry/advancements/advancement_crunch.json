@@ -3,9 +3,11 @@
     "icon": {
       "item": "wizardry:devil_dust"
     },
-    "title": "Sugar, Spice, And Everything Nice",
+    "title": {
+      "translate": "achievement.wizardry.crunch"
+    },
     "description": {
-      "text": "Melt redstone in fire to make Devil Dust",
+      "translate": "achievement.wizardry.book.crunch",
       "italic": true
     }
   },

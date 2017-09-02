@@ -3,9 +3,11 @@
     "icon": {
       "item": "wizardry:book"
     },
-    "title": "You're a Wizard, Harry",
+    "title": {
+      "translate": "achievement.wizardry.book"
+    },
     "description": {
-      "text": "Create a book to aid in your delve into magic",
+      "translate": "achievement.wizardry.book.desc",
       "italic": true
     }
   },
