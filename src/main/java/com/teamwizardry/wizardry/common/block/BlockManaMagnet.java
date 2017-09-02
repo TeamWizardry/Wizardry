@@ -17,7 +17,8 @@ public class BlockManaMagnet extends BlockMod {
 
 	public BlockManaMagnet() {
 		super("mana_magnet", Material.WOOD);
-		setHardness(0.7f);
+		setHardness(2.0f);
+		setResistance(15.0f);
 		setSoundType(SoundType.WOOD);
 	}
 

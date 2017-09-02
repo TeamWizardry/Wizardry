@@ -4,6 +4,7 @@ import com.teamwizardry.librarianlib.features.base.block.tile.BlockModContainer;
 import com.teamwizardry.wizardry.client.render.block.TilePearlHolderRenderer;
 import com.teamwizardry.wizardry.common.tile.TilePearlHolder;
 import com.teamwizardry.wizardry.init.ModItems;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
@@ -29,6 +30,9 @@ public class BlockPearlHolder extends BlockModContainer {
 
 	public BlockPearlHolder() {
 		super("pearl_holder", Material.WOOD);
+		setSoundType(SoundType.WOOD);
+		setHardness(2.0f);
+		setResistance(15.0f);
 	}
 
 	@SideOnly(Side.CLIENT)

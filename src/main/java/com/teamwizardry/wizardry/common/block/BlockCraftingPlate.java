@@ -47,7 +47,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.*;
+import java.awt.Color;
 import java.util.ArrayList;
 
 /**
@@ -59,7 +59,8 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 
 	public BlockCraftingPlate() {
 		super("crafting_plate", Material.WOOD);
-		setHardness(1.0F);
+		setHardness(2.0F);
+		setResistance(15.0f);
 		setSoundType(SoundType.WOOD);
 	}
 
