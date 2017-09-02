@@ -40,6 +40,8 @@ public class BlockJar extends BlockModContainer {
 	public BlockJar() {
 		super("jar_block", Material.GLASS);
 		setSoundType(SoundType.GLASS);
+		setHardness(0.3f);
+		setResistance(1.5f);
 	}
 
 	@Nullable
