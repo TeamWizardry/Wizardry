@@ -175,7 +175,7 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 			}
 			return true;
 		}
-		return false;
+		return heldItem.isEmpty();
 	}
 
 	@Override
