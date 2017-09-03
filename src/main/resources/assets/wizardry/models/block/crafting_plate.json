@@ -7,7 +7,7 @@
 		"side": "wizardry:blocks/crafting_plate/side",
 		"plate": "wizardry:blocks/crafting_plate/plate"
 	},
-	"elements": [ 	 
+	"elements": [
 		{
 			"__comment": "foot_nw",
 			"from": [ 1, 0, 1 ],

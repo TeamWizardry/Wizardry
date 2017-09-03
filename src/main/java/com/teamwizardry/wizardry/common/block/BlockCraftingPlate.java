@@ -55,7 +55,7 @@ import java.util.ArrayList;
  */
 public class BlockCraftingPlate extends BlockModContainer implements IStructure {
 
-	public static final AxisAlignedBB AABB = new AxisAlignedBB(0.125, 0, 0.125, 0.875, 0.725, 0.875);
+	private static final AxisAlignedBB AABB_CRAFTING_PLATE = new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.8125, 1.0);
 
 	public BlockCraftingPlate() {
 		super("crafting_plate", Material.WOOD);
@@ -177,12 +177,6 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 		} else return true;
 	}
 
-	@Nonnull
-	@Override
-	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos) {
-		return AABB;
-	}
-
 	@Override
 	public boolean isFullCube(IBlockState state) {
 		return false;
@@ -191,6 +185,11 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 	@Override
 	public boolean isOpaqueCube(IBlockState blockState) {
 		return false;
+	}
+
+	@Override
+	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+		return AABB_CRAFTING_PLATE;
 	}
 
 	@Override
