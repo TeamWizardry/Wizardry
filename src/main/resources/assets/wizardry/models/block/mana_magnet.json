@@ -2,8 +2,8 @@
 	"__comment": "Copyright © InsomniaKitten 2017",
 	"textures": {
 		"particle": "wizardry:blocks/mana_magnet_up",
-		"down": "wizardry:blocks/mana_magnet_down",
 		"up": "wizardry:blocks/mana_magnet_up",
+		"down": "wizardry:blocks/mana_magnet_down",
 		"side": "wizardry:blocks/mana_magnet_side",
 		"pearl": "wizardry:blocks/mana_magnet_pearl"
 	},
