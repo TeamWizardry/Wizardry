@@ -43,7 +43,7 @@ repositories {
 }
 
 dependencies {
-	compile "com.teamwizardry.librarianlib:librarianlib-1.12:${liblib_version}:deobf"
+	compile "com.teamwizardry.librarianlib:librarianlib-1.12:$liblib_version:deobf"
 	deobfCompile "mezz.jei:jei_1.12:$jei_version:api"
 	runtime "mezz.jei:jei_1.12:$jei_version"
 	deobfCompile "mcp.mobius.waila:Hwyla:$hwyla_version"
