@@ -7,7 +7,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
-import javax.annotation.Nonnull;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;

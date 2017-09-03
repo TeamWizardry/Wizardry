@@ -2,8 +2,8 @@ package com.teamwizardry.wizardry.api.spell;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.world.World;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**

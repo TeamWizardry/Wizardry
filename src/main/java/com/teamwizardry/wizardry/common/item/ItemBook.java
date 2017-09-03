@@ -2,8 +2,8 @@ package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.common.advancement.ModAdvancements;
 import com.teamwizardry.wizardry.common.advancement.IPickupAchievement;
+import com.teamwizardry.wizardry.common.advancement.ModAdvancements;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.entity.item.EntityItem;

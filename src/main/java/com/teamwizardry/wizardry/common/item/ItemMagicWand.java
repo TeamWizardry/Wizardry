@@ -25,11 +25,10 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import javax.annotation.Nonnull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
+import javax.annotation.Nullable;
+import java.awt.Color;
 
 public class ItemMagicWand extends ItemMod implements IGlowingItem {
 

@@ -40,9 +40,9 @@ import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import javax.annotation.Nonnull;
 
-import java.awt.*;
+import javax.annotation.Nonnull;
+import java.awt.Color;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;

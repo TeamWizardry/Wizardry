@@ -9,6 +9,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.registries.IForgeRegistryEntry;
+
 import javax.annotation.Nonnull;
 
 public class RecipeManaSyringe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {

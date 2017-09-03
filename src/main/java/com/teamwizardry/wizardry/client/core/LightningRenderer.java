@@ -4,9 +4,9 @@ import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
@@ -18,7 +18,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.ArrayList;
 
 import static org.lwjgl.opengl.GL11.GL_ONE;

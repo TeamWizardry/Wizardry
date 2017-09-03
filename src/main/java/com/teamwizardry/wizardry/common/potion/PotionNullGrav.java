@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.common.potion;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.item.ItemStack;
-import javax.annotation.Nonnull;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;

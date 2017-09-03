@@ -1,12 +1,12 @@
 package com.teamwizardry.wizardry.crafting;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
+
+import javax.annotation.Nullable;
 
 public class IngredientFluidStack extends Ingredient
 {

@@ -2,8 +2,6 @@ package com.teamwizardry.wizardry.api.spell.module;
 
 import javax.annotation.Nonnull;
 
-import javax.annotation.Nonnull;
-
 public abstract class ModuleModifier extends Module {
 	@Nonnull
 	@Override

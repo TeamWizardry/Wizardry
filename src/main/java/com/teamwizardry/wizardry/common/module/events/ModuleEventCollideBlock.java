@@ -1,16 +1,15 @@
 package com.teamwizardry.wizardry.common.module.events;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.BLOCK_HIT;
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ENTITY_HIT;
-
-import javax.annotation.Nonnull;
-
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEvent;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
-
 import net.minecraft.util.math.BlockPos;
+
+import javax.annotation.Nonnull;
+
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.BLOCK_HIT;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ENTITY_HIT;
 
 /**
  * Created by LordSaad.

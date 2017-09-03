@@ -14,8 +14,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 

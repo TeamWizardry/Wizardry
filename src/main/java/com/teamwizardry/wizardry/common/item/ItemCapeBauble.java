@@ -10,8 +10,8 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Optional;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.UUID;
 

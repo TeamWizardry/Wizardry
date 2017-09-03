@@ -8,6 +8,7 @@ import com.teamwizardry.wizardry.api.util.RandUtilSeed;
 import com.teamwizardry.wizardry.client.core.LightningRenderer;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+
 import javax.annotation.Nonnull;
 
 /**

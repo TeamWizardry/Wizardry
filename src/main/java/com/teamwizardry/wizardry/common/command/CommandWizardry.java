@@ -12,8 +12,8 @@ import net.minecraft.command.WrongUsageException;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 
 

@@ -13,8 +13,8 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 

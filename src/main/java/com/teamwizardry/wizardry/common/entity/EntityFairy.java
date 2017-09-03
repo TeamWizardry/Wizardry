@@ -23,10 +23,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import javax.annotation.Nonnull;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
+import java.awt.Color;
 import java.util.List;
 import java.util.Random;
 

@@ -17,7 +17,7 @@ import net.minecraft.world.gen.structure.template.Template;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.awt.*;
+import java.awt.Color;
 import java.util.HashSet;
 import java.util.Set;
 

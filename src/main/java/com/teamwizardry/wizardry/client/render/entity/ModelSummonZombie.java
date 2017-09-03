@@ -4,6 +4,7 @@ import com.teamwizardry.wizardry.common.entity.EntityBackupZombie;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
+
 import javax.annotation.Nonnull;
 
 public class ModelSummonZombie extends ModelBiped {

@@ -1,10 +1,5 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ENTITY_HIT;
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.TARGET_HIT;
-
-import javax.annotation.Nonnull;
-
 import com.teamwizardry.librarianlib.features.methodhandles.MethodHandleHelper;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.module.Module;
@@ -13,7 +8,6 @@ import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.init.ModSounds;
 import com.teamwizardry.wizardry.lib.LibParticles;
-
 import kotlin.jvm.functions.Function1;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -25,6 +19,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+
+import javax.annotation.Nonnull;
+
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ENTITY_HIT;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.TARGET_HIT;
 
 /**
  * Created by LordSaad.

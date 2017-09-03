@@ -17,7 +17,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
+import java.awt.Color;
 
 /**
  * Created by Saad on 8/17/2016.

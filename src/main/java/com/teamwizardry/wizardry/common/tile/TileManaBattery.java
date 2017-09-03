@@ -21,9 +21,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import javax.annotation.Nonnull;
 
-import java.awt.*;
+import javax.annotation.Nonnull;
+import java.awt.Color;
 import java.util.ArrayList;
 
 @TileRegister("mana_battery")

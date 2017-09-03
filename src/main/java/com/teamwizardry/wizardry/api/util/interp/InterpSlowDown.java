@@ -3,8 +3,8 @@ package com.teamwizardry.wizardry.api.util.interp;
 import com.teamwizardry.librarianlib.features.math.interpolate.InterpFunction;
 import com.teamwizardry.wizardry.api.util.CubicBezier;
 import net.minecraft.util.math.Vec3d;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 /**

@@ -5,8 +5,8 @@ import com.teamwizardry.librarianlib.features.network.PacketBase;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.UUID;
 
 public class PacketSyncCape extends PacketBase {

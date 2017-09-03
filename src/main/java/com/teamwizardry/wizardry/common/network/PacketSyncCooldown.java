@@ -4,6 +4,7 @@ import com.teamwizardry.librarianlib.features.network.PacketBase;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.wizardry.client.core.CooldownHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+
 import javax.annotation.Nonnull;
 
 public class PacketSyncCooldown extends PacketBase {

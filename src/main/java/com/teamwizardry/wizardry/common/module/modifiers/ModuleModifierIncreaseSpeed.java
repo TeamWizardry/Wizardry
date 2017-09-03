@@ -7,7 +7,6 @@ import com.teamwizardry.wizardry.api.spell.attribute.Operation;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
-import javax.annotation.Nonnull;
 
 import javax.annotation.Nonnull;
 

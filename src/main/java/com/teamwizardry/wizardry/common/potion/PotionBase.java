@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.common.potion;
 import com.teamwizardry.librarianlib.features.base.PotionMod;
 import com.teamwizardry.librarianlib.features.helpers.VariantHelper;
 import com.teamwizardry.wizardry.Wizardry;
+
 import javax.annotation.Nonnull;
 
 public class PotionBase extends PotionMod {

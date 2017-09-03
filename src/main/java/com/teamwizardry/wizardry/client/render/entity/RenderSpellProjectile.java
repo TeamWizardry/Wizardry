@@ -15,11 +15,10 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
-import javax.annotation.Nonnull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.*;
+import java.awt.Color;
 
 import static com.teamwizardry.wizardry.common.entity.EntitySpellProjectile.DATA_COLOR;
 import static com.teamwizardry.wizardry.common.entity.EntitySpellProjectile.DATA_COLOR2;

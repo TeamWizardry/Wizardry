@@ -8,8 +8,8 @@ import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 
 /**

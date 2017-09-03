@@ -20,7 +20,6 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.world.World;
-import javax.annotation.Nonnull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
