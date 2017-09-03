@@ -55,6 +55,7 @@ public class BlockTorikkiGrass extends BlockMod implements IGrowable {
 		return Blocks.GRASS.canUseBonemeal(worldIn, rand, pos, state);
 	}
 
+	@Override
 	public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand) {
 		if (!worldIn.isRemote) {
 			if (worldIn.getLightFromNeighbors(pos.up()) < 4 && worldIn.getBlockState(pos.up()).getLightOpacity(worldIn, pos.up()) > 2) {
