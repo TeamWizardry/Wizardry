@@ -77,14 +77,14 @@ subtitle.wizardry.bell=Bell tolls
 subtitle.wizardry.bubbling=Liquid bubbles
 subtitle.wizardry.spirit=Spirit whispers
 
-potion.wizardry.crash=Crash
-potion.wizardry.low_gravity=Feather
-potion.wizardry.nullify_gravity=Ascension
-potion.wizardry.null_movement=Hermetic Seal
-potion.wizardry.phase=Ghostform
-potion.wizardry.slippery=Frictionless
-potion.wizardry.steroid=Overdrive
-potion.wizardry.time_slow=Unwinding
+wizardry.potion.crash=Crash
+wizardry.potion.low_gravity=Feather
+wizardry.potion.nullify_gravity=Ascension
+wizardry.potion.null_movement=Hermetic Seal
+wizardry.potion.phase=Ghostform
+wizardry.potion.slippery=Frictionless
+wizardry.potion.steroid=Overdrive
+wizardry.potion.time_slow=Unwinding
 
 item_group.wizardry=Wizardry
 
