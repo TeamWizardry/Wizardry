@@ -15,7 +15,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -27,6 +29,8 @@ import javax.annotation.Nullable;
  * Created by Saad on 5/7/2016.
  */
 public class BlockPearlHolder extends BlockModContainer {
+
+	private static final AxisAlignedBB AABB_PEARL_HOLDER = new AxisAlignedBB(0.125, 0, 0.125, 0.875, 0.75, 0.875);
 
 	public BlockPearlHolder() {
 		super("pearl_holder", Material.WOOD);
@@ -67,20 +71,22 @@ public class BlockPearlHolder extends BlockModContainer {
 					te.pearl = heldItem.copy();
 					te.pearl.setCount(1);
 					heldItem.shrink(1);
-				} else return false;
-
+				}
 			} else {
-				ItemStack stack = te.pearl.copy();
-				te.pearl = ItemStack.EMPTY;
-				if (playerIn.inventory.addItemStackToInventory(stack)) playerIn.openContainer.detectAndSendChanges();
-				else {
-					EntityItem entityItem = new EntityItem(worldIn, pos.getX(), pos.getY() + 1, pos.getZ(), stack);
-					worldIn.spawnEntity(entityItem);
+				if (heldItem.isEmpty()) {
+					ItemStack stack = te.pearl.copy();
+					te.pearl = ItemStack.EMPTY;
+					if (playerIn.inventory.addItemStackToInventory(stack)) {
+						playerIn.openContainer.detectAndSendChanges();
+					} else {
+						EntityItem entityItem = new EntityItem(worldIn, pos.getX(), pos.getY() + 1, pos.getZ(), stack);
+						worldIn.spawnEntity(entityItem);
+					}
 				}
 			}
 			te.markDirty();
 		}
-		return true;
+		return false;
 	}
 
 	private TilePearlHolder getTE(World world, BlockPos pos) {
@@ -106,5 +112,10 @@ public class BlockPearlHolder extends BlockModContainer {
 	@Override
 	public boolean isOpaqueCube(IBlockState blockState) {
 		return false;
+	}
+
+	@Override
+	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+		return AABB_PEARL_HOLDER;
 	}
 }
