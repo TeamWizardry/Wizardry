@@ -55,6 +55,26 @@ public class BlockTorikkiGrass extends BlockMod implements IGrowable {
 		return Blocks.GRASS.canUseBonemeal(worldIn, rand, pos, state);
 	}
 
+	public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand) {
+		if (!worldIn.isRemote) {
+			if (worldIn.getLightFromNeighbors(pos.up()) < 4 && worldIn.getBlockState(pos.up()).getLightOpacity(worldIn, pos.up()) > 2) {
+				worldIn.setBlockState(pos, Blocks.DIRT.getDefaultState().withProperty(BlockDirt.VARIANT, BlockDirt.DirtType.DIRT));
+			} else {
+				if (worldIn.getLightFromNeighbors(pos.up()) >= 9) {
+					for (int i = 0; i < 4; ++i) {
+						BlockPos posAt = pos.add(rand.nextInt(3) - 1, rand.nextInt(5) - 3, rand.nextInt(3) - 1);
+						IBlockState stateAt = worldIn.getBlockState(posAt);
+						IBlockState stateAbove = worldIn.getBlockState(posAt.up());
+						if (stateAt.getBlock() == Blocks.DIRT && stateAt.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.DIRT
+								&& worldIn.getLightFromNeighbors(posAt.up()) >= 4 && stateAbove.getLightOpacity(worldIn, posAt.up()) <= 2) {
+							worldIn.setBlockState(posAt, this.getDefaultState());
+						}
+					}
+				}
+			}
+		}
+	}
+
 	@Override
 	public boolean canSilkHarvest(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
 		return true;
