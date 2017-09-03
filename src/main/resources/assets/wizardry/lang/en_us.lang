@@ -69,22 +69,22 @@ death.attack.wizardry.mana=%s drowned in power
 death.attack.wizardry.crash=%s was pulverized
 death.attack.wizardry.crash.player=%s was pulverized by %s
 
-wizardry.subtitle.glassbreak=Glass shatters
-wizardry.subtitle.fizz=Dust fizzes
-wizardry.subtitle.sizzle=Dust sizzles
-wizardry.subtitle.harp=Harp plays
-wizardry.subtitle.bell=Bell tolls
-wizardry.subtitle.bubbling=Liquid bubbles
-wizardry.subtitle.spirit=Spirit whispers
+subtitle.wizardry.glassbreak=Glass shatters
+subtitle.wizardry.fizz=Dust fizzes
+subtitle.wizardry.sizzle=Dust sizzles
+subtitle.wizardry.harp=Harp plays
+subtitle.wizardry.bell=Bell tolls
+subtitle.wizardry.bubbling=Liquid bubbles
+subtitle.wizardry.spirit=Spirit whispers
 
-wizardry.potion.crash=Crash
-wizardry.potion.low_gravity=Feather
-wizardry.potion.nullify_gravity=Ascension
-wizardry.potion.null_movement=Hermetic Seal
-wizardry.potion.phase=Ghostform
-wizardry.potion.slippery=Frictionless
-wizardry.potion.steroid=Overdrive
-wizardry.potion.time_slow=Unwinding
+potion.wizardry.crash=Crash
+potion.wizardry.low_gravity=Feather
+potion.wizardry.nullify_gravity=Ascension
+potion.wizardry.null_movement=Hermetic Seal
+potion.wizardry.phase=Ghostform
+potion.wizardry.slippery=Frictionless
+potion.wizardry.steroid=Overdrive
+potion.wizardry.time_slow=Unwinding
 
 item_group.wizardry=Wizardry
 
