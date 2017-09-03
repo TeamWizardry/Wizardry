@@ -2,7 +2,6 @@
 	"ctm_version": 1,
 	"textures": {
 		"0": "wizardry:blocks/crafting_plate",
-		"1": "wizardry:empty",
 		"2": "wizardry:blocks/wisdom_wood_pigmented_planks",
 		"3": "wizardry:blocks/wisdom_wood_planks",
 		"particle": "wizardry:blocks/wisdom_wood_planks"
@@ -287,24 +286,6 @@
 				14.5
 			],
 			"faces": {
-				"down": {
-					"uv": [
-						0,
-						0,
-						3,
-						3
-					],
-					"texture": "#1"
-				},
-				"up": {
-					"uv": [
-						0,
-						0,
-						3,
-						3
-					],
-					"texture": "#1"
-				},
 				"north": {
 					"uv": [
 						0,
@@ -354,24 +335,6 @@
 				14.5
 			],
 			"faces": {
-				"down": {
-					"uv": [
-						0,
-						0,
-						3,
-						3
-					],
-					"texture": "#1"
-				},
-				"up": {
-					"uv": [
-						0,
-						0,
-						3,
-						3
-					],
-					"texture": "#1"
-				},
 				"north": {
 					"uv": [
 						0,
@@ -421,24 +384,6 @@
 				4.5
 			],
 			"faces": {
-				"down": {
-					"uv": [
-						0,
-						0,
-						3,
-						3
-					],
-					"texture": "#1"
-				},
-				"up": {
-					"uv": [
-						0,
-						0,
-						3,
-						3
-					],
-					"texture": "#1"
-				},
 				"north": {
 					"uv": [
 						0,
@@ -488,24 +433,6 @@
 				4.5
 			],
 			"faces": {
-				"down": {
-					"uv": [
-						0,
-						0,
-						3,
-						3
-					],
-					"texture": "#1"
-				},
-				"up": {
-					"uv": [
-						0,
-						0,
-						3,
-						3
-					],
-					"texture": "#1"
-				},
 				"north": {
 					"uv": [
 						0,
@@ -563,15 +490,6 @@
 						8
 					],
 					"texture": "#0"
-				},
-				"up": {
-					"uv": [
-						0,
-						0,
-						4,
-						4
-					],
-					"texture": "#1"
 				},
 				"north": {
 					"uv": [
@@ -631,15 +549,6 @@
 					],
 					"texture": "#0"
 				},
-				"up": {
-					"uv": [
-						0,
-						0,
-						4,
-						4
-					],
-					"texture": "#1"
-				},
 				"north": {
 					"uv": [
 						0,
@@ -698,15 +607,6 @@
 					],
 					"texture": "#0"
 				},
-				"up": {
-					"uv": [
-						0,
-						0,
-						4,
-						4
-					],
-					"texture": "#1"
-				},
 				"north": {
 					"uv": [
 						0,
@@ -764,15 +664,6 @@
 						8
 					],
 					"texture": "#0"
-				},
-				"up": {
-					"uv": [
-						0,
-						0,
-						4,
-						4
-					],
-					"texture": "#1"
 				},
 				"north": {
 					"uv": [
@@ -891,15 +782,6 @@
 				11
 			],
 			"faces": {
-				"down": {
-					"uv": [
-						0,
-						0,
-						6,
-						6
-					],
-					"texture": "#1"
-				},
 				"up": {
 					"uv": [
 						6,
@@ -976,24 +858,6 @@
 					],
 					"texture": "#0"
 				},
-				"north": {
-					"uv": [
-						0,
-						0,
-						1,
-						2
-					],
-					"texture": "#1"
-				},
-				"south": {
-					"uv": [
-						0,
-						0,
-						1,
-						2
-					],
-					"texture": "#1"
-				},
 				"west": {
 					"uv": [
 						4,
@@ -1042,24 +906,6 @@
 						14
 					],
 					"texture": "#0"
-				},
-				"north": {
-					"uv": [
-						0,
-						0,
-						1,
-						2
-					],
-					"texture": "#1"
-				},
-				"south": {
-					"uv": [
-						0,
-						0,
-						1,
-						2
-					],
-					"texture": "#1"
 				},
 				"west": {
 					"uv": [
@@ -1253,15 +1099,6 @@
 					],
 					"texture": "#1"
 				},
-				"south": {
-					"uv": [
-						0,
-						0,
-						2,
-						2
-					],
-					"texture": "#1"
-				},
 				"west": {
 					"uv": [
 						4,
@@ -1310,24 +1147,6 @@
 						14
 					],
 					"texture": "#0"
-				},
-				"north": {
-					"uv": [
-						0,
-						0,
-						2,
-						2
-					],
-					"texture": "#1"
-				},
-				"south": {
-					"uv": [
-						0,
-						0,
-						2,
-						2
-					],
-					"texture": "#1"
 				},
 				"west": {
 					"uv": [
@@ -1395,24 +1214,6 @@
 						16
 					],
 					"texture": "#0"
-				},
-				"west": {
-					"uv": [
-						0,
-						0,
-						2,
-						2
-					],
-					"texture": "#1"
-				},
-				"east": {
-					"uv": [
-						0,
-						0,
-						2,
-						2
-					],
-					"texture": "#1"
 				}
 			}
 		}
