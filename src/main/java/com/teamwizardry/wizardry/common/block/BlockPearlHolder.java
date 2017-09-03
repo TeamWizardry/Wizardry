@@ -73,7 +73,7 @@ public class BlockPearlHolder extends BlockModContainer {
 					heldItem.shrink(1);
 				}
 			} else {
-				if (heldItem.isEmpty()) {
+				if (playerIn.getHeldItemMainhand().isEmpty() && playerIn.getHeldItemOffhand().isEmpty()) {
 					ItemStack stack = te.pearl.copy();
 					te.pearl = ItemStack.EMPTY;
 					if (playerIn.inventory.addItemStackToInventory(stack)) {
