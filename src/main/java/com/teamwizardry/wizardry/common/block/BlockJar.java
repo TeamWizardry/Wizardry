@@ -25,16 +25,15 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import javax.annotation.Nonnull;
 import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
+import javax.annotation.Nonnull;
+import java.awt.Color;
 
 /**
  * Created by LordSaad.
  */
 public class BlockJar extends BlockModContainer {
-
 	private static final AxisAlignedBB AABB_JAR = new AxisAlignedBB(0.25, 0, 0.25, 0.75, 0.75, 0.75);
 
 	public BlockJar() {
@@ -53,14 +52,12 @@ public class BlockJar extends BlockModContainer {
 	@Override
 	public int getLightValue(@Nonnull IBlockState state, IBlockAccess world, @Nonnull BlockPos pos) {
 		TileJar jar = (TileJar) world.getTileEntity(pos);
-		if (jar == null) return 0;
-		return jar.hasFairy ? 15 : 0;
+		return jar != null && jar.hasFairy ? 15 : 0;
 	}
 
 	@Override
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
 		if (ItemNBTHelper.getBoolean(stack, Constants.NBT.FAIRY_INSIDE, false)) {
-
 			TileJar jar = (TileJar) worldIn.getTileEntity(pos);
 			if (jar == null) return;
 			jar.color = new Color(ItemNBTHelper.getInt(stack, Constants.NBT.FAIRY_COLOR, 0xFFFFFF));
@@ -74,8 +71,7 @@ public class BlockJar extends BlockModContainer {
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		if (!worldIn.isRemote) {
 			TileJar jar = (TileJar) worldIn.getTileEntity(pos);
-			if (jar == null) return false;
-			if (playerIn.isSneaking() && jar.hasFairy) {
+			if (jar != null && playerIn.isSneaking() && jar.hasFairy) {
 				EntityFairy entity = new EntityFairy(worldIn, jar.color, jar.age);
 				entity.setPosition(playerIn.posX, playerIn.posY, playerIn.posZ);
 				worldIn.spawnEntity(entity);
