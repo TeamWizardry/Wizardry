@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.block;
 
 import com.teamwizardry.librarianlib.features.base.block.BlockMod;
 import net.minecraft.block.BlockDirt;
+import net.minecraft.block.BlockDirt.DirtType;
 import net.minecraft.block.IGrowable;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -42,7 +43,7 @@ public class BlockTorikkiGrass extends BlockMod implements IGrowable {
 	@Nonnull
 	@Override
 	public Item getItemDropped(IBlockState state, Random rand, int fortune) {
-		return Blocks.DIRT.getItemDropped(Blocks.DIRT.getDefaultState().withProperty(BlockDirt.VARIANT, BlockDirt.DirtType.DIRT), rand, fortune);
+		return Blocks.DIRT.getItemDropped(Blocks.DIRT.getDefaultState().withProperty(BlockDirt.VARIANT, DirtType.DIRT), rand, fortune);
 	}
 
 	@Override
@@ -59,15 +60,16 @@ public class BlockTorikkiGrass extends BlockMod implements IGrowable {
 	public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand) {
 		if (!worldIn.isRemote) {
 			if (worldIn.getLightFromNeighbors(pos.up()) < 4 && worldIn.getBlockState(pos.up()).getLightOpacity(worldIn, pos.up()) > 2) {
-				worldIn.setBlockState(pos, Blocks.DIRT.getDefaultState().withProperty(BlockDirt.VARIANT, BlockDirt.DirtType.DIRT));
+				worldIn.setBlockState(pos, Blocks.DIRT.getDefaultState().withProperty(BlockDirt.VARIANT, DirtType.DIRT));
 			} else {
 				if (worldIn.getLightFromNeighbors(pos.up()) >= 9) {
 					for (int i = 0; i < 4; ++i) {
 						BlockPos posAt = pos.add(rand.nextInt(3) - 1, rand.nextInt(5) - 3, rand.nextInt(3) - 1);
 						IBlockState stateAt = worldIn.getBlockState(posAt);
 						IBlockState stateAbove = worldIn.getBlockState(posAt.up());
-						if (stateAt.getBlock() == Blocks.DIRT && stateAt.getValue(BlockDirt.VARIANT) == BlockDirt.DirtType.DIRT
-								&& worldIn.getLightFromNeighbors(posAt.up()) >= 4 && stateAbove.getLightOpacity(worldIn, posAt.up()) <= 2) {
+						if (Blocks.DIRT.equals(stateAt.getBlock()) && DirtType.DIRT.equals(stateAt.getValue(BlockDirt.VARIANT))
+								&& worldIn.getLightFromNeighbors(posAt.up()) >= 4
+								&& stateAbove.getLightOpacity(worldIn, posAt.up()) <= 2) {
 							worldIn.setBlockState(posAt, this.getDefaultState());
 						}
 					}
