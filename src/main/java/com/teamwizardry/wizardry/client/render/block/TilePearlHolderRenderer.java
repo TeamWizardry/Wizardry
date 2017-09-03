@@ -84,7 +84,7 @@ public class TilePearlHolderRenderer extends TileEntitySpecialRenderer<TilePearl
 
 			if (!isPearl || !magnetFound) GlStateManager.translate(0, sin / 10.0, 0);
 
-			GlStateManager.rotate((te.getWorld().getTotalWorldTime() + partialTicks) * 50.0f, 0, 1, 0);
+			GlStateManager.rotate((te.getWorld().getTotalWorldTime() + partialTicks) * 4.0f, 0, 1, 0);
 
 			GlStateManager.translate(0, 0.6, 0);
 			GlStateManager.rotate(45f, 1, 0, 1);
