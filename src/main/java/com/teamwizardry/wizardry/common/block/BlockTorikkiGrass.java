@@ -15,7 +15,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import javax.annotation.Nonnull;
 
 import javax.annotation.Nonnull;
 import java.util.Random;
@@ -30,6 +29,7 @@ public class BlockTorikkiGrass extends BlockMod implements IGrowable {
 		setSoundType(SoundType.PLANT);
 		setHardness(0.6f);
 		setResistance(3.0f);
+		setHarvestLevel("shovel", 0);
 	}
 
 	@Nonnull
@@ -58,11 +58,6 @@ public class BlockTorikkiGrass extends BlockMod implements IGrowable {
 	@Override
 	public boolean canSilkHarvest(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
 		return true;
-	}
-
-	@Override
-	public boolean isToolEffective(String type, IBlockState state) {
-		return "shovel".equals(type);
 	}
 
 	@Override
