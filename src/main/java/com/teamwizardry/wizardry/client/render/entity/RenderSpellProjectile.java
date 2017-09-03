@@ -15,7 +15,7 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -65,7 +65,7 @@ public class RenderSpellProjectile extends Render<EntitySpellProjectile> {
 
 	@Nullable
 	@Override
-	protected ResourceLocation getEntityTexture(@NotNull EntitySpellProjectile entity) {
+	protected ResourceLocation getEntityTexture(@Nonnull EntitySpellProjectile entity) {
 		return null;
 	}
 }

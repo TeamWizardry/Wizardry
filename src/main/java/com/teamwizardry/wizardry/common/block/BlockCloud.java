@@ -15,7 +15,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import javax.annotation.Nonnull;
 
@@ -33,8 +33,8 @@ public class BlockCloud extends BlockMod {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public boolean shouldSideBeRendered(
-			IBlockState state, @NotNull IBlockAccess world,
-			@NotNull BlockPos pos, EnumFacing side) {
+			IBlockState state, @Nonnull IBlockAccess world,
+			@Nonnull BlockPos pos, EnumFacing side) {
 		IBlockState iblockstate = world.getBlockState(pos.offset(side));
 		Block block = iblockstate.getBlock();
 		if (state != iblockstate) {

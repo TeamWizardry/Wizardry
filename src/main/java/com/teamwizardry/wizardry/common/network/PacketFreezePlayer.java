@@ -4,7 +4,7 @@ import com.teamwizardry.librarianlib.features.network.PacketBase;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * Created by LordSaad.
@@ -25,7 +25,7 @@ public class PacketFreezePlayer extends PacketBase {
 
 
 	@Override
-	public void handle(@NotNull MessageContext messageContext) {
+	public void handle(@Nonnull MessageContext messageContext) {
 		EntityPlayer player = Minecraft.getMinecraft().player;
 		if (player != null) {
 			player.getEntityData().setInteger("strength", countdown);

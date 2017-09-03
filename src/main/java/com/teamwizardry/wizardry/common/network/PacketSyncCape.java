@@ -5,7 +5,7 @@ import com.teamwizardry.librarianlib.features.network.PacketBase;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.UUID;
 
@@ -25,7 +25,7 @@ public class PacketSyncCape extends PacketBase {
 	}
 
 	@Override
-	public void handle(@NotNull MessageContext ctx) {
+	public void handle(@Nonnull MessageContext ctx) {
 		if (!ItemNBTHelper.verifyExistence(stack, "uuid")) {
 			ItemNBTHelper.setUUID(stack, "uuid", uuid);
 		}

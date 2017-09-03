@@ -21,11 +21,10 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.*;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -209,7 +208,7 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	 * @param data The spellData associated with it.
 	 * @return If the spell has succeeded.
 	 */
-	public final boolean castSpell(@NotNull SpellData data) {
+	public final boolean castSpell(@Nonnull SpellData data) {
 		if (this instanceof ILingeringModule)
 			if (!SpellTicker.INSTANCE.ticker.containsKey(this)) {
 				data.addData(MAX_TIME, ((ILingeringModule) this).lingeringTime(data));
@@ -230,7 +229,7 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 		}
 	}
 
-	public final void castParticles(@NotNull SpellData data) {
+	public final void castParticles(@Nonnull SpellData data) {
 		Entity caster = data.getData(CASTER);
 		Vec3d target = data.hasData(SpellData.DefaultKeys.ORIGIN) ?
 				data.getData(SpellData.DefaultKeys.ORIGIN) : data.hasData(SpellData.DefaultKeys.TARGET_HIT) ?
@@ -249,7 +248,7 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 		return ((manager.getMaxBurnout() - manager.getBurnout()) / (manager.getMaxBurnout() * 1.0));
 	}
 
-	protected final boolean runNextModule(@NotNull SpellData data) {
+	protected final boolean runNextModule(@Nonnull SpellData data) {
 		if (nextModule != null) {
 			nextModule.setMultiplier(nextModule.getMultiplier() * getMultiplier());
 		}

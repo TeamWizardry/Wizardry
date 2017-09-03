@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.layers.LayerBipedArmor;
 import net.minecraft.util.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class RenderSummonZombie extends RenderBiped<EntityBackupZombie> {
 	private static final ResourceLocation ZOMBIE_TEXTURES = new ResourceLocation("textures/entity/zombie/zombie.png");
@@ -27,7 +27,7 @@ public class RenderSummonZombie extends RenderBiped<EntityBackupZombie> {
 	 * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
 	 */
 	@Override
-	protected ResourceLocation getEntityTexture(@NotNull EntityBackupZombie entity) {
+	protected ResourceLocation getEntityTexture(@Nonnull EntityBackupZombie entity) {
 		return ZOMBIE_TEXTURES;
 	}
 }

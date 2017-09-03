@@ -13,7 +13,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ public class PotionNullMovement extends PotionBase {
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<ItemStack> getCurativeItems() {
 		return new ArrayList<>();

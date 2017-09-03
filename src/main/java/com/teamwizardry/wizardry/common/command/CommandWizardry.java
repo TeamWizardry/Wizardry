@@ -12,7 +12,7 @@ import net.minecraft.command.WrongUsageException;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.io.File;
 
@@ -22,15 +22,15 @@ import java.io.File;
  */
 public class CommandWizardry extends CommandBase {
 
-	@NotNull
+	@Nonnull
 	@Override
 	public String getName() {
 		return "wizardry";
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public String getUsage(@NotNull ICommandSender sender) {
+	public String getUsage(@Nonnull ICommandSender sender) {
 		return "/wizardry <reset>";
 	}
 
@@ -40,7 +40,7 @@ public class CommandWizardry extends CommandBase {
 	}
 
 	@Override
-	public void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender, @NotNull String[] args) throws CommandException {
+	public void execute(@Nonnull MinecraftServer server, @Nonnull ICommandSender sender, @Nonnull String[] args) throws CommandException {
 		if (args.length != 1) throw new WrongUsageException(getUsage(sender));
 
 		if (args[0].equalsIgnoreCase("reload")) {

@@ -4,7 +4,7 @@ import com.teamwizardry.wizardry.common.entity.EntityBackupZombie;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class ModelSummonZombie extends ModelBiped {
 
@@ -22,7 +22,7 @@ public class ModelSummonZombie extends ModelBiped {
 	 * "far" arms and legs can swing at most.
 	 */
 	@Override
-	public void setRotationAngles(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor, @NotNull Entity entityIn) {
+	public void setRotationAngles(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor, @Nonnull Entity entityIn) {
 		super.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entityIn);
 		boolean flag = ((EntityBackupZombie) entityIn).isArmsRaised();
 		float f = MathHelper.sin(this.swingProgress * (float) Math.PI);

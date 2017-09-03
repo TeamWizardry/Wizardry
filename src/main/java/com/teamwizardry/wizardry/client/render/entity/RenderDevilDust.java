@@ -4,7 +4,7 @@ import com.teamwizardry.wizardry.common.entity.EntityDevilDust;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import javax.annotation.Nullable;
 
@@ -19,7 +19,7 @@ public class RenderDevilDust extends Render<EntityDevilDust> {
 
 	@Nullable
 	@Override
-	protected ResourceLocation getEntityTexture(@NotNull EntityDevilDust entity) {
+	protected ResourceLocation getEntityTexture(@Nonnull EntityDevilDust entity) {
 		return null;
 	}
 }

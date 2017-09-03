@@ -25,7 +25,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
@@ -108,7 +108,7 @@ public class EntityBackupZombie extends EntityMob {
 	}
 
 	@Override
-	public void notifyDataManagerChange(@NotNull DataParameter<?> key) {
+	public void notifyDataManagerChange(@Nonnull DataParameter<?> key) {
 		super.notifyDataManagerChange(key);
 	}
 
@@ -167,7 +167,7 @@ public class EntityBackupZombie extends EntityMob {
 		this.playSound(this.getStepSound(), 0.15F, 1.0F);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public EnumCreatureAttribute getCreatureAttribute() {
 		return EnumCreatureAttribute.UNDEAD;

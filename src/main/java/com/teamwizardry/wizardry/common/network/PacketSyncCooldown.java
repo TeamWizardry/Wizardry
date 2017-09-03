@@ -4,7 +4,7 @@ import com.teamwizardry.librarianlib.features.network.PacketBase;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.wizardry.client.core.CooldownHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class PacketSyncCooldown extends PacketBase {
 
@@ -22,7 +22,7 @@ public class PacketSyncCooldown extends PacketBase {
 	}
 
 	@Override
-	public void handle(@NotNull MessageContext ctx) {
+	public void handle(@Nonnull MessageContext ctx) {
 		CooldownHandler.INSTANCE.setResetMain(resetMain);
 		CooldownHandler.INSTANCE.setResetOff(resetOff);
 	}

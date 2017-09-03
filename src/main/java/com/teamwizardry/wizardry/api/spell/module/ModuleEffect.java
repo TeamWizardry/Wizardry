@@ -1,11 +1,11 @@
 package com.teamwizardry.wizardry.api.spell.module;
 
 import com.teamwizardry.wizardry.api.spell.ITaxing;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public abstract class ModuleEffect extends Module implements ITaxing
 {
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleType getModuleType() {
 		return ModuleType.EFFECT;

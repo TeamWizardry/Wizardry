@@ -25,7 +25,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
@@ -51,7 +51,7 @@ public class BlockJar extends BlockModContainer {
 	}
 
 	@Override
-	public int getLightValue(@NotNull IBlockState state, IBlockAccess world, @NotNull BlockPos pos) {
+	public int getLightValue(@Nonnull IBlockState state, IBlockAccess world, @Nonnull BlockPos pos) {
 		TileJar jar = (TileJar) world.getTileEntity(pos);
 		if (jar == null) return 0;
 		return jar.hasFairy ? 15 : 0;
@@ -85,7 +85,7 @@ public class BlockJar extends BlockModContainer {
 		return false;
 	}
 
-	@NotNull
+	@Nonnull
 	@SideOnly(Side.CLIENT)
 	public BlockRenderLayer getBlockLayer() {
 		return BlockRenderLayer.TRANSLUCENT;
@@ -107,7 +107,7 @@ public class BlockJar extends BlockModContainer {
 
 	@Nullable
 	@Override
-	public TileEntity createTileEntity(@NotNull World world, @NotNull IBlockState iBlockState) {
+	public TileEntity createTileEntity(@Nonnull World world, @Nonnull IBlockState iBlockState) {
 		return new TileJar();
 	}
 

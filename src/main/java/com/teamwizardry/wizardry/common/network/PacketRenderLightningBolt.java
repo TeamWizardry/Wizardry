@@ -8,7 +8,7 @@ import com.teamwizardry.wizardry.api.util.RandUtilSeed;
 import com.teamwizardry.wizardry.client.core.LightningRenderer;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * Created by LordSaad.
@@ -32,7 +32,7 @@ public class PacketRenderLightningBolt extends PacketBase {
 	}
 
 	@Override
-	public void handle(@NotNull MessageContext messageContext) {
+	public void handle(@Nonnull MessageContext messageContext) {
 		LightningRenderer.INSTANCE.addBolt(new LightningGenerator(point1, point2, new RandUtilSeed(seed)).generate(), RandUtil.nextInt(30, 40));
 	}
 }

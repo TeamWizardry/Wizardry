@@ -8,7 +8,7 @@ import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 
@@ -31,7 +31,7 @@ public class PacketSendSpellToBook extends PacketBase {
 	}
 
 	@Override
-	public void handle(@NotNull MessageContext messageContext) {
+	public void handle(@Nonnull MessageContext messageContext) {
 		EntityPlayer player = messageContext.getServerHandler().player;
 
 		ItemStack book = player.inventory.getStackInSlot(slot);

@@ -2,7 +2,7 @@ package com.teamwizardry.wizardry.api.spell;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import javax.annotation.Nullable;
 
@@ -12,10 +12,10 @@ import javax.annotation.Nullable;
 public class ProcessData {
 
 	public interface Process<T extends NBTBase, E> {
-		@NotNull
+		@Nonnull
 		T serialize(@Nullable E object);
 
 		@Nullable
-		E deserialize(@NotNull World world, @NotNull T object);
+		E deserialize(@Nonnull World world, @Nonnull T object);
 	}
 }

@@ -10,12 +10,12 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.registries.IForgeRegistryEntry;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class RecipeSteroidSyringe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
 
 	@Override
-	public boolean matches(@NotNull InventoryCrafting inv, @NotNull World worldIn) {
+	public boolean matches(@Nonnull InventoryCrafting inv, @Nonnull World worldIn) {
 		boolean foundSyringe = false;
 		boolean foundMana = false;
 		boolean foundNacre = false;
@@ -36,9 +36,9 @@ public class RecipeSteroidSyringe extends IForgeRegistryEntry.Impl<IRecipe> impl
 		return foundSyringe && foundMana && foundDevilDust && foundLava && foundNacre;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public ItemStack getCraftingResult(@NotNull InventoryCrafting inv) {
+	public ItemStack getCraftingResult(@Nonnull InventoryCrafting inv) {
 		return new ItemStack(ModItems.SYRINGE, 1, 2);
 	}
 
@@ -47,7 +47,7 @@ public class RecipeSteroidSyringe extends IForgeRegistryEntry.Impl<IRecipe> impl
 		return true;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public ItemStack getRecipeOutput() {
 		return ItemStack.EMPTY;

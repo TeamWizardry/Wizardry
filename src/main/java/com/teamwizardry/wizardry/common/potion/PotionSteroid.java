@@ -7,7 +7,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ public class PotionSteroid extends PotionBase {
 		super("steroid", false, 0xDD5B23);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<ItemStack> getCurativeItems() {
 		return new ArrayList<>();

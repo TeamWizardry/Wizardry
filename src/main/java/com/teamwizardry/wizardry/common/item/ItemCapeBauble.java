@@ -10,7 +10,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Optional;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.List;
 import java.util.UUID;
@@ -32,7 +32,7 @@ public class ItemCapeBauble extends ItemModBauble implements ICape {
 		tickCape(itemstack, player);
 	}
 
-	@NotNull
+	@Nonnull
 	@Optional.Method(modid = "baubles")
 	@Override
 	public BaubleType getBaubleType(ItemStack itemStack) {

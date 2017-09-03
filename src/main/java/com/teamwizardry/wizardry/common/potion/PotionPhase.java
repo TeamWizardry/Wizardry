@@ -23,7 +23,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -40,7 +39,7 @@ public class PotionPhase extends PotionBase {
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<ItemStack> getCurativeItems() {
 		return new ArrayList<>();

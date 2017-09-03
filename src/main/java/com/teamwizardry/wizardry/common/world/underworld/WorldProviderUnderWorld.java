@@ -21,7 +21,6 @@ import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraftforge.client.IRenderHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -30,7 +29,7 @@ import javax.annotation.Nonnull;
  */
 public class WorldProviderUnderWorld extends WorldProvider {
 
-	@NotNull
+	@Nonnull
 	@Override
 	public IChunkGenerator createChunkGenerator() {
 		return new ChunkGeneratorUnderWorld(world);
