@@ -25,7 +25,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import javax.annotation.Nonnull;
 
 import javax.annotation.Nonnull;
 
@@ -37,7 +36,6 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 @RegisterModule
 public class ModuleEffectAntiGravityWell extends ModuleEffect implements ILingeringModule {
 
-	@Nonnull
 	@Nonnull
 	@Override
 	public ModuleType getModuleType() {
