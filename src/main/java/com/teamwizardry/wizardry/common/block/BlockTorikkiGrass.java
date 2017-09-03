@@ -31,6 +31,7 @@ public class BlockTorikkiGrass extends BlockMod implements IGrowable {
 		setHardness(0.6f);
 		setResistance(3.0f);
 		setHarvestLevel("shovel", 0);
+		setTickRandomly(true);
 	}
 
 	@Nonnull
