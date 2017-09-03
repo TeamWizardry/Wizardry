@@ -9,6 +9,6 @@ public class PotionBase extends PotionMod {
 
     public PotionBase(@NotNull String name, boolean badEffect, int color) {
         super(name, badEffect, color);
-        setPotionName("potion." + Wizardry.MODID + VariantHelper.toSnakeCase(name));
+        setPotionName("potion." + Wizardry.MODID + "." + VariantHelper.toSnakeCase(name));
     }
 }
