@@ -70,8 +70,6 @@ public class ModuleShapeTouch extends ModuleShape {
 				.setIgnoreBlocksWithoutBoundingBoxes(false)
 				.trace();
 
-		if (result == null) return true;
-
 		spell.processBlock(result.getBlockPos(), result.sideHit, result.hitVec);
 
 		return runNextModule(spell);

@@ -509,9 +509,10 @@ public class LibParticles {
 				Math.min(255, color.getGreen() + RandUtil.nextInt(5, 20)),
 				Math.min(255, color.getBlue() + RandUtil.nextInt(5, 20)),
 				color.getAlpha()));
+		glitter.setCollision(true);
 
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
-		ParticleSpawner.spawn(glitter, world, new InterpLine(target, origin), (int) origin.distanceTo(target) * 2, 0, (aFloat, particleBuilder) -> {
+		ParticleSpawner.spawn(glitter, world, new InterpLine(target, origin), (int) origin.distanceTo(target) * 2, RandUtil.nextInt(10), (aFloat, particleBuilder) -> {
 			glitter.setScale((float) RandUtil.nextDouble(0.3, 0.8));
 			glitter.setLifetime(RandUtil.nextInt(10, 20));
 		});

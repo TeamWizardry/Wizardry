@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.client.render.entity;
 
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
+import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpLine;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
@@ -44,7 +45,7 @@ public class RenderSpellProjectile extends Render<EntitySpellProjectile> {
 		glitter.setCollision(true);
 		glitter.setColorFunction(new InterpColorHSV(color, color2));
 		glitter.setAcceleration(new Vec3d(0, RandUtil.nextDouble(-0.005, -0.001), 0));
-		ParticleSpawner.spawn(glitter, entity.world, new StaticInterp<>(entity.getPositionVector()), 5, 0, (aFloat, particleBuilder) -> {
+		ParticleSpawner.spawn(glitter, entity.world, new InterpLine(entity.getPositionVector(), new Vec3d(entity.prevPosX, entity.prevPosY, entity.prevPosZ)), 5, 0, (aFloat, particleBuilder) -> {
 			glitter.setScaleFunction(new InterpScale((float) RandUtil.nextDouble(0.3, 0.8), 0));
 			glitter.setLifetime(RandUtil.nextInt(10, 100));
 			glitter.addMotion(new Vec3d(
@@ -53,6 +54,13 @@ public class RenderSpellProjectile extends Render<EntitySpellProjectile> {
 					RandUtil.nextDouble(-0.01, 0.01)
 			));
 		});
+
+		glitter.setScale(2);
+		glitter.disableMotionCalculation();
+		glitter.disableRandom();
+		glitter.setLifetime(3);
+		glitter.setScaleFunction(new InterpScale(3f, 0));
+		ParticleSpawner.spawn(glitter, entity.world, new StaticInterp<>(entity.getPositionVector()), 1);
 	}
 
 	@Nullable

@@ -54,7 +54,13 @@ public class ModuleEffectLight extends ModuleEffect {
 		if (targetPos == null && hit != null) targetPos = new BlockPos(hit);
 		if (targetPos == null) return false;
 
-		BlockUtils.placeBlock(world, world.isAirBlock(targetPos) ? targetPos : facing != null ? targetPos.offset(facing) : targetPos, ModBlocks.LIGHT.getDefaultState(), caster instanceof EntityPlayerMP ? (EntityPlayerMP) caster : null);
+		BlockPos finalPos = null;
+		if (world.isAirBlock(targetPos)) finalPos = targetPos;
+		else if (facing != null && world.isAirBlock(targetPos.offset(facing))) finalPos = targetPos.offset(facing);
+
+		if (finalPos == null) return false;
+
+		BlockUtils.placeBlock(world, finalPos, ModBlocks.LIGHT.getDefaultState(), caster instanceof EntityPlayerMP ? (EntityPlayerMP) caster : null);
 
 		return true;
 	}
