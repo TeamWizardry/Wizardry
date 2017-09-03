@@ -20,6 +20,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -59,12 +60,24 @@ public class BlockJar extends BlockModContainer {
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
 		if (ItemNBTHelper.getBoolean(stack, Constants.NBT.FAIRY_INSIDE, false)) {
 			TileJar jar = (TileJar) worldIn.getTileEntity(pos);
-			if (jar == null) return;
-			jar.color = new Color(ItemNBTHelper.getInt(stack, Constants.NBT.FAIRY_COLOR, 0xFFFFFF));
-			jar.age = ItemNBTHelper.getInt(stack, Constants.NBT.FAIRY_AGE, 0);
-			jar.hasFairy = true;
-			jar.markDirty();
+			if (jar != null) {
+				jar.color = new Color(ItemNBTHelper.getInt(stack, Constants.NBT.FAIRY_COLOR, 0xFFFFFF));
+				jar.age = ItemNBTHelper.getInt(stack, Constants.NBT.FAIRY_AGE, 0);
+				jar.hasFairy = true;
+				jar.markDirty();
+			}
 		}
+	}
+
+	@Override
+	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+		ItemStack stack = new ItemStack(this);
+		TileJar jar = (TileJar) world.getTileEntity(pos);
+		if (jar != null) {
+			ItemNBTHelper.setInt(stack, Constants.NBT.FAIRY_COLOR, jar.color.getRGB());
+			ItemNBTHelper.setInt(stack, Constants.NBT.FAIRY_AGE, jar.age);
+		}
+		return stack;
 	}
 
 	@Override
