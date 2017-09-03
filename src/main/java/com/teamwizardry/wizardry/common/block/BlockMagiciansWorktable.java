@@ -72,7 +72,7 @@ public class BlockMagiciansWorktable extends BlockModContainer {
 	@Override
 	public void breakBlock(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
 		super.breakBlock(worldIn, pos, state);
-		worldIn.destroyBlock(getOtherTableBlock(state, pos), false);
+		worldIn.setBlockToAir(getOtherTableBlock(state, pos));
 	}
 
 	private BlockPos getOtherTableBlock(IBlockState tablePart, BlockPos tablePartPos) {
