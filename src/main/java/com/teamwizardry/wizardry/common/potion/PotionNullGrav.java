@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.potion;
 
-import com.teamwizardry.librarianlib.features.base.PotionMod;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.item.ItemStack;
@@ -13,7 +12,7 @@ import java.util.List;
 /**
  * Created by LordSaad.
  */
-public class PotionNullGrav extends PotionMod {
+public class PotionNullGrav extends PotionBase {
 
 	public PotionNullGrav() {
 		super("nullify_gravity", false, 0x38AA9f);

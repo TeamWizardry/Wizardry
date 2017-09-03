@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.potion;
 
-import com.teamwizardry.librarianlib.features.base.PotionMod;
 import com.teamwizardry.wizardry.api.capability.CapManager;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
@@ -17,7 +16,7 @@ import java.util.List;
 /**
  * Created by LordSaad.
  */
-public class PotionSteroid extends PotionMod {
+public class PotionSteroid extends PotionBase {
 
 	public PotionSteroid() {
 		super("steroid", false, 0xDD5B23);

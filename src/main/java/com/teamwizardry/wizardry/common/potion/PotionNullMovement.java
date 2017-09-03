@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.potion;
 
-import com.teamwizardry.librarianlib.features.base.PotionMod;
 import com.teamwizardry.wizardry.api.NullMovementInput;
 import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.client.Minecraft;
@@ -23,7 +22,7 @@ import java.util.List;
 /**
  * Created by LordSaad.
  */
-public class PotionNullMovement extends PotionMod {
+public class PotionNullMovement extends PotionBase {
 
 	public PotionNullMovement() {
 		super("null_movement", true, 0x111111);

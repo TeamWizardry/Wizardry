@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.potion;
 
-import com.teamwizardry.librarianlib.features.base.PotionMod;
 import com.teamwizardry.wizardry.api.events.EntityPostMoveEvent;
 import com.teamwizardry.wizardry.api.events.PlayerClipEvent;
 import com.teamwizardry.wizardry.init.ModPotions;
@@ -34,7 +33,7 @@ import java.util.List;
 /**
  * Created by LordSaad.
  */
-public class PotionPhase extends PotionMod {
+public class PotionPhase extends PotionBase {
 
 	public PotionPhase() {
 		super("phase", false, 0xDAEFE7);

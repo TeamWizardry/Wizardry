@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.potion;
 
-import com.teamwizardry.librarianlib.features.base.PotionMod;
 import com.teamwizardry.wizardry.api.events.EntityMoveWithHeadingEvent;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
@@ -22,7 +21,7 @@ import java.util.List;
 /**
  * Created by LordSaad.
  */
-public class PotionSlippery extends PotionMod {
+public class PotionSlippery extends PotionBase {
 
 	public PotionSlippery() {
 		super("slippery", false, 0xABFCF0);

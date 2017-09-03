@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.potion;
 
-import com.teamwizardry.librarianlib.features.base.PotionMod;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
@@ -17,7 +16,7 @@ import java.util.List;
 /**
  * Created by LordSaad.
  */
-public class PotionLowGrav extends PotionMod {
+public class PotionLowGrav extends PotionBase {
 
 	public PotionLowGrav() {
 		super("low_gravity", false, 0x469CD6);
