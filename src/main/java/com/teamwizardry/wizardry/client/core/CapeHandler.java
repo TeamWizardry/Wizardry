@@ -2,7 +2,6 @@ package com.teamwizardry.wizardry.client.core;
 
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.wizardry.Wizardry;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -21,6 +20,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -71,20 +71,33 @@ public class CapeHandler {
 		// OpenGL configuration set around `tessellator.draw()` statement at bottom for organization sake
 
 		// VERTEX SETUP ================================================================================================
-		Minecraft.getMinecraft().renderEngine.bindTexture(texture);
+//		Minecraft.getMinecraft().renderEngine.bindTexture(texture);
+		
+		GlStateManager.disableTexture2D();
+		vb.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
+		
+		List<Constraint> constraints = capes.get(event.getEntity().getUniqueID()).cloth.constraints;
+		
+		for(Constraint con : constraints) {
+			Vec3d a = con.a.lastPos.add(con.a.pos.subtract(con.a.lastPos).scale(ClientTickHandler.getPartialTicks()));
+			Vec3d b = con.b.lastPos.add(con.b.pos.subtract(con.b.lastPos).scale(ClientTickHandler.getPartialTicks()));
+			
+			vb.pos(a.x, a.y, a.z).endVertex();
+			vb.pos(b.x, b.y, b.z).endVertex();
+		}
 
-		vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-
-		double height = 16 + capes.get(event.getEntity().getUniqueID()).length * 8;
-
-		for (int h = 0; h < height; h++)
-			for (int w = 0; w < CLOTH_WIDTH; w++) {
-				vert(w, h, vb, event.getEntity().getUniqueID());
-				vert(w + 1, h, vb, event.getEntity().getUniqueID());
-				vert(w + 1, h + 1, vb, event.getEntity().getUniqueID());
-				vert(w, h + 1, vb, event.getEntity().getUniqueID());
-
-			}
+//		vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+//
+//		double height = 16 + capes.get(event.getEntity().getUniqueID()).length * 8;
+//
+//		for (int h = 0; h < height; h++)
+//			for (int w = 0; w < CLOTH_WIDTH; w++) {
+//				vert(w, h, vb, event.getEntity().getUniqueID());
+//				vert(w + 1, h, vb, event.getEntity().getUniqueID());
+//				vert(w + 1, h + 1, vb, event.getEntity().getUniqueID());
+//				vert(w, h + 1, vb, event.getEntity().getUniqueID());
+//
+//			}
 
 		// OpenGL ======================================================================================================
 
@@ -93,6 +106,8 @@ public class CapeHandler {
 		GlStateManager.disableCull();
 
 		tessellator.draw();
+		GlStateManager.enableCull();
+		GlStateManager.enableTexture2D();
 		GlStateManager.popMatrix();
 	}
 
@@ -161,7 +176,7 @@ public class CapeHandler {
 				cloth.points.get(i).pos = origin.add(unit.scale(i));
 			}
 
-			//cloth.tick();
+			cloth.tick();
 		}
 	}
 }

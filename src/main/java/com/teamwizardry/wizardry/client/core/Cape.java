@@ -86,7 +86,7 @@ public class Cape {
 	double windForce = 0.1;
 	Vec3d gravity = Vec3d.ZERO;
 	List<Vertex> points = new ArrayList<>();
-	private List<Constraint> constraints = new ArrayList<>();
+	List<Constraint> constraints = new ArrayList<>();
 
 	public Cape(ClothDefinition def) {
 		def.generate(points, constraints);
@@ -98,10 +98,10 @@ public class Cape {
 		}
 
 		assembleBBs();
-		shiftForAirForce();
+//		shiftForAirForce();
 		shiftForInertia();
 		shiftForAcceleration();
-		applyDampening();
+//		applyDampening();
 		for (int i = 0; i < 3; i++) {
 			resolve();
 		}
@@ -259,11 +259,11 @@ class GridCloth implements ClothDefinition {
 	}
 
 	private int getW(int index) {
-		return index % (width + 1);
+		return index % width;
 	}
 
 	private int getH(int index) {
-		return Math.floorDiv(index, width + 1);
+		return Math.floorDiv(index, width);
 	}
 
 	private int getI(int w, int h) {
