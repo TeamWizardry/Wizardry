@@ -3,9 +3,11 @@
     "icon": {
       "item": "minecraft:bedrock"
     },
-    "title": "§oCRUNCH.§a",
+    "title": {
+      "translate": "advancement.wizardry.devildust"
+    },
     "description": {
-      "text": "Crash straight through Bedrock to the Underworld above",
+      "translate": "advancement.wizardry.devildust.desc",
       "italic": true
     }
   },

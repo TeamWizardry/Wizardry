@@ -29,6 +29,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -64,7 +65,7 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 		spell.processEntity(target, false);
 		SpellUtils.runSpell(stack, spell);
 
-		setCooldown(playerIn.world, playerIn, stack, hand, spell);
+		setCooldown(playerIn.world, playerIn, hand, stack, spell);
 		return true;
 	}
 
@@ -97,7 +98,7 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 		spell.processBlock(pos, side, new Vec3d(pos).addVector(0.5, 0.5, 0.5));
 		SpellUtils.runSpell(stack, spell);
 
-		setCooldown(world, player, stack, hand, spell);
+		setCooldown(world, player, hand, stack, spell);
 
 		return EnumActionResult.PASS;
 	}
@@ -123,7 +124,7 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 				SpellUtils.runSpell(stack, spell);
 
 				player.swingArm(EnumHand.MAIN_HAND);
-				setCooldown(world, player, stack, hand, spell);
+				setCooldown(world, player, hand, stack, spell);
 			}
 			return new ActionResult<>(EnumActionResult.PASS, stack);
 		} else {
@@ -187,7 +188,7 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 
 		if (!isContinuous) {
 			player.swingArm(player.getActiveHand());
-			setCooldown(player.world, (EntityPlayer) player, stack, player.getActiveHand(), spell);
+			setCooldown(player.world, (EntityPlayer) player, player.getActiveHand(), stack, spell);
 		}
 	}
 
@@ -252,10 +253,10 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 				Module tempModule = module;
 				int i = 0;
 				while (tempModule != null) {
-					tooltip.add(new String(new char[i]).replace("\0", "-") + "> " + TextFormatting.GRAY + tempModule.getReadableName() + " - " + TextFormatting.BLUE + (int) Math.round(tempModule.getManaDrain() * tempModule.getMultiplier()) + TextFormatting.GRAY + "/" + TextFormatting.RED + (int) Math.round(tempModule.getBurnoutFill() * tempModule.getMultiplier()));
+					tooltip.add(StringUtils.repeat("-", i) + "> " + TextFormatting.GRAY + tempModule.getReadableName() + " - " + TextFormatting.BLUE + (int) Math.round(tempModule.getManaDrain() * tempModule.getMultiplier()) + TextFormatting.GRAY + "/" + TextFormatting.RED + (int) Math.round(tempModule.getBurnoutFill() * tempModule.getMultiplier()));
 					if (GuiScreen.isShiftKeyDown()) {
 						for (String key : tempModule.attributes.getKeySet())
-							tooltip.add(new String(new char[i]).replace("\0", " ") + " ^ " + TextFormatting.DARK_GRAY + key + " * " + (int) Math.round(tempModule.attributes.getDouble(key)));
+							tooltip.add(StringUtils.repeat(" ", i + 1) + " | " + TextFormatting.DARK_GRAY + key + " x" + (int) Math.round(tempModule.attributes.getDouble(key)));
 					}
 					tempModule = tempModule.nextModule;
 					i++;

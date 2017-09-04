@@ -1,10 +1,9 @@
 {
-  "parent": "block/grass",
+  "parent": "block/cube_bottom_top",
   "textures": {
     "particle": "wizardry:blocks/torikki_dirt",
     "bottom": "wizardry:blocks/torikki_dirt",
     "top": "wizardry:blocks/torikki_grass_top",
-    "side": "wizardry:blocks/torikki_grass_side",
-    "overlay": "wizardry:empty"
+    "side": "wizardry:blocks/torikki_grass_side"
   }
 }

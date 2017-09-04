@@ -27,21 +27,22 @@ import java.util.HashMap;
 public class ComponentIndex extends GuiComponent<ComponentIndex> {
 
 	private static final int plateWidth = 195;
-	private static final Vec2d pos = new Vec2d(45, 35);
 	private static final int buffer = 10;
 	private final GuiComponent<?> componentBook;
 	private final int plateHeight;
+	private final Vec2d pos;
 	private ArrayList<ComponentVoid> prevComps = new ArrayList<>();
 	private GuiComponent<?> prevContent;
 
-	public ComponentIndex(GuiComponent<?> componentBook, ArrayList<BookGui.IndexItem> list, int plateHeight, boolean isMainIndex, BookGui bookGui) {
+	public ComponentIndex(GuiComponent<?> componentBook, ArrayList<BookGui.IndexItem> list, int plateHeight, boolean isMainIndex, BookGui bookGui, Vec2d pos) {
 		super(pos.getXi(), pos.getYi(), plateWidth, 120);
 		this.componentBook = componentBook;
 		this.plateHeight = plateHeight;
+		this.pos = pos;
 
 		HashMap<Integer, ArrayList<BookGui.IndexItem>> pages = getPages(list);
 
-		ComponentNavBar navBar = new ComponentNavBar(0, componentBook.getSize().getYi() - getSize().getYi() + 70, 170, 15, pages.size() - 1);
+		ComponentNavBar navBar = new ComponentNavBar(0, componentBook.getSize().getYi() - getSize().getYi() + 80, 170, 15, pages.size() - 1);
 		add(navBar);
 
 		navBar.BUS.hook(EventNavBarChange.class, eventNavBarChange -> {
@@ -54,7 +55,9 @@ public class ComponentIndex extends GuiComponent<ComponentIndex> {
 				BookGui.IndexItem indexItem = pages.get(navBar.getPage()).get(i);
 
 				ComponentVoid plate = new ComponentVoid(0, i * plateHeight + i * buffer, plateWidth, plateHeight + buffer);
-				add(plate);
+				if (!getChildren().contains(plate)) add(plate);
+				plate.setVisible(true);
+				plate.setEnabled(false);
 
 				plate.BUS.hook(GuiComponent.PostDrawEvent.class, (event) -> {
 					GlStateManager.pushMatrix();
@@ -73,11 +76,17 @@ public class ComponentIndex extends GuiComponent<ComponentIndex> {
 					Pair<String, GuiComponent<?>> pair = next(indexItem.link);
 					if (pair == null) return;
 
-					if (isMainIndex) bookGui.componentLogo.invalidate();
+					if (isMainIndex && !bookGui.componentLogo.isInvalid()) bookGui.componentLogo.invalidate();
 
 					if (pair.getFirst().equals("index")) {
-						componentBook.add(pair.getSecond());
-						invalidate();
+
+						getChildren().forEach(guiComponent -> {
+							guiComponent.setVisible(false);
+							guiComponent.setEnabled(false);
+						});
+
+						GuiComponent<?> subindex = pair.getSecond();
+						add(subindex);
 					} else if (pair.getFirst().equals("content")) {
 						add(pair.getSecond());
 						if (prevContent != null) prevContent.invalidate();
@@ -197,6 +206,6 @@ public class ComponentIndex extends GuiComponent<ComponentIndex> {
 				}
 			}
 		}
-		return new ComponentIndex(componentBook, indexItems, newPlateHeight, false, null);
+		return new ComponentIndex(componentBook, indexItems, newPlateHeight, false, null, Vec2d.ZERO);
 	}
 }

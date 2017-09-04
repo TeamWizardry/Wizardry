@@ -3,9 +3,11 @@
     "icon": {
       "item": "wizardry:mana_orb"
     },
-    "title": "Not a Mana Pool",
+    "title": {
+      "translate": "advancement.wizardry.manapool"
+    },
     "description": {
-      "text": "Find a pool of liquid mana in your travels.",
+      "translate": "advancement.wizardry.manapool.desc",
       "italic": true
     }
   },

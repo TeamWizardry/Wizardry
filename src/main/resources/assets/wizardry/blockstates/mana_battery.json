@@ -1,7 +1,7 @@
 {
   "variants": {
     "normal": {
-      "model": "wizardry:empty"
+      "model": "wizardry:mana_battery"
     }
   }
 }

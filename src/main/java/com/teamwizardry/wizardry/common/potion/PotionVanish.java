@@ -1,7 +1,6 @@
 package com.teamwizardry.wizardry.common.potion;
 
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
-import com.teamwizardry.librarianlib.features.base.PotionMod;
 import com.teamwizardry.librarianlib.features.methodhandles.MethodHandleHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
@@ -38,7 +37,7 @@ import java.util.List;
  * Created by LordSaad.
  */
 // TODO: other player testing, proper in/out fading
-public class PotionVanish extends PotionMod {
+public class PotionVanish extends PotionBase {
 	private static class ClientStuff {
 		public static Function2<RenderLivingBase, Object[], Object> interpolateRotation = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, "interpolateRotation", "func_77034_a", float.class, float.class, float.class);
 		public static Function2<RenderLivingBase, Object[], Object> renderLivingAt = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, "renderLivingAt", "func_77039_a", EntityLivingBase.class, double.class, double.class, double.class);

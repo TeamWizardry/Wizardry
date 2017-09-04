@@ -509,9 +509,10 @@ public class LibParticles {
 				Math.min(255, color.getGreen() + RandUtil.nextInt(5, 20)),
 				Math.min(255, color.getBlue() + RandUtil.nextInt(5, 20)),
 				color.getAlpha()));
+		glitter.setCollision(true);
 
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
-		ParticleSpawner.spawn(glitter, world, new InterpLine(target, origin), (int) origin.distanceTo(target) * 2, 0, (aFloat, particleBuilder) -> {
+		ParticleSpawner.spawn(glitter, world, new InterpLine(target, origin), (int) origin.distanceTo(target) * 2, RandUtil.nextInt(10), (aFloat, particleBuilder) -> {
 			glitter.setScale((float) RandUtil.nextDouble(0.3, 0.8));
 			glitter.setLifetime(RandUtil.nextInt(10, 20));
 		});
@@ -626,6 +627,32 @@ public class LibParticles {
 		//	//		new Vec3d(0, RandUtil.nextDouble(0, 1), 0),
 		//	//		new Vec3d(0, RandUtil.nextDouble(-2, 0), 0)));
 		//});
+	}
+
+	public static void BLOCK_HIGHLIGHT(World world, BlockPos pos, Color color) {
+		ParticleBuilder glitter = new ParticleBuilder(10);
+		glitter.setRenderNormalLayer(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
+		glitter.setColor(color);
+		glitter.disableRandom();
+		glitter.disableMotionCalculation();
+		glitter.setScale(2f);
+		glitter.setLifetime(200);
+
+		double indent = 0.75;
+		Vec3d bottom = new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5 - indent, pos.getZ() + 0.5);
+		Vec3d top = new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5 + indent, pos.getZ() + 0.5);
+		Vec3d front = new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5 + indent);
+		Vec3d back = new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5 - indent);
+		Vec3d left = new Vec3d(pos.getX() + 0.5 + indent, pos.getY() + 0.5, pos.getZ() + 0.5);
+		Vec3d right = new Vec3d(pos.getX() + 0.5 - indent, pos.getY() + 0.5, pos.getZ() + 0.5);
+
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(bottom), 1);
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(top), 1);
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(left), 1);
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(right), 1);
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(front), 1);
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(back), 1);
 	}
 
 	public static void STRUCTURE_BOUNDS(World world, Vec3d pos, Color color) {

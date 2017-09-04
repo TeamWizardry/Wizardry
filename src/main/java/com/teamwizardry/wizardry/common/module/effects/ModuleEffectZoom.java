@@ -36,6 +36,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.constructPair;
 /**
  * Created by LordSaad.
  */
+// TODO: Tracer's blink sound effect
 @RegisterModule
 public class ModuleEffectZoom extends ModuleEffect {
 
@@ -109,6 +110,7 @@ public class ModuleEffectZoom extends ModuleEffect {
 		}
 		if (entityHit instanceof EntityLivingBase) {
 			((EntityLivingBase) entityHit).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 5, 1, true, false));
+			((EntityLivingBase) entityHit).addPotionEffect(new PotionEffect(ModPotions.NULL_MOVEMENT, 5, 1, true, false));
 		}
 
 		return true;

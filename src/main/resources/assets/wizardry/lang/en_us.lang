@@ -1,4 +1,4 @@
-﻿tile.wizardry:crafting_plate.name=Crafting Plate
+tile.wizardry:crafting_plate.name=Crafting Plate
 tile.wizardry:magicians_worktable.name=Magician's Worktable
 tile.wizardry:mana_battery.name=Mana Battery
 tile.wizardry:nacre.name=Liquid Nacre
@@ -9,6 +9,7 @@ tile.wizardry:pearl_holder.name=Pearl Holder
 tile.wizardry:nacre_block.name=Nacre Block
 tile.wizardry:nacre_block_brick.name=Nacre Bricks
 tile.wizardry:mana_magnet.name=Mana Magnet
+tile.wizardry:torikki_grass.name=Torikki Grass
 
 item.wizardry:book.name=Spellforger's Codex
 item.wizardry:ring.name=Golden Ring
@@ -39,6 +40,7 @@ item.wizardry:syringe_blood.name=Blood Syringe
 item.wizardry:light.name=Light
 
 item.wizardry:wisdom_stick.name=Wisdom Wood Stick
+item.wizardry:wisdom_wood_door.name=Wisdom Wood Door
 tile.wizardry:wisdom_wood_log.name=Wisdom Wood Log
 tile.wizardry:wisdom_wood_planks.name=Wisdom Wood Planks
 tile.wizardry:wisdom_wood_pigmented_planks.name=Wisdom Wood Pigmented Planks
@@ -47,8 +49,16 @@ tile.wizardry:wisdom_wood_stairs.name=Wisdom Wood Stairs
 tile.wizardry:wisdom_wood_trapdoor.name=Wisdom Wood Trapdoor
 tile.wizardry:wisdom_wood_fence.name=Wisdom Wood Fence
 tile.wizardry:wisdom_wood_fence_gate.name=Wisdom Wood Fence Gate
-tile.wizardry:wisdom_wood_door.name=Wisdom Wood Door
 tile.wizardry:wisdom_wood.name=Wisdom Wood
+
+advancement.wizardry.book=You're a Wizard, Harry
+advancement.wizardry.book.desc=Create a book to aid in your delve into magic
+advancement.wizardry.manapool=Not a Mana Pool
+advancement.wizardry.manapool.desc=Discover a pool of liquid Mana in your travels
+advancement.wizardry.devildust=Sugar and Spice
+advancement.wizardry.devildust.desc=Melt book in fire to make Devil Dust
+advancement.wizardry.crunch=§oCRUNCH.§a
+advancement.wizardry.crunch.desc=Crash straight through Bedrock to the Underworld above
 
 gui.physicsbook.defaulttitle=Physics Book
 
@@ -59,22 +69,22 @@ death.attack.wizardry.mana=%s drowned in power
 death.attack.wizardry.crash=%s was pulverized
 death.attack.wizardry.crash.player=%s was pulverized by %s
 
-wizardry.subtitle.glassbreak=Glass shatters
-wizardry.subtitle.fizz=Dust fizzes
-wizardry.subtitle.sizzle=Dust sizzles
-wizardry.subtitle.harp=Harp plays
-wizardry.subtitle.bell=Bell tolls
-wizardry.subtitle.bubbling=Liquid bubbles
-wizardry.subtitle.spirit=Spirit whispers
+subtitle.wizardry.glassbreak=Glass shatters
+subtitle.wizardry.fizz=Dust fizzes
+subtitle.wizardry.sizzle=Dust sizzles
+subtitle.wizardry.harp=Harp plays
+subtitle.wizardry.bell=Bell tolls
+subtitle.wizardry.bubbling=Liquid bubbles
+subtitle.wizardry.spirit=Spirit whispers
 
-wizardry.potion.crash=Crash
-wizardry.potion.low_gravity=Feather
-wizardry.potion.nullify_gravity=Ascension
-wizardry.potion.null_movement=Hermetic Seal
-wizardry.potion.phase=Ghostform
-wizardry.potion.slippery=Frictionless
-wizardry.potion.steroid=Overdrive
-wizardry.potion.time_slow=Unwinding
+potion.wizardry.crash=Crash
+potion.wizardry.low_gravity=Feather
+potion.wizardry.nullify_gravity=Ascension
+potion.wizardry.null_movement=Hermetic Seal
+potion.wizardry.phase=Ghostform
+potion.wizardry.slippery=Frictionless
+potion.wizardry.steroid=Overdrive
+potion.wizardry.time_slow=Unwinding
 
 item_group.wizardry=Wizardry
 

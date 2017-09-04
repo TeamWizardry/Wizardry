@@ -132,37 +132,6 @@ public class SpellBuilder {
 
 		object.add("list", array);
 
-		StringBuilder finalName = null;
-		ArrayList<ArrayList<Module>> modules = SpellUtils.getModules(spell);
-		Module lastModule = null;
-		for (ArrayList<Module> module0 : modules)
-			for (Module module : SpellUtils.getAllModules(module0)) {
-				if (lastModule == null) lastModule = module;
-				if (module != null) {
-					Module tempModule = module;
-					while (tempModule != null) {
-
-						boolean next = false;
-						if (lastModule != module) {
-							lastModule = module;
-							finalName.append(" || ");
-							next = true;
-						}
-
-						if (finalName == null) finalName = new StringBuilder(tempModule.getReadableName());
-						else {
-							if (!next) finalName.append(" -> ");
-							finalName.append(tempModule.getReadableName());
-						}
-
-						tempModule = tempModule.nextModule;
-					}
-				}
-			}
-		if (finalName != null) {
-			object.addProperty("name", finalName.toString());
-		}
-
 		return object;
 	}
 

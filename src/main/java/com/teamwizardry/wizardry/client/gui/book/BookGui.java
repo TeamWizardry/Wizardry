@@ -8,7 +8,7 @@ import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.gui.GuiBase;
 import com.teamwizardry.librarianlib.features.gui.GuiComponent;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
-import com.teamwizardry.librarianlib.features.gui.mixin.gl.GlMixin;
+import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.math.Vec2d;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.librarianlib.features.sprite.Texture;
@@ -16,8 +16,8 @@ import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.Vec3d;
 
+import javax.annotation.Nullable;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -34,10 +34,18 @@ public class BookGui extends GuiBase {
 	static Sprite ARROW_NEXT_PRESSED = GUIDE_BOOK_SHEET.getSprite("arrow_next_pressed", 36, 20);
 	static Sprite ARROW_PREV = GUIDE_BOOK_SHEET.getSprite("arrow_prev", 36, 20);
 	static Sprite ARROW_PREV_PRESSED = GUIDE_BOOK_SHEET.getSprite("arrow_prev_pressed", 36, 20);
+	static Sprite BOOKMARK_EXTENDED = GUIDE_BOOK_SHEET.getSprite("bookmark_extended", 226, 22);
+	static Sprite BOOKMARK = GUIDE_BOOK_SHEET.getSprite("bookmark", 170, 22);
+	static Sprite ARROW = GUIDE_BOOK_SHEET.getSprite("arrow", 22, 15);
 
 	public ComponentSprite componentLogo;
+	public ItemStack bookItem;
+	@Nullable
+	public GuiComponent<?> activeComponent = null;
+
 	public BookGui(ItemStack book) {
 		super(508, 360);
+		this.bookItem = book;
 
 		ComponentSprite componentBook = new ComponentSprite(BOOK, 0, 0);
 		getMainComponents().add(componentBook);
@@ -82,65 +90,21 @@ public class BookGui extends GuiBase {
 			}
 		}
 
-		ComponentIndex index = new ComponentIndex(componentBook, indexItems, 45, true, this);
-		componentBook.add(index);
+		int i = 0;
 
+		ComponentBookmark bookmarkIndex = new ComponentBookmark(this, componentBook, i++, new ComponentIndex(componentBook, indexItems, 45, true, this, new Vec2d(45, 45)), "Index", true);
+		componentBook.add(bookmarkIndex);
 
-		//if (ItemNBTHelper.getBoolean(book, "has_recipe", false)) {
-		//	ComponentSprite componentPaper = new ComponentSprite(new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/book/paper.png")), componentBackground.getSize().getXi() + 5, (componentBackground.getSize().getYi() / 2) - (148 / 2), 143, 148);
-//
-		//	JsonObject object = new Gson().fromJson(ItemNBTHelper.getString(book, "spell_recipe", null), JsonObject.class);
-//
-		//	String spellName = object.getAsJsonPrimitive("name").getAsString();
-		//	int width = Minecraft.getMinecraft().fontRenderer.getStringWidth(spellName);
-		//	ComponentText title = new ComponentText((componentPaper.getSize().getXi() / 2) - (width / 2), 4);
-		//	title.getText().setValue(spellName);
-		//	componentPaper.add(title);
-//
-		//	JsonArray array = object.getAsJsonArray("list");
-		//	int row = 0;
-		//	for (int i = 0; i < array.size(); i++) {
-		//		if (i > 0 && i % 6 == 0) row++;
-//
-		//		JsonElement element = array.get(i);
-		//		if (!element.isJsonPrimitive()) continue;
-		//		String name = element.getAsString();
-		//		Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(name));
-		//		if (item == null) continue;
-		//		ItemStack stack = new ItemStack(item);
-//
-		//		ComponentStack componentStack = new ComponentStack(4 + 24 * (i % 6), 14 + 24 * row);
-		//		componentStack.getItemStack().setValue(stack);
-		//		componentPaper.add(componentStack);
-//
-		//		if (i % 6 == 0) continue;
-		//		ComponentSprite next = new ComponentSprite(SPRITE_NEXT, -4 + 24 * (i % 6), 20 + 24 * row, 9, 4);
-		//		componentPaper.add(next);
-		//	}
-//
-		//	getMainComponents().add(componentPaper);
-		//}
+		if (ItemNBTHelper.getBoolean(bookItem, "has_recipe", false)) {
+			ComponentBookmark bookmarkRecipe = new ComponentBookmark(this, componentBook, i++, new ComponentRecipe(this), "Spell Recipe", false);
+			componentBook.add(bookmarkRecipe);
+		}
+
 	}
 
 	@Override
 	public boolean doesGuiPauseGame() {
 		return true;
-	}
-
-	public void hookSlider(GuiComponent<?> component, String text) {
-		Slider slider = new Slider(text);
-		slider.component.setPos(new Vec2d(component.getPos().getX() - component.getSize().getX(), component.getPos().getY()));
-		slider.component.setEnabled(false);
-		component.BUS.hook(GuiComponent.MouseInEvent.class, componentMouseIn -> {
-			if (!component.getMouseOver()) return;
-			component.add(slider.component);
-			GlMixin.INSTANCE.transform(slider.component).setValue(new Vec3d(slider.component.getPos().getX(), slider.component.getPos().getY(), -10));
-		});
-
-		component.BUS.hook(GuiComponent.MouseOutEvent.class, componentMouseOut -> {
-			if (component.getMouseOver()) return;
-			slider.component.addTag("kill");
-		});
 	}
 
 	public static class IndexItem {

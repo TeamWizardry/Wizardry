@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.potion;
 
-import com.teamwizardry.librarianlib.features.base.PotionMod;
 import com.teamwizardry.wizardry.api.events.EntityPostMoveEvent;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
@@ -41,7 +40,7 @@ import java.util.List;
 /**
  * Created by LordSaad.
  */
-public class PotionTimeSlow extends PotionMod {
+public class PotionTimeSlow extends PotionBase {
 
 	public PotionTimeSlow() {
 		super("time_slow", false, 0xE8CA0D);

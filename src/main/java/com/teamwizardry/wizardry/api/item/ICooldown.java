@@ -16,11 +16,12 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 
 public interface ICooldown {
 
-	default void setCooldown(World world, EntityPlayer player, ItemStack stack, EnumHand hand, @Nonnull SpellData data) {
+	default void setCooldown(World world, @Nullable EntityPlayer player, @Nullable EnumHand hand, ItemStack stack, @Nonnull SpellData data) {
 		int maxCooldown = 0;
 		int overridenCooldown = 0;
 
@@ -52,10 +53,11 @@ public interface ICooldown {
 		ItemNBTHelper.setInt(stack, Constants.NBT.LAST_COOLDOWN, finalCooldown);
 		ItemNBTHelper.setLong(stack, Constants.NBT.LAST_CAST, world.getTotalWorldTime());
 
-		if (!world.isRemote)
-			if (hand == EnumHand.MAIN_HAND)
-				PacketHandler.NETWORK.sendTo(new PacketSyncCooldown(true, false), (EntityPlayerMP) player);
-			else PacketHandler.NETWORK.sendTo(new PacketSyncCooldown(false, true), (EntityPlayerMP) player);
+		if (player != null && hand != null)
+			if (!world.isRemote)
+				if (hand == EnumHand.MAIN_HAND)
+					PacketHandler.NETWORK.sendTo(new PacketSyncCooldown(true, false), (EntityPlayerMP) player);
+				else PacketHandler.NETWORK.sendTo(new PacketSyncCooldown(false, true), (EntityPlayerMP) player);
 	}
 
 	default void updateCooldown(ItemStack stack) {

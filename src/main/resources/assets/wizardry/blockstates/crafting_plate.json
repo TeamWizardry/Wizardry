@@ -1,7 +1,6 @@
 {
   "variants": {
-    "normal": {
-      "model": "wizardry:crafting_plate"
-    }
+    "inventory": { "model": "wizardry:crafting_plate" },
+    "normal": { "model": "wizardry:crafting_plate" }
   }
 }

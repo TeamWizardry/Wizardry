@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.potion;
 
-import com.teamwizardry.librarianlib.features.base.PotionMod;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -23,7 +22,7 @@ import java.util.List;
 /**
  * Created by LordSaad.
  */
-public class PotionCrash extends PotionMod {
+public class PotionCrash extends PotionBase {
 
 	public PotionCrash() {
 		super("crash", false, 0x8C680f);

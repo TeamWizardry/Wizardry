@@ -33,7 +33,8 @@ public class BlockMagiciansWorktable extends BlockModContainer {
 
 	public BlockMagiciansWorktable() {
 		super("magicians_worktable", Material.WOOD);
-		setHardness(1.0F);
+		setHardness(2.0F);
+		setResistance(15.0f);
 		setSoundType(SoundType.WOOD);
 		setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(ISLEFTSIDE, true));
 	}
@@ -71,7 +72,7 @@ public class BlockMagiciansWorktable extends BlockModContainer {
 	@Override
 	public void breakBlock(@Nonnull World worldIn, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
 		super.breakBlock(worldIn, pos, state);
-		worldIn.destroyBlock(getOtherTableBlock(state, pos), false);
+		worldIn.setBlockToAir(getOtherTableBlock(state, pos));
 	}
 
 	private BlockPos getOtherTableBlock(IBlockState tablePart, BlockPos tablePartPos) {
