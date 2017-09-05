@@ -110,7 +110,7 @@ public class BlockFluidMana extends BlockFluidClassic {
 
 		// Turn plank to wisdom plank
 		run(entityIn,
-				entity -> entity instanceof EntityItem && Utils.hasOreDictPrefix(((EntityItem) entity).getItem(), "plank"),
+				entity -> entity instanceof EntityItem && !((EntityItem) entity).getItem().isEmpty() && Utils.hasOreDictPrefix(((EntityItem) entity).getItem(), "plank"),
 				entity -> {
 					EntityItem item = (EntityItem) entity;
 					item.setItem(new ItemStack(ModBlocks.WISDOM_WOOD_PLANKS, item.getItem().getCount()));
@@ -121,7 +121,7 @@ public class BlockFluidMana extends BlockFluidClassic {
 
 		// Turn log to wisdom log
 		run(entityIn,
-				entity -> entity instanceof EntityItem && Utils.hasOreDictPrefix(((EntityItem) entity).getItem(), "log"),
+				entity -> entity instanceof EntityItem && !((EntityItem) entity).getItem().isEmpty() && Utils.hasOreDictPrefix(((EntityItem) entity).getItem(), "log"),
 				entity -> {
 					EntityItem item = (EntityItem) entity;
 					item.setItem(new ItemStack(ModBlocks.WISDOM_WOOD_LOG, item.getItem().getCount()));
@@ -132,7 +132,7 @@ public class BlockFluidMana extends BlockFluidClassic {
 
 		// Turn stair to wisdom stair
 		run(entityIn,
-				entity -> entity instanceof EntityItem && Utils.hasOreDictPrefix(((EntityItem) entity).getItem(), "stairs"),
+				entity -> entity instanceof EntityItem && !((EntityItem) entity).getItem().isEmpty() && Utils.hasOreDictPrefix(((EntityItem) entity).getItem(), "stairs"),
 				entity -> {
 					EntityItem item = (EntityItem) entity;
 					item.setItem(new ItemStack(ModBlocks.WISDOM_WOOD_STAIRS, item.getItem().getCount()));
@@ -143,7 +143,7 @@ public class BlockFluidMana extends BlockFluidClassic {
 
 		// Turn slab to wisdom slab
 		run(entityIn,
-				entity -> entity instanceof EntityItem && Utils.hasOreDictPrefix(((EntityItem) entity).getItem(), "slabs"),
+				entity -> entity instanceof EntityItem && !((EntityItem) entity).getItem().isEmpty() && Utils.hasOreDictPrefix(((EntityItem) entity).getItem(), "slabs"),
 				entity -> {
 					EntityItem item = (EntityItem) entity;
 					item.setItem(new ItemStack(ModBlocks.WISDOM_WOOD_SLAB, item.getItem().getCount()));
