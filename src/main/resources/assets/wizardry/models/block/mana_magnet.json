@@ -4,23 +4,9 @@
 		"particle": "wizardry:blocks/mana_magnet_up",
 		"down": "wizardry:blocks/mana_magnet_down",
 		"up": "wizardry:blocks/mana_magnet_up",
-		"side": "wizardry:blocks/mana_magnet_side",
-		"pearl": "wizardry:blocks/mana_magnet_pearl"
+		"side": "wizardry:blocks/mana_magnet_side"
 	},
 	"elements": [ 	 
-		{
-			"__comment": "pearl",
-			"from": [ 6.5, 6, 6.5 ],
-			"to": [ 9.5, 9, 9.5 ],
-			"faces": {
-				"down": { "uv": [ 6, 6, 10, 10 ], "texture": "#pearl" },
-				"up": { "uv": [ 6, 6, 10, 10 ], "texture": "#pearl" },
-				"north": { "uv": [ 6, 6, 10, 10 ], "texture": "#pearl" },
-				"south": { "uv": [ 6, 6, 10, 10 ], "texture": "#pearl" },
-				"west": { "uv": [ 6, 6, 10, 10 ], "texture": "#pearl" },
-				"east": { "uv": [ 6, 6, 10, 10 ], "texture": "#pearl" }
-			}
-		},
 		{
 			"__comment": "plate",
 			"from": [ 2, 0, 2 ],

@@ -9,8 +9,6 @@ import com.teamwizardry.wizardry.common.block.fluid.FluidMana;
 import com.teamwizardry.wizardry.common.block.fluid.FluidNacre;
 import com.teamwizardry.wizardry.common.block.wisdomwood.*;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.MapColor;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -34,8 +32,8 @@ import net.minecraftforge.registries.IForgeRegistry;
 @Mod.EventBusSubscriber
 public class ModBlocks {
 
-	public static Material NACRE_MATERIAL = new MaterialNacre(MapColor.WATER);
-	public static Material MANA_MATERIAL = new MaterialMana(MapColor.WATER);
+	//public static Material NACRE_MATERIAL = new MaterialNacre(MapColor.WATER);
+	//public static Material MANA_MATERIAL = new MaterialMana(MapColor.WATER);
 
 	public static BlockFluidMana FLUID_MANA;
 	public static BlockFluidNacre FLUID_NACRE;
@@ -105,6 +103,7 @@ public class ModBlocks {
 		MANA_BATTERY.initModel();
 		PEARL_HOLDER.initModel();
 		JAR.initModel();
+		MANA_MAGNET.initModel();
 		registerFluidRender(FluidMana.instance);
 		registerFluidRender(FluidNacre.instance);
 	}

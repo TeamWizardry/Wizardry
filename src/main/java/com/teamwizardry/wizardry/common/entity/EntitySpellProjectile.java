@@ -136,19 +136,20 @@ public class EntitySpellProjectile extends EntityMod {
 			motionY = look.y * speed;
 			motionZ = look.z * speed;
 
-			if (getDistanceSq(origin.x, origin.y, origin.z) > 4)
-			motionY -= gravity;
+			// GRAVITY
+			//if (getDistanceSq(origin.x, origin.y, origin.z) > 4)
+			//motionY -= gravity;
 
 			move(MoverType.SELF, motionX, motionY, motionZ);
 		} else {
 			SpellData data = spell.copy();
 
 			RayTraceResult result = new RayTrace(world, look, getPositionVector(), 1).setSkipEntity(this).trace();
-			if (result != null && result.typeOfHit == RayTraceResult.Type.BLOCK) {
+			if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
 				data.processBlock(result.getBlockPos(), result.sideHit, result.hitVec);
 				data.addData(ORIGIN, result.hitVec);
 			} else {
-				data.processBlock(getPosition(), result != null ? result.sideHit : null, getPositionVector());
+				data.processBlock(getPosition(), result.sideHit, getPositionVector());
 				data.addData(ORIGIN, getPositionVector());
 			}
 			goBoom(data);
@@ -175,7 +176,7 @@ public class EntitySpellProjectile extends EntityMod {
 			SpellData data = spell.copy();
 
 			RayTraceResult result = new RayTrace(world, look, getPositionVector(), 1).setSkipEntity(this).trace();
-			if (result != null && result.typeOfHit == RayTraceResult.Type.ENTITY && result.entityHit != null) {
+			if (result.typeOfHit == RayTraceResult.Type.ENTITY && result.entityHit != null) {
 				data.processEntity(result.entityHit, false);
 				data.addData(ORIGIN, result.hitVec);
 			} else if (entities.get(0) != null) {
