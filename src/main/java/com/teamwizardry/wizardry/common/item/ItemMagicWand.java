@@ -25,11 +25,10 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
+import javax.annotation.Nullable;
+import java.awt.Color;
 
 public class ItemMagicWand extends ItemMod implements IGlowingItem {
 
@@ -106,20 +105,20 @@ public class ItemMagicWand extends ItemMod implements IGlowingItem {
 
 	@SideOnly(Side.CLIENT)
 	@Override
-	public int packedGlowCoords(@NotNull ItemStack itemStack, @NotNull IBakedModel iBakedModel) {
+	public int packedGlowCoords(@Nonnull ItemStack itemStack, @Nonnull IBakedModel iBakedModel) {
 		return 0xf000f0;
 	}
 
 	@SideOnly(Side.CLIENT)
 	@Nullable
 	@Override
-	public IBakedModel transformToGlow(@NotNull ItemStack itemStack, @NotNull IBakedModel iBakedModel) {
+	public IBakedModel transformToGlow(@Nonnull ItemStack itemStack, @Nonnull IBakedModel iBakedModel) {
 		return IGlowingItem.Helper.wrapperBake(iBakedModel, false, 1);
 	}
 
 	@SideOnly(Side.CLIENT)
 	@Override
-	public boolean shouldDisableLightingForGlow(@NotNull ItemStack itemStack, @NotNull IBakedModel iBakedModel) {
+	public boolean shouldDisableLightingForGlow(@Nonnull ItemStack itemStack, @Nonnull IBakedModel iBakedModel) {
 		return true;
 	}
 }

@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.common.potion;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -18,7 +17,7 @@ public class PotionNullGrav extends PotionBase {
 		super("nullify_gravity", false, 0x38AA9f);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<ItemStack> getCurativeItems() {
 		return new ArrayList<>();

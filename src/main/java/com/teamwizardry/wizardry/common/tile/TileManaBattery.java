@@ -21,9 +21,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
+import javax.annotation.Nonnull;
+import java.awt.Color;
 import java.util.ArrayList;
 
 @TileRegister("mana_battery")
@@ -33,7 +33,7 @@ public class TileManaBattery extends TileManaFaucet implements ITickable {
 		super(100000, 100000);
 	}
 
-	@NotNull
+	@Nonnull
 	@SideOnly(Side.CLIENT)
 	@Override
 	public AxisAlignedBB getRenderBoundingBox()

@@ -1,16 +1,15 @@
 package com.teamwizardry.wizardry.crafting;
 
-import javax.annotation.Nonnull;
-
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.JsonUtils;
 import net.minecraftforge.common.crafting.IIngredientFactory;
 import net.minecraftforge.common.crafting.JsonContext;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
+
+import javax.annotation.Nonnull;
 
 public class IngredientFluidStackFactory implements IIngredientFactory
 {

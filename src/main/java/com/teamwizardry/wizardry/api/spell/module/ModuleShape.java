@@ -1,11 +1,12 @@
 package com.teamwizardry.wizardry.api.spell.module;
 
 import com.teamwizardry.wizardry.api.spell.ICostModifier;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 public abstract class ModuleShape extends Module implements ICostModifier
 {
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleType getModuleType() {
 		return ModuleType.SHAPE;

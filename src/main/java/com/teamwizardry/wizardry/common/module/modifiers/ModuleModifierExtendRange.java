@@ -7,7 +7,6 @@ import com.teamwizardry.wizardry.api.spell.attribute.Operation;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -46,7 +45,7 @@ public class ModuleModifierExtendRange extends ModuleModifier {
 	}
 
 	@Override
-	public void apply(@NotNull Module module) {
+	public void apply(@Nonnull Module module) {
 		module.modifiers.add(new AttributeModifier(Attributes.RANGE, 1, Operation.ADD));
 		module.modifiers.add(new AttributeModifier(Attributes.MANA, 1.05, Operation.MULTIPLY));
 		module.modifiers.add(new AttributeModifier(Attributes.BURNOUT, 1.05, Operation.MULTIPLY));

@@ -40,9 +40,9 @@ import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
+import javax.annotation.Nonnull;
+import java.awt.Color;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
@@ -65,7 +65,7 @@ public class BlockFluidMana extends BlockFluidClassic {
 	}
 
 	@Override
-	public void updateTick(@NotNull World world, @NotNull BlockPos pos, @NotNull IBlockState state, @NotNull Random rand) {
+	public void updateTick(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull Random rand) {
 		super.updateTick(world, pos, state, rand);
 
 		if (world.isRemote)

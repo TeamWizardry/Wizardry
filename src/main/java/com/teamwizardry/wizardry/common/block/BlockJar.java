@@ -20,21 +20,21 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.awt.Color;
 
 /**
  * Created by LordSaad.
  */
 public class BlockJar extends BlockModContainer {
-
 	private static final AxisAlignedBB AABB_JAR = new AxisAlignedBB(0.25, 0, 0.25, 0.75, 0.75, 0.75);
 
 	public BlockJar() {
@@ -51,31 +51,40 @@ public class BlockJar extends BlockModContainer {
 	}
 
 	@Override
-	public int getLightValue(@NotNull IBlockState state, IBlockAccess world, @NotNull BlockPos pos) {
+	public int getLightValue(@Nonnull IBlockState state, IBlockAccess world, @Nonnull BlockPos pos) {
 		TileJar jar = (TileJar) world.getTileEntity(pos);
-		if (jar == null) return 0;
-		return jar.hasFairy ? 15 : 0;
+		return jar != null && jar.hasFairy ? 15 : 0;
 	}
 
 	@Override
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
 		if (ItemNBTHelper.getBoolean(stack, Constants.NBT.FAIRY_INSIDE, false)) {
-
 			TileJar jar = (TileJar) worldIn.getTileEntity(pos);
-			if (jar == null) return;
-			jar.color = new Color(ItemNBTHelper.getInt(stack, Constants.NBT.FAIRY_COLOR, 0xFFFFFF));
-			jar.age = ItemNBTHelper.getInt(stack, Constants.NBT.FAIRY_AGE, 0);
-			jar.hasFairy = true;
-			jar.markDirty();
+			if (jar != null) {
+				jar.color = new Color(ItemNBTHelper.getInt(stack, Constants.NBT.FAIRY_COLOR, 0xFFFFFF));
+				jar.age = ItemNBTHelper.getInt(stack, Constants.NBT.FAIRY_AGE, 0);
+				jar.hasFairy = true;
+				jar.markDirty();
+			}
 		}
+	}
+
+	@Override
+	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+		ItemStack stack = new ItemStack(this);
+		TileJar jar = (TileJar) world.getTileEntity(pos);
+		if (jar != null) {
+			ItemNBTHelper.setInt(stack, Constants.NBT.FAIRY_COLOR, jar.color.getRGB());
+			ItemNBTHelper.setInt(stack, Constants.NBT.FAIRY_AGE, jar.age);
+		}
+		return stack;
 	}
 
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		if (!worldIn.isRemote) {
 			TileJar jar = (TileJar) worldIn.getTileEntity(pos);
-			if (jar == null) return false;
-			if (playerIn.isSneaking() && jar.hasFairy) {
+			if (jar != null && playerIn.isSneaking() && jar.hasFairy) {
 				EntityFairy entity = new EntityFairy(worldIn, jar.color, jar.age);
 				entity.setPosition(playerIn.posX, playerIn.posY, playerIn.posZ);
 				worldIn.spawnEntity(entity);
@@ -85,7 +94,7 @@ public class BlockJar extends BlockModContainer {
 		return false;
 	}
 
-	@NotNull
+	@Nonnull
 	@SideOnly(Side.CLIENT)
 	public BlockRenderLayer getBlockLayer() {
 		return BlockRenderLayer.TRANSLUCENT;
@@ -107,7 +116,7 @@ public class BlockJar extends BlockModContainer {
 
 	@Nullable
 	@Override
-	public TileEntity createTileEntity(@NotNull World world, @NotNull IBlockState iBlockState) {
+	public TileEntity createTileEntity(@Nonnull World world, @Nonnull IBlockState iBlockState) {
 		return new TileJar();
 	}
 

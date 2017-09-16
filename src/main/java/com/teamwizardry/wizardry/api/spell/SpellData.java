@@ -6,13 +6,17 @@ import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
 import kotlin.Pair;
 import net.minecraft.entity.Entity;
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagFloat;
+import net.minecraft.nbt.NBTTagInt;
+import net.minecraft.nbt.NBTTagLong;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -137,7 +141,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 
 	public static class DefaultKeys {
 		public static final Pair<String, Class<Integer>> TIME_LEFT = constructPair("time_left", Integer.class, new ProcessData.Process<NBTTagInt, Integer>() {
-			@NotNull
+			@Nonnull
 			@Override
 			public NBTTagInt serialize(@Nullable Integer object) {
 				if (object == null) return new NBTTagInt(1);
@@ -145,13 +149,13 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			}
 
 			@Override
-			public Integer deserialize(@NotNull World world, @NotNull NBTTagInt object) {
+			public Integer deserialize(@Nonnull World world, @Nonnull NBTTagInt object) {
 				return object.getInt();
 			}
 		});
 
 		public static final Pair<String, Class<Integer>> MAX_TIME = constructPair("max_time", Integer.class, new ProcessData.Process<NBTTagInt, Integer>() {
-			@NotNull
+			@Nonnull
 			@Override
 			public NBTTagInt serialize(@Nullable Integer object) {
 				if (object == null) return new NBTTagInt(1);
@@ -159,13 +163,13 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			}
 
 			@Override
-			public Integer deserialize(@NotNull World world, @NotNull NBTTagInt object) {
+			public Integer deserialize(@Nonnull World world, @Nonnull NBTTagInt object) {
 				return object.getInt();
 			}
 		});
 
 		public static final Pair<String, Class<Float>> STRENGTH = constructPair("strength", Float.class, new ProcessData.Process<NBTTagFloat, Float>() {
-			@NotNull
+			@Nonnull
 			@Override
 			public NBTTagFloat serialize(@Nullable Float object) {
 				if (object == null) return new NBTTagFloat(1f);
@@ -173,52 +177,52 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			}
 
 			@Override
-			public Float deserialize(@NotNull World world, @NotNull NBTTagFloat object) {
+			public Float deserialize(@Nonnull World world, @Nonnull NBTTagFloat object) {
 				return object.getFloat();
 			}
 		});
 
 		public static final Pair<String, Class<Entity>> CASTER = constructPair("caster", Entity.class, new ProcessData.Process<NBTTagInt, Entity>() {
-			@NotNull
+			@Nonnull
 			@Override
 			public NBTTagInt serialize(Entity object) {
 				return new NBTTagInt(object.getEntityId());
 			}
 
 			@Override
-			public Entity deserialize(@NotNull World world, @NotNull NBTTagInt object) {
+			public Entity deserialize(@Nonnull World world, @Nonnull NBTTagInt object) {
 				return world.getEntityByID(object.getInt());
 			}
 		});
 
 		public static final Pair<String, Class<Float>> YAW = constructPair("yaw", Float.class, new ProcessData.Process<NBTTagFloat, Float>() {
-			@NotNull
+			@Nonnull
 			@Override
 			public NBTTagFloat serialize(Float object) {
 				return new NBTTagFloat(object);
 			}
 
 			@Override
-			public Float deserialize(@NotNull World world, @NotNull NBTTagFloat object) {
+			public Float deserialize(@Nonnull World world, @Nonnull NBTTagFloat object) {
 				return object.getFloat();
 			}
 		});
 
 		public static final Pair<String, Class<Float>> PITCH = constructPair("pitch", Float.class, new ProcessData.Process<NBTTagFloat, Float>() {
-			@NotNull
+			@Nonnull
 			@Override
 			public NBTTagFloat serialize(Float object) {
 				return new NBTTagFloat(object);
 			}
 
 			@Override
-			public Float deserialize(@NotNull World world, @NotNull NBTTagFloat object) {
+			public Float deserialize(@Nonnull World world, @Nonnull NBTTagFloat object) {
 				return object.getFloat();
 			}
 		});
 
 		public static final Pair<String, Class<Vec3d>> LOOK = constructPair("look", Vec3d.class, new ProcessData.Process<NBTTagCompound, Vec3d>() {
-			@NotNull
+			@Nonnull
 			@Override
 			public NBTTagCompound serialize(Vec3d object) {
 				NBTTagCompound compound = new NBTTagCompound();
@@ -229,7 +233,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			}
 
 			@Override
-			public Vec3d deserialize(@NotNull World world, @NotNull NBTTagCompound object) {
+			public Vec3d deserialize(@Nonnull World world, @Nonnull NBTTagCompound object) {
 				double x = object.getDouble("x");
 				double y = object.getDouble("y");
 				double z = object.getDouble("z");
@@ -238,7 +242,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 		});
 
 		public static final Pair<String, Class<Vec3d>> ORIGIN = constructPair("origin", Vec3d.class, new ProcessData.Process<NBTTagCompound, Vec3d>() {
-			@NotNull
+			@Nonnull
 			@Override
 			public NBTTagCompound serialize(Vec3d object) {
 				NBTTagCompound compound = new NBTTagCompound();
@@ -249,7 +253,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			}
 
 			@Override
-			public Vec3d deserialize(@NotNull World world, @NotNull NBTTagCompound object) {
+			public Vec3d deserialize(@Nonnull World world, @Nonnull NBTTagCompound object) {
 				double x = object.getDouble("x");
 				double y = object.getDouble("y");
 				double z = object.getDouble("z");
@@ -258,7 +262,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 		});
 
 		public static final Pair<String, Class<Entity>> ENTITY_HIT = constructPair("entity_hit", Entity.class, new ProcessData.Process<NBTTagInt, Entity>() {
-			@NotNull
+			@Nonnull
 			@Override
 			public NBTTagInt serialize(Entity object) {
 				if (object == null) return new NBTTagInt(-1);
@@ -266,13 +270,13 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			}
 
 			@Override
-			public Entity deserialize(@NotNull World world, @NotNull NBTTagInt object) {
+			public Entity deserialize(@Nonnull World world, @Nonnull NBTTagInt object) {
 				return world.getEntityByID(object.getInt());
 			}
 		});
 
 		public static final Pair<String, Class<BlockPos>> BLOCK_HIT = constructPair("block_hit", BlockPos.class, new ProcessData.Process<NBTTagLong, BlockPos>() {
-			@NotNull
+			@Nonnull
 			@Override
 			public NBTTagLong serialize(BlockPos object) {
 				if (object == null) return new NBTTagLong(-1L);
@@ -280,14 +284,14 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			}
 
 			@Override
-			public BlockPos deserialize(@NotNull World world, @NotNull NBTTagLong object) {
+			public BlockPos deserialize(@Nonnull World world, @Nonnull NBTTagLong object) {
 				return BlockPos.fromLong(object.getLong());
 			}
 		});
 
 		@Nonnull
 		public static final Pair<String, Class<EnumFacing>> FACE_HIT = constructPair("face_hit", EnumFacing.class, new ProcessData.Process<NBTTagString, EnumFacing>() {
-			@NotNull
+			@Nonnull
 			@Override
 			public NBTTagString serialize(EnumFacing object) {
 				if (object == null) return new NBTTagString("UP");
@@ -295,14 +299,14 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			}
 
 			@Override
-			public EnumFacing deserialize(@NotNull World world, @NotNull NBTTagString object) {
+			public EnumFacing deserialize(@Nonnull World world, @Nonnull NBTTagString object) {
 				return EnumFacing.valueOf(object.getString());
 			}
 		});
 
 		@Nonnull
 		public static final Pair<String, Class<IWizardryCapability>> CAPABILITY = constructPair("capability", IWizardryCapability.class, new ProcessData.Process<NBTTagCompound, IWizardryCapability>() {
-			@NotNull
+			@Nonnull
 			@Override
 			public NBTTagCompound serialize(IWizardryCapability object) {
 				if (object == null) return new NBTTagCompound();
@@ -310,7 +314,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			}
 
 			@Override
-			public IWizardryCapability deserialize(@NotNull World world, @NotNull NBTTagCompound object) {
+			public IWizardryCapability deserialize(@Nonnull World world, @Nonnull NBTTagCompound object) {
 				DefaultWizardryCapability cap = new DefaultWizardryCapability();
 				cap.loadNBTData(object);
 				return cap;
@@ -319,7 +323,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 
 		@Nonnull
 		public static final Pair<String, Class<Vec3d>> TARGET_HIT = constructPair("target_hit", Vec3d.class, new ProcessData.Process<NBTTagCompound, Vec3d>() {
-			@NotNull
+			@Nonnull
 			@Override
 			public NBTTagCompound serialize(Vec3d object) {
 				if (object == null) return new NBTTagCompound();
@@ -331,7 +335,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			}
 
 			@Override
-			public Vec3d deserialize(@NotNull World world, @NotNull NBTTagCompound object) {
+			public Vec3d deserialize(@Nonnull World world, @Nonnull NBTTagCompound object) {
 				if (!object.hasKey("x") || !object.hasKey("y") || !object.hasKey("z")) return Vec3d.ZERO;
 				double x = object.getDouble("x");
 				double y = object.getDouble("y");
@@ -343,16 +347,16 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 		@Nonnull
 		public static final Pair<String, Class<Long>> SEED = constructPair("seed", Long.class, new ProcessData.Process<NBTTagLong, Long>() {
 
-			@NotNull
+			@Nonnull
 			@Override
 			public NBTTagLong serialize(@Nullable Long object) {
 				if (object == null) return new NBTTagLong(0);
 				return new NBTTagLong(object);
 			}
 
-			@NotNull
+			@Nonnull
 			@Override
-			public Long deserialize(@NotNull World world, @NotNull NBTTagLong object) {
+			public Long deserialize(@Nonnull World world, @Nonnull NBTTagLong object) {
 				return object.getLong();
 			}
 		});

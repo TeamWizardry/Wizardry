@@ -1,11 +1,9 @@
 package com.teamwizardry.wizardry.api.spell.module;
 
-import org.jetbrains.annotations.NotNull;
-
 import javax.annotation.Nonnull;
 
 public abstract class ModuleModifier extends Module {
-	@NotNull
+	@Nonnull
 	@Override
 	public ModuleType getModuleType() {
 		return ModuleType.MODIFIER;

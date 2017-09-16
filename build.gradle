@@ -13,22 +13,17 @@ buildscript {
 
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = 1.0
+version = "$mod_version"
 group = "com.teamwizardry"
 archivesBaseName = "wizardry"
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-configurations.all {
-    // check for updates every build
-    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
-}
-
 minecraft {
-    version = "1.12-14.21.1.2443"
+    version = "$mc_version-$forge_version"
     runDir = "run"
-    mappings = "snapshot_20170818"
+    mappings = "$mcp_version"
 
     clientJvmArgs = ["-Dfml.coreMods.load=$core_plugin"]
     serverJvmArgs = ["-Dfml.coreMods.load=$core_plugin"]
@@ -43,35 +38,32 @@ repositories {
 }
 
 dependencies {
-	compile "com.teamwizardry.librarianlib:librarianlib-1.12:4.0-SNAPSHOT:deobf"
-	deobfCompile "mezz.jei:jei_1.12:4.7.5.86:api"
-	runtime "mezz.jei:jei_1.12:4.7.5.86"
-	deobfCompile "mcp.mobius.waila:Hwyla:1.8.20-B35_1.12"
-	runtime "team.chisel.ctm:CTM:MC1.12-0.2.2.7"
+	compile "com.teamwizardry.librarianlib:librarianlib-1.12:$liblib_version:deobf"
+	deobfCompile "mezz.jei:jei_1.12:$jei_version:api"
+	runtime "mezz.jei:jei_1.12:$jei_version"
+	deobfCompile "mcp.mobius.waila:Hwyla:$hwyla_version"
+	runtime "team.chisel.ctm:CTM:$ctm_version"
 }
-
 
 jar {
     manifest {
-        attributes("FMLCorePluginContainsFMLMod": "true", "FMLCorePlugin": "com.teamwizardry.wizardry.asm.WizardryCorePlugin")
+        attributes(
+                "FMLCorePluginContainsFMLMod": "true",
+                "FMLCorePlugin": "$core_plugin"
+        )
     }
 }
 
 processResources {
-    // this will ensure that this task is redone when the versions change.
     inputs.property 'version', project.version
     inputs.property 'mcversion', project.minecraft.version
 
-    // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info', 'pack.mcmeta'
-
-        // replace version and mcversion
         expand  'version': project.version,
                 'mcversion': project.minecraft.version
     }
 
-    // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info', 'pack.mcmeta'
     }

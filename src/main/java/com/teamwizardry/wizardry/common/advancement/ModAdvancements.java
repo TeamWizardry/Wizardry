@@ -2,7 +2,11 @@ package com.teamwizardry.wizardry.common.advancement;
 
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.init.ModItems;
-import net.minecraft.advancements.*;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementManager;
+import net.minecraft.advancements.AdvancementRewards;
+import net.minecraft.advancements.DisplayInfo;
+import net.minecraft.advancements.FrameType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;

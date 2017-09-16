@@ -1,8 +1,5 @@
 package com.teamwizardry.wizardry.crafting;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
@@ -11,6 +8,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class RecipeShapelessFluid extends ShapelessOreRecipe
 {

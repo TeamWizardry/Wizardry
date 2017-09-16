@@ -23,10 +23,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
+import java.awt.Color;
 import java.util.List;
 import java.util.Random;
 
@@ -176,7 +175,7 @@ public class EntityFairy extends FlyingEntityMod {
 	}
 
 	@Override
-	public void onDeath(@NotNull DamageSource cause) {
+	public void onDeath(@Nonnull DamageSource cause) {
 		super.onDeath(cause);
 		if (getHealth() <= 0)
 			PacketHandler.NETWORK.sendToAllAround(new PacketExplode(getPositionVector().addVector(0, 0.25, 0), color, color, 0.9, 0.9, RandUtil.nextInt(100, 200), 75, 25, true),

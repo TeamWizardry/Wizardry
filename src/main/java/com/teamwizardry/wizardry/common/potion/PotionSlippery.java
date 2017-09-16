@@ -13,8 +13,8 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +28,7 @@ public class PotionSlippery extends PotionBase {
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<ItemStack> getCurativeItems() {
 		return new ArrayList<>();

@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.api.capability;
 import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.*;
+import java.awt.Color;
 
 /**
  * Created by LordSaad.

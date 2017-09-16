@@ -26,7 +26,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import javax.annotation.Nonnull;
 
@@ -41,7 +41,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.constructPair;
 public class ModuleEffectZoom extends ModuleEffect {
 
 	private static final Pair<String, Class<Vec3d>> ORIGINAL_LOC = constructPair("original_loc", Vec3d.class, new ProcessData.Process<NBTTagCompound, Vec3d>() {
-		@NotNull
+		@Nonnull
 		@Override
 		public NBTTagCompound serialize(Vec3d object) {
 			NBTTagCompound compound = new NBTTagCompound();
@@ -52,7 +52,7 @@ public class ModuleEffectZoom extends ModuleEffect {
 		}
 
 		@Override
-		public Vec3d deserialize(@NotNull World world, @NotNull NBTTagCompound object) {
+		public Vec3d deserialize(@Nonnull World world, @Nonnull NBTTagCompound object) {
 			double x = object.getDouble("x");
 			double y = object.getDouble("y");
 			double z = object.getDouble("z");

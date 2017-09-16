@@ -7,8 +7,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -26,7 +26,7 @@ public class RayTrace {
 	@Nullable
 	private Entity skipEntity = null;
 
-	public RayTrace(@NotNull World world, @NotNull Vec3d slope, @NotNull Vec3d origin, double range) {
+	public RayTrace(@Nonnull World world, @Nonnull Vec3d slope, @Nonnull Vec3d origin, double range) {
 		this.world = world;
 		this.slope = slope;
 		this.origin = origin;
@@ -64,7 +64,7 @@ public class RayTrace {
 	 *
 	 * @return The RaytraceResult.
 	 */
-	@NotNull
+	@Nonnull
 	public RayTraceResult trace() {
 		Vec3d lookVec = origin.add(slope.scale(range));
 

@@ -3,8 +3,8 @@ package com.teamwizardry.wizardry.api.util.interp;
 import com.teamwizardry.librarianlib.features.math.interpolate.InterpFunction;
 import com.teamwizardry.wizardry.api.util.CubicBezier;
 import net.minecraft.util.math.Vec3d;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
@@ -26,13 +26,13 @@ public class InterpSlowDown implements InterpFunction<Vec3d> {
 		return start.subtract(finish).scale(x);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public InterpFunction<Vec3d> reverse() {
 		return null;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public List<Vec3d> list(int i) {
 		return null;
