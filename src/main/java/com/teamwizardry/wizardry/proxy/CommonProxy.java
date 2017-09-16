@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.proxy;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
-import com.teamwizardry.wizardry.client.core.CapeHandler;
 import com.teamwizardry.wizardry.client.gui.GuiHandler;
 import com.teamwizardry.wizardry.common.advancement.AchievementEvents;
 import com.teamwizardry.wizardry.common.core.EventHandler;
@@ -14,7 +13,6 @@ import com.teamwizardry.wizardry.common.network.*;
 import com.teamwizardry.wizardry.common.world.GenHandler;
 import com.teamwizardry.wizardry.common.world.underworld.WorldProviderUnderWorld;
 import com.teamwizardry.wizardry.init.*;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.DimensionType;
@@ -29,7 +27,6 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
-import javax.annotation.Nullable;
 import java.io.File;
 
 public class CommonProxy {
@@ -61,7 +58,6 @@ public class CommonProxy {
 		Wizardry.underWorld = DimensionType.register("underworld", "_dim", tempFix, WorldProviderUnderWorld.class, false);
 		DimensionManager.registerDimension(tempFix, Wizardry.underWorld);
 
-		CapeHandler.INSTANCE.getClass();
 		MinecraftForge.EVENT_BUS.register(new WorldProviderUnderWorld());
 		MinecraftForge.EVENT_BUS.register(new EventHandler());
 		MinecraftForge.EVENT_BUS.register(new AchievementEvents());
@@ -101,16 +97,6 @@ public class CommonProxy {
 		ModuleRegistry.INSTANCE.loadUnprocessedModules();
 		ModuleRegistry.INSTANCE.copyMissingModulesFromResources(directory);
 		ModuleRegistry.INSTANCE.processModules();
-	}
-
-	@Nullable
-	public ItemStack getCape(EntityPlayer player) {
-		for (ItemStack eq : player.getArmorInventoryList()) {
-			if ((eq != null) && (eq.getItem() == ModItems.CAPE)) {
-				return eq;
-			}
-		}
-		return null;
 	}
 
 	@SubscribeEvent

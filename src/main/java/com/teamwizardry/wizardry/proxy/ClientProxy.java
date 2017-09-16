@@ -1,8 +1,5 @@
 package com.teamwizardry.wizardry.proxy;
 
-import baubles.api.BaubleType;
-import baubles.api.BaublesApi;
-import baubles.api.cap.IBaublesItemHandler;
 import com.teamwizardry.librarianlib.features.methodhandles.MethodHandleHelper;
 import com.teamwizardry.librarianlib.features.utilities.client.CustomBlockMapSprites;
 import com.teamwizardry.wizardry.Wizardry;
@@ -15,28 +12,23 @@ import com.teamwizardry.wizardry.client.render.BloodRenderLayer;
 import com.teamwizardry.wizardry.common.core.version.VersionChecker;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModEntities;
-import com.teamwizardry.wizardry.init.ModItems;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function2;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 import javax.annotation.Nonnull;
-import java.util.Map;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class ClientProxy extends CommonProxy implements IResourceManagerReloadListener {
@@ -72,14 +64,11 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 	public void init(FMLInitializationEvent event) {
 		super.init(event);
 
-		CapeHandler.INSTANCE.getClass(); // ...
+		MinecraftForge.EVENT_BUS.register(CapeHandler.instance());
 
-		Map<String, RenderPlayer> skinMap = Minecraft.getMinecraft().getRenderManager().getSkinMap();
-		RenderPlayer render = skinMap.get("default");
-		render.addLayer(new BloodRenderLayer(render));
-
-		render = skinMap.get("slim");
-		render.addLayer(new BloodRenderLayer(render));
+		Minecraft.getMinecraft().getRenderManager().getSkinMap().values().forEach(render ->
+			render.addLayer(new BloodRenderLayer(render))
+		);
 
 	}
 
@@ -100,19 +89,6 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 	@Override
 	public void onResourceManagerReload(@Nonnull IResourceManager resourceManager) {
 		MinecraftForge.EVENT_BUS.post(new ResourceReloadEvent(resourceManager));
-	}
-
-	@Override
-	@Optional.Method(modid = "baubles")
-	public ItemStack getCape(EntityPlayer player) {
-		IBaublesItemHandler inv = BaublesApi.getBaublesHandler(player);
-		for (int i : BaubleType.BODY.getValidSlots()) {
-			ItemStack stack1 = inv.getStackInSlot(i);
-			if (stack1.getItem() == ModItems.CAPE) {
-				return stack1;
-			}
-		}
-		return null;
 	}
 
 	public static class ResourceReloadEvent extends Event {
