@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.api.item;
 
-import com.teamwizardry.wizardry.lib.LibParticles;
+import com.teamwizardry.wizardry.client.fx.LibParticles;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.Potion;

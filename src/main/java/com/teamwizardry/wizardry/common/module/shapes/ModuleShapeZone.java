@@ -71,7 +71,7 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 		double strength = getModifier(spell, Attributes.POTENCY, 1, 10);
 		double range = getModifier(spell, Attributes.RANGE, 1, 20);
 
-		List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(targetPos)).expand(aoe, 1, aoe));
+		List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(targetPos)).grow(aoe, 1, aoe));
 
 		setMultiplier(0.7);
 		if (r.nextInt((int) ((70 - strength))) == 0) {

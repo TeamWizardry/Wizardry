@@ -92,7 +92,7 @@ public class RayTrace {
 		Entity targetEntity = null;
 		RayTraceResult entityTrace = null;
 		AxisAlignedBB bb = new AxisAlignedBB(lookVec.x, lookVec.y, lookVec.z, lookVec.x, lookVec.y, lookVec.z);
-		List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(skipEntity, bb.expand(range, range, range));
+		List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(skipEntity, bb.grow(range, range, range));
 		double closest = 0.0D;
 
 		for (Entity entity : list) {

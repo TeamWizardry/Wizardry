@@ -157,7 +157,7 @@ public class EventHandler {
 				break;
 			}
 		if (RandUtil.nextInt(chance) == 0 && caster != null) {
-			List<EntityFairy> fairyList = event.spell.world.getEntitiesWithinAABB(EntityFairy.class, new AxisAlignedBB(caster.getPosition()).expand(64, 64, 64));
+			List<EntityFairy> fairyList = event.spell.world.getEntitiesWithinAABB(EntityFairy.class, new AxisAlignedBB(caster.getPosition()).grow(64, 64, 64));
 			for (EntityFairy fairy : fairyList) {
 				fairy.ambush = true;
 			}

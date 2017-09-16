@@ -2,9 +2,9 @@ package com.teamwizardry.wizardry.common.entity;
 
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
-import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -73,9 +73,13 @@ public class EntityDevilDust extends Entity {
 				return;
 			}
 		} else {
+			if (redstone == null) return;
+
 			BlockPos fire = PosUtils.checkNeighbor(world, redstone.getPosition(), Blocks.FIRE);
+			if (fire == null) return;
+
 			if ((world.getBlockState(fire).getBlock() == Blocks.FIRE)
-					&& world.isMaterialInBB(redstone.getEntityBoundingBox().expand(0.1, 0.1, 0.1), Material.FIRE)) {
+					&& world.isMaterialInBB(redstone.getEntityBoundingBox().grow(0.1, 0.1, 0.1), Material.FIRE)) {
 				stackSize = redstone.getItem().getCount();
 				if (!redstone.isDead) redstone.setDead();
 				consumed = true;

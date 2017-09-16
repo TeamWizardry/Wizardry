@@ -2,7 +2,7 @@ package com.teamwizardry.wizardry.common.network;
 
 import com.teamwizardry.librarianlib.features.network.PacketBase;
 import com.teamwizardry.librarianlib.features.saving.Save;
-import com.teamwizardry.wizardry.lib.LibParticles;
+import com.teamwizardry.wizardry.client.fx.LibParticles;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;

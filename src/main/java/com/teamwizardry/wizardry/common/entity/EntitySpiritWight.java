@@ -1,8 +1,8 @@
 package com.teamwizardry.wizardry.common.entity;
 
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.init.ModSounds;
-import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;

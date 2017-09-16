@@ -95,7 +95,7 @@ public class EntityFairy extends FlyingEntityMod {
 		if (world.isRemote) return;
 
 		if (ambush) {
-			List<Entity> entities = world.getEntitiesInAABBexcluding(this, new AxisAlignedBB(getPosition()).expand(64, 64, 64), null);
+			List<Entity> entities = world.getEntitiesInAABBexcluding(this, new AxisAlignedBB(getPosition()).grow(64, 64, 64), null);
 			for (Entity entity : entities)
 				if (entity instanceof EntityPlayer) {
 
@@ -119,7 +119,7 @@ public class EntityFairy extends FlyingEntityMod {
 		if (!getNavigator().noPath()) return;
 
 		boolean nopeOut = false;
-		List<Entity> entities = world.getEntitiesInAABBexcluding(this, new AxisAlignedBB(getPosition()).expand(5, 5, 5), null);
+		List<Entity> entities = world.getEntitiesInAABBexcluding(this, new AxisAlignedBB(getPosition()).grow(5, 5, 5), null);
 		for (Entity entity : entities)
 			if (entity instanceof EntityLivingBase) {
 				if (entity.isSneaking()) continue;

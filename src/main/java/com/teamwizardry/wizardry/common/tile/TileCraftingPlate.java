@@ -91,7 +91,7 @@ public class TileCraftingPlate extends TileManaSink {
 	public void update() {
 		super.update();
 
-		for (EntityItem entityItem : world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos).expand(2, 2, 2))) {
+		for (EntityItem entityItem : world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos).grow(2, 2, 2))) {
 			ItemStack stack = entityItem.getItem().copy();
 			stack.setCount(1);
 			entityItem.getItem().shrink(1);
@@ -147,7 +147,7 @@ public class TileCraftingPlate extends TileManaSink {
 				craftingTimeLeft = craftingTime;
 				markDirty();
 
-				List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(pos).expand(32, 32, 32));
+				List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(pos).grow(32, 32, 32));
 				for (Entity entity1 : entityList) {
 					double dist = entity1.getDistance(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
 					final double upperMag = 3;

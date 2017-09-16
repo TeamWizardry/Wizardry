@@ -70,7 +70,7 @@ public class ModuleEffectAntiGravityWell extends ModuleEffect implements ILinger
 
 		double strength = getModifier(spell, Attributes.AREA, 3, 16);
 
-		for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(position)).expand(strength, strength, strength))) {
+		for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(position)).grow(strength, strength, strength))) {
 			if (entity == null) continue;
 			double dist = entity.getPositionVector().distanceTo(position);
 			if (dist < 2) continue;

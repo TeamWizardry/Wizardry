@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.lib;
+package com.teamwizardry.wizardry.client.fx;
 
 import com.teamwizardry.librarianlib.features.math.interpolate.InterpFunction;
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;

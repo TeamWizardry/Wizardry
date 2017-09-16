@@ -2,8 +2,8 @@ package com.teamwizardry.wizardry.api.block;
 
 import com.teamwizardry.librarianlib.features.structure.Structure;
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.init.ModItems;
-import com.teamwizardry.wizardry.lib.LibParticles;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;

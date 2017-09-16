@@ -60,7 +60,7 @@ public class EntityAIUnicornCharge extends EntityAIBase {
 			return;
 		} else unicorn.getNavigator().tryMoveToEntityLiving(unicorn.getAttackTarget(), speed);
 
-		if (unicorn.getEntityBoundingBox().expand(1, 1, 1).intersects(unicorn.getAttackTarget().getEntityBoundingBox())) {
+		if (unicorn.getEntityBoundingBox().grow(1, 1, 1).intersects(unicorn.getAttackTarget().getEntityBoundingBox())) {
 			unicorn.getAttackTarget().knockBack(unicorn, 3F, MathHelper.sin(this.unicorn.rotationYaw), -MathHelper.cos(this.unicorn.rotationYaw));
 			unicorn.knockBack(unicorn, 0.5F, -MathHelper.sin(this.unicorn.rotationYaw), MathHelper.cos(this.unicorn.rotationYaw));
 			unicorn.getAttackTarget().attackEntityFrom(DamageSource.causeMobDamage(unicorn), (float) damage);

@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.common.entity;
 
 import com.teamwizardry.wizardry.api.util.RandUtil;
-import com.teamwizardry.wizardry.lib.LibParticles;
+import com.teamwizardry.wizardry.client.fx.LibParticles;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;

@@ -10,11 +10,11 @@ import com.teamwizardry.librarianlib.features.gui.mixin.gl.GlMixin;
 import com.teamwizardry.librarianlib.features.math.Vec2d;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBezier2D;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
+import com.teamwizardry.librarianlib.features.sprite.Texture;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleType;
-import com.teamwizardry.wizardry.lib.LibSprites;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -39,8 +39,10 @@ import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 
 public class TableModule {
 
-	private static final Sprite plate = LibSprites.Worktable.MODULE_DEFAULT;
-	private static final Sprite plate_highlighted = LibSprites.Worktable.MODULE_DEFAULT_GLOW;
+	private static final Texture SPRITE_SHEET = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sprite_sheet.png"));
+
+	private static final Sprite plate = SPRITE_SHEET.getSprite("module_default", 16, 16);
+	private static final Sprite plate_highlighted = SPRITE_SHEET.getSprite("module_default_glow", 16, 16);
 	private static final Sprite streak = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/streak.png"));
 	public final Module module;
 	public ComponentVoid component;
