@@ -7,6 +7,7 @@ import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.spell.IContinuousModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
@@ -20,6 +21,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -33,7 +35,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.TARGET_H
  * Created by LordSaad.
  */
 @RegisterModule
-public class ModuleEffectTelekinesis extends ModuleEffect {
+public class ModuleEffectTelekinesis extends ModuleEffect implements IContinuousModule {
 
 	@Nonnull
 	@Override
@@ -59,11 +61,11 @@ public class ModuleEffectTelekinesis extends ModuleEffect {
 		Vec3d targetPos = spell.getData(TARGET_HIT);
 		Entity caster = spell.getData(CASTER);
 
-		double strength = getModifier(spell, Attributes.POTENCY, 3, 20);
+		double strength = MathHelper.clamp(getModifier(spell, Attributes.POTENCY, 3, 10), 3, 10);
 
 		if (targetPos == null) return false;
 
-		List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(targetPos)).expand(strength, strength, strength));
+		List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(targetPos)).grow(strength, strength, strength));
 
 		if (RandUtil.nextInt(10) == 0)
 			spell.world.playSound(null, new BlockPos(targetPos), ModSounds.ETHEREAL_PASS_BY, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat());

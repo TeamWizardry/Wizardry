@@ -15,7 +15,7 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 
-import java.awt.Color;
+import java.awt.*;
 
 /**
  * Created by LordSaad.

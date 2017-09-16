@@ -24,7 +24,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.Color;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -270,7 +270,8 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 
 	protected final double getModifier(SpellData data, String attribute, double min, double max) {
 		Entity caster = data.getData(CASTER);
-		return (attributes.hasKey(attribute) ? MathHelper.clamp(min + attributes.getDouble(attribute), min, max) : min) * getMultiplier() * calcBurnoutPercent(caster);
+		double burnout = calcBurnoutPercent(caster);
+		return (attributes.hasKey(attribute) ? MathHelper.clamp(min + attributes.getDouble(attribute), min, max) : min) * getMultiplier() * burnout;
 	}
 
 	public void processModifiers() {

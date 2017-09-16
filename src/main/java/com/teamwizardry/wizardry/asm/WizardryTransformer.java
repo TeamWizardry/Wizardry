@@ -5,15 +5,7 @@ import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraftforge.fml.common.FMLLog;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.JumpInsnNode;
-import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.VarInsnNode;
+import org.objectweb.asm.tree.*;
 import org.objectweb.asm.util.Printer;
 import org.objectweb.asm.util.Textifier;
 import org.objectweb.asm.util.TraceMethodVisitor;
@@ -134,7 +126,7 @@ public class WizardryTransformer implements IClassTransformer {
 	}
 
 	private static byte[] transformPlayerClipping(byte[] basicClass) {
-		MethodSignature sig = new MethodSignature("onUpdate", "func_70071_h_", "A_", "()V");
+		MethodSignature sig = new MethodSignature("onUpdate", "func_70071_h_", "B_", "()V");
 
 		return transform(basicClass, sig, "Player Clipping Event",
 				combine((AbstractInsnNode node) -> node.getOpcode() == PUTFIELD, // Filter

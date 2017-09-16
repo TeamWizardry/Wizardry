@@ -71,22 +71,20 @@ public class BlockPearlHolder extends BlockModContainer {
 					te.pearl = heldItem.copy();
 					te.pearl.setCount(1);
 					heldItem.shrink(1);
-				}
+				} else return false;
+
 			} else {
-				if (playerIn.getHeldItemMainhand().isEmpty() && playerIn.getHeldItemOffhand().isEmpty()) {
-					ItemStack stack = te.pearl.copy();
-					te.pearl = ItemStack.EMPTY;
-					if (playerIn.inventory.addItemStackToInventory(stack)) {
-						playerIn.openContainer.detectAndSendChanges();
-					} else {
-						EntityItem entityItem = new EntityItem(worldIn, pos.getX(), pos.getY() + 1, pos.getZ(), stack);
-						worldIn.spawnEntity(entityItem);
-					}
+				ItemStack stack = te.pearl.copy();
+				te.pearl = ItemStack.EMPTY;
+				if (playerIn.inventory.addItemStackToInventory(stack)) playerIn.openContainer.detectAndSendChanges();
+				else {
+					EntityItem entityItem = new EntityItem(worldIn, pos.getX(), pos.getY() + 1, pos.getZ(), stack);
+					worldIn.spawnEntity(entityItem);
 				}
 			}
 			te.markDirty();
 		}
-		return false;
+		return true;
 	}
 
 	private TilePearlHolder getTE(World world, BlockPos pos) {

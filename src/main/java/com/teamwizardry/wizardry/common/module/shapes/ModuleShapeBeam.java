@@ -74,7 +74,7 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 			spell.processBlock(trace.getBlockPos(), trace.sideHit, trace.hitVec);
 		else spell.processBlock(new BlockPos(vec), null, vec);
 
-		return RandUtil.nextInt((int) potency) == 0 && runNextModule(spell);
+		return ((nextModule == null || nextModule instanceof IContinuousModule) || RandUtil.nextInt((int) potency) == 0) && runNextModule(spell);
 	}
 
 

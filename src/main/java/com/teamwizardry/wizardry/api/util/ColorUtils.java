@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.api.util;
 
 import javax.annotation.Nonnull;
-import java.awt.Color;
+import java.awt.*;
 
 /**
  * Created by LordSaad.

@@ -47,7 +47,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.Color;
+import java.awt.*;
 import java.util.ArrayList;
 
 /**

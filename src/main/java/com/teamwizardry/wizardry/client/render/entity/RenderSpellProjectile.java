@@ -18,7 +18,7 @@ import net.minecraft.util.math.Vec3d;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.Color;
+import java.awt.*;
 
 import static com.teamwizardry.wizardry.common.entity.EntitySpellProjectile.DATA_COLOR;
 import static com.teamwizardry.wizardry.common.entity.EntitySpellProjectile.DATA_COLOR2;
