@@ -1,8 +1,19 @@
 package com.teamwizardry.wizardry.common.world.underworld;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.init.ModBlocks;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Blocks;
@@ -13,10 +24,6 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.IChunkGenerator;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.*;
 
 /**
  * Created by LordSaad44
@@ -105,11 +112,6 @@ public class ChunkGeneratorUnderWorld implements IChunkGenerator {
 		generate(x, z, chunkprimer);
 
 		Chunk chunk = new Chunk(world, chunkprimer, x, z);
-
-		byte[] biomeArray = chunk.getBiomeArray();
-		for (int i = 0; i < biomeArray.length; ++i) {
-			biomeArray[i] = (byte) 42;
-		}
 
 		chunk.generateSkylightMap();
 		return chunk;

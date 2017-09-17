@@ -46,7 +46,7 @@ public class WorldProviderUnderWorld extends WorldProvider {
 	@Nonnull
 	@Override
 	public Biome getBiomeForCoords(@Nonnull BlockPos pos) {
-		return ModBiomes.BIOME_UNDERWORLD;
+		return biomeProvider.getBiome(pos);
 	}
 
 	@Override
