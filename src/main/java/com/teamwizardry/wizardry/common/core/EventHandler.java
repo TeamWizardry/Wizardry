@@ -16,16 +16,12 @@ import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModPotions;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function2;
-import net.minecraft.advancements.Advancement;
-import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -35,7 +31,6 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
@@ -76,13 +71,13 @@ public class EventHandler {
 	public void tickEvent(WorldTickEvent event) {
 		if (event.phase != Phase.START) {
 			if (!fallResetUUIDs.isEmpty())
-				event.world.playerEntities.stream().filter(entity -> fallResetUUIDs.contains(entity.getUniqueID())).forEach(entity -> entity.fallDistance = -255);
+				event.world.playerEntities.stream().filter(entity -> fallResetUUIDs.contains(entity.getUniqueID())).forEach(entity -> entity.fallDistance = -500);
 			fallResetUUIDs.clear();
 		}
 	}
 
 	@SubscribeEvent
-	public void onFallDamage(LivingHurtEvent event) {
+	public void underworldVoidDamage(LivingHurtEvent event) {
 		if (!(event.getEntity() instanceof EntityPlayer)) return;
 		if (event.getEntity().getEntityWorld().provider.getDimension() != Wizardry.underWorld.getId()) return;
 		if (event.getSource() == EntityDamageSource.OUT_OF_WORLD) {
@@ -96,9 +91,9 @@ public class EventHandler {
 	}
 
 	@SubscribeEvent
-	public void onFall(LivingFallEvent event) {
+	public void onBedrockSmack(LivingFallEvent event) {
 		if (!(event.getEntity() instanceof EntityPlayer)) return;
-		if (event.getEntity().getEntityWorld().provider.getDimension() != Wizardry.underWorld.getId()) {
+		if (event.getEntity().getEntityWorld().provider.getDimension() == 0) {
 			if (event.getEntity().fallDistance >= 250) {
 				BlockPos location = event.getEntity().getPosition();
 				BlockPos bedrock = PosUtils.checkNeighbor(event.getEntity().getEntityWorld(), location, Blocks.BEDROCK);
@@ -107,14 +102,6 @@ public class EventHandler {
 						TeleportUtil.teleportToDimension((EntityPlayer) event.getEntity(), Wizardry.underWorld.getId(), 0, 300, 0);
 						((EntityPlayer) event.getEntity()).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 0, true, false));
 						fallResetUUIDs.add(event.getEntity().getUniqueID());
-
-						MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-						Advancement advancement = server.getAdvancementManager().getAdvancement(new ResourceLocation(Wizardry.MODID, "advancements/advancement_crunch.json"));
-						if (advancement == null) return;
-						AdvancementProgress progress = ((EntityPlayerMP) event.getEntityLiving()).getAdvancements().getProgress(advancement);
-						for (String s : progress.getRemaningCriteria()) {
-							((EntityPlayerMP) event.getEntityLiving()).getAdvancements().grantCriterion(advancement, s);
-						}
 						event.setCanceled(true);
 					}
 				}
@@ -124,7 +111,7 @@ public class EventHandler {
 
 	@SubscribeEvent
 	public void onFlyFall(PlayerFlyableFallEvent event) {
-		if (event.getEntityPlayer().getEntityWorld().provider.getDimension() != Wizardry.underWorld.getId()) {
+		if (event.getEntityPlayer().getEntityWorld().provider.getDimension() == 0) {
 			if (event.getEntityPlayer().fallDistance >= 250) {
 				BlockPos location = event.getEntityPlayer().getPosition();
 				BlockPos bedrock = PosUtils.checkNeighbor(event.getEntity().getEntityWorld(), location, Blocks.BEDROCK);
@@ -133,14 +120,6 @@ public class EventHandler {
 						TeleportUtil.teleportToDimension(event.getEntityPlayer(), Wizardry.underWorld.getId(), 0, 300, 0);
 						((EntityPlayer) event.getEntity()).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 0, true, false));
 						fallResetUUIDs.add(event.getEntityPlayer().getUniqueID());
-
-						MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
-						Advancement advancement = server.getAdvancementManager().getAdvancement(new ResourceLocation(Wizardry.MODID, "advancements/advancement_crunch.json"));
-						if (advancement == null) return;
-						AdvancementProgress progress = ((EntityPlayerMP) event.getEntityLiving()).getAdvancements().getProgress(advancement);
-						for (String s : progress.getRemaningCriteria()) {
-							((EntityPlayerMP) event.getEntityLiving()).getAdvancements().grantCriterion(advancement, s);
-						}
 					}
 				}
 			}

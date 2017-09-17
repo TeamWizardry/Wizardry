@@ -37,11 +37,6 @@ public final class PosUtils {
 	public static BlockPos checkNeighbor(World world, BlockPos origin, Block desiredBlockToFind) {
 		if (world.getBlockState(origin).getBlock() == desiredBlockToFind) return origin;
 
-		for (EnumFacing vertical : upDown) {
-			BlockPos pos = origin.offset(vertical);
-			if (world.getBlockState(pos).getBlock() == desiredBlockToFind) return pos;
-		}
-
 		for (EnumFacing facing : EnumFacing.values()) {
 			BlockPos pos = origin.offset(facing);
 			if (world.getBlockState(pos).getBlock() == desiredBlockToFind) return pos;
