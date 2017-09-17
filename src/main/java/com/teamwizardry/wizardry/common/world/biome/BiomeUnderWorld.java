@@ -1,6 +1,8 @@
 package com.teamwizardry.wizardry.common.world.biome;
 
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
+import com.teamwizardry.wizardry.common.entity.EntitySpiritWight;
+import com.teamwizardry.wizardry.common.entity.EntityUnicorn;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -20,7 +22,14 @@ public class BiomeUnderWorld extends Biome {
 
 		this.topBlock = Blocks.AIR.getDefaultState();
 		this.fillerBlock = Blocks.AIR.getDefaultState();
-		this.spawnableCreatureList.add(new Biome.SpawnListEntry(EntityFairy.class, 100, 1, 3));
+		spawnableCreatureList.clear();
+		spawnableWaterCreatureList.clear();
+		spawnableMonsterList.clear();
+		spawnableCaveCreatureList.clear();
+		modSpawnableLists.clear();
+		this.spawnableCreatureList.add(new Biome.SpawnListEntry(EntityFairy.class, 100, 1, 5));
+		this.spawnableMonsterList.add(new Biome.SpawnListEntry(EntityUnicorn.class, 10, 1, 3));
+		this.spawnableMonsterList.add(new Biome.SpawnListEntry(EntitySpiritWight.class, 20, 1, 1));
 	}
 
 	@Override

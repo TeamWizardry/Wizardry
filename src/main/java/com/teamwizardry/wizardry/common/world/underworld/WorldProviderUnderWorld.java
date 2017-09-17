@@ -1,7 +1,8 @@
 package com.teamwizardry.wizardry.common.world.underworld;
 
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.common.world.biome.BiomeUnderWorld;
+import com.teamwizardry.wizardry.api.ConfigValues;
+import com.teamwizardry.wizardry.init.ModBiomes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -16,6 +17,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeProviderSingle;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraftforge.client.IRenderHandler;
@@ -44,7 +46,13 @@ public class WorldProviderUnderWorld extends WorldProvider {
 	@Nonnull
 	@Override
 	public Biome getBiomeForCoords(@Nonnull BlockPos pos) {
-		return new BiomeUnderWorld(new Biome.BiomeProperties("underworld"));
+		return ModBiomes.BIOME_UNDERWORLD;
+	}
+
+	@Override
+	public void init() {
+		biomeProvider = new BiomeProviderSingle(ModBiomes.BIOME_UNDERWORLD);
+		setDimension(ConfigValues.underworldID);
 	}
 
 	@Override

@@ -8,6 +8,7 @@ import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.gui.GuiBase;
 import com.teamwizardry.librarianlib.features.gui.GuiComponent;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
+import com.teamwizardry.librarianlib.features.gui.components.ComponentVoid;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.math.Vec2d;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
@@ -47,12 +48,17 @@ public class BookGui extends GuiBase {
 		super(508, 360);
 		this.bookItem = book;
 
+		ComponentVoid base = new ComponentVoid(0, 0, 509, 360);
+		getMainComponents().add(base);
+
+		base.setChildScale(1f);
+
 		ComponentSprite componentBook = new ComponentSprite(BOOK, 0, 0);
-		getMainComponents().add(componentBook);
+		base.add(componentBook);
 
 		Vec2d logoSize = new Vec2d(524, 978).divide(5);
 		componentLogo = new ComponentSprite(new Sprite(new ResourceLocation(Wizardry.MODID, "textures/wizardry_logo.png")), (int) (250 + 250 / 2.0 - logoSize.getXf() / 2.0), (int) (360 / 2.0 - logoSize.getYf() / 2.0), logoSize.getXi(), logoSize.getYi());
-		getMainComponents().add(componentLogo);
+		base.add(componentLogo);
 
 		String langname = Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode();
 		InputStream stream;
@@ -100,6 +106,11 @@ public class BookGui extends GuiBase {
 			componentBook.add(bookmarkRecipe);
 		}
 
+	}
+
+	@Override
+	public boolean adjustGuiSize() {
+		return false;
 	}
 
 	@Override
