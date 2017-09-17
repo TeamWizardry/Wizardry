@@ -4,13 +4,13 @@ import com.teamwizardry.librarianlib.features.methodhandles.MethodHandleHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants.MISC;
 import com.teamwizardry.wizardry.api.events.SpellCastEvent;
+import com.teamwizardry.wizardry.api.item.RedstoneTracker;
 import com.teamwizardry.wizardry.api.spell.IContinuousModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.TeleportUtil;
-import com.teamwizardry.wizardry.common.entity.EntityDevilDust;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModPotions;
@@ -59,7 +59,7 @@ public class EventHandler {
 			EntityItem item = (EntityItem) event.getEntity();
 			if (item.getItem().getItem() == Items.REDSTONE) {
 				entityFireHandler.invoke(item, true);
-				event.getWorld().spawnEntity(new EntityDevilDust(event.getWorld(), item));
+				RedstoneTracker.INSTANCE.addRedstone(item, event.getWorld());
 			} else if (item.getItem().getItem() == ModItems.DEVIL_DUST) {
 				entityFireHandler.invoke(item, true);
 				item.extinguish();
@@ -69,6 +69,7 @@ public class EventHandler {
 
 	@SubscribeEvent
 	public void tickEvent(WorldTickEvent event) {
+		RedstoneTracker.INSTANCE.tick();
 		if (event.phase != Phase.START) {
 			if (!fallResetUUIDs.isEmpty())
 				event.world.playerEntities.stream().filter(entity -> fallResetUUIDs.contains(entity.getUniqueID())).forEach(entity -> entity.fallDistance = -500);

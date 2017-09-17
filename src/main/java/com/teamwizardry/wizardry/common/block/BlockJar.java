@@ -52,8 +52,11 @@ public class BlockJar extends BlockModContainer {
 
 	@Override
 	public int getLightValue(@Nonnull IBlockState state, IBlockAccess world, @Nonnull BlockPos pos) {
-		TileJar jar = (TileJar) world.getTileEntity(pos);
-		return jar != null && jar.hasFairy ? 15 : 0;
+		TileEntity entity = world.getTileEntity(pos);
+		if (entity != null && entity instanceof TileJar) {
+			TileJar jar = (TileJar) entity;
+			return jar.hasFairy ? 15 : 0;
+		} else return 0;
 	}
 
 	@Override
