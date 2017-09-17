@@ -9,8 +9,10 @@
     "description": {
       "translate": "advancement.wizardry.book.desc",
       "italic": true
-    }
+    },
+    "background": "wizardry:textures/blocks/wisdom_wood_planks.png"
   },
+  "parent": "wizardry:advancement_manapool",
   "criteria": {
     "craft_book": {
       "trigger": "minecraft:inventory_changed",

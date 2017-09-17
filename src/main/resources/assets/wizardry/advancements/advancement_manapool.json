@@ -9,7 +9,8 @@
     "description": {
       "translate": "advancement.wizardry.manapool.desc",
       "italic": true
-    }
+    },
+    "background": "wizardry:textures/blocks/wisdom_wood_planks.png"
   },
   "criteria": {
     "manapool": {

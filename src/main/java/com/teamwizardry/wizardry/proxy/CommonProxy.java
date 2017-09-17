@@ -77,6 +77,7 @@ public class CommonProxy {
 		PacketHandler.register(PacketRenderLightningBolt.class, Side.CLIENT);
 		PacketHandler.register(PacketSyncCooldown.class, Side.CLIENT);
 		PacketHandler.register(PacketVanishPotion.class, Side.CLIENT);
+		PacketHandler.register(PacketDevilDustFizzle.class, Side.CLIENT);
 	}
 
 	public void init(FMLInitializationEvent event) {

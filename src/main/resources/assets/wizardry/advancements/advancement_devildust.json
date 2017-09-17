@@ -9,8 +9,10 @@
     "description": {
       "translate": "advancement.wizardry.devildust.desc",
       "italic": true
-    }
+    },
+    "background": "wizardry:textures/blocks/wisdom_wood_planks.png"
   },
+  "parent": "wizardry:advancement_book",
   "criteria": {
     "craft_devil_dust": {
       "trigger": "minecraft:inventory_changed",

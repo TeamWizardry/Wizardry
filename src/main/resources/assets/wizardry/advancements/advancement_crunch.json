@@ -7,10 +7,12 @@
       "translate": "advancement.wizardry.crunch"
     },
     "description": {
-      "translate": "advancement.wizardry.book.crunch",
+      "translate": "advancement.wizardry.crunch.desc",
       "italic": true
-    }
+    },
+    "background": "wizardry:textures/blocks/wisdom_wood_planks.png"
   },
+  "parent": "wizardry:advancement_book",
   "criteria": {
     "go_to_underworld": {
       "trigger": "minecraft:changed_dimension",
