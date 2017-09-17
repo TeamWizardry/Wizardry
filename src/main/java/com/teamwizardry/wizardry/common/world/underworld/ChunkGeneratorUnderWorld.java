@@ -11,6 +11,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.common.block.BlockCloud;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.init.ModBlocks;
 
@@ -92,9 +93,27 @@ public class ChunkGeneratorUnderWorld implements IChunkGenerator {
 					for (BlockPos pos : poses) {
 						if (pos.getX() >= 0 && pos.getX() <= 15
 								&& pos.getZ() >= 0 && pos.getZ() <= 15) {
-							if (primer.getBlockState(pos.getX(), pos.getY() - 1, pos.getZ()) != ModBlocks.CLOUD) {
+							if (primer.getBlockState(pos.getX(), pos.getY() - 1, pos.getZ()).getBlock() != ModBlocks.CLOUD) {
 								IBlockState block = ModBlocks.CLOUD.getDefaultState();
 								primer.setBlockState(pos.getX(), pos.getY(), pos.getZ(), block);
+							}
+						}
+					}
+					
+					for (BlockPos pos : poses)
+					{
+						if (pos.getX() >= 0 && pos.getX() <= 15 && pos.getZ() >= 0 && pos.getZ() <= 15)
+						{
+							int x = pos.getX();
+							int y = pos.getY();
+							int z = pos.getZ();
+							for (int i = 0; i < y; i++)
+							{
+								if (primer.getBlockState(x, i, z).getBlock() == ModBlocks.CLOUD)
+								{
+									primer.setBlockState(x, i, z, ModBlocks.CLOUD.getDefaultState().withProperty(BlockCloud.HAS_LIGHT_VALUE, true));
+									break;
+								}
 							}
 						}
 					}
