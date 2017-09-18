@@ -1,9 +1,9 @@
 package com.teamwizardry.wizardry.common.network;
 
+import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.network.PacketBase;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -52,9 +52,9 @@ public class PacketExplode extends PacketBase {
 	@Override
 	public void handle(MessageContext messageContext) {
 		if (messageContext.side.isServer()) return;
-		if (Minecraft.getMinecraft().player == null) return;
 
-		World world = Minecraft.getMinecraft().player.world;
+		World world = LibrarianLib.PROXY.getClientPlayer().world;
+		if (world == null) return;
 
 		LibParticles.EXPLODE(world, pos, color1, color2, strengthSideways, strengthUpwards, amount, lifeTime, lifeTimeRange, bounce);
 	}

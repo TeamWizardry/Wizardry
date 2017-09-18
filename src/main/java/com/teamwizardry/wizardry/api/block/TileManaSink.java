@@ -8,6 +8,7 @@ import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
 import com.teamwizardry.librarianlib.features.saving.CapabilityProvide;
 import com.teamwizardry.librarianlib.features.saving.Save;
+import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.capability.CapManager;
@@ -56,7 +57,7 @@ public class TileManaSink extends TileMod implements ITickable {
 			faucet.removeMana(idealAmount);
 			sink.addMana(idealAmount);
 
-			if (world.isRemote) {
+			ClientRunnable.run(() -> {
 				ParticleBuilder helix = new ParticleBuilder(200);
 				helix.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 				helix.setAlphaFunction(new InterpFadeInOut(0.1f, 0.1f));
@@ -67,7 +68,7 @@ public class TileManaSink extends TileMod implements ITickable {
 					helix.setPositionFunction(new InterpBezier3D(Vec3d.ZERO, new Vec3d(getPos().subtract(faucetPos)), new Vec3d(0, 20, 0), new Vec3d(0, 5, 0)));
 					helix.setLifetime(RandUtil.nextInt(10, 40));
 				});
-			}
+			});
 
 		}
 	}

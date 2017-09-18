@@ -1,9 +1,9 @@
 package com.teamwizardry.wizardry.api.capability;
 
+import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.saving.Savable;
 import com.teamwizardry.librarianlib.features.saving.Save;
-import com.teamwizardry.wizardry.common.network.MessageUpdateCapabilities;
-import com.teamwizardry.wizardry.common.network.WizardryPacketHandler;
+import com.teamwizardry.wizardry.common.network.PacketUpdateCaps;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -101,6 +101,6 @@ public class DefaultWizardryCapability implements IWizardryCapability {
 	@Override
 	public void dataChanged(Entity entity) {
 		if ((entity != null) && entity instanceof EntityPlayer && !entity.getEntityWorld().isRemote)
-			WizardryPacketHandler.INSTANCE.sendTo(new MessageUpdateCapabilities(saveNBTData()), (EntityPlayerMP) entity);
+			PacketHandler.NETWORK.sendTo(new PacketUpdateCaps(saveNBTData()), (EntityPlayerMP) entity);
 	}
 }

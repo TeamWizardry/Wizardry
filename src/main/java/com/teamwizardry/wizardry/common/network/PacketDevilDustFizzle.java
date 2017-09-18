@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.network;
 
+import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.network.PacketBase;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
@@ -10,7 +11,6 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -39,9 +39,9 @@ public class PacketDevilDustFizzle extends PacketBase {
 	@Override
 	public void handle(MessageContext messageContext) {
 		if (messageContext.side.isServer()) return;
-		if (Minecraft.getMinecraft().player == null) return;
 
-		World world = Minecraft.getMinecraft().player.world;
+		World world = LibrarianLib.PROXY.getClientPlayer().world;
+		if (world == null) return;
 
 		ParticleBuilder glitter = new ParticleBuilder(30);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));

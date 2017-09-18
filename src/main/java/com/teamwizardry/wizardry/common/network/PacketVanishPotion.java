@@ -1,9 +1,9 @@
 package com.teamwizardry.wizardry.common.network;
 
+import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.network.PacketBase;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.wizardry.init.ModPotions;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
@@ -40,9 +40,9 @@ public class PacketVanishPotion extends PacketBase {
 	@Override
 	public void handle(MessageContext messageContext) {
 		if (messageContext.side.isServer()) return;
-		if (Minecraft.getMinecraft().player == null) return;
 
-		World world = Minecraft.getMinecraft().player.world;
+		World world = LibrarianLib.PROXY.getClientPlayer().world;
+		if (world == null) return;
 
 		EntityLivingBase entityLivingBase = (EntityLivingBase) world.getEntityByID(entityID);
 		if (entityLivingBase == null) return;
