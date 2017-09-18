@@ -32,7 +32,7 @@ public class TileLight extends TileMod implements ITickable {
 			glitter.setColorFunction(new InterpColorHSV(Color.CYAN, Color.BLUE));
 			glitter.setScaleFunction(new InterpScale((float) RandUtil.nextDouble(1, 3), 0));
 			ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(pos).addVector(0.5, 0.5, 0.5)), 1, 0, (i, build) -> {
-				glitter.setMotion(new Vec3d(
+				build.setMotion(new Vec3d(
 						RandUtil.nextDouble(-0.01, 0.01),
 						RandUtil.nextDouble(0, 0.03),
 						RandUtil.nextDouble(-0.01, 0.01)));

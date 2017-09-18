@@ -94,12 +94,12 @@ public class WorldProviderUnderWorld extends WorldProvider {
 
 	@Override
 	public int getHeight() {
-		return 0;
+		return 256;
 	}
 
 	@Override
 	public int getAverageGroundLevel() {
-		return 0;
+		return 50;
 	}
 
 	@Nonnull
