@@ -22,7 +22,7 @@ public class Wizardry {
 
 	public static final String MODID = "wizardry";
 	public static final String MODNAME = "Wizardry";
-	public static final String VERSION = "0.2";
+	public static final String VERSION = "0.1";
 	public static final String CLIENT = "com.teamwizardry.wizardry.proxy.ClientProxy";
 	public static final String SERVER = "com.teamwizardry.wizardry.proxy.ServerProxy";
 	public static Logger logger;

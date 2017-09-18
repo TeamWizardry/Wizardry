@@ -63,6 +63,7 @@ public class CommonProxy {
 		MinecraftForge.EVENT_BUS.register(new ModCapabilities());
 		MinecraftForge.EVENT_BUS.register(new ModuleEffectTimeSlow());
 		MinecraftForge.EVENT_BUS.register(new ModuleEffectLeap());
+		MinecraftForge.EVENT_BUS.register(ModBiomes.BIOME_UNDERWORLD);
 		MinecraftForge.EVENT_BUS.register(this);
 		SpellTicker.INSTANCE.getClass();
 

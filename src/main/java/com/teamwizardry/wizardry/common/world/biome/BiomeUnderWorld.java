@@ -1,14 +1,21 @@
 package com.teamwizardry.wizardry.common.world.biome;
 
+import com.teamwizardry.wizardry.api.ConfigValues;
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.common.entity.EntitySpiritWight;
 import com.teamwizardry.wizardry.common.entity.EntityUnicorn;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -27,13 +34,75 @@ public class BiomeUnderWorld extends Biome {
 		spawnableMonsterList.clear();
 		spawnableCaveCreatureList.clear();
 		modSpawnableLists.clear();
-		this.spawnableCreatureList.add(new Biome.SpawnListEntry(EntityFairy.class, 100, 1, 5));
-		this.spawnableMonsterList.add(new Biome.SpawnListEntry(EntityUnicorn.class, 10, 1, 3));
-		this.spawnableMonsterList.add(new Biome.SpawnListEntry(EntitySpiritWight.class, 20, 1, 1));
 	}
 
 	@Override
 	public void decorate(@Nonnull World worldIn, @Nonnull Random rand, @Nonnull BlockPos pos) {
 
+	}
+
+	@SubscribeEvent
+	public void onTickPlayerTick(TickEvent.PlayerTickEvent event) {
+		if (event.player.world.isRemote) return;
+		if (event.player.world.provider.getDimension() == ConfigValues.underworldID) {
+			if (RandUtil.nextInt(100) == 0 && getEntityCount(EntityFairy.class, event.player.getPosition(), event.player.world, 64) < 15) {
+				BlockPos pos = new BlockPos(event.player.posX + RandUtil.nextInt(-64, 64), RandUtil.nextInt(50, 100), event.player.posZ + RandUtil.nextInt(-64, 64));
+				if (event.player.world.isAirBlock(pos)) {
+					EntityFairy entity = new EntityFairy(event.player.world);
+					entity.setPosition(pos.getX(), pos.getY(), pos.getZ());
+					event.player.world.spawnEntity(entity);
+				}
+			}
+
+			if (RandUtil.nextInt(500) == 0 && getEntityCount(EntitySpiritWight.class, event.player.getPosition(), event.player.world, 128) < 1) {
+				BlockPos pos = new BlockPos(event.player.posX + RandUtil.nextInt(-128, 128), event.player.posY + RandUtil.nextInt(-10, 10), event.player.posZ + RandUtil.nextInt(-128, 128));
+				if (event.player.world.isAirBlock(pos) && pos.getDistance((int) event.player.posX, (int) event.player.posY, (int) event.player.posZ) > 64) {
+					EntitySpiritWight entity = new EntitySpiritWight(event.player.world);
+					entity.setPosition(pos.getX(), pos.getY(), pos.getZ());
+					event.player.world.spawnEntity(entity);
+				}
+			}
+
+			if (RandUtil.nextInt(500) == 0 && getEntityCount(EntityUnicorn.class, event.player.getPosition(), event.player.world, 64) < 3) {
+				BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos((int) event.player.posX + RandUtil.nextInt(-64, 64), 100, (int) event.player.posZ + RandUtil.nextInt(-64, 64));
+
+				if (pos.getDistance((int) event.player.posX, (int) event.player.posY, (int) event.player.posZ) > 30) {
+
+					boolean success = false;
+					for (int i = 100; i > 30; i--) {
+						if (!event.player.world.isAirBlock(pos.move(EnumFacing.DOWN, -1))) {
+							success = true;
+							break;
+						}
+					}
+
+					if (!success) {
+						BlockPos fixed = new BlockPos(pos.getX(), 50, pos.getZ());
+						for (int k = 100; k > 30; k--) {
+							for (int i = -20; i < 20; i++) {
+								for (int j = -20; j < 20; j++) {
+									if (!event.player.world.isAirBlock(pos.setPos(fixed).add(i, k, j))) {
+										success = true;
+										break;
+									}
+								}
+							}
+						}
+					}
+
+					if (success) {
+						pos.move(EnumFacing.UP);
+						EntityUnicorn entity = new EntityUnicorn(event.player.world);
+						entity.setPosition(pos.getX(), pos.getY(), pos.getZ());
+						event.player.world.spawnEntity(entity);
+					}
+				}
+			}
+		}
+	}
+
+	private int getEntityCount(Class entity, BlockPos pos, World world, int range) {
+		List entities = world.getEntitiesWithinAABB(entity, new AxisAlignedBB(pos).grow(range));
+		return entities.size();
 	}
 }

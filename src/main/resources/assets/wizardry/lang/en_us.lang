@@ -11,6 +11,10 @@ tile.wizardry:nacre_block_brick.name=Nacre Bricks
 tile.wizardry:mana_magnet.name=Mana Magnet
 tile.wizardry:torikki_grass.name=Torikki Grass
 
+entity.fairy.name=Fairy
+entity.spirit_wight.name=Spirit Wight
+entity.unicorn.name=Unicorn
+
 item.wizardry:book.name=Spellforger's Codex
 item.wizardry:ring.name=Golden Ring
 item.wizardry:ring_pearl.name=Golden Ring

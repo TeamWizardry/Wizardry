@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.init;
 import com.teamwizardry.wizardry.common.world.biome.BiomeUnderWorld;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.common.BiomeManager;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -24,6 +23,5 @@ public class ModBiomes {
 		r.register(BIOME_UNDERWORLD);
 
 		BiomeDictionary.addTypes(BIOME_UNDERWORLD, BiomeDictionary.Type.VOID, BiomeDictionary.Type.SPOOKY, BiomeDictionary.Type.MAGICAL, BiomeDictionary.Type.DRY, BiomeDictionary.Type.COLD);
-		BiomeManager.addBiome(BiomeManager.BiomeType.WARM, new BiomeManager.BiomeEntry(BIOME_UNDERWORLD, 10));
 	}
 }

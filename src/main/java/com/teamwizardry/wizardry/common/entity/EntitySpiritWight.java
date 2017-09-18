@@ -88,7 +88,12 @@ public class EntitySpiritWight extends EntityMob {
 			motionY = direction.y * -0.05;
 			motionZ = direction.z * -0.05;
 			rotationYaw = (float) (((-MathHelper.atan2(direction.x, direction.z) * 180) / Math.PI) - 180) / 2;
-		} else noClip = false;
+		} else {
+			if (!isCollidedVertically) {
+				motionY = 0;
+			}
+			noClip = false;
+		}
 
 		EntityPlayer player = getAttackTarget() == null ? null : world.getNearestPlayerNotCreative(this, 2);
 		EntityPlayer closePlayer = getAttackTarget() == null ? null : world.getNearestPlayerNotCreative(this, 30);
