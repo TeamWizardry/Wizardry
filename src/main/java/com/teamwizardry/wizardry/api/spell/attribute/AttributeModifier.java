@@ -31,4 +31,10 @@ public class AttributeModifier {
 	public AttributeModifier copy() {
 		return new AttributeModifier(attribute, modifier, op);
 	}
+	
+	@Override
+	public String toString()
+	{
+		return attribute + ": " + op + " " + modifier;
+	}
 }

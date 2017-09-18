@@ -13,4 +13,27 @@ public class Attributes {
 	
 	public static final String MANA = "modifier_mana_cost";
 	public static final String BURNOUT = "modifier_burnout_value";
+	
+	public static String getAttributeFromName(String name)
+	{
+		switch(name)
+		{
+			case "potency":
+				return POTENCY;
+			case "duration":
+				return DURATION;
+			case "range":
+				return RANGE;
+			case "area":
+				return AREA;
+			case "speed":
+				return SPEED;
+			case "mana":
+				return MANA;
+			case "burnout":
+				return BURNOUT;
+			default:
+				return null;
+		}
+	}
 }

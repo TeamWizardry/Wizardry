@@ -1,6 +1,19 @@
 package com.teamwizardry.wizardry.api.spell.module;
 
-import com.google.common.collect.HashMultimap;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.MAX_TIME;
+
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import com.google.common.collect.ArrayListMultimap;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.capability.CapManager;
@@ -12,6 +25,7 @@ import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.attribute.Operation;
 import com.teamwizardry.wizardry.common.core.SpellTicker;
 import com.teamwizardry.wizardry.common.network.PacketRenderSpell;
+
 import kotlin.Pair;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
@@ -21,17 +35,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.MAX_TIME;
 
 /**
  * Created by LordSaad.
@@ -45,6 +48,11 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	public NBTTagCompound attributes = new NBTTagCompound();
 	/**
 	 * Temporarily stores modifiers before spell construction
+	 */
+	@Nonnull
+	public List<AttributeModifier> modifiersToApply = new ArrayList<>();
+	/**
+	 * Stores a list of attribute modifiers to use in spell construction, used by Modifier modules
 	 */
 	@Nonnull
 	public List<AttributeModifier> modifiers = new ArrayList<>();
@@ -275,8 +283,8 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	}
 
 	public void processModifiers() {
-		HashMultimap<Operation, AttributeModifier> sortedMap = HashMultimap.create();
-		for (AttributeModifier modifier : modifiers)
+		ArrayListMultimap<Operation, AttributeModifier> sortedMap = ArrayListMultimap.create();
+		for (AttributeModifier modifier : modifiersToApply)
 			sortedMap.put(modifier.getOperation(), modifier);
 
 		for (Operation op : Operation.values()) {
@@ -292,6 +300,7 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 
 	protected final <T extends Module> Module cloneModule(T toCloneTo) {
 		toCloneTo.attributes = attributes.copy();
+		toCloneTo.modifiers = modifiers.stream().collect(Collectors.toList());
 		toCloneTo.setPrimaryColor(getPrimaryColor());
 		toCloneTo.setSecondaryColor(getSecondaryColor());
 		toCloneTo.setBurnoutFill(getBurnoutFill());

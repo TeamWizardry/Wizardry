@@ -1,24 +1,39 @@
 package com.teamwizardry.wizardry.api.spell.module;
 
+import java.awt.Color;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Deque;
+import java.util.HashSet;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.apache.commons.io.FileUtils;
+
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.utilities.AnnotationHelper;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
+import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
+import com.teamwizardry.wizardry.api.spell.attribute.Operation;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import org.apache.commons.io.FileUtils;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.awt.*;
-import java.io.*;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
 
 /**
  * Created by LordSaad.
@@ -154,6 +169,33 @@ public class ModuleRegistry {
 			i = 5;
 			if (moduleObject.has(keys[i]) && moduleObject.get(keys[i]).isJsonPrimitive() && moduleObject.getAsJsonPrimitive(keys[i]).isString()) {
 				module.setSecondaryColor(new Color(Integer.parseInt(moduleObject.getAsJsonPrimitive(keys[i]).getAsString(), 16)));
+			}
+			
+			if (moduleObject.has("modifiers") && moduleObject.get("modifiers").isJsonArray())
+			{
+				JsonArray attributeModifiers = moduleObject.getAsJsonArray("modifiers");
+				for (JsonElement attributeModifier : attributeModifiers)
+				{
+					if (attributeModifier.isJsonObject())
+					{
+						String attribute = null;
+						Operation operator = null;
+						double amount = 0;
+						JsonObject modifier = attributeModifier.getAsJsonObject();
+						if (modifier.has("attribute") && modifier.get("attribute").isJsonPrimitive() && modifier.getAsJsonPrimitive("attribute").isString())
+							attribute = Attributes.getAttributeFromName(modifier.getAsJsonPrimitive("attribute").getAsString());
+						if (modifier.has("operation") && modifier.get("operation").isJsonPrimitive() && modifier.getAsJsonPrimitive("operation").isString())
+							operator = Operation.valueOf(modifier.get("operation").getAsJsonPrimitive().getAsString().toUpperCase());
+						if (modifier.has("amount") && modifier.get("amount").isJsonPrimitive() && modifier.getAsJsonPrimitive("amount").isNumber())
+							amount = modifier.get("amount").getAsDouble();
+						Wizardry.logger.info("    > Loading AttributeModifier for " + file.getName() + ": " + operator + " -> " + attribute + ", " + amount);
+						if (attribute != null && operator != null)
+						{
+							module.modifiers.add(new AttributeModifier(attribute, amount, operator));
+							Wizardry.logger.info("        > Successfully loaded AttributeModifier");
+						}
+					}
+				}
 			}
 
 			processed.add(module);

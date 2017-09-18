@@ -1,14 +1,11 @@
 package com.teamwizardry.wizardry.common.module.modifiers;
 
+import javax.annotation.Nonnull;
+
 import com.teamwizardry.wizardry.api.spell.SpellData;
-import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
-import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
-import com.teamwizardry.wizardry.api.spell.attribute.Operation;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
-
-import javax.annotation.Nonnull;
 
 /**
  * Created by LordSaad.
@@ -42,13 +39,6 @@ public class ModuleModifierIncreasePotency extends ModuleModifier {
 	@Override
 	public void runClient(@Nonnull SpellData spell) {
 
-	}
-
-	@Override
-	public void apply(@Nonnull Module module) {
-		module.modifiers.add(new AttributeModifier(Attributes.POTENCY, 1, Operation.ADD));
-		module.modifiers.add(new AttributeModifier(Attributes.MANA, 1.05, Operation.MULTIPLY));
-		module.modifiers.add(new AttributeModifier(Attributes.BURNOUT, 1.05, Operation.MULTIPLY));
 	}
 
 	@Nonnull

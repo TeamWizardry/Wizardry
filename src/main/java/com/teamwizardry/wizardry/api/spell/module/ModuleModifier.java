@@ -9,5 +9,8 @@ public abstract class ModuleModifier extends Module {
 		return ModuleType.MODIFIER;
 	}
 
-	public abstract void apply(@Nonnull Module module);
+	public void apply(@Nonnull Module module)
+	{
+		modifiers.forEach(modifier -> module.modifiersToApply.add(modifier));
+	}
 }
