@@ -79,7 +79,7 @@ public class EntitySpiritWight extends EntityMob {
 
 		fallDistance = 0;
 
-		EntityPlayer farPlayer = world.getNearestPlayerNotCreative(this, 100);
+		EntityPlayer farPlayer = world.getNearestPlayerNotCreative(this, 300);
 		setAttackTarget(farPlayer);
 		if (getAttackTarget() != null) {
 			noClip = true;
