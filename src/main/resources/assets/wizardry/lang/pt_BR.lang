@@ -1,0 +1,94 @@
+tile.wizardry:crafting_plate.name=Placa de Manufatura
+tile.wizardry:magicians_worktable.name=Mesa do Feiticeiro
+tile.wizardry:mana_battery.name=Bateria de Mana
+tile.wizardry:nacre.name=Nacre Líquido
+tile.wizardry:mana.name=Mana Líquida
+tile.wizardry:cloud.name=Nuvem
+tile.wizardry:jar_block.name=Jarro
+tile.wizardry:pearl_holder.name=Suporte de Pérola
+tile.wizardry:nacre_block.name=Bloco de Nacre
+tile.wizardry:nacre_block_brick.name=Tijolos de Nacre
+tile.wizardry:mana_magnet.name=Imã Mágico
+tile.wizardry:torikki_grass.name=Grama Torikki
+
+entity.fairy.name=Fada
+entity.spirit_wight.name=Criatura Espiritual
+entity.unicorn.name=Unicórnio
+
+item.wizardry:book.name=Códice do Feiticeiro
+item.wizardry:ring.name=Anel Dourado
+item.wizardry:ring_pearl.name=Anel Dourado
+item.wizardry:devil_dust.name=Pó Demoníaco
+item.wizardry:mana_pearl.name=Pérola de Mana
+item.wizardry:glass_pearl.name=Pérola de Vidro
+item.wizardry:nacre_pearl.name=Pérola de Vidro
+item.wizardry:quartz_pearl.name=Pérola de Quartzo
+item.wizardry:debugger.name=Varinha da Criatividade
+item.wizardry:staff.name=Cajado
+item.wizardry:staff_pearl.name=Cajado com Pérola
+item.wizardry:fairy_dust.name=Pó de Fada
+item.wizardry:fairy_imbued_apple.name=Maçã encrustada com Pó de Fada
+item.wizardry:fairy_wings.name=Asas de Fada
+item.wizardry:unicorn_horn.name=Chifre de Unicórnio
+item.wizardry:jar.name=Jarro
+item.wizardry:jar_fairy.name=Fada no Jarro
+item.wizardry:jar_jam.name=Geléia de Fada
+item.wizardry:syringe.name=Seringa Vazia
+item.wizardry:syringe_mana.name=ManaBooster Lite™
+item.wizardry:syringe_steroid.name=Soro Premium ManaBuilder Plus™
+item.wizardry:mana_orb.name=Orbe de Mana
+item.wizardry:glass_orb.name=Orbe de Vidro
+item.wizardry:cape.name=Capa
+item.wizardry:magic_wand.name=Varinha Mágica
+item.wizardry:syringe_blood.name=Seringa com Sangue
+item.wizardry:light.name=Luz
+
+item.wizardry:wisdom_stick.name=Graveto de Madeira do Conhecimento
+item.wizardry:wisdom_wood_door.name=Porta de Madeira do Conhecimento
+tile.wizardry:wisdom_wood_log.name=Madeira do Conhecimento
+tile.wizardry:wisdom_wood_planks.name=Tábuas de Madeira do Conhecimento
+tile.wizardry:wisdom_wood_pigmented_planks.name=Tábuas Pigmentadas de Madeira do Conhecimento
+tile.wizardry:wisdom_wood_slab.name=Laje de Madeira do Conhecimento
+tile.wizardry:wisdom_wood_stairs.name=Escada de Madeira do Conhecimento
+tile.wizardry:wisdom_wood_trapdoor.name=Alçapão de Madeira do Conhecimento
+tile.wizardry:wisdom_wood_fence.name=Cerca de Madeira do Conhecimento
+tile.wizardry:wisdom_wood_fence_gate.name=Porteira de Madeira do Conhecimento
+tile.wizardry:wisdom_wood.name=Madeira do Conhecimento
+
+advancement.wizardry.book=Você é um bruxo, Harry
+advancement.wizardry.book.desc=Crie um livro para lhe auxiliar na sua busca pela magia
+advancement.wizardry.manapool=Não é um poço de Mana
+advancement.wizardry.manapool.desc=Descubra uma poça de Mana líquida
+advancement.wizardry.devildust=Açúcar e Tempero
+advancement.wizardry.devildust.desc=Derreta um livro no fogo para criar Pó Demoníaco
+advancement.wizardry.crunch=§oCRACK!§a
+advancement.wizardry.crunch.desc=Choque-se contra um bloco de Rocha Matriz para entrar no Submundo
+gui.physicsbook.defaulttitle=Livro de Física
+
+fluid.nacre_fluid=Nacre
+fluid.mana_fluid=Mana
+
+death.attack.wizardry.mana=%s se afogou com o poder
+death.attack.wizardry.crash=%s foi pulverizado
+death.attack.wizardry.crash.player=%s foi pulverizado por %s
+
+subtitle.wizardry.glassbreak=O vidro trinca
+subtitle.wizardry.fizz=A poeira crepita
+subtitle.wizardry.sizzle=A poeira chia
+subtitle.wizardry.harp=Uma Harpa toca
+subtitle.wizardry.bell=Um sino bate
+subtitle.wizardry.bubbling=As bolhas borbulham
+subtitle.wizardry.spirit=Os espíritos sussurram
+
+potion.wizardry.crash=Choque
+potion.wizardry.low_gravity=Leve como uma pena
+potion.wizardry.nullify_gravity=Ascensão
+potion.wizardry.null_movement=Selo Hermético
+potion.wizardry.phase=Forma Espectral
+potion.wizardry.slippery=Sem atrito
+potion.wizardry.steroid=Overdrive
+potion.wizardry.time_slow=Desenrolamento
+
+item_group.wizardry=Wizardry
+
+wizardry.misc.module=Feitiço:
