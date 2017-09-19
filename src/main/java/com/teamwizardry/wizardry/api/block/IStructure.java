@@ -42,10 +42,15 @@ public interface IStructure {
 				if (state.getBlock() == info.blockState.getBlock()) continue;
 
 				if (newPos.toLong() != pos.toLong() && state.getBlock() != Blocks.AIR && info.blockState.getBlock() != state.getBlock()) {
-					ClientRunnable.run(() -> {
-						LibParticles.STRUCTURE_FLAIR(world, new Vec3d(newPos).addVector(0.5, 0.5, 0.5), Color.RED);
-						LibParticles.STRUCTURE_BEACON(world, new Vec3d(newPos).addVector(0.5, 0.5, 0.5), Color.RED);
-						LibParticles.BLOCK_HIGHLIGHT(world, newPos, Color.RED);
+					ClientRunnable.run(new ClientRunnable() {
+						@Override
+						@SideOnly(Side.CLIENT)
+						public void runIfClient()
+						{
+							LibParticles.STRUCTURE_FLAIR(world, new Vec3d(newPos).addVector(0.5, 0.5, 0.5), Color.RED);
+							LibParticles.STRUCTURE_BEACON(world, new Vec3d(newPos).addVector(0.5, 0.5, 0.5), Color.RED);
+							LibParticles.BLOCK_HIGHLIGHT(world, newPos, Color.RED);
+						}
 					});
 					return false;
 				}
@@ -64,15 +69,25 @@ public interface IStructure {
 				if (newPos.toLong() == pos.toLong()) continue;
 
 				world.setBlockState(newPos, info.blockState);
-				ClientRunnable.run(() -> {
-					LibParticles.STRUCTURE_FLAIR(world, new Vec3d(newPos).addVector(0.5, 0.5, 0.5), Color.BLUE);
+				ClientRunnable.run(new ClientRunnable() {
+					@Override
+					@SideOnly(Side.CLIENT)
+					public void runIfClient()
+					{
+						LibParticles.STRUCTURE_FLAIR(world, new Vec3d(newPos).addVector(0.5, 0.5, 0.5), Color.BLUE);
+					}
 				});
 				complete = false;
 				break;
 			}
 			if (complete) {
-				ClientRunnable.run(() -> {
-					LibParticles.STRUCTURE_FLAIR(world, new Vec3d(pos).addVector(0.5, 0.5, 0.5), Color.GREEN);
+				ClientRunnable.run(new ClientRunnable() {
+					@Override
+					@SideOnly(Side.CLIENT)
+					public void runIfClient()
+					{
+						LibParticles.STRUCTURE_FLAIR(world, new Vec3d(pos).addVector(0.5, 0.5, 0.5), Color.GREEN);
+					}
 				});
 				return true;
 			}
@@ -82,10 +97,15 @@ public interface IStructure {
 				BlockPos newPos = info.pos.add(pos).subtract(offsetToCenter());
 				if (info.blockState == null) continue;
 				if (world.getBlockState(newPos).getBlock() != info.blockState.getBlock()) {
-					ClientRunnable.run(() -> {
-						LibParticles.STRUCTURE_BEACON(world, new Vec3d(newPos).addVector(0.5, 0.5, 0.5), Color.RED);
-						LibParticles.STRUCTURE_FLAIR(world, new Vec3d(newPos).addVector(0.5, 0.5, 0.5), Color.RED);
-						LibParticles.BLOCK_HIGHLIGHT(world, newPos, Color.RED);
+					ClientRunnable.run(new ClientRunnable() {
+						@Override
+						@SideOnly(Side.CLIENT)
+						public void runIfClient()
+						{
+							LibParticles.STRUCTURE_BEACON(world, new Vec3d(newPos).addVector(0.5, 0.5, 0.5), Color.RED);
+							LibParticles.STRUCTURE_FLAIR(world, new Vec3d(newPos).addVector(0.5, 0.5, 0.5), Color.RED);
+							LibParticles.BLOCK_HIGHLIGHT(world, newPos, Color.RED);
+						}
 					});
 					return false;
 				} else if (world.getBlockState(newPos) != info.blockState.getBlock())

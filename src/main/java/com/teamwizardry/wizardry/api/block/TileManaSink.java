@@ -29,6 +29,8 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Created by LordSaad.
@@ -63,17 +65,22 @@ public class TileManaSink extends TileMod implements ITickable {
 			faucet.removeMana(idealAmount);
 			sink.addMana(idealAmount);
 
-			ClientRunnable.run(() -> {
-				ParticleBuilder helix = new ParticleBuilder(200);
-				helix.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-				helix.setAlphaFunction(new InterpFadeInOut(0.1f, 0.1f));
+			ClientRunnable.run(new ClientRunnable() {
+				@Override
+				@SideOnly(Side.CLIENT)
+				public void runIfClient()
+				{
+					ParticleBuilder helix = new ParticleBuilder(200);
+					helix.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+					helix.setAlphaFunction(new InterpFadeInOut(0.1f, 0.1f));
 
-				ParticleSpawner.spawn(helix, world, new StaticInterp<>(new Vec3d(faucetPos).addVector(0.5, 1, 0.5)), 1, 0, (aFloat, particleBuilder) -> {
-					helix.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), RandUtil.nextInt(50, 200)));
-					helix.setScale(RandUtil.nextFloat());
-					helix.setPositionFunction(new InterpBezier3D(Vec3d.ZERO, new Vec3d(pos.subtract(faucetPos)), new Vec3d(0, 20, 0), new Vec3d(0, 5, 0)));
-					helix.setLifetime(RandUtil.nextInt(10, 40));
-				});
+					ParticleSpawner.spawn(helix, world, new StaticInterp<>(new Vec3d(faucetPos).addVector(0.5, 1, 0.5)), 1, 0, (aFloat, particleBuilder) -> {
+						helix.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), RandUtil.nextInt(50, 200)));
+						helix.setScale(RandUtil.nextFloat());
+						helix.setPositionFunction(new InterpBezier3D(Vec3d.ZERO, new Vec3d(pos.subtract(faucetPos)), new Vec3d(0, 20, 0), new Vec3d(0, 5, 0)));
+						helix.setLifetime(RandUtil.nextInt(10, 40));
+					});
+				}
 			});
 
 		}
