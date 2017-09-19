@@ -44,6 +44,7 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 	}
 
 	@Override
+	@SuppressWarnings("unused")
 	public boolean run(@Nonnull SpellData spell) {
 		World world = spell.world;
 		float yaw = spell.getData(YAW, 0F);

@@ -56,6 +56,7 @@ public class WizardryCapabilityProvider implements ICapabilityProvider, INBTSeri
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public <T> T getCapability(@Nonnull Capability<T> capability, EnumFacing facing) {
 		if ((wizardryCapability != null) && (capability == wizardryCapability)) return (T) this.capability;
 		return null;

@@ -54,6 +54,7 @@ public class EntityAINearestAttackableTargetFiltered<T extends EntityLivingBase>
 	/**
 	 * Returns whether the EntityAIBase should begin execution.
 	 */
+	@SuppressWarnings("unchecked")
 	public boolean shouldExecute() {
 		if (this.targetChance > 0 && this.taskOwner.getRNG().nextInt(this.targetChance) != 0) {
 			return false;

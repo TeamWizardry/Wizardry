@@ -42,6 +42,7 @@ public class ModuleEffectPhase extends ModuleEffect {
 	}
 
 	@Override
+	@SuppressWarnings("unused")
 	public boolean run(@Nonnull SpellData spell) {
 		Entity caster = spell.getData(CASTER);
 		Entity targetEntity = spell.getData(ENTITY_HIT);

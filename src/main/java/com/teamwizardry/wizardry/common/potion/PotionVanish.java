@@ -36,6 +36,7 @@ import java.util.List;
  * Created by LordSaad.
  */
 // TODO: other player testing, proper in/out fading
+@SuppressWarnings( { "rawtypes", "unused" })
 public class PotionVanish extends PotionBase {
 	private static class ClientStuff {
 		public static Function2<RenderLivingBase, Object[], Object> interpolateRotation = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, "interpolateRotation", "func_77034_a", float.class, float.class, float.class);
@@ -96,6 +97,7 @@ public class PotionVanish extends PotionBase {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void doRenderOverride(RenderLivingEvent.Pre event) {

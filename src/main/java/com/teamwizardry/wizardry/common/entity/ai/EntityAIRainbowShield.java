@@ -28,6 +28,7 @@ public class EntityAIRainbowShield extends EntityAIBase {
 	@Override
 	public void startExecuting() {
 		EntityLivingBase target = this.attacker.getAttackTarget();
+		@SuppressWarnings("unused")
 		Vec3d shieldPos = attacker.getPositionVector().add(target.getPositionVector().subtract(attacker.getPositionVector()).scale(DIST_MULT));
 
 		attacker.shieldCooldown = 0;

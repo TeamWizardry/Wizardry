@@ -40,6 +40,7 @@ public class TileJarRenderer extends TileEntitySpecialRenderer<TileJar> {
 		modelJar = null;
 	}
 
+	@SuppressWarnings("unused")
 	private void getBakedModels() {
 		IModel model = null;
 		if (modelJar == null) {

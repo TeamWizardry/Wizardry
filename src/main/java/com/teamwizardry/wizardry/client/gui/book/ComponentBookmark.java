@@ -11,6 +11,7 @@ import static com.teamwizardry.wizardry.client.gui.book.BookGui.BOOKMARK_EXTENDE
 public class ComponentBookmark extends GuiComponent<ComponentBookmark> {
 
 	private static final Vec2d pos = new Vec2d(35, 25);
+	@SuppressWarnings("unused")
 	private BookGui bookGui;
 
 	public ComponentBookmark(BookGui bookGui, GuiComponent<?> parent, int index, GuiComponent<?> link, String title, boolean isActive) {

@@ -144,6 +144,7 @@ public class WizardryTransformer implements IClassTransformer {
 
 	// BOILERPLATE =====================================================================================================
 
+	@SuppressWarnings("deprecation")
 	public static void log(String str) {
 		FMLLog.info("[Wizardry ASM] %s", str);
 	}

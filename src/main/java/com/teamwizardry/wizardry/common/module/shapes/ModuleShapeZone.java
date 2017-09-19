@@ -55,6 +55,7 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 	}
 
 	@Override
+	@SuppressWarnings("unused")
 	public boolean run(@Nonnull SpellData spell) {
 		World world = spell.world;
 		Vec3d position = spell.getData(ORIGIN);

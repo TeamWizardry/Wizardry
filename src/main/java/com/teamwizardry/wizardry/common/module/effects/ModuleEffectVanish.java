@@ -43,6 +43,7 @@ public class ModuleEffectVanish extends ModuleEffect {
 	}
 
 	@Override
+	@SuppressWarnings("unused")
 	public boolean run(@Nonnull SpellData spell) {
 		World world = spell.world;
 		BlockPos targetPos = spell.getData(BLOCK_HIT);

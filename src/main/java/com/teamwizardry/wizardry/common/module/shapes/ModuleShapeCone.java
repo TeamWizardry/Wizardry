@@ -101,6 +101,7 @@ public class ModuleShapeCone extends ModuleShape {
 	}
 
 	@Override
+	@SuppressWarnings("unused")
 	public void runClient(@Nonnull SpellData spell) {
 		float yaw = spell.getData(YAW, 0F);
 		Entity caster = spell.getData(CASTER);

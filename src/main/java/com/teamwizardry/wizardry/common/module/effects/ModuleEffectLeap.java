@@ -64,6 +64,7 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 	}
 
 	@Override
+	@SuppressWarnings("unused")
 	public boolean run(@Nonnull SpellData spell) {
 		float yaw = spell.getData(YAW, 0F);
 		float pitch = spell.getData(PITCH, 0F);
@@ -100,6 +101,7 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 	}
 
 	@Override
+	@SuppressWarnings("unused")
 	public void runClient(@Nonnull SpellData spell) {
 		Entity caster = spell.getData(CASTER);
 		Vec3d position = spell.getData(TARGET_HIT);

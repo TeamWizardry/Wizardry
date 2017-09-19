@@ -106,6 +106,7 @@ public class EntityAIFollowPlayer extends EntityAIBase {
 	/**
 	 * Keep ticking a continuous task that has already been started
 	 */
+	@SuppressWarnings("deprecation")
 	@Override
 	public void updateTask() {
 		if (this.owner == null) return;

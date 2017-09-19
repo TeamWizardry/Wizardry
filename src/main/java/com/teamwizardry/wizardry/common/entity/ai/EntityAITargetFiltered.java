@@ -6,6 +6,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 
 public class EntityAITargetFiltered<T extends EntityLivingBase> extends EntityAINearestAttackableTarget<T> {
+	@SuppressWarnings("unused")
 	private final EntityLivingBase entity;
 
 	public EntityAITargetFiltered(EntityLivingBase entityIn, Class<T> classTarget, boolean checkSight, Predicate<? super T> targetSelector) {

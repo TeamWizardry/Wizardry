@@ -1,10 +1,17 @@
 package com.teamwizardry.wizardry.common.world.biome;
 
+import java.util.List;
+import java.util.Random;
+
+import javax.annotation.Nonnull;
+
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.common.entity.EntitySpiritWight;
 import com.teamwizardry.wizardry.common.entity.EntityUnicorn;
+
+import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -13,10 +20,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-
-import javax.annotation.Nonnull;
-import java.util.List;
-import java.util.Random;
 
 /**
  * Created by LordSaad44
@@ -101,8 +104,8 @@ public class BiomeUnderWorld extends Biome {
 		}
 	}
 
-	private int getEntityCount(Class entity, BlockPos pos, World world, int range) {
-		List entities = world.getEntitiesWithinAABB(entity, new AxisAlignedBB(pos).grow(range));
+	private int getEntityCount(Class<? extends Entity> entity, BlockPos pos, World world, int range) {
+		List<Entity> entities = world.getEntitiesWithinAABB(entity, new AxisAlignedBB(pos).grow(range));
 		return entities.size();
 	}
 }

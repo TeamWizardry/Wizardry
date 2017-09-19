@@ -54,6 +54,7 @@ public class ModuleEffectLowGravity extends ModuleEffect {
 	}
 
 	@Override
+	@SuppressWarnings("unused")
 	public boolean run(@Nonnull SpellData spell) {
 		World world = spell.world;
 		Entity targetEntity = spell.getData(ENTITY_HIT);

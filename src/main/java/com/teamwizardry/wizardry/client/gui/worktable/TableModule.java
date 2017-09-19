@@ -49,6 +49,7 @@ public class TableModule {
 	private Sprite icon;
 	private Vec2d prevPos;
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public TableModule(WorktableGui table, ComponentSprite parent, Module module, boolean draggable) {
 		this.module = module;
 		icon = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/icons/" + module.getID() + ".png"));
@@ -369,6 +370,7 @@ public class TableModule {
 		this.component = base;
 	}
 
+	@SuppressWarnings("unused")
 	public void drawWire(Vec2d start, Vec2d end, Color primary, Color secondary) {
 		GlStateManager.pushMatrix();
 		GlStateManager.enableBlend();
@@ -451,8 +453,8 @@ public class TableModule {
 				return Color.ORANGE;
 			case MODIFIER:
 				return Color.GREEN;
+			default:
+				return Color.BLACK;
 		}
-
-		return Color.BLACK;
 	}
 }

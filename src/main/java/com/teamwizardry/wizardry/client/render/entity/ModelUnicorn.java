@@ -186,6 +186,7 @@ public class ModelUnicorn extends ModelBase {
 	}
 
 	@Override
+	@SuppressWarnings("unused")
 	public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
 		AbstractHorse abstracthorse = (AbstractHorse) entityIn;
 		float f = abstracthorse.getGrassEatingAmount(0.0F);

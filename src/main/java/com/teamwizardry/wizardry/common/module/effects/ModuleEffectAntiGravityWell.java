@@ -61,6 +61,7 @@ public class ModuleEffectAntiGravityWell extends ModuleEffect implements ILinger
 	}
 
 	@Override
+	@SuppressWarnings("unused")
 	public boolean run(@Nonnull SpellData spell) {
 		World world = spell.world;
 		Vec3d position = spell.getData(TARGET_HIT);

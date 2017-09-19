@@ -44,6 +44,7 @@ public class ModuleShapeProjectile extends ModuleShape implements ITaxing {
 	}
 
 	@Override
+	@SuppressWarnings("unused")
 	public boolean run(@Nonnull SpellData spell) {
 		World world = spell.world;
 		if (world.isRemote) return true;

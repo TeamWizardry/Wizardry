@@ -53,6 +53,7 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 	}
 
 	@Override
+	@SuppressWarnings({ "unused", "deprecation" })
 	public boolean run(@Nonnull SpellData spell) {
 		World world = spell.world;
 		BlockPos targetPos = spell.getData(BLOCK_HIT);

@@ -35,6 +35,7 @@ import java.util.UUID;
 /**
  * Created by Saad on 6/17/2016.
  */
+@SuppressWarnings("rawtypes")
 public class WorktableGui extends GuiBase {
 	private static final Texture BACKGROUND_TEXTURE = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/table_background.png"));
 	private static final Sprite BACKGROUND_SPRITE = BACKGROUND_TEXTURE.getSprite("bg", 480, 224);
@@ -127,6 +128,7 @@ public class WorktableGui extends GuiBase {
 		return paperComponents.inverse().get(uuid);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void compileModule(ArrayList<Module> stream, @Nullable GuiComponent component) {
 		if (component == null) return;
 
@@ -194,6 +196,7 @@ public class WorktableGui extends GuiBase {
 		return grid;
 	}
 
+	@SuppressWarnings("unchecked")
 	private void addScrollbar(ComponentSprite parent, ComponentGrid gridView, int x, int y, ModuleType type) {
 		ComponentSprite scrollBar = new ComponentSprite(SCROLL_BAR_BAR, x, y, 5, 80);
 		ComponentSprite bar = new ComponentSprite(SCROLL_BAR, 1, 0, 3, 11);

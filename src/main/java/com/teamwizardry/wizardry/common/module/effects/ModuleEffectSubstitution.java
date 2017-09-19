@@ -65,6 +65,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 	}
 
 	@Override
+	@SuppressWarnings("unused")
 	public boolean run(@Nonnull SpellData spell) {
 		Entity targetEntity = spell.getData(ENTITY_HIT);
 		Entity caster = spell.getData(CASTER);
@@ -191,6 +192,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 	}
 
 	@Override
+	@SuppressWarnings("unused")
 	public void runClient(@Nonnull SpellData spell) {
 		World world = spell.world;
 		Entity caster = spell.getData(CASTER);

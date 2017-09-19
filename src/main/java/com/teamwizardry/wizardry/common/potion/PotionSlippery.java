@@ -34,6 +34,7 @@ public class PotionSlippery extends PotionBase {
 		return new ArrayList<>();
 	}
 
+	@SuppressWarnings("unused")
 	@SubscribeEvent
 	public void entityMove(EntityMoveWithHeadingEvent event) {
 		if (!event.entity.isPotionActive(this)) return;

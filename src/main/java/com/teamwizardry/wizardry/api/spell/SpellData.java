@@ -21,6 +21,7 @@ import java.util.HashMap;
  * Created by LordSaad.
  */
 @Savable
+@SuppressWarnings("rawtypes")
 public class SpellData implements INBTSerializable<NBTTagCompound> {
 
 	private static HashMap<Pair, ProcessData.Process> dataProcessor = new HashMap<>();
@@ -105,6 +106,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public NBTTagCompound serializeNBT() {
 		NBTTagCompound compound = new NBTTagCompound();
 		for (Pair pair : data.keySet()) {
@@ -115,6 +117,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public void deserializeNBT(NBTTagCompound nbt) {
 		for (String key : nbt.getKeySet()) {
 			for (Pair pair : dataProcessor.keySet()) {
