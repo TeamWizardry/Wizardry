@@ -35,9 +35,7 @@ import com.teamwizardry.wizardry.init.ModTab;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DimensionType;
-import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -124,10 +122,4 @@ public class CommonProxy {
 		Wizardry.logger.info("Sending module list to " + event.player.getName());
 		//PacketHandler.NETWORK.sendTo(new PacketSyncModules(ModuleRegistry.INSTANCE.modules), (EntityPlayerMP) event.player);
 	}
-	
-	public void tileLightParticles(World world, BlockPos pos)
-	{}
-	
-	public void tileManaSinkParticles(World world, BlockPos pos, BlockPos faucetPos)
-	{}
 }
