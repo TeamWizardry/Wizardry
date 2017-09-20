@@ -60,13 +60,13 @@ public class BookGui extends GuiBase {
 		componentLogo = new ComponentSprite(new Sprite(new ResourceLocation(Wizardry.MODID, "textures/wizardry_logo.png")), (int) (250 + 250 / 2.0 - logoSize.getXf() / 2.0), (int) (360 / 2.0 - logoSize.getYf() / 2.0), logoSize.getXi(), logoSize.getYi());
 		base.add(componentLogo);
 
-		String langname = Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode();
+		String langname = Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode().toLowerCase();
 		InputStream stream;
 		String path;
-		try {
-			stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "documentation/" + langname + "/index.json");
-			path = "documentation/" + langname;
-		} catch (Throwable e) {
+
+		stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "documentation/" + langname + "/index.json");
+		path = "documentation/" + langname;
+		if (stream == null) {
 			stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "documentation/en_us/index.json");
 			path = "documentation/en_us";
 		}

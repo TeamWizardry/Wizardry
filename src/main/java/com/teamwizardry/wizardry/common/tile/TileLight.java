@@ -1,7 +1,5 @@
 package com.teamwizardry.wizardry.common.tile;
 
-import java.awt.Color;
-
 import com.teamwizardry.librarianlib.features.autoregister.TileRegister;
 import com.teamwizardry.librarianlib.features.base.block.tile.TileMod;
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
@@ -14,10 +12,11 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
-
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
+
+import java.awt.*;
 
 /**
  * Created by LordSaad.

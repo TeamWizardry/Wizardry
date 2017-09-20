@@ -21,6 +21,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 
@@ -86,7 +88,6 @@ public class ModuleShapeCone extends ModuleShape {
 			SpellData newSpell = spell.copy();
 
 			RayTraceResult result = new RayTrace(world, target.normalize(), origin, range / 2).setSkipEntity(caster).trace();
-			if (result == null) continue;
 			newSpell.processBlock(result.getBlockPos(), result.sideHit, result.hitVec);
 			if (result.entityHit != null) spell.processEntity(result.entityHit, false);
 
@@ -94,7 +95,7 @@ public class ModuleShapeCone extends ModuleShape {
 
 			newSpell.addData(ORIGIN, result.hitVec);
 
-			return runNextModule(newSpell);
+			runNextModule(newSpell);
 		}
 
 		return true;
@@ -102,6 +103,7 @@ public class ModuleShapeCone extends ModuleShape {
 
 	@Override
 	@SuppressWarnings("unused")
+	@SideOnly(Side.CLIENT)
 	public void runClient(@Nonnull SpellData spell) {
 		float yaw = spell.getData(YAW, 0F);
 		Entity caster = spell.getData(CASTER);

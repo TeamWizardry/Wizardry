@@ -25,6 +25,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 
@@ -73,6 +75,7 @@ public class ModuleEffectTimeSlow extends ModuleEffect {
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public void runClient(@Nonnull SpellData spell) {
 		World world = spell.world;
 		Vec3d position = spell.getData(TARGET_HIT);

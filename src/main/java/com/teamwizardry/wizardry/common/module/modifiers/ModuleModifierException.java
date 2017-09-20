@@ -1,11 +1,13 @@
 package com.teamwizardry.wizardry.common.module.modifiers;
 
-import javax.annotation.Nonnull;
-
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nonnull;
 
 /**
  * Created by LordSaad.
@@ -37,6 +39,7 @@ public class ModuleModifierException extends ModuleModifier {
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public void runClient(@Nonnull SpellData spell) {
 
 	}

@@ -1,18 +1,5 @@
 package com.teamwizardry.wizardry.api.spell.module;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.MAX_TIME;
-
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
@@ -25,7 +12,6 @@ import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.attribute.Operation;
 import com.teamwizardry.wizardry.common.core.SpellTicker;
 import com.teamwizardry.wizardry.common.network.PacketRenderSpell;
-
 import kotlin.Pair;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
@@ -35,6 +21,20 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.MAX_TIME;
 
 /**
  * Created by LordSaad.
@@ -134,6 +134,7 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	/**
 	 * This method runs client side when the spell runs. Spawn particles here.
 	 */
+	@SideOnly(Side.CLIENT)
 	public abstract void runClient(@Nonnull SpellData spell);
 
 	@Nullable

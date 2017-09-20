@@ -1,0 +1,52 @@
+{
+  "variants": {
+    "color=white": {
+      "model": "wizardry:unicorn_trail"
+    },
+    "color=orange": {
+      "model": "wizardry:unicorn_trail"
+    },
+    "color=magenta": {
+      "model": "wizardry:unicorn_trail"
+    },
+    "color=light_blue": {
+      "model": "wizardry:unicorn_trail"
+    },
+    "color=yellow": {
+      "model": "wizardry:unicorn_trail"
+    },
+    "color=lime": {
+      "model": "wizardry:unicorn_trail"
+    },
+    "color=pink": {
+      "model": "wizardry:unicorn_trail"
+    },
+    "color=gray": {
+      "model": "wizardry:unicorn_trail"
+    },
+    "color=silver": {
+      "model": "wizardry:unicorn_trail"
+    },
+    "color=cyan": {
+      "model": "wizardry:unicorn_trail"
+    },
+    "color=purple": {
+      "model": "wizardry:unicorn_trail"
+    },
+    "color=blue": {
+      "model": "wizardry:unicorn_trail"
+    },
+    "color=brown": {
+      "model": "wizardry:unicorn_trail"
+    },
+    "color=green": {
+      "model": "wizardry:unicorn_trail"
+    },
+    "color=red": {
+      "model": "wizardry:unicorn_trail"
+    },
+    "color=black": {
+      "model": "wizardry:unicorn_trail"
+    }
+  }
+}

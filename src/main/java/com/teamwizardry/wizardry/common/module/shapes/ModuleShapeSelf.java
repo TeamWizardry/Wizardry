@@ -16,6 +16,8 @@ import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 
@@ -60,6 +62,7 @@ public class ModuleShapeSelf extends ModuleShape {
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public void runClient(@Nonnull SpellData spell) {
 		Entity caster = spell.getData(CASTER);
 		Entity target = spell.getData(DefaultKeys.ENTITY_HIT);

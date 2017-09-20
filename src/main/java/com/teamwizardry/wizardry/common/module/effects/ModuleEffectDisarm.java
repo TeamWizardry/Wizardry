@@ -19,6 +19,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 
@@ -94,8 +96,8 @@ public class ModuleEffectDisarm extends ModuleEffect {
 					}
 					
 					boolean flag = dropChance > 1.0;
-					
-					if (held != null && flag && RandUtil.nextDouble() < dropChance)
+
+					if (!held.isEmpty() && flag && RandUtil.nextDouble() < dropChance)
 					{
 						EntityItem item = new EntityItem(spell.world, targetEntity.posX, targetEntity.posY + 1, targetEntity.posZ, stack);
 						item.setPickupDelay(5);
@@ -110,6 +112,7 @@ public class ModuleEffectDisarm extends ModuleEffect {
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public void runClient(@Nonnull SpellData spell) {
 		World world = spell.world;
 		Vec3d position = spell.getData(TARGET_HIT);

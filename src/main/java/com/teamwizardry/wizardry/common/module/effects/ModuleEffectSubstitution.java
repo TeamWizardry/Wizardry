@@ -34,6 +34,8 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
@@ -193,6 +195,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 
 	@Override
 	@SuppressWarnings("unused")
+	@SideOnly(Side.CLIENT)
 	public void runClient(@Nonnull SpellData spell) {
 		World world = spell.world;
 		Entity caster = spell.getData(CASTER);

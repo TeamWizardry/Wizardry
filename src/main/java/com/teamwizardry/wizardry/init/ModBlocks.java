@@ -62,6 +62,8 @@ public class ModBlocks {
 
 	public static BlockTorikkiGrass TORIKKI_GRASS;
 
+	public static BlockUnicornTrail UNICORN_TRAIL;
+
 	@SubscribeEvent
 	public static void register(RegistryEvent.Register<Block> evt) {
 		IForgeRegistry<Block> r = evt.getRegistry();
@@ -94,6 +96,8 @@ public class ModBlocks {
 		WISDOM_WOOD_PIGMENTED_PLANKS = new BlockWisdomWoodPigmentedPlanks();
 
 		TORIKKI_GRASS = new BlockTorikkiGrass();
+
+		UNICORN_TRAIL = new BlockUnicornTrail();
 	}
 
 	@SubscribeEvent

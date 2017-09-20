@@ -1,17 +1,29 @@
 package com.teamwizardry.wizardry.common.entity;
 
+import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpCircle;
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.common.entity.ai.EntityAIUnicornWander;
+import com.teamwizardry.wizardry.common.tile.TileUnicornTrail;
+import com.teamwizardry.wizardry.init.ModBlocks;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EntityUnicorn extends EntityHorse {
 
@@ -31,9 +43,6 @@ public class EntityUnicorn extends EntityHorse {
 
 	public EntityUnicorn(World worldIn) {
 		super(worldIn);
-		this.setSize(1.3964844F, 1.6F);
-		this.isImmuneToFire = false;
-		this.stepHeight = 1.0F;
 	}
 
 	@Override
@@ -47,7 +56,7 @@ public class EntityUnicorn extends EntityHorse {
 		//this.tasks.addTask(0, new EntityAIUnicornCharge(this, 1.0F, 10.0F, 5.0));
 		this.tasks.addTask(1, new EntityAISwimming(this));
 		this.tasks.addTask(2, new EntityAIMoveTowardsRestriction(this, 1.0D));
-		this.tasks.addTask(3, new EntityAIWander(this, 1.0D));
+		this.tasks.addTask(3, new EntityAIUnicornWander(this, 1.0D));
 		this.tasks.addTask(4, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
 		this.tasks.addTask(5, new EntityAILookIdle(this));
 		this.tasks.addTask(6, new EntityAIRunAroundLikeCrazy(this, 1.2D));
@@ -70,19 +79,66 @@ public class EntityUnicorn extends EntityHorse {
 	@Override
 	public void onUpdate() {
 		super.onUpdate();
-		shieldCooldown--;
-		this.fart();
+		if (world.isRemote) return;
 
 		EntityLivingBase target = this.getAttackTarget();
 		if (target == null) {
 			this.setAttackTarget(world.getNearestAttackablePlayer(this, 50, 50));
-		}
-		if (target == null) return;
-		if (!target.isEntityAlive()) return;
-		if (target.getDistanceToEntity(this) > 10) return;
-		if (((EntityPlayer) target).capabilities.isCreativeMode || ((EntityPlayer) target).isSpectator())
-			return;
+		}// else if (target instanceof EntityPlayer && (((EntityPlayer) target).isCreative() || ((EntityPlayer) target).isSpectator())) {
+		//	target = null;
+		//}
+		//if (target == null) return;
 
+		Vec3d look;
+		if (target != null) {
+			look = target.getPositionVector().subtract(getPositionVector()).normalize();
+			look = look.crossProduct(new Vec3d(0, 1, 0)).crossProduct(look);
+		} else {
+			look = new Vec3d(0, 1, 0);
+		}
+
+		double pitch = Math.asin(look.y / look.lengthVector());
+		Minecraft.getMinecraft().player.sendChatMessage(pitch + "");
+		if (pitch >= 1 || pitch < 0.5) {
+			look = new Vec3d(0, 1, 0);
+		}
+		List<Vec3d> circle2 = new InterpCircle(getPositionVector().addVector(0, -1, 0), look, 3).list(20);
+		List<Vec3d> circle3 = new InterpCircle(getPositionVector().addVector(0, -1, 0), look, 2).list(20);
+		List<Vec3d> circle4 = new InterpCircle(getPositionVector().addVector(0, -1, 0), look, 1).list(20);
+
+		List<Vec3d> finalList = new ArrayList<>();
+		finalList.addAll(circle2);
+		finalList.addAll(circle3);
+		finalList.addAll(circle4);
+
+		for (Vec3d vec3d : finalList) {
+			BlockPos pos = new BlockPos(vec3d);
+			if (!world.isAirBlock(pos)) {
+				TileEntity tile = world.getTileEntity(pos);
+				if (tile != null && tile instanceof TileUnicornTrail) {
+					((TileUnicornTrail) tile).savedTime = System.currentTimeMillis();
+				}
+				continue;
+			}
+			if (!world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos)).isEmpty()) continue;
+
+			world.setBlockState(pos, ModBlocks.UNICORN_TRAIL.getDefaultState());
+		}
+
+		if (target == null) return;
+
+		//if (getNavigator().noPath()) {
+		getNavigator().tryMoveToXYZ(target.posX, target.posY, target.posZ, 1);
+		//}
+
+		if (getEntityBoundingBox().intersects(target.getEntityBoundingBox())) {
+			target.knockBack(this, 2F, MathHelper.sin(rotationYaw), -MathHelper.cos(rotationYaw));
+			knockBack(this, 1F, -MathHelper.sin(rotationYaw), MathHelper.cos(rotationYaw));
+			target.attackEntityFrom(DamageSource.causeMobDamage(target), (float) this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
+			getNavigator().setPath(null, 1);
+			givenPath = false;
+		}
+		/*
 		if (!isCharging) {
 			isCharging = true;
 			prepareChargeTicks = 0;
@@ -107,6 +163,7 @@ public class EntityUnicorn extends EntityHorse {
 				givenPath = false;
 			}
 		}
+		*/
 	}
 
 	private void fart() {

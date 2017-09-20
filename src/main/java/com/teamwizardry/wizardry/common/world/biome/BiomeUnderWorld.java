@@ -1,16 +1,10 @@
 package com.teamwizardry.wizardry.common.world.biome;
 
-import java.util.List;
-import java.util.Random;
-
-import javax.annotation.Nonnull;
-
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.common.entity.EntitySpiritWight;
 import com.teamwizardry.wizardry.common.entity.EntityUnicorn;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
@@ -20,6 +14,10 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+
+import javax.annotation.Nonnull;
+import java.util.List;
+import java.util.Random;
 
 /**
  * Created by LordSaad44
@@ -47,6 +45,8 @@ public class BiomeUnderWorld extends Biome {
 	@SubscribeEvent
 	public void onTickPlayerTick(TickEvent.PlayerTickEvent event) {
 		if (event.player.world.isRemote) return;
+		if (!event.player.world.getGameRules().getBoolean("doMobSpawning")) return;
+
 		if (event.player.world.provider.getDimension() == ConfigValues.underworldID) {
 			if (RandUtil.nextInt(100) == 0 && getEntityCount(EntityFairy.class, event.player.getPosition(), event.player.world, 64) < 15) {
 				BlockPos pos = new BlockPos(event.player.posX + RandUtil.nextInt(-64, 64), RandUtil.nextInt(50, 100), event.player.posZ + RandUtil.nextInt(-64, 64));
@@ -62,6 +62,7 @@ public class BiomeUnderWorld extends Biome {
 				if (pos.getDistance((int) event.player.posX, (int) event.player.posY, (int) event.player.posZ) > 64) {
 					EntitySpiritWight entity = new EntitySpiritWight(event.player.world);
 					entity.setPosition(pos.getX(), pos.getY(), pos.getZ());
+					entity.enablePersistence();
 					event.player.world.spawnEntity(entity);
 				}
 			}

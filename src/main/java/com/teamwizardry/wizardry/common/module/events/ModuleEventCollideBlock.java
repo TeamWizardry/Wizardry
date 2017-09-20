@@ -5,6 +5,8 @@ import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEvent;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 
@@ -43,6 +45,7 @@ public class ModuleEventCollideBlock extends ModuleEvent {
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public void runClient(@Nonnull SpellData spell) {
 
 	}
