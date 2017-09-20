@@ -1,127 +1,88 @@
 package com.teamwizardry.wizardry.common.world.underworld;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
-import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.api.util.RandUtilSeed;
 import com.teamwizardry.wizardry.common.block.BlockCloud;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.init.ModBlocks;
 
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.IChunkGenerator;
+import net.minecraft.world.gen.NoiseGeneratorPerlin;
 
 /**
  * Created by LordSaad44
  */
 public class ChunkGeneratorUnderWorld implements IChunkGenerator {
 
+	private static final int UPPER_LEVEL = 100;
+	private static final int LOWER_LEVEL = 105;
+	private static final double UPPER_X_SCALE = 32.0;
+	private static final double UPPER_Y_SCALE = 1.0 / 2.0;
+	private static final double UPPER_Z_SCALE = 32.0;
+	private static final double LOWER_X_SCALE = 16.0;
+	private static final double LOWER_Y_SCALE = 2.5;
+	private static final double LOWER_Z_SCALE = 16.0;
+	
+	private NoiseGeneratorPerlin upper;
+	private NoiseGeneratorPerlin lower;
+	
 	private World world;
 
 	public ChunkGeneratorUnderWorld(World worldIn) {
 		this.world = worldIn;
+		upper = new NoiseGeneratorPerlin(RandUtil.random, 4);
+		lower = new NoiseGeneratorPerlin(RandUtil.random, 4);
 	}
-
-	private void generateCloud(Set<BlockPos> poses, BlockPos center, float weight, Random seed) {
-		if (poses.contains(center)) {
-			return;
-		}
-		poses.add(center);
-
-		if (weight > 1) {
-			List<EnumFacing> directions = new ArrayList<>();
-			Set<EnumFacing> horizontals = new HashSet<>();
-			Collections.addAll(directions, EnumFacing.VALUES);
-			Collections.addAll(horizontals, EnumFacing.HORIZONTALS);
-			while (!directions.isEmpty()) {
-				int i = seed.nextInt(directions.size());
-				EnumFacing dir;
-				if (horizontals.contains(directions.get(i))) {
-					if (RandUtil.nextBoolean()) dir = directions.get(i);
-					else dir = directions.remove(i);
-				} else dir = directions.remove(i);
-				generateCloud(poses, center.offset(dir), weight - seed.nextFloat() - 1, seed);
-			}
-		}
-	}
-
-	private boolean isChunkCenter(int chunkX, int chunkZ) {
-		long s2 = ((chunkX + world.getSeed() + 337) * 947) + chunkZ * 719L;
-		Random rand = new Random(s2);
-		rand.nextFloat();
-		return rand.nextFloat() < .3f;
-	}
-
-	private Random getRandomForChunk(int chunkX, int chunkZ) {
-		long s2 = ((chunkX + world.getSeed() + 13) * 314) + chunkZ * 17L;
-		Random rand = new Random(s2);
-		rand.nextFloat();
-		return rand;
+	
+	public ChunkGeneratorUnderWorld(World world, long seed)
+	{
+		this.world = world;
+		RandUtilSeed rand = new RandUtilSeed(seed);
+		upper = new NoiseGeneratorPerlin(rand.random, 4);
+		lower = new NoiseGeneratorPerlin(rand.random, 4);
 	}
 
 	private void generate(int chunkX, int chunkZ, ChunkPrimer primer) {
-		for (int cx = -1; cx <= 1; cx++) {
-			for (int cz = -1; cz <= 1; cz++) {
-				if (isChunkCenter(chunkX + cx, chunkZ + cz)) {
-					Random rand = getRandomForChunk(chunkX + cx, chunkZ + cz);
-					Set<BlockPos> poses = new HashSet<>();
-					generateCloud(poses, new BlockPos(8 + cx * 16, 50, 8 + cz * 16), 20, rand);
-
-					for (BlockPos pos : poses) {
-						if (pos.getX() >= 0 && pos.getX() <= 15
-								&& pos.getZ() >= 0 && pos.getZ() <= 15) {
-							IBlockState block = ModBlocks.CLOUD.getDefaultState();
-							primer.setBlockState(pos.getX(), pos.getY(), pos.getZ(), block);
-						}
-					}
-
-					for (BlockPos pos : poses) {
-						if (pos.getX() >= 0 && pos.getX() <= 15
-								&& pos.getZ() >= 0 && pos.getZ() <= 15) {
-							if (primer.getBlockState(pos.getX(), pos.getY() - 1, pos.getZ()).getBlock() != ModBlocks.CLOUD) {
-								IBlockState block = ModBlocks.CLOUD.getDefaultState();
-								primer.setBlockState(pos.getX(), pos.getY(), pos.getZ(), block);
-							}
-						}
-					}
-					
-					for (BlockPos pos : poses)
-					{
-						if (pos.getX() >= 0 && pos.getX() <= 15 && pos.getZ() >= 0 && pos.getZ() <= 15)
-						{
-							int x = pos.getX();
-							int y = pos.getY();
-							int z = pos.getZ();
-							for (int i = 0; i < y; i++)
-							{
-								if (primer.getBlockState(x, i, z).getBlock() == ModBlocks.CLOUD)
-								{
-									primer.setBlockState(x, i, z, ModBlocks.CLOUD.getDefaultState().withProperty(BlockCloud.HAS_LIGHT_VALUE, true));
-									break;
-								}
-							}
-						}
-					}
+		double[][] upperValues = new double[16][16];
+		double[][] lowerValues = new double[16][16];
+		for (int x = 0; x < 16; x++)
+		{
+			for (int z = 0; z < 16; z++)
+			{
+				upperValues[x][z] = upper.getValue((chunkX * 16 + x) / UPPER_X_SCALE, (chunkZ * 16 + z) / UPPER_Z_SCALE);
+				lowerValues[x][z] = lower.getValue((chunkX * 16 + x) / LOWER_X_SCALE, (chunkZ * 16 + z) / LOWER_Z_SCALE);
+			}
+		}
+		
+		for (int x = 0; x < 16; x++)
+		{
+			for (int z = 0; z < 16; z++)
+			{
+				int minY = (int) (lowerValues[x][z] * LOWER_Y_SCALE + LOWER_LEVEL);
+				int maxY = (int) (upperValues[x][z] * UPPER_Y_SCALE + UPPER_LEVEL);
+				for (int y = minY; y <= maxY; y++)
+				{
+					if (y == minY)
+						primer.setBlockState(x, y, z, ModBlocks.CLOUD.getDefaultState().withProperty(BlockCloud.HAS_LIGHT_VALUE, true));
+					else
+						primer.setBlockState(x, y, z, ModBlocks.CLOUD.getDefaultState());
 				}
 			}
 		}
 	}
-
 
 	@Nonnull
 	@Override
@@ -141,8 +102,12 @@ public class ChunkGeneratorUnderWorld implements IChunkGenerator {
 		if (x / 16 == 0 && z / 16 == 0) {
 			for (int i = -3; i < 3; i++)
 				for (int j = -3; j < 3; j++) {
-					world.setBlockState(new BlockPos(i, 50, j), Blocks.OBSIDIAN.getDefaultState());
+					world.setBlockState(new BlockPos(i, 100, j), Blocks.OBSIDIAN.getDefaultState());
 				}
+			world.setBlockState(new BlockPos(-1, 101, -1), Blocks.TORCH.getDefaultState());
+			world.setBlockState(new BlockPos(0, 101, -1), Blocks.TORCH.getDefaultState());
+			world.setBlockState(new BlockPos(-1, 101, 0), Blocks.TORCH.getDefaultState());
+			world.setBlockState(new BlockPos(0, 101, 0), Blocks.TORCH.getDefaultState());
 		}
 	}
 
