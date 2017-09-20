@@ -43,14 +43,15 @@ public class EntitySpellProjectile extends EntityMod {
 	private double speed;
 	private double gravity;
 
-	public EntitySpellProjectile(World worldIn) {
-		super(worldIn);
+	public EntitySpellProjectile(World world) {
+		super(world);
 		setSize(0.3F, 0.3F);
 		isImmuneToFire = true;
 		applyColor(Color.WHITE);
 		applyColor2(Color.WHITE);
 
-		setRenderDistanceWeight(30);
+		if (world.isRemote)
+			setRenderDistanceWeight(30);
 	}
 
 	public EntitySpellProjectile(World world, Module module, SpellData spell, double dist, double speed, double gravity) {
@@ -72,7 +73,8 @@ public class EntitySpellProjectile extends EntityMod {
 			else applyColor2(Color.WHITE);
 		}
 
-		setRenderDistanceWeight(30);
+		if (world.isRemote)
+			setRenderDistanceWeight(30);
 	}
 
 	@Nullable

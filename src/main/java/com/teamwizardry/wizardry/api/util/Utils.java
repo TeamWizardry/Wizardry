@@ -1,12 +1,14 @@
 package com.teamwizardry.wizardry.api.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.teamwizardry.librarianlib.features.gui.GuiComponent;
+
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.oredict.OreDictionary;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by LordSaad.
@@ -50,4 +52,22 @@ public class Utils {
 
 		return visible;
 	}
+	
+	public static int getSlotFor(EntityPlayer player, ItemStack stack)
+	{
+		for (int i = 0; i < player.inventory.mainInventory.size(); ++i)
+        {
+            if (!((ItemStack)player.inventory.mainInventory.get(i)).isEmpty() && stackEqualExact(stack, player.inventory.mainInventory.get(i)))
+            {
+                return i;
+            }
+        }
+
+        return -1;
+	}
+	
+    public static boolean stackEqualExact(ItemStack stack1, ItemStack stack2)
+    {
+        return stack1.getItem() == stack2.getItem() && (!stack1.getHasSubtypes() || stack1.getMetadata() == stack2.getMetadata()) && ItemStack.areItemStackTagsEqual(stack1, stack2);
+    }
 }

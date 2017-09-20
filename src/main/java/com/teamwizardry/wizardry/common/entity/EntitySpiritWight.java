@@ -1,8 +1,14 @@
 package com.teamwizardry.wizardry.common.entity;
 
+import java.awt.Color;
+
+import javax.annotation.Nonnull;
+
+import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.init.ModSounds;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -15,9 +21,8 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-
-import javax.annotation.Nonnull;
-import java.awt.*;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Created by Saad on 8/17/2016.
@@ -66,7 +71,14 @@ public class EntitySpiritWight extends EntityMob {
 
 		Vec3d normal = new Vec3d(RandUtil.nextDouble(-0.01, 0.01), RandUtil.nextDouble(0.1, 0.4), RandUtil.nextDouble(-0.01, 0.01));
 
-		LibParticles.AIR_THROTTLE(world, getPositionVector().addVector(0, getEyeHeight(), 0), normal, Color.WHITE, Color.YELLOW, RandUtil.nextDouble(0.2, 1.0));
+		ClientRunnable.run(new ClientRunnable() {
+			@Override
+			@SideOnly(Side.CLIENT)
+			public void runIfClient()
+			{
+				LibParticles.AIR_THROTTLE(world, getPositionVector().addVector(0, getEyeHeight(), 0), normal, Color.WHITE, Color.YELLOW, RandUtil.nextDouble(0.2, 1.0));
+			}
+		});
 	}
 
 	@Override
@@ -99,11 +111,18 @@ public class EntitySpiritWight extends EntityMob {
 		EntityPlayer closePlayer = getAttackTarget() == null ? null : world.getNearestPlayerNotCreative(this, 30);
 		boolean angry = player != null;
 
-		if ((closePlayer != null) && !angry)
-			LibParticles.SPIRIT_WIGHT_FLAME_FAR(world, getPositionVector().addVector(0, getEyeHeight(), 0));
-		else if (angry)
-			LibParticles.SPIRIT_WIGHT_FLAME_CLOSE(world, getPositionVector().addVector(0, getEyeHeight(), 0));
-		else LibParticles.SPIRIT_WIGHT_FLAME_NORMAL(world, getPositionVector().addVector(0, getEyeHeight(), 0));
+		ClientRunnable.run(new ClientRunnable() {
+			@Override
+			@SideOnly(Side.CLIENT)
+			public void runIfClient()
+			{
+				if ((closePlayer != null) && !angry)
+					LibParticles.SPIRIT_WIGHT_FLAME_FAR(world, getPositionVector().addVector(0, getEyeHeight(), 0));
+				else if (angry)
+					LibParticles.SPIRIT_WIGHT_FLAME_CLOSE(world, getPositionVector().addVector(0, getEyeHeight(), 0));
+				else LibParticles.SPIRIT_WIGHT_FLAME_NORMAL(world, getPositionVector().addVector(0, getEyeHeight(), 0));
+			}
+		});
 
 		if (angry) {
 			player.attackEntityFrom(DamageSource.MAGIC, 0.15f);
@@ -125,7 +144,14 @@ public class EntitySpiritWight extends EntityMob {
 	public boolean attackEntityFrom(@Nonnull DamageSource source, float amount) {
 		if (source.isMagicDamage()) {
 			super.attackEntityFrom(source, amount);
-			LibParticles.SPIRIT_WIGHT_HURT(world, getPositionVector());
+			ClientRunnable.run(new ClientRunnable() {
+				@Override
+				@SideOnly(Side.CLIENT)
+				public void runIfClient()
+				{
+					LibParticles.SPIRIT_WIGHT_HURT(world, getPositionVector());
+				}
+			});
 			return true;
 		} else return false;
 	}
