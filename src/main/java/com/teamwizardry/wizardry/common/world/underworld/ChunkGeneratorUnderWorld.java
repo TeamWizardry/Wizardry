@@ -1,17 +1,10 @@
 package com.teamwizardry.wizardry.common.world.underworld;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RandUtilSeed;
 import com.teamwizardry.wizardry.common.block.BlockCloud;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.init.ModBlocks;
-
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
@@ -22,19 +15,24 @@ import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.NoiseGeneratorPerlin;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by LordSaad44
  */
 public class ChunkGeneratorUnderWorld implements IChunkGenerator {
 
-	private static final int UPPER_LEVEL = 100;
+	private static final int UPPER_LEVEL = 104;
 	private static final int LOWER_LEVEL = 105;
-	private static final double UPPER_X_SCALE = 32.0;
-	private static final double UPPER_Y_SCALE = 1.0 / 2.0;
-	private static final double UPPER_Z_SCALE = 32.0;
-	private static final double LOWER_X_SCALE = 16.0;
-	private static final double LOWER_Y_SCALE = 2.5;
-	private static final double LOWER_Z_SCALE = 16.0;
+	private static final double UPPER_X_SCALE = 16.0;
+	private static final double UPPER_Y_SCALE = 1.0;
+	private static final double UPPER_Z_SCALE = 16.0;
+	private static final double LOWER_X_SCALE = 8.0;
+	private static final double LOWER_Y_SCALE = 1.0;
+	private static final double LOWER_Z_SCALE = 8.0;
 	
 	private NoiseGeneratorPerlin upper;
 	private NoiseGeneratorPerlin lower;
