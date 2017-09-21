@@ -1,9 +1,6 @@
 package com.teamwizardry.wizardry.common.block;
 
-import javax.annotation.Nonnull;
-
 import com.teamwizardry.librarianlib.features.base.block.BlockMod;
-
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
@@ -22,6 +19,8 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
+
 /**
  * Created by Saad on 8/27/2016.
  */
@@ -34,6 +33,7 @@ public class BlockCloud extends BlockMod {
 		setHardness(0.5f);
 		setSoundType(SoundType.CLOTH);
 		setDefaultState(blockState.getBaseState().withProperty(HAS_LIGHT_VALUE, false));
+		setLightOpacity(0);
 	}
 
 	@Override
