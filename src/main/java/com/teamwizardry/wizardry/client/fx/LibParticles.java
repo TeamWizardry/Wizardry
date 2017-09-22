@@ -493,8 +493,8 @@ public class LibParticles {
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(pedestal).addVector(0.5, 1, 0.5)), 1, 0, (aFloat, particleBuilder) -> {
 			glitter.setColorFunction(new InterpColorHSV(ColorUtils.changeColorAlpha(Color.BLUE, RandUtil.nextInt(100, 150)), ColorUtils.changeColorAlpha(Color.CYAN, RandUtil.nextInt(100, 150))));
 			glitter.setScale(RandUtil.nextFloat());
-			glitter.setPositionFunction(new InterpBezier3D(Vec3d.ZERO, new Vec3d(center.subtract(pedestal)), new Vec3d(0, 6, 0), new Vec3d(0, -5, 0)));
-			glitter.setScaleFunction(new InterpScale(1, 0));
+			glitter.setPositionFunction(new InterpBezier3D(Vec3d.ZERO, new Vec3d(center.subtract(pedestal)), new Vec3d(0, 3, 0), new Vec3d(0, 5, 0)));
+			glitter.setScaleFunction(new InterpScale(1, 0.4f));
 			glitter.setLifetime(RandUtil.nextInt(10, 30));
 		});
 	}

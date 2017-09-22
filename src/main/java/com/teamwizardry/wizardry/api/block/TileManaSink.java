@@ -82,7 +82,7 @@ public class TileManaSink extends TileMod implements ITickable {
 					ParticleSpawner.spawn(helix, world, new StaticInterp<>(new Vec3d(faucetPos).addVector(0.5, 1, 0.5)), 1, 0, (aFloat, particleBuilder) -> {
 						helix.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), RandUtil.nextInt(50, 200)));
 						helix.setScale(RandUtil.nextFloat());
-						helix.setPositionFunction(new InterpBezier3D(Vec3d.ZERO, new Vec3d(pos.subtract(faucetPos)), new Vec3d(0, 20, 0), new Vec3d(0, 5, 0)));
+						helix.setPositionFunction(new InterpBezier3D(Vec3d.ZERO, new Vec3d(pos.subtract(faucetPos)), new Vec3d(0, 10, 0), new Vec3d(0, 10, 0)));
 						helix.setLifetime(RandUtil.nextInt(10, 40));
 					});
 				}
