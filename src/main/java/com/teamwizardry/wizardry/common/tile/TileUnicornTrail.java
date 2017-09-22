@@ -16,7 +16,7 @@ public class TileUnicornTrail extends TileMod implements ITickable {
 
 	@Override
 	public void update() {
-		if (System.currentTimeMillis() - savedTime >= 2000) {
+		if (System.currentTimeMillis() - savedTime >= 500) {
 			getWorld().setBlockToAir(getPos());
 		}
 	}

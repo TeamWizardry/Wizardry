@@ -1,23 +1,28 @@
 package com.teamwizardry.wizardry.common.entity;
 
+import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpCircle;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.entity.ai.EntityAIUnicornWander;
-
+import com.teamwizardry.wizardry.common.tile.TileUnicornTrail;
+import com.teamwizardry.wizardry.init.ModBlocks;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIFollowParent;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAIMate;
-import net.minecraft.entity.ai.EntityAIMoveTowardsRestriction;
-import net.minecraft.entity.ai.EntityAIRunAroundLikeCrazy;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.*;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EntityUnicorn extends EntityHorse {
 
@@ -73,94 +78,105 @@ public class EntityUnicorn extends EntityHorse {
 	@Override
 	public void onUpdate() {
 		super.onUpdate();
-//		if (world.isRemote) return;
-//
-//		EntityLivingBase target = this.getAttackTarget();
-//		if (target == null) {
-//			this.setAttackTarget(world.getNearestAttackablePlayer(this, 50, 50));
-//		}// else if (target instanceof EntityPlayer && (((EntityPlayer) target).isCreative() || ((EntityPlayer) target).isSpectator())) {
-//		//	target = null;
-//		//}
-//		//if (target == null) return;
-//
-//		Vec3d look;
-//		if (target != null) {
-//			look = target.getPositionVector().subtract(getPositionVector()).normalize();
-//			look = look.crossProduct(new Vec3d(0, 1, 0)).crossProduct(look);
-//		} else {
-//			look = new Vec3d(0, 1, 0);
-//		}
-//
-//		double pitch = Math.asin(look.y / look.lengthVector());
-//		Minecraft.getMinecraft().player.sendChatMessage(pitch + "");
-//		if (pitch >= 1 || pitch < 0.5) {
-//			look = new Vec3d(0, 1, 0);
-//		}
-//		List<Vec3d> circle2 = new InterpCircle(getPositionVector().addVector(0, -1, 0), look, 3).list(20);
-//		List<Vec3d> circle3 = new InterpCircle(getPositionVector().addVector(0, -1, 0), look, 2).list(20);
-//		List<Vec3d> circle4 = new InterpCircle(getPositionVector().addVector(0, -1, 0), look, 1).list(20);
-//
-//		List<Vec3d> finalList = new ArrayList<>();
-//		finalList.addAll(circle2);
-//		finalList.addAll(circle3);
-//		finalList.addAll(circle4);
-//
-//		for (Vec3d vec3d : finalList) {
-//			BlockPos pos = new BlockPos(vec3d);
-//			if (!world.isAirBlock(pos)) {
-//				TileEntity tile = world.getTileEntity(pos);
-//				if (tile != null && tile instanceof TileUnicornTrail) {
-//					((TileUnicornTrail) tile).savedTime = System.currentTimeMillis();
-//				}
-//				continue;
-//			}
-//			if (!world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos)).isEmpty()) continue;
-//
-//			world.setBlockState(pos, ModBlocks.UNICORN_TRAIL.getDefaultState());
-//		}
-//
-//		if (target == null) return;
-//
-//		//if (getNavigator().noPath()) {
-//		getNavigator().tryMoveToXYZ(target.posX, target.posY, target.posZ, 1);
-//		//}
-//
-//		if (getEntityBoundingBox().intersects(target.getEntityBoundingBox())) {
-//			target.knockBack(this, 2F, MathHelper.sin(rotationYaw), -MathHelper.cos(rotationYaw));
-//			knockBack(this, 1F, -MathHelper.sin(rotationYaw), MathHelper.cos(rotationYaw));
-//			target.attackEntityFrom(DamageSource.causeMobDamage(target), (float) this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
-//			getNavigator().setPath(null, 1);
-//			givenPath = false;
-//		}
-//		/*
-//		if (!isCharging) {
-//			isCharging = true;
-//			prepareChargeTicks = 0;
-//		}
-//
-//		if (prepareChargeTicks < 60) {
-//			prepareChargeTicks++;
-//			limbSwingAmount += prepareChargeTicks / 10;
-//		} else {
-//			if (getNavigator().noPath() && !givenPath) {
-//				Vec3d excess = target.getPositionVector();
-//				getNavigator().tryMoveToXYZ(excess.x, excess.y, excess.z, 2);
-//				givenPath = true;
-//			}
-//
-//			if (getEntityBoundingBox().grow(1, 1, 1).intersects(target.getEntityBoundingBox())) {
-//				target.knockBack(this, 3F, MathHelper.sin(rotationYaw), -MathHelper.cos(rotationYaw));
-//				knockBack(this, 1F, -MathHelper.sin(rotationYaw), MathHelper.cos(rotationYaw));
-//				target.attackEntityFrom(DamageSource.causeMobDamage(target), (float) this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
-//				isCharging = false;
-//				getNavigator().setPath(null, 1);
-//				givenPath = false;
-//			}
-//		}
-//		*/
+
+		EntityLivingBase target = this.getAttackTarget();
+		if (target == null) {
+			this.setAttackTarget(world.getNearestAttackablePlayer(this, 50, 50));
+		}
+
+		Vec3d sub = Vec3d.ZERO;
+		Vec3d look;
+		if (target != null) {
+			look = sub = target.getPositionVector().subtract(getPositionVector()).normalize();
+			look = look.crossProduct(new Vec3d(0, 1, 0)).crossProduct(look);
+		} else {
+			look = new Vec3d(0, 1, 0);
+		}
+
+		double pitch = Math.asin(look.y / look.lengthVector());
+		if (pitch >= 1.3) {
+			look = new Vec3d(0, 1, 0);
+		}
+		double extra = 0;
+		if (target != null && target.getPosition().getY() < getPosition().getY()) extra -= 1;
+		List<Vec3d> circle2 = new InterpCircle(getPositionVector().addVector(0, -1 + extra, 0), look, 3).list(20);
+		List<Vec3d> circle3 = new InterpCircle(getPositionVector().addVector(0, -1 + extra, 0), look, 2).list(20);
+		List<Vec3d> circle4 = new InterpCircle(getPositionVector().addVector(0, -1 + extra, 0), look, 1).list(20);
+
+		List<Vec3d> finalList = new ArrayList<>();
+		finalList.addAll(circle2);
+		finalList.addAll(circle3);
+		finalList.addAll(circle4);
+
+		for (Vec3d vec3d : finalList) {
+			BlockPos pos = new BlockPos(vec3d);
+			if (!world.isAirBlock(pos)) {
+				TileEntity tile = world.getTileEntity(pos);
+				if (tile != null && tile instanceof TileUnicornTrail) {
+					((TileUnicornTrail) tile).savedTime = System.currentTimeMillis();
+				}
+				continue;
+			}
+			if (!world.getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(pos)).isEmpty()) continue;
+
+			world.setBlockState(pos, ModBlocks.UNICORN_TRAIL.getDefaultState());
+		}
+
+		if (target == null) return;
+
+		Vec3d newPath = getPositionVector().add(sub.scale(2));
+		if (getNavigator().canEntityStandOnPos(new BlockPos(newPath))) {
+			getNavigator().tryMoveToXYZ(newPath.x, newPath.y, newPath.z, 1.3);
+		} else {
+			for (int i = 0; i < 3; i++) {
+				for (int j = 0; j < 3; j++) {
+					for (int k = 0; k < 3; k++) {
+						BlockPos pos = getPosition().add(i, j, k);
+						if (getNavigator().canEntityStandOnPos(pos)) {
+							getNavigator().tryMoveToXYZ(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 1.3);
+							break;
+						}
+					}
+				}
+			}
+		}
+		//LibParticles.STRUCTURE_BEACON(world, newPath, new Color(RandUtil.nextFloat(), RandUtil.nextFloat(), RandUtil.nextFloat()));
+
+		if (getEntityBoundingBox().intersects(target.getEntityBoundingBox())) {
+			target.knockBack(this, 2F, MathHelper.sin(rotationYaw), -MathHelper.cos(rotationYaw));
+			knockBack(this, 1F, -MathHelper.sin(rotationYaw), MathHelper.cos(rotationYaw));
+			target.attackEntityFrom(DamageSource.causeMobDamage(target), (float) this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
+			getNavigator().setPath(null, 1);
+			givenPath = false;
+		}
+		/*
+		if (!isCharging) {
+			isCharging = true;
+			prepareChargeTicks = 0;
+		}
+
+		if (prepareChargeTicks < 60) {
+			prepareChargeTicks++;
+			limbSwingAmount += prepareChargeTicks / 10;
+		} else {
+			if (getNavigator().noPath() && !givenPath) {
+				Vec3d excess = target.getPositionVector();
+				getNavigator().tryMoveToXYZ(excess.x, excess.y, excess.z, 2);
+				givenPath = true;
+			}
+
+			if (getEntityBoundingBox().grow(1, 1, 1).intersects(target.getEntityBoundingBox())) {
+				target.knockBack(this, 3F, MathHelper.sin(rotationYaw), -MathHelper.cos(rotationYaw));
+				knockBack(this, 1F, -MathHelper.sin(rotationYaw), MathHelper.cos(rotationYaw));
+				target.attackEntityFrom(DamageSource.causeMobDamage(target), (float) this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
+				isCharging = false;
+				getNavigator().setPath(null, 1);
+				givenPath = false;
+			}
+		}
+		*/
 	}
 
-	@SuppressWarnings({ "unused" })
 	private void fart() {
 		flatulenceTicker--;
 		if (flatulenceTicker <= 0) {

@@ -45,11 +45,12 @@ public class BiomeUnderWorld extends Biome {
 	@SubscribeEvent
 	public void onTickPlayerTick(TickEvent.PlayerTickEvent event) {
 		if (event.player.world.isRemote) return;
-		if (!event.player.world.getGameRules().getBoolean("doMobSpawning")) return;
+
+		// FIXME: 9/21/2017 if (!event.player.world.getGameRules().getBoolean("doMobSpawning")) return;
 
 		if (event.player.world.provider.getDimension() == ConfigValues.underworldID) {
 			if (RandUtil.nextInt(100) == 0 && getEntityCount(EntityFairy.class, event.player.getPosition(), event.player.world, 64) < 15) {
-				BlockPos pos = new BlockPos(event.player.posX + RandUtil.nextInt(-64, 64), RandUtil.nextInt(50, 100), event.player.posZ + RandUtil.nextInt(-64, 64));
+				BlockPos pos = new BlockPos(event.player.posX + RandUtil.nextInt(-64, 64), RandUtil.nextInt(110, 150), event.player.posZ + RandUtil.nextInt(-64, 64));
 				if (event.player.world.isAirBlock(pos)) {
 					EntityFairy entity = new EntityFairy(event.player.world);
 					entity.setPosition(pos.getX(), pos.getY(), pos.getZ());
@@ -73,7 +74,7 @@ public class BiomeUnderWorld extends Biome {
 				if (pos.getDistance((int) event.player.posX, (int) event.player.posY, (int) event.player.posZ) > 30) {
 
 					boolean success = false;
-					for (int i = 100; i > 30; i--) {
+					for (int i = 150; i > 50; i--) {
 						if (!event.player.world.isAirBlock(pos.move(EnumFacing.DOWN, -1))) {
 							success = true;
 							break;
@@ -95,7 +96,7 @@ public class BiomeUnderWorld extends Biome {
 					}
 
 					if (success) {
-						pos.move(EnumFacing.UP);
+						pos.move(EnumFacing.UP, 2);
 						EntityUnicorn entity = new EntityUnicorn(event.player.world);
 						entity.setPosition(pos.getX(), pos.getY(), pos.getZ());
 						event.player.world.spawnEntity(entity);
