@@ -42,6 +42,7 @@ public class BlockJar extends BlockModContainer {
 		setSoundType(SoundType.GLASS);
 		setHardness(0.3f);
 		setResistance(1.5f);
+		setLightOpacity(0);
 	}
 
 	@Nullable
@@ -62,12 +63,14 @@ public class BlockJar extends BlockModContainer {
 	@Override
 	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
 		if (ItemNBTHelper.getBoolean(stack, Constants.NBT.FAIRY_INSIDE, false)) {
-			TileJar jar = (TileJar) worldIn.getTileEntity(pos);
-			if (jar != null) {
+			TileEntity entity = worldIn.getTileEntity(pos);
+			if (entity != null && entity instanceof TileJar) {
+				TileJar jar = (TileJar) entity;
 				jar.color = new Color(ItemNBTHelper.getInt(stack, Constants.NBT.FAIRY_COLOR, 0xFFFFFF));
 				jar.age = ItemNBTHelper.getInt(stack, Constants.NBT.FAIRY_AGE, 0);
 				jar.hasFairy = true;
 				jar.markDirty();
+				worldIn.checkLight(pos);
 			}
 		}
 	}
@@ -75,8 +78,10 @@ public class BlockJar extends BlockModContainer {
 	@Override
 	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
 		ItemStack stack = new ItemStack(this);
-		TileJar jar = (TileJar) world.getTileEntity(pos);
-		if (jar != null) {
+		TileEntity entity = world.getTileEntity(pos);
+		if (entity != null && entity instanceof TileJar) {
+			TileJar jar = (TileJar) entity;
+			if (jar.color == null) return stack;
 			ItemNBTHelper.setInt(stack, Constants.NBT.FAIRY_COLOR, jar.color.getRGB());
 			ItemNBTHelper.setInt(stack, Constants.NBT.FAIRY_AGE, jar.age);
 		}
@@ -86,12 +91,17 @@ public class BlockJar extends BlockModContainer {
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		if (!worldIn.isRemote) {
-			TileJar jar = (TileJar) worldIn.getTileEntity(pos);
-			if (jar != null && playerIn.isSneaking() && jar.hasFairy) {
-				EntityFairy entity = new EntityFairy(worldIn, jar.color, jar.age);
-				entity.setPosition(playerIn.posX, playerIn.posY, playerIn.posZ);
-				worldIn.spawnEntity(entity);
-				return true;
+			TileEntity tile = worldIn.getTileEntity(pos);
+			if (tile != null && tile instanceof TileJar) {
+				TileJar jar = (TileJar) tile;
+				if (playerIn.isSneaking() && jar.hasFairy) {
+					EntityFairy entity = new EntityFairy(worldIn, jar.color, jar.age);
+					entity.setPosition(playerIn.posX, playerIn.posY, playerIn.posZ);
+					worldIn.spawnEntity(entity);
+					jar.hasFairy = false;
+					jar.markDirty();
+					return true;
+				}
 			}
 		}
 		return false;

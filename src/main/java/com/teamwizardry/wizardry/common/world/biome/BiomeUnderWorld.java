@@ -82,7 +82,7 @@ public class BiomeUnderWorld extends Biome {
 					}
 
 					if (!success) {
-						BlockPos fixed = new BlockPos(pos.getX(), 50, pos.getZ());
+						BlockPos fixed = new BlockPos(pos.getX(), 100, pos.getZ());
 						for (int k = 100; k > 30; k--) {
 							for (int i = -20; i < 20; i++) {
 								for (int j = -20; j < 20; j++) {
