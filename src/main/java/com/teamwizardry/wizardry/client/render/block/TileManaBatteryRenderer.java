@@ -11,12 +11,11 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.util.ColorUtils;
-import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.core.IsolatedBlock;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
-import com.teamwizardry.wizardry.init.ModBlocks;
+import com.teamwizardry.wizardry.common.tile.TilePearlHolder;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.proxy.ClientProxy;
 import net.minecraft.client.Minecraft;
@@ -29,6 +28,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.init.Blocks;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -99,12 +99,6 @@ public class TileManaBatteryRenderer extends TileEntitySpecialRenderer<TileManaB
 	@Override
 	public void render(TileManaBattery te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
 		World world = te.getWorld();
-
-		int count = 0;
-		for (int i = -4; i < 4; i++)
-			for (int j = -4; j < 4; j++)
-				if (world.getBlockState(te.getPos().add(i, -3, j)) == ModBlocks.FLUID_MANA.getDefaultState())
-					count++;
 
 		GlStateManager.pushMatrix();
 		GlStateManager.enableBlend();
@@ -190,18 +184,23 @@ public class TileManaBatteryRenderer extends TileEntitySpecialRenderer<TileManaB
 			return;
 		}
 
-		PosUtils.ManaBatteryPositions positions = new PosUtils.ManaBatteryPositions(world, te.getPos());
-		for (BlockPos pos : positions.fullCircle)
-			if (RandUtil.nextInt(5) == 0)
-				LibParticles.MAGIC_DOT(world, new Vec3d(pos).addVector(0.5, 0.5, 0.5), -1);
 
 		CapManager manager = new CapManager(te.cap);
 		if (!manager.isManaFull()) {
-			if (count >= 21)
-				for (BlockPos pos : positions.takenPoses) {
-					if (RandUtil.nextInt(7) == 0)
-						LibParticles.COLORFUL_BATTERY_BEZIER(world, pos, te.getPos());
-				}
+			for (BlockPos relative : TileManaBattery.poses) {
+				BlockPos target = te.getPos().add(relative);
+				if (!world.isBlockLoaded(target)) continue;
+
+				TileEntity tile = world.getTileEntity(target);
+				if (tile == null) continue;
+				if (!(tile instanceof TilePearlHolder)) continue;
+				TilePearlHolder holder = (TilePearlHolder) world.getTileEntity(target);
+
+				if (holder == null || holder.pearl == null || holder.pearl.isEmpty() || holder.pearl.getItem() != ModItems.MANA_ORB)
+					continue;
+				if (RandUtil.nextInt(7) == 0)
+					LibParticles.COLORFUL_BATTERY_BEZIER(world, target, te.getPos());
+			}
 		}
 
 		if (RandUtil.nextInt(10) == 0) {
