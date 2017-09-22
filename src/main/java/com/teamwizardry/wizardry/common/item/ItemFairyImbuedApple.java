@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 public class ItemFairyImbuedApple extends ItemModFood implements IItemColorProvider {
 
 	public ItemFairyImbuedApple() {
-		super("fairy_imbued_apple", 10, 10, false);
+		super("fairy_imbued_apple", 10, 1, false);
 		setMaxStackSize(64);
 	}
 
