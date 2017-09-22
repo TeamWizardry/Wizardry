@@ -80,13 +80,6 @@ public class TileCraftingPlate extends TileManaSink {
 		compound.setTag("clusters", list);
 	}
 
-	@Nonnull
-	@SideOnly(Side.CLIENT)
-	@Override
-	public AxisAlignedBB getRenderBoundingBox() {
-		return TileEntity.INFINITE_EXTENT_AABB;
-	}
-
 	@Override
 	public void update() {
 		super.update();
@@ -171,5 +164,17 @@ public class TileCraftingPlate extends TileManaSink {
 				markDirty();
 			}
 		}
+	}
+
+	@Nonnull
+	@SideOnly(Side.CLIENT)
+	@Override
+	public AxisAlignedBB getRenderBoundingBox() {
+		return TileEntity.INFINITE_EXTENT_AABB;
+	}
+
+	@Override
+	public double getMaxRenderDistanceSquared() {
+		return 100000;
 	}
 }

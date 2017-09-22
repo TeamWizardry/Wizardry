@@ -89,6 +89,6 @@ public class BlockManaBattery extends BlockModContainer implements IStructure {
 
 	@Override
 	public Vec3i offsetToCenter() {
-		return new Vec3i(7, 4, 7);
+		return new Vec3i(5, 4, 5);
 	}
 }

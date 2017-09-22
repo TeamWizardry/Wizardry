@@ -13,20 +13,28 @@ import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.client.core.IsolatedBlock;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
 import com.teamwizardry.wizardry.init.ModBlocks;
+import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.proxy.ClientProxy;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BlockRendererDispatcher;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraft.world.gen.structure.template.Template;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.MinecraftForge;
@@ -34,6 +42,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
+import java.util.EnumMap;
+import java.util.HashSet;
 
 /**
  * Created by LordSaad.
@@ -128,8 +138,57 @@ public class TileManaBatteryRenderer extends TileEntitySpecialRenderer<TileManaB
 		GlStateManager.disableBlend();
 		GlStateManager.popMatrix();
 
-		if (te.getBlockType() instanceof IStructure)
-			if (!((IStructure) te.getBlockType()).renderBoundries(te.getWorld(), te.getPos())) return;
+		if (te.getBlockType() instanceof IStructure && Minecraft.getMinecraft().player.getHeldItemMainhand().getItem() == ModItems.MAGIC_WAND) {
+			IStructure structure = ((IStructure) te.getBlockType());
+
+			GlStateManager.pushMatrix();
+			GlStateManager.enableAlpha();
+			GlStateManager.enableBlend();
+			GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+			GlStateManager.shadeModel(GL11.GL_SMOOTH);
+			GlStateManager.enableCull();
+
+			GlStateManager.translate(x, y, z);
+			GlStateManager.translate(-structure.offsetToCenter().getX(), -structure.offsetToCenter().getY(), -structure.offsetToCenter().getZ());
+			Minecraft mc = Minecraft.getMinecraft();
+			Tessellator tes = Tessellator.getInstance();
+			BufferBuilder buffer = tes.getBuffer();
+			BlockRendererDispatcher dispatcher = mc.getBlockRendererDispatcher();
+
+			IsolatedBlock block = new IsolatedBlock(te.getWorld().getBlockState(te.getPos()), null);
+			mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+			EnumMap<BlockRenderLayer, HashSet<Template.BlockInfo>> blocks = new EnumMap<>(BlockRenderLayer.class);
+			for (Template.BlockInfo info : ((IStructure) te.getBlockType()).getStructure().blockInfos()) {
+
+				if (info.blockState.getBlock() == Blocks.AIR) continue;
+				if (info.blockState.getBlock() == te.getWorld().getBlockState(te.getPos().add(-structure.offsetToCenter().getX(), -structure.offsetToCenter().getY(), -structure.offsetToCenter().getZ()).add(info.pos)).getBlock())
+					continue;
+
+				HashSet<Template.BlockInfo> set = blocks.get(info.blockState.getBlock().getBlockLayer());
+				if (set == null) set = new HashSet<>();
+				set.add(info);
+				blocks.put(info.blockState.getBlock().getBlockLayer(), set);
+			}
+			for (BlockRenderLayer layer : blocks.keySet()) {
+				for (Template.BlockInfo info : blocks.get(layer)) {
+					GlStateManager.translate(info.pos.getX(), info.pos.getY(), info.pos.getZ());
+					buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+					dispatcher.renderBlock(info.blockState, BlockPos.ORIGIN, block, buffer);
+					for (int i = 0; i < buffer.getVertexCount(); i++) {
+						int idx = buffer.getColorIndex(i + 1);
+						buffer.putColorRGBA(idx, 255, 255, 255, 150);
+					}
+					tes.draw();
+					GlStateManager.translate(-info.pos.getX(), -info.pos.getY(), -info.pos.getZ());
+				}
+			}
+
+			GlStateManager.disableAlpha();
+			GlStateManager.disableBlend();
+			GlStateManager.disableCull();
+			GlStateManager.popMatrix();
+			return;
+		}
 
 		PosUtils.ManaBatteryPositions positions = new PosUtils.ManaBatteryPositions(world, te.getPos());
 		for (BlockPos pos : positions.fullCircle)

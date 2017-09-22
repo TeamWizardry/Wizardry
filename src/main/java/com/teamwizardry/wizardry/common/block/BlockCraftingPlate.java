@@ -200,6 +200,6 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 
 	@Override
 	public Vec3i offsetToCenter() {
-		return new Vec3i(6, 2, 6);
+		return new Vec3i(4, 1, 4);
 	}
 }
