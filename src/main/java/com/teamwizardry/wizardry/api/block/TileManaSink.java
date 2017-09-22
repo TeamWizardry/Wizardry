@@ -1,14 +1,5 @@
 package com.teamwizardry.wizardry.api.block;
 
-import static net.minecraft.util.EnumFacing.DOWN;
-import static net.minecraft.util.EnumFacing.EAST;
-import static net.minecraft.util.EnumFacing.NORTH;
-import static net.minecraft.util.EnumFacing.SOUTH;
-import static net.minecraft.util.EnumFacing.UP;
-import static net.minecraft.util.EnumFacing.WEST;
-
-import java.awt.Color;
-
 import com.teamwizardry.librarianlib.features.base.block.tile.TileMod;
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBezier3D;
@@ -19,18 +10,25 @@ import com.teamwizardry.librarianlib.features.saving.CapabilityProvide;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.capability.CustomWizardryCapability;
 import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
-
+import com.teamwizardry.wizardry.common.tile.TileManaBattery;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nullable;
+import java.awt.*;
+import java.util.function.Predicate;
+
+import static net.minecraft.util.EnumFacing.*;
 
 /**
  * Created by LordSaad.
@@ -50,7 +48,15 @@ public class TileManaSink extends TileMod implements ITickable {
 
 	@Override
 	public void update() {
-		if (faucetPos != null) {
+		if (faucetPos == null) {
+			for (TileManaFaucet faucet : TileManaBattery.FAUCETS) {
+				if (faucet != null && !faucet.isInvalid() && faucet.getPos().getDistance(getPos().getX(), getPos().getY(), getPos().getZ()) <= ConfigValues.manaBatteryLinkDistance) {
+					faucetPos = faucet.getPos();
+				}
+			}
+		} else {
+			if (getSuckingCondition() != null && !getSuckingCondition().test(this)) return;
+
 			CapManager sink = new CapManager(cap);
 
 			TileManaFaucet tileFaucet = (TileManaFaucet) world.getTileEntity(faucetPos);
@@ -68,8 +74,7 @@ public class TileManaSink extends TileMod implements ITickable {
 			ClientRunnable.run(new ClientRunnable() {
 				@Override
 				@SideOnly(Side.CLIENT)
-				public void runIfClient()
-				{
+				public void runIfClient() {
 					ParticleBuilder helix = new ParticleBuilder(200);
 					helix.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 					helix.setAlphaFunction(new InterpFadeInOut(0.1f, 0.1f));
@@ -84,6 +89,11 @@ public class TileManaSink extends TileMod implements ITickable {
 			});
 
 		}
+	}
+
+	@Nullable
+	public Predicate<TileManaSink> getSuckingCondition() {
+		return null;
 	}
 
 	protected final boolean consumeMana(double amount) {

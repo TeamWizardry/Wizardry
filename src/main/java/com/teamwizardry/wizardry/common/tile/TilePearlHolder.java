@@ -12,6 +12,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
+import javax.annotation.Nullable;
+import java.util.function.Predicate;
+
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
 /**
@@ -25,6 +28,12 @@ public class TilePearlHolder extends TileManaSink implements ICooldown {
 
 	public TilePearlHolder() {
 		super(10000, 10000);
+	}
+
+	@Nullable
+	@Override
+	public Predicate<TileManaSink> getSuckingCondition() {
+		return tileManaSink -> pearl != null && !pearl.isEmpty() && pearl.getItem() == ModItems.PEARL_NACRE;
 	}
 
 	@Override

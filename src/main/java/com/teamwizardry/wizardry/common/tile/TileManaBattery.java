@@ -25,9 +25,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 @TileRegister("mana_battery")
 public class TileManaBattery extends TileManaFaucet implements ITickable {
+
+	public static HashSet<TileManaFaucet> FAUCETS = new HashSet<>();
 
 	public TileManaBattery() {
 		super(100000, 100000);
@@ -50,6 +53,8 @@ public class TileManaBattery extends TileManaFaucet implements ITickable {
 					count++;
 
 		if (count < 21) return;
+
+		if (!FAUCETS.contains(this)) FAUCETS.add(this);
 
 		CapManager manager = new CapManager(cap);
 		if (manager.isManaFull()) return;

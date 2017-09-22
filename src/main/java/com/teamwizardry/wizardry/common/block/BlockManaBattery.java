@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.common.block;
 import com.teamwizardry.librarianlib.features.base.block.tile.BlockModContainer;
 import com.teamwizardry.librarianlib.features.structure.Structure;
 import com.teamwizardry.wizardry.api.block.IStructure;
+import com.teamwizardry.wizardry.api.block.TileManaFaucet;
 import com.teamwizardry.wizardry.client.render.block.TileManaBatteryRenderer;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
 import com.teamwizardry.wizardry.init.ModStructures;
@@ -21,6 +22,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -41,6 +43,17 @@ public class BlockManaBattery extends BlockModContainer implements IStructure {
 	@Override
 	public TileEntity createTileEntity(World world, IBlockState iBlockState) {
 		return new TileManaBattery();
+	}
+
+	@Override
+	public void breakBlock(@NotNull World worldIn, @NotNull BlockPos pos, @NotNull IBlockState state) {
+		TileEntity tile = worldIn.getTileEntity(pos);
+		if (tile instanceof TileManaFaucet) {
+			TileManaFaucet faucet = (TileManaFaucet) tile;
+			TileManaBattery.FAUCETS.remove(faucet);
+		}
+
+		super.breakBlock(worldIn, pos, state);
 	}
 
 	@Override
