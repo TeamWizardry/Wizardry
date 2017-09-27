@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.api;
 
 import com.teamwizardry.librarianlib.features.config.ConfigDoubleRange;
+import com.teamwizardry.librarianlib.features.config.ConfigIntRange;
 import com.teamwizardry.librarianlib.features.config.ConfigProperty;
 
 /**
@@ -11,8 +12,9 @@ public class ConfigValues {
 	@ConfigProperty(category = "general", comment = "If enabled, will inform you of new updates to the mod.")
 	public static boolean versionCheckerEnabled = true;
 
+	@ConfigIntRange(min = 1, max = Integer.MAX_VALUE)
 	@ConfigProperty(category = "world", comment = "How rare the mana pool is in terms of 1 in X")
-	public static int manaPoolRarity = 75;
+	public static int manaPoolRarity = 25;
 
 	@ConfigProperty(category = "world", comment = "If you have a dimension ID conflict with this mod and something else, change this number")
 	public static int underworldID = 42;

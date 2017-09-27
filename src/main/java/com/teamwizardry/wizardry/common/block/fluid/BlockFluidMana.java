@@ -1,10 +1,18 @@
 package com.teamwizardry.wizardry.common.block.fluid;
 
-import com.google.common.base.Predicates;
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import java.awt.Color;
+import java.util.List;
+import java.util.Random;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+
+import javax.annotation.Nonnull;
+
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.block.ManaTracker;
 import com.teamwizardry.wizardry.api.item.IExplodable;
+import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.Utils;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
@@ -14,6 +22,7 @@ import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModPotions;
 import com.teamwizardry.wizardry.init.ModSounds;
+
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.block.material.Material;
@@ -40,13 +49,6 @@ import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-
-import javax.annotation.Nonnull;
-import java.awt.*;
-import java.util.List;
-import java.util.Random;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 public class BlockFluidMana extends BlockFluidClassic {
 
@@ -153,148 +155,151 @@ public class BlockFluidMana extends BlockFluidClassic {
 				});
 
 		// Turn book to codex
-		run(entityIn,
+		run (entityIn,
 				entity -> entity instanceof EntityItem && ((EntityItem) entity).getItem().getItem() == Items.BOOK,
 				entity -> {
-					ItemStack stack = ((EntityItem) entity).getItem();
-					int expiry = ItemNBTHelper.getInt(stack, REACTION_COOLDOWN, 200);
-					if (expiry > 0) {
+					ManaTracker.INSTANCE.addManaCraft(world, pos, (World worldIn, BlockPos posIn) -> {
+						return PosUtils.blockHasItems(worldIn, posIn, Items.BOOK);
+					}, 200, (worldIn, posIn, cookTimeIn, durationIn) -> {
+						EntityItem entityItem = PosUtils.getItemAtPos(worldIn, posIn, Items.BOOK);
 						if (world.isRemote)
-							LibParticles.CRAFTING_ALTAR_IDLE(world, entity.getPositionVector());
+							LibParticles.CRAFTING_ALTAR_IDLE(world, entityItem.getPositionVector());
+						if ((cookTimeIn % 5) == 0)
+							world.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
+					}, (worldIn, posIn) -> {
+						EntityItem entityItem = PosUtils.getItemAtPos(worldIn, posIn, Items.BOOK);
+						PacketHandler.NETWORK.sendToAllAround(new PacketExplode(entityItem.getPositionVector(), Color.CYAN, Color.BLUE, 0.9, 2, 500, 100, 50, true),
+								new NetworkRegistry.TargetPoint(world.provider.getDimension(), entityItem.posX, entityItem.posY, entityItem.posZ, 256));
 
-						ItemNBTHelper.setInt(stack, REACTION_COOLDOWN, --expiry);
-						if ((expiry % 5) == 0)
-							world.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
-					} else {
-						PacketHandler.NETWORK.sendToAllAround(new PacketExplode(entity.getPositionVector(), Color.CYAN, Color.BLUE, 0.9, 2, 500, 100, 50, true),
-								new NetworkRegistry.TargetPoint(world.provider.getDimension(), entity.posX, entity.posY, entity.posZ, 256));
+						boom(world, entityItem);
 
-						boom(world, entity);
-
-						((EntityItem) entity).setItem(new ItemStack(ModItems.BOOK, stack.getCount()));
-						world.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
-					}
+						entityItem.setItem(new ItemStack(ModItems.BOOK, entityItem.getItem().getCount()));
+						world.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
+					});
 				});
 
 		// Convert mana to nacre
 		run(entityIn,
 				entity -> entity instanceof EntityItem && ((EntityItem) entity).getItem().getItem() == Items.GOLD_NUGGET,
 				entity -> {
-					ItemStack stack = ((EntityItem) entity).getItem();
-					int cooldown = ItemNBTHelper.getInt(stack, REACTION_COOLDOWN, 200);
-					if (cooldown > 0)
-					{
-						ItemNBTHelper.setInt(stack, REACTION_COOLDOWN, --cooldown);
-						if (cooldown % 5 == 0)
-							world.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.BUBBLING, SoundCategory.AMBIENT, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
-					}
-					else
-					{
-						if (world.isRemote) LibParticles.FIZZING_AMBIENT(world, entity.getPositionVector());
-						world.setBlockState(entity.getPosition(), ModBlocks.FLUID_NACRE.getDefaultState());
-						stack.shrink(1);
-						if (stack.isEmpty())
-							world.removeEntity(entity);
-					}
+					ManaTracker.INSTANCE.addManaCraft(world, pos, (worldIn, posIn) -> {
+						return PosUtils.blockHasItems(worldIn, posIn, Items.GOLD_NUGGET);
+					}, 200, (worldIn, posIn, cookTimeIn, durationIn) -> {
+						if (cookTimeIn % 5 == 0)
+						{
+							EntityItem item = PosUtils.getItemAtPos(worldIn, posIn, Items.GOLD_NUGGET);
+							world.playSound(null, item.posX, item.posY, item.posZ, ModSounds.BUBBLING, SoundCategory.AMBIENT, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
+						}
+					}, (worldIn, posIn) -> {
+						EntityItem item = PosUtils.getItemAtPos(worldIn, posIn, Items.GOLD_NUGGET);
+						if (worldIn.isRemote)
+							LibParticles.FIZZING_AMBIENT(worldIn, item.getPositionVector());
+						world.setBlockState(posIn, ModBlocks.FLUID_NACRE.getDefaultState());
+						item.getItem().shrink(1);
+						if (item.getItem().isEmpty())
+							world.removeEntity(item);
+					});
 				});
 		
 		// Explode explodable items
 		run(entityIn,
 				entity -> entity instanceof EntityItem && ((EntityItem) entity).getItem().getItem() instanceof IExplodable,
 				entity -> {
-					ItemStack stack = ((EntityItem) entity).getItem();
-					int expiry = ItemNBTHelper.getInt(stack, REACTION_COOLDOWN, 200);
-					if (expiry > 0) {
-						ItemNBTHelper.setInt(stack, REACTION_COOLDOWN, --expiry);
-						if ((expiry % 5) == 0)
-							world.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.BUBBLING, SoundCategory.AMBIENT, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
-					} else {
-						if (world.isRemote) LibParticles.FIZZING_ITEM(world, entity.getPositionVector());
-
-						((IExplodable) stack.getItem()).explode(entityIn);
-						world.setBlockToAir(entity.getPosition());
-						world.removeEntity(entity);
-						world.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.GLASS_BREAK, SoundCategory.AMBIENT, 0.5F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
-					}
+					ManaTracker.INSTANCE.addManaCraft(world, pos, (worldIn, posIn) -> {
+						List<EntityItem> entities = world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos));
+						for (EntityItem entityItem : entities)
+						{
+							if (entityItem.getItem() == null)
+								continue;
+							if (entityItem.getItem().getItem() instanceof IExplodable)
+								return true;
+						}
+						return false;
+					}, 200, (worldIn, posIn, cookTimeIn, durationIn) -> {
+						List<EntityItem> entities = world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos));
+						for (EntityItem entityItem : entities)
+						{
+							if (entityItem.getItem() == null)
+								continue;
+							if (entityItem.getItem().getItem() instanceof IExplodable)
+							{
+								if (cookTimeIn % 5 == 0)
+									worldIn.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, ModSounds.BUBBLING, SoundCategory.AMBIENT, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
+								return;
+							}
+						}
+					}, (worldIn, posIn) -> {
+						List<EntityItem> entities = world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos));
+						for (EntityItem entityItem : entities)
+						{
+							if (entityItem.getItem() == null)
+								continue;
+							if (entityItem.getItem().getItem() instanceof IExplodable)
+							{
+								((IExplodable) entityItem.getItem().getItem()).explode(entityItem);
+								worldIn.setBlockToAir(posIn);
+								worldIn.removeEntity(entityItem);
+								worldIn.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, ModSounds.GLASS_BREAK, SoundCategory.AMBIENT, 0.5F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
+								return;
+							}
+						}
+					});
 				});
 
 		// Mana Battery Recipe
-		run(entityIn, entity -> {
-			if (world.isRemote) return false;
-			if (entityIn instanceof EntityItem && !((EntityItem) entity).getItem().isEmpty() && ((EntityItem) entity).getItem().getItem() == Items.DIAMOND) {
-				List<Entity> entities = world.getEntitiesInAABBexcluding(entityIn, new AxisAlignedBB(pos),
-						Predicates.instanceOf(EntityItem.class));
-				EntityItem devilDust = null, soulSand = null;
-				for (Entity e : entities) {
-					EntityItem entityItem = (EntityItem) e;
-					if (entityItem.getItem().getItem() == ModItems.DEVIL_DUST)
-						devilDust = entityItem;
-					else if (entityItem.getItem().getItem() == Item.getItemFromBlock(Blocks.SOUL_SAND))
-						soulSand = entityItem;
-				}
+		run(entityIn,
+				entity -> entity instanceof EntityItem && !((EntityItem) entity).getItem().isEmpty() && ((EntityItem) entity).getItem().getItem() == Items.DIAMOND,
+				entity -> {
+					ManaTracker.INSTANCE.addManaCraft(world, pos, (worldIn, posIn) -> {
+						if (PosUtils.blockHasItems(worldIn, posIn, Items.DIAMOND, Item.getItemFromBlock(Blocks.SOUL_SAND), ModItems.DEVIL_DUST))
+						{
+							for (int i = -1; i <= 1; i++)
+								for (int j = -1; j <= 1; j++)
+									if (world.getBlockState(posIn.add(i, 0, j)) != ModBlocks.FLUID_MANA.getDefaultState())
+										return false;
+							return true;
+						}
+						return false;
+					}, 200, (worldIn, posIn, cookTimeIn, durationIn) -> {
+						EntityItem diamond = PosUtils.getItemAtPos(worldIn, posIn, Items.DIAMOND);
+						if (worldIn.isRemote)
+							LibParticles.CRAFTING_ALTAR_IDLE(worldIn, diamond.getPositionVector());
+						if (cookTimeIn % 5 == 0)
+							worldIn.playSound(null, diamond.posX, diamond.posY, diamond.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
+					}, (worldIn, posIn) -> {
+						EntityItem diamond = PosUtils.getItemAtPos(worldIn, posIn, Items.DIAMOND);
+						EntityItem soulSand = PosUtils.getItemAtPos(worldIn, posIn, Item.getItemFromBlock(Blocks.SOUL_SAND));
+						EntityItem devilDust = PosUtils.getItemAtPos(worldIn, posIn, ModItems.DEVIL_DUST);
+						if (diamond == null || soulSand == null || devilDust == null)
+							return;
+						diamond.getItem().shrink(1);
+						if (diamond.getItem().isEmpty())
+							world.removeEntity(diamond);
+						soulSand.getItem().shrink(1);
+						if (soulSand.getItem().isEmpty())
+							world.removeEntity(soulSand);
+						devilDust.getItem().shrink(1);
+						if (devilDust.getItem().isEmpty())
+							world.removeEntity(devilDust);
+						
+						EntityItem manaBattery = new EntityItem(worldIn, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, new ItemStack(ModBlocks.MANA_BATTERY));
+						manaBattery.motionX = 0;
+						manaBattery.motionY = 0;
+						manaBattery.motionZ = 0;
+						manaBattery.forceSpawn = true;
+						world.spawnEntity(manaBattery);
+						
+						for (int i = -1; i <= 1; i++)
+							for (int j = -1; j <= 1; j++)
+								worldIn.setBlockToAir(posIn.add(i, 0, j));
+						
+						PacketHandler.NETWORK.sendToAllAround(new PacketExplode(manaBattery.getPositionVector(), Color.CYAN, Color.BLUE, 0.9, 2, 500, 100, 50, true),
+								new NetworkRegistry.TargetPoint(world.provider.getDimension(), manaBattery.posX, manaBattery.posY, manaBattery.posZ, 256));
 
-				for (int i = -1; i <= 1; i++)
-					for (int j = -1; j <= 1; j++) {
-						if (world.getBlockState(pos.add(i, 0, j)) != ModBlocks.FLUID_MANA.getDefaultState())
-							return false;
-					}
+						boom(world, manaBattery);
 
-				return devilDust != null && soulSand != null;
-			}
-			return false;
-		}, entity -> {
-			ItemStack stack = ((EntityItem) entity).getItem();
-			int expiry = ItemNBTHelper.getInt(stack, REACTION_COOLDOWN, 200);
-			if (expiry > 0) {
-				if (world.isRemote)
-					LibParticles.CRAFTING_ALTAR_IDLE(world, entity.getPositionVector());
-
-				ItemNBTHelper.setInt(stack, REACTION_COOLDOWN, --expiry);
-				if ((expiry % 5) == 0)
-					world.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
-			} else {
-				if (world.isRemote) return;
-
-				List<Entity> entities = world.getEntitiesInAABBexcluding(entityIn, new AxisAlignedBB(pos), Predicates.instanceOf(EntityItem.class));
-				EntityItem devilDust = null, soulSand = null;
-				for (Entity e : entities) {
-					EntityItem entityItem = (EntityItem) e;
-					if (entityItem.getItem().getItem() == ModItems.DEVIL_DUST)
-						devilDust = entityItem;
-					else if (entityItem.getItem().getItem() == Item.getItemFromBlock(Blocks.SOUL_SAND))
-						soulSand = entityItem;
-				}
-
-				((EntityItem) entity).getItem().shrink(1);
-				if (((EntityItem) entity).getItem().isEmpty())
-					world.removeEntity(entity);
-
-				devilDust.getItem().shrink(1);
-				if (devilDust.getItem().isEmpty())
-					world.removeEntity(devilDust);
-
-				soulSand.getItem().shrink(1);
-				if (soulSand.getItem().isEmpty())
-					world.removeEntity(soulSand);
-
-				EntityItem manaBattery = new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, new ItemStack(ModBlocks.MANA_BATTERY));
-				manaBattery.motionX = 0;
-				manaBattery.motionY = 0;
-				manaBattery.motionZ = 0;
-				manaBattery.forceSpawn = true;
-				world.spawnEntity(manaBattery);
-
-				for (int i = -1; i <= 1; i++)
-					for (int j = -1; j <= 1; j++)
-						world.setBlockToAir(pos.add(i, 0, j));
-
-				PacketHandler.NETWORK.sendToAllAround(new PacketExplode(entity.getPositionVector(), Color.CYAN, Color.BLUE, 0.9, 2, 500, 100, 50, true),
-						new NetworkRegistry.TargetPoint(world.provider.getDimension(), entity.posX, entity.posY, entity.posZ, 256));
-
-				boom(world, manaBattery);
-
-				world.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
-			}
+						world.playSound(null, manaBattery.posX, manaBattery.posY, manaBattery.posZ, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
+					});
 		});
 	}
 

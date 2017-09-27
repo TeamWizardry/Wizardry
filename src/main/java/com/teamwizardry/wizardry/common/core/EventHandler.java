@@ -1,8 +1,13 @@
 package com.teamwizardry.wizardry.common.core;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 import com.teamwizardry.librarianlib.features.methodhandles.MethodHandleHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants.MISC;
+import com.teamwizardry.wizardry.api.block.ManaTracker;
 import com.teamwizardry.wizardry.api.events.SpellCastEvent;
 import com.teamwizardry.wizardry.api.item.RedstoneTracker;
 import com.teamwizardry.wizardry.api.spell.IContinuousModule;
@@ -14,6 +19,7 @@ import com.teamwizardry.wizardry.api.util.TeleportUtil;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModPotions;
+
 import kotlin.Unit;
 import kotlin.jvm.functions.Function2;
 import net.minecraft.entity.Entity;
@@ -36,10 +42,6 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 public class EventHandler {
 
@@ -70,6 +72,7 @@ public class EventHandler {
 	@SubscribeEvent
 	public void tickEvent(WorldTickEvent event) {
 		RedstoneTracker.INSTANCE.tick();
+		ManaTracker.INSTANCE.tick();
 		if (event.phase != Phase.START) {
 			if (!fallResetUUIDs.isEmpty())
 				event.world.playerEntities.stream().filter(entity -> fallResetUUIDs.contains(entity.getUniqueID())).forEach(entity -> entity.fallDistance = -500);

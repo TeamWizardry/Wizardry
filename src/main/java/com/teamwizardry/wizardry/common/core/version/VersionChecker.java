@@ -37,6 +37,8 @@ public final class VersionChecker {
 			player.sendMessage(new TextComponentString(TextFormatting.RED + "Do NOT expect much from the mod in its current state and expect a lot of things to change!"));
 			player.sendMessage(new TextComponentString(TextFormatting.RED + "YOU HAVE BEEN WARNED"));
 		}
+		
+		//TODO: Version checker changelog messages
 
 		if (doneChecking && event.phase == TickEvent.Phase.END && Minecraft.getMinecraft().player != null && !triedToWarnPlayer) {
 			if (!onlineVersion.isEmpty()) {
