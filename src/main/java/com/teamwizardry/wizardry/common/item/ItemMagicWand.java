@@ -13,7 +13,6 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -34,10 +33,9 @@ public class ItemMagicWand extends ItemMod implements IGlowingItem {
 
 		TileEntity tile = worldIn.getTileEntity(pos);
 		if (tile != null && tile instanceof IManaInteractable) {
-			CapManager manager = new CapManager(((IManaInteractable) tile).getCap());
-			boolean benign = false;
-			if (tile instanceof TilePearlHolder) benign = ((TilePearlHolder) tile).isBenign;
-			player.sendMessage(new TextComponentString(manager.getMana() + "/" + manager.getMaxMana() + (benign ? " - benign" : "")));
+			if (tile instanceof TilePearlHolder) {
+				new CapManager(((TilePearlHolder) tile).getCap()).removeMana(1000);
+			}
 		}
 
 		return EnumActionResult.SUCCESS;

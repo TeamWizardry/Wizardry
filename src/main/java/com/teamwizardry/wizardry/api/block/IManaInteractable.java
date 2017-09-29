@@ -48,7 +48,7 @@ public interface IManaInteractable {
 			CapManager manager = new CapManager(cap);
 			manager.addMana(amount);
 
-			if (RandUtil.nextInt(2) == 0)
+			if (RandUtil.nextInt(5) == 0)
 				ClientRunnable.run(new ClientRunnable() {
 					@Override
 					@SideOnly(Side.CLIENT)
@@ -56,13 +56,11 @@ public interface IManaInteractable {
 						ParticleBuilder helix = new ParticleBuilder(200);
 						helix.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 						helix.setAlphaFunction(new InterpFadeInOut(0.1f, 0.1f));
-
-						ParticleSpawner.spawn(helix, world, new StaticInterp<>(new Vec3d(from).addVector(0.5, 1, 0.5)), 1, 0, (aFloat, particleBuilder) -> {
+						ParticleSpawner.spawn(helix, world, new StaticInterp<>(new Vec3d(from).addVector(0.5, 1, 0.5)), 1, 0, (someFloat, particleBuilder) -> {
 							particleBuilder.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), RandUtil.nextInt(50, 200)));
-							particleBuilder.setScale(RandUtil.nextFloat());
-							//particleBuilder.setPositionOffset(new Vec3d(RandUtil.nextDouble(-0.1, 0.1), RandUtil.nextDouble(-0.1, 0.1), RandUtil.nextDouble(-0.1, 0.1)));
+							particleBuilder.setScale(RandUtil.nextFloat(0.5f, 0.8f));
 							particleBuilder.setPositionFunction(new InterpBezier3D(Vec3d.ZERO, new Vec3d(origin.subtract(from)), new Vec3d(0, 5, 0), new Vec3d(0, -5, 0)));
-							particleBuilder.setLifetime(RandUtil.nextInt(30, 50));
+							particleBuilder.setLifetime(RandUtil.nextInt(50, 60));
 						});
 					}
 				});

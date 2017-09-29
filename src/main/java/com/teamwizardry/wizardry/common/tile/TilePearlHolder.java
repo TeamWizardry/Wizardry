@@ -77,7 +77,7 @@ public class TilePearlHolder extends TileManaInteracter implements ICooldown {
 				if (getPos().subtract(relative).equals(target)) {
 					break primary;
 				}
-			suckManaFrom(getWorld(), getPos(), getCap(), target, 1, false);
+			suckManaFrom(getWorld(), getPos(), getCap(), target, 100, false);
 		}
 
 		if (isBenign && new CapManager(getCap()).isManaEmpty()) {

@@ -178,7 +178,7 @@ public class EntityFairy extends FlyingEntityMod {
 	public void onDeath(@Nonnull DamageSource cause) {
 		super.onDeath(cause);
 		if (getHealth() <= 0)
-			PacketHandler.NETWORK.sendToAllAround(new PacketExplode(getPositionVector().addVector(0, 0.25, 0), color, color, 0.9, 0.9, RandUtil.nextInt(100, 200), 75, 25, true),
+			PacketHandler.NETWORK.sendToAllAround(new PacketExplode(getPositionVector().addVector(0, 0.25, 0), color, color, 0.5, 0.5, RandUtil.nextInt(100, 200), 75, 25, true),
 					new NetworkRegistry.TargetPoint(world.provider.getDimension(), posX, posY, posZ, 256));
 	}
 

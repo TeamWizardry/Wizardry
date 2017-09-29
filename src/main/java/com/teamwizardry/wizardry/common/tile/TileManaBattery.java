@@ -54,7 +54,7 @@ public class TileManaBattery extends TileManaInteracter {
 					tile.markDirty();
 					world.notifyBlockUpdate(target, world.getBlockState(target), world.getBlockState(target), 3);
 				}
-				((TilePearlHolder) tile).suckManaFrom(getWorld(), getPos(), getCap(), target, 100, false);
+				((TilePearlHolder) tile).suckManaFrom(getWorld(), getPos(), getCap(), target, 10, false);
 			}
 		}
 	}

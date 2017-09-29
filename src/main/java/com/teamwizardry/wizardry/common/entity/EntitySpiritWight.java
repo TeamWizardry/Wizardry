@@ -1,14 +1,16 @@
 package com.teamwizardry.wizardry.common.entity;
 
-import java.awt.Color;
-
-import javax.annotation.Nonnull;
-
+import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
+import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
+import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
+import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
+import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.init.ModSounds;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -18,11 +20,15 @@ import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nonnull;
+import java.awt.*;
 
 /**
  * Created by Saad on 8/17/2016.
@@ -74,8 +80,7 @@ public class EntitySpiritWight extends EntityMob {
 		ClientRunnable.run(new ClientRunnable() {
 			@Override
 			@SideOnly(Side.CLIENT)
-			public void runIfClient()
-			{
+			public void runIfClient() {
 				LibParticles.AIR_THROTTLE(world, getPositionVector().addVector(0, getEyeHeight(), 0), normal, Color.WHITE, Color.YELLOW, RandUtil.nextDouble(0.2, 1.0));
 			}
 		});
@@ -114,8 +119,7 @@ public class EntitySpiritWight extends EntityMob {
 		ClientRunnable.run(new ClientRunnable() {
 			@Override
 			@SideOnly(Side.CLIENT)
-			public void runIfClient()
-			{
+			public void runIfClient() {
 				if ((closePlayer != null) && !angry)
 					LibParticles.SPIRIT_WIGHT_FLAME_FAR(world, getPositionVector().addVector(0, getEyeHeight(), 0));
 				else if (angry)
@@ -147,13 +151,38 @@ public class EntitySpiritWight extends EntityMob {
 			ClientRunnable.run(new ClientRunnable() {
 				@Override
 				@SideOnly(Side.CLIENT)
-				public void runIfClient()
-				{
+				public void runIfClient() {
 					LibParticles.SPIRIT_WIGHT_HURT(world, getPositionVector());
 				}
 			});
 			return true;
 		} else return false;
+	}
+
+	@Override
+	public void onDeath(DamageSource cause) {
+		ClientRunnable.run(new ClientRunnable() {
+			@Override
+			@SideOnly(Side.CLIENT)
+			public void runIfClient() {
+				ParticleBuilder glitter = new ParticleBuilder(RandUtil.nextInt(100, 150));
+				glitter.setColor(Color.WHITE);
+				glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+				glitter.setAlphaFunction(new InterpFadeInOut(0.1f, 0.1f));
+				glitter.setAcceleration(Vec3d.ZERO);
+
+				ParticleSpawner.spawn(glitter, world, new StaticInterp<>(getPositionVector().addVector(0, height, 0)), 1000, 0, (i, build) -> {
+					double radius = 0.2;
+					build.setDeceleration(new Vec3d(RandUtil.nextDouble(0.8, 0.95), RandUtil.nextDouble(0.8, 0.95), RandUtil.nextDouble(0.8, 0.95)));
+					build.addMotion(new Vec3d(RandUtil.nextDouble(-radius, radius), RandUtil.nextDouble(-radius, radius), RandUtil.nextDouble(-radius, radius)));
+					build.setLifetime(RandUtil.nextInt(200, 250));
+					build.setScaleFunction(new InterpScale(RandUtil.nextFloat(0.6f, 1.5f), 0));
+					if (RandUtil.nextBoolean()) build.setColor(Color.WHITE);
+					else build.setColor(Color.YELLOW);
+				});
+			}
+		});
+		super.onDeath(cause);
 	}
 
 	@Override
