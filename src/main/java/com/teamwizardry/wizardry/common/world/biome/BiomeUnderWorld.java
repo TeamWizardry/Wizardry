@@ -46,10 +46,10 @@ public class BiomeUnderWorld extends Biome {
 	public void onTickPlayerTick(TickEvent.PlayerTickEvent event) {
 		if (event.player.world.isRemote) return;
 
-		// FIXME: 9/21/2017 if (!event.player.world.getGameRules().getBoolean("doMobSpawning")) return;
+		if (!event.player.world.getGameRules().getBoolean("doMobSpawning")) return;
 
 		if (event.player.world.provider.getDimension() == ConfigValues.underworldID) {
-			if (RandUtil.nextInt(100) == 0 && getEntityCount(EntityFairy.class, event.player.getPosition(), event.player.world, 64) < 15) {
+			if (RandUtil.nextInt(300) == 0 && getEntityCount(EntityFairy.class, event.player.getPosition(), event.player.world, 64) < 15) {
 				BlockPos pos = new BlockPos(event.player.posX + RandUtil.nextInt(-64, 64), RandUtil.nextInt(110, 150), event.player.posZ + RandUtil.nextInt(-64, 64));
 				if (event.player.world.isAirBlock(pos)) {
 					EntityFairy entity = new EntityFairy(event.player.world);
@@ -58,7 +58,7 @@ public class BiomeUnderWorld extends Biome {
 				}
 			}
 
-			if (RandUtil.nextInt(300) == 0 && getEntityCount(EntitySpiritWight.class, event.player.getPosition(), event.player.world, 128) < 1) {
+			if (RandUtil.nextInt(1000) == 0 && getEntityCount(EntitySpiritWight.class, event.player.getPosition(), event.player.world, 128) < 1) {
 				BlockPos pos = new BlockPos(event.player.posX + RandUtil.nextInt(-128, 128), event.player.posY + RandUtil.nextInt(-10, 10), event.player.posZ + RandUtil.nextInt(-128, 128));
 				if (pos.getDistance((int) event.player.posX, (int) event.player.posY, (int) event.player.posZ) > 64) {
 					EntitySpiritWight entity = new EntitySpiritWight(event.player.world);
@@ -68,7 +68,7 @@ public class BiomeUnderWorld extends Biome {
 				}
 			}
 
-			if (RandUtil.nextInt(500) == 0 && getEntityCount(EntityUnicorn.class, event.player.getPosition(), event.player.world, 64) < 3) {
+			if (RandUtil.nextInt(1000) == 0 && getEntityCount(EntityUnicorn.class, event.player.getPosition(), event.player.world, 64) < 3) {
 				BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos((int) event.player.posX + RandUtil.nextInt(-64, 64), 100, (int) event.player.posZ + RandUtil.nextInt(-64, 64));
 
 				if (pos.getDistance((int) event.player.posX, (int) event.player.posY, (int) event.player.posZ) > 30) {
