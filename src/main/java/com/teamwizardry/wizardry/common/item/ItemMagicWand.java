@@ -2,8 +2,19 @@ package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.features.base.item.IGlowingItem;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
+import com.teamwizardry.wizardry.api.block.IManaInteractable;
+import com.teamwizardry.wizardry.api.capability.CapManager;
+import com.teamwizardry.wizardry.common.tile.TilePearlHolder;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -15,6 +26,21 @@ public class ItemMagicWand extends ItemMod implements IGlowingItem {
 	public ItemMagicWand() {
 		super("magic_wand");
 		setMaxStackSize(1);
+	}
+
+	@Override
+	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+		if (worldIn.isRemote) return EnumActionResult.SUCCESS;
+
+		TileEntity tile = worldIn.getTileEntity(pos);
+		if (tile != null && tile instanceof IManaInteractable) {
+			CapManager manager = new CapManager(((IManaInteractable) tile).getCap());
+			boolean benign = false;
+			if (tile instanceof TilePearlHolder) benign = ((TilePearlHolder) tile).isBenign;
+			player.sendMessage(new TextComponentString(manager.getMana() + "/" + manager.getMaxMana() + (benign ? " - benign" : "")));
+		}
+
+		return EnumActionResult.SUCCESS;
 	}
 
 	@SideOnly(Side.CLIENT)

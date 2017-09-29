@@ -1,19 +1,30 @@
 package com.teamwizardry.wizardry.common.tile;
 
 import com.teamwizardry.librarianlib.features.autoregister.TileRegister;
+import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.saving.Save;
-import com.teamwizardry.wizardry.api.block.TileManaSink;
+import com.teamwizardry.wizardry.api.block.TileManaInteracter;
+import com.teamwizardry.wizardry.api.capability.CapManager;
+import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
+import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
 import com.teamwizardry.wizardry.api.item.ICooldown;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
+import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
+import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.function.Predicate;
+import java.awt.*;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
@@ -21,10 +32,18 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by Saad on 5/7/2016.
  */
 @TileRegister("pedestal")
-public class TilePearlHolder extends TileManaSink implements ICooldown {
+public class TilePearlHolder extends TileManaInteracter implements ICooldown {
 
 	@Save
+	@NotNull
 	public ItemStack pearl = ItemStack.EMPTY;
+
+	@Save
+	public boolean isBenign = false;
+
+	@Save
+	@Nullable
+	public BlockPos structurePos = null;
 
 	public TilePearlHolder() {
 		super(10000, 10000);
@@ -32,16 +51,47 @@ public class TilePearlHolder extends TileManaSink implements ICooldown {
 
 	@Nullable
 	@Override
-	public Predicate<TileManaSink> getSuckingCondition() {
-		return tileManaSink -> pearl != null && !pearl.isEmpty() && pearl.getItem() == ModItems.PEARL_NACRE;
+	public IWizardryCapability getCap() {
+		if (!pearl.isEmpty() && pearl.getItem() == ModItems.MANA_ORB) {
+			return WizardryCapabilityProvider.getCap(pearl);
+		}
+		return null;
 	}
 
 	@Override
 	public void update() {
 		super.update();
-		if (world.isRemote) return;
-		if (pearl == null) pearl = ItemStack.EMPTY;
 
+		if (!isBenign)
+			for (BlockPos pearlHolders : getNearestSuckables(TilePearlHolder.class, getWorld(), getPos())) {
+				TileEntity tile = getWorld().getTileEntity(pearlHolders);
+				if (tile != null && tile instanceof TilePearlHolder && !((TilePearlHolder) tile).isBenign) {
+					if (structurePos != null && ((TilePearlHolder) tile).structurePos != null && !structurePos.equals(((TilePearlHolder) tile).structurePos))
+						suckManaFrom(getWorld(), getPos(), getCap(), pearlHolders, 100, true);
+				}
+			}
+
+		primary:
+		for (BlockPos target : getNearestSuckables(TileManaBattery.class, getWorld(), getPos())) {
+			for (BlockPos relative : TileManaBattery.poses)
+				if (getPos().subtract(relative).equals(target)) {
+					break primary;
+				}
+			suckManaFrom(getWorld(), getPos(), getCap(), target, 1, false);
+		}
+
+		if (isBenign && new CapManager(getCap()).isManaEmpty()) {
+			pearl = ItemStack.EMPTY;
+			markDirty();
+
+			world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), ModSounds.GLASS_BREAK, SoundCategory.AMBIENT, 0.5F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
+			PacketHandler.NETWORK.sendToAllAround(new PacketExplode(new Vec3d(getPos()).addVector(0.5, 0.5, 0.5), Color.CYAN, Color.BLUE, 0.5, 0.5, 50, 50, 10, true),
+					new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
+		}
+
+		if (world.isRemote) return;
+
+		// TODO: support for this again
 		if (pearl.getItem() == ModItems.PEARL_NACRE) {
 			updateCooldown(pearl);
 

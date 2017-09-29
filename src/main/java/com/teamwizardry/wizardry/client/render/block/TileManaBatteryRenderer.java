@@ -9,13 +9,10 @@ import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.IStructure;
-import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.core.IsolatedBlock;
-import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
-import com.teamwizardry.wizardry.common.tile.TilePearlHolder;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.proxy.ClientProxy;
 import net.minecraft.client.Minecraft;
@@ -28,7 +25,6 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.init.Blocks;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -182,25 +178,6 @@ public class TileManaBatteryRenderer extends TileEntitySpecialRenderer<TileManaB
 			GlStateManager.disableCull();
 			GlStateManager.popMatrix();
 			return;
-		}
-
-
-		CapManager manager = new CapManager(te.cap);
-		if (!manager.isManaFull()) {
-			for (BlockPos relative : TileManaBattery.poses) {
-				BlockPos target = te.getPos().add(relative);
-				if (!world.isBlockLoaded(target)) continue;
-
-				TileEntity tile = world.getTileEntity(target);
-				if (tile == null) continue;
-				if (!(tile instanceof TilePearlHolder)) continue;
-				TilePearlHolder holder = (TilePearlHolder) world.getTileEntity(target);
-
-				if (holder == null || holder.pearl == null || holder.pearl.isEmpty() || holder.pearl.getItem() != ModItems.MANA_ORB)
-					continue;
-				if (RandUtil.nextInt(7) == 0)
-					LibParticles.COLORFUL_BATTERY_BEZIER(world, target, te.getPos());
-			}
 		}
 
 		if (RandUtil.nextInt(10) == 0) {

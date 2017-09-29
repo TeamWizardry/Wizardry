@@ -5,7 +5,8 @@ import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.block.TileManaSink;
+import com.teamwizardry.wizardry.api.block.TileManaInteracter;
+import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.item.EnumPearlType;
 import com.teamwizardry.wizardry.api.item.IInfusable;
 import com.teamwizardry.wizardry.api.render.ClusterObject;
@@ -25,6 +26,7 @@ import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -35,6 +37,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
@@ -42,7 +45,7 @@ import java.util.Random;
  * Created by Saad on 6/10/2016.
  */
 @TileRegister("crafting_plate")
-public class TileCraftingPlate extends TileManaSink {
+public class TileCraftingPlate extends TileManaInteracter {
 
 	@Save
 	public int craftingTime = 300;
@@ -57,6 +60,15 @@ public class TileCraftingPlate extends TileManaSink {
 	public ItemStack output;
 	public List<ClusterObject> inventory = new ArrayList<>();
 	public Random random = new Random(getPos().toLong());
+
+	public static final HashSet<BlockPos> poses = new HashSet<>();
+
+	static {
+		poses.add(new BlockPos(3, 2, 3));
+		poses.add(new BlockPos(-3, 2, 3));
+		poses.add(new BlockPos(3, 2, -3));
+		poses.add(new BlockPos(-3, 2, -3));
+	}
 
 	public TileCraftingPlate() {
 		super(10000, 10000);
@@ -84,6 +96,21 @@ public class TileCraftingPlate extends TileManaSink {
 	public void update() {
 		super.update();
 
+		for (BlockPos relative : poses) {
+			BlockPos target = getPos().add(relative);
+			TileEntity tile = world.getTileEntity(target);
+			if (tile != null && tile instanceof TilePearlHolder) {
+				if (!((TilePearlHolder) tile).isBenign) {
+					((TilePearlHolder) tile).structurePos = getPos();
+					tile.markDirty();
+					world.notifyBlockUpdate(target, world.getBlockState(target), world.getBlockState(target), 3);
+					((TilePearlHolder) tile).suckManaFrom(getWorld(), getPos(), getCap(), target, 100, false);
+				}
+			}
+		}
+
+		new CapManager(getCap()).removeMana(100);
+
 		for (EntityItem entityItem : world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos).grow(2, 2, 2))) {
 			ItemStack stack = entityItem.getItem().copy();
 			stack.setCount(1);
@@ -109,7 +136,7 @@ public class TileCraftingPlate extends TileManaSink {
 		}
 
 		if (isCrafting) {
-			if (!consumeMana(50)) {
+			if (!new CapManager(cap).isManaEmpty()) {
 				craftingTimeLeft = Math.min(300, craftingTimeLeft++);
 				return;
 			}
