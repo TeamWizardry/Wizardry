@@ -1,132 +1,71 @@
 package com.teamwizardry.wizardry.api.block;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.function.BiConsumer;
-import java.util.function.BiPredicate;
+import java.util.List;
+import java.util.Set;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimaps;
+import com.teamwizardry.librarianlib.features.utilities.DimWithPos;
+import com.teamwizardry.wizardry.crafting.mana.ManaCrafter;
 import com.teamwizardry.wizardry.init.ModBlocks;
 
-import net.minecraft.client.Minecraft;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 
 public class ManaTracker
 {
 	public static ManaTracker INSTANCE = new ManaTracker();
-	private LinkedList<ManaBluetooth> blueteeth = new LinkedList<>();
-	private HashMap<World, HashSet<BlockPos>> trackedLocs = new HashMap<>();
+	private HashMultimap<DimWithPos, ManaCrafter> manaCrafters = HashMultimap.create();
 	
-	private void trackPos(World world, BlockPos pos)
+	public void addManaCraft(World world, BlockPos pos, ManaCrafter crafter)
 	{
-		trackedLocs.putIfAbsent(world, new HashSet<>());
-		trackedLocs.get(world).add(pos);
-	}
-	
-	private boolean isPosTracked(World world, BlockPos pos)
-	{
-		return trackedLocs.getOrDefault(world, new HashSet<>()).contains(pos);
-	}
-	
-	private void untrackPos(World world, BlockPos pos)
-	{
-		trackedLocs.getOrDefault(world, new HashSet<>()).remove(pos);
-	}
-	
-	public void addManaCraft(World world, BlockPos pos, BiPredicate<World, BlockPos> input, int duration, BiConsumer<World, BlockPos> output)
-	{
-		if (isPosTracked(world, pos))
-			return;
-		if (world.getBlockState(pos).getBlock() == ModBlocks.FLUID_MANA)
-		{
-			blueteeth.add(new ManaBluetooth(world, pos, input, duration, output));
-			trackPos(world, pos);
-		}
-	}
-	
-	public void addManaCraft(World world, BlockPos pos, BiPredicate<World, BlockPos> input, int duration, QuadConsumer<World, BlockPos, Integer, Integer> tickEffect, BiConsumer<World, BlockPos> output)
-	{
-		if (isPosTracked(world, pos))
-			return;
-		if (world.getBlockState(pos).getBlock() == ModBlocks.FLUID_MANA)
-		{
-			blueteeth.add(new ManaBluetooth(world, pos, input, duration, tickEffect, output));
-			trackPos(world, pos);
-		}
+		DimWithPos key = new DimWithPos(world, pos);
+		Set<ManaCrafter> crafterList = manaCrafters.get(key);
+		for (ManaCrafter manaCrafter : crafterList)
+			if (manaCrafter.equals(crafter))
+				return;
+		if (world.getBlockState(pos) == ModBlocks.FLUID_MANA.getDefaultState())
+			manaCrafters.put(key, crafter);
 	}
 	
 	public void tick()
 	{
-		if (blueteeth.isEmpty())
+		if (manaCrafters.isEmpty())
 			return;
-		LinkedList<ManaBluetooth> temp = new LinkedList<>(blueteeth);
-		Minecraft.getMinecraft().player.sendMessage(new TextComponentString("Mana Tracker: " + temp.size() + " tracked effects"));
-		temp.forEach(bluetooth -> {
-			bluetooth.tick();
-			if (bluetooth.isExpired)
+		LinkedList<DimWithPos> posToRemove = new LinkedList<>();
+		HashMultimap<DimWithPos, ManaCrafter> crafterToRemove = HashMultimap.create();
+		Multimaps.asMap(manaCrafters).forEach((dimPos, crafterList) -> {
+			World world = DimensionManager.getWorld(dimPos.getDim());
+			BlockPos pos = dimPos.getPos();
+			if (!world.isBlockLoaded(pos))
+				return;
+			if (world.getBlockState(pos).getBlock() != ModBlocks.FLUID_MANA)
 			{
-				blueteeth.remove(bluetooth);
-				untrackPos(bluetooth.world, bluetooth.position);
-				Minecraft.getMinecraft().player.sendMessage(new TextComponentString("Mana Tracker: Stopped tracking at " + bluetooth.position));
+				posToRemove.add(dimPos);
+				return;
 			}
+			List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos));
+			crafterList.forEach(crafter -> {
+				if (!crafter.isValid(world, pos, items))
+				{
+					crafterToRemove.put(dimPos, crafter);
+					return;
+				}
+				crafter.tick(world, pos, items);
+				if (crafter.isFinished())
+				{
+					crafter.finish(world, pos, items);
+					crafterToRemove.put(dimPos, crafter);
+					return;
+				}
+			});
 		});
-	}
-	
-	public class ManaBluetooth
-	{
-		private World world;
-		private BlockPos position;
-		private BiPredicate<World, BlockPos> input;
-		private int duration;
-		private QuadConsumer<World, BlockPos, Integer, Integer> tickEffect;
-		private BiConsumer<World, BlockPos> output;
 		
-		private int cookTime = 0;
-		public boolean isExpired = false;
-		
-		ManaBluetooth(World world, BlockPos pos, BiPredicate<World, BlockPos> input, int duration, BiConsumer<World, BlockPos> output)
-		{
-			this(world, pos, input, duration, (worldIn, posIn, cookTimeIn, durationIn) -> {}, output);
-		}
-		
-		ManaBluetooth(World world, BlockPos pos, BiPredicate<World, BlockPos> input, int duration, QuadConsumer<World, BlockPos, Integer, Integer> tickEffect, BiConsumer<World, BlockPos> output)
-		{
-			this.world = world;
-			this.position = pos;
-			this.input = input;
-			this.duration = duration;
-			this.tickEffect = tickEffect;
-			this.output = output;
-		}
-		
-		public void tick()
-		{
-			if (world.getBlockState(position).getBlock() != ModBlocks.FLUID_MANA)
-			{
-				isExpired = true;
-				return;
-			}
-			if (!input.test(world, position))
-			{
-				isExpired = true;
-				return;
-			}
-			if (cookTime >= duration)
-			{
-				output.accept(world, position);
-				isExpired = true;
-				return;
-			}
-			cookTime++;
-			tickEffect.accept(world, position, cookTime, duration);
-		}
-	}
-	
-	@FunctionalInterface
-	public interface QuadConsumer<T, U, V, W>
-	{
-		public void accept(T t, U u, V v, W w);
+		posToRemove.forEach(pos -> manaCrafters.removeAll(pos));
+		crafterToRemove.forEach((pos, crafter) -> manaCrafters.remove(pos, crafter));
 	}
 }
