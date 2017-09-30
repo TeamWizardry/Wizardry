@@ -121,6 +121,18 @@ public interface IStructure {
 		return recipes;
 	}
 
+	default boolean isStructureComplete(World world, BlockPos pos) {
+		for (Template.BlockInfo info : getStructure().blockInfos()) {
+			if (info.blockState == null) continue;
+
+			BlockPos realPos = info.pos.add(pos).subtract(offsetToCenter());
+			if (world.isAirBlock(realPos)) continue;
+			if (world.getBlockState(realPos).getBlock() != info.blockState.getBlock()) return false;
+			if (world.getBlockState(realPos) != info.blockState) return false;
+		}
+		return true;
+	}
+
 	default boolean tickStructure(World world, EntityPlayer player, BlockPos pos) {
 		if (world.isRemote) return true;
 

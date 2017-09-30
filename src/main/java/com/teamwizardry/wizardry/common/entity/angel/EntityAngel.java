@@ -1,25 +1,25 @@
-package com.teamwizardry.wizardry.common.entity.gods;
+package com.teamwizardry.wizardry.common.entity.angel;
 
+import com.teamwizardry.wizardry.api.util.Utils;
+import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
-/**
- * Created by LordSaad.
- */
-public class EntityGavreel extends EntityLiving {
+public class EntityAngel extends EntityLiving {
 
-	public EntityGavreel(World worldIn) {
+	public EntityAngel(World worldIn) {
 		super(worldIn);
 		setSize(0.6F, 1.8F);
-		setCustomNameTag("Gavreel");
 	}
 
 	@Override
@@ -46,8 +46,8 @@ public class EntityGavreel extends EntityLiving {
 	@Override
 	public void collideWithEntity(Entity entity) {
 		entity.fallDistance = 0;
-
-		//LibParticles.AIR_THROTTLE(world, getPositionVector().addVector(0, getEyeHeight(), 0), entity, Color.WHITE, Color.YELLOW, -1);
+		Utils.boom(getEntityWorld(), this);
+		playSound(ModSounds.BASS_BOOM, 1f, 1f);
 	}
 
 	@Override
@@ -62,6 +62,19 @@ public class EntityGavreel extends EntityLiving {
 	@Override
 	public void dropLoot(boolean wasRecentlyHit, int lootingModifier, @Nonnull DamageSource source) {
 		super.dropLoot(wasRecentlyHit, lootingModifier, source);
+	}
+
+	@Override
+	public void addPotionEffect(@NotNull PotionEffect potioneffectIn) {
+	}
+
+	@Override
+	protected boolean canBeRidden(Entity entityIn) {
+		return false;
+	}
+
+	public boolean isNonBoss() {
+		return false;
 	}
 
 	@Override

@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.client.render.entity;
 
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.common.entity.gods.EntityGavreel;
+import com.teamwizardry.wizardry.common.entity.angel.EntityGavreel;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;

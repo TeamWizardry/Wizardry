@@ -13,6 +13,7 @@ import com.teamwizardry.wizardry.api.render.ClusterObject;
 import com.teamwizardry.wizardry.api.spell.SpellBuilder;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.common.block.BlockCraftingPlate;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
@@ -96,20 +97,22 @@ public class TileCraftingPlate extends TileManaInteracter {
 	public void update() {
 		super.update();
 
-		for (BlockPos relative : poses) {
-			BlockPos target = getPos().add(relative);
-			TileEntity tile = world.getTileEntity(target);
-			if (tile != null && tile instanceof TilePearlHolder) {
-				if (!((TilePearlHolder) tile).isBenign) {
-					((TilePearlHolder) tile).structurePos = getPos();
-					tile.markDirty();
-					world.notifyBlockUpdate(target, world.getBlockState(target), world.getBlockState(target), 3);
-					((TilePearlHolder) tile).suckManaFrom(getWorld(), getPos(), getCap(), target, 100, false);
+		if (!((BlockCraftingPlate) getBlockType()).isStructureComplete(getWorld(), getPos())) return;
+
+		if (!new CapManager(getCap()).isManaFull()) {
+			for (BlockPos relative : poses) {
+				BlockPos target = getPos().add(relative);
+				TileEntity tile = world.getTileEntity(target);
+				if (tile != null && tile instanceof TilePearlHolder) {
+					if (!((TilePearlHolder) tile).isBenign) {
+						((TilePearlHolder) tile).structurePos = getPos();
+						tile.markDirty();
+						world.notifyBlockUpdate(target, world.getBlockState(target), world.getBlockState(target), 3);
+						((TilePearlHolder) tile).suckManaFrom(getWorld(), getPos(), getCap(), target, 100, false);
+					}
 				}
 			}
 		}
-
-		new CapManager(getCap()).removeMana(100);
 
 		for (EntityItem entityItem : world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos).grow(2, 2, 2))) {
 			ItemStack stack = entityItem.getItem().copy();

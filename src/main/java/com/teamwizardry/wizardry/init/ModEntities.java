@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.init;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.client.render.entity.*;
 import com.teamwizardry.wizardry.common.entity.*;
-import com.teamwizardry.wizardry.common.entity.gods.EntityGavreel;
+import com.teamwizardry.wizardry.common.entity.angel.EntityGavreel;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
