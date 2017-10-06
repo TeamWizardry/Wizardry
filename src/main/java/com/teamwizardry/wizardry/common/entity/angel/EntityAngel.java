@@ -17,6 +17,8 @@ import javax.annotation.Nonnull;
 
 public class EntityAngel extends EntityLiving {
 
+	private boolean isBeingBattled = false;
+
 	public EntityAngel(World worldIn) {
 		super(worldIn);
 		setSize(0.6F, 1.8F);
@@ -45,6 +47,7 @@ public class EntityAngel extends EntityLiving {
 
 	@Override
 	public void collideWithEntity(Entity entity) {
+		if (!(entity instanceof EntityPlayer)) return;
 		entity.fallDistance = 0;
 		Utils.boom(getEntityWorld(), this);
 		playSound(ModSounds.BASS_BOOM, 1f, 1f);
@@ -80,11 +83,20 @@ public class EntityAngel extends EntityLiving {
 	@Override
 	public void readEntityFromNBT(NBTTagCompound compound) {
 		super.readEntityFromNBT(compound);
-
+		isBeingBattled = compound.getBoolean("is_being_battled");
 	}
 
 	@Override
 	public void writeEntityToNBT(NBTTagCompound compound) {
 		super.writeEntityToNBT(compound);
+		compound.setBoolean("is_being_battled", isBeingBattled);
+	}
+
+	public boolean isBeingBattled() {
+		return isBeingBattled;
+	}
+
+	public void setBeingBattled(boolean beingBattled) {
+		isBeingBattled = beingBattled;
 	}
 }

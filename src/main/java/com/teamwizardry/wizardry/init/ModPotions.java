@@ -16,6 +16,7 @@ public class ModPotions {
 	public static PotionLowGrav LOW_GRAVITY;
 	public static PotionVanish VANISH;
 	public static PotionCrash CRASH;
+	public static PotionZachCorruption ZACH_CORRUPTION;
 
 	public static void init() {
 		NULLIFY_GRAVITY = new PotionNullGrav();
@@ -27,5 +28,6 @@ public class ModPotions {
 		LOW_GRAVITY = new PotionLowGrav();
 		CRASH = new PotionCrash();
 		VANISH = new PotionVanish();
+		ZACH_CORRUPTION = new PotionZachCorruption();
 	}
 }

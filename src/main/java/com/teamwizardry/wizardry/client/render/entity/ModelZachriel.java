@@ -12,9 +12,9 @@ import javax.annotation.Nonnull;
  * Created by Saad on 8/21/2016.
  */
 @SideOnly(Side.CLIENT)
-public class ModelGavreel extends ModelBiped {
+public class ModelZachriel extends ModelBiped {
 
-	public ModelGavreel() {
+	public ModelZachriel() {
 		textureWidth = 64;
 		textureHeight = 64;
 	}

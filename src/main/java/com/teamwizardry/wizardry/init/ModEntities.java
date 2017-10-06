@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.init;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.client.render.entity.*;
 import com.teamwizardry.wizardry.common.entity.*;
-import com.teamwizardry.wizardry.common.entity.angel.EntityGavreel;
+import com.teamwizardry.wizardry.common.entity.angel.EntityZachriel;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -20,10 +20,11 @@ public class ModEntities {
 
 	public static void init() {
 		registerEntity(new ResourceLocation(Wizardry.MODID, "spirit_wight"), EntitySpiritWight.class, "spirit_wight");
-		registerEntity(new ResourceLocation(Wizardry.MODID, "gavreel"), EntityGavreel.class, "gavreel");
+		registerEntity(new ResourceLocation(Wizardry.MODID, "angel_zachriel"), EntityZachriel.class, "angel_zachriel");
 		registerEntity(new ResourceLocation(Wizardry.MODID, "fairy"), EntityFairy.class, "fairy");
 		registerEntity(new ResourceLocation(Wizardry.MODID, "spell_projectile"), EntitySpellProjectile.class, "spell_projectile", 256, 1, true);
 		registerEntity(new ResourceLocation(Wizardry.MODID, "jump_pad"), EntityJumpPad.class, "jump_pad", 64, 1, false);
+		registerEntity(new ResourceLocation(Wizardry.MODID, "zachriel_corruption"), EntityZachrielCorruption.class, "zachriel_corruption", 64, 1, false);
 		registerEntity(new ResourceLocation(Wizardry.MODID, "unicorn"), EntityUnicorn.class, "unicorn");
 		registerEntity(new ResourceLocation(Wizardry.MODID, "summon_zombie"), EntityBackupZombie.class, "summon_zombie");
 	}
@@ -41,11 +42,12 @@ public class ModEntities {
 	// TODO: ModelEvent?
 	@SideOnly(Side.CLIENT)
 	public static void initModels() {
-		RenderingRegistry.registerEntityRenderingHandler(EntityGavreel.class, manager -> new RenderGavreel(manager, new ModelGavreel()));
+		RenderingRegistry.registerEntityRenderingHandler(EntityZachriel.class, manager -> new RenderZachriel(manager, new ModelZachriel()));
 		RenderingRegistry.registerEntityRenderingHandler(EntitySpiritWight.class, manager -> new RenderSpiritWight(manager, new ModelSpiritWight()));
 		RenderingRegistry.registerEntityRenderingHandler(EntityFairy.class, manager -> new RenderFairy(manager, new ModelNull()));
 		RenderingRegistry.registerEntityRenderingHandler(EntityUnicorn.class, manager -> new RenderUnicorn(manager, new ModelUnicorn()));
 		RenderingRegistry.registerEntityRenderingHandler(EntityJumpPad.class, manager -> new RenderJumpPad(manager, new ModelNull()));
+		RenderingRegistry.registerEntityRenderingHandler(EntityZachrielCorruption.class, manager -> new RenderZachrielCorruption(manager, new ModelNull()));
 		RenderingRegistry.registerEntityRenderingHandler(EntitySpellProjectile.class, RenderSpellProjectile::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityBackupZombie.class, RenderSummonZombie::new);
 	}
