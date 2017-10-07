@@ -7,6 +7,7 @@ import com.teamwizardry.wizardry.api.arena.ArenaManager;
 import com.teamwizardry.wizardry.api.arena.ZachTimeManager;
 import com.teamwizardry.wizardry.common.entity.EntityZachrielCorruption;
 import com.teamwizardry.wizardry.init.ModItems;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,10 +20,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by LordSaad.
@@ -40,31 +38,33 @@ public class EntityZachriel extends EntityAngel {
 
 	@Override
 	public boolean attackEntityFrom(DamageSource source, float amount) {
-		ZachTimeManager manager = null;
-		for (ZachTimeManager manager1 : ArenaManager.INSTANCE.zachTimeManagers) {
-			if (manager1.getEntityZachriel().getEntityId() == getEntityId()) {
-				manager = manager1;
-			}
-		}
-
-		if (manager == null) return false;
-
-		ZachTimeManager.BasicPalette palette = manager.getPalette();
-		for (BlockPos pos : manager.getTrackedBlocks()) {
-			HashMap<Long, IBlockState> states = manager.getBlocksAtPos(pos, palette);
-			Thread thread = new Thread(() -> {
-				for (Long time : states.keySet()) {
-					IBlockState state = states.get(time);
-					world.setBlockState(pos, state);
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+		Thread thread = new Thread(() -> {
+			ZachTimeManager manager = null;
+			for (ZachTimeManager manager1 : ArenaManager.INSTANCE.zachTimeManagers) {
+				if (manager1.getEntityZachriel().getEntityId() == getEntityId()) {
+					manager = manager1;
 				}
-			});
-			thread.start();
-		}
+			}
+
+			if (manager == null) return;
+
+			ZachTimeManager.BasicPalette palette = manager.getPalette();
+			long lastRecordedBlockTime = System.currentTimeMillis();
+			for (BlockPos pos : manager.getTrackedBlocks()) {
+				HashMap<Long, IBlockState> states = manager.getBlocksAtPos(pos, palette);
+				ArrayDeque<Long> dequeTime = new ArrayDeque<>(states.keySet());
+
+				while (!dequeTime.isEmpty()) {
+					if (System.currentTimeMillis() - lastRecordedBlockTime < dequeTime.peek() / 10.0) continue;
+
+					IBlockState state = states.get(dequeTime.pop());
+					world.setBlockState(pos, state);
+					world.playEvent(2001, pos, Block.getStateId(state));
+				}
+			}
+			manager.reset();
+		});
+		thread.start();
 
 		return false;
 	}

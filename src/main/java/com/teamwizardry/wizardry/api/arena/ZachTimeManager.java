@@ -33,14 +33,15 @@ public class ZachTimeManager {
 	@NotNull
 	private JsonObject ENTITY_JSON = new JsonObject();
 	private EntityZachriel entityZachriel;
+	private long lastRecordedBlockTime = System.currentTimeMillis();
 
 	public ZachTimeManager(@NotNull EntityZachriel entityZachriel) {
 		this.entityZachriel = entityZachriel;
 		Arena arena = ArenaManager.INSTANCE.getArena(entityZachriel);
 		if (arena == null) return;
 
-		zachBlockDir = new File(CommonProxy.directory, "/zach_saver/blocks/" + entityZachriel.getEntityId() + ".json");
-		zachEntityDir = new File(CommonProxy.directory, "/zach_saver/entities/" + entityZachriel.getEntityId() + ".json");
+		zachBlockDir = new File(CommonProxy.directory, "/zach_saver/blocks/" + entityZachriel.getUniqueID() + ".json");
+		zachEntityDir = new File(CommonProxy.directory, "/zach_saver/entities/" + entityZachriel.getUniqueID() + ".json");
 
 		try {
 			if (zachBlockDir.exists()) {
@@ -54,9 +55,14 @@ public class ZachTimeManager {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-
-		//deserialize();
 	}
+
+	public void reset() {
+		BLOCK_JSON = new JsonObject();
+		ENTITY_JSON = new JsonObject();
+		serialize();
+	}
+
 
 	public List<BlockPos> getTrackedBlocks() {
 		List<BlockPos> poses = new ArrayList<>();
@@ -177,7 +183,7 @@ public class ZachTimeManager {
 		if (!BLOCK_JSON.has(pos.toLong() + "")) {
 			BLOCK_JSON.add(pos.toLong() + "", new JsonArray());
 		}
-		BLOCK_JSON.getAsJsonArray(pos.toLong() + "").add(System.currentTimeMillis() + "%" + stateID);
+		BLOCK_JSON.getAsJsonArray(pos.toLong() + "").add((System.currentTimeMillis() - lastRecordedBlockTime) + "%" + stateID);
 
 		if (shouldAddID) {
 			JsonObject paletteAddition = new JsonObject();
