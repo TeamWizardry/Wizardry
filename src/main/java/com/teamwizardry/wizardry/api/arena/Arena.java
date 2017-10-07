@@ -4,18 +4,23 @@ import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpCi
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
+import com.teamwizardry.librarianlib.features.saving.AbstractSaveHandler;
 import com.teamwizardry.librarianlib.features.saving.Savable;
+import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
+import com.teamwizardry.wizardry.common.entity.angel.EntityAngel;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -24,22 +29,33 @@ import java.util.Set;
 import java.util.UUID;
 
 @Savable
-public class Arena {
+public class Arena implements INBTSerializable<NBTTagCompound> {
 
 	private transient World world;
+	private transient EntityAngel boss;
+	@Save
 	private int worldID;
+	@Save
 	private BlockPos center;
+	@Save
 	private double radius;
+	@Save
 	private double height;
+	@Save
 	private int bossID;
+	@Save
 	private Set<UUID> players;
+	@Save
 	private boolean isActive = true;
+	@Save
 	private boolean hasEnded = false;
+	@Save
 	private long startTick = 0;
 
 	public Arena(int worldID, BlockPos center, double radius, double height, int bossID, Set<UUID> players) {
 		this.worldID = worldID;
 		this.world = DimensionManager.getWorld(worldID);
+		this.boss = (EntityAngel) world.getEntityByID(bossID);
 		this.center = center;
 		this.radius = radius;
 		this.height = height;
@@ -79,6 +95,7 @@ public class Arena {
 	}
 
 	public void tick(long timeMillis) {
+
 		if (timeMillis % 500 == 0)
 			ClientRunnable.run(new ClientRunnable() {
 				@Override
@@ -91,7 +108,7 @@ public class Arena {
 					glitter.enableMotionCalculation();
 					ParticleSpawner.spawn(glitter, getWorld(), new InterpCircle(new Vec3d(getCenter()).addVector(0.5, getHeight(), 0.5), new Vec3d(0, 1, 0), (float) getRadius(), 1, RandUtil.nextFloat()), 10, RandUtil.nextInt(10), (aFloat, particleBuilder) -> {
 						particleBuilder.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), RandUtil.nextInt(100, 255)));
-						particleBuilder.setScale(RandUtil.nextFloat());
+						particleBuilder.setScale(RandUtil.nextFloat(0.5f, 1));
 						particleBuilder.addMotion(new Vec3d(RandUtil.nextDouble(-0.01, 0.01),
 								RandUtil.nextDouble(-0.01, 0.01),
 								RandUtil.nextDouble(-0.01, 0.01)));
@@ -101,7 +118,7 @@ public class Arena {
 					glitter.disableMotionCalculation();
 					ParticleSpawner.spawn(glitter, getWorld(), new InterpCircle(new Vec3d(getCenter()).addVector(0.5, 0, 0.5), new Vec3d(0, 1, 0), (float) getRadius(), 1, RandUtil.nextFloat()), 10, RandUtil.nextInt(10), (aFloat, particleBuilder) -> {
 						particleBuilder.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), RandUtil.nextInt(100, 255)));
-						particleBuilder.setScale(RandUtil.nextFloat());
+						particleBuilder.setScale(RandUtil.nextFloat(0.5f, 1));
 						particleBuilder.addMotion(new Vec3d(RandUtil.nextDouble(-0.01, 0.01),
 								RandUtil.nextDouble(0.01, 0.02),
 								RandUtil.nextDouble(-0.01, 0.01)));
@@ -166,5 +183,21 @@ public class Arena {
 
 	public boolean isHasEnded() {
 		return hasEnded;
+	}
+
+	@Override
+	public NBTTagCompound serializeNBT() {
+		NBTTagCompound compound = new NBTTagCompound();
+		compound.setTag("save", AbstractSaveHandler.writeAutoNBT(this, true));
+		return compound;
+	}
+
+	@Override
+	public void deserializeNBT(NBTTagCompound nbt) {
+		AbstractSaveHandler.readAutoNBT(this, nbt.getCompoundTag("save"), true);
+	}
+
+	public EntityAngel getBoss() {
+		return boss;
 	}
 }

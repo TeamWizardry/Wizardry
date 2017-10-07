@@ -1,9 +1,9 @@
 package com.teamwizardry.wizardry.common.entity.angel;
 
+import com.teamwizardry.librarianlib.features.base.entity.LivingEntityMod;
 import com.teamwizardry.wizardry.api.util.Utils;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
-public class EntityAngel extends EntityLiving {
+public class EntityAngel extends LivingEntityMod {
 
 	private boolean isBeingBattled = false;
 
@@ -81,15 +81,15 @@ public class EntityAngel extends EntityLiving {
 	}
 
 	@Override
-	public void readEntityFromNBT(NBTTagCompound compound) {
-		super.readEntityFromNBT(compound);
-		isBeingBattled = compound.getBoolean("is_being_battled");
+	public void writeCustomNBT(@NotNull NBTTagCompound compound) {
+		super.writeCustomNBT(compound);
+		compound.setBoolean("is_being_battled", isBeingBattled);
 	}
 
 	@Override
-	public void writeEntityToNBT(NBTTagCompound compound) {
-		super.writeEntityToNBT(compound);
-		compound.setBoolean("is_being_battled", isBeingBattled);
+	public void readCustomNBT(@NotNull NBTTagCompound compound) {
+		super.readCustomNBT(compound);
+		isBeingBattled = compound.getBoolean("is_being_battled");
 	}
 
 	public boolean isBeingBattled() {

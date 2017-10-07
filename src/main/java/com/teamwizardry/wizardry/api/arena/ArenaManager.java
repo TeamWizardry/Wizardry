@@ -1,7 +1,12 @@
 package com.teamwizardry.wizardry.api.arena;
 
-import com.teamwizardry.librarianlib.features.saving.Savable;
+import com.teamwizardry.librarianlib.features.saving.Save;
+import com.teamwizardry.librarianlib.features.saving.SaveInPlace;
+import com.teamwizardry.wizardry.common.entity.angel.EntityAngel;
+import com.teamwizardry.wizardry.common.entity.angel.EntityZachriel;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.MoverType;
+import net.minecraft.init.Blocks;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -10,25 +15,44 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.Timer;
 import java.util.TimerTask;
 
-@Savable
+@SaveInPlace
 public class ArenaManager {
 
 	public static ArenaManager INSTANCE = new ArenaManager();
 
+	public HashSet<ZachTimeManager> zachTimeManagers = new HashSet<>();
+	@Save
 	private HashSet<Arena> arenas = new HashSet<>();
 
 	private ArenaManager() {
 		new Timer().scheduleAtFixedRate(new ArenaTicker(), 0, 1);
 	}
 
-	public Arena addArena(@NotNull Arena arena) {
+	public boolean addArena(@NotNull Arena arena) {
+		for (Arena arena1 : arenas) {
+			if (arena.getCenter().toLong() == arena1.getCenter().toLong()) return false;
+		}
 		arenas.add(arena);
-		return arena;
+
+		if (arena.getBoss() instanceof EntityZachriel) {
+			ArenaManager.INSTANCE.zachTimeManagers.add(new ZachTimeManager((EntityZachriel) arena.getBoss()));
+		}
+
+		return true;
+	}
+
+	@Nullable
+	public Arena getArena(@NotNull EntityAngel boss) {
+		for (Arena arena : arenas) {
+			if (arena.getBossID() == boss.getEntityId()) return arena;
+		}
+		return null;
 	}
 
 	@SubscribeEvent
@@ -37,7 +61,7 @@ public class ArenaManager {
 			if (event.getEntityLiving().getEntityId() != arena.getBossID()) continue;
 
 			if (event.getEntityLiving().getDistance(arena.getCenter().getX() + 0.5, arena.getCenter().getY(), arena.getCenter().getZ() + 0.5) > arena.getRadius()) {
-				arena.end();
+				event.getEntityLiving().move(MoverType.SELF, arena.getCenter().getX() + 0.5, arena.getCenter().getY() + 0.5, arena.getCenter().getZ() + 0.5);
 			}
 		}
 	}
@@ -64,7 +88,14 @@ public class ArenaManager {
 			if (!arena.getPlayers().contains(event.getPlayer().getUniqueID())) {
 				continue;
 			}
-			event.setCanceled(true);
+
+			if (!event.getWorld().isRemote)
+				for (ZachTimeManager timeManager : zachTimeManagers) {
+					if (timeManager.getEntityZachriel().getEntityId() == arena.getBossID()) {
+						timeManager.trackBlock(event.getState(), event.getPos());
+					}
+				}
+			//event.setCanceled(true);
 		}
 	}
 
@@ -74,7 +105,14 @@ public class ArenaManager {
 			if (!arena.getPlayers().contains(event.getPlayer().getUniqueID())) {
 				continue;
 			}
-			event.setCanceled(true);
+
+			if (!event.getWorld().isRemote)
+				for (ZachTimeManager timeManager : zachTimeManagers) {
+					if (timeManager.getEntityZachriel().getEntityId() == arena.getBossID()) {
+						timeManager.trackBlock(Blocks.AIR.getDefaultState(), event.getPos());
+					}
+				}
+			//event.setCanceled(true);
 		}
 	}
 
