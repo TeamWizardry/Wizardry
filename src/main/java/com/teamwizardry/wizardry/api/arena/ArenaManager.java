@@ -79,6 +79,15 @@ public class ArenaManager {
 			if (event.player.capabilities.isFlying) {
 				event.player.capabilities.isFlying = false;
 			}
+
+			if (event.player.getEntityWorld().getTotalWorldTime() % 100 == 0) {
+				if (!event.player.getEntityWorld().isRemote)
+					for (ZachTimeManager timeManager : zachTimeManagers) {
+						if (timeManager.getEntityZachriel().getEntityId() == arena.getBossID()) {
+							timeManager.trackEntity(event.player);
+						}
+					}
+			}
 		}
 	}
 
@@ -95,7 +104,6 @@ public class ArenaManager {
 						timeManager.trackBlock(event.getState(), event.getPos());
 					}
 				}
-			//event.setCanceled(true);
 		}
 	}
 
@@ -112,7 +120,6 @@ public class ArenaManager {
 						timeManager.trackBlock(Blocks.AIR.getDefaultState(), event.getPos());
 					}
 				}
-			//event.setCanceled(true);
 		}
 	}
 

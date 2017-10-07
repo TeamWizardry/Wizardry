@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.entity.angel;
 
+import com.google.gson.JsonObject;
 import com.teamwizardry.librarianlib.features.saving.AbstractSaveHandler;
 import com.teamwizardry.librarianlib.features.saving.SaveInPlace;
 import com.teamwizardry.wizardry.api.arena.Arena;
@@ -50,6 +51,7 @@ public class EntityZachriel extends EntityAngel {
 
 			ZachTimeManager.BasicPalette palette = manager.getPalette();
 			long lastRecordedBlockTime = System.currentTimeMillis();
+
 			for (BlockPos pos : manager.getTrackedBlocks()) {
 				HashMap<Long, IBlockState> states = manager.getBlocksAtPos(pos, palette);
 				ArrayDeque<Long> dequeTime = new ArrayDeque<>(states.keySet());
@@ -60,6 +62,18 @@ public class EntityZachriel extends EntityAngel {
 					IBlockState state = states.get(dequeTime.pop());
 					world.setBlockState(pos, state);
 					world.playEvent(2001, pos, Block.getStateId(state));
+				}
+			}
+
+			for (Entity entity : manager.getTrackedEntities(world)) {
+				HashMap<Long, JsonObject> snapshots = manager.getEntitySnapshots(entity);
+				ArrayDeque<Long> dequeTime = new ArrayDeque<>(snapshots.keySet());
+
+				while (!dequeTime.isEmpty()) {
+					if (System.currentTimeMillis() - lastRecordedBlockTime < dequeTime.peek() / 10.0) continue;
+
+					JsonObject snapshot = snapshots.get(dequeTime.pop());
+					manager.setEntityToSnapshot(snapshot, entity);
 				}
 			}
 			manager.reset();

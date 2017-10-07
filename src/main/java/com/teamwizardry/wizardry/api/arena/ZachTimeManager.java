@@ -7,22 +7,24 @@ import com.teamwizardry.wizardry.proxy.CommonProxy;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ZachTimeManager {
 
@@ -78,6 +80,35 @@ public class ZachTimeManager {
 		return poses;
 	}
 
+	public List<Entity> getTrackedEntities(World world) {
+		List<Entity> entities = new ArrayList<>();
+		for (Map.Entry<String, JsonElement> element : ENTITY_JSON.entrySet()) {
+			String key = element.getKey();
+			if (key == null) continue;
+			UUID uuid = UUID.fromString(key);
+			for (Entity entity : world.getEntities(Entity.class, input -> true)) {
+				if (entity.getUniqueID().equals(uuid)) entities.add(entity);
+			}
+		}
+		return entities;
+	}
+
+	public HashMap<Long, JsonObject> getEntitySnapshots(Entity entity) {
+		HashMap<Long, JsonObject> objects = new HashMap<>();
+		if (ENTITY_JSON.has(entity.getUniqueID() + "") && ENTITY_JSON.get(entity.getUniqueID() + "").isJsonArray()) {
+			for (JsonElement element : ENTITY_JSON.getAsJsonArray(entity.getUniqueID() + "")) {
+				if (element.isJsonObject()) {
+					JsonObject object = element.getAsJsonObject();
+					if (object.has("time")) {
+						long time = object.getAsJsonPrimitive("time").getAsLong();
+						objects.put(time, object);
+					}
+				}
+			}
+		}
+		return objects;
+	}
+
 	public HashMap<Long, IBlockState> getBlocksAtPos(BlockPos pos, BasicPalette palette) {
 		HashMap<Long, IBlockState> states = new HashMap<>();
 		if (BLOCK_JSON.has(pos.toLong() + "") && BLOCK_JSON.get(pos.toLong() + "").isJsonArray()) {
@@ -91,61 +122,6 @@ public class ZachTimeManager {
 			}
 		}
 		return states;
-	}
-
-	public List<IBlockState> getBlocksAtPos(BlockPos pos) {
-		List<IBlockState> states = new ArrayList<>();
-		if (BLOCK_JSON.has(pos.toLong() + "") && BLOCK_JSON.get(pos.toLong() + "").isJsonArray()) {
-			BasicPalette palette = getPalette();
-			for (JsonElement element : BLOCK_JSON.getAsJsonArray(pos.toLong() + "")) {
-				IBlockState state = palette.stateFor(element.getAsJsonPrimitive().getAsInt());
-				if (state == null) continue;
-				states.add(state);
-			}
-		}
-		return states;
-	}
-
-	public List<Vec3d> getPosesForEntity(Entity entity) {
-		List<Vec3d> poses = new ArrayList<>();
-		if (ENTITY_JSON.has(entity.getEntityId() + "-pos") && ENTITY_JSON.get(entity.getEntityId() + "-pos").isJsonArray()) {
-			Gson gson = new Gson();
-			for (JsonElement element : ENTITY_JSON.getAsJsonArray(entity.getEntityId() + "-pos")) {
-				Vec3d vec = gson.fromJson(element, Vec3d.class);
-				if (vec == null) continue;
-				poses.add(vec);
-			}
-		}
-		return poses;
-	}
-
-	public List<Integer> getHealthsForEntity(Entity entity) {
-		List<Integer> healths = new ArrayList<>();
-		if (ENTITY_JSON.has(entity.getEntityId() + "-health") && ENTITY_JSON.get(entity.getEntityId() + "-health").isJsonArray()) {
-			for (JsonElement element : ENTITY_JSON.getAsJsonArray(entity.getEntityId() + "-health")) {
-				healths.add(element.getAsJsonPrimitive().getAsInt());
-			}
-		}
-		return healths;
-	}
-
-	public void trackEntity(Entity entity) {
-		if (!ENTITY_JSON.has(entity.getEntityId() + "-pos")) {
-			ENTITY_JSON.add(entity.getEntityId() + "-pos", new JsonArray());
-		}
-		JsonElement element = new JsonParser().parse(new Gson().toJson(entity.getPositionVector()));
-
-		ENTITY_JSON.getAsJsonArray(entity.getEntityId() + "-pos").add(element);
-
-		if (entity instanceof EntityLivingBase) {
-			if (!ENTITY_JSON.has(entity.getEntityId() + "-health")) {
-				ENTITY_JSON.add(entity.getEntityId() + "-health", new JsonArray());
-			}
-
-			ENTITY_JSON.getAsJsonArray(entity.getEntityId() + "-health").add(((EntityLivingBase) entity).getHealth());
-		}
-
-		serialize();
 	}
 
 	public BasicPalette getPalette() {
@@ -197,24 +173,17 @@ public class ZachTimeManager {
 		serialize();
 	}
 
-	public void deserialize() {
-		try {
-			if (zachBlockDir.exists()) {
-				JsonElement jsonElement = new JsonParser().parse(new FileReader(zachBlockDir));
+	public void trackEntity(Entity entity) {
+		UUID uuid = entity.getUniqueID();
 
-				if (jsonElement.isJsonObject()) BLOCK_JSON = jsonElement.getAsJsonObject();
-				else BLOCK_JSON = new JsonObject();
-			}
-
-			if (zachEntityDir.exists()) {
-				JsonElement jsonElement = new JsonParser().parse(new FileReader(zachEntityDir));
-
-				if (jsonElement.isJsonObject()) ENTITY_JSON = jsonElement.getAsJsonObject();
-				else ENTITY_JSON = new JsonObject();
-			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+		if (!ENTITY_JSON.has(uuid + "")) {
+			ENTITY_JSON.add(uuid + "", new JsonArray());
 		}
+
+		JsonObject snapshot = snapshotEntity(entity);
+		ENTITY_JSON.getAsJsonArray(uuid + "").add(snapshot);
+
+		serialize();
 	}
 
 	public void serialize() {
@@ -240,6 +209,108 @@ public class ZachTimeManager {
 
 	public EntityZachriel getEntityZachriel() {
 		return entityZachriel;
+	}
+
+	// TODO capability saving
+	public void setEntityToSnapshot(JsonObject snapshot, Entity entity) {
+		if (snapshot.has("pos_x") && snapshot.has("pos_y") && snapshot.has("pos_z")) {
+			entity.setPosition(
+					snapshot.getAsJsonPrimitive("pos_x").getAsDouble(),
+					snapshot.getAsJsonPrimitive("pos_y").getAsDouble(),
+					snapshot.getAsJsonPrimitive("pos_z").getAsDouble());
+		}
+		if (snapshot.has("rot_yaw") && snapshot.has("rot_pitch")) {
+			entity.rotationYaw = snapshot.getAsJsonPrimitive("rot_yaw").getAsFloat();
+			entity.rotationPitch = snapshot.getAsJsonPrimitive("rot_pitch").getAsFloat();
+		}
+
+		if (entity instanceof EntityLivingBase) {
+			((EntityLivingBase) entity).setHealth(snapshot.getAsJsonPrimitive("health").getAsFloat());
+		}
+		if (entity instanceof EntityPlayer) {
+			((EntityPlayer) entity).getFoodStats().setFoodLevel(snapshot.getAsJsonPrimitive("hunger").getAsInt());
+			((EntityPlayer) entity).getFoodStats().setFoodSaturationLevel(snapshot.getAsJsonPrimitive("saturation").getAsInt());
+		}
+
+		if (entity instanceof EntityPlayer && snapshot.has("inventory") && snapshot.get("inventory").isJsonArray()) {
+			for (JsonElement element : snapshot.getAsJsonArray("inventory")) {
+				if (!element.isJsonObject()) continue;
+				JsonObject itemObject = element.getAsJsonObject();
+				if (itemObject.has("count")
+						&& itemObject.has("item")
+						&& itemObject.has("armor")
+						&& itemObject.has("damage")
+						&& itemObject.has("meta")
+						&& itemObject.has("slot")) {
+					Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemObject.getAsJsonPrimitive("item").getAsString()));
+					if (item == null) continue;
+					int count = itemObject.getAsJsonPrimitive("count").getAsInt();
+					int damage = itemObject.getAsJsonPrimitive("damage").getAsInt();
+					int slot = itemObject.getAsJsonPrimitive("slot").getAsInt();
+					int meta = itemObject.getAsJsonPrimitive("meta").getAsInt();
+					boolean armor = itemObject.getAsJsonPrimitive("armor").getAsBoolean();
+
+					ItemStack stack = new ItemStack(item, count, meta);
+					stack.setItemDamage(damage);
+
+					if (!armor) ((EntityPlayer) entity).inventory.mainInventory.add(slot, stack);
+					else ((EntityPlayer) entity).inventory.armorInventory.add(slot, stack);
+				}
+			}
+		}
+	}
+
+	public JsonObject snapshotEntity(Entity entity) {
+		JsonObject object = new JsonObject();
+
+		JsonObject pos = new JsonObject();
+		pos.addProperty("pos_x", entity.posX);
+		pos.addProperty("pos_y", entity.posX);
+		pos.addProperty("pos_z", entity.posX);
+		pos.addProperty("rot_pitch", entity.rotationPitch);
+		pos.addProperty("rot_yaw", entity.rotationYaw);
+		object.add("pos", pos);
+
+		if (entity instanceof EntityLivingBase)
+			object.addProperty("health", ((EntityLivingBase) entity).getHealth());
+
+		if (entity instanceof EntityPlayer) {
+			object.addProperty("hunger", ((EntityPlayer) entity).getFoodStats().getFoodLevel());
+			object.addProperty("saturation", ((EntityPlayer) entity).getFoodStats().getSaturationLevel());
+		}
+
+		JsonArray inv = new JsonArray();
+		if (entity instanceof EntityPlayer)
+			for (ItemStack stack : ((EntityPlayer) entity).inventory.mainInventory) {
+				if (stack == null || stack.isEmpty() || stack.getItem().getRegistryName() == null) continue;
+
+				JsonObject itemObject = new JsonObject();
+				itemObject.addProperty("armor", false);
+				itemObject.addProperty("count", stack.getCount());
+				itemObject.addProperty("item", stack.getItem().getRegistryName().toString());
+				itemObject.addProperty("damage", stack.getItemDamage());
+				itemObject.addProperty("meta", stack.getMetadata());
+				itemObject.addProperty("slot", ((EntityPlayer) entity).inventory.getSlotFor(stack));
+
+				inv.add(itemObject);
+			}
+
+		if (entity instanceof EntityPlayer)
+			for (ItemStack stack : ((EntityPlayer) entity).inventory.armorInventory) {
+				if (stack == null || stack.isEmpty() || stack.getItem().getRegistryName() == null) continue;
+
+				JsonObject itemObject = new JsonObject();
+				itemObject.addProperty("armor", true);
+				itemObject.addProperty("count", stack.getCount());
+				itemObject.addProperty("item", stack.getItem().getRegistryName().toString());
+				itemObject.addProperty("damage", stack.getItemDamage());
+				itemObject.addProperty("meta", stack.getMetadata());
+				itemObject.addProperty("slot", ((EntityPlayer) entity).inventory.getSlotFor(stack));
+
+				inv.add(itemObject);
+			}
+		object.add("inventory", inv);
+		return object;
 	}
 
 	public class BasicPalette {
