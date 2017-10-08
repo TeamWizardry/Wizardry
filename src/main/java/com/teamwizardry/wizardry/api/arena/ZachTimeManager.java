@@ -2,18 +2,21 @@ package com.teamwizardry.wizardry.api.arena;
 
 import com.google.common.collect.HashBiMap;
 import com.google.gson.*;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.entity.angel.EntityZachriel;
 import com.teamwizardry.wizardry.proxy.CommonProxy;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.network.play.server.SPacketPlayerPosLook;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -45,6 +48,16 @@ public class ZachTimeManager {
 		zachBlockDir = new File(CommonProxy.directory, "/zach_saver/blocks/" + entityZachriel.getUniqueID() + ".json");
 		zachEntityDir = new File(CommonProxy.directory, "/zach_saver/entities/" + entityZachriel.getUniqueID() + ".json");
 
+		zachBlockDir.getParentFile().mkdirs();
+		zachEntityDir.getParentFile().mkdirs();
+
+		try {
+			if (!zachBlockDir.exists()) zachBlockDir.createNewFile();
+			if (!zachEntityDir.exists()) zachEntityDir.createNewFile();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		try {
 			if (zachBlockDir.exists()) {
 				JsonElement element = new JsonParser().parse(new FileReader(zachBlockDir));
@@ -59,12 +72,15 @@ public class ZachTimeManager {
 		}
 	}
 
-	public void reset() {
-		BLOCK_JSON = new JsonObject();
+	public void resetEntities() {
 		ENTITY_JSON = new JsonObject();
 		serialize();
 	}
 
+	public void resetBlocks() {
+		BLOCK_JSON = new JsonObject();
+		serialize();
+	}
 
 	public List<BlockPos> getTrackedBlocks() {
 		List<BlockPos> poses = new ArrayList<>();
@@ -213,15 +229,25 @@ public class ZachTimeManager {
 
 	// TODO capability saving
 	public void setEntityToSnapshot(JsonObject snapshot, Entity entity) {
-		if (snapshot.has("pos_x") && snapshot.has("pos_y") && snapshot.has("pos_z")) {
-			entity.setPosition(
-					snapshot.getAsJsonPrimitive("pos_x").getAsDouble(),
-					snapshot.getAsJsonPrimitive("pos_y").getAsDouble(),
-					snapshot.getAsJsonPrimitive("pos_z").getAsDouble());
-		}
-		if (snapshot.has("rot_yaw") && snapshot.has("rot_pitch")) {
-			entity.rotationYaw = snapshot.getAsJsonPrimitive("rot_yaw").getAsFloat();
-			entity.rotationPitch = snapshot.getAsJsonPrimitive("rot_pitch").getAsFloat();
+		if (snapshot.has("pos") && snapshot.get("pos").isJsonObject()) {
+			JsonObject pos = snapshot.getAsJsonObject("pos");
+
+			if (pos.has("pos_x") && pos.has("pos_y") && pos.has("pos_z") && pos.has("rot_yaw") && pos.has("rot_pitch")) {
+				double x = pos.getAsJsonPrimitive("pos_x").getAsDouble();
+				double y = pos.getAsJsonPrimitive("pos_y").getAsDouble();
+				double z = pos.getAsJsonPrimitive("pos_z").getAsDouble();
+				float yaw = pos.getAsJsonPrimitive("rot_yaw").getAsFloat();
+				float pitch = pos.getAsJsonPrimitive("rot_pitch").getAsFloat();
+
+				Wizardry.logger.info("time: " + snapshot.getAsJsonPrimitive("time").getAsLong() + " pos: " + x + ", " + y + ", " + z);
+
+				Set<SPacketPlayerPosLook.EnumFlags> set = EnumSet.noneOf(SPacketPlayerPosLook.EnumFlags.class);
+
+				entity.dismountRidingEntity();
+				if (entity instanceof EntityPlayerMP)
+					((EntityPlayerMP) entity).connection.setPlayerLocation(x, y, z, yaw, pitch, set);
+				entity.setRotationYawHead(yaw);
+			}
 		}
 
 		if (entity instanceof EntityLivingBase) {
@@ -263,10 +289,12 @@ public class ZachTimeManager {
 	public JsonObject snapshotEntity(Entity entity) {
 		JsonObject object = new JsonObject();
 
+		object.addProperty("time", System.currentTimeMillis() - lastRecordedBlockTime);
+
 		JsonObject pos = new JsonObject();
 		pos.addProperty("pos_x", entity.posX);
-		pos.addProperty("pos_y", entity.posX);
-		pos.addProperty("pos_z", entity.posX);
+		pos.addProperty("pos_y", entity.posY);
+		pos.addProperty("pos_z", entity.posZ);
 		pos.addProperty("rot_pitch", entity.rotationPitch);
 		pos.addProperty("rot_yaw", entity.rotationYaw);
 		object.add("pos", pos);

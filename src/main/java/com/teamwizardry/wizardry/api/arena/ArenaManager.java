@@ -80,14 +80,13 @@ public class ArenaManager {
 				event.player.capabilities.isFlying = false;
 			}
 
-			if (event.player.getEntityWorld().getTotalWorldTime() % 100 == 0) {
+			//if (event.player.getEntityWorld().getTotalWorldTime() % 100 == 0)
 				if (!event.player.getEntityWorld().isRemote)
 					for (ZachTimeManager timeManager : zachTimeManagers) {
 						if (timeManager.getEntityZachriel().getEntityId() == arena.getBossID()) {
 							timeManager.trackEntity(event.player);
 						}
 					}
-			}
 		}
 	}
 

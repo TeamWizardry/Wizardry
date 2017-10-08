@@ -39,21 +39,25 @@ public class EntityZachriel extends EntityAngel {
 
 	@Override
 	public boolean attackEntityFrom(DamageSource source, float amount) {
-		Thread thread = new Thread(() -> {
-			ZachTimeManager manager = null;
-			for (ZachTimeManager manager1 : ArenaManager.INSTANCE.zachTimeManagers) {
-				if (manager1.getEntityZachriel().getEntityId() == getEntityId()) {
-					manager = manager1;
-				}
+		if (world.isRemote) return false;
+
+		ZachTimeManager manager = null;
+		for (ZachTimeManager manager1 : ArenaManager.INSTANCE.zachTimeManagers) {
+			if (manager1.getEntityZachriel().getEntityId() == getEntityId()) {
+				manager = manager1;
 			}
+		}
 
-			if (manager == null) return;
+		if (manager == null) return false;
 
-			ZachTimeManager.BasicPalette palette = manager.getPalette();
-			long lastRecordedBlockTime = System.currentTimeMillis();
+		ZachTimeManager finalManager = manager;
+		long lastRecordedBlockTime = System.currentTimeMillis();
 
-			for (BlockPos pos : manager.getTrackedBlocks()) {
-				HashMap<Long, IBlockState> states = manager.getBlocksAtPos(pos, palette);
+		Thread thread = new Thread(() -> {
+			ZachTimeManager.BasicPalette palette = finalManager.getPalette();
+
+			for (BlockPos pos : finalManager.getTrackedBlocks()) {
+				HashMap<Long, IBlockState> states = finalManager.getBlocksAtPos(pos, palette);
 				ArrayDeque<Long> dequeTime = new ArrayDeque<>(states.keySet());
 
 				while (!dequeTime.isEmpty()) {
@@ -64,19 +68,23 @@ public class EntityZachriel extends EntityAngel {
 					world.playEvent(2001, pos, Block.getStateId(state));
 				}
 			}
+			finalManager.resetBlocks();
+		});
+		thread.start();
 
-			for (Entity entity : manager.getTrackedEntities(world)) {
-				HashMap<Long, JsonObject> snapshots = manager.getEntitySnapshots(entity);
+		thread = new Thread(() -> {
+			for (Entity entity : finalManager.getTrackedEntities(world)) {
+				HashMap<Long, JsonObject> snapshots = finalManager.getEntitySnapshots(entity);
 				ArrayDeque<Long> dequeTime = new ArrayDeque<>(snapshots.keySet());
 
 				while (!dequeTime.isEmpty()) {
-					if (System.currentTimeMillis() - lastRecordedBlockTime < dequeTime.peek() / 10.0) continue;
+					if (System.currentTimeMillis() - lastRecordedBlockTime < dequeTime.peek()) continue;
 
 					JsonObject snapshot = snapshots.get(dequeTime.pop());
-					manager.setEntityToSnapshot(snapshot, entity);
+					finalManager.setEntityToSnapshot(snapshot, entity);
 				}
 			}
-			manager.reset();
+			finalManager.resetEntities();
 		});
 		thread.start();
 
