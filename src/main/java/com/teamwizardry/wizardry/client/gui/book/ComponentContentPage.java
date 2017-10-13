@@ -8,6 +8,7 @@ import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.gui.GuiComponent;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentText;
+import com.teamwizardry.librarianlib.features.gui.components.ComponentVoid;
 import com.teamwizardry.librarianlib.features.math.Vec2d;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.wizardry.Wizardry;
@@ -99,7 +100,7 @@ public class ComponentContentPage extends GuiComponent<ComponentContentPage> {
 										ResourceLocation location = new ResourceLocation(Wizardry.MODID, "textures/bookimages/" + image + ".png");
 										Sprite sprite = new Sprite(location);
 
-										ComponentSprite componentSprite = new ComponentSprite(sprite, 0, 45, getSize().getXi(), getSize().getYi());
+										ComponentSprite componentSprite = new ComponentSprite(sprite, 0, 45, 200, 200);
 										ComponentSprite lineBreak1 = new ComponentSprite(BookGui.LINE_BREAK, (int) (getSize().getX() / 2.0 - 177.0 / 2.0), -5, 177, 2);
 										ComponentSprite lineBreak2 = new ComponentSprite(BookGui.LINE_BREAK, (int) (getSize().getX() / 2.0 - 177.0 / 2.0), 203, 177, 2);
 										componentSprite.add(lineBreak1, lineBreak2);
@@ -114,12 +115,13 @@ public class ComponentContentPage extends GuiComponent<ComponentContentPage> {
 										Block block = ForgeRegistries.BLOCKS.getValue(location);
 										if (block == null || !(block instanceof IStructure)) continue;
 
-										ComponentStructure componentStructure = new ComponentStructure(0, 45, 200, 200, Minecraft.getMinecraft().world, (IStructure) block);
+										ComponentVoid plate = new ComponentVoid(0, 0, getSize().getXi(), getSize().getYi());
+										ComponentStructure componentStructure = new ComponentStructure(0, 0, getSize().getXi(), getSize().getYi(), (IStructure) block);
 										ComponentSprite lineBreak1 = new ComponentSprite(BookGui.LINE_BREAK, (int) (getSize().getX() / 2.0 - 177.0 / 2.0), -5, 177, 2);
 										ComponentSprite lineBreak2 = new ComponentSprite(BookGui.LINE_BREAK, (int) (getSize().getX() / 2.0 - 177.0 / 2.0), getSize().getYi() - 5, 177, 2);
-										componentStructure.add(lineBreak1, lineBreak2);
+										plate.add(componentStructure, lineBreak1, lineBreak2);
 
-										componentsAfterThisPage.add(componentStructure);
+										componentsAfterThisPage.add(plate);
 										s = s.replace("[structure:" + structure + "]", "");
 									}
 

@@ -7,25 +7,21 @@ import com.teamwizardry.wizardry.api.block.IStructure;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
 public class ComponentStructure extends GuiComponent<ComponentStructure> {
 
-	private boolean spin = true;
-	private Vec2d offset = Vec2d.ZERO;
 	private double rotateHorizontal = 0;
 	private double rotateVertical = 0;
 	private boolean dragging = false;
 	private Vec2d prevPos = Vec2d.ZERO;
 
-	public ComponentStructure(int x, int y, int width, int height, World world, IStructure structure) {
+	public ComponentStructure(int x, int y, int width, int height, IStructure structure) {
 		super(x, y, width, height);
 
 		ScissorMixin.INSTANCE.scissor(this);
 
 		BUS.hook(GuiComponent.MouseDragEvent.class, event -> {
-			spin = false;
 
 			Vec2d untransform = event.getComponent().unTransform(event.getMousePos(), event.getComponent());
 			Vec2d diff;
@@ -52,7 +48,7 @@ public class ComponentStructure extends GuiComponent<ComponentStructure> {
 			GlStateManager.enableCull();
 			GlStateManager.enableRescaleNormal();
 
-			GlStateManager.translate(width / 2.0, (height / 2.0) + 25, 100);
+			GlStateManager.translate(width / 2.0, (height / 2.0), 100);
 
 			GlStateManager.rotate((float) (35 + rotateVertical), -1, 0, 0);
 			GlStateManager.rotate((float) ((45 + rotateHorizontal)), 0, 1, 0);
