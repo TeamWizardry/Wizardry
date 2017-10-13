@@ -34,7 +34,7 @@ public class ItemMagicWand extends ItemMod implements IGlowingItem {
 		TileEntity tile = worldIn.getTileEntity(pos);
 		if (tile != null && tile instanceof IManaInteractable) {
 			if (tile instanceof TilePearlHolder) {
-				new CapManager(((TilePearlHolder) tile).getCap()).removeMana(1000);
+				new CapManager(((TilePearlHolder) tile).getCap()).removeMana(new CapManager(((TilePearlHolder) tile).getCap()).getMaxMana());
 			}
 		}
 

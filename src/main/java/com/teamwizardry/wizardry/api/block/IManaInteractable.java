@@ -31,11 +31,11 @@ public interface IManaInteractable {
 	@Nullable
 	IWizardryCapability getCap();
 
-	default boolean suckManaFrom(World world, BlockPos origin, @Nullable IWizardryCapability cap, BlockPos from, double idealAmount, boolean equalize) {
+	default boolean suckManaFrom(World world, BlockPos origin, IWizardryCapability capToFill, BlockPos from, double idealAmount, boolean equalize) {
 		if (!world.isBlockLoaded(from)) return false;
-		if (cap == null) return false;
-		if (cap.getMaxMana() <= cap.getMana()) return false;
-		if (new CapManager(cap).isManaFull()) return false;
+		if (capToFill == null) return false;
+		if (capToFill.getMaxMana() <= capToFill.getMana()) return false;
+		if (new CapManager(capToFill).isManaFull()) return false;
 		if (origin.getDistance(from.getX(), from.getY(), from.getZ()) > ConfigValues.manaBatteryLinkDistance)
 			return false;
 
@@ -45,7 +45,7 @@ public interface IManaInteractable {
 			double amount = ((TileManaInteracter) tile).drainMana(world, from, ((TileManaInteracter) tile).getCap(), idealAmount);
 			if (amount < 0) return false;
 
-			CapManager manager = new CapManager(cap);
+			CapManager manager = new CapManager(capToFill);
 			manager.addMana(amount);
 
 			if (RandUtil.nextInt(5) == 0)

@@ -11,8 +11,11 @@ import com.teamwizardry.librarianlib.features.gui.components.ComponentText;
 import com.teamwizardry.librarianlib.features.math.Vec2d;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.block.IStructure;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.InputStream;
@@ -89,19 +92,35 @@ public class ComponentContentPage extends GuiComponent<ComponentContentPage> {
 
 								HashSet<GuiComponent<?>> componentsAfterThisPage = new HashSet<>();
 								String s = lineElement.getAsString();
-								String[] mentions = StringUtils.substringsBetween(s, "[image:", "]");
-								if (mentions != null)
-									for (String image : mentions) {
+								String[] images = StringUtils.substringsBetween(s, "[image:", "]");
+								String[] structures = StringUtils.substringsBetween(s, "[structure:", "]");
+								if (images != null)
+									for (String image : images) {
 										ResourceLocation location = new ResourceLocation(Wizardry.MODID, "textures/bookimages/" + image + ".png");
 										Sprite sprite = new Sprite(location);
 
-										ComponentSprite componentSprite = new ComponentSprite(sprite, 0, 45, 200, 200);
+										ComponentSprite componentSprite = new ComponentSprite(sprite, 0, 45, getSize().getXi(), getSize().getYi());
 										ComponentSprite lineBreak1 = new ComponentSprite(BookGui.LINE_BREAK, (int) (getSize().getX() / 2.0 - 177.0 / 2.0), -5, 177, 2);
 										ComponentSprite lineBreak2 = new ComponentSprite(BookGui.LINE_BREAK, (int) (getSize().getX() / 2.0 - 177.0 / 2.0), 203, 177, 2);
 										componentSprite.add(lineBreak1, lineBreak2);
 
 										componentsAfterThisPage.add(componentSprite);
 										s = s.replace("[image:" + image + "]", "");
+									}
+
+								if (structures != null)
+									for (String structure : structures) {
+										ResourceLocation location = new ResourceLocation(Wizardry.MODID, structure);
+										Block block = ForgeRegistries.BLOCKS.getValue(location);
+										if (block == null || !(block instanceof IStructure)) continue;
+
+										ComponentStructure componentStructure = new ComponentStructure(0, 45, 200, 200, Minecraft.getMinecraft().world, (IStructure) block);
+										ComponentSprite lineBreak1 = new ComponentSprite(BookGui.LINE_BREAK, (int) (getSize().getX() / 2.0 - 177.0 / 2.0), -5, 177, 2);
+										ComponentSprite lineBreak2 = new ComponentSprite(BookGui.LINE_BREAK, (int) (getSize().getX() / 2.0 - 177.0 / 2.0), getSize().getYi() - 5, 177, 2);
+										componentStructure.add(lineBreak1, lineBreak2);
+
+										componentsAfterThisPage.add(componentStructure);
+										s = s.replace("[structure:" + structure + "]", "");
 									}
 
 								// split each line in json into pages if need be.

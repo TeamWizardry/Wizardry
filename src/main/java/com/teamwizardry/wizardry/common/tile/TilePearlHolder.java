@@ -61,41 +61,61 @@ public class TilePearlHolder extends TileManaInteracter implements ICooldown {
 	@Override
 	public void update() {
 		super.update();
+		if (pearl.getItem() == ModItems.MANA_ORB) {
 
-		if (!isBenign)
+			if (!isBenign)
+				for (BlockPos pearlHolders : getNearestSuckables(TilePearlHolder.class, getWorld(), getPos())) {
+					TileEntity tile = getWorld().getTileEntity(pearlHolders);
+					if (tile != null && tile instanceof TilePearlHolder && !((TilePearlHolder) tile).isBenign) {
+						if (structurePos != null && ((TilePearlHolder) tile).structurePos != null && !structurePos.equals(((TilePearlHolder) tile).structurePos))
+							suckManaFrom(getWorld(), getPos(), getCap(), pearlHolders, 10, true);
+					}
+				}
+
+			primary:
+			for (BlockPos target : getNearestSuckables(TileManaBattery.class, getWorld(), getPos())) {
+				for (BlockPos relative : TileManaBattery.poses)
+					if (getPos().subtract(relative).equals(target)) {
+						break primary;
+					}
+				suckManaFrom(getWorld(), getPos(), getCap(), target, 10, false);
+			}
+
+			if (isBenign && new CapManager(getCap()).isManaEmpty()) {
+				pearl = ItemStack.EMPTY;
+				markDirty();
+
+				world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), ModSounds.GLASS_BREAK, SoundCategory.AMBIENT, 0.5F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
+				PacketHandler.NETWORK.sendToAllAround(new PacketExplode(new Vec3d(getPos()).addVector(0.5, 0.5, 0.5), Color.CYAN, Color.BLUE, 0.5, 0.5, 50, 50, 10, true),
+						new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
+			}
+
+
+		} else if (pearl.getItem() == ModItems.PEARL_NACRE) {
+			if (world.isRemote) return;
+
+			updateCooldown(pearl);
+
+			IWizardryCapability pearlCap = WizardryCapabilityProvider.getCap(pearl);
+			if (pearlCap == null || pearlCap.getMana() < pearlCap.getMaxMana() || isBenign) return;
+
+			boolean suckedFromHolder = false;
 			for (BlockPos pearlHolders : getNearestSuckables(TilePearlHolder.class, getWorld(), getPos())) {
 				TileEntity tile = getWorld().getTileEntity(pearlHolders);
-				if (tile != null && tile instanceof TilePearlHolder && !((TilePearlHolder) tile).isBenign) {
-					if (structurePos != null && ((TilePearlHolder) tile).structurePos != null && !structurePos.equals(((TilePearlHolder) tile).structurePos))
-						suckManaFrom(getWorld(), getPos(), getCap(), pearlHolders, 100, true);
+				if (tile != null && tile instanceof TilePearlHolder && !((TilePearlHolder) tile).isBenign && structurePos == null && ((TilePearlHolder) tile).structurePos == null) {
+					suckedFromHolder = true;
+					suckManaFrom(getWorld(), getPos(), pearlCap, pearlHolders, 10, true);
 				}
 			}
 
-		primary:
-		for (BlockPos target : getNearestSuckables(TileManaBattery.class, getWorld(), getPos())) {
-			for (BlockPos relative : TileManaBattery.poses)
-				if (getPos().subtract(relative).equals(target)) {
-					break primary;
+			if (!suckedFromHolder) {
+				for (BlockPos target : getNearestSuckables(TileManaBattery.class, getWorld(), getPos())) {
+					suckManaFrom(getWorld(), getPos(), pearlCap, target, 10, false);
 				}
-			suckManaFrom(getWorld(), getPos(), getCap(), target, 100, false);
-		}
-
-		if (isBenign && new CapManager(getCap()).isManaEmpty()) {
-			pearl = ItemStack.EMPTY;
-			markDirty();
-
-			world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), ModSounds.GLASS_BREAK, SoundCategory.AMBIENT, 0.5F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
-			PacketHandler.NETWORK.sendToAllAround(new PacketExplode(new Vec3d(getPos()).addVector(0.5, 0.5, 0.5), Color.CYAN, Color.BLUE, 0.5, 0.5, 50, 50, 10, true),
-					new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
-		}
-
-		if (world.isRemote) return;
-
-		// TODO: support for this again
-		if (pearl.getItem() == ModItems.PEARL_NACRE) {
-			updateCooldown(pearl);
+			}
 
 			if (isCoolingDown(pearl)) return;
+			if (pearlCap.getMana() == 0) return;
 
 			BlockPos closestMagnet = null;
 			for (int i = -10; i < 10; i++)
@@ -107,17 +127,14 @@ public class TilePearlHolder extends TileManaInteracter implements ICooldown {
 						else if (pos.distanceSq(getPos()) < getPos().distanceSq(closestMagnet))
 							closestMagnet = pos;
 					}
-
 			if (closestMagnet == null) return;
+
 			{
-				Vec3d direction = new Vec3d(closestMagnet)
-						.addVector(0.5, 0, 0.5)
-						.subtract(new Vec3d(getPos()).addVector(0.5, 0.5, 0.5))
-						.normalize();
+				Vec3d direction = new Vec3d(closestMagnet).subtract(new Vec3d(getPos())).normalize();
 				SpellData spell = new SpellData(getWorld());
 				spell.addData(LOOK, direction);
 				spell.addData(ORIGIN, new Vec3d(getPos()).addVector(0.5, 1.5, 0.5));
-				spell.addData(CAPABILITY, cap);
+				spell.addData(CAPABILITY, pearlCap);
 				SpellUtils.runSpell(pearl, spell);
 				setCooldown(world, null, null, pearl, spell);
 			}

@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.api.block;
 
-import com.teamwizardry.librarianlib.features.structure.Structure;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -25,7 +24,7 @@ import java.util.HashSet;
  */
 public interface IStructure {
 
-	Structure getStructure();
+	CachedStructure getStructure();
 
 	Vec3i offsetToCenter();
 

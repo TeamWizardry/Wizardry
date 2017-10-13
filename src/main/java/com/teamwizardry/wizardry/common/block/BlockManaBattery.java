@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.common.block;
 
 import com.teamwizardry.librarianlib.features.base.block.tile.BlockModContainer;
-import com.teamwizardry.librarianlib.features.structure.Structure;
+import com.teamwizardry.wizardry.api.block.CachedStructure;
 import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.client.render.block.TileManaBatteryRenderer;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
@@ -70,7 +70,7 @@ public class BlockManaBattery extends BlockModContainer implements IStructure {
 	}
 
 	@Override
-	public Structure getStructure() {
+	public CachedStructure getStructure() {
 		return ModStructures.INSTANCE.structures.get("mana_battery");
 	}
 

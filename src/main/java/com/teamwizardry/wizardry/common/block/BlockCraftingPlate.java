@@ -7,8 +7,8 @@ import com.google.gson.JsonObject;
 import com.teamwizardry.librarianlib.features.base.block.tile.BlockModContainer;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
-import com.teamwizardry.librarianlib.features.structure.Structure;
 import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.block.CachedStructure;
 import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.api.render.ClusterObject;
 import com.teamwizardry.wizardry.api.spell.SpellBuilder;
@@ -194,7 +194,7 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 	}
 
 	@Override
-	public Structure getStructure() {
+	public CachedStructure getStructure() {
 		return ModStructures.INSTANCE.structures.get("crafting_altar");
 	}
 
