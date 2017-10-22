@@ -4,10 +4,13 @@ import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseAOE;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -47,6 +50,11 @@ public class ModuleEffectBreak extends ModuleEffect {
 	@Override
 	public String getDescription() {
 		return "Will break blocks and damage armor";
+	}
+
+	@Override
+	public ModuleModifier[] applicableModifiers() {
+		return new ModuleModifier[]{new ModuleModifierIncreaseAOE(), new ModuleModifierIncreasePotency()};
 	}
 
 	@Override

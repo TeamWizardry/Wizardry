@@ -6,12 +6,15 @@ import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RandUtilSeed;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.common.core.LightningTracker;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtendRange;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
 import com.teamwizardry.wizardry.common.network.PacketRenderLightningBolt;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
@@ -53,6 +56,11 @@ public class ModuleEffectLightning extends ModuleEffect {
 	@Override
 	public String getDescription() {
 		return "Will shock a target, stunning it.";
+	}
+
+	@Override
+	public ModuleModifier[] applicableModifiers() {
+		return new ModuleModifier[]{new ModuleModifierExtendRange(), new ModuleModifierIncreasePotency()};
 	}
 
 	@Override

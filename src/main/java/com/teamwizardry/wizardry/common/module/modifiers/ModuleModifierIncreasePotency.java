@@ -27,6 +27,11 @@ public class ModuleModifierIncreasePotency extends ModuleModifier {
 		return "Increase Potency";
 	}
 
+	@Override
+	public String getShortHandName() {
+		return "Potency++";
+	}
+
 	@Nonnull
 	@Override
 	public String getDescription() {

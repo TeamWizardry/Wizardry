@@ -43,6 +43,8 @@ public class BookGui extends GuiBase {
 	public ItemStack bookItem;
 	@Nullable
 	public GuiComponent<?> activeComponent = null;
+	public int bookmarkIndex;
+	ComponentSprite componentBook;
 
 	public BookGui(ItemStack book) {
 		super(508, 360);
@@ -53,7 +55,7 @@ public class BookGui extends GuiBase {
 
 		base.setChildScale(1f);
 
-		ComponentSprite componentBook = new ComponentSprite(BOOK, 0, 0);
+		componentBook = new ComponentSprite(BOOK, 0, 0);
 		base.add(componentBook);
 
 		Vec2d logoSize = new Vec2d(524, 978).divide(5);
@@ -96,13 +98,11 @@ public class BookGui extends GuiBase {
 			}
 		}
 
-		int i = 0;
-
-		ComponentBookmark bookmarkIndex = new ComponentBookmark(this, componentBook, i++, new ComponentIndex(componentBook, indexItems, 45, true, this, new Vec2d(45, 45)), "Index", true);
+		ComponentBookmark bookmarkIndex = new ComponentBookmark(new Vec2d(35, 35), this, componentBook, this.bookmarkIndex++, new ComponentIndex(componentBook, indexItems, 45, true, this, new Vec2d(45, 45)), "Index", true);
 		componentBook.add(bookmarkIndex);
 
 		if (ItemNBTHelper.getBoolean(bookItem, "has_recipe", false)) {
-			ComponentBookmark bookmarkRecipe = new ComponentBookmark(this, componentBook, i++, new ComponentRecipe(this), "Spell Recipe", false);
+			ComponentBookmark bookmarkRecipe = new ComponentBookmark(new Vec2d(35, 35), this, componentBook, this.bookmarkIndex++, new ComponentRecipe(this), "Spell Recipe", false);
 			componentBook.add(bookmarkRecipe);
 		}
 

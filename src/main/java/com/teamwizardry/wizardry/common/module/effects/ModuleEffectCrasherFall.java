@@ -4,8 +4,11 @@ import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtendTime;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
 import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -42,6 +45,11 @@ public class ModuleEffectCrasherFall extends ModuleEffect {
 	@Override
 	public String getDescription() {
 		return "Will distribute a percentage of the target's fall damage into any nearby entities absorbing the impact";
+	}
+
+	@Override
+	public ModuleModifier[] applicableModifiers() {
+		return new ModuleModifier[]{new ModuleModifierIncreasePotency(), new ModuleModifierExtendTime()};
 	}
 
 	@Override

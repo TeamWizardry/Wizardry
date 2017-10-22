@@ -18,6 +18,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -30,14 +31,17 @@ public class ComponentIndex extends GuiComponent<ComponentIndex> {
 	private static final int buffer = 10;
 	private final GuiComponent<?> componentBook;
 	private final int plateHeight;
+	@NotNull
+	private final BookGui bookGui;
 	private final Vec2d pos;
 	private ArrayList<ComponentVoid> prevComps = new ArrayList<>();
 	private GuiComponent<?> prevContent;
 
-	public ComponentIndex(GuiComponent<?> componentBook, ArrayList<BookGui.IndexItem> list, int plateHeight, boolean isMainIndex, BookGui bookGui, Vec2d pos) {
+	public ComponentIndex(GuiComponent<?> componentBook, ArrayList<BookGui.IndexItem> list, int plateHeight, boolean isMainIndex, @NotNull BookGui bookGui, Vec2d pos) {
 		super(pos.getXi(), pos.getYi(), plateWidth, 120);
 		this.componentBook = componentBook;
 		this.plateHeight = plateHeight;
+		this.bookGui = bookGui;
 		this.pos = pos;
 
 		HashMap<Integer, ArrayList<BookGui.IndexItem>> pages = getPages(list);
@@ -155,7 +159,7 @@ public class ComponentIndex extends GuiComponent<ComponentIndex> {
 			if (type.equals("index")) {
 				return new Pair<>(type, getNewIndex(newResource));
 			} else if (type.equals("content")) {
-				return new Pair<>(type, new ComponentContentPage(225, -getPos().getYi() + pos.getYi() - 10, 200, 300, newResource, componentBook));
+				return new Pair<>(type, new ComponentContentPage(bookGui, 225, -getPos().getYi() + pos.getYi() - 10, 200, 300, newResource));
 			}
 		}
 		return null;
@@ -206,6 +210,6 @@ public class ComponentIndex extends GuiComponent<ComponentIndex> {
 				}
 			}
 		}
-		return new ComponentIndex(componentBook, indexItems, newPlateHeight, false, null, Vec2d.ZERO);
+		return new ComponentIndex(componentBook, indexItems, newPlateHeight, false, bookGui, Vec2d.ZERO);
 	}
 }

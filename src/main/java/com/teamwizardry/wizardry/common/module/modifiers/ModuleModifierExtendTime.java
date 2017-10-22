@@ -27,6 +27,11 @@ public class ModuleModifierExtendTime extends ModuleModifier {
 		return "Extend Time";
 	}
 
+	@Override
+	public String getShortHandName() {
+		return "Time++";
+	}
+
 	@Nonnull
 	@Override
 	public String getDescription() {

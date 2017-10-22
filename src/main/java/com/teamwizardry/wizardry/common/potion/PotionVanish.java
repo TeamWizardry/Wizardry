@@ -49,7 +49,7 @@ public class PotionVanish extends PotionBase {
 		public static Function2<RenderLivingBase, Object[], Object> unsetBrightness = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, "unsetBrightness", "func_177091_f");
 		public static Function2<RenderLivingBase, Object[], Object> setBrightness = MethodHandleHelper.wrapperForMethod(RenderLivingBase.class, "setBrightness", "func_177092_a", EntityLivingBase.class, float.class, boolean.class);
 		public static Function1<Render, Object> renderOutlines = MethodHandleHelper.wrapperForGetter(Render.class, "renderOutlines", "field_188301_f", "e");
-		public static Function1<RenderLivingBase, Object> renderMarker = MethodHandleHelper.wrapperForGetter(RenderLivingBase.class, "renderMarker", "field_188323_j", "i");
+		public static Function1<RenderLivingBase, Object> renderMarker = MethodHandleHelper.wrapperForGetter(RenderLivingBase.class, "renderMarker", "field_188323_j", "bookmarkIndex");
 		public static Function1<RenderLivingBase, Object> layerRenderers = MethodHandleHelper.wrapperForGetter(RenderLivingBase.class, "layerRenderers", "field_177097_h", "a");
 	}
 

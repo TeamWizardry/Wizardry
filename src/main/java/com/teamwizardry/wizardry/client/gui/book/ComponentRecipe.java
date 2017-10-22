@@ -42,7 +42,6 @@ public class ComponentRecipe extends GuiComponent<ComponentRecipe> {
 
 		if (ItemNBTHelper.getBoolean(bookGui.bookItem, "has_recipe", false)) {
 
-
 			JsonObject object = new Gson().fromJson(ItemNBTHelper.getString(bookGui.bookItem, "spell_recipe", null), JsonObject.class);
 			if (object == null) return;
 

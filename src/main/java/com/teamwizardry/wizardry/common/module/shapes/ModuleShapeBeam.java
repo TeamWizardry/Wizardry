@@ -4,11 +4,14 @@ import com.teamwizardry.wizardry.api.spell.IContinuousModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtendRange;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -43,6 +46,11 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 	@Override
 	public String getDescription() {
 		return "Will run the spell via a beam emanating from the caster";
+	}
+
+	@Override
+	public ModuleModifier[] applicableModifiers() {
+		return new ModuleModifier[]{new ModuleModifierExtendRange(), new ModuleModifierIncreasePotency()};
 	}
 
 	@Override

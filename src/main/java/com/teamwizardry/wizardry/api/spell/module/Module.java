@@ -127,6 +127,16 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	public abstract String getDescription();
 
 	/**
+	 * Specify all applicable modifiers that can be applied to this module.
+	 *
+	 * @return Any set with applicable ModuleModifiers.
+	 */
+	@Nullable
+	public ModuleModifier[] applicableModifiers() {
+		return null;
+	}
+
+	/**
 	 * Only return false if the spell cannot be taxed from mana. Return true otherwise.
 	 */
 	public abstract boolean run(@Nonnull SpellData spell);

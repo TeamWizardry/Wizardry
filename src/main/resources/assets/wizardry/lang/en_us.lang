@@ -64,7 +64,7 @@ advancement.wizardry.devildust.desc=Melt book in fire to make Devil Dust
 advancement.wizardry.crunch=§oCRUNCH.§a
 advancement.wizardry.crunch.desc=Crash straight through Bedrock to the Underworld above
 
-gui.physicsbook.defaulttitle=Physics Book
+bookGui.physicsbook.defaulttitle=Physics Book
 
 fluid.nacre_fluid=Nacre
 fluid.mana_fluid=Mana

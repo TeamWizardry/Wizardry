@@ -13,9 +13,12 @@ import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseAOE;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
@@ -53,6 +56,11 @@ public class ModuleEffectGravityWell extends ModuleEffect implements ILingeringM
 	@Override
 	public String getDescription() {
 		return "Will suck in all entities around the target.";
+	}
+
+	@Override
+	public ModuleModifier[] applicableModifiers() {
+		return new ModuleModifier[]{new ModuleModifierIncreaseAOE(), new ModuleModifierIncreasePotency()};
 	}
 
 	@Override

@@ -4,7 +4,9 @@ import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtendTime;
 import com.teamwizardry.wizardry.init.ModPotions;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
@@ -41,6 +43,11 @@ public class ModuleEffectPhase extends ModuleEffect {
 	@Override
 	public String getDescription() {
 		return "Will enable the target to phase through blocks temporarily.";
+	}
+
+	@Override
+	public ModuleModifier[] applicableModifiers() {
+		return new ModuleModifier[]{new ModuleModifierExtendTime()};
 	}
 
 	@Override

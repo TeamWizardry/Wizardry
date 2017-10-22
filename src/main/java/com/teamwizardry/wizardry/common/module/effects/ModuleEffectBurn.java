@@ -4,10 +4,13 @@ import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtendTime;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseAOE;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -48,6 +51,11 @@ public class ModuleEffectBurn extends ModuleEffect {
 	@Override
 	public String getDescription() {
 		return "Will burn the target block or entity.";
+	}
+
+	@Override
+	public ModuleModifier[] applicableModifiers() {
+		return new ModuleModifier[]{new ModuleModifierIncreaseAOE(), new ModuleModifierExtendTime()};
 	}
 
 	@Override

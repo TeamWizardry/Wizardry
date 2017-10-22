@@ -12,9 +12,11 @@ import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
@@ -55,6 +57,11 @@ public class ModuleEffectTelekinesis extends ModuleEffect implements IContinuous
 	@Override
 	public String getDescription() {
 		return "Will levitate blocks and entities in the world";
+	}
+
+	@Override
+	public ModuleModifier[] applicableModifiers() {
+		return new ModuleModifier[]{new ModuleModifierIncreasePotency()};
 	}
 
 	@Override

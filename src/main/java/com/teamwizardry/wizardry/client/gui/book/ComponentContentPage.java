@@ -18,6 +18,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -28,11 +29,14 @@ import static net.minecraft.client.gui.FontRenderer.getFormatFromString;
 
 public class ComponentContentPage extends GuiComponent<ComponentContentPage> {
 
+	@NotNull
+	private final BookGui bookGui;
 	private final String resource;
 	private GuiComponent<?> prevComps;
 
-	public ComponentContentPage(int posX, int posY, int width, int height, String resource, GuiComponent<?> componentBook) {
+	public ComponentContentPage(@NotNull BookGui bookGui, int posX, int posY, int width, int height, String resource) {
 		super(posX, posY, width, height);
+		this.bookGui = bookGui;
 		this.resource = resource;
 
 		HashMap<Integer, GuiComponent<?>> pages = getContent();
@@ -116,7 +120,7 @@ public class ComponentContentPage extends GuiComponent<ComponentContentPage> {
 										if (block == null || !(block instanceof IStructure)) continue;
 
 										ComponentVoid plate = new ComponentVoid(0, 0, getSize().getXi(), getSize().getYi());
-										ComponentStructure componentStructure = new ComponentStructure(0, 0, getSize().getXi(), getSize().getYi(), (IStructure) block);
+										ComponentStructure componentStructure = new ComponentStructure(bookGui, 0, 0, getSize().getXi(), getSize().getYi(), (IStructure) block);
 										ComponentSprite lineBreak1 = new ComponentSprite(BookGui.LINE_BREAK, (int) (getSize().getX() / 2.0 - 177.0 / 2.0), -5, 177, 2);
 										ComponentSprite lineBreak2 = new ComponentSprite(BookGui.LINE_BREAK, (int) (getSize().getX() / 2.0 - 177.0 / 2.0), getSize().getYi() - 5, 177, 2);
 										plate.add(componentStructure, lineBreak1, lineBreak2);

@@ -27,6 +27,11 @@ public class ModuleModifierIncreaseAOE extends ModuleModifier {
 		return "Extend Area Of Effect";
 	}
 
+	@Override
+	public String getShortHandName() {
+		return "AOE++";
+	}
+
 	@Nonnull
 	@Override
 	public String getDescription() {

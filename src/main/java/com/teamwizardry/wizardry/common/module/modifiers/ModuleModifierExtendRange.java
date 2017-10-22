@@ -27,6 +27,11 @@ public class ModuleModifierExtendRange extends ModuleModifier {
 		return "Extend Range";
 	}
 
+	@Override
+	public String getShortHandName() {
+		return "Range++";
+	}
+
 	@Nonnull
 	@Override
 	public String getDescription() {

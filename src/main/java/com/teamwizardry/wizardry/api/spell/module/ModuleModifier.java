@@ -11,6 +11,8 @@ public abstract class ModuleModifier extends Module {
 
 	public void apply(@Nonnull Module module)
 	{
-		modifiers.forEach(modifier -> module.modifiersToApply.add(modifier));
+		module.modifiersToApply.addAll(modifiers);
 	}
+
+	public abstract String getShortHandName();
 }

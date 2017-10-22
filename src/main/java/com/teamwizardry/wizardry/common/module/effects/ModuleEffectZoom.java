@@ -13,9 +13,11 @@ import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtendRange;
 import com.teamwizardry.wizardry.init.ModPotions;
 import kotlin.Pair;
 import net.minecraft.entity.Entity;
@@ -77,6 +79,11 @@ public class ModuleEffectZoom extends ModuleEffect {
 	@Override
 	public String getDescription() {
 		return "Move swiftly and quickly to the target";
+	}
+
+	@Override
+	public ModuleModifier[] applicableModifiers() {
+		return new ModuleModifier[]{new ModuleModifierExtendRange()};
 	}
 
 	@Override

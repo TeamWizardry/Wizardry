@@ -4,10 +4,13 @@ import com.teamwizardry.wizardry.api.spell.ITaxing;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.entity.EntitySpellProjectile;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtendRange;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseSpeed;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.SoundCategory;
@@ -43,6 +46,11 @@ public class ModuleShapeProjectile extends ModuleShape implements ITaxing {
 	@Override
 	public String getDescription() {
 		return "Will launch the spell as a projectile in the direction the caster is looking";
+	}
+
+	@Override
+	public ModuleModifier[] applicableModifiers() {
+		return new ModuleModifier[]{new ModuleModifierExtendRange(), new ModuleModifierIncreaseSpeed()};
 	}
 
 	@Override

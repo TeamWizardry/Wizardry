@@ -27,6 +27,11 @@ public class ModuleModifierIncreaseSpeed extends ModuleModifier {
 		return "Increase Speed";
 	}
 
+	@Override
+	public String getShortHandName() {
+		return "Speed++";
+	}
+
 	@Nonnull
 	@Override
 	public String getDescription() {

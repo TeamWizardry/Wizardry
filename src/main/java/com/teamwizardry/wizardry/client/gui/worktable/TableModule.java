@@ -27,7 +27,6 @@ import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -41,7 +40,7 @@ public class TableModule {
 
 	private static final Texture SPRITE_SHEET = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sprite_sheet.png"));
 
-	private static final Sprite plate = SPRITE_SHEET.getSprite("module_default", 16, 16);
+	static final Sprite plate = SPRITE_SHEET.getSprite("module_default", 16, 16);
 	private static final Sprite plate_highlighted = SPRITE_SHEET.getSprite("module_default_glow", 16, 16);
 	private static final Sprite streak = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/streak.png"));
 	public final Module module;
@@ -49,8 +48,8 @@ public class TableModule {
 	private Sprite icon;
 	private Vec2d prevPos;
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public TableModule(WorktableGui table, ComponentSprite parent, Module module, boolean draggable) {
+	@SuppressWarnings({"unchecked", "rawtypes"})
+	public TableModule(WorktableGui table, ComponentSprite parent, Module module, boolean draggable, boolean benign) {
 		this.module = module;
 		icon = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/icons/" + module.getID() + ".png"));
 
@@ -59,36 +58,10 @@ public class TableModule {
 		if (draggable) GlMixin.INSTANCE.transform(base).setValue(new Vec3d(0, 0, 30));
 		base.addTag(module);
 
-		base.BUS.hook(GuiComponent.MouseClickEvent.class, (event) -> {
-			if (!event.getComponent().getMouseOver()) return;
-			if (!draggable) return;
-			if (!event.getComponent().hasData(ModuleType.class, "last_modifier_type")) return;
-			ModuleType type = (ModuleType) event.getComponent().getData(ModuleType.class, "last_modifier_type");
-			ArrayDeque<Module> modifiers = new ArrayDeque<>();
-			for (Module modifier : ModuleRegistry.INSTANCE.getModules(type)) {
-				if (event.getComponent().hasData(Integer.class, modifier.getID())) {
-					int x = (int) event.getComponent().getData(Integer.class, modifier.getID());
-					for (int i = 0; i < x; i++) {
-						modifiers.add(modifier.copy());
-					}
-				}
-			}
-			if (modifiers.isEmpty()) return;
-			Module lastModule = modifiers.getLast();
-			int i = event.getComponent().hasData(Integer.class, lastModule.getID()) ? (int) event.getComponent().getData(Integer.class, lastModule.getID()) : 0;
-			if (i <= 0) return;
-
-			if (event.getButton() == EnumMouseButton.LEFT) {
-				event.getComponent().setData(Integer.class, lastModule.getID(), ++i);
-			} else if (event.getButton() == EnumMouseButton.RIGHT) {
-				event.getComponent().setData(Integer.class, lastModule.getID(), --i);
-			}
-		});
-
 		base.BUS.hook(GuiComponent.MouseDownEvent.class, (event) -> {
 			if (event.getButton() == EnumMouseButton.LEFT) {
 				if (!draggable && event.getComponent().getMouseOver()) {
-					TableModule item = new TableModule(table, parent, module, true);
+					TableModule item = new TableModule(table, parent, module, true, false);
 					table.paper.add(item.component);
 
 					item.component.setPos(event.getComponent().getParent().unTransformChildPos(event.getComponent(), event.getMousePos()));
@@ -115,13 +88,23 @@ public class TableModule {
 
 			if (prevPos.getXi() == event.getComponent().getPos().getX()
 					&& prevPos.getYi() == event.getComponent().getPos().getYi()) {
-				Module lastModifier = ModuleRegistry.INSTANCE.getModule((String) event.getComponent().getData(String.class, "last_modifier_type"));
-				if (lastModifier != null && event.getComponent().hasData(Integer.class, lastModifier.getID())) {
-					int x = (int) event.getComponent().getData(Integer.class, lastModifier.getID());
-					if (event.getButton() == EnumMouseButton.LEFT) x++;
-					else if (event.getButton() == EnumMouseButton.RIGHT) x--;
-					if (x <= 0) event.getComponent().removeData(Integer.class, lastModifier.getID());
-					else event.getComponent().setData(Integer.class, lastModifier.getID(), x);
+				//Module lastModifier = ModuleRegistry.INSTANCE.getModule((String) event.getComponent().getData(String.class, "last_modifier_type"));
+				//if (lastModifier != null && event.getComponent().hasData(Integer.class, lastModifier.getID())) {
+				//	int x = (int) event.getComponent().getData(Integer.class, lastModifier.getID());
+				//	if (event.getButton() == EnumMouseButton.LEFT) x++;
+				//	else if (event.getButton() == EnumMouseButton.RIGHT) x--;
+				//	if (x <= 0) event.getComponent().removeData(Integer.class, lastModifier.getID());
+				//	else event.getComponent().setData(Integer.class, lastModifier.getID(), x);
+				//}
+				if (event.getComponent().getMouseOver() && draggable && !benign) {
+
+					if (table.selectedcomponent == event.getComponent()) {
+						table.selectedcomponent = null;
+						table.whitelistedModifiers.refresh();
+					} else {
+						table.selectedcomponent = event.getComponent();
+						table.whitelistedModifiers.refresh();
+					}
 				}
 			}
 
@@ -253,10 +236,10 @@ public class TableModule {
 
 			//---------// RENDER MODULE //---------//
 			{
-				float size = (event.getComponent().getMouseOver() && !hasPos) ? 24 : 16;
-				float sizeIcon = (event.getComponent().getMouseOver() && !hasPos) ? 18 : 12;
-				float posPlate = (event.getComponent().getMouseOver() && !hasPos) ? -4 : 0;
-				float posIcon = (event.getComponent().getMouseOver() && !hasPos) ? -1.5f : 2;
+				float size = ((table.selectedcomponent == event.getComponent() || event.getComponent().getMouseOver()) && !hasPos) ? 24 : 16;
+				float sizeIcon = ((table.selectedcomponent == event.getComponent() || event.getComponent().getMouseOver()) && !hasPos) ? 18 : 12;
+				float posPlate = ((table.selectedcomponent == event.getComponent() || event.getComponent().getMouseOver()) && !hasPos) ? -4 : 0;
+				float posIcon = ((table.selectedcomponent == event.getComponent() || event.getComponent().getMouseOver()) && !hasPos) ? -1.5f : 2;
 
 				GlStateManager.pushMatrix();
 				GlStateManager.color(1, 1, 1, 1);
@@ -371,7 +354,7 @@ public class TableModule {
 	}
 
 	@SuppressWarnings("unused")
-	public void drawWire(Vec2d start, Vec2d end, Color primary, Color secondary) {
+	public static void drawWire(Vec2d start, Vec2d end, Color primary, Color secondary) {
 		GlStateManager.pushMatrix();
 		GlStateManager.enableBlend();
 		GlStateManager.disableCull();
@@ -387,8 +370,6 @@ public class TableModule {
 		for (int i = 0; i < list.size() - 1; i++) {
 			float x = (float) (start.length() + ClientTickHandler.getTicks() + ClientTickHandler.getPartialTicks()) / 30f;
 			if (i == (int) ((x - Math.floor(x)) * 50f)) {
-				pointerPos = list.get(i);
-				if (i > 0) behindPointer = list.get(i - 1);
 				p = i / (list.size() - 1.0f);
 			}
 		}
@@ -439,11 +420,11 @@ public class TableModule {
 		GlStateManager.popMatrix();
 	}
 
-	private float lerp(float a, float b, float f) {
+	private static float lerp(float a, float b, float f) {
 		return a + f * (b - a);
 	}
 
-	private Color getColorForModule(ModuleType type) {
+	public static Color getColorForModule(ModuleType type) {
 		switch (type) {
 			case EVENT:
 				return Color.PINK;

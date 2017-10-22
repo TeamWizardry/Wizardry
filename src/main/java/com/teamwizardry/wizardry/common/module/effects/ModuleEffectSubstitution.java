@@ -13,11 +13,13 @@ import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtendRange;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -64,6 +66,11 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 	@Override
 	public String getDescription() {
 		return "Will swap the caster's position with that of the target. Also works on blocks, ex: will swap blocks similar to the target block with that shift-right-clicked block.";
+	}
+
+	@Override
+	public ModuleModifier[] applicableModifiers() {
+		return new ModuleModifier[]{new ModuleModifierExtendRange()};
 	}
 
 	@Override

@@ -34,6 +34,11 @@ public class ModuleModifierException extends ModuleModifier {
 	}
 
 	@Override
+	public String getShortHandName() {
+		return "Exception";
+	}
+
+	@Override
 	public boolean run(@Nonnull SpellData spell) {
 		return true;
 	}

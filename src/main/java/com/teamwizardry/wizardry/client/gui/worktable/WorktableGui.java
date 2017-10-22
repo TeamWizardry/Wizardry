@@ -16,10 +16,13 @@ import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleType;
+import com.teamwizardry.wizardry.api.util.CubicBezier;
+import com.teamwizardry.wizardry.api.util.RandUtilSeed;
 import com.teamwizardry.wizardry.api.util.Utils;
 import com.teamwizardry.wizardry.common.network.PacketSendSpellToBook;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -37,22 +40,28 @@ import java.util.UUID;
  */
 @SuppressWarnings("rawtypes")
 public class WorktableGui extends GuiBase {
+
 	private static final Texture BACKGROUND_TEXTURE = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/table_background.png"));
 	private static final Sprite BACKGROUND_SPRITE = BACKGROUND_TEXTURE.getSprite("bg", 480, 224);
 	private static final Sprite SCROLL_BAR = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/scroll_bar.png"));
 	private static final Sprite SCROLL_BAR_BAR = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/scroll_bar_bar.png"));
 	private static final Sprite SIDE_BAR = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sidebar.png"));
+	private static final Sprite BUTTON_NORMAL = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/button.png"));
+	private static final Sprite BUTTON_HIGHLIGHTED = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/button_highlighted.png"));
+	private static final Sprite BUTTON_PRESSED = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/button_pressed.png"));
 	ComponentVoid paper;
+	GuiComponent<?> selectedcomponent;
 	BiMap<GuiComponent, UUID> paperComponents = HashBiMap.create();
 	HashMap<UUID, UUID> componentLinks = new HashMap<>();
 	private HashSet<ArrayList<Module>> compiledSpell = new HashSet<>();
+	ComponentWhitelistedModifiers whitelistedModifiers;
 
 	public WorktableGui() {
 		super(480, 224);
 
 		ComponentRect rect = new ComponentRect(0, 0, 40000, 40000);
-		rect.getColor().setValue(new Color(0xB3000000, true));
-		GlMixin.INSTANCE.transform(rect).setValue(new Vec3d(0, 0, -1000));
+		rect.getColor().setValue(new Color(0x80000000, true));
+		GlMixin.INSTANCE.transform(rect).setValue(new Vec3d(0, 0, -20));
 		getFullscreenComponents().add(rect);
 
 		ComponentSprite background = new ComponentSprite(BACKGROUND_SPRITE, 0, 0);
@@ -90,14 +99,33 @@ public class WorktableGui extends GuiBase {
 		addScrollbar(modifiers, scrollModifiers, 141, 123, ModuleType.MODIFIER);
 		getMainComponents().add(modifiers);
 
-		ComponentSprite save = new ComponentSprite(new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/button.png")), 395, 30, (int) (88 / 1.5), (int) (24 / 1.5));
+		ComponentSprite save = new ComponentSprite(BUTTON_NORMAL, 395, 30, (int) (88 / 1.5), (int) (24 / 1.5));
 		GlMixin.INSTANCE.transform(save).setValue(new Vec3d(0, 0, 20));
 		int width = Minecraft.getMinecraft().fontRenderer.getStringWidth("SAVE");
 		int height = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT;
 		ComponentText textSave = new ComponentText((save.getSize().getXi() / 2) - width / 2, (save.getSize().getYi() / 2) - height / 2);
 		textSave.getText().setValue("SAVE");
 		save.add(textSave);
+
+		save.BUS.hook(GuiComponent.MouseInEvent.class, event -> {
+			save.setSprite(BUTTON_HIGHLIGHTED);
+		});
+		save.BUS.hook(GuiComponent.MouseOutEvent.class, event -> {
+			save.setSprite(BUTTON_NORMAL);
+		});
+		save.BUS.hook(GuiComponent.MouseDownEvent.class, event -> {
+			if (event.getComponent().getMouseOver()) {
+				save.setSprite(BUTTON_PRESSED);
+			}
+		});
+		save.BUS.hook(GuiComponent.MouseUpEvent.class, event -> {
+			if (event.getComponent().getMouseOver()) {
+				save.setSprite(BUTTON_HIGHLIGHTED);
+			}
+		});
+
 		save.BUS.hook(GuiComponent.MouseClickEvent.class, (event) -> {
+			final long[] animStart = {System.currentTimeMillis()};
 
 			HashSet<GuiComponent> heads = getHeads();
 			if (heads.isEmpty()) return;
@@ -116,8 +144,132 @@ public class WorktableGui extends GuiBase {
 					PacketHandler.NETWORK.sendToServer(new PacketSendSpellToBook(slot, (ArrayList<ItemStack>) builder.getInventory()));
 				}
 			}
+
+			BiMap<GuiComponent, UUID> paperComponents = HashBiMap.create();
+
+			ComponentVoid fakePaper = new ComponentVoid(0, 0, getFullscreenComponents().getSize().getXi(), getFullscreenComponents().getSize().getYi());
+			getFullscreenComponents().add(fakePaper);
+
+			ComponentVoid bookIcon = new ComponentVoid(getFullscreenComponents().getSize().getXi(), 0, 32, 32);
+			Sprite bookIconSprite = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/items/physics_book.png"));
+			fakePaper.add(bookIcon);
+
+			for (GuiComponent<?> component : this.paperComponents.keySet()) {
+				Module module = getModule(component);
+				if (module == null) continue;
+
+				Vec2d untransform = component.getParent().unTransformRoot(component, event.getMousePos(), false);
+				ComponentSprite plate = new ComponentSprite(TableModule.plate, untransform.getXi(), untransform.getYi(), component.getSize().getXi(), component.getSize().getYi());
+				plate.setData(Vec2d.class, plate.getPos());
+				plate.addTag(module);
+				GlMixin.INSTANCE.transform(plate).setValue(new Vec3d(0, 0, 100));
+
+				Sprite icon = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/icons/" + module.getID() + ".png"));
+				ComponentSprite iconComp = new ComponentSprite(icon, 2, 2, 12, 12);
+				plate.add(iconComp);
+
+				paperComponents.put(plate, this.paperComponents.get(component));
+				fakePaper.add(plate);
+
+				//--- RENDER WIRE ---//
+				plate.BUS.hook(GuiComponent.PreDrawEvent.class, (event1) -> {
+
+					UUID linkedUuid = componentLinks.get(paperComponents.get(event1.getComponent()));
+
+					GuiComponent component1 = paperComponents.inverse().get(linkedUuid);
+					if (component1 == null) return;
+					if (linkedUuid == paperComponents.get(event1.getComponent())) return;
+
+					Vec2d toPos = null;
+					if (component1.hasData(Vec2d.class, "origin_pos"))
+						toPos = (Vec2d) component1.getData(Vec2d.class, "origin_pos");
+					if (toPos == null) toPos = component1.getPos();
+					toPos = toPos.add(8, 8);
+
+					Vec2d fromPos = null;
+					if (event1.getComponent().hasData(Vec2d.class, "origin_pos"))
+						fromPos = ((Vec2d) event1.getComponent().getData(Vec2d.class, "origin_pos"));
+					if (fromPos == null) fromPos = event1.getComponent().getPos();
+					fromPos = fromPos.add(8, 8);
+
+					Module module1 = getModule(component1);
+					if (module1 == null) return;
+
+					Module module2 = getModule(event1.getComponent());
+					if (module2 == null) return;
+
+					TableModule.drawWire(fromPos, toPos, TableModule.getColorForModule(module2.getModuleType()), TableModule.getColorForModule(module1.getModuleType()));
+				});
+				//--- RENDER WIRE ---//
+			}
+
+			int maxTime = 2;
+			double halfTime = maxTime / 2.0;
+			animStart[0] = System.currentTimeMillis();
+			fakePaper.BUS.hook(GuiComponent.PostDrawEvent.class, (event1) -> {
+				double time = (System.currentTimeMillis() - animStart[0]) / 1000.0;
+
+				if (time <= halfTime && !event1.getComponent().hasTag("updated")) {
+					float progress = (float) time / (float) halfTime;
+					float t = new CubicBezier(0.17f, 0.67f, 0.38f, 0.99f).eval(progress);
+
+					bookIcon.BUS.hook(GuiComponent.PostDrawEvent.class, (event2) -> {
+						GlStateManager.pushMatrix();
+						GlStateManager.translate(getFullscreenComponents().getSize().getX() - 32, 0, 1000);
+						GlStateManager.color(1f, 1f, 1f, t);
+						bookIconSprite.getTex().bind();
+						bookIconSprite.draw((int) event2.getPartialTicks(), 0, 0, 32, 32);
+						GlStateManager.popMatrix();
+					});
+
+					for (GuiComponent<?> component : paperComponents.keySet()) {
+						UUID uuid = paperComponents.get(component);
+						if (uuid == null) continue;
+
+						Vec2d origin = component.getData(Vec2d.class);
+						if (origin == null) continue;
+
+						RandUtilSeed seed = new RandUtilSeed(uuid.hashCode());
+						Vec2d to = origin.add(seed.nextDouble(-50, 50), seed.nextDouble(-50, 50));
+						Vec2d diff = origin.sub(to);
+						Vec2d progDist = diff.mul(t);
+						component.setPos(origin.add(progDist));
+					}
+				} else if (time < maxTime) {
+					if (!event1.getComponent().hasTag("updated")) {
+						animStart[0] = System.currentTimeMillis();
+						event1.getComponent().addTag("updated");
+					}
+					float progress = (float) time / (float) maxTime;
+					float t = new CubicBezier(0.17f, 0.67f, 0.38f, 0.99f).eval(progress);
+
+					for (GuiComponent<?> component : paperComponents.keySet()) {
+						if (!component.hasTag("updated")) {
+							component.setData(Vec2d.class, component.getPos());
+							component.addTag("updated");
+						}
+						Module module = getModule(component);
+						if (module == null) continue;
+
+						Vec2d origin = component.getData(Vec2d.class);
+						if (origin == null) continue;
+
+						Vec2d to = new Vec2d(getFullscreenComponents().getSize().getXi(), 0);
+						to = to.sub(fakePaper.getPos());
+						Vec2d diff = to.sub(origin);
+						Vec2d progDist = diff.mul(t);
+						component.setPos(origin.add(progDist));
+					}
+				} else {
+					event1.getComponent().invalidate();
+				}
+			});
 		});
 		getMainComponents().add(save);
+
+		whitelistedModifiers = new ComponentWhitelistedModifiers(this, 384, save.getPos().getYi() + save.getSize().getYi() + 8, 80, 170);
+		GlMixin.INSTANCE.transform(whitelistedModifiers).setValue(new Vec3d(0, 0, 20));
+		getMainComponents().add(whitelistedModifiers);
 	}
 
 	public UUID getUUID(GuiComponent component) {
@@ -185,7 +337,7 @@ public class WorktableGui extends GuiBase {
 
 		ArrayList<GuiComponent<?>> tmp = new ArrayList<>();
 		for (Module module : ModuleRegistry.INSTANCE.getModules(type)) {
-			TableModule item = new TableModule(this, parent, module.copy(), false);
+			TableModule item = new TableModule(this, parent, module.copy(), false, true);
 			tmp.add(item.component);
 		}
 
@@ -215,7 +367,7 @@ public class WorktableGui extends GuiBase {
 
 			ArrayList<GuiComponent<?>> tmp = new ArrayList<>();
 			for (Module module : ModuleRegistry.INSTANCE.getModules(type)) {
-				TableModule item = new TableModule(this, parent, module.copy(), false);
+				TableModule item = new TableModule(this, parent, module.copy(), false, false);
 				tmp.add(item.component);
 			}
 			ArrayList<GuiComponent<?>> scrollable = (ArrayList<GuiComponent<?>>) Utils.getVisibleComponents(tmp, percent);
@@ -239,7 +391,7 @@ public class WorktableGui extends GuiBase {
 
 			ArrayList<GuiComponent<?>> tmp = new ArrayList<>();
 			for (Module module : ModuleRegistry.INSTANCE.getModules(type)) {
-				TableModule item = new TableModule(this, parent, module.copy(), false);
+				TableModule item = new TableModule(this, parent, module.copy(), false, false);
 				tmp.add(item.component);
 			}
 			ArrayList<GuiComponent<?>> scrollable = (ArrayList<GuiComponent<?>>) Utils.getVisibleComponents(tmp, percent);

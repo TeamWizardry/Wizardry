@@ -10,11 +10,15 @@ import com.teamwizardry.wizardry.api.spell.ILingeringModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RandUtilSeed;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtendRange;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseAOE;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -54,6 +58,11 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 	@Override
 	public String getDescription() {
 		return "Will linger in the area targeted in a circle, continuously running a spell in that region.";
+	}
+
+	@Override
+	public ModuleModifier[] applicableModifiers() {
+		return new ModuleModifier[]{new ModuleModifierIncreaseAOE(), new ModuleModifierIncreasePotency(), new ModuleModifierExtendRange()};
 	}
 
 	@Override

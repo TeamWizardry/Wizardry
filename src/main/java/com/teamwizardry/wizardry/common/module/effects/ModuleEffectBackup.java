@@ -11,10 +11,13 @@ import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import com.teamwizardry.wizardry.common.entity.EntityBackupZombie;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtendTime;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseAOE;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.EnumFacing;
@@ -51,6 +54,11 @@ public class ModuleEffectBackup extends ModuleEffect {
 	@Override
 	public String getDescription() {
 		return "Will summon undead mobs to help you out in battle";
+	}
+
+	@Override
+	public ModuleModifier[] applicableModifiers() {
+		return new ModuleModifier[]{new ModuleModifierIncreaseAOE(), new ModuleModifierExtendTime()};
 	}
 
 	@Override
