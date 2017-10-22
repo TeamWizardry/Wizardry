@@ -10,7 +10,6 @@ import static com.teamwizardry.wizardry.client.gui.book.BookGui.BOOKMARK_EXTENDE
 
 public class ComponentBookmark extends GuiComponent<ComponentBookmark> {
 
-
 	public ComponentBookmark(Vec2d pos, BookGui bookGui, GuiComponent<?> parent, int index, GuiComponent<?> link, String title, boolean isActive) {
 		super(pos.getXi(), pos.getYi(), 200, 300);
 

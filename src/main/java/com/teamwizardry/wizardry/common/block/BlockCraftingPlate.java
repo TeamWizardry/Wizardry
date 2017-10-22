@@ -109,7 +109,7 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		ItemStack heldItem = playerIn.getHeldItem(hand);
 
-		if (tickStructure(worldIn, playerIn, pos)) {
+		if (isStructureComplete(worldIn, pos)) {
 			if (!(playerIn.getHeldItemMainhand().getItem() == ModItems.MAGIC_WAND)) {
 				TileCraftingPlate plate = getTE(worldIn, pos);
 				if (plate.isCrafting) return false;
@@ -174,6 +174,10 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 				return true;
 			}
 			return true;
+		} else {
+			TileCraftingPlate plate = getTE(worldIn, pos);
+			plate.structureReveal = System.currentTimeMillis();
+			plate.markDirty();
 		}
 		return heldItem.isEmpty();
 	}

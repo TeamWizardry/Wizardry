@@ -13,7 +13,6 @@ import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.core.IsolatedBlock;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
-import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.proxy.ClientProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
@@ -128,56 +127,61 @@ public class TileManaBatteryRenderer extends TileEntitySpecialRenderer<TileManaB
 		GlStateManager.disableBlend();
 		GlStateManager.popMatrix();
 
-		if (te.getBlockType() instanceof IStructure && Minecraft.getMinecraft().player.getHeldItemMainhand().getItem() == ModItems.MAGIC_WAND) {
-			IStructure structure = ((IStructure) te.getBlockType());
+		if (te.getBlockType() instanceof IStructure) {
+			int maxTime = 10000;
+			long diff = System.currentTimeMillis() - te.structureReveal;
+			if (diff <= maxTime) {
+				float prog = 1 - ((float) diff / (float) maxTime);
 
-			GlStateManager.pushMatrix();
-			GlStateManager.enableAlpha();
-			GlStateManager.enableBlend();
-			GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-			GlStateManager.shadeModel(GL11.GL_SMOOTH);
-			GlStateManager.enableCull();
+				IStructure structure = ((IStructure) te.getBlockType());
 
-			GlStateManager.translate(x, y, z);
-			GlStateManager.translate(-structure.offsetToCenter().getX(), -structure.offsetToCenter().getY(), -structure.offsetToCenter().getZ());
-			Minecraft mc = Minecraft.getMinecraft();
-			Tessellator tes = Tessellator.getInstance();
-			BufferBuilder buffer = tes.getBuffer();
-			BlockRendererDispatcher dispatcher = mc.getBlockRendererDispatcher();
+				GlStateManager.pushMatrix();
+				GlStateManager.enableAlpha();
+				GlStateManager.enableBlend();
+				GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+				GlStateManager.shadeModel(GL11.GL_SMOOTH);
+				GlStateManager.enableCull();
 
-			IsolatedBlock block = new IsolatedBlock(te.getWorld().getBlockState(te.getPos()), null);
-			mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-			EnumMap<BlockRenderLayer, HashSet<Template.BlockInfo>> blocks = new EnumMap<>(BlockRenderLayer.class);
-			for (Template.BlockInfo info : ((IStructure) te.getBlockType()).getStructure().blockInfos()) {
+				GlStateManager.translate(x, y, z);
+				GlStateManager.translate(-structure.offsetToCenter().getX(), -structure.offsetToCenter().getY(), -structure.offsetToCenter().getZ());
+				Minecraft mc = Minecraft.getMinecraft();
+				Tessellator tes = Tessellator.getInstance();
+				BufferBuilder buffer = tes.getBuffer();
+				BlockRendererDispatcher dispatcher = mc.getBlockRendererDispatcher();
 
-				if (info.blockState.getBlock() == Blocks.AIR) continue;
-				if (info.blockState.getBlock() == te.getWorld().getBlockState(te.getPos().add(-structure.offsetToCenter().getX(), -structure.offsetToCenter().getY(), -structure.offsetToCenter().getZ()).add(info.pos)).getBlock())
-					continue;
+				IsolatedBlock block = new IsolatedBlock(te.getWorld().getBlockState(te.getPos()), null);
+				mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+				EnumMap<BlockRenderLayer, HashSet<Template.BlockInfo>> blocks = new EnumMap<>(BlockRenderLayer.class);
+				for (Template.BlockInfo info : ((IStructure) te.getBlockType()).getStructure().blockInfos()) {
 
-				HashSet<Template.BlockInfo> set = blocks.get(info.blockState.getBlock().getBlockLayer());
-				if (set == null) set = new HashSet<>();
-				set.add(info);
-				blocks.put(info.blockState.getBlock().getBlockLayer(), set);
-			}
-			for (BlockRenderLayer layer : blocks.keySet()) {
-				for (Template.BlockInfo info : blocks.get(layer)) {
-					GlStateManager.translate(info.pos.getX(), info.pos.getY(), info.pos.getZ());
-					buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-					dispatcher.renderBlock(info.blockState, BlockPos.ORIGIN, block, buffer);
-					for (int i = 0; i < buffer.getVertexCount(); i++) {
-						int idx = buffer.getColorIndex(i + 1);
-						buffer.putColorRGBA(idx, 255, 255, 255, 150);
-					}
-					tes.draw();
-					GlStateManager.translate(-info.pos.getX(), -info.pos.getY(), -info.pos.getZ());
+					if (info.blockState.getBlock() == Blocks.AIR) continue;
+					if (info.blockState.getBlock() == te.getWorld().getBlockState(te.getPos().add(-structure.offsetToCenter().getX(), -structure.offsetToCenter().getY(), -structure.offsetToCenter().getZ()).add(info.pos)).getBlock())
+						continue;
+
+					HashSet<Template.BlockInfo> set = blocks.get(info.blockState.getBlock().getBlockLayer());
+					if (set == null) set = new HashSet<>();
+					set.add(info);
+					blocks.put(info.blockState.getBlock().getBlockLayer(), set);
 				}
+				for (BlockRenderLayer layer : blocks.keySet()) {
+					for (Template.BlockInfo info : blocks.get(layer)) {
+						GlStateManager.translate(info.pos.getX(), info.pos.getY(), info.pos.getZ());
+						buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+						dispatcher.renderBlock(info.blockState, BlockPos.ORIGIN, block, buffer);
+						for (int i = 0; i < buffer.getVertexCount(); i++) {
+							int idx = buffer.getColorIndex(i + 1);
+							buffer.putColorRGBA(idx, 255, 255, 255, (int) (255 * prog));
+						}
+						tes.draw();
+						GlStateManager.translate(-info.pos.getX(), -info.pos.getY(), -info.pos.getZ());
+					}
+				}
+				GlStateManager.disableAlpha();
+				GlStateManager.disableBlend();
+				GlStateManager.disableCull();
+				GlStateManager.popMatrix();
+				return;
 			}
-
-			GlStateManager.disableAlpha();
-			GlStateManager.disableBlend();
-			GlStateManager.disableCull();
-			GlStateManager.popMatrix();
-			return;
 		}
 
 		if (RandUtil.nextInt(10) == 0) {
@@ -195,5 +199,10 @@ public class TileManaBatteryRenderer extends TileEntitySpecialRenderer<TileManaB
 				glitter.setScale((float) RandUtil.nextDouble(3));
 			});
 		}
+	}
+
+	@Override
+	public boolean isGlobalRenderer(TileManaBattery te) {
+		return true;
 	}
 }

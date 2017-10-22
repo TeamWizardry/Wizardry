@@ -5,6 +5,7 @@ import com.google.common.collect.HashBiMap;
 import com.teamwizardry.librarianlib.features.gui.GuiBase;
 import com.teamwizardry.librarianlib.features.gui.GuiComponent;
 import com.teamwizardry.librarianlib.features.gui.components.*;
+import com.teamwizardry.librarianlib.features.gui.mixin.ScissorMixin;
 import com.teamwizardry.librarianlib.features.gui.mixin.gl.GlMixin;
 import com.teamwizardry.librarianlib.features.math.Vec2d;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
@@ -34,6 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Created by Saad on 6/17/2016.
@@ -147,10 +149,10 @@ public class WorktableGui extends GuiBase {
 
 			BiMap<GuiComponent, UUID> paperComponents = HashBiMap.create();
 
-			ComponentVoid fakePaper = new ComponentVoid(0, 0, getFullscreenComponents().getSize().getXi(), getFullscreenComponents().getSize().getYi());
-			getFullscreenComponents().add(fakePaper);
+			ComponentVoid fakePaper = new ComponentVoid(180, 19, 180, 188);
+			getMainComponents().add(fakePaper);
 
-			ComponentVoid bookIcon = new ComponentVoid(getFullscreenComponents().getSize().getXi(), 0, 32, 32);
+			ComponentVoid bookIcon = new ComponentVoid(0, -100, 200, 100);
 			Sprite bookIconSprite = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/items/physics_book.png"));
 			fakePaper.add(bookIcon);
 
@@ -158,8 +160,8 @@ public class WorktableGui extends GuiBase {
 				Module module = getModule(component);
 				if (module == null) continue;
 
-				Vec2d untransform = component.getParent().unTransformRoot(component, event.getMousePos(), false);
-				ComponentSprite plate = new ComponentSprite(TableModule.plate, untransform.getXi(), untransform.getYi(), component.getSize().getXi(), component.getSize().getYi());
+				ComponentSprite plate = new ComponentSprite(TableModule.plate, component.getPos().getXi(), component.getPos().getYi(), component.getSize().getXi(), component.getSize().getYi());
+				fakePaper.add(plate);
 				plate.setData(Vec2d.class, plate.getPos());
 				plate.addTag(module);
 				GlMixin.INSTANCE.transform(plate).setValue(new Vec3d(0, 0, 100));
@@ -169,7 +171,6 @@ public class WorktableGui extends GuiBase {
 				plate.add(iconComp);
 
 				paperComponents.put(plate, this.paperComponents.get(component));
-				fakePaper.add(plate);
 
 				//--- RENDER WIRE ---//
 				plate.BUS.hook(GuiComponent.PreDrawEvent.class, (event1) -> {
@@ -203,24 +204,45 @@ public class WorktableGui extends GuiBase {
 				//--- RENDER WIRE ---//
 			}
 
-			int maxTime = 2;
+			int maxTime = 1;
 			double halfTime = maxTime / 2.0;
 			animStart[0] = System.currentTimeMillis();
+
+			ScissorMixin.INSTANCE.scissor(bookIcon);
+			AtomicReference<Float> progress1 = new AtomicReference<>((float) 0);
+			bookIcon.BUS.hook(GuiComponent.PostDrawEvent.class, (event2) -> {
+				boolean easeIn = event2.getComponent().hasTag("easeIn");
+				boolean easeOut = event2.getComponent().hasTag("easeOut");
+
+				double time = (System.currentTimeMillis() - animStart[0]) / 1000.0;
+
+
+				if (easeIn) progress1.set((float) time / (float) halfTime);
+				else if (easeOut) progress1.set(1 - ((float) (time - maxTime) / (float) maxTime));
+				//else progress = 1;
+
+				float t = new CubicBezier(.25f, .1f, .25f, 1f).eval(progress1.get());
+
+				GlStateManager.pushMatrix();
+				GlStateManager.enableBlend();
+				GlStateManager.enableAlpha();
+				GlStateManager.translate((fakePaper.getSize().getX() / 2.0) - 16, -64 + (100 * (1 - t)), 1000);
+				GlStateManager.color(1f, 1f, 1f, 1f);
+				bookIconSprite.getTex().bind();
+				bookIconSprite.draw((int) event2.getPartialTicks(), 0, 0, 32, 32);
+				GlStateManager.popMatrix();
+			});
+
+			AtomicReference<Float> progress2 = new AtomicReference<>((float) 1);
+			AtomicReference<Float> progress3 = new AtomicReference<>((float) 0);
 			fakePaper.BUS.hook(GuiComponent.PostDrawEvent.class, (event1) -> {
 				double time = (System.currentTimeMillis() - animStart[0]) / 1000.0;
 
 				if (time <= halfTime && !event1.getComponent().hasTag("updated")) {
-					float progress = (float) time / (float) halfTime;
-					float t = new CubicBezier(0.17f, 0.67f, 0.38f, 0.99f).eval(progress);
+					progress2.set((float) time / (float) halfTime);
+					float t = new CubicBezier(0.17f, 0.67f, 0.38f, 0.99f).eval(progress2.get());
 
-					bookIcon.BUS.hook(GuiComponent.PostDrawEvent.class, (event2) -> {
-						GlStateManager.pushMatrix();
-						GlStateManager.translate(getFullscreenComponents().getSize().getX() - 32, 0, 1000);
-						GlStateManager.color(1f, 1f, 1f, t);
-						bookIconSprite.getTex().bind();
-						bookIconSprite.draw((int) event2.getPartialTicks(), 0, 0, 32, 32);
-						GlStateManager.popMatrix();
-					});
+					if (!bookIcon.hasTag("easeIn")) bookIcon.addTag("easeIn");
 
 					for (GuiComponent<?> component : paperComponents.keySet()) {
 						UUID uuid = paperComponents.get(component);
@@ -240,8 +262,11 @@ public class WorktableGui extends GuiBase {
 						animStart[0] = System.currentTimeMillis();
 						event1.getComponent().addTag("updated");
 					}
-					float progress = (float) time / (float) maxTime;
-					float t = new CubicBezier(0.17f, 0.67f, 0.38f, 0.99f).eval(progress);
+
+					if (bookIcon.hasTag("easeIn")) bookIcon.removeTag("easeIn");
+
+					progress3.set((float) time / (float) maxTime);
+					float t = new CubicBezier(0.17f, 0.67f, 0.38f, 0.99f).eval(progress3.get());
 
 					for (GuiComponent<?> component : paperComponents.keySet()) {
 						if (!component.hasTag("updated")) {
@@ -254,12 +279,18 @@ public class WorktableGui extends GuiBase {
 						Vec2d origin = component.getData(Vec2d.class);
 						if (origin == null) continue;
 
-						Vec2d to = new Vec2d(getFullscreenComponents().getSize().getXi(), 0);
-						to = to.sub(fakePaper.getPos());
+						Vec2d to = new Vec2d((event1.getComponent().getSize().getX() / 2.0) - 8, -64 + 8);
 						Vec2d diff = to.sub(origin);
 						Vec2d progDist = diff.mul(t);
 						component.setPos(origin.add(progDist));
 					}
+				} else if (time - maxTime < maxTime) {
+					if (!bookIcon.hasTag("easeOut")) {
+						bookIcon.addTag("easeOut");
+
+						for (GuiComponent<?> component : paperComponents.keySet()) component.invalidate();
+					}
+
 				} else {
 					event1.getComponent().invalidate();
 				}

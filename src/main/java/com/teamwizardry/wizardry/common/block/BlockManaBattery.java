@@ -45,8 +45,13 @@ public class BlockManaBattery extends BlockModContainer implements IStructure {
 
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-		tickStructure(worldIn, playerIn, pos);
-		return false;
+		TileEntity tile = worldIn.getTileEntity(pos);
+		if (tile == null || !(tile instanceof TileManaBattery)) return false;
+		else {
+			((TileManaBattery) tile).structureReveal = System.currentTimeMillis();
+			tile.markDirty();
+			return true;
+		}
 	}
 
 	@Override

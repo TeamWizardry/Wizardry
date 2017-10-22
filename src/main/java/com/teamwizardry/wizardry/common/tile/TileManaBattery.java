@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.common.tile;
 
 import com.teamwizardry.librarianlib.features.autoregister.TileRegister;
+import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.wizardry.api.block.TileManaInteracter;
 import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.common.block.BlockManaBattery;
@@ -17,6 +18,9 @@ import java.util.HashSet;
 public class TileManaBattery extends TileManaInteracter {
 
 	public static final HashSet<BlockPos> poses = new HashSet<>();
+
+	@Save
+	public long structureReveal = System.currentTimeMillis();
 
 	static {
 		poses.add(new BlockPos(2, 1, 2));

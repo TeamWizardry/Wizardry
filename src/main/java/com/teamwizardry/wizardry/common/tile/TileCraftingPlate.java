@@ -62,6 +62,9 @@ public class TileCraftingPlate extends TileManaInteracter {
 	public List<ClusterObject> inventory = new ArrayList<>();
 	public Random random = new Random(getPos().toLong());
 
+	@Save
+	public long structureReveal = System.currentTimeMillis();
+
 	public static final HashSet<BlockPos> poses = new HashSet<>();
 
 	static {
