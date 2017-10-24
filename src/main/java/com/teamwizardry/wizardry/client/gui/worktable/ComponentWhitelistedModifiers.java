@@ -1,5 +1,9 @@
 package com.teamwizardry.wizardry.client.gui.worktable;
 
+import com.teamwizardry.librarianlib.features.animator.Easing;
+import com.teamwizardry.librarianlib.features.animator.animations.Keyframe;
+import com.teamwizardry.librarianlib.features.animator.animations.KeyframeAnimation;
+import com.teamwizardry.librarianlib.features.animator.animations.ScheduledEventAnimation;
 import com.teamwizardry.librarianlib.features.gui.EnumMouseButton;
 import com.teamwizardry.librarianlib.features.gui.GuiComponent;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentList;
@@ -11,7 +15,6 @@ import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
-import com.teamwizardry.wizardry.api.util.CubicBezier;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
@@ -99,32 +102,32 @@ public class ComponentWhitelistedModifiers extends GuiComponent<ComponentWhiteli
 				else if (event.getButton() == EnumMouseButton.RIGHT)
 					worktable.selectedcomponent.setData(Integer.class, modifier.getID(), --i);
 
-				final long[] animStart = {System.currentTimeMillis()};
-				int maxTime = 1;
-
 				Vec2d r = bar.posRelativeTo(bar.getPos(), worktable.getMainComponents());
-				ComponentSprite fakePlate = new ComponentSprite(TableModule.plate, r.getXi(), r.getYi(), 16, 16);
+				ComponentSprite fakePlate = new ComponentSprite(TableModule.plate, 0, 0, 16, 16);
 				worktable.getMainComponents().add(fakePlate);
 
 				ComponentSprite fakeIconComp = new ComponentSprite(icon, 2, 2, 12, 12);
 				fakePlate.add(fakeIconComp);
 
-				fakePlate.BUS.hook(GuiComponent.PostDrawEvent.class, (event1) -> {
-					double time = (System.currentTimeMillis() - animStart[0]) / 1000.0;
+				ScheduledEventAnimation scheduled = new ScheduledEventAnimation(40, fakePlate::invalidate);
+				worktable.animator.add(scheduled);
 
-					if (time <= maxTime) {
-						float progress = (float) time / (float) maxTime;
-						float t = new CubicBezier(0.17f, 0.67f, 0.38f, 0.99f).eval(progress);
-
-						Vec2d to = worktable.selectedcomponent.posRelativeTo(worktable.selectedcomponent.getPos(), worktable.getMainComponents());
-						Vec2d from = event.getComponent().posRelativeTo(event.getComponent().getPos(), worktable.getMainComponents());
-						Vec2d diff = from.sub(to);
-						Vec2d progDist = diff.mul(t);
-						event1.getComponent().setPos(from.add(progDist));
-					} else {
-						event1.getComponent().invalidate();
-					}
+				KeyframeAnimation<ComponentSprite> animX = new KeyframeAnimation<>(fakePlate, "pos.x");
+				animX.setDuration(40);
+				animX.setKeyframes(new Keyframe[]{
+						new Keyframe(0, fakePlate.getPos().getX(), Easing.linear),
+						new Keyframe(1f, r.getX(), Easing.easeOutQuart),
 				});
+				worktable.animator.add(animX);
+
+				KeyframeAnimation<ComponentSprite> animY = new KeyframeAnimation<>(fakePlate, "pos.y");
+				animY.setDuration(40);
+				animY.setKeyframes(new Keyframe[]{
+						new Keyframe(0, fakePlate.getPos().getY(), Easing.linear),
+						new Keyframe(1f, r.getY(), Easing.easeOutQuart),
+
+				});
+				worktable.animator.add(animY);
 			});
 
 			list.add(bar);

@@ -2,6 +2,11 @@ package com.teamwizardry.wizardry.client.gui.worktable;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.teamwizardry.librarianlib.features.animator.Animator;
+import com.teamwizardry.librarianlib.features.animator.Easing;
+import com.teamwizardry.librarianlib.features.animator.animations.Keyframe;
+import com.teamwizardry.librarianlib.features.animator.animations.KeyframeAnimation;
+import com.teamwizardry.librarianlib.features.animator.animations.ScheduledEventAnimation;
 import com.teamwizardry.librarianlib.features.gui.GuiBase;
 import com.teamwizardry.librarianlib.features.gui.GuiComponent;
 import com.teamwizardry.librarianlib.features.gui.components.*;
@@ -17,13 +22,11 @@ import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleType;
-import com.teamwizardry.wizardry.api.util.CubicBezier;
-import com.teamwizardry.wizardry.api.util.RandUtilSeed;
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.Utils;
 import com.teamwizardry.wizardry.common.network.PacketSendSpellToBook;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -35,7 +38,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Created by Saad on 6/17/2016.
@@ -46,8 +48,9 @@ public class WorktableGui extends GuiBase {
 	private static final Texture BACKGROUND_TEXTURE = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/table_background.png"));
 	private static final Sprite BACKGROUND_SPRITE = BACKGROUND_TEXTURE.getSprite("bg", 480, 224);
 	private static final Sprite SCROLL_BAR = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/scroll_bar.png"));
-	private static final Sprite SCROLL_BAR_BAR = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/scroll_bar_bar.png"));
+	private static final Sprite SCROLL_BAR_GRIP = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/scroll_bar_bar.png"));
 	private static final Sprite SIDE_BAR = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sidebar.png"));
+	private static final Sprite SIDE_BAR_LONG = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/sidebar_long.png"));
 	private static final Sprite BUTTON_NORMAL = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/button.png"));
 	private static final Sprite BUTTON_HIGHLIGHTED = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/button_highlighted.png"));
 	private static final Sprite BUTTON_PRESSED = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/button_pressed.png"));
@@ -57,6 +60,7 @@ public class WorktableGui extends GuiBase {
 	HashMap<UUID, UUID> componentLinks = new HashMap<>();
 	private HashSet<ArrayList<Module>> compiledSpell = new HashSet<>();
 	ComponentWhitelistedModifiers whitelistedModifiers;
+	public Animator animator = new Animator();
 
 	public WorktableGui() {
 		super(480, 224);
@@ -77,29 +81,22 @@ public class WorktableGui extends GuiBase {
 		GlMixin.INSTANCE.transform(shapes).setValue(new Vec3d(0, 0, -15));
 		ComponentGrid scrollShapes = addModules(shapes, ModuleType.SHAPE);
 		GlMixin.INSTANCE.transform(scrollShapes).setValue(new Vec3d(0, 0, 10));
-		addScrollbar(shapes, scrollShapes, 77, 31, ModuleType.SHAPE);
+		addScrollbar(shapes, scrollShapes, 77, 31, ModuleType.SHAPE, 80);
 		getMainComponents().add(shapes);
 
-		ComponentSprite effects = new ComponentSprite(SIDE_BAR, 93, 31, 48, 80);
+		ComponentSprite effects = new ComponentSprite(SIDE_BAR_LONG, 93, 37, 48, 160);
 		GlMixin.INSTANCE.transform(shapes).setValue(new Vec3d(0, 0, -15));
 		ComponentGrid scrollEffects = addModules(effects, ModuleType.EFFECT);
 		GlMixin.INSTANCE.transform(scrollEffects).setValue(new Vec3d(0, 0, 10));
-		addScrollbar(effects, scrollEffects, 141, 31, ModuleType.EFFECT);
+		addScrollbar(effects, scrollEffects, 140, 37, ModuleType.EFFECT, 160);
 		getMainComponents().add(effects);
 
 		ComponentSprite events = new ComponentSprite(SIDE_BAR, 29, 123, 48, 80);
 		GlMixin.INSTANCE.transform(shapes).setValue(new Vec3d(0, 0, -15));
 		ComponentGrid scrollEvents = addModules(events, ModuleType.EVENT);
 		GlMixin.INSTANCE.transform(scrollEvents).setValue(new Vec3d(0, 0, 10));
-		addScrollbar(events, scrollEvents, 77, 123, ModuleType.EVENT);
+		addScrollbar(events, scrollEvents, 77, 123, ModuleType.EVENT, 80);
 		getMainComponents().add(events);
-
-		ComponentSprite modifiers = new ComponentSprite(SIDE_BAR, 93, 123, 48, 80);
-		GlMixin.INSTANCE.transform(shapes).setValue(new Vec3d(0, 0, -15));
-		ComponentGrid scrollModifiers = addModules(modifiers, ModuleType.MODIFIER);
-		GlMixin.INSTANCE.transform(scrollModifiers).setValue(new Vec3d(0, 0, 10));
-		addScrollbar(modifiers, scrollModifiers, 141, 123, ModuleType.MODIFIER);
-		getMainComponents().add(modifiers);
 
 		ComponentSprite save = new ComponentSprite(BUTTON_NORMAL, 395, 30, (int) (88 / 1.5), (int) (24 / 1.5));
 		GlMixin.INSTANCE.transform(save).setValue(new Vec3d(0, 0, 20));
@@ -152,9 +149,30 @@ public class WorktableGui extends GuiBase {
 			ComponentVoid fakePaper = new ComponentVoid(180, 19, 180, 188);
 			getMainComponents().add(fakePaper);
 
-			ComponentVoid bookIcon = new ComponentVoid(0, -100, 200, 100);
-			Sprite bookIconSprite = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/items/physics_book.png"));
-			fakePaper.add(bookIcon);
+			ComponentVoid bookIconMask = new ComponentVoid(0, -100, 180, 100);
+			ComponentSprite bookIcon = new ComponentSprite(new Sprite(new ResourceLocation(Wizardry.MODID, "textures/items/physics_book.png")), (int) ((bookIconMask.getSize().getX() / 2.0) - 16), (int) (bookIconMask.getSize().getY() + 50), 32, 32);
+			{
+				ScissorMixin.INSTANCE.scissor(bookIconMask);
+				GlMixin.INSTANCE.transform(bookIconMask).setValue(new Vec3d(0, 0, 200));
+				fakePaper.add(bookIconMask);
+
+				bookIconMask.add(bookIcon);
+
+				final Vec2d originalPos = bookIcon.getPos();
+				KeyframeAnimation<ComponentSprite> anim = new KeyframeAnimation<>(bookIcon, "pos.y");
+				anim.setDuration(100);
+				anim.setKeyframes(new Keyframe[]{
+						new Keyframe(0, originalPos.getY(), Easing.linear),
+						new Keyframe(0.4f, (bookIconMask.getSize().getY() / 2.0) - 25, Easing.easeInBack),
+						new Keyframe(0.5f, (bookIconMask.getSize().getY() / 2.0) - 10, Easing.easeOutBack),
+						new Keyframe(0.8f, (bookIconMask.getSize().getY() / 2.0) - 10, Easing.easeInBack),
+						new Keyframe(1f, originalPos.getY(), Easing.easeInBack)
+				});
+				animator.add(anim);
+
+				ScheduledEventAnimation scheduled = new ScheduledEventAnimation(100, fakePaper::invalidate);
+				animator.add(scheduled);
+			}
 
 			for (GuiComponent<?> component : this.paperComponents.keySet()) {
 				Module module = getModule(component);
@@ -202,99 +220,36 @@ public class WorktableGui extends GuiBase {
 					TableModule.drawWire(fromPos, toPos, TableModule.getColorForModule(module2.getModuleType()), TableModule.getColorForModule(module1.getModuleType()));
 				});
 				//--- RENDER WIRE ---//
+
+				Vec2d random = plate.getPos().add(RandUtil.nextDouble(-50, 50), RandUtil.nextDouble(-50, 50));
+
+				float delay = RandUtil.nextFloat(0, 0.3f);
+
+				ScheduledEventAnimation scheduled = new ScheduledEventAnimation(80, plate::invalidate);
+				animator.add(scheduled);
+
+				KeyframeAnimation<ComponentSprite> animX = new KeyframeAnimation<>(plate, "pos.x");
+				animX.setDuration(80);
+				animX.setKeyframes(new Keyframe[]{
+						new Keyframe(delay, plate.getPos().getX(), Easing.linear),
+						new Keyframe(0.45f, random.getX(), Easing.easeOutQuart),
+						new Keyframe(0.55f, random.getX(), Easing.linear),
+						new Keyframe(1f, (bookIconMask.getSize().getX() / 2.0) - 8, Easing.easeInOutQuint)
+
+				});
+				animator.add(animX);
+
+				KeyframeAnimation<ComponentSprite> animY = new KeyframeAnimation<>(plate, "pos.y");
+				animY.setDuration(80);
+				animY.setKeyframes(new Keyframe[]{
+						new Keyframe(delay, plate.getPos().getY(), Easing.linear),
+						new Keyframe(0.45f, random.getY(), Easing.easeOutQuart),
+						new Keyframe(0.55f, random.getY(), Easing.linear),
+						new Keyframe(1f, -(bookIconMask.getSize().getY() / 2.0) - 6, Easing.easeInOutQuint)
+
+				});
+				animator.add(animY);
 			}
-
-			int maxTime = 1;
-			double halfTime = maxTime / 2.0;
-			animStart[0] = System.currentTimeMillis();
-
-			ScissorMixin.INSTANCE.scissor(bookIcon);
-			AtomicReference<Float> progress1 = new AtomicReference<>((float) 0);
-			bookIcon.BUS.hook(GuiComponent.PostDrawEvent.class, (event2) -> {
-				boolean easeIn = event2.getComponent().hasTag("easeIn");
-				boolean easeOut = event2.getComponent().hasTag("easeOut");
-
-				double time = (System.currentTimeMillis() - animStart[0]) / 1000.0;
-
-
-				if (easeIn) progress1.set((float) time / (float) halfTime);
-				else if (easeOut) progress1.set(1 - ((float) (time - maxTime) / (float) maxTime));
-				//else progress = 1;
-
-				float t = new CubicBezier(.25f, .1f, .25f, 1f).eval(progress1.get());
-
-				GlStateManager.pushMatrix();
-				GlStateManager.enableBlend();
-				GlStateManager.enableAlpha();
-				GlStateManager.translate((fakePaper.getSize().getX() / 2.0) - 16, -64 + (100 * (1 - t)), 1000);
-				GlStateManager.color(1f, 1f, 1f, 1f);
-				bookIconSprite.getTex().bind();
-				bookIconSprite.draw((int) event2.getPartialTicks(), 0, 0, 32, 32);
-				GlStateManager.popMatrix();
-			});
-
-			AtomicReference<Float> progress2 = new AtomicReference<>((float) 1);
-			AtomicReference<Float> progress3 = new AtomicReference<>((float) 0);
-			fakePaper.BUS.hook(GuiComponent.PostDrawEvent.class, (event1) -> {
-				double time = (System.currentTimeMillis() - animStart[0]) / 1000.0;
-
-				if (time <= halfTime && !event1.getComponent().hasTag("updated")) {
-					progress2.set((float) time / (float) halfTime);
-					float t = new CubicBezier(0.17f, 0.67f, 0.38f, 0.99f).eval(progress2.get());
-
-					if (!bookIcon.hasTag("easeIn")) bookIcon.addTag("easeIn");
-
-					for (GuiComponent<?> component : paperComponents.keySet()) {
-						UUID uuid = paperComponents.get(component);
-						if (uuid == null) continue;
-
-						Vec2d origin = component.getData(Vec2d.class);
-						if (origin == null) continue;
-
-						RandUtilSeed seed = new RandUtilSeed(uuid.hashCode());
-						Vec2d to = origin.add(seed.nextDouble(-50, 50), seed.nextDouble(-50, 50));
-						Vec2d diff = origin.sub(to);
-						Vec2d progDist = diff.mul(t);
-						component.setPos(origin.add(progDist));
-					}
-				} else if (time < maxTime) {
-					if (!event1.getComponent().hasTag("updated")) {
-						animStart[0] = System.currentTimeMillis();
-						event1.getComponent().addTag("updated");
-					}
-
-					if (bookIcon.hasTag("easeIn")) bookIcon.removeTag("easeIn");
-
-					progress3.set((float) time / (float) maxTime);
-					float t = new CubicBezier(0.17f, 0.67f, 0.38f, 0.99f).eval(progress3.get());
-
-					for (GuiComponent<?> component : paperComponents.keySet()) {
-						if (!component.hasTag("updated")) {
-							component.setData(Vec2d.class, component.getPos());
-							component.addTag("updated");
-						}
-						Module module = getModule(component);
-						if (module == null) continue;
-
-						Vec2d origin = component.getData(Vec2d.class);
-						if (origin == null) continue;
-
-						Vec2d to = new Vec2d((event1.getComponent().getSize().getX() / 2.0) - 8, -64 + 8);
-						Vec2d diff = to.sub(origin);
-						Vec2d progDist = diff.mul(t);
-						component.setPos(origin.add(progDist));
-					}
-				} else if (time - maxTime < maxTime) {
-					if (!bookIcon.hasTag("easeOut")) {
-						bookIcon.addTag("easeOut");
-
-						for (GuiComponent<?> component : paperComponents.keySet()) component.invalidate();
-					}
-
-				} else {
-					event1.getComponent().invalidate();
-				}
-			});
 		});
 		getMainComponents().add(save);
 
@@ -380,18 +335,32 @@ public class WorktableGui extends GuiBase {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void addScrollbar(ComponentSprite parent, ComponentGrid gridView, int x, int y, ModuleType type) {
-		ComponentSprite scrollBar = new ComponentSprite(SCROLL_BAR_BAR, x, y, 5, 80);
+	private void addScrollbar(ComponentSprite parent, ComponentGrid gridView, int x, int y, ModuleType type, int trackSize) {
+		ComponentSprite scrollBar = new ComponentSprite(SCROLL_BAR_GRIP, x, y, 5, 80);
 		ComponentSprite bar = new ComponentSprite(SCROLL_BAR, 1, 0, 3, 11);
+
+		int moduleCount = ModuleRegistry.INSTANCE.getModules(type).size();
+
 		scrollBar.BUS.hook(GuiComponent.MouseDragEvent.class, (event) -> {
 			if (!event.getComponent().getMouseOver() && !parent.getMouseOver()) return;
 			for (GuiComponent<?> comp : paperComponents.keySet()) if (comp.hasTag("dragging")) return;
 
-			Vec2d mouse = event.getComponent().getParent().unTransformChildPos(event.getComponent(), event.getMousePos());
-			double clamp = MathHelper.clamp(mouse.getY(), y + 5.5, y + 79 - 5.5);
 
-			bar.setPos(new Vec2d(bar.getPos().getX(), (clamp - y - 5.5)));
-			double percent = MathHelper.clamp((clamp / 79.0) - 0.3, 0, 1);
+			float contentSize = (float) ((moduleCount / 3.0) * 16.0);
+			float windowSize = trackSize;
+			float windowContentRatio = windowSize / contentSize;
+			float gripSize = MathHelper.clamp(trackSize * windowContentRatio, SCROLL_BAR_GRIP.getHeight(), gridView.getSize().getYi());
+			float windowScrollAreaSize = contentSize - windowSize;
+			float windowPosition = 100;
+			float windowPositionRatio = windowPosition / windowScrollAreaSize;
+			float trackScrollAreaSize = trackSize - gripSize;
+			float gripPositionOnTrack = trackScrollAreaSize * windowPositionRatio;
+			float mousePositionDelta = event.getMousePos().getYi();
+			float newGripPosition = MathHelper.clamp(gripPositionOnTrack + mousePositionDelta, 0, trackScrollAreaSize);
+			float newGripPositionRatio = newGripPosition / trackScrollAreaSize;
+			windowPosition = newGripPositionRatio * windowScrollAreaSize;
+
+			float percent = windowPosition / contentSize;
 
 			ArrayList<GuiComponent<?>> compTmp = new ArrayList<>(gridView.getChildren());
 			compTmp.forEach(gridView::remove);
@@ -412,10 +381,10 @@ public class WorktableGui extends GuiBase {
 
 			int dir = event.getDirection().ydirection * -16;
 			double barPos = bar.getPos().getY();
-			double clamp = MathHelper.clamp(barPos + dir, 0, 79 - 11);
+			double clamp = MathHelper.clamp(barPos + dir, 0, (gridView.getSize().getY() - 1) - 11);
 
 			bar.setPos(new Vec2d(bar.getPos().getX(), clamp));
-			double percent = MathHelper.clamp(clamp / (79.0 - 11), 0, 1);
+			double percent = MathHelper.clamp(clamp / ((gridView.getSize().getY() - 1) - 11), 0, 1);
 
 			ArrayList<GuiComponent<?>> compTmp = new ArrayList<>(gridView.getChildren());
 			compTmp.forEach(gridView::remove);
