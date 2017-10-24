@@ -1,7 +1,8 @@
 package com.teamwizardry.wizardry.client.gui.book;
 
 import com.teamwizardry.librarianlib.features.gui.EnumMouseButton;
-import com.teamwizardry.librarianlib.features.gui.GuiComponent;
+import com.teamwizardry.librarianlib.features.gui.component.GuiComponent;
+import com.teamwizardry.librarianlib.features.gui.component.GuiComponentEvents;
 import com.teamwizardry.librarianlib.features.math.Vec2d;
 import com.teamwizardry.librarianlib.features.utilities.client.ScissorUtil;
 import com.teamwizardry.wizardry.api.block.IStructure;
@@ -11,7 +12,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.opengl.GL11;
 
-public class ComponentStructure extends GuiComponent<ComponentStructure> {
+public class ComponentStructure extends GuiComponent {
 
 	private boolean dragging = false;
 	private Vec2d prevPos = Vec2d.ZERO;
@@ -26,14 +27,14 @@ public class ComponentStructure extends GuiComponent<ComponentStructure> {
 		ComponentBookmark bookmark = new ComponentBookmark(new Vec2d(-getSize().getXi() - 35, 0), bookGui, this, bookGui.bookmarkIndex, list, "Materials", false);
 		add(bookmark);
 
-		BUS.hook(GuiComponent.MouseWheelEvent.class, event -> {
-			if (event.getDirection() == MouseWheelDirection.UP) zoom += 1;
+		BUS.hook(GuiComponentEvents.MouseWheelEvent.class, event -> {
+			if (event.getDirection() == GuiComponentEvents.MouseWheelDirection.UP) zoom += 1;
 			else zoom -= 1;
 			zoom = MathHelper.clamp(zoom, 0, 20);
 		});
 
-		BUS.hook(GuiComponent.MouseDragEvent.class, event -> {
-			Vec2d untransform = event.getComponent().unTransform(event.getMousePos(), event.getComponent());
+		BUS.hook(GuiComponentEvents.MouseDragEvent.class, event -> {
+			Vec2d untransform = event.component.thisPosToOtherContext(event.component, event.getMousePos());
 			Vec2d diff;
 			if (dragging) diff = untransform.sub(prevPos).mul(1 / 5.0);
 			else diff = event.getMousePos().mul(1 / 100.0);
@@ -45,22 +46,19 @@ public class ComponentStructure extends GuiComponent<ComponentStructure> {
 			dragging = true;
 		});
 
-		BUS.hook(GuiComponent.MouseUpEvent.class, event -> {
+		BUS.hook(GuiComponentEvents.MouseUpEvent.class, event -> {
 			prevPos = Vec2d.ZERO;
 			dragging = false;
 		});
 
 
-		BUS.hook(GuiComponent.PostDrawEvent.class, event -> {
-			GuiComponent parent = event.getComponent().getParent();
-			if (parent != null) {
-				Vec2d root = parent.unTransformRoot(event.getComponent(), Vec2d.ZERO);
-				Vec2d size = (parent.unTransformRoot(event.getComponent(), event.getComponent().getSize())).sub(root);
-
-				ScissorUtil.push();
-				ScissorUtil.set(root.getXi(), root.getYi(), size.getXi(), size.getYi());
-				ScissorUtil.enable();
-			}
+		BUS.hook(GuiComponentEvents.PostDrawEvent.class, event -> {
+			Vec2d root = event.component.thisPosToOtherContext(null);
+			Vec2d size = event.component.thisPosToOtherContext(null, event.component.getSize());
+			
+			ScissorUtil.push();
+			ScissorUtil.set(root.getXi(), root.getYi(), size.getXi(), size.getYi());
+			ScissorUtil.enable();
 
 			GlStateManager.pushMatrix();
 
@@ -84,9 +82,8 @@ public class ComponentStructure extends GuiComponent<ComponentStructure> {
 			structure.getStructure().draw();
 
 			GlStateManager.popMatrix();
-
-			if (parent != null)
-				ScissorUtil.pop();
+			
+			ScissorUtil.pop();
 		});
 	}
 

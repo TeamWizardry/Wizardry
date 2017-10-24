@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.teamwizardry.librarianlib.features.gui.GuiComponent;
+import com.teamwizardry.librarianlib.features.gui.component.GuiComponent;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentStack;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentText;
@@ -25,7 +25,7 @@ import java.util.List;
 
 import static com.teamwizardry.wizardry.client.gui.book.BookGui.ARROW;
 
-public class ComponentRecipe extends GuiComponent<ComponentRecipe> {
+public class ComponentRecipe extends GuiComponent {
 
 	private static final Vec2d pos = new Vec2d(35, 25);
 	private BookGui bookGui;
@@ -61,7 +61,7 @@ public class ComponentRecipe extends GuiComponent<ComponentRecipe> {
 			}
 			SpellBuilder builder = new SpellBuilder(inventory);
 
-			GuiComponent<?> lastComponent = null;
+			GuiComponent lastComponent = null;
 			List<Module> modules = builder.getSpell();
 			Module lastModule = null;
 			for (Module module : modules) {
@@ -102,7 +102,7 @@ public class ComponentRecipe extends GuiComponent<ComponentRecipe> {
 			}
 
 			ComponentVoid recipe = new ComponentVoid(224, 0, 50, 50);
-			recipe.setChildScale(2);
+			recipe.getTransform().setScale(2);
 			add(recipe);
 			JsonArray array2 = object.getAsJsonArray("list");
 			int row = 0;

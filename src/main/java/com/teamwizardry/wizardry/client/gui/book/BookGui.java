@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.gui.GuiBase;
-import com.teamwizardry.librarianlib.features.gui.GuiComponent;
+import com.teamwizardry.librarianlib.features.gui.component.GuiComponent;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentVoid;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
@@ -42,7 +42,7 @@ public class BookGui extends GuiBase {
 	public ComponentSprite componentLogo;
 	public ItemStack bookItem;
 	@Nullable
-	public GuiComponent<?> activeComponent = null;
+	public GuiComponent activeComponent = null;
 	public int bookmarkIndex;
 	ComponentSprite componentBook;
 
@@ -52,8 +52,6 @@ public class BookGui extends GuiBase {
 
 		ComponentVoid base = new ComponentVoid(0, 0, 509, 360);
 		getMainComponents().add(base);
-
-		base.setChildScale(1f);
 
 		componentBook = new ComponentSprite(BOOK, 0, 0);
 		base.add(componentBook);

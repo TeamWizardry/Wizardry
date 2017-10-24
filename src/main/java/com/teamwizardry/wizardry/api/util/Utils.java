@@ -1,10 +1,6 @@
 package com.teamwizardry.wizardry.api.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.teamwizardry.librarianlib.features.gui.GuiComponent;
-
+import com.teamwizardry.librarianlib.features.gui.component.GuiComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -15,6 +11,9 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by LordSaad.
@@ -33,7 +32,7 @@ public class Utils {
 		return false;
 	}
 
-	public static List<GuiComponent<?>> getVisibleComponents(List<GuiComponent<?>> objects, double scroll) {
+	public static List<GuiComponent> getVisibleComponents(List<GuiComponent> objects, double scroll) {
 		final int ROWS = 3;
 		final int COLS = 5;
 		final int SPACES = ROWS * COLS;
@@ -53,7 +52,7 @@ public class Utils {
 		if (endIndex > objects.size())
 			endIndex = objects.size();
 
-		List<GuiComponent<?>> visible = new ArrayList<>();
+		List<GuiComponent> visible = new ArrayList<>();
 		visible.addAll(objects.subList(startIndex, endIndex));
 
 		return visible;

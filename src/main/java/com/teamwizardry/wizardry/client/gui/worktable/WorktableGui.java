@@ -8,7 +8,8 @@ import com.teamwizardry.librarianlib.features.animator.animations.Keyframe;
 import com.teamwizardry.librarianlib.features.animator.animations.KeyframeAnimation;
 import com.teamwizardry.librarianlib.features.animator.animations.ScheduledEventAnimation;
 import com.teamwizardry.librarianlib.features.gui.GuiBase;
-import com.teamwizardry.librarianlib.features.gui.GuiComponent;
+import com.teamwizardry.librarianlib.features.gui.component.GuiComponent;
+import com.teamwizardry.librarianlib.features.gui.component.GuiComponentEvents;
 import com.teamwizardry.librarianlib.features.gui.components.*;
 import com.teamwizardry.librarianlib.features.gui.mixin.ScissorMixin;
 import com.teamwizardry.librarianlib.features.gui.mixin.gl.GlMixin;
@@ -55,7 +56,7 @@ public class WorktableGui extends GuiBase {
 	private static final Sprite BUTTON_HIGHLIGHTED = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/button_highlighted.png"));
 	private static final Sprite BUTTON_PRESSED = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/button_pressed.png"));
 	ComponentVoid paper;
-	GuiComponent<?> selectedcomponent;
+	GuiComponent selectedcomponent;
 	BiMap<GuiComponent, UUID> paperComponents = HashBiMap.create();
 	HashMap<UUID, UUID> componentLinks = new HashMap<>();
 	private HashSet<ArrayList<Module>> compiledSpell = new HashSet<>();
@@ -106,24 +107,24 @@ public class WorktableGui extends GuiBase {
 		textSave.getText().setValue("SAVE");
 		save.add(textSave);
 
-		save.BUS.hook(GuiComponent.MouseInEvent.class, event -> {
+		save.BUS.hook(GuiComponentEvents.MouseInEvent.class, event -> {
 			save.setSprite(BUTTON_HIGHLIGHTED);
 		});
-		save.BUS.hook(GuiComponent.MouseOutEvent.class, event -> {
+		save.BUS.hook(GuiComponentEvents.MouseOutEvent.class, event -> {
 			save.setSprite(BUTTON_NORMAL);
 		});
-		save.BUS.hook(GuiComponent.MouseDownEvent.class, event -> {
-			if (event.getComponent().getMouseOver()) {
+		save.BUS.hook(GuiComponentEvents.MouseDownEvent.class, event -> {
+			if (event.component.getMouseOver()) {
 				save.setSprite(BUTTON_PRESSED);
 			}
 		});
-		save.BUS.hook(GuiComponent.MouseUpEvent.class, event -> {
-			if (event.getComponent().getMouseOver()) {
+		save.BUS.hook(GuiComponentEvents.MouseUpEvent.class, event -> {
+			if (event.component.getMouseOver()) {
 				save.setSprite(BUTTON_HIGHLIGHTED);
 			}
 		});
 
-		save.BUS.hook(GuiComponent.MouseClickEvent.class, (event) -> {
+		save.BUS.hook(GuiComponentEvents.MouseClickEvent.class, (event) -> {
 			final long[] animStart = {System.currentTimeMillis()};
 
 			HashSet<GuiComponent> heads = getHeads();
@@ -174,7 +175,7 @@ public class WorktableGui extends GuiBase {
 				animator.add(scheduled);
 			}
 
-			for (GuiComponent<?> component : this.paperComponents.keySet()) {
+			for (GuiComponent component : this.paperComponents.keySet()) {
 				Module module = getModule(component);
 				if (module == null) continue;
 
@@ -191,13 +192,13 @@ public class WorktableGui extends GuiBase {
 				paperComponents.put(plate, this.paperComponents.get(component));
 
 				//--- RENDER WIRE ---//
-				plate.BUS.hook(GuiComponent.PreDrawEvent.class, (event1) -> {
+				plate.BUS.hook(GuiComponentEvents.PreDrawEvent.class, (event1) -> {
 
-					UUID linkedUuid = componentLinks.get(paperComponents.get(event1.getComponent()));
+					UUID linkedUuid = componentLinks.get(paperComponents.get(event1.component));
 
 					GuiComponent component1 = paperComponents.inverse().get(linkedUuid);
 					if (component1 == null) return;
-					if (linkedUuid == paperComponents.get(event1.getComponent())) return;
+					if (linkedUuid == paperComponents.get(event1.component)) return;
 
 					Vec2d toPos = null;
 					if (component1.hasData(Vec2d.class, "origin_pos"))
@@ -206,15 +207,15 @@ public class WorktableGui extends GuiBase {
 					toPos = toPos.add(8, 8);
 
 					Vec2d fromPos = null;
-					if (event1.getComponent().hasData(Vec2d.class, "origin_pos"))
-						fromPos = ((Vec2d) event1.getComponent().getData(Vec2d.class, "origin_pos"));
-					if (fromPos == null) fromPos = event1.getComponent().getPos();
+					if (event1.component.hasData(Vec2d.class, "origin_pos"))
+						fromPos = ((Vec2d) event1.component.getData(Vec2d.class, "origin_pos"));
+					if (fromPos == null) fromPos = event1.component.getPos();
 					fromPos = fromPos.add(8, 8);
 
 					Module module1 = getModule(component1);
 					if (module1 == null) return;
 
-					Module module2 = getModule(event1.getComponent());
+					Module module2 = getModule(event1.component);
 					if (module2 == null) return;
 
 					TableModule.drawWire(fromPos, toPos, TableModule.getColorForModule(module2.getModuleType()), TableModule.getColorForModule(module1.getModuleType()));
@@ -321,14 +322,14 @@ public class WorktableGui extends GuiBase {
 		ComponentGrid grid = new ComponentGrid(0, 0, 16, 16, 3);
 		parent.add(grid);
 
-		ArrayList<GuiComponent<?>> tmp = new ArrayList<>();
+		ArrayList<GuiComponent> tmp = new ArrayList<>();
 		for (Module module : ModuleRegistry.INSTANCE.getModules(type)) {
 			TableModule item = new TableModule(this, parent, module.copy(), false, true);
 			tmp.add(item.component);
 		}
 
-		ArrayList<GuiComponent<?>> scrollable = (ArrayList<GuiComponent<?>>) Utils.getVisibleComponents(tmp, 0);
-		for (GuiComponent<?> component : scrollable) {
+		ArrayList<GuiComponent> scrollable = (ArrayList<GuiComponent>) Utils.getVisibleComponents(tmp, 0);
+		for (GuiComponent component : scrollable) {
 			grid.add(component);
 		}
 		return grid;
@@ -341,9 +342,9 @@ public class WorktableGui extends GuiBase {
 
 		int moduleCount = ModuleRegistry.INSTANCE.getModules(type).size();
 
-		scrollBar.BUS.hook(GuiComponent.MouseDragEvent.class, (event) -> {
-			if (!event.getComponent().getMouseOver() && !parent.getMouseOver()) return;
-			for (GuiComponent<?> comp : paperComponents.keySet()) if (comp.hasTag("dragging")) return;
+		scrollBar.BUS.hook(GuiComponentEvents.MouseDragEvent.class, (event) -> {
+			if (!event.component.getMouseOver() && !parent.getMouseOver()) return;
+			for (GuiComponent comp : paperComponents.keySet()) if (comp.hasTag("dragging")) return;
 
 
 			float contentSize = (float) ((moduleCount / 3.0) * 16.0);
@@ -362,22 +363,22 @@ public class WorktableGui extends GuiBase {
 
 			float percent = windowPosition / contentSize;
 
-			ArrayList<GuiComponent<?>> compTmp = new ArrayList<>(gridView.getChildren());
+			ArrayList<GuiComponent> compTmp = new ArrayList<>(gridView.getChildren());
 			compTmp.forEach(gridView::remove);
 
-			ArrayList<GuiComponent<?>> tmp = new ArrayList<>();
+			ArrayList<GuiComponent> tmp = new ArrayList<>();
 			for (Module module : ModuleRegistry.INSTANCE.getModules(type)) {
 				TableModule item = new TableModule(this, parent, module.copy(), false, false);
 				tmp.add(item.component);
 			}
-			ArrayList<GuiComponent<?>> scrollable = (ArrayList<GuiComponent<?>>) Utils.getVisibleComponents(tmp, percent);
-			for (GuiComponent<?> component : scrollable) {
+			ArrayList<GuiComponent> scrollable = (ArrayList<GuiComponent>) Utils.getVisibleComponents(tmp, percent);
+			for (GuiComponent component : scrollable) {
 				gridView.add(component);
 			}
 		});
-		scrollBar.BUS.hook(GuiComponent.MouseWheelEvent.class, (event) -> {
-			if (!event.getComponent().getMouseOver() && !parent.getMouseOver()) return;
-			for (GuiComponent<?> comp : paperComponents.keySet()) if (comp.hasTag("dragging")) return;
+		scrollBar.BUS.hook(GuiComponentEvents.MouseWheelEvent.class, (event) -> {
+			if (!event.component.getMouseOver() && !parent.getMouseOver()) return;
+			for (GuiComponent comp : paperComponents.keySet()) if (comp.hasTag("dragging")) return;
 
 			int dir = event.getDirection().ydirection * -16;
 			double barPos = bar.getPos().getY();
@@ -386,16 +387,16 @@ public class WorktableGui extends GuiBase {
 			bar.setPos(new Vec2d(bar.getPos().getX(), clamp));
 			double percent = MathHelper.clamp(clamp / ((gridView.getSize().getY() - 1) - 11), 0, 1);
 
-			ArrayList<GuiComponent<?>> compTmp = new ArrayList<>(gridView.getChildren());
+			ArrayList<GuiComponent> compTmp = new ArrayList<>(gridView.getChildren());
 			compTmp.forEach(gridView::remove);
 
-			ArrayList<GuiComponent<?>> tmp = new ArrayList<>();
+			ArrayList<GuiComponent> tmp = new ArrayList<>();
 			for (Module module : ModuleRegistry.INSTANCE.getModules(type)) {
 				TableModule item = new TableModule(this, parent, module.copy(), false, false);
 				tmp.add(item.component);
 			}
-			ArrayList<GuiComponent<?>> scrollable = (ArrayList<GuiComponent<?>>) Utils.getVisibleComponents(tmp, percent);
-			for (GuiComponent<?> component : scrollable) {
+			ArrayList<GuiComponent> scrollable = (ArrayList<GuiComponent>) Utils.getVisibleComponents(tmp, percent);
+			for (GuiComponent component : scrollable) {
 				gridView.add(component);
 			}
 		});

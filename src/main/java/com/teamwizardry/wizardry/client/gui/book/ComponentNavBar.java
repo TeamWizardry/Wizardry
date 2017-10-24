@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.client.gui.book;
 
-import com.teamwizardry.librarianlib.features.gui.GuiComponent;
+import com.teamwizardry.librarianlib.features.gui.component.GuiComponent;
+import com.teamwizardry.librarianlib.features.gui.component.GuiComponentEvents;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentText;
 import com.teamwizardry.librarianlib.features.math.Vec2d;
@@ -9,7 +10,7 @@ import net.minecraft.util.math.MathHelper;
 
 import static com.teamwizardry.wizardry.client.gui.book.BookGui.*;
 
-public class ComponentNavBar extends GuiComponent<ComponentNavBar> {
+public class ComponentNavBar extends GuiComponent {
 
 	private int page = 0;
 
@@ -24,20 +25,20 @@ public class ComponentNavBar extends GuiComponent<ComponentNavBar> {
 		pageStringComponent.getScale().setValue(2f);
 		pageStringComponent.getUnicode().setValue(false);
 
-		pageStringComponent.BUS.hook(ComponentTickEvent.class, event -> {
+		pageStringComponent.BUS.hook(GuiComponentEvents.ComponentTickEvent.class, event -> {
 			String pageString = (page + 1) + "/" + (maxPages + 1);
 			pageStringComponent.getText().setValue(pageString);
 			pageStringComponent.setPos(new Vec2d((getSize().getX() / 2.0) - (Minecraft.getMinecraft().fontRenderer.getStringWidth(pageString)), getSize().getYi() - 10));
 		});
 		add(pageStringComponent);
 
-		prev.BUS.hook(GuiComponent.ComponentTickEvent.class, event -> {
+		prev.BUS.hook(GuiComponentEvents.ComponentTickEvent.class, event -> {
 			int x = MathHelper.clamp(page - 1, 0, maxPages);
 			prev.setSprite(page == x ? ARROW_PREV : ARROW_PREV_PRESSED);
-			event.getComponent().setEnabled(page == x);
+			event.component.setEnabled(page == x);
 		});
-		prev.BUS.hook(GuiComponent.MouseClickEvent.class, event -> {
-			if (!event.getComponent().getMouseOver()) return;
+		prev.BUS.hook(GuiComponentEvents.MouseClickEvent.class, event -> {
+			if (!event.component.getMouseOver()) return;
 
 			int x = MathHelper.clamp(page - 1, 0, maxPages);
 			if (page == x) return;
@@ -48,13 +49,13 @@ public class ComponentNavBar extends GuiComponent<ComponentNavBar> {
 			BUS.fire(eventNavBarChange);
 		});
 
-		next.BUS.hook(GuiComponent.ComponentTickEvent.class, event -> {
+		next.BUS.hook(GuiComponentEvents.ComponentTickEvent.class, event -> {
 			int x = MathHelper.clamp(page + 1, 0, maxPages);
 			next.setSprite(page == x ? ARROW_NEXT : ARROW_NEXT_PRESSED);
-			event.getComponent().setEnabled(page == x);
+			event.component.setEnabled(page == x);
 		});
-		next.BUS.hook(GuiComponent.MouseClickEvent.class, event -> {
-			if (!event.getComponent().getMouseOver()) return;
+		next.BUS.hook(GuiComponentEvents.MouseClickEvent.class, event -> {
+			if (!event.component.getMouseOver()) return;
 
 			int x = MathHelper.clamp(page + 1, 0, maxPages);
 			if (page == x) return;

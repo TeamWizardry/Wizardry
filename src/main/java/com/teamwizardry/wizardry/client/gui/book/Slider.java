@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.client.gui.book;
 
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
-import com.teamwizardry.librarianlib.features.gui.GuiComponent;
+import com.teamwizardry.librarianlib.features.gui.component.GuiComponentEvents;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentText;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentVoid;
@@ -40,7 +40,7 @@ public class Slider {
 		compText.getWrap().setValue(120);
 		component.add(compText);
 
-		component.BUS.hook(GuiComponent.ComponentTickEvent.class, componentTickEvent -> {
+		component.BUS.hook(GuiComponentEvents.ComponentTickEvent.class, componentTickEvent -> {
 			double t = -1, tmax = 20;
 			float x;
 			if (!component.hasTag("kill")) {

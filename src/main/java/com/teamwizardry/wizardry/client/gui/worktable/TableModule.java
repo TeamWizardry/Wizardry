@@ -2,7 +2,8 @@ package com.teamwizardry.wizardry.client.gui.worktable;
 
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.gui.EnumMouseButton;
-import com.teamwizardry.librarianlib.features.gui.GuiComponent;
+import com.teamwizardry.librarianlib.features.gui.component.GuiComponent;
+import com.teamwizardry.librarianlib.features.gui.component.GuiComponentEvents;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentVoid;
 import com.teamwizardry.librarianlib.features.gui.mixin.DragMixin;
@@ -24,6 +25,8 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -58,15 +61,15 @@ public class TableModule {
 		if (draggable) GlMixin.INSTANCE.transform(base).setValue(new Vec3d(0, 0, 30));
 		base.addTag(module);
 
-		base.BUS.hook(GuiComponent.MouseDownEvent.class, (event) -> {
+		base.BUS.hook(GuiComponentEvents.MouseDownEvent.class, (event) -> {
 			if (event.getButton() == EnumMouseButton.LEFT) {
-				if (!draggable && event.getComponent().getMouseOver()) {
+				if (!draggable && event.component.getMouseOver()) {
 					TableModule item = new TableModule(table, parent, module, true, false);
 					table.paper.add(item.component);
 
-					item.component.setPos(event.getComponent().getParent().unTransformChildPos(event.getComponent(), event.getMousePos()));
+					item.component.setPos(event.component.thisPosToOtherContext(event.component.getParent(), event.getMousePos()));
 					item.component.addTag("dragging");
-					DragMixin<ComponentVoid> drag = new DragMixin<>(item.component, vec2d -> vec2d);
+					DragMixin drag = new DragMixin(item.component, vec2d -> vec2d);
 					drag.setClickPos(new Vec2d(6, 6));
 					drag.setMouseDown(event.getButton());
 					event.cancel();
@@ -75,34 +78,34 @@ public class TableModule {
 		});
 
 		base.BUS.hook(DragMixin.DragPickupEvent.class, (event) -> {
-			prevPos = event.getComponent().unTransform(Vec2d.ZERO, event.getComponent().getRoot());
+			prevPos = event.component.thisPosToOtherContext(null);
 			if (event.getButton() == EnumMouseButton.RIGHT) {
-				event.getComponent().setData(Vec2d.class, "origin_pos", event.getComponent().getPos());
-				event.getComponent().setZIndex(-1);
-				event.getComponent().addTag("dragging");
+				event.component.setData(Vec2d.class, "origin_pos", event.component.getPos());
+				event.component.setZIndex(-1);
+				event.component.addTag("dragging");
 			}
 		});
 
 		base.BUS.hook(DragMixin.DragDropEvent.class, (event) -> {
-			event.getComponent().removeTag("dragging");
+			event.component.removeTag("dragging");
 
-			if (prevPos.getXi() == event.getComponent().getPos().getX()
-					&& prevPos.getYi() == event.getComponent().getPos().getYi()) {
-				//Module lastModifier = ModuleRegistry.INSTANCE.getModule((String) event.getComponent().getData(String.class, "last_modifier_type"));
-				//if (lastModifier != null && event.getComponent().hasData(Integer.class, lastModifier.getID())) {
-				//	int x = (int) event.getComponent().getData(Integer.class, lastModifier.getID());
+			if (prevPos.getXi() == event.component.getPos().getX()
+					&& prevPos.getYi() == event.component.getPos().getYi()) {
+				//Module lastModifier = ModuleRegistry.INSTANCE.getModule((String) event.component.getData(String.class, "last_modifier_type"));
+				//if (lastModifier != null && event.component.hasData(Integer.class, lastModifier.getID())) {
+				//	int x = (int) event.component.getData(Integer.class, lastModifier.getID());
 				//	if (event.getButton() == EnumMouseButton.LEFT) x++;
 				//	else if (event.getButton() == EnumMouseButton.RIGHT) x--;
-				//	if (x <= 0) event.getComponent().removeData(Integer.class, lastModifier.getID());
-				//	else event.getComponent().setData(Integer.class, lastModifier.getID(), x);
+				//	if (x <= 0) event.component.removeData(Integer.class, lastModifier.getID());
+				//	else event.component.setData(Integer.class, lastModifier.getID(), x);
 				//}
-				if (event.getComponent().getMouseOver() && draggable && !benign) {
+				if (event.component.getMouseOver() && draggable && !benign) {
 
-					if (table.selectedcomponent == event.getComponent()) {
+					if (table.selectedcomponent == event.component) {
 						table.selectedcomponent = null;
 						table.whitelistedModifiers.refresh();
 					} else {
-						table.selectedcomponent = event.getComponent();
+						table.selectedcomponent = event.component;
 						table.whitelistedModifiers.refresh();
 					}
 				}
@@ -111,13 +114,13 @@ public class TableModule {
 			if (event.getButton() == EnumMouseButton.LEFT) {
 
 				Vec2d plateSize = table.paper.getSize();
-				Vec2d platePos = event.getComponent().getPos();
+				Vec2d platePos = event.component.getPos();
 				boolean b = platePos.getX() >= 0 && platePos.getX() <= plateSize.getX() && platePos.getY() >= 0 && platePos.getY() <= plateSize.getY();
 
 				// MODIFIER ADDING //
 				{
 					if (module.getModuleType() == MODIFIER) {
-						GuiComponent<?> componentHovered = null;
+						GuiComponent componentHovered = null;
 						for (GuiComponent component : table.paperComponents.keySet()) {
 							Module module2 = table.getModule(component);
 							if (module2 == null) continue;
@@ -131,9 +134,9 @@ public class TableModule {
 							componentHovered.setData(String.class, "last_modifier_type", module.getID());
 						}
 
-						table.paperComponents.remove(event.getComponent());
+						table.paperComponents.remove(event.component);
 
-						event.getComponent().invalidate();
+						event.component.invalidate();
 						event.cancel();
 					}
 				}
@@ -141,7 +144,7 @@ public class TableModule {
 
 				if (!b) {
 					if (module.getModuleType() != MODIFIER) {
-						UUID uuid1 = table.getUUID(event.getComponent());
+						UUID uuid1 = table.getUUID(event.component);
 						if (table.componentLinks.containsKey(uuid1)) {
 							table.componentLinks.remove(uuid1);
 						}
@@ -150,27 +153,27 @@ public class TableModule {
 							table.componentLinks.remove(uuid2, uuid1);
 						}
 
-						table.paperComponents.remove(event.getComponent());
+						table.paperComponents.remove(event.component);
 
-						event.getComponent().invalidate();
+						event.component.invalidate();
 						event.cancel();
 					}
 				}
 
 			} else if (event.getButton() == EnumMouseButton.RIGHT) {
 				Vec2d position = null;
-				if (event.getComponent().hasData(Vec2d.class, "origin_pos")) {
-					position = (Vec2d) event.getComponent().getData(Vec2d.class, "origin_pos");
-					event.getComponent().removeData(Vec2d.class, "origin_pos");
-					event.getComponent().setZIndex(0);
+				if (event.component.hasData(Vec2d.class, "origin_pos")) {
+					position = (Vec2d) event.component.getData(Vec2d.class, "origin_pos");
+					event.component.removeData(Vec2d.class, "origin_pos");
+					event.component.setZIndex(0);
 				}
-				if (position != null) event.getComponent().setPos(position);
+				if (position != null) event.component.setPos(position);
 
-				UUID uuid1 = table.getUUID(event.getComponent());
+				UUID uuid1 = table.getUUID(event.component);
 
 				for (GuiComponent component : table.paper.getChildren()) {
 					if (component.getMouseOver()) {
-						if (component == event.getComponent()) continue;
+						if (component == event.component) continue;
 						UUID uuid2 = table.getUUID(component);
 
 						if (table.componentLinks.containsKey(uuid1) && table.componentLinks.get(uuid1).equals(uuid2)) {
@@ -203,11 +206,11 @@ public class TableModule {
 			}
 		});
 
-		base.BUS.hook(GuiComponent.PreDrawEvent.class, (GuiComponent.PreDrawEvent event) -> {
-			Vec2d position = event.getComponent().getPos();
-			boolean hasPos = event.getComponent().hasData(Vec2d.class, "origin_pos");
+		base.BUS.hook(GuiComponentEvents.PreDrawEvent.class, (GuiComponentEvents.PreDrawEvent event) -> {
+			Vec2d position = event.component.getPos();
+			boolean hasPos = event.component.hasData(Vec2d.class, "origin_pos");
 			boolean anyDragging = false;
-			for (GuiComponent<?> comp : table.paperComponents.keySet())
+			for (GuiComponent comp : table.paperComponents.keySet())
 				if (comp.hasTag("dragging")) {
 					anyDragging = true;
 					break;
@@ -216,37 +219,37 @@ public class TableModule {
 			//---------// DRAW WIRE TO CURSOR //---------//
 			{
 				if (hasPos) {
-					position = (Vec2d) event.getComponent().getData(Vec2d.class, "origin_pos");
+					position = (Vec2d) event.component.getData(Vec2d.class, "origin_pos");
 
 					if (position != null) {
 						Vec2d start = position.add(8, 8);
-						Vec2d end = event.getComponent().getParent().unTransformChildPos(event.getComponent(), event.getMousePos());
+						Vec2d end = event.component.thisPosToOtherContext(event.component.getParent(), event.getMousePos());
 
 
-						Module module1 = table.getModule(event.getComponent());
+						Module module1 = table.getModule(event.component);
 						if (module1 == null) return;
 
 						drawWire(start, end, getColorForModule(module1.getModuleType()), Color.WHITE);
 					}
 				}
 
-				if (position == null) position = event.getComponent().getPos();
+				if (position == null) position = event.component.getPos();
 			}
 			//---------// DRAW WIRE TO CURSOR //---------//
 
 			//---------// RENDER MODULE //---------//
 			{
-				float size = ((table.selectedcomponent == event.getComponent() || event.getComponent().getMouseOver()) && !hasPos) ? 24 : 16;
-				float sizeIcon = ((table.selectedcomponent == event.getComponent() || event.getComponent().getMouseOver()) && !hasPos) ? 18 : 12;
-				float posPlate = ((table.selectedcomponent == event.getComponent() || event.getComponent().getMouseOver()) && !hasPos) ? -4 : 0;
-				float posIcon = ((table.selectedcomponent == event.getComponent() || event.getComponent().getMouseOver()) && !hasPos) ? -1.5f : 2;
+				float size = ((table.selectedcomponent == event.component || event.component.getMouseOver()) && !hasPos) ? 24 : 16;
+				float sizeIcon = ((table.selectedcomponent == event.component || event.component.getMouseOver()) && !hasPos) ? 18 : 12;
+				float posPlate = ((table.selectedcomponent == event.component || event.component.getMouseOver()) && !hasPos) ? -4 : 0;
+				float posIcon = ((table.selectedcomponent == event.component || event.component.getMouseOver()) && !hasPos) ? -1.5f : 2;
 
 				GlStateManager.pushMatrix();
 				GlStateManager.color(1, 1, 1, 1);
-				GlStateManager.translate(position.getXf(), position.getYf(), event.getComponent().getMouseOver() ? 150 : 5);
+				GlStateManager.translate(position.getXf(), position.getYf(), event.component.getMouseOver() ? 150 : 5);
 				GlStateManager.enableBlend();
 
-				if (event.getComponent().getMouseOver() && !hasPos) {
+				if (event.component.getMouseOver() && !hasPos) {
 					plate.getTex().bind();
 					plate.draw((int) event.getPartialTicks(), posPlate, posPlate, size, size);
 
@@ -269,7 +272,7 @@ public class TableModule {
 
 					ArrayList<Module> modifiers = new ArrayList<>();
 					for (Module modifier : ModuleRegistry.INSTANCE.getModules(ModuleType.MODIFIER)) {
-						if (event.getComponent().hasData(Integer.class, modifier.getID())) {
+						if (event.component.hasData(Integer.class, modifier.getID())) {
 							modifiers.add(modifier);
 						}
 					}
@@ -291,9 +294,9 @@ public class TableModule {
 								new Vec2d(newX, newY).add(s / 2.0, s / 2.0),
 								Vec2d.ZERO.add(8, 8),
 								getColorForModule(ModuleType.MODIFIER),
-								getColorForModule(table.getModule(event.getComponent()).getModuleType()));
+								getColorForModule(table.getModule(event.component).getModuleType()));
 
-						int x = (int) event.getComponent().getData(Integer.class, modifier.getID());
+						int x = (int) event.component.getData(Integer.class, modifier.getID());
 						Minecraft.getMinecraft().fontRenderer.drawString("x" + x, newX + s / 2 - Minecraft.getMinecraft().fontRenderer.getStringWidth("x" + x) / 2, newY + s, Color.LIGHT_GRAY.getRGB(), false);
 						GlStateManager.color(1, 1, 1, 1);
 					}
@@ -306,11 +309,11 @@ public class TableModule {
 
 			//---------// RENDER LINKS BETWEEN MODULES //---------//
 			{
-				UUID linkedUuid = table.componentLinks.get(table.getUUID(event.getComponent()));
+				UUID linkedUuid = table.componentLinks.get(table.getUUID(event.component));
 
 				GuiComponent component = table.getComponent(linkedUuid);
 				if (component == null) return;
-				if (linkedUuid == table.getUUID(event.getComponent())) return;
+				if (linkedUuid == table.getUUID(event.component)) return;
 
 				Vec2d toPos = null;
 				if (component.hasData(Vec2d.class, "origin_pos"))
@@ -319,15 +322,15 @@ public class TableModule {
 				toPos = toPos.add(8, 8);
 
 				Vec2d fromPos = null;
-				if (event.getComponent().hasData(Vec2d.class, "origin_pos"))
-					fromPos = ((Vec2d) event.getComponent().getData(Vec2d.class, "origin_pos"));
-				if (fromPos == null) fromPos = event.getComponent().getPos();
+				if (event.component.hasData(Vec2d.class, "origin_pos"))
+					fromPos = ((Vec2d) event.component.getData(Vec2d.class, "origin_pos"));
+				if (fromPos == null) fromPos = event.component.getPos();
 				fromPos = fromPos.add(8, 8);
 
 				Module module1 = table.getModule(component);
 				if (module1 == null) return;
 
-				Module module2 = table.getModule(event.getComponent());
+				Module module2 = table.getModule(event.component);
 				if (module2 == null) return;
 
 				drawWire(fromPos, toPos, getColorForModule(module2.getModuleType()), getColorForModule(module1.getModuleType()));
@@ -335,10 +338,10 @@ public class TableModule {
 			//---------// RENDER LINKS BETWEEN MODULES //---------//
 		});
 
-		base.getTooltip().func((Function<GuiComponent<ComponentVoid>, List<String>>) t -> {
+		base.getTooltip().func((Function<GuiComponent, List<String>>) t -> {
 			List<String> txt = new ArrayList<>();
 
-			for (GuiComponent<?> comp : table.paperComponents.keySet()) if (comp.hasTag("dragging")) return txt;
+			for (GuiComponent comp : table.paperComponents.keySet()) if (comp.hasTag("dragging")) return txt;
 
 			txt.add(TextFormatting.GOLD + module.getReadableName());
 			if (GuiScreen.isShiftKeyDown())

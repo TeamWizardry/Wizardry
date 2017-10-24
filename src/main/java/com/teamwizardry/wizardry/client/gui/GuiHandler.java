@@ -5,6 +5,8 @@ import com.teamwizardry.wizardry.client.gui.worktable.WorktableGui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Created by Saad on 4/13/2016.

@@ -6,7 +6,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
-import com.teamwizardry.librarianlib.features.gui.GuiComponent;
+import com.teamwizardry.librarianlib.features.gui.component.GuiComponent;
+import com.teamwizardry.librarianlib.features.gui.component.GuiComponentEvents;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentText;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentVoid;
@@ -25,19 +26,19 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ComponentIndex extends GuiComponent<ComponentIndex> {
+public class ComponentIndex extends GuiComponent {
 
 	private static final int plateWidth = 195;
 	private static final int buffer = 10;
-	private final GuiComponent<?> componentBook;
+	private final GuiComponent componentBook;
 	private final int plateHeight;
 	@NotNull
 	private final BookGui bookGui;
 	private final Vec2d pos;
 	private ArrayList<ComponentVoid> prevComps = new ArrayList<>();
-	private GuiComponent<?> prevContent;
+	private GuiComponent prevContent;
 
-	public ComponentIndex(GuiComponent<?> componentBook, ArrayList<BookGui.IndexItem> list, int plateHeight, boolean isMainIndex, @NotNull BookGui bookGui, Vec2d pos) {
+	public ComponentIndex(GuiComponent componentBook, ArrayList<BookGui.IndexItem> list, int plateHeight, boolean isMainIndex, @NotNull BookGui bookGui, Vec2d pos) {
 		super(pos.getXi(), pos.getYi(), plateWidth, 120);
 		this.componentBook = componentBook;
 		this.plateHeight = plateHeight;
@@ -63,12 +64,12 @@ public class ComponentIndex extends GuiComponent<ComponentIndex> {
 				plate.setVisible(true);
 				plate.setEnabled(false);
 
-				plate.BUS.hook(GuiComponent.PostDrawEvent.class, (event) -> {
+				plate.BUS.hook(GuiComponentEvents.PostDrawEvent.class, (event) -> {
 					GlStateManager.pushMatrix();
 					GlStateManager.enableAlpha();
 					GlStateManager.enableBlend();
 					if (isMainIndex) {
-						if (!event.getComponent().getMouseOver()) GlStateManager.color(0, 0, 0);
+						if (!event.component.getMouseOver()) GlStateManager.color(0, 0, 0);
 						else GlStateManager.color(0, 0.5f, 1);
 					}
 					indexItem.icon.getTex().bind();
@@ -76,8 +77,8 @@ public class ComponentIndex extends GuiComponent<ComponentIndex> {
 					GlStateManager.popMatrix();
 				});
 
-				plate.BUS.hook(GuiComponent.MouseClickEvent.class, (event) -> {
-					Pair<String, GuiComponent<?>> pair = next(indexItem.link);
+				plate.BUS.hook(GuiComponentEvents.MouseClickEvent.class, (event) -> {
+					Pair<String, GuiComponent> pair = next(indexItem.link);
 					if (pair == null) return;
 
 					if (isMainIndex && !bookGui.componentLogo.isInvalid()) bookGui.componentLogo.invalidate();
@@ -89,7 +90,7 @@ public class ComponentIndex extends GuiComponent<ComponentIndex> {
 							guiComponent.setEnabled(false);
 						});
 
-						GuiComponent<?> subindex = pair.getSecond();
+						GuiComponent subindex = pair.getSecond();
 						add(subindex);
 					} else if (pair.getFirst().equals("content")) {
 						add(pair.getSecond());
@@ -102,7 +103,7 @@ public class ComponentIndex extends GuiComponent<ComponentIndex> {
 				ComponentText text = new ComponentText(plateHeight + 10, (int) (plateHeight / 2.0 + height / 2.0), ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.MIDDLE);
 				text.getText().setValue(indexItem.text);
 				text.getScale().setValue(2f);
-				text.BUS.hook(GuiComponent.ComponentTickEvent.class, (event) -> {
+				text.BUS.hook(GuiComponentEvents.ComponentTickEvent.class, (event) -> {
 					text.getText().setValue((plate.getMouseOver() ? TextFormatting.ITALIC + " " : "") + indexItem.text);
 				});
 				plate.add(text);
@@ -141,7 +142,7 @@ public class ComponentIndex extends GuiComponent<ComponentIndex> {
 		return pages;
 	}
 
-	private Pair<String, GuiComponent<?>> next(String newResource) {
+	private Pair<String, GuiComponent> next(String newResource) {
 		InputStream stream;
 		try {
 			stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, newResource);

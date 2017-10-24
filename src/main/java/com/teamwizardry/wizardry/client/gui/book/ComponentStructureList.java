@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.client.gui.book;
 
-import com.teamwizardry.librarianlib.features.gui.GuiComponent;
+import com.teamwizardry.librarianlib.features.gui.component.GuiComponent;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentText;
 import com.teamwizardry.librarianlib.features.math.Vec2d;
 import com.teamwizardry.librarianlib.features.structure.Structure;
@@ -9,7 +9,7 @@ import net.minecraft.world.gen.structure.template.Template;
 
 import java.util.HashMap;
 
-public class ComponentStructureList extends GuiComponent<ComponentStructureList> {
+public class ComponentStructureList extends GuiComponent {
 
 	public ComponentStructureList(Structure structure) {
 		super(0, 0, 200, 300);

@@ -5,7 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.teamwizardry.librarianlib.core.LibrarianLib;
-import com.teamwizardry.librarianlib.features.gui.GuiComponent;
+import com.teamwizardry.librarianlib.features.gui.component.GuiComponent;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentText;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentVoid;
@@ -27,40 +27,40 @@ import java.util.HashSet;
 
 import static net.minecraft.client.gui.FontRenderer.getFormatFromString;
 
-public class ComponentContentPage extends GuiComponent<ComponentContentPage> {
+public class ComponentContentPage extends GuiComponent {
 
 	@NotNull
 	private final BookGui bookGui;
 	private final String resource;
-	private GuiComponent<?> prevComps;
+	private GuiComponent prevComps;
 
 	public ComponentContentPage(@NotNull BookGui bookGui, int posX, int posY, int width, int height, String resource) {
 		super(posX, posY, width, height);
 		this.bookGui = bookGui;
 		this.resource = resource;
 
-		HashMap<Integer, GuiComponent<?>> pages = getContent();
+		HashMap<Integer, GuiComponent> pages = getContent();
 
 		ComponentNavBar navBar = new ComponentNavBar((int) (getSize().getX() / 2.0 - 170 / 2.0), getSize().getYi() + 30, 170, 15, pages.size() - 1);
 		add(navBar);
 
 		navBar.BUS.hook(EventNavBarChange.class, eventNavBarChange -> {
 			if (prevComps != null) {
-				GuiComponent<?> parent = prevComps.getParent();
+				GuiComponent parent = prevComps.getParent();
 				if (parent != null) parent.remove(prevComps);
 			}
 
 			if (pages.size() <= navBar.getPage()) return;
 
-			GuiComponent<?> content = pages.get(navBar.getPage());
+			GuiComponent content = pages.get(navBar.getPage());
 			add(content);
 			prevComps = content;
 		});
 		navBar.BUS.fire(new EventNavBarChange());
 	}
 
-	private HashMap<Integer, GuiComponent<?>> getContent() {
-		HashMap<Integer, GuiComponent<?>> pages = new HashMap<>();
+	private HashMap<Integer, GuiComponent> getContent() {
+		HashMap<Integer, GuiComponent> pages = new HashMap<>();
 
 		InputStream stream;
 		try {
@@ -95,7 +95,7 @@ public class ComponentContentPage extends GuiComponent<ComponentContentPage> {
 							for (JsonElement lineElement : contObj.get("text").getAsJsonArray()) {
 								if (!lineElement.isJsonPrimitive()) continue;
 
-								HashSet<GuiComponent<?>> componentsAfterThisPage = new HashSet<>();
+								HashSet<GuiComponent> componentsAfterThisPage = new HashSet<>();
 								String s = lineElement.getAsString();
 								String[] images = StringUtils.substringsBetween(s, "[image:", "]");
 								String[] structures = StringUtils.substringsBetween(s, "[structure:", "]");
@@ -145,7 +145,7 @@ public class ComponentContentPage extends GuiComponent<ComponentContentPage> {
 									page.add(lineBreak1, lineBreak2);
 								}
 
-								for (GuiComponent<?> component : componentsAfterThisPage) {
+								for (GuiComponent component : componentsAfterThisPage) {
 									pages.put(i++, component);
 								}
 							}

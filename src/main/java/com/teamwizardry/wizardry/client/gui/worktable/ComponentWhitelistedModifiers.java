@@ -5,7 +5,8 @@ import com.teamwizardry.librarianlib.features.animator.animations.Keyframe;
 import com.teamwizardry.librarianlib.features.animator.animations.KeyframeAnimation;
 import com.teamwizardry.librarianlib.features.animator.animations.ScheduledEventAnimation;
 import com.teamwizardry.librarianlib.features.gui.EnumMouseButton;
-import com.teamwizardry.librarianlib.features.gui.GuiComponent;
+import com.teamwizardry.librarianlib.features.gui.component.GuiComponent;
+import com.teamwizardry.librarianlib.features.gui.component.GuiComponentEvents;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentList;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentRect;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
@@ -26,7 +27,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
-public class ComponentWhitelistedModifiers extends GuiComponent<ComponentWhitelistedModifiers> {
+public class ComponentWhitelistedModifiers extends GuiComponent {
 
 	private final WorktableGui worktable;
 	private final ComponentList list;
@@ -51,7 +52,7 @@ public class ComponentWhitelistedModifiers extends GuiComponent<ComponentWhiteli
 			setEnabled(true);
 		}
 
-		HashSet<GuiComponent<?>> temp = new HashSet<>(list.getChildren());
+		HashSet<GuiComponent> temp = new HashSet<>(list.getChildren());
 		for (GuiComponent component : temp) {
 			list.remove(component);
 		}
@@ -79,10 +80,10 @@ public class ComponentWhitelistedModifiers extends GuiComponent<ComponentWhiteli
 			text.getText().setValue(TextFormatting.GREEN + modifier.getShortHandName());
 			bar.add(text);
 
-			bar.getTooltip().func((Function<GuiComponent<ComponentRect>, java.util.List<String>>) t -> {
+			bar.getTooltip().func((Function<GuiComponent, java.util.List<String>>) t -> {
 				List<String> txt = new ArrayList<>();
 
-				for (GuiComponent<?> comp : worktable.paperComponents.keySet()) if (comp.hasTag("dragging")) return txt;
+				for (GuiComponent comp : worktable.paperComponents.keySet()) if (comp.hasTag("dragging")) return txt;
 
 				txt.add(TextFormatting.GOLD + module.getReadableName());
 				if (GuiScreen.isShiftKeyDown())
@@ -92,8 +93,8 @@ public class ComponentWhitelistedModifiers extends GuiComponent<ComponentWhiteli
 			});
 
 			// TODO animate here
-			bar.BUS.hook(GuiComponent.MouseClickEvent.class, (event) -> {
-				if (!event.getComponent().getMouseOver()) return;
+			bar.BUS.hook(GuiComponentEvents.MouseClickEvent.class, (event) -> {
+				if (!event.component.getMouseOver()) return;
 
 				int i = worktable.selectedcomponent.hasData(Integer.class, modifier.getID()) ? worktable.selectedcomponent.getData(Integer.class, modifier.getID()) : 0;
 
@@ -102,7 +103,7 @@ public class ComponentWhitelistedModifiers extends GuiComponent<ComponentWhiteli
 				else if (event.getButton() == EnumMouseButton.RIGHT)
 					worktable.selectedcomponent.setData(Integer.class, modifier.getID(), --i);
 
-				Vec2d r = bar.posRelativeTo(bar.getPos(), worktable.getMainComponents());
+				Vec2d r = bar.thisPosToOtherContext(worktable.getMainComponents(), bar.getPos());
 				ComponentSprite fakePlate = new ComponentSprite(TableModule.plate, 0, 0, 16, 16);
 				worktable.getMainComponents().add(fakePlate);
 
