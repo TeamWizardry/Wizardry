@@ -93,7 +93,8 @@ public class TilePearlHolder extends TileManaInteracter implements ICooldown {
 			updateCooldown(pearl);
 
 			IWizardryCapability pearlCap = WizardryCapabilityProvider.getCap(pearl);
-			if (pearlCap == null || pearlCap.getMana() >= pearlCap.getMaxMana() || isBenign) return;
+			if (pearlCap == null || pearlCap.getMana() > pearlCap.getMaxMana() || isBenign || structurePos != null)
+				return;
 
 			boolean suckedFromHolder = false;
 			for (BlockPos pearlHolders : getNearestSuckables(TilePearlHolder.class, getWorld(), getPos())) {

@@ -26,6 +26,8 @@ public class SpellTicker {
 
 	@SubscribeEvent
 	public void tick(TickEvent.WorldTickEvent event) {
+		if (event.world.isRemote) return;
+
 		ArrayList<Module> modules = new ArrayList<>(ticker.keySet());
 		modules.forEach(module -> {
 			int time = ticker.get(module).getSecond();

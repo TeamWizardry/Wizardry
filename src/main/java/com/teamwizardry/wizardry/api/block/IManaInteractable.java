@@ -36,7 +36,7 @@ public interface IManaInteractable {
 		if (capToFill == null) return false;
 		if (capToFill.getMaxMana() <= capToFill.getMana()) return false;
 		if (new CapManager(capToFill).isManaFull()) return false;
-		if (origin.getDistance(from.getX(), from.getY(), from.getZ()) > ConfigValues.manaBatteryLinkDistance)
+		if (origin.getDistance(from.getX(), from.getY(), from.getZ()) > ConfigValues.networkLinkDistance)
 			return false;
 
 		TileEntity tile = world.getTileEntity(from);
@@ -44,7 +44,7 @@ public interface IManaInteractable {
 
 			if (equalize) {
 				IWizardryCapability cap = ((TileManaInteracter) tile).getCap();
-				if (cap != null && cap.getMana() < capToFill.getMana()) {
+				if (cap != null && capToFill.getMana() + idealAmount > cap.getMana() - idealAmount) {
 					return false;
 				}
 			}
@@ -92,7 +92,7 @@ public interface IManaInteractable {
 		for (BlockPos target : temp) {
 			if (target.equals(origin)) continue;
 			if (!world.isBlockLoaded(target)) continue;
-			if (target.getDistance(origin.getX(), origin.getY(), origin.getZ()) > ConfigValues.manaBatteryLinkDistance)
+			if (target.getDistance(origin.getX(), origin.getY(), origin.getZ()) > ConfigValues.networkLinkDistance)
 				continue;
 
 			TileEntity tile = world.getTileEntity(target);

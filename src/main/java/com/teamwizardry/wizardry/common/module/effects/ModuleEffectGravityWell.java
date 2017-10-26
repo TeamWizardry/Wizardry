@@ -109,15 +109,15 @@ public class ModuleEffectGravityWell extends ModuleEffect implements ILingeringM
 		Vec3d position = spell.getData(TARGET_HIT);
 
 		if (position == null) return;
-		if (RandUtil.nextInt(2) != 0) return;
+		if (RandUtil.nextInt(10) != 0) return;
 
-		ParticleBuilder glitter = new ParticleBuilder(RandUtil.nextInt(20, 30));
+		ParticleBuilder glitter = new ParticleBuilder(0);
 		glitter.setColorFunction(new InterpColorHSV(getPrimaryColor(), getSecondaryColor()));
-		ParticleSpawner.spawn(glitter, spell.world, new StaticInterp<>(position), 5, RandUtil.nextInt(0, 30), (aFloat, particleBuilder) -> {
+		ParticleSpawner.spawn(glitter, spell.world, new StaticInterp<>(position), 5, 0, (aFloat, particleBuilder) -> {
 			glitter.setScale((float) RandUtil.nextDouble(0.3, 1));
 			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, (float) RandUtil.nextDouble(0.6, 1)));
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-			glitter.setLifetime(RandUtil.nextInt(10, 20));
+			glitter.setLifetime(RandUtil.nextInt(20, 40));
 			glitter.setScaleFunction(new InterpScale(1, 0));
 			if (RandUtil.nextBoolean())
 				glitter.setPositionFunction(new InterpHelix(
@@ -141,6 +141,6 @@ public class ModuleEffectGravityWell extends ModuleEffect implements ILingeringM
 
 	@Override
 	public int lingeringTime(SpellData spell) {
-		return (int) (getModifier(spell, Attributes.DURATION, 10, 64) * 100);
+		return (int) (getModifier(spell, Attributes.DURATION, 10, 64) * 500);
 	}
 }

@@ -19,8 +19,8 @@ public class ConfigValues {
 	@ConfigProperty(category = "world", comment = "If you have a dimension ID conflict with this mod and something else, change this number")
 	public static int underworldID = 42;
 
-	@ConfigProperty(category = "world", comment = "The maximum possible distance required to link a battery with a mana consuming block")
-	public static int manaBatteryLinkDistance = 64;
+	@ConfigProperty(category = "world", comment = "The maximum possible distance required for 2 mana interacting blocks to link to each other")
+	public static int networkLinkDistance = 16;
 
 	@ConfigProperty(category = "items", comment = "The maximum limit a cape can give a player in terms of mana/burnout buffers")
 	public static int maxCapeCap = 5000;
