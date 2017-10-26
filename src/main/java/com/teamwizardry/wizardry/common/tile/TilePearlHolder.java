@@ -67,17 +67,13 @@ public class TilePearlHolder extends TileManaInteracter implements ICooldown {
 				for (BlockPos pearlHolders : getNearestSuckables(TilePearlHolder.class, getWorld(), getPos())) {
 					TileEntity tile = getWorld().getTileEntity(pearlHolders);
 					if (tile != null && tile instanceof TilePearlHolder && !((TilePearlHolder) tile).isBenign) {
-						if (structurePos != null && ((TilePearlHolder) tile).structurePos != null && !structurePos.equals(((TilePearlHolder) tile).structurePos))
+						if (structurePos == null && ((TilePearlHolder) tile).structurePos == null)
 							suckManaFrom(getWorld(), getPos(), getCap(), pearlHolders, 10, true);
 					}
 				}
 
-			primary:
 			for (BlockPos target : getNearestSuckables(TileManaBattery.class, getWorld(), getPos())) {
-				for (BlockPos relative : TileManaBattery.poses)
-					if (getPos().subtract(relative).equals(target)) {
-						break primary;
-					}
+				if (target.equals(structurePos)) continue;
 				suckManaFrom(getWorld(), getPos(), getCap(), target, 10, false);
 			}
 
@@ -97,14 +93,14 @@ public class TilePearlHolder extends TileManaInteracter implements ICooldown {
 			updateCooldown(pearl);
 
 			IWizardryCapability pearlCap = WizardryCapabilityProvider.getCap(pearl);
-			if (pearlCap == null || pearlCap.getMana() < pearlCap.getMaxMana() || isBenign) return;
+			if (pearlCap == null || pearlCap.getMana() >= pearlCap.getMaxMana() || isBenign) return;
 
 			boolean suckedFromHolder = false;
 			for (BlockPos pearlHolders : getNearestSuckables(TilePearlHolder.class, getWorld(), getPos())) {
 				TileEntity tile = getWorld().getTileEntity(pearlHolders);
 				if (tile != null && tile instanceof TilePearlHolder && !((TilePearlHolder) tile).isBenign && structurePos == null && ((TilePearlHolder) tile).structurePos == null) {
 					suckedFromHolder = true;
-					suckManaFrom(getWorld(), getPos(), pearlCap, pearlHolders, 10, true);
+					suckManaFrom(getWorld(), getPos(), pearlCap, pearlHolders, 10, false);
 				}
 			}
 

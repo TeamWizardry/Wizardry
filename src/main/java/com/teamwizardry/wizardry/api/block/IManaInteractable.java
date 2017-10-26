@@ -42,6 +42,13 @@ public interface IManaInteractable {
 		TileEntity tile = world.getTileEntity(from);
 		if (tile != null && tile instanceof TileManaInteracter) {
 
+			if (equalize) {
+				IWizardryCapability cap = ((TileManaInteracter) tile).getCap();
+				if (cap != null && cap.getMana() < capToFill.getMana()) {
+					return false;
+				}
+			}
+
 			double amount = ((TileManaInteracter) tile).drainMana(world, from, ((TileManaInteracter) tile).getCap(), idealAmount);
 			if (amount < 0) return false;
 
