@@ -84,7 +84,7 @@ public final class BlockUtils {
 				EnumActionResult result = player.interactionManager.processRightClickBlock(
 						player, world, stack, EnumHand.MAIN_HAND,
 						pos, facing, 0, 0, 0);
-				if (result != EnumActionResult.FAIL) return true;
+				return result != EnumActionResult.FAIL;
 			}
 		}
 
@@ -105,7 +105,7 @@ public final class BlockUtils {
 			playerMP.setPosition(pos.getX(), pos.getY(), pos.getZ());
 		} else playerMP = player;
 
-		if (!(player instanceof FakePlayer))
+		if (player != null && !(player instanceof FakePlayer))
 			if (!hasBreakPermission(world, pos, playerMP)) return false;
 
 		if (oldState == null) oldState = world.getBlockState(pos);

@@ -58,22 +58,21 @@ public class TableModule {
 		prevPos = base.getPos();
 		if (draggable) GlMixin.INSTANCE.transform(base).setValue(new Vec3d(0, 0, 30));
 		base.addTag(module);
-		
+
 		base.BUS.hook(GuiComponentEvents.MouseDownEvent.class, (event) -> {
 			if (event.getButton() == EnumMouseButton.LEFT) {
 				if (!draggable && event.component.getMouseOver()) {
 					TableModule item = new TableModule(table, parent, module, true, false);
 					table.paper.add(item.component);
 
-					item.component.setPos(event.component.transformToParentContext(event.getMousePos()));
-					item.component.addTag("dragging");
+					item.component.setPos(table.paper.otherContextToThisContext(null).apply(event.getMousePos()));
 					DragMixin drag = new DragMixin(item.component, vec2d -> vec2d);
 					drag.setClickPos(new Vec2d(6, 6));
 					drag.setMouseDown(event.getButton());
 					event.cancel();
 				}
 			}
-			
+
 		});
 
 		base.BUS.hook(DragMixin.DragPickupEvent.class, (event) -> {
@@ -82,11 +81,12 @@ public class TableModule {
 				event.component.addTag("dragging");
 			}
 		});
-		
+
 		base.BUS.hook(DragMixin.DragMoveEvent.class, (event) -> {
 			if(event.getButton() == EnumMouseButton.RIGHT) {
 				// when we are right-click dragging don't actually move anything. This also means the mousepos will be
 				// correct when we draw a fanceh line from (8,8) to the mousepos while right-click dragging.
+				// IE: Location of component stays where it is and the mouse moves without it.
 				event.setNewPos(event.getPos());
 			}
 		});
@@ -94,8 +94,10 @@ public class TableModule {
 		base.BUS.hook(DragMixin.DragDropEvent.class, (event) -> {
 			event.component.removeTag("dragging");
 
-			if (prevPos.getXi() == event.component.getPos().getX()
-					&& prevPos.getYi() == event.component.getPos().getYi()) {
+			Vec2d prevPos = event.component.thisPosToOtherContext(null, event.getPreviousPos());
+			Vec2d currentPos = event.component.thisPosToOtherContext(null);
+			if (prevPos.getXi() == currentPos.getXi()
+					&& prevPos.getYi() == currentPos.getYi()) {
 				//Module lastModifier = ModuleRegistry.INSTANCE.getModule((String) event.component.getData(String.class, "last_modifier_type"));
 				//if (lastModifier != null && event.component.hasData(Integer.class, lastModifier.getID())) {
 				//	int x = (int) event.component.getData(Integer.class, lastModifier.getID());
@@ -168,7 +170,7 @@ public class TableModule {
 			} else if (event.getButton() == EnumMouseButton.RIGHT) {
 				Vec2d position = null;
 				if (event.component.hasData(Vec2d.class, "origin_pos")) {
-					position = (Vec2d) event.component.getData(Vec2d.class, "origin_pos");
+					position = event.component.getData(Vec2d.class, "origin_pos");
 					event.component.removeData(Vec2d.class, "origin_pos");
 					event.component.setZIndex(0);
 				}
@@ -212,7 +214,6 @@ public class TableModule {
 		});
 
 		base.BUS.hook(GuiComponentEvents.PreDrawEvent.class, (GuiComponentEvents.PreDrawEvent event) -> {
-			Vec2d position = event.component.getPos();
 			boolean hasPos = event.component.hasTag("dragging");
 			boolean anyDragging = false;
 			for (GuiComponent comp : table.paperComponents.keySet())
@@ -226,15 +227,13 @@ public class TableModule {
 				if (hasPos) {
 					Vec2d start = new Vec2d(8, 8);
 					Vec2d end = event.getMousePos();
-					
-					
+
 					Module module1 = table.getModule(event.component);
 					if (module1 == null) return;
-					
+
 					drawWire(start, end, getColorForModule(module1.getModuleType()), Color.WHITE);
 				}
 
-				if (position == null) position = event.component.getPos();
 			}
 			//---------// DRAW WIRE TO CURSOR //---------//
 
@@ -297,7 +296,7 @@ public class TableModule {
 								getColorForModule(ModuleType.MODIFIER),
 								getColorForModule(table.getModule(event.component).getModuleType()));
 
-						int x = (int) event.component.getData(Integer.class, modifier.getID());
+						int x = event.component.getData(Integer.class, modifier.getID());
 						Minecraft.getMinecraft().fontRenderer.drawString("x" + x, newX + s / 2 - Minecraft.getMinecraft().fontRenderer.getStringWidth("x" + x) / 2, newY + s, Color.LIGHT_GRAY.getRGB(), false);
 						GlStateManager.color(1, 1, 1, 1);
 					}

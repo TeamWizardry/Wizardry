@@ -111,6 +111,7 @@ public class TilePearlHolder extends TileManaInteracter implements ICooldown {
 				}
 			}
 
+			if (world.isBlockPowered(getPos())) return;
 			if (isCoolingDown(pearl)) return;
 			if (pearlCap.getMana() == 0) return;
 
