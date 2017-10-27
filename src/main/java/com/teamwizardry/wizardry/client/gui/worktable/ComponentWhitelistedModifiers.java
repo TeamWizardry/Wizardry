@@ -35,21 +35,20 @@ public class ComponentWhitelistedModifiers extends GuiComponent {
 	public ComponentWhitelistedModifiers(WorktableGui worktable, int x, int y, int width, int height) {
 		super(x, y, width, height);
 		this.worktable = worktable;
-		list = new ComponentList(0, 0);
+		list = new ComponentList(0, 0, 16);
 		add(list);
 		//list.setChildScale(1/2.0);
-		list.setMarginBottom(18);
 		refresh();
 	}
 
 	public void refresh() {
 		if (worktable.selectedcomponent == null) {
 			setVisible(false);
-			setEnabled(false);
+			addTag("disabled");
 			return;
 		} else {
 			setVisible(true);
-			setEnabled(true);
+			removeTag("disabled");
 		}
 
 		HashSet<GuiComponent> temp = new HashSet<>(list.getChildren());
@@ -111,7 +110,6 @@ public class ComponentWhitelistedModifiers extends GuiComponent {
 				fakePlate.add(fakeIconComp);
 
 				ScheduledEventAnimation scheduled = new ScheduledEventAnimation(40, fakePlate::invalidate);
-				worktable.animator.add(scheduled);
 
 				KeyframeAnimation<ComponentSprite> animX = new KeyframeAnimation<>(fakePlate, "pos.x");
 				animX.setDuration(40);
@@ -119,7 +117,6 @@ public class ComponentWhitelistedModifiers extends GuiComponent {
 						new Keyframe(0, fakePlate.getPos().getX(), Easing.linear),
 						new Keyframe(1f, r.getX(), Easing.easeOutQuart),
 				});
-				worktable.animator.add(animX);
 
 				KeyframeAnimation<ComponentSprite> animY = new KeyframeAnimation<>(fakePlate, "pos.y");
 				animY.setDuration(40);
@@ -128,7 +125,8 @@ public class ComponentWhitelistedModifiers extends GuiComponent {
 						new Keyframe(1f, r.getY(), Easing.easeOutQuart),
 
 				});
-				worktable.animator.add(animY);
+				
+				worktable.getMainComponents().add(scheduled, animX, animY);
 			});
 
 			list.add(bar);

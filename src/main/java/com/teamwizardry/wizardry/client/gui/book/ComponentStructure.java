@@ -34,7 +34,7 @@ public class ComponentStructure extends GuiComponent {
 		});
 
 		BUS.hook(GuiComponentEvents.MouseDragEvent.class, event -> {
-			Vec2d untransform = event.component.thisPosToOtherContext(event.component, event.getMousePos());
+			Vec2d untransform = event.getMousePos();
 			Vec2d diff;
 			if (dragging) diff = untransform.sub(prevPos).mul(1 / 5.0);
 			else diff = event.getMousePos().mul(1 / 100.0);

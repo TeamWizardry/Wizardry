@@ -25,8 +25,6 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -60,14 +58,14 @@ public class TableModule {
 		prevPos = base.getPos();
 		if (draggable) GlMixin.INSTANCE.transform(base).setValue(new Vec3d(0, 0, 30));
 		base.addTag(module);
-
+		
 		base.BUS.hook(GuiComponentEvents.MouseDownEvent.class, (event) -> {
 			if (event.getButton() == EnumMouseButton.LEFT) {
 				if (!draggable && event.component.getMouseOver()) {
 					TableModule item = new TableModule(table, parent, module, true, false);
 					table.paper.add(item.component);
 
-					item.component.setPos(event.component.thisPosToOtherContext(event.component.getParent(), event.getMousePos()));
+					item.component.setPos(event.component.transformToParentContext(event.getMousePos()));
 					item.component.addTag("dragging");
 					DragMixin drag = new DragMixin(item.component, vec2d -> vec2d);
 					drag.setClickPos(new Vec2d(6, 6));
@@ -75,14 +73,21 @@ public class TableModule {
 					event.cancel();
 				}
 			}
+			
 		});
 
 		base.BUS.hook(DragMixin.DragPickupEvent.class, (event) -> {
 			prevPos = event.component.thisPosToOtherContext(null);
 			if (event.getButton() == EnumMouseButton.RIGHT) {
-				event.component.setData(Vec2d.class, "origin_pos", event.component.getPos());
-				event.component.setZIndex(-1);
 				event.component.addTag("dragging");
+			}
+		});
+		
+		base.BUS.hook(DragMixin.DragMoveEvent.class, (event) -> {
+			if(event.getButton() == EnumMouseButton.RIGHT) {
+				// when we are right-click dragging don't actually move anything. This also means the mousepos will be
+				// correct when we draw a fanceh line from (8,8) to the mousepos while right-click dragging.
+				event.setNewPos(event.getPos());
 			}
 		});
 
@@ -208,7 +213,7 @@ public class TableModule {
 
 		base.BUS.hook(GuiComponentEvents.PreDrawEvent.class, (GuiComponentEvents.PreDrawEvent event) -> {
 			Vec2d position = event.component.getPos();
-			boolean hasPos = event.component.hasData(Vec2d.class, "origin_pos");
+			boolean hasPos = event.component.hasTag("dragging");
 			boolean anyDragging = false;
 			for (GuiComponent comp : table.paperComponents.keySet())
 				if (comp.hasTag("dragging")) {
@@ -219,18 +224,14 @@ public class TableModule {
 			//---------// DRAW WIRE TO CURSOR //---------//
 			{
 				if (hasPos) {
-					position = (Vec2d) event.component.getData(Vec2d.class, "origin_pos");
-
-					if (position != null) {
-						Vec2d start = position.add(8, 8);
-						Vec2d end = event.component.thisPosToOtherContext(event.component.getParent(), event.getMousePos());
-
-
-						Module module1 = table.getModule(event.component);
-						if (module1 == null) return;
-
-						drawWire(start, end, getColorForModule(module1.getModuleType()), Color.WHITE);
-					}
+					Vec2d start = new Vec2d(8, 8);
+					Vec2d end = event.getMousePos();
+					
+					
+					Module module1 = table.getModule(event.component);
+					if (module1 == null) return;
+					
+					drawWire(start, end, getColorForModule(module1.getModuleType()), Color.WHITE);
 				}
 
 				if (position == null) position = event.component.getPos();
@@ -246,7 +247,7 @@ public class TableModule {
 
 				GlStateManager.pushMatrix();
 				GlStateManager.color(1, 1, 1, 1);
-				GlStateManager.translate(position.getXf(), position.getYf(), event.component.getMouseOver() ? 150 : 5);
+				GlStateManager.translate(0, 0, event.component.getMouseOver() ? 150 : 5);
 				GlStateManager.enableBlend();
 
 				if (event.component.getMouseOver() && !hasPos) {
@@ -315,17 +316,9 @@ public class TableModule {
 				if (component == null) return;
 				if (linkedUuid == table.getUUID(event.component)) return;
 
-				Vec2d toPos = null;
-				if (component.hasData(Vec2d.class, "origin_pos"))
-					toPos = (Vec2d) component.getData(Vec2d.class, "origin_pos");
-				if (toPos == null) toPos = component.getPos();
-				toPos = toPos.add(8, 8);
+				Vec2d toPos = component.thisPosToOtherContext(event.component, new Vec2d(8, 8));
 
-				Vec2d fromPos = null;
-				if (event.component.hasData(Vec2d.class, "origin_pos"))
-					fromPos = ((Vec2d) event.component.getData(Vec2d.class, "origin_pos"));
-				if (fromPos == null) fromPos = event.component.getPos();
-				fromPos = fromPos.add(8, 8);
+				Vec2d fromPos = new Vec2d(8, 8);
 
 				Module module1 = table.getModule(component);
 				if (module1 == null) return;

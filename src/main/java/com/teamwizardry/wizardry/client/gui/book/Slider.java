@@ -26,15 +26,15 @@ public class Slider {
 
 	public Slider(String text) {
 		component = new ComponentVoid(0, 0, bg.getWidth(), bg.getHeight());
-		component.setEnabled(false);
+		component.addTag("disabled");
 		component.addTag("slider");
 
 		ComponentSprite compBG = new ComponentSprite(bg, 0, 0, bg.getWidth(), bg.getHeight());
-		compBG.setEnabled(false);
+		compBG.addTag("disabled");
 		component.add(compBG);
 
 		ComponentText compText = new ComponentText(0, 0, ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.MIDDLE);
-		compText.setEnabled(false);
+		compText.addTag("disabled");
 		compText.getText().setValue(text);
 		compText.getUnicode().setValue(true);
 		compText.getWrap().setValue(120);

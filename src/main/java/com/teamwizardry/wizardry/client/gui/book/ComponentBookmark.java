@@ -15,11 +15,11 @@ public class ComponentBookmark extends GuiComponent {
 		super(pos.getXi(), pos.getYi(), 200, 300);
 
 		if (!isActive) {
-			link.setEnabled(false);
+			link.addTag("disabled");
 			link.setVisible(false);
 		} else {
 			bookGui.activeComponent = link;
-			link.setEnabled(true);
+			link.removeTag("disabled");
 			link.setVisible(true);
 		}
 		parent.add(link);
@@ -48,8 +48,8 @@ public class ComponentBookmark extends GuiComponent {
 			}
 
 			if (bookGui.activeComponent != null)
-				if (!bookGui.activeComponent.equals(link) && (link.isVisible() || link.getEnabled())) {
-					link.setEnabled(false);
+				if (!bookGui.activeComponent.equals(link) && (link.isVisible() || !link.hasTag("disabled"))) {
+					link.addTag("disabled");
 					link.setVisible(false);
 				}
 		});
@@ -61,7 +61,7 @@ public class ComponentBookmark extends GuiComponent {
 
 				if (bookGui.activeComponent == null || !bookGui.activeComponent.equals(link)) {
 					bookGui.activeComponent = link;
-					link.setEnabled(true);
+					link.removeTag("disabled");
 					link.setVisible(true);
 				}
 			}

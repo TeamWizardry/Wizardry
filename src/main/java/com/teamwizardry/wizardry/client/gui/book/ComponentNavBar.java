@@ -35,7 +35,7 @@ public class ComponentNavBar extends GuiComponent {
 		prev.BUS.hook(GuiComponentEvents.ComponentTickEvent.class, event -> {
 			int x = MathHelper.clamp(page - 1, 0, maxPages);
 			prev.setSprite(page == x ? ARROW_PREV : ARROW_PREV_PRESSED);
-			event.component.setEnabled(page == x);
+			event.component.setTag("disabled", page != x);
 		});
 		prev.BUS.hook(GuiComponentEvents.MouseClickEvent.class, event -> {
 			if (!event.component.getMouseOver()) return;
@@ -52,7 +52,7 @@ public class ComponentNavBar extends GuiComponent {
 		next.BUS.hook(GuiComponentEvents.ComponentTickEvent.class, event -> {
 			int x = MathHelper.clamp(page + 1, 0, maxPages);
 			next.setSprite(page == x ? ARROW_NEXT : ARROW_NEXT_PRESSED);
-			event.component.setEnabled(page == x);
+			event.component.setTag("disabled", page != x);
 		});
 		next.BUS.hook(GuiComponentEvents.MouseClickEvent.class, event -> {
 			if (!event.component.getMouseOver()) return;

@@ -2,7 +2,6 @@ package com.teamwizardry.wizardry.client.gui.worktable;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.teamwizardry.librarianlib.features.animator.Animator;
 import com.teamwizardry.librarianlib.features.animator.Easing;
 import com.teamwizardry.librarianlib.features.animator.animations.Keyframe;
 import com.teamwizardry.librarianlib.features.animator.animations.KeyframeAnimation;
@@ -61,7 +60,6 @@ public class WorktableGui extends GuiBase {
 	HashMap<UUID, UUID> componentLinks = new HashMap<>();
 	private HashSet<ArrayList<Module>> compiledSpell = new HashSet<>();
 	ComponentWhitelistedModifiers whitelistedModifiers;
-	public Animator animator = new Animator();
 
 	public WorktableGui() {
 		super(480, 224);
@@ -169,10 +167,10 @@ public class WorktableGui extends GuiBase {
 						new Keyframe(0.8f, (bookIconMask.getSize().getY() / 2.0) - 10, Easing.easeInBack),
 						new Keyframe(1f, originalPos.getY(), Easing.easeInBack)
 				});
-				animator.add(anim);
 
 				ScheduledEventAnimation scheduled = new ScheduledEventAnimation(100, fakePaper::invalidate);
-				animator.add(scheduled);
+				
+				bookIcon.add(anim, scheduled);
 			}
 
 			for (GuiComponent component : this.paperComponents.keySet()) {
@@ -200,17 +198,9 @@ public class WorktableGui extends GuiBase {
 					if (component1 == null) return;
 					if (linkedUuid == paperComponents.get(event1.component)) return;
 
-					Vec2d toPos = null;
-					if (component1.hasData(Vec2d.class, "origin_pos"))
-						toPos = (Vec2d) component1.getData(Vec2d.class, "origin_pos");
-					if (toPos == null) toPos = component1.getPos();
-					toPos = toPos.add(8, 8);
+					Vec2d toPos = component1.thisPosToOtherContext(event1.component, new Vec2d(8, 8));
 
-					Vec2d fromPos = null;
-					if (event1.component.hasData(Vec2d.class, "origin_pos"))
-						fromPos = ((Vec2d) event1.component.getData(Vec2d.class, "origin_pos"));
-					if (fromPos == null) fromPos = event1.component.getPos();
-					fromPos = fromPos.add(8, 8);
+					Vec2d fromPos = new Vec2d(8, 8);
 
 					Module module1 = getModule(component1);
 					if (module1 == null) return;
@@ -227,7 +217,6 @@ public class WorktableGui extends GuiBase {
 				float delay = RandUtil.nextFloat(0, 0.3f);
 
 				ScheduledEventAnimation scheduled = new ScheduledEventAnimation(80, plate::invalidate);
-				animator.add(scheduled);
 
 				KeyframeAnimation<ComponentSprite> animX = new KeyframeAnimation<>(plate, "pos.x");
 				animX.setDuration(80);
@@ -238,7 +227,6 @@ public class WorktableGui extends GuiBase {
 						new Keyframe(1f, (bookIconMask.getSize().getX() / 2.0) - 8, Easing.easeInOutQuint)
 
 				});
-				animator.add(animX);
 
 				KeyframeAnimation<ComponentSprite> animY = new KeyframeAnimation<>(plate, "pos.y");
 				animY.setDuration(80);
@@ -249,7 +237,7 @@ public class WorktableGui extends GuiBase {
 						new Keyframe(1f, -(bookIconMask.getSize().getY() / 2.0) - 6, Easing.easeInOutQuint)
 
 				});
-				animator.add(animY);
+				plate.add(scheduled, animX, animY);
 			}
 		});
 		getMainComponents().add(save);

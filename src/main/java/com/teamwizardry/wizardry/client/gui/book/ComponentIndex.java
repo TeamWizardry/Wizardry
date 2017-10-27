@@ -62,7 +62,7 @@ public class ComponentIndex extends GuiComponent {
 				ComponentVoid plate = new ComponentVoid(0, i * plateHeight + i * buffer, plateWidth, plateHeight + buffer);
 				if (!getChildren().contains(plate)) add(plate);
 				plate.setVisible(true);
-				plate.setEnabled(false);
+				plate.addTag("disabled");
 
 				plate.BUS.hook(GuiComponentEvents.PostDrawEvent.class, (event) -> {
 					GlStateManager.pushMatrix();
@@ -87,7 +87,7 @@ public class ComponentIndex extends GuiComponent {
 
 						getChildren().forEach(guiComponent -> {
 							guiComponent.setVisible(false);
-							guiComponent.setEnabled(false);
+							guiComponent.addTag("disabled");
 						});
 
 						GuiComponent subindex = pair.getSecond();
