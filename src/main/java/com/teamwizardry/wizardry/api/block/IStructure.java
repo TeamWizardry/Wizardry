@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.api.block;
 
 import com.teamwizardry.wizardry.init.ModItems;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -123,9 +124,9 @@ public interface IStructure {
 	default boolean isStructureComplete(World world, BlockPos pos) {
 		for (Template.BlockInfo info : getStructure().blockInfos()) {
 			if (info.blockState == null) continue;
+			if (info.blockState.getMaterial() == Material.AIR) continue;
 
 			BlockPos realPos = info.pos.add(pos).subtract(offsetToCenter());
-			if (world.isAirBlock(realPos)) continue;
 			if (world.getBlockState(realPos).getBlock() != info.blockState.getBlock()) return false;
 			if (world.getBlockState(realPos) != info.blockState) return false;
 		}

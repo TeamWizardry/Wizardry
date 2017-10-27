@@ -38,7 +38,7 @@ public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, 
 	@Nullable
 	@Override
 	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
-		return new WizardryCapabilityProvider(new CustomWizardryCapability(0, 0, 10000, 10000));
+		return new WizardryCapabilityProvider(new CustomWizardryCapability(10000, 10000, 0, 0));
 	}
 
 	@Override
