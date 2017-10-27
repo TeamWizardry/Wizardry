@@ -44,7 +44,7 @@ public class Slider {
 			double t = -1, tmax = 20;
 			float x;
 			if (!component.hasTag("kill")) {
-				for (Object tag : component.getTags()) {
+				for (Object tag : component.getTagList()) {
 					if (tag instanceof String && ((String) tag).startsWith("t:")) {
 						t = Double.parseDouble(((String) tag).split(":")[1]);
 						if (t < tmax) {
@@ -65,7 +65,7 @@ public class Slider {
 				x = -bg.getWidth() * bezier.eval(delta);
 
 			} else {
-				for (Object tag : component.getTags()) {
+				for (Object tag : component.getTagList()) {
 					if (tag instanceof String && ((String) tag).startsWith("t:")) {
 						t = Float.parseFloat(((String) tag).split(":")[1]);
 						if (t > 0) {

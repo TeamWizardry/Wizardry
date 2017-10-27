@@ -179,7 +179,7 @@ public class WorktableGui extends GuiBase {
 
 				ComponentSprite plate = new ComponentSprite(TableModule.plate, component.getPos().getXi(), component.getPos().getYi(), component.getSize().getXi(), component.getSize().getYi());
 				fakePaper.add(plate);
-				plate.setData(Vec2d.class, plate.getPos());
+				plate.setData(Vec2d.class, "", plate.getPos());
 				plate.addTag(module);
 				GlMixin.INSTANCE.transform(plate).setValue(new Vec3d(0, 0, 100));
 
@@ -352,7 +352,7 @@ public class WorktableGui extends GuiBase {
 			float percent = windowPosition / contentSize;
 
 			ArrayList<GuiComponent> compTmp = new ArrayList<>(gridView.getChildren());
-			compTmp.forEach(gridView::remove);
+			compTmp.forEach(gridView.relationships::remove);
 
 			ArrayList<GuiComponent> tmp = new ArrayList<>();
 			for (Module module : ModuleRegistry.INSTANCE.getModules(type)) {
@@ -376,7 +376,7 @@ public class WorktableGui extends GuiBase {
 			double percent = MathHelper.clamp(clamp / ((gridView.getSize().getY() - 1) - 11), 0, 1);
 
 			ArrayList<GuiComponent> compTmp = new ArrayList<>(gridView.getChildren());
-			compTmp.forEach(gridView::remove);
+			compTmp.forEach(gridView.relationships::remove);
 
 			ArrayList<GuiComponent> tmp = new ArrayList<>();
 			for (Module module : ModuleRegistry.INSTANCE.getModules(type)) {
@@ -395,7 +395,7 @@ public class WorktableGui extends GuiBase {
 	@Nullable
 	public Module getModule(@Nullable GuiComponent component) {
 		if (component == null) return null;
-		for (Object object : component.getTags()) {
+		for (Object object : component.getTagList()) {
 			if (object instanceof Module) return ((Module) object).copy();
 		}
 		return null;

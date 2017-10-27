@@ -65,7 +65,7 @@ public class TableModule {
 					TableModule item = new TableModule(table, parent, module, true, false);
 					table.paper.add(item.component);
 
-					item.component.setPos(table.paper.otherContextToThisContext(null).apply(event.getMousePos()));
+					item.component.setPos(table.paper.otherPosToThisContext(null, event.getMousePos()));
 					DragMixin drag = new DragMixin(item.component, vec2d -> vec2d);
 					drag.setClickPos(new Vec2d(6, 6));
 					drag.setMouseDown(event.getButton());
@@ -131,7 +131,7 @@ public class TableModule {
 						for (GuiComponent component : table.paperComponents.keySet()) {
 							Module module2 = table.getModule(component);
 							if (module2 == null) continue;
-							if (!component.getMouseOverNoOcclusion()) continue;
+							if (!component.geometry.getMouseOverNoOcclusion()) continue;
 							if (module2.getID().equals(module.getID())) continue;
 							componentHovered = component;
 						}
@@ -330,7 +330,7 @@ public class TableModule {
 			//---------// RENDER LINKS BETWEEN MODULES //---------//
 		});
 
-		base.getTooltip().func((Function<GuiComponent, List<String>>) t -> {
+		base.render.getTooltip().func((Function<GuiComponent, List<String>>) t -> {
 			List<String> txt = new ArrayList<>();
 
 			for (GuiComponent comp : table.paperComponents.keySet()) if (comp.hasTag("dragging")) return txt;

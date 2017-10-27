@@ -53,7 +53,7 @@ public class ComponentWhitelistedModifiers extends GuiComponent {
 
 		HashSet<GuiComponent> temp = new HashSet<>(list.getChildren());
 		for (GuiComponent component : temp) {
-			list.remove(component);
+			list.relationships.remove(component);
 		}
 
 		Module module = worktable.getModule(worktable.selectedcomponent);
@@ -79,7 +79,7 @@ public class ComponentWhitelistedModifiers extends GuiComponent {
 			text.getText().setValue(TextFormatting.GREEN + modifier.getShortHandName());
 			bar.add(text);
 
-			bar.getTooltip().func((Function<GuiComponent, java.util.List<String>>) t -> {
+			bar.render.getTooltip().func((Function<GuiComponent, java.util.List<String>>) t -> {
 				List<String> txt = new ArrayList<>();
 
 				for (GuiComponent comp : worktable.paperComponents.keySet()) if (comp.hasTag("dragging")) return txt;

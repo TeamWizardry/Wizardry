@@ -47,7 +47,7 @@ public class ComponentContentPage extends GuiComponent {
 		navBar.BUS.hook(EventNavBarChange.class, eventNavBarChange -> {
 			if (prevComps != null) {
 				GuiComponent parent = prevComps.getParent();
-				if (parent != null) parent.remove(prevComps);
+				if (parent != null) parent.relationships.remove(prevComps);
 			}
 
 			if (pages.size() <= navBar.getPage()) return;
