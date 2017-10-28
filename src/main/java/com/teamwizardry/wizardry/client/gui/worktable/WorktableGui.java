@@ -70,7 +70,7 @@ public class WorktableGui extends GuiBase {
 		getFullscreenComponents().add(rect);
 
 		ComponentSprite background = new ComponentSprite(BACKGROUND_SPRITE, 0, 0);
-		GlMixin.INSTANCE.transform(background).setValue(new Vec3d(0, 0, 20));
+		background.getTransform().setTranslateZ(20);
 		getMainComponents().add(background);
 
 		paper = new ComponentVoid(180, 19, 180, 188);
@@ -79,26 +79,26 @@ public class WorktableGui extends GuiBase {
 		ComponentSprite shapes = new ComponentSprite(SIDE_BAR, 29, 31, 48, 80);
 		GlMixin.INSTANCE.transform(shapes).setValue(new Vec3d(0, 0, -15));
 		ComponentGrid scrollShapes = addModules(shapes, ModuleType.SHAPE);
-		GlMixin.INSTANCE.transform(scrollShapes).setValue(new Vec3d(0, 0, 10));
+		scrollShapes.getTransform().setTranslateZ(10);
 		addScrollbar(shapes, scrollShapes, 77, 31, ModuleType.SHAPE, 80);
 		getMainComponents().add(shapes);
 
 		ComponentSprite effects = new ComponentSprite(SIDE_BAR_LONG, 93, 37, 48, 160);
 		GlMixin.INSTANCE.transform(shapes).setValue(new Vec3d(0, 0, -15));
 		ComponentGrid scrollEffects = addModules(effects, ModuleType.EFFECT);
-		GlMixin.INSTANCE.transform(scrollEffects).setValue(new Vec3d(0, 0, 10));
+		scrollEffects.getTransform().setTranslateZ(10);
 		addScrollbar(effects, scrollEffects, 140, 37, ModuleType.EFFECT, 160);
 		getMainComponents().add(effects);
 
 		ComponentSprite events = new ComponentSprite(SIDE_BAR, 29, 123, 48, 80);
 		GlMixin.INSTANCE.transform(shapes).setValue(new Vec3d(0, 0, -15));
 		ComponentGrid scrollEvents = addModules(events, ModuleType.EVENT);
-		GlMixin.INSTANCE.transform(scrollEvents).setValue(new Vec3d(0, 0, 10));
+		scrollEvents.getTransform().setTranslateZ(10);
 		addScrollbar(events, scrollEvents, 77, 123, ModuleType.EVENT, 80);
 		getMainComponents().add(events);
 
 		ComponentSprite save = new ComponentSprite(BUTTON_NORMAL, 395, 30, (int) (88 / 1.5), (int) (24 / 1.5));
-		GlMixin.INSTANCE.transform(save).setValue(new Vec3d(0, 0, 20));
+		save.getTransform().setTranslateZ(20);
 		int width = Minecraft.getMinecraft().fontRenderer.getStringWidth("SAVE");
 		int height = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT;
 		ComponentText textSave = new ComponentText((save.getSize().getXi() / 2) - width / 2, (save.getSize().getYi() / 2) - height / 2);
@@ -152,7 +152,7 @@ public class WorktableGui extends GuiBase {
 			ComponentSprite bookIcon = new ComponentSprite(new Sprite(new ResourceLocation(Wizardry.MODID, "textures/items/physics_book.png")), (int) ((bookIconMask.getSize().getX() / 2.0) - 16), (int) (bookIconMask.getSize().getY() + 50), 32, 32);
 			{
 				ScissorMixin.INSTANCE.scissor(bookIconMask);
-				GlMixin.INSTANCE.transform(bookIconMask).setValue(new Vec3d(0, 0, 200));
+				bookIconMask.getTransform().setTranslateZ(200);
 				fakePaper.add(bookIconMask);
 
 				bookIconMask.add(bookIcon);
@@ -179,9 +179,9 @@ public class WorktableGui extends GuiBase {
 
 				ComponentSprite plate = new ComponentSprite(TableModule.plate, component.getPos().getXi(), component.getPos().getYi(), component.getSize().getXi(), component.getSize().getYi());
 				fakePaper.add(plate);
-				plate.setData(Vec2d.class, plate.getPos());
+				plate.setData(Vec2d.class, "", plate.getPos());
 				plate.addTag(module);
-				GlMixin.INSTANCE.transform(plate).setValue(new Vec3d(0, 0, 100));
+				plate.getTransform().setTranslateZ(100);
 
 				Sprite icon = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/icons/" + module.getID() + ".png"));
 				ComponentSprite iconComp = new ComponentSprite(icon, 2, 2, 12, 12);
@@ -243,7 +243,7 @@ public class WorktableGui extends GuiBase {
 		getMainComponents().add(save);
 
 		whitelistedModifiers = new ComponentWhitelistedModifiers(this, 384, save.getPos().getYi() + save.getSize().getYi() + 8, 80, 170);
-		GlMixin.INSTANCE.transform(whitelistedModifiers).setValue(new Vec3d(0, 0, 20));
+		whitelistedModifiers.getTransform().setTranslateZ(20);
 		getMainComponents().add(whitelistedModifiers);
 	}
 
@@ -352,7 +352,7 @@ public class WorktableGui extends GuiBase {
 			float percent = windowPosition / contentSize;
 
 			ArrayList<GuiComponent> compTmp = new ArrayList<>(gridView.getChildren());
-			compTmp.forEach(gridView::remove);
+			compTmp.forEach(gridView.relationships::remove);
 
 			ArrayList<GuiComponent> tmp = new ArrayList<>();
 			for (Module module : ModuleRegistry.INSTANCE.getModules(type)) {
@@ -376,7 +376,7 @@ public class WorktableGui extends GuiBase {
 			double percent = MathHelper.clamp(clamp / ((gridView.getSize().getY() - 1) - 11), 0, 1);
 
 			ArrayList<GuiComponent> compTmp = new ArrayList<>(gridView.getChildren());
-			compTmp.forEach(gridView::remove);
+			compTmp.forEach(gridView.relationships::remove);
 
 			ArrayList<GuiComponent> tmp = new ArrayList<>();
 			for (Module module : ModuleRegistry.INSTANCE.getModules(type)) {
@@ -395,7 +395,7 @@ public class WorktableGui extends GuiBase {
 	@Nullable
 	public Module getModule(@Nullable GuiComponent component) {
 		if (component == null) return null;
-		for (Object object : component.getTags()) {
+		for (Object object : component.getTagList()) {
 			if (object instanceof Module) return ((Module) object).copy();
 		}
 		return null;

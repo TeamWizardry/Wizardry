@@ -22,7 +22,7 @@ public class ComponentNavBar extends GuiComponent {
 		add(prev, next);
 
 		ComponentText pageStringComponent = new ComponentText(0, 0, ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.MIDDLE);
-		pageStringComponent.getScale().setValue(2f);
+		pageStringComponent.getTransform().setScale(2);
 		pageStringComponent.getUnicode().setValue(false);
 
 		pageStringComponent.BUS.hook(GuiComponentEvents.ComponentTickEvent.class, event -> {

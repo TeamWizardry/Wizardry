@@ -61,9 +61,12 @@ public class ComponentRecipe extends GuiComponent {
 			}
 			SpellBuilder builder = new SpellBuilder(inventory);
 
-			GuiComponent lastComponent = null;
 			List<Module> modules = builder.getSpell();
 			Module lastModule = null;
+			GuiComponent textHolder = new ComponentVoid(0, 8);
+			add(textHolder);
+			int textY = 0;
+			
 			for (Module module : modules) {
 				if (lastModule == null) lastModule = module;
 				if (module != null) {
@@ -73,25 +76,24 @@ public class ComponentRecipe extends GuiComponent {
 
 						ComponentText recipeText = new ComponentText(0, (int) (pos.getY() / 2.0), ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.MIDDLE);
 						recipeText.getWrap().setValue(100);
-						recipeText.getScale().setValue(2f);
+						recipeText.getTransform().setScale(2);
 						recipeText.getText().setValue(StringUtils.repeat("-", i) + "> " + tempModule.getReadableName());
-						recipeText.setSize(new Vec2d(200, 16));
-						if (lastComponent != null)
-							recipeText.setPos(new Vec2d(0, lastComponent.getPos().getY() + lastComponent.getSize().getY()));
-						if (lastComponent != null) lastComponent.add(recipeText);
-						else add(recipeText);
-						lastComponent = recipeText;
+						recipeText.setSize(new Vec2d(100, 16));
+						recipeText.setPos(new Vec2d(0, textY));
+						textHolder.add(recipeText);
+						textY += 16;
 
 						for (String key : tempModule.attributes.getKeySet()) {
 							if (!key.equals(Attributes.MANA) && !key.equals(Attributes.BURNOUT)) {
-								ComponentText modifierText = new ComponentText(0, lastComponent.getSize().getYi(), ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.MIDDLE);
+								ComponentText modifierText = new ComponentText(0, recipeText.getSize().getYi(), ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.MIDDLE);
 								modifierText.getWrap().setValue(200);
 								modifierText.getText().setValue(StringUtils.repeat(" ", i * 3) + " | "
 										+ key.replace("modifier_", "").replace("_", " ")
 										+ " x" + (int) Math.round(tempModule.attributes.getDouble(key)));
 								modifierText.setSize(new Vec2d(0, 8));
-								lastComponent.add(modifierText);
-								lastComponent = modifierText;
+								modifierText.setPos(new Vec2d(0, textY));
+								textY += 8;
+								textHolder.add(modifierText);
 							}
 						}
 

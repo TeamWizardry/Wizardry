@@ -28,7 +28,7 @@ public class ComponentBookmark extends GuiComponent {
 		add(bookmark);
 
 		ComponentText bookmarkText = new ComponentText((int) (BOOKMARK.getWidth() / 2.0), (int) (BOOKMARK.getHeight() / 2.0), ComponentText.TextAlignH.CENTER, ComponentText.TextAlignV.MIDDLE);
-		bookmarkText.getScale().setValue(2f);
+		bookmarkText.getTransform().setScale(2);
 		bookmarkText.getText().setValue(title);
 		bookmark.add(bookmarkText);
 

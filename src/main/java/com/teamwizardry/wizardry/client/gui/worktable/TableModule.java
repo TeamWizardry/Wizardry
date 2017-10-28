@@ -7,7 +7,6 @@ import com.teamwizardry.librarianlib.features.gui.component.GuiComponentEvents;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentVoid;
 import com.teamwizardry.librarianlib.features.gui.mixin.DragMixin;
-import com.teamwizardry.librarianlib.features.gui.mixin.gl.GlMixin;
 import com.teamwizardry.librarianlib.features.math.Vec2d;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBezier2D;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
@@ -23,7 +22,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.opengl.GL11;
 
@@ -56,7 +54,7 @@ public class TableModule {
 
 		ComponentVoid base = new ComponentVoid(0, 0, 16, 16);
 		prevPos = base.getPos();
-		if (draggable) GlMixin.INSTANCE.transform(base).setValue(new Vec3d(0, 0, 30));
+		if (draggable) base.getTransform().setTranslateZ(30);
 		base.addTag(module);
 
 		base.BUS.hook(GuiComponentEvents.MouseDownEvent.class, (event) -> {
@@ -65,9 +63,9 @@ public class TableModule {
 					TableModule item = new TableModule(table, parent, module, true, false);
 					table.paper.add(item.component);
 
-					item.component.setPos(table.paper.otherContextToThisContext(null).apply(event.getMousePos()));
+					item.component.setPos(table.paper.otherPosToThisContext(event.component, event.getMousePos()));
 					DragMixin drag = new DragMixin(item.component, vec2d -> vec2d);
-					drag.setClickPos(new Vec2d(6, 6));
+					drag.setDragOffset(new Vec2d(6, 6));
 					drag.setMouseDown(event.getButton());
 					event.cancel();
 				}
@@ -94,7 +92,6 @@ public class TableModule {
 		base.BUS.hook(DragMixin.DragDropEvent.class, (event) -> {
 			event.component.removeTag("dragging");
 
-			Vec2d prevPos = event.component.thisPosToOtherContext(null, event.getPreviousPos());
 			Vec2d currentPos = event.component.thisPosToOtherContext(null);
 			if (prevPos.getXi() == currentPos.getXi()
 					&& prevPos.getYi() == currentPos.getYi()) {
@@ -131,7 +128,7 @@ public class TableModule {
 						for (GuiComponent component : table.paperComponents.keySet()) {
 							Module module2 = table.getModule(component);
 							if (module2 == null) continue;
-							if (!component.getMouseOverNoOcclusion()) continue;
+							if (!component.geometry.getMouseOverNoOcclusion()) continue;
 							if (module2.getID().equals(module.getID())) continue;
 							componentHovered = component;
 						}
@@ -168,14 +165,6 @@ public class TableModule {
 				}
 
 			} else if (event.getButton() == EnumMouseButton.RIGHT) {
-				Vec2d position = null;
-				if (event.component.hasData(Vec2d.class, "origin_pos")) {
-					position = event.component.getData(Vec2d.class, "origin_pos");
-					event.component.removeData(Vec2d.class, "origin_pos");
-					event.component.setZIndex(0);
-				}
-				if (position != null) event.component.setPos(position);
-
 				UUID uuid1 = table.getUUID(event.component);
 
 				for (GuiComponent component : table.paper.getChildren()) {
@@ -214,7 +203,7 @@ public class TableModule {
 		});
 
 		base.BUS.hook(GuiComponentEvents.PreDrawEvent.class, (GuiComponentEvents.PreDrawEvent event) -> {
-			boolean hasPos = event.component.hasTag("dragging");
+			boolean isDragging = event.component.hasTag("dragging");
 			boolean anyDragging = false;
 			for (GuiComponent comp : table.paperComponents.keySet())
 				if (comp.hasTag("dragging")) {
@@ -224,7 +213,7 @@ public class TableModule {
 
 			//---------// DRAW WIRE TO CURSOR //---------//
 			{
-				if (hasPos) {
+				if (isDragging) {
 					Vec2d start = new Vec2d(8, 8);
 					Vec2d end = event.getMousePos();
 
@@ -233,23 +222,22 @@ public class TableModule {
 
 					drawWire(start, end, getColorForModule(module1.getModuleType()), Color.WHITE);
 				}
-
 			}
 			//---------// DRAW WIRE TO CURSOR //---------//
 
 			//---------// RENDER MODULE //---------//
 			{
-				float size = ((table.selectedcomponent == event.component || event.component.getMouseOver()) && !hasPos) ? 24 : 16;
-				float sizeIcon = ((table.selectedcomponent == event.component || event.component.getMouseOver()) && !hasPos) ? 18 : 12;
-				float posPlate = ((table.selectedcomponent == event.component || event.component.getMouseOver()) && !hasPos) ? -4 : 0;
-				float posIcon = ((table.selectedcomponent == event.component || event.component.getMouseOver()) && !hasPos) ? -1.5f : 2;
+				float size = ((table.selectedcomponent == event.component || event.component.getMouseOver()) && !isDragging) ? 24 : 16;
+				float sizeIcon = ((table.selectedcomponent == event.component || event.component.getMouseOver()) && !isDragging) ? 18 : 12;
+				float posPlate = ((table.selectedcomponent == event.component || event.component.getMouseOver()) && !isDragging) ? -4 : 0;
+				float posIcon = ((table.selectedcomponent == event.component || event.component.getMouseOver()) && !isDragging) ? -1.5f : 2;
 
 				GlStateManager.pushMatrix();
 				GlStateManager.color(1, 1, 1, 1);
 				GlStateManager.translate(0, 0, event.component.getMouseOver() ? 150 : 5);
 				GlStateManager.enableBlend();
 
-				if (event.component.getMouseOver() && !hasPos) {
+				if (event.component.getMouseOver() && !isDragging) {
 					plate.getTex().bind();
 					plate.draw((int) event.getPartialTicks(), posPlate, posPlate, size, size);
 
@@ -330,7 +318,7 @@ public class TableModule {
 			//---------// RENDER LINKS BETWEEN MODULES //---------//
 		});
 
-		base.getTooltip().func((Function<GuiComponent, List<String>>) t -> {
+		base.render.getTooltip().func((Function<GuiComponent, List<String>>) t -> {
 			List<String> txt = new ArrayList<>();
 
 			for (GuiComponent comp : table.paperComponents.keySet()) if (comp.hasTag("dragging")) return txt;
