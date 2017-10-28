@@ -134,7 +134,7 @@ public class ComponentContentPage extends GuiComponent {
 
 								for (String chunk : chunks.split("/L")) {
 									ComponentText page = new ComponentText(0, 0, ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.TOP);
-									page.getScale().setValue(2f);
+									page.getTransform().setScale(2);
 									page.getUnicode().setValue(true);
 									page.getWrap().setValue(100);
 									page.getText().setValue(chunk);

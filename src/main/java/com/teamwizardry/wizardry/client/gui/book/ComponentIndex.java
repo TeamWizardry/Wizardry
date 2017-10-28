@@ -73,7 +73,7 @@ public class ComponentIndex extends GuiComponent {
 						else GlStateManager.color(0, 0.5f, 1);
 					}
 					indexItem.icon.getTex().bind();
-					indexItem.icon.draw((int) ClientTickHandler.getPartialTicks(), plate.getPos().getXi(), plate.getPos().getYf() + (plate.getSize().getYf() / 2 - plateHeight / 2.0f), plateHeight, plateHeight);
+					indexItem.icon.draw((int) ClientTickHandler.getPartialTicks(), 0, (plate.getSize().getYf() / 2 - plateHeight / 2.0f), plateHeight, plateHeight);
 					GlStateManager.popMatrix();
 				});
 
@@ -102,7 +102,7 @@ public class ComponentIndex extends GuiComponent {
 				double height = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT;
 				ComponentText text = new ComponentText(plateHeight + 10, (int) (plateHeight / 2.0 + height / 2.0), ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.MIDDLE);
 				text.getText().setValue(indexItem.text);
-				text.getScale().setValue(2f);
+				text.getTransform().setScale(2);
 				text.BUS.hook(GuiComponentEvents.ComponentTickEvent.class, (event) -> {
 					text.getText().setValue((plate.getMouseOver() ? TextFormatting.ITALIC + " " : "") + indexItem.text);
 				});

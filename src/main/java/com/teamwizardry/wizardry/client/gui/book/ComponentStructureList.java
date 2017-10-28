@@ -26,8 +26,8 @@ public class ComponentStructureList extends GuiComponent {
 		}
 
 		ComponentText recipeText = new ComponentText(0, 0, ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.MIDDLE);
-		recipeText.getWrap().setValue(100);
-		recipeText.getScale().setValue(2f);
+		recipeText.getWrap().setValue(50);
+		recipeText.getTransform().setScale(2);
 		recipeText.getText().setValue(builder.toString());
 
 		add(recipeText);
