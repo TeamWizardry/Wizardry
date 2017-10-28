@@ -65,9 +65,9 @@ public class TableModule {
 					TableModule item = new TableModule(table, parent, module, true, false);
 					table.paper.add(item.component);
 
-					item.component.setPos(table.paper.otherPosToThisContext(null, event.getMousePos()));
+					item.component.setPos(table.paper.otherPosToThisContext(event.component, event.getMousePos()));
 					DragMixin drag = new DragMixin(item.component, vec2d -> vec2d);
-					drag.setClickPos(new Vec2d(6, 6));
+					drag.setDragOffset(new Vec2d(6, 6));
 					drag.setMouseDown(event.getButton());
 					event.cancel();
 				}
@@ -94,7 +94,6 @@ public class TableModule {
 		base.BUS.hook(DragMixin.DragDropEvent.class, (event) -> {
 			event.component.removeTag("dragging");
 
-			Vec2d prevPos = event.component.thisPosToOtherContext(null, event.getPreviousPos());
 			Vec2d currentPos = event.component.thisPosToOtherContext(null);
 			if (prevPos.getXi() == currentPos.getXi()
 					&& prevPos.getYi() == currentPos.getYi()) {
@@ -168,14 +167,6 @@ public class TableModule {
 				}
 
 			} else if (event.getButton() == EnumMouseButton.RIGHT) {
-				Vec2d position = null;
-				if (event.component.hasData(Vec2d.class, "origin_pos")) {
-					position = event.component.getData(Vec2d.class, "origin_pos");
-					event.component.removeData(Vec2d.class, "origin_pos");
-					event.component.setZIndex(0);
-				}
-				if (position != null) event.component.setPos(position);
-
 				UUID uuid1 = table.getUUID(event.component);
 
 				for (GuiComponent component : table.paper.getChildren()) {
@@ -214,7 +205,7 @@ public class TableModule {
 		});
 
 		base.BUS.hook(GuiComponentEvents.PreDrawEvent.class, (GuiComponentEvents.PreDrawEvent event) -> {
-			boolean hasPos = event.component.hasTag("dragging");
+			boolean isDragging = event.component.hasTag("dragging");
 			boolean anyDragging = false;
 			for (GuiComponent comp : table.paperComponents.keySet())
 				if (comp.hasTag("dragging")) {
@@ -224,7 +215,7 @@ public class TableModule {
 
 			//---------// DRAW WIRE TO CURSOR //---------//
 			{
-				if (hasPos) {
+				if (isDragging) {
 					Vec2d start = new Vec2d(8, 8);
 					Vec2d end = event.getMousePos();
 
@@ -233,23 +224,22 @@ public class TableModule {
 
 					drawWire(start, end, getColorForModule(module1.getModuleType()), Color.WHITE);
 				}
-
 			}
 			//---------// DRAW WIRE TO CURSOR //---------//
 
 			//---------// RENDER MODULE //---------//
 			{
-				float size = ((table.selectedcomponent == event.component || event.component.getMouseOver()) && !hasPos) ? 24 : 16;
-				float sizeIcon = ((table.selectedcomponent == event.component || event.component.getMouseOver()) && !hasPos) ? 18 : 12;
-				float posPlate = ((table.selectedcomponent == event.component || event.component.getMouseOver()) && !hasPos) ? -4 : 0;
-				float posIcon = ((table.selectedcomponent == event.component || event.component.getMouseOver()) && !hasPos) ? -1.5f : 2;
+				float size = ((table.selectedcomponent == event.component || event.component.getMouseOver()) && !isDragging) ? 24 : 16;
+				float sizeIcon = ((table.selectedcomponent == event.component || event.component.getMouseOver()) && !isDragging) ? 18 : 12;
+				float posPlate = ((table.selectedcomponent == event.component || event.component.getMouseOver()) && !isDragging) ? -4 : 0;
+				float posIcon = ((table.selectedcomponent == event.component || event.component.getMouseOver()) && !isDragging) ? -1.5f : 2;
 
 				GlStateManager.pushMatrix();
 				GlStateManager.color(1, 1, 1, 1);
 				GlStateManager.translate(0, 0, event.component.getMouseOver() ? 150 : 5);
 				GlStateManager.enableBlend();
 
-				if (event.component.getMouseOver() && !hasPos) {
+				if (event.component.getMouseOver() && !isDragging) {
 					plate.getTex().bind();
 					plate.draw((int) event.getPartialTicks(), posPlate, posPlate, size, size);
 
