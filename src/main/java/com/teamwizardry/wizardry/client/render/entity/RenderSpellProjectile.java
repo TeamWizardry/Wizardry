@@ -38,14 +38,14 @@ public class RenderSpellProjectile extends Render<EntitySpellProjectile> {
 		Color color2 = new Color(entity.getDataManager().get(DATA_COLOR2), true);
 
 		ParticleBuilder glitter = new ParticleBuilder(10);
-		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
+		glitter.setAlphaFunction(new InterpFadeInOut(0f, 0.3f));
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 		glitter.enableMotionCalculation();
 		glitter.setCollision(true);
 		glitter.setCanBounce(true);
 		glitter.setColorFunction(new InterpColorHSV(color, color2));
 		glitter.setAcceleration(new Vec3d(0, -0.015, 0));
-		ParticleSpawner.spawn(glitter, entity.world, new StaticInterp<>(entity.getPositionVector()), 5, 0, (aFloat, particleBuilder) -> {
+		ParticleSpawner.spawn(glitter, entity.world, new StaticInterp<>(entity.getPositionVector().add(new Vec3d(entity.motionX, entity.motionY, entity.motionZ))), 5, 0, (aFloat, particleBuilder) -> {
 			particleBuilder.setScaleFunction(new InterpScale((float) RandUtil.nextDouble(0.3, 0.8), 0));
 			particleBuilder.setLifetime(RandUtil.nextInt(40, 60));
 			particleBuilder.addMotion(new Vec3d(

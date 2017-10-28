@@ -25,11 +25,15 @@ import net.minecraft.world.World;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by Saad on 8/29/2016.
  */
 public class LibParticles {
+
+	private static int beamTick = 0;
 
 	public static void FIZZING_AMBIENT(World world, Vec3d pos) {
 		ParticleBuilder glitter = new ParticleBuilder(30);
@@ -499,22 +503,69 @@ public class LibParticles {
 		});
 	}
 
+	static {
+		Timer timer = new Timer();
+		timer.scheduleAtFixedRate(new TimerTask() {
+			@Override
+			public void run() {
+				beamTick++;
+				if (beamTick > 100) beamTick = 0;
+			}
+		}, 0, 1);
+	}
+
 	public static void SHAPE_BEAM(World world, Vec3d target, Vec3d origin, Color color) {
-		ParticleBuilder glitter = new ParticleBuilder(10);
-		glitter.setPositionFunction(new InterpHelix(Vec3d.ZERO, target.subtract(origin), 0.15f, 0.2f, 1.0F, 0));
-		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
+		ParticleBuilder beam = new ParticleBuilder(10);
+		beam.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
+		beam.setAlphaFunction(new InterpFadeInOut(0.3f, 1f));
+		//beam.disableRandom();
 
-		glitter.setColor(new Color(
-				Math.min(255, color.getRed() + RandUtil.nextInt(5, 20)),
-				Math.min(255, color.getGreen() + RandUtil.nextInt(5, 20)),
-				Math.min(255, color.getBlue() + RandUtil.nextInt(5, 20)),
-				color.getAlpha()));
-		glitter.setCollision(true);
+		beam.setColor(ColorUtils.shiftColorHueRandomly(color, 10));
+		beam.setCollision(true);
 
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
-		ParticleSpawner.spawn(glitter, world, new InterpLine(target, origin), (int) origin.distanceTo(target) * 2, RandUtil.nextInt(10), (aFloat, particleBuilder) -> {
-			glitter.setScale((float) RandUtil.nextDouble(0.3, 0.8));
-			glitter.setLifetime(RandUtil.nextInt(10, 20));
+		Vec3d look = target.subtract(origin).normalize();
+		double dist = target.distanceTo(origin);
+
+		ParticleSpawner.spawn(beam, world, new StaticInterp<>(origin), 1, 0, (aFloat1, particleBuilder1) -> {
+			particleBuilder1.setPositionOffset(look.scale(RandUtil.nextDouble(0, dist)));
+			particleBuilder1.setScale(RandUtil.nextFloat(0.1f, 0.5f));
+			final int life = RandUtil.nextInt(50, 60);
+			particleBuilder1.setLifetime(life);
+			particleBuilder1.enableMotionCalculation();
+			particleBuilder1.setCollision(true);
+			particleBuilder1.setCanBounce(true);
+			particleBuilder1.setAcceleration(new Vec3d(0, -0.03, 0));
+
+			double radius = 2;
+			double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
+			double r = radius * RandUtil.nextFloat();
+			double x = r * MathHelper.cos((float) theta);
+			double z = r * MathHelper.sin((float) theta);
+			Vec3d dest = new Vec3d(x, RandUtil.nextDouble(-1, 2), z);
+			particleBuilder1.setPositionFunction(new InterpBezier3D(Vec3d.ZERO, dest, dest.scale(2), new Vec3d(dest.x, RandUtil.nextDouble(-2, 2), dest.z)));
+
+			particleBuilder1.setTick(particle -> {
+				if (particle.getAge() >= particle.getLifetime() / RandUtil.nextDouble(2, 5)) {
+					if (particle.getAcceleration().y == 0)
+						particle.setAcceleration(new Vec3d(0, RandUtil.nextDouble(-0.05, -0.01), 0));
+				} else if (particle.getAcceleration().x != 0 || particle.getAcceleration().y != 0 || particle.getAcceleration().z != 0) {
+					particle.setAcceleration(Vec3d.ZERO);
+				}
+			});
+		});
+
+		ParticleSpawner.spawn(beam, world, new StaticInterp<>(origin), 10, 0, (aFloat, particleBuilder) -> {
+			particleBuilder.setTick(particle -> particle.setAcceleration(Vec3d.ZERO));
+
+			particleBuilder.setScaleFunction(new InterpFadeInOut(0, 1f));
+			particleBuilder.setAlphaFunction(new InterpFadeInOut(0.3f, 0.2f));
+			particleBuilder.setScale(RandUtil.nextFloat(0.5f, 1.5f));
+			particleBuilder.setLifetime(RandUtil.nextInt(10, 20));
+			particleBuilder.disableMotionCalculation();
+			particleBuilder.setMotion(Vec3d.ZERO);
+			particleBuilder.setCanBounce(false);
+			particleBuilder.setPositionOffset(Vec3d.ZERO);
+			particleBuilder.setPositionFunction(new InterpLine(Vec3d.ZERO, target.subtract(origin)));
 		});
 	}
 

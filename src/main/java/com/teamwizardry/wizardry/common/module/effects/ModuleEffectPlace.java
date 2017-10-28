@@ -14,12 +14,14 @@ import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseA
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -28,6 +30,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
@@ -62,7 +65,7 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 	}
 
 	@Override
-	@SuppressWarnings({ "unused", "deprecation" })
+	@SuppressWarnings({"unused", "deprecation"})
 	public boolean run(@Nonnull SpellData spell) {
 		World world = spell.world;
 		BlockPos targetPos = spell.getData(BLOCK_HIT);
@@ -73,7 +76,7 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 		float yaw = spell.getData(YAW, 0F);
 		float pitch = spell.getData(PITCH, 0F);
 
-		if (facing == null) return false;
+		if (facing == null) return true;
 
 		Set<EnumFacing> facings = new HashSet<>();
 		for (EnumFacing facing1 : EnumFacing.VALUES) {
@@ -83,7 +86,9 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 
 		double range = getModifier(spell, Attributes.AREA, 1, 64);
 
-		if (caster != null && targetPos != null && caster.getEntityData().hasKey("selected")) {
+		if (targetPos == null) return true;
+
+		if (caster != null && caster.getEntityData().hasKey("selected")) {
 			IBlockState state = NBTUtil.readBlockState(caster.getEntityData().getCompoundTag("selected"));
 			Block block = world.getBlockState(targetPos).getBlock();
 
@@ -106,16 +111,34 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 					break;
 				}
 
-				if (stackBlock == null) return false;
+				if (stackBlock == null) return true;
 
 				if (!world.isAirBlock(pos)) continue;
-				if (!tax(this, spell)) continue;
+				if (!tax(this, spell)) return false;
 				//stackBlock.shrink(1);
 				IBlockState oldState = world.getBlockState(pos);
 
 				BlockUtils.placeBlock(world, pos, facing, stackBlock);
 				world.playSound(null, pos, state.getBlock().getSoundType(state, world, pos, caster).getPlaceSound(), SoundCategory.BLOCKS, 1f, 1f);
 				((EntityPlayer) caster).inventory.addItemStackToInventory(new ItemStack(oldState.getBlock().getItemDropped(oldState, spell.world.rand, 0)));
+			}
+		} else if (caster == null) {
+			if (!world.isAirBlock(targetPos)) return true;
+			if (!tax(this, spell)) return false;
+
+			List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(targetPos).grow(3, 3, 3));
+			if (items.isEmpty()) return true;
+
+			EntityItem item = items.get(0);
+			if (item == null) return true;
+
+			if (item.getItem().getItem() instanceof ItemBlock) {
+				item.getItem().shrink(1);
+
+				IBlockState oldState = world.getBlockState(targetPos);
+
+				BlockUtils.placeBlock(world, targetPos, facing, item.getItem());
+				world.playSound(null, targetPos, ((ItemBlock) item.getItem().getItem()).getBlock().getSoundType(((ItemBlock) item.getItem().getItem()).getBlock().getDefaultState(), world, targetPos, caster).getPlaceSound(), SoundCategory.BLOCKS, 1f, 1f);
 			}
 		}
 		return true;

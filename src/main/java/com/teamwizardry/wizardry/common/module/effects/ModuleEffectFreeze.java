@@ -132,7 +132,7 @@ public class ModuleEffectFreeze extends ModuleEffect {
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 		glitter.enableMotionCalculation();
 		glitter.setScaleFunction(new InterpScale(1, 0));
-		glitter.setAcceleration(new Vec3d(0, -0.1, 0));
+		glitter.setAcceleration(new Vec3d(0, -0.02, 0));
 		glitter.setCollision(true);
 		glitter.setCanBounce(true);
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(position), RandUtil.nextInt(5, 15), 0, (aFloat, particleBuilder) -> {
