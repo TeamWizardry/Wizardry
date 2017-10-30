@@ -220,7 +220,10 @@ public class TableModule {
 					Module module1 = table.getModule(event.component);
 					if (module1 == null) return;
 
+					GlStateManager.pushMatrix();
+					GlStateManager.translate(0, 0, 10);
 					drawWire(start, end, getColorForModule(module1.getModuleType()), Color.WHITE);
+					GlStateManager.popMatrix();
 				}
 			}
 			//---------// DRAW WIRE TO CURSOR //---------//
@@ -313,7 +316,10 @@ public class TableModule {
 				Module module2 = table.getModule(event.component);
 				if (module2 == null) return;
 
+				GlStateManager.pushMatrix();
+				GlStateManager.translate(0, 0, 10);
 				drawWire(fromPos, toPos, getColorForModule(module2.getModuleType()), getColorForModule(module1.getModuleType()));
+				GlStateManager.popMatrix();
 			}
 			//---------// RENDER LINKS BETWEEN MODULES //---------//
 		});
