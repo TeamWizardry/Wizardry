@@ -1,9 +1,5 @@
 package com.teamwizardry.wizardry.common.core;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
 import com.teamwizardry.librarianlib.features.methodhandles.MethodHandleHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants.MISC;
@@ -19,7 +15,6 @@ import com.teamwizardry.wizardry.api.util.TeleportUtil;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModPotions;
-
 import kotlin.Unit;
 import kotlin.jvm.functions.Function2;
 import net.minecraft.entity.Entity;
@@ -42,6 +37,10 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class EventHandler {
 
@@ -141,9 +140,10 @@ public class EventHandler {
 			}
 		if (RandUtil.nextInt(chance) == 0 && caster != null) {
 			List<EntityFairy> fairyList = event.spell.world.getEntitiesWithinAABB(EntityFairy.class, new AxisAlignedBB(caster.getPosition()).grow(64, 64, 64));
-			for (EntityFairy fairy : fairyList) {
-				fairy.ambush = true;
-			}
+			if (fairyList.isEmpty()) return;
+			EntityFairy fairy = fairyList.get(RandUtil.nextInt(fairyList.size() - 1));
+			if (fairy == null) return;
+			fairy.ambush = true;
 		}
 	}
 }

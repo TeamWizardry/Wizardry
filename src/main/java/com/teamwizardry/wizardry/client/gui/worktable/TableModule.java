@@ -22,6 +22,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.opengl.GL11;
 
@@ -81,7 +82,7 @@ public class TableModule {
 		});
 
 		base.BUS.hook(DragMixin.DragMoveEvent.class, (event) -> {
-			if(event.getButton() == EnumMouseButton.RIGHT) {
+			if (event.getButton() == EnumMouseButton.RIGHT) {
 				// when we are right-click dragging don't actually move anything. This also means the mousepos will be
 				// correct when we draw a fanceh line from (8,8) to the mousepos while right-click dragging.
 				// IE: Location of component stays where it is and the mouse moves without it.
@@ -105,11 +106,11 @@ public class TableModule {
 				//}
 				if (event.component.getMouseOver() && draggable && !benign) {
 
-					if (table.selectedcomponent == event.component) {
-						table.selectedcomponent = null;
+					if (table.selectedComponent == event.component) {
+						table.selectedComponent = null;
 						table.whitelistedModifiers.refresh();
 					} else {
-						table.selectedcomponent = event.component;
+						table.selectedComponent = event.component;
 						table.whitelistedModifiers.refresh();
 					}
 				}
@@ -120,31 +121,6 @@ public class TableModule {
 				Vec2d plateSize = table.paper.getSize();
 				Vec2d platePos = event.component.getPos();
 				boolean b = platePos.getX() >= 0 && platePos.getX() <= plateSize.getX() && platePos.getY() >= 0 && platePos.getY() <= plateSize.getY();
-
-				// MODIFIER ADDING //
-				{
-					if (module.getModuleType() == MODIFIER) {
-						GuiComponent componentHovered = null;
-						for (GuiComponent component : table.paperComponents.keySet()) {
-							Module module2 = table.getModule(component);
-							if (module2 == null) continue;
-							if (!component.geometry.getMouseOverNoOcclusion()) continue;
-							if (module2.getID().equals(module.getID())) continue;
-							componentHovered = component;
-						}
-						if (componentHovered != null) {
-							int i = componentHovered.hasData(Integer.class, module.getID()) ? componentHovered.getData(Integer.class, module.getID()) : 0;
-							componentHovered.setData(Integer.class, module.getID(), ++i);
-							componentHovered.setData(String.class, "last_modifier_type", module.getID());
-						}
-
-						table.paperComponents.remove(event.component);
-
-						event.component.invalidate();
-						event.cancel();
-					}
-				}
-				// MODIFIER ADDING //
 
 				if (!b) {
 					if (module.getModuleType() != MODIFIER) {
@@ -158,6 +134,11 @@ public class TableModule {
 						}
 
 						table.paperComponents.remove(event.component);
+
+						if (event.component.equals(table.selectedComponent)) {
+							table.selectedComponent = null;
+							table.whitelistedModifiers.refresh();
+						}
 
 						event.component.invalidate();
 						event.cancel();
@@ -219,21 +200,17 @@ public class TableModule {
 
 					Module module1 = table.getModule(event.component);
 					if (module1 == null) return;
-
-					GlStateManager.pushMatrix();
-					GlStateManager.translate(0, 0, 10);
 					drawWire(start, end, getColorForModule(module1.getModuleType()), Color.WHITE);
-					GlStateManager.popMatrix();
 				}
 			}
 			//---------// DRAW WIRE TO CURSOR //---------//
 
 			//---------// RENDER MODULE //---------//
 			{
-				float size = ((table.selectedcomponent == event.component || event.component.getMouseOver()) && !isDragging) ? 24 : 16;
-				float sizeIcon = ((table.selectedcomponent == event.component || event.component.getMouseOver()) && !isDragging) ? 18 : 12;
-				float posPlate = ((table.selectedcomponent == event.component || event.component.getMouseOver()) && !isDragging) ? -4 : 0;
-				float posIcon = ((table.selectedcomponent == event.component || event.component.getMouseOver()) && !isDragging) ? -1.5f : 2;
+				float size = ((table.selectedComponent == event.component || event.component.getMouseOver()) && !isDragging) ? 24 : 16;
+				float sizeIcon = ((table.selectedComponent == event.component || event.component.getMouseOver()) && !isDragging) ? 18 : 12;
+				float posPlate = ((table.selectedComponent == event.component || event.component.getMouseOver()) && !isDragging) ? -4 : 0;
+				float posIcon = ((table.selectedComponent == event.component || event.component.getMouseOver()) && !isDragging) ? -1.5f : 2;
 
 				GlStateManager.pushMatrix();
 				GlStateManager.color(1, 1, 1, 1);
@@ -268,12 +245,15 @@ public class TableModule {
 						}
 					}
 
-					double slice = 2 * Math.PI / modifiers.size();
+					double slice = Math.PI / (modifiers.size() + 1);
 					for (int i = 0; i < modifiers.size(); i++) {
 						Module modifier = modifiers.get(i);
-						double angle = slice * i + (ClientTickHandler.getTicks() / 20.0);// + event.getPartialTicks();
-						float newX = (float) (5 + 30 * Math.cos(angle));
-						float newY = (float) (5 + 30 * Math.sin(angle));
+
+						float space = 25;
+
+						float angle = (float) (slice * (i + 1));
+						float newX = 2 - space * MathHelper.cos(angle);
+						float newY = -5 + space * MathHelper.sin(angle);
 						float s = 12;
 						Sprite modifierIcon = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/icons/" + modifier.getID() + ".png"));
 						plate.getTex().bind();
@@ -281,12 +261,8 @@ public class TableModule {
 						modifierIcon.bind();
 						modifierIcon.draw((int) event.getPartialTicks(), newX + 2, newY + 2, s - 4, s - 4);
 
-						drawWire(
-								new Vec2d(newX, newY).add(s / 2.0, s / 2.0),
-								Vec2d.ZERO.add(8, 8),
-								getColorForModule(ModuleType.MODIFIER),
-								getColorForModule(table.getModule(event.component).getModuleType()));
-
+						newX = 2 - space * MathHelper.cos(angle);
+						newY = -5 + space * MathHelper.sin(angle);
 						int x = event.component.getData(Integer.class, modifier.getID());
 						Minecraft.getMinecraft().fontRenderer.drawString("x" + x, newX + s / 2 - Minecraft.getMinecraft().fontRenderer.getStringWidth("x" + x) / 2, newY + s, Color.LIGHT_GRAY.getRGB(), false);
 						GlStateManager.color(1, 1, 1, 1);
@@ -349,7 +325,7 @@ public class TableModule {
 		GlStateManager.disableCull();
 		GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		GlStateManager.color(1, 1, 1, 1);
-		GlStateManager.translate(0, 0, -10);
+		GlStateManager.translate(0, 0, 10);
 		streak.getTex().bind();
 		InterpBezier2D bezier = new InterpBezier2D(start, end);
 		List<Vec2d> list = bezier.list(50);

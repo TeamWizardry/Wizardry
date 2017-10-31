@@ -35,6 +35,11 @@ public class ComponentWhitelistedModifiers extends GuiComponent {
 	public ComponentWhitelistedModifiers(WorktableGui worktable, int x, int y, int width, int height) {
 		super(x, y, width, height);
 		this.worktable = worktable;
+
+		//ComponentText title = new ComponentText(x, y, ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.TOP);
+		//title.getText().setValue("Applicable Modifiers");
+		//add(title);
+
 		list = new ComponentList(0, 0, 16);
 		add(list);
 		//list.setChildScale(1/2.0);
@@ -42,7 +47,7 @@ public class ComponentWhitelistedModifiers extends GuiComponent {
 	}
 
 	public void refresh() {
-		if (worktable.selectedcomponent == null) {
+		if (worktable.selectedComponent == null) {
 			setVisible(false);
 			addTag("disabled");
 			return;
@@ -56,7 +61,7 @@ public class ComponentWhitelistedModifiers extends GuiComponent {
 			list.relationships.remove(component);
 		}
 
-		Module module = worktable.getModule(worktable.selectedcomponent);
+		Module module = worktable.getModule(worktable.selectedComponent);
 		if (module == null) return;
 		if (module.applicableModifiers() == null) return;
 		if (Objects.requireNonNull(module.applicableModifiers()).length <= 0) return;
@@ -91,41 +96,82 @@ public class ComponentWhitelistedModifiers extends GuiComponent {
 				return txt;
 			});
 
-			// TODO animate here
+			bar.BUS.hook(GuiComponentEvents.MouseInEvent.class, event -> {
+				bar.getColor().setValue(new Color(0x66000000, true));
+			});
+			bar.BUS.hook(GuiComponentEvents.MouseOutEvent.class, event -> {
+				bar.getColor().setValue(new Color(0x80000000, true));
+			});
+			bar.BUS.hook(GuiComponentEvents.MouseDownEvent.class, event -> {
+				if (event.component.getMouseOver()) {
+					bar.getColor().setValue(new Color(0x4D000000, true));
+				}
+			});
+			bar.BUS.hook(GuiComponentEvents.MouseUpEvent.class, event -> {
+				if (event.component.getMouseOver()) {
+					bar.getColor().setValue(new Color(0x80000000, true));
+				}
+			});
+
 			bar.BUS.hook(GuiComponentEvents.MouseClickEvent.class, (event) -> {
 				if (!event.component.getMouseOver()) return;
 
-				int i = worktable.selectedcomponent.hasData(Integer.class, modifier.getID()) ? worktable.selectedcomponent.getData(Integer.class, modifier.getID()) : 0;
+				int i = worktable.selectedComponent.hasData(Integer.class, modifier.getID()) ? worktable.selectedComponent.getData(Integer.class, modifier.getID()) : 0;
 
-				if (event.getButton() == EnumMouseButton.LEFT)
-					worktable.selectedcomponent.setData(Integer.class, modifier.getID(), ++i);
-				else if (event.getButton() == EnumMouseButton.RIGHT)
-					worktable.selectedcomponent.setData(Integer.class, modifier.getID(), --i);
+				int status = 0;
+				if (event.getButton() == EnumMouseButton.LEFT) {
+					worktable.selectedComponent.setData(Integer.class, modifier.getID(), ++i);
+					status = 0;
+				} else if (event.getButton() == EnumMouseButton.RIGHT) {
+					if (worktable.selectedComponent.hasData(Integer.class, modifier.getID())) {
 
-				Vec2d r = bar.thisPosToOtherContext(worktable.getMainComponents(), bar.getPos());
+						if (worktable.selectedComponent.getData(Integer.class, modifier.getID()) > 0) {
+							worktable.selectedComponent.setData(Integer.class, modifier.getID(), --i);
+							status = 1;
+						} else {
+							worktable.selectedComponent.removeData(Integer.class, modifier.getID());
+							status = 3;
+						}
+					}
+				}
+
 				ComponentSprite fakePlate = new ComponentSprite(TableModule.plate, 0, 0, 16, 16);
-				worktable.getMainComponents().add(fakePlate);
+				bar.add(fakePlate);
 
 				ComponentSprite fakeIconComp = new ComponentSprite(icon, 2, 2, 12, 12);
 				fakePlate.add(fakeIconComp);
 
-				ScheduledEventAnimation scheduled = new ScheduledEventAnimation(40, fakePlate::invalidate);
+				ScheduledEventAnimation scheduled = new ScheduledEventAnimation(20, fakePlate::invalidate);
+
+				Vec2d r = worktable.selectedComponent.thisPosToOtherContext(bar);
 
 				KeyframeAnimation<ComponentSprite> animX = new KeyframeAnimation<>(fakePlate, "pos.x");
-				animX.setDuration(40);
-				animX.setKeyframes(new Keyframe[]{
-						new Keyframe(0, fakePlate.getPos().getX(), Easing.linear),
-						new Keyframe(1f, r.getX(), Easing.easeOutQuart),
-				});
+				animX.setDuration(20);
+				if (status == 0) {
+					animX.setKeyframes(new Keyframe[]{
+							new Keyframe(0, 0, Easing.linear),
+							new Keyframe(1f, r.getX(), Easing.easeInBack)
+					});
+				} else if (status == 1) {
+					animX.setKeyframes(new Keyframe[]{
+							new Keyframe(0, r.getX(), Easing.linear),
+							new Keyframe(1f, 0, Easing.easeInBack)
+					});
+				}
 
 				KeyframeAnimation<ComponentSprite> animY = new KeyframeAnimation<>(fakePlate, "pos.y");
-				animY.setDuration(40);
-				animY.setKeyframes(new Keyframe[]{
-						new Keyframe(0, fakePlate.getPos().getY(), Easing.linear),
-						new Keyframe(1f, r.getY(), Easing.easeOutQuart),
-
-				});
-				
+				animY.setDuration(20);
+				if (status == 0) {
+					animY.setKeyframes(new Keyframe[]{
+							new Keyframe(0, 0, Easing.linear),
+							new Keyframe(1f, r.getY(), Easing.easeInBack)
+					});
+				} else if (status == 1) {
+					animX.setKeyframes(new Keyframe[]{
+							new Keyframe(0, r.getY(), Easing.linear),
+							new Keyframe(1f, 0, Easing.easeInBack)
+					});
+				}
 				worktable.getMainComponents().add(scheduled, animX, animY);
 			});
 

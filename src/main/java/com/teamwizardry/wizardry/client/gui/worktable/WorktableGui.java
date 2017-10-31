@@ -55,7 +55,7 @@ public class WorktableGui extends GuiBase {
 	private static final Sprite BUTTON_HIGHLIGHTED = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/button_highlighted.png"));
 	private static final Sprite BUTTON_PRESSED = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/button_pressed.png"));
 	ComponentVoid paper;
-	GuiComponent selectedcomponent;
+	GuiComponent selectedComponent;
 	BiMap<GuiComponent, UUID> paperComponents = HashBiMap.create();
 	HashMap<UUID, UUID> componentLinks = new HashMap<>();
 	private HashSet<ArrayList<Module>> compiledSpell = new HashSet<>();
@@ -80,21 +80,21 @@ public class WorktableGui extends GuiBase {
 		GlMixin.INSTANCE.transform(shapes).setValue(new Vec3d(0, 0, -15));
 		ComponentGrid scrollShapes = addModules(shapes, ModuleType.SHAPE);
 		scrollShapes.getTransform().setTranslateZ(10);
-		addScrollbar(shapes, scrollShapes, 77, 31, ModuleType.SHAPE, 80);
+		//	addScrollbar(shapes, scrollShapes, 77, 31, ModuleType.SHAPE, 80);
 		getMainComponents().add(shapes);
 
 		ComponentSprite effects = new ComponentSprite(SIDE_BAR_LONG, 93, 37, 48, 160);
 		GlMixin.INSTANCE.transform(shapes).setValue(new Vec3d(0, 0, -15));
 		ComponentGrid scrollEffects = addModules(effects, ModuleType.EFFECT);
 		scrollEffects.getTransform().setTranslateZ(10);
-		addScrollbar(effects, scrollEffects, 140, 37, ModuleType.EFFECT, 160);
+		//	addScrollbar(effects, scrollEffects, 140, 37, ModuleType.EFFECT, 160);
 		getMainComponents().add(effects);
 
 		ComponentSprite events = new ComponentSprite(SIDE_BAR, 29, 123, 48, 80);
 		GlMixin.INSTANCE.transform(shapes).setValue(new Vec3d(0, 0, -15));
 		ComponentGrid scrollEvents = addModules(events, ModuleType.EVENT);
 		scrollEvents.getTransform().setTranslateZ(10);
-		addScrollbar(events, scrollEvents, 77, 123, ModuleType.EVENT, 80);
+		//	addScrollbar(events, scrollEvents, 77, 123, ModuleType.EVENT, 80);
 		getMainComponents().add(events);
 
 		ComponentSprite save = new ComponentSprite(BUTTON_NORMAL, 395, 30, (int) (88 / 1.5), (int) (24 / 1.5));
@@ -151,8 +151,9 @@ public class WorktableGui extends GuiBase {
 			ComponentVoid bookIconMask = new ComponentVoid(0, -100, 180, 100);
 			ComponentSprite bookIcon = new ComponentSprite(new Sprite(new ResourceLocation(Wizardry.MODID, "textures/items/physics_book.png")), (int) ((bookIconMask.getSize().getX() / 2.0) - 16), (int) (bookIconMask.getSize().getY() + 50), 32, 32);
 			{
+				bookIcon.getTransform().setTranslateZ(1000);
 				ScissorMixin.INSTANCE.scissor(bookIconMask);
-				bookIconMask.getTransform().setTranslateZ(200);
+				bookIconMask.getTransform().setTranslateZ(1000);
 				fakePaper.add(bookIconMask);
 
 				bookIconMask.add(bookIcon);
@@ -266,7 +267,7 @@ public class WorktableGui extends GuiBase {
 		for (Module modifier : ModuleRegistry.INSTANCE.getModules(ModuleType.MODIFIER)) {
 			if (!(modifier instanceof ModuleModifier)) continue;
 			if (component.hasData(Integer.class, modifier.getID())) {
-				int x = (int) component.getData(Integer.class, modifier.getID());
+				int x = component.getData(Integer.class, modifier.getID());
 				for (int i = 0; i < x; i++) {
 					stream.add(modifier.copy());
 				}
@@ -316,8 +317,8 @@ public class WorktableGui extends GuiBase {
 			tmp.add(item.component);
 		}
 
-		ArrayList<GuiComponent> scrollable = (ArrayList<GuiComponent>) Utils.getVisibleComponents(tmp, 0);
-		for (GuiComponent component : scrollable) {
+		//ArrayList<GuiComponent> scrollable = (ArrayList<GuiComponent>) Utils.getVisibleComponents(tmp, 0);
+		for (GuiComponent component : tmp) {
 			grid.add(component);
 		}
 		return grid;
