@@ -146,14 +146,14 @@ public class WorktableGui extends GuiBase {
 			BiMap<GuiComponent, UUID> paperComponents = HashBiMap.create();
 
 			ComponentVoid fakePaper = new ComponentVoid(180, 19, 180, 188);
+			fakePaper.getTransform().setTranslateZ(100);
 			getMainComponents().add(fakePaper);
 
 			ComponentVoid bookIconMask = new ComponentVoid(0, -100, 180, 100);
 			ComponentSprite bookIcon = new ComponentSprite(new Sprite(new ResourceLocation(Wizardry.MODID, "textures/items/physics_book.png")), (int) ((bookIconMask.getSize().getX() / 2.0) - 16), (int) (bookIconMask.getSize().getY() + 50), 32, 32);
 			{
-				bookIcon.getTransform().setTranslateZ(1000);
 				ScissorMixin.INSTANCE.scissor(bookIconMask);
-				bookIconMask.getTransform().setTranslateZ(1000);
+				bookIconMask.getTransform().setTranslateZ(10);
 				fakePaper.add(bookIconMask);
 
 				bookIconMask.add(bookIcon);
@@ -182,7 +182,6 @@ public class WorktableGui extends GuiBase {
 				fakePaper.add(plate);
 				plate.setData(Vec2d.class, "", plate.getPos());
 				plate.addTag(module);
-				plate.getTransform().setTranslateZ(100);
 
 				Sprite icon = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/icons/" + module.getID() + ".png"));
 				ComponentSprite iconComp = new ComponentSprite(icon, 2, 2, 12, 12);

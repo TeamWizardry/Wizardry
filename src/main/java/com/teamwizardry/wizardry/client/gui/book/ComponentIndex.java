@@ -66,6 +66,7 @@ public class ComponentIndex extends GuiComponent {
 
 				plate.BUS.hook(GuiComponentEvents.PostDrawEvent.class, (event) -> {
 					GlStateManager.pushMatrix();
+					GlStateManager.color(1, 1, 1, 1);
 					GlStateManager.enableAlpha();
 					GlStateManager.enableBlend();
 					if (isMainIndex) {

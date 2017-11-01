@@ -214,7 +214,9 @@ public class TableModule {
 
 				GlStateManager.pushMatrix();
 				GlStateManager.color(1, 1, 1, 1);
-				GlStateManager.translate(0, 0, event.component.getMouseOver() ? 150 : 5);
+				if(event.component.getMouseOver()) {
+					GlStateManager.translate(0, 0, 5);
+				}
 				GlStateManager.enableBlend();
 
 				if (event.component.getMouseOver() && !isDragging) {
@@ -292,10 +294,7 @@ public class TableModule {
 				Module module2 = table.getModule(event.component);
 				if (module2 == null) return;
 
-				GlStateManager.pushMatrix();
-				GlStateManager.translate(0, 0, 10);
 				drawWire(fromPos, toPos, getColorForModule(module2.getModuleType()), getColorForModule(module1.getModuleType()));
-				GlStateManager.popMatrix();
 			}
 			//---------// RENDER LINKS BETWEEN MODULES //---------//
 		});
@@ -325,7 +324,7 @@ public class TableModule {
 		GlStateManager.disableCull();
 		GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		GlStateManager.color(1, 1, 1, 1);
-		GlStateManager.translate(0, 0, 10);
+		GlStateManager.translate(0, 0, -1);
 		streak.getTex().bind();
 		InterpBezier2D bezier = new InterpBezier2D(start, end);
 		List<Vec2d> list = bezier.list(50);
