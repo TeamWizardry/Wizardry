@@ -17,7 +17,8 @@ public final class VersionChecker {
 	public static VersionChecker INSTANCE = new VersionChecker();
 
 	public static boolean doneChecking = false;
-	public static String onlineVersion = "";
+	public static String onlineVersion = null;
+	public static String updateMessage = null;
 	private static boolean triedToWarnPlayer = false;
 
 	private boolean warnedPlayerOfAlpha = false;
@@ -37,11 +38,9 @@ public final class VersionChecker {
 			player.sendMessage(new TextComponentString(TextFormatting.RED + "Do NOT expect much from the mod in its current state and expect a lot of things to change!"));
 			player.sendMessage(new TextComponentString(TextFormatting.RED + "YOU HAVE BEEN WARNED"));
 		}
-		
-		//TODO: Version checker changelog messages
 
 		if (doneChecking && event.phase == TickEvent.Phase.END && Minecraft.getMinecraft().player != null && !triedToWarnPlayer) {
-			if (!onlineVersion.isEmpty()) {
+			if (onlineVersion != null && !onlineVersion.isEmpty()) {
 				double onlineBuild = NumberUtils.isCreatable(onlineVersion) ? Double.parseDouble(onlineVersion) : -1;
 				if (onlineBuild == -1) return;
 				double clientBuild = Double.parseDouble(Wizardry.VERSION);
@@ -77,7 +76,20 @@ public final class VersionChecker {
 					player.sendMessage(new TextComponentString(TextFormatting.YELLOW + messages.get(RandUtil.nextInt(messages.size() - 1))));
 					player.sendMessage(new TextComponentString(TextFormatting.GREEN + "There's a new Wizardry update available! your version: '" + TextFormatting.RED + clientBuild + TextFormatting.GREEN + "' new version: '" + TextFormatting.YELLOW + onlineBuild + TextFormatting.GREEN + "'"));
 
+					if (updateMessage != null && !updateMessage.isEmpty()) {
+						player.sendMessage(new TextComponentString(TextFormatting.GRAY + "UPDATE NOTE:"));
+
+						String[] spaces = updateMessage.split("\n");
+						for (String space : spaces)
+							player.sendMessage(new TextComponentString(TextFormatting.GRAY + "  " + space));
+					}
 				}
+			} else if (updateMessage != null && !updateMessage.isEmpty()) {
+				player.sendMessage(new TextComponentString(TextFormatting.GRAY + "UPDATE NOTE:"));
+
+				String[] spaces = updateMessage.split("\n");
+				for (String space : spaces)
+					player.sendMessage(new TextComponentString(TextFormatting.GRAY + "  " + space));
 			}
 
 			triedToWarnPlayer = true;

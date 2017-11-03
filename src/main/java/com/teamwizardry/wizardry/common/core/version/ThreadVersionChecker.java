@@ -1,11 +1,14 @@
 package com.teamwizardry.wizardry.common.core.version;
 
+import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.wizardry.Wizardry;
 import net.minecraftforge.common.MinecraftForge;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
+
+import static com.teamwizardry.wizardry.common.core.version.VersionChecker.onlineVersion;
 
 public class ThreadVersionChecker extends Thread {
 
@@ -19,11 +22,27 @@ public class ThreadVersionChecker extends Thread {
 	public void run() {
 		Wizardry.logger.info("Checking for new updates...");
 		try {
-			URL url = new URL("https://raw.githubusercontent.com/TeamWizardry/Wizardry/master/version/" + MinecraftForge.MC_VERSION + ".txt");
-			BufferedReader r = new BufferedReader(new InputStreamReader(url.openStream()));
-			VersionChecker.onlineVersion = r.readLine();
+			BufferedReader r;
+			if (LibrarianLib.DEV_ENVIRONMENT) {
+				URL url = new URL("https://raw.githubusercontent.com/TeamWizardry/Wizardry/master/version/" + MinecraftForge.MC_VERSION + "-dev.txt");
+				r = new BufferedReader(new InputStreamReader(url.openStream()));
+			} else {
+				URL url = new URL("https://raw.githubusercontent.com/TeamWizardry/Wizardry/master/version/" + MinecraftForge.MC_VERSION + ".txt");
+				r = new BufferedReader(new InputStreamReader(url.openStream()));
+			}
+
+			String line;
+			StringBuilder text = new StringBuilder();
+			while ((line = r.readLine()) != null) {
+				if (onlineVersion == null) onlineVersion = line;
+				else {
+					if (!line.isEmpty()) text.append(line).append("\n");
+				}
+			}
+			VersionChecker.updateMessage = text.toString();
 			r.close();
 		} catch (Exception e) {
+			e.printStackTrace();
 			Wizardry.logger.error("Failed to check for updates! :(");
 		}
 		VersionChecker.doneChecking = true;

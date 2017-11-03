@@ -118,7 +118,7 @@ public class ComponentWhitelistedModifiers extends GuiComponent {
 
 				int i = worktable.selectedComponent.hasData(Integer.class, modifier.getID()) ? worktable.selectedComponent.getData(Integer.class, modifier.getID()) : 0;
 
-				int status = 0;
+				int status = -1;
 				if (event.getButton() == EnumMouseButton.LEFT) {
 					worktable.selectedComponent.setData(Integer.class, modifier.getID(), ++i);
 					status = 0;
@@ -130,7 +130,6 @@ public class ComponentWhitelistedModifiers extends GuiComponent {
 							status = 1;
 						} else {
 							worktable.selectedComponent.removeData(Integer.class, modifier.getID());
-							status = 3;
 						}
 					}
 				}

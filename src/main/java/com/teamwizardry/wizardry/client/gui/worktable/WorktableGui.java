@@ -152,6 +152,7 @@ public class WorktableGui extends GuiBase {
 			ComponentVoid bookIconMask = new ComponentVoid(0, -100, 180, 100);
 			ComponentSprite bookIcon = new ComponentSprite(new Sprite(new ResourceLocation(Wizardry.MODID, "textures/items/physics_book.png")), (int) ((bookIconMask.getSize().getX() / 2.0) - 16), (int) (bookIconMask.getSize().getY() + 50), 32, 32);
 			{
+				bookIcon.getTransform().setTranslateZ(200);
 				ScissorMixin.INSTANCE.scissor(bookIconMask);
 				bookIconMask.getTransform().setTranslateZ(10);
 				fakePaper.add(bookIconMask);
