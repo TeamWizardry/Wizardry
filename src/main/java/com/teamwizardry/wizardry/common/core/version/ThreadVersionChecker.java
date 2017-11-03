@@ -41,6 +41,8 @@ public class ThreadVersionChecker extends Thread {
 			}
 			VersionChecker.updateMessage = text.toString();
 			r.close();
+			Wizardry.logger.error("New version found! -> " + onlineVersion);
+			Wizardry.logger.error("Message: " + VersionChecker.updateMessage);
 		} catch (Exception e) {
 			e.printStackTrace();
 			Wizardry.logger.error("Failed to check for updates! :(");

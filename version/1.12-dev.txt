@@ -1,4 +1,4 @@
-0.4
+0.5
 The mana battery and crafting altar have been redone and simplified! You will need to rebuild your structures.
 The book renders structures now but doesn't display materials yet, sorry.
 For convenience: You can right-click your spell-bound book (codex) directly onto a crafting plate to instantly create a spell pearl in creative mode.
