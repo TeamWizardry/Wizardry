@@ -83,13 +83,13 @@ public final class VersionChecker {
 						for (String space : spaces)
 							player.sendMessage(new TextComponentString(TextFormatting.GRAY + "  " + space));
 					}
-				}
-			} else if (updateMessage != null && !updateMessage.isEmpty()) {
-				player.sendMessage(new TextComponentString(TextFormatting.GRAY + "UPDATE NOTE:"));
+				} else if (updateMessage != null && !updateMessage.isEmpty()) {
+					player.sendMessage(new TextComponentString(TextFormatting.GRAY + "UPDATE NOTE:"));
 
-				String[] spaces = updateMessage.split("\n");
-				for (String space : spaces)
-					player.sendMessage(new TextComponentString(TextFormatting.GRAY + "  " + space));
+					String[] spaces = updateMessage.split("\n");
+					for (String space : spaces)
+						player.sendMessage(new TextComponentString(TextFormatting.GRAY + "  " + space));
+				}
 			}
 
 			triedToWarnPlayer = true;
