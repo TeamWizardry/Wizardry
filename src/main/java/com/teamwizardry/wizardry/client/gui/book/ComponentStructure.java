@@ -10,7 +10,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.math.MathHelper;
-import org.lwjgl.opengl.GL11;
 
 public class ComponentStructure extends GuiComponent {
 
@@ -60,7 +59,7 @@ public class ComponentStructure extends GuiComponent {
 
 			Vec2d root = event.component.thisPosToOtherContext(null);
 			Vec2d size = event.component.getSize().mul(1 / 2.0);
-			
+
 			ScissorUtil.push();
 			ScissorUtil.set(root.getXi(), root.getYi(), size.getXi(), size.getYi());
 			ScissorUtil.enable();
@@ -69,8 +68,6 @@ public class ComponentStructure extends GuiComponent {
 
 			GlStateManager.enableAlpha();
 			GlStateManager.enableBlend();
-			GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-			GlStateManager.shadeModel(GL11.GL_SMOOTH);
 			GlStateManager.enableCull();
 			GlStateManager.enableRescaleNormal();
 
@@ -87,7 +84,7 @@ public class ComponentStructure extends GuiComponent {
 			structure.getStructure().draw();
 
 			GlStateManager.popMatrix();
-			
+
 			ScissorUtil.pop();
 		});
 	}
