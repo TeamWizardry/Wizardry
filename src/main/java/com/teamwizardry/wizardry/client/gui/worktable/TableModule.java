@@ -220,6 +220,7 @@ public class TableModule {
 				GlStateManager.enableBlend();
 
 				if (event.component.getMouseOver() && !isDragging) {
+					GlStateManager.translate(0, 0, 50);
 					plate.getTex().bind();
 					plate.draw((int) event.getPartialTicks(), posPlate, posPlate, size, size);
 

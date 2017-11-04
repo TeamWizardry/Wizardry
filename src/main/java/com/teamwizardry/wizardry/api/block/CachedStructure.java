@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.api.block;
 import com.google.common.collect.HashMultimap;
 import com.teamwizardry.librarianlib.features.kotlin.ClientUtilMethods;
 import com.teamwizardry.librarianlib.features.structure.Structure;
+import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import net.minecraft.block.material.Material;
@@ -18,6 +19,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.structure.template.Template;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
@@ -25,52 +28,61 @@ import java.util.EnumMap;
 
 public class CachedStructure extends Structure {
 
+	@SideOnly(Side.CLIENT)
 	private HashMultimap<BlockRenderLayer, Template.BlockInfo> blocks = HashMultimap.create();
+	@SideOnly(Side.CLIENT)
 	private EnumMap<BlockRenderLayer, int[]> vboCaches = new EnumMap<>(BlockRenderLayer.class);
 	private IStructure block;
 
 	public CachedStructure(@NotNull ResourceLocation loc) {
 		super(loc);
 
-		if (getTemplateBlocks() == null) return;
+		ClientRunnable.run(new ClientRunnable() {
+			@SideOnly(Side.CLIENT)
+			@Override
+			public void runIfClient() {
+				if (getTemplateBlocks() == null) return;
 
-		for (Template.BlockInfo info : getTemplateBlocks()) {
-			if (info.blockState.getMaterial() == Material.AIR) continue;
-			blocks.put(info.blockState.getBlock().getBlockLayer(), info);
-		}
-
-		for (BlockRenderLayer layer : blocks.keySet()) {
-			Tessellator tes = Tessellator.getInstance();
-			BufferBuilder buffer = tes.getBuffer();
-			BlockRendererDispatcher dispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
-
-			buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-
-			for (Template.BlockInfo info : blocks.get(layer)) {
-				buffer.setTranslation(info.pos.getX(), info.pos.getY(), info.pos.getZ());
-
-				VoidBlockAccess blockAccess = new VoidBlockAccess(info.blockState, null);
-				if (info.blockState.getBlock() != ModBlocks.MANA_BATTERY) {
-					dispatcher.renderBlock(info.blockState, BlockPos.ORIGIN, blockAccess, buffer);
-				} else {
-					try {
-						IModel model = ModelLoaderRegistry.getModel(new ResourceLocation(Wizardry.MODID, "block/mana_crystal"));
-						IBakedModel battery = model.bake(model.getDefaultState(), DefaultVertexFormats.ITEM,
-								location -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString()));
-
-						dispatcher.getBlockModelRenderer().renderModel(blockAccess, battery, info.blockState, BlockPos.ORIGIN, buffer, false);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+				for (Template.BlockInfo info : getTemplateBlocks()) {
+					if (info.blockState.getMaterial() == Material.AIR) continue;
+					blocks.put(info.blockState.getBlock().getBlockLayer(), info);
 				}
 
-				buffer.setTranslation(-info.pos.getX(), -info.pos.getY(), -info.pos.getZ());
-			}
+				for (BlockRenderLayer layer : blocks.keySet()) {
+					Tessellator tes = Tessellator.getInstance();
+					BufferBuilder buffer = tes.getBuffer();
+					BlockRendererDispatcher dispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
 
-			vboCaches.put(layer, ClientUtilMethods.createCacheArrayAndReset(buffer));
-		}
+					buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+
+					for (Template.BlockInfo info : blocks.get(layer)) {
+						buffer.setTranslation(info.pos.getX(), info.pos.getY(), info.pos.getZ());
+
+						VoidBlockAccess blockAccess = new VoidBlockAccess(info.blockState, null);
+						if (info.blockState.getBlock() != ModBlocks.MANA_BATTERY) {
+							dispatcher.renderBlock(info.blockState, BlockPos.ORIGIN, blockAccess, buffer);
+						} else {
+							try {
+								IModel model = ModelLoaderRegistry.getModel(new ResourceLocation(Wizardry.MODID, "block/mana_crystal"));
+								IBakedModel battery = model.bake(model.getDefaultState(), DefaultVertexFormats.ITEM,
+										location -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString()));
+
+								dispatcher.getBlockModelRenderer().renderModel(blockAccess, battery, info.blockState, BlockPos.ORIGIN, buffer, false);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+
+						buffer.setTranslation(-info.pos.getX(), -info.pos.getY(), -info.pos.getZ());
+					}
+
+					vboCaches.put(layer, ClientUtilMethods.createCacheArrayAndReset(buffer));
+				}
+			}
+		});
 	}
 
+	@SideOnly(Side.CLIENT)
 	public void draw() {
 		for (BlockRenderLayer layer : blocks.keySet()) {
 			Tessellator tes = Tessellator.getInstance();

@@ -24,16 +24,18 @@ public class ComponentStructure extends GuiComponent {
 		super(x, y, width, height);
 
 		ComponentStructureList list = new ComponentStructureList(structure.getStructure());
-		ComponentBookmark bookmark = new ComponentBookmark(new Vec2d(-getSize().getXi() - 35, 0), bookGui, this, bookGui.bookmarkIndex, list, "Materials", false);
+		ComponentBookmarkSwitch bookmark = new ComponentBookmarkSwitch(new Vec2d(-getSize().getXi() - 35, 0), bookGui, this, list, bookGui.bookmarkIndex, "Materials", true, false, true, true);
 		add(bookmark);
 
 		BUS.hook(GuiComponentEvents.MouseWheelEvent.class, event -> {
+			if (event.component.hasTag("switched") || !event.component.isVisible()) return;
 			if (event.getDirection() == GuiComponentEvents.MouseWheelDirection.UP) zoom += 1;
 			else zoom -= 1;
 			zoom = MathHelper.clamp(zoom, 0, 20);
 		});
 
 		BUS.hook(GuiComponentEvents.MouseDragEvent.class, event -> {
+			if (event.component.hasTag("switched") || !event.component.isVisible()) return;
 			Vec2d untransform = event.getMousePos();
 			Vec2d diff;
 			if (dragging) diff = untransform.sub(prevPos).mul(1 / 5.0);
@@ -47,14 +49,17 @@ public class ComponentStructure extends GuiComponent {
 		});
 
 		BUS.hook(GuiComponentEvents.MouseUpEvent.class, event -> {
+			if (event.component.hasTag("switched") || !event.component.isVisible()) return;
 			prevPos = Vec2d.ZERO;
 			dragging = false;
 		});
 
 
 		BUS.hook(GuiComponentEvents.PostDrawEvent.class, event -> {
+			if (event.component.hasTag("switched") || !event.component.isVisible()) return;
+
 			Vec2d root = event.component.thisPosToOtherContext(null);
-			Vec2d size = event.component.thisPosToOtherContext(null, event.component.getSize());
+			Vec2d size = event.component.getSize().mul(1 / 2.0);
 			
 			ScissorUtil.push();
 			ScissorUtil.set(root.getXi(), root.getYi(), size.getXi(), size.getYi());

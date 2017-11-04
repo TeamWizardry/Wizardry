@@ -36,7 +36,7 @@ public class ThreadVersionChecker extends Thread {
 			while ((line = r.readLine()) != null) {
 				if (onlineVersion == null) onlineVersion = line;
 				else {
-					if (!line.isEmpty()) text.append(line).append("\n");
+					if (!line.isEmpty()) text.append("  ").append(line).append("\n\n");
 				}
 			}
 			VersionChecker.updateMessage = text.toString();

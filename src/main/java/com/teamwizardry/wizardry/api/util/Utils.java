@@ -20,6 +20,29 @@ import java.util.List;
  */
 public class Utils {
 
+	/**
+	 * Compares versions
+	 *
+	 * @param ver1
+	 * @param ver2
+	 * @return 1 if {@code ver1} is > {@code ver2}, -1 if {@code ver1} is < {@code ver2} and 0 otherwise
+	 */
+	public static int compareVersions(String ver1, String ver2) {
+		if (ver1 == null || ver2 == null) return 0;
+
+		String v1 = ver1.replaceAll("[^0-9]+", "");
+		String v2 = ver2.replaceAll("[^0-9]+", "");
+		int len1 = v1.length();
+		int len2 = v2.length();
+		// trim any trailing 0 (for comparing cases 6.3 and 6.3.0)
+		if (len1 > 0 && len2 > 0) {
+			v1 = (v1.charAt(len1 - 1) == '0') ? v1.substring(0, len1 - 1) : v1;
+			v2 = (v2.charAt(len2 - 1) == '0') ? v2.substring(0, len2 - 1) : v2;
+		}
+		int res = v1.compareTo(v2);
+		return res < 0 ? -1 : res > 0 ? 1 : res;
+	}
+
 	public static boolean hasOreDictPrefix(ItemStack stack, String dict) {
 		int[] ids = OreDictionary.getOreIDs(stack);
 		for (int id : ids) {
@@ -60,9 +83,8 @@ public class Utils {
 	
 	public static int getSlotFor(EntityPlayer player, ItemStack stack)
 	{
-		for (int i = 0; i < player.inventory.mainInventory.size(); ++i)
-        {
-            if (!((ItemStack)player.inventory.mainInventory.get(i)).isEmpty() && stackEqualExact(stack, player.inventory.mainInventory.get(i)))
+		for (int i = 0; i < player.inventory.mainInventory.size(); ++i) {
+			if (!player.inventory.mainInventory.get(i).isEmpty() && stackEqualExact(stack, player.inventory.mainInventory.get(i)))
             {
                 return i;
             }

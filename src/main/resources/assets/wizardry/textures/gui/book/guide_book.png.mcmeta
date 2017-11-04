@@ -11,6 +11,8 @@
 			"arrow_prev_pressed":[50, 412, 36, 20],
 			"bookmark":[102, 384, 170, 22],
 			"bookmark_extended":[102, 414, 226, 22],
+			"bookmark_switch":[336, 384, 170, 22],
+            "bookmark_extended_switch":[336, 414, 226, 22],
 			"arrow":[4, 368, 22, 15]
 		}
 	}

@@ -37,6 +37,8 @@ public class BookGui extends GuiBase {
 	static Sprite ARROW_PREV_PRESSED = GUIDE_BOOK_SHEET.getSprite("arrow_prev_pressed", 36, 20);
 	static Sprite BOOKMARK_EXTENDED = GUIDE_BOOK_SHEET.getSprite("bookmark_extended", 226, 22);
 	static Sprite BOOKMARK = GUIDE_BOOK_SHEET.getSprite("bookmark", 170, 22);
+	static Sprite BOOKMARK_EXTENDED_SWITCH = GUIDE_BOOK_SHEET.getSprite("bookmark_extended_switch", 226, 22);
+	static Sprite BOOKMARK_SWITCH = GUIDE_BOOK_SHEET.getSprite("bookmark_switch", 170, 22);
 	static Sprite ARROW = GUIDE_BOOK_SHEET.getSprite("arrow", 22, 15);
 
 	public ComponentSprite componentLogo;
@@ -96,11 +98,11 @@ public class BookGui extends GuiBase {
 			}
 		}
 
-		ComponentBookmark bookmarkIndex = new ComponentBookmark(new Vec2d(35, 35), this, componentBook, this.bookmarkIndex++, new ComponentIndex(componentBook, indexItems, 45, true, this, new Vec2d(45, 45)), "Index", true);
+		ComponentBookmarkSwitch bookmarkIndex = new ComponentBookmarkSwitch(new Vec2d(35, 35), this, componentBook, new ComponentIndex(componentBook, indexItems, 45, true, this, new Vec2d(45, 45)), this.bookmarkIndex++, "Index", false, true, false, true);
 		componentBook.add(bookmarkIndex);
 
 		if (ItemNBTHelper.getBoolean(bookItem, "has_recipe", false)) {
-			ComponentBookmark bookmarkRecipe = new ComponentBookmark(new Vec2d(35, 35), this, componentBook, this.bookmarkIndex++, new ComponentRecipe(this), "Spell Recipe", false);
+			ComponentBookmarkSwitch bookmarkRecipe = new ComponentBookmarkSwitch(new Vec2d(35, 35), this, componentBook, new ComponentRecipe(this), this.bookmarkIndex++, "Spell Recipe", false, false, false, true);
 			componentBook.add(bookmarkRecipe);
 		}
 

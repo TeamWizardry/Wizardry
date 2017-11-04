@@ -2,13 +2,16 @@ package com.teamwizardry.wizardry.common.core.version;
 
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.api.util.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.event.ClickEvent;
+import net.minecraft.util.text.event.HoverEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import org.apache.commons.lang3.math.NumberUtils;
 
 import java.util.ArrayList;
 
@@ -41,10 +44,8 @@ public final class VersionChecker {
 
 		if (doneChecking && event.phase == TickEvent.Phase.END && Minecraft.getMinecraft().player != null && !triedToWarnPlayer) {
 			if (onlineVersion != null && !onlineVersion.isEmpty()) {
-				double onlineBuild = NumberUtils.isCreatable(onlineVersion) ? Double.parseDouble(onlineVersion) : -1;
-				if (onlineBuild == -1) return;
-				double clientBuild = Double.parseDouble(Wizardry.VERSION);
-				if (onlineBuild > clientBuild) {
+				String clientBuild = Wizardry.VERSION;
+				if (Utils.compareVersions(onlineVersion, clientBuild) == 1) {
 					ArrayList<String> messages = new ArrayList<>();
 					messages.add("Don't let your bugs be thugs! Use our patented Magic-o-gon spray for only $9.99");
 					messages.add("What? A new update? Looks like magic...");
@@ -74,21 +75,20 @@ public final class VersionChecker {
 					messages.add("I'm Mr. Meeseeks! Look at my new update!");
 
 					player.sendMessage(new TextComponentString(TextFormatting.YELLOW + messages.get(RandUtil.nextInt(messages.size() - 1))));
-					player.sendMessage(new TextComponentString(TextFormatting.GREEN + "There's a new Wizardry update available! your version: '" + TextFormatting.RED + clientBuild + TextFormatting.GREEN + "' new version: '" + TextFormatting.YELLOW + onlineBuild + TextFormatting.GREEN + "'"));
+					player.sendMessage(new TextComponentString(TextFormatting.GREEN + "There's a new Wizardry update available! your version: '" + TextFormatting.RED + clientBuild + TextFormatting.GREEN + "' new version: '" + TextFormatting.YELLOW + onlineVersion + TextFormatting.GREEN + "'"));
 
 					if (updateMessage != null && !updateMessage.isEmpty()) {
-						player.sendMessage(new TextComponentString(TextFormatting.GRAY + "UPDATE NOTE:"));
+						player.sendMessage(new TextComponentString(TextFormatting.GREEN + "[" + TextFormatting.GRAY + "UPDATE LINK & NOTES" + TextFormatting.GREEN + "]")
+								.setStyle(new Style()
+										.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(updateMessage)))
+										.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://minecraft.curseforge.com/projects/wizardry-mod/files"))));
 
-						String[] spaces = updateMessage.split("\n");
-						for (String space : spaces)
-							player.sendMessage(new TextComponentString(TextFormatting.GRAY + "  " + space));
 					}
 				} else if (updateMessage != null && !updateMessage.isEmpty()) {
-					player.sendMessage(new TextComponentString(TextFormatting.GRAY + "UPDATE NOTE:"));
-
-					String[] spaces = updateMessage.split("\n");
-					for (String space : spaces)
-						player.sendMessage(new TextComponentString(TextFormatting.GRAY + "  " + space));
+					player.sendMessage(new TextComponentString(TextFormatting.GREEN + "[" + TextFormatting.GRAY + "UPDATE LINK & NOTES" + TextFormatting.GREEN + "]")
+							.setStyle(new Style()
+									.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponentString(updateMessage)))
+									.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://minecraft.curseforge.com/projects/wizardry-mod/files"))));
 				}
 			}
 

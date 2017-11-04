@@ -38,7 +38,7 @@ public class ComponentRecipe extends GuiComponent {
 	}
 
 	public void reset() {
-		getChildren().forEach(guiComponent -> guiComponent.invalidate());
+		getChildren().forEach(GuiComponent::invalidate);
 
 		if (ItemNBTHelper.getBoolean(bookGui.bookItem, "has_recipe", false)) {
 
@@ -87,12 +87,12 @@ public class ComponentRecipe extends GuiComponent {
 							if (!key.equals(Attributes.MANA) && !key.equals(Attributes.BURNOUT)) {
 								ComponentText modifierText = new ComponentText(0, recipeText.getSize().getYi(), ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.MIDDLE);
 								modifierText.getWrap().setValue(200);
-								modifierText.getText().setValue(StringUtils.repeat(" ", i * 3) + " | "
+								modifierText.getText().setValue(StringUtils.repeat(" ", i * 6) + " | "
 										+ key.replace("modifier_", "").replace("_", " ")
 										+ " x" + (int) Math.round(tempModule.attributes.getDouble(key)));
 								modifierText.setSize(new Vec2d(0, 8));
 								modifierText.setPos(new Vec2d(0, textY));
-								textY += 8;
+								textY += 16;
 								textHolder.add(modifierText);
 							}
 						}
