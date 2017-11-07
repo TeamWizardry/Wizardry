@@ -21,6 +21,12 @@
       "info": "Learn about what mana is and why you want it so badly."
     },
     {
+      "icon": "wizardry:textures/blocks/wisdom_wood_pigmented_planks.png",
+      "text": "Wisdom",
+      "link": "/basics/wisdom.json",
+      "info": "Learn about wisdom wood and nacre liquid."
+    },
+    {
       "icon": "wizardry:textures/items/cape.png",
       "text": "Capes",
       "link": "/basics/capes.json",

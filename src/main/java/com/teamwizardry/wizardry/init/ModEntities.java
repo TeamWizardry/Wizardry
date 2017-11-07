@@ -19,6 +19,7 @@ public class ModEntities {
 	private static int i = 0;
 
 	public static void init() {
+		registerEntity(new ResourceLocation(Wizardry.MODID, "spirit_blight"), EntitySpiritBlight.class, "spirit_blight");
 		registerEntity(new ResourceLocation(Wizardry.MODID, "spirit_wight"), EntitySpiritWight.class, "spirit_wight");
 		registerEntity(new ResourceLocation(Wizardry.MODID, "angel_zachriel"), EntityZachriel.class, "angel_zachriel");
 		registerEntity(new ResourceLocation(Wizardry.MODID, "fairy"), EntityFairy.class, "fairy");
@@ -43,6 +44,7 @@ public class ModEntities {
 	@SideOnly(Side.CLIENT)
 	public static void initModels() {
 		RenderingRegistry.registerEntityRenderingHandler(EntityZachriel.class, manager -> new RenderZachriel(manager, new ModelZachriel()));
+		RenderingRegistry.registerEntityRenderingHandler(EntitySpiritBlight.class, manager -> new RenderSpiritBlight(manager, new ModelSpiritWight()));
 		RenderingRegistry.registerEntityRenderingHandler(EntitySpiritWight.class, manager -> new RenderSpiritWight(manager, new ModelSpiritWight()));
 		RenderingRegistry.registerEntityRenderingHandler(EntityFairy.class, manager -> new RenderFairy(manager, new ModelNull()));
 		RenderingRegistry.registerEntityRenderingHandler(EntityUnicorn.class, manager -> new RenderUnicorn(manager, new ModelUnicorn()));

@@ -1,8 +1,17 @@
 package com.teamwizardry.wizardry.common.entity;
 
+import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
+import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpLine;
+import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
+import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
+import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
+import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
+import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
@@ -11,6 +20,7 @@ import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -57,23 +67,23 @@ public class EntitySpiritBlight extends EntityMob {
 
 	@Override
 	public void collideWithEntity(Entity entity) {
-		if (getHealth() > 0) {
-			if (entity.getName().equals(getName())) return;
-			//((EntityLivingBase) entity).motionY += 0.4;
-			//((EntityLivingBase) entity).attackEntityAsMob(this);
-			//((EntityLivingBase) entity).setRevengeTarget(this);
-		}
-		entity.fallDistance = 0;
-		Vec3d normal = new Vec3d(RandUtil.nextDouble(-0.01, 0.01), RandUtil.nextDouble(0.1, 0.4), RandUtil.nextDouble(-0.01, 0.01));
-
-		ClientRunnable.run(new ClientRunnable() {
-			@Override
-			@SideOnly(Side.CLIENT)
-			public void runIfClient()
-			{
-				LibParticles.AIR_THROTTLE(world, getPositionVector().addVector(0, getEyeHeight(), 0), normal, Color.WHITE, Color.YELLOW, RandUtil.nextDouble(0.2, 1.0));
-			}
-		});
+		//if (getHealth() > 0) {
+		//	if (entity.getName().equals(getName())) return;
+		//	((EntityLivingBase) entity).motionY += 0.4;
+		//	((EntityLivingBase) entity).attackEntityAsMob(this);
+		//	((EntityLivingBase) entity).setRevengeTarget(this);
+		//}
+		//entity.fallDistance = 0;
+//
+		//Vec3d normal = new Vec3d(RandUtil.nextDouble(-0.01, 0.01), RandUtil.nextDouble(0.1, 0.4), RandUtil.nextDouble(-0.01, 0.01));
+//
+		//ClientRunnable.run(new ClientRunnable() {
+		//	@Override
+		//	@SideOnly(Side.CLIENT)
+		//	public void runIfClient() {
+		//		LibParticles.AIR_THROTTLE(world, getPositionVector().addVector(0, getEyeHeight(), 0), normal, Color.WHITE, Color.YELLOW, RandUtil.nextDouble(0.2, 1.0));
+		//	}
+		//});
 	}
 
 	@Override
@@ -81,28 +91,95 @@ public class EntitySpiritBlight extends EntityMob {
 		super.onUpdate();
 		if (world.isRemote) return;
 
+		if ((ticksExisted % RandUtil.nextInt(100, 200)) == 0)
+			playSound(ModSounds.HALLOWED_SPIRIT, RandUtil.nextFloat(), RandUtil.nextFloat());
+
 		fallDistance = 0;
 
-		EntityPlayer farPlayer = world.getNearestPlayerNotCreative(this, 100);
+		EntityPlayer farPlayer = world.getNearestPlayerNotCreative(this, 300);
 		setAttackTarget(farPlayer);
 		if (getAttackTarget() != null) {
 			noClip = true;
 			Vec3d direction = getPositionVector().subtract(getAttackTarget().getPositionVector()).normalize();
-			motionX = direction.x * -0.05;
-			motionY = direction.y * -0.05;
-			motionZ = direction.z * -0.05;
+
+			motionX = direction.x * -0.1;
+			motionY = direction.y * -0.1;
+			motionZ = direction.z * -0.1;
+
 			rotationYaw = (float) (((-MathHelper.atan2(direction.x, direction.z) * 180) / Math.PI) - 180) / 2;
-		} else noClip = false;
+
+			if (RandUtil.nextInt(10) == 0) {
+				Vec3d perp = direction.scale(-1).crossProduct(new Vec3d(0, 1, 0)).normalize();
+				Vec3d randomize = getPositionVector().subtract(direction).addVector(perp.x * RandUtil.nextDouble(3), RandUtil.nextDouble(-1, 1), perp.z * RandUtil.nextDouble(3));
+				setPosition(randomize.x, randomize.y, randomize.z);
+
+				Vec3d origin = getPositionVector().addVector(0, getEyeHeight(), 0);
+				if (!true) {
+					ClientRunnable.run(new ClientRunnable() {
+						@Override
+						@SideOnly(Side.CLIENT)
+						public void runIfClient() {
+							ParticleBuilder glitter = new ParticleBuilder(30);
+							glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+							glitter.setAlphaFunction(new InterpFadeInOut(1f, 1f));
+							glitter.setColor(new Color(0xf404d4));
+
+							ParticleSpawner.spawn(glitter, world, new InterpLine(origin, getPositionVector().addVector(0, getEyeHeight(), 0)), 100, 0, (i, build) -> {
+								double radius = 0.1;
+								double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
+								double r = radius * RandUtil.nextFloat();
+								double x = r * MathHelper.cos((float) theta);
+								double z = r * MathHelper.sin((float) theta);
+
+								glitter.setLifetime(RandUtil.nextInt(10, 40));
+								glitter.setScaleFunction(new InterpScale(0, (float) RandUtil.nextDouble(3, 4)));
+								glitter.setPositionOffset(new Vec3d(x, RandUtil.nextDouble(0, 0.2), z));
+								if (RandUtil.nextInt(15) == 0)
+									glitter.addMotion(new Vec3d(RandUtil.nextDouble(-0.01, 0.01),
+											RandUtil.nextDouble(0, 0.03),
+											RandUtil.nextDouble(-0.01, 0.01)));
+							});
+						}
+					});
+				}
+			}
+		} else {
+			if (!isCollidedVertically) {
+				motionY = 0;
+			}
+			noClip = false;
+		}
 
 		EntityPlayer player = getAttackTarget() == null ? null : world.getNearestPlayerNotCreative(this, 2);
 		EntityPlayer closePlayer = getAttackTarget() == null ? null : world.getNearestPlayerNotCreative(this, 30);
 		boolean angry = player != null;
 
-		if ((closePlayer != null) && !angry)
-			LibParticles.SPIRIT_WIGHT_FLAME_FAR(world, getPositionVector().addVector(0, getEyeHeight(), 0));
-		else if (angry)
-			LibParticles.SPIRIT_WIGHT_FLAME_CLOSE(world, getPositionVector().addVector(0, getEyeHeight(), 0));
-		else LibParticles.SPIRIT_WIGHT_FLAME_NORMAL(world, getPositionVector().addVector(0, getEyeHeight(), 0));
+		ClientRunnable.run(new ClientRunnable() {
+			@Override
+			@SideOnly(Side.CLIENT)
+			public void runIfClient() {
+				ParticleBuilder glitter = new ParticleBuilder(30);
+				glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+				glitter.setAlphaFunction(new InterpFadeInOut(1f, 1f));
+				glitter.setColor(new Color(0xf404d4));
+
+				ParticleSpawner.spawn(glitter, world, new StaticInterp<>(getPositionVector().addVector(0, getEyeHeight(), 0)), 10, 0, (i, build) -> {
+					double radius = 0.1;
+					double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
+					double r = radius * RandUtil.nextFloat();
+					double x = r * MathHelper.cos((float) theta);
+					double z = r * MathHelper.sin((float) theta);
+
+					glitter.setLifetime(RandUtil.nextInt(10, 40));
+					glitter.setScaleFunction(new InterpScale(0, (float) RandUtil.nextDouble(3, 4)));
+					glitter.setPositionOffset(new Vec3d(x, RandUtil.nextDouble(0, 0.2), z));
+					if (RandUtil.nextInt(15) == 0)
+						glitter.addMotion(new Vec3d(RandUtil.nextDouble(-0.01, 0.01),
+								RandUtil.nextDouble(0, 0.03),
+								RandUtil.nextDouble(-0.01, 0.01)));
+				});
+			}
+		});
 
 		if (angry) {
 			player.attackEntityFrom(DamageSource.MAGIC, 0.15f);
@@ -124,9 +201,41 @@ public class EntitySpiritBlight extends EntityMob {
 	public boolean attackEntityFrom(@Nonnull DamageSource source, float amount) {
 		if (source.isMagicDamage()) {
 			super.attackEntityFrom(source, amount);
-			LibParticles.SPIRIT_WIGHT_HURT(world, getPositionVector());
+			ClientRunnable.run(new ClientRunnable() {
+				@Override
+				@SideOnly(Side.CLIENT)
+				public void runIfClient() {
+					LibParticles.SPIRIT_WIGHT_HURT(world, getPositionVector());
+				}
+			});
 			return true;
 		} else return false;
+	}
+
+	@Override
+	public void onDeath(DamageSource cause) {
+		ClientRunnable.run(new ClientRunnable() {
+			@Override
+			@SideOnly(Side.CLIENT)
+			public void runIfClient() {
+				ParticleBuilder glitter = new ParticleBuilder(RandUtil.nextInt(100, 150));
+				glitter.setColor(Color.WHITE);
+				glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+				glitter.setAlphaFunction(new InterpFadeInOut(0.1f, 0.1f));
+				glitter.setAcceleration(Vec3d.ZERO);
+
+				ParticleSpawner.spawn(glitter, world, new StaticInterp<>(getPositionVector().addVector(0, height, 0)), 1000, 0, (i, build) -> {
+					double radius = 0.2;
+					build.setDeceleration(new Vec3d(RandUtil.nextDouble(0.8, 0.95), RandUtil.nextDouble(0.8, 0.95), RandUtil.nextDouble(0.8, 0.95)));
+					build.addMotion(new Vec3d(RandUtil.nextDouble(-radius, radius), RandUtil.nextDouble(-radius, radius), RandUtil.nextDouble(-radius, radius)));
+					build.setLifetime(RandUtil.nextInt(200, 250));
+					build.setScaleFunction(new InterpScale(RandUtil.nextFloat(0.6f, 1.5f), 0));
+					if (RandUtil.nextBoolean()) build.setColor(Color.WHITE);
+					else build.setColor(Color.YELLOW);
+				});
+			}
+		});
+		super.onDeath(cause);
 	}
 
 	@Override
