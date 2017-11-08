@@ -20,6 +20,70 @@ import java.util.List;
  */
 public class Utils {
 
+	public static boolean isLyingInCone(Vec3d point, Vec3d coneApex, Vec3d baseCenter, float aperture) {
+		float[] x = new float[]{(float) point.x, (float) point.y, (float) point.z};
+		float[] t = new float[]{(float) coneApex.x, (float) coneApex.y, (float) coneApex.z};
+		float[] b = new float[]{(float) baseCenter.x, (float) baseCenter.y, (float) baseCenter.z};
+		return isLyingInCone(x, t, b, aperture);
+	}
+
+	/**
+	 * @param x        coordinates of point to be tested
+	 * @param t        coordinates of apex point of cone
+	 * @param b        coordinates of center of basement circle
+	 * @param aperture in radians
+	 */
+	private static boolean isLyingInCone(float[] x, float[] t, float[] b, float aperture) {
+
+		// This is for our convenience
+		float halfAperture = aperture / 2.f;
+
+		// Vector pointing to X point from apex
+		float[] apexToXVect = dif(t, x);
+
+		// Vector pointing from apex to circle-center point.
+		float[] axisVect = dif(t, b);
+
+		// X is lying in cone only if it's lying in
+		// infinite version of its cone -- that is,
+		// not limited by "round basement".
+		// We'll use dotProd() to
+		// determine angle between apexToXVect and axis.
+		boolean isInInfiniteCone = dotProd(apexToXVect, axisVect)
+				/ magn(apexToXVect) / magn(axisVect)
+				>
+				// We can safely compare cos() of angles
+				// between vectors instead of bare angles.
+				Math.cos(halfAperture);
+
+
+		if (!isInInfiniteCone) return false;
+
+		// X is contained in cone only if projection of apexToXVect to axis
+		// is shorter than axis.
+		// We'll use dotProd() to figure projection length.
+		return dotProd(apexToXVect, axisVect)
+				/ magn(axisVect)
+				<
+				magn(axisVect);
+	}
+
+	private static float dotProd(float[] a, float[] b) {
+		return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+	}
+
+	private static float[] dif(float[] a, float[] b) {
+		return (new float[]{
+				a[0] - b[0],
+				a[1] - b[1],
+				a[2] - b[2]
+		});
+	}
+
+	private static float magn(float[] a) {
+		return (float) (Math.sqrt(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]));
+	}
+
 	/**
 	 * Compares versions
 	 *
@@ -80,25 +144,22 @@ public class Utils {
 
 		return visible;
 	}
-	
-	public static int getSlotFor(EntityPlayer player, ItemStack stack)
-	{
-		for (int i = 0; i < player.inventory.mainInventory.size(); ++i) {
-			if (!player.inventory.mainInventory.get(i).isEmpty() && stackEqualExact(stack, player.inventory.mainInventory.get(i)))
-            {
-                return i;
-            }
-        }
 
-        return -1;
+	public static int getSlotFor(EntityPlayer player, ItemStack stack) {
+		for (int i = 0; i < player.inventory.mainInventory.size(); ++i) {
+			if (!player.inventory.mainInventory.get(i).isEmpty() && stackEqualExact(stack, player.inventory.mainInventory.get(i))) {
+				return i;
+			}
+		}
+
+		return -1;
 	}
-	
-    public static boolean stackEqualExact(ItemStack stack1, ItemStack stack2)
-    {
-        return stack1.getItem() == stack2.getItem() && (!stack1.getHasSubtypes() || stack1.getMetadata() == stack2.getMetadata()) && ItemStack.areItemStackTagsEqual(stack1, stack2);
-    }
-    
-    public static void boom(World worldIn, Entity entity) {
+
+	public static boolean stackEqualExact(ItemStack stack1, ItemStack stack2) {
+		return stack1.getItem() == stack2.getItem() && (!stack1.getHasSubtypes() || stack1.getMetadata() == stack2.getMetadata()) && ItemStack.areItemStackTagsEqual(stack1, stack2);
+	}
+
+	public static void boom(World worldIn, Entity entity) {
 		List<Entity> entityList = worldIn.getEntitiesWithinAABBExcludingEntity(entity, new AxisAlignedBB(entity.getPosition()).grow(32, 32, 32));
 		for (Entity entity1 : entityList) {
 			double dist = entity1.getDistanceToEntity(entity);

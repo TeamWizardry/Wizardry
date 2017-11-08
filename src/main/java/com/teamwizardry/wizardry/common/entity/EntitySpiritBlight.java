@@ -1,7 +1,6 @@
 package com.teamwizardry.wizardry.common.entity;
 
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
-import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpLine;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
@@ -114,34 +113,6 @@ public class EntitySpiritBlight extends EntityMob {
 				setPosition(randomize.x, randomize.y, randomize.z);
 
 				Vec3d origin = getPositionVector().addVector(0, getEyeHeight(), 0);
-				if (!true) {
-					ClientRunnable.run(new ClientRunnable() {
-						@Override
-						@SideOnly(Side.CLIENT)
-						public void runIfClient() {
-							ParticleBuilder glitter = new ParticleBuilder(30);
-							glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-							glitter.setAlphaFunction(new InterpFadeInOut(1f, 1f));
-							glitter.setColor(new Color(0xf404d4));
-
-							ParticleSpawner.spawn(glitter, world, new InterpLine(origin, getPositionVector().addVector(0, getEyeHeight(), 0)), 100, 0, (i, build) -> {
-								double radius = 0.1;
-								double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
-								double r = radius * RandUtil.nextFloat();
-								double x = r * MathHelper.cos((float) theta);
-								double z = r * MathHelper.sin((float) theta);
-
-								glitter.setLifetime(RandUtil.nextInt(10, 40));
-								glitter.setScaleFunction(new InterpScale(0, (float) RandUtil.nextDouble(3, 4)));
-								glitter.setPositionOffset(new Vec3d(x, RandUtil.nextDouble(0, 0.2), z));
-								if (RandUtil.nextInt(15) == 0)
-									glitter.addMotion(new Vec3d(RandUtil.nextDouble(-0.01, 0.01),
-											RandUtil.nextDouble(0, 0.03),
-											RandUtil.nextDouble(-0.01, 0.01)));
-							});
-						}
-					});
-				}
 			}
 		} else {
 			if (!isCollidedVertically) {

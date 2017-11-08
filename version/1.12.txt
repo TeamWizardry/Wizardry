@@ -1,3 +1,6 @@
+0.42
+Fix the same server crash bug again...
+
 0.41
 Fix crash when loaded on a server.
 Fixed bug with version checker and added link + changelog formatting
