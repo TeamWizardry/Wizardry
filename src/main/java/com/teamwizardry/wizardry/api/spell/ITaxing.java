@@ -27,11 +27,14 @@ public interface ITaxing {
 		if (caster == null) manager = new CapManager(data.getData(SpellData.DefaultKeys.CAPABILITY));
 		else manager = new CapManager(caster);
 
+		manager.setEntity(caster);
+
 		boolean fail = false;
 		if (manager.getMana() < manaCost) fail = true;
 
 		manager.removeMana(manaCost);
-		manager.addBurnout(burnoutCost);
+
+		manager.sync();
 
 		return !fail;
 	}

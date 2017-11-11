@@ -57,7 +57,7 @@ public class ModuleEffectPhase extends ModuleEffect {
 		Entity targetEntity = spell.getData(ENTITY_HIT);
 		Vec3d targetHit = spell.getData(TARGET_HIT);
 
-		double time = getModifier(spell, Attributes.DURATION, 10, 100) * 5;
+		double time = getModifier(spell, Attributes.DURATION, 10, 500);
 
 		if (!tax(this, spell)) return false;
 

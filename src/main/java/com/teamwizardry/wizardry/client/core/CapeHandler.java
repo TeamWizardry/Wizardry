@@ -7,7 +7,8 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.common.core.BaublesSupport;
+import com.teamwizardry.wizardry.api.item.BaublesSupport;
+import com.teamwizardry.wizardry.init.ModItems;
 import it.unimi.dsi.fastutil.longs.Long2BooleanMap;
 import it.unimi.dsi.fastutil.longs.Long2BooleanOpenHashMap;
 import net.minecraft.block.BlockLiquid;
@@ -122,7 +123,7 @@ public final class CapeHandler {
 		}
 
 		private boolean hasCape(EntityPlayer player) {
-			return !BaublesSupport.getCape(player).isEmpty();
+			return !BaublesSupport.getItem(player, ModItems.CAPE).isEmpty();
 		}
 
 		private void update(EntityPlayer player) {

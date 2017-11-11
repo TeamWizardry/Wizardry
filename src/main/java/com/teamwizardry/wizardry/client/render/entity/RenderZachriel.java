@@ -28,6 +28,6 @@ public class RenderZachriel extends RenderLiving<EntityZachriel> {
 	@Nonnull
 	@Override
 	protected ResourceLocation getEntityTexture(@Nonnull EntityZachriel entity) {
-		return SPIRIT_TEX;
+		return new ResourceLocation(Wizardry.MODID, "textures/capes/cape_elucent_.png");
 	}
 }

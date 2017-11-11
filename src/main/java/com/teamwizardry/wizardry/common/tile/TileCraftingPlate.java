@@ -142,10 +142,10 @@ public class TileCraftingPlate extends TileManaInteracter {
 		}
 
 		if (isCrafting) {
-			if (!new CapManager(cap).isManaEmpty()) {
-				craftingTimeLeft = Math.min(300, craftingTimeLeft++);
-				return;
-			}
+			//if (!new CapManager(cap).isManaEmpty()) {
+			//	craftingTimeLeft = Math.min(300, craftingTimeLeft++);
+			//	return;
+			//}
 			if (craftingTimeLeft > 0) craftingTimeLeft--;
 			else {
 				isCrafting = false;

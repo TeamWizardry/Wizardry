@@ -1,8 +1,6 @@
 package com.teamwizardry.wizardry.api.item;
 
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
-import com.teamwizardry.wizardry.api.capability.CapManager;
-import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 
@@ -49,21 +47,29 @@ public interface ICape {
 			//Minecraft.getMinecraft().player.sendChatMessage(time + " -- " + buffer + " -- " + owner + " -- " + thief);
 		}
 
-		CapManager manager = new CapManager(entityIn);
-		manager.addMana(manager.getMaxMana() / 1000);
-		manager.removeBurnout(manager.getMaxBurnout() / 1000);
-
-		if (manager.getMaxMana() < 100)
-			manager.setMaxMana(100);
-		if (manager.getMaxBurnout() < 100)
-			manager.setMaxBurnout(100);
-
-		if (!stack.isEmpty() && stack.getItem() == ModItems.CAPE) {
-			double x = ItemNBTHelper.getInt(stack, "time", 0) / 1000.0;
-			double buffer = (1 - (Math.exp(-x))) * 10000;
-			if (buffer < 100) return;
-			manager.setMaxMana(buffer);
-			manager.setMaxBurnout(buffer);
-		}
+		//CapManager manager = new CapManager(entityIn);
+		//if (entityIn instanceof EntityPlayer && ((EntityPlayer) entityIn).isCreative()) {
+		//	manager.setMana(100000);
+		//	manager.setMaxMana(100000);
+		//	manager.setBurnout(0);
+		//	manager.setMaxBurnout(100000);
+		//	return;
+		//}
+//
+		//manager.addMana(manager.getMaxMana() / 1000);
+		//manager.removeBurnout(manager.getMaxBurnout() / 1000);
+//
+		//if (manager.getMaxMana() < 100)
+		//	manager.setMaxMana(100);
+		//if (manager.getMaxBurnout() < 100)
+		//	manager.setMaxBurnout(100);
+//
+		//if (!stack.isEmpty() && stack.getItem() == ModItems.CAPE) {
+		//	double x = ItemNBTHelper.getInt(stack, "time", 0) / 1000.0;
+		//	double buffer = (1 - (Math.exp(-x))) * 10000;
+		//	if (buffer < 100) return;
+		//	manager.setMaxMana(buffer);
+		//	manager.setMaxBurnout(buffer);
+		//}
 	}
 }

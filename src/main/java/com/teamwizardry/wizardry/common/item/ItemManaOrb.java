@@ -1,16 +1,14 @@
 package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
+import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.capability.CustomWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
+import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.init.ModItems;
-import com.teamwizardry.wizardry.init.ModPotions;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
@@ -29,28 +27,6 @@ public class ItemManaOrb extends ItemMod {
 		super("mana_orb");
 	}
 
-	@Nonnull
-	@Override
-	public EnumAction getItemUseAction(ItemStack stack) {
-		return EnumAction.DRINK;
-	}
-
-	@Override
-	public int getMaxItemUseDuration(ItemStack stack) {
-		return 32;
-	}
-
-	@Override
-	@Nonnull
-	public ItemStack onItemUseFinish(@Nonnull ItemStack stack, World worldIn, EntityLivingBase entityLiving) {
-		if (entityLiving instanceof EntityPlayer && !((EntityPlayer) entityLiving).capabilities.isCreativeMode) {
-			stack.shrink(1);
-			((EntityPlayer) entityLiving).inventory.addItemStackToInventory(new ItemStack(ModItems.GLASS_ORB));
-		}
-		entityLiving.addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 0, true, false));
-		return stack;
-	}
-
 	@Nullable
 	@Override
 	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
@@ -60,7 +36,16 @@ public class ItemManaOrb extends ItemMod {
 	@Nonnull
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, @Nonnull EnumHand hand) {
-		player.setActiveHand(hand);
+		if (!BaublesSupport.getItem(player, ModItems.HALO).isEmpty()) {
+			ItemStack halo = BaublesSupport.getItem(player, ModItems.HALO);
+
+			CapManager haloManager = new CapManager(halo);
+			CapManager orbManager = new CapManager(player.getHeldItem(hand));
+
+			if (!haloManager.isManaFull()) haloManager.addMana(orbManager.getMana());
+
+			player.getHeldItem(hand).shrink(1);
+		}
 		return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
 	}
 }

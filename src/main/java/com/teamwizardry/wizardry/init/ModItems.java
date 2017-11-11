@@ -27,6 +27,7 @@ public class ModItems {
 	public static ItemJar JAR;
 	public static ItemUnicornHorn UNICORN_HORN;
 	public static Item CAPE;
+	public static Item HALO;
 
 	public static ItemMagicWand MAGIC_WAND;
 
@@ -55,5 +56,8 @@ public class ModItems {
 
 		if (Loader.isModLoaded("baubles")) CAPE = new ItemCapeBauble();
 		else CAPE = new ItemCapeChest();
+
+		if (Loader.isModLoaded("baubles")) HALO = new ItemHaloBauble();
+		else HALO = new ItemHaloHead();
 	}
 }

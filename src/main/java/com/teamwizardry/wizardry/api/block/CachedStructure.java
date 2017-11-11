@@ -76,7 +76,8 @@ public class CachedStructure extends Structure {
 							}
 						}
 
-						buffer.setTranslation(-info.pos.getX(), -info.pos.getY(), -info.pos.getZ());
+						buffer.setTranslation(0, 0, 0);
+						//buffer.setTranslation(-info.pos.getX(), -info.pos.getY(), -info.pos.getZ());
 					}
 
 					vboCaches.put(layer, ClientUtilMethods.createCacheArrayAndReset(buffer));
