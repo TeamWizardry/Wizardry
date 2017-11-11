@@ -29,9 +29,9 @@ import java.util.EnumMap;
 public class CachedStructure extends Structure {
 
 	@SideOnly(Side.CLIENT)
-	private HashMultimap<BlockRenderLayer, Template.BlockInfo> blocks;
+	public HashMultimap<BlockRenderLayer, Template.BlockInfo> blocks;
 	@SideOnly(Side.CLIENT)
-	private EnumMap<BlockRenderLayer, int[]> vboCaches;
+	public EnumMap<BlockRenderLayer, int[]> vboCaches;
 	private IStructure block;
 
 	public CachedStructure(@NotNull ResourceLocation loc) {

@@ -107,8 +107,8 @@ public class PotionVanish extends PotionBase {
 		// FIXME: 7/2/2017 FADE SHIT
 		float x = 0;//MathHelper.clamp(3 / time, 0, 1);
 
-		boolean iWalked = new Vec3d(player.posX, player.posY, player.posZ).distanceTo(new Vec3d(player.prevPosX, player.prevPosY, player.prevPosZ)) > 0.1;
-		boolean theyWalked = new Vec3d(event.getEntity().posX, event.getEntity().posY, event.getEntity().posZ).distanceTo(new Vec3d(event.getEntity().prevPosX, event.getEntity().prevPosY, event.getEntity().prevPosZ)) > 0.1;
+		boolean iWalked = new Vec3d(player.posX, player.posY, player.posZ).distanceTo(new Vec3d(player.prevPosX, player.prevPosY, player.prevPosZ)) > 0.15;
+		boolean theyWalked = new Vec3d(event.getEntity().posX, event.getEntity().posY, event.getEntity().posZ).distanceTo(new Vec3d(event.getEntity().prevPosX, event.getEntity().prevPosY, event.getEntity().prevPosZ)) > 0.15;
 
 		boolean amRenderingMyself = event.getEntity().getEntityId() == player.getEntityId();
 

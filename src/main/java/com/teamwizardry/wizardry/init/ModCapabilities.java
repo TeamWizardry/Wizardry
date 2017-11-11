@@ -8,6 +8,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 /**
@@ -41,5 +42,25 @@ public class ModCapabilities {
 			});
 			thread.start();
 		}
+	}
+
+	@SubscribeEvent
+	public void onPlayerStartTracking(PlayerEvent.StartTracking event) {
+		new CapManager(event.getTarget()).sync();
+	}
+
+	@SubscribeEvent
+	public void onPlayerLogin(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent event) {
+		new CapManager(event.player).sync();
+	}
+
+	@SubscribeEvent
+	public void onPlayerChangeDimension(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent event) {
+		new CapManager(event.player).sync();
+	}
+
+	@SubscribeEvent
+	public void onPlayerSpawn(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent event) {
+		new CapManager(event.player).sync();
 	}
 }

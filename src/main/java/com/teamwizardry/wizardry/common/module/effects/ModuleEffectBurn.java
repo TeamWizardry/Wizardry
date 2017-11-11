@@ -60,6 +60,7 @@ public class ModuleEffectBurn extends ModuleEffect {
 
 	@Override
 	public boolean run(@Nonnull SpellData spell) {
+		// FIXME: 11/11/2017
 		World world = spell.world;
 		Entity targetEntity = spell.getData(ENTITY_HIT);
 		BlockPos targetPos = spell.getData(BLOCK_HIT);

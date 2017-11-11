@@ -59,7 +59,7 @@ public final class CapeHandler {
 		EntityPlayer player = event.getEntityPlayer();
 		float delta = event.getPartialRenderTick();
 
-		boolean iWalked = new Vec3d(player.posX, player.posY, player.posZ).distanceTo(new Vec3d(player.prevPosX, player.prevPosY, player.prevPosZ)) > 0.1;
+		boolean iWalked = new Vec3d(player.posX, player.posY, player.posZ).distanceTo(new Vec3d(player.prevPosX, player.prevPosY, player.prevPosZ)) > 0.15;
 
 		if (!player.isInvisible() && ((player.getActivePotionEffect(ModPotions.VANISH) != null && iWalked) || player.getActivePotionEffect(ModPotions.VANISH) == null))
 			if (delta < 1) { // not rendering in inventory
