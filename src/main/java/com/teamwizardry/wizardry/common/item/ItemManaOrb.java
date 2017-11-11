@@ -42,9 +42,11 @@ public class ItemManaOrb extends ItemMod {
 			CapManager haloManager = new CapManager(halo);
 			CapManager orbManager = new CapManager(player.getHeldItem(hand));
 
-			if (!haloManager.isManaFull()) haloManager.addMana(orbManager.getMana());
+			if (!haloManager.isManaFull()) {
+				haloManager.addMana(orbManager.getMana());
 
-			player.getHeldItem(hand).shrink(1);
+				player.getHeldItem(hand).shrink(1);
+			}
 		}
 		return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
 	}
