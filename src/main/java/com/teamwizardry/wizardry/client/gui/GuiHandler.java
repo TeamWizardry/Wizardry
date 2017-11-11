@@ -19,6 +19,7 @@ public class GuiHandler implements IGuiHandler {
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
 		if (ID == 0) return new WorktableGui();
 		if (ID == 1) return new BookGui(player.inventory.getStackInSlot(x));
