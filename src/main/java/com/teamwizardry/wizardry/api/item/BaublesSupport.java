@@ -41,8 +41,8 @@ public final class BaublesSupport {
 		@Override
 		@Optional.Method(modid = "baubles")
 		public Iterable<ItemStack> get(EntityLivingBase entity) {
-			if (!(entity instanceof EntityPlayer)) return get(entity);
-			if (BaublesApi.getBaublesHandler((EntityPlayer) entity) == null) return get(entity);
+			if (!(entity instanceof EntityPlayer)) return entity.getArmorInventoryList();
+			if (BaublesApi.getBaublesHandler((EntityPlayer) entity) == null) return entity.getArmorInventoryList();
 
 			ImmutableList.Builder<ItemStack> stacks = ImmutableList.builder();
 			IBaublesItemHandler inv = BaublesApi.getBaublesHandler((EntityPlayer) entity);

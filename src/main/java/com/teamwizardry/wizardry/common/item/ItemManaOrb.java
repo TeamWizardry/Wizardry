@@ -46,8 +46,9 @@ public class ItemManaOrb extends ItemMod {
 				haloManager.addMana(orbManager.getMana());
 
 				player.getHeldItem(hand).shrink(1);
+				return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
 			}
 		}
-		return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+		return new ActionResult<>(EnumActionResult.PASS, player.getHeldItem(hand));
 	}
 }

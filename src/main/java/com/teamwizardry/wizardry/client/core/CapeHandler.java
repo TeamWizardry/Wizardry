@@ -9,6 +9,7 @@ import com.google.common.collect.Lists;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.init.ModItems;
+import com.teamwizardry.wizardry.init.ModPotions;
 import it.unimi.dsi.fastutil.longs.Long2BooleanMap;
 import it.unimi.dsi.fastutil.longs.Long2BooleanOpenHashMap;
 import net.minecraft.block.BlockLiquid;
@@ -25,6 +26,7 @@ import net.minecraft.item.ItemElytra;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.fluids.IFluidBlock;
@@ -38,22 +40,35 @@ import java.util.concurrent.TimeUnit;
 
 // TODO: fix cape while in vehicles
 public final class CapeHandler {
-	private CapeHandler() {}
+	private final LoadingCache<EntityPlayer, RenderCape> capes = CacheBuilder.newBuilder()
+			.weakKeys()
+			.expireAfterAccess(10, TimeUnit.SECONDS)
+			.ticker(new Ticker() {
+				@Override
+				public long read() {
+					return Minecraft.getSystemTime();
+				}
+			})
+			.build(CacheLoader.from(RenderCape::create));
 
-	private static final class Holder {
-		private static final CapeHandler INSTANCE = new CapeHandler();
+	private CapeHandler() {
 	}
 
-	private final LoadingCache<EntityPlayer, RenderCape> capes = CacheBuilder.newBuilder()
-		.weakKeys()
-		.expireAfterAccess(10, TimeUnit.SECONDS)
-		.ticker(new Ticker() {
-			@Override
-			public long read() {
-				return Minecraft.getSystemTime();
+	@SubscribeEvent
+	public void onPlayerRender(RenderPlayerEvent.Post event) {
+		EntityPlayer player = event.getEntityPlayer();
+		float delta = event.getPartialRenderTick();
+
+		boolean iWalked = new Vec3d(player.posX, player.posY, player.posZ).distanceTo(new Vec3d(player.prevPosX, player.prevPosY, player.prevPosZ)) > 0.1;
+
+		if (!player.isInvisible() && ((player.getActivePotionEffect(ModPotions.VANISH) != null && iWalked) || player.getActivePotionEffect(ModPotions.VANISH) == null))
+			if (delta < 1) { // not rendering in inventory
+				double x = -TileEntityRendererDispatcher.staticPlayerX;
+				double y = -TileEntityRendererDispatcher.staticPlayerY;
+				double z = -TileEntityRendererDispatcher.staticPlayerZ;
+				instance().getCape(player).render(player, x, y, z, delta);
 			}
-		})
-		.build(CacheLoader.from(RenderCape::create));
+	}
 
 	private RenderCape getCape(EntityPlayer player) {
 		return capes.getUnchecked(player);
@@ -66,16 +81,8 @@ public final class CapeHandler {
 		}
 	}
 
-	@SubscribeEvent
-	public void onPlayerRender(RenderPlayerEvent.Post event) {
-		EntityPlayer player = event.getEntityPlayer();
-		float delta = event.getPartialRenderTick();
-		if (delta < 1) { // not rendering in inventory
-			double x = -TileEntityRendererDispatcher.staticPlayerX;
-			double y = -TileEntityRendererDispatcher.staticPlayerY;
-			double z = -TileEntityRendererDispatcher.staticPlayerZ;
-			instance().getCape(player).render(player, x, y, z, delta);
-		}
+	private static final class Holder {
+		private static final CapeHandler INSTANCE = new CapeHandler();
 	}
 
 	public static CapeHandler instance() {
@@ -136,8 +143,8 @@ public final class CapeHandler {
 
 		private void updatePlayerPos(EntityPlayer player) {
 			double dist = (playerPosX - player.posX) * (playerPosX - player.posX) +
-				(playerPosY - player.posY) * (playerPosY - player.posY) +
-				(playerPosZ - player.posZ) * (playerPosZ - player.posZ);
+					(playerPosY - player.posY) * (playerPosY - player.posY) +
+					(playerPosZ - player.posZ) * (playerPosZ - player.posZ);
 			if (dist > PLAYER_SKIP_RANGE) {
 				double moveX = player.posX - playerPosX;
 				double moveY = player.posY - playerPosY;
@@ -227,21 +234,21 @@ public final class CapeHandler {
 				ny /= len;
 				nz /= len;
 				buf.pos(v00x, v00y, v00z)
-					.tex(v00.getU(), v00.getV())
-					.normal(nx, ny, nz)
-					.endVertex();
+						.tex(v00.getU(), v00.getV())
+						.normal(nx, ny, nz)
+						.endVertex();
 				buf.pos(v01x, v01y, v01z)
-					.tex(v01.getU(), v01.getV())
-					.normal(nx, ny, nz)
-					.endVertex();
+						.tex(v01.getU(), v01.getV())
+						.normal(nx, ny, nz)
+						.endVertex();
 				buf.pos(v11x, v11y, v11z)
-					.tex(v11.getU(), v11.getV())
-					.normal(nx, ny, nz)
-					.endVertex();
+						.tex(v11.getU(), v11.getV())
+						.normal(nx, ny, nz)
+						.endVertex();
 				buf.pos(v10x, v10y, v10z)
-					.tex(v10.getU(), v10.getV())
-					.normal(nx, ny, nz)
-					.endVertex();
+						.tex(v10.getU(), v10.getV())
+						.normal(nx, ny, nz)
+						.endVertex();
 			}
 			buf.setTranslation(0, 0, 0);
 			GlStateManager.color(1, 1, 1);
