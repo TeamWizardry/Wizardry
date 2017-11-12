@@ -1,13 +1,14 @@
 package com.teamwizardry.wizardry.client.render.entity;
 
+import javax.annotation.Nonnull;
+
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.common.entity.angel.EntityZachriel;
+import com.teamwizardry.wizardry.common.entity.angel.zachriel.EntityZachriel;
+
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
-
-import javax.annotation.Nonnull;
 
 /**
  * Created by Saad on 8/21/2016.

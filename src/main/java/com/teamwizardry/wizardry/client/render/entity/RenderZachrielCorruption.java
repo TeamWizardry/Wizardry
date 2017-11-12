@@ -1,22 +1,22 @@
 package com.teamwizardry.wizardry.client.render.entity;
 
-import com.teamwizardry.wizardry.common.entity.EntityZachrielCorruption;
-import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.renderer.entity.RenderLiving;
+import javax.annotation.Nullable;
+
+import com.teamwizardry.wizardry.common.entity.angel.zachriel.EntityCorruptionProjectile;
+
+import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
 
-import javax.annotation.Nullable;
+public class RenderZachrielCorruption extends Render<EntityCorruptionProjectile> {
 
-public class RenderZachrielCorruption extends RenderLiving<EntityZachrielCorruption> {
-
-	public RenderZachrielCorruption(RenderManager renderManager, ModelBase modelBase) {
-		super(renderManager, modelBase, 0.0f);
+	public RenderZachrielCorruption(RenderManager renderManager) {
+		super(renderManager);
 	}
 
 	@Nullable
 	@Override
-	protected ResourceLocation getEntityTexture(EntityZachrielCorruption entity) {
+	protected ResourceLocation getEntityTexture(EntityCorruptionProjectile entity) {
 		return null;
 	}
 }

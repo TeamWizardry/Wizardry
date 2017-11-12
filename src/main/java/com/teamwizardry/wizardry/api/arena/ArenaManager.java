@@ -3,7 +3,9 @@ package com.teamwizardry.wizardry.api.arena;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.librarianlib.features.saving.SaveInPlace;
 import com.teamwizardry.wizardry.common.entity.angel.EntityAngel;
-import com.teamwizardry.wizardry.common.entity.angel.EntityZachriel;
+import com.teamwizardry.wizardry.common.entity.angel.zachriel.EntityZachriel;
+import com.teamwizardry.wizardry.common.entity.angel.zachriel.ZachTimeManager;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.init.Blocks;

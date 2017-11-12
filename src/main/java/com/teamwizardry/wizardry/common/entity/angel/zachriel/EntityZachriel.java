@@ -1,13 +1,23 @@
-package com.teamwizardry.wizardry.common.entity.angel;
+package com.teamwizardry.wizardry.common.entity.angel.zachriel;
+
+import java.util.ArrayDeque;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.UUID;
+
+import javax.annotation.Nonnull;
+
+import org.jetbrains.annotations.NotNull;
 
 import com.google.gson.JsonObject;
 import com.teamwizardry.librarianlib.features.saving.AbstractSaveHandler;
 import com.teamwizardry.librarianlib.features.saving.SaveInPlace;
 import com.teamwizardry.wizardry.api.arena.Arena;
 import com.teamwizardry.wizardry.api.arena.ArenaManager;
-import com.teamwizardry.wizardry.api.arena.ZachTimeManager;
-import com.teamwizardry.wizardry.common.entity.EntityZachrielCorruption;
+import com.teamwizardry.wizardry.common.entity.angel.EntityAngel;
 import com.teamwizardry.wizardry.init.ModItems;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -18,10 +28,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nonnull;
-import java.util.*;
 
 /**
  * Created by LordSaad.
@@ -39,7 +45,7 @@ public class EntityZachriel extends EntityAngel {
 
 	@Override
 	public boolean attackEntityFrom(DamageSource source, float amount) {
-		if (world.isRemote) return false;
+		if (world.isRemote) return true;
 
 		ZachTimeManager manager = null;
 		for (ZachTimeManager manager1 : ArenaManager.INSTANCE.zachTimeManagers) {
@@ -101,21 +107,14 @@ public class EntityZachriel extends EntityAngel {
 		{
 			//if (!isBeingBattled()) return;
 
-			if (!world.isRemote) {
-				List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(this, new AxisAlignedBB(getPosition()).grow(2));
-				boolean shouldSpawnMoreCorruption = true;
-				if (!entityList.isEmpty())
-					for (Entity entity : entityList) {
-						if (entity instanceof EntityZachrielCorruption) {
-							shouldSpawnMoreCorruption = false;
-						}
-					}
-				if (shouldSpawnMoreCorruption) {
-					EntityZachrielCorruption corruption = new EntityZachrielCorruption(world);
-					corruption.setPosition(posX, posY, posZ);
+			if (!world.isRemote)
+			{
+				List<EntityCorruptionArea> corruptionList = world.getEntitiesWithinAABB(EntityCorruptionArea.class, new AxisAlignedBB(getPosition()).grow(2));
+				if (corruptionList.isEmpty())
+				{
+					EntityCorruptionArea corruption = new EntityCorruptionArea(world, posX, posY, posZ);
 					world.spawnEntity(corruption);
 				}
-
 			}
 		}
 	}
