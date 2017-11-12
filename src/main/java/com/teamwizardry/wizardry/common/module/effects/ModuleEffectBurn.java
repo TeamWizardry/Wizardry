@@ -60,7 +60,6 @@ public class ModuleEffectBurn extends ModuleEffect {
 
 	@Override
 	public boolean run(@Nonnull SpellData spell) {
-		// FIXME: 11/11/2017
 		World world = spell.world;
 		Entity targetEntity = spell.getData(ENTITY_HIT);
 		BlockPos targetPos = spell.getData(BLOCK_HIT);
@@ -85,7 +84,7 @@ public class ModuleEffectBurn extends ModuleEffect {
 						double dist = pos.getDistance(targetPos.getX(), targetPos.getY(), targetPos.getZ());
 						if (dist > strength) continue;
 						if (facing != null) {
-							if (!world.isAirBlock(pos.offset(facing))) return true;
+							if (!world.isAirBlock(pos.offset(facing))) continue;
 							BlockUtils.placeBlock(world, pos.offset(facing), Blocks.FIRE.getDefaultState(), caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null);
 							world.playSound(null, targetPos, ModSounds.FIRE, SoundCategory.NEUTRAL, 0.5f, RandUtil.nextFloat());
 						} else for (EnumFacing face : EnumFacing.VALUES) {

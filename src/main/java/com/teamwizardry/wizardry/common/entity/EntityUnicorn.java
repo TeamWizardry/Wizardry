@@ -72,10 +72,11 @@ public class EntityUnicorn extends EntityHorse {
 		super.onUpdate();
 
 		if (isAIDisabled()) return;
+		if (world.isRemote) return;
 
 		EntityLivingBase target = this.getAttackTarget();
 		if (target == null) {
-			this.setAttackTarget(world.getClosestPlayer(posX, posY, posZ, 50, false));
+			this.setAttackTarget(world.getNearestAttackablePlayer(this, 50, 50));
 		}
 
 		Vec3d sub = Vec3d.ZERO;
