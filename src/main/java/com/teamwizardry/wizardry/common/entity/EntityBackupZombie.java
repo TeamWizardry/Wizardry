@@ -117,6 +117,7 @@ public class EntityBackupZombie extends EntityMob {
 		super.onLivingUpdate();
 
 		if (world.isRemote) return;
+		if (isAIDisabled()) return;
 
 		if (ticksExisted >= getDataManager().get(TIMER)) {
 			world.removeEntity(this);

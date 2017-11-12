@@ -93,6 +93,7 @@ public class EntityFairy extends FlyingEntityMod {
 	public void onUpdate() {
 		super.onUpdate();
 		if (world.isRemote) return;
+		if (isAIDisabled()) return;
 
 		if (ambush) {
 			List<Entity> entities = world.getEntitiesInAABBexcluding(this, new AxisAlignedBB(getPosition()).grow(64, 64, 64), null);

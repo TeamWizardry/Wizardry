@@ -121,7 +121,7 @@ public class TileManaBatteryRenderer extends TileEntitySpecialRenderer<TileManaB
 		GlStateManager.disableBlend();
 		GlStateManager.popMatrix();
 
-		if (te.getBlockType() instanceof IStructure) {
+		if (te.getBlockType() instanceof IStructure && !((IStructure) te.getBlockType()).isStructureComplete(te.getWorld(), te.getPos())) {
 			int maxTime = 30000;
 			long diff = System.currentTimeMillis() - te.structureReveal;
 			if (diff <= maxTime) {

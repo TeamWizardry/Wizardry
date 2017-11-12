@@ -71,6 +71,8 @@ public class EntityUnicorn extends EntityHorse {
 	public void onUpdate() {
 		super.onUpdate();
 
+		if (isAIDisabled()) return;
+
 		EntityLivingBase target = this.getAttackTarget();
 		if (target == null) {
 			this.setAttackTarget(world.getClosestPlayer(posX, posY, posZ, 50, false));

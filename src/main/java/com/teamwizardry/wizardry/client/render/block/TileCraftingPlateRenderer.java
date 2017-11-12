@@ -29,7 +29,7 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
 
 	@Override
 	public void render(TileCraftingPlate te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-		if (te.getBlockType() instanceof IStructure) {
+		if (te.getBlockType() instanceof IStructure && !((IStructure) te.getBlockType()).isStructureComplete(te.getWorld(), te.getPos())) {
 			int maxTime = 30000;
 			long diff = System.currentTimeMillis() - te.structureReveal;
 			if (diff <= maxTime) {

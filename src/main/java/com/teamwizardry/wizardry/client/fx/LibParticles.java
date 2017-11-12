@@ -314,8 +314,8 @@ public class LibParticles {
 		glitter.setCollision(true);
 		glitter.enableMotionCalculation();
 		glitter.setColorFunction(new InterpColorHSV(ColorUtils.changeColorAlpha(color1, RandUtil.nextInt(50, 150)), ColorUtils.changeColorAlpha(color2, RandUtil.nextInt(50, 150))));
-		glitter.setAcceleration(new Vec3d(0, RandUtil.nextDouble(-0.04, -0.025), 0));
-		if (bounce) glitter.setCanBounce(true);
+		glitter.setAcceleration(new Vec3d(0, RandUtil.nextDouble(-0.03, -0.04), 0));
+		glitter.setCanBounce(true);
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), amount, 0, (i, build) -> {
 			double radius = RandUtil.nextDouble(1, 2);
 			double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();

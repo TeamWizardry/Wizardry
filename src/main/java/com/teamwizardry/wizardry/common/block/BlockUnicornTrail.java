@@ -2,8 +2,10 @@ package com.teamwizardry.wizardry.common.block;
 
 import com.teamwizardry.librarianlib.features.base.block.tile.BlockModContainer;
 import com.teamwizardry.wizardry.common.tile.TileUnicornTrail;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
@@ -22,13 +24,9 @@ public class BlockUnicornTrail extends BlockModContainer {
 
 	public BlockUnicornTrail() {
 		super("unicorn_trail", Material.GLASS);
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public boolean shouldSideBeRendered(IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, EnumFacing side) {
-		IBlockState iblockstate = world.getBlockState(pos.offset(side));
-		return state != iblockstate;
+		setHardness(1f);
+		setSoundType(SoundType.CLOTH);
+		setLightOpacity(0);
 	}
 
 	@NotNull
@@ -46,6 +44,32 @@ public class BlockUnicornTrail extends BlockModContainer {
 	@Override
 	public boolean isFullCube(IBlockState state) {
 		return false;
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public boolean shouldSideBeRendered(IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos, EnumFacing side) {
+		IBlockState iblockstate = world.getBlockState(pos.offset(side));
+		return state != iblockstate;
+	}
+
+	@Override
+	public boolean isOpaqueCube(IBlockState state) {
+		return false;
+	}
+
+	@Override
+	public void onFallenUpon(World worldIn, BlockPos pos, Entity entityIn, float fallDistance) {
+	}
+
+	@Override
+	public int quantityDroppedWithBonus(int fortune, Random random) {
+		return 0;
+	}
+
+	@Override
+	public int quantityDropped(IBlockState state, int fortune, Random random) {
+		return 0;
 	}
 
 	@Nullable

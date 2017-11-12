@@ -90,6 +90,7 @@ public class EntitySpiritWight extends EntityMob {
 	public void onUpdate() {
 		super.onUpdate();
 		if (world.isRemote) return;
+		if (isAIDisabled()) return;
 
 		if ((ticksExisted % RandUtil.nextInt(100, 200)) == 0)
 			playSound(ModSounds.HALLOWED_SPIRIT, RandUtil.nextFloat(), RandUtil.nextFloat());
