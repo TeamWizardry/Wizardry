@@ -1,9 +1,10 @@
-package com.teamwizardry.wizardry.api.arena;
+package com.teamwizardry.wizardry.common.entity.angel.zachriel;
 
 import com.google.common.collect.HashBiMap;
 import com.google.gson.*;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.common.entity.angel.EntityZachriel;
+import com.teamwizardry.wizardry.api.arena.Arena;
+import com.teamwizardry.wizardry.api.arena.ArenaManager;
 import com.teamwizardry.wizardry.proxy.CommonProxy;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -88,7 +89,7 @@ public class ZachTimeManager {
 			if (element.getKey().equalsIgnoreCase("palette")) continue;
 			String key = element.getKey();
 			if (key == null) continue;
-			if (NumberUtils.isNumber(key)) {
+			if (NumberUtils.isCreatable(key)) {
 				long posLong = Long.valueOf(key);
 				poses.add(BlockPos.fromLong(posLong));
 			}

@@ -48,7 +48,6 @@ public class TableModule {
 	private Sprite icon;
 	private Vec2d prevPos;
 
-	@SuppressWarnings({"unchecked", "rawtypes"})
 	public TableModule(WorktableGui table, ComponentSprite parent, Module module, boolean draggable, boolean benign) {
 		this.module = module;
 		icon = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/icons/" + module.getID() + ".png"));

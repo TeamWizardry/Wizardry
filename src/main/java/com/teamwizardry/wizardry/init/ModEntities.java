@@ -1,9 +1,29 @@
 package com.teamwizardry.wizardry.init;
 
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.client.render.entity.*;
-import com.teamwizardry.wizardry.common.entity.*;
-import com.teamwizardry.wizardry.common.entity.angel.EntityZachriel;
+import com.teamwizardry.wizardry.client.render.entity.ModelNull;
+import com.teamwizardry.wizardry.client.render.entity.ModelSpiritWight;
+import com.teamwizardry.wizardry.client.render.entity.ModelUnicorn;
+import com.teamwizardry.wizardry.client.render.entity.ModelZachriel;
+import com.teamwizardry.wizardry.client.render.entity.RenderFairy;
+import com.teamwizardry.wizardry.client.render.entity.RenderJumpPad;
+import com.teamwizardry.wizardry.client.render.entity.RenderSpellProjectile;
+import com.teamwizardry.wizardry.client.render.entity.RenderSpiritBlight;
+import com.teamwizardry.wizardry.client.render.entity.RenderSpiritWight;
+import com.teamwizardry.wizardry.client.render.entity.RenderSummonZombie;
+import com.teamwizardry.wizardry.client.render.entity.RenderUnicorn;
+import com.teamwizardry.wizardry.client.render.entity.RenderZachriel;
+import com.teamwizardry.wizardry.client.render.entity.RenderZachrielCorruption;
+import com.teamwizardry.wizardry.common.entity.EntityBackupZombie;
+import com.teamwizardry.wizardry.common.entity.EntityFairy;
+import com.teamwizardry.wizardry.common.entity.EntityJumpPad;
+import com.teamwizardry.wizardry.common.entity.EntitySpellProjectile;
+import com.teamwizardry.wizardry.common.entity.EntitySpiritBlight;
+import com.teamwizardry.wizardry.common.entity.EntitySpiritWight;
+import com.teamwizardry.wizardry.common.entity.EntityUnicorn;
+import com.teamwizardry.wizardry.common.entity.angel.zachriel.EntityCorruptionProjectile;
+import com.teamwizardry.wizardry.common.entity.angel.zachriel.EntityZachriel;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -25,7 +45,7 @@ public class ModEntities {
 		registerEntity(new ResourceLocation(Wizardry.MODID, "fairy"), EntityFairy.class, "fairy");
 		registerEntity(new ResourceLocation(Wizardry.MODID, "spell_projectile"), EntitySpellProjectile.class, "spell_projectile", 256, 1, true);
 		registerEntity(new ResourceLocation(Wizardry.MODID, "jump_pad"), EntityJumpPad.class, "jump_pad", 64, 1, false);
-		registerEntity(new ResourceLocation(Wizardry.MODID, "zachriel_corruption"), EntityZachrielCorruption.class, "zachriel_corruption", 64, 1, false);
+		registerEntity(new ResourceLocation(Wizardry.MODID, "zachriel_corruption"), EntityCorruptionProjectile.class, "zachriel_corruption", 64, 1, false);
 		registerEntity(new ResourceLocation(Wizardry.MODID, "unicorn"), EntityUnicorn.class, "unicorn");
 		registerEntity(new ResourceLocation(Wizardry.MODID, "summon_zombie"), EntityBackupZombie.class, "summon_zombie");
 	}
@@ -49,7 +69,7 @@ public class ModEntities {
 		RenderingRegistry.registerEntityRenderingHandler(EntityFairy.class, manager -> new RenderFairy(manager, new ModelNull()));
 		RenderingRegistry.registerEntityRenderingHandler(EntityUnicorn.class, manager -> new RenderUnicorn(manager, new ModelUnicorn()));
 		RenderingRegistry.registerEntityRenderingHandler(EntityJumpPad.class, manager -> new RenderJumpPad(manager, new ModelNull()));
-		RenderingRegistry.registerEntityRenderingHandler(EntityZachrielCorruption.class, manager -> new RenderZachrielCorruption(manager, new ModelNull()));
+		RenderingRegistry.registerEntityRenderingHandler(EntityCorruptionProjectile.class, manager -> new RenderZachrielCorruption(manager));
 		RenderingRegistry.registerEntityRenderingHandler(EntitySpellProjectile.class, RenderSpellProjectile::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityBackupZombie.class, RenderSummonZombie::new);
 	}
