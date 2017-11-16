@@ -1,6 +1,8 @@
 package com.teamwizardry.wizardry.common.network;
 
 import com.teamwizardry.librarianlib.core.LibrarianLib;
+import com.teamwizardry.librarianlib.features.animator.Animator;
+import com.teamwizardry.librarianlib.features.animator.animations.ScheduledEventAnimation;
 import com.teamwizardry.librarianlib.features.autoregister.PacketRegister;
 import com.teamwizardry.librarianlib.features.network.PacketBase;
 import com.teamwizardry.librarianlib.features.saving.Save;
@@ -32,14 +34,24 @@ public class PacketUpdateCaps extends PacketBase {
 
 	@Override
 	public void handle(@NotNull MessageContext ctx) {
-		EntityPlayer player = LibrarianLib.PROXY.getClientPlayer();
-		IWizardryCapability cap;
-		if (!BaublesSupport.getItem(player, ModItems.HALO).isEmpty()) {
-			cap = WizardryCapabilityProvider.getCap(BaublesSupport.getItem(player, ModItems.HALO));
-		} else {
-			cap = WizardryCapabilityProvider.getCap(player);
-		}
 
-		if (cap != null) cap.loadNBTData(tags);
+		ScheduledEventAnimation scheduledEventAnimation = new ScheduledEventAnimation(100, () -> {
+			EntityPlayer player = LibrarianLib.PROXY.getClientPlayer();
+			IWizardryCapability cap;
+
+			if (!BaublesSupport.getItem(player, ModItems.HALO).isEmpty()) {
+				cap = WizardryCapabilityProvider.getCap(BaublesSupport.getItem(player, ModItems.HALO));
+			} else {
+				cap = WizardryCapabilityProvider.getCap(player);
+			}
+
+			if (cap != null) {
+				cap.loadNBTData(tags);
+			}
+		});
+
+		Animator animator = new Animator();
+		animator.add(scheduledEventAnimation);
+
 	}
 }

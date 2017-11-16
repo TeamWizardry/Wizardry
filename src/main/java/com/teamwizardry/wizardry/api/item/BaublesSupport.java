@@ -50,7 +50,7 @@ public final class BaublesSupport {
 				for (int slot : type.getValidSlots()) {
 					stacks.add(inv.getStackInSlot(slot));
 				}
-			return stacks/*.addAll(super.get(entity))*/.build();
+			return stacks.build();
 		}
 	}
 }

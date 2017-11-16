@@ -35,6 +35,12 @@ public interface IExplodable {
 		for (EntityLivingBase e : entitys)
 			e.addPotionEffect(new PotionEffect(Potion.getPotionById(potions.get(rand.nextInt(potions.size()))), rand.nextInt(30) * 20, rand.nextInt(2) + 1));
 
-		LibParticles.FIZZING_EXPLOSION(entityIn.world, entityIn.getPositionVector());
+		ClientRunnable.run(new ClientRunnable() {
+			@Override
+			@SideOnly(Side.CLIENT)
+			public void runIfClient() {
+				LibParticles.FIZZING_EXPLOSION(entityIn.world, entityIn.getPositionVector());
+			}
+		});
 	}
 }

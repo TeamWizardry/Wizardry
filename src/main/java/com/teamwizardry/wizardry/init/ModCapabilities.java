@@ -7,8 +7,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 /**
@@ -20,7 +20,7 @@ public class ModCapabilities {
 		CapabilityManager.INSTANCE.register(IWizardryCapability.class, new WizardryCapabilityStorage(), DefaultWizardryCapability.class);
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void onAddCapabilities(AttachCapabilitiesEvent<Entity> e) {
 		if (e.getObject() instanceof EntityPlayer) {
 			WizardryCapabilityProvider cap = new WizardryCapabilityProvider(new DefaultWizardryCapability());
@@ -28,39 +28,29 @@ public class ModCapabilities {
 		}
 	}
 
-	@SubscribeEvent
-	public void worldJoin(EntityJoinWorldEvent event) {
-		if (event.getEntity() instanceof EntityPlayer) {
-
-			Thread thread = new Thread(() -> {
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				new CapManager(event.getEntity()).sync();
-			});
-			thread.start();
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public void onPlayerStartTracking(PlayerEvent.StartTracking event) {
+		if (!event.getTarget().world.isRemote) {
+			new CapManager(event.getTarget()).sync();
 		}
 	}
 
-	@SubscribeEvent
-	public void onPlayerStartTracking(PlayerEvent.StartTracking event) {
-		new CapManager(event.getTarget()).sync();
-	}
-
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void onPlayerLogin(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent event) {
-		new CapManager(event.player).sync();
+		if (!event.player.world.isRemote) {
+			new CapManager(event.player).sync();
+		}
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void onPlayerChangeDimension(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent event) {
-		new CapManager(event.player).sync();
+		if (!event.player.world.isRemote)
+			new CapManager(event.player).sync();
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void onPlayerSpawn(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent event) {
-		new CapManager(event.player).sync();
+		if (!event.player.world.isRemote)
+			new CapManager(event.player).sync();
 	}
 }

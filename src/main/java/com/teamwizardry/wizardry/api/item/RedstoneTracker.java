@@ -95,7 +95,8 @@ public class RedstoneTracker {
 					}
 					world.removeEntity(redstone);
 
-					PacketHandler.NETWORK.sendToAllAround(new PacketDevilDustFizzle(new Vec3d(position).addVector(0.5, 0.5, 0.5), cookTime), new NetworkRegistry.TargetPoint(world.provider.getDimension(), position.getX(), position.getY(), position.getZ(), 30));
+					if (position != null)
+						PacketHandler.NETWORK.sendToAllAround(new PacketDevilDustFizzle(new Vec3d(position).addVector(0.5, 0.5, 0.5), cookTime), new NetworkRegistry.TargetPoint(world.provider.getDimension(), position.getX(), position.getY(), position.getZ(), 30));
 				}
 				//if (redstone.isCollided) {
 				//	BlockPos fire = PosUtils.checkNeighbor(redstone.world, redstone.getPosition(), Blocks.FIRE);
