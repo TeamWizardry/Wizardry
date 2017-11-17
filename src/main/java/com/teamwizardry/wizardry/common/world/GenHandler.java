@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.world;
 
+import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import net.minecraft.util.math.BlockPos;
@@ -27,8 +28,8 @@ public class GenHandler implements IWorldGenerator {
 
 	@Override
 	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
-		if (chunkGenerator instanceof ChunkGeneratorOverworld) {
-			generateMana(world, random, chunkX, chunkZ);
-		}
+		if (ConfigValues.manaPoolRarity > 0)
+			if (chunkGenerator instanceof ChunkGeneratorOverworld)
+				generateMana(world, random, chunkX, chunkZ);
 	}
 }
