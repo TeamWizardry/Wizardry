@@ -24,8 +24,6 @@ public final class VersionChecker {
 	public static String updateMessage = null;
 	private static boolean triedToWarnPlayer = false;
 
-	private boolean warnedPlayerOfAlpha = false;
-
 	private VersionChecker() {
 		new ThreadVersionChecker();
 	}
@@ -33,14 +31,6 @@ public final class VersionChecker {
 	@SubscribeEvent
 	public void onTick(TickEvent.ClientTickEvent event) {
 		EntityPlayer player = Minecraft.getMinecraft().player;
-
-		if (doneChecking && Minecraft.getMinecraft().player != null && event.phase == TickEvent.Phase.END && !warnedPlayerOfAlpha) {
-			warnedPlayerOfAlpha = true;
-			player.sendMessage(new TextComponentString(TextFormatting.RED + "" + TextFormatting.BOLD + "WARNING! WIZARDRY IS IN EARLY ALPHA!!!"));
-			player.sendMessage(new TextComponentString(TextFormatting.RED + "The mod still lacks most of its content that's on its way."));
-			player.sendMessage(new TextComponentString(TextFormatting.RED + "Do NOT expect much from the mod in its current state and expect a lot of things to change!"));
-			player.sendMessage(new TextComponentString(TextFormatting.RED + "YOU HAVE BEEN WARNED"));
-		}
 
 		if (doneChecking && event.phase == TickEvent.Phase.END && Minecraft.getMinecraft().player != null && !triedToWarnPlayer) {
 			if (onlineVersion != null && !onlineVersion.isEmpty()) {
