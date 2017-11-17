@@ -1,16 +1,7 @@
-0.42
-Fix the same server crash bug again...
-
-0.41
-Fix crash when loaded on a server.
-Fixed bug with version checker and added link + changelog formatting
-Animated the book's bookmarks and redid their math completely
-Added a material list to the book's structures
-
-0.4.1
-The mana battery and crafting altar have been redone and simplified! You will need to rebuild your structures.
-The book renders structures now but doesn't display materials yet, sorry.
-For convenience: You can right-click your spell-bound book (codex) directly onto a crafting plate to instantly create a spell pearl in creative mode.
-The worktable now animates!
-To add modifiers to modules in the worktables, you can now `select` a module by clicking it (on the paper).
-Sorry for the delay. Have fun!
+0.5
+You no longer regenerate mana. You now need to wear a cheap halo or a real halo. (creative halo included too).
+You can fill your cheap halo with mana manually by right clicking mana orbs while wearing it. Real halos regenerate like normal.
+Fixed a lot of bugs.
+Fixed entities being messed up in the world when wizardry is installed.
+Fixed sided issues.
+Fixed a *LOT* of bugs.
