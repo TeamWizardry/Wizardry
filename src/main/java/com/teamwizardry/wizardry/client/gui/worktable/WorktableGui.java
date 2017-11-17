@@ -122,7 +122,8 @@ public class WorktableGui extends GuiBase {
 		});
 
 		save.BUS.hook(GuiComponentEvents.MouseClickEvent.class, (event) -> {
-			final long[] animStart = {System.currentTimeMillis()};
+
+			if (!Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) return;
 
 			HashSet<GuiComponent> heads = getHeads();
 			if (heads.isEmpty()) return;

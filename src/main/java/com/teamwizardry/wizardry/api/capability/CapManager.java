@@ -45,7 +45,7 @@ public final class CapManager {
 		cap = WizardryCapabilityProvider.getCap(world, pos, facing);
 	}
 
-	public void sync(boolean delay) {
+	public void sync() {
 		if (cap != null && entity != null) {
 			cap.dataChanged(entity);
 		}

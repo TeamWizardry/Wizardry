@@ -192,7 +192,9 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			@Nonnull
 			@Override
 			public NBTTagInt serialize(Entity object) {
-				return new NBTTagInt(object.getEntityId());
+				if (object != null)
+					return new NBTTagInt(object.getEntityId());
+				return new NBTTagInt(-1);
 			}
 
 			@Override

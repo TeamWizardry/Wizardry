@@ -3,13 +3,15 @@
     "modid": "wizardry",
     "name": "Wizardry",
     "description": "Delve into the creation of magical spells and wizardry",
-    "version": "${version}",
-    "mcversion": "${mcversion}",
+    "version": "${mod_version}",
+    "mcversion": "${mc_version}",
     "url": "",
     "updateUrl": "",
     "authorList": [
       "Demoniaque",
       "thecodewarrior",
+      "wiresegal",
+      "pau101",
       "murapix",
       "Mechwarrior99",
       "InsomniaKitten"

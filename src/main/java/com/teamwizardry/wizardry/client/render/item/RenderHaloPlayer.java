@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.client.render.item;
 
+import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpCircle;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
@@ -53,23 +54,35 @@ public class RenderHaloPlayer implements LayerRenderer<EntityPlayer> {
 
 			GlStateManager.popMatrix();
 		} else {
-			ParticleBuilder glitter = new ParticleBuilder(3);
-			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-			glitter.setAlphaFunction(new InterpFadeInOut(1f, 1f));
-			glitter.disableMotionCalculation();
-			glitter.disableRandom();
 
-			ParticleSpawner.spawn(glitter, player.world, new InterpCircle(player.getPositionVector().addVector(0, player.height + (player.isSneaking() ? 0.2 : 0.4), 0), new Vec3d(0, 1, 0), 0.3f, RandUtil.nextFloat(), RandUtil.nextFloat()), 10, 0, (aFloat, particleBuilder) -> {
-				if (RandUtil.nextInt(10) != 0)
-					if (halo.getItem() == ModItems.CREATIVE_HALO)
-						glitter.setColor(ColorUtils.changeColorAlpha(new Color(0xd600d2), RandUtil.nextInt(60, 100)));
-					else glitter.setColor(ColorUtils.changeColorAlpha(Color.YELLOW, RandUtil.nextInt(60, 100)));
-				else glitter.setColor(ColorUtils.changeColorAlpha(Color.WHITE, RandUtil.nextInt(60, 100)));
+			Vec3d playerOrigin = player.getPositionVector().addVector(0, player.height + (player.isSneaking() ? 0.2 : 0.4), 0);
+			InterpCircle circle = new InterpCircle(Vec3d.ZERO, new Vec3d(0, 1, 0), 0.3f, RandUtil.nextFloat(), RandUtil.nextFloat());
+
+			for (Vec3d origin : circle.list(10)) {
+				ParticleBuilder glitter = new ParticleBuilder(3);
+				glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 				glitter.setAlphaFunction(new InterpFadeInOut(1f, 1f));
-				glitter.setLifetime(10);
-				glitter.setScaleFunction(new InterpFadeInOut(0.5f, 0.5f));
-				glitter.setMotion(new Vec3d(player.motionX / 2.0, (player.motionY + (player.capabilities.isFlying ? 0 : 0.0784)) / 2.0, player.motionZ / 2.0));
-			});
+				glitter.disableMotionCalculation();
+				glitter.disableRandom();
+
+				ParticleSpawner.spawn(glitter, player.world, new StaticInterp<>(playerOrigin.add(origin)), 1, 0, (aFloat, particleBuilder) -> {
+					if (RandUtil.nextInt(10) != 0)
+						if (halo.getItem() == ModItems.CREATIVE_HALO)
+							glitter.setColor(ColorUtils.changeColorAlpha(new Color(0xd600d2), RandUtil.nextInt(60, 100)));
+						else glitter.setColor(ColorUtils.changeColorAlpha(Color.YELLOW, RandUtil.nextInt(60, 100)));
+					else glitter.setColor(ColorUtils.changeColorAlpha(Color.WHITE, RandUtil.nextInt(60, 100)));
+					glitter.setAlphaFunction(new InterpFadeInOut(1f, 1f));
+					glitter.setLifetime(10);
+					glitter.setScaleFunction(new InterpFadeInOut(0.5f, 0.5f));
+					//glitter.setMotion(new Vec3d(player.motionX / 2.0, (player.motionY + (player.capabilities.isFlying ? 0 : 0.0784)) / 2.0, player.motionZ / 2.0));
+
+					glitter.setTick(particle -> {
+						Vec3d newOrigin = player.getPositionVector().addVector(0, player.height + (player.isSneaking() ? 0.2 : 0.4), 0);
+						particle.setPos(newOrigin.add(origin));
+					});
+				});
+			}
+
 		}
 	}
 

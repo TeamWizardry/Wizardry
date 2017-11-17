@@ -38,20 +38,20 @@ public class ItemFakeHaloBauble extends ItemModBauble implements IFakeHalo, IHal
 	public void onEquippedOrLoadedIntoWorld(@NotNull ItemStack stack, @NotNull EntityLivingBase player) {
 		super.onEquippedOrLoadedIntoWorld(stack, player);
 		if (player.world.isRemote) return;
-		new CapManager(stack).setEntity(player).sync(false);
+		new CapManager(stack).setEntity(player).sync();
 	}
 
 	@Override
 	public void onEquipped(@NotNull ItemStack stack, @NotNull EntityLivingBase player) {
 		super.onEquipped(stack, player);
 		if (player.world.isRemote) return;
-		new CapManager(stack).setEntity(player).sync(false);
+		new CapManager(stack).setEntity(player).sync();
 	}
 
 	@Override
 	public void onUnequipped(ItemStack itemstack, EntityLivingBase player) {
 		if (player.world.isRemote) return;
-		new CapManager(itemstack).setEntity(player).sync(false);
+		new CapManager(itemstack).setEntity(player).sync();
 	}
 
 	@Nonnull

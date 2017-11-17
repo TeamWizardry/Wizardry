@@ -2,7 +2,6 @@ package com.teamwizardry.wizardry.api.spell;
 
 import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.spell.module.Module;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 
 /**
@@ -33,9 +32,8 @@ public interface ITaxing {
 		boolean fail = false;
 		if (manager.getMana() < manaCost) fail = true;
 
-		Minecraft.getMinecraft().player.sendChatMessage(manager.getMana() + " - " + (manager.getMana() - manaCost));
 		manager.removeMana(manaCost);
-		manager.sync(false);
+		manager.sync();
 
 		return !fail;
 	}
