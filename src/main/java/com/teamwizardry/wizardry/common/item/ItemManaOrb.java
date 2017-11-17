@@ -25,6 +25,7 @@ public class ItemManaOrb extends ItemMod {
 
 	public ItemManaOrb() {
 		super("mana_orb");
+		setMaxStackSize(1);
 	}
 
 	@Nullable
@@ -36,8 +37,8 @@ public class ItemManaOrb extends ItemMod {
 	@Nonnull
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, @Nonnull EnumHand hand) {
-		if (!BaublesSupport.getItem(player, ModItems.HALO).isEmpty()) {
-			ItemStack halo = BaublesSupport.getItem(player, ModItems.HALO);
+		if (!BaublesSupport.getItem(player, ModItems.FAKE_HALO).isEmpty()) {
+			ItemStack halo = BaublesSupport.getItem(player, ModItems.FAKE_HALO);
 
 			CapManager haloManager = new CapManager(halo);
 			CapManager orbManager = new CapManager(player.getHeldItem(hand));

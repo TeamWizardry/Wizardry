@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.api.capability;
 
+import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -47,6 +48,7 @@ public class WizardryCapabilityProvider implements ICapabilityProvider, INBTSeri
 
 	@Nullable
 	public static IWizardryCapability getCap(ItemStack stack) {
+		if (BaublesSupport.isBauble(stack)) return new BaubleWizardryCapability(stack);
 		return stack.getCapability(wizardryCapability, null);
 	}
 

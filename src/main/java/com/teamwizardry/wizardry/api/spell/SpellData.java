@@ -87,8 +87,8 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			addData(DefaultKeys.PITCH, entity.rotationPitch);
 			addData(DefaultKeys.LOOK, entity.getLook(0));
 
-			if (entity instanceof EntityPlayer && !BaublesSupport.getItem((EntityPlayer) entity, ModItems.HALO).isEmpty()) {
-				addData(DefaultKeys.CAPABILITY, WizardryCapabilityProvider.getCap(BaublesSupport.getItem((EntityPlayer) entity, ModItems.HALO)));
+			if (entity instanceof EntityPlayer && !BaublesSupport.getItem((EntityPlayer) entity, ModItems.FAKE_HALO, ModItems.REAL_HALO, ModItems.CREATIVE_HALO).isEmpty()) {
+				addData(DefaultKeys.CAPABILITY, WizardryCapabilityProvider.getCap(BaublesSupport.getItem((EntityPlayer) entity, ModItems.FAKE_HALO, ModItems.FAKE_HALO, ModItems.REAL_HALO, ModItems.CREATIVE_HALO)));
 			} else {
 				addData(DefaultKeys.CAPABILITY, WizardryCapabilityProvider.getCap(entity));
 			}

@@ -23,8 +23,8 @@ public final class CapManager {
 	public CapManager(@Nullable Entity entity) {
 		this.entity = entity;
 		if (entity != null) {
-			if (entity instanceof EntityLivingBase && !BaublesSupport.getItem((EntityLivingBase) entity, ModItems.HALO).isEmpty()) {
-				cap = WizardryCapabilityProvider.getCap(BaublesSupport.getItem((EntityLivingBase) entity, ModItems.HALO));
+			if (entity instanceof EntityLivingBase && !BaublesSupport.getItem((EntityLivingBase) entity, ModItems.FAKE_HALO, ModItems.CREATIVE_HALO, ModItems.REAL_HALO).isEmpty()) {
+				cap = WizardryCapabilityProvider.getCap(BaublesSupport.getItem((EntityLivingBase) entity, ModItems.FAKE_HALO, ModItems.CREATIVE_HALO, ModItems.REAL_HALO));
 			} else {
 				cap = WizardryCapabilityProvider.getCap(entity);
 			}
@@ -45,7 +45,7 @@ public final class CapManager {
 		cap = WizardryCapabilityProvider.getCap(world, pos, facing);
 	}
 
-	public void sync() {
+	public void sync(boolean delay) {
 		if (cap != null && entity != null) {
 			cap.dataChanged(entity);
 		}
@@ -53,6 +53,14 @@ public final class CapManager {
 
 	public CapManager setEntity(Entity entity) {
 		this.entity = entity;
+		if (entity != null) {
+			if (entity instanceof EntityLivingBase && !BaublesSupport.getItem((EntityLivingBase) entity, ModItems.FAKE_HALO, ModItems.CREATIVE_HALO, ModItems.REAL_HALO).isEmpty()) {
+				cap = WizardryCapabilityProvider.getCap(BaublesSupport.getItem((EntityLivingBase) entity, ModItems.FAKE_HALO, ModItems.CREATIVE_HALO, ModItems.REAL_HALO));
+			} else {
+				cap = WizardryCapabilityProvider.getCap(entity);
+			}
+		}
+
 		return this;
 	}
 

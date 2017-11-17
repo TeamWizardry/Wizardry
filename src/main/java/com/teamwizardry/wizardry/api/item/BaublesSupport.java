@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.api.item;
 
 import baubles.api.BaubleType;
 import baubles.api.BaublesApi;
+import baubles.api.IBauble;
 import baubles.api.cap.IBaublesItemHandler;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.EntityLivingBase;
@@ -23,8 +24,26 @@ public final class BaublesSupport {
 		return ItemStack.EMPTY;
 	}
 
+	public static ItemStack getItem(EntityLivingBase entity, Item... items) {
+		for (ItemStack stack : getArmor(entity)) {
+			for (Item item : items)
+				if (stack.getItem() == item) {
+					return stack;
+				}
+		}
+		return ItemStack.EMPTY;
+	}
+
+	public static boolean isBauble(ItemStack stack) {
+		return StackHolder.ACCESSOR.get(stack);
+	}
+
 	public static Iterable<ItemStack> getArmor(EntityLivingBase entity) {
 		return ArmorHolder.ACCESSOR.get(entity);
+	}
+
+	private static final class StackHolder {
+		private static final FallbackStackAccessor ACCESSOR = new StackAccessor();
 	}
 
 	private static final class ArmorHolder {
@@ -34,6 +53,12 @@ public final class BaublesSupport {
 	private static class FallbackArmorAccessor {
 		public Iterable<ItemStack> get(EntityLivingBase entity) {
 			return entity.getArmorInventoryList();
+		}
+	}
+
+	private static class FallbackStackAccessor {
+		public boolean get(ItemStack stack) {
+			return false;
 		}
 	}
 
@@ -51,6 +76,14 @@ public final class BaublesSupport {
 					stacks.add(inv.getStackInSlot(slot));
 				}
 			return stacks.build();
+		}
+	}
+
+	private static final class StackAccessor extends FallbackStackAccessor {
+		@Override
+		@Optional.Method(modid = "baubles")
+		public boolean get(ItemStack stack) {
+			return stack.getItem() instanceof IBauble;
 		}
 	}
 }

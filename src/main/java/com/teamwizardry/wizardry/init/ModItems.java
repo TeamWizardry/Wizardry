@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.init;
 
 import com.teamwizardry.wizardry.common.item.*;
+import com.teamwizardry.wizardry.common.item.halos.*;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.Loader;
 
@@ -27,7 +28,9 @@ public class ModItems {
 	public static ItemJar JAR;
 	public static ItemUnicornHorn UNICORN_HORN;
 	public static Item CAPE;
-	public static Item HALO;
+	public static Item FAKE_HALO;
+	public static Item REAL_HALO;
+	public static Item CREATIVE_HALO;
 
 	public static ItemMagicWand MAGIC_WAND;
 
@@ -54,10 +57,16 @@ public class ModItems {
 
 		WISDOM_STICK = new ItemWisdomStick();
 
-		if (Loader.isModLoaded("baubles")) CAPE = new ItemCapeBauble();
-		else CAPE = new ItemCapeChest();
-
-		if (Loader.isModLoaded("baubles")) HALO = new ItemHaloBauble();
-		else HALO = new ItemHaloHead();
+		if (Loader.isModLoaded("baubles")) {
+			CAPE = new ItemCapeBauble();
+			FAKE_HALO = new ItemFakeHaloBauble();
+			REAL_HALO = new ItemRealHaloBauble();
+			CREATIVE_HALO = new ItemCreativeHaloBauble();
+		} else {
+			CAPE = new ItemCapeChest();
+			FAKE_HALO = new ItemFakeHaloHead();
+			REAL_HALO = new ItemRealHaloHead();
+			CREATIVE_HALO = new ItemCreativeHaloHead();
+		}
 	}
 }
