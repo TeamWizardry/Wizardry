@@ -60,8 +60,8 @@ processResources {
 
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info', 'pack.mcmeta'
-        expand  'version': project.version,
-                'mcversion': project.minecraft.version
+        expand  'mod_version': project.version,
+                'mc_version': project.minecraft.version
     }
 
     from(sourceSets.main.resources.srcDirs) {
