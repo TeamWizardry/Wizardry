@@ -12,8 +12,8 @@ public class ConfigValues {
 	@ConfigProperty(category = "general", comment = "If enabled, will inform you of new updates to the mod.")
 	public static boolean versionCheckerEnabled = true;
 
-	@ConfigIntRange(min = 1, max = Integer.MAX_VALUE)
-	@ConfigProperty(category = "world", comment = "How rare the mana pool is in terms of 1 in X")
+	@ConfigIntRange(min = 0, max = Integer.MAX_VALUE)
+	@ConfigProperty(category = "world", comment = "How rare the mana pool is in terms of 1 in X. Set to 0 to disable generation")
 	public static int manaPoolRarity = 25;
 
 	@ConfigProperty(category = "world", comment = "If you have a dimension ID conflict with this mod and something else, change this number")
