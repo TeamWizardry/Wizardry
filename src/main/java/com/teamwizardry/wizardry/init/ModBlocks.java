@@ -41,6 +41,7 @@ public class ModBlocks {
 	public static BlockCraftingPlate CRAFTING_PLATE;
 	public static BlockMagiciansWorktable MAGICIANS_WORKTABLE;
 	public static BlockManaBattery MANA_BATTERY;
+	public static BlockCreativeManaBattery CREATIVE_MANA_BATTERY;
 	public static BlockPearlHolder PEARL_HOLDER;
 	public static BlockCloud CLOUD;
 	public static BlockManaMagnet MANA_MAGNET;
@@ -77,6 +78,7 @@ public class ModBlocks {
 		CRAFTING_PLATE = new BlockCraftingPlate();
 		MAGICIANS_WORKTABLE = new BlockMagiciansWorktable();
 		MANA_BATTERY = new BlockManaBattery();
+		CREATIVE_MANA_BATTERY = new BlockCreativeManaBattery();
 		PEARL_HOLDER = new BlockPearlHolder();
 		CLOUD = new BlockCloud();
 		NACRE = new BlockNacre();
@@ -105,6 +107,7 @@ public class ModBlocks {
 	public void registerModels(ModelRegistryEvent event) {
 		CRAFTING_PLATE.initModel();
 		MANA_BATTERY.initModel();
+		//CREATIVE_MANA_BATTERY.initModel();
 		PEARL_HOLDER.initModel();
 		JAR.initModel();
 		MANA_MAGNET.initModel();

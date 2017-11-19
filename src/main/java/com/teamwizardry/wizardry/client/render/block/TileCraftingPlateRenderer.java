@@ -29,49 +29,47 @@ public class TileCraftingPlateRenderer extends TileEntitySpecialRenderer<TileCra
 
 	@Override
 	public void render(TileCraftingPlate te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-		if (te.getBlockType() instanceof IStructure && !((IStructure) te.getBlockType()).isStructureComplete(te.getWorld(), te.getPos())) {
-			int maxTime = 30000;
-			long diff = System.currentTimeMillis() - te.structureReveal;
-			if (diff <= maxTime) {
-				float prog = 1 - ((float) diff / (float) maxTime);
+		if (te.revealStructure && te.getBlockType() instanceof IStructure && !((IStructure) te.getBlockType()).isStructureComplete(te.getWorld(), te.getPos())) {
 
-				IStructure structure = ((IStructure) te.getBlockType());
+			IStructure structure = ((IStructure) te.getBlockType());
 
-				GlStateManager.pushMatrix();
-				GlStateManager.enableAlpha();
-				GlStateManager.enableLighting();
-				GlStateManager.enableBlend();
-				GlStateManager.enableCull();
-				GlStateManager.disableDepth();
+			GlStateManager.pushMatrix();
+			GlStateManager.enableAlpha();
+			GlStateManager.enableLighting();
+			GlStateManager.enableBlend();
+			GlStateManager.enableCull();
+			GlStateManager.disableDepth();
+			GlStateManager.enableRescaleNormal();
+			GlStateManager.color(1, 1, 1);
+			GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 
-				GlStateManager.translate(x, y, z);
-				GlStateManager.translate(-structure.offsetToCenter().getX(), -structure.offsetToCenter().getY(), -structure.offsetToCenter().getZ());
-				Minecraft mc = Minecraft.getMinecraft();
-				Tessellator tes = Tessellator.getInstance();
-				BufferBuilder buffer = tes.getBuffer();
+			GlStateManager.translate(x, y, z);
+			GlStateManager.translate(-structure.offsetToCenter().getX(), -structure.offsetToCenter().getY(), -structure.offsetToCenter().getZ());
+			Minecraft mc = Minecraft.getMinecraft();
+			Tessellator tes = Tessellator.getInstance();
+			BufferBuilder buffer = tes.getBuffer();
 
-				CachedStructure cachedStructure = ((IStructure) te.getBlockType()).getStructure();
+			CachedStructure cachedStructure = ((IStructure) te.getBlockType()).getStructure();
 
-				mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+			mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
-				for (BlockRenderLayer layer : cachedStructure.blocks.keySet()) {
-					buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-					buffer.addVertexData(cachedStructure.vboCaches.get(layer));
+			for (BlockRenderLayer layer : cachedStructure.blocks.keySet()) {
+				buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+				buffer.addVertexData(cachedStructure.vboCaches.get(layer));
 
-					for (int i = 0; i < buffer.getVertexCount(); i++) {
-						int idx = buffer.getColorIndex(i + 1);
-						buffer.putColorRGBA(idx, 255, 255, 255, (int) (255 * prog));
-					}
-					tes.draw();
+				for (int i = 0; i < buffer.getVertexCount(); i++) {
+					int idx = buffer.getColorIndex(i + 1);
+					buffer.putColorRGBA(idx, 255, 255, 255, 150);
 				}
-
-				GlStateManager.disableAlpha();
-				GlStateManager.disableBlend();
-				GlStateManager.disableCull();
-				GlStateManager.enableDepth();
-				GlStateManager.popMatrix();
-				return;
+				tes.draw();
 			}
+
+			GlStateManager.disableAlpha();
+			GlStateManager.disableBlend();
+			GlStateManager.disableCull();
+			GlStateManager.enableDepth();
+			GlStateManager.popMatrix();
+			return;
 		}
 
 		CapManager manager = new CapManager(te.cap);

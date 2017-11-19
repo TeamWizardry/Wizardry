@@ -5,12 +5,14 @@ import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.librarianlib.features.sprite.Texture;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.capability.CapManager;
-
+import com.teamwizardry.wizardry.api.item.BaublesSupport;
+import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.Post;
@@ -33,6 +35,9 @@ public class HudEventHandler extends Gui {
 		int width = resolution.getScaledWidth();
 		int height = resolution.getScaledHeight();
 		EntityPlayer player = Minecraft.getMinecraft().player;
+
+		ItemStack stack = BaublesSupport.getItem(player, ModItems.FAKE_HALO, ModItems.CREATIVE_HALO, ModItems.REAL_HALO);
+		if (stack == null || stack.isEmpty()) return;
 
 		if (event.getType() == ElementType.EXPERIENCE) {
 

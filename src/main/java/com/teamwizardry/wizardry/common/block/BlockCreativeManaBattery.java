@@ -25,10 +25,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class BlockManaBattery extends BlockModContainer implements IStructure {
+public class BlockCreativeManaBattery extends BlockModContainer implements IStructure {
 
-	public BlockManaBattery() {
-		super("mana_battery", Material.GLASS);
+	public BlockCreativeManaBattery() {
+		super("creative_mana_battery", Material.GLASS);
 		setSoundType(SoundType.GLASS);
 	}
 

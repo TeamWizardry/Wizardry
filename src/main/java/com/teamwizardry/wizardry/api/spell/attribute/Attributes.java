@@ -10,14 +10,12 @@ public class Attributes {
 	public static final String RANGE = "modifier_extend_range";
 	public static final String AREA = "modifier_increase_aoe";
 	public static final String SPEED = "modifier_increase_speed";
-	
+
 	public static final String MANA = "modifier_mana_cost";
 	public static final String BURNOUT = "modifier_burnout_value";
-	
-	public static String getAttributeFromName(String name)
-	{
-		switch(name)
-		{
+
+	public static String getAttributeFromName(String name) {
+		switch (name) {
 			case "potency":
 				return POTENCY;
 			case "duration":

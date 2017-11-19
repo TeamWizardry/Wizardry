@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.api.spell;
 import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 
 /**
  * Created by LordSaad.
@@ -22,6 +23,12 @@ public interface ITaxing {
 		double burnoutCost = module.getBurnoutFill() * multiplier;
 
 		Entity caster = data.getData(SpellData.DefaultKeys.CASTER);
+
+		if (caster != null && caster instanceof EntityLivingBase) {
+			float reduction = module.getReductionMultiplier((EntityLivingBase) caster);
+			manaCost *= reduction;
+			burnoutCost *= reduction;
+		}
 
 		CapManager manager;
 		if (caster == null) manager = new CapManager(data.getData(SpellData.DefaultKeys.CAPABILITY));

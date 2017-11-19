@@ -1,10 +1,12 @@
 package com.teamwizardry.wizardry.api.spell.module;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.events.SpellCastEvent;
+import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.api.spell.ILingeringModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
@@ -12,8 +14,10 @@ import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.attribute.Operation;
 import com.teamwizardry.wizardry.common.core.SpellTicker;
 import com.teamwizardry.wizardry.common.network.PacketRenderSpell;
+import com.teamwizardry.wizardry.init.ModItems;
 import kotlin.Pair;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.MathHelper;
@@ -167,6 +171,16 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 
 	public final double getManaDrain() {
 		return attributes.getDouble(Attributes.MANA);
+	}
+
+	public final float getReductionMultiplier(EntityLivingBase caster) {
+		ItemStack stack = BaublesSupport.getItem(caster, ModItems.CAPE);
+		if (stack != null) {
+			float time = ItemNBTHelper.getInt(stack, "tick", 0);
+			// Max reduction = 0.25
+			return (float) MathHelper.clamp(1 - (time / 1000000.0), 1, 0.25);
+		}
+		return 1;
 	}
 
 	public final void setManaDrain(double manaDrain) {

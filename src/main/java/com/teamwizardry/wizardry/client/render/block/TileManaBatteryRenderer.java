@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.client.render.block;
 
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
+import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpCircle;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
@@ -13,6 +14,7 @@ import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
+import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.proxy.ClientProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -121,67 +123,81 @@ public class TileManaBatteryRenderer extends TileEntitySpecialRenderer<TileManaB
 		GlStateManager.disableBlend();
 		GlStateManager.popMatrix();
 
-		if (te.getBlockType() instanceof IStructure && !((IStructure) te.getBlockType()).isStructureComplete(te.getWorld(), te.getPos())) {
-			int maxTime = 30000;
-			long diff = System.currentTimeMillis() - te.structureReveal;
-			if (diff <= maxTime) {
-				float prog = 1 - ((float) diff / (float) maxTime);
+		if (te.revealStructure && te.getBlockType() instanceof IStructure && !((IStructure) te.getBlockType()).isStructureComplete(te.getWorld(), te.getPos())) {
 
-				IStructure structure = ((IStructure) te.getBlockType());
+			IStructure structure = ((IStructure) te.getBlockType());
 
-				GlStateManager.pushMatrix();
-				GlStateManager.enableAlpha();
-				GlStateManager.enableLighting();
-				GlStateManager.enableBlend();
-				GlStateManager.enableCull();
-				GlStateManager.disableDepth();
-				GlStateManager.enableRescaleNormal();
-				GlStateManager.color(1, 1, 1);
-				GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+			GlStateManager.pushMatrix();
+			GlStateManager.enableAlpha();
+			GlStateManager.enableLighting();
+			GlStateManager.enableBlend();
+			GlStateManager.enableCull();
+			GlStateManager.disableDepth();
+			GlStateManager.enableRescaleNormal();
+			GlStateManager.color(1, 1, 1);
+			GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 
-				GlStateManager.translate(x, y, z);
-				GlStateManager.translate(-structure.offsetToCenter().getX(), -structure.offsetToCenter().getY(), -structure.offsetToCenter().getZ());
-				Minecraft mc = Minecraft.getMinecraft();
-				Tessellator tes = Tessellator.getInstance();
-				BufferBuilder buffer = tes.getBuffer();
+			GlStateManager.translate(x, y, z);
+			GlStateManager.translate(-structure.offsetToCenter().getX(), -structure.offsetToCenter().getY(), -structure.offsetToCenter().getZ());
+			Minecraft mc = Minecraft.getMinecraft();
+			Tessellator tes = Tessellator.getInstance();
+			BufferBuilder buffer = tes.getBuffer();
 
-				CachedStructure cachedStructure = ((IStructure) te.getBlockType()).getStructure();
+			CachedStructure cachedStructure = ((IStructure) te.getBlockType()).getStructure();
 
-				mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+			mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
-				for (BlockRenderLayer layer : cachedStructure.blocks.keySet()) {
-					buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-					buffer.addVertexData(cachedStructure.vboCaches.get(layer));
+			for (BlockRenderLayer layer : cachedStructure.blocks.keySet()) {
+				buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+				buffer.addVertexData(cachedStructure.vboCaches.get(layer));
 
-					for (int i = 0; i < buffer.getVertexCount(); i++) {
-						int idx = buffer.getColorIndex(i + 1);
-						buffer.putColorRGBA(idx, 255, 255, 255, (int) (255 * prog));
-					}
-					tes.draw();
+				for (int i = 0; i < buffer.getVertexCount(); i++) {
+					int idx = buffer.getColorIndex(i + 1);
+					buffer.putColorRGBA(idx, 255, 255, 255, 150);
 				}
-
-				GlStateManager.disableAlpha();
-				GlStateManager.disableBlend();
-				GlStateManager.disableCull();
-				GlStateManager.enableDepth();
-				GlStateManager.popMatrix();
-				return;
+				tes.draw();
 			}
+
+			GlStateManager.disableAlpha();
+			GlStateManager.disableBlend();
+			GlStateManager.disableCull();
+			GlStateManager.enableDepth();
+			GlStateManager.popMatrix();
+			return;
 		}
 
-		if (RandUtil.nextInt(10) == 0) {
-			ParticleBuilder glitter = new ParticleBuilder(3);
-			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-			glitter.setColorFunction(new InterpColorHSV(ColorUtils.changeColorAlpha(Color.CYAN, RandUtil.nextInt(50, 150)), ColorUtils.changeColorAlpha(Color.BLUE, RandUtil.nextInt(50, 150))));
-			ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(te.getPos()).addVector(0.5, 0.5, 0.5)), RandUtil.nextInt(1, 3), 0, (aFloat, particleBuilder) -> {
-				glitter.setAlphaFunction(new InterpFadeInOut(1f, 1f));
-				glitter.setMotion(new Vec3d(
-						RandUtil.nextDouble(-0.05, 0.05),
-						RandUtil.nextDouble(-0.1, 0.1),
-						RandUtil.nextDouble(-0.05, 0.05)
-				));
-				glitter.setLifetime(RandUtil.nextInt(30));
-				glitter.setScale((float) RandUtil.nextDouble(3));
+		if (te.getBlockType() == ModBlocks.MANA_BATTERY) {
+			if (RandUtil.nextInt(10) == 0) {
+				ParticleBuilder glitter = new ParticleBuilder(3);
+				glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+				glitter.setColorFunction(new InterpColorHSV(ColorUtils.changeColorAlpha(Color.CYAN, RandUtil.nextInt(50, 150)), ColorUtils.changeColorAlpha(Color.BLUE, RandUtil.nextInt(50, 150))));
+				ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(te.getPos()).addVector(0.5, 0.5, 0.5)), RandUtil.nextInt(1, 3), 0, (aFloat, particleBuilder) -> {
+					glitter.setAlphaFunction(new InterpFadeInOut(1f, 1f));
+					glitter.setMotion(new Vec3d(
+							RandUtil.nextDouble(-0.05, 0.05),
+							RandUtil.nextDouble(-0.1, 0.1),
+							RandUtil.nextDouble(-0.05, 0.05)
+					));
+					glitter.setLifetime(RandUtil.nextInt(30));
+					glitter.setScale((float) RandUtil.nextDouble(3));
+				});
+			}
+		} else if (te.getBlockType() == ModBlocks.CREATIVE_MANA_BATTERY) {
+			double angle = te.getWorld().getTotalWorldTime() / 10.0;
+			double x1 = Math.cos((float) angle);
+			double y1 = Math.sin((float) angle);
+
+			ParticleBuilder builder = new ParticleBuilder(10);
+			builder.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+			builder.setCollision(true);
+			builder.disableRandom();
+			builder.disableMotionCalculation();
+
+			ParticleSpawner.spawn(builder, getWorld(), new InterpCircle(new Vec3d(te.getPos()).addVector(0.5, 0.5, 0.5), new Vec3d(x1, x1, y1), 1.5f), 20, 0, (aFloat, particleBuilder) -> {
+				particleBuilder.setScale(0.5f);
+				particleBuilder.setColor(new Color(0xd600d2));
+				particleBuilder.setAlphaFunction(new InterpFadeInOut(1, 1));
+				particleBuilder.setLifetime(RandUtil.nextInt(5, 10));
 			});
 		}
 	}

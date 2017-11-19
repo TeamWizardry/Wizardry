@@ -176,7 +176,7 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 			return true;
 		} else {
 			TileCraftingPlate plate = getTE(worldIn, pos);
-			plate.structureReveal = System.currentTimeMillis();
+			plate.revealStructure = !plate.revealStructure;
 			plate.markDirty();
 		}
 		return heldItem.isEmpty();

@@ -63,7 +63,7 @@ public class TileCraftingPlate extends TileManaInteracter {
 	public Random random = new Random(getPos().toLong());
 
 	@Save
-	public long structureReveal = System.currentTimeMillis();
+	public boolean revealStructure = false;
 
 	public static final HashSet<BlockPos> poses = new HashSet<>();
 
