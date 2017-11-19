@@ -98,14 +98,6 @@ public class RedstoneTracker {
 					if (position != null)
 						PacketHandler.NETWORK.sendToAllAround(new PacketDevilDustFizzle(new Vec3d(position).addVector(0.5, 0.5, 0.5), cookTime), new NetworkRegistry.TargetPoint(world.provider.getDimension(), position.getX(), position.getY(), position.getZ(), 30));
 				}
-				//if (redstone.isCollided) {
-				//	BlockPos fire = PosUtils.checkNeighbor(redstone.world, redstone.getPosition(), Blocks.FIRE);
-				//	BlockPos lava = PosUtils.checkNeighbor(redstone.world, redstone.getPosition(), Blocks.LAVA);
-
-				//	if (fire == null && lava == null) {
-
-				//	}
-				//}
 
 			} else if (!expired && position != null) {
 				if (--cookTime <= 0) {
@@ -118,10 +110,10 @@ public class RedstoneTracker {
 					devilDust.setEntityInvulnerable(true);
 					world.spawnEntity(devilDust);
 
-				} else {
+				} else if (world.getBlockState(position).getBlock() == Blocks.FIRE) {
 					if ((cookTime % 10) == 0)
 						world.playSound(null, position.getX(), position.getY(), position.getZ(), ModSounds.FRYING_SIZZLE, SoundCategory.BLOCKS, 0.7F, (float) RandUtil.nextDouble(0.8, 1.3));
-				}
+				} else expired = true;
 			}
 		}
 
