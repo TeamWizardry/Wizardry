@@ -20,7 +20,7 @@ public class ConfigValues {
 	public static int underworldID = 42;
 
 	@ConfigProperty(category = "world", comment = "The maximum possible distance required for 2 mana interacting blocks to link to each other")
-	public static int networkLinkDistance = 16;
+	public static int networkLinkDistance = 32;
 
 	@ConfigProperty(category = "items", comment = "The maximum limit a cape can give a player in terms of mana/burnout buffers")
 	public static int maxCapeCap = 5000;
