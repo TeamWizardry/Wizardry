@@ -56,6 +56,7 @@ public class ComponentStructureList extends GuiComponent {
 			ItemStack stack;
 			if (FluidRegistry.lookupFluidForBlock(nextBlock) != null) {
 				stack = FluidUtil.getFilledBucket(new FluidStack(FluidRegistry.lookupFluidForBlock(nextBlock), 1));
+				stack = new ItemStack(stack.getItem(), ingredients.get(nextBlock), stack.getMetadata(), stack.getTagCompound());
 			} else {
 				stack = new ItemStack(nextBlock, ingredients.get(nextBlock));
 			}

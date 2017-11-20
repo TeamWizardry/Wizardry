@@ -1,7 +1,10 @@
-0.5
-You no longer regenerate mana. You now need to wear a cheap halo or a real halo. (creative halo included too).
-You can fill your cheap halo with mana manually by right clicking mana orbs while wearing it. Real halos regenerate like normal.
-Fixed a lot of bugs.
-Fixed entities being messed up in the world when wizardry is installed.
-Fixed sided issues.
-Fixed a *LOT* of bugs.
+0.5.1
+Fixed devil dust animations + server crash + bug
+Removed swears from update messages
+Added creative mana battery
+Cape now reduces spell cost the longer it's worn (maximum 75% reduction)
+Stop rendering hud bars if halo isn't worn
+Fixed book not falling back to english if lang isn't en_us + fixes clickability bug
+Fixed fluids (mana liquid) displaying as one bucket in the structure ingredient list in book
+Added recipe for halos
+Added german translation
