@@ -1,13 +1,13 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "GGG",
-    "A  ",
-    "A  "
+    "AGA",
+    "G G",
+    "AGA"
   ],
   "key": {
     "A": {
-      "item": "minecraft:iron_ingot"
+      "item": "wizardry:mana_orb"
     },
     "G": {
       "item": "minecraft:gold_ingot"
