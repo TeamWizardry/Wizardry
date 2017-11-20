@@ -63,11 +63,9 @@ public class BookGui extends GuiBase {
 		base.add(componentLogo);
 
 		String langname = Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode().toLowerCase();
-		InputStream stream;
-		String path;
+		String path = "documentation/" + langname;
 
-		stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "documentation/" + langname + "/index.json");
-		path = "documentation/" + langname;
+		InputStream stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, path + "/index.json");
 		if (stream == null) {
 			stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "documentation/en_us/index.json");
 			path = "documentation/en_us";

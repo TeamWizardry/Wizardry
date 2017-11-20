@@ -3,8 +3,6 @@ package com.teamwizardry.wizardry.client.gui.book;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.gui.component.GuiComponent;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentText;
@@ -20,8 +18,6 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -31,10 +27,10 @@ public class ComponentContentPage extends GuiComponent {
 
 	@NotNull
 	private final BookGui bookGui;
-	private final String resource;
+	private final JsonObject resource;
 	private GuiComponent prevComps;
 
-	public ComponentContentPage(@NotNull BookGui bookGui, int posX, int posY, int width, int height, String resource) {
+	public ComponentContentPage(@NotNull BookGui bookGui, int posX, int posY, int width, int height, JsonObject resource) {
 		super(posX, posY, width, height);
 		this.bookGui = bookGui;
 		this.resource = resource;
@@ -62,20 +58,7 @@ public class ComponentContentPage extends GuiComponent {
 	private HashMap<Integer, GuiComponent> getContent() {
 		HashMap<Integer, GuiComponent> pages = new HashMap<>();
 
-		InputStream stream;
-		try {
-			stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, resource);
-		} catch (Throwable e) {
-			stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "documentation/en_us/index.json");
-		}
-
-		if (stream == null) return pages;
-		InputStreamReader reader = new InputStreamReader(stream);
-
-		JsonElement json = new JsonParser().parse(reader);
-		if (!json.isJsonObject()) return pages;
-
-		JsonObject object = json.getAsJsonObject();
+		JsonObject object = resource;
 		if (object.has("title") && object.has("type") && object.get("title").isJsonPrimitive() && object.get("type").isJsonPrimitive()) {
 
 			// TODO: String title = object.get("title").getAsString();

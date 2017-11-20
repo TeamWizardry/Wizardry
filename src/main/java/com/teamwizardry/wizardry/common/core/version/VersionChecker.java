@@ -45,10 +45,9 @@ public final class VersionChecker {
 					messages.add("(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧");
 					messages.add("before updating (◡‿◡✿) after updating (⊙ω⊙✿)");
 					messages.add("(☞ﾟ∀ﾟ)☞ you're outdated my dude");
-					messages.add("yo do ya got any of that changelog shit? シ");
 					messages.add("yo dawg we heard you like changelogs so we put changelogs in your changelogs so you can change while you log");
 					messages.add("OwO what's this?");
-					messages.add("(^з^)-☆ ~bug fixes and shit~");
+					messages.add("(^з^)-☆ ~bug fixes and stuff~");
 					messages.add("◔_◔ looks like you're out of date");
 					messages.add("ಠ~ಠ why aren't you up to date yet");
 					messages.add("GET IN THE UPDATE, SHINJI");

@@ -1,0 +1,100 @@
+tile.wizardry:crafting_plate.name=Fertigungsstelle
+tile.wizardry:magicians_worktable.name=Die Werkbank des Zauberers
+tile.wizardry:mana_battery.name=Mana Batterie
+tile.wizardry:nacre.name=Perlmutt Saft
+tile.wizardry:mana.name=Mana Saft
+tile.wizardry:cloud.name=Wolke
+tile.wizardry:jar_block.name=Glas
+tile.wizardry:pearl_holder.name=Perlenhalter
+tile.wizardry:nacre_block.name=Perlmuttblock
+tile.wizardry:nacre_block_brick.name=Perlmuttziegel
+tile.wizardry:mana_magnet.name=Mana Magnet
+tile.wizardry:torikki_grass.name=Torikki Graß
+
+entity.fairy.name=Elfe
+entity.spirit_wight.name=Spirit Wight
+entity.spirit_blight.name=Spirit Blight
+entity.unicorn.name=Einhorn
+entity.spell_projectile.name=Zauberstoß
+
+item.wizardry:book.name=Der Zauberer Kodex
+item.wizardry:ring.name=Goldener Ring
+item.wizardry:ring_pearl.name=Goldener Ring
+item.wizardry:devil_dust.name=Teufelsstaub
+item.wizardry:mana_pearl.name=Mana Perle
+item.wizardry:glass_pearl.name=Glaß Perle
+item.wizardry:nacre_pearl.name=Perlmutt Perle
+item.wizardry:quartz_pearl.name=Quartz Perle
+item.wizardry:debugger.name=Zauberstab der Kreativität
+item.wizardry:staff.name=Stab
+item.wizardry:staff_pearl.name=Stab mit einer Perle
+item.wizardry:fairy_dust.name=Elfenstaub
+item.wizardry:fairy_imbued_apple.name=In Elfenstaub getränkter Apfel
+item.wizardry:fairy_wings.name=Elfenflügel
+item.wizardry:unicorn_horn.name=Einhorn Horn
+item.wizardry:jar.name=Glaß
+item.wizardry:jar_fairy.name=Elfe in einem Glaß
+item.wizardry:jar_jam.name=Elfen Marmelade
+item.wizardry:syringe.name=Leere Ampulle
+item.wizardry:syringe_mana.name=ManaBooster Leicht™
+item.wizardry:syringe_steroid.name=ManaBooster Impfstoff Premium Plus™
+item.wizardry:mana_orb.name=Mana Kugel
+item.wizardry:glass_orb.name=Glaß Kugel
+item.wizardry:cape.name=Gewand
+item.wizardry:magic_wand.name=Zauberstab
+item.wizardry:syringe_blood.name=Blutampulle
+item.wizardry:light.name=Licht
+item.wizardry:halo_real.name=Heiligenschein
+item.wizardry:halo_fake.name=Falscher Heiligenschein
+item.wizardry:halo_creative.name= Kreativer Heiligenschein
+
+item.wizardry:wisdom_stick.name=Stock der Weisheit
+item.wizardry:wisdom_wood_door.name=Tür der Weisheit
+tile.wizardry:wisdom_wood_log.name=Holz der Weisheit
+tile.wizardry:wisdom_wood_planks.name=Holzbrett der Weisheit
+tile.wizardry:wisdom_wood_pigmented_planks.name=Gefärbte Holzbretter der Weisheit
+tile.wizardry:wisdom_wood_slab.name=Holzstufe der Weisheit
+tile.wizardry:wisdom_wood_stairs.name=Holztreppe der Weiheit
+tile.wizardry:wisdom_wood_trapdoor.name=Holzfalltür der Weisheit
+tile.wizardry:wisdom_wood_fence.name=Holzzaun der Weisheit
+tile.wizardry:wisdom_wood_fence_gate.name=Holzzauntor der Weisheit
+tile.wizardry:wisdom_wood.name=Wald der Weisheit
+
+advancement.wizardry.book=Du bist ein Zauberer, Harry
+advancement.wizardry.book.desc=Erstelle ein Buch um deinen Eid in die Magie zu stärken
+advancement.wizardry.manapool=Kein Manabecken
+advancement.wizardry.manapool.desc=Finde einen Manasee
+advancement.wizardry.devildust=Zucker und Gewürz
+advancement.wizardry.devildust.desc=Verbrenne ein Buch im Feuer um Teufelsstaub herzustellen
+advancement.wizardry.crunch=§oCRUNCH.§a
+advancement.wizardry.crunch.desc=Fiel direkt durch den Bedrock in die Hölle
+
+bookGui.physicsbook.defaulttitle=Physik Buch
+
+fluid.nacre_fluid=Perlmutt
+fluid.mana_fluid=Mana
+death.attack.wizardry.mana=%s starb an dunkler Magie
+death.attack.wizardry.crash=%s wurde zerstört
+death.attack.wizardry.crash.player=%s wurde zerberstet von %s
+
+subtitle.wizardry.glassbreak=Glaß zerbricht
+subtitle.wizardry.fizz=Staub zischt
+subtitle.wizardry.sizzle=Staub bruzzelt
+subtitle.wizardry.harp=Eine Harfe spielt
+subtitle.wizardry.bell=Glocken spielen
+subtitle.wizardry.bubbling=Flüssigkeit blubert
+subtitle.wizardry.spirit=Ein Geist flüstert
+
+potion.wizardry.crash=Absturz
+potion.wizardry.low_gravity=Feder
+potion.wizardry.nullify_gravity=Aufstieg
+potion.wizardry.null_movement=Hermetische Versiegelung
+potion.wizardry.phase=Geisterzustand
+potion.wizardry.slippery=Reibungslosigkeit
+potion.wizardry.steroid=Schnellgang
+potion.wizardry.time_slow=Abwicklung
+potion.wizardry.zach_corruption=Korruption
+
+item_group.wizardry=Zauberei
+
+wizardry.misc.module=Zauberspruch:

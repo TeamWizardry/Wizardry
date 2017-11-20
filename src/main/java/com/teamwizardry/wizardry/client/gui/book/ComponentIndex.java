@@ -103,6 +103,7 @@ public class ComponentIndex extends GuiComponent {
 				double height = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT;
 				ComponentText text = new ComponentText(plateHeight + 10, (int) (plateHeight / 2.0 + height / 2.0), ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.MIDDLE);
 				text.getText().setValue(indexItem.text);
+
 				text.getTransform().setScale(2);
 				text.BUS.hook(GuiComponentEvents.ComponentTickEvent.class, (event) -> {
 					text.getText().setValue((plate.getMouseOver() ? TextFormatting.ITALIC + " " : "") + indexItem.text);
@@ -144,13 +145,12 @@ public class ComponentIndex extends GuiComponent {
 	}
 
 	private Pair<String, GuiComponent> next(String newResource) {
-		InputStream stream;
-		try {
-			stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, newResource);
-		} catch (Throwable e) {
-			stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "documentation/en_us/index.json");
-		}
+		String langname = Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode().toLowerCase();
+		InputStream stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, newResource);
+		if (stream == null)
+			stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, newResource.replace(langname, "en_us"));
 		if (stream == null) return null;
+
 		InputStreamReader reader = new InputStreamReader(stream);
 		JsonElement json = new JsonParser().parse(reader);
 		if (!json.isJsonObject()) return null;
@@ -161,7 +161,7 @@ public class ComponentIndex extends GuiComponent {
 			if (type.equals("index")) {
 				return new Pair<>(type, getNewIndex(newResource));
 			} else if (type.equals("content")) {
-				return new Pair<>(type, new ComponentContentPage(bookGui, 225, -getPos().getYi() + pos.getYi() - 10, 200, 300, newResource));
+				return new Pair<>(type, new ComponentContentPage(bookGui, 225, -getPos().getYi() + pos.getYi() - 10, 200, 300, object));
 			}
 		}
 		return null;
@@ -170,18 +170,14 @@ public class ComponentIndex extends GuiComponent {
 	private ComponentIndex getNewIndex(String newResource) {
 		int newPlateHeight = 32;
 
-		String langname = Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode();
-		InputStream stream;
-		String path;
-		try {
-			stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, newResource);
-			path = "documentation/" + langname;
-		} catch (Throwable e) {
-			stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "documentation/en_us/index.json");
-			path = "documentation/en_us";
-		}
+		String langname = Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getLanguageCode().toLowerCase();
+		String path = "documentation/" + langname;
 
+		InputStream stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, newResource);
+		if (stream == null)
+			stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, newResource.replace(langname, "en_us"));
 		if (stream == null) return null;
+
 		InputStreamReader reader = new InputStreamReader(stream);
 		JsonElement json = new JsonParser().parse(reader);
 		if (!json.isJsonObject()) return null;
@@ -191,7 +187,6 @@ public class ComponentIndex extends GuiComponent {
 		if (object.has("title") && object.has("type") && object.get("title").isJsonPrimitive() && object.get("type").isJsonPrimitive()) {
 
 			// TODO: String title = object.getAsJsonPrimitive("title").getAsString();
-
 
 			if (object.has("content") && object.get("content").isJsonArray()) {
 				JsonArray array = object.get("content").getAsJsonArray();
