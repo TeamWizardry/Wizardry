@@ -12,6 +12,9 @@ public class ConfigValues {
 	@ConfigProperty(category = "general", comment = "If enabled, will inform you of new updates to the mod.")
 	public static boolean versionCheckerEnabled = true;
 
+	@ConfigProperty(category = "world", comment = "Whitelisted dimensions for mana pool generation.")
+	public static int[] manaPoolDimWhitelist = {0};
+	
 	@ConfigIntRange(min = 0, max = Integer.MAX_VALUE)
 	@ConfigProperty(category = "world", comment = "How rare the mana pool is in terms of 1 in X. Set to 0 to disable generation")
 	public static int manaPoolRarity = 25;

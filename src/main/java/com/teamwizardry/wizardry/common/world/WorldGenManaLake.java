@@ -15,11 +15,11 @@ import net.minecraft.world.biome.Biome;
 public class WorldGenManaLake {
 	private Block block;
 
-	public WorldGenManaLake(Block blockIn) {
-		this.block = blockIn;
+	public WorldGenManaLake(Block block) {
+		this.block = block;
 	}
 
-	public void generate(World worldIn, Random rand, BlockPos position) {
+	public void generate(World world, Random rand, BlockPos position) {
 		int chance = rand.nextInt(ConfigValues.manaPoolRarity);
 		if (chance == 0) {
 			if (position.getY() > 4) {
@@ -57,13 +57,13 @@ public class WorldGenManaLake {
 							boolean flag = !aboolean[(k1 * 16 + l2) * 8 + k] && (k1 < 15 && aboolean[((k1 + 1) * 16 + l2) * 8 + k] || k1 > 0 && aboolean[((k1 - 1) * 16 + l2) * 8 + k] || l2 < 15 && aboolean[(k1 * 16 + l2 + 1) * 8 + k] || l2 > 0 && aboolean[(k1 * 16 + (l2 - 1)) * 8 + k] || k < 7 && aboolean[(k1 * 16 + l2) * 8 + k + 1] || k > 0 && aboolean[(k1 * 16 + l2) * 8 + (k - 1)]);
 
 							if (flag) {
-								Material material = worldIn.getBlockState(position.add(k1, k, l2)).getMaterial();
+								Material material = world.getBlockState(position.add(k1, k, l2)).getMaterial();
 
 								if (k >= 4 && material.isLiquid()) {
 									return;
 								}
 
-								if (k < 4 && !material.isSolid() && worldIn.getBlockState(position.add(k1, k, l2)).getBlock() != this.block) {
+								if (k < 4 && !material.isSolid() && world.getBlockState(position.add(k1, k, l2)).getBlock() != this.block) {
 									return;
 								}
 							}
@@ -75,7 +75,7 @@ public class WorldGenManaLake {
 					for (int i3 = 0; i3 < 16; ++i3) {
 						for (int i4 = 0; i4 < 8; ++i4) {
 							if (aboolean[(l1 * 16 + i3) * 8 + i4]) {
-								worldIn.setBlockState(position.add(l1, i4, i3), i4 >= 4 ? Blocks.AIR.getDefaultState() : this.block.getDefaultState(), 2);
+								world.setBlockState(position.add(l1, i4, i3), i4 >= 4 ? Blocks.AIR.getDefaultState() : this.block.getDefaultState(), 2);
 							}
 						}
 					}
@@ -87,17 +87,17 @@ public class WorldGenManaLake {
 							if (aboolean[(i2 * 16 + j3) * 8 + j4]) {
 								BlockPos blockpos = position.add(i2, j4 - 1, j3);
 
-								if (worldIn.getBlockState(blockpos).getBlock() == Blocks.DIRT && worldIn.getLightFor(EnumSkyBlock.SKY, position.add(i2, j4, j3)) > 0) {
-									Biome biome = worldIn.getBiome(blockpos);
+								if (world.getBlockState(blockpos).getBlock() == Blocks.DIRT && world.getLightFor(EnumSkyBlock.SKY, position.add(i2, j4, j3)) > 0) {
+									Biome biome = world.getBiome(blockpos);
 
 									if (biome.topBlock.getBlock() == Blocks.MYCELIUM) {
-										worldIn.setBlockState(blockpos, Blocks.MYCELIUM.getDefaultState(), 2);
+										world.setBlockState(blockpos, Blocks.MYCELIUM.getDefaultState(), 2);
 									} else {
-										worldIn.setBlockState(blockpos, Blocks.GRASS.getDefaultState(), 2);
+										world.setBlockState(blockpos, Blocks.GRASS.getDefaultState(), 2);
 
 										if (rand.nextInt(3) == 0) {
 											WorldGeneratorWisdomTree tree = new WorldGeneratorWisdomTree(true);
-											tree.generate(worldIn, rand, blockpos);
+											tree.generate(world, rand, blockpos);
 										}
 									}
 								}

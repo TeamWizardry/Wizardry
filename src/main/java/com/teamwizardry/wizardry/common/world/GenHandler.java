@@ -1,16 +1,17 @@
 package com.teamwizardry.wizardry.common.world;
 
+import java.util.Random;
+import java.util.stream.IntStream;
+
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.init.ModBlocks;
+
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.gen.ChunkGeneratorOverworld;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraftforge.fml.common.IWorldGenerator;
-
-import java.util.Random;
 
 public class GenHandler implements IWorldGenerator {
 
@@ -19,7 +20,8 @@ public class GenHandler implements IWorldGenerator {
 			WorldGenManaLake gen = new WorldGenManaLake(ModBlocks.FLUID_MANA);
 			int xRand = x * 16 + rand.nextInt(16);
 			int zRand = z * 16 + rand.nextInt(16);
-			int yRand = world.getTopSolidOrLiquidBlock(new BlockPos(x, 0, z)).getY();
+			int yRand = world.getChunkFromChunkCoords(x, z).getLowestHeight();
+//			int yRand = world.getTopSolidOrLiquidBlock(new BlockPos(x, 0, z)).getY();
 			yRand = RandUtil.nextInt(yRand - 1, yRand);
 			BlockPos position = new BlockPos(xRand, yRand, zRand);
 			gen.generate(world, rand, position);
@@ -29,7 +31,7 @@ public class GenHandler implements IWorldGenerator {
 	@Override
 	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) {
 		if (ConfigValues.manaPoolRarity > 0)
-			if (chunkGenerator instanceof ChunkGeneratorOverworld)
+			if (IntStream.of(ConfigValues.manaPoolDimWhitelist).boxed().anyMatch(dim -> dim == world.provider.getDimension()))
 				generateMana(world, random, chunkX, chunkZ);
 	}
 }
