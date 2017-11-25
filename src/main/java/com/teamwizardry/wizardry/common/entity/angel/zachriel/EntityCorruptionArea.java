@@ -26,6 +26,7 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -73,9 +74,18 @@ public class EntityCorruptionArea extends EntityMod
 	}
 	
 	@Override
+	public void setPosition(double x, double y, double z)
+	{
+		while (y > 0 && world.isAirBlock(new BlockPos(x, y-1, z)))
+			y-=1;
+		super.setPosition(x, y, z);
+	}
+	
+	@Override
 	protected void entityInit()
 	{
 		this.getDataManager().register(RADIUS, Float.valueOf(3));
+		this.setSize(getRadius()*2, 1);
 	}
 	
 	public void setRadius(float radius)
@@ -84,6 +94,7 @@ public class EntityCorruptionArea extends EntityMod
 		this.setSize(radius * 2, 0.5F);
 		if (!world.isRemote)
 			this.getDataManager().set(RADIUS, radius);
+		this.setSize(radius*2, 1);
 	}
 	
 	public float getRadius()
@@ -96,6 +107,7 @@ public class EntityCorruptionArea extends EntityMod
 		super.onUpdate();
 		float radius = this.getRadius();
 		if (duration < 0) setDead();
+		duration--;
 		
 		ClientRunnable.run(new ClientRunnable()
 		{
@@ -103,7 +115,6 @@ public class EntityCorruptionArea extends EntityMod
 			@SideOnly(Side.CLIENT)
 			public void runIfClient()
 			{
-				// TODO: Glitter!!! (Might be the wrong glitter, I'm not sure)
 				ParticleBuilder glitter = new ParticleBuilder(RandUtil.nextInt(30, 50));
 				glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 				glitter.enableMotionCalculation();
