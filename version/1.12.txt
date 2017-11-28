@@ -1,10 +1,6 @@
-0.5.1
-Fixed devil dust animations + server crash + bug
-Removed swears from update messages
-Added creative mana battery
-Cape now reduces spell cost the longer it's worn (maximum 75% reduction)
-Stop rendering hud bars if halo isn't worn
-Fixed book not falling back to english if lang isn't en_us + fixes clickability bug
-Fixed fluids (mana liquid) displaying as one bucket in the structure ingredient list in book
-Added recipe for halos
-Added german translation
+0.6.0
+Reset the Wizardry config file, it has been modified!!!
+Mana Pools now correctly generate on the surface.
+Mana Pools now generate in Dimension 0, regardless of worldgen type.
+Added dimension whitelist for Mana Pool generation, set by default to [ 0 ].
+Increased Mana Pool spawn chance
