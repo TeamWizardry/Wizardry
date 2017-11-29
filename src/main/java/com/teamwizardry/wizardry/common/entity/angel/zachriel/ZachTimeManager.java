@@ -11,17 +11,13 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.play.server.SPacketPlayerPosLook;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jetbrains.annotations.NotNull;
@@ -228,7 +224,6 @@ public class ZachTimeManager {
 		return entityZachriel;
 	}
 
-	// TODO capability saving
 	public void setEntityToSnapshot(JsonObject snapshot, Entity entity) {
 		if (snapshot.has("pos") && snapshot.get("pos").isJsonObject()) {
 			JsonObject pos = snapshot.getAsJsonObject("pos");
@@ -258,33 +253,6 @@ public class ZachTimeManager {
 			((EntityPlayer) entity).getFoodStats().setFoodLevel(snapshot.getAsJsonPrimitive("hunger").getAsInt());
 			((EntityPlayer) entity).getFoodStats().setFoodSaturationLevel(snapshot.getAsJsonPrimitive("saturation").getAsInt());
 		}
-
-		if (entity instanceof EntityPlayer && snapshot.has("inventory") && snapshot.get("inventory").isJsonArray()) {
-			for (JsonElement element : snapshot.getAsJsonArray("inventory")) {
-				if (!element.isJsonObject()) continue;
-				JsonObject itemObject = element.getAsJsonObject();
-				if (itemObject.has("count")
-						&& itemObject.has("item")
-						&& itemObject.has("armor")
-						&& itemObject.has("damage")
-						&& itemObject.has("meta")
-						&& itemObject.has("slot")) {
-					Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemObject.getAsJsonPrimitive("item").getAsString()));
-					if (item == null) continue;
-					int count = itemObject.getAsJsonPrimitive("count").getAsInt();
-					int damage = itemObject.getAsJsonPrimitive("damage").getAsInt();
-					int slot = itemObject.getAsJsonPrimitive("slot").getAsInt();
-					int meta = itemObject.getAsJsonPrimitive("meta").getAsInt();
-					boolean armor = itemObject.getAsJsonPrimitive("armor").getAsBoolean();
-
-					ItemStack stack = new ItemStack(item, count, meta);
-					stack.setItemDamage(damage);
-
-					if (!armor) ((EntityPlayer) entity).inventory.mainInventory.add(slot, stack);
-					else ((EntityPlayer) entity).inventory.armorInventory.add(slot, stack);
-				}
-			}
-		}
 	}
 
 	public JsonObject snapshotEntity(Entity entity) {
@@ -307,38 +275,6 @@ public class ZachTimeManager {
 			object.addProperty("hunger", ((EntityPlayer) entity).getFoodStats().getFoodLevel());
 			object.addProperty("saturation", ((EntityPlayer) entity).getFoodStats().getSaturationLevel());
 		}
-
-		JsonArray inv = new JsonArray();
-		if (entity instanceof EntityPlayer)
-			for (ItemStack stack : ((EntityPlayer) entity).inventory.mainInventory) {
-				if (stack == null || stack.isEmpty() || stack.getItem().getRegistryName() == null) continue;
-
-				JsonObject itemObject = new JsonObject();
-				itemObject.addProperty("armor", false);
-				itemObject.addProperty("count", stack.getCount());
-				itemObject.addProperty("item", stack.getItem().getRegistryName().toString());
-				itemObject.addProperty("damage", stack.getItemDamage());
-				itemObject.addProperty("meta", stack.getMetadata());
-				itemObject.addProperty("slot", ((EntityPlayer) entity).inventory.getSlotFor(stack));
-
-				inv.add(itemObject);
-			}
-
-		if (entity instanceof EntityPlayer)
-			for (ItemStack stack : ((EntityPlayer) entity).inventory.armorInventory) {
-				if (stack == null || stack.isEmpty() || stack.getItem().getRegistryName() == null) continue;
-
-				JsonObject itemObject = new JsonObject();
-				itemObject.addProperty("armor", true);
-				itemObject.addProperty("count", stack.getCount());
-				itemObject.addProperty("item", stack.getItem().getRegistryName().toString());
-				itemObject.addProperty("damage", stack.getItemDamage());
-				itemObject.addProperty("meta", stack.getMetadata());
-				itemObject.addProperty("slot", ((EntityPlayer) entity).inventory.getSlotFor(stack));
-
-				inv.add(itemObject);
-			}
-		object.add("inventory", inv);
 		return object;
 	}
 

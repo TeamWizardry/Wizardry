@@ -29,11 +29,11 @@ public class ConfigValues {
 	public static int maxCapeCap = 5000;
 
 	@ConfigDoubleRange(min = 1, max = 2)
-	@ConfigProperty(category = "spells", comment = "The multiplier a spell gets for a perfect or ancient quality pearl. [1,2]\n" +
-			"This will be multiplied by the quality value of the pearl, which is 1.0 for perfect pearls and greater for ancient pearls.")
+	@ConfigProperty(category = "spells", comment = "The multiplier a spell gets for a perfect or ancient quality outputPearl. [1,2]\n" +
+			"This will be multiplied by the quality value of the outputPearl, which is 1.0 for perfect pearls and greater for ancient pearls.")
 	public static double perfectPearlMultiplier = 1.2;
 
 	@ConfigDoubleRange(min = 0.001, max = 0.1)
-	@ConfigProperty(category = "spells", comment = "The multiplier a spell gets, as a flat rate, for a depleted quality pearl. [0.001,0.1]")
+	@ConfigProperty(category = "spells", comment = "The multiplier a spell gets, as a flat rate, for a depleted quality outputPearl. [0.001,0.1]")
 	public static double damagedPearlMultiplier = 0.05;
 }

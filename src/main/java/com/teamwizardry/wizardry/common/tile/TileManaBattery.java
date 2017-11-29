@@ -37,7 +37,7 @@ public class TileManaBattery extends TileManaInteracter {
 
 
 	public TileManaBattery() {
-		super(1000000, 1000000);
+		super(1000, 1000);
 	}
 
 	@Nonnull
@@ -66,7 +66,7 @@ public class TileManaBattery extends TileManaInteracter {
 							tile.markDirty();
 							world.notifyBlockUpdate(target, world.getBlockState(target), world.getBlockState(target), 3);
 						}
-						((TilePearlHolder) tile).suckManaFrom(getWorld(), getPos(), getCap(), target, 10, false);
+						((TilePearlHolder) tile).suckManaFrom(getWorld(), getPos(), getCap(), target, 1, false);
 					}
 				}
 			}

@@ -51,6 +51,7 @@ public class ModBlocks {
 	public static BlockNacre NACRE;
 	public static BlockNacreBrick NACRE_BRICK;
 
+	public static BlockWisdomLeaves WISDOM_LEAVES;
 	public static BlockWisdomWoodLog WISDOM_WOOD_LOG;
 	public static BlockWisdomWoodPlanks WISDOM_WOOD_PLANKS;
 	public static BlockWisdomWoodSlab WISDOM_WOOD_SLAB;
@@ -87,6 +88,7 @@ public class ModBlocks {
 		LIGHT = new BlockLight();
 		JAR = new BlockJar();
 
+		WISDOM_LEAVES = new BlockWisdomLeaves();
 		WISDOM_WOOD_LOG = new BlockWisdomWoodLog();
 		WISDOM_WOOD_PLANKS = new BlockWisdomWoodPlanks();
 		WISDOM_WOOD_SLAB = new BlockWisdomWoodSlab();

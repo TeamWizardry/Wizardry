@@ -23,7 +23,7 @@ public class ModRecipes {
 		IForgeRegistry<IRecipe> r = evt.getRegistry();
 
 		r.register(new RecipeJam().setRegistryName(path("jam")));
-		r.register(new RecipePearl().setRegistryName(path("pearl")));
+		r.register(new RecipePearl().setRegistryName(path("outputPearl")));
 		r.register(new RecipeManaSyringe().setRegistryName(path("mana_syringe")));
 		r.register(new RecipeSteroidSyringe().setRegistryName(path("steroid_syringe")));
 

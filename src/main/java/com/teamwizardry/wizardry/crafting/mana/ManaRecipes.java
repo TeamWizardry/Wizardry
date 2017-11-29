@@ -1,9 +1,5 @@
 package com.teamwizardry.wizardry.crafting.mana;
 
-import java.awt.Color;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.item.IExplodable;
 import com.teamwizardry.wizardry.api.util.RandUtil;
@@ -13,7 +9,6 @@ import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
-
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -23,6 +18,10 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+
+import java.awt.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ManaRecipes
 {
@@ -37,7 +36,7 @@ public class ManaRecipes
 	{
 		public CodexCrafter()
 		{
-			super(CODEX, 200);
+			super(CODEX, 1000);
 		}
 
 		@Override
@@ -55,7 +54,7 @@ public class ManaRecipes
 				{
 					if (world.isRemote)
 						LibParticles.CRAFTING_ALTAR_IDLE(world, entity.getPositionVector());
-					if (currentDuration % 5 == 0)
+					if (currentDuration % 40 == 0)
 						world.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
 					return;
 				}
@@ -77,7 +76,7 @@ public class ManaRecipes
 					return;
 				}
 		}
-	};
+	}
 
 	public class NacreCrafter extends ManaCrafter
 	{
@@ -101,7 +100,7 @@ public class ManaRecipes
 				{
 					if (world.isRemote)
 						LibParticles.CRAFTING_ALTAR_IDLE(world, entity.getPositionVector());
-					if (currentDuration % 5 == 0)
+					if (currentDuration % 40 == 0)
 						world.playSound(null, entity.posX, entity.posY, entity.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
 					return;
 				}
@@ -143,7 +142,7 @@ public class ManaRecipes
 			super.tick(world, pos, items);
 			EntityItem item = items.stream().filter(entity -> entity.getItem().getItem() instanceof IExplodable).findFirst().orElse(null);
 			if (item != null)
-				if (currentDuration % 5 == 0)
+				if (currentDuration % 40 == 0)
 					world.playSound(null, item.posX, item.posY, item.posZ, ModSounds.BUBBLING, SoundCategory.AMBIENT, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
 		}
 

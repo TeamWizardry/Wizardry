@@ -16,7 +16,7 @@ import java.util.Random;
 public class WorldGeneratorWisdomTree extends WorldGenAbstractTree {
 
 	private static final IBlockState LOG = ModBlocks.WISDOM_WOOD_LOG.getDefaultState();
-	private static final IBlockState LEAF = Blocks.LEAVES.getDefaultState();
+	private static final IBlockState LEAF = ModBlocks.WISDOM_LEAVES.getDefaultState();
 
 	public WorldGeneratorWisdomTree(boolean notify) {
 		super(notify);

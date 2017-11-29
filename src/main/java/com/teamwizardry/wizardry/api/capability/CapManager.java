@@ -137,4 +137,9 @@ public final class CapManager {
 	public boolean isBurnoutEmpty() {
 		return cap != null && cap.getBurnout() <= 0;
 	}
+
+	@Nullable
+	public IWizardryCapability getCap() {
+		return cap;
+	}
 }

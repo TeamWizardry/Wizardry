@@ -59,6 +59,7 @@ tile.wizardry:wisdom_wood_trapdoor.name=Wisdom Wood Trapdoor
 tile.wizardry:wisdom_wood_fence.name=Wisdom Wood Fence
 tile.wizardry:wisdom_wood_fence_gate.name=Wisdom Wood Fence Gate
 tile.wizardry:wisdom_wood.name=Wisdom Wood
+tile.wizardry:wisdom_leaves.name=Wisdom Leaves
 
 advancement.wizardry.book=You're a Wizard, Harry
 advancement.wizardry.book.desc=Create a book to aid in your delve into magic

@@ -31,7 +31,7 @@ public class ItemFakeHaloBauble extends ItemModBauble implements IFakeHalo, IHal
 	@Nullable
 	@Override
 	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
-		return new WizardryCapabilityProvider(new BaubleWizardryCapability(stack, 50000, 50000, 0, 0));
+		return new WizardryCapabilityProvider(new BaubleWizardryCapability(stack, 500, 500, 0, 0));
 	}
 
 	@Override

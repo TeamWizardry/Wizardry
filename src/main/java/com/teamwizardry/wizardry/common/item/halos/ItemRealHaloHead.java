@@ -27,7 +27,7 @@ public class ItemRealHaloHead extends ItemModArmor implements IFakeHalo, IHalo {
 	@Nullable
 	@Override
 	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
-		return new WizardryCapabilityProvider(new CustomWizardryCapability(50000, 50000, 0, 0));
+		return new WizardryCapabilityProvider(new CustomWizardryCapability(2000, 2000, 0, 0));
 	}
 
 	@Override
