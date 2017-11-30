@@ -58,7 +58,9 @@ public class ClusterObject implements INBTSerializable<NBTTagCompound> {
 				return;
 			}
 
-			double t = (plate.craftingTimeLeft * 1.0) / plate.craftingTime;
+			ItemStack input = plate.inputPearl.getHandler().getStackInSlot(0);
+			CapManager manager1 = new CapManager(input);
+			double t = 1 - (manager1.getMana() / manager1.getMaxMana());
 
 			double radius = RandUtil.nextDouble(5, 8) * t;
 

@@ -16,12 +16,14 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.gen.structure.template.Template;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
 import java.util.EnumMap;
@@ -33,9 +35,11 @@ public class CachedStructure extends Structure {
 	@SideOnly(Side.CLIENT)
 	public EnumMap<BlockRenderLayer, int[]> vboCaches;
 	private IStructure block;
+	public ResourceLocation loc;
 
-	public CachedStructure(@NotNull ResourceLocation loc) {
+	public CachedStructure(@NotNull ResourceLocation loc, @Nullable IBlockAccess access) {
 		super(loc);
+		this.loc = loc;
 
 		ClientRunnable.run(new ClientRunnable() {
 			@SideOnly(Side.CLIENT)
@@ -59,11 +63,13 @@ public class CachedStructure extends Structure {
 					buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 
 					for (Template.BlockInfo info : blocks.get(layer)) {
+						IBlockAccess blockAccess = access == null ? getBlockAccess() : access;
+						//blockAccess = new VoidBlockAccess(info.blockState, blockAccess);
+
 						buffer.setTranslation(info.pos.getX(), info.pos.getY(), info.pos.getZ());
 
-						VoidBlockAccess blockAccess = new VoidBlockAccess(info.blockState, null);
 						if (info.blockState.getBlock() != ModBlocks.MANA_BATTERY) {
-							dispatcher.renderBlock(info.blockState, BlockPos.ORIGIN, blockAccess, buffer);
+							dispatcher.getBlockModelRenderer().renderModel(blockAccess, dispatcher.getModelForState(info.blockState), info.blockState, BlockPos.ORIGIN, buffer, true);
 						} else {
 							try {
 								IModel model = ModelLoaderRegistry.getModel(new ResourceLocation(Wizardry.MODID, "block/mana_crystal"));

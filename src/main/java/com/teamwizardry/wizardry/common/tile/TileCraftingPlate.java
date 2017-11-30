@@ -12,7 +12,6 @@ import com.teamwizardry.wizardry.api.block.TileManaInteracter;
 import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.item.EnumPearlType;
 import com.teamwizardry.wizardry.api.item.IInfusable;
-import com.teamwizardry.wizardry.api.render.CPItemRenderer;
 import com.teamwizardry.wizardry.api.render.ClusterObject;
 import com.teamwizardry.wizardry.api.spell.SpellBuilder;
 import com.teamwizardry.wizardry.api.spell.module.Module;
@@ -35,13 +34,11 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -61,23 +58,10 @@ public class TileCraftingPlate extends TileManaInteracter {
 	public ModuleInventory inputPearl = new ModuleInventory(1);
 	@com.teamwizardry.librarianlib.features.saving.Module
 	public ModuleInventory outputPearl = new ModuleInventory(1);
-
-	@Save
-	public int craftingTime = 300;
-	@Save
-	public int craftingTimeLeft = 300;
-	@Save
-	public int tick;
-	@Save
-	public boolean isCrafting;
-	@Save
-	@Nullable
-	public ItemStack output;
-	public List<ClusterObject> inventory = new ArrayList<>();
-	public Random random = new Random(getPos().toLong());
-
 	@Save
 	public boolean revealStructure = false;
+	public ClusterObject[] renders;
+	public Random random = new Random(getPos().toLong());
 
 	public static final HashSet<BlockPos> poses = new HashSet<>();
 
@@ -91,24 +75,30 @@ public class TileCraftingPlate extends TileManaInteracter {
 	public TileCraftingPlate() {
 		super(500, 500);
 		realInventory.setSides(EnumFacing.values());
+		renders = new ClusterObject[realInventory.getHandler().getSlots()];
 	}
 
 	@Override
 	public void readCustomNBT(NBTTagCompound compound) {
-		inventory.clear();
-		NBTTagList list = compound.getTagList("clusters", NBT.TAG_COMPOUND);
-		for (int i = 0; i < list.tagCount(); i++) {
-			ClusterObject cluster = new ClusterObject(this);
-			cluster.deserializeNBT(list.getCompoundTagAt(i));
-			inventory.add(cluster);
-		}
+		TileCraftingPlate plate = this;
+		ClientRunnable.run(new ClientRunnable() {
+			@Override
+			@SideOnly(Side.CLIENT)
+			public void runIfClient() {
+				for (int i = 0; i < renders.length; i++) {
+					renders[i] = null;
+				}
+				for (int i = 0; i < realInventory.getHandler().getSlots(); i++) {
+					ItemStack stack = realInventory.getHandler().getStackInSlot(i);
+					if (stack.isEmpty()) continue;
+					renders[i] = new ClusterObject(plate, stack, getWorld(), null);
+				}
+			}
+		});
 	}
 
 	@Override
 	public void writeCustomNBT(NBTTagCompound compound, boolean sync) {
-		NBTTagList list = new NBTTagList();
-		for (ClusterObject cluster : inventory) list.appendTag(cluster.serializeNBT());
-		compound.setTag("clusters", list);
 	}
 
 	@Override
@@ -123,9 +113,9 @@ public class TileCraftingPlate extends TileManaInteracter {
 				TileEntity tile = world.getTileEntity(target);
 				if (tile != null && tile instanceof TilePearlHolder) {
 					if (!((TilePearlHolder) tile).isBenign) {
-						((TilePearlHolder) tile).structurePos = getPos();
-						tile.markDirty();
-						world.notifyBlockUpdate(target, world.getBlockState(target), world.getBlockState(target), 3);
+						if (((TilePearlHolder) tile).structurePos == null || !((TilePearlHolder) tile).structurePos.equals(getPos())) {
+							((TilePearlHolder) tile).structurePos = getPos();
+						}
 						((TilePearlHolder) tile).suckManaFrom(getWorld(), getPos(), getCap(), target, 1, false);
 					}
 				}
@@ -151,6 +141,16 @@ public class TileCraftingPlate extends TileManaInteracter {
 				for (int i = 0; i < realInventory.getHandler().getSlots(); i++) {
 					if (realInventory.getHandler().getStackInSlot(i).isEmpty()) {
 						realInventory.getHandler().setStackInSlot(i, stack);
+
+						int finalI = i;
+						TileCraftingPlate plate = this;
+						ClientRunnable.run(new ClientRunnable() {
+							@Override
+							@SideOnly(Side.CLIENT)
+							public void runIfClient() {
+								renders[finalI] = new ClusterObject(plate, stack, getWorld(), null);
+							}
+						});
 						break;
 					}
 				}
@@ -187,6 +187,16 @@ public class TileCraftingPlate extends TileManaInteracter {
 				for (int i = 0; i < realInventory.getHandler().getSlots(); i++) {
 					realInventory.getHandler().setStackInSlot(i, ItemStack.EMPTY);
 				}
+
+				ClientRunnable.run(new ClientRunnable() {
+					@Override
+					@SideOnly(Side.CLIENT)
+					public void runIfClient() {
+						for (int i = 0; i < renders.length; i++) {
+							renders[i] = null;
+						}
+					}
+				});
 
 				markDirty();
 
