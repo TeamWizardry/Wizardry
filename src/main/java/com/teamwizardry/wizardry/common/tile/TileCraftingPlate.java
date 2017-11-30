@@ -5,6 +5,7 @@ import com.teamwizardry.librarianlib.features.base.block.tile.module.ModuleInven
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.saving.Save;
+import com.teamwizardry.librarianlib.features.tesr.TileRenderer;
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.TileManaInteracter;
@@ -16,6 +17,7 @@ import com.teamwizardry.wizardry.api.render.ClusterObject;
 import com.teamwizardry.wizardry.api.spell.SpellBuilder;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.client.render.block.TileCraftingPlateRenderer;
 import com.teamwizardry.wizardry.common.block.BlockCraftingPlate;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.init.ModItems;
@@ -50,6 +52,7 @@ import java.util.Random;
  * Created by Saad on 6/10/2016.
  */
 @TileRegister("crafting_plate")
+@TileRenderer(TileCraftingPlateRenderer.class)
 public class TileCraftingPlate extends TileManaInteracter {
 
 	@com.teamwizardry.librarianlib.features.saving.Module
@@ -58,8 +61,6 @@ public class TileCraftingPlate extends TileManaInteracter {
 	public ModuleInventory inputPearl = new ModuleInventory(1);
 	@com.teamwizardry.librarianlib.features.saving.Module
 	public ModuleInventory outputPearl = new ModuleInventory(1);
-
-	public CPItemRenderer[] renderer;
 
 	@Save
 	public int craftingTime = 300;
@@ -90,7 +91,6 @@ public class TileCraftingPlate extends TileManaInteracter {
 	public TileCraftingPlate() {
 		super(500, 500);
 		realInventory.setSides(EnumFacing.values());
-		renderer = new CPItemRenderer[realInventory.getHandler().getSlots()];
 	}
 
 	@Override
@@ -151,17 +151,6 @@ public class TileCraftingPlate extends TileManaInteracter {
 				for (int i = 0; i < realInventory.getHandler().getSlots(); i++) {
 					if (realInventory.getHandler().getStackInSlot(i).isEmpty()) {
 						realInventory.getHandler().setStackInSlot(i, stack);
-
-						int finalI = i;
-						ClientRunnable.run(new ClientRunnable() {
-							@Override
-							@SideOnly(Side.CLIENT)
-							public void runIfClient() {
-								CPItemRenderer cp = new CPItemRenderer(stack, Vec3d.ZERO);
-								cp.reset = true;
-								renderer[finalI] = cp;
-							}
-						});
 						break;
 					}
 				}
@@ -196,14 +185,6 @@ public class TileCraftingPlate extends TileManaInteracter {
 				inputPearl.getHandler().setStackInSlot(0, ItemStack.EMPTY);
 				outputPearl.getHandler().setStackInSlot(0, stack);
 				for (int i = 0; i < realInventory.getHandler().getSlots(); i++) {
-					int finalI = i;
-					ClientRunnable.run(new ClientRunnable() {
-						@Override
-						@SideOnly(Side.CLIENT)
-						public void runIfClient() {
-							renderer[finalI] = null;
-						}
-					});
 					realInventory.getHandler().setStackInSlot(i, ItemStack.EMPTY);
 				}
 

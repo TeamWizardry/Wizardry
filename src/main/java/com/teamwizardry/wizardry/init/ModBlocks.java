@@ -107,7 +107,6 @@ public class ModBlocks {
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void registerModels(ModelRegistryEvent event) {
-		CRAFTING_PLATE.initModel();
 		MANA_BATTERY.initModel();
 		//CREATIVE_MANA_BATTERY.initModel();
 		PEARL_HOLDER.initModel();

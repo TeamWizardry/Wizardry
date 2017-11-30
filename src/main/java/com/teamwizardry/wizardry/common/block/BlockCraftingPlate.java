@@ -64,11 +64,6 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 		setSoundType(SoundType.WOOD);
 	}
 
-	@SideOnly(Side.CLIENT)
-	public void initModel() {
-		ClientRegistry.bindTileEntitySpecialRenderer(TileCraftingPlate.class, new TileCraftingPlateRenderer());
-	}
-
 	@Override
 	public int getLightValue(@Nonnull IBlockState state, IBlockAccess world, @Nonnull BlockPos pos) {
 		return 15;
