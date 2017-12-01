@@ -16,6 +16,7 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -57,7 +58,7 @@ public class EntitySpellProjectile extends EntityMod {
 	public EntitySpellProjectile(World world, Module module, SpellData spell, double dist, double speed, double gravity) {
 		super(world);
 		this.dist = dist;
-		this.speed = speed;
+		this.speed = MathHelper.clamp(speed, 0.5, 20);
 		this.gravity = gravity;
 		setSize(0.3F, 0.3F);
 		isImmuneToFire = true;
