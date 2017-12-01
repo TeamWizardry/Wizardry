@@ -20,7 +20,7 @@ public class ConfigValues {
 	public static int manaPoolRarity = 25;
 
 	@ConfigProperty(category = "world", comment = "If you have a dimension ID conflict with this mod and something else, change this number")
-	public static int underworldID = 42;
+	public static int underworldID = 33;
 
 	@ConfigProperty(category = "world", comment = "Minimum fall distance required to have to smack a block into to teleport to the underworld (in blocks)")
 	public static int underworldFallDistance = 128;

@@ -61,6 +61,7 @@ public class TileCraftingPlate extends TileManaInteracter {
 	@Save
 	public boolean revealStructure = false;
 	public ClusterObject[] renders;
+	public Vec3d[] positions;
 	public Random random = new Random(getPos().toLong());
 
 	public static final HashSet<BlockPos> poses = new HashSet<>();
@@ -76,25 +77,11 @@ public class TileCraftingPlate extends TileManaInteracter {
 		super(500, 500);
 		realInventory.setSides(EnumFacing.values());
 		renders = new ClusterObject[realInventory.getHandler().getSlots()];
+		positions = new Vec3d[realInventory.getHandler().getSlots()];
 	}
 
 	@Override
 	public void readCustomNBT(NBTTagCompound compound) {
-		TileCraftingPlate plate = this;
-		ClientRunnable.run(new ClientRunnable() {
-			@Override
-			@SideOnly(Side.CLIENT)
-			public void runIfClient() {
-				for (int i = 0; i < renders.length; i++) {
-					renders[i] = null;
-				}
-				for (int i = 0; i < realInventory.getHandler().getSlots(); i++) {
-					ItemStack stack = realInventory.getHandler().getStackInSlot(i);
-					if (stack.isEmpty()) continue;
-					renders[i] = new ClusterObject(plate, stack, getWorld(), null);
-				}
-			}
-		});
 	}
 
 	@Override
@@ -143,13 +130,12 @@ public class TileCraftingPlate extends TileManaInteracter {
 						realInventory.getHandler().setStackInSlot(i, stack);
 
 						int finalI = i;
-						TileCraftingPlate plate = this;
 						ClientRunnable.run(new ClientRunnable() {
 							@Override
 							@SideOnly(Side.CLIENT)
 							public void runIfClient() {
-//								if(renderHandler != null)
-//									((TileCraftingPlateRenderer)renderHandler).spawnItem(finalI);
+								if (renderHandler != null)
+									((TileCraftingPlateRenderer) renderHandler).addAnimation(finalI, true);
 							}
 						});
 						break;
@@ -193,8 +179,8 @@ public class TileCraftingPlate extends TileManaInteracter {
 					@Override
 					@SideOnly(Side.CLIENT)
 					public void runIfClient() {
-						for (int i = 0; i < renders.length; i++) {
-							renders[i] = null;
+						for (int i = 0; i < positions.length; i++) {
+							positions[i] = Vec3d.ZERO;
 						}
 					}
 				});
