@@ -113,18 +113,19 @@ public class ComponentContentPage extends GuiComponent {
 									}
 
 								// split each line in json into pages if need be.
-								String chunks = wrapFormattedStringToWidth(s, 1850);
+								String chunks = wrapFormattedStringToWidth(s, 1750);
 
 								for (String chunk : chunks.split("/L")) {
 									ComponentText page = new ComponentText(0, 0, ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.TOP);
+									page.setSize(new Vec2d(getSize().getX() / 2.0, getSize().getY() / 2.0));
 									page.getTransform().setScale(2);
 									page.getUnicode().setValue(true);
 									page.getWrap().setValue(100);
 									page.getText().setValue(chunk);
 									pages.put(i++, page);
 
-									ComponentSprite lineBreak1 = new ComponentSprite(BookGui.LINE_BREAK, (int) (getSize().getX() / 2.0 - 177.0 / 2.0), -5, 177, 2);
-									ComponentSprite lineBreak2 = new ComponentSprite(BookGui.LINE_BREAK, (int) (getSize().getX() / 2.0 - 177.0 / 2.0), getSize().getYi() - 5, 177, 2);
+									ComponentSprite lineBreak1 = new ComponentSprite(BookGui.LINE_BREAK, (int) ((getSize().getX() / 2.0 - 177.0 / 2.0) / 2.0), (int) (-5 / 2.0), (int) (177 / 2.0), (int) (2 / 2.0));
+									ComponentSprite lineBreak2 = new ComponentSprite(BookGui.LINE_BREAK, (int) ((getSize().getX() / 2.0 - 177.0 / 2.0) / 2.0), (int) ((getSize().getYi() - 5) / 2.0), (int) (177 / 2.0), (int) (2 / 2.0));
 									page.add(lineBreak1, lineBreak2);
 								}
 

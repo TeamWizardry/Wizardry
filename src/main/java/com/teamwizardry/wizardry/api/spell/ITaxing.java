@@ -40,7 +40,7 @@ public interface ITaxing {
 		if (manager.getMana() < manaCost) fail = true;
 
 		manager.removeMana(manaCost);
-		manager.sync();
+		manager.addBurnout(burnoutCost);
 
 		return !fail;
 	}

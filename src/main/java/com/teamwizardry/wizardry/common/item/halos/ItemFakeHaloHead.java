@@ -2,18 +2,15 @@ package com.teamwizardry.wizardry.common.item.halos;
 
 import com.teamwizardry.librarianlib.features.base.item.ItemModArmor;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.capability.CustomWizardryCapability;
-import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
+import com.teamwizardry.wizardry.api.ConfigValues;
+import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.item.IFakeHalo;
 import com.teamwizardry.wizardry.api.item.IHalo;
 import net.minecraft.entity.Entity;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-
-import javax.annotation.Nullable;
+import net.minecraft.world.World;
 
 public class ItemFakeHaloHead extends ItemModArmor implements IFakeHalo, IHalo {
 
@@ -22,10 +19,17 @@ public class ItemFakeHaloHead extends ItemModArmor implements IFakeHalo, IHalo {
 		setMaxStackSize(1);
 	}
 
-	@Nullable
 	@Override
-	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
-		return new WizardryCapabilityProvider(new CustomWizardryCapability(500, 500, 0, 0));
+	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
+		CapManager manager = new CapManager(entityIn);
+		if (manager.getMaxMana() != ConfigValues.crudeHaloBufferSize)
+			manager.setMaxMana(ConfigValues.crudeHaloBufferSize);
+		if (manager.getMaxBurnout() != ConfigValues.crudeHaloBufferSize)
+			manager.setMaxBurnout(ConfigValues.crudeHaloBufferSize);
+		if (manager.getMana() > ConfigValues.crudeHaloBufferSize) manager.setMana(ConfigValues.crudeHaloBufferSize);
+		if (manager.getBurnout() > ConfigValues.crudeHaloBufferSize)
+			manager.setBurnout(ConfigValues.crudeHaloBufferSize);
+		if (!manager.isBurnoutEmpty()) manager.removeBurnout(manager.getMaxBurnout() * 0.001);
 	}
 
 	@Override

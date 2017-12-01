@@ -1,9 +1,6 @@
 package com.teamwizardry.wizardry.api.capability;
 
-import com.teamwizardry.wizardry.api.item.BaublesSupport;
-import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -23,11 +20,7 @@ public final class CapManager {
 	public CapManager(@Nullable Entity entity) {
 		this.entity = entity;
 		if (entity != null) {
-			if (entity instanceof EntityLivingBase && !BaublesSupport.getItem((EntityLivingBase) entity, ModItems.FAKE_HALO, ModItems.CREATIVE_HALO, ModItems.REAL_HALO).isEmpty()) {
-				cap = WizardryCapabilityProvider.getCap(BaublesSupport.getItem((EntityLivingBase) entity, ModItems.FAKE_HALO, ModItems.CREATIVE_HALO, ModItems.REAL_HALO));
-			} else {
-				cap = WizardryCapabilityProvider.getCap(entity);
-			}
+			cap = WizardryCapabilityProvider.getCap(entity);
 		}
 	}
 
@@ -54,11 +47,7 @@ public final class CapManager {
 	public CapManager setEntity(Entity entity) {
 		this.entity = entity;
 		if (entity != null) {
-			if (entity instanceof EntityLivingBase && !BaublesSupport.getItem((EntityLivingBase) entity, ModItems.FAKE_HALO, ModItems.CREATIVE_HALO, ModItems.REAL_HALO).isEmpty()) {
-				cap = WizardryCapabilityProvider.getCap(BaublesSupport.getItem((EntityLivingBase) entity, ModItems.FAKE_HALO, ModItems.CREATIVE_HALO, ModItems.REAL_HALO));
-			} else {
-				cap = WizardryCapabilityProvider.getCap(entity);
-			}
+			cap = WizardryCapabilityProvider.getCap(entity);
 		}
 
 		return this;

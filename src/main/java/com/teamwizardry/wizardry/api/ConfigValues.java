@@ -25,8 +25,14 @@ public class ConfigValues {
 	@ConfigProperty(category = "world", comment = "The maximum possible distance required for 2 mana interacting blocks to link to each other")
 	public static int networkLinkDistance = 64;
 
-	@ConfigProperty(category = "items", comment = "The maximum limit a cape can give a player in terms of mana/burnout buffers")
-	public static int maxCapeCap = 5000;
+	@ConfigProperty(category = "items", comment = "The buffer size a cheap halo will give to a player.")
+	public static double crudeHaloBufferSize = 500;
+
+	@ConfigProperty(category = "items", comment = "The buffer size a cheap halo will give to a player.")
+	public static double realHaloBufferSize = 2000;
+
+	@ConfigProperty(category = "items", comment = "The buffer size a cheap halo will give to a player.")
+	public static double creativeHaloBufferSize = 100000;
 
 	@ConfigDoubleRange(min = 1, max = 2)
 	@ConfigProperty(category = "spells", comment = "The multiplier a spell gets for a perfect or ancient quality outputPearl. [1,2]\n" +

@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
+import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.api.item.ICooldown;
 import com.teamwizardry.wizardry.api.item.INacreColorable;
 import com.teamwizardry.wizardry.api.spell.IBlockSelectable;
@@ -10,6 +11,7 @@ import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.common.module.shapes.ModuleShapeTouch;
+import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.util.ITooltipFlag;
@@ -50,6 +52,9 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 	public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer playerIn, EntityLivingBase target, EnumHand hand) {
 		if (isCoolingDown(stack)) return false;
 
+		if (BaublesSupport.getItem(playerIn, ModItems.CREATIVE_HALO, ModItems.FAKE_HALO, ModItems.REAL_HALO).isEmpty())
+			return false;
+
 		boolean touch = false;
 		for (Module module : SpellUtils.getModules(stack)) {
 			if (module instanceof ModuleShapeTouch) {
@@ -83,6 +88,9 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 			}
 		}
 		if (isCoolingDown(stack)) return EnumActionResult.PASS;
+
+		if (BaublesSupport.getItem(player, ModItems.CREATIVE_HALO, ModItems.FAKE_HALO, ModItems.REAL_HALO).isEmpty())
+			return EnumActionResult.PASS;
 
 		boolean isOnTouch = false;
 		for (Module module : SpellUtils.getModules(stack))
@@ -118,6 +126,9 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 
 		if (getItemUseAction(stack) == EnumAction.NONE) {
 			if (!isCoolingDown(stack)) {
+
+				if (BaublesSupport.getItem(player, ModItems.CREATIVE_HALO, ModItems.FAKE_HALO, ModItems.REAL_HALO).isEmpty())
+					return new ActionResult<>(EnumActionResult.FAIL, stack);
 
 				SpellData spell = new SpellData(world);
 				spell.processEntity(player, true);
@@ -172,6 +183,10 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 	@Override
 	public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
 		if (!(player instanceof EntityPlayer)) return;
+
+		if (BaublesSupport.getItem(player, ModItems.CREATIVE_HALO, ModItems.FAKE_HALO, ModItems.REAL_HALO).isEmpty())
+			return;
+
 		boolean isContinuous = false;
 		for (Module module : SpellUtils.getModules(stack))
 			if (module instanceof IContinuousModule) {

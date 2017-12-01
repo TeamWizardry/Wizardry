@@ -2,20 +2,16 @@ package com.teamwizardry.wizardry.common.item.halos;
 
 import baubles.api.BaubleType;
 import com.teamwizardry.librarianlib.features.base.item.ItemModBauble;
-import com.teamwizardry.wizardry.api.capability.BaubleWizardryCapability;
+import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.capability.CapManager;
-import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
 import com.teamwizardry.wizardry.api.item.IFakeHalo;
 import com.teamwizardry.wizardry.api.item.IHalo;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.common.Optional;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * Created by Saad on 8/30/2016.
@@ -28,38 +24,17 @@ public class ItemRealHaloBauble extends ItemModBauble implements IFakeHalo, IHal
 		setMaxStackSize(1);
 	}
 
-	@Nullable
-	@Override
-	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
-		return new WizardryCapabilityProvider(new BaubleWizardryCapability(stack, 2000, 2000, 0, 0));
-	}
-
 	@Override
 	public void onWornTick(@NotNull ItemStack stack, @NotNull EntityLivingBase player) {
-		if (player.world.isRemote) return;
-		CapManager manager = new CapManager(stack);
+		CapManager manager = new CapManager(player);
+		if (manager.getMaxMana() != ConfigValues.realHaloBufferSize)
+			manager.setMaxMana(ConfigValues.realHaloBufferSize);
+		if (manager.getMaxBurnout() != ConfigValues.realHaloBufferSize)
+			manager.setMaxBurnout(ConfigValues.realHaloBufferSize);
 		if (!manager.isManaFull()) manager.addMana(manager.getMaxMana() * 0.001);
 		if (!manager.isBurnoutEmpty()) manager.removeBurnout(manager.getMaxBurnout() * 0.001);
-	}
-
-	@Override
-	public void onEquippedOrLoadedIntoWorld(@NotNull ItemStack stack, @NotNull EntityLivingBase player) {
-		super.onEquippedOrLoadedIntoWorld(stack, player);
-		if (player.world.isRemote) return;
-		new CapManager(stack).setEntity(player).sync();
-	}
-
-	@Override
-	public void onEquipped(@NotNull ItemStack stack, @NotNull EntityLivingBase player) {
-		super.onEquipped(stack, player);
-		if (player.world.isRemote) return;
-		new CapManager(stack).setEntity(player).sync();
-	}
-
-	@Override
-	public void onUnequipped(ItemStack itemstack, EntityLivingBase player) {
-		if (player.world.isRemote) return;
-		new CapManager(itemstack).setEntity(player).sync();
+		if (manager.getMana() > ConfigValues.realHaloBufferSize) manager.setMana(ConfigValues.realHaloBufferSize);
+		if (manager.getBurnout() > ConfigValues.realHaloBufferSize) manager.setBurnout(ConfigValues.realHaloBufferSize);
 	}
 
 	@Nonnull
