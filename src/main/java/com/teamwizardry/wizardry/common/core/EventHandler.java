@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.core;
 
 import com.teamwizardry.librarianlib.features.methodhandles.MethodHandleHelper;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.Constants.MISC;
 import com.teamwizardry.wizardry.api.block.ManaTracker;
 import com.teamwizardry.wizardry.api.events.SpellCastEvent;
@@ -97,7 +98,7 @@ public class EventHandler {
 	public void onBedrockSmack(LivingFallEvent event) {
 		if (!(event.getEntity() instanceof EntityPlayer)) return;
 		if (event.getEntity().getEntityWorld().provider.getDimension() == 0) {
-			if (event.getEntity().fallDistance >= 250) {
+			if (event.getEntity().fallDistance >= ConfigValues.underworldFallDistance) {
 				BlockPos location = event.getEntity().getPosition();
 				BlockPos bedrock = PosUtils.checkNeighbor(event.getEntity().getEntityWorld(), location, Blocks.BEDROCK);
 				if (bedrock != null) {
@@ -115,7 +116,7 @@ public class EventHandler {
 	@SubscribeEvent
 	public void onFlyFall(PlayerFlyableFallEvent event) {
 		if (event.getEntityPlayer().getEntityWorld().provider.getDimension() == 0) {
-			if (event.getEntityPlayer().fallDistance >= 250) {
+			if (event.getEntityPlayer().fallDistance >= ConfigValues.underworldFallDistance) {
 				BlockPos location = event.getEntityPlayer().getPosition();
 				BlockPos bedrock = PosUtils.checkNeighbor(event.getEntity().getEntityWorld(), location, Blocks.BEDROCK);
 				if (bedrock != null) {
