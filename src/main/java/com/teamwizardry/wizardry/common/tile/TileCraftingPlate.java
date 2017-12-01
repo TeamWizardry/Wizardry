@@ -148,7 +148,8 @@ public class TileCraftingPlate extends TileManaInteracter {
 							@Override
 							@SideOnly(Side.CLIENT)
 							public void runIfClient() {
-								renders[finalI] = new ClusterObject(plate, stack, getWorld(), null);
+//								if(renderHandler != null)
+//									((TileCraftingPlateRenderer)renderHandler).spawnItem(finalI);
 							}
 						});
 						break;
