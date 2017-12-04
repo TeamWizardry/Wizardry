@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.proxy;
 
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.arena.ArenaManager;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.client.gui.GuiHandler;
@@ -38,8 +39,6 @@ public class CommonProxy {
 	}
 
 	public void preInit(FMLPreInitializationEvent event) {
-		int tempFix = 42;
-
 		directory = new File(event.getModConfigurationDirectory(), Wizardry.MODID);
 		if (!directory.exists()) if (!directory.mkdirs())
 			Wizardry.logger.fatal("    > SOMETHING WENT WRONG! Could not create config folder!!");
@@ -56,8 +55,8 @@ public class CommonProxy {
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(Wizardry.instance, new GuiHandler());
 
-		Wizardry.underWorld = DimensionType.register("underworld", "_dim", tempFix, WorldProviderUnderWorld.class, false);
-		DimensionManager.registerDimension(tempFix, Wizardry.underWorld);
+		Wizardry.underWorld = DimensionType.register("underworld", "_dim", ConfigValues.underworldID, WorldProviderUnderWorld.class, false);
+		DimensionManager.registerDimension(ConfigValues.underworldID, Wizardry.underWorld);
 
 		MinecraftForge.EVENT_BUS.register(ArenaManager.INSTANCE);
 		MinecraftForge.EVENT_BUS.register(new WorldProviderUnderWorld());

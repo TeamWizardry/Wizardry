@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.common.block;
 import com.teamwizardry.librarianlib.features.base.block.tile.BlockModContainer;
 import com.teamwizardry.wizardry.api.block.CachedStructure;
 import com.teamwizardry.wizardry.api.block.IStructure;
-import com.teamwizardry.wizardry.client.render.block.TileManaBatteryRenderer;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
 import com.teamwizardry.wizardry.init.ModStructures;
 import net.minecraft.block.SoundType;
@@ -18,9 +17,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -32,11 +28,6 @@ public class BlockManaBattery extends BlockModContainer implements IStructure {
 		setSoundType(SoundType.GLASS);
 	}
 
-	@SideOnly(Side.CLIENT)
-	public void initModel() {
-		ClientRegistry.bindTileEntitySpecialRenderer(TileManaBattery.class, new TileManaBatteryRenderer());
-	}
-
 	@Nullable
 	@Override
 	public TileEntity createTileEntity(World world, IBlockState iBlockState) {
@@ -45,13 +36,12 @@ public class BlockManaBattery extends BlockModContainer implements IStructure {
 
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-		TileEntity tile = worldIn.getTileEntity(pos);
-		if (tile == null || !(tile instanceof TileManaBattery)) return false;
-		else {
-			((TileManaBattery) tile).revealStructure = !((TileManaBattery) tile).revealStructure;
-			tile.markDirty();
-			return true;
-		}
+		TileManaBattery tile = (TileManaBattery) worldIn.getTileEntity(pos);
+		if (tile == null) return false;
+
+		tile.revealStructure = !tile.revealStructure;
+		tile.markDirty();
+		return true;
 	}
 
 	@Override

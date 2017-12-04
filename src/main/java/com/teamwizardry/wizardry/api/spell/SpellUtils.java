@@ -3,9 +3,13 @@ package com.teamwizardry.wizardry.api.spell;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.api.item.INacreColorable;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
+import com.teamwizardry.wizardry.init.ModItems;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -18,6 +22,10 @@ public class SpellUtils {
 
 	public static void runSpell(@Nonnull ItemStack spellHolder, @Nonnull SpellData data) {
 		if (data.world.isRemote) return;
+
+		Entity caster = data.getData(SpellData.DefaultKeys.CASTER);
+		if (caster != null && caster instanceof EntityLivingBase && BaublesSupport.getItem((EntityLivingBase) caster, ModItems.CREATIVE_HALO, ModItems.FAKE_HALO, ModItems.REAL_HALO).isEmpty())
+			return;
 
 		if (spellHolder.getItem() instanceof INacreColorable) {
 			float purity = ((INacreColorable) spellHolder.getItem()).getQuality(spellHolder);

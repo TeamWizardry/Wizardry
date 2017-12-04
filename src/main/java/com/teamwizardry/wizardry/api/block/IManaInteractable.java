@@ -50,7 +50,7 @@ public interface IManaInteractable {
 			}
 
 			double amount = ((TileManaInteracter) tile).drainMana(world, from, ((TileManaInteracter) tile).getCap(), idealAmount);
-			if (amount < 0) return false;
+			if (amount <= 0) return false;
 
 			CapManager manager = new CapManager(capToFill);
 			manager.addMana(amount);

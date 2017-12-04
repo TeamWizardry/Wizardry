@@ -31,14 +31,14 @@ minecraft {
 
 repositories {
     mavenCentral()
-   // maven { url = "http://maven.bluexin.be/repository/snapshots/" }
+    maven { url = "http://maven.bluexin.be/repository/snapshots/" }
 	maven { url = "http://dvs1.progwml6.com/files/maven" }
 	maven { url = "http://tehnut.info/maven" }
 	maven { url = "http://maven.tterrag.com/" }
 }
 
 dependencies {
-	//compile "com.teamwizardry.librarianlib:librarianlib-1.12:$liblib_version:deobf"
+	compile "com.teamwizardry.librarianlib:librarianlib-1.12:$liblib_version:deobf"
 	deobfCompile "mezz.jei:jei_1.12:$jei_version:api"
 	runtime "mezz.jei:jei_1.12:$jei_version"
 	deobfCompile "mcp.mobius.waila:Hwyla:$hwyla_version"

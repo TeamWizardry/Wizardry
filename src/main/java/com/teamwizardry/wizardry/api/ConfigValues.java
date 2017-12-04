@@ -20,20 +20,29 @@ public class ConfigValues {
 	public static int manaPoolRarity = 25;
 
 	@ConfigProperty(category = "world", comment = "If you have a dimension ID conflict with this mod and something else, change this number")
-	public static int underworldID = 42;
+	public static int underworldID = 33;
+
+	@ConfigProperty(category = "world", comment = "Minimum fall distance required to have to smack a block into to teleport to the underworld (in blocks)")
+	public static int underworldFallDistance = 128;
 
 	@ConfigProperty(category = "world", comment = "The maximum possible distance required for 2 mana interacting blocks to link to each other")
-	public static int networkLinkDistance = 32;
+	public static int networkLinkDistance = 64;
 
-	@ConfigProperty(category = "items", comment = "The maximum limit a cape can give a player in terms of mana/burnout buffers")
-	public static int maxCapeCap = 5000;
+	@ConfigProperty(category = "items", comment = "The buffer size a cheap halo will give to a player.")
+	public static double crudeHaloBufferSize = 500;
+
+	@ConfigProperty(category = "items", comment = "The buffer size a cheap halo will give to a player.")
+	public static double realHaloBufferSize = 2000;
+
+	@ConfigProperty(category = "items", comment = "The buffer size a cheap halo will give to a player.")
+	public static double creativeHaloBufferSize = 100000;
 
 	@ConfigDoubleRange(min = 1, max = 2)
-	@ConfigProperty(category = "spells", comment = "The multiplier a spell gets for a perfect or ancient quality pearl. [1,2]\n" +
-			"This will be multiplied by the quality value of the pearl, which is 1.0 for perfect pearls and greater for ancient pearls.")
+	@ConfigProperty(category = "spells", comment = "The multiplier a spell gets for a perfect or ancient quality outputPearl. [1,2]\n" +
+			"This will be multiplied by the quality value of the outputPearl, which is 1.0 for perfect pearls and greater for ancient pearls.")
 	public static double perfectPearlMultiplier = 1.2;
 
 	@ConfigDoubleRange(min = 0.001, max = 0.1)
-	@ConfigProperty(category = "spells", comment = "The multiplier a spell gets, as a flat rate, for a depleted quality pearl. [0.001,0.1]")
+	@ConfigProperty(category = "spells", comment = "The multiplier a spell gets, as a flat rate, for a depleted quality outputPearl. [0.001,0.1]")
 	public static double damagedPearlMultiplier = 0.05;
 }

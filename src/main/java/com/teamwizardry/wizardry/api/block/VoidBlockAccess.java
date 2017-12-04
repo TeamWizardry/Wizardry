@@ -1,8 +1,6 @@
 package com.teamwizardry.wizardry.api.block;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Biomes;
-import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -13,44 +11,39 @@ import org.jetbrains.annotations.NotNull;
 
 public final class VoidBlockAccess implements IBlockAccess {
 
-	public static final BlockPos POS = BlockPos.ORIGIN;
-
-	private static final int SKY_LIGHT = 15 << 20;
-
 	private final IBlockState state;
+	private IBlockAccess originalAccess;
 
-	private final TileEntity entity;
-
-	public VoidBlockAccess(IBlockState state, TileEntity entity) {
+	public VoidBlockAccess(IBlockState state, IBlockAccess originalAccess) {
 		this.state = state;
-		this.entity = entity;
+		this.originalAccess = originalAccess;
 	}
 
 	@Override
 	public TileEntity getTileEntity(@NotNull BlockPos pos) {
-		return POS.equals(pos) ? entity : null;
+		return originalAccess.getTileEntity(pos);
 	}
 
 	@Override
 	public int getCombinedLight(@NotNull BlockPos pos, int lightValue) {
-		return SKY_LIGHT | (POS.equals(pos) ? state.getLightValue(this, POS) : 0) << 4;
+		return originalAccess.getCombinedLight(pos, lightValue);
 	}
 
 	@NotNull
 	@Override
 	public IBlockState getBlockState(@NotNull BlockPos pos) {
-		return POS.equals(pos) ? state : Blocks.AIR.getDefaultState();
+		return originalAccess.getBlockState(pos);
 	}
 
 	@Override
 	public boolean isAirBlock(@NotNull BlockPos pos) {
-		return !POS.equals(pos) || state.getBlock().isAir(state, this, pos);
+		return originalAccess.isAirBlock(pos);
 	}
 
 	@NotNull
 	@Override
 	public Biome getBiome(@NotNull BlockPos pos) {
-		return Biomes.DEFAULT;
+		return originalAccess.getBiome(pos);
 	}
 
 	@Override
@@ -61,11 +54,11 @@ public final class VoidBlockAccess implements IBlockAccess {
 	@NotNull
 	@Override
 	public WorldType getWorldType() {
-		return WorldType.CUSTOMIZED;
+		return originalAccess.getWorldType();
 	}
 
 	@Override
 	public boolean isSideSolid(@NotNull BlockPos pos, @NotNull EnumFacing side, boolean _default) {
-		return POS.equals(pos) && state.isSideSolid(this, pos, side);
+		return originalAccess.isSideSolid(pos, side, _default);
 	}
 }

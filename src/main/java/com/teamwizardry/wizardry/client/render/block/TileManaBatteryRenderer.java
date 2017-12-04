@@ -7,6 +7,7 @@ import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
+import com.teamwizardry.librarianlib.features.tesr.TileRenderHandler;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.CachedStructure;
@@ -21,8 +22,8 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.ResourceLocation;
@@ -30,8 +31,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -39,22 +41,25 @@ import java.awt.*;
 /**
  * Created by LordSaad.
  */
-public class TileManaBatteryRenderer extends TileEntitySpecialRenderer<TileManaBattery> {
+@Mod.EventBusSubscriber(modid = Wizardry.MODID)
+public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> {
 
-	private IBakedModel modelRing, modelCrystal, modelRingOuter;
+	private static IBakedModel modelRing, modelCrystal, modelRingOuter;
+	private CachedStructure cachedStructure;
 
-	public TileManaBatteryRenderer() {
-		MinecraftForge.EVENT_BUS.register(this);
+	public TileManaBatteryRenderer(@NotNull TileManaBattery manaBattery) {
+		super(manaBattery);
+		cachedStructure = new CachedStructure(((IStructure) tile.getBlockType()).getStructure().loc, tile.getWorld());
 	}
 
 	@SubscribeEvent
-	public void reload(ClientProxy.ResourceReloadEvent event) {
+	public static void reload(ClientProxy.ResourceReloadEvent event) {
 		modelRing = null;
 		modelCrystal = null;
 		modelRingOuter = null;
 	}
 
-	private void getBakedModels() {
+	private static void getBakedModels() {
 		IModel model;
 		if (modelRing == null) {
 			try {
@@ -88,34 +93,41 @@ public class TileManaBatteryRenderer extends TileEntitySpecialRenderer<TileManaB
 	}
 
 	@Override
-	public void render(TileManaBattery te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-		World world = te.getWorld();
+	public void render(float partialTicks, int destroyStage, float alpha) {
+		super.render(partialTicks, destroyStage, alpha);
+
+		World world = tile.getWorld();
 
 		GlStateManager.pushMatrix();
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		getBakedModels();
 
-		bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+		TextureManager texturemanager = Minecraft.getMinecraft().renderEngine;
+
+		if (texturemanager != null) {
+			texturemanager.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+		}
+
 		if (Minecraft.isAmbientOcclusionEnabled())
 			GlStateManager.shadeModel(GL11.GL_SMOOTH);
 		else GlStateManager.shadeModel(GL11.GL_FLAT);
 
-		GlStateManager.translate(x, y + 0.5, z);
+		GlStateManager.translate(0, 0.5, 0);
 		GlStateManager.disableRescaleNormal();
 
-		GlStateManager.translate(0, Math.sin((te.getWorld().getTotalWorldTime() + ClientTickHandler.getPartialTicks()) / 40) / 8, 0);
+		GlStateManager.translate(0, Math.sin((tile.getWorld().getTotalWorldTime() + ClientTickHandler.getPartialTicks()) / 40) / 8, 0);
 		Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModelBrightnessColor(modelCrystal, 1.0F, 1, 1, 1);
 
 		GlStateManager.translate(0.5, 0, 0.5);
-		GlStateManager.rotate(te.getWorld().getTotalWorldTime() + ClientTickHandler.getPartialTicks(), 0, 1, 0);
+		GlStateManager.rotate(tile.getWorld().getTotalWorldTime() + ClientTickHandler.getPartialTicks(), 0, 1, 0);
 		GlStateManager.translate(-0.5, 0, -0.5);
 
 		Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModelBrightnessColor(modelRing, 1.0F, 1, 1, 1);
 
 		GlStateManager.translate(0.5, 0, 0.5);
-		GlStateManager.rotate(te.getWorld().getTotalWorldTime() + ClientTickHandler.getPartialTicks(), 0, -1, 0);
-		GlStateManager.rotate(te.getWorld().getTotalWorldTime() + ClientTickHandler.getPartialTicks(), 0, -1, 0);
+		GlStateManager.rotate(tile.getWorld().getTotalWorldTime() + ClientTickHandler.getPartialTicks(), 0, -1, 0);
+		GlStateManager.rotate(tile.getWorld().getTotalWorldTime() + ClientTickHandler.getPartialTicks(), 0, -1, 0);
 		GlStateManager.translate(-0.5, 0, -0.5);
 
 		Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModelBrightnessColor(modelRingOuter, 1.0F, 1, 1, 1);
@@ -123,27 +135,20 @@ public class TileManaBatteryRenderer extends TileEntitySpecialRenderer<TileManaB
 		GlStateManager.disableBlend();
 		GlStateManager.popMatrix();
 
-		if (te.revealStructure && te.getBlockType() instanceof IStructure && !((IStructure) te.getBlockType()).isStructureComplete(te.getWorld(), te.getPos())) {
+		if (tile.revealStructure && tile.getBlockType() instanceof IStructure && !((IStructure) tile.getBlockType()).isStructureComplete(tile.getWorld(), tile.getPos())) {
 
-			IStructure structure = ((IStructure) te.getBlockType());
+			IStructure structure = ((IStructure) tile.getBlockType());
 
 			GlStateManager.pushMatrix();
-			GlStateManager.enableAlpha();
-			GlStateManager.enableLighting();
 			GlStateManager.enableBlend();
-			GlStateManager.enableCull();
-			GlStateManager.disableDepth();
-			GlStateManager.enableRescaleNormal();
-			GlStateManager.color(1, 1, 1);
-			GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+			GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+			GlStateManager.enablePolygonOffset();
+			GlStateManager.doPolygonOffset(1f, -0.05f);
 
-			GlStateManager.translate(x, y, z);
 			GlStateManager.translate(-structure.offsetToCenter().getX(), -structure.offsetToCenter().getY(), -structure.offsetToCenter().getZ());
 			Minecraft mc = Minecraft.getMinecraft();
 			Tessellator tes = Tessellator.getInstance();
 			BufferBuilder buffer = tes.getBuffer();
-
-			CachedStructure cachedStructure = ((IStructure) te.getBlockType()).getStructure();
 
 			mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
@@ -153,25 +158,25 @@ public class TileManaBatteryRenderer extends TileEntitySpecialRenderer<TileManaB
 
 				for (int i = 0; i < buffer.getVertexCount(); i++) {
 					int idx = buffer.getColorIndex(i + 1);
-					buffer.putColorRGBA(idx, 255, 255, 255, 150);
+					buffer.putColorRGBA(idx, 255, 255, 255, 200);
 				}
 				tes.draw();
 			}
 
-			GlStateManager.disableAlpha();
-			GlStateManager.disableBlend();
-			GlStateManager.disableCull();
+			GlStateManager.disablePolygonOffset();
+			GlStateManager.color(1F, 1F, 1F, 1F);
 			GlStateManager.enableDepth();
 			GlStateManager.popMatrix();
 			return;
 		}
 
-		if (te.getBlockType() == ModBlocks.MANA_BATTERY) {
+
+		if (tile.getBlockType() == ModBlocks.MANA_BATTERY) {
 			if (RandUtil.nextInt(10) == 0) {
 				ParticleBuilder glitter = new ParticleBuilder(3);
 				glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 				glitter.setColorFunction(new InterpColorHSV(ColorUtils.changeColorAlpha(Color.CYAN, RandUtil.nextInt(50, 150)), ColorUtils.changeColorAlpha(Color.BLUE, RandUtil.nextInt(50, 150))));
-				ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(te.getPos()).addVector(0.5, 0.5, 0.5)), RandUtil.nextInt(1, 3), 0, (aFloat, particleBuilder) -> {
+				ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(tile.getPos()).addVector(0.5, 0.5, 0.5)), RandUtil.nextInt(1, 3), 0, (aFloat, particleBuilder) -> {
 					glitter.setAlphaFunction(new InterpFadeInOut(1f, 1f));
 					glitter.setMotion(new Vec3d(
 							RandUtil.nextDouble(-0.05, 0.05),
@@ -182,8 +187,8 @@ public class TileManaBatteryRenderer extends TileEntitySpecialRenderer<TileManaB
 					glitter.setScale((float) RandUtil.nextDouble(3));
 				});
 			}
-		} else if (te.getBlockType() == ModBlocks.CREATIVE_MANA_BATTERY) {
-			double angle = te.getWorld().getTotalWorldTime() / 10.0;
+		} else if (tile.getBlockType() == ModBlocks.CREATIVE_MANA_BATTERY) {
+			double angle = tile.getWorld().getTotalWorldTime() / 10.0;
 			double x1 = Math.cos((float) angle);
 			double y1 = Math.sin((float) angle);
 
@@ -193,17 +198,12 @@ public class TileManaBatteryRenderer extends TileEntitySpecialRenderer<TileManaB
 			builder.disableRandom();
 			builder.disableMotionCalculation();
 
-			ParticleSpawner.spawn(builder, getWorld(), new InterpCircle(new Vec3d(te.getPos()).addVector(0.5, 0.5, 0.5), new Vec3d(x1, x1, y1), 1.5f), 20, 0, (aFloat, particleBuilder) -> {
+			ParticleSpawner.spawn(builder, tile.getWorld(), new InterpCircle(new Vec3d(tile.getPos()).addVector(0.5, 0.5, 0.5), new Vec3d(x1, x1, y1), 1.5f), 20, 0, (aFloat, particleBuilder) -> {
 				particleBuilder.setScale(0.5f);
 				particleBuilder.setColor(new Color(0xd600d2));
 				particleBuilder.setAlphaFunction(new InterpFadeInOut(1, 1));
 				particleBuilder.setLifetime(RandUtil.nextInt(5, 10));
 			});
 		}
-	}
-
-	@Override
-	public boolean isGlobalRenderer(TileManaBattery te) {
-		return true;
 	}
 }

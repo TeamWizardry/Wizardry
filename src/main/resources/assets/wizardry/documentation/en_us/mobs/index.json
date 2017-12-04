@@ -11,7 +11,7 @@
     {
       "icon": "wizardry:textures/items/fairy_wings.png",
       "text": "Fairies",
-      "link": "/mobs/fairy.json",
+      "link": "/mobs/fairies.json",
       "info": "Pros\nSquishy\nThat’s about it, really\n\nCons\nEverything else"
     },
     {

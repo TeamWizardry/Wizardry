@@ -1,9 +1,12 @@
 package com.teamwizardry.wizardry.common.tile;
 
 import com.teamwizardry.librarianlib.features.autoregister.TileRegister;
+import com.teamwizardry.librarianlib.features.base.block.tile.module.ModuleInventory;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.saving.Save;
+import com.teamwizardry.librarianlib.features.tesr.TileRenderer;
+import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.TileManaInteracter;
 import com.teamwizardry.wizardry.api.capability.CapManager;
@@ -13,6 +16,7 @@ import com.teamwizardry.wizardry.api.render.ClusterObject;
 import com.teamwizardry.wizardry.api.spell.SpellBuilder;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.client.render.block.TileCraftingPlateRenderer;
 import com.teamwizardry.wizardry.common.block.BlockCraftingPlate;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.init.ModItems;
@@ -25,17 +29,16 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -46,24 +49,20 @@ import java.util.Random;
  * Created by Saad on 6/10/2016.
  */
 @TileRegister("crafting_plate")
+@TileRenderer(TileCraftingPlateRenderer.class)
 public class TileCraftingPlate extends TileManaInteracter {
 
-	@Save
-	public int craftingTime = 300;
-	@Save
-	public int craftingTimeLeft = 300;
-	@Save
-	public int tick;
-	@Save
-	public boolean isCrafting;
-	@Save
-	@Nullable
-	public ItemStack output;
-	public List<ClusterObject> inventory = new ArrayList<>();
-	public Random random = new Random(getPos().toLong());
-
+	@com.teamwizardry.librarianlib.features.saving.Module
+	public ModuleInventory realInventory = new ModuleInventory(1000);
+	@com.teamwizardry.librarianlib.features.saving.Module
+	public ModuleInventory inputPearl = new ModuleInventory(1);
+	@com.teamwizardry.librarianlib.features.saving.Module
+	public ModuleInventory outputPearl = new ModuleInventory(1);
 	@Save
 	public boolean revealStructure = false;
+	public ClusterObject[] renders;
+	public Vec3d[] positions;
+	public Random random = new Random(getPos().toLong());
 
 	public static final HashSet<BlockPos> poses = new HashSet<>();
 
@@ -75,25 +74,18 @@ public class TileCraftingPlate extends TileManaInteracter {
 	}
 
 	public TileCraftingPlate() {
-		super(10000, 10000);
+		super(500, 500);
+		realInventory.setSides(EnumFacing.values());
+		renders = new ClusterObject[realInventory.getHandler().getSlots()];
+		positions = new Vec3d[realInventory.getHandler().getSlots()];
 	}
 
 	@Override
 	public void readCustomNBT(NBTTagCompound compound) {
-		inventory.clear();
-		NBTTagList list = compound.getTagList("clusters", NBT.TAG_COMPOUND);
-		for (int i = 0; i < list.tagCount(); i++) {
-			ClusterObject cluster = new ClusterObject(this);
-			cluster.deserializeNBT(list.getCompoundTagAt(i));
-			inventory.add(cluster);
-		}
 	}
 
 	@Override
 	public void writeCustomNBT(NBTTagCompound compound, boolean sync) {
-		NBTTagList list = new NBTTagList();
-		for (ClusterObject cluster : inventory) list.appendTag(cluster.serializeNBT());
-		compound.setTag("clusters", list);
 	}
 
 	@Override
@@ -108,57 +100,66 @@ public class TileCraftingPlate extends TileManaInteracter {
 				TileEntity tile = world.getTileEntity(target);
 				if (tile != null && tile instanceof TilePearlHolder) {
 					if (!((TilePearlHolder) tile).isBenign) {
-						((TilePearlHolder) tile).structurePos = getPos();
-						tile.markDirty();
-						world.notifyBlockUpdate(target, world.getBlockState(target), world.getBlockState(target), 3);
-						((TilePearlHolder) tile).suckManaFrom(getWorld(), getPos(), getCap(), target, 100, false);
+						if (((TilePearlHolder) tile).structurePos == null || !((TilePearlHolder) tile).structurePos.equals(getPos())) {
+							((TilePearlHolder) tile).structurePos = getPos();
+						}
+						((TilePearlHolder) tile).suckManaFrom(getWorld(), getPos(), getCap(), target, 1, false);
 					}
 				}
 			}
 		}
 
 		for (EntityItem entityItem : world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos).grow(2, 2, 2))) {
-			ItemStack stack = entityItem.getItem().copy();
-			stack.setCount(1);
-			entityItem.getItem().shrink(1);
-			inventory.add(new ClusterObject(this, stack, world, entityItem.getPositionVector().subtract(new Vec3d(pos))));
+			if (!inputPearl.getHandler().getStackInSlot(0).isEmpty()) break;
+
+			if (entityItem.getItem().getItem() instanceof IInfusable) {
+
+				ItemStack stack = entityItem.getItem().copy();
+				stack.setCount(1);
+				entityItem.getItem().shrink(1);
+
+				inputPearl.getHandler().setStackInSlot(0, stack);
+
+			} else {
+				ItemStack stack = entityItem.getItem().copy();
+				stack.setCount(1);
+				entityItem.getItem().shrink(1);
+
+				for (int i = 0; i < realInventory.getHandler().getSlots(); i++) {
+					if (realInventory.getHandler().getStackInSlot(i).isEmpty()) {
+						realInventory.getHandler().setStackInSlot(i, stack);
+
+						int finalI = i;
+						ClientRunnable.run(new ClientRunnable() {
+							@Override
+							@SideOnly(Side.CLIENT)
+							public void runIfClient() {
+								if (renderHandler != null)
+									((TileCraftingPlateRenderer) renderHandler).addAnimation(finalI, true);
+							}
+						});
+						break;
+					}
+				}
+			}
+
 			markDirty();
 		}
 
-		if (world.isRemote) return;
-		if (tick < 360) tick += 10;
-		else tick = 0;
-		if (!inventory.isEmpty()) {
-			for (ClusterObject cluster : inventory) cluster.tick(world, random);
-			world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
-		}
-		markDirty();
+		if (!inputPearl.getHandler().getStackInSlot(0).isEmpty()) {
+			CapManager manager = new CapManager(inputPearl.getHandler().getStackInSlot(0));
 
-		if ((output == null) && !isCrafting && !inventory.isEmpty() && (inventory.get(inventory.size() - 1).stack.getItem() instanceof IInfusable)) {
-			isCrafting = true;
-			craftingTimeLeft = craftingTime;
-			output = inventory.remove(inventory.size() - 1).stack;
-			markDirty();
-		}
+			suckManaFrom(getWorld(), getPos(), manager.getCap(), getPos(), 1, false);
 
-		if (isCrafting) {
-			//if (!new CapManager(cap).isManaEmpty()) {
-			//	craftingTimeLeft = Math.min(300, craftingTimeLeft++);
-			//	return;
-			//}
-			if (craftingTimeLeft > 0) craftingTimeLeft--;
-			else {
-				isCrafting = false;
-				markDirty();
+			if (manager.isManaFull()) {
 
 				ArrayList<ItemStack> stacks = new ArrayList<>();
-				for (ClusterObject cluster : inventory) stacks.add(cluster.stack);
+
+				for (int i = 0; i < realInventory.getHandler().getSlots(); i++) {
+					if (!realInventory.getHandler().getStackInSlot(i).isEmpty())
+						stacks.add(realInventory.getHandler().getStackInSlot(i));
+				}
 				SpellBuilder builder = new SpellBuilder(stacks);
-
-				PacketHandler.NETWORK.sendToAllAround(new PacketExplode(new Vec3d(pos).addVector(0.5, 0.5, 0.5), Color.CYAN, Color.BLUE, 2, 2, 500, 300, 20, true),
-						new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
-
-				world.playSound(null, getPos(), ModSounds.BASS_BOOM, SoundCategory.BLOCKS, 1f, (float) RandUtil.nextDouble(1, 1.5));
 
 				ItemStack stack = new ItemStack(ModItems.PEARL_NACRE);
 				ItemNBTHelper.setFloat(stack, Constants.NBT.RAND, world.rand.nextFloat());
@@ -168,10 +169,28 @@ public class TileCraftingPlate extends TileManaInteracter {
 				for (Module module : builder.getSpell()) list.appendTag(module.serializeNBT());
 				ItemNBTHelper.setList(stack, Constants.NBT.SPELL, list);
 
-				output = stack;
-				inventory.clear();
-				craftingTimeLeft = craftingTime;
+				inputPearl.getHandler().setStackInSlot(0, ItemStack.EMPTY);
+				outputPearl.getHandler().setStackInSlot(0, stack);
+				for (int i = 0; i < realInventory.getHandler().getSlots(); i++) {
+					realInventory.getHandler().setStackInSlot(i, ItemStack.EMPTY);
+				}
+
+				ClientRunnable.run(new ClientRunnable() {
+					@Override
+					@SideOnly(Side.CLIENT)
+					public void runIfClient() {
+						for (int i = 0; i < positions.length; i++) {
+							positions[i] = Vec3d.ZERO;
+						}
+					}
+				});
+
 				markDirty();
+
+				PacketHandler.NETWORK.sendToAllAround(new PacketExplode(new Vec3d(pos).addVector(0.5, 0.5, 0.5), Color.CYAN, Color.BLUE, 2, 2, 500, 300, 20, true),
+						new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
+
+				world.playSound(null, getPos(), ModSounds.BASS_BOOM, SoundCategory.BLOCKS, 1f, (float) RandUtil.nextDouble(1, 1.5));
 
 				List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(pos).grow(32, 32, 32));
 				for (Entity entity1 : entityList) {
@@ -190,11 +209,6 @@ public class TileCraftingPlate extends TileManaInteracter {
 					if (entity1 instanceof EntityPlayerMP)
 						((EntityPlayerMP) entity1).connection.sendPacket(new SPacketEntityVelocity(entity1));
 				}
-			}
-		} else {
-			if (craftingTimeLeft != craftingTime) {
-				craftingTimeLeft = craftingTime;
-				markDirty();
 			}
 		}
 	}

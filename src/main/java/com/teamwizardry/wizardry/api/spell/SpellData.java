@@ -4,11 +4,8 @@ import com.teamwizardry.librarianlib.features.saving.Savable;
 import com.teamwizardry.wizardry.api.capability.DefaultWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
-import com.teamwizardry.wizardry.api.item.BaublesSupport;
-import com.teamwizardry.wizardry.init.ModItems;
 import kotlin.Pair;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.*;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -86,12 +83,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			addData(DefaultKeys.YAW, entity.rotationYaw);
 			addData(DefaultKeys.PITCH, entity.rotationPitch);
 			addData(DefaultKeys.LOOK, entity.getLook(0));
-
-			if (entity instanceof EntityPlayer && !BaublesSupport.getItem((EntityPlayer) entity, ModItems.FAKE_HALO, ModItems.REAL_HALO, ModItems.CREATIVE_HALO).isEmpty()) {
-				addData(DefaultKeys.CAPABILITY, WizardryCapabilityProvider.getCap(BaublesSupport.getItem((EntityPlayer) entity, ModItems.FAKE_HALO, ModItems.FAKE_HALO, ModItems.REAL_HALO, ModItems.CREATIVE_HALO)));
-			} else {
-				addData(DefaultKeys.CAPABILITY, WizardryCapabilityProvider.getCap(entity));
-			}
+			addData(DefaultKeys.CAPABILITY, WizardryCapabilityProvider.getCap(entity));
 		} else {
 			addData(DefaultKeys.TARGET_HIT, entity.getPositionVector().addVector(0, entity.height / 2.0, 0));
 			addData(DefaultKeys.ENTITY_HIT, entity);
