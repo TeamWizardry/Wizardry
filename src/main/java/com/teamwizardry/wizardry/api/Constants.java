@@ -67,6 +67,7 @@ public class Constants {
 		public static final String LAST_CAST = "last_cast";
 		public static final String LAST_COOLDOWN = "last_cooldown";
 		public static final String PURITY = "purity";
+		public static final String PURITY_OVERRIDE = "purity_override";
 		public static final String COMPLETE = "complete";
 		public static final int NACRE_PURITY_CONVERSION = 30 * 20; // 30 seconds for max purity, 0/60 for no purity
 	}

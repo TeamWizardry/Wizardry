@@ -53,6 +53,12 @@ public interface INacreColorable extends IItemColorProvider {
 	}
 
 	default float getQuality(ItemStack stack) {
+		if (!stack.hasTagCompound())
+			return 1f;
+		float override = ItemNBTHelper.getFloat(stack, NBT.PURITY_OVERRIDE, -1f);
+		if (override > 0)
+			return override;
+
 		int purity = Math.max(0, Math.min(NBT.NACRE_PURITY_CONVERSION * 2, ItemNBTHelper.getInt(stack, NBT.PURITY, NBT.NACRE_PURITY_CONVERSION)));
 		float quality = purity / (float) NBT.NACRE_PURITY_CONVERSION;
 		if (quality > 1) quality = 2 - quality;
@@ -68,6 +74,8 @@ public interface INacreColorable extends IItemColorProvider {
 	default Function2<ItemStack, Integer, Integer> getItemColorFunction() {
 		return (stack, tintIndex) -> {
 			if (tintIndex != 0) return 0xFFFFFF;
+			if (!stack.hasTagCompound())
+				return Color.HSBtoRGB(MathHelper.sin(Minecraft.getMinecraft().world.getTotalWorldTime() / 140f), 0.75f, 1f);
 			float rand = ItemNBTHelper.getFloat(stack, NBT.RAND, -1);
 			float hue = rand < 0 ? MathHelper.sin(Minecraft.getMinecraft().world.getTotalWorldTime() / 140f) : rand;
 			float pow = Math.min(1f, Math.max(0f, getQuality(stack)));
@@ -87,6 +95,8 @@ public interface INacreColorable extends IItemColorProvider {
 		default Function2<ItemStack, Integer, Integer> getItemColorFunction() {
 			return (stack, tintIndex) -> {
 				if (tintIndex != 0) return 0xFFFFFF;
+				if (!stack.hasTagCompound())
+					return Color.HSBtoRGB(MathHelper.sin(Minecraft.getMinecraft().world.getTotalWorldTime() / 140f), 0.75f, 1f);
 
 				long lastCast = ItemNBTHelper.getLong(stack, NBT.LAST_CAST, -1);
 				int decayCooldown = ItemNBTHelper.getInt(stack, NBT.LAST_COOLDOWN, -1);

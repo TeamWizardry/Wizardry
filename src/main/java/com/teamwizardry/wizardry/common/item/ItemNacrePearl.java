@@ -18,6 +18,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nonnull;
@@ -53,9 +55,35 @@ public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, 
 		return super.onEntityItemUpdate(entityItem);
 	}
 
+	private String getNameType(@Nonnull ItemStack stack) {
+		float quality = this.getQuality(stack);
+		if (quality > 1)
+			return "eclipse";
+		else if (quality == 1)
+			return "apex";
+		else if (quality > 0.8)
+			return "potent";
+		else if (quality > 0.6)
+			return "decent";
+		else if (quality > 0.4)
+			return "flawed";
+		else if (quality > 0.2)
+			return "drained";
+		return "waste";
+	}
+
+	private String getName(@Nonnull ItemStack stack) {
+		if (!stack.hasTagCompound())
+			return getUnlocalizedName() + ".name";
+		return this.getUnlocalizedName(stack) + "." + getNameType(stack) + ".name";
+	}
+
 	@Nonnull
 	@Override
 	public String getItemStackDisplayName(@Nonnull ItemStack stack) {
+		if (!stack.hasTagCompound())
+			return super.getItemStackDisplayName(stack);
+
 		StringBuilder finalName = null;
 		ArrayList<Module> modules = SpellUtils.getModules(stack);
 		Module lastModule = null;
@@ -84,12 +112,16 @@ public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, 
 		}
 
 		if (finalName == null)
-			return LibrarianLib.PROXY.translate(this.getUnlocalizedNameInefficiently(stack) + ".name").trim();
+			return LibrarianLib.PROXY.translate(getName(stack)).trim();
 		else return finalName.toString();
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+		if (!stack.hasTagCompound())
+			return;
+
 		ArrayList<Module> modules = SpellUtils.getModules(stack);
 		Module lastModule = null;
 		for (Module module : modules) {
