@@ -58,7 +58,7 @@ public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, 
 	private String getNameType(@Nonnull ItemStack stack) {
 		float quality = this.getQuality(stack);
 		if (quality > 1)
-			return "eclipse";
+			return "ancient";
 		else if (quality == 1)
 			return "apex";
 		else if (quality > 0.8)

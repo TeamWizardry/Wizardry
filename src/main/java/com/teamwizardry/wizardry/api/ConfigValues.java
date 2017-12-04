@@ -39,7 +39,7 @@ public class ConfigValues {
 
 	@ConfigDoubleRange(min = 1, max = 2)
 	@ConfigProperty(category = "spells", comment = "The multiplier a spell gets for a perfect or ancient quality outputPearl. [1,2]\n" +
-			"This will be multiplied by the quality value of the outputPearl, which is 1.0 for perfect pearls and greater for ancient pearls.")
+			"This will be multiplied by the quality value of the outputPearl, which is 1.0 for apex pearls and greater for ancient pearls.")
 	public static double perfectPearlMultiplier = 1.2;
 
 	@ConfigDoubleRange(min = 0.001, max = 0.1)

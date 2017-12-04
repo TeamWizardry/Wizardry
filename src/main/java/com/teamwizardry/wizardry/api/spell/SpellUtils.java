@@ -31,7 +31,7 @@ public class SpellUtils {
 			float purity = ((INacreColorable) spellHolder.getItem()).getQuality(spellHolder);
 			double multiplier;
 			if (purity >= 1f) multiplier = ConfigValues.perfectPearlMultiplier * purity;
-			else if (purity <= 0f) multiplier = ConfigValues.damagedPearlMultiplier;
+			else if (purity <= ConfigValues.damagedPearlMultiplier) multiplier = ConfigValues.damagedPearlMultiplier;
 			else {
 				double base = purity - 1;
 				multiplier = 1 - (base * base * base * base);
