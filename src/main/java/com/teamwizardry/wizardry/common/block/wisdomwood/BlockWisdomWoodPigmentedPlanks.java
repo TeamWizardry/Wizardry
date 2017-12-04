@@ -1,15 +1,13 @@
 package com.teamwizardry.wizardry.common.block.wisdomwood;
 
-import com.teamwizardry.librarianlib.features.base.block.BlockModPlanks;
-import net.minecraft.block.SoundType;
+import com.teamwizardry.wizardry.api.block.BlockPlankNoOredict;
 
 /**
  * Created by LordSaad.
  */
-public class BlockWisdomWoodPigmentedPlanks extends BlockModPlanks {
+public class BlockWisdomWoodPigmentedPlanks extends BlockPlankNoOredict {
 
 	public BlockWisdomWoodPigmentedPlanks() {
 		super("wisdom_wood_pigmented_planks");
-		setSoundType(SoundType.WOOD);
 	}
 }
