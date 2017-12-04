@@ -107,7 +107,7 @@ public class ItemSyringe extends ItemMod {
 				TooltipHelper.addToTooltip(tooltip, desc + i);
 		}
 
-		if (stack.getItemDamage() != 1 && stack.getItemDamage() != 2) {
+		if (stack.getItemDamage() == 3 && stack.hasTagCompound()) {
 			UUID uuid = ItemNBTHelper.getUUID(stack, "uuid");
 			String entity = ItemNBTHelper.getString(stack, "entity", null);
 			if (uuid != null) {

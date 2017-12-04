@@ -1,6 +1,8 @@
-﻿tile.wizardry:crafting_plate.name=Crafting Plate
+﻿
+tile.wizardry:crafting_plate.name=Crafting Plate
 tile.wizardry:magicians_worktable.name=Magician's Worktable
 tile.wizardry:mana_battery.name=Mana Battery
+tile.wizardry:creative_mana_battery.name=Creative Mana Battery
 tile.wizardry:nacre.name=Liquid Nacre
 tile.wizardry:mana.name=Liquid Mana
 tile.wizardry:cloud.name=Cloud
@@ -10,6 +12,7 @@ tile.wizardry:nacre_block.name=Nacre Block
 tile.wizardry:nacre_block_brick.name=Nacre Bricks
 tile.wizardry:mana_magnet.name=Mana Magnet
 tile.wizardry:torikki_grass.name=Torikki Grass
+tile.wizardry:unicorn_trail.name=Unicorn's Trail
 
 entity.fairy.name=Fairy
 entity.spirit_wight.name=Spirit Wight
@@ -44,7 +47,7 @@ item.wizardry:jar_fairy.name=Fairy in a Jar
 item.wizardry:jar_jam.name=Fairy Jam
 item.wizardry:syringe.name=Empty Syringe
 item.wizardry:syringe_mana.name=ManaBooster Lite™
-item.wizardry:syringe_mana.desc=Refills your mana bar by 30%.
+item.wizardry:syringe_mana.desc=Refills your mana bar by 30%%.
 item.wizardry:syringe_steroid.name=ManaBuilder Serum Premium Plus™
 item.wizardry:syringe_steroid.desc0=Completely saturates your mana bar and depletes your burnout bar for 10 seconds.
 item.wizardry:syringe_steroid.desc1=Severe side-effects included.
