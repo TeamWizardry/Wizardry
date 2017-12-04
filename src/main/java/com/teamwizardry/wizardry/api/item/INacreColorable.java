@@ -25,7 +25,7 @@ public interface INacreColorable extends IItemColorProvider {
 	default void colorableOnUpdate(ItemStack stack, World world) {
 		if (!world.isRemote) {
 			if (!ItemNBTHelper.verifyExistence(stack, NBT.RAND))
-				ItemNBTHelper.setFloat(stack, NBT.RAND, world.rand.nextFloat());
+				ItemNBTHelper.setFloat(stack, NBT.RAND, MathHelper.sin(Minecraft.getMinecraft().world.getTotalWorldTime() / 140f));
 
 			if (!ItemNBTHelper.verifyExistence(stack, NBT.PURITY))
 				ItemNBTHelper.setInt(stack, NBT.PURITY, NBT.NACRE_PURITY_CONVERSION);
