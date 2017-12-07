@@ -1,5 +1,17 @@
 package com.teamwizardry.wizardry.common.module.shapes;
 
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ORIGIN;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.PITCH;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.SEED;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.TARGET_HIT;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.YAW;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Nonnull;
+
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpCircle;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
@@ -17,8 +29,10 @@ import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RandUtilSeed;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtendRange;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtendTime;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseAOE;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -28,12 +42,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
 
 /**
@@ -62,7 +70,7 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 
 	@Override
 	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierIncreaseAOE(), new ModuleModifierIncreasePotency(), new ModuleModifierExtendRange()};
+		return new ModuleModifier[]{new ModuleModifierIncreaseAOE(), new ModuleModifierIncreasePotency(), new ModuleModifierExtendRange(), new ModuleModifierExtendTime()};
 	}
 
 	@Override
