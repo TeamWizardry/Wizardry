@@ -1,7 +1,9 @@
 package com.teamwizardry.wizardry.common.item;
 
+import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.utilities.client.TooltipHelper;
 import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.common.core.DamageSourceMana;
 import com.teamwizardry.wizardry.init.ModPotions;
@@ -96,12 +98,16 @@ public class ItemSyringe extends ItemMod {
 
 	@Override
 	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-		if (stack.getItemDamage() == 2) {
-			tooltip.add("Will completely saturate your mana bar and deplete your burnout bar for 10 seconds. Severe side-effects included");
-			tooltip.add("Feel the burn.");
-		} else if (stack.getItemDamage() == 1) {
-			tooltip.add("Will fill your mana bar by 30%");
-		} else {
+		String desc = stack.getUnlocalizedName() + ".desc";
+		String used = LibrarianLib.PROXY.canTranslate(desc) ? desc : desc + "0";
+		if (LibrarianLib.PROXY.canTranslate(used)) {
+			TooltipHelper.addToTooltip(tooltip, used);
+			int i = 0;
+			while (LibrarianLib.PROXY.canTranslate(desc + (++i)))
+				TooltipHelper.addToTooltip(tooltip, desc + i);
+		}
+
+		if (stack.getItemDamage() == 3 && stack.hasTagCompound()) {
 			UUID uuid = ItemNBTHelper.getUUID(stack, "uuid");
 			String entity = ItemNBTHelper.getString(stack, "entity", null);
 			if (uuid != null) {

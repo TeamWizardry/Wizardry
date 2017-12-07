@@ -279,7 +279,7 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 			}
 		}
 
-		if (lastModule != null && !GuiScreen.isShiftKeyDown()) {
+		if (!GuiScreen.isShiftKeyDown() && !modules.isEmpty()) {
 			tooltip.add(TextFormatting.GRAY + "<- " + TextFormatting.DARK_GRAY + "Shift for more info" + TextFormatting.GRAY + " ->");
 		}
 	}

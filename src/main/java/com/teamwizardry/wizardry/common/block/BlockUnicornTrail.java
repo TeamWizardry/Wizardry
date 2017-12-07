@@ -6,6 +6,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
@@ -76,5 +77,11 @@ public class BlockUnicornTrail extends BlockModContainer {
 	@Override
 	public TileEntity createTileEntity(@NotNull World world, @NotNull IBlockState state) {
 		return new TileUnicornTrail();
+	}
+
+	@Nullable
+	@Override
+	public ItemBlock createItemForm() {
+		return null;
 	}
 }

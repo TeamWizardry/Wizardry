@@ -72,10 +72,12 @@ public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, 
 		return "waste";
 	}
 
-	private String getName(@Nonnull ItemStack stack) {
+	@Override
+	@Nonnull
+	public String getUnlocalizedName(@Nonnull ItemStack stack) {
 		if (!stack.hasTagCompound())
-			return getUnlocalizedName() + ".name";
-		return this.getUnlocalizedName(stack) + "." + getNameType(stack) + ".name";
+			return super.getUnlocalizedName(stack) + ".name";
+		return super.getUnlocalizedName(stack) + "." + getNameType(stack) + ".name";
 	}
 
 	@Nonnull
@@ -112,7 +114,7 @@ public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, 
 		}
 
 		if (finalName == null)
-			return LibrarianLib.PROXY.translate(getName(stack)).trim();
+			return LibrarianLib.PROXY.translate(getUnlocalizedName(stack)).trim();
 		else return finalName.toString();
 	}
 
@@ -143,7 +145,7 @@ public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, 
 			}
 		}
 
-		if (!GuiScreen.isShiftKeyDown()) {
+		if (!GuiScreen.isShiftKeyDown() && !modules.isEmpty()) {
 			tooltip.add(TextFormatting.GRAY + "<- " + TextFormatting.DARK_GRAY + "Shift for more info" + TextFormatting.GRAY + " ->");
 		}
 	}

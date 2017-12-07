@@ -25,7 +25,7 @@ public interface INacreColorable extends IItemColorProvider {
 	default void colorableOnUpdate(ItemStack stack, World world) {
 		if (!world.isRemote) {
 			if (!ItemNBTHelper.verifyExistence(stack, NBT.RAND))
-				ItemNBTHelper.setFloat(stack, NBT.RAND, world.rand.nextFloat());
+				ItemNBTHelper.setFloat(stack, NBT.RAND, (world.getTotalWorldTime() / 140f) % 140f);
 
 			if (!ItemNBTHelper.verifyExistence(stack, NBT.PURITY))
 				ItemNBTHelper.setInt(stack, NBT.PURITY, NBT.NACRE_PURITY_CONVERSION);
@@ -74,10 +74,8 @@ public interface INacreColorable extends IItemColorProvider {
 	default Function2<ItemStack, Integer, Integer> getItemColorFunction() {
 		return (stack, tintIndex) -> {
 			if (tintIndex != 0) return 0xFFFFFF;
-			if (!stack.hasTagCompound())
-				return Color.HSBtoRGB(MathHelper.sin(Minecraft.getMinecraft().world.getTotalWorldTime() / 140f), 0.75f, 1f);
 			float rand = ItemNBTHelper.getFloat(stack, NBT.RAND, -1);
-			float hue = rand < 0 ? MathHelper.sin(Minecraft.getMinecraft().world.getTotalWorldTime() / 140f) : rand;
+			float hue = rand < 0 ? (Minecraft.getMinecraft().world.getTotalWorldTime() / 140f) % 140f : rand;
 			float pow = Math.min(1f, Math.max(0f, getQuality(stack)));
 
 			float saturation = curveConst * (1 - (float) Math.pow(Math.E, -pow));
@@ -106,7 +104,7 @@ public interface INacreColorable extends IItemColorProvider {
 
 
 				float rand = ItemNBTHelper.getFloat(stack, NBT.RAND, -1);
-				float hue = rand < 0 ? MathHelper.sin(tick / 140f) : rand;
+				float hue = rand < 0 ? (tick / 140f) % 140f : rand;
 				float pow = Math.min(1f, Math.max(0f, getQuality(stack)));
 
 				double decaySaturation = (lastCast == -1 || decayCooldown <= 0 || decayStage >= 1f) ? 1f :
