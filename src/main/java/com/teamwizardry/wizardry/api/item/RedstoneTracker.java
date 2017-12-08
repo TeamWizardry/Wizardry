@@ -7,6 +7,7 @@ import com.teamwizardry.wizardry.common.network.PacketDevilDustFizzle;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -65,7 +66,10 @@ public class RedstoneTracker {
 		}
 
 		public void tick() {
-			if (redstone == null || world == null || expired) return;
+			if (redstone == null || world == null || expired) {
+				expired = true;
+				return;
+			}
 
 			if (!cooking) {
 				if (redstone.isInLava() || redstone.isInsideOfMaterial(Material.FIRE) || redstone.isInsideOfMaterial(Material.LAVA)) {
@@ -84,7 +88,10 @@ public class RedstoneTracker {
 					PacketHandler.NETWORK.sendToAllAround(new PacketDevilDustFizzle(new Vec3d(position).addVector(0.5, 0.5, 0.5), cookTime), new NetworkRegistry.TargetPoint(world.provider.getDimension(), position.getX(), position.getY(), position.getZ(), 30));
 				}
 			} else {
-				if (position == null) return;
+				if (position == null) {
+					expired = true;
+					return;
+				}
 				if (--cookTime <= 0) {
 					expired = true;
 
@@ -95,10 +102,15 @@ public class RedstoneTracker {
 					devilDust.setEntityInvulnerable(true);
 					world.spawnEntity(devilDust);
 
-				} else if (world.getBlockState(position).getBlock() == Blocks.FIRE) {
-					if ((cookTime % 10) == 0)
-						world.playSound(null, position.getX(), position.getY(), position.getZ(), ModSounds.FRYING_SIZZLE, SoundCategory.BLOCKS, 0.7F, (float) RandUtil.nextDouble(0.8, 1.3));
-				} else expired = true;
+				} else {
+					IBlockState state = world.getBlockState(position);
+					if (state.getMaterial() == Material.LAVA || state.getBlock() == Blocks.FIRE) {
+						if ((cookTime % 10) == 0) {
+							PacketHandler.NETWORK.sendToAllAround(new PacketDevilDustFizzle(new Vec3d(position).addVector(0.5, 0.5, 0.5), cookTime), new NetworkRegistry.TargetPoint(world.provider.getDimension(), position.getX(), position.getY(), position.getZ(), 20));
+							world.playSound(null, position.getX(), position.getY(), position.getZ(), ModSounds.FRYING_SIZZLE, SoundCategory.BLOCKS, 0.7F, (float) RandUtil.nextDouble(0.8, 1.3));
+						}
+					} else expired = true;
+				}
 			}
 		}
 
