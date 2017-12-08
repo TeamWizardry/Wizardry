@@ -3,6 +3,8 @@ package com.teamwizardry.wizardry.api.item;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import net.minecraft.item.ItemStack;
 
+import java.util.UUID;
+
 /**
  * Created by LordSaad.
  */
@@ -12,5 +14,8 @@ public interface ICape {
 		int tick = ItemNBTHelper.getInt(stack, "tick", 0);
 
 		if (tick < 1000000) ItemNBTHelper.setInt(stack, "tick", ++tick);
+
+		if (!ItemNBTHelper.verifyExistence(stack, "uuid"))
+			ItemNBTHelper.setUUID(stack, "uuid", UUID.randomUUID());
 	}
 }

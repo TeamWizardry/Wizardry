@@ -6,8 +6,11 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.teamwizardry.librarianlib.core.LibrarianLib;
+import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
+import com.teamwizardry.wizardry.api.util.RandUtilSeed;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModPotions;
 import it.unimi.dsi.fastutil.longs.Long2BooleanMap;
@@ -23,6 +26,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemElytra;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -36,6 +40,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import org.lwjgl.opengl.GL11;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 // TODO: fix cape while in vehicles
@@ -255,7 +260,22 @@ public final class CapeHandler {
 			GlStateManager.disableCull();
 			GlStateManager.enableBlend();
 			GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-			Minecraft.getMinecraft().getTextureManager().bindTexture(TEXTURE);
+
+			ItemStack stack = BaublesSupport.getItem(player, ModItems.CAPE);
+			String cape = null;
+
+			if (LibrarianLib.PROXY.getResource(Wizardry.MODID, "textures/capes/cape_" + player.getUniqueID().toString().replace("-", "") + ".png") == null) {
+				UUID uuid = ItemNBTHelper.getUUID(stack, "uuid");
+				if (uuid != null) {
+					RandUtilSeed seed = new RandUtilSeed(uuid.hashCode());
+					cape = "cape_normal_" + seed.nextInt(1, 4);
+				}
+			} else {
+				cape = "cape_" + player.getUniqueID().toString().replace("-", "");
+			}
+
+			Minecraft.getMinecraft().getTextureManager().bindTexture(new ResourceLocation(Wizardry.MODID, "textures/capes/" + cape + ".png"));
+
 			tes.draw();
 			GlStateManager.enableCull();
 		}
