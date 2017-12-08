@@ -12,7 +12,6 @@ import com.teamwizardry.wizardry.api.block.TileManaInteracter;
 import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.item.EnumPearlType;
 import com.teamwizardry.wizardry.api.item.IInfusable;
-import com.teamwizardry.wizardry.api.render.ClusterObject;
 import com.teamwizardry.wizardry.api.spell.SpellBuilder;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.util.RandUtil;
@@ -60,7 +59,6 @@ public class TileCraftingPlate extends TileManaInteracter {
 	public ModuleInventory outputPearl = new ModuleInventory(1);
 	@Save
 	public boolean revealStructure = false;
-	public ClusterObject[] renders;
 	public Vec3d[] positions;
 	public Random random = new Random(getPos().toLong());
 
@@ -76,12 +74,27 @@ public class TileCraftingPlate extends TileManaInteracter {
 	public TileCraftingPlate() {
 		super(500, 500);
 		realInventory.setSides(EnumFacing.values());
-		renders = new ClusterObject[realInventory.getHandler().getSlots()];
 		positions = new Vec3d[realInventory.getHandler().getSlots()];
 	}
 
 	@Override
 	public void readCustomNBT(NBTTagCompound compound) {
+		//positions = new Vec3d[realInventory.getHandler().getSlots()];
+		//for (int i = 0; i < realInventory.getHandler().getSlots(); i++) {
+		//	if (!realInventory.getHandler().getStackInSlot(i).isEmpty()) {
+//
+		//		int finalI = i;
+		//		ClientRunnable.run(new ClientRunnable() {
+		//			@Override
+		//			@SideOnly(Side.CLIENT)
+		//			public void runIfClient() {
+		//				if (renderHandler != null)
+		//					((TileCraftingPlateRenderer) renderHandler).addAnimation(finalI, true);
+		//			}
+		//		});
+		//		break;
+		//	}
+		//}
 	}
 
 	@Override

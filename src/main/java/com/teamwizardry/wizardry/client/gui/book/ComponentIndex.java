@@ -17,14 +17,19 @@ import com.teamwizardry.wizardry.Wizardry;
 import kotlin.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 
 public class ComponentIndex extends GuiComponent {
 
@@ -45,19 +50,21 @@ public class ComponentIndex extends GuiComponent {
 		this.bookGui = bookGui;
 		this.pos = pos;
 
-		HashMap<Integer, ArrayList<BookGui.IndexItem>> pages = getPages(list);
+		List<List<BookGui.IndexItem>> pages = getPages(list);
 
 		ComponentNavBar navBar = new ComponentNavBar(0, componentBook.getSize().getYi() - getSize().getYi() + 80, 170, 15, pages.size() - 1);
 		add(navBar);
 
 		navBar.BUS.hook(EventNavBarChange.class, eventNavBarChange -> {
 			for (ComponentVoid componentVoid : prevComps) componentVoid.invalidate();
-			prevComps.clear();
+			prevComps = new ArrayList<>();
 
-			if (pages.size() <= navBar.getPage()) return;
+			if (pages.size() - 1 < navBar.getPage()) return;
+			if (pages.get(navBar.getPage()).isEmpty()) return;
 
 			for (int i = 0; i < pages.get(navBar.getPage()).size(); i++) {
 				BookGui.IndexItem indexItem = pages.get(navBar.getPage()).get(i);
+				if (indexItem == null) continue;
 
 				ComponentVoid plate = new ComponentVoid(0, i * plateHeight + i * buffer, plateWidth, plateHeight + buffer);
 				if (!getChildren().contains(plate)) add(plate);
@@ -73,8 +80,25 @@ public class ComponentIndex extends GuiComponent {
 						if (!event.component.getMouseOver()) GlStateManager.color(0, 0, 0);
 						else GlStateManager.color(0, 0.5f, 1);
 					}
-					indexItem.icon.getTex().bind();
-					indexItem.icon.draw((int) ClientTickHandler.getPartialTicks(), 0, (plate.getSize().getYf() / 2 - plateHeight / 2.0f), plateHeight, plateHeight);
+					if (indexItem.icon != null) {
+						indexItem.icon.getTex().bind();
+						indexItem.icon.draw((int) ClientTickHandler.getPartialTicks(), 0, (plate.getSize().getYf() / 2 - plateHeight / 2.0f), plateHeight, plateHeight);
+					} else if (!indexItem.iconStack.isEmpty()) {
+						RenderHelper.enableGUIStandardItemLighting();
+						GlStateManager.enableRescaleNormal();
+						GlStateManager.scale(2, 2, 2);
+
+						RenderItem itemRender = Minecraft.getMinecraft().getRenderItem();
+						itemRender.zLevel = 200.0f;
+
+						itemRender.renderItemAndEffectIntoGUI(indexItem.iconStack, 0, 3);
+
+						itemRender.zLevel = 0.0f;
+
+						GlStateManager.disableRescaleNormal();
+						RenderHelper.disableStandardItemLighting();
+					}
+
 					GlStateManager.popMatrix();
 				});
 
@@ -124,22 +148,19 @@ public class ComponentIndex extends GuiComponent {
 
 	}
 
-	private HashMap<Integer, ArrayList<BookGui.IndexItem>> getPages(ArrayList<BookGui.IndexItem> items) {
-		HashMap<Integer, ArrayList<BookGui.IndexItem>> pages = new HashMap<>();
-		int itemCount = 0, pageNb = 0, itemsPerPage = (int) (300.0 / (plateHeight + buffer));
+	private List<List<BookGui.IndexItem>> getPages(ArrayList<BookGui.IndexItem> items) {
+		int itemsPerPage = 6;
+		List<List<BookGui.IndexItem>> pages = new ArrayList<>();
 
 		ArrayList<BookGui.IndexItem> tmp = new ArrayList<>();
 		for (BookGui.IndexItem item : items) {
-			if (itemCount > itemsPerPage) {
-				itemCount = 0;
-				pages.put(pageNb++, tmp);
-				tmp.clear();
-			} else {
-				itemCount++;
-				tmp.add(item);
+			tmp.add(item);
+			if (tmp.size() >= itemsPerPage) {
+				pages.add(new ArrayList<>(tmp));
+				tmp = new ArrayList<>();
 			}
 		}
-		if (!tmp.isEmpty()) pages.put(pageNb > 0 ? ++pageNb : 0, tmp);
+		if (!tmp.isEmpty()) pages.add(new ArrayList<>(tmp));
 
 		return pages;
 	}
@@ -195,13 +216,23 @@ public class ComponentIndex extends GuiComponent {
 					if (element.isJsonObject()) {
 
 						JsonObject chunk = element.getAsJsonObject();
-						if (chunk.has("icon") && chunk.has("text") && chunk.has("link") && chunk.get("icon").isJsonPrimitive() && chunk.get("text").isJsonPrimitive() && chunk.get("link").isJsonPrimitive()) {
+						if (chunk.has("text") && chunk.has("link") && chunk.get("text").isJsonPrimitive() && chunk.get("link").isJsonPrimitive()) {
 
-							Sprite icon = new Sprite(new ResourceLocation(chunk.getAsJsonPrimitive("icon").getAsString()));
+							Sprite icon = null;
+							if (chunk.has("icon") && chunk.get("icon").isJsonPrimitive())
+								icon = new Sprite(new ResourceLocation(chunk.getAsJsonPrimitive("icon").getAsString()));
+
+							ItemStack stack = ItemStack.EMPTY;
+							if (chunk.has("item") && chunk.get("item").isJsonPrimitive()) {
+								Item itemIcon = ForgeRegistries.ITEMS.getValue(new ResourceLocation(chunk.getAsJsonPrimitive("item").getAsString()));
+								if (itemIcon != null) stack = new ItemStack(itemIcon);
+							}
+
 							String finalPath = path + chunk.getAsJsonPrimitive("link").getAsString();
 							String text = chunk.getAsJsonPrimitive("text").getAsString();
 
-							indexItems.add(new BookGui.IndexItem(text, icon, finalPath));
+							BookGui.IndexItem item = new BookGui.IndexItem(text, finalPath, icon, stack);
+							indexItems.add(item);
 						}
 					}
 				}

@@ -11,10 +11,10 @@ import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.CachedStructure;
 import com.teamwizardry.wizardry.api.block.IStructure;
-import com.teamwizardry.wizardry.api.render.ClusterObject;
 import com.teamwizardry.wizardry.api.spell.SpellBuilder;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.client.render.block.TileCraftingPlateRenderer;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
 import com.teamwizardry.wizardry.init.ModItems;
@@ -118,66 +118,70 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 
 					worldIn.playSound(null, pos, ModSounds.BASS_BOOM, SoundCategory.BLOCKS, 1f, (float) RandUtil.nextDouble(1, 1.5));
 					return true;
-				}
+				} else {
+					ItemStack stack = heldItem.copy();
+					stack.setCount(1);
+					heldItem.shrink(1);
 
-				ItemStack stack = heldItem.copy();
-				stack.setCount(1);
-				heldItem.setCount(heldItem.getCount() - 1);
-
-				float yaw = playerIn.rotationYaw;
-				float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - yaw));
-				float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - yaw));
-				Vec3d origin = new Vec3d(offX, playerIn.getEyeHeight(), offZ).add(playerIn.getPositionVector());
-
-				for (int i = 0; i < plate.realInventory.getHandler().getSlots(); i++) {
-					if (plate.realInventory.getHandler().getStackInSlot(i).isEmpty()) {
-						plate.realInventory.getHandler().setStackInSlot(i, stack);
-
-						int finalI = i;
-						ClientRunnable.run(new ClientRunnable() {
-							@Override
-							@SideOnly(Side.CLIENT)
-							public void runIfClient() {
-								plate.renders[finalI] = new ClusterObject(plate, stack, worldIn, origin.subtract(new Vec3d(pos)));
-							}
-						});
-						break;
-					}
-				}
-
-				playerIn.openContainer.detectAndSendChanges();
-				worldIn.notifyBlockUpdate(pos, state, state, 3);
-
-			} else if (!plate.outputPearl.getHandler().getStackInSlot(0).isEmpty()) {
-				playerIn.setHeldItem(hand, plate.outputPearl.getHandler().extractItem(0, 1, false));
-				playerIn.openContainer.detectAndSendChanges();
-				worldIn.notifyBlockUpdate(pos, state, state, 3);
-
-			} else {
-				boolean empty = false;
-				for (int i = 0; i < plate.realInventory.getHandler().getSlots(); i++) {
-					if (!plate.realInventory.getHandler().getStackInSlot(i).isEmpty()) {
-						empty = true;
-						break;
-					}
-				}
-				if (!empty) {
 					for (int i = 0; i < plate.realInventory.getHandler().getSlots(); i++) {
-						ItemStack extracted = plate.realInventory.getHandler().getStackInSlot(i);
-						if (!extracted.isEmpty()) {
-							playerIn.setHeldItem(hand, plate.realInventory.getHandler().extractItem(i, extracted.getCount(), false));
-							playerIn.openContainer.detectAndSendChanges();
-							worldIn.notifyBlockUpdate(pos, state, state, 3);
+						if (plate.realInventory.getHandler().getStackInSlot(i).isEmpty()) {
+							plate.realInventory.getHandler().setStackInSlot(i, stack);
+
+							int finalI = i;
+							ClientRunnable.run(new ClientRunnable() {
+								@Override
+								@SideOnly(Side.CLIENT)
+								public void runIfClient() {
+									if (plate.renderHandler != null)
+										((TileCraftingPlateRenderer) plate.renderHandler).addAnimation(finalI, true);
+								}
+							});
 							break;
 						}
 					}
+
+					playerIn.openContainer.detectAndSendChanges();
+					worldIn.notifyBlockUpdate(pos, state, state, 3);
+					return true;
 				}
+			} else {
+
+				if (!plate.outputPearl.getHandler().getStackInSlot(0).isEmpty()) {
+					playerIn.setHeldItem(hand, plate.outputPearl.getHandler().extractItem(0, 1, false));
+					playerIn.openContainer.detectAndSendChanges();
+					worldIn.notifyBlockUpdate(pos, state, state, 3);
+
+					return true;
+				} else {
+					boolean empty = true;
+					for (int i = 0; i < plate.realInventory.getHandler().getSlots(); i++) {
+						if (!plate.realInventory.getHandler().getStackInSlot(i).isEmpty()) {
+							empty = false;
+							break;
+						}
+					}
+					if (!empty) {
+						for (int i = 0; i < plate.realInventory.getHandler().getSlots(); i++) {
+							ItemStack extracted = plate.realInventory.getHandler().getStackInSlot(i);
+							if (!extracted.isEmpty()) {
+								playerIn.addItemStackToInventory(plate.realInventory.getHandler().extractItem(i, extracted.getCount(), false));
+								worldIn.notifyBlockUpdate(pos, state, state, 3);
+								break;
+							}
+						}
+					}
+				}
+				return true;
 			}
-			return true;
+
 		} else {
-			TileCraftingPlate plate = getTE(worldIn, pos);
-			plate.revealStructure = !plate.revealStructure;
-			plate.markDirty();
+			if (playerIn.isCreative() && playerIn.isSneaking()) {
+				tickStructure(worldIn, playerIn, pos);
+			} else {
+				TileCraftingPlate plate = getTE(worldIn, pos);
+				plate.revealStructure = !plate.revealStructure;
+				plate.markDirty();
+			}
 		}
 		return heldItem.isEmpty();
 	}

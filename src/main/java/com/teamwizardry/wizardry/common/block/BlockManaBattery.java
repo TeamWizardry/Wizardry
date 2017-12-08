@@ -36,11 +36,15 @@ public class BlockManaBattery extends BlockModContainer implements IStructure {
 
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-		TileManaBattery tile = (TileManaBattery) worldIn.getTileEntity(pos);
-		if (tile == null) return false;
+		if (playerIn.isCreative() && playerIn.isSneaking()) {
+			tickStructure(worldIn, playerIn, pos);
+		} else {
+			TileManaBattery tile = (TileManaBattery) worldIn.getTileEntity(pos);
+			if (tile == null) return false;
 
-		tile.revealStructure = !tile.revealStructure;
-		tile.markDirty();
+			tile.revealStructure = !tile.revealStructure;
+			tile.markDirty();
+		}
 		return true;
 	}
 

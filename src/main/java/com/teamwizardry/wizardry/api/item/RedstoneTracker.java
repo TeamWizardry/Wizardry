@@ -17,6 +17,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 
 public class RedstoneTracker {
@@ -53,7 +54,8 @@ public class RedstoneTracker {
 		private int cookTime = 1000;
 		private boolean expired = false;
 		private World world;
-		private BlockPos position;
+		@Nullable
+		private BlockPos position = null;
 		private int count;
 
 		RedstoneBluetooth(EntityItem redstone, World world) {
@@ -63,43 +65,26 @@ public class RedstoneTracker {
 		}
 
 		public void tick() {
-			if (redstone == null || world == null) return;
-			if (!expired && !cooking) {
-				if (redstone.isDead || redstone.isBurning() || redstone.isInLava()) {
-					cooking = true;
+			if (redstone == null || world == null || expired) return;
 
-					BlockPos fire = PosUtils.checkNeighbor(world, redstone.getPosition(), Blocks.FIRE);
-					BlockPos lava = PosUtils.checkNeighbor(world, redstone.getPosition(), Blocks.LAVA);
-
-					if (fire != null && world.isMaterialInBB(redstone.getEntityBoundingBox().grow(0.1, 0.1, 0.1), Material.FIRE)) {
+			if (!cooking) {
+				if (redstone.isInLava() || redstone.isInsideOfMaterial(Material.FIRE) || redstone.isInsideOfMaterial(Material.LAVA)) {
+					position = redstone.getPosition();
+				}
+				if (position == null) {
+					BlockPos fire = PosUtils.checkNeighbor(world, redstone.getPosition(), Blocks.FIRE, Blocks.LAVA, Blocks.FLOWING_LAVA);
+					if (fire != null) {
 						position = fire;
-					} else if (lava != null && world.isMaterialInBB(redstone.getEntityBoundingBox().grow(0.1, 0.1, 0.1), Material.LAVA)) {
-						position = lava;
 					}
-					world.removeEntity(redstone);
-
-					if (position != null)
-						PacketHandler.NETWORK.sendToAllAround(new PacketDevilDustFizzle(new Vec3d(position).addVector(0.5, 0.5, 0.5), cookTime), new NetworkRegistry.TargetPoint(world.provider.getDimension(), position.getX(), position.getY(), position.getZ(), 30));
 				}
 
-				if (redstone.isInsideOfMaterial(Material.FIRE) || redstone.isInsideOfMaterial(Material.LAVA)) {
-					cooking = true;
-
-					BlockPos fire = PosUtils.checkNeighbor(world, redstone.getPosition(), Blocks.FIRE);
-					BlockPos lava = PosUtils.checkNeighbor(world, redstone.getPosition(), Blocks.LAVA);
-
-					if (fire != null && world.isMaterialInBB(redstone.getEntityBoundingBox().grow(0.1, 0.1, 0.1), Material.FIRE)) {
-						position = fire;
-					} else if (lava != null && world.isMaterialInBB(redstone.getEntityBoundingBox().grow(0.1, 0.1, 0.1), Material.LAVA)) {
-						position = lava;
-					}
+				if (position != null) {
 					world.removeEntity(redstone);
-
-					if (position != null)
-						PacketHandler.NETWORK.sendToAllAround(new PacketDevilDustFizzle(new Vec3d(position).addVector(0.5, 0.5, 0.5), cookTime), new NetworkRegistry.TargetPoint(world.provider.getDimension(), position.getX(), position.getY(), position.getZ(), 30));
+					cooking = true;
+					PacketHandler.NETWORK.sendToAllAround(new PacketDevilDustFizzle(new Vec3d(position).addVector(0.5, 0.5, 0.5), cookTime), new NetworkRegistry.TargetPoint(world.provider.getDimension(), position.getX(), position.getY(), position.getZ(), 30));
 				}
-
-			} else if (!expired && position != null) {
+			} else {
+				if (position == null) return;
 				if (--cookTime <= 0) {
 					expired = true;
 

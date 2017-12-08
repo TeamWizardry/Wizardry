@@ -15,12 +15,15 @@ import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.librarianlib.features.sprite.Texture;
 import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.client.Minecraft;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 /**
@@ -73,7 +76,7 @@ public class BookGui extends GuiBase {
 
 		ArrayList<IndexItem> indexItems = new ArrayList<>();
 		if (stream != null) {
-			InputStreamReader reader = new InputStreamReader(stream);
+			InputStreamReader reader = new InputStreamReader(stream, Charset.forName("UTF-8"));
 			JsonElement json = new JsonParser().parse(reader);
 			if (json.isJsonObject() && json.getAsJsonObject().has("index")) {
 
@@ -82,13 +85,22 @@ public class BookGui extends GuiBase {
 					if (element.isJsonObject()) {
 
 						JsonObject chunk = element.getAsJsonObject();
-						if (chunk.has("icon") && chunk.has("text") && chunk.has("link") && chunk.get("icon").isJsonPrimitive() && chunk.get("text").isJsonPrimitive() && chunk.get("link").isJsonPrimitive()) {
+						if (chunk.has("text") && chunk.has("link") && chunk.get("text").isJsonPrimitive() && chunk.get("link").isJsonPrimitive()) {
 
-							Sprite icon = new Sprite(new ResourceLocation(chunk.getAsJsonPrimitive("icon").getAsString()));
+							Sprite icon = null;
+							if (chunk.has("icon") && chunk.get("icon").isJsonPrimitive())
+								icon = new Sprite(new ResourceLocation(chunk.getAsJsonPrimitive("icon").getAsString()));
+
+							ItemStack stack = ItemStack.EMPTY;
+							if (chunk.has("item") && chunk.get("item").isJsonPrimitive()) {
+								Item itemIcon = ForgeRegistries.ITEMS.getValue(new ResourceLocation(chunk.getAsJsonPrimitive("item").getAsString()));
+								if (itemIcon != null) stack = new ItemStack(itemIcon);
+							}
+
 							String finalPath = path + chunk.getAsJsonPrimitive("link").getAsString();
 							String text = chunk.getAsJsonPrimitive("text").getAsString();
 
-							IndexItem item = new IndexItem(text, icon, finalPath);
+							IndexItem item = new IndexItem(text, finalPath, icon, stack);
 							indexItems.add(item);
 						}
 					}
@@ -118,14 +130,17 @@ public class BookGui extends GuiBase {
 
 	public static class IndexItem {
 
+		@Nullable
 		public final Sprite icon;
 		public final String text;
 		public final String link;
+		public final ItemStack iconStack;
 
-		public IndexItem(String text, Sprite icon, String link) {
+		public IndexItem(String text, String link, @Nullable Sprite icon, ItemStack iconStack) {
 			this.text = text;
 			this.icon = icon;
 			this.link = link;
+			this.iconStack = iconStack;
 		}
 	}
 }

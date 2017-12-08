@@ -31,7 +31,7 @@ public class CommandWizardry extends CommandBase {
 	@Nonnull
 	@Override
 	public String getUsage(@Nonnull ICommandSender sender) {
-		return "/wizardry <reset>";
+		return "/wizardry <reload/reset [config/inventory]>";
 	}
 
 	@Override

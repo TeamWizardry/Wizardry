@@ -36,13 +36,17 @@ public class BlockCreativeManaBattery extends BlockModContainer implements IStru
 
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-		TileEntity tile = worldIn.getTileEntity(pos);
-		if (tile == null || !(tile instanceof TileManaBattery)) return false;
-		else {
-			((TileManaBattery) tile).revealStructure = !((TileManaBattery) tile).revealStructure;
-			tile.markDirty();
-			return true;
+		if (playerIn.isCreative() && playerIn.isSneaking()) {
+			tickStructure(worldIn, playerIn, pos);
+		} else {
+			TileEntity tile = worldIn.getTileEntity(pos);
+			if (tile == null || !(tile instanceof TileManaBattery)) return false;
+			else {
+				((TileManaBattery) tile).revealStructure = !((TileManaBattery) tile).revealStructure;
+				tile.markDirty();
+			}
 		}
+		return true;
 	}
 
 	@Override

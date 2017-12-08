@@ -1,8 +1,8 @@
 package com.teamwizardry.wizardry.api.block;
 
-import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -124,7 +124,8 @@ public interface IStructure {
 	default boolean isStructureComplete(World world, BlockPos pos) {
 		for (Template.BlockInfo info : getStructure().blockInfos()) {
 			if (info.blockState == null) continue;
-			if (info.blockState.getMaterial() == Material.AIR) continue;
+			if (info.blockState.getMaterial() == Material.AIR || info.blockState.getBlock() == Blocks.STRUCTURE_VOID)
+				continue;
 
 			BlockPos realPos = info.pos.add(pos).subtract(offsetToCenter());
 			if (world.getBlockState(realPos).getBlock() != info.blockState.getBlock()) return false;
@@ -136,50 +137,48 @@ public interface IStructure {
 	default boolean tickStructure(World world, EntityPlayer player, BlockPos pos) {
 		if (world.isRemote) return true;
 
-		if (player.getHeldItemMainhand().getItem() == ModItems.MAGIC_WAND) {
-			for (Template.BlockInfo info : getStructure().blockInfos()) {
-				if (info.blockState == null) continue;
+		for (Template.BlockInfo info : getStructure().blockInfos()) {
+			if (info.blockState == null) continue;
 
-				BlockPos realPos = info.pos.add(pos).subtract(offsetToCenter());
-				if (world.getBlockState(realPos).getBlock() != info.blockState.getBlock()) {
-					if (world.isAirBlock(realPos)) {
+			BlockPos realPos = info.pos.add(pos).subtract(offsetToCenter());
+			if (world.getBlockState(realPos).getBlock() != info.blockState.getBlock()) {
+				if (world.isAirBlock(realPos)) {
 
-						if (player.isCreative()) {
-							world.setBlockState(realPos, info.blockState);
-						} else {
-							ItemStack requiredStack = new ItemStack(info.blockState.getBlock());
-							ItemStack stack = findItemInventoryFromItem(player, requiredStack);
-
-							if (stack.isEmpty()) {
-								ItemStack outputItem = craftItemFromInventory(player, requiredStack);
-
-								if (outputItem.isEmpty()) continue;
-								outputItem.shrink(1);
-								player.inventory.addItemStackToInventory(outputItem);
-								player.inventory.markDirty();
-								world.setBlockState(realPos, info.blockState);
-								return true;
-							} else {
-								stack.shrink(1);
-								world.setBlockState(realPos, info.blockState);
-								return true;
-							}
-						}
-					}
-				} else if (world.getBlockState(realPos) != info.blockState) {
-					if (player.isCreative() || !info.blockState.getMaterial().isLiquid()) {
+					if (player.isCreative()) {
 						world.setBlockState(realPos, info.blockState);
-						return true;
 					} else {
-						FluidStack fluidStack = new FluidStack(FluidRegistry.lookupFluidForBlock(info.blockState.getBlock()), 1);
-						ItemStack fluidBucket = findItemInventoryFromItem(player, FluidUtil.getFilledBucket(fluidStack));
-						if (!fluidBucket.isEmpty()) {
-							fluidBucket.shrink(1);
-							player.addItemStackToInventory(new ItemStack(Items.BUCKET));
+						ItemStack requiredStack = new ItemStack(info.blockState.getBlock());
+						ItemStack stack = findItemInventoryFromItem(player, requiredStack);
+
+						if (stack.isEmpty()) {
+							ItemStack outputItem = craftItemFromInventory(player, requiredStack);
+
+							if (outputItem.isEmpty()) continue;
+							outputItem.shrink(1);
+							player.inventory.addItemStackToInventory(outputItem);
 							player.inventory.markDirty();
 							world.setBlockState(realPos, info.blockState);
 							return true;
+						} else {
+							stack.shrink(1);
+							world.setBlockState(realPos, info.blockState);
+							return true;
 						}
+					}
+				}
+			} else if (world.getBlockState(realPos) != info.blockState) {
+				if (player.isCreative() || !info.blockState.getMaterial().isLiquid()) {
+					world.setBlockState(realPos, info.blockState);
+					return true;
+				} else {
+					FluidStack fluidStack = new FluidStack(FluidRegistry.lookupFluidForBlock(info.blockState.getBlock()), 1);
+					ItemStack fluidBucket = findItemInventoryFromItem(player, FluidUtil.getFilledBucket(fluidStack));
+					if (!fluidBucket.isEmpty()) {
+						fluidBucket.shrink(1);
+						player.addItemStackToInventory(new ItemStack(Items.BUCKET));
+						player.inventory.markDirty();
+						world.setBlockState(realPos, info.blockState);
+						return true;
 					}
 				}
 			}

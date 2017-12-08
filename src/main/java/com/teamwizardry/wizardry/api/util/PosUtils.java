@@ -1,14 +1,8 @@
 package com.teamwizardry.wizardry.api.util;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.teamwizardry.wizardry.common.tile.TilePearlHolder;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
@@ -20,6 +14,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Saad on 8/27/2016.
@@ -40,7 +40,23 @@ public final class PosUtils {
 		symmetricFacingValues.add(EnumFacing.NORTH);
 	}
 
-	public static BlockPos checkNeighbor(World world, BlockPos origin, Block desiredBlockToFind) {
+	@Nullable
+	public static BlockPos checkNeighbor(World world, BlockPos origin, Block... desiredBlocksToFind) {
+		IBlockState originState = world.getBlockState(origin);
+		for (Block desiredBlockToFind : desiredBlocksToFind) {
+			if (originState.getBlock() == desiredBlockToFind) return origin;
+		}
+		for (EnumFacing facing : EnumFacing.values()) {
+			BlockPos pos = origin.offset(facing);
+			IBlockState state = world.getBlockState(pos);
+			for (Block desiredBlockToFind : desiredBlocksToFind) {
+				if (state.getBlock() == desiredBlockToFind) return pos;
+			}
+		}
+		return null;
+	}
+
+	public static BlockPos checkNeighborThorough(World world, BlockPos origin, Block desiredBlockToFind) {
 		if (world.getBlockState(origin).getBlock() == desiredBlockToFind) return origin;
 
 		for (EnumFacing facing : EnumFacing.values()) {
@@ -108,23 +124,19 @@ public final class PosUtils {
 			fullCircle.removeAll(takenPoses);
 		}
 	}
-	
-	public static boolean blockHasItems(World world, BlockPos pos, ItemStack... items)
-	{
+
+	public static boolean blockHasItems(World world, BlockPos pos, ItemStack... items) {
 		List<EntityItem> entities = world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos));
 		if (entities.size() < items.length)
 			return false;
 		boolean[] found = new boolean[entities.size()];
-		for (EntityItem entityItem : entities)
-		{
+		for (EntityItem entityItem : entities) {
 			if (entityItem.getItem() == null)
 				continue;
-			for (int i = 0; i < items.length; i++)
-			{
+			for (int i = 0; i < items.length; i++) {
 				if (found[i])
 					continue;
-				if (ItemStack.areItemStacksEqual(entityItem.getItem(), items[i]) && ItemStack.areItemStackTagsEqual(entityItem.getItem(), items[i]))
-				{
+				if (ItemStack.areItemStacksEqual(entityItem.getItem(), items[i]) && ItemStack.areItemStackTagsEqual(entityItem.getItem(), items[i])) {
 					found[i] = true;
 					break;
 				}
@@ -135,23 +147,19 @@ public final class PosUtils {
 				return false;
 		return true;
 	}
-	
-	public static boolean blockHasItems(World world, BlockPos pos, Item... items)
-	{
+
+	public static boolean blockHasItems(World world, BlockPos pos, Item... items) {
 		List<EntityItem> entities = world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos));
 		if (entities.size() < items.length)
 			return false;
 		boolean[] found = new boolean[entities.size()];
-		for (EntityItem entityItem : entities)
-		{
+		for (EntityItem entityItem : entities) {
 			if (entityItem.getItem() == null)
 				continue;
-			for (int i = 0; i < items.length; i++)
-			{
+			for (int i = 0; i < items.length; i++) {
 				if (found[i])
 					continue;
-				if (entityItem.getItem().getItem() == items[i])
-				{
+				if (entityItem.getItem().getItem() == items[i]) {
 					found[i] = true;
 					break;
 				}
@@ -162,12 +170,10 @@ public final class PosUtils {
 				return false;
 		return true;
 	}
-	
-	public static EntityItem getItemAtPos(World world, BlockPos pos, Item item)
-	{
+
+	public static EntityItem getItemAtPos(World world, BlockPos pos, Item item) {
 		List<EntityItem> entities = world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos));
-		for (EntityItem entity : entities)
-		{
+		for (EntityItem entity : entities) {
 			if (entity.getItem() == null)
 				continue;
 			if (entity.getItem().getItem() == item)
@@ -175,12 +181,10 @@ public final class PosUtils {
 		}
 		return null;
 	}
-	
-	public static EntityItem getItemAtPos(World world, BlockPos pos, ItemStack item)
-	{
+
+	public static EntityItem getItemAtPos(World world, BlockPos pos, ItemStack item) {
 		List<EntityItem> entities = world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos));
-		for (EntityItem entity : entities)
-		{
+		for (EntityItem entity : entities) {
 			if (entity.getItem() == null)
 				continue;
 			if (ItemStack.areItemStacksEqual(entity.getItem(), item) && ItemStack.areItemStackTagsEqual(entity.getItem(), item))

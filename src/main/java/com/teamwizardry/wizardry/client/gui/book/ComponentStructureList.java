@@ -8,8 +8,10 @@ import com.teamwizardry.librarianlib.features.gui.components.ComponentVoid;
 import com.teamwizardry.librarianlib.features.math.Vec2d;
 import com.teamwizardry.librarianlib.features.structure.Structure;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.gen.structure.template.Template;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -25,12 +27,14 @@ public class ComponentStructureList extends GuiComponent {
 		super(0, 0, 200, 300);
 		Deque<Block> sorted = new ArrayDeque<>();
 		HashMap<Block, Integer> ingredients = new HashMap<>();
+		HashMap<Block, IBlockState> access = new HashMap<>();
 
 		for (Template.BlockInfo info : structure.blockInfos()) {
 			if (info.blockState.getBlock() == Blocks.AIR) continue;
 
 			ingredients.putIfAbsent(info.blockState.getBlock(), 0);
 			ingredients.put(info.blockState.getBlock(), ingredients.get(info.blockState.getBlock()) + 1);
+			access.putIfAbsent(info.blockState.getBlock(), info.blockState);
 
 			if (!sorted.contains(info.blockState.getBlock())) sorted.add(info.blockState.getBlock());
 		}
@@ -58,7 +62,14 @@ public class ComponentStructureList extends GuiComponent {
 				stack = FluidUtil.getFilledBucket(new FluidStack(FluidRegistry.lookupFluidForBlock(nextBlock), 1));
 				stack = new ItemStack(stack.getItem(), ingredients.get(nextBlock), stack.getMetadata(), stack.getTagCompound());
 			} else {
-				stack = new ItemStack(nextBlock, ingredients.get(nextBlock));
+				NonNullList<ItemStack> itemStacks = NonNullList.create();
+				nextBlock.getDrops(itemStacks, structure.getBlockAccess(), null, access.get(nextBlock), 0);
+				if (itemStacks.isEmpty())
+					stack = new ItemStack(nextBlock, ingredients.get(nextBlock));
+				else {
+					stack = itemStacks.get(0);
+					stack.setCount(ingredients.get(nextBlock));
+				}
 			}
 
 			ComponentStack componentStack = new ComponentStack(i * 16, 20 + row * 16);

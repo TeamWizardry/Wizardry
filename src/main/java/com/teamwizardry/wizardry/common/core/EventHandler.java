@@ -71,8 +71,10 @@ public class EventHandler {
 
 	@SubscribeEvent
 	public void tickEvent(WorldTickEvent event) {
-		RedstoneTracker.INSTANCE.tick();
-		ManaTracker.INSTANCE.tick();
+		if (event.phase == Phase.END) {
+			RedstoneTracker.INSTANCE.tick();
+			ManaTracker.INSTANCE.tick();
+		}
 		if (event.phase != Phase.START) {
 			if (!fallResetUUIDs.isEmpty())
 				event.world.playerEntities.stream().filter(entity -> fallResetUUIDs.contains(entity.getUniqueID())).forEach(entity -> entity.fallDistance = -500);
@@ -100,7 +102,7 @@ public class EventHandler {
 		if (event.getEntity().getEntityWorld().provider.getDimension() == 0) {
 			if (event.getEntity().fallDistance >= ConfigValues.underworldFallDistance) {
 				BlockPos location = event.getEntity().getPosition();
-				BlockPos bedrock = PosUtils.checkNeighbor(event.getEntity().getEntityWorld(), location, Blocks.BEDROCK);
+				BlockPos bedrock = PosUtils.checkNeighborThorough(event.getEntity().getEntityWorld(), location, Blocks.BEDROCK);
 				if (bedrock != null) {
 					if (event.getEntity().getEntityWorld().getBlockState(bedrock).getBlock() == Blocks.BEDROCK) {
 						TeleportUtil.teleportToDimension((EntityPlayer) event.getEntity(), Wizardry.underWorld.getId(), 0, 300, 0);
@@ -118,7 +120,7 @@ public class EventHandler {
 		if (event.getEntityPlayer().getEntityWorld().provider.getDimension() == 0) {
 			if (event.getEntityPlayer().fallDistance >= ConfigValues.underworldFallDistance) {
 				BlockPos location = event.getEntityPlayer().getPosition();
-				BlockPos bedrock = PosUtils.checkNeighbor(event.getEntity().getEntityWorld(), location, Blocks.BEDROCK);
+				BlockPos bedrock = PosUtils.checkNeighborThorough(event.getEntity().getEntityWorld(), location, Blocks.BEDROCK);
 				if (bedrock != null) {
 					if (event.getEntity().getEntityWorld().getBlockState(bedrock).getBlock() == Blocks.BEDROCK) {
 						TeleportUtil.teleportToDimension(event.getEntityPlayer(), Wizardry.underWorld.getId(), 0, 300, 0);
