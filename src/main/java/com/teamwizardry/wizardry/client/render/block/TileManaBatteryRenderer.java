@@ -8,12 +8,14 @@ import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
 import com.teamwizardry.librarianlib.features.tesr.TileRenderHandler;
+import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.CachedStructure;
 import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.client.core.StructureErrorRenderer;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.proxy.ClientProxy;
@@ -27,6 +29,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.IModel;
@@ -37,6 +40,7 @@ import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
+import java.util.HashSet;
 
 /**
  * Created by LordSaad.
@@ -135,7 +139,8 @@ public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> 
 		GlStateManager.disableBlend();
 		GlStateManager.popMatrix();
 
-		if (tile.revealStructure && tile.getBlockType() instanceof IStructure && !((IStructure) tile.getBlockType()).isStructureComplete(tile.getWorld(), tile.getPos())) {
+		HashSet<BlockPos> errors = ((IStructure) tile.getBlockType()).getErroredBlocks(tile.getWorld(), tile.getPos());
+		if (tile.revealStructure && tile.getBlockType() instanceof IStructure && !errors.isEmpty()) {
 
 			IStructure structure = ((IStructure) tile.getBlockType());
 
@@ -168,8 +173,11 @@ public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> 
 			GlStateManager.enableDepth();
 			GlStateManager.popMatrix();
 			return;
-		}
 
+		} else if (!tile.revealStructure && !errors.isEmpty()) {
+			for (BlockPos error : errors)
+				ClientRunnable.run(() -> StructureErrorRenderer.INSTANCE.addError(error));
+		}
 
 		if (tile.getBlockType() == ModBlocks.MANA_BATTERY) {
 			if (RandUtil.nextInt(10) == 0) {

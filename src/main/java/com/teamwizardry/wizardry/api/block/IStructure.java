@@ -128,11 +128,34 @@ public interface IStructure {
 				continue;
 
 			BlockPos realPos = info.pos.add(pos).subtract(offsetToCenter());
-			if (world.getBlockState(realPos).getBlock() != info.blockState.getBlock()) return false;
-			if (world.getBlockState(realPos) != info.blockState) return false;
+			if (world.getBlockState(realPos).getBlock() != info.blockState.getBlock()) {
+				return false;
+			}
+			if (world.getBlockState(realPos) != info.blockState) {
+				return false;
+			}
 		}
 		return true;
 	}
+
+	default HashSet<BlockPos> getErroredBlocks(World world, BlockPos pos) {
+		HashSet<BlockPos> set = new HashSet<>();
+
+		for (Template.BlockInfo info : getStructure().blockInfos()) {
+			if (info.blockState == null) continue;
+			if (info.blockState.getMaterial() == Material.AIR || info.blockState.getBlock() == Blocks.STRUCTURE_VOID)
+				continue;
+
+			BlockPos realPos = info.pos.add(pos).subtract(offsetToCenter());
+			if (world.getBlockState(realPos).getBlock() != info.blockState.getBlock()) {
+				set.add(realPos);
+			} else if (world.getBlockState(realPos) != info.blockState) {
+				set.add(realPos);
+			}
+		}
+		return set;
+	}
+
 
 	default boolean tickStructure(World world, EntityPlayer player, BlockPos pos) {
 		if (world.isRemote) return true;
