@@ -24,13 +24,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -39,14 +39,14 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
 public class EventHandler {
 
 	private static Function2<Entity, Object, Unit> entityFireHandler = MethodHandleHelper.wrapperForSetter(Entity.class, "isImmuneToFire", "field_70178_ae", "sm");
-	private final ArrayList<UUID> fallResetUUIDs = new ArrayList<>();
+	private final HashSet<UUID> fallResetter = new HashSet<>();
 
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
@@ -75,41 +75,34 @@ public class EventHandler {
 			RedstoneTracker.INSTANCE.tick();
 			ManaTracker.INSTANCE.tick();
 		}
-		if (event.phase != Phase.START) {
-			if (!fallResetUUIDs.isEmpty())
-				event.world.playerEntities.stream().filter(entity -> fallResetUUIDs.contains(entity.getUniqueID())).forEach(entity -> entity.fallDistance = -500);
-			fallResetUUIDs.clear();
-		}
 	}
 
 	@SubscribeEvent
-	public void underworldVoidDamage(LivingHurtEvent event) {
+	public void underworldTeleport(LivingHurtEvent event) {
 		if (!(event.getEntity() instanceof EntityPlayer)) return;
-		if (event.getEntity().getEntityWorld().provider.getDimension() != Wizardry.underWorld.getId()) return;
-		if (event.getSource() == EntityDamageSource.OUT_OF_WORLD) {
-			EntityPlayer player = ((EntityPlayer) event.getEntityLiving());
-			BlockPos spawn = player.isSpawnForced(0) ? player.getBedLocation(0) : player.world.getSpawnPoint().add(player.world.rand.nextGaussian() * 16, 0, player.world.rand.nextGaussian() * 16);
-			BlockPos teleportTo = spawn.add(0, 300 - spawn.getY(), 0);
-			TeleportUtil.teleportToDimension((EntityPlayer) event.getEntity(), 0, teleportTo.getX(), teleportTo.getY(), teleportTo.getZ());
-			event.getEntity().fallDistance = -500;
+		if (event.getSource() == DamageSource.FALL && fallResetter.contains(event.getEntity().getUniqueID())) {
+			fallResetter.remove(event.getEntity().getUniqueID());
 			event.setCanceled(true);
+			return;
 		}
-	}
-
-	@SubscribeEvent
-	public void onBedrockSmack(LivingFallEvent event) {
-		if (!(event.getEntity() instanceof EntityPlayer)) return;
-		if (event.getEntity().getEntityWorld().provider.getDimension() == 0) {
-			if (event.getEntity().fallDistance >= ConfigValues.underworldFallDistance) {
+		if (event.getEntity().getEntityWorld().provider.getDimension() == Wizardry.underWorld.getId()) {
+			if (event.getSource() == EntityDamageSource.OUT_OF_WORLD) {
+				EntityPlayer player = ((EntityPlayer) event.getEntityLiving());
+				BlockPos spawn = player.isSpawnForced(0) ? player.getBedLocation(0) : player.world.getSpawnPoint().add(player.world.rand.nextGaussian() * 16, 0, player.world.rand.nextGaussian() * 16);
+				BlockPos teleportTo = spawn.add(0, 300 - spawn.getY(), 0);
+				TeleportUtil.teleportToDimension((EntityPlayer) event.getEntity(), 0, teleportTo.getX(), teleportTo.getY(), teleportTo.getZ());
+				fallResetter.add(event.getEntity().getUniqueID());
+				event.setCanceled(true);
+			}
+		} else if (event.getEntity().getEntityWorld().provider.getDimension() == 0) {
+			if (event.getSource() == EntityDamageSource.FALL && event.getEntity().fallDistance >= ConfigValues.underworldFallDistance) {
 				BlockPos location = event.getEntity().getPosition();
-				BlockPos bedrock = PosUtils.checkNeighborThorough(event.getEntity().getEntityWorld(), location, Blocks.BEDROCK);
+				BlockPos bedrock = PosUtils.checkNeighborBlocksThoroughly(event.getEntity().getEntityWorld(), location, Blocks.BEDROCK);
 				if (bedrock != null) {
-					if (event.getEntity().getEntityWorld().getBlockState(bedrock).getBlock() == Blocks.BEDROCK) {
-						TeleportUtil.teleportToDimension((EntityPlayer) event.getEntity(), Wizardry.underWorld.getId(), 0, 300, 0);
-						((EntityPlayer) event.getEntity()).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 0, true, false));
-						fallResetUUIDs.add(event.getEntity().getUniqueID());
-						event.setCanceled(true);
-					}
+					TeleportUtil.teleportToDimension((EntityPlayer) event.getEntity(), Wizardry.underWorld.getId(), 0, 300, 0);
+					((EntityPlayer) event.getEntity()).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 0, true, false));
+					fallResetter.add(event.getEntity().getUniqueID());
+					event.setCanceled(true);
 				}
 			}
 		}
@@ -120,12 +113,12 @@ public class EventHandler {
 		if (event.getEntityPlayer().getEntityWorld().provider.getDimension() == 0) {
 			if (event.getEntityPlayer().fallDistance >= ConfigValues.underworldFallDistance) {
 				BlockPos location = event.getEntityPlayer().getPosition();
-				BlockPos bedrock = PosUtils.checkNeighborThorough(event.getEntity().getEntityWorld(), location, Blocks.BEDROCK);
+				BlockPos bedrock = PosUtils.checkNeighborBlocksThoroughly(event.getEntity().getEntityWorld(), location, Blocks.BEDROCK);
 				if (bedrock != null) {
 					if (event.getEntity().getEntityWorld().getBlockState(bedrock).getBlock() == Blocks.BEDROCK) {
 						TeleportUtil.teleportToDimension(event.getEntityPlayer(), Wizardry.underWorld.getId(), 0, 300, 0);
 						((EntityPlayer) event.getEntity()).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 0, true, false));
-						fallResetUUIDs.add(event.getEntityPlayer().getUniqueID());
+						fallResetter.add(event.getEntity().getUniqueID());
 					}
 				}
 			}
