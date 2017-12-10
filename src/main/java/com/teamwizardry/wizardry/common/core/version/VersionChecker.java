@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.common.core.version;
 
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.Utils;
 import net.minecraft.client.Minecraft;
@@ -31,6 +32,8 @@ public final class VersionChecker {
 	@SubscribeEvent
 	public void onTick(TickEvent.ClientTickEvent event) {
 		EntityPlayer player = Minecraft.getMinecraft().player;
+
+		if (!ConfigValues.versionCheckerEnabled) return;
 
 		if (doneChecking && event.phase == TickEvent.Phase.END && Minecraft.getMinecraft().player != null && !triedToWarnPlayer) {
 			if (onlineVersion != null && !onlineVersion.isEmpty()) {
