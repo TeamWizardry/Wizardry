@@ -1,6 +1,8 @@
 package com.teamwizardry.wizardry.api.block;
 
+import net.minecraft.block.BlockStairs;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -128,10 +130,16 @@ public interface IStructure {
 				continue;
 
 			BlockPos realPos = info.pos.add(pos).subtract(offsetToCenter());
-			if (world.getBlockState(realPos).getBlock() != info.blockState.getBlock()) {
-				return false;
-			}
-			if (world.getBlockState(realPos) != info.blockState) {
+			IBlockState state = world.getBlockState(realPos);
+			if (state != info.blockState) {
+				if (info.blockState.getBlock() instanceof BlockStairs && state.getBlock() instanceof BlockStairs
+						&& info.blockState.getBlock() == state.getBlock()
+						&& info.blockState.getValue(BlockStairs.HALF) == state.getValue(BlockStairs.HALF)
+						&& info.blockState.getValue(BlockStairs.SHAPE) == state.getValue(BlockStairs.SHAPE)) {
+					if (info.blockState.getValue(BlockStairs.FACING) != state.getValue(BlockStairs.FACING))
+						world.setBlockState(realPos, info.blockState);
+					continue;
+				}
 				return false;
 			}
 		}
@@ -146,10 +154,16 @@ public interface IStructure {
 			if (info.blockState.getMaterial() == Material.AIR || info.blockState.getBlock() == Blocks.STRUCTURE_VOID)
 				continue;
 
+
 			BlockPos realPos = info.pos.add(pos).subtract(offsetToCenter());
-			if (world.getBlockState(realPos).getBlock() != info.blockState.getBlock()) {
-				set.add(realPos);
-			} else if (world.getBlockState(realPos) != info.blockState) {
+			IBlockState state = world.getBlockState(realPos);
+			if (state != info.blockState) {
+				if (info.blockState.getBlock() instanceof BlockStairs && state.getBlock() instanceof BlockStairs
+						&& info.blockState.getBlock() == state.getBlock()
+						&& info.blockState.getValue(BlockStairs.HALF) == state.getValue(BlockStairs.HALF)
+						&& info.blockState.getValue(BlockStairs.SHAPE) == state.getValue(BlockStairs.SHAPE)) {
+					continue;
+				}
 				set.add(realPos);
 			}
 		}
