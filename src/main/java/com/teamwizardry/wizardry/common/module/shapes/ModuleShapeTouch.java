@@ -46,7 +46,7 @@ public class ModuleShapeTouch extends ModuleShape {
 	@Nonnull
 	@Override
 	public String getDescription() {
-		return "Will run the spell on the caster";
+		return "Will run the spell on the block or entity touched by the caster";
 	}
 
 	@Override
