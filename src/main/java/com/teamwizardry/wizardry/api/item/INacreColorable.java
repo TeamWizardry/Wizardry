@@ -27,8 +27,10 @@ public interface INacreColorable extends IItemColorProvider {
 			if (!ItemNBTHelper.verifyExistence(stack, NBT.RAND))
 				ItemNBTHelper.setFloat(stack, NBT.RAND, (world.getTotalWorldTime() / 140f) % 140f);
 
-			if (!ItemNBTHelper.verifyExistence(stack, NBT.PURITY))
+			if (!ItemNBTHelper.verifyExistence(stack, NBT.PURITY)) {
 				ItemNBTHelper.setInt(stack, NBT.PURITY, NBT.NACRE_PURITY_CONVERSION);
+				ItemNBTHelper.setFloat(stack, NBT.PURITY_OVERRIDE, 1f);
+			}
 
 			if (!ItemNBTHelper.getBoolean(stack, NBT.COMPLETE, false))
 				ItemNBTHelper.setBoolean(stack, NBT.COMPLETE, true);
