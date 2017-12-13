@@ -114,7 +114,7 @@ public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, 
 		}
 
 		if (finalName == null)
-			return LibrarianLib.PROXY.translate(getUnlocalizedName(stack) + ".name").trim();
+			return super.getItemStackDisplayName(stack);
 		else return finalName.toString();
 	}
 
