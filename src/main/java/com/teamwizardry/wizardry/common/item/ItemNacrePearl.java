@@ -76,8 +76,8 @@ public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, 
 	@Nonnull
 	public String getUnlocalizedName(@Nonnull ItemStack stack) {
 		if (!stack.hasTagCompound())
-			return super.getUnlocalizedName(stack) + ".name";
-		return super.getUnlocalizedName(stack) + "." + getNameType(stack) + ".name";
+			return super.getUnlocalizedName(stack);
+		return super.getUnlocalizedName(stack) + "." + getNameType(stack);
 	}
 
 	@Nonnull
@@ -114,7 +114,7 @@ public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, 
 		}
 
 		if (finalName == null)
-			return LibrarianLib.PROXY.translate(getUnlocalizedName(stack)).trim();
+			return LibrarianLib.PROXY.translate(getUnlocalizedName(stack) + ".name").trim();
 		else return finalName.toString();
 	}
 
