@@ -15,6 +15,7 @@ import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -23,10 +24,7 @@ import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
@@ -282,5 +280,11 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 		if (!GuiScreen.isShiftKeyDown() && !modules.isEmpty()) {
 			tooltip.add(TextFormatting.GRAY + "<- " + TextFormatting.DARK_GRAY + "Shift for more info" + TextFormatting.GRAY + " ->");
 		}
+	}
+
+	@Override
+	public void getSubItems(@Nullable CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems) {
+		if (isInCreativeTab(tab))
+			subItems.add(new ItemStack(this));
 	}
 }
