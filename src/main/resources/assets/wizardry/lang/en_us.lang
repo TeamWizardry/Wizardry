@@ -132,6 +132,10 @@ wizardry.misc.module=Spell:
 wizardry.misc.sneak=<Sneak for info>
 wizardry.misc.save=SAVE
 wizardry.misc.sneak_expanded=&7<- &8Shift for more info&7 ->
+wizardry.misc.update_link=Wizardry Update Info
+wizardry.misc.update_checker0=There's a new Wizardry update available.
+wizardry.misc.update_checker1=Your version:
+wizardry.misc.update_checker2=New Version:
 
 wizardry.spell.effect_anti_gravity_well.name=Antigravity Well
 wizardry.spell.effect_anti_gravity_well.desc=Repulses all entities around the target.
@@ -226,3 +230,11 @@ wizardry.command.fail_dir_delete=Could not delete module directory
 wizardry.command.fail_dir_create=Could not create module directory
 
 
+wizardry.update0=Don't let your bugs be thugs! Use our patented Magic-o-gon spray for only $9.99
+wizardry.update1=There's magic in the air...
+wizardry.update2=(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧
+wizardry.update3=I am now up back up to... One. Wizardry. Update.
+wizardry.update4=GET IN THE UPDATE, SHINJI
+wizardry.update5=it's outdated my dudes
+wizardry.update6=yo dawg we heard you like changelogs so we put changelogs in your changelogs so you can change while you log
+wizardry.update7=*:･ﾟ✧ᕕ( ᐛ )ᕗ
