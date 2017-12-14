@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.client.gui.book;
 
+import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.gui.component.GuiComponent;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentStack;
@@ -46,7 +47,7 @@ public class ComponentStructureList extends GuiComponent {
 
 		ComponentText text = new ComponentText(0, 3, ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.TOP);
 		text.setSize(new Vec2d(200, 16));
-		text.getText().setValue(" Materials Required");
+		text.getText().setValue(" " + LibrarianLib.PROXY.translate("wizardry.misc.structure_materials"));
 		recipe.add(text);
 
 		ComponentSprite lineBreak = new ComponentSprite(BookGui.LINE_BREAK, (int) (getSize().getX() / 2.0 - 177.0 / 2.0), 30, 177, 2);

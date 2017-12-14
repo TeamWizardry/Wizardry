@@ -151,7 +151,7 @@ public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, 
 		}
 
 		if (!GuiScreen.isShiftKeyDown() && !modules.isEmpty()) {
-			tooltip.add(TextFormatting.GRAY + "<- " + TextFormatting.DARK_GRAY + "Shift for more info" + TextFormatting.GRAY + " ->");
+			TooltipHelper.addToTooltip(tooltip, "wizardry.misc.sneak_expanded");
 		}
 
 		if (modules.isEmpty() && ItemNBTHelper.getFloat(stack, Constants.NBT.PURITY_OVERRIDE, -1f) < 0) {
