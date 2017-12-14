@@ -44,18 +44,6 @@ public class ModuleEffectBackup extends ModuleEffect {
 		return "effect_backup";
 	}
 
-	@Nonnull
-	@Override
-	public String getReadableName() {
-		return "Backup";
-	}
-
-	@Nonnull
-	@Override
-	public String getDescription() {
-		return "Will summon undead mobs to help you out in battle";
-	}
-
 	@Override
 	public ModuleModifier[] applicableModifiers() {
 		return new ModuleModifier[]{new ModuleModifierIncreaseAOE(), new ModuleModifierExtendTime()};

@@ -32,18 +32,6 @@ public class ModuleEffectLight extends ModuleEffect {
 		return "effect_light";
 	}
 
-	@Nonnull
-	@Override
-	public String getReadableName() {
-		return "Light";
-	}
-
-	@Nonnull
-	@Override
-	public String getDescription() {
-		return "Will place a magical light source at the target location";
-	}
-
 	@Override
 	@SuppressWarnings("unused")
 	public boolean run(@Nonnull SpellData spell) {

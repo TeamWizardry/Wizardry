@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.client.gui.worktable;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.animator.Easing;
 import com.teamwizardry.librarianlib.features.animator.animations.Keyframe;
 import com.teamwizardry.librarianlib.features.animator.animations.KeyframeAnimation;
@@ -98,10 +99,11 @@ public class WorktableGui extends GuiBase {
 
 		ComponentSprite save = new ComponentSprite(BUTTON_NORMAL, 395, 30, (int) (88 / 1.5), (int) (24 / 1.5));
 		save.getTransform().setTranslateZ(20);
-		int width = Minecraft.getMinecraft().fontRenderer.getStringWidth("SAVE");
+		String saveStr = LibrarianLib.PROXY.translate("wizardry.misc.save");
+		int width = Minecraft.getMinecraft().fontRenderer.getStringWidth(saveStr);
 		int height = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT;
 		ComponentText textSave = new ComponentText((save.getSize().getXi() / 2) - width / 2, (save.getSize().getYi() / 2) - height / 2);
-		textSave.getText().setValue("SAVE");
+		textSave.getText().setValue(saveStr);
 		save.add(textSave);
 
 		save.BUS.hook(GuiComponentEvents.MouseInEvent.class, event -> {

@@ -1,7 +1,6 @@
 package com.teamwizardry.wizardry.common.command;
 
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
-import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.common.network.PacketSyncModules;
 import com.teamwizardry.wizardry.proxy.CommonProxy;
@@ -10,8 +9,6 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nonnull;
 import java.io.File;
@@ -31,7 +28,7 @@ public class CommandWizardry extends CommandBase {
 	@Nonnull
 	@Override
 	public String getUsage(@Nonnull ICommandSender sender) {
-		return "/wizardry <reload/reset [config/inventory]>";
+		return "wizardry.command.usage";
 	}
 
 	@Override
@@ -53,10 +50,10 @@ public class CommandWizardry extends CommandBase {
 				PacketHandler.NETWORK.sendToAll(new PacketSyncModules(ModuleRegistry.INSTANCE.modules));
 			}
 
-			sender.sendMessage(new TextComponentString(TextFormatting.GREEN + "Modules successfully reloaded! Horay! (ﾉ≧∀≦)ﾉ・‥…━━━★"));
+			notifyCommandListener(sender, this, "wizardry.command.success");
 
 		} else if (args[0].equalsIgnoreCase("reset")) {
-			sender.sendMessage(new TextComponentString(TextFormatting.GREEN + "Attempting to reset module directory... Any modifications made to it will be lost!"));
+			notifyCommandListener(sender, this, "wizardry.command.reset");
 
 			File moduleDirectory = new File(CommonProxy.directory, "modules");
 			if (moduleDirectory.exists()) {
@@ -66,25 +63,20 @@ public class CommandWizardry extends CommandBase {
 					for (File file : files) {
 						String name = file.getName();
 						if (!file.delete()) {
-							Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not delete " + file.getName() + ". Cancelling process!");
-							sender.sendMessage(new TextComponentString(TextFormatting.RED + "SOMETHING WENT WRONG! Could not delete " + file.getName() + ". Cancelling process!"));
-							return;
+							throw new CommandException("wizardry.command.fail", name);
 						} else {
-							Wizardry.logger.info(name + " deleted successfully!");
+							notifyCommandListener(sender, this, "wizardry.command.success_delete", name);
 						}
 					}
 
 				if (!moduleDirectory.delete()) {
-					Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not delete module directory!");
-					sender.sendMessage(new TextComponentString(TextFormatting.RED + "SOMETHING WENT WRONG! Could not delete module directory!"));
-					return;
+					throw new CommandException("wizardry.command.fail_dir_delete");
+
 				}
 			}
 			if (!moduleDirectory.exists())
 				if (!moduleDirectory.mkdirs()) {
-					Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not create module directory!");
-					sender.sendMessage(new TextComponentString(TextFormatting.RED + "SOMETHING WENT WRONG! Could not create module directory!"));
-					return;
+					throw new CommandException("wizardry.command.fail_dir_create");
 				}
 
 			ModuleRegistry.INSTANCE.setDirectory(moduleDirectory);
@@ -96,7 +88,7 @@ public class CommandWizardry extends CommandBase {
 				PacketHandler.NETWORK.sendToAll(new PacketSyncModules(ModuleRegistry.INSTANCE.modules));
 			}
 
-			sender.sendMessage(new TextComponentString(TextFormatting.GREEN + "Modules successfully reset! Horay! (ﾉ≧∀≦)ﾉ・‥…━━━★"));
+			notifyCommandListener(sender, this, "wizardry.command.success");
 
 		} else throw new WrongUsageException(getUsage(sender));
 	}

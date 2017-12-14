@@ -53,18 +53,6 @@ public class ModuleEffectFreeze extends ModuleEffect {
 		return "effect_freeze";
 	}
 
-	@Nonnull
-	@Override
-	public String getReadableName() {
-		return "Freeze";
-	}
-
-	@Nonnull
-	@Override
-	public String getDescription() {
-		return "Will slow down opponents, extinguish fires, turn water to ice, lava to stone, etc...";
-	}
-
 	@Override
 	public ModuleModifier[] applicableModifiers() {
 		return new ModuleModifier[]{new ModuleModifierIncreaseAOE(), new ModuleModifierExtendTime()};

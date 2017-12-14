@@ -41,18 +41,6 @@ public class ModuleEffectBurn extends ModuleEffect {
 		return "effect_burn";
 	}
 
-	@Nonnull
-	@Override
-	public String getReadableName() {
-		return "Burn";
-	}
-
-	@Nonnull
-	@Override
-	public String getDescription() {
-		return "Will burn the target block or entity.";
-	}
-
 	@Override
 	public ModuleModifier[] applicableModifiers() {
 		return new ModuleModifier[]{new ModuleModifierIncreaseAOE(), new ModuleModifierExtendTime()};

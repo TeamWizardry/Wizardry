@@ -25,18 +25,6 @@ public class ModuleEventCollideBlock extends ModuleEvent {
 		return "event_collide_block";
 	}
 
-	@Nonnull
-	@Override
-	public String getReadableName() {
-		return "On Collide Block";
-	}
-
-	@Nonnull
-	@Override
-	public String getDescription() {
-		return "Triggered when the spell collides with a block";
-	}
-
 	@Override
 	public boolean run(@Nonnull SpellData spell) {
 		BlockPos pos = spell.getData(BLOCK_HIT);

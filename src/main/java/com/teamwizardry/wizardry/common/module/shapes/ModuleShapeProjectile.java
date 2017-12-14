@@ -36,18 +36,6 @@ public class ModuleShapeProjectile extends ModuleShape implements ITaxing {
 		return "shape_projectile";
 	}
 
-	@Nonnull
-	@Override
-	public String getReadableName() {
-		return "Projectile";
-	}
-
-	@Nonnull
-	@Override
-	public String getDescription() {
-		return "Will launch the spell as a projectile in the direction the caster is looking";
-	}
-
 	@Override
 	public ModuleModifier[] applicableModifiers() {
 		return new ModuleModifier[]{new ModuleModifierExtendRange(), new ModuleModifierIncreaseSpeed()};

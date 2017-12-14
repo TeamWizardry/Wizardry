@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
+import com.teamwizardry.librarianlib.features.utilities.client.TooltipHelper;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.api.item.ICooldown;
 import com.teamwizardry.wizardry.api.item.INacreColorable;
@@ -278,7 +279,7 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 		}
 
 		if (!GuiScreen.isShiftKeyDown() && !modules.isEmpty()) {
-			tooltip.add(TextFormatting.GRAY + "<- " + TextFormatting.DARK_GRAY + "Shift for more info" + TextFormatting.GRAY + " ->");
+			TooltipHelper.addToTooltip(tooltip, "wizardry.misc.sneak_expanded");
 		}
 	}
 

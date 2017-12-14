@@ -47,18 +47,6 @@ public class ModuleEffectTelekinesis extends ModuleEffect implements IContinuous
 		return "effect_telekinesis";
 	}
 
-	@Nonnull
-	@Override
-	public String getReadableName() {
-		return "Telekinesis";
-	}
-
-	@Nonnull
-	@Override
-	public String getDescription() {
-		return "Will levitate blocks and entities in the world";
-	}
-
 	@Override
 	public ModuleModifier[] applicableModifiers() {
 		return new ModuleModifier[]{new ModuleModifierIncreasePotency()};

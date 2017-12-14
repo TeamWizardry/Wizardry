@@ -46,18 +46,6 @@ public class ModuleEffectLowGravity extends ModuleEffect {
 		return "effect_low_gravity";
 	}
 
-	@Nonnull
-	@Override
-	public String getReadableName() {
-		return "Low Gravity";
-	}
-
-	@Nonnull
-	@Override
-	public String getDescription() {
-		return "The target becomes lightweight, falling slowly, jumping higher, and walking on water";
-	}
-
 	@Override
 	public ModuleModifier[] applicableModifiers() {
 		return new ModuleModifier[]{new ModuleModifierIncreasePotency(), new ModuleModifierExtendTime()};

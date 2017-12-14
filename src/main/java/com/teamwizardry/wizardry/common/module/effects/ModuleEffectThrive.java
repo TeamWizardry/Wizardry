@@ -45,18 +45,6 @@ public class ModuleEffectThrive extends ModuleEffect {
 		return "effect_thrive";
 	}
 
-	@Nonnull
-	@Override
-	public String getReadableName() {
-		return "Thrive";
-	}
-
-	@Nonnull
-	@Override
-	public String getDescription() {
-		return "Will heal entities & speed up plant growth";
-	}
-
 	@Override
 	public ModuleModifier[] applicableModifiers() {
 		return new ModuleModifier[]{new ModuleModifierIncreasePotency()};

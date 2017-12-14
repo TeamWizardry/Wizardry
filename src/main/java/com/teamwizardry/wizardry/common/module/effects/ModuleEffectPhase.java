@@ -33,18 +33,6 @@ public class ModuleEffectPhase extends ModuleEffect {
 		return "effect_phase";
 	}
 
-	@Nonnull
-	@Override
-	public String getReadableName() {
-		return "Phase";
-	}
-
-	@Nonnull
-	@Override
-	public String getDescription() {
-		return "Will enable the target to phase through blocks temporarily.";
-	}
-
 	@Override
 	public ModuleModifier[] applicableModifiers() {
 		return new ModuleModifier[]{new ModuleModifierExtendTime()};

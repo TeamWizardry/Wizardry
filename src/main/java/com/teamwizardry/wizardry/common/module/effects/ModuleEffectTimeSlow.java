@@ -47,18 +47,6 @@ public class ModuleEffectTimeSlow extends ModuleEffect {
 		return "effect_time_slow";
 	}
 
-	@Nonnull
-	@Override
-	public String getReadableName() {
-		return "Time Slow";
-	}
-
-	@Nonnull
-	@Override
-	public String getDescription() {
-		return "Will slow down time depending on the strength. Can cause a complete freeze.";
-	}
-
 	@Override
 	public ModuleModifier[] applicableModifiers() {
 		return new ModuleModifier[]{new ModuleModifierIncreasePotency(), new ModuleModifierExtendTime()};

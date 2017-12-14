@@ -21,23 +21,6 @@ public class ModuleModifierExtendTime extends ModuleModifier {
 		return "modifier_extend_time";
 	}
 
-	@Nonnull
-	@Override
-	public String getReadableName() {
-		return "Extend Time";
-	}
-
-	@Override
-	public String getShortHandName() {
-		return "Time++";
-	}
-
-	@Nonnull
-	@Override
-	public String getDescription() {
-		return "Will increase the duration of the spell.";
-	}
-
 	@Override
 	public boolean run(@Nonnull SpellData spell) {
 		return true;

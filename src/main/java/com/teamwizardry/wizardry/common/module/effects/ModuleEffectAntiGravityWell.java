@@ -49,18 +49,6 @@ public class ModuleEffectAntiGravityWell extends ModuleEffect implements ILinger
 		return "effect_anti_gravity_well";
 	}
 
-	@Nonnull
-	@Override
-	public String getReadableName() {
-		return "Anti Gravity Well";
-	}
-
-	@Nonnull
-	@Override
-	public String getDescription() {
-		return "Will disperse in all entities around the target.";
-	}
-
 	@Override
 	public ModuleModifier[] applicableModifiers() {
 		return new ModuleModifier[]{new ModuleModifierIncreaseAOE(), new ModuleModifierIncreasePotency()};

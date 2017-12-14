@@ -47,18 +47,6 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 		return "effect_place";
 	}
 
-	@Nonnull
-	@Override
-	public String getReadableName() {
-		return "Place";
-	}
-
-	@Nonnull
-	@Override
-	public String getDescription() {
-		return "Will place the block selected";
-	}
-
 	@Override
 	public ModuleModifier[] applicableModifiers() {
 		return new ModuleModifier[]{new ModuleModifierIncreaseAOE()};

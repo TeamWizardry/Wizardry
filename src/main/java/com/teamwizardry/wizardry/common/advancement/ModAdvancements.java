@@ -5,7 +5,7 @@ import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.advancements.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 
 import java.util.HashMap;
 
@@ -27,8 +27,8 @@ public class ModAdvancements {
 				null,
 				new DisplayInfo(
 						new ItemStack(ModItems.MANA_ORB),
-						new TextComponentString("Not a Mana Pool"),
-						new TextComponentString("Discover a pool of liquid Mana in your travels"),
+						new TextComponentTranslation("wizardry.advancement.begin.name"),
+						new TextComponentTranslation("wizardry.advancement.begin.desc"),
 						null, FrameType.GOAL, true, true, false),
 				AdvancementRewards.EMPTY, new HashMap<>(), new String[0][0]);
 
