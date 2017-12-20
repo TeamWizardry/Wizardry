@@ -46,18 +46,6 @@ public class ModuleEffectLightning extends ModuleEffect {
 		return "effect_lightning";
 	}
 
-	@Nonnull
-	@Override
-	public String getReadableName() {
-		return "Lightning";
-	}
-
-	@Nonnull
-	@Override
-	public String getDescription() {
-		return "Will shock a target, stunning it.";
-	}
-
 	@Override
 	public ModuleModifier[] applicableModifiers() {
 		return new ModuleModifier[]{new ModuleModifierExtendRange(), new ModuleModifierIncreasePotency()};

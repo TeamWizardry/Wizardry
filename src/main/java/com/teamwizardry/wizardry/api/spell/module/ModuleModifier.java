@@ -1,5 +1,7 @@
 package com.teamwizardry.wizardry.api.spell.module;
 
+import com.teamwizardry.librarianlib.core.LibrarianLib;
+
 import javax.annotation.Nonnull;
 
 public abstract class ModuleModifier extends Module {
@@ -14,5 +16,11 @@ public abstract class ModuleModifier extends Module {
 		module.modifiersToApply.addAll(modifiers);
 	}
 
-	public abstract String getShortHandName();
+	public String getShortHandName() {
+		return LibrarianLib.PROXY.translate(getShortHandKey());
+	}
+
+	public String getShortHandKey() {
+		return "spell.wizardry." + getID() + ".short";
+	}
 }

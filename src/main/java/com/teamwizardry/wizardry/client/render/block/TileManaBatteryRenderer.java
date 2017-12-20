@@ -36,6 +36,8 @@ import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
@@ -45,7 +47,7 @@ import java.util.HashSet;
 /**
  * Created by LordSaad.
  */
-@Mod.EventBusSubscriber(modid = Wizardry.MODID)
+@Mod.EventBusSubscriber(value = Side.CLIENT, modid = Wizardry.MODID)
 public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> {
 
 	private static IBakedModel modelRing, modelCrystal, modelRingOuter;
@@ -56,6 +58,7 @@ public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> 
 		cachedStructure = new CachedStructure(((IStructure) tile.getBlockType()).getStructure().loc, tile.getWorld());
 	}
 
+	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public static void reload(ClientProxy.ResourceReloadEvent event) {
 		modelRing = null;
@@ -176,7 +179,13 @@ public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> 
 
 		} else if (!tile.revealStructure && !errors.isEmpty()) {
 			for (BlockPos error : errors)
-				ClientRunnable.run(() -> StructureErrorRenderer.INSTANCE.addError(error));
+				ClientRunnable.run(new ClientRunnable() {
+					@Override
+					@SideOnly(Side.CLIENT)
+					public void runIfClient() {
+						StructureErrorRenderer.INSTANCE.addError(error);
+					}
+				});
 		}
 
 		if (tile.getBlockType() == ModBlocks.MANA_BATTERY) {

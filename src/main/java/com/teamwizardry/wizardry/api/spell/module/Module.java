@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.api.spell.module;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
@@ -122,13 +123,33 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 	 * Represents the readable name of this module. Viewed in the worktable.
 	 */
 	@Nonnull
-	public abstract String getReadableName();
+	public String getReadableName() {
+		return LibrarianLib.PROXY.translate(getNameKey());
+	}
+
+	/**
+	 * Represents the readable name of this module. Viewed in the worktable.
+	 */
+	@Nonnull
+	public String getNameKey() {
+		return "wizardry.spell." + getID() + ".name";
+	}
 
 	/**
 	 * The description of what this module does.
 	 */
 	@Nonnull
-	public abstract String getDescription();
+	public String getDescription() {
+		return LibrarianLib.PROXY.translate(getDescriptionKey());
+	}
+
+	/**
+	 * The description of what this module does.
+	 */
+	@Nonnull
+	public String getDescriptionKey() {
+		return "wizardry.spell." + getID() + ".desc";
+	}
 
 	/**
 	 * Specify all applicable modifiers that can be applied to this module.

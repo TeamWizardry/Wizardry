@@ -38,18 +38,6 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 		return "effect_leap";
 	}
 
-	@Nonnull
-	@Override
-	public String getReadableName() {
-		return "Leap";
-	}
-
-	@Nonnull
-	@Override
-	public String getDescription() {
-		return "Will throttle you upwards and forwards";
-	}
-
 	@Override
 	public int getNewCooldown(@Nonnull SpellData data) {
 		Entity target = data.getData(ENTITY_HIT);

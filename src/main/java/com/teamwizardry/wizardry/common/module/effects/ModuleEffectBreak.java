@@ -40,18 +40,6 @@ public class ModuleEffectBreak extends ModuleEffect {
 		return "effect_break";
 	}
 
-	@Nonnull
-	@Override
-	public String getReadableName() {
-		return "Break";
-	}
-
-	@Nonnull
-	@Override
-	public String getDescription() {
-		return "Will break blocks and damage armor";
-	}
-
 	@Override
 	public ModuleModifier[] applicableModifiers() {
 		return new ModuleModifier[]{new ModuleModifierIncreaseAOE(), new ModuleModifierIncreasePotency()};

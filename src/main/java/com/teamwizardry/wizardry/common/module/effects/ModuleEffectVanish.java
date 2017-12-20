@@ -35,18 +35,6 @@ public class ModuleEffectVanish extends ModuleEffect {
 		return "effect_vanish";
 	}
 
-	@Nonnull
-	@Override
-	public String getReadableName() {
-		return "Vanish";
-	}
-
-	@Nonnull
-	@Override
-	public String getDescription() {
-		return "Invisibility to everyone when still, invisibility from everyone when moving";
-	}
-
 	@Override
 	public ModuleModifier[] applicableModifiers() {
 		return new ModuleModifier[]{new ModuleModifierIncreaseAOE(), new ModuleModifierIncreasePotency()};

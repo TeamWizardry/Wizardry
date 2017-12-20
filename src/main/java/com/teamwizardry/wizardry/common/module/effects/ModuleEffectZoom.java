@@ -69,18 +69,6 @@ public class ModuleEffectZoom extends ModuleEffect {
 		return "effect_zoom";
 	}
 
-	@Nonnull
-	@Override
-	public String getReadableName() {
-		return "Zoom";
-	}
-
-	@Nonnull
-	@Override
-	public String getDescription() {
-		return "Move swiftly and quickly to the target";
-	}
-
 	@Override
 	public ModuleModifier[] applicableModifiers() {
 		return new ModuleModifier[]{new ModuleModifierExtendRange()};

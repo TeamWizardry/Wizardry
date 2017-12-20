@@ -36,18 +36,6 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 		return "shape_beam";
 	}
 
-	@Nonnull
-	@Override
-	public String getReadableName() {
-		return "Beam";
-	}
-
-	@Nonnull
-	@Override
-	public String getDescription() {
-		return "Will run the spell via a beam emanating from the caster";
-	}
-
 	@Override
 	public ModuleModifier[] applicableModifiers() {
 		return new ModuleModifier[]{new ModuleModifierExtendRange(), new ModuleModifierIncreasePotency()};

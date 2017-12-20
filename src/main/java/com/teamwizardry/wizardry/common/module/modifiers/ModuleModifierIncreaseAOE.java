@@ -21,23 +21,6 @@ public class ModuleModifierIncreaseAOE extends ModuleModifier {
 		return "modifier_increase_aoe";
 	}
 
-	@Nonnull
-	@Override
-	public String getReadableName() {
-		return "Extend Area Of Effect";
-	}
-
-	@Override
-	public String getShortHandName() {
-		return "AOE++";
-	}
-
-	@Nonnull
-	@Override
-	public String getDescription() {
-		return "Can increase/widen area of effect spells.";
-	}
-
 	@Override
 	public boolean run(@Nonnull SpellData spell) {
 		return true;

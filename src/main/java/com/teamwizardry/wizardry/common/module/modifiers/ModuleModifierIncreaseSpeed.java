@@ -21,23 +21,6 @@ public class ModuleModifierIncreaseSpeed extends ModuleModifier {
 		return "modifier_increase_speed";
 	}
 
-	@Nonnull
-	@Override
-	public String getReadableName() {
-		return "Increase Speed";
-	}
-
-	@Override
-	public String getShortHandName() {
-		return "Speed++";
-	}
-
-	@Nonnull
-	@Override
-	public String getDescription() {
-		return "Will increase the speed of the spell, like the speed of a projectile";
-	}
-
 	@Override
 	public boolean run(@Nonnull SpellData spell) {
 		return true;

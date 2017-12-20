@@ -56,17 +56,6 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 		return "effect_substitution";
 	}
 
-	@Nonnull
-	@Override
-	public String getReadableName() {
-		return "Substitution";
-	}
-
-	@Nonnull
-	@Override
-	public String getDescription() {
-		return "Will swap the caster's position with that of the target. Also works on blocks, ex: will swap blocks similar to the target block with that shift-right-clicked block.";
-	}
 
 	@Override
 	public ModuleModifier[] applicableModifiers() {

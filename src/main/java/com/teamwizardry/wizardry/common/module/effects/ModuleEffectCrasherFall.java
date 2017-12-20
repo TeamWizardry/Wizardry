@@ -35,18 +35,6 @@ public class ModuleEffectCrasherFall extends ModuleEffect {
 		return "effect_crasher_fall";
 	}
 
-	@Nonnull
-	@Override
-	public String getReadableName() {
-		return "Crasher Fall";
-	}
-
-	@Nonnull
-	@Override
-	public String getDescription() {
-		return "Will distribute a percentage of the target's fall damage into any nearby entities absorbing the impact";
-	}
-
 	@Override
 	public ModuleModifier[] applicableModifiers() {
 		return new ModuleModifier[]{new ModuleModifierIncreasePotency(), new ModuleModifierExtendTime()};

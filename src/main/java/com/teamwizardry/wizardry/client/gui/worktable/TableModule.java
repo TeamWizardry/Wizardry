@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.client.gui.worktable;
 
+import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.gui.EnumMouseButton;
 import com.teamwizardry.librarianlib.features.gui.component.GuiComponent;
@@ -307,7 +308,7 @@ public class TableModule {
 			txt.add(TextFormatting.GOLD + module.getReadableName());
 			if (GuiScreen.isShiftKeyDown())
 				txt.add(TextFormatting.GRAY + module.getDescription());
-			else txt.add(TextFormatting.GRAY + "<Sneak for info>");
+			else txt.add(TextFormatting.GRAY + LibrarianLib.PROXY.translate("wizardry.misc.sneak"));
 			return txt;
 		});
 

@@ -44,18 +44,6 @@ public class ModuleShapeCone extends ModuleShape {
 		return "shape_cone";
 	}
 
-	@Nonnull
-	@Override
-	public String getReadableName() {
-		return "Cone";
-	}
-
-	@Nonnull
-	@Override
-	public String getDescription() {
-		return "Will run the spell in a scattered circular arc in front of the caster";
-	}
-
 	@Override
 	public ModuleModifier[] applicableModifiers() {
 		return new ModuleModifier[]{new ModuleModifierIncreasePotency(), new ModuleModifierExtendRange()};

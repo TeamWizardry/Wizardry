@@ -1,3 +1,9 @@
+0.6.2
+update liblib to prevent crash
+fix server sided crash
+auto-fix stairs in structures. (this made structure unbuildable to a lot of people)
+add oredict for wisdom sticks
+
 0.6.1
 NOTE: Please delete/replace your mana batteries, crafting plates, halos and mana orbs to adjust to the new mana numbers.
 Redo crafting plate code. It no longer re-renders the whole chunk every single tick. Using liblib animation system now.

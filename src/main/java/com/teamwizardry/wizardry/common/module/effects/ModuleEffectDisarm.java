@@ -39,18 +39,6 @@ public class ModuleEffectDisarm extends ModuleEffect {
 		return "effect_disarm";
 	}
 
-	@Nonnull
-	@Override
-	public String getReadableName() {
-		return "Disarm";
-	}
-
-	@Nonnull
-	@Override
-	public String getDescription() {
-		return "Will drop the target's held item on the ground";
-	}
-
 	@Override
 	public boolean run(@Nonnull SpellData spell) {
 		Entity targetEntity = spell.getData(ENTITY_HIT);

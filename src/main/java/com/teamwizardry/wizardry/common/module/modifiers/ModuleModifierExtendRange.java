@@ -21,23 +21,6 @@ public class ModuleModifierExtendRange extends ModuleModifier {
 		return "modifier_extend_range";
 	}
 
-	@Nonnull
-	@Override
-	public String getReadableName() {
-		return "Extend Range";
-	}
-
-	@Override
-	public String getShortHandName() {
-		return "Range++";
-	}
-
-	@Nonnull
-	@Override
-	public String getDescription() {
-		return "Will increase the range or reach of the spell.";
-	}
-
 	@Override
 	public boolean run(@Nonnull SpellData spell) {
 		return true;

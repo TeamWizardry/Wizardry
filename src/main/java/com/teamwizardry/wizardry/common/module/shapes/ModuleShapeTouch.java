@@ -37,18 +37,6 @@ public class ModuleShapeTouch extends ModuleShape {
 		return "shape_touch";
 	}
 
-	@Nonnull
-	@Override
-	public String getReadableName() {
-		return "Touch";
-	}
-
-	@Nonnull
-	@Override
-	public String getDescription() {
-		return "Will run the spell on the caster";
-	}
-
 	@Override
 	public boolean run(@Nonnull SpellData spell) {
 		Entity caster = spell.getData(CASTER);

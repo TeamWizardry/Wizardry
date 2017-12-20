@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.client.gui.worktable;
 
+import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.animator.Easing;
 import com.teamwizardry.librarianlib.features.animator.animations.Keyframe;
 import com.teamwizardry.librarianlib.features.animator.animations.KeyframeAnimation;
@@ -92,7 +93,7 @@ public class ComponentWhitelistedModifiers extends GuiComponent {
 				txt.add(TextFormatting.GOLD + module.getReadableName());
 				if (GuiScreen.isShiftKeyDown())
 					txt.add(TextFormatting.GRAY + module.getDescription());
-				else txt.add(TextFormatting.GRAY + "<Sneak for info>");
+				else txt.add(TextFormatting.GRAY + LibrarianLib.PROXY.translate("wizardry.misc.sneak"));
 				return txt;
 			});
 

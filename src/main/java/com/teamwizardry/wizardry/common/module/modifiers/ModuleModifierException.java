@@ -21,23 +21,6 @@ public class ModuleModifierException extends ModuleModifier {
 		return "modifier_exception";
 	}
 
-	@Nonnull
-	@Override
-	public String getReadableName() {
-		return "Exception";
-	}
-
-	@Nonnull
-	@Override
-	public String getDescription() {
-		return "Will ignore the entity chosen";
-	}
-
-	@Override
-	public String getShortHandName() {
-		return "Exception";
-	}
-
 	@Override
 	public boolean run(@Nonnull SpellData spell) {
 		return true;

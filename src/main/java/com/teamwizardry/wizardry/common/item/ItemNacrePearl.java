@@ -2,6 +2,9 @@ package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
+import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.utilities.client.TooltipHelper;
+import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.capability.CustomWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
 import com.teamwizardry.wizardry.api.item.IExplodable;
@@ -11,10 +14,12 @@ import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -76,8 +81,8 @@ public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, 
 	@Nonnull
 	public String getUnlocalizedName(@Nonnull ItemStack stack) {
 		if (!stack.hasTagCompound())
-			return super.getUnlocalizedName(stack) + ".name";
-		return super.getUnlocalizedName(stack) + "." + getNameType(stack) + ".name";
+			return super.getUnlocalizedName(stack);
+		return super.getUnlocalizedName(stack) + "." + getNameType(stack);
 	}
 
 	@Nonnull
@@ -114,7 +119,7 @@ public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, 
 		}
 
 		if (finalName == null)
-			return LibrarianLib.PROXY.translate(getUnlocalizedName(stack)).trim();
+			return super.getItemStackDisplayName(stack);
 		else return finalName.toString();
 	}
 
@@ -146,7 +151,54 @@ public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, 
 		}
 
 		if (!GuiScreen.isShiftKeyDown() && !modules.isEmpty()) {
-			tooltip.add(TextFormatting.GRAY + "<- " + TextFormatting.DARK_GRAY + "Shift for more info" + TextFormatting.GRAY + " ->");
+			TooltipHelper.addToTooltip(tooltip, "wizardry.misc.sneak_expanded");
+		}
+
+		if (modules.isEmpty() && ItemNBTHelper.getFloat(stack, Constants.NBT.PURITY_OVERRIDE, -1f) < 0) {
+			float purity = getQuality(stack);
+			String desc = super.getUnlocalizedName(stack) + ".";
+			if (purity >= 1) desc += "perfect";
+			else {
+				boolean over = ItemNBTHelper.getInt(stack, Constants.NBT.PURITY, 0) > Constants.NBT.NACRE_PURITY_CONVERSION;
+				if (purity >= 5 / 6.0)
+					if (over)
+						desc += "over_near";
+					else
+						desc += "under_near";
+				else
+					if (over)
+						desc += "overdone";
+					else
+						desc += "underdone";
+
+			}
+			desc += ".desc";
+			String used = LibrarianLib.PROXY.canTranslate(desc) ? desc : desc + "0";
+			if (LibrarianLib.PROXY.canTranslate(used)) {
+				TooltipHelper.addToTooltip(tooltip, used);
+				int i = 0;
+				while (LibrarianLib.PROXY.canTranslate(desc + (++i)))
+					TooltipHelper.addToTooltip(tooltip, desc + i);
+			}
+		} else if (modules.isEmpty() && getQuality(stack) > 1f) {
+			String desc = super.getUnlocalizedName(stack) + ".ancient.desc";
+			String used = LibrarianLib.PROXY.canTranslate(desc) ? desc : desc + "0";
+			if (LibrarianLib.PROXY.canTranslate(used)) {
+				TooltipHelper.addToTooltip(tooltip, used);
+				int i = 0;
+				while (LibrarianLib.PROXY.canTranslate(desc + (++i)))
+					TooltipHelper.addToTooltip(tooltip, desc + i);
+			}
+		}
+	}
+
+	@Override
+	public void getSubItems(@Nullable CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems) {
+		if (isInCreativeTab(tab)) {
+			subItems.add(new ItemStack(this));
+			ItemStack stack = new ItemStack(this);
+			ItemNBTHelper.setFloat(stack, Constants.NBT.PURITY_OVERRIDE, 2f);
+			subItems.add(stack);
 		}
 	}
 }

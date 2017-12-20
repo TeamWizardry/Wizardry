@@ -25,18 +25,6 @@ public class ModuleEventCollideEntity extends ModuleEvent {
 		return "event_collide_entity";
 	}
 
-	@Nonnull
-	@Override
-	public String getReadableName() {
-		return "On Collide Entity";
-	}
-
-	@Nonnull
-	@Override
-	public String getDescription() {
-		return "Triggered when the spell collides with an entity";
-	}
-
 	@Override
 	public boolean run(@Nonnull SpellData spell) {
 		Entity entity = spell.getData(ENTITY_HIT);

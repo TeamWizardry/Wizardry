@@ -108,11 +108,11 @@ public class BookGui extends GuiBase {
 			}
 		}
 
-		ComponentBookmarkSwitch bookmarkIndex = new ComponentBookmarkSwitch(new Vec2d(35, 35), this, componentBook, new ComponentIndex(componentBook, indexItems, 45, true, this, new Vec2d(45, 45)), this.bookmarkIndex++, "Index", false, true, false, true);
+		ComponentBookmarkSwitch bookmarkIndex = new ComponentBookmarkSwitch(new Vec2d(35, 35), this, componentBook, new ComponentIndex(componentBook, indexItems, 45, true, this, new Vec2d(45, 45)), this.bookmarkIndex++, LibrarianLib.PROXY.translate("wizardry.gui.index"), false, true, false, true);
 		componentBook.add(bookmarkIndex);
 
 		if (ItemNBTHelper.getBoolean(bookItem, "has_recipe", false)) {
-			ComponentBookmarkSwitch bookmarkRecipe = new ComponentBookmarkSwitch(new Vec2d(35, 35), this, componentBook, new ComponentRecipe(this), this.bookmarkIndex++, "Spell Recipe", false, false, false, true);
+			ComponentBookmarkSwitch bookmarkRecipe = new ComponentBookmarkSwitch(new Vec2d(35, 35), this, componentBook, new ComponentRecipe(this), this.bookmarkIndex++, LibrarianLib.PROXY.translate("wizardry.gui.recipe"), false, false, false, true);
 			componentBook.add(bookmarkRecipe);
 		}
 

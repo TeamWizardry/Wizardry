@@ -35,18 +35,6 @@ public class ModuleShapeSelf extends ModuleShape {
 		return "shape_self";
 	}
 
-	@Nonnull
-	@Override
-	public String getReadableName() {
-		return "Self";
-	}
-
-	@Nonnull
-	@Override
-	public String getDescription() {
-		return "Will run the spell on the caster";
-	}
-
 	@Override
 	public boolean run(@Nonnull SpellData spell) {
 		Entity caster = spell.getData(CASTER);
