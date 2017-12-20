@@ -14,6 +14,7 @@ import com.teamwizardry.wizardry.common.module.effects.ModuleEffectTimeSlow;
 import com.teamwizardry.wizardry.common.network.*;
 import com.teamwizardry.wizardry.common.world.GenHandler;
 import com.teamwizardry.wizardry.common.world.underworld.WorldProviderUnderWorld;
+import com.teamwizardry.wizardry.crafting.mana.ManaRecipes;
 import com.teamwizardry.wizardry.init.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
@@ -53,6 +54,8 @@ public class CommonProxy {
 		ModEntities.init();
 		ModCapabilities.preInit();
 
+		ManaRecipes.INSTANCE.loadRecipes(directory);
+		
 		NetworkRegistry.INSTANCE.registerGuiHandler(Wizardry.instance, new GuiHandler());
 
 		Wizardry.underWorld = DimensionType.register("underworld", "_dim", ConfigValues.underworldID, WorldProviderUnderWorld.class, false);

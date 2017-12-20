@@ -1,19 +1,21 @@
 package com.teamwizardry.wizardry.api.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.teamwizardry.librarianlib.features.gui.component.GuiComponent;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by LordSaad.
@@ -159,14 +161,35 @@ public class Utils {
 		return stack1.getItem() == stack2.getItem() && (!stack1.getHasSubtypes() || stack1.getMetadata() == stack2.getMetadata()) && ItemStack.areItemStackTagsEqual(stack1, stack2);
 	}
 
-	public static void boom(World worldIn, Entity entity) {
-		List<Entity> entityList = worldIn.getEntitiesWithinAABBExcludingEntity(entity, new AxisAlignedBB(entity.getPosition()).grow(32, 32, 32));
+	public static void boom(World world, Entity entity) {
+		List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(entity, new AxisAlignedBB(entity.getPosition()).grow(32, 32, 32));
 		for (Entity entity1 : entityList) {
 			double dist = entity1.getDistanceToEntity(entity);
 			final double upperMag = 3;
 			final double scale = 0.8;
 			double mag = upperMag * (scale * dist / (-scale * dist - 1) + 1);
 			Vec3d dir = entity1.getPositionVector().subtract(entity.getPositionVector()).normalize().scale(mag);
+
+			entity1.motionX += (dir.x);
+			entity1.motionY += (dir.y);
+			entity1.motionZ += (dir.z);
+			entity1.fallDistance = 0;
+			entity1.velocityChanged = true;
+
+			if (entity1 instanceof EntityPlayerMP)
+				((EntityPlayerMP) entity1).connection.sendPacket(new SPacketEntityVelocity(entity1));
+		}
+	}
+	
+	public static void boom(World world, Vec3d pos)
+	{
+		List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(pos)).grow(32, 32, 32));
+		for (Entity entity1 : entityList) {
+			double dist = entity1.getDistance(pos.x, pos.y, pos.z);
+			final double upperMag = 3;
+			final double scale = 0.8;
+			double mag = upperMag * (scale * dist / (-scale * dist - 1) + 1);
+			Vec3d dir = entity1.getPositionVector().subtract(pos).normalize().scale(mag);
 
 			entity1.motionX += (dir.x);
 			entity1.motionY += (dir.y);

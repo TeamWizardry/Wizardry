@@ -26,7 +26,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.server.MinecraftServer;
@@ -37,6 +36,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.oredict.OreDictionary;
 
 public class BlockFluidMana extends BlockFluidClassic {
 
@@ -142,19 +142,19 @@ public class BlockFluidMana extends BlockFluidClassic {
 					}
 				});
 
-		// Turn book to codex
-		run (entityIn,
-				entity -> entity instanceof EntityItem && ((EntityItem) entity).getItem().getItem() == Items.BOOK,
-				entity -> {
-					ManaTracker.INSTANCE.addManaCraft(entity.world, entity.getPosition(), ManaRecipes.INSTANCE.new CodexCrafter());
-				});
+//		// Turn book to codex
+//		run (entityIn,
+//				entity -> entity instanceof EntityItem && ((EntityItem) entity).getItem().getItem() == Items.BOOK,
+//				entity -> {
+//					ManaTracker.INSTANCE.addManaCraft(entity.world, entity.getPosition(), ManaRecipes.INSTANCE.new CodexCrafter());
+//				});
 
-		// Convert mana to nacre
-		run(entityIn,
-				entity -> entity instanceof EntityItem && ((EntityItem) entity).getItem().getItem() == Items.GOLD_NUGGET,
-				entity -> {
-					ManaTracker.INSTANCE.addManaCraft(entity.world, entity.getPosition(), ManaRecipes.INSTANCE.new NacreCrafter());
-				});
+//		// Convert mana to nacre
+//		run(entityIn,
+//				entity -> entity instanceof EntityItem && ((EntityItem) entity).getItem().getItem() == Items.GOLD_NUGGET,
+//				entity -> {
+//					ManaTracker.INSTANCE.addManaCraft(entity.world, entity.getPosition(), ManaRecipes.INSTANCE.new NacreCrafter());
+//				});
 		
 		// Explode explodable items
 		run(entityIn,
@@ -163,11 +163,27 @@ public class BlockFluidMana extends BlockFluidClassic {
 					ManaTracker.INSTANCE.addManaCraft(entity.world, entity.getPosition(), ManaRecipes.INSTANCE.new ExplodableCrafter());
 				});
 
-		// Mana Battery Recipe
+//		// Mana Battery Recipe
+//		run(entityIn,
+//				entity -> entity instanceof EntityItem && !((EntityItem) entity).getItem().isEmpty() && ((EntityItem) entity).getItem().getItem() == Items.DIAMOND,
+//				entity -> {
+//					ManaTracker.INSTANCE.addManaCraft(entity.world, entity.getPosition(), ManaRecipes.INSTANCE.new ManaBatteryCrafter());
+//				});
+		
+		// Non-oredict ManaCrafters
 		run(entityIn,
-				entity -> entity instanceof EntityItem && !((EntityItem) entity).getItem().isEmpty() && ((EntityItem) entity).getItem().getItem() == Items.DIAMOND,
+				entity -> entity instanceof EntityItem && ManaRecipes.RECIPES.keySet().stream().anyMatch(item -> ItemStack.areItemsEqual(item, ((EntityItem) entity).getItem())),
 				entity -> {
-					ManaTracker.INSTANCE.addManaCraft(entity.world, entity.getPosition(), ManaRecipes.INSTANCE.new ManaBatteryCrafter());
+					ItemStack key = ManaRecipes.RECIPES.keySet().stream().filter(item -> ItemStack.areItemsEqual(item, ((EntityItem) entity).getItem())).findFirst().orElse(null);
+					ManaRecipes.RECIPES.get(key).forEach(crafter -> ManaTracker.INSTANCE.addManaCraft(entity.world, entity.getPosition(), crafter.build()));
+				});
+		
+		// Oredict ManaCrafters
+		run(entityIn,
+				entity -> entity instanceof EntityItem && ManaRecipes.OREDICT_RECIPES.keySet().stream().anyMatch(oredict -> OreDictionary.getOres(oredict, false).stream().anyMatch(ore -> ItemStack.areItemsEqual(ore, ((EntityItem) entity).getItem()))),
+				entity -> {
+					String key = ManaRecipes.OREDICT_RECIPES.keySet().stream().filter(oredict -> OreDictionary.getOres(oredict, false).stream().anyMatch(ore -> ItemStack.areItemsEqual(ore, ((EntityItem) entity).getItem()))).findFirst().orElse(null);
+					ManaRecipes.OREDICT_RECIPES.get(key).forEach(crafter -> ManaTracker.INSTANCE.addManaCraft(entity.world, entity.getPosition(), crafter.build()));
 				});
 	}
 
