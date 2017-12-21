@@ -89,12 +89,12 @@ public class ClientProxy extends CommonProxy implements IResourceManagerReloadLi
 		for (ResourceLocation entity : EntityList.getEntityNameList()) {
 			Class<? extends Entity> clazz = EntityList.getClass(entity);
 			Render<? extends Entity> entityRenderer = map.get(clazz);
-			if (entityRenderer instanceof RenderLiving) {
-				ModelBase main = ((RenderLiving) entityRenderer).getMainModel();
+			if (entityRenderer instanceof RenderLiving<?>) {
+				ModelBase main = ((RenderLiving<?>) entityRenderer).getMainModel();
 				ModelRenderer renderer = null;
 				if (main instanceof ModelBiped) renderer = ((ModelBiped) main).bipedHead;
 
-				((RenderLiving) entityRenderer).addLayer(new RenderHaloEntity(renderer));
+				((RenderLiving<?>) entityRenderer).addLayer(new RenderHaloEntity(renderer));
 			}
 		}
 	}

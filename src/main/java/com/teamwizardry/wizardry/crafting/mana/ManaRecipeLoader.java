@@ -117,6 +117,7 @@ public class ManaRecipeLoader
 			int radius = 0;
 			boolean consume = false;
 			boolean explode = false;
+			boolean bubbling = true;
 			boolean silent = false;
 			
 			if (recipes.containsKey(file.getPath()))
@@ -272,6 +273,16 @@ public class ManaRecipeLoader
 				silent = fileObject.get("silent").getAsBoolean();
 			}
 			
+			if (fileObject.has("bubbling"))
+			{
+				if (!fileObject.get("bubbling").isJsonPrimitive() || !fileObject.getAsJsonPrimitive("bubbling").isBoolean())
+				{
+					Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT give bubbling as a boolean. Ignoring file...: " + element.toString());
+					continue;
+				}
+				silent = fileObject.get("bubbling").getAsBoolean();
+			}
+			
 			String type = fileObject.get("type").getAsString();
 			JsonObject output = fileObject.get("output").getAsJsonObject();
 			if (!output.has("name"))
@@ -311,13 +322,13 @@ public class ManaRecipeLoader
 			
 				if (inputOredict == null)
 				{
-					ManaCrafterBuilder build = buildManaCrafter(file.getPath(), outputItem, inputItem, extraInputItems, extraInputOredicts, duration, radius, consume, explode, silent);
+					ManaCrafterBuilder build = buildManaCrafter(file.getPath(), outputItem, inputItem, extraInputItems, extraInputOredicts, duration, radius, consume, explode, bubbling, silent);
 					recipeRegistry.put(file.getPath(), build);
 					recipes.put(inputItem, build);
 				}
 				else
 				{
-					ManaCrafterBuilder build = buildManaCrafter(file.getPath(), outputItem, inputOredict, extraInputItems, extraInputOredicts, duration, radius, consume, explode, silent);
+					ManaCrafterBuilder build = buildManaCrafter(file.getPath(), outputItem, inputOredict, extraInputItems, extraInputOredicts, duration, radius, consume, explode, bubbling, silent);
 					recipeRegistry.put(file.getPath(), build);
 					oredictRecipes.put(inputOredict, build);
 				}
@@ -339,13 +350,13 @@ public class ManaRecipeLoader
 			
 				if (inputOredict == null)
 				{
-					ManaCrafterBuilder build = buildManaCrafter(file.getPath(), outputBlock, inputItem, extraInputItems, extraInputOredicts, duration, radius, consume, explode, silent);
+					ManaCrafterBuilder build = buildManaCrafter(file.getPath(), outputBlock, inputItem, extraInputItems, extraInputOredicts, duration, radius, consume, explode, bubbling, silent);
 					recipeRegistry.put(file.getPath(), build);
 					recipes.put(inputItem, build);
 				}
 				else
 				{
-					ManaCrafterBuilder build = buildManaCrafter(file.getPath(), outputBlock, inputOredict, extraInputItems, extraInputOredicts, duration, radius, consume, explode, silent);
+					ManaCrafterBuilder build = buildManaCrafter(file.getPath(), outputBlock, inputOredict, extraInputItems, extraInputOredicts, duration, radius, consume, explode, bubbling, silent);
 					recipeRegistry.put(file.getPath(), build);
 					oredictRecipes.put(inputOredict, build);
 				}
@@ -356,7 +367,7 @@ public class ManaRecipeLoader
 		}
 	}
 	
-	private ManaCrafterBuilder buildManaCrafter(String identifier, ItemStack outputItem, ItemStack input, List<ItemStack> extraInputs, List<String> extraInputOredicts, int duration, int radius, boolean consume, boolean explode, boolean silent)
+	private ManaCrafterBuilder buildManaCrafter(String identifier, ItemStack outputItem, ItemStack input, List<ItemStack> extraInputs, List<String> extraInputOredicts, int duration, int radius, boolean consume, boolean explode, boolean bubbling, boolean silent)
 	{
 		return new ManaCrafterBuilder(new ManaCrafterPredicate()
 		{
@@ -367,32 +378,69 @@ public class ManaRecipeLoader
 					for (int j = -radius; j <= radius; j++)
 						if (world.getBlockState(pos.add(i, 0, j)) != ModBlocks.FLUID_MANA.getDefaultState()) return false;
 
-				boolean foundInput = false;
-				List<ItemStack> list = items.stream().map(entity -> entity.getItem()).collect(Collectors.toList());
+				List<ItemStack> list = items.stream().map(entity -> entity.getItem().copy()).collect(Collectors.toList());
 				List<String> oredictList = new LinkedList<>();
 				oredictList.addAll(extraInputOredicts);
 				List<ItemStack> inputList = new LinkedList<>();
 				inputList.addAll(extraInputs);
-				for (ItemStack item : list)
+				inputList.add(input);
+				while (inputList.size() > 0)
 				{
-					if (foundInput && inputList.size() <= 0 && oredictList.size() <= 0) return true;
-					if (!foundInput && ItemStack.areItemsEqual(item, input))
+					boolean foundMatch = false;
+					List<ItemStack> toRemove = new LinkedList<>();
+					ItemStack itemIn = inputList.get(0);
+					for (ItemStack item : list)
 					{
-						foundInput = true;
-						continue;
+						if (ItemStack.areItemsEqual(item, itemIn))
+						{
+							foundMatch = true;
+							if (item.getCount() == itemIn.getCount())
+							{
+								inputList.remove(0);
+								toRemove.add(item);
+								break;
+							}
+							if (item.getCount() > itemIn.getCount())
+							{
+								inputList.remove(0);
+								item.shrink(itemIn.getCount());
+								break;
+							}
+							if (item.getCount() < itemIn.getCount())
+							{
+								itemIn.shrink(item.getCount());
+								toRemove.add(item);
+								break;
+							}
+						}
 					}
-					if (inputList.size() > 0 && ItemStack.areItemsEqual(item, inputList.get(0)))
-					{
-						inputList.remove(0);
-						continue;
-					}
-					if (oredictList.size() > 0 && OreDictionary.getOres(oredictList.get(0), false).stream().anyMatch(ore -> ItemStack.areItemsEqual(ore, item)))
-					{
-						oredictList.remove(0);
-						continue;
-					}
+					if (!foundMatch)
+						return false;
+					list.removeAll(toRemove);
+					toRemove.clear();
 				}
-				return foundInput && inputList.size() <= 0 && oredictList.size() <= 0;
+				while (oredictList.size() > 0)
+				{
+					boolean foundMatch = false;
+					List<String> toRemove = new LinkedList<>();
+					String oredictIn = oredictList.get(0);
+					for (ItemStack item : list)
+					{
+						List<ItemStack> ores = OreDictionary.getOres(oredictIn, false);
+						if (ores.stream().anyMatch(ore -> ItemStack.areItemsEqual(ore, item)))
+						{
+							item.shrink(1);
+							oredictList.remove(0);
+							foundMatch = true;
+							break;
+						}
+					}
+					if (!foundMatch)
+						return false;
+					list.removeAll(toRemove);
+					toRemove.clear();
+				}
+				return true;
 			}
 		}, new ManaCrafterConsumer()
 		{
@@ -401,7 +449,7 @@ public class ManaRecipeLoader
 			{
 				EntityItem entityItem = items.stream().filter(entity -> ItemStack.areItemsEqual(entity.getItem(), input)).findFirst().orElse(null);
 				if (world.isRemote) LibParticles.CRAFTING_ALTAR_IDLE(world, entityItem.getPositionVector());
-				if (!silent && currentDuration % 40 == 0) world.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
+				if (bubbling && currentDuration % 40 == 0) world.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
 			}
 		}, new ManaCrafterConsumer()
 		{
@@ -457,7 +505,7 @@ public class ManaRecipeLoader
 		}, identifier, duration);
 	}
 
-	private ManaCrafterBuilder buildManaCrafter(String identifier, IBlockState outputBlock, ItemStack input, List<ItemStack> extraInputs, List<String> extraInputOredicts, int duration, int radius, boolean consume, boolean explode, boolean silent)
+	private ManaCrafterBuilder buildManaCrafter(String identifier, IBlockState outputBlock, ItemStack input, List<ItemStack> extraInputs, List<String> extraInputOredicts, int duration, int radius, boolean consume, boolean explode, boolean bubbling, boolean silent)
 	{
 		return new ManaCrafterBuilder(new ManaCrafterPredicate()
 		{
@@ -468,32 +516,69 @@ public class ManaRecipeLoader
 					for (int j = -radius; j <= radius; j++)
 						if (world.getBlockState(pos.add(i, 0, j)) != ModBlocks.FLUID_MANA.getDefaultState()) return false;
 
-				boolean foundInput = false;
-				List<ItemStack> list = items.stream().map(entity -> entity.getItem()).collect(Collectors.toList());
+				List<ItemStack> list = items.stream().map(entity -> entity.getItem().copy()).collect(Collectors.toList());
 				List<String> oredictList = new LinkedList<>();
 				oredictList.addAll(extraInputOredicts);
 				List<ItemStack> inputList = new LinkedList<>();
 				inputList.addAll(extraInputs);
-				for (ItemStack item : list)
+				inputList.add(input);
+				while (inputList.size() > 0)
 				{
-					if (foundInput && inputList.size() <= 0 && oredictList.size() <= 0) return true;
-					if (!foundInput && ItemStack.areItemsEqual(item, input))
+					boolean foundMatch = false;
+					List<ItemStack> toRemove = new LinkedList<>();
+					ItemStack itemIn = inputList.get(0);
+					for (ItemStack item : list)
 					{
-						foundInput = true;
-						continue;
+						if (ItemStack.areItemsEqual(item, itemIn))
+						{
+							foundMatch = true;
+							if (item.getCount() == itemIn.getCount())
+							{
+								inputList.remove(0);
+								toRemove.add(item);
+								break;
+							}
+							if (item.getCount() > itemIn.getCount())
+							{
+								inputList.remove(0);
+								item.shrink(itemIn.getCount());
+								break;
+							}
+							if (item.getCount() < itemIn.getCount())
+							{
+								itemIn.shrink(item.getCount());
+								toRemove.add(item);
+								break;
+							}
+						}
 					}
-					if (inputList.size() > 0 && ItemStack.areItemsEqual(item, inputList.get(0)))
-					{
-						inputList.remove(0);
-						continue;
-					}
-					if (oredictList.size() > 0 && OreDictionary.getOres(oredictList.get(0), false).stream().anyMatch(ore -> ItemStack.areItemsEqual(ore, item)))
-					{
-						oredictList.remove(0);
-						continue;
-					}
+					if (!foundMatch)
+						return false;
+					list.removeAll(toRemove);
+					toRemove.clear();
 				}
-				return foundInput && inputList.size() <= 0 && oredictList.size() <= 0;
+				while (oredictList.size() > 0)
+				{
+					boolean foundMatch = false;
+					List<String> toRemove = new LinkedList<>();
+					String oredictIn = oredictList.get(0);
+					for (ItemStack item : list)
+					{
+						List<ItemStack> ores = OreDictionary.getOres(oredictIn, false);
+						if (ores.stream().anyMatch(ore -> ItemStack.areItemsEqual(ore, item)))
+						{
+							item.shrink(1);
+							oredictList.remove(0);
+							foundMatch = true;
+							break;
+						}
+					}
+					if (!foundMatch)
+						return false;
+					list.removeAll(toRemove);
+					toRemove.clear();
+				}
+				return true;
 			}
 		}, new ManaCrafterConsumer()
 		{
@@ -502,7 +587,7 @@ public class ManaRecipeLoader
 			{
 				EntityItem entityItem = items.stream().filter(entity -> ItemStack.areItemsEqual(entity.getItem(), input)).findFirst().orElse(null);
 				if (world.isRemote) LibParticles.CRAFTING_ALTAR_IDLE(world, entityItem.getPositionVector());
-				if (!silent && currentDuration % 40 == 0) world.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
+				if (bubbling && currentDuration % 40 == 0) world.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
 			}
 		}, new ManaCrafterConsumer()
 		{
@@ -554,7 +639,7 @@ public class ManaRecipeLoader
 		}, identifier, duration);
 	}
 
-	private ManaCrafterBuilder buildManaCrafter(String identifier, ItemStack outputItem, String inputOredict, List<ItemStack> extraInputs, List<String> extraInputOredicts, int duration, int radius, boolean consume, boolean explode, boolean silent)
+	private ManaCrafterBuilder buildManaCrafter(String identifier, ItemStack outputItem, String inputOredict, List<ItemStack> extraInputs, List<String> extraInputOredicts, int duration, int radius, boolean consume, boolean explode, boolean bubbling, boolean silent)
 	{
 		return new ManaCrafterBuilder(new ManaCrafterPredicate()
 		{
@@ -565,32 +650,69 @@ public class ManaRecipeLoader
 					for (int j = -radius; j <= radius; j++)
 						if (world.getBlockState(pos.add(i, 0, j)) != ModBlocks.FLUID_MANA.getDefaultState()) return false;
 
-				boolean foundInput = false;
-				List<ItemStack> list = items.stream().map(entity -> entity.getItem()).collect(Collectors.toList());
+				List<ItemStack> list = items.stream().map(entity -> entity.getItem().copy()).collect(Collectors.toList());
 				List<String> oredictList = new LinkedList<>();
 				oredictList.addAll(extraInputOredicts);
+				oredictList.add(inputOredict);
 				List<ItemStack> inputList = new LinkedList<>();
 				inputList.addAll(extraInputs);
-				for (ItemStack item : list)
+				while (inputList.size() > 0)
 				{
-					if (foundInput && inputList.size() <= 0 && oredictList.size() <= 0) return true;
-					if (!foundInput && OreDictionary.getOres(inputOredict, false).stream().anyMatch(ore -> ItemStack.areItemsEqual(ore, item)))
+					boolean foundMatch = false;
+					List<ItemStack> toRemove = new LinkedList<>();
+					ItemStack itemIn = inputList.get(0);
+					for (ItemStack item : list)
 					{
-						foundInput = true;
-						continue;
+						if (ItemStack.areItemsEqual(item, itemIn))
+						{
+							foundMatch = true;
+							if (item.getCount() == itemIn.getCount())
+							{
+								inputList.remove(0);
+								toRemove.add(item);
+								break;
+							}
+							if (item.getCount() > itemIn.getCount())
+							{
+								inputList.remove(0);
+								item.shrink(itemIn.getCount());
+								break;
+							}
+							if (item.getCount() < itemIn.getCount())
+							{
+								itemIn.shrink(item.getCount());
+								toRemove.add(item);
+								break;
+							}
+						}
 					}
-					if (inputList.size() > 0 && ItemStack.areItemsEqual(item, inputList.get(0)))
-					{
-						inputList.remove(0);
-						continue;
-					}
-					if (oredictList.size() > 0 && OreDictionary.getOres(oredictList.get(0), false).stream().anyMatch(ore -> ItemStack.areItemsEqual(ore, item)))
-					{
-						oredictList.remove(0);
-						continue;
-					}
+					if (!foundMatch)
+						return false;
+					list.removeAll(toRemove);
+					toRemove.clear();
 				}
-				return foundInput && inputList.size() <= 0 && oredictList.size() <= 0;
+				while (oredictList.size() > 0)
+				{
+					boolean foundMatch = false;
+					List<String> toRemove = new LinkedList<>();
+					String oredictIn = oredictList.get(0);
+					for (ItemStack item : list)
+					{
+						List<ItemStack> ores = OreDictionary.getOres(oredictIn, false);
+						if (ores.stream().anyMatch(ore -> ItemStack.areItemsEqual(ore, item)))
+						{
+							item.shrink(1);
+							oredictList.remove(0);
+							foundMatch = true;
+							break;
+						}
+					}
+					if (!foundMatch)
+						return false;
+					list.removeAll(toRemove);
+					toRemove.clear();
+				}
+				return true;
 			}
 		}, new ManaCrafterConsumer()
 		{
@@ -599,7 +721,7 @@ public class ManaRecipeLoader
 			{
 				EntityItem entityItem = items.stream().filter(entity -> OreDictionary.getOres(inputOredict, false).stream().anyMatch(ore -> ItemStack.areItemsEqual(entity.getItem(), ore))).findFirst().orElse(null);
 				if (world.isRemote) LibParticles.CRAFTING_ALTAR_IDLE(world, entityItem.getPositionVector());
-				if (!silent && currentDuration % 40 == 0) world.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
+				if (bubbling && currentDuration % 40 == 0) world.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
 			}
 		}, new ManaCrafterConsumer()
 		{
@@ -655,7 +777,7 @@ public class ManaRecipeLoader
 		}, identifier, duration);
 	}
 
-	private ManaCrafterBuilder buildManaCrafter(String identifier, IBlockState outputBlock, String inputOredict, List<ItemStack> extraInputs, List<String> extraInputOredicts, int duration, int radius, boolean consume, boolean explode, boolean silent)
+	private ManaCrafterBuilder buildManaCrafter(String identifier, IBlockState outputBlock, String inputOredict, List<ItemStack> extraInputs, List<String> extraInputOredicts, int duration, int radius, boolean consume, boolean explode, boolean bubbling, boolean silent)
 	{
 		return new ManaCrafterBuilder(new ManaCrafterPredicate()
 		{
@@ -666,32 +788,69 @@ public class ManaRecipeLoader
 					for (int j = -radius; j <= radius; j++)
 						if (world.getBlockState(pos.add(i, 0, j)) != ModBlocks.FLUID_MANA.getDefaultState()) return false;
 
-				boolean foundInput = false;
-				List<ItemStack> list = items.stream().map(entity -> entity.getItem()).collect(Collectors.toList());
+				List<ItemStack> list = items.stream().map(entity -> entity.getItem().copy()).collect(Collectors.toList());
 				List<String> oredictList = new LinkedList<>();
 				oredictList.addAll(extraInputOredicts);
+				oredictList.add(inputOredict);
 				List<ItemStack> inputList = new LinkedList<>();
 				inputList.addAll(extraInputs);
-				for (ItemStack item : list)
+				while (inputList.size() > 0)
 				{
-					if (foundInput && inputList.size() <= 0 && oredictList.size() <= 0) return true;
-					if (!foundInput && OreDictionary.getOres(inputOredict, false).stream().anyMatch(ore -> ItemStack.areItemsEqual(ore, item)))
+					boolean foundMatch = false;
+					List<ItemStack> toRemove = new LinkedList<>();
+					ItemStack itemIn = inputList.get(0);
+					for (ItemStack item : list)
 					{
-						foundInput = true;
-						continue;
+						if (ItemStack.areItemsEqual(item, itemIn))
+						{
+							foundMatch = true;
+							if (item.getCount() == itemIn.getCount())
+							{
+								inputList.remove(0);
+								toRemove.add(item);
+								break;
+							}
+							if (item.getCount() > itemIn.getCount())
+							{
+								inputList.remove(0);
+								item.shrink(itemIn.getCount());
+								break;
+							}
+							if (item.getCount() < itemIn.getCount())
+							{
+								itemIn.shrink(item.getCount());
+								toRemove.add(item);
+								break;
+							}
+						}
 					}
-					if (inputList.size() > 0 && ItemStack.areItemsEqual(item, inputList.get(0)))
-					{
-						inputList.remove(0);
-						continue;
-					}
-					if (oredictList.size() > 0 && OreDictionary.getOres(oredictList.get(0), false).stream().anyMatch(ore -> ItemStack.areItemsEqual(ore, item)))
-					{
-						oredictList.remove(0);
-						continue;
-					}
+					if (!foundMatch)
+						return false;
+					list.removeAll(toRemove);
+					toRemove.clear();
 				}
-				return foundInput && inputList.size() <= 0 && oredictList.size() <= 0;
+				while (oredictList.size() > 0)
+				{
+					boolean foundMatch = false;
+					List<String> toRemove = new LinkedList<>();
+					String oredictIn = oredictList.get(0);
+					for (ItemStack item : list)
+					{
+						List<ItemStack> ores = OreDictionary.getOres(oredictIn, false);
+						if (ores.stream().anyMatch(ore -> ItemStack.areItemsEqual(ore, item)))
+						{
+							item.shrink(1);
+							oredictList.remove(0);
+							foundMatch = true;
+							break;
+						}
+					}
+					if (!foundMatch)
+						return false;
+					list.removeAll(toRemove);
+					toRemove.clear();
+				}
+				return true;
 			}
 		}, new ManaCrafterConsumer()
 		{
@@ -700,7 +859,7 @@ public class ManaRecipeLoader
 			{
 				EntityItem entityItem = items.stream().filter(entity -> OreDictionary.getOres(inputOredict, false).stream().anyMatch(ore -> ItemStack.areItemsEqual(entity.getItem(), ore))).findFirst().orElse(null);
 				if (world.isRemote) LibParticles.CRAFTING_ALTAR_IDLE(world, entityItem.getPositionVector());
-				if (!silent && currentDuration % 40 == 0) world.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
+				if (bubbling && currentDuration % 40 == 0) world.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
 			}
 		}, new ManaCrafterConsumer()
 		{
