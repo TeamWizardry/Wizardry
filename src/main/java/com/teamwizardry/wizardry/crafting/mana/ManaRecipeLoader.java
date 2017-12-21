@@ -222,28 +222,54 @@ public class ManaRecipeLoader
 				}
 			}
 			
-			if (!fileObject.has("duration"))
+			if (fileObject.has("duration"))
 			{
-				Wizardry.logger.error("  > WARNING! " + file.getPath() + " . Ignoring file...: " + element.toString());
-				continue;
+				if (!fileObject.get("duration").isJsonPrimitive() || !fileObject.getAsJsonPrimitive("duration").isNumber())
+				{
+					Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT give duration as a number. Ignoring file...:" + element.toString());
+					continue;
+				}
+				duration = fileObject.get("duration").getAsInt();
 			}
 			
-			if (!fileObject.has("radius"))
+			if (fileObject.has("radius"))
 			{
-				Wizardry.logger.error("  > WARNING! " + file.getPath() + " . Ignoring file...: " + element.toString());
-				continue;
+				if (!fileObject.get("radius").isJsonPrimitive() || !fileObject.getAsJsonPrimitive("radius").isNumber())
+				{
+					Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT give radius as a number. Ignoring file...: " + element.toString());
+					continue;
+				}
+				radius = fileObject.get("radius").getAsInt();
 			}
 			
-			if (!fileObject.has("consume"))
+			if (fileObject.has("consume"))
 			{
-				Wizardry.logger.error("  > WARNING! " + file.getPath() + " . Ignoring file...: " + element.toString());
-				continue;
+				if (!fileObject.get("consume").isJsonPrimitive() || !fileObject.getAsJsonPrimitive("consume").isBoolean())
+				{
+					Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT give consume as a boolean. Ignoring file...: " + element.toString());
+					continue;
+				}
+				consume = fileObject.get("consume").getAsBoolean();
 			}
 			
-			if (!fileObject.has("explode"))
+			if (fileObject.has("explode"))
 			{
-				Wizardry.logger.error("  > WARNING! " + file.getPath() + " . Ignoring file...: " + element.toString());
-				continue;
+				if (!fileObject.get("explode").isJsonPrimitive() || !fileObject.getAsJsonPrimitive("explode").isBoolean())
+				{
+					Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT give explode as a boolean. Ignoring file...: " + element.toString());
+					continue;
+				}
+				explode = fileObject.get("explode").getAsBoolean();
+			}
+			
+			if (fileObject.has("silent"))
+			{
+				if (!fileObject.get("silent").isJsonPrimitive() || !fileObject.getAsJsonPrimitive("silent").isBoolean())
+				{
+					Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT give silent as a boolean. Ignoring file...: " + element.toString());
+					continue;
+				}
+				silent = fileObject.get("silent").getAsBoolean();
 			}
 			
 			String type = fileObject.get("type").getAsString();
@@ -392,21 +418,24 @@ public class ManaRecipeLoader
 				inputList.addAll(extraInputs);
 				inputList.add(input);
 
-				for (EntityItem entity : items)
+				while ((inputList.size() > 0 || oredictList.size() > 0) && items.size() > 0)
 				{
-					if (inputList.size() > 0 && ItemStack.areItemsEqual(entity.getItem(), inputList.get(0)))
+					for (EntityItem entity : items)
 					{
-						entity.getItem().shrink(1);
-						if (entity.getItem().isEmpty()) world.removeEntity(entity);
-						inputList.remove(0);
-						continue;
-					}
-					if (oredictList.size() > 0 && OreDictionary.getOres(oredictList.get(0), false).stream().anyMatch(ore -> ItemStack.areItemsEqual(ore, entity.getItem())))
-					{
-						entity.getItem().shrink(1);
-						if (entity.getItem().isEmpty()) world.removeEntity(entity);
-						oredictList.remove(0);
-						continue;
+						if (inputList.size() > 0 && ItemStack.areItemsEqual(entity.getItem(), inputList.get(0)))
+						{
+							entity.getItem().shrink(1);
+							if (entity.getItem().isEmpty()) world.removeEntity(entity);
+							inputList.remove(0);
+							continue;
+						}
+						if (oredictList.size() > 0 && OreDictionary.getOres(oredictList.get(0), false).stream().anyMatch(ore -> ItemStack.areItemsEqual(ore, entity.getItem())))
+						{
+							entity.getItem().shrink(1);
+							if (entity.getItem().isEmpty()) world.removeEntity(entity);
+							oredictList.remove(0);
+							continue;
+						}
 					}
 				}
 
@@ -414,6 +443,7 @@ public class ManaRecipeLoader
 				output.motionX = 0;
 				output.motionY = 0;
 				output.motionZ = 0;
+				output.forceSpawn = true;
 				world.spawnEntity(output);
 
 				if (explode)
@@ -489,21 +519,24 @@ public class ManaRecipeLoader
 				inputList.addAll(extraInputs);
 				inputList.add(input);
 
-				for (EntityItem entity : items)
+				while ((inputList.size() > 0 || oredictList.size() > 0) && items.size() > 0)
 				{
-					if (inputList.size() > 0 && ItemStack.areItemsEqual(entity.getItem(), inputList.get(0)))
+					for (EntityItem entity : items)
 					{
-						entity.getItem().shrink(1);
-						if (entity.getItem().isEmpty()) world.removeEntity(entity);
-						inputList.remove(0);
-						continue;
-					}
-					if (oredictList.size() > 0 && OreDictionary.getOres(oredictList.get(0), false).stream().anyMatch(ore -> ItemStack.areItemsEqual(ore, entity.getItem())))
-					{
-						entity.getItem().shrink(1);
-						if (entity.getItem().isEmpty()) world.removeEntity(entity);
-						oredictList.remove(0);
-						continue;
+						if (inputList.size() > 0 && ItemStack.areItemsEqual(entity.getItem(), inputList.get(0)))
+						{
+							entity.getItem().shrink(1);
+							if (entity.getItem().isEmpty()) world.removeEntity(entity);
+							inputList.remove(0);
+							continue;
+						}
+						if (oredictList.size() > 0 && OreDictionary.getOres(oredictList.get(0), false).stream().anyMatch(ore -> ItemStack.areItemsEqual(ore, entity.getItem())))
+						{
+							entity.getItem().shrink(1);
+							if (entity.getItem().isEmpty()) world.removeEntity(entity);
+							oredictList.remove(0);
+							continue;
+						}
 					}
 				}
 
@@ -583,21 +616,24 @@ public class ManaRecipeLoader
 				inputList.addAll(extraInputs);
 				oredictList.add(inputOredict);
 
-				for (EntityItem entity : items)
+				while ((inputList.size() > 0 || oredictList.size() > 0) && items.size() > 0)
 				{
-					if (inputList.size() > 0 && ItemStack.areItemsEqual(entity.getItem(), inputList.get(0)))
+					for (EntityItem entity : items)
 					{
-						entity.getItem().shrink(1);
-						if (entity.getItem().isEmpty()) world.removeEntity(entity);
-						inputList.remove(0);
-						continue;
-					}
-					if (oredictList.size() > 0 && OreDictionary.getOres(oredictList.get(0), false).stream().anyMatch(ore -> ItemStack.areItemsEqual(ore, entity.getItem())))
-					{
-						entity.getItem().shrink(1);
-						if (entity.getItem().isEmpty()) world.removeEntity(entity);
-						oredictList.remove(0);
-						continue;
+						if (inputList.size() > 0 && ItemStack.areItemsEqual(entity.getItem(), inputList.get(0)))
+						{
+							entity.getItem().shrink(1);
+							if (entity.getItem().isEmpty()) world.removeEntity(entity);
+							inputList.remove(0);
+							continue;
+						}
+						if (oredictList.size() > 0 && OreDictionary.getOres(oredictList.get(0), false).stream().anyMatch(ore -> ItemStack.areItemsEqual(ore, entity.getItem())))
+						{
+							entity.getItem().shrink(1);
+							if (entity.getItem().isEmpty()) world.removeEntity(entity);
+							oredictList.remove(0);
+							continue;
+						}
 					}
 				}
 
@@ -605,6 +641,7 @@ public class ManaRecipeLoader
 				output.motionX = 0;
 				output.motionY = 0;
 				output.motionZ = 0;
+				output.forceSpawn = true;
 				world.spawnEntity(output);
 
 				if (explode)
@@ -680,21 +717,24 @@ public class ManaRecipeLoader
 				inputList.addAll(extraInputs);
 				oredictList.add(inputOredict);
 
-				for (EntityItem entity : items)
+				while ((inputList.size() > 0 || oredictList.size() > 0) && items.size() > 0)
 				{
-					if (inputList.size() > 0 && ItemStack.areItemsEqual(entity.getItem(), inputList.get(0)))
+					for (EntityItem entity : items)
 					{
-						entity.getItem().shrink(1);
-						if (entity.getItem().isEmpty()) world.removeEntity(entity);
-						inputList.remove(0);
-						continue;
-					}
-					if (oredictList.size() > 0 && OreDictionary.getOres(oredictList.get(0), false).stream().anyMatch(ore -> ItemStack.areItemsEqual(ore, entity.getItem())))
-					{
-						entity.getItem().shrink(1);
-						if (entity.getItem().isEmpty()) world.removeEntity(entity);
-						oredictList.remove(0);
-						continue;
+						if (inputList.size() > 0 && ItemStack.areItemsEqual(entity.getItem(), inputList.get(0)))
+						{
+							entity.getItem().shrink(1);
+							if (entity.getItem().isEmpty()) world.removeEntity(entity);
+							inputList.remove(0);
+							continue;
+						}
+						if (oredictList.size() > 0 && OreDictionary.getOres(oredictList.get(0), false).stream().anyMatch(ore -> ItemStack.areItemsEqual(ore, entity.getItem())))
+						{
+							entity.getItem().shrink(1);
+							if (entity.getItem().isEmpty()) world.removeEntity(entity);
+							oredictList.remove(0);
+							continue;
+						}
 					}
 				}
 

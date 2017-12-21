@@ -1,0 +1,12 @@
+{
+	"type": "item",
+	"output": { "name": "wizardry:mana_battery" },
+	"input": { "name": "minecraft:diamond" },
+	"extraInputs": [
+		{ "name": "minecraft:soul_sand" },
+		{ "name": "wizardry:devil_dust" }
+	],
+	"radius": 1,
+	"consume": true,
+	"explode": true
+}

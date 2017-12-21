@@ -1,10 +1,16 @@
 package com.teamwizardry.wizardry.crafting.mana;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
+
 import com.google.common.collect.HashMultimap;
+import com.teamwizardry.librarianlib.core.LibrarianLib;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.IExplodable;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.crafting.mana.ManaRecipeLoader.ManaCrafterBuilder;
@@ -27,12 +33,42 @@ public class ManaRecipes
 	public static final String CODEX = "codex";
 	public static final String NACRE = "nacre";
 	public static final String EXPLODABLE = "explodable";
-	public static final String MANA_BATTERY = "mana battery";
+	public static final String MANA_BATTERY = "mana_battery";
+	
+	private static final String[] INTERNAL_RECIPE_NAMES = { CODEX.toLowerCase(), 
+															NACRE.toLowerCase(), 
+															MANA_BATTERY.toLowerCase() };
 	
 	public void loadRecipes(File directory)
 	{
 		ManaRecipeLoader.INSTANCE.setDirectory(directory);
 		ManaRecipeLoader.INSTANCE.processRecipes(RECIPE_REGISTRY, RECIPES, OREDICT_RECIPES);
+	}
+	
+	public void copyMissingRecipes(File directory)
+	{
+		for (String recipeName : INTERNAL_RECIPE_NAMES)
+		{
+			File file = new File(directory, recipeName + ".json");
+			if (file.exists()) continue;
+			
+			InputStream stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "mana_recipes/" + recipeName + ".json");
+			if (stream == null)
+			{
+				Wizardry.logger.fatal("    > SOMETHING WENT WRONG! Could not read recipe " + recipeName + " from mod jar! Report this to the devs on Github!");
+				continue;
+			}
+			
+			try
+			{
+				FileUtils.copyInputStreamToFile(stream, file);
+				Wizardry.logger.info("    > Mana recipe " + recipeName + " copied successfully from mod jar.");
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
 	}
 	
 //	public class CodexCrafter extends ManaCrafter
