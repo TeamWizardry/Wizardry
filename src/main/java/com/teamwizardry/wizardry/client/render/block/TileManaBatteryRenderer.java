@@ -66,7 +66,7 @@ public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> 
 		modelRingOuter = null;
 	}
 
-	private static void getBakedModels() {
+	private static boolean getBakedModels() {
 		IModel model;
 		if (modelRing == null) {
 			try {
@@ -97,18 +97,21 @@ public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> 
 				e.printStackTrace();
 			}
 		}
+
+		return modelRing != null && modelRingOuter != null && modelCrystal != null;
 	}
 
 	@Override
 	public void render(float partialTicks, int destroyStage, float alpha) {
 		super.render(partialTicks, destroyStage, alpha);
 
+		if (!getBakedModels()) return;
+
 		World world = tile.getWorld();
 
 		GlStateManager.pushMatrix();
 		GlStateManager.enableBlend();
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		getBakedModels();
 
 		TextureManager texturemanager = Minecraft.getMinecraft().renderEngine;
 

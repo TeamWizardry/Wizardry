@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.api.block;
 
+import com.teamwizardry.wizardry.init.ModBlocks;
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -132,6 +133,11 @@ public interface IStructure {
 			BlockPos realPos = info.pos.add(pos).subtract(offsetToCenter());
 			IBlockState state = world.getBlockState(realPos);
 			if (state != info.blockState) {
+
+				if (state.getBlock() == ModBlocks.CREATIVE_MANA_BATTERY && info.blockState.getBlock() == ModBlocks.MANA_BATTERY) {
+					continue;
+				}
+
 				if (info.blockState.getBlock() instanceof BlockStairs && state.getBlock() instanceof BlockStairs
 						&& info.blockState.getBlock() == state.getBlock()
 						&& info.blockState.getValue(BlockStairs.HALF) == state.getValue(BlockStairs.HALF)
@@ -154,10 +160,14 @@ public interface IStructure {
 			if (info.blockState.getMaterial() == Material.AIR || info.blockState.getBlock() == Blocks.STRUCTURE_VOID)
 				continue;
 
-
 			BlockPos realPos = info.pos.add(pos).subtract(offsetToCenter());
 			IBlockState state = world.getBlockState(realPos);
 			if (state != info.blockState) {
+
+				if (state.getBlock() == ModBlocks.CREATIVE_MANA_BATTERY && info.blockState.getBlock() == ModBlocks.MANA_BATTERY) {
+					continue;
+				}
+
 				if (info.blockState.getBlock() instanceof BlockStairs && state.getBlock() instanceof BlockStairs
 						&& info.blockState.getBlock() == state.getBlock()
 						&& info.blockState.getValue(BlockStairs.HALF) == state.getValue(BlockStairs.HALF)
@@ -178,12 +188,17 @@ public interface IStructure {
 			if (info.blockState == null) continue;
 
 			BlockPos realPos = info.pos.add(pos).subtract(offsetToCenter());
-			if (world.getBlockState(realPos).getBlock() != info.blockState.getBlock()) {
-				if (world.isAirBlock(realPos)) {
+			IBlockState state = world.getBlockState(realPos);
+			if (state.getBlock() != info.blockState.getBlock()) {
 
-					if (player.isCreative()) {
-						world.setBlockState(realPos, info.blockState);
-					} else {
+				if (state.getBlock() == ModBlocks.CREATIVE_MANA_BATTERY && info.blockState.getBlock() == ModBlocks.MANA_BATTERY) {
+					continue;
+				}
+
+				if (player.isCreative()) {
+					world.setBlockState(realPos, info.blockState);
+				} else {
+					if (world.isAirBlock(realPos)) {
 						ItemStack requiredStack = new ItemStack(info.blockState.getBlock());
 						ItemStack stack = findItemInventoryFromItem(player, requiredStack);
 
