@@ -11,6 +11,7 @@ import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.CachedStructure;
 import com.teamwizardry.wizardry.api.block.IStructure;
+import com.teamwizardry.wizardry.api.item.IInfusable;
 import com.teamwizardry.wizardry.api.spell.SpellBuilder;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.util.RandUtil;
@@ -123,20 +124,24 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 					stack.setCount(1);
 					heldItem.shrink(1);
 
-					for (int i = 0; i < plate.realInventory.getHandler().getSlots(); i++) {
-						if (plate.realInventory.getHandler().getStackInSlot(i).isEmpty()) {
-							plate.realInventory.getHandler().setStackInSlot(i, stack);
+					if (stack.getItem() instanceof IInfusable) {
+						plate.inputPearl.getHandler().setStackInSlot(0, stack);
+					} else {
+						for (int i = 0; i < plate.realInventory.getHandler().getSlots(); i++) {
+							if (plate.realInventory.getHandler().getStackInSlot(i).isEmpty()) {
+								plate.realInventory.getHandler().setStackInSlot(i, stack);
 
-							int finalI = i;
-							ClientRunnable.run(new ClientRunnable() {
-								@Override
-								@SideOnly(Side.CLIENT)
-								public void runIfClient() {
-									if (plate.renderHandler != null)
-										((TileCraftingPlateRenderer) plate.renderHandler).addAnimation(finalI, true);
-								}
-							});
-							break;
+								int finalI = i;
+								ClientRunnable.run(new ClientRunnable() {
+									@Override
+									@SideOnly(Side.CLIENT)
+									public void runIfClient() {
+										if (plate.renderHandler != null)
+											((TileCraftingPlateRenderer) plate.renderHandler).addAnimation(finalI, true);
+									}
+								});
+								break;
+							}
 						}
 					}
 
