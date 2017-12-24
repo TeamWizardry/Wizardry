@@ -28,6 +28,10 @@ import java.util.*;
 
 public class ZachTimeManager {
 
+	public boolean tracking = false;
+	public boolean serialize = false;
+	public boolean end = false;
+
 	private File zachBlockDir;
 	private File zachEntityDir;
 	@NotNull
@@ -67,6 +71,36 @@ public class ZachTimeManager {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+
+		Thread zachSerializeTick = new Thread(() -> {
+			try {
+				while (!end) {
+					if (serialize) {
+						FileWriter writer = null;
+						try {
+							writer = new FileWriter(zachBlockDir);
+							writer.write(new Gson().toJson(BLOCK_JSON));
+						} catch (IOException e) {
+							e.printStackTrace();
+						} finally {
+							IOUtils.closeQuietly(writer);
+						}
+
+						try {
+							writer = new FileWriter(zachEntityDir);
+							writer.write(new Gson().toJson(ENTITY_JSON));
+						} catch (IOException e) {
+							e.printStackTrace();
+						} finally {
+							IOUtils.closeQuietly(writer);
+						}
+					}
+				}
+			} catch (Exception ignored) {
+
+			}
+		});
+		zachSerializeTick.start();
 	}
 
 	public void resetEntities() {
@@ -163,6 +197,8 @@ public class ZachTimeManager {
 	}
 
 	public void trackBlock(IBlockState state, BlockPos pos) {
+		if (!tracking) return;
+
 		BasicPalette palette = getPalette();
 
 		boolean shouldAddID = !palette.hasMappingFor(state);
@@ -172,7 +208,7 @@ public class ZachTimeManager {
 		if (!BLOCK_JSON.has(pos.toLong() + "")) {
 			BLOCK_JSON.add(pos.toLong() + "", new JsonArray());
 		}
-		BLOCK_JSON.getAsJsonArray(pos.toLong() + "").add((System.currentTimeMillis() - lastRecordedBlockTime) + "%" + stateID);
+		BLOCK_JSON.getAsJsonArray(pos.toLong() + "").add(System.currentTimeMillis() + "%" + stateID);
 
 		if (shouldAddID) {
 			JsonObject paletteAddition = new JsonObject();
@@ -182,11 +218,10 @@ public class ZachTimeManager {
 
 			BLOCK_JSON.getAsJsonArray("palette").add(paletteAddition);
 		}
-
-		serialize();
 	}
 
 	public void trackEntity(Entity entity) {
+		if (!tracking) return;
 		UUID uuid = entity.getUniqueID();
 
 		if (!ENTITY_JSON.has(uuid + "")) {
@@ -195,29 +230,10 @@ public class ZachTimeManager {
 
 		JsonObject snapshot = snapshotEntity(entity);
 		ENTITY_JSON.getAsJsonArray(uuid + "").add(snapshot);
-
-		serialize();
 	}
 
 	public void serialize() {
-		FileWriter writer = null;
-		try {
-			writer = new FileWriter(zachBlockDir);
-			writer.write(new Gson().toJson(BLOCK_JSON));
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			IOUtils.closeQuietly(writer);
-		}
-
-		try {
-			writer = new FileWriter(zachEntityDir);
-			writer.write(new Gson().toJson(ENTITY_JSON));
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			IOUtils.closeQuietly(writer);
-		}
+		serialize = true;
 	}
 
 	public EntityZachriel getEntityZachriel() {
@@ -258,7 +274,7 @@ public class ZachTimeManager {
 	public JsonObject snapshotEntity(Entity entity) {
 		JsonObject object = new JsonObject();
 
-		object.addProperty("time", System.currentTimeMillis() - lastRecordedBlockTime);
+		object.addProperty("time", System.currentTimeMillis());
 
 		JsonObject pos = new JsonObject();
 		pos.addProperty("pos_x", entity.posX);

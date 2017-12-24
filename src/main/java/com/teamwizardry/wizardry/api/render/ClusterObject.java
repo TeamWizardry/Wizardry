@@ -92,7 +92,7 @@ public class ClusterObject implements INBTSerializable<NBTTagCompound> {
 		}
 		compound.setDouble("dest_time", destTime);
 		compound.setLong("world_time", worldTime);
-		compound.setDouble("tick", tick);
+		compound.setDouble("maxTick", tick);
 		return compound;
 	}
 
@@ -117,7 +117,7 @@ public class ClusterObject implements INBTSerializable<NBTTagCompound> {
 		if (nbt.hasKey("world_time")) worldTime = nbt.getLong("world_time");
 		else worldTime = 0;
 
-		if (nbt.hasKey("tick")) tick = nbt.getInteger("tick");
+		if (nbt.hasKey("maxTick")) tick = nbt.getInteger("maxTick");
 		else tick = 0;
 	}
 }
