@@ -6,10 +6,12 @@ import com.teamwizardry.librarianlib.features.animator.Easing;
 import com.teamwizardry.librarianlib.features.animator.animations.BasicAnimation;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBezier3D;
 import com.teamwizardry.librarianlib.features.tesr.TileRenderHandler;
+import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.api.block.CachedStructure;
 import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.client.core.StructureErrorRenderer;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
 import net.minecraft.client.Minecraft;
@@ -21,10 +23,15 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
+
+import java.util.HashSet;
 
 /**
  * Created by Saad on 6/11/2016.
@@ -82,7 +89,8 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 
 	@Override
 	public void render(float partialTicks, int destroyStage, float alpha) {
-		if (tile.revealStructure && tile.getBlockType() instanceof IStructure && !((IStructure) tile.getBlockType()).isStructureComplete(tile.getWorld(), tile.getPos())) {
+		HashSet<BlockPos> errors = ((IStructure) tile.getBlockType()).getErroredBlocks(tile.getWorld(), tile.getPos());
+		if (tile.revealStructure && tile.getBlockType() instanceof IStructure && !errors.isEmpty()) {
 
 			IStructure structure = ((IStructure) tile.getBlockType());
 
@@ -115,7 +123,18 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 			GlStateManager.enableDepth();
 			GlStateManager.popMatrix();
 			return;
+
+		} else if (!tile.revealStructure && !errors.isEmpty()) {
+			for (BlockPos error : errors)
+				ClientRunnable.run(new ClientRunnable() {
+					@Override
+					@SideOnly(Side.CLIENT)
+					public void runIfClient() {
+						StructureErrorRenderer.INSTANCE.addError(error);
+					}
+				});
 		}
+
 
 		ItemStack pearl = tile.inputPearl.getHandler().getStackInSlot(0);
 		CapManager manager = new CapManager(pearl);

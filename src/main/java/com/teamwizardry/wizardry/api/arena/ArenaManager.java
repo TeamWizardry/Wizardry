@@ -4,11 +4,9 @@ import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.librarianlib.features.saving.SaveInPlace;
 import com.teamwizardry.wizardry.common.entity.angel.EntityAngel;
 import com.teamwizardry.wizardry.common.entity.angel.zachriel.EntityZachriel;
-import com.teamwizardry.wizardry.common.entity.angel.zachriel.ZachTimeManager;
-
+import com.teamwizardry.wizardry.common.entity.angel.zachriel.ZachHourGlass;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
-import net.minecraft.init.Blocks;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -28,7 +26,7 @@ public class ArenaManager {
 
 	public static ArenaManager INSTANCE = new ArenaManager();
 
-	public HashSet<ZachTimeManager> zachTimeManagers = new HashSet<>();
+	public HashSet<ZachHourGlass> zachHourGlasses = new HashSet<>();
 	@Save
 	private HashSet<Arena> arenas = new HashSet<>();
 
@@ -43,10 +41,18 @@ public class ArenaManager {
 		arenas.add(arena);
 
 		if (arena.getBoss() instanceof EntityZachriel) {
-			ArenaManager.INSTANCE.zachTimeManagers.add(new ZachTimeManager((EntityZachriel) arena.getBoss()));
+			ArenaManager.INSTANCE.zachHourGlasses.add(new ZachHourGlass((EntityZachriel) arena.getBoss()));
 		}
 
 		return true;
+	}
+
+	@Nullable
+	public ZachHourGlass getZachHourGlass(EntityZachriel zach) {
+		for (ZachHourGlass glass : zachHourGlasses) {
+			if (glass.getEntityZachriel().getEntityId() == zach.getEntityId()) return glass;
+		}
+		return null;
 	}
 
 	@Nullable
@@ -84,9 +90,9 @@ public class ArenaManager {
 
 			//if (event.player.getEntityWorld().getTotalWorldTime() % 100 == 0)
 				if (!event.player.getEntityWorld().isRemote)
-					for (ZachTimeManager timeManager : zachTimeManagers) {
-						if (timeManager.getEntityZachriel().getEntityId() == arena.getBossID()) {
-							timeManager.trackEntity(event.player);
+					for (ZachHourGlass glass : zachHourGlasses) {
+						if (glass.getEntityZachriel().getEntityId() == arena.getBossID()) {
+							glass.trackEntityTick(event.player);
 						}
 					}
 		}
@@ -99,12 +105,12 @@ public class ArenaManager {
 				continue;
 			}
 
-			if (!event.getWorld().isRemote)
-				for (ZachTimeManager timeManager : zachTimeManagers) {
-					if (timeManager.getEntityZachriel().getEntityId() == arena.getBossID()) {
-						timeManager.trackBlock(event.getState(), event.getPos());
-					}
-				}
+			//if (!event.getWorld().isRemote)
+			//	for (ZachTimeManager timeManager : zachHourGlasses) {
+			//		if (timeManager.getEntityZachriel().getEntityId() == arena.getBossID()) {
+			//			timeManager.trackBlock(event.getState(), event.getPos());
+			//		}
+			//	}
 		}
 	}
 
@@ -115,12 +121,12 @@ public class ArenaManager {
 				continue;
 			}
 
-			if (!event.getWorld().isRemote)
-				for (ZachTimeManager timeManager : zachTimeManagers) {
-					if (timeManager.getEntityZachriel().getEntityId() == arena.getBossID()) {
-						timeManager.trackBlock(Blocks.AIR.getDefaultState(), event.getPos());
-					}
-				}
+			//if (!event.getWorld().isRemote)
+			//	for (ZachTimeManager timeManager : zachHourGlasses) {
+			//		if (timeManager.getEntityZachriel().getEntityId() == arena.getBossID()) {
+			//			timeManager.trackBlock(Blocks.AIR.getDefaultState(), event.getPos());
+			//		}
+			//	}
 		}
 	}
 

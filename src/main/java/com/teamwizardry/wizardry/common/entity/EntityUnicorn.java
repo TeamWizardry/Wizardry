@@ -3,11 +3,13 @@ package com.teamwizardry.wizardry.common.entity;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.entity.ai.EntityAIUnicornWander;
 import com.teamwizardry.wizardry.init.ModBlocks;
+import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumParticleTypes;
@@ -124,6 +126,12 @@ public class EntityUnicorn extends EntityHorse {
 			}
 			flatulenceTicker = RandUtil.nextInt(200, 6000);
 		}
+	}
+
+	@Override
+	protected void dropLoot(boolean wasRecentlyHit, int lootingModifier, DamageSource source) {
+		super.dropLoot(wasRecentlyHit, lootingModifier, source);
+		entityDropItem(new ItemStack(ModItems.UNICORN_HORN), RandUtil.nextFloat());
 	}
 
 	@Override

@@ -1,14 +1,5 @@
 package com.teamwizardry.wizardry.common.entity.angel.zachriel;
 
-import java.awt.Color;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
-
-import javax.annotation.Nonnull;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
@@ -24,7 +15,9 @@ import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.entity.angel.EntityAngel;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModPotions;
-
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -41,6 +34,13 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
+import java.awt.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by LordSaad.
@@ -50,30 +50,32 @@ public class EntityZachriel extends EntityAngel {
 
 	public boolean saveTime = false;
 	public boolean reverseTime = false;
-	
+
 	/**
 	 * Number of times Zachriel has saved the arena
 	 */
 	public int numSaves = 0;
-	/**
-	 * List of health percentages when Zachriel will save the arena
-	 */
-	public float[] saveTimes = new float[]{ 5F/6F, 1F/2F, 1F/6F };
+	private static int timeReverseTick = 200;
 	/**
 	 * Number of times Zachriel has loaded the last save
 	 */
 	public int numLoads = 0;
 	/**
-	 * List of health percentages when Zachriel will load the last save
+	 * List of health percentages when Zachriel will save the arena
 	 */
-	public float[] loadTimes = new float[]{ 2F/3F, 1F/3F, 1F/getMaxHealth() };
-	
+	public float[] saveTimes = new float[]{5F / 6F, 1F / 2F, 1F / 6F};
+
 	public int nextBurst = 0;
 	public int nextBurstSave = -1;
-	public float[] burstLevels = new float[] { 0.95F, 0.85F, 0.75F, 0.65F, 0.55F, 0.45F, 0.35F, 0.25F, 0.15F, 0.05F };
+	/**
+	 * List of health percentages when Zachriel will load the last save
+	 */
+	public float[] loadTimes = new float[]{2F / 3F, 1F / 3F, 1F / getMaxHealth()};
 	public int burstTimer = 0;
 	public static final float burstDamage = 10;
 	public static final float burstCorruptionScaling = 0.25F;
+	public float[] burstLevels = new float[]{0.95F, 0.85F, 0.75F, 0.65F, 0.55F, 0.45F, 0.35F, 0.25F, 0.15F, 0.05F};
+	public Arena arena = null;
 
 	public EntityZachriel(World world) {
 		super(world);
@@ -81,17 +83,23 @@ public class EntityZachriel extends EntityAngel {
 		setNoGravity(true);
 		setSize(1.2F, 3.2F);
 	}
-	
+
 	@Override
-	protected void applyEntityAttributes()
-	{
+	protected void applyEntityAttributes() {
 		super.applyEntityAttributes();
 		getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(300.0D);
 	}
 
 	@Override
-	public boolean attackEntityFrom(DamageSource source, float amount)
-	{
+	public boolean attackEntityFrom(DamageSource source, float amount) {
+		if (arena == null) {
+			HashSet<UUID> players = new HashSet<>();
+			players.add(Minecraft.getMinecraft().player.getUniqueID());
+			arena = new Arena(
+					getEntityWorld().provider.getDimension(), getPosition(), 50, 50, getEntityId(), players);
+			ArenaManager.INSTANCE.addArena(arena);
+		}
+
 		if (burstTimer > 0) return false;
 		boolean result = super.attackEntityFrom(source, amount);
 		if (source.equals(DamageSource.OUT_OF_WORLD)) // Special case for the /kill command
@@ -99,37 +107,90 @@ public class EntityZachriel extends EntityAngel {
 			numLoads = loadTimes.length;
 			return super.attackEntityFrom(source, amount);
 		}
-		if (!world.isRemote)
-		{
+		if (!world.isRemote) {
 			float healthPercent = this.getHealth() / this.getMaxHealth();
-			if (numSaves < saveTimes.length && healthPercent < saveTimes[numSaves])
-			{
+			if (numSaves < saveTimes.length && healthPercent < saveTimes[numSaves]) {
 				numSaves++;
 				nextBurstSave = nextBurst;
 				source.getTrueSource().sendMessage(new TextComponentString("Save #" + numSaves));
 				// run save code
+
+				ZachHourGlass glass = ArenaManager.INSTANCE.getZachHourGlass(this);
+				if (glass == null) {
+					return true;
+				}
+				glass.setTracking(true, false);
 			}
-			if (numLoads < loadTimes.length && healthPercent < loadTimes[numLoads])
-			{
+			if (numLoads < loadTimes.length && healthPercent < loadTimes[numLoads]) {
 				this.setHealth(this.getMaxHealth() * saveTimes[numLoads]);
 				numLoads++;
 				nextBurst = nextBurstSave;
 				source.getTrueSource().sendMessage(new TextComponentString("Load #" + numLoads));
 				if (this.isDead)
 					this.isDead = false;
+
 				// run load code
+
+				ZachHourGlass glass = ArenaManager.INSTANCE.getZachHourGlass(this);
+				if (glass == null) {
+					return true;
+				}
+
+				if (glass.getAllTrackedEntities().isEmpty()) return true;
+				glass.setTracking(false, false);
+
+				Thread reverseThread = new Thread(() -> {
+					while (timeReverseTick > 0) {
+						Minecraft.getMinecraft().player.sendChatMessage("maxTick: " + timeReverseTick);
+						try {
+							Thread.sleep(100);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+
+						timeReverseTick--;
+
+						for (UUID uuid : glass.getAllTrackedEntities()) {
+							ZachHourGlass.EntityState state = glass.getEntityStateAtTime(uuid, timeReverseTick);
+							if (state == null) continue;
+
+							for (Entity entity : world.getEntities(Entity.class, input -> input instanceof EntityLivingBase)) {
+								if (entity.getUniqueID().equals(uuid)) {
+									entity.setNoGravity(true);
+									state.setToEntity((EntityLivingBase) entity);
+								}
+							}
+						}
+					}
+
+					for (UUID uuid : glass.getAllTrackedEntities()) {
+						ZachHourGlass.EntityState state = glass.getEntityStateAtTime(uuid, timeReverseTick);
+						if (state == null) continue;
+
+						for (Entity entity : world.getEntities(Entity.class, input -> input instanceof EntityLivingBase)) {
+							if (entity.getUniqueID().equals(uuid)) {
+								entity.setNoGravity(false);
+							}
+						}
+					}
+
+					timeReverseTick = 200;
+					glass.setTracking(false, true);
+				});
+				reverseThread.start();
+
 			}
-			if (nextBurst < burstLevels.length && healthPercent < burstLevels[nextBurst])
-			{
+			if (nextBurst < burstLevels.length && healthPercent < burstLevels[nextBurst]) {
 				nextBurst++;
 				burstTimer = 60;
 			}
 		}
-		
+
+
 		return result;
 
 //		ZachTimeManager manager = null;
-//		for (ZachTimeManager manager1 : ArenaManager.INSTANCE.zachTimeManagers) {
+//		for (ZachTimeManager manager1 : ArenaManager.INSTANCE.zachHourGlasses) {
 //			if (manager1.getEntityZachriel().getEntityId() == getEntityId()) {
 //				manager = manager1;
 //			}
@@ -177,10 +238,9 @@ public class EntityZachriel extends EntityAngel {
 //
 //		return false;
 	}
-	
+
 	@Override
-	public void onDeath(DamageSource source)
-	{
+	public void onDeath(DamageSource source) {
 		if (numLoads < loadTimes.length)
 			return;
 		super.onDeath(source);
@@ -195,26 +255,22 @@ public class EntityZachriel extends EntityAngel {
 		{
 			//if (!isBeingBattled()) return;
 
-			if (burstTimer > 0)
-			{
+			if (burstTimer > 0) {
 				burstTimer--;
 				if (burstTimer == 0)
 					if (!world.isRemote)
 						for (EntityPlayer player : world.playerEntities)
 							if (EntitySelectors.CAN_AI_TARGET.apply(player))
-								if (this.getDistanceSqToEntity(player) < 32*32)
-								{
-									
+								if (this.getDistanceSqToEntity(player) < 32 * 32) {
+
 									PotionEffect corruption = player.getActivePotionEffect(ModPotions.ZACH_CORRUPTION);
 									float bonusDamage = corruption == null ? 0 : burstDamage * (corruption.getAmplifier() + 1);
 									player.attackEntityFrom(DamageSource.causeMobDamage(this).setMagicDamage().setDamageBypassesArmor(), burstDamage + bonusDamage);
 								}
-				ClientRunnable.run(new ClientRunnable()
-				{
+				ClientRunnable.run(new ClientRunnable() {
 					@Override
 					@SideOnly(Side.CLIENT)
-					public void runIfClient()
-					{
+					public void runIfClient() {
 						ParticleBuilder glitter = new ParticleBuilder(RandUtil.nextInt(30, 50));
 						glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 						glitter.enableMotionCalculation();
@@ -226,23 +282,22 @@ public class EntityZachriel extends EntityAngel {
 						ParticleSpawner.spawn(glitter, world, new StaticInterp<>(getPositionVector()), 1, 1, (i, build) -> {
 							double theta = 2.0F * (float) Math.PI * RandUtil.nextFloat();
 							double r;
-							if (burstTimer > 0) r = (getEntityBoundingBox().maxX - getEntityBoundingBox().minX) / 2 * RandUtil.nextFloat(0.01F, 1);
+							if (burstTimer > 0)
+								r = (getEntityBoundingBox().maxX - getEntityBoundingBox().minX) / 2 * RandUtil.nextFloat(0.01F, 1);
 							else r = 32 * RandUtil.nextFloat();
 							double x = r * MathHelper.cos((float) theta);
 							double y = (getEntityBoundingBox().maxY - getEntityBoundingBox().minY) * RandUtil.nextFloat();
 							double z = r * MathHelper.sin((float) theta);
 							build.setPositionOffset(new Vec3d(x, y, z));
-							build.addMotion(new	Vec3d(0, RandUtil.nextDouble(0.01, 0.15), 0));
+							build.addMotion(new Vec3d(0, RandUtil.nextDouble(0.01, 0.15), 0));
 						});
 					}
 				});
 			}
-			
-			if (!world.isRemote)
-			{
+
+			if (!world.isRemote) {
 				List<EntityCorruptionArea> corruptionList = world.getEntitiesWithinAABB(EntityCorruptionArea.class, new AxisAlignedBB(getPosition()).grow(2));
-				if (corruptionList.isEmpty())
-				{
+				if (corruptionList.isEmpty()) {
 					EntityCorruptionArea corruption = new EntityCorruptionArea(world, posX, posY, posZ);
 					world.spawnEntity(corruption);
 				}

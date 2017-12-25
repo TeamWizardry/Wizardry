@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "wizardry:devil_dust"
+      "item": "minecraft:bedrock"
     },
     "title": {
       "translate": "advancement.wizardry.crunch"

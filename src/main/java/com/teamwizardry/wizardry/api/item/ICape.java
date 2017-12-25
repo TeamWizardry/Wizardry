@@ -11,9 +11,9 @@ import java.util.UUID;
 public interface ICape {
 
 	default void tickCape(ItemStack stack) {
-		int tick = ItemNBTHelper.getInt(stack, "tick", 0);
+		int tick = ItemNBTHelper.getInt(stack, "maxTick", 0);
 
-		if (tick < 1000000) ItemNBTHelper.setInt(stack, "tick", ++tick);
+		if (tick < 1000000) ItemNBTHelper.setInt(stack, "maxTick", ++tick);
 
 		if (!ItemNBTHelper.verifyExistence(stack, "uuid"))
 			ItemNBTHelper.setUUID(stack, "uuid", UUID.randomUUID());

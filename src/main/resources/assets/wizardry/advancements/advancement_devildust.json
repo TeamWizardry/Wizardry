@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "minecraft:bedrock"
+      "item": "wizardry:devil_dust"
     },
     "title": {
       "translate": "advancement.wizardry.devildust"
