@@ -14,7 +14,7 @@ Good luck.
 ## For Packmakers:
 
 ### Mana Recipe Format
-Mana recipes can be found, edited, created, and replaced in the config/wizardry/mana_recipes folder, and can be placed inside any folder within that folder.    
+Mana recipes can be found, edited, created, and replaced in the config/wizardry/mana_recipes folder, and can be placed inside any folder within that folder. Make sure to enable "customManaRecipes" in the main Wizardry config file if you wish to remove any default recipes.    
 Only .json files will be read.
 
 ```
