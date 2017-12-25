@@ -24,6 +24,7 @@ Only .json files will be read.
   {
     "name": "string"    // Registry name of item or block resulting from recipe.
     "meta": number      // Optional, defaults to 0 if not present.
+    "nbt": { ... }      // Optional, only used by "item" type recipes. Specifies the exact NBT compound the output will be created with.
   },
   "input":
   {
