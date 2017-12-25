@@ -118,7 +118,7 @@ public class ManaRecipeLoader
 			boolean consume = false;
 			boolean explode = false;
 			boolean bubbling = true;
-			boolean silent = false;
+			boolean harp = true;
 			
 			if (recipes.containsKey(file.getPath()))
 			{
@@ -263,14 +263,14 @@ public class ManaRecipeLoader
 				explode = fileObject.get("explode").getAsBoolean();
 			}
 			
-			if (fileObject.has("silent"))
+			if (fileObject.has("harp"))
 			{
-				if (!fileObject.get("silent").isJsonPrimitive() || !fileObject.getAsJsonPrimitive("silent").isBoolean())
+				if (!fileObject.get("harp").isJsonPrimitive() || !fileObject.getAsJsonPrimitive("harp").isBoolean())
 				{
-					Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT give silent as a boolean. Ignoring file...: " + element.toString());
+					Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT give harp as a boolean. Ignoring file...: " + element.toString());
 					continue;
 				}
-				silent = fileObject.get("silent").getAsBoolean();
+				harp = fileObject.get("harp").getAsBoolean();
 			}
 			
 			if (fileObject.has("bubbling"))
@@ -280,7 +280,7 @@ public class ManaRecipeLoader
 					Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT give bubbling as a boolean. Ignoring file...: " + element.toString());
 					continue;
 				}
-				silent = fileObject.get("bubbling").getAsBoolean();
+				harp = fileObject.get("bubbling").getAsBoolean();
 			}
 			
 			String type = fileObject.get("type").getAsString();
@@ -322,13 +322,13 @@ public class ManaRecipeLoader
 			
 				if (inputOredict == null)
 				{
-					ManaCrafterBuilder build = buildManaCrafter(file.getPath(), outputItem, inputItem, extraInputItems, extraInputOredicts, duration, radius, consume, explode, bubbling, silent);
+					ManaCrafterBuilder build = buildManaCrafter(file.getPath(), outputItem, inputItem, extraInputItems, extraInputOredicts, duration, radius, consume, explode, bubbling, harp);
 					recipeRegistry.put(file.getPath(), build);
 					recipes.put(inputItem, build);
 				}
 				else
 				{
-					ManaCrafterBuilder build = buildManaCrafter(file.getPath(), outputItem, inputOredict, extraInputItems, extraInputOredicts, duration, radius, consume, explode, bubbling, silent);
+					ManaCrafterBuilder build = buildManaCrafter(file.getPath(), outputItem, inputOredict, extraInputItems, extraInputOredicts, duration, radius, consume, explode, bubbling, harp);
 					recipeRegistry.put(file.getPath(), build);
 					oredictRecipes.put(inputOredict, build);
 				}
@@ -350,13 +350,13 @@ public class ManaRecipeLoader
 			
 				if (inputOredict == null)
 				{
-					ManaCrafterBuilder build = buildManaCrafter(file.getPath(), outputBlock, inputItem, extraInputItems, extraInputOredicts, duration, radius, consume, explode, bubbling, silent);
+					ManaCrafterBuilder build = buildManaCrafter(file.getPath(), outputBlock, inputItem, extraInputItems, extraInputOredicts, duration, radius, consume, explode, bubbling, harp);
 					recipeRegistry.put(file.getPath(), build);
 					recipes.put(inputItem, build);
 				}
 				else
 				{
-					ManaCrafterBuilder build = buildManaCrafter(file.getPath(), outputBlock, inputOredict, extraInputItems, extraInputOredicts, duration, radius, consume, explode, bubbling, silent);
+					ManaCrafterBuilder build = buildManaCrafter(file.getPath(), outputBlock, inputOredict, extraInputItems, extraInputOredicts, duration, radius, consume, explode, bubbling, harp);
 					recipeRegistry.put(file.getPath(), build);
 					oredictRecipes.put(inputOredict, build);
 				}
@@ -367,7 +367,7 @@ public class ManaRecipeLoader
 		}
 	}
 	
-	private ManaCrafterBuilder buildManaCrafter(String identifier, ItemStack outputItem, ItemStack input, List<ItemStack> extraInputs, List<String> extraInputOredicts, int duration, int radius, boolean consume, boolean explode, boolean bubbling, boolean silent)
+	private ManaCrafterBuilder buildManaCrafter(String identifier, ItemStack outputItem, ItemStack input, List<ItemStack> extraInputs, List<String> extraInputOredicts, int duration, int radius, boolean consume, boolean explode, boolean bubbling, boolean harp)
 	{
 		return new ManaCrafterBuilder(new ManaCrafterPredicate()
 		{
@@ -500,12 +500,12 @@ public class ManaRecipeLoader
 					Utils.boom(world, output);
 				}
 
-				if (!silent) world.playSound(null, output.posX, output.posY, output.posZ, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
+				if (harp) world.playSound(null, output.posX, output.posY, output.posZ, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
 			}
 		}, identifier, duration);
 	}
 
-	private ManaCrafterBuilder buildManaCrafter(String identifier, IBlockState outputBlock, ItemStack input, List<ItemStack> extraInputs, List<String> extraInputOredicts, int duration, int radius, boolean consume, boolean explode, boolean bubbling, boolean silent)
+	private ManaCrafterBuilder buildManaCrafter(String identifier, IBlockState outputBlock, ItemStack input, List<ItemStack> extraInputs, List<String> extraInputOredicts, int duration, int radius, boolean consume, boolean explode, boolean bubbling, boolean harp)
 	{
 		return new ManaCrafterBuilder(new ManaCrafterPredicate()
 		{
@@ -634,12 +634,12 @@ public class ManaRecipeLoader
 					Utils.boom(world, output);
 				}
 
-				if (!silent) world.playSound(null, output.x, output.y, output.z, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
+				if (harp) world.playSound(null, output.x, output.y, output.z, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
 			}
 		}, identifier, duration);
 	}
 
-	private ManaCrafterBuilder buildManaCrafter(String identifier, ItemStack outputItem, String inputOredict, List<ItemStack> extraInputs, List<String> extraInputOredicts, int duration, int radius, boolean consume, boolean explode, boolean bubbling, boolean silent)
+	private ManaCrafterBuilder buildManaCrafter(String identifier, ItemStack outputItem, String inputOredict, List<ItemStack> extraInputs, List<String> extraInputOredicts, int duration, int radius, boolean consume, boolean explode, boolean bubbling, boolean harp)
 	{
 		return new ManaCrafterBuilder(new ManaCrafterPredicate()
 		{
@@ -772,12 +772,12 @@ public class ManaRecipeLoader
 					Utils.boom(world, output);
 				}
 
-				if (!silent) world.playSound(null, output.posX, output.posY, output.posZ, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
+				if (harp) world.playSound(null, output.posX, output.posY, output.posZ, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
 			}
 		}, identifier, duration);
 	}
 
-	private ManaCrafterBuilder buildManaCrafter(String identifier, IBlockState outputBlock, String inputOredict, List<ItemStack> extraInputs, List<String> extraInputOredicts, int duration, int radius, boolean consume, boolean explode, boolean bubbling, boolean silent)
+	private ManaCrafterBuilder buildManaCrafter(String identifier, IBlockState outputBlock, String inputOredict, List<ItemStack> extraInputs, List<String> extraInputOredicts, int duration, int radius, boolean consume, boolean explode, boolean bubbling, boolean harp)
 	{
 		return new ManaCrafterBuilder(new ManaCrafterPredicate()
 		{
@@ -906,7 +906,7 @@ public class ManaRecipeLoader
 					Utils.boom(world, output);
 				}
 
-				if (!silent) world.playSound(null, output.x, output.y, output.z, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
+				if (harp) world.playSound(null, output.x, output.y, output.z, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
 			}
 		}, identifier, duration);
 	}
