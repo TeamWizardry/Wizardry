@@ -10,3 +10,43 @@ Finally, there is the Underworld. Dark creatures travel in that void, and the sm
 All that is still to come, however, for now it is time to take your first steps.
 
 Good luck.
+
+## For Packmakers:
+
+### Mana Recipe Format
+Mana recipes can be found, edited, created, and replaced in the config/wizardry/mana_recipes folder, and can be placed inside any folder within that folder. Make sure to enable "customManaRecipes" in the main Wizardry config file if you wish to remove any default recipes.    
+Only .json files will be read.
+
+```
+{
+  "type": "item" or "block" // Item recipes drop in-world, while Block recipes place the given output block.
+  "output":
+  {
+    "name": "string"    // Registry name of item or block resulting from recipe.
+    "meta": number      // Optional, defaults to 0 if not present.
+    "nbt": { ... }      // Optional, only used by "item" type recipes. Specifies the exact NBT compound the output will be created with.
+  },
+  "input":
+  {
+    "name": "string"    // Registry name of item being loaded.
+    "meta": number      // Optional, defaults to 0 if not present.
+    "oredict": "string" // Oredict value for the recipe's item, only used if "name" value is not given. Ignores "meta" value if used.
+  },
+  "extraInputs":        // Optional, use if recipe has more than one input item.
+  [
+    {
+      "name": "string"  // All values here function the same as the "input" field
+      "meta": number
+      "oredict": "string"
+    },
+    ...
+  ],
+  "duration": number    // Optional, amount of time required for the recipe to run. Defaults to 200 ticks if not present.
+  "radius": number      // Optional, distance around center required to be mana source blocks. Defaults to 0 if not present.
+                        // Value of 0 = 1x1, 1 = 3x3, 2 = 5x5, 3 = 7x7, etc.
+  "consume": boolean    // Optional, determines if the mana blocks required for the recipe will be consumed when processing finishes. Defaults to false if not present.
+  "explode": boolean    // Optional, determines if any nearby entities will be pushed away when the recipe finishes. Defaults to false if not present.
+  "bubbling": boolean   // Optional, determines if the items in the pool will make bubbling noises over the recipe's duration. Defaults to true if not present.
+  "harp": boolean     // Optional, if true, a few notes will play on a harp when the recipe completes. Defaults to true if not present.
+}
+```
