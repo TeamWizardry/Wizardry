@@ -16,8 +16,6 @@ import com.teamwizardry.wizardry.common.entity.angel.EntityAngel;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -80,7 +78,7 @@ public class EntityZachriel extends EntityAngel {
 	public EntityZachriel(World world) {
 		super(world);
 		setCustomNameTag("Zachriel");
-		setNoGravity(true);
+		//setNoGravity(true);
 		setSize(1.2F, 3.2F);
 	}
 
@@ -107,6 +105,7 @@ public class EntityZachriel extends EntityAngel {
 			numLoads = loadTimes.length;
 			return super.attackEntityFrom(source, amount);
 		}
+
 		if (!world.isRemote) {
 			float healthPercent = this.getHealth() / this.getMaxHealth();
 			if (numSaves < saveTimes.length && healthPercent < saveTimes[numSaves]) {
@@ -131,54 +130,7 @@ public class EntityZachriel extends EntityAngel {
 
 				// run load code
 
-				ZachHourGlass glass = ArenaManager.INSTANCE.getZachHourGlass(this);
-				if (glass == null) {
-					return true;
-				}
-
-				if (glass.getAllTrackedEntities().isEmpty()) return true;
-				glass.setTracking(false, false);
-
-				Thread reverseThread = new Thread(() -> {
-					while (timeReverseTick > 0) {
-						Minecraft.getMinecraft().player.sendChatMessage("maxTick: " + timeReverseTick);
-						try {
-							Thread.sleep(100);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-
-						timeReverseTick--;
-
-						for (UUID uuid : glass.getAllTrackedEntities()) {
-							ZachHourGlass.EntityState state = glass.getEntityStateAtTime(uuid, timeReverseTick);
-							if (state == null) continue;
-
-							for (Entity entity : world.getEntities(Entity.class, input -> input instanceof EntityLivingBase)) {
-								if (entity.getUniqueID().equals(uuid)) {
-									entity.setNoGravity(true);
-									state.setToEntity((EntityLivingBase) entity);
-								}
-							}
-						}
-					}
-
-					for (UUID uuid : glass.getAllTrackedEntities()) {
-						ZachHourGlass.EntityState state = glass.getEntityStateAtTime(uuid, timeReverseTick);
-						if (state == null) continue;
-
-						for (Entity entity : world.getEntities(Entity.class, input -> input instanceof EntityLivingBase)) {
-							if (entity.getUniqueID().equals(uuid)) {
-								entity.setNoGravity(false);
-							}
-						}
-					}
-
-					timeReverseTick = 200;
-					glass.setTracking(false, true);
-				});
-				reverseThread.start();
-
+				Tardis.INSTANCE.reverseTime(this);
 			}
 			if (nextBurst < burstLevels.length && healthPercent < burstLevels[nextBurst]) {
 				nextBurst++;

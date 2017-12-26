@@ -5,9 +5,9 @@ import com.google.common.collect.HashMultimap;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.api.arena.Arena;
 import com.teamwizardry.wizardry.api.arena.ArenaManager;
+import com.teamwizardry.wizardry.common.network.PacketZachInterpolatePlayer;
 import com.teamwizardry.wizardry.proxy.CommonProxy;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -19,8 +19,7 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -29,7 +28,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class ZachHourGlass {
 
@@ -40,7 +38,7 @@ public class ZachHourGlass {
 	@NotNull
 	private JsonObject ENTITY_JSON = new JsonObject();
 	private HashMultimap<UUID, EntityState> ENTITIES = HashMultimap.create();
-	private HashMultimap<BlockPos, IBlockState> BLOCKS = HashMultimap.create();
+	private HashMultimap<BlockPos, BlockStateState> BLOCKS = HashMultimap.create();
 	private BasicPalette PALETTE;
 	private EntityZachriel entityZachriel;
 
@@ -78,13 +76,26 @@ public class ZachHourGlass {
 		//}
 	}
 
+	public void trackBlockTick(BlockPos pos, IBlockState state) {
+		if (!tracking) return;
+		BLOCKS.put(pos, new BlockStateState(state));
+	}
+
 	public void trackEntityTick(EntityLivingBase entity) {
 		if (!tracking) return;
 		ENTITIES.put(entity.getUniqueID(), new EntityState(entity));
 	}
 
+	public Set<BlockPos> getAllTrackedBlocks() {
+		return BLOCKS.keySet();
+	}
+
 	public Set<UUID> getAllTrackedEntities() {
 		return ENTITIES.keySet();
+	}
+
+	public Set<BlockStateState> getBlockPosTimeMap(BlockPos pos) {
+		return BLOCKS.get(pos);
 	}
 
 	public Set<EntityState> getEntityTimeMap(EntityLivingBase entity) {
@@ -93,6 +104,21 @@ public class ZachHourGlass {
 
 	public Set<EntityState> getEntityTimeMap(UUID entity) {
 		return ENTITIES.get(entity);
+	}
+
+	@Nullable
+	public BlockStateState getBlockStateAtTime(BlockPos pos, long time) {
+		ArrayList<BlockStateState> list = new ArrayList<>(getBlockPosTimeMap(pos));
+
+		list.sort((state1, state2) -> {
+			long time1 = state1.time;
+			long time2 = state2.time;
+			return Long.compare(time2, time1);
+		});
+
+		float percent = (float) (time / 200.0);
+
+		return list.get(MathHelper.clamp((int) ((list.size() - 1) * percent), 0, list.size() - 1));
 	}
 
 	@Nullable
@@ -108,16 +134,6 @@ public class ZachHourGlass {
 		float percent = (float) (time / 200.0);
 
 		return list.get(MathHelper.clamp((int) ((list.size() - 1) * percent), 0, list.size() - 1));
-	}
-
-	@Nullable
-	public EntityState getEntityStateAtTime(EntityLivingBase entity, long time) {
-		AtomicReference<EntityState> state = new AtomicReference<>();
-		getEntityTimeMap(entity).forEach(entityState -> {
-			if ((int) (entityState.getTime() / 1000.0) == time) state.set(entityState);
-		});
-
-		return state.get();
 	}
 
 	public void resetEntities() {
@@ -191,12 +207,31 @@ public class ZachHourGlass {
 		}
 	}
 
+	public class BlockStateState {
+
+		private final IBlockState state;
+		private final long time;
+
+		public BlockStateState(IBlockState state) {
+			time = System.currentTimeMillis();
+			this.state = state;
+		}
+
+		public IBlockState getState() {
+			return state;
+		}
+
+		public long getTime() {
+			return time;
+		}
+	}
+
 	public class EntityState {
 
-		private long time;
-		private Vec3d position;
-		private float pitch, yaw;
-		private float health;
+		private final long time;
+		private final Vec3d position;
+		private final float pitch, yaw;
+		private final float health;
 		private double hunger, saturation;
 
 		public EntityState(EntityLivingBase entity) {
@@ -241,14 +276,8 @@ public class ZachHourGlass {
 		}
 
 		public void setToEntity(EntityLivingBase entity) {
-			ClientRunnable.run(new ClientRunnable() {
-				@Override
-				@SideOnly(Side.CLIENT)
-				public void runIfClient() {
-					entity.setPositionAndRotationDirect(getPosition().x, getPosition().y, getPosition().z, getYaw(), getPitch(), 10, true);
-					Tardis.INSTANCE.interpolatePosition(entity, entity.getPositionVector(), getPosition(), 100);
-				}
-			});
+			com.teamwizardry.librarianlib.features.network.PacketHandler.NETWORK.sendToAllAround(new PacketZachInterpolatePlayer(entity.getEntityId(), getPosition(), yaw, pitch),
+					new NetworkRegistry.TargetPoint(entity.getEntityWorld().provider.getDimension(), getPosition().x, getPosition().y, getPosition().z, 30));
 
 			//entity.setPositionAndUpdate(getPosition().x, getPosition().y, getPosition().z);
 			entity.setHealth(getHealth());
