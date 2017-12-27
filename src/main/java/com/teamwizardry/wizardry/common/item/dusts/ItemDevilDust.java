@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.item;
+package com.teamwizardry.wizardry.common.item.dusts;
 
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.wizardry.Wizardry;
