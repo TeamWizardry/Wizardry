@@ -73,7 +73,7 @@ public class RedstoneTracker {
 		}
 
 		public void tick() {
-			if (redstone == null || world == null || expired) {
+			if (redstone == null || redstone.isDead || world == null || expired) {
 				expired = true;
 				return;
 			}
