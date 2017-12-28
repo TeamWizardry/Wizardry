@@ -72,8 +72,8 @@ public class EventHandler {
 	@SubscribeEvent
 	public void tickEvent(WorldTickEvent event) {
 		if (event.phase == Phase.END) {
-			RedstoneTracker.INSTANCE.tick();
-			ManaTracker.INSTANCE.tick();
+			RedstoneTracker.INSTANCE.tick(event.world);
+			ManaTracker.INSTANCE.tick(event.world);
 		}
 	}
 

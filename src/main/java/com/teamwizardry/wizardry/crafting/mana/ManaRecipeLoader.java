@@ -449,7 +449,7 @@ public class ManaRecipeLoader
 			{
 				EntityItem entityItem = items.stream().filter(entity -> ItemStack.areItemsEqual(entity.getItem(), input)).findFirst().orElse(null);
 				if (world.isRemote) LibParticles.CRAFTING_ALTAR_IDLE(world, entityItem.getPositionVector());
-				if (bubbling && currentDuration % 40 == 0) world.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
+				if (bubbling && currentDuration % 10 == 0) world.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
 			}
 		}, new ManaCrafterConsumer()
 		{
@@ -587,7 +587,7 @@ public class ManaRecipeLoader
 			{
 				EntityItem entityItem = items.stream().filter(entity -> ItemStack.areItemsEqual(entity.getItem(), input)).findFirst().orElse(null);
 				if (world.isRemote) LibParticles.CRAFTING_ALTAR_IDLE(world, entityItem.getPositionVector());
-				if (bubbling && currentDuration % 40 == 0) world.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
+				if (bubbling && currentDuration % 10 == 0) world.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
 			}
 		}, new ManaCrafterConsumer()
 		{
@@ -721,7 +721,7 @@ public class ManaRecipeLoader
 			{
 				EntityItem entityItem = items.stream().filter(entity -> OreDictionary.getOres(inputOredict, false).stream().anyMatch(ore -> ItemStack.areItemsEqual(entity.getItem(), ore))).findFirst().orElse(null);
 				if (world.isRemote) LibParticles.CRAFTING_ALTAR_IDLE(world, entityItem.getPositionVector());
-				if (bubbling && currentDuration % 40 == 0) world.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
+				if (bubbling && currentDuration % 10 == 0) world.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
 			}
 		}, new ManaCrafterConsumer()
 		{
@@ -859,7 +859,7 @@ public class ManaRecipeLoader
 			{
 				EntityItem entityItem = items.stream().filter(entity -> OreDictionary.getOres(inputOredict, false).stream().anyMatch(ore -> ItemStack.areItemsEqual(entity.getItem(), ore))).findFirst().orElse(null);
 				if (world.isRemote) LibParticles.CRAFTING_ALTAR_IDLE(world, entityItem.getPositionVector());
-				if (bubbling && currentDuration % 40 == 0) world.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
+				if (bubbling && currentDuration % 10 == 0) world.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
 			}
 		}, new ManaCrafterConsumer()
 		{
