@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "wizardry:sky_dust"
+    },
+    {
+      "type": "minecraft:paper"
+    },
+    {
+      "type": "minecraft:gun_powder"
+    }
+  ],
+  "result": {
+    "item": "wizardry:bomb",
+    "data": 0
+  }
+}

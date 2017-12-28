@@ -1,6 +1,10 @@
 package com.teamwizardry.wizardry.init;
 
 import com.teamwizardry.wizardry.common.item.*;
+import com.teamwizardry.wizardry.common.item.dusts.ItemBomb;
+import com.teamwizardry.wizardry.common.item.dusts.ItemDevilDust;
+import com.teamwizardry.wizardry.common.item.dusts.ItemFairyDust;
+import com.teamwizardry.wizardry.common.item.dusts.ItemSkyDust;
 import com.teamwizardry.wizardry.common.item.halos.*;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.Loader;
@@ -18,16 +22,19 @@ public class ModItems {
 
 	public static ItemRing RING;
 	public static ItemBook BOOK;
-	public static ItemDevilDust DEVIL_DUST;
 	public static ItemSyringe SYRINGE;
-
-	public static ItemFairyWings FAIRY_WINGS;
-	public static ItemFairyDust FAIRY_DUST;
-	public static ItemFairyImbuedApple FAIRY_IMBUED_APPLE;
-
+	public static ItemBomb BOMB;
 	public static ItemJar JAR;
 	public static ItemUnicornHorn UNICORN_HORN;
 	public static Item CAPE;
+
+	public static ItemFairyWings FAIRY_WINGS;
+	public static ItemFairyImbuedApple FAIRY_IMBUED_APPLE;
+
+	public static ItemFairyDust FAIRY_DUST;
+	public static ItemDevilDust DEVIL_DUST;
+	public static ItemSkyDust SKY_DUST;
+
 	public static Item FAKE_HALO;
 	public static Item REAL_HALO;
 	public static Item CREATIVE_HALO;
@@ -44,14 +51,17 @@ public class ModItems {
 		RING = new ItemRing();
 		BOOK = new ItemBook();
 		MAGIC_WAND = new ItemMagicWand();
-		DEVIL_DUST = new ItemDevilDust();
 		SYRINGE = new ItemSyringe();
+		BOMB = new ItemBomb();
 
 		STAFF = new ItemStaff();
 
 		FAIRY_WINGS = new ItemFairyWings();
-		FAIRY_DUST = new ItemFairyDust();
 		FAIRY_IMBUED_APPLE = new ItemFairyImbuedApple();
+
+		FAIRY_DUST = new ItemFairyDust();
+		DEVIL_DUST = new ItemDevilDust();
+		SKY_DUST = new ItemSkyDust();
 
 		UNICORN_HORN = new ItemUnicornHorn();
 
