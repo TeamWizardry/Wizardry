@@ -1,0 +1,7 @@
+{
+	"type": "item",
+	"output": { "name": "wizardry:wisdom_stick" },
+	"input": { "oredict": "stickWood" },
+	"duration": 0,
+	"harp": false
+}

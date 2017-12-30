@@ -1,0 +1,7 @@
+{
+	"type": "item",
+	"output": { "name": "wizardry:wisdom_wood_stairs" },
+	"input": { "oredict": "stairWood" },
+	"duration": 0,
+	"harp": false
+}

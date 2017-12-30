@@ -1,6 +1,9 @@
 package com.teamwizardry.wizardry.common.core;
 
-import com.teamwizardry.librarianlib.features.methodhandles.MethodHandleHelper;
+import java.util.HashSet;
+import java.util.List;
+import java.util.UUID;
+
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.Constants.MISC;
@@ -14,15 +17,13 @@ import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.TeleportUtil;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
-import com.teamwizardry.wizardry.init.ModItems;
+import com.teamwizardry.wizardry.crafting.burnable.EntityBurnableItem;
 import com.teamwizardry.wizardry.init.ModPotions;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function2;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
@@ -39,13 +40,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
-
 public class EventHandler {
 
-	private static Function2<Entity, Object, Unit> entityFireHandler = MethodHandleHelper.wrapperForSetter(Entity.class, "isImmuneToFire", "field_70178_ae", "sm");
 	private final HashSet<UUID> fallResetter = new HashSet<>();
 
 	@SideOnly(Side.CLIENT)
@@ -57,14 +53,23 @@ public class EventHandler {
 
 	@SubscribeEvent
 	public void redstoneHandler(EntityJoinWorldEvent event) {
-		if (event.getEntity() instanceof EntityItem) {
+		if (event.getWorld().isRemote)
+		{
+			return;
+		}
+		
+		if (event.getEntity() instanceof EntityItem && !(event.getEntity() instanceof EntityBurnableItem))
+		{
 			EntityItem item = (EntityItem) event.getEntity();
-			if (item.getItem().getItem() == Items.REDSTONE) {
-				entityFireHandler.invoke(item, true);
-				RedstoneTracker.INSTANCE.addRedstone(item, event.getWorld());
-			} else if (item.getItem().getItem() == ModItems.DEVIL_DUST) {
-				entityFireHandler.invoke(item, true);
-				item.extinguish();
+			if (EntityBurnableItem.isBurnable(item.getItem()))
+			{
+				EntityBurnableItem newItem = new EntityBurnableItem(event.getWorld(), item.posX, item.posY, item.posZ, item.getItem());
+				newItem.motionX = item.motionX;
+				newItem.motionY = item.motionY;
+				newItem.motionZ = item.motionZ;
+				newItem.setDefaultPickupDelay();
+				item.setDead();
+				event.getWorld().spawnEntity(newItem);
 			}
 		}
 	}

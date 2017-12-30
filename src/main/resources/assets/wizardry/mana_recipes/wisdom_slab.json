@@ -1,0 +1,7 @@
+{
+	"type": "item",
+	"output": { "name": "wizardry:wisdom_wood_slab" },
+	"input": { "oredict": "slabWood" },
+	"duration": 0,
+	"harp": false
+}

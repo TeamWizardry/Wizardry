@@ -98,49 +98,49 @@ public class BlockFluidMana extends BlockFluidClassic {
 						((EntityPlayer) entity).getFoodStats().addExhaustion(1f);
 				});
 
-		// Turn plank to wisdom plank
-		run(entityIn,
-				entity -> entity instanceof EntityItem && !((EntityItem) entity).getItem().isEmpty() && Utils.hasOreDictPrefix(((EntityItem) entity).getItem(), "plank"),
-				entity -> {
-					EntityItem item = (EntityItem) entity;
-					item.setItem(new ItemStack(ModBlocks.WISDOM_WOOD_PLANKS, item.getItem().getCount()));
-					if (world.isRemote) {
-						LibParticles.FIZZING_AMBIENT(world, item.getPositionVector());
-					}
-				});
-
-		// Turn log to wisdom log
-		run(entityIn,
-				entity -> entity instanceof EntityItem && !((EntityItem) entity).getItem().isEmpty() && Utils.hasOreDictPrefix(((EntityItem) entity).getItem(), "log"),
-				entity -> {
-					EntityItem item = (EntityItem) entity;
-					item.setItem(new ItemStack(ModBlocks.WISDOM_WOOD_LOG, item.getItem().getCount()));
-					if (world.isRemote) {
-						LibParticles.FIZZING_AMBIENT(world, item.getPositionVector());
-					}
-				});
-
-		// Turn stair to wisdom stair
-		run(entityIn,
-				entity -> entity instanceof EntityItem && !((EntityItem) entity).getItem().isEmpty() && Utils.hasOreDictPrefix(((EntityItem) entity).getItem(), "stairs"),
-				entity -> {
-					EntityItem item = (EntityItem) entity;
-					item.setItem(new ItemStack(ModBlocks.WISDOM_WOOD_STAIRS, item.getItem().getCount()));
-					if (world.isRemote) {
-						LibParticles.FIZZING_AMBIENT(world, item.getPositionVector());
-					}
-				});
-
-		// Turn slab to wisdom slab
-		run(entityIn,
-				entity -> entity instanceof EntityItem && !((EntityItem) entity).getItem().isEmpty() && Utils.hasOreDictPrefix(((EntityItem) entity).getItem(), "slabs"),
-				entity -> {
-					EntityItem item = (EntityItem) entity;
-					item.setItem(new ItemStack(ModBlocks.WISDOM_WOOD_SLAB, item.getItem().getCount()));
-					if (world.isRemote) {
-						LibParticles.FIZZING_AMBIENT(world, item.getPositionVector());
-					}
-				});
+//		// Turn plank to wisdom plank
+//		run(entityIn,
+//				entity -> entity instanceof EntityItem && !((EntityItem) entity).getItem().isEmpty() && Utils.hasOreDictPrefix(((EntityItem) entity).getItem(), "plank"),
+//				entity -> {
+//					EntityItem item = (EntityItem) entity;
+//					item.setItem(new ItemStack(ModBlocks.WISDOM_WOOD_PLANKS, item.getItem().getCount()));
+//					if (world.isRemote) {
+//						LibParticles.FIZZING_AMBIENT(world, item.getPositionVector());
+//					}
+//				});
+//
+//		// Turn log to wisdom log
+//		run(entityIn,
+//				entity -> entity instanceof EntityItem && !((EntityItem) entity).getItem().isEmpty() && Utils.hasOreDictPrefix(((EntityItem) entity).getItem(), "log"),
+//				entity -> {
+//					EntityItem item = (EntityItem) entity;
+//					item.setItem(new ItemStack(ModBlocks.WISDOM_WOOD_LOG, item.getItem().getCount()));
+//					if (world.isRemote) {
+//						LibParticles.FIZZING_AMBIENT(world, item.getPositionVector());
+//					}
+//				});
+//
+//		// Turn stair to wisdom stair
+//		run(entityIn,
+//				entity -> entity instanceof EntityItem && !((EntityItem) entity).getItem().isEmpty() && Utils.hasOreDictPrefix(((EntityItem) entity).getItem(), "stairs"),
+//				entity -> {
+//					EntityItem item = (EntityItem) entity;
+//					item.setItem(new ItemStack(ModBlocks.WISDOM_WOOD_STAIRS, item.getItem().getCount()));
+//					if (world.isRemote) {
+//						LibParticles.FIZZING_AMBIENT(world, item.getPositionVector());
+//					}
+//				});
+//
+//		// Turn slab to wisdom slab
+//		run(entityIn,
+//				entity -> entity instanceof EntityItem && !((EntityItem) entity).getItem().isEmpty() && Utils.hasOreDictPrefix(((EntityItem) entity).getItem(), "slabs"),
+//				entity -> {
+//					EntityItem item = (EntityItem) entity;
+//					item.setItem(new ItemStack(ModBlocks.WISDOM_WOOD_SLAB, item.getItem().getCount()));
+//					if (world.isRemote) {
+//						LibParticles.FIZZING_AMBIENT(world, item.getPositionVector());
+//					}
+//				});
 
 //		// Turn book to codex
 //		run (entityIn,

@@ -1,0 +1,7 @@
+{
+	"type": "item",
+	"output": { "name": "wizardry:wisdom_wood_planks" },
+	"input": { "oredict": "plankWood" },
+	"duration": 0,
+	"harp": false
+}

@@ -1,0 +1,7 @@
+{
+	"type": "item",
+	"output": { "name": "wizardry:wisdom_wood_log" },
+	"input": { "oredict": "logWood" },
+	"duration": 0,
+	"harp": false
+}

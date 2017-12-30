@@ -15,6 +15,7 @@ import com.teamwizardry.wizardry.common.module.effects.ModuleEffectTimeSlow;
 import com.teamwizardry.wizardry.common.network.*;
 import com.teamwizardry.wizardry.common.world.GenHandler;
 import com.teamwizardry.wizardry.common.world.underworld.WorldProviderUnderWorld;
+import com.teamwizardry.wizardry.crafting.burnable.FireRecipes;
 import com.teamwizardry.wizardry.crafting.mana.ManaRecipes;
 import com.teamwizardry.wizardry.init.*;
 import net.minecraft.item.ItemStack;
@@ -88,18 +89,31 @@ public class CommonProxy {
 	public void init(FMLInitializationEvent event) {
 		GameRegistry.registerWorldGenerator(new GenHandler(), 0);
 		
-		recipeLoading:
+		manaRecipeLoading:
 		{
 			File recipeDirectory = new File(directory, "mana_recipes");
 			if (!recipeDirectory.exists())
 				if (!recipeDirectory.mkdirs())
 				{
 					Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not create directory " + recipeDirectory.getPath());
-					break recipeLoading;
+					break manaRecipeLoading;
 				}
 			if (!ConfigValues.customManaRecipes)
 				ManaRecipes.INSTANCE.copyMissingRecipes(recipeDirectory);
 			ManaRecipes.INSTANCE.loadRecipes(recipeDirectory);
+		}
+		fireRecipeLoading:
+		{
+			File recipeDirectory = new File(directory, "fire_recipes");
+			if (!recipeDirectory.exists())
+				if (!recipeDirectory.mkdirs())
+				{
+					Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not create directory " + recipeDirectory.getPath());
+					break fireRecipeLoading;
+				}
+//			if (!ConfigValues.customFireRecipes)
+//				FireRecipes.INSTANCE.copyMissingRecipes(recipeDirectory);
+			FireRecipes.INSTANCE.loadRecipes(recipeDirectory);
 		}
 	}
 
