@@ -99,7 +99,7 @@ public class TilePearlHolderRenderer extends TileEntitySpecialRenderer<TilePearl
 
 				Color c = Color.WHITE;
 				if (te.pearl.getItem() == ModItems.PEARL_NACRE) {
-					c = new Color(Minecraft.getMinecraft().getItemColors().getColorFromItemstack(te.pearl, 0));
+					c = new Color(Minecraft.getMinecraft().getItemColors().colorMultiplier(te.pearl, 0));
 					Minecraft.getMinecraft().getTextureManager().bindTexture(pearlCubeTexture);
 				} else Minecraft.getMinecraft().getTextureManager().bindTexture(manaPearlCubeTexture);
 

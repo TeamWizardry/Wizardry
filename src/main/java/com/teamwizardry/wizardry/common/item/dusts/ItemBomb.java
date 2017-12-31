@@ -27,7 +27,7 @@ public class ItemBomb extends ItemMod {
 			EntityBomb bomb = new EntityBomb(world, player);
 			bomb.setBombItem(stack);
 			bomb.setPosition(player.posX, player.posY + player.eyeHeight, player.posZ);
-			bomb.setHeadingFromThrower(player, player.rotationPitch, player.rotationYaw, 0.0f, 1.5f, 1.0f);
+			bomb.shoot(player, player.rotationPitch, player.rotationYaw, 0.0f, 1.5f, 1.0f);
 			stack.shrink(1);
 			world.spawnEntity(bomb);
 			bomb.velocityChanged = true;

@@ -1,13 +1,7 @@
 package com.teamwizardry.wizardry.common.entity.angel;
 
-import javax.annotation.Nonnull;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.teamwizardry.librarianlib.features.base.entity.LivingEntityMod;
-import com.teamwizardry.wizardry.api.util.Utils;
 import com.teamwizardry.wizardry.init.ModSounds;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,6 +9,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 public class EntityAngel extends LivingEntityMod {
 
@@ -43,7 +40,7 @@ public class EntityAngel extends LivingEntityMod {
 	public void collideWithEntity(Entity entity) {
 		if (!(entity instanceof EntityPlayer)) return;
 		entity.fallDistance = 0;
-		Utils.boom(getEntityWorld(), this);
+		//PosUtils.boom(getEntityWorld(), this);
 		playSound(ModSounds.BASS_BOOM, 1f, 1f);
 	}
 

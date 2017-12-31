@@ -213,7 +213,7 @@ public class EntityZachriel extends EntityAngel {
 					if (!world.isRemote)
 						for (EntityPlayer player : world.playerEntities)
 							if (EntitySelectors.CAN_AI_TARGET.apply(player))
-								if (this.getDistanceSqToEntity(player) < 32 * 32) {
+								if (getDistance(player) < 32) {
 
 									PotionEffect corruption = player.getActivePotionEffect(ModPotions.ZACH_CORRUPTION);
 									float bonusDamage = corruption == null ? 0 : burstDamage * (corruption.getAmplifier() + 1);

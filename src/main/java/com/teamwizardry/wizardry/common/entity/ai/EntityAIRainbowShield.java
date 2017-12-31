@@ -21,7 +21,7 @@ public class EntityAIRainbowShield extends EntityAIBase {
 	public boolean shouldExecute() {
 		EntityLivingBase target = this.attacker.getAttackTarget();
 		if (target == null || !target.isEntityAlive()) return false;
-		if (target.getDistanceToEntity(attacker) <= minRange) return false;
+		if (target.getDistance(attacker) <= minRange) return false;
 		return attacker.shieldCooldown <= 0;
 	}
 
@@ -39,6 +39,6 @@ public class EntityAIRainbowShield extends EntityAIBase {
 	}
 
 	public void resetTask() {
-		this.attacker.getNavigator().clearPathEntity();
+		this.attacker.getNavigator().clearPath();
 	}
 }

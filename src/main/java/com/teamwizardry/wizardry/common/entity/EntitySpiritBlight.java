@@ -116,7 +116,7 @@ public class EntitySpiritBlight extends EntityMob {
 				Vec3d origin = getPositionVector().addVector(0, getEyeHeight(), 0);
 			}
 		} else {
-			if (!isCollidedVertically) {
+			if (!collidedVertically) {
 				motionY = 0;
 			}
 			noClip = false;

@@ -1,8 +1,8 @@
 package com.teamwizardry.wizardry.asm;
 
-import com.teamwizardry.wizardry.api.events.EntityMoveWithHeadingEvent;
-import com.teamwizardry.wizardry.api.events.EntityPostMoveEvent;
+import com.teamwizardry.wizardry.api.events.EntityMoveEvent;
 import com.teamwizardry.wizardry.api.events.EntityRenderShadowAndFireEvent;
+import com.teamwizardry.wizardry.api.events.EntityTravelEvent;
 import com.teamwizardry.wizardry.api.events.PlayerClipEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -15,8 +15,8 @@ import net.minecraftforge.common.MinecraftForge;
  */
 public class WizardryASMHooks {
 
-	public static boolean playerClipEventHook(boolean isSpectator, EntityPlayer player) {
-		if (isSpectator) return true;
+	public static boolean playerClipEventHook(EntityPlayer player) {
+		if (player.isSpectator()) return true;
 
 		PlayerClipEvent event = new PlayerClipEvent(player);
 		MinecraftForge.EVENT_BUS.post(event);
@@ -24,13 +24,13 @@ public class WizardryASMHooks {
 	}
 
 	public static boolean entityPreMoveHook(Entity entity, MoverType type, double x, double y, double z) {
-		EntityPostMoveEvent event = new EntityPostMoveEvent(entity, type, x, y, z);
+		EntityMoveEvent event = new EntityMoveEvent(entity, type, x, y, z);
 		MinecraftForge.EVENT_BUS.post(event);
 		return !event.override;
 	}
 
 	public static boolean travel(EntityLivingBase entity, float strafe, float vertical, float forward) {
-		EntityMoveWithHeadingEvent event = new EntityMoveWithHeadingEvent(entity, strafe, vertical, forward);
+		EntityTravelEvent event = new EntityTravelEvent(entity, strafe, vertical, forward);
 		MinecraftForge.EVENT_BUS.post(event);
 		return !event.override;
 	}

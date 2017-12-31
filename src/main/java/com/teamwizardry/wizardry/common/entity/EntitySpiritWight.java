@@ -107,7 +107,7 @@ public class EntitySpiritWight extends EntityMob {
 			motionZ = direction.z * -0.05;
 			rotationYaw = (float) (((-MathHelper.atan2(direction.x, direction.z) * 180) / Math.PI) - 180) / 2;
 		} else {
-			if (!isCollidedVertically) {
+			if (!collidedVertically) {
 				motionY = 0;
 			}
 			noClip = false;

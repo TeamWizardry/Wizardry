@@ -2,7 +2,11 @@ package com.teamwizardry.wizardry.api.util;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -10,6 +14,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Saad on 8/27/2016.
@@ -65,5 +70,28 @@ public final class PosUtils {
 		float yaw = (float) MathHelper.atan2(vec.z, vec.x);
 		float pitch = (float) Math.asin(vec.y / vec.lengthVector());
 		return new float[]{(float) Math.toDegrees(pitch), (float) Math.toDegrees(yaw) + 90};
+	}
+
+	public static void boom(World world, Vec3d pos, @Nullable Entity excluded, double scale, double upperMagnitude, boolean reverseDirection) {
+		List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(excluded, new AxisAlignedBB(new BlockPos(pos)).grow(32, 32, 32));
+		for (Entity entity1 : entityList) {
+			double dist = entity1.getDistance(pos.x, pos.y, pos.z);
+			double mag = upperMagnitude * (scale * dist / (-scale * dist - 1) + 1);
+
+			Vec3d dir;
+			if (reverseDirection) {
+				mag = ((-scale * dist - 1) / (scale * dist) + 1);
+				dir = pos.subtract(entity1.getPositionVector()).normalize().scale(mag);
+			} else dir = entity1.getPositionVector().subtract(pos).normalize().scale(mag);
+
+			entity1.motionX += (dir.x);
+			entity1.motionY += (dir.y);
+			entity1.motionZ += (dir.z);
+			entity1.fallDistance = 0;
+			entity1.velocityChanged = true;
+
+			if (entity1 instanceof EntityPlayerMP)
+				((EntityPlayerMP) entity1).connection.sendPacket(new SPacketEntityVelocity(entity1));
+		}
 	}
 }

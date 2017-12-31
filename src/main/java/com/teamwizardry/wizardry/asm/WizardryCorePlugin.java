@@ -10,6 +10,7 @@ import java.util.Map;
  */
 @IFMLLoadingPlugin.Name("Wizardry Plugin")
 @IFMLLoadingPlugin.TransformerExclusions("com.teamwizardry.wizardry.asm")
+@IFMLLoadingPlugin.SortingIndex(1001) // After runtime deobf
 public class WizardryCorePlugin implements IFMLLoadingPlugin {
 
 	@Override
