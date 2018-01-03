@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.common.potion;
 
-import com.teamwizardry.wizardry.api.events.EntityPostMoveEvent;
+import com.teamwizardry.wizardry.api.events.EntityMoveEvent;
 import com.teamwizardry.wizardry.api.events.PlayerClipEvent;
 import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.block.Block;
@@ -53,7 +53,7 @@ public class PotionPhase extends PotionBase {
 	}
 
 	@SubscribeEvent
-	public void entityMove(EntityPostMoveEvent event) {
+	public void entityMove(EntityMoveEvent event) {
 		if (!(event.entity instanceof EntityLivingBase)) return;
 		EntityLivingBase base = (EntityLivingBase) event.entity;
 		if (!base.isPotionActive(ModPotions.PHASE)) return;
@@ -212,10 +212,10 @@ public class PotionPhase extends PotionBase {
 		entity.world.profiler.endSection();
 		entity.world.profiler.startSection("rest");
 		entity.resetPositionToBB();
-		entity.isCollidedHorizontally = d2 != x || d4 != z;
-		entity.isCollidedVertically = d3 != y;
-		entity.onGround = entity.isCollidedVertically && d3 < 0.0D;
-		entity.isCollided = entity.isCollidedHorizontally || entity.isCollidedVertically;
+		entity.collidedHorizontally = d2 != x || d4 != z;
+		entity.collidedVertically = d3 != y;
+		entity.onGround = entity.collidedVertically && d3 < 0.0D;
+		entity.collided = entity.collidedHorizontally || entity.collidedVertically;
 		int j6 = MathHelper.floor(entity.posX);
 		int i1 = MathHelper.floor(entity.posY - 0.20000000298023224D);
 		int k6 = MathHelper.floor(entity.posZ);

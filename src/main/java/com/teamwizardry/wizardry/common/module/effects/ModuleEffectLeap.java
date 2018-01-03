@@ -127,7 +127,7 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 		if (event.getEntityLiving().getEntityData().hasKey("jump_timer")) {
 			int x = event.getEntityLiving().getEntityData().getInteger("jump_timer");
 
-			if (event.getEntityLiving().isCollidedVertically) {
+			if (event.getEntityLiving().collidedVertically) {
 				event.getEntityLiving().getEntityData().removeTag("jump_timer");
 				event.getEntityLiving().getEntityData().removeTag("jump_count");
 				return;

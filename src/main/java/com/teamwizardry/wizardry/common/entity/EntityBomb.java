@@ -7,8 +7,8 @@ import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
-import com.teamwizardry.wizardry.api.util.Utils;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.item.ItemStack;
@@ -61,11 +61,15 @@ public class EntityBomb extends EntityThrowable {
 		if (result.entityHit != null && getThrower() != null && getThrower().getEntityId() == result.entityHit.getEntityId())
 			return;
 
+		int type = getDataManager().get(DATA_BOMB_TYPE);
+
+		if (type == 0) PosUtils.boom(getEntityWorld(), getPositionVector(), null, 0.2, 10, true);
+		else PosUtils.boom(getEntityWorld(), getPositionVector(), null, 0.2, 10, false);
+
 		ClientRunnable.run(new ClientRunnable() {
 			@SideOnly(Side.CLIENT)
 			@Override
 			public void runIfClient() {
-				int type = getDataManager().get(DATA_BOMB_TYPE);
 
 				Color color, color2;
 				if (type == 1) {
@@ -111,7 +115,6 @@ public class EntityBomb extends EntityThrowable {
 			}
 		});
 
-		Utils.boom(getEntityWorld(), getPositionVector());
 		setDead();
 	}
 

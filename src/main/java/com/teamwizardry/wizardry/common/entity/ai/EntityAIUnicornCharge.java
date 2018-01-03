@@ -27,7 +27,7 @@ public class EntityAIUnicornCharge extends EntityAIBase {
 	public boolean shouldExecute() {
 		EntityLivingBase target = this.unicorn.getAttackTarget();
 		if (target == null || !target.isEntityAlive()) return false;
-		return !(target.getDistanceToEntity(unicorn) > maxRange);
+		return !(target.getDistance(unicorn) > maxRange);
 	}
 
 	@Override
@@ -40,7 +40,7 @@ public class EntityAIUnicornCharge extends EntityAIBase {
 	@Override
 	public boolean shouldContinueExecuting() {
 		EntityLivingBase target = this.unicorn.getAttackTarget();
-		if (target == null || !target.isEntityAlive() || unicorn.getDistanceToEntity(target) >= maxRange * 1.5)
+		if (target == null || !target.isEntityAlive() || unicorn.getDistance(target) >= maxRange * 1.5)
 			return false;
 
 		if (target instanceof EntityPlayer && (((EntityPlayer) target).capabilities.isCreativeMode || ((EntityPlayer) target).isSpectator()))
@@ -69,7 +69,7 @@ public class EntityAIUnicornCharge extends EntityAIBase {
 	}
 
 	public void resetTask() {
-		this.unicorn.getNavigator().clearPathEntity();
+		this.unicorn.getNavigator().clearPath();
 		unicorn.isCharging = false;
 		unicorn.prepareChargeTicks = 0;
 	}

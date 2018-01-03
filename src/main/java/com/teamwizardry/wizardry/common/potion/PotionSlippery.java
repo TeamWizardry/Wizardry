@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.common.potion;
 
-import com.teamwizardry.wizardry.api.events.EntityMoveWithHeadingEvent;
+import com.teamwizardry.wizardry.api.events.EntityTravelEvent;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.MoverType;
@@ -36,7 +36,7 @@ public class PotionSlippery extends PotionBase {
 
 	@SuppressWarnings("unused")
 	@SubscribeEvent
-	public void entityMove(EntityMoveWithHeadingEvent event) {
+	public void entityMove(EntityTravelEvent event) {
 		if (!event.entity.isPotionActive(this)) return;
 		event.override = true;
 
@@ -86,7 +86,7 @@ public class PotionSlippery extends PotionBase {
 						entity.motionZ *= 0.9900000095367432D;
 						entity.move(MoverType.SELF, entity.motionX, entity.motionY, entity.motionZ);
 
-						if (entity.isCollidedHorizontally && !entity.world.isRemote) {
+						if (entity.collidedHorizontally && !entity.world.isRemote) {
 							double d11 = Math.sqrt(entity.motionX * entity.motionX + entity.motionZ * entity.motionZ);
 							double d3 = d8 - d11;
 							float f5 = (float) (d3 * 10.0D - 3.0D);
@@ -143,7 +143,7 @@ public class PotionSlippery extends PotionBase {
 
 						entity.move(MoverType.SELF, entity.motionX, entity.motionY, entity.motionZ);
 
-						if (entity.isCollidedHorizontally && entity.isOnLadder()) {
+						if (entity.collidedHorizontally && entity.isOnLadder()) {
 							entity.motionY = 0.2D;
 						}
 
@@ -180,7 +180,7 @@ public class PotionSlippery extends PotionBase {
 						entity.motionY -= 0.02D;
 					}
 
-					if (entity.isCollidedHorizontally && entity.isOffsetPositionInLiquid(entity.motionX, entity.motionY + 0.6000000238418579D - entity.posY + d4, entity.motionZ)) {
+					if (entity.collidedHorizontally && entity.isOffsetPositionInLiquid(entity.motionX, entity.motionY + 0.6000000238418579D - entity.posY + d4, entity.motionZ)) {
 						entity.motionY = 0.30000001192092896D;
 					}
 				}
@@ -213,7 +213,7 @@ public class PotionSlippery extends PotionBase {
 					entity.motionY -= 0.02D;
 				}
 
-				if (entity.isCollidedHorizontally && entity.isOffsetPositionInLiquid(entity.motionX, entity.motionY + 0.6000000238418579D - entity.posY + d0, entity.motionZ)) {
+				if (entity.collidedHorizontally && entity.isOffsetPositionInLiquid(entity.motionX, entity.motionY + 0.6000000238418579D - entity.posY + d0, entity.motionZ)) {
 					entity.motionY = 0.30000001192092896D;
 				}
 			}

@@ -62,7 +62,7 @@ public class EntityAIFollowPlayer extends EntityAIBase {
 			return false;
 		} else if (entitylivingbase instanceof EntityPlayer && ((EntityPlayer) entitylivingbase).isSpectator()) {
 			return false;
-		} else if (this.entity.getDistanceSqToEntity(entitylivingbase) < (double) (this.minDist * this.minDist)) {
+		} else if (this.entity.getDistance(entitylivingbase) < this.minDist) {
 			return false;
 		} else {
 			this.owner = entitylivingbase;
@@ -75,7 +75,7 @@ public class EntityAIFollowPlayer extends EntityAIBase {
 	 */
 	@Override
 	public boolean shouldContinueExecuting() {
-		return !this.petPathfinder.noPath() && (this.owner != null && this.entity.getDistanceSqToEntity(this.owner) > (double) (this.maxDist * this.maxDist));
+		return !this.petPathfinder.noPath() && (this.owner != null && this.entity.getDistance(this.owner) > this.maxDist);
 	}
 
 	/**
@@ -94,7 +94,7 @@ public class EntityAIFollowPlayer extends EntityAIBase {
 	@Override
 	public void resetTask() {
 		this.owner = null;
-		this.petPathfinder.clearPathEntity();
+		this.petPathfinder.clearPath();
 		this.entity.setPathPriority(PathNodeType.WATER, this.oldWaterCost);
 	}
 
@@ -117,7 +117,7 @@ public class EntityAIFollowPlayer extends EntityAIBase {
 
 			if (!this.petPathfinder.tryMoveToEntityLiving(this.owner, this.followSpeed)) {
 				if (!this.entity.getLeashed()) {
-					if (this.entity.getDistanceSqToEntity(this.owner) >= 144.0D) {
+					if (this.entity.getDistance(this.owner) >= 12.0D) {
 						int i = MathHelper.floor(this.owner.posX) - 2;
 						int j = MathHelper.floor(this.owner.posZ) - 2;
 						int k = MathHelper.floor(this.owner.getEntityBoundingBox().minY);
@@ -126,7 +126,7 @@ public class EntityAIFollowPlayer extends EntityAIBase {
 							for (int i1 = 0; i1 <= 4; ++i1) {
 								if ((l < 1 || i1 < 1 || l > 3 || i1 > 3) && this.world.getBlockState(new BlockPos(i + l, k - 1, j + i1)).isTopSolid() && this.isEmptyBlock(new BlockPos(i + l, k, j + i1)) && this.isEmptyBlock(new BlockPos(i + l, k + 1, j + i1))) {
 									this.entity.setLocationAndAngles((double) ((float) (i + l) + 0.5F), (double) k, (double) ((float) (j + i1) + 0.5F), this.entity.rotationYaw, this.entity.rotationPitch);
-									this.petPathfinder.clearPathEntity();
+									this.petPathfinder.clearPath();
 									return;
 								}
 							}

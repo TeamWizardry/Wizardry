@@ -132,7 +132,7 @@ public class EntitySpellProjectile extends EntityMod {
 
 		if (isDead) return;
 
-		if (!isCollided) {
+		if (!collided) {
 
 			// MOVE //
 			motionX = look.x * speed;

@@ -1,15 +1,5 @@
 package com.teamwizardry.wizardry.crafting.mana;
 
-import java.awt.Color;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
-import java.util.stream.Collectors;
-
 import com.google.common.collect.HashMultimap;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -17,13 +7,12 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
-import com.teamwizardry.wizardry.api.util.Utils;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModSounds;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
@@ -40,6 +29,16 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.OreDictionary;
+
+import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
+import java.util.stream.Collectors;
 
 public class ManaRecipeLoader
 {
@@ -499,7 +498,7 @@ public class ManaRecipeLoader
 				if (explode)
 				{
 					PacketHandler.NETWORK.sendToAllAround(new PacketExplode(output.getPositionVector(), Color.CYAN, Color.BLUE, 0.9, 2, 500, 100, 50, true), new NetworkRegistry.TargetPoint(world.provider.getDimension(), output.posX, output.posY, output.posZ, 256));
-					Utils.boom(world, output);
+					PosUtils.boom(world, output.getPositionVector(), output, 0.8, 3, false);
 				}
 
 				if (harp) world.playSound(null, output.posX, output.posY, output.posZ, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
@@ -633,7 +632,7 @@ public class ManaRecipeLoader
 				if (explode)
 				{
 					PacketHandler.NETWORK.sendToAllAround(new PacketExplode(output, Color.CYAN, Color.BLUE, 0.9, 2, 500, 100, 50, true), new NetworkRegistry.TargetPoint(world.provider.getDimension(), output.x, output.y, output.z, 256));
-					Utils.boom(world, output);
+					PosUtils.boom(world, output, null, 0.8, 3, false);
 				}
 
 				if (harp) world.playSound(null, output.x, output.y, output.z, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
@@ -771,7 +770,7 @@ public class ManaRecipeLoader
 				if (explode)
 				{
 					PacketHandler.NETWORK.sendToAllAround(new PacketExplode(output.getPositionVector(), Color.CYAN, Color.BLUE, 0.9, 2, 500, 100, 50, true), new NetworkRegistry.TargetPoint(world.provider.getDimension(), output.posX, output.posY, output.posZ, 256));
-					Utils.boom(world, output);
+					PosUtils.boom(world, output.getPositionVector(), output, 0.8, 3, false);
 				}
 
 				if (harp) world.playSound(null, output.posX, output.posY, output.posZ, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
@@ -905,7 +904,7 @@ public class ManaRecipeLoader
 				if (explode)
 				{
 					PacketHandler.NETWORK.sendToAllAround(new PacketExplode(output, Color.CYAN, Color.BLUE, 0.9, 2, 500, 100, 50, true), new NetworkRegistry.TargetPoint(world.provider.getDimension(), output.x, output.y, output.z, 256));
-					Utils.boom(world, output);
+					PosUtils.boom(world, output, null, 0.8, 3, false);
 				}
 
 				if (harp) world.playSound(null, output.x, output.y, output.z, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
@@ -959,12 +958,12 @@ public class ManaRecipeLoader
 	@FunctionalInterface
 	private interface ManaCrafterPredicate
 	{
-		public boolean check(World world, BlockPos pos, List<EntityItem> items);
+		boolean check(World world, BlockPos pos, List<EntityItem> items);
 	}
 	
 	@FunctionalInterface
 	private interface ManaCrafterConsumer
 	{
-		public void consume(World world, BlockPos pos, List<EntityItem> items, int currentDuration);
+		void consume(World world, BlockPos pos, List<EntityItem> items, int currentDuration);
 	}
 }
