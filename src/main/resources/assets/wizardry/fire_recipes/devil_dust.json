@@ -1,0 +1,4 @@
+{
+	"input": { "name": "minecraft:redstone" },
+	"output": { "name": "wizardry:devil_dust" }
+}

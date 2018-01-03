@@ -37,4 +37,9 @@ public abstract class ManaCrafter
 	{
 		return other.name.equals(name);
 	}
+	
+	public boolean isInstant()
+	{
+		return maxDuration == 0;
+	}
 }

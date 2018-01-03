@@ -4,6 +4,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
+import net.minecraftforge.oredict.OreDictionary;
 
 public class EntityBurnableItem extends EntityItem
 {
@@ -66,11 +67,25 @@ public class EntityBurnableItem extends EntityItem
 	public void setItem(ItemStack stack)
 	{
 		super.setItem(stack);
-		ItemStack key = FireRecipes.RECIPES.keySet().stream().filter(item -> ItemStack.areItemsEqual(item, stack)).findFirst().orElse(null);
-		if (FireRecipes.RECIPES.containsKey(key))
-			recipe = FireRecipes.RECIPES.get(key).copy();
+		ItemStack key = FireRecipes.ITEM_RECIPES.keySet().stream().filter(item -> ItemStack.areItemsEqual(item, stack)).findFirst().orElse(null);
+		if (FireRecipes.ITEM_RECIPES.containsKey(key))
+		{
+			recipe = FireRecipes.ITEM_RECIPES.get(key).copy();
+			return;
+		}
 		else
-			recipe = null;
+		{
+			int[] oreIds = OreDictionary.getOreIDs(stack);
+			for (int oreId : oreIds)
+			{
+				if (FireRecipes.OREDICT_RECIPES.containsKey(OreDictionary.getOreName(oreId)))
+				{
+					recipe = FireRecipes.OREDICT_RECIPES.get(OreDictionary.getOreName(oreId));
+					return;
+				}
+			}
+		}
+		recipe = null;
 	}
 	
 	@Override
@@ -81,6 +96,14 @@ public class EntityBurnableItem extends EntityItem
 	
 	public static boolean isBurnable(ItemStack stack)
 	{
-		return FireRecipes.RECIPES.keySet().stream().anyMatch(item -> ItemStack.areItemsEqual(item, stack));
+		if (stack.isEmpty())
+			return false;
+		if (FireRecipes.ITEM_RECIPES.keySet().stream().anyMatch(item -> ItemStack.areItemsEqual(item, stack)))
+			return true;
+		int[] oreIds = OreDictionary.getOreIDs(stack);
+		for (int oreId : oreIds)
+			if (FireRecipes.OREDICT_RECIPES.containsKey(OreDictionary.getOreName(oreId)))
+				return true;
+		return false;
 	}
 }

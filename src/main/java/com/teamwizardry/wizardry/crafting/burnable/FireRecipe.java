@@ -60,11 +60,6 @@ public class FireRecipe
 		return output.copy();
 	}
 	
-	public boolean equals(FireRecipe other)
-	{
-		return ItemStack.areItemsEqual(output, other.output);
-	}
-	
 	public FireRecipe copy()
 	{
 		return new FireRecipe(output, maxDuration);

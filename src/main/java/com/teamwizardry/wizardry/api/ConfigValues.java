@@ -15,6 +15,9 @@ public class ConfigValues {
 	@ConfigProperty(category = "recipes", comment = "If disabled, will generate missing Wizardry mana pool recipes. Enable for custom recipes")
 	public static boolean customManaRecipes = false;
 	
+	@ConfigProperty(category = "recipes", comment = "If disabled, will generate missing Wizardry fire recipes. Enable for custom recipes")
+	public static boolean customFireRecipes = false;
+	
 	@ConfigProperty(category = "world", comment = "Whitelisted dimensions for mana pool generation.")
 	public static int[] manaPoolDimWhitelist = {0};
 	

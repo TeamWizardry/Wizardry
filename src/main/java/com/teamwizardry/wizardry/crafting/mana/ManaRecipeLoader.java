@@ -365,6 +365,8 @@ public class ManaRecipeLoader
 
 			Wizardry.logger.error("  > WARNING! " + file.getPath() + " specifies an invalid recipe output type. Valid recipe types: \"item\" \"block\". Ignoring file...: " + element.toString());
 		}
+		Wizardry.logger.info("> Finished mana recipe loading.");
+		Wizardry.logger.info("<<========================================================================>>");
 	}
 	
 	private ManaCrafterBuilder buildManaCrafter(String identifier, ItemStack outputItem, ItemStack input, List<ItemStack> extraInputs, List<String> extraInputOredicts, int duration, int radius, boolean consume, boolean explode, boolean bubbling, boolean harp)
@@ -427,7 +429,7 @@ public class ManaRecipeLoader
 					for (ItemStack item : list)
 					{
 						List<ItemStack> ores = OreDictionary.getOres(oredictIn, false);
-						if (ores.stream().anyMatch(ore -> ItemStack.areItemsEqual(ore, item)))
+						if (ores.stream().anyMatch(ore -> OreDictionary.itemMatches(ore, item, false)))
 						{
 							item.shrink(1);
 							oredictList.remove(0);
@@ -477,7 +479,7 @@ public class ManaRecipeLoader
 							inputList.remove(0);
 							continue;
 						}
-						if (oredictList.size() > 0 && OreDictionary.getOres(oredictList.get(0), false).stream().anyMatch(ore -> ItemStack.areItemsEqual(ore, entity.getItem())))
+						if (oredictList.size() > 0 && OreDictionary.getOres(oredictList.get(0), false).stream().anyMatch(ore -> OreDictionary.itemMatches(ore, entity.getItem(), false)))
 						{
 							entity.getItem().shrink(1);
 							if (entity.getItem().isEmpty()) world.removeEntity(entity);
@@ -487,7 +489,7 @@ public class ManaRecipeLoader
 					}
 				}
 
-				EntityItem output = new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, outputItem);
+				EntityItem output = new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, outputItem.copy());
 				output.motionX = 0;
 				output.motionY = 0;
 				output.motionZ = 0;
@@ -565,7 +567,7 @@ public class ManaRecipeLoader
 					for (ItemStack item : list)
 					{
 						List<ItemStack> ores = OreDictionary.getOres(oredictIn, false);
-						if (ores.stream().anyMatch(ore -> ItemStack.areItemsEqual(ore, item)))
+						if (ores.stream().anyMatch(ore -> OreDictionary.itemMatches(ore, item, false)))
 						{
 							item.shrink(1);
 							oredictList.remove(0);
@@ -615,7 +617,7 @@ public class ManaRecipeLoader
 							inputList.remove(0);
 							continue;
 						}
-						if (oredictList.size() > 0 && OreDictionary.getOres(oredictList.get(0), false).stream().anyMatch(ore -> ItemStack.areItemsEqual(ore, entity.getItem())))
+						if (oredictList.size() > 0 && OreDictionary.getOres(oredictList.get(0), false).stream().anyMatch(ore -> OreDictionary.itemMatches(ore, entity.getItem(), false)))
 						{
 							entity.getItem().shrink(1);
 							if (entity.getItem().isEmpty()) world.removeEntity(entity);
@@ -699,7 +701,7 @@ public class ManaRecipeLoader
 					for (ItemStack item : list)
 					{
 						List<ItemStack> ores = OreDictionary.getOres(oredictIn, false);
-						if (ores.stream().anyMatch(ore -> ItemStack.areItemsEqual(ore, item)))
+						if (ores.stream().anyMatch(ore -> OreDictionary.itemMatches(ore, item, false)))
 						{
 							item.shrink(1);
 							oredictList.remove(0);
@@ -719,7 +721,7 @@ public class ManaRecipeLoader
 			@Override
 			public void consume(World world, BlockPos pos, List<EntityItem> items, int currentDuration)
 			{
-				EntityItem entityItem = items.stream().filter(entity -> OreDictionary.getOres(inputOredict, false).stream().anyMatch(ore -> ItemStack.areItemsEqual(entity.getItem(), ore))).findFirst().orElse(null);
+				EntityItem entityItem = items.stream().filter(entity -> OreDictionary.getOres(inputOredict, false).stream().anyMatch(ore -> OreDictionary.itemMatches(entity.getItem(), ore, false))).findFirst().orElse(null);
 				if (world.isRemote) LibParticles.CRAFTING_ALTAR_IDLE(world, entityItem.getPositionVector());
 				if (bubbling && currentDuration % 10 == 0) world.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
 			}
@@ -749,7 +751,7 @@ public class ManaRecipeLoader
 							inputList.remove(0);
 							continue;
 						}
-						if (oredictList.size() > 0 && OreDictionary.getOres(oredictList.get(0), false).stream().anyMatch(ore -> ItemStack.areItemsEqual(ore, entity.getItem())))
+						if (oredictList.size() > 0 && OreDictionary.getOres(oredictList.get(0), false).stream().anyMatch(ore -> OreDictionary.itemMatches(ore, entity.getItem(), false)))
 						{
 							entity.getItem().shrink(1);
 							if (entity.getItem().isEmpty()) world.removeEntity(entity);
@@ -759,7 +761,7 @@ public class ManaRecipeLoader
 					}
 				}
 
-				EntityItem output = new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, outputItem);
+				EntityItem output = new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, outputItem.copy());
 				output.motionX = 0;
 				output.motionY = 0;
 				output.motionZ = 0;
@@ -837,7 +839,7 @@ public class ManaRecipeLoader
 					for (ItemStack item : list)
 					{
 						List<ItemStack> ores = OreDictionary.getOres(oredictIn, false);
-						if (ores.stream().anyMatch(ore -> ItemStack.areItemsEqual(ore, item)))
+						if (ores.stream().anyMatch(ore -> OreDictionary.itemMatches(ore, item, false)))
 						{
 							item.shrink(1);
 							oredictList.remove(0);
@@ -857,7 +859,7 @@ public class ManaRecipeLoader
 			@Override
 			public void consume(World world, BlockPos pos, List<EntityItem> items, int currentDuration)
 			{
-				EntityItem entityItem = items.stream().filter(entity -> OreDictionary.getOres(inputOredict, false).stream().anyMatch(ore -> ItemStack.areItemsEqual(entity.getItem(), ore))).findFirst().orElse(null);
+				EntityItem entityItem = items.stream().filter(entity -> OreDictionary.getOres(inputOredict, false).stream().anyMatch(ore -> OreDictionary.itemMatches(entity.getItem(), ore, false))).findFirst().orElse(null);
 				if (world.isRemote) LibParticles.CRAFTING_ALTAR_IDLE(world, entityItem.getPositionVector());
 				if (bubbling && currentDuration % 10 == 0) world.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
 			}
@@ -887,7 +889,7 @@ public class ManaRecipeLoader
 							inputList.remove(0);
 							continue;
 						}
-						if (oredictList.size() > 0 && OreDictionary.getOres(oredictList.get(0), false).stream().anyMatch(ore -> ItemStack.areItemsEqual(ore, entity.getItem())))
+						if (oredictList.size() > 0 && OreDictionary.getOres(oredictList.get(0), false).stream().anyMatch(ore -> OreDictionary.itemMatches(ore, entity.getItem(), false)))
 						{
 							entity.getItem().shrink(1);
 							if (entity.getItem().isEmpty()) world.removeEntity(entity);

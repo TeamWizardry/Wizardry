@@ -10,11 +10,9 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.block.ManaTracker;
 import com.teamwizardry.wizardry.api.item.IExplodable;
 import com.teamwizardry.wizardry.api.util.RandUtil;
-import com.teamwizardry.wizardry.api.util.Utils;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.common.core.DamageSourceMana;
 import com.teamwizardry.wizardry.crafting.mana.ManaRecipes;
-import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModPotions;
 
 import net.minecraft.advancements.Advancement;
@@ -170,6 +168,16 @@ public class BlockFluidMana extends BlockFluidClassic {
 //					ManaTracker.INSTANCE.addManaCraft(entity.world, entity.getPosition(), ManaRecipes.INSTANCE.new ManaBatteryCrafter());
 //				});
 		
+//		run(entityIn,
+//				entity -> entity instanceof EntityItem,
+//				entity -> {
+//					Wizardry.logger.info(((EntityItem) entity).getItem());
+//					Wizardry.logger.info(Arrays.stream(OreDictionary.getOreIDs(((EntityItem) entity).getItem())).mapToObj(i -> OreDictionary.getOreName(i)).collect(Collectors.toList()));
+//					Wizardry.logger.debug(ManaRecipes.RECIPES);
+//					Wizardry.logger.debug(ManaRecipes.OREDICT_RECIPES);
+//					Wizardry.logger.info(OreDictionary.getOres("logWood", false));
+//				});
+		
 		// Non-oredict ManaCrafters
 		run(entityIn,
 				entity -> entity instanceof EntityItem && ManaRecipes.RECIPES.keySet().stream().anyMatch(item -> ItemStack.areItemsEqual(item, ((EntityItem) entity).getItem())),
@@ -180,9 +188,9 @@ public class BlockFluidMana extends BlockFluidClassic {
 		
 		// Oredict ManaCrafters
 		run(entityIn,
-				entity -> entity instanceof EntityItem && ManaRecipes.OREDICT_RECIPES.keySet().stream().anyMatch(oredict -> OreDictionary.getOres(oredict, false).stream().anyMatch(ore -> ItemStack.areItemsEqual(ore, ((EntityItem) entity).getItem()))),
+				entity -> entity instanceof EntityItem && ManaRecipes.OREDICT_RECIPES.keySet().stream().anyMatch(oredict -> OreDictionary.getOres(oredict, false).stream().anyMatch(ore -> OreDictionary.itemMatches(ore, ((EntityItem) entity).getItem(), false))),
 				entity -> {
-					String key = ManaRecipes.OREDICT_RECIPES.keySet().stream().filter(oredict -> OreDictionary.getOres(oredict, false).stream().anyMatch(ore -> ItemStack.areItemsEqual(ore, ((EntityItem) entity).getItem()))).findFirst().orElse(null);
+					String key = ManaRecipes.OREDICT_RECIPES.keySet().stream().filter(oredict -> OreDictionary.getOres(oredict, false).stream().anyMatch(ore -> OreDictionary.itemMatches(ore, ((EntityItem) entity).getItem(), false))).findFirst().orElse(null);
 					ManaRecipes.OREDICT_RECIPES.get(key).forEach(crafter -> ManaTracker.INSTANCE.addManaCraft(entity.world, entity.getPosition(), crafter.build()));
 				});
 	}

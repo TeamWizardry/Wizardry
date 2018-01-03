@@ -37,7 +37,12 @@ public class ManaRecipes
 	
 	private static final String[] INTERNAL_RECIPE_NAMES = { CODEX.toLowerCase(), 
 															NACRE.toLowerCase(), 
-															MANA_BATTERY.toLowerCase() };
+															MANA_BATTERY.toLowerCase(),
+															"wisdom_log",
+															"wisdom_plank",
+															"wisdom_slab",
+															"wisdom_stairs",
+															"wisdom_stick" };
 	
 	public void loadRecipes(File directory)
 	{

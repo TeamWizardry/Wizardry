@@ -9,7 +9,6 @@ import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.Constants.MISC;
 import com.teamwizardry.wizardry.api.block.ManaTracker;
 import com.teamwizardry.wizardry.api.events.SpellCastEvent;
-import com.teamwizardry.wizardry.api.item.RedstoneTracker;
 import com.teamwizardry.wizardry.api.spell.IContinuousModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.module.Module;
@@ -77,7 +76,6 @@ public class EventHandler {
 	@SubscribeEvent
 	public void tickEvent(WorldTickEvent event) {
 		if (event.phase == Phase.END) {
-			RedstoneTracker.INSTANCE.tick(event.world);
 			ManaTracker.INSTANCE.tick(event.world);
 		}
 	}
