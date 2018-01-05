@@ -137,7 +137,7 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 									@SideOnly(Side.CLIENT)
 									public void runIfClient() {
 										if (plate.renderHandler != null)
-											((TileCraftingPlateRenderer) plate.renderHandler).addAnimation(finalI, true);
+											((TileCraftingPlateRenderer) plate.renderHandler).addAnimation(finalI, true, false);
 									}
 								});
 								break;

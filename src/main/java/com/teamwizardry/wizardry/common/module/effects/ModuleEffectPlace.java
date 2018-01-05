@@ -53,7 +53,6 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 	}
 
 	@Override
-	@SuppressWarnings({"unused", "deprecation"})
 	public boolean run(@Nonnull SpellData spell) {
 		World world = spell.world;
 		BlockPos targetPos = spell.getData(BLOCK_HIT);
@@ -93,7 +92,9 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 				for (ItemStack stack : ((EntityPlayer) caster).inventory.mainInventory) {
 					if (stack.isEmpty()) continue;
 					if (!(stack.getItem() instanceof ItemBlock)) continue;
+
 					ItemStack stack1 = state.getBlock().getItem(world, null, state);
+					if (stack1.isEmpty()) continue;
 					if (!ItemStack.areItemsEqual(stack, stack1)) continue;
 					stackBlock = stack;
 					break;

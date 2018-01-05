@@ -20,7 +20,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
@@ -85,8 +84,7 @@ public interface IManaInteractable {
 		return amount;
 	}
 
-	@NotNull
-	default HashSet<BlockPos> getNearestSuckables(Class<? extends TileManaInteracter> clazz, World world, BlockPos origin) {
+	default HashSet<BlockPos> getNearestSuckables(Class<? extends TileManaInteracter> clazz, World world, BlockPos origin, boolean ignoreStorage) {
 		HashSet<BlockPos> poses = new HashSet<>();
 		HashSet<BlockPos> temp = new HashSet<>(TileManaInteracter.MANA_INTERACTABLES.asMap().keySet());
 		for (BlockPos target : temp) {
@@ -97,9 +95,12 @@ public interface IManaInteractable {
 
 			TileEntity tile = world.getTileEntity(target);
 			if (tile == null || !(tile.getClass().isAssignableFrom(clazz))) continue;
-			if (((TileManaInteracter) tile).getCap() == null) continue;
-			CapManager manager = new CapManager(((TileManaInteracter) tile).getCap());
-			if (manager.isManaEmpty()) continue;
+
+			if (!ignoreStorage) {
+				if (((TileManaInteracter) tile).getCap() == null) continue;
+				CapManager manager = new CapManager(((TileManaInteracter) tile).getCap());
+				if (manager.isManaEmpty()) continue;
+			}
 			poses.add(target);
 		}
 		return poses;

@@ -18,7 +18,6 @@ import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.render.block.TileCraftingPlateRenderer;
 import com.teamwizardry.wizardry.common.block.BlockCraftingPlate;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
-import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -58,7 +57,7 @@ public class TileCraftingPlate extends TileManaInteracter {
 	@com.teamwizardry.librarianlib.features.saving.Module
 	public ModuleInventory outputPearl = new ModuleInventory(1);
 	@Save
-	public boolean revealStructure = false;
+	public boolean revealStructure = false, isAbleToSuckMana = false;
 	public Vec3d[] positions;
 	public Random random = new Random(getPos().toLong());
 
@@ -79,22 +78,6 @@ public class TileCraftingPlate extends TileManaInteracter {
 
 	@Override
 	public void readCustomNBT(NBTTagCompound compound) {
-		//positions = new Vec3d[realInventory.getHandler().getSlots()];
-		//for (int i = 0; i < realInventory.getHandler().getSlots(); i++) {
-		//	if (!realInventory.getHandler().getStackInSlot(i).isEmpty()) {
-//
-		//		int finalI = i;
-		//		ClientRunnable.run(new ClientRunnable() {
-		//			@Override
-		//			@SideOnly(Side.CLIENT)
-		//			public void runIfClient() {
-		//				if (renderHandler != null)
-		//					((TileCraftingPlateRenderer) renderHandler).addAnimation(finalI, true);
-		//			}
-		//		});
-		//		break;
-		//	}
-		//}
 	}
 
 	@Override
@@ -107,6 +90,7 @@ public class TileCraftingPlate extends TileManaInteracter {
 
 		if (!((BlockCraftingPlate) getBlockType()).isStructureComplete(getWorld(), getPos())) return;
 
+		boolean ableToSuckMana = false;
 		if (!new CapManager(getCap()).isManaFull()) {
 			for (BlockPos relative : poses) {
 				BlockPos target = getPos().add(relative);
@@ -116,13 +100,17 @@ public class TileCraftingPlate extends TileManaInteracter {
 						if (((TilePearlHolder) tile).structurePos == null || !((TilePearlHolder) tile).structurePos.equals(getPos())) {
 							((TilePearlHolder) tile).structurePos = getPos();
 						}
-						((TilePearlHolder) tile).suckManaFrom(getWorld(), getPos(), getCap(), target, 1, false);
+						if (((TilePearlHolder) tile).suckManaFrom(getWorld(), getPos(), getCap(), target, 1, false)) {
+							ableToSuckMana = true;
+						}
 					}
 				}
 			}
 		}
 
-		for (EntityItem entityItem : world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos).grow(2, 2, 2))) {
+		isAbleToSuckMana = ableToSuckMana;
+
+		for (EntityItem entityItem : world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos))) {
 			if (!inputPearl.getHandler().getStackInSlot(0).isEmpty()) break;
 
 			if (entityItem.getItem().getItem() instanceof IInfusable) {
@@ -148,7 +136,7 @@ public class TileCraftingPlate extends TileManaInteracter {
 							@SideOnly(Side.CLIENT)
 							public void runIfClient() {
 								if (renderHandler != null)
-									((TileCraftingPlateRenderer) renderHandler).addAnimation(finalI, true);
+									((TileCraftingPlateRenderer) renderHandler).addAnimation(finalI, true, false);
 							}
 						});
 						break;
@@ -159,7 +147,7 @@ public class TileCraftingPlate extends TileManaInteracter {
 			markDirty();
 		}
 
-		if (!inputPearl.getHandler().getStackInSlot(0).isEmpty()) {
+		if (!inputPearl.getHandler().getStackInSlot(0).isEmpty() && !realInventory.getHandler().getStackInSlot(0).isEmpty()) {
 			CapManager manager = new CapManager(inputPearl.getHandler().getStackInSlot(0));
 
 			suckManaFrom(getWorld(), getPos(), manager.getCap(), getPos(), 1, false);
@@ -174,7 +162,7 @@ public class TileCraftingPlate extends TileManaInteracter {
 				}
 				SpellBuilder builder = new SpellBuilder(stacks);
 
-				ItemStack stack = new ItemStack(ModItems.PEARL_NACRE);
+				ItemStack stack = inputPearl.getHandler().getStackInSlot(0).copy();
 				ItemNBTHelper.setFloat(stack, Constants.NBT.RAND, world.rand.nextFloat());
 				ItemNBTHelper.setString(stack, "type", EnumPearlType.INFUSED.toString());
 

@@ -64,7 +64,7 @@ public class TilePearlHolder extends TileManaInteracter implements ICooldown {
 		if (pearl.getItem() == ModItems.MANA_ORB) {
 
 			if (!isBenign)
-				for (BlockPos pearlHolders : getNearestSuckables(TilePearlHolder.class, getWorld(), getPos())) {
+				for (BlockPos pearlHolders : getNearestSuckables(TilePearlHolder.class, getWorld(), getPos(), false)) {
 					TileEntity tile = getWorld().getTileEntity(pearlHolders);
 					if (tile != null && tile instanceof TilePearlHolder && !((TilePearlHolder) tile).isBenign) {
 						if (structurePos == null && ((TilePearlHolder) tile).structurePos == null)
@@ -72,7 +72,7 @@ public class TilePearlHolder extends TileManaInteracter implements ICooldown {
 					}
 				}
 
-			for (BlockPos target : getNearestSuckables(TileManaBattery.class, getWorld(), getPos())) {
+			for (BlockPos target : getNearestSuckables(TileManaBattery.class, getWorld(), getPos(), false)) {
 				if (target.equals(structurePos)) continue;
 				suckManaFrom(getWorld(), getPos(), getCap(), target, 1, false);
 			}
@@ -97,7 +97,7 @@ public class TilePearlHolder extends TileManaInteracter implements ICooldown {
 				return;
 
 			boolean suckedFromHolder = false;
-			for (BlockPos pearlHolders : getNearestSuckables(TilePearlHolder.class, getWorld(), getPos())) {
+			for (BlockPos pearlHolders : getNearestSuckables(TilePearlHolder.class, getWorld(), getPos(), false)) {
 				TileEntity tile = getWorld().getTileEntity(pearlHolders);
 				if (tile != null && tile instanceof TilePearlHolder && !((TilePearlHolder) tile).isBenign && structurePos == null && ((TilePearlHolder) tile).structurePos == null) {
 					suckedFromHolder = true;
@@ -106,7 +106,7 @@ public class TilePearlHolder extends TileManaInteracter implements ICooldown {
 			}
 
 			if (!suckedFromHolder) {
-				for (BlockPos target : getNearestSuckables(TileManaBattery.class, getWorld(), getPos())) {
+				for (BlockPos target : getNearestSuckables(TileManaBattery.class, getWorld(), getPos(), false)) {
 					suckManaFrom(getWorld(), getPos(), pearlCap, target, 10, false);
 				}
 			}

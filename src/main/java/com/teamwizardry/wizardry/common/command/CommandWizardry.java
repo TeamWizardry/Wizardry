@@ -52,8 +52,8 @@ public class CommandWizardry extends CommandBase {
 
 			notifyCommandListener(sender, this, "wizardry.command.success");
 
-		} else if (args[0].equalsIgnoreCase("reverseTime")) {
-			notifyCommandListener(sender, this, "wizardry.command.reverseTime");
+		} else if (args[0].equalsIgnoreCase("reset")) {
+			notifyCommandListener(sender, this, "wizardry.command.reset");
 
 			File moduleDirectory = new File(CommonProxy.directory, "modules");
 			if (moduleDirectory.exists()) {

@@ -28,8 +28,6 @@ public class WizardryTransformer implements IClassTransformer {
 		System.out.println("[" + Wizardry.MODID + " ASM] " + str);
 	}
 
-	// BOILERPLATE =====================================================================================================
-
 	@Override
 	public byte[] transform(String name, String transformedName, byte[] basicClass) {
 		switch (transformedName) {

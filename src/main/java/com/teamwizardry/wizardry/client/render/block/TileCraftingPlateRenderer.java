@@ -14,9 +14,11 @@ import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.core.StructureErrorRenderer;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
+import com.teamwizardry.wizardry.common.tile.TileManaBattery;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -52,39 +54,66 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 		angles = new double[tile.realInventory.getHandler().getSlots()];
 	}
 
-	public void addAnimation(int i, boolean firstTime) {
+	public void addAnimation(int i, boolean firstTime, boolean reverse) {
 		if (firstTime) {
-			tile.positions[i] = Vec3d.ZERO;
+			tile.positions[i] = Vec3d.ZERO.addVector(0, 0.5, 0);
 			angles[i] = RandUtil.nextDouble(0, 360);
 		}
 
 		if (tile.positions[i] == null) return;
 
+		CapManager manager = new CapManager(tile.inputPearl.getHandler().getStackInSlot(0));
+
+		Vec3d newDest;
 		double t;
-		if (tile.inputPearl.getHandler().getStackInSlot(0).isEmpty()) t = 1;
-		else {
-			CapManager manager = new CapManager(tile.inputPearl.getHandler().getStackInSlot(0));
-			t = 1 - (manager.getMana() / manager.getMaxMana());
+		if (!manager.isManaEmpty() && tile.isAbleToSuckMana || (!tile.inputPearl.getHandler().getStackInSlot(0).isEmpty() && tile.isAbleToSuckMana)) {
+
+			if (tile.inputPearl.getHandler().getStackInSlot(0).isEmpty()) t = 1;
+			else {
+				t = 1 - (manager.getMana() / manager.getMaxMana());
+			}
+
+			double radius = RandUtil.nextDouble(5, 8) * t;
+
+			angles[i] += RandUtil.nextDouble(-1.5, 1.5);
+			double x = MathHelper.cos((float) angles[i]) * radius;
+			double z = MathHelper.sin((float) angles[i]) * radius;
+			newDest = new Vec3d(x, (2 + (RandUtil.nextFloat() * 7)) * t, z);
+
+			BasicAnimation<Vec3d[]> anim = new BasicAnimation<>(tile.positions, "[" + i + "]");
+			anim.setTo(newDest);
+			anim.setDuration((float) (RandUtil.nextDouble(50, 100) * t));
+			anim.setEasing(Easing.easeInOutQuint);
+			final int finalI = i;
+			anim.setCompletion(() -> {
+				if (tile.positions[finalI] == null) return;
+				addAnimation(finalI, false, false);
+			});
+			animator.add(anim);
+		} else {
+			newDest = Vec3d.ZERO;
+
+			if (!reverse) {
+				for (BlockPos pos : tile.getNearestSuckables(TileManaBattery.class, tile.getWorld(), tile.getPos(), true)) {
+					newDest = new Vec3d(pos).subtract(new Vec3d(tile.getPos())).normalize().scale(1.0 / 2.0);
+					break;
+				}
+			}
+
+			newDest = newDest.addVector(RandUtil.nextDouble(-0.15, 0.15), 0.5 + RandUtil.nextDouble(0.15), RandUtil.nextDouble(-0.15, 0.15));
+
+			BasicAnimation<Vec3d[]> anim = new BasicAnimation<>(tile.positions, "[" + i + "]");
+			anim.setDuration((float) (RandUtil.nextDouble(50, 100)));
+			anim.setEasing(Easing.easeInOutSine);
+			anim.setTo(newDest);
+			final int finalI = i;
+			anim.setCompletion(() -> {
+				if (tile.positions[finalI] == null) return;
+				addAnimation(finalI, false, !reverse);
+			});
+			animator.add(anim);
 		}
 
-		double radius = RandUtil.nextDouble(5, 8) * t;
-
-		angles[i] += RandUtil.nextDouble(-1.5, 1.5);
-		double x = MathHelper.cos((float) angles[i]) * radius;
-		double z = MathHelper.sin((float) angles[i]) * radius;
-
-		Vec3d newDest = new Vec3d(x, (2 + (RandUtil.nextFloat() * 7)) * t, z);
-
-		BasicAnimation<Vec3d[]> anim = new BasicAnimation<>(tile.positions, "[" + i + "]");
-		anim.setTo(newDest);
-		anim.setDuration((float) (RandUtil.nextDouble(50, 100) * t));
-		anim.setEasing(Easing.easeInOutQuint);
-		final int finalI = i;
-		anim.setCompletion(() -> {
-			if (tile.positions[finalI] == null) return;
-			addAnimation(finalI, false);
-		});
-		animator.add(anim);
 	}
 
 	@Override
@@ -157,10 +186,16 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 				GlStateManager.rotate((tile.getWorld().getTotalWorldTime()) + ClientTickHandler.getPartialTicks(), 0, 1, 0);
 				GlStateManager.rotate((tile.getWorld().getTotalWorldTime()) + ClientTickHandler.getPartialTicks(), 1, 0, 0);
 				GlStateManager.rotate((tile.getWorld().getTotalWorldTime()) + ClientTickHandler.getPartialTicks(), 0, 0, 1);
+
+				GlStateManager.enableLighting();
+				GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+				RenderHelper.disableStandardItemLighting();
 				Minecraft.getMinecraft().getRenderItem().renderItem(stack, TransformType.NONE);
+				RenderHelper.enableStandardItemLighting();
 				GlStateManager.popMatrix();
 
-				if (!manager.isManaEmpty()) {
+
+				if (!manager.isManaEmpty() && tile.isAbleToSuckMana || (!tile.inputPearl.getHandler().getStackInSlot(0).isEmpty() && tile.isAbleToSuckMana)) {
 					if (tile.inputPearl.getHandler().getStackInSlot(0).isEmpty() && RandUtil.nextInt(count > 0 && count / 2 > 0 ? count / 2 : 1) == 0)
 						LibParticles.CLUSTER_DRAPE(tile.getWorld(), new Vec3d(tile.getPos()).addVector(0.5, 0.5, 0.5).add(pos));
 
@@ -187,7 +222,7 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 			GlStateManager.rotate(tile.getWorld().getTotalWorldTime(), 0, 1, 0);
 			Minecraft.getMinecraft().getRenderItem().renderItem(tile.outputPearl.getHandler().getStackInSlot(0), TransformType.NONE);
 			GlStateManager.popMatrix();
-		} else if (!manager.isManaEmpty() && RandUtil.nextInt(4) == 0) {
+		} else if (!manager.isManaEmpty() && tile.isAbleToSuckMana && RandUtil.nextInt(4) == 0) {
 			LibParticles.CRAFTING_ALTAR_IDLE(tile.getWorld(), new Vec3d(tile.getPos()).addVector(0.5, 0.7, 0.5));
 		}
 	}

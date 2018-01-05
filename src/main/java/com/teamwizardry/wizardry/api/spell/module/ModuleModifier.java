@@ -21,6 +21,6 @@ public abstract class ModuleModifier extends Module {
 	}
 
 	public String getShortHandKey() {
-		return "spell.wizardry." + getID() + ".short";
+		return "wizardry.spell." + getID() + ".short";
 	}
 }
