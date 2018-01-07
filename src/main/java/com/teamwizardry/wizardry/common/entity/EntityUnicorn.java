@@ -107,7 +107,7 @@ public class EntityUnicorn extends EntityHorse {
 		if (getEntityBoundingBox().intersects(target.getEntityBoundingBox())) {
 			target.knockBack(this, 2F, MathHelper.sin(rotationYaw), -MathHelper.cos(rotationYaw));
 			knockBack(this, 1F, -MathHelper.sin(rotationYaw), MathHelper.cos(rotationYaw));
-			target.attackEntityFrom(DamageSource.causeMobDamage(target), (float) this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
+			target.attackEntityFrom(DamageSource.causeMobDamage(this), (float) this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
 			getNavigator().setPath(null, 1);
 			givenPath = false;
 		}
