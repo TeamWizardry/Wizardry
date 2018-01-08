@@ -63,8 +63,8 @@ public class EntityBomb extends EntityThrowable {
 
 		int type = getDataManager().get(DATA_BOMB_TYPE);
 
-		if (type == 0) PosUtils.boom(getEntityWorld(), getPositionVector(), null, 0.2, 10, true);
-		else PosUtils.boom(getEntityWorld(), getPositionVector(), null, 0.2, 10, false);
+		if (type == 0) PosUtils.boom(getEntityWorld(), getPositionVector(), null, 10, true);
+		else PosUtils.boom(getEntityWorld(), getPositionVector(), null, 10, false);
 
 		ClientRunnable.run(new ClientRunnable() {
 			@SideOnly(Side.CLIENT)

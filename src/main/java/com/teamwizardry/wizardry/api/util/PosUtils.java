@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.api.util;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
@@ -72,17 +73,18 @@ public final class PosUtils {
 		return new float[]{(float) Math.toDegrees(pitch), (float) Math.toDegrees(yaw) + 90};
 	}
 
-	public static void boom(World world, Vec3d pos, @Nullable Entity excluded, double scale, double upperMagnitude, boolean reverseDirection) {
+	public static void boom(World world, Vec3d pos, @Nullable Entity excluded, double scale, boolean reverseDirection) {
 		List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(excluded, new AxisAlignedBB(new BlockPos(pos)).grow(32, 32, 32));
 		for (Entity entity1 : entityList) {
-			double dist = entity1.getDistance(pos.x, pos.y, pos.z);
-			double mag = upperMagnitude * (scale * dist / (-scale * dist - 1) + 1);
+			double x = entity1.getDistance(pos.x, pos.y, pos.z) / 32.0;
+			double magY;
 
-			Vec3d dir;
-			if (reverseDirection) {
-				mag = ((-scale * dist - 1) / (scale * dist) + 1);
-				dir = pos.subtract(entity1.getPositionVector()).normalize().scale(mag);
-			} else dir = entity1.getPositionVector().subtract(pos).normalize().scale(mag);
+			if (reverseDirection) magY = x;
+			else magY = -x + 1;
+
+			Minecraft.getMinecraft().player.sendChatMessage(magY + " - reverse: " + reverseDirection);
+
+			Vec3d dir = entity1.getPositionVector().subtract(pos).normalize().scale(reverseDirection ? -1 : 1).scale(magY).scale(scale);
 
 			entity1.motionX += (dir.x);
 			entity1.motionY += (dir.y);

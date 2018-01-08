@@ -2,6 +2,5 @@
 	"type": "item",
 	"output": { "name": "wizardry:book" },
 	"input": { "name": "minecraft:book" },
-	"duration": 1000,
 	"explode": true
 }
