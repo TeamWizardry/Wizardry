@@ -2,7 +2,6 @@ package com.teamwizardry.wizardry.api.spell;
 
 import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.spell.module.Module;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 
@@ -45,8 +44,6 @@ public interface ITaxing {
 		manager.addBurnout(burnoutCost);
 
 		manager.sync();
-
-		Minecraft.getMinecraft().player.sendChatMessage(manager.getMana() + "/" + manager.getMaxMana());
 
 		return !fail;
 	}
