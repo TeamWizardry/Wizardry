@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.api.spell;
 
 import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.spell.module.Module;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 
@@ -35,12 +36,17 @@ public interface ITaxing {
 		else manager = new CapManager(caster);
 
 		manager.setEntity(caster);
+		manager.setManualSync(true);
 
 		boolean fail = false;
 		if (manager.getMana() < manaCost) fail = true;
 
 		manager.removeMana(manaCost);
 		manager.addBurnout(burnoutCost);
+
+		manager.sync();
+
+		Minecraft.getMinecraft().player.sendChatMessage(manager.getMana() + "/" + manager.getMaxMana());
 
 		return !fail;
 	}

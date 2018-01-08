@@ -6,8 +6,6 @@ import com.teamwizardry.librarianlib.features.network.PacketBase;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
-import com.teamwizardry.wizardry.api.item.BaublesSupport;
-import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -33,14 +31,9 @@ public class PacketUpdateCaps extends PacketBase {
 
 	@Override
 	public void handle(@NotNull MessageContext ctx) {
-		IWizardryCapability cap;
 		EntityPlayer player = LibrarianLib.PROXY.getClientPlayer();
 
-		if (!BaublesSupport.getItem(player, ModItems.FAKE_HALO, ModItems.CREATIVE_HALO, ModItems.REAL_HALO).isEmpty()) {
-			cap = WizardryCapabilityProvider.getCap(BaublesSupport.getItem(player, ModItems.FAKE_HALO, ModItems.CREATIVE_HALO, ModItems.REAL_HALO));
-		} else {
-			cap = WizardryCapabilityProvider.getCap(player);
-		}
+		IWizardryCapability cap = WizardryCapabilityProvider.getCap(player);
 
 		if (cap != null) {
 			cap.loadNBTData(tags);

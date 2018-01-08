@@ -26,14 +26,15 @@ public class ItemCreativeHaloBauble extends ItemModBauble implements IFakeHalo, 
 
 	@Override
 	public void onWornTick(@NotNull ItemStack stack, @NotNull EntityLivingBase player) {
-		CapManager manager = new CapManager(player);
-		if (manager.getMaxMana() != ConfigValues.creativeHaloBufferSize)
-			manager.setMaxMana(ConfigValues.creativeHaloBufferSize);
-		if (manager.getMaxBurnout() != ConfigValues.creativeHaloBufferSize)
-			manager.setMaxBurnout(ConfigValues.creativeHaloBufferSize);
-		if (manager.getMana() != ConfigValues.creativeHaloBufferSize)
-			manager.setMana(ConfigValues.creativeHaloBufferSize);
-		if (manager.getBurnout() != 0) manager.setBurnout(0);
+		CapManager manager = new CapManager(player).setManualSync(true);
+
+		manager.setMaxMana(ConfigValues.creativeHaloBufferSize);
+		manager.setMaxBurnout(ConfigValues.creativeHaloBufferSize);
+		manager.setMana(ConfigValues.creativeHaloBufferSize);
+		manager.setBurnout(ConfigValues.creativeHaloBufferSize);
+
+		if (manager.isSomethingChanged())
+			manager.sync();
 	}
 
 	@Nonnull
