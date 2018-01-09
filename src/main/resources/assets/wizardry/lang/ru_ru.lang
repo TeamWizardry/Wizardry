@@ -1,0 +1,117 @@
+﻿jei.wizardry.category.mana_crafting=Крафт маны
+
+tile.wizardry:crafting_plate.name=Плита для крафта
+tile.wizardry:magicians_worktable.name=Верстак мага
+tile.wizardry:mana_battery.name=Батарея маны
+tile.wizardry:creative_mana_battery.name=Творческая батарея маны
+tile.wizardry:nacre.name=Жидкий перламутр
+tile.wizardry:mana.name=Жидкая мана
+tile.wizardry:cloud.name=Облако
+tile.wizardry:jar_block.name=Банка
+tile.wizardry:pearl_holder.name=Держатель жемчуга
+tile.wizardry:nacre_block.name=Перламутровый блок
+tile.wizardry:nacre_block_brick.name=Перламутровые кирпичи
+tile.wizardry:mana_magnet.name=Магнит маны
+tile.wizardry:torikki_grass.name=Торикки-Трава
+tile.wizardry:unicorn_trail.name=Тропа единорога
+
+entity.fairy.name=Фея
+entity.spirit_wight.name=Светлая душа
+entity.spirit_blight.name=Темная душа
+entity.unicorn.name=Единорог
+entity.spell_projectile.name=Заклинание
+
+item.wizardry:book.name=Кодекс заклинателя
+item.wizardry:ring.name=Золотое кольцо
+item.wizardry:ring_pearl.name=Золотое кольцо
+item.wizardry:devil_dust.name=Демоническая пыль
+item.wizardry:mana_pearl.name=Жемчуг мманы
+item.wizardry:glass_pearl.name=Стеклянный жемчуг
+item.wizardry:nacre_pearl.name=Перламутровый жемчуг
+item.wizardry:nacre_pearl.ancient.name=Древний перламутровый жемчуг
+item.wizardry:nacre_pearl.apex.name=Высший перламутровый жемчуг
+item.wizardry:nacre_pearl.potent.name=Мощный перламутровый жемчуг
+item.wizardry:nacre_pearl.decent.name=Достойный перламутровый жемчуг
+item.wizardry:nacre_pearl.flawed.name=Неиспользуемый перламутровый жемчуг
+item.wizardry:nacre_pearl.drained.name=Истощенный перламутровый жемчуг
+item.wizardry:nacre_pearl.waste.name=Отходный перламутровый жемчуг
+item.wizardry:quartz_pearl.name=Кварцевый жемчуг
+item.wizardry:debugger.name=Жезл творчества
+item.wizardry:staff.name=Посох
+item.wizardry:staff_pearl.name=Посох с жемчугом
+item.wizardry:fairy_dust.name=Пыль фей
+item.wizardry:fairy_imbued_apple.name=Сказочное яблоко
+item.wizardry:fairy_wings.name=Крылья фей
+item.wizardry:unicorn_horn.name=Рог единорога
+item.wizardry:jar.name=Банка
+item.wizardry:jar_fairy.name=Фея в банке
+item.wizardry:jar_jam.name=Сказочное варенье
+item.wizardry:syringe.name=Пустой шприц
+item.wizardry:syringe_mana.name=Мини мана-бустер™
+item.wizardry:syringe_mana.desc=Заполняет шкалу маны на 30%%.
+item.wizardry:syringe_steroid.name=Премиальная сыворотка мана-строителя™
+item.wizardry:syringe_steroid.desc0=Полностью заполняет шкалу маны и исчерпывает шкалу выгорания в течение 10 секунд.
+item.wizardry:syringe_steroid.desc1=Серьезные побочные эффекты.
+item.wizardry:syringe_steroid.desc2=&oОжог.
+item.wizardry:mana_orb.name=Сфера маны
+item.wizardry:glass_orb.name=Стеклянная сфера
+item.wizardry:cape.name=Плащ
+item.wizardry:magic_wand.name=Магический жезл
+item.wizardry:syringe_blood.name=Шприц крови
+item.wizardry:light.name=Свет
+item.wizardry:halo_real.name=Гало
+item.wizardry:halo_fake.name=Грубое гало
+item.wizardry:halo_creative.name=Творческое гало
+
+item.wizardry:wisdom_stick.name=Палка из дерева мудрости
+item.wizardry:wisdom_wood_door.name=Дверь из дерева мудрости
+tile.wizardry:wisdom_wood_log.name=Дерево мудрости
+tile.wizardry:wisdom_wood_planks.name=Доски из дерева мудрости
+tile.wizardry:wisdom_wood_pigmented_planks.name=Пигментированные доски из дерева мудрости
+tile.wizardry:wisdom_wood_slab.name=Плита из дерева мудрости
+tile.wizardry:wisdom_wood_stairs.name=Ступеньки из дерева мудрости
+tile.wizardry:wisdom_wood_trapdoor.name=Люк из дерева мудрости
+tile.wizardry:wisdom_wood_fence.name=Забор из дерева мудрости
+tile.wizardry:wisdom_wood_fence_gate.name=Ворота из дерева мудрости
+tile.wizardry:wisdom_wood.name=Дерево мудрости
+tile.wizardry:wisdom_leaves.name=Мудрая листва
+
+advancement.wizardry.book=Ты - волшебник, Гарри
+advancement.wizardry.book.desc=Создайте книгу, чтобы помочь вам в освоении волшебства
+advancement.wizardry.manapool=Не бассеин маны
+advancement.wizardry.manapool.desc=Откройте для себя жидкую ману в своих путешествиях
+advancement.wizardry.devildust=Сахар и специи
+advancement.wizardry.devildust.desc=Сожгите книгу в огне, чтобы сделать Дьявольскую пыль
+advancement.wizardry.crunch=§oCRUNCH.§a
+advancement.wizardry.crunch.desc=Разбейте бедрок в вершине нижнего мира
+
+bookGui.physicsbook.defaulttitle=Книга Физики
+
+fluid.nacre_fluid=Перламутр
+fluid.mana_fluid=Мана
+
+death.attack.wizardry.mana=%s утонул во власти
+death.attack.wizardry.crash=%s был измельчен
+death.attack.wizardry.crash.player=%s был измельчен %s
+
+subtitle.wizardry.glassbreak=Стеклянные осколки
+subtitle.wizardry.fizz=Пылевидные шипы
+subtitle.wizardry.sizzle=Шипучая пыль
+subtitle.wizardry.harp=Играющая арфа
+subtitle.wizardry.bell=Колокола
+subtitle.wizardry.bubbling=Жидкие пузыри
+subtitle.wizardry.spirit=Призрачный шепот
+
+potion.wizardry.crash=Разрушение
+potion.wizardry.low_gravity=Перо
+potion.wizardry.nullify_gravity=Вознесение
+potion.wizardry.null_movement=Герметичная печать
+potion.wizardry.phase=Призрачная форма
+potion.wizardry.slippery=Лишение трения
+potion.wizardry.steroid=Переутомление
+potion.wizardry.time_slow=Закрытие
+potion.wizardry.zach_corruption=Искажение
+
+item_group.wizardry=Волшебство
+
+wizardry.misc.module=Заклинание:
