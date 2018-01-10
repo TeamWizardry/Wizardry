@@ -15,11 +15,10 @@ import net.minecraftforge.common.MinecraftForge;
  */
 public class WizardryASMHooks {
 
-	public static boolean playerClipEventHook(EntityPlayer player) {
-		if (player.isSpectator()) return true;
-
-		PlayerClipEvent event = new PlayerClipEvent(player);
+	public static boolean playerClipEventHook(boolean hasNoClip, EntityPlayer player) {
+		PlayerClipEvent event = new PlayerClipEvent(hasNoClip, player);
 		MinecraftForge.EVENT_BUS.post(event);
+
 		return event.noClip;
 	}
 

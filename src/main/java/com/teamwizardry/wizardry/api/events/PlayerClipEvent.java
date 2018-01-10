@@ -8,10 +8,11 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  */
 public class PlayerClipEvent extends Event {
 
-	public EntityPlayer player;
-	public boolean noClip = false;
+	public final EntityPlayer player;
+	public boolean noClip;
 
-	public PlayerClipEvent(EntityPlayer player) {
+	public PlayerClipEvent(boolean isSpectator, EntityPlayer player) {
+		noClip = isSpectator;
 		this.player = player;
 	}
 }
