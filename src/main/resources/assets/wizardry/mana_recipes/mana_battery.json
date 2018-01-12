@@ -8,5 +8,6 @@
 	],
 	"radius": 1,
 	"consume": true,
-	"explode": true
+	"explode": true,
+	"harp": false
 }

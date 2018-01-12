@@ -45,6 +45,7 @@ public class WizardryTransformer implements IClassTransformer {
 							LabelNode node1 = new LabelNode();
 							InsnList newInstructions = new InsnList();
 
+							//newInstructions.add(new FrameNode(F_SAME, 0, null, 0, null));
 							newInstructions.add(new VarInsnNode(ALOAD, 1));
 							newInstructions.add(new MethodInsnNode(INVOKESTATIC, ASM_HOOKS, "entityRenderShadowAndFire",
 									"(L" + CLASS_ENTITY + ";)Z", false));
@@ -54,6 +55,7 @@ public class WizardryTransformer implements IClassTransformer {
 
 							newInstructions.add(node1);
 							methodNode.instructions.insertBefore(methodNode.instructions.getFirst(), newInstructions);
+							methodNode.instructions.resetLabels();
 							return true;
 						}
 				);
@@ -73,6 +75,7 @@ public class WizardryTransformer implements IClassTransformer {
 							InsnList newInstructions = new InsnList();
 							LabelNode node1 = new LabelNode();
 
+							//	newInstructions.add(new FrameNode(F_SAME, 0, null, 0, null));
 							newInstructions.add(new VarInsnNode(ALOAD, 0));
 							newInstructions.add(new VarInsnNode(ALOAD, 1));
 							newInstructions.add(new VarInsnNode(DLOAD, 2));
@@ -86,7 +89,7 @@ public class WizardryTransformer implements IClassTransformer {
 							newInstructions.add(node1);
 
 							methodNode.instructions.insertBefore(methodNode.instructions.getFirst(), newInstructions);
-
+							methodNode.instructions.resetLabels();
 							return true;
 						}
 				);
@@ -106,6 +109,7 @@ public class WizardryTransformer implements IClassTransformer {
 							LabelNode node1 = new LabelNode();
 							InsnList newInstructions = new InsnList();
 
+							//	newInstructions.add(new FrameNode(F_SAME, 0, null, 0, null));
 							newInstructions.add(new VarInsnNode(ALOAD, 0));
 							newInstructions.add(new VarInsnNode(FLOAD, 1));
 							newInstructions.add(new VarInsnNode(FLOAD, 2));
@@ -118,6 +122,7 @@ public class WizardryTransformer implements IClassTransformer {
 							newInstructions.add(node1);
 
 							methodNode.instructions.insertBefore(methodNode.instructions.getFirst(), newInstructions);
+							methodNode.instructions.resetLabels();
 							return true;
 						}
 				);
@@ -139,21 +144,21 @@ public class WizardryTransformer implements IClassTransformer {
 									FieldInsnNode fInsnNode = (FieldInsnNode) insnNode;
 									if (fInsnNode.getOpcode() == Opcodes.PUTFIELD
 											&& fInsnNode.owner.equals(CLASS_ENTITY_PLAYER)
-											&& equalsEither(fInsnNode.name, "field_70145_X ", "noClip")
+											&& equalsEither(fInsnNode.name, "field_70145_X", "noClip")
 											&& fInsnNode.desc.equals("Z")) {
 
 										InsnList newInstructions = new InsnList();
 
 										newInstructions.add(new VarInsnNode(ALOAD, 0));
 										newInstructions.add(new MethodInsnNode(INVOKESTATIC, ASM_HOOKS, "playerClipEventHook",
-												"(L" + CLASS_ENTITY_PLAYER + ";)Z", false));
+												"(ZL" + CLASS_ENTITY_PLAYER + ";)Z", false));
 
-										methodNode.instructions.insert(insnNode, newInstructions);
+										methodNode.instructions.insertBefore(insnNode, newInstructions);
+										methodNode.instructions.resetLabels();
 										return true;
 									}
 								}
 							}
-
 							return false;
 						}
 				);
@@ -188,7 +193,13 @@ public class WizardryTransformer implements IClassTransformer {
 
 		transformer.accept(classNode);
 
-		ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);//SafeClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+		SafeClassWriter writer = new SafeClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES) {
+			@Override
+			protected String getCommonSuperClass(final String type1, final String type2) {
+				//  the default asm merge uses Class.forName(), this prevents that.
+				return "java/lang/Object";
+			}
+		};
 		classNode.accept(writer);
 		return writer.toByteArray();
 	}

@@ -1,6 +1,7 @@
 {
 	"type": "block",
 	"output": { "name": "wizardry:nacre" },
-	"input": { "name": "minecraft:gold_nugget" },
-	"harp": false
+	"input": {
+		"name": "minecraft:gold_nugget"
+	}
 }

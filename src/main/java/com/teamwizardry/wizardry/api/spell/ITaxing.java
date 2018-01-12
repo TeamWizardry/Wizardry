@@ -35,12 +35,15 @@ public interface ITaxing {
 		else manager = new CapManager(caster);
 
 		manager.setEntity(caster);
+		manager.setManualSync(true);
 
 		boolean fail = false;
 		if (manager.getMana() < manaCost) fail = true;
 
 		manager.removeMana(manaCost);
 		manager.addBurnout(burnoutCost);
+
+		manager.sync();
 
 		return !fail;
 	}

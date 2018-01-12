@@ -21,15 +21,18 @@ public class ItemFakeHaloHead extends ItemModArmor implements IFakeHalo, IHalo {
 
 	@Override
 	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-		CapManager manager = new CapManager(entityIn);
-		if (manager.getMaxMana() != ConfigValues.crudeHaloBufferSize)
-			manager.setMaxMana(ConfigValues.crudeHaloBufferSize);
-		if (manager.getMaxBurnout() != ConfigValues.crudeHaloBufferSize)
-			manager.setMaxBurnout(ConfigValues.crudeHaloBufferSize);
+		CapManager manager = new CapManager(entityIn).setManualSync(true);
+
+		manager.setMaxMana(ConfigValues.crudeHaloBufferSize);
+		manager.setMaxBurnout(ConfigValues.crudeHaloBufferSize);
 		if (manager.getMana() > ConfigValues.crudeHaloBufferSize) manager.setMana(ConfigValues.crudeHaloBufferSize);
 		if (manager.getBurnout() > ConfigValues.crudeHaloBufferSize)
 			manager.setBurnout(ConfigValues.crudeHaloBufferSize);
-		if (!manager.isBurnoutEmpty()) manager.removeBurnout(manager.getMaxBurnout() * 0.001);
+
+		if (!manager.isBurnoutEmpty()) manager.removeBurnout(manager.getMaxBurnout() * ConfigValues.haloGenSpeed);
+
+		if (manager.isSomethingChanged())
+			manager.sync();
 	}
 
 	@Override

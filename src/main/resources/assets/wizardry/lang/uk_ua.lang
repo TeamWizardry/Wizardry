@@ -1,0 +1,117 @@
+jei.wizardry.category.mana_crafting=Крафт мани
+
+tile.wizardry:crafting_plate.name=Плита для крафта
+tile.wizardry:magicians_worktable.name=Верстак мага
+tile.wizardry:mana_battery.name=Батарея мани
+tile.wizardry:creative_mana_battery.name=Творча батарея мани
+tile.wizardry:nacre.name=Рідкий перламутр
+tile.wizardry:mana.name=Рідка мана
+tile.wizardry:cloud.name=Хмара
+tile.wizardry:jar_block.name=Банку
+tile.wizardry:pearl_holder.name=Тримач перлів
+tile.wizardry:nacre_block.name=Перламутровий блок
+tile.wizardry:nacre_block_brick.name=Перламутрові цеглини
+tile.wizardry:mana_magnet.name=Магніт мани
+tile.wizardry:torikki_grass.name=Торикки-Трава
+tile.wizardry:unicorn_trail.name=Стежка єдинорога
+
+entity.fairy.name=Фея
+entity.spirit_wight.name=Світла душа
+entity.spirit_blight.name=Темна душа
+entity.unicorn.name=Єдиноріг
+entity.spell_projectile.name=Заклинання
+
+item.wizardry:book.name=Кодекс заклинателя
+item.wizardry:ring.name=Золоте кільце
+item.wizardry:ring_pearl.name=Золоте кільце
+item.wizardry:devil_dust.name=Демонічна пил
+item.wizardry:mana_pearl.name=Перли мани
+item.wizardry:glass_pearl.name=Скляний перли
+item.wizardry:nacre_pearl.name=Перламутровий перли
+item.wizardry:nacre_pearl.ancient.name=Стародавній перламутровий перли
+item.wizardry:nacre_pearl.apex.name=Вищий перламутровий перли
+item.wizardry:nacre_pearl.potent.name=Потужний перламутровий перли
+item.wizardry:nacre_pearl.decent.name=Гідний перламутровий перли
+item.wizardry:nacre_pearl.flawed.name=Невикористаний перламутровий перли
+item.wizardry:nacre_pearl.drained.name=Виснажений перламутровий перли
+item.wizardry:nacre_pearl.waste.name=Поганий перламутровий перли
+item.wizardry:quartz_pearl.name=Кварцовий перли
+item.wizardry:debugger.name=Жезл творчості
+item.wizardry:staff.name=Посох
+item.wizardry:staff_pearl.name=Посох з перлами
+item.wizardry:fairy_dust.name=Пил фей
+item.wizardry:fairy_imbued_apple.name=Казкове яблуко
+item.wizardry:fairy_wings.name=Крила фей
+item.wizardry:unicorn_horn.name=Ріг єдинорога
+item.wizardry:jar.name=Банку
+item.wizardry:jar_fairy.name=Фея в банку
+item.wizardry:jar_jam.name=Казкове варення
+item.wizardry:syringe.name=Порожній шприц
+item.wizardry:syringe_mana.name=Міні мана-бустер™
+item.wizardry:syringe_mana.desc=Заповнює шкалу мани на 30%%.
+item.wizardry:syringe_steroid.name=Преміальна сироватка мана-будівельника™
+item.wizardry:syringe_steroid.desc0=Повністю заповнює шкалу мани і вичерпує шкалу вигорання протягом 10 секунд.
+item.wizardry:syringe_steroid.desc1=Серйозні побічні ефекти.
+item.wizardry:syringe_steroid.desc2=&оОжог.
+item.wizardry:mana_orb.name=Сфера мани
+item.wizardry:glass_orb.name=Скляна сфера
+item.wizardry:cape.name=Плащ
+item.wizardry:magic_wand.name=Магічний жезл
+item.wizardry:syringe_blood.name=Шприц крові
+item.wizardry:light.name=Світло
+item.wizardry:halo_real.name=Гало
+item.wizardry:halo_fake.name=Грубе гало
+item.wizardry:halo_creative.name=Творче гало
+
+item.wizardry:wisdom_stick.name=Палиця з дерева мудрості
+item.wizardry:wisdom_wood_door.name=Двері з дерева мудрості
+tile.wizardry:wisdom_wood_log.name=Дерево мудрості
+tile.wizardry:wisdom_wood_planks.name=Дошки з дерева мудрості
+tile.wizardry:wisdom_wood_pigmented_planks.name=Пігментовані дошки з дерева мудрості
+tile.wizardry:wisdom_wood_slab.name=Плита з дерева мудрості
+tile.wizardry:wisdom_wood_stairs.name=Сходинки з дерева мудрості
+tile.wizardry:wisdom_wood_trapdoor.name=Люк з дерева мудрості
+tile.wizardry:wisdom_wood_fence.name=Паркан з дерева мудрості
+tile.wizardry:wisdom_wood_fence_gate.name=Ворота з дерева мудрості
+tile.wizardry:wisdom_wood.name=Дерево мудрості
+tile.wizardry:wisdom_leaves.name=Мудра листя
+
+advancement.wizardry.book=Ти - чарівник, Гаррі
+advancement.wizardry.book.desc=Створіть книгу, щоб допомогти вам в освоєнні чарівництва
+advancement.wizardry.manapool=басейн мани
+advancement.wizardry.manapool.desc=Відкрийте для себе рідку ману в своїх подорожах
+advancement.wizardry.devildust=Цукор і спеції
+advancement.wizardry.devildust.desc=Спаліть книгу у вогні, щоб зробити Диявольську пил
+advancement.wizardry.crunch=§oCRUNCH.§a
+advancement.wizardry.crunch.desc=Розбийте бедрок у вершині нижнього світу
+
+bookGui.physicsbook.defaulttitle=Книга Фізики
+
+fluid.nacre_fluid=Перламутр
+fluid.mana_fluid=Мана
+
+death.attack.wizardry.mana=%s потонув у владі
+death.attack.wizardry.crash=%s був подрібнений
+death.attack.wizardry.crash.player=%s був подрібнений %s
+
+subtitle.wizardry.glassbreak=Скляні осколки
+subtitle.wizardry.fizz=Пилоподібні шипи
+subtitle.wizardry.sizzle=Шипуча пил
+subtitle.wizardry.harp=Грає арфа
+subtitle.wizardry.bell=Дзвони
+subtitle.wizardry.киплячому=Рідкі бульбашки
+subtitle.wizardry.spirit=Примарний шепіт
+
+potion.wizardry.crash=Руйнування
+potion.wizardry.low_gravity=Перо
+potion.wizardry.nullify_gravity=Вознесіння
+potion.wizardry.null_movement=Герметична друк
+potion.wizardry.phase=Примарна форма
+potion.wizardry.slippery=Позбавлення тертя
+potion.wizardry.steroid=Перевтома
+potion.wizardry.time_slow=Закриття
+potion.wizardry.zach_corruption=Спотворення
+
+item_group.wizardry=Чари
+
+wizardry.misc.module=Заклинання:

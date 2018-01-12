@@ -112,7 +112,7 @@ public class ManaRecipeLoader
 			String inputOredict = null;
 			List<ItemStack> extraInputItems = new LinkedList<>();
 			List<String> extraInputOredicts = new LinkedList<>();
-			int duration = 200;
+			int duration = 100;
 			int radius = 0;
 			boolean consume = false;
 			boolean explode = false;
@@ -498,7 +498,7 @@ public class ManaRecipeLoader
 				if (explode)
 				{
 					PacketHandler.NETWORK.sendToAllAround(new PacketExplode(output.getPositionVector(), Color.CYAN, Color.BLUE, 0.9, 2, 500, 100, 50, true), new NetworkRegistry.TargetPoint(world.provider.getDimension(), output.posX, output.posY, output.posZ, 256));
-					PosUtils.boom(world, output.getPositionVector(), output, 0.8, 3, false);
+					PosUtils.boom(world, output.getPositionVector(), output, 3, false);
 				}
 
 				if (harp) world.playSound(null, output.posX, output.posY, output.posZ, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
@@ -632,7 +632,7 @@ public class ManaRecipeLoader
 				if (explode)
 				{
 					PacketHandler.NETWORK.sendToAllAround(new PacketExplode(output, Color.CYAN, Color.BLUE, 0.9, 2, 500, 100, 50, true), new NetworkRegistry.TargetPoint(world.provider.getDimension(), output.x, output.y, output.z, 256));
-					PosUtils.boom(world, output, null, 0.8, 3, false);
+					PosUtils.boom(world, output, null, 3, false);
 				}
 
 				if (harp) world.playSound(null, output.x, output.y, output.z, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
@@ -770,7 +770,7 @@ public class ManaRecipeLoader
 				if (explode)
 				{
 					PacketHandler.NETWORK.sendToAllAround(new PacketExplode(output.getPositionVector(), Color.CYAN, Color.BLUE, 0.9, 2, 500, 100, 50, true), new NetworkRegistry.TargetPoint(world.provider.getDimension(), output.posX, output.posY, output.posZ, 256));
-					PosUtils.boom(world, output.getPositionVector(), output, 0.8, 3, false);
+					PosUtils.boom(world, output.getPositionVector(), output, 3, false);
 				}
 
 				if (harp) world.playSound(null, output.posX, output.posY, output.posZ, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
@@ -904,7 +904,7 @@ public class ManaRecipeLoader
 				if (explode)
 				{
 					PacketHandler.NETWORK.sendToAllAround(new PacketExplode(output, Color.CYAN, Color.BLUE, 0.9, 2, 500, 100, 50, true), new NetworkRegistry.TargetPoint(world.provider.getDimension(), output.x, output.y, output.z, 256));
-					PosUtils.boom(world, output, null, 0.8, 3, false);
+					PosUtils.boom(world, output, null, 3, false);
 				}
 
 				if (harp) world.playSound(null, output.x, output.y, output.z, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);

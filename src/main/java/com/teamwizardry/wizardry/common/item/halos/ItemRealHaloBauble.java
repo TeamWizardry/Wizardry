@@ -26,15 +26,18 @@ public class ItemRealHaloBauble extends ItemModBauble implements IFakeHalo, IHal
 
 	@Override
 	public void onWornTick(@NotNull ItemStack stack, @NotNull EntityLivingBase player) {
-		CapManager manager = new CapManager(player);
-		if (manager.getMaxMana() != ConfigValues.realHaloBufferSize)
-			manager.setMaxMana(ConfigValues.realHaloBufferSize);
-		if (manager.getMaxBurnout() != ConfigValues.realHaloBufferSize)
-			manager.setMaxBurnout(ConfigValues.realHaloBufferSize);
-		if (!manager.isManaFull()) manager.addMana(manager.getMaxMana() * 0.001);
-		if (!manager.isBurnoutEmpty()) manager.removeBurnout(manager.getMaxBurnout() * 0.001);
+		CapManager manager = new CapManager(player).setManualSync(true);
+
+		manager.setMaxMana(ConfigValues.realHaloBufferSize);
+		manager.setMaxBurnout(ConfigValues.realHaloBufferSize);
 		if (manager.getMana() > ConfigValues.realHaloBufferSize) manager.setMana(ConfigValues.realHaloBufferSize);
 		if (manager.getBurnout() > ConfigValues.realHaloBufferSize) manager.setBurnout(ConfigValues.realHaloBufferSize);
+
+		if (!manager.isManaFull()) manager.addMana(manager.getMaxMana() * ConfigValues.haloGenSpeed);
+		if (!manager.isBurnoutEmpty()) manager.removeBurnout(manager.getMaxBurnout() * ConfigValues.haloGenSpeed);
+
+		if (manager.isSomethingChanged())
+			manager.sync();
 	}
 
 	@Nonnull

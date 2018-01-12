@@ -37,7 +37,7 @@ public class EntityBurnableItem extends EntityItem
 			return;
 		if (hasBurned)
 		{
-			hasBurned = !hasBurned;
+			hasBurned = false;
 			recipe.tick(world, this.getPosition());
 			if (recipe.isFinished())
 			{

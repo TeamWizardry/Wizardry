@@ -4,6 +4,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -16,6 +17,7 @@ public final class CapManager {
 	@Nullable
 	private IWizardryCapability cap;
 	private Entity entity;
+	private boolean manualSync = false, somethingChanged = false;
 
 	public CapManager(@Nullable Entity entity) {
 		this.entity = entity;
@@ -76,8 +78,20 @@ public final class CapManager {
 
 	public void setMaxMana(double mana) {
 		if (cap == null) return;
-		cap.setMaxMana(mana, entity);
-		if (getMana() > mana) setMana(mana);
+
+		boolean change = false;
+		if (getMaxMana() != mana) {
+			cap.setMaxMana(mana);
+			change = true;
+		}
+		if (getMana() > mana) {
+			cap.setMana(mana);
+			change = true;
+		}
+
+		somethingChanged = change;
+
+		if (change && !isManualSync()) sync();
 	}
 
 	public double getMana() {
@@ -87,7 +101,14 @@ public final class CapManager {
 
 	public void setMana(double mana) {
 		if (cap == null) return;
-		cap.setMana(Math.min(Math.max(0, mana), getMaxMana()), entity);
+		double clamped = MathHelper.clamp(mana, 0, getMaxMana());
+
+		if (cap.getMana() != clamped) {
+			cap.setMana(clamped);
+
+			somethingChanged = true;
+			if (!isManualSync()) sync();
+		}
 	}
 
 	public double getBurnout() {
@@ -97,7 +118,14 @@ public final class CapManager {
 
 	public void setBurnout(double burnout) {
 		if (cap == null) return;
-		cap.setBurnout(Math.max(0, Math.min(burnout, getMaxBurnout())), entity);
+		double clamped = MathHelper.clamp(burnout, 0, getMaxBurnout());
+
+		if (cap.getBurnout() != clamped) {
+			cap.setBurnout(clamped);
+
+			somethingChanged = true;
+			if (!isManualSync()) sync();
+		}
 	}
 
 	public double getMaxBurnout() {
@@ -107,8 +135,19 @@ public final class CapManager {
 
 	public void setMaxBurnout(double burnout) {
 		if (cap == null) return;
-		cap.setMaxBurnout(burnout, entity);
-		if (getBurnout() > burnout) setBurnout(burnout);
+
+		boolean change = false;
+		if (getMaxBurnout() != burnout) {
+			cap.setMaxBurnout(burnout);
+			change = true;
+		}
+		if (getBurnout() > burnout) {
+			cap.setBurnout(burnout);
+			change = true;
+		}
+
+		somethingChanged = change;
+		if (change && !isManualSync()) sync();
 	}
 
 	public boolean isManaFull() {
@@ -130,5 +169,18 @@ public final class CapManager {
 	@Nullable
 	public IWizardryCapability getCap() {
 		return cap;
+	}
+
+	public boolean isManualSync() {
+		return manualSync;
+	}
+
+	public CapManager setManualSync(boolean manualSync) {
+		this.manualSync = manualSync;
+		return this;
+	}
+
+	public boolean isSomethingChanged() {
+		return somethingChanged;
 	}
 }
