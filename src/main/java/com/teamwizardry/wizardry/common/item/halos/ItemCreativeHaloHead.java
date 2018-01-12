@@ -26,7 +26,7 @@ public class ItemCreativeHaloHead extends ItemModArmor implements IFakeHalo, IHa
 		manager.setMaxMana(ConfigValues.creativeHaloBufferSize);
 		manager.setMaxBurnout(ConfigValues.creativeHaloBufferSize);
 		manager.setMana(ConfigValues.creativeHaloBufferSize);
-		manager.setBurnout(ConfigValues.creativeHaloBufferSize);
+		manager.setBurnout(0);
 
 		if (manager.isSomethingChanged())
 			manager.sync();
