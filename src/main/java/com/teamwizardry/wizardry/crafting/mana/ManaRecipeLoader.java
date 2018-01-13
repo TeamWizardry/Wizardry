@@ -373,14 +373,14 @@ public class ManaRecipeLoader {
         }, identifier, duration);
 	}
 
-	private static class ManaCrafterBuilder {
+	public static class ManaCrafterBuilder {
 		private ManaCrafterPredicate isValid;
 		private ManaCrafterConsumer tick;
 		private ManaCrafterConsumer finish;
 		private String identifier;
 		private int duration;
 
-		public ManaCrafterBuilder(ManaCrafterPredicate isValid, ManaCrafterConsumer tick, ManaCrafterConsumer finish, String identifier, int duration) {
+		private ManaCrafterBuilder(ManaCrafterPredicate isValid, ManaCrafterConsumer tick, ManaCrafterConsumer finish, String identifier, int duration) {
 			this.isValid = isValid;
 			this.tick = tick;
 			this.finish = finish;
