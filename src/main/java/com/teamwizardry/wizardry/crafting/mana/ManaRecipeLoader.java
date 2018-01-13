@@ -373,7 +373,7 @@ public class ManaRecipeLoader {
         }, identifier, duration);
 	}
 
-	private static class ManaCrafterBuilder {
+	public static class ManaCrafterBuilder {
 		private ManaCrafterPredicate isValid;
 		private ManaCrafterConsumer tick;
 		private ManaCrafterConsumer finish;
