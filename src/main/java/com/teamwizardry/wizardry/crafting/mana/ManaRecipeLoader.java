@@ -78,7 +78,7 @@ public class ManaRecipeLoader {
 				try {
 					element = new JsonParser().parse(new FileReader(file));
 				} catch (FileNotFoundException e) {
-					e.printStackTrace();
+					Wizardry.logger.error("  > SOMETHING WENT WRONG! " + file.getPath() + " can NOT be found. Ignoring file...");
 					continue;
 				}
 
@@ -231,8 +231,7 @@ public class ManaRecipeLoader {
 				} else
 					Wizardry.logger.error("  > WARNING! " + file.getPath() + " specifies an invalid recipe output type. Valid recipe types: \"item\" \"block\". Ignoring file...: " + element.toString());
 			} catch (JsonParseException jsonException) {
-				Wizardry.logger.error("  > WARNING! Skipping " + file.getPath() + " due to error:");
-				jsonException.printStackTrace();
+				Wizardry.logger.error("  > WARNING! Skipping " + file.getPath() + " due to error: ", jsonException);
 			}
 		}
 		Wizardry.logger.info("> Finished mana recipe loading.");
