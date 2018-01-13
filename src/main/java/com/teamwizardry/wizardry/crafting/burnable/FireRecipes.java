@@ -19,14 +19,12 @@ public class FireRecipes
 	public static final HashMap<ItemStack, FireRecipe> ITEM_RECIPES = new HashMap<>();
 	public static final HashMap<String, FireRecipe> OREDICT_RECIPES = new HashMap<>();
 	
-	private static final String[] INTERNAL_RECIPE_NAMES = { "devil_dust", "sky_dust" };
+	private static final String[] INTERNAL_RECIPE_NAMES = { "devil_dust", "devil_dust_secondary", "sky_dust" };
 	
 	public void loadRecipes(File directory)
 	{
 		FireRecipeLoader.INSTANCE.setDirectory(directory);
 		FireRecipeLoader.INSTANCE.processRecipes(ITEM_RECIPES, OREDICT_RECIPES);
-//		ITEM_RECIPES.put(new ItemStack(Items.REDSTONE), new FireRecipe(new ItemStack(ModItems.DEVIL_DUST), 200));
-//		ITEM_RECIPES.put(new ItemStack(ModItems.FAIRY_DUST), new FireRecipe(new ItemStack(ModItems.SKY_DUST), 200));
 	}
 	
 	public void copyMissingRecipes(File directory)

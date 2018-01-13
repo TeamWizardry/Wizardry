@@ -1,9 +1,11 @@
 package com.teamwizardry.wizardry.crafting.burnable;
 
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class EntityBurnableItem extends EntityItem
@@ -97,6 +99,8 @@ public class EntityBurnableItem extends EntityItem
 	public static boolean isBurnable(ItemStack stack)
 	{
 		if (stack.isEmpty())
+			return false;
+		if (stack.getItem() == Items.REDSTONE && Loader.isModLoaded("fluxnetworks"))
 			return false;
 		if (FireRecipes.ITEM_RECIPES.keySet().stream().anyMatch(item -> ItemStack.areItemsEqual(item, stack)))
 			return true;

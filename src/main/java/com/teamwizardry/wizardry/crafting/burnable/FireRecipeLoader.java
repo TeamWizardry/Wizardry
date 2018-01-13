@@ -12,9 +12,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.teamwizardry.wizardry.Wizardry;
 
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -111,6 +113,11 @@ public class FireRecipeLoader
 					Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT provide a valid initial input item. Ignoring file...: " + element.toString());
 					continue;
 				}
+				if (in == Items.REDSTONE && Loader.isModLoaded("fluxnetworks"))
+				{
+					Wizardry.logger.error("  > WARNING! " + file.getPath() + " gives an input of Redstone Dust, which is incompatible with Flux Networks. Ignoring file...: " + element.toString());
+					continue;
+				}
 				int metaIn = 0;
 				if (inputObject.has("meta") && inputObject.get("meta").isJsonPrimitive() && inputObject.getAsJsonPrimitive("meta").isNumber())
 					metaIn = inputObject.get("meta").getAsInt();
@@ -130,6 +137,8 @@ public class FireRecipeLoader
 					Wizardry.logger.error("  > WARNING! " + file.getPath() + " provides an already used input oredict. Ignoring file...: " + element.toString());
 					continue;
 				}
+				if (OreDictionary.getOres(oreIn, false).stream().map(stack -> stack.getItem()).anyMatch(item -> item == Items.REDSTONE))
+					Wizardry.logger.error("  > WARNING! " + file.getPath() + " gives an input OreDict that contains Redstone Dust, which is incompatible with Flux Networks. Recipe may not function correctly.");
 			}
 			else
 			{
@@ -153,16 +162,22 @@ public class FireRecipeLoader
 			if (outputObject.has("name"))
 			{
 				Item out = ForgeRegistries.ITEMS.getValue(new ResourceLocation(outputObject.get("name").getAsString()));
+//				if (out == null)
+//				{
+//					Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(outputObject.get("name").getAsString()));
+//					if (block != null)
+//						out = ItemBlock.getItemFromBlock(block);
+//				}
 				if (out == null)
 				{
-					Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT provide a valid initial input item. Ignoring file...: " + element.toString());
+					Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT provide a valid initial output item. Ignoring file...: " + element.toString());
 					continue;
 				}
 				int metaOut = 0;
 				if (outputObject.has("meta") && outputObject.get("meta").isJsonPrimitive() && outputObject.getAsJsonPrimitive("meta").isNumber())
 					metaOut = outputObject.get("meta").getAsInt();
 				int count = 1;
-				if (outputObject.has("count") && outputObject.get("count").isJsonPrimitive() && outputObject.getAsJsonPrimitive("meta").isNumber())
+				if (outputObject.has("count") && outputObject.get("count").isJsonPrimitive() && outputObject.getAsJsonPrimitive("count").isNumber())
 					count = outputObject.get("count").getAsInt();
 				output = new ItemStack(out, count, metaOut);
 			}

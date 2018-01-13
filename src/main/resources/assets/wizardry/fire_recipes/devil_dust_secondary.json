@@ -1,0 +1,6 @@
+{
+	"input": { "name": "minecraft:redstone_block" },
+	"output": { "name": "wizardry:devil_dust",
+				"count": 9 },
+	"duration": 900
+}
