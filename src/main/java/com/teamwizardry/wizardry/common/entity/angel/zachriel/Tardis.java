@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.common.entity.angel.zachriel;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.arena.ArenaManager;
 import com.teamwizardry.wizardry.common.network.PacketZachClearCompanions;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.math.BlockPos;
@@ -52,7 +51,6 @@ public class Tardis {
 	 */
 	public void reverseTime(EntityZachriel zachriel) {
 		pocketWatches.add(new PocketWatch(zachriel));
-		//Minecraft.getMinecraft().player.sendChatMessage("Pocket watch made.");
 	}
 
 	@SubscribeEvent
@@ -63,12 +61,10 @@ public class Tardis {
 
 			HashSet<PocketWatch> tmp = new HashSet<>(pocketWatches);
 			for (PocketWatch watch : tmp) {
-				//Minecraft.getMinecraft().player.sendChatMessage("Loop pocket watches - " + pocketWatches.size());
 
 				// Delete object if glass is null //
 				ZachHourGlass glass = watch.getGlass();
 				if (glass == null) {
-					Minecraft.getMinecraft().player.sendChatMessage("Hour glass is null");
 					pocketWatches.remove(watch);
 					continue;
 				}
@@ -79,8 +75,6 @@ public class Tardis {
 				if (watch.timeReverseTicks > 0) {
 
 					//// --- REVERSE TIME --- ////
-
-					Minecraft.getMinecraft().player.sendChatMessage("maxTick: " + watch.timeReverseTicks);
 
 					watch.timeReverseTicks--;
 

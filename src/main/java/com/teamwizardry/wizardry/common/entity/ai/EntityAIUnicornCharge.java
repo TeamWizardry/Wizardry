@@ -1,7 +1,6 @@
 package com.teamwizardry.wizardry.common.entity.ai;
 
 import com.teamwizardry.wizardry.common.entity.EntityUnicorn;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -53,7 +52,6 @@ public class EntityAIUnicornCharge extends EntityAIBase {
 	public void updateTask() {
 		if (unicorn.getAttackTarget() == null) return;
 
-		Minecraft.getMinecraft().player.sendChatMessage(unicorn.prepareChargeTicks + " - " + unicorn.isCharging);
 		if (unicorn.isCharging && unicorn.prepareChargeTicks < 40) {
 			unicorn.limbSwingAmount += 0.6F;
 			unicorn.prepareChargeTicks++;

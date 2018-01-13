@@ -1,3 +1,6 @@
+0.7.1
+Removed debug lines that crashed the game.
+
 0.7
 Minecraft version updated to 1.12.2
 Forge updated to latest recommended

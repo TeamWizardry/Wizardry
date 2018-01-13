@@ -4,7 +4,6 @@ import com.teamwizardry.librarianlib.features.base.item.IGlowingItem;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.wizardry.api.block.IManaInteractable;
 import com.teamwizardry.wizardry.api.capability.CapManager;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -34,7 +33,6 @@ public class ItemMagicWand extends ItemMod implements IGlowingItem {
 		TileEntity tile = worldIn.getTileEntity(pos);
 		if (tile != null && tile instanceof IManaInteractable) {
 			CapManager manager = new CapManager(((IManaInteractable) tile).getCap());
-			Minecraft.getMinecraft().player.sendChatMessage(manager.getMana() + "/" + manager.getMaxMana());
 		}
 
 		return EnumActionResult.SUCCESS;

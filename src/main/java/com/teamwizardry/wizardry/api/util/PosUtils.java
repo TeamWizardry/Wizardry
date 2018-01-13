@@ -2,7 +2,6 @@ package com.teamwizardry.wizardry.api.util;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
@@ -81,8 +80,6 @@ public final class PosUtils {
 
 			if (reverseDirection) magY = x;
 			else magY = -x + 1;
-
-			Minecraft.getMinecraft().player.sendChatMessage(magY + " - reverse: " + reverseDirection);
 
 			Vec3d dir = entity1.getPositionVector().subtract(pos).normalize().scale(reverseDirection ? -1 : 1).scale(magY).scale(scale);
 
