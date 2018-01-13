@@ -12,6 +12,8 @@ import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 
@@ -29,12 +31,13 @@ public final class VersionChecker {
 	}
 
 	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
 	public void onTick(TickEvent.ClientTickEvent event) {
 		EntityPlayer player = Minecraft.getMinecraft().player;
 
 		if (!ConfigValues.versionCheckerEnabled) return;
 
-		if (doneChecking && event.phase == TickEvent.Phase.END && Minecraft.getMinecraft().player != null && !triedToWarnPlayer) {
+		if (doneChecking && event.phase == TickEvent.Phase.END && player != null && !triedToWarnPlayer) {
 			ITextComponent component = new TextComponentString("[").setStyle(new Style().setColor(TextFormatting.GREEN))
 					.appendSibling(new TextComponentTranslation("wizardry.misc.update_link").setStyle(new Style().setColor(TextFormatting.GRAY)))
 					.appendSibling(new TextComponentString("]").setStyle(new Style().setColor(TextFormatting.GREEN)));
