@@ -374,12 +374,12 @@ public class ManaRecipeLoader {
         }, identifier, duration);
 	}
 
-	public class ManaCrafterBuilder {
-		ManaCrafterPredicate isValid;
-		ManaCrafterConsumer tick;
-		ManaCrafterConsumer finish;
-		String identifier;
-		int duration;
+	private static class ManaCrafterBuilder {
+		private ManaCrafterPredicate isValid;
+		private ManaCrafterConsumer tick;
+		private ManaCrafterConsumer finish;
+		private String identifier;
+		private int duration;
 
 		public ManaCrafterBuilder(ManaCrafterPredicate isValid, ManaCrafterConsumer tick, ManaCrafterConsumer finish, String identifier, int duration) {
 			this.isValid = isValid;
