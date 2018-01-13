@@ -3,10 +3,13 @@ package com.teamwizardry.wizardry.crafting.burnable;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.oredict.OreDictionary;
+
+import javax.annotation.Nonnull;
+import java.util.Map;
 
 public class EntityBurnableItem extends EntityItem
 {
@@ -55,7 +58,7 @@ public class EntityBurnableItem extends EntityItem
 	}
 
 	@Override
-	public boolean isEntityInvulnerable(DamageSource source)
+	public boolean isEntityInvulnerable(@Nonnull DamageSource source)
 	{
 		if (source.isFireDamage())
 		{
@@ -66,28 +69,18 @@ public class EntityBurnableItem extends EntityItem
 	}
 	
 	@Override
-	public void setItem(ItemStack stack)
+	public void setItem(@Nonnull ItemStack stack)
 	{
 		super.setItem(stack);
-		ItemStack key = FireRecipes.ITEM_RECIPES.keySet().stream().filter(item -> ItemStack.areItemsEqual(item, stack)).findFirst().orElse(null);
-		if (FireRecipes.ITEM_RECIPES.containsKey(key))
-		{
-			recipe = FireRecipes.ITEM_RECIPES.get(key).copy();
-			return;
-		}
+		Map.Entry<Ingredient, FireRecipe> recipeEntry =
+				FireRecipes.RECIPES.entrySet().stream()
+						.filter(item -> item.getKey().apply(stack) && !Ingredient.fromStacks(item.getValue().output).apply(stack))
+						.findFirst().orElse(null);
+
+		if (recipeEntry != null)
+			recipe = recipeEntry.getValue();
 		else
-		{
-			int[] oreIds = OreDictionary.getOreIDs(stack);
-			for (int oreId : oreIds)
-			{
-				if (FireRecipes.OREDICT_RECIPES.containsKey(OreDictionary.getOreName(oreId)))
-				{
-					recipe = FireRecipes.OREDICT_RECIPES.get(OreDictionary.getOreName(oreId));
-					return;
-				}
-			}
-		}
-		recipe = null;
+			recipe = null;
 	}
 	
 	@Override
@@ -96,18 +89,9 @@ public class EntityBurnableItem extends EntityItem
 		return false;
 	}
 	
-	public static boolean isBurnable(ItemStack stack)
-	{
-		if (stack.isEmpty())
-			return false;
-		if (stack.getItem() == Items.REDSTONE && Loader.isModLoaded("fluxnetworks"))
-			return false;
-		if (FireRecipes.ITEM_RECIPES.keySet().stream().anyMatch(item -> ItemStack.areItemsEqual(item, stack)))
-			return true;
-		int[] oreIds = OreDictionary.getOreIDs(stack);
-		for (int oreId : oreIds)
-			if (FireRecipes.OREDICT_RECIPES.containsKey(OreDictionary.getOreName(oreId)))
-				return true;
-		return false;
+	public static boolean isBurnable(ItemStack stack) {
+		return !stack.isEmpty() &&
+				(stack.getItem() != Items.REDSTONE || !Loader.isModLoaded("fluxnetworks")) &&
+				FireRecipes.RECIPES.keySet().stream().anyMatch(item -> item.apply(stack));
 	}
 }

@@ -1,4 +1,4 @@
 {
-	"input": { "name": "minecraft:redstone" },
-	"output": { "name": "wizardry:devil_dust" }
+	"input": { "type": "forge:ore_dict", "ore": "dustRedstone" },
+	"output": { "item": "wizardry:devil_dust" }
 }

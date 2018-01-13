@@ -50,7 +50,7 @@ public class FireRecipe
 	{
 		int count = output.getCount();
 		ItemStack input = entity.getItem();
-		if (input == null || input.isEmpty())
+		if (input.isEmpty())
 		{
 			entity.setDead();
 			return ItemStack.EMPTY;

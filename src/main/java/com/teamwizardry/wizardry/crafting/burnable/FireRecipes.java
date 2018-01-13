@@ -1,30 +1,27 @@
 package com.teamwizardry.wizardry.crafting.burnable;
 
+import com.teamwizardry.librarianlib.core.LibrarianLib;
+import com.teamwizardry.wizardry.Wizardry;
+import net.minecraft.item.crafting.Ingredient;
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 
-import org.apache.commons.io.FileUtils;
-
-import com.teamwizardry.librarianlib.core.LibrarianLib;
-import com.teamwizardry.wizardry.Wizardry;
-
-import net.minecraft.item.ItemStack;
-
 public class FireRecipes
 {
 	public static final FireRecipes INSTANCE = new FireRecipes();
 	
-	public static final HashMap<ItemStack, FireRecipe> ITEM_RECIPES = new HashMap<>();
-	public static final HashMap<String, FireRecipe> OREDICT_RECIPES = new HashMap<>();
+	public static final HashMap<Ingredient, FireRecipe> RECIPES = new HashMap<>();
 	
 	private static final String[] INTERNAL_RECIPE_NAMES = { "devil_dust", "devil_dust_secondary", "sky_dust" };
 	
 	public void loadRecipes(File directory)
 	{
 		FireRecipeLoader.INSTANCE.setDirectory(directory);
-		FireRecipeLoader.INSTANCE.processRecipes(ITEM_RECIPES, OREDICT_RECIPES);
+		FireRecipeLoader.INSTANCE.processRecipes(RECIPES);
 	}
 	
 	public void copyMissingRecipes(File directory)

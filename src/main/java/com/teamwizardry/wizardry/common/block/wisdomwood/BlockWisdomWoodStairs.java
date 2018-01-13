@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.block.wisdomwood;
 
+import com.teamwizardry.librarianlib.core.common.OreDictionaryRegistrar;
 import com.teamwizardry.librarianlib.features.base.block.BlockModStairs;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import net.minecraft.block.BlockStairs;
@@ -8,7 +9,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.oredict.OreDictionary;
 
 /**
  * Created by LordSaad.
@@ -18,7 +18,7 @@ public class BlockWisdomWoodStairs extends BlockModStairs {
 	public BlockWisdomWoodStairs() {
 		super("wisdom_wood_stairs", ModBlocks.WISDOM_WOOD_PLANKS.getDefaultState());
 		setSoundType(SoundType.WOOD);
-		OreDictionary.registerOre("stairWood", this);
+		OreDictionaryRegistrar.registerOre("stairWood", this);
 	}
 
 	@Override

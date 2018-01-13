@@ -1,4 +1,4 @@
 {
-	"input": { "name": "wizardry:fairy_dust" },
-	"output": { "name": "wizardry:sky_dust" }
+	"input": { "item": "wizardry:fairy_dust" },
+	"output": { "item": "wizardry:sky_dust" }
 }

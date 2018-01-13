@@ -1,7 +1,7 @@
 {
 	"type": "item",
-	"output": { "name": "wizardry:wisdom_wood_planks" },
-	"input": { "oredict": "plankWood" },
+	"output": { "item": "wizardry:wisdom_wood_planks" },
+	"input": { "type": "forge:ore_dict", "ore": "plankWood" },
 	"duration": 0,
 	"harp": false
 }

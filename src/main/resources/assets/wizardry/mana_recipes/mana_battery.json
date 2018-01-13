@@ -1,10 +1,10 @@
 {
 	"type": "item",
-	"output": { "name": "wizardry:mana_battery" },
-	"input": { "name": "minecraft:diamond" },
+	"output": { "item": "wizardry:mana_battery" },
+	"input": {  "type": "forge:ore_dict", "ore": "gemDiamond" },
 	"extraInputs": [
-		{ "name": "minecraft:soul_sand" },
-		{ "name": "wizardry:devil_dust" }
+		{ "item": "minecraft:soul_sand" },
+		{ "item": "wizardry:devil_dust" }
 	],
 	"radius": 1,
 	"consume": true,

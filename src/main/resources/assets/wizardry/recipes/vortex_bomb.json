@@ -5,10 +5,10 @@
       "item": "wizardry:devil_dust"
     },
     {
-      "type": "minecraft:paper"
+      "item": "minecraft:paper"
     },
     {
-      "type": "minecraft:gun_powder"
+      "item": "minecraft:gunpowder"
     }
   ],
   "result": {

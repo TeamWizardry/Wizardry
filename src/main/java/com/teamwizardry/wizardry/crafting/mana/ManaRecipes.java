@@ -1,13 +1,5 @@
 package com.teamwizardry.wizardry.crafting.mana;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
-
-import org.apache.commons.io.FileUtils;
-
 import com.google.common.collect.HashMultimap;
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.wizardry.Wizardry;
@@ -15,20 +7,25 @@ import com.teamwizardry.wizardry.api.item.IExplodable;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.crafting.mana.ManaRecipeLoader.ManaCrafterBuilder;
 import com.teamwizardry.wizardry.init.ModSounds;
-
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
 
 public class ManaRecipes
 {
 	public static final ManaRecipes INSTANCE = new ManaRecipes();
 	
 	public static final HashMap<String, ManaCrafterBuilder> RECIPE_REGISTRY = new HashMap<>();
-	public static final HashMultimap<ItemStack, ManaCrafterBuilder> RECIPES = HashMultimap.create();
-	public static final HashMultimap<String, ManaCrafterBuilder> OREDICT_RECIPES = HashMultimap.create();
+	public static final HashMultimap<Ingredient, ManaCrafterBuilder> RECIPES = HashMultimap.create();
 	
 	public static final String CODEX = "codex";
 	public static final String NACRE = "nacre";
@@ -47,7 +44,7 @@ public class ManaRecipes
 	public void loadRecipes(File directory)
 	{
 		ManaRecipeLoader.INSTANCE.setDirectory(directory);
-		ManaRecipeLoader.INSTANCE.processRecipes(RECIPE_REGISTRY, RECIPES, OREDICT_RECIPES);
+		ManaRecipeLoader.INSTANCE.processRecipes(RECIPE_REGISTRY, RECIPES);
 	}
 	
 	public void copyMissingRecipes(File directory)
