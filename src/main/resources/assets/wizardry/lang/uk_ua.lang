@@ -1,4 +1,4 @@
-jei.wizardry.category.mana_crafting=Крафт мани
+﻿jei.wizardry.category.mana_crafting=Крафт мани
 
 tile.wizardry:crafting_plate.name=Плита для крафта
 tile.wizardry:magicians_worktable.name=Верстак мага
@@ -48,7 +48,7 @@ item.wizardry:jar_fairy.name=Фея в банку
 item.wizardry:jar_jam.name=Казкове варення
 item.wizardry:syringe.name=Порожній шприц
 item.wizardry:syringe_mana.name=Міні мана-бустер™
-item.wizardry:syringe_mana.desc=Заповнює шкалу мани на 30%%.
+item.wizardry:syringe_mana.desc=Заповнює шкалу мани на 50%%.
 item.wizardry:syringe_steroid.name=Преміальна сироватка мана-будівельника™
 item.wizardry:syringe_steroid.desc0=Повністю заповнює шкалу мани і вичерпує шкалу вигорання протягом 10 секунд.
 item.wizardry:syringe_steroid.desc1=Серйозні побічні ефекти.

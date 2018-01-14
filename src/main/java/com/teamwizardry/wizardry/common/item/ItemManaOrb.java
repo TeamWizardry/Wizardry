@@ -16,7 +16,6 @@ public class ItemManaOrb extends ItemMod {
 
 	public ItemManaOrb() {
 		super("mana_orb");
-		setMaxStackSize(1);
 	}
 
 	@Nullable
