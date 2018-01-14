@@ -17,6 +17,7 @@ public class FireRecipe
 {
 	protected int maxDuration;
 	protected int currentDuration;
+
 	protected ItemStack output;
 	
 	public FireRecipe(ItemStack output, int maxDuration)
@@ -63,5 +64,9 @@ public class FireRecipe
 	public FireRecipe copy()
 	{
 		return new FireRecipe(output, maxDuration);
+	}
+
+	public ItemStack getOutput() {
+		return output;
 	}
 }

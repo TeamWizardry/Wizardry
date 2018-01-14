@@ -22,22 +22,24 @@ Only .json files will be read.
   "type": "item" or "block" // Item recipes drop in-world, while Block recipes place the given output block.
   "output":
   {
-    "name": "string"    // Registry name of item or block resulting from recipe.
+    "item": "string"    // Registry name of item or block resulting from recipe.
     "meta": number      // Optional, defaults to 0 if not present.
     "nbt": { ... }      // Optional, only used by "item" type recipes. Specifies the exact NBT compound the output will be created with.
   },
   "input":
   {
-    "name": "string"    // Registry name of item being loaded.
+    "item": "string"    // Registry name of item being loaded.
     "meta": number      // Optional, defaults to 0 if not present.
-    "oredict": "string" // Oredict value for the recipe's item, only used if "name" value is not given. Ignores "meta" value if used.
+    OR
+    "type": "forge:ore_dict", "ore": "string" // Oredict value for the recipe's item, only used if "name" value is not given. Ignores "meta" value if used.
   },
   "extraInputs":        // Optional, use if recipe has more than one input item.
   [
     {
-      "name": "string"  // All values here function the same as the "input" field
+      "item": "string"  // All values here function the same as the "input" field
       "meta": number
-      "oredict": "string"
+      OR
+      "type": "forge:ore_dict", "ore": "string"
     },
     ...
   ],
@@ -48,5 +50,28 @@ Only .json files will be read.
   "explode": boolean    // Optional, determines if any nearby entities will be pushed away when the recipe finishes. Defaults to false if not present.
   "bubbling": boolean   // Optional, determines if the items in the pool will make bubbling noises over the recipe's duration. Defaults to true if not present.
   "harp": boolean     // Optional, if true, a few notes will play on a harp when the recipe completes. Defaults to true if not present.
+}
+```
+
+### Fire Recipe Format
+Fire recipes can be found, edited, created, and replaced in the config/wizardry/fire_recipes folder, and can be placed inside any folder within that folder. Make sure to enable "customFireRecipes" in the main Wizardry config file if you wish to remove any default recipes.    
+Only .json files will be read.
+
+```
+{
+  "input":
+  {
+    "item": "string"  // Registry name of recipe's input
+    "meta": number    // Optional, defaults to 0
+    OR
+    "type": "forge:ore_dict", "ore": "string" // Oredict value for the recipe's input item
+  },
+  "output":
+  {
+    "item": "string"  // Registry name of recipe's output
+    "meta": number    // Optional, defaults to 0
+    "count": number   // Optional, defaults to 1. Number of output items per input item
+  },
+  "duration": number  // Optional, defaults to 200. Duration in ticks of the recipe
 }
 ```
