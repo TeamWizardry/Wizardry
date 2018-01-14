@@ -128,6 +128,14 @@ potion.wizardry.zach_corruption=Corruption
 
 item_group.wizardry=Wizardry
 
+jei.recipe.wizardry:mana=Mana Soaking
+jei.recipe.block.wizardry:mana=Output replaces mana
+jei.recipe.consumes.wizardry:mana=Consumes the liquid mana used
+jei.recipe.radius.wizardry:mana=Needs a %1$dx%1$d square of source blocks
+jei.recipe.wizardry:fire=Item Burning
+jei.recipe.tooltip.wizardry:fire=Fire
+
+
 wizardry.misc.module=Spell:
 wizardry.misc.sneak=<Sneak for info>
 wizardry.misc.save=SAVE

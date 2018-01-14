@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.crafting.mana;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.gson.*;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
@@ -22,6 +23,9 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.JsonContext;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
@@ -29,10 +33,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-import java.util.Stack;
 import java.util.stream.Collectors;
 
 public class ManaRecipeLoader {
@@ -240,6 +242,8 @@ public class ManaRecipeLoader {
 
 	private ManaCrafterBuilder buildManaCrafter(String identifier, ItemStack outputItem, Ingredient input, List<Ingredient> extraInputs, int duration, int radius, boolean consume, boolean explode, boolean bubbling, boolean harp) {
 		Ingredient outputIngredient = Ingredient.fromStacks(outputItem);
+		List<Ingredient> inputs = Lists.newArrayList(extraInputs);
+
 		return new ManaCrafterBuilder((world, pos, items) -> {
             if (radius > 0) for (int i = -radius; i <= radius; i++)
                 for (int j = -radius; j <= radius; j++)
@@ -247,10 +251,11 @@ public class ManaRecipeLoader {
                         return false;
 
             List<ItemStack> list = items.stream().map(entity -> entity.getItem().copy()).collect(Collectors.toList());
-            List<Ingredient> inputList = new LinkedList<>();
-            inputList.addAll(extraInputs);
-            inputList.add(input);
-            for (Ingredient itemIn : inputList) {
+
+            List<Ingredient> inputList = new ArrayList<>(inputs);
+			inputList.add(input);
+
+			for (Ingredient itemIn : inputList) {
                 boolean foundMatch = false;
                 List<ItemStack> toRemove = new LinkedList<>();
                 for (ItemStack item : list) {
@@ -277,9 +282,8 @@ public class ManaRecipeLoader {
                 for (int j = -radius; j <= radius; j++)
                     world.setBlockToAir(pos.add(i, 0, j));
 
-            List<Ingredient> inputList = new LinkedList<>();
-            inputList.addAll(extraInputs);
-            inputList.add(input);
+			List<Ingredient> inputList = new ArrayList<>(inputs);
+			inputList.add(input);
 
 			for (Ingredient itemIn : inputList) {
                 for (EntityItem entity : items) {
@@ -305,19 +309,20 @@ public class ManaRecipeLoader {
 
             if (harp)
                 world.playSound(null, output.posX, output.posY, output.posZ, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
-        }, identifier, duration);
+        }, identifier, duration).setInputs(input, inputs).setOutput(outputItem).setDoesConsume(consume).setRadius(radius);
 	}
 
 	private ManaCrafterBuilder buildManaCrafter(String identifier, IBlockState outputBlock, Ingredient input, List<Ingredient> extraInputs, int duration, int radius, boolean consume, boolean explode, boolean bubbling, boolean harp) {
-		return new ManaCrafterBuilder((world, pos, items) -> {
+		List<Ingredient> inputs = Lists.newArrayList(extraInputs);
+
+		ManaCrafterBuilder builder = new ManaCrafterBuilder((world, pos, items) -> {
             if (radius > 0) for (int i = -radius; i <= radius; i++)
                 for (int j = -radius; j <= radius; j++)
                     if (world.getBlockState(pos.add(i, 0, j)) != ModBlocks.FLUID_MANA.getDefaultState())
                         return false;
 
             List<ItemStack> list = items.stream().map(entity -> entity.getItem().copy()).collect(Collectors.toList());
-			List<Ingredient> inputList = new LinkedList<>();
-			inputList.addAll(extraInputs);
+			List<Ingredient> inputList = new ArrayList<>(inputs);
 			inputList.add(input);
 			for (Ingredient itemIn : inputList) {
 				boolean foundMatch = false;
@@ -346,8 +351,7 @@ public class ManaRecipeLoader {
                 for (int j = -radius; j <= radius; j++)
                     world.setBlockToAir(pos.add(i, 0, j));
 
-			List<Ingredient> inputList = new LinkedList<>();
-			inputList.addAll(extraInputs);
+			List<Ingredient> inputList = new ArrayList<>(inputs);
 			inputList.add(input);
 
 			for (Ingredient itemIn : inputList) {
@@ -370,7 +374,15 @@ public class ManaRecipeLoader {
 
             if (harp)
                 world.playSound(null, output.x, output.y, output.z, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
-        }, identifier, duration);
+        }, identifier, duration).setInputs(input, inputs).setIsBlock(true).setDoesConsume(true).setRadius(radius);
+
+		Fluid fluid = FluidRegistry.lookupFluidForBlock(outputBlock.getBlock());
+		if (fluid != null)
+			builder.setOutput(new FluidStack(fluid, 1000));
+		else
+			builder.setOutput(new ItemStack(outputBlock.getBlock(), 1, outputBlock.getBlock().damageDropped(outputBlock)));
+
+		return builder;
 	}
 
 	public static class ManaCrafterBuilder {
@@ -380,12 +392,79 @@ public class ManaRecipeLoader {
 		private String identifier;
 		private int duration;
 
+		private Ingredient primaryInput = Ingredient.EMPTY;
+		private List<Ingredient> extraInputs = Collections.emptyList();
+		private ItemStack output = ItemStack.EMPTY;
+		private FluidStack fluidOutput = null;
+		private boolean block = false;
+		private boolean doesConsume = false;
+		private int radius = 0;
+
 		private ManaCrafterBuilder(ManaCrafterPredicate isValid, ManaCrafterConsumer tick, ManaCrafterConsumer finish, String identifier, int duration) {
 			this.isValid = isValid;
 			this.tick = tick;
 			this.finish = finish;
 			this.identifier = identifier;
 			this.duration = duration;
+		}
+
+		private ManaCrafterBuilder setInputs(Ingredient primary, List<Ingredient> inputs) {
+			this.primaryInput = primary;
+			this.extraInputs = inputs;
+			return this;
+		}
+
+		private ManaCrafterBuilder setOutput(ItemStack output) {
+			this.output = output;
+			return this;
+		}
+
+		private ManaCrafterBuilder setOutput(FluidStack output) {
+			this.fluidOutput = output;
+			return this;
+		}
+
+		private ManaCrafterBuilder setIsBlock(boolean state) {
+			this.block = state;
+			return this;
+		}
+
+		private ManaCrafterBuilder setDoesConsume(boolean state) {
+			this.doesConsume = state;
+			return this;
+		}
+
+		private ManaCrafterBuilder setRadius(int radius) {
+			this.radius = radius;
+			return this;
+		}
+
+		public Ingredient getMainInput() {
+			return primaryInput;
+		}
+
+		public List<Ingredient> getInputs() {
+			return extraInputs;
+		}
+
+		public ItemStack getOutput() {
+			return output;
+		}
+
+		public FluidStack getFluidOutput() {
+			return fluidOutput;
+		}
+
+		public boolean isBlock() {
+			return block;
+		}
+
+		public boolean doesConsume() {
+			return doesConsume;
+		}
+
+		public int getRadius() {
+			return radius;
 		}
 
 		public ManaCrafter build() {
