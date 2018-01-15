@@ -88,14 +88,6 @@ public class ArenaManager {
 			if (event.player.capabilities.isFlying) {
 				event.player.capabilities.isFlying = false;
 			}
-
-			//if (event.player.getEntityWorld().getTotalWorldTime() % 50 == 0)
-				if (!event.player.getEntityWorld().isRemote)
-					for (ZachHourGlass glass : zachHourGlasses) {
-						if (glass.getEntityZachriel().getEntityId() == arena.getBossID()) {
-							glass.trackEntityTick(event.player);
-						}
-					}
 		}
 	}
 
@@ -113,12 +105,12 @@ public class ArenaManager {
 					}
 				}
 
-			//if (!event.getWorld().isRemote)
-			//	for (ZachTimeManager timeManager : zachHourGlasses) {
-			//		if (timeManager.getEntityZachriel().getEntityId() == arena.getBossID()) {
-			//			timeManager.trackBlock(event.getState(), event.getPos());
-			//		}
-			//	}
+//			if (!event.getWorld().isRemote)
+//				for (ZachTimeManager timeManager : zachHourGlasses) {
+//					if (timeManager.getEntityZachriel().getEntityId() == arena.getBossID()) {
+//						timeManager.trackBlock(event.getState(), event.getPos());
+//					}
+//				}
 		}
 	}
 

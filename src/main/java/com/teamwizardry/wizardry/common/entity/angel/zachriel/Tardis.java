@@ -1,11 +1,9 @@
 package com.teamwizardry.wizardry.common.entity.angel.zachriel;
 
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
-import com.teamwizardry.wizardry.api.arena.ArenaManager;
 import com.teamwizardry.wizardry.common.network.PacketZachClearCompanions;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -14,11 +12,9 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.UUID;
 
 /**
  * Handles time reversal ticking on both client and server
@@ -61,73 +57,18 @@ public class Tardis {
 
 			HashSet<PocketWatch> tmp = new HashSet<>(pocketWatches);
 			for (PocketWatch watch : tmp) {
+				if (watch.world != event.world) continue;
 
-				// Delete object if glass is null //
-				ZachHourGlass glass = watch.getGlass();
-				if (glass == null) {
-					pocketWatches.remove(watch);
-					continue;
-				}
-				// Delete object if glass is null //
-
-				//	if (glass.getEntityZachriel().world.getTotalWorldTime() % 50 != 0) continue;
-
-				if (watch.timeReverseTicks > 0) {
-
-					//// --- REVERSE TIME --- ////
-
-					watch.timeReverseTicks--;
-
-					// Reverse Entities //
-					for (UUID uuid : glass.getAllTrackedEntities()) {
-						ZachHourGlass.EntityState state = glass.getEntityStateAtTime(uuid, watch.timeReverseTicks);
-						if (state == null) continue;
-
-						for (Entity entity : watch.getWorld().getEntities(Entity.class, input -> input instanceof EntityLivingBase)) {
-							if (entity.getUniqueID().equals(uuid)) {
-								entity.setNoGravity(true);
-								state.setToEntity((EntityLivingBase) entity);
-							}
-						}
-					}
-					// Reverse Entities //
-
-					// Reverse Blocks //
-					for (BlockPos pos : glass.getAllTrackedBlocks()) {
-						ZachHourGlass.BlockStateState state = glass.getBlockStateAtTime(pos, watch.timeReverseTicks);
-						if (state == null) continue;
-
-						watch.getWorld().setBlockState(pos, state.getState());
-					}
-					// Reverse Blocks //
-
-					//// --- REVERSE TIME --- ////
-
+				if (watch.zach.nemezDrive.hasNext()) {
+					watch.zach.nemezDrive.applySnapshot(event.world);
 				} else {
-					//// --- FINISHED REVERSING - RESET --- ////
-
-					// Reset gravity for all entities //
-					for (UUID uuid : glass.getAllTrackedEntities()) {
-						ZachHourGlass.EntityState state = glass.getEntityStateAtTime(uuid, watch.timeReverseTicks);
-						if (state == null) continue;
-
-						for (Entity entity : watch.getWorld().getEntities(Entity.class, input -> input instanceof EntityLivingBase)) {
-							if (entity.getUniqueID().equals(uuid)) {
-								entity.setNoGravity(false);
-							}
-						}
+					for (Entity entity : watch.nemez.getTrackedEntities(event.world)) {
+						entity.setNoGravity(false);
 					}
 
-					watch.timeReverseTicks = 200;
-
-					// Delete all info saved //
-					glass.setTracking(false, true);
-
-					// Let the object die in a fire //
 					pocketWatches.remove(watch);
 
 					PacketHandler.NETWORK.sendToAll(new PacketZachClearCompanions(watch.getZach().getEntityId()));
-					//// --- FINISHED REVERSING - RESET --- ////
 				}
 			}
 		}
@@ -176,22 +117,14 @@ public class Tardis {
 
 		private final EntityZachriel zach;
 		private final World world;
-		public int timeReverseTicks = 200;
-		@Nullable
-		private ZachHourGlass glass;
+		private ZachTimeManager nemez;
 
 		public PocketWatch(@NotNull EntityZachriel zach) {
 			this.zach = zach;
 			this.world = zach.world;
-			glass = ArenaManager.INSTANCE.getZachHourGlass(zach);
-
-			if (glass != null)
-				glass.setTracking(false, false);
-		}
-
-		@Nullable
-		public ZachHourGlass getGlass() {
-			return glass;
+			this.nemez = zach.nemezDrive.snapshot();
+			this.nemez.collapse();
+			zach.nemezDrive.erase();
 		}
 
 		public EntityZachriel getZach() {

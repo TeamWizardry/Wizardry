@@ -15,7 +15,7 @@ import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.entity.angel.EntityAngel;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModPotions;
-import net.minecraft.client.Minecraft;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -28,7 +28,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -75,6 +74,8 @@ public class EntityZachriel extends EntityAngel {
 	public float[] burstLevels = new float[]{0.95F, 0.85F, 0.75F, 0.65F, 0.55F, 0.45F, 0.35F, 0.25F, 0.15F, 0.05F};
 	public Arena arena = null;
 
+	public ZachTimeManager nemezDrive = new ZachTimeManager();
+
 	public EntityZachriel(World world) {
 		super(world);
 		setCustomNameTag("Zachriel");
@@ -89,10 +90,9 @@ public class EntityZachriel extends EntityAngel {
 	}
 
 	@Override
-	public boolean attackEntityFrom(DamageSource source, float amount) {
+	public boolean attackEntityFrom(@Nonnull DamageSource source, float amount) {
 		if (arena == null) {
 			HashSet<UUID> players = new HashSet<>();
-			players.add(Minecraft.getMinecraft().player.getUniqueID());
 			arena = new Arena(
 					getEntityWorld().provider.getDimension(), getPosition(), 50, 50, getEntityId(), players);
 			ArenaManager.INSTANCE.addArena(arena);
@@ -111,20 +111,17 @@ public class EntityZachriel extends EntityAngel {
 			if (numSaves < saveTimes.length && healthPercent < saveTimes[numSaves]) {
 				numSaves++;
 				nextBurstSave = nextBurst;
-				source.getTrueSource().sendMessage(new TextComponentString("Save #" + numSaves));
 				// run save code
 
 				ZachHourGlass glass = ArenaManager.INSTANCE.getZachHourGlass(this);
 				if (glass == null) {
 					return true;
 				}
-				glass.setTracking(true, false);
 			}
 			if (numLoads < loadTimes.length && healthPercent < loadTimes[numLoads]) {
 				this.setHealth(this.getMaxHealth() * saveTimes[numLoads]);
 				numLoads++;
 				nextBurst = nextBurstSave;
-				source.getTrueSource().sendMessage(new TextComponentString("Load #" + numLoads));
 				if (this.isDead)
 					this.isDead = false;
 
@@ -192,7 +189,7 @@ public class EntityZachriel extends EntityAngel {
 	}
 
 	@Override
-	public void onDeath(DamageSource source) {
+	public void onDeath(@Nonnull DamageSource source) {
 		if (numLoads < loadTimes.length)
 			return;
 		super.onDeath(source);
@@ -207,18 +204,20 @@ public class EntityZachriel extends EntityAngel {
 		{
 			//if (!isBeingBattled()) return;
 
+			for (EntityLivingBase targeted : arena.getVictims())
+				nemezDrive.trackEntity(targeted);
+
 			if (burstTimer > 0) {
 				burstTimer--;
 				if (burstTimer == 0)
 					if (!world.isRemote)
 						for (EntityPlayer player : world.playerEntities)
-							if (EntitySelectors.CAN_AI_TARGET.apply(player))
-								if (getDistance(player) < 32) {
+							if (EntitySelectors.CAN_AI_TARGET.apply(player) && getDistanceSq(player) < 32 * 32) {
+								PotionEffect corruption = player.getActivePotionEffect(ModPotions.ZACH_CORRUPTION);
+								float bonusDamage = corruption == null ? 0 : burstDamage * (corruption.getAmplifier() + 1);
+								player.attackEntityFrom(DamageSource.causeMobDamage(this).setMagicDamage().setDamageBypassesArmor(), burstDamage + bonusDamage);
+							}
 
-									PotionEffect corruption = player.getActivePotionEffect(ModPotions.ZACH_CORRUPTION);
-									float bonusDamage = corruption == null ? 0 : burstDamage * (corruption.getAmplifier() + 1);
-									player.attackEntityFrom(DamageSource.causeMobDamage(this).setMagicDamage().setDamageBypassesArmor(), burstDamage + bonusDamage);
-								}
 				ClientRunnable.run(new ClientRunnable() {
 					@Override
 					@SideOnly(Side.CLIENT)
@@ -255,6 +254,8 @@ public class EntityZachriel extends EntityAngel {
 				}
 			}
 		}
+
+		nemezDrive.endUpdate();
 	}
 
 	@Override
