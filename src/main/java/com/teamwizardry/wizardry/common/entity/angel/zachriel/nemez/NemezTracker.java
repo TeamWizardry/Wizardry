@@ -1,6 +1,5 @@
-package com.teamwizardry.wizardry.common.entity.angel.zachriel;
+package com.teamwizardry.wizardry.common.entity.angel.zachriel.nemez;
 
-import com.teamwizardry.wizardry.common.entity.angel.zachriel.nemez.NemezManager;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
@@ -9,7 +8,7 @@ import net.minecraft.world.World;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ZachTimeManager {
+public class NemezTracker {
 
 	private NemezManager manager = new NemezManager();
 	private Set<String> trackingEntities = new HashSet<>();
@@ -53,8 +52,8 @@ public class ZachTimeManager {
 		manager.collapse();
 	}
 
-	public ZachTimeManager snapshot() {
-		ZachTimeManager manager = new ZachTimeManager();
+	public NemezTracker snapshot() {
+		NemezTracker manager = new NemezTracker();
 		manager.manager = this.manager.snapshot();
 		manager.trackingEntities = new HashSet<>(this.trackingEntities);
 		return manager;

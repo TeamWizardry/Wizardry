@@ -1,5 +1,6 @@
-package com.teamwizardry.wizardry.common.entity.angel.zachriel;
+package com.teamwizardry.wizardry.common.entity.angel.zachriel.nemez;
 
+import com.teamwizardry.wizardry.common.entity.angel.zachriel.EntityZachriel;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.math.Vec3d;
@@ -17,14 +18,14 @@ import java.util.HashSet;
 /**
  * Handles time reversal ticking on both client and server
  */
-public class Tardis {
+public class NemezTicker {
 
-	public static Tardis INSTANCE = new Tardis();
+	public static NemezTicker INSTANCE = new NemezTicker();
 
 	private HashMap<EntityLivingBase, Destination> companions = new HashMap<>();
 	private HashSet<PocketWatch> pocketWatches = new HashSet<>();
 
-	private Tardis() {
+	private NemezTicker() {
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
@@ -111,7 +112,7 @@ public class Tardis {
 	public class PocketWatch {
 
 		private final World world;
-		private ZachTimeManager nemez;
+		private NemezTracker nemez;
 
 		public PocketWatch(@NotNull EntityZachriel zach) {
 			this.world = zach.world;

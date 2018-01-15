@@ -4,7 +4,7 @@ import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.autoregister.PacketRegister;
 import com.teamwizardry.librarianlib.features.network.PacketBase;
 import com.teamwizardry.librarianlib.features.saving.Save;
-import com.teamwizardry.wizardry.common.entity.angel.zachriel.Tardis;
+import com.teamwizardry.wizardry.common.entity.angel.zachriel.nemez.NemezTicker;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -36,6 +36,6 @@ public class PacketZachClearCompanions extends PacketBase {
 		EntityLivingBase entity = (EntityLivingBase) world.getEntityByID(entityID);
 		if (entity == null) return;
 
-		Tardis.INSTANCE.clearCompanions(entity);
+		NemezTicker.INSTANCE.clearCompanions(entity);
 	}
 }

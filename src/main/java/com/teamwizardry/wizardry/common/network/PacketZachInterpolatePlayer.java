@@ -4,7 +4,7 @@ import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.autoregister.PacketRegister;
 import com.teamwizardry.librarianlib.features.network.PacketBase;
 import com.teamwizardry.librarianlib.features.saving.Save;
-import com.teamwizardry.wizardry.common.entity.angel.zachriel.Tardis;
+import com.teamwizardry.wizardry.common.entity.angel.zachriel.nemez.NemezTicker;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -47,6 +47,6 @@ public class PacketZachInterpolatePlayer extends PacketBase {
 		if (entity == null) return;
 
 		entity.setPositionAndRotationDirect(to.x, to.y, to.z, yaw, pitch, 30, true);
-		Tardis.INSTANCE.interpolatePosition(entity, entity.getPositionVector(), to, 100);
+		NemezTicker.INSTANCE.interpolatePosition(entity, entity.getPositionVector(), to, 100);
 	}
 }

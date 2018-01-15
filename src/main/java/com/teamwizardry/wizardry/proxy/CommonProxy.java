@@ -9,7 +9,7 @@ import com.teamwizardry.wizardry.client.gui.GuiHandler;
 import com.teamwizardry.wizardry.common.advancement.AchievementEvents;
 import com.teamwizardry.wizardry.common.core.EventHandler;
 import com.teamwizardry.wizardry.common.core.SpellTicker;
-import com.teamwizardry.wizardry.common.entity.angel.zachriel.Tardis;
+import com.teamwizardry.wizardry.common.entity.angel.zachriel.nemez.NemezTicker;
 import com.teamwizardry.wizardry.common.module.effects.ModuleEffectLeap;
 import com.teamwizardry.wizardry.common.module.effects.ModuleEffectTimeSlow;
 import com.teamwizardry.wizardry.common.network.*;
@@ -47,7 +47,7 @@ public class CommonProxy {
 			Wizardry.logger.fatal("    > SOMETHING WENT WRONG! Could not create config folder!!");
 
 		ArenaManager.INSTANCE.getClass();
-		Tardis.INSTANCE.getClass();
+		NemezTicker.INSTANCE.getClass();
 
 		new ModTab();
 		ModBlocks.init();

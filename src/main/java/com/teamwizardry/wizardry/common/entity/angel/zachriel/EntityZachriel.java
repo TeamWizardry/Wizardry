@@ -13,6 +13,8 @@ import com.teamwizardry.wizardry.api.arena.Arena;
 import com.teamwizardry.wizardry.api.arena.ArenaManager;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.entity.angel.EntityAngel;
+import com.teamwizardry.wizardry.common.entity.angel.zachriel.nemez.NemezTracker;
+import com.teamwizardry.wizardry.common.entity.angel.zachriel.nemez.NemezTicker;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.entity.EntityLivingBase;
@@ -74,7 +76,7 @@ public class EntityZachriel extends EntityAngel {
 	public float[] burstLevels = new float[]{0.95F, 0.85F, 0.75F, 0.65F, 0.55F, 0.45F, 0.35F, 0.25F, 0.15F, 0.05F};
 	public Arena arena = null;
 
-	public ZachTimeManager nemezDrive = new ZachTimeManager();
+	public NemezTracker nemezDrive = new NemezTracker();
 
 	public EntityZachriel(World world) {
 		super(world);
@@ -111,12 +113,6 @@ public class EntityZachriel extends EntityAngel {
 			if (numSaves < saveTimes.length && healthPercent < saveTimes[numSaves]) {
 				numSaves++;
 				nextBurstSave = nextBurst;
-				// run save code
-
-				ZachHourGlass glass = ArenaManager.INSTANCE.getZachHourGlass(this);
-				if (glass == null) {
-					return true;
-				}
 			}
 			if (numLoads < loadTimes.length && healthPercent < loadTimes[numLoads]) {
 				this.setHealth(this.getMaxHealth() * saveTimes[numLoads]);
@@ -127,7 +123,7 @@ public class EntityZachriel extends EntityAngel {
 
 				// run load code
 
-				Tardis.INSTANCE.reverseTime(this);
+				NemezTicker.INSTANCE.reverseTime(this);
 			}
 			if (nextBurst < burstLevels.length && healthPercent < burstLevels[nextBurst]) {
 				nextBurst++;
