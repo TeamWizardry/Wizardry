@@ -1,7 +1,5 @@
 package com.teamwizardry.wizardry.common.entity.angel.zachriel;
 
-import com.teamwizardry.librarianlib.features.network.PacketHandler;
-import com.teamwizardry.wizardry.common.network.PacketZachClearCompanions;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.math.Vec3d;
@@ -59,16 +57,13 @@ public class Tardis {
 			for (PocketWatch watch : tmp) {
 				if (watch.world != event.world) continue;
 
-				if (watch.zach.nemezDrive.hasNext()) {
-					watch.zach.nemezDrive.applySnapshot(event.world);
+				if (watch.nemez.hasNext()) {
+					watch.nemez.applySnapshot(event.world);
 				} else {
-					for (Entity entity : watch.nemez.getTrackedEntities(event.world)) {
+					for (Entity entity : watch.nemez.getTrackedEntities(event.world))
 						entity.setNoGravity(false);
-					}
 
 					pocketWatches.remove(watch);
-
-					PacketHandler.NETWORK.sendToAll(new PacketZachClearCompanions(watch.getZach().getEntityId()));
 				}
 			}
 		}
@@ -115,20 +110,14 @@ public class Tardis {
 	 */
 	public class PocketWatch {
 
-		private final EntityZachriel zach;
 		private final World world;
 		private ZachTimeManager nemez;
 
 		public PocketWatch(@NotNull EntityZachriel zach) {
-			this.zach = zach;
 			this.world = zach.world;
 			this.nemez = zach.nemezDrive.snapshot();
 			this.nemez.collapse();
 			zach.nemezDrive.erase();
-		}
-
-		public EntityZachriel getZach() {
-			return zach;
 		}
 
 		public World getWorld() {

@@ -14,7 +14,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author WireSegal
@@ -22,6 +24,7 @@ import java.util.List;
  */
 public final class Moment {
     // The lists produced are to be treated like stacks.
+    private final Map<String, EntityMoment> totalDifference = new HashMap<>();
     private final ListMultimap<String, EntityMoment> entities = ArrayListMultimap.create();
     private final ListMultimap<BlockPos, IBlockState> blocks = ArrayListMultimap.create();
 
@@ -35,11 +38,16 @@ public final class Moment {
     }
 
     public void addEntitySnapshot(Entity entity) {
-        List<EntityMoment> moments = entities.get(entity.getCachedUniqueIdString());
-        if (moments != null && !moments.isEmpty()) {
-            if (moments.get(moments.size() - 1).matches(entity))
-                return;
-        }
+        String uuid = entity.getCachedUniqueIdString();
+        EntityMoment total = totalDifference.get(uuid);
+        EntityMoment newMoment = EntityMoment.fromPreviousMoment(entity, total);
+        if (total == null)
+            totalDifference.put(uuid, newMoment);
+        else if (!total.matches(entity))
+            totalDifference.put(uuid, total.withOverride(newMoment));
+        else
+            return;
+
         entities.put(entity.getCachedUniqueIdString(), new EntityMoment(entity));
     }
 
@@ -119,6 +127,7 @@ public final class Moment {
 
     public Moment snapshot() {
         Moment moment = new Moment();
+        moment.totalDifference.putAll(totalDifference);
         moment.entities.putAll(entities);
         moment.blocks.putAll(blocks);
         return moment;
@@ -163,11 +172,13 @@ public final class Moment {
         return momentSerialized;
     }
 
+    @SuppressWarnings("deprecation")
     public static Moment fromNBT(NBTTagCompound nbt) {
-        Moment moment = new Moment();
+        Moment newMoment = new Moment();
         NBTTagList blocksSerialized = nbt.getTagList("blocks", Constants.NBT.TAG_COMPOUND);
         NBTTagCompound entitiesSerialized = nbt.getCompoundTag("entities");
 
+        Map<String, EntityMoment> newTotal = new HashMap<>();
         ListMultimap<String, EntityMoment> newEntities = ArrayListMultimap.create();
         ListMultimap<BlockPos, IBlockState> newBlocks = ArrayListMultimap.create();
 
@@ -186,12 +197,20 @@ public final class Moment {
         }
 
         for (String key : entitiesSerialized.getKeySet()) {
-            NBTTagCompound compound = entitiesSerialized.getCompoundTag(key);
-            newEntities.put(key, EntityMoment.fromNBT(compound));
+            NBTTagList moments = entitiesSerialized.getTagList(key, Constants.NBT.TAG_COMPOUND);
+            EntityMoment total = EntityMoment.EMPTY;
+            for (NBTBase momentUncast : moments) {
+                NBTTagCompound momentCompound = (NBTTagCompound) momentUncast;
+                EntityMoment moment = EntityMoment.fromNBT(momentCompound);
+                total = total.withOverride(moment);
+                newEntities.put(key, moment);
+            }
+            newTotal.put(key, total);
         }
 
-        moment.entities.putAll(newEntities);
-        moment.blocks.putAll(newBlocks);
-        return moment;
+        newMoment.totalDifference.putAll(newTotal);
+        newMoment.entities.putAll(newEntities);
+        newMoment.blocks.putAll(newBlocks);
+        return newMoment;
     }
 }
