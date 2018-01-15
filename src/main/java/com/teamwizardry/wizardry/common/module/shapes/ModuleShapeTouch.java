@@ -14,7 +14,8 @@ import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -54,7 +55,7 @@ public class ModuleShapeTouch extends ModuleShape {
 
 		RayTraceResult result = new RayTrace(
 				spell.world, look, isHead() ? origin : targetHit,
-				finalEntity instanceof EntityPlayerMP ? ((EntityPlayerMP) finalEntity).interactionManager.getBlockReachDistance() : 5)
+				finalEntity instanceof EntityLivingBase ? ((EntityLivingBase) finalEntity).getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue() : 5)
 				.setSkipEntity(finalEntity)
 				.setReturnLastUncollidableBlock(true)
 				.setIgnoreBlocksWithoutBoundingBoxes(false)

@@ -12,7 +12,6 @@ import com.teamwizardry.librarianlib.features.gui.component.GuiComponent;
 import com.teamwizardry.librarianlib.features.gui.component.GuiComponentEvents;
 import com.teamwizardry.librarianlib.features.gui.components.*;
 import com.teamwizardry.librarianlib.features.gui.mixin.DragMixin;
-import com.teamwizardry.librarianlib.features.gui.mixin.ScissorMixin;
 import com.teamwizardry.librarianlib.features.gui.mixin.gl.GlMixin;
 import com.teamwizardry.librarianlib.features.math.Vec2d;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
@@ -204,7 +203,7 @@ public class WorktableGui extends GuiBase {
 			ComponentSprite bookIcon = new ComponentSprite(new Sprite(new ResourceLocation(Wizardry.MODID, "textures/items/physics_book.png")), (int) ((bookIconMask.getSize().getX() / 2.0) - 16), (int) (bookIconMask.getSize().getY() + 50), 32, 32);
 			{
 				bookIcon.getTransform().setTranslateZ(200);
-				ScissorMixin.INSTANCE.scissor(bookIconMask);
+				bookIconMask.clipping.setClipToBounds(true);
 				bookIconMask.getTransform().setTranslateZ(10);
 				fakePaper.add(bookIconMask);
 
