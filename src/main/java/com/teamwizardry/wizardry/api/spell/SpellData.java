@@ -27,9 +27,9 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 	private static HashMap<Pair, ProcessData.Process> dataProcessor = new HashMap<>();
 
 	@Nonnull
-	public World world;
+	public final World world;
 	@Nonnull
-	private HashMap<Pair, Object> data = new HashMap<>();
+	private final HashMap<Pair, Object> data = new HashMap<>();
 
 	public SpellData(@Nonnull World world) {
 		this.world = world;

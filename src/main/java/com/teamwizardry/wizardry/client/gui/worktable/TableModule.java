@@ -142,6 +142,8 @@ public class TableModule {
 
 						event.component.invalidate();
 						event.cancel();
+
+						table.sync();
 					}
 				}
 
@@ -177,6 +179,9 @@ public class TableModule {
 						}
 
 						table.componentLinks.put(uuid1, uuid2);
+
+						table.sync();
+
 						return;
 					}
 				}
@@ -312,8 +317,11 @@ public class TableModule {
 			return txt;
 		});
 
-		if (draggable)
+		if (draggable) {
 			table.paperComponents.put(base, UUID.randomUUID());
+
+			table.sync();
+		}
 
 		this.component = base;
 	}

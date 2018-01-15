@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.client.gui;
 import com.teamwizardry.wizardry.client.gui.book.BookGui;
 import com.teamwizardry.wizardry.client.gui.worktable.WorktableGui;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -21,7 +22,7 @@ public class GuiHandler implements IGuiHandler {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-		if (ID == 0) return new WorktableGui();
+		if (ID == 0) return new WorktableGui(new BlockPos(x, y, z));
 		if (ID == 1) return new BookGui(player.inventory.getStackInSlot(x));
 
 		return null;

@@ -81,7 +81,7 @@ public class BlockMagiciansWorktable extends BlockModContainer {
 
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-		playerIn.openGui(Wizardry.instance, 0, worldIn, (int) playerIn.posX, (int) playerIn.posY, (int) playerIn.posZ);
+		playerIn.openGui(Wizardry.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
 		return true;
 	}
 
