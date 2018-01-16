@@ -21,7 +21,6 @@ import java.util.HashSet;
  */
 public final class NemezEventHandler {
 
-	public static NemezEventHandler INSTANCE = new NemezEventHandler();
 	private static HashSet<Reversal> reversals = new HashSet<>();
 
 	public static void register() {
@@ -45,7 +44,6 @@ public final class NemezEventHandler {
 		reverseTime(zachriel.world, zachriel.nemezDrive, zachriel.arena.getCenter());
 		zachriel.nemezDrive.erase();
 	}
-
 
 
 	@SubscribeEvent

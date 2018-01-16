@@ -123,7 +123,7 @@ public class EntityZachriel extends EntityAngel {
 
 				// run load code
 
-				NemezEventHandler.INSTANCE.reverseTime(this);
+				NemezEventHandler.reverseTime(this);
 			}
 			if (nextBurst < burstLevels.length && healthPercent < burstLevels[nextBurst]) {
 				nextBurst++;
