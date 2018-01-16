@@ -2,28 +2,24 @@ package com.teamwizardry.wizardry.common.entity.angel.zachriel.nemez;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class NemezTracker {
+public class NemezArenaTracker implements INBTSerializable<NBTTagList> {
 
 	private NemezManager manager = new NemezManager();
 	private Set<String> trackingEntities = new HashSet<>();
 
 	public Set<Entity> getTrackedEntities(World world) {
 		Set<Entity> tracking = new HashSet<>();
-		for (String id : trackingEntities) {
-			Entity entity = null;
-			for (Entity inWorld : world.loadedEntityList) if (id.equals(inWorld.getCachedUniqueIdString())) {
-				entity = inWorld;
-				break;
-			}
-			if (entity != null)
-				tracking.add(entity);
-		}
+		for (Entity inWorld : world.loadedEntityList)
+			if (trackingEntities.contains(inWorld.getCachedUniqueIdString()))
+				tracking.add(inWorld);
 		return tracking;
 	}
 
@@ -52,8 +48,8 @@ public class NemezTracker {
 		manager.collapse();
 	}
 
-	public NemezTracker snapshot() {
-		NemezTracker manager = new NemezTracker();
+	public NemezArenaTracker snapshot() {
+		NemezArenaTracker manager = new NemezArenaTracker();
 		manager.manager = this.manager.snapshot();
 		manager.trackingEntities = new HashSet<>(this.trackingEntities);
 		return manager;
@@ -69,5 +65,15 @@ public class NemezTracker {
 			return;
 		}
 		manager.peekAtMoment().apply(world, getTrackedEntities(world), partialTicks);
+	}
+
+	@Override
+	public NBTTagList serializeNBT() {
+		return manager.serializeNBT();
+	}
+
+	@Override
+	public void deserializeNBT(NBTTagList nbt) {
+		manager.deserializeNBT(nbt);
 	}
 }

@@ -24,7 +24,7 @@ import java.util.Map;
  */
 public final class Moment {
     // The lists produced are to be treated like stacks.
-    private final Map<String, EntityMoment> totalDifference = new HashMap<>();
+    private transient final Map<String, EntityMoment> totalDifference = new HashMap<>();
     private final ListMultimap<String, EntityMoment> entities = ArrayListMultimap.create();
     private final ListMultimap<BlockPos, IBlockState> blocks = ArrayListMultimap.create();
 
