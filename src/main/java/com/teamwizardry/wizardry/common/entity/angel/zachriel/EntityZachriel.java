@@ -41,6 +41,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
+import static net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND;
+
 /**
  * Created by LordSaad.
  */
@@ -274,11 +276,13 @@ public class EntityZachriel extends EntityAngel {
 	public void writeCustomNBT(@NotNull NBTTagCompound compound) {
 		super.writeCustomNBT(compound);
 		compound.setTag("save", AbstractSaveHandler.writeAutoNBT(this, true));
+		compound.setTag("nemez", nemezDrive.serializeNBT());
 	}
 
 	@Override
 	public void readCustomNBT(@NotNull NBTTagCompound compound) {
 		super.readCustomNBT(compound);
 		AbstractSaveHandler.readAutoNBT(this, compound.getCompoundTag("save"), true);
+		nemezDrive.deserializeNBT(compound.getTagList("nemez", TAG_COMPOUND));
 	}
 }
