@@ -63,6 +63,7 @@ public final class EntityMoment {
     }
 
     public void apply(Entity entity) {
+        entity.setNoGravity(true);
         if (x != null) entity.posX = x;
         if (y != null) entity.posY = y;
         if (z != null) entity.posZ = z;
@@ -86,6 +87,7 @@ public final class EntityMoment {
             return;
         }
 
+        entity.setNoGravity(true);
         if (x != null) entity.posX = x + (nextMoment.x != null ? (nextMoment.x - x) * partialTicks : 0);
         if (y != null) entity.posY = y + (nextMoment.y != null ? (nextMoment.y - y) * partialTicks : 0);
         if (z != null) entity.posZ = z + (nextMoment.z != null ? (nextMoment.z - z) * partialTicks : 0);

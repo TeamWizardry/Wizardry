@@ -50,22 +50,19 @@ public final class NemezEventHandler {
 
 	@SubscribeEvent
 	public static void worldTick(TickEvent.WorldTickEvent event) {
-		if (event.phase == TickEvent.Phase.START) {
-
-			HashSet<Reversal> tmp = new HashSet<>(reversals);
-			for (Reversal watch : tmp) {
-				if (watch.world != event.world) continue;
-
-				if (watch.nemez.hasNext()) {
-					watch.nemez.applySnapshot(event.world);
-				} else {
-					for (Entity entity : watch.nemez.getTrackedEntities(event.world))
-						entity.setNoGravity(false);
-
-					reversals.remove(watch);
+		if (event.phase == TickEvent.Phase.START)
+			reversals.removeIf((reversal) -> {
+				if (reversal.world != event.world) {
+					if (reversal.nemez.hasNext())
+						reversal.nemez.applySnapshot(event.world);
+					else {
+						for (Entity entity : reversal.nemez.getTrackedEntities(event.world))
+							entity.setNoGravity(false);
+						return true;
+					}
 				}
-			}
-		}
+				return false;
+			});
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -73,13 +70,11 @@ public final class NemezEventHandler {
 	public static void renderTick(TickEvent.RenderTickEvent event) {
 		World world = Minecraft.getMinecraft().world;
 		if (event.phase == TickEvent.Phase.START) {
+			for (Reversal reversal : reversals) {
+				if (reversal.world != world) continue;
 
-			HashSet<Reversal> tmp = new HashSet<>(reversals);
-			for (Reversal watch : tmp) {
-				if (watch.world != world) continue;
-
-				if (watch.nemez.hasNext())
-					watch.nemez.applySnapshot(world, event.renderTickTime);
+				if (reversal.nemez.hasNext())
+					reversal.nemez.applySnapshot(world, event.renderTickTime);
 			}
 		}
 	}
