@@ -46,7 +46,7 @@ public class ModEntities {
 	@SideOnly(Side.CLIENT)
 	public static void initModels() {
 		RenderingRegistry.registerEntityRenderingHandler(EntityZachriel.class, manager -> new RenderZachriel(manager, new ModelZachriel()));
-		RenderingRegistry.registerEntityRenderingHandler(EntitySpiritBlight.class, manager -> new RenderSpiritBlight(manager, new ModelSpiritWight()));
+		RenderingRegistry.registerEntityRenderingHandler(EntitySpiritBlight.class, manager -> new RenderSpiritBlight(manager, new ModelSpiritBlight()));
 		RenderingRegistry.registerEntityRenderingHandler(EntitySpiritWight.class, manager -> new RenderSpiritWight(manager, new ModelSpiritWight()));
 		RenderingRegistry.registerEntityRenderingHandler(EntityFairy.class, manager -> new RenderFairy(manager, new ModelNull()));
 		RenderingRegistry.registerEntityRenderingHandler(EntityUnicorn.class, manager -> new RenderUnicorn(manager, new ModelUnicorn()));
