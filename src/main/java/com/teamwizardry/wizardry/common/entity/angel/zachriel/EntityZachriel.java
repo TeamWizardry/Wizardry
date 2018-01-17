@@ -202,6 +202,15 @@ public class EntityZachriel extends EntityAngel {
 		{
 			//if (!isBeingBattled()) return;
 
+			if (arena == null) {
+				HashSet<UUID> players = new HashSet<>();
+				arena = new Arena(
+						getEntityWorld().provider.getDimension(), getPosition(), 50, 50, getEntityId(), players);
+				ArenaManager.INSTANCE.addArena(arena);
+			}
+
+
+
 			for (EntityLivingBase targeted : arena.getVictims())
 				nemezDrive.trackEntity(targeted);
 
