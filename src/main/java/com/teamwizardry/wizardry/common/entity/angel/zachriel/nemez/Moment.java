@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.entity.angel.zachriel.nemez;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Lists;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -35,6 +36,8 @@ public final class Moment {
                 return;
         }
         blocks.put(position, newState);
+
+        capBlock(position);
     }
 
     public void addEntitySnapshot(Entity entity) {
@@ -49,11 +52,55 @@ public final class Moment {
             return;
 
         entities.put(entity.getCachedUniqueIdString(), new EntityMoment(entity));
+
+        capEntity(entity);
+    }
+
+    private void capBlock(BlockPos pos) {
+        List<IBlockState> moments = blocks.get(pos);
+        if (moments.size() > 5) {
+            List<IBlockState> newMoments = Lists.newArrayList();
+            int slice = moments.size() / 5;
+            int remainder = moments.size() % 5;
+            for (int i = 5; i > 0; i--)
+                newMoments.add(moments.get(slice * i + (i == 5 ? remainder : 0)));
+
+            blocks.replaceValues(pos, newMoments);
+        }
+    }
+
+    private void capEntity(Entity entity) {
+        capEntity(entity.getCachedUniqueIdString());
+    }
+
+    private void capEntity(String id) {
+        List<EntityMoment> moments = entities.get(id);
+        if (moments.size() > 5) {
+            List<EntityMoment> newMoments = Lists.newArrayList();
+            int slice = moments.size() / 5;
+            int remainder = moments.size() % 5;
+            for (int i = 5; i > 0; i--) {
+                int startIndex = slice * i + (i == 5 ? remainder : 0);
+                int endIndex = (slice - 1) * i;
+                EntityMoment compiled = moments.get(startIndex);
+                for (int subIndex = startIndex; subIndex > endIndex; subIndex--)
+                    compiled = compiled.withOverride(moments.get(subIndex));
+
+                newMoments.add(compiled);
+            }
+
+            entities.replaceValues(id, newMoments);
+        }
     }
 
     public void collapse(Moment theNext) {
         entities.putAll(theNext.entities);
         blocks.putAll(theNext.blocks);
+
+        for (String id : entities.keySet())
+            capEntity(id);
+        for (BlockPos pos : blocks.keySet())
+            capBlock(pos);
     }
 
     public void apply(Entity entity) {
@@ -126,6 +173,11 @@ public final class Moment {
     }
 
     public Moment snapshot() {
+        for (String id : entities.keySet())
+            capEntity(id);
+        for (BlockPos pos : blocks.keySet())
+            capBlock(pos);
+
         Moment moment = new Moment();
         moment.totalDifference.putAll(totalDifference);
         moment.entities.putAll(entities);
@@ -134,6 +186,11 @@ public final class Moment {
     }
 
     public NBTTagCompound serializeNBT() {
+        for (String id : entities.keySet())
+            capEntity(id);
+        for (BlockPos pos : blocks.keySet())
+            capBlock(pos);
+
         NBTTagCompound momentSerialized = new NBTTagCompound();
         NBTTagList blocksSerialized = new NBTTagList();
         NBTTagCompound entitiesSerialized = new NBTTagCompound();
@@ -211,6 +268,10 @@ public final class Moment {
         newMoment.totalDifference.putAll(newTotal);
         newMoment.entities.putAll(newEntities);
         newMoment.blocks.putAll(newBlocks);
+        for (String id : newMoment.entities.keySet())
+            newMoment.capEntity(id);
+        for (BlockPos pos : newMoment.blocks.keySet())
+            newMoment.capBlock(pos);
         return newMoment;
     }
 }

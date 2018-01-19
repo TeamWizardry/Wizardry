@@ -45,6 +45,19 @@ public class NemezManager implements INBTSerializable<NBTTagList> {
     public static final int TIME_COMPRESSION_CONSTANT = 15;
 
     public void collapse() {
+        compress(TIME_COMPRESSION_CONSTANT);
+    }
+
+    public boolean needsCompression(int maximumMoments) {
+        return moments.size() <= maximumMoments * 1.5;
+    }
+
+    public void compressDownTo(int maximumMoments) {
+        if (moments.size() <= maximumMoments) return;
+        compress((int) Math.ceil((float) maximumMoments / moments.size()));
+    }
+
+    public void compress(int factor) {
         List<Moment> collapsedMoments = new ArrayList<>();
 
         int momentaryIndex = 0;
@@ -55,7 +68,7 @@ public class NemezManager implements INBTSerializable<NBTTagList> {
                 lastMoment = currentMoment;
             else
                 lastMoment.collapse(currentMoment);
-            if (++momentaryIndex == TIME_COMPRESSION_CONSTANT) {
+            if (++momentaryIndex == factor) {
                 collapsedMoments.add(lastMoment);
                 momentaryIndex = 0;
                 lastMoment = null;

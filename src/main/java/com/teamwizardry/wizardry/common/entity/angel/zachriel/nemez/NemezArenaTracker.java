@@ -12,6 +12,8 @@ import java.util.Set;
 
 public class NemezArenaTracker implements INBTSerializable<NBTTagList> {
 
+	public static final int MAXIMUM_MOMENTS = 6000;
+
 	private NemezManager manager = new NemezManager();
 	private Set<String> trackingEntities = new HashSet<>();
 
@@ -25,11 +27,13 @@ public class NemezArenaTracker implements INBTSerializable<NBTTagList> {
 
 	public void trackBlock(BlockPos pos, IBlockState state) {
 		manager.pushBlockData(pos, state);
+		compressDownTo(MAXIMUM_MOMENTS);
 	}
 
 	public void trackEntity(Entity entity) {
 		trackingEntities.add(entity.getCachedUniqueIdString());
 		manager.pushEntityData(entity);
+		compressDownTo(MAXIMUM_MOMENTS);
 	}
 
 	public boolean hasNext() {
@@ -48,7 +52,17 @@ public class NemezArenaTracker implements INBTSerializable<NBTTagList> {
 		manager.collapse();
 	}
 
+	public boolean needsCompression(int maximumMoments) {
+		return manager.needsCompression(maximumMoments);
+	}
+
+	public void compressDownTo(int maximumMoments) {
+		if (needsCompression(maximumMoments))
+			manager.compressDownTo(maximumMoments);
+	}
+
 	public NemezArenaTracker snapshot() {
+		compressDownTo(MAXIMUM_MOMENTS);
 		NemezArenaTracker manager = new NemezArenaTracker();
 		manager.manager = this.manager.snapshot();
 		manager.trackingEntities = new HashSet<>(this.trackingEntities);
