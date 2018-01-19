@@ -114,7 +114,9 @@ subtitle.wizardry.sizzle=Dust sizzles
 subtitle.wizardry.harp=Harp plays
 subtitle.wizardry.bell=Bell tolls
 subtitle.wizardry.bubbling=Liquid bubbles
-subtitle.wizardry.spirit=Spirit whispers
+subtitle.wizardry.spirit_wight=Spirit whispers
+subtitle.wizardry.spirit_blight=Spirit zaps
+subtitle.wizardry.electric_white_noise=Electrical humming
 
 potion.wizardry.crash=Crash
 potion.wizardry.low_gravity=Feather

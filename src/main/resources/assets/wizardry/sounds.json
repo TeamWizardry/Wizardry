@@ -208,6 +208,20 @@
       "wizardry:hallowed_spirit_shriek_5",
       "wizardry:hallowed_spirit_shriek_6"
     ],
-    "subtitle": "subtitle.wizardry.spirit"
+    "subtitle": "subtitle.wizardry.spirit_wight"
+  },
+  "zap": {
+    "category": "hostile",
+    "sounds": [
+      "wizardry:zap"
+    ],
+    "subtitle": "subtitle.wizardry.spirit_blight"
+  },
+  "electric_white_noise": {
+    "category": "hostile",
+    "sounds": [
+      "wizardry:electric_white_noise"
+    ],
+    "subtitle": "subtitle.wizardry.electric_white_noise"
   }
 }
