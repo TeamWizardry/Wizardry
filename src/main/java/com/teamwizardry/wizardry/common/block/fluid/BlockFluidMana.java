@@ -21,6 +21,7 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -34,8 +35,6 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class BlockFluidMana extends BlockFluidClassic {
-
-	public static final String REACTION_COOLDOWN = "reaction_cooldown";
 
 	public BlockFluidMana() {
 		super(FluidMana.instance, Material.WATER);
@@ -60,14 +59,14 @@ public class BlockFluidMana extends BlockFluidClassic {
 	@Override
 	public void onEntityCollidedWithBlock(World world, BlockPos pos, IBlockState state, Entity entityIn) {
 		// Fizz all entities in the pool
-		run(entityIn,
+		run(world, pos, entityIn,
 				entity -> true,
 				entity -> {
 					if (world.isRemote) LibParticles.FIZZING_AMBIENT(world, entityIn.getPositionVector());
 				});
 
 		// Nullify gravity of player
-		run(entityIn,
+		run(world, pos, entityIn,
 				entity -> entity instanceof EntityLivingBase,
 				entity -> {
 					((EntityLivingBase) entityIn).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 0, true, false));
@@ -76,7 +75,7 @@ public class BlockFluidMana extends BlockFluidClassic {
 				});
 
 		// Subtract player food
-		run(entityIn,
+		run(world, pos, entityIn,
 				entity -> entity instanceof EntityPlayer,
 				entity -> {
 
@@ -92,90 +91,14 @@ public class BlockFluidMana extends BlockFluidClassic {
 					if (!((EntityPlayer) entity).capabilities.isCreativeMode && RandUtil.nextInt(50) == 0)
 						((EntityPlayer) entity).getFoodStats().addExhaustion(1f);
 				});
-
-//		// Turn plank to wisdom plank
-//		run(entityIn,
-//				entity -> entity instanceof EntityItem && !((EntityItem) entity).getItem().isEmpty() && Utils.hasOreDictPrefix(((EntityItem) entity).getItem(), "plank"),
-//				entity -> {
-//					EntityItem item = (EntityItem) entity;
-//					item.setItem(new ItemStack(ModBlocks.WISDOM_WOOD_PLANKS, item.getItem().getCount()));
-//					if (world.isRemote) {
-//						LibParticles.FIZZING_AMBIENT(world, item.getPositionVector());
-//					}
-//				});
-//
-//		// Turn log to wisdom log
-//		run(entityIn,
-//				entity -> entity instanceof EntityItem && !((EntityItem) entity).getItem().isEmpty() && Utils.hasOreDictPrefix(((EntityItem) entity).getItem(), "log"),
-//				entity -> {
-//					EntityItem item = (EntityItem) entity;
-//					item.setItem(new ItemStack(ModBlocks.WISDOM_WOOD_LOG, item.getItem().getCount()));
-//					if (world.isRemote) {
-//						LibParticles.FIZZING_AMBIENT(world, item.getPositionVector());
-//					}
-//				});
-//
-//		// Turn stair to wisdom stair
-//		run(entityIn,
-//				entity -> entity instanceof EntityItem && !((EntityItem) entity).getItem().isEmpty() && Utils.hasOreDictPrefix(((EntityItem) entity).getItem(), "stairs"),
-//				entity -> {
-//					EntityItem item = (EntityItem) entity;
-//					item.setItem(new ItemStack(ModBlocks.WISDOM_WOOD_STAIRS, item.getItem().getCount()));
-//					if (world.isRemote) {
-//						LibParticles.FIZZING_AMBIENT(world, item.getPositionVector());
-//					}
-//				});
-//
-//		// Turn slab to wisdom slab
-//		run(entityIn,
-//				entity -> entity instanceof EntityItem && !((EntityItem) entity).getItem().isEmpty() && Utils.hasOreDictPrefix(((EntityItem) entity).getItem(), "slabs"),
-//				entity -> {
-//					EntityItem item = (EntityItem) entity;
-//					item.setItem(new ItemStack(ModBlocks.WISDOM_WOOD_SLAB, item.getItem().getCount()));
-//					if (world.isRemote) {
-//						LibParticles.FIZZING_AMBIENT(world, item.getPositionVector());
-//					}
-//				});
-
-//		// Turn book to codex
-//		run (entityIn,
-//				entity -> entity instanceof EntityItem && ((EntityItem) entity).getItem().getItem() == Items.BOOK,
-//				entity -> {
-//					ManaTracker.INSTANCE.addManaCraft(entity.world, entity.getPosition(), ManaRecipes.INSTANCE.new CodexCrafter());
-//				});
-
-//		// Convert mana to nacre
-//		run(entityIn,
-//				entity -> entity instanceof EntityItem && ((EntityItem) entity).getItem().getItem() == Items.GOLD_NUGGET,
-//				entity -> {
-//					ManaTracker.INSTANCE.addManaCraft(entity.world, entity.getPosition(), ManaRecipes.INSTANCE.new NacreCrafter());
-//				});
-		
 		// Explode explodable items
-		run(entityIn,
+		run(world, pos, entityIn,
 				entity -> entity instanceof EntityItem && ((EntityItem) entity).getItem().getItem() instanceof IExplodable,
 				entity -> {
 					ManaTracker.INSTANCE.addManaCraft(entity.world, entity.getPosition(), ManaRecipes.INSTANCE.new ExplodableCrafter());
 				});
-
-//		// Mana Battery Recipe
-//		run(entityIn,
-//				entity -> entity instanceof EntityItem && !((EntityItem) entity).getItem().isEmpty() && ((EntityItem) entity).getItem().getItem() == Items.DIAMOND,
-//				entity -> {
-//					ManaTracker.INSTANCE.addManaCraft(entity.world, entity.getPosition(), ManaRecipes.INSTANCE.new ManaBatteryCrafter());
-//				});
 		
-//		run(entityIn,
-//				entity -> entity instanceof EntityItem,
-//				entity -> {
-//					Wizardry.logger.info(((EntityItem) entity).getItem());
-//					Wizardry.logger.info(Arrays.stream(OreDictionary.getOreIDs(((EntityItem) entity).getItem())).mapToObj(i -> OreDictionary.getOreName(i)).collect(Collectors.toList()));
-//					Wizardry.logger.debug(ManaRecipes.RECIPES);
-//					Wizardry.logger.debug(ManaRecipes.OREDICT_RECIPES);
-//					Wizardry.logger.info(OreDictionary.getOres("logWood", false));
-//				});
-		
-		run(entityIn,
+		run(world, pos, entityIn,
 				entity -> entity instanceof EntityItem && ManaRecipes.RECIPES.keySet().stream().anyMatch(item -> item.apply(((EntityItem) entity).getItem())),
 				entity -> {
 					Ingredient key = ManaRecipes.RECIPES.keySet().stream().filter(item -> item.apply(((EntityItem) entity).getItem())).findFirst().orElse(null);
@@ -183,7 +106,9 @@ public class BlockFluidMana extends BlockFluidClassic {
 				});
 	}
 
-	public void run(Entity entity, Predicate<Entity> test, Consumer<Entity> process) {
-		if (test.test(entity)) process.accept(entity);
+	public void run(World world, BlockPos pos, Entity entity, Predicate<Entity> test, Consumer<Entity> process) {
+		float height = getFluidHeightForRender(world, pos, world.getBlockState(pos.up()));
+		AxisAlignedBB bb = new AxisAlignedBB(pos).contract(0, 1 - height, 0);
+		if (entity.getCollisionBoundingBox().intersects(bb) && test.test(entity)) process.accept(entity);
 	}
 }
