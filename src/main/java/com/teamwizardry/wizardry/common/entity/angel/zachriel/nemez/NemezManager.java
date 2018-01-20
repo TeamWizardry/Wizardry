@@ -94,6 +94,31 @@ public class NemezManager implements INBTSerializable<NBTTagList> {
         return manager;
     }
 
+    public NBTTagList serializeFirstN(int n) {
+        NBTTagList momentsSerialized = new NBTTagList();
+        int i = 0;
+        for (Moment moment : moments) {
+            momentsSerialized.appendTag(moment.serializeNBT());
+            if (i++ == n)
+                break;
+        }
+        return momentsSerialized;
+    }
+
+    public void absorb(NBTTagList nbt) {
+        Stack<Moment> shifted = new Stack<>();
+        for (NBTBase momentUncast : nbt) {
+            NBTTagCompound moment = (NBTTagCompound) momentUncast;
+            shifted.push(Moment.fromNBT(moment));
+        }
+        for (Moment moment : moments)
+            shifted.push(moment);
+
+        moments.clear();
+        for (Moment moment : shifted)
+            moments.push(moment);
+    }
+
     @Override
     public NBTTagList serializeNBT() {
         NBTTagList momentsSerialized = new NBTTagList();

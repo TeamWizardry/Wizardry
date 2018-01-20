@@ -14,7 +14,9 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nullable;
 import java.util.HashSet;
+import java.util.Objects;
 
 /**
  * Handles time reversal ticking on both client and server
@@ -27,17 +29,19 @@ public final class NemezEventHandler {
 		MinecraftForge.EVENT_BUS.register(NemezEventHandler.class);
 	}
 
-	public static void reverseTime(World world, NemezArenaTracker tracker) {
-		Reversal reversal = new Reversal(world, tracker);
-		reversals.add(reversal);
+	@SideOnly(Side.CLIENT)
+	public static NemezArenaTracker getCurrent() {
+		if (reversals.isEmpty()) {
+			Reversal reversal = new Reversal(Minecraft.getMinecraft().world, new NemezArenaTracker());
+			reversals.add(reversal);
+		}
+		return reversals.iterator().next().nemez;
 	}
 
 	public static void reverseTime(World world, NemezArenaTracker tracker, BlockPos position) {
-		reverseTime(world, tracker);
-		if (!world.isRemote)
-			PacketHandler.NETWORK.sendToAllAround(new PacketZachrielTimeReversal(tracker),
-					new NetworkRegistry.TargetPoint(world.provider.getDimension(),
-							position.getX() + 0.5, position.getY() + 0.5, position.getZ() + 0.5, 96));
+		Reversal reversal = new Reversal(world, tracker);
+		reversal.pos = position;
+		reversals.add(reversal);
 	}
 
 	public static void reverseTime(EntityZachriel zachriel) {
@@ -51,9 +55,13 @@ public final class NemezEventHandler {
 		if (event.phase == TickEvent.Phase.START)
 			reversals.removeIf((reversal) -> {
 				if (reversal.world != event.world) {
-					if (reversal.nemez.hasNext())
+					if (reversal.nemez.hasNext()) {
 						reversal.nemez.applySnapshot(event.world);
-					else {
+						if (reversal.pos != null && reversal.world.getTotalWorldTime() % PacketZachrielTimeReversal.SYNC_AMOUNT == 0)
+							PacketHandler.NETWORK.sendToAllAround(new PacketZachrielTimeReversal(reversal.nemez),
+									new NetworkRegistry.TargetPoint(reversal.world.provider.getDimension(),
+											reversal.pos.getX() + 0.5, reversal.pos.getY() + 0.5, reversal.pos.getZ() + 0.5, 96));
+					} else {
 						for (Entity entity : reversal.nemez.getTrackedEntities(event.world))
 							entity.setNoGravity(false);
 						return true;
@@ -80,7 +88,10 @@ public final class NemezEventHandler {
 	private static class Reversal {
 
 		private final World world;
-		private NemezArenaTracker nemez;
+		private final NemezArenaTracker nemez;
+
+		@Nullable
+		private BlockPos pos = null;
 
 		public Reversal(World world, NemezArenaTracker tracker) {
 			this.world = world;
@@ -88,8 +99,18 @@ public final class NemezEventHandler {
 			this.nemez.collapse();
 		}
 
-		public World getWorld() {
-			return world;
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+			Reversal reversal = (Reversal) o;
+			return Objects.equals(world, reversal.world) &&
+					Objects.equals(nemez, reversal.nemez);
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(world, nemez);
 		}
 	}
 }

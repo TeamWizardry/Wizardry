@@ -81,6 +81,14 @@ public class NemezArenaTracker implements INBTSerializable<NBTTagList> {
 		manager.peekAtMoment().apply(world, getTrackedEntities(world), partialTicks);
 	}
 
+	public NBTTagList nextNMoments(int seconds) {
+		return manager.serializeFirstN(seconds);
+	}
+
+	public void absorb(NBTTagList data) {
+		manager.absorb(data);
+	}
+
 	@Override
 	public NBTTagList serializeNBT() {
 		return manager.serializeNBT();

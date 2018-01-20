@@ -4,9 +4,8 @@ import com.teamwizardry.librarianlib.features.autoregister.PacketRegister;
 import com.teamwizardry.librarianlib.features.network.PacketBase;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
-import com.teamwizardry.wizardry.common.entity.angel.zachriel.nemez.NemezEventHandler;
 import com.teamwizardry.wizardry.common.entity.angel.zachriel.nemez.NemezArenaTracker;
-import net.minecraft.client.Minecraft;
+import com.teamwizardry.wizardry.common.entity.angel.zachriel.nemez.NemezEventHandler;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -21,12 +20,14 @@ import org.jetbrains.annotations.NotNull;
 @PacketRegister(Side.CLIENT)
 public class PacketZachrielTimeReversal extends PacketBase {
 
+    public static final int SYNC_AMOUNT = 20;
+
     @Save
     public NBTTagCompound nemez;
 
     public PacketZachrielTimeReversal(NemezArenaTracker nemez) {
         this.nemez = new NBTTagCompound();
-        this.nemez.setTag("root", nemez.serializeNBT());
+        this.nemez.setTag("root", nemez.nextNMoments(SYNC_AMOUNT));
     }
 
     public PacketZachrielTimeReversal() {
@@ -39,9 +40,8 @@ public class PacketZachrielTimeReversal extends PacketBase {
             @Override
             @SideOnly(Side.CLIENT)
             public void runIfClient() {
-                NemezArenaTracker tracker = new NemezArenaTracker();
-                tracker.deserializeNBT(nemez.getTagList("root", Constants.NBT.TAG_COMPOUND));
-                NemezEventHandler.reverseTime(Minecraft.getMinecraft().world, tracker);
+                NemezArenaTracker tracker = NemezEventHandler.getCurrent();
+                tracker.absorb(nemez.getTagList("root", Constants.NBT.TAG_COMPOUND));
             }
         });
     }
