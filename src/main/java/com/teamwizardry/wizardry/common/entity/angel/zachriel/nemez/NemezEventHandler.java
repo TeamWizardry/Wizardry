@@ -15,6 +15,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
+import java.lang.ref.WeakReference;
 import java.util.HashSet;
 import java.util.Objects;
 
@@ -54,12 +55,12 @@ public final class NemezEventHandler {
 	public static void worldTick(TickEvent.WorldTickEvent event) {
 		if (event.phase == TickEvent.Phase.START)
 			reversals.removeIf((reversal) -> {
-				if (reversal.world != event.world) {
+				if (reversal.world.get() == event.world) {
 					if (reversal.nemez.hasNext()) {
 						reversal.nemez.applySnapshot(event.world);
-						if (reversal.pos != null && reversal.world.getTotalWorldTime() % PacketZachrielTimeReversal.SYNC_AMOUNT == 0)
+						if (reversal.pos != null && reversal.world.get().getTotalWorldTime() % PacketZachrielTimeReversal.SYNC_AMOUNT == 0)
 							PacketHandler.NETWORK.sendToAllAround(new PacketZachrielTimeReversal(reversal.nemez),
-									new NetworkRegistry.TargetPoint(reversal.world.provider.getDimension(),
+									new NetworkRegistry.TargetPoint(reversal.world.get().provider.getDimension(),
 											reversal.pos.getX() + 0.5, reversal.pos.getY() + 0.5, reversal.pos.getZ() + 0.5, 96));
 					} else {
 						for (Entity entity : reversal.nemez.getTrackedEntities(event.world))
@@ -67,7 +68,7 @@ public final class NemezEventHandler {
 						return true;
 					}
 				}
-				return false;
+				return reversal.world.get() == null;
 			});
 	}
 
@@ -77,7 +78,7 @@ public final class NemezEventHandler {
 		World world = Minecraft.getMinecraft().world;
 		if (event.phase == TickEvent.Phase.START) {
 			for (Reversal reversal : reversals) {
-				if (reversal.world != world) continue;
+				if (reversal.world.get() != world) continue;
 
 				if (reversal.nemez.hasNext())
 					reversal.nemez.applySnapshot(world, event.renderTickTime);
@@ -87,14 +88,14 @@ public final class NemezEventHandler {
 
 	private static class Reversal {
 
-		private final World world;
+		private final WeakReference<World> world;
 		private final NemezArenaTracker nemez;
 
 		@Nullable
 		private BlockPos pos = null;
 
 		public Reversal(World world, NemezArenaTracker tracker) {
-			this.world = world;
+			this.world = new WeakReference<>(world);
 			this.nemez = tracker.snapshot();
 			this.nemez.collapse();
 		}

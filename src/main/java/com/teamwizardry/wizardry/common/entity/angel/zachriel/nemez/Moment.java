@@ -63,7 +63,7 @@ public final class Moment {
             int slice = moments.size() / 5;
             int remainder = moments.size() % 5;
             for (int i = 5; i > 0; i--)
-                newMoments.add(moments.get(slice * i + (i == 5 ? remainder : 0)));
+                newMoments.add(moments.get(slice * i + (i > remainder ? 1 : 0)));
 
             blocks.replaceValues(pos, newMoments);
         }
@@ -80,7 +80,7 @@ public final class Moment {
             int slice = moments.size() / 5;
             int remainder = moments.size() % 5;
             for (int i = 5; i > 0; i--) {
-                int startIndex = slice * i + (i == 5 ? remainder : 0);
+                int startIndex = slice * i + (i > remainder ? 1 : 0);
                 int endIndex = (slice - 1) * i;
                 EntityMoment compiled = moments.get(startIndex);
                 for (int subIndex = startIndex; subIndex > endIndex; subIndex--)
