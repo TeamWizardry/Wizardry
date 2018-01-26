@@ -35,6 +35,8 @@ public class ModSounds {
 	public static ModSoundEvent TELEPORT;
 	public static ModSoundEvent THUNDERBLAST;
 	public static ModSoundEvent WIND;
+	public static ModSoundEvent ZAP;
+	public static ModSoundEvent ELECTRIC_WHITE_NOISE;
 
 	public static void init() {
 		GLASS_BREAK = new ModSoundEvent("glassbreak");
@@ -66,6 +68,8 @@ public class ModSounds {
 		TELEPORT = new ModSoundEvent("teleport");
 		THUNDERBLAST = new ModSoundEvent("thunder_blast");
 		WIND = new ModSoundEvent("wind");
+		ZAP = new ModSoundEvent("zap");
+		ELECTRIC_WHITE_NOISE = new ModSoundEvent("electric_white_noise");
 	}
 
 }

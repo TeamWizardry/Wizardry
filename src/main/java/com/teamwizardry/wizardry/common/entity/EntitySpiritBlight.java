@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.entity;
 
+import com.teamwizardry.librarianlib.features.math.Matrix4;
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
@@ -8,16 +9,18 @@ import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.api.util.RandUtilSeed;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -34,22 +37,32 @@ import java.awt.*;
  */
 public class EntitySpiritBlight extends EntityMob {
 
+	public static final DataParameter<Integer> DATA_SHIFT_SEED = EntityDataManager.createKey(EntitySpiritBlight.class, DataSerializers.VARINT);
+
 	public EntitySpiritBlight(World worldIn) {
 		super(worldIn);
 		setSize(0.6F, 1.95F);
 		experienceValue = 5;
+
+		setShiftseed(RandUtil.nextInt(100, 100000));
+	}
+
+	public void setShiftseed(int seed) {
+		this.getDataManager().set(DATA_SHIFT_SEED, seed);
+		this.getDataManager().setDirty(DATA_SHIFT_SEED);
 	}
 
 	@Override
 	protected void entityInit() {
 		super.entityInit();
 		isImmuneToFire = true;
+		this.getDataManager().register(DATA_SHIFT_SEED, RandUtil.nextInt(100, 1000000));
 	}
 
 	@Override
 	protected void initEntityAI() {
-		tasks.addTask(1, new EntityAIWatchClosest(this, EntityPlayer.class, 50.0F));
-		applyEntityAI();
+		//tasks.addTask(1, new EntityAIWatchClosest(this, EntityPlayer.class, 50.0F));
+		//applyEntityAI();
 	}
 
 	@Override
@@ -61,7 +74,7 @@ public class EntitySpiritBlight extends EntityMob {
 	}
 
 	protected void applyEntityAI() {
-		targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, true));
+		//targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, true));
 	}
 
 	@Override
@@ -91,8 +104,18 @@ public class EntitySpiritBlight extends EntityMob {
 		if (world.isRemote) return;
 		if (isAIDisabled()) return;
 
+		if (RandUtil.nextInt(100) == 0) {
+			setShiftseed(RandUtil.nextInt(1000, 100000000));
+			playSound(ModSounds.ZAP, 0.3f, RandUtil.nextFloat(1.5f, 2f));
+		}
+
 		if ((ticksExisted % RandUtil.nextInt(100, 200)) == 0)
 			playSound(ModSounds.HALLOWED_SPIRIT, RandUtil.nextFloat(), RandUtil.nextFloat());
+
+
+		//if (world.getTotalWorldTime() % 30 == 0) {
+		//	playSound(ModSounds.ELECTRIC_WHITE_NOISE, RandUtil.nextFloat(0.2f, 0.3f), RandUtil.nextFloat(0.1f, 0.3f));
+		//}
 
 		fallDistance = 0;
 
@@ -101,20 +124,10 @@ public class EntitySpiritBlight extends EntityMob {
 		if (getAttackTarget() != null) {
 			noClip = true;
 			Vec3d direction = getPositionVector().subtract(getAttackTarget().getPositionVector()).normalize();
-
-			motionX = direction.x * -0.1;
-			motionY = direction.y * -0.1;
-			motionZ = direction.z * -0.1;
-
+			motionX = direction.x * -0.05;
+			motionY = direction.y * -0.05;
+			motionZ = direction.z * -0.05;
 			rotationYaw = (float) (((-MathHelper.atan2(direction.x, direction.z) * 180) / Math.PI) - 180) / 2;
-
-			if (RandUtil.nextInt(10) == 0) {
-				Vec3d perp = direction.scale(-1).crossProduct(new Vec3d(0, 1, 0)).normalize();
-				Vec3d randomize = getPositionVector().subtract(direction).addVector(perp.x * RandUtil.nextDouble(3), RandUtil.nextDouble(-1, 1), perp.z * RandUtil.nextDouble(3));
-				setPosition(randomize.x, randomize.y, randomize.z);
-
-				Vec3d origin = getPositionVector().addVector(0, getEyeHeight(), 0);
-			}
 		} else {
 			if (!collidedVertically) {
 				motionY = 0;
@@ -135,7 +148,14 @@ public class EntitySpiritBlight extends EntityMob {
 				glitter.setAlphaFunction(new InterpFadeInOut(1f, 1f));
 				glitter.setColor(new Color(0xf404d4));
 
-				ParticleSpawner.spawn(glitter, world, new StaticInterp<>(getPositionVector().addVector(0, getEyeHeight(), 0)), 10, 0, (i, build) -> {
+				RandUtilSeed seed = new RandUtilSeed(getDataManager().get(DATA_SHIFT_SEED));
+				Matrix4 matrix4 = new Matrix4();
+				matrix4.rotate(rotationYaw, new Vec3d(0, 1, 0));
+
+				Vec3d offset = new Vec3d(seed.nextDouble(-2, 2), seed.nextDouble(-2, 2), seed.nextDouble(-2, 2));
+
+				ParticleSpawner.spawn(glitter, world, new StaticInterp<>(
+						getPositionVector().addVector(0, getEyeHeight(), 0).add(offset)), 10, 0, (i, build) -> {
 					double radius = 0.1;
 					double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
 					double r = radius * RandUtil.nextFloat();
@@ -203,10 +223,12 @@ public class EntitySpiritBlight extends EntityMob {
 					build.setLifetime(RandUtil.nextInt(200, 250));
 					build.setScaleFunction(new InterpScale(RandUtil.nextFloat(0.6f, 1.5f), 0));
 					if (RandUtil.nextBoolean()) build.setColor(Color.WHITE);
-					else build.setColor(Color.YELLOW);
+					else build.setColor(new Color(0xf404d4));
 				});
 			}
 		});
+		playSound(ModSounds.BASS_BOOM, 3, 0.5f);
+		playSound(ModSounds.BASS_BOOM, 1, RandUtil.nextFloat(1, 1.5f));
 		super.onDeath(cause);
 	}
 
@@ -214,10 +236,16 @@ public class EntitySpiritBlight extends EntityMob {
 	public void readEntityFromNBT(NBTTagCompound compound) {
 		super.readEntityFromNBT(compound);
 
+		if (compound.hasKey("shift_seed")) {
+			this.getDataManager().set(DATA_SHIFT_SEED, compound.getInteger("shift_seed"));
+			this.getDataManager().setDirty(DATA_SHIFT_SEED);
+		}
 	}
 
 	@Override
 	public void writeEntityToNBT(NBTTagCompound compound) {
 		super.writeEntityToNBT(compound);
+
+		compound.setInteger("shift_seed", getDataManager().get(DATA_SHIFT_SEED));
 	}
 }

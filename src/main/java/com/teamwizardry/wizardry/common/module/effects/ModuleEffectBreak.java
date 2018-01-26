@@ -52,7 +52,7 @@ public class ModuleEffectBreak extends ModuleEffect {
 		Entity caster = spell.getData(CASTER);
 
 		double range = getModifier(spell, Attributes.AREA, 1, 64);
-		double strength = getModifier(spell, Attributes.POTENCY, 1, 64);
+		double strength = getModifier(spell, Attributes.POTENCY, 1, 20) / 4;
 
 		if (targetPos != null) {
 			Block block = world.getBlockState(targetPos).getBlock();

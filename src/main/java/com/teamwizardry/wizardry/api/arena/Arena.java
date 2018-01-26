@@ -14,8 +14,11 @@ import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.common.entity.angel.EntityAngel;
+import com.teamwizardry.wizardry.common.entity.angel.zachriel.EntityZachriel;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -179,6 +182,14 @@ public class Arena implements INBTSerializable<NBTTagCompound> {
 
 	public Set<UUID> getPlayers() {
 		return players;
+	}
+
+	public Iterable<EntityLivingBase> getVictims() {
+		return world.getEntitiesWithinAABB(EntityLivingBase.class,
+				new AxisAlignedBB(center).grow(radius, 0, radius).expand(0, height, 0),
+				(entity) -> entity != null && entity.isEntityAlive() &&
+						entity.canBeHitWithPotion() && !(entity instanceof EntityZachriel) &&
+						entity.getDistanceSq(center) < radius * radius);
 	}
 
 	public boolean isHasEnded() {

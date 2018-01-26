@@ -36,7 +36,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.MAX_TIME;
@@ -346,7 +345,7 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 
 	protected final <T extends Module> Module cloneModule(T toCloneTo) {
 		toCloneTo.attributes = attributes.copy();
-		toCloneTo.modifiers = modifiers.stream().collect(Collectors.toList());
+		toCloneTo.modifiers = new ArrayList<>(modifiers);
 		toCloneTo.setPrimaryColor(getPrimaryColor());
 		toCloneTo.setSecondaryColor(getSecondaryColor());
 		toCloneTo.setBurnoutFill(getBurnoutFill());
@@ -369,12 +368,13 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 		if (nextModule != null) compound.setTag("next_module", nextModule.serializeNBT());
 
 		compound.setString("id", getID());
-		compound.setDouble("mana_drain", getManaDrain());
-		compound.setDouble("burnout_fill", getBurnoutFill());
-		compound.setDouble("chargeup_time", getChargeupTime());
-		compound.setDouble("cooldown_time", getCooldownTime());
-		compound.setDouble("multiplier", getMultiplier());
-		compound.setBoolean("is_head", isHead);
+
+		if (getManaDrain() != 0) compound.setDouble("mana_drain", getManaDrain());
+		if (getBurnoutFill() != 0) compound.setDouble("burnout_fill", getBurnoutFill());
+		if (getChargeupTime() != 0) compound.setDouble("chargeup_time", getChargeupTime());
+		if (getCooldownTime() != 0) compound.setDouble("cooldown_time", getCooldownTime());
+		if (getManaDrain() != 1) compound.setDouble("multiplier", getMultiplier());
+		if (isHead) compound.setBoolean("is_head", true);
 
 		if (getItemStack() != null) compound.setTag("item_stack", getItemStack().serializeNBT());
 		if (getPrimaryColor() != null) compound.setInteger("primary_color", getPrimaryColor().getRGB());
@@ -403,6 +403,6 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 		if (nbt.hasKey("cooldown_time")) setCooldownTime(nbt.getInteger("cooldown_time"));
 		if (nbt.hasKey("item_stack")) setItemStack(new ItemStack(nbt.getCompoundTag("item_stack")));
 		if (nbt.hasKey("multiplier")) setMultiplier(nbt.getDouble("multiplier"));
-		if (nbt.hasKey("is_head")) isHead = nbt.getBoolean("is_head");
+		if (nbt.hasKey("is_head")) isHead = true;
 	}
 }

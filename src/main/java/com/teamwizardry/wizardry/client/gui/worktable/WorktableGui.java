@@ -11,7 +11,7 @@ import com.teamwizardry.librarianlib.features.gui.GuiBase;
 import com.teamwizardry.librarianlib.features.gui.component.GuiComponent;
 import com.teamwizardry.librarianlib.features.gui.component.GuiComponentEvents;
 import com.teamwizardry.librarianlib.features.gui.components.*;
-import com.teamwizardry.librarianlib.features.gui.mixin.ScissorMixin;
+import com.teamwizardry.librarianlib.features.gui.mixin.DragMixin;
 import com.teamwizardry.librarianlib.features.gui.mixin.gl.GlMixin;
 import com.teamwizardry.librarianlib.features.math.Vec2d;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
@@ -26,19 +26,25 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleType;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.Utils;
 import com.teamwizardry.wizardry.common.network.PacketSendSpellToBook;
+import com.teamwizardry.wizardry.common.network.PacketWorktableUpdate;
+import com.teamwizardry.wizardry.common.tile.TileMagiciansWorktable;
+import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nullable;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.UUID;
+import java.util.*;
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * Created by Saad on 6/17/2016.
@@ -60,9 +66,11 @@ public class WorktableGui extends GuiBase {
 	HashMap<UUID, UUID> componentLinks = new HashMap<>();
 	private HashSet<ArrayList<Module>> compiledSpell = new HashSet<>();
 	ComponentWhitelistedModifiers whitelistedModifiers;
+	public BlockPos worktablePos;
 
-	public WorktableGui() {
+	public WorktableGui(BlockPos worktablePos) {
 		super(480, 224);
+		this.worktablePos = worktablePos;
 
 		ComponentRect rect = new ComponentRect(0, 0, 40000, 40000);
 		rect.getColor().setValue(new Color(0x80000000, true));
@@ -75,6 +83,29 @@ public class WorktableGui extends GuiBase {
 
 		paper = new ComponentVoid(180, 19, 180, 188);
 		getMainComponents().add(paper);
+
+		TileEntity tile = Minecraft.getMinecraft().world.getTileEntity(worktablePos);
+		if (tile != null && tile instanceof TileMagiciansWorktable) {
+			for (Map.Entry<Module, UUID> entrySet : ((TileMagiciansWorktable) tile).paperComponents.entrySet()) {
+				TableModule module = new TableModule(this, null, entrySet.getKey(), true, false);
+
+				if (entrySet.getKey().attributes.hasKey("worktable_x") && entrySet.getKey().attributes.hasKey("worktable_y")) {
+					double x = entrySet.getKey().attributes.getDouble("worktable_x");
+					double y = entrySet.getKey().attributes.getDouble("worktable_y");
+					module.component.setPos(new Vec2d(x, y));
+				}
+
+				DragMixin drag = new DragMixin(module.component, vec2d -> vec2d);
+				drag.setDragOffset(new Vec2d(6, 6));
+
+				paperComponents.put(module.component, entrySet.getValue());
+				paper.add(module.component);
+			}
+
+			for (Map.Entry<UUID, UUID> entrySet : ((TileMagiciansWorktable) tile).componentLinks.entrySet()) {
+				componentLinks.put(entrySet.getKey(), entrySet.getValue());
+			}
+		}
 
 		ComponentSprite shapes = new ComponentSprite(SIDE_BAR, 29, 31, 48, 80);
 		GlMixin.INSTANCE.transform(shapes).setValue(new Vec3d(0, 0, -15));
@@ -106,19 +137,36 @@ public class WorktableGui extends GuiBase {
 		textSave.getText().setValue(saveStr);
 		save.add(textSave);
 
+		save.render.getTooltip().func((Function<GuiComponent, java.util.List<String>>) t -> {
+			List<String> txt = new ArrayList<>();
+
+			if (!Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) {
+				txt.add(TextFormatting.RED + LibrarianLib.PROXY.translate("wizardry.misc.save_error"));
+			}
+			return txt;
+		});
+
 		save.BUS.hook(GuiComponentEvents.MouseInEvent.class, event -> {
-			save.setSprite(BUTTON_HIGHLIGHTED);
+			if (!Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) {
+				save.setSprite(BUTTON_PRESSED);
+			} else save.setSprite(BUTTON_HIGHLIGHTED);
 		});
 		save.BUS.hook(GuiComponentEvents.MouseOutEvent.class, event -> {
-			save.setSprite(BUTTON_NORMAL);
+			if (!Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) {
+				save.setSprite(BUTTON_PRESSED);
+			} else save.setSprite(BUTTON_NORMAL);
 		});
 		save.BUS.hook(GuiComponentEvents.MouseDownEvent.class, event -> {
-			if (event.component.getMouseOver()) {
+			if (!Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) {
+				save.setSprite(BUTTON_PRESSED);
+			} else if (event.component.getMouseOver()) {
 				save.setSprite(BUTTON_PRESSED);
 			}
 		});
 		save.BUS.hook(GuiComponentEvents.MouseUpEvent.class, event -> {
-			if (event.component.getMouseOver()) {
+			if (!Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) {
+				save.setSprite(BUTTON_PRESSED);
+			} else if (event.component.getMouseOver()) {
 				save.setSprite(BUTTON_HIGHLIGHTED);
 			}
 		});
@@ -155,7 +203,7 @@ public class WorktableGui extends GuiBase {
 			ComponentSprite bookIcon = new ComponentSprite(new Sprite(new ResourceLocation(Wizardry.MODID, "textures/items/physics_book.png")), (int) ((bookIconMask.getSize().getX() / 2.0) - 16), (int) (bookIconMask.getSize().getY() + 50), 32, 32);
 			{
 				bookIcon.getTransform().setTranslateZ(200);
-				ScissorMixin.INSTANCE.scissor(bookIconMask);
+				bookIconMask.clipping.setClipToBounds(true);
 				bookIconMask.getTransform().setTranslateZ(10);
 				fakePaper.add(bookIconMask);
 
@@ -173,7 +221,7 @@ public class WorktableGui extends GuiBase {
 				});
 
 				ScheduledEventAnimation scheduled = new ScheduledEventAnimation(100, fakePaper::invalidate);
-				
+
 				bookIcon.add(anim, scheduled);
 			}
 
@@ -248,6 +296,32 @@ public class WorktableGui extends GuiBase {
 		whitelistedModifiers = new ComponentWhitelistedModifiers(this, 384, save.getPos().getYi() + save.getSize().getYi() + 8, 80, 170);
 		whitelistedModifiers.getTransform().setTranslateZ(20);
 		getMainComponents().add(whitelistedModifiers);
+	}
+
+	public void sync() {
+		HashMap<Module, UUID> convertComponents = new HashMap<>();
+
+		for (Map.Entry<GuiComponent, UUID> entrySet : paperComponents.entrySet()) {
+			Module module1 = getModule(entrySet.getKey());
+			if (module1 == null) continue;
+			module1.attributes.setDouble("worktable_x", entrySet.getKey().getPos().getX());
+			module1.attributes.setDouble("worktable_y", entrySet.getKey().getPos().getY());
+			convertComponents.put(module1, entrySet.getValue());
+		}
+
+		if (!Minecraft.getMinecraft().world.isBlockLoaded(worktablePos)) return;
+		IBlockState state = Minecraft.getMinecraft().world.getBlockState(worktablePos);
+
+		if (state.getBlock() != ModBlocks.MAGICIANS_WORKTABLE) return;
+
+		TileEntity table = Minecraft.getMinecraft().world.getTileEntity(worktablePos);
+		if (table == null) return;
+		if (!(table instanceof TileMagiciansWorktable)) return;
+
+		((TileMagiciansWorktable) table).componentLinks = componentLinks;
+		((TileMagiciansWorktable) table).paperComponents = convertComponents;
+
+		PacketHandler.NETWORK.sendToServer(new PacketWorktableUpdate(Minecraft.getMinecraft().world.provider.getDimension(), worktablePos, convertComponents, componentLinks));
 	}
 
 	public UUID getUUID(GuiComponent component) {

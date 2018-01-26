@@ -58,7 +58,7 @@ public class EntitySpellProjectile extends EntityMod {
 	public EntitySpellProjectile(World world, Module module, SpellData spell, double dist, double speed, double gravity) {
 		super(world);
 		this.dist = dist;
-		this.speed = MathHelper.clamp(speed, 0.5, 20);
+		this.speed = MathHelper.clamp(speed, 1, 20);
 		this.gravity = gravity;
 		setSize(0.3F, 0.3F);
 		isImmuneToFire = true;

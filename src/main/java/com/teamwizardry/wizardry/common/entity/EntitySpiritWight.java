@@ -183,6 +183,9 @@ public class EntitySpiritWight extends EntityMob {
 				});
 			}
 		});
+
+		playSound(ModSounds.BASS_BOOM, 3, 0.5f);
+		playSound(ModSounds.BASS_BOOM, 1, RandUtil.nextFloat(1, 1.5f));
 		super.onDeath(cause);
 	}
 
