@@ -106,7 +106,8 @@ public class ComponentIndex extends GuiComponent {
 					Pair<String, GuiComponent> pair = next(indexItem.link);
 					if (pair == null) return;
 
-					if (isMainIndex && !bookGui.componentLogo.isInvalid()) bookGui.componentLogo.invalidate();
+					if (isMainIndex && !bookGui.componentBookSearch.isInvalid())
+						bookGui.componentBookSearch.invalidate();
 
 					if (pair.getFirst().equals("index")) {
 

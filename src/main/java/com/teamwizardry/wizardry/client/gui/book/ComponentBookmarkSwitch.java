@@ -152,7 +152,7 @@ public class ComponentBookmarkSwitch extends GuiComponent {
 				}
 
 				if (status != 0) {
-					bookGui.componentLogo.invalidate();
+					bookGui.componentBookSearch.invalidate();
 				}
 
 				if (status == 1) {

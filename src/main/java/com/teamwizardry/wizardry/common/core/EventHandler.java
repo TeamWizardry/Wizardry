@@ -1,9 +1,5 @@
 package com.teamwizardry.wizardry.common.core;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
-
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.Constants.MISC;
@@ -18,7 +14,6 @@ import com.teamwizardry.wizardry.api.util.TeleportUtil;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.crafting.burnable.EntityBurnableItem;
 import com.teamwizardry.wizardry.init.ModPotions;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -39,6 +34,10 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.UUID;
+
 public class EventHandler {
 
 	private final HashSet<UUID> fallResetter = new HashSet<>();
@@ -52,16 +51,13 @@ public class EventHandler {
 
 	@SubscribeEvent
 	public void redstoneHandler(EntityJoinWorldEvent event) {
-		if (event.getWorld().isRemote)
-		{
+		if (event.getWorld().isRemote) {
 			return;
 		}
-		
-		if (event.getEntity() instanceof EntityItem && !(event.getEntity() instanceof EntityBurnableItem))
-		{
+
+		if (event.getEntity() instanceof EntityItem && !(event.getEntity() instanceof EntityBurnableItem)) {
 			EntityItem item = (EntityItem) event.getEntity();
-			if (EntityBurnableItem.isBurnable(item.getItem()))
-			{
+			if (EntityBurnableItem.isBurnable(item.getItem())) {
 				EntityBurnableItem newItem = new EntityBurnableItem(event.getWorld(), item.posX, item.posY, item.posZ, item.getItem());
 				newItem.motionX = item.motionX;
 				newItem.motionY = item.motionY;

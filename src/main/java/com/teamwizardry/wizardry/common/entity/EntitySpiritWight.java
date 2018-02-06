@@ -117,17 +117,17 @@ public class EntitySpiritWight extends EntityMob {
 		EntityPlayer closePlayer = getAttackTarget() == null ? null : world.getNearestPlayerNotCreative(this, 30);
 		boolean angry = player != null;
 
-		ClientRunnable.run(new ClientRunnable() {
-			@Override
-			@SideOnly(Side.CLIENT)
-			public void runIfClient() {
-				if ((closePlayer != null) && !angry)
-					LibParticles.SPIRIT_WIGHT_FLAME_FAR(world, getPositionVector().addVector(0, getEyeHeight(), 0));
-				else if (angry)
-					LibParticles.SPIRIT_WIGHT_FLAME_CLOSE(world, getPositionVector().addVector(0, getEyeHeight(), 0));
-				else LibParticles.SPIRIT_WIGHT_FLAME_NORMAL(world, getPositionVector().addVector(0, getEyeHeight(), 0));
-			}
-		});
+		//ClientRunnable.run(new ClientRunnable() {
+		//	@Override
+		//	@SideOnly(Side.CLIENT)
+		//	public void runIfClient() {
+		//		if ((closePlayer != null) && !angry)
+		//			LibParticles.SPIRIT_WIGHT_FLAME_FAR(world, getPositionVector().addVector(0, getEyeHeight(), 0));
+		//		else if (angry)
+		//			LibParticles.SPIRIT_WIGHT_FLAME_CLOSE(world, getPositionVector().addVector(0, getEyeHeight(), 0));
+		//		else LibParticles.SPIRIT_WIGHT_FLAME_NORMAL(world, getPositionVector().addVector(0, getEyeHeight(), 0));
+		//	}
+		//});
 
 		if (angry) {
 			player.attackEntityFrom(DamageSource.MAGIC, 0.15f);
