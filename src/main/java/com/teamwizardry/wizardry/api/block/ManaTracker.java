@@ -1,19 +1,18 @@
 package com.teamwizardry.wizardry.api.block;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimaps;
 import com.teamwizardry.wizardry.crafting.mana.ManaCrafter;
 import com.teamwizardry.wizardry.init.ModBlocks;
-
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 public class ManaTracker
 {
@@ -33,7 +32,7 @@ public class ManaTracker
 		for (ManaCrafter manaCrafter : crafterList)
 			if (manaCrafter.equals(crafter))
 				return;
-		if (world.getBlockState(pos) == ModBlocks.FLUID_MANA.getDefaultState())
+		if (world.getBlockState(pos).getBlock() == ModBlocks.FLUID_MANA)
 			worldCrafters.put(pos, crafter);
 	}
 	
@@ -55,26 +54,23 @@ public class ManaTracker
 				posToRemove.add(pos);
 				return;
 			}
-			List<EntityItem> items = tickedWorld.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos));
+			List<EntityItem> items = tickedWorld.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos).grow(1));
 			crafterList.forEach(crafter -> {
-				if (!crafter.isValid(tickedWorld, pos, items))
-				{
+				if (!crafter.isValid(tickedWorld, pos, items)) {
 					crafterToRemove.put(pos, crafter);
-					return;
-				}
-				crafter.tick(tickedWorld, pos, items);
-				if (crafter.isFinished())
-				{
-					crafter.finish(tickedWorld, pos, items);
-					crafterToRemove.put(pos, crafter);
-					return;
+				} else {
+					crafter.tick(tickedWorld, pos, items);
+					if (crafter.isFinished()) {
+						crafter.finish(tickedWorld, pos, items);
+						crafterToRemove.put(pos, crafter);
+					}
 				}
 			});
 		});
 		
-		posToRemove.forEach(pos -> worldCrafters.removeAll(pos));
-		crafterToRemove.forEach((pos, crafter) -> worldCrafters.remove(pos, crafter));
+		posToRemove.forEach(worldCrafters::removeAll);
+		crafterToRemove.forEach(worldCrafters::remove);
 		if (worldCrafters.isEmpty())
-			manaCrafters.remove(worldCrafters);
+			manaCrafters.remove(dim);
 	}
 }

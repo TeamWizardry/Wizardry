@@ -2,7 +2,7 @@
 	"type": "item",
 	"output": { 
 		"item": "wizardry:halo_real",
-		"nbt": "{display:{Lore:[\"Temporary Recipe\"]}}"
+		"nbt": "{display:{Lore:[\"§7§oThis is a temporary recipe! Don't rely on it!\"]}}"
 	},
 	"input": { "item": "wizardry:halo_fake" },
 	"extraInputs": [

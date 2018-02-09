@@ -25,6 +25,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.JsonContext;
+import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -242,6 +243,50 @@ public class ManaRecipeLoader {
 		Wizardry.logger.info("<<========================================================================>>");
 	}
 
+	private static Set<BlockPos> allManaLiquidInPool(World world, BlockPos pos, int needed) {
+		if (needed == 0) return Sets.newHashSet();
+
+		IBlockState manaFluid = ModBlocks.FLUID_MANA.getDefaultState();
+
+		BlockPos.MutableBlockPos topPos = new BlockPos.MutableBlockPos(pos);
+		IBlockState stateAt = world.getBlockState(topPos);
+		while (stateAt.getBlock() == ModBlocks.FLUID_MANA)
+			stateAt = world.getBlockState(topPos.setPos(topPos.getX(), topPos.getY() + 1, topPos.getZ()));
+		topPos.setPos(topPos.getX(), topPos.getY() - 1, topPos.getZ());
+
+		BlockPos.MutableBlockPos tool = new BlockPos.MutableBlockPos();
+		Set<BlockPos> positions = Sets.newHashSet(topPos.toImmutable());
+		Set<BlockPos> visited = Sets.newHashSet(positions);
+		Set<BlockPos> resultants = Sets.newHashSet(positions);
+		while (!positions.isEmpty() && visited.size() < 1000) {
+			BlockPos point = positions.iterator().next();
+			positions.remove(point);
+			for (int index = EnumFacing.VALUES.length - 1; index >= 0; index--) {
+				EnumFacing facing = EnumFacing.getFront(index);
+				tool.setPos(point.getX() + facing.getFrontOffsetX(),
+						point.getY() + facing.getFrontOffsetY(),
+						point.getZ() + facing.getFrontOffsetZ());
+
+				if (!visited.contains(tool)) {
+					BlockPos immutable = tool.toImmutable();
+					visited.add(immutable);
+					stateAt = world.getBlockState(tool);
+					if (stateAt.getBlock() == ModBlocks.FLUID_MANA) {
+						positions.add(immutable);
+						if (stateAt == manaFluid) {
+							resultants.add(immutable);
+
+							if (resultants.size() >= needed)
+								return resultants;
+						}
+					}
+				}
+			}
+		}
+
+		return resultants;
+	}
+
 	private ManaCrafterBuilder buildManaCrafter(String identifier, ItemStack outputItem, Ingredient input, List<Ingredient> extraInputs, int duration, int required, boolean consume, boolean explode, boolean bubbling, boolean harp) {
 		Ingredient outputIngredient = Ingredient.fromStacks(outputItem);
 		List<Ingredient> inputs = Lists.newArrayList(extraInputs);
@@ -278,8 +323,12 @@ public class ManaRecipeLoader {
                     world.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
             }
         }, (world, pos, items, currentDuration) -> {
-            if (consume) for (BlockPos position : allManaLiquidInPool(world, pos, required))
-				world.setBlockToAir(position);
+			if (consume) {
+				IBlockState drainState = ModBlocks.FLUID_MANA.getDefaultState().withProperty(BlockFluidBase.LEVEL, 14);
+
+				for (BlockPos position : allManaLiquidInPool(world, pos, required))
+					world.setBlockState(position, drainState);
+			}
 
 			List<Ingredient> inputList = new ArrayList<>(inputs);
 			inputList.add(input);
@@ -309,48 +358,6 @@ public class ManaRecipeLoader {
             if (harp)
                 world.playSound(null, output.posX, output.posY, output.posZ, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
         }, identifier, duration).setInputs(input, inputs).setOutput(outputItem).setDoesConsume(consume).setRequired(required);
-	}
-
-	private static Set<BlockPos> allManaLiquidInPool(World world, BlockPos pos, int needed) {
-		if (needed == 0) return Sets.newHashSet();
-
-		IBlockState manaFluid = ModBlocks.FLUID_MANA.getDefaultState();
-
-		BlockPos.MutableBlockPos topPos = new BlockPos.MutableBlockPos(pos);
-		IBlockState stateAt = world.getBlockState(topPos);
-		while (stateAt == manaFluid)
-			stateAt = world.getBlockState(topPos.setPos(topPos.getX(), topPos.getY() + 1, topPos.getZ()));
-		topPos.setPos(topPos.getX(), topPos.getY() - 1, topPos.getZ());
-
-		BlockPos.MutableBlockPos tool = new BlockPos.MutableBlockPos();
-		Set<BlockPos> positions = Sets.newHashSet(topPos.toImmutable());
-		Set<BlockPos> visited = Sets.newHashSet(positions);
-		Set<BlockPos> resultants = Sets.newHashSet(positions);
-		while (!positions.isEmpty()) {
-			BlockPos point = positions.iterator().next();
-			positions.remove(point);
-			for (int index = EnumFacing.VALUES.length - 1; index >= 0; index--) {
-				EnumFacing facing = EnumFacing.getFront(index);
-				tool.setPos(point.getX() + facing.getFrontOffsetX(),
-						point.getY() + facing.getFrontOffsetY(),
-						point.getZ() + facing.getFrontOffsetZ());
-
-				if (!visited.contains(tool)) {
-					BlockPos immutable = tool.toImmutable();
-					visited.add(immutable);
-					stateAt = world.getBlockState(tool);
-					if (stateAt == manaFluid) {
-						positions.add(immutable);
-						resultants.add(immutable);
-
-						if (resultants.size() >= needed)
-							return resultants;
-					}
-				}
-			}
-		}
-
-		return resultants;
 	}
 
 	private ManaCrafterBuilder buildManaCrafter(String identifier, IBlockState outputBlock, Ingredient input, List<Ingredient> extraInputs, int duration, int required, boolean consume, boolean explode, boolean bubbling, boolean harp) {
@@ -386,8 +393,11 @@ public class ManaRecipeLoader {
 					world.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
 			}
         }, (world, pos, items, currentDuration) -> {
-            if (consume) for (BlockPos position : allManaLiquidInPool(world, pos, required))
-                    world.setBlockToAir(position);
+            if (consume) {
+            	IBlockState drainState = ModBlocks.FLUID_MANA.getDefaultState().withProperty(BlockFluidBase.LEVEL, 14);
+				for (BlockPos position : allManaLiquidInPool(world, pos, required))
+					world.setBlockState(position, drainState);
+			}
 
 			List<Ingredient> inputList = new ArrayList<>(inputs);
 			inputList.add(input);
