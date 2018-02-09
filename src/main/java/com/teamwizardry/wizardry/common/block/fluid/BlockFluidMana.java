@@ -109,8 +109,8 @@ public class BlockFluidMana extends BlockFluidClassic {
 	public void run(World world, BlockPos pos, Entity entity, Predicate<Entity> test, Consumer<Entity> process) {
 		float height = getFluidHeightForRender(world, pos, world.getBlockState(pos.up()));
 		AxisAlignedBB bb = new AxisAlignedBB(pos).contract(0, 1 - height, 0);
-		if (entity.getCollisionBoundingBox() != null
-				&& entity.getCollisionBoundingBox().intersects(bb)
+		AxisAlignedBB entityBox = entity.getCollisionBoundingBox();
+		if ((entityBox == null || entityBox.intersects(bb))
 				&& test.test(entity)) process.accept(entity);
 	}
 }

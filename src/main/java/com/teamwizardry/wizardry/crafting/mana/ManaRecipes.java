@@ -39,7 +39,8 @@ public class ManaRecipes
 															"wisdom_plank",
 															"wisdom_slab",
 															"wisdom_stairs",
-															"wisdom_stick" };
+															"wisdom_stick",
+															"temp_real_halo" };
 	
 	public void loadRecipes(File directory)
 	{
