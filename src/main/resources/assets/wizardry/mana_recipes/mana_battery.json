@@ -6,7 +6,7 @@
 		{ "item": "minecraft:soul_sand" },
 		{ "item": "wizardry:devil_dust" }
 	],
-	"radius": 1,
+	"required": 9,
 	"consume": true,
 	"explode": true,
 	"harp": false

@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.crafting.mana;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 import com.google.gson.*;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
@@ -16,6 +17,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
@@ -98,7 +100,7 @@ public class ManaRecipeLoader {
 
 				List<Ingredient> extraInputs = new LinkedList<>();
 				int duration = 100;
-				int radius = 0;
+				int required = 0;
 				boolean consume = false;
 				boolean explode = false;
 				boolean bubbling = true;
@@ -161,12 +163,12 @@ public class ManaRecipeLoader {
 					duration = fileObject.get("duration").getAsInt();
 				}
 
-				if (fileObject.has("radius")) {
-					if (!fileObject.get("radius").isJsonPrimitive() || !fileObject.getAsJsonPrimitive("radius").isNumber()) {
-						Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT give radius as a number. Ignoring file...: " + element.toString());
+				if (fileObject.has("required")) {
+					if (!fileObject.get("required").isJsonPrimitive() || !fileObject.getAsJsonPrimitive("required").isNumber()) {
+						Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT give required as a number. Ignoring file...: " + element.toString());
 						continue;
 					}
-					radius = fileObject.get("radius").getAsInt();
+					required = fileObject.get("required").getAsInt();
 				}
 
 				if (fileObject.has("consume")) {
@@ -212,7 +214,7 @@ public class ManaRecipeLoader {
 						continue;
 					}
 
-					ManaCrafterBuilder build = buildManaCrafter(file.getPath(), outputItem, inputItem, extraInputs, duration, radius, consume, explode, bubbling, harp);
+					ManaCrafterBuilder build = buildManaCrafter(file.getPath(), outputItem, inputItem, extraInputs, duration, required, consume, explode, bubbling, harp);
 					recipeRegistry.put(file.getPath(), build);
 					recipes.put(inputItem, build);
 				} else if (type.equalsIgnoreCase("block")) {
@@ -227,7 +229,7 @@ public class ManaRecipeLoader {
 						meta = output.get("meta").getAsInt();
 					outputBlock = block.getStateFromMeta(meta);
 
-					ManaCrafterBuilder build = buildManaCrafter(file.getPath(), outputBlock, inputItem, extraInputs, duration, radius, consume, explode, bubbling, harp);
+					ManaCrafterBuilder build = buildManaCrafter(file.getPath(), outputBlock, inputItem, extraInputs, duration, required, consume, explode, bubbling, harp);
 					recipeRegistry.put(file.getPath(), build);
 					recipes.put(inputItem, build);
 				} else
@@ -240,15 +242,13 @@ public class ManaRecipeLoader {
 		Wizardry.logger.info("<<========================================================================>>");
 	}
 
-	private ManaCrafterBuilder buildManaCrafter(String identifier, ItemStack outputItem, Ingredient input, List<Ingredient> extraInputs, int duration, int radius, boolean consume, boolean explode, boolean bubbling, boolean harp) {
+	private ManaCrafterBuilder buildManaCrafter(String identifier, ItemStack outputItem, Ingredient input, List<Ingredient> extraInputs, int duration, int required, boolean consume, boolean explode, boolean bubbling, boolean harp) {
 		Ingredient outputIngredient = Ingredient.fromStacks(outputItem);
 		List<Ingredient> inputs = Lists.newArrayList(extraInputs);
 
 		return new ManaCrafterBuilder((world, pos, items) -> {
-            if (radius > 0) for (int i = -radius; i <= radius; i++)
-                for (int j = -radius; j <= radius; j++)
-                    if (world.getBlockState(pos.add(i, 0, j)) != ModBlocks.FLUID_MANA.getDefaultState())
-                        return false;
+			if (allManaLiquidInPool(world, pos, required).size() < required)
+				return false;
 
             List<ItemStack> list = items.stream().map(entity -> entity.getItem().copy()).collect(Collectors.toList());
 
@@ -278,9 +278,8 @@ public class ManaRecipeLoader {
                     world.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
             }
         }, (world, pos, items, currentDuration) -> {
-            if (consume) for (int i = -radius; i <= radius; i++)
-                for (int j = -radius; j <= radius; j++)
-                    world.setBlockToAir(pos.add(i, 0, j));
+            if (consume) for (BlockPos position : allManaLiquidInPool(world, pos, required))
+				world.setBlockToAir(position);
 
 			List<Ingredient> inputList = new ArrayList<>(inputs);
 			inputList.add(input);
@@ -309,17 +308,57 @@ public class ManaRecipeLoader {
 
             if (harp)
                 world.playSound(null, output.posX, output.posY, output.posZ, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
-        }, identifier, duration).setInputs(input, inputs).setOutput(outputItem).setDoesConsume(consume).setRadius(radius);
+        }, identifier, duration).setInputs(input, inputs).setOutput(outputItem).setDoesConsume(consume).setRequired(required);
 	}
 
-	private ManaCrafterBuilder buildManaCrafter(String identifier, IBlockState outputBlock, Ingredient input, List<Ingredient> extraInputs, int duration, int radius, boolean consume, boolean explode, boolean bubbling, boolean harp) {
+	private static Set<BlockPos> allManaLiquidInPool(World world, BlockPos pos, int needed) {
+		if (needed == 0) return Sets.newHashSet();
+
+		IBlockState manaFluid = ModBlocks.FLUID_MANA.getDefaultState();
+
+		BlockPos.MutableBlockPos topPos = new BlockPos.MutableBlockPos(pos);
+		IBlockState stateAt = world.getBlockState(topPos);
+		while (stateAt == manaFluid)
+			stateAt = world.getBlockState(topPos.setPos(topPos.getX(), topPos.getY() + 1, topPos.getZ()));
+		topPos.setPos(topPos.getX(), topPos.getY() - 1, topPos.getZ());
+
+		BlockPos.MutableBlockPos tool = new BlockPos.MutableBlockPos();
+		Set<BlockPos> positions = Sets.newHashSet(topPos.toImmutable());
+		Set<BlockPos> visited = Sets.newHashSet(positions);
+		Set<BlockPos> resultants = Sets.newHashSet(positions);
+		while (!positions.isEmpty()) {
+			BlockPos point = positions.iterator().next();
+			positions.remove(point);
+			for (int index = EnumFacing.VALUES.length - 1; index >= 0; index--) {
+				EnumFacing facing = EnumFacing.getFront(index);
+				tool.setPos(point.getX() + facing.getFrontOffsetX(),
+						point.getY() + facing.getFrontOffsetY(),
+						point.getZ() + facing.getFrontOffsetZ());
+
+				if (!visited.contains(tool)) {
+					BlockPos immutable = tool.toImmutable();
+					visited.add(immutable);
+					stateAt = world.getBlockState(tool);
+					if (stateAt == manaFluid) {
+						positions.add(immutable);
+						resultants.add(immutable);
+
+						if (resultants.size() >= needed)
+							return resultants;
+					}
+				}
+			}
+		}
+
+		return resultants;
+	}
+
+	private ManaCrafterBuilder buildManaCrafter(String identifier, IBlockState outputBlock, Ingredient input, List<Ingredient> extraInputs, int duration, int required, boolean consume, boolean explode, boolean bubbling, boolean harp) {
 		List<Ingredient> inputs = Lists.newArrayList(extraInputs);
 
 		ManaCrafterBuilder builder = new ManaCrafterBuilder((world, pos, items) -> {
-            if (radius > 0) for (int i = -radius; i <= radius; i++)
-                for (int j = -radius; j <= radius; j++)
-                    if (world.getBlockState(pos.add(i, 0, j)) != ModBlocks.FLUID_MANA.getDefaultState())
-                        return false;
+            if (allManaLiquidInPool(world, pos, required).size() < required)
+            	return false;
 
             List<ItemStack> list = items.stream().map(entity -> entity.getItem().copy()).collect(Collectors.toList());
 			List<Ingredient> inputList = new ArrayList<>(inputs);
@@ -347,9 +386,8 @@ public class ManaRecipeLoader {
 					world.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
 			}
         }, (world, pos, items, currentDuration) -> {
-            if (consume) for (int i = -radius; i <= radius; i++)
-                for (int j = -radius; j <= radius; j++)
-                    world.setBlockToAir(pos.add(i, 0, j));
+            if (consume) for (BlockPos position : allManaLiquidInPool(world, pos, required))
+                    world.setBlockToAir(position);
 
 			List<Ingredient> inputList = new ArrayList<>(inputs);
 			inputList.add(input);
@@ -374,7 +412,7 @@ public class ManaRecipeLoader {
 
             if (harp)
                 world.playSound(null, output.x, output.y, output.z, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
-        }, identifier, duration).setInputs(input, inputs).setIsBlock(true).setDoesConsume(true).setRadius(radius);
+        }, identifier, duration).setInputs(input, inputs).setIsBlock(true).setDoesConsume(true).setRequired(required);
 
 		Fluid fluid = FluidRegistry.lookupFluidForBlock(outputBlock.getBlock());
 		if (fluid != null)
@@ -398,7 +436,7 @@ public class ManaRecipeLoader {
 		private FluidStack fluidOutput = null;
 		private boolean block = false;
 		private boolean doesConsume = false;
-		private int radius = 0;
+		private int required = 0;
 
 		private ManaCrafterBuilder(ManaCrafterPredicate isValid, ManaCrafterConsumer tick, ManaCrafterConsumer finish, String identifier, int duration) {
 			this.isValid = isValid;
@@ -434,8 +472,8 @@ public class ManaRecipeLoader {
 			return this;
 		}
 
-		private ManaCrafterBuilder setRadius(int radius) {
-			this.radius = radius;
+		private ManaCrafterBuilder setRequired(int required) {
+			this.required = required;
 			return this;
 		}
 
@@ -463,8 +501,8 @@ public class ManaRecipeLoader {
 			return doesConsume;
 		}
 
-		public int getRadius() {
-			return radius;
+		public int getRequired() {
+			return required;
 		}
 
 		public ManaCrafter build() {

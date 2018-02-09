@@ -68,10 +68,10 @@ public class ManaRecipeJEI implements IRecipeWrapper {
             List<String> output = Lists.newArrayList();
             if (builder.isBlock())
                 TooltipHelper.addToTooltip(output, "jei.recipe.block." + manaCategory.getUid());
-            if (builder.doesConsume() && (!builder.isBlock() || builder.getRadius() != 0))
+            if (builder.doesConsume() && (!builder.isBlock() || builder.getRequired() != 0))
                 TooltipHelper.addToTooltip(output, "jei.recipe.consumes." + manaCategory.getUid());
-            if (builder.getRadius() != 0)
-                TooltipHelper.addToTooltip(output, "jei.recipe.radius." + manaCategory.getUid(), builder.getRadius() * 2 + 1);
+            if (builder.getRequired() != 0)
+                TooltipHelper.addToTooltip(output, "jei.recipe.requires." + manaCategory.getUid(), builder.getRequired());
             return output;
         }
 
@@ -86,13 +86,13 @@ public class ManaRecipeJEI implements IRecipeWrapper {
     public void drawInfo(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
         ManaCraftingCategory category = WizardryJEIPlugin.manaCategory;
 
-        if (builder.isBlock() || builder.doesConsume() || builder.getRadius() != 0) {
+        if (builder.isBlock() || builder.doesConsume() || builder.getRequired() != 0) {
             GlStateManager.pushMatrix();
             GlStateManager.scale(0.5, 0.5, 1.0);
             category.info.draw(minecraft, 64 * 2, 3 * 2);
             GlStateManager.popMatrix();
         }
         for (int i = 0; i < rows(); i++)
-            category.slots.draw(minecraft, 11 + 18 * i, 46);
+            category.slots.draw(minecraft, 11, 46 + 18 * i);
     }
 }

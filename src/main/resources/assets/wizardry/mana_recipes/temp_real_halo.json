@@ -2,8 +2,8 @@
 	"type": "item",
 	"output": { 
 		"item": "wizardry:halo_real",
-		"nbt": {display:{Lore:["Temporary Recipe"]}}
-		 },
+		"nbt": "{display:{Lore:[\"Temporary Recipe\"]}}"
+	},
 	"input": { "item": "wizardry:halo_fake" },
 	"extraInputs": [
 		{ "item": "minecraft:prismarine_shard" },
@@ -13,7 +13,7 @@
 		{ "item": "wizardry:devil_dust" },
 		{ "item": "wizardry:unicorn_horn" }
 	],
-	"radius": 2,
+	"required": 25,
 	"duration": 600,
 	"consume": true,
 	"explode": true
