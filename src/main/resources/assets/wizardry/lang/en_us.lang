@@ -134,6 +134,7 @@ jei.recipe.wizardry:mana=Mana Soaking
 jei.recipe.block.wizardry:mana=Output replaces mana
 jei.recipe.consumes.wizardry:mana=Consumes the liquid mana used
 jei.recipe.requires.wizardry:mana=Needs %d source blocks of mana
+jei.recipe.requires.wizardry:mana=Needs a source block of mana
 jei.recipe.wizardry:fire=Item Burning
 jei.recipe.tooltip.wizardry:fire=Fire
 

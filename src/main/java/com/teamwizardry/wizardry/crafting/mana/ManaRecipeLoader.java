@@ -148,7 +148,7 @@ public class ManaRecipeLoader {
 
 				List<Ingredient> extraInputs = new LinkedList<>();
 				int duration = 100;
-				int required = 0;
+				int required = 1;
 				boolean consume = false;
 				boolean explode = false;
 				boolean bubbling = true;
@@ -459,7 +459,7 @@ public class ManaRecipeLoader {
 		private FluidStack fluidOutput = null;
 		private boolean block = false;
 		private boolean doesConsume = false;
-		private int required = 0;
+		private int required = 1;
 
 		private ManaCrafterBuilder(ManaCrafterPredicate isValid, ManaCrafterConsumer tick, ManaCrafterConsumer finish, String identifier, int duration) {
 			this.isValid = isValid;

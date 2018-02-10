@@ -70,7 +70,7 @@ public class ManaRecipeJEI implements IRecipeWrapper {
 				TooltipHelper.addToTooltip(output, "jei.recipe.block." + manaCategory.getUid());
 			if (builder.doesConsume() && (!builder.isBlock() || builder.getRequired() != 0))
 				TooltipHelper.addToTooltip(output, "jei.recipe.consumes." + manaCategory.getUid());
-			if (builder.getRequired() != 0)
+			if (builder.getRequired() > 1)
 				TooltipHelper.addToTooltip(output, "jei.recipe.requires." + manaCategory.getUid(), builder.getRequired());
 			return output;
 		}
