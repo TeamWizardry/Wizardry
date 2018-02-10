@@ -46,7 +46,7 @@ public class ManaRecipeLoader {
 	private File directory;
 
 	private static Set<BlockPos> allManaLiquidInPool(World world, BlockPos pos, int needed) {
-		if (needed == 0) return Sets.newHashSet();
+		if (needed <= 0) return Sets.newHashSet();
 
 		IBlockState manaFluid = ModBlocks.FLUID_MANA.getDefaultState();
 
@@ -58,6 +58,9 @@ public class ManaRecipeLoader {
 
 		BlockPos.MutableBlockPos tool = new BlockPos.MutableBlockPos();
 		Set<BlockPos> positions = Sets.newHashSet(topPos.toImmutable());
+		if (needed == 1)
+			return positions;
+
 		Set<BlockPos> visited = Sets.newHashSet(positions);
 		Set<BlockPos> resultants = Sets.newHashSet(positions);
 		while (!positions.isEmpty() && visited.size() < 1000) {
