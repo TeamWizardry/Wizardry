@@ -1,7 +1,12 @@
 {
-	"type": "item",
-	"output": { "item": "wizardry:wisdom_wood_planks" },
-	"input": { "type": "forge:ore_dict", "ore": "plankWood" },
-	"duration": 0,
-	"harp": false
+  "type": "item",
+  "output": {
+    "item": "wizardry:wisdom_wood_planks"
+  },
+  "input": {
+    "type": "forge:ore_dict",
+    "ore": "plankWood"
+  },
+  "duration": 0,
+  "harp": false
 }

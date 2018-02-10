@@ -1,6 +1,10 @@
 {
-	"type": "item",
-	"output": { "item": "wizardry:book" },
-	"input": { "item": "minecraft:book" },
-	"explode": true
+  "type": "item",
+  "output": {
+    "item": "wizardry:book"
+  },
+  "input": {
+    "item": "minecraft:book"
+  },
+  "explode": true
 }

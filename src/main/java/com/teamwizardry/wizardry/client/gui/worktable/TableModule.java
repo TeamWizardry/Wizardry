@@ -219,7 +219,7 @@ public class TableModule {
 
 				GlStateManager.pushMatrix();
 				GlStateManager.color(1, 1, 1, 1);
-				if(event.component.getMouseOver()) {
+				if (event.component.getMouseOver()) {
 					GlStateManager.translate(0, 0, 5);
 				}
 				GlStateManager.enableBlend();

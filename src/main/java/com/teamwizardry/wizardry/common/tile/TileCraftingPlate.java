@@ -50,6 +50,15 @@ import java.util.Random;
 @TileRenderer(TileCraftingPlateRenderer.class)
 public class TileCraftingPlate extends TileManaInteracter {
 
+	public static final HashSet<BlockPos> poses = new HashSet<>();
+
+	static {
+		poses.add(new BlockPos(3, 2, 3));
+		poses.add(new BlockPos(-3, 2, 3));
+		poses.add(new BlockPos(3, 2, -3));
+		poses.add(new BlockPos(-3, 2, -3));
+	}
+
 	@com.teamwizardry.librarianlib.features.saving.Module
 	public ModuleInventory realInventory = new ModuleInventory(1000);
 	@com.teamwizardry.librarianlib.features.saving.Module
@@ -60,15 +69,6 @@ public class TileCraftingPlate extends TileManaInteracter {
 	public boolean revealStructure = false, isAbleToSuckMana = false;
 	public Vec3d[] positions;
 	public Random random = new Random(getPos().toLong());
-
-	public static final HashSet<BlockPos> poses = new HashSet<>();
-
-	static {
-		poses.add(new BlockPos(3, 2, 3));
-		poses.add(new BlockPos(-3, 2, 3));
-		poses.add(new BlockPos(3, 2, -3));
-		poses.add(new BlockPos(-3, 2, -3));
-	}
 
 	public TileCraftingPlate() {
 		super(500, 500);

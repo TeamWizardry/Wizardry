@@ -1,12 +1,11 @@
 package com.teamwizardry.wizardry.client.render.entity;
 
-import javax.annotation.Nullable;
-
 import com.teamwizardry.wizardry.common.entity.angel.zachriel.EntityCorruptionProjectile;
-
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
+
+import javax.annotation.Nullable;
 
 public class RenderZachrielCorruption extends Render<EntityCorruptionProjectile> {
 

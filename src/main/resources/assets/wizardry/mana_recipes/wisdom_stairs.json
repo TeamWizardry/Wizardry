@@ -1,7 +1,12 @@
 {
-	"type": "item",
-	"output": { "item": "wizardry:wisdom_wood_stairs" },
-	"input": { "type": "forge:ore_dict", "ore": "stairWood" },
-	"duration": 0,
-	"harp": false
+  "type": "item",
+  "output": {
+    "item": "wizardry:wisdom_wood_stairs"
+  },
+  "input": {
+    "type": "forge:ore_dict",
+    "ore": "stairWood"
+  },
+  "duration": 0,
+  "harp": false
 }

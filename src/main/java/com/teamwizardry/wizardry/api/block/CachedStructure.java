@@ -34,8 +34,8 @@ public class CachedStructure extends Structure {
 	public HashMultimap<BlockRenderLayer, Template.BlockInfo> blocks;
 	@SideOnly(Side.CLIENT)
 	public EnumMap<BlockRenderLayer, int[]> vboCaches;
-	private IStructure block;
 	public ResourceLocation loc;
+	private IStructure block;
 
 	public CachedStructure(@NotNull ResourceLocation loc, @Nullable IBlockAccess access) {
 		super(loc);

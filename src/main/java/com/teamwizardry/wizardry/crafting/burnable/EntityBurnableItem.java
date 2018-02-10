@@ -11,66 +11,60 @@ import net.minecraftforge.fml.common.Loader;
 import javax.annotation.Nonnull;
 import java.util.Map;
 
-public class EntityBurnableItem extends EntityItem
-{
+public class EntityBurnableItem extends EntityItem {
 	private FireRecipe recipe;
 	private boolean hasBurned;
-	
-	public EntityBurnableItem(World world)
-	{
+
+	public EntityBurnableItem(World world) {
 		super(world);
 		this.isImmuneToFire = true;
 	}
-	
-	public EntityBurnableItem(World world, double x, double y, double z)
-	{
+
+	public EntityBurnableItem(World world, double x, double y, double z) {
 		super(world, x, y, z);
 		this.isImmuneToFire = true;
 	}
-	
-	public EntityBurnableItem(World world, double x, double y, double z, ItemStack stack)
-	{
+
+	public EntityBurnableItem(World world, double x, double y, double z, ItemStack stack) {
 		super(world, x, y, z, stack);
 		this.isImmuneToFire = true;
 	}
-	
+
+	public static boolean isBurnable(ItemStack stack) {
+		return !stack.isEmpty() &&
+				(stack.getItem() != Items.REDSTONE || !Loader.isModLoaded("fluxnetworks")) &&
+				FireRecipes.RECIPES.keySet().stream().anyMatch(item -> item.apply(stack));
+	}
+
 	@Override
-	public void onUpdate()
-	{
+	public void onUpdate() {
 		super.onUpdate();
 		if (recipe == null)
 			return;
-		if (hasBurned)
-		{
+		if (hasBurned) {
 			hasBurned = false;
 			recipe.tick(world, this.getPosition());
-			if (recipe.isFinished())
-			{
+			if (recipe.isFinished()) {
 				this.setItem(recipe.finish(this));
 				this.setPickupDelay(5);
 				this.motionY = 0.8;
 			}
-		}
-		else
-		{
+		} else {
 			recipe.reset();
 		}
 	}
 
 	@Override
-	public boolean isEntityInvulnerable(@Nonnull DamageSource source)
-	{
-		if (source.isFireDamage())
-		{
+	public boolean isEntityInvulnerable(@Nonnull DamageSource source) {
+		if (source.isFireDamage()) {
 			hasBurned = true;
 			return true;
 		}
 		return super.isEntityInvulnerable(source);
 	}
-	
+
 	@Override
-	public void setItem(@Nonnull ItemStack stack)
-	{
+	public void setItem(@Nonnull ItemStack stack) {
 		super.setItem(stack);
 		Map.Entry<Ingredient, FireRecipe> recipeEntry =
 				FireRecipes.RECIPES.entrySet().stream()
@@ -82,16 +76,9 @@ public class EntityBurnableItem extends EntityItem
 		else
 			recipe = null;
 	}
-	
+
 	@Override
-	public boolean isBurning()
-	{
+	public boolean isBurning() {
 		return false;
-	}
-	
-	public static boolean isBurnable(ItemStack stack) {
-		return !stack.isEmpty() &&
-				(stack.getItem() != Items.REDSTONE || !Loader.isModLoaded("fluxnetworks")) &&
-				FireRecipes.RECIPES.keySet().stream().anyMatch(item -> item.apply(stack));
 	}
 }

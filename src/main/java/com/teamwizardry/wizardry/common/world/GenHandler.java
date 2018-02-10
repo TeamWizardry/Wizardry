@@ -1,17 +1,16 @@
 package com.teamwizardry.wizardry.common.world;
 
-import java.util.Random;
-import java.util.stream.IntStream;
-
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.init.ModBlocks;
-
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraftforge.fml.common.IWorldGenerator;
+
+import java.util.Random;
+import java.util.stream.IntStream;
 
 public class GenHandler implements IWorldGenerator {
 

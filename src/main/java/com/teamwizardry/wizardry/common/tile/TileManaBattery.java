@@ -23,9 +23,6 @@ public class TileManaBattery extends TileManaInteracter {
 
 	public static final HashSet<BlockPos> poses = new HashSet<>();
 
-	@Save
-	public boolean revealStructure = false;
-
 	static {
 		poses.add(new BlockPos(2, 1, 2));
 		poses.add(new BlockPos(-2, 1, 2));
@@ -37,6 +34,9 @@ public class TileManaBattery extends TileManaInteracter {
 		poses.add(new BlockPos(4, 2, -4));
 		poses.add(new BlockPos(-4, 2, -4));
 	}
+
+	@Save
+	public boolean revealStructure = false;
 
 
 	public TileManaBattery() {

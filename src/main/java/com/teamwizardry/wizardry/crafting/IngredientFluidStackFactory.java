@@ -11,12 +11,10 @@ import net.minecraftforge.fluids.FluidRegistry;
 
 import javax.annotation.Nonnull;
 
-public class IngredientFluidStackFactory implements IIngredientFactory
-{
+public class IngredientFluidStackFactory implements IIngredientFactory {
 	@Nonnull
 	@Override
-	public Ingredient parse(JsonContext context, JsonObject json)
-	{
+	public Ingredient parse(JsonContext context, JsonObject json) {
 		String name = JsonUtils.getString(json, "fluid");
 		int amount = JsonUtils.getInt(json, "amount", 1000);
 		Fluid fluid = FluidRegistry.getFluid(name);

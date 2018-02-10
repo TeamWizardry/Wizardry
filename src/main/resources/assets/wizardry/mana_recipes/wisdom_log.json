@@ -1,7 +1,12 @@
 {
-	"type": "item",
-	"output": { "item": "wizardry:wisdom_wood_log" },
-	"input": { "type": "forge:ore_dict", "ore": "logWood" },
-	"duration": 0,
-	"harp": false
+  "type": "item",
+  "output": {
+    "item": "wizardry:wisdom_wood_log"
+  },
+  "input": {
+    "type": "forge:ore_dict",
+    "ore": "logWood"
+  },
+  "duration": 0,
+  "harp": false
 }

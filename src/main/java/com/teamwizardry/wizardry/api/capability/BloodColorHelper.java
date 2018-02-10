@@ -9,7 +9,7 @@ import java.awt.*;
 
 /**
  * @author WireSegal
- *         Created at 3:18 PM on 8/2/16.
+ * Created at 3:18 PM on 8/2/16.
  */
 @SideOnly(Side.CLIENT)
 public final class BloodColorHelper {

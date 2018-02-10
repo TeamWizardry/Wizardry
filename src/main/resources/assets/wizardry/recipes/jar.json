@@ -6,10 +6,12 @@
   ],
   "key": {
     "A": {
-      "ore": "slabWood", "type": "forge:ore_dict"
+      "ore": "slabWood",
+      "type": "forge:ore_dict"
     },
     "B": {
-      "ore": "blockGlass", "type": "forge:ore_dict"
+      "ore": "blockGlass",
+      "type": "forge:ore_dict"
     }
   },
   "result": {

@@ -66,7 +66,7 @@ public class ComponentRecipe extends GuiComponent {
 			GuiComponent textHolder = new ComponentVoid(0, 8);
 			add(textHolder);
 			int textY = 0;
-			
+
 			for (Module module : modules) {
 				if (lastModule == null) lastModule = module;
 				if (module != null) {

@@ -31,8 +31,7 @@ public class TileLight extends TileMod implements ITickable {
 		ClientRunnable.run(new ClientRunnable() {
 			@Override
 			@SideOnly(Side.CLIENT)
-			public void runIfClient()
-			{
+			public void runIfClient() {
 				if (RandUtil.nextInt(4) == 0) {
 					ParticleBuilder glitter = new ParticleBuilder(30);
 					glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));

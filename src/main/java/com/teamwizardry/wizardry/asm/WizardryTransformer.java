@@ -172,7 +172,7 @@ public class WizardryTransformer implements IClassTransformer {
 	}
 
 	private byte[] transformSingleMethod(byte[] basicClass, String srgName, String mcpName,
-	                                     String desc, Predicate<MethodNode> transformer) {
+										 String desc, Predicate<MethodNode> transformer) {
 		return transformClass(basicClass, classNode -> {
 			for (MethodNode methodNode : classNode.methods) {
 				if (equalsEither(methodNode.name, srgName, mcpName) && methodNode.desc.equals(desc)) {

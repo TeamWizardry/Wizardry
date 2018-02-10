@@ -11,8 +11,7 @@ public abstract class ModuleModifier extends Module {
 		return ModuleType.MODIFIER;
 	}
 
-	public void apply(@Nonnull Module module)
-	{
+	public void apply(@Nonnull Module module) {
 		module.modifiersToApply.addAll(modifiers);
 	}
 

@@ -28,10 +28,6 @@ import java.util.HashSet;
  */
 public interface IStructure {
 
-	CachedStructure getStructure();
-
-	Vec3i offsetToCenter();
-
 	static ItemStack craftItemFromInventory(EntityPlayer player, ItemStack output) {
 		HashSet<IRecipe> recipes = getRecipesForItem(output);
 		if (recipes.isEmpty()) return ItemStack.EMPTY;
@@ -123,6 +119,10 @@ public interface IStructure {
 		}
 		return recipes;
 	}
+
+	CachedStructure getStructure();
+
+	Vec3i offsetToCenter();
 
 	default boolean isStructureComplete(World world, BlockPos pos) {
 		for (Template.BlockInfo info : getStructure().blockInfos()) {

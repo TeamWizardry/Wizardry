@@ -14,17 +14,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public class ManaTracker
-{
+public class ManaTracker {
 	public static ManaTracker INSTANCE = new ManaTracker();
 	private HashMap<Integer, HashMultimap<BlockPos, ManaCrafter>> manaCrafters = new HashMap<>();
-	
-	public void addManaCraft(World world, BlockPos pos, ManaCrafter crafter)
-	{
+
+	public void addManaCraft(World world, BlockPos pos, ManaCrafter crafter) {
 		int dim = world.provider.getDimension();
 		HashMultimap<BlockPos, ManaCrafter> worldCrafters = manaCrafters.get(dim);
-		if (worldCrafters == null)
-		{
+		if (worldCrafters == null) {
 			worldCrafters = HashMultimap.create();
 			manaCrafters.put(dim, worldCrafters);
 		}
@@ -35,9 +32,8 @@ public class ManaTracker
 		if (world.getBlockState(pos).getBlock() == ModBlocks.FLUID_MANA)
 			worldCrafters.put(pos, crafter);
 	}
-	
-	public void tick(World tickedWorld)
-	{
+
+	public void tick(World tickedWorld) {
 		if (manaCrafters.isEmpty())
 			return;
 		int dim = tickedWorld.provider.getDimension();
@@ -49,8 +45,7 @@ public class ManaTracker
 		Multimaps.asMap(worldCrafters).forEach((pos, crafterList) -> {
 			if (!tickedWorld.isBlockLoaded(pos))
 				return;
-			if (tickedWorld.getBlockState(pos).getBlock() != ModBlocks.FLUID_MANA)
-			{
+			if (tickedWorld.getBlockState(pos).getBlock() != ModBlocks.FLUID_MANA) {
 				posToRemove.add(pos);
 				return;
 			}
@@ -67,7 +62,7 @@ public class ManaTracker
 				}
 			});
 		});
-		
+
 		posToRemove.forEach(worldCrafters::removeAll);
 		crafterToRemove.forEach(worldCrafters::remove);
 		if (worldCrafters.isEmpty())

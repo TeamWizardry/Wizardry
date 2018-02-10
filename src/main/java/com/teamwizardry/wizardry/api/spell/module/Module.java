@@ -193,6 +193,10 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 		return attributes.getDouble(Attributes.MANA);
 	}
 
+	public final void setManaDrain(double manaDrain) {
+		attributes.setDouble(Attributes.MANA, manaDrain);
+	}
+
 	public final float getReductionMultiplier(EntityLivingBase caster) {
 		ItemStack stack = BaublesSupport.getItem(caster, ModItems.CAPE);
 		if (stack != null) {
@@ -201,10 +205,6 @@ public abstract class Module implements INBTSerializable<NBTTagCompound> {
 			return (float) MathHelper.clamp(1 - (time / 1000000.0), 1, 0.25);
 		}
 		return 1;
-	}
-
-	public final void setManaDrain(double manaDrain) {
-		attributes.setDouble(Attributes.MANA, manaDrain);
 	}
 
 	public final double getBurnoutFill() {

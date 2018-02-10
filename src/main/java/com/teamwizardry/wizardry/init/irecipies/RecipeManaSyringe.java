@@ -24,7 +24,7 @@ public class RecipeManaSyringe extends IForgeRegistryEntry.Impl<IRecipe> impleme
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);
 			if (stack.getItem() == ModItems.SYRINGE && stack.getItemDamage() == 0) {
-					foundSyringe = true;
+				foundSyringe = true;
 			}
 			if (ItemStack.areItemStacksEqual(bucket, stack))
 				foundBucket = true;

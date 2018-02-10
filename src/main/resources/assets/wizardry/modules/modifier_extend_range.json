@@ -4,20 +4,20 @@
   "burnout_fill": 0.0,
   "item_meta": "4",
   "modifiers": [
-      {
-          "attribute": "range",
-          "operation": "add",
-          "amount": 1
-      },
-      {
-          "attribute": "mana",
-          "operation": "multiply",
-          "amount": 1.05
-      },
-      {
-          "attribute": "burnout",
-          "operation": "multiply",
-          "amount": 1.05
-      }
+    {
+      "attribute": "range",
+      "operation": "add",
+      "amount": 1
+    },
+    {
+      "attribute": "mana",
+      "operation": "multiply",
+      "amount": 1.05
+    },
+    {
+      "attribute": "burnout",
+      "operation": "multiply",
+      "amount": 1.05
+    }
   ]
 }

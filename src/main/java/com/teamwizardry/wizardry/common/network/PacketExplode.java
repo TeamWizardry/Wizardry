@@ -62,8 +62,7 @@ public class PacketExplode extends PacketBase {
 		ClientRunnable.run(new ClientRunnable() {
 			@Override
 			@SideOnly(Side.CLIENT)
-			public void runIfClient()
-			{
+			public void runIfClient() {
 				LibParticles.EXPLODE(world, pos, color1, color2, strengthSideways, strengthUpwards, amount, lifeTime, lifeTimeRange, bounce);
 			}
 		});

@@ -159,14 +159,11 @@ public class ModuleRegistry {
 			if (moduleObject.has(keys[i]) && moduleObject.get(keys[i]).isJsonPrimitive() && moduleObject.getAsJsonPrimitive(keys[i]).isString()) {
 				module.setSecondaryColor(new Color(Integer.parseInt(moduleObject.getAsJsonPrimitive(keys[i]).getAsString(), 16)));
 			}
-			
-			if (moduleObject.has("modifiers") && moduleObject.get("modifiers").isJsonArray())
-			{
+
+			if (moduleObject.has("modifiers") && moduleObject.get("modifiers").isJsonArray()) {
 				JsonArray attributeModifiers = moduleObject.getAsJsonArray("modifiers");
-				for (JsonElement attributeModifier : attributeModifiers)
-				{
-					if (attributeModifier.isJsonObject())
-					{
+				for (JsonElement attributeModifier : attributeModifiers) {
+					if (attributeModifier.isJsonObject()) {
 						String attribute = null;
 						Operation operator = null;
 						double amount = 0;
@@ -178,8 +175,7 @@ public class ModuleRegistry {
 						if (modifier.has("amount") && modifier.get("amount").isJsonPrimitive() && modifier.getAsJsonPrimitive("amount").isNumber())
 							amount = modifier.get("amount").getAsDouble();
 						Wizardry.logger.info("    > Loading AttributeModifier for " + file.getName() + ": " + operator + " -> " + attribute + ", " + amount);
-						if (attribute != null && operator != null)
-						{
+						if (attribute != null && operator != null) {
 							module.modifiers.add(new AttributeModifier(attribute, amount, operator));
 							Wizardry.logger.info("        > Successfully loaded AttributeModifier");
 						}

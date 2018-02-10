@@ -59,6 +59,10 @@ public final class CapeHandler {
 	private CapeHandler() {
 	}
 
+	public static CapeHandler instance() {
+		return Holder.INSTANCE;
+	}
+
 	@SubscribeEvent
 	public void onPlayerRender(RenderPlayerEvent.Post event) {
 		EntityPlayer player = event.getEntityPlayer();
@@ -88,10 +92,6 @@ public final class CapeHandler {
 
 	private static final class Holder {
 		private static final CapeHandler INSTANCE = new CapeHandler();
-	}
-
-	public static CapeHandler instance() {
-		return Holder.INSTANCE;
 	}
 
 	private static final class RenderCape {
@@ -132,6 +132,53 @@ public final class CapeHandler {
 		private RenderCape(ImmutableList<Point> points, ImmutableList<Quad> quads) {
 			this.points = points;
 			this.quads = quads;
+		}
+
+		private static RenderCape create() {
+			return create(WIDTH, HEIGHT);
+		}
+
+		private static RenderCape create(int width, int height) {
+			List<Point> points = Lists.newArrayList();
+			List<Quad> quads = Lists.newArrayList();
+			float scale = 2 / 16F;
+			int columns = width + 1;
+			PlayerCollisionResolver collision = new PlayerCollisionResolver();
+			for (int y = 0; y <= height; y++) {
+				for (int x = 0; x <= width; x++) {
+					ImmutableList.Builder<ConstraintResolver> res = ImmutableList.builder();
+					float mass = 1;
+					if (y == 0 || (y == 1 && (x == 0 || x == width))) {
+						mass = 0;
+						res.add(new PinResolver(-(x - width * 0.5F) * scale, -y * scale));
+					}
+					if (y > 0 || x > 0) {
+						mass = 1 - (y / (float) height) * 0.1F;
+						LinkResolver link = new LinkResolver();
+						if (y > 0) {
+							link.attach(points.get(x + (y - 1) * columns), scale, 1);
+						}
+						if (x > 0) {
+							link.attach(points.get(points.size() - 1), scale * (1 + y / (float) height * 0.1F), 1);
+						}
+						res.add(link);
+					}
+					res.add(collision);
+					points.add(new Point(-(x - width * 0.5F) * scale, -y * scale, 0, mass, res.build()));
+					if (x > 0 && y > 0) {
+						int p00x = x - 1, p00y = y - 1;
+						int p01x = x - 1, p01y = y;
+						int p11x = x, p10y = y;
+						int p10x = x, p11y = y - 1;
+						Quad.Vertex v00 = Quad.vert(points.get(p00x + p00y * columns), p00x, p00y, width, height);
+						Quad.Vertex v01 = Quad.vert(points.get(p01x + p01y * columns), p01x, p01y, width, height);
+						Quad.Vertex v11 = Quad.vert(points.get(p11x + p10y * columns), p11x, p10y, width, height);
+						Quad.Vertex v10 = Quad.vert(points.get(p10x + p11y * columns), p10x, p11y, width, height);
+						quads.add(new Quad(v00, v01, v11, v10));
+					}
+				}
+			}
+			return new RenderCape(ImmutableList.copyOf(points), ImmutableList.copyOf(quads));
 		}
 
 		private boolean hasCape(EntityPlayer player) {
@@ -187,7 +234,6 @@ public final class CapeHandler {
 				fluidCache.clear();
 			}
 		}
-
 
 		private boolean isFluid(World world, float x, float y, float z) {
 			long key = scratchPos.setPos(x, y, z).toLong();
@@ -280,51 +326,8 @@ public final class CapeHandler {
 			GlStateManager.enableCull();
 		}
 
-		private static RenderCape create() {
-			return create(WIDTH, HEIGHT);
-		}
-
-		private static RenderCape create(int width, int height) {
-			List<Point> points = Lists.newArrayList();
-			List<Quad> quads = Lists.newArrayList();
-			float scale = 2 / 16F;
-			int columns = width + 1;
-			PlayerCollisionResolver collision = new PlayerCollisionResolver();
-			for (int y = 0; y <= height; y++) {
-				for (int x = 0; x <= width; x++) {
-					ImmutableList.Builder<ConstraintResolver> res = ImmutableList.builder();
-					float mass = 1;
-					if (y == 0 || (y == 1 && (x == 0 || x == width))) {
-						mass = 0;
-						res.add(new PinResolver(-(x - width * 0.5F) * scale, -y * scale));
-					}
-					if (y > 0 || x > 0) {
-						mass = 1 - (y / (float) height) * 0.1F;
-						LinkResolver link = new LinkResolver();
-						if (y > 0) {
-							link.attach(points.get(x + (y - 1) * columns), scale, 1);
-						}
-						if (x > 0) {
-							link.attach(points.get(points.size() - 1), scale * (1 + y / (float) height * 0.1F), 1);
-						}
-						res.add(link);
-					}
-					res.add(collision);
-					points.add(new Point(-(x - width * 0.5F) * scale, -y * scale, 0, mass, res.build()));
-					if (x > 0 && y > 0) {
-						int p00x = x - 1, p00y = y - 1;
-						int p01x = x - 1, p01y = y;
-						int p11x = x, p10y = y;
-						int p10x = x, p11y = y - 1;
-						Quad.Vertex v00 = Quad.vert(points.get(p00x + p00y * columns), p00x, p00y, width, height);
-						Quad.Vertex v01 = Quad.vert(points.get(p01x + p01y * columns), p01x, p01y, width, height);
-						Quad.Vertex v11 = Quad.vert(points.get(p11x + p10y * columns), p11x, p10y, width, height);
-						Quad.Vertex v10 = Quad.vert(points.get(p10x + p11y * columns), p10x, p11y, width, height);
-						quads.add(new Quad(v00, v01, v11, v10));
-					}
-				}
-			}
-			return new RenderCape(ImmutableList.copyOf(points), ImmutableList.copyOf(quads));
+		private interface ConstraintResolver {
+			void resolve(EntityPlayer player, Point point);
 		}
 
 		private static final class Quad {
@@ -343,6 +346,10 @@ public final class CapeHandler {
 				this.v10 = v10;
 			}
 
+			private static Vertex vert(Point point, int u, int v, int width, int height) {
+				return new Vertex(point, u / (float) width, v / (float) height);
+			}
+
 			private Vertex getV00() {
 				return v00;
 			}
@@ -357,10 +364,6 @@ public final class CapeHandler {
 
 			private Vertex getV10() {
 				return v10;
-			}
-
-			private static Vertex vert(Point point, int u, int v, int width, int height) {
-				return new Vertex(point, u / (float) width, v / (float) height);
 			}
 
 			private static final class Vertex {
@@ -399,33 +402,20 @@ public final class CapeHandler {
 		}
 
 		private static final class Point {
-			private float prevPosX;
-
-			private float prevPosY;
-
-			private float prevPosZ;
-
-			private float posX;
-
-			private float posY;
-
-			private float posZ;
-
-			private float lastPosX;
-
-			private float lastPosY;
-
-			private float lastPosZ;
-
-			private float motionX;
-
-			private float motionY;
-
-			private float motionZ;
-
-			private float invMass;
-
 			private final ImmutableList<ConstraintResolver> constraintResolvers;
+			private float prevPosX;
+			private float prevPosY;
+			private float prevPosZ;
+			private float posX;
+			private float posY;
+			private float posZ;
+			private float lastPosX;
+			private float lastPosY;
+			private float lastPosZ;
+			private float motionX;
+			private float motionY;
+			private float motionZ;
+			private float invMass;
 
 			private Point(float posX, float posY, float posZ, float invMass, ImmutableList<ConstraintResolver> constraintResolvers) {
 				this.posX = posX;
@@ -463,10 +453,6 @@ public final class CapeHandler {
 					r.resolve(player, this);
 				}
 			}
-		}
-
-		private interface ConstraintResolver {
-			void resolve(EntityPlayer player, Point point);
 		}
 
 		private static final class PinResolver implements ConstraintResolver {
