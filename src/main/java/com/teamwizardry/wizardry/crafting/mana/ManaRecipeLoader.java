@@ -52,18 +52,22 @@ public class ManaRecipeLoader {
 
 		BlockPos.MutableBlockPos topPos = new BlockPos.MutableBlockPos(pos);
 		IBlockState stateAt = world.getBlockState(topPos);
-		while (stateAt.getBlock() == ModBlocks.FLUID_MANA)
+		boolean lastWasFluid = false;
+		while (stateAt.getBlock() == ModBlocks.FLUID_MANA) {
+			lastWasFluid = stateAt == manaFluid;
 			stateAt = world.getBlockState(topPos.setPos(topPos.getX(), topPos.getY() + 1, topPos.getZ()));
+		}
 		topPos.setPos(topPos.getX(), topPos.getY() - 1, topPos.getZ());
 
 		BlockPos.MutableBlockPos tool = new BlockPos.MutableBlockPos();
 		Set<BlockPos> positions = Sets.newHashSet(topPos.toImmutable());
-		if (needed == 1)
-			return positions;
 
 		Set<BlockPos> visited = Sets.newHashSet(positions);
-		Set<BlockPos> resultants = Sets.newHashSet(positions);
-		while (!positions.isEmpty() && visited.size() < 1000) {
+		Set<BlockPos> resultants = Sets.newHashSet();
+		if (lastWasFluid)
+			resultants.addAll(positions);
+
+		while (resultants.size() < needed && !positions.isEmpty() && visited.size() < 1000) {
 			BlockPos point = positions.iterator().next();
 			positions.remove(point);
 			for (int index = EnumFacing.VALUES.length - 1; index >= 0; index--) {
@@ -396,11 +400,10 @@ public class ManaRecipeLoader {
 					world.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
 			}
 		}, (world, pos, items, currentDuration) -> {
-			if (consume) {
-				IBlockState drainState = ModBlocks.FLUID_MANA.getDefaultState().withProperty(BlockFluidBase.LEVEL, 14);
-				for (BlockPos position : allManaLiquidInPool(world, pos, required))
-					world.setBlockState(position, drainState);
-			}
+			IBlockState drainState = ModBlocks.FLUID_MANA.getDefaultState().withProperty(BlockFluidBase.LEVEL, 14);
+
+			for (BlockPos position : allManaLiquidInPool(world, pos, consume ? required : 1))
+				world.setBlockState(position, drainState);
 
 			List<Ingredient> inputList = new ArrayList<>(inputs);
 			inputList.add(input);
