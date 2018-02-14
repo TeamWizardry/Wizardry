@@ -1,7 +1,6 @@
 package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
-import com.teamwizardry.wizardry.common.block.fluid.FluidMana;
 import com.teamwizardry.wizardry.common.block.fluid.FluidNacre;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.block.state.IBlockState;
@@ -24,9 +23,6 @@ public class ItemGlassOrb extends ItemMod {
 			ItemStack newStack = new ItemStack(ModItems.PEARL_NACRE, entityItem.getItem().getCount());
 			entityItem.setItem(newStack);
 			newStack.getItem().onEntityItemUpdate(entityItem);
-		} else if (state.getBlock() == FluidMana.instance.getBlock()) {
-			ItemStack newStack = new ItemStack(ModItems.MANA_ORB, entityItem.getItem().getCount());
-			entityItem.setItem(newStack);
 		}
 		return super.onEntityItemUpdate(entityItem);
 	}
