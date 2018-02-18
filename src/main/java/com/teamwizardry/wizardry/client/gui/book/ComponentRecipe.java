@@ -1,143 +1,177 @@
 package com.teamwizardry.wizardry.client.gui.book;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.teamwizardry.librarianlib.features.gui.component.GuiComponent;
-import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
+import com.teamwizardry.librarianlib.features.gui.component.GuiComponentEvents;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentStack;
-import com.teamwizardry.librarianlib.features.gui.components.ComponentText;
-import com.teamwizardry.librarianlib.features.gui.components.ComponentVoid;
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
-import com.teamwizardry.librarianlib.features.math.Vec2d;
-import com.teamwizardry.wizardry.api.spell.SpellBuilder;
-import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
-import com.teamwizardry.wizardry.api.spell.module.Module;
-import net.minecraft.item.Item;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.recipebook.GhostRecipe;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.crafting.IShapedRecipe;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.lwjgl.opengl.GL11;
 
-import java.util.ArrayList;
+import java.awt.*;
+import java.util.Iterator;
 import java.util.List;
 
-import static com.teamwizardry.wizardry.client.gui.book.BookGui.ARROW;
+import static com.teamwizardry.wizardry.client.gui.book.GuiBook.ARROW_HOME_PRESSED;
+import static org.lwjgl.opengl.GL11.GL_SMOOTH;
 
 public class ComponentRecipe extends GuiComponent {
 
-	private static final Vec2d pos = new Vec2d(35, 25);
-	private BookGui bookGui;
+	/**
+	 * Will render a default recipe grid.
+	 *
+	 * @param key The recipe name.
+	 */
+	public ComponentRecipe(int posX, int posY, int width, int height, Color mainColor, @NotNull ResourceLocation key) {
+		super(posX, posY, width, height);
 
-	public ComponentRecipe(BookGui bookGui) {
-		super(pos.getXi(), pos.getYi(), 200, 300);
-		this.bookGui = bookGui;
+		IRecipe recipe = ForgeRegistries.RECIPES.getValue(key);
 
-		reset();
-	}
+		if (recipe == null) return;
+		GhostRecipe ghostRecipe = createGhostRecipe(recipe, Minecraft.getMinecraft().player.openContainer.inventorySlots);
 
-	public void reset() {
-		getChildren().forEach(GuiComponent::invalidate);
+		ComponentStack output = new ComponentStack(
+				(int) ((getSize().getX() / 2.0) - (16 * 1.25 / 2.0) + 40), (int) ((getSize().getY() / 2.0) - (16 * 1.25 / 2.0)));
+		output.getStack().setValue(recipe.getRecipeOutput());
+		output.getTransform().setScale(1.25);
+		add(output);
 
-		if (ItemNBTHelper.getBoolean(bookGui.bookItem, "has_recipe", false)) {
+		int row = -1, column = -1;
+		for (int i = 1; i < recipe.getIngredients().size() + 1; i++) {
+			GhostRecipe.GhostIngredient ingredient = ghostRecipe.get(i);
 
-			JsonObject object = new Gson().fromJson(ItemNBTHelper.getString(bookGui.bookItem, "spell_recipe", null), JsonObject.class);
-			if (object == null) return;
-
-			ArrayList<ItemStack> inventory = new ArrayList<>();
-			JsonArray array = object.getAsJsonArray("list");
-			for (int i = 0; i < array.size(); i++) {
-				JsonElement element = array.get(i);
-				if (!element.isJsonObject()) continue;
-				JsonObject obj = element.getAsJsonObject();
-				String name = obj.getAsJsonPrimitive("name").getAsString();
-				Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(name));
-				if (item == null) continue;
-				ItemStack stack = new ItemStack(item);
-				stack.setItemDamage(obj.getAsJsonPrimitive("meta").getAsInt());
-				stack.setCount(obj.getAsJsonPrimitive("count").getAsInt());
-				inventory.add(stack);
-			}
-			SpellBuilder builder = new SpellBuilder(inventory);
-
-			List<Module> modules = builder.getSpell();
-			Module lastModule = null;
-			GuiComponent textHolder = new ComponentVoid(0, 8);
-			add(textHolder);
-			int textY = 0;
-			
-			for (Module module : modules) {
-				if (lastModule == null) lastModule = module;
-				if (module != null) {
-					Module tempModule = module;
-					int i = 0;
-					while (tempModule != null) {
-
-						ComponentText recipeText = new ComponentText(0, (int) (pos.getY() / 2.0), ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.MIDDLE);
-						recipeText.getWrap().setValue(100);
-						recipeText.getTransform().setScale(2);
-						recipeText.getText().setValue(StringUtils.repeat("-", i) + "> " + tempModule.getReadableName());
-						recipeText.setSize(new Vec2d(100, 16));
-						recipeText.setPos(new Vec2d(0, textY));
-						textHolder.add(recipeText);
-						textY += 16;
-
-						for (String key : tempModule.attributes.getKeySet()) {
-							if (!key.equals(Attributes.MANA) && !key.equals(Attributes.BURNOUT)) {
-								ComponentText modifierText = new ComponentText(0, recipeText.getSize().getYi(), ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.MIDDLE);
-								modifierText.getWrap().setValue(200);
-								modifierText.getText().setValue(StringUtils.repeat(" ", i * 6) + " | "
-										+ key.replace("modifier_", "").replace("_", " ")
-										+ " x" + (int) Math.round(tempModule.attributes.getDouble(key)));
-								modifierText.setSize(new Vec2d(0, 8));
-								modifierText.setPos(new Vec2d(0, textY));
-								textY += 16;
-								textHolder.add(modifierText);
-							}
-						}
-
-						tempModule = tempModule.nextModule;
-						i++;
-					}
+			int x = (int) (-8 + (getSize().getX() / 2.0) - 24);
+			int y = (int) (-8 + (getSize().getY() / 2.0));
+			ComponentStack stack = new ComponentStack(x + row * 16, y + column * 16);
+			stack.getStack().setValue(ingredient.getItem());
+			add(stack);
+			stack.BUS.hook(GuiComponentEvents.ComponentTickEvent.class, event -> {
+				if (!stack.getStack().getValue(stack).isItemEqual(ingredient.getItem())) {
+					stack.getStack().setValue(ingredient.getItem());
 				}
-			}
+			});
 
-			ComponentVoid recipe = new ComponentVoid(224, 0, 50, 50);
-			recipe.getTransform().setScale(2);
-			add(recipe);
-			JsonArray array2 = object.getAsJsonArray("list");
-			int row = 0;
-			for (int i = 0; i < array2.size(); i++) {
-				if (i > 0 && i % 4 == 0) row++;
-
-				if (array2.get(i).isJsonObject()) {
-					JsonObject object1 = array2.get(i).getAsJsonObject();
-					if (object1.has("name") && object1.get("name").isJsonPrimitive()) {
-
-						String name = object1.getAsJsonPrimitive("name").getAsString();
-						int meta = object1.has("meta") ? object1.get("meta").getAsJsonPrimitive().getAsInt() : 0;
-						int count = object1.has("count") ? object1.get("count").getAsJsonPrimitive().getAsInt() : 0;
-						Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(name));
-						if (item == null) continue;
-
-						ItemStack stack = new ItemStack(item, count, meta);
-
-						ComponentStack componentStack = new ComponentStack(32 * (i % 4), 16 * row);
-						componentStack.getStack().setValue(stack);
-						recipe.add(componentStack);
-
-						if (i % 4 == 0) continue;
-						ComponentSprite next = new ComponentSprite(ARROW, -13 + 32 * (i % 4), 6 + 16 * row, (int) (ARROW.getWidth() / 2.0), (int) (ARROW.getHeight() / 2.0));
-						recipe.add(next);
-					}
-				}
+			if (++row >= 2) {
+				column++;
+				row = -1;
 			}
 		}
+
+		BUS.hook(GuiComponentEvents.PostDrawEvent.class, event -> {
+			GlStateManager.pushMatrix();
+			GlStateManager.enableBlend();
+			GlStateManager.enableAlpha();
+			GlStateManager.translate(
+					(int) ((getSize().getX() / 2.0) + (ARROW_HOME_PRESSED.getWidth() / 2.0) + 16), (int) ((getSize().getY() / 2.0) + (ARROW_HOME_PRESSED.getHeight() / 2.0)), 0);
+			GlStateManager.rotate(180, 0, 0, 1);
+			GlStateManager.color(1f, 0.5f, 1f, 1f);
+			ARROW_HOME_PRESSED.bind();
+			ARROW_HOME_PRESSED.draw((int) event.getPartialTicks(), 0, 0);
+			GlStateManager.popMatrix();
+
+			GlStateManager.pushMatrix();
+			GlStateManager.enableBlend();
+			GlStateManager.enableAlpha();
+			GlStateManager.disableCull();
+			GlStateManager.color(1f, 1f, 1f, 1f);
+			//GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE);
+			GlStateManager.disableTexture2D();
+			GlStateManager.shadeModel(GL_SMOOTH);
+
+			int x = (int) (-8 + (getSize().getX() / 2.0) - 24 - (16));
+			int y = (int) (-8 + (getSize().getY() / 2.0) - (16));
+			int bandWidth = 1;
+			int excess = 6;
+
+			GlStateManager.translate(x - (bandWidth / 2.0), y, 500);
+
+			Color color = mainColor.darker().darker();
+			Color fadeOff = new Color(color.getRed(), color.getGreen(), color.getBlue(), 20);
+
+			Tessellator tessellator = Tessellator.getInstance();
+			BufferBuilder buffer = tessellator.getBuffer();
+
+			for (int i = 1; i < 3; i++) {
+				buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+				buffer.pos((i * 16) + bandWidth, 0 - excess, 200).color(fadeOff.getRed(), fadeOff.getGreen(), fadeOff.getBlue(), fadeOff.getAlpha()).endVertex();
+				buffer.pos((i * 16), 0 - excess, 200).color(fadeOff.getRed(), fadeOff.getGreen(), fadeOff.getBlue(), fadeOff.getAlpha()).endVertex();
+				buffer.pos((i * 16), 24, 200).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+				buffer.pos((i * 16) + bandWidth, 24, 200).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+				tessellator.draw();
+
+				buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+				buffer.pos((i * 16) + bandWidth, 48 + excess, 200).color(fadeOff.getRed(), fadeOff.getGreen(), fadeOff.getBlue(), fadeOff.getAlpha()).endVertex();
+				buffer.pos((i * 16), 48 + excess, 200).color(fadeOff.getRed(), fadeOff.getGreen(), fadeOff.getBlue(), fadeOff.getAlpha()).endVertex();
+				buffer.pos((i * 16), 24, 200).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+				buffer.pos((i * 16) + bandWidth, 24, 200).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+				tessellator.draw();
+			}
+
+			for (int i = 1; i < 3; i++) {
+				buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+				buffer.pos(0 - excess, (i * 16) + bandWidth, 200).color(fadeOff.getRed(), fadeOff.getGreen(), fadeOff.getBlue(), fadeOff.getAlpha()).endVertex();
+				buffer.pos(0 - excess, (i * 16), 200).color(fadeOff.getRed(), fadeOff.getGreen(), fadeOff.getBlue(), fadeOff.getAlpha()).endVertex();
+				buffer.pos(24, (i * 16), 200).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+				buffer.pos(24, (i * 16) + bandWidth, 200).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+				tessellator.draw();
+
+				buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+				buffer.pos(48 + excess, (i * 16) + bandWidth, 200).color(fadeOff.getRed(), fadeOff.getGreen(), fadeOff.getBlue(), fadeOff.getAlpha()).endVertex();
+				buffer.pos(48 + excess, (i * 16), 200).color(fadeOff.getRed(), fadeOff.getGreen(), fadeOff.getBlue(), fadeOff.getAlpha()).endVertex();
+				buffer.pos(24, (i * 16), 200).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+				buffer.pos(24, (i * 16) + bandWidth, 200).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+				tessellator.draw();
+			}
+
+			GlStateManager.popMatrix();
+
+		});
 	}
 
-	@Override
-	public void drawComponent(Vec2d mousePos, float partialTicks) {
+	private GhostRecipe createGhostRecipe(IRecipe recipe, List<Slot> slots) {
+		GhostRecipe ghostRecipe = new GhostRecipe();
+		ItemStack itemstack = recipe.getRecipeOutput();
+		ghostRecipe.setRecipe(recipe);
+		ghostRecipe.addIngredient(Ingredient.fromStacks(itemstack),
+				(int) ((getSize().getX()) - 60), (int) ((getSize().getY() / 2.0) - 32));
+		int i = 3;
+		int j = 3;
+		int k = recipe instanceof IShapedRecipe ? ((IShapedRecipe) recipe).getRecipeWidth() : i;
+		int l = 1;
+		Iterator<Ingredient> iterator = recipe.getIngredients().iterator();
 
+		for (int i1 = 0; i1 < j; ++i1) {
+			for (int j1 = 0; j1 < k; ++j1) {
+				if (!iterator.hasNext()) {
+					return ghostRecipe;
+				}
+
+				Ingredient ingredient = iterator.next();
+
+				if (ingredient != Ingredient.EMPTY) {
+					Slot slot = slots.get(l);
+					ghostRecipe.addIngredient(ingredient, slot.xPos, slot.yPos);
+				}
+
+				++l;
+			}
+
+			if (k < i) {
+				l += i - k;
+			}
+		}
+
+		return ghostRecipe;
 	}
 }

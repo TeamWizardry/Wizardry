@@ -1,0 +1,11 @@
+{
+  "title": "Mobs",
+  "icon": "wizardry:textures/gui/book/icons/fangs.png",
+  "description": "Learn about all the mobs here",
+  "type": "index",
+  "content": [
+    "documentation/%LANG%/mobs/fairies.json",
+    "documentation/%LANG%/mobs/spiritwights.json",
+    "documentation/%LANG%/mobs/unicorns.json"
+  ]
+}

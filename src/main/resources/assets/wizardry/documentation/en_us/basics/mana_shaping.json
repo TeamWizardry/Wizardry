@@ -1,13 +1,19 @@
 {
   "title": "Mana Shaping",
-  "type": "content",
+  "icon": "wizardry:crafting_plate",
+  "description": "Learn about the structures that will enable you to build your spells.",
+  "type": "entry",
   "content": [
+    "Once, shaping mana into new forms was commonplace. We few who keep the ancient arts alive, we wizards, must keep these ancient skills alive. Namely, the art of forging mana into forms of power.",
+    "As I have illustrated in this Codex on the following page, the first step to shaping mana is to collect it. This task is best accomplished by a structure reminiscent of an electrical capacitor, called a Mana Battery, obviously. As any wizard will quickly learn, this is the center of your powers. The Mana Battery\u0027s core can absorb this mystic substance far more than any other method of storage. To fill it, feed the battery from Mana Orbs. It will discharge its power to orbs outside of the battery\u0027s circle, allowing for transfer out of the battery.",
     {
-      "text": [
-        "Once, shaping mana into new forms was commonplace. We few who keep the ancient arts alive, we wizards, must keep these ancient skills alive. Namely, the art of forging mana into forms of power.",
-        "As I have illustrated in this Codex on the following page, the first step to shaping mana is to collect it. This task is best accomplished by a structure reminiscent of an electrical capacitor, called a Mana Battery, obviously. As any wizard will quickly learn, this is the center of your powers. The Mana Battery\u0027s core can absorb this mystic substance far more than any other method of storage. To fill it, feed the battery from Mana Orbs. It will discharge its power to orbs outside of the battery\u0027s circle, allowing for transfer out of the battery.\n[structure:mana_battery]",
-        "The arguably more important structure, the Crafting Altar, is a consumer of mana. It takes mana out of orbs on its structure, and directs it. Batteries can then be used to refill these orbs. By directing the power through reagents, you can infuse complex patterns into iridescent Nacre pearls, creating §lSpells§r. However, these reagents and patterns are far too complex to explain here, especially for you, and it would cheapen their importance. I will elaborate in further entries.\n[structure:crafting_plate]"
-      ]
+      "type": "structure",
+      "value": "mana_battery"
+    },
+    "The arguably more important structure, the Crafting Altar, is a consumer of mana. It takes mana out of orbs on its structure, and directs it. Batteries can then be used to refill these orbs. By directing the power through reagents, you can infuse complex patterns into iridescent Nacre pearls, creating §lSpells§r. However, these reagents and patterns are far too complex to explain here, especially for you, and it would cheapen their importance. I will elaborate in further entries.",
+    {
+      "type": "structure",
+      "value": "crafting_altar"
     }
   ]
 }
