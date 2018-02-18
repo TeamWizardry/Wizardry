@@ -1,7 +1,12 @@
 {
-	"type": "item",
-	"output": { "item": "wizardry:wisdom_stick" },
-	"input": { "type": "forge:ore_dict", "ore": "stickWood" },
-	"duration": 0,
-	"harp": false
+  "type": "item",
+  "output": {
+    "item": "wizardry:wisdom_stick"
+  },
+  "input": {
+    "type": "forge:ore_dict",
+    "ore": "stickWood"
+  },
+  "duration": 0,
+  "harp": false
 }

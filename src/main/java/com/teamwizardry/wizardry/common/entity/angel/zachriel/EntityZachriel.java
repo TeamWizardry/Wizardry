@@ -49,14 +49,15 @@ import static net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND;
 @SaveInPlace
 public class EntityZachriel extends EntityAngel {
 
+	public static final float burstDamage = 10;
+	public static final float burstCorruptionScaling = 0.25F;
+	private static int timeReverseTick = 200;
 	public boolean saveTime = false;
 	public boolean reverseTime = false;
-
 	/**
 	 * Number of times Zachriel has saved the arena
 	 */
 	public int numSaves = 0;
-	private static int timeReverseTick = 200;
 	/**
 	 * Number of times Zachriel has loaded the last save
 	 */
@@ -65,7 +66,6 @@ public class EntityZachriel extends EntityAngel {
 	 * List of health percentages when Zachriel will save the arena
 	 */
 	public float[] saveTimes = new float[]{5F / 6F, 1F / 2F, 1F / 6F};
-
 	public int nextBurst = 0;
 	public int nextBurstSave = -1;
 	/**
@@ -73,8 +73,6 @@ public class EntityZachriel extends EntityAngel {
 	 */
 	public float[] loadTimes = new float[]{2F / 3F, 1F / 3F, 1F / getMaxHealth()};
 	public int burstTimer = 0;
-	public static final float burstDamage = 10;
-	public static final float burstCorruptionScaling = 0.25F;
 	public float[] burstLevels = new float[]{0.95F, 0.85F, 0.75F, 0.65F, 0.55F, 0.45F, 0.35F, 0.25F, 0.15F, 0.05F};
 	public Arena arena = null;
 
@@ -208,7 +206,6 @@ public class EntityZachriel extends EntityAngel {
 						getEntityWorld().provider.getDimension(), getPosition(), 50, 50, getEntityId(), players);
 				ArenaManager.INSTANCE.addArena(arena);
 			}
-
 
 
 			for (EntityLivingBase targeted : arena.getVictims())

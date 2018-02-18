@@ -27,7 +27,7 @@ import javax.annotation.Nonnull;
 public class BlockCloud extends BlockMod {
 
 	public static final PropertyBool HAS_LIGHT_VALUE = PropertyBool.create("has_light_value");
-	
+
 	public BlockCloud() {
 		super("cloud", Material.CLOTH);
 		setHardness(0.5f);
@@ -59,39 +59,32 @@ public class BlockCloud extends BlockMod {
 	public BlockRenderLayer getBlockLayer() {
 		return BlockRenderLayer.TRANSLUCENT;
 	}
-	
+
 	@Nonnull
 	@Override
-	protected BlockStateContainer createBlockState()
-	{
+	protected BlockStateContainer createBlockState() {
 		return new BlockStateContainer(this, HAS_LIGHT_VALUE);
 	}
-	
+
 	@Nonnull
 	@Override
-	public IBlockState getStateFromMeta(int meta)
-	{
+	public IBlockState getStateFromMeta(int meta) {
 		return getDefaultState().withProperty(HAS_LIGHT_VALUE, meta == 1);
 	}
-	
+
 	@Override
-	public int getMetaFromState(IBlockState state)
-	{
+	public int getMetaFromState(IBlockState state) {
 		return state.getValue(HAS_LIGHT_VALUE) ? 1 : 0;
 	}
-	
+
 	@Override
-	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
-	{
+	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
 		super.onBlockPlacedBy(world, pos, state, placer, stack);
-		
+
 		boolean hasLightValue = state.getValue(HAS_LIGHT_VALUE);
-		for (int i = 1; i < pos.getY(); i++)
-		{
-			if (hasLightValue)
-			{
-				if (!world.isAirBlock(pos.down(i)))
-				{
+		for (int i = 1; i < pos.getY(); i++) {
+			if (hasLightValue) {
+				if (!world.isAirBlock(pos.down(i))) {
 					hasLightValue = false;
 					state = state.withProperty(HAS_LIGHT_VALUE, false);
 					break;
@@ -102,18 +95,15 @@ public class BlockCloud extends BlockMod {
 			if (world.getBlockState(pos.up(i)) == getDefaultState().withProperty(HAS_LIGHT_VALUE, true))
 				world.setBlockState(pos.up(i), getDefaultState().withProperty(HAS_LIGHT_VALUE, false), 2);
 	}
-	
+
 	@Override
-	public void breakBlock(World world, BlockPos pos, IBlockState state)
-	{
+	public void breakBlock(World world, BlockPos pos, IBlockState state) {
 		boolean isLowest = true;
-		for (int i = 1; i < pos.getY(); i++)
-		{
+		for (int i = 1; i < pos.getY(); i++) {
 			if (!world.isAirBlock(pos.down(i)))
 				isLowest = false;
 		}
-		if (isLowest)
-		{
+		if (isLowest) {
 			for (int i = 1; i < 255 - pos.getY(); i++)
 				if (world.getBlockState(pos.up(i)) == getDefaultState().withProperty(HAS_LIGHT_VALUE, true))
 					world.setBlockState(pos.up(i), getDefaultState().withProperty(HAS_LIGHT_VALUE, false), 2);

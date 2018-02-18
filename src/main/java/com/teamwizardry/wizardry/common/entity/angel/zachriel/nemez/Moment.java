@@ -24,254 +24,254 @@ import java.util.Map;
  * Created at 3:12 PM on 1/15/18.
  */
 public final class Moment {
-    // The lists produced are to be treated like stacks.
-    private transient final Map<String, EntityMoment> totalDifference = new HashMap<>();
-    private final ListMultimap<String, EntityMoment> entities = ArrayListMultimap.create();
-    private final ListMultimap<BlockPos, IBlockState> blocks = ArrayListMultimap.create();
+	// The lists produced are to be treated like stacks.
+	private transient final Map<String, EntityMoment> totalDifference = new HashMap<>();
+	private final ListMultimap<String, EntityMoment> entities = ArrayListMultimap.create();
+	private final ListMultimap<BlockPos, IBlockState> blocks = ArrayListMultimap.create();
 
-    public void addBlockSnapshot(BlockPos position, IBlockState newState) {
-        List<IBlockState> moments = blocks.get(position);
-        if (moments != null && !moments.isEmpty()) {
-            if (moments.get(moments.size() - 1) != newState)
-                return;
-        }
-        blocks.put(position, newState);
+	@SuppressWarnings("deprecation")
+	public static Moment fromNBT(NBTTagCompound nbt) {
+		Moment newMoment = new Moment();
+		NBTTagList blocksSerialized = nbt.getTagList("blocks", Constants.NBT.TAG_COMPOUND);
+		NBTTagCompound entitiesSerialized = nbt.getCompoundTag("entities");
 
-        capBlock(position);
-    }
+		Map<String, EntityMoment> newTotal = new HashMap<>();
+		ListMultimap<String, EntityMoment> newEntities = ArrayListMultimap.create();
+		ListMultimap<BlockPos, IBlockState> newBlocks = ArrayListMultimap.create();
 
-    public void addEntitySnapshot(Entity entity) {
-        String uuid = entity.getCachedUniqueIdString();
-        EntityMoment total = totalDifference.get(uuid);
-        EntityMoment newMoment = EntityMoment.fromPreviousMoment(entity, total);
-        if (total == null)
-            totalDifference.put(uuid, newMoment);
-        else if (!total.matches(entity))
-            totalDifference.put(uuid, total.withOverride(newMoment));
-        else
-            return;
+		for (NBTBase blockUncast : blocksSerialized) {
+			NBTTagCompound block = (NBTTagCompound) blockUncast;
+			BlockPos pos = BlockPos.fromLong(block.getLong("pos"));
+			NBTTagList states = block.getTagList("states", Constants.NBT.TAG_COMPOUND);
+			for (NBTBase stateUncast : states) {
+				NBTTagCompound state = (NBTTagCompound) stateUncast;
+				Block blockAt = Block.getBlockFromName(state.getString("id"));
+				if (blockAt != null) {
+					int meta = state.getByte("data");
+					newBlocks.put(pos, blockAt.getStateFromMeta(meta));
+				}
+			}
+		}
 
-        entities.put(entity.getCachedUniqueIdString(), new EntityMoment(entity));
+		for (String key : entitiesSerialized.getKeySet()) {
+			NBTTagList moments = entitiesSerialized.getTagList(key, Constants.NBT.TAG_COMPOUND);
+			EntityMoment total = EntityMoment.EMPTY;
+			for (NBTBase momentUncast : moments) {
+				NBTTagCompound momentCompound = (NBTTagCompound) momentUncast;
+				EntityMoment moment = EntityMoment.fromNBT(momentCompound);
+				total = total.withOverride(moment);
+				newEntities.put(key, moment);
+			}
+			newTotal.put(key, total);
+		}
 
-        capEntity(entity);
-    }
+		newMoment.totalDifference.putAll(newTotal);
+		newMoment.entities.putAll(newEntities);
+		newMoment.blocks.putAll(newBlocks);
+		for (String id : newMoment.entities.keySet())
+			newMoment.capEntity(id);
+		for (BlockPos pos : newMoment.blocks.keySet())
+			newMoment.capBlock(pos);
+		return newMoment;
+	}
 
-    private void capBlock(BlockPos pos) {
-        List<IBlockState> moments = blocks.get(pos);
-        if (moments.size() > 5) {
-            List<IBlockState> newMoments = Lists.newArrayList();
-            int slice = moments.size() / 5;
-            int remainder = moments.size() % 5;
-            for (int i = 5; i > 0; i--)
-                newMoments.add(moments.get(slice * i + (i > remainder ? 1 : 0)));
+	public void addBlockSnapshot(BlockPos position, IBlockState newState) {
+		List<IBlockState> moments = blocks.get(position);
+		if (moments != null && !moments.isEmpty()) {
+			if (moments.get(moments.size() - 1) != newState)
+				return;
+		}
+		blocks.put(position, newState);
 
-            blocks.replaceValues(pos, newMoments);
-        }
-    }
+		capBlock(position);
+	}
 
-    private void capEntity(Entity entity) {
-        capEntity(entity.getCachedUniqueIdString());
-    }
+	public void addEntitySnapshot(Entity entity) {
+		String uuid = entity.getCachedUniqueIdString();
+		EntityMoment total = totalDifference.get(uuid);
+		EntityMoment newMoment = EntityMoment.fromPreviousMoment(entity, total);
+		if (total == null)
+			totalDifference.put(uuid, newMoment);
+		else if (!total.matches(entity))
+			totalDifference.put(uuid, total.withOverride(newMoment));
+		else
+			return;
 
-    private void capEntity(String id) {
-        List<EntityMoment> moments = entities.get(id);
-        if (moments.size() > 5) {
-            List<EntityMoment> newMoments = Lists.newArrayList();
-            int slice = moments.size() / 5;
-            int remainder = moments.size() % 5;
-            for (int i = 5; i > 0; i--) {
-                int startIndex = slice * i + (i > remainder ? 1 : 0);
-                int endIndex = (slice - 1) * i;
-                EntityMoment compiled = moments.get(startIndex);
-                for (int subIndex = startIndex; subIndex > endIndex; subIndex--)
-                    compiled = compiled.withOverride(moments.get(subIndex));
+		entities.put(entity.getCachedUniqueIdString(), new EntityMoment(entity));
 
-                newMoments.add(compiled);
-            }
+		capEntity(entity);
+	}
 
-            entities.replaceValues(id, newMoments);
-        }
-    }
+	private void capBlock(BlockPos pos) {
+		List<IBlockState> moments = blocks.get(pos);
+		if (moments.size() > 5) {
+			List<IBlockState> newMoments = Lists.newArrayList();
+			int slice = moments.size() / 5;
+			int remainder = moments.size() % 5;
+			for (int i = 5; i > 0; i--)
+				newMoments.add(moments.get(slice * i + (i > remainder ? 1 : 0)));
 
-    public void collapse(Moment theNext) {
-        entities.putAll(theNext.entities);
-        blocks.putAll(theNext.blocks);
+			blocks.replaceValues(pos, newMoments);
+		}
+	}
 
-        for (String id : entities.keySet())
-            capEntity(id);
-        for (BlockPos pos : blocks.keySet())
-            capBlock(pos);
-    }
+	private void capEntity(Entity entity) {
+		capEntity(entity.getCachedUniqueIdString());
+	}
 
-    public void apply(Entity entity) {
-        List<EntityMoment> momentsOfEntity = entities.get(entity.getCachedUniqueIdString());
-        if (momentsOfEntity == null || momentsOfEntity.isEmpty())
-            return;
-        momentsOfEntity.get(0).apply(entity);
-    }
+	private void capEntity(String id) {
+		List<EntityMoment> moments = entities.get(id);
+		if (moments.size() > 5) {
+			List<EntityMoment> newMoments = Lists.newArrayList();
+			int slice = moments.size() / 5;
+			int remainder = moments.size() % 5;
+			for (int i = 5; i > 0; i--) {
+				int startIndex = slice * i + (i > remainder ? 1 : 0);
+				int endIndex = (slice - 1) * i;
+				EntityMoment compiled = moments.get(startIndex);
+				for (int subIndex = startIndex; subIndex > endIndex; subIndex--)
+					compiled = compiled.withOverride(moments.get(subIndex));
 
-    public void apply(Entity entity, float partialTicks) {
-        if (partialTicks == 0) {
-            apply(entity);
-            return;
-        }
+				newMoments.add(compiled);
+			}
 
-        List<EntityMoment> momentsOfEntity = entities.get(entity.getCachedUniqueIdString());
-        if (momentsOfEntity == null || momentsOfEntity.isEmpty())
-            return;
+			entities.replaceValues(id, newMoments);
+		}
+	}
 
-        int stackIndexOfMoment = (int) (momentsOfEntity.size() * partialTicks);
-        int indexOfMoment = momentsOfEntity.size() - stackIndexOfMoment;
-        if (indexOfMoment == 0) {
-            apply(entity);
-            return;
-        }
+	public void collapse(Moment theNext) {
+		entities.putAll(theNext.entities);
+		blocks.putAll(theNext.blocks);
 
-        EntityMoment momentToApply = momentsOfEntity.get(indexOfMoment);
-        EntityMoment nextMoment = momentsOfEntity.get(indexOfMoment - 1);
-        float subPartial = partialTicks * momentsOfEntity.size() - ((float) stackIndexOfMoment / momentsOfEntity.size());
-        momentToApply.apply(entity, nextMoment, subPartial);
-    }
+		for (String id : entities.keySet())
+			capEntity(id);
+		for (BlockPos pos : blocks.keySet())
+			capBlock(pos);
+	}
 
-    public void apply(World world, BlockPos pos) {
+	public void apply(Entity entity) {
+		List<EntityMoment> momentsOfEntity = entities.get(entity.getCachedUniqueIdString());
+		if (momentsOfEntity == null || momentsOfEntity.isEmpty())
+			return;
+		momentsOfEntity.get(0).apply(entity);
+	}
 
-        List<IBlockState> momentsOfBlock = blocks.get(pos);
-        if (momentsOfBlock == null || momentsOfBlock.isEmpty())
-            return;
+	public void apply(Entity entity, float partialTicks) {
+		if (partialTicks == 0) {
+			apply(entity);
+			return;
+		}
 
-        world.setBlockState(pos, momentsOfBlock.get(0));
-    }
+		List<EntityMoment> momentsOfEntity = entities.get(entity.getCachedUniqueIdString());
+		if (momentsOfEntity == null || momentsOfEntity.isEmpty())
+			return;
 
-    public void apply(World world, BlockPos pos, float partialTicks) {
-        if (partialTicks == 0) {
-            apply(world, pos);
-            return;
-        }
+		int stackIndexOfMoment = (int) (momentsOfEntity.size() * partialTicks);
+		int indexOfMoment = momentsOfEntity.size() - stackIndexOfMoment;
+		if (indexOfMoment == 0) {
+			apply(entity);
+			return;
+		}
 
-        List<IBlockState> momentsOfBlock = blocks.get(pos);
-        if (momentsOfBlock == null || momentsOfBlock.isEmpty())
-            return;
+		EntityMoment momentToApply = momentsOfEntity.get(indexOfMoment);
+		EntityMoment nextMoment = momentsOfEntity.get(indexOfMoment - 1);
+		float subPartial = partialTicks * momentsOfEntity.size() - ((float) stackIndexOfMoment / momentsOfEntity.size());
+		momentToApply.apply(entity, nextMoment, subPartial);
+	}
 
-        int stackIndexOfMoment = (int) (momentsOfBlock.size() * partialTicks);
-        int indexOfMoment = momentsOfBlock.size() - stackIndexOfMoment;
+	public void apply(World world, BlockPos pos) {
 
-        world.setBlockState(pos, momentsOfBlock.get(indexOfMoment));
-    }
+		List<IBlockState> momentsOfBlock = blocks.get(pos);
+		if (momentsOfBlock == null || momentsOfBlock.isEmpty())
+			return;
 
-    public void apply(World world, Collection<Entity> tracked) {
-        for (BlockPos position : blocks.keySet())
-            apply(world, position);
-        for (Entity entity : tracked)
-            apply(entity);
-    }
+		world.setBlockState(pos, momentsOfBlock.get(0));
+	}
 
-    public void apply(World world, Collection<Entity> tracked, float partialTicks) {
-        for (BlockPos position : blocks.keySet())
-            apply(world, position, partialTicks);
-        for (Entity entity : tracked)
-            apply(entity, partialTicks);
-    }
+	public void apply(World world, BlockPos pos, float partialTicks) {
+		if (partialTicks == 0) {
+			apply(world, pos);
+			return;
+		}
 
-    public Moment snapshot() {
-        for (String id : entities.keySet())
-            capEntity(id);
-        for (BlockPos pos : blocks.keySet())
-            capBlock(pos);
+		List<IBlockState> momentsOfBlock = blocks.get(pos);
+		if (momentsOfBlock == null || momentsOfBlock.isEmpty())
+			return;
 
-        Moment moment = new Moment();
-        moment.totalDifference.putAll(totalDifference);
-        moment.entities.putAll(entities);
-        moment.blocks.putAll(blocks);
-        return moment;
-    }
+		int stackIndexOfMoment = (int) (momentsOfBlock.size() * partialTicks);
+		int indexOfMoment = momentsOfBlock.size() - stackIndexOfMoment;
 
-    public NBTTagCompound serializeNBT() {
-        for (String id : entities.keySet())
-            capEntity(id);
-        for (BlockPos pos : blocks.keySet())
-            capBlock(pos);
+		world.setBlockState(pos, momentsOfBlock.get(indexOfMoment));
+	}
 
-        NBTTagCompound momentSerialized = new NBTTagCompound();
-        NBTTagList blocksSerialized = new NBTTagList();
-        NBTTagCompound entitiesSerialized = new NBTTagCompound();
+	public void apply(World world, Collection<Entity> tracked) {
+		for (BlockPos position : blocks.keySet())
+			apply(world, position);
+		for (Entity entity : tracked)
+			apply(entity);
+	}
 
-        momentSerialized.setTag("blocks", blocksSerialized);
-        momentSerialized.setTag("entities", entitiesSerialized);
+	public void apply(World world, Collection<Entity> tracked, float partialTicks) {
+		for (BlockPos position : blocks.keySet())
+			apply(world, position, partialTicks);
+		for (Entity entity : tracked)
+			apply(entity, partialTicks);
+	}
 
-        for (BlockPos position : blocks.keySet()) {
-            NBTTagList states = new NBTTagList();
-            NBTTagCompound posCompound = new NBTTagCompound();
-            posCompound.setLong("pos", position.toLong());
-            posCompound.setTag("states", states);
+	public Moment snapshot() {
+		for (String id : entities.keySet())
+			capEntity(id);
+		for (BlockPos pos : blocks.keySet())
+			capBlock(pos);
 
-            for (IBlockState state : blocks.get(position)) {
-                ResourceLocation regName = state.getBlock().getRegistryName();
-                if (regName != null) {
-                    NBTTagCompound block = new NBTTagCompound();
-                    block.setString("id", regName.toString());
-                    block.setByte("data", (byte) state.getBlock().getMetaFromState(state));
-                    states.appendTag(block);
-                }
-            }
+		Moment moment = new Moment();
+		moment.totalDifference.putAll(totalDifference);
+		moment.entities.putAll(entities);
+		moment.blocks.putAll(blocks);
+		return moment;
+	}
 
-            blocksSerialized.appendTag(posCompound);
-        }
+	public NBTTagCompound serializeNBT() {
+		for (String id : entities.keySet())
+			capEntity(id);
+		for (BlockPos pos : blocks.keySet())
+			capBlock(pos);
 
-        for (String identifier : entities.keySet()) {
-            NBTTagList moments = new NBTTagList();
+		NBTTagCompound momentSerialized = new NBTTagCompound();
+		NBTTagList blocksSerialized = new NBTTagList();
+		NBTTagCompound entitiesSerialized = new NBTTagCompound();
 
-            for (EntityMoment moment : entities.get(identifier))
-                moments.appendTag(moment.serializeNBT());
+		momentSerialized.setTag("blocks", blocksSerialized);
+		momentSerialized.setTag("entities", entitiesSerialized);
 
-            entitiesSerialized.setTag(identifier, moments);
-        }
+		for (BlockPos position : blocks.keySet()) {
+			NBTTagList states = new NBTTagList();
+			NBTTagCompound posCompound = new NBTTagCompound();
+			posCompound.setLong("pos", position.toLong());
+			posCompound.setTag("states", states);
 
-        return momentSerialized;
-    }
+			for (IBlockState state : blocks.get(position)) {
+				ResourceLocation regName = state.getBlock().getRegistryName();
+				if (regName != null) {
+					NBTTagCompound block = new NBTTagCompound();
+					block.setString("id", regName.toString());
+					block.setByte("data", (byte) state.getBlock().getMetaFromState(state));
+					states.appendTag(block);
+				}
+			}
 
-    @SuppressWarnings("deprecation")
-    public static Moment fromNBT(NBTTagCompound nbt) {
-        Moment newMoment = new Moment();
-        NBTTagList blocksSerialized = nbt.getTagList("blocks", Constants.NBT.TAG_COMPOUND);
-        NBTTagCompound entitiesSerialized = nbt.getCompoundTag("entities");
+			blocksSerialized.appendTag(posCompound);
+		}
 
-        Map<String, EntityMoment> newTotal = new HashMap<>();
-        ListMultimap<String, EntityMoment> newEntities = ArrayListMultimap.create();
-        ListMultimap<BlockPos, IBlockState> newBlocks = ArrayListMultimap.create();
+		for (String identifier : entities.keySet()) {
+			NBTTagList moments = new NBTTagList();
 
-        for (NBTBase blockUncast : blocksSerialized) {
-            NBTTagCompound block = (NBTTagCompound) blockUncast;
-            BlockPos pos = BlockPos.fromLong(block.getLong("pos"));
-            NBTTagList states = block.getTagList("states", Constants.NBT.TAG_COMPOUND);
-            for (NBTBase stateUncast : states) {
-                NBTTagCompound state = (NBTTagCompound) stateUncast;
-                Block blockAt = Block.getBlockFromName(state.getString("id"));
-                if (blockAt != null) {
-                    int meta = state.getByte("data");
-                    newBlocks.put(pos, blockAt.getStateFromMeta(meta));
-                }
-            }
-        }
+			for (EntityMoment moment : entities.get(identifier))
+				moments.appendTag(moment.serializeNBT());
 
-        for (String key : entitiesSerialized.getKeySet()) {
-            NBTTagList moments = entitiesSerialized.getTagList(key, Constants.NBT.TAG_COMPOUND);
-            EntityMoment total = EntityMoment.EMPTY;
-            for (NBTBase momentUncast : moments) {
-                NBTTagCompound momentCompound = (NBTTagCompound) momentUncast;
-                EntityMoment moment = EntityMoment.fromNBT(momentCompound);
-                total = total.withOverride(moment);
-                newEntities.put(key, moment);
-            }
-            newTotal.put(key, total);
-        }
+			entitiesSerialized.setTag(identifier, moments);
+		}
 
-        newMoment.totalDifference.putAll(newTotal);
-        newMoment.entities.putAll(newEntities);
-        newMoment.blocks.putAll(newBlocks);
-        for (String id : newMoment.entities.keySet())
-            newMoment.capEntity(id);
-        for (BlockPos pos : newMoment.blocks.keySet())
-            newMoment.capBlock(pos);
-        return newMoment;
-    }
+		return momentSerialized;
+	}
 }

@@ -8,47 +8,37 @@ import net.minecraftforge.fluids.FluidUtil;
 
 import javax.annotation.Nullable;
 
-public class IngredientFluidStack extends Ingredient
-{
+public class IngredientFluidStack extends Ingredient {
 	private final FluidStack fluid;
-	
+
 	ItemStack[] cachedStacks;
 
-	public IngredientFluidStack(FluidStack fluid)
-	{
+	public IngredientFluidStack(FluidStack fluid) {
 		super(0);
 		this.fluid = fluid;
 	}
 
-	public IngredientFluidStack(Fluid fluid, int amount)
-	{
+	public IngredientFluidStack(Fluid fluid, int amount) {
 		this(new FluidStack(fluid, amount));
 	}
 
-	public FluidStack getFluid()
-	{
+	public FluidStack getFluid() {
 		return fluid;
 	}
 
 	@Override
-	public ItemStack[] getMatchingStacks()
-	{
-		if (cachedStacks == null)
-		{
-			cachedStacks = new ItemStack[] { FluidUtil.getFilledBucket(fluid) };
+	public ItemStack[] getMatchingStacks() {
+		if (cachedStacks == null) {
+			cachedStacks = new ItemStack[]{FluidUtil.getFilledBucket(fluid)};
 		}
 		return this.cachedStacks;
 	}
 
 	@Override
-	public boolean apply(@Nullable ItemStack stack)
-	{
-		if (stack == null)
-		{
+	public boolean apply(@Nullable ItemStack stack) {
+		if (stack == null) {
 			return false;
-		}
-		else
-		{
+		} else {
 			FluidStack fluidStack = FluidUtil.getFluidContained(stack);
 			return fluidStack == null && this.fluid == null || fluidStack != null && fluidStack.containsFluid(fluid);
 		}

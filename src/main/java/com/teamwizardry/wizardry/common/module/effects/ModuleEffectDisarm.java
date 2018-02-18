@@ -33,6 +33,8 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.TARGET_H
 @RegisterModule
 public class ModuleEffectDisarm extends ModuleEffect {
 
+	private Function1<EntityLiving, Object> inventoryHandsDropChances = MethodHandleHelper.wrapperForGetter(EntityLiving.class, "inventoryHandsDropChances", "field_184655_bs", "bs");
+
 	@Nonnull
 	@Override
 	public String getID() {
@@ -69,24 +71,21 @@ public class ModuleEffectDisarm extends ModuleEffect {
 					held.setCount(0);
 
 					float dropChance = 0;
-					
-					if (targetEntity instanceof EntityLiving)
-					{
+
+					if (targetEntity instanceof EntityLiving) {
 						EntityLiving entity = (EntityLiving) targetEntity;
-						
+
 						Object o = inventoryHandsDropChances.invoke(entity);
 						float[] dropChances;
-						if (o instanceof float[])
-						{
+						if (o instanceof float[]) {
 							dropChances = (float[]) o;
 							dropChance = dropChances[EntityEquipmentSlot.MAINHAND.getIndex()];
 						}
 					}
-					
+
 					boolean flag = dropChance > 1.0;
 
-					if (!held.isEmpty() && flag && RandUtil.nextDouble() < dropChance)
-					{
+					if (!held.isEmpty() && flag && RandUtil.nextDouble() < dropChance) {
 						EntityItem item = new EntityItem(spell.world, targetEntity.posX, targetEntity.posY + 1, targetEntity.posZ, stack);
 						item.setPickupDelay(5);
 						spell.world.playSound(null, targetEntity.getPosition(), ModSounds.ELECTRIC_BLAST, SoundCategory.NEUTRAL, 1, 1);
@@ -115,6 +114,4 @@ public class ModuleEffectDisarm extends ModuleEffect {
 	public Module copy() {
 		return cloneModule(new ModuleEffectDisarm());
 	}
-	
-	private Function1<EntityLiving, Object> inventoryHandsDropChances = MethodHandleHelper.wrapperForGetter(EntityLiving.class, "inventoryHandsDropChances", "field_184655_bs", "bs");
 }

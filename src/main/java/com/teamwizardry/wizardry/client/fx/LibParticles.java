@@ -35,6 +35,17 @@ public class LibParticles {
 
 	private static int beamTick = 0;
 
+	static {
+		Timer timer = new Timer();
+		timer.scheduleAtFixedRate(new TimerTask() {
+			@Override
+			public void run() {
+				beamTick++;
+				if (beamTick > 100) beamTick = 0;
+			}
+		}, 0, 1);
+	}
+
 	public static void FIZZING_AMBIENT(World world, Vec3d pos) {
 		ParticleBuilder glitter = new ParticleBuilder(30);
 		glitter.setScale(0.3f);
@@ -501,17 +512,6 @@ public class LibParticles {
 			glitter.setScaleFunction(new InterpScale(1, 0.4f));
 			glitter.setLifetime(RandUtil.nextInt(10, 30));
 		});
-	}
-
-	static {
-		Timer timer = new Timer();
-		timer.scheduleAtFixedRate(new TimerTask() {
-			@Override
-			public void run() {
-				beamTick++;
-				if (beamTick > 100) beamTick = 0;
-			}
-		}, 0, 1);
 	}
 
 	public static void SHAPE_BEAM(World world, Vec3d target, Vec3d origin, Color color) {

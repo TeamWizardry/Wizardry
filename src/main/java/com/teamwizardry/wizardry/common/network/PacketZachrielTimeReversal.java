@@ -20,29 +20,29 @@ import org.jetbrains.annotations.NotNull;
 @PacketRegister(Side.CLIENT)
 public class PacketZachrielTimeReversal extends PacketBase {
 
-    public static final int SYNC_AMOUNT = 20;
+	public static final int SYNC_AMOUNT = 20;
 
-    @Save
-    public NBTTagCompound nemez;
+	@Save
+	public NBTTagCompound nemez;
 
-    public PacketZachrielTimeReversal(NemezArenaTracker nemez) {
-        this.nemez = new NBTTagCompound();
-        this.nemez.setTag("root", nemez.nextNMoments(SYNC_AMOUNT));
-    }
+	public PacketZachrielTimeReversal(NemezArenaTracker nemez) {
+		this.nemez = new NBTTagCompound();
+		this.nemez.setTag("root", nemez.nextNMoments(SYNC_AMOUNT));
+	}
 
-    public PacketZachrielTimeReversal() {
-        // NO-OP
-    }
+	public PacketZachrielTimeReversal() {
+		// NO-OP
+	}
 
-    @Override
-    public void handle(@NotNull MessageContext ctx) {
-        ClientRunnable.run(new ClientRunnable() {
-            @Override
-            @SideOnly(Side.CLIENT)
-            public void runIfClient() {
-                NemezArenaTracker tracker = NemezEventHandler.getCurrent();
-                tracker.absorb(nemez.getTagList("root", Constants.NBT.TAG_COMPOUND));
-            }
-        });
-    }
+	@Override
+	public void handle(@NotNull MessageContext ctx) {
+		ClientRunnable.run(new ClientRunnable() {
+			@Override
+			@SideOnly(Side.CLIENT)
+			public void runIfClient() {
+				NemezArenaTracker tracker = NemezEventHandler.getCurrent();
+				tracker.absorb(nemez.getTagList("root", Constants.NBT.TAG_COMPOUND));
+			}
+		});
+	}
 }

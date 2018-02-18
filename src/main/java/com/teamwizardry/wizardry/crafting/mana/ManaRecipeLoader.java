@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.crafting.mana;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 import com.google.gson.*;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
@@ -16,6 +17,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
@@ -23,6 +25,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.JsonContext;
+import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -41,6 +44,57 @@ public class ManaRecipeLoader {
 	public static final ManaRecipeLoader INSTANCE = new ManaRecipeLoader();
 
 	private File directory;
+
+	private static Set<BlockPos> allManaLiquidInPool(World world, BlockPos pos, int needed) {
+		if (needed <= 0) return Sets.newHashSet();
+
+		IBlockState manaFluid = ModBlocks.FLUID_MANA.getDefaultState();
+
+		BlockPos.MutableBlockPos topPos = new BlockPos.MutableBlockPos(pos);
+		IBlockState stateAt = world.getBlockState(topPos);
+		boolean lastWasFluid = false;
+		while (stateAt.getBlock() == ModBlocks.FLUID_MANA) {
+			lastWasFluid = stateAt == manaFluid;
+			stateAt = world.getBlockState(topPos.setPos(topPos.getX(), topPos.getY() + 1, topPos.getZ()));
+		}
+		topPos.setPos(topPos.getX(), topPos.getY() - 1, topPos.getZ());
+
+		BlockPos.MutableBlockPos tool = new BlockPos.MutableBlockPos();
+		Set<BlockPos> positions = Sets.newHashSet(topPos.toImmutable());
+
+		Set<BlockPos> visited = Sets.newHashSet(positions);
+		Set<BlockPos> resultants = Sets.newHashSet();
+		if (lastWasFluid)
+			resultants.addAll(positions);
+
+		while (resultants.size() < needed && !positions.isEmpty() && visited.size() < 1000) {
+			BlockPos point = positions.iterator().next();
+			positions.remove(point);
+			for (int index = EnumFacing.VALUES.length - 1; index >= 0; index--) {
+				EnumFacing facing = EnumFacing.getFront(index);
+				tool.setPos(point.getX() + facing.getFrontOffsetX(),
+						point.getY() + facing.getFrontOffsetY(),
+						point.getZ() + facing.getFrontOffsetZ());
+
+				if (!visited.contains(tool)) {
+					BlockPos immutable = tool.toImmutable();
+					visited.add(immutable);
+					stateAt = world.getBlockState(tool);
+					if (stateAt.getBlock() == ModBlocks.FLUID_MANA) {
+						positions.add(immutable);
+						if (stateAt == manaFluid) {
+							resultants.add(immutable);
+
+							if (resultants.size() >= needed)
+								return resultants;
+						}
+					}
+				}
+			}
+		}
+
+		return resultants;
+	}
 
 	public void setDirectory(File directory) {
 		this.directory = directory;
@@ -98,7 +152,7 @@ public class ManaRecipeLoader {
 
 				List<Ingredient> extraInputs = new LinkedList<>();
 				int duration = 100;
-				int radius = 0;
+				int required = 1;
 				boolean consume = false;
 				boolean explode = false;
 				boolean bubbling = true;
@@ -161,12 +215,12 @@ public class ManaRecipeLoader {
 					duration = fileObject.get("duration").getAsInt();
 				}
 
-				if (fileObject.has("radius")) {
-					if (!fileObject.get("radius").isJsonPrimitive() || !fileObject.getAsJsonPrimitive("radius").isNumber()) {
-						Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT give radius as a number. Ignoring file...: " + element.toString());
+				if (fileObject.has("required")) {
+					if (!fileObject.get("required").isJsonPrimitive() || !fileObject.getAsJsonPrimitive("required").isNumber()) {
+						Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT give required as a number. Ignoring file...: " + element.toString());
 						continue;
 					}
-					radius = fileObject.get("radius").getAsInt();
+					required = fileObject.get("required").getAsInt();
 				}
 
 				if (fileObject.has("consume")) {
@@ -212,7 +266,7 @@ public class ManaRecipeLoader {
 						continue;
 					}
 
-					ManaCrafterBuilder build = buildManaCrafter(file.getPath(), outputItem, inputItem, extraInputs, duration, radius, consume, explode, bubbling, harp);
+					ManaCrafterBuilder build = buildManaCrafter(file.getPath(), outputItem, inputItem, extraInputs, duration, required, consume, explode, bubbling, harp);
 					recipeRegistry.put(file.getPath(), build);
 					recipes.put(inputItem, build);
 				} else if (type.equalsIgnoreCase("block")) {
@@ -227,7 +281,7 @@ public class ManaRecipeLoader {
 						meta = output.get("meta").getAsInt();
 					outputBlock = block.getStateFromMeta(meta);
 
-					ManaCrafterBuilder build = buildManaCrafter(file.getPath(), outputBlock, inputItem, extraInputs, duration, radius, consume, explode, bubbling, harp);
+					ManaCrafterBuilder build = buildManaCrafter(file.getPath(), outputBlock, inputItem, extraInputs, duration, required, consume, explode, bubbling, harp);
 					recipeRegistry.put(file.getPath(), build);
 					recipes.put(inputItem, build);
 				} else
@@ -240,88 +294,87 @@ public class ManaRecipeLoader {
 		Wizardry.logger.info("<<========================================================================>>");
 	}
 
-	private ManaCrafterBuilder buildManaCrafter(String identifier, ItemStack outputItem, Ingredient input, List<Ingredient> extraInputs, int duration, int radius, boolean consume, boolean explode, boolean bubbling, boolean harp) {
+	private ManaCrafterBuilder buildManaCrafter(String identifier, ItemStack outputItem, Ingredient input, List<Ingredient> extraInputs, int duration, int required, boolean consume, boolean explode, boolean bubbling, boolean harp) {
 		Ingredient outputIngredient = Ingredient.fromStacks(outputItem);
 		List<Ingredient> inputs = Lists.newArrayList(extraInputs);
 
 		return new ManaCrafterBuilder((world, pos, items) -> {
-            if (radius > 0) for (int i = -radius; i <= radius; i++)
-                for (int j = -radius; j <= radius; j++)
-                    if (world.getBlockState(pos.add(i, 0, j)) != ModBlocks.FLUID_MANA.getDefaultState())
-                        return false;
+			if (allManaLiquidInPool(world, pos, required).size() < required)
+				return false;
 
-            List<ItemStack> list = items.stream().map(entity -> entity.getItem().copy()).collect(Collectors.toList());
-
-            List<Ingredient> inputList = new ArrayList<>(inputs);
-			inputList.add(input);
-
-			for (Ingredient itemIn : inputList) {
-                boolean foundMatch = false;
-                List<ItemStack> toRemove = new LinkedList<>();
-                for (ItemStack item : list) {
-                    if (itemIn.apply(item) && !outputIngredient.apply(item)) {
-                        foundMatch = true;
-                        break;
-                    }
-                }
-                if (!foundMatch)
-                    return false;
-                list.removeAll(toRemove);
-                toRemove.clear();
-            }
-            return true;
-        }, (world, pos, items, currentDuration) -> {
-            EntityItem entityItem = items.stream().filter(entity -> input.apply(entity.getItem())).findFirst().orElse(null);
-            if (entityItem != null) {
-                if (world.isRemote) LibParticles.CRAFTING_ALTAR_IDLE(world, entityItem.getPositionVector());
-                if (bubbling && currentDuration % 10 == 0)
-                    world.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
-            }
-        }, (world, pos, items, currentDuration) -> {
-            if (consume) for (int i = -radius; i <= radius; i++)
-                for (int j = -radius; j <= radius; j++)
-                    world.setBlockToAir(pos.add(i, 0, j));
+			List<ItemStack> list = items.stream().map(entity -> entity.getItem().copy()).collect(Collectors.toList());
 
 			List<Ingredient> inputList = new ArrayList<>(inputs);
 			inputList.add(input);
 
 			for (Ingredient itemIn : inputList) {
-                for (EntityItem entity : items) {
-                    if (itemIn.apply(entity.getItem()) && !outputIngredient.apply(entity.getItem()))  {
-                        entity.getItem().shrink(1);
-                        if (entity.getItem().isEmpty())
-                            entity.setDead();
-                    }
-                }
-            }
+				boolean foundMatch = false;
+				List<ItemStack> toRemove = new LinkedList<>();
+				for (ItemStack item : list) {
+					if (itemIn.apply(item) && !outputIngredient.apply(item)) {
+						foundMatch = true;
+						break;
+					}
+				}
+				if (!foundMatch)
+					return false;
+				list.removeAll(toRemove);
+				toRemove.clear();
+			}
+			return true;
+		}, (world, pos, items, currentDuration) -> {
+			EntityItem entityItem = items.stream().filter(entity -> input.apply(entity.getItem())).findFirst().orElse(null);
+			if (entityItem != null) {
+				if (world.isRemote) LibParticles.CRAFTING_ALTAR_IDLE(world, entityItem.getPositionVector());
+				if (bubbling && currentDuration % 10 == 0)
+					world.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
+			}
+		}, (world, pos, items, currentDuration) -> {
+			if (consume) {
+				IBlockState drainState = ModBlocks.FLUID_MANA.getDefaultState().withProperty(BlockFluidBase.LEVEL, 14);
 
-            EntityItem output = new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, outputItem.copy());
-            output.motionX = 0;
-            output.motionY = 0;
-            output.motionZ = 0;
-            output.forceSpawn = true;
-            world.spawnEntity(output);
+				for (BlockPos position : allManaLiquidInPool(world, pos, required))
+					world.setBlockState(position, drainState);
+			}
 
-            if (explode) {
-                PacketHandler.NETWORK.sendToAllAround(new PacketExplode(output.getPositionVector(), Color.CYAN, Color.BLUE, 0.9, 2, 500, 100, 50, true), new NetworkRegistry.TargetPoint(world.provider.getDimension(), output.posX, output.posY, output.posZ, 256));
-                PosUtils.boom(world, output.getPositionVector(), output, 3, false);
-            }
+			List<Ingredient> inputList = new ArrayList<>(inputs);
+			inputList.add(input);
 
-            if (harp)
-                world.playSound(null, output.posX, output.posY, output.posZ, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
-        }, identifier, duration).setInputs(input, inputs).setOutput(outputItem).setDoesConsume(consume).setRadius(radius);
+			for (Ingredient itemIn : inputList) {
+				for (EntityItem entity : items) {
+					if (itemIn.apply(entity.getItem()) && !outputIngredient.apply(entity.getItem())) {
+						entity.getItem().shrink(1);
+						if (entity.getItem().isEmpty())
+							entity.setDead();
+					}
+				}
+			}
+
+			EntityItem output = new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, outputItem.copy());
+			output.motionX = 0;
+			output.motionY = 0;
+			output.motionZ = 0;
+			output.forceSpawn = true;
+			world.spawnEntity(output);
+
+			if (explode) {
+				PacketHandler.NETWORK.sendToAllAround(new PacketExplode(output.getPositionVector(), Color.CYAN, Color.BLUE, 0.9, 2, 500, 100, 50, true), new NetworkRegistry.TargetPoint(world.provider.getDimension(), output.posX, output.posY, output.posZ, 256));
+				PosUtils.boom(world, output.getPositionVector(), output, 3, false);
+			}
+
+			if (harp)
+				world.playSound(null, output.posX, output.posY, output.posZ, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
+		}, identifier, duration).setInputs(input, inputs).setOutput(outputItem).setDoesConsume(consume).setRequired(required);
 	}
 
-	private ManaCrafterBuilder buildManaCrafter(String identifier, IBlockState outputBlock, Ingredient input, List<Ingredient> extraInputs, int duration, int radius, boolean consume, boolean explode, boolean bubbling, boolean harp) {
+	private ManaCrafterBuilder buildManaCrafter(String identifier, IBlockState outputBlock, Ingredient input, List<Ingredient> extraInputs, int duration, int required, boolean consume, boolean explode, boolean bubbling, boolean harp) {
 		List<Ingredient> inputs = Lists.newArrayList(extraInputs);
 
 		ManaCrafterBuilder builder = new ManaCrafterBuilder((world, pos, items) -> {
-            if (radius > 0) for (int i = -radius; i <= radius; i++)
-                for (int j = -radius; j <= radius; j++)
-                    if (world.getBlockState(pos.add(i, 0, j)) != ModBlocks.FLUID_MANA.getDefaultState())
-                        return false;
+			if (allManaLiquidInPool(world, pos, required).size() < required)
+				return false;
 
-            List<ItemStack> list = items.stream().map(entity -> entity.getItem().copy()).collect(Collectors.toList());
+			List<ItemStack> list = items.stream().map(entity -> entity.getItem().copy()).collect(Collectors.toList());
 			List<Ingredient> inputList = new ArrayList<>(inputs);
 			inputList.add(input);
 			for (Ingredient itemIn : inputList) {
@@ -338,18 +391,19 @@ public class ManaRecipeLoader {
 				list.removeAll(toRemove);
 				toRemove.clear();
 			}
-            return true;
-        }, (world, pos, items, currentDuration) -> {
-            EntityItem entityItem = items.stream().filter(entity -> input.apply(entity.getItem())).findFirst().orElse(null);
-            if (entityItem != null) {
+			return true;
+		}, (world, pos, items, currentDuration) -> {
+			EntityItem entityItem = items.stream().filter(entity -> input.apply(entity.getItem())).findFirst().orElse(null);
+			if (entityItem != null) {
 				if (world.isRemote) LibParticles.CRAFTING_ALTAR_IDLE(world, entityItem.getPositionVector());
 				if (bubbling && currentDuration % 10 == 0)
 					world.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
 			}
-        }, (world, pos, items, currentDuration) -> {
-            if (consume) for (int i = -radius; i <= radius; i++)
-                for (int j = -radius; j <= radius; j++)
-                    world.setBlockToAir(pos.add(i, 0, j));
+		}, (world, pos, items, currentDuration) -> {
+			IBlockState drainState = ModBlocks.FLUID_MANA.getDefaultState().withProperty(BlockFluidBase.LEVEL, 14);
+
+			for (BlockPos position : allManaLiquidInPool(world, pos, consume ? required : 1))
+				world.setBlockState(position, drainState);
 
 			List<Ingredient> inputList = new ArrayList<>(inputs);
 			inputList.add(input);
@@ -364,17 +418,17 @@ public class ManaRecipeLoader {
 				}
 			}
 
-            world.setBlockState(pos, outputBlock);
-            Vec3d output = new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+			world.setBlockState(pos, outputBlock);
+			Vec3d output = new Vec3d(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
 
-            if (explode) {
-                PacketHandler.NETWORK.sendToAllAround(new PacketExplode(output, Color.CYAN, Color.BLUE, 0.9, 2, 500, 100, 50, true), new NetworkRegistry.TargetPoint(world.provider.getDimension(), output.x, output.y, output.z, 256));
-                PosUtils.boom(world, output, null, 3, false);
-            }
+			if (explode) {
+				PacketHandler.NETWORK.sendToAllAround(new PacketExplode(output, Color.CYAN, Color.BLUE, 0.9, 2, 500, 100, 50, true), new NetworkRegistry.TargetPoint(world.provider.getDimension(), output.x, output.y, output.z, 256));
+				PosUtils.boom(world, output, null, 3, false);
+			}
 
-            if (harp)
-                world.playSound(null, output.x, output.y, output.z, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
-        }, identifier, duration).setInputs(input, inputs).setIsBlock(true).setDoesConsume(true).setRadius(radius);
+			if (harp)
+				world.playSound(null, output.x, output.y, output.z, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
+		}, identifier, duration).setInputs(input, inputs).setIsBlock(true).setDoesConsume(true).setRequired(required);
 
 		Fluid fluid = FluidRegistry.lookupFluidForBlock(outputBlock.getBlock());
 		if (fluid != null)
@@ -383,6 +437,16 @@ public class ManaRecipeLoader {
 			builder.setOutput(new ItemStack(outputBlock.getBlock(), 1, outputBlock.getBlock().damageDropped(outputBlock)));
 
 		return builder;
+	}
+
+	@FunctionalInterface
+	private interface ManaCrafterPredicate {
+		boolean check(World world, BlockPos pos, List<EntityItem> items);
+	}
+
+	@FunctionalInterface
+	private interface ManaCrafterConsumer {
+		void consume(World world, BlockPos pos, List<EntityItem> items, int currentDuration);
 	}
 
 	public static class ManaCrafterBuilder {
@@ -398,7 +462,7 @@ public class ManaRecipeLoader {
 		private FluidStack fluidOutput = null;
 		private boolean block = false;
 		private boolean doesConsume = false;
-		private int radius = 0;
+		private int required = 1;
 
 		private ManaCrafterBuilder(ManaCrafterPredicate isValid, ManaCrafterConsumer tick, ManaCrafterConsumer finish, String identifier, int duration) {
 			this.isValid = isValid;
@@ -419,11 +483,6 @@ public class ManaRecipeLoader {
 			return this;
 		}
 
-		private ManaCrafterBuilder setOutput(FluidStack output) {
-			this.fluidOutput = output;
-			return this;
-		}
-
 		private ManaCrafterBuilder setIsBlock(boolean state) {
 			this.block = state;
 			return this;
@@ -431,11 +490,6 @@ public class ManaRecipeLoader {
 
 		private ManaCrafterBuilder setDoesConsume(boolean state) {
 			this.doesConsume = state;
-			return this;
-		}
-
-		private ManaCrafterBuilder setRadius(int radius) {
-			this.radius = radius;
 			return this;
 		}
 
@@ -451,6 +505,11 @@ public class ManaRecipeLoader {
 			return output;
 		}
 
+		private ManaCrafterBuilder setOutput(FluidStack output) {
+			this.fluidOutput = output;
+			return this;
+		}
+
 		public FluidStack getFluidOutput() {
 			return fluidOutput;
 		}
@@ -463,8 +522,13 @@ public class ManaRecipeLoader {
 			return doesConsume;
 		}
 
-		public int getRadius() {
-			return radius;
+		public int getRequired() {
+			return required;
+		}
+
+		private ManaCrafterBuilder setRequired(int required) {
+			this.required = required;
+			return this;
 		}
 
 		public ManaCrafter build() {
@@ -486,15 +550,5 @@ public class ManaRecipeLoader {
 				}
 			};
 		}
-	}
-
-	@FunctionalInterface
-	private interface ManaCrafterPredicate {
-		boolean check(World world, BlockPos pos, List<EntityItem> items);
-	}
-
-	@FunctionalInterface
-	private interface ManaCrafterConsumer {
-		void consume(World world, BlockPos pos, List<EntityItem> items, int currentDuration);
 	}
 }

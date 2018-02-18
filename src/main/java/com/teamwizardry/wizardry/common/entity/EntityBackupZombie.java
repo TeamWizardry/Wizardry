@@ -64,7 +64,7 @@ public class EntityBackupZombie extends EntityMob {
 		this.targetTasks.addTask(4, new EntityAITargetFiltered<>(this, EntityMob.class, false, new Predicate<Entity>() {
 			public boolean apply(@Nullable Entity entity) {
 				if (entity == null) return false;
-				
+
 				UUID theirOwner = null;
 				Object ownerObj = entity.getDataManager().get(OWNER);
 				if (ownerObj instanceof Optional && ((Optional<?>) ownerObj).get() instanceof UUID)
@@ -178,10 +178,9 @@ public class EntityBackupZombie extends EntityMob {
 	public float getEyeHeight() {
 		return 1.74F;
 	}
-	
+
 	@Override
-	protected boolean canDropLoot()
-	{
+	protected boolean canDropLoot() {
 		return false;
 	}
 }

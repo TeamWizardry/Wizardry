@@ -165,11 +165,10 @@ public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, 
 						desc += "over_near";
 					else
 						desc += "under_near";
+				else if (over)
+					desc += "overdone";
 				else
-					if (over)
-						desc += "overdone";
-					else
-						desc += "underdone";
+					desc += "underdone";
 
 			}
 			desc += ".desc";

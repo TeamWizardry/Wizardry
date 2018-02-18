@@ -3,15 +3,15 @@
   "mana_drain": 0.0,
   "burnout_fill": 0.0,
   "modifiers": [
-      {
-          "attribute": "mana",
-          "operation": "multiply",
-          "amount": 1.2
-      },
-      {
-          "attribute": "burnout",
-          "operation": "multiply",
-          "amount": 1.2
-      }
+    {
+      "attribute": "mana",
+      "operation": "multiply",
+      "amount": 1.2
+    },
+    {
+      "attribute": "burnout",
+      "operation": "multiply",
+      "amount": 1.2
+    }
   ]
 }

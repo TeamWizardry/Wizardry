@@ -22,6 +22,8 @@ import java.awt.*;
  */
 public interface INacreColorable extends IItemColorProvider {
 
+	float curveConst = 0.75F / (1.0F - 1 / (float) Math.E);
+
 	default void colorableOnUpdate(ItemStack stack, World world) {
 		if (!world.isRemote) {
 			if (!ItemNBTHelper.verifyExistence(stack, NBT.RAND))
@@ -67,8 +69,6 @@ public interface INacreColorable extends IItemColorProvider {
 
 		return quality;
 	}
-
-	float curveConst = 0.75F / (1.0F - 1 / (float) Math.E);
 
 	@Nullable
 	@Override

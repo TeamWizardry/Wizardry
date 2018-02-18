@@ -12,32 +12,25 @@ import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
-public class RecipeShapedFluid extends ShapedOreRecipe
-{
-	public RecipeShapedFluid(ResourceLocation loc, ItemStack result, ShapedPrimer primer)
-	{
+public class RecipeShapedFluid extends ShapedOreRecipe {
+	public RecipeShapedFluid(ResourceLocation loc, ItemStack result, ShapedPrimer primer) {
 		super(loc, result, primer);
 	}
-	
+
 	@Override
-	public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv)
-	{
+	public NonNullList<ItemStack> getRemainingItems(InventoryCrafting inv) {
 		NonNullList<ItemStack> remains = ForgeHooks.defaultRecipeGetRemainingItems(inv);
-		for (int i = 0; i < height * width; i++)
-		{
+		for (int i = 0; i < height * width; i++) {
 			ItemStack stack = inv.getStackInSlot(i);
 			NonNullList<Ingredient> matchedIngredients = this.input;
-			if (matchedIngredients.get(i) instanceof IngredientFluidStack)
-			{
-				if (!stack.isEmpty())
-				{
+			if (matchedIngredients.get(i) instanceof IngredientFluidStack) {
+				if (!stack.isEmpty()) {
 					ItemStack copy = stack.copy();
 					copy.setCount(1);
 					remains.set(i, copy);
 				}
 				IFluidHandlerItem handler = FluidUtil.getFluidHandler(remains.get(i));
-				if (handler != null)
-				{
+				if (handler != null) {
 					FluidStack fluid = ((IngredientFluidStack) matchedIngredients.get(i)).getFluid();
 					handler.drain(fluid.amount, true);
 					remains.set(i, handler.getContainer());

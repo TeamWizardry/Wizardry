@@ -152,10 +152,6 @@ public class Arena implements INBTSerializable<NBTTagCompound> {
 		return hasEnded;
 	}
 
-	public void setHasEnded(boolean hasEnded) {
-		this.hasEnded = hasEnded;
-	}
-
 	public World getWorld() {
 		return world;
 	}
@@ -194,6 +190,10 @@ public class Arena implements INBTSerializable<NBTTagCompound> {
 
 	public boolean isHasEnded() {
 		return hasEnded;
+	}
+
+	public void setHasEnded(boolean hasEnded) {
+		this.hasEnded = hasEnded;
 	}
 
 	@Override

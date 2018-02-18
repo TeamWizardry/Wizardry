@@ -248,9 +248,9 @@ public class EntitySpellProjectile extends EntityMod {
 	@Override
 	public void writeCustomNBT(@Nonnull NBTTagCompound compound) {
 		if (world.isRemote) return; // Stupid Wawla, refusing to fix their problems...
-									// https://github.com/micdoodle8/Galacticraft/commit/543e6afad64e51b02252a07489d0832fb93faa8d
-									// https://github.com/Darkhax-Minecraft/WAWLA/issues/75
-		
+		// https://github.com/micdoodle8/Galacticraft/commit/543e6afad64e51b02252a07489d0832fb93faa8d
+		// https://github.com/Darkhax-Minecraft/WAWLA/issues/75
+
 		compound.setTag("module", module.serializeNBT());
 		compound.setTag("spell_data", spell.serializeNBT());
 		compound.setInteger("color", getDataManager().get(DATA_COLOR));

@@ -5,7 +5,6 @@ import com.teamwizardry.wizardry.api.util.RandUtilSeed;
 import com.teamwizardry.wizardry.common.block.BlockCloud;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.init.ModBlocks;
-
 import kotlin.Pair;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Blocks;
@@ -37,10 +36,10 @@ public class ChunkGeneratorUnderWorld implements IChunkGenerator {
 	private static final double LOWER_X_SCALE = 16.0;
 	private static final double LOWER_Y_SCALE = 1.75;
 	private static final double LOWER_Z_SCALE = 16.0;
-	
+
 	private NoiseGeneratorPerlin upper;
 	private NoiseGeneratorPerlin lower;
-	
+
 	private World world;
 
 	public ChunkGeneratorUnderWorld(World worldIn) {
@@ -48,9 +47,8 @@ public class ChunkGeneratorUnderWorld implements IChunkGenerator {
 		upper = new NoiseGeneratorPerlin(RandUtil.random, 4);
 		lower = new NoiseGeneratorPerlin(RandUtil.random, 4);
 	}
-	
-	public ChunkGeneratorUnderWorld(World world, long seed)
-	{
+
+	public ChunkGeneratorUnderWorld(World world, long seed) {
 		this.world = world;
 		RandUtilSeed rand = new RandUtilSeed(seed);
 		upper = new NoiseGeneratorPerlin(rand.random, 4);
@@ -60,28 +58,23 @@ public class ChunkGeneratorUnderWorld implements IChunkGenerator {
 	private List<Pair<BlockPos, BlockPos>> generate(int chunkX, int chunkZ, ChunkPrimer primer) {
 		double[][] upperValues = new double[16][16];
 		double[][] lowerValues = new double[16][16];
-		for (int x = 0; x < 16; x++)
-		{
-			for (int z = 0; z < 16; z++)
-			{
+		for (int x = 0; x < 16; x++) {
+			for (int z = 0; z < 16; z++) {
 				upperValues[x][z] = upper.getValue((chunkX * 16 + x) / UPPER_X_SCALE, (chunkZ * 16 + z) / UPPER_Z_SCALE);
 				lowerValues[x][z] = lower.getValue((chunkX * 16 + x) / LOWER_X_SCALE, (chunkZ * 16 + z) / LOWER_Z_SCALE);
 			}
 		}
-		
+
 		List<Pair<BlockPos, BlockPos>> litBlocks = new LinkedList<>();
-		for (int x = 0; x < 16; x++)
-		{
-			for (int z = 0; z < 16; z++)
-			{
+		for (int x = 0; x < 16; x++) {
+			for (int z = 0; z < 16; z++) {
 				int minY = (int) (lowerValues[x][z] * LOWER_Y_SCALE + LOWER_LEVEL);
 				int maxY = (int) (upperValues[x][z] * UPPER_Y_SCALE + UPPER_LEVEL);
 				litBlocks.add(new Pair<>(
 						new BlockPos(chunkX * 16 + x, minY, chunkZ * 16 + z),
 						new BlockPos(chunkX * 16 + x, maxY, chunkZ * 16 + z))
-						);
-				for (int y = minY; y <= maxY; y++)
-				{
+				);
+				for (int y = minY; y <= maxY; y++) {
 					if (y == minY)
 						primer.setBlockState(x, y, z, ModBlocks.CLOUD.getDefaultState().withProperty(BlockCloud.HAS_LIGHT_VALUE, true));
 					else
@@ -105,14 +98,13 @@ public class ChunkGeneratorUnderWorld implements IChunkGenerator {
 		litBlocks.forEach(pair -> {
 			BlockPos lower = pair.getFirst();
 			BlockPos upper = pair.getSecond();
-			for (int i = 0; i < 15; i++)
-			{
+			for (int i = 0; i < 15; i++) {
 				if (lower.getY() + i > upper.getY())
 					return;
 				chunk.setLightFor(EnumSkyBlock.BLOCK, lower.up(i), 15 - i);
 			}
 		});
-		
+
 		return chunk;
 	}
 

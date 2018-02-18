@@ -41,6 +41,31 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 @RegisterModule
 public class ModuleEffectTimeSlow extends ModuleEffect {
 
+	@SubscribeEvent
+	public static void skipTick(LivingEvent.LivingUpdateEvent event) {
+		if (event.getEntity().getEntityData().hasKey("skip_tick")
+				&& event.getEntity().getEntityData().hasKey("skip_tick_interval")
+				&& event.getEntity().getEntityData().hasKey("skip_tick_interval_save")) {
+			int tickCountdown = event.getEntity().getEntityData().getInteger("skip_tick");
+			int tickInterval = event.getEntity().getEntityData().getInteger("skip_tick_interval");
+
+			if (tickInterval <= 0) {
+				event.getEntity().getEntityData().setInteger("skip_tick_interval", event.getEntity().getEntityData().getInteger("skip_tick_interval_save"));
+
+				if (tickCountdown <= 0) {
+					event.getEntity().getEntityData().removeTag("skip_tick");
+					event.getEntity().getEntityData().removeTag("skip_tick_interval");
+					event.getEntity().getEntityData().removeTag("skip_tick_interval_save");
+				} else {
+					event.getEntity().getEntityData().setInteger("skip_tick", --tickCountdown);
+					event.setCanceled(true);
+				}
+			} else {
+				event.getEntity().getEntityData().setInteger("skip_tick_interval", --tickInterval);
+			}
+		}
+	}
+
 	@Nonnull
 	@Override
 	public String getID() {
@@ -109,30 +134,5 @@ public class ModuleEffectTimeSlow extends ModuleEffect {
 	@Override
 	public Module copy() {
 		return cloneModule(new ModuleEffectTimeSlow());
-	}
-
-	@SubscribeEvent
-	public static void skipTick(LivingEvent.LivingUpdateEvent event) {
-		if (event.getEntity().getEntityData().hasKey("skip_tick")
-				&& event.getEntity().getEntityData().hasKey("skip_tick_interval")
-				&& event.getEntity().getEntityData().hasKey("skip_tick_interval_save")) {
-			int tickCountdown = event.getEntity().getEntityData().getInteger("skip_tick");
-			int tickInterval = event.getEntity().getEntityData().getInteger("skip_tick_interval");
-
-			if (tickInterval <= 0) {
-				event.getEntity().getEntityData().setInteger("skip_tick_interval", event.getEntity().getEntityData().getInteger("skip_tick_interval_save"));
-
-				if (tickCountdown <= 0) {
-					event.getEntity().getEntityData().removeTag("skip_tick");
-					event.getEntity().getEntityData().removeTag("skip_tick_interval");
-					event.getEntity().getEntityData().removeTag("skip_tick_interval_save");
-				} else {
-					event.getEntity().getEntityData().setInteger("skip_tick", --tickCountdown);
-					event.setCanceled(true);
-				}
-			} else {
-				event.getEntity().getEntityData().setInteger("skip_tick_interval", --tickInterval);
-			}
-		}
 	}
 }

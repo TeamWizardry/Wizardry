@@ -60,13 +60,13 @@ public class WorktableGui extends GuiBase {
 	private static final Sprite BUTTON_NORMAL = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/button.png"));
 	private static final Sprite BUTTON_HIGHLIGHTED = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/button_highlighted.png"));
 	private static final Sprite BUTTON_PRESSED = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/button_pressed.png"));
+	public BlockPos worktablePos;
 	ComponentVoid paper;
 	GuiComponent selectedComponent;
 	BiMap<GuiComponent, UUID> paperComponents = HashBiMap.create();
 	HashMap<UUID, UUID> componentLinks = new HashMap<>();
-	private HashSet<ArrayList<Module>> compiledSpell = new HashSet<>();
 	ComponentWhitelistedModifiers whitelistedModifiers;
-	public BlockPos worktablePos;
+	private HashSet<ArrayList<Module>> compiledSpell = new HashSet<>();
 
 	public WorktableGui(BlockPos worktablePos) {
 		super(480, 224);

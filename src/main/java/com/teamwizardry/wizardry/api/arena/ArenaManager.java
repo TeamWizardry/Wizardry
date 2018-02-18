@@ -79,7 +79,8 @@ public class ArenaManager {
 	@SubscribeEvent
 	public void blockBreak(BlockEvent.BreakEvent event) {
 		for (Arena arena : arenas) {
-			if (!arena.getPlayers().contains(event.getPlayer().getUniqueID()) || arena.getWorld() != event.getWorld()) continue;
+			if (!arena.getPlayers().contains(event.getPlayer().getUniqueID()) || arena.getWorld() != event.getWorld())
+				continue;
 
 			if (!event.getWorld().isRemote && arena.getBoss() instanceof EntityZachriel)
 				((EntityZachriel) arena.getBoss()).nemezDrive.trackBlock(event.getPos(), event.getState());

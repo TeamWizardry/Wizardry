@@ -29,70 +29,70 @@ import static com.teamwizardry.wizardry.client.jei.WizardryJEIPlugin.manaCategor
 @SideOnly(Side.CLIENT)
 public class ManaRecipeJEI implements IRecipeWrapper {
 
-    private final ManaRecipeLoader.ManaCrafterBuilder builder;
+	private final ManaRecipeLoader.ManaCrafterBuilder builder;
 
-    public ManaRecipeJEI(ManaRecipeLoader.ManaCrafterBuilder builder) {
-        this.builder = builder;
-    }
+	public ManaRecipeJEI(ManaRecipeLoader.ManaCrafterBuilder builder) {
+		this.builder = builder;
+	}
 
-    @Override
-    public void getIngredients(@Nonnull IIngredients ingredients) {
-        List<List<ItemStack>> stacks = Lists.newArrayList();
-        stacks.add(Lists.newArrayList(builder.getMainInput().getMatchingStacks()));
-        for (Ingredient ingredient : builder.getInputs())
-            stacks.add(Lists.newArrayList(ingredient.getMatchingStacks()));
+	@Override
+	public void getIngredients(@Nonnull IIngredients ingredients) {
+		List<List<ItemStack>> stacks = Lists.newArrayList();
+		stacks.add(Lists.newArrayList(builder.getMainInput().getMatchingStacks()));
+		for (Ingredient ingredient : builder.getInputs())
+			stacks.add(Lists.newArrayList(ingredient.getMatchingStacks()));
 
-        if (!isFluidOutput())
-            for (List<ItemStack> stackList : stacks)
-                stackList.removeIf(Ingredient.fromStacks(builder.getOutput())::apply);
+		if (!isFluidOutput())
+			for (List<ItemStack> stackList : stacks)
+				stackList.removeIf(Ingredient.fromStacks(builder.getOutput())::apply);
 
-        ingredients.setInputLists(ItemStack.class, stacks);
-        ingredients.setInput(FluidStack.class, new FluidStack(FluidMana.instance, 1000));
+		ingredients.setInputLists(ItemStack.class, stacks);
+		ingredients.setInput(FluidStack.class, new FluidStack(FluidMana.instance, 1000));
 
-        if (isFluidOutput())
-            ingredients.setOutput(FluidStack.class, builder.getFluidOutput());
-        else
-            ingredients.setOutput(ItemStack.class, builder.getOutput());
-    }
+		if (isFluidOutput())
+			ingredients.setOutput(FluidStack.class, builder.getFluidOutput());
+		else
+			ingredients.setOutput(ItemStack.class, builder.getOutput());
+	}
 
-    public boolean isFluidOutput() {
-        return builder.getFluidOutput() != null;
-    }
+	public boolean isFluidOutput() {
+		return builder.getFluidOutput() != null;
+	}
 
-    @Nonnull
-    @Override
-    public List<String> getTooltipStrings(int mouseX, int mouseY) {
-        IDrawable info = WizardryJEIPlugin.manaCategory.info;
-        if (mouseX >= 64 && mouseX <= 64 + info.getWidth() / 2 &&
-                mouseY >= 3 && mouseY <= 3 + info.getHeight() / 2) {
-            List<String> output = Lists.newArrayList();
-            if (builder.isBlock())
-                TooltipHelper.addToTooltip(output, "jei.recipe.block." + manaCategory.getUid());
-            if (builder.doesConsume() && (!builder.isBlock() || builder.getRadius() != 0))
-                TooltipHelper.addToTooltip(output, "jei.recipe.consumes." + manaCategory.getUid());
-            if (builder.getRadius() != 0)
-                TooltipHelper.addToTooltip(output, "jei.recipe.radius." + manaCategory.getUid(), builder.getRadius() * 2 + 1);
-            return output;
-        }
+	@Nonnull
+	@Override
+	public List<String> getTooltipStrings(int mouseX, int mouseY) {
+		IDrawable info = WizardryJEIPlugin.manaCategory.info;
+		if (mouseX >= 64 && mouseX <= 64 + info.getWidth() / 2 &&
+				mouseY >= 3 && mouseY <= 3 + info.getHeight() / 2) {
+			List<String> output = Lists.newArrayList();
+			if (builder.isBlock())
+				TooltipHelper.addToTooltip(output, "jei.recipe.block." + manaCategory.getUid());
+			if (builder.doesConsume() && (!builder.isBlock() || builder.getRequired() > 1))
+				TooltipHelper.addToTooltip(output, "jei.recipe.consumes." + manaCategory.getUid());
+			if (builder.getRequired() > 1)
+				TooltipHelper.addToTooltip(output, "jei.recipe.requires." + manaCategory.getUid(), builder.getRequired());
+			return output;
+		}
 
-        return Collections.emptyList();
-    }
+		return Collections.emptyList();
+	}
 
-    public int rows() {
-        return (builder.getInputs().size() + 2) / 3;
-    }
+	public int rows() {
+		return (builder.getInputs().size() + 2) / 3;
+	}
 
-    @Override
-    public void drawInfo(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
-        ManaCraftingCategory category = WizardryJEIPlugin.manaCategory;
+	@Override
+	public void drawInfo(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
+		ManaCraftingCategory category = WizardryJEIPlugin.manaCategory;
 
-        if (builder.isBlock() || builder.doesConsume() || builder.getRadius() != 0) {
-            GlStateManager.pushMatrix();
-            GlStateManager.scale(0.5, 0.5, 1.0);
-            category.info.draw(minecraft, 64 * 2, 3 * 2);
-            GlStateManager.popMatrix();
-        }
-        for (int i = 0; i < rows(); i++)
-            category.slots.draw(minecraft, 11 + 18 * i, 46);
-    }
+		if (builder.isBlock() || builder.doesConsume() || builder.getRequired() > 1) {
+			GlStateManager.pushMatrix();
+			GlStateManager.scale(0.5, 0.5, 1.0);
+			category.info.draw(minecraft, 64 * 2, 3 * 2);
+			GlStateManager.popMatrix();
+		}
+		for (int i = 0; i < rows(); i++)
+			category.slots.draw(minecraft, 11, 46 + 18 * i);
+	}
 }

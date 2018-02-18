@@ -56,7 +56,7 @@ public class CommonProxy {
 		ModPotions.init();
 		ModEntities.init();
 		ModCapabilities.preInit();
-		
+
 		NetworkRegistry.INSTANCE.registerGuiHandler(Wizardry.instance, new GuiHandler());
 
 		Wizardry.underWorld = DimensionType.register("underworld", "_dim", ConfigValues.underworldID, WorldProviderUnderWorld.class, false);
@@ -88,13 +88,12 @@ public class CommonProxy {
 
 	public void init(FMLInitializationEvent event) {
 		GameRegistry.registerWorldGenerator(new GenHandler(), 0);
-		
+
 		manaRecipeLoading:
 		{
 			File recipeDirectory = new File(directory, "mana_recipes");
 			if (!recipeDirectory.exists())
-				if (!recipeDirectory.mkdirs())
-				{
+				if (!recipeDirectory.mkdirs()) {
 					Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not create directory " + recipeDirectory.getPath());
 					break manaRecipeLoading;
 				}
@@ -106,8 +105,7 @@ public class CommonProxy {
 		{
 			File recipeDirectory = new File(directory, "fire_recipes");
 			if (!recipeDirectory.exists())
-				if (!recipeDirectory.mkdirs())
-				{
+				if (!recipeDirectory.mkdirs()) {
 					Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not create directory " + recipeDirectory.getPath());
 					break fireRecipeLoading;
 				}

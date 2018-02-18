@@ -58,8 +58,8 @@ public class FireRecipeLoader {
 				try {
 					element = new JsonParser().parse(new FileReader(file));
 				} catch (FileNotFoundException e) {
-                    Wizardry.logger.error("  > SOMETHING WENT WRONG! " + file.getPath() + " can NOT be found. Ignoring file...");
-                    continue;
+					Wizardry.logger.error("  > SOMETHING WENT WRONG! " + file.getPath() + " can NOT be found. Ignoring file...");
+					continue;
 				}
 
 				if (element == null) {
@@ -117,7 +117,7 @@ public class FireRecipeLoader {
 
 				recipes.put(input, new FireRecipe(output, duration));
 			} catch (JsonParseException jsonException) {
-                Wizardry.logger.error("  > WARNING! Skipping " + file.getPath() + " due to error: ", jsonException);
+				Wizardry.logger.error("  > WARNING! Skipping " + file.getPath() + " due to error: ", jsonException);
 			}
 		}
 		Wizardry.logger.info("> Finished fire recipe loading.");
