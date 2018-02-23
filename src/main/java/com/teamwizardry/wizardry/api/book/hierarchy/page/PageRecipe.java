@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
 import com.teamwizardry.librarianlib.features.gui.component.GuiComponent;
 import com.teamwizardry.librarianlib.features.math.Vec2d;
+import com.teamwizardry.wizardry.api.book.hierarchy.entry.Entry;
 import com.teamwizardry.wizardry.client.gui.book.ComponentRecipe;
 import com.teamwizardry.wizardry.client.gui.book.GuiBook;
 import net.minecraft.util.ResourceLocation;
@@ -15,16 +16,17 @@ import java.util.List;
 
 public class PageRecipe implements Page {
 
-	private ResourceLocation recipe;
+	private final ResourceLocation recipe;
+	private final Entry entry;
 
-	public PageRecipe(JsonObject jsonElement) {
-		recipe = new ResourceLocation(jsonElement.getAsJsonPrimitive("value").getAsString());
+	public PageRecipe(Entry entry, JsonObject jsonElement) {
+		this.entry = entry;
+		recipe = new ResourceLocation(jsonElement.getAsJsonPrimitive("recipe").getAsString());
 	}
 
-	@NotNull
 	@Override
-	public String getType() {
-		return "recipe";
+	public @NotNull Entry getEntry() {
+		return entry;
 	}
 
 	@Override

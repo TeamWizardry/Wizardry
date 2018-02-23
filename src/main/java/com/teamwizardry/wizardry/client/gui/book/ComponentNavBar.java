@@ -6,6 +6,7 @@ import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentText;
 import com.teamwizardry.librarianlib.features.math.Vec2d;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.math.MathHelper;
 
 import java.awt.*;
@@ -20,13 +21,13 @@ import static com.teamwizardry.wizardry.client.gui.book.GuiBook.*;
  */
 public class ComponentNavBar extends GuiComponent {
 
+	public int maxPages;
 	private int page = 0;
 
-	/**
-	 * @param navBarHolder The parent of holding this nav bar
-	 */
-	public ComponentNavBar(GuiBook book, BookGuiComponent navBarHolder, int posX, int posY, int width, int maxPages) {
+	public ComponentNavBar(GuiBook book, int posX, int posY, int width, int pageCount) {
 		super(posX, posY, width, 20);
+
+		maxPages = Math.max(0, pageCount - 1);
 
 		ComponentSprite back = new ComponentSprite(ARROW_BACK, 0, (int) ((getSize().getY() / 2.0) - (ARROW_NEXT.getHeight() / 2.0)));
 		ComponentSprite home = new ComponentSprite(ARROW_HOME, (int) ((getSize().getX() / 2.0) - (ARROW_HOME.getWidth() / 2.0)), (int) ((getSize().getY() / 2.0) - (ARROW_NEXT.getHeight() / 2.0)));
@@ -54,24 +55,19 @@ public class ComponentNavBar extends GuiComponent {
 			home.getColor().setValue(Color.WHITE);
 		});
 		List<String> homeTooltip = new ArrayList<>();
-		homeTooltip.add("Index");
+		homeTooltip.add(I18n.format("librarianlib.book.nav.back"));
 		home.render.getTooltip().setValue(homeTooltip);
 
 		home.BUS.hook(GuiComponentEvents.MouseClickEvent.class, event -> {
-			// Make visible the parent of the holder of the nav bar or the main index if shifting
 			if (GuiBook.isShiftKeyDown()) {
-				book.MAIN_INDEX.setVisible(true);
-				book.FOCUSED_COMPONENT = book.MAIN_INDEX;
-
-				// Make the holder of the nav bar invisible
-				navBarHolder.setVisible(false);
-			} else if (navBarHolder.getLinkingParent() != null) {
-				navBarHolder.getLinkingParent().setVisible(true);
-				book.FOCUSED_COMPONENT = navBarHolder.getLinkingParent();
-
-				// Make the holder of the nav bar invisible
-				navBarHolder.setVisible(false);
+				book.placeInFocus(book.book);
+			} else if (!book.history.empty()) {
+				book.forceInFocus(book.history.pop());
 			}
+		});
+		home.BUS.hook(GuiComponentEvents.ComponentTickEvent.class, event -> {
+			if (book.history.empty()) home.setVisible(false);
+			else home.setVisible(true);
 		});
 
 		back.BUS.hook(GuiComponentEvents.ComponentTickEvent.class, event -> {
@@ -99,7 +95,7 @@ public class ComponentNavBar extends GuiComponent {
 			BUS.fire(eventNavBarChange);
 		});
 		List<String> backTooltip = new ArrayList<>();
-		backTooltip.add("Back");
+		backTooltip.add(I18n.format("librarianlib.book.nav.previous"));
 		back.render.getTooltip().setValue(backTooltip);
 
 		next.BUS.hook(GuiComponentEvents.ComponentTickEvent.class, event -> {
@@ -127,7 +123,7 @@ public class ComponentNavBar extends GuiComponent {
 			BUS.fire(eventNavBarChange);
 		});
 		List<String> nextTooltip = new ArrayList<>();
-		nextTooltip.add("Next");
+		nextTooltip.add(I18n.format("librarianlib.book.nav.next"));
 		next.render.getTooltip().setValue(nextTooltip);
 	}
 

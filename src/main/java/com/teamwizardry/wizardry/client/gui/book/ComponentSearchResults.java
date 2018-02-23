@@ -4,16 +4,18 @@ import com.teamwizardry.librarianlib.features.gui.component.GuiComponent;
 import com.teamwizardry.librarianlib.features.gui.component.GuiComponentEvents;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentText;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentVoid;
+import com.teamwizardry.wizardry.api.book.hierarchy.IBookElement;
+import com.teamwizardry.wizardry.api.book.hierarchy.entry.Entry;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-public class ComponentSearchResults extends BookGuiComponent {
+public class ComponentSearchResults extends NavBarHolder implements IBookElement {
 
 	private final HashMap<Integer, GuiComponent> pages = new HashMap<>();
 	private final int margin = 16;
@@ -21,12 +23,14 @@ public class ComponentSearchResults extends BookGuiComponent {
 	private ComponentNavBar navBar = null;
 	private ComponentText pageHeader;
 	private ComponentVoid resultSection;
+	private GuiBook book;
 
-	public ComponentSearchResults(GuiBook book, BookGuiComponent parent) {
-		super(16, 16, book.COMPONENT_BOOK.getSize().getXi() - 32, book.COMPONENT_BOOK.getSize().getYi() - 32, book, parent);
+	public ComponentSearchResults(GuiBook book) {
+		super(16, 16, book.bookComponent.getSize().getXi() - 32, book.bookComponent.getSize().getYi() - 32, book);
+		this.book = book;
 
 		pageHeader = new ComponentText(0, 0, ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.TOP);
-		pageHeader.getText().setValue("No results found!");
+		pageHeader.getText().setValue(I18n.format("librarianlib.book.results.notfound"));
 		pageHeader.getUnicode().setValue(true);
 		pageHeader.getWrap().setValue(getSize().getXi());
 		add(pageHeader);
@@ -38,7 +42,9 @@ public class ComponentSearchResults extends BookGuiComponent {
 	public void updateTfidfSearches(List<GuiBook.TfidfSearchResult> results) {
 		reset();
 
-		pageHeader.getText().setValue("Found " + results.size() + " results!");
+		pageHeader.getText().setValue(results.size() == 1 ?
+				I18n.format("librarianlib.book.results.oneresult") :
+				I18n.format("librarianlib.book.results.nresults", results.size()));
 
 		Collections.sort(results);
 
@@ -59,12 +65,12 @@ public class ComponentSearchResults extends BookGuiComponent {
 			double matchPercentage = results.size() == 1 ? 100 : Math.round((resultItem.getTfidfrequency() - smallestTFIDF) / (largestTFIDF - smallestTFIDF) * 100);
 			if (matchPercentage <= 0) continue;
 
-			BookGuiComponent resultComponent = resultItem.getResultComponent().clone();
-			resultComponent.setLinkingParent(this);
+			Entry resultComponent = resultItem.getResultComponent();
 
 			ComponentText textComponent = new ComponentText(25, Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + 2, ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.TOP);
 
-			GuiComponent indexButton = resultComponent.createIndexButton(count, getBook(), plate -> plate.add(textComponent));
+			GuiComponent indexButton = book.createIndexButton(count, resultComponent, plate -> plate.add(textComponent));
+			if (indexButton == null) continue;
 			pageComponent.add(indexButton);
 
 			// --------- HANDLE EXTRA TEXT COMPONENT --------- //
@@ -82,16 +88,19 @@ public class ComponentSearchResults extends BookGuiComponent {
 				} else color = TextFormatting.DARK_RED;
 
 
-				textComponent.getUnicode().setValue(true);
-				textComponent.getText().setValue("| " + color + matchPercentage + "% match");
-
 				double finalMatchPercentage = Math.round(matchPercentage);
+				String mpercent = I18n.format("librarianlib.book.results.match", matchPercentage);
+				String fmpercent = I18n.format("librarianlib.book.results.match", finalMatchPercentage);
+
+				textComponent.getUnicode().setValue(true);
+				textComponent.getText().setValue("| " + color + mpercent);
+
 				indexButton.BUS.hook(GuiComponentEvents.MouseInEvent.class, (event) -> {
-					textComponent.getText().setValue("  | " + color + TextFormatting.ITALIC + finalMatchPercentage + "% match");
+					textComponent.getText().setValue("  | " + color + TextFormatting.ITALIC + fmpercent);
 				});
 
 				indexButton.BUS.hook(GuiComponentEvents.MouseOutEvent.class, (event) -> {
-					textComponent.getText().setValue("| " + color + finalMatchPercentage + "% match");
+					textComponent.getText().setValue("| " + color + fmpercent);
 				});
 			}
 			// --------- HANDLE EXTRA TEXT COMPONENT --------- //
@@ -106,7 +115,7 @@ public class ComponentSearchResults extends BookGuiComponent {
 			}
 		}
 
-		navBar = new ComponentNavBar(getBook(), this, (getSize().getXi() / 2) - 35, getSize().getYi() + 16, 70, pages.size());
+		navBar = new ComponentNavBar(book, (getSize().getXi() / 2) - 35, getSize().getYi() + 16, 70, pages.size());
 		add(navBar);
 
 		navBar.BUS.hook(EventNavBarChange.class, (navBarChange) -> {
@@ -117,7 +126,7 @@ public class ComponentSearchResults extends BookGuiComponent {
 	public void updateMatchCountSearches(List<GuiBook.MatchCountSearchResult> results) {
 		reset();
 
-		pageHeader.getText().setValue("Search too broad! Found " + results.size() + " results with your keywords");
+		pageHeader.getText().setValue(I18n.format("librarianlib.book.results.toobroad", results.size()));
 
 		Collections.sort(results);
 
@@ -129,26 +138,30 @@ public class ComponentSearchResults extends BookGuiComponent {
 		int count = 0;
 		for (GuiBook.MatchCountSearchResult resultItem : results) {
 
-			BookGuiComponent resultComponent = resultItem.getResultComponent().clone();
-			resultComponent.setLinkingParent(this);
+			Entry resultComponent = resultItem.getResultComponent();
 
 			ComponentText textComponent = new ComponentText(25, Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + 2, ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.TOP);
 
-			GuiComponent indexButton = resultComponent.createIndexButton(count, getBook(), plate -> plate.add(textComponent));
+			GuiComponent indexButton = book.createIndexButton(count, resultComponent, plate -> plate.add(textComponent));
+			if (indexButton == null) continue;
 			pageComponent.add(indexButton);
 
 			// --------- HANDLE EXTRA TEXT COMPONENT --------- //
 			{
 
+				String kwds = resultItem.getMatchCount() == 1 ?
+						I18n.format("librarianlib.book.results.kwd") :
+						I18n.format("librarianlib.book.results.kwds", resultItem.getMatchCount());
+
 				textComponent.getUnicode().setValue(true);
-				textComponent.getText().setValue("| " + resultItem.getMatchCount() + " matched keywords");
+				textComponent.getText().setValue("| " + kwds);
 
 				indexButton.BUS.hook(GuiComponentEvents.MouseInEvent.class, (event) -> {
-					textComponent.getText().setValue("  | " + TextFormatting.ITALIC.toString() + resultItem.getMatchCount() + " matched keywords");
+					textComponent.getText().setValue("  | " + TextFormatting.ITALIC.toString() + kwds);
 				});
 
 				indexButton.BUS.hook(GuiComponentEvents.MouseOutEvent.class, (event) -> {
-					textComponent.getText().setValue("| " + TextFormatting.RESET.toString() + resultItem.getMatchCount() + " matched keywords");
+					textComponent.getText().setValue("| " + TextFormatting.RESET.toString() + kwds);
 				});
 			}
 			// --------- HANDLE EXTRA TEXT COMPONENT --------- //
@@ -164,7 +177,7 @@ public class ComponentSearchResults extends BookGuiComponent {
 
 		}
 
-		navBar = new ComponentNavBar(getBook(), this, (getSize().getXi() / 2) - 35, getSize().getYi() + 16, 70, pages.size());
+		navBar = new ComponentNavBar(book, (getSize().getXi() / 2) - 35, getSize().getYi() + 16, 70, pages.size());
 		add(navBar);
 
 		navBar.BUS.hook(EventNavBarChange.class, (navBarChange) -> {
@@ -174,9 +187,9 @@ public class ComponentSearchResults extends BookGuiComponent {
 
 	public void setAsBadSearch() {
 		reset();
-		pageHeader.getText().setValue("No results found!");
+		pageHeader.getText().setValue(I18n.format("librarianlib.book.results.notfound"));
 
-		navBar = new ComponentNavBar(getBook(), this, (getSize().getXi() / 2) - 35, getSize().getYi() + 16, 70, pages.size());
+		navBar = new ComponentNavBar(book, (getSize().getXi() / 2) - 35, getSize().getYi() + 16, 70, pages.size());
 		add(navBar);
 
 		navBar.BUS.hook(EventNavBarChange.class, (navBarChange) -> {
@@ -193,22 +206,6 @@ public class ComponentSearchResults extends BookGuiComponent {
 	}
 
 	@Override
-	public String getTitle() {
-		return "Search Results";
-	}
-
-	@Override
-	public String getDescription() {
-		return null;
-	}
-
-	@Nullable
-	@Override
-	public String getIcon() {
-		return null;
-	}
-
-	@Override
 	public void update() {
 		if (currentActive != null) currentActive.setVisible(false);
 
@@ -217,9 +214,13 @@ public class ComponentSearchResults extends BookGuiComponent {
 		if (currentActive != null) currentActive.setVisible(true);
 	}
 
-	@Nonnull
 	@Override
-	public BookGuiComponent clone() {
-		return new ComponentSearchResults(getBook(), getLinkingParent());
+	public GuiComponent createComponent(GuiBook book) {
+		return this;
+	}
+
+	@Override
+	public @Nullable IBookElement getBookParent() {
+		return book.book;
 	}
 }

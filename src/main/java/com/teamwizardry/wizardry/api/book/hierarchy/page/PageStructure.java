@@ -4,32 +4,37 @@ import com.google.common.collect.Lists;
 import com.google.gson.JsonObject;
 import com.teamwizardry.librarianlib.features.gui.component.GuiComponent;
 import com.teamwizardry.librarianlib.features.math.Vec2d;
-import com.teamwizardry.wizardry.api.structure.StructureCacheRegistry;
+import com.teamwizardry.wizardry.api.book.hierarchy.entry.Entry;
+import com.teamwizardry.wizardry.api.book.structure.CachedStructure;
+import com.teamwizardry.wizardry.api.book.structure.StructureCacheRegistry;
 import com.teamwizardry.wizardry.client.gui.book.ComponentStructure;
 import com.teamwizardry.wizardry.client.gui.book.GuiBook;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.List;
 
 public class PageStructure implements Page {
 
-	private String structureName;
+	private final String structureName;
+	private final Entry entry;
+	private final CachedStructure structure;
 
-	public PageStructure(JsonObject object) {
-		structureName = object.getAsJsonPrimitive("value").getAsString();
-	}
-
-	@NotNull
-	@Override
-	public String getType() {
-		return "structure";
+	public PageStructure(Entry entry, JsonObject object) {
+		this.entry = entry;
+		structureName = object.getAsJsonPrimitive("name").getAsString();
+		structure = StructureCacheRegistry.getStructureOrAdd(structureName);
 	}
 
 	@Override
-	public @Nullable List<String> getSearchableStrings() {
+	public @NotNull Entry getEntry() {
+		return entry;
+	}
+
+	@Override
+	public Collection<String> getSearchableStrings() {
 		return Lists.newArrayList(structureName);
 	}
 
@@ -37,7 +42,6 @@ public class PageStructure implements Page {
 	@SideOnly(Side.CLIENT)
 	public List<GuiComponent> createBookComponents(GuiBook book, Vec2d size) {
 		return Lists.newArrayList(
-				new ComponentStructure(0, 0, size.getXi(), size.getYi(),
-						StructureCacheRegistry.INSTANCE.getStructureOrAdd(structureName)));
+				new ComponentStructure(0, 0, size.getXi(), size.getYi(), structure));
 	}
 }

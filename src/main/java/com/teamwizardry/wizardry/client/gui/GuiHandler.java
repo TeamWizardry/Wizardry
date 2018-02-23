@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.awt.*;
+import static com.teamwizardry.wizardry.common.item.ItemBook.BOOK;
 
 /**
  * Created by Saad on 4/13/2016.
@@ -25,7 +25,11 @@ public class GuiHandler implements IGuiHandler {
 	@SideOnly(Side.CLIENT)
 	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
 		if (ID == 0) return new WorktableGui(new BlockPos(x, y, z));
-		if (ID == 1) return new GuiBook("documentation/categories.json", new Color(0x7c3218), Color.CYAN);
+		if (ID == 1) {
+			//ItemStack stack = player.inventory.getStackInSlot(x);
+			//if (stack.isEmpty() || !(stack.getItem() instanceof ItemBook)) return null;
+			return new GuiBook(BOOK);
+		}
 
 		return null;
 	}

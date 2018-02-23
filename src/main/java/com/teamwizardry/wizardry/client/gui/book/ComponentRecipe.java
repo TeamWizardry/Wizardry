@@ -42,9 +42,8 @@ public class ComponentRecipe extends GuiComponent {
 		GhostRecipe ghostRecipe = createGhostRecipe(recipe, Minecraft.getMinecraft().player.openContainer.inventorySlots);
 
 		ComponentStack output = new ComponentStack(
-				(int) ((getSize().getX() / 2.0) - (16 * 1.25 / 2.0) + 40), (int) ((getSize().getY() / 2.0) - (16 * 1.25 / 2.0)));
+				(int) ((getSize().getX() / 2.0) - 8 + 40), (int) ((getSize().getY() / 2.0) - 8) - 8);
 		output.getStack().setValue(recipe.getRecipeOutput());
-		output.getTransform().setScale(1.25);
 		add(output);
 
 		int row = -1, column = -1;
@@ -52,7 +51,7 @@ public class ComponentRecipe extends GuiComponent {
 			GhostRecipe.GhostIngredient ingredient = ghostRecipe.get(i);
 
 			int x = (int) (-8 + (getSize().getX() / 2.0) - 24);
-			int y = (int) (-8 + (getSize().getY() / 2.0));
+			int y = (int) (-8 + (getSize().getY() / 2.0) - 8);
 			ComponentStack stack = new ComponentStack(x + row * 16, y + column * 16);
 			stack.getStack().setValue(ingredient.getItem());
 			add(stack);
@@ -73,7 +72,7 @@ public class ComponentRecipe extends GuiComponent {
 			GlStateManager.enableBlend();
 			GlStateManager.enableAlpha();
 			GlStateManager.translate(
-					(int) ((getSize().getX() / 2.0) + (ARROW_HOME_PRESSED.getWidth() / 2.0) + 16), (int) ((getSize().getY() / 2.0) + (ARROW_HOME_PRESSED.getHeight() / 2.0)), 0);
+					(int) ((getSize().getX() / 2.0) + (ARROW_HOME_PRESSED.getWidth() / 2.0) + 16), (int) ((getSize().getY() / 2.0) + (ARROW_HOME_PRESSED.getHeight() / 2.0) - 8 + 1), 0);
 			GlStateManager.rotate(180, 0, 0, 1);
 			GlStateManager.color(1f, 0.5f, 1f, 1f);
 			ARROW_HOME_PRESSED.bind();
@@ -90,7 +89,7 @@ public class ComponentRecipe extends GuiComponent {
 			GlStateManager.shadeModel(GL_SMOOTH);
 
 			int x = (int) (-8 + (getSize().getX() / 2.0) - 24 - (16));
-			int y = (int) (-8 + (getSize().getY() / 2.0) - (16));
+			int y = (int) (-8 + (getSize().getY() / 2.0) - (16) - 8);
 			int bandWidth = 1;
 			int excess = 6;
 
@@ -135,7 +134,6 @@ public class ComponentRecipe extends GuiComponent {
 			}
 
 			GlStateManager.popMatrix();
-
 		});
 	}
 

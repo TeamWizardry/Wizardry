@@ -32,7 +32,6 @@ public class ModAdvancements {
 						null, FrameType.GOAL, true, true, false),
 				AdvancementRewards.EMPTY, new HashMap<>(), new String[0][0]);
 
-
 		//	ModAdvancement("manapool", 1, -2, ModItems.MANA_ORB, null);
 		//	BOOK = new ModAdvancement("book", 3, 0, ModItems.BOOK, MANAPOOL);
 		//	DEVILDUST = new ModAdvancement("devildust", -1, 0, ModItems.DEVIL_DUST, null);

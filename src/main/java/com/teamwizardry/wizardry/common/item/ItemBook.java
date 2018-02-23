@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.book.hierarchy.book.Book;
 import com.teamwizardry.wizardry.api.util.Utils;
 import com.teamwizardry.wizardry.common.advancement.IPickupAchievement;
 import com.teamwizardry.wizardry.common.advancement.ModAdvancements;
@@ -21,6 +22,8 @@ import javax.annotation.Nonnull;
  * Created by Saad on 6/12/2016.
  */
 public class ItemBook extends ItemMod implements IPickupAchievement {
+
+	public static Book BOOK = new Book("book");
 
 	public ItemBook() {
 		super("book");

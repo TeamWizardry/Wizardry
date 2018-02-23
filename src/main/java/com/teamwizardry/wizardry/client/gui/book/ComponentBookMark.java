@@ -26,7 +26,7 @@ public class ComponentBookMark extends ComponentAnimatableVoid {
 	private ComponentSprite bar;
 
 	public ComponentBookMark(GuiBook book, Sprite icon, int id) {
-		super(book.COMPONENT_BOOK.getSize().getXi() - 10, 20 + 5 * id + BOOKMARK.getHeight() * id, BOOKMARK.getWidth(), BOOKMARK.getHeight());
+		super(book.bookComponent.getSize().getXi() - 10, 20 + 5 * id + BOOKMARK.getHeight() * id, BOOKMARK.getWidth(), BOOKMARK.getHeight());
 		this.book = book;
 		this.id = id;
 
