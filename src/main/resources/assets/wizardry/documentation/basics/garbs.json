@@ -3,14 +3,11 @@
   "icon": {
     "item": "wizardry:cape"
   },
-  "en_us": {
-    "title": "Wizard\u0027s Garbs",
-    "description": "Learn about capes and halos.",
-    "content": [
-      "Much of the popular wisdom on wizards and their art comprises of the clothing from which the grandeur of their power comes. Some think it comes from the wearing of a pointy hat or a flowing robe; others think it comes from a mighty staff, which has, as everyone knows, a knob on the end. This is, of course, nonsense. Grandeur doesn\u0027t come from a toy with a knob.",
-      "Really, it all comes down to the cape.Well, not entirely. These magnificent garments are not the §osource§r of a wizard\u0027s power, but they §oare§r the reason that power is grand. They act like a channel for magical energy, reducing the power you need to use to accomplish an effect, by taking on the burden. Now, the source of the power... that is a greater art.To gain the power of a wizard, one must do as the ancient wizards did. Once, angels walked freely among the world, sharing their power with humanity. You don\u0027t have this luxury. But a halo you must have, if you wish to become a wizard. And so, you have to create... a crude copy of what the angels once gave, fittingly named the Crude Halo. While it looks absurd... well, downright hilarious, it has to be worn to give you the ability to channel mana. It will never be as strong as what it could have been, but I think that\u0027s for the better. I don\u0027t weep for the stupid, and your death would certainly qualify.Now, because you won\u0027t have an Angel\u0027s Grace giving you a flow of mana, you\u0027ll have to get it into your system through other means. The easiest way is through the vein, shooting the mana straight into your bloodstream using a syringe of mana. Wizards have reported the rush of power through this method is quite intoxicating. When the basic stuff won\u0027t do, there\u0027s a more powerful version, which modern wizards have named \"Mana Builder Premium Plus(tm)\", which can fill your mana to the brim. Side effects can be... well, I\u0027m sure you\u0027ll be fine. A head as hard as yours can take a few blows.Now, to make the most of this power, you need a cape. Creating one is simply a matter of arranging six sheets of leather, but a fresh-made cape is barely worth the cloth, a shadow of what it could become. To get a cape, you have two options: make your own, or steal one. The first is easy, but weak. As your new cape is worn, the flow of mana from you will awaken its Wisdom, slowly but powerfully. Yes, even the leather has more Wisdom than you. That\u0027s why you need a cape. If you didn\u0027t have one, you\u0027d barely have the mental capacity to cast a puff of smoke. Now, the second option is considerably more difficult, but potentially much more rewarding.",
-      "This creation is only the beginning of a cape\u0027s power. As you wear it, it will fill with its Wisdom, growing stronger and more shrewd. The longer a wizard wears their cape, the better a channel it is, and the difference between a newly-cut scrap of leather and the flowing cape of a master wizard like myself is immense.Now, about stealing one. Capes are glorious and powerful, but they are fickle. They will easily give up their loyalty to another, because one Wisdomless dolt is the same as another to them. If you can cheat a master out of their cape, you can go head-to-head with the rest, even despite your... limitations.",
-      "So if you do happen to find a beautiful, billowing cape on another\u0027s rapidly-cooling body, there\u0027s no harm in peeling it off and trying it on. And really, does it matter how they died? A cape is a cape is a cape."
-    ]
-  }
+  "title": "wizardry.book.basics.garbs.title",
+  "description": "wizardry.book.basics.garbs.desc",
+  "content": [
+    "wizardry.book.basics.garbs.content1",
+    "wizardry.book.basics.garbs.content2",
+    "wizardry.book.basics.garbs.content3"
+  ]
 }
