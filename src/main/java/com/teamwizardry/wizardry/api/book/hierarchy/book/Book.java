@@ -129,9 +129,7 @@ public class Book implements IBookElement {
             for (Entry entry : category.entries) {
                 StringBuilder searchBuilder = new StringBuilder();
 
-                if (entry.getPages() == null) continue;
-
-                for (Page page : entry.getPages()) {
+	            for (Page page : entry.pages) {
                     Collection<String> searchable = page.getSearchableKeys();
                     if (searchable != null) for (String key : searchable)
                         searchBuilder.append(I18n.format(key)).append(' ');

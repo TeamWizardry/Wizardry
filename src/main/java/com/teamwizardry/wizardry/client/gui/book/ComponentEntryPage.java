@@ -18,9 +18,7 @@ public class ComponentEntryPage extends NavBarHolder {
 	public ComponentEntryPage(GuiBook book, Entry entry) {
 		super(16, 16, book.bookComponent.getSize().getXi() - 32, book.bookComponent.getSize().getYi() - 32, book);
 
-		if (entry.getTitle() == null) return;
-
-		String title = I18n.format(entry.getTitle());
+		String title = I18n.format(entry.titleKey);
 
 		ComponentSprite titleBar = new ComponentSprite(TITLE_BAR,
 				(int) ((getSize().getX() / 2.0) - (TITLE_BAR.getWidth() / 2.0)),
@@ -32,9 +30,7 @@ public class ComponentEntryPage extends NavBarHolder {
 		titleText.getText().setValue(title);
 		titleBar.add(titleText);
 
-		if (entry.getPages() == null) return;
-
-		for (Page page : entry.getPages()) {
+		for (Page page : entry.pages) {
 			for (GuiComponent pageComponent : page.createBookComponents(book, getSize())) {
 				addPage(pageComponent);
 			}

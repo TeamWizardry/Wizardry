@@ -74,7 +74,7 @@ public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, 
 			return "flawed";
 		else if (quality > 0.2)
 			return "drained";
-		return "waste";
+		return "wasted";
 	}
 
 	@Override

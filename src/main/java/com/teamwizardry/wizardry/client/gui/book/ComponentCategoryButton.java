@@ -1,18 +1,19 @@
 package com.teamwizardry.wizardry.client.gui.book;
 
 import com.google.gson.JsonElement;
+import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.animator.Easing;
 import com.teamwizardry.librarianlib.features.animator.animations.BasicAnimation;
 import com.teamwizardry.librarianlib.features.gui.component.GuiComponent;
 import com.teamwizardry.librarianlib.features.gui.component.GuiComponentEvents;
 import com.teamwizardry.librarianlib.features.math.Vec2d;
+import com.teamwizardry.librarianlib.features.utilities.client.TooltipHelper;
 import com.teamwizardry.wizardry.api.book.hierarchy.category.Category;
 import kotlin.Unit;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.opengl.GL11;
@@ -32,8 +33,6 @@ public class ComponentCategoryButton extends GuiComponent {
 		super(posX, posY, width, height);
 
 		JsonElement icon = category.icon;
-		String title = I18n.format(category.titleKey);
-		String description = I18n.format(category.descKey);
 
 		BUS.hook(GuiComponentEvents.MouseClickEvent.class, (event) -> {
 			book.placeInFocus(category);
@@ -49,8 +48,19 @@ public class ComponentCategoryButton extends GuiComponent {
 
 			render.getTooltip().func((Function<GuiComponent, List<String>>) guiComponent -> {
 				List<String> list = new ArrayList<>();
-				list.add(title);
-				list.add(TextFormatting.GRAY + description);
+				TooltipHelper.addToTooltip(list, category.titleKey);
+
+				String desc = category.descKey;
+				String used = LibrarianLib.PROXY.canTranslate(desc) ? desc : desc + "0";
+				if (LibrarianLib.PROXY.canTranslate(used)) {
+					TooltipHelper.addToTooltip(list, used);
+					int i = 0;
+					while (LibrarianLib.PROXY.canTranslate(desc + (++i)))
+						TooltipHelper.addToTooltip(list, desc + i);
+				}
+
+				for (int i = 1; i < list.size(); i++)
+					list.set(i, TextFormatting.GRAY + list.get(i));
 				return list;
 			});
 

@@ -46,14 +46,19 @@ public class Entry implements IBookElement {
 		ENTRIES.put(new ResourceLocation(rl), this);
 
 		List<Page> pages = Lists.newArrayList();
-		String titleKey = "";
-		String descKey = "";
+		String baseKey = category.book.location.getResourceDomain() + "." +
+				category.book.location.getResourcePath() + "." +
+				rl.replaceAll("^.*/(?=\\w+)", "");
+		String titleKey = baseKey + ".title";
+		String descKey = baseKey + ".description";
 		JsonElement icon = new JsonObject();
 
 		this.category = category;
 		try {
-			titleKey = json.getAsJsonPrimitive("title").getAsString();
-			descKey = json.getAsJsonPrimitive("description").getAsString();
+			if (json.has("title"))
+				titleKey = json.getAsJsonPrimitive("title").getAsString();
+			if (json.has("description"))
+				descKey = json.getAsJsonPrimitive("description").getAsString();
 			icon = json.get("icon");
 			JsonArray allPages = json.getAsJsonArray("content");
 			for (JsonElement pageJson : allPages) {

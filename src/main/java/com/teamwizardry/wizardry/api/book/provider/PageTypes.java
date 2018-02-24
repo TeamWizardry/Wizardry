@@ -2,7 +2,10 @@ package com.teamwizardry.wizardry.api.book.provider;
 
 import com.google.gson.JsonObject;
 import com.teamwizardry.wizardry.api.book.hierarchy.entry.Entry;
-import com.teamwizardry.wizardry.api.book.hierarchy.page.*;
+import com.teamwizardry.wizardry.api.book.hierarchy.page.Page;
+import com.teamwizardry.wizardry.api.book.hierarchy.page.PageRecipe;
+import com.teamwizardry.wizardry.api.book.hierarchy.page.PageStructure;
+import com.teamwizardry.wizardry.api.book.hierarchy.page.PageText;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,7 +22,6 @@ public class PageTypes {
 		registerPageProvider("text", PageText::new);
 		registerPageProvider("recipe", PageRecipe::new);
 		registerPageProvider("structure", PageStructure::new);
-		registerPageProvider("translated", PageTranslated::new);
 	}
 
 	public static void registerPageProvider(@NotNull String name, @NotNull BiFunction<Entry, JsonObject, Page> provider) {

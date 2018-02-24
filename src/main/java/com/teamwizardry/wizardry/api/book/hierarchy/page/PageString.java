@@ -45,7 +45,7 @@ public abstract class PageString implements Page {
 
 		int lineCount = lineCount(size);
 
-		String text = getText();
+		String text = getText().replace("<br>", "\n");
 
 		FontRenderer fr = minecraft.fontRenderer;
 
@@ -69,7 +69,6 @@ public abstract class PageString implements Page {
 
 		if (!page.isEmpty())
 			sections.add(String.join("\n", page));
-
 
 		for (String section : sections) {
 			ComponentText sectionComponent = new ComponentText(0, 0, ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.TOP);
