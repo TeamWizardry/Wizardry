@@ -16,7 +16,7 @@ public class ModFluids {
 			new ResourceLocation(Wizardry.MODID, "fluid/mana_flowing"), true)
 			.setViscosity(500)
 			.setDensity(200)
-			.setTemperature(200)
+			.setTemperature(310)
 			.setVaporizes(false);
 
 	public static final ModFluid NACRE = new ModFluid("nacre_fluid",
