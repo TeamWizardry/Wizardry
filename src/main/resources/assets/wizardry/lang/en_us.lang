@@ -28,7 +28,7 @@ item.wizardry:nacre_pearl.potent.name=Potent Nacre Pearl
 item.wizardry:nacre_pearl.decent.name=Decent Nacre Pearl
 item.wizardry:nacre_pearl.flawed.name=Flawed Nacre Pearl
 item.wizardry:nacre_pearl.drained.name=Drained Nacre Pearl
-item.wizardry:nacre_pearl.waste.name=Waste Nacre Pearl
+item.wizardry:nacre_pearl.wasted.name=Waste Nacre Pearl
 
 item.wizardry:nacre_pearl.overdone.desc0=Seems overdone.
 item.wizardry:nacre_pearl.overdone.desc1=Maybe less time will make it stronger.
@@ -130,10 +130,10 @@ potion.wizardry.zach_corruption=Corruption
 
 item_group.wizardry=Wizardry
 
-jei.recipe.wizardry:mana=Mana Soaking
-jei.recipe.block.wizardry:mana=Output replaces mana
-jei.recipe.consumes.wizardry:mana=Consumes the liquid mana used
-jei.recipe.requires.wizardry:mana=Needs %d source blocks of mana
+jei.recipe.wizardry:fluid=Fluid Soaking
+jei.recipe.block.wizardry:fluid=Output replaces fluid
+jei.recipe.consumes.wizardry:fluid=Consumes the liquid used
+jei.recipe.requires.wizardry:fluid=Needs %d source blocks of fluid
 jei.recipe.wizardry:fire=Item Burning
 jei.recipe.tooltip.wizardry:fire=Fire
 

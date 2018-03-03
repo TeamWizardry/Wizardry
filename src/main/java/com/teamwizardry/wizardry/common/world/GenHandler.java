@@ -2,7 +2,7 @@ package com.teamwizardry.wizardry.common.world;
 
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.util.RandUtil;
-import com.teamwizardry.wizardry.init.ModBlocks;
+import com.teamwizardry.wizardry.common.block.fluid.ModFluids;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
@@ -16,7 +16,7 @@ public class GenHandler implements IWorldGenerator {
 
 	private void generateMana(World world, Random rand, int x, int z) {
 		for (int i = 0; i < 1; i++) {
-			WorldGenManaLake gen = new WorldGenManaLake(ModBlocks.FLUID_MANA);
+			WorldGenManaLake gen = new WorldGenManaLake(ModFluids.MANA.getActualBlock());
 			int xRand = x * 16 + rand.nextInt(16);
 			int zRand = z * 16 + rand.nextInt(16);
 			int yRand = world.getChunkFromChunkCoords(x, z).getLowestHeight();

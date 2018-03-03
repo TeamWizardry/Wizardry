@@ -23,13 +23,14 @@ archivesBaseName = "wizardry"
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+
 minecraft {
     version = "$mc_version-$forge_version"
     runDir = "run"
     mappings = "$mcp_version"
 
-    clientJvmArgs = ["-Dfml.coreMods.load=$core_plugin"]
-    serverJvmArgs = ["-Dfml.coreMods.load=$core_plugin"]
+    clientJvmArgs = ["-Dfml.coreMods.load=$core_plugin,com.teamwizardry.librarianlib.asm.LibLibCorePlugin"]
+    serverJvmArgs = ["-Dfml.coreMods.load=$core_plugin,com.teamwizardry.librarianlib.asm.LibLibCorePlugin"]
 }
 
 repositories {

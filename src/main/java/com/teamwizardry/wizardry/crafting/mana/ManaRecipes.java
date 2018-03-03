@@ -5,8 +5,9 @@ import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.IExplodable;
 import com.teamwizardry.wizardry.api.util.RandUtil;
-import com.teamwizardry.wizardry.crafting.mana.ManaRecipeLoader.ManaCrafterBuilder;
+import com.teamwizardry.wizardry.common.block.fluid.ModFluids;
 import com.teamwizardry.wizardry.init.ModSounds;
+import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.SoundCategory;
@@ -23,8 +24,8 @@ import java.util.List;
 public class ManaRecipes {
 	public static final ManaRecipes INSTANCE = new ManaRecipes();
 
-	public static final HashMap<String, ManaCrafterBuilder> RECIPE_REGISTRY = new HashMap<>();
-	public static final HashMultimap<Ingredient, ManaCrafterBuilder> RECIPES = HashMultimap.create();
+	public static final HashMap<String, FluidRecipeLoader.FluidCrafter> RECIPE_REGISTRY = new HashMap<>();
+	public static final HashMultimap<Ingredient, FluidRecipeLoader.FluidCrafter> RECIPES = HashMultimap.create();
 
 	public static final String CODEX = "codex";
 	public static final String NACRE = "nacre";
@@ -42,8 +43,8 @@ public class ManaRecipes {
 			"temp_real_halo"};
 
 	public void loadRecipes(File directory) {
-		ManaRecipeLoader.INSTANCE.setDirectory(directory);
-		ManaRecipeLoader.INSTANCE.processRecipes(RECIPE_REGISTRY, RECIPES);
+		FluidRecipeLoader.INSTANCE.setDirectory(directory);
+		FluidRecipeLoader.INSTANCE.processRecipes(RECIPE_REGISTRY, RECIPES);
 	}
 
 	public void copyMissingRecipes(File directory) {
@@ -51,7 +52,7 @@ public class ManaRecipes {
 			File file = new File(directory, recipeName + ".json");
 			if (file.exists()) continue;
 
-			InputStream stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "mana_recipes/" + recipeName + ".json");
+			InputStream stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "fluid_recipes/" + recipeName + ".json");
 			if (stream == null) {
 				Wizardry.logger.fatal("    > SOMETHING WENT WRONG! Could not read recipe " + recipeName + " from mod jar! Report this to the devs on Github!");
 				continue;
@@ -66,14 +67,15 @@ public class ManaRecipes {
 		}
 	}
 
-	public class ExplodableCrafter extends ManaCrafter {
+	public static class ExplodableCrafter extends FluidCraftInstance {
 		public ExplodableCrafter() {
-			super(EXPLODABLE, 200);
+			super(EXPLODABLE, 200, ModFluids.MANA.getActual());
 		}
 
 		@Override
 		public boolean isValid(World world, BlockPos pos, List<EntityItem> items) {
-			return items.stream().map(entity -> entity.getItem().getItem()).anyMatch(item -> item instanceof IExplodable);
+			Block at = world.getBlockState(pos).getBlock();
+			return at == fluid.getBlock() && items.stream().map(entity -> entity.getItem().getItem()).anyMatch(item -> item instanceof IExplodable);
 		}
 
 		@Override

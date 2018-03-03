@@ -91,7 +91,7 @@ public class CommonProxy {
 
 		manaRecipeLoading:
 		{
-			File recipeDirectory = new File(directory, "mana_recipes");
+			File recipeDirectory = new File(directory, "fluid_recipes");
 			if (!recipeDirectory.exists())
 				if (!recipeDirectory.mkdirs()) {
 					Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not create directory " + recipeDirectory.getPath());

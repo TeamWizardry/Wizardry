@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.common.core;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.Constants.MISC;
-import com.teamwizardry.wizardry.api.block.ManaTracker;
+import com.teamwizardry.wizardry.api.block.FluidTracker;
 import com.teamwizardry.wizardry.api.events.SpellCastEvent;
 import com.teamwizardry.wizardry.api.spell.IContinuousModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
@@ -72,7 +72,7 @@ public class EventHandler {
 	@SubscribeEvent
 	public void tickEvent(WorldTickEvent event) {
 		if (event.phase == Phase.END) {
-			ManaTracker.INSTANCE.tick(event.world);
+			FluidTracker.INSTANCE.tick(event.world);
 		}
 	}
 

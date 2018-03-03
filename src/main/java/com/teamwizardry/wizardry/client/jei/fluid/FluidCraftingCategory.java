@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.client.jei.mana;
+package com.teamwizardry.wizardry.client.jei.fluid;
 
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.client.jei.WizardryJEIPlugin;
@@ -19,7 +19,7 @@ import javax.annotation.Nonnull;
  * Created at 4:50 PM on 1/13/18.
  */
 @SideOnly(Side.CLIENT)
-public class ManaCraftingCategory implements IRecipeCategory<ManaRecipeJEI> {
+public class FluidCraftingCategory implements IRecipeCategory<FluidRecipeJEI> {
 
 	private static final ResourceLocation RECIPE_BACKGROUND = new ResourceLocation("jei", "textures/gui/recipe_background.png");
 
@@ -34,7 +34,7 @@ public class ManaCraftingCategory implements IRecipeCategory<ManaRecipeJEI> {
 	@Nonnull
 	@Override
 	public String getUid() {
-		return Wizardry.MODID + ":mana";
+		return Wizardry.MODID + ":fluid";
 	}
 
 	@Nonnull
@@ -58,7 +58,7 @@ public class ManaCraftingCategory implements IRecipeCategory<ManaRecipeJEI> {
 	}
 
 	@Override
-	public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull ManaRecipeJEI recipeWrapper, @Nonnull IIngredients ingredients) {
+	public void setRecipe(@Nonnull IRecipeLayout recipeLayout, @Nonnull FluidRecipeJEI recipeWrapper, @Nonnull IIngredients ingredients) {
 		recipeLayout.getItemStacks().init(0, true, 0, 13);
 		recipeLayout.getFluidStacks().init(0, true, 30, 14);
 

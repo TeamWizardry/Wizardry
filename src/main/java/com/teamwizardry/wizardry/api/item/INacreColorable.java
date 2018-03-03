@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.api.item;
 import com.teamwizardry.librarianlib.features.base.item.IItemColorProvider;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.api.Constants.NBT;
-import com.teamwizardry.wizardry.common.block.fluid.FluidNacre;
+import com.teamwizardry.wizardry.common.block.fluid.ModFluids;
 import kotlin.jvm.functions.Function2;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -48,7 +48,7 @@ public interface INacreColorable extends IItemColorProvider {
 
 		IBlockState state = entityItem.world.getBlockState(entityItem.getPosition());
 
-		if (state.getBlock() == FluidNacre.instance.getBlock() && !ItemNBTHelper.getBoolean(stack, NBT.COMPLETE, false)) {
+		if (state.getBlock() == ModFluids.NACRE.getActualBlock() && !ItemNBTHelper.getBoolean(stack, NBT.COMPLETE, false)) {
 			int purity = ItemNBTHelper.getInt(stack, NBT.PURITY, 0);
 			purity = Math.min(purity + 1, NBT.NACRE_PURITY_CONVERSION * 2);
 			ItemNBTHelper.setInt(stack, NBT.PURITY, purity);

@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.init.irecipies;
 
-import com.teamwizardry.wizardry.init.ModBlocks;
+import com.teamwizardry.wizardry.common.block.fluid.ModFluids;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
@@ -19,7 +19,7 @@ public class RecipeManaSyringe extends IForgeRegistryEntry.Impl<IRecipe> impleme
 		boolean foundSyringe = false;
 		boolean foundBucket = false;
 
-		ItemStack bucket = FluidUtil.getFilledBucket(new FluidStack(ModBlocks.FLUID_MANA.getFluid(), 1));
+		ItemStack bucket = FluidUtil.getFilledBucket(new FluidStack(ModFluids.MANA.getActual(), 1));
 
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);

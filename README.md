@@ -15,7 +15,7 @@ Good luck.
 ## For Packmakers:
 
 ### Mana Recipe Format
-Mana recipes can be found, edited, created, and replaced in the config/wizardry/mana_recipes folder, and can be placed inside any folder within that folder. Make sure to enable "customManaRecipes" in the main Wizardry config file if you wish to remove any default recipes.    
+Mana recipes can be found, edited, created, and replaced in the config/wizardry/fluid_recipes folder, and can be placed inside any folder within that folder. Make sure to enable "customManaRecipes" in the main Wizardry config file if you wish to remove any default recipes.    
 Only .json files will be read.
 
 ```
@@ -44,13 +44,13 @@ Only .json files will be read.
     },
     ...
   ],
+  "fluid": "fluid_name" // Optional, change the fluid the recipe crafts in. Defaults to "mana_fluid" if not present.
   "duration": number    // Optional, amount of time required for the recipe to run. Defaults to 200 ticks if not present.
-  "radius": number      // Optional, distance around center required to be mana source blocks. Defaults to 0 if not present.
-                        // Value of 0 = 1x1, 1 = 3x3, 2 = 5x5, 3 = 7x7, etc.
+  "required": number    // Optional, number of source blocks required to craft. Defaults to 1 if not present.
   "consume": boolean    // Optional, determines if the mana blocks required for the recipe will be consumed when processing finishes. Defaults to false if not present.
   "explode": boolean    // Optional, determines if any nearby entities will be pushed away when the recipe finishes. Defaults to false if not present.
   "bubbling": boolean   // Optional, determines if the items in the pool will make bubbling noises over the recipe's duration. Defaults to true if not present.
-  "harp": boolean     // Optional, if true, a few notes will play on a harp when the recipe completes. Defaults to true if not present.
+  "harp": boolean       // Optional, if true, a few notes will play on a harp when the recipe completes. Defaults to true if not present.
 }
 ```
 

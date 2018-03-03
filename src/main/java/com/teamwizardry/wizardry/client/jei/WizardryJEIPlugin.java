@@ -2,8 +2,8 @@ package com.teamwizardry.wizardry.client.jei;
 
 import com.teamwizardry.wizardry.client.jei.fire.FireCraftingCategory;
 import com.teamwizardry.wizardry.client.jei.fire.FireRecipeJEI;
-import com.teamwizardry.wizardry.client.jei.mana.ManaCraftingCategory;
-import com.teamwizardry.wizardry.client.jei.mana.ManaRecipeJEI;
+import com.teamwizardry.wizardry.client.jei.fluid.FluidCraftingCategory;
+import com.teamwizardry.wizardry.client.jei.fluid.FluidRecipeJEI;
 import com.teamwizardry.wizardry.crafting.burnable.FireRecipes;
 import com.teamwizardry.wizardry.crafting.mana.ManaRecipes;
 import com.teamwizardry.wizardry.init.ModItems;
@@ -29,13 +29,13 @@ public class WizardryJEIPlugin implements IModPlugin {
 	public static IJeiHelpers helpers;
 
 	public static FireCraftingCategory fireCategory;
-	public static ManaCraftingCategory manaCategory;
+	public static FluidCraftingCategory manaCategory;
 
 	@Override
 	public void registerCategories(IRecipeCategoryRegistration registry) {
 		helpers = registry.getJeiHelpers();
 		registry.addRecipeCategories(fireCategory = new FireCraftingCategory());
-		registry.addRecipeCategories(manaCategory = new ManaCraftingCategory());
+		registry.addRecipeCategories(manaCategory = new FluidCraftingCategory());
 	}
 
 	@Override
@@ -46,7 +46,7 @@ public class WizardryJEIPlugin implements IModPlugin {
 
 		registry.addRecipes(ManaRecipes.RECIPE_REGISTRY.values().stream()
 						.filter(recipe -> !recipe.getOutput().isEmpty() || recipe.getFluidOutput() != null)
-						.map(ManaRecipeJEI::new).collect(Collectors.toList()),
+						.map(FluidRecipeJEI::new).collect(Collectors.toList()),
 				manaCategory.getUid());
 
 		registry.addRecipeCatalyst(new ItemStack(Items.FIRE_CHARGE), fireCategory.getUid());

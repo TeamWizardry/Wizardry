@@ -1,6 +1,6 @@
 package com.teamwizardry.wizardry.init.irecipies;
 
-import com.teamwizardry.wizardry.init.ModBlocks;
+import com.teamwizardry.wizardry.common.block.fluid.ModFluids;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;
@@ -23,8 +23,8 @@ public class RecipeSteroidSyringe extends IForgeRegistryEntry.Impl<IRecipe> impl
 		boolean foundLava = false;
 		boolean foundDevilDust = false;
 
-		ItemStack mana = FluidUtil.getFilledBucket(new FluidStack(ModBlocks.FLUID_MANA.getFluid(), 1));
-		ItemStack nacre = FluidUtil.getFilledBucket(new FluidStack(ModBlocks.FLUID_NACRE.getFluid(), 1));
+		ItemStack mana = FluidUtil.getFilledBucket(new FluidStack(ModFluids.MANA.getActual(), 1));
+		ItemStack nacre = FluidUtil.getFilledBucket(new FluidStack(ModFluids.NACRE.getActual(), 1));
 
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);

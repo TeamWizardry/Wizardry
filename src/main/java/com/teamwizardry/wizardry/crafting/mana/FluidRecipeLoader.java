@@ -9,8 +9,8 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
+import com.teamwizardry.wizardry.common.block.fluid.ModFluids;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
-import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -40,21 +40,24 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ManaRecipeLoader {
-	public static final ManaRecipeLoader INSTANCE = new ManaRecipeLoader();
+public class FluidRecipeLoader {
+	public static final FluidRecipeLoader INSTANCE = new FluidRecipeLoader();
 
 	private File directory;
 
-	private static Set<BlockPos> allManaLiquidInPool(World world, BlockPos pos, int needed) {
+	private static Set<BlockPos> allLiquidInPool(World world, BlockPos pos, int needed, Fluid fluid) {
 		if (needed <= 0) return Sets.newHashSet();
 
-		IBlockState manaFluid = ModBlocks.FLUID_MANA.getDefaultState();
+		Block block = fluid.getBlock();
+		if (block == null) return Sets.newHashSet();
+
+		IBlockState sourceBlock = block.getDefaultState();
 
 		BlockPos.MutableBlockPos topPos = new BlockPos.MutableBlockPos(pos);
 		IBlockState stateAt = world.getBlockState(topPos);
 		boolean lastWasFluid = false;
-		while (stateAt.getBlock() == ModBlocks.FLUID_MANA) {
-			lastWasFluid = stateAt == manaFluid;
+		while (stateAt.getBlock() == block) {
+			lastWasFluid = stateAt == sourceBlock;
 			stateAt = world.getBlockState(topPos.setPos(topPos.getX(), topPos.getY() + 1, topPos.getZ()));
 		}
 		topPos.setPos(topPos.getX(), topPos.getY() - 1, topPos.getZ());
@@ -80,9 +83,9 @@ public class ManaRecipeLoader {
 					BlockPos immutable = tool.toImmutable();
 					visited.add(immutable);
 					stateAt = world.getBlockState(tool);
-					if (stateAt.getBlock() == ModBlocks.FLUID_MANA) {
+					if (stateAt.getBlock() == block) {
 						positions.add(immutable);
-						if (stateAt == manaFluid) {
+						if (stateAt == sourceBlock) {
 							resultants.add(immutable);
 
 							if (resultants.size() >= needed)
@@ -101,9 +104,9 @@ public class ManaRecipeLoader {
 	}
 
 	@SuppressWarnings("deprecation")
-	public void processRecipes(Map<String, ManaCrafterBuilder> recipeRegistry, Multimap<Ingredient, ManaCrafterBuilder> recipes) {
+	public void processRecipes(Map<String, FluidCrafter> recipeRegistry, Multimap<Ingredient, FluidCrafter> recipes) {
 		Wizardry.logger.info("<<========================================================================>>");
-		Wizardry.logger.info("> Starting mana recipe loading.");
+		Wizardry.logger.info("> Starting fluid recipe loading.");
 
 		JsonContext context = new JsonContext("minecraft");
 
@@ -151,6 +154,7 @@ public class ManaRecipeLoader {
 				JsonObject fileObject = element.getAsJsonObject();
 
 				List<Ingredient> extraInputs = new LinkedList<>();
+				Fluid fluid = ModFluids.MANA.getActual();
 				int duration = 100;
 				int required = 1;
 				boolean consume = false;
@@ -205,6 +209,14 @@ public class ManaRecipeLoader {
 						}
 						extraInputs.add(ingredient);
 					}
+				}
+
+				if (fileObject.has("fluid")) {
+					if (!fileObject.get("fluid").isJsonPrimitive() || !fileObject.getAsJsonPrimitive("fluid").isString()) {
+						Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT give rfluid as a string. Ignoring file...: " + element.toString());
+						continue;
+					}
+					fluid = FluidRegistry.getFluid(fileObject.get("fluid").getAsString());
 				}
 
 				if (fileObject.has("duration")) {
@@ -266,7 +278,7 @@ public class ManaRecipeLoader {
 						continue;
 					}
 
-					ManaCrafterBuilder build = buildManaCrafter(file.getPath(), outputItem, inputItem, extraInputs, duration, required, consume, explode, bubbling, harp);
+					FluidCrafter build = buildFluidCrafter(file.getPath(), outputItem, inputItem, extraInputs, fluid, duration, required, consume, explode, bubbling, harp);
 					recipeRegistry.put(file.getPath(), build);
 					recipes.put(inputItem, build);
 				} else if (type.equalsIgnoreCase("block")) {
@@ -281,7 +293,7 @@ public class ManaRecipeLoader {
 						meta = output.get("meta").getAsInt();
 					outputBlock = block.getStateFromMeta(meta);
 
-					ManaCrafterBuilder build = buildManaCrafter(file.getPath(), outputBlock, inputItem, extraInputs, duration, required, consume, explode, bubbling, harp);
+					FluidCrafter build = buildFluidCrafter(file.getPath(), outputBlock, inputItem, extraInputs, fluid, duration, required, consume, explode, bubbling, harp);
 					recipeRegistry.put(file.getPath(), build);
 					recipes.put(inputItem, build);
 				} else
@@ -294,12 +306,12 @@ public class ManaRecipeLoader {
 		Wizardry.logger.info("<<========================================================================>>");
 	}
 
-	private ManaCrafterBuilder buildManaCrafter(String identifier, ItemStack outputItem, Ingredient input, List<Ingredient> extraInputs, int duration, int required, boolean consume, boolean explode, boolean bubbling, boolean harp) {
+	private FluidCrafter buildFluidCrafter(String identifier, ItemStack outputItem, Ingredient input, List<Ingredient> extraInputs, Fluid fluid, int duration, int required, boolean consume, boolean explode, boolean bubbling, boolean harp) {
 		Ingredient outputIngredient = Ingredient.fromStacks(outputItem);
 		List<Ingredient> inputs = Lists.newArrayList(extraInputs);
 
-		return new ManaCrafterBuilder((world, pos, items) -> {
-			if (allManaLiquidInPool(world, pos, required).size() < required)
+		return new FluidCrafter((world, pos, items) -> {
+			if (allLiquidInPool(world, pos, required, fluid).size() < required)
 				return false;
 
 			List<ItemStack> list = items.stream().map(entity -> entity.getItem().copy()).collect(Collectors.toList());
@@ -331,10 +343,14 @@ public class ManaRecipeLoader {
 			}
 		}, (world, pos, items, currentDuration) -> {
 			if (consume) {
-				IBlockState drainState = ModBlocks.FLUID_MANA.getDefaultState().withProperty(BlockFluidBase.LEVEL, 14);
+				Block block = fluid.getBlock();
+				if (block != null) {
+					IBlockState defaultState = block.getDefaultState();
+					IBlockState drainState = defaultState.withProperty(BlockFluidBase.LEVEL, defaultState.getValue(BlockFluidBase.LEVEL) + 1);
 
-				for (BlockPos position : allManaLiquidInPool(world, pos, required))
-					world.setBlockState(position, drainState);
+					for (BlockPos position : allLiquidInPool(world, pos, required, fluid))
+						world.setBlockState(position, drainState);
+				}
 			}
 
 			List<Ingredient> inputList = new ArrayList<>(inputs);
@@ -364,14 +380,14 @@ public class ManaRecipeLoader {
 
 			if (harp)
 				world.playSound(null, output.posX, output.posY, output.posZ, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
-		}, identifier, duration).setInputs(input, inputs).setOutput(outputItem).setDoesConsume(consume).setRequired(required);
+		}, identifier, duration).setInputs(input, inputs).setOutput(outputItem).setDoesConsume(consume).setRequired(required).setFluid(fluid);
 	}
 
-	private ManaCrafterBuilder buildManaCrafter(String identifier, IBlockState outputBlock, Ingredient input, List<Ingredient> extraInputs, int duration, int required, boolean consume, boolean explode, boolean bubbling, boolean harp) {
+	private FluidCrafter buildFluidCrafter(String identifier, IBlockState outputBlock, Ingredient input, List<Ingredient> extraInputs, Fluid fluid, int duration, int required, boolean consume, boolean explode, boolean bubbling, boolean harp) {
 		List<Ingredient> inputs = Lists.newArrayList(extraInputs);
 
-		ManaCrafterBuilder builder = new ManaCrafterBuilder((world, pos, items) -> {
-			if (allManaLiquidInPool(world, pos, required).size() < required)
+		FluidCrafter builder = new FluidCrafter((world, pos, items) -> {
+			if (allLiquidInPool(world, pos, required, fluid).size() < required)
 				return false;
 
 			List<ItemStack> list = items.stream().map(entity -> entity.getItem().copy()).collect(Collectors.toList());
@@ -400,10 +416,16 @@ public class ManaRecipeLoader {
 					world.playSound(null, entityItem.posX, entityItem.posY, entityItem.posZ, ModSounds.BUBBLING, SoundCategory.BLOCKS, 0.7F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
 			}
 		}, (world, pos, items, currentDuration) -> {
-			IBlockState drainState = ModBlocks.FLUID_MANA.getDefaultState().withProperty(BlockFluidBase.LEVEL, 14);
+			if (consume) {
+				Block block = fluid.getBlock();
+				if (block != null) {
+					IBlockState defaultState = block.getDefaultState();
+					IBlockState drainState = defaultState.withProperty(BlockFluidBase.LEVEL, defaultState.getValue(BlockFluidBase.LEVEL) - 1);
 
-			for (BlockPos position : allManaLiquidInPool(world, pos, consume ? required : 1))
-				world.setBlockState(position, drainState);
+					for (BlockPos position : allLiquidInPool(world, pos, required, fluid))
+						world.setBlockState(position, drainState);
+				}
+			}
 
 			List<Ingredient> inputList = new ArrayList<>(inputs);
 			inputList.add(input);
@@ -428,11 +450,11 @@ public class ManaRecipeLoader {
 
 			if (harp)
 				world.playSound(null, output.x, output.y, output.z, ModSounds.HARP1, SoundCategory.BLOCKS, 0.3F, 1.0F);
-		}, identifier, duration).setInputs(input, inputs).setIsBlock(true).setDoesConsume(true).setRequired(required);
+		}, identifier, duration).setInputs(input, inputs).setIsBlock(true).setDoesConsume(true).setRequired(required).setFluid(fluid);
 
-		Fluid fluid = FluidRegistry.lookupFluidForBlock(outputBlock.getBlock());
-		if (fluid != null)
-			builder.setOutput(new FluidStack(fluid, 1000));
+		Fluid fluidOutput = FluidRegistry.lookupFluidForBlock(outputBlock.getBlock());
+		if (fluidOutput != null)
+			builder.setOutput(new FluidStack(fluidOutput, 1000));
 		else
 			builder.setOutput(new ItemStack(outputBlock.getBlock(), 1, outputBlock.getBlock().damageDropped(outputBlock)));
 
@@ -449,13 +471,14 @@ public class ManaRecipeLoader {
 		void consume(World world, BlockPos pos, List<EntityItem> items, int currentDuration);
 	}
 
-	public static class ManaCrafterBuilder {
+	public static class FluidCrafter {
 		private ManaCrafterPredicate isValid;
 		private ManaCrafterConsumer tick;
 		private ManaCrafterConsumer finish;
 		private String identifier;
 		private int duration;
 
+		private Fluid fluid = ModFluids.MANA.getActual();
 		private Ingredient primaryInput = Ingredient.EMPTY;
 		private List<Ingredient> extraInputs = Collections.emptyList();
 		private ItemStack output = ItemStack.EMPTY;
@@ -464,7 +487,7 @@ public class ManaRecipeLoader {
 		private boolean doesConsume = false;
 		private int required = 1;
 
-		private ManaCrafterBuilder(ManaCrafterPredicate isValid, ManaCrafterConsumer tick, ManaCrafterConsumer finish, String identifier, int duration) {
+		private FluidCrafter(ManaCrafterPredicate isValid, ManaCrafterConsumer tick, ManaCrafterConsumer finish, String identifier, int duration) {
 			this.isValid = isValid;
 			this.tick = tick;
 			this.finish = finish;
@@ -472,23 +495,28 @@ public class ManaRecipeLoader {
 			this.duration = duration;
 		}
 
-		private ManaCrafterBuilder setInputs(Ingredient primary, List<Ingredient> inputs) {
+		private FluidCrafter setInputs(Ingredient primary, List<Ingredient> inputs) {
 			this.primaryInput = primary;
 			this.extraInputs = inputs;
 			return this;
 		}
 
-		private ManaCrafterBuilder setOutput(ItemStack output) {
+		private FluidCrafter setOutput(ItemStack output) {
 			this.output = output;
 			return this;
 		}
 
-		private ManaCrafterBuilder setIsBlock(boolean state) {
+		private FluidCrafter setFluid(Fluid fluid) {
+			this.fluid = fluid;
+			return this;
+		}
+
+		private FluidCrafter setIsBlock(boolean state) {
 			this.block = state;
 			return this;
 		}
 
-		private ManaCrafterBuilder setDoesConsume(boolean state) {
+		private FluidCrafter setDoesConsume(boolean state) {
 			this.doesConsume = state;
 			return this;
 		}
@@ -505,9 +533,13 @@ public class ManaRecipeLoader {
 			return output;
 		}
 
-		private ManaCrafterBuilder setOutput(FluidStack output) {
+		private FluidCrafter setOutput(FluidStack output) {
 			this.fluidOutput = output;
 			return this;
+		}
+
+		public Fluid getFluid() {
+			return fluid;
 		}
 
 		public FluidStack getFluidOutput() {
@@ -526,16 +558,17 @@ public class ManaRecipeLoader {
 			return required;
 		}
 
-		private ManaCrafterBuilder setRequired(int required) {
+		private FluidCrafter setRequired(int required) {
 			this.required = required;
 			return this;
 		}
 
-		public ManaCrafter build() {
-			return new ManaCrafter(identifier, duration) {
+		public FluidCraftInstance build() {
+			return new FluidCraftInstance(identifier, duration, fluid) {
 				@Override
 				public boolean isValid(World world, BlockPos pos, List<EntityItem> items) {
-					return isValid.check(world, pos, items);
+					Block at = world.getBlockState(pos).getBlock();
+					return at == fluid.getBlock() && isValid.check(world, pos, items);
 				}
 
 				@Override

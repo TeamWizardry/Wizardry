@@ -1,10 +1,9 @@
-package com.teamwizardry.wizardry.client.jei.mana;
+package com.teamwizardry.wizardry.client.jei.fluid;
 
 import com.google.common.collect.Lists;
 import com.teamwizardry.librarianlib.features.utilities.client.TooltipHelper;
 import com.teamwizardry.wizardry.client.jei.WizardryJEIPlugin;
-import com.teamwizardry.wizardry.common.block.fluid.FluidMana;
-import com.teamwizardry.wizardry.crafting.mana.ManaRecipeLoader;
+import com.teamwizardry.wizardry.crafting.mana.FluidRecipeLoader;
 import mezz.jei.api.gui.IDrawable;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.IRecipeWrapper;
@@ -27,11 +26,11 @@ import static com.teamwizardry.wizardry.client.jei.WizardryJEIPlugin.manaCategor
  * Created at 4:51 PM on 1/13/18.
  */
 @SideOnly(Side.CLIENT)
-public class ManaRecipeJEI implements IRecipeWrapper {
+public class FluidRecipeJEI implements IRecipeWrapper {
 
-	private final ManaRecipeLoader.ManaCrafterBuilder builder;
+	private final FluidRecipeLoader.FluidCrafter builder;
 
-	public ManaRecipeJEI(ManaRecipeLoader.ManaCrafterBuilder builder) {
+	public FluidRecipeJEI(FluidRecipeLoader.FluidCrafter builder) {
 		this.builder = builder;
 	}
 
@@ -47,7 +46,7 @@ public class ManaRecipeJEI implements IRecipeWrapper {
 				stackList.removeIf(Ingredient.fromStacks(builder.getOutput())::apply);
 
 		ingredients.setInputLists(ItemStack.class, stacks);
-		ingredients.setInput(FluidStack.class, new FluidStack(FluidMana.instance, 1000));
+		ingredients.setInput(FluidStack.class, new FluidStack(builder.getFluid(), 1000));
 
 		if (isFluidOutput())
 			ingredients.setOutput(FluidStack.class, builder.getFluidOutput());
@@ -84,7 +83,7 @@ public class ManaRecipeJEI implements IRecipeWrapper {
 
 	@Override
 	public void drawInfo(Minecraft minecraft, int recipeWidth, int recipeHeight, int mouseX, int mouseY) {
-		ManaCraftingCategory category = WizardryJEIPlugin.manaCategory;
+		FluidCraftingCategory category = WizardryJEIPlugin.manaCategory;
 
 		if (builder.isBlock() || builder.doesConsume() || builder.getRequired() > 1) {
 			GlStateManager.pushMatrix();

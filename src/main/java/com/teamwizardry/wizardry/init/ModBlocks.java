@@ -1,42 +1,22 @@
 package com.teamwizardry.wizardry.init;
 
 
-import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.block.*;
-import com.teamwizardry.wizardry.common.block.fluid.BlockFluidMana;
-import com.teamwizardry.wizardry.common.block.fluid.BlockFluidNacre;
-import com.teamwizardry.wizardry.common.block.fluid.FluidMana;
-import com.teamwizardry.wizardry.common.block.fluid.FluidNacre;
+import com.teamwizardry.wizardry.common.block.fluid.ModFluids;
 import com.teamwizardry.wizardry.common.block.wisdomwood.*;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.ItemMeshDefinition;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.block.statemap.StateMapperBase;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.registries.IForgeRegistry;
 
 /**
  * Created by Saad on 3/24/2016.
  */
 @Mod.EventBusSubscriber
 public class ModBlocks {
-
-	//public static Material NACRE_MATERIAL = new MaterialNacre(MapColor.WATER);
-	//public static Material MANA_MATERIAL = new MaterialMana(MapColor.WATER);
-
-	public static BlockFluidMana FLUID_MANA;
-	public static BlockFluidNacre FLUID_NACRE;
 
 	public static BlockCraftingPlate CRAFTING_PLATE;
 	public static BlockMagiciansWorktable MAGICIANS_WORKTABLE;
@@ -66,15 +46,9 @@ public class ModBlocks {
 
 	public static BlockUnicornTrail UNICORN_TRAIL;
 
-	@SubscribeEvent
-	public static void register(RegistryEvent.Register<Block> evt) {
-		IForgeRegistry<Block> r = evt.getRegistry();
-
-		r.register(FLUID_MANA = new BlockFluidMana());
-		r.register(FLUID_NACRE = new BlockFluidNacre());
-	}
-
 	public static void init() {
+
+		ModFluids.init();
 
 		CRAFTING_PLATE = new BlockCraftingPlate();
 		MAGICIANS_WORKTABLE = new BlockMagiciansWorktable();
@@ -105,47 +79,20 @@ public class ModBlocks {
 	}
 
 	@SubscribeEvent
+	public void remapFluids(RegistryEvent.MissingMappings<Block> event) {
+		event.getMappings().stream()
+				.filter(mapping -> mapping.key.getResourcePath().equals("mana"))
+				.forEach(mapping -> mapping.remap(ModFluids.MANA.getActualBlock()));
+		event.getMappings().stream()
+				.filter(mapping -> mapping.key.getResourcePath().equals("nacre"))
+				.forEach(mapping -> mapping.remap(ModFluids.NACRE.getActualBlock()));
+	}
+
+	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void registerModels(ModelRegistryEvent event) {
 		PEARL_HOLDER.initModel();
 		JAR.initModel();
 		MANA_MAGNET.initModel();
-		registerFluidRender(FluidMana.instance);
-		registerFluidRender(FluidNacre.instance);
-	}
-
-	@SideOnly(Side.CLIENT)
-	private void registerFluidRender(Fluid f) {
-		FluidCustomModelMapper mapper = new FluidCustomModelMapper(f);
-		Block block = f.getBlock();
-		if (block != null) {
-			Item item = Item.getItemFromBlock(block);
-			if (item != Items.AIR) {
-				ModelLoader.registerItemVariants(item);
-				ModelLoader.setCustomMeshDefinition(item, mapper);
-			} else {
-				ModelLoader.setCustomStateMapper(block, mapper);
-			}
-		}
-	}
-
-	public static class FluidCustomModelMapper extends StateMapperBase implements ItemMeshDefinition {
-
-		private final ModelResourceLocation res;
-
-		public FluidCustomModelMapper(Fluid f) {
-			this.res = new ModelResourceLocation(Wizardry.MODID + ":blockfluids", f.getName());
-		}
-
-		@Override
-		public ModelResourceLocation getModelLocation(ItemStack stack) {
-			return res;
-		}
-
-		@Override
-		public ModelResourceLocation getModelResourceLocation(IBlockState state) {
-			return res;
-		}
-
 	}
 }
