@@ -1,0 +1,15 @@
+{
+  "type": "entry",
+  "icon": {
+    "item": "wizardry:mana_orb"
+  },
+  "title": "wizardry.book.steps.mana.title",
+  "description": "wizardry.book.steps.mana.desc",
+  "content": [
+    "wizardry.book.steps.mana.content0",
+    "wizardry.book.steps.mana.content1",
+    "wizardry.book.steps.mana.content2",
+    "wizardry.book.steps.mana.content3",
+    "wizardry.book.steps.mana.content4"
+  ]
+}

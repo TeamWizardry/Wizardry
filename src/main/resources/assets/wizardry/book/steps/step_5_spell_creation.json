@@ -1,0 +1,18 @@
+{
+  "type": "entry",
+  "icon": {
+    "item": "wizardry:magicians_worktable"
+  },
+  "title": "wizardry.book.steps.spell_creation.title",
+  "description": "wizardry.book.steps.spell_creation.desc",
+  "content": [
+    "wizardry.book.steps.spell_creation.content0",
+    "wizardry.book.steps.spell_creation.content1",
+    "wizardry.book.steps.spell_creation.content2",
+    "wizardry.book.steps.spell_creation.content3",
+    "wizardry.book.steps.spell_creation.content4",
+    "wizardry.book.steps.spell_creation.content5",
+    "wizardry.book.steps.spell_creation.content6",
+    "wizardry.book.steps.spell_creation.content7"
+  ]
+}
