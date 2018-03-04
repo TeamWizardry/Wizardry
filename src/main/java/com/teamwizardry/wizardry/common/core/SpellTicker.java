@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.common.core;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import kotlin.Pair;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -16,16 +15,10 @@ import java.util.HashMap;
 // TODO: use world time instead of ticking
 public class SpellTicker {
 
-	public static SpellTicker INSTANCE = new SpellTicker();
-
-	public HashMap<Module, Pair<SpellData, Integer>> ticker = new HashMap<>();
-
-	private SpellTicker() {
-		MinecraftForge.EVENT_BUS.register(this);
-	}
+	public static HashMap<Module, Pair<SpellData, Integer>> ticker = new HashMap<>();
 
 	@SubscribeEvent
-	public void tick(TickEvent.WorldTickEvent event) {
+	public static void tick(TickEvent.WorldTickEvent event) {
 		if (event.world.isRemote) return;
 
 		ArrayList<Module> modules = new ArrayList<>(ticker.keySet());
