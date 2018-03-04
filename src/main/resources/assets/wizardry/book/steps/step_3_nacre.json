@@ -1,0 +1,12 @@
+{
+  "type": "entry",
+  "icon": {
+    "item": "wizardry:nacre_pearl"
+  },
+  "title": "wizardry.book.steps.nacre.title",
+  "description": "wizardry.book.steps.nacre.desc",
+  "content": [
+    "wizardry.book.steps.nacre.content0",
+    "wizardry.book.steps.nacre.content1"
+  ]
+}

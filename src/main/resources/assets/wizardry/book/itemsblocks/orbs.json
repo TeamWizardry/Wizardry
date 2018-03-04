@@ -1,0 +1,11 @@
+{
+  "type": "entry",
+  "icon": {
+    "item": "wizardry:glass_orb"
+  },
+  "title": "wizardry.book.items_blocks.orbs.title",
+  "content": [
+    "wizardry.book.items_blocks.orbs.content0",
+    "wizardry.book.items_blocks.orbs.content1"
+  ]
+}

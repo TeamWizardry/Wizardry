@@ -1,0 +1,16 @@
+{
+  "type": "entry",
+  "icon": {
+    "item": "wizardry:crafting_plate"
+  },
+  "title": "wizardry.book.steps.structures.title",
+  "description": "wizardry.book.steps.structures.desc",
+  "content": [
+    "wizardry.book.steps.structures.content0",
+    "wizardry.book.steps.structures.content1",
+    "wizardry.book.steps.structures.content2",
+    "wizardry.book.steps.structures.content3",
+    "wizardry.book.steps.structures.content4",
+    "wizardry.book.steps.structures.content5"
+  ]
+}
