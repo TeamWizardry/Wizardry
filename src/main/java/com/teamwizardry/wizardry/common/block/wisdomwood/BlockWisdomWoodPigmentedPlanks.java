@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.common.block.wisdomwood;
 import com.teamwizardry.wizardry.api.block.BlockPlankNoOredict;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public class BlockWisdomWoodPigmentedPlanks extends BlockPlankNoOredict {
 

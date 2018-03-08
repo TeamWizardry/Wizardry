@@ -44,7 +44,7 @@ import java.util.UUID;
 import static net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 @SaveInPlace
 public class EntityZachriel extends EntityAngel {

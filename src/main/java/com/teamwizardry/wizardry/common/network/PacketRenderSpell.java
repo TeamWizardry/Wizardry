@@ -13,7 +13,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public class PacketRenderSpell extends PacketBase {
 

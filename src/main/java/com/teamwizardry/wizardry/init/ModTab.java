@@ -6,7 +6,7 @@ import net.minecraft.item.ItemStack;
 import javax.annotation.Nonnull;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public class ModTab extends ModCreativeTab {
 

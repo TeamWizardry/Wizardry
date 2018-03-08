@@ -23,6 +23,7 @@ public class ModBlocks {
 	public static BlockManaBattery MANA_BATTERY;
 	public static BlockCreativeManaBattery CREATIVE_MANA_BATTERY;
 	public static BlockPearlHolder PEARL_HOLDER;
+	public static BlockHaloInfuser HALO_INFUSER;
 	public static BlockCloud CLOUD;
 	public static BlockManaMagnet MANA_MAGNET;
 	public static BlockLight LIGHT;
@@ -55,6 +56,7 @@ public class ModBlocks {
 		MANA_BATTERY = new BlockManaBattery();
 		CREATIVE_MANA_BATTERY = new BlockCreativeManaBattery();
 		PEARL_HOLDER = new BlockPearlHolder();
+		HALO_INFUSER = new BlockHaloInfuser();
 		CLOUD = new BlockCloud();
 		NACRE = new BlockNacre();
 		NACRE_BRICK = new BlockNacreBrick();

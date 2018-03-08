@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 @TileRegister("magicians_worktable")
 public class TileMagiciansWorktable extends TileMod {

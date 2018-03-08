@@ -11,7 +11,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.MinecraftForge;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public class WizardryASMHooks {
 

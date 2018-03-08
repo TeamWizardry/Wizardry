@@ -25,7 +25,7 @@ import static org.lwjgl.opengl.GL11.GL_ONE;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public class LightningRenderer {
 

@@ -37,6 +37,7 @@ public class ItemCreativeHaloBauble extends ItemModBauble implements IFakeHalo, 
 			manager.sync();
 	}
 
+
 	@Nonnull
 	@Optional.Method(modid = "baubles")
 	@Override

@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 @Mod.EventBusSubscriber
 public class ModBiomes {

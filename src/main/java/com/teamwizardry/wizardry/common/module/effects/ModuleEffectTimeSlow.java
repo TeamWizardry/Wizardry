@@ -36,7 +36,7 @@ import javax.annotation.Nonnull;
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 @RegisterModule
 public class ModuleEffectTimeSlow extends ModuleEffect {

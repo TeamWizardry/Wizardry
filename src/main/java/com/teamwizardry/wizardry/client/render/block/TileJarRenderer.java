@@ -25,7 +25,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import java.awt.*;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public class TileJarRenderer extends TileEntitySpecialRenderer<TileJar> {
 

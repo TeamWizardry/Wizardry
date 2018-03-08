@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public class ProcessData {
 

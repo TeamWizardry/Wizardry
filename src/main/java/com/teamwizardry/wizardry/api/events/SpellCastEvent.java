@@ -5,7 +5,7 @@ import com.teamwizardry.wizardry.api.spell.module.Module;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public class SpellCastEvent extends Event {
 

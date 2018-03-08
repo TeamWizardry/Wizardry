@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public class LightningGenerator {
 

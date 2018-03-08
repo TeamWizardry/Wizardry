@@ -21,7 +21,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.awt.*;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 @TileRegister("light")
 public class TileLight extends TileMod implements ITickable {

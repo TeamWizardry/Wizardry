@@ -12,7 +12,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import javax.annotation.Nullable;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 @Savable
 public class CustomWizardryCapability implements IWizardryCapability {

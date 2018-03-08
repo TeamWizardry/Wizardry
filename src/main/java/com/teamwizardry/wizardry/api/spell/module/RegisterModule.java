@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.api.spell.module;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public @interface RegisterModule {
 }

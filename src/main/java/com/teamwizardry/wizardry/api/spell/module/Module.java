@@ -41,7 +41,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.MAX_TIME;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public abstract class Module implements INBTSerializable<NBTTagCompound> {
 

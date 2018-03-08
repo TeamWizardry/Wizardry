@@ -10,7 +10,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 @RegisterModule
 public class ModuleModifierException extends ModuleModifier {

@@ -13,7 +13,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public class PacketSendSpellToBook extends PacketBase {
 

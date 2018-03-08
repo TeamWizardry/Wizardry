@@ -1,19 +1,16 @@
 package com.teamwizardry.wizardry.client.render.block;
 
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
-import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpCircle;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
-import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
 import com.teamwizardry.librarianlib.features.tesr.TileRenderHandler;
-import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.CachedStructure;
 import com.teamwizardry.wizardry.api.block.IStructure;
-import com.teamwizardry.wizardry.api.util.ColorUtils;
+import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.core.StructureErrorRenderer;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
@@ -45,7 +42,7 @@ import java.awt.*;
 import java.util.HashSet;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 @Mod.EventBusSubscriber(value = Side.CLIENT, modid = Wizardry.MODID)
 public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> {
@@ -123,11 +120,21 @@ public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> 
 			GlStateManager.shadeModel(GL11.GL_SMOOTH);
 		else GlStateManager.shadeModel(GL11.GL_FLAT);
 
+		CapManager manager = new CapManager(tile.getCap());
+		float fill = (float) (manager.getMana() / manager.getMaxMana()) / 50.0f;
+
+
 		GlStateManager.translate(0, 0.5, 0);
 		GlStateManager.disableRescaleNormal();
 
-		GlStateManager.translate(0, Math.sin((tile.getWorld().getTotalWorldTime() + ClientTickHandler.getPartialTicks()) / 40) / 8, 0);
-		Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModelBrightnessColor(modelCrystal, 1.0F, 1, 1, 1);
+		{
+			double x = RandUtil.nextDouble(-fill, fill), y = RandUtil.nextDouble(-fill, fill), z = RandUtil.nextDouble(-fill, fill);
+			GlStateManager.translate(0, Math.sin((tile.getWorld().getTotalWorldTime() + ClientTickHandler.getPartialTicks()) / 40) / 8, 0);
+
+			GlStateManager.translate(x, y, z);
+			Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModelBrightnessColor(modelCrystal, 1.0F, 1, 1, 1);
+			GlStateManager.translate(-x, -y, -z);
+		}
 
 		GlStateManager.translate(0.5, 0, 0.5);
 		GlStateManager.rotate(tile.getWorld().getTotalWorldTime() + ClientTickHandler.getPartialTicks(), 0, 1, 0);
@@ -178,36 +185,13 @@ public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> 
 			GlStateManager.color(1F, 1F, 1F, 1F);
 			GlStateManager.enableDepth();
 			GlStateManager.popMatrix();
-			return;
 
 		} else if (!tile.revealStructure && !errors.isEmpty()) {
 			for (BlockPos error : errors)
-				ClientRunnable.run(new ClientRunnable() {
-					@Override
-					@SideOnly(Side.CLIENT)
-					public void runIfClient() {
-						StructureErrorRenderer.INSTANCE.addError(error);
-					}
-				});
+				StructureErrorRenderer.INSTANCE.addError(error);
 		}
 
-		if (tile.getBlockType() == ModBlocks.MANA_BATTERY) {
-			if (RandUtil.nextInt(10) == 0) {
-				ParticleBuilder glitter = new ParticleBuilder(3);
-				glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-				glitter.setColorFunction(new InterpColorHSV(ColorUtils.changeColorAlpha(Color.CYAN, RandUtil.nextInt(50, 150)), ColorUtils.changeColorAlpha(Color.BLUE, RandUtil.nextInt(50, 150))));
-				ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(tile.getPos()).addVector(0.5, 0.5, 0.5)), RandUtil.nextInt(1, 3), 0, (aFloat, particleBuilder) -> {
-					glitter.setAlphaFunction(new InterpFadeInOut(1f, 1f));
-					glitter.setMotion(new Vec3d(
-							RandUtil.nextDouble(-0.05, 0.05),
-							RandUtil.nextDouble(-0.1, 0.1),
-							RandUtil.nextDouble(-0.05, 0.05)
-					));
-					glitter.setLifetime(RandUtil.nextInt(30));
-					glitter.setScale((float) RandUtil.nextDouble(3));
-				});
-			}
-		} else if (tile.getBlockType() == ModBlocks.CREATIVE_MANA_BATTERY) {
+		if (tile.getBlockType() == ModBlocks.CREATIVE_MANA_BATTERY) {
 			double angle = tile.getWorld().getTotalWorldTime() / 10.0;
 			double x1 = Math.cos((float) angle);
 			double y1 = Math.sin((float) angle);

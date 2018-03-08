@@ -28,7 +28,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ENTITY_H
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.TARGET_HIT;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 @RegisterModule
 public class ModuleEffectDisarm extends ModuleEffect {

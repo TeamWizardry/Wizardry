@@ -38,7 +38,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 @RegisterModule
 public class ModuleShapeZone extends ModuleShape implements ILingeringModule {

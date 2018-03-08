@@ -25,7 +25,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public class ModuleRegistry {
 

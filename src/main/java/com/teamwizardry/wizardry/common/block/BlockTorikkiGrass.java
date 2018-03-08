@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 import java.util.Random;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public class BlockTorikkiGrass extends BlockMod implements IGrowable {
 

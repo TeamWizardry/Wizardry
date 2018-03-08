@@ -19,7 +19,7 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 /**
- * Created by LordSaad44
+ * Created by Demoniaque44
  */
 public class ChunkGeneratorTorikki implements IChunkGenerator {
 

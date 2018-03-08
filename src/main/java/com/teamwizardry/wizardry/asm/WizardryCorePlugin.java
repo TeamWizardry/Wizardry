@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 import java.util.Map;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 @IFMLLoadingPlugin.Name("Wizardry Plugin")
 @IFMLLoadingPlugin.TransformerExclusions("com.teamwizardry.wizardry.asm")

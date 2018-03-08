@@ -22,7 +22,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.awt.*;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public class PacketDevilDustFizzle extends PacketBase {
 

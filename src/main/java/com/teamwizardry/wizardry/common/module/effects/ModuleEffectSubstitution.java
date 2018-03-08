@@ -45,7 +45,7 @@ import java.util.HashSet;
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 @RegisterModule
 public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSelectable {

@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public class PotionCrash extends PotionBase {
 

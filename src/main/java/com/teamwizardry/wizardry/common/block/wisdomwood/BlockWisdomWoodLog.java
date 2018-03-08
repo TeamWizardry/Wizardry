@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.common.block.wisdomwood;
 import com.teamwizardry.librarianlib.features.base.block.BlockModLog;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public class BlockWisdomWoodLog extends BlockModLog {
 

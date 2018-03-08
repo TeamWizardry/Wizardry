@@ -24,7 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Created by LordSaad44
+ * Created by Demoniaque44
  */
 public class ChunkGeneratorUnderWorld implements IChunkGenerator {
 

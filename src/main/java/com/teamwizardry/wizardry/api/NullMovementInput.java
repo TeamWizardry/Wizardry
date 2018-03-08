@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.MovementInput;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public class NullMovementInput extends MovementInput {
 	private MovementInput original;

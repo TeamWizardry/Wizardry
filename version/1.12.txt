@@ -26,7 +26,7 @@ add oredict for wisdom sticks
 NOTE: Please delete/replace your mana batteries, crafting plates, halos and mana orbs to adjust to the new mana numbers.
 Redo crafting plate code. It no longer re-renders the whole chunk every single tick. Using liblib animation system now.
 Changed structure rendering to be easier to follow + added structure error highlighting.
-mana storage changed. It's now in the player rather than the halos. Halos are now "antennae" of mana. Use mana syringes to fuel yourself up while a cheap halo is equipped. Mana orbs no longer right-clickable.
+mana storage changed. It's now in the player rather than the halos. Halos are now "antennae" of mana. Use mana syringes to fuel yourself up while a cheap haloInv is equipped. Mana orbs no longer right-clickable.
 Completely rebalance mana numbers. (Please replace all your current items and blocks to adjust to the new system)
 Fixed underworld teleportation. No longer kills you.
 Removed wisdom wood planks from oredict to support our wisdom sticks recipe.

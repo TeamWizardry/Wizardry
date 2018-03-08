@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public class ItemSyringe extends ItemMod {
 

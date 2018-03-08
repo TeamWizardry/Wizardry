@@ -6,7 +6,7 @@ import com.teamwizardry.wizardry.init.ModBlocks;
 import net.minecraft.block.SoundType;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public class BlockWisdomWoodSlab extends BlockModSlab {
 

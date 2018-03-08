@@ -10,7 +10,7 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public final class CapManager {
 

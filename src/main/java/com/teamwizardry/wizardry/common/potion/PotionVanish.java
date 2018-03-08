@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 // TODO: other player testing, proper in/out fading
 @SuppressWarnings({"rawtypes", "unused"})

@@ -11,7 +11,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public class BlockWisdomWoodDoor extends BlockModDoor {
 

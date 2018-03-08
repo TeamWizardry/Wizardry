@@ -4,7 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public class PlayerClipEvent extends Event {
 

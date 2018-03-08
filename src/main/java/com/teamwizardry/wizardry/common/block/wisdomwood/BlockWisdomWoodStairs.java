@@ -11,7 +11,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public class BlockWisdomWoodStairs extends BlockModStairs {
 

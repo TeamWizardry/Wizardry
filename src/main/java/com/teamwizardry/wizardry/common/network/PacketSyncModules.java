@@ -13,7 +13,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import java.util.ArrayList;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public class PacketSyncModules extends PacketBase {
 

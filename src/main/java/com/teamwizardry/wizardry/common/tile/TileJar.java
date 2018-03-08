@@ -7,7 +7,7 @@ import com.teamwizardry.librarianlib.features.saving.Save;
 import java.awt.*;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 @TileRegister("jar")
 public class TileJar extends TileMod {

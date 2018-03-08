@@ -13,7 +13,7 @@ import net.minecraft.util.math.MathHelper;
 import javax.annotation.Nullable;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public class BaubleWizardryCapability implements IWizardryCapability {
 

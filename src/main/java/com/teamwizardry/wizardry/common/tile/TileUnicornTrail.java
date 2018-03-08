@@ -21,7 +21,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import static com.teamwizardry.wizardry.api.Constants.MISC.SPARKLE_BLURRED;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 @TileRegister("unicorn_trail")
 public class TileUnicornTrail extends TileMod implements ITickable {

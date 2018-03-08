@@ -25,7 +25,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 
 /**
- * Created by LordSaad44
+ * Created by Demoniaque44
  */
 public class WorldProviderTorikki extends WorldProvider {
 

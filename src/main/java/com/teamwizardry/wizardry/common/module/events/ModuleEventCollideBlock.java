@@ -14,7 +14,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.BLOCK_HI
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ENTITY_HIT;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 @RegisterModule
 public class ModuleEventCollideBlock extends ModuleEvent {

@@ -13,7 +13,7 @@ import java.util.function.Predicate;
 import static org.objectweb.asm.Opcodes.*;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public class WizardryTransformer implements IClassTransformer {
 

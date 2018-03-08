@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 @PacketRegister(Side.SERVER)
 public class PacketWorktableUpdate extends PacketBase {

@@ -6,7 +6,7 @@ import net.minecraft.util.ResourceLocation;
 import java.awt.*;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public enum EnumBloodType {
 

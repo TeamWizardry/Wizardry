@@ -36,7 +36,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.TARGET_HIT;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 @RegisterModule
 public class ModuleEffectTelekinesis extends ModuleEffect implements IContinuousModule {

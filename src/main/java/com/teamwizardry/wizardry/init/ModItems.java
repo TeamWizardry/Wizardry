@@ -26,6 +26,7 @@ public class ModItems {
 	public static ItemBomb BOMB;
 	public static ItemJar JAR;
 	public static ItemUnicornHorn UNICORN_HORN;
+	public static ItemBlackenedSpirit BLACKENED_SPIRIT;
 	public static Item CAPE;
 
 	public static ItemFairyWings FAIRY_WINGS;
@@ -53,6 +54,7 @@ public class ModItems {
 		MAGIC_WAND = new ItemMagicWand();
 		SYRINGE = new ItemSyringe();
 		BOMB = new ItemBomb();
+		BLACKENED_SPIRIT = new ItemBlackenedSpirit();
 
 		STAFF = new ItemStaff();
 

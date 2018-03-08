@@ -6,7 +6,7 @@ import net.minecraft.item.ItemStack;
 import java.util.UUID;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public interface ICape {
 

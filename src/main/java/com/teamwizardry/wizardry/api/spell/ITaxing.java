@@ -6,7 +6,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public interface ITaxing {
 

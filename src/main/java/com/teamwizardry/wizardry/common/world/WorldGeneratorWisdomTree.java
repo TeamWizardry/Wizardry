@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 import java.util.Random;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public class WorldGeneratorWisdomTree extends WorldGenAbstractTree {
 

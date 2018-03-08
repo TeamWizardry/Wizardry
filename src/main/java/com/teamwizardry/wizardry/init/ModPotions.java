@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.init;
 import com.teamwizardry.wizardry.common.potion.*;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public class ModPotions {
 

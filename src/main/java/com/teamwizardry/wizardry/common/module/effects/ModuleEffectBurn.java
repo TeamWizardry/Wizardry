@@ -30,7 +30,7 @@ import java.awt.*;
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 @RegisterModule
 public class ModuleEffectBurn extends ModuleEffect {

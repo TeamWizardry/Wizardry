@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
 import java.util.Random;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public class ClusterObject implements INBTSerializable<NBTTagCompound> {
 

@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public interface IStructure {
 

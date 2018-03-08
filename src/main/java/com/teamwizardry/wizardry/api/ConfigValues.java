@@ -5,7 +5,7 @@ import com.teamwizardry.librarianlib.features.config.ConfigIntRange;
 import com.teamwizardry.librarianlib.features.config.ConfigProperty;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public class ConfigValues {
 
@@ -34,13 +34,13 @@ public class ConfigValues {
 	@ConfigProperty(category = "world", comment = "The maximum possible distance required for 2 mana interacting blocks to link to each other")
 	public static int networkLinkDistance = 64;
 
-	@ConfigProperty(category = "items", comment = "The buffer size a cheap halo will give to a player.")
+	@ConfigProperty(category = "items", comment = "The buffer size a cheap haloInv will give to a player.")
 	public static double crudeHaloBufferSize = 500;
 
-	@ConfigProperty(category = "items", comment = "The buffer size a cheap halo will give to a player.")
+	@ConfigProperty(category = "items", comment = "The buffer size a cheap haloInv will give to a player.")
 	public static double realHaloBufferSize = 2000;
 
-	@ConfigProperty(category = "items", comment = "The buffer size a cheap halo will give to a player.")
+	@ConfigProperty(category = "items", comment = "The buffer size a cheap haloInv will give to a player.")
 	public static double creativeHaloBufferSize = 100000;
 
 	@ConfigProperty(category = "items", comment = "Halo mana regeneration and burnout degeneration per tick")

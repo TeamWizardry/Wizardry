@@ -51,7 +51,7 @@ dependencies {
     deobfCompile "com.azanor.baubles:Baubles:1.12-1.5.2"
 
     // https://mvnrepository.com/artifact/ai.api/libai
-    compile group: 'ai.api', name: 'libai', version: '1.6.12'
+    //compile group: 'ai.api', name: 'libai', version: '1.6.12'
 
 }
 

@@ -37,7 +37,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 import static com.teamwizardry.wizardry.api.spell.SpellData.constructPair;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 // TODO: Tracer's blink sound effect
 @RegisterModule

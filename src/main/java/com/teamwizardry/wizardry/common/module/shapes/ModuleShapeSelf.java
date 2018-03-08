@@ -24,7 +24,7 @@ import javax.annotation.Nonnull;
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 @RegisterModule
 public class ModuleShapeSelf extends ModuleShape {

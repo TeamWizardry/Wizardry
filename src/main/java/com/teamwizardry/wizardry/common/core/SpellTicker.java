@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 // TODO: use world time instead of ticking
 public class SpellTicker {

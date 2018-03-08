@@ -6,7 +6,7 @@ import com.teamwizardry.librarianlib.features.saving.Save;
 import net.minecraft.item.ItemStack;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 @TileRegister("mana_magnet")
 public class TileManaMagnet extends TileMod {

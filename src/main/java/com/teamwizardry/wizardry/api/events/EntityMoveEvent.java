@@ -5,7 +5,7 @@ import net.minecraft.entity.MoverType;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public class EntityMoveEvent extends Event {
 

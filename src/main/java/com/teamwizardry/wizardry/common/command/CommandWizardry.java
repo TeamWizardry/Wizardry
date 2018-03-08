@@ -15,7 +15,7 @@ import java.io.File;
 
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public class CommandWizardry extends CommandBase {
 

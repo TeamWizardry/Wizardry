@@ -8,7 +8,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public class InterpSlowDown implements InterpFunction<Vec3d> {
 

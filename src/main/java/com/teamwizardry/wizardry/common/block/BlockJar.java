@@ -32,7 +32,7 @@ import javax.annotation.Nullable;
 import java.awt.*;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public class BlockJar extends BlockModContainer {
 	private static final AxisAlignedBB AABB_JAR = new AxisAlignedBB(0.25, 0, 0.25, 0.75, 0.75, 0.75);

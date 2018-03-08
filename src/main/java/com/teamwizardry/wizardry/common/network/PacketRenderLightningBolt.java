@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import javax.annotation.Nonnull;
 
 /**
- * Created by LordSaad.
+ * Created by Demoniaque.
  */
 public class PacketRenderLightningBolt extends PacketBase {
 
