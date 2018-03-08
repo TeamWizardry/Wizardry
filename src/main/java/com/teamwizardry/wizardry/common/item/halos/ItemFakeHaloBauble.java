@@ -7,7 +7,11 @@ import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.item.IFakeHalo;
 import com.teamwizardry.wizardry.api.item.IHalo;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumHand;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Optional;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,6 +26,12 @@ public class ItemFakeHaloBauble extends ItemModBauble implements IFakeHalo, IHal
 	public ItemFakeHaloBauble() {
 		super("halo_fake");
 		setMaxStackSize(1);
+	}
+
+	@NotNull
+	@Override
+	public ActionResult<ItemStack> onItemRightClick(@NotNull World world, @NotNull EntityPlayer player, @NotNull EnumHand hand) {
+		return super.onItemRightClick(world, player, hand);
 	}
 
 	@Override
