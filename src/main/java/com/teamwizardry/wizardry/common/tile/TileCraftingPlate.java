@@ -223,6 +223,6 @@ public class TileCraftingPlate extends TileManaInteracter {
 
 	@Override
 	public double getMaxRenderDistanceSquared() {
-		return 100000;
+		return 4096;
 	}
 }

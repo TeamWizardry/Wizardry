@@ -45,6 +45,6 @@ public class TileHaloInfuser extends TileMod {
 
 	@Override
 	public double getMaxRenderDistanceSquared() {
-		return 25;
+		return 4096;
 	}
 }
