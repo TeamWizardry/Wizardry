@@ -28,6 +28,8 @@ public class HaloInfusionItemRenderers {
 
 	static {
 		addRender(HaloInfusionItemRegistry.OVERWORLD_PRISMARINE_CRYSTALS, (vec3d, world) -> {
+			if (RandUtil.nextInt(2) != 0) return;
+
 			ParticleBuilder glitter = new ParticleBuilder(20);
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 			glitter.setAlphaFunction(new InterpFadeInOut(0.5f, 1f));
@@ -55,24 +57,27 @@ public class HaloInfusionItemRenderers {
 		});
 
 		addRender(HaloInfusionItemRegistry.OVERWORLD_EMERALD, (vec3d, world) -> {
+			if (RandUtil.nextInt(3) != 0) return;
+
 			ParticleBuilder glitter = new ParticleBuilder(20);
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 			glitter.setAlphaFunction(new InterpFadeInOut(0.5f, 1f));
 			glitter.setColor(new Color(0x16bf00));
 
-			if (RandUtil.nextInt(2) == 0)
-				ParticleSpawner.spawn(glitter, world, new StaticInterp<>(vec3d), 1, 0, (aFloat, build) -> {
-					build.setScaleFunction(new InterpScale(RandUtil.nextFloat(2.5f, 4.5f), 0));
-					build.addMotion(new Vec3d(
-							RandUtil.nextDouble(-0.02, 0.02),
-							RandUtil.nextDouble(-0.02, 0.02),
-							RandUtil.nextDouble(-0.02, 0.02)
-					));
-					build.setLifetime(RandUtil.nextInt(10, 20));
-				});
+			ParticleSpawner.spawn(glitter, world, new StaticInterp<>(vec3d), 1, 0, (aFloat, build) -> {
+				build.setScaleFunction(new InterpScale(RandUtil.nextFloat(2.5f, 4.5f), 0));
+				build.addMotion(new Vec3d(
+						RandUtil.nextDouble(-0.02, 0.02),
+						RandUtil.nextDouble(-0.02, 0.02),
+						RandUtil.nextDouble(-0.02, 0.02)
+				));
+				build.setLifetime(RandUtil.nextInt(10, 20));
+			});
 		});
 
 		addRender(HaloInfusionItemRegistry.OVERWORLD_RABBIT_FOOT, (vec3d, world) -> {
+			if (RandUtil.nextInt(2) != 0) return;
+
 			ParticleBuilder glitter = new ParticleBuilder(20);
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 			glitter.setAlphaFunction(new InterpFadeInOut(0.5f, 1f));
@@ -125,6 +130,8 @@ public class HaloInfusionItemRenderers {
 		});
 
 		addRender(HaloInfusionItemRegistry.NETHER_GHAST_TEARS, (vec3d, world) -> {
+			if (RandUtil.nextInt(2) != 0) return;
+
 			ParticleBuilder glitter = new ParticleBuilder(20);
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 			glitter.setAlphaFunction(new InterpFadeInOut(0.5f, 1f));
@@ -151,6 +158,8 @@ public class HaloInfusionItemRenderers {
 		});
 
 		addRender(HaloInfusionItemRegistry.NETHER_NETHER_STAR, (vec3d, world) -> {
+			if (RandUtil.nextInt(2) != 0) return;
+
 			ParticleBuilder glitter = new ParticleBuilder(20);
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 			glitter.setAlphaFunction(new InterpFadeInOut(0.5f, 1f));
@@ -182,6 +191,8 @@ public class HaloInfusionItemRenderers {
 
 
 		addRender(HaloInfusionItemRegistry.END_DRAGON_BREATH, (vec3d, world) -> {
+			if (RandUtil.nextInt(2) != 0) return;
+
 			ParticleBuilder glitter = new ParticleBuilder(20);
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 			glitter.setAlphaFunction(new InterpFadeInOut(0.5f, 1f));
@@ -209,6 +220,8 @@ public class HaloInfusionItemRenderers {
 
 
 		addRender(HaloInfusionItemRegistry.END_POPPED_CHORUS, (vec3d, world) -> {
+			if (RandUtil.nextInt(2) != 0) return;
+
 			ParticleBuilder glitter = new ParticleBuilder(20);
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 			glitter.setAlphaFunction(new InterpFadeInOut(0f, 1f));
@@ -240,6 +253,8 @@ public class HaloInfusionItemRenderers {
 
 
 		addRender(HaloInfusionItemRegistry.END_SHULKER_SHELL, (vec3d, world) -> {
+			if (RandUtil.nextInt(2) != 0) return;
+
 			ParticleBuilder glitter = new ParticleBuilder(20);
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 			glitter.setAlphaFunction(new InterpFadeInOut(0.5f, 1f));
@@ -267,6 +282,8 @@ public class HaloInfusionItemRenderers {
 
 
 		addRender(HaloInfusionItemRegistry.UNDEROWRLD_UNICORN_HORN, (vec3d, world) -> {
+			if (RandUtil.nextInt(2) != 0) return;
+
 			ParticleBuilder glitter = new ParticleBuilder(5);
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 			glitter.setAlphaFunction(new InterpFadeInOut(0.5f, 1f));
