@@ -56,20 +56,19 @@ public class BlockHaloInfuser extends BlockModContainer implements IStructure {
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		ItemStack heldItem = playerIn.getHeldItem(hand);
 
-		if (isStructureComplete(worldIn, pos)) {
+		//if (isStructureComplete(worldIn, pos)) {
 			TileHaloInfuser infuser = getTE(worldIn, pos);
 			if (infuser == null) return heldItem.isEmpty();
 
 			if (!infuser.getHalo().isEmpty()) {
 				playerIn.setHeldItem(hand, infuser.extractHalo());
 				playerIn.openContainer.detectAndSendChanges();
-				worldIn.notifyBlockUpdate(pos, state, state, 3);
 			} else if (heldItem.getItem() == ModItems.FAKE_HALO) {
 				infuser.setHalo(heldItem);
+				playerIn.setHeldItem(hand, ItemStack.EMPTY);
 				playerIn.openContainer.detectAndSendChanges();
-				worldIn.notifyBlockUpdate(pos, state, state, 3);
 			}
-		}
+		//}
 		return heldItem.isEmpty();
 	}
 

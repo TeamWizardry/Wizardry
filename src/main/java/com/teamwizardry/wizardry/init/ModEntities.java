@@ -21,6 +21,7 @@ public class ModEntities {
 
 	public static void init() {
 		registerEntity(new ResourceLocation(Wizardry.MODID, "bomb"), EntityBomb.class, "bomb", 256, 1, true);
+		registerEntity(new ResourceLocation(Wizardry.MODID, "halo_infusion_item"), EntityHaloInfusionItem.class, "halo_infusion_item", 256, 1, true);
 		registerEntity(new ResourceLocation(Wizardry.MODID, "spirit_blight"), EntitySpiritBlight.class, "spirit_blight");
 		registerEntity(new ResourceLocation(Wizardry.MODID, "spirit_wight"), EntitySpiritWight.class, "spirit_wight");
 		registerEntity(new ResourceLocation(Wizardry.MODID, "angel_zachriel"), EntityZachriel.class, "angel_zachriel");
@@ -53,6 +54,7 @@ public class ModEntities {
 		RenderingRegistry.registerEntityRenderingHandler(EntityJumpPad.class, manager -> new RenderJumpPad(manager, new ModelNull()));
 		RenderingRegistry.registerEntityRenderingHandler(EntityCorruptionProjectile.class, RenderZachrielCorruption::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntitySpellProjectile.class, RenderSpellProjectile::new);
+		RenderingRegistry.registerEntityRenderingHandler(EntityHaloInfusionItem.class, RenderHaloInfusionItem::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityBackupZombie.class, RenderSummonZombie::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityBomb.class, RenderBomb::new);
 	}

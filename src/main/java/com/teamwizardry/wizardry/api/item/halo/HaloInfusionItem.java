@@ -7,7 +7,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 import java.util.function.BiConsumer;
 
 public class HaloInfusionItem {
@@ -37,14 +37,22 @@ public class HaloInfusionItem {
 	}
 
 	@SideOnly(Side.CLIENT)
-	@Nullable
 	public BiConsumer<Vec3d, World> getRenderer() {
 		return HaloInfusionItemRenderers.getHaloRenderer(this);
 	}
 
+	@Nonnull
+	public static HaloInfusionItem deserialize(String nbtName) {
+		for (HaloInfusionItem haloInfusionItem : HaloInfusionItemRegistry.getItems()) {
+			if (haloInfusionItem.getNbtName().equalsIgnoreCase(nbtName)) {
+				return haloInfusionItem;
+			}
+		}
+		return HaloInfusionItemRegistry.EMPTY;
+	}
+
 	@SideOnly(Side.CLIENT)
 	public void render(World world, Vec3d pos) {
-		if (getRenderer() != null)
-			getRenderer().accept(pos, world);
+		getRenderer().accept(pos, world);
 	}
 }

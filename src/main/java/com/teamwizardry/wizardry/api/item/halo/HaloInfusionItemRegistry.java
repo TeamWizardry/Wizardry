@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.api.item.halo;
 
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,7 @@ public final class HaloInfusionItemRegistry {
 
 	public static HaloInfusionItemRegistry INSTANCE = new HaloInfusionItemRegistry();
 
+	public static final HaloInfusionItem EMPTY;
 	public static final HaloInfusionItem OVERWORLD_RABBIT_FOOT;
 	public static final HaloInfusionItem OVERWORLD_PRISMARINE_CRYSTALS;
 	public static final HaloInfusionItem OVERWORLD_EMERALD;
@@ -24,6 +26,8 @@ public final class HaloInfusionItemRegistry {
 	private static final List<HaloInfusionItem> items = new ArrayList<>();
 
 	static {
+		addHaloInfusionItem(EMPTY = new HaloInfusionItem(ItemStack.EMPTY));
+
 		addHaloInfusionItem(OVERWORLD_RABBIT_FOOT = new HaloInfusionItem(Items.RABBIT_FOOT, 2));
 		addHaloInfusionItem(OVERWORLD_PRISMARINE_CRYSTALS = new HaloInfusionItem(Items.PRISMARINE_CRYSTALS, 4));
 		addHaloInfusionItem(OVERWORLD_EMERALD = new HaloInfusionItem(Items.EMERALD));
@@ -46,5 +50,12 @@ public final class HaloInfusionItemRegistry {
 
 	public static List<HaloInfusionItem> getItems() {
 		return items;
+	}
+
+	public static HaloInfusionItem getItemFromName(String nbtName) {
+		for (HaloInfusionItem item : items) {
+			if (item.getNbtName().equals(nbtName)) return item;
+		}
+		return HaloInfusionItemRegistry.EMPTY;
 	}
 }

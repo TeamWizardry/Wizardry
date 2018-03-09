@@ -6,6 +6,10 @@
   "title": "wizardry.book.items_blocks.orbs.title",
   "content": [
     "wizardry.book.items_blocks.orbs.content0",
-    "wizardry.book.items_blocks.orbs.content1"
+    "wizardry.book.items_blocks.orbs.content1",
+    {
+      "type": "recipe",
+      "recipe": "wizardry:glass_orb"
+    }
   ]
 }

@@ -15,7 +15,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.function.BiConsumer;
@@ -27,6 +27,18 @@ public class HaloInfusionItemRenderers {
 	public static HaloInfusionItemRenderers INSTANCE = new HaloInfusionItemRenderers();
 
 	static {
+		addRender(HaloInfusionItemRegistry.EMPTY, (vec3d, world) -> {
+			ParticleBuilder glitter = new ParticleBuilder(20);
+			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+			glitter.setAlphaFunction(new InterpFadeInOut(0.5f, 1f));
+			glitter.setColor(new Color(0xff8300));
+
+			ParticleSpawner.spawn(glitter, world, new StaticInterp<>(vec3d), 1, 0, (aFloat, build) -> {
+				build.setScaleFunction(new InterpScale(RandUtil.nextFloat(2.5f, 4.5f), 0));
+				build.setLifetime(50);
+			});
+		});
+
 		addRender(HaloInfusionItemRegistry.OVERWORLD_PRISMARINE_CRYSTALS, (vec3d, world) -> {
 			if (RandUtil.nextInt(2) != 0) return;
 
@@ -347,10 +359,10 @@ public class HaloInfusionItemRenderers {
 		renders.put(item, renderHook);
 	}
 
-	@Nullable
+	@Nonnull
 	public static BiConsumer<Vec3d, World> getHaloRenderer(HaloInfusionItem item) {
 		if (renders.containsKey(item)) return renders.get(item);
-		return null;
+		return getHaloRenderer(HaloInfusionItemRegistry.EMPTY);
 	}
 
 	public static HashMap<HaloInfusionItem, BiConsumer<Vec3d, World>> getRenderers() {

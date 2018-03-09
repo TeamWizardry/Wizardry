@@ -6,11 +6,14 @@ import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.item.IFakeHalo;
 import com.teamwizardry.wizardry.api.item.IHalo;
+import com.teamwizardry.wizardry.init.ModBlocks;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Optional;
 import org.jetbrains.annotations.NotNull;
@@ -28,10 +31,14 @@ public class ItemFakeHaloBauble extends ItemModBauble implements IFakeHalo, IHal
 		setMaxStackSize(1);
 	}
 
-	@NotNull
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(@NotNull World world, @NotNull EntityPlayer player, @NotNull EnumHand hand) {
-		return super.onItemRightClick(world, player, hand);
+	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+
+		if (worldIn.getBlockState(pos).getBlock() == ModBlocks.HALO_INFUSER) {
+			return EnumActionResult.SUCCESS;
+		}
+
+		return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
 	}
 
 	@Override
