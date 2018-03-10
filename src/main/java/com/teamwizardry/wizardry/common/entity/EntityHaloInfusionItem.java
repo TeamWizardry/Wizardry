@@ -133,7 +133,7 @@ public class EntityHaloInfusionItem extends EntityMod {
 			TileHaloInfuser haloInfuser = (TileHaloInfuser) tile;
 			ItemStack halo = haloInfuser.getHalo();
 
-			NBTTagList slots = ItemNBTHelper.getList(halo, "slots", NBTTagList.class);
+			NBTTagList slots = ItemNBTHelper.getList(halo, "slots", NBTTagString.class);
 			if (slots == null || slots.tagCount() < HaloInfusionItemRegistry.getItems().size() - 1) {
 				slots = new NBTTagList();
 

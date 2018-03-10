@@ -77,7 +77,7 @@ public class TileHaloInfuser extends TileModTickable {
 	}
 
 	public void updateItems(boolean soft) {
-		NBTTagList slots = ItemNBTHelper.getList(getHalo(), "slots", NBTTagList.class);
+		NBTTagList slots = ItemNBTHelper.getList(getHalo(), "slots", NBTTagString.class);
 		if (slots == null || slots.tagCount() < HaloInfusionItemRegistry.getItems().size() - 1) {
 			slots = new NBTTagList();
 

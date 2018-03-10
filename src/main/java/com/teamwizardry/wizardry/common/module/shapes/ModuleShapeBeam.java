@@ -7,7 +7,6 @@ import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
-import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtendRange;
@@ -55,9 +54,7 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 		if (position == null || look == null) return false;
 
 		double range = getModifier(spell, Attributes.RANGE, 10, 100);
-		double potency = 20 - getModifier(spell, Attributes.POTENCY, 1, 19);
-
-		setCostMultiplier(this, 0.1);
+		double potency = 30 - getModifier(spell, Attributes.POTENCY, 0, 25);
 
 		RayTraceResult trace = new RayTrace(world, look, position, range)
 				.setSkipEntity(caster)
@@ -73,7 +70,7 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 			spell.processBlock(trace.getBlockPos(), trace.sideHit, trace.hitVec);
 		else spell.processBlock(new BlockPos(vec), null, vec);
 
-		return ((nextModule == null || nextModule instanceof IContinuousModule) || RandUtil.nextInt((int) potency) == 0) && runNextModule(spell);
+		return ((nextModule == null || nextModule instanceof IContinuousModule) || spell.world.getTotalWorldTime() % (int) potency == 0) && runNextModule(spell);
 	}
 
 

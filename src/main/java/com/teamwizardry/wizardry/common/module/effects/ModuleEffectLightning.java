@@ -117,7 +117,6 @@ public class ModuleEffectLightning extends ModuleEffect {
 		}
 
 		RayTraceResult traceResult = new RayTrace(world, PosUtils.vecFromRotations(pitch, yaw), target, range).setSkipBlocks(true).setSkipEntities(true).trace();
-		if (traceResult == null) return;
 
 		PacketHandler.NETWORK.sendToAllAround(new PacketRenderLightningBolt(origin, traceResult.hitVec, seed),
 				new NetworkRegistry.TargetPoint(world.provider.getDimension(), origin.x, origin.y, origin.z, 256));
