@@ -9,10 +9,7 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.ILingeringModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
-import com.teamwizardry.wizardry.api.spell.module.Module;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
-import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
-import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.module.*;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RandUtilSeed;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
@@ -115,7 +112,13 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void runClient(@Nonnull SpellData spell) {
+	public void render(@Nonnull SpellData spell, SpellRing spellRing) {
+		for (Module child : getAllChildModules()) {
+			if (child.overrideShapeRunClient(this, spell)) {
+				return;
+			}
+		}
+
 		Vec3d target = spell.getData(TARGET_HIT);
 
 		if (target == null) return;
@@ -150,7 +153,7 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 	}
 
 	@Override
-	public int lingeringTime(SpellData spell) {
+	public int getLingeringTime(SpellData spell) {
 		double strength = getModifier(spell, Attributes.DURATION, 40, 100) * 30;
 		return (int) strength;
 	}

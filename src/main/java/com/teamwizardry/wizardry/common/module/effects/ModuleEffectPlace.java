@@ -3,10 +3,7 @@ package com.teamwizardry.wizardry.common.module.effects;
 import com.teamwizardry.wizardry.api.spell.IBlockSelectable;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
-import com.teamwizardry.wizardry.api.spell.module.Module;
-import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
-import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.module.*;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
@@ -172,7 +169,7 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void runClient(@Nonnull SpellData spell) {
+	public void render(@Nonnull SpellData spell, SpellRing spellRing) {
 		World world = spell.world;
 		Vec3d position = spell.getData(TARGET_HIT);
 

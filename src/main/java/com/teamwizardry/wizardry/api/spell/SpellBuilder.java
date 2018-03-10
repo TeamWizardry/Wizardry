@@ -2,9 +2,11 @@ package com.teamwizardry.wizardry.api.spell;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
+import com.teamwizardry.wizardry.api.spell.module.SpellRing;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -18,7 +20,7 @@ public class SpellBuilder {
 	private final static Item codeLineBreak = ModItems.DEVIL_DUST;
 
 	private List<ItemStack> inventory;
-	private List<Module> spell;
+	private List<SpellRing> spell;
 
 	public SpellBuilder(List<ItemStack> inventory) {
 		this.inventory = inventory;
@@ -60,56 +62,70 @@ public class SpellBuilder {
 		return branches;
 	}
 
-	private List<Module> toSpell(List<ItemStack> inventory) {
-		List<Module> spellList = new ArrayList<>();
-		Set<List<Module>> compiled = new HashSet<>();
+	private List<SpellRing> toSpell(List<ItemStack> inventory) {
+		List<SpellRing> spellList = new ArrayList<>();
+		Set<List<SpellRing>> compiled = new HashSet<>();
 
 		List<List<ItemStack>> lines = brancher(inventory, codeLineBreak);
 
-		Module lastModule = null;
+		SpellRing lastModule = null;
+
+		// Spell chain from multiple chains
 		for (List<ItemStack> line : lines) {
-			List<Module> lineModule = new ArrayList<>();
+
+			// List is made of all modules that aren't modifiers for this spell chain.
+			List<SpellRing> lineModule = new ArrayList<>();
+
+			// Each module get's it's list of modifiers.
+			HashMap<SpellRing, List<AttributeModifier>> modifiersToApply = new HashMap<>();
+
+			// Step through each item in line. If modifier, add to lastModule, if not, add to compiled.
 			for (ItemStack stack : line) {
 				Module module = ModuleRegistry.INSTANCE.getModule(stack);
+
 				if (module == null) continue;
+
+				SpellRing ring = new SpellRing(module);
+
 				if (module instanceof ModuleModifier) {
 					if (lastModule == null) continue;
+
+					modifiersToApply.putIfAbsent(lastModule, new ArrayList<>());
+					List<AttributeModifier> modifiers = modifiersToApply.get(lastModule);
+
 					for (int i = 0; i < stack.getCount(); i++)
-						((ModuleModifier) module).apply(lastModule);
+						((ModuleModifier) module).apply(modifiers);
 				} else {
-					lastModule = module;
-					lineModule.add(module);
+					lastModule = ring;
+					lineModule.add(ring);
 				}
 			}
-			lineModule.forEach(Module::processModifiers);
+
+			// Process all module modifiers.
+			for (SpellRing ring : modifiersToApply.keySet()) {
+				ring.processModifiers(modifiersToApply.get(ring));
+			}
 			compiled.add(lineModule);
 		}
 
 		// We now have a code line of modules. link them as children in order.
-		for (List<Module> modules : compiled) {
-			Deque<Module> deque = new ArrayDeque<>();
-			deque.addAll(modules);
+		for (List<SpellRing> rings : compiled) {
+			Deque<SpellRing> deque = new ArrayDeque<>(rings);
 
-			for (@SuppressWarnings("unused") Module ignored : modules) {
+			for (@SuppressWarnings("unused") SpellRing ignored : rings) {
 				if (deque.peekFirst() == deque.peekLast()) {
 					spellList.add(deque.peekLast());
 					break;
 				}
 				if (deque.peekLast() != null) {
-					Module last = deque.pollLast();
+					SpellRing last = deque.pollLast();
 					if (deque.peekLast() != null) {
-						Module beforeLast = deque.peekLast();
-						beforeLast.nextModule = last;
-						last.prevModule = beforeLast;
+						SpellRing beforeLast = deque.peekLast();
+						beforeLast.setChildRing(last);
+						last.setParentRing(beforeLast);
 					}
 				}
 			}
-		}
-
-		// PROCESS COLOR
-		for (Module module : spellList) {
-			module.setIsHead(true);
-			Module.processColor(module);
 		}
 		return spellList;
 	}
@@ -139,7 +155,7 @@ public class SpellBuilder {
 		return inventory;
 	}
 
-	public List<Module> getSpell() {
+	public List<SpellRing> getSpell() {
 		return spell;
 	}
 }

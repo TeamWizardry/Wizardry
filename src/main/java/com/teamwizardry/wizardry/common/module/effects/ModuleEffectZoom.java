@@ -11,10 +11,7 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.ProcessData;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
-import com.teamwizardry.wizardry.api.spell.module.Module;
-import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
-import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.module.*;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtendRange;
@@ -114,7 +111,7 @@ public class ModuleEffectZoom extends ModuleEffect {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void runClient(@Nonnull SpellData spell) {
+	public void render(@Nonnull SpellData spell, SpellRing spellRing) {
 		World world = spell.world;
 
 		Entity entity = spell.getData(ENTITY_HIT);

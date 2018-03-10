@@ -28,7 +28,7 @@ public class SpellTicker {
 				ticker.put(module, new Pair<>(ticker.get(module).getFirst().copy(), --time));
 				SpellData spell = ticker.get(module).getFirst();
 				spell.addData(SpellData.DefaultKeys.TIME_LEFT, time);
-				module.castSpell(ticker.get(module).getFirst());
+				module.castSpell(ticker.get(module).getFirst(), this);
 			} else {
 				ticker.remove(module);
 			}

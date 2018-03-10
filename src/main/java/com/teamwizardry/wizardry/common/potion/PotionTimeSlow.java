@@ -86,7 +86,7 @@ public class PotionTimeSlow extends PotionBase {
 		ModuleEffectTimeSlow slow = (ModuleEffectTimeSlow) ModuleRegistry.INSTANCE.getModule("effect_time_slow").copy();
 		SpellData data = new SpellData(event.entity.world);
 		data.processEntity(event.entity, false);
-		slow.castParticles(data);
+		slow.sendRenderPacket(data, this);
 
 		event.override = true;
 

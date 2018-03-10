@@ -4,10 +4,7 @@ import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.LightningGenerator;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
-import com.teamwizardry.wizardry.api.spell.module.Module;
-import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
-import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.module.*;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RandUtilSeed;
@@ -97,8 +94,35 @@ public class ModuleEffectLightning extends ModuleEffect {
 	}
 
 	@Override
+	public boolean overrideShapeRunClient(Module shape, SpellData spell) {
+		World world = spell.world;
+		float yaw = spell.getData(YAW, 0F);
+		float pitch = spell.getData(PITCH, 0F);
+		Entity caster = spell.getData(CASTER);
+		Vec3d target = spell.getData(TARGET_HIT);
+		long seed = spell.getData(SEED, 0L);
+		double range = getModifier(spell, Attributes.RANGE, 10, 32);
+
+		if (target == null) return true;
+
+		Vec3d origin = target;
+		if (caster != null) {
+			float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - yaw));
+			float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - yaw));
+			origin = new Vec3d(offX, 0, offZ).add(target);
+		}
+
+		RayTraceResult traceResult = new RayTrace(world, PosUtils.vecFromRotations(pitch, yaw), target, range).setSkipBlocks(true).setSkipEntities(true).trace();
+
+		PacketHandler.NETWORK.sendToAllAround(new PacketRenderLightningBolt(origin, traceResult.hitVec, seed),
+				new NetworkRegistry.TargetPoint(world.provider.getDimension(), origin.x, origin.y, origin.z, 256));
+
+		return true;
+	}
+
+	@Override
 	@SideOnly(Side.CLIENT)
-	public void runClient(@Nonnull SpellData spell) {
+	public void render(@Nonnull SpellData spell, SpellRing spellRing) {
 		World world = spell.world;
 		float yaw = spell.getData(YAW, 0F);
 		float pitch = spell.getData(PITCH, 0F);

@@ -11,6 +11,7 @@ import com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.module.SpellRing;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import net.minecraft.entity.Entity;
@@ -51,7 +52,13 @@ public class ModuleShapeSelf extends ModuleShape {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void runClient(@Nonnull SpellData spell) {
+	public void render(@Nonnull SpellData spell, SpellRing spellRing) {
+		for (Module child : getAllChildModules()) {
+			if (child.overrideShapeRunClient(this, spell)) {
+				return;
+			}
+		}
+
 		Entity caster = spell.getData(CASTER);
 		Entity target = spell.getData(DefaultKeys.ENTITY_HIT);
 

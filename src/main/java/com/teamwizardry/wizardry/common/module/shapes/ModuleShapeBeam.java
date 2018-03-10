@@ -3,10 +3,7 @@ package com.teamwizardry.wizardry.common.module.shapes;
 import com.teamwizardry.wizardry.api.spell.IContinuousModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
-import com.teamwizardry.wizardry.api.spell.module.Module;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
-import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
-import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.module.*;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtendRange;
@@ -56,6 +53,13 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 		double range = getModifier(spell, Attributes.RANGE, 10, 100);
 		double potency = 30 - getModifier(spell, Attributes.POTENCY, 0, 25);
 
+		//boolean hasBeenOverriden = false;
+		//for (Module child : getAllChildRings()) {
+		//	if (child.overrideShapeRun(this, spell)) {
+		//		return ((nextModule == null || nextModule instanceof IContinuousModule) || spell.world.getTotalWorldTime() % (int) potency == 0) && runNextModule(spell);
+		//	}
+		//}
+
 		RayTraceResult trace = new RayTrace(world, look, position, range)
 				.setSkipEntity(caster)
 				.setReturnLastUncollidableBlock(true)
@@ -76,7 +80,13 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void runClient(@Nonnull SpellData spell) {
+	public void render(@Nonnull SpellData spell, SpellRing spellRing) {
+		for (Module child : getAllChildModules()) {
+			if (child.overrideShapeRunClient(this, spell)) {
+				return;
+			}
+		}
+
 		World world = spell.world;
 		float yaw = spell.getData(YAW, 0F);
 		Vec3d position = spell.getData(ORIGIN);

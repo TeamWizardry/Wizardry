@@ -94,7 +94,7 @@ public class ModuleEffectAntiGravityWell extends ModuleEffect implements ILinger
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void runClient(@Nonnull SpellData spell) {
+	public void render(@Nonnull SpellData spell, SpellRing spellRing) {
 		Vec3d position = spell.getData(ORIGIN);
 
 		if (position == null) return;
@@ -129,7 +129,7 @@ public class ModuleEffectAntiGravityWell extends ModuleEffect implements ILinger
 	}
 
 	@Override
-	public int lingeringTime(SpellData spell) {
+	public int getLingeringTime(SpellData spell) {
 		return (int) (getModifier(spell, Attributes.DURATION, 10, 64) * 500);
 	}
 }

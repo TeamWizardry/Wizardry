@@ -3,10 +3,7 @@ package com.teamwizardry.wizardry.common.module.shapes;
 import com.teamwizardry.wizardry.api.spell.ITaxing;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
-import com.teamwizardry.wizardry.api.spell.module.Module;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
-import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
-import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.module.*;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.entity.EntitySpellProjectile;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtendRange;
@@ -68,7 +65,7 @@ public class ModuleShapeProjectile extends ModuleShape implements ITaxing {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void runClient(@Nonnull SpellData spell) {
+	public void render(@Nonnull SpellData spell, SpellRing spellRing) {
 
 	}
 

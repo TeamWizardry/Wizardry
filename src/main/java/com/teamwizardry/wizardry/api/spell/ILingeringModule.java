@@ -5,5 +5,5 @@ package com.teamwizardry.wizardry.api.spell;
  */
 public interface ILingeringModule {
 
-	int lingeringTime(SpellData spell);
+	int getLingeringTime(SpellData spell);
 }

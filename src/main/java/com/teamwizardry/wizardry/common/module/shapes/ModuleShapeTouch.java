@@ -10,6 +10,7 @@ import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.module.SpellRing;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
@@ -68,7 +69,13 @@ public class ModuleShapeTouch extends ModuleShape {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void runClient(@Nonnull SpellData spell) {
+	public void render(@Nonnull SpellData spell, SpellRing spellRing) {
+		for (Module child : getAllChildModules()) {
+			if (child.overrideShapeRunClient(this, spell)) {
+				return;
+			}
+		}
+
 		Entity targetEntity = spell.getData(ENTITY_HIT);
 
 		if (targetEntity == null) return;

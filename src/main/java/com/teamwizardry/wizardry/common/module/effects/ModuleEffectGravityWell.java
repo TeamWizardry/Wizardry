@@ -11,10 +11,7 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.ILingeringModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
-import com.teamwizardry.wizardry.api.spell.module.Module;
-import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
-import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.module.*;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseAOE;
@@ -93,7 +90,7 @@ public class ModuleEffectGravityWell extends ModuleEffect implements ILingeringM
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void runClient(@Nonnull SpellData spell) {
+	public void render(@Nonnull SpellData spell, SpellRing spellRing) {
 		Vec3d position = spell.getData(TARGET_HIT);
 
 		if (position == null) return;
@@ -128,7 +125,7 @@ public class ModuleEffectGravityWell extends ModuleEffect implements ILingeringM
 	}
 
 	@Override
-	public int lingeringTime(SpellData spell) {
+	public int getLingeringTime(SpellData spell) {
 		return (int) (getModifier(spell, Attributes.DURATION, 10, 64) * 500);
 	}
 }

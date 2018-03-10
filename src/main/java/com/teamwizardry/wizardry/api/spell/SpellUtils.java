@@ -5,8 +5,7 @@ import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.api.item.INacreColorable;
-import com.teamwizardry.wizardry.api.spell.module.Module;
-import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
+import com.teamwizardry.wizardry.api.spell.module.SpellRing;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -37,97 +36,95 @@ public class SpellUtils {
 				multiplier = 1 - (base * base * base * base);
 			}
 
-			for (Module module : SpellUtils.getAllModules(spellHolder))
+			for (SpellRing module : SpellUtils.getAllSpellRings(spellHolder))
 				module.setMultiplier(module.getMultiplier() * multiplier);
 
 		}
 
-		for (Module module : getModules(spellHolder)) {
-			module.castSpell(data);
+		for (SpellRing module : getSpellRings(spellHolder)) {
+			module.castSpell(data, this);
 		}
 	}
 
-	public static ArrayList<ArrayList<Module>> getModules(@Nonnull List<Module> moduleHeads) {
-		ArrayList<ArrayList<Module>> modules = new ArrayList<>();
+	public static ArrayList<ArrayList<SpellRing>> getSpellRings(@Nonnull List<SpellRing> moduleHeads) {
+		ArrayList<ArrayList<SpellRing>> rings = new ArrayList<>();
 
-		for (Module module : moduleHeads) modules.add(getAllModules(module));
+		for (SpellRing module : moduleHeads) rings.add(getAllSpellRings(module));
 
-		return modules;
+		return rings;
 	}
 
-	public static ArrayList<Module> getModules(@Nonnull ItemStack spellHolder) {
-		ArrayList<Module> modules = new ArrayList<>();
+	public static ArrayList<SpellRing> getSpellRings(@Nonnull ItemStack spellHolder) {
+		ArrayList<SpellRing> rings = new ArrayList<>();
 
 		NBTTagList list = ItemNBTHelper.getList(spellHolder, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
-		if (list == null) return modules;
+		if (list == null) return rings;
 
-		return getModules(list);
+		return getSpellRings(list);
 	}
 
-	public static ArrayList<Module> getModules(@Nonnull NBTTagCompound compound) {
+	public static ArrayList<SpellRing> getSpellRings(@Nonnull NBTTagCompound compound) {
 		if (compound.hasKey(Constants.NBT.SPELL))
-			return getModules(compound.getTagList(Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND));
+			return getSpellRings(compound.getTagList(Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND));
 		else return new ArrayList<>();
 	}
 
-	public static ArrayList<Module> getModules(@Nonnull NBTTagList list) {
-		ArrayList<Module> modules = new ArrayList<>();
+	public static ArrayList<SpellRing> getSpellRings(@Nonnull NBTTagList list) {
+		ArrayList<SpellRing> rings = new ArrayList<>();
 		for (int i = 0; i < list.tagCount(); i++) {
 			NBTTagCompound compound = list.getCompoundTagAt(i);
-			Module module = ModuleRegistry.INSTANCE.getModule(compound.getString("id"));
-			if (module == null) continue;
-			module = module.copy();
-			module.deserializeNBT(compound);
-			modules.add(module);
+			SpellRing ring = SpellRing.deserializeRing(compound);
+			if (ring == null) continue;
+			rings.add(ring);
 		}
-		return modules;
+		return rings;
 	}
 
-	public static ArrayList<Module> getAllModules(@Nonnull NBTTagCompound compound) {
-		ArrayList<Module> modules = new ArrayList<>();
-		ArrayList<Module> heads = getModules(compound);
-		for (Module module : heads) {
-			Module tempModule = module;
-			while (tempModule != null) {
-				modules.add(tempModule);
-				tempModule = tempModule.nextModule;
+	public static ArrayList<SpellRing> getAllSpellRings(@Nonnull NBTTagCompound compound) {
+		ArrayList<SpellRing> rings = new ArrayList<>();
+		ArrayList<SpellRing> heads = getSpellRings(compound);
+		for (SpellRing module : heads) {
+			SpellRing tempSpellRing = module;
+			while (tempSpellRing != null) {
+				rings.add(tempSpellRing);
+				tempSpellRing = tempSpellRing.getChildRing();
 			}
 		}
-		return modules;
+		return rings;
 	}
 
-	public static ArrayList<Module> getAllModules(@Nonnull Module module) {
-		ArrayList<Module> modules = new ArrayList<>();
-		Module tempModule = module;
-		while (tempModule != null) {
-			modules.add(tempModule);
-			tempModule = tempModule.nextModule;
+	public static ArrayList<SpellRing> getAllSpellRings(@Nonnull SpellRing module) {
+		ArrayList<SpellRing> rings = new ArrayList<>();
+		SpellRing tempSpellRing = module;
+		while (tempSpellRing != null) {
+			rings.add(tempSpellRing);
+			tempSpellRing = tempSpellRing.getChildRing();
 		}
-		return modules;
+		return rings;
 	}
 
-	public static ArrayList<Module> getAllModules(@Nonnull ArrayList<Module> modules) {
-		ArrayList<Module> modules1 = new ArrayList<>();
-		for (Module module : modules) {
-			Module tempModule = module;
-			while (tempModule != null) {
-				modules1.add(tempModule);
-				tempModule = tempModule.nextModule;
+	public static ArrayList<SpellRing> getAllSpellRings(@Nonnull ArrayList<SpellRing> rings) {
+		ArrayList<SpellRing> rings1 = new ArrayList<>();
+		for (SpellRing module : rings) {
+			SpellRing tempSpellRing = module;
+			while (tempSpellRing != null) {
+				rings1.add(tempSpellRing);
+				tempSpellRing = tempSpellRing.getChildRing();
 			}
 		}
-		return modules1;
+		return rings1;
 	}
 
-	public static ArrayList<Module> getAllModules(@Nonnull ItemStack spellHolder) {
-		ArrayList<Module> modules = new ArrayList<>();
-		ArrayList<Module> heads = getModules(spellHolder);
-		for (Module module : heads) {
-			Module tempModule = module;
-			while (tempModule != null) {
-				modules.add(tempModule);
-				tempModule = tempModule.nextModule;
+	public static ArrayList<SpellRing> getAllSpellRings(@Nonnull ItemStack spellHolder) {
+		ArrayList<SpellRing> rings = new ArrayList<>();
+		ArrayList<SpellRing> heads = getSpellRings(spellHolder);
+		for (SpellRing module : heads) {
+			SpellRing tempSpellRing = module;
+			while (tempSpellRing != null) {
+				rings.add(tempSpellRing);
+				tempSpellRing = tempSpellRing.getChildRing();
 			}
 		}
-		return modules;
+		return rings;
 	}
 }

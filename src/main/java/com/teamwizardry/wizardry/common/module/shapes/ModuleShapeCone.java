@@ -9,10 +9,7 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
-import com.teamwizardry.wizardry.api.spell.module.Module;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
-import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
-import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.module.*;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
@@ -87,7 +84,7 @@ public class ModuleShapeCone extends ModuleShape {
 			newSpell.processBlock(result.getBlockPos(), result.sideHit, result.hitVec);
 			if (result.entityHit != null) spell.processEntity(result.entityHit, false);
 
-			castParticles(newSpell);
+			sendRenderPacket(newSpell, this);
 
 			newSpell.addData(ORIGIN, result.hitVec);
 
@@ -100,7 +97,13 @@ public class ModuleShapeCone extends ModuleShape {
 	@Override
 	@SuppressWarnings("unused")
 	@SideOnly(Side.CLIENT)
-	public void runClient(@Nonnull SpellData spell) {
+	public void render(@Nonnull SpellData spell, SpellRing spellRing) {
+		for (Module child : getAllChildModules()) {
+			if (child.overrideShapeRunClient(this, spell)) {
+				return;
+			}
+		}
+
 		float yaw = spell.getData(YAW, 0F);
 		Entity caster = spell.getData(CASTER);
 		Vec3d position = spell.getData(ORIGIN);

@@ -129,6 +129,12 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 		}
 	}
 
+	public static SpellData deserializeData(World world, NBTTagCompound compound) {
+		SpellData data = new SpellData(world);
+		data.deserializeNBT(compound);
+		return data;
+	}
+
 	@Override
 	public String toString() {
 		return "SpellData{" +

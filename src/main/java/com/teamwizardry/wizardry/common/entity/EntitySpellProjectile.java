@@ -198,7 +198,7 @@ public class EntitySpellProjectile extends EntityMod {
 
 		if (module != null && module.nextModule != null) {
 			Module nextModule = module.nextModule;
-			nextModule.castSpell(data);
+			nextModule.castSpell(data, this);
 		}
 
 		PacketHandler.NETWORK.sendToAllAround(new PacketExplode(getPositionVector(), new Color(getDataManager().get(DATA_COLOR)), new Color(getDataManager().get(DATA_COLOR2)), 0.3, 0.3, RandUtil.nextInt(30, 50), 10, 25, true),
