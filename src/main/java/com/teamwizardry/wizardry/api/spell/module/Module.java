@@ -5,6 +5,7 @@ import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.events.SpellCastEvent;
 import com.teamwizardry.wizardry.api.spell.ILingeringModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
+import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.common.core.SpellTicker;
 import com.teamwizardry.wizardry.common.network.PacketRenderSpell;
 import kotlin.Pair;
@@ -29,18 +30,18 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.MAX_TIME
  */
 public abstract class Module {
 
-	private final Color primaryColor;
-	private final Color secondaryColor;
-	private final int cooldownTime;
-	private final int chargeupTime;
-	private final double manaDrain;
-	private final double burnoutFill;
-	private final ItemStack itemStack;
-	private final float powerMultiplier;
-	private final float manaMultiplier;
-	private final float burnoutMultiplier;
+	private Color primaryColor;
+	private Color secondaryColor;
+	private int cooldownTime;
+	private int chargeupTime;
+	private double manaDrain;
+	private double burnoutFill;
+	private ItemStack itemStack;
+	private float powerMultiplier;
+	private float manaMultiplier;
+	private float burnoutMultiplier;
 
-	public Module(ItemStack stack,
+	public Module(ItemStack itemStack,
 	              double manaDrain,
 	              double burnoutFill,
 	              Color primaryColor,
@@ -50,7 +51,29 @@ public abstract class Module {
 	              float burnoutMultiplier,
 	              int cooldownTime,
 	              int chargeupTime) {
-		itemStack = stack;
+		this.itemStack = itemStack;
+		this.manaDrain = manaDrain;
+		this.burnoutFill = burnoutFill;
+		this.primaryColor = primaryColor;
+		this.secondaryColor = secondaryColor;
+		this.powerMultiplier = powerMultiplier;
+		this.manaMultiplier = manaMultiplier;
+		this.burnoutMultiplier = burnoutMultiplier;
+		this.cooldownTime = cooldownTime;
+		this.chargeupTime = chargeupTime;
+	}
+
+	public void update(ItemStack itemStack,
+	                   double manaDrain,
+	                   double burnoutFill,
+	                   Color primaryColor,
+	                   Color secondaryColor,
+	                   float powerMultiplier,
+	                   float manaMultiplier,
+	                   float burnoutMultiplier,
+	                   int cooldownTime,
+	                   int chargeupTime) {
+		this.itemStack = itemStack;
 		this.manaDrain = manaDrain;
 		this.burnoutFill = burnoutFill;
 		this.primaryColor = primaryColor;
@@ -190,22 +213,22 @@ public abstract class Module {
 	/**
 	 * Only return false if the spell cannot be taxed from mana. Return true otherwise.
 	 */
-	public abstract boolean run(@Nonnull SpellData spell);
+	public abstract boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing);
 
 	/**
 	 * This method runs client side when the spell runs. Spawn particles here.
 	 */
 	@SideOnly(Side.CLIENT)
-	public abstract void render(@Nonnull SpellData spell, SpellRing spellRing);
+	public abstract void render(@Nonnull SpellData spell, @Nonnull SpellRing spellRing);
 
 	/**
 	 * Use this to run the module properly without rendering.
 	 *
 	 * @param data The spellData associated with it.
-	 * @param spellRing
+	 * @param spellRing The SpellRing made with this.
 	 * @return If the spell has succeeded.
 	 */
-	public final boolean castSpell(@Nonnull SpellData data, SpellRing spellRing) {
+	public final boolean castSpell(@Nonnull SpellData data, @Nonnull SpellRing spellRing) {
 		if (this instanceof ILingeringModule)
 			if (!SpellTicker.ticker.containsKey(this)) {
 				data.addData(MAX_TIME, ((ILingeringModule) this).getLingeringTime(data));
@@ -215,10 +238,10 @@ public abstract class Module {
 		SpellCastEvent event = new SpellCastEvent(this, data);
 		MinecraftForge.EVENT_BUS.post(event);
 
-		return !event.isCanceled() && run(data);
+		return !event.isCanceled() && run(data, spellRing);
 	}
 
-	public final void sendRenderPacket(@Nonnull SpellData data, SpellRing spellRing) {
+	public final void sendRenderPacket(@Nonnull SpellData data, @Nonnull SpellRing spellRing) {
 		Entity caster = data.getData(CASTER);
 		Vec3d target = data.hasData(SpellData.DefaultKeys.ORIGIN) ?
 				data.getData(SpellData.DefaultKeys.ORIGIN) : data.hasData(SpellData.DefaultKeys.TARGET_HIT) ?

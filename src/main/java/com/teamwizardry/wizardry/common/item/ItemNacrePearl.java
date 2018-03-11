@@ -9,7 +9,7 @@ import com.teamwizardry.wizardry.api.capability.CustomWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
 import com.teamwizardry.wizardry.api.item.IExplodable;
 import com.teamwizardry.wizardry.api.item.IInfusable;
-import com.teamwizardry.wizardry.api.item.INacreColorable;
+import com.teamwizardry.wizardry.api.item.INacreProduct;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import net.minecraft.client.gui.GuiScreen;
@@ -35,7 +35,7 @@ import java.util.List;
 /**
  * Created by Saad on 6/28/2016.
  */
-public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, INacreColorable {
+public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, INacreProduct {
 
 	public ItemNacrePearl() {
 		super("nacre_pearl");
@@ -139,10 +139,10 @@ public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, 
 				Module tempModule = module;
 				int i = 0;
 				while (tempModule != null) {
-					tooltip.add(StringUtils.repeat("-", i) + "> " + TextFormatting.GRAY + tempModule.getReadableName() + " - " + TextFormatting.BLUE + (int) Math.round(tempModule.getManaDrain() * tempModule.getMultiplier()) + TextFormatting.GRAY + "/" + TextFormatting.RED + (int) Math.round(tempModule.getBurnoutFill() * tempModule.getMultiplier()));
+					tooltip.add(StringUtils.repeat("-", i) + "> " + TextFormatting.GRAY + tempModule.getReadableName() + " - " + TextFormatting.BLUE + Math.round(tempModule.getManaDrain() * tempModule.getMultiplier()) + TextFormatting.GRAY + "/" + TextFormatting.RED + Math.round(tempModule.getBurnoutFill() * tempModule.getMultiplier()));
 					if (GuiScreen.isShiftKeyDown()) {
 						for (String key : tempModule.attributes.getKeySet())
-							tooltip.add(StringUtils.repeat(" ", i + 1) + " | " + TextFormatting.DARK_GRAY + key + " x" + (int) Math.round(tempModule.attributes.getDouble(key)));
+							tooltip.add(StringUtils.repeat(" ", i + 1) + " | " + TextFormatting.DARK_GRAY + key + " x" + Math.round(tempModule.attributes.getDouble(key)));
 					}
 					tempModule = tempModule.nextModule;
 					i++;

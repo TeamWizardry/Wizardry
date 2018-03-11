@@ -1,13 +1,14 @@
 package com.teamwizardry.wizardry.common.module.events;
 
 import com.teamwizardry.wizardry.api.spell.SpellData;
+import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEvent;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
-import com.teamwizardry.wizardry.api.spell.module.SpellRing;
 import net.minecraft.entity.Entity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -27,7 +28,7 @@ public class ModuleEventCollideEntity extends ModuleEvent {
 	}
 
 	@Override
-	public boolean run(@Nonnull SpellData spell) {
+	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Entity entity = spell.getData(ENTITY_HIT);
 		spell.removeData(BLOCK_HIT);
 		return entity != null && nextModule != null && nextModule.run(spell);
@@ -35,7 +36,7 @@ public class ModuleEventCollideEntity extends ModuleEvent {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void render(@Nonnull SpellData spell, SpellRing spellRing) {
+	public void render(@Nonnull SpellData spell, @NotNull SpellRing spellRing) {
 
 	}
 

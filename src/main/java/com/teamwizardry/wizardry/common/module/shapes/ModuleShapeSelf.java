@@ -8,10 +8,10 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys;
+import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
-import com.teamwizardry.wizardry.api.spell.module.SpellRing;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import net.minecraft.entity.Entity;
@@ -19,6 +19,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -37,7 +38,7 @@ public class ModuleShapeSelf extends ModuleShape {
 	}
 
 	@Override
-	public boolean run(@Nonnull SpellData spell) {
+	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Entity caster = spell.getData(CASTER);
 		Entity target = spell.getData(DefaultKeys.ENTITY_HIT);
 
@@ -52,7 +53,7 @@ public class ModuleShapeSelf extends ModuleShape {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void render(@Nonnull SpellData spell, SpellRing spellRing) {
+	public void render(@Nonnull SpellData spell, @NotNull SpellRing spellRing) {
 		for (Module child : getAllChildModules()) {
 			if (child.overrideShapeRunClient(this, spell)) {
 				return;

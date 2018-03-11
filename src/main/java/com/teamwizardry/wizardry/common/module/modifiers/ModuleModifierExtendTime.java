@@ -1,12 +1,13 @@
 package com.teamwizardry.wizardry.common.module.modifiers;
 
 import com.teamwizardry.wizardry.api.spell.SpellData;
+import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
-import com.teamwizardry.wizardry.api.spell.module.SpellRing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -23,13 +24,13 @@ public class ModuleModifierExtendTime extends ModuleModifier {
 	}
 
 	@Override
-	public boolean run(@Nonnull SpellData spell) {
+	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		return true;
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void render(@Nonnull SpellData spell, SpellRing spellRing) {
+	public void render(@Nonnull SpellData spell, @NotNull SpellRing spellRing) {
 
 	}
 

@@ -108,7 +108,7 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 					}
 					SpellBuilder builder = new SpellBuilder(inventory);
 					NBTTagList list = new NBTTagList();
-					for (Module module : builder.getSpell()) list.appendTag(module.serializeNBT());
+					for (Module module : builder.buildSpell()) list.appendTag(module.serializeNBT());
 					ItemNBTHelper.setList(pearl, Constants.NBT.SPELL, list);
 					ItemNBTHelper.setFloat(pearl, Constants.NBT.RAND, playerIn.world.rand.nextFloat());
 

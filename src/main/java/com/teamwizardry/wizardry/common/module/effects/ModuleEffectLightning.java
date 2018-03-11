@@ -3,8 +3,11 @@ package com.teamwizardry.wizardry.common.module.effects;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.LightningGenerator;
 import com.teamwizardry.wizardry.api.spell.SpellData;
+import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
-import com.teamwizardry.wizardry.api.spell.module.*;
+import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
+import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RandUtilSeed;
@@ -24,6 +27,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -49,7 +53,7 @@ public class ModuleEffectLightning extends ModuleEffect {
 	}
 
 	@Override
-	public boolean run(@Nonnull SpellData spell) {
+	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		Vec3d target = spell.getData(TARGET_HIT);
 		Entity caster = spell.getData(CASTER);
@@ -65,8 +69,8 @@ public class ModuleEffectLightning extends ModuleEffect {
 			origin = new Vec3d(offX, caster.getEyeHeight(), offZ).add(target);
 		}
 
-		double range = getModifier(spell, Attributes.RANGE, 10, 32);
-		double strength = getModifier(spell, Attributes.POTENCY, 4, 20) / 2.0;
+		double range = spellRing.getModifier(Attributes.RANGE, 10, 32);
+		double strength = spellRing.getModifier(Attributes.POTENCY, 4, 20) / 2.0;
 
 		if (!tax(this, spell)) return false;
 
@@ -94,42 +98,20 @@ public class ModuleEffectLightning extends ModuleEffect {
 	}
 
 	@Override
-	public boolean overrideShapeRunClient(Module shape, SpellData spell) {
-		World world = spell.world;
-		float yaw = spell.getData(YAW, 0F);
-		float pitch = spell.getData(PITCH, 0F);
-		Entity caster = spell.getData(CASTER);
-		Vec3d target = spell.getData(TARGET_HIT);
-		long seed = spell.getData(SEED, 0L);
-		double range = getModifier(spell, Attributes.RANGE, 10, 32);
-
-		if (target == null) return true;
-
-		Vec3d origin = target;
-		if (caster != null) {
-			float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - yaw));
-			float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - yaw));
-			origin = new Vec3d(offX, 0, offZ).add(target);
-		}
-
-		RayTraceResult traceResult = new RayTrace(world, PosUtils.vecFromRotations(pitch, yaw), target, range).setSkipBlocks(true).setSkipEntities(true).trace();
-
-		PacketHandler.NETWORK.sendToAllAround(new PacketRenderLightningBolt(origin, traceResult.hitVec, seed),
-				new NetworkRegistry.TargetPoint(world.provider.getDimension(), origin.x, origin.y, origin.z, 256));
-
+	public boolean overrideParentRenders() {
 		return true;
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void render(@Nonnull SpellData spell, SpellRing spellRing) {
+	public void render(@Nonnull SpellData spell, @NotNull SpellRing spellRing) {
 		World world = spell.world;
 		float yaw = spell.getData(YAW, 0F);
 		float pitch = spell.getData(PITCH, 0F);
 		Entity caster = spell.getData(CASTER);
 		Vec3d target = spell.getData(TARGET_HIT);
 		long seed = spell.getData(SEED, 0L);
-		double range = getModifier(spell, Attributes.RANGE, 10, 32);
+		double range = spellRing.getModifier(Attributes.RANGE, 10, 32);
 
 		if (target == null) return;
 
@@ -144,11 +126,5 @@ public class ModuleEffectLightning extends ModuleEffect {
 
 		PacketHandler.NETWORK.sendToAllAround(new PacketRenderLightningBolt(origin, traceResult.hitVec, seed),
 				new NetworkRegistry.TargetPoint(world.provider.getDimension(), origin.x, origin.y, origin.z, 256));
-	}
-
-	@Nonnull
-	@Override
-	public Module copy() {
-		return cloneModule(new ModuleEffectLightning());
 	}
 }

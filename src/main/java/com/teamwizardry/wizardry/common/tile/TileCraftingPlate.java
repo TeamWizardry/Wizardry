@@ -7,13 +7,17 @@ import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.librarianlib.features.tesr.TileRenderer;
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
+import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.TileManaInteracter;
 import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.item.EnumPearlType;
 import com.teamwizardry.wizardry.api.item.IInfusable;
+import com.teamwizardry.wizardry.api.item.INacreProduct;
 import com.teamwizardry.wizardry.api.spell.SpellBuilder;
-import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.SpellUtils;
+import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.render.block.TileCraftingPlateRenderer;
 import com.teamwizardry.wizardry.common.block.BlockCraftingPlate;
@@ -38,10 +42,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Created by Saad on 6/10/2016.
@@ -157,23 +159,54 @@ public class TileCraftingPlate extends TileManaInteracter {
 				ArrayList<ItemStack> stacks = new ArrayList<>();
 
 				for (int i = 0; i < realInventory.getHandler().getSlots(); i++) {
-					if (!realInventory.getHandler().getStackInSlot(i).isEmpty())
+					if (!realInventory.getHandler().getStackInSlot(i).isEmpty()) {
 						stacks.add(realInventory.getHandler().getStackInSlot(i));
+						realInventory.getHandler().setStackInSlot(i, ItemStack.EMPTY);
+					}
 				}
 				SpellBuilder builder = new SpellBuilder(stacks);
 
-				ItemStack stack = inputPearl.getHandler().getStackInSlot(0).copy();
-				ItemNBTHelper.setFloat(stack, Constants.NBT.RAND, world.rand.nextFloat());
-				ItemNBTHelper.setString(stack, "type", EnumPearlType.INFUSED.toString());
+				ItemStack infusedPearl = outputPearl.getHandler().insertItem(0, inputPearl.getHandler().extractItem(0, 1, false), false);
+
+				ArrayDeque<Color> colorSet = new ArrayDeque<>();
 
 				NBTTagList list = new NBTTagList();
-				for (Module module : builder.getSpell()) list.appendTag(module.serializeNBT());
-				ItemNBTHelper.setList(stack, Constants.NBT.SPELL, list);
+				for (SpellRing spellRing : builder.buildSpell()) {
+					colorSet.add(spellRing.getPrimaryColor());
+					colorSet.add(spellRing.getSecondaryColor());
+					list.appendTag(spellRing.serializeNBT());
+				}
+				ItemNBTHelper.setList(infusedPearl, Constants.NBT.SPELL, list);
 
-				inputPearl.getHandler().setStackInSlot(0, ItemStack.EMPTY);
-				outputPearl.getHandler().setStackInSlot(0, stack);
-				for (int i = 0; i < realInventory.getHandler().getSlots(); i++) {
-					realInventory.getHandler().setStackInSlot(i, ItemStack.EMPTY);
+				// Average pearl color
+				{
+					Color lastColor = null;
+					while (!colorSet.isEmpty()) {
+						if (lastColor == null) lastColor = colorSet.getFirst();
+						else {
+							lastColor = ColorUtils.mixColors(lastColor, colorSet.pop());
+						}
+					}
+					if (lastColor == null) lastColor = Color.WHITE;
+				}
+
+				ItemNBTHelper.setFloat(infusedPearl, Constants.NBT.RAND, world.rand.nextFloat());
+				ItemNBTHelper.setString(infusedPearl, "type", EnumPearlType.INFUSED.toString());
+
+				// Process spell multipliers based on nacre quality
+				if (infusedPearl.getItem() instanceof INacreProduct) {
+					float purity = ((INacreProduct) infusedPearl.getItem()).getQuality(infusedPearl);
+					double multiplier;
+					if (purity >= 1f) multiplier = ConfigValues.perfectPearlMultiplier * purity;
+					else if (purity <= ConfigValues.damagedPearlMultiplier)
+						multiplier = ConfigValues.damagedPearlMultiplier;
+					else {
+						double base = purity - 1;
+						multiplier = 1 - (base * base * base * base);
+					}
+
+					for (SpellRing spellRing : SpellUtils.getAllSpellRings(infusedPearl))
+						spellRing.multiplyMultiplierForAll((float) multiplier);
 				}
 
 				ClientRunnable.run(new ClientRunnable() {

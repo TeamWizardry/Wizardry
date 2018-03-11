@@ -5,7 +5,7 @@ import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.librarianlib.features.utilities.client.TooltipHelper;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.api.item.ICooldown;
-import com.teamwizardry.wizardry.api.item.INacreColorable;
+import com.teamwizardry.wizardry.api.item.INacreProduct;
 import com.teamwizardry.wizardry.api.spell.IBlockSelectable;
 import com.teamwizardry.wizardry.api.spell.IContinuousModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
@@ -40,7 +40,7 @@ import java.util.List;
 /**
  * Created by Saad on 6/7/2016.
  */
-public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayColorable, ICooldown {
+public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProduct, ICooldown {
 
 	public ItemStaff() {
 		super("staff", "staff", "staff_pearl");
@@ -267,10 +267,10 @@ public class ItemStaff extends ItemMod implements INacreColorable.INacreDecayCol
 				Module tempModule = module;
 				int i = 0;
 				while (tempModule != null) {
-					tooltip.add(StringUtils.repeat("-", i) + "> " + TextFormatting.GRAY + tempModule.getReadableName() + " - " + TextFormatting.BLUE + (int) Math.round(tempModule.getManaDrain() * tempModule.getMultiplier()) + TextFormatting.GRAY + "/" + TextFormatting.RED + (int) Math.round(tempModule.getBurnoutFill() * tempModule.getMultiplier()));
+					tooltip.add(StringUtils.repeat("-", i) + "> " + TextFormatting.GRAY + tempModule.getReadableName() + " - " + TextFormatting.BLUE + Math.round(tempModule.getManaDrain() * tempModule.getMultiplier()) + TextFormatting.GRAY + "/" + TextFormatting.RED + Math.round(tempModule.getBurnoutFill() * tempModule.getMultiplier()));
 					if (GuiScreen.isShiftKeyDown()) {
 						for (String key : tempModule.attributes.getKeySet())
-							tooltip.add(StringUtils.repeat(" ", i + 1) + " | " + TextFormatting.DARK_GRAY + key + " x" + (int) Math.round(tempModule.attributes.getDouble(key)));
+							tooltip.add(StringUtils.repeat(" ", i + 1) + " | " + TextFormatting.DARK_GRAY + key + " x" + Math.round(tempModule.attributes.getDouble(key)));
 					}
 					tempModule = tempModule.nextModule;
 					i++;

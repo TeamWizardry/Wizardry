@@ -1,10 +1,11 @@
-package com.teamwizardry.wizardry.api.spell.module;
+package com.teamwizardry.wizardry.api.spell;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
 import com.teamwizardry.wizardry.api.spell.attribute.Operation;
+import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -64,7 +65,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	}
 
 	public SpellRing(@Nonnull Module module) {
-		this.module = module;
+		setModule(module);
 	}
 
 	public static SpellRing deserializeRing(NBTTagCompound compound) {
@@ -134,8 +135,8 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	 * @param max       Max range.
 	 * @return The final double potency of a modifier.
 	 */
-	protected final double getModifier(String attribute, double min, double max) {
-		return (attributes.hasKey(attribute) ? MathHelper.clamp(min + attributes.getDouble(attribute), min, max) : min) * getBurnoutMultiplier();
+	public final double getModifier(String attribute, double min, double max) {
+		return (attributes.hasKey(attribute) ? MathHelper.clamp(min + attributes.getDouble(attribute), min, max) : min) * getBurnoutMultiplier() * getPowerMultiplier();
 	}
 
 	public final void processModifiers(List<AttributeModifier> modifiersToApply) {
@@ -156,9 +157,9 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	}
 
 	/**
-	 * Get all the children rings of this ring.
+	 * Get all the children rings of this ring excluding itself.
 	 */
-	public final Set<SpellRing> getAllChildRings() {
+	private Set<SpellRing> getAllChildRings() {
 		Set<SpellRing> childRings = new HashSet<>();
 
 		if (childRing == null) return childRings;
@@ -198,6 +199,10 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 	public final void setModule(@NotNull Module module) {
 		this.module = module;
+
+		setManaMultiplier(module.getManaMultiplier());
+		setBurnoutMultiplier(module.getBurnoutMultiplier());
+		setPowerMultiplier(module.getPowerMultiplier());
 	}
 
 	@Nonnull
@@ -235,6 +240,10 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		this.powerMultiplier = powerMultiplier;
 	}
 
+	public final void multiplyPowerMultiplier(float powerMultiplier) {
+		this.powerMultiplier *= powerMultiplier;
+	}
+
 	public final float getManaMultiplier() {
 		return manaMultiplier;
 	}
@@ -243,12 +252,40 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		this.manaMultiplier = manaMultiplier;
 	}
 
+	public final void multiplyManaMultiplier(float manaMultiplier) {
+		this.manaMultiplier *= manaMultiplier;
+	}
+
+	/**
+	 * This multiplier is special because we take it's inverse.
+	 * When multiplying it, if your burnout is 0, then that means you have no burnout
+	 * but your multiplier completely nullifies your numbers, so we want the inverse
+	 * because this should be obvious and why am I even explaining this, grow a brain.
+	 *
+	 * @return The INVERTED burnout multiplier.
+	 */
 	public final float getBurnoutMultiplier() {
-		return burnoutMultiplier;
+		return 1 - burnoutMultiplier;
 	}
 
 	public final void setBurnoutMultiplier(float burnoutMultiplier) {
 		this.burnoutMultiplier = burnoutMultiplier;
+	}
+
+	public final void multiplyBurnoutMultiplier(float burnoutMultiplier) {
+		this.burnoutMultiplier *= burnoutMultiplier;
+	}
+
+	public final void setMultiplierForAll(float multiplier) {
+		this.powerMultiplier = multiplier;
+		this.burnoutMultiplier = multiplier;
+		this.manaMultiplier = multiplier;
+	}
+
+	public final void multiplyMultiplierForAll(float multiplier) {
+		this.powerMultiplier *= multiplier;
+		this.burnoutMultiplier *= multiplier;
+		this.manaMultiplier *= multiplier;
 	}
 
 	@Nonnull
@@ -261,6 +298,10 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		NBTTagCompound compound = new NBTTagCompound();
 
 		compound.setTag("attributes", attributes);
+		compound.setFloat("power_multiplier", powerMultiplier);
+		compound.setFloat("burnout_multiplier", burnoutMultiplier);
+		compound.setFloat("mana_multiplier", manaMultiplier);
+
 		if (childRing != null) compound.setTag("child_ring", this.childRing.serializeNBT());
 		if (module != null) compound.setString("module", module.getID());
 
@@ -269,17 +310,19 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 	@Override
 	public final void deserializeNBT(NBTTagCompound nbt) {
-		if (nbt.hasKey("attributes")) {
-			attributes = nbt.getCompoundTag("attributes");
-		}
+		if (nbt.hasKey("power_multiplier")) powerMultiplier = nbt.getFloat("power_multiplier");
+		if (nbt.hasKey("burnout_multiplier")) burnoutMultiplier = nbt.getFloat("burnout_multiplier");
+		if (nbt.hasKey("mana_multiplier")) manaMultiplier = nbt.getFloat("mana_multiplier");
+
+		if (nbt.hasKey("attributes")) attributes = nbt.getCompoundTag("attributes");
+
+		if (nbt.hasKey("module")) this.module = ModuleRegistry.INSTANCE.getModule(nbt.getString("module"));
 
 		if (nbt.hasKey("child_ring")) {
 			SpellRing childRing = deserializeRing(nbt.getCompoundTag("child_ring"));
 			childRing.setParentRing(this);
 			setChildRing(childRing);
 		}
-
-		if (nbt.hasKey("module")) this.module = ModuleRegistry.INSTANCE.getModule(nbt.getString("module"));
 	}
 
 	public final SpellRing copy() {

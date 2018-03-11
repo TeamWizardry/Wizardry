@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
-import com.teamwizardry.wizardry.api.item.INacreColorable;
+import com.teamwizardry.wizardry.api.item.INacreProduct;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 /**
  * Created by Saad on 6/13/2016.
  */
-public class ItemRing extends ItemMod implements INacreColorable {
+public class ItemRing extends ItemMod implements INacreProduct {
 
 	public ItemRing() {
 		super("ring", "ring", "ring_pearl");

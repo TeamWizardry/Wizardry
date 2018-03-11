@@ -40,12 +40,8 @@ public class ModuleRegistry {
 	private ModuleRegistry() {
 	}
 
-	public void registerModule(Module module) {
-		modules.add(module);
-	}
-
 	public Module getModule(String id) {
-		for (Module module : modules) if (module.getID().equals(id)) return module.copy();
+		for (Module module : modules) if (module.getID().equals(id)) return module;
 		return null;
 	}
 
@@ -53,7 +49,7 @@ public class ModuleRegistry {
 	public Module getModule(ItemStack itemStack) {
 		for (Module module : modules)
 			if (ItemStack.areItemsEqual(itemStack, module.getItemStack())) {
-				return module.copy();
+				return module;
 			}
 		return null;
 	}
@@ -61,7 +57,7 @@ public class ModuleRegistry {
 	@Nonnull
 	public ArrayList<Module> getModules(ModuleType type) {
 		ArrayList<Module> modules = new ArrayList<>();
-		for (Module module : this.modules) if (module.getModuleType() == type) modules.add(module.copy());
+		for (Module module : this.modules) if (module.getModuleType() == type) modules.add(module);
 
 		modules.sort(Comparator.comparing(Module::getReadableName));
 		return modules;
@@ -73,7 +69,7 @@ public class ModuleRegistry {
 			try {
 				Constructor<?> ctor = clazz.getConstructor();
 				Object object = ctor.newInstance();
-				if (object instanceof Module) registerModule((Module) object);
+				if (object instanceof Module) modules.add((Module) object);
 			} catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 				e.printStackTrace();
 			}
@@ -87,11 +83,11 @@ public class ModuleRegistry {
 
 		HashSet<Module> processed = new HashSet<>();
 
-		for (Module module : modules) {
-			File file = new File(directory, module.getID() + ".json");
+		for (Module rawModule : modules) {
+			File file = new File(directory, rawModule.getID() + ".json");
 
 			if (!file.exists()) {
-				Wizardry.logger.error("  > SOMETHING WENT WRONG! " + module.getID() + ".json does NOT exist. Ignoring module...");
+				Wizardry.logger.error("  > SOMETHING WENT WRONG! " + rawModule.getID() + ".json does NOT exist. Ignoring module...");
 				continue;
 			}
 
@@ -119,46 +115,70 @@ public class ModuleRegistry {
 				continue;
 			}
 
+			Color primaryColor = Color.WHITE;
+			Color secondaryColor = Color.WHITE;
+			int cooldownTime = 0;
+			int chargeupTime = 0;
+			double manaDrain = 0;
+			double burnoutFill = 0;
+			ItemStack itemStack = ItemStack.EMPTY;
+			float powerMultiplier = 1;
+			float manaMultiplier = 1;
+			float burnoutMultiplier = 1;
+			int itemMeta = 0;
+
 			Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(moduleObject.getAsJsonPrimitive("item").getAsString()));
 			if (item == null) {
-				Wizardry.logger.error("    > WARNING! Item for module " + module.getID() + " does not exist '" + moduleObject.getAsJsonPrimitive("item").getAsString() + "' from " + file.getName());
+				Wizardry.logger.error("    > WARNING! Item for module " + rawModule.getID() + " does not exist '" + moduleObject.getAsJsonPrimitive("item").getAsString() + "' from " + file.getName());
 				continue;
 			}
 
-			int itemMeta = 0;
-			if (moduleObject.has("item_meta") && moduleObject.get("item_meta").isJsonPrimitive() && moduleObject.getAsJsonPrimitive("item_meta").isNumber()) {
-				itemMeta = moduleObject.getAsJsonPrimitive("item_meta").getAsInt();
+			for (Map.Entry<String, JsonElement> entry : moduleObject.entrySet()) {
+				switch (entry.getKey()) {
+					case "item_meta": {
+						itemMeta = entry.getValue().getAsJsonPrimitive().getAsInt();
+						break;
+					}
+					case "mana_drain": {
+						manaDrain = entry.getValue().getAsJsonPrimitive().getAsDouble();
+						break;
+					}
+					case "burnout_fill": {
+						burnoutFill = entry.getValue().getAsJsonPrimitive().getAsDouble();
+						break;
+					}
+					case "cooldown_time": {
+						cooldownTime = entry.getValue().getAsJsonPrimitive().getAsInt();
+						break;
+					}
+					case "chargeup_time": {
+						chargeupTime = entry.getValue().getAsJsonPrimitive().getAsInt();
+						break;
+					}
+					case "primary_color": {
+						primaryColor = new Color(Integer.parseInt(entry.getValue().getAsJsonPrimitive().getAsString(), 16));
+						break;
+					}
+					case "secondary_color": {
+						primaryColor = new Color(Integer.parseInt(entry.getValue().getAsJsonPrimitive().getAsString(), 16));
+						break;
+					}
+					case "power_multiplier": {
+						powerMultiplier = entry.getValue().getAsJsonPrimitive().getAsFloat();
+						break;
+					}
+					case "mana_multiplier": {
+						manaMultiplier = entry.getValue().getAsJsonPrimitive().getAsFloat();
+						break;
+					}
+					case "burnout_multiplier": {
+						burnoutMultiplier = entry.getValue().getAsJsonPrimitive().getAsFloat();
+						break;
+					}
+				}
 			}
 
-			ItemStack stack = new ItemStack(item, 1, itemMeta);
-
-			module.setItemStack(stack);
-
-			String[] keys = new String[]{"mana_drain", "burnout_fill", "cooldown_time", "chargeup_time", "primary_color", "secondary_color"};
-			int i = 0;
-			if (moduleObject.has(keys[i]) && moduleObject.get(keys[i]).isJsonPrimitive() && moduleObject.getAsJsonPrimitive(keys[i]).isNumber()) {
-				module.setManaDrain(moduleObject.getAsJsonPrimitive(keys[i]).getAsDouble());
-			}
-			i++;
-			if (moduleObject.has(keys[i]) && moduleObject.get(keys[i]).isJsonPrimitive() && moduleObject.getAsJsonPrimitive(keys[i]).isNumber()) {
-				module.setBurnoutFill(moduleObject.getAsJsonPrimitive(keys[i]).getAsDouble());
-			}
-			i++;
-			if (moduleObject.has(keys[i]) && moduleObject.get(keys[i]).isJsonPrimitive() && moduleObject.getAsJsonPrimitive(keys[i]).isNumber()) {
-				module.setCooldownTime(moduleObject.getAsJsonPrimitive(keys[i]).getAsInt());
-			}
-			i++;
-			if (moduleObject.has(keys[i]) && moduleObject.get(keys[i]).isJsonPrimitive() && moduleObject.getAsJsonPrimitive(keys[i]).isNumber()) {
-				module.setChargeupTime(moduleObject.getAsJsonPrimitive(keys[i]).getAsInt());
-			}
-			i++;
-			if (moduleObject.has(keys[i]) && moduleObject.get(keys[i]).isJsonPrimitive() && moduleObject.getAsJsonPrimitive(keys[i]).isString()) {
-				module.setPrimaryColor(new Color(Integer.parseInt(moduleObject.getAsJsonPrimitive(keys[i]).getAsString(), 16)));
-			}
-			i++;
-			if (moduleObject.has(keys[i]) && moduleObject.get(keys[i]).isJsonPrimitive() && moduleObject.getAsJsonPrimitive(keys[i]).isString()) {
-				module.setSecondaryColor(new Color(Integer.parseInt(moduleObject.getAsJsonPrimitive(keys[i]).getAsString(), 16)));
-			}
+			rawModule.update(new ItemStack(item, 1, itemMeta), manaDrain, burnoutFill, primaryColor, secondaryColor, powerMultiplier, manaMultiplier, burnoutMultiplier, cooldownTime, chargeupTime);
 
 			if (moduleObject.has("modifiers") && moduleObject.get("modifiers").isJsonArray()) {
 				JsonArray attributeModifiers = moduleObject.getAsJsonArray("modifiers");

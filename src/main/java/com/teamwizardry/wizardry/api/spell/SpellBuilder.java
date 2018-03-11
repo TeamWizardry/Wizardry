@@ -6,7 +6,6 @@ import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
-import com.teamwizardry.wizardry.api.spell.module.SpellRing;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -155,7 +154,7 @@ public class SpellBuilder {
 		return inventory;
 	}
 
-	public List<SpellRing> getSpell() {
+	public List<SpellRing> buildSpell() {
 		return spell;
 	}
 }
