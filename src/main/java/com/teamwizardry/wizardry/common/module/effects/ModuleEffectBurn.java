@@ -55,7 +55,7 @@ public class ModuleEffectBurn extends ModuleEffect {
 		Entity caster = spell.getCaster();
 		EnumFacing facing = spell.getData(FACE_HIT);
 
-		double strength = spellRing.getModifier(Attributes.AREA, 1, 16) / 2.0;
+		double strength = spellRing.getModifier(Attributes.AREA, 2, 16) / 2.0;
 		double time = spellRing.getModifier(Attributes.DURATION, 100, 1000);
 
 		if (!tax(this, spell, spellRing)) return false;
