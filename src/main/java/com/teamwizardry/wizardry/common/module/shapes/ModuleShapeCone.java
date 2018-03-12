@@ -76,7 +76,6 @@ public class ModuleShapeCone extends ModuleShape {
 		int chance = (int) (spellRing.getModifier(Attributes.POTENCY, 5, 32));
 
 		for (int i = 0; i < chance; i++) {
-			//	if (chance > 0 && RandUtil.nextInt(33 - chance) != 0) continue;
 
 			double angle = range * 2;
 			float newPitch = (float) (pitch + RandUtil.nextDouble(-angle, angle));

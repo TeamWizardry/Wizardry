@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.api.spell;
 import com.google.common.collect.ArrayListMultimap;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.saving.Savable;
-import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
 import com.teamwizardry.wizardry.api.spell.attribute.Operation;
@@ -158,7 +157,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 				double newValue = modifier.apply(current);
 				attributes.setDouble(attribute, newValue);
 
-				Wizardry.logger.info(module == null ? "<null module>" : module.getID() + ": Attribute: " + attribute + ": " + current + "-> " + newValue);
+				//Wizardry.logger.info(module == null ? "<null module>" : module.getID() + ": Attribute: " + attribute + ": " + current + "-> " + newValue);
 			}
 		}
 	}

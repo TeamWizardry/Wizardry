@@ -37,13 +37,12 @@ public class RenderSpellProjectile extends Render<EntitySpellProjectile> {
 	public void doRender(@Nonnull EntitySpellProjectile entity, double x, double y, double z, float entityYaw, float partialTicks) {
 		super.doRender(entity, x, y, z, entityYaw, partialTicks);
 
-		if (entity.spellRing == null) return;
-
-		for (SpellRing ring : SpellUtils.getAllSpellRings(entity.spellRing)) {
-			if (ring.overrideParentRenders()) {
-				return;
+		if (entity.spellRing != null)
+			for (SpellRing ring : SpellUtils.getAllSpellRings(entity.spellRing)) {
+				if (ring.overrideParentRenders()) {
+					return;
+				}
 			}
-		}
 
 		Color color = new Color(entity.getDataManager().get(DATA_COLOR), true);
 		Color color2 = new Color(entity.getDataManager().get(DATA_COLOR2), true);

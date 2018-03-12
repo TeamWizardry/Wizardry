@@ -98,6 +98,8 @@ public class EntitySpellProjectile extends EntityMod {
 	public void onUpdate() {
 		super.onUpdate();
 
+		if (world.isRemote) return;
+
 		if (spellRing == null || spellData == null) {
 			setDead();
 			world.removeEntity(this);
@@ -127,9 +129,9 @@ public class EntitySpellProjectile extends EntityMod {
 		if (!collided) {
 
 			// MOVE //
-			motionX += (motionX - (look.x * speed));
-			motionY += (motionY - (look.y * speed));
-			motionZ += (motionZ - (look.z * speed));
+			motionX += ((look.x * speed) - motionX);
+			motionY += ((look.y * speed) - motionY);
+			motionZ += ((look.z * speed) - motionZ);
 
 			// GRAVITY
 			//if (getDistanceSq(origin.x, origin.y, origin.z) > 4)
@@ -137,17 +139,10 @@ public class EntitySpellProjectile extends EntityMod {
 
 			move(MoverType.SELF, motionX, motionY, motionZ);
 		} else {
-			SpellData data = spellData.copy();
 
 			RayTraceResult result = new RayTrace(world, look, getPositionVector(), 1).setSkipEntity(this).trace();
-			if (result.typeOfHit == RayTraceResult.Type.BLOCK) {
-				data.processBlock(result.getBlockPos(), result.sideHit, result.hitVec);
-				data.addData(ORIGIN, result.hitVec);
-			} else {
-				data.processBlock(getPosition(), result.sideHit, getPositionVector());
-				data.addData(ORIGIN, getPositionVector());
-			}
-			goBoom(data);
+			spellData.processTrace(result, look);
+			goBoom(spellData);
 			return;
 		}
 
@@ -155,31 +150,16 @@ public class EntitySpellProjectile extends EntityMod {
 		if (!entities.isEmpty()) {
 			Entity caster = spellData.getCaster();
 
-			if (caster != null && entities.size() == 1 && entities.get(0) instanceof EntitySpellProjectile) {
-				EntitySpellProjectile spellProjectile = (EntitySpellProjectile) entities.get(0);
-				SpellData otherData = spellProjectile.spellData;
-				if (otherData != null && otherData.hasData(CASTER)) {
-					Entity otherCaster = spellData.getCaster();
-					if (otherCaster != null && otherCaster.getUniqueID().equals(caster.getUniqueID())) {
-						return;
-					}
-				}
+			// Don't colldie with other spell projectiles
+			for (Entity entity : entities) {
+				if (entity == caster) return;
+				if (entity instanceof EntitySpellProjectile) return;
 			}
-
-			if (caster != null && entities.contains(caster)) return;
-
-			SpellData data = spellData.copy();
 
 			RayTraceResult result = new RayTrace(world, look, getPositionVector(), 1).setSkipEntity(this).trace();
-			if (result.typeOfHit == RayTraceResult.Type.ENTITY && result.entityHit != null) {
-				data.processEntity(result.entityHit, false);
-				data.addData(ORIGIN, result.hitVec);
-			} else if (entities.get(0) != null) {
-				data.processEntity(entities.get(0), false);
-				data.addData(ORIGIN, entities.get(0).getPositionVector().addVector(0, entities.get(0).getEyeHeight(), 0));
-			}
+			spellData.processTrace(result, look);
 
-			goBoom(data);
+			goBoom(spellData);
 		}
 	}
 
@@ -188,8 +168,8 @@ public class EntitySpellProjectile extends EntityMod {
 		motionY = 0;
 		motionZ = 0;
 
-		if (spellRing != null) {
-			spellRing.runSpellRing(data);
+		if (spellRing.getChildRing() != null) {
+			spellRing.getChildRing().runSpellRing(data);
 		}
 
 		PacketHandler.NETWORK.sendToAllAround(new PacketExplode(getPositionVector(), new Color(getDataManager().get(DATA_COLOR)), new Color(getDataManager().get(DATA_COLOR2)), 0.3, 0.3, RandUtil.nextInt(30, 50), 10, 25, true),
@@ -223,6 +203,9 @@ public class EntitySpellProjectile extends EntityMod {
 		if (compound.hasKey("spell_data")) {
 			spellData = SpellData.deserializeData(world, compound.getCompoundTag("spell_data"));
 		}
+
+		applyColor(spellRing.getPrimaryColor());
+		applyColor2(spellRing.getSecondaryColor());
 
 		dist = compound.getDouble("distance");
 		speed = compound.getDouble("speed");

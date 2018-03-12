@@ -90,14 +90,14 @@ public class ModuleRegistry {
 			File file = new File(directory, module.getID() + ".json");
 
 			if (!file.exists()) {
-				Wizardry.logger.error(" | | |_ SOMETHING WENT WRONG! " + file.getName() + " does NOT exist.");
-				Wizardry.logger.error(" | |___ Failed to register module " + module.getID());
+				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! " + file.getName() + " does NOT exist.");
+				Wizardry.logger.error("| |___ Failed to register module " + module.getID());
 				continue;
 			}
 
 			if (!file.canRead()) {
-				Wizardry.logger.error(" | | |_ SOMETHING WENT WRONG! Something is preventing me from reading " + file.getName());
-				Wizardry.logger.error(" | |___ Failed to register module " + module.getID());
+				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! Something is preventing me from reading " + file.getName());
+				Wizardry.logger.error("| |___ Failed to register module " + module.getID());
 			}
 
 			JsonElement element;
@@ -109,21 +109,21 @@ public class ModuleRegistry {
 			}
 
 			if (element == null) {
-				Wizardry.logger.error(" | | |_ SOMETHING WENT WRONG! Could not parse " + file.getName() + ". Invalid json.");
-				Wizardry.logger.error(" | |___ Failed to register module " + module.getID());
+				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! Could not parse " + file.getName() + ". Invalid json.");
+				Wizardry.logger.error("| |___ Failed to register module " + module.getID());
 				continue;
 			}
 
 			if (!element.isJsonObject()) {
-				Wizardry.logger.error(" | | |_ SOMETHING WENT WRONG! " + file.getName() + "'s json is NOT a Json Object.");
-				Wizardry.logger.error(" | |___ Failed to register module " + module.getID());
+				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! " + file.getName() + "'s json is NOT a Json Object.");
+				Wizardry.logger.error("| |___ Failed to register module " + module.getID());
 				continue;
 			}
 			JsonObject moduleObject = element.getAsJsonObject();
 
 			if (!moduleObject.has("item")) {
-				Wizardry.logger.error(" | | |_ SOMETHING WENT WRONG! No 'item' key found in " + file.getName() + ". Unknown item to use for element.");
-				Wizardry.logger.error(" | |___ Failed to register module " + module.getID());
+				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! No 'item' key found in " + file.getName() + ". Unknown item to use for element.");
+				Wizardry.logger.error("| |___ Failed to register module " + module.getID());
 				continue;
 			}
 
@@ -140,11 +140,11 @@ public class ModuleRegistry {
 
 			Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(moduleObject.getAsJsonPrimitive("item").getAsString()));
 			if (item == null) {
-				Wizardry.logger.error(" | | |_ SOMETHING WENT WRONG! Item for module " + module.getID() + " does not exist '" + moduleObject.getAsJsonPrimitive("item").getAsString() + "'");
-				Wizardry.logger.error(" | |___ Failed to register module " + module.getID());
+				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! Item for module " + module.getID() + " does not exist '" + moduleObject.getAsJsonPrimitive("item").getAsString() + "'");
+				Wizardry.logger.error("| |___ Failed to register module " + module.getID());
 				continue;
 			} else {
-				Wizardry.logger.error(" | | |_ Found Item " + item.getUnlocalizedName());
+				Wizardry.logger.error("| | |_ Found Item " + item.getUnlocalizedName());
 			}
 
 			for (Map.Entry<String, JsonElement> entry : moduleObject.entrySet()) {
@@ -226,7 +226,7 @@ public class ModuleRegistry {
 							module.addAttribute(new AttributeModifier(attribute, amount, operator));
 							Wizardry.logger.info(" | | | | |_ AttributeModifier registered successfully");
 						} else {
-							Wizardry.logger.error(" | | | | |_ Failed to register AttributeModifier!");
+							Wizardry.logger.error("| | | | |_ Failed to register AttributeModifier!");
 						}
 					}
 				}
@@ -247,9 +247,9 @@ public class ModuleRegistry {
 		}
 
 		if (!left.isEmpty()) {
-			Wizardry.logger.error(" |");
-			Wizardry.logger.error(" |_ Missing or ignored modules detected in modules directory:");
-			for (Module module : left) Wizardry.logger.error(" | |_ " + module.getID());
+			Wizardry.logger.error("|");
+			Wizardry.logger.error("|_ Missing or ignored modules detected in modules directory:");
+			for (Module module : left) Wizardry.logger.error("| |_ " + module.getID());
 		}
 
 		modules.clear();

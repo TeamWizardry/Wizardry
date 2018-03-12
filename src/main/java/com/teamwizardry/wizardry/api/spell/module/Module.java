@@ -220,7 +220,8 @@ public abstract class Module {
 	public final boolean castSpell(@Nonnull SpellData data, @Nonnull SpellRing spellRing) {
 		if (this instanceof ILingeringModule) {
 			for (SpellTicker.LingeringObject lingeringObject : SpellTicker.getStorageMap()) {
-				if (lingeringObject.getSpellRing() == spellRing) return false;
+				if (lingeringObject.getSpellRing() == spellRing
+						|| lingeringObject.getSpellData() == data) return true;
 			}
 			SpellTicker.addLingerSpell(spellRing, data, ((ILingeringModule) this).getLingeringTime(data, spellRing));
 		}
