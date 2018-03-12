@@ -16,7 +16,7 @@ entity.spirit_wight.name=Criatura Espiritual
 entity.unicorn.name=Unicórnio
 
 item.wizardry:book.name=Códice do Feiticeiro
-item.wizardry:ring.name=Anel Dourado
+item.wizardry:spellRing.name=Anel Dourado
 item.wizardry:ring_pearl.name=Anel Dourado
 item.wizardry:devil_dust.name=Pó Demoníaco
 item.wizardry:mana_pearl.name=Pérola de Mana

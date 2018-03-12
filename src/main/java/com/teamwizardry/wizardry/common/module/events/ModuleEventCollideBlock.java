@@ -2,7 +2,6 @@ package com.teamwizardry.wizardry.common.module.events;
 
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEvent;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import net.minecraft.util.math.BlockPos;
@@ -12,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.BLOCK_HIT;
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ENTITY_HIT;
 
 /**
@@ -29,20 +27,14 @@ public class ModuleEventCollideBlock extends ModuleEvent {
 
 	@Override
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		BlockPos pos = spell.getData(BLOCK_HIT);
+		BlockPos pos = spell.getTargetPos();
 		spell.removeData(ENTITY_HIT);
-		return pos != null && nextModule != null && nextModule.run(spell);
+		return pos != null;
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void render(@Nonnull SpellData spell, @NotNull SpellRing spellRing) {
 
-	}
-
-	@Nonnull
-	@Override
-	public Module copy() {
-		return cloneModule(new ModuleEventCollideBlock());
 	}
 }

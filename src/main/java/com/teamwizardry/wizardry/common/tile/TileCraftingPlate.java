@@ -193,7 +193,7 @@ public class TileCraftingPlate extends TileManaInteracter {
 				ItemNBTHelper.setFloat(infusedPearl, Constants.NBT.RAND, world.rand.nextFloat());
 				ItemNBTHelper.setString(infusedPearl, "type", EnumPearlType.INFUSED.toString());
 
-				// Process spell multipliers based on nacre quality
+				// Process spellData multipliers based on nacre quality
 				if (infusedPearl.getItem() instanceof INacreProduct) {
 					float purity = ((INacreProduct) infusedPearl.getItem()).getQuality(infusedPearl);
 					double multiplier;

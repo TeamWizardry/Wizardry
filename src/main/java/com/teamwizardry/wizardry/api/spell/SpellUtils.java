@@ -31,10 +31,10 @@ public class SpellUtils {
 	/**
 	 * Gets all SpellRings that exist in an ItemStack with the children of each ring inside
 	 * of them, compressed essentially.
-	 * This basically returns the head of each spell chain only.
+	 * This basically returns the head of each spellData chain only.
 	 *
 	 * @param spellHolder The ItemStack containing the spells.
-	 * @return List with all spell ring heads in the stack.
+	 * @return List with all spellData ring heads in the stack.
 	 */
 	public static List<SpellRing> getSpellChains(@Nonnull ItemStack spellHolder) {
 		List<SpellRing> rings = new ArrayList<>();
@@ -46,10 +46,10 @@ public class SpellUtils {
 	}
 
 	/**
-	 * Gets all spell ring heads (containing children inside of each).
+	 * Gets all spellData ring heads (containing children inside of each).
 	 *
 	 * @param list NBTTagList where each tag contains a whole SpellRing chain.
-	 * @return List with the spell ring heads.
+	 * @return List with the spellData ring heads.
 	 */
 	public static List<SpellRing> getSpellChains(@Nonnull NBTTagList list) {
 		ArrayList<SpellRing> rings = new ArrayList<>();
@@ -66,7 +66,7 @@ public class SpellUtils {
 	 * Gets all SpellRings children from the passed spellRing object with itself included.
 	 *
 	 * @param spellRing The SpellRing to uncompress.
-	 * @return List with all spell rings that exist in the spellRing including itself.
+	 * @return List with all spellData rings that exist in the spellRing including itself.
 	 */
 	public static List<SpellRing> getAllSpellRings(@Nonnull SpellRing spellRing) {
 		List<SpellRing> rings = new ArrayList<>();
@@ -82,8 +82,8 @@ public class SpellUtils {
 	 * Gets all SpellRings that exist in an ItemStack with children of each ring included
 	 * in the list returned.
 	 *
-	 * @param spellHolder The ItemStack containing the spell.
-	 * @return List with all spell rings that exist in the stack.
+	 * @param spellHolder The ItemStack containing the spellData.
+	 * @return List with all spellData rings that exist in the stack.
 	 */
 	public static List<SpellRing> getAllSpellRings(@Nonnull ItemStack spellHolder) {
 		List<SpellRing> rings = new ArrayList<>();

@@ -5,11 +5,11 @@ import com.teamwizardry.librarianlib.features.network.PacketBase;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.librarianlib.features.saving.SaveMethodGetter;
 import com.teamwizardry.librarianlib.features.saving.SaveMethodSetter;
-import com.teamwizardry.wizardry.api.spell.module.Module;
-import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
+import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.common.tile.TileMagiciansWorktable;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
@@ -36,13 +36,13 @@ public class PacketWorktableUpdate extends PacketBase {
 	@Save
 	private BlockPos pos;
 
-	private HashMap<Module, UUID> components;
+	private HashMap<SpellRing, UUID> components;
 	private HashMap<UUID, UUID> links;
 
 	public PacketWorktableUpdate() {
 	}
 
-	public PacketWorktableUpdate(int worldID, BlockPos pos, HashMap<Module, UUID> components, HashMap<UUID, UUID> links) {
+	public PacketWorktableUpdate(int worldID, BlockPos pos, HashMap<SpellRing, UUID> components, HashMap<UUID, UUID> links) {
 		this.worldID = worldID;
 		this.pos = pos;
 		this.components = components;
@@ -50,30 +50,24 @@ public class PacketWorktableUpdate extends PacketBase {
 	}
 
 	@SaveMethodSetter(saveName = "manual_saver")
-	private void manualSaveSetter(NBTTagCompound compound) {
+	private void manualSaveGetter(NBTTagCompound compound) {
 		if (compound == null) return;
 
-		components = new HashMap<>();
 		links = new HashMap<>();
+		components = new HashMap<>();
 
-		NBTTagList list = compound.getTagList("components", Constants.NBT.TAG_COMPOUND);
-		for (int i = 0; i < list.tagCount(); i++) {
-			NBTTagCompound compound1 = list.getCompoundTagAt(i);
-			if (compound1.hasKey("module") && compound1.hasKey("uuid")) {
+		for (NBTBase base : compound.getTagList("components", Constants.NBT.TAG_COMPOUND)) {
+			NBTTagCompound compound1 = (NBTTagCompound) base;
+			if (compound1.hasKey("ring") && compound1.hasKey("uuid")) {
 
-				NBTTagCompound nbtModule = compound1.getCompoundTag("module");
+				NBTTagCompound nbtModule = compound.getCompoundTag("ring");
 
-				if (nbtModule.hasKey("id")) {
-					Module module = ModuleRegistry.INSTANCE.getModule(nbtModule.getString("id"));
-					module.deserializeNBT(nbtModule);
-					components.put(module, UUID.fromString(compound1.getString("uuid")));
-				}
+				components.put(SpellRing.deserializeRing(nbtModule), compound1.getUniqueId("uuid"));
 			}
 		}
 
-		list = compound.getTagList("links", Constants.NBT.TAG_COMPOUND);
-		for (int i = 0; i < list.tagCount(); i++) {
-			NBTTagCompound compound1 = list.getCompoundTagAt(i);
+		for (NBTBase base : compound.getTagList("links", Constants.NBT.TAG_COMPOUND)) {
+			NBTTagCompound compound1 = (NBTTagCompound) base;
 			if (compound1.hasKey("uuid1") && compound1.hasKey("uuid2")) {
 				links.put(UUID.fromString(compound1.getString("uuid1")), UUID.fromString(compound1.getString("uuid2")));
 			}
@@ -81,29 +75,30 @@ public class PacketWorktableUpdate extends PacketBase {
 	}
 
 	@SaveMethodGetter(saveName = "manual_saver")
-	private NBTTagCompound manualSaveGetter() {
-		NBTTagCompound nbt = new NBTTagCompound();
+	private NBTTagCompound manualSaveSetter() {
+		NBTTagCompound compound = new NBTTagCompound();
 
-		if (components == null || links == null) return nbt;
+		if (components == null || links == null) return compound;
 
 		NBTTagList list = new NBTTagList();
-		for (Map.Entry<Module, UUID> entrySet : components.entrySet()) {
-			NBTTagCompound compound = new NBTTagCompound();
-			compound.setTag("module", entrySet.getKey().serializeNBT());
-			compound.setString("uuid", entrySet.getValue().toString());
-			list.appendTag(compound);
+		for (Map.Entry<SpellRing, UUID> entrySet : components.entrySet()) {
+			NBTTagCompound compound1 = new NBTTagCompound();
+			compound1.setTag("ring", entrySet.getKey().serializeNBT());
+			compound1.setString("uuid", entrySet.getValue().toString());
+			list.appendTag(compound1);
 		}
-		nbt.setTag("components", list);
+		compound.setTag("components", list);
 
 		list = new NBTTagList();
 		for (Map.Entry<UUID, UUID> entrySet : links.entrySet()) {
-			NBTTagCompound compound = new NBTTagCompound();
-			compound.setString("uuid1", entrySet.getKey().toString());
-			compound.setString("uuid2", entrySet.getValue().toString());
-			list.appendTag(compound);
+			NBTTagCompound compound1 = new NBTTagCompound();
+			compound1.setString("uuid1", entrySet.getKey().toString());
+			compound1.setString("uuid2", entrySet.getValue().toString());
+			list.appendTag(compound1);
 		}
-		nbt.setTag("links", list);
-		return nbt;
+		compound.setTag("links", list);
+
+		return compound;
 	}
 
 

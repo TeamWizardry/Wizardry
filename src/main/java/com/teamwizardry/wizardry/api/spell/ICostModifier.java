@@ -8,6 +8,6 @@ import com.teamwizardry.wizardry.api.spell.module.Module;
 public interface ICostModifier {
 
 	default void setCostMultiplier(Module module, double multiplier) {
-		module.setMultiplier(module.getMultiplier() * multiplier);
+		//	module.setMultiplier(module.getMultiplier() * multiplier);
 	}
 }

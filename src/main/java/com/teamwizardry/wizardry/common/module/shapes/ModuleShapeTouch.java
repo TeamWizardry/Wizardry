@@ -8,7 +8,6 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
@@ -26,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.LOOK;
 
 /**
  * Created by Demoniaque.
@@ -42,42 +41,32 @@ public class ModuleShapeTouch extends ModuleShape {
 
 	@Override
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		Entity caster = spell.getData(CASTER);
-		Entity target = spell.getData(ENTITY_HIT);
-		Vec3d targetHit = spell.getData(TARGET_HIT);
-		Vec3d origin = spell.getData(ORIGIN);
 		Vec3d look = spell.getData(LOOK);
 
-		Entity finalEntity = isHead() ? (caster == null ? target : caster) : target;
+		Entity caster = spell.getCaster();
+		Vec3d origin = spell.getOrigin();
 
-		if (look == null) return true;
-		if (finalEntity == null && targetHit == null && origin == null) return true;
-		if (isHead() && origin == null) return true;
-		if (!isHead() && targetHit == null) return true;
+		if (look == null) return false;
+		if (caster == null) return false;
+		if (origin == null) return false;
 
 		RayTraceResult result = new RayTrace(
-				spell.world, look, isHead() ? origin : targetHit,
-				finalEntity instanceof EntityLivingBase ? ((EntityLivingBase) finalEntity).getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue() : 5)
-				.setSkipEntity(finalEntity)
+				spell.world, look, origin,
+				caster instanceof EntityLivingBase ? ((EntityLivingBase) caster).getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue() : 5)
+				.setSkipEntity(caster)
 				.setReturnLastUncollidableBlock(true)
 				.setIgnoreBlocksWithoutBoundingBoxes(false)
 				.trace();
 
 		spell.processBlock(result.getBlockPos(), result.sideHit, result.hitVec);
 
-		return runNextModule(spell);
+		return true;
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void render(@Nonnull SpellData spell, @NotNull SpellRing spellRing) {
-		for (Module child : getAllChildModules()) {
-			if (child.overrideShapeRunClient(this, spell)) {
-				return;
-			}
-		}
-
-		Entity targetEntity = spell.getData(ENTITY_HIT);
+		Entity targetEntity = spell.getVictim();
 
 		if (targetEntity == null) return;
 
@@ -97,11 +86,5 @@ public class ModuleShapeTouch extends ModuleShape {
 			glitter.setLifetime(RandUtil.nextInt(10, 20));
 			glitter.setScaleFunction(new InterpScale(1, 0));
 		});
-	}
-
-	@Nonnull
-	@Override
-	public Module copy() {
-		return cloneModule(new ModuleShapeTouch());
 	}
 }

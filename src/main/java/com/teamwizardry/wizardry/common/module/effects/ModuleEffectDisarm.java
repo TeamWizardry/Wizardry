@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.common.module.effects;
 import com.teamwizardry.librarianlib.features.methodhandles.MethodHandleHelper;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
@@ -26,9 +25,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ENTITY_HIT;
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.TARGET_HIT;
-
 /**
  * Created by Demoniaque.
  */
@@ -45,11 +41,11 @@ public class ModuleEffectDisarm extends ModuleEffect {
 
 	@Override
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		Entity targetEntity = spell.getData(ENTITY_HIT);
+		Entity targetEntity = spell.getVictim();
 
 		if (targetEntity instanceof EntityLivingBase) {
 			if (!spell.world.isRemote) {
-				if (!tax(this, spell)) return false;
+				if (!tax(this, spell, spellRing)) return false;
 
 				ItemStack held = ((EntityLivingBase) targetEntity).getHeldItemMainhand();
 
@@ -104,16 +100,10 @@ public class ModuleEffectDisarm extends ModuleEffect {
 	@SideOnly(Side.CLIENT)
 	public void render(@Nonnull SpellData spell, @NotNull SpellRing spellRing) {
 		World world = spell.world;
-		Vec3d position = spell.getData(TARGET_HIT);
+		Vec3d position = spell.getTarget();
 
 		if (position == null) return;
 
 		LibParticles.EFFECT_REGENERATE(world, position, getPrimaryColor());
-	}
-
-	@Nonnull
-	@Override
-	public Module copy() {
-		return cloneModule(new ModuleEffectDisarm());
 	}
 }

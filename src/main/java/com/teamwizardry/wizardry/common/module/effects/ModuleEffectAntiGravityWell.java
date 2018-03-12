@@ -12,7 +12,10 @@ import com.teamwizardry.wizardry.api.spell.ILingeringModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
-import com.teamwizardry.wizardry.api.spell.module.*;
+import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
+import com.teamwizardry.wizardry.api.spell.module.ModuleType;
+import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseAOE;
@@ -31,7 +34,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ENTITY_HIT;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ORIGIN;
 
 /**
  * Created by Demoniaque.
@@ -60,21 +64,21 @@ public class ModuleEffectAntiGravityWell extends ModuleEffect implements ILinger
 	@SuppressWarnings("unused")
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
-		Vec3d position = spell.getData(TARGET_HIT);
-		Entity caster = spell.getData(CASTER);
+		Vec3d position = spell.getTarget();
+		Entity caster = spell.getCaster();
 
 		if (position == null) return false;
 
-		double strength = getModifier(spell, Attributes.AREA, 3, 16);
+		double strength = spellRing.getModifier(Attributes.AREA, 3, 16);
 
 		for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(position)).grow(strength, strength, strength))) {
 			if (entity == null) continue;
 			double dist = entity.getPositionVector().distanceTo(position);
 			if (dist < 2) continue;
 			if (dist > strength) continue;
-			if (!tax(this, spell)) return false;
+			if (!tax(this, spell, spellRing)) return false;
 
-			final double upperMag = getModifier(spell, Attributes.POTENCY, 10, 50) / 100.0;
+			final double upperMag = spellRing.getModifier(Attributes.POTENCY, 10, 50) / 100.0;
 			final double scale = 3.5;
 			double mag = upperMag * (scale * dist / (-scale * dist - 1) + 1);
 
@@ -124,14 +128,8 @@ public class ModuleEffectAntiGravityWell extends ModuleEffect implements ILinger
 		});
 	}
 
-	@Nonnull
 	@Override
-	public Module copy() {
-		return cloneModule(new ModuleEffectAntiGravityWell());
-	}
-
-	@Override
-	public int getLingeringTime(SpellData spell) {
-		return (int) (getModifier(spell, Attributes.DURATION, 10, 64) * 500);
+	public int getLingeringTime(SpellData spell, SpellRing spellRing) {
+		return (int) (spellRing.getModifier(Attributes.DURATION, 10, 64) * 500);
 	}
 }

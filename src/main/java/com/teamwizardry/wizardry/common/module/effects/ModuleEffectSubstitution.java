@@ -12,7 +12,6 @@ import com.teamwizardry.wizardry.api.spell.IBlockSelectable;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
-import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
@@ -44,7 +43,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 import java.util.HashSet;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.FACE_HIT;
 
 /**
  * Created by Demoniaque.
@@ -67,15 +66,15 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 	@Override
 	@SuppressWarnings("unused")
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		Entity targetEntity = spell.getData(ENTITY_HIT);
-		Entity caster = spell.getData(CASTER);
-		BlockPos targetBlock = spell.getData(BLOCK_HIT);
+		Entity targetEntity = spell.getVictim();
+		Entity caster = spell.getCaster();
+		BlockPos targetBlock = spell.getTargetPos();
 		EnumFacing facing = spell.getData(FACE_HIT);
 
 		if (caster == null) return false;
 
 		if (targetEntity != null && targetEntity instanceof EntityLivingBase) {
-			if (!tax(this, spell)) return false;
+			if (!tax(this, spell, spellRing)) return false;
 
 			Vec3d posTarget = new Vec3d(targetEntity.posX, targetEntity.posY, targetEntity.posZ),
 					posCaster = new Vec3d(caster.posX, caster.posY, caster.posZ);
@@ -104,7 +103,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 
 				if (touchedBlock.getBlock() == state.getBlock()) return false;
 
-				double strength = getModifier(spell, Attributes.RANGE, 10, 64);
+				double strength = spellRing.getModifier(Attributes.RANGE, 10, 64);
 
 				ItemStack stackBlock = null;
 				for (ItemStack stack : ((EntityPlayer) caster).inventory.mainInventory) {
@@ -127,7 +126,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 				if (blocks.isEmpty()) return true;
 
 				for (BlockPos ignored : blocks) {
-					if (!tax(this, spell)) return false;
+					if (!tax(this, spell, spellRing)) return false;
 					BlockPos nearest = null;
 					for (BlockPos pos : blocks) {
 						if (spell.world.isAirBlock(pos)) continue;
@@ -196,9 +195,9 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 	@SideOnly(Side.CLIENT)
 	public void render(@Nonnull SpellData spell, @NotNull SpellRing spellRing) {
 		World world = spell.world;
-		Entity caster = spell.getData(CASTER);
-		BlockPos targetBlock = spell.getData(BLOCK_HIT);
-		Entity targetEntity = spell.getData(ENTITY_HIT);
+		Entity caster = spell.getCaster();
+		BlockPos targetBlock = spell.getTargetPos();
+		Entity targetEntity = spell.getVictim();
 
 		if (targetEntity != null && caster != null) {
 
@@ -245,11 +244,5 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 				));
 			});
 		}
-	}
-
-	@Nonnull
-	@Override
-	public Module copy() {
-		return cloneModule(new ModuleEffectSubstitution());
 	}
 }

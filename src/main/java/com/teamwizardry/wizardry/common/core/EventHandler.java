@@ -7,7 +7,8 @@ import com.teamwizardry.wizardry.api.block.FluidTracker;
 import com.teamwizardry.wizardry.api.events.SpellCastEvent;
 import com.teamwizardry.wizardry.api.spell.IContinuousModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
-import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.TeleportUtil;
@@ -126,15 +127,15 @@ public class EventHandler {
 
 	@SubscribeEvent
 	public void fairyAmbush(SpellCastEvent event) {
-		Entity caster = event.spell.getData(SpellData.DefaultKeys.CASTER);
+		Entity caster = event.getSpellData().getData(SpellData.DefaultKeys.CASTER);
 		int chance = 5;
-		for (Module module : event.module.getAllChildModules())
-			if (module instanceof IContinuousModule) {
+		for (SpellRing spellRing : SpellUtils.getAllSpellRings(event.getSpellRing()))
+			if (spellRing instanceof IContinuousModule) {
 				chance = 1000;
 				break;
 			}
 		if (RandUtil.nextInt(chance) == 0 && caster != null) {
-			List<EntityFairy> fairyList = event.spell.world.getEntitiesWithinAABB(EntityFairy.class, new AxisAlignedBB(caster.getPosition()).grow(64, 64, 64));
+			List<EntityFairy> fairyList = event.getSpellData().world.getEntitiesWithinAABB(EntityFairy.class, new AxisAlignedBB(caster.getPosition()).grow(64, 64, 64));
 			if (fairyList.isEmpty()) return;
 			EntityFairy fairy = fairyList.get(RandUtil.nextInt(fairyList.size() - 1));
 			if (fairy == null) return;

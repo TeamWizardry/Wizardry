@@ -55,8 +55,8 @@ public class ModuleEffectLightning extends ModuleEffect {
 	@Override
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
-		Vec3d target = spell.getData(TARGET_HIT);
-		Entity caster = spell.getData(CASTER);
+		Vec3d target = spell.getTarget();
+		Entity caster = spell.getCaster();
 		float yaw = spell.getData(YAW, 0F);
 		float pitch = spell.getData(PITCH, 0F);
 
@@ -72,7 +72,7 @@ public class ModuleEffectLightning extends ModuleEffect {
 		double range = spellRing.getModifier(Attributes.RANGE, 10, 32);
 		double strength = spellRing.getModifier(Attributes.POTENCY, 4, 20) / 2.0;
 
-		if (!tax(this, spell)) return false;
+		if (!tax(this, spell, spellRing)) return false;
 
 		RayTraceResult traceResult = new RayTrace(world, PosUtils.vecFromRotations(pitch, yaw), target, range).setSkipBlocks(true).setSkipEntities(true).trace();
 
@@ -108,8 +108,8 @@ public class ModuleEffectLightning extends ModuleEffect {
 		World world = spell.world;
 		float yaw = spell.getData(YAW, 0F);
 		float pitch = spell.getData(PITCH, 0F);
-		Entity caster = spell.getData(CASTER);
-		Vec3d target = spell.getData(TARGET_HIT);
+		Entity caster = spell.getCaster();
+		Vec3d target = spell.getTarget();
 		long seed = spell.getData(SEED, 0L);
 		double range = spellRing.getModifier(Attributes.RANGE, 10, 32);
 

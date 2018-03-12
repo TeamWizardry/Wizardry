@@ -7,5 +7,5 @@ import javax.annotation.Nonnull;
  */
 public interface IOverrideCooldown {
 
-	int getNewCooldown(@Nonnull SpellData data);
+	int getNewCooldown(@Nonnull SpellData data, SpellRing ring);
 }

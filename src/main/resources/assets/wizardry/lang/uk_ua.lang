@@ -22,7 +22,7 @@ entity.unicorn.name=Єдиноріг
 entity.spell_projectile.name=Заклинання
 
 item.wizardry:book.name=Кодекс заклинателя
-item.wizardry:ring.name=Золоте кільце
+item.wizardry:spellRing.name=Золоте кільце
 item.wizardry:ring_pearl.name=Золоте кільце
 item.wizardry:devil_dust.name=Демонічна пил
 item.wizardry:mana_pearl.name=Перли мани

@@ -49,7 +49,7 @@ public final class VersionChecker {
 				String clientBuild = Wizardry.VERSION;
 				if (Utils.compareVersions(onlineVersion, clientBuild) == 1) {
 					ArrayList<String> messages = new ArrayList<>();
-					String base = "wizardry.update";
+					String base = "wizardry.init";
 					int n = 0;
 					while (LibrarianLib.PROXY.canTranslate(base + n))
 						messages.add(base + n++);

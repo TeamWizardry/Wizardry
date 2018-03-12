@@ -10,7 +10,6 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
-import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
@@ -32,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.FACE_HIT;
 
 /**
  * Created by Demoniaque.
@@ -55,15 +54,15 @@ public class ModuleEffectBackup extends ModuleEffect {
 	@SuppressWarnings("unused")
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
-		Entity targetEntity = spell.getData(ENTITY_HIT);
-		Vec3d targetPos = spell.getData(TARGET_HIT);
+		Entity targetEntity = spell.getVictim();
+		Vec3d targetPos = spell.getTarget();
 		EnumFacing facing = spell.getData(FACE_HIT);
-		Entity caster = spell.getData(CASTER);
+		Entity caster = spell.getCaster();
 
-		double range = getModifier(spell, Attributes.AREA, 1, 16) / 2.0;
-		double time = getModifier(spell, Attributes.DURATION, 500, 1000);
+		double range = spellRing.getModifier(Attributes.AREA, 1, 16) / 2.0;
+		double time = spellRing.getModifier(Attributes.DURATION, 500, 1000);
 
-		if (!tax(this, spell)) return false;
+		if (!tax(this, spell, spellRing)) return false;
 
 		if (targetPos == null) return true;
 		if (!(caster instanceof EntityLivingBase)) return true;
@@ -83,7 +82,7 @@ public class ModuleEffectBackup extends ModuleEffect {
 	@SideOnly(Side.CLIENT)
 	public void render(@Nonnull SpellData spell, @NotNull SpellRing spellRing) {
 		World world = spell.world;
-		Vec3d position = spell.getData(TARGET_HIT);
+		Vec3d position = spell.getTarget();
 
 		if (position == null) return;
 
@@ -107,11 +106,5 @@ public class ModuleEffectBackup extends ModuleEffect {
 			glitter.addMotion(new Vec3d(RandUtil.nextDouble(-0.05, 0.05), RandUtil.nextDouble(0.01, 0.05), RandUtil.nextDouble(-0.05, 0.05)));
 		});
 
-	}
-
-	@Nonnull
-	@Override
-	public Module copy() {
-		return cloneModule(new ModuleEffectBackup());
 	}
 }

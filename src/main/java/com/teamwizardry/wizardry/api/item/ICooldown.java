@@ -3,11 +3,7 @@ package com.teamwizardry.wizardry.api.item;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.spell.IContinuousModule;
-import com.teamwizardry.wizardry.api.spell.IOverrideCooldown;
-import com.teamwizardry.wizardry.api.spell.SpellData;
-import com.teamwizardry.wizardry.api.spell.SpellUtils;
-import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.*;
 import com.teamwizardry.wizardry.common.network.PacketSyncCooldown;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -17,7 +13,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
+import java.util.List;
 
 public interface ICooldown {
 
@@ -28,18 +24,18 @@ public interface ICooldown {
 		boolean cooldownOverriden = false;
 		boolean hasNonContinuous = false;
 
-		ArrayList<Module> modules = SpellUtils.getModules(stack);
+		List<SpellRing> rings = SpellUtils.getAllSpellRings(stack);
 
-		for (Module module : modules) {
-			if (!(module instanceof IContinuousModule)) {
+		for (SpellRing ring : rings) {
+			if (!(ring instanceof IContinuousModule)) {
 				hasNonContinuous = true;
 			} else continue;
-			if (module.getCooldownTime() > maxCooldown) maxCooldown = module.getCooldownTime();
+			if (ring.getCooldownTime() > maxCooldown) maxCooldown = ring.getCooldownTime();
 		}
 
-		for (Module module : SpellUtils.getAllModules(stack)) {
-			if (module instanceof IOverrideCooldown) {
-				int cooldown = ((IOverrideCooldown) module).getNewCooldown(data);
+		for (SpellRing ring : SpellUtils.getAllSpellRings(stack)) {
+			if (ring.getModule() instanceof IOverrideCooldown) {
+				int cooldown = ring.getCooldownTime(data);
 				if (cooldown > overridenCooldown) overridenCooldown = cooldown;
 				cooldownOverriden = true;
 			}

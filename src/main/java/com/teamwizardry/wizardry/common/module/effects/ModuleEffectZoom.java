@@ -12,7 +12,6 @@ import com.teamwizardry.wizardry.api.spell.ProcessData;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
-import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
@@ -35,7 +34,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.LOOK;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ORIGIN;
 import static com.teamwizardry.wizardry.api.spell.SpellData.constructPair;
 
 /**
@@ -79,18 +79,18 @@ public class ModuleEffectZoom extends ModuleEffect {
 	@Override
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
-		Entity entityHit = spell.getData(ENTITY_HIT);
+		Entity entityHit = spell.getVictim();
 		Vec3d look = spell.getData(LOOK);
 		Vec3d origin = spell.getData(ORIGIN);
 
 		if (entityHit == null) return true;
 		else {
-			if (!tax(this, spell)) return false;
+			if (!tax(this, spell, spellRing)) return false;
 
 			if (look == null) return true;
 			if (origin == null) return true;
 
-			double range = getModifier(spell, Attributes.RANGE, 10, 32);
+			double range = spellRing.getModifier(Attributes.RANGE, 10, 32);
 			RayTraceResult trace = new RayTrace(world, look, origin, range)
 					.setSkipEntity(entityHit)
 					.setIgnoreBlocksWithoutBoundingBoxes(true)
@@ -119,7 +119,7 @@ public class ModuleEffectZoom extends ModuleEffect {
 	public void render(@Nonnull SpellData spell, @NotNull SpellRing spellRing) {
 		World world = spell.world;
 
-		Entity entity = spell.getData(ENTITY_HIT);
+		Entity entity = spell.getVictim();
 		if (entity == null) return;
 
 		Vec3d origin = spell.getData(ORIGINAL_LOC);
@@ -156,11 +156,5 @@ public class ModuleEffectZoom extends ModuleEffect {
 				glitter.setAlphaFunction(new InterpFadeInOut(0f, 1f));
 			});
 		});
-	}
-
-	@Nonnull
-	@Override
-	public Module copy() {
-		return cloneModule(new ModuleEffectZoom());
 	}
 }

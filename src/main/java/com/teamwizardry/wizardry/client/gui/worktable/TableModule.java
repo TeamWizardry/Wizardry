@@ -96,9 +96,9 @@ public class TableModule {
 			Vec2d currentPos = event.component.thisPosToOtherContext(null);
 			if (prevPos.getXi() == currentPos.getXi()
 					&& prevPos.getYi() == currentPos.getYi()) {
-				//Module lastModifier = ModuleRegistry.INSTANCE.getModule((String) event.component.getData(String.class, "last_modifier_type"));
+				//Module lastModifier = ModuleRegistry.INSTANCE.getModule((String) event.component.getSpellData(String.class, "last_modifier_type"));
 				//if (lastModifier != null && event.component.hasData(Integer.class, lastModifier.getID())) {
-				//	int x = (int) event.component.getData(Integer.class, lastModifier.getID());
+				//	int x = (int) event.component.getSpellData(Integer.class, lastModifier.getID());
 				//	if (event.getButton() == EnumMouseButton.LEFT) x++;
 				//	else if (event.getButton() == EnumMouseButton.RIGHT) x--;
 				//	if (x <= 0) event.component.removeData(Integer.class, lastModifier.getID());

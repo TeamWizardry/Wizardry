@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.common.module.effects;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
-import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
@@ -28,8 +27,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 import java.util.HashSet;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
-
 /**
  * Created by Demoniaque.
  */
@@ -50,11 +47,11 @@ public class ModuleEffectBreak extends ModuleEffect {
 	@Override
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
-		BlockPos targetPos = spell.getData(BLOCK_HIT);
-		Entity caster = spell.getData(CASTER);
+		BlockPos targetPos = spell.getTargetPos();
+		Entity caster = spell.getCaster();
 
-		double range = getModifier(spell, Attributes.AREA, 1, 64);
-		double strength = getModifier(spell, Attributes.POTENCY, 1, 20) / 4;
+		double range = spellRing.getModifier(Attributes.AREA, 1, 64);
+		double strength = spellRing.getModifier(Attributes.POTENCY, 1, 20) / 4;
 
 		if (targetPos != null) {
 			Block block = world.getBlockState(targetPos).getBlock();
@@ -67,7 +64,7 @@ public class ModuleEffectBreak extends ModuleEffect {
 
 				float hardness = world.getBlockState(pos).getBlockHardness(world, pos);
 				if (hardness >= 0 && hardness < strength) {
-					if (!tax(this, spell)) return false;
+					if (!tax(this, spell, spellRing)) return false;
 					BlockUtils.breakBlock(world, pos, null, caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null, true);
 				}
 			}
@@ -116,16 +113,10 @@ public class ModuleEffectBreak extends ModuleEffect {
 	@SideOnly(Side.CLIENT)
 	public void render(@Nonnull SpellData spell, @NotNull SpellRing spellRing) {
 		World world = spell.world;
-		Vec3d position = spell.getData(TARGET_HIT);
+		Vec3d position = spell.getTarget();
 
 		if (position == null) return;
 
 		LibParticles.EXPLODE(world, position, getPrimaryColor(), getSecondaryColor(), 0.2, 0.3, 20, 40, 10, true);
-	}
-
-	@Nonnull
-	@Override
-	public Module copy() {
-		return cloneModule(new ModuleEffectBreak());
 	}
 }

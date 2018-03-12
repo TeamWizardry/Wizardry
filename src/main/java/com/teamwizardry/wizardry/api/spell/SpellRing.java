@@ -1,11 +1,17 @@
 package com.teamwizardry.wizardry.api.spell;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.saving.Savable;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
 import com.teamwizardry.wizardry.api.spell.attribute.Operation;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
+import com.teamwizardry.wizardry.init.ModItems;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -21,6 +27,7 @@ import java.util.Set;
 /**
  * Modules ala IBlockStates
  */
+@Savable
 public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 	/**
@@ -59,7 +66,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	@Nullable
 	private SpellRing childRing = null;
 
-	private float powerMultiplier = 1, manaMultiplier = 1, burnoutMultiplier = 1;
+	private float powerMultiplier = 1, manaMultiplier = 1, burnoutMultiplier = 0;
 
 	private SpellRing() {
 	}
@@ -84,7 +91,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	/**
 	 * Will check if this ring's run method is overridden by any of it's children
 	 */
-	public final boolean isRunOverriden() {
+	public boolean isRunOverriden() {
 		for (SpellRing ring : getAllChildRings()) {
 			if (ring.overrideParentRuns()) return true;
 		}
@@ -101,7 +108,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	/**
 	 * Will check if this ring's render method is overridden by any of it's children
 	 */
-	public final boolean isRenderOverridden() {
+	public boolean isRenderOverridden() {
 		for (SpellRing ring : getAllChildRings()) {
 			if (ring.overrideParentRenders()) return true;
 		}
@@ -109,11 +116,11 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	}
 
 	/**
-	 * Will run the spell from this ring and down to it's children including rendering.
+	 * Will run the spellData from this ring and down to it's children including rendering.
 	 *
 	 * @param data The SpellData object.
 	 */
-	public final boolean runSpellRing(SpellData data) {
+	public boolean runSpellRing(SpellData data) {
 		boolean success = !isRunOverriden() && module != null && module.castSpell(data, this);
 		if (success) {
 
@@ -133,13 +140,13 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	 * @param attribute The attribute you want. List in Attributes for default ones.
 	 * @param min       Min range.
 	 * @param max       Max range.
-	 * @return The final double potency of a modifier.
+	 * @return The double potency of a modifier.
 	 */
-	public final double getModifier(String attribute, double min, double max) {
+	public double getModifier(String attribute, double min, double max) {
 		return (attributes.hasKey(attribute) ? MathHelper.clamp(min + attributes.getDouble(attribute), min, max) : min) * getBurnoutMultiplier() * getPowerMultiplier();
 	}
 
-	public final void processModifiers(List<AttributeModifier> modifiersToApply) {
+	public void processModifiers(List<AttributeModifier> modifiersToApply) {
 		ArrayListMultimap<Operation, AttributeModifier> sortedMap = ArrayListMultimap.create();
 		for (AttributeModifier modifier : modifiersToApply)
 			sortedMap.put(modifier.getOperation(), modifier);
@@ -154,6 +161,15 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 				Wizardry.logger.info(module == null ? "<null module>" : module.getID() + ": Attribute: " + attribute + ": " + current + "-> " + newValue);
 			}
 		}
+	}
+
+	public final float getReductionMultiplier(EntityLivingBase caster) {
+		ItemStack stack = BaublesSupport.getItem(caster, ModItems.CAPE);
+		if (stack != null) {
+			float time = ItemNBTHelper.getInt(stack, "maxTick", 0);
+			return (float) MathHelper.clamp(1 - (time / 1000000.0), 1, 0.25);
+		}
+		return 1;
 	}
 
 	/**
@@ -173,54 +189,56 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	}
 
 	@Nullable
-	public final SpellRing getChildRing() {
+	public SpellRing getChildRing() {
 		return childRing;
 	}
 
-	public final void setChildRing(@Nonnull SpellRing childRing) {
+	public void setChildRing(@Nonnull SpellRing childRing) {
 		this.childRing = childRing;
 
 		updateColorChain();
 	}
 
 	@Nullable
-	public final SpellRing getParentRing() {
+	public SpellRing getParentRing() {
 		return parentRing;
 	}
 
-	public final void setParentRing(@Nullable SpellRing parentRing) {
+	public void setParentRing(@Nullable SpellRing parentRing) {
 		this.parentRing = parentRing;
 	}
 
 	@Nullable
-	public final Module getModule() {
+	public Module getModule() {
 		return module;
 	}
 
-	public final void setModule(@NotNull Module module) {
+	public void setModule(@NotNull Module module) {
 		this.module = module;
 
 		setManaMultiplier(module.getManaMultiplier());
 		setBurnoutMultiplier(module.getBurnoutMultiplier());
 		setPowerMultiplier(module.getPowerMultiplier());
+
+		processModifiers(module.getAttributes());
 	}
 
 	@Nonnull
-	public final Color getPrimaryColor() {
+	public Color getPrimaryColor() {
 		return primaryColor;
 	}
 
-	public final void setPrimaryColor(@Nonnull Color primaryColor) {
+	public void setPrimaryColor(@Nonnull Color primaryColor) {
 		this.primaryColor = primaryColor;
 		updateColorChain();
 	}
 
 	@Nonnull
-	public final Color getSecondaryColor() {
+	public Color getSecondaryColor() {
 		return secondaryColor;
 	}
 
-	public final void setSecondaryColor(@Nonnull Color secondaryColor) {
+	public void setSecondaryColor(@Nonnull Color secondaryColor) {
 		this.secondaryColor = secondaryColor;
 	}
 
@@ -232,27 +250,27 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		getParentRing().updateColorChain();
 	}
 
-	public final float getPowerMultiplier() {
+	public float getPowerMultiplier() {
 		return powerMultiplier;
 	}
 
-	public final void setPowerMultiplier(float powerMultiplier) {
+	public void setPowerMultiplier(float powerMultiplier) {
 		this.powerMultiplier = powerMultiplier;
 	}
 
-	public final void multiplyPowerMultiplier(float powerMultiplier) {
+	public void multiplyPowerMultiplier(float powerMultiplier) {
 		this.powerMultiplier *= powerMultiplier;
 	}
 
-	public final float getManaMultiplier() {
+	public float getManaMultiplier() {
 		return manaMultiplier;
 	}
 
-	public final void setManaMultiplier(float manaMultiplier) {
+	public void setManaMultiplier(float manaMultiplier) {
 		this.manaMultiplier = manaMultiplier;
 	}
 
-	public final void multiplyManaMultiplier(float manaMultiplier) {
+	public void multiplyManaMultiplier(float manaMultiplier) {
 		this.manaMultiplier *= manaMultiplier;
 	}
 
@@ -264,37 +282,78 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	 *
 	 * @return The INVERTED burnout multiplier.
 	 */
-	public final float getBurnoutMultiplier() {
+	public float getBurnoutMultiplier() {
 		return 1 - burnoutMultiplier;
 	}
 
-	public final void setBurnoutMultiplier(float burnoutMultiplier) {
+	public void setBurnoutMultiplier(float burnoutMultiplier) {
 		this.burnoutMultiplier = burnoutMultiplier;
 	}
 
-	public final void multiplyBurnoutMultiplier(float burnoutMultiplier) {
+	public void multiplyBurnoutMultiplier(float burnoutMultiplier) {
 		this.burnoutMultiplier *= burnoutMultiplier;
 	}
 
-	public final void setMultiplierForAll(float multiplier) {
+	public void setMultiplierForAll(float multiplier) {
 		this.powerMultiplier = multiplier;
 		this.burnoutMultiplier = multiplier;
 		this.manaMultiplier = multiplier;
 	}
 
-	public final void multiplyMultiplierForAll(float multiplier) {
+	public void multiplyMultiplierForAll(float multiplier) {
 		this.powerMultiplier *= multiplier;
 		this.burnoutMultiplier *= multiplier;
 		this.manaMultiplier *= multiplier;
 	}
 
+	public double getManaDrain() {
+		return module != null ? module.getManaDrain() : 0;
+	}
+
+	public double getBurnoutFill() {
+		return module != null ? module.getBurnoutFill() : 0;
+	}
+
 	@Nonnull
-	public final NBTTagCompound getAttributes() {
+	public NBTTagCompound getAttributes() {
 		return attributes;
 	}
 
+	public int getCooldownTime(@Nullable SpellData data) {
+		if (data != null && module instanceof IOverrideCooldown)
+			return ((IOverrideCooldown) module).getNewCooldown(data, this);
+
+		return module != null ? module.getCooldownTime() : 0;
+	}
+
+	public int getCooldownTime() {
+		return getCooldownTime(null);
+	}
+
+	public int getChargeUpTime() {
+		return module != null ? module.getChargeupTime() : 0;
+	}
+
+	@Nullable
+	public String getModuleReadableName() {
+		return module != null ? module.getReadableName() : null;
+	}
+
 	@Override
-	public final NBTTagCompound serializeNBT() {
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+
+		SpellRing ring = this;
+		while (ring != null) {
+			builder.append(ring.getModuleReadableName()).append(" > ");
+			ring = ring.getChildRing();
+		}
+
+		return builder.toString();
+	}
+
+	@Override
+	public NBTTagCompound serializeNBT() {
 		NBTTagCompound compound = new NBTTagCompound();
 
 		compound.setTag("attributes", attributes);
@@ -309,7 +368,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	}
 
 	@Override
-	public final void deserializeNBT(NBTTagCompound nbt) {
+	public void deserializeNBT(NBTTagCompound nbt) {
 		if (nbt.hasKey("power_multiplier")) powerMultiplier = nbt.getFloat("power_multiplier");
 		if (nbt.hasKey("burnout_multiplier")) burnoutMultiplier = nbt.getFloat("burnout_multiplier");
 		if (nbt.hasKey("mana_multiplier")) manaMultiplier = nbt.getFloat("mana_multiplier");
@@ -325,7 +384,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		}
 	}
 
-	public final SpellRing copy() {
+	public SpellRing copy() {
 		return deserializeRing(serializeNBT());
 	}
 }

@@ -9,6 +9,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.nbt.*;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -76,6 +77,152 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 		return data.containsKey(pair) && data.get(pair) != null;
 	}
 
+	public void processTrace(RayTraceResult trace, @Nullable Vec3d fallback) {
+
+		if (trace.typeOfHit == RayTraceResult.Type.ENTITY)
+			processEntity(trace.entityHit, false);
+		else if (trace.typeOfHit == RayTraceResult.Type.BLOCK)
+			processBlock(trace.getBlockPos(), trace.sideHit, trace.hitVec);
+		else {
+			Vec3d vec = trace.hitVec == null ? fallback : trace.hitVec;
+
+			if (vec == null) return;
+			processBlock(new BlockPos(vec), null, vec);
+		}
+	}
+
+	public void processTrace(RayTraceResult trace) {
+		processTrace(trace, null);
+	}
+
+	@Nullable
+	public Vec3d getOriginWithFallback() {
+		Vec3d origin = getData(DefaultKeys.ORIGIN);
+		if (origin == null) {
+			Entity caster = getData(DefaultKeys.CASTER);
+			if (caster == null) {
+				Vec3d target = getData(DefaultKeys.TARGET_HIT);
+				if (target == null) {
+					BlockPos pos = getData(DefaultKeys.BLOCK_HIT);
+					if (pos == null) {
+						Entity victim = getData(DefaultKeys.ENTITY_HIT);
+						if (victim == null) {
+							return null;
+						} else return victim.getPositionVector().addVector(0, victim.height / 2.0, 0);
+					} else return new Vec3d(pos).addVector(0.5, 0.5, 0.5);
+				} else return target;
+			} else return caster.getPositionVector().addVector(0, caster.height / 2.0, 0);
+		} else return origin;
+	}
+
+	@Nullable
+	public Vec3d getOrigin() {
+		Vec3d origin = getData(DefaultKeys.ORIGIN);
+		if (origin == null) {
+			Entity caster = getData(DefaultKeys.CASTER);
+			if (caster == null) {
+				return null;
+			} else return caster.getPositionVector().addVector(0, caster.height / 2.0, 0);
+		} else return origin;
+	}
+
+	@Nullable
+	public Vec3d getTargetWithFallback() {
+		Vec3d target = getData(DefaultKeys.TARGET_HIT);
+		if (target == null) {
+			BlockPos pos = getData(DefaultKeys.BLOCK_HIT);
+			if (pos == null) {
+				Entity victim = getData(DefaultKeys.ENTITY_HIT);
+				if (victim == null) {
+					Vec3d origin = getData(DefaultKeys.ORIGIN);
+					if (origin == null) {
+						Entity caster = getData(DefaultKeys.CASTER);
+						if (caster == null) {
+							return null;
+						} else return caster.getPositionVector().addVector(0, caster.height / 2.0, 0);
+					}
+					return origin;
+				} else return victim.getPositionVector().addVector(0, victim.height / 2.0, 0);
+			} else return new Vec3d(pos).addVector(0.5, 0.5, 0.5);
+		}
+		return target;
+	}
+
+	@Nullable
+	public Vec3d getTarget() {
+		Vec3d target = getData(DefaultKeys.TARGET_HIT);
+		if (target == null) {
+			BlockPos pos = getData(DefaultKeys.BLOCK_HIT);
+			if (pos == null) {
+				Entity victim = getData(DefaultKeys.ENTITY_HIT);
+				if (victim == null) {
+					return null;
+				} else return victim.getPositionVector().addVector(0, victim.height / 2.0, 0);
+			} else return new Vec3d(pos).addVector(0.5, 0.5, 0.5);
+		}
+		return target;
+	}
+
+	@Nullable
+	public BlockPos getTargetPos() {
+		Vec3d target = getTarget();
+		if (target == null) return null;
+		return new BlockPos(target);
+	}
+
+	@Nullable
+	public Entity getCaster() {
+		return getData(DefaultKeys.CASTER);
+	}
+
+	@Nullable
+	public Entity getVictim() {
+		return getData(DefaultKeys.ENTITY_HIT);
+	}
+
+	@Nullable
+	public Entity getVictimWithCasterFallback() {
+		Entity victim = getVictim();
+		return victim == null ? getCaster() : victim;
+	}
+
+	@Nullable
+	public IWizardryCapability getCapability() {
+		IWizardryCapability capability = getData(DefaultKeys.CAPABILITY);
+		if (capability == null) {
+			Entity caster = getCaster();
+			if (caster == null) {
+				return null;
+			} else return WizardryCapabilityProvider.getCap(caster);
+		} else return capability;
+	}
+
+	public RayTraceResult.Type getHitType() {
+		if (getVictim() == null) {
+			Vec3d vec = getTarget();
+			if (vec == null) {
+				return RayTraceResult.Type.MISS;
+			} else return RayTraceResult.Type.BLOCK;
+		} else return RayTraceResult.Type.ENTITY;
+	}
+
+	public float getPitch() {
+		return getData(DefaultKeys.PITCH, 0f);
+	}
+
+	public float getYaw() {
+		return getData(DefaultKeys.YAW, 0f);
+	}
+
+	@Nullable
+	public Vec3d getOriginHand() {
+		Vec3d trueOrigin = getOriginWithFallback();
+		if (trueOrigin == null) return null;
+		float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - getYaw()));
+		float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - getYaw()));
+		return new Vec3d(offX, 0, offZ).add(trueOrigin);
+	}
+
 	public void processEntity(@Nonnull Entity entity, boolean asCaster) {
 		if (asCaster) {
 			addData(DefaultKeys.ORIGIN, entity.getPositionVector().addVector(0, entity.getEyeHeight(), 0));
@@ -87,15 +234,16 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 		} else {
 			addData(DefaultKeys.TARGET_HIT, entity.getPositionVector().addVector(0, entity.height / 2.0, 0));
 			addData(DefaultKeys.ENTITY_HIT, entity);
-			addData(DefaultKeys.BLOCK_HIT, null);
 		}
 	}
 
 	public void processBlock(@Nullable BlockPos pos, @Nullable EnumFacing facing, @Nullable Vec3d targetHit) {
-		if (pos != null) addData(DefaultKeys.BLOCK_HIT, pos);
-		if (targetHit != null) addData(DefaultKeys.TARGET_HIT, targetHit);
-		if (facing != null) addData(DefaultKeys.FACE_HIT, facing);
-		addData(DefaultKeys.ENTITY_HIT, null);
+		if (pos == null && targetHit != null) pos = new BlockPos(targetHit);
+		if (targetHit == null && pos != null) targetHit = new Vec3d(pos).addVector(0.5, 0.5, 0.5);
+
+		addData(DefaultKeys.BLOCK_HIT, pos);
+		addData(DefaultKeys.TARGET_HIT, targetHit);
+		addData(DefaultKeys.FACE_HIT, facing);
 	}
 
 	public SpellData copy() {
@@ -144,19 +292,6 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 	}
 
 	public static class DefaultKeys {
-		public static final Pair<String, Class<Integer>> TIME_LEFT = constructPair("time_left", Integer.class, new ProcessData.Process<NBTTagInt, Integer>() {
-			@Nonnull
-			@Override
-			public NBTTagInt serialize(@Nullable Integer object) {
-				if (object == null) return new NBTTagInt(1);
-				return new NBTTagInt(object);
-			}
-
-			@Override
-			public Integer deserialize(@Nonnull World world, @Nonnull NBTTagInt object) {
-				return object.getInt();
-			}
-		});
 
 		public static final Pair<String, Class<Integer>> MAX_TIME = constructPair("max_time", Integer.class, new ProcessData.Process<NBTTagInt, Integer>() {
 			@Nonnull
@@ -169,20 +304,6 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			@Override
 			public Integer deserialize(@Nonnull World world, @Nonnull NBTTagInt object) {
 				return object.getInt();
-			}
-		});
-
-		public static final Pair<String, Class<Float>> STRENGTH = constructPair("strength", Float.class, new ProcessData.Process<NBTTagFloat, Float>() {
-			@Nonnull
-			@Override
-			public NBTTagFloat serialize(@Nullable Float object) {
-				if (object == null) return new NBTTagFloat(1f);
-				return new NBTTagFloat(object);
-			}
-
-			@Override
-			public Float deserialize(@Nonnull World world, @Nonnull NBTTagFloat object) {
-				return object.getFloat();
 			}
 		});
 

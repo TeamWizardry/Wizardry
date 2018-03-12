@@ -13,7 +13,7 @@ import com.teamwizardry.wizardry.api.block.CachedStructure;
 import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.api.item.IInfusable;
 import com.teamwizardry.wizardry.api.spell.SpellBuilder;
-import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.render.block.TileCraftingPlateRenderer;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
@@ -106,9 +106,11 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 						stack.setCount(obj.getAsJsonPrimitive("count").getAsInt());
 						inventory.add(stack);
 					}
+
 					SpellBuilder builder = new SpellBuilder(inventory);
 					NBTTagList list = new NBTTagList();
-					for (Module module : builder.buildSpell()) list.appendTag(module.serializeNBT());
+					for (SpellRing ring : builder.buildSpell()) list.appendTag(ring.serializeNBT());
+
 					ItemNBTHelper.setList(pearl, Constants.NBT.SPELL, list);
 					ItemNBTHelper.setFloat(pearl, Constants.NBT.RAND, playerIn.world.rand.nextFloat());
 

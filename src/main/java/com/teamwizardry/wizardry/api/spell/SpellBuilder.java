@@ -72,7 +72,7 @@ public class SpellBuilder {
 		// Spell chain from multiple chains
 		for (List<ItemStack> line : lines) {
 
-			// List is made of all modules that aren't modifiers for this spell chain.
+			// List is made of all modules that aren't modifiers for this spellData chain.
 			List<SpellRing> lineModule = new ArrayList<>();
 
 			// Each module get's it's list of modifiers.

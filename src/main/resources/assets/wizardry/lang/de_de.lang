@@ -18,7 +18,7 @@ entity.unicorn.name=Einhorn
 entity.spell_projectile.name=Zauberstoß
 
 item.wizardry:book.name=Der Zauberer Kodex
-item.wizardry:ring.name=Goldener Ring
+item.wizardry:spellRing.name=Goldener Ring
 item.wizardry:ring_pearl.name=Goldener Ring
 item.wizardry:devil_dust.name=Teufelsstaub
 item.wizardry:mana_pearl.name=Mana Perle

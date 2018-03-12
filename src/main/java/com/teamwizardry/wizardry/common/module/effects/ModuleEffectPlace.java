@@ -4,7 +4,6 @@ import com.teamwizardry.wizardry.api.spell.IBlockSelectable;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
-import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
@@ -57,10 +56,10 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 	@Override
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
-		BlockPos targetPos = spell.getData(BLOCK_HIT);
+		BlockPos targetPos = spell.getTargetPos();
 		Vec3d originPos = spell.getData(ORIGIN);
-		Entity targetEntity = spell.getData(ENTITY_HIT);
-		Entity caster = spell.getData(CASTER);
+		Entity targetEntity = spell.getVictim();
+		Entity caster = spell.getCaster();
 		EnumFacing facing = spell.getData(FACE_HIT);
 		float yaw = spell.getData(YAW, 0F);
 		float pitch = spell.getData(PITCH, 0F);
@@ -73,7 +72,7 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 			facings.add(facing1);
 		}
 
-		double range = getModifier(spell, Attributes.AREA, 1, 64);
+		double range = spellRing.getModifier(Attributes.AREA, 1, 64);
 
 		if (targetPos == null) return true;
 
@@ -105,7 +104,7 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 				if (stackBlock == null) return true;
 
 				if (!world.isAirBlock(pos)) continue;
-				if (!tax(this, spell)) return false;
+				if (!tax(this, spell, spellRing)) return false;
 				//stackBlock.shrink(1);
 				IBlockState oldState = world.getBlockState(pos);
 
@@ -115,7 +114,7 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 			}
 		} else if (caster == null) {
 			if (!world.isAirBlock(targetPos)) return true;
-			if (!tax(this, spell)) return false;
+			if (!tax(this, spell, spellRing)) return false;
 
 			List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(targetPos).grow(3, 3, 3));
 			if (items.isEmpty()) return true;
@@ -176,16 +175,10 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 	@SideOnly(Side.CLIENT)
 	public void render(@Nonnull SpellData spell, @NotNull SpellRing spellRing) {
 		World world = spell.world;
-		Vec3d position = spell.getData(TARGET_HIT);
+		Vec3d position = spell.getTarget();
 
 		if (position == null) return;
 
 		LibParticles.EXPLODE(world, position, getPrimaryColor(), getSecondaryColor(), 0.2, 0.3, 20, 40, 10, true);
-	}
-
-	@Nonnull
-	@Override
-	public Module copy() {
-		return cloneModule(new ModuleEffectPlace());
 	}
 }

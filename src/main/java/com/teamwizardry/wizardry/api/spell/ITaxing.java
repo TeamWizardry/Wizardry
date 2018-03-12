@@ -13,19 +13,19 @@ public interface ITaxing {
 	/**
 	 * Will do the necessary costs to drain mana and fill burnout based on the multipliers passed
 	 *
-	 * @param module The module running the spell.
-	 * @param data   The spell data passed to the running spell.
-	 * @return If the tax was successfully deducted. If false, the spell needs to fail.
+	 * @param module    The module running the spellData.
+	 * @param data      The spellData data passed to the running spellData.
+	 * @param spellRing The spellData ring passed to the running spellData.
+	 * @return If the tax was successfully deducted. If false, the spellData needs to fail.
 	 */
-	default boolean tax(Module module, SpellData data) {
-		double multiplier = module.getMultiplier();
-		double manaCost = module.getManaDrain() * multiplier;
-		double burnoutCost = module.getBurnoutFill() * multiplier;
+	default boolean tax(Module module, SpellData data, SpellRing spellRing) {
+		double manaCost = module.getManaDrain() * module.getManaMultiplier();
+		double burnoutCost = module.getBurnoutFill() * module.getBurnoutMultiplier();
 
 		Entity caster = data.getData(SpellData.DefaultKeys.CASTER);
 
 		if (caster != null && caster instanceof EntityLivingBase) {
-			float reduction = module.getReductionMultiplier((EntityLivingBase) caster);
+			float reduction = spellRing.getReductionMultiplier((EntityLivingBase) caster);
 			manaCost *= reduction;
 			burnoutCost *= reduction;
 		}

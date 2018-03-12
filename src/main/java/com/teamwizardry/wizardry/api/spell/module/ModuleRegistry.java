@@ -78,17 +78,26 @@ public class ModuleRegistry {
 	}
 
 	public void processModules() {
-		Wizardry.logger.info("<<========================================================================>>");
-		Wizardry.logger.info("> Starting module registration processing.");
+		Wizardry.logger.info(" _______________________________________________________________________\\\\");
+		Wizardry.logger.info(" | Starting module registration");
 
 		HashSet<Module> processed = new HashSet<>();
 
-		for (Module rawModule : modules) {
-			File file = new File(directory, rawModule.getID() + ".json");
+		for (Module module : modules) {
+			Wizardry.logger.info(" | |");
+			Wizardry.logger.info(" | | Registering module " + module.getID());
+
+			File file = new File(directory, module.getID() + ".json");
 
 			if (!file.exists()) {
-				Wizardry.logger.error("  > SOMETHING WENT WRONG! " + rawModule.getID() + ".json does NOT exist. Ignoring module...");
+				Wizardry.logger.error(" | | |_ SOMETHING WENT WRONG! " + file.getName() + " does NOT exist.");
+				Wizardry.logger.error(" | |___ Failed to register module " + module.getID());
 				continue;
+			}
+
+			if (!file.canRead()) {
+				Wizardry.logger.error(" | | |_ SOMETHING WENT WRONG! Something is preventing me from reading " + file.getName());
+				Wizardry.logger.error(" | |___ Failed to register module " + module.getID());
 			}
 
 			JsonElement element;
@@ -100,18 +109,21 @@ public class ModuleRegistry {
 			}
 
 			if (element == null) {
-				Wizardry.logger.error("  > SOMETHING WENT WRONG! Could not parse " + file.getName() + ".json. Ignoring module...");
+				Wizardry.logger.error(" | | |_ SOMETHING WENT WRONG! Could not parse " + file.getName() + ". Invalid json.");
+				Wizardry.logger.error(" | |___ Failed to register module " + module.getID());
 				continue;
 			}
 
 			if (!element.isJsonObject()) {
-				Wizardry.logger.error("    > WARNING! " + file.getName() + ".json does NOT contain a JsonObject. Ignoring module...: " + element.toString());
+				Wizardry.logger.error(" | | |_ SOMETHING WENT WRONG! " + file.getName() + "'s json is NOT a Json Object.");
+				Wizardry.logger.error(" | |___ Failed to register module " + module.getID());
 				continue;
 			}
 			JsonObject moduleObject = element.getAsJsonObject();
 
 			if (!moduleObject.has("item")) {
-				Wizardry.logger.error("    > WARNING! An element in " + file.getName() + ".json does NOT have an 'item' key! Unknown item to use for element, Ignoring module...: " + element.toString());
+				Wizardry.logger.error(" | | |_ SOMETHING WENT WRONG! No 'item' key found in " + file.getName() + ". Unknown item to use for element.");
+				Wizardry.logger.error(" | |___ Failed to register module " + module.getID());
 				continue;
 			}
 
@@ -121,66 +133,81 @@ public class ModuleRegistry {
 			int chargeupTime = 0;
 			double manaDrain = 0;
 			double burnoutFill = 0;
-			ItemStack itemStack = ItemStack.EMPTY;
 			float powerMultiplier = 1;
 			float manaMultiplier = 1;
-			float burnoutMultiplier = 1;
+			float burnoutMultiplier = 0;
 			int itemMeta = 0;
 
 			Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(moduleObject.getAsJsonPrimitive("item").getAsString()));
 			if (item == null) {
-				Wizardry.logger.error("    > WARNING! Item for module " + rawModule.getID() + " does not exist '" + moduleObject.getAsJsonPrimitive("item").getAsString() + "' from " + file.getName());
+				Wizardry.logger.error(" | | |_ SOMETHING WENT WRONG! Item for module " + module.getID() + " does not exist '" + moduleObject.getAsJsonPrimitive("item").getAsString() + "'");
+				Wizardry.logger.error(" | |___ Failed to register module " + module.getID());
 				continue;
+			} else {
+				Wizardry.logger.error(" | | |_ Found Item " + item.getUnlocalizedName());
 			}
 
 			for (Map.Entry<String, JsonElement> entry : moduleObject.entrySet()) {
 				switch (entry.getKey()) {
 					case "item_meta": {
 						itemMeta = entry.getValue().getAsJsonPrimitive().getAsInt();
+						Wizardry.logger.info(" | | |_ Found Item Meta:          " + itemMeta);
 						break;
 					}
 					case "mana_drain": {
 						manaDrain = entry.getValue().getAsJsonPrimitive().getAsDouble();
+						Wizardry.logger.info(" | | |_ Found Mana Drain:         " + manaDrain);
 						break;
 					}
 					case "burnout_fill": {
 						burnoutFill = entry.getValue().getAsJsonPrimitive().getAsDouble();
+						Wizardry.logger.info(" | | |_ Found Burnout Fill:       " + burnoutFill);
 						break;
 					}
 					case "cooldown_time": {
 						cooldownTime = entry.getValue().getAsJsonPrimitive().getAsInt();
+						Wizardry.logger.info(" | | |_ Found Cooldown Time:      " + cooldownTime);
 						break;
 					}
 					case "chargeup_time": {
 						chargeupTime = entry.getValue().getAsJsonPrimitive().getAsInt();
+						Wizardry.logger.info(" | | |_ Found Chargeup Time:      " + chargeupTime);
 						break;
 					}
 					case "primary_color": {
 						primaryColor = new Color(Integer.parseInt(entry.getValue().getAsJsonPrimitive().getAsString(), 16));
+						Wizardry.logger.info(" | | |_ Found Primary Color:      " + primaryColor.getRGB());
 						break;
 					}
 					case "secondary_color": {
-						primaryColor = new Color(Integer.parseInt(entry.getValue().getAsJsonPrimitive().getAsString(), 16));
+						secondaryColor = new Color(Integer.parseInt(entry.getValue().getAsJsonPrimitive().getAsString(), 16));
+						Wizardry.logger.info(" | | |_ Found Secondary Color:    " + secondaryColor.getRGB());
 						break;
 					}
 					case "power_multiplier": {
 						powerMultiplier = entry.getValue().getAsJsonPrimitive().getAsFloat();
+						Wizardry.logger.info(" | | |_ Found Power Multiplier:   " + powerMultiplier);
 						break;
 					}
 					case "mana_multiplier": {
 						manaMultiplier = entry.getValue().getAsJsonPrimitive().getAsFloat();
+						Wizardry.logger.info(" | | |_ Found Mana Multiplier:    " + manaMultiplier);
 						break;
 					}
 					case "burnout_multiplier": {
 						burnoutMultiplier = entry.getValue().getAsJsonPrimitive().getAsFloat();
+						Wizardry.logger.info(" | | |_ Found Burnout Multiplier: " + burnoutMultiplier);
 						break;
 					}
 				}
 			}
 
-			rawModule.update(new ItemStack(item, 1, itemMeta), manaDrain, burnoutFill, primaryColor, secondaryColor, powerMultiplier, manaMultiplier, burnoutMultiplier, cooldownTime, chargeupTime);
+			module.init(new ItemStack(item, 1, itemMeta), manaDrain, burnoutFill, primaryColor, secondaryColor, powerMultiplier, manaMultiplier, burnoutMultiplier, cooldownTime, chargeupTime);
 
 			if (moduleObject.has("modifiers") && moduleObject.get("modifiers").isJsonArray()) {
+				Wizardry.logger.info(" | | |___ Found Modifiers. About to process them");
+
+
 				JsonArray attributeModifiers = moduleObject.getAsJsonArray("modifiers");
 				for (JsonElement attributeModifier : attributeModifiers) {
 					if (attributeModifier.isJsonObject()) {
@@ -194,17 +221,21 @@ public class ModuleRegistry {
 							operator = Operation.valueOf(modifier.get("operation").getAsJsonPrimitive().getAsString().toUpperCase());
 						if (modifier.has("amount") && modifier.get("amount").isJsonPrimitive() && modifier.getAsJsonPrimitive("amount").isNumber())
 							amount = modifier.get("amount").getAsDouble();
-						Wizardry.logger.info("    > Loading AttributeModifier for " + file.getName() + ": " + operator + " -> " + attribute + ", " + amount);
+						Wizardry.logger.info(" | | | |_ Loading AttributeModifier for " + file.getName() + ": " + operator + " -> " + attribute + ", " + amount);
 						if (attribute != null && operator != null) {
-							module.modifiers.add(new AttributeModifier(attribute, amount, operator));
-							Wizardry.logger.info("        > Successfully loaded AttributeModifier");
+							module.addAttribute(new AttributeModifier(attribute, amount, operator));
+							Wizardry.logger.info(" | | | | |_ AttributeModifier registered successfully");
+						} else {
+							Wizardry.logger.error(" | | | | |_ Failed to register AttributeModifier!");
 						}
 					}
 				}
+
+				Wizardry.logger.info(" | | |___ Modifiers Registered Successfully.");
 			}
 
 			processed.add(module);
-			Wizardry.logger.info("  > module " + module.getID() + " registered successfully.");
+			Wizardry.logger.info(" | |_ Module " + module.getID() + " registered successfully!");
 		}
 
 		primary:
@@ -216,15 +247,17 @@ public class ModuleRegistry {
 		}
 
 		if (!left.isEmpty()) {
-			Wizardry.logger.error("  > Missing or ignored modules detected in modules directory:");
-			for (Module module : left) Wizardry.logger.error("    - " + module.getID());
+			Wizardry.logger.error(" |");
+			Wizardry.logger.error(" |_ Missing or ignored modules detected in modules directory:");
+			for (Module module : left) Wizardry.logger.error(" | |_ " + module.getID());
 		}
 
 		modules.clear();
 		modules.addAll(processed);
 
-		Wizardry.logger.info("> Module registration processing complete! (ᵔᴥᵔ)");
-		Wizardry.logger.info("<<========================================================================>>");
+		Wizardry.logger.info(" |");
+		Wizardry.logger.info(" | Module registration processing complete! (ᵔᴥᵔ)");
+		Wizardry.logger.info(" |_______________________________________________________________________//");
 	}
 
 	public void copyMissingModulesFromResources(File directory) {

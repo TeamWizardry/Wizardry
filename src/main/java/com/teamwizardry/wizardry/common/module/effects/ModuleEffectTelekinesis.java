@@ -11,7 +11,6 @@ import com.teamwizardry.wizardry.api.spell.IContinuousModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
-import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
@@ -34,9 +33,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.CASTER;
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.TARGET_HIT;
-
 /**
  * Created by Demoniaque.
  */
@@ -57,10 +53,10 @@ public class ModuleEffectTelekinesis extends ModuleEffect implements IContinuous
 	@Override
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
-		Vec3d targetPos = spell.getData(TARGET_HIT);
-		Entity caster = spell.getData(CASTER);
+		Vec3d targetPos = spell.getTarget();
+		Entity caster = spell.getCaster();
 
-		double strength = MathHelper.clamp(getModifier(spell, Attributes.POTENCY, 3, 10), 3, 10);
+		double strength = MathHelper.clamp(spellRing.getModifier(Attributes.POTENCY, 3, 10), 3, 10);
 
 		if (targetPos == null) return false;
 
@@ -71,7 +67,7 @@ public class ModuleEffectTelekinesis extends ModuleEffect implements IContinuous
 		for (Entity entity : entityList) {
 			double dist = entity.getPositionVector().distanceTo(targetPos);
 			if (dist > strength) continue;
-			if (!tax(this, spell)) return false;
+			if (!tax(this, spell, spellRing)) return false;
 
 			final double upperMag = 1;
 			final double scale = 1;
@@ -93,7 +89,7 @@ public class ModuleEffectTelekinesis extends ModuleEffect implements IContinuous
 	@SideOnly(Side.CLIENT)
 	public void render(@Nonnull SpellData spell, @NotNull SpellRing spellRing) {
 		World world = spell.world;
-		Vec3d position = spell.getData(TARGET_HIT);
+		Vec3d position = spell.getTarget();
 
 		if (position == null) return;
 
@@ -113,11 +109,5 @@ public class ModuleEffectTelekinesis extends ModuleEffect implements IContinuous
 					RandUtil.nextDouble(-0.1, 0.1)
 			));
 		});
-	}
-
-	@Nonnull
-	@Override
-	public Module copy() {
-		return cloneModule(new ModuleEffectTelekinesis());
 	}
 }

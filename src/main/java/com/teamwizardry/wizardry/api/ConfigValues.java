@@ -47,11 +47,11 @@ public class ConfigValues {
 	public static double haloGenSpeed = 0.001;
 
 	@ConfigDoubleRange(min = 1, max = 2)
-	@ConfigProperty(category = "spells", comment = "The multiplier a spell gets for a perfect or ancient quality outputPearl. [1,2]\n" +
+	@ConfigProperty(category = "spells", comment = "The multiplier a spellData gets for a perfect or ancient quality outputPearl. [1,2]\n" +
 			"This will be multiplied by the quality value of the outputPearl, which is 1.0 for apex pearls and greater for ancient pearls.")
 	public static double perfectPearlMultiplier = 1.2;
 
 	@ConfigDoubleRange(min = 0.001, max = 0.1)
-	@ConfigProperty(category = "spells", comment = "The multiplier a spell gets, as a flat rate, for a depleted quality outputPearl. [0.001,0.1]")
+	@ConfigProperty(category = "spells", comment = "The multiplier a spellData gets, as a flat rate, for a depleted quality outputPearl. [0.001,0.1]")
 	public static double damagedPearlMultiplier = 0.05;
 }

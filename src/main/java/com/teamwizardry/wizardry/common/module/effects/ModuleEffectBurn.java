@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.common.module.effects;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
-import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
@@ -29,7 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 import java.awt.*;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.FACE_HIT;
 
 /**
  * Created by Demoniaque.
@@ -51,15 +50,15 @@ public class ModuleEffectBurn extends ModuleEffect {
 	@Override
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
-		Entity targetEntity = spell.getData(ENTITY_HIT);
-		BlockPos targetPos = spell.getData(BLOCK_HIT);
-		Entity caster = spell.getData(CASTER);
+		Entity targetEntity = spell.getVictim();
+		BlockPos targetPos = spell.getTargetPos();
+		Entity caster = spell.getCaster();
 		EnumFacing facing = spell.getData(FACE_HIT);
 
-		double strength = getModifier(spell, Attributes.AREA, 1, 16) / 2.0;
-		double time = getModifier(spell, Attributes.DURATION, 100, 1000);
+		double strength = spellRing.getModifier(Attributes.AREA, 1, 16) / 2.0;
+		double time = spellRing.getModifier(Attributes.DURATION, 100, 1000);
 
-		if (!tax(this, spell)) return false;
+		if (!tax(this, spell, spellRing)) return false;
 
 		if (targetEntity != null) {
 			targetEntity.setFire((int) time);
@@ -92,7 +91,7 @@ public class ModuleEffectBurn extends ModuleEffect {
 	@SideOnly(Side.CLIENT)
 	public void render(@Nonnull SpellData spell, @NotNull SpellRing spellRing) {
 		World world = spell.world;
-		Vec3d position = spell.getData(TARGET_HIT);
+		Vec3d position = spell.getTarget();
 
 		if (position == null) return;
 
@@ -100,11 +99,5 @@ public class ModuleEffectBurn extends ModuleEffect {
 		if (RandUtil.nextBoolean()) color = getSecondaryColor();
 
 		LibParticles.EFFECT_BURN(world, position, color);
-	}
-
-	@Nonnull
-	@Override
-	public Module copy() {
-		return cloneModule(new ModuleEffectBurn());
 	}
 }

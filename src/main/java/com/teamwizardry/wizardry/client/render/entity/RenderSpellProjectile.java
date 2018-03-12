@@ -7,7 +7,8 @@ import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import com.teamwizardry.wizardry.common.entity.EntitySpellProjectile;
@@ -36,8 +37,10 @@ public class RenderSpellProjectile extends Render<EntitySpellProjectile> {
 	public void doRender(@Nonnull EntitySpellProjectile entity, double x, double y, double z, float entityYaw, float partialTicks) {
 		super.doRender(entity, x, y, z, entityYaw, partialTicks);
 
-		for (Module child : entity.module.getAllChildModules()) {
-			if (child.overrideShapeRunClient(entity.module, entity.spell)) {
+		if (entity.spellRing == null) return;
+
+		for (SpellRing ring : SpellUtils.getAllSpellRings(entity.spellRing)) {
+			if (ring.overrideParentRenders()) {
 				return;
 			}
 		}

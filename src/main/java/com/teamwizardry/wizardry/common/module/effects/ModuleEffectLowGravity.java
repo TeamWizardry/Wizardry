@@ -9,7 +9,6 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
-import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
@@ -34,8 +33,6 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
-
 /**
  * Created by Demoniaque.
  */
@@ -57,14 +54,14 @@ public class ModuleEffectLowGravity extends ModuleEffect {
 	@SuppressWarnings("unused")
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
-		Entity targetEntity = spell.getData(ENTITY_HIT);
-		BlockPos targetPos = spell.getData(BLOCK_HIT);
-		Entity caster = spell.getData(CASTER);
+		Entity targetEntity = spell.getVictim();
+		BlockPos targetPos = spell.getTargetPos();
+		Entity caster = spell.getCaster();
 
-		double potency = getModifier(spell, Attributes.POTENCY, 2, 16);
-		double time = getModifier(spell, Attributes.DURATION, 50, 1000);
+		double potency = spellRing.getModifier(Attributes.POTENCY, 2, 16);
+		double time = spellRing.getModifier(Attributes.DURATION, 50, 1000);
 
-		if (!tax(this, spell)) return false;
+		if (!tax(this, spell, spellRing)) return false;
 
 		if (targetEntity != null) {
 			spell.world.playSound(null, targetEntity.getPosition(), ModSounds.TELEPORT, SoundCategory.NEUTRAL, 1, 1);
@@ -77,7 +74,7 @@ public class ModuleEffectLowGravity extends ModuleEffect {
 	@SideOnly(Side.CLIENT)
 	public void render(@Nonnull SpellData spell, @NotNull SpellRing spellRing) {
 		World world = spell.world;
-		Vec3d position = spell.getData(TARGET_HIT);
+		Vec3d position = spell.getTarget();
 
 		if (position == null) return;
 
@@ -99,11 +96,5 @@ public class ModuleEffectLowGravity extends ModuleEffect {
 			glitter.setMotion(direction.scale(RandUtil.nextDouble(0.5, 1.3)));
 		});
 
-	}
-
-	@Nonnull
-	@Override
-	public Module copy() {
-		return cloneModule(new ModuleEffectLowGravity());
 	}
 }

@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.common.module.effects;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
-import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
@@ -20,8 +19,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
-
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
 /**
  * Created by Demoniaque.
@@ -43,13 +40,13 @@ public class ModuleEffectPhase extends ModuleEffect {
 	@Override
 	@SuppressWarnings("unused")
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		Entity caster = spell.getData(CASTER);
-		Entity targetEntity = spell.getData(ENTITY_HIT);
-		Vec3d targetHit = spell.getData(TARGET_HIT);
+		Entity caster = spell.getCaster();
+		Entity targetEntity = spell.getVictim();
+		Vec3d targetHit = spell.getTarget();
 
-		double time = getModifier(spell, Attributes.DURATION, 10, 500);
+		double time = spellRing.getModifier(Attributes.DURATION, 10, 500);
 
-		if (!tax(this, spell)) return false;
+		if (!tax(this, spell, spellRing)) return false;
 
 		if (targetEntity != null && targetEntity instanceof EntityLivingBase) {
 			EntityLivingBase entity = (EntityLivingBase) targetEntity;
@@ -63,11 +60,5 @@ public class ModuleEffectPhase extends ModuleEffect {
 	@SideOnly(Side.CLIENT)
 	public void render(@Nonnull SpellData spell, @NotNull SpellRing spellRing) {
 
-	}
-
-	@Nonnull
-	@Override
-	public Module copy() {
-		return cloneModule(new ModuleEffectPhase());
 	}
 }
