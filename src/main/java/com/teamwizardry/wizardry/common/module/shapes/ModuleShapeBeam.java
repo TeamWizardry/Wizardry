@@ -41,6 +41,11 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 	}
 
 	@Override
+	public boolean ignoreResult() {
+		return true;
+	}
+
+	@Override
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) throws NullPointerException {
 		World world = spell.world;
 		Vec3d look = spell.getData(LOOK);
@@ -59,9 +64,16 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 				.trace();
 
 		spell.processTrace(trace, look.scale(range));
-		return spell.world.getTotalWorldTime() % potency == 0;
-	}
 
+		sendRenderPacket(spell, spellRing);
+		if (spell.world.getTotalWorldTime() % potency == 0) {
+			if (spellRing.getChildRing() != null) {
+				spellRing.getChildRing().runSpellRing(spell);
+			}
+		}
+
+		return true;
+	}
 
 	@Override
 	@SideOnly(Side.CLIENT)

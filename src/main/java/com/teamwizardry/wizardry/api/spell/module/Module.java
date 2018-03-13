@@ -218,12 +218,19 @@ public abstract class Module {
 	 * @return If the spellData has succeeded.
 	 */
 	public final boolean castSpell(@Nonnull SpellData data, @Nonnull SpellRing spellRing) {
+		if (data.world.isRemote) return true;
+
 		if (this instanceof ILingeringModule) {
+			boolean alreadyLingering = false;
 			for (SpellTicker.LingeringObject lingeringObject : SpellTicker.getStorageMap()) {
 				if (lingeringObject.getSpellRing() == spellRing
-						|| lingeringObject.getSpellData() == data) return true;
+						|| lingeringObject.getSpellData() == data) {
+					alreadyLingering = true;
+					break;
+				}
 			}
-			SpellTicker.addLingerSpell(spellRing, data, ((ILingeringModule) this).getLingeringTime(data, spellRing));
+			if (!alreadyLingering)
+				SpellTicker.addLingerSpell(spellRing, data, ((ILingeringModule) this).getLingeringTime(data, spellRing));
 		}
 
 		SpellCastEvent event = new SpellCastEvent(spellRing, data);

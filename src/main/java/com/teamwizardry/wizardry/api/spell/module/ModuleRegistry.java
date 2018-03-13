@@ -85,7 +85,7 @@ public class ModuleRegistry {
 
 		for (Module module : modules) {
 			Wizardry.logger.info(" | |");
-			Wizardry.logger.info(" | | Registering module " + module.getID());
+			Wizardry.logger.info(" | |_ Registering module " + module.getID());
 
 			File file = new File(directory, module.getID() + ".json");
 
@@ -251,9 +251,12 @@ public class ModuleRegistry {
 			Wizardry.logger.error("|_ Missing or ignored modules detected in modules directory:");
 			for (Module module : left) Wizardry.logger.error("| |_ " + module.getID());
 		}
+		left.clear();
 
 		modules.clear();
 		modules.addAll(processed);
+
+		modules.sort((o1, o2) -> o1.getID().compareTo(o2.getID()));
 
 		Wizardry.logger.info(" |");
 		Wizardry.logger.info(" | Module registration processing complete! (ᵔᴥᵔ)");

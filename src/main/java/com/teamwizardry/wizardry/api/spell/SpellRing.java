@@ -120,7 +120,8 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	 * @param data The SpellData object.
 	 */
 	public boolean runSpellRing(SpellData data) {
-		boolean success = !isRunOverriden() && module != null && module.castSpell(data, this);
+		if (module == null) return false;
+		boolean success = !isRunOverriden() && module.castSpell(data, this) && !module.ignoreResult();
 		if (success) {
 
 			if (!isRenderOverridden() && module != null) {
@@ -128,6 +129,10 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 			}
 
 			if (getChildRing() != null) return getChildRing().runSpellRing(data);
+		} else if (module.ignoreResult()) {
+			if (!isRenderOverridden() && module != null) {
+				module.sendRenderPacket(data, this);
+			}
 		}
 
 		return success;
@@ -194,8 +199,6 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 	public void setChildRing(@Nonnull SpellRing childRing) {
 		this.childRing = childRing;
-
-		updateColorChain();
 	}
 
 	@Nullable
@@ -241,11 +244,11 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		this.secondaryColor = secondaryColor;
 	}
 
-	private void updateColorChain() {
+	public void updateColorChain() {
 		if (getParentRing() == null) return;
 
 		getParentRing().setPrimaryColor(getPrimaryColor());
-		getParentRing().setPrimaryColor(getSecondaryColor());
+		getParentRing().setSecondaryColor(getSecondaryColor());
 		getParentRing().updateColorChain();
 	}
 

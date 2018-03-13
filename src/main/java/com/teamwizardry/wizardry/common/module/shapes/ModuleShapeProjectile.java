@@ -40,6 +40,11 @@ public class ModuleShapeProjectile extends ModuleShape implements ITaxing {
 	}
 
 	@Override
+	public boolean ignoreResult() {
+		return true;
+	}
+
+	@Override
 	@SuppressWarnings("unused")
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;

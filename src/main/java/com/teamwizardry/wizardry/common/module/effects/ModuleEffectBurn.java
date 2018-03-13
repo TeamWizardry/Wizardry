@@ -62,7 +62,7 @@ public class ModuleEffectBurn extends ModuleEffect {
 
 		if (targetEntity != null) {
 			targetEntity.setFire((int) time);
-			world.playSound(null, targetEntity.getPosition(), ModSounds.FIRE, SoundCategory.NEUTRAL, 1, 1);
+			world.playSound(null, targetEntity.getPosition(), ModSounds.FIRE, SoundCategory.NEUTRAL, RandUtil.nextFloat(0.35f, 0.75f), RandUtil.nextFloat(0.35f, 1.5f));
 		}
 
 		if (targetPos != null) {

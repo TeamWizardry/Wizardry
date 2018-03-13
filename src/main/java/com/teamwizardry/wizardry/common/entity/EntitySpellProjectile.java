@@ -119,7 +119,6 @@ public class EntitySpellProjectile extends EntityMod {
 
 		if (origin == null || dist < getDistance(origin.x, origin.y, origin.z)) {
 			spellData.processBlock(getPosition(), EnumFacing.getFacingFromVector((float) look.x, (float) look.y, (float) look.z), getPositionVector());
-			spellData.addData(ORIGIN, getPositionVector());
 			goBoom(spellData);
 			return;
 		}
@@ -140,8 +139,8 @@ public class EntitySpellProjectile extends EntityMod {
 			move(MoverType.SELF, motionX, motionY, motionZ);
 		} else {
 
-			RayTraceResult result = new RayTrace(world, look, getPositionVector(), 1).setSkipEntity(this).trace();
-			spellData.processTrace(result, look);
+			RayTraceResult result = new RayTrace(world, look, getPositionVector(), 5).setSkipEntity(this).trace();
+			spellData.processTrace(result, getPositionVector());
 			goBoom(spellData);
 			return;
 		}
@@ -150,14 +149,14 @@ public class EntitySpellProjectile extends EntityMod {
 		if (!entities.isEmpty()) {
 			Entity caster = spellData.getCaster();
 
-			// Don't colldie with other spell projectiles
+			// Don't collide with other spell projectiles
 			for (Entity entity : entities) {
 				if (entity == caster) return;
 				if (entity instanceof EntitySpellProjectile) return;
 			}
 
 			RayTraceResult result = new RayTrace(world, look, getPositionVector(), 1).setSkipEntity(this).trace();
-			spellData.processTrace(result, look);
+			spellData.processTrace(result, getPositionVector());
 
 			goBoom(spellData);
 		}

@@ -14,7 +14,6 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
-import com.teamwizardry.wizardry.api.util.RandUtilSeed;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtendRange;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtendTime;
@@ -60,7 +59,6 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 		return true;
 	}
 
-	// TODO: Redo
 	@Override
 	@SuppressWarnings("unused")
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
@@ -68,21 +66,16 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 		Vec3d position = spell.getData(ORIGIN);
 		Entity caster = spell.getCaster();
 		Vec3d targetPos = spell.getTarget();
-		long seed = RandUtil.nextLong(100, 1000000);
-		spell.addData(SEED, seed);
-
-		RandUtilSeed r = new RandUtilSeed(seed);
 
 		if (targetPos == null) return false;
 
 		double aoe = spellRing.getModifier(Attributes.AREA, 3, 10);
-		double strength = spellRing.getModifier(Attributes.POTENCY, 1, 10);
+		double strength = spellRing.getModifier(Attributes.POTENCY, 1, 20);
 		double range = spellRing.getModifier(Attributes.RANGE, 1, 20);
 
 		List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(targetPos)).grow(aoe, 1, aoe));
 
-		//todo: setMultiplier(0.7);
-		if (r.nextInt((int) ((70 - strength))) == 0) {
+		if (RandUtil.nextInt((int) ((70 - strength))) == 0) {
 			for (Entity entity : entities) {
 				if (entity.getDistance(targetPos.x, targetPos.y, targetPos.z) <= aoe) {
 					Vec3d vec = targetPos.addVector(RandUtil.nextDouble(-strength, strength), RandUtil.nextDouble(range), RandUtil.nextDouble(-strength, strength));
@@ -100,7 +93,8 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 			}
 		}
 
-		if (r.nextInt((int) ((40 - strength))) != 0) return true;
+		if (RandUtil.nextInt((int) ((40 - strength))) != 0) return false;
+
 		ArrayList<Vec3d> blocks = new ArrayList<>();
 		for (double i = -aoe; i < aoe; i++)
 			for (double j = 0; j < range; j++)
@@ -111,7 +105,7 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 						blocks.add(pos);
 					}
 				}
-		if (blocks.isEmpty()) return true;
+		if (blocks.isEmpty()) return false;
 		Vec3d pos = blocks.get(RandUtil.nextInt(blocks.size() - 1));
 
 		SpellData copy = spell.copy();
@@ -119,6 +113,10 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 		copy.processBlock(new BlockPos(pos), EnumFacing.UP, pos);
 		copy.addData(YAW, RandUtil.nextFloat(-180, 180));
 		copy.addData(PITCH, RandUtil.nextFloat(-50, 50));
+
+		if (spellRing.getChildRing() != null) {
+			spellRing.getChildRing().runSpellRing(copy);
+		}
 		return true;
 	}
 
@@ -154,7 +152,7 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 
 	@Override
 	public int getLingeringTime(SpellData spell, SpellRing spellRing) {
-		double strength = spellRing.getModifier(Attributes.DURATION, 40, 100) * 30;
+		double strength = spellRing.getModifier(Attributes.DURATION, 10, 100) * 10;
 		return (int) strength;
 	}
 }

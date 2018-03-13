@@ -1,6 +1,6 @@
 {
   "type": "entry",
-  "icon": "wizardry:textures/items/null.png",
+  "icon": "wizardry:empty.png",
   "title": "wizardry.book.mobs.spirit_wights.title",
   "description": "wizardry.book.mobs.spirit_wights.desc",
   "content": [

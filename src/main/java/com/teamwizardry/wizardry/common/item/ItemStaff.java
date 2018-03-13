@@ -149,27 +149,26 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 	@Nonnull
 	@Override
 	public EnumAction getItemUseAction(ItemStack stack) {
-		boolean anyNotContinuous = false;
+		boolean anyContinueous = false;
 		for (SpellRing spellRing : SpellUtils.getAllSpellRings(stack))
-			if (!(spellRing.getModule() instanceof IContinuousModule && spellRing.getChargeUpTime() <= 0)) {
-				anyNotContinuous = true;
+			if (spellRing.getModule() instanceof IContinuousModule || spellRing.getChargeUpTime() > 0) {
+				anyContinueous = true;
 				break;
 			}
-		return anyNotContinuous ? EnumAction.NONE : EnumAction.BOW;
+		return anyContinueous ? EnumAction.BOW : EnumAction.NONE;
 	}
 
 	@Override
 	public int getMaxItemUseDuration(ItemStack stack) {
 		int maxChargeUp = 0;
-		boolean anyNotContinuous = false;
 		for (SpellRing spellRing : SpellUtils.getAllSpellRings(stack)) {
-			if (!(spellRing.getModule() instanceof IContinuousModule)) {
-				anyNotContinuous = true;
-				if (spellRing.getChargeUpTime() > maxChargeUp) maxChargeUp = spellRing.getChargeUpTime();
-			}
+			if (spellRing.getModule() instanceof IContinuousModule) {
+				maxChargeUp = 72000;
+			} else if (spellRing.getChargeUpTime() > maxChargeUp)
+				maxChargeUp += spellRing.getChargeUpTime();
 		}
 
-		return anyNotContinuous ? maxChargeUp : 72000;
+		return maxChargeUp;
 	}
 
 	@Nonnull
@@ -187,7 +186,7 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 
 		boolean isContinuous = false;
 		for (SpellRing spellRing : SpellUtils.getAllSpellRings(stack))
-			if (spellRing instanceof IContinuousModule) {
+			if (spellRing.getModule() instanceof IContinuousModule) {
 				isContinuous = true;
 				break;
 			}
@@ -196,7 +195,6 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 
 		SpellData spell = new SpellData(player.world);
 		spell.processEntity(player, true);
-		spell.processEntity(player, false);
 		SpellUtils.runSpell(stack, spell);
 
 		if (!isContinuous) {

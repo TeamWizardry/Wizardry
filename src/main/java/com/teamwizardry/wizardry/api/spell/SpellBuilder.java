@@ -126,6 +126,17 @@ public class SpellBuilder {
 				}
 			}
 		}
+
+		for (SpellRing ring : spellList) {
+			SpellRing first = ring;
+			while (first != null) {
+
+				if (first.getChildRing() == null) {
+					first.updateColorChain();
+					break;
+				} else first = first.getChildRing();
+			}
+		}
 		return spellList;
 	}
 

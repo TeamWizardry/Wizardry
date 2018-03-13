@@ -17,15 +17,16 @@ public class SpellTicker {
 	@SubscribeEvent
 	public static void tick(TickEvent.WorldTickEvent event) {
 		if (event.world.isRemote) return;
+		if (event.phase != TickEvent.Phase.END) return;
 
 		storageMap.removeIf(lingeringObject -> {
 			long fromWorldTime = lingeringObject.getWorldTime();
 			long currentWorldTime = event.world.getTotalWorldTime();
 			long subtract = currentWorldTime - fromWorldTime;
 
-			if (lingeringObject.expiry >= subtract) return true;
+			if (lingeringObject.expiry <= subtract) return true;
 
-			lingeringObject.getSpellRing().runSpellRing(lingeringObject.getSpellData());
+			lingeringObject.getSpellRing().runSpellRing(lingeringObject.getSpellData().copy());
 
 			return false;
 		});
