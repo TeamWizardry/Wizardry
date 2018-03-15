@@ -5,8 +5,8 @@ import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 
 /**
@@ -25,7 +25,7 @@ public class PacketSyncModules extends PacketBase {
 	}
 
 	@Override
-	public void handle(@NotNull MessageContext messageContext) {
+	public void handle(@Nonnull MessageContext messageContext) {
 		ModuleRegistry.INSTANCE.modules = modules;
 	}
 }

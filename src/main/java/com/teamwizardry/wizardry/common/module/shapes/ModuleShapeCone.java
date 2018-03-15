@@ -26,7 +26,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -106,7 +105,7 @@ public class ModuleShapeCone extends ModuleShape {
 	@Override
 	@SuppressWarnings("unused")
 	@SideOnly(Side.CLIENT)
-	public void render(@Nonnull SpellData spell, @NotNull SpellRing spellRing) {
+	public void render(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Vec3d target = spell.getTarget();
 
 		if (target == null) return;

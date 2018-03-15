@@ -1,9 +1,5 @@
 package com.teamwizardry.wizardry.common.block;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.teamwizardry.librarianlib.features.base.block.tile.BlockModContainer;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
@@ -12,8 +8,6 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.CachedStructure;
 import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.api.item.IInfusable;
-import com.teamwizardry.wizardry.api.spell.SpellBuilder;
-import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.render.block.TileCraftingPlateRenderer;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
@@ -25,13 +19,11 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -40,14 +32,12 @@ import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
-import java.util.ArrayList;
 
 /**
  * Created by Saad on 6/10/2016.
@@ -89,29 +79,10 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 				if (heldItem.getItem() == ModItems.BOOK && playerIn.isCreative()) {
 					ItemStack pearl = new ItemStack(ModItems.PEARL_NACRE);
 
-					JsonObject object = new Gson().fromJson(ItemNBTHelper.getString(heldItem, "spell_recipe", null), JsonObject.class);
-					if (object == null) return false;
+					NBTTagList spellList = ItemNBTHelper.getList(heldItem, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+					if (spellList == null) return false;
 
-					ArrayList<ItemStack> inventory = new ArrayList<>();
-					JsonArray array = object.getAsJsonArray("list");
-					for (int i = 0; i < array.size(); i++) {
-						JsonElement element = array.get(i);
-						if (!element.isJsonObject()) continue;
-						JsonObject obj = element.getAsJsonObject();
-						String name = obj.getAsJsonPrimitive("name").getAsString();
-						Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(name));
-						if (item == null) continue;
-						ItemStack stack = new ItemStack(item);
-						stack.setItemDamage(obj.getAsJsonPrimitive("meta").getAsInt());
-						stack.setCount(obj.getAsJsonPrimitive("count").getAsInt());
-						inventory.add(stack);
-					}
-
-					SpellBuilder builder = new SpellBuilder(inventory);
-					NBTTagList list = new NBTTagList();
-					for (SpellRing ring : builder.buildSpell()) list.appendTag(ring.serializeNBT());
-
-					ItemNBTHelper.setList(pearl, Constants.NBT.SPELL, list);
+					ItemNBTHelper.setList(pearl, Constants.NBT.SPELL, spellList);
 					ItemNBTHelper.setFloat(pearl, Constants.NBT.RAND, playerIn.world.rand.nextFloat());
 
 					plate.outputPearl.getHandler().setStackInSlot(0, pearl);

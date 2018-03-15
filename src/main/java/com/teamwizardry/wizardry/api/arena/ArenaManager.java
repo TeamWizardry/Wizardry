@@ -13,9 +13,9 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
 import java.util.HashSet;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -32,7 +32,7 @@ public class ArenaManager {
 		new Timer().scheduleAtFixedRate(new ArenaTicker(), 0, 1);
 	}
 
-	public boolean addArena(@NotNull Arena arena) {
+	public boolean addArena(@Nonnull Arena arena) {
 		for (Arena arena1 : arenas) {
 			if (arena.getCenter().toLong() == arena1.getCenter().toLong()) return false;
 		}
@@ -42,7 +42,7 @@ public class ArenaManager {
 	}
 
 	@Nullable
-	public Arena getArena(@NotNull EntityAngel boss) {
+	public Arena getArena(@Nonnull EntityAngel boss) {
 		for (Arena arena : arenas) {
 			if (arena.getBossID() == boss.getEntityId()) return arena;
 		}

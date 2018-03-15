@@ -10,7 +10,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 /**
  * Created by Saad on 8/16/2016.
@@ -30,7 +31,7 @@ public class PacketUpdateCaps extends PacketBase {
 	}
 
 	@Override
-	public void handle(@NotNull MessageContext ctx) {
+	public void handle(@Nonnull MessageContext ctx) {
 		EntityPlayer player = LibrarianLib.PROXY.getClientPlayer();
 
 		IWizardryCapability cap = WizardryCapabilityProvider.getCap(player);

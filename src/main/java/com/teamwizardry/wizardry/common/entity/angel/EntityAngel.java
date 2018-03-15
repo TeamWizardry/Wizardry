@@ -9,7 +9,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -59,7 +58,7 @@ public class EntityAngel extends LivingEntityMod {
 	}
 
 	@Override
-	public void addPotionEffect(@NotNull PotionEffect potioneffectIn) {
+	public void addPotionEffect(@Nonnull PotionEffect potioneffectIn) {
 	}
 
 	@Override
@@ -72,13 +71,13 @@ public class EntityAngel extends LivingEntityMod {
 	}
 
 	@Override
-	public void writeCustomNBT(@NotNull NBTTagCompound compound) {
+	public void writeCustomNBT(@Nonnull NBTTagCompound compound) {
 		super.writeCustomNBT(compound);
 		compound.setBoolean("is_being_battled", isBeingBattled);
 	}
 
 	@Override
-	public void readCustomNBT(@NotNull NBTTagCompound compound) {
+	public void readCustomNBT(@Nonnull NBTTagCompound compound) {
 		super.readCustomNBT(compound);
 		isBeingBattled = compound.getBoolean("is_being_battled");
 	}

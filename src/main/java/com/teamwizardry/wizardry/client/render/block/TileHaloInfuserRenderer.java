@@ -2,11 +2,12 @@ package com.teamwizardry.wizardry.client.render.block;
 
 import com.teamwizardry.librarianlib.features.tesr.TileRenderHandler;
 import com.teamwizardry.wizardry.common.tile.TileHaloInfuser;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 public class TileHaloInfuserRenderer extends TileRenderHandler<TileHaloInfuser> {
 
-	public TileHaloInfuserRenderer(@NotNull TileHaloInfuser tile) {
+	public TileHaloInfuserRenderer(@Nonnull TileHaloInfuser tile) {
 		super(tile);
 	}
 

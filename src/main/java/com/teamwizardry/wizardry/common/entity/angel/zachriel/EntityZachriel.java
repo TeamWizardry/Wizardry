@@ -33,7 +33,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -279,14 +278,14 @@ public class EntityZachriel extends EntityAngel {
 	}
 
 	@Override
-	public void writeCustomNBT(@NotNull NBTTagCompound compound) {
+	public void writeCustomNBT(@Nonnull NBTTagCompound compound) {
 		super.writeCustomNBT(compound);
 		compound.setTag("save", AbstractSaveHandler.writeAutoNBT(this, true));
 		compound.setTag("nemez", nemezDrive.serializeNBT());
 	}
 
 	@Override
-	public void readCustomNBT(@NotNull NBTTagCompound compound) {
+	public void readCustomNBT(@Nonnull NBTTagCompound compound) {
 		super.readCustomNBT(compound);
 		AbstractSaveHandler.readAutoNBT(this, compound.getCompoundTag("save"), true);
 		nemezDrive.deserializeNBT(compound.getTagList("nemez", TAG_COMPOUND));

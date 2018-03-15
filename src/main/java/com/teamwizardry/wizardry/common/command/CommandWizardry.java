@@ -101,7 +101,7 @@ public class CommandWizardry extends CommandBase {
 			for (Module module : ModuleRegistry.INSTANCE.modules) {
 				notifyCommandListener(sender, this, TextFormatting.YELLOW + " | |_ " + TextFormatting.GREEN + module.getID() + TextFormatting.RESET + ": " + TextFormatting.GRAY + module.getReadableName());
 			}
-			notifyCommandListener(sender, this, TextFormatting.YELLOW + " ________________________________________________//");
+			notifyCommandListener(sender, this, TextFormatting.YELLOW + " |________________________________________________//");
 
 		} else if (args[0].equalsIgnoreCase("debug")) {
 			if (args.length < 2) throw new WrongUsageException(getUsage(sender));
@@ -138,7 +138,7 @@ public class CommandWizardry extends CommandBase {
 				for (ModuleModifier modifier : modifierList)
 					notifyCommandListener(sender, this, TextFormatting.YELLOW + " |     |_ " + TextFormatting.DARK_GREEN + modifier.getID());
 			}
-			notifyCommandListener(sender, this, TextFormatting.YELLOW + " ________________________________________________//");
+			notifyCommandListener(sender, this, TextFormatting.YELLOW + " |________________________________________________//");
 		} else {
 			throw new WrongUsageException(getUsage(sender));
 		}

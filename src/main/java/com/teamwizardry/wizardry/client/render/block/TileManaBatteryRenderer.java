@@ -35,9 +35,9 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.HashSet;
 
@@ -50,7 +50,7 @@ public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> 
 	private static IBakedModel modelRing, modelCrystal, modelRingOuter;
 	private CachedStructure cachedStructure;
 
-	public TileManaBatteryRenderer(@NotNull TileManaBattery manaBattery) {
+	public TileManaBatteryRenderer(@Nonnull TileManaBattery manaBattery) {
 		super(manaBattery);
 		cachedStructure = new CachedStructure(((IStructure) tile.getBlockType()).getStructure().loc, tile.getWorld());
 	}

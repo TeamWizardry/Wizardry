@@ -14,7 +14,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.INBTSerializable;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -215,7 +214,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		return module;
 	}
 
-	public void setModule(@NotNull Module module) {
+	public void setModule(@Nonnull Module module) {
 		this.module = module;
 
 		setManaMultiplier(module.getManaMultiplier());

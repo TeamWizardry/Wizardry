@@ -164,7 +164,7 @@ public class TileCraftingPlate extends TileManaInteracter {
 						realInventory.getHandler().setStackInSlot(i, ItemStack.EMPTY);
 					}
 				}
-				SpellBuilder builder = new SpellBuilder(stacks);
+				SpellBuilder builder = new SpellBuilder(stacks, true);
 
 				ItemStack infusedPearl = outputPearl.getHandler().insertItem(0, inputPearl.getHandler().extractItem(0, 1, false), false);
 

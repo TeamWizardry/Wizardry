@@ -17,7 +17,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -45,7 +44,7 @@ public class ModuleShapeSelf extends ModuleShape {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void render(@Nonnull SpellData spell, @NotNull SpellRing spellRing) {
+	public void render(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Entity caster = spell.getCaster();
 
 		if (caster == null) return;

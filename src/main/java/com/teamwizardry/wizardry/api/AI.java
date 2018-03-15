@@ -4,7 +4,7 @@ public class AI {
 
 	//public static AI INSTANCE = new AI();
 //
-	//@NotNull
+	//@Nonnull
 	//private AIDataService dataService;
 //
 	//private AI() {

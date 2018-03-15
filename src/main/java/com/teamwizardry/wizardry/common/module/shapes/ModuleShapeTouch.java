@@ -21,7 +21,6 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -65,7 +64,7 @@ public class ModuleShapeTouch extends ModuleShape {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void render(@Nonnull SpellData spell, @NotNull SpellRing spellRing) {
+	public void render(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Entity targetEntity = spell.getVictim();
 
 		if (targetEntity == null) return;

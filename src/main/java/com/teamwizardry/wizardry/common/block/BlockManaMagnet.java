@@ -14,8 +14,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
 
 /**
  * Created by Saad on 9/4/2016.
@@ -53,7 +54,7 @@ public class BlockManaMagnet extends BlockModContainer {
 
 	@Nullable
 	@Override
-	public TileEntity createTileEntity(@NotNull World world, @NotNull IBlockState state) {
+	public TileEntity createTileEntity(@Nonnull World world, @Nonnull IBlockState state) {
 		return new TileManaMagnet();
 	}
 }

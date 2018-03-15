@@ -1,7 +1,5 @@
 package com.teamwizardry.wizardry.api.spell;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
@@ -9,7 +7,6 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -21,23 +18,33 @@ public class SpellBuilder {
 	private List<ItemStack> inventory;
 	private List<SpellRing> spell;
 
-	public SpellBuilder(List<ItemStack> inventory) {
+	public SpellBuilder(List<ItemStack> inventory, boolean javaIsStupid) {
 		this.inventory = inventory;
 		spell = toSpell(inventory);
 	}
 
-	public SpellBuilder(HashSet<ArrayList<Module>> moduleHeads) {
+	public SpellBuilder(List<SpellRing> spellChains) {
 		inventory = new ArrayList<>();
 
-		for (ArrayList<Module> modules : moduleHeads) {
-			for (Module module : modules) {
-				if (module instanceof ModuleModifier) {
-					ModuleModifier moduleModifier = (ModuleModifier) module;
+		for (SpellRing spellChain : spellChains) {
+			for (SpellRing spellRing : SpellUtils.getAllSpellRings(spellChain)) {
+				if (spellRing.getModule() == null) continue;
+
+				if (spellRing.getModule() instanceof ModuleModifier) {
+
+					if (inventory.isEmpty()) continue;
+
+					ModuleModifier moduleModifier = (ModuleModifier) spellRing.getModule();
 					ItemStack lastStack = inventory.get(inventory.size() - 1);
+
 					if (ItemStack.areItemsEqual(lastStack, moduleModifier.getItemStack())) {
+
 						lastStack.setCount(lastStack.getCount() + moduleModifier.getItemStack().getCount());
-					} else inventory.add(moduleModifier.getItemStack().copy());
-				} else inventory.add(module.getItemStack().copy());
+
+					} else {
+						inventory.add(moduleModifier.getItemStack().copy());
+					}
+				} else inventory.add(spellRing.getModule().getItemStack().copy());
 			}
 			inventory.add(new ItemStack(codeLineBreak));
 		}
@@ -138,27 +145,6 @@ public class SpellBuilder {
 			}
 		}
 		return spellList;
-	}
-
-	public JsonObject toJson() {
-		if (inventory.isEmpty()) return null;
-		JsonObject object = new JsonObject();
-		JsonArray array = new JsonArray();
-
-		for (ItemStack stack : inventory) {
-			ResourceLocation location = stack.getItem().getRegistryName();
-			if (location == null) continue;
-
-			JsonObject obj = new JsonObject();
-			obj.addProperty("name", location.toString());
-			obj.addProperty("meta", stack.getItemDamage());
-			obj.addProperty("count", stack.getCount());
-			array.add(obj);
-		}
-
-		object.add("list", array);
-
-		return object;
 	}
 
 	public List<ItemStack> getInventory() {

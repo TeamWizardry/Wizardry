@@ -85,7 +85,7 @@ advancement.wizardry.devildust.desc=Сожгите книгу в огне, чт�
 advancement.wizardry.crunch=§oCRUNCH.§a
 advancement.wizardry.crunch.desc=Разбейте бедрок в вершине нижнего мира
 
-bookGui.physicsbook.defaulttitle=Книга Физики
+book.physicsbook.defaulttitle=Книга Физики
 
 fluid.nacre_fluid=Перламутр
 fluid.mana_fluid=Мана

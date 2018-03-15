@@ -67,7 +67,7 @@ public class WorktableGui extends GuiBase {
 	BiMap<GuiComponent, UUID> paperComponents = HashBiMap.create();
 	HashMap<UUID, UUID> componentLinks = new HashMap<>();
 	ComponentWhitelistedModifiers whitelistedModifiers;
-	private HashSet<ArrayList<Module>> compiledSpell = new HashSet<>();
+	private List<SpellRing> compiledSpell = new ArrayList<>();
 
 	public WorktableGui(BlockPos worktablePos) {
 		super(480, 224);
@@ -185,7 +185,9 @@ public class WorktableGui extends GuiBase {
 			for (GuiComponent component : heads) {
 				ArrayList<Module> stream = new ArrayList<>();
 				compileModule(stream, component);
-				compiledSpell.add(stream);
+
+				for (Module module : stream)
+					compiledSpell.add(new SpellRing(module));
 			}
 
 			SpellBuilder builder = new SpellBuilder(compiledSpell);
@@ -193,7 +195,7 @@ public class WorktableGui extends GuiBase {
 			for (ItemStack stack : Minecraft.getMinecraft().player.inventory.mainInventory) {
 				if (stack.getItem() == ModItems.BOOK) {
 					int slot = Minecraft.getMinecraft().player.inventory.getSlotFor(stack);
-					PacketHandler.NETWORK.sendToServer(new PacketSendSpellToBook(slot, (ArrayList<ItemStack>) builder.getInventory()));
+					PacketHandler.NETWORK.sendToServer(new PacketSendSpellToBook(slot, builder.buildSpell()));
 				}
 			}
 

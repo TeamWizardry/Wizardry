@@ -27,7 +27,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -104,7 +103,7 @@ public class ModuleEffectLightning extends ModuleEffect {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void render(@Nonnull SpellData spell, @NotNull SpellRing spellRing) {
+	public void render(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		float yaw = spell.getData(YAW, 0F);
 		float pitch = spell.getData(PITCH, 0F);

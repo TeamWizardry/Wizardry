@@ -15,7 +15,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
@@ -30,7 +29,7 @@ public class BlockUnicornTrail extends BlockModContainer {
 		setLightOpacity(0);
 	}
 
-	@NotNull
+	@Nonnull
 	@SideOnly(Side.CLIENT)
 	@Override
 	public BlockRenderLayer getBlockLayer() {
@@ -75,7 +74,7 @@ public class BlockUnicornTrail extends BlockModContainer {
 
 	@Nullable
 	@Override
-	public TileEntity createTileEntity(@NotNull World world, @NotNull IBlockState state) {
+	public TileEntity createTileEntity(@Nonnull World world, @Nonnull IBlockState state) {
 		return new TileUnicornTrail();
 	}
 

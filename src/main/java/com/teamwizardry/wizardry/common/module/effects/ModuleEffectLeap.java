@@ -21,7 +21,6 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -101,7 +100,7 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 	@Override
 	@SuppressWarnings("unused")
 	@SideOnly(Side.CLIENT)
-	public void render(@Nonnull SpellData spell, @NotNull SpellRing spellRing) {
+	public void render(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Entity caster = spell.getCaster();
 		Vec3d position = spell.getTarget();
 		Entity entityHit = spell.getVictim();
