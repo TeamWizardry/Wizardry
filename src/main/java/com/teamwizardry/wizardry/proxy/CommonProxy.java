@@ -94,23 +94,25 @@ public class CommonProxy {
 		manaRecipeLoading:
 		{
 			File recipeDirectory = new File(directory, "fluid_recipes");
-			if (!recipeDirectory.exists())
+			if (!recipeDirectory.exists()) {
 				if (!recipeDirectory.mkdirs()) {
 					Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not create directory " + recipeDirectory.getPath());
 					break manaRecipeLoading;
 				}
-			ManaRecipes.INSTANCE.copyMissingRecipes(recipeDirectory);
+				ManaRecipes.INSTANCE.copyMissingRecipes(recipeDirectory);
+			}
 			ManaRecipes.INSTANCE.loadRecipes(recipeDirectory);
 		}
 		fireRecipeLoading:
 		{
 			File recipeDirectory = new File(directory, "fire_recipes");
-			if (!recipeDirectory.exists())
+			if (!recipeDirectory.exists()) {
 				if (!recipeDirectory.mkdirs()) {
 					Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not create directory " + recipeDirectory.getPath());
 					break fireRecipeLoading;
 				}
-			FireRecipes.INSTANCE.copyMissingRecipes(recipeDirectory);
+				FireRecipes.INSTANCE.copyMissingRecipes(recipeDirectory);
+			}
 			FireRecipes.INSTANCE.loadRecipes(recipeDirectory);
 		}
 	}
