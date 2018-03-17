@@ -8,7 +8,7 @@ import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.utilities.AnnotationHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
-import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.attribute.Operation;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -144,7 +144,7 @@ public class ModuleRegistry {
 				Wizardry.logger.error("| |___ Failed to register module " + module.getID());
 				continue;
 			} else {
-				Wizardry.logger.error("| | |_ Found Item " + item.getUnlocalizedName());
+				Wizardry.logger.info(" | | |_ Found Item " + item.getRegistryName().toString());
 			}
 
 			for (Map.Entry<String, JsonElement> entry : moduleObject.entrySet()) {
@@ -211,19 +211,23 @@ public class ModuleRegistry {
 				JsonArray attributeModifiers = moduleObject.getAsJsonArray("modifiers");
 				for (JsonElement attributeModifier : attributeModifiers) {
 					if (attributeModifier.isJsonObject()) {
-						String attribute = null;
+						String attributeName = "NULL";
+						AttributeRegistry.Attribute attribute = null;
 						Operation operator = null;
 						double amount = 0;
 						JsonObject modifier = attributeModifier.getAsJsonObject();
-						if (modifier.has("attribute") && modifier.get("attribute").isJsonPrimitive() && modifier.getAsJsonPrimitive("attribute").isString())
-							attribute = Attributes.getAttributeFromName(modifier.getAsJsonPrimitive("attribute").getAsString());
+						if (modifier.has("attribute") && modifier.get("attribute").isJsonPrimitive() && modifier.getAsJsonPrimitive("attribute").isString()) {
+							attribute = AttributeRegistry.getAttributeFromName(modifier.getAsJsonPrimitive("attribute").getAsString());
+							if (attribute != null)
+								attributeName = attribute.getShortName();
+						}
 						if (modifier.has("operation") && modifier.get("operation").isJsonPrimitive() && modifier.getAsJsonPrimitive("operation").isString())
 							operator = Operation.valueOf(modifier.get("operation").getAsJsonPrimitive().getAsString().toUpperCase());
 						if (modifier.has("amount") && modifier.get("amount").isJsonPrimitive() && modifier.getAsJsonPrimitive("amount").isNumber())
 							amount = modifier.get("amount").getAsDouble();
-						Wizardry.logger.info(" | | | |_ Loading AttributeModifier for " + file.getName() + ": " + operator + " -> " + attribute + ", " + amount);
+						Wizardry.logger.info(" | | | |_ Loading AttributeModifier for " + file.getName() + ": " + operator + " -> " + attributeName + ", " + amount);
 						if (attribute != null && operator != null) {
-							module.addAttribute(new AttributeModifier(attribute, amount, operator));
+							module.addAttribute(new AttributeModifier(attribute, amount, operator, (attribute == AttributeRegistry.MANA || attribute == AttributeRegistry.BURNOUT) ? null : module));
 							Wizardry.logger.info(" | | | | |_ AttributeModifier registered successfully");
 						} else {
 							Wizardry.logger.error("| | | | |_ Failed to register AttributeModifier!");

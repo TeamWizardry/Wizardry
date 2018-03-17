@@ -208,16 +208,10 @@ public class TileCraftingPlate extends TileManaInteracter {
 					for (SpellRing spellRing : SpellUtils.getAllSpellRings(infusedPearl))
 						spellRing.multiplyMultiplierForAll((float) multiplier);
 				}
+				for (int i = 0; i < positions.length; i++) {
+					positions[i] = Vec3d.ZERO;
+				}
 
-				ClientRunnable.run(new ClientRunnable() {
-					@Override
-					@SideOnly(Side.CLIENT)
-					public void runIfClient() {
-						for (int i = 0; i < positions.length; i++) {
-							positions[i] = Vec3d.ZERO;
-						}
-					}
-				});
 
 				markDirty();
 

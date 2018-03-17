@@ -9,6 +9,7 @@ import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.api.item.ICooldown;
 import com.teamwizardry.wizardry.api.item.INacreProduct;
 import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
 import com.teamwizardry.wizardry.common.module.shapes.ModuleShapeTouch;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.Minecraft;
@@ -267,8 +268,8 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 									+ TextFormatting.RED
 									+ Math.round(tmpRing.getBurnoutFill() * tmpRing.getBurnoutMultiplier()));
 					if (GuiScreen.isShiftKeyDown()) {
-						for (String key : tmpRing.getAttributes().getKeySet())
-							tooltip.add(StringUtils.repeat(" ", i + 1) + " | " + TextFormatting.DARK_GRAY + key + " x" + Math.round(tmpRing.getAttributes().getDouble(key)));
+						for (AttributeModifier modifier : tmpRing.getAttributes())
+							tooltip.add(StringUtils.repeat(" ", i + 1) + " | " + TextFormatting.DARK_GRAY + modifier.getAttribute().getShortName() + " x" + Math.round(modifier.getModifier()));
 					}
 					tmpRing = tmpRing.getChildRing();
 					i++;

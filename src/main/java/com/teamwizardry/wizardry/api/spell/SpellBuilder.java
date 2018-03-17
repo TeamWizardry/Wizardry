@@ -13,6 +13,7 @@ import java.util.*;
 
 public class SpellBuilder {
 
+	// TODO: config this
 	private final static Item codeLineBreak = ModItems.DEVIL_DUST;
 
 	private List<ItemStack> inventory;
@@ -23,33 +24,58 @@ public class SpellBuilder {
 		spell = toSpell(inventory);
 	}
 
-	public SpellBuilder(List<SpellRing> spellChains) {
-		inventory = new ArrayList<>();
+	public SpellBuilder(List<SpellRing> chains, boolean javaisReallyStupid, boolean fml) {
+		this.spell = chains;
 
-		for (SpellRing spellChain : spellChains) {
-			for (SpellRing spellRing : SpellUtils.getAllSpellRings(spellChain)) {
+		Deque<ItemStack> dequeItems = new ArrayDeque<>();
+
+		for (SpellRing chainHeads : chains) {
+
+			for (SpellRing spellRing : SpellUtils.getAllSpellRings(chainHeads)) {
 				if (spellRing.getModule() == null) continue;
 
-				if (spellRing.getModule() instanceof ModuleModifier) {
+				dequeItems.add(spellRing.getModule().getItemStack().copy());
 
-					if (inventory.isEmpty()) continue;
-
-					ModuleModifier moduleModifier = (ModuleModifier) spellRing.getModule();
-					ItemStack lastStack = inventory.get(inventory.size() - 1);
-
-					if (ItemStack.areItemsEqual(lastStack, moduleModifier.getItemStack())) {
-
-						lastStack.setCount(lastStack.getCount() + moduleModifier.getItemStack().getCount());
-
-					} else {
-						inventory.add(moduleModifier.getItemStack().copy());
+				for (AttributeModifier modifier : spellRing.getAttributes()) {
+					if (modifier.getModuleSet().isEmpty()) continue;
+					for (Module module : modifier.getModuleSet()) {
+						ItemStack stack = module.getItemStack().copy();
+						//stack.setCount((int) modifier.getModifier());
+						dequeItems.add(stack);
 					}
-				} else inventory.add(spellRing.getModule().getItemStack().copy());
+				}
 			}
-			inventory.add(new ItemStack(codeLineBreak));
-		}
 
-		inventory.add(new ItemStack(ModItems.PEARL_NACRE));
+			dequeItems.add(new ItemStack(codeLineBreak));
+		}
+		dequeItems.add(new ItemStack(ModItems.PEARL_NACRE));
+
+		inventory = new ArrayList<>(dequeItems);
+	}
+
+	public SpellBuilder(List<List<Module>> modules) {
+		Deque<ItemStack> dequeItems = new ArrayDeque<>();
+
+		for (List<Module> moduleChain : modules) {
+			for (Module module : moduleChain) {
+
+				if (module instanceof ModuleModifier) {
+
+					ItemStack lastStack = dequeItems.peekLast();
+					if (lastStack.isItemEqual(module.getItemStack())) {
+						ItemStack stack = dequeItems.pollLast();
+						stack.setCount(stack.getCount() + module.getItemStack().getCount());
+						dequeItems.add(stack);
+					} else dequeItems.add(module.getItemStack().copy());
+
+				} else {
+					dequeItems.add(module.getItemStack().copy());
+				}
+			}
+		}
+		dequeItems.add(new ItemStack(ModItems.PEARL_NACRE));
+
+		inventory = new ArrayList<>(dequeItems);
 
 		spell = toSpell(inventory);
 	}
@@ -70,20 +96,17 @@ public class SpellBuilder {
 
 	private List<SpellRing> toSpell(List<ItemStack> inventory) {
 		List<SpellRing> spellList = new ArrayList<>();
-		Set<List<SpellRing>> compiled = new HashSet<>();
+		Set<List<SpellRing>> spellChains = new HashSet<>();
 
 		List<List<ItemStack>> lines = brancher(inventory, codeLineBreak);
-
-		SpellRing lastModule = null;
 
 		// Spell chain from multiple chains
 		for (List<ItemStack> line : lines) {
 
 			// List is made of all modules that aren't modifiers for this spellData chain.
-			List<SpellRing> lineModule = new ArrayList<>();
+			Deque<SpellRing> uncompressedChain = new ArrayDeque<>();
 
-			// Each module get's it's list of modifiers.
-			HashMap<SpellRing, List<AttributeModifier>> modifiersToApply = new HashMap<>();
+			List<AttributeModifier> modifiersToApply = new ArrayList<>();
 
 			// Step through each item in line. If modifier, add to lastModule, if not, add to compiled.
 			for (ItemStack stack : line) {
@@ -91,57 +114,62 @@ public class SpellBuilder {
 
 				if (module == null) continue;
 
-				SpellRing ring = new SpellRing(module);
-
 				if (module instanceof ModuleModifier) {
-					if (lastModule == null) continue;
-
-					modifiersToApply.putIfAbsent(lastModule, new ArrayList<>());
-					List<AttributeModifier> modifiers = modifiersToApply.get(lastModule);
 
 					for (int i = 0; i < stack.getCount(); i++)
-						((ModuleModifier) module).apply(modifiers);
+						((ModuleModifier) module).apply(modifiersToApply);
+
 				} else {
-					lastModule = ring;
-					lineModule.add(ring);
+					if (!modifiersToApply.isEmpty() && !uncompressedChain.isEmpty()) {
+						SpellRing lastRing = uncompressedChain.peekLast();
+						lastRing.processModifiers(modifiersToApply);
+						modifiersToApply.clear();
+					}
+
+					SpellRing ring = new SpellRing(module);
+					uncompressedChain.add(ring);
 				}
 			}
 
-			// Process all module modifiers.
-			for (SpellRing ring : modifiersToApply.keySet()) {
-				ring.processModifiers(modifiersToApply.get(ring));
+			if (!modifiersToApply.isEmpty()) {
+				SpellRing lastRing = uncompressedChain.peekLast();
+				lastRing.processModifiers(modifiersToApply);
+				modifiersToApply.clear();
 			}
-			compiled.add(lineModule);
+
+			spellChains.add(new ArrayList<>(uncompressedChain));
 		}
 
 		// We now have a code line of modules. link them as children in order.
-		for (List<SpellRing> rings : compiled) {
+
+		for (List<SpellRing> rings : spellChains) {
+			if (rings.isEmpty()) continue;
+
 			Deque<SpellRing> deque = new ArrayDeque<>(rings);
 
-			for (@SuppressWarnings("unused") SpellRing ignored : rings) {
-				if (deque.peekFirst() == deque.peekLast()) {
-					spellList.add(deque.peekLast());
-					break;
-				}
-				if (deque.peekLast() != null) {
-					SpellRing last = deque.pollLast();
-					if (deque.peekLast() != null) {
-						SpellRing beforeLast = deque.peekLast();
-						beforeLast.setChildRing(last);
-						last.setParentRing(beforeLast);
-					}
-				}
+			SpellRing ringHead = deque.pop();
+
+			SpellRing lastRing = ringHead;
+			while (!deque.isEmpty()) {
+				SpellRing child = deque.pop();
+				lastRing.setChildRing(child);
+				child.setParentRing(lastRing);
+				lastRing = child;
 			}
+
+			spellList.add(ringHead);
+
 		}
 
 		for (SpellRing ring : spellList) {
-			SpellRing first = ring;
-			while (first != null) {
+			SpellRing chainEnd = ring;
+			while (chainEnd != null) {
+				if (chainEnd.getChildRing() == null) break;
+				chainEnd = chainEnd.getChildRing();
+			}
 
-				if (first.getChildRing() == null) {
-					first.updateColorChain();
-					break;
-				} else first = first.getChildRing();
+			if (chainEnd != null) {
+				chainEnd.updateColorChain();
 			}
 		}
 		return spellList;

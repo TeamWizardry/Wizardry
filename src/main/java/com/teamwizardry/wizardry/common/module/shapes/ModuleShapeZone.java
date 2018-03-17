@@ -9,7 +9,7 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.ILingeringModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
@@ -68,9 +68,9 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 
 		if (targetPos == null) return false;
 
-		double aoe = spellRing.getModifier(Attributes.AREA, 3, 10);
-		double strength = spellRing.getModifier(Attributes.POTENCY, 1, 20);
-		double range = spellRing.getModifier(Attributes.RANGE, 1, 20);
+		double aoe = spellRing.getModifier(AttributeRegistry.AREA, 3, 10);
+		double strength = spellRing.getModifier(AttributeRegistry.POTENCY, 1, 20);
+		double range = spellRing.getModifier(AttributeRegistry.RANGE, 1, 20);
 
 		List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(targetPos)).grow(aoe, 1, aoe));
 
@@ -127,7 +127,7 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 		if (target == null) return;
 		if (RandUtil.nextInt(10) != 0) return;
 
-		double aoe = spellRing.getModifier(Attributes.AREA, 3, 10);
+		double aoe = spellRing.getModifier(AttributeRegistry.AREA, 3, 10);
 
 		ParticleBuilder glitter = new ParticleBuilder(10);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
@@ -151,7 +151,7 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 
 	@Override
 	public int getLingeringTime(SpellData spell, SpellRing spellRing) {
-		double strength = spellRing.getModifier(Attributes.DURATION, 10, 100) * 10;
+		double strength = spellRing.getModifier(AttributeRegistry.DURATION, 10, 100) * 10;
 		return (int) strength;
 	}
 }

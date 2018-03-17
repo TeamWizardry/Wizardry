@@ -1,4 +1,4 @@
-jei.wizardry.category.mana_crafting=魔力合成
+4jei.wizardry.category.mana_crafting=魔力合成
 
 tile.wizardry:crafting_plate.name=合成台
 tile.wizardry:magicians_worktable.name=铭文桌
@@ -138,7 +138,7 @@ jei.recipe.wizardry:fire=物品燃烧
 jei.recipe.tooltip.wizardry:fire=火
 
 
-wizardry.misc.module=法术:
+wizardry.misc.moduleSet=法术:
 wizardry.misc.sneak=<潜行查看信息>
 wizardry.misc.save=保存
 wizardry.misc.save_error=你的物品栏里没有巫师宝典！把宝典放进物品栏以正常保存。
@@ -235,11 +235,11 @@ wizardry.gui.recipe=法术合成
 
 wizardry.command.usage=/wizardry <reload/reset> [config/inventory]
 wizardry.command.success=Successfully reloaded modules.
-wizardry.command.reset=Attempting to reset module directory... Any modifications made to it will be lost!
+wizardry.command.reset=Attempting to reset moduleSet directory... Any modifications made to it will be lost!
 wizardry.command.success_delete=Successfully deleted %s
 wizardry.command.fail=Could not delete %s
-wizardry.command.fail_dir_delete=Could not delete module directory
-wizardry.command.fail_dir_create=Could not create module directory
+wizardry.command.fail_dir_delete=Could not delete moduleSet directory
+wizardry.command.fail_dir_create=Could not create moduleSet directory
 
 
 wizardry.update0=Don't let your bugs be thugs! Use our patented Magic-o-gon spray for only $9.99

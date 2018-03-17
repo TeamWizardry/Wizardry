@@ -10,7 +10,7 @@ import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
 import com.teamwizardry.wizardry.common.core.SpellTicker;
 import com.teamwizardry.wizardry.common.network.PacketRenderSpell;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -41,9 +41,13 @@ public abstract class Module {
 	private float burnoutMultiplier;
 
 	@Nullable
-	public static Module deserialize(NBTTagCompound compound) {
-		if (compound.hasKey("id")) return ModuleRegistry.INSTANCE.getModule(compound.getString("id"));
-		return null;
+	public static Module deserialize(NBTTagString tagString) {
+		return ModuleRegistry.INSTANCE.getModule(tagString.getString());
+	}
+
+	@Nullable
+	public static Module deserialize(String id) {
+		return ModuleRegistry.INSTANCE.getModule(id);
 	}
 
 	public final void init(ItemStack itemStack,
@@ -248,9 +252,7 @@ public abstract class Module {
 	}
 
 	@Nonnull
-	public final NBTTagCompound serialize() {
-		NBTTagCompound compound = new NBTTagCompound();
-		compound.setString("id", getID());
-		return compound;
+	public final NBTTagString serialize() {
+		return new NBTTagString(getID());
 	}
 }

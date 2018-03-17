@@ -144,6 +144,9 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 							if (!extracted.isEmpty()) {
 								playerIn.addItemStackToInventory(plate.realInventory.getHandler().extractItem(i, extracted.getCount(), false));
 								worldIn.notifyBlockUpdate(pos, state, state, 3);
+
+								plate.positions[i] = Vec3d.ZERO;
+
 								break;
 							}
 						}

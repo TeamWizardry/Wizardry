@@ -9,7 +9,7 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
@@ -58,8 +58,8 @@ public class ModuleEffectBackup extends ModuleEffect {
 		EnumFacing facing = spell.getData(FACE_HIT);
 		Entity caster = spell.getCaster();
 
-		double range = spellRing.getModifier(Attributes.AREA, 1, 16) / 2.0;
-		double time = spellRing.getModifier(Attributes.DURATION, 500, 1000);
+		double range = spellRing.getModifier(AttributeRegistry.AREA, 1, 16) / 2.0;
+		double time = spellRing.getModifier(AttributeRegistry.DURATION, 500, 1000);
 
 		if (!tax(this, spell, spellRing)) return false;
 

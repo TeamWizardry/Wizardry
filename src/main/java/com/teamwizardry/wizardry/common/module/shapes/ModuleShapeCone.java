@@ -9,7 +9,7 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
@@ -64,7 +64,7 @@ public class ModuleShapeCone extends ModuleShape {
 
 		if (position == null) return false;
 
-		double range = spellRing.getModifier(Attributes.RANGE, 5, 16);
+		double range = spellRing.getModifier(AttributeRegistry.RANGE, 5, 16);
 
 		setCostMultiplier(this, range / 16.0);
 
@@ -72,7 +72,7 @@ public class ModuleShapeCone extends ModuleShape {
 
 		if (origin == null) return false;
 
-		int chance = (int) (spellRing.getModifier(Attributes.POTENCY, 5, 32));
+		int chance = (int) (spellRing.getModifier(AttributeRegistry.POTENCY, 5, 32));
 
 		for (int i = 0; i < chance; i++) {
 

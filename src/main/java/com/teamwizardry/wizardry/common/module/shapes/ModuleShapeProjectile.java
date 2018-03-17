@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.common.module.shapes;
 import com.teamwizardry.wizardry.api.spell.ITaxing;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
@@ -52,8 +52,8 @@ public class ModuleShapeProjectile extends ModuleShape implements ITaxing {
 		Vec3d origin = spell.getOriginWithFallback();
 		if (origin == null) return false;
 
-		double dist = spellRing.getModifier(Attributes.RANGE, 20, 240);
-		double speed = spellRing.getModifier(Attributes.SPEED, 1, 10);
+		double dist = spellRing.getModifier(AttributeRegistry.RANGE, 20, 240);
+		double speed = spellRing.getModifier(AttributeRegistry.SPEED, 1, 10);
 
 		EntitySpellProjectile proj = new EntitySpellProjectile(world, spellRing, spell, dist, speed, 0.1);
 		proj.setPosition(origin.x, origin.y, origin.z);

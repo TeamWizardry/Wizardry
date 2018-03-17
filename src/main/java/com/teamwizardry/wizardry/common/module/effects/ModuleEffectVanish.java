@@ -2,7 +2,7 @@ package com.teamwizardry.wizardry.common.module.effects;
 
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
@@ -46,8 +46,8 @@ public class ModuleEffectVanish extends ModuleEffect {
 		Entity caster = spell.getCaster();
 		Entity targetEntity = spell.getVictim();
 
-		double range = spellRing.getModifier(Attributes.AREA, 1, 64);
-		double strength = spellRing.getModifier(Attributes.POTENCY, 1, 64);
+		double range = spellRing.getModifier(AttributeRegistry.AREA, 1, 64);
+		double strength = spellRing.getModifier(AttributeRegistry.POTENCY, 1, 64);
 		range = 32;
 
 		if (targetEntity != null && targetEntity instanceof EntityLivingBase) {

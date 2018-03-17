@@ -2,7 +2,7 @@ package com.teamwizardry.wizardry.common.module.effects;
 
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
@@ -43,7 +43,7 @@ public class ModuleEffectPhase extends ModuleEffect {
 		Entity targetEntity = spell.getVictim();
 		Vec3d targetHit = spell.getTarget();
 
-		double time = spellRing.getModifier(Attributes.DURATION, 10, 500);
+		double time = spellRing.getModifier(AttributeRegistry.DURATION, 10, 500);
 
 		if (!tax(this, spell, spellRing)) return false;
 

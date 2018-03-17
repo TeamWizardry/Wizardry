@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.client.gui.book;
 
 import com.teamwizardry.librarianlib.features.gui.component.GuiComponent;
+import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentStack;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentText;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentVoid;
@@ -53,7 +54,7 @@ public class ComponentSpellRecipe extends NavBarHolder implements IBookElement {
 				} else {
 					int realLength = Minecraft.getMinecraft().fontRenderer.getStringWidth(margin);
 					int nbOfSpace = MathHelper.clamp(realLength / widthOfSpace, 0, 20);
-					margin = StringUtils.repeat(" ", nbOfSpace) + "|_";
+					margin = StringUtils.repeat(" ", nbOfSpace) + "|_ ";
 
 					builder.append(margin).append(ring.getModuleReadableName()).append("\n");
 				}
@@ -75,39 +76,55 @@ public class ComponentSpellRecipe extends NavBarHolder implements IBookElement {
 				spellStructureText.getUnicode().setValue(true);
 				spellStructureText.getWrap().setValue(getSize().getXi());
 
-				getPages().add(spellStructureText);
+				addPage(spellStructureText);
 			}
 		}
 
-		if (!pageChunk.toString().isEmpty()) {
+		if (count != 0) {
 			ComponentText spellStructureText = new ComponentText(0, 0, ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.TOP);
 			spellStructureText.getText().setValue(pageChunk.toString());
 			spellStructureText.getUnicode().setValue(true);
 			spellStructureText.getWrap().setValue(getSize().getXi());
 
-			getPages().add(spellStructureText);
+			addPage(spellStructureText);
 		}
 
-		SpellBuilder spellBuilder = new SpellBuilder(spellChains);
+		SpellBuilder spellBuilder = new SpellBuilder(spellChains, true, true);
 
 		ComponentVoid page = new ComponentVoid(0, 0, getSize().getXi(), getSize().getYi());
 
 		int row = 0;
+		int column = 0;
 		List<ItemStack> inventory = spellBuilder.getInventory();
 		for (int i = 0; i < inventory.size(); i++) {
 			ItemStack stack = inventory.get(i);
 
-			if (i != 0 && i % 4 == 0) row++;
-
-			ComponentStack componentStack = new ComponentStack((i % 4) * 32, row * 16);
+			ComponentStack componentStack = new ComponentStack(column * 32, row * 16);
 			componentStack.getStack().setValue(stack);
 			page.add(componentStack);
 
+			if (i != inventory.size() - 1 && column < 3) {
+				ComponentSprite nextItem = new ComponentSprite(book.getHomeSprite(), 32 + column * 32, row * 16 + 13, 16, 8);
+				nextItem.getColor().setValue(book.getBook().getHighlightColor());
+				nextItem.getTransform().setRotate(Math.toRadians(180));
+				page.add(nextItem);
+			}
+
+
+			if (++column >= 4) {
+				column = 0;
+				row++;
+			}
+
 			if (row >= 20) {
 				row = 0;
-				getPages().add(page);
+				addPage(page);
 				page = new ComponentVoid(0, 0, getSize().getXi(), getSize().getYi());
 			}
+		}
+
+		if (row != 0) {
+			addPage(page);
 		}
 	}
 

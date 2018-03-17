@@ -138,7 +138,7 @@ jei.recipe.wizardry:fire=Item Burning
 jei.recipe.tooltip.wizardry:fire=Fire
 jei.recipe.wizardry:fluid=Fluid Recipe
 
-wizardry.misc.module=Spell:
+wizardry.misc.moduleSet=Spell:
 wizardry.misc.sneak=<Sneak for info>
 wizardry.misc.save=SAVE
 wizardry.misc.save_error=No codex found in your inventory! Place one in your inventory to save properly.
@@ -235,11 +235,11 @@ wizardry.gui.recipe=Spell Recipe
 
 wizardry.command.usage=/wizardry <reload/reset> [config/inventory]
 wizardry.command.success=Successfully reloaded modules.
-wizardry.command.reset=Attempting to reset module directory... Any modifications made to it will be lost!
+wizardry.command.reset=Attempting to reset moduleSet directory... Any modifications made to it will be lost!
 wizardry.command.success_delete=Successfully deleted %s
 wizardry.command.fail=Could not delete %s
-wizardry.command.fail_dir_delete=Could not delete module directory
-wizardry.command.fail_dir_create=Could not create module directory
+wizardry.command.fail_dir_delete=Could not delete moduleSet directory
+wizardry.command.fail_dir_create=Could not create moduleSet directory
 
 wizardry.update0=Don't let your bugs be thugs! Use our patented Magic-o-gon spray for only $9.99
 wizardry.update1=There's magic in the air...

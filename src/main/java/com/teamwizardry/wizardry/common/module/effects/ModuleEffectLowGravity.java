@@ -8,7 +8,7 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
@@ -57,8 +57,8 @@ public class ModuleEffectLowGravity extends ModuleEffect {
 		BlockPos targetPos = spell.getTargetPos();
 		Entity caster = spell.getCaster();
 
-		double potency = spellRing.getModifier(Attributes.POTENCY, 2, 16);
-		double time = spellRing.getModifier(Attributes.DURATION, 50, 1000);
+		double potency = spellRing.getModifier(AttributeRegistry.POTENCY, 2, 16);
+		double time = spellRing.getModifier(AttributeRegistry.DURATION, 50, 1000);
 
 		if (!tax(this, spell, spellRing)) return false;
 

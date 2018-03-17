@@ -2,7 +2,7 @@ package com.teamwizardry.wizardry.common.module.effects;
 
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
@@ -54,8 +54,8 @@ public class ModuleEffectBurn extends ModuleEffect {
 		Entity caster = spell.getCaster();
 		EnumFacing facing = spell.getData(FACE_HIT);
 
-		double strength = spellRing.getModifier(Attributes.AREA, 2, 16) / 2.0;
-		double time = spellRing.getModifier(Attributes.DURATION, 100, 1000);
+		double strength = spellRing.getModifier(AttributeRegistry.AREA, 2, 16) / 2.0;
+		double time = spellRing.getModifier(AttributeRegistry.DURATION, 100, 1000);
 
 		if (!tax(this, spell, spellRing)) return false;
 

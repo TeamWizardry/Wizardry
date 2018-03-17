@@ -67,7 +67,6 @@ public class WorktableGui extends GuiBase {
 	BiMap<GuiComponent, UUID> paperComponents = HashBiMap.create();
 	HashMap<UUID, UUID> componentLinks = new HashMap<>();
 	ComponentWhitelistedModifiers whitelistedModifiers;
-	private List<SpellRing> compiledSpell = new ArrayList<>();
 
 	public WorktableGui(BlockPos worktablePos) {
 		super(480, 224);
@@ -93,9 +92,9 @@ public class WorktableGui extends GuiBase {
 
 				TableModule tableModule = new TableModule(this, null, module, true, false);
 
-				if (entrySet.getKey().getAttributes().hasKey("worktable_x") && entrySet.getKey().getAttributes().hasKey("worktable_y")) {
-					double x = entrySet.getKey().getAttributes().getDouble("worktable_x");
-					double y = entrySet.getKey().getAttributes().getDouble("worktable_y");
+				if (entrySet.getKey().getExtraInformation().hasKey("worktable_x") && entrySet.getKey().getExtraInformation().hasKey("worktable_y")) {
+					double x = entrySet.getKey().getExtraInformation().getDouble("worktable_x");
+					double y = entrySet.getKey().getExtraInformation().getDouble("worktable_y");
 					tableModule.component.setPos(new Vec2d(x, y));
 				}
 
@@ -181,13 +180,14 @@ public class WorktableGui extends GuiBase {
 
 			HashSet<GuiComponent> heads = getHeads();
 			if (heads.isEmpty()) return;
-			compiledSpell.clear();
+
+			List<List<Module>> compiledSpell = new ArrayList<>();
+
 			for (GuiComponent component : heads) {
 				ArrayList<Module> stream = new ArrayList<>();
 				compileModule(stream, component);
 
-				for (Module module : stream)
-					compiledSpell.add(new SpellRing(module));
+				compiledSpell.add(stream);
 			}
 
 			SpellBuilder builder = new SpellBuilder(compiledSpell);
@@ -320,8 +320,8 @@ public class WorktableGui extends GuiBase {
 			if (module1 == null) continue;
 			SpellRing ring = new SpellRing(module1);
 
-			ring.getAttributes().setDouble("worktable_x", entrySet.getKey().getPos().getX());
-			ring.getAttributes().setDouble("worktable_y", entrySet.getKey().getPos().getY());
+			ring.getExtraInformation().setDouble("worktable_x", entrySet.getKey().getPos().getX());
+			ring.getExtraInformation().setDouble("worktable_y", entrySet.getKey().getPos().getY());
 			convertComponents.put(ring, entrySet.getValue());
 		}
 
