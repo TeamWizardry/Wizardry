@@ -65,20 +65,20 @@ public class BlockFluidMana extends BlockModFluid {
 		IBlockState state = world.getBlockState(pos);
 		if (state.getBlock() == ModFluids.MANA.getActualBlock()) {
 			// Fizz all entities in the pool
-			run(world, pos, state.getBlock(), entityIn,
+			if (world.isRemote)
+				run(world, pos, state.getBlock(), entityIn,
 					entity -> true,
-					entity -> {
-						if (world.isRemote) LibParticles.FIZZING_AMBIENT(world, entityIn.getPositionVector());
-					});
+					entity -> LibParticles.FIZZING_AMBIENT(world, entityIn.getPositionVector()));
 
 			// Nullify gravity of player
-			run(world, pos, state.getBlock(), entityIn,
-					entity -> entity instanceof EntityLivingBase,
-					entity -> {
-						((EntityLivingBase) entityIn).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 0, true, false));
+			if (!world.isRemote)
+				run(world, pos, state.getBlock(), entityIn,
+						entity -> entity instanceof EntityLivingBase,
+						entity -> {
+							((EntityLivingBase) entityIn).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 0, true, false));
 
-						if (RandUtil.nextInt(50) == 0) entity.attackEntityFrom(DamageSourceMana.INSTANCE, 0.1f);
-					});
+							if (RandUtil.nextInt(50) == 0) entity.attackEntityFrom(DamageSourceMana.INSTANCE, 0.1f);
+						});
 
 			// Subtract player food
 			run(world, pos, state.getBlock(), entityIn,
