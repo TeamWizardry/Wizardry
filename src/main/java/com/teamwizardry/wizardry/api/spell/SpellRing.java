@@ -392,7 +392,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 			modifierCompound.setTag("modifier", modifier.getKey().serialize());
 			modifierCompound.setInteger("count", modifier.getValue());
 
-			attribs.appendTag(compound);
+			attribs.appendTag(modifierCompound);
 		}
 
 		compound.setTag("extra", informationTag);
