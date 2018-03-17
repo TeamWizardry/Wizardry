@@ -92,9 +92,9 @@ public class WorktableGui extends GuiBase {
 
 				TableModule tableModule = new TableModule(this, null, module, true, false);
 
-				if (entrySet.getKey().getExtraInformation().hasKey("worktable_x") && entrySet.getKey().getExtraInformation().hasKey("worktable_y")) {
-					double x = entrySet.getKey().getExtraInformation().getDouble("worktable_x");
-					double y = entrySet.getKey().getExtraInformation().getDouble("worktable_y");
+				if (entrySet.getKey().getInformationTag().hasKey("worktable_x") && entrySet.getKey().getInformationTag().hasKey("worktable_y")) {
+					double x = entrySet.getKey().getInformationTag().getDouble("worktable_x");
+					double y = entrySet.getKey().getInformationTag().getDouble("worktable_y");
 					tableModule.component.setPos(new Vec2d(x, y));
 				}
 
@@ -195,7 +195,7 @@ public class WorktableGui extends GuiBase {
 			for (ItemStack stack : Minecraft.getMinecraft().player.inventory.mainInventory) {
 				if (stack.getItem() == ModItems.BOOK) {
 					int slot = Minecraft.getMinecraft().player.inventory.getSlotFor(stack);
-					PacketHandler.NETWORK.sendToServer(new PacketSendSpellToBook(slot, builder.buildSpell()));
+					PacketHandler.NETWORK.sendToServer(new PacketSendSpellToBook(slot, builder.getSpell()));
 				}
 			}
 
@@ -320,8 +320,8 @@ public class WorktableGui extends GuiBase {
 			if (module1 == null) continue;
 			SpellRing ring = new SpellRing(module1);
 
-			ring.getExtraInformation().setDouble("worktable_x", entrySet.getKey().getPos().getX());
-			ring.getExtraInformation().setDouble("worktable_y", entrySet.getKey().getPos().getY());
+			ring.getInformationTag().setDouble("worktable_x", entrySet.getKey().getPos().getX());
+			ring.getInformationTag().setDouble("worktable_y", entrySet.getKey().getPos().getY());
 			convertComponents.put(ring, entrySet.getValue());
 		}
 

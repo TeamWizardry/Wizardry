@@ -12,7 +12,6 @@ import com.teamwizardry.wizardry.api.item.IInfusable;
 import com.teamwizardry.wizardry.api.item.INacreProduct;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
-import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
@@ -135,8 +134,8 @@ public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, 
 									+ TextFormatting.RED
 									+ Math.round(tmpRing.getBurnoutFill() * tmpRing.getBurnoutMultiplier()));
 					if (GuiScreen.isShiftKeyDown()) {
-						for (AttributeModifier modifier : tmpRing.getAttributes())
-							tooltip.add(StringUtils.repeat(" ", i + 1) + " | " + TextFormatting.DARK_GRAY + modifier.getAttribute().getShortName() + " x" + Math.round(modifier.getModifier()));
+						for (String key : tmpRing.getInformationTag().getKeySet())
+							tooltip.add(StringUtils.repeat(" ", i + 1) + " | " + TextFormatting.DARK_GRAY + key + " x" + Math.round(tmpRing.getInformationTag().getDouble(key)));
 					}
 					tmpRing = tmpRing.getChildRing();
 					i++;

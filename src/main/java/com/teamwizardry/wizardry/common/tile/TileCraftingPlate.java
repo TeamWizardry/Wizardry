@@ -171,7 +171,7 @@ public class TileCraftingPlate extends TileManaInteracter {
 				ArrayDeque<Color> colorSet = new ArrayDeque<>();
 
 				NBTTagList list = new NBTTagList();
-				for (SpellRing spellRing : builder.buildSpell()) {
+				for (SpellRing spellRing : builder.getSpell()) {
 					colorSet.add(spellRing.getPrimaryColor());
 					colorSet.add(spellRing.getSecondaryColor());
 					list.appendTag(spellRing.serializeNBT());

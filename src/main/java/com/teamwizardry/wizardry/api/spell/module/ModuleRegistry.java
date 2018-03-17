@@ -207,7 +207,6 @@ public class ModuleRegistry {
 			if (moduleObject.has("modifiers") && moduleObject.get("modifiers").isJsonArray()) {
 				Wizardry.logger.info(" | | |___ Found Modifiers. About to process them");
 
-
 				JsonArray attributeModifiers = moduleObject.getAsJsonArray("modifiers");
 				for (JsonElement attributeModifier : attributeModifiers) {
 					if (attributeModifier.isJsonObject()) {
@@ -227,7 +226,7 @@ public class ModuleRegistry {
 							amount = modifier.get("amount").getAsDouble();
 						Wizardry.logger.info(" | | | |_ Loading AttributeModifier for " + file.getName() + ": " + operator + " -> " + attributeName + ", " + amount);
 						if (attribute != null && operator != null) {
-							module.addAttribute(new AttributeModifier(attribute, amount, operator, (attribute == AttributeRegistry.MANA || attribute == AttributeRegistry.BURNOUT) ? null : module));
+							module.addAttribute(new AttributeModifier(attribute, amount, operator));
 							Wizardry.logger.info(" | | | | |_ AttributeModifier registered successfully");
 						} else {
 							Wizardry.logger.error("| | | | |_ Failed to register AttributeModifier!");

@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.api.spell;
 
-import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
@@ -36,13 +35,10 @@ public class SpellBuilder {
 
 				dequeItems.add(spellRing.getModule().getItemStack().copy());
 
-				for (AttributeModifier modifier : spellRing.getAttributes()) {
-					if (modifier.getModuleSet().isEmpty()) continue;
-					for (Module module : modifier.getModuleSet()) {
-						ItemStack stack = module.getItemStack().copy();
-						//stack.setCount((int) modifier.getModifier());
-						dequeItems.add(stack);
-					}
+				for (ModuleModifier modifier : spellRing.getModifiers().keySet()) {
+					ItemStack stack = modifier.getItemStack().copy();
+					stack.setCount(stack.getCount() * spellRing.getModifiers().get(modifier));
+					dequeItems.add(stack);
 				}
 			}
 
@@ -106,8 +102,6 @@ public class SpellBuilder {
 			// List is made of all modules that aren't modifiers for this spellData chain.
 			Deque<SpellRing> uncompressedChain = new ArrayDeque<>();
 
-			List<AttributeModifier> modifiersToApply = new ArrayList<>();
-
 			// Step through each item in line. If modifier, add to lastModule, if not, add to compiled.
 			for (ItemStack stack : line) {
 				Module module = ModuleRegistry.INSTANCE.getModule(stack);
@@ -115,33 +109,20 @@ public class SpellBuilder {
 				if (module == null) continue;
 
 				if (module instanceof ModuleModifier) {
-
-					for (int i = 0; i < stack.getCount(); i++)
-						((ModuleModifier) module).apply(modifiersToApply);
-
-				} else {
-					if (!modifiersToApply.isEmpty() && !uncompressedChain.isEmpty()) {
+					if (!uncompressedChain.isEmpty()) {
 						SpellRing lastRing = uncompressedChain.peekLast();
-						lastRing.processModifiers(modifiersToApply);
-						modifiersToApply.clear();
+						lastRing.addModifier((ModuleModifier) module);
 					}
-
+				} else {
 					SpellRing ring = new SpellRing(module);
 					uncompressedChain.add(ring);
 				}
-			}
-
-			if (!modifiersToApply.isEmpty()) {
-				SpellRing lastRing = uncompressedChain.peekLast();
-				lastRing.processModifiers(modifiersToApply);
-				modifiersToApply.clear();
 			}
 
 			spellChains.add(new ArrayList<>(uncompressedChain));
 		}
 
 		// We now have a code line of modules. link them as children in order.
-
 		for (List<SpellRing> rings : spellChains) {
 			if (rings.isEmpty()) continue;
 
@@ -152,8 +133,10 @@ public class SpellBuilder {
 			SpellRing lastRing = ringHead;
 			while (!deque.isEmpty()) {
 				SpellRing child = deque.pop();
+
 				lastRing.setChildRing(child);
 				child.setParentRing(lastRing);
+
 				lastRing = child;
 			}
 
@@ -179,7 +162,7 @@ public class SpellBuilder {
 		return inventory;
 	}
 
-	public List<SpellRing> buildSpell() {
+	public List<SpellRing> getSpell() {
 		return spell;
 	}
 }
