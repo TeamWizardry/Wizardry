@@ -99,8 +99,7 @@ public class CommonProxy {
 					Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not create directory " + recipeDirectory.getPath());
 					break manaRecipeLoading;
 				}
-			if (!ConfigValues.customManaRecipes)
-				ManaRecipes.INSTANCE.copyMissingRecipes(recipeDirectory);
+			ManaRecipes.INSTANCE.copyMissingRecipes(recipeDirectory);
 			ManaRecipes.INSTANCE.loadRecipes(recipeDirectory);
 		}
 		fireRecipeLoading:
@@ -111,8 +110,7 @@ public class CommonProxy {
 					Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not create directory " + recipeDirectory.getPath());
 					break fireRecipeLoading;
 				}
-			if (!ConfigValues.customFireRecipes)
-				FireRecipes.INSTANCE.copyMissingRecipes(recipeDirectory);
+			FireRecipes.INSTANCE.copyMissingRecipes(recipeDirectory);
 			FireRecipes.INSTANCE.loadRecipes(recipeDirectory);
 		}
 	}

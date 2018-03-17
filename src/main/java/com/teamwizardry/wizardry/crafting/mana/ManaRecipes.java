@@ -18,8 +18,12 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 public class ManaRecipes {
 	public static final ManaRecipes INSTANCE = new ManaRecipes();
@@ -27,43 +31,75 @@ public class ManaRecipes {
 	public static final HashMap<String, FluidRecipeLoader.FluidCrafter> RECIPE_REGISTRY = new HashMap<>();
 	public static final HashMultimap<Ingredient, FluidRecipeLoader.FluidCrafter> RECIPES = HashMultimap.create();
 
-	public static final String CODEX = "codex";
-	public static final String NACRE = "nacre";
 	public static final String EXPLODABLE = "explodable";
-	public static final String MANA_BATTERY = "mana_battery";
-
-	private static final String[] INTERNAL_RECIPE_NAMES = {CODEX.toLowerCase(),
-			NACRE.toLowerCase(),
-			MANA_BATTERY.toLowerCase(),
-			"wisdom_log",
-			"wisdom_plank",
-			"wisdom_slab",
-			"wisdom_stairs",
-			"wisdom_stick",
-			"temp_real_halo"};
 
 	public void loadRecipes(File directory) {
 		FluidRecipeLoader.INSTANCE.setDirectory(directory);
 		FluidRecipeLoader.INSTANCE.processRecipes(RECIPE_REGISTRY, RECIPES);
 	}
 
+	// Todo replace in liblib 4.9 with CommonUtilMethods.getAllResources
+	public static String[] getResourceListing(Class clazz, String path) throws URISyntaxException, IOException {
+		URL dirURL = clazz.getClassLoader().getResource(path);
+		if (dirURL != null && dirURL.getProtocol().equals("file")) {
+			/* A file path: easy enough */
+			return new File(dirURL.toURI()).list();
+		}
+
+		if (dirURL == null) {
+			/*
+			 * In case of a jar file, we can't actually find a directory.
+			 * Have to assume the same jar as clazz.
+			 */
+			String me = clazz.getName().replace(".", "/") + ".class";
+			dirURL = clazz.getClassLoader().getResource(me);
+		}
+
+		if (dirURL.getProtocol().equals("jar")) {
+			/* A JAR path */
+			String jarPath = dirURL.getPath().substring(5, dirURL.getPath().indexOf("!")); // strip out only the JAR file
+			JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"));
+			Enumeration<JarEntry> entries = jar.entries(); // gives ALL entries in jar
+			Set<String> result = new HashSet<>(); // avoid duplicates in case it is a subdirectory
+			while (entries.hasMoreElements()) {
+				String name = entries.nextElement().getName();
+				if (name.startsWith(path)) { // filter according to the path
+					String entry = name.substring(path.length());
+					int checkSubdir = entry.indexOf("/");
+					if (checkSubdir >= 0) {
+						// if it is a subdirectory, we just return the directory name
+						entry = entry.substring(0, checkSubdir);
+					}
+					result.add(entry);
+				}
+			}
+			return result.toArray(new String[result.size()]);
+		}
+
+		throw new UnsupportedOperationException("Cannot list files for URL " + dirURL);
+	}
+
 	public void copyMissingRecipes(File directory) {
-		for (String recipeName : INTERNAL_RECIPE_NAMES) {
-			File file = new File(directory, recipeName + ".json");
-			if (file.exists()) continue;
+		try {
+			for (String recipeName : getResourceListing(ManaRecipes.class, "assets/" + Wizardry.MODID + "/fluid_recipes/")) {
+				File file = new File(directory, recipeName);
+				if (file.exists()) continue;
 
-			InputStream stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "fluid_recipes/" + recipeName + ".json");
-			if (stream == null) {
-				Wizardry.logger.fatal("    > SOMETHING WENT WRONG! Could not read recipe " + recipeName + " from mod jar! Report this to the devs on Github!");
-				continue;
-			}
+				InputStream stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "fluid_recipes/" + recipeName);
+				if (stream == null) {
+					Wizardry.logger.fatal("    > SOMETHING WENT WRONG! Could not read recipe " + recipeName + " from mod jar! Report this to the devs on Github!");
+					continue;
+				}
 
-			try {
-				FileUtils.copyInputStreamToFile(stream, file);
-				Wizardry.logger.info("    > Mana recipe " + recipeName + " copied successfully from mod jar.");
-			} catch (IOException e) {
-				e.printStackTrace();
+				try {
+					FileUtils.copyInputStreamToFile(stream, file);
+					Wizardry.logger.info("    > Mana recipe " + recipeName + " copied successfully from mod jar.");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
+		} catch (IOException | URISyntaxException e) {
+			Wizardry.logger.fatal("    > SOMETHING WENT WRONG! Could not read recipes from mod jar! Report this to the devs on Github!");
 		}
 	}
 
