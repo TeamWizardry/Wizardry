@@ -51,6 +51,7 @@ public class ModuleEffectVanish extends ModuleEffect {
 		range = 32;
 
 		if (targetEntity != null && targetEntity instanceof EntityLivingBase) {
+			if (!spellRing.taxCaster(spell)) return false;
 			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.VANISH, 100, 0, true, false));
 		}
 		return true;

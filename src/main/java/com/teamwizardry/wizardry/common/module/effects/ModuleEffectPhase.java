@@ -45,7 +45,7 @@ public class ModuleEffectPhase extends ModuleEffect {
 
 		double time = spellRing.getModifier(AttributeRegistry.DURATION, 10, 500);
 
-		if (!tax(this, spell, spellRing)) return false;
+		if (!spellRing.taxCaster(spell)) return false;
 
 		if (targetEntity != null && targetEntity instanceof EntityLivingBase) {
 			EntityLivingBase entity = (EntityLivingBase) targetEntity;

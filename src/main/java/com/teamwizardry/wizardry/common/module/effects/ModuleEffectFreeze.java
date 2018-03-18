@@ -66,7 +66,7 @@ public class ModuleEffectFreeze extends ModuleEffect {
 		double range = spellRing.getModifier(AttributeRegistry.AREA, 1, 16) / 2.0;
 		double time = spellRing.getModifier(AttributeRegistry.DURATION, 50, 1000);
 
-		if (!tax(this, spell, spellRing)) return false;
+		if (!spellRing.taxCaster(spell)) return false;
 
 		if (targetEntity != null) {
 			spell.world.playSound(null, targetEntity.getPosition(), ModSounds.FROST_FORM, SoundCategory.NEUTRAL, 1, 1);

@@ -57,7 +57,7 @@ public class ModuleEffectBurn extends ModuleEffect {
 		double strength = spellRing.getModifier(AttributeRegistry.AREA, 2, 16) / 2.0;
 		double time = spellRing.getModifier(AttributeRegistry.DURATION, 100, 1000);
 
-		if (!tax(this, spell, spellRing)) return false;
+		if (!spellRing.taxCaster(spell)) return false;
 
 		if (targetEntity != null) {
 			targetEntity.setFire((int) time);

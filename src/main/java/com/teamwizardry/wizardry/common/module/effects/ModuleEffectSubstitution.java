@@ -73,7 +73,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 		if (caster == null) return false;
 
 		if (targetEntity != null && targetEntity instanceof EntityLivingBase) {
-			if (!tax(this, spell, spellRing)) return false;
+			if (!spellRing.taxCaster(spell)) return false;
 
 			Vec3d posTarget = new Vec3d(targetEntity.posX, targetEntity.posY, targetEntity.posZ),
 					posCaster = new Vec3d(caster.posX, caster.posY, caster.posZ);
@@ -125,7 +125,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 				if (blocks.isEmpty()) return true;
 
 				for (BlockPos ignored : blocks) {
-					if (!tax(this, spell, spellRing)) return false;
+					if (!spellRing.taxCaster(spell)) return false;
 					BlockPos nearest = null;
 					for (BlockPos pos : blocks) {
 						if (spell.world.isAirBlock(pos)) continue;

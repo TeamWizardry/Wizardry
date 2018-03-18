@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.api.spell;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
@@ -10,6 +11,7 @@ import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.init.ModItems;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
@@ -157,6 +159,35 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		return success;
 	}
 
+	public boolean taxCaster(SpellData data) {
+		Entity caster = data.getCaster();
+		if (caster == null) return false;
+
+		double manaDrain = getManaDrain();
+		double burnoutFill = getBurnoutFill();
+
+		if (caster instanceof EntityLivingBase) {
+			float reduction = getReductionMultiplier((EntityLivingBase) caster);
+			manaDrain *= reduction;
+			burnoutFill *= reduction;
+		}
+
+		CapManager manager = new CapManager(data.getCapability());
+
+		manager.setEntity(caster);
+		manager.setManualSync(true);
+
+		boolean fail = false;
+		if (manager.getMana() < manaDrain) fail = true;
+
+		manager.removeMana(manaDrain);
+		manager.addBurnout(burnoutFill);
+
+		manager.sync();
+
+		return !fail;
+	}
+
 	/**
 	 * Get a modifier in this ring between the range.
 	 *
@@ -297,24 +328,64 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		return powerMultiplier;
 	}
 
+	/**
+	 * Will cascade down to children
+	 */
 	public void setPowerMultiplier(float powerMultiplier) {
 		this.powerMultiplier = powerMultiplier;
+
+		SpellRing lastChild = getChildRing();
+		while (lastChild != null) {
+			lastChild.powerMultiplier = powerMultiplier;
+
+			lastChild = lastChild.getChildRing();
+		}
 	}
 
+	/**
+	 * Will cascade down to children
+	 */
 	public void multiplyPowerMultiplier(float powerMultiplier) {
 		this.powerMultiplier *= powerMultiplier;
+
+		SpellRing lastChild = getChildRing();
+		while (lastChild != null) {
+			lastChild.powerMultiplier *= powerMultiplier;
+
+			lastChild = lastChild.getChildRing();
+		}
 	}
 
 	public float getManaMultiplier() {
 		return manaMultiplier;
 	}
 
+	/**
+	 * Will cascade down to children
+	 */
 	public void setManaMultiplier(float manaMultiplier) {
 		this.manaMultiplier = manaMultiplier;
+
+		SpellRing lastChild = getChildRing();
+		while (lastChild != null) {
+			lastChild.manaMultiplier = manaMultiplier;
+
+			lastChild = lastChild.getChildRing();
+		}
 	}
 
+	/**
+	 * Will cascade down to children
+	 */
 	public void multiplyManaMultiplier(float manaMultiplier) {
 		this.manaMultiplier *= manaMultiplier;
+
+		SpellRing lastChild = getChildRing();
+		while (lastChild != null) {
+			lastChild.manaMultiplier *= manaMultiplier;
+
+			lastChild = lastChild.getChildRing();
+		}
 	}
 
 	/**
@@ -329,24 +400,68 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		return 1 - burnoutMultiplier;
 	}
 
+	/**
+	 * Will cascade down to children
+	 */
 	public void setBurnoutMultiplier(float burnoutMultiplier) {
 		this.burnoutMultiplier = burnoutMultiplier;
+
+		SpellRing lastChild = getChildRing();
+		while (lastChild != null) {
+			lastChild.burnoutMultiplier = burnoutMultiplier;
+
+			lastChild = lastChild.getChildRing();
+		}
 	}
 
+	/**
+	 * Will cascade down to children
+	 */
 	public void multiplyBurnoutMultiplier(float burnoutMultiplier) {
 		this.burnoutMultiplier *= burnoutMultiplier;
+
+		SpellRing lastChild = getChildRing();
+		while (lastChild != null) {
+			lastChild.burnoutMultiplier *= burnoutMultiplier;
+
+			lastChild = lastChild.getChildRing();
+		}
 	}
 
+	/**
+	 * Will cascade down to children
+	 */
 	public void setMultiplierForAll(float multiplier) {
 		this.powerMultiplier = multiplier;
 		this.burnoutMultiplier = multiplier;
 		this.manaMultiplier = multiplier;
+
+		SpellRing lastChild = getChildRing();
+		while (lastChild != null) {
+			lastChild.powerMultiplier *= multiplier;
+			lastChild.burnoutMultiplier *= multiplier;
+			lastChild.manaMultiplier *= multiplier;
+
+			lastChild = lastChild.getChildRing();
+		}
 	}
 
+	/**
+	 * Will cascade down to children
+	 */
 	public void multiplyMultiplierForAll(float multiplier) {
 		this.powerMultiplier *= multiplier;
 		this.burnoutMultiplier *= multiplier;
 		this.manaMultiplier *= multiplier;
+
+		SpellRing lastChild = getChildRing();
+		while (lastChild != null) {
+			lastChild.powerMultiplier *= multiplier;
+			lastChild.burnoutMultiplier *= multiplier;
+			lastChild.manaMultiplier *= multiplier;
+
+			lastChild = lastChild.getChildRing();
+		}
 	}
 
 	public double getManaDrain() {

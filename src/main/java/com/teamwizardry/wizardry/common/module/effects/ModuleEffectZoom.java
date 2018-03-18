@@ -84,7 +84,7 @@ public class ModuleEffectZoom extends ModuleEffect {
 
 		if (entityHit == null) return true;
 		else {
-			if (!tax(this, spell, spellRing)) return false;
+			if (!spellRing.taxCaster(spell)) return false;
 
 			if (look == null) return true;
 			if (origin == null) return true;

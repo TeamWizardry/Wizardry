@@ -103,7 +103,7 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 				if (stackBlock == null) return true;
 
 				if (!world.isAirBlock(pos)) continue;
-				if (!tax(this, spell, spellRing)) return false;
+				if (!spellRing.taxCaster(spell)) return false;
 				//stackBlock.shrink(1);
 				IBlockState oldState = world.getBlockState(pos);
 
@@ -113,7 +113,7 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 			}
 		} else if (caster == null) {
 			if (!world.isAirBlock(targetPos)) return true;
-			if (!tax(this, spell, spellRing)) return false;
+			if (!spellRing.taxCaster(spell)) return false;
 
 			List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(targetPos).grow(3, 3, 3));
 			if (items.isEmpty()) return true;

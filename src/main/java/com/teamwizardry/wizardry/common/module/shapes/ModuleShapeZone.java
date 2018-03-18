@@ -72,9 +72,12 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 		double strength = spellRing.getModifier(AttributeRegistry.POTENCY, 1, 20);
 		double range = spellRing.getModifier(AttributeRegistry.RANGE, 1, 20);
 
+		spellRing.multiplyMultiplierForAll((float) (aoe / 7.0 * strength / 15.0 * range / 15.0));
+
 		List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(targetPos)).grow(aoe, 1, aoe));
 
 		if (RandUtil.nextInt((int) ((70 - strength))) == 0) {
+			if (!spellRing.taxCaster(spell)) return false;
 			for (Entity entity : entities) {
 				if (entity.getDistance(targetPos.x, targetPos.y, targetPos.z) <= aoe) {
 					Vec3d vec = targetPos.addVector(RandUtil.nextDouble(-strength, strength), RandUtil.nextDouble(range), RandUtil.nextDouble(-strength, strength));
@@ -105,6 +108,7 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 					}
 				}
 		if (blocks.isEmpty()) return false;
+		if (!spellRing.taxCaster(spell)) return false;
 		Vec3d pos = blocks.get(RandUtil.nextInt(blocks.size() - 1));
 
 		SpellData copy = spell.copy();

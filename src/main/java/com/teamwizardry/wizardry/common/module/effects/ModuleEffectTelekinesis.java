@@ -66,7 +66,7 @@ public class ModuleEffectTelekinesis extends ModuleEffect implements IContinuous
 		for (Entity entity : entityList) {
 			double dist = entity.getPositionVector().distanceTo(targetPos);
 			if (dist > strength) continue;
-			if (!tax(this, spell, spellRing)) return false;
+			if (!spellRing.taxCaster(spell)) return false;
 
 			final double upperMag = 1;
 			final double scale = 1;

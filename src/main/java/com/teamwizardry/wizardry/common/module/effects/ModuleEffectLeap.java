@@ -76,7 +76,7 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 
 		if (!target.hasNoGravity()) {
 			double strength = spellRing.getModifier(AttributeRegistry.POTENCY, 1, 64) / 10.0;
-			if (!tax(this, spell, spellRing)) return false;
+			if (!spellRing.taxCaster(spell)) return false;
 
 			if (!target.getEntityData().hasKey("jump_count")) {
 				target.getEntityData().setInteger("jump_count", (int) strength);

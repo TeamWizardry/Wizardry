@@ -71,7 +71,7 @@ public class ModuleEffectLightning extends ModuleEffect {
 		double range = spellRing.getModifier(AttributeRegistry.RANGE, 10, 32);
 		double strength = spellRing.getModifier(AttributeRegistry.POTENCY, 4, 20) / 2.0;
 
-		if (!tax(this, spell, spellRing)) return false;
+		if (!spellRing.taxCaster(spell)) return false;
 
 		RayTraceResult traceResult = new RayTrace(world, PosUtils.vecFromRotations(pitch, yaw), target, range).setSkipBlocks(true).setSkipEntities(true).trace();
 

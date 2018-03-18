@@ -63,7 +63,7 @@ public class ModuleEffectBreak extends ModuleEffect {
 
 				float hardness = world.getBlockState(pos).getBlockHardness(world, pos);
 				if (hardness >= 0 && hardness < strength) {
-					if (!tax(this, spell, spellRing)) return false;
+					if (!spellRing.taxCaster(spell)) return false;
 					BlockUtils.breakBlock(world, pos, null, caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null, true);
 				}
 			}

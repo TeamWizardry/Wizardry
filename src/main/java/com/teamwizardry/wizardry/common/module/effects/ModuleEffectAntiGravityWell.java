@@ -75,7 +75,7 @@ public class ModuleEffectAntiGravityWell extends ModuleEffect implements ILinger
 			double dist = entity.getPositionVector().distanceTo(position);
 			if (dist < 2) continue;
 			if (dist > strength) continue;
-			if (!tax(this, spell, spellRing)) return false;
+			if (!spellRing.taxCaster(spell)) return false;
 
 			final double upperMag = spellRing.getModifier(AttributeRegistry.POTENCY, 10, 50) / 100.0;
 			final double scale = 3.5;

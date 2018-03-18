@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.module.shapes;
 
-import com.teamwizardry.wizardry.api.spell.ITaxing;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
@@ -25,7 +24,7 @@ import javax.annotation.Nonnull;
  * Created by Demoniaque.
  */
 @RegisterModule
-public class ModuleShapeProjectile extends ModuleShape implements ITaxing {
+public class ModuleShapeProjectile extends ModuleShape {
 
 	@Nonnull
 	@Override
@@ -59,7 +58,7 @@ public class ModuleShapeProjectile extends ModuleShape implements ITaxing {
 		proj.setPosition(origin.x, origin.y, origin.z);
 		proj.velocityChanged = true;
 
-		if (!tax(this, spell, spellRing)) return false;
+		if (!spellRing.taxCaster(spell)) return false;
 
 		boolean success = world.spawnEntity(proj);
 		if (success)

@@ -65,14 +65,13 @@ public class ModuleShapeCone extends ModuleShape {
 		if (position == null) return false;
 
 		double range = spellRing.getModifier(AttributeRegistry.RANGE, 5, 16);
+		int chance = (int) (spellRing.getModifier(AttributeRegistry.POTENCY, 5, 32));
 
-		setCostMultiplier(this, range / 16.0);
+		spellRing.multiplyMultiplierForAll((float) (range / 8.0 * chance / 16.0));
 
 		Vec3d origin = spell.getOriginHand();
 
 		if (origin == null) return false;
-
-		int chance = (int) (spellRing.getModifier(AttributeRegistry.POTENCY, 5, 32));
 
 		for (int i = 0; i < chance; i++) {
 
