@@ -76,6 +76,10 @@ item.wizardry:light.name=Light
 item.wizardry:halo_real.name=Halo
 item.wizardry:halo_fake.name=Crude Halo
 item.wizardry:halo_creative.name=Creative Halo
+item.wizardry:halo_creative.name=Creative Halo
+item.wizardry:repulsion_bomb.name=Repulsion Bomb
+item.wizardry:vortex_bomb.name=Vortex Bomb
+item.wizardry:sky_dust.name=Sky Dust
 
 item.wizardry:wisdom_stick.name=Wisdom Wood Stick
 item.wizardry:wisdom_wood_door.name=Wisdom Wood Door

@@ -104,18 +104,20 @@ public class SpellBuilder {
 
 			// Step through each item in line. If modifier, add to lastModule, if not, add to compiled.
 			for (ItemStack stack : line) {
-				Module module = ModuleRegistry.INSTANCE.getModule(stack);
+				for (int i = 0; i < stack.getCount(); i++) {
+					Module module = ModuleRegistry.INSTANCE.getModule(stack);
 
-				if (module == null) continue;
+					if (module == null) continue;
 
-				if (module instanceof ModuleModifier) {
-					if (!uncompressedChain.isEmpty()) {
-						SpellRing lastRing = uncompressedChain.peekLast();
-						lastRing.addModifier((ModuleModifier) module);
+					if (module instanceof ModuleModifier) {
+						if (!uncompressedChain.isEmpty()) {
+							SpellRing lastRing = uncompressedChain.peekLast();
+							lastRing.addModifier((ModuleModifier) module);
+						}
+					} else {
+						SpellRing ring = new SpellRing(module);
+						uncompressedChain.add(ring);
 					}
-				} else {
-					SpellRing ring = new SpellRing(module);
-					uncompressedChain.add(ring);
 				}
 			}
 
@@ -147,7 +149,12 @@ public class SpellBuilder {
 		for (SpellRing ring : spellList) {
 			SpellRing chainEnd = ring;
 			while (chainEnd != null) {
-				if (chainEnd.getChildRing() == null) break;
+				if (chainEnd.getChildRing() == null) {
+					chainEnd.processModifiers();
+					break;
+				}
+
+				chainEnd.processModifiers();
 				chainEnd = chainEnd.getChildRing();
 			}
 
@@ -155,6 +162,7 @@ public class SpellBuilder {
 				chainEnd.updateColorChain();
 			}
 		}
+
 		return spellList;
 	}
 
