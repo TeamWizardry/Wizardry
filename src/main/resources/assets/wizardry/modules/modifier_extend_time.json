@@ -11,12 +11,12 @@
     {
       "attribute": "mana",
       "operation": "multiply",
-      "amount": 1.05
+      "amount": 1.1
     },
     {
       "attribute": "burnout",
       "operation": "multiply",
-      "amount": 1.05
+      "amount": 1.1
     }
   ]
 }
