@@ -14,7 +14,7 @@ public class ComponentRecipeBar extends ComponentBookMark {
 	private boolean focused = false;
 
 	public ComponentRecipeBar(@Nonnull GuiBook book, int id) {
-		super(book, SPELL_RECIPE_ICON, id);
+		super(book, SPELL_RECIPE_ICON, id, 0, 0);
 
 		clipping.setClipToBounds(true);
 
