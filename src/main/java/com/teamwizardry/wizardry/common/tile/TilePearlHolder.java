@@ -21,8 +21,8 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 
@@ -35,7 +35,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 public class TilePearlHolder extends TileManaInteracter implements ICooldown {
 
 	@Save
-	@NotNull
+	@Nonnull
 	public ItemStack pearl = ItemStack.EMPTY;
 
 	@Save

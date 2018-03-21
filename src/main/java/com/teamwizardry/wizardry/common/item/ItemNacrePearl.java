@@ -134,8 +134,8 @@ public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, 
 									+ TextFormatting.RED
 									+ Math.round(tmpRing.getBurnoutFill() * tmpRing.getBurnoutMultiplier()));
 					if (GuiScreen.isShiftKeyDown()) {
-						for (String key : tmpRing.getAttributes().getKeySet())
-							tooltip.add(StringUtils.repeat(" ", i + 1) + " | " + TextFormatting.DARK_GRAY + key + " x" + Math.round(tmpRing.getAttributes().getDouble(key)));
+						for (String key : tmpRing.getInformationTag().getKeySet())
+							tooltip.add(StringUtils.repeat(" ", i + 1) + " | " + TextFormatting.DARK_GRAY + key + " x" + Math.round(tmpRing.getInformationTag().getDouble(key)));
 					}
 					tmpRing = tmpRing.getChildRing();
 					i++;

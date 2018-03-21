@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.crafting.mana;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.IExplodable;
@@ -13,6 +14,8 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.fml.common.Loader;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -27,32 +30,27 @@ public class ManaRecipes {
 	public static final HashMap<String, FluidRecipeLoader.FluidCrafter> RECIPE_REGISTRY = new HashMap<>();
 	public static final HashMultimap<Ingredient, FluidRecipeLoader.FluidCrafter> RECIPES = HashMultimap.create();
 
-	public static final String CODEX = "codex";
-	public static final String NACRE = "nacre";
 	public static final String EXPLODABLE = "explodable";
-	public static final String MANA_BATTERY = "mana_battery";
-
-	private static final String[] INTERNAL_RECIPE_NAMES = {CODEX.toLowerCase(),
-			NACRE.toLowerCase(),
-			MANA_BATTERY.toLowerCase(),
-			"wisdom_log",
-			"wisdom_plank",
-			"wisdom_slab",
-			"wisdom_stairs",
-			"wisdom_stick",
-			"temp_real_halo"};
 
 	public void loadRecipes(File directory) {
 		FluidRecipeLoader.INSTANCE.setDirectory(directory);
 		FluidRecipeLoader.INSTANCE.processRecipes(RECIPE_REGISTRY, RECIPES);
 	}
 
+	public static String[] getResourceListing(String mod, String path) {
+		List<String> all = Lists.newArrayList();
+		if (CraftingHelper.findFiles(Loader.instance().getIndexedModList().get(mod), "assets/" + mod + "/" + path, null,
+				(root, full) -> all.add(root.relativize(full).toString()), false, false))
+			return all.toArray(new String[0]);
+		return new String[0];
+	}
+
 	public void copyMissingRecipes(File directory) {
-		for (String recipeName : INTERNAL_RECIPE_NAMES) {
-			File file = new File(directory, recipeName + ".json");
+		for (String recipeName : getResourceListing(Wizardry.MODID, "fluid_recipes")) {
+			File file = new File(directory, recipeName);
 			if (file.exists()) continue;
 
-			InputStream stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "fluid_recipes/" + recipeName + ".json");
+			InputStream stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "fluid_recipes/" + recipeName);
 			if (stream == null) {
 				Wizardry.logger.fatal("    > SOMETHING WENT WRONG! Could not read recipe " + recipeName + " from mod jar! Report this to the devs on Github!");
 				continue;
@@ -65,6 +63,7 @@ public class ManaRecipes {
 				e.printStackTrace();
 			}
 		}
+
 	}
 
 	public static class ExplodableCrafter extends FluidCraftInstance {

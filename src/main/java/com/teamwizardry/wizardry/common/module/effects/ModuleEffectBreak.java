@@ -2,7 +2,7 @@ package com.teamwizardry.wizardry.common.module.effects;
 
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
@@ -22,7 +22,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
@@ -50,8 +49,8 @@ public class ModuleEffectBreak extends ModuleEffect {
 		BlockPos targetPos = spell.getTargetPos();
 		Entity caster = spell.getCaster();
 
-		double range = spellRing.getModifier(Attributes.AREA, attributeRanges.get(Attributes.AREA));
-		double strength = spellRing.getModifier(Attributes.POTENCY, attributeRanges.get(Attributes.POTENCY)) / 4;
+		double range = spellRing.getModifier(AttributeRegistry.AREA, attributeRanges.get(AttributeRegistry.AREA));
+		double strength = spellRing.getModifier(AttributeRegistry.POTENCY, attributeRanges.get(AttributeRegistry.POTENCY)) / 4;
 
 		if (targetPos != null) {
 			Block block = world.getBlockState(targetPos).getBlock();
@@ -64,7 +63,7 @@ public class ModuleEffectBreak extends ModuleEffect {
 
 				float hardness = world.getBlockState(pos).getBlockHardness(world, pos);
 				if (hardness >= 0 && hardness < strength) {
-					if (!tax(this, spell, spellRing)) return false;
+					if (!spellRing.taxCaster(spell)) return false;
 					BlockUtils.breakBlock(world, pos, null, caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null, true);
 				}
 			}
@@ -111,7 +110,7 @@ public class ModuleEffectBreak extends ModuleEffect {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void render(@Nonnull SpellData spell, @NotNull SpellRing spellRing) {
+	public void render(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		Vec3d position = spell.getTarget();
 

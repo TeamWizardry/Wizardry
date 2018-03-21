@@ -15,7 +15,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -51,6 +50,7 @@ public class ModuleEffectLight extends ModuleEffect {
 		else if (facing != null && world.isAirBlock(targetPos.offset(facing))) finalPos = targetPos.offset(facing);
 
 		if (finalPos == null) return false;
+		if (!spellRing.taxCaster(spell)) return false;
 
 		BlockUtils.placeBlock(world, finalPos, ModBlocks.LIGHT.getDefaultState(), caster instanceof EntityPlayerMP ? (EntityPlayerMP) caster : null);
 
@@ -59,7 +59,7 @@ public class ModuleEffectLight extends ModuleEffect {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void render(@Nonnull SpellData spell, @NotNull SpellRing spellRing) {
+	public void render(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		Vec3d position = spell.getTarget();
 

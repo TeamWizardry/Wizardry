@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.common.module.shapes;
 import com.teamwizardry.wizardry.api.spell.IContinuousModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
@@ -17,7 +17,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -54,8 +53,10 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 
 		if (look == null || position == null) return false;
 
-		double range = spellRing.getModifier(Attributes.RANGE, attributeRanges.get(Attributes.RANGE));
-		double potency = 30 - spellRing.getModifier(Attributes.POTENCY, attributeRanges.get(Attributes.POTENCY));
+		double range = spellRing.getModifier(AttributeRegistry.RANGE, attributeRanges.get(AttributeRegistry.RANGE));
+		double potency = 30 - spellRing.getModifier(AttributeRegistry.POTENCY, attributeRanges.get(AttributeRegistry.POTENCY));
+
+		spellRing.multiplyMultiplierForAll((float) (potency / 25.0 * range / 75.0));
 
 		RayTraceResult trace = new RayTrace(world, look, position, range)
 				.setSkipEntity(caster)
@@ -77,7 +78,7 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void render(@Nonnull SpellData spell, @NotNull SpellRing spellRing) {
+	public void render(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		Vec3d target = spell.getTargetWithFallback();
 

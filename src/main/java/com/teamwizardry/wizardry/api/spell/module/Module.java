@@ -16,13 +16,14 @@ import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRange;
-import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry.Attribute;
 import com.teamwizardry.wizardry.api.util.DefaultHashMap;
 import com.teamwizardry.wizardry.common.core.SpellTicker;
 import com.teamwizardry.wizardry.common.network.PacketRenderSpell;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -35,21 +36,25 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public abstract class Module {
 
 	protected final List<AttributeModifier> attributes = new ArrayList<>();
-	protected Map<String, AttributeRange> attributeRanges = new DefaultHashMap<>(AttributeRange.BACKUP);
+	protected Map<Attribute, AttributeRange> attributeRanges = new DefaultHashMap<>(AttributeRange.BACKUP);
 	protected Color primaryColor;
 	protected Color secondaryColor;
 	protected ItemStack itemStack;
 
 	@Nullable
-	public static Module deserialize(NBTTagCompound compound) {
-		if (compound.hasKey("id")) return ModuleRegistry.INSTANCE.getModule(compound.getString("id"));
-		return null;
+	public static Module deserialize(NBTTagString tagString) {
+		return ModuleRegistry.INSTANCE.getModule(tagString.getString());
+	}
+
+	@Nullable
+	public static Module deserialize(String id) {
+		return ModuleRegistry.INSTANCE.getModule(id);
 	}
 
 	public final void init(ItemStack itemStack,
 	                       Color primaryColor,
 	                       Color secondaryColor,
-	                       DefaultHashMap<String, AttributeRange> attributeRanges) {
+	                       DefaultHashMap<Attribute, AttributeRange> attributeRanges) {
 		this.itemStack = itemStack;
 		this.primaryColor = primaryColor;
 		this.secondaryColor = secondaryColor;
@@ -125,15 +130,15 @@ public abstract class Module {
 	}
 
 	public final double getBurnoutFill() {
-		return attributeRanges.get(Attributes.BURNOUT).base;
+		return attributeRanges.get(AttributeRegistry.BURNOUT).base;
 	}
 
 	public final int getCooldownTime() {
-		return (int) attributeRanges.get(Attributes.COOLDOWN).base;
+		return (int) attributeRanges.get(AttributeRegistry.COOLDOWN).base;
 	}
 
 	public final int getChargeupTime() {
-		return (int) attributeRanges.get(Attributes.CHARGEUP).base;
+		return (int) attributeRanges.get(AttributeRegistry.CHARGEUP).base;
 	}
 
 	public final ItemStack getItemStack() {
@@ -141,19 +146,19 @@ public abstract class Module {
 	}
 
 	public final double getManaDrain() {
-		return attributeRanges.get(Attributes.MANA).base;
+		return attributeRanges.get(AttributeRegistry.MANA).base;
 	}
 
 	public final float getPowerMultiplier() {
-		return (int) attributeRanges.get(Attributes.POWER_MULTI).base;
+		return (int) attributeRanges.get(AttributeRegistry.POWER_MULTI).base;
 	}
 
 	public final float getManaMultiplier() {
-		return (int) attributeRanges.get(Attributes.MANA_MULTI).base;
+		return (int) attributeRanges.get(AttributeRegistry.MANA_MULTI).base;
 	}
 
 	public final float getBurnoutMultiplier() {
-		return (int) attributeRanges.get(Attributes.BURNOUT_MULTI).base;
+		return (int) attributeRanges.get(AttributeRegistry.BURNOUT_MULTI).base;
 	}
 
 	@Nonnull
@@ -183,7 +188,7 @@ public abstract class Module {
 		this.attributes.add(attribute);
 	}
 	
-	public final void addAttributeRange(String attribute, AttributeRange range)
+	public final void addAttributeRange(Attribute attribute, AttributeRange range)
 	{
 		this.attributeRanges.put(attribute, range);
 	}
@@ -241,9 +246,7 @@ public abstract class Module {
 	}
 
 	@Nonnull
-	public final NBTTagCompound serialize() {
-		NBTTagCompound compound = new NBTTagCompound();
-		compound.setString("id", getID());
-		return compound;
+	public final NBTTagString serialize() {
+		return new NBTTagString(getID());
 	}
 }

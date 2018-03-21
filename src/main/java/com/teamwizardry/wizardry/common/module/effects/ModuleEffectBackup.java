@@ -9,7 +9,7 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
@@ -27,7 +27,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -59,10 +58,10 @@ public class ModuleEffectBackup extends ModuleEffect {
 		EnumFacing facing = spell.getData(FACE_HIT);
 		Entity caster = spell.getCaster();
 
-		double range = spellRing.getModifier(Attributes.AREA, attributeRanges.get(Attributes.AREA)) / 2.0;
-		double time = spellRing.getModifier(Attributes.DURATION, attributeRanges.get(Attributes.DURATION));
+		double range = spellRing.getModifier(AttributeRegistry.AREA, attributeRanges.get(AttributeRegistry.AREA)) / 2.0;
+		double time = spellRing.getModifier(AttributeRegistry.DURATION, attributeRanges.get(AttributeRegistry.DURATION));
 
-		if (!tax(this, spell, spellRing)) return false;
+		if (!spellRing.taxCaster(spell)) return false;
 
 		if (targetPos == null) return true;
 		if (!(caster instanceof EntityLivingBase)) return true;
@@ -80,7 +79,7 @@ public class ModuleEffectBackup extends ModuleEffect {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void render(@Nonnull SpellData spell, @NotNull SpellRing spellRing) {
+	public void render(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		Vec3d position = spell.getTarget();
 

@@ -46,7 +46,6 @@ dependencies {
 	compile "com.teamwizardry.librarianlib:librarianlib-1.12.2:$liblib_version:deobf"
 	deobfCompile "mezz.jei:jei_1.12:$jei_version:api"
 	runtime "mezz.jei:jei_1.12:$jei_version"
-	deobfCompile "mcp.mobius.waila:Hwyla:$hwyla_version"
 	runtime "team.chisel.ctm:CTM:$ctm_version"
     deobfCompile "com.azanor.baubles:Baubles:1.12-1.5.2"
 

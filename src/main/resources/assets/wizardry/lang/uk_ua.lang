@@ -85,7 +85,7 @@ advancement.wizardry.devildust.desc=Спаліть книгу у вогні, щ�
 advancement.wizardry.crunch=§oCRUNCH.§a
 advancement.wizardry.crunch.desc=Розбийте бедрок у вершині нижнього світу
 
-bookGui.physicsbook.defaulttitle=Книга Фізики
+book.physicsbook.defaulttitle=Книга Фізики
 
 fluid.nacre_fluid=Перламутр
 fluid.mana_fluid=Мана
@@ -114,4 +114,4 @@ potion.wizardry.zach_corruption=Спотворення
 
 item_group.wizardry=Чари
 
-wizardry.misc.module=Заклинання:
+wizardry.misc.moduleSet=Заклинання:

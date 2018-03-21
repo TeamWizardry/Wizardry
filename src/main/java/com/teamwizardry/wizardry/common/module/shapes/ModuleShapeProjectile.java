@@ -2,12 +2,9 @@ package com.teamwizardry.wizardry.common.module.shapes;
 
 import javax.annotation.Nonnull;
 
-import org.jetbrains.annotations.NotNull;
-
-import com.teamwizardry.wizardry.api.spell.ITaxing;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
@@ -28,7 +25,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  * Created by Demoniaque.
  */
 @RegisterModule
-public class ModuleShapeProjectile extends ModuleShape implements ITaxing {
+public class ModuleShapeProjectile extends ModuleShape {
 
 	@Nonnull
 	@Override
@@ -54,14 +51,14 @@ public class ModuleShapeProjectile extends ModuleShape implements ITaxing {
 		Vec3d origin = spell.getOriginWithFallback();
 		if (origin == null) return false;
 
-		double dist = spellRing.getModifier(Attributes.RANGE, attributeRanges.get(Attributes.RANGE));
-		double speed = spellRing.getModifier(Attributes.SPEED, attributeRanges.get(Attributes.SPEED));
+		double dist = spellRing.getModifier(AttributeRegistry.RANGE, attributeRanges.get(AttributeRegistry.RANGE));
+		double speed = spellRing.getModifier(AttributeRegistry.SPEED, attributeRanges.get(AttributeRegistry.SPEED));
 
 		EntitySpellProjectile proj = new EntitySpellProjectile(world, spellRing, spell, dist, speed, 0.1);
 		proj.setPosition(origin.x, origin.y, origin.z);
 		proj.velocityChanged = true;
 
-		if (!tax(this, spell, spellRing)) return false;
+		if (!spellRing.taxCaster(spell)) return false;
 
 		boolean success = world.spawnEntity(proj);
 		if (success)
@@ -71,7 +68,7 @@ public class ModuleShapeProjectile extends ModuleShape implements ITaxing {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void render(@Nonnull SpellData spell, @NotNull SpellRing spellRing) {
+	public void render(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 
 	}
 }

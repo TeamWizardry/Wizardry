@@ -11,8 +11,9 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
 
 /**
  * Created by Saad on 6/12/2016.
@@ -31,15 +32,15 @@ public class ItemBook extends ItemModBook implements IPickupAchievement {
 		return ModAdvancements.BOOK;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public IBookGui createGui(@NotNull EntityPlayer player, @Nullable World world, @NotNull ItemStack stack) {
-		return new GuiBook(BOOK);
+	public IBookGui createGui(@Nonnull EntityPlayer player, @Nullable World world, @Nonnull ItemStack stack) {
+		return new GuiBook(BOOK, stack);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public Book getBook(@NotNull EntityPlayer player, @Nullable World world, @NotNull ItemStack stack) {
+	public Book getBook(@Nonnull EntityPlayer player, @Nullable World world, @Nonnull ItemStack stack) {
 		return BOOK;
 	}
 }

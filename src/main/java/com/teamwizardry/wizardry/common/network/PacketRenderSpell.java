@@ -45,7 +45,6 @@ public class PacketRenderSpell extends PacketBase {
 		if (compound.hasKey("spell_ring")) spellRing = SpellRing.deserializeRing(compound.getCompoundTag("spell_ring"));
 	}
 
-
 	@Override
 	public void handle(@Nonnull MessageContext messageContext) {
 		if (messageContext.side.isServer()) return;

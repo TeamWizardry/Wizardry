@@ -1,10 +1,15 @@
 package com.teamwizardry.wizardry.api;
 
+/**
+ * TODO
+ * We fixed the book documentation, ok? Leave me alone.
+ * [Will be brought back at a later day]
+ */
 public class AI {
 
 	//public static AI INSTANCE = new AI();
 //
-	//@NotNull
+	//@Nonnull
 	//private AIDataService dataService;
 //
 	//private AI() {

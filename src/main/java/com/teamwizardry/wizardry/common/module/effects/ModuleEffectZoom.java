@@ -11,7 +11,7 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.ProcessData;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
@@ -30,7 +30,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -85,12 +84,12 @@ public class ModuleEffectZoom extends ModuleEffect {
 
 		if (entityHit == null) return true;
 		else {
-			if (!tax(this, spell, spellRing)) return false;
+			if (!spellRing.taxCaster(spell)) return false;
 
 			if (look == null) return true;
 			if (origin == null) return true;
 
-			double range = spellRing.getModifier(Attributes.RANGE, attributeRanges.get(Attributes.RANGE));
+			double range = spellRing.getModifier(AttributeRegistry.RANGE, attributeRanges.get(AttributeRegistry.RANGE));
 			RayTraceResult trace = new RayTrace(world, look, origin, range)
 					.setSkipEntity(entityHit)
 					.setIgnoreBlocksWithoutBoundingBoxes(true)
@@ -116,7 +115,7 @@ public class ModuleEffectZoom extends ModuleEffect {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void render(@Nonnull SpellData spell, @NotNull SpellRing spellRing) {
+	public void render(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 
 		Entity entity = spell.getVictim();

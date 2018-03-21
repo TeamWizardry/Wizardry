@@ -4,7 +4,7 @@ import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.LightningGenerator;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
@@ -27,7 +27,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -69,10 +68,10 @@ public class ModuleEffectLightning extends ModuleEffect {
 			origin = new Vec3d(offX, caster.getEyeHeight(), offZ).add(target);
 		}
 
-		double range = spellRing.getModifier(Attributes.RANGE, attributeRanges.get(Attributes.RANGE));
-		double strength = spellRing.getModifier(Attributes.POTENCY, attributeRanges.get(Attributes.POTENCY)) / 2.0;
+		double range = spellRing.getModifier(AttributeRegistry.RANGE, attributeRanges.get(AttributeRegistry.RANGE));
+		double strength = spellRing.getModifier(AttributeRegistry.POTENCY, attributeRanges.get(AttributeRegistry.POTENCY)) / 2.0;
 
-		if (!tax(this, spell, spellRing)) return false;
+		if (!spellRing.taxCaster(spell)) return false;
 
 		RayTraceResult traceResult = new RayTrace(world, PosUtils.vecFromRotations(pitch, yaw), target, range).setSkipBlocks(true).setSkipEntities(true).trace();
 
@@ -104,14 +103,14 @@ public class ModuleEffectLightning extends ModuleEffect {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void render(@Nonnull SpellData spell, @NotNull SpellRing spellRing) {
+	public void render(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		float yaw = spell.getData(YAW, 0F);
 		float pitch = spell.getData(PITCH, 0F);
 		Entity caster = spell.getCaster();
 		Vec3d target = spell.getTarget();
 		long seed = spell.getData(SEED, 0L);
-		double range = spellRing.getModifier(Attributes.RANGE, attributeRanges.get(Attributes.RANGE));
+		double range = spellRing.getModifier(AttributeRegistry.RANGE, attributeRanges.get(AttributeRegistry.RANGE));
 
 		if (target == null) return;
 

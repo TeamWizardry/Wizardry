@@ -11,9 +11,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ColorizerFoliage;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.biome.BiomeColorHelper;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
 import java.util.Random;
 
 public class BlockWisdomLeaves extends BlockModLeaves implements IBlockColorProvider {
@@ -24,7 +24,7 @@ public class BlockWisdomLeaves extends BlockModLeaves implements IBlockColorProv
 
 	@Nullable
 	@Override
-	public Item getItemDropped(@NotNull IBlockState state, @NotNull Random rand, int fortune) {
+	public Item getItemDropped(@Nonnull IBlockState state, @Nonnull Random rand, int fortune) {
 		return null;
 	}
 

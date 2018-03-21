@@ -164,14 +164,14 @@ public class TileCraftingPlate extends TileManaInteracter {
 						realInventory.getHandler().setStackInSlot(i, ItemStack.EMPTY);
 					}
 				}
-				SpellBuilder builder = new SpellBuilder(stacks);
+				SpellBuilder builder = new SpellBuilder(stacks, true);
 
 				ItemStack infusedPearl = outputPearl.getHandler().insertItem(0, inputPearl.getHandler().extractItem(0, 1, false), false);
 
 				ArrayDeque<Color> colorSet = new ArrayDeque<>();
 
 				NBTTagList list = new NBTTagList();
-				for (SpellRing spellRing : builder.buildSpell()) {
+				for (SpellRing spellRing : builder.getSpell()) {
 					colorSet.add(spellRing.getPrimaryColor());
 					colorSet.add(spellRing.getSecondaryColor());
 					list.appendTag(spellRing.serializeNBT());
@@ -208,16 +208,10 @@ public class TileCraftingPlate extends TileManaInteracter {
 					for (SpellRing spellRing : SpellUtils.getAllSpellRings(infusedPearl))
 						spellRing.multiplyMultiplierForAll((float) multiplier);
 				}
+				for (int i = 0; i < positions.length; i++) {
+					positions[i] = Vec3d.ZERO;
+				}
 
-				ClientRunnable.run(new ClientRunnable() {
-					@Override
-					@SideOnly(Side.CLIENT)
-					public void runIfClient() {
-						for (int i = 0; i < positions.length; i++) {
-							positions[i] = Vec3d.ZERO;
-						}
-					}
-				});
 
 				markDirty();
 

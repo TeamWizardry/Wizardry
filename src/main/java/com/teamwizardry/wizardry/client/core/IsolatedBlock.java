@@ -9,7 +9,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 public final class IsolatedBlock implements IBlockAccess {
 
@@ -27,45 +28,45 @@ public final class IsolatedBlock implements IBlockAccess {
 	}
 
 	@Override
-	public TileEntity getTileEntity(@NotNull BlockPos pos) {
+	public TileEntity getTileEntity(@Nonnull BlockPos pos) {
 		return POS.equals(pos) ? entity : null;
 	}
 
 	@Override
-	public int getCombinedLight(@NotNull BlockPos pos, int lightValue) {
+	public int getCombinedLight(@Nonnull BlockPos pos, int lightValue) {
 		return SKY_LIGHT | (POS.equals(pos) ? state.getLightValue(this, POS) : 0) << 4;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public IBlockState getBlockState(@NotNull BlockPos pos) {
+	public IBlockState getBlockState(@Nonnull BlockPos pos) {
 		return POS.equals(pos) ? state : Blocks.AIR.getDefaultState();
 	}
 
 	@Override
-	public boolean isAirBlock(@NotNull BlockPos pos) {
+	public boolean isAirBlock(@Nonnull BlockPos pos) {
 		return !POS.equals(pos) || state.getBlock().isAir(state, this, pos);
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
-	public Biome getBiome(@NotNull BlockPos pos) {
+	public Biome getBiome(@Nonnull BlockPos pos) {
 		return Biomes.DEFAULT;
 	}
 
 	@Override
-	public int getStrongPower(@NotNull BlockPos pos, @NotNull EnumFacing direction) {
+	public int getStrongPower(@Nonnull BlockPos pos, @Nonnull EnumFacing direction) {
 		return 0;
 	}
 
-	@NotNull
+	@Nonnull
 	@Override
 	public WorldType getWorldType() {
 		return WorldType.CUSTOMIZED;
 	}
 
 	@Override
-	public boolean isSideSolid(@NotNull BlockPos pos, @NotNull EnumFacing side, boolean _default) {
+	public boolean isSideSolid(@Nonnull BlockPos pos, @Nonnull EnumFacing side, boolean _default) {
 		return POS.equals(pos) && state.isSideSolid(this, pos, side);
 	}
 }

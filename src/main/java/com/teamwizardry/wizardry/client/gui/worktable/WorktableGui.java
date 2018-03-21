@@ -67,7 +67,6 @@ public class WorktableGui extends GuiBase {
 	BiMap<GuiComponent, UUID> paperComponents = HashBiMap.create();
 	HashMap<UUID, UUID> componentLinks = new HashMap<>();
 	ComponentWhitelistedModifiers whitelistedModifiers;
-	private HashSet<ArrayList<Module>> compiledSpell = new HashSet<>();
 
 	public WorktableGui(BlockPos worktablePos) {
 		super(480, 224);
@@ -93,9 +92,9 @@ public class WorktableGui extends GuiBase {
 
 				TableModule tableModule = new TableModule(this, null, module, true, false);
 
-				if (entrySet.getKey().getAttributes().hasKey("worktable_x") && entrySet.getKey().getAttributes().hasKey("worktable_y")) {
-					double x = entrySet.getKey().getAttributes().getDouble("worktable_x");
-					double y = entrySet.getKey().getAttributes().getDouble("worktable_y");
+				if (entrySet.getKey().getInformationTag().hasKey("worktable_x") && entrySet.getKey().getInformationTag().hasKey("worktable_y")) {
+					double x = entrySet.getKey().getInformationTag().getDouble("worktable_x");
+					double y = entrySet.getKey().getInformationTag().getDouble("worktable_y");
 					tableModule.component.setPos(new Vec2d(x, y));
 				}
 
@@ -181,10 +180,13 @@ public class WorktableGui extends GuiBase {
 
 			HashSet<GuiComponent> heads = getHeads();
 			if (heads.isEmpty()) return;
-			compiledSpell.clear();
+
+			List<List<Module>> compiledSpell = new ArrayList<>();
+
 			for (GuiComponent component : heads) {
 				ArrayList<Module> stream = new ArrayList<>();
 				compileModule(stream, component);
+
 				compiledSpell.add(stream);
 			}
 
@@ -193,7 +195,7 @@ public class WorktableGui extends GuiBase {
 			for (ItemStack stack : Minecraft.getMinecraft().player.inventory.mainInventory) {
 				if (stack.getItem() == ModItems.BOOK) {
 					int slot = Minecraft.getMinecraft().player.inventory.getSlotFor(stack);
-					PacketHandler.NETWORK.sendToServer(new PacketSendSpellToBook(slot, (ArrayList<ItemStack>) builder.getInventory()));
+					PacketHandler.NETWORK.sendToServer(new PacketSendSpellToBook(slot, builder.getSpell()));
 				}
 			}
 
@@ -204,7 +206,7 @@ public class WorktableGui extends GuiBase {
 			getMainComponents().add(fakePaper);
 
 			ComponentVoid bookIconMask = new ComponentVoid(0, -100, 180, 100);
-			ComponentSprite bookIcon = new ComponentSprite(new Sprite(new ResourceLocation(Wizardry.MODID, "textures/items/physics_book.png")), (int) ((bookIconMask.getSize().getX() / 2.0) - 16), (int) (bookIconMask.getSize().getY() + 50), 32, 32);
+			ComponentSprite bookIcon = new ComponentSprite(new Sprite(new ResourceLocation(Wizardry.MODID, "textures/items/book.png")), (int) ((bookIconMask.getSize().getX() / 2.0) - 16), (int) (bookIconMask.getSize().getY() + 50), 32, 32);
 			{
 				bookIcon.getTransform().setTranslateZ(200);
 				bookIconMask.clipping.setClipToBounds(true);
@@ -318,8 +320,8 @@ public class WorktableGui extends GuiBase {
 			if (module1 == null) continue;
 			SpellRing ring = new SpellRing(module1);
 
-			ring.getAttributes().setDouble("worktable_x", entrySet.getKey().getPos().getX());
-			ring.getAttributes().setDouble("worktable_y", entrySet.getKey().getPos().getY());
+			ring.getInformationTag().setDouble("worktable_x", entrySet.getKey().getPos().getX());
+			ring.getInformationTag().setDouble("worktable_y", entrySet.getKey().getPos().getY());
 			convertComponents.put(ring, entrySet.getValue());
 		}
 

@@ -9,7 +9,6 @@ import com.teamwizardry.wizardry.api.item.IHalo;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Optional;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -25,7 +24,7 @@ public class ItemCreativeHaloBauble extends ItemModBauble implements IFakeHalo, 
 	}
 
 	@Override
-	public void onWornTick(@NotNull ItemStack stack, @NotNull EntityLivingBase player) {
+	public void onWornTick(@Nonnull ItemStack stack, @Nonnull EntityLivingBase player) {
 		CapManager manager = new CapManager(player).setManualSync(true);
 
 		manager.setMaxMana(ConfigValues.creativeHaloBufferSize);
@@ -41,7 +40,7 @@ public class ItemCreativeHaloBauble extends ItemModBauble implements IFakeHalo, 
 	@Nonnull
 	@Optional.Method(modid = "baubles")
 	@Override
-	public BaubleType getBaubleType(@NotNull ItemStack itemStack) {
+	public BaubleType getBaubleType(@Nonnull ItemStack itemStack) {
 		return BaubleType.HEAD;
 	}
 }

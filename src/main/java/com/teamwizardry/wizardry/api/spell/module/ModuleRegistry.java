@@ -29,7 +29,8 @@ import com.teamwizardry.librarianlib.features.utilities.AnnotationHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRange;
-import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry.Attribute;
 import com.teamwizardry.wizardry.api.spell.attribute.Operation;
 import com.teamwizardry.wizardry.api.util.DefaultHashMap;
 
@@ -144,7 +145,7 @@ public class ModuleRegistry {
 			Color primaryColor = Color.WHITE;
 			Color secondaryColor = Color.WHITE;
 			int itemMeta = 0;
-			DefaultHashMap<String, AttributeRange> attributeRanges = new DefaultHashMap<>(AttributeRange.BACKUP);
+			DefaultHashMap<Attribute, AttributeRange> attributeRanges = new DefaultHashMap<>(AttributeRange.BACKUP);
 
 			Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(moduleObject.getAsJsonPrimitive("item").getAsString()));
 			if (item == null) {
@@ -152,7 +153,7 @@ public class ModuleRegistry {
 				Wizardry.logger.error("| |___ Failed to register module " + module.getID());
 				continue;
 			} else {
-				Wizardry.logger.error("| | |_ Found Item " + item.getUnlocalizedName());
+				Wizardry.logger.info(" | | |_ Found Item " + item.getRegistryName().toString());
 			}
 
 			for (Entry<String, JsonElement> entry : moduleObject.entrySet()) {
@@ -174,7 +175,7 @@ public class ModuleRegistry {
 					}
 					default:
 					{
-						String attribute = Attributes.getAttributeFromName(entry.getKey());
+						Attribute attribute = AttributeRegistry.getAttributeFromName(entry.getKey());
 						if (attribute != null)
 						{
 							Wizardry.logger.info(" | | |_ Found base " + attribute + " values:");
@@ -233,21 +234,24 @@ public class ModuleRegistry {
 			if (moduleObject.has("modifiers") && moduleObject.get("modifiers").isJsonArray()) {
 				Wizardry.logger.info(" | | |___ Found Modifiers. About to process them");
 
-
 				JsonArray attributeModifiers = moduleObject.getAsJsonArray("modifiers");
 				for (JsonElement attributeModifier : attributeModifiers) {
 					if (attributeModifier.isJsonObject()) {
-						String attribute = null;
+						String attributeName = "NULL";
+						AttributeRegistry.Attribute attribute = null;
 						Operation operator = null;
 						double amount = 0;
 						JsonObject modifier = attributeModifier.getAsJsonObject();
-						if (modifier.has("attribute") && modifier.get("attribute").isJsonPrimitive() && modifier.getAsJsonPrimitive("attribute").isString())
-							attribute = Attributes.getAttributeFromName(modifier.getAsJsonPrimitive("attribute").getAsString());
+						if (modifier.has("attribute") && modifier.get("attribute").isJsonPrimitive() && modifier.getAsJsonPrimitive("attribute").isString()) {
+							attribute = AttributeRegistry.getAttributeFromName(modifier.getAsJsonPrimitive("attribute").getAsString());
+							if (attribute != null)
+								attributeName = attribute.getShortName();
+						}
 						if (modifier.has("operation") && modifier.get("operation").isJsonPrimitive() && modifier.getAsJsonPrimitive("operation").isString())
 							operator = Operation.valueOf(modifier.get("operation").getAsJsonPrimitive().getAsString().toUpperCase());
 						if (modifier.has("amount") && modifier.get("amount").isJsonPrimitive() && modifier.getAsJsonPrimitive("amount").isNumber())
 							amount = modifier.get("amount").getAsDouble();
-						Wizardry.logger.info(" | | | |_ Loading AttributeModifier for " + file.getName() + ": " + operator + " -> " + attribute + ", " + amount);
+						Wizardry.logger.info(" | | | |_ Loading AttributeModifier for " + file.getName() + ": " + operator + " -> " + attributeName + ", " + amount);
 						if (attribute != null && operator != null) {
 							module.addAttribute(new AttributeModifier(attribute, amount, operator));
 							Wizardry.logger.info(" | | | | |_ AttributeModifier registered successfully");

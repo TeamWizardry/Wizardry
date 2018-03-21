@@ -1,6 +1,6 @@
 {
   "parent": "item/handheld",
   "textures": {
-    "layer0": "wizardry:items/physics_book"
+    "layer0": "wizardry:items/book"
   }
 }

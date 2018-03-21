@@ -11,7 +11,7 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.IBlockSelectable;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
@@ -38,7 +38,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.HashSet;
@@ -74,7 +73,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 		if (caster == null) return false;
 
 		if (targetEntity != null && targetEntity instanceof EntityLivingBase) {
-			if (!tax(this, spell, spellRing)) return false;
+			if (!spellRing.taxCaster(spell)) return false;
 
 			Vec3d posTarget = new Vec3d(targetEntity.posX, targetEntity.posY, targetEntity.posZ),
 					posCaster = new Vec3d(caster.posX, caster.posY, caster.posZ);
@@ -103,7 +102,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 
 				if (touchedBlock.getBlock() == state.getBlock()) return false;
 
-				double strength = spellRing.getModifier(Attributes.RANGE, attributeRanges.get(Attributes.RANGE));
+				double strength = spellRing.getModifier(AttributeRegistry.RANGE, attributeRanges.get(AttributeRegistry.RANGE));
 
 				ItemStack stackBlock = null;
 				for (ItemStack stack : ((EntityPlayer) caster).inventory.mainInventory) {
@@ -126,7 +125,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 				if (blocks.isEmpty()) return true;
 
 				for (BlockPos ignored : blocks) {
-					if (!tax(this, spell, spellRing)) return false;
+					if (!spellRing.taxCaster(spell)) return false;
 					BlockPos nearest = null;
 					for (BlockPos pos : blocks) {
 						if (spell.world.isAirBlock(pos)) continue;
@@ -193,7 +192,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 	@Override
 	@SuppressWarnings("unused")
 	@SideOnly(Side.CLIENT)
-	public void render(@Nonnull SpellData spell, @NotNull SpellRing spellRing) {
+	public void render(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		Entity caster = spell.getCaster();
 		BlockPos targetBlock = spell.getTargetPos();

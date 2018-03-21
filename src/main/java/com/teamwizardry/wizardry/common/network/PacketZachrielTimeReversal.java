@@ -11,7 +11,8 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author WireSegal
@@ -35,7 +36,7 @@ public class PacketZachrielTimeReversal extends PacketBase {
 	}
 
 	@Override
-	public void handle(@NotNull MessageContext ctx) {
+	public void handle(@Nonnull MessageContext ctx) {
 		ClientRunnable.run(new ClientRunnable() {
 			@Override
 			@SideOnly(Side.CLIENT)

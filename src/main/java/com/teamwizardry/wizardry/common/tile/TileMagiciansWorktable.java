@@ -11,8 +11,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
-import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -32,7 +32,7 @@ public class TileMagiciansWorktable extends TileMod {
 	public HashMap<UUID, UUID> componentLinks = new HashMap<>();
 
 	@Override
-	public void writeCustomNBT(@NotNull NBTTagCompound compound, boolean sync) {
+	public void writeCustomNBT(@Nonnull NBTTagCompound compound, boolean sync) {
 		super.writeCustomNBT(compound, sync);
 
 		NBTTagList list = new NBTTagList();
@@ -55,7 +55,7 @@ public class TileMagiciansWorktable extends TileMod {
 	}
 
 	@Override
-	public void readCustomNBT(@NotNull NBTTagCompound compound) {
+	public void readCustomNBT(@Nonnull NBTTagCompound compound) {
 		super.readCustomNBT(compound);
 		componentLinks = new HashMap<>();
 		paperComponents = new HashMap<>();

@@ -63,7 +63,7 @@ advancement.wizardry.devildust=Açúcar e Tempero
 advancement.wizardry.devildust.desc=Derreta um livro no fogo para criar Pó Demoníaco
 advancement.wizardry.crunch=§oCRACK!§a
 advancement.wizardry.crunch.desc=Choque-se contra um bloco de Rocha Matriz para entrar no Submundo
-bookGui.physicsbook.defaulttitle=Livro de Física
+book.physicsbook.defaulttitle=Livro de Física
 
 fluid.nacre_fluid=Nacre
 fluid.mana_fluid=Mana
@@ -91,4 +91,4 @@ potion.wizardry.time_slow=Desenrolamento
 
 item_group.wizardry=Wizardry
 
-wizardry.misc.module=Feitiço:
+wizardry.misc.moduleSet=Feitiço:

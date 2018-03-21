@@ -27,9 +27,9 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nonnull;
 import java.util.HashSet;
 
 /**
@@ -43,7 +43,7 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 
 	private CachedStructure cachedStructure;
 
-	public TileCraftingPlateRenderer(@NotNull TileCraftingPlate tile) {
+	public TileCraftingPlateRenderer(@Nonnull TileCraftingPlate tile) {
 		super(tile);
 
 		animator.setUseWorldTicks(true);

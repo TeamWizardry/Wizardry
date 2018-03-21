@@ -9,7 +9,7 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
@@ -26,7 +26,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -65,15 +64,15 @@ public class ModuleShapeCone extends ModuleShape {
 
 		if (position == null) return false;
 
-		double range = spellRing.getModifier(Attributes.RANGE, attributeRanges.get(Attributes.RANGE));
-
-		setCostMultiplier(this, range / 16.0);
+		double range = spellRing.getModifier(AttributeRegistry.RANGE, attributeRanges.get(AttributeRegistry.RANGE));
+		int chance = (int) (spellRing.getModifier(AttributeRegistry.POTENCY, attributeRanges.get(AttributeRegistry.POTENCY)));
+		
+		spellRing.multiplyMultiplierForAll((float) (range / 8.0 * chance / 16.0));
 
 		Vec3d origin = spell.getOriginHand();
 
 		if (origin == null) return false;
 
-		int chance = (int) (spellRing.getModifier(Attributes.POTENCY, attributeRanges.get(Attributes.POTENCY)));
 
 		for (int i = 0; i < chance; i++) {
 
@@ -105,7 +104,7 @@ public class ModuleShapeCone extends ModuleShape {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void render(@Nonnull SpellData spell, @NotNull SpellRing spellRing) {
+	public void render(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Vec3d target = spell.getTarget();
 
 		if (target == null) return;
