@@ -13,8 +13,8 @@ import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RandUtilSeed;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.common.core.LightningTracker;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseRange;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseRange;
 import com.teamwizardry.wizardry.common.network.PacketRenderLightningBolt;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
@@ -68,8 +68,8 @@ public class ModuleEffectLightning extends ModuleEffect {
 			origin = new Vec3d(offX, caster.getEyeHeight(), offZ).add(target);
 		}
 
-		double range = spellRing.getModifier(AttributeRegistry.RANGE, attributeRanges.get(AttributeRegistry.RANGE));
-		double strength = spellRing.getModifier(AttributeRegistry.POTENCY, attributeRanges.get(AttributeRegistry.POTENCY)) / 2.0;
+		double range = spellRing.getModifier(AttributeRegistry.RANGE);
+		double strength = spellRing.getModifier(AttributeRegistry.POTENCY) / 2.0;
 
 		if (!spellRing.taxCaster(spell)) return false;
 
@@ -110,7 +110,7 @@ public class ModuleEffectLightning extends ModuleEffect {
 		Entity caster = spell.getCaster();
 		Vec3d target = spell.getTarget();
 		long seed = spell.getData(SEED, 0L);
-		double range = spellRing.getModifier(AttributeRegistry.RANGE, attributeRanges.get(AttributeRegistry.RANGE));
+		double range = spellRing.getModifier(AttributeRegistry.RANGE);
 
 		if (target == null) return;
 

@@ -1,13 +1,5 @@
 package com.teamwizardry.wizardry.api.spell.module;
 
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.events.SpellCastEvent;
@@ -21,7 +13,6 @@ import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry.Attribute
 import com.teamwizardry.wizardry.api.util.DefaultHashMap;
 import com.teamwizardry.wizardry.common.core.SpellTicker;
 import com.teamwizardry.wizardry.common.network.PacketRenderSpell;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.math.Vec3d;
@@ -29,6 +20,13 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Demoniaque.
@@ -168,6 +166,10 @@ public abstract class Module {
 
 	public List<AttributeModifier> getAttributes() {
 		return attributes;
+	}
+
+	public Map<Attribute, AttributeRange> getAttributeRanges() {
+		return attributeRanges;
 	}
 
 	/**

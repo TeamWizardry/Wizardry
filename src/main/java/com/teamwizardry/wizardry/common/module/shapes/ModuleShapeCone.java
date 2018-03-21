@@ -17,8 +17,8 @@ import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseRange;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseRange;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.RayTraceResult;
@@ -64,8 +64,8 @@ public class ModuleShapeCone extends ModuleShape {
 
 		if (position == null) return false;
 
-		double range = spellRing.getModifier(AttributeRegistry.RANGE, attributeRanges.get(AttributeRegistry.RANGE));
-		int chance = (int) (spellRing.getModifier(AttributeRegistry.POTENCY, attributeRanges.get(AttributeRegistry.POTENCY)));
+		double range = spellRing.getModifier(AttributeRegistry.RANGE);
+		int chance = (int) (spellRing.getModifier(AttributeRegistry.POTENCY));
 		
 		spellRing.multiplyMultiplierForAll((float) (range / 8.0 * chance / 16.0));
 

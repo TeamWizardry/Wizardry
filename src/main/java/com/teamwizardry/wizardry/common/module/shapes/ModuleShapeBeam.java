@@ -9,8 +9,8 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseRange;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseRange;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -53,8 +53,8 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 
 		if (look == null || position == null) return false;
 
-		double range = spellRing.getModifier(AttributeRegistry.RANGE, attributeRanges.get(AttributeRegistry.RANGE));
-		double potency = 30 - spellRing.getModifier(AttributeRegistry.POTENCY, attributeRanges.get(AttributeRegistry.POTENCY));
+		double range = spellRing.getModifier(AttributeRegistry.RANGE);
+		double potency = 30 - spellRing.getModifier(AttributeRegistry.POTENCY);
 
 		spellRing.multiplyMultiplierForAll((float) (potency / 25.0 * range / 75.0));
 

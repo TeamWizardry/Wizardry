@@ -1,10 +1,5 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ENTITY_HIT;
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ORIGIN;
-
-import javax.annotation.Nonnull;
-
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpHelix;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
@@ -23,10 +18,9 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleType;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseDuration;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseAOE;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseDuration;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
@@ -37,6 +31,11 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nonnull;
+
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ENTITY_HIT;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ORIGIN;
 
 /**
  * Created by Demoniaque.
@@ -70,7 +69,7 @@ public class ModuleEffectAntiGravityWell extends ModuleEffect implements ILinger
 
 		if (position == null) return false;
 
-		double area = spellRing.getModifier(AttributeRegistry.AREA, attributeRanges.get(AttributeRegistry.AREA));
+		double area = spellRing.getModifier(AttributeRegistry.AREA);
 
 		for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(position)).grow(area, area, area))) {
 			if (entity == null) continue;
@@ -79,7 +78,7 @@ public class ModuleEffectAntiGravityWell extends ModuleEffect implements ILinger
 			if (dist > area) continue;
 			if (!spellRing.taxCaster(spell)) return false;
 
-			final double upperMag = spellRing.getModifier(AttributeRegistry.POTENCY, attributeRanges.get(AttributeRegistry.POTENCY)) / 100.0;
+			final double upperMag = spellRing.getModifier(AttributeRegistry.POTENCY) / 100.0;
 			final double scale = 3.5;
 			double mag = upperMag * (scale * dist / (-scale * dist - 1) + 1);
 
@@ -131,6 +130,6 @@ public class ModuleEffectAntiGravityWell extends ModuleEffect implements ILinger
 
 	@Override
 	public int getLingeringTime(SpellData spell, SpellRing spellRing) {
-		return (int) (spellRing.getModifier(AttributeRegistry.DURATION, attributeRanges.get(AttributeRegistry.DURATION)) * 500);
+		return (int) (spellRing.getModifier(AttributeRegistry.DURATION) * 500);
 	}
 }

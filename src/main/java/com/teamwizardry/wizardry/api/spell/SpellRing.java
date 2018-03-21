@@ -193,12 +193,14 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	 * Get a modifier in this ring between the range.
 	 *
 	 * @param attribute The attribute you want. List in AttributeRegistry for default ones.
-	 * @param min       Min range.
-	 * @param max       Max range.
 	 * @return The double potency of a modifier.
 	 */
-	public final double getModifier(AttributeRegistry.Attribute attribute, AttributeRange range) {
+	public final double getModifier(AttributeRegistry.Attribute attribute) {
+		if (module == null) return 0;
+
 		double current = informationTag.getDouble(attribute.getNbtName());
+
+		AttributeRange range = module.getAttributeRanges().get(attribute);
 
 		return MathHelper.clamp(current, range.min, range.max) * getBurnoutMultiplier() * getPowerMultiplier();
 	}

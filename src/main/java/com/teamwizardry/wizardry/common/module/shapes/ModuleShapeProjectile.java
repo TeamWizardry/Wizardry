@@ -1,7 +1,5 @@
 package com.teamwizardry.wizardry.common.module.shapes;
 
-import javax.annotation.Nonnull;
-
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
@@ -13,13 +11,14 @@ import com.teamwizardry.wizardry.common.entity.EntitySpellProjectile;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseRange;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseSpeed;
 import com.teamwizardry.wizardry.init.ModSounds;
-
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nonnull;
 
 /**
  * Created by Demoniaque.
@@ -51,8 +50,8 @@ public class ModuleShapeProjectile extends ModuleShape {
 		Vec3d origin = spell.getOriginWithFallback();
 		if (origin == null) return false;
 
-		double dist = spellRing.getModifier(AttributeRegistry.RANGE, attributeRanges.get(AttributeRegistry.RANGE));
-		double speed = spellRing.getModifier(AttributeRegistry.SPEED, attributeRanges.get(AttributeRegistry.SPEED));
+		double dist = spellRing.getModifier(AttributeRegistry.RANGE);
+		double speed = spellRing.getModifier(AttributeRegistry.SPEED);
 
 		EntitySpellProjectile proj = new EntitySpellProjectile(world, spellRing, spell, dist, speed, 0.1);
 		proj.setPosition(origin.x, origin.y, origin.z);

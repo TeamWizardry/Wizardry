@@ -54,7 +54,7 @@ public class ModuleEffectTelekinesis extends ModuleEffect implements IContinuous
 		Vec3d targetPos = spell.getTarget();
 		Entity caster = spell.getCaster();
 
-		double strength = spellRing.getModifier(AttributeRegistry.POTENCY, attributeRanges.get(AttributeRegistry.POTENCY));
+		double strength = spellRing.getModifier(AttributeRegistry.POTENCY);
 
 		if (targetPos == null) return false;
 

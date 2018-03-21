@@ -43,7 +43,7 @@ public class ModuleEffectPhase extends ModuleEffect {
 		Entity targetEntity = spell.getVictim();
 		Vec3d targetHit = spell.getTarget();
 
-		double time = spellRing.getModifier(AttributeRegistry.DURATION, attributeRanges.get(AttributeRegistry.DURATION));
+		double time = spellRing.getModifier(AttributeRegistry.DURATION);
 
 		if (!spellRing.taxCaster(spell)) return false;
 
