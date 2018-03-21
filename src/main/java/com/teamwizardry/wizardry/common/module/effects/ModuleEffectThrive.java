@@ -60,7 +60,7 @@ public class ModuleEffectThrive extends ModuleEffect {
 		if (pos != null)
 			spell.world.playSound(null, new BlockPos(pos), ModSounds.HEAL, SoundCategory.NEUTRAL, 1, 1);
 		if (targetEntity instanceof EntityLivingBase) {
-			double strength = spellRing.getModifier(Attributes.POTENCY, 3, 20) / 10.0;
+			double strength = spellRing.getModifier(Attributes.POTENCY, attributeRanges.get(Attributes.POTENCY)) / 10.0;
 
 			if (!tax(this, spell, spellRing)) return false;
 

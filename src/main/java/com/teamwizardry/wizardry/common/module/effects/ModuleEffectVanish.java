@@ -47,8 +47,8 @@ public class ModuleEffectVanish extends ModuleEffect {
 		Entity caster = spell.getCaster();
 		Entity targetEntity = spell.getVictim();
 
-		double range = spellRing.getModifier(Attributes.AREA, 1, 64);
-		double strength = spellRing.getModifier(Attributes.POTENCY, 1, 64);
+		double range = spellRing.getModifier(Attributes.AREA, attributeRanges.get(Attributes.AREA));
+		double strength = spellRing.getModifier(Attributes.POTENCY, attributeRanges.get(Attributes.POTENCY));
 		range = 32;
 
 		if (targetEntity != null && targetEntity instanceof EntityLivingBase) {

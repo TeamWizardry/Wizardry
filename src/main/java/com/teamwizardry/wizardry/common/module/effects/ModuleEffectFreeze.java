@@ -15,7 +15,7 @@ import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtendTime;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseDuration;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseAOE;
 import com.teamwizardry.wizardry.init.ModPotions;
 import com.teamwizardry.wizardry.init.ModSounds;
@@ -54,7 +54,7 @@ public class ModuleEffectFreeze extends ModuleEffect {
 
 	@Override
 	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierIncreaseAOE(), new ModuleModifierExtendTime()};
+		return new ModuleModifier[]{new ModuleModifierIncreaseAOE(), new ModuleModifierIncreaseDuration()};
 	}
 
 	@Override
@@ -64,8 +64,8 @@ public class ModuleEffectFreeze extends ModuleEffect {
 		BlockPos targetPos = spell.getTargetPos();
 		Entity caster = spell.getCaster();
 
-		double range = spellRing.getModifier(Attributes.AREA, 1, 16) / 2.0;
-		double time = spellRing.getModifier(Attributes.DURATION, 50, 1000);
+		double range = spellRing.getModifier(Attributes.AREA, attributeRanges.get(Attributes.AREA)) / 2.0;
+		double time = spellRing.getModifier(Attributes.DURATION, attributeRanges.get(Attributes.DURATION));
 
 		if (!tax(this, spell, spellRing)) return false;
 

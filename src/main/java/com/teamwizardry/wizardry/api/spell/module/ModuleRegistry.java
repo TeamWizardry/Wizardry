@@ -1,5 +1,25 @@
 package com.teamwizardry.wizardry.api.spell.module;
 
+import java.awt.Color;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Deque;
+import java.util.HashSet;
+import java.util.Map.Entry;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.apache.commons.io.FileUtils;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -8,21 +28,15 @@ import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.utilities.AnnotationHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRange;
 import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
 import com.teamwizardry.wizardry.api.spell.attribute.Operation;
+import com.teamwizardry.wizardry.api.util.DefaultHashMap;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import org.apache.commons.io.FileUtils;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.awt.*;
-import java.io.*;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
 
 /**
  * Created by Demoniaque.
@@ -129,14 +143,8 @@ public class ModuleRegistry {
 
 			Color primaryColor = Color.WHITE;
 			Color secondaryColor = Color.WHITE;
-			int cooldownTime = 0;
-			int chargeupTime = 0;
-			double manaDrain = 0;
-			double burnoutFill = 0;
-			float powerMultiplier = 1;
-			float manaMultiplier = 1;
-			float burnoutMultiplier = 0;
 			int itemMeta = 0;
+			DefaultHashMap<String, AttributeRange> attributeRanges = new DefaultHashMap<>(AttributeRange.BACKUP);
 
 			Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(moduleObject.getAsJsonPrimitive("item").getAsString()));
 			if (item == null) {
@@ -147,31 +155,11 @@ public class ModuleRegistry {
 				Wizardry.logger.error("| | |_ Found Item " + item.getUnlocalizedName());
 			}
 
-			for (Map.Entry<String, JsonElement> entry : moduleObject.entrySet()) {
+			for (Entry<String, JsonElement> entry : moduleObject.entrySet()) {
 				switch (entry.getKey()) {
 					case "item_meta": {
 						itemMeta = entry.getValue().getAsJsonPrimitive().getAsInt();
 						Wizardry.logger.info(" | | |_ Found Item Meta:          " + itemMeta);
-						break;
-					}
-					case "mana_drain": {
-						manaDrain = entry.getValue().getAsJsonPrimitive().getAsDouble();
-						Wizardry.logger.info(" | | |_ Found Mana Drain:         " + manaDrain);
-						break;
-					}
-					case "burnout_fill": {
-						burnoutFill = entry.getValue().getAsJsonPrimitive().getAsDouble();
-						Wizardry.logger.info(" | | |_ Found Burnout Fill:       " + burnoutFill);
-						break;
-					}
-					case "cooldown_time": {
-						cooldownTime = entry.getValue().getAsJsonPrimitive().getAsInt();
-						Wizardry.logger.info(" | | |_ Found Cooldown Time:      " + cooldownTime);
-						break;
-					}
-					case "chargeup_time": {
-						chargeupTime = entry.getValue().getAsJsonPrimitive().getAsInt();
-						Wizardry.logger.info(" | | |_ Found Chargeup Time:      " + chargeupTime);
 						break;
 					}
 					case "primary_color": {
@@ -184,25 +172,63 @@ public class ModuleRegistry {
 						Wizardry.logger.info(" | | |_ Found Secondary Color:    " + secondaryColor.getRGB());
 						break;
 					}
-					case "power_multiplier": {
-						powerMultiplier = entry.getValue().getAsJsonPrimitive().getAsFloat();
-						Wizardry.logger.info(" | | |_ Found Power Multiplier:   " + powerMultiplier);
-						break;
-					}
-					case "mana_multiplier": {
-						manaMultiplier = entry.getValue().getAsJsonPrimitive().getAsFloat();
-						Wizardry.logger.info(" | | |_ Found Mana Multiplier:    " + manaMultiplier);
-						break;
-					}
-					case "burnout_multiplier": {
-						burnoutMultiplier = entry.getValue().getAsJsonPrimitive().getAsFloat();
-						Wizardry.logger.info(" | | |_ Found Burnout Multiplier: " + burnoutMultiplier);
-						break;
+					default:
+					{
+						String attribute = Attributes.getAttributeFromName(entry.getKey());
+						if (attribute != null)
+						{
+							Wizardry.logger.info(" | | |_ Found base " + attribute + " values:");
+							JsonObject baseAttrib = entry.getValue().getAsJsonObject();
+
+							double min = 0;
+							if (baseAttrib.has("min") && baseAttrib.get("min").isJsonPrimitive())
+							{
+								min = baseAttrib.get("min").getAsInt();
+								if (min < 0)
+								{
+									Wizardry.logger.info(" | | | |_ Minimum value for " + attribute + " was " + min + ", must be a positive integer. Setting to 0");
+									min = 0;
+								}
+							}
+							
+							double max = Integer.MAX_VALUE;
+							if (baseAttrib.has("max") && baseAttrib.get("max").isJsonPrimitive())
+							{
+								max = baseAttrib.get("max").getAsDouble();
+								if (max < min)
+								{
+									Wizardry.logger.info(" | | | |_ Maximum value for " + attribute + " was " + max + ", must be greater than min. Setting to min, " + min);
+									max = min;
+								}
+								if (max > Integer.MAX_VALUE)
+								{
+									Wizardry.logger.info(" | | | |_ Maximum maximum value is " + Integer.MAX_VALUE + ", max was " + max + ". Setting to " + Integer.MAX_VALUE);
+									max = Integer.MAX_VALUE;
+								}
+							}
+							
+							double base = min;
+							if (baseAttrib.has("base") && baseAttrib.get("base").isJsonPrimitive())
+							{
+								base = baseAttrib.get("base").getAsDouble();
+								if (base < min)
+								{
+									Wizardry.logger.info(" | | | |_ Base value for " + attribute + " was " + base + ", must be greater than min, " + min + ". Setting to " + min);
+									base = min;
+								}
+								else if (base > max)
+								{
+									Wizardry.logger.info(" | | | |_ Base value for " + attribute + " was " + base + ", must be less than max, " + max + ". Setting to " + max);
+									base = max;
+								}
+							}
+							attributeRanges.put(attribute, new AttributeRange(base, min, max));
+						}
 					}
 				}
 			}
 
-			module.init(new ItemStack(item, 1, itemMeta), manaDrain, burnoutFill, primaryColor, secondaryColor, powerMultiplier, manaMultiplier, burnoutMultiplier, cooldownTime, chargeupTime);
+			module.init(new ItemStack(item, 1, itemMeta), primaryColor, secondaryColor, attributeRanges);
 
 			if (moduleObject.has("modifiers") && moduleObject.get("modifiers").isJsonArray()) {
 				Wizardry.logger.info(" | | |___ Found Modifiers. About to process them");

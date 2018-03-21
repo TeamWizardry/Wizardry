@@ -19,7 +19,7 @@ import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtendRange;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseRange;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -60,7 +60,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 
 	@Override
 	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierExtendRange()};
+		return new ModuleModifier[]{new ModuleModifierIncreaseRange()};
 	}
 
 	@Override
@@ -103,7 +103,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 
 				if (touchedBlock.getBlock() == state.getBlock()) return false;
 
-				double strength = spellRing.getModifier(Attributes.RANGE, 10, 64);
+				double strength = spellRing.getModifier(Attributes.RANGE, attributeRanges.get(Attributes.RANGE));
 
 				ItemStack stackBlock = null;
 				for (ItemStack stack : ((EntityPlayer) caster).inventory.mainInventory) {

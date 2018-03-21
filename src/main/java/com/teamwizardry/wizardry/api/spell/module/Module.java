@@ -1,5 +1,13 @@
 package com.teamwizardry.wizardry.api.spell.module;
 
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.events.SpellCastEvent;
@@ -7,8 +15,12 @@ import com.teamwizardry.wizardry.api.spell.ILingeringModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRange;
+import com.teamwizardry.wizardry.api.spell.attribute.Attributes;
+import com.teamwizardry.wizardry.api.util.DefaultHashMap;
 import com.teamwizardry.wizardry.common.core.SpellTicker;
 import com.teamwizardry.wizardry.common.network.PacketRenderSpell;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.Vec3d;
@@ -17,28 +29,16 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by Demoniaque.
  */
 public abstract class Module {
 
-	private final List<AttributeModifier> attributes = new ArrayList<>();
-	private Color primaryColor;
-	private Color secondaryColor;
-	private int cooldownTime;
-	private int chargeupTime;
-	private double manaDrain;
-	private double burnoutFill;
-	private ItemStack itemStack;
-	private float powerMultiplier;
-	private float manaMultiplier;
-	private float burnoutMultiplier;
+	protected final List<AttributeModifier> attributes = new ArrayList<>();
+	protected Map<String, AttributeRange> attributeRanges = new DefaultHashMap<>(AttributeRange.BACKUP);
+	protected Color primaryColor;
+	protected Color secondaryColor;
+	protected ItemStack itemStack;
 
 	@Nullable
 	public static Module deserialize(NBTTagCompound compound) {
@@ -47,25 +47,13 @@ public abstract class Module {
 	}
 
 	public final void init(ItemStack itemStack,
-	                       double manaDrain,
-	                       double burnoutFill,
 	                       Color primaryColor,
 	                       Color secondaryColor,
-	                       float powerMultiplier,
-	                       float manaMultiplier,
-	                       float burnoutMultiplier,
-	                       int cooldownTime,
-	                       int chargeupTime) {
+	                       DefaultHashMap<String, AttributeRange> attributeRanges) {
 		this.itemStack = itemStack;
-		this.manaDrain = manaDrain;
-		this.burnoutFill = burnoutFill;
 		this.primaryColor = primaryColor;
 		this.secondaryColor = secondaryColor;
-		this.powerMultiplier = powerMultiplier;
-		this.manaMultiplier = manaMultiplier;
-		this.burnoutMultiplier = burnoutMultiplier;
-		this.cooldownTime = cooldownTime;
-		this.chargeupTime = chargeupTime;
+		this.attributeRanges = attributeRanges;
 	}
 
 	/**
@@ -137,15 +125,15 @@ public abstract class Module {
 	}
 
 	public final double getBurnoutFill() {
-		return burnoutFill;
+		return attributeRanges.get(Attributes.BURNOUT).base;
 	}
 
 	public final int getCooldownTime() {
-		return cooldownTime;
+		return (int) attributeRanges.get(Attributes.COOLDOWN).base;
 	}
 
 	public final int getChargeupTime() {
-		return chargeupTime;
+		return (int) attributeRanges.get(Attributes.CHARGEUP).base;
 	}
 
 	public final ItemStack getItemStack() {
@@ -153,19 +141,19 @@ public abstract class Module {
 	}
 
 	public final double getManaDrain() {
-		return manaDrain;
+		return attributeRanges.get(Attributes.MANA).base;
 	}
 
 	public final float getPowerMultiplier() {
-		return powerMultiplier;
+		return (int) attributeRanges.get(Attributes.POWER_MULTI).base;
 	}
 
 	public final float getManaMultiplier() {
-		return manaMultiplier;
+		return (int) attributeRanges.get(Attributes.MANA_MULTI).base;
 	}
 
 	public final float getBurnoutMultiplier() {
-		return burnoutMultiplier;
+		return (int) attributeRanges.get(Attributes.BURNOUT_MULTI).base;
 	}
 
 	@Nonnull
@@ -193,6 +181,11 @@ public abstract class Module {
 
 	public final void addAttribute(AttributeModifier attribute) {
 		this.attributes.add(attribute);
+	}
+	
+	public final void addAttributeRange(String attribute, AttributeRange range)
+	{
+		this.attributeRanges.put(attribute, range);
 	}
 
 	public boolean ignoreResult() {

@@ -1,8 +1,10 @@
 {
   "item": "minecraft:red_flower",
-  "mana_drain": 400.0,
-  "burnout_fill": 600.0,
   "primary_color": "8D0000",
   "secondary_color": "FFA5A5",
-  "cooldown_time": 80
+  "mana": { "base": 400 },
+  "burnout": { "base": 600 },
+  "cooldown": { "base": 80 },
+  "potency": { "base": 2, "min": 2, "max": 20 },
+  "duration": { "base": 5, "min": 5, "max": 64 }
 }

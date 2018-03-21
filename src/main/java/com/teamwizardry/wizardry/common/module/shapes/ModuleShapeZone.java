@@ -15,8 +15,8 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtendRange;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtendTime;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseRange;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseDuration;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseAOE;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
 import net.minecraft.entity.Entity;
@@ -51,7 +51,7 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 
 	@Override
 	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierIncreaseAOE(), new ModuleModifierIncreasePotency(), new ModuleModifierExtendRange(), new ModuleModifierExtendTime()};
+		return new ModuleModifier[]{new ModuleModifierIncreaseAOE(), new ModuleModifierIncreasePotency(), new ModuleModifierIncreaseRange(), new ModuleModifierIncreaseDuration()};
 	}
 
 	@Override
@@ -69,9 +69,9 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 
 		if (targetPos == null) return false;
 
-		double aoe = spellRing.getModifier(Attributes.AREA, 3, 10);
-		double strength = spellRing.getModifier(Attributes.POTENCY, 1, 20);
-		double range = spellRing.getModifier(Attributes.RANGE, 1, 20);
+		double aoe = spellRing.getModifier(Attributes.AREA, attributeRanges.get(Attributes.AREA));
+		double strength = spellRing.getModifier(Attributes.POTENCY, attributeRanges.get(Attributes.POTENCY));
+		double range = spellRing.getModifier(Attributes.RANGE, attributeRanges.get(Attributes.RANGE));
 
 		List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(targetPos)).grow(aoe, 1, aoe));
 
@@ -128,7 +128,7 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 		if (target == null) return;
 		if (RandUtil.nextInt(10) != 0) return;
 
-		double aoe = spellRing.getModifier(Attributes.AREA, 3, 10);
+		double aoe = spellRing.getModifier(Attributes.AREA, attributeRanges.get(Attributes.AREA));
 
 		ParticleBuilder glitter = new ParticleBuilder(10);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
@@ -152,7 +152,7 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 
 	@Override
 	public int getLingeringTime(SpellData spell, SpellRing spellRing) {
-		double strength = spellRing.getModifier(Attributes.DURATION, 10, 100) * 10;
+		double strength = spellRing.getModifier(Attributes.DURATION, attributeRanges.get(Attributes.DURATION)) * 10;
 		return (int) strength;
 	}
 }

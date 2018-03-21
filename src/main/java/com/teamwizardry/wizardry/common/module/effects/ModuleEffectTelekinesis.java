@@ -23,7 +23,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -56,7 +55,7 @@ public class ModuleEffectTelekinesis extends ModuleEffect implements IContinuous
 		Vec3d targetPos = spell.getTarget();
 		Entity caster = spell.getCaster();
 
-		double strength = MathHelper.clamp(spellRing.getModifier(Attributes.POTENCY, 3, 10), 3, 10);
+		double strength = spellRing.getModifier(Attributes.POTENCY, attributeRanges.get(Attributes.POTENCY));
 
 		if (targetPos == null) return false;
 

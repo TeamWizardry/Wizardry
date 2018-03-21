@@ -5,6 +5,7 @@ import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.saving.Savable;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRange;
 import com.teamwizardry.wizardry.api.spell.attribute.Operation;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
@@ -146,8 +147,8 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	 * @param max       Max range.
 	 * @return The double potency of a modifier.
 	 */
-	public double getModifier(String attribute, double min, double max) {
-		return (attributes.hasKey(attribute) ? MathHelper.clamp(min + attributes.getDouble(attribute), min, max) : min) * getBurnoutMultiplier() * getPowerMultiplier();
+	public double getModifier(String attribute, AttributeRange range) {
+		return (attributes.hasKey(attribute) ? MathHelper.clamp(attributes.getDouble(attribute), range.min, range.max) : range.base) * getBurnoutMultiplier() * getPowerMultiplier();
 	}
 
 	public void processModifiers(List<AttributeModifier> modifiersToApply) {

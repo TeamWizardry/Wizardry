@@ -7,7 +7,7 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtendTime;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseDuration;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
 import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.entity.Entity;
@@ -35,7 +35,7 @@ public class ModuleEffectCrasherFall extends ModuleEffect {
 
 	@Override
 	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierIncreasePotency(), new ModuleModifierExtendTime()};
+		return new ModuleModifier[]{new ModuleModifierIncreasePotency(), new ModuleModifierIncreaseDuration()};
 	}
 
 	@Override
@@ -43,8 +43,8 @@ public class ModuleEffectCrasherFall extends ModuleEffect {
 		Entity targetEntity = spell.getVictim();
 
 		if (targetEntity instanceof EntityLivingBase) {
-			double strength = spellRing.getModifier(Attributes.POTENCY, 2, 20);
-			double duration = spellRing.getModifier(Attributes.DURATION, 5, 64) * 10;
+			double strength = spellRing.getModifier(Attributes.POTENCY, attributeRanges.get(Attributes.POTENCY));
+			double duration = spellRing.getModifier(Attributes.DURATION, attributeRanges.get(Attributes.DURATION)) * 10;
 			if (!tax(this, spell, spellRing)) return false;
 
 			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.CRASH, (int) duration, (int) strength, true, true));

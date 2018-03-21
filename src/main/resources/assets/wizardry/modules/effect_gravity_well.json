@@ -5,5 +5,11 @@
   "burnout_fill": 0.5,
   "primary_color": "000000",
   "secondary_color": "00FFFF",
-  "cooldown_time": 100
+  "cooldown_time": 100,
+  "mana": { "base": 0.5 },
+  "burnout": { "base": 0.5 },
+  "cooldown": { "base": 100 },
+  "area": { "base": 16, "min": 16, "max": 32 },
+  "potency": { "base": 10, "min": 10, "max": 50 },
+  "duration": { "base": 10, "min": 10, "max": 64 }
 }

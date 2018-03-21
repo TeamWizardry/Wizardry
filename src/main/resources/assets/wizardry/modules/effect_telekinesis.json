@@ -1,7 +1,8 @@
 {
   "item": "minecraft:reeds",
-  "mana_drain": 10.0,
-  "burnout_fill": 10.0,
   "primary_color": "FFFFFF",
-  "secondary_color": "FFFFFF"
+  "secondary_color": "FFFFFF",
+  "mana": { "base": 10 },
+  "burnout": { "base": 10 },
+  "potency": { "base": 3, "min": 3, "max": 10 }
 }

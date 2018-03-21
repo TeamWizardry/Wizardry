@@ -16,6 +16,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -42,7 +43,7 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 	@Override
 	public int getNewCooldown(@Nonnull SpellData data, SpellRing ring) {
 		Entity target = data.getData(ENTITY_HIT);
-		double strength = ring.getModifier(Attributes.POTENCY, 1, 10);
+		double strength = MathHelper.clamp(ring.getModifier(Attributes.POTENCY, attributeRanges.get(Attributes.POTENCY)), 1, 10);
 		if (target == null) return 50;
 		if (target.getEntityData().hasKey("jump_count")) {
 			int jumpCount = target.getEntityData().getInteger("jump_count");
@@ -76,7 +77,7 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 		Vec3d lookVec = PosUtils.vecFromRotations(pitch, yaw);
 
 		if (!target.hasNoGravity()) {
-			double strength = spellRing.getModifier(Attributes.POTENCY, 1, 64) / 10.0;
+			double strength = spellRing.getModifier(Attributes.POTENCY, attributeRanges.get(Attributes.POTENCY)) / 10.0;
 			if (!tax(this, spell, spellRing)) return false;
 
 			if (!target.getEntityData().hasKey("jump_count")) {
@@ -89,7 +90,7 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 			target.motionZ += lookVec.z;
 
 			target.velocityChanged = true;
-			target.fallDistance /= spellRing.getModifier(Attributes.POTENCY, 2, 10);
+			target.fallDistance /= MathHelper.clamp(spellRing.getModifier(Attributes.POTENCY, attributeRanges.get(Attributes.POTENCY)), 2, 10);
 
 			if (target instanceof EntityPlayerMP)
 				((EntityPlayerMP) target).connection.sendPacket(new SPacketEntityVelocity(target));

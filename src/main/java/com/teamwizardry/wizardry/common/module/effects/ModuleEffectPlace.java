@@ -53,16 +53,13 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 		return new ModuleModifier[]{new ModuleModifierIncreaseAOE()};
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		BlockPos targetPos = spell.getTargetPos();
-		Vec3d originPos = spell.getData(ORIGIN);
-		Entity targetEntity = spell.getVictim();
 		Entity caster = spell.getCaster();
 		EnumFacing facing = spell.getData(FACE_HIT);
-		float yaw = spell.getData(YAW, 0F);
-		float pitch = spell.getData(PITCH, 0F);
 
 		if (facing == null) return true;
 
@@ -72,7 +69,7 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 			facings.add(facing1);
 		}
 
-		double range = spellRing.getModifier(Attributes.AREA, 1, 64);
+		double range = spellRing.getModifier(Attributes.AREA, attributeRanges.get(Attributes.AREA));
 
 		if (targetPos == null) return true;
 
@@ -124,8 +121,6 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 
 			if (item.getItem().getItem() instanceof ItemBlock) {
 				item.getItem().shrink(1);
-
-				IBlockState oldState = world.getBlockState(targetPos);
 
 				BlockUtils.placeBlock(world, targetPos, facing, item.getItem());
 				world.playSound(null, targetPos, ((ItemBlock) item.getItem().getItem()).getBlock().getSoundType(((ItemBlock) item.getItem().getItem()).getBlock().getDefaultState(), world, targetPos, caster).getPlaceSound(), SoundCategory.BLOCKS, 1f, 1f);

@@ -15,7 +15,7 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtendTime;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseDuration;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
 import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.entity.Entity;
@@ -73,7 +73,7 @@ public class ModuleEffectTimeSlow extends ModuleEffect {
 
 	@Override
 	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierIncreasePotency(), new ModuleModifierExtendTime()};
+		return new ModuleModifier[]{new ModuleModifierIncreasePotency(), new ModuleModifierIncreaseDuration()};
 	}
 
 	@Override
@@ -85,8 +85,8 @@ public class ModuleEffectTimeSlow extends ModuleEffect {
 		Entity caster = spell.getCaster();
 
 		if (targetEntity instanceof EntityLivingBase) {
-			double strength = spellRing.getModifier(Attributes.POTENCY, 2, 20);
-			double duration = spellRing.getModifier(Attributes.DURATION, 5, 64) * 10;
+			double strength = spellRing.getModifier(Attributes.POTENCY, attributeRanges.get(Attributes.POTENCY));
+			double duration = spellRing.getModifier(Attributes.DURATION, attributeRanges.get(Attributes.DURATION)) * 10;
 			if (!tax(this, spell, spellRing)) return false;
 
 			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.TIME_SLOW, (int) duration, (int) strength, true, false));

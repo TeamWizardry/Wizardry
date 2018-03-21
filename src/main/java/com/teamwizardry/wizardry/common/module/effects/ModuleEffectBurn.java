@@ -9,7 +9,7 @@ import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtendTime;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseDuration;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseAOE;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
@@ -44,7 +44,7 @@ public class ModuleEffectBurn extends ModuleEffect {
 
 	@Override
 	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierIncreaseAOE(), new ModuleModifierExtendTime()};
+		return new ModuleModifier[]{new ModuleModifierIncreaseAOE(), new ModuleModifierIncreaseDuration()};
 	}
 
 	@Override
@@ -55,8 +55,8 @@ public class ModuleEffectBurn extends ModuleEffect {
 		Entity caster = spell.getCaster();
 		EnumFacing facing = spell.getData(FACE_HIT);
 
-		double strength = spellRing.getModifier(Attributes.AREA, 2, 16) / 2.0;
-		double time = spellRing.getModifier(Attributes.DURATION, 100, 1000);
+		double strength = spellRing.getModifier(Attributes.AREA, attributeRanges.get(Attributes.AREA)) / 2.0;
+		double time = spellRing.getModifier(Attributes.DURATION, attributeRanges.get(Attributes.DURATION));
 
 		if (!tax(this, spell, spellRing)) return false;
 

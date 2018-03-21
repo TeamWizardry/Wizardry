@@ -13,7 +13,7 @@ import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RandUtilSeed;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.common.core.LightningTracker;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtendRange;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseRange;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
 import com.teamwizardry.wizardry.common.network.PacketRenderLightningBolt;
 import com.teamwizardry.wizardry.init.ModSounds;
@@ -49,7 +49,7 @@ public class ModuleEffectLightning extends ModuleEffect {
 
 	@Override
 	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierExtendRange(), new ModuleModifierIncreasePotency()};
+		return new ModuleModifier[]{new ModuleModifierIncreaseRange(), new ModuleModifierIncreasePotency()};
 	}
 
 	@Override
@@ -69,8 +69,8 @@ public class ModuleEffectLightning extends ModuleEffect {
 			origin = new Vec3d(offX, caster.getEyeHeight(), offZ).add(target);
 		}
 
-		double range = spellRing.getModifier(Attributes.RANGE, 10, 32);
-		double strength = spellRing.getModifier(Attributes.POTENCY, 4, 20) / 2.0;
+		double range = spellRing.getModifier(Attributes.RANGE, attributeRanges.get(Attributes.RANGE));
+		double strength = spellRing.getModifier(Attributes.POTENCY, attributeRanges.get(Attributes.POTENCY)) / 2.0;
 
 		if (!tax(this, spell, spellRing)) return false;
 
@@ -111,7 +111,7 @@ public class ModuleEffectLightning extends ModuleEffect {
 		Entity caster = spell.getCaster();
 		Vec3d target = spell.getTarget();
 		long seed = spell.getData(SEED, 0L);
-		double range = spellRing.getModifier(Attributes.RANGE, 10, 32);
+		double range = spellRing.getModifier(Attributes.RANGE, attributeRanges.get(Attributes.RANGE));
 
 		if (target == null) return;
 

@@ -13,6 +13,12 @@ public class Attributes {
 
 	public static final String MANA = "modifier_mana_cost";
 	public static final String BURNOUT = "modifier_burnout_value";
+	
+	public static final String COOLDOWN = "modifier_cooldown_time";
+	public static final String CHARGEUP = "modifier_chargeup_time";
+	public static final String POWER_MULTI = "power_multiplier";
+	public static final String MANA_MULTI = "mana_multiplier";
+	public static final String BURNOUT_MULTI = "burnout_multiplier";
 
 	public static String getAttributeFromName(String name) {
 		switch (name) {
@@ -30,6 +36,16 @@ public class Attributes {
 				return MANA;
 			case "burnout":
 				return BURNOUT;
+			case "cooldown":
+				return COOLDOWN;
+			case "chargeup":
+				return CHARGEUP;
+			case "power_multiplier":
+				return POWER_MULTI;
+			case "mana_multiplier":
+				return MANA_MULTI;
+			case "burnout_multiplier":
+				return BURNOUT_MULTI;
 			default:
 				return null;
 		}

@@ -50,8 +50,8 @@ public class ModuleEffectBreak extends ModuleEffect {
 		BlockPos targetPos = spell.getTargetPos();
 		Entity caster = spell.getCaster();
 
-		double range = spellRing.getModifier(Attributes.AREA, 1, 64);
-		double strength = spellRing.getModifier(Attributes.POTENCY, 1, 20) / 4;
+		double range = spellRing.getModifier(Attributes.AREA, attributeRanges.get(Attributes.AREA));
+		double strength = spellRing.getModifier(Attributes.POTENCY, attributeRanges.get(Attributes.POTENCY)) / 4;
 
 		if (targetPos != null) {
 			Block block = world.getBlockState(targetPos).getBlock();
