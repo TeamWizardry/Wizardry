@@ -45,6 +45,16 @@ public class TilePearlHolder extends TileManaInteracter implements ICooldown {
 		}
 	});
 
+	@Nullable
+	@Override
+	public IWizardryCapability getCap() {
+		if (containsManaOrb()) {
+			return WizardryCapabilityProvider.getCap(getItemStack());
+		}
+		return null;
+	}
+
+
 	/**
 	 * isPartOfStructure defines if this holder is part of a structure
 	 * and cannot be used for mana networking outside of its own structure

@@ -59,11 +59,12 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 
 		if (tile.positions[i] == null) return;
 
-		CapManager manager = new CapManager(tile.inputPearl.getHandler().getStackInSlot(0));
+		CapManager manager = new CapManager(tile.getCap());
 
 		Vec3d newDest;
 		double t;
-		if (!manager.isManaEmpty() && tile.isAbleToSuckMana || (!tile.inputPearl.getHandler().getStackInSlot(0).isEmpty() && tile.isAbleToSuckMana)) {
+		if ((!tile.isAbleToSuckMana && !manager.isManaEmpty())
+				|| (!tile.inputPearl.getHandler().getStackInSlot(0).isEmpty() && tile.isAbleToSuckMana)) {
 
 			if (tile.inputPearl.getHandler().getStackInSlot(0).isEmpty()) t = 1;
 			else {
@@ -157,7 +158,7 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 
 
 		ItemStack pearl = tile.inputPearl.getHandler().getStackInSlot(0);
-		CapManager manager = new CapManager(pearl);
+		CapManager manager = new CapManager(tile.getCap());
 
 		int count = 0;
 		for (int i = 0; i < tile.realInventory.getHandler().getSlots(); i++) {
@@ -186,7 +187,7 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 				GlStateManager.popMatrix();
 
 
-				if (!manager.isManaEmpty() && tile.isAbleToSuckMana || (!tile.inputPearl.getHandler().getStackInSlot(0).isEmpty() && tile.isAbleToSuckMana)) {
+				if (!manager.isManaEmpty() && !tile.isAbleToSuckMana || (!tile.inputPearl.getHandler().getStackInSlot(0).isEmpty() && tile.isAbleToSuckMana)) {
 					if (tile.inputPearl.getHandler().getStackInSlot(0).isEmpty() && RandUtil.nextInt(count > 0 && count / 2 > 0 ? count / 2 : 1) == 0)
 						LibParticles.CLUSTER_DRAPE(tile.getWorld(), new Vec3d(tile.getPos()).addVector(0.5, 0.5, 0.5).add(pos));
 
