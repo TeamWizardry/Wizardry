@@ -98,7 +98,7 @@ public class TileCraftingPlate extends TileManaInteracter {
 				BlockPos target = getPos().add(relative);
 				TileEntity tile = world.getTileEntity(target);
 				if (tile != null && tile instanceof TilePearlHolder) {
-					if (!((TilePearlHolder) tile).isBenign) {
+					if (!((TilePearlHolder) tile).isPartOfStructure) {
 						if (((TilePearlHolder) tile).structurePos == null || !((TilePearlHolder) tile).structurePos.equals(getPos())) {
 							((TilePearlHolder) tile).structurePos = getPos();
 						}
@@ -178,7 +178,7 @@ public class TileCraftingPlate extends TileManaInteracter {
 				}
 				ItemNBTHelper.setList(infusedPearl, Constants.NBT.SPELL, list);
 
-				// Average pearl color
+				// Average inventory color
 				{
 					Color lastColor = null;
 					while (!colorSet.isEmpty()) {

@@ -63,8 +63,8 @@ public class TileManaBattery extends TileManaInteracter {
 					BlockPos target = getPos().add(relative);
 					TileEntity tile = world.getTileEntity(target);
 					if (tile != null && tile instanceof TilePearlHolder) {
-						if (!((TilePearlHolder) tile).isBenign) {
-							((TilePearlHolder) tile).isBenign = true;
+						if (!((TilePearlHolder) tile).isPartOfStructure) {
+							((TilePearlHolder) tile).isPartOfStructure = true;
 							((TilePearlHolder) tile).structurePos = getPos();
 							tile.markDirty();
 							world.notifyBlockUpdate(target, world.getBlockState(target), world.getBlockState(target), 3);

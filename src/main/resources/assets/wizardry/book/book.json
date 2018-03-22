@@ -36,6 +36,14 @@
         "wizardry:mobs/spiritwights",
         "wizardry:mobs/unicorns"
       ]
+    },
+    {
+      "title": "wizardry.book.dimensions.title",
+      "icon": "wizardry:gui/book/icons/magic_gate",
+      "description": "test",
+      "entries": [
+        "wizardry:dimensions/underworld"
+      ]
     }
   ]
 }

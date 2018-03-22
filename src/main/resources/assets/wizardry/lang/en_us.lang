@@ -263,6 +263,7 @@ wizardry.book.subtitle=Not By Raziel
 wizardry.book.steps.title=The 5 Steps To Becoming A Wizard
 wizardry.book.mobs.title=Mobs
 wizardry.book.itemsblocks.title=Items And Blocks
+wizardry.book.dimensions.title=Dimensions
 
 wizardry.book.steps.mana.title=Step 1: Mana
 wizardry.book.steps.mana.desc=Learn about what mana is and why you want it so badly
@@ -336,3 +337,10 @@ wizardry.book.mobs.unicorns.desc=Learn about unicorns
 wizardry.book.mobs.unicorns.content1=Please, make no mistake; these are not the gentle, damsel-loving creatures of song and story. The tales I heard as a childRing about unicorns were keen to stress their beauty and intelligence, their kindness and faithfulness. Real unicorns are better described as 'stroppy'.
 wizardry.book.mobs.unicorns.content2=These creatures are savage and territorial, sharp of horn and hard of hoof. As far as we can tell, they possess a burning desire to kick, stab or otherwise main any animal that crosses their path - wizards included - and will even resort to biting if in the mood. They seem to harbour a particular grudge against fairies, which they eat when possible.
 wizardry.book.mobs.unicorns.content3=Some have argued that unicorns have little practical value, but their horns have potent magical properties. Also - as I've said elsewhere - fairies are remarkably annoying, so anything that keeps their numbers down can't be all bad.
+
+wizardry.book.dimensions.underworld.title=Underworld
+wizardry.book.dimensions.underworld.desc=Learn about the Underworld
+wizardry.book.dimensions.underworld.content1=<WIP><br>The domain of Zachriel, Angel of Memory.
+wizardry.book.dimensions.underworld.content2=Life is rare among the cloudy skies of the Underworld (it is the realm of the dead, after all), but there are a few beings<br><WIP>
+wizardry.book.dimensions.underworld.content3=To get to the underworld, jump from a height over 130 blocks and smack bedrock, you will fall straight through into the top of the underworld where you will be greeted with a pleasant and relatively safe fall to it’s clouds.
+wizardry.book.dimensions.underworld.content4=To get back from the underworld, fall into its void. You will fall straight into the top of the overworld.

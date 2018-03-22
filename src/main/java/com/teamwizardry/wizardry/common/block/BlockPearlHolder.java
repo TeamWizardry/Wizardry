@@ -52,7 +52,7 @@ public class BlockPearlHolder extends BlockModContainer {
 			return;
 		}
 
-		ItemStack itemStack = holder.pearl;
+		ItemStack itemStack = holder.getItemStack();
 		if (itemStack != null && !itemStack.isEmpty()) {
 			InventoryHelper.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), itemStack);
 		}
@@ -66,16 +66,16 @@ public class BlockPearlHolder extends BlockModContainer {
 		if (!worldIn.isRemote) {
 			TilePearlHolder te = getTE(worldIn, pos);
 
-			if ((te.pearl == null || te.pearl.isEmpty())) {
+			if (!te.containsSomething()) {
 				if (heldItem.getItem() == ModItems.MANA_ORB || heldItem.getItem() == ModItems.PEARL_NACRE) {
-					te.pearl = heldItem.copy();
-					te.pearl.setCount(1);
+					te.setItemStack(heldItem.copy());
+					te.getItemStack().setCount(1);
 					heldItem.shrink(1);
 				} else return false;
 
 			} else {
-				ItemStack stack = te.pearl.copy();
-				te.pearl = ItemStack.EMPTY;
+				ItemStack stack = te.getItemStack().copy();
+				te.setItemStack(ItemStack.EMPTY);
 				if (playerIn.inventory.addItemStackToInventory(stack)) playerIn.openContainer.detectAndSendChanges();
 				else {
 					EntityItem entityItem = new EntityItem(worldIn, pos.getX(), pos.getY() + 1, pos.getZ(), stack);

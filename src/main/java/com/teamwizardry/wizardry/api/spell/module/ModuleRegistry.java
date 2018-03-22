@@ -1,25 +1,5 @@
 package com.teamwizardry.wizardry.api.spell.module;
 
-import java.awt.Color;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.Map.Entry;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import org.apache.commons.io.FileUtils;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -33,11 +13,20 @@ import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry.Attribute;
 import com.teamwizardry.wizardry.api.spell.attribute.Operation;
 import com.teamwizardry.wizardry.api.util.DefaultHashMap;
-
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import org.apache.commons.io.FileUtils;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.awt.*;
+import java.io.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * Created by Demoniaque.
@@ -94,6 +83,21 @@ public class ModuleRegistry {
 
 	public void processModules() {
 		Wizardry.logger.info(" _______________________________________________________________________\\\\");
+		Wizardry.logger.info(" | ");
+		Wizardry.logger.error(" | WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
+		Wizardry.logger.error(" | WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
+		Wizardry.logger.error(" | WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
+		Wizardry.logger.error(" | WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
+		Wizardry.logger.error(" | WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
+		Wizardry.logger.error(" | WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
+		Wizardry.logger.error(" | WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
+		Wizardry.logger.error(" | WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
+		Wizardry.logger.error(" | WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
+		Wizardry.logger.error(" | ================= THIS UPDATE BREAKS ALL OLD CONFIGS THIS IS WHY YOU SHOULD DELETE YOUR OLD ONES IF YOU HAVEN'T. OR RUN /wizardry reset IN GAME");
+		Wizardry.logger.info(" | ");
+		Wizardry.logger.info(" | ");
+		Wizardry.logger.info(" | ");
+		Wizardry.logger.info(" | ");
 		Wizardry.logger.info(" | Starting module registration");
 
 		HashSet<Module> processed = new HashSet<>();
