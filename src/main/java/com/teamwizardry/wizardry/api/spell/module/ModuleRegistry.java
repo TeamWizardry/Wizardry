@@ -84,16 +84,16 @@ public class ModuleRegistry {
 	public void processModules() {
 		Wizardry.logger.info(" _______________________________________________________________________\\\\");
 		Wizardry.logger.info(" | ");
-		Wizardry.logger.error(" | WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
-		Wizardry.logger.error(" | WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
-		Wizardry.logger.error(" | WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
-		Wizardry.logger.error(" | WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
-		Wizardry.logger.error(" | WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
-		Wizardry.logger.error(" | WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
-		Wizardry.logger.error(" | WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
-		Wizardry.logger.error(" | WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
-		Wizardry.logger.error(" | WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
-		Wizardry.logger.error(" | ================= THIS UPDATE BREAKS ALL OLD CONFIGS THIS IS WHY YOU SHOULD DELETE YOUR OLD ONES IF YOU HAVEN'T. OR RUN /wizardry reset IN GAME");
+		Wizardry.logger.error("| WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
+		Wizardry.logger.error("| WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
+		Wizardry.logger.error("| WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
+		Wizardry.logger.error("| WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
+		Wizardry.logger.error("| WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
+		Wizardry.logger.error("| WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
+		Wizardry.logger.error("| WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
+		Wizardry.logger.error("| WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
+		Wizardry.logger.error("| WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
+		Wizardry.logger.error("| ================= THIS UPDATE BREAKS ALL OLD CONFIGS THIS IS WHY YOU SHOULD DELETE YOUR OLD ONES IF YOU HAVEN'T. OR RUN /wizardry reset IN GAME");
 		Wizardry.logger.info(" | ");
 		Wizardry.logger.info(" | ");
 		Wizardry.logger.info(" | ");
@@ -152,7 +152,7 @@ public class ModuleRegistry {
 			DefaultHashMap<Attribute, AttributeRange> attributeRanges = new DefaultHashMap<>(AttributeRange.BACKUP);
 
 			Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(moduleObject.getAsJsonPrimitive("item").getAsString()));
-			if (item == null) {
+			if (item == null || item.getRegistryName() == null) {
 				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! Item for module " + module.getID() + " does not exist '" + moduleObject.getAsJsonPrimitive("item").getAsString() + "'");
 				Wizardry.logger.error("| |___ Failed to register module " + module.getID());
 				continue;
@@ -182,7 +182,7 @@ public class ModuleRegistry {
 						Attribute attribute = AttributeRegistry.getAttributeFromName(entry.getKey());
 						if (attribute != null)
 						{
-							Wizardry.logger.info(" | | |_ Found base " + attribute + " values:");
+							Wizardry.logger.info(" | | |_ Found base " + attribute.toString() + " values:");
 							JsonObject baseAttrib = entry.getValue().getAsJsonObject();
 
 							double min = 0;
@@ -191,9 +191,11 @@ public class ModuleRegistry {
 								min = baseAttrib.get("min").getAsInt();
 								if (min < 0)
 								{
-									Wizardry.logger.info(" | | | |_ Minimum value for " + attribute + " was " + min + ", must be a positive integer. Setting to 0");
+									Wizardry.logger.info(" | | | |_ Minimum value for " + attribute.toString() + " was " + min + ", must be a positive integer. Setting to 0");
 									min = 0;
 								}
+
+								Wizardry.logger.info(" | | | |_ Minimum: " + min);
 							}
 							
 							double max = Integer.MAX_VALUE;
@@ -202,7 +204,7 @@ public class ModuleRegistry {
 								max = baseAttrib.get("max").getAsDouble();
 								if (max < min)
 								{
-									Wizardry.logger.info(" | | | |_ Maximum value for " + attribute + " was " + max + ", must be greater than min. Setting to min, " + min);
+									Wizardry.logger.info(" | | | |_ Maximum value for " + attribute.toString() + " was " + max + ", must be greater than min. Setting to min, " + min);
 									max = min;
 								}
 								if (max > Integer.MAX_VALUE)
@@ -210,6 +212,9 @@ public class ModuleRegistry {
 									Wizardry.logger.info(" | | | |_ Maximum maximum value is " + Integer.MAX_VALUE + ", max was " + max + ". Setting to " + Integer.MAX_VALUE);
 									max = Integer.MAX_VALUE;
 								}
+
+								Wizardry.logger.info(" | | | |_ Maximum: " + max);
+
 							}
 							
 							double base = min;
@@ -218,7 +223,7 @@ public class ModuleRegistry {
 								base = baseAttrib.get("base").getAsDouble();
 								if (base < min)
 								{
-									Wizardry.logger.info(" | | | |_ Base value for " + attribute + " was " + base + ", must be greater than min, " + min + ". Setting to " + min);
+									Wizardry.logger.info(" | | | |_ Base value for " + attribute.toString() + " was " + base + ", must be greater than min, " + min + ". Setting to " + min);
 									base = min;
 								}
 								else if (base > max)
@@ -226,11 +231,31 @@ public class ModuleRegistry {
 									Wizardry.logger.info(" | | | |_ Base value for " + attribute + " was " + base + ", must be less than max, " + max + ". Setting to " + max);
 									base = max;
 								}
+
+								Wizardry.logger.info(" | | | |_ Base: " + base);
 							}
 							attributeRanges.put(attribute, new AttributeRange(base, min, max));
 						}
 					}
 				}
+			}
+
+			boolean foundManaMulti = false, foundBurnoutMulti = false;
+			for (Attribute attribute : module.getAttributeRanges().keySet()) {
+				if (attribute == AttributeRegistry.MANA_MULTI) {
+					foundManaMulti = true;
+				}
+				if (attribute == AttributeRegistry.BURNOUT_MULTI) {
+					foundBurnoutMulti = true;
+				}
+			}
+
+			if (!foundManaMulti) {
+				attributeRanges.put(AttributeRegistry.MANA_MULTI, new AttributeRange(1, Integer.MIN_VALUE, Integer.MAX_VALUE));
+			}
+			if (!foundBurnoutMulti) {
+				attributeRanges.put(AttributeRegistry.BURNOUT_MULTI, new AttributeRange(0, Integer.MIN_VALUE, Integer.MAX_VALUE));
+
 			}
 
 			module.init(new ItemStack(item, 1, itemMeta), primaryColor, secondaryColor, attributeRanges);
@@ -290,7 +315,7 @@ public class ModuleRegistry {
 		modules.clear();
 		modules.addAll(processed);
 
-		modules.sort((o1, o2) -> o1.getID().compareTo(o2.getID()));
+		modules.sort(Comparator.comparing(Module::getID));
 
 		Wizardry.logger.info(" |");
 		Wizardry.logger.info(" | Module registration processing complete! (ᵔᴥᵔ)");

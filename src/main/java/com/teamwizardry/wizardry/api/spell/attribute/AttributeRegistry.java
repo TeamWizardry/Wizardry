@@ -76,5 +76,10 @@ public class AttributeRegistry {
 		public String getNbtName() {
 			return nbtName;
 		}
+
+		@Override
+		public String toString() {
+			return shortName;
+		}
 	}
 }

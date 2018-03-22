@@ -78,6 +78,7 @@ public class TileCraftingPlate extends TileManaInteracter {
 		positions = new Vec3d[realInventory.getHandler().getSlots()];
 	}
 
+
 	@Override
 	public void readCustomNBT(NBTTagCompound compound) {
 	}
@@ -166,7 +167,9 @@ public class TileCraftingPlate extends TileManaInteracter {
 				}
 				SpellBuilder builder = new SpellBuilder(stacks, true);
 
-				ItemStack infusedPearl = outputPearl.getHandler().insertItem(0, inputPearl.getHandler().extractItem(0, 1, false), false);
+				ItemStack infusedPearl = inputPearl.getHandler().getStackInSlot(0).copy();
+				inputPearl.getHandler().setStackInSlot(0, ItemStack.EMPTY);
+				outputPearl.getHandler().setStackInSlot(0, infusedPearl);
 
 				ArrayDeque<Color> colorSet = new ArrayDeque<>();
 
