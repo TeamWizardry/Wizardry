@@ -85,11 +85,14 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 					if (spellList == null) return false;
 
 					SpellBuilder builder = new SpellBuilder(SpellUtils.getSpellChains(spellList), true, true);
-					SpellBuilder builder1 = new SpellBuilder(builder.getInventory(), true);
-					System.out.println(builder1.getSpell());
 
-					ItemNBTHelper.setList(pearl, Constants.NBT.SPELL, spellList);
+					//Color lastColor = SpellUtils.getAverageSpellColor(builder.getSpell());
+//
+					//float[] hsv = ColorUtils.getHSVFromColor(lastColor);
+					//ItemNBTHelper.setFloat(pearl, "hue", hsv[0]);
+					//ItemNBTHelper.setFloat(pearl, "saturation", hsv[1]);
 					ItemNBTHelper.setFloat(pearl, Constants.NBT.RAND, playerIn.world.rand.nextFloat());
+					ItemNBTHelper.setList(pearl, Constants.NBT.SPELL, spellList);
 
 					plate.outputPearl.getHandler().setStackInSlot(0, pearl);
 					plate.markDirty();

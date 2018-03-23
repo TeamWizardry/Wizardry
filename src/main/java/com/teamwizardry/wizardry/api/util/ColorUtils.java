@@ -2,11 +2,37 @@ package com.teamwizardry.wizardry.api.util;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
+import java.util.List;
 
 /**
  * Created by Demoniaque.
  */
 public class ColorUtils {
+
+	public static Color mixColors(List<Color> colors) {
+		int red = 0, green = 0, blue = 0;
+
+		for (Color color : colors) {
+
+			double colorCount = 0;
+			if (color.getRed() > 0) colorCount++;
+			if (color.getGreen() > 0) colorCount++;
+			if (color.getBlue() > 0) colorCount++;
+			if (colorCount <= 0) continue;
+
+			red += color.getRed() * color.getAlpha() / 255F / colorCount;
+			green += color.getGreen() * color.getAlpha() / 255F / colorCount;
+			blue += color.getBlue() * color.getAlpha() / 255F / colorCount;
+		}
+
+		if (!colors.isEmpty()) {
+			red = Math.min(red / colors.size(), 255);
+			green = Math.min(green / colors.size(), 255);
+			blue = Math.min(blue / colors.size(), 255);
+		}
+
+		return new Color(red, green, blue);
+	}
 
 	public static Color mixColors(@Nonnull Color color1, @Nonnull Color color2) {
 
@@ -41,4 +67,5 @@ public class ColorUtils {
 	public static Color getColorFromHSV(float[] hsv) {
 		return new Color(Color.HSBtoRGB(hsv[0], hsv[1], hsv[2]));
 	}
+
 }

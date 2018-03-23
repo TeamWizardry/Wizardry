@@ -17,7 +17,6 @@ import com.teamwizardry.wizardry.api.item.INacreProduct;
 import com.teamwizardry.wizardry.api.spell.SpellBuilder;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
-import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.render.block.TileCraftingPlateRenderer;
 import com.teamwizardry.wizardry.common.block.BlockCraftingPlate;
@@ -42,8 +41,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by Saad on 6/10/2016.
@@ -171,28 +172,17 @@ public class TileCraftingPlate extends TileManaInteracter {
 				inputPearl.getHandler().setStackInSlot(0, ItemStack.EMPTY);
 				outputPearl.getHandler().setStackInSlot(0, infusedPearl);
 
-				ArrayDeque<Color> colorSet = new ArrayDeque<>();
 
 				NBTTagList list = new NBTTagList();
 				for (SpellRing spellRing : builder.getSpell()) {
-					colorSet.add(spellRing.getPrimaryColor());
-					colorSet.add(spellRing.getSecondaryColor());
 					list.appendTag(spellRing.serializeNBT());
 				}
 				ItemNBTHelper.setList(infusedPearl, Constants.NBT.SPELL, list);
 
-				// Average inventory color
-				{
-					Color lastColor = null;
-					while (!colorSet.isEmpty()) {
-						if (lastColor == null) lastColor = colorSet.getFirst();
-						else {
-							lastColor = ColorUtils.mixColors(lastColor, colorSet.pop());
-						}
-					}
-					if (lastColor == null) lastColor = Color.WHITE;
-				}
-
+				//Color lastColor = SpellUtils.getAverageSpellColor(builder.getSpell());
+				//float[] hsv = ColorUtils.getHSVFromColor(lastColor);
+				//ItemNBTHelper.setFloat(infusedPearl, "hue", hsv[0]);
+				//ItemNBTHelper.setFloat(infusedPearl, "saturation", hsv[1]);
 				ItemNBTHelper.setFloat(infusedPearl, Constants.NBT.RAND, world.rand.nextFloat());
 				ItemNBTHelper.setString(infusedPearl, "type", EnumPearlType.INFUSED.toString());
 

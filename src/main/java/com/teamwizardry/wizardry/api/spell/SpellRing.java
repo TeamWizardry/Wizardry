@@ -78,10 +78,8 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	private float powerMultiplier = 1, manaMultiplier = 1, burnoutMultiplier = 1;
 
 	private SpellRing() {
-
 		informationTag.setDouble(AttributeRegistry.MANA.getNbtName(), 1);
 		informationTag.setDouble(AttributeRegistry.BURNOUT.getNbtName(), 1);
-
 	}
 
 	public SpellRing(@Nonnull Module module) {
@@ -98,6 +96,14 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 		ring.getInformationTag().setDouble(AttributeRegistry.MANA.getNbtName(), 1);
 		ring.getInformationTag().setDouble(AttributeRegistry.BURNOUT.getNbtName(), 1);
+
+		SpellRing lastRing = ring;
+		while (lastRing != null) {
+			if (lastRing.getChildRing() == null) break;
+
+			lastRing = lastRing.getChildRing();
+		}
+		if (lastRing != null) lastRing.updateColorChain();
 
 		return ring;
 	}
@@ -212,9 +218,11 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	public void processModifiers() {
 		informationTag = new NBTTagCompound();
 
-		module.getAttributeRanges().forEach((attribute, range) -> {
-			informationTag.setDouble(attribute.getNbtName(), range.base);
-		});
+		if (module != null) {
+			module.getAttributeRanges().forEach((attribute, range) -> {
+				informationTag.setDouble(attribute.getNbtName(), range.base);
+			});
+		}
 
 		List<AttributeModifier> attributeModifiers = new ArrayList<>();
 

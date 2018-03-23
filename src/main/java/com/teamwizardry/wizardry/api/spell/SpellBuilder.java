@@ -47,6 +47,22 @@ public class SpellBuilder {
 		dequeItems.add(new ItemStack(ModItems.PEARL_NACRE));
 
 		inventory = new ArrayList<>(dequeItems);
+
+		for (SpellRing ring : chains) {
+			SpellRing chainEnd = ring;
+			while (chainEnd != null) {
+				if (chainEnd.getChildRing() == null) {
+					if (chainEnd.getModule() != null) {
+						chainEnd.setPrimaryColor(chainEnd.getModule().getPrimaryColor());
+						chainEnd.setSecondaryColor(chainEnd.getModule().getSecondaryColor());
+					}
+					chainEnd.updateColorChain();
+					break;
+				}
+
+				chainEnd = chainEnd.getChildRing();
+			}
+		}
 	}
 
 	public SpellBuilder(List<List<Module>> modules) {
@@ -151,15 +167,17 @@ public class SpellBuilder {
 			while (chainEnd != null) {
 				if (chainEnd.getChildRing() == null) {
 					chainEnd.processModifiers();
+
+					if (chainEnd.getModule() != null) {
+						chainEnd.setPrimaryColor(chainEnd.getModule().getPrimaryColor());
+						chainEnd.setSecondaryColor(chainEnd.getModule().getSecondaryColor());
+					}
+					chainEnd.updateColorChain();
 					break;
 				}
 
 				chainEnd.processModifiers();
 				chainEnd = chainEnd.getChildRing();
-			}
-
-			if (chainEnd != null) {
-				chainEnd.updateColorChain();
 			}
 		}
 
