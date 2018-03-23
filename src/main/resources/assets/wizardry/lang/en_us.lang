@@ -147,7 +147,6 @@ wizardry.misc.sneak=<Sneak for info>
 wizardry.misc.save=SAVE
 wizardry.misc.save_error=No codex found in your inventory! Place one in your inventory to save properly.
 wizardry.misc.sneak_expanded=&7<- &8Shift for more info&7 ->
-wizardry.misc.update_link=Wizardry Update Info
 wizardry.misc.update_checker0=There's a new Wizardry update available.
 wizardry.misc.update_checker1=Your version:
 wizardry.misc.update_checker2=New version:

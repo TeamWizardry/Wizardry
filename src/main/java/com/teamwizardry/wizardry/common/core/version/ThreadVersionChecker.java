@@ -25,13 +25,13 @@ public class ThreadVersionChecker extends Thread {
 		Wizardry.logger.info("Checking for new updates...");
 		try {
 			BufferedReader r;
+			URL url;
 			if (LibrarianLib.DEV_ENVIRONMENT) {
-				URL url = new URL("https://raw.githubusercontent.com/TeamWizardry/Wizardry/master/version/" + MinecraftForge.MC_VERSION + "-dev.txt");
-				r = new BufferedReader(new InputStreamReader(url.openStream()));
+				url = new URL("https://raw.githubusercontent.com/TeamWizardry/Wizardry/master/version/" + MinecraftForge.MC_VERSION + "-dev.txt");
 			} else {
-				URL url = new URL("https://raw.githubusercontent.com/TeamWizardry/Wizardry/master/version/" + MinecraftForge.MC_VERSION + ".txt");
-				r = new BufferedReader(new InputStreamReader(url.openStream()));
+				url = new URL("https://raw.githubusercontent.com/TeamWizardry/Wizardry/master/version/" + MinecraftForge.MC_VERSION + ".txt");
 			}
+			r = new BufferedReader(new InputStreamReader(url.openStream()));
 
 			String line;
 			StringBuilder text = new StringBuilder();
@@ -41,6 +41,7 @@ public class ThreadVersionChecker extends Thread {
 					if (!line.isEmpty()) text.append("  ").append(line).append("\n\n");
 				}
 			}
+
 			VersionChecker.updateMessage = text.toString();
 			r.close();
 			Wizardry.logger.error("New version found! -> " + onlineVersion);
