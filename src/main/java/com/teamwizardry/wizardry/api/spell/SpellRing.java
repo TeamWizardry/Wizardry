@@ -10,7 +10,6 @@ import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.attribute.Operation;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
-import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -337,12 +336,8 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	public void setPowerMultiplier(float powerMultiplier) {
 		this.powerMultiplier = powerMultiplier;
 
-		SpellRing lastChild = getChildRing();
-		while (lastChild != null) {
-			lastChild.powerMultiplier = powerMultiplier;
-
-			lastChild = lastChild.getChildRing();
-		}
+		SpellRing child = getChildRing();
+		if (child != null) child.setPowerMultiplier(powerMultiplier);
 	}
 
 	/**
@@ -351,12 +346,9 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	public void multiplyPowerMultiplier(float powerMultiplier) {
 		this.powerMultiplier *= powerMultiplier;
 
-		SpellRing lastChild = getChildRing();
-		while (lastChild != null) {
-			lastChild.powerMultiplier *= powerMultiplier;
 
-			lastChild = lastChild.getChildRing();
-		}
+		SpellRing child = getChildRing();
+		if (child != null) child.multiplyPowerMultiplier(powerMultiplier);
 	}
 
 	public float getManaMultiplier() {
@@ -369,12 +361,8 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	public void setManaMultiplier(float manaMultiplier) {
 		this.manaMultiplier = manaMultiplier;
 
-		SpellRing lastChild = getChildRing();
-		while (lastChild != null) {
-			lastChild.manaMultiplier = manaMultiplier;
-
-			lastChild = lastChild.getChildRing();
-		}
+		SpellRing child = getChildRing();
+		if (child != null) child.setManaMultiplier(manaMultiplier);
 	}
 
 	/**
@@ -383,12 +371,8 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	public void multiplyManaMultiplier(float manaMultiplier) {
 		this.manaMultiplier *= manaMultiplier;
 
-		SpellRing lastChild = getChildRing();
-		while (lastChild != null) {
-			lastChild.manaMultiplier *= manaMultiplier;
-
-			lastChild = lastChild.getChildRing();
-		}
+		SpellRing child = getChildRing();
+		if (child != null) child.multiplyManaMultiplier(manaMultiplier);
 	}
 
 	/**
@@ -409,12 +393,8 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	public void setBurnoutMultiplier(float burnoutMultiplier) {
 		this.burnoutMultiplier = burnoutMultiplier;
 
-		SpellRing lastChild = getChildRing();
-		while (lastChild != null) {
-			lastChild.burnoutMultiplier = burnoutMultiplier;
-
-			lastChild = lastChild.getChildRing();
-		}
+		SpellRing child = getChildRing();
+		if (child != null) child.setBurnoutMultiplier(burnoutMultiplier);
 	}
 
 	/**
@@ -423,30 +403,9 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	public void multiplyBurnoutMultiplier(float burnoutMultiplier) {
 		this.burnoutMultiplier *= burnoutMultiplier;
 
-		SpellRing lastChild = getChildRing();
-		while (lastChild != null) {
-			lastChild.burnoutMultiplier *= burnoutMultiplier;
 
-			lastChild = lastChild.getChildRing();
-		}
-	}
-
-	/**
-	 * Will cascade down to children
-	 */
-	public void setMultiplierForAll(float multiplier) {
-		this.powerMultiplier = multiplier;
-		this.burnoutMultiplier = multiplier;
-		this.manaMultiplier = multiplier;
-
-		SpellRing lastChild = getChildRing();
-		while (lastChild != null) {
-			lastChild.powerMultiplier *= multiplier;
-			lastChild.burnoutMultiplier *= multiplier;
-			lastChild.manaMultiplier *= multiplier;
-
-			lastChild = lastChild.getChildRing();
-		}
+		SpellRing child = getChildRing();
+		if (child != null) child.multiplyBurnoutMultiplier(burnoutMultiplier);
 	}
 
 	/**
@@ -457,18 +416,17 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		this.burnoutMultiplier *= multiplier;
 		this.manaMultiplier *= multiplier;
 
-		SpellRing lastChild = getChildRing();
-		while (lastChild != null) {
-			lastChild.powerMultiplier *= multiplier;
-			lastChild.burnoutMultiplier *= multiplier;
-			lastChild.manaMultiplier *= multiplier;
 
-			lastChild = lastChild.getChildRing();
+		SpellRing child = getChildRing();
+		if (child != null) {
+			child.multiplyManaMultiplier(multiplier);
+			child.multiplyBurnoutMultiplier(multiplier);
+			child.multiplyPowerMultiplier(multiplier);
 		}
 	}
 
 	public double getManaDrain() {
-		return module != null ? module.getManaDrain() * informationTag.getDouble(AttributeRegistry.MANA.getNbtName()) * manaMultiplier : 0;
+		return module != null ? module.getManaDrain() * informationTag.getDouble(AttributeRegistry.MANA.getNbtName()) : 0;
 	}
 
 	public double getBurnoutFill() {
@@ -555,14 +513,14 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 	@Override
 	public void deserializeNBT(NBTTagCompound nbt) {
-		if (nbt.hasKey("module")) this.module = ModuleRegistry.INSTANCE.getModule(nbt.getString("module"));
+		if (nbt.hasKey("module")) this.module = Module.deserialize(nbt.getString("module"));
 		if (nbt.hasKey("extra")) informationTag = nbt.getCompoundTag("extra");
 		if (nbt.hasKey("power_multiplier")) powerMultiplier = nbt.getFloat("power_multiplier");
 		if (nbt.hasKey("burnout_multiplier")) burnoutMultiplier = nbt.getFloat("burnout_multiplier");
 		if (nbt.hasKey("mana_multiplier")) manaMultiplier = nbt.getFloat("mana_multiplier");
 
 		if (nbt.hasKey("modifiers")) {
-			modifiers = new HashMap<>();
+			modifiers.clear();
 			for (NBTBase base : nbt.getTagList("modifiers", Constants.NBT.TAG_COMPOUND))
 				if (base instanceof NBTTagCompound) {
 					NBTTagCompound modifierComound = (NBTTagCompound) base;

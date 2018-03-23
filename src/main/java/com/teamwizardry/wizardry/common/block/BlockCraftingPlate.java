@@ -8,6 +8,8 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.CachedStructure;
 import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.api.item.IInfusable;
+import com.teamwizardry.wizardry.api.spell.SpellBuilder;
+import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.render.block.TileCraftingPlateRenderer;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
@@ -81,6 +83,10 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 
 					NBTTagList spellList = ItemNBTHelper.getList(heldItem, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
 					if (spellList == null) return false;
+
+					SpellBuilder builder = new SpellBuilder(SpellUtils.getSpellChains(spellList), true, true);
+					SpellBuilder builder1 = new SpellBuilder(builder.getInventory(), true);
+					System.out.println(builder1.getSpell());
 
 					ItemNBTHelper.setList(pearl, Constants.NBT.SPELL, spellList);
 					ItemNBTHelper.setFloat(pearl, Constants.NBT.RAND, playerIn.world.rand.nextFloat());
