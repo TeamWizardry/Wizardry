@@ -89,7 +89,7 @@ public class ModuleEffectZoom extends ModuleEffect {
 			if (look == null) return true;
 			if (origin == null) return true;
 
-			double range = spellRing.getModifier(AttributeRegistry.RANGE);
+			double range = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
 			RayTraceResult trace = new RayTrace(world, look, origin, range)
 					.setSkipEntity(entityHit)
 					.setIgnoreBlocksWithoutBoundingBoxes(true)

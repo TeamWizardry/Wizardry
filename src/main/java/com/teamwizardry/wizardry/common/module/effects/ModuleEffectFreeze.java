@@ -63,8 +63,8 @@ public class ModuleEffectFreeze extends ModuleEffect {
 		BlockPos targetPos = spell.getTargetPos();
 		Entity caster = spell.getCaster();
 
-		double range = spellRing.getModifier(AttributeRegistry.AREA) / 2.0;
-		double time = spellRing.getModifier(AttributeRegistry.DURATION);
+		double range = spellRing.getAttributeValue(AttributeRegistry.AREA, spell) / 2.0;
+		double time = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell);
 
 		if (!spellRing.taxCaster(spell)) return false;
 

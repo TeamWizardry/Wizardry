@@ -50,8 +50,8 @@ public class ModuleShapeProjectile extends ModuleShape {
 		Vec3d origin = spell.getOriginWithFallback();
 		if (origin == null) return false;
 
-		double dist = spellRing.getModifier(AttributeRegistry.RANGE);
-		double speed = spellRing.getModifier(AttributeRegistry.SPEED);
+		double dist = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
+		double speed = spellRing.getAttributeValue(AttributeRegistry.SPEED, spell);
 
 		EntitySpellProjectile proj = new EntitySpellProjectile(world, spellRing, spell, dist, speed, 0.1);
 		proj.setPosition(origin.x, origin.y, origin.z);

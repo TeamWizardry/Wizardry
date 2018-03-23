@@ -213,38 +213,38 @@ public abstract class Module {
 	/**
 	 * Use this to run the module properly without rendering.
 	 *
-	 * @param data      The spellData associated with it.
+	 * @param spell      The spellData associated with it.
 	 * @param spellRing The SpellRing made with this.
 	 * @return If the spellData has succeeded.
 	 */
-	public final boolean castSpell(@Nonnull SpellData data, @Nonnull SpellRing spellRing) {
-		if (data.world.isRemote) return true;
+	public final boolean castSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		if (spell.world.isRemote) return true;
 
 		if (this instanceof ILingeringModule) {
 			boolean alreadyLingering = false;
 			for (SpellTicker.LingeringObject lingeringObject : SpellTicker.getStorageMap()) {
 				if (lingeringObject.getSpellRing() == spellRing
-						|| lingeringObject.getSpellData() == data) {
+						|| lingeringObject.getSpellData() == spell) {
 					alreadyLingering = true;
 					break;
 				}
 			}
 			if (!alreadyLingering)
-				SpellTicker.addLingerSpell(spellRing, data, ((ILingeringModule) this).getLingeringTime(data, spellRing));
+				SpellTicker.addLingerSpell(spellRing, spell, ((ILingeringModule) this).getLingeringTime(spell, spellRing));
 		}
 
-		SpellCastEvent event = new SpellCastEvent(spellRing, data);
+		SpellCastEvent event = new SpellCastEvent(spellRing, spell);
 		MinecraftForge.EVENT_BUS.post(event);
 
-		return !event.isCanceled() && run(data, spellRing);
+		return !event.isCanceled() && run(spell, spellRing);
 	}
 
-	public final void sendRenderPacket(@Nonnull SpellData data, @Nonnull SpellRing spellRing) {
-		Vec3d target = data.getTargetWithFallback();
+	public final void sendRenderPacket(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Vec3d target = spell.getTargetWithFallback();
 
 		if (target != null)
-			PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(data, spellRing),
-					new NetworkRegistry.TargetPoint(data.world.provider.getDimension(), target.x, target.y, target.z, 60));
+			PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(spell, spellRing),
+					new NetworkRegistry.TargetPoint(spell.world.provider.getDimension(), target.x, target.y, target.z, 60));
 	}
 
 	@Nonnull

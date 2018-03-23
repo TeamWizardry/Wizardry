@@ -68,7 +68,7 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 			facings.add(facing1);
 		}
 
-		double range = spellRing.getModifier(AttributeRegistry.AREA);
+		double range = spellRing.getAttributeValue(AttributeRegistry.AREA, spell);
 
 		if (targetPos == null) return true;
 

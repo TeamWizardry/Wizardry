@@ -102,7 +102,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 
 				if (touchedBlock.getBlock() == state.getBlock()) return false;
 
-				double strength = spellRing.getModifier(AttributeRegistry.RANGE);
+				double strength = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
 
 				ItemStack stackBlock = null;
 				for (ItemStack stack : ((EntityPlayer) caster).inventory.mainInventory) {

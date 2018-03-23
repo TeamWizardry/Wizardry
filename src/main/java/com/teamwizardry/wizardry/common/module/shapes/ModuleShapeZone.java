@@ -68,9 +68,9 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 
 		if (targetPos == null) return false;
 
-		double aoe = spellRing.getModifier(AttributeRegistry.AREA);
-		double strength = spellRing.getModifier(AttributeRegistry.POTENCY);
-		double range = spellRing.getModifier(AttributeRegistry.RANGE);
+		double aoe = spellRing.getAttributeValue(AttributeRegistry.AREA, spell);
+		double strength = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell);
+		double range = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
 
 		spellRing.multiplyMultiplierForAll((float) (aoe / 7.0 * strength / 15.0 * range / 15.0));
 
@@ -131,7 +131,7 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 		if (target == null) return;
 		if (RandUtil.nextInt(10) != 0) return;
 
-		double aoe = spellRing.getModifier(AttributeRegistry.AREA);
+		double aoe = spellRing.getAttributeValue(AttributeRegistry.AREA, spell);
 
 		ParticleBuilder glitter = new ParticleBuilder(10);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
@@ -155,7 +155,7 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 
 	@Override
 	public int getLingeringTime(SpellData spell, SpellRing spellRing) {
-		double strength = spellRing.getModifier(AttributeRegistry.DURATION) * 10;
+		double strength = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 10;
 		return (int) strength;
 	}
 }

@@ -7,6 +7,7 @@ import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRange;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry.Attribute;
 import com.teamwizardry.wizardry.api.spell.attribute.Operation;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
@@ -74,7 +75,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	@Nullable
 	private SpellRing childRing = null;
 
-	private float powerMultiplier = 1, manaMultiplier = 1, burnoutMultiplier = 0;
+	private float powerMultiplier = 1, manaMultiplier = 1, burnoutMultiplier = 1;
 
 	private SpellRing() {
 
@@ -194,14 +195,14 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	 * @param attribute The attribute you want. List in AttributeRegistry for default ones.
 	 * @return The double potency of a modifier.
 	 */
-	public final double getModifier(AttributeRegistry.Attribute attribute) {
+	public final double getAttributeValue(Attribute attribute, SpellData data) {
 		if (module == null) return 0;
 
 		double current = informationTag.getDouble(attribute.getNbtName());
 
 		AttributeRange range = module.getAttributeRanges().get(attribute);
 
-		return MathHelper.clamp(current, range.min, range.max) * getBurnoutMultiplier() * getPowerMultiplier();
+		return MathHelper.clamp(current, range.min, range.max) * getPlayerBurnoutMultiplier(data) * getPowerMultiplier();
 	}
 
 	/**
@@ -211,8 +212,9 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	public void processModifiers() {
 		informationTag = new NBTTagCompound();
 
-		informationTag.setDouble(AttributeRegistry.MANA.getNbtName(), 1);
-		informationTag.setDouble(AttributeRegistry.BURNOUT.getNbtName(), 1);
+		module.getAttributeRanges().forEach((attribute, range) -> {
+			informationTag.setDouble(attribute.getNbtName(), range.base);
+		});
 
 		List<AttributeModifier> attributeModifiers = new ArrayList<>();
 
@@ -375,14 +377,6 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		if (child != null) child.multiplyManaMultiplier(manaMultiplier);
 	}
 
-	/**
-	 * This multiplier is special because we take it's inverse.
-	 * When multiplying it, if your burnout is 0, then that means you have no burnout
-	 * but your multiplier completely nullifies your numbers, so we want the inverse
-	 * because this should be obvious and why am I even explaining this, grow a brain.
-	 *
-	 * @return The INVERTED burnout multiplier.
-	 */
 	public float getBurnoutMultiplier() {
 		return 1 - burnoutMultiplier;
 	}
@@ -426,7 +420,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	}
 
 	public double getManaDrain() {
-		return module != null ? module.getManaDrain() * informationTag.getDouble(AttributeRegistry.MANA.getNbtName()) : 0;
+		return module != null ? module.getManaDrain() * informationTag.getDouble(AttributeRegistry.MANA.getNbtName()) * manaMultiplier : 0;
 	}
 
 	public double getBurnoutFill() {
@@ -461,6 +455,24 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		return module != null ? module.getChargeupTime() : 0;
 	}
 
+	/**
+	 * This multiplier is special because we take it's inverse.
+	 * When multiplying it, if your burnout is 0, then that means you have no burnout
+	 * but your multiplier completely nullifies your numbers, so we want the inverse
+	 * because this should be obvious and why am I even explaining this, grow a brain.
+	 *
+	 * @return The INVERTED burnout multiplier.
+	 */
+	public double getPlayerBurnoutMultiplier(SpellData data)
+	{
+		Entity caster = data.getCaster();
+		if (caster == null || caster instanceof EntityLivingBase && BaublesSupport.getItem((EntityLivingBase) caster, ModItems.CREATIVE_HALO, ModItems.FAKE_HALO, ModItems.REAL_HALO).isEmpty())
+			return 1;
+		CapManager manager = new CapManager(caster);
+		
+		return 1 - (manager.getBurnout() / manager.getMaxBurnout());
+	}
+	
 	@Nullable
 	public String getModuleReadableName() {
 		return module != null ? module.getReadableName() : null;

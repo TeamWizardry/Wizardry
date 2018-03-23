@@ -64,8 +64,8 @@ public class ModuleShapeCone extends ModuleShape {
 
 		if (position == null) return false;
 
-		double range = spellRing.getModifier(AttributeRegistry.RANGE);
-		int chance = (int) (spellRing.getModifier(AttributeRegistry.POTENCY));
+		double range = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
+		int chance = (int) (spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell));
 		
 		spellRing.multiplyMultiplierForAll((float) (range / 8.0 * chance / 16.0));
 

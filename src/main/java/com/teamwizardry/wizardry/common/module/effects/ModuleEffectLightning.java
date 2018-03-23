@@ -68,8 +68,8 @@ public class ModuleEffectLightning extends ModuleEffect {
 			origin = new Vec3d(offX, caster.getEyeHeight(), offZ).add(target);
 		}
 
-		double range = spellRing.getModifier(AttributeRegistry.RANGE);
-		double strength = spellRing.getModifier(AttributeRegistry.POTENCY) / 2.0;
+		double range = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
+		double strength = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell) / 2.0;
 
 		if (!spellRing.taxCaster(spell)) return false;
 
@@ -110,7 +110,7 @@ public class ModuleEffectLightning extends ModuleEffect {
 		Entity caster = spell.getCaster();
 		Vec3d target = spell.getTarget();
 		long seed = spell.getData(SEED, 0L);
-		double range = spellRing.getModifier(AttributeRegistry.RANGE);
+		double range = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
 
 		if (target == null) return;
 
