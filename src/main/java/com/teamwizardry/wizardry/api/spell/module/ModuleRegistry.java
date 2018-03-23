@@ -160,6 +160,9 @@ public class ModuleRegistry {
 				Wizardry.logger.info(" | | |_ Found Item " + item.getRegistryName().toString());
 			}
 
+			attributeRanges.put(AttributeRegistry.BURNOUT_MULTI, new AttributeRange(1, 0, Integer.MAX_VALUE));
+			attributeRanges.put(AttributeRegistry.MANA_MULTI, new AttributeRange(1, 0, Integer.MAX_VALUE));
+			attributeRanges.put(AttributeRegistry.POWER_MULTI, new AttributeRange(1, 0, Integer.MAX_VALUE));
 			for (Entry<String, JsonElement> entry : moduleObject.entrySet()) {
 				switch (entry.getKey()) {
 					case "item_meta": {
@@ -238,24 +241,6 @@ public class ModuleRegistry {
 						}
 					}
 				}
-			}
-
-			boolean foundManaMulti = false, foundBurnoutMulti = false;
-			for (Attribute attribute : module.getAttributeRanges().keySet()) {
-				if (attribute == AttributeRegistry.MANA_MULTI) {
-					foundManaMulti = true;
-				}
-				if (attribute == AttributeRegistry.BURNOUT_MULTI) {
-					foundBurnoutMulti = true;
-				}
-			}
-
-			if (!foundManaMulti) {
-				attributeRanges.put(AttributeRegistry.MANA_MULTI, new AttributeRange(1, Integer.MIN_VALUE, Integer.MAX_VALUE));
-			}
-			if (!foundBurnoutMulti) {
-				attributeRanges.put(AttributeRegistry.BURNOUT_MULTI, new AttributeRange(0, Integer.MIN_VALUE, Integer.MAX_VALUE));
-
 			}
 
 			module.init(new ItemStack(item, 1, itemMeta), primaryColor, secondaryColor, attributeRanges);
