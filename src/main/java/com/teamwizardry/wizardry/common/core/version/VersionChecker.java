@@ -61,9 +61,11 @@ public final class VersionChecker {
 							.setStyle(new Style().setColor(TextFormatting.GREEN)));
 					player.sendMessage(new TextComponentTranslation("wizardry.misc.update_checker1")
 							.setStyle(new Style().setColor(TextFormatting.GREEN))
+							.appendText(" ")
 							.appendSibling(new TextComponentString(clientBuild).setStyle(new Style().setColor(TextFormatting.RED))));
 					player.sendMessage(new TextComponentTranslation("wizardry.misc.update_checker2")
 							.setStyle(new Style().setColor(TextFormatting.GREEN))
+							.appendText(" ")
 							.appendSibling(new TextComponentString(onlineVersion).setStyle(new Style().setColor(TextFormatting.YELLOW))));
 
 					if (updateMessage != null && !updateMessage.isEmpty())
