@@ -26,4 +26,6 @@ public class ItemGlassOrb extends ItemMod {
 		}
 		return super.onEntityItemUpdate(entityItem);
 	}
+
+
 }

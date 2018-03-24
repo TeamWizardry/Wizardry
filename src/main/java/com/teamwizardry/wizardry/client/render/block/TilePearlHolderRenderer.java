@@ -23,8 +23,9 @@ import java.awt.*;
  */
 public class TilePearlHolderRenderer extends TileEntitySpecialRenderer<TilePearlHolder> {
 
-	private static ResourceLocation pearlCubeTexture = new ResourceLocation(Wizardry.MODID, "textures/blocks/pearl_cube.png");
+	private static ResourceLocation pearlTexture = new ResourceLocation(Wizardry.MODID, "textures/blocks/pearl_cube.png");
 	private static ResourceLocation manaOrb = new ResourceLocation(Wizardry.MODID, "textures/blocks/mana_orb_cube.png");
+	private static ResourceLocation glassOrb = new ResourceLocation(Wizardry.MODID, "textures/blocks/glass_orb_cube.png");
 
 	@Override
 	public void render(TilePearlHolder te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
@@ -97,12 +98,14 @@ public class TilePearlHolderRenderer extends TileEntitySpecialRenderer<TilePearl
 				RenderHelper.disableStandardItemLighting();
 
 				if (isPearl) {
-					Minecraft.getMinecraft().getTextureManager().bindTexture(pearlCubeTexture);
+					Minecraft.getMinecraft().getTextureManager().bindTexture(pearlTexture);
 					renderCube(0.1, new Color(Minecraft.getMinecraft().getItemColors().colorMultiplier(te.getItemStack(), 0)));
+
+					//} else if (te.containsGlassOrb() || new CapManager(te.getCap()).getMana() <= 2) {
+					//	Minecraft.getMinecraft().getTextureManager().bindTexture(glassOrb);
+					//	renderCube(0.15, Color.WHITE);
+
 				} else if (te.containsManaOrb()) {
-					Minecraft.getMinecraft().getTextureManager().bindTexture(manaOrb);
-					renderCube(0.15, Color.WHITE);
-				} else if (te.containsGlassOrb()) {
 					Minecraft.getMinecraft().getTextureManager().bindTexture(manaOrb);
 					renderCube(0.15, Color.WHITE);
 				}

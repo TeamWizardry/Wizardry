@@ -118,7 +118,7 @@ public class TileCraftingPlate extends TileManaInteracter {
 				TileEntity tile = world.getTileEntity(target);
 				if (tile != null && tile instanceof TilePearlHolder) {
 					if (!((TilePearlHolder) tile).isPartOfStructure) {
-						if (((TilePearlHolder) tile).structurePos == null || !((TilePearlHolder) tile).structurePos.equals(getPos())) {
+						if (((TilePearlHolder) tile).structurePos != null && (((TilePearlHolder) tile).structurePos == null || !((TilePearlHolder) tile).structurePos.equals(getPos()))) {
 							((TilePearlHolder) tile).structurePos = getPos();
 						}
 						if (((TilePearlHolder) tile).suckManaFrom(getWorld(), getPos(), getCap(), target, 1, false)) {

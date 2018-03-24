@@ -19,7 +19,7 @@ public abstract class ModuleModifier extends Module {
 	}
 
 	public String getShortHandKey() {
-		return "wizardry.spellData." + getID() + ".short";
+		return "wizardry.spell." + getID() + ".short";
 	}
 
 	@Override

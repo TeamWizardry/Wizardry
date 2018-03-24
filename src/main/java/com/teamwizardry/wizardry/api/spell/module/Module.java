@@ -93,7 +93,7 @@ public abstract class Module {
 	 */
 	@Nonnull
 	public final String getNameKey() {
-		return "wizardry.spellData." + getID() + ".name";
+		return "wizardry.spell." + getID() + ".name";
 	}
 
 	/**
@@ -119,7 +119,7 @@ public abstract class Module {
 	 */
 	@Nonnull
 	public final String getDescriptionKey() {
-		return "wizardry.spellData." + getID() + ".desc";
+		return "wizardry.spell." + getID() + ".desc";
 	}
 
 	@Nonnull
