@@ -4,6 +4,7 @@ import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import net.minecraftforge.common.MinecraftForge;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -38,9 +39,15 @@ public class ThreadVersionChecker extends Thread {
 			while ((line = r.readLine()) != null) {
 				if (onlineVersion == null) {
 					onlineVersion = line;
-					text.append("VERSION: ").append(onlineVersion);
+					text.append("VERSION: ").append(onlineVersion).append("\n");
 				} else {
-					if (!line.isEmpty()) text.append(" - ").append(line).append("\n");
+					if (!line.isEmpty()) {
+						if (NumberUtils.isCreatable(line)) {
+							text.append("\n").append("VERSION: ").append(line).append("\n");
+						} else {
+							text.append(" - ").append(line).append("\n");
+						}
+					}
 				}
 			}
 
