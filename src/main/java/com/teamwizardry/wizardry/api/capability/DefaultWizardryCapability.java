@@ -89,18 +89,18 @@ public class DefaultWizardryCapability implements IWizardryCapability {
 	}
 
 	@Override
-	public NBTTagCompound saveNBTData() {
+	public NBTTagCompound serializeNBT() {
 		return (NBTTagCompound) WizardryCapabilityStorage.INSTANCE.writeNBT(WizardryCapabilityProvider.wizardryCapability, this, null);
 	}
 
 	@Override
-	public void loadNBTData(NBTTagCompound compound) {
+	public void deserializeNBT(NBTTagCompound compound) {
 		WizardryCapabilityStorage.INSTANCE.readNBT(WizardryCapabilityProvider.wizardryCapability, this, null, compound);
 	}
 
 	@Override
 	public void dataChanged(Entity entity) {
 		if ((entity != null) && entity instanceof EntityPlayer && !entity.getEntityWorld().isRemote)
-			PacketHandler.NETWORK.sendTo(new PacketUpdateCaps(saveNBTData()), (EntityPlayerMP) entity);
+			PacketHandler.NETWORK.sendTo(new PacketUpdateCaps(serializeNBT()), (EntityPlayerMP) entity);
 	}
 }

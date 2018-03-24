@@ -2,11 +2,12 @@ package com.teamwizardry.wizardry.api.capability;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.INBTSerializable;
 
 /**
  * Created by Saad on 8/16/2016.
  */
-public interface IWizardryCapability {
+public interface IWizardryCapability extends INBTSerializable<NBTTagCompound> {
 
 	double getMana();
 
@@ -27,10 +28,6 @@ public interface IWizardryCapability {
 	EnumBloodType getBloodType();
 
 	void setBloodType(EnumBloodType bloodType);
-
-	NBTTagCompound saveNBTData();
-
-	void loadNBTData(NBTTagCompound compound);
 
 	void dataChanged(Entity player);
 }

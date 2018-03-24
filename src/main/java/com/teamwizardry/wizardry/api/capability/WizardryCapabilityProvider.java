@@ -66,12 +66,12 @@ public class WizardryCapabilityProvider implements ICapabilityProvider, INBTSeri
 
 	@Override
 	public NBTTagCompound serializeNBT() {
-		return capability.saveNBTData();
+		return capability.serializeNBT();
 	}
 
 	@Override
 	public void deserializeNBT(NBTTagCompound nbt) {
-		capability.loadNBTData(nbt);
+		capability.deserializeNBT(nbt);
 	}
 
 }

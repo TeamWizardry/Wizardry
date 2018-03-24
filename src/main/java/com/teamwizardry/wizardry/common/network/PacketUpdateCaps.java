@@ -37,7 +37,7 @@ public class PacketUpdateCaps extends PacketBase {
 		IWizardryCapability cap = WizardryCapabilityProvider.getCap(player);
 
 		if (cap != null) {
-			cap.loadNBTData(tags);
+			cap.deserializeNBT(tags);
 		}
 	}
 }

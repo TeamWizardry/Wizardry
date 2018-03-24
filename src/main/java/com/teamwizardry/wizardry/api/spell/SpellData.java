@@ -437,13 +437,13 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			@Override
 			public NBTTagCompound serialize(IWizardryCapability object) {
 				if (object == null) return new NBTTagCompound();
-				return object.saveNBTData();
+				return object.serializeNBT();
 			}
 
 			@Override
 			public IWizardryCapability deserialize(@Nonnull World world, @Nonnull NBTTagCompound object) {
 				DefaultWizardryCapability cap = new DefaultWizardryCapability();
-				cap.loadNBTData(object);
+				cap.deserializeNBT(object);
 				return cap;
 			}
 		});
