@@ -1,5 +1,8 @@
-0.8.1
+0.8.2
 Added new Leech spell effect
+
+0.8.1
+Fix crash when opening the book
 
 0.8
 DELETE YOUR WIZARDRY CONFIG FOLDER OR RUN /wizardry reset TO UPDATE EVERYTHING PROPERLY!!!
