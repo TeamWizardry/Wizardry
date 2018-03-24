@@ -5,7 +5,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 
 /**
- * Created by Saad on 9/3/2016.
+ * Created by Demoniaque on 9/3/2016.
  */
 public class BlockNacreBrick extends BlockMod {
 

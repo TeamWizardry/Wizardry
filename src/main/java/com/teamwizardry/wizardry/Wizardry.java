@@ -15,14 +15,14 @@ import org.apache.logging.log4j.Logger;
 
 
 /**
- * Created by Saad on 6/9/2016.
+ * Created by Demoniaque on 6/9/2016.
  */
 @Mod(modid = Wizardry.MODID, version = Wizardry.VERSION, name = Wizardry.MODNAME, dependencies = "required-before:librarianlib")
 public class Wizardry {
 
 	public static final String MODID = "wizardry";
 	public static final String MODNAME = "Wizardry";
-	public static final String VERSION = "0.7.2";
+	public static final String VERSION = "0.8.2";
 	public static final String CLIENT = "com.teamwizardry.wizardry.proxy.ClientProxy";
 	public static final String SERVER = "com.teamwizardry.wizardry.proxy.ServerProxy";
 	public static Logger logger;

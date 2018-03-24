@@ -9,11 +9,12 @@ import javax.annotation.Nonnull;
  * Created by Demoniaque.
  */
 @RegisterModule
-public class ModuleModifierExtendRange extends ModuleModifier {
+public class ModuleModifierIncreaseDuration extends ModuleModifier {
 
 	@Nonnull
 	@Override
 	public String getID() {
-		return "modifier_extend_range";
+		return "modifier_extend_time";
 	}
+
 }

@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.client.render.block;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.tile.TilePearlHolder;
 import com.teamwizardry.wizardry.init.ModBlocks;
-import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -20,18 +19,19 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 
 /**
- * Created by Saad on 5/7/2016.
+ * Created by Demoniaque on 5/7/2016.
  */
 public class TilePearlHolderRenderer extends TileEntitySpecialRenderer<TilePearlHolder> {
 
-	private static ResourceLocation pearlCubeTexture = new ResourceLocation(Wizardry.MODID, "textures/blocks/pearl_cube.png");
-	private static ResourceLocation manaPearlCubeTexture = new ResourceLocation(Wizardry.MODID, "textures/blocks/mana_pearl_cube.png");
+	private static ResourceLocation pearlTexture = new ResourceLocation(Wizardry.MODID, "textures/blocks/pearl_cube.png");
+	private static ResourceLocation manaOrb = new ResourceLocation(Wizardry.MODID, "textures/blocks/mana_orb_cube.png");
+	private static ResourceLocation glassOrb = new ResourceLocation(Wizardry.MODID, "textures/blocks/glass_orb_cube.png");
 
 	@Override
 	public void render(TilePearlHolder te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-		if (te.pearl != null && (te.pearl.getItem() == ModItems.MANA_ORB || te.pearl.getItem() == ModItems.PEARL_NACRE)) {
+		if (te.containsSomething()) {
 
-			boolean isPearl = te.pearl.getItem() == ModItems.PEARL_NACRE;
+			boolean isPearl = te.containsNacrePearl();
 
 			GlStateManager.pushMatrix();
 			GlStateManager.enableBlend();
@@ -97,69 +97,77 @@ public class TilePearlHolderRenderer extends TileEntitySpecialRenderer<TilePearl
 				GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 				RenderHelper.disableStandardItemLighting();
 
-				Color c = Color.WHITE;
-				if (te.pearl.getItem() == ModItems.PEARL_NACRE) {
-					c = new Color(Minecraft.getMinecraft().getItemColors().colorMultiplier(te.pearl, 0));
-					Minecraft.getMinecraft().getTextureManager().bindTexture(pearlCubeTexture);
-				} else Minecraft.getMinecraft().getTextureManager().bindTexture(manaPearlCubeTexture);
+				if (isPearl) {
+					Minecraft.getMinecraft().getTextureManager().bindTexture(pearlTexture);
+					renderCube(0.1, new Color(Minecraft.getMinecraft().getItemColors().colorMultiplier(te.getItemStack(), 0)));
 
-				Tessellator tess = Tessellator.getInstance();
-				BufferBuilder buffer = tess.getBuffer();
+					//} else if (te.containsGlassOrb() || new CapManager(te.getCap()).getMana() <= 2) {
+					//	Minecraft.getMinecraft().getTextureManager().bindTexture(glassOrb);
+					//	renderCube(0.15, Color.WHITE);
 
-				double s = isPearl ? 0.1 : 0.15;
-				// TOP
-				buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-				buffer.pos(-s, s, -s).tex(0, 0).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
-				buffer.pos(-s, s, s).tex(1, 0).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
-				buffer.pos(s, s, s).tex(1, 1).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
-				buffer.pos(s, s, -s).tex(0, 1).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
-				tess.draw();
-
-				// BOTTOM
-				buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-				buffer.pos(-s, -s, -s).tex(0, 0).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
-				buffer.pos(-s, -s, s).tex(1, 0).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
-				buffer.pos(s, -s, s).tex(1, 1).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
-				buffer.pos(s, -s, -s).tex(0, 1).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
-				tess.draw();
-
-				// TO THE RIGHT
-				buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-				buffer.pos(-s, -s, s).tex(0, 0).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
-				buffer.pos(-s, s, s).tex(1, 0).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
-				buffer.pos(s, s, s).tex(1, 1).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
-				buffer.pos(s, -s, s).tex(0, 1).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
-				tess.draw();
-
-				// TO THE LEFT
-				buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-				buffer.pos(-s, -s, -s).tex(0, 0).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
-				buffer.pos(-s, s, -s).tex(1, 0).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
-				buffer.pos(s, s, -s).tex(1, 1).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
-				buffer.pos(s, -s, -s).tex(0, 1).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
-				tess.draw();
-
-				// FRONT
-				buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-				buffer.pos(s, -s, -s).tex(0, 0).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
-				buffer.pos(s, s, -s).tex(1, 0).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
-				buffer.pos(s, s, s).tex(1, 1).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
-				buffer.pos(s, -s, s).tex(0, 1).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
-				tess.draw();
-
-				// BACK
-				buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-				buffer.pos(-s, -s, -s).tex(0, 0).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
-				buffer.pos(-s, s, -s).tex(1, 0).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
-				buffer.pos(-s, s, s).tex(1, 1).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
-				buffer.pos(-s, -s, s).tex(0, 1).color(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).endVertex();
-				tess.draw();
-
+				} else if (te.containsManaOrb()) {
+					Minecraft.getMinecraft().getTextureManager().bindTexture(manaOrb);
+					renderCube(0.15, Color.WHITE);
+				}
 				GlStateManager.disableRescaleNormal();
 			}
 
 			GlStateManager.disableBlend();
 			GlStateManager.popMatrix();
 		}
+	}
+
+	private void renderCube(double scale, Color color) {
+		Tessellator tess = Tessellator.getInstance();
+		BufferBuilder buffer = tess.getBuffer();
+
+		// TOP
+		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+		buffer.pos(-scale, scale, -scale).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		buffer.pos(-scale, scale, scale).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		buffer.pos(scale, scale, scale).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		buffer.pos(scale, scale, -scale).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		tess.draw();
+
+		// BOTTOM
+		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+		buffer.pos(-scale, -scale, -scale).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		buffer.pos(-scale, -scale, scale).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		buffer.pos(scale, -scale, scale).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		buffer.pos(scale, -scale, -scale).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		tess.draw();
+
+		// TO THE RIGHT
+		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+		buffer.pos(-scale, -scale, scale).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		buffer.pos(-scale, scale, scale).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		buffer.pos(scale, scale, scale).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		buffer.pos(scale, -scale, scale).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		tess.draw();
+
+		// TO THE LEFT
+		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+		buffer.pos(-scale, -scale, -scale).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		buffer.pos(-scale, scale, -scale).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		buffer.pos(scale, scale, -scale).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		buffer.pos(scale, -scale, -scale).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		tess.draw();
+
+		// FRONT
+		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+		buffer.pos(scale, -scale, -scale).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		buffer.pos(scale, scale, -scale).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		buffer.pos(scale, scale, scale).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		buffer.pos(scale, -scale, scale).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		tess.draw();
+
+		// BACK
+		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+		buffer.pos(-scale, -scale, -scale).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		buffer.pos(-scale, scale, -scale).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		buffer.pos(-scale, scale, scale).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		buffer.pos(-scale, -scale, scale).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
+		tess.draw();
+
 	}
 }

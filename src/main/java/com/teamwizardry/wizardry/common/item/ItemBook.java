@@ -11,12 +11,14 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 
 /**
- * Created by Saad on 6/12/2016.
+ * Created by Demoniaque on 6/12/2016.
  */
 public class ItemBook extends ItemModBook implements IPickupAchievement {
 
@@ -34,6 +36,7 @@ public class ItemBook extends ItemModBook implements IPickupAchievement {
 
 	@Nonnull
 	@Override
+	@SideOnly(Side.CLIENT)
 	public IBookGui createGui(@Nonnull EntityPlayer player, @Nullable World world, @Nonnull ItemStack stack) {
 		return new GuiBook(BOOK, stack);
 	}

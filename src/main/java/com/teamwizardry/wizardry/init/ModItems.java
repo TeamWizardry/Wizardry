@@ -10,7 +10,7 @@ import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.Loader;
 
 /**
- * Created by Saad on 4/9/2016.
+ * Created by Demoniaque on 4/9/2016.
  */
 public class ModItems {
 

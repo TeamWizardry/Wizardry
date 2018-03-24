@@ -12,7 +12,7 @@ import net.minecraft.world.World;
 import javax.annotation.Nonnull;
 
 /**
- * Created by Saad on 8/28/2016.
+ * Created by Demoniaque on 8/28/2016.
  */
 public class ItemFairyDust extends ItemMod {
 

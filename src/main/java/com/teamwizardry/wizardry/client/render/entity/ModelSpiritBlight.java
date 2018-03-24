@@ -15,7 +15,7 @@ import javax.annotation.Nonnull;
 import static com.teamwizardry.wizardry.common.entity.EntitySpiritBlight.DATA_SHIFT_SEED;
 
 /**
- * Created by Saad on 8/21/2016.
+ * Created by Demoniaque on 8/21/2016.
  */
 @SideOnly(Side.CLIENT)
 public class ModelSpiritBlight extends ModelBiped {

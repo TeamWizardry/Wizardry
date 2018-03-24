@@ -18,7 +18,7 @@ import java.awt.*;
 
 public class TileManaMagnetRenderer extends TileEntitySpecialRenderer<TileManaMagnet> {
 
-	private static ResourceLocation manaPearlCubeTexture = new ResourceLocation(Wizardry.MODID, "textures/blocks/mana_pearl_cube.png");
+	private static ResourceLocation manaPearlCubeTexture = new ResourceLocation(Wizardry.MODID, "textures/blocks/mana_orb_cube.png");
 
 	@Override
 	public void render(TileManaMagnet te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {

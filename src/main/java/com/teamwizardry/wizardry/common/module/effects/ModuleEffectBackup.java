@@ -16,8 +16,8 @@ import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import com.teamwizardry.wizardry.common.entity.EntityBackupZombie;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtendTime;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseAOE;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseDuration;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.EnumFacing;
@@ -46,7 +46,7 @@ public class ModuleEffectBackup extends ModuleEffect {
 
 	@Override
 	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierIncreaseAOE(), new ModuleModifierExtendTime()};
+		return new ModuleModifier[]{new ModuleModifierIncreaseAOE(), new ModuleModifierIncreaseDuration()};
 	}
 
 	@Override
@@ -58,10 +58,10 @@ public class ModuleEffectBackup extends ModuleEffect {
 		EnumFacing facing = spell.getData(FACE_HIT);
 		Entity caster = spell.getCaster();
 
-		double range = spellRing.getModifier(AttributeRegistry.AREA, 1, 16) / 2.0;
-		double time = spellRing.getModifier(AttributeRegistry.DURATION, 500, 1000);
+		double range = spellRing.getAttributeValue(AttributeRegistry.AREA, spell) / 2.0;
+		double time = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell);
 
-		if (!tax(this, spell, spellRing)) return false;
+		if (!spellRing.taxCaster(spell)) return false;
 
 		if (targetPos == null) return true;
 		if (!(caster instanceof EntityLivingBase)) return true;

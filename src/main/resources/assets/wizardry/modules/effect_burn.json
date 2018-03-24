@@ -1,7 +1,13 @@
 {
   "item": "minecraft:blaze_powder",
-  "mana_drain": 200.0,
-  "burnout_fill": 100.0,
   "primary_color": "FF3C3C",
-  "secondary_color": "A10000"
+  "secondary_color": "A10000",
+  "mana": { "base": 200 },
+  "burnout": { "base": 100 },
+  "area": { "base": 2, "min": 2, "max": 16 },
+  "duration": {
+    "base": 100,
+    "min": 100,
+    "max": 1000
+  }
 }

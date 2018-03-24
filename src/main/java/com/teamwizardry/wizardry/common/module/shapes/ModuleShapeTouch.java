@@ -48,6 +48,7 @@ public class ModuleShapeTouch extends ModuleShape {
 		if (look == null) return false;
 		if (caster == null) return false;
 		if (origin == null) return false;
+		if (!spellRing.taxCaster(spell)) return false;
 
 		RayTraceResult result = new RayTrace(
 				spell.world, look, origin,

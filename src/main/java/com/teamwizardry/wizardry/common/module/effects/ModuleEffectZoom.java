@@ -17,7 +17,7 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtendRange;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseRange;
 import com.teamwizardry.wizardry.init.ModPotions;
 import kotlin.Pair;
 import net.minecraft.entity.Entity;
@@ -72,7 +72,7 @@ public class ModuleEffectZoom extends ModuleEffect {
 
 	@Override
 	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierExtendRange()};
+		return new ModuleModifier[]{new ModuleModifierIncreaseRange()};
 	}
 
 	@Override
@@ -84,12 +84,12 @@ public class ModuleEffectZoom extends ModuleEffect {
 
 		if (entityHit == null) return true;
 		else {
-			if (!tax(this, spell, spellRing)) return false;
+			if (!spellRing.taxCaster(spell)) return false;
 
 			if (look == null) return true;
 			if (origin == null) return true;
 
-			double range = spellRing.getModifier(AttributeRegistry.RANGE, 10, 32);
+			double range = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
 			RayTraceResult trace = new RayTrace(world, look, origin, range)
 					.setSkipEntity(entityHit)
 					.setIgnoreBlocksWithoutBoundingBoxes(true)

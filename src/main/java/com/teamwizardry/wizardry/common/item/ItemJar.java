@@ -25,7 +25,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Created by Saad on 8/27/2016.
+ * Created by Demoniaque on 8/27/2016.
  */
 public class ItemJar extends ItemModBlock implements IItemColorProvider {
 

@@ -6,7 +6,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
 /**
- * Created by Saad on 7/1/2016.
+ * Created by Demoniaque on 7/1/2016.
  */
 public interface IPickupAchievement {
 

@@ -48,7 +48,7 @@ import java.util.List;
 import java.util.function.Function;
 
 /**
- * Created by Saad on 6/17/2016.
+ * Created by Demoniaque on 6/17/2016.
  */
 public class WorktableGui extends GuiBase {
 
@@ -206,7 +206,7 @@ public class WorktableGui extends GuiBase {
 			getMainComponents().add(fakePaper);
 
 			ComponentVoid bookIconMask = new ComponentVoid(0, -100, 180, 100);
-			ComponentSprite bookIcon = new ComponentSprite(new Sprite(new ResourceLocation(Wizardry.MODID, "textures/items/physics_book.png")), (int) ((bookIconMask.getSize().getX() / 2.0) - 16), (int) (bookIconMask.getSize().getY() + 50), 32, 32);
+			ComponentSprite bookIcon = new ComponentSprite(new Sprite(new ResourceLocation(Wizardry.MODID, "textures/items/book.png")), (int) ((bookIconMask.getSize().getX() / 2.0) - 16), (int) (bookIconMask.getSize().getY() + 50), 32, 32);
 			{
 				bookIcon.getTransform().setTranslateZ(200);
 				bookIconMask.clipping.setClipToBounds(true);

@@ -13,8 +13,8 @@ import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RandUtilSeed;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.common.core.LightningTracker;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtendRange;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseRange;
 import com.teamwizardry.wizardry.common.network.PacketRenderLightningBolt;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
@@ -48,7 +48,7 @@ public class ModuleEffectLightning extends ModuleEffect {
 
 	@Override
 	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierExtendRange(), new ModuleModifierIncreasePotency()};
+		return new ModuleModifier[]{new ModuleModifierIncreaseRange(), new ModuleModifierIncreasePotency()};
 	}
 
 	@Override
@@ -68,10 +68,10 @@ public class ModuleEffectLightning extends ModuleEffect {
 			origin = new Vec3d(offX, caster.getEyeHeight(), offZ).add(target);
 		}
 
-		double range = spellRing.getModifier(AttributeRegistry.RANGE, 10, 32);
-		double strength = spellRing.getModifier(AttributeRegistry.POTENCY, 4, 20) / 2.0;
+		double range = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
+		double strength = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell) / 2.0;
 
-		if (!tax(this, spell, spellRing)) return false;
+		if (!spellRing.taxCaster(spell)) return false;
 
 		RayTraceResult traceResult = new RayTrace(world, PosUtils.vecFromRotations(pitch, yaw), target, range).setSkipBlocks(true).setSkipEntities(true).trace();
 
@@ -110,7 +110,7 @@ public class ModuleEffectLightning extends ModuleEffect {
 		Entity caster = spell.getCaster();
 		Vec3d target = spell.getTarget();
 		long seed = spell.getData(SEED, 0L);
-		double range = spellRing.getModifier(AttributeRegistry.RANGE, 10, 32);
+		double range = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
 
 		if (target == null) return;
 

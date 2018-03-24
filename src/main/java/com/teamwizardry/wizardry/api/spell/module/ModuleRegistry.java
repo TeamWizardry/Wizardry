@@ -8,8 +8,11 @@ import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.utilities.AnnotationHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRange;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry.Attribute;
 import com.teamwizardry.wizardry.api.spell.attribute.Operation;
+import com.teamwizardry.wizardry.api.util.DefaultHashMap;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -23,6 +26,7 @@ import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * Created by Demoniaque.
@@ -79,6 +83,21 @@ public class ModuleRegistry {
 
 	public void processModules() {
 		Wizardry.logger.info(" _______________________________________________________________________\\\\");
+		Wizardry.logger.info(" | ");
+		Wizardry.logger.error("| WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
+		Wizardry.logger.error("| WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
+		Wizardry.logger.error("| WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
+		Wizardry.logger.error("| WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
+		Wizardry.logger.error("| WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
+		Wizardry.logger.error("| WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
+		Wizardry.logger.error("| WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
+		Wizardry.logger.error("| WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
+		Wizardry.logger.error("| WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
+		Wizardry.logger.error("| ================= THIS UPDATE BREAKS ALL OLD CONFIGS THIS IS WHY YOU SHOULD DELETE YOUR OLD ONES IF YOU HAVEN'T. OR RUN /wizardry reset IN GAME");
+		Wizardry.logger.info(" | ");
+		Wizardry.logger.info(" | ");
+		Wizardry.logger.info(" | ");
+		Wizardry.logger.info(" | ");
 		Wizardry.logger.info(" | Starting module registration");
 
 		HashSet<Module> processed = new HashSet<>();
@@ -129,17 +148,11 @@ public class ModuleRegistry {
 
 			Color primaryColor = Color.WHITE;
 			Color secondaryColor = Color.WHITE;
-			int cooldownTime = 0;
-			int chargeupTime = 0;
-			double manaDrain = 0;
-			double burnoutFill = 0;
-			float powerMultiplier = 1;
-			float manaMultiplier = 1;
-			float burnoutMultiplier = 0;
 			int itemMeta = 0;
+			DefaultHashMap<Attribute, AttributeRange> attributeRanges = new DefaultHashMap<>(AttributeRange.BACKUP);
 
 			Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(moduleObject.getAsJsonPrimitive("item").getAsString()));
-			if (item == null) {
+			if (item == null || item.getRegistryName() == null) {
 				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! Item for module " + module.getID() + " does not exist '" + moduleObject.getAsJsonPrimitive("item").getAsString() + "'");
 				Wizardry.logger.error("| |___ Failed to register module " + module.getID());
 				continue;
@@ -147,31 +160,14 @@ public class ModuleRegistry {
 				Wizardry.logger.info(" | | |_ Found Item " + item.getRegistryName().toString());
 			}
 
-			for (Map.Entry<String, JsonElement> entry : moduleObject.entrySet()) {
+			attributeRanges.put(AttributeRegistry.BURNOUT_MULTI, new AttributeRange(1, 0, Integer.MAX_VALUE));
+			attributeRanges.put(AttributeRegistry.MANA_MULTI, new AttributeRange(1, 0, Integer.MAX_VALUE));
+			attributeRanges.put(AttributeRegistry.POWER_MULTI, new AttributeRange(1, 0, Integer.MAX_VALUE));
+			for (Entry<String, JsonElement> entry : moduleObject.entrySet()) {
 				switch (entry.getKey()) {
 					case "item_meta": {
 						itemMeta = entry.getValue().getAsJsonPrimitive().getAsInt();
 						Wizardry.logger.info(" | | |_ Found Item Meta:          " + itemMeta);
-						break;
-					}
-					case "mana_drain": {
-						manaDrain = entry.getValue().getAsJsonPrimitive().getAsDouble();
-						Wizardry.logger.info(" | | |_ Found Mana Drain:         " + manaDrain);
-						break;
-					}
-					case "burnout_fill": {
-						burnoutFill = entry.getValue().getAsJsonPrimitive().getAsDouble();
-						Wizardry.logger.info(" | | |_ Found Burnout Fill:       " + burnoutFill);
-						break;
-					}
-					case "cooldown_time": {
-						cooldownTime = entry.getValue().getAsJsonPrimitive().getAsInt();
-						Wizardry.logger.info(" | | |_ Found Cooldown Time:      " + cooldownTime);
-						break;
-					}
-					case "chargeup_time": {
-						chargeupTime = entry.getValue().getAsJsonPrimitive().getAsInt();
-						Wizardry.logger.info(" | | |_ Found Chargeup Time:      " + chargeupTime);
 						break;
 					}
 					case "primary_color": {
@@ -184,25 +180,70 @@ public class ModuleRegistry {
 						Wizardry.logger.info(" | | |_ Found Secondary Color:    " + secondaryColor.getRGB());
 						break;
 					}
-					case "power_multiplier": {
-						powerMultiplier = entry.getValue().getAsJsonPrimitive().getAsFloat();
-						Wizardry.logger.info(" | | |_ Found Power Multiplier:   " + powerMultiplier);
-						break;
-					}
-					case "mana_multiplier": {
-						manaMultiplier = entry.getValue().getAsJsonPrimitive().getAsFloat();
-						Wizardry.logger.info(" | | |_ Found Mana Multiplier:    " + manaMultiplier);
-						break;
-					}
-					case "burnout_multiplier": {
-						burnoutMultiplier = entry.getValue().getAsJsonPrimitive().getAsFloat();
-						Wizardry.logger.info(" | | |_ Found Burnout Multiplier: " + burnoutMultiplier);
-						break;
+					default:
+					{
+						Attribute attribute = AttributeRegistry.getAttributeFromName(entry.getKey());
+						if (attribute != null)
+						{
+							Wizardry.logger.info(" | | |_ Found base " + attribute.toString() + " values:");
+							JsonObject baseAttrib = entry.getValue().getAsJsonObject();
+
+							double min = 0;
+							if (baseAttrib.has("min") && baseAttrib.get("min").isJsonPrimitive())
+							{
+								min = baseAttrib.get("min").getAsInt();
+								if (min < 0)
+								{
+									Wizardry.logger.info(" | | | |_ Minimum value for " + attribute.toString() + " was " + min + ", must be a positive integer. Setting to 0");
+									min = 0;
+								}
+
+								Wizardry.logger.info(" | | | |_ Minimum: " + min);
+							}
+							
+							double max = Integer.MAX_VALUE;
+							if (baseAttrib.has("max") && baseAttrib.get("max").isJsonPrimitive())
+							{
+								max = baseAttrib.get("max").getAsDouble();
+								if (max < min)
+								{
+									Wizardry.logger.info(" | | | |_ Maximum value for " + attribute.toString() + " was " + max + ", must be greater than min. Setting to min, " + min);
+									max = min;
+								}
+								if (max > Integer.MAX_VALUE)
+								{
+									Wizardry.logger.info(" | | | |_ Maximum maximum value is " + Integer.MAX_VALUE + ", max was " + max + ". Setting to " + Integer.MAX_VALUE);
+									max = Integer.MAX_VALUE;
+								}
+
+								Wizardry.logger.info(" | | | |_ Maximum: " + max);
+
+							}
+							
+							double base = min;
+							if (baseAttrib.has("base") && baseAttrib.get("base").isJsonPrimitive())
+							{
+								base = baseAttrib.get("base").getAsDouble();
+								if (base < min)
+								{
+									Wizardry.logger.info(" | | | |_ Base value for " + attribute.toString() + " was " + base + ", must be greater than min, " + min + ". Setting to " + min);
+									base = min;
+								}
+								else if (base > max)
+								{
+									Wizardry.logger.info(" | | | |_ Base value for " + attribute + " was " + base + ", must be less than max, " + max + ". Setting to " + max);
+									base = max;
+								}
+
+								Wizardry.logger.info(" | | | |_ Base: " + base);
+							}
+							attributeRanges.put(attribute, new AttributeRange(base, min, max));
+						}
 					}
 				}
 			}
 
-			module.init(new ItemStack(item, 1, itemMeta), manaDrain, burnoutFill, primaryColor, secondaryColor, powerMultiplier, manaMultiplier, burnoutMultiplier, cooldownTime, chargeupTime);
+			module.init(new ItemStack(item, 1, itemMeta), primaryColor, secondaryColor, attributeRanges);
 
 			if (moduleObject.has("modifiers") && moduleObject.get("modifiers").isJsonArray()) {
 				Wizardry.logger.info(" | | |___ Found Modifiers. About to process them");
@@ -259,7 +300,7 @@ public class ModuleRegistry {
 		modules.clear();
 		modules.addAll(processed);
 
-		modules.sort((o1, o2) -> o1.getID().compareTo(o2.getID()));
+		modules.sort(Comparator.comparing(Module::getID));
 
 		Wizardry.logger.info(" |");
 		Wizardry.logger.info(" | Module registration processing complete! (ᵔᴥᵔ)");

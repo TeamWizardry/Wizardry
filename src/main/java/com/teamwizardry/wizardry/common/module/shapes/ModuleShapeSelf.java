@@ -37,6 +37,7 @@ public class ModuleShapeSelf extends ModuleShape {
 		Entity caster = spell.getCaster();
 		if (caster == null) return false;
 
+		if (!spellRing.taxCaster(spell)) return false;
 		spell.processEntity(caster, false);
 
 		return true;

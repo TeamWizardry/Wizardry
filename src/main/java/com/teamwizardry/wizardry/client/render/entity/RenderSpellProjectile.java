@@ -25,7 +25,7 @@ import static com.teamwizardry.wizardry.common.entity.EntitySpellProjectile.DATA
 import static com.teamwizardry.wizardry.common.entity.EntitySpellProjectile.DATA_COLOR2;
 
 /**
- * Created by Saad on 8/25/2016.
+ * Created by Demoniaque on 8/25/2016.
  */
 public class RenderSpellProjectile extends Render<EntitySpellProjectile> {
 

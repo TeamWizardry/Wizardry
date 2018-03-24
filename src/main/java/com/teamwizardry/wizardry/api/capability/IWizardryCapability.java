@@ -5,7 +5,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
 
 /**
- * Created by Saad on 8/16/2016.
+ * Created by Demoniaque on 8/16/2016.
  */
 public interface IWizardryCapability extends INBTSerializable<NBTTagCompound> {
 

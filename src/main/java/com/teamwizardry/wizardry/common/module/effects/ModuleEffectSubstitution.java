@@ -19,7 +19,7 @@ import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtendRange;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseRange;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -59,7 +59,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 
 	@Override
 	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierExtendRange()};
+		return new ModuleModifier[]{new ModuleModifierIncreaseRange()};
 	}
 
 	@Override
@@ -73,7 +73,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 		if (caster == null) return false;
 
 		if (targetEntity != null && targetEntity instanceof EntityLivingBase) {
-			if (!tax(this, spell, spellRing)) return false;
+			if (!spellRing.taxCaster(spell)) return false;
 
 			Vec3d posTarget = new Vec3d(targetEntity.posX, targetEntity.posY, targetEntity.posZ),
 					posCaster = new Vec3d(caster.posX, caster.posY, caster.posZ);
@@ -102,7 +102,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 
 				if (touchedBlock.getBlock() == state.getBlock()) return false;
 
-				double strength = spellRing.getModifier(AttributeRegistry.RANGE, 10, 64);
+				double strength = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
 
 				ItemStack stackBlock = null;
 				for (ItemStack stack : ((EntityPlayer) caster).inventory.mainInventory) {
@@ -125,7 +125,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 				if (blocks.isEmpty()) return true;
 
 				for (BlockPos ignored : blocks) {
-					if (!tax(this, spell, spellRing)) return false;
+					if (!spellRing.taxCaster(spell)) return false;
 					BlockPos nearest = null;
 					for (BlockPos pos : blocks) {
 						if (spell.world.isAirBlock(pos)) continue;

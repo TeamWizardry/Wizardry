@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.api.spell;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
+import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -11,10 +12,37 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import javax.annotation.Nonnull;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SpellUtils {
+
+	public static Color getAverageSpellColor(List<SpellRing> spellChains) {
+		List<Color> colorSet = new ArrayList<>();
+
+		NBTTagList list = new NBTTagList();
+		for (SpellRing spellRing : spellChains) {
+			colorSet.add(spellRing.getPrimaryColor());
+			//colorSet.add(spellRing.getSecondaryColor());
+			list.appendTag(spellRing.serializeNBT());
+		}
+
+		if (colorSet.size() == 1) return colorSet.get(0);
+
+		Color lastColor = ColorUtils.mixColors(colorSet);
+
+		boolean r = lastColor.getRed() == 0;
+		boolean g = lastColor.getGreen() == 0;
+		boolean b = lastColor.getBlue() == 0;
+
+		if (g ? !(b && r) : b) return lastColor;
+		if (lastColor.getRed() / lastColor.getBlue() < 0.8 || lastColor.getRed() / lastColor.getGreen() < 0.8) {
+			// todo: rebalance the color so its not white-ish
+		}
+
+		return lastColor;
+	}
 
 	public static void runSpell(@Nonnull ItemStack spellHolder, @Nonnull SpellData data) {
 		if (data.world.isRemote) return;

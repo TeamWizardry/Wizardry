@@ -8,7 +8,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 
 /**
- * Created by Saad on 6/20/2016.
+ * Created by Demoniaque on 6/20/2016.
  */
 public class ItemGlassOrb extends ItemMod {
 
@@ -26,4 +26,6 @@ public class ItemGlassOrb extends ItemMod {
 		}
 		return super.onEntityItemUpdate(entityItem);
 	}
+
+
 }

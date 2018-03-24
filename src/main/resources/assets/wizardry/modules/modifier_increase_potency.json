@@ -1,7 +1,5 @@
 {
   "item": "minecraft:prismarine_crystals",
-  "mana_drain": 0.0,
-  "burnout_fill": 0.0,
   "modifiers": [
     {
       "attribute": "potency",
@@ -11,12 +9,12 @@
     {
       "attribute": "mana",
       "operation": "multiply",
-      "amount": 1.05
+      "amount": 1.1
     },
     {
       "attribute": "burnout",
       "operation": "multiply",
-      "amount": 1.05
+      "amount": 1.1
     }
   ]
 }

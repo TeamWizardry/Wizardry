@@ -15,7 +15,7 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 import javax.annotation.Nonnull;
 
 /**
- * Created by Saad on 6/13/2016.
+ * Created by Demoniaque on 6/13/2016.
  */
 public class RecipePearl extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
 	@Override

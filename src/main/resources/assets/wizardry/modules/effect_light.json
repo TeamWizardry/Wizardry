@@ -1,7 +1,7 @@
 {
   "item": "minecraft:glowstone",
-  "mana_drain": 100.0,
-  "burnout_fill": 50.0,
   "primary_color": "00FFFF",
-  "secondary_color": "FF0000"
+  "secondary_color": "FF0000",
+  "mana": { "base": 100 },
+  "burnout": { "base": 50 }
 }

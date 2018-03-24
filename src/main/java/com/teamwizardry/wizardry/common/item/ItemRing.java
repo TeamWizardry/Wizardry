@@ -13,7 +13,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Created by Saad on 6/13/2016.
+ * Created by Demoniaque on 6/13/2016.
  */
 public class ItemRing extends ItemMod implements INacreProduct {
 

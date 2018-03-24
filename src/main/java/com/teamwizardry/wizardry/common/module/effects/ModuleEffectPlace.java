@@ -33,7 +33,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.FACE_HIT;
 
 /**
  * Created by Demoniaque.
@@ -52,16 +52,13 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 		return new ModuleModifier[]{new ModuleModifierIncreaseAOE()};
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		BlockPos targetPos = spell.getTargetPos();
-		Vec3d originPos = spell.getData(ORIGIN);
-		Entity targetEntity = spell.getVictim();
 		Entity caster = spell.getCaster();
 		EnumFacing facing = spell.getData(FACE_HIT);
-		float yaw = spell.getData(YAW, 0F);
-		float pitch = spell.getData(PITCH, 0F);
 
 		if (facing == null) return true;
 
@@ -71,7 +68,7 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 			facings.add(facing1);
 		}
 
-		double range = spellRing.getModifier(AttributeRegistry.AREA, 1, 64);
+		double range = spellRing.getAttributeValue(AttributeRegistry.AREA, spell);
 
 		if (targetPos == null) return true;
 
@@ -103,7 +100,7 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 				if (stackBlock == null) return true;
 
 				if (!world.isAirBlock(pos)) continue;
-				if (!tax(this, spell, spellRing)) return false;
+				if (!spellRing.taxCaster(spell)) return false;
 				//stackBlock.shrink(1);
 				IBlockState oldState = world.getBlockState(pos);
 
@@ -113,7 +110,7 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 			}
 		} else if (caster == null) {
 			if (!world.isAirBlock(targetPos)) return true;
-			if (!tax(this, spell, spellRing)) return false;
+			if (!spellRing.taxCaster(spell)) return false;
 
 			List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(targetPos).grow(3, 3, 3));
 			if (items.isEmpty()) return true;
@@ -123,8 +120,6 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 
 			if (item.getItem().getItem() instanceof ItemBlock) {
 				item.getItem().shrink(1);
-
-				IBlockState oldState = world.getBlockState(targetPos);
 
 				BlockUtils.placeBlock(world, targetPos, facing, item.getItem());
 				world.playSound(null, targetPos, ((ItemBlock) item.getItem().getItem()).getBlock().getSoundType(((ItemBlock) item.getItem().getItem()).getBlock().getDefaultState(), world, targetPos, caster).getPlaceSound(), SoundCategory.BLOCKS, 1f, 1f);

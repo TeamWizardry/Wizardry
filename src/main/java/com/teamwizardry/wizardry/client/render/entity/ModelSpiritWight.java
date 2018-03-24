@@ -11,7 +11,7 @@ import org.lwjgl.opengl.GL11;
 import javax.annotation.Nonnull;
 
 /**
- * Created by Saad on 8/21/2016.
+ * Created by Demoniaque on 8/21/2016.
  */
 @SideOnly(Side.CLIENT)
 public class ModelSpiritWight extends ModelBiped {

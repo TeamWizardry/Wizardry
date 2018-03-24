@@ -1,10 +1,8 @@
 package com.teamwizardry.wizardry.api.spell.module;
 
-import com.teamwizardry.wizardry.api.spell.ICostModifier;
-
 import javax.annotation.Nonnull;
 
-public abstract class ModuleShape extends Module implements ICostModifier {
+public abstract class ModuleShape extends Module {
 	@Nonnull
 	@Override
 	public ModuleType getModuleType() {

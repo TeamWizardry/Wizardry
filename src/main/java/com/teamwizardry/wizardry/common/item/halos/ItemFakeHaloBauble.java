@@ -4,9 +4,7 @@ import baubles.api.BaubleType;
 import com.teamwizardry.librarianlib.features.base.item.ItemModBauble;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.capability.CapManager;
-import com.teamwizardry.wizardry.api.item.IFakeHalo;
-import com.teamwizardry.wizardry.api.item.IHalo;
-import com.teamwizardry.wizardry.init.ModBlocks;
+import com.teamwizardry.wizardry.api.item.halo.IHalo;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -20,10 +18,10 @@ import net.minecraftforge.fml.common.Optional;
 import javax.annotation.Nonnull;
 
 /**
- * Created by Saad on 8/30/2016.
+ * Created by Demoniaque on 8/30/2016.
  */
 @Optional.Interface(iface = "baubles.api.IBauble", modid = "baubles")
-public class ItemFakeHaloBauble extends ItemModBauble implements IFakeHalo, IHalo {
+public class ItemFakeHaloBauble extends ItemModBauble implements IHalo {
 
 	public ItemFakeHaloBauble() {
 		super("halo_fake");
@@ -33,9 +31,9 @@ public class ItemFakeHaloBauble extends ItemModBauble implements IFakeHalo, IHal
 	@Override
 	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 
-		if (worldIn.getBlockState(pos).getBlock() == ModBlocks.HALO_INFUSER) {
-			return EnumActionResult.SUCCESS;
-		}
+		//if (worldIn.getBlockState(pos).getBlock() == ModBlocks.HALO_INFUSER) {
+		//	return EnumActionResult.SUCCESS;
+		//}
 
 		return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
 	}

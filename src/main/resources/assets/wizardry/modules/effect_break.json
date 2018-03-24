@@ -1,7 +1,9 @@
 {
   "item": "minecraft:sand",
-  "mana_drain": 50.0,
-  "burnout_fill": 50.0,
   "primary_color": "A52A2A",
-  "secondary_color": "FFA7A7"
+  "secondary_color": "FFA7A7",
+  "mana": { "base": 50 },
+  "burnout": { "base": 50 },
+  "area": { "base": 1, "min": 1, "max": 64 },
+  "potency": { "base": 1, "min": 1, "max": 20 }
 }

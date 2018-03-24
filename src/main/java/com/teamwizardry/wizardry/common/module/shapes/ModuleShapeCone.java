@@ -17,8 +17,8 @@ import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtendRange;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseRange;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.RayTraceResult;
@@ -46,7 +46,7 @@ public class ModuleShapeCone extends ModuleShape {
 
 	@Override
 	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierIncreasePotency(), new ModuleModifierExtendRange()};
+		return new ModuleModifier[]{new ModuleModifierIncreasePotency(), new ModuleModifierIncreaseRange()};
 	}
 
 	@Override
@@ -64,15 +64,15 @@ public class ModuleShapeCone extends ModuleShape {
 
 		if (position == null) return false;
 
-		double range = spellRing.getModifier(AttributeRegistry.RANGE, 5, 16);
-
-		setCostMultiplier(this, range / 16.0);
+		double range = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
+		int chance = (int) (spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell));
+		
+		spellRing.multiplyMultiplierForAll((float) (range / 8.0 * chance / 16.0));
 
 		Vec3d origin = spell.getOriginHand();
 
 		if (origin == null) return false;
 
-		int chance = (int) (spellRing.getModifier(AttributeRegistry.POTENCY, 5, 32));
 
 		for (int i = 0; i < chance; i++) {
 
@@ -103,7 +103,6 @@ public class ModuleShapeCone extends ModuleShape {
 	}
 
 	@Override
-	@SuppressWarnings("unused")
 	@SideOnly(Side.CLIENT)
 	public void render(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Vec3d target = spell.getTarget();

@@ -1,17 +1,15 @@
 {
   "item": "wizardry:syringe_blood",
-  "mana_drain": 0.0,
-  "burnout_fill": 0.0,
   "modifiers": [
     {
       "attribute": "mana",
       "operation": "multiply",
-      "amount": 1.2
+      "amount": 1.1
     },
     {
       "attribute": "burnout",
       "operation": "multiply",
-      "amount": 1.2
+      "amount": 1.1
     }
   ]
 }

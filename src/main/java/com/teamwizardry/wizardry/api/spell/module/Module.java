@@ -7,6 +7,10 @@ import com.teamwizardry.wizardry.api.spell.ILingeringModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRange;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry.Attribute;
+import com.teamwizardry.wizardry.api.util.DefaultHashMap;
 import com.teamwizardry.wizardry.common.core.SpellTicker;
 import com.teamwizardry.wizardry.common.network.PacketRenderSpell;
 import net.minecraft.item.ItemStack;
@@ -22,23 +26,18 @@ import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Demoniaque.
  */
 public abstract class Module {
 
-	private final List<AttributeModifier> attributes = new ArrayList<>();
-	private Color primaryColor;
-	private Color secondaryColor;
-	private int cooldownTime;
-	private int chargeupTime;
-	private double manaDrain;
-	private double burnoutFill;
-	private ItemStack itemStack;
-	private float powerMultiplier;
-	private float manaMultiplier;
-	private float burnoutMultiplier;
+	protected final List<AttributeModifier> attributes = new ArrayList<>();
+	protected Map<Attribute, AttributeRange> attributeRanges = new DefaultHashMap<>(AttributeRange.BACKUP);
+	protected Color primaryColor;
+	protected Color secondaryColor;
+	protected ItemStack itemStack;
 
 	@Nullable
 	public static Module deserialize(NBTTagString tagString) {
@@ -51,25 +50,13 @@ public abstract class Module {
 	}
 
 	public final void init(ItemStack itemStack,
-	                       double manaDrain,
-	                       double burnoutFill,
 	                       Color primaryColor,
 	                       Color secondaryColor,
-	                       float powerMultiplier,
-	                       float manaMultiplier,
-	                       float burnoutMultiplier,
-	                       int cooldownTime,
-	                       int chargeupTime) {
+	                       DefaultHashMap<Attribute, AttributeRange> attributeRanges) {
 		this.itemStack = itemStack;
-		this.manaDrain = manaDrain;
-		this.burnoutFill = burnoutFill;
 		this.primaryColor = primaryColor;
 		this.secondaryColor = secondaryColor;
-		this.powerMultiplier = powerMultiplier;
-		this.manaMultiplier = manaMultiplier;
-		this.burnoutMultiplier = burnoutMultiplier;
-		this.cooldownTime = cooldownTime;
-		this.chargeupTime = chargeupTime;
+		this.attributeRanges = attributeRanges;
 	}
 
 	/**
@@ -106,7 +93,7 @@ public abstract class Module {
 	 */
 	@Nonnull
 	public final String getNameKey() {
-		return "wizardry.spellData." + getID() + ".name";
+		return "wizardry.spell." + getID() + ".name";
 	}
 
 	/**
@@ -132,7 +119,7 @@ public abstract class Module {
 	 */
 	@Nonnull
 	public final String getDescriptionKey() {
-		return "wizardry.spellData." + getID() + ".desc";
+		return "wizardry.spell." + getID() + ".desc";
 	}
 
 	@Nonnull
@@ -141,15 +128,15 @@ public abstract class Module {
 	}
 
 	public final double getBurnoutFill() {
-		return burnoutFill;
+		return attributeRanges.get(AttributeRegistry.BURNOUT).base;
 	}
 
 	public final int getCooldownTime() {
-		return cooldownTime;
+		return (int) attributeRanges.get(AttributeRegistry.COOLDOWN).base;
 	}
 
 	public final int getChargeupTime() {
-		return chargeupTime;
+		return (int) attributeRanges.get(AttributeRegistry.CHARGEUP).base;
 	}
 
 	public final ItemStack getItemStack() {
@@ -157,19 +144,19 @@ public abstract class Module {
 	}
 
 	public final double getManaDrain() {
-		return manaDrain;
+		return attributeRanges.get(AttributeRegistry.MANA).base;
 	}
 
 	public final float getPowerMultiplier() {
-		return powerMultiplier;
+		return (int) attributeRanges.get(AttributeRegistry.POWER_MULTI).base;
 	}
 
 	public final float getManaMultiplier() {
-		return manaMultiplier;
+		return (int) attributeRanges.get(AttributeRegistry.MANA_MULTI).base;
 	}
 
 	public final float getBurnoutMultiplier() {
-		return burnoutMultiplier;
+		return (int) attributeRanges.get(AttributeRegistry.BURNOUT_MULTI).base;
 	}
 
 	@Nonnull
@@ -179,6 +166,10 @@ public abstract class Module {
 
 	public List<AttributeModifier> getAttributes() {
 		return attributes;
+	}
+
+	public Map<Attribute, AttributeRange> getAttributeRanges() {
+		return attributeRanges;
 	}
 
 	/**
@@ -197,6 +188,11 @@ public abstract class Module {
 
 	public final void addAttribute(AttributeModifier attribute) {
 		this.attributes.add(attribute);
+	}
+	
+	public final void addAttributeRange(Attribute attribute, AttributeRange range)
+	{
+		this.attributeRanges.put(attribute, range);
 	}
 
 	public boolean ignoreResult() {
@@ -217,38 +213,38 @@ public abstract class Module {
 	/**
 	 * Use this to run the module properly without rendering.
 	 *
-	 * @param data      The spellData associated with it.
+	 * @param spell      The spellData associated with it.
 	 * @param spellRing The SpellRing made with this.
 	 * @return If the spellData has succeeded.
 	 */
-	public final boolean castSpell(@Nonnull SpellData data, @Nonnull SpellRing spellRing) {
-		if (data.world.isRemote) return true;
+	public final boolean castSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		if (spell.world.isRemote) return true;
 
 		if (this instanceof ILingeringModule) {
 			boolean alreadyLingering = false;
 			for (SpellTicker.LingeringObject lingeringObject : SpellTicker.getStorageMap()) {
 				if (lingeringObject.getSpellRing() == spellRing
-						|| lingeringObject.getSpellData() == data) {
+						|| lingeringObject.getSpellData() == spell) {
 					alreadyLingering = true;
 					break;
 				}
 			}
 			if (!alreadyLingering)
-				SpellTicker.addLingerSpell(spellRing, data, ((ILingeringModule) this).getLingeringTime(data, spellRing));
+				SpellTicker.addLingerSpell(spellRing, spell, ((ILingeringModule) this).getLingeringTime(spell, spellRing));
 		}
 
-		SpellCastEvent event = new SpellCastEvent(spellRing, data);
+		SpellCastEvent event = new SpellCastEvent(spellRing, spell);
 		MinecraftForge.EVENT_BUS.post(event);
 
-		return !event.isCanceled() && run(data, spellRing);
+		return !event.isCanceled() && run(spell, spellRing);
 	}
 
-	public final void sendRenderPacket(@Nonnull SpellData data, @Nonnull SpellRing spellRing) {
-		Vec3d target = data.getTargetWithFallback();
+	public final void sendRenderPacket(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Vec3d target = spell.getTargetWithFallback();
 
 		if (target != null)
-			PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(data, spellRing),
-					new NetworkRegistry.TargetPoint(data.world.provider.getDimension(), target.x, target.y, target.z, 60));
+			PacketHandler.NETWORK.sendToAllAround(new PacketRenderSpell(spell, spellRing),
+					new NetworkRegistry.TargetPoint(spell.world.provider.getDimension(), target.x, target.y, target.z, 60));
 	}
 
 	@Nonnull

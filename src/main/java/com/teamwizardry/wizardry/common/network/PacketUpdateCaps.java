@@ -14,7 +14,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import javax.annotation.Nonnull;
 
 /**
- * Created by Saad on 8/16/2016.
+ * Created by Demoniaque on 8/16/2016.
  */
 @PacketRegister(Side.CLIENT)
 public class PacketUpdateCaps extends PacketBase {

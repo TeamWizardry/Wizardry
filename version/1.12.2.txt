@@ -1,24 +1,21 @@
-0.7.2
-Fixed incompatibility with Flux Networks
-Updated mana and fire recipe formats
+0.8.2
+Added new Leech spell effect
 
-0.7.1
-Removed debug lines that crashed the game.
+0.8.1
+Fix crash when opening the book
 
-0.7
-Minecraft version updated to 1.12.2
-Forge updated to latest recommended
-Fix mana/burnout bars desyncing
-Change all hard-coded strings to lang file
-Add hints to nacre pearls about quality
-Move all mana and fire recipes to their own new json systems so they're customizable
-Unicorns actually drop their horns now. I know. Amazing.
-Fix structure error indicating particles in crafting plate
-Fix flipped advancements
-Input pearl now is properly eaten up by the crafting plate
-Fix all the asm. Time slow, phase, and freeze spells now work PERFECTLY!
-Replace fire recipe handling with a new system that doesn't actually cripple your world.
-If liblib is not available, forge now tells you instead of crashing and you reporting the crash to us...
-Crafting plate animations are now more visually descriptive
-Reduce network load from the mana bars
-Potentially fix the book's scrambled text
+0.8
+DELETE YOUR WIZARDRY CONFIG FOLDER OR RUN /wizardry reset TO UPDATE EVERYTHING PROPERLY!!!
+JEI SUPPORT! FOR EVERYTHING. AAAAAAAAH.
+Overhauled whole spell system. Your existing spells are broken now. *Mod is in alpha*
+Overhauled whole book AND documentation. It's now pretty and readable!
+Overhauled crafting systems. Burnables and liquid recipes generified & made efficient.
+Fixed a compatibility bug with FluxNetworks.
+All text is now in en_us.lang. Everything can be properly translated now. EVERYTHING.
+Cape now shows level indicator.
+Spell system got rebalanced and properly calculates mana/burnout costs.
+Crafting plate got less bugs and subsequently more bugs. Also updated visuals. (sort of buggy)
+Mana battery now has a recipe. I know. Amazing.
+The Real halo now has a TEMPORARY RECIPE ONLY. Once we implement our first boss, it'll be gone.
+Fixed a crash with WAWLA. Go blame them, not us.
+Updated some components and modifiers.

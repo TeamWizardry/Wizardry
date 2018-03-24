@@ -35,7 +35,7 @@ public class FireRecipes {
 
 			try {
 				FileUtils.copyInputStreamToFile(stream, file);
-				Wizardry.logger.info("    > Mana recipe " + recipeName + " copied successfully from mod jar.");
+				Wizardry.logger.info("    > Fire recipe " + recipeName + " copied successfully from mod jar.");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

@@ -10,7 +10,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import javax.annotation.Nullable;
 
 /**
- * Created by Saad on 6/21/2016.
+ * Created by Demoniaque on 6/21/2016.
  */
 public class ItemManaOrb extends ItemMod {
 

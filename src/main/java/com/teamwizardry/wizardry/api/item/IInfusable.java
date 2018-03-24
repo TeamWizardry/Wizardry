@@ -3,7 +3,8 @@ package com.teamwizardry.wizardry.api.item;
 import net.minecraft.item.ItemStack;
 
 /**
- * Created by Saad on 6/30/2016.
+ * Implement this interface on an item to have it become spell infusable
+ * Used by nacre pearls
  */
 public interface IInfusable {
 

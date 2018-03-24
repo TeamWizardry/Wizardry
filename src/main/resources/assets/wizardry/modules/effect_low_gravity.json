@@ -3,5 +3,9 @@
   "mana_drain": 200.0,
   "burnout_fill": 100.0,
   "primary_color": "FFFFFF",
-  "secondary_color": "00FFFF"
+  "secondary_color": "00FFFF",
+  "mana": { "base": 200 },
+  "burnout": { "base": 100 },
+  "potency": { "base": 2, "min": 2, "max": 16 },
+  "duration": { "base": 50, "min": 50, "max": 1000 }
 }

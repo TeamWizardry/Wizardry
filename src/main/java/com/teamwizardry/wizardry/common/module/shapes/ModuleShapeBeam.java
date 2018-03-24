@@ -9,8 +9,8 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtendRange;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseRange;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -36,7 +36,7 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 
 	@Override
 	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierExtendRange(), new ModuleModifierIncreasePotency()};
+		return new ModuleModifier[]{new ModuleModifierIncreaseRange(), new ModuleModifierIncreasePotency()};
 	}
 
 	@Override
@@ -53,8 +53,10 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 
 		if (look == null || position == null) return false;
 
-		double range = spellRing.getModifier(AttributeRegistry.RANGE, 10, 100);
-		double potency = 30 - spellRing.getModifier(AttributeRegistry.POTENCY, 0, 25);
+		double range = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
+		double potency = 30 - spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell);
+
+		spellRing.multiplyMultiplierForAll((float) (potency / 25.0 * range / 75.0));
 
 		RayTraceResult trace = new RayTrace(world, look, position, range)
 				.setSkipEntity(caster)

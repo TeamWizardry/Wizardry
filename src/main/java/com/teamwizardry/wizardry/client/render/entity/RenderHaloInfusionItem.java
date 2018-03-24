@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Created by Saad on 8/25/2016.
+ * Created by Demoniaque on 8/25/2016.
  */
 public class RenderHaloInfusionItem extends Render<EntityHaloInfusionItem> {
 

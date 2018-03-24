@@ -8,6 +8,8 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.CachedStructure;
 import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.api.item.IInfusable;
+import com.teamwizardry.wizardry.api.spell.SpellBuilder;
+import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.render.block.TileCraftingPlateRenderer;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
@@ -40,7 +42,7 @@ import javax.annotation.Nullable;
 import java.awt.*;
 
 /**
- * Created by Saad on 6/10/2016.
+ * Created by Demoniaque on 6/10/2016.
  */
 public class BlockCraftingPlate extends BlockModContainer implements IStructure {
 
@@ -82,8 +84,15 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 					NBTTagList spellList = ItemNBTHelper.getList(heldItem, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
 					if (spellList == null) return false;
 
-					ItemNBTHelper.setList(pearl, Constants.NBT.SPELL, spellList);
+					SpellBuilder builder = new SpellBuilder(SpellUtils.getSpellChains(spellList), true, true);
+
+					//Color lastColor = SpellUtils.getAverageSpellColor(builder.getSpell());
+//
+					//float[] hsv = ColorUtils.getHSVFromColor(lastColor);
+					//ItemNBTHelper.setFloat(pearl, "hue", hsv[0]);
+					//ItemNBTHelper.setFloat(pearl, "saturation", hsv[1]);
 					ItemNBTHelper.setFloat(pearl, Constants.NBT.RAND, playerIn.world.rand.nextFloat());
+					ItemNBTHelper.setList(pearl, Constants.NBT.SPELL, spellList);
 
 					plate.outputPearl.getHandler().setStackInSlot(0, pearl);
 					plate.markDirty();

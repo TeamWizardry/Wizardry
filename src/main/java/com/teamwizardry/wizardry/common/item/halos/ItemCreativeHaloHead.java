@@ -4,15 +4,14 @@ import com.teamwizardry.librarianlib.features.base.item.ItemModArmor;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.capability.CapManager;
-import com.teamwizardry.wizardry.api.item.IFakeHalo;
-import com.teamwizardry.wizardry.api.item.IHalo;
+import com.teamwizardry.wizardry.api.item.halo.IHalo;
 import net.minecraft.entity.Entity;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
-public class ItemCreativeHaloHead extends ItemModArmor implements IFakeHalo, IHalo {
+public class ItemCreativeHaloHead extends ItemModArmor implements IHalo {
 
 	public ItemCreativeHaloHead() {
 		super("halo_creative", ArmorMaterial.IRON, EntityEquipmentSlot.HEAD);

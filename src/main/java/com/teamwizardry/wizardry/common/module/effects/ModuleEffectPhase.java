@@ -6,7 +6,7 @@ import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierExtendTime;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseDuration;
 import com.teamwizardry.wizardry.init.ModPotions;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
@@ -33,7 +33,7 @@ public class ModuleEffectPhase extends ModuleEffect {
 
 	@Override
 	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierExtendTime()};
+		return new ModuleModifier[]{new ModuleModifierIncreaseDuration()};
 	}
 
 	@Override
@@ -43,9 +43,9 @@ public class ModuleEffectPhase extends ModuleEffect {
 		Entity targetEntity = spell.getVictim();
 		Vec3d targetHit = spell.getTarget();
 
-		double time = spellRing.getModifier(AttributeRegistry.DURATION, 10, 500);
+		double time = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell);
 
-		if (!tax(this, spell, spellRing)) return false;
+		if (!spellRing.taxCaster(spell)) return false;
 
 		if (targetEntity != null && targetEntity instanceof EntityLivingBase) {
 			EntityLivingBase entity = (EntityLivingBase) targetEntity;

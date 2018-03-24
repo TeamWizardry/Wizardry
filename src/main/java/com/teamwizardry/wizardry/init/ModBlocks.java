@@ -13,7 +13,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
- * Created by Saad on 3/24/2016.
+ * Created by Demoniaque on 3/24/2016.
  */
 @Mod.EventBusSubscriber
 public class ModBlocks {

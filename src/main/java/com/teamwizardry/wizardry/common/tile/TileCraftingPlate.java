@@ -4,6 +4,7 @@ import com.teamwizardry.librarianlib.features.autoregister.TileRegister;
 import com.teamwizardry.librarianlib.features.base.block.tile.module.ModuleInventory;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
+import com.teamwizardry.librarianlib.features.saving.Module;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.librarianlib.features.tesr.TileRenderer;
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
@@ -17,7 +18,6 @@ import com.teamwizardry.wizardry.api.item.INacreProduct;
 import com.teamwizardry.wizardry.api.spell.SpellBuilder;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
-import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.render.block.TileCraftingPlateRenderer;
 import com.teamwizardry.wizardry.common.block.BlockCraftingPlate;
@@ -39,14 +39,17 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 
 /**
- * Created by Saad on 6/10/2016.
+ * Created by Demoniaque on 6/10/2016.
  */
 @TileRegister("crafting_plate")
 @TileRenderer(TileCraftingPlateRenderer.class)
@@ -61,12 +64,28 @@ public class TileCraftingPlate extends TileManaInteracter {
 		poses.add(new BlockPos(-3, 2, -3));
 	}
 
-	@com.teamwizardry.librarianlib.features.saving.Module
+	@Module
 	public ModuleInventory realInventory = new ModuleInventory(1000);
-	@com.teamwizardry.librarianlib.features.saving.Module
-	public ModuleInventory inputPearl = new ModuleInventory(1);
-	@com.teamwizardry.librarianlib.features.saving.Module
-	public ModuleInventory outputPearl = new ModuleInventory(1);
+	@Module
+	public ModuleInventory inputPearl = new ModuleInventory(new ItemStackHandler() {
+		@Override
+		protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
+			if (stack.getItem() instanceof IInfusable)
+				return super.getStackLimit(slot, stack);
+			else return 0;
+		}
+	});
+
+	@Module
+	public ModuleInventory outputPearl = new ModuleInventory(new ItemStackHandler() {
+		@Override
+		protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
+			if (stack.getItem() instanceof IInfusable)
+				return super.getStackLimit(slot, stack);
+			else return 0;
+		}
+	});
+
 	@Save
 	public boolean revealStructure = false, isAbleToSuckMana = false;
 	public Vec3d[] positions;
@@ -98,8 +117,8 @@ public class TileCraftingPlate extends TileManaInteracter {
 				BlockPos target = getPos().add(relative);
 				TileEntity tile = world.getTileEntity(target);
 				if (tile != null && tile instanceof TilePearlHolder) {
-					if (!((TilePearlHolder) tile).isBenign) {
-						if (((TilePearlHolder) tile).structurePos == null || !((TilePearlHolder) tile).structurePos.equals(getPos())) {
+					if (!((TilePearlHolder) tile).isPartOfStructure) {
+						if (((TilePearlHolder) tile).structurePos != null && (((TilePearlHolder) tile).structurePos == null || !((TilePearlHolder) tile).structurePos.equals(getPos()))) {
 							((TilePearlHolder) tile).structurePos = getPos();
 						}
 						if (((TilePearlHolder) tile).suckManaFrom(getWorld(), getPos(), getCap(), target, 1, false)) {
@@ -166,30 +185,21 @@ public class TileCraftingPlate extends TileManaInteracter {
 				}
 				SpellBuilder builder = new SpellBuilder(stacks, true);
 
-				ItemStack infusedPearl = outputPearl.getHandler().insertItem(0, inputPearl.getHandler().extractItem(0, 1, false), false);
+				ItemStack infusedPearl = inputPearl.getHandler().getStackInSlot(0).copy();
+				inputPearl.getHandler().setStackInSlot(0, ItemStack.EMPTY);
+				outputPearl.getHandler().setStackInSlot(0, infusedPearl);
 
-				ArrayDeque<Color> colorSet = new ArrayDeque<>();
 
 				NBTTagList list = new NBTTagList();
 				for (SpellRing spellRing : builder.getSpell()) {
-					colorSet.add(spellRing.getPrimaryColor());
-					colorSet.add(spellRing.getSecondaryColor());
 					list.appendTag(spellRing.serializeNBT());
 				}
 				ItemNBTHelper.setList(infusedPearl, Constants.NBT.SPELL, list);
 
-				// Average pearl color
-				{
-					Color lastColor = null;
-					while (!colorSet.isEmpty()) {
-						if (lastColor == null) lastColor = colorSet.getFirst();
-						else {
-							lastColor = ColorUtils.mixColors(lastColor, colorSet.pop());
-						}
-					}
-					if (lastColor == null) lastColor = Color.WHITE;
-				}
-
+				//Color lastColor = SpellUtils.getAverageSpellColor(builder.getSpell());
+				//float[] hsv = ColorUtils.getHSVFromColor(lastColor);
+				//ItemNBTHelper.setFloat(infusedPearl, "hue", hsv[0]);
+				//ItemNBTHelper.setFloat(infusedPearl, "saturation", hsv[1]);
 				ItemNBTHelper.setFloat(infusedPearl, Constants.NBT.RAND, world.rand.nextFloat());
 				ItemNBTHelper.setString(infusedPearl, "type", EnumPearlType.INFUSED.toString());
 

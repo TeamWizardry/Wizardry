@@ -31,7 +31,7 @@ import javax.annotation.Nonnull;
 import java.awt.*;
 
 /**
- * Created by Saad on 8/17/2016.
+ * Created by Demoniaque on 8/17/2016.
  */
 public class EntitySpiritWight extends EntityMob {
 

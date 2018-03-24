@@ -17,6 +17,13 @@ public class AttributeRegistry {
 
 	public static final Attribute MANA = new Attribute("modifier_mana_cost", "mana");
 	public static final Attribute BURNOUT = new Attribute("modifier_burnout_value", "burnout");
+	public static final Attribute COOLDOWN = new Attribute("modifier_cooldown_time", "cooldown");
+	public static final Attribute CHARGEUP = new Attribute("modifier_chargeup_time", "chargeup");
+	
+	public static final Attribute POWER_MULTI = new Attribute("power_multiplier");
+	public static final Attribute MANA_MULTI = new Attribute("mana_multiplier");
+	public static final Attribute BURNOUT_MULTI = new Attribute("burnout_multiplier");
+	
 
 	private static final Set<Attribute> attributes = new HashSet<>();
 
@@ -28,6 +35,11 @@ public class AttributeRegistry {
 		addAttribute(SPEED);
 		addAttribute(MANA);
 		addAttribute(BURNOUT);
+		addAttribute(COOLDOWN);
+		addAttribute(CHARGEUP);
+		addAttribute(POWER_MULTI);
+		addAttribute(MANA_MULTI);
+		addAttribute(BURNOUT_MULTI);
 	}
 
 	public static void addAttribute(Attribute attribute) {
@@ -51,6 +63,11 @@ public class AttributeRegistry {
 			this.nbtName = nbtName;
 			this.shortName = shortName;
 		}
+		
+		public Attribute(String name)
+		{
+			this(name, name);
+		}
 
 		public String getShortName() {
 			return shortName;
@@ -58,6 +75,11 @@ public class AttributeRegistry {
 
 		public String getNbtName() {
 			return nbtName;
+		}
+
+		@Override
+		public String toString() {
+			return shortName;
 		}
 	}
 }

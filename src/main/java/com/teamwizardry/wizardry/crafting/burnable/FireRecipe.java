@@ -53,7 +53,7 @@ public class FireRecipe {
 	}
 
 	public FireRecipe copy() {
-		return new FireRecipe(output, maxDuration);
+		return new FireRecipe(output.copy(), maxDuration);
 	}
 
 	public ItemStack getOutput() {

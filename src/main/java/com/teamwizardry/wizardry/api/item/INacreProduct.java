@@ -18,7 +18,7 @@ import javax.annotation.Nullable;
 import java.awt.*;
 
 /**
- * Created by Saad on 6/7/2016.
+ * Created by Demoniaque on 6/7/2016.
  */
 public interface INacreProduct extends IItemColorProvider {
 
@@ -75,6 +75,12 @@ public interface INacreProduct extends IItemColorProvider {
 	@SideOnly(Side.CLIENT)
 	default Function2<ItemStack, Integer, Integer> getItemColorFunction() {
 		return (stack, tintIndex) -> {
+			//float hue = ItemNBTHelper.getFloat(stack, "hue", 0);
+			//float sat = ItemNBTHelper.getFloat(stack, "saturation", 0);
+			//float pow = Math.min(1f, Math.max(0f, getQuality(stack)));
+
+			//float saturation = curveConst * (1 - (float) Math.pow(Math.E, -pow)) * sat;
+
 			if (tintIndex != 0) return 0xFFFFFF;
 			float rand = ItemNBTHelper.getFloat(stack, NBT.RAND, -1);
 			float hue = rand < 0 ? (Minecraft.getMinecraft().world.getTotalWorldTime() / 140f) % 140f : rand;

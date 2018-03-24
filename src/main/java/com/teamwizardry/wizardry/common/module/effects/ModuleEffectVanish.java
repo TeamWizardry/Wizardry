@@ -46,11 +46,12 @@ public class ModuleEffectVanish extends ModuleEffect {
 		Entity caster = spell.getCaster();
 		Entity targetEntity = spell.getVictim();
 
-		double range = spellRing.getModifier(AttributeRegistry.AREA, 1, 64);
-		double strength = spellRing.getModifier(AttributeRegistry.POTENCY, 1, 64);
+		double range = spellRing.getAttributeValue(AttributeRegistry.AREA, spell);
+		double strength = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell);
 		range = 32;
 
 		if (targetEntity != null && targetEntity instanceof EntityLivingBase) {
+			if (!spellRing.taxCaster(spell)) return false;
 			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.VANISH, 100, 0, true, false));
 		}
 		return true;

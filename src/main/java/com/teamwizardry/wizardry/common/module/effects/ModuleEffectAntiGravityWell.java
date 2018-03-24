@@ -19,6 +19,7 @@ import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseAOE;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseDuration;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -56,7 +57,7 @@ public class ModuleEffectAntiGravityWell extends ModuleEffect implements ILinger
 
 	@Override
 	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierIncreaseAOE(), new ModuleModifierIncreasePotency()};
+		return new ModuleModifier[]{new ModuleModifierIncreaseAOE(), new ModuleModifierIncreasePotency(), new ModuleModifierIncreaseDuration()};
 	}
 
 	@Override
@@ -68,16 +69,16 @@ public class ModuleEffectAntiGravityWell extends ModuleEffect implements ILinger
 
 		if (position == null) return false;
 
-		double strength = spellRing.getModifier(AttributeRegistry.AREA, 3, 16);
+		double area = spellRing.getAttributeValue(AttributeRegistry.AREA, spell);
 
-		for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(position)).grow(strength, strength, strength))) {
+		for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(position)).grow(area, area, area))) {
 			if (entity == null) continue;
 			double dist = entity.getPositionVector().distanceTo(position);
 			if (dist < 2) continue;
-			if (dist > strength) continue;
-			if (!tax(this, spell, spellRing)) return false;
+			if (dist > area) continue;
+			if (!spellRing.taxCaster(spell)) return false;
 
-			final double upperMag = spellRing.getModifier(AttributeRegistry.POTENCY, 10, 50) / 100.0;
+			final double upperMag = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell) / 100.0;
 			final double scale = 3.5;
 			double mag = upperMag * (scale * dist / (-scale * dist - 1) + 1);
 
@@ -129,6 +130,6 @@ public class ModuleEffectAntiGravityWell extends ModuleEffect implements ILinger
 
 	@Override
 	public int getLingeringTime(SpellData spell, SpellRing spellRing) {
-		return (int) (spellRing.getModifier(AttributeRegistry.DURATION, 10, 64) * 500);
+		return (int) (spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 500);
 	}
 }

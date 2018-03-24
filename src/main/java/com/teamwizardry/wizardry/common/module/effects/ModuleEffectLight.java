@@ -50,6 +50,7 @@ public class ModuleEffectLight extends ModuleEffect {
 		else if (facing != null && world.isAirBlock(targetPos.offset(facing))) finalPos = targetPos.offset(facing);
 
 		if (finalPos == null) return false;
+		if (!spellRing.taxCaster(spell)) return false;
 
 		BlockUtils.placeBlock(world, finalPos, ModBlocks.LIGHT.getDefaultState(), caster instanceof EntityPlayerMP ? (EntityPlayerMP) caster : null);
 

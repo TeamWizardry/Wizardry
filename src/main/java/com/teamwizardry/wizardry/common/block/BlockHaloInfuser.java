@@ -24,7 +24,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Created by Saad on 6/10/2016.
+ * Created by Demoniaque on 6/10/2016.
  */
 public class BlockHaloInfuser extends BlockModContainer implements IStructure {
 

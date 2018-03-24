@@ -5,6 +5,7 @@ import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentStack;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentText;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentVoid;
+import com.teamwizardry.librarianlib.features.gui.provided.book.EventNavBarChange;
 import com.teamwizardry.librarianlib.features.gui.provided.book.IBookGui;
 import com.teamwizardry.librarianlib.features.gui.provided.book.NavBarHolder;
 import com.teamwizardry.librarianlib.features.gui.provided.book.hierarchy.IBookElement;
@@ -30,6 +31,10 @@ public class ComponentSpellRecipe extends NavBarHolder implements IBookElement {
 	public ComponentSpellRecipe(GuiBook book) {
 		super(16, 16, book.getMainBookComponent().getSize().getXi() - 32, book.getMainBookComponent().getSize().getYi() - 32, book);
 		this.book = book;
+
+		getNavBar().BUS.hook(EventNavBarChange.class, event -> {
+
+		});
 
 		if (book.getBookItemStack().isEmpty()) return;
 		ItemStack bookStack = book.getBookItemStack();

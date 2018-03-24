@@ -1,9 +1,10 @@
 {
   "item": "minecraft:ender_pearl",
-  "mana_drain": 200.0,
-  "burnout_fill": 100.0,
   "primary_color": "800000",
   "secondary_color": "FF0000",
-  "cooldown_time": 40,
-  "chargup_time": 10
+  "mana": { "base": 200 },
+  "burnout": { "base": 100 },
+  "cooldown": { "base": 40 },
+  "chargeup": { "base": 10 },
+  "duration": { "base": 10, "min": 10, "max": 500 }
 }

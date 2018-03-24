@@ -49,8 +49,8 @@ public class ModuleEffectBreak extends ModuleEffect {
 		BlockPos targetPos = spell.getTargetPos();
 		Entity caster = spell.getCaster();
 
-		double range = spellRing.getModifier(AttributeRegistry.AREA, 1, 64);
-		double strength = spellRing.getModifier(AttributeRegistry.POTENCY, 1, 20) / 4;
+		double range = spellRing.getAttributeValue(AttributeRegistry.AREA, spell);
+		double strength = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell) / 4;
 
 		if (targetPos != null) {
 			Block block = world.getBlockState(targetPos).getBlock();
@@ -63,7 +63,7 @@ public class ModuleEffectBreak extends ModuleEffect {
 
 				float hardness = world.getBlockState(pos).getBlockHardness(world, pos);
 				if (hardness >= 0 && hardness < strength) {
-					if (!tax(this, spell, spellRing)) return false;
+					if (!spellRing.taxCaster(spell)) return false;
 					BlockUtils.breakBlock(world, pos, null, caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null, true);
 				}
 			}

@@ -49,22 +49,23 @@ public final class VersionChecker {
 				String clientBuild = Wizardry.VERSION;
 				if (Utils.compareVersions(onlineVersion, clientBuild) == 1) {
 					ArrayList<String> messages = new ArrayList<>();
-					String base = "wizardry.init";
+					String base = "wizardry.update";
 					int n = 0;
 					while (LibrarianLib.PROXY.canTranslate(base + n))
 						messages.add(base + n++);
-					if (messages.isEmpty())
-						messages.add("wizardry.misc.update_link");
 
-					player.sendMessage(new TextComponentTranslation(messages.get(RandUtil.nextInt(messages.size() - 1))).setStyle(new Style().setColor(TextFormatting.YELLOW)));
+					if (!messages.isEmpty())
+						player.sendMessage(new TextComponentTranslation(messages.get(RandUtil.nextInt(messages.size() - 1))).setStyle(new Style().setColor(TextFormatting.YELLOW)));
 					player.sendMessage(new TextComponentTranslation("wizardry.misc.update_checker0")
 							.setStyle(new Style().setColor(TextFormatting.GREEN)));
 					player.sendMessage(new TextComponentTranslation("wizardry.misc.update_checker1")
 							.setStyle(new Style().setColor(TextFormatting.GREEN))
-							.appendSibling(new TextComponentString(clientBuild).setStyle(new Style().setColor(TextFormatting.RED))));
+							.appendText(" ")
+							.appendSibling(new TextComponentString(" " + clientBuild).setStyle(new Style().setColor(TextFormatting.RED))));
 					player.sendMessage(new TextComponentTranslation("wizardry.misc.update_checker2")
 							.setStyle(new Style().setColor(TextFormatting.GREEN))
-							.appendSibling(new TextComponentString(onlineVersion).setStyle(new Style().setColor(TextFormatting.YELLOW))));
+							.appendText(" ")
+							.appendSibling(new TextComponentString(" " + onlineVersion).setStyle(new Style().setColor(TextFormatting.YELLOW))));
 
 					if (updateMessage != null && !updateMessage.isEmpty())
 						player.sendMessage(component);

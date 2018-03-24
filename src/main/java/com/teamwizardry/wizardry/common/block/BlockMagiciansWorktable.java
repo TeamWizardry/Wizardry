@@ -25,7 +25,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Created by Saad on 6/12/2016.
+ * Created by Demoniaque on 6/12/2016.
  */
 public class BlockMagiciansWorktable extends BlockModContainer {
 	public static final PropertyEnum<EnumFacing> FACING = PropertyEnum.create("facing", EnumFacing.class, EnumFacing.HORIZONTALS);
