@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 /**
- * Created by Saad on 8/30/2016.
+ * Created by Demoniaque on 8/30/2016.
  */
 @Optional.Interface(iface = "baubles.api.IBauble", modid = "baubles")
 public class ItemCapeBauble extends ItemModBauble implements ICape {

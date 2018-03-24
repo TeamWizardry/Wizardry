@@ -19,7 +19,7 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent.Post;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 /**
- * Created by Saad on 6/20/2016.
+ * Created by Demoniaque on 6/20/2016.
  */
 public class HudEventHandler extends Gui {
 

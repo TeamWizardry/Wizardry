@@ -14,7 +14,7 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 /**
- * Created by Saad on 8/18/2016.
+ * Created by Demoniaque on 8/18/2016.
  */
 public class ModCapabilities {
 

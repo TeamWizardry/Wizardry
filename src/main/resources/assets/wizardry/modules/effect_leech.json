@@ -1,0 +1,16 @@
+{
+  "item": "minecraft:lead",
+  "primary_color": "00ffff",
+  "secondary_color": "00ff61",
+  "mana": {
+    "base": 200
+  },
+  "burnout": {
+    "base": 200
+  },
+  "potency": {
+    "base": 4,
+    "min": 4,
+    "max": 40
+  }
+}

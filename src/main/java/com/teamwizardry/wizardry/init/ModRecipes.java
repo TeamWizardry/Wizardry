@@ -13,7 +13,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 
 /**
- * Created by Saad on 4/8/2016.
+ * Created by Demoniaque on 4/8/2016.
  */
 @Mod.EventBusSubscriber
 public class ModRecipes {

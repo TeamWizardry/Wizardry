@@ -13,7 +13,7 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 import javax.annotation.Nonnull;
 
 /**
- * Created by Saad on 8/30/2016.
+ * Created by Demoniaque on 8/30/2016.
  */
 public class RecipeJam extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
 

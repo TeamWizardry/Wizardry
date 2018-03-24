@@ -34,7 +34,7 @@ import java.awt.*;
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 
 /**
- * Created by Saad on 5/7/2016.
+ * Created by Demoniaque on 5/7/2016.
  */
 @TileRegister("pedestal")
 public class TilePearlHolder extends TileManaInteracter implements ICooldown {

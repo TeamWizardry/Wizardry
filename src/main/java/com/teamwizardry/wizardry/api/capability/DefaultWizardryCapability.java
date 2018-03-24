@@ -12,7 +12,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import javax.annotation.Nullable;
 
 /**
- * Created by Saad on 8/16/2016.
+ * Created by Demoniaque on 8/16/2016.
  */
 @Savable
 public class DefaultWizardryCapability implements IWizardryCapability {

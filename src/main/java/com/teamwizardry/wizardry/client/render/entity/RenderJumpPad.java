@@ -9,7 +9,7 @@ import net.minecraft.util.ResourceLocation;
 import javax.annotation.Nonnull;
 
 /**
- * Created by Saad on 8/25/2016.
+ * Created by Demoniaque on 8/25/2016.
  */
 public class RenderJumpPad extends RenderLiving<EntityJumpPad> {
 

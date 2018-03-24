@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.init;
 import com.teamwizardry.librarianlib.features.base.ModSoundEvent;
 
 /**
- * Created by Saad on 6/29/2016.
+ * Created by Demoniaque on 6/29/2016.
  */
 public class ModSounds {
 	public static ModSoundEvent GLASS_BREAK;

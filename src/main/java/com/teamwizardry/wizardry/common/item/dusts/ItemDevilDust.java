@@ -17,7 +17,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import javax.annotation.Nonnull;
 
 /**
- * Created by Saad on 6/21/2016.
+ * Created by Demoniaque on 6/21/2016.
  */
 public class ItemDevilDust extends ItemMod implements IPickupAchievement {
 

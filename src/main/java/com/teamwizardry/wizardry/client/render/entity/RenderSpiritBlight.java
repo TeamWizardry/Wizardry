@@ -10,7 +10,7 @@ import net.minecraft.util.ResourceLocation;
 import javax.annotation.Nonnull;
 
 /**
- * Created by Saad on 8/21/2016.
+ * Created by Demoniaque on 8/21/2016.
  */
 public class RenderSpiritBlight extends RenderLiving<EntitySpiritBlight> {
 

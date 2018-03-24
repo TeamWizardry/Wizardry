@@ -9,7 +9,7 @@ import net.minecraftforge.common.capabilities.Capability.IStorage;
 import static com.teamwizardry.wizardry.api.Constants.Data.*;
 
 /**
- * Created by Saad on 8/16/2016.
+ * Created by Demoniaque on 8/16/2016.
  */
 public class WizardryCapabilityStorage implements IStorage<IWizardryCapability> {
 

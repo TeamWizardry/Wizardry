@@ -10,7 +10,7 @@ import net.minecraft.item.ItemStack;
 import javax.annotation.Nullable;
 
 /**
- * Created by Saad on 8/28/2016.
+ * Created by Demoniaque on 8/28/2016.
  */
 public class ItemFairyImbuedApple extends ItemModFood implements IItemColorProvider {
 

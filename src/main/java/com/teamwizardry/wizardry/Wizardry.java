@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 
 
 /**
- * Created by Saad on 6/9/2016.
+ * Created by Demoniaque on 6/9/2016.
  */
 @Mod(modid = Wizardry.MODID, version = Wizardry.VERSION, name = Wizardry.MODNAME, dependencies = "required-before:librarianlib")
 public class Wizardry {

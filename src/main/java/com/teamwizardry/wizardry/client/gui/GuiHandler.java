@@ -9,7 +9,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
- * Created by Saad on 4/13/2016.
+ * Created by Demoniaque on 4/13/2016.
  */
 public class GuiHandler implements IGuiHandler {
 

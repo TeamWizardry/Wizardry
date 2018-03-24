@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.api;
 
 /**
- * Created by Saad on 6/14/2016.
+ * Created by Demoniaque on 6/14/2016.
  */
 public class Constants {
 

@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.annotation.Nonnull;
 
 /**
- * Created by Saad on 9/4/2016.
+ * Created by Demoniaque on 9/4/2016.
  */
 public class BlockManaMagnet extends BlockModContainer {
 

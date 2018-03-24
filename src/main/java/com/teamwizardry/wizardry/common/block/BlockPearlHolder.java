@@ -26,7 +26,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nullable;
 
 /**
- * Created by Saad on 5/7/2016.
+ * Created by Demoniaque on 5/7/2016.
  */
 public class BlockPearlHolder extends BlockModContainer {
 

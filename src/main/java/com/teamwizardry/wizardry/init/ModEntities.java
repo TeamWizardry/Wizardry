@@ -13,7 +13,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
- * Created by Saad on 8/17/2016.
+ * Created by Demoniaque on 8/17/2016.
  */
 public class ModEntities {
 

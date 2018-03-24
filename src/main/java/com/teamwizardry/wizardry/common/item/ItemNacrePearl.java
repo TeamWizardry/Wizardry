@@ -32,7 +32,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 /**
- * Created by Saad on 6/28/2016.
+ * Created by Demoniaque on 6/28/2016.
  */
 public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, INacreProduct {
 

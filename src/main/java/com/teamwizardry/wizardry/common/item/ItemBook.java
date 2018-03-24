@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.annotation.Nonnull;
 
 /**
- * Created by Saad on 6/12/2016.
+ * Created by Demoniaque on 6/12/2016.
  */
 public class ItemBook extends ItemModBook implements IPickupAchievement {
 

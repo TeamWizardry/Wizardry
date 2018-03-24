@@ -4,6 +4,7 @@ import com.teamwizardry.librarianlib.features.autoregister.TileRegister;
 import com.teamwizardry.librarianlib.features.base.block.tile.module.ModuleInventory;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
+import com.teamwizardry.librarianlib.features.saving.Module;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.librarianlib.features.tesr.TileRenderer;
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
@@ -38,6 +39,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -47,7 +49,7 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * Created by Saad on 6/10/2016.
+ * Created by Demoniaque on 6/10/2016.
  */
 @TileRegister("crafting_plate")
 @TileRenderer(TileCraftingPlateRenderer.class)
@@ -62,12 +64,28 @@ public class TileCraftingPlate extends TileManaInteracter {
 		poses.add(new BlockPos(-3, 2, -3));
 	}
 
-	@com.teamwizardry.librarianlib.features.saving.Module
+	@Module
 	public ModuleInventory realInventory = new ModuleInventory(1000);
-	@com.teamwizardry.librarianlib.features.saving.Module
-	public ModuleInventory inputPearl = new ModuleInventory(1);
-	@com.teamwizardry.librarianlib.features.saving.Module
-	public ModuleInventory outputPearl = new ModuleInventory(1);
+	@Module
+	public ModuleInventory inputPearl = new ModuleInventory(new ItemStackHandler() {
+		@Override
+		protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
+			if (stack.getItem() instanceof IInfusable)
+				return super.getStackLimit(slot, stack);
+			else return 0;
+		}
+	});
+
+	@Module
+	public ModuleInventory outputPearl = new ModuleInventory(new ItemStackHandler() {
+		@Override
+		protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
+			if (stack.getItem() instanceof IInfusable)
+				return super.getStackLimit(slot, stack);
+			else return 0;
+		}
+	});
+
 	@Save
 	public boolean revealStructure = false, isAbleToSuckMana = false;
 	public Vec3d[] positions;
@@ -78,7 +96,6 @@ public class TileCraftingPlate extends TileManaInteracter {
 		realInventory.setSides(EnumFacing.values());
 		positions = new Vec3d[realInventory.getHandler().getSlots()];
 	}
-
 
 	@Override
 	public void readCustomNBT(NBTTagCompound compound) {

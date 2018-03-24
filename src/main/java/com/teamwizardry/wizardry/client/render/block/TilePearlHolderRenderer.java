@@ -19,7 +19,7 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 
 /**
- * Created by Saad on 5/7/2016.
+ * Created by Demoniaque on 5/7/2016.
  */
 public class TilePearlHolderRenderer extends TileEntitySpecialRenderer<TilePearlHolder> {
 

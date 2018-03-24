@@ -4,7 +4,7 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.entity.Entity;
 
 /**
- * Created by Saad on 8/25/2016.
+ * Created by Demoniaque on 8/25/2016.
  */
 public class ModelNull extends ModelBase {
 

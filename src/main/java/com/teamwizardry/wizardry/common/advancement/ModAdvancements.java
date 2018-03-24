@@ -10,7 +10,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import java.util.HashMap;
 
 /**
- * Created by Saad on 7/1/2016.
+ * Created by Demoniaque on 7/1/2016.
  */
 public class ModAdvancements {
 

@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * Created by Saad on 8/21/2016.
+ * Created by Demoniaque on 8/21/2016.
  */
 @SaveInPlace
 public class EntityFairy extends FlyingEntityMod {

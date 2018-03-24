@@ -29,7 +29,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * Created by Saad on 8/29/2016.
+ * Created by Demoniaque on 8/29/2016.
  */
 public class LibParticles {
 

@@ -524,6 +524,8 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		compound.setFloat("power_multiplier", powerMultiplier);
 		compound.setFloat("burnout_multiplier", burnoutMultiplier);
 		compound.setFloat("mana_multiplier", manaMultiplier);
+		compound.setString("primary_color", String.valueOf(primaryColor.getRGB()));
+		compound.setString("secondary_color", String.valueOf(secondaryColor.getRGB()));
 
 		if (childRing != null) compound.setTag("child_ring", this.childRing.serializeNBT());
 		if (module != null) compound.setString("module", module.getID());
@@ -538,6 +540,8 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		if (nbt.hasKey("power_multiplier")) powerMultiplier = nbt.getFloat("power_multiplier");
 		if (nbt.hasKey("burnout_multiplier")) burnoutMultiplier = nbt.getFloat("burnout_multiplier");
 		if (nbt.hasKey("mana_multiplier")) manaMultiplier = nbt.getFloat("mana_multiplier");
+		if (nbt.hasKey("primary_color")) primaryColor = Color.decode(nbt.getString("primary_color"));
+		if (nbt.hasKey("secondary_color")) secondaryColor = Color.decode(nbt.getString("secondary_color"));
 
 		if (nbt.hasKey("modifiers")) {
 			modifiers.clear();

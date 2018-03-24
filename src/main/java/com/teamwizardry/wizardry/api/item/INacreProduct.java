@@ -18,7 +18,7 @@ import javax.annotation.Nullable;
 import java.awt.*;
 
 /**
- * Created by Saad on 6/7/2016.
+ * Created by Demoniaque on 6/7/2016.
  */
 public interface INacreProduct extends IItemColorProvider {
 

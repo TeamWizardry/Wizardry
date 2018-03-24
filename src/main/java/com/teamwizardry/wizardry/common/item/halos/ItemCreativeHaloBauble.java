@@ -4,8 +4,7 @@ import baubles.api.BaubleType;
 import com.teamwizardry.librarianlib.features.base.item.ItemModBauble;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.capability.CapManager;
-import com.teamwizardry.wizardry.api.item.IFakeHalo;
-import com.teamwizardry.wizardry.api.item.IHalo;
+import com.teamwizardry.wizardry.api.item.halo.IHalo;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Optional;
@@ -13,10 +12,10 @@ import net.minecraftforge.fml.common.Optional;
 import javax.annotation.Nonnull;
 
 /**
- * Created by Saad on 8/30/2016.
+ * Created by Demoniaque on 8/30/2016.
  */
 @Optional.Interface(iface = "baubles.api.IBauble", modid = "baubles")
-public class ItemCreativeHaloBauble extends ItemModBauble implements IFakeHalo, IHalo {
+public class ItemCreativeHaloBauble extends ItemModBauble implements IHalo {
 
 	public ItemCreativeHaloBauble() {
 		super("halo_creative");

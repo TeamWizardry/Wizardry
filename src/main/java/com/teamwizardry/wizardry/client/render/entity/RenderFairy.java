@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 import java.util.Random;
 
 /**
- * Created by Saad on 8/25/2016.
+ * Created by Demoniaque on 8/25/2016.
  */
 public class RenderFairy extends RenderLiving<EntityFairy> {
 

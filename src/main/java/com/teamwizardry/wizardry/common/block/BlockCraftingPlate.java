@@ -42,7 +42,7 @@ import javax.annotation.Nullable;
 import java.awt.*;
 
 /**
- * Created by Saad on 6/10/2016.
+ * Created by Demoniaque on 6/10/2016.
  */
 public class BlockCraftingPlate extends BlockModContainer implements IStructure {
 
