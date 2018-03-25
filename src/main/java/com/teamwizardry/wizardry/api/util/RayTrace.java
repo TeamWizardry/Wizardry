@@ -25,12 +25,19 @@ public class RayTrace {
 	private boolean ignoreBlocksWithoutBoundingBoxes = false;
 	@Nullable
 	private Entity skipEntity = null;
+	@Nullable
+	private BlockPos skipBlockPos = null;
 
 	public RayTrace(@Nonnull World world, @Nonnull Vec3d slope, @Nonnull Vec3d origin, double range) {
 		this.world = world;
 		this.slope = slope;
 		this.origin = origin;
 		this.range = range;
+	}
+
+	public RayTrace skipBlockPos(@Nullable BlockPos pos) {
+		this.skipBlockPos = pos;
+		return this;
 	}
 
 	public RayTrace setSkipEntity(@Nullable Entity skipEntity) {

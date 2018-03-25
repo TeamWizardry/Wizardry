@@ -67,7 +67,7 @@ public class BlockPearlHolder extends BlockModContainer {
 			TilePearlHolder te = getTE(worldIn, pos);
 
 			if (!te.containsSomething()) {
-				if (heldItem.getItem() == ModItems.MANA_ORB || heldItem.getItem() == ModItems.PEARL_NACRE) {
+				if (heldItem.getItem() == ModItems.ORB || heldItem.getItem() == ModItems.PEARL_NACRE) {
 					te.setItemStack(heldItem.copy());
 					te.getItemStack().setCount(1);
 					heldItem.shrink(1);

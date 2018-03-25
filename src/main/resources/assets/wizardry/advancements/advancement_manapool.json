@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "wizardry:mana_orb"
+      "item": "wizardry:orb"
     },
     "title": {
       "translate": "advancement.wizardry.manapool"
