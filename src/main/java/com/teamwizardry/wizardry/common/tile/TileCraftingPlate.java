@@ -12,6 +12,8 @@ import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.TileManaInteracter;
 import com.teamwizardry.wizardry.api.capability.CapManager;
+import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
+import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
 import com.teamwizardry.wizardry.api.item.EnumPearlType;
 import com.teamwizardry.wizardry.api.item.IInfusable;
 import com.teamwizardry.wizardry.api.item.INacreProduct;
@@ -31,7 +33,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -42,6 +43,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -93,7 +95,6 @@ public class TileCraftingPlate extends TileManaInteracter {
 
 	public TileCraftingPlate() {
 		super(500, 500);
-		realInventory.setSides(EnumFacing.values());
 		positions = new Vec3d[realInventory.getHandler().getSlots()];
 	}
 
@@ -105,31 +106,33 @@ public class TileCraftingPlate extends TileManaInteracter {
 	public void writeCustomNBT(NBTTagCompound compound, boolean sync) {
 	}
 
+	@Nullable
+	@Override
+	public IWizardryCapability getWizardryCap() {
+		if (!inputPearl.getHandler().getStackInSlot(0).isEmpty())
+			return WizardryCapabilityProvider.getCap(inputPearl.getHandler().getStackInSlot(0));
+		return super.getWizardryCap();
+	}
+
 	@Override
 	public void update() {
 		super.update();
 
 		if (!((BlockCraftingPlate) getBlockType()).isStructureComplete(getWorld(), getPos())) return;
 
-		boolean ableToSuckMana = false;
-		if (!new CapManager(getCap()).isManaFull()) {
+		if (!new CapManager(getWizardryCap()).isManaFull()) {
 			for (BlockPos relative : poses) {
 				BlockPos target = getPos().add(relative);
 				TileEntity tile = world.getTileEntity(target);
 				if (tile != null && tile instanceof TilePearlHolder) {
 					if (!((TilePearlHolder) tile).isPartOfStructure) {
-						if (((TilePearlHolder) tile).structurePos != null && (((TilePearlHolder) tile).structurePos == null || !((TilePearlHolder) tile).structurePos.equals(getPos()))) {
-							((TilePearlHolder) tile).structurePos = getPos();
-						}
-						if (((TilePearlHolder) tile).suckManaFrom(getWorld(), getPos(), getCap(), target, 1, false)) {
-							ableToSuckMana = true;
-						}
+						((TilePearlHolder) tile).isPartOfStructure = true;
+						((TilePearlHolder) tile).structurePos = getPos();
+						tile.markDirty();
 					}
 				}
 			}
 		}
-
-		isAbleToSuckMana = ableToSuckMana;
 
 		for (EntityItem entityItem : world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos))) {
 			if (!inputPearl.getHandler().getStackInSlot(0).isEmpty()) break;
@@ -170,8 +173,6 @@ public class TileCraftingPlate extends TileManaInteracter {
 
 		if (!inputPearl.getHandler().getStackInSlot(0).isEmpty() && !realInventory.getHandler().getStackInSlot(0).isEmpty()) {
 			CapManager manager = new CapManager(inputPearl.getHandler().getStackInSlot(0));
-
-			suckManaFrom(getWorld(), getPos(), manager.getCap(), getPos(), 1, false);
 
 			if (manager.isManaFull()) {
 

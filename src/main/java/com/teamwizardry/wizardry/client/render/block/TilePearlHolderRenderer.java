@@ -1,14 +1,15 @@
 package com.teamwizardry.wizardry.client.render.block;
 
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.common.tile.TilePearlHolder;
 import com.teamwizardry.wizardry.init.ModBlocks;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
@@ -37,52 +38,38 @@ public class TilePearlHolderRenderer extends TileEntitySpecialRenderer<TilePearl
 			GlStateManager.enableBlend();
 			GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-			bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-			if (Minecraft.isAmbientOcclusionEnabled())
-				GlStateManager.shadeModel(GL11.GL_SMOOTH);
-			else GlStateManager.shadeModel(GL11.GL_FLAT);
-
 			GlStateManager.translate(x + 0.5, y + 0.5, z + 0.5);
 			GlStateManager.disableRescaleNormal();
 
 			float sin = (float) Math.sin((te.getWorld().getTotalWorldTime() + partialTicks + te.getPos().hashCode()) / 10.0);
-			boolean magnetFound = false;
 
-			if (isPearl) {
-				Vec3d direction = Vec3d.ZERO;
+			boolean gravitating = false;
+			// Hover towards block
+			if (te.containsSomething()) {
+				BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(te.getPos());
 				for (int i = -6; i < 6; i++)
 					for (int j = -6; j < 6; j++)
 						for (int k = -6; k < 6; k++) {
-							BlockPos pos = new BlockPos(te.getPos().getX() + i, te.getPos().getY() + j, te.getPos().getZ() + k);
-							if (te.getWorld().getBlockState(pos).getBlock() != ModBlocks.MANA_MAGNET) continue;
-							direction = new Vec3d(te.getPos()).subtract(new Vec3d(pos)).normalize();
-							magnetFound = true;
-							break;
-						}
+							pos.setPos(te.getPos().getX() + i, te.getPos().getY() + j, te.getPos().getZ() + k);
+							Block block = te.getWorld().getBlockState(pos).getBlock();
 
-				if (magnetFound) {
-					GlStateManager.translate(sin * direction.x / 5.0, sin * direction.y / 5.0, sin * direction.z / 5.0);
-					GlStateManager.translate(-direction.x / 3.0, -direction.y / 3.0, -direction.z / 3.0);
-				}
-			} else {
-				Vec3d directionBattery = Vec3d.ZERO;
-				boolean batteryFound = false;
-				for (int i = -6; i < 6; i++)
-					for (int j = -6; j < 6; j++)
-						for (int k = -6; k < 6; k++) {
-							BlockPos pos = new BlockPos(te.getPos().getX() + i, te.getPos().getY() + j, te.getPos().getZ() + k);
-							if (te.getWorld().getBlockState(pos).getBlock() != ModBlocks.MANA_BATTERY) continue;
-							directionBattery = new Vec3d(te.getPos()).subtract(new Vec3d(pos)).normalize();
-							batteryFound = true;
-							break;
+							if (te.containsNacrePearl() && block == ModBlocks.MANA_MAGNET) {
+								gravitating = true;
+								Vec3d direction = new Vec3d(te.getPos()).subtract(new Vec3d(pos)).normalize();
+								GlStateManager.translate(sin * direction.x / 5.0, sin * direction.y / 5.0, sin * direction.z / 5.0);
+								break;
+							}
+							if (te.containsManaOrb() && block == ModBlocks.MANA_BATTERY) {
+								gravitating = true;
+								Vec3d direction = new Vec3d(te.getPos()).subtract(new Vec3d(pos)).normalize();
+								GlStateManager.translate(sin * direction.x / 5.0, sin * direction.y / 5.0, sin * direction.z / 5.0);
+								break;
+							}
 						}
-				if (batteryFound) {
-					GlStateManager.translate(sin * directionBattery.x / 5.0, sin * directionBattery.y / 5.0, sin * directionBattery.z / 5.0);
-					GlStateManager.translate(-directionBattery.x / 3.0, -directionBattery.y / 3.0, -directionBattery.z / 3.0);
-				}
 			}
 
-			if (!isPearl || !magnetFound) GlStateManager.translate(0, sin / 10.0, 0);
+
+			if (!gravitating) GlStateManager.translate(0, sin / 10.0, 0);
 
 			GlStateManager.rotate((te.getWorld().getTotalWorldTime() + partialTicks) * 4.0f, 0, 1, 0);
 
@@ -90,24 +77,22 @@ public class TilePearlHolderRenderer extends TileEntitySpecialRenderer<TilePearl
 			GlStateManager.rotate(45f, 1, 0, 1);
 
 			{
-				GlStateManager.enableRescaleNormal();
 				GlStateManager.disableCull();
-				GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 				GlStateManager.enableLighting();
 				GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 				RenderHelper.disableStandardItemLighting();
 
-				if (isPearl) {
+				if (te.containsNacrePearl()) {
 					Minecraft.getMinecraft().getTextureManager().bindTexture(pearlTexture);
 					renderCube(0.1, new Color(Minecraft.getMinecraft().getItemColors().colorMultiplier(te.getItemStack(), 0)));
 
-					//} else if (te.containsGlassOrb() || new CapManager(te.getCap()).getMana() <= 2) {
-					//	Minecraft.getMinecraft().getTextureManager().bindTexture(glassOrb);
-					//	renderCube(0.15, Color.WHITE);
-
-				} else if (te.containsManaOrb()) {
+				} else if (te.containsAnyOrb()) {
+					CapManager manager = new CapManager(te.getWizardryCap());
+					Color c = new Color(1f, 1f, 1f, (float) (manager.getMana() / manager.getMaxMana()));
 					Minecraft.getMinecraft().getTextureManager().bindTexture(manaOrb);
-					renderCube(0.15, Color.WHITE);
+					renderCube(0.13, c);
+					Minecraft.getMinecraft().getTextureManager().bindTexture(glassOrb);
+					renderCube(0.135, new Color(1, 1, 1, 0.8f));
 				}
 				GlStateManager.disableRescaleNormal();
 			}

@@ -14,8 +14,8 @@ import net.minecraftforge.fml.common.Loader;
  */
 public class ModItems {
 
-	public static ItemGlassOrb GLASS_ORB;
-	public static ItemManaOrb MANA_ORB;
+	//public static ItemGlassOrb GLASS_ORB;
+	public static ItemOrb ORB;
 	public static ItemNacrePearl PEARL_NACRE;
 
 	public static ItemStaff STAFF;
@@ -45,8 +45,8 @@ public class ModItems {
 	public static ItemWisdomStick WISDOM_STICK;
 
 	public static void init() {
-		GLASS_ORB = new ItemGlassOrb();
-		MANA_ORB = new ItemManaOrb();
+		//GLASS_ORB = new ItemGlassOrb();
+		ORB = new ItemOrb();
 		PEARL_NACRE = new ItemNacrePearl();
 
 		RING = new ItemRing();

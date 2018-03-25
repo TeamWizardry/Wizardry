@@ -59,7 +59,7 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 
 		if (tile.positions[i] == null) return;
 
-		CapManager manager = new CapManager(tile.getCap());
+		CapManager manager = new CapManager(tile.getWizardryCap());
 
 		Vec3d newDest;
 		double t;
@@ -92,7 +92,7 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 			newDest = Vec3d.ZERO;
 
 			if (!reverse) {
-				for (BlockPos pos : tile.getNearestSuckables(TileManaBattery.class, tile.getWorld(), tile.getPos(), true)) {
+				for (BlockPos pos : tile.getNearestInteractablesPoses(TileManaBattery.class)) {
 					newDest = new Vec3d(pos).subtract(new Vec3d(tile.getPos())).normalize().scale(1.0 / 2.0);
 					break;
 				}
@@ -158,7 +158,7 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 
 
 		ItemStack pearl = tile.inputPearl.getHandler().getStackInSlot(0);
-		CapManager manager = new CapManager(tile.getCap());
+		CapManager manager = new CapManager(tile.getWizardryCap());
 
 		int count = 0;
 		for (int i = 0; i < tile.realInventory.getHandler().getSlots(); i++) {

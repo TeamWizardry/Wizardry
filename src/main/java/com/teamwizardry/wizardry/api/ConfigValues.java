@@ -26,7 +26,7 @@ public class ConfigValues {
 	public static int underworldFallDistance = 128;
 
 	@ConfigProperty(category = "world", comment = "The maximum possible distance required for 2 mana interacting blocks to link to each other")
-	public static int networkLinkDistance = 64;
+	public static int networkLinkDistance = 32;
 
 	@ConfigProperty(category = "items", comment = "The buffer size a cheap haloInv will give to a player.")
 	public static double crudeHaloBufferSize = 500;

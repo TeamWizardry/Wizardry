@@ -120,7 +120,7 @@ public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> 
 			GlStateManager.shadeModel(GL11.GL_SMOOTH);
 		else GlStateManager.shadeModel(GL11.GL_FLAT);
 
-		CapManager manager = new CapManager(tile.getCap());
+		CapManager manager = new CapManager(tile.getWizardryCap());
 		float fill = (float) (manager.getMana() / manager.getMaxMana()) / 50.0f;
 
 

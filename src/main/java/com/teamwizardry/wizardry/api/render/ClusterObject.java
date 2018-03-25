@@ -49,7 +49,7 @@ public class ClusterObject implements INBTSerializable<NBTTagCompound> {
 	public void tick(World world, Random random) {
 		tick++;
 		if ((world.getTotalWorldTime() - worldTime) >= destTime) {
-			CapManager manager = new CapManager(plate.cap);
+			CapManager manager = new CapManager(plate.getWizardryCap());
 			if (manager.isManaEmpty()) {
 				origin = dest;
 				dest = new Vec3d(RandUtil.nextDouble(-0.3, 0.3), RandUtil.nextDouble(0.5, 0.6), RandUtil.nextDouble(-0.3, 0.3));
