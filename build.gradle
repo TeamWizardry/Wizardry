@@ -29,6 +29,11 @@ minecraft {
     runDir = "run"
     mappings = "$mcp_version"
 
+    replace 'GRADLE:VERSION', mod_version
+    replace 'required-before:librarianlib', 'required-before:librarianlib@' + liblib_version
+
+    replaceIn 'Wizardry.java'
+
     clientJvmArgs = ["-Dfml.coreMods.load=$core_plugin,com.teamwizardry.librarianlib.asm.LibLibCorePlugin"]
     serverJvmArgs = ["-Dfml.coreMods.load=$core_plugin,com.teamwizardry.librarianlib.asm.LibLibCorePlugin"]
 }
@@ -43,7 +48,7 @@ repositories {
 }
 
 dependencies {
-	compile "com.teamwizardry.librarianlib:librarianlib-1.12.2:$liblib_version:deobf"
+	compile "com.teamwizardry.librarianlib:librarianlib-1.12.2:$liblib_version-SNAPSHOT:deobf"
 	deobfCompile "mezz.jei:jei_1.12:$jei_version:api"
 	runtime "mezz.jei:jei_1.12:$jei_version"
 	runtime "team.chisel.ctm:CTM:$ctm_version"
@@ -62,6 +67,8 @@ jar {
         )
     }
 }
+
+
 
 processResources {
     inputs.property 'version', project.version
