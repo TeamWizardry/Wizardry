@@ -167,11 +167,6 @@ public class FluidRecipeLoader {
 					continue;
 				}
 
-				if (!fileObject.has("type")) {
-					Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT specify a recipe output type. Ignoring file...: " + element.toString());
-					continue;
-				}
-
 				if (!fileObject.has("output")) {
 					Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT specify a recipe output. Ignoring file...: " + element.toString());
 					continue;
@@ -267,7 +262,8 @@ public class FluidRecipeLoader {
 					bubbling = fileObject.get("bubbling").getAsBoolean();
 				}
 
-				String type = fileObject.get("type").getAsString();
+				JsonElement typeElement = fileObject.get("type");
+				String type = typeElement == null ? "item" : typeElement.getAsString();
 				JsonObject output = fileObject.get("output").getAsJsonObject();
 
 				if (type.equalsIgnoreCase("item")) {
