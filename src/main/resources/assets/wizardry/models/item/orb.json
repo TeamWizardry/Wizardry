@@ -1,0 +1,68 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "wizardry:items/orb_fill_50"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "fill": 1
+      },
+      "model": "wizardry:item/mana_orb"
+    },
+    {
+      "predicate": {
+        "fill": 0.9
+      },
+      "model": "wizardry:item/orb_fill_90"
+    },
+    {
+      "predicate": {
+        "fill": 0.8
+      },
+      "model": "wizardry:item/orb_fill_80"
+    },
+    {
+      "predicate": {
+        "fill": 0.7
+      },
+      "model": "wizardry:item/orb_fill_70"
+    },
+    {
+      "predicate": {
+        "fill": 0.6
+      },
+      "model": "wizardry:item/orb_fill_60"
+    },
+    {
+      "predicate": {
+        "fill": 0.5
+      },
+      "model": "wizardry:item/orb_fill_50"
+    },
+    {
+      "predicate": {
+        "fill": 0.4
+      },
+      "model": "wizardry:item/orb_fill_40"
+    },
+    {
+      "predicate": {
+        "fill": 0.3
+      },
+      "model": "wizardry:item/orb_fill_30"
+    },
+    {
+      "predicate": {
+        "fill": 0.2
+      },
+      "model": "wizardry:item/orb_fill_20"
+    },
+    {
+      "predicate": {
+        "fill": 0.1
+      },
+      "model": "wizardry:item/orb_fill_10"
+    }
+  ]
+}

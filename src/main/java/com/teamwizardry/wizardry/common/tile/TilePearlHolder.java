@@ -8,6 +8,7 @@ import com.teamwizardry.wizardry.api.block.TileManaInteracter;
 import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
 import com.teamwizardry.wizardry.api.item.ICooldown;
+import com.teamwizardry.wizardry.api.item.IManaCell;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.common.item.ItemNacrePearl;
@@ -33,7 +34,7 @@ public class TilePearlHolder extends TileManaInteracter implements ICooldown {
 	public ModuleInventory inventory = new ModuleInventory(new ItemStackHandler() {
 		@Override
 		protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
-			if (stack.getItem() instanceof ItemOrb
+			if (stack.getItem() instanceof IManaCell
 					|| stack.getItem() instanceof ItemNacrePearl)
 				return super.getStackLimit(slot, stack);
 			else return 0;
