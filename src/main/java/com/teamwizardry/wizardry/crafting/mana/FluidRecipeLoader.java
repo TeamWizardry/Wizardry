@@ -236,7 +236,7 @@ public class FluidRecipeLoader {
 				}
 
 				if (fileObject.has("consume")) {
-					if (!fileObject.get("consume").isJsonPrimitive() || !fileObject.getAsJsonPrimitive("consume").isBoolean()) {
+					if (!fileObject.get("consume").isJsonPrimitive()) {
 						Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT give consume as a boolean. Ignoring file...: " + element.toString());
 						continue;
 					}
@@ -244,7 +244,7 @@ public class FluidRecipeLoader {
 				}
 
 				if (fileObject.has("explode")) {
-					if (!fileObject.get("explode").isJsonPrimitive() || !fileObject.getAsJsonPrimitive("explode").isBoolean()) {
+					if (!fileObject.get("explode").isJsonPrimitive()) {
 						Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT give explode as a boolean. Ignoring file...: " + element.toString());
 						continue;
 					}
@@ -252,7 +252,7 @@ public class FluidRecipeLoader {
 				}
 
 				if (fileObject.has("harp")) {
-					if (!fileObject.get("harp").isJsonPrimitive() || !fileObject.getAsJsonPrimitive("harp").isBoolean()) {
+					if (!fileObject.get("harp").isJsonPrimitive()) {
 						Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT give harp as a boolean. Ignoring file...: " + element.toString());
 						continue;
 					}
@@ -260,7 +260,7 @@ public class FluidRecipeLoader {
 				}
 
 				if (fileObject.has("bubbling")) {
-					if (!fileObject.get("bubbling").isJsonPrimitive() || !fileObject.getAsJsonPrimitive("bubbling").isBoolean()) {
+					if (!fileObject.get("bubbling").isJsonPrimitive()) {
 						Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT give bubbling as a boolean. Ignoring file...: " + element.toString());
 						continue;
 					}
