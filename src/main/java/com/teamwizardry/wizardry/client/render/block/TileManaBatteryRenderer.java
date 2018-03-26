@@ -6,6 +6,7 @@ import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
 import com.teamwizardry.librarianlib.features.tesr.TileRenderHandler;
+import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.CachedStructure;
@@ -15,7 +16,6 @@ import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.core.StructureErrorRenderer;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
 import com.teamwizardry.wizardry.init.ModBlocks;
-import com.teamwizardry.wizardry.proxy.ClientProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -28,11 +28,9 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
@@ -44,6 +42,7 @@ import java.util.HashSet;
 /**
  * Created by Demoniaque.
  */
+@SideOnly(Side.CLIENT)
 @Mod.EventBusSubscriber(value = Side.CLIENT, modid = Wizardry.MODID)
 public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> {
 
@@ -55,12 +54,12 @@ public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> 
 		cachedStructure = new CachedStructure(((IStructure) tile.getBlockType()).getStructure().loc, tile.getWorld());
 	}
 
-	@SideOnly(Side.CLIENT)
-	@SubscribeEvent
-	public static void reload(ClientProxy.ResourceReloadEvent event) {
-		modelRing = null;
-		modelCrystal = null;
-		modelRingOuter = null;
+	static {
+		ClientRunnable.registerReloadHandler(() -> {
+			modelRing = null;
+			modelCrystal = null;
+			modelRingOuter = null;
+		});
 	}
 
 	private static boolean getBakedModels() {
@@ -103,8 +102,6 @@ public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> 
 		super.render(partialTicks, destroyStage, alpha);
 
 		if (!getBakedModels()) return;
-
-		World world = tile.getWorld();
 
 		GlStateManager.pushMatrix();
 		GlStateManager.enableBlend();

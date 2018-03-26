@@ -6,8 +6,8 @@ import com.teamwizardry.wizardry.common.block.fluid.ModFluids;
 import com.teamwizardry.wizardry.common.block.wisdomwood.*;
 import net.minecraft.block.Block;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -15,7 +15,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 /**
  * Created by Demoniaque on 3/24/2016.
  */
-@Mod.EventBusSubscriber
 public class ModBlocks {
 
 	public static BlockCraftingPlate CRAFTING_PLATE;
@@ -49,6 +48,8 @@ public class ModBlocks {
 
 	public static void init() {
 
+		MinecraftForge.EVENT_BUS.register(ModBlocks.class);
+
 		ModFluids.init();
 
 		CRAFTING_PLATE = new BlockCraftingPlate();
@@ -81,7 +82,7 @@ public class ModBlocks {
 	}
 
 	@SubscribeEvent
-	public void remapFluids(RegistryEvent.MissingMappings<Block> event) {
+	public static void remapFluids(RegistryEvent.MissingMappings<Block> event) {
 		event.getMappings().stream()
 				.filter(mapping -> mapping.key.getResourcePath().equals("mana"))
 				.forEach(mapping -> mapping.remap(ModFluids.MANA.getActualBlock()));
@@ -92,7 +93,7 @@ public class ModBlocks {
 
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
-	public void registerModels(ModelRegistryEvent event) {
+	public static void registerModels(ModelRegistryEvent event) {
 		PEARL_HOLDER.initModel();
 		JAR.initModel();
 		MANA_MAGNET.initModel();

@@ -3,7 +3,10 @@ package com.teamwizardry.wizardry.crafting.mana;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.util.PosUtils;
@@ -13,6 +16,7 @@ import com.teamwizardry.wizardry.common.block.fluid.ModFluids;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.block.Block;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -25,7 +29,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.JsonContext;
-import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -167,11 +170,6 @@ public class FluidRecipeLoader {
 					continue;
 				}
 
-				if (!fileObject.has("type")) {
-					Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT specify a recipe output type. Ignoring file...: " + element.toString());
-					continue;
-				}
-
 				if (!fileObject.has("output")) {
 					Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT specify a recipe output. Ignoring file...: " + element.toString());
 					continue;
@@ -236,7 +234,7 @@ public class FluidRecipeLoader {
 				}
 
 				if (fileObject.has("consume")) {
-					if (!fileObject.get("consume").isJsonPrimitive() || !fileObject.getAsJsonPrimitive("consume").isBoolean()) {
+					if (!fileObject.get("consume").isJsonPrimitive()) {
 						Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT give consume as a boolean. Ignoring file...: " + element.toString());
 						continue;
 					}
@@ -244,7 +242,7 @@ public class FluidRecipeLoader {
 				}
 
 				if (fileObject.has("explode")) {
-					if (!fileObject.get("explode").isJsonPrimitive() || !fileObject.getAsJsonPrimitive("explode").isBoolean()) {
+					if (!fileObject.get("explode").isJsonPrimitive()) {
 						Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT give explode as a boolean. Ignoring file...: " + element.toString());
 						continue;
 					}
@@ -252,7 +250,7 @@ public class FluidRecipeLoader {
 				}
 
 				if (fileObject.has("harp")) {
-					if (!fileObject.get("harp").isJsonPrimitive() || !fileObject.getAsJsonPrimitive("harp").isBoolean()) {
+					if (!fileObject.get("harp").isJsonPrimitive()) {
 						Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT give harp as a boolean. Ignoring file...: " + element.toString());
 						continue;
 					}
@@ -260,14 +258,15 @@ public class FluidRecipeLoader {
 				}
 
 				if (fileObject.has("bubbling")) {
-					if (!fileObject.get("bubbling").isJsonPrimitive() || !fileObject.getAsJsonPrimitive("bubbling").isBoolean()) {
+					if (!fileObject.get("bubbling").isJsonPrimitive()) {
 						Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT give bubbling as a boolean. Ignoring file...: " + element.toString());
 						continue;
 					}
 					bubbling = fileObject.get("bubbling").getAsBoolean();
 				}
 
-				String type = fileObject.get("type").getAsString();
+				JsonElement typeElement = fileObject.get("type");
+				String type = typeElement == null ? "item" : typeElement.getAsString();
 				JsonObject output = fileObject.get("output").getAsJsonObject();
 
 				if (type.equalsIgnoreCase("item")) {
@@ -283,14 +282,27 @@ public class FluidRecipeLoader {
 					recipes.put(inputItem, build);
 				} else if (type.equalsIgnoreCase("block")) {
 					IBlockState outputBlock;
-					Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(output.get("name").getAsString()));
+
+					JsonElement name = output.get("item");
+					if (name == null)
+						name = output.get("block");
+					if (name == null)
+						name = output.get("name");
+
+					Block block = name != null ? ForgeRegistries.BLOCKS.getValue(new ResourceLocation(name.getAsString())) : null;
 					if (block == null) {
 						Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT provide a valid output block. Ignoring file...: " + element.toString());
 						continue;
 					}
+
 					int meta = 0;
-					if (output.has("meta") && output.get("meta").isJsonPrimitive() && output.getAsJsonPrimitive("meta").isNumber())
-						meta = output.get("meta").getAsInt();
+
+					JsonElement data = output.get("data");
+					if (data == null)
+						data = output.get("meta");
+
+					if (data != null && data.isJsonPrimitive() && data.getAsJsonPrimitive().isNumber())
+						meta = data.getAsInt();
 					outputBlock = block.getStateFromMeta(meta);
 
 					FluidCrafter build = buildFluidCrafter(file.getPath(), outputBlock, inputItem, extraInputs, fluid, duration, required, consume, explode, bubbling, harp);
@@ -298,7 +310,7 @@ public class FluidRecipeLoader {
 					recipes.put(inputItem, build);
 				} else
 					Wizardry.logger.error("  > WARNING! " + file.getPath() + " specifies an invalid recipe output type. Valid recipe types: \"item\" \"block\". Ignoring file...: " + element.toString());
-			} catch (JsonParseException jsonException) {
+			} catch (Exception jsonException) {
 				Wizardry.logger.error("  > WARNING! Skipping " + file.getPath() + " due to error: ", jsonException);
 			}
 		}
@@ -346,7 +358,10 @@ public class FluidRecipeLoader {
 				Block block = fluid.getBlock();
 				if (block != null) {
 					IBlockState defaultState = block.getDefaultState();
-					IBlockState drainState = defaultState.withProperty(BlockFluidBase.LEVEL, defaultState.getValue(BlockFluidBase.LEVEL) + 1);
+					Iterator<IProperty<?>> properties = defaultState.getPropertyKeys().iterator();
+					IBlockState drainState = defaultState;
+					if (properties.hasNext())
+						drainState = drainState.cycleProperty(properties.next());
 
 					for (BlockPos position : allLiquidInPool(world, pos, required, fluid))
 						world.setBlockState(position, drainState);
@@ -420,7 +435,10 @@ public class FluidRecipeLoader {
 				Block block = fluid.getBlock();
 				if (block != null) {
 					IBlockState defaultState = block.getDefaultState();
-					IBlockState drainState = defaultState.withProperty(BlockFluidBase.LEVEL, defaultState.getValue(BlockFluidBase.LEVEL) - 1);
+					Iterator<IProperty<?>> properties = defaultState.getPropertyKeys().iterator();
+					IBlockState drainState = defaultState;
+					if (properties.hasNext())
+						drainState = drainState.cycleProperty(properties.next());
 
 					for (BlockPos position : allLiquidInPool(world, pos, required, fluid))
 						world.setBlockState(position, drainState);

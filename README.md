@@ -24,13 +24,13 @@ Only .json files will be read.
   "output":
   {
     "item": "string"    // Registry name of item or block resulting from recipe.
-    "meta": number      // Optional, defaults to 0 if not present.
+    "data": number      // Only optional if the item has only one variant.
     "nbt": { ... }      // Optional, only used by "item" type recipes. Specifies the exact NBT compound the output will be created with.
   },
   "input":
   {
     "item": "string"    // Registry name of item being loaded.
-    "meta": number      // Optional, defaults to 0 if not present.
+    "data": number      // Only optional if the item has only one variant.
     OR
     "type": "forge:ore_dict", "ore": "string" // Oredict value for the recipe's item, only used if "name" value is not given. Ignores "meta" value if used.
   },
@@ -38,7 +38,7 @@ Only .json files will be read.
   [
     {
       "item": "string"  // All values here function the same as the "input" field
-      "meta": number
+      "data": number    // Only optional if the item has only one variant.
       OR
       "type": "forge:ore_dict", "ore": "string"
     },
@@ -63,14 +63,14 @@ Only .json files will be read.
   "input":
   {
     "item": "string"  // Registry name of recipe's input
-    "meta": number    // Optional, defaults to 0
+    "data": number    // Only optional if the item has only one variant.
     OR
     "type": "forge:ore_dict", "ore": "string" // Oredict value for the recipe's input item
   },
   "output":
   {
     "item": "string"  // Registry name of recipe's output
-    "meta": number    // Optional, defaults to 0
+    "data": number    // Only optional if the item has only one variant.
     "count": number   // Optional, defaults to 1. Number of output items per input item
   },
   "duration": number  // Optional, defaults to 200. Duration in ticks of the recipe
