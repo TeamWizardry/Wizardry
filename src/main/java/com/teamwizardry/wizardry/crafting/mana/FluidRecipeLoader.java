@@ -279,14 +279,27 @@ public class FluidRecipeLoader {
 					recipes.put(inputItem, build);
 				} else if (type.equalsIgnoreCase("block")) {
 					IBlockState outputBlock;
-					Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(output.get("name").getAsString()));
+
+					JsonElement name = output.get("item");
+					if (name == null)
+						name = output.get("block");
+					if (name == null)
+						name = output.get("name");
+
+					Block block = name != null ? ForgeRegistries.BLOCKS.getValue(new ResourceLocation(name.getAsString())) : null;
 					if (block == null) {
 						Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT provide a valid output block. Ignoring file...: " + element.toString());
 						continue;
 					}
+
 					int meta = 0;
-					if (output.has("meta") && output.get("meta").isJsonPrimitive() && output.getAsJsonPrimitive("meta").isNumber())
-						meta = output.get("meta").getAsInt();
+
+					JsonElement data = output.get("data");
+					if (data == null)
+						data = output.get("meta");
+
+					if (data != null && data.isJsonPrimitive() && data.getAsJsonPrimitive().isNumber())
+						meta = data.getAsInt();
 					outputBlock = block.getStateFromMeta(meta);
 
 					FluidCrafter build = buildFluidCrafter(file.getPath(), outputBlock, inputItem, extraInputs, fluid, duration, required, consume, explode, bubbling, harp);
@@ -294,7 +307,7 @@ public class FluidRecipeLoader {
 					recipes.put(inputItem, build);
 				} else
 					Wizardry.logger.error("  > WARNING! " + file.getPath() + " specifies an invalid recipe output type. Valid recipe types: \"item\" \"block\". Ignoring file...: " + element.toString());
-			} catch (JsonParseException jsonException) {
+			} catch (Exception jsonException) {
 				Wizardry.logger.error("  > WARNING! Skipping " + file.getPath() + " due to error: ", jsonException);
 			}
 		}
