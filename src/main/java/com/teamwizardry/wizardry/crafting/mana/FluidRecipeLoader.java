@@ -3,7 +3,10 @@ package com.teamwizardry.wizardry.crafting.mana;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.util.PosUtils;
@@ -13,6 +16,7 @@ import com.teamwizardry.wizardry.common.block.fluid.ModFluids;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.block.Block;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -25,7 +29,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.JsonContext;
-import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -355,7 +358,10 @@ public class FluidRecipeLoader {
 				Block block = fluid.getBlock();
 				if (block != null) {
 					IBlockState defaultState = block.getDefaultState();
-					IBlockState drainState = defaultState.withProperty(BlockFluidBase.LEVEL, defaultState.getValue(BlockFluidBase.LEVEL) + 1);
+					Iterator<IProperty<?>> properties = defaultState.getPropertyKeys().iterator();
+					IBlockState drainState = defaultState;
+					if (properties.hasNext())
+						drainState = drainState.cycleProperty(properties.next());
 
 					for (BlockPos position : allLiquidInPool(world, pos, required, fluid))
 						world.setBlockState(position, drainState);
@@ -429,7 +435,10 @@ public class FluidRecipeLoader {
 				Block block = fluid.getBlock();
 				if (block != null) {
 					IBlockState defaultState = block.getDefaultState();
-					IBlockState drainState = defaultState.withProperty(BlockFluidBase.LEVEL, defaultState.getValue(BlockFluidBase.LEVEL) - 1);
+					Iterator<IProperty<?>> properties = defaultState.getPropertyKeys().iterator();
+					IBlockState drainState = defaultState;
+					if (properties.hasNext())
+						drainState = drainState.cycleProperty(properties.next());
 
 					for (BlockPos position : allLiquidInPool(world, pos, required, fluid))
 						world.setBlockState(position, drainState);
