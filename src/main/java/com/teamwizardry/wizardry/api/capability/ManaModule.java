@@ -1,9 +1,7 @@
-package com.teamwizardry.wizardry.common.tile;
+package com.teamwizardry.wizardry.api.capability;
 
 import com.teamwizardry.librarianlib.features.base.block.tile.TileMod;
 import com.teamwizardry.librarianlib.features.base.block.tile.module.ModuleCapability;
-import com.teamwizardry.wizardry.api.capability.CustomWizardryCapability;
-import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
 import org.jetbrains.annotations.NotNull;
 
 /**
