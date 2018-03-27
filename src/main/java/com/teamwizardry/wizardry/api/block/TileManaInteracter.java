@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.api.block;
 import com.teamwizardry.librarianlib.features.base.block.tile.TileMod;
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBezier3D;
-import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpLine;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
@@ -139,10 +138,6 @@ public class TileManaInteracter extends TileMod implements ITickable, IManaInter
 		return Vec3d.ZERO;
 	}
 
-	public boolean isInboundManaController() {
-		return false;
-	}
-
 	public boolean isAllowOutsideSucking() {
 		return allowOutsideSucking;
 	}
@@ -174,18 +169,18 @@ public class TileManaInteracter extends TileMod implements ITickable, IManaInter
 		Vec3d thisPos = new Vec3d(getPos()).addVector(0.5, 0.5, 0.5);
 		Vec3d theirPos = new Vec3d(interacterFrom.getPos()).addVector(0.5, 0.5, 0.5);
 
-		if (false) {
-			ParticleBuilder helix = new ParticleBuilder(200);
-			helix.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-			helix.setAlphaFunction(new InterpFadeInOut(0.1f, 0.1f));
-			ParticleSpawner.spawn(helix, world, new StaticInterp<>(thisPos), 1, 0, (someFloat, particleBuilder) -> {
-				particleBuilder.setColor(ColorUtils.changeColorAlpha(new Color(0xFF0000), RandUtil.nextInt(50, 200)));
-				particleBuilder.setScale(RandUtil.nextFloat(0.3f, 0.8f));
-				particleBuilder.disableRandom();
-				particleBuilder.setPositionFunction(new InterpLine(Vec3d.ZERO, theirPos.subtract(thisPos)));
-				particleBuilder.setLifetime(RandUtil.nextInt(50, 60));
-			});
-		}
+		// DEBUG
+		//ParticleBuilder helix = new ParticleBuilder(200);
+		//helix.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+		//helix.setAlphaFunction(new InterpFadeInOut(0.1f, 0.1f));
+		//ParticleSpawner.spawn(helix, world, new StaticInterp<>(thisPos), 1, 0, (someFloat, particleBuilder) -> {
+		//	particleBuilder.setColor(ColorUtils.changeColorAlpha(new Color(0xFF0000), RandUtil.nextInt(50, 200)));
+		//	particleBuilder.setScale(RandUtil.nextFloat(0.3f, 0.8f));
+		//	particleBuilder.disableRandom();
+		//	particleBuilder.setPositionFunction(new InterpLine(Vec3d.ZERO, theirPos.subtract(thisPos)));
+		//	particleBuilder.setLifetime(RandUtil.nextInt(50, 60));
+		//});
+
 
 		double ratio = theirManager.getMana() / thisManager.getMana();
 

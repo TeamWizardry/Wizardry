@@ -77,11 +77,6 @@ public class TileManaBattery extends TileManaInteracter {
 	}
 
 	@Override
-	public boolean isInboundManaController() {
-		return true;
-	}
-
-	@Override
 	public void update() {
 		super.update();
 

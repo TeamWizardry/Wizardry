@@ -72,21 +72,6 @@ public class TilePearlHolder extends TileManaInteracter implements ICooldown {
 	}
 
 	@Override
-	public void onDrainedFrom(TileManaInteracter from) {
-		//CapManager manager = new CapManager(getWizardryCap());
-//
-		//if (containsManaOrb() && manager.getMana() <= 2) {
-		//	setItemStack(new ItemStack(ModItems.ORB, 1, 0));
-		//	markDirty();
-		//} else if (containsGlassOrb() && manager.getMana() > 2) {
-		//	setItemStack(new ItemStack(ModItems.ORB, 1, 1));
-		//	CapManager manager1 = new CapManager(getItemStack());
-		//	manager1.setMana(0);
-		//	markDirty();
-		//}
-	}
-
-	@Override
 	public void update() {
 		super.update();
 		if (containsNacrePearl()) {
