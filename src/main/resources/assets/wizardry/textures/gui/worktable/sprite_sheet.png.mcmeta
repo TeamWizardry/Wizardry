@@ -1,0 +1,36 @@
+{
+	"spritesheet":{
+		"textureWidth":256,
+		"textureHeight":256,
+		"sprites": {
+			"tab_side":[0, 0, 24, 24],
+			"tab_top":[0, 32, 24, 24],
+
+			"module_slot_single":[0, 64, 32, 32],
+			"module_slot_l":[0, 96, 32, 32],
+			"module_slot_r":[0, 128, 32, 32],
+			"module_slot_lr":[0, 160, 32, 32],
+
+			"module_default":[32, 208, 24, 24],
+			"module_default_glow":[0, 208, 24, 24],
+			"module_icon_missing":[0, 232, 16, 16],
+
+			"scroll_slider_v":[0, 192, 8, 16],
+			"scroll_slider_h":[16, 192, 16, 8],
+
+			"scroll_groove_v":[64, 16, 12, 12],
+			"scroll_groove_v_top":[64, 0, 12, 12],
+			"scroll_groove_v_bottom":[64, 32, 12, 12],
+
+			"scroll_groove_h":[80, 16, 12, 12],
+			"scroll_groove_h_left":[80, 0, 12, 12],
+			"scroll_groove_h_right":[80, 32, 12, 12],
+
+			"_whatisthis_grid_thing":[32, 64, 24, 24],
+			"_whatisthis_box_thing":[96, 0, 16, 16],
+			"_whatisthis_box_h_thing":[112, 16, 16, 13],
+			"_whatisthis_box_h_left_thing":[112, 0, 16, 13],
+			"_whatisthis_box_h_right_thing":[112, 32, 16, 13]
+		}
+	}
+}
