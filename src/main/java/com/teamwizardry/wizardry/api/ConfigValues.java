@@ -4,6 +4,9 @@ import com.teamwizardry.librarianlib.features.config.ConfigDoubleRange;
 import com.teamwizardry.librarianlib.features.config.ConfigIntRange;
 import com.teamwizardry.librarianlib.features.config.ConfigProperty;
 
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 /**
  * Created by Demoniaque.
  */
@@ -48,4 +51,20 @@ public class ConfigValues {
 	@ConfigDoubleRange(min = 0.001, max = 0.1)
 	@ConfigProperty(category = "spells", comment = "The multiplier a spellData gets, as a flat rate, for a depleted quality outputPearl. [0.001,0.1]")
 	public static double damagedPearlMultiplier = 0.05;
+	
+	@SideOnly(Side.CLIENT)
+	@ConfigProperty(category = "render", comment = "If enabled, the crude halo will render.")
+	public static boolean renderCrudeHalo = true;
+	
+	@SideOnly(Side.CLIENT)
+	@ConfigProperty(category = "render", comment = "If enabled, the real halo will render.")
+	public static boolean renderRealHalo = true;
+	
+	@SideOnly(Side.CLIENT)
+	@ConfigProperty(category = "render", comment = "If enabled, the creative halo will render.")
+	public static boolean renderCreativeHalo = true;
+	
+	@SideOnly(Side.CLIENT)
+	@ConfigProperty(category = "render", comment = "If enabled, the cape will render.")
+	public static boolean renderCape = true;
 }
