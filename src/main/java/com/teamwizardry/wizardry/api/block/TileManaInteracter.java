@@ -64,6 +64,8 @@ public class TileManaInteracter extends TileMod implements ITickable, IManaInter
 	public ManaModule cap;
 	@Save
 	public boolean allowOutsideSucking = true;
+	@Save
+	public int suckingCooldown = 0;
 
 	public TileManaInteracter(double maxMana, double maxBurnout) {
 		cap = new ManaModule(new CustomWizardryCapability(maxMana, maxBurnout));
@@ -76,6 +78,11 @@ public class TileManaInteracter extends TileMod implements ITickable, IManaInter
 	@Override
 	public void update() {
 		if (world.isRemote) return;
+
+		if (suckingCooldown > 0) {
+			suckingCooldown--;
+			markDirty();
+		}
 
 		MANA_INTERACTABLES.putIfAbsent(this, new WeakHashMap<>());
 
@@ -107,6 +114,7 @@ public class TileManaInteracter extends TileMod implements ITickable, IManaInter
 				int i = 0;
 				for (TileManaInteracter interacter : interactables) {
 					if (suckManaFrom(interacter, suckRule)) {
+						suckingCooldown = 10;
 						interacter.onDrainedFrom(this);
 						onSuckFrom(interacter);
 

@@ -106,20 +106,19 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 					stack.setCount(1);
 					heldItem.shrink(1);
 
-					if (stack.getItem() instanceof IInfusable) {
+					if (!plate.isInventoryEmpty() && stack.getItem() instanceof IInfusable) {
 						plate.inputPearl.getHandler().setStackInSlot(0, stack);
-					} else {
+					} else if (!(stack.getItem() instanceof IInfusable)) {
 						for (int i = 0; i < plate.realInventory.getHandler().getSlots(); i++) {
 							if (plate.realInventory.getHandler().getStackInSlot(i).isEmpty()) {
 								plate.realInventory.getHandler().setStackInSlot(i, stack);
 
-								int finalI = i;
 								ClientRunnable.run(new ClientRunnable() {
 									@Override
 									@SideOnly(Side.CLIENT)
 									public void runIfClient() {
 										if (plate.renderHandler != null)
-											((TileCraftingPlateRenderer) plate.renderHandler).addAnimation(finalI, true, false);
+											((TileCraftingPlateRenderer) plate.renderHandler).addAnimation();
 									}
 								});
 								break;
@@ -133,7 +132,7 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 				}
 			} else {
 
-				if (!plate.outputPearl.getHandler().getStackInSlot(0).isEmpty()) {
+				if (plate.hasOutputPearl()) {
 					playerIn.setHeldItem(hand, plate.outputPearl.getHandler().extractItem(0, 1, false));
 					playerIn.openContainer.detectAndSendChanges();
 					worldIn.notifyBlockUpdate(pos, state, state, 3);
@@ -152,10 +151,16 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 							ItemStack extracted = plate.realInventory.getHandler().getStackInSlot(i);
 							if (!extracted.isEmpty()) {
 								playerIn.addItemStackToInventory(plate.realInventory.getHandler().extractItem(i, extracted.getCount(), false));
-								worldIn.notifyBlockUpdate(pos, state, state, 3);
+								plate.markDirty();
 
-								plate.positions[i] = Vec3d.ZERO;
-
+								ClientRunnable.run(new ClientRunnable() {
+									@Override
+									@SideOnly(Side.CLIENT)
+									public void runIfClient() {
+										if (plate.renderHandler != null)
+											((TileCraftingPlateRenderer) plate.renderHandler).clearAll();
+									}
+								});
 								break;
 							}
 						}
