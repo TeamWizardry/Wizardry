@@ -32,7 +32,7 @@ public final class HaloInfusionItemRegistry {
 		addHaloInfusionItem(OVERWORLD_PRISMARINE_CRYSTALS = new HaloInfusionItem(Items.PRISMARINE_CRYSTALS, 4));
 		addHaloInfusionItem(OVERWORLD_EMERALD = new HaloInfusionItem(Items.EMERALD));
 
-		addHaloInfusionItem(NETHER_BLAZE_POWDERS = new HaloInfusionItem(Items.BLAZE_ROD, 5));
+		addHaloInfusionItem(NETHER_BLAZE_POWDERS = new HaloInfusionItem(Items.BLAZE_POWDER, 5));
 		addHaloInfusionItem(NETHER_GHAST_TEARS = new HaloInfusionItem(Items.GHAST_TEAR, 4));
 		addHaloInfusionItem(NETHER_NETHER_STAR = new HaloInfusionItem(Items.NETHER_STAR));
 

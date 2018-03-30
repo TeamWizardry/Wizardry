@@ -5,6 +5,7 @@ import com.teamwizardry.librarianlib.features.base.item.ItemModBauble;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.item.halo.IHalo;
+import com.teamwizardry.wizardry.init.ModBlocks;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -31,9 +32,9 @@ public class ItemFakeHaloBauble extends ItemModBauble implements IHalo {
 	@Override
 	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 
-		//if (worldIn.getBlockState(pos).getBlock() == ModBlocks.HALO_INFUSER) {
-		//	return EnumActionResult.SUCCESS;
-		//}
+		if (worldIn.getBlockState(pos).getBlock() == ModBlocks.HALO_INFUSER) {
+			return EnumActionResult.SUCCESS;
+		}
 
 		return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
 	}

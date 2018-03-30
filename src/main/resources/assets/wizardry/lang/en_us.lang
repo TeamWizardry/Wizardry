@@ -81,6 +81,18 @@ item.wizardry:repulsion_bomb.name=Repulsion Bomb
 item.wizardry:vortex_bomb.name=Vortex Bomb
 item.wizardry:sky_dust.name=Sky Dust
 
+item.wizardry:orb.fill.0.name=Glass Orb
+item.wizardry:orb.fill.10.name=Mana Orb 10%
+item.wizardry:orb.fill.20.name=Mana Orb 20%
+item.wizardry:orb.fill.30.name=Mana Orb 30%
+item.wizardry:orb.fill.40.name=Mana Orb 40%
+item.wizardry:orb.fill.50.name=Mana Orb 50%
+item.wizardry:orb.fill.60.name=Mana Orb 60%
+item.wizardry:orb.fill.70.name=Mana Orb 70%
+item.wizardry:orb.fill.80.name=Mana Orb 80%
+item.wizardry:orb.fill.90.name=Mana Orb 90%
+item.wizardry:orb.fill.100.name=Mana Orb 100%
+
 item.wizardry:wisdom_stick.name=Wisdom Wood Stick
 item.wizardry:wisdom_wood_door.name=Wisdom Wood Door
 tile.wizardry:wisdom_wood_log.name=Wisdom Wood Log

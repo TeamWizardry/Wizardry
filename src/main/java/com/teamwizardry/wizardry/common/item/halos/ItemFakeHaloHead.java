@@ -5,6 +5,7 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.item.halo.IHalo;
+import com.teamwizardry.wizardry.init.ModBlocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -26,9 +27,9 @@ public class ItemFakeHaloHead extends ItemModArmor implements IHalo {
 	@Override
 	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 
-		//if (worldIn.getBlockState(pos).getBlock() == ModBlocks.HALO_INFUSER) {
-		//	return EnumActionResult.SUCCESS;
-		//}
+		if (worldIn.getBlockState(pos).getBlock() == ModBlocks.HALO_INFUSER) {
+			return EnumActionResult.SUCCESS;
+		}
 
 		return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
 	}
