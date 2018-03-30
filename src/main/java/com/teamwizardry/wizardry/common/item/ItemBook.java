@@ -46,4 +46,5 @@ public class ItemBook extends ItemModBook implements IPickupAchievement {
 	public Book getBook(@Nonnull EntityPlayer player, @Nullable World world, @Nonnull ItemStack stack) {
 		return BOOK;
 	}
+
 }

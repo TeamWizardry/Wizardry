@@ -10,6 +10,7 @@ import com.teamwizardry.wizardry.client.render.item.RenderHaloEntity;
 import com.teamwizardry.wizardry.client.render.item.RenderHaloPlayer;
 import com.teamwizardry.wizardry.common.core.version.VersionChecker;
 import com.teamwizardry.wizardry.init.ModEntities;
+import com.teamwizardry.wizardry.init.ModItems;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function2;
 import net.minecraft.client.Minecraft;
@@ -17,6 +18,8 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.ItemRenderer;
+import net.minecraft.client.renderer.block.model.ModelBakery;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderPlayer;
@@ -25,6 +28,7 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -61,6 +65,12 @@ public class ClientProxy extends CommonProxy {
 		CustomBlockMapSprites.INSTANCE.register(new ResourceLocation(Wizardry.MODID, "blocks/mana_orb"));
 		CustomBlockMapSprites.INSTANCE.register(new ResourceLocation(Wizardry.MODID, "blocks/mana_pearl_cube"));
 		CustomBlockMapSprites.INSTANCE.register(new ResourceLocation(Wizardry.MODID, "blocks/nacre_pearl_cube"));
+
+
+		// Load and bake the 2D models
+		ModelBakery.registerItemVariants(ModItems.BOOK, new ModelResourceLocation("wizardry:book", "inventory"));
+		ModelResourceLocation default3dPath = new ModelResourceLocation("wizardry:book", "inventory");
+		ModelLoader.setCustomMeshDefinition(ModItems.BOOK, stack -> default3dPath);
 	}
 
 	@Override

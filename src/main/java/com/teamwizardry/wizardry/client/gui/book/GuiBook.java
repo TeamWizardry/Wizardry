@@ -20,6 +20,8 @@ public class GuiBook extends ModGuiBook {
 		super(book);
 		this.bookItemStack = bookItemStack;
 
+		//RenderCodex.openingCooldownRight = 10;
+
 		if (bookItemStack.isEmpty()) return;
 
 		if (!ItemNBTHelper.getBoolean(bookItemStack, "has_spell", false)) return;
@@ -31,5 +33,10 @@ public class GuiBook extends ModGuiBook {
 
 	public ItemStack getBookItemStack() {
 		return bookItemStack;
+	}
+
+	@Override
+	public boolean doesGuiPauseGame() {
+		return false;
 	}
 }
