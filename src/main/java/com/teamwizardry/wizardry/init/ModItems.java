@@ -6,7 +6,10 @@ import com.teamwizardry.wizardry.common.item.dusts.ItemDevilDust;
 import com.teamwizardry.wizardry.common.item.dusts.ItemFairyDust;
 import com.teamwizardry.wizardry.common.item.dusts.ItemSkyDust;
 import com.teamwizardry.wizardry.common.item.halos.*;
+import net.minecraft.client.renderer.block.model.ModelBakery;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.Loader;
 
 /**
@@ -80,5 +83,14 @@ public class ModItems {
 			REAL_HALO = new ItemRealHaloHead();
 			CREATIVE_HALO = new ItemCreativeHaloHead();
 		}
+
+		// Load and bake the 2D models
+		ModelBakery.registerItemVariants(BOOK, new ModelResourceLocation("wizardry:book", "inventory"));
+
+		ModelResourceLocation default3dPath = new ModelResourceLocation("wizardry:book", "inventory");
+
+		// smart model will dispatch between 2d/3d appropriately, see LexiconModel
+		ModelLoader.setCustomMeshDefinition(BOOK, stack -> default3dPath);
+
 	}
 }
