@@ -147,16 +147,16 @@ public abstract class Module {
 		return attributeRanges.get(AttributeRegistry.MANA).base;
 	}
 
-	public final float getPowerMultiplier() {
-		return (int) attributeRanges.get(AttributeRegistry.POWER_MULTI).base;
+	public final double getPowerMultiplier() {
+		return attributeRanges.get(AttributeRegistry.POWER_MULTI).base;
 	}
 
-	public final float getManaMultiplier() {
-		return (int) attributeRanges.get(AttributeRegistry.MANA_MULTI).base;
+	public final double getManaMultiplier() {
+		return attributeRanges.get(AttributeRegistry.MANA_MULTI).base;
 	}
 
-	public final float getBurnoutMultiplier() {
-		return (int) attributeRanges.get(AttributeRegistry.BURNOUT_MULTI).base;
+	public final double getBurnoutMultiplier() {
+		return attributeRanges.get(AttributeRegistry.BURNOUT_MULTI).base;
 	}
 
 	@Nonnull

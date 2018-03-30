@@ -75,7 +75,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	@Nullable
 	private SpellRing childRing = null;
 
-	private float powerMultiplier = 1, manaMultiplier = 1, burnoutMultiplier = 1;
+	private double powerMultiplier = 1, manaMultiplier = 1, burnoutMultiplier = 1;
 
 	private SpellRing() {
 		informationTag.setDouble(AttributeRegistry.MANA.getNbtName(), 1);
@@ -196,7 +196,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	}
 
 	/**
-	 * Get a modifier in this ring between the range.
+	 * Get a modifier in this ring between the range. Returns the attribute value, modified by burnout and multipliers, for use in a spell.
 	 *
 	 * @param attribute The attribute you want. List in AttributeRegistry for default ones.
 	 * @return The double potency of a modifier.
@@ -208,7 +208,27 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 		AttributeRange range = module.getAttributeRanges().get(attribute);
 
-		return MathHelper.clamp(current, range.min, range.max) * getPlayerBurnoutMultiplier(data) * getPowerMultiplier();
+		current = MathHelper.clamp(current, range.min, range.max);
+		current *= getPlayerBurnoutMultiplier(data);
+		current *= getTrueAttributeValue(AttributeRegistry.POWER_MULTI);
+		return current;
+	}
+	
+	/**
+	 * Get a modifier in this ring between the range. Returns the true attribute value, unmodified by any other attributes.
+	 * 
+	 * @param attribute The attribute you want. List in {@link AttributeRegistry} for default attributes.
+	 * @return The {@code double} potency of a modifier.
+	 */
+	public final double getTrueAttributeValue(Attribute attribute)
+	{
+		if (module == null) return 0;
+		
+		double current = informationTag.getDouble(attribute.getNbtName());
+		
+		AttributeRange range = module.getAttributeRanges().get(attribute);
+		
+		return MathHelper.clamp(current, range.min, range.max);
 	}
 
 	/**
@@ -336,14 +356,14 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		getParentRing().updateColorChain();
 	}
 
-	public float getPowerMultiplier() {
+	public double getPowerMultiplier() {
 		return powerMultiplier;
 	}
 
 	/**
 	 * Will cascade down to children
 	 */
-	public void setPowerMultiplier(float powerMultiplier) {
+	public void setPowerMultiplier(double powerMultiplier) {
 		this.powerMultiplier = powerMultiplier;
 
 		SpellRing child = getChildRing();
@@ -353,7 +373,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	/**
 	 * Will cascade down to children
 	 */
-	public void multiplyPowerMultiplier(float powerMultiplier) {
+	public void multiplyPowerMultiplier(double powerMultiplier) {
 		this.powerMultiplier *= powerMultiplier;
 
 
@@ -361,14 +381,14 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		if (child != null) child.multiplyPowerMultiplier(powerMultiplier);
 	}
 
-	public float getManaMultiplier() {
+	public double getManaMultiplier() {
 		return manaMultiplier;
 	}
 
 	/**
 	 * Will cascade down to children
 	 */
-	public void setManaMultiplier(float manaMultiplier) {
+	public void setManaMultiplier(double manaMultiplier) {
 		this.manaMultiplier = manaMultiplier;
 
 		SpellRing child = getChildRing();
@@ -378,21 +398,21 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	/**
 	 * Will cascade down to children
 	 */
-	public void multiplyManaMultiplier(float manaMultiplier) {
+	public void multiplyManaMultiplier(double manaMultiplier) {
 		this.manaMultiplier *= manaMultiplier;
 
 		SpellRing child = getChildRing();
 		if (child != null) child.multiplyManaMultiplier(manaMultiplier);
 	}
 
-	public float getBurnoutMultiplier() {
-		return 1 - burnoutMultiplier;
+	public double getBurnoutMultiplier() {
+		return burnoutMultiplier;
 	}
 
 	/**
 	 * Will cascade down to children
 	 */
-	public void setBurnoutMultiplier(float burnoutMultiplier) {
+	public void setBurnoutMultiplier(double burnoutMultiplier) {
 		this.burnoutMultiplier = burnoutMultiplier;
 
 		SpellRing child = getChildRing();
@@ -402,7 +422,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	/**
 	 * Will cascade down to children
 	 */
-	public void multiplyBurnoutMultiplier(float burnoutMultiplier) {
+	public void multiplyBurnoutMultiplier(double burnoutMultiplier) {
 		this.burnoutMultiplier *= burnoutMultiplier;
 
 
@@ -464,11 +484,8 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	}
 
 	/**
-	 * This multiplier is special because we take it's inverse.
-	 * When multiplying it, if your burnout is 0, then that means you have no burnout
-	 * but your multiplier completely nullifies your numbers, so we want the inverse
-	 * because this should be obvious and why am I even explaining this, grow a brain.
-	 *
+	 * All non mana, burnout, and multiplier attributes are reduced based on the caster's burnout level. This returns how much to reduce them by.
+	 * 
 	 * @return The INVERTED burnout multiplier.
 	 */
 	public double getPlayerBurnoutMultiplier(SpellData data)
@@ -478,7 +495,9 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 			return 1;
 		CapManager manager = new CapManager(caster);
 		
-		return 1 - (manager.getBurnout() / manager.getMaxBurnout());
+		double multiplier = manager.getBurnout() / manager.getMaxBurnout();
+		double burnoutLimit = 0.5; //TODO: Probably put this into config, limit to [0, 1)
+		return Math.min(1, 1 - (multiplier - burnoutLimit) / (1 - burnoutLimit));
 	}
 	
 	@Nullable
@@ -521,9 +540,9 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		}
 
 		compound.setTag("extra", informationTag);
-		compound.setFloat("power_multiplier", powerMultiplier);
-		compound.setFloat("burnout_multiplier", burnoutMultiplier);
-		compound.setFloat("mana_multiplier", manaMultiplier);
+		compound.setDouble("power_multiplier", powerMultiplier);
+		compound.setDouble("burnout_multiplier", burnoutMultiplier);
+		compound.setDouble("mana_multiplier", manaMultiplier);
 		compound.setString("primary_color", String.valueOf(primaryColor.getRGB()));
 		compound.setString("secondary_color", String.valueOf(secondaryColor.getRGB()));
 

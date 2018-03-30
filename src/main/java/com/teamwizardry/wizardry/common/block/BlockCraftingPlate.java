@@ -147,7 +147,7 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 						}
 					}
 					if (!empty) {
-						for (int i = 0; i < plate.realInventory.getHandler().getSlots(); i++) {
+						for (int i = plate.realInventory.getHandler().getSlots() - 1; i >= 0; i--) {
 							ItemStack extracted = plate.realInventory.getHandler().getStackInSlot(i);
 							if (!extracted.isEmpty()) {
 								playerIn.addItemStackToInventory(plate.realInventory.getHandler().extractItem(i, extracted.getCount(), false));
