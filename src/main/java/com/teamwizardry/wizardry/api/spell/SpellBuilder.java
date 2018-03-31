@@ -120,17 +120,19 @@ public class SpellBuilder {
 
 			// Step through each item in line. If modifier, add to lastModule, if not, add to compiled.
 			for (ItemStack stack : line) {
-				for (int i = 0; i < stack.getCount(); i++) {
-					Module module = ModuleRegistry.INSTANCE.getModule(stack);
+				Module module = ModuleRegistry.INSTANCE.getModule(stack);
 
-					if (module == null) continue;
+				if (module == null) continue;
 
-					if (module instanceof ModuleModifier) {
-						if (!uncompressedChain.isEmpty()) {
+				if (module instanceof ModuleModifier) {
+					if (!uncompressedChain.isEmpty()) {
+						for (int i = 0; i < stack.getCount(); i++) {
 							SpellRing lastRing = uncompressedChain.peekLast();
 							lastRing.addModifier((ModuleModifier) module);
 						}
-					} else {
+					}
+				} else {
+					for (int i = 0; i < stack.getCount(); i++) {
 						SpellRing ring = new SpellRing(module);
 						uncompressedChain.add(ring);
 					}
