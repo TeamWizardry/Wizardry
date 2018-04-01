@@ -19,7 +19,7 @@ import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseRange;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseAOE;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -42,8 +42,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nonnull;
 import java.util.HashSet;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.FACE_HIT;
-
 /**
  * Created by Demoniaque.
  */
@@ -59,16 +57,14 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 
 	@Override
 	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierIncreaseRange()};
+		return new ModuleModifier[]{new ModuleModifierIncreaseAOE()};
 	}
 
 	@Override
-	@SuppressWarnings("unused")
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Entity targetEntity = spell.getVictim();
 		Entity caster = spell.getCaster();
 		BlockPos targetBlock = spell.getTargetPos();
-		EnumFacing facing = spell.getData(FACE_HIT);
 
 		if (caster == null) return false;
 
@@ -102,7 +98,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 
 				if (touchedBlock.getBlock() == state.getBlock()) return false;
 
-				double strength = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
+				double area = spellRing.getAttributeValue(AttributeRegistry.AREA, spell);
 
 				ItemStack stackBlock = null;
 				for (ItemStack stack : ((EntityPlayer) caster).inventory.mainInventory) {
@@ -120,11 +116,11 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 				HashSet<BlockPos> branch = new HashSet<>();
 				branch.add(targetBlock);
 				blocks.add(targetBlock);
-				getBlocks(spell.world, touchedBlock.getBlock(), (int) strength, branch, blocks);
+				getBlocks(spell.world, touchedBlock.getBlock(), (int) area, branch, blocks);
 
 				if (blocks.isEmpty()) return true;
 
-				for (BlockPos ignored : blocks) {
+				for (@SuppressWarnings("unused") BlockPos ignored : blocks) {
 					if (!spellRing.taxCaster(spell)) return false;
 					BlockPos nearest = null;
 					for (BlockPos pos : blocks) {

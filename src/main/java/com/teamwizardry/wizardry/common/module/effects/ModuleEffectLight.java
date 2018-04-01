@@ -33,12 +33,10 @@ public class ModuleEffectLight extends ModuleEffect {
 	}
 
 	@Override
-	@SuppressWarnings("unused")
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		BlockPos targetPos = spell.getTargetPos();
 		Vec3d hit = spell.getTarget();
-		Entity targetEntity = spell.getVictim();
 		EnumFacing facing = spell.getData(FACE_HIT);
 		Entity caster = spell.getCaster();
 

@@ -2,6 +2,6 @@
   "item": "wizardry:unicorn_horn",
   "mana": { "base": 20 },
   "burnout": { "base": 10 },
-  "range": { "base": 10, "min": 10, "max": 100 },
+  "range": { "base": 10, "min": 10, "max": 30 },
   "potency": { "max": 25 }
 }

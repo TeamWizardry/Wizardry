@@ -54,7 +54,7 @@ public class ModuleEffectBurn extends ModuleEffect {
 		Entity caster = spell.getCaster();
 		EnumFacing facing = spell.getData(FACE_HIT);
 
-		double strength = spellRing.getAttributeValue(AttributeRegistry.AREA, spell) / 2.0;
+		double area = spellRing.getAttributeValue(AttributeRegistry.AREA, spell) / 2.0;
 		double time = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell);
 
 		if (!spellRing.taxCaster(spell)) return false;
@@ -65,12 +65,12 @@ public class ModuleEffectBurn extends ModuleEffect {
 		}
 
 		if (targetPos != null) {
-			for (int x = (int) strength; x >= -strength; x--)
-				for (int y = (int) strength; y >= -strength; y--)
-					for (int z = (int) strength; z >= -strength; z--) {
+			for (int x = (int) area; x >= -area; x--)
+				for (int y = (int) area; y >= -area; y--)
+					for (int z = (int) area; z >= -area; z--) {
 						BlockPos pos = targetPos.add(x, y, z);
 						double dist = pos.getDistance(targetPos.getX(), targetPos.getY(), targetPos.getZ());
-						if (dist > strength) continue;
+						if (dist > area) continue;
 						if (facing != null) {
 							if (!world.isAirBlock(pos.offset(facing))) continue;
 							BlockUtils.placeBlock(world, pos.offset(facing), Blocks.FIRE.getDefaultState(), caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null);

@@ -9,7 +9,7 @@
   "mana": { "base": 0.5 },
   "burnout": { "base": 0.5 },
   "cooldown": { "base": 100 },
-  "area": { "base": 16, "min": 16, "max": 32 },
+  "area": { "base": 3, "min": 3, "max": 16 },
   "potency": { "base": 10, "min": 10, "max": 50 },
   "duration": { "base": 10, "min": 10, "max": 64 }
 }

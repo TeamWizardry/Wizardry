@@ -8,7 +8,7 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseDuration;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseRange;
 import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -34,7 +34,7 @@ public class ModuleEffectCrasherFall extends ModuleEffect {
 
 	@Override
 	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierIncreasePotency(), new ModuleModifierIncreaseDuration()};
+		return new ModuleModifier[]{new ModuleModifierIncreaseRange(), new ModuleModifierIncreaseDuration()};
 	}
 
 	@Override
@@ -42,7 +42,7 @@ public class ModuleEffectCrasherFall extends ModuleEffect {
 		Entity targetEntity = spell.getVictim();
 
 		if (targetEntity instanceof EntityLivingBase) {
-			double strength = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell);
+			double strength = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
 			double duration = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 10;
 			if (!spellRing.taxCaster(spell)) return false;
 

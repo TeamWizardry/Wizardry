@@ -7,13 +7,11 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseAOE;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseDuration;
 import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -35,24 +33,18 @@ public class ModuleEffectVanish extends ModuleEffect {
 
 	@Override
 	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierIncreaseAOE(), new ModuleModifierIncreasePotency()};
+		return new ModuleModifier[]{new ModuleModifierIncreaseDuration()};
 	}
 
 	@Override
-	@SuppressWarnings("unused")
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		World world = spell.world;
-		BlockPos targetPos = spell.getTargetPos();
-		Entity caster = spell.getCaster();
 		Entity targetEntity = spell.getVictim();
 
-		double range = spellRing.getAttributeValue(AttributeRegistry.AREA, spell);
-		double strength = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell);
-		range = 32;
+		double duration = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 20;
 
 		if (targetEntity != null && targetEntity instanceof EntityLivingBase) {
 			if (!spellRing.taxCaster(spell)) return false;
-			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.VANISH, 100, 0, true, false));
+			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.VANISH, (int) duration, 0, true, false));
 		}
 		return true;
 	}

@@ -4,5 +4,5 @@
   "secondary_color": "00FFFF",
   "mana": { "base": 200 },
   "burnout": { "base": 100 },
-  "range": { "base": 10, "min": 10, "max": 64 }
+  "area": { "base": 10, "min": 10, "max": 64 }
 }

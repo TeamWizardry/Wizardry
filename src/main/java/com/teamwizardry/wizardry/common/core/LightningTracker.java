@@ -16,18 +16,18 @@ public class LightningTracker {
 
 	private HashMap<Entity, Integer> entityToTicks = new HashMap<>();
 	private HashMap<Entity, Entity> entityToCaster = new HashMap<>();
-	private HashMap<Entity, Integer> entityToStrength = new HashMap<>();
+	private HashMap<Entity, Double> entityToPotency = new HashMap<>();
 
 	private LightningTracker() {
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
-	public void addEntity(Vec3d origin, Entity target, Entity caster, int strength) {
+	public void addEntity(Vec3d origin, Entity target, Entity caster, double potency) {
 		double dist = target.getPositionVector().subtract(origin).lengthVector();
 		int numPoints = (int) (dist * LightningGenerator.POINTS_PER_DIST);
 		entityToTicks.put(target, numPoints);
 		entityToCaster.put(target, caster);
-		entityToStrength.put(target, strength);
+		entityToPotency.put(target, potency);
 	}
 
 	@SubscribeEvent
@@ -35,7 +35,7 @@ public class LightningTracker {
 		entityToTicks.keySet().removeIf(entity -> {
 			Entity caster = entityToCaster.get(entity);
 			int ticks = entityToTicks.get(entity);
-			int strength = entityToStrength.get(entity);
+			double potency = entityToPotency.get(entity);
 
 			if (ticks > 0) {
 				entityToTicks.put(entity, --ticks);
@@ -43,12 +43,12 @@ public class LightningTracker {
 			}
 
 			entityToCaster.remove(entity);
-			entityToStrength.remove(entity);
+			entityToPotency.remove(entity);
 
-			entity.setFire(strength);
+			entity.setFire((int) potency);
 			if (caster instanceof EntityPlayer)
-				entity.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer) caster), (float) (strength));
-			else entity.attackEntityFrom(DamageSource.LIGHTNING_BOLT, (float) (strength));
+				entity.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer) caster), (float) potency);
+			else entity.attackEntityFrom(DamageSource.LIGHTNING_BOLT, (float) potency);
 			return true;
 		});
 	}

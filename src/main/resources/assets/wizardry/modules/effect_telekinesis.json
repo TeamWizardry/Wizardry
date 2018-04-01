@@ -4,5 +4,5 @@
   "secondary_color": "FFFFFF",
   "mana": { "base": 10 },
   "burnout": { "base": 10 },
-  "potency": { "base": 3, "min": 3, "max": 10 }
+  "area": { "base": 3, "min": 3, "max": 10 }
 }

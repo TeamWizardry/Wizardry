@@ -14,8 +14,10 @@ import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseP
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -47,11 +49,15 @@ public class ModuleEffectBreak extends ModuleEffect {
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		BlockPos targetPos = spell.getTargetPos();
+		Entity targetEntity = spell.getVictim();
 		Entity caster = spell.getCaster();
 
 		double range = spellRing.getAttributeValue(AttributeRegistry.AREA, spell);
-		double strength = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell) / 4;
+		double strength = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell);
 
+		if (targetEntity instanceof EntityLivingBase)
+			for (ItemStack stack : targetEntity.getArmorInventoryList())
+				stack.damageItem((int) strength, (EntityLivingBase) targetEntity);
 		if (targetPos != null) {
 			Block block = world.getBlockState(targetPos).getBlock();
 			HashSet<BlockPos> branch = new HashSet<>();
@@ -62,7 +68,7 @@ public class ModuleEffectBreak extends ModuleEffect {
 			for (BlockPos pos : blocks) {
 
 				float hardness = world.getBlockState(pos).getBlockHardness(world, pos);
-				if (hardness >= 0 && hardness < strength) {
+				if (hardness >= 0 && hardness < strength/4) {
 					if (!spellRing.taxCaster(spell)) return false;
 					BlockUtils.breakBlock(world, pos, null, caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null, true);
 				}

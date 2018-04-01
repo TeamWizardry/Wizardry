@@ -38,37 +38,32 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 	public String getID() {
 		return "effect_leap";
 	}
-
-	@Override
-	public int getNewCooldown(@Nonnull SpellData spell, SpellRing ring) {
-		Entity target = spell.getData(ENTITY_HIT);
-		double strength = MathHelper.clamp(ring.getAttributeValue(AttributeRegistry.POTENCY, spell), 1, 10);
-		if (target == null) return 50;
-		if (target.getEntityData().hasKey("jump_count")) {
-			int jumpCount = target.getEntityData().getInteger("jump_count");
-			if (jumpCount <= 0) {
-				target.getEntityData().removeTag("jump_count");
-				return 50;
-			}
-			target.getEntityData().setInteger("jump_count", jumpCount - 1);
-			return (int) ((strength - jumpCount)) * 2;
-		}
-		return 50;
-	}
-
+	
 	@Override
 	public ModuleModifier[] applicableModifiers() {
 		return new ModuleModifier[]{new ModuleModifierIncreasePotency()};
 	}
 
 	@Override
-	@SuppressWarnings("unused")
+	public int getNewCooldown(@Nonnull SpellData spell, SpellRing ring) {
+		Entity target = spell.getData(ENTITY_HIT);
+		if (target == null)
+			return 50;
+		int jumpCount = target.getEntityData().getInteger("jump_count");
+		if (jumpCount <= 0)
+		{
+			target.getEntityData().removeTag("jump_count");
+			return 50;
+		}
+		target.getEntityData().setInteger("jump_count", jumpCount - 1);
+		return 0;
+	}
+
+	@Override
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		float yaw = spell.getData(YAW, 0F);
 		float pitch = spell.getData(PITCH, 0F);
-		Vec3d pos = spell.getTarget();
 		Entity target = spell.getVictim();
-		Entity caster = spell.getCaster();
 
 		if (target == null) return false;
 		if (!(target instanceof EntityLivingBase)) return true;
@@ -76,11 +71,11 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 		Vec3d lookVec = PosUtils.vecFromRotations(pitch, yaw);
 
 		if (!target.hasNoGravity()) {
-			double strength = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell) / 10.0;
+			double potency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell) / 10;
 			if (!spellRing.taxCaster(spell)) return false;
 
 			if (!target.getEntityData().hasKey("jump_count")) {
-				target.getEntityData().setInteger("jump_count", (int) strength);
+				target.getEntityData().setInteger("jump_count", (int) potency);
 				target.getEntityData().setInteger("jump_timer", 200);
 			}
 
@@ -89,7 +84,7 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 			target.motionZ += lookVec.z;
 
 			target.velocityChanged = true;
-			target.fallDistance /= MathHelper.clamp(spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell), 2, 10);
+			target.fallDistance /= (1 + MathHelper.ceil(spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell) / 8));
 
 			if (target instanceof EntityPlayerMP)
 				((EntityPlayerMP) target).connection.sendPacket(new SPacketEntityVelocity(target));
@@ -99,10 +94,8 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 	}
 
 	@Override
-	@SuppressWarnings("unused")
 	@SideOnly(Side.CLIENT)
 	public void render(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		Entity caster = spell.getCaster();
 		Vec3d position = spell.getTarget();
 		Entity entityHit = spell.getVictim();
 

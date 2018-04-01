@@ -69,18 +69,20 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 		if (targetPos == null) return false;
 
 		double aoe = spellRing.getAttributeValue(AttributeRegistry.AREA, spell);
-		double strength = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell);
+		double potency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell);
 		double range = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
 
-		spellRing.multiplyMultiplierForAll((float) (aoe / 7.0 * strength / 15.0 * range / 15.0));
+		spellRing.multiplyMultiplierForAll((float) (aoe / 7.0 * potency / 15.0 * range / 15.0));
 
 		List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(targetPos)).grow(aoe, 1, aoe));
 
-		if (RandUtil.nextInt((int) ((70 - strength))) == 0) {
+		int blockPotency = (int) (70 - potency);
+		if (blockPotency < 1) blockPotency = 1;
+		if (spell.world.getTotalWorldTime() % blockPotency == 0) {
 			if (!spellRing.taxCaster(spell)) return false;
 			for (Entity entity : entities) {
 				if (entity.getDistance(targetPos.x, targetPos.y, targetPos.z) <= aoe) {
-					Vec3d vec = targetPos.addVector(RandUtil.nextDouble(-strength, strength), RandUtil.nextDouble(range), RandUtil.nextDouble(-strength, strength));
+					Vec3d vec = targetPos.addVector(RandUtil.nextDouble(-potency, potency), RandUtil.nextDouble(range), RandUtil.nextDouble(-potency, potency));
 
 					SpellData copy = spell.copy();
 					copy.processEntity(entity, false);
@@ -95,7 +97,9 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 			}
 		}
 
-		if (RandUtil.nextInt((int) ((40 - strength))) != 0) return false;
+		int entityPotency = (int) (40 - potency);
+		if (entityPotency < 1) entityPotency = 1;
+		if (spell.world.getTotalWorldTime() % entityPotency != 0) return false;
 
 		ArrayList<Vec3d> blocks = new ArrayList<>();
 		for (double i = -aoe; i < aoe; i++)
@@ -155,7 +159,6 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 
 	@Override
 	public int getLingeringTime(SpellData spell, SpellRing spellRing) {
-		double strength = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 10;
-		return (int) strength;
+		return (int) spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 10;
 	}
 }

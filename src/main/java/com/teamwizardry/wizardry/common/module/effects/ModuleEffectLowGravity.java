@@ -58,13 +58,13 @@ public class ModuleEffectLowGravity extends ModuleEffect {
 		Entity caster = spell.getCaster();
 
 		double potency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell);
-		double time = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell);
+		double duration = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 10;
 
 		if (!spellRing.taxCaster(spell)) return false;
 
 		if (targetEntity != null) {
 			spell.world.playSound(null, targetEntity.getPosition(), ModSounds.TELEPORT, SoundCategory.NEUTRAL, 1, 1);
-			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.LOW_GRAVITY, (int) time, (int) potency, true, false));
+			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.LOW_GRAVITY, (int) duration, (int) potency, true, false));
 		}
 		return true;
 	}

@@ -95,6 +95,7 @@ public class PotionTimeSlow extends PotionBase {
 
 		Entity entity = event.entity;
 		double amp = effect.getAmplifier();
+		if (amp < 2) amp = 2;
 		double x = event.x / amp;
 		double y = event.y / amp;
 		double z = event.z / amp;

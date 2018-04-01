@@ -55,6 +55,7 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 
 		double range = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
 		double potency = 30 - spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell);
+		if (potency < 1) potency = 1;
 
 		spellRing.multiplyMultiplierForAll((float) (potency / 25.0 * range / 75.0));
 

@@ -7,9 +7,5 @@
   "mana": { "base": 200 },
   "burnout": { "base": 100 },
   "range": { "base": 10, "min": 10, "max": 32 },
-  "potency": {
-    "base": 4,
-    "min": 4,
-    "max": 20
-  }
+  "potency": { "base": 4, "min": 4, "max": 20 }
 }

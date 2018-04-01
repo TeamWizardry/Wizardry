@@ -69,7 +69,7 @@ public class ModuleEffectLightning extends ModuleEffect {
 		}
 
 		double range = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
-		double strength = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell) / 2.0;
+		double potency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell) / 2.0;
 
 		if (!spellRing.taxCaster(spell)) return false;
 
@@ -88,7 +88,7 @@ public class ModuleEffectLightning extends ModuleEffect {
 			List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(point)).contract(0.2, 0.2, 0.2));
 			if (!entityList.isEmpty()) {
 				for (Entity entity : entityList) {
-					LightningTracker.INSTANCE.addEntity(origin, entity, caster, (int) strength);
+					LightningTracker.INSTANCE.addEntity(origin, entity, caster, potency);
 				}
 			}
 		}

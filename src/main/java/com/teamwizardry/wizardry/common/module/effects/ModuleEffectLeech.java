@@ -30,8 +30,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.FACE_HIT;
-
 /**
  * Created by Demoniaque.
  */
@@ -53,11 +51,9 @@ public class ModuleEffectLeech extends ModuleEffect {
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		Entity targetEntity = spell.getVictim();
-		BlockPos targetPos = spell.getTargetPos();
 		Entity caster = spell.getCaster();
-		EnumFacing facing = spell.getData(FACE_HIT);
 
-		double strength = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell) / 2;
+		double potency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell) / 2;
 
 		if (!spellRing.taxCaster(spell)) return false;
 
@@ -66,7 +62,7 @@ public class ModuleEffectLeech extends ModuleEffect {
 
 				double targetMana = new CapManager(targetEntity).getMana();
 
-				targetEntity.attackEntityFrom(DamageSource.MAGIC, (float) strength);
+				targetEntity.attackEntityFrom(DamageSource.MAGIC, (float) potency);
 				if (targetEntity.isDead) {
 					targetMana /= 2;
 					targetMana = MathHelper.clamp(targetMana, targetMana, spellRing.getManaDrain() * 2);
@@ -77,7 +73,7 @@ public class ModuleEffectLeech extends ModuleEffect {
 
 				double targetMana = spellRing.getManaDrain() * 2;
 
-				targetEntity.attackEntityFrom(DamageSource.MAGIC, (float) strength);
+				targetEntity.attackEntityFrom(DamageSource.MAGIC, (float) potency);
 				if (targetEntity.isDead) {
 					new CapManager(caster).addMana(targetMana);
 				}
@@ -86,9 +82,9 @@ public class ModuleEffectLeech extends ModuleEffect {
 				if (caster instanceof EntityLivingBase) ((EntityLivingBase) caster).setLastAttackedEntity(targetEntity);
 
 				if (caster != null)
-					targetEntity.attackEntityFrom(new EntityDamageSource("magic", caster).setDamageBypassesArmor().setMagicDamage(), (float) strength);
+					targetEntity.attackEntityFrom(new EntityDamageSource("magic", caster).setDamageBypassesArmor().setMagicDamage(), (float) potency);
 				else
-					targetEntity.attackEntityFrom(DamageSource.MAGIC, (float) strength);
+					targetEntity.attackEntityFrom(DamageSource.MAGIC, (float) potency);
 
 			}
 		}

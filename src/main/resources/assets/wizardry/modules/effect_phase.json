@@ -6,5 +6,5 @@
   "burnout": { "base": 100 },
   "cooldown": { "base": 40 },
   "chargeup": { "base": 10 },
-  "duration": { "base": 10, "min": 10, "max": 500 }
+  "duration": { "base": 5, "min": 5, "max": 30 }
 }

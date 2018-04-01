@@ -4,6 +4,5 @@
   "secondary_color": "42D1D1",
   "mana": { "base": 200 },
   "burnout": { "base": 100 },
-  "area": { "base": 1, "min": 1, "max": 64 },
-  "potency": { "base": 1, "min": 1, "max": 64 }
+  "duration": { "base": 5, "min": 5, "max": 60 }
 }

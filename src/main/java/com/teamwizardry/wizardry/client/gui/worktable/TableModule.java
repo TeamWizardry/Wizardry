@@ -312,7 +312,12 @@ public class TableModule {
 
 			txt.add(TextFormatting.GOLD + module.getReadableName());
 			if (GuiScreen.isShiftKeyDown())
+			{
 				txt.add(TextFormatting.GRAY + module.getDescription());
+				if (module.getAttributeRanges().keySet().stream().anyMatch(attribute -> attribute.hasDetailedText()))
+					if (GuiScreen.isCtrlKeyDown()) txt.add(TextFormatting.GRAY + module.getDetailedInfo());
+					else txt.add(TextFormatting.GRAY + LibrarianLib.PROXY.translate("wizardry.misc.ctrl"));
+			}
 			else txt.add(TextFormatting.GRAY + LibrarianLib.PROXY.translate("wizardry.misc.sneak"));
 			return txt;
 		});

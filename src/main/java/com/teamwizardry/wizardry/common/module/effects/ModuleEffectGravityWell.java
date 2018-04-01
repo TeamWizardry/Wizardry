@@ -18,6 +18,7 @@ import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseAOE;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseDuration;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -48,25 +49,23 @@ public class ModuleEffectGravityWell extends ModuleEffect implements ILingeringM
 
 	@Override
 	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierIncreaseAOE(), new ModuleModifierIncreasePotency()};
+		return new ModuleModifier[]{new ModuleModifierIncreaseAOE(), new ModuleModifierIncreasePotency(), new ModuleModifierIncreaseDuration()};
 	}
 
 	@Override
-	@SuppressWarnings("unused")
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		Vec3d position = spell.getTarget();
-		Entity caster = spell.getCaster();
 
 		if (position == null) return false;
 
-		double strength = spellRing.getAttributeValue(AttributeRegistry.AREA, spell);
+		double area = spellRing.getAttributeValue(AttributeRegistry.AREA, spell);
 
-		for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(position)).grow(strength, strength, strength))) {
+		for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(position)).grow(area, area, area))) {
 			if (entity == null) continue;
 			double dist = entity.getPositionVector().distanceTo(position);
 			if (dist < 2) continue;
-			if (dist > strength) continue;
+			if (dist > area) continue;
 			if (!spellRing.taxCaster(spell)) return false;
 
 			final double upperMag = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell) / 100.0;
@@ -121,6 +120,6 @@ public class ModuleEffectGravityWell extends ModuleEffect implements ILingeringM
 
 	@Override
 	public int getLingeringTime(SpellData spell, SpellRing spellRing) {
-		return (int) (spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 500);
+		return (int) (spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 10);
 	}
 }

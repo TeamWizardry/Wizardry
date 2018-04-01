@@ -9,20 +9,20 @@ import java.util.Set;
  */
 public class AttributeRegistry {
 
-	public static final Attribute POTENCY = new Attribute("modifier_increase_strength", "potency");
-	public static final Attribute DURATION = new Attribute("modifier_extend_time", "duration");
-	public static final Attribute RANGE = new Attribute("modifier_extend_range", "range");
-	public static final Attribute AREA = new Attribute("modifier_increase_aoe", "area");
-	public static final Attribute SPEED = new Attribute("modifier_increase_speed", "speed");
+	public static final Attribute POTENCY = new Attribute("modifier_increase_strength", "potency", true);
+	public static final Attribute DURATION = new Attribute("modifier_extend_time", "duration", true);
+	public static final Attribute RANGE = new Attribute("modifier_extend_range", "range", true);
+	public static final Attribute AREA = new Attribute("modifier_increase_aoe", "area", true);
+	public static final Attribute SPEED = new Attribute("modifier_increase_speed", "speed", true);
 
-	public static final Attribute MANA = new Attribute("modifier_mana_cost", "mana");
-	public static final Attribute BURNOUT = new Attribute("modifier_burnout_value", "burnout");
-	public static final Attribute COOLDOWN = new Attribute("modifier_cooldown_time", "cooldown");
-	public static final Attribute CHARGEUP = new Attribute("modifier_chargeup_time", "chargeup");
+	public static final Attribute MANA = new Attribute("modifier_mana_cost", "mana", false);
+	public static final Attribute BURNOUT = new Attribute("modifier_burnout_value", "burnout", false);
+	public static final Attribute COOLDOWN = new Attribute("modifier_cooldown_time", "cooldown", false);
+	public static final Attribute CHARGEUP = new Attribute("modifier_chargeup_time", "chargeup", false);
 	
-	public static final Attribute POWER_MULTI = new Attribute("power_multiplier");
-	public static final Attribute MANA_MULTI = new Attribute("mana_multiplier");
-	public static final Attribute BURNOUT_MULTI = new Attribute("burnout_multiplier");
+	public static final Attribute POWER_MULTI = new Attribute("power_multiplier", false);
+	public static final Attribute MANA_MULTI = new Attribute("mana_multiplier", false);
+	public static final Attribute BURNOUT_MULTI = new Attribute("burnout_multiplier", false);
 	
 
 	private static final Set<Attribute> attributes = new HashSet<>();
@@ -58,15 +58,17 @@ public class AttributeRegistry {
 
 		private final String nbtName;
 		private final String shortName;
+		private final boolean hasDetailedText;
 
-		public Attribute(String nbtName, String shortName) {
+		public Attribute(String nbtName, String shortName, boolean hasDetailedText) {
 			this.nbtName = nbtName;
 			this.shortName = shortName;
+			this.hasDetailedText = hasDetailedText;
 		}
 		
-		public Attribute(String name)
+		public Attribute(String name, boolean hasDetailedText)
 		{
-			this(name, name);
+			this(name, name, hasDetailedText);
 		}
 
 		public String getShortName() {
@@ -75,6 +77,11 @@ public class AttributeRegistry {
 
 		public String getNbtName() {
 			return nbtName;
+		}
+		
+		public boolean hasDetailedText()
+		{
+			return hasDetailedText;
 		}
 
 		@Override

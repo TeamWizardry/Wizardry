@@ -103,6 +103,30 @@ public abstract class Module {
 	public final String getDescription() {
 		return LibrarianLib.PROXY.translate(getDescriptionKey());
 	}
+	
+	@Nonnull
+	public String getDetailedInfo()
+	{
+		String detailedInfo = "";
+		for (Attribute attribute : attributeRanges.keySet())
+		{
+			if (attribute.hasDetailedText())
+			{
+				if (!detailedInfo.equals(""))
+					detailedInfo += "\n";
+				detailedInfo += getDetailedInfo(attribute);
+			}
+		}
+		return detailedInfo;
+	}
+	
+	@Nonnull
+	public final String getDetailedInfo(Attribute attribute)
+	{
+		String infoKey = getDescriptionKey() + ".";
+		String rangeKey = "wizardry.misc.attribute_range";
+		return LibrarianLib.PROXY.translate(infoKey + attribute.getShortName()) + "\n    " + LibrarianLib.PROXY.translate(rangeKey) + attributeRanges.get(attribute);
+	}
 
 	/**
 	 * Specify all applicable modifiers that can be applied to this module.
@@ -121,7 +145,7 @@ public abstract class Module {
 	public final String getDescriptionKey() {
 		return "wizardry.spell." + getID() + ".desc";
 	}
-
+	
 	@Nonnull
 	public final Color getPrimaryColor() {
 		return primaryColor;

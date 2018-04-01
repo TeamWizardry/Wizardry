@@ -61,11 +61,9 @@ public class ModuleEffectAntiGravityWell extends ModuleEffect implements ILinger
 	}
 
 	@Override
-	@SuppressWarnings("unused")
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		Vec3d position = spell.getTarget();
-		Entity caster = spell.getCaster();
 
 		if (position == null) return false;
 
@@ -130,6 +128,6 @@ public class ModuleEffectAntiGravityWell extends ModuleEffect implements ILinger
 
 	@Override
 	public int getLingeringTime(SpellData spell, SpellRing spellRing) {
-		return (int) (spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 500);
+		return (int) (spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 10);
 	}
 }

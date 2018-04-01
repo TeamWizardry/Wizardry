@@ -16,7 +16,7 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
+import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseAOE;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
@@ -45,7 +45,7 @@ public class ModuleEffectTelekinesis extends ModuleEffect implements IContinuous
 
 	@Override
 	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierIncreasePotency()};
+		return new ModuleModifier[]{new ModuleModifierIncreaseAOE()};
 	}
 
 	@Override
@@ -54,17 +54,17 @@ public class ModuleEffectTelekinesis extends ModuleEffect implements IContinuous
 		Vec3d targetPos = spell.getTarget();
 		Entity caster = spell.getCaster();
 
-		double strength = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell);
+		double potency = spellRing.getAttributeValue(AttributeRegistry.AREA, spell);
 
 		if (targetPos == null) return false;
 
-		List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(targetPos)).grow(strength, strength, strength));
+		List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(targetPos)).grow(potency, potency, potency));
 
 		if (RandUtil.nextInt(10) == 0)
 			spell.world.playSound(null, new BlockPos(targetPos), ModSounds.ETHEREAL_PASS_BY, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat());
 		for (Entity entity : entityList) {
 			double dist = entity.getPositionVector().distanceTo(targetPos);
-			if (dist > strength) continue;
+			if (dist > potency) continue;
 			if (!spellRing.taxCaster(spell)) return false;
 
 			final double upperMag = 1;

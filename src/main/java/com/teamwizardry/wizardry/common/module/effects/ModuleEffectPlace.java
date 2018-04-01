@@ -68,7 +68,7 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 			facings.add(facing1);
 		}
 
-		double range = spellRing.getAttributeValue(AttributeRegistry.AREA, spell);
+		double area = spellRing.getAttributeValue(AttributeRegistry.AREA, spell);
 
 		if (targetPos == null) return true;
 
@@ -80,7 +80,7 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 			HashSet<BlockPos> blocks = new HashSet<>();
 			branch.add(targetPos);
 			blocks.add(targetPos);
-			getBlocks(world, block, facings, (int) range, branch, blocks);
+			getBlocks(world, block, facings, (int) area, branch, blocks);
 			for (BlockPos ignored : blocks) {
 
 				BlockPos pos = ignored.offset(facing);
