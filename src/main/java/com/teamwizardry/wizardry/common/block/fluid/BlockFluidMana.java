@@ -11,6 +11,7 @@ import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.common.core.DamageSourceMana;
 import com.teamwizardry.wizardry.crafting.mana.FluidRecipeLoader;
 import com.teamwizardry.wizardry.crafting.mana.ManaRecipes;
+import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
@@ -101,6 +102,10 @@ public class BlockFluidMana extends BlockModFluid {
 			run(world, pos, state.getBlock(), entityIn,
 					entity -> entity instanceof EntityItem && ((EntityItem) entity).getItem().getItem() instanceof IExplodable,
 					entity -> FluidTracker.INSTANCE.addManaCraft(entity.world, entity.getPosition(), new ManaRecipes.ExplodableCrafter()));
+			// Fill Mana Orbs
+			run(world, pos, state.getBlock(), entityIn,
+					entity -> entity instanceof EntityItem && ((EntityItem) entity).getItem().getItem() == ModItems.ORB,
+					entity -> FluidTracker.INSTANCE.addManaCraft(entity.world, entity.getPosition(), new ManaRecipes.ManaOrbCrafter()));
 		}
 
 

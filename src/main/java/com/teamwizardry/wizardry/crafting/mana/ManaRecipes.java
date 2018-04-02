@@ -4,12 +4,15 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.item.IExplodable;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.block.fluid.ModFluids;
+import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
@@ -23,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ManaRecipes {
 	public static final ManaRecipes INSTANCE = new ManaRecipes();
@@ -31,6 +35,7 @@ public class ManaRecipes {
 	public static final HashMultimap<Ingredient, FluidRecipeLoader.FluidCrafter> RECIPES = HashMultimap.create();
 
 	public static final String EXPLODABLE = "explodable";
+	public static final String MANA_ORB = "mana orb";
 
 	public void loadRecipes(File directory) {
 		FluidRecipeLoader.INSTANCE.setDirectory(directory);
@@ -94,6 +99,32 @@ public class ManaRecipes {
 				world.setBlockToAir(pos);
 				world.removeEntity(item);
 				world.playSound(null, item.posX, item.posY, item.posZ, ModSounds.GLASS_BREAK, SoundCategory.AMBIENT, 0.5F, (RandUtil.nextFloat() * 0.4F) + 0.8F);
+			}
+		}
+	}
+	
+	public static class ManaOrbCrafter extends FluidCraftInstance
+	{
+		public ManaOrbCrafter()
+		{
+			super(MANA_ORB, 0, ModFluids.MANA.getActual());
+		}
+		
+		@Override
+		public boolean isValid(World world, BlockPos pos, List<EntityItem> items)
+		{
+			Block at = world.getBlockState(pos).getBlock();
+			return at == fluid.getBlock() && items.stream().map(entity -> entity.getItem().getItem()).anyMatch(item -> item == ModItems.ORB);
+		}
+		
+		@Override
+		public void finish(World world, BlockPos pos, List<EntityItem> items)
+		{
+			List<ItemStack> orbs = items.stream().filter(entity -> entity.getItem().getItem() == ModItems.ORB).map(entity -> entity.getItem()).collect(Collectors.toList());
+			for (ItemStack orb : orbs)
+			{
+				CapManager manager = new CapManager(orb);
+				manager.setMana(manager.getMaxMana());
 			}
 		}
 	}

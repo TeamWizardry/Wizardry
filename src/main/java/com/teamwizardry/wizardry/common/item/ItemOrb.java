@@ -60,7 +60,6 @@ public class ItemOrb extends ItemMod implements IManaCell {
 				newStack.getItem().onEntityItemUpdate(entityItem);
 			}
 		}
-
 		return super.onEntityItemUpdate(entityItem);
 	}
 

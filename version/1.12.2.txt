@@ -1,3 +1,18 @@
+0.8.3
+Another internal update, DELETE YOUR WIZARDRY CONFIG FOLER OR RUN /wizardry reset TO UPDATE PROPERLY!
+Overhauled spell creation, your existing spells are possibly broken again.
+Book now opens in your hand if it has a spell recipe saved.
+Detailed info added to each module about what each modifier does. This is more translation work for you translators!
+Mana Orbs have been overhauled, they now visually show their fill levels, as well as have a new look when placed in Pearl Holders.
+Mana Orbs can now be refilled, regardless of how much of their mana has been drained.
+Modifiers now properly affect everything. Again.
+All spells have been rebalanced, many components actually gain more than a tick of duration from a +Time modifier now.
+New crafting altar animation, which should actually work for everyone this time!
+Added configs allowing you to disable rendering of the various halos and the cape. Will eventually be replaced by a cosmetics system.
+Fluid recipes no longer crash on completion.
+The "type" field in fluid recipes is no longer required, and defaults to "item".
+Various other miscellaneous bugfixes.
+
 0.8.2
 Added new Leech spell effect
 
