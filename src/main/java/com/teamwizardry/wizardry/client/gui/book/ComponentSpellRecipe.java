@@ -12,9 +12,9 @@ import com.teamwizardry.librarianlib.features.gui.provided.book.hierarchy.IBookE
 import com.teamwizardry.librarianlib.features.gui.provided.book.hierarchy.book.Book;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.spell.SpellBuilder;
-import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
+import com.teamwizardry.wizardry.api.spell.module.Module;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
@@ -41,27 +41,31 @@ public class ComponentSpellRecipe extends NavBarHolder implements IBookElement {
 
 		if (!ItemNBTHelper.getBoolean(bookStack, "has_spell", false)) return;
 
-		NBTTagList spellList = ItemNBTHelper.getList(bookStack, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
-		if (spellList == null) return;
+		NBTTagList moduleList = ItemNBTHelper.getList(bookStack, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
+		if (moduleList == null) return;
 
-		List<SpellRing> spellChains = SpellUtils.getSpellChains(spellList);
-
+		List<List<Module>> spellModules = SpellUtils.deserializeModuleList(moduleList);
+		List<ItemStack> spellItems = SpellUtils.getSpellItems(spellModules);
+		spellModules = SpellUtils.getEssentialModules(spellModules);
+		
 		int widthOfSpace = Minecraft.getMinecraft().fontRenderer.getStringWidth(" ");
 		StringBuilder builder = new StringBuilder("Spell Structure:\n");
-		for (SpellRing chainHead : spellChains) {
+		for (List<Module> spellModuleList : spellModules)
+		{
 			String margin = null;
-			List<SpellRing> allSpellRings = SpellUtils.getAllSpellRings(chainHead);
-			for (SpellRing ring : allSpellRings) {
-				if (margin == null) {
+			for (Module module : spellModuleList)
+			{
+				if (margin == null)
+				{
 					margin = " - ";
-
-					builder.append(margin).append(ring.getModuleReadableName()).append("\n");
-				} else {
+					builder.append(margin).append(module.getReadableName()).append("\n");
+				}
+				else
+				{
 					int realLength = Minecraft.getMinecraft().fontRenderer.getStringWidth(margin);
 					int nbOfSpace = MathHelper.clamp(realLength / widthOfSpace, 0, 20);
 					margin = StringUtils.repeat(" ", nbOfSpace) + "|_ ";
-
-					builder.append(margin).append(ring.getModuleReadableName()).append("\n");
+					builder.append(margin).append(module.getReadableName()).append("\n");
 				}
 			}
 		}
@@ -94,21 +98,18 @@ public class ComponentSpellRecipe extends NavBarHolder implements IBookElement {
 			addPage(spellStructureText);
 		}
 
-		SpellBuilder spellBuilder = new SpellBuilder(spellChains, true, true);
-
 		ComponentVoid page = new ComponentVoid(0, 0, getSize().getXi(), getSize().getYi());
 
 		int row = 0;
 		int column = 0;
-		List<ItemStack> inventory = spellBuilder.getInventory();
-		for (int i = 0; i < inventory.size(); i++) {
-			ItemStack stack = inventory.get(i);
+		for (int i = 0; i < spellItems.size(); i++) {
+			ItemStack stack = spellItems.get(i);
 
 			ComponentStack componentStack = new ComponentStack(column * 32, row * 16);
 			componentStack.getStack().setValue(stack);
 			page.add(componentStack);
 
-			if (i != inventory.size() - 1 && column < 3) {
+			if (i != spellItems.size() - 1 && column < 3) {
 				ComponentSprite nextItem = new ComponentSprite(book.getHomeSprite(), 32 + column * 32, row * 16 + 13, 16, 8);
 				nextItem.getColor().setValue(book.getBook().getHighlightColor());
 				nextItem.getTransform().setRotate(Math.toRadians(180));

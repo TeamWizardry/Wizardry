@@ -48,7 +48,7 @@ public class ModuleEffectFrost extends ModuleEffect {
 	@Nonnull
 	@Override
 	public String getID() {
-		return "effect_freeze";
+		return "effect_frost";
 	}
 
 	@Override

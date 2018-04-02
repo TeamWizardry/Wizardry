@@ -19,7 +19,6 @@ import com.teamwizardry.wizardry.api.item.IInfusable;
 import com.teamwizardry.wizardry.api.item.INacreProduct;
 import com.teamwizardry.wizardry.api.spell.SpellBuilder;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.render.block.TileCraftingPlateRenderer;
 import com.teamwizardry.wizardry.common.block.BlockCraftingPlate;
@@ -181,17 +180,10 @@ public class TileCraftingPlate extends TileManaInteracter {
 						realInventory.getHandler().setStackInSlot(i, ItemStack.EMPTY);
 					}
 				}
-				SpellBuilder builder = new SpellBuilder(stacks, true);
-
+				
 				ItemStack infusedPearl = inputPearl.getHandler().getStackInSlot(0).copy();
 				inputPearl.getHandler().setStackInSlot(0, ItemStack.EMPTY);
 				outputPearl.getHandler().setStackInSlot(0, infusedPearl);
-
-				NBTTagList list = new NBTTagList();
-				for (SpellRing spellRing : builder.getSpell()) {
-					list.appendTag(spellRing.serializeNBT());
-				}
-				ItemNBTHelper.setList(infusedPearl, Constants.NBT.SPELL, list);
 
 				//Color lastColor = SpellUtils.getAverageSpellColor(builder.getSpell());
 				//float[] hsv = ColorUtils.getHSVFromColor(lastColor);
@@ -201,21 +193,26 @@ public class TileCraftingPlate extends TileManaInteracter {
 				ItemNBTHelper.setString(infusedPearl, "type", EnumPearlType.INFUSED.toString());
 
 				// Process spellData multipliers based on nacre quality
+				double pearlMultiplier = 1;
 				if (infusedPearl.getItem() instanceof INacreProduct) {
 					float purity = ((INacreProduct) infusedPearl.getItem()).getQuality(infusedPearl);
-					double multiplier;
-					if (purity >= 1f) multiplier = ConfigValues.perfectPearlMultiplier * purity;
+					if (purity >= 1f) pearlMultiplier = ConfigValues.perfectPearlMultiplier * purity;
 					else if (purity <= ConfigValues.damagedPearlMultiplier)
-						multiplier = ConfigValues.damagedPearlMultiplier;
+						pearlMultiplier = ConfigValues.damagedPearlMultiplier;
 					else {
 						double base = purity - 1;
-						multiplier = 1 - (base * base * base * base);
+						pearlMultiplier = 1 - (base * base * base * base);
 					}
-
-					for (SpellRing spellRing : SpellUtils.getAllSpellRings(infusedPearl))
-						spellRing.multiplyMultiplierForAll((float) multiplier);
 				}
+				
+				SpellBuilder builder = new SpellBuilder(stacks, pearlMultiplier);
 
+				NBTTagList list = new NBTTagList();
+				for (SpellRing spellRing : builder.getSpell()) {
+					list.appendTag(spellRing.serializeNBT());
+				}
+				ItemNBTHelper.setList(infusedPearl, Constants.NBT.SPELL, list);
+				
 				ClientRunnable.run(new ClientRunnable() {
 					@Override
 					@SideOnly(Side.CLIENT)

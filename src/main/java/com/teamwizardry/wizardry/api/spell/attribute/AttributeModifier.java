@@ -1,12 +1,14 @@
 package com.teamwizardry.wizardry.api.spell.attribute;
 
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry.Attribute;
+
 public class AttributeModifier {
 
 	private AttributeRegistry.Attribute attribute;
 	private double modifier;
 	private Operation op;
 
-	public AttributeModifier(AttributeRegistry.Attribute attribute, double modifier, Operation op) {
+	public AttributeModifier(Attribute attribute, double modifier, Operation op) {
 		this.attribute = attribute;
 		this.modifier = modifier;
 		this.op = op;
@@ -16,7 +18,7 @@ public class AttributeModifier {
 		return op.apply(currentValue, modifier);
 	}
 
-	public AttributeRegistry.Attribute getAttribute() {
+	public Attribute getAttribute() {
 		return attribute;
 	}
 

@@ -57,8 +57,6 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 		double potency = 30 - spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell);
 		if (potency < 1) potency = 1;
 
-		spellRing.multiplyMultiplierForAll((float) (potency / 25.0 * range / 75.0));
-
 		RayTraceResult trace = new RayTrace(world, look, position, range)
 				.setSkipEntity(caster)
 				.setReturnLastUncollidableBlock(true)

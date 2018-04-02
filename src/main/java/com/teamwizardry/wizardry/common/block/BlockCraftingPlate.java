@@ -9,6 +9,7 @@ import com.teamwizardry.wizardry.api.block.CachedStructure;
 import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.api.item.IInfusable;
 import com.teamwizardry.wizardry.api.spell.SpellBuilder;
+import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.render.block.TileCraftingPlateRenderer;
@@ -81,18 +82,23 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 				if (heldItem.getItem() == ModItems.BOOK && playerIn.isCreative()) {
 					ItemStack pearl = new ItemStack(ModItems.PEARL_NACRE);
 
-					NBTTagList spellList = ItemNBTHelper.getList(heldItem, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
-					if (spellList == null) return false;
+					NBTTagList moduleList = ItemNBTHelper.getList(heldItem, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
+					if (moduleList == null) return false;
 
-					SpellBuilder builder = new SpellBuilder(SpellUtils.getSpellChains(spellList), true, true);
+					SpellBuilder builder = new SpellBuilder(SpellUtils.getSpellItems(SpellUtils.deserializeModuleList(moduleList)));
 
+					NBTTagList list = new NBTTagList();
+					for (SpellRing spellRing : builder.getSpell()) {
+						list.appendTag(spellRing.serializeNBT());
+					}
+					ItemNBTHelper.setList(pearl, Constants.NBT.SPELL, list);
+					
 					//Color lastColor = SpellUtils.getAverageSpellColor(builder.getSpell());
 //
 					//float[] hsv = ColorUtils.getHSVFromColor(lastColor);
 					//ItemNBTHelper.setFloat(pearl, "hue", hsv[0]);
 					//ItemNBTHelper.setFloat(pearl, "saturation", hsv[1]);
 					ItemNBTHelper.setFloat(pearl, Constants.NBT.RAND, playerIn.world.rand.nextFloat());
-					ItemNBTHelper.setList(pearl, Constants.NBT.SPELL, spellList);
 
 					plate.outputPearl.getHandler().setStackInSlot(0, pearl);
 					plate.markDirty();

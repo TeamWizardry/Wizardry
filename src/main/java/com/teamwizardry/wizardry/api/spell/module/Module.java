@@ -105,27 +105,26 @@ public abstract class Module {
 	}
 	
 	@Nonnull
-	public String getDetailedInfo()
+	public List<String> getDetailedInfo()
 	{
-		String detailedInfo = "";
+		List<String> detailedInfo = new ArrayList<>();
 		for (Attribute attribute : attributeRanges.keySet())
 		{
 			if (attribute.hasDetailedText())
-			{
-				if (!detailedInfo.equals(""))
-					detailedInfo += "\n";
-				detailedInfo += getDetailedInfo(attribute);
-			}
+				detailedInfo.addAll(getDetailedInfo(attribute));
 		}
 		return detailedInfo;
 	}
 	
 	@Nonnull
-	public final String getDetailedInfo(Attribute attribute)
+	public final List<String> getDetailedInfo(Attribute attribute)
 	{
+		List<String> detailedInfo = new ArrayList<>();
 		String infoKey = getDescriptionKey() + ".";
 		String rangeKey = "wizardry.misc.attribute_range";
-		return LibrarianLib.PROXY.translate(infoKey + attribute.getShortName()) + "\n    " + LibrarianLib.PROXY.translate(rangeKey) + attributeRanges.get(attribute);
+		detailedInfo.add(LibrarianLib.PROXY.translate(infoKey + attribute.getShortName()));
+		detailedInfo.add("    " + LibrarianLib.PROXY.translate(rangeKey) + attributeRanges.get(attribute));
+		return detailedInfo;
 	}
 
 	/**

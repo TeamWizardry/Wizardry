@@ -67,8 +67,6 @@ public class ModuleShapeCone extends ModuleShape {
 		double range = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
 		int potency = (int) (spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell));
 		
-		spellRing.multiplyMultiplierForAll((float) (range / 8.0 * potency / 16.0));
-
 		Vec3d origin = spell.getOriginHand();
 
 		if (origin == null) return false;

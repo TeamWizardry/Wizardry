@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.api.spell;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
@@ -26,7 +27,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 /**
  * Modules ala IBlockStates
@@ -43,7 +43,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	 * A map holding modifiers.
 	 */
 	@Nonnull
-	private HashMap<ModuleModifier, Integer> modifiers = new HashMap<>();
+	private ArrayListMultimap<Operation, AttributeModifier> modifiers = ArrayListMultimap.create();
 
 	/**
 	 * Primary rendering color.
@@ -75,25 +75,16 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	@Nullable
 	private SpellRing childRing = null;
 
-	private SpellRing() {
-		informationTag.setDouble(AttributeRegistry.MANA.getNbtName(), 1);
-		informationTag.setDouble(AttributeRegistry.BURNOUT.getNbtName(), 1);
+	private SpellRing() {	
 	}
 
 	public SpellRing(@Nonnull Module module) {
 		setModule(module);
-
-		informationTag.setDouble(AttributeRegistry.MANA.getNbtName(), 1);
-		informationTag.setDouble(AttributeRegistry.BURNOUT.getNbtName(), 1);
-
 	}
 
 	public static SpellRing deserializeRing(NBTTagCompound compound) {
 		SpellRing ring = new SpellRing();
 		ring.deserializeNBT(compound);
-
-		ring.getInformationTag().setDouble(AttributeRegistry.MANA.getNbtName(), 1);
-		ring.getInformationTag().setDouble(AttributeRegistry.BURNOUT.getNbtName(), 1);
 
 		SpellRing lastRing = ring;
 		while (lastRing != null) {
@@ -172,7 +163,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		double burnoutFill = getBurnoutFill();
 
 		if (caster instanceof EntityLivingBase) {
-			float reduction = getReductionMultiplier((EntityLivingBase) caster);
+			float reduction = getCapeReduction((EntityLivingBase) caster);
 			manaDrain *= reduction;
 			burnoutFill *= reduction;
 		}
@@ -196,8 +187,9 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	/**
 	 * Get a modifier in this ring between the range. Returns the attribute value, modified by burnout and multipliers, for use in a spell.
 	 *
-	 * @param attribute The attribute you want. List in AttributeRegistry for default ones.
-	 * @return The double potency of a modifier.
+	 * @param attribute The attribute you want. List in {@link AttributeRegistry} for default ones.
+	 * @param data The data of the spell being cast, used to get caster-specific modifiers.
+	 * @return The {@code double} potency of a modifier.
 	 */
 	public final double getAttributeValue(Attribute attribute, SpellData data) {
 		if (module == null) return 0;
@@ -242,33 +234,22 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 			});
 		}
 
-		List<AttributeModifier> attributeModifiers = new ArrayList<>();
-
-		if (module != null) attributeModifiers.addAll(module.getAttributes());
-
-		for (ModuleModifier modifier : getModifiers().keySet()) {
-			for (int i = 0; i < getModifiers().get(modifier); i++)
-				attributeModifiers.addAll(modifier.getAttributes());
-		}
-
-		ArrayListMultimap<Operation, AttributeModifier> sortedMap = ArrayListMultimap.create();
-		for (AttributeModifier modifier : attributeModifiers)
-			sortedMap.put(modifier.getOperation(), modifier);
-
 		for (Operation op : Operation.values()) {
-			for (AttributeModifier modifier : sortedMap.get(op)) {
+			for (AttributeModifier modifier : modifiers.get(op)) {
 
+				if (!informationTag.hasKey(modifier.getAttribute().getNbtName()))
+					continue;
 				double current = informationTag.getDouble(modifier.getAttribute().getNbtName());
 				double newValue = modifier.apply(current);
 
 				informationTag.setDouble(modifier.getAttribute().getNbtName(), newValue);
 
-				//Wizardry.logger.info(module == null ? "<null module>" : module.getID() + ": Attribute: " + attribute + ": " + current + "-> " + newValue);
+				Wizardry.logger.info(module == null ? "<null module>" : module.getID() + ": Attribute: " + modifier.getAttribute() + ": " + current + "-> " + newValue);
 			}
 		}
 	}
 
-	public final float getReductionMultiplier(EntityLivingBase caster) {
+	public final float getCapeReduction(EntityLivingBase caster) {
 		ItemStack stack = BaublesSupport.getItem(caster, ModItems.CAPE);
 		if (stack != null) {
 			float time = ItemNBTHelper.getInt(stack, "maxTick", 0);
@@ -321,10 +302,6 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 		setPrimaryColor(module.getPrimaryColor());
 		setSecondaryColor(module.getSecondaryColor());
-
-		setManaMultiplier(module.getManaMultiplier());
-		setBurnoutMultiplier(module.getBurnoutMultiplier());
-		setPowerMultiplier(module.getPowerMultiplier());
 	}
 
 	@Nonnull
@@ -358,109 +335,41 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		return getTrueAttributeValue(AttributeRegistry.POWER_MULTI);
 	}
 
-	/**
-	 * Will cascade down to children
-	 */
-	public void setPowerMultiplier(double powerMultiplier) {
-		informationTag.setDouble("power_multiplier", powerMultiplier);
-
-		SpellRing child = getChildRing();
-		if (child != null) child.setPowerMultiplier(powerMultiplier);
-	}
-
-	/**
-	 * Will cascade down to children
-	 */
-	public void multiplyPowerMultiplier(double powerMultiplier) {
-		informationTag.setDouble("power_multiplier", informationTag.getDouble("power_multiplier") * powerMultiplier);
-
-		SpellRing child = getChildRing();
-		if (child != null) child.multiplyPowerMultiplier(powerMultiplier);
-	}
-
 	public double getManaMultiplier() {
 		return getTrueAttributeValue(AttributeRegistry.MANA_MULTI);
-	}
-
-	/**
-	 * Will cascade down to children
-	 */
-	public void setManaMultiplier(double manaMultiplier) {
-		informationTag.setDouble("mana_multiplier", manaMultiplier);
-
-		SpellRing child = getChildRing();
-		if (child != null) child.setPowerMultiplier(manaMultiplier);
-	}
-
-	/**
-	 * Will cascade down to children
-	 */
-	public void multiplyManaMultiplier(double manaMultiplier) {
-		informationTag.setDouble("mana_multiplier", informationTag.getDouble("mana_multiplier") * manaMultiplier);
-
-		SpellRing child = getChildRing();
-		if (child != null) child.multiplyPowerMultiplier(manaMultiplier);
 	}
 
 	public double getBurnoutMultiplier() {
 		return getTrueAttributeValue(AttributeRegistry.BURNOUT_MULTI);
 	}
 
-	/**
-	 * Will cascade down to children
-	 */
-	public void setBurnoutMultiplier(double burnoutMultiplier) {
-		informationTag.setDouble("burnout_multiplier", burnoutMultiplier);
-
-		SpellRing child = getChildRing();
-		if (child != null) child.setPowerMultiplier(burnoutMultiplier);
-	}
-
-	/**
-	 * Will cascade down to children
-	 */
-	public void multiplyBurnoutMultiplier(double burnoutMultiplier) {
-		informationTag.setDouble("burnout_multiplier", informationTag.getDouble("burnout_multiplier") * burnoutMultiplier);
-
-		SpellRing child = getChildRing();
-		if (child != null) child.multiplyPowerMultiplier(burnoutMultiplier);
-	}
-
-	/**
-	 * Will cascade down to children
-	 */
-	public void multiplyMultiplierForAll(float multiplier) {
-		multiplyManaMultiplier(multiplier);
-		multiplyBurnoutMultiplier(multiplier);
-		multiplyPowerMultiplier(multiplier);
-	}
-
 	public double getManaDrain() {
-		return module != null ? module.getManaDrain() * informationTag.getDouble(AttributeRegistry.MANA.getNbtName()) * getManaMultiplier() : 0;
+		return informationTag.getDouble(AttributeRegistry.MANA.getNbtName()) * getManaMultiplier();
 	}
 
 	public double getBurnoutFill() {
-		return module != null ? module.getBurnoutFill() * informationTag.getDouble(AttributeRegistry.BURNOUT.getNbtName()) * getBurnoutMultiplier() : 0;
+		return informationTag.getDouble(AttributeRegistry.BURNOUT.getNbtName()) * getBurnoutMultiplier();
 	}
 
 	@Nonnull
-	public HashMap<ModuleModifier, Integer> getModifiers() {
+	public ArrayListMultimap<Operation, AttributeModifier> getModifiers() {
 		return modifiers;
 	}
 
-	public void addModifier(ModuleModifier modifier) {
-		if (!modifiers.containsKey(modifier)) {
-			modifiers.put(modifier, 1);
-		} else {
-			modifiers.put(modifier, modifiers.get(modifier) + 1);
-		}
+	public void addModifier(ModuleModifier moduleModifier) {
+		moduleModifier.getAttributes().forEach(modifier -> modifiers.put(modifier.getOperation(), modifier));
+	}
+	
+	public void addModifier(AttributeModifier attributeModifier)
+	{
+		modifiers.put(attributeModifier.getOperation(), attributeModifier);
 	}
 
 	public int getCooldownTime(@Nullable SpellData data) {
 		if (data != null && module instanceof IOverrideCooldown)
 			return ((IOverrideCooldown) module).getNewCooldown(data, this);
 
-		return module != null ? module.getCooldownTime() : 0;
+		return (int) informationTag.getDouble(AttributeRegistry.COOLDOWN.getNbtName());
 	}
 
 	public int getCooldownTime() {
@@ -468,7 +377,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	}
 
 	public int getChargeUpTime() {
-		return module != null ? module.getChargeupTime() : 0;
+		return (int) informationTag.getDouble(AttributeRegistry.CHARGEUP.getNbtName());
 	}
 
 	/**
@@ -516,14 +425,14 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 		if (!modifiers.isEmpty()) {
 			NBTTagList attribs = new NBTTagList();
-			for (Map.Entry<ModuleModifier, Integer> modifier : modifiers.entrySet()) {
+			modifiers.forEach((op, modifier) -> {
 				NBTTagCompound modifierCompound = new NBTTagCompound();
 
-				modifierCompound.setTag("modifier", modifier.getKey().serialize());
-				modifierCompound.setInteger("count", modifier.getValue());
-
+				modifierCompound.setInteger("operation", modifier.getOperation().ordinal());
+				modifierCompound.setString("attribute", modifier.getAttribute().getNbtName());
+				modifierCompound.setDouble("modifier", modifier.getModifier());
 				attribs.appendTag(modifierCompound);
-			}
+			});
 			compound.setTag("modifiers", attribs);
 		}
 
@@ -547,15 +456,18 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		if (nbt.hasKey("modifiers")) {
 			modifiers.clear();
 			for (NBTBase base : nbt.getTagList("modifiers", Constants.NBT.TAG_COMPOUND))
+			{
 				if (base instanceof NBTTagCompound) {
-					NBTTagCompound modifierComound = (NBTTagCompound) base;
-					if (modifierComound.hasKey("modifier") && modifierComound.hasKey("count")) {
-						ModuleModifier moduleModifier = (ModuleModifier) Module.deserialize(modifierComound.getString("modifier"));
-
-						if (moduleModifier == null) continue;
-						modifiers.put(moduleModifier, modifierComound.getInteger("count"));
+					NBTTagCompound modifierCompound = (NBTTagCompound) base;
+					if (modifierCompound.hasKey("operation") && modifierCompound.hasKey("attribute") && modifierCompound.hasKey("modifier"))
+					{
+						Operation operation = Operation.values()[modifierCompound.getInteger("operation") % Operation.values().length];
+						Attribute attribute = AttributeRegistry.getAttributeFromName(modifierCompound.getString("attribute"));
+						double modifier = modifierCompound.getDouble("modifier");
+						modifiers.put(operation, new AttributeModifier(attribute, modifier, operation));
 					}
 				}
+			}
 		}
 
 		if (nbt.hasKey("child_ring")) {

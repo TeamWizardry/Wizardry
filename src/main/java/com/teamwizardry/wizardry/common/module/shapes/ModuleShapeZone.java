@@ -72,8 +72,6 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 		double potency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell);
 		double range = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
 
-		spellRing.multiplyMultiplierForAll((float) (aoe / 7.0 * potency / 15.0 * range / 15.0));
-
 		List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(targetPos)).grow(aoe, 1, aoe));
 
 		int blockPotency = (int) (70 - potency);

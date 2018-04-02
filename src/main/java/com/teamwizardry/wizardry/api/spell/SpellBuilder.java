@@ -17,79 +17,16 @@ public class SpellBuilder {
 
 	private List<ItemStack> inventory;
 	private List<SpellRing> spell;
-
-	public SpellBuilder(List<ItemStack> inventory, boolean javaIsStupid) {
+	
+	public SpellBuilder(List<ItemStack> inventory)
+	{
 		this.inventory = inventory;
-		spell = toSpell(inventory);
+		spell = toSpell(inventory, 1);
 	}
-
-	public SpellBuilder(List<SpellRing> chains, boolean javaisReallyStupid, boolean fml) {
-		this.spell = chains;
-
-		Deque<ItemStack> dequeItems = new ArrayDeque<>();
-
-		for (SpellRing chainHeads : chains) {
-
-			for (SpellRing spellRing : SpellUtils.getAllSpellRings(chainHeads)) {
-				if (spellRing.getModule() == null) continue;
-
-				dequeItems.add(spellRing.getModule().getItemStack().copy());
-
-				for (ModuleModifier modifier : spellRing.getModifiers().keySet()) {
-					ItemStack stack = modifier.getItemStack().copy();
-					stack.setCount(stack.getCount() * spellRing.getModifiers().get(modifier));
-					dequeItems.add(stack);
-				}
-			}
-
-			dequeItems.add(new ItemStack(codeLineBreak));
-		}
-		dequeItems.add(new ItemStack(ModItems.PEARL_NACRE));
-
-		inventory = new ArrayList<>(dequeItems);
-
-		for (SpellRing ring : chains) {
-			SpellRing chainEnd = ring;
-			while (chainEnd != null) {
-				if (chainEnd.getChildRing() == null) {
-					if (chainEnd.getModule() != null) {
-						chainEnd.setPrimaryColor(chainEnd.getModule().getPrimaryColor());
-						chainEnd.setSecondaryColor(chainEnd.getModule().getSecondaryColor());
-					}
-					chainEnd.updateColorChain();
-					break;
-				}
-
-				chainEnd = chainEnd.getChildRing();
-			}
-		}
-	}
-
-	public SpellBuilder(List<List<Module>> modules) {
-		Deque<ItemStack> dequeItems = new ArrayDeque<>();
-
-		for (List<Module> moduleChain : modules) {
-			for (Module module : moduleChain) {
-
-				if (module instanceof ModuleModifier) {
-
-					ItemStack lastStack = dequeItems.peekLast();
-					if (lastStack.isItemEqual(module.getItemStack())) {
-						ItemStack stack = dequeItems.pollLast();
-						stack.setCount(stack.getCount() + module.getItemStack().getCount());
-						dequeItems.add(stack);
-					} else dequeItems.add(module.getItemStack().copy());
-
-				} else {
-					dequeItems.add(module.getItemStack().copy());
-				}
-			}
-		}
-		dequeItems.add(new ItemStack(ModItems.PEARL_NACRE));
-
-		inventory = new ArrayList<>(dequeItems);
-
-		spell = toSpell(inventory);
+	
+	public SpellBuilder(List<ItemStack> inventory, double pearlMultiplier) {
+		this.inventory = inventory;
+		spell = toSpell(inventory, pearlMultiplier);
 	}
 
 	@Nonnull
@@ -106,7 +43,7 @@ public class SpellBuilder {
 		return branches;
 	}
 
-	private List<SpellRing> toSpell(List<ItemStack> inventory) {
+	private List<SpellRing> toSpell(List<ItemStack> inventory, double pearlMultiplier) {
 		List<SpellRing> spellList = new ArrayList<>();
 		Set<List<SpellRing>> spellChains = new HashSet<>();
 
@@ -138,7 +75,6 @@ public class SpellBuilder {
 					}
 				}
 			}
-
 			spellChains.add(new ArrayList<>(uncompressedChain));
 		}
 
@@ -159,30 +95,26 @@ public class SpellBuilder {
 
 				lastRing = child;
 			}
-
 			spellList.add(ringHead);
-
 		}
 
 		for (SpellRing ring : spellList) {
 			SpellRing chainEnd = ring;
+			List<ModuleModifier> cascadingModifiers = new LinkedList<>();
 			while (chainEnd != null) {
+				for (ModuleModifier modifier : cascadingModifiers)
+					chainEnd.addModifier(modifier);
 				if (chainEnd.getChildRing() == null) {
-					chainEnd.processModifiers();
-
 					if (chainEnd.getModule() != null) {
 						chainEnd.setPrimaryColor(chainEnd.getModule().getPrimaryColor());
 						chainEnd.setSecondaryColor(chainEnd.getModule().getSecondaryColor());
 					}
 					chainEnd.updateColorChain();
-					break;
 				}
-
 				chainEnd.processModifiers();
 				chainEnd = chainEnd.getChildRing();
 			}
 		}
-
 		return spellList;
 	}
 

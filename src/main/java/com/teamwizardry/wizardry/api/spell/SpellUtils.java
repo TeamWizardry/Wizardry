@@ -3,17 +3,23 @@ package com.teamwizardry.wizardry.api.spell;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
+import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 
 public class SpellUtils {
@@ -89,7 +95,73 @@ public class SpellUtils {
 		}
 		return rings;
 	}
+	
+	public static List<List<Module>> deserializeModuleList(@Nonnull NBTTagList list)
+	{
+		List<List<Module>> modules = new ArrayList<>();
+		List<Module> moduleList = new ArrayList<>();
+		for (int i = 0; i < list.tagCount(); i++)
+		{
+			NBTBase base = list.get(i);
+			if (!(base instanceof NBTTagString)) continue;
+			NBTTagString string = (NBTTagString) base;
+			if (string.hasNoTags())
+			{
+				if (!moduleList.isEmpty())
+					modules.add(moduleList);
+				moduleList = new ArrayList<>();
+			}
+			Module module = Module.deserialize(string);
+			if (module == null) continue;
+			modules.add(moduleList);
+		}
+		if (!moduleList.isEmpty())
+			modules.add(moduleList);
+		return modules;
+	}
+	
+	/**
+	 * Gets a list of items required to create the given list of spell module chains.
+	 * @param modules The list of spell module chains.
+	 * @return A list of required items.
+	 */
+	public static List<ItemStack> getSpellItems(List<List<Module>> modules)
+	{
+		Deque<ItemStack> items = new ArrayDeque<>();
+		for (List<Module> moduleList : modules)
+		{
+			for (Module module : moduleList)
+			{
+				ItemStack stack = module.getItemStack();
+				ItemStack last = items.peekLast();
+				if (items.peekLast().isItemEqual(stack))
+					last.grow(stack.getCount());
+				else
+					items.add(stack.copy());
+			}
+		}
+		return new ArrayList<>(items);
+	}
 
+	/**
+	 * Gives a list of all non-modifier modules in a spell.
+	 * @param modules The list of spell chains in the spell.
+	 * @return The list of spell chains containing only essential modules.
+	 */
+	public static List<List<Module>> getEssentialModules(List<List<Module>> modules)
+	{
+		List<List<Module>> essentialModules = new ArrayList<>();
+		modules.forEach(moduleList -> {
+			List<Module> essentialList = new ArrayList<>();
+			moduleList.forEach(module -> {
+				if (!(module instanceof ModuleModifier))
+					essentialList.add(module);
+			});
+			essentialModules.add(essentialList);
+		});
+		return essentialModules;
+	}
+	
 	/**
 	 * Gets all SpellRings children from the passed spellRing object with itself included.
 	 *

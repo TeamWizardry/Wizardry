@@ -55,7 +55,7 @@ public class ModuleEffectBackup extends ModuleEffect {
 		EnumFacing facing = spell.getData(FACE_HIT);
 		Entity caster = spell.getCaster();
 
-		double time = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 20;
+		double duration = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 20;
 
 		if (!spellRing.taxCaster(spell)) return false;
 
@@ -65,7 +65,7 @@ public class ModuleEffectBackup extends ModuleEffect {
 			targetPos = new Vec3d(new BlockPos(targetPos).offset(facing)).addVector(0.5, 0.5, 0.5);
 		}
 
-		EntityBackupZombie zombie = new EntityBackupZombie(world, (EntityLivingBase) caster, (int) time);
+		EntityBackupZombie zombie = new EntityBackupZombie(world, (EntityLivingBase) caster, (int) duration);
 		zombie.setPosition(targetPos.x, targetPos.y, targetPos.z);
 		zombie.forceSpawn = true;
 		world.spawnEntity(zombie);

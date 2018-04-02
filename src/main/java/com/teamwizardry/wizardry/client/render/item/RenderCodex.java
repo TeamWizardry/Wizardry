@@ -367,10 +367,10 @@ public class RenderCodex {
 	public List<ItemStack> getSpellInventory(ItemStack stack) {
 		if (!ItemNBTHelper.getBoolean(stack, "has_spell", false)) return new ArrayList<>();
 
-		NBTTagList spellList = ItemNBTHelper.getList(stack, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+		NBTTagList spellList = ItemNBTHelper.getList(stack, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
 		if (spellList == null) return new ArrayList<>();
 
-		return new SpellBuilder(SpellUtils.getSpellChains(spellList), true, true).getInventory();
+		return SpellUtils.getSpellItems(SpellUtils.deserializeModuleList(spellList));
 	}
 
 	// Manually rendering itemstack overlays because mojang set all their states

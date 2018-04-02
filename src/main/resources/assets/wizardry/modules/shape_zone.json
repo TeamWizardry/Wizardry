@@ -3,7 +3,6 @@
 	"mana": { "base": 100 },
 	"burnout": { "base": 30 },
 	"cooldown": { "base": 100 },
-	"power_multiplier": { "base": 0.35 },
 	"area": { "base": 3, "min": 3, "max": 10 },
 	"potency": { "max": 60 },
 	"range": { "base": 1, "min": 1, "max": 20 },
