@@ -5,7 +5,7 @@ import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.ConfigValues;
+import com.teamwizardry.wizardry.api.ClientConfigValues;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.api.util.ColorUtils;
@@ -41,9 +41,9 @@ public class RenderHaloEntity implements LayerRenderer<EntityLivingBase> {
 		ItemStack halo = BaublesSupport.getItem(entitylivingbaseIn, ModItems.FAKE_HALO, ModItems.CREATIVE_HALO, ModItems.REAL_HALO);
 
 		// TODO: Remove these once we have a cosmetics system
-		if (halo.getItem() == ModItems.FAKE_HALO && !ConfigValues.renderCrudeHalo) return;
-		if (halo.getItem() == ModItems.REAL_HALO && !ConfigValues.renderRealHalo) return;
-		if (halo.getItem() == ModItems.CREATIVE_HALO && !ConfigValues.renderCreativeHalo) return;
+		if (halo.getItem() == ModItems.FAKE_HALO && !ClientConfigValues.renderCrudeHalo) return;
+		if (halo.getItem() == ModItems.REAL_HALO && !ClientConfigValues.renderRealHalo) return;
+		if (halo.getItem() == ModItems.CREATIVE_HALO && !ClientConfigValues.renderCreativeHalo) return;
 		
 		if (halo.getItem() == ModItems.FAKE_HALO) {
 			GlStateManager.pushMatrix();

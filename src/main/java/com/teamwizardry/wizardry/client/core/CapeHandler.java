@@ -9,7 +9,7 @@ import com.google.common.collect.Lists;
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.ConfigValues;
+import com.teamwizardry.wizardry.api.ClientConfigValues;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.api.util.RandUtilSeed;
 import com.teamwizardry.wizardry.init.ModItems;
@@ -71,8 +71,8 @@ public final class CapeHandler {
 
 		boolean iWalked = new Vec3d(player.posX, player.posY, player.posZ).distanceTo(new Vec3d(player.prevPosX, player.prevPosY, player.prevPosZ)) > 0.15;
 
-		//TODO: Remove `ConfigValues.renderCape` once we have a real cosmetics system
-		if (ConfigValues.renderCape && !player.isInvisible() && ((player.getActivePotionEffect(ModPotions.VANISH) != null && iWalked) || player.getActivePotionEffect(ModPotions.VANISH) == null))
+		//TODO: Remove `ClientConfigValues.renderCape` once we have a real cosmetics system
+		if (ClientConfigValues.renderCape && !player.isInvisible() && ((player.getActivePotionEffect(ModPotions.VANISH) != null && iWalked) || player.getActivePotionEffect(ModPotions.VANISH) == null))
 			if (delta < 1) { // not rendering in inventory
 				double x = -TileEntityRendererDispatcher.staticPlayerX;
 				double y = -TileEntityRendererDispatcher.staticPlayerY;
