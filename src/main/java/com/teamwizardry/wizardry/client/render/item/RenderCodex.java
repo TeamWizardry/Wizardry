@@ -11,6 +11,7 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellBuilder;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
+import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.gui.book.GuiBook;
 import com.teamwizardry.wizardry.init.ModItems;
@@ -336,27 +337,30 @@ public class RenderCodex {
 	}
 
 	public String[] getSpellStructureLines(ItemStack stack) {
-		NBTTagList spellList = ItemNBTHelper.getList(stack, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
-		if (spellList == null) return new String[0];
+		NBTTagList moduleList = ItemNBTHelper.getList(stack, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
+		if (moduleList == null) return new String[0];
 
-		List<SpellRing> spellChains = SpellUtils.getSpellChains(spellList);
-
+		List<List<Module>> spellModules = SpellUtils.deserializeModuleList(moduleList);
+		spellModules = SpellUtils.getEssentialModules(spellModules);
+		
 		int widthOfSpace = Minecraft.getMinecraft().fontRenderer.getStringWidth(" ");
 		StringBuilder builder = new StringBuilder("Spell Structure:\n");
-		for (SpellRing chainHead : spellChains) {
+		for (List<Module> spellModuleList : spellModules)
+		{
 			String margin = null;
-			List<SpellRing> allSpellRings = SpellUtils.getAllSpellRings(chainHead);
-			for (SpellRing ring : allSpellRings) {
-				if (margin == null) {
+			for (Module module : spellModuleList)
+			{
+				if (margin == null)
+				{
 					margin = " - ";
-
-					builder.append(margin).append(ring.getModuleReadableName()).append("\n");
-				} else {
+					builder.append(margin).append(module.getReadableName()).append("\n");
+				}
+				else
+				{
 					int realLength = Minecraft.getMinecraft().fontRenderer.getStringWidth(margin);
 					int nbOfSpace = MathHelper.clamp(realLength / widthOfSpace, 0, 20);
 					margin = StringUtils.repeat(" ", nbOfSpace) + "|_ ";
-
-					builder.append(margin).append(ring.getModuleReadableName()).append("\n");
+					builder.append(margin).append(module.getReadableName()).append("\n");
 				}
 			}
 		}

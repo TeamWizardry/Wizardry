@@ -57,7 +57,7 @@ public class PacketSendSpellToBook extends PacketBase {
 	@SaveMethodSetter(saveName = "module_saver")
 	public void setter(NBTTagCompound compound) {
 		if (compound.hasKey("spell_list"))
-			moduleList = compound.getTagList("spell_list", net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+			moduleList = compound.getTagList("spell_list", net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
 	}
 
 

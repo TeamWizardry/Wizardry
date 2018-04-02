@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.api.spell;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
-import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
@@ -11,9 +10,6 @@ import javax.annotation.Nonnull;
 import java.util.*;
 
 public class SpellBuilder {
-
-	// TODO: config this
-	private final static Item codeLineBreak = ModItems.DEVIL_DUST;
 
 	private List<ItemStack> inventory;
 	private List<SpellRing> spell;
@@ -47,7 +43,7 @@ public class SpellBuilder {
 		List<SpellRing> spellList = new ArrayList<>();
 		Set<List<SpellRing>> spellChains = new HashSet<>();
 
-		List<List<ItemStack>> lines = brancher(inventory, codeLineBreak);
+		List<List<ItemStack>> lines = brancher(inventory, SpellUtils.CODE_LINE_BREAK);
 
 		// Spell chain from multiple chains
 		for (List<ItemStack> line : lines) {

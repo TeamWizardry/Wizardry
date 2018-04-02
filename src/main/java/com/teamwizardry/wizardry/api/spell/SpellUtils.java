@@ -9,6 +9,7 @@ import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,6 +25,9 @@ import java.util.List;
 
 public class SpellUtils {
 
+	// TODO: config this
+	public final static Item CODE_LINE_BREAK = ModItems.DEVIL_DUST;
+	
 	public static Color getAverageSpellColor(List<SpellRing> spellChains) {
 		List<Color> colorSet = new ArrayList<>();
 
@@ -113,7 +117,7 @@ public class SpellUtils {
 			}
 			Module module = Module.deserialize(string);
 			if (module == null) continue;
-			modules.add(moduleList);
+			moduleList.add(module);
 		}
 		if (!moduleList.isEmpty())
 			modules.add(moduleList);
@@ -134,12 +138,16 @@ public class SpellUtils {
 			{
 				ItemStack stack = module.getItemStack();
 				ItemStack last = items.peekLast();
-				if (items.peekLast().isItemEqual(stack))
+				if (last == null)
+					items.add(stack.copy());
+				else if (items.peekLast().isItemEqual(stack))
 					last.grow(stack.getCount());
 				else
 					items.add(stack.copy());
 			}
+			items.add(new ItemStack(CODE_LINE_BREAK));
 		}
+		items.add(new ItemStack(ModItems.PEARL_NACRE));
 		return new ArrayList<>(items);
 	}
 
