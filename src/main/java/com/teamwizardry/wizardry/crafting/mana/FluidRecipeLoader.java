@@ -164,6 +164,7 @@ public class FluidRecipeLoader {
 				boolean explode = false;
 				boolean bubbling = true;
 				boolean harp = true;
+				boolean instant = true;
 
 				if (recipeRegistry.containsKey(file.getPath())) {
 					Wizardry.logger.error("  > WARNING! " + file.getPath() + " already exists in the recipe map. Ignoring file...: " + element.toString());
@@ -264,6 +265,14 @@ public class FluidRecipeLoader {
 					}
 					bubbling = fileObject.get("bubbling").getAsBoolean();
 				}
+				
+				if (fileObject.has("instant")) {
+					if (!fileObject.get("instant").isJsonPrimitive()) {
+						Wizardry.logger.error("  > WARNING! " + file.getPath() + " does NOT give instant as a boolean. Ignoring file...: " + element.toString());
+						continue;
+					}
+					instant = fileObject.get("instant").getAsBoolean();
+				}
 
 				JsonElement typeElement = fileObject.get("type");
 				String type = typeElement == null ? "item" : typeElement.getAsString();
@@ -277,7 +286,7 @@ public class FluidRecipeLoader {
 						continue;
 					}
 
-					FluidCrafter build = buildFluidCrafter(file.getPath(), outputItem, inputItem, extraInputs, fluid, duration, required, consume, explode, bubbling, harp);
+					FluidCrafter build = buildFluidCrafter(file.getPath(), outputItem, inputItem, extraInputs, fluid, duration, required, consume, explode, bubbling, harp, instant);
 					recipeRegistry.put(file.getPath(), build);
 					recipes.put(inputItem, build);
 				} else if (type.equalsIgnoreCase("block")) {
@@ -318,7 +327,7 @@ public class FluidRecipeLoader {
 		Wizardry.logger.info("<<========================================================================>>");
 	}
 
-	private FluidCrafter buildFluidCrafter(String identifier, ItemStack outputItem, Ingredient input, List<Ingredient> extraInputs, Fluid fluid, int duration, int required, boolean consume, boolean explode, boolean bubbling, boolean harp) {
+	private FluidCrafter buildFluidCrafter(String identifier, ItemStack outputItem, Ingredient input, List<Ingredient> extraInputs, Fluid fluid, int duration, int required, boolean consume, boolean explode, boolean bubbling, boolean harp, boolean instant) {
 		Ingredient outputIngredient = Ingredient.fromStacks(outputItem);
 		List<Ingredient> inputs = Lists.newArrayList(extraInputs);
 
@@ -371,22 +380,57 @@ public class FluidRecipeLoader {
 			List<Ingredient> inputList = new ArrayList<>(inputs);
 			inputList.add(input);
 
-			for (Ingredient itemIn : inputList) {
-				for (EntityItem entity : items) {
-					if (itemIn.apply(entity.getItem()) && !outputIngredient.apply(entity.getItem())) {
-						entity.getItem().shrink(1);
-						if (entity.getItem().isEmpty())
-							entity.setDead();
+			int count = 0;
+			recipeLoop:
+			{
+				boolean itemFound = false;
+				do
+				{
+					for (Ingredient itemIn : inputList) {
+						for (EntityItem entity : items) {
+							if (itemIn.apply(entity.getItem()) && !outputIngredient.apply(entity.getItem())) {
+								entity.getItem().shrink(1);
+								if (entity.getItem().isEmpty())
+									entity.setDead();
+								break;
+							}
+						}
+					}
+					
+					count += outputItem.getCount();
+					
+					for (Ingredient itemIn : inputList)
+					{
+						itemFound = false;
+						for (EntityItem entity : items)
+						{
+							if (itemIn.apply(entity.getItem()) && !outputIngredient.apply(entity.getItem()))
+							{
+								itemFound = true;
+								break;
+							}
+						}
+						if (!itemFound)
+							break recipeLoop;
 					}
 				}
-			}
+				while (duration == 0 && !consume && instant && itemFound);
+			}			
 
-			EntityItem output = new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, outputItem.copy());
-			output.motionX = 0;
-			output.motionY = 0;
-			output.motionZ = 0;
-			output.forceSpawn = true;
-			world.spawnEntity(output);
+			EntityItem output;
+			do
+			{
+				output = new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, outputItem.copy());
+				output.getItem().setCount(Math.min(count, outputItem.getMaxStackSize()));
+				output.motionX = 0;
+				output.motionY = 0;
+				output.motionZ = 0;
+				output.forceSpawn = true;
+				world.spawnEntity(output);
+				
+				count -= outputItem.getMaxStackSize();
+			}
+			while (count > 0);
 
 			if (explode) {
 				PacketHandler.NETWORK.sendToAllAround(new PacketExplode(output.getPositionVector(), Color.CYAN, Color.BLUE, 0.9, 2, 500, 100, 50, true), new NetworkRegistry.TargetPoint(world.provider.getDimension(), output.posX, output.posY, output.posZ, 256));

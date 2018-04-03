@@ -51,6 +51,7 @@ Only .json files will be read.
   "explode": boolean    // Optional, determines if any nearby entities will be pushed away when the recipe finishes. Defaults to false if not present.
   "bubbling": boolean   // Optional, determines if the items in the pool will make bubbling noises over the recipe's duration. Defaults to true if not present.
   "harp": boolean       // Optional, if true, a few notes will play on a harp when the recipe completes. Defaults to true if not present.
+  "instant": boolean    // Optional, if true, then recipes with 0 duration that don't consume mana will run concurrently. Defaults to true if not present.
 }
 ```
 
