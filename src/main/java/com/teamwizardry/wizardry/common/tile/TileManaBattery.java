@@ -4,7 +4,7 @@ import com.teamwizardry.librarianlib.features.autoregister.TileRegister;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.librarianlib.features.tesr.TileRenderer;
-import com.teamwizardry.wizardry.api.block.TileManaInteracter;
+import com.teamwizardry.wizardry.api.block.TileManaInteractor;
 import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.render.block.TileManaBatteryRenderer;
@@ -28,7 +28,7 @@ import java.util.HashSet;
 
 @TileRegister("mana_battery")
 @TileRenderer(TileManaBatteryRenderer.class)
-public class TileManaBattery extends TileManaInteracter {
+public class TileManaBattery extends TileManaInteractor {
 
 	public static final HashSet<BlockPos> poses = new HashSet<>();
 
@@ -61,7 +61,7 @@ public class TileManaBattery extends TileManaInteracter {
 	}
 
 	@Override
-	public void onSuckFrom(TileManaInteracter from) {
+	public void onSuckFrom(TileManaInteractor from) {
 		super.onSuckFrom(from);
 
 		CapManager manager = new CapManager(from.getWizardryCap());

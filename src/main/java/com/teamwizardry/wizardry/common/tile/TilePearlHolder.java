@@ -4,7 +4,7 @@ import com.teamwizardry.librarianlib.features.autoregister.TileRegister;
 import com.teamwizardry.librarianlib.features.base.block.tile.module.ModuleInventory;
 import com.teamwizardry.librarianlib.features.saving.Module;
 import com.teamwizardry.librarianlib.features.saving.Save;
-import com.teamwizardry.wizardry.api.block.TileManaInteracter;
+import com.teamwizardry.wizardry.api.block.TileManaInteractor;
 import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
 import com.teamwizardry.wizardry.api.item.ICooldown;
@@ -14,6 +14,8 @@ import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.common.item.ItemNacrePearl;
 import com.teamwizardry.wizardry.common.item.ItemOrb;
 import com.teamwizardry.wizardry.init.ModBlocks;
+import com.teamwizardry.wizardry.init.ModItems;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -28,7 +30,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by Demoniaque on 5/7/2016.
  */
 @TileRegister("pedestal")
-public class TilePearlHolder extends TileManaInteracter implements ICooldown {
+public class TilePearlHolder extends TileManaInteractor implements ICooldown {
 
 	@Module
 	public ModuleInventory inventory = new ModuleInventory(new ItemStackHandler() {
@@ -74,7 +76,11 @@ public class TilePearlHolder extends TileManaInteracter implements ICooldown {
 	@Override
 	public void update() {
 		super.update();
-		if (containsNacrePearl()) {
+		if (containsAnyOrb())
+		{
+			ModItems.ORB.onUpdate(getItemStack(), getWorld(), null, 0, true);
+		}
+		else if (containsNacrePearl()) {
 			if (world.isRemote) return;
 
 			updateCooldown(getItemStack());

@@ -10,7 +10,7 @@ import com.teamwizardry.librarianlib.features.tesr.TileRenderer;
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.block.TileManaInteracter;
+import com.teamwizardry.wizardry.api.block.TileManaInteractor;
 import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
@@ -54,7 +54,7 @@ import java.util.Random;
  */
 @TileRegister("crafting_plate")
 @TileRenderer(TileCraftingPlateRenderer.class)
-public class TileCraftingPlate extends TileManaInteracter {
+public class TileCraftingPlate extends TileManaInteractor {
 
 	private static final HashSet<BlockPos> poses = new HashSet<>();
 

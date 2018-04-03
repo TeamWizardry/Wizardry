@@ -9,7 +9,8 @@
       "item": "wizardry:devil_dust"
     },
     {
-      "item": "wizardry:mana_orb"
+      "item": "wizardry:orb",
+      "data": 1
     },
     {
       "type": "wizardry:fluid",

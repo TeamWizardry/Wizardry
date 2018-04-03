@@ -12,7 +12,8 @@
     }
   },
   "result": {
-    "item": "wizardry:glass_orb",
+    "item": "wizardry:orb",
+    "data": 0,
     "count": 4
   }
 }

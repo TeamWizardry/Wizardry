@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.capability.CustomWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
@@ -9,6 +10,7 @@ import com.teamwizardry.wizardry.common.block.fluid.ModFluids;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.IItemPropertyGetter;
@@ -30,7 +32,7 @@ import javax.annotation.Nullable;
 public class ItemOrb extends ItemMod implements IManaCell {
 
 	public ItemOrb() {
-		super("orb");
+		super("orb", "glass_orb", "mana_orb");
 
 		this.addPropertyOverride(new ResourceLocation("fill"), new IItemPropertyGetter() {
 			@SideOnly(Side.CLIENT)
@@ -39,7 +41,7 @@ public class ItemOrb extends ItemMod implements IManaCell {
 				double mana = manager.getMana();
 				double maxMana = manager.getMaxMana();
 
-				return (int) (10 * mana / maxMana) / 10f;
+				return (Math.round(100 * mana / maxMana) / 10) / 10f;
 			}
 		});
 	}
@@ -47,20 +49,53 @@ public class ItemOrb extends ItemMod implements IManaCell {
 	@Nullable
 	@Override
 	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
-		return new WizardryCapabilityProvider(new CustomWizardryCapability(100, 100, 100, 0));
+		return new WizardryCapabilityProvider(new CustomWizardryCapability(100, 100, stack.getItemDamage() * 100, 0));
 	}
 
 	@Override
 	public boolean onEntityItemUpdate(EntityItem entityItem) {
-		if (entityItem.getItem().getItemDamage() == 0) {
-			IBlockState state = entityItem.world.getBlockState(entityItem.getPosition());
-			if (state.getBlock() == ModFluids.NACRE.getActualBlock()) {
-				ItemStack newStack = new ItemStack(ModItems.PEARL_NACRE, entityItem.getItem().getCount());
-				entityItem.setItem(newStack);
-				newStack.getItem().onEntityItemUpdate(entityItem);
+		CapManager manager = new CapManager(entityItem.getItem());
+		if (entityItem.getItem().getItemDamage() == 0)
+		{
+			if (!manager.isManaEmpty())
+			{
+				entityItem.getItem().setItemDamage(1);
+			}
+			else
+			{
+				IBlockState state = entityItem.world.getBlockState(entityItem.getPosition());
+				if (state.getBlock() == ModFluids.NACRE.getActualBlock()) {
+					ItemStack newStack = new ItemStack(ModItems.PEARL_NACRE, entityItem.getItem().getCount());
+					entityItem.setItem(newStack);
+					newStack.getItem().onEntityItemUpdate(entityItem);
+				}
+			}
+		}
+		else if (entityItem.getItem().getItemDamage() == 1)
+		{
+			if (manager.isManaEmpty())
+			{
+				entityItem.getItem().setItemDamage(0);
+			}
+			else
+			{
+				IBlockState state = entityItem.world.getBlockState(entityItem.getPosition());
+				if (state.getBlock() == ModFluids.MANA.getActualBlock()) {
+					manager.setMana(manager.getMaxMana());
+				}
 			}
 		}
 		return super.onEntityItemUpdate(entityItem);
+	}
+	
+	@Override
+	public void onUpdate(ItemStack stack, World world, Entity entity, int slot, boolean isSelected)
+	{
+		CapManager manager = new CapManager(stack);
+		if (manager.isManaEmpty() && stack.getItemDamage() == 1)
+			stack.setItemDamage(0);
+		else if (!manager.isManaEmpty() && stack.getItemDamage() == 0)
+			stack.setItemDamage(1);
 	}
 
 	@Override
@@ -77,12 +112,14 @@ public class ItemOrb extends ItemMod implements IManaCell {
 
 			subItems.add(new ItemStack(this));
 
-			for (float i = 0; i < 1; i += 0.1) {
-				ItemStack stack = new ItemStack(this);
+			for (double i = 0.1; i < 1; i += 0.1) {
+				ItemStack stack = new ItemStack(this, 1, 1);
 				CapManager manager = new CapManager(stack);
 				manager.setMana(manager.getMaxMana() * i);
 				subItems.add(stack);
 			}
+			
+			subItems.add(new ItemStack(this, 1, 1));
 		}
 	}
 }

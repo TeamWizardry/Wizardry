@@ -59,7 +59,7 @@ public class TilePearlHolderRenderer extends TileEntitySpecialRenderer<TilePearl
 								GlStateManager.translate(sin * direction.x / 5.0, sin * direction.y / 5.0, sin * direction.z / 5.0);
 								break;
 							}
-							if (te.containsManaOrb() && block == ModBlocks.MANA_BATTERY) {
+							if (te.containsAnyOrb() && block == ModBlocks.MANA_BATTERY) {
 								gravitating = true;
 								Vec3d direction = new Vec3d(te.getPos()).subtract(new Vec3d(pos)).normalize();
 								GlStateManager.translate(sin * direction.x / 5.0, sin * direction.y / 5.0, sin * direction.z / 5.0);

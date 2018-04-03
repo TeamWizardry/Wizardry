@@ -2,7 +2,7 @@ package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.features.base.item.IGlowingItem;
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
-import com.teamwizardry.wizardry.api.block.TileManaInteracter;
+import com.teamwizardry.wizardry.api.block.TileManaInteractor;
 import com.teamwizardry.wizardry.api.capability.CapManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -32,8 +32,8 @@ public class ItemMagicWand extends ItemMod implements IGlowingItem {
 		if (worldIn.isRemote) return EnumActionResult.SUCCESS;
 
 		TileEntity tile = worldIn.getTileEntity(pos);
-		if (tile instanceof TileManaInteracter) {
-			CapManager manager = new CapManager(((TileManaInteracter) tile).getWizardryCap());
+		if (tile instanceof TileManaInteractor) {
+			CapManager manager = new CapManager(((TileManaInteractor) tile).getWizardryCap());
 			Minecraft.getMinecraft().player.sendChatMessage(manager.getMana() + " / " + manager.getMaxMana());
 		}
 

@@ -1,8 +1,10 @@
 {
   "output": {
-    "item": "wizardry:mana_orb"
+    "item": "wizardry:orb",
+    "data": 1
   },
   "input": {
-    "item": "wizardry:glass_orb"
+    "item": "wizardry:orb",
+    "data": 0
   }
 }
