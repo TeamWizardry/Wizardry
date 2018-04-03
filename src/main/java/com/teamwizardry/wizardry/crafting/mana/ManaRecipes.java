@@ -31,7 +31,6 @@ public class ManaRecipes {
 	public static final HashMultimap<Ingredient, FluidRecipeLoader.FluidCrafter> RECIPES = HashMultimap.create();
 
 	public static final String EXPLODABLE = "explodable";
-	public static final String MANA_ORB = "mana orb";
 
 	public void loadRecipes(File directory) {
 		FluidRecipeLoader.INSTANCE.setDirectory(directory);

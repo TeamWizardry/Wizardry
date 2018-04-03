@@ -62,7 +62,7 @@
       "predicate": {
         "fill": 1
       },
-      "model": "wizardry:item/mana_orb"
+      "model": "wizardry:item/orb_fill_100"
     }
   ]
 }

@@ -1,13 +1,16 @@
 package com.teamwizardry.wizardry.common.item;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.teamwizardry.librarianlib.features.base.item.ItemMod;
-import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.capability.CustomWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
 import com.teamwizardry.wizardry.api.item.IManaCell;
 import com.teamwizardry.wizardry.common.block.fluid.ModFluids;
 import com.teamwizardry.wizardry.init.ModItems;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -22,9 +25,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * Created by Demoniaque on 6/21/2016.
@@ -41,11 +41,11 @@ public class ItemOrb extends ItemMod implements IManaCell {
 				double mana = manager.getMana();
 				double maxMana = manager.getMaxMana();
 
-				return (Math.round(100 * mana / maxMana) / 10) / 10f;
+				return (int) (10 * mana / maxMana) / 10f;
 			}
 		});
 	}
-
+	
 	@Nullable
 	@Override
 	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
@@ -112,10 +112,10 @@ public class ItemOrb extends ItemMod implements IManaCell {
 
 			subItems.add(new ItemStack(this));
 
-			for (double i = 0.1; i < 1; i += 0.1) {
+			for (int i = 1; i < 10; i++) {
 				ItemStack stack = new ItemStack(this, 1, 1);
 				CapManager manager = new CapManager(stack);
-				manager.setMana(manager.getMaxMana() * i);
+				manager.setMana(manager.getMaxMana() * i / 10.0);
 				subItems.add(stack);
 			}
 			

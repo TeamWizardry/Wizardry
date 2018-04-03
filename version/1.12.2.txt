@@ -1,3 +1,9 @@
+0.8.4
+Glass and Mana Orbs split into two items again. Reset fluid recipes again, as they have changed to mirror this.
+Config crash fixed.
+Multiple fluid recipes of the same type can now occur at once.
+Fluid recipes with no duration that don't consume their liquids now run all at once. This can be disabled by setting the new "instant" recipe flag to false.
+
 0.8.3
 Another internal update, DELETE YOUR WIZARDRY CONFIG FOLER OR RUN /wizardry reset TO UPDATE PROPERLY!
 Overhauled spell creation, your existing spells are possibly broken again.

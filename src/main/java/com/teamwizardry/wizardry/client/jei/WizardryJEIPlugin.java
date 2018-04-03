@@ -50,6 +50,6 @@ public class WizardryJEIPlugin implements IModPlugin {
 				manaCategory.getUid());
 
 		registry.addRecipeCatalyst(new ItemStack(Items.FIRE_CHARGE), fireCategory.getUid());
-		registry.addRecipeCatalyst(new ItemStack(ModItems.ORB), manaCategory.getUid());
+		registry.addRecipeCatalyst(new ItemStack(ModItems.ORB, 1, 1), manaCategory.getUid());
 	}
 }
