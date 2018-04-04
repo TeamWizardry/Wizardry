@@ -1,7 +1,8 @@
 {
   "type": "entry",
   "icon": {
-    "item": "wizardry:orb"
+    "item": "wizardry:orb",
+    "data": 1
   },
   "title": "wizardry.book.steps.mana.title",
   "description": "wizardry.book.steps.mana.desc",

@@ -1,3 +1,6 @@
+0.8.5
+Book crashes fixed... why does everything use the Mana Orb...
+
 0.8.4
 Glass and Mana Orbs split into two items again. Reset fluid recipes again, as they have changed to mirror this.
 Config crash fixed.
