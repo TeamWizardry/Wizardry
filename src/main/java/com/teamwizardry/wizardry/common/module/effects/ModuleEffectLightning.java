@@ -77,47 +77,6 @@ public class ModuleEffectLightning extends ModuleEffect implements IOverrideCool
 		};
 	}
 
-
-	@Override
-	public OverrideObject[] getRunOverrides() {
-		return new OverrideObject[]{
-				// BEAM
-				new OverrideObject(ModuleShapeBeam.class, (data, ring) -> {
-					World world = data.world;
-					Entity caster = data.getCaster();
-					float yaw = data.getData(YAW, 0F);
-					float pitch = data.getData(PITCH, 0F);
-
-					if (data.getOriginHand() == null) return;
-
-					double range = ring.getAttributeValue(AttributeRegistry.RANGE, data);
-					double potency = ring.getAttributeValue(AttributeRegistry.POTENCY, data) / 2.0;
-
-					if (!ring.taxCaster(data)) return;
-
-					RayTraceResult traceResult = new RayTrace(world, PosUtils.vecFromRotations(pitch, yaw), data.getOriginHand(), range).setSkipBlocks(true).setSkipEntities(true).trace();
-
-					long seed = RandUtil.nextLong(100, 100000);
-
-					data.addData(SEED, seed);
-
-					LightningGenerator generator = new LightningGenerator(data.getOriginHand(), traceResult.hitVec, new RandUtilSeed(seed));
-
-					ArrayList<Vec3d> points = generator.generate();
-
-					data.world.playSound(null, new BlockPos(traceResult.hitVec), ModSounds.LIGHTNING, SoundCategory.NEUTRAL, 0.5f, RandUtil.nextFloat(1, 1.5f));
-					for (Vec3d point : points) {
-						List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(point)).contract(0.2, 0.2, 0.2));
-						if (!entityList.isEmpty()) {
-							for (Entity entity : entityList) {
-								LightningTracker.INSTANCE.addEntity(data.getOriginHand(), entity, caster, potency);
-							}
-						}
-					}
-				})
-		};
-	}
-
 	@Override
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		if (hasOverridingRuns(spellRing)) return true;
