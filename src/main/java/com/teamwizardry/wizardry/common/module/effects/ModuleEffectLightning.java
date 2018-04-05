@@ -54,6 +54,7 @@ public class ModuleEffectLightning extends ModuleEffect implements IOverrideCool
 		return new ModuleModifier[]{new ModuleModifierIncreaseRange(), new ModuleModifierIncreasePotency()};
 	}
 
+	@SideOnly(Side.CLIENT)
 	@Override
 	public OverrideObject[] getRenderOverrides() {
 		return new OverrideObject[]{

@@ -137,8 +137,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 		for (SpellRing child : getAllChildRings()) {
 			if (child.getModule() == null) continue;
-			if (isRunBeingOverridenBy(child.getModule())
-					|| isRenderBeingOverridenBy(child.getModule())) set.add(child);
+			if (isRunBeingOverridenBy(child.getModule())) set.add(child);
 		}
 
 		return set;
@@ -155,6 +154,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		return false;
 	}
 
+	@SideOnly(Side.CLIENT)
 	public boolean isRenderBeingOverriden() {
 		if (module == null) return false;
 
