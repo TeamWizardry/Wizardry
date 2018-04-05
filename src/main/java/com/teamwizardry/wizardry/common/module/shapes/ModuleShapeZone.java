@@ -61,6 +61,8 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 	@Override
 	@SuppressWarnings("unused")
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		if (runRunOverrides(spell, spellRing)) return true;
+
 		World world = spell.world;
 		Vec3d position = spell.getData(ORIGIN);
 		Entity caster = spell.getCaster();
@@ -128,6 +130,8 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void render(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		if (runRenderOverrides(spell, spellRing)) return;
+
 		Vec3d target = spell.getTarget();
 
 		if (target == null) return;

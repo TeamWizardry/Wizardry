@@ -11,6 +11,7 @@ import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry.Attribute;
 import com.teamwizardry.wizardry.api.spell.attribute.Operation;
 import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.Entity;
@@ -22,11 +23,15 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.BiConsumer;
 
 /**
  * Modules ala IBlockStates
@@ -98,61 +103,99 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	}
 
 	/**
-	 * If a child has this as true, it's parents will not run their run methods.
-	 */
-	public boolean overrideParentRuns() {
-		return module != null && module.overrideParentRuns();
-	}
-
-	/**
-	 * Will check if this ring's run method is overridden by any of it's children
-	 */
-	public boolean isRunOverriden() {
-		for (SpellRing ring : getAllChildRings()) {
-			if (ring.overrideParentRuns()) return true;
-		}
-		return false;
-	}
-
-	/**
-	 * If a child has this as true, it's parents will not run their render methods.
-	 */
-	public boolean overrideParentRenders() {
-		return module != null && module.overrideParentRenders();
-	}
-
-	/**
-	 * Will check if this ring's render method is overridden by any of it's children
-	 */
-	public boolean isRenderOverridden() {
-		for (SpellRing ring : getAllChildRings()) {
-			if (ring.overrideParentRenders()) return true;
-		}
-		return false;
-	}
-
-	/**
 	 * Will run the spellData from this ring and down to it's children including rendering.
 	 *
 	 * @param data The SpellData object.
 	 */
 	public boolean runSpellRing(SpellData data) {
 		if (module == null) return false;
-		boolean success = !isRunOverriden() && module.castSpell(data, this) && !module.ignoreResult();
+
+		boolean success = module.castSpell(data, this) && !module.ignoreResult();
 		if (success) {
 
-			if (!isRenderOverridden() && module != null) {
+			if (module != null) {
 				module.sendRenderPacket(data, this);
 			}
 
 			if (getChildRing() != null) return getChildRing().runSpellRing(data);
 		} else if (module.ignoreResult()) {
-			if (!isRenderOverridden() && module != null) {
+			if (module != null) {
 				module.sendRenderPacket(data, this);
 			}
 		}
 
 		return success;
+	}
+
+	public boolean isContinuous() {
+		return this.module != null && module instanceof IContinuousModule && !isRunBeingOverriden();
+	}
+
+	public Set<SpellRing> getOverridingRings() {
+		Set<SpellRing> set = new HashSet<>();
+		if (module == null) return set;
+
+		for (SpellRing child : getAllChildRings()) {
+			if (child.getModule() == null) continue;
+			if (isRunBeingOverridenBy(child.getModule())
+					|| isRenderBeingOverridenBy(child.getModule())) set.add(child);
+		}
+
+		return set;
+	}
+
+	public boolean isRunBeingOverriden() {
+		if (module == null) return false;
+
+		for (SpellRing child : getAllChildRings()) {
+			if (child.getModule() == null) continue;
+			if (isRunBeingOverridenBy(child.getModule())) return true;
+		}
+
+		return false;
+	}
+
+	public boolean isRenderBeingOverriden() {
+		if (module == null) return false;
+
+		for (SpellRing child : getAllChildRings()) {
+			if (child.getModule() == null) continue;
+			if (isRenderBeingOverridenBy(child.getModule())) return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * If the given module is overriding this module's run
+	 */
+	public boolean isRunBeingOverridenBy(@Nonnull Module module) {
+		return this.module != null && module instanceof ModuleEffect && ((ModuleEffect) module).hasRunOverrideFor(this.module);
+	}
+
+	@Nullable
+	public BiConsumer<SpellData, SpellRing> getRunOverrideFrom(@Nonnull Module module) {
+		if (!(module instanceof ModuleEffect)) return null;
+		if (this.module == null) return null;
+
+		return ((ModuleEffect) module).getRunOverrideFor(this.module);
+	}
+
+	/**
+	 * If the given module is overriding this module's run
+	 */
+	@SideOnly(Side.CLIENT)
+	public boolean isRenderBeingOverridenBy(@Nonnull Module module) {
+		return this.module != null && module instanceof ModuleEffect && ((ModuleEffect) module).hasRenderOverrideFor(this.module);
+	}
+
+	@Nullable
+	@SideOnly(Side.CLIENT)
+	public BiConsumer<SpellData, SpellRing> getRenderOverrideFrom(@Nonnull Module module) {
+		if (!(module instanceof ModuleEffect)) return null;
+		if (this.module == null) return null;
+
+		return ((ModuleEffect) module).getRenderOverrideFor(this.module);
 	}
 
 	public boolean taxCaster(SpellData data) {
@@ -261,7 +304,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	/**
 	 * Get all the children rings of this ring excluding itself.
 	 */
-	private Set<SpellRing> getAllChildRings() {
+	public final Set<SpellRing> getAllChildRings() {
 		Set<SpellRing> childRings = new HashSet<>();
 
 		if (childRing == null) return childRings;

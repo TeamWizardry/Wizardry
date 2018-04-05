@@ -56,6 +56,8 @@ public class ModuleShapeCone extends ModuleShape {
 
 	@Override
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		if (runRunOverrides(spell, spellRing)) return true;
+
 		World world = spell.world;
 		float yaw = spell.getData(YAW, 0F);
 		float pitch = spell.getData(PITCH, 0F);
@@ -103,6 +105,8 @@ public class ModuleShapeCone extends ModuleShape {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void render(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		if (runRenderOverrides(spell, spellRing)) return;
+
 		Vec3d target = spell.getTarget();
 
 		if (target == null) return;

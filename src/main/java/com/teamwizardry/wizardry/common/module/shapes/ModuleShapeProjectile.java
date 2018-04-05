@@ -68,6 +68,8 @@ public class ModuleShapeProjectile extends ModuleShape {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void render(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-
+		if (spellRing.isRunBeingOverriden()) {
+			runRenderOverrides(spell, spellRing);
+		}
 	}
 }

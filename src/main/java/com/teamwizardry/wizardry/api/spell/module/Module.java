@@ -195,20 +195,6 @@ public abstract class Module {
 		return attributeRanges;
 	}
 
-	/**
-	 * If a child has this as true, it's parents will not run their render methods.
-	 */
-	public boolean overrideParentRenders() {
-		return false;
-	}
-
-	/**
-	 * If a child has this as true, it's parents will not run their run methods.
-	 */
-	public boolean overrideParentRuns() {
-		return false;
-	}
-
 	public final void addAttribute(AttributeModifier attribute) {
 		this.attributes.add(attribute);
 	}

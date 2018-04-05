@@ -3,7 +3,10 @@ package com.teamwizardry.wizardry.api.item;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.spell.IOverrideCooldown;
+import com.teamwizardry.wizardry.api.spell.SpellData;
+import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.common.network.PacketSyncCooldown;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -27,7 +30,7 @@ public interface ICooldown {
 		List<SpellRing> rings = SpellUtils.getAllSpellRings(stack);
 
 		for (SpellRing ring : rings) {
-			if (!(ring instanceof IContinuousModule)) {
+			if (!ring.isContinuous()) {
 				hasNonContinuous = true;
 			} else continue;
 			if (ring.getCooldownTime() > maxCooldown) maxCooldown = ring.getCooldownTime();

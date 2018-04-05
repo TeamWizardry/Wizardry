@@ -8,7 +8,10 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.api.item.ICooldown;
 import com.teamwizardry.wizardry.api.item.INacreProduct;
-import com.teamwizardry.wizardry.api.spell.*;
+import com.teamwizardry.wizardry.api.spell.IBlockSelectable;
+import com.teamwizardry.wizardry.api.spell.SpellData;
+import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.common.module.shapes.ModuleShapeTouch;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.Minecraft;
@@ -35,6 +38,7 @@ import org.apache.commons.lang3.StringUtils;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Demoniaque on 6/7/2016.
@@ -151,7 +155,7 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 	public EnumAction getItemUseAction(ItemStack stack) {
 		boolean anyContinueous = false;
 		for (SpellRing spellRing : SpellUtils.getAllSpellRings(stack))
-			if (spellRing.getModule() instanceof IContinuousModule || spellRing.getChargeUpTime() > 0) {
+			if (spellRing.isContinuous() || spellRing.getChargeUpTime() > 0) {
 				anyContinueous = true;
 				break;
 			}
@@ -162,10 +166,15 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 	public int getMaxItemUseDuration(ItemStack stack) {
 		int maxChargeUp = 0;
 		for (SpellRing spellRing : SpellUtils.getAllSpellRings(stack)) {
-			if (spellRing.getModule() instanceof IContinuousModule) {
+			Set<SpellRing> overridingRings = spellRing.getOverridingRings();
+			if (spellRing.isContinuous()) {
 				maxChargeUp = 72000;
 			} else if (spellRing.getChargeUpTime() > maxChargeUp)
 				maxChargeUp += spellRing.getChargeUpTime();
+
+			for (SpellRing ring : overridingRings) {
+				maxChargeUp += ring.getChargeUpTime();
+			}
 		}
 
 		return maxChargeUp;
@@ -186,7 +195,7 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 
 		boolean isContinuous = false;
 		for (SpellRing spellRing : SpellUtils.getAllSpellRings(stack))
-			if (spellRing.getModule() instanceof IContinuousModule) {
+			if (spellRing.isContinuous()) {
 				isContinuous = true;
 				break;
 			}
@@ -267,8 +276,7 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 									+ TextFormatting.RED
 									+ Math.round(tmpRing.getBurnoutFill() * tmpRing.getBurnoutMultiplier()));
 					if (GuiScreen.isShiftKeyDown()) {
-						for (String key : tmpRing.getInformationTag().getKeySet())
-						{
+						for (String key : tmpRing.getInformationTag().getKeySet()) {
 							double value = tmpRing.getInformationTag().getDouble(key);
 							String valueString;
 							if (value < 10) valueString = String.format("%.2f", value);

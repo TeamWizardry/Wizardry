@@ -34,6 +34,8 @@ public class ModuleShapeSelf extends ModuleShape {
 
 	@Override
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		if (runRunOverrides(spell, spellRing)) return true;
+
 		Entity caster = spell.getCaster();
 		if (caster == null) return false;
 
@@ -46,6 +48,8 @@ public class ModuleShapeSelf extends ModuleShape {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void render(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		if (runRenderOverrides(spell, spellRing)) return;
+
 		Entity caster = spell.getCaster();
 
 		if (caster == null) return;
