@@ -8,8 +8,6 @@ import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.spell.SpellBuilder;
-import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.util.RandUtil;
@@ -43,8 +41,36 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-// CODE COPIED FROM BOTANIA & MODIFIED
-// https://github.com/Vazkii/Botania/blob/master/src/main/java/vazkii/botania/client/core/handler/RenderLexicon.java
+/**
+ * CODE COPIED FROM BOTANIA & MODIFIED
+ * https://github.com/Vazkii/Botania/blob/master/src/main/java/vazkii/botania/client/core/handler/RenderLexicon.java
+ * <p>
+ * Please do not touch this code.
+ * These are dangerous lands you are exploring
+ * Take this code fairy with you
+ * <p>
+ * .--.   _,
+ * .--;    \ /(_
+ * /    '.   |   '-._    . ' .
+ * |       \  \    ,-.)  -= * =-
+ * \ /\_   '. \((` .(    '/. '
+ * )\ /     \ )\  _/   _/
+ * /  \\    .-'   '--. /_\
+ * |    \\_.' ,        \/||
+ * \     \_.-';,_) _)'\ \||
+ * '.       /`\   (   '._/
+ * `\   .;  |  . '.
+ * ).'  )/|      \
+ * `    ` |  \|   |
+ * \  |   |
+ * '.|   |
+ * \  '\__
+ * `-._  '. _
+ * \`;-.` `._
+ * \ \ `'-._\
+ * \ |
+ * \ )
+ */
 @Mod.EventBusSubscriber(value = Side.CLIENT, modid = Wizardry.MODID)
 public class RenderCodex {
 
@@ -278,39 +304,54 @@ public class RenderCodex {
 				// Translate a little extra bit to fit the recipe cozily
 				GlStateManager.translate(-5, -5, 0);
 
+
+				List<ItemStack> inventory = getSpellInventory(stack);
+				int currentPage = ItemNBTHelper.getInt(stack, "page", 0);
+
 				int row = 0;
 				int column = 0;
-				List<ItemStack> inventory = getSpellInventory(stack);
+				int pageNb = 0;
 				for (int i = 0; i < inventory.size(); i++) {
 					ItemStack recipeStack = inventory.get(i);
 					if (recipeStack.isEmpty()) continue;
 
-					GlStateManager.pushMatrix();
-					GlStateManager.translate(column * 32, row * 16, -150);
+					if (pageNb >= currentPage) {
 
-					renderItemStack(recipeStack);
-
-					GlStateManager.popMatrix();
-
-					if (i != inventory.size() - 1 && column < 3) {
 						GlStateManager.pushMatrix();
-						GlStateManager.translate(32 + column * 32, row * 16 + 13, 0);
+						GlStateManager.translate(column * 32, row * 16, -150);
 
-						GlStateManager.rotate(180, 0, 0, 1);
-						GlStateManager.color(0, 1f, 1f, 1f);
-						GlStateManager.disableLighting();
-
-						arrowSprite.bind();
-						arrowSprite.draw(0, 0, 0, 16, 8);
+						renderItemStack(recipeStack);
 
 						GlStateManager.popMatrix();
-					}
 
+						if (i != inventory.size() - 1 && column < 3) {
+							GlStateManager.pushMatrix();
+							GlStateManager.translate(32 + column * 32, row * 16 + 13, 0);
+
+							GlStateManager.rotate(180, 0, 0, 1);
+							GlStateManager.color(0, 1f, 1f, 1f);
+							GlStateManager.disableLighting();
+
+							arrowSprite.bind();
+							arrowSprite.draw(0, 0, 0, 16, 8);
+
+							GlStateManager.popMatrix();
+						}
+
+					}
 
 					if (++column >= 3) {
 						column = 0;
 						row++;
 					}
+
+					if (row >= 9) {
+						row = 0;
+						pageNb++;
+
+						if (pageNb > currentPage) break;
+					}
+
 				}
 
 				GlStateManager.popMatrix();
@@ -342,30 +383,49 @@ public class RenderCodex {
 
 		List<List<Module>> spellModules = SpellUtils.deserializeModuleList(moduleList);
 		spellModules = SpellUtils.getEssentialModules(spellModules);
-		
-		int widthOfSpace = Minecraft.getMinecraft().fontRenderer.getStringWidth(" ");
+		int page = ItemNBTHelper.getInt(stack, "page", 0);
+
+		FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
+
+		int widthOfSpace = fr.getStringWidth(" ");
 		StringBuilder builder = new StringBuilder("Spell Structure:\n");
-		for (List<Module> spellModuleList : spellModules)
-		{
+		for (List<Module> spellModuleList : spellModules) {
 			String margin = null;
-			for (Module module : spellModuleList)
-			{
-				if (margin == null)
-				{
+			for (Module module : spellModuleList) {
+				if (margin == null) {
 					margin = " - ";
 					builder.append(margin).append(module.getReadableName()).append("\n");
-				}
-				else
-				{
-					int realLength = Minecraft.getMinecraft().fontRenderer.getStringWidth(margin);
-					int nbOfSpace = MathHelper.clamp(realLength / widthOfSpace, 0, 20);
+				} else {
+					int realLength = fr.getStringWidth(margin);
+					int nbOfSpace = MathHelper.clamp(realLength / widthOfSpace, 0, 17);
 					margin = StringUtils.repeat(" ", nbOfSpace) + "|_ ";
 					builder.append(margin).append(module.getReadableName()).append("\n");
+
+					if (nbOfSpace >= 16) {
+						builder.append("   ________________|")
+								.append("\n");
+						margin = "   ";
+					}
 				}
 			}
 		}
 
-		return builder.toString().split("\n");
+		String[] lines = builder.toString().split("\n");
+		StringBuilder pageChunk = new StringBuilder();
+		int count = 0;
+		int currentPage = 0;
+		for (String line : lines) {
+			pageChunk.append(line).append("\n");
+
+			if (++count >= 16) {
+				count = 0;
+
+				if (currentPage >= page) return pageChunk.toString().split("\n");
+				pageChunk = new StringBuilder();
+			}
+		}
+
+		return pageChunk.toString().split("\n");
 	}
 
 	public List<ItemStack> getSpellInventory(ItemStack stack) {
