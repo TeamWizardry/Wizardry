@@ -14,8 +14,8 @@ import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.spell.module.Module;
-
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.MathHelper;
@@ -47,25 +47,27 @@ public class ComponentSpellRecipe extends NavBarHolder implements IBookElement {
 		List<List<Module>> spellModules = SpellUtils.deserializeModuleList(moduleList);
 		List<ItemStack> spellItems = SpellUtils.getSpellItems(spellModules);
 		spellModules = SpellUtils.getEssentialModules(spellModules);
-		
-		int widthOfSpace = Minecraft.getMinecraft().fontRenderer.getStringWidth(" ");
+
+		FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
+
+		int widthOfSpace = fr.getStringWidth(" ");
 		StringBuilder builder = new StringBuilder("Spell Structure:\n");
-		for (List<Module> spellModuleList : spellModules)
-		{
+		for (List<Module> spellModuleList : spellModules) {
 			String margin = null;
-			for (Module module : spellModuleList)
-			{
-				if (margin == null)
-				{
+			for (Module module : spellModuleList) {
+				if (margin == null) {
 					margin = " - ";
 					builder.append(margin).append(module.getReadableName()).append("\n");
-				}
-				else
-				{
-					int realLength = Minecraft.getMinecraft().fontRenderer.getStringWidth(margin);
-					int nbOfSpace = MathHelper.clamp(realLength / widthOfSpace, 0, 20);
+				} else {
+					int realLength = fr.getStringWidth(margin);
+					int nbOfSpace = MathHelper.clamp(realLength / widthOfSpace, 0, 17);
 					margin = StringUtils.repeat(" ", nbOfSpace) + "|_ ";
 					builder.append(margin).append(module.getReadableName()).append("\n");
+
+					if (nbOfSpace >= 16) {
+						builder.append("   ________________|").append("\n");
+						margin = "   ";
+					}
 				}
 			}
 		}
@@ -76,23 +78,24 @@ public class ComponentSpellRecipe extends NavBarHolder implements IBookElement {
 		for (String line : lines) {
 			pageChunk.append(line).append("\n");
 
-			if (++count >= 20) {
+			if (++count >= 16) {
 				count = 0;
-				pageChunk = new StringBuilder();
 
 				ComponentText spellStructureText = new ComponentText(0, 0, ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.TOP);
-				spellStructureText.getText().setValue(pageChunk.toString());
 				spellStructureText.getUnicode().setValue(true);
+				spellStructureText.getText().setValue(pageChunk.toString());
 				spellStructureText.getWrap().setValue(getSize().getXi());
 
 				addPage(spellStructureText);
+
+				pageChunk = new StringBuilder();
 			}
 		}
 
 		if (count != 0) {
 			ComponentText spellStructureText = new ComponentText(0, 0, ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.TOP);
-			spellStructureText.getText().setValue(pageChunk.toString());
 			spellStructureText.getUnicode().setValue(true);
+			spellStructureText.getText().setValue(pageChunk.toString());
 			spellStructureText.getWrap().setValue(getSize().getXi());
 
 			addPage(spellStructureText);
@@ -122,7 +125,7 @@ public class ComponentSpellRecipe extends NavBarHolder implements IBookElement {
 				row++;
 			}
 
-			if (row >= 20) {
+			if (row >= 9) {
 				row = 0;
 				addPage(page);
 				page = new ComponentVoid(0, 0, getSize().getXi(), getSize().getYi());

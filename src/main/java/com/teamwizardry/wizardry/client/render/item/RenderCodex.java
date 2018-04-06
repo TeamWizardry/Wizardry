@@ -8,8 +8,6 @@ import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.spell.SpellBuilder;
-import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.util.RandUtil;
@@ -20,10 +18,7 @@ import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.model.ModelBook;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderItem;
-import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
@@ -33,6 +28,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.RenderSpecificHandEvent;
+import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -43,8 +39,36 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-// CODE COPIED FROM BOTANIA & MODIFIED
-// https://github.com/Vazkii/Botania/blob/master/src/main/java/vazkii/botania/client/core/handler/RenderLexicon.java
+/**
+ * CODE COPIED FROM BOTANIA & MODIFIED
+ * https://github.com/Vazkii/Botania/blob/master/src/main/java/vazkii/botania/client/core/handler/RenderLexicon.java
+ * <p>
+ * Please do not touch this code.
+ * These are dangerous lands you are exploring
+ * Take this code fairy with you
+ * <p>
+ * .--.   _,
+ * .--;    \ /(_
+ * /    '.   |   '-._    . ' .
+ * |       \  \    ,-.)  -= * =-
+ * \ /\_   '. \((` .(    '/. '
+ * )\ /     \ )\  _/   _/
+ * /  \\    .-'   '--. /_\
+ * |    \\_.' ,        \/||
+ * \     \_.-';,_) _)'\ \||
+ * '.       /`\   (   '._/
+ * `\   .;  |  . '.
+ * ).'  )/|      \
+ * `    ` |  \|   |
+ * \  |   |
+ * '.|   |
+ * \  '\__
+ * `-._  '. _
+ * \`;-.` `._
+ * \ \ `'-._\
+ * \ |
+ * \ )
+ */
 @Mod.EventBusSubscriber(value = Side.CLIENT, modid = Wizardry.MODID)
 public class RenderCodex {
 
@@ -257,6 +281,15 @@ public class RenderCodex {
 				GlStateManager.scale(0.003F, 0.003F, -0.003F);
 
 				GlStateManager.translate(-10, -30, -5);
+
+				// Draw tooltip above page here
+				if (rightHand) {
+					GlStateManager.pushMatrix();
+					GlStateManager.translate(0, -20, -30);
+					drawTooltip("Shift click to cycle pages", font);
+					GlStateManager.popMatrix();
+				}
+
 				String[] lines = getSpellStructureLines(stack);
 				for (int i = 0; i < lines.length; i++)
 					font.drawString(lines[i], 0, i * font.FONT_HEIGHT, 0x00);
@@ -278,39 +311,57 @@ public class RenderCodex {
 				// Translate a little extra bit to fit the recipe cozily
 				GlStateManager.translate(-5, -5, 0);
 
+				// Draw tooltip above page here
+				if (!rightHand)
+					drawTooltip("Shift click to cycle pages", font);
+
+				List<ItemStack> inventory = getSpellInventory(stack);
+				int currentPage = ItemNBTHelper.getInt(stack, "page", 0);
+
 				int row = 0;
 				int column = 0;
-				List<ItemStack> inventory = getSpellInventory(stack);
+				int pageNb = 0;
 				for (int i = 0; i < inventory.size(); i++) {
 					ItemStack recipeStack = inventory.get(i);
 					if (recipeStack.isEmpty()) continue;
 
-					GlStateManager.pushMatrix();
-					GlStateManager.translate(column * 32, row * 16, -150);
+					if (pageNb >= currentPage) {
 
-					renderItemStack(recipeStack);
-
-					GlStateManager.popMatrix();
-
-					if (i != inventory.size() - 1 && column < 3) {
 						GlStateManager.pushMatrix();
-						GlStateManager.translate(32 + column * 32, row * 16 + 13, 0);
+						GlStateManager.translate(column * 32, row * 16, -150);
 
-						GlStateManager.rotate(180, 0, 0, 1);
-						GlStateManager.color(0, 1f, 1f, 1f);
-						GlStateManager.disableLighting();
-
-						arrowSprite.bind();
-						arrowSprite.draw(0, 0, 0, 16, 8);
+						renderItemStack(recipeStack);
 
 						GlStateManager.popMatrix();
-					}
 
+						if (i != inventory.size() - 1 && column < 3) {
+							GlStateManager.pushMatrix();
+							GlStateManager.translate(32 + column * 32, row * 16 + 13, 0);
+
+							GlStateManager.rotate(180, 0, 0, 1);
+							GlStateManager.color(0, 1f, 1f, 1f);
+							GlStateManager.disableLighting();
+
+							arrowSprite.bind();
+							arrowSprite.draw(0, 0, 0, 16, 8);
+
+							GlStateManager.popMatrix();
+						}
+
+					}
 
 					if (++column >= 3) {
 						column = 0;
 						row++;
 					}
+
+					if (row >= 9) {
+						row = 0;
+						pageNb++;
+
+						if (pageNb > currentPage) break;
+					}
+
 				}
 
 				GlStateManager.popMatrix();
@@ -318,6 +369,45 @@ public class RenderCodex {
 		}
 
 		font.setUnicodeFlag(prevFlag);
+		GlStateManager.popMatrix();
+	}
+
+	public void drawTooltip(String text, FontRenderer font) {
+		GlStateManager.pushMatrix();
+
+		GlStateManager.translate(0, -25, 0);
+
+		GlStateManager.disableRescaleNormal();
+		RenderHelper.disableStandardItemLighting();
+		GlStateManager.disableLighting();
+		GlStateManager.disableDepth();
+
+		boolean previousUnicode = font.getUnicodeFlag();
+		font.setUnicodeFlag(false);
+
+		final int backgroundColor = 0xF0100010;
+		int tooltipTextWidth = font.getStringWidth(text);
+		int tooltipHeight = 8;
+		GuiUtils.drawGradientRect(0, 0 - 3, 0 - 4, tooltipTextWidth + 3, 0 - 3, backgroundColor, backgroundColor);
+		GuiUtils.drawGradientRect(0, 0 - 3, tooltipHeight + 3, tooltipTextWidth + 3, tooltipHeight + 4, backgroundColor, backgroundColor);
+		GuiUtils.drawGradientRect(0, 0 - 3, 0 - 3, tooltipTextWidth + 3, tooltipHeight + 3, backgroundColor, backgroundColor);
+		GuiUtils.drawGradientRect(0, 0 - 4, 0 - 3, 0 - 3, tooltipHeight + 3, backgroundColor, backgroundColor);
+		GuiUtils.drawGradientRect(0, tooltipTextWidth + 3, 0 - 3, tooltipTextWidth + 4, tooltipHeight + 3, backgroundColor, backgroundColor);
+		final int borderColorStart = 0x505000FF;
+		final int borderColorEnd = (borderColorStart & 0xFEFEFE) >> 1 | borderColorStart & 0xFF000000;
+		GuiUtils.drawGradientRect(0, 0 - 3, 0 - 3 + 1, 0 - 3 + 1, tooltipHeight + 3 - 1, borderColorStart, borderColorEnd);
+		GuiUtils.drawGradientRect(0, tooltipTextWidth + 2, 0 - 3 + 1, tooltipTextWidth + 3, tooltipHeight + 3 - 1, borderColorStart, borderColorEnd);
+		GuiUtils.drawGradientRect(0, 0 - 3, 0 - 3, tooltipTextWidth + 3, 0 - 3 + 1, borderColorStart, borderColorStart);
+		GuiUtils.drawGradientRect(0, 0 - 3, tooltipHeight + 2, tooltipTextWidth + 3, tooltipHeight + 3, borderColorEnd, borderColorEnd);
+
+		font.drawStringWithShadow(text, 0, 0, 0xFFD700);
+		font.setUnicodeFlag(previousUnicode);
+
+		GlStateManager.disableRescaleNormal();
+		RenderHelper.enableStandardItemLighting();
+		GlStateManager.disableLighting();
+		GlStateManager.enableDepth();
+
 		GlStateManager.popMatrix();
 	}
 
@@ -342,30 +432,49 @@ public class RenderCodex {
 
 		List<List<Module>> spellModules = SpellUtils.deserializeModuleList(moduleList);
 		spellModules = SpellUtils.getEssentialModules(spellModules);
-		
-		int widthOfSpace = Minecraft.getMinecraft().fontRenderer.getStringWidth(" ");
+		int page = ItemNBTHelper.getInt(stack, "page", 0);
+
+		FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
+
+		int widthOfSpace = fr.getStringWidth(" ");
 		StringBuilder builder = new StringBuilder("Spell Structure:\n");
-		for (List<Module> spellModuleList : spellModules)
-		{
+		for (List<Module> spellModuleList : spellModules) {
 			String margin = null;
-			for (Module module : spellModuleList)
-			{
-				if (margin == null)
-				{
+			for (Module module : spellModuleList) {
+				if (margin == null) {
 					margin = " - ";
 					builder.append(margin).append(module.getReadableName()).append("\n");
-				}
-				else
-				{
-					int realLength = Minecraft.getMinecraft().fontRenderer.getStringWidth(margin);
-					int nbOfSpace = MathHelper.clamp(realLength / widthOfSpace, 0, 20);
+				} else {
+					int realLength = fr.getStringWidth(margin);
+					int nbOfSpace = MathHelper.clamp(realLength / widthOfSpace, 0, 17);
 					margin = StringUtils.repeat(" ", nbOfSpace) + "|_ ";
 					builder.append(margin).append(module.getReadableName()).append("\n");
+
+					if (nbOfSpace >= 16) {
+						builder.append("   ________________|")
+								.append("\n");
+						margin = "   ";
+					}
 				}
 			}
 		}
 
-		return builder.toString().split("\n");
+		String[] lines = builder.toString().split("\n");
+		StringBuilder pageChunk = new StringBuilder();
+		int count = 0;
+		int currentPage = 0;
+		for (String line : lines) {
+			pageChunk.append(line).append("\n");
+
+			if (++count >= 16) {
+				count = 0;
+
+				if (currentPage >= page) return pageChunk.toString().split("\n");
+				pageChunk = new StringBuilder();
+			}
+		}
+
+		return pageChunk.toString().split("\n");
 	}
 
 	public List<ItemStack> getSpellInventory(ItemStack stack) {
