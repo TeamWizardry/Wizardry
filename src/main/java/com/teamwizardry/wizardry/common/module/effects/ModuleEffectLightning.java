@@ -54,6 +54,48 @@ public class ModuleEffectLightning extends ModuleEffect implements IOverrideCool
 		return new ModuleModifier[]{new ModuleModifierIncreaseRange(), new ModuleModifierIncreasePotency()};
 	}
 
+	@Override
+	public OverrideObject[] getRunOverrides() {
+		return new OverrideObject[]{
+				// BEAM
+				new OverrideObject(ModuleShapeBeam.class, ((data, spellRing) -> {
+					World world = data.world;
+					Entity caster = data.getCaster();
+					float yaw = data.getData(YAW, 0F);
+					float pitch = data.getData(PITCH, 0F);
+					Vec3d origin = data.getOriginHand();
+
+					if (origin == null) return;
+
+					double range = spellRing.getAttributeValue(AttributeRegistry.RANGE, data);
+					double potency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, data) / 2.0;
+
+					if (!spellRing.taxCaster(data)) return;
+
+					RayTraceResult traceResult = new RayTrace(world, PosUtils.vecFromRotations(pitch, yaw), origin, range).setSkipBlocks(true).setSkipEntities(true).trace();
+
+					long seed = RandUtil.nextLong(100, 100000);
+
+					data.addData(SEED, seed);
+
+					LightningGenerator generator = new LightningGenerator(origin, traceResult.hitVec, new RandUtilSeed(seed));
+
+					ArrayList<Vec3d> points = generator.generate();
+
+					data.world.playSound(null, new BlockPos(traceResult.hitVec), ModSounds.LIGHTNING, SoundCategory.NEUTRAL, 0.5f, RandUtil.nextFloat(1, 1.5f));
+					for (Vec3d point : points) {
+						List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(point)).contract(0.2, 0.2, 0.2));
+						if (!entityList.isEmpty()) {
+							for (Entity entity : entityList) {
+								LightningTracker.INSTANCE.addEntity(origin, entity, caster, potency);
+							}
+						}
+					}
+
+				}))
+		};
+	}
+
 	@SideOnly(Side.CLIENT)
 	@Override
 	public OverrideObject[] getRenderOverrides() {
@@ -82,26 +124,19 @@ public class ModuleEffectLightning extends ModuleEffect implements IOverrideCool
 		if (hasOverridingRuns(spellRing)) return true;
 
 		World world = spell.world;
-		Vec3d target = spell.getTarget();
 		Entity caster = spell.getCaster();
 		float yaw = spell.getData(YAW, 0F);
 		float pitch = spell.getData(PITCH, 0F);
+		Vec3d origin = spell.getOriginHand();
 
-		if (target == null) return false;
-
-		Vec3d origin = target;
-		if (caster != null) {
-			float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - yaw));
-			float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - yaw));
-			origin = new Vec3d(offX, caster.getEyeHeight(), offZ).add(target);
-		}
+		if (origin == null) return false;
 
 		double range = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
 		double potency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell) / 2.0;
 
 		if (!spellRing.taxCaster(spell)) return false;
 
-		RayTraceResult traceResult = new RayTrace(world, PosUtils.vecFromRotations(pitch, yaw), target, range).setSkipBlocks(true).setSkipEntities(true).trace();
+		RayTraceResult traceResult = new RayTrace(world, PosUtils.vecFromRotations(pitch, yaw), origin, range).setSkipBlocks(true).setSkipEntities(true).trace();
 
 		long seed = RandUtil.nextLong(100, 100000);
 
@@ -132,21 +167,13 @@ public class ModuleEffectLightning extends ModuleEffect implements IOverrideCool
 		World world = spell.world;
 		float yaw = spell.getData(YAW, 0F);
 		float pitch = spell.getData(PITCH, 0F);
-		Entity caster = spell.getCaster();
-		Vec3d target = spell.getTarget();
+		Vec3d origin = spell.getOriginHand();
 		long seed = spell.getData(SEED, 0L);
 		double range = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
 
-		if (target == null) return;
+		if (origin == null) return;
 
-		Vec3d origin = target;
-		if (caster != null) {
-			float offX = 0.5f * (float) Math.sin(Math.toRadians(-90.0f - yaw));
-			float offZ = 0.5f * (float) Math.cos(Math.toRadians(-90.0f - yaw));
-			origin = new Vec3d(offX, 0, offZ).add(target);
-		}
-
-		RayTraceResult traceResult = new RayTrace(world, PosUtils.vecFromRotations(pitch, yaw), target, range).setSkipBlocks(true).setSkipEntities(true).trace();
+		RayTraceResult traceResult = new RayTrace(world, PosUtils.vecFromRotations(pitch, yaw), origin, range).setSkipBlocks(true).setSkipEntities(true).trace();
 
 		PacketHandler.NETWORK.sendToAllAround(new PacketRenderLightningBolt(origin, traceResult.hitVec, seed),
 				new NetworkRegistry.TargetPoint(world.provider.getDimension(), origin.x, origin.y, origin.z, 256));
