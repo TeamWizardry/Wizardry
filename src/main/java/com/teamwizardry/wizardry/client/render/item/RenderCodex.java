@@ -32,6 +32,7 @@ import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -47,29 +48,31 @@ import java.util.Set;
  * These are dangerous lands you are exploring
  * Take this code fairy with you
  * <p>
- * .--.   _,
- * .--;    \ /(_
- * /    '.   |   '-._    . ' .
- * |       \  \    ,-.)  -= * =-
- * \ /\_   '. \((` .(    '/. '
- * )\ /     \ )\  _/   _/
- * /  \\    .-'   '--. /_\
- * |    \\_.' ,        \/||
- * \     \_.-';,_) _)'\ \||
- * '.       /`\   (   '._/
- * `\   .;  |  . '.
- * ).'  )/|      \
- * `    ` |  \|   |
- * \  |   |
- * '.|   |
- * \  '\__
- * `-._  '. _
- * \`;-.` `._
- * \ \ `'-._\
- * \ |
- * \ )
+ * ~          .--.   _,
+ * ~      .--;    \ /(_
+ * ~     /    '.   |   '-._    . ' .
+ * ~    |       \  \    ,-.)  -= * =-
+ * ~     \ /\_   '. \((` .(    '/. '
+ * ~      )\ /     \ )\  _/   _/
+ * ~     /  \\    .-'   '--. /_\
+ * ~    |    \\_.' ,        \/||
+ * ~    \     \_.-';,_) _)'\ \||
+ * ~     '.       /`\   (   '._/
+ * ~       `\   .;  |  . '.
+ * ~         ).'  )/|      \
+ * ~         `    ` |  \|   |
+ * ~                 \  |   |
+ * ~                  '.|   |
+ * ~                     \  '\__
+ * ~                      `-._  '. _
+ * ~                         \`;-.` `._
+ * ~                          \ \ `'-._\
+ * ~                           \ |
+ * ~                            \ )
+ * ~                             \_\
  */
 @Mod.EventBusSubscriber(value = Side.CLIENT, modid = Wizardry.MODID)
+@SideOnly(Side.CLIENT)
 public class RenderCodex {
 
 	private static final ModelBook model = new ModelBook();
