@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -31,8 +32,6 @@ public class TilePearlHolderRenderer extends TileEntitySpecialRenderer<TilePearl
 	@Override
 	public void render(TilePearlHolder te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
 		if (te.containsSomething()) {
-
-			boolean isPearl = te.containsNacrePearl();
 
 			GlStateManager.pushMatrix();
 			GlStateManager.enableBlend();
@@ -79,13 +78,13 @@ public class TilePearlHolderRenderer extends TileEntitySpecialRenderer<TilePearl
 			{
 				GlStateManager.disableCull();
 				GlStateManager.enableLighting();
+				GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 				GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 				RenderHelper.disableStandardItemLighting();
 
 				if (te.containsNacrePearl()) {
 					Minecraft.getMinecraft().getTextureManager().bindTexture(pearlTexture);
 					renderCube(0.1, new Color(Minecraft.getMinecraft().getItemColors().colorMultiplier(te.getItemStack(), 0)));
-
 				} else if (te.containsAnyOrb()) {
 					CapManager manager = new CapManager(te.getWizardryCap());
 					Color c = new Color(1f, 1f, 1f, (float) (manager.getMana() / manager.getMaxMana()));
@@ -102,57 +101,51 @@ public class TilePearlHolderRenderer extends TileEntitySpecialRenderer<TilePearl
 		}
 	}
 
-	private void renderCube(double scale, Color color) {
+	// Texture Unit for cube textures
+	private static final double TX = 0.25;
+
+	private static void side(Tessellator tess, double scale, Color color, EnumFacing facing, double u, double v) {
+		int normalX = facing.getFrontOffsetX();
+		int normalY = facing.getFrontOffsetY();
+		int normalZ = facing.getFrontOffsetZ();
+
+		BufferBuilder bf = tess.getBuffer();
+
+		bf.begin(GL11.GL_TRIANGLE_STRIP, DefaultVertexFormats.POSITION_TEX_COLOR);
+
+		for (int vertex = 0; vertex <= 0b11; vertex++) {
+			int vertexU = (vertex & 0b1);
+			int vertexV = (vertex & 0b10) >> 1;
+
+			int crossU = 1 - 2 * vertexU;
+			int crossV = 1 - 2 * vertexV;
+
+			int x = normalX == 0 ? crossU : normalX;
+			int z = normalZ == 0 ? crossV : normalZ;
+			int y = normalY == 0 ? (normalX != 0 ? crossU : crossV) : normalY;
+
+			vertex(bf, scale, x, y, z, u, v, vertexU, vertexV, color);
+		}
+
+		tess.draw();
+
+	}
+
+	private static void vertex(BufferBuilder bf, double scale, int xDir, int yDir, int zDir, double startU, double startV, double uAmount, double vAmount, Color color) {
+		bf.pos(scale * xDir, scale * yDir, scale * zDir)
+				.tex((startU + uAmount) * TX, (startV + vAmount) * TX)
+				.color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha())
+				.endVertex();
+	}
+
+	public static void renderCube(double scale, Color color) {
 		Tessellator tess = Tessellator.getInstance();
-		BufferBuilder buffer = tess.getBuffer();
 
-		// TOP
-		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-		buffer.pos(-scale, scale, -scale).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
-		buffer.pos(-scale, scale, scale).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
-		buffer.pos(scale, scale, scale).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
-		buffer.pos(scale, scale, -scale).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
-		tess.draw();
-
-		// BOTTOM
-		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-		buffer.pos(-scale, -scale, -scale).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
-		buffer.pos(-scale, -scale, scale).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
-		buffer.pos(scale, -scale, scale).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
-		buffer.pos(scale, -scale, -scale).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
-		tess.draw();
-
-		// TO THE RIGHT
-		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-		buffer.pos(-scale, -scale, scale).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
-		buffer.pos(-scale, scale, scale).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
-		buffer.pos(scale, scale, scale).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
-		buffer.pos(scale, -scale, scale).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
-		tess.draw();
-
-		// TO THE LEFT
-		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-		buffer.pos(-scale, -scale, -scale).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
-		buffer.pos(-scale, scale, -scale).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
-		buffer.pos(scale, scale, -scale).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
-		buffer.pos(scale, -scale, -scale).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
-		tess.draw();
-
-		// FRONT
-		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-		buffer.pos(scale, -scale, -scale).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
-		buffer.pos(scale, scale, -scale).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
-		buffer.pos(scale, scale, scale).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
-		buffer.pos(scale, -scale, scale).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
-		tess.draw();
-
-		// BACK
-		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-		buffer.pos(-scale, -scale, -scale).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
-		buffer.pos(-scale, scale, -scale).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
-		buffer.pos(-scale, scale, scale).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
-		buffer.pos(-scale, -scale, scale).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
-		tess.draw();
-
+		side(tess, scale, color, EnumFacing.DOWN, 0, 2);
+		side(tess, scale, color, EnumFacing.UP, 0, 1);
+		side(tess, scale, color, EnumFacing.NORTH, 1, 1);
+		side(tess, scale, color, EnumFacing.SOUTH, 1, 3);
+		side(tess, scale, color, EnumFacing.WEST, 1, 1);
+		side(tess, scale, color, EnumFacing.EAST, 1, 0);
 	}
 }

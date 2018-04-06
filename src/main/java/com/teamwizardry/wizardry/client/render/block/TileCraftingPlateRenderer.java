@@ -26,15 +26,17 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
 import java.util.HashSet;
 
 /**
  * Created by Demoniaque on 6/11/2016.
  */
+@SideOnly(Side.CLIENT)
 public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPlate> {
 
 	private static Animator animator = new Animator();
@@ -149,7 +151,7 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 
 		} else if (!tile.revealStructure && !errors.isEmpty()) {
 			for (BlockPos error : errors)
-				StructureErrorRenderer.INSTANCE.addError(error, Color.RED);
+				StructureErrorRenderer.INSTANCE.addError(error);
 		}
 
 		// render each item at its current position
