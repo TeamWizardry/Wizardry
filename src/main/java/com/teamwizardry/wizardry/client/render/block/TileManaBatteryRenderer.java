@@ -185,7 +185,7 @@ public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> 
 
 		} else if (!tile.revealStructure && !errors.isEmpty()) {
 			for (BlockPos error : errors)
-				StructureErrorRenderer.INSTANCE.addError(error);
+				StructureErrorRenderer.INSTANCE.addError(error, Color.RED);
 		}
 
 		if (tile.getBlockType() == ModBlocks.CREATIVE_MANA_BATTERY) {

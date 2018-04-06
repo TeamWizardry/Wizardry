@@ -29,6 +29,7 @@ import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
+import java.awt.*;
 import java.util.HashSet;
 
 /**
@@ -148,7 +149,7 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 
 		} else if (!tile.revealStructure && !errors.isEmpty()) {
 			for (BlockPos error : errors)
-				StructureErrorRenderer.INSTANCE.addError(error);
+				StructureErrorRenderer.INSTANCE.addError(error, Color.RED);
 		}
 
 		// render each item at its current position

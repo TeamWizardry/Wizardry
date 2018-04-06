@@ -48,7 +48,7 @@ public class ModuleEffectBreak extends ModuleEffect {
 	@Override
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
-		BlockPos targetPos = spell.getTargetPos();
+		BlockPos targetPos = spell.getData(SpellData.DefaultKeys.BLOCK_HIT);
 		Entity targetEntity = spell.getVictim();
 		Entity caster = spell.getCaster();
 
@@ -59,6 +59,7 @@ public class ModuleEffectBreak extends ModuleEffect {
 			for (ItemStack stack : targetEntity.getArmorInventoryList())
 				stack.damageItem((int) strength, (EntityLivingBase) targetEntity);
 		if (targetPos != null) {
+
 			Block block = world.getBlockState(targetPos).getBlock();
 			HashSet<BlockPos> branch = new HashSet<>();
 			HashSet<BlockPos> blocks = new HashSet<>();
@@ -68,7 +69,7 @@ public class ModuleEffectBreak extends ModuleEffect {
 			for (BlockPos pos : blocks) {
 
 				float hardness = world.getBlockState(pos).getBlockHardness(world, pos);
-				if (hardness >= 0 && hardness < strength/4) {
+				if (hardness >= 0 && hardness < strength) {
 					if (!spellRing.taxCaster(spell)) return false;
 					BlockUtils.breakBlock(world, pos, null, caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null, true);
 				}
@@ -77,23 +78,26 @@ public class ModuleEffectBreak extends ModuleEffect {
 		return true;
 	}
 
-	private void getBlocks(World world, Block block, int maxBlocks, HashSet<BlockPos> branch, HashSet<BlockPos> allBlocks) {
+	private void getBlocks(World world, Block block, int maxBlocks, HashSet<BlockPos> step, HashSet<BlockPos> allBlocks) {
 		if (allBlocks.size() >= maxBlocks) return;
 
-		HashSet<BlockPos> newBranch = new HashSet<>();
+		HashSet<BlockPos> newSteps = new HashSet<>();
 
-		for (BlockPos branchPos : branch) {
-			for (EnumFacing facing : EnumFacing.VALUES) {
-				BlockPos posAdj = branchPos.offset(facing);
-				IBlockState state = world.getBlockState(posAdj);
+		for (BlockPos stepPos : step) {
+			for (EnumFacing facing : PosUtils.symmetricFacingValues) {
 
-				if (!world.isBlockLoaded(posAdj)) continue;
-				if (allBlocks.contains(posAdj)) continue;
+				BlockPos nextStep = stepPos.offset(facing);
+
+				BlockPos immut = nextStep.toImmutable();
+				if (allBlocks.contains(immut)) continue;
+				if (!world.isBlockLoaded(nextStep)) continue;
+
+				IBlockState state = world.getBlockState(nextStep);
 				if (state.getBlock() != block) continue;
 
 				boolean sideSolid = false;
 				for (EnumFacing dir : PosUtils.symmetricFacingValues) {
-					BlockPos adjPos = branchPos.offset(dir);
+					BlockPos adjPos = stepPos.offset(dir);
 					IBlockState adjState = world.getBlockState(adjPos);
 					if (!adjState.isSideSolid(world, adjPos, dir.getOpposite())) {
 						sideSolid = true;
@@ -102,16 +106,16 @@ public class ModuleEffectBreak extends ModuleEffect {
 				}
 				if (!sideSolid) continue;
 
-				if (allBlocks.size() >= maxBlocks) return;
+				newSteps.add(nextStep);
+				allBlocks.add(nextStep);
 
-				newBranch.add(posAdj);
-				allBlocks.add(posAdj);
+				if (allBlocks.size() >= maxBlocks) return;
 			}
 		}
-		boolean mismatched = false;
-		for (BlockPos pos : branch) if (!newBranch.contains(pos)) mismatched = true;
-		if (mismatched)
-			getBlocks(world, block, maxBlocks, newBranch, allBlocks);
+
+		if (newSteps.isEmpty()) return;
+
+		getBlocks(world, block, maxBlocks, newSteps, allBlocks);
 	}
 
 	@Override
