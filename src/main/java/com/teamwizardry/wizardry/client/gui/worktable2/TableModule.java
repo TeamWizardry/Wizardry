@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import static com.teamwizardry.wizardry.api.spell.module.ModuleType.EFFECT;
 import static com.teamwizardry.wizardry.client.gui.worktable2.WorktableGui.*;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
@@ -99,6 +98,8 @@ public class TableModule extends GuiComponent {
 		});
 
 		BUS.hook(DragMixin.DragDropEvent.class, (event) -> {
+			if (!event.component.hasTag("placed")) event.component.addTag("placed");
+
 			Vec2d currentPos = event.component.thisPosToOtherContext(null);
 			if (event.getButton() == EnumMouseButton.LEFT && initialPos.equals(currentPos)) {
 				selectedModule = (selectedModule == event.component) ? null : this;
@@ -128,7 +129,9 @@ public class TableModule extends GuiComponent {
 					}
 
 					event.component.invalidate();
-					worktable.setToastMessage("", Color.GREEN);
+
+					if (event.component.hasTag("placed"))
+						worktable.setToastMessage("", Color.GREEN);
 				}
 				event.component.removeTag("connecting");
 				return;
@@ -144,50 +147,32 @@ public class TableModule extends GuiComponent {
 					if (!linkTo.draggable) continue;
 					if (linkTo == this) continue;
 
-					// safe means that there's at least one module
-					// that has a link to something but isn't being linked by something
-					// IE: A spell chain head.
-					boolean safe = false;
-					for (GuiComponent child : paper.getChildren()) {
-						if (child == this) continue;
-						if (!(child instanceof TableModule)) continue;
-						TableModule childModule = (TableModule) child;
-
-						boolean linkedFromSomewhere = false;
-						if (childModule.getLinksTo() != null) {
-							for (GuiComponent subChild : paper.getChildren()) {
-								if (subChild == child) continue;
-								if (!(subChild instanceof TableModule)) continue;
-								TableModule subChildModule = (TableModule) subChild;
-
-								if (childModule.getLinksTo() == subChildModule) continue;
-
-								if (subChildModule.getLinksTo() == childModule) {
-									linkedFromSomewhere = true;
-									break;
-								}
-							}
-						}
-
-						if (!linkedFromSomewhere) {
-							safe = true;
-							break;
-						}
-					}
-					if (safe) {
+					if (checkSafety(paper)) {
 						if (getLinksTo() == linkTo) {
 							event.component.removeTag("connecting");
 							setLinksTo(null);
 							worktable.setToastMessage("", Color.GREEN);
 							return;
-						} else if (isCompatibleWith(linkTo.module.getModuleType())) {
+						} else if (isCompatibleWith()) {
 							setLinksTo(linkTo);
 
+							boolean linkedToSelf = false;
 							if (linkTo.getLinksTo() == this) {
+								linkedToSelf = true;
 								linkTo.setLinksTo(null);
 							}
 
-							worktable.setToastMessage("", Color.GREEN);
+							if (checkSafety(paper)) {
+								worktable.setToastMessage("", Color.GREEN);
+							} else {
+								worktable.setToastMessage("You can't create a loop!", Color.RED);
+
+								setLinksTo(null);
+
+								if (linkedToSelf) {
+									linkTo.setLinksTo(this);
+								}
+							}
 						}
 					} else {
 						worktable.setToastMessage("There's a loop somewhere! A spell should start from somewhere and not make an infinite cycle.", Color.RED);
@@ -368,16 +353,48 @@ public class TableModule extends GuiComponent {
 		return module;
 	}
 
-	private boolean isCompatibleWith(ModuleType type) {
+	/**
+	 * safe means that there's at least one module
+	 * that has a link to something but isn't being linked by something
+	 * IE: A spell chain head.
+	 */
+	private boolean checkSafety(GuiComponent paper) {
+		for (GuiComponent child : paper.getChildren()) {
+			if (child == this) continue;
+			if (!(child instanceof TableModule)) continue;
+			TableModule childModule = (TableModule) child;
+
+			boolean linkedFromSomewhere = false;
+			if (childModule.getLinksTo() != null) {
+				for (GuiComponent subChild : paper.getChildren()) {
+					if (subChild == child) continue;
+					if (!(subChild instanceof TableModule)) continue;
+					TableModule subChildModule = (TableModule) subChild;
+
+					if (childModule.getLinksTo() == subChildModule) continue;
+
+					if (subChildModule.getLinksTo() == childModule) {
+						linkedFromSomewhere = true;
+						break;
+					}
+				}
+			}
+
+			if (!linkedFromSomewhere) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean isCompatibleWith() {
 		String bold = TextFormatting.BOLD.toString();
 		String reset = TextFormatting.RESET.toString();
 		switch (getModule().getModuleType()) {
 			case SHAPE:
 				return true;
-			case EVENT: {
-				worktable.setToastMessage("These pieces don't work together.\n\nAn " + bold + "Event" + reset + " module can only link to an " + bold + "Effect" + reset + " module.", Color.RED);
-				return type == EFFECT;
-			}
+			case EVENT:
+				return true;
 			default: {
 				worktable.setToastMessage("These pieces don't work together.\n\nAn " + bold + "Effect" + reset + " module cannot link to a module. They can only be linked from other modules.", Color.RED);
 				return false;

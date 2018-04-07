@@ -118,6 +118,7 @@ public class WorktableGui extends GuiBase {
 			} else save.setSprite(BUTTON_NORMAL);
 		});
 		save.BUS.hook(GuiComponentEvents.MouseDownEvent.class, event -> {
+			if (!event.component.getMouseOver()) return;
 			save.setSprite(BUTTON_PRESSED);
 		});
 
