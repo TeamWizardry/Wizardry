@@ -47,7 +47,7 @@ public final class VersionChecker {
 
 			if (onlineVersion != null && !onlineVersion.isEmpty()) {
 				String clientBuild = Wizardry.VERSION;
-				if (Utils.compareVersions(onlineVersion, clientBuild) == 1) {
+				if (!clientBuild.equals("GRADLE:VERSION") && Utils.compareVersions(onlineVersion, clientBuild) == 1) {
 					ArrayList<String> messages = new ArrayList<>();
 					String base = "wizardry.update";
 					int n = 0;
@@ -61,11 +61,11 @@ public final class VersionChecker {
 					player.sendMessage(new TextComponentTranslation("wizardry.misc.update_checker1")
 							.setStyle(new Style().setColor(TextFormatting.GREEN))
 							.appendText(" ")
-							.appendSibling(new TextComponentString(" " + clientBuild).setStyle(new Style().setColor(TextFormatting.RED))));
+							.appendSibling(new TextComponentString(clientBuild).setStyle(new Style().setColor(TextFormatting.RED))));
 					player.sendMessage(new TextComponentTranslation("wizardry.misc.update_checker2")
 							.setStyle(new Style().setColor(TextFormatting.GREEN))
 							.appendText(" ")
-							.appendSibling(new TextComponentString(" " + onlineVersion).setStyle(new Style().setColor(TextFormatting.YELLOW))));
+							.appendSibling(new TextComponentString(onlineVersion).setStyle(new Style().setColor(TextFormatting.YELLOW))));
 
 					if (updateMessage != null && !updateMessage.isEmpty())
 						player.sendMessage(component);

@@ -18,6 +18,7 @@ import com.teamwizardry.wizardry.api.util.RandUtil;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.text.TextFormatting;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,40 +47,41 @@ public class ComponentModifiers extends GuiComponent {
 		});
 	}
 
-	private static int factorial(int n) {
-		if (n == 1) {
-			return 1;
-		}
-		return n * factorial(n - 1);
-	}
-
 	public void refresh() {
 		refreshRequested = true;
 	}
 
-	public void set() {
-		//if (worktable.selectedModule == null) {
-		//	setVisible(false);
-		//	return;
-		//} else setVisible(true);
+	public static final int PIXELS_PER_BAR = 16; // units: pixels
+	public static final float SLIDE_IN_DURATION = 30; // units: ticks
+	public static final float SPACER_DURATION = 5; // units: ticks
+	public static final float SLIDE_OUT_DURATION = 10; // units: ticks (/ modifier)
 
+	public void set() {
 		List<GuiComponent> children = new ArrayList<>(getChildren());
-		float duration = 1 / 5f;
-		final int childrenSize = children.size();
+
+		int childrenSize = children.size(); // units: none (modifier)
+
+		float slideInDist = childrenSize * PIXELS_PER_BAR; // units: pixels
+
 		for (int i = 0; i < childrenSize; i++) {
+			int lengthToTravel = (i + 1) * PIXELS_PER_BAR; // units: pixels
+			float slideDuration = SLIDE_IN_DURATION * lengthToTravel / slideInDist; // units: ticks
+			float waitDuration = SLIDE_IN_DURATION - slideDuration; // units: ticks
+
 			GuiComponent bar = children.get(i);
 
 			BasicAnimation<GuiComponent> animPlate = new BasicAnimation<>(bar, "pos.y");
-			animPlate.setEasing(Easing.easeInBack);
-			animPlate.setFrom(i * 16);
-			animPlate.setTo(0);
-			animPlate.setDuration(-((i + 1) * duration) / (duration * (2 - 1f / (childrenSize - i))) + duration);
+			animPlate.setEasing(Easing.easeInBack); // Use Easing.easeInOutBack for the sexiest effect. Important: do it for BOTH!
+			animPlate.setFrom(lengthToTravel - PIXELS_PER_BAR); // units: pixels
+			animPlate.setTo(-PIXELS_PER_BAR); // units: pixels
+			animPlate.setDuration(slideDuration); // units: ticks
 			animPlate.setCompletion(bar::invalidate);
 
-			add(animPlate);
+			add(new ScheduledEventAnimation(waitDuration, () -> add(animPlate)));
 		}
 
-		ScheduledEventAnimation begin = new ScheduledEventAnimation(duration, () -> {
+
+		Runnable begin = () -> {
 
 			TableModule selectedModule = worktable.selectedModule;
 			if (selectedModule == null) {
@@ -101,15 +103,21 @@ public class ComponentModifiers extends GuiComponent {
 				return;
 			}
 
-			ScheduledEventAnimation animExpiry = new ScheduledEventAnimation(duration, () -> {
-				animationPlaying = false;
-			});
-			add(animExpiry);
+
+			int modifiersSize = modifiers.length; // units: none
+			float slideOutDist = modifiersSize * PIXELS_PER_BAR; // units: pixels
+			float outDuration = SLIDE_OUT_DURATION * modifiersSize; // units: ticks
+
+			add(new ScheduledEventAnimation(SLIDE_IN_DURATION,
+					() -> animationPlaying = false));
 
 			for (int i = 0; i < modifiers.length; i++) {
+				int lengthToTravel = (i + 1) * PIXELS_PER_BAR; // units: pixels
+				float slideDuration = outDuration * lengthToTravel / slideOutDist; // units: ticks
+
 				ModuleModifier modifier = modifiers[i];
 
-				ComponentRect bar = new ComponentRect(0, i * 16, getSize().getXi(), 16);
+				ComponentRect bar = new ComponentRect(0, 0, getSize().getXi(), PIXELS_PER_BAR);
 				bar.getColor().setValue(new Color(0x80000000, true));
 
 				TableModule tableModifier = new TableModule(worktable, modifier, false, false);
@@ -121,21 +129,21 @@ public class ComponentModifiers extends GuiComponent {
 
 				bar.setVisible(true);
 				BasicAnimation<ComponentRect> animPlate = new BasicAnimation<>(bar, "pos.y");
-				animPlate.setEasing(Easing.easeOutBack);
-				animPlate.setFrom(0);
-				animPlate.setTo(i * 16);
-				animPlate.setDuration(((modifiers.length - i) + 1) * ((modifiers.length - i) + 1) / duration);
+				animPlate.setEasing(Easing.easeOutBack); // Use Easing.easeInOutBack for the sexiest effect. Important: do it for BOTH!
+				animPlate.setFrom(-PIXELS_PER_BAR); // units: pixels
+				animPlate.setTo(lengthToTravel - PIXELS_PER_BAR); // units: pixels
+				animPlate.setDuration(slideDuration); // units: ticks
 
 				add(animPlate);
 
 				bar.render.getTooltip().func((Function<GuiComponent, List<String>>) t -> {
 					List<String> txt = new ArrayList<>();
 
-					if (worktable.animationPlaying) return txt;
+					if (worktable.animationPlaying || tableModifier.getMouseOver()) return txt;
 
-					txt.add(TextFormatting.GOLD + module.getReadableName());
+					txt.add(TextFormatting.GOLD + modifier.getReadableName());
 					if (GuiScreen.isShiftKeyDown())
-						txt.add(TextFormatting.GRAY + module.getDescription());
+						txt.add(TextFormatting.GRAY + modifier.getDescription());
 					else txt.add(TextFormatting.GRAY + LibrarianLib.PROXY.translate("wizardry.misc.sneak"));
 					return txt;
 				});
@@ -212,13 +220,16 @@ public class ComponentModifiers extends GuiComponent {
 
 				add(bar);
 			}
-		});
+		};
 
-		add(begin);
+		if (childrenSize > 0)
+			add(new ScheduledEventAnimation(SLIDE_IN_DURATION + SPACER_DURATION, begin));
+		else
+			begin.run();
 	}
 
 	@Override
-	public void drawComponent(Vec2d mousePos, float partialTicks) {
+	public void drawComponent(@Nonnull Vec2d mousePos, float partialTicks) {
 
 	}
 }

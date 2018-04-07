@@ -141,11 +141,11 @@ public class TilePearlHolderRenderer extends TileEntitySpecialRenderer<TilePearl
 	public static void renderCube(double scale, Color color) {
 		Tessellator tess = Tessellator.getInstance();
 
-		side(tess, scale, color, EnumFacing.DOWN, 0, 2);
-		side(tess, scale, color, EnumFacing.UP, 0, 1);
+		side(tess, scale, color, EnumFacing.DOWN, 2, 0);
+		side(tess, scale, color, EnumFacing.UP, 1, 0);
 		side(tess, scale, color, EnumFacing.NORTH, 1, 1);
-		side(tess, scale, color, EnumFacing.SOUTH, 1, 3);
-		side(tess, scale, color, EnumFacing.WEST, 1, 1);
-		side(tess, scale, color, EnumFacing.EAST, 1, 0);
+		side(tess, scale, color, EnumFacing.SOUTH, 3, 1);
+		side(tess, scale, color, EnumFacing.WEST, 2, 1);
+		side(tess, scale, color, EnumFacing.EAST, 0, 1);
 	}
 }

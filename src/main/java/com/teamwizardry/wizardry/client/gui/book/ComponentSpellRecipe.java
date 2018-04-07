@@ -51,7 +51,7 @@ public class ComponentSpellRecipe extends NavBarHolder implements IBookElement {
 		FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
 
 		int widthOfSpace = fr.getStringWidth(" ");
-		StringBuilder builder = new StringBuilder("Spell Structure:\n");
+		StringBuilder builder = new StringBuilder("LOCALIZE ME DAMMIT (originally \"Spell Structure:\")\n");
 		for (List<Module> spellModuleList : spellModules) {
 			String margin = null;
 			for (Module module : spellModuleList) {
