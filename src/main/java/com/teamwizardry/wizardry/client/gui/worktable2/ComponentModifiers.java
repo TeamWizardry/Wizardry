@@ -131,46 +131,28 @@ public class ComponentModifiers extends GuiComponent {
 				}
 
 				TableModule fakePlate = new TableModule(worktable, modifier, false, false);
-				worktable.getFullscreenComponents().add(fakePlate);
+				worktable.getMainComponents().add(fakePlate);
 
-				//Vec2d from = tableModifier.thisPosToOtherContext(worktable.getMainComponents());
-				//Vec2d to = worktable.selectedModule.thisPosToOtherContext(worktable.getMainComponents());
+				Vec2d from = tableModifier.thisPosToOtherContext(worktable.getMainComponents());
+				Vec2d to = worktable.selectedModule.thisPosToOtherContext(worktable.getMainComponents());
 
-				Vec2d from = tableModifier.thisPosToOtherContext(null);
-				Vec2d to = worktable.selectedModule.thisPosToOtherContext(null);
-
-				Wizardry.logger.info("original pos: " + tableModifier.getPos() + " - contexted Pos: " + from.toString());
-				KeyframeAnimation<TableModule> animX = new KeyframeAnimation<>(fakePlate, "pos.x");
-				animX.setDuration(20);
+				KeyframeAnimation<TableModule> anim = new KeyframeAnimation<>(fakePlate, "pos");
+				anim.setDuration(20);
 				if (status == 0) {
-					animX.setKeyframes(new Keyframe[]{
-							new Keyframe(0, from.getX(), Easing.easeOutCubic),
-							new Keyframe(1f, to.getX(), Easing.easeOutCubic)
+					anim.setKeyframes(new Keyframe[]{
+							new Keyframe(0, from, Easing.easeOutCubic),
+							new Keyframe(1f, to, Easing.easeOutCubic)
 					});
 				} else if (status == 1) {
-					animX.setKeyframes(new Keyframe[]{
-							new Keyframe(0, to.getX(), Easing.easeOutCubic),
-							new Keyframe(1f, from.getX(), Easing.easeOutCubic)
+					anim.setKeyframes(new Keyframe[]{
+							new Keyframe(0, to, Easing.easeOutCubic),
+							new Keyframe(1f, from, Easing.easeOutCubic)
 					});
 				}
 
-				KeyframeAnimation<TableModule> animY = new KeyframeAnimation<>(fakePlate, "pos.y");
-				animY.setDuration(20);
-				if (status == 0) {
-					animX.setKeyframes(new Keyframe[]{
-							new Keyframe(0, from.getY(), Easing.easeOutCubic),
-							new Keyframe(1f, to.getY(), Easing.easeOutCubic)
-					});
-				} else if (status == 1) {
-					animX.setKeyframes(new Keyframe[]{
-							new Keyframe(0, to.getY(), Easing.easeOutCubic),
-							new Keyframe(1f, from.getY(), Easing.easeOutCubic)
-					});
-				}
+				anim.setCompletion(fakePlate::invalidate);
 
-				animY.setCompletion(fakePlate::invalidate);
-
-				worktable.getMainComponents().add(animX, animY);
+				worktable.getMainComponents().add(anim);
 			});
 
 			list.add(bar);
