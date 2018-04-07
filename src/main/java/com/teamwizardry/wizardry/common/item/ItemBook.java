@@ -54,8 +54,9 @@ public class ItemBook extends ItemModBook implements IPickupAchievement {
 
 			for (EnumHand hand : EnumHand.values()) {
 				ItemStack stack = player.getHeldItem(hand);
+
 				if (stack.getItem() != ModItems.BOOK)
-					return;
+					continue;
 
 				if (!ItemNBTHelper.getBoolean(stack, "has_spell", false))
 					return;
