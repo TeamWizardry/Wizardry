@@ -12,6 +12,7 @@ import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleType;
 import com.teamwizardry.wizardry.init.ModItems;
+import kotlin.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -19,7 +20,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 import java.util.function.Function;
 
@@ -41,6 +42,8 @@ public class WorktableGui extends GuiBase {
 	final ComponentVoid paper;
 	final ComponentText toast;
 
+	private boolean hadBook = false, bookWarnRevised = false;
+
 	public WorktableGui(BlockPos worktablePos) {
 		super(480, 224);
 
@@ -61,7 +64,19 @@ public class WorktableGui extends GuiBase {
 		// PAPER PLATE
 		toast = new ComponentText(384, 139, ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.TOP);
 		toast.setSize(new Vec2d(80, 69));
+		toast.getTransform().setScale(0.5f);
+		toast.getWrap().setValue(160);
 		tableComponent.add(toast);
+
+		setCodexToastMessage();
+
+		toast.BUS.hook(GuiComponentEvents.ComponentTickEvent.class, event -> {
+			if (!bookWarnRevised && !hadBook && Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) {
+				toast.getColor().setValue(Color.GREEN);
+				toast.getText().setValue("Codex found, you can save spells.");
+				bookWarnRevised = true;
+			}
+		});
 
 		ComponentSprite shapes = new ComponentSprite(SIDE_BAR_SHORT, 29, 31, 48, 80);
 		addModules(shapes, ModuleType.SHAPE);
@@ -103,12 +118,9 @@ public class WorktableGui extends GuiBase {
 			} else save.setSprite(BUTTON_NORMAL);
 		});
 		save.BUS.hook(GuiComponentEvents.MouseDownEvent.class, event -> {
-			if (!Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) {
-				save.setSprite(BUTTON_PRESSED);
-			} else if (event.component.getMouseOver()) {
-				save.setSprite(BUTTON_PRESSED);
-			}
+			save.setSprite(BUTTON_PRESSED);
 		});
+
 		save.BUS.hook(GuiComponentEvents.MouseUpEvent.class, event -> {
 			if (!Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) {
 				save.setSprite(BUTTON_PRESSED);
@@ -118,15 +130,91 @@ public class WorktableGui extends GuiBase {
 		});
 
 		save.BUS.hook(GuiComponentEvents.MouseClickEvent.class, (event) -> {
-
 			if (!Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) return;
-
 		});
 		getMainComponents().add(save);
 
 		//whitelistedModifiers = new ComponentWhitelistedModifiers(this, 384, save.getPos().getYi() + save.getSize().getYi() + 8, 80, 170);
 		//whitelistedModifiers.getTransform().setTranslateZ(20);
 		//getMainComponents().add(whitelistedModifiers);
+	}
+
+	public void setCodexToastMessage() {
+		if (!Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) {
+			hadBook = false;
+			toast.getColor().setValue(Color.RED);
+			toast.getText().setValue("You do not have a codex in your inventory! Once you have one, you can save your spell into the book.");
+		} else {
+			hadBook = true;
+			toast.getColor().setValue(Color.GREEN);
+			toast.getText().setValue("Codex found, you can save spells.");
+		}
+	}
+
+	public String getToastHeader() {
+		return TextFormatting.YELLOW + getSpellName() + TextFormatting.RESET + "\n\n";
+	}
+
+	public String getSpellName() {
+		StringBuilder builder = new StringBuilder();
+		Deque<TableModule> heads = new ArrayDeque<>(getSpellHeads());
+
+		while (!heads.isEmpty()) {
+
+			TableModule lastModule = heads.pop();
+
+			while (lastModule != null) {
+				builder.append(lastModule.getModule().getReadableName());
+				lastModule = lastModule.getLinksTo();
+
+				if (lastModule != null)
+					builder.append(" > ");
+			}
+
+			if (!heads.isEmpty()) {
+				builder.append(" | ");
+			}
+		}
+		return builder.toString();
+	}
+
+	public Pair<String, Color> getToastMessage() {
+		String text = toast.getText().getValue(toast);
+		Color color = toast.getColor().getValue(toast);
+		return new Pair<>(text, color);
+	}
+
+	public void setToastMessage(String text, Color color) {
+		toast.getText().setValue(getToastHeader() + text);
+		toast.getColor().setValue(color);
+	}
+
+	private Set<TableModule> getSpellHeads() {
+		Set<TableModule> set = new HashSet<>();
+
+		for (GuiComponent child : paper.getChildren()) {
+			if (!(child instanceof TableModule)) continue;
+			TableModule childModule = (TableModule) child;
+
+			if (childModule.getLinksTo() != null) {
+				boolean linkedToSomehow = false;
+				for (GuiComponent subChild : paper.getChildren()) {
+					if (!(subChild instanceof TableModule)) continue;
+					TableModule subChildModule = (TableModule) subChild;
+					if (subChildModule == childModule) continue;
+
+					if (subChildModule.getLinksTo() == childModule) {
+						linkedToSomehow = true;
+						break;
+					}
+				}
+				if (!linkedToSomehow) {
+					set.add(childModule);
+				}
+			}
+		}
+
+		return set;
 	}
 
 	private void addModules(ComponentSprite parent, ModuleType type) {

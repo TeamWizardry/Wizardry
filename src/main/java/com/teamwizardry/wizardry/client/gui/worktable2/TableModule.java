@@ -100,7 +100,7 @@ public class TableModule extends GuiComponent {
 
 		BUS.hook(DragMixin.DragDropEvent.class, (event) -> {
 			Vec2d currentPos = event.component.thisPosToOtherContext(null);
-			if (event.getButton() == EnumMouseButton.RIGHT && initialPos.equals(currentPos)) {
+			if (event.getButton() == EnumMouseButton.LEFT && initialPos.equals(currentPos)) {
 				selectedModule = (selectedModule == event.component) ? null : this;
 
 				// TODO: refresh modifiers here
@@ -109,7 +109,11 @@ public class TableModule extends GuiComponent {
 				return;
 			}
 
-			if (!paper.geometry.getMouseOver()) {
+			Vec2d plateSize = paper.getSize();
+			Vec2d platePos = event.component.getPos();
+			boolean isInsidePaper = platePos.getX() >= 0 && platePos.getX() <= plateSize.getX() && platePos.getY() >= 0 && platePos.getY() <= plateSize.getY();
+
+			if (!isInsidePaper) {
 				if (!event.component.hasTag("connecting")) {
 
 					for (GuiComponent paperComponent : paper.getChildren()) {
@@ -124,7 +128,7 @@ public class TableModule extends GuiComponent {
 					}
 
 					event.component.invalidate();
-
+					worktable.setToastMessage("", Color.GREEN);
 				}
 				event.component.removeTag("connecting");
 				return;
@@ -137,17 +141,56 @@ public class TableModule extends GuiComponent {
 
 					if (!(paperComponent instanceof TableModule)) continue;
 					TableModule linkTo = (TableModule) paperComponent;
+					if (!linkTo.draggable) continue;
+					if (linkTo == this) continue;
 
-					if (linkTo.getLinksTo() == null) {
-						linkTo.setLinksTo(this);
+					// safe means that there's at least one module
+					// that has a link to something but isn't being linked by something
+					// IE: A spell chain head.
+					boolean safe = false;
+					for (GuiComponent child : paper.getChildren()) {
+						if (child == this) continue;
+						if (!(child instanceof TableModule)) continue;
+						TableModule childModule = (TableModule) child;
+
+						boolean linkedFromSomewhere = false;
+						if (childModule.getLinksTo() != null) {
+							for (GuiComponent subChild : paper.getChildren()) {
+								if (subChild == child) continue;
+								if (!(subChild instanceof TableModule)) continue;
+								TableModule subChildModule = (TableModule) subChild;
+
+								if (childModule.getLinksTo() == subChildModule) continue;
+
+								if (subChildModule.getLinksTo() == childModule) {
+									linkedFromSomewhere = true;
+									break;
+								}
+							}
+						}
+
+						if (!linkedFromSomewhere) {
+							safe = true;
+							break;
+						}
 					}
+					if (safe) {
+						if (getLinksTo() == linkTo) {
+							event.component.removeTag("connecting");
+							setLinksTo(null);
+							worktable.setToastMessage("", Color.GREEN);
+							return;
+						} else if (isCompatibleWith(linkTo.module.getModuleType())) {
+							setLinksTo(linkTo);
 
-					if (getLinksTo() == linkTo) {
-						event.component.removeTag("connecting");
-						setLinksTo(null);
-						return;
+							if (linkTo.getLinksTo() == this) {
+								linkTo.setLinksTo(null);
+							}
+
+							worktable.setToastMessage("", Color.GREEN);
+						}
 					} else {
-						setLinksTo(linkTo);
+						worktable.setToastMessage("There's a loop somewhere! A spell should start from somewhere and not make an infinite cycle.", Color.RED);
 					}
 
 					event.component.removeTag("connecting");
@@ -177,7 +220,7 @@ public class TableModule extends GuiComponent {
 		GlStateManager.disableCull();
 		GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		GlStateManager.color(1, 1, 1, 1);
-		GlStateManager.translate(0, 0, -1);
+		GlStateManager.translate(0, 0, -10);
 		STREAK.bind();
 		InterpBezier2D bezier = new InterpBezier2D(start, end);
 		List<Vec2d> list = bezier.list(50);
@@ -233,6 +276,7 @@ public class TableModule extends GuiComponent {
 		}
 		tessellator.draw();
 
+		GlStateManager.translate(0, 0, 10);
 		GlStateManager.enableTexture2D();
 		GlStateManager.popMatrix();
 	}
@@ -266,15 +310,22 @@ public class TableModule extends GuiComponent {
 
 		Vec2d size = new Vec2d(plate.getWidth(), plate.getHeight());
 		if (selectedModule == this || (getMouseOver() && !hasTag("connecting"))) {
+			GlStateManager.translate(0, 0, 50);
 			size = size.add(6, 6);
 			pos = pos.sub(3, 3);
 		}
 
 		if (hasTag("connecting")) {
 			drawWire(pos.add(size.getX() / 2.0, size.getY() / 2.0), mousePos, getColorForModule(module.getModuleType()), Color.WHITE);
-		} else if (linksTo != null) {
-			Vec2d posTo = new Vec2d(linksTo.getPos().getX() - (linksTo.getSize().getXi() / 2.0), linksTo.getPos().getY() - (linksTo.getSize().getYi() / 2.0));
+		}
+		if (linksTo != null) {
+			Vec2d posContext = linksTo.thisPosToOtherContext(this);
+			Vec2d posTo = new Vec2d(posContext.getX(), posContext.getY());
 			drawWire(pos.add(size.getX() / 2.0, size.getY() / 2.0), posTo.add(size.getX() / 2.0, size.getY() / 2.0), getColorForModule(module.getModuleType()), getColorForModule(linksTo.getModule().getModuleType()));
+		}
+
+		if (selectedModule == this || (getMouseOver() && !hasTag("connecting"))) {
+			GlStateManager.translate(0, 0, 50);
 		}
 
 		plate.bind();
@@ -288,6 +339,10 @@ public class TableModule extends GuiComponent {
 				(float) ((plate.getHeight() / 2.0) - ((size.getY() - shrink) / 2.0)),
 				(float) (size.getX() - shrink),
 				(float) (size.getYi() - shrink));
+
+		if (selectedModule == this || (getMouseOver() && !hasTag("connecting"))) {
+			GlStateManager.translate(0, 0, -50);
+		}
 	}
 
 	@Nullable
@@ -314,13 +369,19 @@ public class TableModule extends GuiComponent {
 	}
 
 	private boolean isCompatibleWith(ModuleType type) {
+		String bold = TextFormatting.BOLD.toString();
+		String reset = TextFormatting.RESET.toString();
 		switch (getModule().getModuleType()) {
 			case SHAPE:
 				return true;
-			case EVENT:
+			case EVENT: {
+				worktable.setToastMessage("These pieces don't work together.\n\nAn " + bold + "Event" + reset + " module can only link to an " + bold + "Effect" + reset + " module.", Color.RED);
 				return type == EFFECT;
-			default:
+			}
+			default: {
+				worktable.setToastMessage("These pieces don't work together.\n\nAn " + bold + "Effect" + reset + " module cannot link to a module. They can only be linked from other modules.", Color.RED);
 				return false;
+			}
 		}
 	}
 
