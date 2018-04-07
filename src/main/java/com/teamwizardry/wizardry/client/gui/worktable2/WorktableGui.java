@@ -52,7 +52,8 @@ public class WorktableGui extends GuiBase {
 	final ComponentText toast;
 	public float backgroundAlpha = 0f;
 	private ComponentSprite tableComponent;
-	private boolean hadBook = false, bookWarnRevised = false, animationPlaying = false;
+	public boolean animationPlaying = false;
+	private boolean hadBook = false, bookWarnRevised = false;
 
 	public WorktableGui() {
 		super(480, 224);
@@ -128,33 +129,19 @@ public class WorktableGui extends GuiBase {
 			save.render.getTooltip().func((Function<GuiComponent, List<String>>) t -> {
 				List<String> txt = new ArrayList<>();
 
-				if (!Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) {
+				if (!animationPlaying && !Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) {
 					txt.add(TextFormatting.RED + LibrarianLib.PROXY.translate("wizardry.misc.save_error"));
 				}
 				return txt;
 			});
 
-			save.BUS.hook(GuiComponentEvents.MouseInEvent.class, event -> {
+			save.BUS.hook(GuiComponentEvents.ComponentTickEvent.class, event -> {
 				if (animationPlaying || !Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) {
 					save.setSprite(BUTTON_PRESSED);
-				} else save.setSprite(BUTTON_HIGHLIGHTED);
-			});
-			save.BUS.hook(GuiComponentEvents.MouseOutEvent.class, event -> {
-				if (animationPlaying || !Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) {
-					save.setSprite(BUTTON_PRESSED);
-				} else save.setSprite(BUTTON_NORMAL);
-			});
-			save.BUS.hook(GuiComponentEvents.MouseDownEvent.class, event -> {
-				if (!event.component.getMouseOver()) {
-					save.setSprite(BUTTON_NORMAL);
-				} else save.setSprite(BUTTON_PRESSED);
-			});
-
-			save.BUS.hook(GuiComponentEvents.MouseUpEvent.class, event -> {
-				if (animationPlaying || !Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) {
-					save.setSprite(BUTTON_PRESSED);
-				} else if (event.component.getMouseOver()) {
-					save.setSprite(BUTTON_HIGHLIGHTED);
+				} else {
+					if (event.component.getMouseOver())
+						save.setSprite(BUTTON_HIGHLIGHTED);
+					else save.setSprite(BUTTON_NORMAL);
 				}
 			});
 
@@ -289,6 +276,7 @@ public class WorktableGui extends GuiBase {
 		ComponentVoid bookIconMask = new ComponentVoid(0, -100, 180, 100);
 		fakePaper.add(bookIconMask);
 
+		// GRAY BACKGROUND
 		{
 			ComponentRect grayBackground = new ComponentRect(0, 0, tableComponent.getSize().getXi(), tableComponent.getSize().getYi());
 			grayBackground.getColor().setValue(new Color(0.05f, 0.05f, 0.05f, 0f));
@@ -303,7 +291,7 @@ public class WorktableGui extends GuiBase {
 			anim.setKeyframes(new Keyframe[]{
 					new Keyframe(0, 0f, Easing.easeInOutQuint),
 					new Keyframe(0.2f, 0.65f, Easing.easeInOutQuint),
-					new Keyframe(0.8f, 0.65f, Easing.easeInOutQuint),
+					new Keyframe(0.7f, 0.65f, Easing.easeInOutQuint),
 					new Keyframe(1f, 0f, Easing.easeInOutQuint)
 			});
 			anim.setCompletion(grayBackground::invalidate);
@@ -390,7 +378,7 @@ public class WorktableGui extends GuiBase {
 				if (!(component instanceof TableModule)) continue;
 				TableModule fakeModule = (TableModule) component;
 
-				Vec2d random = fakeModule.getPos().add(RandUtil.nextDouble(-50, 50), RandUtil.nextDouble(-50, 50));
+				Vec2d random = fakeModule.getPos().add(RandUtil.nextDouble(-10, 10), RandUtil.nextDouble(-10, 10));
 
 				float delay = RandUtil.nextFloat(0.2f, 0.3f);
 

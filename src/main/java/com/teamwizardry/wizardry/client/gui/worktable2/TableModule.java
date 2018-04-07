@@ -71,6 +71,7 @@ public class TableModule extends GuiComponent {
 
 		if (!benign)
 			BUS.hook(GuiComponentEvents.MouseDownEvent.class, (event) -> {
+				if (worktable.animationPlaying) return;
 				if (event.getButton() == EnumMouseButton.LEFT && getMouseOver() && !this.draggable) {
 					TableModule item = new TableModule(this.worktable, this.module, true, false);
 					item.setPos(paper.otherPosToThisContext(event.component, event.getMousePos()));
@@ -85,6 +86,7 @@ public class TableModule extends GuiComponent {
 
 		if (!benign)
 			BUS.hook(DragMixin.DragPickupEvent.class, (event) -> {
+				if (worktable.animationPlaying) return;
 				if (!getMouseOver()) return;
 				initialPos = event.component.thisPosToOtherContext(null);
 				if (event.getButton() == EnumMouseButton.RIGHT) {
@@ -94,6 +96,7 @@ public class TableModule extends GuiComponent {
 
 		if (!benign)
 			BUS.hook(DragMixin.DragMoveEvent.class, (event) -> {
+				if (worktable.animationPlaying) return;
 				if (event.getButton() == EnumMouseButton.RIGHT) {
 					// event.getPos returns the before-moving position. Setting it back to it's place.
 					// This allows the component to stay where it is while also allowing us to draw a line
@@ -104,6 +107,8 @@ public class TableModule extends GuiComponent {
 
 		if (!benign)
 			BUS.hook(DragMixin.DragDropEvent.class, (event) -> {
+				if (worktable.animationPlaying) return;
+
 				if (!event.component.hasTag("placed")) event.component.addTag("placed");
 
 				Vec2d currentPos = event.component.thisPosToOtherContext(null);
@@ -196,6 +201,7 @@ public class TableModule extends GuiComponent {
 			render.getTooltip().func((Function<GuiComponent, List<String>>) t -> {
 				List<String> txt = new ArrayList<>();
 
+				if (worktable.animationPlaying) return txt;
 				if (t.hasTag("connecting")) return txt;
 
 				txt.add(TextFormatting.GOLD + module.getReadableName());
@@ -301,7 +307,7 @@ public class TableModule extends GuiComponent {
 		Vec2d pos = Vec2d.ZERO;
 
 		Vec2d size = new Vec2d(plate.getWidth(), plate.getHeight());
-		if (worktable.selectedModule == this || (getMouseOver() && !hasTag("connecting"))) {
+		if (worktable.selectedModule == this || (!worktable.animationPlaying && getMouseOver() && !hasTag("connecting"))) {
 			GlStateManager.translate(0, 0, 50);
 			size = size.add(6, 6);
 			pos = pos.sub(3, 3);
