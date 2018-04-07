@@ -1,24 +1,30 @@
 package com.teamwizardry.wizardry.client.gui.worktable2;
 
 import com.teamwizardry.librarianlib.core.LibrarianLib;
+import com.teamwizardry.librarianlib.features.animator.Easing;
+import com.teamwizardry.librarianlib.features.animator.animations.Keyframe;
+import com.teamwizardry.librarianlib.features.animator.animations.KeyframeAnimation;
 import com.teamwizardry.librarianlib.features.gui.GuiBase;
 import com.teamwizardry.librarianlib.features.gui.component.GuiComponent;
 import com.teamwizardry.librarianlib.features.gui.component.GuiComponentEvents;
 import com.teamwizardry.librarianlib.features.gui.components.*;
 import com.teamwizardry.librarianlib.features.math.Vec2d;
+import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleType;
+import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.common.network.PacketSendSpellToBook;
 import com.teamwizardry.wizardry.init.ModItems;
 import kotlin.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
 
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -38,37 +44,43 @@ public class WorktableGui extends GuiBase {
 	static final Sprite PLATE = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/plate.png"));
 	static final Sprite PLATE_HIGHLIGHTED = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/plate_highlighted.png"));
 	static final Sprite STREAK = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/streak.png"));
-
+	static final Sprite BOOK_ICON = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/items/book.png"));
+	final ComponentModifiers modifiers;
+	@Nullable
+	public TableModule selectedModule = null;
 	final ComponentVoid paper;
 	final ComponentText toast;
+	public float backgroundAlpha = 0f;
+	private ComponentSprite tableComponent;
+	private boolean hadBook = false, bookWarnRevised = false, animationPlaying = false;
 
-	private boolean hadBook = false, bookWarnRevised = false;
-
-	public WorktableGui(BlockPos worktablePos) {
+	public WorktableGui() {
 		super(480, 224);
 
 		// GRAY OUT BACKGROUND
-		ComponentRect rect = new ComponentRect(0, 0, 40000, 40000);
-		rect.getColor().setValue(new Color(0x80000000, true));
-		rect.getTransform().setTranslateZ(-20);
-		getFullscreenComponents().add(rect);
+		ComponentRect grayBackground = new ComponentRect(0, 0, 40000, 40000);
+		grayBackground.getColor().setValue(new Color(0.05f, 0.05f, 0.05f, 0.8f));
+		grayBackground.getTransform().setTranslateZ(-20);
+		getFullscreenComponents().add(grayBackground);
 
 		// TABLE
-		ComponentSprite tableComponent = new ComponentSprite(TABLE_SPRITE, 0, 0, 480, 224);
+		tableComponent = new ComponentSprite(TABLE_SPRITE, 0, 0, 480, 224);
 		getMainComponents().add(tableComponent);
 
 		// PAPER PLATE
 		paper = new ComponentVoid(181, 22, 180, 184);
 		tableComponent.add(paper);
 
-		// PAPER PLATE
+		// --- TOAST BOX --- //
 		toast = new ComponentText(384, 139, ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.TOP);
-		toast.setSize(new Vec2d(80, 69));
+		toast.setSize(new Vec2d(80, 69).mul(2));
+		toast.clipping.setClipToBounds(true);
 		toast.getTransform().setScale(0.5f);
 		toast.getWrap().setValue(160);
 		tableComponent.add(toast);
 
 		setCodexToastMessage();
+		// --- TOAST BOX --- //
 
 		toast.BUS.hook(GuiComponentEvents.ComponentTickEvent.class, event -> {
 			if (!bookWarnRevised && !hadBook && Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) {
@@ -78,6 +90,7 @@ public class WorktableGui extends GuiBase {
 			}
 		});
 
+		// --- SIDEBAR MODULES --- //
 		ComponentSprite shapes = new ComponentSprite(SIDE_BAR_SHORT, 29, 31, 48, 80);
 		addModules(shapes, ModuleType.SHAPE);
 		tableComponent.add(shapes);
@@ -89,55 +102,94 @@ public class WorktableGui extends GuiBase {
 		ComponentSprite events = new ComponentSprite(SIDE_BAR_SHORT, 29, 123, 48, 80);
 		addModules(events, ModuleType.EVENT);
 		tableComponent.add(events);
+		// --- SIDEBAR MODULES --- //
 
-		ComponentSprite save = new ComponentSprite(BUTTON_NORMAL, 395, 30, (int) (88 / 1.5), (int) (24 / 1.5));
-		String saveStr = LibrarianLib.PROXY.translate("wizardry.misc.save");
-		int width = Minecraft.getMinecraft().fontRenderer.getStringWidth(saveStr);
-		int height = Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT;
-		ComponentText textSave = new ComponentText((save.getSize().getXi() / 2) - width / 2, (save.getSize().getYi() / 2) - height / 2);
-		textSave.getText().setValue(saveStr);
-		save.add(textSave);
+		modifiers = new ComponentModifiers(this);
+		tableComponent.add(modifiers);
 
-		save.render.getTooltip().func((Function<GuiComponent, List<String>>) t -> {
-			List<String> txt = new ArrayList<>();
+		// --- SAVE BUTTON --- //
+		{
+			ComponentSprite save = new ComponentSprite(BUTTON_NORMAL, 395, 30, (int) (88 / 1.5), (int) (24 / 1.5));
 
-			if (!Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) {
-				txt.add(TextFormatting.RED + LibrarianLib.PROXY.translate("wizardry.misc.save_error"));
+			// Button rendering
+			{
+				String saveStr = LibrarianLib.PROXY.translate("wizardry.misc.save");
+				int stringWidth = Minecraft.getMinecraft().fontRenderer.getStringWidth(saveStr);
+				int fitWidth = save.getSize().getXi() - 16;
+
+				ComponentText textSave = new ComponentText(16 + (int) (fitWidth / 2.0 - stringWidth / 2.0), (save.getSize().getYi() / 2), ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.MIDDLE);
+				textSave.getText().setValue(saveStr);
+				save.add(textSave);
+
+				ComponentSprite sprite = new ComponentSprite(BOOK_ICON, 2, 0);
+				save.add(sprite);
 			}
-			return txt;
-		});
 
-		save.BUS.hook(GuiComponentEvents.MouseInEvent.class, event -> {
-			if (!Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) {
-				save.setSprite(BUTTON_PRESSED);
-			} else save.setSprite(BUTTON_HIGHLIGHTED);
-		});
-		save.BUS.hook(GuiComponentEvents.MouseOutEvent.class, event -> {
-			if (!Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) {
-				save.setSprite(BUTTON_PRESSED);
-			} else save.setSprite(BUTTON_NORMAL);
-		});
-		save.BUS.hook(GuiComponentEvents.MouseDownEvent.class, event -> {
-			if (!event.component.getMouseOver()) return;
-			save.setSprite(BUTTON_PRESSED);
-		});
+			save.render.getTooltip().func((Function<GuiComponent, List<String>>) t -> {
+				List<String> txt = new ArrayList<>();
 
-		save.BUS.hook(GuiComponentEvents.MouseUpEvent.class, event -> {
-			if (!Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) {
-				save.setSprite(BUTTON_PRESSED);
-			} else if (event.component.getMouseOver()) {
-				save.setSprite(BUTTON_HIGHLIGHTED);
-			}
-		});
+				if (!Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) {
+					txt.add(TextFormatting.RED + LibrarianLib.PROXY.translate("wizardry.misc.save_error"));
+				}
+				return txt;
+			});
 
-		save.BUS.hook(GuiComponentEvents.MouseClickEvent.class, (event) -> {
-			if (!Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) return;
-		});
-		getMainComponents().add(save);
+			save.BUS.hook(GuiComponentEvents.MouseInEvent.class, event -> {
+				if (animationPlaying || !Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) {
+					save.setSprite(BUTTON_PRESSED);
+				} else save.setSprite(BUTTON_HIGHLIGHTED);
+			});
+			save.BUS.hook(GuiComponentEvents.MouseOutEvent.class, event -> {
+				if (animationPlaying || !Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) {
+					save.setSprite(BUTTON_PRESSED);
+				} else save.setSprite(BUTTON_NORMAL);
+			});
+			save.BUS.hook(GuiComponentEvents.MouseDownEvent.class, event -> {
+				if (!event.component.getMouseOver()) {
+					save.setSprite(BUTTON_NORMAL);
+				} else save.setSprite(BUTTON_PRESSED);
+			});
 
-		//whitelistedModifiers = new ComponentWhitelistedModifiers(this, 384, save.getPos().getYi() + save.getSize().getYi() + 8, 80, 170);
-		//whitelistedModifiers.getTransform().setTranslateZ(20);
-		//getMainComponents().add(whitelistedModifiers);
+			save.BUS.hook(GuiComponentEvents.MouseUpEvent.class, event -> {
+				if (animationPlaying || !Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) {
+					save.setSprite(BUTTON_PRESSED);
+				} else if (event.component.getMouseOver()) {
+					save.setSprite(BUTTON_HIGHLIGHTED);
+				}
+			});
+
+			save.BUS.hook(GuiComponentEvents.MouseClickEvent.class, (event) -> {
+				if (animationPlaying || !Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK)))
+					return;
+
+				List<List<Module>> chains = new ArrayList<>();
+				for (TableModule head : getSpellHeads()) {
+					List<Module> chain = new ArrayList<>();
+
+					TableModule lastModule = head;
+
+					while (lastModule != null) {
+						chain.add(lastModule.getModule());
+
+						lastModule = lastModule.getLinksTo();
+					}
+
+					chains.add(chain);
+				}
+
+				for (ItemStack stack : Minecraft.getMinecraft().player.inventory.mainInventory) {
+					if (stack.getItem() == ModItems.BOOK) {
+						int slot = Minecraft.getMinecraft().player.inventory.getSlotFor(stack);
+						PacketHandler.NETWORK.sendToServer(new PacketSendSpellToBook(slot, chains));
+					}
+				}
+
+				setToastMessage("Spell saved to codex successfully! Open the book and check the new spell recipe tab.", Color.GREEN);
+				playAnimation();
+			});
+			getMainComponents().add(save);
+		}
+		// --- SAVE BUTTON --- //
 	}
 
 	public void setCodexToastMessage() {
@@ -223,8 +275,149 @@ public class WorktableGui extends GuiBase {
 		parent.add(grid);
 
 		for (Module module : ModuleRegistry.INSTANCE.getModules(type)) {
-			com.teamwizardry.wizardry.client.gui.worktable2.TableModule tableModule = new com.teamwizardry.wizardry.client.gui.worktable2.TableModule(this, module, false);
+			TableModule tableModule = new com.teamwizardry.wizardry.client.gui.worktable2.TableModule(this, module, false, false);
 			grid.add(tableModule);
+		}
+	}
+
+	public void playAnimation() {
+		animationPlaying = true;
+		ComponentVoid fakePaper = new ComponentVoid(180, 19, 180, 188);
+		fakePaper.getTransform().setTranslateZ(100);
+		getMainComponents().add(fakePaper);
+
+		ComponentVoid bookIconMask = new ComponentVoid(0, -100, 180, 100);
+		fakePaper.add(bookIconMask);
+
+		{
+			ComponentRect grayBackground = new ComponentRect(0, 0, tableComponent.getSize().getXi(), tableComponent.getSize().getYi());
+			grayBackground.getColor().setValue(new Color(0.05f, 0.05f, 0.05f, 0f));
+			grayBackground.getTransform().setTranslateZ(200);
+			grayBackground.BUS.hook(GuiComponentEvents.ComponentTickEvent.class, event -> {
+				grayBackground.getColor().setValue(new Color(0.05f, 0.05f, 0.05f, backgroundAlpha));
+			});
+			tableComponent.add(grayBackground);
+
+			KeyframeAnimation<WorktableGui> anim = new KeyframeAnimation<>(this, "backgroundAlpha");
+			anim.setDuration(100);
+			anim.setKeyframes(new Keyframe[]{
+					new Keyframe(0, 0f, Easing.easeInOutQuint),
+					new Keyframe(0.2f, 0.65f, Easing.easeInOutQuint),
+					new Keyframe(0.8f, 0.65f, Easing.easeInOutQuint),
+					new Keyframe(1f, 0f, Easing.easeInOutQuint)
+			});
+			anim.setCompletion(grayBackground::invalidate);
+			getMainComponents().add(anim);
+		}
+
+		// BOOK PEAK ANIMATION
+		{
+			ComponentSprite bookIcon = new ComponentSprite(BOOK_ICON, (int) ((bookIconMask.getSize().getX() / 2.0) - 16), (int) (bookIconMask.getSize().getY() + 50), 32, 32);
+			bookIconMask.add(bookIcon);
+
+			bookIcon.getTransform().setTranslateZ(200);
+			bookIconMask.clipping.setClipToBounds(true);
+			bookIconMask.getTransform().setTranslateZ(250);
+
+			final Vec2d originalPos = bookIcon.getPos();
+			KeyframeAnimation<ComponentSprite> anim = new KeyframeAnimation<>(bookIcon, "pos.y");
+			anim.setDuration(120);
+			anim.setKeyframes(new Keyframe[]{
+					new Keyframe(0, originalPos.getY(), Easing.linear),
+					new Keyframe(0.4f, (bookIconMask.getSize().getY() / 2.0) - 25, Easing.easeInBack),
+					new Keyframe(0.5f, (bookIconMask.getSize().getY() / 2.0) - 10, Easing.easeOutBack),
+					new Keyframe(0.8f, (bookIconMask.getSize().getY() / 2.0) - 10, Easing.easeInBack),
+					new Keyframe(1f, originalPos.getY(), Easing.easeInBack)
+			});
+
+			anim.setCompletion(() -> {
+				fakePaper.invalidate();
+				animationPlaying = false;
+			});
+
+			bookIcon.add(anim);
+
+		}
+
+		// PAPER ITEMS ANIMATION
+		{
+			HashMap<TableModule, UUID> links = new HashMap<>();
+
+			for (GuiComponent component : paper.getChildren()) {
+				if (!(component instanceof TableModule)) continue;
+				TableModule tableModule = (TableModule) component;
+
+				TableModule fakeModule = new TableModule(this, tableModule.getModule(), true, true);
+				fakeModule.setPos(tableModule.getPos());
+				for (Object tag : tableModule.getTagList()) fakeModule.addTag(tag);
+				fakeModule.getTransform().setTranslateZ(230);
+				fakePaper.add(fakeModule);
+
+				UUID uuid = tableModule.getData(UUID.class, "uuid");
+				if (uuid != null)
+					fakeModule.setData(UUID.class, "uuid", uuid);
+
+				TableModule linkedModule = tableModule.getLinksTo();
+				if (linkedModule == null) continue;
+
+				UUID linkTo = linkedModule.getData(UUID.class, "uuid");
+				if (linkTo != null)
+					links.put(fakeModule, linkTo);
+			}
+
+			for (TableModule module : links.keySet()) {
+				if (!links.containsKey(module)) continue;
+
+				UUID linkTo = links.get(module);
+
+				if (linkTo == null) continue;
+
+				for (GuiComponent child : fakePaper.getChildren()) {
+					UUID uuid = child.getData(UUID.class, "uuid");
+					if (uuid == null) continue;
+
+					if (!linkTo.equals(uuid)) continue;
+
+					if (!(child instanceof TableModule)) continue;
+					TableModule reverseUUIDLink = (TableModule) child;
+
+					module.setLinksTo(reverseUUIDLink);
+					break;
+				}
+			}
+
+			for (GuiComponent component : fakePaper.getChildren()) {
+				if (!(component instanceof TableModule)) continue;
+				TableModule fakeModule = (TableModule) component;
+
+				Vec2d random = fakeModule.getPos().add(RandUtil.nextDouble(-50, 50), RandUtil.nextDouble(-50, 50));
+
+				float delay = RandUtil.nextFloat(0.2f, 0.3f);
+
+				KeyframeAnimation<TableModule> animX = new KeyframeAnimation<>(fakeModule, "pos.x");
+				animX.setDuration(100);
+				animX.setKeyframes(new Keyframe[]{
+						new Keyframe(delay, fakeModule.getPos().getX() + 1, Easing.easeOutQuint),
+						new Keyframe(0.45f, random.getX(), Easing.easeOutQuint),
+						new Keyframe(0.6f, random.getX(), Easing.easeOutQuint),
+						new Keyframe(1f, (bookIconMask.getSize().getX() / 2.0) - 8, Easing.easeInOutQuint)
+
+				});
+
+				KeyframeAnimation<TableModule> animY = new KeyframeAnimation<>(fakeModule, "pos.y");
+				animY.setDuration(100);
+				animY.setKeyframes(new Keyframe[]{
+						new Keyframe(delay, fakeModule.getPos().getY() + 3, Easing.easeOutQuint),
+						new Keyframe(0.45f, random.getY(), Easing.easeOutQuint),
+						new Keyframe(0.6f, random.getY(), Easing.easeOutQuint),
+						new Keyframe(1f, -(bookIconMask.getSize().getY() / 2.0) - 4, Easing.easeInOutQuint)
+
+				});
+
+				animY.setCompletion(fakeModule::invalidate);
+
+				fakeModule.add(animX, animY);
+			}
 		}
 	}
 

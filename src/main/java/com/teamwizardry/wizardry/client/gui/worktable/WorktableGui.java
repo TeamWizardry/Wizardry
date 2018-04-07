@@ -25,7 +25,6 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleType;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.Utils;
-import com.teamwizardry.wizardry.common.network.PacketSendSpellToBook;
 import com.teamwizardry.wizardry.common.network.PacketWorktableUpdate;
 import com.teamwizardry.wizardry.common.tile.TileMagiciansWorktable;
 import com.teamwizardry.wizardry.init.ModBlocks;
@@ -191,7 +190,7 @@ public class WorktableGui extends GuiBase {
 			for (ItemStack stack : Minecraft.getMinecraft().player.inventory.mainInventory) {
 				if (stack.getItem() == ModItems.BOOK) {
 					int slot = Minecraft.getMinecraft().player.inventory.getSlotFor(stack);
-					PacketHandler.NETWORK.sendToServer(new PacketSendSpellToBook(slot, compiledSpell));
+					//PacketHandler.NETWORK.sendToServer(new PacketSendSpellToBook(slot, compiledSpell));
 				}
 			}
 

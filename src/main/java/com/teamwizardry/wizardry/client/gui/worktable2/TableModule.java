@@ -28,6 +28,7 @@ import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Function;
 
 import static com.teamwizardry.wizardry.client.gui.worktable2.WorktableGui.*;
@@ -36,167 +37,173 @@ import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 
 public class TableModule extends GuiComponent {
 
-	@Nullable
-	public static TableModule selectedModule = null;
 	@Nonnull
 	private final WorktableGui worktable;
 	@Nonnull
 	private final Module module;
 	private final boolean draggable;
 	private final Sprite icon;
+	private final boolean benign;
 	@Nullable
 	private TableModule linksTo = null;
 	/**
 	 * ALWAYS from the context of null. Never to any other component.
 	 */
-	private Vec2d initialPos = null;
+	private Vec2d initialPos;
 
-	public TableModule(@Nonnull WorktableGui worktable, @Nonnull Module module, boolean draggable) {
+	public TableModule(@Nonnull WorktableGui worktable, @Nonnull Module module, boolean draggable, boolean benign) {
 		super(0, 0, PLATE.getWidth(), PLATE.getHeight());
 		this.worktable = worktable;
 		this.module = module;
 		this.draggable = draggable;
 		icon = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/icons/" + module.getID() + ".png"));
+		this.benign = benign;
 
 		initialPos = thisPosToOtherContext(null);
 
 		ComponentVoid paper = worktable.paper;
 
-		geometry.setComponentOccludesMouseOver(false);
-		//geometry.setComponentPropagatesMouseOverToParent(false);
-
 		if (draggable) getTransform().setTranslateZ(30);
 
-		BUS.hook(GuiComponentEvents.MouseDownEvent.class, (event) -> {
-			if (event.getButton() == EnumMouseButton.LEFT && getMouseOver() && !this.draggable) {
-				TableModule item = new TableModule(this.worktable, this.module, true);
-				item.setPos(paper.otherPosToThisContext(event.component, event.getMousePos()));
-				DragMixin drag = new DragMixin(item, vec2d -> vec2d);
-				drag.setDragOffset(new Vec2d(6, 6));
-				drag.setMouseDown(event.getButton());
-				paper.add(item);
+		if (!benign && draggable) {
+			setData(UUID.class, "uuid", UUID.randomUUID());
+		}
 
-				event.cancel();
-			}
-		});
+		if (!benign)
+			BUS.hook(GuiComponentEvents.MouseDownEvent.class, (event) -> {
+				if (event.getButton() == EnumMouseButton.LEFT && getMouseOver() && !this.draggable) {
+					TableModule item = new TableModule(this.worktable, this.module, true, false);
+					item.setPos(paper.otherPosToThisContext(event.component, event.getMousePos()));
+					DragMixin drag = new DragMixin(item, vec2d -> vec2d);
+					drag.setDragOffset(new Vec2d(6, 6));
+					drag.setMouseDown(event.getButton());
+					paper.add(item);
 
-		BUS.hook(DragMixin.DragPickupEvent.class, (event) -> {
-			if (!getMouseOver()) return;
-			initialPos = event.component.thisPosToOtherContext(null);
-			if (event.getButton() == EnumMouseButton.RIGHT) {
-				event.component.addTag("connecting");
-			}
-		});
-
-		BUS.hook(DragMixin.DragMoveEvent.class, (event) -> {
-			if (event.getButton() == EnumMouseButton.RIGHT) {
-				// event.getPos returns the before-moving position. Setting it back to it's place.
-				// This allows the component to stay where it is while also allowing us to draw a line
-				// outside of it's box
-				event.setNewPos(event.getPos());
-			}
-		});
-
-		BUS.hook(DragMixin.DragDropEvent.class, (event) -> {
-			if (!event.component.hasTag("placed")) event.component.addTag("placed");
-
-			Vec2d currentPos = event.component.thisPosToOtherContext(null);
-			if (event.getButton() == EnumMouseButton.LEFT && initialPos.equals(currentPos)) {
-				selectedModule = (selectedModule == event.component) ? null : this;
-
-				// TODO: refresh modifiers here
-
-				event.component.removeTag("connecting");
-				return;
-			}
-
-			Vec2d plateSize = paper.getSize();
-			Vec2d platePos = event.component.getPos();
-			boolean isInsidePaper = platePos.getX() >= 0 && platePos.getX() <= plateSize.getX() && platePos.getY() >= 0 && platePos.getY() <= plateSize.getY();
-
-			if (!isInsidePaper) {
-				if (!event.component.hasTag("connecting")) {
-
-					for (GuiComponent paperComponent : paper.getChildren()) {
-						if (paperComponent == event.component) continue;
-
-						if (!(paperComponent instanceof TableModule)) continue;
-						TableModule linkTo = (TableModule) paperComponent;
-
-						if (linkTo.getLinksTo() == this) {
-							linkTo.setLinksTo(null);
-						}
-					}
-
-					event.component.invalidate();
-
-					if (event.component.hasTag("placed"))
-						worktable.setToastMessage("", Color.GREEN);
+					event.cancel();
 				}
-				event.component.removeTag("connecting");
-				return;
-			}
+			});
 
-			if (event.component.hasTag("connecting")) {
-				for (GuiComponent paperComponent : paper.getChildren()) {
-					if (paperComponent == event.component) continue;
-					if (!paperComponent.geometry.getMouseOverNoOcclusion()) continue;
+		if (!benign)
+			BUS.hook(DragMixin.DragPickupEvent.class, (event) -> {
+				if (!getMouseOver()) return;
+				initialPos = event.component.thisPosToOtherContext(null);
+				if (event.getButton() == EnumMouseButton.RIGHT) {
+					event.component.addTag("connecting");
+				}
+			});
 
-					if (!(paperComponent instanceof TableModule)) continue;
-					TableModule linkTo = (TableModule) paperComponent;
-					if (!linkTo.draggable) continue;
-					if (linkTo == this) continue;
+		if (!benign)
+			BUS.hook(DragMixin.DragMoveEvent.class, (event) -> {
+				if (event.getButton() == EnumMouseButton.RIGHT) {
+					// event.getPos returns the before-moving position. Setting it back to it's place.
+					// This allows the component to stay where it is while also allowing us to draw a line
+					// outside of it's box
+					event.setNewPos(event.getPos());
+				}
+			});
 
-					if (checkSafety(paper)) {
-						if (getLinksTo() == linkTo) {
-							event.component.removeTag("connecting");
-							setLinksTo(null);
-							worktable.setToastMessage("", Color.GREEN);
-							return;
-						} else if (isCompatibleWith()) {
-							setLinksTo(linkTo);
+		if (!benign)
+			BUS.hook(DragMixin.DragDropEvent.class, (event) -> {
+				if (!event.component.hasTag("placed")) event.component.addTag("placed");
 
-							boolean linkedToSelf = false;
-							if (linkTo.getLinksTo() == this) {
-								linkedToSelf = true;
-								linkTo.setLinksTo(null);
-							}
+				Vec2d currentPos = event.component.thisPosToOtherContext(null);
+				if (event.getButton() == EnumMouseButton.LEFT && initialPos.equals(currentPos)) {
+					worktable.selectedModule = (worktable.selectedModule == event.component) ? null : this;
 
-							if (checkSafety(paper)) {
-								worktable.setToastMessage("", Color.GREEN);
-							} else {
-								worktable.setToastMessage("You can't create a loop!", Color.RED);
-
-								setLinksTo(null);
-
-								if (linkedToSelf) {
-									linkTo.setLinksTo(this);
-								}
-							}
-						}
-					} else {
-						worktable.setToastMessage("There's a loop somewhere! A spell should start from somewhere and not make an infinite cycle.", Color.RED);
-					}
+					worktable.modifiers.refresh();
 
 					event.component.removeTag("connecting");
 					return;
 				}
-			}
 
-			event.component.removeTag("connecting");
-		});
+				Vec2d plateSize = paper.getSize();
+				Vec2d platePos = event.component.getPos();
+				boolean isInsidePaper = platePos.getX() >= 0 && platePos.getX() <= plateSize.getX() && platePos.getY() >= 0 && platePos.getY() <= plateSize.getY();
 
-		render.getTooltip().func((Function<GuiComponent, List<String>>) t -> {
-			List<String> txt = new ArrayList<>();
+				if (!isInsidePaper) {
+					if (!event.component.hasTag("connecting")) {
 
-			if (t.hasTag("connecting")) return txt;
+						for (GuiComponent paperComponent : paper.getChildren()) {
+							if (paperComponent == event.component) continue;
 
-			txt.add(TextFormatting.GOLD + module.getReadableName());
-			if (GuiScreen.isShiftKeyDown())
-				txt.add(TextFormatting.GRAY + module.getDescription());
-			else txt.add(TextFormatting.GRAY + LibrarianLib.PROXY.translate("wizardry.misc.sneak"));
-			return txt;
-		});
+							if (!(paperComponent instanceof TableModule)) continue;
+							TableModule linkTo = (TableModule) paperComponent;
+
+							if (linkTo.getLinksTo() == this) {
+								linkTo.setLinksTo(null);
+							}
+						}
+
+						event.component.invalidate();
+
+						if (event.component.hasTag("placed"))
+							worktable.setToastMessage("", Color.GREEN);
+					}
+					event.component.removeTag("connecting");
+					return;
+				}
+
+				if (event.component.hasTag("connecting")) {
+					for (GuiComponent paperComponent : paper.getChildren()) {
+						if (paperComponent == event.component) continue;
+						if (!paperComponent.geometry.getMouseOverNoOcclusion()) continue;
+
+						if (!(paperComponent instanceof TableModule)) continue;
+						TableModule linkTo = (TableModule) paperComponent;
+						if (!linkTo.draggable) continue;
+						if (linkTo == this) continue;
+
+						if (checkSafety(paper)) {
+							if (getLinksTo() == linkTo) {
+								event.component.removeTag("connecting");
+								setLinksTo(null);
+								worktable.setToastMessage("", Color.GREEN);
+								return;
+							} else if (isCompatibleWith()) {
+								setLinksTo(linkTo);
+
+								boolean linkedToSelf = false;
+								if (linkTo.getLinksTo() == this) {
+									linkedToSelf = true;
+									linkTo.setLinksTo(null);
+								}
+
+								if (checkSafety(paper)) {
+									worktable.setToastMessage("", Color.GREEN);
+								} else {
+									setLinksTo(null);
+
+									if (linkedToSelf) {
+										linkTo.setLinksTo(this);
+									}
+
+									worktable.setToastMessage("You can't create a loop!", Color.RED);
+								}
+							}
+						} else {
+							worktable.setToastMessage("There's a loop somewhere! A spell should start from somewhere and not make an infinite cycle.", Color.RED);
+						}
+
+						event.component.removeTag("connecting");
+						return;
+					}
+				}
+
+				event.component.removeTag("connecting");
+			});
+
+		if (!benign)
+			render.getTooltip().func((Function<GuiComponent, List<String>>) t -> {
+				List<String> txt = new ArrayList<>();
+
+				if (t.hasTag("connecting")) return txt;
+
+				txt.add(TextFormatting.GOLD + module.getReadableName());
+				if (GuiScreen.isShiftKeyDown())
+					txt.add(TextFormatting.GRAY + module.getDescription());
+				else txt.add(TextFormatting.GRAY + LibrarianLib.PROXY.translate("wizardry.misc.sneak"));
+				return txt;
+			});
 	}
 
 	public static void drawWire(Vec2d start, Vec2d end, Color primary, Color secondary) {
@@ -290,11 +297,11 @@ public class TableModule extends GuiComponent {
 		super.drawComponent(mousePos, partialTicks);
 
 		Sprite plate;
-		plate = selectedModule == this ? PLATE_HIGHLIGHTED : PLATE;
+		plate = worktable.selectedModule == this ? PLATE_HIGHLIGHTED : PLATE;
 		Vec2d pos = Vec2d.ZERO;
 
 		Vec2d size = new Vec2d(plate.getWidth(), plate.getHeight());
-		if (selectedModule == this || (getMouseOver() && !hasTag("connecting"))) {
+		if (worktable.selectedModule == this || (getMouseOver() && !hasTag("connecting"))) {
 			GlStateManager.translate(0, 0, 50);
 			size = size.add(6, 6);
 			pos = pos.sub(3, 3);
@@ -309,7 +316,7 @@ public class TableModule extends GuiComponent {
 			drawWire(pos.add(size.getX() / 2.0, size.getY() / 2.0), posTo.add(size.getX() / 2.0, size.getY() / 2.0), getColorForModule(module.getModuleType()), getColorForModule(linksTo.getModule().getModuleType()));
 		}
 
-		if (selectedModule == this || (getMouseOver() && !hasTag("connecting"))) {
+		if (worktable.selectedModule == this || (getMouseOver() && !hasTag("connecting"))) {
 			GlStateManager.translate(0, 0, 50);
 		}
 
@@ -325,7 +332,7 @@ public class TableModule extends GuiComponent {
 				(float) (size.getX() - shrink),
 				(float) (size.getYi() - shrink));
 
-		if (selectedModule == this || (getMouseOver() && !hasTag("connecting"))) {
+		if (worktable.selectedModule == this || (getMouseOver() && !hasTag("connecting"))) {
 			GlStateManager.translate(0, 0, -50);
 		}
 	}
