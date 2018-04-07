@@ -352,6 +352,8 @@ public class RenderCodex {
 							arrowSprite.bind();
 							arrowSprite.draw(0, 0, 0, 16, 8);
 
+							GlStateManager.enableLighting();
+
 							GlStateManager.popMatrix();
 						}
 
