@@ -18,7 +18,10 @@ import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.model.ModelBook;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
@@ -34,6 +37,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.StringUtils;
+import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -41,7 +45,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * CODE COPIED FROM BOTANIA & MODIFIED
+ * CODE COPIED FROM BOTANIA & HEAVILY HEAVILY HEAVILY HEAVILY MODIFIED
  * https://github.com/Vazkii/Botania/blob/master/src/main/java/vazkii/botania/client/core/handler/RenderLexicon.java
  * <p>
  * Please do not touch this code.
@@ -81,7 +85,7 @@ public class RenderCodex {
 	public static RenderCodex INSTANCE = new RenderCodex();
 	public Animator animator = new Animator();
 	public float openingCooldownLeft = 0;
-	public float pageFlipCooldownLeft = 0;
+	public float tooltipCooldown = 40;
 	public float idleXLeft = 0, idleYLeft = 0, idleZLeft = 0;
 	public float openingCooldownRight = 0;
 	public float pageFlipCooldownRight = 0;
@@ -289,7 +293,7 @@ public class RenderCodex {
 				if (rightHand) {
 					GlStateManager.pushMatrix();
 					GlStateManager.translate(0, -20, -30);
-					drawTooltip("Shift click to cycle pages", font);
+					drawTooltip(LibrarianLib.PROXY.translate("wizardry.book.shift_scroll"), font);
 					GlStateManager.popMatrix();
 				}
 
@@ -316,7 +320,7 @@ public class RenderCodex {
 
 				// Draw tooltip above page here
 				if (!rightHand)
-					drawTooltip("Shift click to cycle pages", font);
+					drawTooltip(LibrarianLib.PROXY.translate("wizardry.book.shift_scroll"), font);
 
 				List<ItemStack> inventory = getSpellInventory(stack);
 				int currentPage = ItemNBTHelper.getInt(stack, "page", 0);
@@ -380,15 +384,19 @@ public class RenderCodex {
 
 		GlStateManager.translate(0, -25, 0);
 
-		GlStateManager.disableRescaleNormal();
-		RenderHelper.disableStandardItemLighting();
+		//GlStateManager.disableRescaleNormal();
+		//RenderHelper.disableStandardItemLighting();
 		GlStateManager.disableLighting();
 		GlStateManager.disableDepth();
 
 		boolean previousUnicode = font.getUnicodeFlag();
 		font.setUnicodeFlag(false);
 
-		final int backgroundColor = 0xF0100010;
+		int backgroundColor = 0xF0100010;
+		//Color color = Color.decode("0xF0100010");
+		//color = new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (tooltipCooldown / 40.0 * 255.0));
+		//backgroundColor = color.getRGB();
+
 		int tooltipTextWidth = font.getStringWidth(text);
 		int tooltipHeight = 8;
 		GuiUtils.drawGradientRect(0, 0 - 3, 0 - 4, tooltipTextWidth + 3, 0 - 3, backgroundColor, backgroundColor);
@@ -406,10 +414,14 @@ public class RenderCodex {
 		font.drawStringWithShadow(text, 0, 0, 0xFFD700);
 		font.setUnicodeFlag(previousUnicode);
 
-		GlStateManager.disableRescaleNormal();
-		RenderHelper.enableStandardItemLighting();
-		GlStateManager.disableLighting();
 		GlStateManager.enableDepth();
+		GlStateManager.enableAlpha();
+		GlStateManager.enableBlend();
+		GlStateManager.disableRescaleNormal();
+		GlStateManager.enableTexture2D();
+		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+		GlStateManager.shadeModel(GL11.GL_SMOOTH);
+		GlStateManager.enableLighting();
 
 		GlStateManager.popMatrix();
 	}

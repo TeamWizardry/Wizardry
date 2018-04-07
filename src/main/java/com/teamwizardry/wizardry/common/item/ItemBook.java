@@ -13,23 +13,20 @@ import com.teamwizardry.wizardry.common.advancement.IPickupAchievement;
 import com.teamwizardry.wizardry.common.advancement.ModAdvancements;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.advancements.Advancement;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -48,108 +45,62 @@ public class ItemBook extends ItemModBook implements IPickupAchievement {
 	}
 
 	@SubscribeEvent
-	public static void onLeftBlock(PlayerInteractEvent.LeftClickBlock event) {
-		if (event.getItemStack().getItem() != ModItems.BOOK) return;
-		EntityPlayer player = event.getEntityPlayer();
+	@SideOnly(Side.CLIENT)
+	public static void onScroll(MouseEvent event) {
+		EntityPlayer player = Minecraft.getMinecraft().player;
+		if (player == null) return;
 
-		if (player.isSneaking()) {
-			ItemStack stack = event.getItemStack();
-			if (!ItemNBTHelper.getBoolean(stack, "has_spell", false)) return;
+		if (Keyboard.isCreated() && event.getDwheel() != 0 && player.isSneaking()) {
 
-			NBTTagList moduleList = ItemNBTHelper.getList(stack, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
-			if (moduleList == null) return;
+			for (EnumHand hand : EnumHand.values()) {
+				ItemStack stack = player.getHeldItem(hand);
+				if (stack.getItem() != ModItems.BOOK)
+					return;
 
-			int page = ItemNBTHelper.getInt(stack, "page", 0);
+				if (!ItemNBTHelper.getBoolean(stack, "has_spell", false))
+					return;
 
-			ItemNBTHelper.setInt(stack, "page", Math.max(page - 1, 0));
-			event.setCancellationResult(EnumActionResult.PASS);
-		}
-	}
+				NBTTagList moduleList = ItemNBTHelper.getList(stack, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
+				if (moduleList == null)
+					return;
 
-	@SubscribeEvent
-	public static void onLeftEmpty(PlayerInteractEvent.LeftClickEmpty event) {
-		if (event.getItemStack().getItem() != ModItems.BOOK) return;
-		EntityPlayer player = event.getEntityPlayer();
+				if (event.getDwheel() > 0) {
 
-		if (player.isSneaking()) {
-			ItemStack stack = event.getItemStack();
-			if (!ItemNBTHelper.getBoolean(stack, "has_spell", false)) return;
+					List<List<Module>> spellModules = SpellUtils.deserializeModuleList(moduleList);
+					List<ItemStack> spellItems = SpellUtils.getSpellItems(spellModules);
 
-			NBTTagList moduleList = ItemNBTHelper.getList(stack, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
-			if (moduleList == null) return;
+					int page = ItemNBTHelper.getInt(stack, "page", 0);
 
-			int page = ItemNBTHelper.getInt(stack, "page", 0);
+					int maxPages = 0;
+					int row = 0;
+					int column = 0;
+					for (int i = 0; i < spellItems.size(); i++) {
 
-			ItemNBTHelper.setInt(stack, "page", Math.max(page - 1, 0));
-			event.setCancellationResult(EnumActionResult.PASS);
-		}
-	}
+						if (++column >= 3) {
+							column = 0;
+							row++;
+						}
 
-	@Override
-	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-		if (player.isSneaking()) {
-			ItemStack stack = player.getHeldItem(hand);
-			if (stack.getItem() != ModItems.BOOK)
-				return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
+						if (row >= 9) {
+							row = 0;
+							maxPages++;
 
-			if (!ItemNBTHelper.getBoolean(stack, "has_spell", false))
-				return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
-
-			NBTTagList moduleList = ItemNBTHelper.getList(stack, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
-			if (moduleList == null)
-				return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
-
-			int page = ItemNBTHelper.getInt(stack, "page", 0);
-
-			ItemNBTHelper.setInt(stack, "page", Math.max(page - 1, 0));
-			return EnumActionResult.PASS;
-		}
-		return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
-	}
-
-	@NotNull
-	@Override
-	public ActionResult<ItemStack> onItemRightClick(@NotNull World worldIn, @NotNull EntityPlayer playerIn, @NotNull EnumHand handIn) {
-		if (playerIn.isSneaking()) {
-			ItemStack stack = playerIn.getHeldItem(handIn);
-			if (stack.getItem() != ModItems.BOOK)
-				return super.onItemRightClick(worldIn, playerIn, handIn);
-
-			if (!ItemNBTHelper.getBoolean(stack, "has_spell", false))
-				return super.onItemRightClick(worldIn, playerIn, handIn);
-
-			NBTTagList moduleList = ItemNBTHelper.getList(stack, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
-			if (moduleList == null)
-				return super.onItemRightClick(worldIn, playerIn, handIn);
-
-			List<List<Module>> spellModules = SpellUtils.deserializeModuleList(moduleList);
-			List<ItemStack> spellItems = SpellUtils.getSpellItems(spellModules);
-
-			int page = ItemNBTHelper.getInt(stack, "page", 0);
-
-			int maxPages = 0;
-			int row = 0;
-			int column = 0;
-			for (int i = 0; i < spellItems.size(); i++) {
-
-				if (++column >= 4) {
-					column = 0;
-					row++;
-				}
-
-				if (row >= 9) {
-					row = 0;
-					maxPages++;
-
-					if (maxPages > page) {
-						ItemNBTHelper.setInt(stack, "page", page + 1);
+							if (maxPages > page) {
+								ItemNBTHelper.setInt(stack, "page", page + 1);
+							}
+						}
 					}
-				}
-			}
 
-			return new ActionResult<>(EnumActionResult.PASS, stack);
+				} else {
+
+					int page = ItemNBTHelper.getInt(stack, "page", 0);
+
+					ItemNBTHelper.setInt(stack, "page", Math.max(page - 1, 0));
+				}
+
+				event.setCanceled(true);
+			}
 		}
-		return super.onItemRightClick(worldIn, playerIn, handIn);
 	}
 
 	@Override
