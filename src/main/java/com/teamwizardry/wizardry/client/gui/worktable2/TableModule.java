@@ -14,13 +14,18 @@ import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBe
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
+import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleType;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
@@ -29,6 +34,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
@@ -54,6 +60,8 @@ public class TableModule extends GuiComponent {
 	 */
 	private Vec2d initialPos;
 
+	public float radius = 16, textRadius = 10;
+
 	//public float size = 16;
 	//public final float originalSize = 16;
 
@@ -75,10 +83,10 @@ public class TableModule extends GuiComponent {
 			setData(UUID.class, "uuid", UUID.randomUUID());
 		}
 
-		if (!benign)
+		if (!benign && !draggable)
 			BUS.hook(GuiComponentEvents.MouseDownEvent.class, (event) -> {
 				if (worktable.animationPlaying) return;
-				if (event.getButton() == EnumMouseButton.LEFT && getMouseOver() && !this.draggable) {
+				if (event.getButton() == EnumMouseButton.LEFT && getMouseOver()) {
 					TableModule item = new TableModule(this.worktable, this.module, true, false);
 					item.setPos(paper.otherPosToThisContext(event.component, event.getMousePos()));
 					DragMixin drag = new DragMixin(item, vec2d -> vec2d);
@@ -102,8 +110,7 @@ public class TableModule extends GuiComponent {
 
 		if (!benign)
 			BUS.hook(DragMixin.DragMoveEvent.class, (event) -> {
-				if (worktable.animationPlaying) return;
-				if (event.getButton() == EnumMouseButton.RIGHT) {
+				if (worktable.animationPlaying || event.getButton() == EnumMouseButton.RIGHT) {
 					// event.getPos returns the before-moving position. Setting it back to it's place.
 					// This allows the component to stay where it is while also allowing us to draw a line
 					// outside of it's box
@@ -135,6 +142,19 @@ public class TableModule extends GuiComponent {
 						animPos.setEasing(Easing.easeOutCubic);
 						animPos.setTo(getPos().add((getSize().sub(toSize)).mul(0.5f)));
 						add(animPos);
+
+						BasicAnimation<TableModule> animRadius = new BasicAnimation<>(this, "radius");
+						animRadius.setDuration(20);
+						animRadius.setEasing(Easing.easeOutCubic);
+						animRadius.setTo(16);
+						add(animRadius);
+
+						BasicAnimation<TableModule> animText = new BasicAnimation<>(this, "textRadius");
+						animText.setDuration(40);
+						animText.setEasing(Easing.easeOutCubic);
+						animText.setTo(30);
+						add(animText);
+
 					} else {
 						if (worktable.selectedModule != null) {
 							Vec2d toSize = new Vec2d(16, 16);
@@ -147,8 +167,26 @@ public class TableModule extends GuiComponent {
 							BasicAnimation<TableModule> animPos = new BasicAnimation<>(worktable.selectedModule, "pos");
 							animPos.setDuration(5);
 							animPos.setEasing(Easing.easeOutCubic);
-							animPos.setTo(worktable.selectedModule.getPos().add((getSize().sub(toSize))));
+							animPos.setTo(worktable.selectedModule.getPos().add((worktable.selectedModule.getSize().sub(toSize)).mul(0.5f)));
 							worktable.selectedModule.add(animPos);
+
+							BasicAnimation<TableModule> animRadius = new BasicAnimation<>(worktable.selectedModule, "radius");
+							animRadius.setDuration(5);
+							animRadius.setEasing(Easing.easeOutCubic);
+							animRadius.setTo(10);
+							worktable.selectedModule.add(animRadius);
+
+							BasicAnimation<TableModule> animText2 = new BasicAnimation<>(worktable.selectedModule, "textRadius");
+							animText2.setDuration(40);
+							animText2.setEasing(Easing.easeOutCubic);
+							animText2.setTo(5);
+							worktable.selectedModule.add(animText2);
+
+							BasicAnimation<TableModule> animText = new BasicAnimation<>(this, "textRadius");
+							animText.setDuration(40);
+							animText.setEasing(Easing.easeOutCubic);
+							animText.setTo(0);
+							add(animText);
 						}
 
 						worktable.selectedModule = this;
@@ -165,6 +203,18 @@ public class TableModule extends GuiComponent {
 						animPos.setEasing(Easing.easeOutCubic);
 						animPos.setTo(getPos().add((getSize().sub(toSize)).mul(0.5f)));
 						add(animPos);
+
+						BasicAnimation<TableModule> animRadius = new BasicAnimation<>(this, "radius");
+						animRadius.setDuration(20);
+						animRadius.setEasing(Easing.easeOutCubic);
+						animRadius.setTo(24);
+						add(animRadius);
+
+						BasicAnimation<TableModule> animText = new BasicAnimation<>(this, "textRadius");
+						animText.setDuration(40);
+						animText.setEasing(Easing.easeOutCubic);
+						animText.setTo(40);
+						add(animText);
 					}
 
 					worktable.modifiers.refresh();
@@ -191,10 +241,14 @@ public class TableModule extends GuiComponent {
 							}
 						}
 
+						if (worktable.selectedModule == this) worktable.selectedModule = null;
+
 						event.component.invalidate();
 
 						if (event.component.hasTag("placed"))
 							worktable.setToastMessage("", Color.GREEN);
+
+						worktable.modifiers.refresh();
 					}
 					event.component.removeTag("connecting");
 					return;
@@ -269,6 +323,7 @@ public class TableModule extends GuiComponent {
 
 		if (!benign)
 			BUS.hook(GuiComponentEvents.MouseInEvent.class, event -> {
+				if (worktable.animationPlaying) return;
 				if (worktable.selectedModule == this) return;
 				Vec2d toSize = new Vec2d(20, 20);
 				BasicAnimation<TableModule> animSize = new BasicAnimation<>(this, "size");
@@ -282,10 +337,23 @@ public class TableModule extends GuiComponent {
 				animPos.setEasing(Easing.easeOutCubic);
 				animPos.setTo(getPos().add((getSize().sub(toSize)).mul(0.5f)));
 				add(animPos);
+
+				BasicAnimation<TableModule> animRadius = new BasicAnimation<>(this, "radius");
+				animRadius.setDuration(20);
+				animRadius.setEasing(Easing.easeOutCubic);
+				animRadius.setTo(16);
+				add(animRadius);
+
+				BasicAnimation<TableModule> animText = new BasicAnimation<>(this, "textRadius");
+				animText.setDuration(40);
+				animText.setEasing(Easing.easeOutCubic);
+				animText.setTo(30);
+				add(animText);
 			});
 
 		if (!benign)
 			BUS.hook(GuiComponentEvents.MouseOutEvent.class, event -> {
+				if (worktable.animationPlaying) return;
 				if (worktable.selectedModule == this) return;
 				Vec2d toSize = new Vec2d(16, 16);
 				BasicAnimation<TableModule> animSize = new BasicAnimation<>(this, "size");
@@ -299,6 +367,19 @@ public class TableModule extends GuiComponent {
 				animPos.setEasing(Easing.easeOutCubic);
 				animPos.setTo(getPos().add((getSize().sub(toSize)).mul(0.5f)));
 				add(animPos);
+
+				BasicAnimation<TableModule> animRadius = new BasicAnimation<>(this, "radius");
+				animRadius.setDuration(20);
+				animRadius.setEasing(Easing.easeOutCubic);
+				animRadius.setTo(10);
+				add(animRadius);
+
+				BasicAnimation<TableModule> animText = new BasicAnimation<>(this, "textRadius");
+				animText.setDuration(40);
+				animText.setEasing(Easing.easeOutCubic);
+				animText.setTo(0);
+				add(animText);
+
 			});
 	}
 
@@ -313,7 +394,6 @@ public class TableModule extends GuiComponent {
 		InterpBezier2D bezier = new InterpBezier2D(start, end);
 		List<Vec2d> list = bezier.list(50);
 
-		Vec2d pointerPos = null, behindPointer = null;
 		float p = 0;
 		for (int i = 0; i < list.size() - 1; i++) {
 			float x = (float) (start.length() + ClientTickHandler.getTicks() + ClientTickHandler.getPartialTicks()) / 30f;
@@ -391,17 +471,15 @@ public class TableModule extends GuiComponent {
 	@Override
 	public void drawComponent(@NotNull Vec2d mousePos, float partialTicks) {
 		super.drawComponent(mousePos, partialTicks);
+		GlStateManager.color(1f, 1f, 1f, 1f);
+		GlStateManager.enableAlpha();
+		GlStateManager.enableTexture2D();
 
 		Sprite plate;
 		plate = worktable.selectedModule == this ? PLATE_HIGHLIGHTED : PLATE;
 		Vec2d pos = Vec2d.ZERO;
 
-		if (worktable.selectedModule == this || (!benign && !worktable.animationPlaying && getMouseOver() && !hasTag("connecting"))) {
-			//size = size.add(6, 6);
-			//pos = pos.sub(3, 3);
-		}
-		//GlStateManager.translate((16f - getSize().getXf()) / 2.0f, (16f - getSize().getYf()) / 2.0f, 0);
-
+		GlStateManager.translate(0, 0, -20);
 		if (hasTag("connecting")) {
 			drawWire(pos.add(getSize().getX() / 2.0, getSize().getY() / 2.0), mousePos, getColorForModule(module.getModuleType()), Color.WHITE);
 		}
@@ -410,6 +488,8 @@ public class TableModule extends GuiComponent {
 			Vec2d posTo = new Vec2d(posContext.getX(), posContext.getY());
 			drawWire(pos.add(getSize().getX() / 2.0, getSize().getY() / 2.0), posTo.add(getSize().getX() / 2.0, getSize().getY() / 2.0), getColorForModule(module.getModuleType()), getColorForModule(linksTo.getModule().getModuleType()));
 		}
+
+		GlStateManager.translate(0, 0, 20);
 
 		if (worktable.selectedModule == this || (!benign && !worktable.animationPlaying && getMouseOver() && !hasTag("connecting"))) {
 			GlStateManager.translate(0, 0, 80);
@@ -422,6 +502,67 @@ public class TableModule extends GuiComponent {
 
 		icon.bind();
 		icon.draw(0, shrink / 2.0f, shrink / 2.0f, getSize().getXf() - shrink, getSize().getYf() - shrink);
+
+		HashMap<ModuleModifier, Integer> modifiers = new HashMap<>();
+		List<ModuleModifier> modifierList = new ArrayList<>();
+		for (Module module : ModuleRegistry.INSTANCE.getModules(ModuleType.MODIFIER)) {
+			if (!(module instanceof ModuleModifier)) continue;
+			if (!hasData(Integer.class, module.getID())) continue;
+
+			modifiers.put((ModuleModifier) module, getData(Integer.class, module.getID()));
+			modifierList.add((ModuleModifier) module);
+		}
+
+		int count = modifierList.size();
+		for (int i = 0; i < count; i++) {
+
+			ModuleModifier modifier = modifierList.get(i);
+
+			Vec2d modSize = getSize().mul(0.75f);
+
+			float angle = (float) (i * Math.PI * 2.0 / count);
+
+			// RENDER PLATE
+			{
+				float x = (getSize().getXf() / 2f - modSize.getXf() / 2f) + MathHelper.cos(angle) * radius;
+				float y = (getSize().getYf() / 2f - modSize.getYf() / 2f) + MathHelper.sin(angle) * radius;
+
+				GlStateManager.pushMatrix();
+				GlStateManager.translate(x, y, -10);
+
+				plate.bind();
+				plate.draw(0, 0, 0, modSize.getXf(), modSize.getYf());
+
+				float modShrink = 4;
+
+				Sprite modICon = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/icons/" + modifier.getID() + ".png"));
+				modICon.bind();
+				modICon.draw(0, modShrink / 2.0f, modShrink / 2.0f, modSize.getXf() - modShrink, modSize.getYf() - modShrink);
+
+				GlStateManager.translate(-x, -y, 10);
+				GlStateManager.popMatrix();
+			}
+
+			// RENDER TEXT
+			{
+				FontRenderer font = Minecraft.getMinecraft().fontRenderer;
+				String txt = "x" + modifiers.get(modifier);
+				float txtWidth = font.getStringWidth(txt);
+				float txtHeight = font.FONT_HEIGHT;
+
+				float x = (getSize().getXf() / 2f - txtWidth / 2f) + MathHelper.cos(angle) * textRadius;
+				float y = (getSize().getYf() / 2f - txtHeight / 2f) + MathHelper.sin(angle) * textRadius;
+
+				GlStateManager.pushMatrix();
+				GlStateManager.translate(x, y, -15);
+
+				font.drawString(txt, 0, 0, 0x000000);
+				GlStateManager.color(1f, 1f, 1f, 1f);
+
+				GlStateManager.translate(-x, -y, 15);
+				GlStateManager.popMatrix();
+			}
+		}
 
 		if (worktable.selectedModule == this || (!benign && !worktable.animationPlaying && getMouseOver() && !hasTag("connecting"))) {
 			GlStateManager.translate(0, 0, -80);

@@ -180,38 +180,43 @@ public class ComponentModifiers extends GuiComponent {
 					} else if (event.getButton() == EnumMouseButton.RIGHT) {
 						if (worktable.selectedModule.hasData(Integer.class, modifier.getID())) {
 
-							if (worktable.selectedModule.getData(Integer.class, modifier.getID()) > 0) {
+							if (j > 0) {
 								worktable.selectedModule.setData(Integer.class, modifier.getID(), --j);
+
+								if (j <= 0) {
+									worktable.selectedModule.removeData(Integer.class, modifier.getID());
+								}
 								status = 1;
-							} else {
-								worktable.selectedModule.removeData(Integer.class, modifier.getID());
 							}
 						}
 					}
 
-					TableModule fakePlate = new TableModule(worktable, modifier, false, false);
+					if (status == -1) return;
+
+					TableModule fakePlate = new TableModule(worktable, modifier, false, true);
 					fakePlate.getTransform().setTranslateZ(80);
 					worktable.getMainComponents().add(fakePlate);
 
 					Vec2d from = tableModifier.thisPosToOtherContext(worktable.getMainComponents());
-					Vec2d to = worktable.selectedModule.thisPosToOtherContext(worktable.getMainComponents());
+					Vec2d to = worktable.selectedModule.thisPosToOtherContext(worktable.getMainComponents())
+							.add(worktable.selectedModule.getSize().sub(tableModifier.getSize()).mul(0.5f));
 
 					KeyframeAnimation<TableModule> anim = new KeyframeAnimation<>(fakePlate, "pos");
-					anim.setDuration(40);
+					anim.setDuration(20);
 					if (status == 0) {
 						Vec2d rand = from.add(RandUtil.nextDouble(-10, 10), RandUtil.nextDouble(-10, 10));
 						anim.setKeyframes(new Keyframe[]{
 								new Keyframe(0, from, Easing.easeOutQuint),
-								new Keyframe(0.4f, rand, Easing.easeOutQuint),
-								new Keyframe(0.5f, rand, Easing.easeOutQuint),
+								new Keyframe(0.3f, rand, Easing.easeOutQuint),
+								new Keyframe(0.35f, rand, Easing.easeOutQuint),
 								new Keyframe(1f, to, Easing.easeInOutQuint)
 						});
-					} else if (status == 1) {
+					} else {
 						Vec2d rand = to.add(RandUtil.nextDouble(-10, 10), RandUtil.nextDouble(-10, 10));
 						anim.setKeyframes(new Keyframe[]{
 								new Keyframe(0, to, Easing.easeOutQuint),
-								new Keyframe(0.4f, rand, Easing.easeOutQuint),
-								new Keyframe(0.5f, rand, Easing.easeOutQuint),
+								new Keyframe(0.3f, rand, Easing.easeOutQuint),
+								new Keyframe(0.35f, rand, Easing.easeOutQuint),
 								new Keyframe(1f, from, Easing.easeInOutQuint)
 						});
 					}

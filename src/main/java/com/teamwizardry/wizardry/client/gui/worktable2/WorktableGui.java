@@ -2,8 +2,10 @@ package com.teamwizardry.wizardry.client.gui.worktable2;
 
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.animator.Easing;
+import com.teamwizardry.librarianlib.features.animator.animations.BasicAnimation;
 import com.teamwizardry.librarianlib.features.animator.animations.Keyframe;
 import com.teamwizardry.librarianlib.features.animator.animations.KeyframeAnimation;
+import com.teamwizardry.librarianlib.features.animator.animations.ScheduledEventAnimation;
 import com.teamwizardry.librarianlib.features.gui.GuiBase;
 import com.teamwizardry.librarianlib.features.gui.component.GuiComponent;
 import com.teamwizardry.librarianlib.features.gui.component.GuiComponentEvents;
@@ -195,7 +197,7 @@ public class WorktableGui extends GuiBase {
 	}
 
 	public String getToastHeader() {
-		return TextFormatting.YELLOW + getSpellName() + TextFormatting.RESET + "\n\n";
+		return TextFormatting.YELLOW.toString() + getSpellName() + TextFormatting.RESET + "\n\n";
 	}
 
 	public String getSpellName() {
@@ -276,144 +278,168 @@ public class WorktableGui extends GuiBase {
 
 	public void playAnimation() {
 		animationPlaying = true;
-		ComponentVoid fakePaper = new ComponentVoid(180, 19, 180, 188);
-		fakePaper.getTransform().setTranslateZ(100);
-		getMainComponents().add(fakePaper);
 
-		ComponentVoid bookIconMask = new ComponentVoid(0, -100, 180, 100);
-		fakePaper.add(bookIconMask);
+		if (selectedModule != null) {
+			Vec2d toSize = new Vec2d(16, 16);
+			BasicAnimation<TableModule> animSize = new BasicAnimation<>(selectedModule, "size");
+			animSize.setDuration(5);
+			animSize.setEasing(Easing.easeOutCubic);
+			animSize.setTo(toSize);
+			selectedModule.add(animSize);
 
-		// GRAY BACKGROUND
-		{
-			ComponentRect grayBackground = new ComponentRect(0, 0, tableComponent.getSize().getXi(), tableComponent.getSize().getYi());
-			grayBackground.getColor().setValue(new Color(0.05f, 0.05f, 0.05f, 0f));
-			grayBackground.getTransform().setTranslateZ(200);
-			grayBackground.BUS.hook(GuiComponentEvents.ComponentTickEvent.class, event -> {
-				grayBackground.getColor().setValue(new Color(0.05f, 0.05f, 0.05f, backgroundAlpha));
-			});
-			tableComponent.add(grayBackground);
-
-			KeyframeAnimation<WorktableGui> anim = new KeyframeAnimation<>(this, "backgroundAlpha");
-			anim.setDuration(100);
-			anim.setKeyframes(new Keyframe[]{
-					new Keyframe(0, 0f, Easing.easeInOutQuint),
-					new Keyframe(0.2f, 0.65f, Easing.easeInOutQuint),
-					new Keyframe(0.7f, 0.65f, Easing.easeInOutQuint),
-					new Keyframe(1f, 0f, Easing.easeInOutQuint)
-			});
-			anim.setCompletion(grayBackground::invalidate);
-			getMainComponents().add(anim);
+			BasicAnimation<TableModule> animPos = new BasicAnimation<>(selectedModule, "pos");
+			animPos.setDuration(5);
+			animPos.setEasing(Easing.easeOutCubic);
+			animPos.setTo(selectedModule.getPos().add((selectedModule.getSize().sub(toSize)).mul(0.5f)));
+			selectedModule.add(animPos);
 		}
 
-		// BOOK PEAK ANIMATION
-		{
-			ComponentSprite bookIcon = new ComponentSprite(BOOK_ICON, (int) ((bookIconMask.getSize().getX() / 2.0) - 16), (int) (bookIconMask.getSize().getY() + 50), 32, 32);
-			bookIconMask.add(bookIcon);
+		Runnable runnable = () -> {
+			ComponentVoid fakePaper = new ComponentVoid(180, 19, 180, 188);
+			fakePaper.getTransform().setTranslateZ(100);
+			getMainComponents().add(fakePaper);
 
-			bookIcon.getTransform().setTranslateZ(200);
-			bookIconMask.clipping.setClipToBounds(true);
-			bookIconMask.getTransform().setTranslateZ(250);
+			ComponentVoid bookIconMask = new ComponentVoid(0, -100, 180, 100);
+			fakePaper.add(bookIconMask);
 
-			final Vec2d originalPos = bookIcon.getPos();
-			KeyframeAnimation<ComponentSprite> anim = new KeyframeAnimation<>(bookIcon, "pos.y");
-			anim.setDuration(120);
-			anim.setKeyframes(new Keyframe[]{
-					new Keyframe(0, originalPos.getY(), Easing.linear),
-					new Keyframe(0.4f, (bookIconMask.getSize().getY() / 2.0) - 25, Easing.easeInBack),
-					new Keyframe(0.5f, (bookIconMask.getSize().getY() / 2.0) - 10, Easing.easeOutBack),
-					new Keyframe(0.8f, (bookIconMask.getSize().getY() / 2.0) - 10, Easing.easeInBack),
-					new Keyframe(1f, originalPos.getY(), Easing.easeInBack)
-			});
+			// GRAY BACKGROUND
+			{
+				ComponentRect grayBackground = new ComponentRect(0, 0, tableComponent.getSize().getXi(), tableComponent.getSize().getYi());
+				grayBackground.getColor().setValue(new Color(0.05f, 0.05f, 0.05f, 0f));
+				grayBackground.getTransform().setTranslateZ(200);
+				grayBackground.BUS.hook(GuiComponentEvents.ComponentTickEvent.class, event -> {
+					grayBackground.getColor().setValue(new Color(0.05f, 0.05f, 0.05f, backgroundAlpha));
+				});
+				tableComponent.add(grayBackground);
 
-			anim.setCompletion(() -> {
-				fakePaper.invalidate();
-				animationPlaying = false;
-			});
-
-			bookIcon.add(anim);
-
-		}
-
-		// PAPER ITEMS ANIMATION
-		{
-			HashMap<TableModule, UUID> links = new HashMap<>();
-
-			for (GuiComponent component : paper.getChildren()) {
-				if (!(component instanceof TableModule)) continue;
-				TableModule tableModule = (TableModule) component;
-
-				TableModule fakeModule = new TableModule(this, tableModule.getModule(), false, true);
-				fakeModule.setPos(tableModule.getPos());
-				for (Object tag : tableModule.getTagList()) fakeModule.addTag(tag);
-				fakeModule.getTransform().setTranslateZ(230);
-				fakePaper.add(fakeModule);
-
-				UUID uuid = tableModule.getData(UUID.class, "uuid");
-				if (uuid != null)
-					fakeModule.setData(UUID.class, "uuid", uuid);
-
-				TableModule linkedModule = tableModule.getLinksTo();
-				if (linkedModule == null) continue;
-
-				UUID linkTo = linkedModule.getData(UUID.class, "uuid");
-				if (linkTo != null)
-					links.put(fakeModule, linkTo);
+				KeyframeAnimation<WorktableGui> anim = new KeyframeAnimation<>(this, "backgroundAlpha");
+				anim.setDuration(100);
+				anim.setKeyframes(new Keyframe[]{
+						new Keyframe(0, 0f, Easing.easeInOutQuint),
+						new Keyframe(0.2f, 0.65f, Easing.easeInOutQuint),
+						new Keyframe(0.7f, 0.65f, Easing.easeInOutQuint),
+						new Keyframe(1f, 0f, Easing.easeInOutQuint)
+				});
+				anim.setCompletion(grayBackground::invalidate);
+				getMainComponents().add(anim);
 			}
 
-			for (TableModule module : links.keySet()) {
-				if (!links.containsKey(module)) continue;
+			// BOOK PEAK ANIMATION
+			{
+				ComponentSprite bookIcon = new ComponentSprite(BOOK_ICON, (int) ((bookIconMask.getSize().getX() / 2.0) - 16), (int) (bookIconMask.getSize().getY() + 50), 32, 32);
+				bookIconMask.add(bookIcon);
 
-				UUID linkTo = links.get(module);
+				bookIcon.getTransform().setTranslateZ(200);
+				bookIconMask.clipping.setClipToBounds(true);
+				bookIconMask.getTransform().setTranslateZ(250);
 
-				if (linkTo == null) continue;
+				final Vec2d originalPos = bookIcon.getPos();
+				KeyframeAnimation<ComponentSprite> anim = new KeyframeAnimation<>(bookIcon, "pos.y");
+				anim.setDuration(120);
+				anim.setKeyframes(new Keyframe[]{
+						new Keyframe(0, originalPos.getY(), Easing.linear),
+						new Keyframe(0.4f, (bookIconMask.getSize().getY() / 2.0) - 25, Easing.easeInBack),
+						new Keyframe(0.5f, (bookIconMask.getSize().getY() / 2.0) - 10, Easing.easeOutBack),
+						new Keyframe(0.8f, (bookIconMask.getSize().getY() / 2.0) - 10, Easing.easeInBack),
+						new Keyframe(1f, originalPos.getY(), Easing.easeInBack)
+				});
 
-				for (GuiComponent child : fakePaper.getChildren()) {
-					UUID uuid = child.getData(UUID.class, "uuid");
-					if (uuid == null) continue;
+				anim.setCompletion(() -> {
+					fakePaper.invalidate();
+					animationPlaying = false;
+				});
 
-					if (!linkTo.equals(uuid)) continue;
+				bookIcon.add(anim);
 
-					if (!(child instanceof TableModule)) continue;
-					TableModule reverseUUIDLink = (TableModule) child;
+			}
 
-					module.setLinksTo(reverseUUIDLink);
-					break;
+			// PAPER ITEMS ANIMATION
+			{
+
+				HashMap<TableModule, UUID> links = new HashMap<>();
+
+				for (GuiComponent component : paper.getChildren()) {
+					if (!(component instanceof TableModule)) continue;
+					TableModule tableModule = (TableModule) component;
+
+					TableModule fakeModule = new TableModule(this, tableModule.getModule(), false, true);
+					fakeModule.setPos(tableModule.getPos());
+					for (Object tag : tableModule.getTagList()) fakeModule.addTag(tag);
+					fakeModule.getTransform().setTranslateZ(230);
+					fakePaper.add(fakeModule);
+
+					UUID uuid = tableModule.getData(UUID.class, "uuid");
+					if (uuid != null)
+						fakeModule.setData(UUID.class, "uuid", uuid);
+
+					TableModule linkedModule = tableModule.getLinksTo();
+					if (linkedModule == null) continue;
+
+					UUID linkTo = linkedModule.getData(UUID.class, "uuid");
+					if (linkTo != null)
+						links.put(fakeModule, linkTo);
+				}
+
+				for (TableModule module : links.keySet()) {
+					if (!links.containsKey(module)) continue;
+
+					UUID linkTo = links.get(module);
+
+					if (linkTo == null) continue;
+
+					for (GuiComponent child : fakePaper.getChildren()) {
+						UUID uuid = child.getData(UUID.class, "uuid");
+						if (uuid == null) continue;
+
+						if (!linkTo.equals(uuid)) continue;
+
+						if (!(child instanceof TableModule)) continue;
+						TableModule reverseUUIDLink = (TableModule) child;
+
+						module.setLinksTo(reverseUUIDLink);
+						break;
+					}
+				}
+
+				for (GuiComponent component : fakePaper.getChildren()) {
+					if (!(component instanceof TableModule)) continue;
+					TableModule fakeModule = (TableModule) component;
+
+					Vec2d random = fakeModule.getPos().add(RandUtil.nextDouble(-10, 10), RandUtil.nextDouble(-10, 10));
+
+					float delay = RandUtil.nextFloat(0.2f, 0.3f);
+
+					KeyframeAnimation<TableModule> animX = new KeyframeAnimation<>(fakeModule, "pos.x");
+					animX.setDuration(100);
+					animX.setKeyframes(new Keyframe[]{
+							new Keyframe(delay, fakeModule.getPos().getX() + 1, Easing.easeOutQuint),
+							new Keyframe(0.45f, random.getX(), Easing.easeOutQuint),
+							new Keyframe(0.6f, random.getX(), Easing.easeOutQuint),
+							new Keyframe(1f, (bookIconMask.getSize().getX() / 2.0) - 8, Easing.easeInOutQuint)
+
+					});
+
+					KeyframeAnimation<TableModule> animY = new KeyframeAnimation<>(fakeModule, "pos.y");
+					animY.setDuration(100);
+					animY.setKeyframes(new Keyframe[]{
+							new Keyframe(delay, fakeModule.getPos().getY() + 3, Easing.easeOutQuint),
+							new Keyframe(0.45f, random.getY(), Easing.easeOutQuint),
+							new Keyframe(0.6f, random.getY(), Easing.easeOutQuint),
+							new Keyframe(1f, -(bookIconMask.getSize().getY() / 2.0) - 4, Easing.easeInOutQuint)
+
+					});
+
+					animY.setCompletion(fakeModule::invalidate);
+
+					fakeModule.add(animX, animY);
 				}
 			}
+		};
 
-			for (GuiComponent component : fakePaper.getChildren()) {
-				if (!(component instanceof TableModule)) continue;
-				TableModule fakeModule = (TableModule) component;
-
-				Vec2d random = fakeModule.getPos().add(RandUtil.nextDouble(-10, 10), RandUtil.nextDouble(-10, 10));
-
-				float delay = RandUtil.nextFloat(0.2f, 0.3f);
-
-				KeyframeAnimation<TableModule> animX = new KeyframeAnimation<>(fakeModule, "pos.x");
-				animX.setDuration(100);
-				animX.setKeyframes(new Keyframe[]{
-						new Keyframe(delay, fakeModule.getPos().getX() + 1, Easing.easeOutQuint),
-						new Keyframe(0.45f, random.getX(), Easing.easeOutQuint),
-						new Keyframe(0.6f, random.getX(), Easing.easeOutQuint),
-						new Keyframe(1f, (bookIconMask.getSize().getX() / 2.0) - 8, Easing.easeInOutQuint)
-
-				});
-
-				KeyframeAnimation<TableModule> animY = new KeyframeAnimation<>(fakeModule, "pos.y");
-				animY.setDuration(100);
-				animY.setKeyframes(new Keyframe[]{
-						new Keyframe(delay, fakeModule.getPos().getY() + 3, Easing.easeOutQuint),
-						new Keyframe(0.45f, random.getY(), Easing.easeOutQuint),
-						new Keyframe(0.6f, random.getY(), Easing.easeOutQuint),
-						new Keyframe(1f, -(bookIconMask.getSize().getY() / 2.0) - 4, Easing.easeInOutQuint)
-
-				});
-
-				animY.setCompletion(fakeModule::invalidate);
-
-				fakeModule.add(animX, animY);
-			}
-		}
+		if (selectedModule != null) {
+			selectedModule = null;
+			getMainComponents().add(new ScheduledEventAnimation(5, runnable));
+		} else runnable.run();
 	}
 
 	@Override
