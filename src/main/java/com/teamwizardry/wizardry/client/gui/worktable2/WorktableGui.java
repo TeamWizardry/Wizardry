@@ -7,7 +7,10 @@ import com.teamwizardry.librarianlib.features.animator.animations.KeyframeAnimat
 import com.teamwizardry.librarianlib.features.gui.GuiBase;
 import com.teamwizardry.librarianlib.features.gui.component.GuiComponent;
 import com.teamwizardry.librarianlib.features.gui.component.GuiComponentEvents;
-import com.teamwizardry.librarianlib.features.gui.components.*;
+import com.teamwizardry.librarianlib.features.gui.components.ComponentRect;
+import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
+import com.teamwizardry.librarianlib.features.gui.components.ComponentText;
+import com.teamwizardry.librarianlib.features.gui.components.ComponentVoid;
 import com.teamwizardry.librarianlib.features.math.Vec2d;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
@@ -258,12 +261,16 @@ public class WorktableGui extends GuiBase {
 	}
 
 	private void addModules(ComponentSprite parent, ModuleType type) {
-		ComponentGrid grid = new ComponentGrid(0, 0, 16, 16, 3);
-		parent.add(grid);
-
+		int column = 0, row = 0;
 		for (Module module : ModuleRegistry.INSTANCE.getModules(type)) {
-			TableModule tableModule = new com.teamwizardry.wizardry.client.gui.worktable2.TableModule(this, module, false, false);
-			grid.add(tableModule);
+			TableModule tableModule = new TableModule(this, module, false, false);
+			tableModule.setPos(new Vec2d(row * 16, column * 16));
+			parent.add(tableModule);
+
+			if (++row >= 3) {
+				row = 0;
+				column++;
+			}
 		}
 	}
 
