@@ -120,7 +120,9 @@ public class ComponentModifiers extends GuiComponent {
 				ComponentRect bar = new ComponentRect(0, 0, getSize().getXi(), PIXELS_PER_BAR);
 				bar.getColor().setValue(new Color(0x80000000, true));
 
-				TableModule tableModifier = new TableModule(worktable, modifier, false, false);
+				TableModule tableModifier = new TableModule(worktable, modifier, false, true);
+				tableModifier.setEnableTooltip(true);
+				tableModifier.getTransform().setTranslateZ(80);
 				bar.add(tableModifier);
 
 				ComponentText text = new ComponentText(20, 4, ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.TOP);
@@ -188,6 +190,7 @@ public class ComponentModifiers extends GuiComponent {
 					}
 
 					TableModule fakePlate = new TableModule(worktable, modifier, false, false);
+					fakePlate.getTransform().setTranslateZ(80);
 					worktable.getMainComponents().add(fakePlate);
 
 					Vec2d from = tableModifier.thisPosToOtherContext(worktable.getMainComponents());

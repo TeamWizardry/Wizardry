@@ -335,7 +335,7 @@ public class WorktableGui extends GuiBase {
 				if (!(component instanceof TableModule)) continue;
 				TableModule tableModule = (TableModule) component;
 
-				TableModule fakeModule = new TableModule(this, tableModule.getModule(), true, true);
+				TableModule fakeModule = new TableModule(this, tableModule.getModule(), false, true);
 				fakeModule.setPos(tableModule.getPos());
 				for (Object tag : tableModule.getTagList()) fakeModule.addTag(tag);
 				fakeModule.getTransform().setTranslateZ(230);

@@ -2,6 +2,8 @@ package com.teamwizardry.wizardry.client.gui.worktable2;
 
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
+import com.teamwizardry.librarianlib.features.animator.Easing;
+import com.teamwizardry.librarianlib.features.animator.animations.BasicAnimation;
 import com.teamwizardry.librarianlib.features.gui.EnumMouseButton;
 import com.teamwizardry.librarianlib.features.gui.component.GuiComponent;
 import com.teamwizardry.librarianlib.features.gui.component.GuiComponentEvents;
@@ -46,10 +48,14 @@ public class TableModule extends GuiComponent {
 	private final boolean benign;
 	@Nullable
 	private TableModule linksTo = null;
+	private boolean enableTooltip;
 	/**
 	 * ALWAYS from the context of null. Never to any other component.
 	 */
 	private Vec2d initialPos;
+
+	//public float size = 16;
+	//public final float originalSize = 16;
 
 	public TableModule(@Nonnull WorktableGui worktable, @Nonnull Module module, boolean draggable, boolean benign) {
 		super(0, 0, PLATE.getWidth(), PLATE.getHeight());
@@ -57,7 +63,7 @@ public class TableModule extends GuiComponent {
 		this.module = module;
 		this.draggable = draggable;
 		icon = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/icons/" + module.getID() + ".png"));
-		this.benign = benign;
+		this.benign = enableTooltip = benign;
 
 		initialPos = thisPosToOtherContext(null);
 
@@ -113,7 +119,53 @@ public class TableModule extends GuiComponent {
 
 				Vec2d currentPos = event.component.thisPosToOtherContext(null);
 				if (event.getButton() == EnumMouseButton.LEFT && initialPos.equals(currentPos)) {
-					worktable.selectedModule = (worktable.selectedModule == event.component) ? null : this;
+
+					if (worktable.selectedModule == this) {
+						worktable.selectedModule = null;
+
+						Vec2d toSize = new Vec2d(20, 20);
+						BasicAnimation<TableModule> animSize = new BasicAnimation<>(this, "size");
+						animSize.setDuration(5);
+						animSize.setEasing(Easing.easeOutCubic);
+						animSize.setTo(toSize);
+						add(animSize);
+
+						BasicAnimation<TableModule> animPos = new BasicAnimation<>(this, "pos");
+						animPos.setDuration(5);
+						animPos.setEasing(Easing.easeOutCubic);
+						animPos.setTo(getPos().add((getSize().sub(toSize)).mul(0.5f)));
+						add(animPos);
+					} else {
+						if (worktable.selectedModule != null) {
+							Vec2d toSize = new Vec2d(16, 16);
+							BasicAnimation<TableModule> animSize = new BasicAnimation<>(worktable.selectedModule, "size");
+							animSize.setDuration(5);
+							animSize.setEasing(Easing.easeOutCubic);
+							animSize.setTo(toSize);
+							worktable.selectedModule.add(animSize);
+
+							BasicAnimation<TableModule> animPos = new BasicAnimation<>(worktable.selectedModule, "pos");
+							animPos.setDuration(5);
+							animPos.setEasing(Easing.easeOutCubic);
+							animPos.setTo(worktable.selectedModule.getPos().add((getSize().sub(toSize))));
+							worktable.selectedModule.add(animPos);
+						}
+
+						worktable.selectedModule = this;
+
+						Vec2d toSize = new Vec2d(24, 24);
+						BasicAnimation<TableModule> animSize = new BasicAnimation<>(this, "size");
+						animSize.setDuration(5);
+						animSize.setEasing(Easing.easeOutCubic);
+						animSize.setTo(toSize);
+						add(animSize);
+
+						BasicAnimation<TableModule> animPos = new BasicAnimation<>(this, "pos");
+						animPos.setDuration(5);
+						animPos.setEasing(Easing.easeOutCubic);
+						animPos.setTo(getPos().add((getSize().sub(toSize)).mul(0.5f)));
+						add(animPos);
+					}
 
 					worktable.modifiers.refresh();
 
@@ -197,7 +249,7 @@ public class TableModule extends GuiComponent {
 				event.component.removeTag("connecting");
 			});
 
-		if (!benign)
+		if (!benign || enableTooltip)
 			render.getTooltip().func((Function<GuiComponent, List<String>>) t -> {
 				List<String> txt = new ArrayList<>();
 
@@ -205,15 +257,48 @@ public class TableModule extends GuiComponent {
 				if (t.hasTag("connecting")) return txt;
 
 				txt.add(TextFormatting.GOLD + module.getReadableName());
-				if (GuiScreen.isShiftKeyDown())
-				{ 
+				if (GuiScreen.isShiftKeyDown()) {
 					txt.add(TextFormatting.GRAY + module.getDescription());
 					if (module.getAttributeRanges().keySet().stream().anyMatch(attribute -> attribute.hasDetailedText()))
-						if (GuiScreen.isCtrlKeyDown()) module.getDetailedInfo().forEach(info -> txt.add(TextFormatting.GRAY + info));
+						if (GuiScreen.isCtrlKeyDown())
+							module.getDetailedInfo().forEach(info -> txt.add(TextFormatting.GRAY + info));
 						else txt.add(TextFormatting.GRAY + LibrarianLib.PROXY.translate("wizardry.misc.ctrl"));
-				}
-				else txt.add(TextFormatting.GRAY + LibrarianLib.PROXY.translate("wizardry.misc.sneak"));
+				} else txt.add(TextFormatting.GRAY + LibrarianLib.PROXY.translate("wizardry.misc.sneak"));
 				return txt;
+			});
+
+		if (!benign)
+			BUS.hook(GuiComponentEvents.MouseInEvent.class, event -> {
+				if (worktable.selectedModule == this) return;
+				Vec2d toSize = new Vec2d(20, 20);
+				BasicAnimation<TableModule> animSize = new BasicAnimation<>(this, "size");
+				animSize.setDuration(5);
+				animSize.setEasing(Easing.easeOutCubic);
+				animSize.setTo(toSize);
+				add(animSize);
+
+				BasicAnimation<TableModule> animPos = new BasicAnimation<>(this, "pos");
+				animPos.setDuration(5);
+				animPos.setEasing(Easing.easeOutCubic);
+				animPos.setTo(getPos().add((getSize().sub(toSize)).mul(0.5f)));
+				add(animPos);
+			});
+
+		if (!benign)
+			BUS.hook(GuiComponentEvents.MouseOutEvent.class, event -> {
+				if (worktable.selectedModule == this) return;
+				Vec2d toSize = new Vec2d(16, 16);
+				BasicAnimation<TableModule> animSize = new BasicAnimation<>(this, "size");
+				animSize.setDuration(5);
+				animSize.setEasing(Easing.easeOutCubic);
+				animSize.setTo(toSize);
+				add(animSize);
+
+				BasicAnimation<TableModule> animPos = new BasicAnimation<>(this, "pos");
+				animPos.setDuration(5);
+				animPos.setEasing(Easing.easeOutCubic);
+				animPos.setTo(getPos().add((getSize().sub(toSize)).mul(0.5f)));
+				add(animPos);
 			});
 	}
 
@@ -311,40 +396,35 @@ public class TableModule extends GuiComponent {
 		plate = worktable.selectedModule == this ? PLATE_HIGHLIGHTED : PLATE;
 		Vec2d pos = Vec2d.ZERO;
 
-		Vec2d size = new Vec2d(plate.getWidth(), plate.getHeight());
-		if (worktable.selectedModule == this || (!worktable.animationPlaying && getMouseOver() && !hasTag("connecting"))) {
-			GlStateManager.translate(0, 0, 50);
-			size = size.add(6, 6);
-			pos = pos.sub(3, 3);
+		if (worktable.selectedModule == this || (!benign && !worktable.animationPlaying && getMouseOver() && !hasTag("connecting"))) {
+			//size = size.add(6, 6);
+			//pos = pos.sub(3, 3);
 		}
+		//GlStateManager.translate((16f - getSize().getXf()) / 2.0f, (16f - getSize().getYf()) / 2.0f, 0);
 
 		if (hasTag("connecting")) {
-			drawWire(pos.add(size.getX() / 2.0, size.getY() / 2.0), mousePos, getColorForModule(module.getModuleType()), Color.WHITE);
+			drawWire(pos.add(getSize().getX() / 2.0, getSize().getY() / 2.0), mousePos, getColorForModule(module.getModuleType()), Color.WHITE);
 		}
 		if (linksTo != null) {
 			Vec2d posContext = linksTo.thisPosToOtherContext(this);
 			Vec2d posTo = new Vec2d(posContext.getX(), posContext.getY());
-			drawWire(pos.add(size.getX() / 2.0, size.getY() / 2.0), posTo.add(size.getX() / 2.0, size.getY() / 2.0), getColorForModule(module.getModuleType()), getColorForModule(linksTo.getModule().getModuleType()));
+			drawWire(pos.add(getSize().getX() / 2.0, getSize().getY() / 2.0), posTo.add(getSize().getX() / 2.0, getSize().getY() / 2.0), getColorForModule(module.getModuleType()), getColorForModule(linksTo.getModule().getModuleType()));
 		}
 
-		if (worktable.selectedModule == this || (getMouseOver() && !hasTag("connecting"))) {
-			GlStateManager.translate(0, 0, 50);
+		if (worktable.selectedModule == this || (!benign && !worktable.animationPlaying && getMouseOver() && !hasTag("connecting"))) {
+			GlStateManager.translate(0, 0, 80);
 		}
 
 		plate.bind();
-		plate.draw(0, pos.getXi(), pos.getYi(), size.getXi(), size.getYi());
+		plate.draw(0, 0, 0, getSize().getXf(), getSize().getYf());
 
-		double shrink = 2;
+		float shrink = 4;
 
 		icon.bind();
-		icon.draw(0,
-				(float) ((plate.getWidth() / 2.0) - ((size.getX() - shrink) / 2.0)),
-				(float) ((plate.getHeight() / 2.0) - ((size.getY() - shrink) / 2.0)),
-				(float) (size.getX() - shrink),
-				(float) (size.getYi() - shrink));
+		icon.draw(0, shrink / 2.0f, shrink / 2.0f, getSize().getXf() - shrink, getSize().getYf() - shrink);
 
-		if (worktable.selectedModule == this || (getMouseOver() && !hasTag("connecting"))) {
-			GlStateManager.translate(0, 0, -50);
+		if (worktable.selectedModule == this || (!benign && !worktable.animationPlaying && getMouseOver() && !hasTag("connecting"))) {
+			GlStateManager.translate(0, 0, -80);
 		}
 	}
 
@@ -422,5 +502,13 @@ public class TableModule extends GuiComponent {
 
 	public Sprite getIcon() {
 		return icon;
+	}
+
+	public boolean isEnableTooltip() {
+		return enableTooltip;
+	}
+
+	public void setEnableTooltip(boolean enableTooltip) {
+		this.enableTooltip = enableTooltip;
 	}
 }
