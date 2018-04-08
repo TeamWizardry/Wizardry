@@ -18,6 +18,7 @@ import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleType;
 import com.teamwizardry.wizardry.api.util.RandUtil;
@@ -162,6 +163,17 @@ public class WorktableGui extends GuiBase {
 
 					while (lastModule != null) {
 						chain.add(lastModule.getModule());
+
+						for (Module module : ModuleRegistry.INSTANCE.getModules(ModuleType.MODIFIER)) {
+							if (!(module instanceof ModuleModifier)) continue;
+							if (!lastModule.hasData(Integer.class, module.getID())) continue;
+
+							int count = lastModule.getData(Integer.class, module.getID());
+
+							for (int i = 0; i < count; i++) {
+								chain.add(module);
+							}
+						}
 
 						lastModule = lastModule.getLinksTo();
 					}

@@ -36,7 +36,7 @@ public class RenderSpellProjectile extends Render<EntitySpellProjectile> {
 	public void doRender(@Nonnull EntitySpellProjectile entity, double x, double y, double z, float entityYaw, float partialTicks) {
 		super.doRender(entity, x, y, z, entityYaw, partialTicks);
 
-		if (entity.spellRing.getModule() instanceof ModuleShape)
+		if (entity.spellRing != null && entity.spellRing.getModule() instanceof ModuleShape)
 			if (!((ModuleShape) entity.spellRing.getModule()).runRenderOverrides(entity.spellData, entity.spellRing))
 				return;
 
