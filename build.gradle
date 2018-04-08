@@ -29,7 +29,7 @@ minecraft {
     runDir = "run"
     mappings = "$mcp_version"
 
-    replace 'GRADLE:VERSION', mod_version
+    replace 'GRADLE:VERSION', $mod_version
     replace 'required-before:librarianlib', 'required-before:librarianlib@' + liblib_version
 
     replaceIn 'Wizardry.java'
@@ -71,8 +71,8 @@ jar {
 
 
 processResources {
-    inputs.property 'version', project.version
-    inputs.property 'mcversion', project.minecraft.version
+    inputs.property 'mod_version', project.version
+    inputs.property 'mc_version', project.minecraft.version
 
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info', 'pack.mcmeta'

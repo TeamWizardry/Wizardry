@@ -521,6 +521,7 @@ public class RenderCodex {
 		if (font == null) font = Minecraft.getMinecraft().fontRenderer;
 
 		if (font != null && stack.getCount() != 1) {
+			GlStateManager.translate(0, 0, 5);
 			GlStateManager.disableLighting();
 			GlStateManager.disableBlend();
 			font.drawStringWithShadow(stack.getCount() + "",
@@ -529,6 +530,7 @@ public class RenderCodex {
 					0xFFFFFF);
 			GlStateManager.enableDepth();
 			GlStateManager.enableBlend();
+			GlStateManager.translate(0, 0, -5);
 		}
 
 		if (stack.getItem().showDurabilityBar(stack)) {
