@@ -288,11 +288,11 @@ public class TableModule extends GuiComponent {
 										linkTo.setLinksTo(this);
 									}
 
-									worktable.setToastMessage("You can't create a loop!", Color.RED);
+									worktable.setToastMessage(LibrarianLib.PROXY.translate("wizardry.table.loop_error"), Color.RED);
 								}
 							}
 						} else {
-							worktable.setToastMessage("There's a loop somewhere! A spell should start from somewhere and not make an infinite cycle.", Color.RED);
+							worktable.setToastMessage(LibrarianLib.PROXY.translate("wizardry.table.loop_found"), Color.RED);
 						}
 
 						event.component.removeTag("connecting");
@@ -635,7 +635,7 @@ public class TableModule extends GuiComponent {
 			case EVENT:
 				return true;
 			default: {
-				worktable.setToastMessage("These pieces don't work together.\n\nAn " + bold + "Effect" + reset + " module cannot link to a module. They can only be linked from other modules.", Color.RED);
+				worktable.setToastMessage(LibrarianLib.PROXY.translate("wizardry.table.connection_doesnt_work"), Color.RED);
 				return false;
 			}
 		}

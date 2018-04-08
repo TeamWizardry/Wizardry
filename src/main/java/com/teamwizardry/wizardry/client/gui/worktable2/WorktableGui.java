@@ -92,7 +92,7 @@ public class WorktableGui extends GuiBase {
 		toast.BUS.hook(GuiComponentEvents.ComponentTickEvent.class, event -> {
 			if (!bookWarnRevised && !hadBook && Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) {
 				toast.getColor().setValue(Color.GREEN);
-				toast.getText().setValue("Codex found, you can save spells.");
+				toast.getText().setValue(LibrarianLib.PROXY.translate("wizardry.table.codex_found"));
 				bookWarnRevised = true;
 			}
 		});
@@ -188,7 +188,7 @@ public class WorktableGui extends GuiBase {
 					}
 				}
 
-				setToastMessage("Spell saved to codex successfully! Open the book and check the new spell recipe tab.", Color.GREEN);
+				setToastMessage(LibrarianLib.PROXY.translate("wizardry.table.spell_saved"), Color.GREEN);
 				playAnimation();
 			});
 			getMainComponents().add(save);
@@ -200,11 +200,11 @@ public class WorktableGui extends GuiBase {
 		if (!Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) {
 			hadBook = false;
 			toast.getColor().setValue(Color.RED);
-			toast.getText().setValue("You do not have a codex in your inventory! Once you have one, you can save your spell into the book.");
+			toast.getText().setValue(LibrarianLib.PROXY.translate("wizardry.table.no_codex_found"));
 		} else {
 			hadBook = true;
 			toast.getColor().setValue(Color.GREEN);
-			toast.getText().setValue("Codex found, you can save spells.");
+			toast.getText().setValue(LibrarianLib.PROXY.translate("wizardry.table.codex_found"));
 		}
 	}
 
