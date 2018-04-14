@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -89,7 +90,7 @@ public class UnicornTrailRenderer {
 		GlStateManager.translate(-interpPosX, -interpPosY + 0.1, -interpPosZ);
 
 		GlStateManager.disableCull();
-		GlStateManager.enableAlpha();
+		//GlStateManager.enableAlpha();
 		GlStateManager.enableBlend();
 		GlStateManager.disableTexture2D();
 		GlStateManager.shadeModel(GL11.GL_SMOOTH);
@@ -98,7 +99,6 @@ public class UnicornTrailRenderer {
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder vb = tessellator.getBuffer();
 
-		float alpha = 0.3f;
 		Set<EntityUnicorn> corns = new HashSet<>(positions.keySet());
 		for (EntityUnicorn corn : corns) {
 			if (corn.world.provider.getDimension() != world.provider.getDimension()) continue;
@@ -110,13 +110,20 @@ public class UnicornTrailRenderer {
 			for (Point pos : points) {
 				if (pos == null) continue;
 
-				Color color = Color.getHSBColor((float) Math.sin((world.getTotalWorldTime() - pos.time) / 100.0) * 0.5f + 0.5f, 1f, 1f);
+				float sub = (world.getTotalWorldTime() - pos.time);
+				Color color = Color.getHSBColor(sub % 360.0f / 360.0f, 1f, 1f);
+
+				int alpha;
+				if (sub < 500) {
+					alpha = (int) (MathHelper.clamp(Math.log(sub + 1) / 2.0, 0, 1) * 80.0);
+				} else {
+					alpha = (int) (MathHelper.clamp(1 - (Math.log(sub) / 2.0), 0, 1) * 80.0);
+				}
 
 				pos(vb, pos.origin.subtract(pos.normal)).color(color.getRed(), color.getGreen(), color.getBlue(), alpha).endVertex();
 				pos(vb, pos.origin.add(pos.normal)).color(color.getRed(), color.getGreen(), color.getBlue(), alpha).endVertex();
 				q = !q;
 			}
-
 
 			tessellator.draw();
 		}
