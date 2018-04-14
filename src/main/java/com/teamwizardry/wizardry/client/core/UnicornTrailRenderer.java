@@ -54,23 +54,30 @@ public class UnicornTrailRenderer {
 		for (EntityUnicorn unicorn : unicorns) {
 			if (unicorn == null) continue;
 			if (unicorn.isDead) {
-				unicorns.remove(unicorn);
+				positions.remove(unicorn);
 				break;
 			}
+
 			positions.putIfAbsent(unicorn, new ArrayList<>());
 
 			List<Point> poses = positions.get(unicorn);
 
-			Vec3d backCenter = unicorn.getPositionVector();
-			Vec3d look = new Vec3d(unicorn.motionX, unicorn.motionY, unicorn.motionZ).normalize();
-			backCenter = backCenter.add(look.scale(-1));
-
-			if (poses.size() >= 1000) {
+			if ((poses.size() >= 1000 || world.getTotalWorldTime() % 20 == 0) && !poses.isEmpty()) {
 				poses.remove(0);
 			}
 
-			Vec3d cross = unicorn.getLook(0).crossProduct(new Vec3d(0, 1, 0)).scale(0.35f);
-			poses.add(new Point(backCenter, cross, world.getTotalWorldTime()));
+			double mot = 0.05;
+			if (poses.size() < 1000 &&
+					(unicorn.motionX >= mot || unicorn.motionX <= -mot
+							|| unicorn.motionZ >= mot || unicorn.motionZ <= -mot)) {
+
+				Vec3d backCenter = unicorn.getPositionVector();
+				Vec3d look = new Vec3d(unicorn.motionX, unicorn.motionY, unicorn.motionZ).normalize();
+				backCenter = backCenter.add(look.scale(-1));
+
+				Vec3d cross = look.crossProduct(new Vec3d(0, 1, 0)).normalize().scale(0.35f);
+				poses.add(new Point(backCenter, cross, world.getTotalWorldTime()));
+			}
 		}
 	}
 
