@@ -83,6 +83,7 @@ public class ComponentSpellRecipe extends NavBarHolder implements IBookElement {
 
 				ComponentText spellStructureText = new ComponentText(0, 0, ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.TOP);
 				spellStructureText.getUnicode().setValue(true);
+				spellStructureText.getEnableUnicodeBidi().setValue(false);
 				spellStructureText.getText().setValue(pageChunk.toString());
 				spellStructureText.getWrap().setValue(getSize().getXi());
 
@@ -95,6 +96,7 @@ public class ComponentSpellRecipe extends NavBarHolder implements IBookElement {
 		if (count != 0) {
 			ComponentText spellStructureText = new ComponentText(0, 0, ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.TOP);
 			spellStructureText.getUnicode().setValue(true);
+			spellStructureText.getEnableUnicodeBidi().setValue(false);
 			spellStructureText.getText().setValue(pageChunk.toString());
 			spellStructureText.getWrap().setValue(getSize().getXi());
 

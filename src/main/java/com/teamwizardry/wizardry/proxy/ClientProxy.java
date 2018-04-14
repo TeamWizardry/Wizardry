@@ -55,6 +55,7 @@ public class ClientProxy extends CommonProxy {
 		ModEntities.initModels();
 
 		LightningRenderer.INSTANCE.getClass();
+		UnicornTrailRenderer.INSTANCE.getClass();
 		StructureErrorRenderer.INSTANCE.getClass();
 		CooldownHandler.INSTANCE.getClass();
 

@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -35,7 +36,21 @@ public class StructureErrorRenderer {
 	public void addError(BlockPos pos) {
 		for (ParticleError error : errors) {
 			if (error == null) continue;
-			if (error.pos.toLong() == pos.toLong())
+			if (error.pos.x == pos.getX() + 0.5
+					|| error.pos.y == pos.getY() + 0.5
+					|| error.pos.z == pos.getZ() + 0.5)
+				return;
+		}
+
+		errors.add(new ParticleError(new Vec3d(pos).addVector(0.5, 0.5, 0.5), 100));
+	}
+
+	public void addError(Vec3d pos) {
+		for (ParticleError error : errors) {
+			if (error == null) continue;
+			if (error.pos.x == pos.x
+					|| error.pos.y == pos.y
+					|| error.pos.z == pos.z)
 				return;
 		}
 
@@ -63,7 +78,7 @@ public class StructureErrorRenderer {
 
 
 			GlStateManager.translate(-interpPosX, -interpPosY, -interpPosZ);
-			GlStateManager.translate(error.pos.getX() + 0.5f, error.pos.getY() + 0.5f, error.pos.getZ() + 0.5f);
+			GlStateManager.translate(error.pos.x, error.pos.y, error.pos.z);
 
 			GlStateManager.rotate(-Minecraft.getMinecraft().getRenderManager().playerViewY, 0.0F, 1.0F, 0.0F);
 			GlStateManager.rotate((float) (Minecraft.getMinecraft().getRenderManager().options.thirdPersonView == 2 ? -1 : 1) * Minecraft.getMinecraft().getRenderManager().playerViewX, 1.0F, 0.0F, 0.0F);
@@ -89,10 +104,10 @@ public class StructureErrorRenderer {
 
 	class ParticleError {
 
-		public final BlockPos pos;
+		public final Vec3d pos;
 		public int tick;
 
-		public ParticleError(BlockPos pos, int maxTick) {
+		public ParticleError(Vec3d pos, int maxTick) {
 			this.pos = pos;
 			this.tick = maxTick;
 		}
