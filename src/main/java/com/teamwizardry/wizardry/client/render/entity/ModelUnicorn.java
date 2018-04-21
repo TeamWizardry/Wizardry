@@ -7,7 +7,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.AbstractChestHorse;
 import net.minecraft.entity.passive.AbstractHorse;
-import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -311,7 +310,7 @@ public class ModelUnicorn extends ModelBase {
 			f4 += MathHelper.cos(p_78086_2_ * 0.4F) * 0.15F * p_78086_3_;
 		}
 
-		EntityHorse entityhorse = (EntityHorse) entitylivingbaseIn;
+		AbstractHorse entityhorse = (AbstractHorse) entitylivingbaseIn;
 		float f5 = entityhorse.getGrassEatingAmount(partialTickTime);
 		float f6 = entityhorse.getRearingAmount(partialTickTime);
 		float f7 = 1.0F - f6;

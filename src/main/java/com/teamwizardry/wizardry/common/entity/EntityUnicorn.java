@@ -1,24 +1,26 @@
 package com.teamwizardry.wizardry.common.entity;
 
 import com.teamwizardry.wizardry.api.util.RandUtil;
-import com.teamwizardry.wizardry.common.entity.ai.EntityAIUnicornWander;
-import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.*;
-import net.minecraft.entity.passive.EntityHorse;
+import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
+import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.EntityFlyHelper;
+import net.minecraft.entity.passive.AbstractHorse;
+import net.minecraft.entity.passive.EntityFlying;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.pathfinding.PathNavigate;
+import net.minecraft.pathfinding.PathNavigateFlying;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
-public class EntityUnicorn extends EntityHorse {
+public class EntityUnicorn extends AbstractHorse implements EntityFlying {
 
 	private static final String SHIELD_COOLDOWN = "shield_cooldown";
 	private static final String IS_CHARGING = "is_charging";
@@ -36,6 +38,7 @@ public class EntityUnicorn extends EntityHorse {
 
 	public EntityUnicorn(World worldIn) {
 		super(worldIn);
+		moveHelper = new EntityFlyHelper(this);
 	}
 
 	@Override
@@ -44,26 +47,43 @@ public class EntityUnicorn extends EntityHorse {
 		flatulenceTicker = RandUtil.nextInt(20, 200);
 	}
 
+	@NotNull
+	@Override
+	protected PathNavigate createNavigator(@NotNull World worldIn) {
+		PathNavigateFlying navigateFlying = new PathNavigateFlying(this, world);
+		navigateFlying.setCanFloat(true);
+		navigateFlying.setCanEnterDoors(true);
+		return navigateFlying;
+	}
+
 	@Override
 	protected void initEntityAI() {
 		//this.tasks.addTask(0, new EntityAIUnicornCharge(this, 1.0F, 10.0F, 5.0));
-		this.tasks.addTask(1, new EntityAISwimming(this));
-		this.tasks.addTask(2, new EntityAIMoveTowardsRestriction(this, 1.0D));
-		this.tasks.addTask(3, new EntityAIUnicornWander(this, 1.0D));
+		//this.tasks.addTask(1, new EntityAISwimming(this));
+		//this.tasks.addTask(2, new EntityAIMoveTowardsRestriction(this, 1.0D));
+		//this.tasks.addTask(3, new EntityAIUnicornWander(this, 1.0D));
+
+		//this.tasks.addTask(3, new EntityAIWander(this, 0.6));
 		this.tasks.addTask(4, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
-		this.tasks.addTask(5, new EntityAILookIdle(this));
-		this.tasks.addTask(6, new EntityAIRunAroundLikeCrazy(this, 1.2D));
-		this.tasks.addTask(7, new EntityAIMate(this, 1.0D));
-		this.tasks.addTask(8, new EntityAIFollowParent(this, 1.0D));
+		//this.tasks.addTask(5, new EntityAILookIdle(this));
+
+		//this.tasks.addTask(6, new EntityAIRunAroundLikeCrazy(this, 1.2D));
+		//this.tasks.addTask(7, new EntityAIMate(this, 1.0D));
+		//this.tasks.addTask(8, new EntityAIFollowParent(this, 1.0D));
 
 		//this.targetTasks.addTask(1, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, false, false));
-		this.targetTasks.addTask(2, new EntityAIHurtByTarget(this, false));
+		//this.targetTasks.addTask(2, new EntityAIHurtByTarget(this, false));
+
+		this.targetTasks.addTask(0, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, false));
+		//	this.targetTasks.addTask(1, new EntityAINearestAttackableTarget<>(this, EntityFairy.class, false));
 	}
 
 	@Override
 	protected void applyEntityAttributes() {
 		super.applyEntityAttributes();
 		this.getAttributeMap().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
+		this.getAttributeMap().registerAttribute(SharedMonsterAttributes.FLYING_SPEED);
+		this.getEntityAttribute(SharedMonsterAttributes.FLYING_SPEED).setBaseValue(0.5);
 		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(10.0D);
 		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.25D);
 		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(5.0D);
@@ -73,44 +93,15 @@ public class EntityUnicorn extends EntityHorse {
 	public void onUpdate() {
 		super.onUpdate();
 
-		if (isAIDisabled()) return;
+		if (isAIDisabled() || isDead) return;
 		if (world.isRemote) return;
+		fallDistance = 0;
 
-		EntityLivingBase target = this.getAttackTarget();
-		if (target == null) {
-			this.setAttackTarget(world.getNearestAttackablePlayer(this, 50, 50));
+		setAttackTarget(Minecraft.getMinecraft().player);
+		if (getAttackTarget() != null) {
+			moveHelper.setMoveTo(getAttackTarget().posX, getAttackTarget().posY, getAttackTarget().posZ, 1);
 		}
 
-		Vec3d sub = Vec3d.ZERO;
-		if (target != null) {
-			sub = target.getPositionVector().subtract(getPositionVector()).normalize();
-		}
-
-		{
-			Vec3d pos = getPositionVector().addVector(0, -1, 0);
-			if (target == null || posY < target.posY) {
-				BlockPos trailPos = new BlockPos(pos);
-				if (world.isAirBlock(trailPos)) {
-					world.setBlockState(trailPos, ModBlocks.UNICORN_TRAIL.getDefaultState());
-				}
-			}
-			pos = pos.add(sub.scale(2));
-			BlockPos trailPos = new BlockPos(pos);
-			if (world.isAirBlock(trailPos)) {
-				world.setBlockState(trailPos, ModBlocks.UNICORN_TRAIL.getDefaultState());
-			}
-		}
-		if (target == null) return;
-
-		moveHelper.setMoveTo(target.posX, target.posY, target.posZ, 1.5);
-
-		if (getEntityBoundingBox().intersects(target.getEntityBoundingBox())) {
-			target.knockBack(this, 2F, MathHelper.sin(rotationYaw), -MathHelper.cos(rotationYaw));
-			knockBack(this, 1F, -MathHelper.sin(rotationYaw), MathHelper.cos(rotationYaw));
-			target.attackEntityFrom(DamageSource.causeMobDamage(this), (float) this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
-			getNavigator().setPath(null, 1);
-			givenPath = false;
-		}
 	}
 
 	private void fart() {
@@ -131,7 +122,8 @@ public class EntityUnicorn extends EntityHorse {
 	@Override
 	protected void dropLoot(boolean wasRecentlyHit, int lootingModifier, DamageSource source) {
 		super.dropLoot(wasRecentlyHit, lootingModifier, source);
-		entityDropItem(new ItemStack(ModItems.UNICORN_HORN), RandUtil.nextFloat());
+		if (RandUtil.nextInt(20) == 0)
+			entityDropItem(new ItemStack(ModItems.UNICORN_HORN), RandUtil.nextFloat());
 	}
 
 	@Override
