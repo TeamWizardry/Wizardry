@@ -83,21 +83,6 @@ public class ModuleRegistry {
 
 	public void processModules() {
 		Wizardry.logger.info(" _______________________________________________________________________\\\\");
-		Wizardry.logger.info(" | ");
-		Wizardry.logger.error("| WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
-		Wizardry.logger.error("| WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
-		Wizardry.logger.error("| WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
-		Wizardry.logger.error("| WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
-		Wizardry.logger.error("| WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
-		Wizardry.logger.error("| WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
-		Wizardry.logger.error("| WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
-		Wizardry.logger.error("| WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
-		Wizardry.logger.error("| WARNING: YOU MAY WANT TO DELETE YOUR WHOLE WIZARDRY CONFIG FOLDER!!!! ======================= DO YOU SEE THIS MESSAGE YET?!?!?!?!? ======================= ");
-		Wizardry.logger.error("| ================= THIS UPDATE BREAKS ALL OLD CONFIGS THIS IS WHY YOU SHOULD DELETE YOUR OLD ONES IF YOU HAVEN'T. OR RUN /wizardry reset IN GAME");
-		Wizardry.logger.info(" | ");
-		Wizardry.logger.info(" | ");
-		Wizardry.logger.info(" | ");
-		Wizardry.logger.info(" | ");
 		Wizardry.logger.info(" | Starting module registration");
 
 		HashSet<Module> processed = new HashSet<>();
@@ -307,7 +292,7 @@ public class ModuleRegistry {
 		Wizardry.logger.info(" |_______________________________________________________________________//");
 	}
 
-	public void copyMissingModulesFromResources(File directory) {
+	public void copyMissingModules(File directory) {
 		for (Module module : modules) {
 			File file = new File(directory + "/modules/", module.getID() + ".json");
 			if (file.exists()) continue;
@@ -322,6 +307,29 @@ public class ModuleRegistry {
 				FileUtils.copyInputStreamToFile(stream, file);
 				Wizardry.logger.info("    > Module " + module.getID() + " copied successfully from mod jar.");
 			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void copyAllModules(File directory)
+	{
+		for (Module module : modules)
+		{
+			InputStream stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "modules/" + module.getID() + ".json");
+			if (stream == null)
+			{
+				Wizardry.logger.fatal("    > SOMETHING WENT WRONG! Could not read module " + module.getID() + " from mod jar! Report this to the devs on Github!");
+				continue;
+			}
+			
+			try
+			{
+				FileUtils.copyInputStreamToFile(stream, new File(directory + "/modules/", module.getID() + ".json"));
+				Wizardry.logger.info("    > Module " + module.getID() + " copied successfully from mod jar.");
+			}
+			catch (IOException e)
+			{
 				e.printStackTrace();
 			}
 		}

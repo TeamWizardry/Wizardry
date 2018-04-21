@@ -65,6 +65,24 @@ public class ManaRecipes {
 		}
 
 	}
+	
+	public void copyAllRecipes(File directory) {
+		for (String recipeName : getResourceListing(Wizardry.MODID, "fluid_recipes")) {
+			InputStream stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "fluid_recipes/" + recipeName);
+			if (stream == null) {
+				Wizardry.logger.fatal("    > SOMETHING WENT WRONG! Could not read recipe " + recipeName + " from mod jar! Report this to the devs on Github!");
+				continue;
+			}
+
+			try {
+				FileUtils.copyInputStreamToFile(stream, new File(directory, recipeName));
+				Wizardry.logger.info("    > Mana recipe " + recipeName + " copied successfully from mod jar.");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
 
 	public static class ExplodableCrafter extends FluidCraftInstance {
 		public ExplodableCrafter() {

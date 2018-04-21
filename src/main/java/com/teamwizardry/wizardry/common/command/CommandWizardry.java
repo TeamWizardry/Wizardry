@@ -47,7 +47,7 @@ public class CommandWizardry extends CommandBase {
 		if (args[0].equalsIgnoreCase("reload")) {
 
 			ModuleRegistry.INSTANCE.loadUnprocessedModules();
-			ModuleRegistry.INSTANCE.copyMissingModulesFromResources(CommonProxy.directory);
+			ModuleRegistry.INSTANCE.copyMissingModules(CommonProxy.directory);
 			ModuleRegistry.INSTANCE.processModules();
 
 			if (server.isDedicatedServer()) {
@@ -85,7 +85,7 @@ public class CommandWizardry extends CommandBase {
 
 			ModuleRegistry.INSTANCE.setDirectory(moduleDirectory);
 			ModuleRegistry.INSTANCE.loadUnprocessedModules();
-			ModuleRegistry.INSTANCE.copyMissingModulesFromResources(CommonProxy.directory);
+			ModuleRegistry.INSTANCE.copyMissingModules(CommonProxy.directory);
 			ModuleRegistry.INSTANCE.processModules();
 
 			if (server.isDedicatedServer()) {

@@ -99,8 +99,10 @@ public class CommonProxy {
 					Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not create directory " + recipeDirectory.getPath());
 					break manaRecipeLoading;
 				}
-				ManaRecipes.INSTANCE.copyMissingRecipes(recipeDirectory);
+//				ManaRecipes.INSTANCE.copyMissingRecipes(recipeDirectory);
 			}
+			if (ConfigValues.useInternalValues)
+				ManaRecipes.INSTANCE.copyAllRecipes(recipeDirectory);
 			ManaRecipes.INSTANCE.loadRecipes(recipeDirectory);
 		}
 		fireRecipeLoading:
@@ -111,8 +113,10 @@ public class CommonProxy {
 					Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not create directory " + recipeDirectory.getPath());
 					break fireRecipeLoading;
 				}
-				FireRecipes.INSTANCE.copyMissingRecipes(recipeDirectory);
+//				FireRecipes.INSTANCE.copyMissingRecipes(recipeDirectory);
 			}
+			if (ConfigValues.useInternalValues)
+				FireRecipes.INSTANCE.copyAllRecipes(recipeDirectory);
 			FireRecipes.INSTANCE.loadRecipes(recipeDirectory);
 		}
 	}
@@ -129,7 +133,10 @@ public class CommonProxy {
 
 		ModuleRegistry.INSTANCE.setDirectory(moduleDirectory);
 		ModuleRegistry.INSTANCE.loadUnprocessedModules();
-		ModuleRegistry.INSTANCE.copyMissingModulesFromResources(directory);
+		if (ConfigValues.useInternalValues)
+			ModuleRegistry.INSTANCE.copyAllModules(directory);
+		else
+			ModuleRegistry.INSTANCE.copyMissingModules(directory);
 		ModuleRegistry.INSTANCE.processModules();
 	}
 

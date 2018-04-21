@@ -12,6 +12,9 @@ public class ConfigValues {
 	@ConfigProperty(category = "general", comment = "If enabled, will inform you of new updates to the mod.")
 	public static boolean versionCheckerEnabled = true;
 
+	@ConfigProperty(category = "general", comment = "If enabled, external recipes and modules will be forcibly reset to default.\nDisable to allow custom recipes and module values.")
+	public static boolean useInternalValues = true;
+	
 	@ConfigProperty(category = "world", comment = "Whitelisted dimensions for mana pool generation.")
 	public static int[] manaPoolDimWhitelist = {0};
 

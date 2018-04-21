@@ -41,4 +41,22 @@ public class FireRecipes {
 			}
 		}
 	}
+	
+	public void copyAllRecipes(File directory)
+	{
+		for (String recipeName : getResourceListing(Wizardry.MODID, "fire_recipes")) {
+			InputStream stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "fire_recipes/" + recipeName);
+			if (stream == null) {
+				Wizardry.logger.fatal("    > SOMETHING WENT WRONG! Could not read recipe " + recipeName + " from mod jar! Report this to the devs on Github!");
+				continue;
+			}
+			
+			try {
+				FileUtils.copyInputStreamToFile(stream, new File(directory, recipeName));
+				Wizardry.logger.info("    > Fire recipe " + recipeName + " copied successfully from mod jar.");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }
