@@ -23,10 +23,19 @@ import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.render.block.TileCraftingPlateRenderer;
 import com.teamwizardry.wizardry.common.block.BlockCraftingPlate;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
+import com.teamwizardry.wizardry.init.ModEnchantments;
 import com.teamwizardry.wizardry.init.ModSounds;
+import com.teamwizardry.wizardry.utils.InfusedItemStackNBTData;
+import com.teamwizardry.wizardry.utils.InfusionHelper;
+
+import net.minecraft.enchantment.EnchantmentData;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemEnchantedBook;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -71,7 +80,9 @@ public class TileCraftingPlate extends TileManaInteractor {
 	public ModuleInventory inputPearl = new ModuleInventory(new ItemStackHandler() {
 		@Override
 		protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
-			if (stack.getItem() instanceof IInfusable)
+			IInfusable infusable = InfusionHelper.getInfusable(stack.getItem());
+			boolean canBeInfused = infusable != null && infusable.canBeInfused(stack);
+			if (infusable != null && canBeInfused)
 				return super.getStackLimit(slot, stack);
 			else return 0;
 		}
@@ -81,7 +92,8 @@ public class TileCraftingPlate extends TileManaInteractor {
 	public ModuleInventory outputPearl = new ModuleInventory(new ItemStackHandler() {
 		@Override
 		protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
-			if (stack.getItem() instanceof IInfusable)
+			IInfusable infusable = InfusionHelper.getInfusable(stack.getItem());
+			if (infusable != null)
 				return super.getStackLimit(slot, stack);
 			else return 0;
 		}
@@ -133,8 +145,12 @@ public class TileCraftingPlate extends TileManaInteractor {
 
 		for (EntityItem entityItem : world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos))) {
 			if (hasInputPearl()) break;
+			
+			IInfusable infusable = InfusionHelper.getInfusable(entityItem.getItem().getItem());
+			boolean canBeInfused = infusable != null && infusable.canBeInfused(entityItem.getItem());
 
-			if (!isInventoryEmpty() && entityItem.getItem().getItem() instanceof IInfusable) {
+
+			if (!isInventoryEmpty() && canBeInfused) {
 
 				ItemStack stack = entityItem.getItem().copy();
 				stack.setCount(1);
@@ -142,7 +158,7 @@ public class TileCraftingPlate extends TileManaInteractor {
 
 				inputPearl.getHandler().setStackInSlot(0, stack);
 
-			} else if (!(entityItem.getItem().getItem() instanceof IInfusable)) {
+			} else if (!canBeInfused) {
 				ItemStack stack = entityItem.getItem().copy();
 				stack.setCount(1);
 				entityItem.getItem().shrink(1);
@@ -181,21 +197,45 @@ public class TileCraftingPlate extends TileManaInteractor {
 					}
 				}
 				
-				ItemStack infusedPearl = inputPearl.getHandler().getStackInSlot(0).copy();
+				ItemStack infusedProduct;
+				String prefix = "";
+				
+				ItemStack inputStack = inputPearl.getHandler().getStackInSlot(0);
+				Item inputItem = inputStack.getItem();
+				if( inputItem == Items.BOOK || inputItem == Items.ENCHANTED_BOOK ) {
+					prefix = Constants.NBT.VANILLA_PREFIX;	// To avoid collisions in a vanilla namespace. 
+					
+					if( inputItem != Items.ENCHANTED_BOOK )
+						infusedProduct = new ItemStack(Items.ENCHANTED_BOOK);
+					else
+						infusedProduct = inputStack.copy();
+
+					// Mark as infused
+					if( EnchantmentHelper.getEnchantmentLevel(ModEnchantments.enchantmentInfusion, infusedProduct) <= 0 )
+					{
+						ItemEnchantedBook.addEnchantment(infusedProduct, new EnchantmentData(ModEnchantments.enchantmentInfusion, 1));
+					}
+
+					// TODO: Merge with existing infusions on an enchanted book
+				}
+				else {
+					infusedProduct = inputStack.copy();
+				}
+				
 				inputPearl.getHandler().setStackInSlot(0, ItemStack.EMPTY);
-				outputPearl.getHandler().setStackInSlot(0, infusedPearl);
+				outputPearl.getHandler().setStackInSlot(0, infusedProduct);
 
 				//Color lastColor = SpellUtils.getAverageSpellColor(builder.getSpell());
 				//float[] hsv = ColorUtils.getHSVFromColor(lastColor);
 				//ItemNBTHelper.setFloat(infusedPearl, "hue", hsv[0]);
 				//ItemNBTHelper.setFloat(infusedPearl, "saturation", hsv[1]);
-				ItemNBTHelper.setFloat(infusedPearl, Constants.NBT.RAND, world.rand.nextFloat());
-				ItemNBTHelper.setString(infusedPearl, "type", EnumPearlType.INFUSED.toString());
+//				ItemNBTHelper.setFloat(infusedProduct, prefix + Constants.NBT.RAND, world.rand.nextFloat());
+//				ItemNBTHelper.setString(infusedProduct, prefix + Constants.NBT.PEARL_TYPE, EnumPearlType.INFUSED.toString());
 
 				// Process spellData multipliers based on nacre quality
 				double pearlMultiplier = 1;
-				if (infusedPearl.getItem() instanceof INacreProduct) {
-					float purity = ((INacreProduct) infusedPearl.getItem()).getQuality(infusedPearl);
+				if (infusedProduct.getItem() instanceof INacreProduct) {
+					float purity = ((INacreProduct) infusedProduct.getItem()).getQuality(infusedProduct);
 					if (purity >= 1f) pearlMultiplier = ConfigValues.perfectPearlMultiplier * purity;
 					else if (purity <= ConfigValues.damagedPearlMultiplier)
 						pearlMultiplier = ConfigValues.damagedPearlMultiplier;
@@ -207,11 +247,18 @@ public class TileCraftingPlate extends TileManaInteractor {
 				
 				SpellBuilder builder = new SpellBuilder(stacks, pearlMultiplier);
 
-				NBTTagList list = new NBTTagList();
-				for (SpellRing spellRing : builder.getSpell()) {
-					list.appendTag(spellRing.serializeNBT());
-				}
-				ItemNBTHelper.setList(infusedPearl, Constants.NBT.SPELL, list);
+//				NBTTagList list = new NBTTagList();
+//				for (SpellRing spellRing : builder.getSpell()) {
+//					list.appendTag(spellRing.serializeNBT());
+//				}
+//				ItemNBTHelper.setList(infusedProduct, prefix + Constants.NBT.SPELL, list);
+				
+				// NOTE: Change crafting.infusion.InfusionEventHandler.onAnvilUpdateEvent() if changed nbt structure!
+				new InfusedItemStackNBTData(prefix)
+					.setRand(world.rand.nextFloat())
+					.setSpellList(builder)
+					.setPearlType(EnumPearlType.INFUSED)
+						.assignToStack(infusedProduct);
 				
 				ClientRunnable.run(new ClientRunnable() {
 					@Override

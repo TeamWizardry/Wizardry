@@ -18,6 +18,8 @@ import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
 import com.teamwizardry.wizardry.init.ModStructures;
+import com.teamwizardry.wizardry.utils.InfusionHelper;
+
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -110,11 +112,14 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 				} else {
 					ItemStack stack = heldItem.copy();
 					stack.setCount(1);
-					heldItem.shrink(1);
 
-					if (!plate.isInventoryEmpty() && stack.getItem() instanceof IInfusable) {
+					IInfusable infusable = InfusionHelper.getInfusable(stack.getItem());
+					boolean canBeInfused = infusable != null && infusable.canBeInfused(stack);
+
+					boolean itemConsumed = true;
+					if (!plate.isInventoryEmpty() && canBeInfused) {
 						plate.inputPearl.getHandler().setStackInSlot(0, stack);
-					} else if (!(stack.getItem() instanceof IInfusable)) {
+					} else if (!canBeInfused) {
 						for (int i = 0; i < plate.realInventory.getHandler().getSlots(); i++) {
 							if (plate.realInventory.getHandler().getStackInSlot(i).isEmpty()) {
 								plate.realInventory.getHandler().setStackInSlot(i, stack);
@@ -131,9 +136,14 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 							}
 						}
 					}
+					else
+						itemConsumed = false;
 
-					playerIn.openContainer.detectAndSendChanges();
-					worldIn.notifyBlockUpdate(pos, state, state, 3);
+					if( itemConsumed ) {
+						heldItem.shrink(1);
+						playerIn.openContainer.detectAndSendChanges();
+						worldIn.notifyBlockUpdate(pos, state, state, 3);
+					}
 					return true;
 				}
 			} else {

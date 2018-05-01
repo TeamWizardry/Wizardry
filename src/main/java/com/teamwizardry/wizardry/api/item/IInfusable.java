@@ -1,5 +1,7 @@
 package com.teamwizardry.wizardry.api.item;
 
+import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
+
 import net.minecraft.item.ItemStack;
 
 /**
@@ -13,4 +15,11 @@ public interface IInfusable {
 			return stack.getTagCompound().hasKey("type") ? EnumPearlType.valueOf(stack.getTagCompound().getString("type").toUpperCase()) : EnumPearlType.MUNDANE;
 		else return EnumPearlType.MUNDANE;
 	}
+	
+	default boolean canBeInfused(ItemStack stack) {
+		if( getType(stack) == EnumPearlType.MUNDANE )
+			return true;
+		return false;
+	}
+	
 }

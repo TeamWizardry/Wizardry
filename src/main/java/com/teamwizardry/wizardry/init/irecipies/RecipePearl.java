@@ -51,7 +51,7 @@ public class RecipePearl extends IForgeRegistryEntry.Impl<IRecipe> implements IR
 				if (stack.getItemDamage() == 0)
 					baseItem = stack;
 			}
-			if (stack.getItem() instanceof IInfusable)
+			if (stack.getItem() instanceof ItemNacrePearl)
 				pearl = stack;
 		}
 

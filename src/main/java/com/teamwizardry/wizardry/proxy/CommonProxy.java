@@ -9,6 +9,7 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.client.gui.GuiHandler;
 import com.teamwizardry.wizardry.common.advancement.AchievementEvents;
 import com.teamwizardry.wizardry.common.core.EventHandler;
+import com.teamwizardry.wizardry.common.core.InfusionEventHandler;
 import com.teamwizardry.wizardry.common.core.SpellTicker;
 import com.teamwizardry.wizardry.common.entity.angel.zachriel.nemez.NemezEventHandler;
 import com.teamwizardry.wizardry.common.module.effects.ModuleEffectLeap;
@@ -58,6 +59,7 @@ public class CommonProxy {
 		ModPotions.init();
 		ModEntities.init();
 		ModCapabilities.preInit();
+		ModEnchantments.init();
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(Wizardry.instance, new GuiHandler());
 
@@ -67,6 +69,7 @@ public class CommonProxy {
 		MinecraftForge.EVENT_BUS.register(ArenaManager.INSTANCE);
 		MinecraftForge.EVENT_BUS.register(new WorldProviderUnderWorld());
 		MinecraftForge.EVENT_BUS.register(new EventHandler());
+		MinecraftForge.EVENT_BUS.register(new InfusionEventHandler());
 		MinecraftForge.EVENT_BUS.register(new AchievementEvents());
 		MinecraftForge.EVENT_BUS.register(new ModCapabilities());
 		MinecraftForge.EVENT_BUS.register(new ModuleEffectTimeSlow());

@@ -57,7 +57,10 @@ public class Constants {
 	}
 
 	public static class NBT {
+		public static final String VANILLA_PREFIX = "wizardry_";	// To avoid naming collisions
+		
 		public static final String SPELL = "spellData";
+		public static final String PEARL_TYPE = "type";
 		public static final String TAG_OVERLAY = "overlay";
 		public static final String FAIRY_INSIDE = "fairy_inside";
 		public static final String FAIRY_COLOR = "fairy_color";
