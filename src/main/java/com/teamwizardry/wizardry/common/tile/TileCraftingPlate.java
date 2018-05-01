@@ -203,7 +203,7 @@ public class TileCraftingPlate extends TileManaInteractor {
 				ItemStack inputStack = inputPearl.getHandler().getStackInSlot(0);
 				Item inputItem = inputStack.getItem();
 				if( inputItem == Items.BOOK || inputItem == Items.ENCHANTED_BOOK ) {
-					prefix = Constants.NBT.VANILLA_PREFIX;	// To avoid collisions in a vanilla namespace. 
+					prefix = Constants.NBT.VANILLA_PREFIX;	// To avoid collisions in a vanilla namespace with other mods. 
 					
 					if( inputItem != Items.ENCHANTED_BOOK )
 						infusedProduct = new ItemStack(Items.ENCHANTED_BOOK);
@@ -225,12 +225,11 @@ public class TileCraftingPlate extends TileManaInteractor {
 				inputPearl.getHandler().setStackInSlot(0, ItemStack.EMPTY);
 				outputPearl.getHandler().setStackInSlot(0, infusedProduct);
 
+				// NOTE: Change crafting.infusion.InfusionEventHandler.onAnvilUpdateEvent() if changed nbt structure!
 				//Color lastColor = SpellUtils.getAverageSpellColor(builder.getSpell());
 				//float[] hsv = ColorUtils.getHSVFromColor(lastColor);
 				//ItemNBTHelper.setFloat(infusedPearl, "hue", hsv[0]);
 				//ItemNBTHelper.setFloat(infusedPearl, "saturation", hsv[1]);
-//				ItemNBTHelper.setFloat(infusedProduct, prefix + Constants.NBT.RAND, world.rand.nextFloat());
-//				ItemNBTHelper.setString(infusedProduct, prefix + Constants.NBT.PEARL_TYPE, EnumPearlType.INFUSED.toString());
 
 				// Process spellData multipliers based on nacre quality
 				double pearlMultiplier = 1;
@@ -246,14 +245,7 @@ public class TileCraftingPlate extends TileManaInteractor {
 				}
 				
 				SpellBuilder builder = new SpellBuilder(stacks, pearlMultiplier);
-
-//				NBTTagList list = new NBTTagList();
-//				for (SpellRing spellRing : builder.getSpell()) {
-//					list.appendTag(spellRing.serializeNBT());
-//				}
-//				ItemNBTHelper.setList(infusedProduct, prefix + Constants.NBT.SPELL, list);
 				
-				// NOTE: Change crafting.infusion.InfusionEventHandler.onAnvilUpdateEvent() if changed nbt structure!
 				new InfusedItemStackNBTData(prefix)
 					.setRand(world.rand.nextFloat())
 					.setSpellList(builder)

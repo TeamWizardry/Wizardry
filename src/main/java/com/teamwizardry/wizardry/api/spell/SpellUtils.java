@@ -55,13 +55,33 @@ public class SpellUtils {
 	}
 
 	public static void runSpell(@Nonnull ItemStack spellHolder, @Nonnull SpellData data) {
+		runSpell(spellHolder, data);
+	}
+	
+	public static void runSpell(@Nonnull ItemStack spellHolder, String prefix, @Nonnull SpellData data) {
+		if( prefix == null )
+			prefix = "";
+		
+		NBTTagList list = ItemNBTHelper.getList(spellHolder, prefix + Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+		if( list == null )
+			return;
+		
+		runSpell(list, data);
+	}
+	
+	public static void runSpell(@Nonnull NBTTagList spellList, @Nonnull SpellData data) {
+		runSpell(getSpellChains(spellList), data);
+	}
+	
+	public static void runSpell(@Nonnull List<SpellRing> spellList, @Nonnull SpellData data) {
 		if (data.world.isRemote) return;
+		if( spellList == null || spellList.isEmpty() ) return;
 
 		Entity caster = data.getData(SpellData.DefaultKeys.CASTER);
 		if (caster != null && caster instanceof EntityLivingBase && BaublesSupport.getItem((EntityLivingBase) caster, ModItems.CREATIVE_HALO, ModItems.FAKE_HALO, ModItems.REAL_HALO).isEmpty())
 			return;
 
-		for (SpellRing spellRing : getSpellChains(spellHolder)) {
+		for (SpellRing spellRing : spellList) {
 			spellRing.runSpellRing(data);
 		}
 	}
@@ -91,6 +111,8 @@ public class SpellUtils {
 	 */
 	public static List<SpellRing> getSpellChains(@Nonnull NBTTagList list) {
 		ArrayList<SpellRing> rings = new ArrayList<>();
+		if( list == null || list.hasNoTags() )
+			return rings;
 		for (int i = 0; i < list.tagCount(); i++) {
 			NBTTagCompound compound = list.getCompoundTagAt(i);
 			SpellRing ring = SpellRing.deserializeRing(compound);

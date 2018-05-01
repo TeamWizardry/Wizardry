@@ -1,20 +1,31 @@
 package com.teamwizardry.wizardry.common.core;
 
+import java.util.List;
 import java.util.Map;
 
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.init.ModEnchantments;
 import com.teamwizardry.wizardry.utils.InfusedItemStackNBTData;
+import com.teamwizardry.wizardry.utils.SpellCasting;
 
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemEnchantedBook;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumHand;
 import net.minecraftforge.event.AnvilUpdateEvent;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class InfusionEventHandler {
@@ -29,42 +40,68 @@ public class InfusionEventHandler {
 			return;
 
 		// Check if it is a correctly infused book
-		Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(book);
-		if( enchantments.get(ModEnchantments.enchantmentInfusion) == null )
+		InfusedItemStackNBTData data = getValidSpellData(book);
+		if( data == null )
 			return;
 
-//		NBTTagList spellData = ItemNBTHelper.getList(book, Constants.NBT.VANILLA_PREFIX + Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
-//		if( spellData == null )
-//			return;
-		
-//		String type = ItemNBTHelper.getString(book, Constants.NBT.VANILLA_PREFIX + Constants.NBT.PEARL_TYPE, "");
-//		if( type.isEmpty() )
-//			return;
-		
-		InfusedItemStackNBTData data =
-				new InfusedItemStackNBTData(Constants.NBT.VANILLA_PREFIX)
-					.initByStack(book);
-		if( !data.isComplete() )
-			return;
-		
 		// Now try to apply effects by vanilla mechanics
-		if( !applyVanillaEnchantmentsFromBook(event, itemToEnchant, book, enchantments) )
+		if( !applyVanillaEnchantmentsFromBook(event, itemToEnchant, book) )
 			return;
 
 		// Copy all wizardry data
-//		float rand = ItemNBTHelper.getFloat(book, Constants.NBT.VANILLA_PREFIX + Constants.NBT.RAND, 0);
 		ItemStack output = event.getOutput();
 		data.assignToStack(output);
-//		ItemNBTHelper.setString(output, Constants.NBT.VANILLA_PREFIX + Constants.NBT.PEARL_TYPE, type);
-//		ItemNBTHelper.setFloat(output, Constants.NBT.VANILLA_PREFIX + Constants.NBT.RAND, rand);
-//		ItemNBTHelper.setList(output, Constants.NBT.VANILLA_PREFIX + Constants.NBT.SPELL, spellData);
 		
 		// TODO: Merge effects if two infused books are combined
 	}
 	
-	private static boolean applyVanillaEnchantmentsFromBook(AnvilUpdateEvent event, ItemStack itemToEnchant, ItemStack book, Map<Enchantment, Integer> newEnchantments) {
+	@SubscribeEvent
+	public void onPlayerHitWithMeleeWeapon(LivingAttackEvent event) {
+		DamageSource source = event.getSource();
+		if( !source.damageType.equals("player" ))	// Name from net.minecraft.util.DamageSource.causePlayerDamage(EntityPlayer)
+			return;
+		
+		Entity ent = source.getTrueSource();
+		if( ent instanceof EntityPlayer ) {
+			EntityPlayer player = (EntityPlayer)ent;
+			EnumHand hand = EnumHand.MAIN_HAND;
+			ItemStack stack = player.getHeldItem(hand);
+			if( stack.isEmpty() )
+				return;
+			
+			// Reject if a book
+			if( stack.getItem() == Items.ENCHANTED_BOOK )
+				return;
+			
+			// Reject if not an infused item
+			InfusedItemStackNBTData data = getValidSpellData(stack);
+			if( data == null )
+				return;
+			
+			List<SpellRing> spellList = SpellUtils.getSpellChains(data.getSpellList());
+			SpellCasting.touchInteract(stack, spellList, player, event.getEntity(), hand);
+		}
+	}
+	
+	// -------------
+	
+	private InfusedItemStackNBTData getValidSpellData(ItemStack stack) {
+		Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(stack);
+		if( enchantments.get(ModEnchantments.enchantmentInfusion) == null )
+			return null;
+		
+		InfusedItemStackNBTData data =
+				new InfusedItemStackNBTData(Constants.NBT.VANILLA_PREFIX)
+					.initByStack(stack);
+		if( !data.isComplete() )
+			return null;
+		return data;
+	}
+	
+	private static boolean applyVanillaEnchantmentsFromBook(AnvilUpdateEvent event, ItemStack itemToEnchant, ItemStack book) {
 		// NOTE: Copied and adapted from net.minecraft.inventory.ContainerRepair.updateRepairOutput() 
 		
+		Map<Enchantment, Integer> newEnchantments = EnchantmentHelper.getEnchantments(book);
 		Map<Enchantment, Integer> curEnchantments = EnchantmentHelper.getEnchantments(itemToEnchant);
 		int cost = 0;
 		boolean flag2 = false;

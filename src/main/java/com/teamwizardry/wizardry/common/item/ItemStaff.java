@@ -14,6 +14,8 @@ import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.common.module.shapes.ModuleShapeTouch;
 import com.teamwizardry.wizardry.init.ModItems;
+import com.teamwizardry.wizardry.utils.SpellCasting;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.util.ITooltipFlag;
@@ -52,28 +54,8 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 
 	@Override
 	public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer playerIn, EntityLivingBase target, EnumHand hand) {
-		if (isCoolingDown(stack)) return false;
-
-		if (BaublesSupport.getItem(playerIn, ModItems.CREATIVE_HALO, ModItems.FAKE_HALO, ModItems.REAL_HALO).isEmpty())
-			return false;
-
-		boolean touch = false;
-		for (SpellRing ring : SpellUtils.getSpellChains(stack)) {
-			if (ring.getModule() instanceof ModuleShapeTouch) {
-				touch = true;
-				break;
-			}
-		}
-
-		if (!touch) return false;
-
-		SpellData spell = new SpellData(playerIn.world);
-		spell.processEntity(playerIn, true);
-		spell.processEntity(target, false);
-		SpellUtils.runSpell(stack, spell);
-
-		setCooldown(playerIn.world, playerIn, hand, stack, spell);
-		return true;
+		List<SpellRing> spellList = SpellUtils.getSpellChains(stack);
+		return SpellCasting.touchInteract(stack, spellList, playerIn, target, hand);
 	}
 
 	@Nonnull
