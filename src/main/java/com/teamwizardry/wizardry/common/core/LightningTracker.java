@@ -10,11 +10,13 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 
 public class LightningTracker {
 	public static LightningTracker INSTANCE = new LightningTracker();
 
 	private HashMap<Entity, TrackingEntry> entityToEntry = new HashMap<>();
+	private LinkedList<TrackingEntry> newEntries = new LinkedList<>();
 
 	private LightningTracker() {
 		MinecraftForge.EVENT_BUS.register(this);
@@ -23,11 +25,14 @@ public class LightningTracker {
 	public void addEntity(Vec3d origin, Entity target, Entity caster, double potency) {
 		double dist = target.getPositionVector().subtract(origin).lengthVector();
 		int numPoints = (int) (dist * LightningGenerator.POINTS_PER_DIST);
-		entityToEntry.put(target, new TrackingEntry(numPoints, dist, caster));
+		newEntries.add(new TrackingEntry(numPoints, dist, caster, target));
 	}
 
 	@SubscribeEvent
 	public void tick(TickEvent.WorldTickEvent event) {
+		newEntries.stream().forEach(e -> entityToEntry.put(e.getTarget(), e));
+		newEntries.clear();
+		
 		entityToEntry.keySet().removeIf(entity -> {
 			TrackingEntry entry = entityToEntry.get(entity);
 			Entity caster = entry.getCaster();
@@ -51,12 +56,14 @@ public class LightningTracker {
 		private int ticks;
 		private final double potency;
 		private final Entity caster;
-		
-		TrackingEntry(int ticks, double potency, Entity caster) {
+		private final Entity target;
+				
+		TrackingEntry(int ticks, double potency, Entity caster, Entity target) {
 			super();
 			this.ticks = ticks;
 			this.potency = potency;
 			this.caster = caster;
+			this.target = target;
 		}
 		
 		public final void setTicks( int ticks ) {
@@ -73,6 +80,10 @@ public class LightningTracker {
 
 		public final Entity getCaster() {
 			return caster;
+		}
+		
+		public final Entity getTarget() {
+			return target;
 		}
 	}
 }
