@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.entity;
+package com.teamwizardry.wizardry.common.entity.projectile;
 
 import com.teamwizardry.librarianlib.features.base.entity.EntityMod;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
@@ -161,7 +161,7 @@ public class EntitySpellProjectile extends EntityMod {
 		}
 	}
 
-	private void goBoom(SpellData data) {
+	protected void goBoom(SpellData data) {
 		motionX = 0;
 		motionY = 0;
 		motionZ = 0;

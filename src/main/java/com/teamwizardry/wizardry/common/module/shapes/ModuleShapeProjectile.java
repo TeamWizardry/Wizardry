@@ -7,7 +7,7 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
-import com.teamwizardry.wizardry.common.entity.EntitySpellProjectile;
+import com.teamwizardry.wizardry.common.entity.projectile.EntitySpellProjectile;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseRange;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseSpeed;
 import com.teamwizardry.wizardry.init.ModSounds;

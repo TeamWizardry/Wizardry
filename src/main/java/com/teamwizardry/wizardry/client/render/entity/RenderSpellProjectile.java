@@ -10,7 +10,8 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
-import com.teamwizardry.wizardry.common.entity.EntitySpellProjectile;
+import com.teamwizardry.wizardry.common.entity.projectile.EntitySpellProjectile;
+
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
@@ -18,10 +19,11 @@ import net.minecraft.util.math.Vec3d;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.*;
 
-import static com.teamwizardry.wizardry.common.entity.EntitySpellProjectile.DATA_COLOR;
-import static com.teamwizardry.wizardry.common.entity.EntitySpellProjectile.DATA_COLOR2;
+import static com.teamwizardry.wizardry.common.entity.projectile.EntitySpellProjectile.DATA_COLOR;
+import static com.teamwizardry.wizardry.common.entity.projectile.EntitySpellProjectile.DATA_COLOR2;
+
+import java.awt.*;
 
 /**
  * Created by Demoniaque on 8/25/2016.

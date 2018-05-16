@@ -5,6 +5,7 @@ import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
+import com.teamwizardry.wizardry.api.spell.OverrideObject.OverrideConsumer;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRange;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
@@ -31,7 +32,6 @@ import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.BiConsumer;
 
 /**
  * Modules ala IBlockStates
@@ -174,7 +174,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	}
 
 	@Nullable
-	public BiConsumer<SpellData, SpellRing> getRunOverrideFrom(@Nonnull Module module) {
+	public OverrideConsumer<SpellData, SpellRing, SpellRing> getRunOverrideFrom(@Nonnull Module module) {
 		if (!(module instanceof ModuleEffect)) return null;
 		if (this.module == null) return null;
 
@@ -191,7 +191,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 	@Nullable
 	@SideOnly(Side.CLIENT)
-	public BiConsumer<SpellData, SpellRing> getRenderOverrideFrom(@Nonnull Module module) {
+	public OverrideConsumer<SpellData, SpellRing, SpellRing> getRenderOverrideFrom(@Nonnull Module module) {
 		if (!(module instanceof ModuleEffect)) return null;
 		if (this.module == null) return null;
 

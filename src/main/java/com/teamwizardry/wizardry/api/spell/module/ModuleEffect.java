@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.api.spell.module;
 
 import com.teamwizardry.wizardry.api.spell.OverrideObject;
+import com.teamwizardry.wizardry.api.spell.OverrideObject.OverrideConsumer;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import net.minecraftforge.fml.relauncher.Side;
@@ -8,7 +9,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.function.BiConsumer;
 
 public abstract class ModuleEffect extends Module {
 
@@ -68,7 +68,7 @@ public abstract class ModuleEffect extends Module {
 	}
 
 	@Nullable
-	public BiConsumer<SpellData, SpellRing> getRunOverrideFor(Module module) {
+	public OverrideConsumer<SpellData, SpellRing, SpellRing> getRunOverrideFor(Module module) {
 		for (OverrideObject overrideObject : getRunOverrides()) {
 			if (module.getClass().isAssignableFrom(overrideObject.getModuleClass()))
 				return overrideObject.getConsumer();
@@ -78,7 +78,7 @@ public abstract class ModuleEffect extends Module {
 
 	@Nullable
 	@SideOnly(Side.CLIENT)
-	public BiConsumer<SpellData, SpellRing> getRenderOverrideFor(Module module) {
+	public OverrideConsumer<SpellData, SpellRing, SpellRing> getRenderOverrideFor(Module module) {
 		for (OverrideObject overrideObject : getRenderOverrides()) {
 			if (module.getClass().isAssignableFrom(overrideObject.getModuleClass()))
 				return overrideObject.getConsumer();
