@@ -150,7 +150,7 @@ public class ModuleRegistry {
 			attributeRanges.put(AttributeRegistry.POWER_MULTI, new AttributeRange(1, 0, Integer.MAX_VALUE));
 			for (Entry<String, JsonElement> entry : moduleObject.entrySet()) {
 				switch (entry.getKey()) {
-					case "item_meta": {
+					case "meta": {
 						itemMeta = entry.getValue().getAsJsonPrimitive().getAsInt();
 						Wizardry.logger.info(" | | |_ Found Item Meta:          " + itemMeta);
 						break;
