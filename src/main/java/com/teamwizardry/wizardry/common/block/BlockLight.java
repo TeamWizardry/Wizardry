@@ -29,6 +29,7 @@ public class BlockLight extends BlockModContainer {
 	public BlockLight() {
 		super("light", Material.CLOTH);
 		setSoundType(SoundType.CLOTH);
+		setHardness(0f);
 	}
 
 	@Override

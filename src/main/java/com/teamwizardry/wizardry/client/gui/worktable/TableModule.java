@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.client.gui.worktable2;
+package com.teamwizardry.wizardry.client.gui.worktable;
 
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 
-import static com.teamwizardry.wizardry.client.gui.worktable2.WorktableGui.*;
+import static com.teamwizardry.wizardry.client.gui.worktable.WorktableGui.*;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 
@@ -52,6 +52,7 @@ public class TableModule extends GuiComponent {
 	private final boolean draggable;
 	private final Sprite icon;
 	private final boolean benign;
+	public float radius = 16, textRadius = 10;
 	@Nullable
 	private TableModule linksTo = null;
 	private boolean enableTooltip;
@@ -59,8 +60,6 @@ public class TableModule extends GuiComponent {
 	 * ALWAYS from the context of null. Never to any other component.
 	 */
 	private Vec2d initialPos;
-
-	public float radius = 16, textRadius = 10;
 
 	//public float size = 16;
 	//public final float originalSize = 16;

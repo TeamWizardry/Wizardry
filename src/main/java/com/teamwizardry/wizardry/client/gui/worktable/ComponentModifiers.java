@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.client.gui.worktable2;
+package com.teamwizardry.wizardry.client.gui.worktable;
 
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.animator.Easing;
@@ -26,8 +26,11 @@ import java.util.function.Function;
 
 public class ComponentModifiers extends GuiComponent {
 
+	public static final int PIXELS_PER_BAR = 16; // units: pixels
+	public static final float SLIDE_IN_DURATION = 18; // units: ticks
+	public static final float SPACER_DURATION = 5; // units: ticks
+	public static final float SLIDE_OUT_DURATION = 3; // units: ticks (/ modifier)
 	private final WorktableGui worktable;
-
 	private boolean animationPlaying = false, refreshRequested = false;
 
 	public ComponentModifiers(WorktableGui worktable) {
@@ -50,11 +53,6 @@ public class ComponentModifiers extends GuiComponent {
 	public void refresh() {
 		refreshRequested = true;
 	}
-
-	public static final int PIXELS_PER_BAR = 16; // units: pixels
-	public static final float SLIDE_IN_DURATION = 18; // units: ticks
-	public static final float SPACER_DURATION = 5; // units: ticks
-	public static final float SLIDE_OUT_DURATION = 3; // units: ticks (/ modifier)
 
 	public void set() {
 		List<GuiComponent> children = new ArrayList<>(getChildren());

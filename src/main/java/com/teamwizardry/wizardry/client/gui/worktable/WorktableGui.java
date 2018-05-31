@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.client.gui.worktable2;
+package com.teamwizardry.wizardry.client.gui.worktable;
 
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.animator.Easing;
@@ -52,13 +52,13 @@ public class WorktableGui extends GuiBase {
 	static final Sprite STREAK = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/streak.png"));
 	static final Sprite BOOK_ICON = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/items/book.png"));
 	final ComponentModifiers modifiers;
-	@Nullable
-	public TableModule selectedModule = null;
 	final ComponentVoid paper;
 	final ComponentText toast;
+	@Nullable
+	public TableModule selectedModule = null;
 	public float backgroundAlpha = 0f;
-	private ComponentSprite tableComponent;
 	public boolean animationPlaying = false;
+	private ComponentSprite tableComponent;
 	private boolean hadBook = false, bookWarnRevised = false;
 
 	public WorktableGui() {

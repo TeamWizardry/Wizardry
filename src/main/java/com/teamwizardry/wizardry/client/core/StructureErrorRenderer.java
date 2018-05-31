@@ -37,8 +37,8 @@ public class StructureErrorRenderer {
 		for (ParticleError error : errors) {
 			if (error == null) continue;
 			if (error.pos.x == pos.getX() + 0.5
-					|| error.pos.y == pos.getY() + 0.5
-					|| error.pos.z == pos.getZ() + 0.5)
+					&& error.pos.y == pos.getY() + 0.5
+					&& error.pos.z == pos.getZ() + 0.5)
 				return;
 		}
 
