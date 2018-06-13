@@ -161,6 +161,13 @@ public class EntitySpellProjectile extends EntityMod {
 		}
 	}
 
+	/**
+	 * Called when the projectile entity hits another block or entity, or reaches the end of its path.
+	 * <BR><b>
+	 * MAKE SURE TO RUN {@code super.goBoom(data)} AT THE END, OR YOU WILL BE BREAKING SPELL MECHANICS!
+	 * </b>
+	 * @param data The {@link SpellData} attached to the spell.
+	 */
 	protected void goBoom(SpellData data) {
 		motionX = 0;
 		motionY = 0;

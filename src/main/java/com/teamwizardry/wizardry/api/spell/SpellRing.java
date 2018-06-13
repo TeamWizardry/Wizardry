@@ -5,7 +5,6 @@ import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.capability.CapManager;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
-import com.teamwizardry.wizardry.api.spell.OverrideObject.OverrideConsumer;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRange;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
@@ -173,29 +172,12 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		return this.module != null && module instanceof ModuleEffect && ((ModuleEffect) module).hasRunOverrideFor(this.module);
 	}
 
-	@Nullable
-	public OverrideConsumer<SpellData, SpellRing, SpellRing> getRunOverrideFrom(@Nonnull Module module) {
-		if (!(module instanceof ModuleEffect)) return null;
-		if (this.module == null) return null;
-
-		return ((ModuleEffect) module).getRunOverrideFor(this.module);
-	}
-
 	/**
 	 * If the given module is overriding this module's run
 	 */
 	@SideOnly(Side.CLIENT)
 	public boolean isRenderBeingOverridenBy(@Nonnull Module module) {
 		return this.module != null && module instanceof ModuleEffect && ((ModuleEffect) module).hasRenderOverrideFor(this.module);
-	}
-
-	@Nullable
-	@SideOnly(Side.CLIENT)
-	public OverrideConsumer<SpellData, SpellRing, SpellRing> getRenderOverrideFrom(@Nonnull Module module) {
-		if (!(module instanceof ModuleEffect)) return null;
-		if (this.module == null) return null;
-
-		return ((ModuleEffect) module).getRenderOverrideFor(this.module);
 	}
 
 	public boolean taxCaster(SpellData data) {

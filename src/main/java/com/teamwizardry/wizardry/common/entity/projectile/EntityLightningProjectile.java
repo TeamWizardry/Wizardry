@@ -38,13 +38,6 @@ public class EntityLightningProjectile extends EntitySpellProjectile
 	@Override
 	protected void goBoom(SpellData data)
 	{
-		motionX = 0;
-		motionY = 0;
-		motionZ = 0;
-
-		if (spellRing.getChildRing() != null)
-			spellRing.getChildRing().runSpellRing(data);
-
 		double range = childRing.getAttributeValue(AttributeRegistry.RANGE, data);
 		double potency = childRing.getAttributeValue(AttributeRegistry.POTENCY, data);
 		double duration = childRing.getAttributeValue(AttributeRegistry.DURATION, data);
@@ -75,7 +68,6 @@ public class EntityLightningProjectile extends EntitySpellProjectile
 			}
 		}
 
-		setDead();
-		world.removeEntity(this);
+		super.goBoom(data);
 	}
 }

@@ -12,12 +12,12 @@ import javax.annotation.Nonnull;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.LightningGenerator;
 import com.teamwizardry.wizardry.api.spell.IOverrideCooldown;
-import com.teamwizardry.wizardry.api.spell.OverrideObject;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
+import com.teamwizardry.wizardry.api.spell.module.OverrideConsumer;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
@@ -27,8 +27,6 @@ import com.teamwizardry.wizardry.common.core.LightningTracker;
 import com.teamwizardry.wizardry.common.entity.projectile.EntityLightningProjectile;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseRange;
-import com.teamwizardry.wizardry.common.module.shapes.ModuleShapeBeam;
-import com.teamwizardry.wizardry.common.module.shapes.ModuleShapeSelf;
 import com.teamwizardry.wizardry.common.network.PacketRenderLightningBolt;
 import com.teamwizardry.wizardry.init.ModSounds;
 
@@ -49,6 +47,23 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @RegisterModule
 public class ModuleEffectLightning extends ModuleEffect implements IOverrideCooldown {
 
+	public ModuleEffectLightning()
+	{
+		registerRunOverride("shape_self", getSelfOverride());
+		registerRunOverride("shape_touch", getTouchOverride());
+		registerRunOverride("shape_projectile", getProjectileOverride());
+		registerRunOverride("shape_cone", getConeOverride());
+		registerRunOverride("shape_beam", getBeamOverride());
+		registerRunOverride("shape_zone", getZoneOverride());
+		
+//		registerRenderOverride("shape_self", getSelfRenderOverride());
+//		registerRenderOverride("shape_touch", getTouchRenderOverride());
+//		registerRenderOverride("shape_projectile", getProjectileRenderOverride());
+//		registerRenderOverride("shape_cone", getConeRenderOverride());
+		registerRenderOverride("shape_beam", getBeamRenderOverride());
+//		registerRenderOverride("shape_zone", getZoneRenderOverride());
+	}
+	
 	@Nonnull
 	@Override
 	public String getID() {
@@ -59,24 +74,24 @@ public class ModuleEffectLightning extends ModuleEffect implements IOverrideCool
 	public ModuleModifier[] applicableModifiers() {
 		return new ModuleModifier[]{new ModuleModifierIncreaseRange(), new ModuleModifierIncreasePotency()};
 	}
-	
-	private OverrideObject getSelfOverride()
+
+	private OverrideConsumer<SpellData, SpellRing, SpellRing> getSelfOverride()
 	{
-		return new OverrideObject(ModuleShapeSelf.class, (data, spellRing, childRing) -> {
+		return (data, spellRing, childRing) -> {
 			
-		});
+		};
 	}
 	
-	private OverrideObject getTouchOverride()
+	private OverrideConsumer<SpellData, SpellRing, SpellRing> getTouchOverride()
 	{
-		return new OverrideObject(ModuleShapeSelf.class, (data, spellRing, childRing) -> {
+		return (data, spellRing, childRing) -> {
 			
-		});
+		};
 	}
 	
-	private OverrideObject getProjectileOverride()
+	private OverrideConsumer<SpellData, SpellRing, SpellRing> getProjectileOverride()
 	{
-		return new OverrideObject(ModuleShapeSelf.class, (data, spellRing, childRing) -> {
+		return (data, spellRing, childRing) -> {
 			World world = data.world;
 			if (world.isRemote) return;
 			
@@ -87,13 +102,13 @@ public class ModuleEffectLightning extends ModuleEffect implements IOverrideCool
 			double speed = spellRing.getAttributeValue(AttributeRegistry.SPEED, data);
 			
 			EntityLightningProjectile proj = new EntityLightningProjectile(world, spellRing, childRing, data, dist, speed, 0.1);
-			
-		});
+			world.spawnEntity(proj);
+		};
 	}
 
-	private OverrideObject getBeamOverride()
+	private OverrideConsumer<SpellData, SpellRing, SpellRing> getBeamOverride()
 	{
-		return new OverrideObject(ModuleShapeBeam.class, ((data, spellRing, childRing) -> {
+		return (data, spellRing, childRing) -> {
 			World world = data.world;
 			Entity caster = data.getCaster();
 			float yaw = data.getData(YAW, 0F);
@@ -127,55 +142,39 @@ public class ModuleEffectLightning extends ModuleEffect implements IOverrideCool
 					}
 				}
 			}
-		}));
-	}
-	
-	private OverrideObject getConeOverride()
-	{
-		return new OverrideObject(ModuleShapeSelf.class, (data, spellRing, childRing) -> {
-			
-		});
-	}
-	
-	private OverrideObject getZoneOverride()
-	{
-		return new OverrideObject(ModuleShapeSelf.class, (data, spellRing, childRing) -> {
-			
-		});
-	}
-	
-	@Override
-	public OverrideObject[] getRunOverrides() {
-		return new OverrideObject[]{
-				getSelfOverride(),
-				getTouchOverride(),
-				getProjectileOverride(),
-				getBeamOverride(),
-				getConeOverride(),
-				getZoneOverride()
 		};
 	}
-
+	
+	private OverrideConsumer<SpellData, SpellRing, SpellRing> getConeOverride()
+	{
+		return (data, spellRing, childRing) -> {
+			
+		};
+	}
+	
+	private OverrideConsumer<SpellData, SpellRing, SpellRing> getZoneOverride()
+	{
+		return (data, spellRing, childRing) -> {
+			
+		};
+	}
+	
 	@SideOnly(Side.CLIENT)
-	@Override
-	public OverrideObject[] getRenderOverrides() {
-		return new OverrideObject[]{
-				// BEAM
-				new OverrideObject(ModuleShapeBeam.class, (data, ring, childRing) -> {
-					World world = data.world;
-					float yaw = data.getData(YAW, 0F);
-					float pitch = data.getData(PITCH, 0F);
-					long seed = data.getData(SEED, 0L);
-					double range = ring.getAttributeValue(AttributeRegistry.RANGE, data);
-					Vec3d origin = data.getOriginHand();
-					if (origin == null) return;
+	private OverrideConsumer<SpellData, SpellRing, SpellRing> getBeamRenderOverride()
+	{
+		return (data, ring, childRing) -> {
+			World world = data.world;
+			float yaw = data.getData(YAW, 0F);
+			float pitch = data.getData(PITCH, 0F);
+			long seed = data.getData(SEED, 0L);
+			double range = ring.getAttributeValue(AttributeRegistry.RANGE, data);
+			Vec3d origin = data.getOriginHand();
+			if (origin == null) return;
 
-					RayTraceResult traceResult = new RayTrace(world, PosUtils.vecFromRotations(pitch, yaw), origin, range).setSkipBlocks(true).setSkipEntities(true).trace();
+			RayTraceResult traceResult = new RayTrace(world, PosUtils.vecFromRotations(pitch, yaw), origin, range).setSkipBlocks(true).setSkipEntities(true).trace();
 
-					PacketHandler.NETWORK.sendToAllAround(new PacketRenderLightningBolt(origin, traceResult.hitVec, seed),
-							new NetworkRegistry.TargetPoint(world.provider.getDimension(), origin.x, origin.y, origin.z, 256));
-
-				})
+			PacketHandler.NETWORK.sendToAllAround(new PacketRenderLightningBolt(origin, traceResult.hitVec, seed),
+					new NetworkRegistry.TargetPoint(world.provider.getDimension(), origin.x, origin.y, origin.z, 256));
 		};
 	}
 

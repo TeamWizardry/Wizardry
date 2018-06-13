@@ -1,30 +1,45 @@
 package com.teamwizardry.wizardry.api.spell.module;
 
-import com.teamwizardry.wizardry.api.spell.OverrideObject;
-import com.teamwizardry.wizardry.api.spell.OverrideObject.OverrideConsumer;
-import com.teamwizardry.wizardry.api.spell.SpellData;
-import com.teamwizardry.wizardry.api.spell.SpellRing;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import java.util.HashMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.teamwizardry.wizardry.api.spell.SpellData;
+import com.teamwizardry.wizardry.api.spell.SpellRing;
+
+import kotlin.Pair;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 public abstract class ModuleEffect extends Module {
 
+	protected HashMap<String, OverrideConsumer<SpellData, SpellRing, SpellRing>> runOverrides = new HashMap<>();
+	protected HashMap<String, OverrideConsumer<SpellData, SpellRing, SpellRing>> renderOverrides = new HashMap<>();
+	
 	@Nonnull
 	@Override
 	public ModuleType getModuleType() {
 		return ModuleType.EFFECT;
 	}
 
-	public OverrideObject[] getRunOverrides() {
-		return new OverrideObject[0];
+	public void registerOverrides()
+	{}
+	
+	public void registerRunOverride(String moduleID, OverrideConsumer<SpellData, SpellRing, SpellRing> runOverride)
+	{
+		runOverrides.put(moduleID, runOverride);
+	}
+	
+	public void registerRenderOverride(String moduleID, OverrideConsumer<SpellData, SpellRing, SpellRing> renderOverride)
+	{
+		renderOverrides.put(moduleID, renderOverride);
 	}
 
 	@SideOnly(Side.CLIENT)
-	public OverrideObject[] getRenderOverrides() {
-		return new OverrideObject[0];
+	public OverrideConsumer<SpellData, SpellRing, SpellRing> registerRenderOverride(String moduleID)
+	{
+		return null;
 	}
 
 	public boolean hasOverridingRuns(SpellRing spellRing) {
@@ -53,36 +68,22 @@ public abstract class ModuleEffect extends Module {
 	}
 
 	public boolean hasRunOverrideFor(Module module) {
-		for (OverrideObject overrideObject : getRunOverrides()) {
-			if (module.getClass().isAssignableFrom(overrideObject.getModuleClass())) return true;
-		}
-		return false;
+		return ModuleRegistry.INSTANCE.runOverrides.containsKey(new Pair<>(module, this));
 	}
 
 	@SideOnly(Side.CLIENT)
 	public boolean hasRenderOverrideFor(Module module) {
-		for (OverrideObject overrideObject : getRenderOverrides()) {
-			if (module.getClass().isAssignableFrom(overrideObject.getModuleClass())) return true;
-		}
-		return false;
+		return ModuleRegistry.INSTANCE.renderOverrides.containsKey(new Pair<>(module, this));
 	}
 
 	@Nullable
 	public OverrideConsumer<SpellData, SpellRing, SpellRing> getRunOverrideFor(Module module) {
-		for (OverrideObject overrideObject : getRunOverrides()) {
-			if (module.getClass().isAssignableFrom(overrideObject.getModuleClass()))
-				return overrideObject.getConsumer();
-		}
-		return null;
+		return ModuleRegistry.INSTANCE.runOverrides.get(new Pair<>(module, this));
 	}
 
 	@Nullable
 	@SideOnly(Side.CLIENT)
 	public OverrideConsumer<SpellData, SpellRing, SpellRing> getRenderOverrideFor(Module module) {
-		for (OverrideObject overrideObject : getRenderOverrides()) {
-			if (module.getClass().isAssignableFrom(overrideObject.getModuleClass()))
-				return overrideObject.getConsumer();
-		}
-		return null;
+		return ModuleRegistry.INSTANCE.renderOverrides.get(new Pair<>(module, this));
 	}
 }
