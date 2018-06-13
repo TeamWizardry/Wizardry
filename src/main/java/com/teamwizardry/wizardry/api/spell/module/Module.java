@@ -231,7 +231,7 @@ public abstract class Module {
 
 		if (this instanceof ILingeringModule) {
 			boolean alreadyLingering = false;
-			for (SpellTicker.LingeringObject lingeringObject : SpellTicker.getStorageMap()) {
+			for (SpellTicker.LingeringObject lingeringObject : SpellTicker.getLingeringStorageMap()) {
 				if (lingeringObject.getSpellRing() == spellRing
 						|| lingeringObject.getSpellData() == spell) {
 					alreadyLingering = true;
