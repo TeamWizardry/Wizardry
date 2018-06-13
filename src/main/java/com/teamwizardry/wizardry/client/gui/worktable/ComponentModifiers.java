@@ -175,6 +175,7 @@ public class ComponentModifiers extends GuiComponent {
 					if (event.getButton() == EnumMouseButton.LEFT) {
 						worktable.selectedModule.setData(Integer.class, modifier.getID(), ++j);
 						status = 0;
+						worktable.setToastMessage("", Color.GREEN);
 					} else if (event.getButton() == EnumMouseButton.RIGHT) {
 						if (worktable.selectedModule.hasData(Integer.class, modifier.getID())) {
 
@@ -186,6 +187,7 @@ public class ComponentModifiers extends GuiComponent {
 								}
 								status = 1;
 							}
+							worktable.setToastMessage("", Color.GREEN);
 						}
 					}
 
