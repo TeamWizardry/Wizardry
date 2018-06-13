@@ -17,6 +17,9 @@ import com.teamwizardry.librarianlib.features.math.Vec2d;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.spell.SpellBuilder;
+import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
@@ -213,26 +216,65 @@ public class WorktableGui extends GuiBase {
 	}
 
 	public String getSpellName() {
-		StringBuilder builder = new StringBuilder();
-		Deque<TableModule> heads = new ArrayDeque<>(getSpellHeads());
+		List<List<Module>> chains = new ArrayList<>();
+		for (TableModule head : getSpellHeads()) {
+			List<Module> chain = new ArrayList<>();
 
-		while (!heads.isEmpty()) {
-
-			TableModule lastModule = heads.pop();
+			TableModule lastModule = head;
 
 			while (lastModule != null) {
-				builder.append(lastModule.getModule().getReadableName());
-				lastModule = lastModule.getLinksTo();
+				chain.add(lastModule.getModule());
 
-				if (lastModule != null)
-					builder.append(" > ");
+				for (Module module : ModuleRegistry.INSTANCE.getModules(ModuleType.MODIFIER)) {
+					if (!(module instanceof ModuleModifier)) continue;
+					if (!lastModule.hasData(Integer.class, module.getID())) continue;
+
+					int count = lastModule.getData(Integer.class, module.getID());
+
+					for (int i = 0; i < count; i++) {
+						chain.add(module);
+					}
+				}
+
+				lastModule = lastModule.getLinksTo();
 			}
 
-			if (!heads.isEmpty()) {
-				builder.append(" | ");
+			chains.add(chain);
+		}
+
+		SpellBuilder builder = new SpellBuilder(SpellUtils.getSpellItems(chains));
+		StringBuilder spellNameBuilder = new StringBuilder();
+
+		SpellRing lastRing = null;
+		for (SpellRing ring : builder.getSpell()) {
+			if (lastRing == null) lastRing = ring;
+			if (ring != null) {
+				if (ring != lastRing) spellNameBuilder.append(TextFormatting.GRAY).append(" | ");
+				SpellRing tmpRing = ring;
+				while (tmpRing != null) {
+					spellNameBuilder
+							.append(TextFormatting.YELLOW)
+							.append(tmpRing.getModuleReadableName())
+							.append(TextFormatting.GRAY)
+							.append("(")
+							.append(TextFormatting.BLUE)
+							.append(Math.round(tmpRing.getManaDrain() * tmpRing.getManaMultiplier()))
+							.append(TextFormatting.GRAY)
+							.append("/")
+							.append(TextFormatting.RED)
+							.append(Math.round(tmpRing.getBurnoutFill() * tmpRing.getBurnoutMultiplier()))
+							.append(TextFormatting.GRAY)
+							.append(")");
+					tmpRing = tmpRing.getChildRing();
+
+					if (tmpRing != null) {
+						spellNameBuilder.append(TextFormatting.GRAY).append(" > ");
+					}
+				}
 			}
 		}
-		return builder.toString();
+
+		return spellNameBuilder.toString();
 	}
 
 	public Pair<String, Color> getToastMessage() {

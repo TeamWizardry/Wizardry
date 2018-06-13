@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.entity.angel.zachriel.nemez;
+package com.teamwizardry.wizardry.common.nemez;
 
 import com.teamwizardry.librarianlib.features.methodhandles.MethodHandleHelper;
 import kotlin.Unit;

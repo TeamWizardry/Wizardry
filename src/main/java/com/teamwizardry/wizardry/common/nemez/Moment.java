@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.entity.angel.zachriel.nemez;
+package com.teamwizardry.wizardry.common.nemez;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;

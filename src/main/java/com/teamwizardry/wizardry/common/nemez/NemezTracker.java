@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.entity.angel.zachriel.nemez;
+package com.teamwizardry.wizardry.common.nemez;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -10,7 +10,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 import java.util.HashSet;
 import java.util.Set;
 
-public class NemezArenaTracker implements INBTSerializable<NBTTagList> {
+public class NemezTracker implements INBTSerializable<NBTTagList> {
 
 	public static final int MAXIMUM_MOMENTS = 6000;
 
@@ -61,9 +61,9 @@ public class NemezArenaTracker implements INBTSerializable<NBTTagList> {
 			manager.compressDownTo(maximumMoments);
 	}
 
-	public NemezArenaTracker snapshot() {
+	public NemezTracker snapshot() {
 		compressDownTo(MAXIMUM_MOMENTS);
-		NemezArenaTracker manager = new NemezArenaTracker();
+		NemezTracker manager = new NemezTracker();
 		manager.manager = this.manager.snapshot();
 		manager.trackingEntities = new HashSet<>(this.trackingEntities);
 		return manager;

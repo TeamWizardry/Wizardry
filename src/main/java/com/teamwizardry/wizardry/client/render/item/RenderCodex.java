@@ -170,8 +170,7 @@ public class RenderCodex {
 				anim.setDuration(20);
 				anim.setEasing(Easing.easeOutCubic);
 				anim.setCompletion(() -> {
-					if (animatingFields.contains(openingTag))
-						animatingFields.remove(openingTag);
+					animatingFields.remove(openingTag);
 				});
 				animator.add(anim);
 			}
@@ -184,8 +183,7 @@ public class RenderCodex {
 				anim.setDuration(20);
 				anim.setEasing(Easing.easeOutCubic);
 				anim.setCompletion(() -> {
-					if (animatingFields.contains(openingTag))
-						animatingFields.remove(openingTag);
+					animatingFields.remove(openingTag);
 				});
 				animator.add(anim);
 			}
@@ -436,8 +434,7 @@ public class RenderCodex {
 			anim.setDuration(RandUtil.nextInt(80, 120));
 			anim.setEasing(Easing.easeInOutSine);
 			anim.setCompletion(() -> {
-				if (animatingFields.contains(tag))
-					animatingFields.remove(tag);
+				animatingFields.remove(tag);
 			});
 			animator.add(anim);
 		}
