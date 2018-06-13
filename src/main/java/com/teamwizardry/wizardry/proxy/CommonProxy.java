@@ -10,7 +10,7 @@ import com.teamwizardry.wizardry.client.gui.GuiHandler;
 import com.teamwizardry.wizardry.common.advancement.AchievementEvents;
 import com.teamwizardry.wizardry.common.core.EventHandler;
 import com.teamwizardry.wizardry.common.core.SpellTicker;
-import com.teamwizardry.wizardry.common.entity.angel.zachriel.nemez.NemezEventHandler;
+import com.teamwizardry.wizardry.common.nemez.NemezEventHandler;
 import com.teamwizardry.wizardry.common.module.effects.ModuleEffectLeap;
 import com.teamwizardry.wizardry.common.module.effects.ModuleEffectTimeSlow;
 import com.teamwizardry.wizardry.common.network.*;

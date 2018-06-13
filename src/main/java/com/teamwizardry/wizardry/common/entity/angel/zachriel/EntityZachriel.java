@@ -13,8 +13,8 @@ import com.teamwizardry.wizardry.api.arena.Arena;
 import com.teamwizardry.wizardry.api.arena.ArenaManager;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.entity.angel.EntityAngel;
-import com.teamwizardry.wizardry.common.entity.angel.zachriel.nemez.NemezArenaTracker;
-import com.teamwizardry.wizardry.common.entity.angel.zachriel.nemez.NemezEventHandler;
+import com.teamwizardry.wizardry.common.nemez.NemezTracker;
+import com.teamwizardry.wizardry.common.nemez.NemezEventHandler;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModPotions;
 import net.minecraft.entity.EntityLivingBase;
@@ -75,7 +75,7 @@ public class EntityZachriel extends EntityAngel {
 	public float[] burstLevels = new float[]{0.95F, 0.85F, 0.75F, 0.65F, 0.55F, 0.45F, 0.35F, 0.25F, 0.15F, 0.05F};
 	public Arena arena = null;
 
-	public NemezArenaTracker nemezDrive = new NemezArenaTracker();
+	public NemezTracker nemezDrive = new NemezTracker();
 
 	public EntityZachriel(World world) {
 		super(world);
@@ -122,7 +122,7 @@ public class EntityZachriel extends EntityAngel {
 
 				// run load code
 
-				NemezEventHandler.reverseTime(this);
+				NemezEventHandler.reverseTime(world, nemezDrive, arena.getCenter());
 			}
 			if (nextBurst < burstLevels.length && healthPercent < burstLevels[nextBurst]) {
 				nextBurst++;
