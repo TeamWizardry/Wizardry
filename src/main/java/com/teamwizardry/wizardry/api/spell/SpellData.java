@@ -4,6 +4,7 @@ import com.teamwizardry.librarianlib.features.saving.Savable;
 import com.teamwizardry.wizardry.api.capability.DefaultWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
+import com.teamwizardry.wizardry.common.core.nemez.NemezTracker;
 import kotlin.Pair;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.*;
@@ -53,8 +54,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 	}
 
 	public <T> void removeData(@Nonnull Pair<String, Class<T>> key) {
-		if (this.data.containsKey(key))
-			this.data.remove(key);
+		this.data.remove(key);
 	}
 
 	@Nullable
@@ -168,6 +168,11 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 		Vec3d target = getTarget();
 		if (target == null) return null;
 		return new BlockPos(target);
+	}
+
+	@Nullable
+	public EnumFacing getFaceHit() {
+		return getData(DefaultKeys.FACE_HIT);
 	}
 
 	@Nullable
@@ -485,6 +490,25 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			@Override
 			public Long deserialize(@Nonnull World world, @Nonnull NBTTagLong object) {
 				return object.getLong();
+			}
+		});
+
+		@Nonnull
+		public static final Pair<String, Class<NemezTracker>> NEMEZ = constructPair("nemez", NemezTracker.class, new ProcessData.Process<NBTTagList, NemezTracker>() {
+
+			@Nonnull
+			@Override
+			public NBTTagList serialize(@Nullable NemezTracker object) {
+				if (object != null)
+					return object.serializeNBT();
+				return new NBTTagList();
+			}
+
+			@Override
+			public NemezTracker deserialize(@Nullable World world, @Nonnull NBTTagList object) {
+				NemezTracker tracker = new NemezTracker();
+				tracker.deserializeNBT(object);
+				return tracker;
 			}
 		});
 	}

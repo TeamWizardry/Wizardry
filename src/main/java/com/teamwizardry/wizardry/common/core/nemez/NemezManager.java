@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.nemez;
+package com.teamwizardry.wizardry.common.core.nemez;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;

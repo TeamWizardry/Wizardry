@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.nemez;
+package com.teamwizardry.wizardry.common.core.nemez;
 
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.common.network.PacketNemezReversal;

@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.nemez;
+package com.teamwizardry.wizardry.common.core.nemez;
 
 import com.teamwizardry.librarianlib.features.methodhandles.MethodHandleHelper;
 import kotlin.Unit;

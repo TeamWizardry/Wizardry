@@ -27,6 +27,7 @@ public class ModBlocks {
 	public static BlockManaMagnet MANA_MAGNET;
 	public static BlockLight LIGHT;
 	public static BlockJar JAR;
+	public static BlockFakeAir FAKE_AIR;
 
 	public static BlockNacre NACRE;
 	public static BlockNacreBrick NACRE_BRICK;
@@ -64,6 +65,7 @@ public class ModBlocks {
 		MANA_MAGNET = new BlockManaMagnet();
 		LIGHT = new BlockLight();
 		JAR = new BlockJar();
+		FAKE_AIR = new BlockFakeAir();
 
 		WISDOM_LEAVES = new BlockWisdomLeaves();
 		WISDOM_WOOD_LOG = new BlockWisdomWoodLog();

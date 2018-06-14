@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.nemez;
+package com.teamwizardry.wizardry.common.core.nemez;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
