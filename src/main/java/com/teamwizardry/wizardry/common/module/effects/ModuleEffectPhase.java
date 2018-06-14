@@ -16,14 +16,15 @@ import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModPotions;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.init.Blocks;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -51,7 +52,6 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Entity caster = spell.getCaster();
 		Entity targetEntity = spell.getVictim();
-		Vec3d targetHit = spell.getTarget();
 		BlockPos targetPos = spell.getTargetPos();
 		EnumFacing faceHit = spell.getFaceHit();
 
@@ -68,39 +68,43 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 		}
 
 		if (targetPos != null && faceHit != null) {
-			NemezTracker tracker = new NemezTracker();
+			faceHit = faceHit.getOpposite();
+			NemezTracker nemezDrive = new NemezTracker();
 
-			Vec3d centerStart = new Vec3d(targetPos);
-			Vec3d centerEnd = centerStart.add(new Vec3d(faceHit.getDirectionVec()).scale(range));
-
-			AxisAlignedBB bb = new AxisAlignedBB(centerStart, centerEnd);
+			AxisAlignedBB bb = new AxisAlignedBB(targetPos);
 
 			switch (faceHit) {
 				case DOWN:
 				case UP:
-					bb.grow(area, 0, area);
+					bb = bb.grow(area, range, area);
 					break;
 				case NORTH:
 				case SOUTH:
-					bb.grow(area, area, 0);
+					bb = bb.grow(area, area, range);
 					break;
 				case WEST:
 				case EAST:
-					bb.grow(0, area, area);
+					bb = bb.grow(range, area, area);
 					break;
 			}
 
 			for (BlockPos pos : BlockPos.getAllInBox((int) bb.minX, (int) bb.minY, (int) bb.minZ, (int) bb.maxX, (int) bb.maxY, (int) bb.maxZ)) {
-				tracker.trackBlock(pos, spell.world.getBlockState(pos));
+				IBlockState originalState = spell.world.getBlockState(pos);
+				if (originalState.getBlock() == ModBlocks.FAKE_AIR || originalState.getBlock() == Blocks.AIR) continue;
+
+				Minecraft.getMinecraft().player.sendChatMessage(pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + " - " + originalState.getBlock().getLocalizedName());
+
+				nemezDrive.trackBlock(pos, originalState);
 
 				IBlockState state = ModBlocks.FAKE_AIR.getDefaultState();
 
 				spell.world.setBlockState(pos, state);
 
-				tracker.trackBlock(pos, state);
 			}
 
-			spell.addData(SpellData.DefaultKeys.NEMEZ, tracker);
+			nemezDrive.endUpdate();
+
+			spell.addData(SpellData.DefaultKeys.NEMEZ, nemezDrive);
 
 			addDelayedSpell(spellRing, spell, (int) duration);
 		}
@@ -116,11 +120,11 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 
 	@Override
 	public void runDelayedEffect(SpellData spell, SpellRing spellRing) {
-		NemezTracker nemez = spell.getData(SpellData.DefaultKeys.NEMEZ);
+		NemezTracker nemezDrive = spell.getData(SpellData.DefaultKeys.NEMEZ);
 		BlockPos targetPos = spell.getTargetPos();
 
-		if (nemez != null && targetPos != null) {
-			NemezEventHandler.reverseTime(spell.world, nemez, targetPos);
+		if (nemezDrive != null && targetPos != null) {
+			NemezEventHandler.reverseTime(spell.world, nemezDrive, targetPos);
 		}
 	}
 }

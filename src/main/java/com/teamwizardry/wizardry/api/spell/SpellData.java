@@ -163,6 +163,29 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 		return target;
 	}
 
+
+	@Nullable
+	public Vec3d getTargetBlockFirst() {
+		BlockPos pos = getData(DefaultKeys.BLOCK_HIT);
+		if (pos == null) {
+			Vec3d target = getData(DefaultKeys.TARGET_HIT);
+			if (target == null) {
+
+				Entity victim = getData(DefaultKeys.ENTITY_HIT);
+				if (victim == null) {
+					return null;
+				} else return victim.getPositionVector().addVector(0, victim.height / 2.0, 0);
+			} else return target;
+		} else return new Vec3d(pos).addVector(0.5, 0.5, 0.5);
+	}
+
+	@Nullable
+	public BlockPos getTargetPosBlockFirst() {
+		Vec3d target = getTarget();
+		if (target == null) return null;
+		return new BlockPos(target);
+	}
+
 	@Nullable
 	public BlockPos getTargetPos() {
 		Vec3d target = getTarget();
