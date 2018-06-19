@@ -76,7 +76,6 @@ item.wizardry:light.name=Light
 item.wizardry:halo_real.name=Halo
 item.wizardry:halo_fake.name=Crude Halo
 item.wizardry:halo_creative.name=Creative Halo
-item.wizardry:halo_creative.name=Creative Halo
 item.wizardry:repulsion_bomb.name=Repulsion Bomb
 item.wizardry:vortex_bomb.name=Vortex Bomb
 item.wizardry:sky_dust.name=Sky Dust
@@ -134,6 +133,7 @@ subtitle.wizardry.bubbling=Liquid bubbles
 subtitle.wizardry.spirit_wight=Spirit whispers
 subtitle.wizardry.spirit_blight=Spirit zaps
 subtitle.wizardry.electric_white_noise=Electrical humming
+subtitle.wizardry.sparkle=Sparkling noises
 
 potion.wizardry.crash=Crash
 potion.wizardry.low_gravity=Feather
@@ -147,7 +147,6 @@ potion.wizardry.zach_corruption=Corruption
 
 item_group.wizardry=Wizardry
 
-jei.recipe.wizardry:fluid=Item Soaking
 jei.recipe.block.wizardry:fluid=Output replaces liquid
 jei.recipe.consumes.wizardry:fluid=Consumes the liquid used
 jei.recipe.requires.wizardry:fluid=Needs %d source blocks of liquid

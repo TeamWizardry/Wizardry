@@ -10,6 +10,8 @@ import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import net.minecraft.util.ITickable;
@@ -33,6 +35,7 @@ public class TileLight extends TileMod implements ITickable {
 			@SideOnly(Side.CLIENT)
 			public void runIfClient() {
 				if (RandUtil.nextInt(4) == 0) {
+					Module module = ModuleRegistry.INSTANCE.getModule("effect_light");
 					ParticleBuilder glitter = new ParticleBuilder(30);
 					glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 					glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
@@ -43,6 +46,12 @@ public class TileLight extends TileMod implements ITickable {
 								RandUtil.nextDouble(-0.01, 0.01),
 								RandUtil.nextDouble(0, 0.03),
 								RandUtil.nextDouble(-0.01, 0.01)));
+
+						if (RandUtil.nextBoolean()) {
+							build.setColorFunction(new InterpColorHSV(module.getPrimaryColor(), module.getSecondaryColor()));
+						} else {
+							build.setColorFunction(new InterpColorHSV(module.getSecondaryColor(), module.getPrimaryColor()));
+						}
 					});
 				}
 			}

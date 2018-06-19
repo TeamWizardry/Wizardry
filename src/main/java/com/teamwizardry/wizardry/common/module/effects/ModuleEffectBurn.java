@@ -74,14 +74,13 @@ public class ModuleEffectBurn extends ModuleEffect {
 						if (facing != null) {
 							if (!world.isAirBlock(pos.offset(facing))) continue;
 							BlockUtils.placeBlock(world, pos.offset(facing), Blocks.FIRE.getDefaultState(), caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null);
-							world.playSound(null, targetPos, ModSounds.FIRE, SoundCategory.NEUTRAL, 0.5f, RandUtil.nextFloat());
 						} else for (EnumFacing face : EnumFacing.VALUES) {
 							if (world.isAirBlock(pos.offset(face)) || world.getBlockState(pos.offset(face)).getBlock() == Blocks.SNOW_LAYER) {
 								BlockUtils.placeBlock(world, pos.offset(face), Blocks.AIR.getDefaultState(), caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null);
-								world.playSound(null, targetPos, ModSounds.FIRE, SoundCategory.NEUTRAL, 0.5f, RandUtil.nextFloat());
 							}
 						}
 					}
+			world.playSound(null, targetPos, ModSounds.FIRE, SoundCategory.AMBIENT, 0.5f, RandUtil.nextFloat());
 		}
 		return true;
 	}

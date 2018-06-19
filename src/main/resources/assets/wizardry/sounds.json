@@ -223,5 +223,12 @@
       "wizardry:electric_white_noise"
     ],
     "subtitle": "subtitle.wizardry.electric_white_noise"
+  },
+  "sparkle": {
+    "category": "ambient",
+    "sounds": [
+      "wizardry:sparkle"
+    ],
+    "subtitle": "subtitle.wizardry.sparkle"
   }
 }

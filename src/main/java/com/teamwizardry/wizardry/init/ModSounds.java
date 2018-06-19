@@ -37,6 +37,7 @@ public class ModSounds {
 	public static ModSoundEvent WIND;
 	public static ModSoundEvent ZAP;
 	public static ModSoundEvent ELECTRIC_WHITE_NOISE;
+	public static ModSoundEvent SPARKLE;
 
 	public static void init() {
 		GLASS_BREAK = new ModSoundEvent("glassbreak");
@@ -70,6 +71,7 @@ public class ModSounds {
 		WIND = new ModSoundEvent("wind");
 		ZAP = new ModSoundEvent("zap");
 		ELECTRIC_WHITE_NOISE = new ModSoundEvent("electric_white_noise");
+		SPARKLE = new ModSoundEvent("sparkle");
 	}
 
 }

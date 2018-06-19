@@ -1,11 +1,20 @@
 package com.teamwizardry.wizardry.common.entity.projectile;
 
 import com.teamwizardry.librarianlib.features.base.entity.EntityMod;
+import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
+import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
+import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
+import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
+import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
+import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
+import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
@@ -14,6 +23,7 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -24,7 +34,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.awt.*;
 import java.util.List;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
@@ -34,38 +43,31 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  */
 public class EntitySpellProjectile extends EntityMod {
 
-	public static final DataParameter<Integer> DATA_COLOR = EntityDataManager.createKey(EntitySpellProjectile.class, DataSerializers.VARINT);
-	public static final DataParameter<Integer> DATA_COLOR2 = EntityDataManager.createKey(EntitySpellProjectile.class, DataSerializers.VARINT);
-	public SpellData spellData;
-	public SpellRing spellRing;
-	private double dist;
-	private double speed;
-	private double gravity;
+	public static final DataParameter<NBTTagCompound> SPELL_DATA = EntityDataManager.createKey(EntitySpellProjectile.class, DataSerializers.COMPOUND_TAG);
+	public static final DataParameter<NBTTagCompound> SPELL_RING = EntityDataManager.createKey(EntitySpellProjectile.class, DataSerializers.COMPOUND_TAG);
+	public static final DataParameter<Float> SPEED = EntityDataManager.createKey(EntitySpellProjectile.class, DataSerializers.FLOAT);
+	public static final DataParameter<Float> GRAVITY = EntityDataManager.createKey(EntitySpellProjectile.class, DataSerializers.FLOAT);
+	public static final DataParameter<Float> DIST = EntityDataManager.createKey(EntitySpellProjectile.class, DataSerializers.FLOAT);
 
 	public EntitySpellProjectile(World world) {
 		super(world);
 		setSize(0.3F, 0.3F);
 		isImmuneToFire = true;
-		applyColor(Color.WHITE);
-		applyColor2(Color.WHITE);
 
 		if (world.isRemote)
 			setRenderDistanceWeight(30);
 	}
 
-	public EntitySpellProjectile(World world, SpellRing spellRing, SpellData spellData, double dist, double speed, double gravity) {
+	public EntitySpellProjectile(World world, SpellRing spellRing, SpellData spellData, float dist, float speed, float gravity) {
 		super(world);
-		this.dist = dist;
-		this.speed = speed;
-		this.gravity = gravity;
 		setSize(0.3F, 0.3F);
 		isImmuneToFire = true;
 
-		this.spellRing = spellRing;
-		this.spellData = spellData;
-
-		applyColor(spellRing.getPrimaryColor());
-		applyColor2(spellRing.getSecondaryColor());
+		setSpellData(spellData);
+		setSpellRing(spellRing);
+		setSpeed(speed);
+		setDistance(dist);
+		setGravity(gravity);
 
 		if (world.isRemote)
 			setRenderDistanceWeight(30);
@@ -79,29 +81,106 @@ public class EntitySpellProjectile extends EntityMod {
 
 	@Override
 	protected void entityInit() {
-		this.getDataManager().register(DATA_COLOR, 0);
-		this.getDataManager().register(DATA_COLOR2, 0);
+		this.getDataManager().register(SPELL_DATA, new NBTTagCompound());
+		this.getDataManager().register(SPELL_RING, new NBTTagCompound());
+		this.getDataManager().register(SPEED, 0f);
+		this.getDataManager().register(DIST, 0f);
+		this.getDataManager().register(GRAVITY, 0f);
 	}
 
-	private void applyColor(Color color) {
-		this.getDataManager().set(DATA_COLOR, color.getRGB());
-		this.getDataManager().setDirty(DATA_COLOR);
+	private SpellData getSpellData() {
+		NBTTagCompound compound = getDataManager().get(SPELL_DATA);
+		return SpellData.deserializeData(world, compound);
 	}
 
-	private void applyColor2(Color color) {
-		this.getDataManager().set(DATA_COLOR2, color.getRGB());
-		this.getDataManager().setDirty(DATA_COLOR2);
+	private void setSpellData(SpellData data) {
+		getDataManager().set(SPELL_DATA, data.serializeNBT());
+		getDataManager().setDirty(SPELL_DATA);
+	}
+
+	private SpellRing getSpellRing() {
+		NBTTagCompound compound = getDataManager().get(SPELL_RING);
+		return SpellRing.deserializeRing(compound);
+	}
+
+	private void setSpellRing(SpellRing ring) {
+		getDataManager().set(SPELL_RING, ring.serializeNBT());
+		getDataManager().setDirty(SPELL_RING);
+	}
+
+	private float getSpeed() {
+		return getDataManager().get(SPEED);
+	}
+
+	private void setSpeed(float speed) {
+		getDataManager().set(SPEED, speed);
+		getDataManager().setDirty(SPEED);
+	}
+
+	private float getGravity() {
+		return getDataManager().get(GRAVITY);
+	}
+
+	private void setGravity(float gravity) {
+		getDataManager().set(GRAVITY, gravity);
+		getDataManager().setDirty(GRAVITY);
+	}
+
+	private float getDistance() {
+		return getDataManager().get(DIST);
+	}
+
+	private void setDistance(float dist) {
+		getDataManager().set(DIST, dist);
+		getDataManager().setDirty(DIST);
 	}
 
 	@Override
 	public void onUpdate() {
 		super.onUpdate();
 
-		if (world.isRemote) return;
+		SpellRing spellRing = getSpellRing();
+		SpellData spellData = getSpellData();
 
 		if (spellRing == null || spellData == null) {
 			setDead();
 			world.removeEntity(this);
+			return;
+		}
+
+
+		if (world.isRemote && !isDead) {
+			ClientRunnable.run(() -> {
+
+				if (spellRing.getModule() instanceof ModuleShape)
+					if (((ModuleShape) spellRing.getModule()).runRenderOverrides(spellData, spellRing))
+						return;
+
+				ParticleBuilder glitter = new ParticleBuilder(10);
+				glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+				glitter.enableMotionCalculation();
+				glitter.setCollision(true);
+				glitter.setCanBounce(true);
+				glitter.setColorFunction(new InterpColorHSV(spellRing.getPrimaryColor(), spellRing.getSecondaryColor()));
+				glitter.setAcceleration(new Vec3d(0, -0.015, 0));
+				ParticleSpawner.spawn(glitter, world, new StaticInterp<>(getPositionVector().add(new Vec3d(motionX, motionY, motionZ))), 5, 0, (aFloat, particleBuilder) -> {
+					particleBuilder.setScaleFunction(new InterpScale((float) RandUtil.nextDouble(0.3, 0.8), 0));
+					particleBuilder.setLifetime(RandUtil.nextInt(40, 60));
+					particleBuilder.addMotion(new Vec3d(
+							RandUtil.nextDouble(-0.03, 0.03),
+							RandUtil.nextDouble(-0.01, 0.05),
+							RandUtil.nextDouble(-0.03, 0.03)
+					));
+				});
+
+				glitter.disableMotionCalculation();
+				glitter.setMotion(Vec3d.ZERO);
+				ParticleSpawner.spawn(glitter, world, new StaticInterp<>(getPositionVector()), 5, 0, (aFloat, particleBuilder) -> {
+					particleBuilder.setScaleFunction(new InterpScale(RandUtil.nextFloat(1f, 2), 0));
+					particleBuilder.setLifetime(RandUtil.nextInt(5, 10));
+					//particleBuilder.addMotion()
+				});
+			});
 			return;
 		}
 
@@ -116,9 +195,9 @@ public class EntitySpellProjectile extends EntityMod {
 			return;
 		}
 
-		if (origin == null || dist < getDistance(origin.x, origin.y, origin.z)) {
+		if (origin == null || getDistance() < getDistance(origin.x, origin.y, origin.z)) {
 			spellData.processBlock(getPosition(), EnumFacing.getFacingFromVector((float) look.x, (float) look.y, (float) look.z), getPositionVector());
-			goBoom(spellData);
+			goBoom(spellRing, spellData);
 			return;
 		}
 
@@ -126,6 +205,7 @@ public class EntitySpellProjectile extends EntityMod {
 
 		if (!collided) {
 
+			float speed = getSpeed();
 			// MOVE //
 			motionX += ((look.x * speed) - motionX);
 			motionY += ((look.y * speed) - motionY);
@@ -140,7 +220,7 @@ public class EntitySpellProjectile extends EntityMod {
 
 			RayTraceResult result = new RayTrace(world, look, getPositionVector(), 5).setSkipEntity(this).trace();
 			spellData.processTrace(result, getPositionVector());
-			goBoom(spellData);
+			goBoom(spellRing, spellData);
 			return;
 		}
 
@@ -157,7 +237,7 @@ public class EntitySpellProjectile extends EntityMod {
 			RayTraceResult result = new RayTrace(world, look, getPositionVector(), 1).setSkipEntity(this).trace();
 			spellData.processTrace(result, getPositionVector());
 
-			goBoom(spellData);
+			goBoom(spellRing, spellData);
 		}
 	}
 
@@ -166,9 +246,10 @@ public class EntitySpellProjectile extends EntityMod {
 	 * <BR><b>
 	 * MAKE SURE TO RUN {@code super.goBoom(data)} AT THE END, OR YOU WILL BE BREAKING SPELL MECHANICS!
 	 * </b>
+	 *
 	 * @param data The {@link SpellData} attached to the spell.
 	 */
-	protected void goBoom(SpellData data) {
+	protected void goBoom(SpellRing spellRing, SpellData data) {
 		motionX = 0;
 		motionY = 0;
 		motionZ = 0;
@@ -177,7 +258,7 @@ public class EntitySpellProjectile extends EntityMod {
 			spellRing.getChildRing().runSpellRing(data);
 		}
 
-		PacketHandler.NETWORK.sendToAllAround(new PacketExplode(getPositionVector(), new Color(getDataManager().get(DATA_COLOR)), new Color(getDataManager().get(DATA_COLOR2)), 0.3, 0.3, RandUtil.nextInt(30, 50), 10, 25, true),
+		PacketHandler.NETWORK.sendToAllAround(new PacketExplode(getPositionVector(), spellRing.getPrimaryColor(), spellRing.getSecondaryColor(), 0.3, 0.3, RandUtil.nextInt(30, 50), 10, 25, true),
 				new NetworkRegistry.TargetPoint(world.provider.getDimension(), posX, posY, posZ, 512));
 
 		setDead();
@@ -202,19 +283,24 @@ public class EntitySpellProjectile extends EntityMod {
 	@Override
 	public void readCustomNBT(@Nonnull NBTTagCompound compound) {
 		if (compound.hasKey("spell_ring")) {
-			spellRing = SpellRing.deserializeRing(compound.getCompoundTag("spell_ring"));
+			setSpellRing(SpellRing.deserializeRing(compound.getCompoundTag("spell_ring")));
 		}
 
 		if (compound.hasKey("spell_data")) {
-			spellData = SpellData.deserializeData(world, compound.getCompoundTag("spell_data"));
+			setSpellData(SpellData.deserializeData(world, compound.getCompoundTag("spell_data")));
 		}
 
-		applyColor(spellRing.getPrimaryColor());
-		applyColor2(spellRing.getSecondaryColor());
+		if (compound.hasKey("gravity")) {
+			setGravity(compound.getFloat("gravity"));
+		}
 
-		dist = compound.getDouble("distance");
-		speed = compound.getDouble("speed");
-		gravity = compound.getDouble("gravity");
+		if (compound.hasKey("speed")) {
+			setSpeed(compound.getFloat("speed"));
+		}
+
+		if (compound.hasKey("distance")) {
+			setDistance(compound.getFloat("distance"));
+		}
 	}
 
 	@Override
@@ -225,11 +311,11 @@ public class EntitySpellProjectile extends EntityMod {
 		// https://github.com/Darkhax-Minecraft/WAWLA/issues/75
 		if (world.isRemote) return;
 
-		compound.setTag("spell_ring", spellRing.serializeNBT());
-		compound.setTag("spell_data", spellData.serializeNBT());
+		compound.setTag("spell_ring", getSpellRing().serializeNBT());
+		compound.setTag("spell_data", getSpellRing().serializeNBT());
 
-		compound.setDouble("distance", dist);
-		compound.setDouble("speed", speed);
-		compound.setDouble("gravity", gravity);
+		compound.setDouble("distance", getDistance());
+		compound.setDouble("speed", getSpeed());
+		compound.setDouble("gravity", getGravity());
 	}
 }
