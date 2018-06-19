@@ -2,13 +2,11 @@ package com.teamwizardry.wizardry.common.block;
 
 import com.teamwizardry.librarianlib.features.base.ModCreativeTab;
 import com.teamwizardry.librarianlib.features.base.block.BlockMod;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.state.BlockFaceShape;
+import com.teamwizardry.wizardry.api.block.MaterialFakeAir;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -20,9 +18,10 @@ import java.util.Random;
 
 public class BlockFakeAir extends BlockMod {
 
+	private static MaterialFakeAir FAKE_AIR = new MaterialFakeAir();
+
 	public BlockFakeAir() {
-		super("fake_air", Material.AIR);
-		//setBlockUnbreakable();
+		super("fake_air", FAKE_AIR);
 	}
 
 	@Override
@@ -37,7 +36,7 @@ public class BlockFakeAir extends BlockMod {
 
 	@Override
 	public boolean isReplaceable(IBlockAccess worldIn, BlockPos pos) {
-		return true;
+		return false;
 	}
 
 	@Nullable
@@ -85,8 +84,8 @@ public class BlockFakeAir extends BlockMod {
 	public void dropBlockAsItemWithChance(World worldIn, BlockPos pos, IBlockState state, float chance, int fortune) {
 	}
 
-	@Override
-	public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face) {
-		return BlockFaceShape.UNDEFINED;
-	}
+	//@Override
+	//public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face) {
+	//	return BlockFaceShape.UNDEFINED;
+	//}
 }

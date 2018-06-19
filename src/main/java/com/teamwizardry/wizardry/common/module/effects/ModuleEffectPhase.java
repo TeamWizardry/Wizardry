@@ -7,6 +7,8 @@ import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
+import com.teamwizardry.wizardry.api.util.BlockUtils;
+import com.teamwizardry.wizardry.client.core.StructureErrorRenderer;
 import com.teamwizardry.wizardry.common.core.nemez.NemezEventHandler;
 import com.teamwizardry.wizardry.common.core.nemez.NemezTracker;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseAOE;
@@ -16,9 +18,9 @@ import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModPotions;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumFacing;
@@ -75,31 +77,44 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 
 			switch (faceHit) {
 				case DOWN:
+					bb = bb.grow(area, 0, area);
+					bb = bb.expand(0, -range, 0);
+					break;
 				case UP:
-					bb = bb.grow(area, range, area);
+					bb = bb.grow(area, 0, area);
+					bb = bb.expand(0, range, 0);
 					break;
 				case NORTH:
+					bb = bb.grow(area, area, 0);
+					bb = bb.expand(0, 0, -range);
+					break;
 				case SOUTH:
-					bb = bb.grow(area, area, range);
+					bb = bb.grow(area, area, 0);
+					bb = bb.expand(0, 0, range);
 					break;
 				case WEST:
+					bb = bb.grow(0, area, area);
+					bb = bb.expand(-range, 0, 0);
+					break;
 				case EAST:
-					bb = bb.grow(range, area, area);
+					bb = bb.grow(0, area, area);
+					bb = bb.expand(range, 0, 0);
 					break;
 			}
 
+			StructureErrorRenderer.INSTANCE.addError(targetPos);
 			for (BlockPos pos : BlockPos.getAllInBox((int) bb.minX, (int) bb.minY, (int) bb.minZ, (int) bb.maxX, (int) bb.maxY, (int) bb.maxZ)) {
 				IBlockState originalState = spell.world.getBlockState(pos);
 				if (originalState.getBlock() == ModBlocks.FAKE_AIR || originalState.getBlock() == Blocks.AIR) continue;
 
-				Minecraft.getMinecraft().player.sendChatMessage(pos.getX() + ", " + pos.getY() + ", " + pos.getZ() + " - " + originalState.getBlock().getLocalizedName());
 
 				nemezDrive.trackBlock(pos, originalState);
 
 				IBlockState state = ModBlocks.FAKE_AIR.getDefaultState();
 
-				spell.world.setBlockState(pos, state);
+				BlockUtils.placeBlock(spell.world, pos, state, (EntityPlayerMP) caster);
 
+				nemezDrive.trackBlock(pos, state);
 			}
 
 			nemezDrive.endUpdate();

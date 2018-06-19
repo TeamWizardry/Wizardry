@@ -12,7 +12,6 @@ import com.teamwizardry.wizardry.api.spell.IBlockSelectable;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
-import com.teamwizardry.wizardry.common.module.shapes.ModuleShapeTouch;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -52,20 +51,12 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 
 	@Override
 	public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer playerIn, EntityLivingBase target, EnumHand hand) {
-		if (isCoolingDown(stack)) return false;
+		if (isCoolingDown(playerIn.world, stack)) return false;
 
 		if (BaublesSupport.getItem(playerIn, ModItems.CREATIVE_HALO, ModItems.FAKE_HALO, ModItems.REAL_HALO).isEmpty())
 			return false;
 
-		boolean touch = false;
-		for (SpellRing ring : SpellUtils.getSpellChains(stack)) {
-			if (ring.getModule() instanceof ModuleShapeTouch) {
-				touch = true;
-				break;
-			}
-		}
-
-		if (!touch) return false;
+		if (requiresBowAction(stack)) return false;
 
 		SpellData spell = new SpellData(playerIn.world);
 		spell.processEntity(playerIn, true);
@@ -81,27 +72,19 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 	public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float par8, float par9, float par10) {
 		ItemStack stack = player.getHeldItem(hand);
 		if (player.isSneaking()) {
-			for (SpellRing spellRing : SpellUtils.getSpellChains(stack)) {
+			for (SpellRing spellRing : SpellUtils.getAllSpellRings(stack)) {
 				if (spellRing.getModule() instanceof IBlockSelectable) {
 					player.getEntityData().setTag("selected", NBTUtil.writeBlockState(new NBTTagCompound(), world.getBlockState(pos)));
-					player.swingArm(hand);
+					player.stopActiveHand();
 					return EnumActionResult.PASS;
 				}
 			}
 		}
-		if (isCoolingDown(stack)) return EnumActionResult.PASS;
 
+		if (isCoolingDown(world, stack)) return EnumActionResult.PASS;
+		if (requiresBowAction(stack)) return EnumActionResult.PASS;
 		if (BaublesSupport.getItem(player, ModItems.CREATIVE_HALO, ModItems.FAKE_HALO, ModItems.REAL_HALO).isEmpty())
 			return EnumActionResult.PASS;
-
-		boolean isOnTouch = false;
-		for (SpellRing spellRing : SpellUtils.getSpellChains(stack))
-			if (spellRing.getModule() instanceof ModuleShapeTouch) {
-				isOnTouch = true;
-				break;
-			}
-
-		if (!isOnTouch) return EnumActionResult.PASS;
 
 		SpellData spell = new SpellData(world);
 		spell.processEntity(player, true);
@@ -118,111 +101,64 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, @Nonnull EnumHand hand) {
 		ItemStack stack = player.getHeldItem(hand);
 
-		if (player.isSneaking()) {
-			for (SpellRing spellRing : SpellUtils.getAllSpellRings(stack)) {
-				if (spellRing.getModule() instanceof IBlockSelectable) {
-					return new ActionResult<>(EnumActionResult.PASS, stack);
-				}
-			}
-		}
-
-		if (getItemUseAction(stack) == EnumAction.NONE) {
-			if (!isCoolingDown(stack)) {
-
-				if (BaublesSupport.getItem(player, ModItems.CREATIVE_HALO, ModItems.FAKE_HALO, ModItems.REAL_HALO).isEmpty())
-					return new ActionResult<>(EnumActionResult.FAIL, stack);
-
-				SpellData spell = new SpellData(world);
+		boolean hasHalo = BaublesSupport.getItem(player, ModItems.CREATIVE_HALO, ModItems.FAKE_HALO, ModItems.REAL_HALO).isEmpty();
+		if (isCoolingDown(world, stack) || hasHalo || (world.isRemote && (Minecraft.getMinecraft().currentScreen != null))) {
+			return new ActionResult<>(EnumActionResult.FAIL, stack);
+		} else {
+			if (requiresBowAction(stack))
+				player.setActiveHand(hand);
+			else {
+				SpellData spell = new SpellData(player.world);
 				spell.processEntity(player, true);
 				SpellUtils.runSpell(stack, spell);
-
-				player.swingArm(EnumHand.MAIN_HAND);
 				setCooldown(world, player, hand, stack, spell);
 			}
 			return new ActionResult<>(EnumActionResult.PASS, stack);
-		} else {
-			if (world.isRemote && (Minecraft.getMinecraft().currentScreen != null)) {
-				return new ActionResult<>(EnumActionResult.FAIL, stack);
-			} else {
-				player.setActiveHand(hand);
-				return new ActionResult<>(EnumActionResult.PASS, stack);
-			}
 		}
 	}
 
 	@Nonnull
 	@Override
 	public EnumAction getItemUseAction(ItemStack stack) {
-		boolean anyContinueous = false;
-		for (SpellRing spellRing : SpellUtils.getAllSpellRings(stack))
-			if (spellRing.isContinuous() || spellRing.getChargeUpTime() > 0) {
-				anyContinueous = true;
-				break;
-			}
-		return anyContinueous ? EnumAction.BOW : EnumAction.NONE;
+		return EnumAction.BOW;
 	}
 
 	@Override
 	public int getMaxItemUseDuration(ItemStack stack) {
-		int maxChargeUp = 0;
-		for (SpellRing spellRing : SpellUtils.getAllSpellRings(stack)) {
-			Set<SpellRing> overridingRings = spellRing.getOverridingRings();
-			if (spellRing.isContinuous()) {
-				maxChargeUp = 72000;
-			} else if (spellRing.getChargeUpTime() > maxChargeUp)
-				maxChargeUp += spellRing.getChargeUpTime();
-
-			for (SpellRing ring : overridingRings) {
-				maxChargeUp += ring.getChargeUpTime();
-			}
-		}
-
-		return maxChargeUp;
-	}
-
-	@Nonnull
-	@Override
-	public EnumActionResult onItemUseFirst(EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, EnumHand hand) {
-		return EnumActionResult.PASS;
+		return 72000;
 	}
 
 	@Override
 	public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
+		if (isCoolingDown(player.world, stack)) return;
 		if (!(player instanceof EntityPlayer)) return;
 
-		if (BaublesSupport.getItem(player, ModItems.CREATIVE_HALO, ModItems.FAKE_HALO, ModItems.REAL_HALO).isEmpty())
-			return;
+		if (isContinuousSpell(stack)) {
 
-		boolean isContinuous = false;
-		for (SpellRing spellRing : SpellUtils.getAllSpellRings(stack))
-			if (spellRing.isContinuous()) {
-				isContinuous = true;
-				break;
+			SpellData spell = new SpellData(player.world);
+			spell.processEntity(player, true);
+			SpellUtils.runSpell(stack, spell);
+		} else {
+			int chargeup = getChargeupTime(stack);
+			if (72000 - count >= chargeup) {
+
+				SpellData spell = new SpellData(player.world);
+				spell.processEntity(player, true);
+				SpellUtils.runSpell(stack, spell);
+
+				setCooldown(player.world, (EntityPlayer) player, player.getActiveHand(), stack, spell);
 			}
-
-		if (!isContinuous && count > 1) return;
-
-		SpellData spell = new SpellData(player.world);
-		spell.processEntity(player, true);
-		SpellUtils.runSpell(stack, spell);
-
-		if (!isContinuous) {
-			player.swingArm(player.getActiveHand());
-			setCooldown(player.world, (EntityPlayer) player, player.getActiveHand(), stack, spell);
 		}
 	}
 
 	@Override
 	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 		colorableOnUpdate(stack, worldIn);
-		if (entityIn instanceof EntityPlayer)
-			updateCooldown(stack);
 	}
 
 	@Override
 	public boolean onEntityItemUpdate(EntityItem entityItem) {
 		colorableOnEntityItemUpdate(entityItem);
-
 		return super.onEntityItemUpdate(entityItem);
 	}
 
@@ -336,5 +272,38 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 	public void getSubItems(@Nullable CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems) {
 		if (isInCreativeTab(tab))
 			subItems.add(new ItemStack(this));
+	}
+
+	private boolean requiresBowAction(ItemStack stack) {
+		for (SpellRing spellRing : SpellUtils.getAllSpellRings(stack))
+			if (spellRing.isContinuous() || spellRing.getChargeUpTime() > 0) {
+				return true;
+			}
+		return false;
+	}
+
+	private boolean isContinuousSpell(ItemStack stack) {
+		for (SpellRing spellRing : SpellUtils.getAllSpellRings(stack))
+			if (spellRing.isContinuous()) {
+				return true;
+			}
+		return false;
+	}
+
+	private int getChargeupTime(ItemStack stack) {
+		int maxChargeUp = 0;
+		for (SpellRing spellRing : SpellUtils.getAllSpellRings(stack)) {
+			Set<SpellRing> overridingRings = spellRing.getOverridingRings();
+			if (spellRing.isContinuous()) {
+				return 72000;
+			} else if (spellRing.getChargeUpTime() > maxChargeUp)
+				maxChargeUp = spellRing.getChargeUpTime();
+
+			for (SpellRing ring : overridingRings) {
+				maxChargeUp = ring.getChargeUpTime();
+			}
+		}
+
+		return maxChargeUp;
 	}
 }

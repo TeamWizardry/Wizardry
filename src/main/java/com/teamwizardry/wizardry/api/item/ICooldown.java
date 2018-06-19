@@ -22,50 +22,40 @@ public interface ICooldown {
 
 	default void setCooldown(World world, @Nullable EntityPlayer player, @Nullable EnumHand hand, ItemStack stack, @Nonnull SpellData data) {
 		int maxCooldown = 0;
-		int overridenCooldown = 0;
-
-		boolean cooldownOverriden = false;
-		boolean hasNonContinuous = false;
 
 		List<SpellRing> rings = SpellUtils.getAllSpellRings(stack);
 
 		for (SpellRing ring : rings) {
-			if (!ring.isContinuous()) {
-				hasNonContinuous = true;
-			} else continue;
-			if (ring.getCooldownTime() > maxCooldown) maxCooldown = ring.getCooldownTime();
-		}
+			if (ring.isContinuous()) return;
 
-		for (SpellRing ring : SpellUtils.getAllSpellRings(stack)) {
 			if (ring.getModule() instanceof IOverrideCooldown) {
-				int cooldown = ring.getCooldownTime(data);
-				if (cooldown > overridenCooldown) overridenCooldown = cooldown;
-				cooldownOverriden = true;
+				maxCooldown = ring.getCooldownTime();
+				break;
 			}
+
+			maxCooldown += ring.getCooldownTime();
 		}
 
-		if (!hasNonContinuous) return;
+		if (maxCooldown <= 0) return;
 
-		int finalCooldown = cooldownOverriden ? overridenCooldown : maxCooldown;
-
-		ItemNBTHelper.setInt(stack, "cooldown_ticks", finalCooldown);
-		ItemNBTHelper.setInt(stack, Constants.NBT.LAST_COOLDOWN, finalCooldown);
-		ItemNBTHelper.setLong(stack, Constants.NBT.LAST_CAST, world.getTotalWorldTime());
-
-		if (player != null && hand != null)
+		if (player != null && hand != null) {
+			player.stopActiveHand();
+			player.swingArm(hand);
 			if (!world.isRemote)
 				if (hand == EnumHand.MAIN_HAND)
 					PacketHandler.NETWORK.sendTo(new PacketSyncCooldown(true, false), (EntityPlayerMP) player);
 				else PacketHandler.NETWORK.sendTo(new PacketSyncCooldown(false, true), (EntityPlayerMP) player);
+		}
+
+		ItemNBTHelper.setInt(stack, Constants.NBT.LAST_COOLDOWN, maxCooldown);
+		ItemNBTHelper.setLong(stack, Constants.NBT.LAST_CAST, world.getTotalWorldTime());
 	}
 
-	default void updateCooldown(ItemStack stack) {
-		if (ItemNBTHelper.getInt(stack, "cooldown_ticks", 0) > 0)
-			ItemNBTHelper.setInt(stack, "cooldown_ticks", ItemNBTHelper.getInt(stack, "cooldown_ticks", 0) - 1);
-		else ItemNBTHelper.removeEntry(stack, "cooldown_ticks");
-	}
+	default boolean isCoolingDown(World world, ItemStack stack) {
+		int lastCooldown = ItemNBTHelper.getInt(stack, Constants.NBT.LAST_COOLDOWN, 0);
+		long lastCast = ItemNBTHelper.getLong(stack, Constants.NBT.LAST_CAST, 0);
+		long currentCast = world.getTotalWorldTime();
 
-	default boolean isCoolingDown(ItemStack stack) {
-		return ItemNBTHelper.verifyExistence(stack, "cooldown_ticks");
+		return currentCast - lastCast <= lastCooldown;
 	}
 }
