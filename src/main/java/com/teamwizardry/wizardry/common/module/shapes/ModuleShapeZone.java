@@ -147,9 +147,9 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 			glitter.setLifetime(RandUtil.nextInt(10, 20));
 			if (RandUtil.nextBoolean()) {
-				glitter.setColor(getPrimaryColor());
+				glitter.setColor(spellRing.getPrimaryColor());
 			} else {
-				glitter.setColor(getSecondaryColor());
+				glitter.setColor(spellRing.getSecondaryColor());
 			}
 			glitter.addMotion(new Vec3d(
 					RandUtil.nextDouble(-0.001, 0.001),

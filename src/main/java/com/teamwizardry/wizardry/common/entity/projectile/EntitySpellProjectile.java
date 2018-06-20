@@ -178,7 +178,6 @@ public class EntitySpellProjectile extends EntityMod {
 				ParticleSpawner.spawn(glitter, world, new StaticInterp<>(getPositionVector()), 5, 0, (aFloat, particleBuilder) -> {
 					particleBuilder.setScaleFunction(new InterpScale(RandUtil.nextFloat(1f, 2), 0));
 					particleBuilder.setLifetime(RandUtil.nextInt(5, 10));
-					//particleBuilder.addMotion()
 				});
 			});
 			return;

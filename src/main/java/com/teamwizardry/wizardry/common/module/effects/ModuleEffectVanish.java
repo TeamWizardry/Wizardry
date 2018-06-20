@@ -42,7 +42,7 @@ public class ModuleEffectVanish extends ModuleEffect {
 
 		double duration = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 20;
 
-		if (targetEntity != null && targetEntity instanceof EntityLivingBase) {
+		if (targetEntity instanceof EntityLivingBase) {
 			if (!spellRing.taxCaster(spell)) return false;
 			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.VANISH, (int) duration, 0, true, false));
 		}

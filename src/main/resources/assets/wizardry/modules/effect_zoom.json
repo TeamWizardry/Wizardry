@@ -4,6 +4,8 @@
   "secondary_color": "41d9f4",
   "mana": { "base": 500 },
   "burnout": { "base": 300 },
-  "cooldown": { "base": 400 },
+  "cooldown": {
+    "base": 250
+  },
   "range": { "base": 10, "min": 10, "max": 32 }
 }

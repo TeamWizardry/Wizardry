@@ -1,8 +1,9 @@
 package com.teamwizardry.wizardry.common.module.shapes;
 
-import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpCircle;
+import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
+import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
@@ -14,7 +15,9 @@ import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -51,50 +54,37 @@ public class ModuleShapeSelf extends ModuleShape {
 		if (runRenderOverrides(spell, spellRing)) return;
 
 		Entity caster = spell.getCaster();
+		World world = spell.world;
 
 		if (caster == null) return;
 
-		ParticleBuilder glitter = new ParticleBuilder(1);
+		ParticleBuilder glitter = new ParticleBuilder(30);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-		ParticleSpawner.spawn(glitter, spell.world, new InterpCircle(caster.getPositionVector().addVector(0, caster.height / 2.0, 0), new Vec3d(0, 1, 0), 1, 2), 100, 15, (aFloat, particleBuilder) -> {
-			if (RandUtil.nextBoolean()) {
-				glitter.setColor(getPrimaryColor());
-				glitter.setMotion(new Vec3d(RandUtil.nextDouble(-0.05, 0.05), RandUtil.nextDouble(0.1, 0.3), RandUtil.nextDouble(-0.05, 0.05)));
-			} else {
-				glitter.setColor(getSecondaryColor());
-				glitter.setMotion(new Vec3d(RandUtil.nextDouble(-0.05, 0.05), RandUtil.nextDouble(-0.3, -0.1), RandUtil.nextDouble(-0.05, 0.05)));
-			}
-			glitter.setLifetime(RandUtil.nextInt(70, 100));
-			glitter.setScale((float) RandUtil.nextDouble(0.3, 1));
-			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, (float) RandUtil.nextDouble(0.6, 1)));
-			glitter.setScaleFunction(new InterpScale(1, 0));
-		});
+		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
+		glitter.enableMotionCalculation();
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(caster.getPositionVector()), 50, 5, (i, build) -> {
+			double radius = 1;
+			double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
+			double r = radius * RandUtil.nextFloat();
+			double x = r * MathHelper.cos((float) theta);
+			double z = r * MathHelper.sin((float) theta);
+			build.setPositionOffset(new Vec3d(
+					RandUtil.nextDouble(-0.5, 0.5),
+					RandUtil.nextDouble(-0.5, 0.5),
+					RandUtil.nextDouble(-0.5, 0.5)
+			));
+			build.setScaleFunction(new InterpScale(RandUtil.nextFloat(0.2f, 1f), 0f));
+			build.setMotion(new Vec3d(x, RandUtil.nextDouble(radius / 2.0, radius), z).normalize().scale(RandUtil.nextFloat()));
+			build.setAcceleration(Vec3d.ZERO);
+			build.setLifetime(50);
+			build.setDeceleration(new Vec3d(0.8, 0.8, 0.8));
 
-		//ParticleBuilder glitter = new ParticleBuilder(10);
-		//glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-		//glitter.setCollision(true);
-		//glitter.setCanBounce(true);
-		//glitter.disableMotionCalculation();
-//
-		//for (double j = 0; j < 200; j++) {
-		//	double finalJ = j;
-		//	ParticleSpawner.spawn(glitter, world, new StaticInterp<>(position), 1, 0, (i, build) -> {
-		//		double radius = 1;
-		//		double theta = 2.0f * (float) Math.PI * (finalJ / 200);
-		//		double r = radius;
-		//		double x = r * MathHelper.cos((float) theta);
-		//		double z = r * MathHelper.sin((float) theta) ;
-		//		Vec3d normalize = new Vec3d(x, 0, z).normalize();
-		//		double strengthSideways = 0.01;
-		//		build.addMotion(normalize.scale(strengthSideways));
-//
-		//		build.setAlphaFunction(new InterpFadeInOut(0.0f, RandUtil.nextFloat()));
-		//		build.setDeceleration(new Vec3d(RandUtil.nextDouble(0.8, 0.95), RandUtil.nextDouble(0.8, 0.95), RandUtil.nextDouble(0.8, 0.95)));
-		//		build.setLifetime(RandUtil.nextInt(20, 40));
-		//		build.setScaleFunction(new InterpScale(RandUtil.nextFloat(0.5f, 1f), 0));
-		//		build.setColorFunction(new InterpColorHSV(ColorUtils.changeColorAlpha(getPrimaryColor(), RandUtil.nextInt(50, 150)), ColorUtils.changeColorAlpha(getSecondaryColor(), RandUtil.nextInt(50, 150))));
-		//	});
-		//}
+			if (RandUtil.nextBoolean()) {
+				build.setColorFunction(new InterpColorHSV(spellRing.getPrimaryColor(), spellRing.getSecondaryColor()));
+			} else {
+				build.setColorFunction(new InterpColorHSV(spellRing.getSecondaryColor(), spellRing.getPrimaryColor()));
+			}
+		});
 
 	}
 }
