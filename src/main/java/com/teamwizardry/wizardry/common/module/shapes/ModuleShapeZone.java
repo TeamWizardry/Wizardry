@@ -5,6 +5,7 @@ import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.ILingeringModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
@@ -19,7 +20,9 @@ import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseA
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseDuration;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseRange;
+
 import net.minecraft.entity.Entity;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -30,7 +33,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
@@ -42,6 +44,8 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 @RegisterModule
 public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 
+	public static final String ZONE_OFFSET = "zone offset";
+	
 	@Nonnull
 	@Override
 	public String getID() {
@@ -59,14 +63,13 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 	}
 
 	@Override
-	@SuppressWarnings("unused")
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		if (runRunOverrides(spell, spellRing)) return true;
 
 		World world = spell.world;
-		Vec3d position = spell.getData(ORIGIN);
-		Entity caster = spell.getCaster();
-		Vec3d targetPos = spell.getTarget();
+//		Vec3d position = spell.getData(ORIGIN);
+//		Entity caster = spell.getCaster();
+		Vec3d targetPos = spell.getTargetWithFallback();
 
 		if (targetPos == null) return false;
 
@@ -74,56 +77,46 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 		double potency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell);
 		double range = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
 
-		List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(targetPos)).grow(aoe, 1, aoe));
-
-		int blockPotency = (int) (70 - potency);
-		if (blockPotency < 1) blockPotency = 1;
-		if (spell.world.getTotalWorldTime() % blockPotency == 0) {
-			if (!spellRing.taxCaster(spell)) return false;
-			for (Entity entity : entities) {
-				if (entity.getDistance(targetPos.x, targetPos.y, targetPos.z) <= aoe) {
-					Vec3d vec = targetPos.addVector(RandUtil.nextDouble(-potency, potency), RandUtil.nextDouble(range), RandUtil.nextDouble(-potency, potency));
-
-					SpellData copy = spell.copy();
-					copy.processEntity(entity, false);
-					copy.addData(YAW, entity.rotationYaw);
-					copy.addData(PITCH, entity.rotationPitch);
-					copy.addData(ORIGIN, vec);
-
-					if (spellRing.getChildRing() != null) {
-						spellRing.getChildRing().runSpellRing(spell);
-					}
-				}
+		Vec3d min = targetPos.subtract(aoe/2, range/2, aoe/2);
+		Vec3d max = targetPos.addVector(aoe/2, range/2, aoe/2);
+		
+		NBTTagCompound info = spellRing.getInformationTag();
+		double zoneOffset = info.getDouble(ZONE_OFFSET) + potency;
+		while (zoneOffset >= ConfigValues.zoneTimer)
+		{
+			zoneOffset -= ConfigValues.zoneTimer;
+			if (!spellRing.taxCaster(spell))
+			{
+				info.setDouble(ZONE_OFFSET, zoneOffset % ConfigValues.zoneTimer);
+				return false;
 			}
+			BlockPos target = new BlockPos(RandUtil.nextDouble(min.x, max.x), RandUtil.nextDouble(min.y, max.y), RandUtil.nextDouble(min.z, max.z));
+			List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(target));
+			for (Entity entity : entities)
+			{
+				Vec3d vec = new Vec3d(RandUtil.nextDouble(min.x, max.x), RandUtil.nextDouble(min.y, max.y), RandUtil.nextDouble(min.z, max.z));
+
+				SpellData copy = spell.copy();
+				copy.processEntity(entity, false);
+				copy.addData(YAW, entity.rotationYaw);
+				copy.addData(PITCH, entity.rotationPitch);
+				copy.addData(ORIGIN, vec);
+
+				if (spellRing.getChildRing() != null)
+					spellRing.getChildRing().runSpellRing(spell);
+			}
+			Vec3d pos = new Vec3d(target).addVector(0.5, 0.5, 0.5);
+				
+			SpellData copy = spell.copy();
+			copy.addData(ORIGIN, pos);
+			copy.processBlock(target, EnumFacing.UP, pos);
+			copy.addData(YAW, RandUtil.nextFloat(-180, 180));
+			copy.addData(PITCH, RandUtil.nextFloat(-50, 50));
+
+			if (spellRing.getChildRing() != null)
+				spellRing.getChildRing().runSpellRing(copy);
 		}
-
-		int entityPotency = (int) (40 - potency);
-		if (entityPotency < 1) entityPotency = 1;
-		if (spell.world.getTotalWorldTime() % entityPotency != 0) return false;
-
-		ArrayList<Vec3d> blocks = new ArrayList<>();
-		for (double i = -aoe; i < aoe; i++)
-			for (double j = 0; j < range; j++)
-				for (double k = -aoe; k < aoe; k++) {
-					Vec3d pos = targetPos.addVector(i, j, k);
-					if (pos.distanceTo(targetPos) <= aoe) {
-//						BlockPos.MutableBlockPos blockPos = new BlockPos.MutableBlockPos(new BlockPos(pos));
-						blocks.add(pos);
-					}
-				}
-		if (blocks.isEmpty()) return false;
-		if (!spellRing.taxCaster(spell)) return false;
-		Vec3d pos = blocks.get(RandUtil.nextInt(blocks.size() - 1));
-
-		SpellData copy = spell.copy();
-		copy.addData(ORIGIN, pos);
-		copy.processBlock(new BlockPos(pos), EnumFacing.UP, pos);
-		copy.addData(YAW, RandUtil.nextFloat(-180, 180));
-		copy.addData(PITCH, RandUtil.nextFloat(-50, 50));
-
-		if (spellRing.getChildRing() != null) {
-			spellRing.getChildRing().runSpellRing(copy);
-		}
+		info.setDouble(ZONE_OFFSET, zoneOffset);
 		return true;
 	}
 

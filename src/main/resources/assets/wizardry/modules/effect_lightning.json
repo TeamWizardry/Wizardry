@@ -6,6 +6,6 @@
   "secondary_color": "ff00e0",
   "mana": { "base": 200 },
   "burnout": { "base": 100 },
-  "range": { "base": 10, "min": 10, "max": 32 },
+  "range": { "base": 1, "min": 1, "max": 16 },
   "potency": { "base": 4, "min": 4, "max": 20 }
 }

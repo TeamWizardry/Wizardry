@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.module.shapes;
 
+import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.spell.IContinuousModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
@@ -13,6 +14,7 @@ import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseRange;
 import net.minecraft.entity.Entity;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -29,6 +31,8 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.LOOK;
 @RegisterModule
 public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 
+	public static final String BEAM_OFFSET = "beam offset";
+	
 	@Nonnull
 	@Override
 	public String getID() {
@@ -57,24 +61,34 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 		if (look == null || position == null) return false;
 
 		double range = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
-		double potency = 30 - spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell);
-		if (potency < 1) potency = 1;
+		double potency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell);
 
-		RayTraceResult trace = new RayTrace(world, look, position, range)
+		NBTTagCompound info = spellRing.getInformationTag();
+		double beamOffset = info.getDouble(BEAM_OFFSET) + potency;
+		
+		while (beamOffset >= ConfigValues.beamTimer)
+		{
+			beamOffset -= ConfigValues.beamTimer;
+			if (!spellRing.taxCaster(spell))
+			{
+				info.setDouble(BEAM_OFFSET, beamOffset % ConfigValues.beamTimer);
+				return false;
+			}
+
+			RayTraceResult trace = new RayTrace(world, look, position, range)
 				.setSkipEntity(caster)
 				.setReturnLastUncollidableBlock(true)
 				.setIgnoreBlocksWithoutBoundingBoxes(true)
 				.trace();
 
-		spell.processTrace(trace, look.scale(range));
-
-		sendRenderPacket(spell, spellRing);
-		if (spell.world.getTotalWorldTime() % potency == 0) {
-			if (spellRing.getChildRing() != null) {
+			spell.processTrace(trace, look.scale(range));
+			
+			if (spellRing.getChildRing() != null)
 				spellRing.getChildRing().runSpellRing(spell);
-			}
 		}
-
+		
+		sendRenderPacket(spell, spellRing);
+		info.setDouble(BEAM_OFFSET, beamOffset);
 		return true;
 	}
 
