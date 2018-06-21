@@ -8,7 +8,6 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
-import com.teamwizardry.wizardry.client.core.StructureErrorRenderer;
 import com.teamwizardry.wizardry.common.core.nemez.NemezEventHandler;
 import com.teamwizardry.wizardry.common.core.nemez.NemezTracker;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseAOE;
@@ -102,11 +101,9 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 					break;
 			}
 
-			StructureErrorRenderer.INSTANCE.addError(targetPos);
 			for (BlockPos pos : BlockPos.getAllInBox((int) bb.minX, (int) bb.minY, (int) bb.minZ, (int) bb.maxX, (int) bb.maxY, (int) bb.maxZ)) {
 				IBlockState originalState = spell.world.getBlockState(pos);
 				if (originalState.getBlock() == ModBlocks.FAKE_AIR || originalState.getBlock() == Blocks.AIR) continue;
-
 
 				nemezDrive.trackBlock(pos, originalState);
 
