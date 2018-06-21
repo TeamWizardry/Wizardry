@@ -51,4 +51,12 @@ public class ConfigValues {
 	@ConfigDoubleRange(min = 0.001, max = 0.1)
 	@ConfigProperty(category = "spells", comment = "The multiplier a spellData gets, as a flat rate, for a depleted quality outputPearl. [0.001,0.1]")
 	public static double damagedPearlMultiplier = 0.05;
+	
+	@ConfigIntRange(min = 1, max = Integer.MAX_VALUE)
+	@ConfigProperty(category = "spells", comment = "Maximum number of ticks between Zone activations. Minimum of 1.")
+	public static int zoneTimer = 20;
+	
+	@ConfigIntRange(min = 1, max = Integer.MAX_VALUE)
+	@ConfigProperty(category = "spells", comment = "Maximum number of ticks between Beam activations. Minimum of 1.")
+	public static int beamTimer = 20;
 }
