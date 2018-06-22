@@ -132,6 +132,7 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 			for (BlockPos pos : BlockPos.getAllInBox((int) bb.minX, (int) bb.minY, (int) bb.minZ, (int) bb.maxX, (int) bb.maxY, (int) bb.maxZ)) {
 				IBlockState originalState = spell.world.getBlockState(pos);
 				if (originalState.getBlock() == ModBlocks.FAKE_AIR || originalState.getBlock() == Blocks.AIR) continue;
+				if (spell.world.getTileEntity(pos) != null) continue;
 
 				poses.add(pos);
 

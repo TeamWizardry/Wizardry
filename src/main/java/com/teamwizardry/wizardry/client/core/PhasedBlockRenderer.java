@@ -10,7 +10,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -58,7 +57,7 @@ public class PhasedBlockRenderer {
 		GlStateManager.enableAlpha();
 		GlStateManager.enableBlend();
 		GlStateManager.disableTexture2D();
-		GlStateManager.disableCull();
+		GlStateManager.enableCull();
 
 		GlStateManager.color(colorR, colorG, colorB, ALPHA);
 		GlStateManager.shadeModel(GL11.GL_SMOOTH);
@@ -177,7 +176,7 @@ public class PhasedBlockRenderer {
 						IBlockState state = world.getBlockState(mutable);
 						mutable.move(facing.getOpposite());
 
-						if (state.getBlock() == Blocks.AIR) continue;
+						//if (state.getBlock() == Blocks.AIR) continue;
 
 						sides.put(mutable.toImmutable(), facing);
 					} else {
