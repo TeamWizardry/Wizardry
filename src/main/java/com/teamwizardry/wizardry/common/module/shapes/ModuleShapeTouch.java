@@ -13,7 +13,6 @@ import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
-import com.teamwizardry.wizardry.client.core.StructureErrorRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -62,8 +61,6 @@ public class ModuleShapeTouch extends ModuleShape {
 				.trace();
 
 		spell.processTrace(result);
-
-		StructureErrorRenderer.INSTANCE.addError(spell.getTargetPos());
 		return true;
 	}
 

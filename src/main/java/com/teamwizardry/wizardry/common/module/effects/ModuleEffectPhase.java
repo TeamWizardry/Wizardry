@@ -69,37 +69,66 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 		}
 
 		if (targetPos != null && faceHit != null) {
+			BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(targetPos);
+
 			faceHit = faceHit.getOpposite();
 			NemezTracker nemezDrive = new NemezTracker();
 
-			AxisAlignedBB bb = new AxisAlignedBB(targetPos);
+			AxisAlignedBB bb = null;
 
 			switch (faceHit) {
 				case DOWN:
+					mutable.move(EnumFacing.DOWN);
+					bb = new AxisAlignedBB(mutable);
+
 					bb = bb.grow(area, 0, area);
 					bb = bb.expand(0, -range, 0);
+					bb = bb.offset(0, -1, 0);
 					break;
 				case UP:
+					mutable.move(EnumFacing.DOWN);
+					bb = new AxisAlignedBB(mutable);
+
 					bb = bb.grow(area, 0, area);
 					bb = bb.expand(0, range, 0);
+					bb = bb.offset(0, 1, 0);
 					break;
 				case NORTH:
+					mutable.move(EnumFacing.NORTH);
+					bb = new AxisAlignedBB(mutable);
+
 					bb = bb.grow(area, area, 0);
 					bb = bb.expand(0, 0, -range);
+					bb = bb.offset(0, 0, -1);
 					break;
 				case SOUTH:
+					mutable.move(EnumFacing.NORTH);
+					bb = new AxisAlignedBB(mutable);
+
 					bb = bb.grow(area, area, 0);
 					bb = bb.expand(0, 0, range);
+					bb = bb.offset(0, 0, 1);
 					break;
 				case WEST:
+					mutable.move(EnumFacing.WEST);
+					bb = new AxisAlignedBB(mutable);
+
 					bb = bb.grow(0, area, area);
 					bb = bb.expand(-range, 0, 0);
+					bb = bb.offset(-1, 0, 0);
 					break;
 				case EAST:
+					mutable.move(EnumFacing.WEST);
+					bb = new AxisAlignedBB(mutable);
+
 					bb = bb.grow(0, area, area);
 					bb = bb.expand(range, 0, 0);
+					bb = bb.offset(1, 0, 0);
 					break;
 			}
+
+			IBlockState targetState = spell.world.getBlockState(mutable);
+			if (targetState.getBlock() == Blocks.AIR) return true;
 
 			for (BlockPos pos : BlockPos.getAllInBox((int) bb.minX, (int) bb.minY, (int) bb.minZ, (int) bb.maxX, (int) bb.maxY, (int) bb.maxZ)) {
 				IBlockState originalState = spell.world.getBlockState(pos);
