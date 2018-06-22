@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.client.core;
 
-import com.google.common.collect.HashMultimap;
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.block.state.IBlockState;
@@ -22,9 +21,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -40,10 +37,10 @@ public class PhasedBlockRenderer {
 		phaseObjects.add(new PhaseObject(world, blocks, expiry));
 	}
 
-	public static final float WARP_TIME_PERIOD = 30f;
+	public static final float WARP_TIME_PERIOD = 40f;
 	public static final int COLOR = 0x28AEB7;
 	public static final float ALPHA = 0.75f;
-	public static final float BASE_ALPHA = 0.875f;
+	public static final float BASE_ALPHA = 0.625f;
 
 	public static BufferBuilder beginRender(float time) {
 		float timeAngle = (float) Math.PI * time / WARP_TIME_PERIOD;
@@ -58,10 +55,11 @@ public class PhasedBlockRenderer {
 		GlStateManager.enableBlend();
 		GlStateManager.disableTexture2D();
 		GlStateManager.enableCull();
+		GlStateManager.cullFace(GlStateManager.CullFace.BACK);
+		GlStateManager.depthMask(false);
 
 		GlStateManager.color(colorR, colorG, colorB, ALPHA);
 		GlStateManager.shadeModel(GL11.GL_SMOOTH);
-		GlStateManager.depthMask(false);
 
 		GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
 		GL14.glBlendEquation(GL14.GL_FUNC_SUBTRACT);
@@ -79,24 +77,28 @@ public class PhasedBlockRenderer {
 
 		GL14.glBlendEquation(GL14.GL_FUNC_ADD);
 		GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-
 		GlStateManager.depthMask(true);
 
 		GlStateManager.enableDepth();
 		GlStateManager.enableTexture2D();
 	}
 
-	public static void render(BlockPos pos, Iterable<EnumFacing> sides, float time, BufferBuilder buffer) {
-		for (EnumFacing facing : sides)
-			renderFace(facing, pos.getX(), pos.getY(), pos.getZ(), time, buffer);
+	public static void render(World world, BlockPos.MutableBlockPos mut, BlockPos pos, BufferBuilder buffer) {
+		for (EnumFacing facing : EnumFacing.VALUES) {
+			mut.setPos(pos);
+			mut.offset(facing);
+			IBlockState state = world.getBlockState(mut);
+			if (state.getBlock().isAir(state, world, mut) || state.doesSideBlockRendering(world, mut, facing.getOpposite()))
+				renderFace(facing, pos.getX(), pos.getY(), pos.getZ(), buffer);
+		}
 	}
 
-	public static void renderFace(EnumFacing facing, float x, float y, float z, float time, BufferBuilder buffer) {
+	public static void renderFace(EnumFacing facing, float x, float y, float z, BufferBuilder buffer) {
 		float xNormal = -facing.getFrontOffsetX();
 		float yNormal = -facing.getFrontOffsetY();
 		float zNormal = -facing.getFrontOffsetZ();
 
-		float direction = -facing.getAxisDirection().getOffset();
+		int direction = -facing.getAxisDirection().getOffset();
 
 		float xLocus = x + (1 - xNormal) / 2;
 		float yLocus = y + (1 - yNormal) / 2;
@@ -108,8 +110,12 @@ public class PhasedBlockRenderer {
 		float yShearOne = xShear == 0 ? yShear : 0;
 		float yShearTwo = xShear != 0 ? yShear : 0;
 
-		for (int shearOne = -1; shearOne < 2; shearOne += 2) {
-			for (int shearTwo = shearOne; shearTwo >= -1 && shearTwo < 2; shearTwo -= 2 * shearOne) {
+		int renderDirection = -direction;
+		if (facing.getAxis().isHorizontal())
+			renderDirection *= -1;
+
+		for (int shearOne = -renderDirection; shearOne >= -1 && shearOne < 2; shearOne += 2 * renderDirection) {
+			for (int shearTwo = shearOne * renderDirection; shearTwo >= -1 && shearTwo < 2; shearTwo -= 2 * shearOne * renderDirection) {
 
 				float directionX = xShear * shearOne;
 				float directionY = yShearOne * shearOne + yShearTwo * shearTwo;
@@ -132,6 +138,8 @@ public class PhasedBlockRenderer {
 
 		Set<PhaseObject> tmp = new HashSet<>(phaseObjects);
 
+		BlockPos.MutableBlockPos mut = new BlockPos.MutableBlockPos();
+
 		for (PhaseObject phaseObject : tmp) {
 			if (Minecraft.getMinecraft().world.getTotalWorldTime() - phaseObject.lastWorldTick > phaseObject.expiry)
 				phaseObjects.remove(phaseObject);
@@ -140,8 +148,8 @@ public class PhasedBlockRenderer {
 			float time = ClientTickHandler.getTicksInGame() +
 					(Minecraft.getMinecraft().isGamePaused() ? 0 : ClientTickHandler.getPartialTicks());
 			BufferBuilder bufferBuilder = beginRender(time);
-			for (Map.Entry<BlockPos, Collection<EnumFacing>> entry : phaseObject.sides.asMap().entrySet())
-				render(entry.getKey(), entry.getValue(), time, bufferBuilder);
+			for (BlockPos pos : phaseObject.blocks)
+				render(phaseObject.world, mut, pos, bufferBuilder);
 			finishRender(bufferBuilder);
 		}
 	}
@@ -153,7 +161,6 @@ public class PhasedBlockRenderer {
 		public final int expiry;
 		private final Set<BlockPos> blocks;
 		private final World world;
-		private final HashMultimap<BlockPos, EnumFacing> sides = HashMultimap.create();
 
 		public PhaseObject(World world, Set<BlockPos> blocks, int expiry) {
 			this.blocks = blocks;
@@ -166,24 +173,6 @@ public class PhasedBlockRenderer {
 		private void init() {
 			Set<Long> longs = new HashSet<>();
 			for (BlockPos pos : blocks) longs.add(pos.toLong());
-
-			for (BlockPos pos : blocks) {
-				BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(pos);
-				for (EnumFacing facing : EnumFacing.values()) {
-					mutable.move(facing);
-					if (!longs.contains(mutable.toLong())) {
-
-						IBlockState state = world.getBlockState(mutable);
-						mutable.move(facing.getOpposite());
-
-						//if (state.getBlock() == Blocks.AIR) continue;
-
-						sides.put(mutable.toImmutable(), facing);
-					} else {
-						mutable.move(facing.getOpposite());
-					}
-				}
-			}
 		}
 	}
 }
