@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.api.capability;
+package com.teamwizardry.wizardry.api.capability.mana;
 
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.saving.Savable;

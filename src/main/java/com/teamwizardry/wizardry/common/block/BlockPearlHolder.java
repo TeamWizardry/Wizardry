@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.common.block;
 
 import com.teamwizardry.librarianlib.features.base.block.tile.BlockModContainer;
-import com.teamwizardry.wizardry.api.capability.CapManager;
+import com.teamwizardry.wizardry.api.capability.mana.CapManager;
 import com.teamwizardry.wizardry.client.render.block.TilePearlHolderRenderer;
 import com.teamwizardry.wizardry.common.tile.TilePearlHolder;
 import com.teamwizardry.wizardry.init.ModItems;

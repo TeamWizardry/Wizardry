@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.api.capability;
+package com.teamwizardry.wizardry.api.capability.mana;
 
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import net.minecraft.util.math.MathHelper;

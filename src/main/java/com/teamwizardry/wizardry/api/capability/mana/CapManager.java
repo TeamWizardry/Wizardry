@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.api.capability;
+package com.teamwizardry.wizardry.api.capability.mana;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;

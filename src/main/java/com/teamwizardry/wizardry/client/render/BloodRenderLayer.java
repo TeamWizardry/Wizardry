@@ -2,9 +2,9 @@ package com.teamwizardry.wizardry.client.render;
 
 import com.teamwizardry.librarianlib.features.kotlin.ClientUtilMethods;
 import com.teamwizardry.librarianlib.features.shader.ShaderHelper;
-import com.teamwizardry.wizardry.api.capability.EnumBloodType;
-import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
-import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
+import com.teamwizardry.wizardry.api.capability.mana.EnumBloodType;
+import com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability;
+import com.teamwizardry.wizardry.api.capability.mana.WizardryCapabilityProvider;
 import com.teamwizardry.wizardry.client.fx.Shaders;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelBiped.ArmPose;

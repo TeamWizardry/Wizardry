@@ -5,7 +5,7 @@ import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.librarianlib.features.tesr.TileRenderer;
 import com.teamwizardry.wizardry.api.block.TileManaInteractor;
-import com.teamwizardry.wizardry.api.capability.CapManager;
+import com.teamwizardry.wizardry.api.capability.mana.CapManager;
 import com.teamwizardry.wizardry.client.render.block.TileManaBatteryRenderer;
 import com.teamwizardry.wizardry.common.block.BlockManaBattery;
 import com.teamwizardry.wizardry.common.network.PacketExplode;

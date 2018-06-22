@@ -2,6 +2,8 @@ package com.teamwizardry.wizardry.api.spell.module;
 
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
+import com.teamwizardry.wizardry.api.capability.world.WizardryWorld;
+import com.teamwizardry.wizardry.api.capability.world.WizardryWorldCapability;
 import com.teamwizardry.wizardry.api.events.SpellCastEvent;
 import com.teamwizardry.wizardry.api.spell.ILingeringModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
@@ -231,7 +233,9 @@ public abstract class Module {
 
 		if (this instanceof ILingeringModule) {
 			boolean alreadyLingering = false;
-			for (SpellTicker.LingeringObject lingeringObject : SpellTicker.getLingeringStorageMap()) {
+
+			WizardryWorld worldCap = WizardryWorldCapability.get(spell.world);
+			for (SpellTicker.LingeringObject lingeringObject : worldCap.getLingeringObjects()) {
 				if (lingeringObject.getSpellRing() == spellRing
 						|| lingeringObject.getSpellData() == spell) {
 					alreadyLingering = true;
@@ -239,7 +243,7 @@ public abstract class Module {
 				}
 			}
 			if (!alreadyLingering)
-				SpellTicker.addLingerSpell(spellRing, spell, ((ILingeringModule) this).getLingeringTime(spell, spellRing));
+				worldCap.addLingerSpell(spellRing, spell, ((ILingeringModule) this).getLingeringTime(spell, spellRing));
 		}
 
 		SpellCastEvent event = new SpellCastEvent(spellRing, spell);

@@ -150,7 +150,7 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 			spell.addData(SpellData.DefaultKeys.NEMEZ, nemezDrive);
 			spell.addData(SpellData.DefaultKeys.BLOCK_SET, poses);
 
-			addDelayedSpell(spellRing, spell, 500);
+			addDelayedSpell(this, spellRing, spell, 500);
 		}
 
 		return true;

@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.api.capability;
+package com.teamwizardry.wizardry.api.capability.mana;
 
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import net.minecraft.entity.Entity;

@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.common.item.halos;
 import com.teamwizardry.librarianlib.features.base.item.ItemModArmor;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
-import com.teamwizardry.wizardry.api.capability.CapManager;
+import com.teamwizardry.wizardry.api.capability.mana.CapManager;
 import com.teamwizardry.wizardry.api.item.halo.IHalo;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import net.minecraft.entity.Entity;

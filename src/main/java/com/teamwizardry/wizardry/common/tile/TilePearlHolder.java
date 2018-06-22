@@ -5,8 +5,8 @@ import com.teamwizardry.librarianlib.features.base.block.tile.module.ModuleInven
 import com.teamwizardry.librarianlib.features.saving.Module;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.wizardry.api.block.TileManaInteractor;
-import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
-import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
+import com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability;
+import com.teamwizardry.wizardry.api.capability.mana.WizardryCapabilityProvider;
 import com.teamwizardry.wizardry.api.item.ICooldown;
 import com.teamwizardry.wizardry.api.item.IManaCell;
 import com.teamwizardry.wizardry.api.spell.SpellData;

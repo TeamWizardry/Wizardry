@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.api.capability;
+package com.teamwizardry.wizardry.api.capability.mana;
 
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.saving.Savable;
@@ -100,7 +100,7 @@ public class DefaultWizardryCapability implements IWizardryCapability {
 
 	@Override
 	public void dataChanged(Entity entity) {
-		if ((entity != null) && entity instanceof EntityPlayer && !entity.getEntityWorld().isRemote)
+		if (entity instanceof EntityPlayer && !entity.getEntityWorld().isRemote)
 			PacketHandler.NETWORK.sendTo(new PacketUpdateCaps(serializeNBT()), (EntityPlayerMP) entity);
 	}
 }

@@ -1,9 +1,9 @@
 package com.teamwizardry.wizardry.api.spell;
 
 import com.teamwizardry.librarianlib.features.saving.Savable;
-import com.teamwizardry.wizardry.api.capability.DefaultWizardryCapability;
-import com.teamwizardry.wizardry.api.capability.IWizardryCapability;
-import com.teamwizardry.wizardry.api.capability.WizardryCapabilityProvider;
+import com.teamwizardry.wizardry.api.capability.mana.DefaultWizardryCapability;
+import com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability;
+import com.teamwizardry.wizardry.api.capability.mana.WizardryCapabilityProvider;
 import com.teamwizardry.wizardry.common.core.nemez.NemezTracker;
 import kotlin.Pair;
 import net.minecraft.entity.Entity;
@@ -14,6 +14,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -284,15 +285,13 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 		return spell;
 	}
 
-	@Override
-	@SuppressWarnings("unchecked")
-	public NBTTagCompound serializeNBT() {
-		NBTTagCompound compound = new NBTTagCompound();
-		for (Pair pair : data.keySet()) {
-			NBTBase nbtClass = dataProcessor.get(pair).serialize(data.get(pair));
-			compound.setTag(pair.getFirst() + "", nbtClass);
-		}
-		return compound;
+	public static SpellData deserializeData(NBTTagCompound compound) {
+		if (!compound.hasKey("world")) return null;
+
+		World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(compound.getInteger("world"));
+		SpellData data = new SpellData(world);
+		data.deserializeNBT(compound);
+		return data;
 	}
 
 	@Override
@@ -308,10 +307,17 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 		}
 	}
 
-	public static SpellData deserializeData(World world, NBTTagCompound compound) {
-		SpellData data = new SpellData(world);
-		data.deserializeNBT(compound);
-		return data;
+	@Override
+	@SuppressWarnings("unchecked")
+	public NBTTagCompound serializeNBT() {
+		NBTTagCompound compound = new NBTTagCompound();
+		for (Pair pair : data.keySet()) {
+			NBTBase nbtClass = dataProcessor.get(pair).serialize(data.get(pair));
+			compound.setTag(pair.getFirst() + "", nbtClass);
+		}
+
+		compound.setInteger("world", world.provider.getDimension());
+		return compound;
 	}
 
 	@Override
