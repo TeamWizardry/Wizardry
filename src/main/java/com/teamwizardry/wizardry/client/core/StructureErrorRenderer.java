@@ -9,7 +9,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -23,17 +23,13 @@ import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
  * Created by Demoniaque.
  */
 @SideOnly(Side.CLIENT)
+@Mod.EventBusSubscriber(modid = Wizardry.MODID)
 public class StructureErrorRenderer {
 
 	private static final Sprite particle = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/particles/sparkle_blurred.png"));
-	public static StructureErrorRenderer INSTANCE = new StructureErrorRenderer();
-	private ArrayList<ParticleError> errors = new ArrayList<>();
+	private static ArrayList<ParticleError> errors = new ArrayList<>();
 
-	private StructureErrorRenderer() {
-		MinecraftForge.EVENT_BUS.register(this);
-	}
-
-	public void addError(BlockPos pos) {
+	public static void addError(BlockPos pos) {
 		for (ParticleError error : errors) {
 			if (error == null) continue;
 			if (error.pos.x == pos.getX() + 0.5
@@ -45,7 +41,7 @@ public class StructureErrorRenderer {
 		errors.add(new ParticleError(new Vec3d(pos).addVector(0.5, 0.5, 0.5), 100));
 	}
 
-	public void addError(Vec3d pos) {
+	public static void addError(Vec3d pos) {
 		for (ParticleError error : errors) {
 			if (error == null) continue;
 			if (error.pos.x == pos.x
@@ -59,7 +55,7 @@ public class StructureErrorRenderer {
 
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
-	public void render(RenderWorldLastEvent event) {
+	public static void render(RenderWorldLastEvent event) {
 		if (Minecraft.getMinecraft().player == null) return;
 		if (Minecraft.getMinecraft().getRenderManager().options == null) return;
 
@@ -102,7 +98,7 @@ public class StructureErrorRenderer {
 		}
 	}
 
-	class ParticleError {
+	private static class ParticleError {
 
 		public final Vec3d pos;
 		public int tick;

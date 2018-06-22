@@ -1,8 +1,10 @@
 package com.teamwizardry.wizardry.common.core;
 
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.IDelayedModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -11,6 +13,7 @@ import java.util.HashSet;
 /**
  * Created by Demoniaque.
  */
+@Mod.EventBusSubscriber(modid = Wizardry.MODID)
 public class SpellTicker {
 
 	private static HashSet<LingeringObject> lingeringStorageMap = new HashSet<>();

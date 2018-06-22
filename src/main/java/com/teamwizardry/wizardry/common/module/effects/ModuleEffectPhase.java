@@ -162,7 +162,7 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 
 		double duration = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 20;
 
-		PhasedBlockRenderer.INSTANCE.addPhase(spell.world, blockSet, 500);
+		PhasedBlockRenderer.addPhase(spell.world, blockSet, 500);
 	}
 
 	@Override

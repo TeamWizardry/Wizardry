@@ -1,12 +1,13 @@
 package com.teamwizardry.wizardry.common.core.nemez;
 
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.network.PacketNemezReversal;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -21,13 +22,10 @@ import java.util.Objects;
 /**
  * Handles time reversal ticking on both client and server
  */
+@Mod.EventBusSubscriber(modid = Wizardry.MODID)
 public final class NemezEventHandler {
 
 	private static HashSet<Reversal> reversals = new HashSet<>();
-
-	public static void register() {
-		MinecraftForge.EVENT_BUS.register(NemezEventHandler.class);
-	}
 
 	@SideOnly(Side.CLIENT)
 	public static NemezTracker getCurrent() {

@@ -132,16 +132,7 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 
 			mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
-			for (BlockRenderLayer layer : cachedStructure.blocks.keySet()) {
-				buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-				buffer.addVertexData(cachedStructure.vboCaches.get(layer));
-
-				for (int i = 0; i < buffer.getVertexCount(); i++) {
-					int idx = buffer.getColorIndex(i + 1);
-					buffer.putColorRGBA(idx, 255, 255, 255, 200);
-				}
-				tes.draw();
-			}
+			TileManaBatteryRenderer.renderLayers(tes, buffer, cachedStructure);
 
 			GlStateManager.disablePolygonOffset();
 			GlStateManager.color(1F, 1F, 1F, 1F);
@@ -151,7 +142,7 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 
 		} else if (!tile.revealStructure && !errors.isEmpty()) {
 			for (BlockPos error : errors)
-				StructureErrorRenderer.INSTANCE.addError(error);
+				StructureErrorRenderer.addError(error);
 		}
 
 		// render each item at its current position

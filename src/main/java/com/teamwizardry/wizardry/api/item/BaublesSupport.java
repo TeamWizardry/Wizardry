@@ -5,14 +5,17 @@ import baubles.api.BaublesApi;
 import baubles.api.IBauble;
 import baubles.api.cap.IBaublesItemHandler;
 import com.google.common.collect.ImmutableList;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.item.wheels.EventPearlInventories;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+@Mod.EventBusSubscriber(modid = Wizardry.MODID)
 public final class BaublesSupport {
 	
 	@SubscribeEvent

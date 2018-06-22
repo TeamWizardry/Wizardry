@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.client.core;
 
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.entity.EntityUnicorn;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -11,7 +12,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -30,15 +31,10 @@ import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
  * Created by Demoniaque.
  */
 @SideOnly(Side.CLIENT)
+@Mod.EventBusSubscriber(modid = Wizardry.MODID)
 public class UnicornTrailRenderer {
 
-	public static UnicornTrailRenderer INSTANCE = new UnicornTrailRenderer();
-
-	public HashMap<EntityUnicorn, List<Point>> positions = new HashMap<>();
-
-	private UnicornTrailRenderer() {
-		MinecraftForge.EVENT_BUS.register(this);
-	}
+	public static HashMap<EntityUnicorn, List<Point>> positions = new HashMap<>();
 
 	private static BufferBuilder pos(BufferBuilder vb, Vec3d pos) {
 		return vb.pos(pos.x, pos.y, pos.z);
@@ -46,7 +42,7 @@ public class UnicornTrailRenderer {
 
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
-	public void tick(TickEvent.WorldTickEvent event) {
+	public static void tick(TickEvent.WorldTickEvent event) {
 		World world = event.world;
 
 		List<EntityUnicorn> unicorns = world.getEntities(EntityUnicorn.class, input -> true);
@@ -83,7 +79,7 @@ public class UnicornTrailRenderer {
 
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
-	public void render(RenderWorldLastEvent event) {
+	public static void render(RenderWorldLastEvent event) {
 		World world = Minecraft.getMinecraft().world;
 		EntityPlayer player = Minecraft.getMinecraft().player;
 		if (player == null || world == null) return;
@@ -140,7 +136,7 @@ public class UnicornTrailRenderer {
 		GlStateManager.popMatrix();
 	}
 
-	public class Point {
+	public static class Point {
 
 		@Nonnull
 		public final Vec3d origin;

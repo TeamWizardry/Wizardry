@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.client.core;
 
 import com.google.common.collect.HashMultimap;
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
+import com.teamwizardry.wizardry.Wizardry;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -9,14 +10,13 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -32,69 +32,72 @@ import java.util.Set;
  * Created by Demoniaque.
  */
 @SideOnly(Side.CLIENT)
+@Mod.EventBusSubscriber(modid = Wizardry.MODID)
 public class PhasedBlockRenderer {
 
-	public static PhasedBlockRenderer INSTANCE = new PhasedBlockRenderer();
-	private Set<PhaseObject> phaseObjects = new HashSet<>();
+	private static Set<PhaseObject> phaseObjects = new HashSet<>();
 
-	private PhasedBlockRenderer() {
-		MinecraftForge.EVENT_BUS.register(this);
-	}
-
-	public void addPhase(World world, Set<BlockPos> blocks, int expiry) {
+	public static void addPhase(World world, Set<BlockPos> blocks, int expiry) {
 		phaseObjects.add(new PhaseObject(world, blocks, expiry));
 	}
 
-	public static final float WARP_SCALE = 0.0025f;
+	public static final float WARP_TIME_PERIOD = 30f;
+	public static final int COLOR = 0x28AEB7;
+	public static final float ALPHA = 0.75f;
+	public static final float BASE_ALPHA = 0.875f;
 
 	public static BufferBuilder beginRender(float time) {
+		float timeAngle = (float) Math.PI * time / WARP_TIME_PERIOD;
+
+		float colorWarp = ((MathHelper.cos(timeAngle) + 1) / 2 * (1 - BASE_ALPHA) + BASE_ALPHA) / 0xFF;
+
+		float colorR = ((COLOR & 0xFF0000) >> 16) * colorWarp;
+		float colorG = ((COLOR & 0xFF00) >> 8) * colorWarp;
+		float colorB = (COLOR & 0xFF) * colorWarp;
+
 		GlStateManager.enableAlpha();
 		GlStateManager.enableBlend();
 		GlStateManager.disableTexture2D();
+		GlStateManager.disableCull();
+
+		GlStateManager.color(colorR, colorG, colorB, ALPHA);
 		GlStateManager.shadeModel(GL11.GL_SMOOTH);
-
-		float timeAngle = (float) Math.PI * time / 30;
-		float warpNormal = MathHelper.cos(timeAngle) * WARP_SCALE;
-
-		float colorR = 0x37 * warpNormal / 0xFF;
-		float colorG = 0x75 * warpNormal / 0xFF;
-		float colorB = 0x7A * warpNormal / 0xFF;
-		float alpha = 0x96 / (float) 0xFF;
-
-		GlStateManager.color(colorR, colorG, colorB, alpha);
-
 		GlStateManager.depthMask(false);
+
+		GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE);
 		GL14.glBlendEquation(GL14.GL_FUNC_SUBTRACT);
 
 		BufferBuilder buffer = Tessellator.getInstance().getBuffer();
 		buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_NORMAL);
+		buffer.setTranslation(-TileEntityRendererDispatcher.staticPlayerX, -TileEntityRendererDispatcher.staticPlayerY, -TileEntityRendererDispatcher.staticPlayerZ);
 
 		return buffer;
 	}
 
-	public static void finishRender() {
+	public static void finishRender(BufferBuilder buffer) {
 		Tessellator.getInstance().draw();
+		buffer.setTranslation(0, 0, 0);
+
 		GL14.glBlendEquation(GL14.GL_FUNC_ADD);
+		GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 
 		GlStateManager.depthMask(true);
+
 		GlStateManager.enableDepth();
 		GlStateManager.enableTexture2D();
 	}
 
 	public static void render(BlockPos pos, Iterable<EnumFacing> sides, float time, BufferBuilder buffer) {
 		for (EnumFacing facing : sides)
-			renderFace(facing,
-					(float) (pos.getX() - TileEntityRendererDispatcher.staticPlayerX),
-					(float) (pos.getY() - TileEntityRendererDispatcher.staticPlayerY),
-					(float) (pos.getZ() - TileEntityRendererDispatcher.staticPlayerZ),
-					time,
-					buffer);
+			renderFace(facing, pos.getX(), pos.getY(), pos.getZ(), time, buffer);
 	}
 
 	public static void renderFace(EnumFacing facing, float x, float y, float z, float time, BufferBuilder buffer) {
-		float xNormal = facing.getFrontOffsetX();
-		float yNormal = facing.getFrontOffsetY();
-		float zNormal = facing.getFrontOffsetZ();
+		float xNormal = -facing.getFrontOffsetX();
+		float yNormal = -facing.getFrontOffsetY();
+		float zNormal = -facing.getFrontOffsetZ();
+
+		float direction = -facing.getAxisDirection().getOffset();
 
 		float xLocus = x + (1 - xNormal) / 2;
 		float yLocus = y + (1 - yNormal) / 2;
@@ -103,43 +106,30 @@ public class PhasedBlockRenderer {
 		float yShear = zNormal - xNormal;
 		float zShear = xNormal - yNormal;
 
-		float timeAngle = (float) Math.PI * time / 30;
-		float warpNormal = MathHelper.cos(timeAngle) * WARP_SCALE;
-		float warpAffine = MathHelper.sin(timeAngle) * WARP_SCALE;
-
 		float yShearOne = xShear == 0 ? yShear : 0;
 		float yShearTwo = xShear != 0 ? yShear : 0;
 
-		for (int shearOne = 0; shearOne < 2; shearOne++) {
-			for (int shearTwo = 0; shearTwo < 2; shearTwo++) {
-				float calculatedX = xShear * (shearOne - 0.5f) + xLocus;
-				float calculatedY = yShearOne * (shearOne - 0.5f) + yShearTwo * (shearTwo - 0.5f) + yLocus;
-				float calculatedZ = zShear * (shearTwo - 0.5f) + zLocus;
+		for (int shearOne = -1; shearOne < 2; shearOne += 2) {
+			for (int shearTwo = shearOne; shearTwo >= -1 && shearTwo < 2; shearTwo -= 2 * shearOne) {
 
-				float positionAngleX = (float) Math.PI * calculatedX / 10;
-				float positionAngleY = (float) Math.PI * calculatedY / 10;
-				float positionAngleZ = (float) Math.PI * calculatedZ / 10;
+				float directionX = xShear * shearOne;
+				float directionY = yShearOne * shearOne + yShearTwo * shearTwo;
+				float directionZ = zShear * shearTwo;
 
-				float xShift = MathHelper.sin(positionAngleY) * warpNormal + MathHelper.cos(positionAngleZ) * warpAffine + 2 * WARP_SCALE;
-				float yShift = MathHelper.sin(positionAngleZ) * warpNormal + MathHelper.cos(positionAngleX) * warpAffine + 2 * WARP_SCALE;
-				float zShift = MathHelper.sin(positionAngleX) * warpNormal + MathHelper.cos(positionAngleY) * warpAffine + 2 * WARP_SCALE;
+				float calculatedX = directionX / 2 + xLocus + direction * 0.001f;
+				float calculatedY = directionY / 2 + yLocus + direction * 0.001f;
+				float calculatedZ = directionZ / 2 + zLocus + direction * 0.001f;
 
-				float xPosition = calculatedX + xShift * xShear;
-				float yPosition = calculatedY + yShift * yShear;
-				float zPosition = calculatedZ + zShift * zShear;
-
-				buffer.pos(xPosition, yPosition, zPosition).normal(xNormal, yNormal, zNormal).endVertex();
+				buffer.pos(calculatedX, calculatedY, calculatedZ).normal(-xNormal, -yNormal, -zNormal).endVertex();
 			}
 		}
 	}
 
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
-	public void render(RenderWorldLastEvent event) {
+	public static void render(RenderWorldLastEvent event) {
 		if (Minecraft.getMinecraft().player == null) return;
 		if (Minecraft.getMinecraft().getRenderManager().options == null) return;
-
-		EntityPlayer player = Minecraft.getMinecraft().player;
 
 		Set<PhaseObject> tmp = new HashSet<>(phaseObjects);
 
@@ -147,16 +137,18 @@ public class PhasedBlockRenderer {
 			if (Minecraft.getMinecraft().world.getTotalWorldTime() - phaseObject.lastWorldTick > phaseObject.expiry)
 				phaseObjects.remove(phaseObject);
 
-			float time = ClientTickHandler.getTicks() + event.getPartialTicks();
+
+			float time = ClientTickHandler.getTicksInGame() +
+					(Minecraft.getMinecraft().isGamePaused() ? 0 : ClientTickHandler.getPartialTicks());
 			BufferBuilder bufferBuilder = beginRender(time);
 			for (Map.Entry<BlockPos, Collection<EnumFacing>> entry : phaseObject.sides.asMap().entrySet())
 				render(entry.getKey(), entry.getValue(), time, bufferBuilder);
-			finishRender();
+			finishRender(bufferBuilder);
 		}
 	}
 
 
-	class PhaseObject {
+	private static class PhaseObject {
 
 		public final long lastWorldTick;
 		public final int expiry;

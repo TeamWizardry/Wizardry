@@ -54,11 +54,6 @@ public class ClientProxy extends CommonProxy {
 
 		ModEntities.initModels();
 
-		LightningRenderer.INSTANCE.getClass();
-		UnicornTrailRenderer.INSTANCE.getClass();
-		StructureErrorRenderer.INSTANCE.getClass();
-		CooldownHandler.INSTANCE.getClass();
-
 		CustomBlockMapSprites.INSTANCE.register(new ResourceLocation(Wizardry.MODID, "blocks/mana_crystal_ring"));
 		CustomBlockMapSprites.INSTANCE.register(new ResourceLocation(Wizardry.MODID, "blocks/mana_crystal_ring_outer"));
 		CustomBlockMapSprites.INSTANCE.register(new ResourceLocation(Wizardry.MODID, "blocks/mana_crystal"));

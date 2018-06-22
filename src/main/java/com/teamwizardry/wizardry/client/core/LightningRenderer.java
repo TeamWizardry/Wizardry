@@ -12,7 +12,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -28,29 +28,25 @@ import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
  * Created by Demoniaque.
  */
 @SideOnly(Side.CLIENT)
+@Mod.EventBusSubscriber(modid = Wizardry.MODID)
 public class LightningRenderer {
 
-	public static LightningRenderer INSTANCE = new LightningRenderer();
 	private static Sprite streakBase = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/particles/streak_base.png"));
 	private static Sprite streakCorner = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/particles/streak_corner.png"));
-	private ArrayList<LightningBolt> bolts = new ArrayList<>();
-	private ArrayList<LightningBolt> clear = new ArrayList<>();
-
-	private LightningRenderer() {
-		MinecraftForge.EVENT_BUS.register(this);
-	}
+	private static ArrayList<LightningBolt> bolts = new ArrayList<>();
+	private static ArrayList<LightningBolt> clear = new ArrayList<>();
 
 	private static BufferBuilder pos(BufferBuilder vb, Vec3d pos) {
 		return vb.pos(pos.x, pos.y, pos.z);
 	}
 
-	public void addBolt(ArrayList<Vec3d> points, int maxTick) {
+	public static void addBolt(ArrayList<Vec3d> points, int maxTick) {
 		bolts.add(new LightningBolt(points, maxTick));
 	}
 
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
-	public void render(RenderWorldLastEvent event) {
+	public static void render(RenderWorldLastEvent event) {
 		ArrayList<LightningBolt> temp = new ArrayList<>(bolts);
 		for (LightningBolt bolt : temp) {
 			if (--bolt.tick <= 0) clear.add(bolt);
@@ -168,7 +164,7 @@ public class LightningRenderer {
 		}
 	}
 
-	public class LightningBolt {
+	public static class LightningBolt {
 
 		public final ArrayList<Vec3d> points;
 		public final int maxTick;

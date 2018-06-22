@@ -167,16 +167,7 @@ public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> 
 
 			mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
-			for (BlockRenderLayer layer : cachedStructure.blocks.keySet()) {
-				buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-				buffer.addVertexData(cachedStructure.vboCaches.get(layer));
-
-				for (int i = 0; i < buffer.getVertexCount(); i++) {
-					int idx = buffer.getColorIndex(i + 1);
-					buffer.putColorRGBA(idx, 255, 255, 255, 200);
-				}
-				tes.draw();
-			}
+			renderLayers(tes, buffer, cachedStructure);
 
 			GlStateManager.disablePolygonOffset();
 			GlStateManager.color(1F, 1F, 1F, 1F);
@@ -185,7 +176,7 @@ public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> 
 
 		} else if (!tile.revealStructure && !errors.isEmpty()) {
 			for (BlockPos error : errors)
-				StructureErrorRenderer.INSTANCE.addError(error);
+				StructureErrorRenderer.addError(error);
 		}
 
 		if (tile.getBlockType() == ModBlocks.CREATIVE_MANA_BATTERY) {
@@ -205,6 +196,19 @@ public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> 
 				particleBuilder.setAlphaFunction(new InterpFadeInOut(1, 1));
 				particleBuilder.setLifetime(RandUtil.nextInt(5, 10));
 			});
+		}
+	}
+
+	public static void renderLayers(Tessellator tes, BufferBuilder buffer, CachedStructure cachedStructure) {
+		for (BlockRenderLayer layer : cachedStructure.blocks.keySet()) {
+			buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+			buffer.addVertexData(cachedStructure.vboCaches.get(layer));
+
+			for (int i = 0; i < buffer.getVertexCount(); i++) {
+				int idx = buffer.getColorIndex(i + 1);
+				buffer.putColorRGBA(idx, 255, 255, 255, 200);
+			}
+			tes.draw();
 		}
 	}
 }

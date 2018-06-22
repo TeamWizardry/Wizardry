@@ -24,7 +24,7 @@ public class PacketSyncCooldown extends PacketBase {
 
 	@Override
 	public void handle(@Nonnull MessageContext ctx) {
-		CooldownHandler.INSTANCE.setResetMain(resetMain);
-		CooldownHandler.INSTANCE.setResetOff(resetOff);
+		CooldownHandler.setResetMain(resetMain);
+		CooldownHandler.setResetOff(resetOff);
 	}
 }
