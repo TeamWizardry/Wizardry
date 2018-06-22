@@ -8,6 +8,7 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
+import com.teamwizardry.wizardry.client.core.PhasedBlockRenderer;
 import com.teamwizardry.wizardry.common.core.nemez.NemezEventHandler;
 import com.teamwizardry.wizardry.common.core.nemez.NemezTracker;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseAOE;
@@ -30,6 +31,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Demoniaque.
@@ -81,58 +84,56 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 					mutable.move(EnumFacing.DOWN);
 					bb = new AxisAlignedBB(mutable);
 
-					bb = bb.grow(area, 0, area);
-					bb = bb.expand(0, -range, 0);
-					bb = bb.offset(0, -1, 0);
+					bb = bb.grow(area, range, area);
+					bb = bb.offset(0, -range / 2, 0);
 					break;
 				case UP:
-					mutable.move(EnumFacing.DOWN);
+					mutable.move(EnumFacing.UP);
 					bb = new AxisAlignedBB(mutable);
 
-					bb = bb.grow(area, 0, area);
-					bb = bb.expand(0, range, 0);
-					bb = bb.offset(0, 1, 0);
+					bb = bb.grow(area, range, area);
+					bb = bb.offset(0, range / 2, 0);
 					break;
 				case NORTH:
 					mutable.move(EnumFacing.NORTH);
 					bb = new AxisAlignedBB(mutable);
 
-					bb = bb.grow(area, area, 0);
-					bb = bb.expand(0, 0, -range);
-					bb = bb.offset(0, 0, -1);
+					bb = bb.grow(area, area, range);
+					bb = bb.offset(0, 0, -range / 2);
 					break;
 				case SOUTH:
-					mutable.move(EnumFacing.NORTH);
+					mutable.move(EnumFacing.SOUTH);
 					bb = new AxisAlignedBB(mutable);
 
-					bb = bb.grow(area, area, 0);
-					bb = bb.expand(0, 0, range);
-					bb = bb.offset(0, 0, 1);
+					bb = bb.grow(area, area, range);
+					bb = bb.offset(0, 0, range / 2);
 					break;
 				case WEST:
 					mutable.move(EnumFacing.WEST);
 					bb = new AxisAlignedBB(mutable);
 
-					bb = bb.grow(0, area, area);
-					bb = bb.expand(-range, 0, 0);
-					bb = bb.offset(-1, 0, 0);
+					bb = bb.grow(range, area, area);
+					bb = bb.offset(-range / 2, 0, 0);
 					break;
 				case EAST:
-					mutable.move(EnumFacing.WEST);
+					mutable.move(EnumFacing.EAST);
 					bb = new AxisAlignedBB(mutable);
 
-					bb = bb.grow(0, area, area);
-					bb = bb.expand(range, 0, 0);
-					bb = bb.offset(1, 0, 0);
+					bb = bb.grow(range, area, area);
+					bb = bb.offset(range / 2, 0, 0);
 					break;
 			}
 
 			IBlockState targetState = spell.world.getBlockState(mutable);
 			if (targetState.getBlock() == Blocks.AIR) return true;
 
+			Set<BlockPos> poses = new HashSet<>();
+
 			for (BlockPos pos : BlockPos.getAllInBox((int) bb.minX, (int) bb.minY, (int) bb.minZ, (int) bb.maxX, (int) bb.maxY, (int) bb.maxZ)) {
 				IBlockState originalState = spell.world.getBlockState(pos);
 				if (originalState.getBlock() == ModBlocks.FAKE_AIR || originalState.getBlock() == Blocks.AIR) continue;
+
+				poses.add(pos);
 
 				nemezDrive.trackBlock(pos, originalState);
 
@@ -146,6 +147,7 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 			nemezDrive.endUpdate();
 
 			spell.addData(SpellData.DefaultKeys.NEMEZ, nemezDrive);
+			spell.addData(SpellData.DefaultKeys.BLOCK_SET, poses);
 
 			addDelayedSpell(spellRing, spell, (int) duration);
 		}
@@ -156,7 +158,11 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void render(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		Set<BlockPos> blockSet = spell.getData(SpellData.DefaultKeys.BLOCK_SET, new HashSet<>());
 
+		double duration = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 20;
+
+		PhasedBlockRenderer.INSTANCE.addPhase(spell.world, blockSet, (int) duration);
 	}
 
 	@Override

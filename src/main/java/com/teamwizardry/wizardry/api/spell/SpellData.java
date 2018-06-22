@@ -14,10 +14,13 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Demoniaque.
@@ -321,6 +324,36 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 
 	public static class DefaultKeys {
 
+		public static final Pair<String, Class<Set<BlockPos>>> BLOCK_SET = constructPair("block_set", Set.class, new ProcessData.Process<NBTTagList, Set<BlockPos>>() {
+
+			@Nonnull
+			@Override
+			public NBTTagList serialize(@Nullable Set<BlockPos> object) {
+				NBTTagList list = new NBTTagList();
+
+				if (object == null) return list;
+
+				for (BlockPos pos : object) {
+					list.appendTag(new NBTTagLong(pos.toLong()));
+				}
+
+				return list;
+			}
+
+			@NotNull
+			@Override
+			public Set<BlockPos> deserialize(@Nullable World world, @Nonnull NBTTagList object) {
+				Set<BlockPos> poses = new HashSet<>();
+
+				for (NBTBase base : object) {
+					if (base instanceof NBTTagLong) {
+						poses.add(BlockPos.fromLong(((NBTTagLong) base).getLong()));
+					}
+				}
+
+				return poses;
+			}
+		});
 		public static final Pair<String, Class<Integer>> MAX_TIME = constructPair("max_time", Integer.class, new ProcessData.Process<NBTTagInt, Integer>() {
 			@Nonnull
 			@Override
