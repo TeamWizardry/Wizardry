@@ -149,7 +149,7 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 			spell.addData(SpellData.DefaultKeys.NEMEZ, nemezDrive);
 			spell.addData(SpellData.DefaultKeys.BLOCK_SET, poses);
 
-			addDelayedSpell(spellRing, spell, (int) duration);
+			addDelayedSpell(spellRing, spell, 500);
 		}
 
 		return true;
@@ -162,7 +162,7 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 
 		double duration = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 20;
 
-		PhasedBlockRenderer.INSTANCE.addPhase(spell.world, blockSet, (int) duration);
+		PhasedBlockRenderer.INSTANCE.addPhase(spell.world, blockSet, 500);
 	}
 
 	@Override
