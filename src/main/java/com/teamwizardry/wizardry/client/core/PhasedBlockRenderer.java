@@ -44,8 +44,7 @@ public class PhasedBlockRenderer {
 	public static final float ALPHA = 0.75f;
 	public static final float BASE_ALPHA = 0.5f;
 
-	public static BufferBuilder beginRender(float time) {
-
+	public static BufferBuilder beginRender() {
 		GlStateManager.enableAlpha();
 		GlStateManager.enableBlend();
 		GlStateManager.disableTexture2D();
@@ -122,7 +121,7 @@ public class PhasedBlockRenderer {
 
 			float time = ClientTickHandler.getTicksInGame() +
 					(Minecraft.getMinecraft().isGamePaused() ? 0 : ClientTickHandler.getPartialTicks());
-			BufferBuilder bufferBuilder = beginRender(time);
+			BufferBuilder bufferBuilder = beginRender();
 			render(phaseObject, time, bufferBuilder);
 			finishRender(bufferBuilder);
 		}
