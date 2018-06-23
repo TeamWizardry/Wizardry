@@ -68,7 +68,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 
 		if (caster == null) return false;
 
-		if (targetEntity != null && targetEntity instanceof EntityLivingBase) {
+		if (targetEntity instanceof EntityLivingBase) {
 			if (!spellRing.taxCaster(spell)) return false;
 
 			Vec3d posTarget = new Vec3d(targetEntity.posX, targetEntity.posY, targetEntity.posZ),
@@ -227,15 +227,15 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 			ParticleBuilder glitter = new ParticleBuilder(RandUtil.nextInt(20, 30));
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 			glitter.setColorFunction(new InterpColorHSV(getPrimaryColor(), getSecondaryColor()));
-			ParticleSpawner.spawn(glitter, spell.world, new StaticInterp<>(new Vec3d(targetBlock).addVector(0.5, 0.5, 0.5)), 20, RandUtil.nextInt(20, 30), (aFloat, particleBuilder) -> {
+			ParticleSpawner.spawn(glitter, spell.world, new StaticInterp<>(new Vec3d(targetBlock).addVector(0.5, 0.5, 0.5)), 20, 0, (aFloat, particleBuilder) -> {
 				glitter.setScale((float) RandUtil.nextDouble(0.3, 1));
 				glitter.setAlphaFunction(new InterpFadeInOut(0.3f, (float) RandUtil.nextDouble(0.6, 1)));
 				glitter.setLifetime(RandUtil.nextInt(10, 20));
 				glitter.setScaleFunction(new InterpScale(1, 0));
 				glitter.setMotion(new Vec3d(
-						RandUtil.nextDouble(-0.001, 0.001),
-						RandUtil.nextDouble(-0.001, 0.001),
-						RandUtil.nextDouble(-0.001, 0.001)
+						RandUtil.nextDouble(-0.1, 0.1),
+						RandUtil.nextDouble(-0.1, 0.1),
+						RandUtil.nextDouble(-0.1, 0.1)
 				));
 			});
 		}

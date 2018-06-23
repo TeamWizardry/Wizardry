@@ -14,7 +14,6 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -285,10 +284,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 		return spell;
 	}
 
-	public static SpellData deserializeData(NBTTagCompound compound) {
-		if (!compound.hasKey("world")) return null;
-
-		World world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(compound.getInteger("world"));
+	public static SpellData deserializeData(World world, NBTTagCompound compound) {
 		SpellData data = new SpellData(world);
 		data.deserializeNBT(compound);
 		return data;

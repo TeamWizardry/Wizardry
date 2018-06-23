@@ -90,7 +90,7 @@ public class EntitySpellProjectile extends EntityMod {
 
 	private SpellData getSpellData() {
 		NBTTagCompound compound = getDataManager().get(SPELL_DATA);
-		return SpellData.deserializeData(compound);
+		return SpellData.deserializeData(world, compound);
 	}
 
 	private void setSpellData(SpellData data) {
@@ -281,8 +281,8 @@ public class EntitySpellProjectile extends EntityMod {
 			setSpellRing(SpellRing.deserializeRing(compound.getCompoundTag("spell_ring")));
 		}
 
-		if (compound.hasKey("spell_data")) {
-			setSpellData(SpellData.deserializeData(compound.getCompoundTag("spell_data")));
+		if (world != null && compound.hasKey("spell_data")) {
+			setSpellData(SpellData.deserializeData(world, compound.getCompoundTag("spell_data")));
 		}
 
 		if (compound.hasKey("gravity")) {

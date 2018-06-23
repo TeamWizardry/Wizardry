@@ -76,6 +76,7 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 				if (spellRing.getModule() instanceof IBlockSelectable) {
 					player.getEntityData().setTag("selected", NBTUtil.writeBlockState(new NBTTagCompound(), world.getBlockState(pos)));
 					player.stopActiveHand();
+					player.swingArm(hand);
 					return EnumActionResult.PASS;
 				}
 			}

@@ -39,7 +39,7 @@ public class PhasedBlockRenderer {
 
 	public static final float WARP_TIME_PERIOD = 40f;
 	public static final float WARP_SPACE_PERIOD = 2f;
-	public static final float WARP_MAGNITUDE = 0.0625f;
+	public static final float WARP_MAGNITUDE = 0;
 	public static final int COLOR = 0x28AEB7;
 	public static final float ALPHA = 0.75f;
 	public static final float BASE_ALPHA = 0.5f;
@@ -94,7 +94,7 @@ public class PhasedBlockRenderer {
 			float timeAngle = (float) Math.PI * time / WARP_TIME_PERIOD;
 
 			float periodicValue = MathHelper.sin(timeAngle) * vertexData[6];
-			float magnitude = (periodicValue + 1) * WARP_MAGNITUDE + .001f;
+			float magnitude = (periodicValue + 1) * WARP_MAGNITUDE + .01f;
 			float vectorX = magnitude * vertexData[3];
 			float vectorY = magnitude * vertexData[4];
 			float vectorZ = magnitude * vertexData[5];

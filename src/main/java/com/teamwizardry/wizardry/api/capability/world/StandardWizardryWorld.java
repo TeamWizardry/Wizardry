@@ -1,14 +1,17 @@
 package com.teamwizardry.wizardry.api.capability.world;
 
+import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.spell.IDelayedModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.common.core.SpellTicker;
+import com.teamwizardry.wizardry.common.network.PacketSyncWizardryWorld;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.Constants;
 
@@ -18,22 +21,31 @@ import java.util.HashSet;
 
 public class StandardWizardryWorld implements WizardryWorld {
 
-	private static HashSet<SpellTicker.LingeringObject> lingeringStorageSet = new HashSet<>();
-	private static HashSet<SpellTicker.DelayedObject> delayedStorageSet = new HashSet<>();
+	private World world;
+	private HashSet<SpellTicker.LingeringObject> lingeringStorageSet = new HashSet<>();
+	private HashSet<SpellTicker.DelayedObject> delayedStorageSet = new HashSet<>();
 
-	public static StandardWizardryWorld create() {
-		return new StandardWizardryWorld();
+	public StandardWizardryWorld(World world) {
+		this.world = world;
+	}
+
+	public static StandardWizardryWorld create(World world) {
+		return new StandardWizardryWorld(world);
 	}
 
 	@Override
 	public void addLingerSpell(SpellRing spellRing, SpellData data, int expiry) {
 		lingeringStorageSet.add(new SpellTicker.LingeringObject(spellRing, data, data.world.getTotalWorldTime(), expiry));
+
+		PacketHandler.NETWORK.sendToDimension(new PacketSyncWizardryWorld(serializeNBT()), data.world.provider.getDimension());
 	}
 
 	@Override
 	public void addDelayedSpell(Module module, SpellRing spellRing, SpellData data, int expiry) {
 		if (module instanceof IDelayedModule)
 			delayedStorageSet.add(new SpellTicker.DelayedObject(module, spellRing, data, data.world.getTotalWorldTime(), expiry));
+
+		PacketHandler.NETWORK.sendToDimension(new PacketSyncWizardryWorld(serializeNBT()), data.world.provider.getDimension());
 	}
 
 	@Override
@@ -71,7 +83,7 @@ public class StandardWizardryWorld implements WizardryWorld {
 			NBTTagList lingeringNBT = compound.getTagList("lingering", Constants.NBT.TAG_COMPOUND);
 			for (NBTBase base : lingeringNBT) {
 				if (base instanceof NBTTagCompound) {
-					lingeringStorageSet.add(SpellTicker.LingeringObject.deserialize((NBTTagCompound) base));
+					lingeringStorageSet.add(SpellTicker.LingeringObject.deserialize(world, (NBTTagCompound) base));
 				}
 			}
 		}
@@ -80,11 +92,10 @@ public class StandardWizardryWorld implements WizardryWorld {
 			NBTTagList delayedNBT = compound.getTagList("delayed", Constants.NBT.TAG_COMPOUND);
 			for (NBTBase base : delayedNBT) {
 				if (base instanceof NBTTagCompound) {
-					delayedStorageSet.add(SpellTicker.DelayedObject.deserialize((NBTTagCompound) base));
+					delayedStorageSet.add(SpellTicker.DelayedObject.deserialize(world, (NBTTagCompound) base));
 				}
 			}
 		}
-
 	}
 
 	@Override
