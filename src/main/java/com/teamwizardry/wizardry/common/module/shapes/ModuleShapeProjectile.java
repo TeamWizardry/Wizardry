@@ -38,7 +38,7 @@ public class ModuleShapeProjectile extends ModuleShape {
 	}
 
 	@Override
-	public boolean ignoreResult() {
+	public boolean ignoreResultForRendering() {
 		return true;
 	}
 

@@ -1,6 +1,12 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
+import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpLine;
+import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
+import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
+import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.IDelayedModule;
+import com.teamwizardry.wizardry.api.spell.ProcessData;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
@@ -17,21 +23,29 @@ import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseR
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModPotions;
 import com.teamwizardry.wizardry.init.ModSounds;
+import kotlin.Pair;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.nbt.*;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.awt.*;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -54,6 +68,107 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 	@Override
 	public ModuleModifier[] applicableModifiers() {
 		return new ModuleModifier[]{new ModuleModifierIncreaseDuration(), new ModuleModifierIncreaseAOE(), new ModuleModifierIncreaseRange()};
+	}
+
+	public static final Pair<String, Class<Set<BlockPos>>> BLOCK_SET = SpellData.constructPair("block_set", Set.class, new ProcessData.Process<NBTTagList, Set<BlockPos>>() {
+
+		@Nonnull
+		@Override
+		public NBTTagList serialize(@Nullable Set<BlockPos> object) {
+			NBTTagList list = new NBTTagList();
+
+			if (object == null) return list;
+
+			for (BlockPos pos : object) {
+				list.appendTag(new NBTTagLong(pos.toLong()));
+			}
+
+			return list;
+		}
+
+		@NotNull
+		@Override
+		public Set<BlockPos> deserialize(@Nullable World world, @Nonnull NBTTagList object) {
+			Set<BlockPos> poses = new HashSet<>();
+
+			for (NBTBase base : object) {
+				if (base instanceof NBTTagLong) {
+					poses.add(BlockPos.fromLong(((NBTTagLong) base).getLong()));
+				}
+			}
+
+			return poses;
+		}
+	});
+	public static final Pair<String, Class<HashMap<BlockPos, IBlockState>>> BLOCKSTATE_CACHE = SpellData.constructPair("block_state_cache", HashMap.class, new ProcessData.Process<NBTTagList, HashMap<BlockPos, IBlockState>>() {
+
+		@Nonnull
+		@Override
+		public NBTTagList serialize(@Nullable HashMap<BlockPos, IBlockState> object) {
+			NBTTagList list = new NBTTagList();
+
+			if (object == null) return list;
+
+			for (Map.Entry<BlockPos, IBlockState> entry : object.entrySet()) {
+				NBTTagCompound compound = new NBTTagCompound();
+				compound.setLong("pos", entry.getKey().toLong());
+
+				NBTTagCompound nbtState = new NBTTagCompound();
+				NBTUtil.writeBlockState(nbtState, entry.getValue());
+				compound.setTag("blockstate", nbtState);
+
+				list.appendTag(compound);
+			}
+
+			return list;
+		}
+
+		@Override
+		public HashMap<BlockPos, IBlockState> deserialize(@Nullable World world, @Nonnull NBTTagList object) {
+			HashMap<BlockPos, IBlockState> stateCache = new HashMap<>();
+
+			for (NBTBase base : object) {
+				if (base instanceof NBTTagCompound) {
+
+					NBTTagCompound compound = (NBTTagCompound) base;
+					if (compound.hasKey("pos") && compound.hasKey("blockstate")) {
+						BlockPos pos = BlockPos.fromLong(compound.getLong("pos"));
+						IBlockState state = NBTUtil.readBlockState(compound.getCompoundTag("blockstate"));
+
+						stateCache.put(pos, state);
+
+					}
+				}
+			}
+
+			return stateCache;
+		}
+	});
+
+	@Override
+	public void runDelayedEffect(SpellData spell, SpellRing spellRing) {
+		NemezTracker nemezDrive = spell.getData(SpellData.DefaultKeys.NEMEZ);
+		BlockPos targetPos = spell.getTargetPos();
+
+		if (nemezDrive != null && targetPos != null) {
+			NemezEventHandler.reverseTime(spell.world, nemezDrive, targetPos);
+		}
+	}
+
+	public EnumFacing[] getPerpendicularFacings(EnumFacing facing) {
+		switch (facing) {
+			case DOWN:
+			case UP:
+				return EnumFacing.HORIZONTALS;
+			case NORTH:
+			case SOUTH:
+				return new EnumFacing[]{UP, DOWN, WEST, EAST};
+			case WEST:
+			case EAST:
+				return new EnumFacing[]{UP, DOWN, NORTH, SOUTH};
+		}
+
+		return new EnumFacing[]{};
 	}
 
 	@Override
@@ -82,30 +197,11 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 			faceHit = faceHit.getOpposite();
 			NemezTracker nemezDrive = new NemezTracker();
 
-			//switch (faceHit) {
-			//	case DOWN:
-			//		mutable.move(EnumFacing.DOWN, 2);
-			//		break;
-			//	case UP:
-			//		break;
-			//	case NORTH:
-			//		mutable.move(EnumFacing.NORTH, 2);
-			//		break;
-			//	case SOUTH:
-			//		mutable.move(EnumFacing.SOUTH);
-			//		break;
-			//	case WEST:
-			//		mutable.move(EnumFacing.WEST, 2);
-			//		break;
-			//	case EAST:
-			//		//mutable.move(EnumFacing.EAST);
-			//		break;
-			//}
-
 			IBlockState targetState = spell.world.getBlockState(mutable);
 			if (targetState.getBlock() == Blocks.AIR) return true;
 
 			Set<BlockPos> poses = new HashSet<>();
+			HashMap<BlockPos, IBlockState> stateCache = new HashMap<>();
 
 			int rangeTick = 0;
 			while (rangeTick < (int) range) {
@@ -166,17 +262,17 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 						break;
 				}
 
-
-				Set<BlockPos> airBlocks = new HashSet<>();
 				HashMap<BlockPos, IBlockState> tmp = new HashMap<>();
 				boolean fullAirPlane = true;
 				int edgeAirCount = 0;
 				int edgeBlockCount = 0;
 				for (BlockPos pos : BlockPos.getAllInBox((int) bb.minX, (int) bb.minY, (int) bb.minZ, (int) bb.maxX, (int) bb.maxY, (int) bb.maxZ)) {
+
 					IBlockState originalState = spell.world.getBlockState(pos);
 					Block block = originalState.getBlock();
 
 					if (edges.contains(pos)) {
+						stateCache.put(pos, originalState);
 						if (block == Blocks.AIR) edgeAirCount++;
 						else edgeBlockCount++;
 						continue;
@@ -198,18 +294,24 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 							IBlockState state = ModBlocks.FAKE_AIR.getDefaultState();
 							BlockUtils.placeBlock(spell.world, entry.getKey(), state, (EntityPlayerMP) caster);
 
+							stateCache.put(entry.getKey(), state);
+
 							nemezDrive.trackBlock(entry.getKey(), state);
 						}
 						poses.addAll(tmp.keySet());
 					} else {
 						for (Map.Entry<BlockPos, IBlockState> entry : tmp.entrySet()) {
-							if (entry.getValue().getBlock() == Blocks.AIR) continue;
+							if (entry.getValue().getBlock() == Blocks.AIR) {
+								stateCache.put(entry.getKey(), entry.getValue());
+								continue;
+							}
 
 							nemezDrive.trackBlock(entry.getKey(), entry.getValue());
 
 							IBlockState state = ModBlocks.FAKE_AIR.getDefaultState();
 							BlockUtils.placeBlock(spell.world, entry.getKey(), state, (EntityPlayerMP) caster);
 
+							stateCache.put(entry.getKey(), state);
 							nemezDrive.trackBlock(entry.getKey(), state);
 
 							poses.add(entry.getKey());
@@ -224,7 +326,8 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 			nemezDrive.endUpdate();
 
 			spell.addData(SpellData.DefaultKeys.NEMEZ, nemezDrive);
-			spell.addData(SpellData.DefaultKeys.BLOCK_SET, poses);
+			spell.addData(BLOCK_SET, poses);
+			spell.addData(BLOCKSTATE_CACHE, stateCache);
 
 			addDelayedSpell(this, spellRing, spell, (int) duration);
 		}
@@ -235,36 +338,68 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void render(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		Set<BlockPos> blockSet = spell.getData(SpellData.DefaultKeys.BLOCK_SET, new HashSet<>());
+		EnumFacing faceHit = spell.getFaceHit();
+
+		Set<BlockPos> blockSet = spell.getData(BLOCK_SET, new HashSet<>());
+		HashMap<BlockPos, IBlockState> blockStateCache = spell.getData(BLOCKSTATE_CACHE, new HashMap<>());
+		HashMap<BlockPos, IBlockState> tmpCache = new HashMap<>(blockStateCache);
 
 		double duration = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 20;
-
 		PhasedBlockRenderer.addPhase(spell.world, blockSet, (int) duration);
-	}
 
-	@Override
-	public void runDelayedEffect(SpellData spell, SpellRing spellRing) {
-		NemezTracker nemezDrive = spell.getData(SpellData.DefaultKeys.NEMEZ);
-		BlockPos targetPos = spell.getTargetPos();
+		if (faceHit != null) {
+			for (Map.Entry<BlockPos, IBlockState> entry : tmpCache.entrySet()) {
 
-		if (nemezDrive != null && targetPos != null) {
-			NemezEventHandler.reverseTime(spell.world, nemezDrive, targetPos);
+				IBlockState thisState = entry.getValue();
+				if (thisState.getBlock() != ModBlocks.FAKE_AIR) continue;
+
+				BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(entry.getKey());
+				for (EnumFacing facing : EnumFacing.VALUES) {
+					mutable.move(facing);
+
+					IBlockState adjState;
+					if (!blockStateCache.containsKey(mutable)) adjState = spell.world.getBlockState(mutable);
+					else adjState = blockStateCache.get(mutable);
+
+					if (adjState.getBlock() != Blocks.AIR && adjState.getBlock() != ModBlocks.FAKE_AIR) {
+
+						Vec3d directionOffsetVec = new Vec3d(facing.getOpposite().getDirectionVec()).scale(0.5);
+						Vec3d adjPos = new Vec3d(mutable).addVector(0.5, 0.5, 0.5).add(directionOffsetVec);
+
+						for (EnumFacing subFacing : getPerpendicularFacings(facing)) {
+							mutable.move(subFacing);
+
+							IBlockState subState;
+							if (!blockStateCache.containsKey(mutable)) subState = spell.world.getBlockState(mutable);
+							else subState = blockStateCache.get(mutable);
+
+							if (subState.getBlock() == Blocks.AIR) {
+								Vec3d subPos = new Vec3d(mutable).addVector(0.5, 0.5, 0.5).add(directionOffsetVec);
+								Vec3d midPointVec = new Vec3d(
+										(adjPos.x + subPos.x) / 2.0,
+										(adjPos.y + subPos.y) / 2.0,
+										(adjPos.z + subPos.z) / 2.0);
+								Vec3d sub = subPos.subtract(adjPos);
+								EnumFacing adjSubFacing = EnumFacing.getFacingFromVector((float) sub.x, (float) sub.y, (float) sub.z);
+								Vec3d cross = new Vec3d(adjSubFacing.getDirectionVec()).crossProduct(new Vec3d(facing.getDirectionVec())).normalize().scale(0.5);
+
+								ParticleBuilder glitter = new ParticleBuilder(10);
+								glitter.setRenderNormalLayer(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+								glitter.setScale(0.5f);
+								glitter.setLifetime((int) duration);
+								//glitter.setScaleFunction(new InterpFadeInOut(0.1F, 0.1F));
+								glitter.setColor(Color.CYAN);
+								glitter.disableRandom();
+								ParticleSpawner.spawn(glitter, spell.world, new InterpLine(midPointVec.subtract(cross), midPointVec.add(cross)), 20, 0, (aFloat, particleBuilder) -> {
+
+								});
+							}
+							mutable.move(subFacing.getOpposite());
+						}
+					}
+					mutable.move(facing.getOpposite());
+				}
+			}
 		}
-	}
-
-	public EnumFacing[] getPerpendicularFacings(EnumFacing facing) {
-		switch (facing) {
-			case DOWN:
-			case UP:
-				return EnumFacing.HORIZONTALS;
-			case NORTH:
-			case SOUTH:
-				return new EnumFacing[]{UP, DOWN, WEST, EAST};
-			case WEST:
-			case EAST:
-				return new EnumFacing[]{UP, DOWN, NORTH, SOUTH};
-		}
-
-		return new EnumFacing[]{};
 	}
 }

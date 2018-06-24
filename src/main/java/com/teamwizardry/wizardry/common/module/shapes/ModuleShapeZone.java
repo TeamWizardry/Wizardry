@@ -20,7 +20,6 @@ import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseA
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseDuration;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseRange;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -58,7 +57,7 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 	}
 
 	@Override
-	public boolean ignoreResult() {
+	public boolean ignoreResultForRendering() {
 		return true;
 	}
 

@@ -54,11 +54,8 @@ public class PacketRenderSpell extends PacketBase {
 		SpellData data = new SpellData(world);
 		data.deserializeNBT(spellData);
 
-		try {
-			if (spellRing.getModule() != null) {
-				spellRing.getModule().render(data, spellRing);
-			}
-		} catch (Exception ignored) {
+		if (spellRing.getModule() != null) {
+			spellRing.getModule().render(data, spellRing);
 		}
 	}
 }

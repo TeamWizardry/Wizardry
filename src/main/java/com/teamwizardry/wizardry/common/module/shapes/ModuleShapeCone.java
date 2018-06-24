@@ -50,7 +50,7 @@ public class ModuleShapeCone extends ModuleShape {
 	}
 
 	@Override
-	public boolean ignoreResult() {
+	public boolean ignoreResultForRendering() {
 		return true;
 	}
 

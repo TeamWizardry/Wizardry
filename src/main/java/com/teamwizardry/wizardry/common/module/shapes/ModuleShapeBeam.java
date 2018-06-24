@@ -45,7 +45,7 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 	}
 
 	@Override
-	public boolean ignoreResult() {
+	public boolean ignoreResultForRendering() {
 		return true;
 	}
 

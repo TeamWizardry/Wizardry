@@ -206,7 +206,7 @@ public abstract class Module {
 		this.attributeRanges.put(attribute, range);
 	}
 
-	public boolean ignoreResult() {
+	public boolean ignoreResultForRendering() {
 		return false;
 	}
 
