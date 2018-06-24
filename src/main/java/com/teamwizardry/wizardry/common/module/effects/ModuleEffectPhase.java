@@ -17,6 +17,7 @@ import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseR
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModPotions;
 import com.teamwizardry.wizardry.init.ModSounds;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -31,8 +32,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+
+import static net.minecraft.util.EnumFacing.*;
 
 /**
  * Created by Demoniaque.
@@ -56,7 +61,7 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Entity caster = spell.getCaster();
 		Entity targetEntity = spell.getVictim();
-		BlockPos targetPos = spell.getTargetPos();
+		BlockPos targetPos = spell.getTargetPosBlockFirst();
 		EnumFacing faceHit = spell.getFaceHit();
 
 		double duration = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 20;
@@ -77,72 +82,143 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 			faceHit = faceHit.getOpposite();
 			NemezTracker nemezDrive = new NemezTracker();
 
-			AxisAlignedBB bb = null;
-
-			switch (faceHit) {
-				case DOWN:
-					mutable.move(EnumFacing.DOWN);
-					bb = new AxisAlignedBB(mutable);
-
-					bb = bb.grow(area, range, area);
-					bb = bb.offset(0, -range / 2, 0);
-					break;
-				case UP:
-					mutable.move(EnumFacing.UP);
-					bb = new AxisAlignedBB(mutable);
-
-					bb = bb.grow(area, range, area);
-					bb = bb.offset(0, range / 2, 0);
-					break;
-				case NORTH:
-					mutable.move(EnumFacing.NORTH);
-					bb = new AxisAlignedBB(mutable);
-
-					bb = bb.grow(area, area, range);
-					bb = bb.offset(0, 0, -range / 2);
-					break;
-				case SOUTH:
-					mutable.move(EnumFacing.SOUTH);
-					bb = new AxisAlignedBB(mutable);
-
-					bb = bb.grow(area, area, range);
-					bb = bb.offset(0, 0, range / 2);
-					break;
-				case WEST:
-					mutable.move(EnumFacing.WEST);
-					bb = new AxisAlignedBB(mutable);
-
-					bb = bb.grow(range, area, area);
-					bb = bb.offset(-range / 2, 0, 0);
-					break;
-				case EAST:
-					mutable.move(EnumFacing.EAST);
-					bb = new AxisAlignedBB(mutable);
-
-					bb = bb.grow(range, area, area);
-					bb = bb.offset(range / 2, 0, 0);
-					break;
-			}
+			//switch (faceHit) {
+			//	case DOWN:
+			//		mutable.move(EnumFacing.DOWN, 2);
+			//		break;
+			//	case UP:
+			//		break;
+			//	case NORTH:
+			//		mutable.move(EnumFacing.NORTH, 2);
+			//		break;
+			//	case SOUTH:
+			//		mutable.move(EnumFacing.SOUTH);
+			//		break;
+			//	case WEST:
+			//		mutable.move(EnumFacing.WEST, 2);
+			//		break;
+			//	case EAST:
+			//		//mutable.move(EnumFacing.EAST);
+			//		break;
+			//}
 
 			IBlockState targetState = spell.world.getBlockState(mutable);
 			if (targetState.getBlock() == Blocks.AIR) return true;
 
 			Set<BlockPos> poses = new HashSet<>();
 
-			for (BlockPos pos : BlockPos.getAllInBox((int) bb.minX, (int) bb.minY, (int) bb.minZ, (int) bb.maxX, (int) bb.maxY, (int) bb.maxZ)) {
-				IBlockState originalState = spell.world.getBlockState(pos);
-				if (originalState.getBlock() == ModBlocks.FAKE_AIR || originalState.getBlock() == Blocks.AIR) continue;
-				if (spell.world.getTileEntity(pos) != null) continue;
+			int rangeTick = 0;
+			while (rangeTick < (int) range) {
 
-				poses.add(pos);
+				AxisAlignedBB bb = new AxisAlignedBB(mutable, mutable);
+				switch (faceHit) {
+					case DOWN:
+					case UP:
+						bb = bb.grow(area + 1, 0, area + 1);
+						break;
+					case NORTH:
+					case SOUTH:
+						bb = bb.grow(area + 1, area + 1, 0);
+						break;
+					case WEST:
+					case EAST:
+						bb = bb.grow(0, area + 1, area + 1);
+						break;
+				}
 
-				nemezDrive.trackBlock(pos, originalState);
+				Set<BlockPos> edges = new HashSet<>();
+				switch (faceHit) {
+					case DOWN:
+					case UP:
+						for (int x = (int) bb.minX; x <= (int) bb.maxX; x++) {
+							for (int z = (int) bb.minZ; z <= (int) bb.maxZ; z++) {
+								if (x == (int) bb.maxX || x == (int) bb.minX) {
+									edges.add(new BlockPos(x, mutable.getY(), z));
+								} else if (z == (int) bb.minZ || z == (int) bb.maxZ) {
+									edges.add(new BlockPos(x, mutable.getY(), z));
+								}
+							}
+						}
+						break;
+					case NORTH:
+					case SOUTH:
+						for (int x = (int) bb.minX; x <= (int) bb.maxX; x++) {
+							for (int y = (int) bb.minY; y <= (int) bb.maxY; y++) {
+								if (y == (int) bb.maxY || y == (int) bb.minY) {
+									edges.add(new BlockPos(x, y, mutable.getZ()));
+								} else if (x == (int) bb.minX || x == (int) bb.maxX) {
+									edges.add(new BlockPos(x, y, mutable.getZ()));
+								}
+							}
+						}
+						break;
+					case WEST:
+					case EAST:
+						for (int z = (int) bb.minZ; z <= (int) bb.maxZ; z++) {
+							for (int y = (int) bb.minY; y <= (int) bb.maxY; y++) {
+								if (y == (int) bb.maxY || y == (int) bb.minY) {
+									edges.add(new BlockPos(mutable.getX(), y, z));
+								} else if (z == (int) bb.minZ || z == (int) bb.maxZ) {
+									edges.add(new BlockPos(mutable.getX(), y, z));
+								}
+							}
+						}
+						break;
+				}
 
-				IBlockState state = ModBlocks.FAKE_AIR.getDefaultState();
 
-				BlockUtils.placeBlock(spell.world, pos, state, (EntityPlayerMP) caster);
+				Set<BlockPos> airBlocks = new HashSet<>();
+				HashMap<BlockPos, IBlockState> tmp = new HashMap<>();
+				boolean fullAirPlane = true;
+				int edgeAirCount = 0;
+				int edgeBlockCount = 0;
+				for (BlockPos pos : BlockPos.getAllInBox((int) bb.minX, (int) bb.minY, (int) bb.minZ, (int) bb.maxX, (int) bb.maxY, (int) bb.maxZ)) {
+					IBlockState originalState = spell.world.getBlockState(pos);
+					Block block = originalState.getBlock();
 
-				nemezDrive.trackBlock(pos, state);
+					if (edges.contains(pos)) {
+						if (block == Blocks.AIR) edgeAirCount++;
+						else edgeBlockCount++;
+						continue;
+					}
+
+					if (block != Blocks.AIR) fullAirPlane = false;
+					if (block == ModBlocks.FAKE_AIR) continue;
+					if (spell.world.getTileEntity(pos) != null) continue;
+
+					tmp.put(pos, originalState);
+				}
+
+				if (!fullAirPlane) {
+					if (edgeAirCount <= edgeBlockCount) {
+						for (Map.Entry<BlockPos, IBlockState> entry : tmp.entrySet()) {
+
+							nemezDrive.trackBlock(entry.getKey(), entry.getValue());
+
+							IBlockState state = ModBlocks.FAKE_AIR.getDefaultState();
+							BlockUtils.placeBlock(spell.world, entry.getKey(), state, (EntityPlayerMP) caster);
+
+							nemezDrive.trackBlock(entry.getKey(), state);
+						}
+						poses.addAll(tmp.keySet());
+					} else {
+						for (Map.Entry<BlockPos, IBlockState> entry : tmp.entrySet()) {
+							if (entry.getValue().getBlock() == Blocks.AIR) continue;
+
+							nemezDrive.trackBlock(entry.getKey(), entry.getValue());
+
+							IBlockState state = ModBlocks.FAKE_AIR.getDefaultState();
+							BlockUtils.placeBlock(spell.world, entry.getKey(), state, (EntityPlayerMP) caster);
+
+							nemezDrive.trackBlock(entry.getKey(), state);
+
+							poses.add(entry.getKey());
+						}
+					}
+				} else break;
+
+				mutable.move(faceHit);
+				rangeTick++;
 			}
 
 			nemezDrive.endUpdate();
@@ -150,7 +226,7 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 			spell.addData(SpellData.DefaultKeys.NEMEZ, nemezDrive);
 			spell.addData(SpellData.DefaultKeys.BLOCK_SET, poses);
 
-			addDelayedSpell(this, spellRing, spell, 500);
+			addDelayedSpell(this, spellRing, spell, (int) duration);
 		}
 
 		return true;
@@ -163,7 +239,7 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 
 		double duration = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 20;
 
-		PhasedBlockRenderer.addPhase(spell.world, blockSet, 500);
+		PhasedBlockRenderer.addPhase(spell.world, blockSet, (int) duration);
 	}
 
 	@Override
@@ -174,5 +250,21 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 		if (nemezDrive != null && targetPos != null) {
 			NemezEventHandler.reverseTime(spell.world, nemezDrive, targetPos);
 		}
+	}
+
+	public EnumFacing[] getPerpendicularFacings(EnumFacing facing) {
+		switch (facing) {
+			case DOWN:
+			case UP:
+				return EnumFacing.HORIZONTALS;
+			case NORTH:
+			case SOUTH:
+				return new EnumFacing[]{UP, DOWN, WEST, EAST};
+			case WEST:
+			case EAST:
+				return new EnumFacing[]{UP, DOWN, NORTH, SOUTH};
+		}
+
+		return new EnumFacing[]{};
 	}
 }

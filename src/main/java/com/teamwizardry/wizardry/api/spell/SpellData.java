@@ -184,9 +184,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 
 	@Nullable
 	public BlockPos getTargetPosBlockFirst() {
-		Vec3d target = getTarget();
-		if (target == null) return null;
-		return new BlockPos(target);
+		return getData(DefaultKeys.BLOCK_HIT);
 	}
 
 	@Nullable

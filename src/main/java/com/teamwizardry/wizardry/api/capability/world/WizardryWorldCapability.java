@@ -44,7 +44,7 @@ public final class WizardryWorldCapability {
 
 	@SubscribeEvent
 	public static void onAttachCapabilities(AttachCapabilitiesEvent<World> event) {
-		event.addCapability(WIZARDRY_WORLD_ID, StandardWizardryWorld.create());
+		event.addCapability(WIZARDRY_WORLD_ID, StandardWizardryWorld.create(event.getObject()));
 	}
 
 	// other event subscriptions related to cap behavior

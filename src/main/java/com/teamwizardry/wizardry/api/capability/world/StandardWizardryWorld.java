@@ -25,12 +25,15 @@ public class StandardWizardryWorld implements WizardryWorld {
 	private HashSet<SpellTicker.LingeringObject> lingeringStorageSet = new HashSet<>();
 	private HashSet<SpellTicker.DelayedObject> delayedStorageSet = new HashSet<>();
 
-	public StandardWizardryWorld(World world) {
-		this.world = world;
-	}
 
 	public static StandardWizardryWorld create(World world) {
-		return new StandardWizardryWorld(world);
+		StandardWizardryWorld wizardryWorld = new StandardWizardryWorld();
+		wizardryWorld.world = world;
+		return wizardryWorld;
+	}
+
+	public static StandardWizardryWorld create() {
+		return new StandardWizardryWorld();
 	}
 
 	@Override
