@@ -14,6 +14,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,6 +26,16 @@ import java.util.Set;
  */
 @Mod.EventBusSubscriber(modid = Wizardry.MODID)
 public class SpellTicker {
+
+	@SubscribeEvent
+	public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
+		if (event.player.world.isRemote) return;
+
+		WizardryWorld cap = WizardryWorldCapability.get(event.player.world);
+		if (cap == null) return;
+
+		PacketHandler.NETWORK.sendToDimension(new PacketSyncWizardryWorld(cap.serializeNBT()), event.player.world.provider.getDimension());
+	}
 
 	@SubscribeEvent
 	public static void tick(TickEvent.WorldTickEvent event) {
@@ -125,7 +136,7 @@ public class SpellTicker {
 			compound.setLong("world_time", worldTime);
 			compound.setInteger("expiry", expiry);
 			compound.setInteger("world", world.provider.getDimension());
-			return null;
+			return compound;
 		}
 
 		@Override

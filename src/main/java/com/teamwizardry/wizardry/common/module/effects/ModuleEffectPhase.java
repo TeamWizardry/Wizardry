@@ -206,7 +206,7 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 			HashMap<BlockPos, IBlockState> stateCache = new HashMap<>();
 
 			int rangeTick = 0;
-			while (rangeTick < (int) range) {
+			while (rangeTick <= (int) range) {
 
 				AxisAlignedBB bb = new AxisAlignedBB(mutable, mutable);
 				switch (faceHit) {
@@ -383,8 +383,10 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 					mutable.move(facing);
 
 					IBlockState adjState;
-					if (!blockStateCache.containsKey(mutable)) adjState = spell.world.getBlockState(mutable);
-					else adjState = blockStateCache.get(mutable);
+					if (!blockStateCache.containsKey(mutable)) {
+						adjState = spell.world.getBlockState(mutable);
+						blockStateCache.put(mutable.toImmutable(), adjState);
+					} else adjState = blockStateCache.get(mutable);
 
 					if (adjState.getBlock() != Blocks.AIR && adjState.getBlock() != ModBlocks.FAKE_AIR) {
 
@@ -395,10 +397,12 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 							mutable.move(subFacing);
 
 							IBlockState subState;
-							if (!blockStateCache.containsKey(mutable)) subState = spell.world.getBlockState(mutable);
-							else subState = blockStateCache.get(mutable);
+							if (!blockStateCache.containsKey(mutable)) {
+								subState = spell.world.getBlockState(mutable);
+								blockStateCache.put(mutable.toImmutable(), subState);
+							} else subState = blockStateCache.get(mutable);
 
-							if (subState.getBlock() == Blocks.AIR) {
+							if (subState.getBlock() == Blocks.AIR || subState.getBlock() == ModBlocks.FAKE_AIR) {
 								Vec3d subPos = new Vec3d(mutable).addVector(0.5, 0.5, 0.5).add(directionOffsetVec);
 								Vec3d midPointVec = new Vec3d(
 										(adjPos.x + subPos.x) / 2.0,

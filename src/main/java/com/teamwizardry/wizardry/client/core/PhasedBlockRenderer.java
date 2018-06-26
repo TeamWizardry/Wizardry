@@ -24,6 +24,8 @@ import org.lwjgl.opengl.GL14;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.lwjgl.opengl.GL11.GL_POLYGON_OFFSET_FILL;
+
 /**
  * Created by Demoniaque.
  */
@@ -51,6 +53,8 @@ public class PhasedBlockRenderer {
 		GlStateManager.enableCull();
 		GlStateManager.cullFace(GlStateManager.CullFace.BACK);
 		GlStateManager.depthMask(false);
+		GL11.glEnable(GL_POLYGON_OFFSET_FILL);
+		GL11.glPolygonOffset(-0.1f, -0.1f);
 
 		GlStateManager.color(1, 1, 1, 1);
 		GlStateManager.shadeModel(GL11.GL_SMOOTH);
@@ -73,6 +77,7 @@ public class PhasedBlockRenderer {
 		GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 		GlStateManager.depthMask(true);
 
+		GL11.glDisable(GL_POLYGON_OFFSET_FILL);
 		GlStateManager.enableDepth();
 		GlStateManager.enableTexture2D();
 	}
@@ -196,8 +201,8 @@ public class PhasedBlockRenderer {
 					float positionWarp = MathHelper.sin((calculatedX + calculatedY + calculatedZ) *
 							(float) Math.PI / WARP_SPACE_PERIOD);
 
-					shapeData[idx++] = new float[] { calculatedX, calculatedY, calculatedZ,
-							distanceToLocusX / descale, distanceToLocusY / descale, distanceToLocusZ / descale, positionWarp };
+					shapeData[idx++] = new float[]{calculatedX, calculatedY, calculatedZ,
+							distanceToLocusX / descale, distanceToLocusY / descale, distanceToLocusZ / descale, positionWarp};
 				}
 			}
 		}

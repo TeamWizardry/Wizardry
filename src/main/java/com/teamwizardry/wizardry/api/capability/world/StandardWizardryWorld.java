@@ -67,11 +67,13 @@ public class StandardWizardryWorld implements WizardryWorld {
 
 		NBTTagList lingeringNBT = new NBTTagList();
 		for (SpellTicker.LingeringObject object : lingeringStorageSet) {
+			if (object == null) continue;
 			lingeringNBT.appendTag(object.serializeNBT());
 		}
 
 		NBTTagList delayedNBT = new NBTTagList();
 		for (SpellTicker.DelayedObject object : delayedStorageSet) {
+			if (object == null) continue;
 			delayedNBT.appendTag(object.serializeNBT());
 		}
 

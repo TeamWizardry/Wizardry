@@ -13,11 +13,11 @@
   },
   "area": {
     "base": 1,
-    "min": 1,
-    "max": 8
+    "min": 0.5,
+    "max": 4
   },
   "range": {
-    "base": 0.5,
+    "base": 1.5,
     "min": 0.5,
     "max": 20
   }
