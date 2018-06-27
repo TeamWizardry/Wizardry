@@ -70,7 +70,9 @@ public class SpellTicker {
 			long currentWorldTime = event.world.getTotalWorldTime();
 			long subtract = currentWorldTime - fromWorldTime;
 
+			System.out.println(subtract + " / " + delayedObject.getExpiry());
 			if (subtract > delayedObject.getExpiry()) {
+				System.out.println("REEEEEEEEEEEEEEEEEEEEEE");
 				((IDelayedModule) delayedObject.getModule()).runDelayedEffect(delayedObject.getSpellData(), delayedObject.getSpellRing());
 				worldCap.getDelayedObjects().remove(delayedObject);
 				change = true;
