@@ -53,8 +53,8 @@ public class ComponentRecipeBar extends ComponentBookMark {
 			} else {
 				//	textTitle.setVisible(true);
 				book.placeInFocus(new ComponentSpellRecipe(book));
-				slideOutLong();
-				focused = true;
+				slideIn();
+				focused = false;
 			}
 		});
 

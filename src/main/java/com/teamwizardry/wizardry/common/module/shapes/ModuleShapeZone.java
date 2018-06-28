@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.common.module.shapes;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpCircle;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
+import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
@@ -135,18 +136,14 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 		glitter.setScaleFunction(new InterpScale(1, 0));
 		glitter.setCollision(true);
-		ParticleSpawner.spawn(glitter, spell.world, new InterpCircle(target, new Vec3d(0, 1, 0), (float) aoe, 1, RandUtil.nextFloat()), (int) (aoe * 5), 0, (aFloat, particleBuilder) -> {
+		ParticleSpawner.spawn(glitter, spell.world, new InterpCircle(target, new Vec3d(0, 1, 0), (float) aoe, 1, RandUtil.nextFloat()), (int) (aoe * 30), 10, (aFloat, particleBuilder) -> {
 			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
-			glitter.setLifetime(RandUtil.nextInt(10, 20));
-			if (RandUtil.nextBoolean()) {
-				glitter.setColor(spellRing.getPrimaryColor());
-			} else {
-				glitter.setColor(spellRing.getSecondaryColor());
-			}
-			glitter.addMotion(new Vec3d(
-					RandUtil.nextDouble(-0.001, 0.001),
+			glitter.setLifetime(RandUtil.nextInt(30, 50));
+			glitter.setColorFunction(new InterpColorHSV(spellRing.getPrimaryColor(), spellRing.getSecondaryColor()));
+			glitter.setMotion(new Vec3d(
+					RandUtil.nextDouble(-0.01, 0.01),
 					RandUtil.nextDouble(-0.1, 0.1),
-					RandUtil.nextDouble(-0.001, 0.001)
+					RandUtil.nextDouble(-0.01, 0.01)
 			));
 		});
 	}

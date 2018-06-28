@@ -338,7 +338,7 @@ wizardry.book.steps.mana.content4=Finally, you can store the mana liquid into or
 
 wizardry.book.steps.garbs.title=Step 2: Garbs
 wizardry.book.steps.garbs.desc=Learn about wardrobe you should be using
-wizardry.book.steps.garbs.content0=Once you've injected mana, you might be wondering why you don't have a bar showing you how much you have. Well although the mana is flowing in your blood stream right now, you simply cannot channel it yet.<br>Angels are bits of divinity. Their Grace allows them to have a constant supply of mana... but you don't have it that easy. You'll have to make do with what's called a crude haloInv, instead of the glorious one of an angel.<br> Once you equip the crude haloInv, you will be able to see your mana bar.
+wizardry.book.steps.garbs.content0=Once you've injected mana, you might be wondering why you don't have a bar showing you how much you have. Well although the mana is flowing in your blood stream right now, you simply cannot channel it yet.<br>Angels are bits of divinity. Their Grace allows them to have a constant supply of mana... but you don't have it that easy. You'll have to make do with what's called a crude halo, instead of the glorious one of an angel.<br> Once you equip the crude halo, you will be able to see your mana bar.
 wizardry.book.steps.garbs.content1=Next up is the cape. Capes are not storages, but they are conduits, aiding wizards in mana transference and reducing mana loss. Once you craft yourself a cape, wear it and do not take it off. The cape will get stronger the longer you wear it. At first, it barely reduces spell cost, but after you wear it for prolonged periods of time, it can reduce mana spell cost down to a quarter of what it was.
 wizardry.book.steps.garbs.content2=Capes may be glorious and powerful, but they are fickle. They will easily give up their loyalty to another, because one wizard is the same as another to them. If you can cheat a master out of their cape, it's the same as if you'd worn it for years yourself.<br>So if you do happen to find a beautiful, billowing cape on another's rapidly-cooling body, there's no harm in peeling it off and trying it on. And really, does it matter how they died? A cape is a cape.
 
@@ -349,7 +349,7 @@ wizardry.book.steps.nacre.content1=To make a nacre pearl, take a glass orb and t
 
 wizardry.book.steps.structures.title=Step 4: Structures
 wizardry.book.steps.structures.desc=Learn about the structure you will need to build
-wizardry.book.steps.structures.content0=You've got your mana, you've got your crooked haloInv, you've got your beautiful cape, and you've got your shimmering nacre pearls. But how do you actually infuse a spell into a pearl? Well, we just need one last device before we get there.
+wizardry.book.steps.structures.content0=You've got your mana, you've got your crooked halo, you've got your beautiful cape, and you've got your shimmering nacre pearls. But how do you actually infuse a spell into a pearl? Well, we just need one last device before we get there.
 wizardry.book.steps.structures.content1=The first structure is a Mana Battery. This structure is a massive reservoir of mana.<br>As any wizard will quickly learn, this is the center of your powers. The Mana Battery's core can absorb mana far more efficiently than any other method of storage. To fill it, set mana orbs on the pillars in its structure; it will discharge its power to mana orbs outside of the battery's pillars, allowing for automatic and efficient mana transfer out of the battery.
 wizardry.book.steps.structures.content2=Do note that once you place the mana battery block down, you will see red dots highlighting where blocks of the structures are going to be. Shift right click the block to display a hologram of the structure itself. Adjust the battery's position as you please. Once you finish the structure, no red dots should be flashing.
 wizardry.book.steps.structures.content3=This structure is technically not required. You could manually replace emptied mana orbs in your other structures to feed them mana, but you'll quickly find that that task is very annoying and tedious to do.
@@ -376,7 +376,7 @@ wizardry.book.items_blocks.wisdom_wood.content0=&oWisdom wood is a form of wood 
 wizardry.book.items_blocks.wisdom_wood.content1=Any type of wood can be converted into wisdom wood simply by throwing the wood into liquid mana.
 
 wizardry.book.items_blocks.crude_halo.title=Crude Halo
-wizardry.book.items_blocks.crude_halo.content0=&oThe crude haloInv is a bad representation of divinity. While it's nowhere near as potent as the Grace of an angel, it... does the job of holding mana, if not bestowing it.&r
+wizardry.book.items_blocks.crude_halo.content0=&oThe crude halo is a bad representation of divinity. While it's nowhere near as potent as the Grace of an angel, it... does the job of holding mana, if not bestowing it.&r
 wizardry.book.items_blocks.crude_halo.content1=If you like wearing baubles and trinkets, you can wear it on your head alongside your armor. Otherwise, it'll have to take the place of your helmet. It may not look as fancy as the real deal, but it'll do.
 
 wizardry.book.items_blocks.orbs.title=Orbs
@@ -397,7 +397,7 @@ wizardry.book.mobs.spirit_wights.content4=It is one final point of interest that
 
 wizardry.book.mobs.unicorns.title=Unicorns
 wizardry.book.mobs.unicorns.desc=Learn about unicorns
-wizardry.book.mobs.unicorns.content1=Please, make no mistake; these are not the gentle, damsel-loving creatures of song and story. The tales I heard as a childRing about unicorns were keen to stress their beauty and intelligence, their kindness and faithfulness. Real unicorns are better described as 'stroppy'.
+wizardry.book.mobs.unicorns.content1=Please, make no mistake; these are not the gentle, damsel-loving creatures of song and story. The tales I heard as a child about unicorns were keen to stress their beauty and intelligence, their kindness and faithfulness. Real unicorns are better described as 'stroppy'.
 wizardry.book.mobs.unicorns.content2=These creatures are savage and territorial, sharp of horn and hard of hoof. As far as we can tell, they possess a burning desire to kick, stab or otherwise main any animal that crosses their path - wizards included - and will even resort to biting if in the mood. They seem to harbour a particular grudge against fairies, which they eat when possible.
 wizardry.book.mobs.unicorns.content3=Some have argued that unicorns have little practical value, but their horns have potent magical properties. Also - as I've said elsewhere - fairies are remarkably annoying, so anything that keeps their numbers down can't be all bad.
 
