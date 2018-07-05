@@ -17,23 +17,25 @@ import javax.annotation.Nonnull;
 public class PacketRenderLightningBolt extends PacketBase {
 
 	@Save
-	private Vec3d point1;
-	@Save
-	private Vec3d point2;
-	@Save
 	private long seed;
+	@Save
+	private Vec3d from;
+	@Save
+	private Vec3d to;
+	@Save
+	private double offshootRange;
+	
+	public PacketRenderLightningBolt()
+	{}
 
-	public PacketRenderLightningBolt() {
-	}
-
-	public PacketRenderLightningBolt(Vec3d point1, Vec3d point2, long seed) {
-		this.point1 = point1;
-		this.point2 = point2;
+	public PacketRenderLightningBolt(long seed, Vec3d from, Vec3d to, double offshootRange) {
+		this.from = from;
+		this.to = to;
 		this.seed = seed;
 	}
 
 	@Override
 	public void handle(@Nonnull MessageContext messageContext) {
-		LightningRenderer.addBolt(new LightningGenerator(point1, point2, new RandUtilSeed(seed)).generate(), RandUtil.nextInt(30, 40));
+		LightningRenderer.addBolt(LightningGenerator.generate(new RandUtilSeed(seed), from, to, offshootRange), RandUtil.nextInt(10, 15));
 	}
 }

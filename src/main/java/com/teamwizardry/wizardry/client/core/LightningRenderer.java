@@ -1,8 +1,22 @@
 package com.teamwizardry.wizardry.client.core;
 
+import static org.lwjgl.opengl.GL11.GL_ONE;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.stream.Collectors;
+
+import org.lwjgl.opengl.GL11;
+
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.api.util.TreeNode;
+
+import kotlin.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -16,13 +30,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.opengl.GL11;
-
-import java.awt.*;
-import java.util.ArrayList;
-
-import static org.lwjgl.opengl.GL11.GL_ONE;
-import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 
 /**
  * Created by Demoniaque.
@@ -40,7 +47,7 @@ public class LightningRenderer {
 		return vb.pos(pos.x, pos.y, pos.z);
 	}
 
-	public static void addBolt(ArrayList<Vec3d> points, int maxTick) {
+	public static void addBolt(TreeNode<Vec3d> points, int maxTick) {
 		bolts.add(new LightningBolt(points, maxTick));
 	}
 
@@ -61,7 +68,7 @@ public class LightningRenderer {
 		clear.clear();
 
 		for (LightningBolt bolt : bolts) {
-			ArrayList<Vec3d> points = bolt.points;
+			ArrayList<ArrayList<Pair<Vec3d, Vec3d>>> points = bolt.points;
 
 			if (points.isEmpty()) return;
 
@@ -84,78 +91,83 @@ public class LightningRenderer {
 			Tessellator tessellator = Tessellator.getInstance();
 			BufferBuilder vb = tessellator.getBuffer();
 
-			for (int i = 1; i < points.size() - 1; i++) {
+			for (int i = 0; i < points.size(); i++) {
 
 				float progress = (bolt.tick / (bolt.maxTick * 1.0f));
 				float beamProgress = 1f - (i / (points.size() - 1.0f));
 
 				if (beamProgress < progress / 2) continue;
 
-				Vec3d to = points.get(i);
-				Vec3d from = points.get(i - 1);
+				ArrayList<Pair<Vec3d, Vec3d>> beams = points.get(i);
+				
+				for (Pair<Vec3d, Vec3d> pair : beams)
+				{
+					Vec3d from = pair.getFirst();
+					Vec3d to = pair.getSecond();
 
-				Vec3d playerEyes = Minecraft.getMinecraft().player.getPositionEyes(event.getPartialTicks());
-				Vec3d normal = (from.subtract(to)).crossProduct(playerEyes.subtract(to)).normalize(); //(b.subtract(a)).crossProduct(c.subtract(a));
-				if (normal.y < 0)
-					normal = normal.scale(-1);
+					Vec3d playerEyes = Minecraft.getMinecraft().player.getPositionEyes(event.getPartialTicks());
+					Vec3d normal = (from.subtract(to)).crossProduct(playerEyes.subtract(to)).normalize(); //(b.subtract(a)).crossProduct(c.subtract(a));
+					if (normal.y < 0)
+						normal = normal.scale(-1);
 
-				Color color = new Color(0xDA83FF);
-				int a = (int) (color.getAlpha() * progress);
-				Vec3d x = normal.scale(0.08 * RandUtil.nextDouble(1, 1.5));
+					Color color = new Color(0xDA83FF);
+					int a = (int) (color.getAlpha() * progress);
+					Vec3d x = normal.scale(0.08 * RandUtil.nextDouble(1, 1.5));
 
-				streakBase.bind();
-				vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-				pos(vb, from.add(x)).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
-				pos(vb, from.subtract(x)).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
-				pos(vb, to.subtract(x)).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
-				pos(vb, to.add(x)).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
-				tessellator.draw();
+					streakBase.bind();
+					vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+					pos(vb, from.add(x)).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+					pos(vb, from.subtract(x)).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+					pos(vb, to.subtract(x)).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+					pos(vb, to.add(x)).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+					tessellator.draw();
 
-				streakCorner.bind();
-				Vec3d moreFrom = from.add(from.subtract(to).normalize().scale(0.1));
-				vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-				pos(vb, from.add(x)).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
-				pos(vb, from.subtract(x)).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
-				pos(vb, moreFrom.subtract(x)).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
-				pos(vb, moreFrom.add(x)).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
-				tessellator.draw();
+					streakCorner.bind();
+					Vec3d moreFrom = from.add(from.subtract(to).normalize().scale(0.1));
+					vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+					pos(vb, from.add(x)).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+					pos(vb, from.subtract(x)).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+					pos(vb, moreFrom.subtract(x)).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+					pos(vb, moreFrom.add(x)).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+					tessellator.draw();
 
-				Vec3d moreTo = to.add(to.subtract(from).normalize().scale(0.1));
-				vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-				pos(vb, to.add(x)).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
-				pos(vb, to.subtract(x)).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
-				pos(vb, moreTo.subtract(x)).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
-				pos(vb, moreTo.add(x)).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
-				tessellator.draw();
+					Vec3d moreTo = to.add(to.subtract(from).normalize().scale(0.1));
+					vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+					pos(vb, to.add(x)).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+					pos(vb, to.subtract(x)).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+					pos(vb, moreTo.subtract(x)).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+					pos(vb, moreTo.add(x)).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+					tessellator.draw();
 
-				streakBase.bind();
-				color = Color.WHITE;
-				x = normal.scale(0.05 * RandUtil.nextDouble(0.3, 0.5));
-				//from = from.add(normal.scale(0.001));
-				//to = to.add(normal.scale(0.001));
+					streakBase.bind();
+					color = Color.WHITE;
+					x = normal.scale(0.05 * RandUtil.nextDouble(0.3, 0.5));
+					//from = from.add(normal.scale(0.001));
+					//to = to.add(normal.scale(0.001));
 
-				vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-				pos(vb, from.add(x)).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
-				pos(vb, from.subtract(x)).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
-				pos(vb, to.subtract(x)).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
-				pos(vb, to.add(x)).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
-				tessellator.draw();
+					vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+					pos(vb, from.add(x)).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+					pos(vb, from.subtract(x)).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+					pos(vb, to.subtract(x)).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+					pos(vb, to.add(x)).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+					tessellator.draw();
 
-				Vec3d moreFromCore = from.add(from.subtract(to).normalize().scale(0.01));
-				vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-				pos(vb, from.add(x)).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
-				pos(vb, from.subtract(x)).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
-				pos(vb, moreFromCore.subtract(x)).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
-				pos(vb, moreFromCore.add(x)).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
-				tessellator.draw();
+					Vec3d moreFromCore = from.add(from.subtract(to).normalize().scale(0.01));
+					vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+					pos(vb, from.add(x)).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+					pos(vb, from.subtract(x)).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+					pos(vb, moreFromCore.subtract(x)).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+					pos(vb, moreFromCore.add(x)).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+					tessellator.draw();
 
-				Vec3d moreToCore = to.add(to.subtract(from).normalize().scale(0.01));
-				vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-				pos(vb, to.add(x)).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
-				pos(vb, to.subtract(x)).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
-				pos(vb, moreToCore.subtract(x)).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
-				pos(vb, moreToCore.add(x)).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
-				tessellator.draw();
+					Vec3d moreToCore = to.add(to.subtract(from).normalize().scale(0.01));
+					vb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+					pos(vb, to.add(x)).tex(1, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+					pos(vb, to.subtract(x)).tex(1, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+					pos(vb, moreToCore.subtract(x)).tex(0, 0).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+					pos(vb, moreToCore.add(x)).tex(0, 1).color(color.getRed(), color.getGreen(), color.getBlue(), a).endVertex();
+					tessellator.draw();
+				}
 			}
 
 			GlStateManager.depthMask(true);
@@ -166,14 +178,35 @@ public class LightningRenderer {
 
 	public static class LightningBolt {
 
-		public final ArrayList<Vec3d> points;
+		public final ArrayList<ArrayList<Pair<Vec3d, Vec3d>>> points;
 		public final int maxTick;
 		public int tick;
 
-		public LightningBolt(ArrayList<Vec3d> points, int maxTick) {
-			this.points = points;
+		public LightningBolt(TreeNode<Vec3d> points, int maxTick) {
+			this.points = new ArrayList<>();
 			this.maxTick = maxTick;
 			this.tick = maxTick;
+			
+			Queue<TreeNode<Vec3d>> queue = new LinkedList<>();
+			Queue<TreeNode<Vec3d>> temp = new LinkedList<>();
+			ArrayList<Pair<Vec3d, Vec3d>> frameList = new ArrayList<>();
+			
+			queue.add(points);
+			
+			while (!queue.isEmpty())
+			{
+				TreeNode<Vec3d> node = queue.remove();
+				temp.addAll(node.getChildren());
+				frameList.addAll(node.getChildren().stream().map(child -> new Pair<>(node.getData(), child.getData())).collect(Collectors.toList()));
+				if (queue.isEmpty())
+				{
+					this.points.add(frameList);
+					frameList = new ArrayList<>();
+					
+					queue = temp;
+					temp = new LinkedList<>();
+				}
+			}
 		}
 	}
 }

@@ -32,6 +32,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.LOOK;
 public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 
 	public static final String BEAM_OFFSET = "beam offset";
+	public static final String BEAM_CAST = "beam cast";
 	
 	@Nonnull
 	@Override

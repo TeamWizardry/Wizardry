@@ -67,9 +67,9 @@ public class EntityLightningProjectile extends EntitySpellProjectile {
 				RandUtilSeed random = new RandUtilSeed(RandUtil.nextLong(100, 100000));
 				Vec3d dir = PosUtils.vecFromRotations(random.nextFloat(0, 180), random.nextFloat(0, 360));
 				Vec3d pos = dir.scale(range).add(origin);
-				LightningGenerator generator = new LightningGenerator(origin, pos, random);
 
-				ArrayList<Vec3d> points = generator.generate();
+				ArrayList<Vec3d> points = new ArrayList<>();
+				LightningGenerator.generate(random, origin, pos, range).forEach(point -> points.add(point));
 
 				data.world.playSound(null, new BlockPos(pos), ModSounds.LIGHTNING, SoundCategory.NEUTRAL, 0.5f, RandUtil.nextFloat(1, 1.5f));
 				for (Vec3d point : points) {
