@@ -16,7 +16,7 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
-import com.teamwizardry.wizardry.client.core.PhasedBlockRenderer;
+import com.teamwizardry.wizardry.client.core.renderer.PhasedBlockRenderer;
 import com.teamwizardry.wizardry.common.core.nemez.NemezEventHandler;
 import com.teamwizardry.wizardry.common.core.nemez.NemezTracker;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseAOE;
@@ -53,7 +53,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static net.minecraft.util.EnumFacing.*;
+import static com.teamwizardry.wizardry.api.util.PosUtils.getPerpendicularFacings;
 
 /**
  * Created by Demoniaque.
@@ -157,28 +157,12 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 		}
 	}
 
-	public EnumFacing[] getPerpendicularFacings(EnumFacing facing) {
-		switch (facing) {
-			case DOWN:
-			case UP:
-				return EnumFacing.HORIZONTALS;
-			case NORTH:
-			case SOUTH:
-				return new EnumFacing[]{UP, DOWN, WEST, EAST};
-			case WEST:
-			case EAST:
-				return new EnumFacing[]{UP, DOWN, NORTH, SOUTH};
-		}
-
-		return new EnumFacing[]{};
-	}
-
 	@Override
 	@SuppressWarnings("unused")
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Entity caster = spell.getCaster();
 		Entity targetEntity = spell.getVictim();
-		BlockPos targetPos = spell.getTargetPosBlockFirst();
+		BlockPos targetPos = spell.getTargetPos();
 		EnumFacing faceHit = spell.getFaceHit();
 
 		double duration = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 20;
@@ -339,7 +323,7 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void render(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		EnumFacing faceHit = spell.getFaceHit();
 
 		Set<BlockPos> blockSet = spell.getData(BLOCK_SET, new HashSet<>());

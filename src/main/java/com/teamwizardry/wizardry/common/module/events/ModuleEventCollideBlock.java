@@ -33,7 +33,7 @@ public class ModuleEventCollideBlock extends ModuleEvent {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void render(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 
 	}
 }

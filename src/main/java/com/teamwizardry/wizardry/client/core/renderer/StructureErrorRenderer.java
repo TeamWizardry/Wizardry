@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.client.core;
+package com.teamwizardry.wizardry.client.core.renderer;
 
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.wizardry.Wizardry;

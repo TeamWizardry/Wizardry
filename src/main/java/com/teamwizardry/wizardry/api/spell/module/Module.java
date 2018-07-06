@@ -62,6 +62,16 @@ public abstract class Module {
 	}
 
 	/**
+	 * Will render whatever GL code is specified here while the spell is being held by the
+	 * player's hand.
+	 */
+	@Nullable
+	@SideOnly(Side.CLIENT)
+	public SpellData renderVisualization(@Nonnull SpellData data, @Nonnull SpellRing ring, @Nullable SpellData previousData) {
+		return null;
+	}
+
+	/**
 	 * The type of module this module is.
 	 *
 	 * @return A ModuleType representing the type of module this is.
@@ -219,7 +229,7 @@ public abstract class Module {
 	 * This method runs client side when the spellData runs. Spawn particles here.
 	 */
 	@SideOnly(Side.CLIENT)
-	public abstract void render(@Nonnull SpellData spell, @Nonnull SpellRing spellRing);
+	public abstract void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing);
 
 	/**
 	 * Use this to run the module properly without rendering.

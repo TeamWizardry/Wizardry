@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.client.core;
+package com.teamwizardry.wizardry.client.core.renderer;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;

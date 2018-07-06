@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.client.core;
+package com.teamwizardry.wizardry.client.core.renderer;
 
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.entity.EntityUnicorn;

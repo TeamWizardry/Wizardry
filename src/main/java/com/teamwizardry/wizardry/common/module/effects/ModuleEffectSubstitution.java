@@ -1,5 +1,7 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
+import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
+import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpHelix;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
@@ -23,12 +25,17 @@ import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseA
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -38,9 +45,19 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.awt.*;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.BLOCK_STATE;
+import static com.teamwizardry.wizardry.api.util.PosUtils.getPerpendicularFacings;
+import static org.lwjgl.opengl.GL11.GL_ONE;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 
 /**
  * Created by Demoniaque.
@@ -91,9 +108,16 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 			return true;
 
 		} else if (targetBlock != null && caster instanceof EntityPlayer) {
+			ItemStack hand = ((EntityPlayer) caster).getHeldItemMainhand();
+			if (hand.isEmpty()) return false;
+
 			spell.world.playSound(null, targetBlock, ModSounds.TELEPORT, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat());
-			if (caster.getEntityData().hasKey("selected")) {
-				IBlockState state = NBTUtil.readBlockState(caster.getEntityData().getCompoundTag("selected"));
+			if (ItemNBTHelper.verifyExistence(hand, "selected")) {
+
+				NBTTagCompound compound = ItemNBTHelper.getCompound(hand, "selected");
+				if (compound == null) return false;
+
+				IBlockState state = NBTUtil.readBlockState(compound);
 				IBlockState touchedBlock = spell.world.getBlockState(targetBlock);
 
 				if (touchedBlock.getBlock() == state.getBlock()) return false;
@@ -121,6 +145,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 				if (blocks.isEmpty()) return true;
 
 				for (@SuppressWarnings("unused") BlockPos ignored : blocks) {
+					if (stackBlock.isEmpty()) return true;
 					if (!spellRing.taxCaster(spell)) return false;
 					BlockPos nearest = null;
 					for (BlockPos pos : blocks) {
@@ -188,7 +213,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 	@Override
 	@SuppressWarnings("unused")
 	@SideOnly(Side.CLIENT)
-	public void render(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		Entity caster = spell.getCaster();
 		BlockPos targetBlock = spell.getTargetPos();
@@ -239,5 +264,143 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 				));
 			});
 		}
+	}
+
+	@Nullable
+	@Override
+	public SpellData renderVisualization(@Nonnull SpellData data, @Nonnull SpellRing ring, @Nullable SpellData previousData) {
+		Entity caster = data.getCaster();
+		BlockPos targetBlock = data.getTargetPos();
+
+		if (!(caster instanceof EntityLivingBase)) return previousData;
+		ItemStack hand = ((EntityLivingBase) caster).getHeldItemMainhand();
+
+		if (hand.isEmpty()) return previousData;
+
+		if (targetBlock != null && caster instanceof EntityPlayer) {
+			if (ItemNBTHelper.verifyExistence(hand, "selected")) {
+				NBTTagCompound compound = ItemNBTHelper.getCompound(hand, "selected");
+				if (compound == null) return previousData;
+
+				IBlockState state = NBTUtil.readBlockState(compound);
+				IBlockState targetState = null;
+
+				if (previousData == null) previousData = new SpellData(data.world);
+				else {
+					if (previousData.getTargetPos() == targetBlock) {
+						targetState = previousData.getData(SpellData.DefaultKeys.BLOCK_STATE);
+					}
+				}
+				if (targetState == null) {
+					targetState = data.world.getBlockState(targetBlock);
+					previousData.addData(BLOCK_STATE, state);
+				}
+
+				if (targetState.getBlock() == state.getBlock()) return previousData;
+
+				double area = ring.getAttributeValue(AttributeRegistry.AREA, data);
+
+				ItemStack stackBlock = null;
+				for (ItemStack stack : ((EntityPlayer) caster).inventory.mainInventory) {
+					if (stack.isEmpty()) continue;
+					if (!(stack.getItem() instanceof ItemBlock)) continue;
+					Block block = ((ItemBlock) stack.getItem()).getBlock();
+					if (block != state.getBlock()) continue;
+					stackBlock = stack;
+					break;
+				}
+
+				if (stackBlock == null) return previousData;
+				stackBlock = stackBlock.copy();
+
+				HashSet<BlockPos> blocks = new HashSet<>();
+				HashSet<BlockPos> branch = new HashSet<>();
+				branch.add(targetBlock);
+				blocks.add(targetBlock);
+				getBlocks(data.world, targetState.getBlock(), (int) area, branch, blocks);
+
+				if (blocks.isEmpty()) return previousData;
+
+				HashMap<BlockPos, IBlockState> blockStateCache = new HashMap<>();
+				for (BlockPos pos : blocks) {
+					blockStateCache.put(pos, data.world.getBlockState(pos));
+				}
+
+				HashMap<BlockPos, IBlockState> tmpCache = new HashMap<>(blockStateCache);
+
+				GlStateManager.pushMatrix();
+
+				GlStateManager.disableDepth();
+
+				GlStateManager.disableCull();
+				GlStateManager.enableAlpha();
+				GlStateManager.enableBlend();
+				GlStateManager.shadeModel(GL11.GL_SMOOTH);
+				GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE);
+				GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+				GlStateManager.color(1, 1, 1, 1);
+				GlStateManager.disableTexture2D();
+				GlStateManager.enableColorMaterial();
+
+				Tessellator tessellator = Tessellator.getInstance();
+				tessellator.getBuffer().begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
+
+				int color = Color.HSBtoRGB(ClientTickHandler.getTicks() % 200 / 200F, 0.6F, 1F);
+				Color colorRGB = new Color(color);
+
+				for (Map.Entry<BlockPos, IBlockState> entry : tmpCache.entrySet()) {
+
+					if (entry.getValue().getBlock() == Blocks.AIR) continue;
+
+					BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(entry.getKey());
+					for (EnumFacing facing : EnumFacing.VALUES) {
+
+						Vec3d directionOffsetVec = new Vec3d(facing.getDirectionVec()).scale(0.5);
+						Vec3d adjPos = new Vec3d(mutable).addVector(0.5, 0.5, 0.5).add(directionOffsetVec);
+
+						mutable.move(facing);
+
+						IBlockState adjState;
+						if (!blockStateCache.containsKey(mutable)) {
+							adjState = data.world.getBlockState(mutable);
+							blockStateCache.put(mutable.toImmutable(), adjState);
+						} else adjState = blockStateCache.get(mutable);
+
+						if (adjState.getBlock() != targetState.getBlock() || !blocks.contains(mutable)) {
+
+							GL11.glLineWidth(1f);
+							GL11.glColor4ub((byte) colorRGB.getRed(), (byte) colorRGB.getGreen(), (byte) colorRGB.getBlue(), (byte) 255);
+
+							for (EnumFacing facing1 : getPerpendicularFacings(facing)) {
+								for (EnumFacing facing2 : getPerpendicularFacings(facing)) {
+									if (facing1 == facing2 || facing1.getOpposite() == facing2 || facing2.getOpposite() == facing1)
+										continue;
+
+									Vec3d p1 = new Vec3d(facing1.getDirectionVec()).scale(0.5);
+									Vec3d p2 = new Vec3d(facing2.getDirectionVec()).scale(0.5);
+									Vec3d edge = adjPos.add(p1.add(p2));
+
+									tessellator.getBuffer().pos(edge.x, edge.y, edge.z).endVertex();
+								}
+							}
+						}
+						mutable.move(facing.getOpposite());
+					}
+				}
+
+				tessellator.draw();
+
+				GlStateManager.disableBlend();
+				GlStateManager.enableDepth();
+				GlStateManager.enableAlpha();
+				GlStateManager.enableTexture2D();
+				GlStateManager.disableColorMaterial();
+
+				GlStateManager.enableDepth();
+				GlStateManager.popMatrix();
+			}
+		}
+
+		return previousData;
 	}
 }

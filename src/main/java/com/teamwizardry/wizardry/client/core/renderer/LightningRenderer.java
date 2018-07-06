@@ -1,21 +1,9 @@
-package com.teamwizardry.wizardry.client.core;
-
-import static org.lwjgl.opengl.GL11.GL_ONE;
-import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
-
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.stream.Collectors;
-
-import org.lwjgl.opengl.GL11;
+package com.teamwizardry.wizardry.client.core.renderer;
 
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.TreeNode;
-
 import kotlin.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -30,6 +18,16 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.opengl.GL11;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.stream.Collectors;
+
+import static org.lwjgl.opengl.GL11.GL_ONE;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 
 /**
  * Created by Demoniaque.
@@ -61,9 +59,7 @@ public class LightningRenderer {
 		}
 
 		for (LightningBolt bolt : clear) {
-			if (bolts.contains(bolt)) {
-				bolts.remove(bolt);
-			}
+			bolts.remove(bolt);
 		}
 		clear.clear();
 
@@ -99,9 +95,8 @@ public class LightningRenderer {
 				if (beamProgress < progress / 2) continue;
 
 				ArrayList<Pair<Vec3d, Vec3d>> beams = points.get(i);
-				
-				for (Pair<Vec3d, Vec3d> pair : beams)
-				{
+
+				for (Pair<Vec3d, Vec3d> pair : beams) {
 					Vec3d from = pair.getFirst();
 					Vec3d to = pair.getSecond();
 
@@ -186,23 +181,21 @@ public class LightningRenderer {
 			this.points = new ArrayList<>();
 			this.maxTick = maxTick;
 			this.tick = maxTick;
-			
+
 			Queue<TreeNode<Vec3d>> queue = new LinkedList<>();
 			Queue<TreeNode<Vec3d>> temp = new LinkedList<>();
 			ArrayList<Pair<Vec3d, Vec3d>> frameList = new ArrayList<>();
-			
+
 			queue.add(points);
-			
-			while (!queue.isEmpty())
-			{
+
+			while (!queue.isEmpty()) {
 				TreeNode<Vec3d> node = queue.remove();
 				temp.addAll(node.getChildren());
 				frameList.addAll(node.getChildren().stream().map(child -> new Pair<>(node.getData(), child.getData())).collect(Collectors.toList()));
-				if (queue.isEmpty())
-				{
+				if (queue.isEmpty()) {
 					this.points.add(frameList);
 					frameList = new ArrayList<>();
-					
+
 					queue = temp;
 					temp = new LinkedList<>();
 				}

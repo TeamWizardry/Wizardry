@@ -10,7 +10,7 @@ import com.teamwizardry.wizardry.api.block.CachedStructure;
 import com.teamwizardry.wizardry.api.block.IStructure;
 import com.teamwizardry.wizardry.api.capability.mana.CapManager;
 import com.teamwizardry.wizardry.api.util.RandUtil;
-import com.teamwizardry.wizardry.client.core.StructureErrorRenderer;
+import com.teamwizardry.wizardry.client.core.renderer.StructureErrorRenderer;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
 import net.minecraft.client.Minecraft;
@@ -143,7 +143,7 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 				StructureErrorRenderer.addError(error);
 		}
 
-		// render each item at its current position
+		// renderSpell each item at its current position
 		for (int i = 0; i < index; i++) {
 
 			ItemStack stack = tile.realInventory.getHandler().getStackInSlot(i);

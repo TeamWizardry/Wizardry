@@ -50,7 +50,7 @@ public class ModuleShapeSelf extends ModuleShape {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void render(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		if (runRenderOverrides(spell, spellRing)) return;
 
 		Entity caster = spell.getCaster();

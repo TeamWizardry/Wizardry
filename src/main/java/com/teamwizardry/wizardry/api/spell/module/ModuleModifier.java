@@ -28,7 +28,7 @@ public abstract class ModuleModifier extends Module {
 	}
 
 	@Override
-	public void render(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 
 	}
 }

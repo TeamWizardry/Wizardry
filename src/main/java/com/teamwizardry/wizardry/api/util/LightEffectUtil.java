@@ -106,7 +106,6 @@ public class LightEffectUtil {
 		int a = color.getAlpha();
 
 		for (int i = 1; i < points.size(); i++) {
-			if (i - 1 < 0) continue;
 			Vec3d to = points.get(i);
 			Vec3d from = points.get(i - 1);
 			if (derivative.size() <= i) continue;

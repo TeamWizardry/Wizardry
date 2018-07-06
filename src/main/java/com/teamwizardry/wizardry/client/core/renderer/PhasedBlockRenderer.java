@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.client.core;
+package com.teamwizardry.wizardry.client.core.renderer;
 
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.wizardry.Wizardry;
@@ -33,18 +33,17 @@ import static org.lwjgl.opengl.GL11.GL_POLYGON_OFFSET_FILL;
 @Mod.EventBusSubscriber(modid = Wizardry.MODID)
 public class PhasedBlockRenderer {
 
-	private static Set<PhaseObject> phaseObjects = new HashSet<>();
-
-	public static void addPhase(World world, Set<BlockPos> blocks, int expiry) {
-		phaseObjects.add(new PhaseObject(world, blocks, expiry));
-	}
-
 	public static final float WARP_TIME_PERIOD = 40f;
 	public static final float WARP_SPACE_PERIOD = 2f;
 	public static final float WARP_MAGNITUDE = 0;
 	public static final int COLOR = 0x28AEB7;
 	public static final float ALPHA = 0.75f;
 	public static final float BASE_ALPHA = 0.5f;
+	private static Set<PhaseObject> phaseObjects = new HashSet<>();
+
+	public static void addPhase(World world, Set<BlockPos> blocks, int expiry) {
+		phaseObjects.add(new PhaseObject(world, blocks, expiry));
+	}
 
 	public static BufferBuilder beginRender() {
 		GlStateManager.enableAlpha();
@@ -150,10 +149,10 @@ public class PhasedBlockRenderer {
 	}
 
 	private static class SurfaceFace {
+		private static BlockPos.MutableBlockPos VISITOR = new BlockPos.MutableBlockPos();
 		public final EnumFacing face;
 		public final BlockPos position;
 		public final float[][] shapeData = new float[4][7];
-
 		public final float xNormal, yNormal, zNormal;
 
 		public SurfaceFace(EnumFacing face, BlockPos position, Vec3d shapeLocus) {
@@ -206,8 +205,6 @@ public class PhasedBlockRenderer {
 				}
 			}
 		}
-
-		private static BlockPos.MutableBlockPos VISITOR = new BlockPos.MutableBlockPos();
 
 		public static Set<SurfaceFace> fromPlaces(Set<BlockPos> places) {
 			Set<SurfaceFace> faces = new HashSet<>();

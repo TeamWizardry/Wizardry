@@ -16,6 +16,8 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.minecraft.util.EnumFacing.*;
+
 /**
  * Created by Demoniaque on 8/27/2016.
  */
@@ -32,6 +34,22 @@ public final class PosUtils {
 		symmetricFacingValues.add(EnumFacing.NORTH);
 	}
 
+
+	public static EnumFacing[] getPerpendicularFacings(EnumFacing facing) {
+		switch (facing) {
+			case DOWN:
+			case UP:
+				return EnumFacing.HORIZONTALS;
+			case NORTH:
+			case SOUTH:
+				return new EnumFacing[]{UP, DOWN, WEST, EAST};
+			case WEST:
+			case EAST:
+				return new EnumFacing[]{UP, DOWN, NORTH, SOUTH};
+		}
+
+		return new EnumFacing[]{};
+	}
 	@Nullable
 	public static BlockPos checkNeighbor(World world, BlockPos origin, Block... desiredBlocksToFind) {
 		IBlockState originState = world.getBlockState(origin);

@@ -15,6 +15,21 @@ import java.util.List;
  */
 public class Utils {
 
+	public static float signAngle(Vec3d a, Vec3d b, Vec3d n) {
+		Vec3d cross = a.crossProduct(b);
+		double s = cross.lengthVector();
+		double c = a.dotProduct(b);
+		double angle = MathHelper.atan2(s, c);
+
+		if (n != null) {
+			if (n.dotProduct(cross) < 0) {
+				angle = -angle;
+			}
+		}
+
+		return (float) Math.toDegrees(angle);
+	}
+
 	public static boolean isLyingInCone(Vec3d point, Vec3d coneApex, Vec3d baseCenter, float aperture) {
 		float[] x = new float[]{(float) point.x, (float) point.y, (float) point.z};
 		float[] t = new float[]{(float) coneApex.x, (float) coneApex.y, (float) coneApex.z};
@@ -106,7 +121,7 @@ public class Utils {
 		int[] ids = OreDictionary.getOreIDs(stack);
 		for (int id : ids) {
 			if (OreDictionary.getOreName(id).length() >= dict.length()) {
-				if (OreDictionary.getOreName(id).substring(0, dict.length()).compareTo(dict.substring(0, dict.length())) == 0) {
+				if (OreDictionary.getOreName(id).substring(0, dict.length()).compareTo(dict) == 0) {
 					return true;
 				}
 			}

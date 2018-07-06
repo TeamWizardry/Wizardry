@@ -55,7 +55,7 @@ public class PacketRenderSpell extends PacketBase {
 		data.deserializeNBT(spellData);
 
 		if (spellRing.getModule() != null) {
-			spellRing.getModule().render(data, spellRing);
+			spellRing.getModule().renderSpell(data, spellRing);
 		}
 	}
 }

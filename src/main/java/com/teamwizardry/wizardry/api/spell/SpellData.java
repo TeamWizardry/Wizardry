@@ -6,6 +6,7 @@ import com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.mana.WizardryCapabilityProvider;
 import com.teamwizardry.wizardry.common.core.nemez.NemezTracker;
 import kotlin.Pair;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.*;
 import net.minecraft.util.EnumFacing;
@@ -18,6 +19,8 @@ import net.minecraftforge.common.util.INBTSerializable;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
+
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.BLOCK_HIT;
 
 /**
  * Created by Demoniaque.
@@ -103,7 +106,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			if (caster == null) {
 				Vec3d target = getData(DefaultKeys.TARGET_HIT);
 				if (target == null) {
-					BlockPos pos = getData(DefaultKeys.BLOCK_HIT);
+					BlockPos pos = getData(BLOCK_HIT);
 					if (pos == null) {
 						Entity victim = getData(DefaultKeys.ENTITY_HIT);
 						if (victim == null) {
@@ -130,7 +133,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 	public Vec3d getTargetWithFallback() {
 		Vec3d target = getData(DefaultKeys.TARGET_HIT);
 		if (target == null) {
-			BlockPos pos = getData(DefaultKeys.BLOCK_HIT);
+			BlockPos pos = getData(BLOCK_HIT);
 			if (pos == null) {
 				Entity victim = getData(DefaultKeys.ENTITY_HIT);
 				if (victim == null) {
@@ -152,7 +155,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 	public Vec3d getTarget() {
 		Vec3d target = getData(DefaultKeys.TARGET_HIT);
 		if (target == null) {
-			BlockPos pos = getData(DefaultKeys.BLOCK_HIT);
+			BlockPos pos = getData(BLOCK_HIT);
 			if (pos == null) {
 				Entity victim = getData(DefaultKeys.ENTITY_HIT);
 				if (victim == null) {
@@ -163,32 +166,9 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 		return target;
 	}
 
-
-	@Nullable
-	public Vec3d getTargetBlockFirst() {
-		BlockPos pos = getData(DefaultKeys.BLOCK_HIT);
-		if (pos == null) {
-			Vec3d target = getData(DefaultKeys.TARGET_HIT);
-			if (target == null) {
-
-				Entity victim = getData(DefaultKeys.ENTITY_HIT);
-				if (victim == null) {
-					return null;
-				} else return victim.getPositionVector().addVector(0, victim.height / 2.0, 0);
-			} else return target;
-		} else return new Vec3d(pos).addVector(0.5, 0.5, 0.5);
-	}
-
-	@Nullable
-	public BlockPos getTargetPosBlockFirst() {
-		return getData(DefaultKeys.BLOCK_HIT);
-	}
-
 	@Nullable
 	public BlockPos getTargetPos() {
-		Vec3d target = getTarget();
-		if (target == null) return null;
-		return new BlockPos(target);
+		return getData(BLOCK_HIT);
 	}
 
 	@Nullable
@@ -204,12 +184,6 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 	@Nullable
 	public Entity getVictim() {
 		return getData(DefaultKeys.ENTITY_HIT);
-	}
-
-	@Nullable
-	public Entity getVictimWithCasterFallback() {
-		Entity victim = getVictim();
-		return victim == null ? getCaster() : victim;
 	}
 
 	@Nullable
@@ -267,7 +241,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 		if (pos == null && targetHit != null) pos = new BlockPos(targetHit);
 		if (targetHit == null && pos != null) targetHit = new Vec3d(pos).addVector(0.5, 0.5, 0.5);
 
-		addData(DefaultKeys.BLOCK_HIT, pos);
+		addData(BLOCK_HIT, pos);
 		addData(DefaultKeys.TARGET_HIT, targetHit);
 		addData(DefaultKeys.FACE_HIT, facing);
 	}
@@ -495,6 +469,25 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 				double y = object.getDouble("y");
 				double z = object.getDouble("z");
 				return new Vec3d(x, y, z);
+			}
+		});
+
+		@Nonnull
+		public static final Pair<String, Class<IBlockState>> BLOCK_STATE = constructPair("block_state", IBlockState.class, new ProcessData.Process<NBTTagCompound, IBlockState>() {
+
+			@Nonnull
+			@Override
+			public NBTTagCompound serialize(@Nullable IBlockState object) {
+				NBTTagCompound nbtState = new NBTTagCompound();
+				if (object == null) return nbtState;
+				NBTUtil.writeBlockState(nbtState, object);
+				return nbtState;
+			}
+
+			@Nullable
+			@Override
+			public IBlockState deserialize(@Nullable World world, @Nonnull NBTTagCompound object) {
+				return NBTUtil.readBlockState(object);
 			}
 		});
 
