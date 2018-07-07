@@ -66,9 +66,6 @@ public final class BlockUtils {
 
 		if (!hasEditPermission(pos, playerMP)) return false;
 
-		if (!state.getBlock().canPlaceBlockAt(world, pos)) return false;
-		if (!state.getBlock().isReplaceable(world, pos)) return false;
-
 		BlockEvent.PlaceEvent event = new BlockEvent.PlaceEvent(BlockSnapshot.getBlockSnapshot(world, pos), Blocks.AIR.getDefaultState(), playerMP, playerMP.getActiveHand());
 		MinecraftForge.EVENT_BUS.post(event);
 		if (!event.isCanceled()) {

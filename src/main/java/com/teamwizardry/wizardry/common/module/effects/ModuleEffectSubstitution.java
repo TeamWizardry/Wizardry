@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
-import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpHelix;
@@ -25,9 +24,6 @@ import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseA
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -45,17 +41,11 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
-import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
-import java.awt.*;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-
-import static com.teamwizardry.wizardry.api.util.PosUtils.getPerpendicularFacings;
-import static org.lwjgl.opengl.GL11.GL_ONE;
-import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 
 /**
  * Created by Demoniaque.
@@ -314,25 +304,6 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 
 				HashMap<BlockPos, IBlockState> tmpCache = new HashMap<>(blockStateCache);
 
-				GlStateManager.pushMatrix();
-
-				GlStateManager.disableDepth();
-
-				GlStateManager.disableCull();
-				GlStateManager.enableAlpha();
-				GlStateManager.enableBlend();
-				GlStateManager.shadeModel(GL11.GL_SMOOTH);
-				GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE);
-				GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-				GlStateManager.color(1, 1, 1, 1);
-				GlStateManager.disableTexture2D();
-				GlStateManager.enableColorMaterial();
-
-				Tessellator tessellator = Tessellator.getInstance();
-				tessellator.getBuffer().begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
-
-				int color = Color.HSBtoRGB(ClientTickHandler.getTicks() % 200 / 200F, 0.6F, 1F);
-				Color colorRGB = new Color(color);
 
 				for (Map.Entry<BlockPos, IBlockState> entry : tmpCache.entrySet()) {
 
@@ -340,9 +311,6 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 
 					BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(entry.getKey());
 					for (EnumFacing facing : EnumFacing.VALUES) {
-
-						Vec3d directionOffsetVec = new Vec3d(facing.getDirectionVec()).scale(0.5);
-						Vec3d adjPos = new Vec3d(mutable).addVector(0.5, 0.5, 0.5).add(directionOffsetVec);
 
 						mutable.move(facing);
 
@@ -354,36 +322,11 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 
 						if (adjState.getBlock() != targetState.getBlock() || !blocks.contains(mutable)) {
 
-							GL11.glLineWidth(1f);
-							GL11.glColor4ub((byte) colorRGB.getRed(), (byte) colorRGB.getGreen(), (byte) colorRGB.getBlue(), (byte) 255);
-
-							for (EnumFacing facing1 : getPerpendicularFacings(facing)) {
-								for (EnumFacing facing2 : getPerpendicularFacings(facing)) {
-									if (facing1 == facing2 || facing1.getOpposite() == facing2 || facing2.getOpposite() == facing1)
-										continue;
-
-									Vec3d p1 = new Vec3d(facing1.getDirectionVec()).scale(0.5);
-									Vec3d p2 = new Vec3d(facing2.getDirectionVec()).scale(0.5);
-									Vec3d edge = adjPos.add(p1.add(p2));
-
-									tessellator.getBuffer().pos(edge.x, edge.y, edge.z).endVertex();
-								}
-							}
+							drawFaceOutline(mutable, facing.getOpposite());
 						}
 						mutable.move(facing.getOpposite());
 					}
 				}
-
-				tessellator.draw();
-
-				GlStateManager.disableBlend();
-				GlStateManager.enableDepth();
-				GlStateManager.enableAlpha();
-				GlStateManager.enableTexture2D();
-				GlStateManager.disableColorMaterial();
-
-				GlStateManager.enableDepth();
-				GlStateManager.popMatrix();
 			}
 		}
 

@@ -39,6 +39,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -103,7 +104,7 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 			NemezTracker nemezDrive = new NemezTracker();
 
 			IBlockState targetState = spell.world.getBlockState(mutable);
-			if (targetState.getBlock() == Blocks.AIR) return true;
+			if (BlockUtils.isAnyAir(targetState)) return true;
 
 			Set<BlockPos> poses = new HashSet<>();
 			HashMap<BlockPos, IBlockState> stateCache = new HashMap<>();
@@ -336,5 +337,127 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 				}
 			}
 		}
+	}
+
+	@NotNull
+	@Override
+	public SpellData renderVisualization(@Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+		BlockPos targetPos = data.getData(SpellData.DefaultKeys.BLOCK_HIT);
+		EnumFacing faceHit = data.getFaceHit();
+
+		double area = ring.getAttributeValue(AttributeRegistry.AREA, data);
+		double range = ring.getAttributeValue(AttributeRegistry.RANGE, data);
+
+		if (faceHit != null && targetPos != null) {
+
+			IBlockState targetState = getCachableBlockstate(data.world, targetPos, previousData);
+			if (BlockUtils.isAnyAir(targetState)) return previousData;
+
+			BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(targetPos);
+
+			faceHit = faceHit.getOpposite();
+
+			int rangeTick = 0;
+			while (rangeTick <= (int) range) {
+
+				AxisAlignedBB bb = new AxisAlignedBB(mutable, mutable);
+				switch (faceHit) {
+					case DOWN:
+					case UP:
+						bb = bb.grow(area + 1, 0, area + 1);
+						break;
+					case NORTH:
+					case SOUTH:
+						bb = bb.grow(area + 1, area + 1, 0);
+						break;
+					case WEST:
+					case EAST:
+						bb = bb.grow(0, area + 1, area + 1);
+						break;
+				}
+
+				Set<BlockPos> edges = new HashSet<>();
+				switch (faceHit) {
+					case DOWN:
+					case UP:
+						for (int x = (int) bb.minX; x <= (int) bb.maxX; x++) {
+							for (int z = (int) bb.minZ; z <= (int) bb.maxZ; z++) {
+								if (x == (int) bb.maxX || x == (int) bb.minX) {
+									edges.add(new BlockPos(x, mutable.getY(), z));
+								} else if (z == (int) bb.minZ || z == (int) bb.maxZ) {
+									edges.add(new BlockPos(x, mutable.getY(), z));
+								}
+							}
+						}
+						break;
+					case NORTH:
+					case SOUTH:
+						for (int x = (int) bb.minX; x <= (int) bb.maxX; x++) {
+							for (int y = (int) bb.minY; y <= (int) bb.maxY; y++) {
+								if (y == (int) bb.maxY || y == (int) bb.minY) {
+									edges.add(new BlockPos(x, y, mutable.getZ()));
+								} else if (x == (int) bb.minX || x == (int) bb.maxX) {
+									edges.add(new BlockPos(x, y, mutable.getZ()));
+								}
+							}
+						}
+						break;
+					case WEST:
+					case EAST:
+						for (int z = (int) bb.minZ; z <= (int) bb.maxZ; z++) {
+							for (int y = (int) bb.minY; y <= (int) bb.maxY; y++) {
+								if (y == (int) bb.maxY || y == (int) bb.minY) {
+									edges.add(new BlockPos(mutable.getX(), y, z));
+								} else if (z == (int) bb.minZ || z == (int) bb.maxZ) {
+									edges.add(new BlockPos(mutable.getX(), y, z));
+								}
+							}
+						}
+						break;
+				}
+
+				HashMap<BlockPos, IBlockState> tmp = new HashMap<>();
+				boolean fullAirPlane = true;
+				for (BlockPos pos : BlockPos.getAllInBox((int) bb.minX, (int) bb.minY, (int) bb.minZ, (int) bb.maxX, (int) bb.maxY, (int) bb.maxZ)) {
+
+					IBlockState originalState = getCachableBlockstate(data.world, pos, previousData);
+					Block block = originalState.getBlock();
+
+					if (edges.contains(pos)) continue;
+
+					if (block != Blocks.AIR) fullAirPlane = false;
+					if (block == ModBlocks.FAKE_AIR) continue;
+					if (data.world.getTileEntity(pos) != null) continue;
+
+					if (BlockUtils.isAnyAir(originalState)) continue;
+					tmp.put(pos, originalState);
+				}
+
+				if (!fullAirPlane) {
+					for (Map.Entry<BlockPos, IBlockState> entry : tmp.entrySet()) {
+						if (BlockUtils.isAnyAir(entry.getValue())) continue;
+
+						BlockPos.MutableBlockPos mutable2 = new BlockPos.MutableBlockPos(entry.getKey());
+						for (EnumFacing facing : getPerpendicularFacings(faceHit)) {
+
+							mutable2.move(facing);
+
+							IBlockState adjStat = getCachableBlockstate(data.world, mutable2, previousData);
+
+							if (!tmp.containsKey(mutable2)) {
+
+								drawFaceOutline(mutable2, facing.getOpposite());
+							}
+							mutable2.move(facing.getOpposite());
+						}
+					}
+				} else break;
+
+				mutable.move(faceHit);
+				rangeTick++;
+			}
+		}
+
+		return previousData;
 	}
 }
