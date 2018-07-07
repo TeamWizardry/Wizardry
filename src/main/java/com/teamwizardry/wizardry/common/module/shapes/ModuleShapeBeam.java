@@ -15,11 +15,13 @@ import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseP
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseRange;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -33,7 +35,7 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 
 	public static final String BEAM_OFFSET = "beam offset";
 	public static final String BEAM_CAST = "beam cast";
-	
+
 	@Nonnull
 	@Override
 	public String getID() {
@@ -66,31 +68,69 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 
 		NBTTagCompound info = spellRing.getInformationTag();
 		double beamOffset = info.getDouble(BEAM_OFFSET) + potency;
-		
-		while (beamOffset >= ConfigValues.beamTimer)
-		{
+
+		while (beamOffset >= ConfigValues.beamTimer) {
 			beamOffset -= ConfigValues.beamTimer;
-			if (!spellRing.taxCaster(spell))
-			{
+			if (!spellRing.taxCaster(spell)) {
 				info.setDouble(BEAM_OFFSET, beamOffset % ConfigValues.beamTimer);
 				return false;
 			}
 
 			RayTraceResult trace = new RayTrace(world, look, position, range)
-				.setSkipEntity(caster)
-				.setReturnLastUncollidableBlock(true)
-				.setIgnoreBlocksWithoutBoundingBoxes(true)
-				.trace();
+					.setSkipEntity(caster)
+					.setReturnLastUncollidableBlock(true)
+					.setIgnoreBlocksWithoutBoundingBoxes(true)
+					.trace();
 
 			spell.processTrace(trace, look.scale(range));
-			
+
 			if (spellRing.getChildRing() != null)
 				spellRing.getChildRing().runSpellRing(spell);
 		}
-		
+
 		sendRenderPacket(spell, spellRing);
 		info.setDouble(BEAM_OFFSET, beamOffset);
 		return true;
+	}
+
+	@NotNull
+	@Override
+	public SpellData renderVisualization(@Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+		World world = data.world;
+		Vec3d look = data.getData(LOOK);
+		Vec3d position = data.getOrigin();
+		Entity caster = data.getCaster();
+
+		if (look == null || position == null) return previousData;
+
+		double range = ring.getAttributeValue(AttributeRegistry.RANGE, data);
+		double potency = ring.getAttributeValue(AttributeRegistry.POTENCY, data);
+
+		NBTTagCompound info = ring.getInformationTag();
+		double beamOffset = info.getDouble(BEAM_OFFSET) + potency;
+
+		while (beamOffset >= ConfigValues.beamTimer) {
+			beamOffset -= ConfigValues.beamTimer;
+			if (!ring.taxCaster(data)) {
+				info.setDouble(BEAM_OFFSET, beamOffset % ConfigValues.beamTimer);
+				return previousData;
+			}
+
+			RayTraceResult trace = new RayTrace(world, look, position, range)
+					.setSkipEntity(caster)
+					.setReturnLastUncollidableBlock(true)
+					.setIgnoreBlocksWithoutBoundingBoxes(true)
+					.trace();
+
+			data.processTrace(trace, look.scale(range));
+
+			BlockPos pos = data.getTargetPos();
+			if (pos == null) return previousData;
+
+			previousData.processTrace(trace, look.scale(range));
+		}
+
+		return previousData;
 	}
 
 	@Override

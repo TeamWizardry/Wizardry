@@ -30,8 +30,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.FACE_HIT;
-
 /**
  * Created by Demoniaque.
  */
@@ -48,19 +46,15 @@ public class ModuleEffectLight extends ModuleEffect {
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		BlockPos targetPos = spell.getTargetPos();
-		Vec3d hit = spell.getTarget();
-		EnumFacing facing = spell.getData(FACE_HIT);
+		EnumFacing facing = spell.getFaceHit();
 		Entity caster = spell.getCaster();
 
-		if (targetPos == null && hit != null) targetPos = new BlockPos(hit);
-		if (targetPos == null) return false;
-
-		BlockPos finalPos = null;
-		if (world.isAirBlock(targetPos)) finalPos = targetPos;
-		else if (facing != null && world.isAirBlock(targetPos.offset(facing))) finalPos = targetPos.offset(facing);
-
-		if (finalPos == null) return false;
 		if (!spellRing.taxCaster(spell)) return false;
+
+		if (targetPos == null) return true;
+
+		BlockPos finalPos = targetPos;
+		if (facing != null && world.isAirBlock(targetPos.offset(facing))) finalPos = targetPos.offset(facing);
 
 		BlockUtils.placeBlock(world, finalPos, ModBlocks.LIGHT.getDefaultState(), caster instanceof EntityPlayerMP ? (EntityPlayerMP) caster : null);
 
@@ -74,14 +68,18 @@ public class ModuleEffectLight extends ModuleEffect {
 	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		BlockPos position = spell.getTargetPos();
+		EnumFacing facing = spell.getFaceHit();
 
 		if (position == null) return;
+
+		BlockPos finalPos = position;
+		if (facing != null && world.isAirBlock(position.offset(facing))) finalPos = position.offset(facing);
 
 		ParticleBuilder glitter = new ParticleBuilder(30);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 		glitter.enableMotionCalculation();
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(position).addVector(0.5, 0.5, 0.5)), 500, 0, (i, build) -> {
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(finalPos).addVector(0.5, 0.5, 0.5)), 500, 0, (i, build) -> {
 			double radius = 1;
 			double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
 			double r = radius * RandUtil.nextFloat();

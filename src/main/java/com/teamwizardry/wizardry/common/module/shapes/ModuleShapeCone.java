@@ -68,7 +68,7 @@ public class ModuleShapeCone extends ModuleShape {
 
 		double range = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
 		int potency = (int) (spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell));
-		
+
 		Vec3d origin = spell.getOriginHand();
 
 		if (origin == null) return false;

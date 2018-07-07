@@ -10,7 +10,6 @@ import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
-import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
@@ -97,9 +96,6 @@ public class ModuleShapeTouch extends ModuleShape {
 		IBlockState state = getCachableBlockstate(data.world, result.getBlockPos(), previousData);
 
 		previousData.processTrace(result);
-
-		if (BlockUtils.isAnyAir(state)) drawCubeOutline(data.world, pos, state);
-		else drawFaceOutline(pos, facing);
 
 		return previousData;
 	}

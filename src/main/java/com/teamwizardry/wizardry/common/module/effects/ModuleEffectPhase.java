@@ -342,6 +342,11 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 	@NotNull
 	@Override
 	public SpellData renderVisualization(@Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+		//if (ring.getParentRing() != null
+		//		&& ring.getParentRing().getModule() != null
+		//		&& ring.getParentRing().getModule() == ModuleRegistry.INSTANCE.getModule("event_collide_entity"))
+		//	return previousData;
+
 		BlockPos targetPos = data.getData(SpellData.DefaultKeys.BLOCK_HIT);
 		EnumFacing faceHit = data.getFaceHit();
 
@@ -442,12 +447,9 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 
 							mutable2.move(facing);
 
-							IBlockState adjStat = getCachableBlockstate(data.world, mutable2, previousData);
-
-							if (!tmp.containsKey(mutable2)) {
-
+							if (!tmp.containsKey(mutable2))
 								drawFaceOutline(mutable2, facing.getOpposite());
-							}
+
 							mutable2.move(facing.getOpposite());
 						}
 					}

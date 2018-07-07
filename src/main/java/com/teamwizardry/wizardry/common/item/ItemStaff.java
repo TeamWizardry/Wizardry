@@ -80,6 +80,10 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 					return EnumActionResult.PASS;
 				}
 			}
+
+			player.stopActiveHand();
+			player.swingArm(hand);
+			return EnumActionResult.PASS;
 		}
 
 		if (isCoolingDown(world, stack)) return EnumActionResult.PASS;

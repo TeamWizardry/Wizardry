@@ -6,16 +6,13 @@ import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
-import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.common.entity.projectile.EntitySpellProjectile;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseRange;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseSpeed;
 import com.teamwizardry.wizardry.init.ModSounds;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -108,16 +105,7 @@ public class ModuleShapeProjectile extends ModuleShape {
 		BlockPos pos = data.getTargetPos();
 		if (pos == null) return previousData;
 
-		EnumFacing facing = result.sideHit;
-		IBlockState state = getCachableBlockstate(data.world, result.getBlockPos(), previousData);
-
 		previousData.processTrace(result);
-
-		if (BlockUtils.isAnyAir(state)) {
-			drawCubeOutline(data.world, pos, state);
-		} else {
-			drawFaceOutline(pos, facing);
-		}
 
 		return previousData;
 	}
