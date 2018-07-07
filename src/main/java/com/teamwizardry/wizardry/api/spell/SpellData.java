@@ -15,10 +15,14 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.BLOCK_HIT;
 
@@ -525,6 +529,80 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 				NemezTracker tracker = new NemezTracker();
 				tracker.deserializeNBT(object);
 				return tracker;
+			}
+		});
+		public static final Pair<String, Class<Set<BlockPos>>> BLOCK_SET = constructPair("block_set", Set.class, new ProcessData.Process<NBTTagList, Set<BlockPos>>() {
+
+			@Nonnull
+			@Override
+			public NBTTagList serialize(@Nullable Set<BlockPos> object) {
+				NBTTagList list = new NBTTagList();
+
+				if (object == null) return list;
+
+				for (BlockPos pos : object) {
+					list.appendTag(new NBTTagLong(pos.toLong()));
+				}
+
+				return list;
+			}
+
+			@NotNull
+			@Override
+			public Set<BlockPos> deserialize(@Nullable World world, @Nonnull NBTTagList object) {
+				Set<BlockPos> poses = new HashSet<>();
+
+				for (NBTBase base : object) {
+					if (base instanceof NBTTagLong) {
+						poses.add(BlockPos.fromLong(((NBTTagLong) base).getLong()));
+					}
+				}
+
+				return poses;
+			}
+		});
+		public static final Pair<String, Class<HashMap<BlockPos, IBlockState>>> BLOCKSTATE_CACHE = constructPair("block_state_cache", HashMap.class, new ProcessData.Process<NBTTagList, HashMap<BlockPos, IBlockState>>() {
+
+			@Nonnull
+			@Override
+			public NBTTagList serialize(@Nullable HashMap<BlockPos, IBlockState> object) {
+				NBTTagList list = new NBTTagList();
+
+				if (object == null) return list;
+
+				for (Map.Entry<BlockPos, IBlockState> entry : object.entrySet()) {
+					NBTTagCompound compound = new NBTTagCompound();
+					compound.setLong("pos", entry.getKey().toLong());
+
+					NBTTagCompound nbtState = new NBTTagCompound();
+					NBTUtil.writeBlockState(nbtState, entry.getValue());
+					compound.setTag("blockstate", nbtState);
+
+					list.appendTag(compound);
+				}
+
+				return list;
+			}
+
+			@Override
+			public HashMap<BlockPos, IBlockState> deserialize(@Nullable World world, @Nonnull NBTTagList object) {
+				HashMap<BlockPos, IBlockState> stateCache = new HashMap<>();
+
+				for (NBTBase base : object) {
+					if (base instanceof NBTTagCompound) {
+
+						NBTTagCompound compound = (NBTTagCompound) base;
+						if (compound.hasKey("pos") && compound.hasKey("blockstate")) {
+							BlockPos pos = BlockPos.fromLong(compound.getLong("pos"));
+							IBlockState state = NBTUtil.readBlockState(compound.getCompoundTag("blockstate"));
+
+							stateCache.put(pos, state);
+
+						}
+					}
+				}
+
+				return stateCache;
 			}
 		});
 	}

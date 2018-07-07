@@ -32,7 +32,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -45,16 +44,15 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.BLOCK_STATE;
 import static com.teamwizardry.wizardry.api.util.PosUtils.getPerpendicularFacings;
 import static org.lwjgl.opengl.GL11.GL_ONE;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
@@ -266,9 +264,9 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 		}
 	}
 
-	@Nullable
+	@NotNull
 	@Override
-	public SpellData renderVisualization(@Nonnull SpellData data, @Nonnull SpellRing ring, @Nullable SpellData previousData) {
+	public SpellData renderVisualization(@Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
 		Entity caster = data.getCaster();
 		BlockPos targetBlock = data.getTargetPos();
 
@@ -283,19 +281,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 				if (compound == null) return previousData;
 
 				IBlockState state = NBTUtil.readBlockState(compound);
-				IBlockState targetState = null;
-
-				if (previousData == null) previousData = new SpellData(data.world);
-				else {
-					if (previousData.getTargetPos() == targetBlock) {
-						targetState = previousData.getData(SpellData.DefaultKeys.BLOCK_STATE);
-					}
-				}
-				if (targetState == null) {
-					targetState = data.world.getBlockState(targetBlock);
-					previousData.addData(BLOCK_STATE, state);
-				}
-
+				IBlockState targetState = getCachableBlockstate(data.world, targetBlock, previousData);
 				if (targetState.getBlock() == state.getBlock()) return previousData;
 
 				double area = ring.getAttributeValue(AttributeRegistry.AREA, data);
@@ -350,7 +336,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 
 				for (Map.Entry<BlockPos, IBlockState> entry : tmpCache.entrySet()) {
 
-					if (entry.getValue().getBlock() == Blocks.AIR) continue;
+					if (BlockUtils.isAnyAir(entry.getValue())) continue;
 
 					BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(entry.getKey());
 					for (EnumFacing facing : EnumFacing.VALUES) {

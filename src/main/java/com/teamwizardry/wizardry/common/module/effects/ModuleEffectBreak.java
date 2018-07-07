@@ -24,9 +24,13 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.HashSet;
+
+import static com.teamwizardry.wizardry.api.util.PosUtils.getPerpendicularFacings;
 
 /**
  * Created by Demoniaque.
@@ -78,6 +82,30 @@ public class ModuleEffectBreak extends ModuleEffect {
 		return true;
 	}
 
+	private HashSet<BlockPos> getBetterBlocks(World world, BlockPos origin, Block block, int maxBlocks, EnumFacing facing, @Nullable EnumFacing rootFacing, @Nullable HashSet<BlockPos> rootSet) {
+		HashSet<BlockPos> blocks = new HashSet<>();
+		blocks.add(origin);
+
+		BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(origin);
+
+		for (EnumFacing adjFacing : getPerpendicularFacings(facing)) {
+			pos.move(adjFacing);
+
+			if (!world.isBlockLoaded(pos)) continue;
+
+			IBlockState state = world.getBlockState(pos);
+			if (state.getBlock() != block) continue;
+
+			blocks.add(pos);
+
+			if (blocks.size() >= maxBlocks) return blocks;
+
+			pos.move(adjFacing.getOpposite());
+		}
+
+		return blocks;
+	}
+
 	private void getBlocks(World world, Block block, int maxBlocks, HashSet<BlockPos> step, HashSet<BlockPos> allBlocks) {
 		if (allBlocks.size() >= maxBlocks) return;
 
@@ -127,5 +155,51 @@ public class ModuleEffectBreak extends ModuleEffect {
 		if (position == null) return;
 
 		LibParticles.EXPLODE(world, position, getPrimaryColor(), getSecondaryColor(), 0.2, 0.3, 20, 40, 10, true);
+	}
+
+	@NotNull
+	@Override
+	public SpellData renderVisualization(@Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+		BlockPos targetPos = data.getData(SpellData.DefaultKeys.BLOCK_HIT);
+		Entity targetEntity = data.getVictim();
+
+		double range = ring.getAttributeValue(AttributeRegistry.AREA, data);
+		double strength = ring.getAttributeValue(AttributeRegistry.POTENCY, data);
+
+		if (targetEntity instanceof EntityLivingBase)
+			for (ItemStack stack : targetEntity.getArmorInventoryList())
+				stack.damageItem((int) strength, (EntityLivingBase) targetEntity);
+		if (targetPos != null) {
+
+			IBlockState state = getCachableBlockstate(data.world, targetPos, previousData);
+			if (BlockUtils.isAnyAir(state)) return previousData;
+
+			HashSet<BlockPos> branch = new HashSet<>();
+			HashSet<BlockPos> blocks = new HashSet<>();
+			branch.add(targetPos);
+			blocks.add(targetPos);
+			getBlocks(data.world, state.getBlock(), (int) range, branch, blocks);
+
+			if (blocks.isEmpty()) return previousData;
+
+			for (BlockPos pos : blocks) {
+
+				BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(pos);
+				for (EnumFacing facing : EnumFacing.VALUES) {
+
+					mutable.move(facing);
+
+					IBlockState adjStat = getCachableBlockstate(data.world, mutable, previousData);
+
+					if (adjStat.getBlock() != state.getBlock() || !blocks.contains(mutable)) {
+
+						drawFaceOutline(mutable, facing.getOpposite());
+					}
+					mutable.move(facing.getOpposite());
+				}
+			}
+		}
+
+		return previousData;
 	}
 }

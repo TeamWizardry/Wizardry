@@ -7,6 +7,7 @@ import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
+import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.api.util.RenderUtils;
@@ -19,7 +20,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
@@ -28,13 +28,12 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.awt.*;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.BLOCK_STATE;
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.LOOK;
 import static com.teamwizardry.wizardry.api.util.PosUtils.getPerpendicularFacings;
 import static org.lwjgl.opengl.GL11.GL_ONE;
@@ -93,9 +92,9 @@ public class ModuleShapeProjectile extends ModuleShape {
 		}
 	}
 
-	@Nullable
+	@NotNull
 	@Override
-	public SpellData renderVisualization(@Nonnull SpellData data, @Nonnull SpellRing ring, @Nullable SpellData previousData) {
+	public SpellData renderVisualization(@Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
 		Vec3d look = data.getData(LOOK);
 
 		Entity caster = data.getCaster();
@@ -120,20 +119,7 @@ public class ModuleShapeProjectile extends ModuleShape {
 		if (pos == null) return previousData;
 
 		EnumFacing facing = result.sideHit;
-		IBlockState state = null;
-
-		if (previousData == null) previousData = new SpellData(data.world);
-		else {
-			if (previousData.getTargetPos() == result.getBlockPos()
-					&& previousData.getFaceHit() == result.sideHit) {
-				state = previousData.getData(SpellData.DefaultKeys.BLOCK_STATE);
-			}
-		}
-
-		if (state == null) {
-			state = data.world.getBlockState(pos);
-			previousData.addData(BLOCK_STATE, state);
-		}
+		IBlockState state = getCachableBlockstate(data.world, result.getBlockPos(), previousData);
 
 		previousData.processTrace(result);
 
@@ -156,7 +142,7 @@ public class ModuleShapeProjectile extends ModuleShape {
 		GL11.glLineWidth(1f);
 		GL11.glColor4ub((byte) colorRGB.getRed(), (byte) colorRGB.getGreen(), (byte) colorRGB.getBlue(), (byte) 255);
 
-		if (state.getBlock() == Blocks.AIR) {
+		if (BlockUtils.isAnyAir(state)) {
 
 			RenderUtils.renderBlockOutline(state.getSelectedBoundingBox(data.world, pos));
 

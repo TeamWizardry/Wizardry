@@ -1,7 +1,6 @@
 package com.teamwizardry.wizardry.api.util;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
@@ -49,21 +48,6 @@ public final class PosUtils {
 		}
 
 		return new EnumFacing[]{};
-	}
-	@Nullable
-	public static BlockPos checkNeighbor(World world, BlockPos origin, Block... desiredBlocksToFind) {
-		IBlockState originState = world.getBlockState(origin);
-		for (Block desiredBlockToFind : desiredBlocksToFind) {
-			if (originState.getBlock() == desiredBlockToFind) return origin;
-		}
-		for (EnumFacing facing : EnumFacing.values()) {
-			BlockPos pos = origin.offset(facing);
-			IBlockState state = world.getBlockState(pos);
-			for (Block desiredBlockToFind : desiredBlocksToFind) {
-				if (state.getBlock() == desiredBlockToFind) return pos;
-			}
-		}
-		return null;
 	}
 
 	@Nullable

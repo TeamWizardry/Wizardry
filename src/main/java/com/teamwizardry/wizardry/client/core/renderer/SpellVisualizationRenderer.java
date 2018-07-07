@@ -56,16 +56,12 @@ public class SpellVisualizationRenderer {
 						SpellData newTickData = ring.getModule().renderVisualization(data, ring, oldTickData);
 
 						if (newTickData != oldTickData) {
-							if (newTickData != null)
-								previousTickCache.put(ring.getModule(), newTickData);
-							else previousTickCache.remove(ring.getModule());
+							previousTickCache.put(ring.getModule(), newTickData);
 						}
 					} else {
 
 						SpellData newTickData = ring.getModule().renderVisualization(data, ring, new SpellData(world));
-
-						if (newTickData != null)
-							previousTickCache.put(ring.getModule(), newTickData);
+						previousTickCache.put(ring.getModule(), newTickData);
 					}
 				}
 				ring = ring.getChildRing();
