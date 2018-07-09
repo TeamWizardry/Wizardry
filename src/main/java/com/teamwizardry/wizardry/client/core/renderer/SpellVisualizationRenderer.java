@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.client.core.renderer;
 
 import com.teamwizardry.librarianlib.features.forgeevents.CustomWorldRenderEvent;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.ICooldown;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
@@ -11,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -20,13 +22,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Mod.EventBusSubscriber(modid = Wizardry.MODID)
 @SideOnly(Side.CLIENT)
 public class SpellVisualizationRenderer {
 
 	private static HashMap<Module, SpellData> previousTickCache = new HashMap<>();
 
 	@SubscribeEvent
-	public void tickDisplay(CustomWorldRenderEvent event) {
+	public static void tickDisplay(CustomWorldRenderEvent event) {
 		if (Minecraft.getMinecraft().player == null) return;
 		if (Minecraft.getMinecraft().world == null) return;
 

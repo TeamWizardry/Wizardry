@@ -25,3 +25,4 @@ libs/librarianlib-1.0.jar
 kotlinlib/
 
 .DS_Store
+/src/main/java/com/teamwizardry/wizardry/client/quaeritumrender/

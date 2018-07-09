@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.client.core;
+package com.teamwizardry.wizardry.client.core.renderer;
 
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
@@ -16,21 +16,26 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.Post;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Created by Demoniaque on 6/20/2016.
  */
-public class HudEventHandler extends Gui {
+@SideOnly(Side.CLIENT)
+@Mod.EventBusSubscriber(modid = Wizardry.MODID)
+public class HudRenderer extends Gui {
 
-	private final Texture HUD_TEXTURE = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/hud.png"));
-	private final Sprite emptyManaBar = HUD_TEXTURE.getSprite("mana_empty", 101, 5);
-	private final Sprite fullManaBar = HUD_TEXTURE.getSprite("mana_full", 101, 5);
-	private final Sprite emptyBurnoutBar = HUD_TEXTURE.getSprite("burnout_empty", 101, 5);
-	private final Sprite fullBurnoutBar = HUD_TEXTURE.getSprite("burnout_full", 101, 5);
+	private static final Texture HUD_TEXTURE = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/hud.png"));
+	private static final Sprite emptyManaBar = HUD_TEXTURE.getSprite("mana_empty", 101, 5);
+	private static final Sprite fullManaBar = HUD_TEXTURE.getSprite("mana_full", 101, 5);
+	private static final Sprite emptyBurnoutBar = HUD_TEXTURE.getSprite("burnout_empty", 101, 5);
+	private static final Sprite fullBurnoutBar = HUD_TEXTURE.getSprite("burnout_full", 101, 5);
 
 	@SubscribeEvent
-	public void renderHud(Post event) {
+	public static void renderHud(Post event) {
 		ScaledResolution resolution = event.getResolution();
 		int width = resolution.getScaledWidth();
 		int height = resolution.getScaledHeight();
