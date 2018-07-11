@@ -9,6 +9,7 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.client.gui.GuiHandler;
 import com.teamwizardry.wizardry.common.advancement.AchievementEvents;
 import com.teamwizardry.wizardry.common.core.EventHandler;
+import com.teamwizardry.wizardry.common.core.version.ManifestHandler;
 import com.teamwizardry.wizardry.common.module.effects.ModuleEffectLeap;
 import com.teamwizardry.wizardry.common.module.effects.ModuleEffectTimeSlow;
 import com.teamwizardry.wizardry.common.network.*;
@@ -45,6 +46,10 @@ public class CommonProxy {
 		directory = new File(event.getModConfigurationDirectory(), Wizardry.MODID);
 		if (!directory.exists()) if (!directory.mkdirs())
 			Wizardry.logger.fatal("    > SOMETHING WENT WRONG! Could not create config folder!!");
+
+		ManifestHandler.INSTANCE.loadNewInternalManifest("modules", "fluid_recipes", "fire_recipes");
+		ManifestHandler.INSTANCE.loadExternalManifest(directory);
+		ManifestHandler.INSTANCE.processComparisons(directory, "modules", "fluid_recipes", "fire_recipes");
 
 		new ModTab();
 		ModBlocks.init();
@@ -95,7 +100,6 @@ public class CommonProxy {
 					Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not create directory " + recipeDirectory.getPath());
 					break manaRecipeLoading;
 				}
-//				ManaRecipes.INSTANCE.copyMissingRecipes(recipeDirectory);
 			}
 			if (ConfigValues.useInternalValues)
 				ManaRecipes.INSTANCE.copyAllRecipes(recipeDirectory);
@@ -109,27 +113,26 @@ public class CommonProxy {
 					Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not create directory " + recipeDirectory.getPath());
 					break fireRecipeLoading;
 				}
-//				FireRecipes.INSTANCE.copyMissingRecipes(recipeDirectory);
 			}
 			if (ConfigValues.useInternalValues)
 				FireRecipes.INSTANCE.copyAllRecipes(recipeDirectory);
 			FireRecipes.INSTANCE.loadRecipes(recipeDirectory);
 		}
-		
-		File moduleDirectory = new File(directory, "modules");
-		if (!moduleDirectory.exists())
-			if (!moduleDirectory.mkdirs()) {
-				Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not create directory " + moduleDirectory.getPath());
-				return;
-			}
 
-		ModuleRegistry.INSTANCE.setDirectory(moduleDirectory);
-		ModuleRegistry.INSTANCE.loadUnprocessedModules();
-		if (ConfigValues.useInternalValues)
-			ModuleRegistry.INSTANCE.copyAllModules(directory);
-		else
-			ModuleRegistry.INSTANCE.copyMissingModules(directory);
-		ModuleRegistry.INSTANCE.processModules();
+		manaRecipeLoading:
+		{
+			File moduleDirectory = new File(directory, "modules");
+			if (!moduleDirectory.exists())
+				if (!moduleDirectory.mkdirs()) {
+					Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not create directory " + moduleDirectory.getPath());
+					break manaRecipeLoading;
+				}
+
+			ModuleRegistry.INSTANCE.loadUnprocessedModules();
+			if (ConfigValues.useInternalValues)
+				ModuleRegistry.INSTANCE.copyAllModules(moduleDirectory);
+			ModuleRegistry.INSTANCE.loadModules(moduleDirectory);
+		}
 	}
 
 	public void postInit(FMLPostInitializationEvent event) {

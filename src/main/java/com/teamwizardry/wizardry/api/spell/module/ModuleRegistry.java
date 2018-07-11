@@ -42,8 +42,6 @@ public class ModuleRegistry {
 	public HashMap<Pair<ModuleShape, ModuleEffect>, OverrideConsumer<SpellData, SpellRing, SpellRing>> runOverrides = new HashMap<>();
 	public HashMap<Pair<ModuleShape, ModuleEffect>, OverrideConsumer<SpellData, SpellRing, SpellRing>> renderOverrides = new HashMap<>();
 
-	private File directory;
-
 	private Deque<Module> left = new ArrayDeque<>();
 
 	private ModuleRegistry() {
@@ -86,7 +84,7 @@ public class ModuleRegistry {
 		});
 	}
 
-	public void processModules() {
+	public void loadModules(File directory) {
 		Wizardry.logger.info(" _______________________________________________________________________\\\\");
 		Wizardry.logger.info(" | Starting module registration");
 
@@ -331,7 +329,7 @@ public class ModuleRegistry {
 
 			InputStream stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "modules/" + module.getID() + ".json");
 			if (stream == null) {
-				Wizardry.logger.fatal("    > SOMETHING WENT WRONG! Could not read module " + module.getID() + " from mod jar! Report this to the devs on Github!");
+				Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not read module " + module.getID() + " from mod jar! Report this to the devs on Github!");
 				continue;
 			}
 
@@ -351,7 +349,7 @@ public class ModuleRegistry {
 			InputStream stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "modules/" + module.getID() + ".json");
 			if (stream == null)
 			{
-				Wizardry.logger.fatal("    > SOMETHING WENT WRONG! Could not read module " + module.getID() + " from mod jar! Report this to the devs on Github!");
+				Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not read module " + module.getID() + " from mod jar! Report this to the devs on Github!");
 				continue;
 			}
 			
@@ -365,9 +363,5 @@ public class ModuleRegistry {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	public void setDirectory(File directory) {
-		this.directory = directory;
 	}
 }

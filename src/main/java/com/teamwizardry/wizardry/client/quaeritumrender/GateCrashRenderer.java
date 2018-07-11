@@ -1,7 +1,6 @@
 package com.teamwizardry.wizardry.client.quaeritumrender;
 
 import com.teamwizardry.librarianlib.features.forgeevents.CustomWorldRenderEvent;
-import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.util.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -12,7 +11,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -27,7 +25,7 @@ import static org.lwjgl.opengl.GL14.GL_FUNC_ADD;
 import static org.lwjgl.opengl.GL14.GL_FUNC_REVERSE_SUBTRACT;
 
 @SideOnly(Side.CLIENT)
-@Mod.EventBusSubscriber(modid = Wizardry.MODID)
+//@Mod.EventBusSubscriber(modid = Wizardry.MODID)
 public class GateCrashRenderer {
 
 	@SubscribeEvent

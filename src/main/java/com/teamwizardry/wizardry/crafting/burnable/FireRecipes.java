@@ -24,6 +24,8 @@ public class FireRecipes {
 
 	public void copyMissingRecipes(File directory) {
 		for (String recipeName : getResourceListing(Wizardry.MODID, "fire_recipes")) {
+			if (recipeName.isEmpty()) continue;
+
 			File file = new File(directory, recipeName);
 			if (file.exists()) continue;
 
@@ -45,6 +47,8 @@ public class FireRecipes {
 	public void copyAllRecipes(File directory)
 	{
 		for (String recipeName : getResourceListing(Wizardry.MODID, "fire_recipes")) {
+			if (recipeName.isEmpty()) continue;
+
 			InputStream stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "fire_recipes/" + recipeName);
 			if (stream == null) {
 				Wizardry.logger.fatal("    > SOMETHING WENT WRONG! Could not read recipe " + recipeName + " from mod jar! Report this to the devs on Github!");
