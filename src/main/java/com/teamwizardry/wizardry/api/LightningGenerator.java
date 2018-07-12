@@ -8,7 +8,6 @@ import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpLi
 import com.teamwizardry.wizardry.api.util.RandUtilSeed;
 import com.teamwizardry.wizardry.api.util.TreeNode;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.Vec3d;
 
 /**
@@ -16,9 +15,10 @@ import net.minecraft.util.math.Vec3d;
  */
 public class LightningGenerator
 {
-	public static final int POINTS_PER_DIST = 6;
+	public static final int POINTS_PER_DIST = 3;
 	public static final float ANGLE_OFFSET = 22.5f;
-	public static final int MAX_BRANCHES = 2;
+	public static final float ANGLE_OFFSET_RADS = (float)Math.toRadians(ANGLE_OFFSET);
+	public static final int MAX_BRANCHES = 1;
 
 	public static TreeNode<Vec3d> generate(RandUtilSeed rand, Vec3d from, Vec3d to, double offshootRange)
 	{
@@ -31,7 +31,7 @@ public class LightningGenerator
 	
 	private static TreeNode<Vec3d> generateOffshoot(RandUtilSeed rand, TreeNode<Vec3d> from, Vec3d to, double offshootRange, int numBranchesLeft)
 	{
-		if (numBranchesLeft <= 0)
+		if (numBranchesLeft < 0)
 			return from;
 		
 		TreeNode<Vec3d> bolt = from;
@@ -49,8 +49,8 @@ public class LightningGenerator
 
 		for (float point : points)
 		{
-			float pitchOff = rand.nextFloat(-ANGLE_OFFSET, ANGLE_OFFSET);
-			float yawOff = rand.nextFloat(-ANGLE_OFFSET, ANGLE_OFFSET);
+			float pitchOff = rand.nextFloat(-ANGLE_OFFSET_RADS, ANGLE_OFFSET_RADS);
+			float yawOff = rand.nextFloat(-ANGLE_OFFSET_RADS, ANGLE_OFFSET_RADS);
 			Vec3d newPoint = interp.get(point);
 			
 			Vec3d diff = newPoint.subtract(bolt.getData());
@@ -63,13 +63,12 @@ public class LightningGenerator
 			while (rand.nextInt(10) == 0)
 			{
 				double scale = rand.nextDouble(offshootRange/2, offshootRange);
-				float pitch = rand.nextFloat(ANGLE_OFFSET, 2*ANGLE_OFFSET) * (rand.nextBoolean() ? 1 : -1);
-				float yaw = rand.nextFloat(ANGLE_OFFSET, 2*ANGLE_OFFSET) * (rand.nextBoolean() ? 1 : -1);
-				Vec3d newTo = bolt.getData().subtract(bolt.getParent().getData()).normalize().rotatePitch(pitch).rotateYaw(yaw).scale(scale).add(bolt.getData());
-				LightningGenerator.generateOffshoot(rand, bolt, newTo, offshootRange, numBranchesLeft-1);
+				float pitch = rand.nextFloat(2*ANGLE_OFFSET_RADS, 3*ANGLE_OFFSET_RADS) * (rand.nextBoolean() ? 1 : -1);
+				float yaw = rand.nextFloat(2*ANGLE_OFFSET_RADS, 3*ANGLE_OFFSET_RADS) * (rand.nextBoolean() ? 1 : -1);
+				Vec3d newTo = bolt.getData().subtract(bolt.getParent().getData()).normalize().rotatePitch(pitch).rotateYaw(yaw).scale(4*scale).add(bolt.getData());
+				LightningGenerator.generateOffshoot(rand, bolt, newTo, scale, numBranchesLeft-1);
 			}
 		}
-		
 		return from;
 	}
 }

@@ -24,7 +24,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.stream.Collectors;
 
 import static org.lwjgl.opengl.GL11.GL_ONE;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
@@ -191,7 +190,9 @@ public class LightningRenderer {
 			while (!queue.isEmpty()) {
 				TreeNode<Vec3d> node = queue.remove();
 				temp.addAll(node.getChildren());
-				frameList.addAll(node.getChildren().stream().map(child -> new Pair<>(node.getData(), child.getData())).collect(Collectors.toList()));
+				for (TreeNode<Vec3d> child : node.getChildren())
+					frameList.add(new Pair<>(node.getData(), child.getData()));
+				
 				if (queue.isEmpty()) {
 					this.points.add(frameList);
 					frameList = new ArrayList<>();
