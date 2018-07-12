@@ -13,7 +13,6 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
-import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.LightningGenerator;
 import com.teamwizardry.wizardry.api.spell.IOverrideCooldown;
@@ -121,7 +120,7 @@ public class ModuleEffectLightning extends ModuleEffect implements IOverrideCool
 
 			if (origin == null) return;
 
-			double lightningRange = childRing.getAttributeValue(AttributeRegistry.RANGE, data) / 4.0;
+			double lightningRange = childRing.getAttributeValue(AttributeRegistry.RANGE, data);
 			double lightningPotency = childRing.getAttributeValue(AttributeRegistry.POTENCY, data) / 2.0;
 			double lightningDuration = childRing.getAttributeValue(AttributeRegistry.DURATION, data);
 			double beamRange = spellRing.getAttributeValue(AttributeRegistry.RANGE, data);
@@ -150,19 +149,18 @@ public class ModuleEffectLightning extends ModuleEffect implements IOverrideCool
 
 				data.world.playSound(null, new BlockPos(traceResult.hitVec), ModSounds.LIGHTNING, SoundCategory.NEUTRAL, 0.5f, RandUtil.nextFloat(1, 1.5f));
 				
-				long sysTime = System.nanoTime();
 				HashSet<BlockPos> positions = new HashSet<>();
 				for (Vec3d point : points)
 					positions.add(new BlockPos(point));
-				Wizardry.logger.info("Gathering Positions: " + (System.nanoTime() - sysTime) + " ns, #: " + points.size());
+
 				HashSet<EntityLivingBase> entities = new HashSet<>();
 				for (BlockPos position : positions)
 					entities.addAll(world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(position).contract(0.2, 0.2, 0.2)));
 				entities.remove(caster);
-				Wizardry.logger.info("Gathering Entities: " + (System.nanoTime() - sysTime) + " ns, #: " + entities.size());
+
 				for (Entity entity : entities)
 					LightningTracker.INSTANCE.addEntity(origin, entity, caster, lightningPotency, lightningDuration);
-				Wizardry.logger.info("Targeting Entities: " + (System.nanoTime() - sysTime) + " ns");
+
 				info.setBoolean(BEAM_CAST, true);
 			}
 
