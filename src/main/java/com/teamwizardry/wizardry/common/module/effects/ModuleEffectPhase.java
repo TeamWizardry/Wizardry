@@ -16,6 +16,7 @@ import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.core.renderer.PhasedBlockRenderer;
+import com.teamwizardry.wizardry.common.core.SpellNemezTracker;
 import com.teamwizardry.wizardry.common.core.nemez.NemezEventHandler;
 import com.teamwizardry.wizardry.common.core.nemez.NemezTracker;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseAOE;
@@ -56,6 +57,7 @@ import static com.teamwizardry.wizardry.api.util.PosUtils.getPerpendicularFacing
 @RegisterModule
 public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 
+
 	@Nonnull
 	@Override
 	public String getID() {
@@ -69,11 +71,14 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 
 	@Override
 	public void runDelayedEffect(SpellData spell, SpellRing spellRing) {
-		NemezTracker nemezDrive = spell.getData(SpellData.DefaultKeys.NEMEZ);
 		BlockPos targetPos = spell.getTargetPos();
+		if (targetPos == null) return;
 
-		if (nemezDrive != null && targetPos != null) {
+		NemezTracker nemezDrive = SpellNemezTracker.getNemezDrive(spell.world, targetPos);
+
+		if (nemezDrive != null) {
 			NemezEventHandler.reverseTime(spell.world, nemezDrive, targetPos);
+			SpellNemezTracker.removeNemezDrive(spell.world, targetPos);
 		}
 	}
 
@@ -98,10 +103,10 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 		}
 
 		if (targetPos != null && faceHit != null) {
+			NemezTracker nemezDrive = SpellNemezTracker.getOrCreateNemezDrive(spell.world, targetPos);
 			BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(targetPos);
 
 			faceHit = faceHit.getOpposite();
-			NemezTracker nemezDrive = new NemezTracker();
 
 			IBlockState targetState = spell.world.getBlockState(mutable);
 			if (BlockUtils.isAnyAir(targetState)) return true;
@@ -231,7 +236,7 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 
 			nemezDrive.endUpdate();
 
-			spell.addData(SpellData.DefaultKeys.NEMEZ, nemezDrive);
+			//spell.addData(SpellData.DefaultKeys.NEMEZ, nemezDrive.serializeNBT());
 			spell.addData(SpellData.DefaultKeys.BLOCK_SET, poses);
 			spell.addData(SpellData.DefaultKeys.BLOCKSTATE_CACHE, stateCache);
 

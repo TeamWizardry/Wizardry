@@ -5,6 +5,7 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.arena.ArenaManager;
 import com.teamwizardry.wizardry.api.capability.world.WizardryWorldCapability;
+import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.client.gui.GuiHandler;
 import com.teamwizardry.wizardry.common.advancement.AchievementEvents;
@@ -42,10 +43,11 @@ public class CommonProxy {
 	}
 
 	public void preInit(FMLPreInitializationEvent event) {
-
 		directory = new File(event.getModConfigurationDirectory(), Wizardry.MODID);
 		if (!directory.exists()) if (!directory.mkdirs())
 			Wizardry.logger.fatal("    > SOMETHING WENT WRONG! Could not create config folder!!");
+
+		new SpellData.DefaultKeys();
 
 		ManifestHandler.INSTANCE.loadNewInternalManifest("modules", "fluid_recipes", "fire_recipes");
 		ManifestHandler.INSTANCE.loadExternalManifest(directory);

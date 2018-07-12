@@ -21,12 +21,12 @@ public class ModFluids {
 			.setVaporizes(false);
 
 	//FIXME: textures
-	public static final ModFluid LETHE = new ModFluid("lethe",
-			new ResourceLocation(Wizardry.MODID, "fluid/mana_still"),
-			new ResourceLocation(Wizardry.MODID, "fluid/mana_flowing"), true)
-			.setViscosity(100000)
-			.setDensity(3000)
-			.setVaporizes(false);
+	//public static final ModFluid LETHE = new ModFluid("lethe",
+	//		new ResourceLocation(Wizardry.MODID, "fluid/mana_still"),
+	//		new ResourceLocation(Wizardry.MODID, "fluid/mana_flowing"), true)
+	//		.setViscosity(100000)
+	//		.setDensity(3000)
+	//		.setVaporizes(false);
 
 	public static final ModFluid NACRE = new ModFluid("nacre_fluid",
 			new ResourceLocation(Wizardry.MODID, "fluid/nacre_still"),
@@ -40,8 +40,8 @@ public class ModFluids {
 		if (MANA.getActualBlock() == null)
 			new BlockFluidMana(MANA);
 
-		if (LETHE.getActualBlock() == null)
-			new BlockFluidLethe(LETHE);
+		//	if (LETHE.getActualBlock() == null)
+		//		new BlockFluidLethe(LETHE);
 
 		MinecraftForge.EVENT_BUS.register(BlockFluidMana.class);
 	}

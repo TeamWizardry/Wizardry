@@ -4,7 +4,6 @@ import com.teamwizardry.librarianlib.features.saving.Savable;
 import com.teamwizardry.wizardry.api.capability.mana.DefaultWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.mana.WizardryCapabilityProvider;
-import com.teamwizardry.wizardry.common.core.nemez.NemezTracker;
 import kotlin.Pair;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -266,11 +265,13 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 	@Override
 	@SuppressWarnings("unchecked")
 	public void deserializeNBT(NBTTagCompound nbt) {
+		primary:
 		for (String key : nbt.getKeySet()) {
 			for (Pair pair : dataProcessor.keySet()) {
 				if (pair.getFirst().equals(key)) {
 					NBTBase nbtType = nbt.getTag(pair.getFirst() + "");
 					data.put(pair, dataProcessor.get(pair).deserialize(world, nbtType));
+					continue primary;
 				}
 			}
 		}
@@ -285,7 +286,6 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			compound.setTag(pair.getFirst() + "", nbtClass);
 		}
 
-		compound.setInteger("world", world.provider.getDimension());
 		return compound;
 	}
 
@@ -298,6 +298,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 	}
 
 	public static class DefaultKeys {
+
 		public static final Pair<String, Class<Integer>> MAX_TIME = constructPair("max_time", Integer.class, new ProcessData.Process<NBTTagInt, Integer>() {
 			@Nonnull
 			@Override
@@ -488,7 +489,6 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 				return nbtState;
 			}
 
-			@Nullable
 			@Override
 			public IBlockState deserialize(@Nullable World world, @Nonnull NBTTagCompound object) {
 				return NBTUtil.readBlockState(object);
@@ -512,25 +512,6 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			}
 		});
 
-		//TODO: not how you serialize nemez apparently
-		@Nonnull
-		public static final Pair<String, Class<NemezTracker>> NEMEZ = constructPair("nemez", NemezTracker.class, new ProcessData.Process<NBTTagList, NemezTracker>() {
-
-			@Nonnull
-			@Override
-			public NBTTagList serialize(@Nullable NemezTracker object) {
-				if (object != null)
-					return object.serializeNBT();
-				return new NBTTagList();
-			}
-
-			@Override
-			public NemezTracker deserialize(World world, @Nonnull NBTTagList object) {
-				NemezTracker tracker = new NemezTracker();
-				tracker.deserializeNBT(object);
-				return tracker;
-			}
-		});
 		public static final Pair<String, Class<Set<BlockPos>>> BLOCK_SET = constructPair("block_set", Set.class, new ProcessData.Process<NBTTagList, Set<BlockPos>>() {
 
 			@Nonnull
