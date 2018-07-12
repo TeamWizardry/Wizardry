@@ -48,7 +48,7 @@ public class CommandWizardry extends CommandBase {
 
 			ModuleRegistry.INSTANCE.loadUnprocessedModules();
 			ModuleRegistry.INSTANCE.copyMissingModules(CommonProxy.directory);
-			ModuleRegistry.INSTANCE.processModules();
+			ModuleRegistry.INSTANCE.loadModules(CommonProxy.directory);
 
 			if (server.isDedicatedServer()) {
 				PacketHandler.NETWORK.sendToAll(new PacketSyncModules(ModuleRegistry.INSTANCE.modules));
@@ -83,10 +83,9 @@ public class CommandWizardry extends CommandBase {
 					throw new CommandException("wizardry.command.fail_dir_create");
 				}
 
-			ModuleRegistry.INSTANCE.setDirectory(moduleDirectory);
 			ModuleRegistry.INSTANCE.loadUnprocessedModules();
 			ModuleRegistry.INSTANCE.copyMissingModules(CommonProxy.directory);
-			ModuleRegistry.INSTANCE.processModules();
+			ModuleRegistry.INSTANCE.loadModules(CommonProxy.directory);
 
 			if (server.isDedicatedServer()) {
 				PacketHandler.NETWORK.sendToAll(new PacketSyncModules(ModuleRegistry.INSTANCE.modules));
