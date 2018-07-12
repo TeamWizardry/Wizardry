@@ -1,6 +1,19 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.PITCH;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.SEED;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.YAW;
+import static com.teamwizardry.wizardry.common.module.shapes.ModuleShapeBeam.BEAM_CAST;
+import static com.teamwizardry.wizardry.common.module.shapes.ModuleShapeBeam.BEAM_OFFSET;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
+import javax.annotation.Nonnull;
+
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.LightningGenerator;
 import com.teamwizardry.wizardry.api.spell.IOverrideCooldown;
@@ -22,7 +35,9 @@ import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseP
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseRange;
 import com.teamwizardry.wizardry.common.network.PacketRenderLightningBolt;
 import com.teamwizardry.wizardry.init.ModSounds;
+
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -33,14 +48,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
-import static com.teamwizardry.wizardry.common.module.shapes.ModuleShapeBeam.BEAM_CAST;
-import static com.teamwizardry.wizardry.common.module.shapes.ModuleShapeBeam.BEAM_OFFSET;
 
 /**
  * Created by Demoniaque.
@@ -143,14 +150,19 @@ public class ModuleEffectLightning extends ModuleEffect implements IOverrideCool
 
 				data.world.playSound(null, new BlockPos(traceResult.hitVec), ModSounds.LIGHTNING, SoundCategory.NEUTRAL, 0.5f, RandUtil.nextFloat(1, 1.5f));
 				
-				for (Vec3d point : points) {
-					List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(point)).contract(0.2, 0.2, 0.2));
-					if (!entityList.isEmpty()) {
-						for (Entity entity : entityList) {
-							LightningTracker.INSTANCE.addEntity(origin, entity, caster, lightningPotency, lightningDuration);
-						}
-					}
-				}
+				long sysTime = System.nanoTime();
+				HashSet<BlockPos> positions = new HashSet<>();
+				for (Vec3d point : points)
+					positions.add(new BlockPos(point));
+				Wizardry.logger.info("Gathering Positions: " + (System.nanoTime() - sysTime) + " ns, #: " + points.size());
+				HashSet<EntityLivingBase> entities = new HashSet<>();
+				for (BlockPos position : positions)
+					entities.addAll(world.getEntitiesWithinAABB(EntityLivingBase.class, new AxisAlignedBB(position).contract(0.2, 0.2, 0.2)));
+				entities.remove(caster);
+				Wizardry.logger.info("Gathering Entities: " + (System.nanoTime() - sysTime) + " ns, #: " + entities.size());
+				for (Entity entity : entities)
+					LightningTracker.INSTANCE.addEntity(origin, entity, caster, lightningPotency, lightningDuration);
+				Wizardry.logger.info("Targeting Entities: " + (System.nanoTime() - sysTime) + " ns");
 				info.setBoolean(BEAM_CAST, true);
 			}
 

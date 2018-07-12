@@ -40,8 +40,6 @@ public class LightningGenerator
 		ArrayList<Float> points = new ArrayList<>();
 
 		double dist = to.subtract(from.getData()).lengthVector();
-		if (dist * POINTS_PER_DIST < 1)
-			return from;
 		
 		points.add(1f);
 		for (int i = 0; i < dist * POINTS_PER_DIST; i++)
@@ -51,18 +49,24 @@ public class LightningGenerator
 
 		for (float point : points)
 		{
-			double xOff = rand.nextDouble(offshootRange/2, offshootRange) * (rand.nextBoolean() ? 1 : -1);
-			double yOff = rand.nextDouble(offshootRange/2, offshootRange) * (rand.nextBoolean() ? 1 : -1);
-			double zOff = rand.nextDouble(offshootRange/2, offshootRange) * (rand.nextBoolean() ? 1 : -1);
-			Vec3d newPoint = interp.get(point).addVector(xOff, yOff, zOff);
+			float pitchOff = rand.nextFloat(-ANGLE_OFFSET, ANGLE_OFFSET);
+			float yawOff = rand.nextFloat(-ANGLE_OFFSET, ANGLE_OFFSET);
+			Vec3d newPoint = interp.get(point);
+			
+			Vec3d diff = newPoint.subtract(bolt.getData());
+			Vec3d norm = diff.normalize();
+			Vec3d dir = norm.rotatePitch(pitchOff).rotateYaw(yawOff).normalize();
+			
+			newPoint = dir.scale(norm.dotProduct(diff) / norm.dotProduct(dir)).add(bolt.getData());
+			
 			bolt = bolt.addChild(new TreeNode<>(newPoint));
 			while (rand.nextInt(10) == 0)
 			{
 				double scale = rand.nextDouble(offshootRange/2, offshootRange);
 				float pitch = rand.nextFloat(ANGLE_OFFSET, 2*ANGLE_OFFSET) * (rand.nextBoolean() ? 1 : -1);
 				float yaw = rand.nextFloat(ANGLE_OFFSET, 2*ANGLE_OFFSET) * (rand.nextBoolean() ? 1 : -1);
-				Vec3d newTo = bolt.getData().subtract(bolt.getParent().getData()).normalize().rotatePitch(pitch).rotateYaw(yaw).scale(scale).add(bolt.getParent().getData());
-				LightningGenerator.generateOffshoot(rand, bolt.getParent(), newTo, offshootRange, numBranchesLeft-1);
+				Vec3d newTo = bolt.getData().subtract(bolt.getParent().getData()).normalize().rotatePitch(pitch).rotateYaw(yaw).scale(scale).add(bolt.getData());
+				LightningGenerator.generateOffshoot(rand, bolt, newTo, offshootRange, numBranchesLeft-1);
 			}
 		}
 		
