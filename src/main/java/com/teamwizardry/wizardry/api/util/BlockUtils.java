@@ -1,7 +1,18 @@
 package com.teamwizardry.wizardry.api.util;
 
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Predicate;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.mojang.authlib.GameProfile;
 import com.teamwizardry.wizardry.init.ModBlocks;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -9,6 +20,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -19,10 +31,6 @@ import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.UUID;
 
 /**
  * Created by Demoniaque.
@@ -143,5 +151,49 @@ public final class BlockUtils {
 			if (!player.canPlayerEdit(pos, e, player.getHeldItemMainhand()))
 				return false;
 		return true;
+	}
+
+	public static Set<BlockPos> blocksInSquare(BlockPos center, Axis axis, int maxBlocks, int maxRange, Predicate<BlockPos> ignore)
+	{	
+		Set<BlockPos> blocks = new HashSet<>();
+		
+		Queue<BlockPos> blockQueue = new LinkedList<>();
+		blockQueue.add(center);
+		
+		while (!blockQueue.isEmpty())
+		{
+			BlockPos pos = blockQueue.remove();
+			
+			for (EnumFacing facing : EnumFacing.VALUES)
+			{
+				if (facing.getAxis() == axis)
+					continue;
+				BlockPos shift = pos.offset(facing);
+				if (shift.getX() - center.getX() > maxRange || center.getX() - shift.getX() > maxRange)
+					continue;
+				if (shift.getY() - center.getY() > maxRange || center.getY() - shift.getY() > maxRange)
+					continue;
+				if (shift.getZ() - center.getZ() > maxRange || center.getZ() - shift.getZ() > maxRange)
+					continue;
+				if (blocks.contains(shift))
+					continue;
+				if (ignore.test(shift))
+					continue;
+				blocks.add(shift);
+				blockQueue.add(shift);
+				if (blocks.size() >= maxBlocks)
+					break;
+			}
+			
+			if (blocks.size() >= maxBlocks)
+				break;
+		}
+		
+		return blocks;
+	}
+	
+	public static Set<BlockPos> blocksInSquare(BlockPos center, EnumFacing facing, int maxBlocks, int maxRange, Predicate<BlockPos> ignore)
+	{
+		return blocksInSquare(center, facing.getAxis(), maxBlocks, maxRange, ignore);
 	}
 }
