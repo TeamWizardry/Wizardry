@@ -5,8 +5,11 @@ import com.teamwizardry.librarianlib.features.base.item.ItemMod;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.utilities.client.TooltipHelper;
 import com.teamwizardry.wizardry.api.capability.mana.CapManager;
+import com.teamwizardry.wizardry.common.block.fluid.ModFluids;
 import com.teamwizardry.wizardry.common.core.DamageSourceMana;
 import com.teamwizardry.wizardry.init.ModPotions;
+import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
@@ -16,10 +19,13 @@ import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -58,7 +64,7 @@ public class ItemSyringe extends ItemMod {
 
 	@Override
 	public int getMaxItemUseDuration(ItemStack stack) {
-		return 60;
+		return 30;
 	}
 
 	@Override
@@ -77,22 +83,36 @@ public class ItemSyringe extends ItemMod {
 				player.attackEntityFrom(DamageSourceMana.INSTANCE, 2);
 				stack.setItemDamage(0);
 			} else if (stack.getItemDamage() == 0) {
-				player.attackEntityFrom(DamageSource.causePlayerDamage((EntityPlayer) player), 2);
-				stack.setItemDamage(3);
-				ItemNBTHelper.setUUID(stack, "uuid", player.getUniqueID());
+
+				RayTraceResult raytraceresult = this.rayTrace(player.world, (EntityPlayer) player, true);
+
+				if (raytraceresult.typeOfHit == RayTraceResult.Type.BLOCK) {
+					BlockPos blockpos = raytraceresult.getBlockPos();
+
+					if (player.world.isBlockModifiable((EntityPlayer) player, blockpos)
+							&& ((EntityPlayer) player).canPlayerEdit(blockpos.offset(raytraceresult.sideHit), raytraceresult.sideHit, stack)) {
+
+						IBlockState iblockstate = player.world.getBlockState(blockpos);
+
+						Fluid fluid = FluidRegistry.lookupFluidForBlock(iblockstate.getBlock());
+						if (fluid != null && fluid == ModFluids.MANA && iblockstate.getValue(BlockLiquid.LEVEL) == 0) {
+							stack.setItemDamage(1);
+						}
+					}
+				}
 			}
 		}
 	}
 
 	@Override
 	public boolean onLeftClickEntity(ItemStack stack, EntityPlayer player, Entity entity) {
-		if (stack.getItemDamage() == 0) {
-			entity.attackEntityFrom(DamageSource.causePlayerDamage(player), 2);
-			stack.setItemDamage(3);
-			if (entity instanceof EntityPlayer)
-				ItemNBTHelper.setUUID(stack, "uuid", entity.getUniqueID());
-			else ItemNBTHelper.setString(stack, "entity", entity.getName());
-		}
+		//if (stack.getItemDamage() == 0) {
+		//	entity.attackEntityFrom(DamageSource.causePlayerDamage(player), 2);
+		//	stack.setItemDamage(3);
+		//	if (entity instanceof EntityPlayer)
+		//		ItemNBTHelper.setUUID(stack, "uuid", entity.getUniqueID());
+		//	else ItemNBTHelper.setString(stack, "entity", entity.getName());
+		//}
 		return false;
 	}
 

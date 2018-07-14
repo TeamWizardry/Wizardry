@@ -1,13 +1,13 @@
 {
-  "type": "wizardry:fluid_shapeless",
+  "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
       "item": "wizardry:syringe",
       "data": 0
     },
     {
-      "type": "wizardry:fluid",
-      "fluid": "mana_fluid"
+      "item": "wizardry:mana_orb",
+      "data": 1
     }
   ],
   "result": {
