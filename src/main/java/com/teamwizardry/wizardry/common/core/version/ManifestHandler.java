@@ -176,6 +176,7 @@ public class ManifestHandler {
 					JsonElement categoryElement = categorySet.getValue();
 
 					externalManifestMap.putIfAbsent(category, new HashMap<>());
+					Wizardry.logger.info("    >  |");
 					Wizardry.logger.info("    >  |_ Category found: " + category);
 
 					if (categoryElement.isJsonArray()) {

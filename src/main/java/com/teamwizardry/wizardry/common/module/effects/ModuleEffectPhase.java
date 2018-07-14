@@ -74,11 +74,10 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 		BlockPos targetPos = spell.getTargetPos();
 		if (targetPos == null) return;
 
-		NemezTracker nemezDrive = SpellNemezTracker.getNemezDrive(spell.world, targetPos);
+		NemezTracker nemezDrive = SpellNemezTracker.getAndRemoveNemezDrive(spell.world, targetPos);
 
 		if (nemezDrive != null) {
 			NemezEventHandler.reverseTime(spell.world, nemezDrive, targetPos);
-			SpellNemezTracker.removeNemezDrive(spell.world, targetPos);
 		}
 	}
 

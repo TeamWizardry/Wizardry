@@ -138,13 +138,13 @@ public class StandardWizardryWorld implements WizardryWorld {
 		}
 
 		if (compound.hasKey("drives")) {
-			NBTTagList delayedNBT = compound.getTagList("drives", Constants.NBT.TAG_COMPOUND);
-			for (NBTBase base : delayedNBT) {
+			NBTTagList driveNBT = compound.getTagList("drives", Constants.NBT.TAG_COMPOUND);
+			for (NBTBase base : driveNBT) {
 				if (base instanceof NBTTagCompound) {
 					if (((NBTTagCompound) base).hasKey("pos") && ((NBTTagCompound) base).hasKey("drive")) {
-						BlockPos pos = BlockPos.fromLong(compound.getLong("pos"));
+						BlockPos pos = BlockPos.fromLong(((NBTTagCompound) base).getLong("pos"));
 						NemezTracker tracker = new NemezTracker();
-						tracker.deserializeNBT(((NBTTagCompound) base).getTagList("drive", Constants.NBT.TAG_LIST));
+						tracker.deserializeNBT(((NBTTagCompound) base).getTagList("drive", Constants.NBT.TAG_COMPOUND));
 
 						nemezDrives.put(pos, tracker);
 					}

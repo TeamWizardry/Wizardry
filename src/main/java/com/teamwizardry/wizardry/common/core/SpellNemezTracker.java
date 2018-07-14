@@ -21,17 +21,14 @@ public class SpellNemezTracker {
 	}
 
 	@Nullable
-	public static NemezTracker getNemezDrive(World world, BlockPos pos) {
+	public static NemezTracker getAndRemoveNemezDrive(World world, BlockPos pos) {
 		WizardryWorld worldCap = WizardryWorldCapability.get(world);
 
-		if (worldCap.getNemezDrives().containsKey(pos))
-			return worldCap.getNemezDrives().get(pos);
+		if (worldCap.getNemezDrives().containsKey(pos)) {
+			NemezTracker tracker = worldCap.getNemezDrives().get(pos);
+			worldCap.removeNemezDrive(pos);
+			return tracker;
+		}
 		return null;
-	}
-
-	public static void removeNemezDrive(World world, BlockPos pos) {
-		WizardryWorld worldCap = WizardryWorldCapability.get(world);
-
-		worldCap.removeNemezDrive(pos);
 	}
 }
