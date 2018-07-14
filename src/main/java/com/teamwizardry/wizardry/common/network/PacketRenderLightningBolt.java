@@ -32,6 +32,7 @@ public class PacketRenderLightningBolt extends PacketBase {
 		this.from = from;
 		this.to = to;
 		this.seed = seed;
+		this.offshootRange = offshootRange;
 	}
 
 	@Override

@@ -250,6 +250,6 @@ public class ModuleEffectLightning extends ModuleEffect implements IOverrideCool
 
 	@Override
 	public int getNewCooldown(@Nonnull SpellData spell, SpellRing ring) {
-		return 30;
+		return 0;
 	}
 }

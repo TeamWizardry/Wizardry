@@ -5,6 +5,7 @@ import java.util.Collections;
 
 import com.teamwizardry.librarianlib.features.math.interpolate.InterpFunction;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpLine;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.util.RandUtilSeed;
 import com.teamwizardry.wizardry.api.util.TreeNode;
 
@@ -65,7 +66,16 @@ public class LightningGenerator
 				double scale = rand.nextDouble(offshootRange/2, offshootRange);
 				float pitch = rand.nextFloat(2*ANGLE_OFFSET_RADS, 3*ANGLE_OFFSET_RADS) * (rand.nextBoolean() ? 1 : -1);
 				float yaw = rand.nextFloat(2*ANGLE_OFFSET_RADS, 3*ANGLE_OFFSET_RADS) * (rand.nextBoolean() ? 1 : -1);
-				Vec3d newTo = bolt.getData().subtract(bolt.getParent().getData()).normalize().rotatePitch(pitch).rotateYaw(yaw).scale(4*scale).add(bolt.getData());
+				Vec3d newTo = bolt.getData();
+				
+				Vec3d newDiff = newTo.subtract(from.getData());
+				Vec3d newNorm = newDiff.normalize();
+				Vec3d newDir = newNorm.rotatePitch(pitch).rotateYaw(yaw).normalize();
+				
+				newTo = newDir.scale(newNorm.dotProduct(newDiff) / newNorm.dotProduct(newDir)).normalize().scale(scale).add(bolt.getData());
+				
+				Wizardry.logger.info(newTo.subtract(bolt.getData()).lengthVector());
+				
 				LightningGenerator.generateOffshoot(rand, bolt, newTo, scale, numBranchesLeft-1);
 			}
 		}
