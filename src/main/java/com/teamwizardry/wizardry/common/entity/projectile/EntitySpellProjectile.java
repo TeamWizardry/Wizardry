@@ -150,35 +150,38 @@ public class EntitySpellProjectile extends EntityMod {
 
 
 		if (world.isRemote && !isDead) {
-			ClientRunnable.run(() -> {
+			ClientRunnable.run(new ClientRunnable() {
+				@Override
+				@SideOnly(Side.CLIENT)
+				public void runIfClient() {
+					if (spellRing.getModule() instanceof ModuleShape)
+						if (((ModuleShape) spellRing.getModule()).runRenderOverrides(spellData, spellRing))
+							return;
 
-				if (spellRing.getModule() instanceof ModuleShape)
-					if (((ModuleShape) spellRing.getModule()).runRenderOverrides(spellData, spellRing))
-						return;
+					ParticleBuilder glitter = new ParticleBuilder(10);
+					glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+					glitter.enableMotionCalculation();
+					glitter.setCollision(true);
+					glitter.setCanBounce(true);
+					glitter.setColorFunction(new InterpColorHSV(spellRing.getPrimaryColor(), spellRing.getSecondaryColor()));
+					glitter.setAcceleration(new Vec3d(0, -0.015, 0));
+					ParticleSpawner.spawn(glitter, world, new StaticInterp<>(getPositionVector().add(new Vec3d(motionX, motionY, motionZ))), 5, 0, (aFloat, particleBuilder) -> {
+						particleBuilder.setScaleFunction(new InterpScale((float) RandUtil.nextDouble(0.3, 0.8), 0));
+						particleBuilder.setLifetime(RandUtil.nextInt(40, 60));
+						particleBuilder.addMotion(new Vec3d(
+								RandUtil.nextDouble(-0.03, 0.03),
+								RandUtil.nextDouble(-0.01, 0.05),
+								RandUtil.nextDouble(-0.03, 0.03)
+						));
+					});
 
-				ParticleBuilder glitter = new ParticleBuilder(10);
-				glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-				glitter.enableMotionCalculation();
-				glitter.setCollision(true);
-				glitter.setCanBounce(true);
-				glitter.setColorFunction(new InterpColorHSV(spellRing.getPrimaryColor(), spellRing.getSecondaryColor()));
-				glitter.setAcceleration(new Vec3d(0, -0.015, 0));
-				ParticleSpawner.spawn(glitter, world, new StaticInterp<>(getPositionVector().add(new Vec3d(motionX, motionY, motionZ))), 5, 0, (aFloat, particleBuilder) -> {
-					particleBuilder.setScaleFunction(new InterpScale((float) RandUtil.nextDouble(0.3, 0.8), 0));
-					particleBuilder.setLifetime(RandUtil.nextInt(40, 60));
-					particleBuilder.addMotion(new Vec3d(
-							RandUtil.nextDouble(-0.03, 0.03),
-							RandUtil.nextDouble(-0.01, 0.05),
-							RandUtil.nextDouble(-0.03, 0.03)
-					));
-				});
-
-				glitter.disableMotionCalculation();
-				glitter.setMotion(Vec3d.ZERO);
-				ParticleSpawner.spawn(glitter, world, new StaticInterp<>(getPositionVector()), 5, 0, (aFloat, particleBuilder) -> {
-					particleBuilder.setScaleFunction(new InterpScale(RandUtil.nextFloat(1f, 2), 0));
-					particleBuilder.setLifetime(RandUtil.nextInt(5, 10));
-				});
+					glitter.disableMotionCalculation();
+					glitter.setMotion(Vec3d.ZERO);
+					ParticleSpawner.spawn(glitter, world, new StaticInterp<>(getPositionVector()), 5, 0, (aFloat, particleBuilder) -> {
+						particleBuilder.setScaleFunction(new InterpScale(RandUtil.nextFloat(1f, 2), 0));
+						particleBuilder.setLifetime(RandUtil.nextInt(5, 10));
+					});
+				}
 			});
 			return;
 		}
@@ -242,6 +245,7 @@ public class EntitySpellProjectile extends EntityMod {
 
 	/**
 	 * Called when the projectile entity hits another block or entity, or reaches the end of its path.
+	 *
 	 * @param data The {@link SpellData} attached to the spell.
 	 */
 	protected void goBoom(SpellRing spellRing, SpellData data) {
