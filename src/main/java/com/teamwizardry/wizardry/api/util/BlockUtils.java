@@ -1,18 +1,7 @@
 package com.teamwizardry.wizardry.api.util;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Set;
-import java.util.UUID;
-import java.util.function.Predicate;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.mojang.authlib.GameProfile;
 import com.teamwizardry.wizardry.init.ModBlocks;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -31,6 +20,11 @@ import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * Created by Demoniaque.
@@ -153,7 +147,7 @@ public final class BlockUtils {
 		return true;
 	}
 
-	public static Set<BlockPos> blocksInSquare(BlockPos center, Axis axis, int maxBlocks, int maxRange, Predicate<BlockPos> ignore)
+	public static Set<BlockPos> blocksInSquare(BlockPos center, Axis axis, int maxRange, int maxBlocks, Predicate<BlockPos> ignore)
 	{	
 		Set<BlockPos> blocks = new HashSet<>();
 		

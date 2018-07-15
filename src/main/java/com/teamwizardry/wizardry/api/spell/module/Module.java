@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.api.spell.module;
 
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
+import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.capability.world.WizardryWorld;
 import com.teamwizardry.wizardry.api.capability.world.WizardryWorldCapability;
@@ -21,8 +22,13 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -36,10 +42,8 @@ import org.lwjgl.opengl.GL11;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.BLOCKSTATE_CACHE;
 import static com.teamwizardry.wizardry.api.util.PosUtils.getPerpendicularFacings;
@@ -85,6 +89,121 @@ public abstract class Module {
 	@SideOnly(Side.CLIENT)
 	public SpellData renderVisualization(@Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
 		return new SpellData(data.world);
+	}
+
+	@Nullable
+	public final ItemStack getAvailableStack(Collection<ItemStack> stacks) {
+		for (ItemStack stack : stacks) {
+			if (stack.isEmpty()) continue;
+			return stack;
+		}
+		return null;
+	}
+
+	/**
+	 * Will return the blockstate if one is selected when shift right clicking on a block in the stack.
+	 *
+	 * @param caster gets the caster's held item for convenience.
+	 */
+	@Nullable
+	public final IBlockState getSelectedBlockState(EntityLivingBase caster) {
+		ItemStack hand = caster.getHeldItemMainhand();
+		if (hand.isEmpty()) return null;
+		if (ItemNBTHelper.verifyExistence(hand, "selected")) {
+
+			NBTTagCompound compound = ItemNBTHelper.getCompound(hand, "selected");
+			if (compound == null) return null;
+
+			return NBTUtil.readBlockState(compound);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Gets all of the itemstacks in the player's inventory that match a given itemstack
+	 * Modified to take a blockstate instead for convenience.
+	 */
+	public final List<ItemStack> getAllOfStackFromInventory(@Nonnull EntityPlayer player, @Nonnull IBlockState state) {
+		List<ItemStack> stacks = new ArrayList<>();
+
+		World world = player.world;
+		ItemStack search = state.getBlock().getItem(world, null, state);
+
+		if (search.isEmpty()) return stacks;
+
+		for (ItemStack stack : player.inventory.mainInventory) {
+			if (stack == null || stack.isEmpty()) continue;
+			if (!(stack.getItem() instanceof ItemBlock)) continue;
+
+			if (!ItemStack.areItemsEqual(stack, search)) continue;
+
+			stacks.add(stack);
+		}
+
+		return stacks;
+	}
+
+	/**
+	 * Gets all of the itemstacks in the player's inventory that match a given itemstack
+	 */
+	public final List<ItemStack> getAllOfStackFromInventory(@Nonnull EntityPlayer player, @Nonnull ItemStack search) {
+		List<ItemStack> stacks = new ArrayList<>();
+
+		if (search.isEmpty()) return stacks;
+
+		for (ItemStack stack : player.inventory.mainInventory) {
+			if (stack == null || stack.isEmpty()) continue;
+			if (!(stack.getItem() instanceof ItemBlock)) continue;
+
+			if (!ItemStack.areItemsEqual(stack, search)) continue;
+
+			stacks.add(stack);
+		}
+
+		return stacks;
+	}
+
+	/**
+	 * Convenience method for Module#getAllOfStackFromInventory
+	 * Modified to take a blockstate instead for convenience.
+	 */
+	public final int getCountOfStackFromInventory(@Nonnull EntityPlayer player, @Nonnull IBlockState state) {
+		World world = player.world;
+		ItemStack search = state.getBlock().getItem(world, null, state);
+
+		List<ItemStack> stacks = getAllOfStackFromInventory(player, search);
+		int count = 0;
+		for (ItemStack stack : stacks) {
+			count += stack.getCount();
+		}
+
+		return count;
+	}
+
+	/**
+	 * Convenience method for Module#getAllOfStackFromInventory
+	 */
+	public final int getCountOfStackFromInventory(@Nonnull EntityPlayer player, @Nonnull ItemStack search) {
+		List<ItemStack> stacks = getAllOfStackFromInventory(player, search);
+		int count = 0;
+		for (ItemStack stack : stacks) {
+			count += stack.getCount();
+		}
+
+		return count;
+	}
+
+	/**
+	 * Convenience method for Module#getAllOfStackFromInventory
+	 */
+	public final int getCountOfStacks(@Nonnull Collection<ItemStack> stacks) {
+		int count = 0;
+		for (ItemStack stack : stacks) {
+			count += stack.getCount();
+		}
+
+		return count;
 	}
 
 	/**

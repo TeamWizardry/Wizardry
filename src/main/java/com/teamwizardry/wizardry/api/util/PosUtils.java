@@ -33,7 +33,6 @@ public final class PosUtils {
 		symmetricFacingValues.add(EnumFacing.NORTH);
 	}
 
-
 	public static EnumFacing[] getPerpendicularFacings(EnumFacing facing) {
 		switch (facing) {
 			case DOWN:

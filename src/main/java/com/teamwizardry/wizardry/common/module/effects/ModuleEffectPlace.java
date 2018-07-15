@@ -9,18 +9,15 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
-import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseAOE;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -32,7 +29,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -66,54 +62,50 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 
 		if (facing == null) return true;
 
-		Set<EnumFacing> facings = new HashSet<>();
-		for (EnumFacing facing1 : EnumFacing.VALUES) {
-			if (facing1 == facing || facing1 == facing.getOpposite()) continue;
-			facings.add(facing1);
-		}
-
 		double area = spellRing.getAttributeValue(AttributeRegistry.AREA, spell);
 
 		if (targetPos == null) return true;
 
-		if (caster != null && caster.getEntityData().hasKey("selected")) {
-			IBlockState state = NBTUtil.readBlockState(caster.getEntityData().getCompoundTag("selected"));
-			Block block = world.getBlockState(targetPos).getBlock();
+		if (caster instanceof EntityPlayer) {
+			IBlockState selected = getSelectedBlockState((EntityPlayer) caster);
+			if (selected == null) return true;
 
-			HashSet<BlockPos> branch = new HashSet<>();
-			HashSet<BlockPos> blocks = new HashSet<>();
-			branch.add(targetPos);
-			blocks.add(targetPos);
-			getBlocks(world, block, facings, (int) area, branch, blocks);
-			for (BlockPos ignored : blocks) {
+			IBlockState targetState = world.getBlockState(targetPos);
+			List<ItemStack> stacks = getAllOfStackFromInventory((EntityPlayer) caster, selected);
+			if (stacks.isEmpty()) return true;
 
-				BlockPos pos = ignored.offset(facing);
+			int stackCount = getCountOfStacks(stacks);
+			Set<BlockPos> blocks = BlockUtils.blocksInSquare(targetPos, facing, (int) area, stackCount, pos -> {
+				if (BlockUtils.isAnyAir(targetState)) return true;
 
-				ItemStack stackBlock = null;
-				for (ItemStack stack : ((EntityPlayer) caster).inventory.mainInventory) {
-					if (stack.isEmpty()) continue;
-					if (!(stack.getItem() instanceof ItemBlock)) continue;
+				BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(pos);
+				IBlockState adjacentState = world.getBlockState(mutable.offset(facing));
+				if (adjacentState.getBlock() != Blocks.AIR) return true;
 
-					ItemStack stack1 = state.getBlock().getItem(world, null, state);
-					if (stack1.isEmpty()) continue;
-					if (!ItemStack.areItemsEqual(stack, stack1)) continue;
-					stackBlock = stack;
-					break;
-				}
+				IBlockState state = world.getBlockState(pos);
+				return state.getBlock() != targetState.getBlock();
+			});
+			if (blocks.isEmpty()) {
+				blocks.add(targetPos);
+			}
 
-				if (stackBlock == null) return true;
-
-				if (!world.isAirBlock(pos)) continue;
+			for (BlockPos areaPos : blocks) {
 				if (!spellRing.taxCaster(spell)) return false;
-				//stackBlock.shrink(1);
+
+				BlockPos pos = blocks.size() > 1 ? areaPos.offset(facing) : areaPos;
+
 				IBlockState oldState = world.getBlockState(pos);
 
-				BlockUtils.placeBlock(world, pos, facing, stackBlock);
-				world.playSound(null, pos, state.getBlock().getSoundType(state, world, pos, caster).getPlaceSound(), SoundCategory.BLOCKS, 1f, 1f);
+				ItemStack availableStack = getAvailableStack(stacks);
+				if (availableStack == null) return true;
+
+				BlockUtils.placeBlock(world, pos, facing, availableStack);
+				world.playSound(null, pos, selected.getBlock().getSoundType(selected, world, pos, caster).getPlaceSound(), SoundCategory.BLOCKS, 1f, 1f);
 				((EntityPlayer) caster).inventory.addItemStackToInventory(new ItemStack(oldState.getBlock().getItemDropped(oldState, spell.world.rand, 0)));
 			}
-		} else if (caster == null) {
-			if (!world.isAirBlock(targetPos)) return true;
+
+		} else {
+			if (!BlockUtils.isAnyAir(world, targetPos)) return true;
 			if (!spellRing.taxCaster(spell)) return false;
 
 			List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(targetPos).grow(3, 3, 3));
@@ -123,50 +115,12 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 			if (item == null) return true;
 
 			if (item.getItem().getItem() instanceof ItemBlock) {
-				item.getItem().shrink(1);
 
 				BlockUtils.placeBlock(world, targetPos, facing, item.getItem());
 				world.playSound(null, targetPos, ((ItemBlock) item.getItem().getItem()).getBlock().getSoundType(((ItemBlock) item.getItem().getItem()).getBlock().getDefaultState(), world, targetPos, caster).getPlaceSound(), SoundCategory.BLOCKS, 1f, 1f);
 			}
 		}
 		return true;
-	}
-
-	private void getBlocks(World world, Block block, Set<EnumFacing> facingSet, int maxBlocks, HashSet<BlockPos> branch, HashSet<BlockPos> allBlocks) {
-		if (allBlocks.size() >= maxBlocks) return;
-
-		HashSet<BlockPos> newBranch = new HashSet<>();
-
-		for (BlockPos branchPos : branch) {
-			for (EnumFacing facing : facingSet) {
-				BlockPos posAdj = branchPos.offset(facing);
-				IBlockState state = world.getBlockState(posAdj);
-
-				if (!world.isBlockLoaded(posAdj)) continue;
-				if (allBlocks.contains(posAdj)) continue;
-				if (state.getBlock() != block) continue;
-
-				boolean sideSolid = false;
-				for (EnumFacing dir : PosUtils.symmetricFacingValues) {
-					BlockPos adjPos = branchPos.offset(dir);
-					IBlockState adjState = world.getBlockState(adjPos);
-					if (!adjState.isSideSolid(world, adjPos, dir.getOpposite())) {
-						sideSolid = true;
-						break;
-					}
-				}
-				if (!sideSolid) continue;
-
-				if (allBlocks.size() >= maxBlocks) return;
-
-				newBranch.add(posAdj);
-				allBlocks.add(posAdj);
-			}
-		}
-		boolean mismatched = false;
-		for (BlockPos pos : branch) if (!newBranch.contains(pos)) mismatched = true;
-		if (mismatched)
-			getBlocks(world, block, facingSet, maxBlocks, newBranch, allBlocks);
 	}
 
 	@Override
@@ -189,54 +143,54 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 			return previousData;
 
 		BlockPos targetPos = data.getData(SpellData.DefaultKeys.BLOCK_HIT);
-		Entity targetEntity = data.getVictim();
 		EnumFacing facing = data.getFaceHit();
+		Entity caster = data.getCaster();
 
-		if (facing == null) return previousData;
+		if (facing == null || targetPos == null) return previousData;
 
-		double range = ring.getAttributeValue(AttributeRegistry.AREA, data);
-		double strength = ring.getAttributeValue(AttributeRegistry.POTENCY, data);
+		double area = ring.getAttributeValue(AttributeRegistry.AREA, data);
 
-		if (targetEntity instanceof EntityLivingBase)
-			for (ItemStack stack : targetEntity.getArmorInventoryList())
-				stack.damageItem((int) strength, (EntityLivingBase) targetEntity);
-		if (targetPos != null) {
+		if (caster instanceof EntityPlayer) {
+			IBlockState selected = getSelectedBlockState((EntityPlayer) caster);
+			if (selected == null) return previousData;
 
-			IBlockState state = getCachableBlockstate(data.world, targetPos, previousData);
-			if (BlockUtils.isAnyAir(state)) return previousData;
+			IBlockState targetState = data.world.getBlockState(targetPos);
+			List<ItemStack> stacks = getAllOfStackFromInventory((EntityPlayer) caster, selected);
+			if (stacks.isEmpty()) return previousData;
 
-			Set<EnumFacing> facings = new HashSet<>();
-			for (EnumFacing facing1 : EnumFacing.VALUES) {
-				if (facing1 == facing || facing1 == facing.getOpposite()) continue;
-				facings.add(facing1);
-			}
-
-			HashSet<BlockPos> branch = new HashSet<>();
-			HashSet<BlockPos> blocks = new HashSet<>();
-			branch.add(targetPos);
-			blocks.add(targetPos);
-			getBlocks(data.world, state.getBlock(), facings, (int) range, branch, blocks);
-
-			if (blocks.isEmpty()) return previousData;
-
-			for (BlockPos pos : blocks) {
+			int stackCount = getCountOfStacks(stacks);
+			Set<BlockPos> blocks = BlockUtils.blocksInSquare(targetPos, facing, (int) area, stackCount, pos -> {
+				if (BlockUtils.isAnyAir(targetState)) return true;
 
 				BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(pos);
-				for (EnumFacing facing1 : EnumFacing.VALUES) {
+				IBlockState adjacentState = getCachableBlockstate(data.world, mutable.offset(facing), previousData);
+				if (adjacentState.getBlock() != Blocks.AIR) return true;
 
-					mutable.move(facing1);
+				IBlockState state = getCachableBlockstate(data.world, pos, previousData);
+				return state.getBlock() != targetState.getBlock();
+			});
 
-					IBlockState adjStat = getCachableBlockstate(data.world, mutable, previousData);
+			if (blocks.isEmpty()) {
+				if (targetState.getBlock() == Blocks.AIR)
+					drawCubeOutline(data.world, targetPos, targetState);
+				else drawFaceOutline(targetPos, facing);
+			} else
+				for (BlockPos areaPos : blocks) {
+					BlockPos pos = areaPos.offset(facing);
 
-					if (adjStat.getBlock() != state.getBlock() || !blocks.contains(mutable)) {
+					BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(pos);
+					for (EnumFacing facing1 : EnumFacing.VALUES) {
 
-						drawFaceOutline(mutable, facing1.getOpposite());
+						mutable.move(facing1);
+
+						if (blocks.contains(mutable)) {
+
+							drawFaceOutline(mutable, facing1.getOpposite());
+						}
+						mutable.move(facing1.getOpposite());
 					}
-					mutable.move(facing1.getOpposite());
 				}
-			}
 		}
-
 		return previousData;
 	}
 }
