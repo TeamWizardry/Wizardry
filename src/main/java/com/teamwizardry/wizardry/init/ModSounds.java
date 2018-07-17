@@ -46,8 +46,12 @@ public class ModSounds {
 	public static ModSoundEvent WHOOSH;
 	public static ModSoundEvent WING_FLAP;
 	public static ModSoundEvent ZOOM;
+	public static ModSoundEvent GOOD_ETHEREAL_CHILLS;
+	public static ModSoundEvent SCRIBBLING;
 
 	public static void init() {
+		SCRIBBLING = new ModSoundEvent("scribbling");
+		GOOD_ETHEREAL_CHILLS = new ModSoundEvent("good_ethereal_chills");
 		ZOOM = new ModSoundEvent("zoom");
 		WING_FLAP = new ModSoundEvent("wing_flap");
 		WHOOSH = new ModSoundEvent("whoosh");

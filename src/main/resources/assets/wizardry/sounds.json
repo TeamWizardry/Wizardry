@@ -205,5 +205,17 @@
 		"sounds": [
 			"wizardry:sparkle"
 		]
+    },
+  "scribbling": {
+    "sounds": [
+      "wizardry:scribbling_1",
+      "wizardry:scribbling_2",
+      "wizardry:scribbling_3"
+    ]
+  },
+  "good_ethereal_chills": {
+    "sounds": [
+      "wizardry:good_ethereal_chills"
+    ]
 	}
 }

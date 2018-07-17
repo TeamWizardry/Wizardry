@@ -409,14 +409,14 @@ public class WorktableGui extends GuiBase {
 						new Keyframe(1f, originalPos.getY(), Easing.easeInBack)
 				});
 
-				ScheduledEventAnimation soundAnim = new ScheduledEventAnimation(120 * 0.8f, () -> Minecraft.getMinecraft().player.playSound(ModSounds.BELL_TING, 1f, 1f));
-
 				anim.setCompletion(() -> {
 					fakePaper.invalidate();
 					animationPlaying = false;
 				});
 
-				bookIcon.add(anim, soundAnim);
+				ScheduledEventAnimation animSound = new ScheduledEventAnimation(120 * 0.5f, () -> Minecraft.getMinecraft().player.playSound(ModSounds.SCRIBBLING, 1f, 1f));
+
+				bookIcon.add(anim, animSound);
 
 			}
 
@@ -475,12 +475,18 @@ public class WorktableGui extends GuiBase {
 					Vec2d random = fakeModule.getPos().add(RandUtil.nextDouble(-10, 10), RandUtil.nextDouble(-10, 10));
 
 					float delay = RandUtil.nextFloat(0.2f, 0.3f);
-					float dur = RandUtil.nextFloat(80, 100);
+					float dur = RandUtil.nextFloat(70, 100);
 
 
 					ScheduledEventAnimation animSound1 = new ScheduledEventAnimation(dur * delay, () -> Minecraft.getMinecraft().player.playSound(ModSounds.POP, 1f, 1f));
 
-					ScheduledEventAnimation animSound2 = new ScheduledEventAnimation(dur * 0.6f, () -> Minecraft.getMinecraft().player.playSound(ModSounds.WHOOSH, 1f, 1f));
+					ScheduledEventAnimation animSound2 = new ScheduledEventAnimation(dur * 0.5f, () -> Minecraft.getMinecraft().player.playSound(ModSounds.WHOOSH, 1f, 1f));
+
+					ScheduledEventAnimation animSound3 = new ScheduledEventAnimation(dur * 0.8f, () -> {
+					}); //Minecraft.getMinecraft().player.playSound(ModSounds.WHOOSH, 1f, 1f));
+
+					ScheduledEventAnimation animSound4 = new ScheduledEventAnimation(dur * 0.6f, () -> {
+					});//Minecraft.getMinecraft().player.playSound(ModSounds.CHORUS_GOOD, 1f, 1f));
 
 					KeyframeAnimation<TableModule> animX = new KeyframeAnimation<>(fakeModule, "pos.x");
 					animX.setDuration(dur);
@@ -502,7 +508,7 @@ public class WorktableGui extends GuiBase {
 
 					animY.setCompletion(fakeModule::invalidate);
 
-					fakeModule.add(animX, animY, animSound1, animSound2);
+					fakeModule.add(animX, animY, animSound1, animSound2, animSound3, animSound4);
 				}
 			}
 		};
