@@ -98,10 +98,11 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 		if (targetEntity instanceof EntityLivingBase) {
 			EntityLivingBase entity = (EntityLivingBase) targetEntity;
 			entity.addPotionEffect(new PotionEffect(ModPotions.PHASE, (int) duration, 0, true, false));
-			spell.world.playSound(null, targetEntity.getPosition(), ModSounds.ETHEREAL_PASS_BY, SoundCategory.NEUTRAL, 1, 1);
+			spell.world.playSound(null, targetEntity.getPosition(), ModSounds.ETHEREAL, SoundCategory.NEUTRAL, 1, 1);
 		}
 
 		if (targetPos != null && faceHit != null) {
+			spell.world.playSound(null, targetPos, ModSounds.ETHEREAL, SoundCategory.NEUTRAL, 1, 1);
 			NemezTracker nemezDrive = SpellNemezTracker.getOrCreateNemezDrive(spell.world, targetPos);
 			BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(targetPos);
 

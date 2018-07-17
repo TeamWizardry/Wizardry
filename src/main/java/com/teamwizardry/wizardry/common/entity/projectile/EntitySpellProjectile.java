@@ -138,6 +138,7 @@ public class EntitySpellProjectile extends EntityMod {
 	@Override
 	public void onUpdate() {
 		super.onUpdate();
+		if (isDead) return;
 
 		SpellRing spellRing = getSpellRing();
 		SpellData spellData = getSpellData();
@@ -147,7 +148,6 @@ public class EntitySpellProjectile extends EntityMod {
 			world.removeEntity(this);
 			return;
 		}
-
 
 		if (world.isRemote && !isDead) {
 			ClientRunnable.run(new ClientRunnable() {
@@ -191,6 +191,7 @@ public class EntitySpellProjectile extends EntityMod {
 		rotationPitch = spellData.getData(PITCH, 0F);
 		rotationYaw = spellData.getData(YAW, 0F);
 		Vec3d look = spellData.getData(LOOK);
+
 		if (look == null) {
 			setDead();
 			world.removeEntity(this);
@@ -202,8 +203,6 @@ public class EntitySpellProjectile extends EntityMod {
 			goBoom(spellRing, spellData);
 			return;
 		}
-
-		if (isDead) return;
 
 		if (!collided) {
 

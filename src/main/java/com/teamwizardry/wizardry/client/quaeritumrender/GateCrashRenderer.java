@@ -131,8 +131,8 @@ public class GateCrashRenderer {
 			float x1 = MathHelper.cos(angle) * innerRadius;
 			float y1 = MathHelper.sin(angle) * innerRadius;
 
-			float x2 = MathHelper.cos(nextAngle) * outerRadius;
-			float y2 = MathHelper.sin(nextAngle) * outerRadius;
+			float x2 = MathHelper.cos(angle) * outerRadius;
+			float y2 = MathHelper.sin(angle) * outerRadius;
 
 			vb.pos(x1, y1, 0).color(inner.getRed(), inner.getGreen(), inner.getBlue(), inner.getAlpha()).endVertex();
 			vb.pos(x2, y2, 0).color(outer.getRed(), outer.getGreen(), outer.getBlue(), outer.getAlpha()).endVertex();

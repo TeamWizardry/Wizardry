@@ -38,8 +38,24 @@ public class ModSounds {
 	public static ModSoundEvent ZAP;
 	public static ModSoundEvent ELECTRIC_WHITE_NOISE;
 	public static ModSoundEvent SPARKLE;
+	public static ModSoundEvent POP;
+	public static ModSoundEvent BELL_TING;
+	public static ModSoundEvent BUTTON_CLICK_IN;
+	public static ModSoundEvent BUTTON_CLICK_OUT;
+	public static ModSoundEvent ETHEREAL;
+	public static ModSoundEvent WHOOSH;
+	public static ModSoundEvent WING_FLAP;
+	public static ModSoundEvent ZOOM;
 
 	public static void init() {
+		ZOOM = new ModSoundEvent("zoom");
+		WING_FLAP = new ModSoundEvent("wing_flap");
+		WHOOSH = new ModSoundEvent("whoosh");
+		ETHEREAL = new ModSoundEvent("ethereal");
+		BUTTON_CLICK_OUT = new ModSoundEvent("button_click_out");
+		BUTTON_CLICK_IN = new ModSoundEvent("button_click_in");
+		BELL_TING = new ModSoundEvent("bell_ting");
+		POP = new ModSoundEvent("pop");
 		GLASS_BREAK = new ModSoundEvent("glassbreak");
 		FIZZING_LOOP = new ModSoundEvent("fizzingloop");
 		FRYING_SIZZLE = new ModSoundEvent("firesizzleloop");

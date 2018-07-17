@@ -68,8 +68,6 @@ jar {
     }
 }
 
-
-
 processResources {
     inputs.property 'mod_version', project.version
     inputs.property 'mc_version', project.minecraft.version

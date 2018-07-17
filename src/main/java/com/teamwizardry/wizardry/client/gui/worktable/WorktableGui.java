@@ -27,6 +27,7 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleType;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.network.PacketSendSpellToBook;
 import com.teamwizardry.wizardry.init.ModItems;
+import com.teamwizardry.wizardry.init.ModSounds;
 import kotlin.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
@@ -152,6 +153,16 @@ public class WorktableGui extends GuiBase {
 						save.setSprite(BUTTON_HIGHLIGHTED);
 					else save.setSprite(BUTTON_NORMAL);
 				}
+			});
+
+			save.BUS.hook(GuiComponentEvents.MouseDownEvent.class, event -> {
+				if (event.component.getMouseOver())
+					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_IN, 1f, 1f);
+			});
+
+			save.BUS.hook(GuiComponentEvents.MouseUpEvent.class, event -> {
+				if (event.component.getMouseOver())
+					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_OUT, 1f, 1f);
 			});
 
 			save.BUS.hook(GuiComponentEvents.MouseClickEvent.class, (event) -> {
@@ -398,12 +409,14 @@ public class WorktableGui extends GuiBase {
 						new Keyframe(1f, originalPos.getY(), Easing.easeInBack)
 				});
 
+				ScheduledEventAnimation soundAnim = new ScheduledEventAnimation(120 * 0.8f, () -> Minecraft.getMinecraft().player.playSound(ModSounds.BELL_TING, 1f, 1f));
+
 				anim.setCompletion(() -> {
 					fakePaper.invalidate();
 					animationPlaying = false;
 				});
 
-				bookIcon.add(anim);
+				bookIcon.add(anim, soundAnim);
 
 			}
 
@@ -462,30 +475,34 @@ public class WorktableGui extends GuiBase {
 					Vec2d random = fakeModule.getPos().add(RandUtil.nextDouble(-10, 10), RandUtil.nextDouble(-10, 10));
 
 					float delay = RandUtil.nextFloat(0.2f, 0.3f);
+					float dur = RandUtil.nextFloat(80, 100);
+
+
+					ScheduledEventAnimation animSound1 = new ScheduledEventAnimation(dur * delay, () -> Minecraft.getMinecraft().player.playSound(ModSounds.POP, 1f, 1f));
+
+					ScheduledEventAnimation animSound2 = new ScheduledEventAnimation(dur * 0.6f, () -> Minecraft.getMinecraft().player.playSound(ModSounds.WHOOSH, 1f, 1f));
 
 					KeyframeAnimation<TableModule> animX = new KeyframeAnimation<>(fakeModule, "pos.x");
-					animX.setDuration(100);
+					animX.setDuration(dur);
 					animX.setKeyframes(new Keyframe[]{
 							new Keyframe(delay, fakeModule.getPos().getX() + 1, Easing.easeOutQuint),
 							new Keyframe(0.45f, random.getX(), Easing.easeOutQuint),
 							new Keyframe(0.6f, random.getX(), Easing.easeOutQuint),
 							new Keyframe(1f, (bookIconMask.getSize().getX() / 2.0) - 8, Easing.easeInOutQuint)
-
 					});
 
 					KeyframeAnimation<TableModule> animY = new KeyframeAnimation<>(fakeModule, "pos.y");
-					animY.setDuration(100);
+					animY.setDuration(dur);
 					animY.setKeyframes(new Keyframe[]{
 							new Keyframe(delay, fakeModule.getPos().getY() + 3, Easing.easeOutQuint),
 							new Keyframe(0.45f, random.getY(), Easing.easeOutQuint),
 							new Keyframe(0.6f, random.getY(), Easing.easeOutQuint),
 							new Keyframe(1f, -(bookIconMask.getSize().getY() / 2.0) - 4, Easing.easeInOutQuint)
-
 					});
 
 					animY.setCompletion(fakeModule::invalidate);
 
-					fakeModule.add(animX, animY);
+					fakeModule.add(animX, animY, animSound1, animSound2);
 				}
 			}
 		};

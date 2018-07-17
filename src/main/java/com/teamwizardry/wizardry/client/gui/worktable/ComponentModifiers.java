@@ -15,6 +15,8 @@ import com.teamwizardry.librarianlib.features.math.Vec2d;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.init.ModSounds;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.text.TextFormatting;
 
@@ -133,7 +135,9 @@ public class ComponentModifiers extends GuiComponent {
 				animPlate.setFrom(-PIXELS_PER_BAR); // units: pixels
 				animPlate.setTo(lengthToTravel - PIXELS_PER_BAR); // units: pixels
 				animPlate.setDuration(slideDuration); // units: ticks
-
+				animPlate.setCompletion(() -> {
+					Minecraft.getMinecraft().player.playSound(ModSounds.POP, 1f, 1f);
+				});
 				add(animPlate);
 
 				bar.render.getTooltip().func((Function<GuiComponent, List<String>>) t -> {
@@ -173,6 +177,7 @@ public class ComponentModifiers extends GuiComponent {
 
 					int status = -1;
 					if (event.getButton() == EnumMouseButton.LEFT) {
+						Minecraft.getMinecraft().player.playSound(ModSounds.POP, 1f, 1f);
 						worktable.selectedModule.setData(Integer.class, modifier.getID(), ++j);
 						status = 0;
 						worktable.setToastMessage("", Color.GREEN);
@@ -180,6 +185,7 @@ public class ComponentModifiers extends GuiComponent {
 						if (worktable.selectedModule.hasData(Integer.class, modifier.getID())) {
 
 							if (j > 0) {
+								Minecraft.getMinecraft().player.playSound(ModSounds.ZOOM, 1f, 1f);
 								worktable.selectedModule.setData(Integer.class, modifier.getID(), --j);
 
 								if (j <= 0) {
