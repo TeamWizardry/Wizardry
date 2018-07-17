@@ -482,12 +482,6 @@ public class WorktableGui extends GuiBase {
 
 					ScheduledEventAnimation animSound2 = new ScheduledEventAnimation(dur * 0.5f, () -> Minecraft.getMinecraft().player.playSound(ModSounds.WHOOSH, 1f, 1f));
 
-					ScheduledEventAnimation animSound3 = new ScheduledEventAnimation(dur * 0.8f, () -> {
-					}); //Minecraft.getMinecraft().player.playSound(ModSounds.WHOOSH, 1f, 1f));
-
-					ScheduledEventAnimation animSound4 = new ScheduledEventAnimation(dur * 0.6f, () -> {
-					});//Minecraft.getMinecraft().player.playSound(ModSounds.CHORUS_GOOD, 1f, 1f));
-
 					KeyframeAnimation<TableModule> animX = new KeyframeAnimation<>(fakeModule, "pos.x");
 					animX.setDuration(dur);
 					animX.setKeyframes(new Keyframe[]{
@@ -508,7 +502,7 @@ public class WorktableGui extends GuiBase {
 
 					animY.setCompletion(fakeModule::invalidate);
 
-					fakeModule.add(animX, animY, animSound1, animSound2, animSound3, animSound4);
+					fakeModule.add(animX, animY, animSound1, animSound2);
 				}
 			}
 		};

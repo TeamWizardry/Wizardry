@@ -135,9 +135,7 @@ public class ComponentModifiers extends GuiComponent {
 				animPlate.setFrom(-PIXELS_PER_BAR); // units: pixels
 				animPlate.setTo(lengthToTravel - PIXELS_PER_BAR); // units: pixels
 				animPlate.setDuration(slideDuration); // units: ticks
-				animPlate.setCompletion(() -> {
-					Minecraft.getMinecraft().player.playSound(ModSounds.POP, 1f, 1f);
-				});
+				animPlate.setCompletion(() -> Minecraft.getMinecraft().player.playSound(ModSounds.WHOOSH, 1f, 1f));
 				add(animPlate);
 
 				bar.render.getTooltip().func((Function<GuiComponent, List<String>>) t -> {

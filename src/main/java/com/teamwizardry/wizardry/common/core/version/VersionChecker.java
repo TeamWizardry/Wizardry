@@ -47,7 +47,7 @@ public final class VersionChecker {
 
 			if (onlineVersion != null && !onlineVersion.isEmpty()) {
 				String clientBuild = Wizardry.VERSION;
-				if (!clientBuild.equals("GRADLE:VERSION") && Utils.compareVersions(onlineVersion, clientBuild) == 1) {
+				if (Utils.compareVersions(onlineVersion, clientBuild) > 0) {
 					ArrayList<String> messages = new ArrayList<>();
 					String base = "wizardry.update";
 					int n = 0;

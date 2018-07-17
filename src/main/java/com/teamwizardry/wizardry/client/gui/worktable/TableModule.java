@@ -87,7 +87,7 @@ public class TableModule extends GuiComponent {
 			BUS.hook(GuiComponentEvents.MouseDownEvent.class, (event) -> {
 				if (worktable.animationPlaying) return;
 				if (event.getButton() == EnumMouseButton.LEFT && getMouseOver()) {
-					Minecraft.getMinecraft().player.playSound(ModSounds.POP, 1f, 1f);
+					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_IN, 1f, 1f);
 					TableModule item = new TableModule(this.worktable, this.module, true, false);
 					item.setPos(paper.otherPosToThisContext(event.component, event.getMousePos()));
 					DragMixin drag = new DragMixin(item, vec2d -> vec2d);
