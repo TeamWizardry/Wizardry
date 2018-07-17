@@ -7,7 +7,6 @@ import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
-import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
 import com.teamwizardry.wizardry.init.ModSounds;
@@ -25,7 +24,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ENTITY_HIT;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.LOOK;
 
 /**
  * Created by Demoniaque.
@@ -38,7 +38,7 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 	public String getID() {
 		return "effect_leap";
 	}
-	
+
 	@Override
 	public ModuleModifier[] applicableModifiers() {
 		return new ModuleModifier[]{new ModuleModifierIncreasePotency()};
@@ -50,32 +50,32 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 		if (target == null)
 			return 50;
 		int jumpCount = target.getEntityData().getInteger("jump_count");
-		if (jumpCount <= 0)
-		{
+		int maxJumps = target.getEntityData().getInteger("max_jumps");
+		if (jumpCount <= 1) {
 			target.getEntityData().removeTag("jump_count");
 			return 50;
 		}
 		target.getEntityData().setInteger("jump_count", jumpCount - 1);
-		return 0;
+		return (maxJumps + 5) - jumpCount;
 	}
 
 	@Override
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		float yaw = spell.getData(YAW, 0F);
-		float pitch = spell.getData(PITCH, 0F);
+		Vec3d lookVec = spell.getData(LOOK);
 		Entity target = spell.getVictim();
 
+		if (lookVec == null) return false;
 		if (target == null) return false;
 		if (!(target instanceof EntityLivingBase)) return true;
 
-		Vec3d lookVec = PosUtils.vecFromRotations(pitch, yaw);
 
 		if (!target.hasNoGravity()) {
-			double potency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell) / 10;
+			double potency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell);
 			if (!spellRing.taxCaster(spell)) return false;
 
 			if (!target.getEntityData().hasKey("jump_count")) {
 				target.getEntityData().setInteger("jump_count", (int) potency);
+				target.getEntityData().setInteger("max_jumps", (int) potency);
 				target.getEntityData().setInteger("jump_timer", 200);
 			}
 

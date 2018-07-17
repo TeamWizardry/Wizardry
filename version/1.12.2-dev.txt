@@ -15,3 +15,4 @@ Vanish now hides player hand in first person
 New particles for a lot of things especially light and self spells
 Spell projectiles cast particles properly now
 Fix crash caused by lightning occasionally
+Added some new sounds
