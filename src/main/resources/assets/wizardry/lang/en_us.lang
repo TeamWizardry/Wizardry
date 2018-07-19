@@ -320,6 +320,7 @@ wizardry.table.connection_doesnt_work=These pieces don't work together.\n\nAn &o
 
 
 wizardry.book.shift_scroll=Shift + Scroll to flip pages
+wizardry.book.open_recipe_tab=Open recipe tab for more details
 
 wizardry.book.title=Spellforger's Codex
 wizardry.book.subtitle=Not By Raziel
