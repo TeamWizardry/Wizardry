@@ -8,12 +8,16 @@ import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -36,14 +40,16 @@ public class EntityJumpPad extends EntityLiving {
 	@Override
 	protected void applyEntityAttributes() {
 		super.applyEntityAttributes();
-		getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(100D);
+		getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(10D);
 		getEntityAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(0.0D);
 	}
 
 	@Override
 	public void collideWithEntity(Entity entity) {
 		if (!(entity instanceof EntityLivingBase)) return;
-		((EntityLivingBase) entity).motionY += 0.2;
+		if (entity instanceof EntityJumpPad) return;
+
+		((EntityLivingBase) entity).motionY += 0.35;
 		entity.fallDistance = 0;
 		Color color1 = new Color(
 				RandUtil.nextInt(100, 255),
@@ -69,6 +75,7 @@ public class EntityJumpPad extends EntityLiving {
 	@Override
 	public void onUpdate() {
 		super.onUpdate();
+		if (isDead) return;
 		if (ticksExisted > 100) setDead();
 
 		ClientRunnable.run(new ClientRunnable() {
@@ -78,33 +85,82 @@ public class EntityJumpPad extends EntityLiving {
 				ParticleBuilder glitter = new ParticleBuilder(RandUtil.nextInt(30, 50));
 				glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 				glitter.setAlphaFunction(new InterpFadeInOut(0.9f, 0.9f));
-				glitter.enableMotionCalculation();
+				glitter.disableMotionCalculation();
 				Color color1 = new Color(
-						RandUtil.nextInt(100, 255),
-						RandUtil.nextInt(100, 255),
-						RandUtil.nextInt(100, 255),
-						RandUtil.nextInt(100, 255));
-				Color color2 = new Color(
-						RandUtil.nextInt(100, 255),
-						RandUtil.nextInt(100, 255),
-						RandUtil.nextInt(100, 255),
-						RandUtil.nextInt(100, 255));
+						RandUtil.nextInt(70, 255),
+						RandUtil.nextInt(70, 255),
+						RandUtil.nextInt(70, 255),
+						RandUtil.nextInt(70, 255));
 				glitter.setCollision(true);
+				glitter.setColor(color1);
+				glitter.setScaleFunction(new InterpScale(RandUtil.nextFloat(0.8f, 1f), 0f));
+
 				ParticleSpawner.spawn(glitter, world, new StaticInterp<>(getPositionVector()), 1, 1, (i, build) -> {
-					if (RandUtil.nextBoolean()) glitter.setColor(color1);
-					else glitter.setColor(color2);
 					double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
 					double r = 1 * RandUtil.nextFloat();
 					double x = r * MathHelper.cos((float) theta);
 					double z = r * MathHelper.sin((float) theta);
-					glitter.setPositionOffset(new Vec3d(x, 0.3, z));
+					glitter.setPositionOffset(new Vec3d(x, 0.1, z));
 					if (RandUtil.nextBoolean())
-						glitter.setMotion(new Vec3d(0, RandUtil.nextDouble(0.2), 0));
+						glitter.setMotion(new Vec3d(0, RandUtil.nextDouble(0.01, 0.05), 0));
 				});
-				if (RandUtil.nextInt(30) == 0)
-					LibParticles.AIR_THROTTLE(world, getPositionVector(), new Vec3d(0, RandUtil.nextDouble(0.5), 0), color1, color2, 0.5);
 			}
 		});
+	}
+
+	@Override
+	protected void playHurtSound(DamageSource source) {
+	}
+
+	@Override
+	public boolean isImmuneToExplosions() {
+		return true;
+	}
+
+	@Override
+	protected void damageShield(float damage) {
+	}
+
+	@Override
+	protected float applyPotionDamageCalculations(DamageSource source, float damage) {
+		return 0f;
+	}
+
+	@Override
+	protected void damageArmor(float damage) {
+	}
+
+	@Override
+	protected void dealFireDamage(int amount) {
+	}
+
+	@Override
+	protected void damageEntity(DamageSource damageSrc, float damageAmount) {
+	}
+
+	@Override
+	public boolean canBreatheUnderwater() {
+		return true;
+	}
+
+	@Override
+	public boolean canBeLeashedTo(EntityPlayer player) {
+		return false;
+	}
+
+	@Override
+	public boolean canPickUpLoot() {
+		return false;
+	}
+
+	@Override
+	protected boolean canEquipItem(ItemStack stack) {
+		return false;
+	}
+
+	@Override
+	public boolean canAttackClass(Class<? extends EntityLivingBase> cls) {
+		return false;
 	}
 
 	@Override

@@ -17,11 +17,6 @@ public class RenderSpellProjectile extends Render<EntitySpellProjectile> {
 		super(renderManager);
 	}
 
-	@Override
-	public void doRender(@Nonnull EntitySpellProjectile entity, double x, double y, double z, float entityYaw, float partialTicks) {
-		super.doRender(entity, x, y, z, entityYaw, partialTicks);
-	}
-
 	@Nullable
 	@Override
 	protected ResourceLocation getEntityTexture(@Nonnull EntitySpellProjectile entity) {

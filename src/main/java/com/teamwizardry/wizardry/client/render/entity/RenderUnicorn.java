@@ -18,16 +18,6 @@ public class RenderUnicorn extends RenderLiving<EntityUnicorn> {
 	}
 
 	@Override
-	protected void preRenderCallback(EntityUnicorn entitylivingbaseIn, float partialTickTime) {
-		super.preRenderCallback(entitylivingbaseIn, partialTickTime);
-	}
-
-	@Override
-	public void doRender(@Nonnull EntityUnicorn entity, double x, double y, double z, float entityYaw, float partialTicks) {
-		super.doRender(entity, x, y, z, entityYaw, partialTicks);
-	}
-
-	@Override
 	protected ResourceLocation getEntityTexture(@Nonnull EntityUnicorn entity) {
 		return UNICORN_TEX_PATH;
 	}

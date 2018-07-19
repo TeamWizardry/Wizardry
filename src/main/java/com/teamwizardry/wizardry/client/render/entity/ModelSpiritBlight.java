@@ -36,13 +36,11 @@ public class ModelSpiritBlight extends ModelBiped {
 		GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 0.9F);
 
-		RandUtilSeed seed = new RandUtilSeed(entityIn.getDataManager().get(DATA_SHIFT_SEED));
-		GlStateManager.translate(seed.nextDouble(-2, 2), seed.nextDouble(-2, 2), seed.nextDouble(-2, 2));
+		RandUtilSeed seed = new RandUtilSeed(entityIn.getDataManager().get(DATA_SHIFT_SEED) + 1);
+		GlStateManager.translate(seed.nextDouble(-3, 3), seed.nextDouble(-3, 3), seed.nextDouble(-3, 3));
 
 		double multiplier = 0.05;
 		GlStateManager.translate(RandUtil.nextFloat() * multiplier, RandUtil.nextFloat() * multiplier, RandUtil.nextFloat() * multiplier);
-
-		GlStateManager.rotate(entityIn.rotationYaw, 0, 1, 0);
 
 		super.render(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
 
