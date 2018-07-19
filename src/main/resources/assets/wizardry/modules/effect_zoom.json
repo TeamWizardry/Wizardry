@@ -5,7 +5,7 @@
   "mana": { "base": 500 },
   "burnout": { "base": 300 },
   "cooldown": {
-    "base": 250
+    "base": 10
   },
   "range": { "base": 10, "min": 10, "max": 32 }
 }
