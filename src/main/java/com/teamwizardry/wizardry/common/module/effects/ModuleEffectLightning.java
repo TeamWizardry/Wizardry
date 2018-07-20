@@ -60,12 +60,12 @@ public class ModuleEffectLightning extends ModuleEffect implements IOverrideCool
 		registerRunOverride("shape_beam", getBeamOverride());
 		registerRunOverride("shape_zone", getZoneOverride());
 
-		registerRenderOverride("shape_self", getSelfRenderOverride());
-		registerRenderOverride("shape_touch", getTouchRenderOverride());
-		registerRenderOverride("shape_projectile", getProjectileRenderOverride());
-		registerRenderOverride("shape_cone", getConeRenderOverride());
-		registerRenderOverride("shape_beam", getBeamRenderOverride());
-		registerRenderOverride("shape_zone", getZoneRenderOverride());
+		registerRenderOverride("shape_self", (data, spellRing, childRing) -> {});
+		registerRenderOverride("shape_touch", (data, spellRing, childRing) -> {});
+		registerRenderOverride("shape_projectile", (data, spellRing, childRing) -> {});
+		registerRenderOverride("shape_cone", (data, spellRing, childRing) -> {});
+		registerRenderOverride("shape_beam", (data, spellRing, childRing) -> {});
+		registerRenderOverride("shape_zone", (data, spellRing, childRing) -> {});
 	}
 
 	@Nonnull
@@ -95,36 +95,14 @@ public class ModuleEffectLightning extends ModuleEffect implements IOverrideCool
 			
 			if (!childRing.taxCaster(data)) return;
 			
-			long seed = RandUtil.nextLong(100, 100000);
-			data.addData(SEED, seed);
-			RandUtilSeed rand = new RandUtilSeed(seed);
+			RandUtilSeed rand = new RandUtilSeed(RandUtil.nextLong(100, 100000));
 			float pitch = rand.nextFloat(-45, 45);
 			float yaw = rand.nextFloat(0, 360);
-			doLightning(new RandUtilSeed(seed), world, caster, origin, Vec3d.fromPitchYaw(pitch, yaw).normalize().scale(range).add(origin), range, potency, duration);
+			doLightning(rand.nextLong(100, 100000), world, caster, origin, Vec3d.fromPitchYaw(pitch, yaw).normalize().scale(range).add(origin), range, potency, duration);
 			LightningTracker.INSTANCE.addEntity(origin, caster, caster, potency, duration);
 		};
 	}
 	
-	@SideOnly(Side.CLIENT)
-	private OverrideConsumer<SpellData, SpellRing, SpellRing> getSelfRenderOverride()
-	{
-		return (data, spellRing, childRing) -> {
-			World world = data.world;
-			Entity caster = data.getCaster();
-			if (caster == null) return;
-			Vec3d origin = data.getOrigin();
-			if (origin == null) return;
-			
-			double range = childRing.getAttributeValue(AttributeRegistry.RANGE, data);
-			
-			long seed = data.getData(SEED, 0L);
-			RandUtilSeed rand = new RandUtilSeed(seed);
-			float pitch = rand.nextFloat(-45, 45);
-			float yaw = rand.nextFloat(0, 360);
-			doLightningRender(seed, world, origin, Vec3d.fromPitchYaw(pitch, yaw).normalize().scale(range).add(origin), range);
-		};
-	}
-
 	private OverrideConsumer<SpellData, SpellRing, SpellRing> getTouchOverride() {
 		return (data, spellRing, childRing) -> {
 			World world = data.world;
@@ -138,39 +116,14 @@ public class ModuleEffectLightning extends ModuleEffect implements IOverrideCool
 			double potency = childRing.getAttributeValue(AttributeRegistry.POTENCY, data);
 			double duration = childRing.getAttributeValue(AttributeRegistry.DURATION, data);
 			
-			long seed = RandUtil.nextLong(100, 100000);
-			data.addData(SEED, seed);
-			
 			RayTraceResult trace = new RayTrace(world, look, origin,
 					caster instanceof EntityLivingBase ? ((EntityLivingBase) caster).getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue() : 5)
 					.setSkipEntity(caster).setReturnLastUncollidableBlock(true).setIgnoreBlocksWithoutBoundingBoxes(true).trace();
 			
-			doLightning(new RandUtilSeed(seed), world, caster, origin, trace.hitVec, range, potency, duration);
+			doLightning(RandUtil.nextLong(100, 100000), world, caster, origin, trace.hitVec, range, potency, duration);
 		};
 	}
 	
-	@SideOnly(Side.CLIENT)
-	private OverrideConsumer<SpellData, SpellRing, SpellRing> getTouchRenderOverride() {
-		return (data, spellRing, childRing) -> {
-			World world = data.world;
-			Vec3d look = data.getData(LOOK);
-			Entity caster = data.getCaster();
-			Vec3d origin = data.getOriginWithFallback();
-			if (look == null || caster == null || origin == null) return;
-			if (!childRing.taxCaster(data)) return;
-			
-			double range = childRing.getAttributeValue(AttributeRegistry.RANGE, data);
-			
-			long seed = RandUtil.nextLong(100, 100000);
-			data.addData(SEED, seed);
-			
-			RayTraceResult trace = new RayTrace(world, look, origin,
-					caster instanceof EntityLivingBase ? ((EntityLivingBase) caster).getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue() : 5)
-					.setSkipEntity(caster).setReturnLastUncollidableBlock(true).setIgnoreBlocksWithoutBoundingBoxes(true).trace();
-			
-			doLightningRender(seed, world, origin, trace.hitVec, range);
-		};
-	}
 
 	private OverrideConsumer<SpellData, SpellRing, SpellRing> getProjectileOverride() {
 		return (data, spellRing, childRing) -> {
@@ -189,12 +142,6 @@ public class ModuleEffectLightning extends ModuleEffect implements IOverrideCool
 		};
 	}
 	
-	@SideOnly(Side.CLIENT)
-	private OverrideConsumer<SpellData, SpellRing, SpellRing> getProjectileRenderOverride() {
-		return (data, spellRing, childRing) -> {
-			
-		};
-	}
 	
 	private OverrideConsumer<SpellData, SpellRing, SpellRing> getBeamOverride() {
 		return (data, spellRing, childRing) -> {
@@ -216,33 +163,10 @@ public class ModuleEffectLightning extends ModuleEffect implements IOverrideCool
 				
 			RayTraceResult traceResult = new RayTrace(world, PosUtils.vecFromRotations(pitch, yaw), origin, beamRange).setSkipBlocks(true).setSkipEntities(true).trace();
 
-			long seed = RandUtil.nextLong(100, 100000);
-
-			data.addData(SEED, seed);
-
-			doLightning(new RandUtilSeed(seed), world, caster, origin, traceResult.hitVec, lightningRange, lightningPotency, lightningDuration);
+			doLightning(RandUtil.nextLong(100, 100000), world, caster, origin, traceResult.hitVec, lightningRange, lightningPotency, lightningDuration);
 		};
 	}
 	
-	@SideOnly(Side.CLIENT)
-	private OverrideConsumer<SpellData, SpellRing, SpellRing> getBeamRenderOverride() {
-		return (data, spellRing, childRing) -> {
-			World world = data.world;
-			float yaw = data.getData(YAW, 0F);
-			float pitch = data.getData(PITCH, 0F);
-			long seed = data.getData(SEED, 0L);
-			double beamRange = spellRing.getAttributeValue(AttributeRegistry.RANGE, data);
-			double lightningRange = childRing.getAttributeValue(AttributeRegistry.RANGE, data);
-			Vec3d origin = data.getOriginHand();
-			
-			if (origin == null) return;
-
-			RayTraceResult traceResult = new RayTrace(world, PosUtils.vecFromRotations(pitch, yaw), origin, beamRange).setSkipBlocks(true).setSkipEntities(true).trace();
-			
-			doLightningRender(seed, world, origin, traceResult.hitVec, lightningRange);
-		};
-	}
-
 	private OverrideConsumer<SpellData, SpellRing, SpellRing> getConeOverride() {
 		return (data, spellRing, childRing) -> {
 			World world = data.world;
@@ -253,12 +177,10 @@ public class ModuleEffectLightning extends ModuleEffect implements IOverrideCool
 			
 			if (origin == null) return;
 
-			long seed = RandUtil.nextLong(100, 100000);
-			
 			double coneRange = spellRing.getAttributeValue(AttributeRegistry.RANGE, data);
 			int conePotency = (int) (spellRing.getAttributeValue(AttributeRegistry.POTENCY, data));
 			
-			RandUtilSeed rand = new RandUtilSeed(seed);
+			RandUtilSeed rand = new RandUtilSeed(RandUtil.nextLong(100, 100000));
 			for (int i = 0; i < conePotency; i++)
 			{
 				// cone needs special handling, do cast loop on shape, then get overrides
@@ -266,13 +188,6 @@ public class ModuleEffectLightning extends ModuleEffect implements IOverrideCool
 		};
 	}
 	
-	@SideOnly(Side.CLIENT)
-	private OverrideConsumer<SpellData, SpellRing, SpellRing> getConeRenderOverride() {
-		return (data, spellRing, childRing) -> {
-
-		};
-	}
-
 	private OverrideConsumer<SpellData, SpellRing, SpellRing> getZoneOverride() {
 		return (data, spellRing, childRing) -> {
 			World world = data.world;
@@ -296,23 +211,15 @@ public class ModuleEffectLightning extends ModuleEffect implements IOverrideCool
 			if (!childRing.taxCaster(data)) return;
 
 			long seed = RandUtil.nextLong(100, 100000);
-
-			data.addData(SEED, seed);
 		};
 	}
 	
-	@SideOnly(Side.CLIENT)
-	private OverrideConsumer<SpellData, SpellRing, SpellRing> getZoneRenderOverride() {
-		return (data, spellRing, childRing) -> {
-			
-		};
-	}
-
 	@Override
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		// NO-OP, should always be overriding a shape
 		return true;
 	}
+	
 	
 	@Override
 	@SideOnly(Side.CLIENT)
@@ -325,8 +232,9 @@ public class ModuleEffectLightning extends ModuleEffect implements IOverrideCool
 		return 0;
 	}
 	
-	public static void doLightning(RandUtilSeed rand, World world, Entity caster, Vec3d from, Vec3d to, double offshootRange, double potency, double duration)
+	public static void doLightning(long seed, World world, Entity caster, Vec3d from, Vec3d to, double offshootRange, double potency, double duration)
 	{
+		RandUtilSeed rand = new RandUtilSeed(seed);
 		ArrayList<Vec3d> points = new ArrayList<>();
 		LightningGenerator.generate(rand, from, to, offshootRange).forEach(point -> points.add(point));
 
@@ -343,6 +251,8 @@ public class ModuleEffectLightning extends ModuleEffect implements IOverrideCool
 
 		for (Entity entity : entities)
 			LightningTracker.INSTANCE.addEntity(from, entity, caster, potency, duration);
+		
+		doLightningRender(seed, world, from, to, offshootRange);
 	}
 	
 	public static void doLightningRender(long seed, World world, Vec3d from, Vec3d to, double offshootRange)

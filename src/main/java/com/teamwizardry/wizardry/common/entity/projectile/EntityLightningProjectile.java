@@ -1,9 +1,7 @@
 package com.teamwizardry.wizardry.common.entity.projectile;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.SEED;
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.LOOK;
 
-import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRange;
@@ -23,10 +21,17 @@ import net.minecraft.world.World;
 import javax.annotation.Nonnull;
 
 public class EntityLightningProjectile extends EntitySpellProjectile {
-	public static final DataParameter<NBTTagCompound> CHILD_RING = EntityDataManager.createKey(EntitySpellProjectile.class, DataSerializers.COMPOUND_TAG);
+	public static final DataParameter<NBTTagCompound> CHILD_RING = EntityDataManager.createKey(EntityLightningProjectile.class, DataSerializers.COMPOUND_TAG);
 	
 	public EntityLightningProjectile(World world) {
 		super(world);
+	}
+	
+	@Override
+	protected void entityInit()
+	{
+		super.entityInit();
+		this.getDataManager().register(CHILD_RING, new NBTTagCompound());
 	}
 
 	public EntityLightningProjectile(World world, SpellRing spellRing, SpellRing childRing, SpellData spellData, float dist, float speed, float gravity) {
@@ -50,67 +55,36 @@ public class EntityLightningProjectile extends EntitySpellProjectile {
 		super.onUpdate();
 		if (isDead) return;
 		
-		SpellData data = getSpellData();
-		SpellRing spellRing = getSpellRing();
-		SpellRing childRing = getChildRing();
-		
-		double range = childRing.getAttributeValue(AttributeRegistry.RANGE, data);
-		double potency = childRing.getAttributeValue(AttributeRegistry.POTENCY, data);
-		double duration = childRing.getAttributeValue(AttributeRegistry.DURATION, data);
-		double maxPotency = childRing.getModule().getAttributeRanges().get(AttributeRegistry.POTENCY).max;
-		
-		if (data == null || spellRing == null || childRing == null)
-		{
-			setDead();
-			world.removeEntity(this);
-			return;
-		}
-
-		Vec3d dir = data.getData(LOOK);
-		
 		if (!world.isRemote)
 		{
-			long seed = RandUtil.nextLong(100, 100000);
-			data.addData(SEED, seed);
-			
-			RandUtilSeed rand = new RandUtilSeed(seed);
-			if (rand.nextDouble(maxPotency) < potency)
+			SpellData data = getSpellData();
+			SpellRing spellRing = getSpellRing();
+			SpellRing childRing = getChildRing();
+		
+			double range = childRing.getAttributeValue(AttributeRegistry.RANGE, data);
+			double potency = childRing.getAttributeValue(AttributeRegistry.POTENCY, data);
+			double duration = childRing.getAttributeValue(AttributeRegistry.DURATION, data);
+			double maxPotency = childRing.getModule().getAttributeRanges().get(AttributeRegistry.POTENCY).max;
+		
+			if (data == null || spellRing == null || childRing == null)
 			{
-				float u = rand.nextFloat();
-				float v = rand.nextFloat();
-				float pitch = (float) (180 * Math.acos(2*u - 1) / Math.PI);
-				float yaw = (float) (2 * Math.PI * v);
-				
-				Vec3d to = dir.rotatePitch(pitch).rotateYaw(yaw).normalize().scale(range).add(getPositionVector());
-				
-				rand = new RandUtilSeed(seed);
-				ModuleEffectLightning.doLightning(rand, world, data.getCaster(), getPositionVector(), to, range, potency, duration);
+				setDead();
+				world.removeEntity(this);
+				return;
 			}
-		}
-		else if (doesRender())
-		{
-			ClientRunnable.run(new ClientRunnable() {
-				@Override
-				public void runIfClient()
-				{
-					Long seed = data.getData(SEED);
-					if (seed == null) return;
-					
-					RandUtilSeed rand = new RandUtilSeed(seed);
-					if (rand.nextDouble(maxPotency) < potency)
-					{
-						float u = rand.nextFloat();
-						float v = rand.nextFloat();
-						float pitch = (float) (180 * Math.acos(2*u - 1) / Math.PI);
-						float yaw = (float) (2 * Math.PI * v);
-						
-						Vec3d to = dir.rotatePitch(pitch).rotateYaw(yaw).normalize().scale(range).add(getPositionVector());
-						
-						ModuleEffectLightning.doLightningRender(seed, world, getPositionVector(), to, range);
-					}
-				}
-			});
-			return;
+
+			Vec3d dir = data.getData(LOOK);
+		
+			RandUtilSeed rand = new RandUtilSeed(RandUtil.nextLong(100, 100000));
+			
+			float u = rand.nextFloat();
+			float v = rand.nextFloat();
+			float pitch = (float) (180 * Math.acos(2*u - 1) / Math.PI);
+			float yaw = (float) (2 * Math.PI * v);
+			
+			Vec3d to = dir.rotatePitch(pitch).rotateYaw(yaw).normalize().scale(rand.nextDouble(maxPotency * 5) < potency ? range : 1.0/2.0).add(getPositionVector());
+
+			ModuleEffectLightning.doLightning(rand.nextLong(100, 100000), world, data.getCaster(), getPositionVector(), to, range, potency, duration);
 		}
 	}
 	
@@ -125,19 +99,16 @@ public class EntityLightningProjectile extends EntitySpellProjectile {
 		double potency = childRing.getAttributeValue(AttributeRegistry.POTENCY, data);
 		double duration = childRing.getAttributeValue(AttributeRegistry.DURATION, data);
 		AttributeRange potencyRange = childRing.getModule().getAttributeRanges().get(AttributeRegistry.POTENCY);
-		Vec3d origin = data.getOriginWithFallback();
+		Vec3d origin = this.getPositionVector();
 		Entity caster = data.getCaster();
 
-		long seed = RandUtil.nextLong(100, 100000);
-		data.addData(SEED, seed);
-		
 		if (origin != null) {
 			for (int i = 0; i < potency; i += ((int) potencyRange.min >> 2)) {
 				RandUtilSeed rand = new RandUtilSeed(RandUtil.nextLong(100, 100000));
 				Vec3d dir = PosUtils.vecFromRotations(rand.nextFloat(0, 180), rand.nextFloat(0, 360));
 				Vec3d pos = dir.scale(range).add(origin);
 
-				ModuleEffectLightning.doLightning(rand, world, caster, origin, pos, range, potency, duration);
+				ModuleEffectLightning.doLightning(rand.nextLong(100, 100000), world, caster, origin, pos, range, potency, duration);
 			}
 		}
 

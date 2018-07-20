@@ -52,4 +52,19 @@ public class RandUtilSeed {
 	public boolean nextBoolean() {
 		return random.nextBoolean();
 	}
+	
+	public long nextLong()
+	{
+		return random.nextLong();
+	}
+	
+	public long nextLong(long bound)
+	{
+		return random.nextLong() * bound;
+	}
+	
+	public long nextLong(long min, long max)
+	{
+		return random.nextLong() * (max - min) + min;
+	}
 }
