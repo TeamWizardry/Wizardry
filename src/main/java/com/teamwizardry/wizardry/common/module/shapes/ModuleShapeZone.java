@@ -64,8 +64,6 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 
 	@Override
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		if (runRunOverrides(spell, spellRing)) return true;
-
 		World world = spell.world;
 //		Vec3d position = spell.getData(ORIGIN);
 //		Entity caster = spell.getCaster();
@@ -90,6 +88,9 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 				info.setDouble(ZONE_OFFSET, zoneOffset % ConfigValues.zoneTimer);
 				return false;
 			}
+			
+			runRunOverrides(spell, spellRing);
+			
 			BlockPos target = new BlockPos(RandUtil.nextDouble(min.x, max.x), RandUtil.nextDouble(min.y, max.y), RandUtil.nextDouble(min.z, max.z));
 			List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(target));
 			for (Entity entity : entities)

@@ -28,10 +28,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.HashSet;
-
-import static com.teamwizardry.wizardry.api.util.PosUtils.getPerpendicularFacings;
+import java.util.Set;
 
 /**
  * Created by Demoniaque.
@@ -63,88 +61,23 @@ public class ModuleEffectBreak extends ModuleEffect {
 		if (targetEntity instanceof EntityLivingBase)
 			for (ItemStack stack : targetEntity.getArmorInventoryList())
 				stack.damageItem((int) strength, (EntityLivingBase) targetEntity);
-		if (targetPos != null) {
-
-			Block block = world.getBlockState(targetPos).getBlock();
-			HashSet<BlockPos> branch = new HashSet<>();
-			HashSet<BlockPos> blocks = new HashSet<>();
-			branch.add(targetPos);
-			blocks.add(targetPos);
-			getBlocks(spell.world, block, (int) range, branch, blocks);
-			for (BlockPos pos : blocks) {
-
-				float hardness = world.getBlockState(pos).getBlockHardness(world, pos);
-				if (hardness >= 0 && hardness < strength) {
-					if (!spellRing.taxCaster(spell)) return false;
-					BlockUtils.breakBlock(world, pos, null, caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null, true);
-				}
+		if (targetPos != null)
+		{
+			Set<BlockPos> blocks = BlockUtils.blocksAroundPos(targetPos, (int) range, pos ->
+			{
+				IBlockState state = world.getBlockState(pos);
+				if (BlockUtils.isAnyAir(state)) return true;
+				
+				float hardness = state.getBlockHardness(world, pos);
+				return hardness < 0 || hardness > strength;
+			});
+			for (BlockPos pos : blocks)
+			{
+				if (!spellRing.taxCaster(spell, 1/range)) continue;
+				BlockUtils.breakBlock(world, pos, null, caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null, true);
 			}
 		}
 		return true;
-	}
-
-	private HashSet<BlockPos> getBetterBlocks(World world, BlockPos origin, Block block, int maxBlocks, EnumFacing facing, @Nullable EnumFacing rootFacing, @Nullable HashSet<BlockPos> rootSet) {
-		HashSet<BlockPos> blocks = new HashSet<>();
-		blocks.add(origin);
-
-		BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(origin);
-
-		for (EnumFacing adjFacing : getPerpendicularFacings(facing)) {
-			pos.move(adjFacing);
-
-			if (!world.isBlockLoaded(pos)) continue;
-
-			IBlockState state = world.getBlockState(pos);
-			if (state.getBlock() != block) continue;
-
-			blocks.add(pos);
-
-			if (blocks.size() >= maxBlocks) return blocks;
-
-			pos.move(adjFacing.getOpposite());
-		}
-
-		return blocks;
-	}
-
-	private void getBlocks(World world, Block block, int maxBlocks, HashSet<BlockPos> step, HashSet<BlockPos> allBlocks) {
-		if (allBlocks.size() >= maxBlocks) return;
-
-		HashSet<BlockPos> newSteps = new HashSet<>();
-
-		for (BlockPos stepPos : step) {
-			for (EnumFacing facing : PosUtils.symmetricFacingValues) {
-
-				BlockPos nextStep = stepPos.offset(facing);
-
-				BlockPos immut = nextStep.toImmutable();
-				if (allBlocks.contains(immut)) continue;
-				if (!world.isBlockLoaded(nextStep)) continue;
-
-				IBlockState state = world.getBlockState(nextStep);
-				if (state.getBlock() != block) continue;
-
-				boolean sideSolid = false;
-				for (EnumFacing dir : PosUtils.symmetricFacingValues) {
-					BlockPos adjPos = stepPos.offset(dir);
-					IBlockState adjState = world.getBlockState(adjPos);
-					if (!adjState.isSideSolid(world, adjPos, dir.getOpposite())) {
-						sideSolid = true;
-						break;
-					}
-				}
-				if (!sideSolid) continue;
-
-				newSteps.add(nextStep);
-				allBlocks.add(nextStep);
-
-				if (allBlocks.size() >= maxBlocks) return;
-			}
-		}
-
-		if (newSteps.isEmpty()) return;
-
-		getBlocks(world, block, maxBlocks, newSteps, allBlocks);
 	}
 
 	@Override
@@ -166,6 +99,7 @@ public class ModuleEffectBreak extends ModuleEffect {
 				&& ring.getParentRing().getModule() == ModuleRegistry.INSTANCE.getModule("event_collide_entity"))
 			return previousData;
 
+		World world = data.world;
 		BlockPos targetPos = data.getData(SpellData.DefaultKeys.BLOCK_HIT);
 		Entity targetEntity = data.getVictim();
 
@@ -175,21 +109,21 @@ public class ModuleEffectBreak extends ModuleEffect {
 		if (targetEntity instanceof EntityLivingBase)
 			for (ItemStack stack : targetEntity.getArmorInventoryList())
 				stack.damageItem((int) strength, (EntityLivingBase) targetEntity);
-		if (targetPos != null) {
-
-			IBlockState state = getCachableBlockstate(data.world, targetPos, previousData);
-			if (BlockUtils.isAnyAir(state)) return previousData;
-
-			HashSet<BlockPos> branch = new HashSet<>();
-			HashSet<BlockPos> blocks = new HashSet<>();
-			branch.add(targetPos);
-			blocks.add(targetPos);
-			getBlocks(data.world, state.getBlock(), (int) range, branch, blocks);
-
+		if (targetPos != null)
+		{
+			Set<BlockPos> blocks = BlockUtils.blocksAroundPos(targetPos, (int) range, pos ->
+			{
+				IBlockState state = world.getBlockState(pos);
+				if (BlockUtils.isAnyAir(state)) return true;
+				
+				float hardness = state.getBlockHardness(world, pos);
+				return hardness < 0 || hardness > strength;
+			});
 			if (blocks.isEmpty()) return previousData;
 
-			for (BlockPos pos : blocks) {
-
+			for (BlockPos pos : blocks)
+			{
+				IBlockState state = world.getBlockState(pos);
 				BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(pos);
 				for (EnumFacing facing : EnumFacing.VALUES) {
 

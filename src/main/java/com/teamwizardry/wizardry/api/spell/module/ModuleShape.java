@@ -20,6 +20,7 @@ public abstract class ModuleShape extends Module {
 	public boolean runRunOverrides(SpellData data, SpellRing ring) {
 		boolean overriden = false;
 		for (SpellRing child : ring.getAllChildRings()) {
+			if (child.getModule().getModuleType() == ModuleType.SHAPE) break;
 			OverrideConsumer<SpellData, SpellRing, SpellRing> consumer = ModuleRegistry.INSTANCE.runOverrides.get(new Pair<>(this, child.getModule()));
 			if (consumer == null) continue;
 
@@ -33,6 +34,7 @@ public abstract class ModuleShape extends Module {
 	public boolean runRenderOverrides(SpellData data, SpellRing ring) {
 		boolean overriden = false;
 		for (SpellRing child : ring.getAllChildRings()) {
+			if (child.getModule().getModuleType() == ModuleType.SHAPE) break;
 			OverrideConsumer<SpellData, SpellRing, SpellRing> consumer = ModuleRegistry.INSTANCE.renderOverrides.get(new Pair<>(this, child.getModule()));
 			if (consumer == null) continue;
 

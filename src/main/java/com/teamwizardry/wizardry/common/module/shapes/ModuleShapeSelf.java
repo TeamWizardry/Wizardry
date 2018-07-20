@@ -37,12 +37,13 @@ public class ModuleShapeSelf extends ModuleShape {
 
 	@Override
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		if (runRunOverrides(spell, spellRing)) return true;
-
 		Entity caster = spell.getCaster();
 		if (caster == null) return false;
 
 		if (!spellRing.taxCaster(spell)) return false;
+		
+		runRunOverrides(spell, spellRing);
+		
 		spell.processEntity(caster, false);
 
 		return true;

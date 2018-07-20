@@ -48,7 +48,8 @@ public class EntitySpellProjectile extends EntityMod {
 	public static final DataParameter<Float> SPEED = EntityDataManager.createKey(EntitySpellProjectile.class, DataSerializers.FLOAT);
 	public static final DataParameter<Float> GRAVITY = EntityDataManager.createKey(EntitySpellProjectile.class, DataSerializers.FLOAT);
 	public static final DataParameter<Float> DIST = EntityDataManager.createKey(EntitySpellProjectile.class, DataSerializers.FLOAT);
-
+	public static final DataParameter<Boolean> RENDER = EntityDataManager.createKey(EntitySpellProjectile.class, DataSerializers.BOOLEAN);
+	
 	public EntitySpellProjectile(World world) {
 		super(world);
 		setSize(0.3F, 0.3F);
@@ -58,7 +59,7 @@ public class EntitySpellProjectile extends EntityMod {
 			setRenderDistanceWeight(30);
 	}
 
-	public EntitySpellProjectile(World world, SpellRing spellRing, SpellData spellData, float dist, float speed, float gravity) {
+	public EntitySpellProjectile(World world, SpellRing spellRing, SpellData spellData, float dist, float speed, float gravity, boolean render) {
 		super(world);
 		setSize(0.3F, 0.3F);
 		isImmuneToFire = true;
@@ -68,6 +69,7 @@ public class EntitySpellProjectile extends EntityMod {
 		setSpeed(speed);
 		setDistance(dist);
 		setGravity(gravity);
+		setRender(render);
 
 		if (world.isRemote)
 			setRenderDistanceWeight(30);
@@ -86,53 +88,65 @@ public class EntitySpellProjectile extends EntityMod {
 		this.getDataManager().register(SPEED, 0f);
 		this.getDataManager().register(DIST, 0f);
 		this.getDataManager().register(GRAVITY, 0f);
+		this.getDataManager().register(RENDER, true);
 	}
 
-	private SpellData getSpellData() {
+	protected SpellData getSpellData() {
 		NBTTagCompound compound = getDataManager().get(SPELL_DATA);
 		return SpellData.deserializeData(world, compound);
 	}
 
-	private void setSpellData(SpellData data) {
+	protected void setSpellData(SpellData data) {
 		getDataManager().set(SPELL_DATA, data.serializeNBT());
 		getDataManager().setDirty(SPELL_DATA);
 	}
 
-	private SpellRing getSpellRing() {
+	protected SpellRing getSpellRing() {
 		NBTTagCompound compound = getDataManager().get(SPELL_RING);
 		return SpellRing.deserializeRing(compound);
 	}
 
-	private void setSpellRing(SpellRing ring) {
+	protected void setSpellRing(SpellRing ring) {
 		getDataManager().set(SPELL_RING, ring.serializeNBT());
 		getDataManager().setDirty(SPELL_RING);
 	}
 
-	private float getSpeed() {
+	protected float getSpeed() {
 		return getDataManager().get(SPEED);
 	}
 
-	private void setSpeed(float speed) {
+	protected void setSpeed(float speed) {
 		getDataManager().set(SPEED, speed);
 		getDataManager().setDirty(SPEED);
 	}
 
-	private float getGravity() {
+	protected float getGravity() {
 		return getDataManager().get(GRAVITY);
 	}
 
-	private void setGravity(float gravity) {
+	protected void setGravity(float gravity) {
 		getDataManager().set(GRAVITY, gravity);
 		getDataManager().setDirty(GRAVITY);
 	}
 
-	private float getDistance() {
+	protected float getDistance() {
 		return getDataManager().get(DIST);
 	}
 
-	private void setDistance(float dist) {
+	protected void setDistance(float dist) {
 		getDataManager().set(DIST, dist);
 		getDataManager().setDirty(DIST);
+	}
+	
+	protected boolean doesRender()
+	{
+		return getDataManager().get(RENDER);
+	}
+	
+	protected void setRender(boolean render)
+	{
+		getDataManager().set(RENDER, render);
+		getDataManager().setDirty(RENDER);
 	}
 
 	@Override
@@ -149,7 +163,7 @@ public class EntitySpellProjectile extends EntityMod {
 			return;
 		}
 
-		if (world.isRemote && !isDead) {
+		if (world.isRemote && doesRender()) {
 			ClientRunnable.run(new ClientRunnable() {
 				@Override
 				@SideOnly(Side.CLIENT)
@@ -252,13 +266,13 @@ public class EntitySpellProjectile extends EntityMod {
 		motionY = 0;
 		motionZ = 0;
 
-		if (spellRing.getChildRing() != null) {
+		if (spellRing.getChildRing() != null)
 			spellRing.getChildRing().runSpellRing(data);
-		}
 
-		PacketHandler.NETWORK.sendToAllAround(new PacketExplode(getPositionVector(), spellRing.getPrimaryColor(), spellRing.getSecondaryColor(), 0.3, 0.3, RandUtil.nextInt(30, 50), 10, 25, true),
-				new NetworkRegistry.TargetPoint(world.provider.getDimension(), posX, posY, posZ, 512));
-
+		if (doesRender())
+			PacketHandler.NETWORK.sendToAllAround(new PacketExplode(getPositionVector(), spellRing.getPrimaryColor(), spellRing.getSecondaryColor(), 0.3, 0.3, RandUtil.nextInt(30, 50), 10, 25, true),
+					new NetworkRegistry.TargetPoint(world.provider.getDimension(), posX, posY, posZ, 512));
+		
 		setDead();
 		world.removeEntity(this);
 	}

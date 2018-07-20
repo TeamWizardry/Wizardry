@@ -52,7 +52,6 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 		return new ModuleModifier[]{new ModuleModifierIncreaseAOE()};
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
@@ -60,11 +59,9 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 		Entity caster = spell.getCaster();
 		EnumFacing facing = spell.getData(FACE_HIT);
 
-		if (facing == null) return true;
+		if (facing == null || targetPos == null) return true;
 
 		double area = spellRing.getAttributeValue(AttributeRegistry.AREA, spell);
-
-		if (targetPos == null) return true;
 
 		if (caster instanceof EntityPlayer) {
 			IBlockState selected = getSelectedBlockState((EntityPlayer) caster);
@@ -73,9 +70,9 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 			IBlockState targetState = world.getBlockState(targetPos);
 			List<ItemStack> stacks = getAllOfStackFromInventory((EntityPlayer) caster, selected);
 			if (stacks.isEmpty()) return true;
-
+			
 			int stackCount = getCountOfStacks(stacks);
-			Set<BlockPos> blocks = BlockUtils.blocksInSquare(targetPos, facing, (int) area, stackCount, pos -> {
+			Set<BlockPos> blocks = BlockUtils.blocksInSquare(targetPos, facing, Math.min(stackCount, (int) area), (int) ((Math.sqrt(area)+1)/2), pos -> {
 				if (BlockUtils.isAnyAir(targetState)) return true;
 
 				BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(pos);
@@ -90,8 +87,8 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 			}
 
 			for (BlockPos areaPos : blocks) {
-				if (!spellRing.taxCaster(spell)) return false;
-
+				if (!spellRing.taxCaster(spell, 1/area)) return false;
+				
 				BlockPos pos = blocks.size() > 1 ? areaPos.offset(facing) : areaPos;
 
 				IBlockState oldState = world.getBlockState(pos);
@@ -106,7 +103,6 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 
 		} else {
 			if (!BlockUtils.isAnyAir(world, targetPos)) return true;
-			if (!spellRing.taxCaster(spell)) return false;
 
 			List<EntityItem> items = world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(targetPos).grow(3, 3, 3));
 			if (items.isEmpty()) return true;
@@ -115,7 +111,7 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 			if (item == null) return true;
 
 			if (item.getItem().getItem() instanceof ItemBlock) {
-
+				if (!spellRing.taxCaster(spell)) return false;
 				BlockUtils.placeBlock(world, targetPos, facing, item.getItem());
 				world.playSound(null, targetPos, ((ItemBlock) item.getItem().getItem()).getBlock().getSoundType(((ItemBlock) item.getItem().getItem()).getBlock().getDefaultState(), world, targetPos, caster).getPlaceSound(), SoundCategory.BLOCKS, 1f, 1f);
 			}
@@ -159,7 +155,7 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 			if (stacks.isEmpty()) return previousData;
 
 			int stackCount = getCountOfStacks(stacks);
-			Set<BlockPos> blocks = BlockUtils.blocksInSquare(targetPos, facing, (int) area, stackCount, pos -> {
+			Set<BlockPos> blocks = BlockUtils.blocksInSquare(targetPos, facing, Math.min(stackCount, (int) area), (int) ((Math.sqrt(area)+1)/2), pos -> {
 				if (BlockUtils.isAnyAir(targetState)) return true;
 
 				BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(pos);

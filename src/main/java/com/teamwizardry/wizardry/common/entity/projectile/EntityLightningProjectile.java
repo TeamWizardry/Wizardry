@@ -1,6 +1,10 @@
 package com.teamwizardry.wizardry.common.entity.projectile;
 
-import com.teamwizardry.wizardry.api.LightningGenerator;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.SEED;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.LOOK;
+
+import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRange;
@@ -8,50 +12,113 @@ import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RandUtilSeed;
-import com.teamwizardry.wizardry.common.core.LightningTracker;
-import com.teamwizardry.wizardry.init.ModSounds;
+import com.teamwizardry.wizardry.common.module.effects.ModuleEffectLightning;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
 
 public class EntityLightningProjectile extends EntitySpellProjectile {
 	public static final DataParameter<NBTTagCompound> CHILD_RING = EntityDataManager.createKey(EntitySpellProjectile.class, DataSerializers.COMPOUND_TAG);
-
+	
 	public EntityLightningProjectile(World world) {
 		super(world);
 	}
 
 	public EntityLightningProjectile(World world, SpellRing spellRing, SpellRing childRing, SpellData spellData, float dist, float speed, float gravity) {
-		super(world, spellRing, spellData, dist, speed, gravity);
+		super(world, spellRing, spellData, dist, speed, gravity, true);
 		setChildRing(childRing);
 	}
 
-	private SpellRing getChildRing() {
+	protected SpellRing getChildRing() {
 		NBTTagCompound compound = getDataManager().get(CHILD_RING);
 		return SpellRing.deserializeRing(compound);
 	}
 
-	private void setChildRing(SpellRing ring) {
+	protected void setChildRing(SpellRing ring) {
 		getDataManager().set(CHILD_RING, ring.serializeNBT());
 		getDataManager().setDirty(CHILD_RING);
 	}
 
 	@Override
+	public void onUpdate()
+	{
+		super.onUpdate();
+		if (isDead) return;
+		
+		SpellData data = getSpellData();
+		SpellRing spellRing = getSpellRing();
+		SpellRing childRing = getChildRing();
+		
+		double range = childRing.getAttributeValue(AttributeRegistry.RANGE, data);
+		double potency = childRing.getAttributeValue(AttributeRegistry.POTENCY, data);
+		double duration = childRing.getAttributeValue(AttributeRegistry.DURATION, data);
+		double maxPotency = childRing.getModule().getAttributeRanges().get(AttributeRegistry.POTENCY).max;
+		
+		if (data == null || spellRing == null || childRing == null)
+		{
+			setDead();
+			world.removeEntity(this);
+			return;
+		}
+
+		Vec3d dir = data.getData(LOOK);
+		
+		if (!world.isRemote)
+		{
+			long seed = RandUtil.nextLong(100, 100000);
+			data.addData(SEED, seed);
+			
+			RandUtilSeed rand = new RandUtilSeed(seed);
+			if (rand.nextDouble(maxPotency) < potency)
+			{
+				float u = rand.nextFloat();
+				float v = rand.nextFloat();
+				float pitch = (float) (180 * Math.acos(2*u - 1) / Math.PI);
+				float yaw = (float) (2 * Math.PI * v);
+				
+				Vec3d to = dir.rotatePitch(pitch).rotateYaw(yaw).normalize().scale(range).add(getPositionVector());
+				
+				rand = new RandUtilSeed(seed);
+				ModuleEffectLightning.doLightning(rand, world, data.getCaster(), getPositionVector(), to, range, potency, duration);
+			}
+		}
+		else if (doesRender())
+		{
+			ClientRunnable.run(new ClientRunnable() {
+				@Override
+				public void runIfClient()
+				{
+					Long seed = data.getData(SEED);
+					if (seed == null) return;
+					
+					RandUtilSeed rand = new RandUtilSeed(seed);
+					if (rand.nextDouble(maxPotency) < potency)
+					{
+						float u = rand.nextFloat();
+						float v = rand.nextFloat();
+						float pitch = (float) (180 * Math.acos(2*u - 1) / Math.PI);
+						float yaw = (float) (2 * Math.PI * v);
+						
+						Vec3d to = dir.rotatePitch(pitch).rotateYaw(yaw).normalize().scale(range).add(getPositionVector());
+						
+						ModuleEffectLightning.doLightningRender(seed, world, getPositionVector(), to, range);
+					}
+				}
+			});
+			return;
+		}
+	}
+	
+	@Override
 	protected void goBoom(SpellRing spellRing, SpellData data) {
 		SpellRing childRing = getChildRing();
 		if (childRing == null || childRing.getModule() == null) {
-			super.goBoom(spellRing, data);
 			return;
 		}
 
@@ -62,24 +129,16 @@ public class EntityLightningProjectile extends EntitySpellProjectile {
 		Vec3d origin = data.getOriginWithFallback();
 		Entity caster = data.getCaster();
 
+		long seed = RandUtil.nextLong(100, 100000);
+		data.addData(SEED, seed);
+		
 		if (origin != null) {
 			for (int i = 0; i < potency; i += ((int) potencyRange.min >> 2)) {
-				RandUtilSeed random = new RandUtilSeed(RandUtil.nextLong(100, 100000));
-				Vec3d dir = PosUtils.vecFromRotations(random.nextFloat(0, 180), random.nextFloat(0, 360));
+				RandUtilSeed rand = new RandUtilSeed(RandUtil.nextLong(100, 100000));
+				Vec3d dir = PosUtils.vecFromRotations(rand.nextFloat(0, 180), rand.nextFloat(0, 360));
 				Vec3d pos = dir.scale(range).add(origin);
 
-				ArrayList<Vec3d> points = new ArrayList<>();
-				LightningGenerator.generate(random, origin, pos, range).forEach(point -> points.add(point));
-
-				data.world.playSound(null, new BlockPos(pos), ModSounds.LIGHTNING, SoundCategory.NEUTRAL, 0.5f, RandUtil.nextFloat(1, 1.5f));
-				for (Vec3d point : points) {
-					List<Entity> entityList = world.getEntitiesWithinAABBExcludingEntity(caster, new AxisAlignedBB(new BlockPos(point)).contract(0.2, 0.2, 0.2));
-					if (!entityList.isEmpty()) {
-						for (Entity entity : entityList) {
-							LightningTracker.INSTANCE.addEntity(origin, entity, caster, potency, duration);
-						}
-					}
-				}
+				ModuleEffectLightning.doLightning(rand, world, caster, origin, pos, range, potency, duration);
 			}
 		}
 

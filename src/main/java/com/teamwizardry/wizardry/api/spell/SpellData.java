@@ -542,6 +542,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 				return poses;
 			}
 		});
+		
 		public static final Pair<String, Class<HashMap<BlockPos, IBlockState>>> BLOCKSTATE_CACHE = constructPair("block_state_cache", HashMap.class, new ProcessData.Process<NBTTagList, HashMap<BlockPos, IBlockState>>() {
 
 			@Nonnull
@@ -586,5 +587,6 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 				return stateCache;
 			}
 		});
+	
 	}
 }

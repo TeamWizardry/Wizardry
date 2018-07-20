@@ -147,9 +147,11 @@ public final class BlockUtils {
 		return true;
 	}
 
-	public static Set<BlockPos> blocksInSquare(BlockPos center, Axis axis, int maxRange, int maxBlocks, Predicate<BlockPos> ignore)
+	public static Set<BlockPos> blocksInSquare(BlockPos center, Axis axis, int maxBlocks, int maxRange, Predicate<BlockPos> ignore)
 	{	
 		Set<BlockPos> blocks = new HashSet<>();
+		if (ignore.test(center)) return blocks;
+		blocks.add(center);
 		
 		Queue<BlockPos> blockQueue = new LinkedList<>();
 		blockQueue.add(center);
@@ -189,5 +191,38 @@ public final class BlockUtils {
 	public static Set<BlockPos> blocksInSquare(BlockPos center, EnumFacing facing, int maxBlocks, int maxRange, Predicate<BlockPos> ignore)
 	{
 		return blocksInSquare(center, facing.getAxis(), maxBlocks, maxRange, ignore);
+	}
+
+	public static Set<BlockPos> blocksAroundPos(BlockPos center, int maxBlocks, Predicate<BlockPos> ignore)
+	{
+		Set<BlockPos> blocks = new HashSet<>();
+		if (ignore.test(center)) return blocks;
+		blocks.add(center);
+		
+		Queue<BlockPos> blockQueue = new LinkedList<>();
+		blockQueue.add(center);
+		
+		while (!blockQueue.isEmpty())
+		{
+			BlockPos pos = blockQueue.remove();
+			
+			for (EnumFacing facing : EnumFacing.VALUES)
+			{
+				BlockPos shift = pos.offset(facing);
+				if (blocks.contains(shift))
+					continue;
+				if (ignore.test(shift))
+					continue;
+				blocks.add(shift);
+				blockQueue.add(shift);
+				if (blocks.size() >= maxBlocks)
+					break;
+			}
+			
+			if (blocks.size() >= maxBlocks)
+				break;
+		}
+		
+		return blocks;
 	}
 }

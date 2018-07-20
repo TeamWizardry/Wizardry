@@ -56,29 +56,26 @@ public class ModuleShapeCone extends ModuleShape {
 
 	@Override
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		if (runRunOverrides(spell, spellRing)) return true;
-
 		World world = spell.world;
 		float yaw = spell.getData(YAW, 0F);
 		float pitch = spell.getData(PITCH, 0F);
-		Vec3d position = spell.getData(ORIGIN);
 		Entity caster = spell.getCaster();
 
-		if (position == null) return false;
-
+		Vec3d origin = spell.getOriginHand();
+		if (origin == null) return false;
+		
 		double range = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
 		int potency = (int) (spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell));
 
-		Vec3d origin = spell.getOriginHand();
-
-		if (origin == null) return false;
-
-
 		for (int i = 0; i < potency; i++) {
 
-			double angle = range * 2;
-			float newPitch = (float) (pitch + RandUtil.nextDouble(-angle, angle));
-			float newYaw = (float) (yaw + RandUtil.nextDouble(-angle, angle));
+			long seed = RandUtil.nextLong(100, 10000);
+			spell.addData(SEED, seed);
+			runRunOverrides(spell, spellRing);
+			
+			float angle = (float) range * 2;
+			float newPitch = pitch + RandUtil.nextFloat(-angle, angle);
+			float newYaw = yaw + RandUtil.nextFloat(-angle, angle);
 
 			Vec3d target = PosUtils.vecFromRotations(newPitch, newYaw);
 

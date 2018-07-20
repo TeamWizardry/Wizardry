@@ -5,5 +5,5 @@
   "mana": { "base": 50 },
   "burnout": { "base": 50 },
   "area": { "base": 1, "min": 1, "max": 64 },
-  "potency": { "base": 1, "min": 1, "max": 20 }
+  "potency": { "base": 1.5, "min": 0, "max": 50 }
 }

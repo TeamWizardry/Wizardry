@@ -180,12 +180,12 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		return this.module != null && module instanceof ModuleEffect && ((ModuleEffect) module).hasRenderOverrideFor(this.module);
 	}
 
-	public boolean taxCaster(SpellData data) {
+	public boolean taxCaster(SpellData data, double multiplier) {
 		Entity caster = data.getCaster();
 		if (caster == null) return false;
 
-		double manaDrain = getManaDrain();
-		double burnoutFill = getBurnoutFill();
+		double manaDrain = getManaDrain() * multiplier;
+		double burnoutFill = getBurnoutFill() * multiplier;
 
 		if (caster instanceof EntityLivingBase) {
 			float reduction = getCapeReduction((EntityLivingBase) caster);
@@ -207,6 +207,10 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		manager.sync();
 
 		return !fail;
+	}
+	
+	public boolean taxCaster(SpellData data) {
+		return taxCaster(data, 1);
 	}
 
 	/**

@@ -54,8 +54,6 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 
 	@Override
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		if (runRunOverrides(spell, spellRing)) return true;
-
 		World world = spell.world;
 		Vec3d look = spell.getData(LOOK);
 		Vec3d position = spell.getOrigin();
@@ -68,13 +66,16 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 
 		NBTTagCompound info = spellRing.getInformationTag();
 		double beamOffset = info.getDouble(BEAM_OFFSET) + potency;
+		info.setBoolean(BEAM_CAST, false);
 
-		while (beamOffset >= ConfigValues.beamTimer) {
-			beamOffset -= ConfigValues.beamTimer;
+		if (beamOffset >= ConfigValues.beamTimer) {
+			beamOffset %= ConfigValues.beamTimer;
 			if (!spellRing.taxCaster(spell)) {
-				info.setDouble(BEAM_OFFSET, beamOffset % ConfigValues.beamTimer);
+				info.setDouble(BEAM_OFFSET, beamOffset);
 				return false;
 			}
+			
+			runRunOverrides(spell, spellRing);
 
 			RayTraceResult trace = new RayTrace(world, look, position, range)
 					.setSkipEntity(caster)
@@ -86,9 +87,11 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 
 			if (spellRing.getChildRing() != null)
 				spellRing.getChildRing().runSpellRing(spell);
+			
+			info.setBoolean(BEAM_CAST, true);
+			sendRenderPacket(spell, spellRing);
 		}
-
-		sendRenderPacket(spell, spellRing);
+		
 		info.setDouble(BEAM_OFFSET, beamOffset);
 		return true;
 	}
@@ -109,10 +112,10 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 		NBTTagCompound info = ring.getInformationTag();
 		double beamOffset = info.getDouble(BEAM_OFFSET) + potency;
 
-		while (beamOffset >= ConfigValues.beamTimer) {
-			beamOffset -= ConfigValues.beamTimer;
+		if (beamOffset >= ConfigValues.beamTimer) {
+			beamOffset %= ConfigValues.beamTimer;
 			if (!ring.taxCaster(data)) {
-				info.setDouble(BEAM_OFFSET, beamOffset % ConfigValues.beamTimer);
+				info.setDouble(BEAM_OFFSET, beamOffset);
 				return previousData;
 			}
 
@@ -136,13 +139,16 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		if (runRenderOverrides(spell, spellRing)) return;
+		if (spellRing.getInformationTag().getBoolean(BEAM_CAST))
+		{
+			if (runRenderOverrides(spell, spellRing)) return;
 
-		World world = spell.world;
-		Vec3d target = spell.getTargetWithFallback();
+			World world = spell.world;
+			Vec3d target = spell.getTargetWithFallback();
 
-		if (target == null) return;
+			if (target == null) return;
 
-		LibParticles.SHAPE_BEAM(world, target, spell.getOriginHand(), RandUtil.nextBoolean() ? spellRing.getPrimaryColor() : spellRing.getSecondaryColor());
+			LibParticles.SHAPE_BEAM(world, target, spell.getOriginHand(), RandUtil.nextBoolean() ? spellRing.getPrimaryColor() : spellRing.getSecondaryColor());
+		}
 	}
 }

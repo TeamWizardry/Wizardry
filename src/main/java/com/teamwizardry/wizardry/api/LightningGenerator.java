@@ -18,7 +18,7 @@ public class LightningGenerator
 	public static final int POINTS_PER_DIST = 3;
 	public static final float ANGLE_OFFSET = 22.5f;
 	public static final float ANGLE_OFFSET_RADS = (float)Math.toRadians(ANGLE_OFFSET);
-	public static final int MAX_BRANCHES = 1;
+	public static final int MAX_BRANCHES = 2;
 
 	public static TreeNode<Vec3d> generate(RandUtilSeed rand, Vec3d from, Vec3d to, double offshootRange)
 	{
@@ -63,8 +63,8 @@ public class LightningGenerator
 			while (rand.nextInt(10) == 0)
 			{
 				double scale = rand.nextDouble(offshootRange/2, offshootRange);
-				float pitch = rand.nextFloat(2*ANGLE_OFFSET_RADS, 3*ANGLE_OFFSET_RADS) * (rand.nextBoolean() ? 1 : -1);
-				float yaw = rand.nextFloat(2*ANGLE_OFFSET_RADS, 3*ANGLE_OFFSET_RADS) * (rand.nextBoolean() ? 1 : -1);
+				float pitch = rand.nextFloat(ANGLE_OFFSET_RADS/2, 3*ANGLE_OFFSET_RADS/2) * (rand.nextBoolean() ? 1 : -1);
+				float yaw = rand.nextFloat(ANGLE_OFFSET_RADS/2, 3*ANGLE_OFFSET_RADS/2) * (rand.nextBoolean() ? 1 : -1);
 				Vec3d newTo = bolt.getData().subtract(from.getData()).rotatePitch(pitch).rotateYaw(yaw).normalize().scale(scale).add(bolt.getData());
 				LightningGenerator.generateOffshoot(rand, bolt, newTo, scale, numBranchesLeft-1);
 			}

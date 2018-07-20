@@ -13,11 +13,9 @@ import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -44,8 +42,6 @@ public class ModuleShapeTouch extends ModuleShape {
 
 	@Override
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		if (runRunOverrides(spell, spellRing)) return true;
-
 		Vec3d look = spell.getData(LOOK);
 
 		Entity caster = spell.getCaster();
@@ -56,6 +52,8 @@ public class ModuleShapeTouch extends ModuleShape {
 		if (origin == null) return false;
 		if (!spellRing.taxCaster(spell)) return false;
 
+		runRunOverrides(spell, spellRing);
+		
 		RayTraceResult result = new RayTrace(
 				spell.world, look, origin,
 				caster instanceof EntityLivingBase ? ((EntityLivingBase) caster).getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue() : 5)
@@ -92,8 +90,8 @@ public class ModuleShapeTouch extends ModuleShape {
 		BlockPos pos = data.getTargetPos();
 		if (pos == null) return previousData;
 
-		EnumFacing facing = result.sideHit;
-		IBlockState state = getCachableBlockstate(data.world, result.getBlockPos(), previousData);
+//		EnumFacing facing = result.sideHit;
+//		IBlockState state = getCachableBlockstate(data.world, result.getBlockPos(), previousData);
 
 		previousData.processTrace(result);
 
