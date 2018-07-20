@@ -24,6 +24,7 @@ public class ItemFairyDust extends ItemMod {
 	@Nonnull
 	@Override
 	public EnumActionResult onItemUse(EntityPlayer entityPlayer, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+		if (world.isRemote) return EnumActionResult.SUCCESS;
 		EntityJumpPad pad = new EntityJumpPad(world);
 		pad.setPosition(pos.getX() + 0.5, pos.getY() + 1, pos.getZ() + 0.5);
 		world.spawnEntity(pad);

@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.entity;
 
-import com.teamwizardry.librarianlib.features.math.Matrix4;
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
@@ -104,7 +103,7 @@ public class EntitySpiritBlight extends EntityMob {
 		if (world.isRemote) return;
 		if (isAIDisabled()) return;
 
-		if (RandUtil.nextInt(100) == 0) {
+		if (RandUtil.nextInt(10) == 0) {
 			setShiftseed(RandUtil.nextInt(1000, 100000000));
 			playSound(ModSounds.ZAP, 0.3f, RandUtil.nextFloat(1.5f, 2f));
 		}
@@ -149,10 +148,8 @@ public class EntitySpiritBlight extends EntityMob {
 				glitter.setColor(new Color(0xf404d4));
 
 				RandUtilSeed seed = new RandUtilSeed(getDataManager().get(DATA_SHIFT_SEED));
-				Matrix4 matrix4 = new Matrix4();
-				matrix4.rotate(rotationYaw, new Vec3d(0, 1, 0));
 
-				Vec3d offset = new Vec3d(seed.nextDouble(-2, 2), seed.nextDouble(-2, 2), seed.nextDouble(-2, 2));
+				Vec3d offset = new Vec3d(seed.nextDouble(-3, 3), seed.nextDouble(-3, 3), seed.nextDouble(-3, 3));
 
 				ParticleSpawner.spawn(glitter, world, new StaticInterp<>(
 						getPositionVector().addVector(0, getEyeHeight(), 0).add(offset)), 10, 0, (i, build) -> {
@@ -167,7 +164,7 @@ public class EntitySpiritBlight extends EntityMob {
 					glitter.setPositionOffset(new Vec3d(x, RandUtil.nextDouble(0, 0.2), z));
 					if (RandUtil.nextInt(15) == 0)
 						glitter.addMotion(new Vec3d(RandUtil.nextDouble(-0.01, 0.01),
-								RandUtil.nextDouble(0, 0.03),
+								RandUtil.nextDouble(-0.03, 0),
 								RandUtil.nextDouble(-0.01, 0.01)));
 				});
 			}

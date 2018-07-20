@@ -5,8 +5,10 @@ import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.saving.AbstractSaveHandler;
 import com.teamwizardry.librarianlib.features.saving.SaveInPlace;
+import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.api.Constants.NBT;
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.Entity;
@@ -23,6 +25,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -92,8 +96,17 @@ public class EntityFairy extends FlyingEntityMod {
 	@Override
 	public void onUpdate() {
 		super.onUpdate();
-		if (world.isRemote) return;
 		if (isAIDisabled()) return;
+		if (isDead) return;
+
+		ClientRunnable.run(new ClientRunnable() {
+			@Override
+			@SideOnly(Side.CLIENT)
+			public void runIfClient() {
+				LibParticles.FAIRY_HEAD(world, getPositionVector().addVector(0, 0.25, 0), getColor());
+				LibParticles.FAIRY_TRAIL(world, getPositionVector().addVector(0, 0.25, 0), getColor(), isSad(), new Random(getUniqueID().hashCode()).nextInt(150));
+			}
+		});
 
 		if (ambush) {
 			List<Entity> entities = world.getEntitiesInAABBexcluding(this, new AxisAlignedBB(getPosition()).grow(64, 64, 64), null);

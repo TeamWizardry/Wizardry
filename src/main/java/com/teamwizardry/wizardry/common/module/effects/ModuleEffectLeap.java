@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
+import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.api.spell.IOverrideCooldown;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
@@ -13,6 +14,7 @@ import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.MathHelper;
@@ -47,15 +49,29 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 	@Override
 	public int getNewCooldown(@Nonnull SpellData spell, SpellRing ring) {
 		Entity target = spell.getData(ENTITY_HIT);
-		if (target == null)
+		if (!(target instanceof EntityLivingBase))
 			return 50;
-		int jumpCount = target.getEntityData().getInteger("jump_count");
-		int maxJumps = target.getEntityData().getInteger("max_jumps");
+
+		ItemStack stack = ((EntityLivingBase) target).getHeldItemMainhand();
+
+		if (stack.isEmpty()
+				|| !ItemNBTHelper.verifyExistence(stack, "jump_count")
+				|| !ItemNBTHelper.verifyExistence(stack, "max_jumps")
+				|| !ItemNBTHelper.verifyExistence(stack, "jump_timer"))
+			return 50;
+
+		int jumpCount = ItemNBTHelper.getInt(stack, "jump_count", 0);
+		int maxJumps = ItemNBTHelper.getInt(stack, "max_jumps", 0);
+
 		if (jumpCount <= 1) {
-			target.getEntityData().removeTag("jump_count");
+
+			ItemNBTHelper.removeEntry(stack, "jump_timer");
+			ItemNBTHelper.removeEntry(stack, "jump_count");
+			ItemNBTHelper.removeEntry(stack, "max_jumps");
 			return 50;
 		}
-		target.getEntityData().setInteger("jump_count", jumpCount - 1);
+
+		ItemNBTHelper.setInt(stack, "jump_count", jumpCount - 1);
 		return (maxJumps + 5) - jumpCount;
 	}
 
@@ -64,19 +80,23 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 		Vec3d lookVec = spell.getData(LOOK);
 		Entity target = spell.getVictim();
 
-		if (lookVec == null) return false;
-		if (target == null) return false;
+		if (target == null) return true;
 		if (!(target instanceof EntityLivingBase)) return true;
 
+		ItemStack stack = ((EntityLivingBase) target).getHeldItemMainhand();
+		if (stack.isEmpty()) return true;
+		if (lookVec == null) return true;
 
 		if (!target.hasNoGravity()) {
 			double potency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell);
 			if (!spellRing.taxCaster(spell)) return false;
 
-			if (!target.getEntityData().hasKey("jump_count")) {
-				target.getEntityData().setInteger("jump_count", (int) potency);
-				target.getEntityData().setInteger("max_jumps", (int) potency);
-				target.getEntityData().setInteger("jump_timer", 200);
+			if (!ItemNBTHelper.verifyExistence(stack, "jump_count")
+					|| !ItemNBTHelper.verifyExistence(stack, "max_jumps")
+					|| !ItemNBTHelper.verifyExistence(stack, "jump_timer")) {
+				ItemNBTHelper.setInt(stack, "jump_count", (int) potency);
+				ItemNBTHelper.setInt(stack, "max_jumps", (int) potency);
+				ItemNBTHelper.setInt(stack, "jump_timer", 200);
 			}
 
 			target.motionX += lookVec.x;
@@ -112,19 +132,18 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 
 	@SubscribeEvent
 	public void tickEntity(LivingEvent.LivingUpdateEvent event) {
-		if (event.getEntityLiving().getEntityData().hasKey("jump_timer")) {
-			int x = event.getEntityLiving().getEntityData().getInteger("jump_timer");
+		ItemStack stack = event.getEntityLiving().getHeldItemMainhand();
+		if (stack.isEmpty()) return;
 
-			if (event.getEntityLiving().collidedVertically) {
-				event.getEntityLiving().getEntityData().removeTag("jump_timer");
-				event.getEntityLiving().getEntityData().removeTag("jump_count");
-				return;
-			}
+		if (ItemNBTHelper.verifyExistence(stack, "jump_timer")) {
+			int x = ItemNBTHelper.getInt(stack, "jump_timer", 0);
 
-			if (x <= 0) {
-				event.getEntityLiving().getEntityData().removeTag("jump_timer");
-				event.getEntityLiving().getEntityData().removeTag("jump_count");
-			} else event.getEntityLiving().getEntityData().setInteger("jump_timer", x - 1);
+			if (x <= 0 || event.getEntityLiving().collidedVertically) {
+				ItemNBTHelper.removeEntry(stack, "jump_timer");
+				ItemNBTHelper.removeEntry(stack, "jump_count");
+				ItemNBTHelper.removeEntry(stack, "max_jumps");
+
+			} else ItemNBTHelper.setInt(stack, "jump_timer", x - 1);
 		}
 	}
 }
