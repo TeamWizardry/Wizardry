@@ -45,6 +45,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 
 	public static final String ZONE_OFFSET = "zone offset";
+	public static final String ZONE_CAST = "zone cast";
 	
 	@Nonnull
 	@Override
@@ -80,12 +81,13 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 		
 		NBTTagCompound info = spellRing.getInformationTag();
 		double zoneOffset = info.getDouble(ZONE_OFFSET) + potency;
-		while (zoneOffset >= ConfigValues.zoneTimer)
+		info.setBoolean(ZONE_CAST, false);
+		if (zoneOffset >= ConfigValues.zoneTimer)
 		{
-			zoneOffset -= ConfigValues.zoneTimer;
+			zoneOffset %= ConfigValues.zoneTimer;
 			if (!spellRing.taxCaster(spell))
 			{
-				info.setDouble(ZONE_OFFSET, zoneOffset % ConfigValues.zoneTimer);
+				info.setDouble(ZONE_OFFSET, zoneOffset);
 				return false;
 			}
 			

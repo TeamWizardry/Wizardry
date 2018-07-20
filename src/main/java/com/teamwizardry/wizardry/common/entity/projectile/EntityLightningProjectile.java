@@ -4,7 +4,6 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.SEED;
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.LOOK;
 
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
-import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRange;

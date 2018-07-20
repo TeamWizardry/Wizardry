@@ -5,6 +5,7 @@ import com.teamwizardry.wizardry.client.render.entity.*;
 import com.teamwizardry.wizardry.common.entity.*;
 import com.teamwizardry.wizardry.common.entity.angel.zachriel.EntityCorruptionProjectile;
 import com.teamwizardry.wizardry.common.entity.angel.zachriel.EntityZachriel;
+import com.teamwizardry.wizardry.common.entity.projectile.EntityLightningProjectile;
 import com.teamwizardry.wizardry.common.entity.projectile.EntitySpellProjectile;
 
 import net.minecraft.entity.Entity;
@@ -29,6 +30,7 @@ public class ModEntities {
 		registerEntity(new ResourceLocation(Wizardry.MODID, "angel_zachriel"), EntityZachriel.class, "angel_zachriel");
 		registerEntity(new ResourceLocation(Wizardry.MODID, "fairy"), EntityFairy.class, "fairy");
 		registerEntity(new ResourceLocation(Wizardry.MODID, "spell_projectile"), EntitySpellProjectile.class, "spell_projectile", 256, 1, true);
+		registerEntity(new ResourceLocation(Wizardry.MODID, "lightning_projectile"), EntityLightningProjectile.class, "lightning_projectile", 256, 1, true);
 		registerEntity(new ResourceLocation(Wizardry.MODID, "jump_pad"), EntityJumpPad.class, "jump_pad", 64, 1, false);
 		registerEntity(new ResourceLocation(Wizardry.MODID, "zachriel_corruption"), EntityCorruptionProjectile.class, "zachriel_corruption", 64, 1, false);
 		registerEntity(new ResourceLocation(Wizardry.MODID, "unicorn"), EntityUnicorn.class, "unicorn");
@@ -56,6 +58,7 @@ public class ModEntities {
 		RenderingRegistry.registerEntityRenderingHandler(EntityJumpPad.class, manager -> new RenderJumpPad(manager, new ModelNull()));
 		RenderingRegistry.registerEntityRenderingHandler(EntityCorruptionProjectile.class, RenderZachrielCorruption::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntitySpellProjectile.class, RenderSpellProjectile::new);
+		RenderingRegistry.registerEntityRenderingHandler(EntityLightningProjectile.class, RenderSpellProjectile::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityHaloInfusionItem.class, RenderHaloInfusionItem::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityBackupZombie.class, RenderSummonZombie::new);
 		RenderingRegistry.registerEntityRenderingHandler(EntityBomb.class, RenderBomb::new);
