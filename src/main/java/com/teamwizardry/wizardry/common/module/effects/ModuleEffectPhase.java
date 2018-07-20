@@ -12,6 +12,7 @@ import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
+import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
@@ -347,10 +348,10 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 	@NotNull
 	@Override
 	public SpellData renderVisualization(@Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
-		//if (ring.getParentRing() != null
-		//		&& ring.getParentRing().getModule() != null
-		//		&& ring.getParentRing().getModule() == ModuleRegistry.INSTANCE.getModule("event_collide_entity"))
-		//	return previousData;
+		if (ring.getParentRing() != null
+				&& ring.getParentRing().getModule() != null
+				&& ring.getParentRing().getModule() == ModuleRegistry.INSTANCE.getModule("event_collide_entity"))
+			return previousData;
 
 		BlockPos targetPos = data.getData(SpellData.DefaultKeys.BLOCK_HIT);
 		EnumFacing faceHit = data.getFaceHit();

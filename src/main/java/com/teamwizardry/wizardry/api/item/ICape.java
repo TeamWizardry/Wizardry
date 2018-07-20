@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.api.item;
 
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.ArrayList;
@@ -26,9 +27,10 @@ public interface ICape {
 		List<String> list = new ArrayList<>();
 
 		double tick = ItemNBTHelper.getInt(stack, "maxTick", 0) / 1000000.0;
+		double percentage = Math.round(MathHelper.clamp(tick, 0, 0.75) * 100.0);
 
 		list.add(TextFormatting.GRAY.toString() + "Spell Cost Reduction: ");
-		list.add(TextFormatting.YELLOW.toString() + Math.round(tick * 100) + "%");
+		list.add(TextFormatting.YELLOW.toString() + percentage + "%");
 
 		return list;
 	}

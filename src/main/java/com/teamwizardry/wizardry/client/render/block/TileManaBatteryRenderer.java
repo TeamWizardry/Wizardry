@@ -99,8 +99,6 @@ public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> 
 
 	@Override
 	public void render(float partialTicks, int destroyStage, float alpha) {
-		super.render(partialTicks, destroyStage, alpha);
-
 		if (!getBakedModels()) return;
 
 		GlStateManager.pushMatrix();

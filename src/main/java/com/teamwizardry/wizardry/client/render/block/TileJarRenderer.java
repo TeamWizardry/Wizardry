@@ -53,12 +53,6 @@ public class TileJarRenderer extends TileEntitySpecialRenderer<TileJar> {
 
 	@Override
 	public void render(TileJar te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
-		//InterpBezier3D bezier = new InterpBezier3D(new Vec3d(te.getPos().add(-5, 5, 0)), new Vec3d(te.getPos().add(5, 5, 0)), new Vec3d(0, 3, 0), new Vec3d(0, -3, 0));
-		////InterpLine bezier = new InterpLine(new Vec3d(te.getPos().add(-5, 5, 0)), new Vec3d(te.getPos().add(5, 5, 0)));
-		//LightEffectUtil.renderBilinearGradient(bezier.list(50), Color.WHITE, 0.2, new Vec3d(0, 1, 0));
-		//LightEffectUtil.renderBilinearGradient(bezier.list(50), Color.BLUE, 0.3, new Vec3d(0, 1, 0));
-		//LightEffectUtil.renderBilinearGradient(bezier.list(50), Color.CYAN, 0.5, new Vec3d(0, 1, 0));
-		//LightEffectUtil.renderBilinearGradient(bezier.list(50), Color.CYAN, 1.5, new Vec3d(0, 1, 0));
 		if (!te.hasFairy) return;
 		double timeDifference = (ClientTickHandler.getTicks() + partialTicks) / 20.0;
 		Vec3d pos = new Vec3d(te.getPos()).addVector(0.5, 0.35 + 0.2 * MathHelper.sin((float) timeDifference), 0.5);

@@ -17,3 +17,5 @@ Spell projectiles cast particles properly now
 Fix crash caused by lightning occasionally
 Added some new sounds
 Leap effect behavior changed
+Zoom effect ridiculous cooldown bug fixed
+Fix fairy dust jump pads (They were uh... bad...)
