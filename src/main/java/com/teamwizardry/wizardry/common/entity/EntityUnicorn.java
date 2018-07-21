@@ -4,7 +4,13 @@ import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.EntityAIFollowParent;
+import net.minecraft.entity.ai.EntityAILookIdle;
+import net.minecraft.entity.ai.EntityAIMate;
+import net.minecraft.entity.ai.EntityAIMoveTowardsRestriction;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
+import net.minecraft.entity.ai.EntityAIRunAroundLikeCrazy;
+import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.ai.EntityFlyHelper;
 import net.minecraft.entity.passive.AbstractHorse;
@@ -58,24 +64,24 @@ public class EntityUnicorn extends AbstractHorse implements EntityFlying {
 
 	@Override
 	protected void initEntityAI() {
-		//this.tasks.addTask(0, new EntityAIUnicornCharge(this, 1.0F, 10.0F, 5.0));
-		//this.tasks.addTask(1, new EntityAISwimming(this));
-		//this.tasks.addTask(2, new EntityAIMoveTowardsRestriction(this, 1.0D));
-		//this.tasks.addTask(3, new EntityAIUnicornWander(this, 1.0D));
+//		this.tasks.addTask(0, new EntityAIUnicornCharge(this, 1.0F, 10.0F, 5.0));
+		this.tasks.addTask(1, new EntityAISwimming(this));
+		this.tasks.addTask(2, new EntityAIMoveTowardsRestriction(this, 1.0D));
+//		this.tasks.addTask(3, new EntityAIUnicornWander(this, 1.0D));
 
-		//this.tasks.addTask(3, new EntityAIWander(this, 0.6));
+//		this.tasks.addTask(3, new EntityAIWander(this, 0.6));
 		this.tasks.addTask(4, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
-		//this.tasks.addTask(5, new EntityAILookIdle(this));
+		this.tasks.addTask(5, new EntityAILookIdle(this));
 
-		//this.tasks.addTask(6, new EntityAIRunAroundLikeCrazy(this, 1.2D));
-		//this.tasks.addTask(7, new EntityAIMate(this, 1.0D));
-		//this.tasks.addTask(8, new EntityAIFollowParent(this, 1.0D));
+		this.tasks.addTask(6, new EntityAIRunAroundLikeCrazy(this, 1.2D));
+		this.tasks.addTask(7, new EntityAIMate(this, 1.0D));
+		this.tasks.addTask(8, new EntityAIFollowParent(this, 1.0D));
 
-		//this.targetTasks.addTask(1, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, false, false));
-		//this.targetTasks.addTask(2, new EntityAIHurtByTarget(this, false));
+//		this.targetTasks.addTask(1, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, false, false));
+//		this.targetTasks.addTask(2, new EntityAIHurtByTarget(this, false));
 
 		this.targetTasks.addTask(0, new EntityAINearestAttackableTarget<>(this, EntityPlayer.class, false));
-		//	this.targetTasks.addTask(1, new EntityAINearestAttackableTarget<>(this, EntityFairy.class, false));
+//		this.targetTasks.addTask(1, new EntityAINearestAttackableTarget<>(this, EntityFairy.class, false));
 	}
 
 	@Override
@@ -97,27 +103,26 @@ public class EntityUnicorn extends AbstractHorse implements EntityFlying {
 		if (world.isRemote) return;
 		fallDistance = 0;
 
-		setAttackTarget(Minecraft.getMinecraft().player);
 		if (getAttackTarget() != null) {
 			moveHelper.setMoveTo(getAttackTarget().posX, getAttackTarget().posY, getAttackTarget().posZ, 1);
 		}
 
 	}
 
-	private void fart() {
-		flatulenceTicker--;
-		if (flatulenceTicker <= 0) {
-			Vec3d fartPos = this.getLookVec().subtract(this.getPositionVector()).rotateYaw((float) Math.PI);
-			for (int p = 0; p < 64; p++) {
-				this.world.spawnParticle(EnumParticleTypes.REDSTONE, fartPos.x + RandUtil.nextDouble(-FART_SIZE, FART_SIZE),
-						this.posY + this.getEyeHeight() - FART_OFFSET + RandUtil.nextDouble(-FART_SIZE, FART_SIZE),
-						fartPos.z + RandUtil.nextDouble(-FART_SIZE, FART_SIZE),
-						this.world.rand.nextFloat(), this.world.rand.nextFloat(), this.world.rand.nextFloat()
-				);
-			}
-			flatulenceTicker = RandUtil.nextInt(200, 6000);
-		}
-	}
+//	private void fart() {
+//		flatulenceTicker--;
+//		if (flatulenceTicker <= 0) {
+//			Vec3d fartPos = this.getLookVec().subtract(this.getPositionVector()).rotateYaw((float) Math.PI);
+//			for (int p = 0; p < 64; p++) {
+//				this.world.spawnParticle(EnumParticleTypes.REDSTONE, fartPos.x + RandUtil.nextDouble(-FART_SIZE, FART_SIZE),
+//						this.posY + this.getEyeHeight() - FART_OFFSET + RandUtil.nextDouble(-FART_SIZE, FART_SIZE),
+//						fartPos.z + RandUtil.nextDouble(-FART_SIZE, FART_SIZE),
+//						this.world.rand.nextFloat(), this.world.rand.nextFloat(), this.world.rand.nextFloat()
+//				);
+//			}
+//			flatulenceTicker = RandUtil.nextInt(200, 6000);
+//		}
+//	}
 
 	@Override
 	protected void dropLoot(boolean wasRecentlyHit, int lootingModifier, DamageSource source) {

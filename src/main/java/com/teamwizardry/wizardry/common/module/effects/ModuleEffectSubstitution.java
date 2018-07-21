@@ -18,7 +18,6 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
-import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseAOE;
@@ -29,6 +28,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -45,8 +45,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Demoniaque.
@@ -71,6 +71,8 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 		Entity targetEntity = spell.getVictim();
 		Entity caster = spell.getCaster();
 		BlockPos targetBlock = spell.getTargetPos();
+		EnumFacing facing = spell.getFaceHit();
+		World world = spell.world;
 
 		if (caster == null) return false;
 
@@ -91,8 +93,8 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 			caster.rotationYaw = yawTarget;
 			caster.rotationPitch = pitchTarget;
 			caster.setPositionAndUpdate(posTarget.x, posTarget.y, posTarget.z);
-			spell.world.playSound(null, caster.getPosition(), ModSounds.TELEPORT, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat());
-			spell.world.playSound(null, targetEntity.getPosition(), ModSounds.TELEPORT, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat());
+			world.playSound(null, caster.getPosition(), ModSounds.TELEPORT, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat());
+			world.playSound(null, targetEntity.getPosition(), ModSounds.TELEPORT, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat());
 
 			return true;
 
@@ -100,14 +102,14 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 			ItemStack hand = ((EntityPlayer) caster).getHeldItemMainhand();
 			if (hand.isEmpty()) return false;
 
-			spell.world.playSound(null, targetBlock, ModSounds.TELEPORT, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat());
+			world.playSound(null, targetBlock, ModSounds.TELEPORT, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat());
 			if (ItemNBTHelper.verifyExistence(hand, "selected")) {
 
 				NBTTagCompound compound = ItemNBTHelper.getCompound(hand, "selected");
 				if (compound == null) return false;
 
 				IBlockState state = NBTUtil.readBlockState(compound);
-				IBlockState touchedBlock = spell.world.getBlockState(targetBlock);
+				IBlockState touchedBlock = world.getBlockState(targetBlock);
 
 				if (touchedBlock.getBlock() == state.getBlock()) return false;
 
@@ -125,35 +127,28 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 
 				if (stackBlock == null) return false;
 
-				HashSet<BlockPos> blocks = new HashSet<>();
-				HashSet<BlockPos> branch = new HashSet<>();
-				branch.add(targetBlock);
-				blocks.add(targetBlock);
-				getBlocks(spell.world, touchedBlock.getBlock(), (int) area, branch, blocks);
+				Set<BlockPos> blocks = BlockUtils.blocksInSquare(targetBlock, facing, Math.min(stackBlock.getCount(), (int) area), (int) ((Math.sqrt(area)+1)/2), pos -> {
+					BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(pos);
+					IBlockState adjacentState = world.getBlockState(mutable.offset(facing));
+					if (adjacentState.getBlock() != Blocks.AIR) return true;
+
+					IBlockState block = world.getBlockState(pos);
+					return block.getBlock() != touchedBlock.getBlock();
+				});
 
 				if (blocks.isEmpty()) return true;
 
-				for (@SuppressWarnings("unused") BlockPos ignored : blocks) {
+				for (BlockPos pos : blocks) {
 					if (stackBlock.isEmpty()) return true;
-					if (!spellRing.taxCaster(spell)) return false;
-					BlockPos nearest = null;
-					for (BlockPos pos : blocks) {
-						if (spell.world.isAirBlock(pos)) continue;
-						if (spell.world.getBlockState(pos).getBlock() == state.getBlock()) continue;
-
-						if (nearest == null) {
-							nearest = pos;
-							continue;
-						}
-						if (pos.distanceSq(targetBlock) < nearest.distanceSq(targetBlock)) nearest = pos;
-					}
-					if (nearest == null) return true;
+					if (!spellRing.taxCaster(spell, 1/area)) return false;
+					if (world.isAirBlock(pos)) continue;
+					if (world.getBlockState(pos).getBlock() == state.getBlock()) continue;
 
 					stackBlock.shrink(1);
 
-					IBlockState oldState = spell.world.getBlockState(nearest);
-					BlockUtils.placeBlock(spell.world, nearest, state, (EntityPlayerMP) caster);
-					((EntityPlayer) caster).inventory.addItemStackToInventory(new ItemStack(oldState.getBlock().getItemDropped(oldState, spell.world.rand, 0)));
+					IBlockState oldState = world.getBlockState(pos);
+					BlockUtils.placeBlock(world, pos, state, (EntityPlayerMP) caster);
+					((EntityPlayer) caster).inventory.addItemStackToInventory(new ItemStack(oldState.getBlock().getItemDropped(oldState, world.rand, 0)));
 				}
 			}
 			return true;
@@ -162,45 +157,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 		return false;
 	}
 
-	private void getBlocks(World world, Block block, int maxBlocks, HashSet<BlockPos> branch, HashSet<BlockPos> allBlocks) {
-		if (allBlocks.size() >= maxBlocks) return;
-
-		HashSet<BlockPos> newBranch = new HashSet<>();
-
-		for (BlockPos branchPos : branch) {
-			for (EnumFacing facing : EnumFacing.VALUES) {
-				BlockPos posAdj = branchPos.offset(facing);
-				IBlockState state = world.getBlockState(posAdj);
-
-				if (!world.isBlockLoaded(posAdj)) continue;
-				if (allBlocks.contains(posAdj)) continue;
-				if (state.getBlock() != block) continue;
-
-				boolean sideSolid = false;
-				for (EnumFacing dir : PosUtils.symmetricFacingValues) {
-					BlockPos adjPos = branchPos.offset(dir);
-					IBlockState adjState = world.getBlockState(adjPos);
-					if (!adjState.isSideSolid(world, adjPos, dir.getOpposite())) {
-						sideSolid = true;
-						break;
-					}
-				}
-				if (!sideSolid) continue;
-
-				if (allBlocks.size() >= maxBlocks) return;
-
-				newBranch.add(posAdj);
-				allBlocks.add(posAdj);
-			}
-		}
-		boolean mismatched = false;
-		for (BlockPos pos : branch) if (!newBranch.contains(pos)) mismatched = true;
-		if (mismatched)
-			getBlocks(world, block, maxBlocks, newBranch, allBlocks);
-	}
-
 	@Override
-	@SuppressWarnings("unused")
 	@SideOnly(Side.CLIENT)
 	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
@@ -213,7 +170,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 			ParticleBuilder glitter = new ParticleBuilder(RandUtil.nextInt(20, 30));
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 			glitter.setColorFunction(new InterpColorHSV(getPrimaryColor(), getSecondaryColor()));
-			ParticleSpawner.spawn(glitter, spell.world, new StaticInterp<>(new Vec3d(targetEntity.posX, targetEntity.posY, targetEntity.posZ)), 50, RandUtil.nextInt(20, 30), (aFloat, particleBuilder) -> {
+			ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(targetEntity.posX, targetEntity.posY, targetEntity.posZ)), 50, RandUtil.nextInt(20, 30), (aFloat, particleBuilder) -> {
 				glitter.setScale((float) RandUtil.nextDouble(0.3, 1));
 				glitter.setAlphaFunction(new InterpFadeInOut(0.3f, (float) RandUtil.nextDouble(0.6, 1)));
 				glitter.setLifetime(RandUtil.nextInt(10, 20));
@@ -226,7 +183,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 			});
 
 			glitter.setColorFunction(new InterpColorHSV(getSecondaryColor(), getPrimaryColor()));
-			ParticleSpawner.spawn(glitter, spell.world, new StaticInterp<>(new Vec3d(caster.posX, caster.posY, caster.posZ)), 50, RandUtil.nextInt(20, 30), (aFloat, particleBuilder) -> {
+			ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(caster.posX, caster.posY, caster.posZ)), 50, RandUtil.nextInt(20, 30), (aFloat, particleBuilder) -> {
 				glitter.setScale((float) RandUtil.nextDouble(0.3, 1));
 				glitter.setAlphaFunction(new InterpFadeInOut(0.3f, (float) RandUtil.nextDouble(0.6, 1)));
 				glitter.setLifetime(RandUtil.nextInt(10, 20));
@@ -241,7 +198,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 			ParticleBuilder glitter = new ParticleBuilder(RandUtil.nextInt(20, 30));
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 			glitter.setColorFunction(new InterpColorHSV(getPrimaryColor(), getSecondaryColor()));
-			ParticleSpawner.spawn(glitter, spell.world, new StaticInterp<>(new Vec3d(targetBlock).addVector(0.5, 0.5, 0.5)), 20, 0, (aFloat, particleBuilder) -> {
+			ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(targetBlock).addVector(0.5, 0.5, 0.5)), 20, 0, (aFloat, particleBuilder) -> {
 				glitter.setScale((float) RandUtil.nextDouble(0.3, 1));
 				glitter.setAlphaFunction(new InterpFadeInOut(0.3f, (float) RandUtil.nextDouble(0.6, 1)));
 				glitter.setLifetime(RandUtil.nextInt(10, 20));
@@ -265,6 +222,8 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 
 		Entity caster = data.getCaster();
 		BlockPos targetBlock = data.getTargetPos();
+		EnumFacing facing = data.getFaceHit();
+		World world = data.world;
 
 		if (!(caster instanceof EntityLivingBase)) return previousData;
 		ItemStack hand = ((EntityLivingBase) caster).getHeldItemMainhand();
@@ -295,12 +254,15 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 				if (stackBlock == null) return previousData;
 				stackBlock = stackBlock.copy();
 
-				HashSet<BlockPos> blocks = new HashSet<>();
-				HashSet<BlockPos> branch = new HashSet<>();
-				branch.add(targetBlock);
-				blocks.add(targetBlock);
-				getBlocks(data.world, targetState.getBlock(), (int) area, branch, blocks);
+				Set<BlockPos> blocks = BlockUtils.blocksInSquare(targetBlock, facing, Math.min(stackBlock.getCount(), (int) area), (int) ((Math.sqrt(area)+1)/2), pos -> {
+					BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(pos);
+					IBlockState adjacentState = world.getBlockState(mutable.offset(facing));
+					if (adjacentState.getBlock() != Blocks.AIR) return true;
 
+					IBlockState block = world.getBlockState(pos);
+					return block.getBlock() != targetState.getBlock();
+				});
+				
 				if (blocks.isEmpty()) return previousData;
 
 				HashMap<BlockPos, IBlockState> blockStateCache = new HashMap<>();
@@ -316,9 +278,9 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 					if (BlockUtils.isAnyAir(entry.getValue())) continue;
 
 					BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(entry.getKey());
-					for (EnumFacing facing : EnumFacing.VALUES) {
+					for (EnumFacing face : EnumFacing.VALUES) {
 
-						mutable.move(facing);
+						mutable.move(face);
 
 						IBlockState adjState;
 						if (!blockStateCache.containsKey(mutable)) {
@@ -328,9 +290,9 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 
 						if (adjState.getBlock() != targetState.getBlock() || !blocks.contains(mutable)) {
 
-							drawFaceOutline(mutable, facing.getOpposite());
+							drawFaceOutline(mutable, face.getOpposite());
 						}
-						mutable.move(facing.getOpposite());
+						mutable.move(face.getOpposite());
 					}
 				}
 			}

@@ -172,19 +172,24 @@ public class ModuleEffectLightning extends ModuleEffect implements IOverrideCool
 			World world = data.world;
 			float yaw = data.getData(YAW, 0F);
 			float pitch = data.getData(PITCH, 0F);
-			Vec3d origin = data.getOriginWithFallback();
+			Vec3d origin = data.getOriginHand();
 			Entity caster = data.getCaster();
 			
 			if (origin == null) return;
 
 			double coneRange = spellRing.getAttributeValue(AttributeRegistry.RANGE, data);
-			int conePotency = (int) (spellRing.getAttributeValue(AttributeRegistry.POTENCY, data));
+			double lightningRange = childRing.getAttributeValue(AttributeRegistry.RANGE, data);
+			double lightningPotency = childRing.getAttributeValue(AttributeRegistry.POTENCY, data);
+			double lightningDuration = childRing.getAttributeValue(AttributeRegistry.DURATION, data);
 			
 			RandUtilSeed rand = new RandUtilSeed(RandUtil.nextLong(100, 100000));
-			for (int i = 0; i < conePotency; i++)
-			{
-				// cone needs special handling, do cast loop on shape, then get overrides
-			}
+			
+			float angle = (float) coneRange * 2;
+			float newPitch = pitch + rand.nextFloat(-angle, angle);
+			float newYaw = yaw + rand.nextFloat(-angle, angle);
+			
+			Vec3d to = Vec3d.fromPitchYaw(newPitch, newYaw).normalize().scale(lightningRange).add(origin);
+			doLightning(rand.nextLong(100, 100000), world, caster, origin, to, lightningRange, lightningPotency, lightningDuration);
 		};
 	}
 	
@@ -201,16 +206,21 @@ public class ModuleEffectLightning extends ModuleEffect implements IOverrideCool
 			double lightningDuration = childRing.getAttributeValue(AttributeRegistry.DURATION, data);
 			double zoneAoE = spellRing.getAttributeValue(AttributeRegistry.AREA, data);
 			double zoneRange = spellRing.getAttributeValue(AttributeRegistry.RANGE, data);
-			double zonePotency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, data);
 
 			Vec3d min = targetPos.subtract(zoneAoE/2, zoneRange/2, zoneAoE/2);
 			Vec3d max = targetPos.addVector(zoneAoE/2, zoneRange/2, zoneAoE/2);
 			
-			NBTTagCompound info = spellRing.getInformationTag();
-			
 			if (!childRing.taxCaster(data)) return;
 
-			long seed = RandUtil.nextLong(100, 100000);
+			RandUtilSeed rand = new RandUtilSeed(RandUtil.nextLong(100, 100000));
+			
+			Vec3d from = new Vec3d(rand.nextDouble(min.x, max.x), rand.nextDouble(min.y, max.y), rand.nextDouble(min.z, max.z));
+			float pitch = (float) (180 * Math.asin(2 * rand.nextDouble() - 1) / Math.PI);
+			float yaw = (float) rand.nextDouble(360);
+			
+			Vec3d to = Vec3d.fromPitchYaw(pitch, yaw).normalize().scale(lightningRange).add(from);
+			
+			doLightning(rand.nextLong(100, 100000), world, caster, from, to, lightningRange, lightningPotency, lightningDuration);
 		};
 	}
 	
