@@ -299,6 +299,19 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 
 	public static class DefaultKeys {
 
+		public static final Pair<String, Class<NBTTagCompound>> COMPOUND = constructPair("compound", NBTTagCompound.class, new ProcessData.Process<NBTTagCompound, NBTTagCompound>() {
+			@Nonnull
+			@Override
+			public NBTTagCompound serialize(@Nullable NBTTagCompound object) {
+				return object == null ? new NBTTagCompound() : object;
+			}
+
+			@Override
+			public NBTTagCompound deserialize(@Nullable World world, @Nonnull NBTTagCompound object) {
+				return object;
+			}
+		});
+
 		public static final Pair<String, Class<Integer>> MAX_TIME = constructPair("max_time", Integer.class, new ProcessData.Process<NBTTagInt, Integer>() {
 			@Nonnull
 			@Override

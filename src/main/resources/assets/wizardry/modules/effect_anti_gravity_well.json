@@ -1,8 +1,8 @@
 {
   "item": "wizardry:bomb",
   "meta": "1",
-  "primary_color": "FF0000",
-  "secondary_color": "FFA5A5",
+  "primary_color": "0015ff",
+  "secondary_color": "00ffe1",
   "mana": { "base": 0.5 },
   "burnout": { "base": 0.5 },
   "cooldown": { "base": 100 },

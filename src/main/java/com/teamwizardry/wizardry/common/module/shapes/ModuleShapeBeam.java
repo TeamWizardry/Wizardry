@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.module.shapes;
 
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.spell.IContinuousModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
@@ -14,16 +15,20 @@ import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseRange;
 import net.minecraft.entity.Entity;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
+import java.util.HashMap;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.LOOK;
 
@@ -31,10 +36,13 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.LOOK;
  * Created by Demoniaque.
  */
 @RegisterModule
+@Mod.EventBusSubscriber(modid = Wizardry.MODID)
 public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 
 	public static final String BEAM_OFFSET = "beam offset";
 	public static final String BEAM_CAST = "beam cast";
+
+	public static final HashMap<ItemStack, BeamTicker> beamTickMap = new HashMap<>();
 
 	@Nonnull
 	@Override
@@ -52,6 +60,14 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 		return true;
 	}
 
+	@SubscribeEvent
+	public static void tick(TickEvent.PlayerTickEvent event) {
+		if (event.phase != TickEvent.Phase.END) return;
+
+		ItemStack stack = event.player.getHeldItemMainhand();
+		beamTickMap.keySet().removeIf(itemStack -> !ItemStack.areItemStacksEqual(itemStack, stack));
+	}
+
 	@Override
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
@@ -59,22 +75,26 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 		Vec3d position = spell.getOrigin();
 		Entity caster = spell.getCaster();
 
-		if (look == null || position == null) return false;
+		if (look == null || position == null || caster == null) return false;
+		ItemStack stack = ((EntityLivingBase) caster).getHeldItemMainhand();
+		if (stack.isEmpty()) return true;
+		beamTickMap.putIfAbsent(stack, new BeamTicker());
+
+		BeamTicker ticker = beamTickMap.get(stack);
 
 		double range = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
 		double potency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell);
 
-		NBTTagCompound info = spellRing.getInformationTag();
-		double beamOffset = info.getDouble(BEAM_OFFSET) + potency;
-		info.setBoolean(BEAM_CAST, false);
+		double beamOffset = ticker.ticks + potency;
+		ticker.cast = false;
 
 		if (beamOffset >= ConfigValues.beamTimer) {
 			beamOffset %= ConfigValues.beamTimer;
 			if (!spellRing.taxCaster(spell)) {
-				info.setDouble(BEAM_OFFSET, beamOffset);
+				ticker.ticks = beamOffset;
 				return false;
 			}
-			
+
 			runRunOverrides(spell, spellRing);
 
 			RayTraceResult trace = new RayTrace(world, look, position, range)
@@ -87,12 +107,13 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 
 			if (spellRing.getChildRing() != null)
 				spellRing.getChildRing().runSpellRing(spell);
-			
-			info.setBoolean(BEAM_CAST, true);
+
+			ticker.cast = true;
 			sendRenderPacket(spell, spellRing);
 		}
-		
-		info.setDouble(BEAM_OFFSET, beamOffset);
+
+		ticker.ticks = beamOffset;
+
 		return true;
 	}
 
@@ -104,43 +125,29 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 		Vec3d position = data.getOrigin();
 		Entity caster = data.getCaster();
 
-		if (look == null || position == null) return previousData;
+		if (look == null || position == null || caster == null) return previousData;
 
 		double range = ring.getAttributeValue(AttributeRegistry.RANGE, data);
-		double potency = ring.getAttributeValue(AttributeRegistry.POTENCY, data);
 
-		NBTTagCompound info = ring.getInformationTag();
-		double beamOffset = info.getDouble(BEAM_OFFSET) + potency;
+		RayTraceResult trace = new RayTrace(world, look, position, range)
+				.setSkipEntity(caster)
+				.setReturnLastUncollidableBlock(true)
+				.setIgnoreBlocksWithoutBoundingBoxes(true)
+				.trace();
 
-		if (beamOffset >= ConfigValues.beamTimer) {
-			beamOffset %= ConfigValues.beamTimer;
-			if (!ring.taxCaster(data)) {
-				info.setDouble(BEAM_OFFSET, beamOffset);
-				return previousData;
-			}
-
-			RayTraceResult trace = new RayTrace(world, look, position, range)
-					.setSkipEntity(caster)
-					.setReturnLastUncollidableBlock(true)
-					.setIgnoreBlocksWithoutBoundingBoxes(true)
-					.trace();
-
-			data.processTrace(trace, look.scale(range));
-
-			BlockPos pos = data.getTargetPos();
-			if (pos == null) return previousData;
-
-			previousData.processTrace(trace, look.scale(range));
-		}
-
+		data.processTrace(trace, look.scale(range));
 		return previousData;
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		if (spellRing.getInformationTag().getBoolean(BEAM_CAST))
-		{
+		Entity caster = spell.getCaster();
+		if (caster == null) return;
+		ItemStack stack = ((EntityLivingBase) caster).getHeldItemMainhand();
+		if (stack.isEmpty()) return;
+
+		if (beamTickMap.containsKey(stack) && beamTickMap.get(stack).cast) {
 			if (runRenderOverrides(spell, spellRing)) return;
 
 			World world = spell.world;
@@ -149,6 +156,15 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 			if (target == null) return;
 
 			LibParticles.SHAPE_BEAM(world, target, spell.getOriginHand(), RandUtil.nextBoolean() ? spellRing.getPrimaryColor() : spellRing.getSecondaryColor());
+		}
+	}
+
+	public static class BeamTicker {
+
+		boolean cast = false;
+		double ticks = 0;
+
+		BeamTicker() {
 		}
 	}
 }

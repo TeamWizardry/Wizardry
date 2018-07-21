@@ -4,7 +4,11 @@
 	"burnout": { "base": 30 },
 	"cooldown": { "base": 100 },
 	"area": { "base": 3, "min": 3, "max": 10 },
-	"potency": { "max": 60 },
+	"potency": {
+		"base": 1,
+		"min": 1,
+		"max": 60
+	},
 	"range": { "base": 1, "min": 1, "max": 20 },
 	"duration": { "base": 10, "min": 10, "max": 100 }
 }

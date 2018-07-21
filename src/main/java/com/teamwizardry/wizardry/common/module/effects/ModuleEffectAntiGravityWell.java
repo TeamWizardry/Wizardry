@@ -76,11 +76,11 @@ public class ModuleEffectAntiGravityWell extends ModuleEffect implements ILinger
 			if (dist > area) continue;
 			if (!spellRing.taxCaster(spell)) return false;
 
-			final double upperMag = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell) / 100.0;
-			final double scale = 3.5;
+			final double upperMag = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell) / 50.0;
+			final double scale = 1.5;
 			double mag = upperMag * (scale * dist / (-scale * dist - 1) + 1);
 
-			Vec3d dir = position.subtract(entity.getPositionVector()).normalize().scale(mag);
+			Vec3d dir = position.subtract(entity.getPositionVector()).normalize().scale(-mag);
 
 			entity.motionX += (dir.x);
 			entity.motionY += (dir.y);
@@ -102,11 +102,10 @@ public class ModuleEffectAntiGravityWell extends ModuleEffect implements ILinger
 		Vec3d position = spell.getData(ORIGIN);
 
 		if (position == null) return;
-		if (RandUtil.nextInt(10) != 0) return;
 
 		ParticleBuilder glitter = new ParticleBuilder(0);
 		glitter.setColorFunction(new InterpColorHSV(getPrimaryColor(), getSecondaryColor()));
-		ParticleSpawner.spawn(glitter, spell.world, new StaticInterp<>(position), 5, 0, (aFloat, particleBuilder) -> {
+		ParticleSpawner.spawn(glitter, spell.world, new StaticInterp<>(position), 10, 10, (aFloat, particleBuilder) -> {
 			glitter.setScale((float) RandUtil.nextDouble(0.3, 1));
 			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, (float) RandUtil.nextDouble(0.6, 1)));
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));

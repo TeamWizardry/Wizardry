@@ -127,7 +127,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	}
 
 	public boolean isContinuous() {
-		return module instanceof IContinuousModule && !isRunBeingOverriden();
+		return module instanceof IContinuousModule;
 	}
 
 	public Set<SpellRing> getOverridingRings() {

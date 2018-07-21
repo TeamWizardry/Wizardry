@@ -32,7 +32,7 @@ public class ConfigValues {
 	public static int networkLinkDistance = 32;
 
 	@ConfigProperty(category = "items", comment = "The buffer size a crude halo will give to a player.")
-	public static double crudeHaloBufferSize = 500;
+	public static double crudeHaloBufferSize = 1000;
 
 	@ConfigProperty(category = "items", comment = "The buffer size a real halo will give to a player.")
 	public static double realHaloBufferSize = 5000;
@@ -58,5 +58,5 @@ public class ConfigValues {
 	
 	@ConfigIntRange(min = 1, max = Integer.MAX_VALUE)
 	@ConfigProperty(category = "spells", comment = "Maximum number of ticks between Beam activations. Minimum of 1.")
-	public static int beamTimer = 20;
+	public static int beamTimer = 10;
 }

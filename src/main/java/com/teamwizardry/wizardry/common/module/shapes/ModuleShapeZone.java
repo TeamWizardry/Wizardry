@@ -78,8 +78,9 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 
 		Vec3d min = targetPos.subtract(aoe/2, range/2, aoe/2);
 		Vec3d max = targetPos.addVector(aoe/2, range/2, aoe/2);
-		
-		NBTTagCompound info = spellRing.getInformationTag();
+
+		NBTTagCompound info = spell.getData(SpellData.DefaultKeys.COMPOUND, new NBTTagCompound());
+
 		double zoneOffset = info.getDouble(ZONE_OFFSET) + potency;
 		info.setBoolean(ZONE_CAST, false);
 		if (zoneOffset >= ConfigValues.zoneTimer)
@@ -88,6 +89,7 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 			if (!spellRing.taxCaster(spell))
 			{
 				info.setDouble(ZONE_OFFSET, zoneOffset);
+				spell.addData(COMPOUND, info);
 				return false;
 			}
 			
@@ -120,6 +122,8 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 				spellRing.getChildRing().runSpellRing(copy);
 		}
 		info.setDouble(ZONE_OFFSET, zoneOffset);
+
+		spell.addData(COMPOUND, info);
 		return true;
 	}
 
@@ -139,7 +143,7 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 		glitter.setScaleFunction(new InterpScale(1, 0));
 		glitter.setCollision(true);
-		ParticleSpawner.spawn(glitter, spell.world, new InterpCircle(target, new Vec3d(0, 1, 0), (float) aoe, 1, RandUtil.nextFloat()), (int) (aoe * 30), 10, (aFloat, particleBuilder) -> {
+		ParticleSpawner.spawn(glitter, spell.world, new InterpCircle(target, new Vec3d(0, 1, 0), (float) aoe, 1, RandUtil.nextFloat()), (int) (aoe * 25), 10, (aFloat, particleBuilder) -> {
 			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
 			glitter.setLifetime(RandUtil.nextInt(30, 50));
 			glitter.setColorFunction(new InterpColorHSV(spellRing.getPrimaryColor(), spellRing.getSecondaryColor()));

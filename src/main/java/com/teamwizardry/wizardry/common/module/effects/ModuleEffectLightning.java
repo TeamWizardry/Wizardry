@@ -1,18 +1,7 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
-import static com.teamwizardry.wizardry.common.module.shapes.ModuleShapeBeam.BEAM_CAST;
-import static com.teamwizardry.wizardry.common.module.shapes.ModuleShapeBeam.BEAM_OFFSET;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-
-import javax.annotation.Nonnull;
-
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
-import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.LightningGenerator;
-import com.teamwizardry.wizardry.api.spell.IOverrideCooldown;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
@@ -31,11 +20,9 @@ import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseP
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseRange;
 import com.teamwizardry.wizardry.common.network.PacketRenderLightningBolt;
 import com.teamwizardry.wizardry.init.ModSounds;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -46,11 +33,17 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.HashSet;
+
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
+
 /**
  * Created by Demoniaque.
  */
 @RegisterModule
-public class ModuleEffectLightning extends ModuleEffect implements IOverrideCooldown {
+public class ModuleEffectLightning extends ModuleEffect {
 
 	public ModuleEffectLightning() {
 		registerRunOverride("shape_self", getSelfOverride());
@@ -60,12 +53,40 @@ public class ModuleEffectLightning extends ModuleEffect implements IOverrideCool
 		registerRunOverride("shape_beam", getBeamOverride());
 		registerRunOverride("shape_zone", getZoneOverride());
 
-		registerRenderOverride("shape_self", (data, spellRing, childRing) -> {});
+		//registerRenderOverride("shape_self", (data, spellRing, childRing) -> {});
 		registerRenderOverride("shape_touch", (data, spellRing, childRing) -> {});
 		registerRenderOverride("shape_projectile", (data, spellRing, childRing) -> {});
 		registerRenderOverride("shape_cone", (data, spellRing, childRing) -> {});
 		registerRenderOverride("shape_beam", (data, spellRing, childRing) -> {});
-		registerRenderOverride("shape_zone", (data, spellRing, childRing) -> {});
+		/*registerRenderOverride("shape_zone", (data, spellRing, childRing) -> {
+			ClientRunnable.run(new ClientRunnable() {
+				@Override
+				@SideOnly(Side.CLIENT)
+				public void runIfClient() {
+					Vec3d target = data.getTarget();
+
+					if (target == null) return;
+					if (RandUtil.nextInt(10) != 0) return;
+
+					double aoe = spellRing.getAttributeValue(AttributeRegistry.AREA, data);
+
+					ParticleBuilder glitter = new ParticleBuilder(10);
+					glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+					glitter.setScaleFunction(new InterpScale(1, 0));
+					glitter.setCollision(true);
+					ParticleSpawner.spawn(glitter, data.world, new InterpCircle(target, new Vec3d(0, 1, 0), (float) aoe, 1, RandUtil.nextFloat()), (int) (aoe * 30), 10, (aFloat, particleBuilder) -> {
+						glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
+						glitter.setLifetime(RandUtil.nextInt(30, 50));
+						glitter.setColorFunction(new InterpColorHSV(spellRing.getPrimaryColor(), spellRing.getSecondaryColor()));
+						glitter.setMotion(new Vec3d(
+								RandUtil.nextDouble(-0.01, 0.01),
+								RandUtil.nextDouble(-0.1, 0.1),
+								RandUtil.nextDouble(-0.01, 0.01)
+						));
+					});
+				}
+			});
+		});*/
 	}
 
 	@Nonnull
@@ -187,8 +208,8 @@ public class ModuleEffectLightning extends ModuleEffect implements IOverrideCool
 			float angle = (float) coneRange * 2;
 			float newPitch = pitch + rand.nextFloat(-angle, angle);
 			float newYaw = yaw + rand.nextFloat(-angle, angle);
-			
-			Vec3d to = Vec3d.fromPitchYaw(newPitch, newYaw).normalize().scale(lightningRange).add(origin);
+
+			Vec3d to = Vec3d.fromPitchYaw(newPitch, newYaw).normalize().scale(coneRange).add(origin);
 			doLightning(rand.nextLong(100, 100000), world, caster, origin, to, lightningRange, lightningPotency, lightningDuration);
 		};
 	}
@@ -235,11 +256,6 @@ public class ModuleEffectLightning extends ModuleEffect implements IOverrideCool
 	@SideOnly(Side.CLIENT)
 	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		// NO-OP, should always be overriding a shape
-	}
-	
-	@Override
-	public int getNewCooldown(@Nonnull SpellData spell, SpellRing ring) {
-		return 0;
 	}
 	
 	public static void doLightning(long seed, World world, Entity caster, Vec3d from, Vec3d to, double offshootRange, double potency, double duration)
