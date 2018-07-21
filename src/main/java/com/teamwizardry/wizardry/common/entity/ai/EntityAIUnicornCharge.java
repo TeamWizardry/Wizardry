@@ -50,6 +50,7 @@ public class EntityAIUnicornCharge extends EntityAIBase {
 
 	@Override
 	public void updateTask() {
+		if (unicorn.isDead) return;
 		if (unicorn.getAttackTarget() == null) return;
 
 		if (unicorn.isCharging && unicorn.prepareChargeTicks < 40) {
@@ -70,5 +71,6 @@ public class EntityAIUnicornCharge extends EntityAIBase {
 		this.unicorn.getNavigator().clearPath();
 		unicorn.isCharging = false;
 		unicorn.prepareChargeTicks = 0;
+		targetHit = false;
 	}
 }

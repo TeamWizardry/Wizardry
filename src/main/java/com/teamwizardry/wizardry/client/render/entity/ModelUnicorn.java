@@ -1,12 +1,12 @@
 package com.teamwizardry.wizardry.client.render.entity;
 
+import com.teamwizardry.wizardry.common.entity.EntityUnicorn;
+
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.passive.AbstractChestHorse;
-import net.minecraft.entity.passive.AbstractHorse;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -24,7 +24,6 @@ public class ModelUnicorn extends ModelBase {
 	private final ModelRenderer horseLeftEar;
 	private final ModelRenderer horseRightEar;
 	private final ModelRenderer neck;
-	private final ModelRenderer horseFaceRopes;
 	private final ModelRenderer mane;
 	private final ModelRenderer body;
 	private final ModelRenderer tailBase;
@@ -42,17 +41,6 @@ public class ModelUnicorn extends ModelBase {
 	private final ModelRenderer frontRightLeg;
 	private final ModelRenderer frontRightShin;
 	private final ModelRenderer frontRightHoof;
-	private final ModelRenderer horseSaddleBottom;
-	private final ModelRenderer horseSaddleFront;
-	private final ModelRenderer horseSaddleBack;
-	private final ModelRenderer horseLeftSaddleRope;
-	private final ModelRenderer horseLeftSaddleMetal;
-	private final ModelRenderer horseRightSaddleRope;
-	private final ModelRenderer horseRightSaddleMetal;
-	private final ModelRenderer horseLeftFaceMetal;
-	private final ModelRenderer horseRightFaceMetal;
-	private final ModelRenderer horseLeftRein;
-	private final ModelRenderer horseRightRein;
 
 	public ModelUnicorn() {
 		this.textureWidth = 128;
@@ -139,79 +127,18 @@ public class ModelUnicorn extends ModelBase {
 		this.neck.addBox(-2.05F, -9.8F, -2.0F, 4, 14, 8);
 		this.neck.setRotationPoint(0.0F, 4.0F, -10.0F);
 		this.setBoxRotation(this.neck, 0.5235988F, 0.0F, 0.0F);
-		this.horseSaddleBottom = new ModelRenderer(this, 80, 0);
-		this.horseSaddleBottom.addBox(-5.0F, 0.0F, -3.0F, 10, 1, 8);
-		this.horseSaddleBottom.setRotationPoint(0.0F, 2.0F, 2.0F);
-		this.horseSaddleFront = new ModelRenderer(this, 106, 9);
-		this.horseSaddleFront.addBox(-1.5F, -1.0F, -3.0F, 3, 1, 2);
-		this.horseSaddleFront.setRotationPoint(0.0F, 2.0F, 2.0F);
-		this.horseSaddleBack = new ModelRenderer(this, 80, 9);
-		this.horseSaddleBack.addBox(-4.0F, -1.0F, 3.0F, 8, 1, 2);
-		this.horseSaddleBack.setRotationPoint(0.0F, 2.0F, 2.0F);
-		this.horseLeftSaddleMetal = new ModelRenderer(this, 74, 0);
-		this.horseLeftSaddleMetal.addBox(-0.5F, 6.0F, -1.0F, 1, 2, 2);
-		this.horseLeftSaddleMetal.setRotationPoint(5.0F, 3.0F, 2.0F);
-		this.horseLeftSaddleRope = new ModelRenderer(this, 70, 0);
-		this.horseLeftSaddleRope.addBox(-0.5F, 0.0F, -0.5F, 1, 6, 1);
-		this.horseLeftSaddleRope.setRotationPoint(5.0F, 3.0F, 2.0F);
-		this.horseRightSaddleMetal = new ModelRenderer(this, 74, 4);
-		this.horseRightSaddleMetal.addBox(-0.5F, 6.0F, -1.0F, 1, 2, 2);
-		this.horseRightSaddleMetal.setRotationPoint(-5.0F, 3.0F, 2.0F);
-		this.horseRightSaddleRope = new ModelRenderer(this, 80, 0);
-		this.horseRightSaddleRope.addBox(-0.5F, 0.0F, -0.5F, 1, 6, 1);
-		this.horseRightSaddleRope.setRotationPoint(-5.0F, 3.0F, 2.0F);
-		this.horseLeftFaceMetal = new ModelRenderer(this, 74, 13);
-		this.horseLeftFaceMetal.addBox(1.5F, -8.0F, -4.0F, 1, 2, 2);
-		this.horseLeftFaceMetal.setRotationPoint(0.0F, 4.0F, -10.0F);
-		this.setBoxRotation(this.horseLeftFaceMetal, 0.5235988F, 0.0F, 0.0F);
-		this.horseRightFaceMetal = new ModelRenderer(this, 74, 13);
-		this.horseRightFaceMetal.addBox(-2.5F, -8.0F, -4.0F, 1, 2, 2);
-		this.horseRightFaceMetal.setRotationPoint(0.0F, 4.0F, -10.0F);
-		this.setBoxRotation(this.horseRightFaceMetal, 0.5235988F, 0.0F, 0.0F);
-		this.horseLeftRein = new ModelRenderer(this, 44, 10);
-		this.horseLeftRein.addBox(2.6F, -6.0F, -6.0F, 0, 3, 16);
-		this.horseLeftRein.setRotationPoint(0.0F, 4.0F, -10.0F);
-		this.horseRightRein = new ModelRenderer(this, 44, 5);
-		this.horseRightRein.addBox(-2.6F, -6.0F, -6.0F, 0, 3, 16);
-		this.horseRightRein.setRotationPoint(0.0F, 4.0F, -10.0F);
 		this.mane = new ModelRenderer(this, 58, 0);
 		this.mane.addBox(-1.0F, -11.5F, 5.0F, 2, 16, 4);
 		this.mane.setRotationPoint(0.0F, 4.0F, -10.0F);
 		this.setBoxRotation(this.mane, 0.5235988F, 0.0F, 0.0F);
-		this.horseFaceRopes = new ModelRenderer(this, 80, 12);
-		this.horseFaceRopes.addBox(-2.5F, -10.1F, -7.0F, 5, 5, 12, 0.2F);
-		this.horseFaceRopes.setRotationPoint(0.0F, 4.0F, -10.0F);
-		this.setBoxRotation(this.horseFaceRopes, 0.5235988F, 0.0F, 0.0F);
 	}
 
 	@Override
-	@SuppressWarnings("unused")
 	public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
-		AbstractHorse abstracthorse = (AbstractHorse) entityIn;
-		float f = abstracthorse.getGrassEatingAmount(0.0F);
-		boolean flag = abstracthorse.isChild();
-		boolean flag1 = !flag && abstracthorse.isHorseSaddled();
-		boolean flag2 = abstracthorse instanceof AbstractChestHorse;
-		float f1 = abstracthorse.getHorseSize();
-		boolean flag4 = abstracthorse.isBeingRidden();
-
-		if (flag1) {
-			this.horseFaceRopes.render(scale);
-			this.horseSaddleBottom.render(scale);
-			this.horseSaddleFront.render(scale);
-			this.horseSaddleBack.render(scale);
-			this.horseLeftSaddleRope.render(scale);
-			this.horseLeftSaddleMetal.render(scale);
-			this.horseRightSaddleRope.render(scale);
-			this.horseRightSaddleMetal.render(scale);
-			this.horseLeftFaceMetal.render(scale);
-			this.horseRightFaceMetal.render(scale);
-
-			if (flag4) {
-				this.horseLeftRein.render(scale);
-				this.horseRightRein.render(scale);
-			}
-		}
+		EntityUnicorn unicorn = (EntityUnicorn) entityIn;
+		float f = unicorn.getGrassEatingAmount(0.0F);
+		boolean flag = unicorn.isChild();
+		float f1 = unicorn.getSize();
 
 		if (!flag) {
 			GlStateManager.pushMatrix();
@@ -310,14 +237,11 @@ public class ModelUnicorn extends ModelBase {
 			f4 += MathHelper.cos(p_78086_2_ * 0.4F) * 0.15F * p_78086_3_;
 		}
 
-		AbstractHorse entityhorse = (AbstractHorse) entitylivingbaseIn;
-		float f5 = entityhorse.getGrassEatingAmount(partialTickTime);
-		float f6 = entityhorse.getRearingAmount(partialTickTime);
+		EntityUnicorn unicorn =(EntityUnicorn) entitylivingbaseIn;
+		float f6 = unicorn.getRearingAmount(partialTickTime);
 		float f7 = 1.0F - f6;
-		float f8 = entityhorse.getMouthOpennessAngle(partialTickTime);
-		boolean flag = entityhorse.tailCounter != 0;
-		boolean flag1 = entityhorse.isHorseSaddled();
-		boolean flag2 = entityhorse.isBeingRidden();
+		float f8 = unicorn.getMouthOpennessAngle(partialTickTime);
+		boolean flag = unicorn.tailCounter != 0;
 		float f9 = (float) entitylivingbaseIn.ticksExisted + partialTickTime;
 		float f10 = MathHelper.cos(p_78086_2_ * 0.6662F + (float) Math.PI);
 		float f11 = f10 * 0.8F * p_78086_3_;
@@ -330,10 +254,10 @@ public class ModelUnicorn extends ModelBase {
 		this.body.rotateAngleX = 0.0F;
 		this.head.rotateAngleX = 0.5235988F + f4;
 		this.head.rotateAngleY = f3 * 0.017453292F;
-		this.head.rotateAngleX = f6 * (0.2617994F + f4) + f5 * 2.18166F + (1.0F - Math.max(f6, f5)) * this.head.rotateAngleX;
-		this.head.rotateAngleY = f6 * f3 * 0.017453292F + (1.0F - Math.max(f6, f5)) * this.head.rotateAngleY;
-		this.head.rotationPointY = f6 * -6.0F + f5 * 11.0F + (1.0F - Math.max(f6, f5)) * this.head.rotationPointY;
-		this.head.rotationPointZ = f6 * -1.0F + f5 * -10.0F + (1.0F - Math.max(f6, f5)) * this.head.rotationPointZ;
+		this.head.rotateAngleX = f6 * (0.2617994F + f4) + (1.0F - f6) * this.head.rotateAngleX;
+		this.head.rotateAngleY = f6 * f3 * 0.017453292F + (1.0F - f6) * this.head.rotateAngleY;
+		this.head.rotationPointY = f6 * -6.0F + (1.0F - f6) * this.head.rotationPointY;
+		this.head.rotationPointZ = f6 * -1.0F + (1.0F - f6) * this.head.rotationPointZ;
 		this.tailBase.rotationPointY = f6 * 9.0F + f7 * this.tailBase.rotationPointY;
 		this.tailMiddle.rotationPointZ = f6 * 18.0F + f7 * this.tailMiddle.rotationPointZ;
 		this.body.rotateAngleX = f6 * -45.0F * 0.017453292F + f7 * this.body.rotateAngleX;
@@ -401,69 +325,6 @@ public class ModelUnicorn extends ModelBase {
 		this.frontLeftHoof.rotationPointZ = this.frontLeftShin.rotationPointZ;
 		this.frontRightHoof.rotationPointY = this.frontRightShin.rotationPointY;
 		this.frontRightHoof.rotationPointZ = this.frontRightShin.rotationPointZ;
-
-		if (flag1) {
-			this.horseSaddleBottom.rotationPointY = f6 * 0.5F + f7 * 2.0F;
-			this.horseSaddleBottom.rotationPointZ = f6 * 11.0F + f7 * 2.0F;
-			this.horseSaddleFront.rotationPointY = this.horseSaddleBottom.rotationPointY;
-			this.horseSaddleBack.rotationPointY = this.horseSaddleBottom.rotationPointY;
-			this.horseLeftSaddleRope.rotationPointY = this.horseSaddleBottom.rotationPointY;
-			this.horseRightSaddleRope.rotationPointY = this.horseSaddleBottom.rotationPointY;
-			this.horseLeftSaddleMetal.rotationPointY = this.horseSaddleBottom.rotationPointY;
-			this.horseRightSaddleMetal.rotationPointY = this.horseSaddleBottom.rotationPointY;
-			this.horseSaddleFront.rotationPointZ = this.horseSaddleBottom.rotationPointZ;
-			this.horseSaddleBack.rotationPointZ = this.horseSaddleBottom.rotationPointZ;
-			this.horseLeftSaddleRope.rotationPointZ = this.horseSaddleBottom.rotationPointZ;
-			this.horseRightSaddleRope.rotationPointZ = this.horseSaddleBottom.rotationPointZ;
-			this.horseLeftSaddleMetal.rotationPointZ = this.horseSaddleBottom.rotationPointZ;
-			this.horseRightSaddleMetal.rotationPointZ = this.horseSaddleBottom.rotationPointZ;
-			this.horseSaddleBottom.rotateAngleX = this.body.rotateAngleX;
-			this.horseSaddleFront.rotateAngleX = this.body.rotateAngleX;
-			this.horseSaddleBack.rotateAngleX = this.body.rotateAngleX;
-			this.horn.rotationPointY = this.head.rotationPointY;
-			this.horseLeftRein.rotationPointY = this.head.rotationPointY;
-			this.horseRightRein.rotationPointY = this.head.rotationPointY;
-			this.horseFaceRopes.rotationPointY = this.head.rotationPointY;
-			this.horseLeftFaceMetal.rotationPointY = this.head.rotationPointY;
-			this.horseRightFaceMetal.rotationPointY = this.head.rotationPointY;
-			this.horn.rotationPointZ = this.head.rotationPointZ;
-			this.horseLeftRein.rotationPointZ = this.head.rotationPointZ;
-			this.horseRightRein.rotationPointZ = this.head.rotationPointZ;
-			this.horseFaceRopes.rotationPointZ = this.head.rotationPointZ;
-			this.horseLeftFaceMetal.rotationPointZ = this.head.rotationPointZ;
-			this.horseRightFaceMetal.rotationPointZ = this.head.rotationPointZ;
-			this.horseLeftRein.rotateAngleX = f4;
-			this.horseRightRein.rotateAngleX = f4;
-			this.horn.rotateAngleX = this.head.rotateAngleX;
-			this.horseFaceRopes.rotateAngleX = this.head.rotateAngleX;
-			this.horseLeftFaceMetal.rotateAngleX = this.head.rotateAngleX;
-			this.horseRightFaceMetal.rotateAngleX = this.head.rotateAngleX;
-			this.horseFaceRopes.rotateAngleY = this.head.rotateAngleY;
-			this.horseLeftFaceMetal.rotateAngleY = this.head.rotateAngleY;
-			this.horseLeftRein.rotateAngleY = this.head.rotateAngleY;
-			this.horseRightFaceMetal.rotateAngleY = this.head.rotateAngleY;
-			this.horseRightRein.rotateAngleY = this.head.rotateAngleY;
-
-			if (flag2) {
-				this.horseLeftSaddleRope.rotateAngleX = -1.0471976F;
-				this.horseLeftSaddleMetal.rotateAngleX = -1.0471976F;
-				this.horseRightSaddleRope.rotateAngleX = -1.0471976F;
-				this.horseRightSaddleMetal.rotateAngleX = -1.0471976F;
-				this.horseLeftSaddleRope.rotateAngleZ = 0.0F;
-				this.horseLeftSaddleMetal.rotateAngleZ = 0.0F;
-				this.horseRightSaddleRope.rotateAngleZ = 0.0F;
-				this.horseRightSaddleMetal.rotateAngleZ = 0.0F;
-			} else {
-				this.horseLeftSaddleRope.rotateAngleX = f11 / 3.0F;
-				this.horseLeftSaddleMetal.rotateAngleX = f11 / 3.0F;
-				this.horseRightSaddleRope.rotateAngleX = f11 / 3.0F;
-				this.horseRightSaddleMetal.rotateAngleX = f11 / 3.0F;
-				this.horseLeftSaddleRope.rotateAngleZ = f11 / 5.0F;
-				this.horseLeftSaddleMetal.rotateAngleZ = f11 / 5.0F;
-				this.horseRightSaddleRope.rotateAngleZ = -f11 / 5.0F;
-				this.horseRightSaddleMetal.rotateAngleZ = -f11 / 5.0F;
-			}
-		}
 
 		f12 = -1.3089F + p_78086_3_ * 1.5F;
 

@@ -1,45 +1,21 @@
-0.8.5
-Book crashes fixed... why does everything use the Mana Orb...
-
-0.8.4
-Glass and Mana Orbs split into two items again. Reset fluid recipes again, as they have changed to mirror this.
-Config crash fixed.
-Multiple fluid recipes of the same type can now occur at once.
-Fluid recipes with no duration that don't consume their liquids now run all at once. This can be disabled by setting the new "instant" recipe flag to false.
-
-0.8.3
-Another internal update, DELETE YOUR WIZARDRY CONFIG FOLER OR RUN /wizardry reset TO UPDATE PROPERLY!
-Overhauled spell creation, your existing spells are possibly broken again.
-Book now opens in your hand if it has a spell recipe saved.
-Detailed info added to each module about what each modifier does. This is more translation work for you translators!
-Mana Orbs have been overhauled, they now visually show their fill levels, as well as have a new look when placed in Pearl Holders.
-Mana Orbs can now be refilled, regardless of how much of their mana has been drained.
-Modifiers now properly affect everything. Again.
-All spells have been rebalanced, many components actually gain more than a tick of duration from a +Time modifier now.
-New crafting altar animation, which should actually work for everyone this time!
-Added configs allowing you to disable rendering of the various halos and the cape. Will eventually be replaced by a cosmetics system.
-Fluid recipes no longer crash on completion.
-The "type" field in fluid recipes is no longer required, and defaults to "item".
-Various other miscellaneous bugfixes.
-
-0.8.2
-Added new Leech spell effect
-
-0.8.1
-Fix crash when opening the book
-
-0.8
-DELETE YOUR WIZARDRY CONFIG FOLDER OR RUN /wizardry reset TO UPDATE EVERYTHING PROPERLY!!!
-JEI SUPPORT! FOR EVERYTHING. AAAAAAAAH.
-Overhauled whole spell system. Your existing spells are broken now. *Mod is in alpha*
-Overhauled whole book AND documentation. It's now pretty and readable!
-Overhauled crafting systems. Burnables and liquid recipes generified & made efficient.
-Fixed a compatibility bug with FluxNetworks.
-All text is now in en_us.lang. Everything can be properly translated now. EVERYTHING.
-Cape now shows level indicator.
-Spell system got rebalanced and properly calculates mana/burnout costs.
-Crafting plate got less bugs and subsequently more bugs. Also updated visuals. (sort of buggy)
-Mana battery now has a recipe. I know. Amazing.
-The Real halo now has a TEMPORARY RECIPE ONLY. Once we implement our first boss, it'll be gone.
-Fixed a crash with WAWLA. Go blame them, not us.
-Updated some components and modifiers.
+0.9
+Warning: Custom changes to recipes/modules will be reverted this update.
+Worktable overhaul (visual aids, animations, and detailed tooltips, info, etc)
+New spell visualization. Spells that target blocks now show you where and how before casting them
+Spell recipe scrolling with the 3d book in your hand
+Update ru_ru and uk_ua langs
+Redid unicorns. Now have a rainbow trail that's not blocks
+Cheaper syringes, now use mana orbs instead of buckets or you can directly right click liquid mana in the world with a syringe
+Tons of rebalanced numbers
+Made manifest file to automagically update files for seamless updates
+Redid lightning, should cast smoothly now with all shapes
+Phase spell now works on blocks (like thaumcraft blackhole wands but cooler)
+Lingering/Delayed spells now save on world close
+Vanish now hides player hand in first person
+New particles for a lot of things especially light and self spells
+Spell projectiles cast particles properly now
+Fix crash caused by lightning occasionally
+Added some new sounds
+Leap effect behavior changed
+Zoom effect ridiculous cooldown bug fixed
+Fix fairy dust jump pads (They were uh... bad...)
