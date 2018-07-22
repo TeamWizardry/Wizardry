@@ -4,8 +4,12 @@
   "burnout_fill": 100.0,
   "primary_color": "FF0000",
   "secondary_color": "FF0000",
-  "mana": { "base": 200 },
-  "burnout": { "base": 100 },
+  "mana": {
+    "base": 100
+  },
+  "burnout": {
+    "base": 300
+  },
   "range": { "base": 2, "min": 2, "max": 20 },
   "duration": { "base": 5, "min": 5, "max": 40 }
 }

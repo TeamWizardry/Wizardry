@@ -2,7 +2,11 @@
   "item": "minecraft:reeds",
   "primary_color": "FFFFFF",
   "secondary_color": "FFFFFF",
-  "mana": { "base": 10 },
-  "burnout": { "base": 10 },
+  "mana": {
+    "base": 5
+  },
+  "burnout": {
+    "base": 5
+  },
   "area": { "base": 3, "min": 3, "max": 10 }
 }

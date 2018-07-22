@@ -319,7 +319,7 @@ wizardry.table.no_codex_found=You do not have a codex in your inventory! Once yo
 wizardry.table.codex_found=Codex found, you can save spells.
 wizardry.table.loop_error=You can't create a loop
 wizardry.table.loop_found=There's a loop somewhere! A spell should start from somewhere and not make an infinite cycle.
-wizardry.table.connection_doesnt_work=These pieces don't work together.\n\nAn &oEffect&r module cannot link to a module. They can only be linked from other modules.
+wizardry.table.connection_doesnt_work=These pieces don't work together. An Effect module cannot link to another module. They can only be linked from other modules.
 
 
 wizardry.book.shift_scroll=Shift + Scroll to flip pages

@@ -2,6 +2,10 @@
   "item": "minecraft:blaze_rod",
   "primary_color": "FFFFFF",
   "secondary_color": "FF0000",
-  "mana": { "base": 400 },
-  "burnout": { "base": 300 }
+  "mana": {
+    "base": 100
+  },
+  "burnout": {
+    "base": 100
+  }
 }

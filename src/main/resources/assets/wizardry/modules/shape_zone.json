@@ -1,7 +1,11 @@
 {
 	"item": "minecraft:glass",
-	"mana": { "base": 100 },
-	"burnout": { "base": 30 },
+	"mana": {
+		"base": 50
+	},
+	"burnout": {
+		"base": 20
+	},
 	"cooldown": { "base": 100 },
 	"area": { "base": 3, "min": 3, "max": 10 },
 	"potency": {
