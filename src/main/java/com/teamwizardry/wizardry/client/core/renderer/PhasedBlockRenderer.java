@@ -29,8 +29,7 @@ import static org.lwjgl.opengl.GL11.GL_POLYGON_OFFSET_FILL;
 /**
  * Created by Demoniaque.
  */
-@SideOnly(Side.CLIENT)
-@Mod.EventBusSubscriber(modid = Wizardry.MODID)
+@Mod.EventBusSubscriber(modid = Wizardry.MODID, value = Side.CLIENT)
 public class PhasedBlockRenderer {
 
 	public static final float WARP_TIME_PERIOD = 40f;

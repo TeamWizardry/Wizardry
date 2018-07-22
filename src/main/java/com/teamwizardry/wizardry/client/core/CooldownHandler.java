@@ -11,10 +11,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
-@SideOnly(Side.CLIENT)
-@Mod.EventBusSubscriber(modid = Wizardry.MODID)
+@Mod.EventBusSubscriber(modid = Wizardry.MODID, value = Side.CLIENT)
 public class CooldownHandler {
 
 	private static Function2<EntityLivingBase, Object, Unit> playerHandler = MethodHandleHelper.wrapperForSetter(EntityLivingBase.class, "aE", "field_184617_aD", "ticksSinceLastSwing");

@@ -1,4 +1,8 @@
-0.9
+0.9.1
+Fixed Side.CLIENT issues with Event Subscribers
+Updated module lang descriptions
+
+0.9.0
 Warning: Custom changes to recipes/modules will be reverted this update.
 Worktable overhaul (visual aids, animations, and detailed tooltips, info, etc)
 New spell visualization. Spells that target blocks now show you where and how before casting them

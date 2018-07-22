@@ -5,14 +5,17 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
 
-//@Mod.EventBusSubscriber(modid = Wizardry.MODID)
-//@SideOnly(Side.CLIENT)
+import com.teamwizardry.wizardry.Wizardry;
+
+//@Mod.EventBusSubscriber(modid = Wizardry.MODID, value = Side.CLIENT)
 public class HudVFXRenderer {
 
 	private static Set<VFXObject> vfxObjects = new HashSet<>();

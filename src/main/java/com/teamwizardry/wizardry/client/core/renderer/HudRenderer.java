@@ -19,13 +19,11 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent.Post;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Created by Demoniaque on 6/20/2016.
  */
-@SideOnly(Side.CLIENT)
-@Mod.EventBusSubscriber(modid = Wizardry.MODID)
+@Mod.EventBusSubscriber(modid = Wizardry.MODID, value = Side.CLIENT)
 public class HudRenderer extends Gui {
 
 	private static final Texture HUD_TEXTURE = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/hud.png"));

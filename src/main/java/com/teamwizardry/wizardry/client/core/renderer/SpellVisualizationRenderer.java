@@ -15,15 +15,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Mod.EventBusSubscriber(modid = Wizardry.MODID)
-@SideOnly(Side.CLIENT)
+@Mod.EventBusSubscriber(modid = Wizardry.MODID, value = Side.CLIENT)
 public class SpellVisualizationRenderer {
 
 	private static HashMap<Module, SpellData> previousTickCache = new HashMap<>();
