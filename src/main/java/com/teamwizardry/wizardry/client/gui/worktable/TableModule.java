@@ -13,10 +13,7 @@ import com.teamwizardry.librarianlib.features.math.Vec2d;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBezier2D;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.spell.module.Module;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
-import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
-import com.teamwizardry.wizardry.api.spell.module.ModuleType;
+import com.teamwizardry.wizardry.api.spell.module.*;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -275,7 +272,7 @@ public class TableModule extends GuiComponent {
 								setLinksTo(null);
 								worktable.setToastMessage("", Color.GREEN);
 								return;
-							} else if (isCompatibleWith()) {
+							} else if (isCompatibleWith(linkTo)) {
 								setLinksTo(linkTo);
 								Minecraft.getMinecraft().player.playSound(ModSounds.BELL_TING, 1f, 1f);
 
@@ -296,6 +293,16 @@ public class TableModule extends GuiComponent {
 
 									worktable.setToastMessage(LibrarianLib.PROXY.translate("wizardry.table.loop_error"), Color.RED);
 								}
+							} else {
+								String connectionFail = LibrarianLib.PROXY.translate("wizardry.table.connection_doesnt_work");
+								if (getModule() instanceof ModuleEffect && linkTo.getModule() instanceof ModuleEvent) {
+									connectionFail += "\n\n" + LibrarianLib.PROXY.translate("wizardry.table.connection_effect_to_event");
+								} else if (getModule() instanceof ModuleEffect) {
+									connectionFail += "\n\n" + LibrarianLib.PROXY.translate("wizardry.table.connection_effect_to_any");
+								} else if (getModule() instanceof ModuleEvent && linkTo.getModule() instanceof ModuleShape) {
+									connectionFail += "\n\n" + LibrarianLib.PROXY.translate("wizardry.table.connection_event_to_something");
+								}
+								worktable.setToastMessage(connectionFail, Color.RED);
 							}
 						} else {
 							worktable.setToastMessage(LibrarianLib.PROXY.translate("wizardry.table.loop_found"), Color.RED);
@@ -632,16 +639,13 @@ public class TableModule extends GuiComponent {
 		return false;
 	}
 
-	private boolean isCompatibleWith() {
-		String bold = TextFormatting.BOLD.toString();
-		String reset = TextFormatting.RESET.toString();
+	private boolean isCompatibleWith(TableModule linkTo) {
 		switch (getModule().getModuleType()) {
 			case SHAPE:
 				return true;
 			case EVENT:
-				return true;
+				return linkTo.getModule() instanceof ModuleEffect;
 			default: {
-				worktable.setToastMessage(LibrarianLib.PROXY.translate("wizardry.table.connection_doesnt_work"), Color.RED);
 				return false;
 			}
 		}
