@@ -1,3 +1,9 @@
+0.9.1
+ALL spells have been HEAVILY cheapened! Everything costs less now!! (Old modules will be reset)
+Fixed server crashes (client sided problems)
+Updated module lang descriptions
+Fixed formatting bug in the worktable
+
 0.9
 Warning: Custom changes to recipes/modules will be reverted this update.
 Worktable overhaul (visual aids, animations, and detailed tooltips, info, etc)
