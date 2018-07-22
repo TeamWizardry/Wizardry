@@ -1,11 +1,13 @@
 {
   "item": "minecraft:snowball",
-  "mana_drain": 200.0,
-  "burnout_fill": 100.0,
   "primary_color": "FFFFFF",
   "secondary_color": "FFFFFF",
-  "mana": { "base": 200 },
-  "burnout": { "base": 100 },
+  "mana": {
+    "base": 100
+  },
+  "burnout": {
+    "base": 50
+  },
   "area": { "base": 1, "min": 1, "max": 16 },
   "duration": { "base": 5, "min": 5, "max": 40 }
 }

@@ -2,7 +2,9 @@
   "item": "minecraft:ender_eye",
   "primary_color": "FF0000",
   "secondary_color": "00FFFF",
-  "mana": { "base": 200 },
+  "mana": {
+    "base": 50
+  },
   "burnout": { "base": 100 },
   "area": { "base": 10, "min": 10, "max": 64 }
 }

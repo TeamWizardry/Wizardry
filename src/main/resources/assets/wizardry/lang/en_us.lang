@@ -317,9 +317,11 @@ wizardry.update7=*:･ﾟ✧ᕕ( ᐛ )ᕗ
 wizardry.table.spell_saved=Spell saved to codex successfully! Open the book and check the new spell recipe tab.
 wizardry.table.no_codex_found=You do not have a codex in your inventory! Once you have one, you can save your spell into the book.
 wizardry.table.codex_found=Codex found, you can save spells.
-wizardry.table.loop_error=You can't create a loop
-wizardry.table.loop_found=There's a loop somewhere! A spell should start from somewhere and not make an infinite cycle.
-wizardry.table.connection_doesnt_work=These pieces don't work together.\n\nAn &oEffect&r module cannot link to a module. They can only be linked from other modules.
+wizardry.table.loop_error=You can't create a loop.
+wizardry.table.loop_found=There's a loop somewhere! A spell should start from somewhere with no links to it and not make an infinite cycle.
+wizardry.table.connection_doesnt_work=Those components can't be linked together like that!
+wizardry.table.connection_effect_to_any=An Effect module cannot link to another components. They can only be linked from other components.
+wizardry.table.connection_event_to_something=To make your spell use that Event component, hook your Shape TO it, then hook the Event TO the Effect. Shape -> Event -> Effect
 
 
 wizardry.book.shift_scroll=Shift + Scroll to flip pages

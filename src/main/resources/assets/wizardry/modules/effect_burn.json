@@ -2,8 +2,12 @@
   "item": "minecraft:blaze_powder",
   "primary_color": "FF3C3C",
   "secondary_color": "A10000",
-  "mana": { "base": 200 },
-  "burnout": { "base": 100 },
+  "mana": {
+    "base": 100
+  },
+  "burnout": {
+    "base": 50
+  },
   "area": { "base": 2, "min": 2, "max": 16 },
   "duration": { "base": 5, "min": 5, "max": 20 }
 }

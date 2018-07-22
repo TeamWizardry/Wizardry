@@ -3,6 +3,8 @@
   "primary_color": "00FFFF",
   "secondary_color": "00FFFF",
   "mana": { "base": 100 },
-  "burnout": { "base": 400 },
+  "burnout": {
+    "base": 50
+  },
   "potency": { "base": 3, "min": 3, "max": 20 }
 }
