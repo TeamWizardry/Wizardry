@@ -13,7 +13,6 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.monster.EntityPigZombie;
-import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.network.datasync.DataParameter;
@@ -32,8 +31,8 @@ import java.util.UUID;
 
 public class EntityBackupZombie extends EntityMob {
 
-	private static final DataParameter<Boolean> ARMS_RAISED = EntityDataManager.createKey(EntityZombie.class, DataSerializers.BOOLEAN);
-	private static final DataParameter<Integer> TIMER = EntityDataManager.createKey(EntityZombie.class, DataSerializers.VARINT);
+	private static final DataParameter<Boolean> ARMS_RAISED = EntityDataManager.createKey(EntityBackupZombie.class, DataSerializers.BOOLEAN);
+	private static final DataParameter<Integer> TIMER = EntityDataManager.createKey(EntityBackupZombie.class, DataSerializers.VARINT);
 	private static final DataParameter<Optional<UUID>> OWNER = EntityDataManager.createKey(EntityBackupZombie.class, DataSerializers.OPTIONAL_UNIQUE_ID);
 
 	public EntityBackupZombie(World world) {
