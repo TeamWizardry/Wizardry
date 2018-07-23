@@ -12,8 +12,8 @@ import javax.annotation.Nonnull;
  */
 public class PacketFreezePlayer extends PacketBase {
 
-	private int countdown;
-	private int interval;
+	public int countdown;
+	public int interval;
 
 	public PacketFreezePlayer() {
 

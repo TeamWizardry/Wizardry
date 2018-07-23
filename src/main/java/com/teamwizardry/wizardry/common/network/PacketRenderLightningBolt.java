@@ -17,13 +17,13 @@ import javax.annotation.Nonnull;
 public class PacketRenderLightningBolt extends PacketBase {
 
 	@Save
-	private long seed;
+	public long seed;
 	@Save
-	private Vec3d from;
+	public Vec3d from;
 	@Save
-	private Vec3d to;
+	public Vec3d to;
 	@Save
-	private double offshootRange;
+	public double offshootRange;
 	
 	public PacketRenderLightningBolt()
 	{}

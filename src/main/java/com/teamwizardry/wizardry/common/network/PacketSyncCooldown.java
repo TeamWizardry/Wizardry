@@ -10,9 +10,9 @@ import javax.annotation.Nonnull;
 public class PacketSyncCooldown extends PacketBase {
 
 	@Save
-	private boolean resetMain;
+	public boolean resetMain;
 	@Save
-	private boolean resetOff;
+	public boolean resetOff;
 
 	public PacketSyncCooldown() {
 	}

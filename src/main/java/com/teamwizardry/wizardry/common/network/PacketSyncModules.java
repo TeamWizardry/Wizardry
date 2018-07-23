@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class PacketSyncModules extends PacketBase {
 
 	@Save
-	private ArrayList<Module> modules;
+	public ArrayList<Module> modules;
 
 	public PacketSyncModules() {
 	}

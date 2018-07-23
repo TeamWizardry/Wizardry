@@ -17,8 +17,8 @@ import javax.annotation.Nonnull;
  */
 public class PacketRenderSpell extends PacketBase {
 
-	private NBTTagCompound spellData;
-	private SpellRing spellRing;
+	public NBTTagCompound spellData;
+	public SpellRing spellRing;
 
 	public PacketRenderSpell() {
 	}

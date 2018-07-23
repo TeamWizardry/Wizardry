@@ -32,12 +32,12 @@ import java.util.UUID;
 public class PacketWorktableUpdate extends PacketBase {
 
 	@Save
-	private int worldID;
+	public int worldID;
 	@Save
-	private BlockPos pos;
+	public BlockPos pos;
 
-	private HashMap<SpellRing, UUID> components;
-	private HashMap<UUID, UUID> links;
+	public HashMap<SpellRing, UUID> components;
+	public HashMap<UUID, UUID> links;
 
 	public PacketWorktableUpdate() {
 	}

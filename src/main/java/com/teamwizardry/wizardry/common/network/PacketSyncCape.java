@@ -12,9 +12,9 @@ import java.util.UUID;
 public class PacketSyncCape extends PacketBase {
 
 	@Save
-	private UUID uuid;
+	public UUID uuid;
 	@Save
-	private ItemStack stack;
+	public ItemStack stack;
 
 	public PacketSyncCape() {
 	}

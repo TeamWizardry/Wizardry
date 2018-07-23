@@ -21,7 +21,7 @@ public class PacketUpdateCaps extends PacketBase {
 
 
 	@Save
-	private NBTTagCompound tags;
+	public NBTTagCompound tags;
 
 	public PacketUpdateCaps() {
 	}

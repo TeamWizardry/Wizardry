@@ -19,7 +19,7 @@ import net.minecraftforge.fml.relauncher.Side;
 public class PacketOrbBreakSound extends PacketBase {
 
 	@Save
-	private BlockPos pos;
+	public BlockPos pos;
 
 	public PacketOrbBreakSound() {
 	}

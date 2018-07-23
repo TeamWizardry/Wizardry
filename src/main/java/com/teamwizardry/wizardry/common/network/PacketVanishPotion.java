@@ -15,13 +15,13 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class PacketVanishPotion extends PacketBase {
 
 	@Save
-	private int entityID;
+	public int entityID;
 	@Save
-	private int amplifier;
+	public int amplifier;
 	@Save
-	private int duration;
+	public int duration;
 	@Save
-	private boolean remove;
+	public boolean remove;
 
 	public PacketVanishPotion(int entityID, int amplifier, int duration) {
 		this.entityID = entityID;

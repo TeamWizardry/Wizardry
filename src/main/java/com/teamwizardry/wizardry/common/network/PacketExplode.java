@@ -19,23 +19,23 @@ import java.awt.*;
 public class PacketExplode extends PacketBase {
 
 	@Save
-	private Vec3d pos;
+	public Vec3d pos;
 	@Save
-	private Color color1;
+	public Color color1;
 	@Save
-	private Color color2;
+	public Color color2;
 	@Save
-	private double strengthUpwards;
+	public double strengthUpwards;
 	@Save
-	private double strengthSideways;
+	public double strengthSideways;
 	@Save
-	private int amount;
+	public int amount;
 	@Save
-	private int lifeTime;
+	public int lifeTime;
 	@Save
-	private int lifeTimeRange;
+	public int lifeTimeRange;
 	@Save
-	private boolean bounce;
+	public boolean bounce;
 
 	public PacketExplode() {
 	}

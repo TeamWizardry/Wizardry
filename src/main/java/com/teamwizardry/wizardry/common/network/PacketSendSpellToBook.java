@@ -21,9 +21,9 @@ import java.util.List;
 public class PacketSendSpellToBook extends PacketBase {
 
 	@Save
-	private int slot;
+	public int slot;
 	@Save
-	private NBTTagList moduleList;
+	public NBTTagList moduleList;
 
 	public PacketSendSpellToBook() {
 	}

@@ -27,9 +27,9 @@ import java.awt.*;
 public class PacketDevilDustFizzle extends PacketBase {
 
 	@Save
-	private Vec3d pos;
+	public Vec3d pos;
 	@Save
-	private int tick;
+	public int tick;
 
 	public PacketDevilDustFizzle() {
 	}
