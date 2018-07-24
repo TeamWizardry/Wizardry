@@ -13,7 +13,6 @@ import com.teamwizardry.wizardry.api.ClientConfigValues;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.api.util.RandUtilSeed;
 import com.teamwizardry.wizardry.init.ModItems;
-import com.teamwizardry.wizardry.init.ModPotions;
 import it.unimi.dsi.fastutil.longs.Long2BooleanMap;
 import it.unimi.dsi.fastutil.longs.Long2BooleanOpenHashMap;
 import net.minecraft.block.BlockLiquid;
@@ -31,7 +30,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.fluids.IFluidBlock;
@@ -40,7 +38,6 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import org.lwjgl.opengl.GL11;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -70,15 +67,14 @@ public final class CapeHandler {
 		EntityPlayer player = event.getEntityPlayer();
 		float delta = event.getPartialRenderTick();
 
-		boolean iWalked = new Vec3d(player.posX, player.posY, player.posZ).distanceTo(new Vec3d(player.prevPosX, player.prevPosY, player.prevPosZ)) > 0.15;
-
-		if (ClientConfigValues.renderCape && !player.isInvisible() && ((player.getActivePotionEffect(ModPotions.VANISH) != null && iWalked) || player.getActivePotionEffect(ModPotions.VANISH) == null))
+		if (ClientConfigValues.renderCape && !player.isInvisible()) {
 			if (delta < 1) { // not rendering in inventory
 				double x = -TileEntityRendererDispatcher.staticPlayerX;
 				double y = -TileEntityRendererDispatcher.staticPlayerY;
 				double z = -TileEntityRendererDispatcher.staticPlayerZ;
-				instance().getCape(player).render(player, x, y, z, delta);
+				getCape(player).render(player, x, y, z, delta);
 			}
+		}
 	}
 
 	private RenderCape getCape(EntityPlayer player) {
@@ -199,20 +195,18 @@ public final class CapeHandler {
 		}
 
 		private void updatePlayerPos(EntityPlayer player) {
-			double dist = (playerPosX - player.posX) * (playerPosX - player.posX) +
-					(playerPosY - player.posY) * (playerPosY - player.posY) +
-					(playerPosZ - player.posZ) * (playerPosZ - player.posZ);
+			double dx = player.posX - playerPosX;
+			double dy = player.posY - playerPosY;
+			double dz = player.posZ - playerPosZ;
+			double dist = dx * dx + dy * dy + dz * dz;
 			if (dist > PLAYER_SKIP_RANGE) {
-				double moveX = player.posX - playerPosX;
-				double moveY = player.posY - playerPosY;
-				double moveZ = player.posZ - playerPosZ;
 				for (Point point : points) {
-					point.posX += moveX;
-					point.posY += moveY;
-					point.posZ += moveZ;
-					point.prevPosX += moveX;
-					point.prevPosY += moveY;
-					point.prevPosZ += moveZ;
+					point.posX += dx;
+					point.posY += dy;
+					point.posZ += dz;
+					point.prevPosX += dx;
+					point.prevPosY += dy;
+					point.prevPosZ += dz;
 				}
 			}
 			playerPosX = player.posX;
@@ -521,15 +515,15 @@ public final class CapeHandler {
 				}
 
 				private void resolve(Point point) {
-					float dX = point.posX - dest.posX;
-					float dY = point.posY - dest.posY;
-					float dZ = point.posZ - dest.posZ;
-					float dist = MathHelper.sqrt(dX * dX + dY * dY + dZ * dZ);
+					float dx = point.posX - dest.posX;
+					float dy = point.posY - dest.posY;
+					float dz = point.posZ - dest.posZ;
+					float dist = MathHelper.sqrt(dx * dx + dy * dy + dz * dz);
 					float d = dist * (point.invMass + dest.invMass);
 					float diff = d < EPSILON ? length / 2 : (dist - length) / d;
-					float px = dX * diff * strength;
-					float py = dY * diff * strength;
-					float pz = dZ * diff * strength;
+					float px = dx * diff * strength;
+					float py = dy * diff * strength;
+					float pz = dz * diff * strength;
 					point.posX -= px * point.invMass;
 					point.posY -= py * point.invMass;
 					point.posZ -= pz * point.invMass;
@@ -576,9 +570,9 @@ public final class CapeHandler {
 			private void collideWithPlane(Point point, float px, float py, float pz, float nx, float ny, float nz, float amount) {
 				float d = getDistToPlane(point, px, py, pz, nx, ny, nz);
 				if (d < 0) {
-					point.posX += nx * -d * amount;
-					point.posY += ny * -d * amount;
-					point.posZ += nz * -d * amount;
+					point.posX -= nx * d * amount;
+					point.posY -= ny * d * amount;
+					point.posZ -= nz * d * amount;
 				}
 			}
 		}
