@@ -142,7 +142,7 @@ public final class CapeHandler {
 
 		private static RenderCape create(int width, int height) {
 			List<Point> points = Lists.newArrayList();
-			List<Quad> quads = Lists.newArrayList();
+			ImmutableList.Builder<Quad> quads = ImmutableList.builder();
 			float scale = 2 / 16F;
 			int columns = width + 1;
 			PlayerCollisionResolver collision = new PlayerCollisionResolver();
@@ -180,7 +180,7 @@ public final class CapeHandler {
 					}
 				}
 			}
-			return new RenderCape(ImmutableList.copyOf(points), ImmutableList.copyOf(quads));
+			return new RenderCape(ImmutableList.copyOf(points), quads.build());
 		}
 
 		private boolean hasCape(EntityPlayer player) {
