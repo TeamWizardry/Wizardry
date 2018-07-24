@@ -479,6 +479,9 @@ public final class CapeHandler {
 					height = 1.38F;
 					back = 0.14F;
 				}
+				if (!player.getItemStackFromSlot(EntityEquipmentSlot.CHEST).isEmpty()) {
+					back += 0.075F;
+				}
 				float vx = MathHelper.cos(yaw) * x + MathHelper.cos(yaw - (float) Math.PI / 2) * back;
 				float vz = MathHelper.sin(yaw) * x + MathHelper.sin(yaw - (float) Math.PI / 2) * back;
 				point.posX = (float) player.posX + vx;
