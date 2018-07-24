@@ -98,8 +98,6 @@ public final class CapeHandler {
 	}
 
 	private static final class RenderCape {
-		private static final ResourceLocation TEXTURE = new ResourceLocation(Wizardry.MODID, "textures/capes/cape_normal_4.png");
-
 		private static final int PLAYER_SKIP_RANGE = 4 * 4;
 
 		private static final int FLUID_CACHE_CLEAR_RATE = 4;
