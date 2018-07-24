@@ -207,9 +207,6 @@ public final class CapeHandler {
 					point.posX += moveX;
 					point.posY += moveY;
 					point.posZ += moveZ;
-					point.lastPosX += moveX;
-					point.lastPosY += moveY;
-					point.lastPosZ += moveZ;
 					point.prevPosX += moveX;
 					point.prevPosY += moveY;
 					point.prevPosZ += moveZ;
@@ -411,9 +408,6 @@ public final class CapeHandler {
 			private float posX;
 			private float posY;
 			private float posZ;
-			private float lastPosX;
-			private float lastPosY;
-			private float lastPosZ;
 			private float motionX;
 			private float motionY;
 			private float motionZ;
@@ -434,16 +428,13 @@ public final class CapeHandler {
 			}
 
 			private void update(World world, RenderCape cape, float delta) {
+				applyForce(0, cape.isFluid(world, posX, posY, posZ) ? FLUID_FORCE : GRAVITY, 0);
+				float x = posX + (posX - prevPosX) * 0.75F + motionX * 0.5F * (delta * delta);
+				float y = posY + (posY - prevPosY) * 0.75F + motionY * 0.5F * (delta * delta);
+				float z = posZ + (posZ - prevPosZ) * 0.75F + motionZ * 0.5F * (delta * delta);
 				prevPosX = posX;
 				prevPosY = posY;
 				prevPosZ = posZ;
-				applyForce(0, cape.isFluid(world, posX, posY, posZ) ? FLUID_FORCE : GRAVITY, 0);
-				float x = posX + (posX - lastPosX) * 0.75F + motionX * 0.5F * (delta * delta);
-				float y = posY + (posY - lastPosY) * 0.75F + motionY * 0.5F * (delta * delta);
-				float z = posZ + (posZ - lastPosZ) * 0.75F + motionZ * 0.5F * (delta * delta);
-				lastPosX = posX;
-				lastPosY = posY;
-				lastPosZ = posZ;
 				posX = x;
 				posY = y;
 				posZ = z;
