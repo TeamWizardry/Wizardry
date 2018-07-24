@@ -70,16 +70,18 @@ public class ItemSyringe extends ItemMod {
 	@Override
 	public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
 		if (!(player instanceof EntityPlayer)) return;
+		if (player.world.isRemote) return;
+
 		if (count <= 1) {
 			player.swingArm(player.getActiveHand());
-			((EntityPlayer) player).getCooldownTracker().setCooldown(this, stack.getItemDamage() == 1 ? 100 : 500);
+			((EntityPlayer) player).getCooldownTracker().setCooldown(this, stack.getItemDamage() == 1 ? 100 : 300);
 
 			if (stack.getItemDamage() == 2) {
 				player.addPotionEffect(new PotionEffect(ModPotions.STEROID, 500, 0, true, false));
 				stack.setItemDamage(0);
 			} else if (stack.getItemDamage() == 1) {
 				CapManager manager = new CapManager(player);
-				manager.addMana(manager.getMaxMana() / 2);
+				manager.addMana(manager.getMaxMana() / 1.5);
 				player.attackEntityFrom(DamageSourceMana.INSTANCE, 2);
 				stack.setItemDamage(0);
 			} else if (stack.getItemDamage() == 0) {

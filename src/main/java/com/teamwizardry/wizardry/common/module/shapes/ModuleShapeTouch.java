@@ -57,7 +57,7 @@ public class ModuleShapeTouch extends ModuleShape {
 		RayTraceResult result = new RayTrace(
 				spell.world, look, origin,
 				caster instanceof EntityLivingBase ? ((EntityLivingBase) caster).getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue() : 5)
-				.setSkipEntity(caster)
+				.setEntityFilter(input -> input != caster)
 				.setReturnLastUncollidableBlock(true)
 				.setIgnoreBlocksWithoutBoundingBoxes(true)
 				.trace();
@@ -80,7 +80,7 @@ public class ModuleShapeTouch extends ModuleShape {
 
 		RayTraceResult result = new RayTrace(data.world, look, caster.getPositionVector().addVector(0, caster.getEyeHeight(), 0),
 				caster instanceof EntityLivingBase ? ((EntityLivingBase) caster).getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue() : 5)
-				.setSkipEntity(caster)
+				.setEntityFilter(input -> input != caster)
 				.setReturnLastUncollidableBlock(true)
 				.setIgnoreBlocksWithoutBoundingBoxes(true)
 				.trace();

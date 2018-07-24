@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.client.render.entity;
 
-import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.entity.EntityHaloInfusionItem;
 import com.teamwizardry.wizardry.common.tile.TileHaloInfuser;
 import net.minecraft.client.Minecraft;
@@ -40,9 +39,6 @@ public class RenderHaloInfusionItem extends Render<EntityHaloInfusionItem> {
 		if (!(tile instanceof TileHaloInfuser) || ((TileHaloInfuser) tile).getHalo().isEmpty()) {
 			return;
 		}
-
-		if (!entity.getHaloInfusionItem().getStack().isEmpty() || RandUtil.nextInt(15) == 0)
-			entity.getHaloInfusionItem().render(entity.world, entity.getPositionVector().addVector(0, entity.height / 2.0, 0));
 
 		if (entity.getHaloInfusionItem().getStack().isEmpty()) return;
 

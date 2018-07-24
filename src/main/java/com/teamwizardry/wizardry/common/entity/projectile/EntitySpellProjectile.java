@@ -49,7 +49,7 @@ public class EntitySpellProjectile extends EntityMod {
 	public static final DataParameter<Float> GRAVITY = EntityDataManager.createKey(EntitySpellProjectile.class, DataSerializers.FLOAT);
 	public static final DataParameter<Float> DIST = EntityDataManager.createKey(EntitySpellProjectile.class, DataSerializers.FLOAT);
 	public static final DataParameter<Boolean> RENDER = EntityDataManager.createKey(EntitySpellProjectile.class, DataSerializers.BOOLEAN);
-	
+
 	public EntitySpellProjectile(World world) {
 		super(world);
 		setSize(0.3F, 0.3F);
@@ -137,14 +137,12 @@ public class EntitySpellProjectile extends EntityMod {
 		getDataManager().set(DIST, dist);
 		getDataManager().setDirty(DIST);
 	}
-	
-	protected boolean doesRender()
-	{
+
+	protected boolean doesRender() {
 		return getDataManager().get(RENDER);
 	}
-	
-	protected void setRender(boolean render)
-	{
+
+	protected void setRender(boolean render) {
 		getDataManager().set(RENDER, render);
 		getDataManager().setDirty(RENDER);
 	}
@@ -233,7 +231,9 @@ public class EntitySpellProjectile extends EntityMod {
 			move(MoverType.SELF, motionX, motionY, motionZ);
 		} else {
 
-			RayTraceResult result = new RayTrace(world, look, getPositionVector(), 5).setSkipEntity(this).trace();
+			RayTraceResult result = new RayTrace(world, look, getPositionVector(), 5)
+					.setEntityFilter(input -> input != this)
+					.trace();
 			spellData.processTrace(result, getPositionVector());
 			goBoom(spellRing, spellData);
 			return;
@@ -249,7 +249,9 @@ public class EntitySpellProjectile extends EntityMod {
 				if (entity instanceof EntitySpellProjectile) return;
 			}
 
-			RayTraceResult result = new RayTrace(world, look, getPositionVector(), 1).setSkipEntity(this).trace();
+			RayTraceResult result = new RayTrace(world, look, getPositionVector(), 1)
+					.setEntityFilter(input -> input != this)
+					.trace();
 			spellData.processTrace(result, getPositionVector());
 
 			goBoom(spellRing, spellData);
@@ -272,7 +274,7 @@ public class EntitySpellProjectile extends EntityMod {
 		if (doesRender())
 			PacketHandler.NETWORK.sendToAllAround(new PacketExplode(getPositionVector(), spellRing.getPrimaryColor(), spellRing.getSecondaryColor(), 0.3, 0.3, RandUtil.nextInt(30, 50), 10, 25, true),
 					new NetworkRegistry.TargetPoint(world.provider.getDimension(), posX, posY, posZ, 512));
-		
+
 		setDead();
 		world.removeEntity(this);
 	}

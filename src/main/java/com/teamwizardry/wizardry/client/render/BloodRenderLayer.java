@@ -6,6 +6,7 @@ import com.teamwizardry.wizardry.api.capability.mana.EnumBloodType;
 import com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.mana.WizardryCapabilityProvider;
 import com.teamwizardry.wizardry.client.fx.Shaders;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelBiped.ArmPose;
 import net.minecraft.client.model.ModelPlayer;
@@ -30,6 +31,8 @@ public class BloodRenderLayer implements LayerRenderer<AbstractClientPlayer> {
 
 	@Override
 	public void doRenderLayer(@Nonnull AbstractClientPlayer entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale) {
+		if (Minecraft.getMinecraft().player == null || Minecraft.getMinecraft().world == null) return;
+
 		IWizardryCapability cap = WizardryCapabilityProvider.getCap(entity);
 		if (cap != null) {
 			EnumBloodType type = cap.getBloodType();

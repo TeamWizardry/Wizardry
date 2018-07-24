@@ -52,6 +52,22 @@ public final class HaloInfusionItemRegistry {
 		return items;
 	}
 
+	public static HaloInfusionItem getInfusionItemFromStack(ItemStack stack) {
+		if (stack.isEmpty()) return EMPTY;
+		for (HaloInfusionItem item : items) {
+			if (ItemStack.areItemStacksEqual(stack, item.getStack())) return item;
+		}
+		return EMPTY;
+	}
+
+	public static boolean isHaloInfusionItem(ItemStack stack) {
+		if (stack.isEmpty()) return false;
+		for (HaloInfusionItem item : items) {
+			if (ItemStack.areItemStacksEqual(stack, item.getStack())) return true;
+		}
+		return false;
+	}
+
 	public static HaloInfusionItem getItemFromName(String nbtName) {
 		for (HaloInfusionItem item : items) {
 			if (item.getNbtName().equals(nbtName)) return item;

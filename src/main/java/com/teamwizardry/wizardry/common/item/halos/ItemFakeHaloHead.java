@@ -6,6 +6,7 @@ import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.capability.mana.CapManager;
 import com.teamwizardry.wizardry.api.item.halo.IHalo;
 import com.teamwizardry.wizardry.init.ModBlocks;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -16,6 +17,10 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class ItemFakeHaloHead extends ItemModArmor implements IHalo {
 
@@ -55,4 +60,9 @@ public class ItemFakeHaloHead extends ItemModArmor implements IHalo {
 		return new ResourceLocation(Wizardry.MODID, "textures/empty.png").toString();
 	}
 
+	@Override
+	public void addInformation(@NotNull ItemStack stack, @Nullable World world, @NotNull List<String> tooltip, @NotNull ITooltipFlag flag) {
+		super.addInformation(stack, world, tooltip, flag);
+		tooltip.addAll(getHaloTooltip(stack));
+	}
 }

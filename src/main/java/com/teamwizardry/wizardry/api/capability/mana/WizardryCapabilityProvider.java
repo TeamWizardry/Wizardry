@@ -10,8 +10,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -19,7 +18,7 @@ import javax.annotation.Nullable;
 /**
  * Created by Demoniaque on 8/16/2016.
  */
-public class WizardryCapabilityProvider implements ICapabilityProvider, INBTSerializable<NBTTagCompound> {
+public class WizardryCapabilityProvider implements ICapabilitySerializable<NBTTagCompound> {
 
 	@CapabilityInject(IWizardryCapability.class)
 	public static final Capability<IWizardryCapability> wizardryCapability = null;

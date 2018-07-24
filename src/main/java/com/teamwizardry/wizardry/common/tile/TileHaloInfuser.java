@@ -45,6 +45,11 @@ public class TileHaloInfuser extends TileModTickable {
 			refreshEntities();
 			updateItems(true);
 		}
+
+		if (world.isRemote)
+			for (EntityHaloInfusionItem entity : entities)
+				entity.getHaloInfusionItem().render(entity.world, entity.getPositionVector().addVector(0, entity.height / 2.0, 0));
+
 	}
 
 	public ItemStack getHalo() {

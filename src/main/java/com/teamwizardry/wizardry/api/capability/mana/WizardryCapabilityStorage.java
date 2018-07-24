@@ -32,10 +32,10 @@ public class WizardryCapabilityStorage implements IStorage<IWizardryCapability> 
 	public void readNBT(Capability<IWizardryCapability> capability, IWizardryCapability instance, EnumFacing side, NBTBase nbt) {
 		NBTTagCompound tag = (NBTTagCompound) nbt;
 
-		instance.setMana(tag.getDouble(MANA));
 		instance.setMaxMana(tag.getDouble(MAX_MANA));
-		instance.setBurnout(tag.getDouble(BURNOUT));
 		instance.setMaxBurnout(tag.getDouble(MAX_BURNOUT));
+		instance.setMana(tag.getDouble(MANA));
+		instance.setBurnout(tag.getDouble(BURNOUT));
 		if (tag.hasKey(BLOOD_TYPE))
 			instance.setBloodType(EnumBloodType.getType(tag.getString(BLOOD_TYPE)));
 	}

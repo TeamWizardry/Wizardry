@@ -121,7 +121,7 @@ public class TileCraftingPlate extends TileManaInteractor {
 			for (BlockPos relative : poses) {
 				BlockPos target = getPos().add(relative);
 				TileEntity tile = world.getTileEntity(target);
-				if (tile != null && tile instanceof TilePearlHolder) {
+				if (tile instanceof TilePearlHolder) {
 					if (!((TilePearlHolder) tile).isPartOfStructure) {
 						((TilePearlHolder) tile).isPartOfStructure = true;
 						((TilePearlHolder) tile).structurePos = getPos();

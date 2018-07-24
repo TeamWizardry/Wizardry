@@ -81,7 +81,9 @@ public class ModuleShapeCone extends ModuleShape {
 
 			SpellData newSpell = spell.copy();
 
-			RayTraceResult result = new RayTrace(world, target.normalize(), origin, range).setSkipEntity(caster).trace();
+			RayTraceResult result = new RayTrace(world, target.normalize(), origin, range)
+					.setEntityFilter(input -> input != caster)
+					.trace();
 
 			Vec3d lookFallback = spell.getData(LOOK);
 			if (lookFallback != null) lookFallback.scale(range);

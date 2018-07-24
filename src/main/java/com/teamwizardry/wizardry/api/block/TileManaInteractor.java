@@ -18,7 +18,6 @@ import com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.mana.ManaModule;
 import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
-import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
 import com.teamwizardry.wizardry.common.tile.TilePearlHolder;
@@ -26,7 +25,6 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -67,6 +65,9 @@ public class TileManaInteractor extends TileMod implements ITickable, IManaInter
 	@Save
 	public int suckingCooldown = 0;
 
+	public WeakHashMap<TileManaInteractor, Double> distanceCache;
+
+
 	public TileManaInteractor(double maxMana, double maxBurnout) {
 		cap = new ManaModule(new CustomWizardryCapability(maxMana, maxBurnout));
 	}
@@ -76,17 +77,10 @@ public class TileManaInteractor extends TileMod implements ITickable, IManaInter
 	}
 
 	@Override
-	public void update() {
-		if (world.isRemote) return;
-
-		if (suckingCooldown > 0) {
-			suckingCooldown--;
-			markDirty();
-		}
-
+	public void onLoad() {
+		super.onLoad();
 		MANA_INTERACTABLES.putIfAbsent(this, new WeakHashMap<>());
-
-		WeakHashMap<TileManaInteractor, Double> distanceCache = MANA_INTERACTABLES.get(this);
+		distanceCache = MANA_INTERACTABLES.get(this);
 
 		if (distanceCache.isEmpty() && MANA_INTERACTABLES.size() > 1) {
 
@@ -104,6 +98,13 @@ public class TileManaInteractor extends TileMod implements ITickable, IManaInter
 				}
 			}
 		}
+	}
+
+	@Override
+	public void update() {
+		if (distanceCache == null) return;
+
+		if (suckingCooldown > 0) suckingCooldown--;
 
 		for (SuckRule suckRule : suckRules) {
 			if (getClass().isAssignableFrom(suckRule.thisClazz)) {
@@ -118,8 +119,8 @@ public class TileManaInteractor extends TileMod implements ITickable, IManaInter
 						interacter.onDrainedFrom(this);
 						onSuckFrom(interacter);
 
-						interacter.markDirty();
-						markDirty();
+						//interacter.markDirty();
+						//markDirty();
 
 						if (++i > suckRule.getNbOfConnections()) break;
 					}
@@ -155,9 +156,8 @@ public class TileManaInteractor extends TileMod implements ITickable, IManaInter
 	}
 
 	public double getCachedDistanceSq(TileManaInteractor interacter) {
-		WeakHashMap<TileManaInteractor, Double> map = MANA_INTERACTABLES.get(this);
-		if (map == null) return Double.MAX_VALUE;
-		return map.getOrDefault(interacter, Double.MAX_VALUE);
+		if (distanceCache == null) return Double.MAX_VALUE;
+		return distanceCache.getOrDefault(interacter, Double.MAX_VALUE);
 	}
 
 	public boolean suckManaFrom(TileManaInteractor interacterFrom, SuckRule suckRule) {
@@ -174,62 +174,32 @@ public class TileManaInteractor extends TileMod implements ITickable, IManaInter
 		if (suckRule.equalize && Math.abs(thisManager.getMana() - theirManager.getMana()) <= suckRule.idealAmount)
 			return false;
 
-		Vec3d thisPos = new Vec3d(getPos()).addVector(0.5, 0.5, 0.5);
-		Vec3d theirPos = new Vec3d(interacterFrom.getPos()).addVector(0.5, 0.5, 0.5);
-
-		// DEBUG
-		//ParticleBuilder helix = new ParticleBuilder(200);
-		//helix.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-		//helix.setAlphaFunction(new InterpFadeInOut(0.1f, 0.1f));
-		//ParticleSpawner.spawn(helix, world, new StaticInterp<>(thisPos), 1, 0, (someFloat, particleBuilder) -> {
-		//	particleBuilder.setColor(ColorUtils.changeColorAlpha(new Color(0xFF0000), RandUtil.nextInt(50, 200)));
-		//	particleBuilder.setScale(RandUtil.nextFloat(0.3f, 0.8f));
-		//	particleBuilder.disableRandom();
-		//	particleBuilder.setPositionFunction(new InterpLine(Vec3d.ZERO, theirPos.subtract(thisPos)));
-		//	particleBuilder.setLifetime(RandUtil.nextInt(50, 60));
-		//});
-
-
 		double ratio = theirManager.getMana() / thisManager.getMana();
 
 		if (suckRule.equalize && Double.isFinite(ratio) && ratio <= 1.2)
 			return false;
-
-		if (getCachedDistanceSq(interacterFrom) > ConfigValues.networkLinkDistance * ConfigValues.networkLinkDistance)
-			return false;
-
-		if (!suckRule.ignoreTrace) {
-			Vec3d thisSub = theirPos.subtract(thisPos.add(getOffset()));
-			Vec3d thisNorm = thisSub.normalize();
-
-			RayTraceResult trace = new RayTrace(world, thisNorm, thisPos.add(getOffset() == Vec3d.ZERO ? thisNorm : getOffset()), ConfigValues.networkLinkDistance * ConfigValues.networkLinkDistance)
-					.setSkipEntities(true)
-					.setIgnoreBlocksWithoutBoundingBoxes(true)
-					.trace();
-
-			if (!trace.getBlockPos().equals(interacterFrom.getPos())) return false;
-		}
 
 		double amount = interacterFrom.drainMana(suckRule.idealAmount);
 		if (amount <= 0) return false;
 
 		thisManager.addMana(amount);
 
-		ClientRunnable.run(new ClientRunnable() {
-			@Override
-			@SideOnly(Side.CLIENT)
-			public void runIfClient() {
-				ParticleBuilder helix = new ParticleBuilder(200);
-				helix.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-				helix.setAlphaFunction(new InterpFadeInOut(0.1f, 0.1f));
-				ParticleSpawner.spawn(helix, world, new StaticInterp<>(new Vec3d(interacterFrom.getPos()).addVector(0.5, 1, 0.5)), 1, 0, (someFloat, particleBuilder) -> {
-					particleBuilder.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), RandUtil.nextInt(50, 200)));
-					particleBuilder.setScale(RandUtil.nextFloat(0.3f, 0.8f));
-					particleBuilder.setPositionFunction(new InterpBezier3D(Vec3d.ZERO, new Vec3d(getPos().subtract(interacterFrom.getPos())), new Vec3d(0, 5, 0), new Vec3d(0, -5, 0)));
-					particleBuilder.setLifetime(RandUtil.nextInt(50, 60));
-				});
-			}
-		});
+		if (world.isRemote)
+			ClientRunnable.run(new ClientRunnable() {
+				@Override
+				@SideOnly(Side.CLIENT)
+				public void runIfClient() {
+					ParticleBuilder helix = new ParticleBuilder(200);
+					helix.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+					helix.setAlphaFunction(new InterpFadeInOut(0.1f, 0.1f));
+					ParticleSpawner.spawn(helix, world, new StaticInterp<>(new Vec3d(interacterFrom.getPos()).addVector(0.5, 1, 0.5)), 1, 0, (someFloat, particleBuilder) -> {
+						particleBuilder.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), RandUtil.nextInt(50, 200)));
+						particleBuilder.setScale(RandUtil.nextFloat(0.3f, 0.8f));
+						particleBuilder.setPositionFunction(new InterpBezier3D(Vec3d.ZERO, new Vec3d(getPos().subtract(interacterFrom.getPos())), new Vec3d(0, 5, 0), new Vec3d(0, -5, 0)));
+						particleBuilder.setLifetime(RandUtil.nextInt(50, 60));
+					});
+				}
+			});
 		return true;
 	}
 
@@ -252,10 +222,10 @@ public class TileManaInteractor extends TileMod implements ITickable, IManaInter
 		for (TileManaInteractor target : MANA_INTERACTABLES.keySet()) {
 			if (target == this) continue;
 			if (!world.isBlockLoaded(target.getPos())) continue;
+			if (!(target.getClass().isAssignableFrom(clazz))) continue;
 			if (getCachedDistanceSq(target) > ConfigValues.networkLinkDistance * ConfigValues.networkLinkDistance)
 				continue;
 
-			if (!(target.getClass().isAssignableFrom(clazz))) continue;
 			poses.add((T) target);
 		}
 		return poses;
@@ -285,7 +255,6 @@ public class TileManaInteractor extends TileMod implements ITickable, IManaInter
 		private final Class<T> fromClazz;
 		@Nullable
 		private final BiPredicate<K, T> condition;
-		private boolean ignoreTrace;
 
 		public SuckRule(double idealAmount, boolean equalize, int nbOfConnections, Class<K> thisClazz, Class<T> fromClazz, @Nullable BiPredicate<K, T> condition) {
 			this.idealAmount = idealAmount;
@@ -294,7 +263,6 @@ public class TileManaInteractor extends TileMod implements ITickable, IManaInter
 			this.thisClazz = thisClazz;
 			this.fromClazz = fromClazz;
 			this.condition = condition;
-			this.ignoreTrace = false;
 		}
 
 		public SuckRule(double idealAmount, boolean equalize, int nbOfConnections, Class<K> thisClazz, Class<T> fromClazz, @Nullable BiPredicate<K, T> condition, boolean ignoreTrace) {
@@ -304,7 +272,6 @@ public class TileManaInteractor extends TileMod implements ITickable, IManaInter
 			this.thisClazz = thisClazz;
 			this.fromClazz = fromClazz;
 			this.condition = condition;
-			this.ignoreTrace = ignoreTrace;
 		}
 
 		public double getIdealAmount() {
@@ -328,9 +295,6 @@ public class TileManaInteractor extends TileMod implements ITickable, IManaInter
 			return condition;
 		}
 
-		public boolean isIgnoreTrace() {
-			return ignoreTrace;
-		}
 
 		public int getNbOfConnections() {
 			return nbOfConnections;

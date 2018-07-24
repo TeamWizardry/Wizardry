@@ -53,7 +53,7 @@ public class EntityHaloInfusionItem extends EntityMod {
 		if (world == null || infuserPos == null) return;
 
 		TileEntity tile = world.getTileEntity(infuserPos);
-		if (tile == null || !(tile instanceof TileHaloInfuser)) {
+		if (!(tile instanceof TileHaloInfuser)) {
 			world.removeEntity(this);
 		}
 	}
@@ -69,7 +69,7 @@ public class EntityHaloInfusionItem extends EntityMod {
 	@Override
 	public boolean processInitialInteract(EntityPlayer player, EnumHand hand) {
 		TileEntity tile = world.getTileEntity(infuserPos);
-		if (tile == null || !(tile instanceof TileHaloInfuser)) {
+		if (!(tile instanceof TileHaloInfuser)) {
 			world.removeEntity(this);
 			return false;
 		}

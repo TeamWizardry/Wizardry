@@ -139,7 +139,10 @@ public class ModuleEffectLightning extends ModuleEffect {
 			
 			RayTraceResult trace = new RayTrace(world, look, origin,
 					caster instanceof EntityLivingBase ? ((EntityLivingBase) caster).getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue() : 5)
-					.setSkipEntity(caster).setReturnLastUncollidableBlock(true).setIgnoreBlocksWithoutBoundingBoxes(true).trace();
+					.setEntityFilter(input -> input != caster)
+					.setReturnLastUncollidableBlock(true)
+					.setIgnoreBlocksWithoutBoundingBoxes(true)
+					.trace();
 			
 			doLightning(RandUtil.nextLong(100, 100000), world, caster, origin, trace.hitVec, range, potency, duration);
 		};
@@ -181,8 +184,11 @@ public class ModuleEffectLightning extends ModuleEffect {
 			double beamRange = spellRing.getAttributeValue(AttributeRegistry.RANGE, data);
 			
 			if (!childRing.taxCaster(data)) return;
-				
-			RayTraceResult traceResult = new RayTrace(world, PosUtils.vecFromRotations(pitch, yaw), origin, beamRange).setSkipBlocks(true).setSkipEntities(true).trace();
+
+			RayTraceResult traceResult = new RayTrace(world, PosUtils.vecFromRotations(pitch, yaw), origin, beamRange)
+					.setSkipBlocks(true)
+					.setSkipEntities(true)
+					.trace();
 
 			doLightning(RandUtil.nextLong(100, 100000), world, caster, origin, traceResult.hitVec, lightningRange, lightningPotency, lightningDuration);
 		};

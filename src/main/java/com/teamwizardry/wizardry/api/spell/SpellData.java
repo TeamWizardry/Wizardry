@@ -299,6 +299,21 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 
 	public static class DefaultKeys {
 
+		public static final Pair<String, Class<NBTTagList>> TAG_LIST = constructPair("list", NBTTagList.class, new ProcessData.Process<NBTTagList, NBTTagList>() {
+
+			@Nonnull
+			@Override
+			public NBTTagList serialize(@Nullable NBTTagList object) {
+				return object == null ? new NBTTagList() : object;
+			}
+
+			@Nullable
+			@Override
+			public NBTTagList deserialize(@Nullable World world, @Nonnull NBTTagList object) {
+				return object;
+			}
+		});
+
 		public static final Pair<String, Class<NBTTagCompound>> COMPOUND = constructPair("compound", NBTTagCompound.class, new ProcessData.Process<NBTTagCompound, NBTTagCompound>() {
 			@Nonnull
 			@Override

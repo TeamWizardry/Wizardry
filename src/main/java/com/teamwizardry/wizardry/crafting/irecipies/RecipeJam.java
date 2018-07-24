@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.init.irecipies;
+package com.teamwizardry.wizardry.crafting.irecipies;
 
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.init.Items;

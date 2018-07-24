@@ -17,6 +17,9 @@ import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseR
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -98,7 +101,7 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 			runRunOverrides(spell, spellRing);
 
 			RayTraceResult trace = new RayTrace(world, look, position, range)
-					.setSkipEntity(caster)
+					.setEntityFilter(input -> input != caster)
 					.setReturnLastUncollidableBlock(true)
 					.setIgnoreBlocksWithoutBoundingBoxes(true)
 					.trace();
@@ -113,8 +116,34 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 		}
 
 		ticker.ticks = beamOffset;
-
 		return true;
+	}
+
+	private NBTTagList serializeBeamTicks() {
+		NBTTagList list = new NBTTagList();
+		beamTickMap.forEach((stack, beamTicker) -> {
+			NBTTagCompound compound = new NBTTagCompound();
+			compound.setTag("stack", stack.serializeNBT());
+			compound.setDouble("tick", beamTicker.ticks);
+			compound.setBoolean("cast", beamTicker.cast);
+			list.appendTag(compound);
+		});
+		return list;
+	}
+
+	private void deserializeBeamTicks(NBTTagList list) {
+		for (NBTBase base : list) {
+			if (base instanceof NBTTagCompound) {
+				NBTTagCompound compound = (NBTTagCompound) base;
+				if (compound.hasKey("stack") && compound.hasKey("tick") && compound.hasKey("cast")) {
+					ItemStack itemStack = new ItemStack((NBTTagCompound) compound.getTag("stack"));
+					BeamTicker ticker = new BeamTicker();
+					ticker.ticks = compound.getDouble("tick");
+					ticker.cast = compound.getBoolean("cast");
+					beamTickMap.put(itemStack, ticker);
+				}
+			}
+		}
 	}
 
 	@NotNull
@@ -130,7 +159,7 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 		double range = ring.getAttributeValue(AttributeRegistry.RANGE, data);
 
 		RayTraceResult trace = new RayTrace(world, look, position, range)
-				.setSkipEntity(caster)
+				.setEntityFilter(input -> input != caster)
 				.setReturnLastUncollidableBlock(true)
 				.setIgnoreBlocksWithoutBoundingBoxes(true)
 				.trace();
@@ -142,21 +171,30 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		if (runRenderOverrides(spell, spellRing)) return;
+
+		World world = spell.world;
+		Vec3d look = spell.getData(LOOK);
+		Vec3d position = spell.getOrigin();
 		Entity caster = spell.getCaster();
-		if (caster == null) return;
+
+		if (look == null || position == null || caster == null) return;
 		ItemStack stack = ((EntityLivingBase) caster).getHeldItemMainhand();
 		if (stack.isEmpty()) return;
 
-		if (beamTickMap.containsKey(stack) && beamTickMap.get(stack).cast) {
-			if (runRenderOverrides(spell, spellRing)) return;
+		double range = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
 
-			World world = spell.world;
-			Vec3d target = spell.getTargetWithFallback();
+		RayTraceResult trace = new RayTrace(world, look, position, range)
+				.setEntityFilter(input -> input != caster)
+				.setReturnLastUncollidableBlock(true)
+				.setIgnoreBlocksWithoutBoundingBoxes(true)
+				.trace();
 
-			if (target == null) return;
+		Vec3d target = trace.hitVec;
 
-			LibParticles.SHAPE_BEAM(world, target, spell.getOriginHand(), RandUtil.nextBoolean() ? spellRing.getPrimaryColor() : spellRing.getSecondaryColor());
-		}
+		if (target == null) return;
+
+		LibParticles.SHAPE_BEAM(world, target, spell.getOriginHand(), RandUtil.nextBoolean() ? spellRing.getPrimaryColor() : spellRing.getSecondaryColor());
 	}
 
 	public static class BeamTicker {

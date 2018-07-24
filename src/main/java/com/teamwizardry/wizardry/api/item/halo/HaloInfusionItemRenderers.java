@@ -28,13 +28,15 @@ public class HaloInfusionItemRenderers {
 
 	static {
 		addRender(HaloInfusionItemRegistry.EMPTY, (vec3d, world) -> {
+			if (RandUtil.nextInt(5) != 0) return;
+
 			ParticleBuilder glitter = new ParticleBuilder(20);
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 			glitter.setAlphaFunction(new InterpFadeInOut(0.5f, 1f));
 			glitter.setColor(new Color(0xff8300));
 
 			ParticleSpawner.spawn(glitter, world, new StaticInterp<>(vec3d), 1, 0, (aFloat, build) -> {
-				build.setScaleFunction(new InterpScale(RandUtil.nextFloat(2.5f, 4.5f), 0));
+				build.setScale(2);
 				build.setLifetime(50);
 			});
 		});
