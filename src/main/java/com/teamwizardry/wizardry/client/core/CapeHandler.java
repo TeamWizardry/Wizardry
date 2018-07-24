@@ -72,7 +72,6 @@ public final class CapeHandler {
 
 		boolean iWalked = new Vec3d(player.posX, player.posY, player.posZ).distanceTo(new Vec3d(player.prevPosX, player.prevPosY, player.prevPosZ)) > 0.15;
 
-		//TODO: Remove `ClientConfigValues.renderCape` once we have a real cosmetics system
 		if (ClientConfigValues.renderCape && !player.isInvisible() && ((player.getActivePotionEffect(ModPotions.VANISH) != null && iWalked) || player.getActivePotionEffect(ModPotions.VANISH) == null))
 			if (delta < 1) { // not rendering in inventory
 				double x = -TileEntityRendererDispatcher.staticPlayerX;

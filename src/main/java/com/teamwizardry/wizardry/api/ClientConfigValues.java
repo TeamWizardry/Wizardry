@@ -16,6 +16,7 @@ public class ClientConfigValues
 	@ConfigProperty(category = "renderSpell", comment = "If enabled, the creative halo will renderSpell.")
 	public static boolean renderCreativeHalo = true;
 
+	//TODO: Remove once we have a real cosmetics system
 	@ConfigProperty(category = "renderSpell", comment = "If enabled, the cape will renderSpell.")
 	public static boolean renderCape = true;
 }
