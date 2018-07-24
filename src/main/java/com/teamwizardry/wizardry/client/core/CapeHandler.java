@@ -152,7 +152,7 @@ public final class CapeHandler {
 					float mass = 1;
 					if (y == 0 || (y == 1 && (x == 0 || x == width))) {
 						mass = 0;
-						res.add(new PinResolver(-(x - width * 0.5F) * scale, -y * scale));
+						res.add(new PlayerPinResolver(-(x - width * 0.5F) * scale, -y * scale));
 					}
 					if (y > 0 || x > 0) {
 						mass = 1 - (y / (float) height) * 0.1F;
@@ -448,12 +448,21 @@ public final class CapeHandler {
 			}
 		}
 
-		private static final class PinResolver implements ConstraintResolver {
+		private static abstract class PlayerResolver implements ConstraintResolver {
+			final float getBack(EntityPlayer player, float offset) {
+				if (player.getItemStackFromSlot(EntityEquipmentSlot.CHEST).isEmpty()) {
+					return offset;
+				}
+				return offset + 0.075F;
+			}
+		}
+
+		private static final class PlayerPinResolver extends PlayerResolver {
 			private final float x;
 
 			private final float y;
 
-			private PinResolver(float x, float y) {
+			private PlayerPinResolver(float x, float y) {
 				this.x = x;
 				this.y = y;
 			}
@@ -465,13 +474,10 @@ public final class CapeHandler {
 				float back;
 				if (player.isSneaking()) {
 					height = 1.15F;
-					back = 0.135F;
+					back = getBack(player, 0.135F);
 				} else {
 					height = 1.38F;
-					back = 0.14F;
-				}
-				if (!player.getItemStackFromSlot(EntityEquipmentSlot.CHEST).isEmpty()) {
-					back += 0.075F;
+					back = getBack(player, 0.14F);
 				}
 				float vx = MathHelper.cos(yaw) * x + MathHelper.cos(yaw - (float) Math.PI / 2) * back;
 				float vz = MathHelper.sin(yaw) * x + MathHelper.sin(yaw - (float) Math.PI / 2) * back;
@@ -531,7 +537,7 @@ public final class CapeHandler {
 			}
 		}
 
-		private static final class PlayerCollisionResolver implements ConstraintResolver {
+		private static final class PlayerCollisionResolver extends PlayerResolver {
 			@Override
 			public void resolve(EntityPlayer player, Point point) {
 				float yaw = (float) (Math.toRadians(player.renderYawOffset) - Math.PI / 2);
@@ -541,8 +547,9 @@ public final class CapeHandler {
 				float py = (float) player.posY + 0.56F;
 				float pz = (float) player.posZ;
 				if (player.isSneaking()) {
-					float backX = px + dx * 0.45F;
-					float backZ = pz + dz * 0.45F;
+					float dist = getBack(player, 0.45F);
+					float backX = px + dx * dist;
+					float backZ = pz + dz * dist;
 					float dy = 0.52F;
 					float len = MathHelper.sqrt(1 + dy * dy);
 					dx /= len;
@@ -554,7 +561,8 @@ public final class CapeHandler {
 				} else {
 					float rx = (point.posX - (float) player.posX) * MathHelper.cos(yaw + (float) Math.PI / 2) + (point.posZ - (float) player.posZ) * MathHelper.sin(yaw + (float) Math.PI / 2);
 					float a = 1 - (MathHelper.clamp(Math.abs(rx), 0.24F, 0.36F) - 0.24F) / (0.36F - 0.24F);
-					collideWithPlane(point, px + dx * 0.14F, py, pz + dz * 0.14F, dx, 0, dz, a);
+					float dist = getBack(player, 0.14F);
+					collideWithPlane(point, px + dx * dist, py, pz + dz * dist, dx, 0, dz, a);
 				}
 			}
 
