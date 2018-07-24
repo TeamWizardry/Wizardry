@@ -40,6 +40,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import org.lwjgl.opengl.GL11;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -155,10 +156,11 @@ public final class CapeHandler {
 						res.add(new PlayerPinResolver(-(x - width * 0.5F) * scale, -y * scale));
 					}
 					if (y > 0 || x > 0) {
-						mass = 1 - (y / (float) height) * 0.1F;
+						float t = (float) y / height;
+						mass = 1 - t * 0.1F;
 						LinkResolver link = new LinkResolver();
 						if (y > 0) {
-							link.attach(points.get(x + (y - 1) * columns), scale, 1);
+							link.attach(points.get(x + (y - 1) * columns), scale, 2.0F + (1.95F - 2.0F) * t);
 						}
 						if (x > 0) {
 							link.attach(points.get(points.size() - 1), scale * (1 + y / (float) height * 0.1F), 1);
@@ -180,6 +182,10 @@ public final class CapeHandler {
 					}
 				}
 			}
+			points.sort((a, b) -> Double.compare(
+				MathHelper.sqrt(b.posX * b.posX + b.posY + b.posY),
+				MathHelper.sqrt(a.posX * a.posX + a.posY + a.posY)
+			));
 			return new RenderCape(ImmutableList.copyOf(points), quads.build());
 		}
 
