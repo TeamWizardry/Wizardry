@@ -1,3 +1,7 @@
+0.9.2
+Unicorns now maim other animals, instead of maining them
+Private packet crashes fixed
+
 0.9.1
 ALL spells have been HEAVILY cheapened! Everything costs less now!! (Old modules will be reset)
 Fixed server crashes (client sided problems)
