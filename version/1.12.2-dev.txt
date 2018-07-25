@@ -1,9 +1,10 @@
 0.9.3
-Fixed particle rendering issues
+Fixed several particle rendering issues
 Fixed unicorn droppings
-Cape now renders over armor, not under it
+Cape now renders over armor, not under + physics modifications and enhancements
 Fixed cape mana reduction applying in reverse
-Fixed mana disappearing on relog
+Fixed mana disappearing on relog & a million desyncs that happen with it
+Fixed several bugs.
 
 0.9.2
 Unicorns now maim other animals, instead of maining them
@@ -23,16 +24,4 @@ Spell recipe scrolling with the 3d book in your hand
 Update ru_ru and uk_ua langs
 Redid unicorns. Now have a rainbow trail that's not blocks
 Cheaper syringes, now use mana orbs instead of buckets or you can directly right click liquid mana in the world with a syringe
-Tons of rebalanced numbers
-Made manifest file to automagically update files for seamless updates
-Redid lightning, should cast smoothly now with all shapes
-Phase spell now works on blocks (like thaumcraft blackhole wands but cooler)
-Lingering/Delayed spells now save on world close
-Vanish now hides player hand in first person
-New particles for a lot of things especially light and self spells
-Spell projectiles cast particles properly now
-Fix crash caused by lightning occasionally
-Added some new sounds
-Leap effect behavior changed
-Zoom effect ridiculous cooldown bug fixed
-Fix fairy dust jump pads (They were uh... bad...)
+... (changelog is too massive)
