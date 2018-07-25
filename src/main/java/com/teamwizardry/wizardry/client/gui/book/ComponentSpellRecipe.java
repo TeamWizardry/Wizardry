@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.client.gui.book;
 
+import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.gui.component.GuiComponent;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentStack;
@@ -51,7 +52,7 @@ public class ComponentSpellRecipe extends NavBarHolder implements IBookElement {
 		FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
 
 		int widthOfSpace = fr.getStringWidth(" ");
-		StringBuilder builder = new StringBuilder("LOCALIZE ME DAMMIT (originally \"Spell Structure:\")\n");
+		StringBuilder builder = new StringBuilder(LibrarianLib.PROXY.translate("wizardry.book.spell_recipe_structure") + "\n");
 		for (List<Module> spellModuleList : spellModules) {
 			String margin = null;
 			for (Module module : spellModuleList) {

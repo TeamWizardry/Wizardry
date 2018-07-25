@@ -15,6 +15,8 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 /**
  * Created by Demoniaque on 8/30/2016.
@@ -29,12 +31,17 @@ public class RecipeCrudeHaloInfusion extends IForgeRegistryEntry.Impl<IRecipe> i
 		int availableItems = 0;
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);
-			if (stack.getItem() == ModItems.GLUE_STICK) foundGlueStick = true;
-			else if (stack.getItem() == ModItems.FAKE_HALO)
+			if (stack.getItem() == ModItems.GLUE_STICK) {
+				if (foundGlueStick) return false;
+				foundGlueStick = true;
+			} else if (stack.getItem() == ModItems.FAKE_HALO) {
+				if (!foundHalo.isEmpty()) return false;
 				foundHalo = stack;
-			else if (HaloInfusionItemRegistry.isHaloInfusionItem(stack))
+			} else if (HaloInfusionItemRegistry.isHaloInfusionItem(stack))
 				availableItems++;
-			else return false;
+			else if (!stack.isEmpty()) {
+				return false;
+			}
 		}
 
 		if (!foundGlueStick || foundHalo.isEmpty() || availableItems <= 0) return false;
@@ -57,18 +64,17 @@ public class RecipeCrudeHaloInfusion extends IForgeRegistryEntry.Impl<IRecipe> i
 	public ItemStack getCraftingResult(@Nonnull InventoryCrafting inv) {
 		ItemStack foundHalo = ItemStack.EMPTY;
 		ItemStack foundGlueStick = ItemStack.EMPTY;
-		ItemStack foundInfusionItem = ItemStack.EMPTY;
+		Deque<HaloInfusionItem> infusionItems = new ArrayDeque<>();
 
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);
 			if (stack.getItem() == ModItems.GLUE_STICK) foundGlueStick = stack;
 			else if (stack.getItem() == ModItems.FAKE_HALO) foundHalo = stack;
-			else if (HaloInfusionItemRegistry.isHaloInfusionItem(stack)) foundInfusionItem = stack;
+			else if (HaloInfusionItemRegistry.isHaloInfusionItem(stack))
+				infusionItems.add(HaloInfusionItemRegistry.getInfusionItemFromStack(stack));
 		}
 
-		if (foundHalo.isEmpty() || foundGlueStick.isEmpty() || foundInfusionItem.isEmpty()) return ItemStack.EMPTY;
-		HaloInfusionItem infuse = HaloInfusionItemRegistry.getInfusionItemFromStack(foundInfusionItem);
-		if (infuse == HaloInfusionItemRegistry.EMPTY) return ItemStack.EMPTY;
+		if (foundHalo.isEmpty() || foundGlueStick.isEmpty() || infusionItems.isEmpty()) return ItemStack.EMPTY;
 
 		NBTTagList slots = ItemNBTHelper.getList(foundHalo, "slots", NBTTagString.class);
 		if (slots == null || slots.tagCount() < HaloInfusionItemRegistry.getItems().size()) {
@@ -79,15 +85,17 @@ public class RecipeCrudeHaloInfusion extends IForgeRegistryEntry.Impl<IRecipe> i
 			}
 		}
 
-		int slot = 0;
-		for (int i = 0; i < slots.tagCount(); i++) {
-			slot = i;
+		final int count = slots.tagCount();
+		for (int i = 0; i < count; i++) {
+			if (infusionItems.isEmpty()) break;
+
 			String string = slots.getStringTagAt(i);
 			HaloInfusionItem infusionItem = HaloInfusionItemRegistry.getItemFromName(string);
-			if (infusionItem == HaloInfusionItemRegistry.EMPTY) break;
-		}
 
-		slots.set(slot, new NBTTagString(infuse.getNbtName()));
+			if (infusionItem == HaloInfusionItemRegistry.EMPTY) {
+				slots.set(i, new NBTTagString(infusionItems.pop().getNbtName()));
+			}
+		}
 
 		ItemStack haloCopy = foundHalo.copy();
 
