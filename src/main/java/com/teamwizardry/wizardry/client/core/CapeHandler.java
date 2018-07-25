@@ -25,7 +25,6 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.ItemElytra;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -66,15 +65,17 @@ public final class CapeHandler {
 	public void onPlayerRender(RenderPlayerEvent.Post event) {
 		EntityPlayer player = event.getEntityPlayer();
 		float delta = event.getPartialRenderTick();
-		if (ClientConfigValues.renderCape && !player.isInvisible() && delta != 1) {
+		if (ClientConfigValues.renderCape && !player.isInvisible() && !player.isElytraFlying() && !player.isPlayerSleeping() && delta != 1) {
 			RenderCape cape = getCape(player);
-			cape.render(
-				player,
-				player.posX - cape.posX - TileEntityRendererDispatcher.staticPlayerX,
-				player.posY - cape.posY - TileEntityRendererDispatcher.staticPlayerY,
-				player.posZ - cape.posZ - TileEntityRendererDispatcher.staticPlayerZ,
-				delta
-			);
+			if (cape.isPresent(player)) {
+				cape.render(
+					player,
+					player.posX - cape.posX - TileEntityRendererDispatcher.staticPlayerX,
+					player.posY - cape.posY - TileEntityRendererDispatcher.staticPlayerY,
+					player.posZ - cape.posZ - TileEntityRendererDispatcher.staticPlayerZ,
+					delta
+				);
+			}
 		}
 	}
 
@@ -88,7 +89,7 @@ public final class CapeHandler {
 			World world = FMLClientHandler.instance().getWorldClient();
 			if (world != null) {
 				for (EntityPlayer player : world.playerEntities) {
-					getCape(player).update(player);		
+					getCape(player).update(player);
 				}
 			}
 		}
@@ -188,12 +189,12 @@ public final class CapeHandler {
 			return new RenderCape(ImmutableList.copyOf(points), quads.build());
 		}
 
-		private boolean hasCape(EntityPlayer player) {
+		private boolean isPresent(EntityPlayer player) {
 			return !BaublesSupport.getItem(player, ModItems.CAPE).isEmpty();
 		}
 
 		private void update(EntityPlayer player) {
-			if (hasCape(player)) {
+			if (isPresent(player)) {
 				updatePlayerPos(player);
 				updatePoints(player);
 				updateFluidCache(player);
@@ -252,12 +253,6 @@ public final class CapeHandler {
 		}
 
 		private void render(EntityPlayer player, double x, double y, double z, float delta) {
-			if (!hasCape(player)) {
-				return;
-			}
-			if (player.getItemStackFromSlot(EntityEquipmentSlot.CHEST).getItem() instanceof ItemElytra) {
-				return;
-			}
 			Tessellator tes = Tessellator.getInstance();
 			BufferBuilder buf = tes.getBuffer();
 			buf.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_NORMAL);
