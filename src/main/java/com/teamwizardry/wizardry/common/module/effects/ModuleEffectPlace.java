@@ -59,7 +59,7 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 		Entity caster = spell.getCaster();
 		EnumFacing facing = spell.getData(FACE_HIT);
 
-		if (facing == null || targetPos == null) return true;
+		if (facing == null || targetPos == null) return false;
 
 		double area = spellRing.getAttributeValue(AttributeRegistry.AREA, spell);
 

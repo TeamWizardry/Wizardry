@@ -58,7 +58,6 @@ import static com.teamwizardry.wizardry.api.util.PosUtils.getPerpendicularFacing
 @RegisterModule
 public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 
-
 	@Nonnull
 	@Override
 	public String getID() {
@@ -83,7 +82,6 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 	}
 
 	@Override
-	@SuppressWarnings("unused")
 	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Entity caster = spell.getCaster();
 		Entity targetEntity = spell.getVictim();

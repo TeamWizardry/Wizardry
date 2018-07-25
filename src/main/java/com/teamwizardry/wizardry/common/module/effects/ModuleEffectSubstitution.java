@@ -99,6 +99,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 			return true;
 
 		} else if (targetBlock != null && caster instanceof EntityPlayer) {
+			if (facing == null) return false;
 			ItemStack hand = ((EntityPlayer) caster).getHeldItemMainhand();
 			if (hand.isEmpty()) return false;
 
@@ -231,6 +232,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 		if (hand.isEmpty()) return previousData;
 
 		if (targetBlock != null && caster instanceof EntityPlayer) {
+			if (facing == null) return previousData;
 			if (ItemNBTHelper.verifyExistence(hand, "selected")) {
 				NBTTagCompound compound = ItemNBTHelper.getCompound(hand, "selected");
 				if (compound == null) return previousData;

@@ -280,9 +280,9 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 	public final float getCapeReduction(EntityLivingBase caster) {
 		ItemStack stack = BaublesSupport.getItem(caster, ModItems.CAPE);
-		if (stack != null) {
+		if (stack != ItemStack.EMPTY) {
 			float time = ItemNBTHelper.getInt(stack, "maxTick", 0);
-			return (float) MathHelper.clamp(1 - (time / 1000000.0), 1, 0.25);
+			return (float) MathHelper.clamp(1 - (time / 1000000.0), 0.25, 1);
 		}
 		return 1;
 	}
