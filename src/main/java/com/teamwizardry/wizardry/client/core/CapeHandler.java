@@ -33,6 +33,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.fluids.IFluidBlock;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -42,7 +43,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-// TODO: fix cape while in vehicles
 public final class CapeHandler {
 	private final LoadingCache<EntityPlayer, RenderCape> capes = CacheBuilder.newBuilder()
 			.weakKeys()
@@ -66,14 +66,15 @@ public final class CapeHandler {
 	public void onPlayerRender(RenderPlayerEvent.Post event) {
 		EntityPlayer player = event.getEntityPlayer();
 		float delta = event.getPartialRenderTick();
-
-		if (ClientConfigValues.renderCape && !player.isInvisible()) {
-			if (delta < 1) { // not rendering in inventory
-				double x = -TileEntityRendererDispatcher.staticPlayerX;
-				double y = -TileEntityRendererDispatcher.staticPlayerY;
-				double z = -TileEntityRendererDispatcher.staticPlayerZ;
-				getCape(player).render(player, x, y, z, delta);
-			}
+		if (ClientConfigValues.renderCape && !player.isInvisible() && delta != 1) {
+			RenderCape cape = getCape(player);
+			cape.render(
+				player,
+				player.posX - cape.posX - TileEntityRendererDispatcher.staticPlayerX,
+				player.posY - cape.posY - TileEntityRendererDispatcher.staticPlayerY,
+				player.posZ - cape.posZ - TileEntityRendererDispatcher.staticPlayerZ,
+				delta
+			);
 		}
 	}
 
@@ -82,9 +83,14 @@ public final class CapeHandler {
 	}
 
 	@SubscribeEvent
-	public void onPlayerTick(TickEvent.PlayerTickEvent event) {
+	public void onClientTick(TickEvent.ClientTickEvent event) {
 		if (event.side == Side.CLIENT && event.phase == TickEvent.Phase.END) {
-			getCape(event.player).update(event.player);
+			World world = FMLClientHandler.instance().getWorldClient();
+			if (world != null) {
+				for (EntityPlayer player : world.playerEntities) {
+					getCape(player).update(player);		
+				}
+			}
 		}
 	}
 
@@ -119,11 +125,11 @@ public final class CapeHandler {
 
 		private final BlockPos.MutableBlockPos scratchPos = new BlockPos.MutableBlockPos();
 
-		private double playerPosX = 0;
+		private double posX;
 
-		private double playerPosY = 0;
+		private double posY;
 
-		private double playerPosZ = 0;
+		private double posZ;
 
 		private RenderCape(ImmutableList<Point> points, ImmutableList<Quad> quads) {
 			this.points = points;
@@ -195,9 +201,9 @@ public final class CapeHandler {
 		}
 
 		private void updatePlayerPos(EntityPlayer player) {
-			double dx = player.posX - playerPosX;
-			double dy = player.posY - playerPosY;
-			double dz = player.posZ - playerPosZ;
+			double dx = player.posX - posX;
+			double dy = player.posY - posY;
+			double dz = player.posZ - posZ;
 			double dist = dx * dx + dy * dy + dz * dz;
 			if (dist > PLAYER_SKIP_RANGE) {
 				for (Point point : points) {
@@ -209,9 +215,9 @@ public final class CapeHandler {
 					point.prevPosZ += dz;
 				}
 			}
-			playerPosX = player.posX;
-			playerPosY = player.posY;
-			playerPosZ = player.posZ;
+			posX = player.posX;
+			posY = player.posY;
+			posZ = player.posZ;
 		}
 
 		private void updatePoints(EntityPlayer player) {
