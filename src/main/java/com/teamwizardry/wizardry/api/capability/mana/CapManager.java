@@ -89,7 +89,7 @@ public final class CapManager {
 			change = true;
 		}
 
-		somethingChanged = change;
+		somethingChanged |= change;
 
 		if (change && !isManualSync()) sync();
 	}
@@ -146,7 +146,7 @@ public final class CapManager {
 			change = true;
 		}
 
-		somethingChanged = change;
+		somethingChanged |= change;
 		if (change && !isManualSync()) sync();
 	}
 

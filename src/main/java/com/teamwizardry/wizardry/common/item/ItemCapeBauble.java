@@ -27,6 +27,8 @@ public class ItemCapeBauble extends ItemModBauble implements ICape {
 	@Optional.Method(modid = "baubles")
 	@Override
 	public void onWornTick(ItemStack itemstack, EntityLivingBase player) {
+		if (player.world.isRemote) return;
+
 		tickCape(itemstack);
 	}
 

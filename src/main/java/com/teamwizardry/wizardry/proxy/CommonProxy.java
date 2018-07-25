@@ -70,7 +70,6 @@ public class CommonProxy {
 		MinecraftForge.EVENT_BUS.register(new WorldProviderUnderWorld());
 		MinecraftForge.EVENT_BUS.register(new EventHandler());
 		MinecraftForge.EVENT_BUS.register(new AchievementEvents());
-		MinecraftForge.EVENT_BUS.register(new ModCapabilities());
 		MinecraftForge.EVENT_BUS.register(new ModuleEffectTimeSlow());
 		MinecraftForge.EVENT_BUS.register(new ModuleEffectLeap());
 		MinecraftForge.EVENT_BUS.register(ModBiomes.BIOME_UNDERWORLD);

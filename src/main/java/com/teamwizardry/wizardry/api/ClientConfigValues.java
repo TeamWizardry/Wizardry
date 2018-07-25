@@ -7,16 +7,16 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class ClientConfigValues
 {
-	@ConfigProperty(category = "renderSpell", comment = "If enabled, the crude halo will renderSpell.")
+	@ConfigProperty(category = "renderSpell", comment = "If enabled, the crude halo will render.")
 	public static boolean renderCrudeHalo = true;
 
-	@ConfigProperty(category = "renderSpell", comment = "If enabled, the real halo will renderSpell.")
+	@ConfigProperty(category = "renderSpell", comment = "If enabled, the real halo will render.")
 	public static boolean renderRealHalo = true;
 
-	@ConfigProperty(category = "renderSpell", comment = "If enabled, the creative halo will renderSpell.")
+	@ConfigProperty(category = "renderSpell", comment = "If enabled, the creative halo will render.")
 	public static boolean renderCreativeHalo = true;
 
 	//TODO: Remove once we have a real cosmetics system
-	@ConfigProperty(category = "renderSpell", comment = "If enabled, the cape will renderSpell.")
+	@ConfigProperty(category = "renderSpell", comment = "If enabled, the cape will render.")
 	public static boolean renderCape = true;
 }
