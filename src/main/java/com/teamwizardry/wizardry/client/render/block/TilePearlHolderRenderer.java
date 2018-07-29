@@ -86,8 +86,7 @@ public class TilePearlHolderRenderer extends TileEntitySpecialRenderer<TilePearl
 					Minecraft.getMinecraft().getTextureManager().bindTexture(pearlTexture);
 					renderCube(0.1, new Color(Minecraft.getMinecraft().getItemColors().colorMultiplier(te.getItemStack(), 0)));
 				} else if (te.containsAnyOrb()) {
-					CapManager manager = new CapManager(te.getWizardryCap());
-					Color c = new Color(1f, 1f, 1f, (float) (manager.getMana() / manager.getMaxMana()));
+					Color c = new Color(1f, 1f, 1f, (float) (CapManager.getMana(te.getWizardryCap()) / CapManager.getMaxMana(te.getWizardryCap())));
 					Minecraft.getMinecraft().getTextureManager().bindTexture(manaOrb);
 					renderCube(0.13, c);
 					Minecraft.getMinecraft().getTextureManager().bindTexture(glassOrb);

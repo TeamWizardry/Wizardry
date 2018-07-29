@@ -80,8 +80,9 @@ public class ItemSyringe extends ItemMod {
 				player.addPotionEffect(new PotionEffect(ModPotions.STEROID, 500, 0, true, false));
 				stack.setItemDamage(0);
 			} else if (stack.getItemDamage() == 1) {
-				CapManager manager = new CapManager(player);
-				manager.addMana(manager.getMaxMana() / 1.5);
+				CapManager.forObject(player)
+						.addMana(CapManager.getMaxMana(player) / 1.5)
+						.close();
 				player.attackEntityFrom(DamageSourceMana.INSTANCE, 2);
 				stack.setItemDamage(0);
 			} else if (stack.getItemDamage() == 0) {

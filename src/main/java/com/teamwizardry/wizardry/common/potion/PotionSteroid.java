@@ -35,18 +35,18 @@ public class PotionSteroid extends PotionBase {
 	@Override
 	public void performEffect(@Nonnull EntityLivingBase entityLivingBaseIn, int p_76394_2_) {
 		if (!hasEffect(entityLivingBaseIn)) return;
-
-		CapManager manager = new CapManager(entityLivingBaseIn);
-
-		manager.setMana(manager.getMaxMana());
-		manager.setBurnout(0);
+		CapManager.forObject(entityLivingBaseIn)
+				.setMana(CapManager.getMaxMana(entityLivingBaseIn))
+				.setBurnout(0)
+				.close();
 	}
 
 	@Override
 	public void removeAttributesModifiersFromEntity(EntityLivingBase entityLivingBaseIn, @Nonnull AbstractAttributeMap attributeMapIn, int amplifier) {
-		CapManager manager = new CapManager(entityLivingBaseIn);
-		manager.setMana(0);
-		manager.setBurnout(manager.getMaxBurnout());
+		CapManager.forObject(entityLivingBaseIn)
+				.setMana(0)
+				.setBurnout(CapManager.getMaxBurnout(entityLivingBaseIn))
+				.close();
 		entityLivingBaseIn.addPotionEffect(new PotionEffect(MobEffects.MINING_FATIGUE, 200, 3, true, true));
 		entityLivingBaseIn.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 200, 3, true, true));
 		entityLivingBaseIn.addPotionEffect(new PotionEffect(MobEffects.HUNGER, 200, 3, true, true));

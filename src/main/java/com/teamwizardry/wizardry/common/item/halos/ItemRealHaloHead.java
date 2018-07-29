@@ -26,18 +26,18 @@ public class ItemRealHaloHead extends ItemModArmor implements IHalo {
 	@Override
 	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
 		if (worldIn.isRemote) return;
-		CapManager manager = new CapManager(entityIn).setManualSync(true);
 
-		manager.setMaxMana(ConfigValues.realHaloBufferSize);
-		manager.setMaxBurnout(ConfigValues.realHaloBufferSize);
-		if (manager.getMana() > ConfigValues.realHaloBufferSize) manager.setMana(ConfigValues.realHaloBufferSize);
-		if (manager.getBurnout() > ConfigValues.realHaloBufferSize) manager.setBurnout(ConfigValues.realHaloBufferSize);
+		double mana = CapManager.getMana(entityIn);
+		double burnout = CapManager.getBurnout(entityIn);
 
-		if (!manager.isManaFull()) manager.addMana(manager.getMaxMana() * ConfigValues.haloGenSpeed);
-		if (!manager.isBurnoutEmpty()) manager.removeBurnout(manager.getMaxBurnout() * ConfigValues.haloGenSpeed);
-
-		if (manager.isSomethingChanged())
-			manager.sync();
+		CapManager.forObject(entityIn)
+				.setMaxMana(ConfigValues.realHaloBufferSize)
+				.setMaxBurnout(ConfigValues.realHaloBufferSize)
+				.setMana(mana > ConfigValues.crudeHaloBufferSize ? ConfigValues.crudeHaloBufferSize : mana)
+				.setBurnout(burnout > ConfigValues.crudeHaloBufferSize ? ConfigValues.crudeHaloBufferSize : burnout)
+				.removeBurnout(CapManager.getMaxBurnout(entityIn) * ConfigValues.haloGenSpeed)
+				.addMana(CapManager.getMaxMana(entityIn) * ConfigValues.haloGenSpeed)
+		;
 	}
 
 	@Override

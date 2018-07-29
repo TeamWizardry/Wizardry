@@ -63,13 +63,13 @@ public class ModuleEffectLeech extends ModuleEffect {
 		if (targetEntity instanceof EntityLivingBase) {
 			if (targetEntity instanceof EntityPlayer) {
 
-				double targetMana = new CapManager(targetEntity).getMana();
+				double targetMana = CapManager.getMana(targetEntity);
 
 				targetEntity.attackEntityFrom(DamageSource.MAGIC, (float) potency);
 				if (targetEntity.isDead) {
 					targetMana /= 2;
 					targetMana = MathHelper.clamp(targetMana, targetMana, spellRing.getManaDrain() * 2);
-					new CapManager(caster).addMana(targetMana);
+					CapManager.forObject(caster).addMana(targetMana).close();
 				}
 
 			} else if (targetEntity instanceof EntityWitch) {
@@ -78,7 +78,7 @@ public class ModuleEffectLeech extends ModuleEffect {
 
 				targetEntity.attackEntityFrom(DamageSource.MAGIC, (float) potency);
 				if (targetEntity.isDead) {
-					new CapManager(caster).addMana(targetMana);
+					CapManager.forObject(caster).addMana(targetMana).close();
 				}
 
 			} else {

@@ -54,21 +54,27 @@ public class HudRenderer extends Gui {
 			emptyBurnoutBar.draw(ClientTickHandler.getTicks(), right, top + 6);
 			GlStateManager.popMatrix();
 
-			CapManager manager = new CapManager(player);
+			try (CapManager.CapManagerBuilder mgr = CapManager.forObject(player)) {
+				double mana = mgr.getMana();
+				double burnout = mgr.getBurnout();
+				double maxMana = mgr.getMaxMana();
+				double maxBurnout = mgr.getMaxBurnout();
 
-			GlStateManager.pushMatrix();
-			GlStateManager.color(1.0F, 1.0F, 1.0F);
-			int visualManaLength = 0;
-			if (manager.getMana() > 0)
-				visualManaLength = (int) (((manager.getMana() * 100) / manager.getMaxMana()) % 101);
-			fullManaBar.drawClipped(ClientTickHandler.getTicks(), right, top, visualManaLength, 5);
+				GlStateManager.pushMatrix();
+				GlStateManager.color(1.0F, 1.0F, 1.0F);
+				int visualManaLength = 0;
+				if (mana > 0)
+					visualManaLength = (int) (((mana * 100) / maxMana) % 101);
+				fullManaBar.drawClipped(ClientTickHandler.getTicks(), right, top, visualManaLength, 5);
 
-			GlStateManager.color(1.0F, 1.0F, 1.0F);
-			int visualBurnoutLength = 0;
-			if (manager.getBurnout() > 0)
-				visualBurnoutLength = (int) (((manager.getBurnout() * 100) / manager.getMaxBurnout()) % 101);
-			fullBurnoutBar.drawClipped(ClientTickHandler.getTicks(), right, top + 6, visualBurnoutLength, 5);
-			GlStateManager.popMatrix();
+				GlStateManager.color(1.0F, 1.0F, 1.0F);
+				int visualBurnoutLength = 0;
+				if (burnout > 0)
+					visualBurnoutLength = (int) (((burnout * 100) / maxBurnout) % 101);
+				fullBurnoutBar.drawClipped(ClientTickHandler.getTicks(), right, top + 6, visualBurnoutLength, 5);
+				GlStateManager.popMatrix();
+
+			}
 		}
 	}
 }

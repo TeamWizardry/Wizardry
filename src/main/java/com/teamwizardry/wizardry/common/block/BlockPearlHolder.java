@@ -1,7 +1,6 @@
 package com.teamwizardry.wizardry.common.block;
 
 import com.teamwizardry.librarianlib.features.base.block.tile.BlockModContainer;
-import com.teamwizardry.wizardry.api.capability.mana.CapManager;
 import com.teamwizardry.wizardry.client.render.block.TilePearlHolderRenderer;
 import com.teamwizardry.wizardry.common.tile.TilePearlHolder;
 import com.teamwizardry.wizardry.init.ModItems;
@@ -76,8 +75,6 @@ public class BlockPearlHolder extends BlockModContainer {
 
 			} else {
 				ItemStack stack = te.getItemStack().copy();
-				CapManager manager1 = new CapManager(stack).setEntity(playerIn);
-				manager1.sync();
 
 				te.setItemStack(ItemStack.EMPTY);
 				if (playerIn.inventory.addItemStackToInventory(stack)) playerIn.openContainer.detectAndSendChanges();

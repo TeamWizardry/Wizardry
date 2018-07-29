@@ -80,10 +80,6 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 					return EnumActionResult.PASS;
 				}
 			}
-
-			player.stopActiveHand();
-			player.swingArm(hand);
-			return EnumActionResult.PASS;
 		}
 
 		if (isCoolingDown(world, stack)) return EnumActionResult.PASS;
@@ -105,6 +101,13 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, @Nonnull EnumHand hand) {
 		ItemStack stack = player.getHeldItem(hand);
+		if (player.isSneaking()) {
+			for (SpellRing spellRing : SpellUtils.getAllSpellRings(stack)) {
+				if (spellRing.getModule() instanceof IBlockSelectable) {
+					return new ActionResult<>(EnumActionResult.PASS, stack);
+				}
+			}
+		}
 
 		boolean hasHalo = BaublesSupport.getItem(player, ModItems.CREATIVE_HALO, ModItems.FAKE_HALO, ModItems.REAL_HALO).isEmpty();
 		if (isCoolingDown(world, stack) || hasHalo || (world.isRemote && (Minecraft.getMinecraft().currentScreen != null))) {
