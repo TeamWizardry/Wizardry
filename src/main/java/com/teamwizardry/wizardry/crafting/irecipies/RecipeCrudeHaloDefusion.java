@@ -24,12 +24,16 @@ public class RecipeCrudeHaloDefusion extends IForgeRegistryEntry.Impl<IRecipe> i
 	@Override
 	public boolean matches(@Nonnull InventoryCrafting inv, @Nonnull World worldIn) {
 
+		boolean hasHalo = false;
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);
-			if (stack.getItem() == ModItems.FAKE_HALO) return true;
+			if (stack.getItem() == ModItems.FAKE_HALO) {
+				if (hasHalo) return false;
+				hasHalo = true;
+			} else if (!stack.isEmpty()) return false;
 		}
 
-		return false;
+		return hasHalo;
 	}
 
 	@Override
@@ -71,7 +75,7 @@ public class RecipeCrudeHaloDefusion extends IForgeRegistryEntry.Impl<IRecipe> i
 					String string = slots.getStringTagAt(j);
 					HaloInfusionItem infusionItem = HaloInfusionItemRegistry.getItemFromName(string);
 					if (infusionItem == HaloInfusionItemRegistry.EMPTY) continue;
-					remainingItems.add(i, infusionItem.getStack());
+					remainingItems.set(i, infusionItem.getStack());
 				}
 				break;
 			}

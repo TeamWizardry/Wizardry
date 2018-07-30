@@ -13,7 +13,6 @@ import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.common.item.ItemNacrePearl;
 import com.teamwizardry.wizardry.common.item.ItemOrb;
-import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -90,16 +89,7 @@ public class TilePearlHolder extends TileManaInteractor implements ICooldown {
 			if (isCoolingDown(world, getItemStack())) return;
 			if (pearlCap.getMana() == 0) return;
 
-			BlockPos closestMagnet = null;
-			for (int i = -10; i < 10; i++)
-				for (int j = -10; j < 10; j++)
-					for (int k = -10; k < 10; k++) {
-						BlockPos pos = new BlockPos(getPos().getX() + i, getPos().getY() + j, getPos().getZ() + k);
-						if (world.getBlockState(pos).getBlock() != ModBlocks.MANA_MAGNET) continue;
-						if (closestMagnet == null) closestMagnet = pos;
-						else if (pos.distanceSq(getPos()) < getPos().distanceSq(closestMagnet))
-							closestMagnet = pos;
-					}
+			BlockPos closestMagnet = getNearestTilePos(TileManaMagnet.class);
 			if (closestMagnet == null) return;
 
 			{

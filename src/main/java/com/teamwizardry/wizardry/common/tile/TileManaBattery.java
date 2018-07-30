@@ -62,8 +62,7 @@ public class TileManaBattery extends TileManaInteractor {
 	public void onSuckFrom(TileManaInteractor from) {
 		super.onSuckFrom(from);
 
-		CapManager manager = new CapManager(from.getWizardryCap());
-		if (from instanceof TilePearlHolder && manager.isManaEmpty()) {
+		if (from instanceof TilePearlHolder && CapManager.isManaEmpty(from.getWizardryCap())) {
 
 			((TilePearlHolder) from).setItemStack(ItemStack.EMPTY);
 			from.markDirty();
@@ -99,9 +98,10 @@ public class TileManaBattery extends TileManaInteractor {
 			}
 
 		} else {
-			CapManager manager = new CapManager(getWizardryCap());
-			manager.setMana(manager.getMaxMana());
-			manager.setBurnout(0);
+			CapManager.forObject(getWizardryCap())
+					.setMana(CapManager.getMaxMana(getWizardryCap()))
+					.setBurnout(0)
+					.close();
 		}
 	}
 }

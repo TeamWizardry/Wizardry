@@ -4,7 +4,6 @@ import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.entity.ai.EntityAIUnicornCharge;
 import com.teamwizardry.wizardry.common.entity.ai.EntityAIUnicornWander;
 import com.teamwizardry.wizardry.init.ModItems;
-
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.EntityMob;
@@ -18,7 +17,6 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
 import org.jetbrains.annotations.NotNull;
 
 public class EntityUnicorn extends EntityMob implements EntityFlying {
@@ -131,7 +129,7 @@ public class EntityUnicorn extends EntityMob implements EntityFlying {
 	@Override
 	protected void dropLoot(boolean wasRecentlyHit, int lootingModifier, DamageSource source) {
 		super.dropLoot(wasRecentlyHit, lootingModifier, source);
-		if (RandUtil.nextInt(20) <= lootingModifier)
+		if (RandUtil.nextInt(20) <= 0)
 			entityDropItem(new ItemStack(ModItems.UNICORN_HORN), RandUtil.nextFloat());
 	}
 

@@ -25,15 +25,14 @@ public class ItemCreativeHaloHead extends ItemModArmor implements IHalo {
 
 	@Override
 	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-		CapManager manager = new CapManager(entityIn).setManualSync(true);
+		if (worldIn.isRemote) return;
 
-		manager.setMaxMana(ConfigValues.creativeHaloBufferSize);
-		manager.setMaxBurnout(ConfigValues.creativeHaloBufferSize);
-		manager.setMana(ConfigValues.creativeHaloBufferSize);
-		manager.setBurnout(0);
-
-		if (manager.isSomethingChanged())
-			manager.sync();
+		try (CapManager.CapManagerBuilder mgr = CapManager.forObject(entityIn)) {
+			mgr.setMaxMana(ConfigValues.creativeHaloBufferSize);
+			mgr.setMaxBurnout(ConfigValues.creativeHaloBufferSize);
+			mgr.setMana(ConfigValues.creativeHaloBufferSize);
+			mgr.setBurnout(0);
+		}
 	}
 
 	@Override

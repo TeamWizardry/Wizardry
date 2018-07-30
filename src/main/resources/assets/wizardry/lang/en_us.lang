@@ -115,8 +115,6 @@ advancement.wizardry.devildust.desc=Melt book in fire to make Devil Dust
 advancement.wizardry.crunch=§oCRUNCH.§a
 advancement.wizardry.crunch.desc=Crash straight through Bedrock to the Underworld above
 
-book.physicsbook.defaulttitle=Physics Book
-
 fluid.nacre_fluid=Nacre
 fluid.mana_fluid=Mana
 
@@ -326,6 +324,9 @@ wizardry.table.connection_event_to_something=To make your spell use that Event c
 
 wizardry.book.shift_scroll=Shift + Scroll to flip pages
 wizardry.book.open_recipe_tab=Open recipe tab for more details
+
+wizardry.book.spell_recipe_recipe=Spell Recipe
+wizardry.book.spell_recipe_structure=Spell Structure
 
 wizardry.book.title=Spellforger's Codex
 wizardry.book.subtitle=Not By Raziel

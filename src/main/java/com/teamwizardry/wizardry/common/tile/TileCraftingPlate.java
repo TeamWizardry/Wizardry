@@ -117,7 +117,7 @@ public class TileCraftingPlate extends TileManaInteractor {
 
 		if (!((BlockCraftingPlate) getBlockType()).isStructureComplete(getWorld(), getPos())) return;
 
-		if (!new CapManager(getWizardryCap()).isManaFull()) {
+		if (!CapManager.isManaFull(getWizardryCap())) {
 			for (BlockPos relative : poses) {
 				BlockPos target = getPos().add(relative);
 				TileEntity tile = world.getTileEntity(target);
@@ -168,9 +168,8 @@ public class TileCraftingPlate extends TileManaInteractor {
 		}
 
 		if (hasInputPearl() && !isInventoryEmpty()) {
-			CapManager manager = new CapManager(getInputPearl());
 
-			if (manager.isManaFull()) {
+			if (CapManager.isManaFull(getInputPearl())) {
 
 				ArrayList<ItemStack> stacks = new ArrayList<>();
 

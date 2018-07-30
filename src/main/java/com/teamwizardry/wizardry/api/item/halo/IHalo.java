@@ -23,7 +23,7 @@ public interface IHalo {
 		for (int j = 0; j < slots.tagCount(); j++) {
 			String string = slots.getStringTagAt(j);
 			HaloInfusionItem infusionItem = HaloInfusionItemRegistry.getItemFromName(string);
-			if (infusionItem == HaloInfusionItemRegistry.EMPTY) {
+			if (infusionItem != HaloInfusionItemRegistry.EMPTY) {
 				tooltips.add(TextFormatting.GOLD + "- " + infusionItem.getNbtName());
 			}
 		}

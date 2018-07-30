@@ -29,17 +29,15 @@ public class ItemCreativeHaloBauble extends ItemModBauble implements IHalo {
 
 	@Override
 	public void onWornTick(@Nonnull ItemStack stack, @Nonnull EntityLivingBase player) {
-		CapManager manager = new CapManager(player).setManualSync(true);
+		if (player.world.isRemote) return;
 
-		manager.setMaxMana(ConfigValues.creativeHaloBufferSize);
-		manager.setMaxBurnout(ConfigValues.creativeHaloBufferSize);
-		manager.setMana(ConfigValues.creativeHaloBufferSize);
-		manager.setBurnout(0);
-
-		if (manager.isSomethingChanged())
-			manager.sync();
+		try (CapManager.CapManagerBuilder mgr = CapManager.forObject(player)) {
+			mgr.setMaxMana(ConfigValues.creativeHaloBufferSize);
+			mgr.setMaxBurnout(ConfigValues.creativeHaloBufferSize);
+			mgr.setMana(ConfigValues.creativeHaloBufferSize);
+			mgr.setBurnout(0);
+		}
 	}
-
 
 	@Nonnull
 	@Optional.Method(modid = "baubles")

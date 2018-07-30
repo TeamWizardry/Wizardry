@@ -76,10 +76,8 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 		LocationAndAngle locationAndAngle = pop(i);
 		if (locationAndAngle == null) return;
 
-		CapManager manager = new CapManager(tile.getWizardryCap());
-
 		Vec3d newDest;
-		double t = manager.getCap() == null ? 1 : 1 - (manager.getMana() / manager.getMaxMana());
+		double t = tile.getWizardryCap() == null ? 1 : 1 - (CapManager.getMana(tile.getWizardryCap()) / CapManager.getMaxMana(tile.getWizardryCap()));
 
 		double radius = RandUtil.nextDouble(5, 8) * t;
 		locationAndAngle.angle += RandUtil.nextDouble(-1.5, 1.5);
@@ -91,7 +89,7 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 		BasicAnimation<LocationAndAngle> anim = new BasicAnimation<>(locationAndAngle, "location");
 		anim.setTo(newDest);
 		anim.setDuration((float) (RandUtil.nextDouble(50, 100) * (tile.suckingCooldown <= 0 ? MathHelper.clamp(t * 2, 0, 1) : t)));
-		anim.setEasing(!manager.isManaEmpty() ? Easing.easeInOutQuint : Easing.easeInOutSine);
+		anim.setEasing(!CapManager.isManaEmpty(tile.getWizardryCap()) ? Easing.easeInOutQuint : Easing.easeInOutSine);
 		anim.setCompletion(() -> animationLoop(i, !motionInvert));
 		animator.add(anim);
 	}

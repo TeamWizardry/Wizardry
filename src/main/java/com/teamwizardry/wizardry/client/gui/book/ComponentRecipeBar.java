@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.client.gui.book;
 
+import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.gui.component.GuiComponentEvents;
 import com.teamwizardry.librarianlib.features.gui.provided.book.ComponentBookMark;
 
@@ -14,32 +15,18 @@ public class ComponentRecipeBar extends ComponentBookMark {
 	public ComponentRecipeBar(@Nonnull GuiBook book, int id) {
 		super(book, SPELL_RECIPE_ICON, id, -2, -2);
 
-		setText("Spell Recipe");
+		setBookmarkText(LibrarianLib.PROXY.translate("wizardry.book.spell_recipe_recipe"), book.getBook().getSearchTextColor(), -5);
 
-		clipping.setClipToBounds(true);
-
-		//ComponentText textTitle = new ComponentText(2, 1, ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.TOP);
-		//textTitle.setVisible(false);
-		//textTitle.getColor().setValue(Color.WHITE);
-		//textTitle.getText().setValue("Spell Recipe");
-		//add(textTitle);
-
-		//textTitle.BUS.hook(GuiComponentEvents.ComponentTickEvent.class, componentTickEvent -> {
-		//	textTitle.setPos(new Vec2d(getAnimX(), textTitle.getPos().getY()));
-		//});
+		slideOutShort();
 
 		BUS.hook(GuiComponentEvents.MouseInEvent.class, mouseInEvent -> {
-			if (!focused) {
-				//	textTitle.setVisible(true);
-				slideOutShort();
-			}
+			if (!focused)
+				slideOutLong();
 		});
 
 		BUS.hook(GuiComponentEvents.MouseOutEvent.class, mouseOutEvent -> {
-			if (!focused) {
-				//textTitle.setVisible(false);
-				slideIn();
-			}
+			if (!focused)
+				slideOutShort();
 		});
 
 		BUS.hook(GuiComponentEvents.MouseClickEvent.class, mouseClickEvent -> {
@@ -47,14 +34,12 @@ public class ComponentRecipeBar extends ComponentBookMark {
 				if (!book.getHistory().empty()) {
 					book.forceInFocus(book.getHistory().pop());
 				}
-				//	textTitle.setVisible(false);
-				slideIn();
+				slideOutShort();
 				focused = false;
 			} else {
-				//	textTitle.setVisible(true);
 				book.placeInFocus(new ComponentSpellRecipe(book));
 				slideIn();
-				focused = false;
+				focused = true;
 			}
 		});
 

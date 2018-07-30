@@ -79,7 +79,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	@Nullable
 	private SpellRing childRing = null;
 
-	private SpellRing() {	
+	private SpellRing() {
 	}
 
 	public SpellRing(@Nonnull Module module) {
@@ -180,6 +180,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		return this.module != null && module instanceof ModuleEffect && ((ModuleEffect) module).hasRenderOverrideFor(this.module);
 	}
 
+	//TODO: pearl holders
 	public boolean taxCaster(SpellData data, double multiplier) {
 		Entity caster = data.getCaster();
 		if (caster == null) return false;
@@ -193,22 +194,18 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 			burnoutFill *= reduction;
 		}
 
-		CapManager manager = new CapManager(data.getCapability());
-
-		manager.setEntity(caster);
-		manager.setManualSync(true);
-
 		boolean fail = false;
-		if (manager.getMana() < manaDrain) fail = true;
 
-		manager.removeMana(manaDrain);
-		manager.addBurnout(burnoutFill);
+		try (CapManager.CapManagerBuilder mgr = CapManager.forObject(caster)) {
+			if (mgr.getMana() < manaDrain) fail = true;
 
-		manager.sync();
+			mgr.removeMana(manaDrain);
+			mgr.addBurnout(burnoutFill);
+		}
 
 		return !fail;
 	}
-	
+
 	public boolean taxCaster(SpellData data) {
 		return taxCaster(data, 1);
 	}
@@ -217,7 +214,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	 * Get a modifier in this ring between the range. Returns the attribute value, modified by burnout and multipliers, for use in a spell.
 	 *
 	 * @param attribute The attribute you want. List in {@link AttributeRegistry} for default ones.
-	 * @param data The data of the spell being cast, used to get caster-specific modifiers.
+	 * @param data      The data of the spell being cast, used to get caster-specific modifiers.
 	 * @return The {@code double} potency of a modifier.
 	 */
 	public final double getAttributeValue(Attribute attribute, SpellData data) {
@@ -232,21 +229,20 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		current *= getTrueAttributeValue(AttributeRegistry.POWER_MULTI);
 		return current;
 	}
-	
+
 	/**
 	 * Get a modifier in this ring between the range. Returns the true attribute value, unmodified by any other attributes.
-	 * 
+	 *
 	 * @param attribute The attribute you want. List in {@link AttributeRegistry} for default attributes.
 	 * @return The {@code double} potency of a modifier.
 	 */
-	public final double getTrueAttributeValue(Attribute attribute)
-	{
+	public final double getTrueAttributeValue(Attribute attribute) {
 		if (module == null) return 0;
-		
+
 		double current = informationTag.getDouble(attribute.getNbtName());
-		
+
 		AttributeRange range = module.getAttributeRanges().get(attribute);
-		
+
 		return MathHelper.clamp(current, range.min, range.max);
 	}
 
@@ -388,9 +384,8 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	public void addModifier(ModuleModifier moduleModifier) {
 		moduleModifier.getAttributes().forEach(modifier -> modifiers.put(modifier.getOperation(), modifier));
 	}
-	
-	public void addModifier(AttributeModifier attributeModifier)
-	{
+
+	public void addModifier(AttributeModifier attributeModifier) {
 		modifiers.put(attributeModifier.getOperation(), attributeModifier);
 	}
 
@@ -411,21 +406,19 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 	/**
 	 * All non mana, burnout, and multiplier attributes are reduced based on the caster's burnout level. This returns how much to reduce them by.
-	 * 
+	 *
 	 * @return The INVERTED burnout multiplier.
 	 */
-	public double getPlayerBurnoutMultiplier(SpellData data)
-	{
+	public double getPlayerBurnoutMultiplier(SpellData data) {
 		Entity caster = data.getCaster();
 		if (caster == null || caster instanceof EntityLivingBase && BaublesSupport.getItem((EntityLivingBase) caster, ModItems.CREATIVE_HALO, ModItems.FAKE_HALO, ModItems.REAL_HALO).isEmpty())
 			return 1;
-		CapManager manager = new CapManager(caster);
-		
-		double multiplier = manager.getBurnout() / manager.getMaxBurnout();
+
+		double multiplier = CapManager.getBurnout(caster) / CapManager.getMaxBurnout(caster);
 		double burnoutLimit = 0.5; //TODO: Probably put this into config, limit to [0, 1)
 		return Math.min(1, 1 - (multiplier - burnoutLimit) / (1 - burnoutLimit));
 	}
-	
+
 	@Nullable
 	public String getModuleReadableName() {
 		return module != null ? module.getReadableName() : null;
@@ -484,12 +477,10 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 		if (nbt.hasKey("modifiers")) {
 			modifiers.clear();
-			for (NBTBase base : nbt.getTagList("modifiers", Constants.NBT.TAG_COMPOUND))
-			{
+			for (NBTBase base : nbt.getTagList("modifiers", Constants.NBT.TAG_COMPOUND)) {
 				if (base instanceof NBTTagCompound) {
 					NBTTagCompound modifierCompound = (NBTTagCompound) base;
-					if (modifierCompound.hasKey("operation") && modifierCompound.hasKey("attribute") && modifierCompound.hasKey("modifier"))
-					{
+					if (modifierCompound.hasKey("operation") && modifierCompound.hasKey("attribute") && modifierCompound.hasKey("modifier")) {
 						Operation operation = Operation.values()[modifierCompound.getInteger("operation") % Operation.values().length];
 						Attribute attribute = AttributeRegistry.getAttributeFromName(modifierCompound.getString("attribute"));
 						double modifier = modifierCompound.getDouble("modifier");
