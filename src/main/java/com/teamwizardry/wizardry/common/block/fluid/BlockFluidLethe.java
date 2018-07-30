@@ -5,7 +5,7 @@ import com.teamwizardry.librarianlib.features.base.fluid.ModFluid;
 import com.teamwizardry.librarianlib.features.forgeevents.EntityUpdateEvent;
 import com.teamwizardry.wizardry.api.block.FluidTracker;
 import com.teamwizardry.wizardry.api.capability.mana.CapManager;
-import com.teamwizardry.wizardry.api.capability.mana.WizardryCapabilityProvider;
+import com.teamwizardry.wizardry.api.capability.mana.CapManager.CapManagerBuilder;
 import com.teamwizardry.wizardry.crafting.mana.FluidRecipeLoader;
 import com.teamwizardry.wizardry.crafting.mana.ManaRecipes;
 import net.minecraft.block.Block;
@@ -48,7 +48,7 @@ public class BlockFluidLethe extends BlockModFluid {
 						EntityPlayer player = (EntityPlayer) entity;
 						float xpDrain = player.experienceTotal > 1 ? 1 : player.experienceTotal;
 						player.experienceTotal -= xpDrain;
-						CapManager manager = new CapManager(WizardryCapabilityProvider.getCap(player));
+						CapManagerBuilder manager = CapManager.forObject(player);
 						manager.addMana(xpDrain);
 					});
 
