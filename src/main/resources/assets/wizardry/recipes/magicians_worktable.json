@@ -1,23 +1,23 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "pattern": [
-    " A ",
-    "BBB",
-    "C C"
-  ],
-  "key": {
-    "A": {
-      "item": "minecraft:book"
-    },
-    "B": {
-      "item": "wizardry:wisdom_wood_slab",
-      "data": 0
-    },
-    "C": {
-      "item": "wizardry:wisdom_wood_planks"
-    }
-  },
-  "result": {
-    "item": "wizardry:magicians_worktable"
-  }
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		" A ",
+		"BBB",
+		"C C"
+	],
+	"key": {
+		"A": {
+			"item": "minecraft:book"
+		},
+		"B": {
+			"item": "wizardry:wisdom_wood_slab",
+			"data": 0
+		},
+		"C": {
+			"item": "wizardry:wisdom_wood_planks"
+		}
+	},
+	"result": {
+		"item": "wizardry:magicians_worktable"
+	}
 }

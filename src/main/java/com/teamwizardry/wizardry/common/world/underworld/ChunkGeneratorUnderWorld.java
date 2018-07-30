@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.common.world.underworld;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RandUtilSeed;
 import com.teamwizardry.wizardry.common.block.BlockCloud;
+import com.teamwizardry.wizardry.common.block.fluid.ModFluids;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import kotlin.Pair;
@@ -78,7 +79,12 @@ public class ChunkGeneratorUnderWorld implements IChunkGenerator {
 					if (y == minY)
 						primer.setBlockState(x, y, z, ModBlocks.CLOUD.getDefaultState().withProperty(BlockCloud.HAS_LIGHT_VALUE, true));
 					else
-						primer.setBlockState(x, y, z, ModBlocks.CLOUD.getDefaultState());
+					{
+						if (y >= minY + 8 && y <= maxY - 8)
+							primer.setBlockState(x, y, z, ModFluids.LETHE.getActualBlock().getDefaultState());
+						else
+							primer.setBlockState(x, y, z, ModBlocks.CLOUD.getDefaultState());
+					}
 				}
 			}
 		}

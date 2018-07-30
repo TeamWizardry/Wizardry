@@ -1,16 +1,16 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "AA",
-    "AA"
-  ],
-  "key": {
-    "A": {
-      "item": "wizardry:nacre_block"
-    }
-  },
-  "result": {
-    "item": "wizardry:nacre_block_brick",
-    "count": 4
-  }
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"AA",
+		"AA"
+	],
+	"key": {
+		"A": {
+			"item": "wizardry:nacre_block"
+		}
+	},
+	"result": {
+		"item": "wizardry:nacre_block_brick",
+		"count": 4
+	}
 }

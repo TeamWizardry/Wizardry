@@ -1,20 +1,20 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "AGA",
-    "G G",
-    "AGA"
-  ],
-  "key": {
-    "A": {
-      "item": "wizardry:orb",
-      "data": 1
-    },
-    "G": {
-      "item": "minecraft:gold_ingot"
-    }
-  },
-  "result": {
-    "item": "wizardry:halo_fake"
-  }
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"AGA",
+		"G G",
+		"AGA"
+	],
+	"key": {
+		"A": {
+			"item": "wizardry:orb",
+			"data": 1
+		},
+		"G": {
+			"item": "minecraft:gold_ingot"
+		}
+	},
+	"result": {
+		"item": "wizardry:halo_fake"
+	}
 }

@@ -1,24 +1,24 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "   ",
-    "BAB",
-    "CCC"
-  ],
-  "key": {
-    "A": {
-      "item": "wizardry:orb",
-      "data": 1
-    },
-    "B": {
-      "item": "wizardry:wisdom_stick"
-    },
-    "C": {
-      "item": "wizardry:wisdom_wood_slab",
-      "data": 0
-    }
-  },
-  "result": {
-    "item": "wizardry:mana_magnet"
-  }
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"   ",
+		"BAB",
+		"CCC"
+	],
+	"key": {
+		"A": {
+			"item": "wizardry:orb",
+			"data": 1
+		},
+		"B": {
+			"item": "wizardry:wisdom_stick"
+		},
+		"C": {
+			"item": "wizardry:wisdom_wood_slab",
+			"data": 0
+		}
+	},
+	"result": {
+		"item": "wizardry:mana_magnet"
+	}
 }

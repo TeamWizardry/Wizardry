@@ -1,16 +1,16 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "AAA"
-  ],
-  "key": {
-    "A": {
-      "item": "wizardry:wisdom_wood_planks"
-    }
-  },
-  "result": {
-    "item": "wizardry:wisdom_wood_slab",
-    "data": 0,
-    "count": 3
-  }
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"AAA"
+	],
+	"key": {
+		"A": {
+			"item": "wizardry:wisdom_wood_planks"
+		}
+	},
+	"result": {
+		"item": "wizardry:wisdom_wood_slab",
+		"data": 0,
+		"count": 6
+	}
 }

@@ -1,19 +1,19 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "ABA",
-    "ABA"
-  ],
-  "key": {
-    "B": {
-      "item": "wizardry:wisdom_wood_planks"
-    },
-    "A": {
-      "item": "wizardry:wisdom_stick"
-    }
-  },
-  "result": {
-    "item": "wizardry:wisdom_wood_fence_gate",
-    "count": 3
-  }
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"ABA",
+		"ABA"
+	],
+	"key": {
+		"B": {
+			"item": "wizardry:wisdom_wood_planks"
+		},
+		"A": {
+			"item": "wizardry:wisdom_stick"
+		}
+	},
+	"result": {
+		"item": "wizardry:wisdom_wood_fence_gate",
+		"count": 3
+	}
 }

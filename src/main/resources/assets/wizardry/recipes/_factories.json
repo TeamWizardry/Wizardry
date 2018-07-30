@@ -1,9 +1,9 @@
 {
-  "ingredients": {
-    "fluid": "com.teamwizardry.wizardry.crafting.IngredientFluidStackFactory"
-  },
-  "recipes": {
-    "fluid_shaped": "com.teamwizardry.wizardry.crafting.RecipeShapedFluidFactory",
-    "fluid_shapeless": "com.teamwizardry.wizardry.crafting.RecipeShapelessFluidFactory"
-  }
+	"ingredients": {
+		"fluid": "com.teamwizardry.wizardry.crafting.IngredientFluidStackFactory"
+	},
+	"recipes": {
+		"fluid_shaped": "com.teamwizardry.wizardry.crafting.RecipeShapedFluidFactory",
+		"fluid_shapeless": "com.teamwizardry.wizardry.crafting.RecipeShapelessFluidFactory"
+	}
 }

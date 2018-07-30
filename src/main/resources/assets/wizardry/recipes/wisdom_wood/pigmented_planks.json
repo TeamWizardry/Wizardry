@@ -1,20 +1,20 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "pattern": [
-    "AAA",
-    "ABA",
-    "AAA"
-  ],
-  "key": {
-    "A": {
-      "item": "wizardry:wisdom_wood_planks"
-    },
-    "B": {
-      "item": "minecraft:gold_nugget"
-    }
-  },
-  "result": {
-    "item": "wizardry:wisdom_wood_pigmented_planks",
-    "count": 8
-  }
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"AAA",
+		"ABA",
+		"AAA"
+	],
+	"key": {
+		"A": {
+			"item": "wizardry:wisdom_wood_planks"
+		},
+		"B": {
+			"item": "minecraft:gold_nugget"
+		}
+	},
+	"result": {
+		"item": "wizardry:wisdom_wood_pigmented_planks",
+		"count": 8
+	}
 }

@@ -1,20 +1,20 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "pattern": [
-    " A ",
-    " BA",
-    "A  "
-  ],
-  "key": {
-    "A": {
-      "item": "minecraft:gold_nugget"
-    },
-    "B": {
-      "item": "wizardry:wisdom_wood_planks"
-    }
-  },
-  "result": {
-    "item": "wizardry:staff",
-    "data": 0
-  }
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		" A ",
+		" BA",
+		"A  "
+	],
+	"key": {
+		"A": {
+			"item": "minecraft:gold_nugget"
+		},
+		"B": {
+			"item": "wizardry:wisdom_wood_planks"
+		}
+	},
+	"result": {
+		"item": "wizardry:staff",
+		"data": 0
+	}
 }
