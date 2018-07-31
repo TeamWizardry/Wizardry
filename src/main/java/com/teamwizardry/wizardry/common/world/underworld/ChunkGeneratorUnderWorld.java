@@ -80,9 +80,9 @@ public class ChunkGeneratorUnderWorld implements IChunkGenerator {
 						primer.setBlockState(x, y, z, ModBlocks.CLOUD.getDefaultState().withProperty(BlockCloud.HAS_LIGHT_VALUE, true));
 					else
 					{
-						if (y >= minY + 8 && y <= maxY - 8)
-							primer.setBlockState(x, y, z, ModFluids.LETHE.getActualBlock().getDefaultState());
-						else
+//						if (y >= minY + 8 && y <= maxY - 8)
+//							primer.setBlockState(x, y, z, ModFluids.LETHE.getActualBlock().getDefaultState());
+//						else
 							primer.setBlockState(x, y, z, ModBlocks.CLOUD.getDefaultState());
 					}
 				}

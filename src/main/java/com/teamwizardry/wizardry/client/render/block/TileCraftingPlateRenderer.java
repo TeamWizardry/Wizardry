@@ -88,7 +88,7 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 
 		BasicAnimation<LocationAndAngle> anim = new BasicAnimation<>(locationAndAngle, "location");
 		anim.setTo(newDest);
-		anim.setDuration((float) (RandUtil.nextDouble(50, 100) * (tile.suckingCooldown <= 0 ? MathHelper.clamp(t * 2, 0, 1) : t)));
+//		anim.setDuration((float) (RandUtil.nextDouble(50, 100) * (tile.suckingCooldown <= 0 ? MathHelper.clamp(t * 2, 0, 1) : t)));
 		anim.setEasing(!CapManager.isManaEmpty(tile.getWizardryCap()) ? Easing.easeInOutQuint : Easing.easeInOutSine);
 		anim.setCompletion(() -> animationLoop(i, !motionInvert));
 		animator.add(anim);
@@ -165,20 +165,20 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 					GlStateManager.popMatrix();
 				}
 
-				if (tile.suckingCooldown <= 0) {
-					if (RandUtil.nextInt(index / 2) == 0) {
-						LibParticles.CLUSTER_DRAPE(
-								tile.getWorld(),
-								locationsAndAngle.location.add(new Vec3d(tile.getPos())).addVector(0.5, 0.5, 0.5));
-					}
-				} else {
-					if (RandUtil.nextInt(index / 4) == 0) {
-						LibParticles.CRAFTING_ALTAR_CLUSTER_SUCTION(
-								tile.getWorld(),
-								new Vec3d(tile.getPos()).addVector(0.5, 0.75, 0.5),
-								new InterpBezier3D(locationsAndAngle.location, new Vec3d(0, 0, 0)));
-					}
-				}
+//				if (tile.suckingCooldown <= 0) {
+//					if (RandUtil.nextInt(index / 2) == 0) {
+//						LibParticles.CLUSTER_DRAPE(
+//								tile.getWorld(),
+//								locationsAndAngle.location.add(new Vec3d(tile.getPos())).addVector(0.5, 0.5, 0.5));
+//					}
+//				} else {
+//					if (RandUtil.nextInt(index / 4) == 0) {
+//						LibParticles.CRAFTING_ALTAR_CLUSTER_SUCTION(
+//								tile.getWorld(),
+//								new Vec3d(tile.getPos()).addVector(0.5, 0.75, 0.5),
+//								new InterpBezier3D(locationsAndAngle.location, new Vec3d(0, 0, 0)));
+//					}
+//				}
 			}
 		}
 
