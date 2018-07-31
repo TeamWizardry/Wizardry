@@ -1,44 +1,66 @@
 package com.teamwizardry.wizardry.api.block;
 
-import com.teamwizardry.librarianlib.features.base.block.tile.TileMod;
-import com.teamwizardry.wizardry.api.ConfigValues;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-public class TileCachable extends TileMod {
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-	private static WeakHashMap<TileEntity, WeakHashMap<TileEntity, Double>> TILE_CACHE = new WeakHashMap<>();
+import com.teamwizardry.librarianlib.features.base.block.tile.TileMod;
+import com.teamwizardry.wizardry.api.ConfigValues;
+import com.teamwizardry.wizardry.api.capability.chunk.WizardryChunk;
+import com.teamwizardry.wizardry.api.capability.chunk.WizardryChunkCapability;
+
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
+
+public class TileCachable extends TileMod
+{
 	@Nonnull
 	public WeakHashMap<TileEntity, Double> distanceCache = new WeakHashMap<>();
+	
+	private static int LINK_DIST_SQ = ConfigValues.networkLinkDistance * ConfigValues.networkLinkDistance;
+	private static int CHUNK_RANGE = (ConfigValues.networkLinkDistance >> 4) + 1;
+	private static int CHUNK_DIST_SQ = CHUNK_RANGE * CHUNK_RANGE;
 
 	@Override
-	public void onLoad() {
+	public void onLoad()
+	{
 		super.onLoad();
 
-		TILE_CACHE.putIfAbsent(this, distanceCache);
+		int chunkX = pos.getX() >> 4;
+		int chunkZ = pos.getZ() >> 4;
 
-		if (distanceCache.isEmpty() && TILE_CACHE.size() > 1) {
-
-			for (TileEntity key : TILE_CACHE.keySet()) {
-				if (key == this) continue;
-
-				double distance = key.getPos().distanceSq(getPos());
-				if (distance <= ConfigValues.networkLinkDistance * ConfigValues.networkLinkDistance) {
-					distanceCache.put(key, distance);
-
-					WeakHashMap<TileEntity, Double> otherDistanceCache = TILE_CACHE.get(key);
-					if (otherDistanceCache != null) {
-						otherDistanceCache.put(this, distance);
-					}
-				}
+		Queue<TileCachable> toCheck = new LinkedList<>();
+		
+		for (int x = -CHUNK_RANGE; x <= CHUNK_RANGE; x++)
+		{
+			for (int z = -CHUNK_RANGE; z <= CHUNK_RANGE; z++)
+			{
+				if (x*x + z*z > CHUNK_DIST_SQ) continue;
+				WizardryChunk chunk = WizardryChunkCapability.get(world.getChunkFromChunkCoords(chunkX + x, chunkZ + z));
+				toCheck.addAll(chunk.getCachableTiles());
 			}
 		}
+		
+		while (!toCheck.isEmpty())
+		{
+			TileCachable tile = toCheck.remove();
+			double dist = tile.getPos().distanceSq(pos);
+			if (dist <= LINK_DIST_SQ)
+			{
+				tile.distanceCache.put(this, dist);
+				distanceCache.put(tile, dist);
+			}
+		}
+		
+		WizardryChunk chunk = WizardryChunkCapability.get(world.getChunkFromChunkCoords(chunkX, chunkZ));
+		chunk.addCachableTile(this);
+		this.onBreak();
+		this.onChunkUnload();
 	}
 
 	public double getCachedDistanceSq(TileEntity tile) {
@@ -46,6 +68,7 @@ public class TileCachable extends TileMod {
 	}
 
 	@Nonnull
+	@SuppressWarnings("unchecked")
 	public <T extends TileEntity> Set<T> getNearestTiles(Class<T> clazz) {
 		Set<T> poses = new HashSet<>();
 		for (TileEntity tile : distanceCache.keySet()) {

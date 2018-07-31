@@ -46,7 +46,7 @@ public final class WizardryChunkCapability
 	@SubscribeEvent
 	public static void onAttachCapabilities(AttachCapabilitiesEvent<Chunk> event)
 	{
-		event.addCapability(WIZARDRY_CHUNK_ID, StandardWizardryChunk.create(event.getObject()));
+		event.addCapability(WIZARDRY_CHUNK_ID, StandardWizardryChunk.create());
 	}
 	
 	private static final class WizardryChunkStorage implements Capability.IStorage<WizardryChunk>
