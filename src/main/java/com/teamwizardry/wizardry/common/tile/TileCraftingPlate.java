@@ -90,6 +90,8 @@ public class TileCraftingPlate extends TileManaInteractor {
 	@Save
 	public boolean revealStructure = false;
 	public Random random = new Random(getPos().toLong());
+	@Save
+	public int suckingCooldown = 0;
 
 	public TileCraftingPlate() {
 		super(0, 0);
@@ -112,8 +114,21 @@ public class TileCraftingPlate extends TileManaInteractor {
 	}
 
 	@Override
+	public void onSuckFrom(TileManaInteractor from) {
+		super.onSuckFrom(from);
+
+		suckingCooldown = 10;
+		markDirty();
+	}
+
+	@Override
 	public void update() {
 		super.update();
+
+		if (suckingCooldown > 0) {
+			suckingCooldown--;
+			//markDirty();
+		}
 
 		if (!((BlockCraftingPlate) getBlockType()).isStructureComplete(getWorld(), getPos())) return;
 
@@ -134,6 +149,7 @@ public class TileCraftingPlate extends TileManaInteractor {
 		for (EntityItem entityItem : world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos))) {
 			if (hasInputPearl()) break;
 
+			boolean change = false;
 			if (!isInventoryEmpty() && entityItem.getItem().getItem() instanceof IInfusable) {
 
 				ItemStack stack = entityItem.getItem().copy();
@@ -142,6 +158,7 @@ public class TileCraftingPlate extends TileManaInteractor {
 
 				inputPearl.getHandler().setStackInSlot(0, stack);
 
+				change = true;
 			} else if (!(entityItem.getItem().getItem() instanceof IInfusable)) {
 				ItemStack stack = entityItem.getItem().copy();
 				stack.setCount(1);
@@ -150,6 +167,8 @@ public class TileCraftingPlate extends TileManaInteractor {
 				for (int i = 0; i < realInventory.getHandler().getSlots(); i++) {
 					if (realInventory.getHandler().getStackInSlot(i).isEmpty()) {
 						realInventory.getHandler().setStackInSlot(i, stack);
+
+						markDirty();
 
 						ClientRunnable.run(new ClientRunnable() {
 							@Override
@@ -164,7 +183,7 @@ public class TileCraftingPlate extends TileManaInteractor {
 				}
 			}
 
-			markDirty();
+			if (change) markDirty();
 		}
 
 		if (hasInputPearl() && !isInventoryEmpty()) {
@@ -179,7 +198,7 @@ public class TileCraftingPlate extends TileManaInteractor {
 						realInventory.getHandler().setStackInSlot(i, ItemStack.EMPTY);
 					}
 				}
-				
+
 				ItemStack infusedPearl = inputPearl.getHandler().getStackInSlot(0).copy();
 				inputPearl.getHandler().setStackInSlot(0, ItemStack.EMPTY);
 				outputPearl.getHandler().setStackInSlot(0, infusedPearl);
@@ -203,7 +222,7 @@ public class TileCraftingPlate extends TileManaInteractor {
 						pearlMultiplier = 1 - (base * base * base * base);
 					}
 				}
-				
+
 				SpellBuilder builder = new SpellBuilder(stacks, pearlMultiplier);
 
 				NBTTagList list = new NBTTagList();
@@ -211,7 +230,7 @@ public class TileCraftingPlate extends TileManaInteractor {
 					list.appendTag(spellRing.serializeNBT());
 				}
 				ItemNBTHelper.setList(infusedPearl, Constants.NBT.SPELL, list);
-				
+
 				ClientRunnable.run(new ClientRunnable() {
 					@Override
 					@SideOnly(Side.CLIENT)

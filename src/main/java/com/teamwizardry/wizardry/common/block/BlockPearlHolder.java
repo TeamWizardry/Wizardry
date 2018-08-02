@@ -63,28 +63,26 @@ public class BlockPearlHolder extends BlockModContainer {
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		ItemStack heldItem = playerIn.getHeldItem(hand);
 
-		if (!worldIn.isRemote) {
-			TilePearlHolder te = getTE(worldIn, pos);
+		TilePearlHolder te = getTE(worldIn, pos);
 
-			if (!te.containsSomething()) {
-				if (heldItem.getItem() == ModItems.ORB || heldItem.getItem() == ModItems.PEARL_NACRE) {
-					te.setItemStack(heldItem.copy());
-					te.getItemStack().setCount(1);
-					heldItem.shrink(1);
-				} else return false;
+		if (!te.containsSomething()) {
+			if (heldItem.getItem() == ModItems.ORB || heldItem.getItem() == ModItems.PEARL_NACRE) {
+				te.setItemStack(heldItem.copy());
+				te.getItemStack().setCount(1);
+				heldItem.shrink(1);
+			} else return false;
 
-			} else {
-				ItemStack stack = te.getItemStack().copy();
+		} else {
+			ItemStack stack = te.getItemStack().copy();
 
-				te.setItemStack(ItemStack.EMPTY);
-				if (playerIn.inventory.addItemStackToInventory(stack)) playerIn.openContainer.detectAndSendChanges();
-				else {
-					EntityItem entityItem = new EntityItem(worldIn, pos.getX(), pos.getY() + 1, pos.getZ(), stack);
-					worldIn.spawnEntity(entityItem);
-				}
+			te.setItemStack(ItemStack.EMPTY);
+			if (playerIn.inventory.addItemStackToInventory(stack)) playerIn.openContainer.detectAndSendChanges();
+			else {
+				EntityItem entityItem = new EntityItem(worldIn, pos.getX(), pos.getY() + 1, pos.getZ(), stack);
+				worldIn.spawnEntity(entityItem);
 			}
-			te.markDirty();
 		}
+		te.markDirty();
 		return true;
 	}
 

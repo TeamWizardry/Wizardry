@@ -234,6 +234,7 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 			}
 
 			nemezDrive.endUpdate();
+			nemezDrive.collapse();
 
 			//spell.addData(SpellData.DefaultKeys.NEMEZ, nemezDrive.serializeNBT());
 			spell.addData(SpellData.DefaultKeys.BLOCK_SET, poses);
