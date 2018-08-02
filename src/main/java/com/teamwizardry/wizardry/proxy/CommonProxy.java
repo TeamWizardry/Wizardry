@@ -4,6 +4,7 @@ import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.arena.ArenaManager;
+import com.teamwizardry.wizardry.api.capability.chunk.WizardryChunkCapability;
 import com.teamwizardry.wizardry.api.capability.world.WizardryWorldCapability;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
@@ -76,6 +77,7 @@ public class CommonProxy {
 		MinecraftForge.EVENT_BUS.register(this);
 
 		WizardryWorldCapability.init();
+		WizardryChunkCapability.init();
 
 		PacketHandler.register(PacketSendSpellToBook.class, Side.SERVER);
 		PacketHandler.register(PacketSyncCape.class, Side.SERVER);
@@ -120,13 +122,13 @@ public class CommonProxy {
 			FireRecipes.INSTANCE.loadRecipes(recipeDirectory);
 		}
 
-		manaRecipeLoading:
+		moduleLoading:
 		{
 			File moduleDirectory = new File(directory, "modules");
 			if (!moduleDirectory.exists())
 				if (!moduleDirectory.mkdirs()) {
 					Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not create directory " + moduleDirectory.getPath());
-					break manaRecipeLoading;
+					break moduleLoading;
 				}
 
 			ModuleRegistry.INSTANCE.loadUnprocessedModules();
