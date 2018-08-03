@@ -64,40 +64,40 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 		return index - 1;
 	}
 
-	private LocationAndAngle popLast() {
-		return locationsAndAngles[index - 1];
-	}
-
-	private LocationAndAngle pop(int index) {
+	private LocationAndAngle getLocAndAngles(int index) {
 		return locationsAndAngles[index];
 	}
 
-	public void animationLoop(int i, boolean motionInvert) {
-		LocationAndAngle locationAndAngle = pop(i);
+	public void animationLoop(int i) {
+		LocationAndAngle locationAndAngle = getLocAndAngles(i);
 		if (locationAndAngle == null) return;
 
-		Vec3d newDest;
-		double t = tile.getWizardryCap() == null ? 1 : 1 - (CapManager.getMana(tile.getWizardryCap()) / CapManager.getMaxMana(tile.getWizardryCap()));
+		try (CapManager.CapManagerBuilder manager = CapManager.forObject(tile.getWizardryCap())) {
 
-		double radius = RandUtil.nextDouble(5, 8) * t;
-		locationAndAngle.angle += RandUtil.nextDouble(-1.5, 1.5);
-		double x = MathHelper.cos((float) locationAndAngle.angle) * radius;
-		double z = MathHelper.sin((float) locationAndAngle.angle) * radius;
+			Vec3d newDest;
+			double t = tile.getWizardryCap() == null ? 1 : 1 - (manager.getMana() / manager.getMaxMana());
 
-		newDest = new Vec3d(x, (2 + (RandUtil.nextFloat() * 7)) * t, z);
+			double radius = RandUtil.nextDouble(5, 8) * t;
+			locationAndAngle.angle += RandUtil.nextDouble(-1.5, 1.5);
+			double x = MathHelper.cos((float) locationAndAngle.angle) * radius;
+			double z = MathHelper.sin((float) locationAndAngle.angle) * radius;
 
-		BasicAnimation<LocationAndAngle> anim = new BasicAnimation<>(locationAndAngle, "location");
-		anim.setTo(newDest);
-//		anim.setDuration((float) (RandUtil.nextDouble(50, 100) * (tile.suckingCooldown <= 0 ? MathHelper.clamp(t * 2, 0, 1) : t)));
-		anim.setEasing(!CapManager.isManaEmpty(tile.getWizardryCap()) ? Easing.easeInOutQuint : Easing.easeInOutSine);
-		anim.setCompletion(() -> animationLoop(i, !motionInvert));
-		animator.add(anim);
+			newDest = new Vec3d(x, (2 + (RandUtil.nextFloat() * 7)) * t, z);
+
+			BasicAnimation<LocationAndAngle> anim = new BasicAnimation<>(locationAndAngle, "location");
+			anim.setTo(newDest);
+			anim.setDuration((float) (RandUtil.nextDouble(50, 100) * (tile.suckingCooldown <= 0 ? MathHelper.clamp(t * 2, 0, 1) : t)));
+			anim.setEasing(!manager.isManaEmpty() ? Easing.easeInOutQuint : Easing.easeInOutSine);
+			anim.setCompletion(() -> animationLoop(i));
+			animator.add(anim);
+
+		}
 	}
 
 	public void addAnimation() {
 		int index = push(0, 0.5, 0, RandUtil.nextDouble(0, 360));
 
-		animationLoop(index, false);
+		animationLoop(index);
 	}
 
 	public void removeLast() {
@@ -158,27 +158,26 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 					GlStateManager.rotate((locationsAndAngle.randZ + tile.getWorld().getTotalWorldTime()) + ClientTickHandler.getPartialTicks(), 0, 0, 1);
 
 					GlStateManager.enableLighting();
-					GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 					RenderHelper.disableStandardItemLighting();
 					Minecraft.getMinecraft().getRenderItem().renderItem(stack, TransformType.NONE);
 					RenderHelper.enableStandardItemLighting();
 					GlStateManager.popMatrix();
 				}
 
-//				if (tile.suckingCooldown <= 0) {
-//					if (RandUtil.nextInt(index / 2) == 0) {
-//						LibParticles.CLUSTER_DRAPE(
-//								tile.getWorld(),
-//								locationsAndAngle.location.add(new Vec3d(tile.getPos())).addVector(0.5, 0.5, 0.5));
-//					}
-//				} else {
-//					if (RandUtil.nextInt(index / 4) == 0) {
-//						LibParticles.CRAFTING_ALTAR_CLUSTER_SUCTION(
-//								tile.getWorld(),
-//								new Vec3d(tile.getPos()).addVector(0.5, 0.75, 0.5),
-//								new InterpBezier3D(locationsAndAngle.location, new Vec3d(0, 0, 0)));
-//					}
-//				}
+				if (tile.suckingCooldown <= 0) {
+					if (RandUtil.nextInt(index / 2) == 0) {
+						LibParticles.CLUSTER_DRAPE(
+								tile.getWorld(),
+								locationsAndAngle.location.add(new Vec3d(tile.getPos())).addVector(0.5, 0.5, 0.5));
+					}
+				} else {
+					if (RandUtil.nextInt(index / 4) == 0) {
+						LibParticles.CRAFTING_ALTAR_CLUSTER_SUCTION(
+								tile.getWorld(),
+								new Vec3d(tile.getPos()).addVector(0.5, 0.75, 0.5),
+								new InterpBezier3D(locationsAndAngle.location, new Vec3d(0, 0, 0)));
+					}
+				}
 			}
 		}
 

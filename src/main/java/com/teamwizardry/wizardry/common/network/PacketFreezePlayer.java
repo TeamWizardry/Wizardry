@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.network;
 
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.network.PacketBase;
+import com.teamwizardry.librarianlib.features.saving.Save;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
@@ -12,7 +13,9 @@ import javax.annotation.Nonnull;
  */
 public class PacketFreezePlayer extends PacketBase {
 
+	@Save
 	public int countdown;
+	@Save
 	public int interval;
 
 	public PacketFreezePlayer() {
