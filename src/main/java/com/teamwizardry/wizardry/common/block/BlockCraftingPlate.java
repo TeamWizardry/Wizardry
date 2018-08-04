@@ -3,7 +3,6 @@ package com.teamwizardry.wizardry.common.block;
 import com.teamwizardry.librarianlib.features.base.block.tile.BlockModContainer;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
-import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.CachedStructure;
 import com.teamwizardry.wizardry.api.block.IStructure;
@@ -12,7 +11,6 @@ import com.teamwizardry.wizardry.api.spell.SpellBuilder;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
-import com.teamwizardry.wizardry.client.render.block.TileCraftingPlateRenderer;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
 import com.teamwizardry.wizardry.init.ModItems;
@@ -35,8 +33,6 @@ import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -73,6 +69,8 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+		if (worldIn.isRemote) return true;
+
 		ItemStack heldItem = playerIn.getHeldItem(hand);
 
 		if (isStructureComplete(worldIn, pos)) {
@@ -92,7 +90,7 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 						list.appendTag(spellRing.serializeNBT());
 					}
 					ItemNBTHelper.setList(pearl, Constants.NBT.SPELL, list);
-					
+
 					//Color lastColor = SpellUtils.getAverageSpellColor(builder.getSpell());
 //
 					//float[] hsv = ColorUtils.getHSVFromColor(lastColor);
@@ -109,66 +107,53 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 					return true;
 				} else {
 					ItemStack stack = heldItem.copy();
-					stack.setCount(1);
-					heldItem.shrink(1);
+					int oldCount = stack.getCount();
+					int subtractHand = playerIn.isSneaking() ? 64 : 1;
+					heldItem.shrink(subtractHand);
+					stack.setCount(oldCount - heldItem.getCount());
 
 					if (!plate.isInventoryEmpty() && stack.getItem() instanceof IInfusable) {
 						plate.inputPearl.getHandler().setStackInSlot(0, stack);
+						plate.markDirty();
+
+						playerIn.openContainer.detectAndSendChanges();
+						worldIn.notifyBlockUpdate(pos, state, state, 3);
+
 					} else if (!(stack.getItem() instanceof IInfusable)) {
 						for (int i = 0; i < plate.realInventory.getHandler().getSlots(); i++) {
 							if (plate.realInventory.getHandler().getStackInSlot(i).isEmpty()) {
 								plate.realInventory.getHandler().setStackInSlot(i, stack);
+								plate.markDirty();
 
-								ClientRunnable.run(new ClientRunnable() {
-									@Override
-									@SideOnly(Side.CLIENT)
-									public void runIfClient() {
-										if (plate.renderHandler != null)
-											((TileCraftingPlateRenderer) plate.renderHandler).addAnimation();
-									}
-								});
+								playerIn.openContainer.detectAndSendChanges();
+
 								break;
 							}
 						}
 					}
 
-					playerIn.openContainer.detectAndSendChanges();
-					worldIn.notifyBlockUpdate(pos, state, state, 3);
 					return true;
 				}
 			} else {
 
 				if (plate.hasOutputPearl()) {
 					playerIn.setHeldItem(hand, plate.outputPearl.getHandler().extractItem(0, 1, false));
+					plate.markDirty();
+
 					playerIn.openContainer.detectAndSendChanges();
-					worldIn.notifyBlockUpdate(pos, state, state, 3);
 
 					return true;
 				} else {
-					boolean empty = true;
-					for (int i = 0; i < plate.realInventory.getHandler().getSlots(); i++) {
-						if (!plate.realInventory.getHandler().getStackInSlot(i).isEmpty()) {
-							empty = false;
-							break;
-						}
-					}
-					if (!empty) {
-						for (int i = plate.realInventory.getHandler().getSlots() - 1; i >= 0; i--) {
-							ItemStack extracted = plate.realInventory.getHandler().getStackInSlot(i);
-							if (!extracted.isEmpty()) {
-								playerIn.addItemStackToInventory(plate.realInventory.getHandler().extractItem(i, extracted.getCount(), false));
-								plate.markDirty();
 
-								ClientRunnable.run(new ClientRunnable() {
-									@Override
-									@SideOnly(Side.CLIENT)
-									public void runIfClient() {
-										if (plate.renderHandler != null)
-											((TileCraftingPlateRenderer) plate.renderHandler).clearAll();
-									}
-								});
-								break;
-							}
+					for (int i = plate.realInventory.getHandler().getSlots() - 1; i >= 0; i--) {
+						ItemStack extracted = plate.realInventory.getHandler().extractItem(i, playerIn.isSneaking() ? 64 : 1, false);
+						if (!extracted.isEmpty()) {
+							playerIn.addItemStackToInventory(extracted);
+							plate.markDirty();
+
+							playerIn.openContainer.detectAndSendChanges();
+
+							break;
 						}
 					}
 				}

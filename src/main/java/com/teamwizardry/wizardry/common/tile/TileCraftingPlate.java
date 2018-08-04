@@ -7,7 +7,6 @@ import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.saving.Module;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.librarianlib.features.tesr.TileRenderer;
-import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.TileManaInteractor;
@@ -23,6 +22,7 @@ import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.render.block.TileCraftingPlateRenderer;
 import com.teamwizardry.wizardry.common.block.BlockCraftingPlate;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
+import com.teamwizardry.wizardry.common.network.PacketUpdateCraftingPlateRenderer;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -66,7 +66,16 @@ public class TileCraftingPlate extends TileManaInteractor {
 	}
 
 	@Module
-	public ModuleInventory realInventory = new ModuleInventory(1000);
+	public ModuleInventory realInventory = new ModuleInventory(new ItemStackHandler(1000) {
+
+		@Override
+		protected void onContentsChanged(int slot) {
+			if (world.isRemote) return;
+			PacketHandler.NETWORK.sendToAllAround(new PacketUpdateCraftingPlateRenderer(pos, slot), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
+		}
+
+	});
+
 	@Module
 	public ModuleInventory inputPearl = new ModuleInventory(new ItemStackHandler() {
 		@Override
@@ -169,15 +178,6 @@ public class TileCraftingPlate extends TileManaInteractor {
 						realInventory.getHandler().setStackInSlot(i, stack);
 
 						markDirty();
-
-						ClientRunnable.run(new ClientRunnable() {
-							@Override
-							@SideOnly(Side.CLIENT)
-							public void runIfClient() {
-								if (renderHandler != null)
-									((TileCraftingPlateRenderer) renderHandler).addAnimation();
-							}
-						});
 						break;
 					}
 				}
@@ -230,15 +230,6 @@ public class TileCraftingPlate extends TileManaInteractor {
 					list.appendTag(spellRing.serializeNBT());
 				}
 				ItemNBTHelper.setList(infusedPearl, Constants.NBT.SPELL, list);
-
-				ClientRunnable.run(new ClientRunnable() {
-					@Override
-					@SideOnly(Side.CLIENT)
-					public void runIfClient() {
-						if (renderHandler != null)
-							((TileCraftingPlateRenderer) renderHandler).clearAll();
-					}
-				});
 
 				markDirty();
 

@@ -29,7 +29,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 /**
  * Created by Demoniaque on 6/11/2016.
@@ -39,9 +41,7 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 
 	private static Animator animator = new Animator();
 
-	private LocationAndAngle[] locationsAndAngles;
-
-	private int index = 0;
+	private HashMap<Integer, LocationAndAngle> locationsAndAngles;
 
 	private CachedStructure cachedStructure;
 
@@ -50,62 +50,20 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 
 		animator.setUseWorldTicks(true);
 		cachedStructure = new CachedStructure(((IStructure) tile.getBlockType()).getStructure().loc, tile.getWorld());
-		locationsAndAngles = new LocationAndAngle[tile.realInventory.getHandler().getSlots()];
+		locationsAndAngles = new HashMap<>();
 
 		for (int i = 0; i < tile.realInventory.getHandler().getSlots(); i++) {
-			if (!tile.realInventory.getHandler().getStackInSlot(i).isEmpty()) {
-				addAnimation();
-			}
+			update(i);
 		}
 	}
 
-	private int push(double x, double y, double z, double angle) {
-		locationsAndAngles[index++] = new LocationAndAngle(x, y, z, angle);
-		return index - 1;
-	}
-
-	private LocationAndAngle getLocAndAngles(int index) {
-		return locationsAndAngles[index];
-	}
-
-	public void animationLoop(int i) {
-		LocationAndAngle locationAndAngle = getLocAndAngles(i);
-		if (locationAndAngle == null) return;
-
-		try (CapManager.CapManagerBuilder manager = CapManager.forObject(tile.getWizardryCap())) {
-
-			Vec3d newDest;
-			double t = tile.getWizardryCap() == null ? 1 : 1 - (manager.getMana() / manager.getMaxMana());
-
-			double radius = RandUtil.nextDouble(5, 8) * t;
-			locationAndAngle.angle += RandUtil.nextDouble(-1.5, 1.5);
-			double x = MathHelper.cos((float) locationAndAngle.angle) * radius;
-			double z = MathHelper.sin((float) locationAndAngle.angle) * radius;
-
-			newDest = new Vec3d(x, (2 + (RandUtil.nextFloat() * 7)) * t, z);
-
-			BasicAnimation<LocationAndAngle> anim = new BasicAnimation<>(locationAndAngle, "location");
-			anim.setTo(newDest);
-			anim.setDuration((float) (RandUtil.nextDouble(50, 100) * (tile.suckingCooldown <= 0 ? MathHelper.clamp(t * 2, 0, 1) : t)));
-			anim.setEasing(!manager.isManaEmpty() ? Easing.easeInOutQuint : Easing.easeInOutSine);
-			anim.setCompletion(() -> animationLoop(i));
-			animator.add(anim);
-
+	public void update(int slot) {
+		ItemStack stack = tile.realInventory.getHandler().getStackInSlot(slot);
+		if (stack.isEmpty()) {
+			locationsAndAngles.remove(slot);
+		} else {
+			locationsAndAngles.put(slot, new LocationAndAngle(tile, 0, 0.5, 0, RandUtil.nextDouble(0, 360)));
 		}
-	}
-
-	public void addAnimation() {
-		int index = push(0, 0.5, 0, RandUtil.nextDouble(0, 360));
-
-		animationLoop(index);
-	}
-
-	public void removeLast() {
-		locationsAndAngles[index - 1] = null;
-	}
-
-	public void clearAll() {
-		locationsAndAngles = new LocationAndAngle[tile.realInventory.getHandler().getSlots()];
 	}
 
 	@Override
@@ -142,10 +100,11 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 		}
 
 		// renderSpell each item at its current position
-		for (int i = 0; i < index; i++) {
+		final int mapSize = locationsAndAngles.size();
+		for (Map.Entry<Integer, LocationAndAngle> entry : locationsAndAngles.entrySet()) {
 
-			ItemStack stack = tile.realInventory.getHandler().getStackInSlot(i);
-			LocationAndAngle locationsAndAngle = locationsAndAngles[i];
+			ItemStack stack = tile.realInventory.getHandler().getStackInSlot(entry.getKey());
+			LocationAndAngle locationsAndAngle = entry.getValue();
 
 			if (!stack.isEmpty() && locationsAndAngle != null) {
 
@@ -165,13 +124,13 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 				}
 
 				if (tile.suckingCooldown <= 0) {
-					if (RandUtil.nextInt(index / 2) == 0) {
+					if (RandUtil.nextInt(mapSize / 2) == 0) {
 						LibParticles.CLUSTER_DRAPE(
 								tile.getWorld(),
 								locationsAndAngle.location.add(new Vec3d(tile.getPos())).addVector(0.5, 0.5, 0.5));
 					}
 				} else {
-					if (RandUtil.nextInt(index / 4) == 0) {
+					if (RandUtil.nextInt(mapSize / 4) == 0) {
 						LibParticles.CRAFTING_ALTAR_CLUSTER_SUCTION(
 								tile.getWorld(),
 								new Vec3d(tile.getPos()).addVector(0.5, 0.75, 0.5),
@@ -207,14 +166,42 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 		public double angle;
 		public Vec3d location;
 		// for randomized item rotation
-		public int randX, randY, randZ;
+		private int randX, randY, randZ;
+		private TileCraftingPlate tile;
 
-		LocationAndAngle(double x, double y, double z, double angle) {
+		LocationAndAngle(TileCraftingPlate tile, double x, double y, double z, double angle) {
+			this.tile = tile;
 			location = new Vec3d(x, y, z);
 			this.angle = angle;
 			randX = RandUtil.nextInt(-1000, 1000);
 			randY = RandUtil.nextInt(-1000, 1000);
 			randZ = RandUtil.nextInt(-1000, 1000);
+
+			animationLoop();
+		}
+
+
+		private void animationLoop() {
+			try (CapManager.CapManagerBuilder manager = CapManager.forObject(tile.getWizardryCap())) {
+
+				Vec3d newDest;
+				double t = tile.getWizardryCap() == null ? 1 : 1 - (manager.getMana() / manager.getMaxMana());
+
+				double radius = RandUtil.nextDouble(5, 8) * t;
+				angle += RandUtil.nextDouble(-1.5, 1.5);
+				double x = MathHelper.cos((float) angle) * radius;
+				double z = MathHelper.sin((float) angle) * radius;
+
+				newDest = new Vec3d(x, (2 + (RandUtil.nextFloat() * 7)) * t, z);
+
+				BasicAnimation<LocationAndAngle> anim = new BasicAnimation<>(this, "location");
+				anim.setTo(newDest);
+				anim.setDuration((float) (RandUtil.nextDouble(50, 100) * (tile.suckingCooldown <= 0 ? MathHelper.clamp(t * 2, 0, 1) : t)));
+				anim.setEasing(!manager.isManaEmpty() ? Easing.easeInOutQuint : Easing.easeInOutSine);
+				anim.setCompletion(this::animationLoop);
+				animator.add(anim);
+
+			}
 		}
 	}
 }
