@@ -29,6 +29,7 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
@@ -77,7 +78,7 @@ public class EventHandler {
 		}
 	}
 
-	@SubscribeEvent
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void underworldTeleport(LivingHurtEvent event) {
 		if (!(event.getEntity() instanceof EntityPlayer)) return;
 		if (event.getSource() == DamageSource.FALL && fallResetter.contains(event.getEntity().getUniqueID())) {
@@ -86,8 +87,10 @@ public class EventHandler {
 			return;
 		}
 		if (event.getEntity().getEntityWorld().provider.getDimension() == Wizardry.underWorld.getId()) {
-			if (event.getSource() == EntityDamageSource.OUT_OF_WORLD) {
+			if (event.getEntity().posY < 0) {
 				EntityPlayer player = ((EntityPlayer) event.getEntityLiving());
+				player.isDead = false;
+				event.setAmount(0);
 				BlockPos spawn = player.isSpawnForced(0) ? player.getBedLocation(0) : player.world.getSpawnPoint().add(player.world.rand.nextGaussian() * 16, 0, player.world.rand.nextGaussian() * 16);
 				BlockPos teleportTo = spawn.add(0, 300 - spawn.getY(), 0);
 				TeleportUtil.teleportToDimension((EntityPlayer) event.getEntity(), 0, teleportTo.getX(), teleportTo.getY(), teleportTo.getZ());

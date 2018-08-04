@@ -1,3 +1,8 @@
+0.9.4
+Fixed CME issue with Mana Network code
+Mana Batteries now correctly require liquid mana in their pools
+Crafting Plate rendering issues fixed
+
 0.9.3
 Fixed several particle rendering issues
 Fixed unicorn droppings
