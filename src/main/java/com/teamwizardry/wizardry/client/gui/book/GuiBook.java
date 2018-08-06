@@ -26,7 +26,8 @@ public class GuiBook extends ModGuiBook {
 
 		if (!ItemNBTHelper.getBoolean(bookItemStack, "has_spell", false)) return;
 
-		ComponentRecipeBar recipe = new ComponentRecipeBar(this, 1);
+		ComponentRecipeBar recipe = new ComponentRecipeBar(this, getBookMarkIndex());
+		setBookMarkIndex(getBookMarkIndex() + 1);
 
 		getMainComponents().add(recipe);
 	}
