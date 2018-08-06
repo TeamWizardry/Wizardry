@@ -87,7 +87,7 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 			}
 
 			for (BlockPos areaPos : blocks) {
-				if (!spellRing.taxCaster(spell, 1/area)) return false;
+				if (!spellRing.taxCaster(spell, 1 / area, false)) return false;
 				
 				BlockPos pos = blocks.size() > 1 ? areaPos.offset(facing) : areaPos;
 
@@ -111,7 +111,7 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 			if (item == null) return true;
 
 			if (item.getItem().getItem() instanceof ItemBlock) {
-				if (!spellRing.taxCaster(spell)) return false;
+				if (!spellRing.taxCaster(spell, true)) return false;
 				BlockUtils.placeBlock(world, targetPos, facing, item.getItem());
 				world.playSound(null, targetPos, ((ItemBlock) item.getItem().getItem()).getBlock().getSoundType(((ItemBlock) item.getItem().getItem()).getBlock().getDefaultState(), world, targetPos, caster).getPlaceSound(), SoundCategory.BLOCKS, 1f, 1f);
 			}

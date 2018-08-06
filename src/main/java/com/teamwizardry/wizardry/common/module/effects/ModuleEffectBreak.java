@@ -1,8 +1,5 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.BLOCK_HIT;
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.FACE_HIT;
-
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
@@ -30,6 +27,9 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.Set;
+
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.BLOCK_HIT;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.FACE_HIT;
 
 /**
  * Created by Demoniaque.
@@ -76,7 +76,7 @@ public class ModuleEffectBreak extends ModuleEffect {
 		});
 		for (BlockPos pos : blocks)
 		{
-			if (!spellRing.taxCaster(spell, 1/range)) continue;
+			if (!spellRing.taxCaster(spell, 1 / range, false)) continue;
 			BlockUtils.breakBlock(world, pos, null, caster instanceof EntityPlayer ? (EntityPlayerMP) caster : null, true);
 		}
 		

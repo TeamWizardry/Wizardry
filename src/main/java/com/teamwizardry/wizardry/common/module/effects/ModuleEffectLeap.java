@@ -89,7 +89,7 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 
 		if (!target.hasNoGravity()) {
 			double potency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell);
-			if (!spellRing.taxCaster(spell)) return false;
+			if (!spellRing.taxCaster(spell, true)) return false;
 
 			if (!ItemNBTHelper.verifyExistence(stack, "jump_count")
 					|| !ItemNBTHelper.verifyExistence(stack, "max_jumps")

@@ -217,5 +217,10 @@
     "sounds": [
       "wizardry:good_ethereal_chills"
     ]
+  },
+  "spell_fail": {
+    "sounds": [
+      "wizardry:spell_fail"
+    ]
 	}
 }

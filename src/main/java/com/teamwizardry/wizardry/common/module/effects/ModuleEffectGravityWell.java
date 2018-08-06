@@ -66,7 +66,7 @@ public class ModuleEffectGravityWell extends ModuleEffect implements ILingeringM
 			double dist = entity.getPositionVector().distanceTo(position);
 			if (dist < 2) continue;
 			if (dist > area) continue;
-			if (!spellRing.taxCaster(spell)) return false;
+			if (!spellRing.taxCaster(spell, false)) return false;
 
 			final double upperMag = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell) / 50.0;
 			final double scale = 1.5;

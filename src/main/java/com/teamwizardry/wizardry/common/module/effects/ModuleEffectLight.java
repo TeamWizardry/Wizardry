@@ -49,7 +49,7 @@ public class ModuleEffectLight extends ModuleEffect {
 		EnumFacing facing = spell.getFaceHit();
 		Entity caster = spell.getCaster();
 
-		if (!spellRing.taxCaster(spell)) return false;
+		if (!spellRing.taxCaster(spell, true)) return false;
 
 		if (targetPos == null) return true;
 

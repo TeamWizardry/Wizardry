@@ -14,13 +14,18 @@ import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.init.ModItems;
+import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.relauncher.Side;
@@ -181,7 +186,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	}
 
 	//TODO: pearl holders
-	public boolean taxCaster(SpellData data, double multiplier) {
+	public boolean taxCaster(SpellData data, double multiplier, boolean failSound) {
 		Entity caster = data.getCaster();
 		if (caster == null) return false;
 
@@ -203,11 +208,18 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 			mgr.addBurnout(burnoutFill);
 		}
 
+		if (fail && failSound) {
+			World world = data.world;
+			Vec3d origin = data.getOriginWithFallback();
+			if (origin != null)
+				world.playSound(null, new BlockPos(origin), ModSounds.SPELL_FAIL, SoundCategory.NEUTRAL, 1f, 1f);
+		}
+
 		return !fail;
 	}
 
-	public boolean taxCaster(SpellData data) {
-		return taxCaster(data, 1);
+	public boolean taxCaster(SpellData data, boolean failSound) {
+		return taxCaster(data, 1, failSound);
 	}
 
 	/**

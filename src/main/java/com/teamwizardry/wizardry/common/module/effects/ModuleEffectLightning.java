@@ -113,8 +113,8 @@ public class ModuleEffectLightning extends ModuleEffect {
 			double range = childRing.getAttributeValue(AttributeRegistry.RANGE, data);
 			double potency = childRing.getAttributeValue(AttributeRegistry.POTENCY, data) / 2;
 			double duration = childRing.getAttributeValue(AttributeRegistry.DURATION, data);
-			
-			if (!childRing.taxCaster(data)) return;
+
+			if (!childRing.taxCaster(data, true)) return;
 			
 			RandUtilSeed rand = new RandUtilSeed(RandUtil.nextLong(100, 100000));
 			float pitch = rand.nextFloat(-45, 45);
@@ -131,7 +131,7 @@ public class ModuleEffectLightning extends ModuleEffect {
 			Entity caster = data.getCaster();
 			Vec3d origin = data.getOriginWithFallback();
 			if (look == null || caster == null || origin == null) return;
-			if (!childRing.taxCaster(data)) return;
+			if (!childRing.taxCaster(data, true)) return;
 			
 			double range = childRing.getAttributeValue(AttributeRegistry.RANGE, data);
 			double potency = childRing.getAttributeValue(AttributeRegistry.POTENCY, data);
@@ -182,8 +182,8 @@ public class ModuleEffectLightning extends ModuleEffect {
 			double lightningPotency = childRing.getAttributeValue(AttributeRegistry.POTENCY, data) / 2.0;
 			double lightningDuration = childRing.getAttributeValue(AttributeRegistry.DURATION, data);
 			double beamRange = spellRing.getAttributeValue(AttributeRegistry.RANGE, data);
-			
-			if (!childRing.taxCaster(data)) return;
+
+			if (!childRing.taxCaster(data, true)) return;
 
 			RayTraceResult traceResult = new RayTrace(world, PosUtils.vecFromRotations(pitch, yaw), origin, beamRange)
 					.setSkipBlocks(true)
@@ -236,8 +236,8 @@ public class ModuleEffectLightning extends ModuleEffect {
 
 			Vec3d min = targetPos.subtract(zoneAoE/2, zoneRange/2, zoneAoE/2);
 			Vec3d max = targetPos.addVector(zoneAoE/2, zoneRange/2, zoneAoE/2);
-			
-			if (!childRing.taxCaster(data)) return;
+
+			if (!childRing.taxCaster(data, true)) return;
 
 			RandUtilSeed rand = new RandUtilSeed(RandUtil.nextLong(100, 100000));
 			

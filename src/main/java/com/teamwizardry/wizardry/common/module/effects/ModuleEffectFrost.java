@@ -66,7 +66,7 @@ public class ModuleEffectFrost extends ModuleEffect {
 		double range = spellRing.getAttributeValue(AttributeRegistry.AREA, spell) / 2;
 		double time = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 10;
 
-		if (!spellRing.taxCaster(spell)) return false;
+		if (!spellRing.taxCaster(spell, true)) return false;
 
 		if (targetEntity != null) {
 			spell.world.playSound(null, targetEntity.getPosition(), ModSounds.FROST_FORM, SoundCategory.NEUTRAL, 1, 1);

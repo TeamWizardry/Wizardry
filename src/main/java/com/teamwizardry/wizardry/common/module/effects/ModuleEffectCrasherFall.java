@@ -44,7 +44,7 @@ public class ModuleEffectCrasherFall extends ModuleEffect {
 		if (targetEntity instanceof EntityLivingBase) {
 			double strength = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
 			double duration = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 10;
-			if (!spellRing.taxCaster(spell)) return false;
+			if (!spellRing.taxCaster(spell, true)) return false;
 
 			((EntityLivingBase) targetEntity).addPotionEffect(new PotionEffect(ModPotions.CRASH, (int) duration, (int) strength, true, true));
 		}
