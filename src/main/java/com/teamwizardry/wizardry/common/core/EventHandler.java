@@ -47,7 +47,7 @@ public class EventHandler {
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent
 	public void onTextureStitchEvent(TextureStitchEvent event) {
-		event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE));
+		event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, MISC.SMOKE));
 		event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 	}
 
