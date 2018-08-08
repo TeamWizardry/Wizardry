@@ -68,7 +68,12 @@ public class EntitySpiritWight extends EntityMob {
 	@Override
 	public void collideWithEntity(Entity entity) {
 		if (getHealth() > 0) {
-			if (entity.getName().equals(getName())) return;
+			if (entity instanceof EntitySpiritWight) {
+				((EntityLivingBase) entity).motionX += RandUtil.nextDouble(-0.4, 0.4);
+				((EntityLivingBase) entity).motionY += RandUtil.nextDouble(-0.4, 0.4);
+				((EntityLivingBase) entity).motionY += RandUtil.nextDouble(-0.4, 0.4);
+				return;
+			}
 			((EntityLivingBase) entity).motionY += 0.4;
 			((EntityLivingBase) entity).attackEntityAsMob(this);
 			((EntityLivingBase) entity).setRevengeTarget(this);

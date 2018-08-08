@@ -24,7 +24,7 @@ public interface IHalo {
 			String string = slots.getStringTagAt(j);
 			HaloInfusionItem infusionItem = HaloInfusionItemRegistry.getItemFromName(string);
 			if (infusionItem != HaloInfusionItemRegistry.EMPTY) {
-				tooltips.add(TextFormatting.GOLD + "- " + infusionItem.getNbtName());
+				tooltips.add(TextFormatting.GOLD + "- " + infusionItem.getStack().getDisplayName());
 			}
 		}
 

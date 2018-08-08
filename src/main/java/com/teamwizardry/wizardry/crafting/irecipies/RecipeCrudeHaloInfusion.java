@@ -47,10 +47,11 @@ public class RecipeCrudeHaloInfusion extends IForgeRegistryEntry.Impl<IRecipe> i
 		if (!foundGlueStick || foundHalo.isEmpty() || availableItems <= 0) return false;
 
 		NBTTagList slots = ItemNBTHelper.getList(foundHalo, "slots", NBTTagString.class);
-		if (slots == null) return true;
+		if (slots == null) return availableItems <= 7;
 
 		int freeSlots = 0;
 		for (int j = 0; j < slots.tagCount(); j++) {
+			if (freeSlots >= 7) break;
 			String string = slots.getStringTagAt(j);
 			HaloInfusionItem infusionItem = HaloInfusionItemRegistry.getItemFromName(string);
 			if (infusionItem == HaloInfusionItemRegistry.EMPTY) freeSlots++;
@@ -77,13 +78,14 @@ public class RecipeCrudeHaloInfusion extends IForgeRegistryEntry.Impl<IRecipe> i
 		if (foundHalo.isEmpty() || foundGlueStick.isEmpty() || infusionItems.isEmpty()) return ItemStack.EMPTY;
 
 		NBTTagList slots = ItemNBTHelper.getList(foundHalo, "slots", NBTTagString.class);
-		if (slots == null || slots.tagCount() < HaloInfusionItemRegistry.getItems().size()) {
+		if (slots == null) {
 			slots = new NBTTagList();
 
-			for (int i = 0; i < HaloInfusionItemRegistry.getItems().size(); i++) {
+			for (int i = 0; i < 7; i++) {
 				slots.appendTag(new NBTTagString(HaloInfusionItemRegistry.EMPTY.getNbtName()));
 			}
-		}
+
+		} else slots = slots.copy();
 
 		final int count = slots.tagCount();
 		for (int i = 0; i < count; i++) {
@@ -106,7 +108,7 @@ public class RecipeCrudeHaloInfusion extends IForgeRegistryEntry.Impl<IRecipe> i
 
 	@Override
 	public boolean canFit(int width, int height) {
-		return true;
+		return width >= 3 && height >= 3;
 	}
 
 	@Override

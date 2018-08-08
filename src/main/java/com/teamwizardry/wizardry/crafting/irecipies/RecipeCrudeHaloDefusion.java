@@ -10,6 +10,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -44,7 +45,7 @@ public class RecipeCrudeHaloDefusion extends IForgeRegistryEntry.Impl<IRecipe> i
 
 	@Override
 	public boolean canFit(int width, int height) {
-		return true;
+		return width >= 3 && height >= 3;
 	}
 
 	@Override
@@ -71,11 +72,11 @@ public class RecipeCrudeHaloDefusion extends IForgeRegistryEntry.Impl<IRecipe> i
 					}
 				}
 
-				for (int j = 0; j < slots.tagCount(); j++) {
+				for (int j = 0; j < MathHelper.clamp(slots.tagCount(), 0, 7); j++) {
 					String string = slots.getStringTagAt(j);
 					HaloInfusionItem infusionItem = HaloInfusionItemRegistry.getItemFromName(string);
 					if (infusionItem == HaloInfusionItemRegistry.EMPTY) continue;
-					remainingItems.set(i, infusionItem.getStack());
+					remainingItems.set(j, infusionItem.getStack().copy());
 				}
 				break;
 			}
