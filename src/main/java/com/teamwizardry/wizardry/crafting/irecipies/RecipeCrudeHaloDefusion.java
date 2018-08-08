@@ -64,13 +64,14 @@ public class RecipeCrudeHaloDefusion extends IForgeRegistryEntry.Impl<IRecipe> i
 			if (stack.getItem() == ModItems.FAKE_HALO) {
 
 				NBTTagList slots = ItemNBTHelper.getList(stack, "slots", NBTTagString.class);
-				if (slots == null || slots.tagCount() < HaloInfusionItemRegistry.getItems().size()) {
+				if (slots == null) {
 					slots = new NBTTagList();
 
-					for (int j = 0; j < HaloInfusionItemRegistry.getItems().size(); j++) {
+					for (int j = 0; j < 7; j++) {
 						slots.appendTag(new NBTTagString(HaloInfusionItemRegistry.EMPTY.getNbtName()));
 					}
-				}
+
+				} else slots = slots.copy();
 
 				for (int j = 0; j < MathHelper.clamp(slots.tagCount(), 0, 7); j++) {
 					String string = slots.getStringTagAt(j);

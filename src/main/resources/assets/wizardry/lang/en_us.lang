@@ -80,6 +80,7 @@ item.wizardry:halo_creative.name=Creative Halo
 item.wizardry:repulsion_bomb.name=Repulsion Bomb
 item.wizardry:vortex_bomb.name=Vortex Bomb
 item.wizardry:sky_dust.name=Sky Dust
+item.wizardry:glue_stick.name=Glue Stick
 
 item.wizardry:glass_orb.fill.0.name=Glass Orb
 item.wizardry:mana_orb.fill.0.name=Mana Orb 0%
