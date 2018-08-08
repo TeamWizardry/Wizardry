@@ -57,7 +57,7 @@ public class ModuleEffectBackup extends ModuleEffect {
 
 		double duration = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 20;
 
-		if (!spellRing.taxCaster(spell)) return false;
+		if (!spellRing.taxCaster(spell, true)) return false;
 
 		if (targetPos == null) return true;
 		if (!(caster instanceof EntityLivingBase)) return true;

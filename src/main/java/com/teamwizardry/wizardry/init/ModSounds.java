@@ -48,8 +48,10 @@ public class ModSounds {
 	public static ModSoundEvent ZOOM;
 	public static ModSoundEvent GOOD_ETHEREAL_CHILLS;
 	public static ModSoundEvent SCRIBBLING;
+	public static ModSoundEvent SPELL_FAIL;
 
 	public static void init() {
+		SPELL_FAIL = new ModSoundEvent("spell_fail");
 		SCRIBBLING = new ModSoundEvent("scribbling");
 		GOOD_ETHEREAL_CHILLS = new ModSoundEvent("good_ethereal_chills");
 		ZOOM = new ModSoundEvent("zoom");

@@ -93,7 +93,7 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 
 		if (beamOffset >= ConfigValues.beamTimer) {
 			beamOffset %= ConfigValues.beamTimer;
-			if (!spellRing.taxCaster(spell)) {
+			if (!spellRing.taxCaster(spell, true)) {
 				ticker.ticks = beamOffset;
 				return false;
 			}

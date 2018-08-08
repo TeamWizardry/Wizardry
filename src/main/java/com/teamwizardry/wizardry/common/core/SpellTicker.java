@@ -18,8 +18,7 @@ import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Iterator;
 
 /**
  * Created by Demoniaque.
@@ -45,34 +44,36 @@ public class SpellTicker {
 		World world = event.world;
 		WizardryWorld worldCap = WizardryWorldCapability.get(world);
 
-		Set<LingeringObject> tmp1 = new HashSet<>(worldCap.getLingeringObjects());
-		Set<DelayedObject> tmp2 = new HashSet<>(worldCap.getDelayedObjects());
-
 		boolean change = false;
 
-		for (LingeringObject lingeringObject : tmp1) {
+		Iterator<LingeringObject> lingering = worldCap.getLingeringObjects().iterator();
+		while (lingering.hasNext()) {
+			LingeringObject lingeringObject = lingering.next();
+
 			long fromWorldTime = lingeringObject.getWorldTime();
 			long currentWorldTime = event.world.getTotalWorldTime();
 			long subtract = currentWorldTime - fromWorldTime;
 
 			if (subtract > lingeringObject.getExpiry()) {
-				worldCap.getLingeringObjects().remove(lingeringObject);
+				lingering.remove();
 				change = true;
 				continue;
 			}
 
 			lingeringObject.getSpellRing().runSpellRing(lingeringObject.getSpellData().copy());
-
 		}
 
-		for (DelayedObject delayedObject : tmp2) {
+		Iterator<DelayedObject> delayed = worldCap.getDelayedObjects().iterator();
+		while (delayed.hasNext()) {
+			DelayedObject delayedObject = delayed.next();
+
 			long fromWorldTime = delayedObject.getWorldTime();
 			long currentWorldTime = event.world.getTotalWorldTime();
 			long subtract = currentWorldTime - fromWorldTime;
 
 			if (subtract > delayedObject.getExpiry()) {
 				((IDelayedModule) delayedObject.getModule()).runDelayedEffect(delayedObject.getSpellData(), delayedObject.getSpellRing());
-				worldCap.getDelayedObjects().remove(delayedObject);
+				delayed.remove();
 				change = true;
 			}
 		}

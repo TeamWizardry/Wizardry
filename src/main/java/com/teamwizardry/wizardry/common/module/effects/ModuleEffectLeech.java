@@ -58,7 +58,7 @@ public class ModuleEffectLeech extends ModuleEffect {
 
 		double potency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell) / 2;
 
-		if (!spellRing.taxCaster(spell)) return false;
+		if (!spellRing.taxCaster(spell, true)) return false;
 
 		if (targetEntity instanceof EntityLivingBase) {
 			if (targetEntity instanceof EntityPlayer) {

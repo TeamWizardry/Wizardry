@@ -61,20 +61,20 @@ public class ModuleEffectThrive extends ModuleEffect {
 		if (targetEntity instanceof EntityLivingBase) {
 			double potency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell) / 2;
 
-			if (!spellRing.taxCaster(spell)) return false;
+			if (!spellRing.taxCaster(spell, true)) return false;
 
 			((EntityLivingBase) targetEntity).heal((float) potency);
 		}
 
 		if (targetPos != null) {
 			if (world.getBlockState(targetPos).getBlock() instanceof IGrowable) {
-				if (!spellRing.taxCaster(spell)) return false;
+				if (!spellRing.taxCaster(spell, true)) return false;
 				if (caster == null || (caster instanceof EntityPlayer && BlockUtils.hasEditPermission(targetPos, (EntityPlayerMP) caster)))
 					ItemDye.applyBonemeal(new ItemStack(Items.DYE), world, targetPos);
 			} else if (world.getBlockState(targetPos).getBlock() instanceof IPlantable) {
 				IBlockState state = world.getBlockState(targetPos);
 				Block block = state.getBlock();
-				if (!spellRing.taxCaster(spell)) return false;
+				if (!spellRing.taxCaster(spell, true)) return false;
 				if (caster == null || (caster instanceof EntityPlayer && BlockUtils.hasEditPermission(targetPos, (EntityPlayerMP) caster))) {
 					while (world.getBlockState(targetPos.up()).getBlock() == block) {
 						targetPos = targetPos.up();

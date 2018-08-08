@@ -86,7 +86,7 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 		if (zoneOffset >= ConfigValues.zoneTimer)
 		{
 			zoneOffset %= ConfigValues.zoneTimer;
-			if (!spellRing.taxCaster(spell))
+			if (!spellRing.taxCaster(spell, true))
 			{
 				info.setDouble(ZONE_OFFSET, zoneOffset);
 				spell.addData(COMPOUND, info);

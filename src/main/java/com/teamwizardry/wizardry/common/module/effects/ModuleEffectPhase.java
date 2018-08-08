@@ -92,7 +92,7 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 		double area = spellRing.getAttributeValue(AttributeRegistry.AREA, spell);
 		double range = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
 
-		if (!spellRing.taxCaster(spell)) return false;
+		if (!spellRing.taxCaster(spell, true)) return false;
 
 		if (targetEntity instanceof EntityLivingBase) {
 			EntityLivingBase entity = (EntityLivingBase) targetEntity;

@@ -44,7 +44,7 @@ public class ModuleEffectDisarm extends ModuleEffect {
 
 		if (targetEntity instanceof EntityLivingBase) {
 			if (!spell.world.isRemote) {
-				if (!spellRing.taxCaster(spell)) return false;
+				if (!spellRing.taxCaster(spell, true)) return false;
 
 				ItemStack held = ((EntityLivingBase) targetEntity).getHeldItemMainhand();
 

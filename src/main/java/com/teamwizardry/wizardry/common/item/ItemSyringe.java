@@ -20,6 +20,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -91,6 +92,7 @@ public class ItemSyringe extends ItemMod {
 
 				if (raytraceresult.typeOfHit == RayTraceResult.Type.BLOCK) {
 					BlockPos blockpos = raytraceresult.getBlockPos();
+					if (raytraceresult.sideHit == null) raytraceresult.sideHit = EnumFacing.UP;
 
 					if (player.world.isBlockModifiable((EntityPlayer) player, blockpos)
 							&& ((EntityPlayer) player).canPlayerEdit(blockpos.offset(raytraceresult.sideHit), raytraceresult.sideHit, stack)) {

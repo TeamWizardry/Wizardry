@@ -66,7 +66,7 @@ public class EntityBackupZombie extends EntityMob {
 
 				UUID theirOwner = null;
 				Object ownerObj = entity.getDataManager().get(OWNER);
-				if (ownerObj instanceof Optional && ((Optional<?>) ownerObj).get() instanceof UUID)
+				if (ownerObj != null && ownerObj instanceof Optional && ((Optional<?>) ownerObj).isPresent() && ((Optional<?>) ownerObj).get() instanceof UUID)
 					theirOwner = entity.getDataManager().get(OWNER).orNull();
 
 				return !(theirOwner != null && getDataManager().get(OWNER).isPresent() && theirOwner.equals(getDataManager().get(OWNER).get()));

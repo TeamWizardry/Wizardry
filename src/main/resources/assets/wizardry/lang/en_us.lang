@@ -13,7 +13,8 @@ tile.wizardry:nacre_block.name=Nacre Block
 tile.wizardry:nacre_block_brick.name=Nacre Bricks
 tile.wizardry:mana_magnet.name=Mana Magnet
 tile.wizardry:torikki_grass.name=Torikki Grass
-tile.wizardry:unicorn_trail.name=Unicorn's Trail
+tile.wizardry:unicorn_trail.name=Unicorn Trail
+tile.wizardry:light.name=Light
 
 entity.fairy.name=Fairy
 entity.spirit_wight.name=Spirit Wight
@@ -79,6 +80,7 @@ item.wizardry:halo_creative.name=Creative Halo
 item.wizardry:repulsion_bomb.name=Repulsion Bomb
 item.wizardry:vortex_bomb.name=Vortex Bomb
 item.wizardry:sky_dust.name=Sky Dust
+item.wizardry:glue_stick.name=Glue Stick
 
 item.wizardry:glass_orb.fill.0.name=Glass Orb
 item.wizardry:mana_orb.fill.0.name=Mana Orb 0%

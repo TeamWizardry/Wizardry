@@ -44,7 +44,7 @@ public class ModuleEffectTimeLock extends ModuleEffect implements IDelayedModule
 
 		double time = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell);
 
-		if (!spellRing.taxCaster(spell)) return false;
+		if (!spellRing.taxCaster(spell, true)) return false;
 
 		if (targetEntity != null) {
 			targetEntity.setFire((int) time);

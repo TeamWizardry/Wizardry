@@ -60,7 +60,7 @@ public class ModuleEffectLowGravity extends ModuleEffect {
 		double potency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell);
 		double duration = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 10;
 
-		if (!spellRing.taxCaster(spell)) return false;
+		if (!spellRing.taxCaster(spell, true)) return false;
 
 		if (targetEntity != null) {
 			spell.world.playSound(null, targetEntity.getPosition(), ModSounds.TELEPORT, SoundCategory.NEUTRAL, 1, 1);

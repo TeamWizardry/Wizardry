@@ -1,9 +1,15 @@
 package com.teamwizardry.wizardry.client.render.item;
 
+import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
+import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpCircle;
+import com.teamwizardry.librarianlib.features.particle.ParticleBase;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
+import com.teamwizardry.librarianlib.features.particle.ParticleRenderManager;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
+import com.teamwizardry.librarianlib.features.particle.functions.RenderFunction;
+import com.teamwizardry.librarianlib.features.particle.functions.RenderFunctionBasic;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ClientConfigValues;
 import com.teamwizardry.wizardry.api.Constants;
@@ -13,15 +19,20 @@ import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.particle.Particle;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityZombieVillager;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -71,23 +82,64 @@ public class RenderHaloEntity implements LayerRenderer<EntityLivingBase> {
 
 			GlStateManager.popMatrix();
 		} else {
-			ParticleBuilder glitter = new ParticleBuilder(3);
-			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-			glitter.setAlphaFunction(new InterpFadeInOut(1f, 1f));
-			glitter.disableMotionCalculation();
-			glitter.disableRandom();
+		    Entity entity = entitylivingbaseIn;
 
-			ParticleSpawner.spawn(glitter, entitylivingbaseIn.world, new InterpCircle(entitylivingbaseIn.getPositionVector().addVector(0, entitylivingbaseIn.height + (entitylivingbaseIn.isSneaking() ? 0.2 : 0.4), 0), new Vec3d(0, 1, 0), 0.3f, RandUtil.nextFloat(), RandUtil.nextFloat()), 10, 0, (aFloat, particleBuilder) -> {
-				if (RandUtil.nextInt(10) != 0)
-					if (halo.getItem() == ModItems.CREATIVE_HALO)
-						glitter.setColor(ColorUtils.changeColorAlpha(new Color(0xd600d2), RandUtil.nextInt(60, 100)));
-					else glitter.setColor(ColorUtils.changeColorAlpha(Color.YELLOW, RandUtil.nextInt(60, 100)));
-				else glitter.setColor(ColorUtils.changeColorAlpha(Color.WHITE, RandUtil.nextInt(60, 100)));
+			Vec3d entityOrigin = entity.getPositionVector().addVector(0, entity.height + (entity.isSneaking() ? 0.2 : 0.4), 0);
+			InterpCircle circle = new InterpCircle(Vec3d.ZERO, new Vec3d(0, 1, 0), 0.3f, RandUtil.nextFloat(), RandUtil.nextFloat());
+
+			for (Vec3d origin : circle.list(10)) {
+				RenderFunction baseRenderFunction = new RenderFunctionBasic(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED), false);
+				ParticleBuilder glitter = new ParticleBuilder(3);
 				glitter.setAlphaFunction(new InterpFadeInOut(1f, 1f));
-				glitter.setLifetime(10);
-				glitter.setScaleFunction(new InterpFadeInOut(0.5f, 0.5f));
-				glitter.setMotion(new Vec3d(entitylivingbaseIn.motionX / 2.0, (entitylivingbaseIn.motionY + 0.0784) / 2.0, entitylivingbaseIn.motionZ / 2.0));
-			});
+				glitter.disableMotionCalculation();
+				glitter.disableRandom();
+
+				ParticleSpawner.spawn(glitter, entity.world, new StaticInterp<>(entityOrigin.add(origin)), 1, 0, (aFloat, particleBuilder) -> {
+					if (RandUtil.nextInt(10) != 0)
+						if (halo.getItem() == ModItems.CREATIVE_HALO)
+							glitter.setColor(ColorUtils.changeColorAlpha(new Color(0xd600d2), RandUtil.nextInt(60, 100)));
+						else glitter.setColor(ColorUtils.changeColorAlpha(Color.YELLOW, RandUtil.nextInt(60, 100)));
+					else glitter.setColor(ColorUtils.changeColorAlpha(Color.WHITE, RandUtil.nextInt(60, 100)));
+					glitter.setAlphaFunction(new InterpFadeInOut(1f, 1f));
+					glitter.setLifetime(10);
+					glitter.setScaleFunction(new InterpFadeInOut(0.5f, 0.5f));
+
+					glitter.setRenderFunction(
+							new RenderFunction(ParticleRenderManager.getLAYER_BLOCK_MAP_ADDITIVE()) {
+								@Override
+								public void render(float i,
+												   @NotNull ParticleBase particle, @NotNull Color color, float alpha,
+												   @NotNull BufferBuilder worldRendererIn, @Nullable Entity entityIn,
+												   float partialTicks, float rotationX, float rotationZ,
+												   float rotationYZ, float rotationXY, float rotationXZ,
+												   float scale, float rotation, @NotNull Vec3d pos,
+												   int skyLight, int blockLight) {
+
+									Vec3d interpPos =
+											new Vec3d(
+//													ClientTickHandler.interpPartialTicks(entity.prevPosX, entity.posX) - Particle.interpPosX,
+//													ClientTickHandler.interpPartialTicks(entity.prevPosY, entity.posY) - Particle.interpPosY,
+//													ClientTickHandler.interpPartialTicks(entity.prevPosZ, entity.posZ) - Particle.interpPosZ
+													entity.prevPosX + (entity.posX - entity.prevPosX) * ClientTickHandler.getPartialTicks() - Particle.interpPosX,
+													entity.prevPosY + (entity.posY - entity.prevPosY) * ClientTickHandler.getPartialTicks() - Particle.interpPosY,
+													entity.prevPosZ + (entity.posZ - entity.prevPosZ) * ClientTickHandler.getPartialTicks() - Particle.interpPosZ
+											);
+									Vec3d newPos = interpPos
+											.addVector(0, entity.height + (entity.isSneaking() ? 0.2 : 0.4), 0)
+											.add(origin);
+
+									baseRenderFunction.render(i,
+											particle, color, alpha,
+											worldRendererIn, entityIn,
+											partialTicks, rotationX, rotationZ,
+											rotationYZ, rotationXY, rotationXZ,
+											scale, rotation, newPos,
+											skyLight, blockLight);
+								}
+							}
+					);
+				});
+			}
 		}
 	}
 

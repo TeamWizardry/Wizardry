@@ -59,7 +59,7 @@ public class ModuleShapeProjectile extends ModuleShape {
 		double dist = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
 		double speed = spellRing.getAttributeValue(AttributeRegistry.SPEED, spell);
 
-		if (!spellRing.taxCaster(spell)) return false;
+		if (!spellRing.taxCaster(spell, true)) return false;
 		
 		EntitySpellProjectile proj = new EntitySpellProjectile(world, spellRing, spell, (float) dist, (float) speed, (float) 0.1, !runRunOverrides(spell, spellRing));
 		proj.setPosition(origin.x, origin.y, origin.z);

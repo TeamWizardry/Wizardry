@@ -226,7 +226,7 @@ public class LibParticles {
 
 	public static void SPIRIT_WIGHT_FLAME_NORMAL(World world, Vec3d pos) {
 		ParticleBuilder glitter = new ParticleBuilder(30);
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SMOKE));
 		glitter.setAlphaFunction(new InterpFadeInOut(1f, 1f));
 
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 10, 0, (i, build) -> {
@@ -238,7 +238,7 @@ public class LibParticles {
 
 			glitter.setLifetime(RandUtil.nextInt(10, 40));
 			glitter.setColor(new Color(0x4DFFFFFF, true));
-			glitter.setScaleFunction(new InterpScale(0, (float) RandUtil.nextDouble(3, 4)));
+			glitter.setScaleFunction(new InterpScale(1f, (float) RandUtil.nextDouble(4, 5)));
 			glitter.setPositionOffset(new Vec3d(x, RandUtil.nextDouble(0, 0.2), z));
 			if (RandUtil.nextInt(15) == 0)
 				glitter.addMotion(new Vec3d(RandUtil.nextDouble(-0.01, 0.01),
