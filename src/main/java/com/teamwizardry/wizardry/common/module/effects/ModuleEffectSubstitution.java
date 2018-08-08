@@ -6,7 +6,7 @@ import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpHe
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
-import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.IBlockSelectable;
@@ -173,7 +173,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 			glitter.setColorFunction(new InterpColorHSV(getPrimaryColor(), getSecondaryColor()));
 			ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(targetEntity.posX, targetEntity.posY, targetEntity.posZ)), 50, RandUtil.nextInt(20, 30), (aFloat, particleBuilder) -> {
 				glitter.setScale((float) RandUtil.nextDouble(0.3, 1));
-				glitter.setAlphaFunction(new InterpFadeInOut(0.3f, (float) RandUtil.nextDouble(0.6, 1)));
+				glitter.setAlphaFunction(new InterpFloatInOut(0.3f, (float) RandUtil.nextDouble(0.6, 1)));
 				glitter.setLifetime(RandUtil.nextInt(10, 20));
 				glitter.setScaleFunction(new InterpScale(1, 0));
 				glitter.setPositionFunction(new InterpHelix(
@@ -186,7 +186,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 			glitter.setColorFunction(new InterpColorHSV(getSecondaryColor(), getPrimaryColor()));
 			ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(caster.posX, caster.posY, caster.posZ)), 50, RandUtil.nextInt(20, 30), (aFloat, particleBuilder) -> {
 				glitter.setScale((float) RandUtil.nextDouble(0.3, 1));
-				glitter.setAlphaFunction(new InterpFadeInOut(0.3f, (float) RandUtil.nextDouble(0.6, 1)));
+				glitter.setAlphaFunction(new InterpFloatInOut(0.3f, (float) RandUtil.nextDouble(0.6, 1)));
 				glitter.setLifetime(RandUtil.nextInt(10, 20));
 				glitter.setScaleFunction(new InterpScale(1, 0));
 				glitter.setPositionFunction(new InterpHelix(
@@ -201,7 +201,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 			glitter.setColorFunction(new InterpColorHSV(getPrimaryColor(), getSecondaryColor()));
 			ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(targetBlock).addVector(0.5, 0.5, 0.5)), 20, 0, (aFloat, particleBuilder) -> {
 				glitter.setScale((float) RandUtil.nextDouble(0.3, 1));
-				glitter.setAlphaFunction(new InterpFadeInOut(0.3f, (float) RandUtil.nextDouble(0.6, 1)));
+				glitter.setAlphaFunction(new InterpFloatInOut(0.3f, (float) RandUtil.nextDouble(0.6, 1)));
 				glitter.setLifetime(RandUtil.nextInt(10, 20));
 				glitter.setScaleFunction(new InterpScale(1, 0));
 				glitter.setMotion(new Vec3d(

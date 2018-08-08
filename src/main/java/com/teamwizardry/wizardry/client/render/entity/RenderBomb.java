@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.client.render.entity;
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
-import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.util.RandUtil;
@@ -41,7 +41,7 @@ public class RenderBomb extends Render<EntityBomb> {
 		}
 
 		ParticleBuilder glitter = new ParticleBuilder(10);
-		glitter.setAlphaFunction(new InterpFadeInOut(0f, 0.3f));
+		glitter.setAlphaFunction(new InterpFloatInOut(0f, 0.3f));
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 		glitter.enableMotionCalculation();
 		glitter.setCollision(true);
@@ -65,8 +65,8 @@ public class RenderBomb extends Render<EntityBomb> {
 		glitter.disableMotionCalculation();
 		glitter.setMotion(Vec3d.ZERO);
 		glitter.setLifetime(20);
-		glitter.setScaleFunction(new InterpFadeInOut(0f, 1f));
-		glitter.setAlphaFunction(new InterpFadeInOut(0f, 1f));
+		glitter.setScaleFunction(new InterpFloatInOut(0f, 1f));
+		glitter.setAlphaFunction(new InterpFloatInOut(0f, 1f));
 		ParticleSpawner.spawn(glitter, entity.world, new StaticInterp<>(entity.getPositionVector()), 5, 0, (aFloat, particleBuilder) -> {
 			particleBuilder.setScale(RandUtil.nextFloat(0.5f, 2));
 			particleBuilder.setLifetime(RandUtil.nextInt(5, 10));

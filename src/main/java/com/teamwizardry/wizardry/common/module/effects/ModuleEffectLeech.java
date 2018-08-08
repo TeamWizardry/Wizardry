@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.common.module.effects;
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
-import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.capability.mana.CapManager;
@@ -117,7 +117,7 @@ public class ModuleEffectLeech extends ModuleEffect {
 			builder.setLifetime(RandUtil.nextInt(30, 60));
 			builder.addMotion(new Vec3d(RandUtil.nextDouble(-0.05, 0.05), RandUtil.nextDouble(0.01, 0.02), RandUtil.nextDouble(-0.05, 0.05)));
 			builder.setScale((float) RandUtil.nextDouble(0.3, 0.5));
-			builder.setAlphaFunction(new InterpFadeInOut(0.0f, 0.3f));
+			builder.setAlphaFunction(new InterpFloatInOut(0.0f, 0.3f));
 			builder.setColor(RandUtil.nextBoolean() ? spellRing.getPrimaryColor() : spellRing.getSecondaryColor());
 		});
 	}

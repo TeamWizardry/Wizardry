@@ -7,7 +7,7 @@ import com.teamwizardry.librarianlib.features.particle.ParticleBase;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleRenderManager;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
-import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.particle.functions.RenderFunction;
 import com.teamwizardry.librarianlib.features.particle.functions.RenderFunctionBasic;
 import com.teamwizardry.wizardry.Wizardry;
@@ -90,7 +90,7 @@ public class RenderHaloEntity implements LayerRenderer<EntityLivingBase> {
 			for (Vec3d origin : circle.list(10)) {
 				RenderFunction baseRenderFunction = new RenderFunctionBasic(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED), false);
 				ParticleBuilder glitter = new ParticleBuilder(3);
-				glitter.setAlphaFunction(new InterpFadeInOut(1f, 1f));
+				glitter.setAlphaFunction(new InterpFloatInOut(1f, 1f));
 				glitter.disableMotionCalculation();
 				glitter.disableRandom();
 
@@ -100,9 +100,9 @@ public class RenderHaloEntity implements LayerRenderer<EntityLivingBase> {
 							glitter.setColor(ColorUtils.changeColorAlpha(new Color(0xd600d2), RandUtil.nextInt(60, 100)));
 						else glitter.setColor(ColorUtils.changeColorAlpha(Color.YELLOW, RandUtil.nextInt(60, 100)));
 					else glitter.setColor(ColorUtils.changeColorAlpha(Color.WHITE, RandUtil.nextInt(60, 100)));
-					glitter.setAlphaFunction(new InterpFadeInOut(1f, 1f));
+					glitter.setAlphaFunction(new InterpFloatInOut(1f, 1f));
 					glitter.setLifetime(10);
-					glitter.setScaleFunction(new InterpFadeInOut(0.5f, 0.5f));
+					glitter.setScaleFunction(new InterpFloatInOut(0.5f, 0.5f));
 
 					glitter.setRenderFunction(
 							new RenderFunction(ParticleRenderManager.getLAYER_BLOCK_MAP_ADDITIVE()) {

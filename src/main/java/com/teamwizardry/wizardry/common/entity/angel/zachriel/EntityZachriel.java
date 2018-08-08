@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.common.entity.angel.zachriel;
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
-import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.saving.AbstractSaveHandler;
 import com.teamwizardry.librarianlib.features.saving.SaveInPlace;
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
@@ -232,7 +232,7 @@ public class EntityZachriel extends EntityAngel {
 						glitter.setCanBounce(burstTimer > 0);
 						glitter.setAcceleration(new Vec3d(0, -0.035, 0));
 						glitter.setColor(new Color(255, 0, 206));
-						glitter.setAlphaFunction(new InterpFadeInOut(0.5F, 0F));
+						glitter.setAlphaFunction(new InterpFloatInOut(0.5F, 0F));
 						ParticleSpawner.spawn(glitter, world, new StaticInterp<>(getPositionVector()), 1, 1, (i, build) -> {
 							double theta = 2.0F * (float) Math.PI * RandUtil.nextFloat();
 							double r;

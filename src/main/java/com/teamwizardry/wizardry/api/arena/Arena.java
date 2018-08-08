@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.api.arena;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpCircle;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
-import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.saving.AbstractSaveHandler;
 import com.teamwizardry.librarianlib.features.saving.Savable;
 import com.teamwizardry.librarianlib.features.saving.Save;
@@ -106,7 +106,7 @@ public class Arena implements INBTSerializable<NBTTagCompound> {
 				public void runIfClient() {
 					ParticleBuilder glitter = new ParticleBuilder(10);
 					glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-					glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
+					glitter.setAlphaFunction(new InterpFloatInOut(0.3f, 0.3f));
 					glitter.setCollision(true);
 					glitter.enableMotionCalculation();
 					ParticleSpawner.spawn(glitter, getWorld(), new InterpCircle(new Vec3d(getCenter()).addVector(0.5, getHeight(), 0.5), new Vec3d(0, 1, 0), (float) getRadius(), 1, RandUtil.nextFloat()), 10, RandUtil.nextInt(10), (aFloat, particleBuilder) -> {

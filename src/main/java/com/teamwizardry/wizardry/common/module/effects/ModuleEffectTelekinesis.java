@@ -4,7 +4,7 @@ import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
-import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.IContinuousModule;
@@ -100,7 +100,7 @@ public class ModuleEffectTelekinesis extends ModuleEffect implements IContinuous
 			glitter.setLifetime(RandUtil.nextInt(10, 20));
 			glitter.setScale(RandUtil.nextFloat());
 			glitter.setScaleFunction(new InterpScale(1, 0));
-			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, RandUtil.nextFloat()));
+			glitter.setAlphaFunction(new InterpFloatInOut(0.3f, RandUtil.nextFloat()));
 			glitter.setMotion(new Vec3d(
 					RandUtil.nextDouble(-0.1, 0.1),
 					RandUtil.nextDouble(-0.1, 0.1),

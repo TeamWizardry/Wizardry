@@ -2,7 +2,12 @@ package com.teamwizardry.wizardry.client.gui.book;
 
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.gui.component.GuiComponentEvents;
-import com.teamwizardry.librarianlib.features.gui.provided.book.ComponentBookMark;
+import com.teamwizardry.librarianlib.features.gui.provided.book.IBookGui;
+import com.teamwizardry.librarianlib.features.gui.provided.book.context.Bookmark;
+import com.teamwizardry.librarianlib.features.gui.provided.book.context.ComponentBookMark;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
@@ -31,17 +36,23 @@ public class ComponentRecipeBar extends ComponentBookMark {
 
 		BUS.hook(GuiComponentEvents.MouseClickEvent.class, mouseClickEvent -> {
 			if (focused) {
-				if (!book.getHistory().empty()) {
-					book.forceInFocus(book.getHistory().pop());
-				}
+				book.up();
 				slideOutShort();
 				focused = false;
 			} else {
-				book.placeInFocus(new ComponentSpellRecipe(book));
+				book.placeInFocus(new ComponentSpellRecipe(book.getBook()));
 				slideIn();
 				focused = true;
 			}
 		});
+	}
 
+	public static class RecipeBookmark implements Bookmark {
+		@NotNull
+		@Override
+		@SideOnly(Side.CLIENT)
+		public ComponentBookMark createBookmarkComponent(@NotNull IBookGui book, int bookmarkIndex) {
+			return new ComponentRecipeBar((GuiBook) book, bookmarkIndex);
+		}
 	}
 }

@@ -4,7 +4,7 @@ import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
-import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
@@ -61,7 +61,7 @@ public class ModuleShapeSelf extends ModuleShape {
 
 		ParticleBuilder glitter = new ParticleBuilder(30);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-		glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
+		glitter.setAlphaFunction(new InterpFloatInOut(0.3f, 0.3f));
 		glitter.enableMotionCalculation();
 		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(caster.getPositionVector()), 50, 5, (i, build) -> {
 			double radius = 1;

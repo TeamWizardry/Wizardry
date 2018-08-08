@@ -5,7 +5,7 @@ import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpLi
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
-import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.ProcessData;
@@ -128,7 +128,7 @@ public class ModuleEffectZoom extends ModuleEffect {
 
 		ParticleBuilder glitter = new ParticleBuilder(10);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-		glitter.setAlphaFunction(new InterpFadeInOut(0.0f, 0.3f));
+		glitter.setAlphaFunction(new InterpFloatInOut(0.0f, 0.3f));
 
 		glitter.enableMotionCalculation();
 		glitter.disableRandom();
@@ -152,7 +152,7 @@ public class ModuleEffectZoom extends ModuleEffect {
 				glitter.setScale(RandUtil.nextFloat(0.3f, 0.6f));
 				glitter.setLifetime(RandUtil.nextInt(30, 50));
 				glitter.setColorFunction(new InterpColorHSV(getPrimaryColor(), getSecondaryColor()));
-				glitter.setAlphaFunction(new InterpFadeInOut(0f, 1f));
+				glitter.setAlphaFunction(new InterpFloatInOut(0f, 1f));
 			});
 		});
 	}
