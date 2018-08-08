@@ -7,7 +7,6 @@ import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.client.core.CapeHandler;
 import com.teamwizardry.wizardry.client.render.BloodRenderLayer;
 import com.teamwizardry.wizardry.client.render.item.RenderHaloEntity;
-import com.teamwizardry.wizardry.client.render.item.RenderHaloPlayer;
 import com.teamwizardry.wizardry.common.core.version.VersionChecker;
 import com.teamwizardry.wizardry.init.ModEntities;
 import com.teamwizardry.wizardry.init.ModItems;
@@ -77,7 +76,7 @@ public class ClientProxy extends CommonProxy {
 		Map<String, RenderPlayer> skinMap = Minecraft.getMinecraft().getRenderManager().getSkinMap();
 		for (RenderPlayer render : skinMap.values()) {
 			render.addLayer(new BloodRenderLayer(render));
-			render.addLayer(new RenderHaloPlayer(render.getMainModel().bipedHead));
+			render.addLayer(new RenderHaloEntity(render.getMainModel().bipedHead));
 		}
 
 		Map<Class<? extends Entity>, Render<? extends Entity>> map = Minecraft.getMinecraft().getRenderManager().entityRenderMap;
