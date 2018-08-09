@@ -9,6 +9,7 @@ import net.minecraft.entity.ai.*;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.passive.EntityFlying;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.pathfinding.PathNavigate;
@@ -129,8 +130,9 @@ public class EntityUnicorn extends EntityMob implements EntityFlying {
 	@Override
 	protected void dropLoot(boolean wasRecentlyHit, int lootingModifier, DamageSource source) {
 		super.dropLoot(wasRecentlyHit, lootingModifier, source);
-		if (RandUtil.nextInt(20) <= 0)
+		if (RandUtil.nextInt(8) <= lootingModifier)
 			entityDropItem(new ItemStack(ModItems.UNICORN_HORN), RandUtil.nextFloat());
+		entityDropItem(new ItemStack(Items.LEATHER, RandUtil.nextInt(3 + lootingModifier)), RandUtil.nextFloat());
 	}
 
 	@Override
