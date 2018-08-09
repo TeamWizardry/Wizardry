@@ -117,7 +117,7 @@ public class ComponentSpellRecipe implements IBookElement {
 
 			int index = i;
 			applier = applier.andThen(component -> {
-				ComponentStack componentStack = new ComponentStack((index / 4) * 32, (index % 4) * 16);
+				ComponentStack componentStack = new ComponentStack((index % 4) * 32, (index / 4) * 16);
 				componentStack.getStack().setValue(stack);
 				component.add(componentStack);
 
