@@ -2,12 +2,12 @@ package com.teamwizardry.wizardry.client.render.item;
 
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpCircle;
 import com.teamwizardry.librarianlib.features.particle.ParticleBase;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleRenderManager;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
-import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.particle.functions.RenderFunction;
 import com.teamwizardry.librarianlib.features.particle.functions.RenderFunctionBasic;
 import com.teamwizardry.wizardry.Wizardry;
@@ -55,7 +55,7 @@ public class RenderHaloEntity implements LayerRenderer<EntityLivingBase> {
 		if (halo.getItem() == ModItems.FAKE_HALO && !ClientConfigValues.renderCrudeHalo) return;
 		if (halo.getItem() == ModItems.REAL_HALO && !ClientConfigValues.renderRealHalo) return;
 		if (halo.getItem() == ModItems.CREATIVE_HALO && !ClientConfigValues.renderCreativeHalo) return;
-		
+
 		if (halo.getItem() == ModItems.FAKE_HALO) {
 			GlStateManager.pushMatrix();
 
@@ -87,7 +87,7 @@ public class RenderHaloEntity implements LayerRenderer<EntityLivingBase> {
 			Vec3d entityOrigin = entity.getPositionVector().addVector(0, entity.height + (entity.isSneaking() ? 0.2 : 0.4), 0);
 			InterpCircle circle = new InterpCircle(Vec3d.ZERO, new Vec3d(0, 1, 0), 0.3f, RandUtil.nextFloat(), RandUtil.nextFloat());
 
-			for (Vec3d origin : circle.list(10)) {
+			for (Vec3d origin : circle.list(5)) {
 				RenderFunction baseRenderFunction = new RenderFunctionBasic(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED), false);
 				ParticleBuilder glitter = new ParticleBuilder(3);
 				glitter.setAlphaFunction(new InterpFloatInOut(1f, 1f));
@@ -100,7 +100,7 @@ public class RenderHaloEntity implements LayerRenderer<EntityLivingBase> {
 							glitter.setColor(ColorUtils.changeColorAlpha(new Color(0xd600d2), RandUtil.nextInt(60, 100)));
 						else glitter.setColor(ColorUtils.changeColorAlpha(Color.YELLOW, RandUtil.nextInt(60, 100)));
 					else glitter.setColor(ColorUtils.changeColorAlpha(Color.WHITE, RandUtil.nextInt(60, 100)));
-					glitter.setAlphaFunction(new InterpFloatInOut(1f, 1f));
+					glitter.setAlphaFunction(new InterpFloatInOut(0.5f, 0.5f));
 					glitter.setLifetime(10);
 					glitter.setScaleFunction(new InterpFloatInOut(0.5f, 0.5f));
 
