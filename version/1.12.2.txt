@@ -1,10 +1,25 @@
+0.9.4
+Fixed CME issue with Mana Network code
+Optimized Mana Networking code in general
+Optimized pearl holders as they were causing lag
+Fixed cape present while sleeping
+Mana Batteries now correctly require liquid mana in their pools
+Crafting Plate rendering and syncing issues fixed
+Potentially fixed death when jumping out of Underworld
+Name light block + remove null break particles
+Spells now have fail sounds
+Fix Spirit Wight particles not rendering
+Spirit Wights no longer attack dead things
+Real halos no longer lag behind players
+Increased drop chance of unicorn horns to 1/8th of a chance
+
 0.9.3
 Fixed several particle rendering issues
 Fixed unicorn droppings
 Cape now renders over armor, not under + physics modifications and enhancements
 Fixed cape mana reduction applying in reverse
 Fixed mana disappearing on relog & a million desyncs that happen with it
-Fixed several bugs.
+Fixed several bugs
 
 0.9.2
 Unicorns now maim other animals, instead of maining them
@@ -18,10 +33,4 @@ Fixed formatting bug in the worktable
 
 0.9.0
 Warning: Custom changes to recipes/modules will be reverted this update.
-Worktable overhaul (visual aids, animations, and detailed tooltips, info, etc)
-New spell visualization. Spells that target blocks now show you where and how before casting them
-Spell recipe scrolling with the 3d book in your hand
-Update ru_ru and uk_ua langs
-Redid unicorns. Now have a rainbow trail that's not blocks
-Cheaper syringes, now use mana orbs instead of buckets or you can directly right click liquid mana in the world with a syringe
 ... (changelog is too massive)
