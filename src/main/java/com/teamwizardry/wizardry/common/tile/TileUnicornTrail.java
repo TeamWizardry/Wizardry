@@ -5,7 +5,7 @@ import com.teamwizardry.librarianlib.features.base.block.tile.TileMod;
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
-import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.Wizardry;
@@ -43,7 +43,7 @@ public class TileUnicornTrail extends TileMod implements ITickable {
 						ParticleBuilder builder = new ParticleBuilder(50);
 						builder.setRender(new ResourceLocation(Wizardry.MODID, SPARKLE_BLURRED));
 						builder.disableMotionCalculation();
-						builder.setAlphaFunction(new InterpFadeInOut(0.3f, 0f));
+						builder.setAlphaFunction(new InterpFloatInOut(0.3f, 0f));
 						builder.setScaleFunction(new InterpScale(0.3f, 0f));
 						ParticleSpawner.spawn(builder, world, new StaticInterp<>(new Vec3d(getPos()).addVector(0.5, 0.5, 0.5)), 2, 0, (aFloat, particleBuilder) -> {
 							particleBuilder.setPositionOffset(new Vec3d(

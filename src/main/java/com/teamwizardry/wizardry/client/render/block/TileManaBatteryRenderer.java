@@ -4,7 +4,7 @@ import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpCircle;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
-import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.tesr.TileRenderHandler;
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.Wizardry;
@@ -190,7 +190,7 @@ public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> 
 			ParticleSpawner.spawn(builder, tile.getWorld(), new InterpCircle(new Vec3d(tile.getPos()).addVector(0.5, 0.5, 0.5), new Vec3d(x1, x1, y1), 1.5f), 20, 0, (aFloat, particleBuilder) -> {
 				particleBuilder.setScale(0.5f);
 				particleBuilder.setColor(new Color(0xd600d2));
-				particleBuilder.setAlphaFunction(new InterpFadeInOut(1, 1));
+				particleBuilder.setAlphaFunction(new InterpFloatInOut(1, 1));
 				particleBuilder.setLifetime(RandUtil.nextInt(5, 10));
 			});
 		}

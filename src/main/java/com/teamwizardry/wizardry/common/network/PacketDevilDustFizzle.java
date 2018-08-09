@@ -5,7 +5,7 @@ import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.network.PacketBase;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
-import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.Wizardry;
@@ -59,7 +59,7 @@ public class PacketDevilDustFizzle extends PacketBase {
 				ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 15, RandUtil.nextInt(10), (i, builder) -> {
 					builder.setAcceleration(new Vec3d(0, RandUtil.nextDouble(-0.05, -0.01), 0));
 					builder.setColor(new Color(RandUtil.nextFloat(0.9f, 1), RandUtil.nextFloat(0, 0.25f), 0));
-					builder.setAlphaFunction(new InterpFadeInOut(0.0f, RandUtil.nextFloat(1f, 0.3f)));
+					builder.setAlphaFunction(new InterpFloatInOut(0.0f, RandUtil.nextFloat(1f, 0.3f)));
 					builder.setScaleFunction(new InterpScale(RandUtil.nextFloat(0.3f, 1f), RandUtil.nextFloat(0, 0.2f)));
 					Vec3d offset = new Vec3d(RandUtil.nextDouble(-0.3, 0.3), RandUtil.nextDouble(-0.3, 0), RandUtil.nextDouble(-0.3, 0.3));
 					builder.setPositionOffset(offset);

@@ -4,7 +4,7 @@ import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpCi
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
-import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.Constants;
@@ -144,7 +144,7 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 		glitter.setScaleFunction(new InterpScale(1, 0));
 		glitter.setCollision(true);
 		ParticleSpawner.spawn(glitter, spell.world, new InterpCircle(target, new Vec3d(0, 1, 0), (float) aoe, 1, RandUtil.nextFloat()), (int) (aoe * 25), 10, (aFloat, particleBuilder) -> {
-			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
+			glitter.setAlphaFunction(new InterpFloatInOut(0.3f, 0.3f));
 			glitter.setLifetime(RandUtil.nextInt(30, 50));
 			glitter.setColorFunction(new InterpColorHSV(spellRing.getPrimaryColor(), spellRing.getSecondaryColor()));
 			glitter.setMotion(new Vec3d(

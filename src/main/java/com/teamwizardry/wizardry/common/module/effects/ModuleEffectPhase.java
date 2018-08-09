@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.common.module.effects;
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
-import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.IDelayedModule;
@@ -269,7 +269,7 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 				glitter2.disableRandom();
 				ParticleSpawner.spawn(glitter2, spell.world, new StaticInterp<>(new Vec3d(entry.getKey()).addVector(0.5, 0.5, 0.5)), 5, (int) duration, (aFloat, build) -> {
 					build.setColor(Color.CYAN);
-					//build.setAlphaFunction(new InterpFadeInOut(1f, 0.1f));
+					//build.setAlphaFunction(new InterpFloatInOut(1f, 0.1f));
 					build.setAlpha(RandUtil.nextFloat(0.05f, 0.2f));
 
 					build.setPositionOffset(new Vec3d(
@@ -283,7 +283,7 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 							RandUtil.nextDouble(-0.001, 0.001)
 					));
 					build.setLifetime(RandUtil.nextInt(20, 40));
-					build.setScaleFunction(new InterpFadeInOut(0.9f, 0.9f));
+					build.setScaleFunction(new InterpFloatInOut(0.9f, 0.9f));
 					build.setScale(RandUtil.nextFloat(0.1f, 0.3f));
 				});
 
@@ -326,12 +326,12 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 								glitter.disableRandom();
 								ParticleSpawner.spawn(glitter, spell.world, new StaticInterp<>(midPointVec), 50, (int) duration, (aFloat, build) -> {
 									build.setColor(Color.CYAN);
-									//build.setAlphaFunction(new InterpFadeInOut(1f, 0.1f));
+									//build.setAlphaFunction(new InterpFloatInOut(1f, 0.1f));
 									build.setAlpha(RandUtil.nextFloat(0.3f, 0.7f));
 
 									build.setPositionOffset(cross.scale(RandUtil.nextFloat(-1, 1)));
 									build.setLifetime(RandUtil.nextInt(20, 40));
-									build.setScaleFunction(new InterpFadeInOut(0.9f, 0.9f));
+									build.setScaleFunction(new InterpFloatInOut(0.9f, 0.9f));
 									build.setScale(RandUtil.nextFloat(0.2f, 0.5f));
 								});
 							}

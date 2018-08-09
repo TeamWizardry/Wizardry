@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.common.module.effects;
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
-import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
@@ -78,7 +78,7 @@ public class ModuleEffectLowGravity extends ModuleEffect {
 		if (position == null) return;
 
 		ParticleBuilder glitter = new ParticleBuilder(1);
-		glitter.setAlphaFunction(new InterpFadeInOut(0.0f, 0.1f));
+		glitter.setAlphaFunction(new InterpFloatInOut(0.0f, 0.1f));
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 		glitter.enableMotionCalculation();
 		glitter.setScaleFunction(new InterpScale(1, 0));

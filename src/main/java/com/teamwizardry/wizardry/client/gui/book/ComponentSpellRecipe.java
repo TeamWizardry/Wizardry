@@ -1,14 +1,14 @@
 package com.teamwizardry.wizardry.client.gui.book;
 
+import com.google.common.collect.Lists;
 import com.teamwizardry.librarianlib.core.LibrarianLib;
-import com.teamwizardry.librarianlib.features.gui.component.GuiComponent;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentStack;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentText;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentVoid;
-import com.teamwizardry.librarianlib.features.gui.provided.book.EventNavBarChange;
 import com.teamwizardry.librarianlib.features.gui.provided.book.IBookGui;
-import com.teamwizardry.librarianlib.features.gui.provided.book.NavBarHolder;
+import com.teamwizardry.librarianlib.features.gui.provided.book.context.Bookmark;
+import com.teamwizardry.librarianlib.features.gui.provided.book.context.PaginationContext;
 import com.teamwizardry.librarianlib.features.gui.provided.book.hierarchy.IBookElement;
 import com.teamwizardry.librarianlib.features.gui.provided.book.hierarchy.book.Book;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
@@ -21,29 +21,49 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.MathHelper;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.function.Consumer;
 
-public class ComponentSpellRecipe extends NavBarHolder implements IBookElement {
+public class ComponentSpellRecipe implements IBookElement {
 
-	private GuiBook book;
+	private final Book book;
 
-	public ComponentSpellRecipe(GuiBook book) {
-		super(16, 16, book.getMainBookComponent().getSize().getXi() - 32, book.getMainBookComponent().getSize().getYi() - 32, book);
+	public ComponentSpellRecipe(Book book) {
 		this.book = book;
+	}
 
-		getNavBar().BUS.hook(EventNavBarChange.class, event -> {
+	@NotNull
+	@Override
+	public Book getBookParent() {
+		return book;
+	}
 
-		});
+	@NotNull
+	@Override
+	public List<Bookmark> addAllBookmarks(@Nullable List<? extends Bookmark> list) {
+		return DefaultImpls.addAllBookmarks(this, list);
+	}
 
-		if (book.getBookItemStack().isEmpty()) return;
+	@NotNull
+	@Override
+	public List<PaginationContext> createComponents(@NotNull IBookGui book) {
+		return components((GuiBook) book);
+	}
+
+	public static List<PaginationContext> components(GuiBook book) {
+
+		List<PaginationContext> contexts = Lists.newArrayList();
+
+		if (book.getBookItemStack().isEmpty()) return contexts;
 		ItemStack bookStack = book.getBookItemStack();
 
-		if (!ItemNBTHelper.getBoolean(bookStack, "has_spell", false)) return;
+		if (!ItemNBTHelper.getBoolean(bookStack, "has_spell", false)) return contexts;
 
 		NBTTagList moduleList = ItemNBTHelper.getList(bookStack, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
-		if (moduleList == null) return;
+		if (moduleList == null) return contexts;
 
 		List<List<Module>> spellModules = SpellUtils.deserializeModuleList(moduleList);
 		List<ItemStack> spellItems = SpellUtils.getSpellItems(spellModules);
@@ -82,79 +102,67 @@ public class ComponentSpellRecipe extends NavBarHolder implements IBookElement {
 			if (++count >= 16) {
 				count = 0;
 
-				ComponentText spellStructureText = new ComponentText(0, 0, ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.TOP);
-				spellStructureText.getUnicode().setValue(true);
-				spellStructureText.getEnableUnicodeBidi().setValue(false);
-				spellStructureText.getText().setValue(pageChunk.toString());
-				spellStructureText.getWrap().setValue(getSize().getXi());
-
-				addPage(spellStructureText);
+				pageFromString(book, contexts, pageChunk);
 
 				pageChunk = new StringBuilder();
 			}
 		}
 
-		if (count != 0) {
-			ComponentText spellStructureText = new ComponentText(0, 0, ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.TOP);
-			spellStructureText.getUnicode().setValue(true);
-			spellStructureText.getEnableUnicodeBidi().setValue(false);
-			spellStructureText.getText().setValue(pageChunk.toString());
-			spellStructureText.getWrap().setValue(getSize().getXi());
+		if (count != 0) pageFromString(book, contexts, pageChunk);
 
-			addPage(spellStructureText);
-		}
+		Consumer<ComponentVoid> applier = component -> {};
 
-		ComponentVoid page = new ComponentVoid(0, 0, getSize().getXi(), getSize().getYi());
-
-		int row = 0;
-		int column = 0;
 		for (int i = 0; i < spellItems.size(); i++) {
 			ItemStack stack = spellItems.get(i);
 
-			ComponentStack componentStack = new ComponentStack(column * 32, row * 16);
-			componentStack.getStack().setValue(stack);
-			page.add(componentStack);
+			int index = i;
+			applier = applier.andThen(component -> {
+				ComponentStack componentStack = new ComponentStack((index / 4) * 32, (index % 4) * 16);
+				componentStack.getStack().setValue(stack);
+				component.add(componentStack);
 
-			if (i != spellItems.size() - 1 && column < 3) {
-				ComponentSprite nextItem = new ComponentSprite(book.getHomeSprite(), 32 + column * 32, row * 16 + 13, 16, 8);
-				nextItem.getColor().setValue(book.getBook().getHighlightColor());
-				nextItem.getTransform().setRotate(Math.toRadians(180));
-				page.add(nextItem);
-			}
+				if (index != spellItems.size() - 1 && (index % 4) < 3) {
+					ComponentSprite nextItem = new ComponentSprite(book.getHomeSprite(), 32 + (index % 4) * 32, (index / 4) * 16 + 13, 16, 8);
+					nextItem.getColor().setValue(book.getBook().getHighlightColor());
+					nextItem.getTransform().setRotate(Math.toRadians(180));
+					component.add(nextItem);
+				}
+			});
 
+			if ((index / 4) >= 9) {
+				Consumer<ComponentVoid> spellApplier = applier;
+				contexts.add(new PaginationContext(() -> {
+					ComponentVoid component = new ComponentVoid(16, 16,
+							book.getMainBookComponent().getSize().getXi() - 32,
+							book.getMainBookComponent().getSize().getYi() - 32);
+					spellApplier.accept(component);
+					return component;
+				}));
 
-			if (++column >= 4) {
-				column = 0;
-				row++;
-			}
-
-			if (row >= 9) {
-				row = 0;
-				addPage(page);
-				page = new ComponentVoid(0, 0, getSize().getXi(), getSize().getYi());
+				applier = component -> {};
 			}
 		}
 
-		if (row != 0) {
-			addPage(page);
-		}
+		Consumer<ComponentVoid> spellApplier = applier;
+		contexts.add(new PaginationContext(() -> {
+			ComponentVoid component = new ComponentVoid(16, 16,
+					book.getMainBookComponent().getSize().getXi() - 32,
+					book.getMainBookComponent().getSize().getYi() - 32);
+			spellApplier.accept(component);
+			return component;
+		}));
+
+		return contexts;
 	}
 
-	@Nonnull
-	@Override
-	public Book getBookParent() {
-		return book.getBook();
-	}
-
-	@Nonnull
-	@Override
-	public GuiComponent createComponent(@Nonnull IBookGui book) {
-		return new ComponentSpellRecipe(this.book);
-	}
-
-	@Nonnull
-	@Override
-	public IBookElement getHeldElement() {
-		return this;
+	private static void pageFromString(GuiBook book, List<PaginationContext> contexts, StringBuilder page) {
+		contexts.add(new PaginationContext(() -> {
+			ComponentText spellStructureText = new ComponentText(16, 16, ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.TOP);
+			spellStructureText.getUnicode().setValue(true);
+			spellStructureText.getEnableUnicodeBidi().setValue(false);
+			spellStructureText.getText().setValue(page.toString());
+			spellStructureText.getWrap().setValue(book.getMainBookComponent().getSize().getXi() - 32);
+			return spellStructureText;
+		}));
 	}
 }

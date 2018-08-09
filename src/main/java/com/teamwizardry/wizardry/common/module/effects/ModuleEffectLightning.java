@@ -75,7 +75,7 @@ public class ModuleEffectLightning extends ModuleEffect {
 					glitter.setScaleFunction(new InterpScale(1, 0));
 					glitter.setCollision(true);
 					ParticleSpawner.spawn(glitter, data.world, new InterpCircle(target, new Vec3d(0, 1, 0), (float) aoe, 1, RandUtil.nextFloat()), (int) (aoe * 30), 10, (aFloat, particleBuilder) -> {
-						glitter.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
+						glitter.setAlphaFunction(new InterpFloatInOut(0.3f, 0.3f));
 						glitter.setLifetime(RandUtil.nextInt(30, 50));
 						glitter.setColorFunction(new InterpColorHSV(spellRing.getPrimaryColor(), spellRing.getSecondaryColor()));
 						glitter.setMotion(new Vec3d(

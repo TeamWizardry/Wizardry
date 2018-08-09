@@ -4,7 +4,7 @@ import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpLi
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
-import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
@@ -118,7 +118,7 @@ public class ModuleShapeCone extends ModuleShape {
 		lines.setScaleFunction(new InterpScale(0.5f, 0));
 		lines.setColorFunction(new InterpColorHSV(spellRing.getPrimaryColor(), spellRing.getSecondaryColor()));
 		ParticleSpawner.spawn(lines, spell.world, new InterpLine(origin, target), (int) target.distanceTo(origin) * 4, 0, (aFloat, particleBuilder) -> {
-			lines.setAlphaFunction(new InterpFadeInOut(0.3f, 0.3f));
+			lines.setAlphaFunction(new InterpFloatInOut(0.3f, 0.3f));
 			lines.setLifetime(RandUtil.nextInt(10, 20));
 		});
 	}

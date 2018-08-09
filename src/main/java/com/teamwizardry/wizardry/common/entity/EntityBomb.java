@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.common.entity;
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
-import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
@@ -89,7 +89,7 @@ public class EntityBomb extends EntityThrowable {
 				ParticleSpawner.spawn(glitter, world, new StaticInterp<>(getPositionVector()), 500, 0, (i, build) -> {
 					build.setMotion(Vec3d.ZERO);
 					build.setLifetime(RandUtil.nextInt(50, 100));
-					build.setAlphaFunction(new InterpFadeInOut(RandUtil.nextFloat(), RandUtil.nextFloat()));
+					build.setAlphaFunction(new InterpFloatInOut(RandUtil.nextFloat(), RandUtil.nextFloat()));
 					build.setScale(RandUtil.nextFloat(0.2f, 1));
 
 					if (type == 0) {

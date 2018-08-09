@@ -3,7 +3,7 @@ package com.teamwizardry.wizardry.common.module.shapes;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpCircle;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
-import com.teamwizardry.librarianlib.features.particle.functions.InterpFadeInOut;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
@@ -119,7 +119,7 @@ public class ModuleShapeTouch extends ModuleShape {
 			}
 			glitter.setLifetime(RandUtil.nextInt(20, 30));
 			glitter.setScale((float) RandUtil.nextDouble(0.3, 1));
-			glitter.setAlphaFunction(new InterpFadeInOut(0.3f, (float) RandUtil.nextDouble(0.6, 1)));
+			glitter.setAlphaFunction(new InterpFloatInOut(0.3f, (float) RandUtil.nextDouble(0.6, 1)));
 			glitter.setLifetime(RandUtil.nextInt(10, 20));
 			glitter.setScaleFunction(new InterpScale(1, 0));
 		});

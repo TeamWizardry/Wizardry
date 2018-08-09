@@ -55,7 +55,7 @@ public class ItemDevilDust extends ItemMod implements IPickupAchievement {
 		//		ParticleBuilder glitter = new ParticleBuilder(10);
 		//		glitter.setColor(Color.ORANGE);
 		//		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-		//		glitter.setAlphaFunction(new InterpFadeInOut(0.2f, 1f));
+		//		glitter.setAlphaFunction(new InterpFloatInOut(0.2f, 1f));
 //
 		//		ParticleSpawner.spawn(glitter, worldIn, new StaticInterp<>(origin), RandUtil.nextInt(30, 40), 0, (i, build) -> {
 		//			glitter.setMotion(playerIn.getLook(0).scale(3));
