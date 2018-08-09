@@ -5,7 +5,6 @@ import com.teamwizardry.librarianlib.features.utilities.client.CustomBlockMapSpr
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.client.core.CapeHandler;
-import com.teamwizardry.wizardry.client.render.BloodRenderLayer;
 import com.teamwizardry.wizardry.client.render.item.RenderHaloEntity;
 import com.teamwizardry.wizardry.common.core.version.VersionChecker;
 import com.teamwizardry.wizardry.init.ModEntities;
@@ -75,7 +74,7 @@ public class ClientProxy extends CommonProxy {
 
 		Map<String, RenderPlayer> skinMap = Minecraft.getMinecraft().getRenderManager().getSkinMap();
 		for (RenderPlayer render : skinMap.values()) {
-			render.addLayer(new BloodRenderLayer(render));
+			//	render.addLayer(new BloodRenderLayer(render));
 			render.addLayer(new RenderHaloEntity(render.getMainModel().bipedHead));
 		}
 

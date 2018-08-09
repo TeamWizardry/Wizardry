@@ -1,7 +1,17 @@
 0.9.4
 Fixed CME issue with Mana Network code
+Optimized Mana Networking code in general
+Optimized pearl holders as they were causing lag
+Fixed cape present while sleeping
 Mana Batteries now correctly require liquid mana in their pools
-Crafting Plate rendering issues fixed
+Crafting Plate rendering and syncing issues fixed
+Potentially fixed death when jumping out of Underworld
+Name light block + remove null break particles
+Spells now have fail sounds
+Fix Spirit Wight particles not rendering
+Spirit Wights no longer attack dead things
+Real halos no longer lag behind players
+Fix Unicorns not dropping horns. Now have a 1/8th of a chance without Looting
 
 0.9.3
 Fixed several particle rendering issues
