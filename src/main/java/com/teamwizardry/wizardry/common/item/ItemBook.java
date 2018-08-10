@@ -2,14 +2,12 @@ package com.teamwizardry.wizardry.common.item;
 
 import com.teamwizardry.librarianlib.features.base.item.ItemModBook;
 import com.teamwizardry.librarianlib.features.gui.provided.book.IBookGui;
-import com.teamwizardry.librarianlib.features.gui.provided.book.context.Bookmark;
 import com.teamwizardry.librarianlib.features.gui.provided.book.hierarchy.book.Book;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.spell.module.Module;
-import com.teamwizardry.wizardry.client.gui.book.ComponentRecipeBar;
 import com.teamwizardry.wizardry.client.gui.book.GuiBook;
 import com.teamwizardry.wizardry.common.advancement.IPickupAchievement;
 import com.teamwizardry.wizardry.common.advancement.ModAdvancements;
@@ -27,7 +25,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 
@@ -40,15 +37,7 @@ import java.util.List;
 @Mod.EventBusSubscriber(modid = Wizardry.MODID)
 public class ItemBook extends ItemModBook implements IPickupAchievement {
 
-	public static Book BOOK = new Book("book") {
-		@NotNull
-		@Override
-		public List<Bookmark> addAllBookmarks(@Nullable List<? extends Bookmark> list) {
-			List<Bookmark> bookmarks = super.addAllBookmarks(list);
-			bookmarks.add(new ComponentRecipeBar.RecipeBookmark());
-			return bookmarks;
-		}
-	};
+	public static Book BOOK = new Book("book");
 
 	public ItemBook() {
 		super("book");
