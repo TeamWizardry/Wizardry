@@ -134,8 +134,12 @@ public class UnicornTrailRenderer {
 			tessellator.draw();
 		}
 
+		GlStateManager.enableCull();
 		GlStateManager.depthMask(true);
+		GlStateManager.disableBlend();
 		GlStateManager.enableTexture2D();
+		GlStateManager.shadeModel(GL11.GL_FLAT);
+		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 
 		GlStateManager.popMatrix();
 	}
