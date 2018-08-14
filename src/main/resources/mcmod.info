@@ -5,8 +5,8 @@
     "description": "Delve into the creation of magical spells and wizardry",
     "version": "${mod_version}",
     "mcversion": "${mc_version}",
-    "url": "",
-    "updateUrl": "",
+    "url": "https://minecraft.curseforge.com/projects/wizardry-mod",
+    "updateUrl": "https://minecraft.curseforge.com/projects/wizardry-mod/files",
     "authorList": [
       "Demoniaque",
       "thecodewarrior",
