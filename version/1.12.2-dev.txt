@@ -1,5 +1,5 @@
 0.9.6
-Fix in game changelog formatting version incorrectly
+Fix in game changelog formatting versions incorrectly
 Fixed forge not enforcing liblib versions required by wizardry
 Fixed syringe + mana orb recipe
 Fixed GL leak makings hands transparent (thanks paul)
