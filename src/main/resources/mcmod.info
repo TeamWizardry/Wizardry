@@ -10,14 +10,14 @@
     "authorList": [
       "Demoniaque",
       "thecodewarrior",
-      "wiresegal",
+      "yrsegal",
       "pau101",
       "murapix",
       "Mechwarrior99",
       "InsomniaKitten"
     ],
     "credits": "Team Wizardry",
-    "logoFile": "",
+    "logoFile": "assets/wizardry/wizardry_logo.png",
     "screenshots": [],
     "dependencies": []
   }
