@@ -30,7 +30,7 @@ minecraft {
     mappings = "$mcp_version"
 
     replace 'GRADLE:VERSION', "$mod_version"
-    replace 'required-before:librarianlib', 'required-before:librarianlib@' + liblib_version
+    replace 'required-before:librarianlib', "required-before:librarianlib@[$liblib_version]"
 
     replaceIn 'Wizardry.java'
 
