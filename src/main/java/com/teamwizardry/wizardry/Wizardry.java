@@ -25,7 +25,7 @@ public class Wizardry {
 	public static final String VERSION = "GRADLE:VERSION";
 	public static final String CLIENT = "com.teamwizardry.wizardry.proxy.ClientProxy";
 	public static final String SERVER = "com.teamwizardry.wizardry.proxy.ServerProxy";
-	public static final String DEPENDENCIES = "required-before:librarianlib";
+	public static final String DEPENDENCIES = "required-after:librarianlib";
 	public static Logger logger;
 	public static DimensionType underWorld;
 
