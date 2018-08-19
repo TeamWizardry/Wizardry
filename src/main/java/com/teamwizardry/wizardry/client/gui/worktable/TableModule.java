@@ -124,7 +124,7 @@ public class TableModule extends GuiComponent {
 				if (!event.component.hasTag("placed")) event.component.addTag("placed");
 
 				Vec2d currentPos = event.component.thisPosToOtherContext(null);
-				if (event.getButton() == EnumMouseButton.LEFT && initialPos.equals(currentPos)) {
+				if (event.getButton() == EnumMouseButton.LEFT && initialPos.squareDist(currentPos) < 0.1) {
 
 					if (worktable.selectedModule == this) {
 						Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_OUT, 1f, 1f);
