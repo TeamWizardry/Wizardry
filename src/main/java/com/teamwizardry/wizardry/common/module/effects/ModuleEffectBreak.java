@@ -105,14 +105,9 @@ public class ModuleEffectBreak extends ModuleEffect {
 		World world = data.world;
 		BlockPos targetPos = data.getData(BLOCK_HIT);
 		EnumFacing facing = data.getData(FACE_HIT);
-		Entity targetEntity = data.getVictim();
 
 		double range = ring.getAttributeValue(AttributeRegistry.AREA, data);
 		double strength = ring.getAttributeValue(AttributeRegistry.POTENCY, data);
-
-		if (targetEntity instanceof EntityLivingBase)
-			for (ItemStack stack : targetEntity.getArmorInventoryList())
-				stack.damageItem((int) strength, (EntityLivingBase) targetEntity);
 
 		if (targetPos == null || facing == null) return previousData;
 		Set<BlockPos> blocks = BlockUtils.blocksInSquare(targetPos, facing, (int) range, (int) ((Math.sqrt(range)+1)/2), pos ->
