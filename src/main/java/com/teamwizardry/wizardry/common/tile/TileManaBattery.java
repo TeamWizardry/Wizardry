@@ -4,6 +4,7 @@ import com.teamwizardry.librarianlib.features.autoregister.TileRegister;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.librarianlib.features.tesr.TileRenderer;
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.block.TileManaInteractor;
 import com.teamwizardry.wizardry.api.capability.mana.CapManager;
 import com.teamwizardry.wizardry.api.util.RandUtil;
@@ -25,7 +26,7 @@ import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.HashSet;
 
-@TileRegister("mana_battery")
+@TileRegister(Wizardry.MODID + ":mana_battery")
 @TileRenderer(TileManaBatteryRenderer.class)
 public class TileManaBattery extends TileManaInteractor {
 
@@ -86,7 +87,7 @@ public class TileManaBattery extends TileManaInteractor {
 	public void update() {
 		super.update();
 
-		if (getBlockType() == ModBlocks.MANA_BATTERY && !((BlockManaBattery) getBlockType()).isStructureComplete(getWorld(), getPos()))
+		if (getBlockType() == ModBlocks.MANA_BATTERY && !((BlockManaBattery) getBlockType()).testStructure(getWorld(), getPos()).isEmpty())
 			return;
 
 		if (getBlockType() != ModBlocks.CREATIVE_MANA_BATTERY) {

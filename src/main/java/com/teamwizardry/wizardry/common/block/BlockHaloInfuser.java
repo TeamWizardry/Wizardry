@@ -1,9 +1,10 @@
 package com.teamwizardry.wizardry.common.block;
 
 import com.teamwizardry.librarianlib.features.base.block.tile.BlockModContainer;
-import com.teamwizardry.wizardry.api.block.CachedStructure;
 import com.teamwizardry.wizardry.api.block.IStructure;
+import com.teamwizardry.wizardry.api.block.WizardryStructure;
 import com.teamwizardry.wizardry.common.tile.TileHaloInfuser;
+import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModStructures;
 import net.minecraft.block.SoundType;
@@ -88,8 +89,8 @@ public class BlockHaloInfuser extends BlockModContainer implements IStructure {
 	}
 
 	@Override
-	public CachedStructure getStructure() {
-		return ModStructures.INSTANCE.structures.get("crafting_altar");
+	public WizardryStructure getStructure() {
+		return ModStructures.INSTANCE.getStructure(ModBlocks.CRAFTING_PLATE);
 	}
 
 	@Override

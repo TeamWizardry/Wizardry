@@ -12,13 +12,13 @@
     "wizardry.book.steps.structures.content3",
     {
       "type": "structure",
-      "name": "wizardry:mana_battery"
+      "name": "wizardry:tile.mana_battery"
     },
     "wizardry.book.steps.structures.content4",
     "wizardry.book.steps.structures.content5",
     {
       "type": "structure",
-      "name": "wizardry:crafting_altar"
+      "name": "wizardry:tile.crafting_plate"
     }
   ]
 }

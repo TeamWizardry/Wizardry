@@ -137,8 +137,6 @@ public class CommonProxy {
 	}
 
 	public void postInit(FMLPostInitializationEvent event) {
-		ModStructures.INSTANCE.getClass();
-
 		ModuleRegistry.INSTANCE.loadModuleOverrides();
 	}
 

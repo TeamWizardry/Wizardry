@@ -7,6 +7,7 @@ import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.saving.Module;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.librarianlib.features.tesr.TileRenderer;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.TileManaInteractor;
@@ -21,6 +22,7 @@ import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.render.block.TileCraftingPlateRenderer;
 import com.teamwizardry.wizardry.common.block.BlockCraftingPlate;
+import com.teamwizardry.wizardry.common.network.PacketAddItemCraftingPlate;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.common.network.PacketUpdateCraftingPlateRenderer;
 import com.teamwizardry.wizardry.init.ModSounds;
@@ -39,6 +41,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
@@ -52,7 +55,7 @@ import java.util.Random;
 /**
  * Created by Demoniaque on 6/10/2016.
  */
-@TileRegister("crafting_plate")
+@TileRegister(Wizardry.MODID + ":crafting_plate")
 @TileRenderer(TileCraftingPlateRenderer.class)
 public class TileCraftingPlate extends TileManaInteractor {
 
@@ -69,19 +72,33 @@ public class TileCraftingPlate extends TileManaInteractor {
 	public ModuleInventory realInventory = new ModuleInventory(new ItemStackHandler(1000) {
 
 		@Override
-		protected void onContentsChanged(int slot) {
-			if (world.isRemote) return;
-			PacketHandler.NETWORK.sendToAllAround(new PacketUpdateCraftingPlateRenderer(pos, slot), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
+		public int getSlotLimit(int slot) {
+			markDirty();
+			return 1;
 		}
 
+		@Override
+		protected void onContentsChanged(int slot) {
+			markDirty();
+
+			if (!world.isRemote) {
+				PacketHandler.NETWORK.sendToAllAround(new PacketUpdateCraftingPlateRenderer(pos, slot), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
+			}
+		}
 	});
 
 	@Module
 	public ModuleInventory inputPearl = new ModuleInventory(new ItemStackHandler() {
 		@Override
+		protected void onContentsChanged(int slot) {
+			markDirty();
+		}
+
+		@Override
 		protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
+			markDirty();
 			if (stack.getItem() instanceof IInfusable)
-				return super.getStackLimit(slot, stack);
+				return 1;
 			else return 0;
 		}
 	});
@@ -89,9 +106,15 @@ public class TileCraftingPlate extends TileManaInteractor {
 	@Module
 	public ModuleInventory outputPearl = new ModuleInventory(new ItemStackHandler() {
 		@Override
+		protected void onContentsChanged(int slot) {
+			markDirty();
+		}
+
+		@Override
 		protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
+			markDirty();
 			if (stack.getItem() instanceof IInfusable)
-				return super.getStackLimit(slot, stack);
+				return 1;
 			else return 0;
 		}
 	});
@@ -139,7 +162,7 @@ public class TileCraftingPlate extends TileManaInteractor {
 			//markDirty();
 		}
 
-		if (!((BlockCraftingPlate) getBlockType()).isStructureComplete(getWorld(), getPos())) return;
+		if (!((BlockCraftingPlate) getBlockType()).testStructure(getWorld(), getPos()).isEmpty()) return;
 
 		if (!CapManager.isManaFull(getWizardryCap())) {
 			for (BlockPos relative : poses) {
@@ -156,9 +179,9 @@ public class TileCraftingPlate extends TileManaInteractor {
 		}
 
 		for (EntityItem entityItem : world.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(pos))) {
+			if (entityItem.getItem().isEmpty()) continue;
 			if (hasInputPearl()) break;
 
-			boolean change = false;
 			if (!isInventoryEmpty() && entityItem.getItem().getItem() instanceof IInfusable) {
 
 				ItemStack stack = entityItem.getItem().copy();
@@ -167,23 +190,20 @@ public class TileCraftingPlate extends TileManaInteractor {
 
 				inputPearl.getHandler().setStackInSlot(0, stack);
 
-				change = true;
 			} else if (!(entityItem.getItem().getItem() instanceof IInfusable)) {
+
 				ItemStack stack = entityItem.getItem().copy();
 				stack.setCount(1);
-				entityItem.getItem().shrink(1);
 
-				for (int i = 0; i < realInventory.getHandler().getSlots(); i++) {
-					if (realInventory.getHandler().getStackInSlot(i).isEmpty()) {
-						realInventory.getHandler().setStackInSlot(i, stack);
+				if (!world.isRemote) {
+					PacketHandler.NETWORK.sendToAllAround(new PacketAddItemCraftingPlate(getPos(), stack), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
+				}
+				ItemStack left = ItemHandlerHelper.insertItem(realInventory.getHandler(), stack, false);
 
-						markDirty();
-						break;
-					}
+				if (left.isEmpty()) {
+					entityItem.getItem().shrink(1);
 				}
 			}
-
-			if (change) markDirty();
 		}
 
 		if (hasInputPearl() && !isInventoryEmpty()) {

@@ -1,7 +1,10 @@
 package com.teamwizardry.wizardry.init;
 
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.crafting.irecipies.*;
+import com.teamwizardry.wizardry.crafting.irecipies.RecipeJam;
+import com.teamwizardry.wizardry.crafting.irecipies.RecipeManaSyringe;
+import com.teamwizardry.wizardry.crafting.irecipies.RecipePearl;
+import com.teamwizardry.wizardry.crafting.irecipies.RecipeSteroidSyringe;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
@@ -23,8 +26,8 @@ public class ModRecipes {
 		r.register(new RecipePearl().setRegistryName(path("outputPearl")));
 		r.register(new RecipeManaSyringe().setRegistryName(path("mana_syringe")));
 		r.register(new RecipeSteroidSyringe().setRegistryName(path("steroid_syringe")));
-		r.register(new RecipeCrudeHaloInfusion().setRegistryName(path("crude_halo_infusion")));
-		r.register(new RecipeCrudeHaloDefusion().setRegistryName(path("crude_halo_defusion")));
+		//	r.register(new RecipeCrudeHaloInfusion().setRegistryName(path("crude_halo_infusion")));
+		//	r.register(new RecipeCrudeHaloDefusion().setRegistryName(path("crude_halo_defusion")));
 
 	}
 

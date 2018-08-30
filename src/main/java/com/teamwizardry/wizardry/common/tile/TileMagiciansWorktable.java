@@ -4,6 +4,7 @@ import com.google.common.collect.HashMultimap;
 import com.teamwizardry.librarianlib.features.autoregister.TileRegister;
 import com.teamwizardry.librarianlib.features.base.block.tile.TileMod;
 import com.teamwizardry.librarianlib.features.saving.Save;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import net.minecraft.nbt.NBTBase;
@@ -20,7 +21,7 @@ import java.util.UUID;
 /**
  * Created by Demoniaque.
  */
-@TileRegister("magicians_worktable")
+@TileRegister(Wizardry.MODID + ":magicians_worktable")
 public class TileMagiciansWorktable extends TileMod {
 
 	@Save

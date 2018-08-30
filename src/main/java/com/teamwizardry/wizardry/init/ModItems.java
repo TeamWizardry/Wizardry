@@ -6,6 +6,8 @@ import com.teamwizardry.wizardry.common.item.dusts.ItemDevilDust;
 import com.teamwizardry.wizardry.common.item.dusts.ItemFairyDust;
 import com.teamwizardry.wizardry.common.item.dusts.ItemSkyDust;
 import com.teamwizardry.wizardry.common.item.halos.*;
+import com.teamwizardry.wizardry.common.item.pearlbelt.ItemPearlBelt;
+import com.teamwizardry.wizardry.common.item.pearlbelt.ItemPearlBeltBauble;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.Loader;
 
@@ -28,7 +30,6 @@ public class ModItems {
 	public static ItemUnicornHorn UNICORN_HORN;
 	public static ItemBlackenedSpirit BLACKENED_SPIRIT;
 	public static Item CAPE;
-	public static ItemGlueStick GLUE_STICK;
 
 	public static ItemFairyWings FAIRY_WINGS;
 	public static ItemFairyImbuedApple FAIRY_IMBUED_APPLE;
@@ -40,6 +41,8 @@ public class ModItems {
 	public static Item FAKE_HALO;
 	public static Item REAL_HALO;
 	public static Item CREATIVE_HALO;
+
+	public static Item PEARL_BELT;
 
 	public static ItemMagicWand MAGIC_WAND;
 
@@ -56,7 +59,6 @@ public class ModItems {
 		SYRINGE = new ItemSyringe();
 		BOMB = new ItemBomb();
 		BLACKENED_SPIRIT = new ItemBlackenedSpirit();
-		GLUE_STICK = new ItemGlueStick();
 
 		STAFF = new ItemStaff();
 
@@ -76,11 +78,15 @@ public class ModItems {
 			FAKE_HALO = new ItemFakeHaloBauble();
 			REAL_HALO = new ItemRealHaloBauble();
 			CREATIVE_HALO = new ItemCreativeHaloBauble();
+
+			PEARL_BELT = new ItemPearlBeltBauble();
 		} else {
 			CAPE = new ItemCapeChest();
 			FAKE_HALO = new ItemFakeHaloHead();
 			REAL_HALO = new ItemRealHaloHead();
 			CREATIVE_HALO = new ItemCreativeHaloHead();
+
+			PEARL_BELT = new ItemPearlBelt();
 		}
 	}
 }

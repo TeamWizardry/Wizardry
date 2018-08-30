@@ -1,33 +1,32 @@
 package com.teamwizardry.wizardry.client.render.block;
 
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpCircle;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
-import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.tesr.TileRenderHandler;
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.block.CachedStructure;
 import com.teamwizardry.wizardry.api.block.IStructure;
+import com.teamwizardry.wizardry.api.block.WizardryStructure;
 import com.teamwizardry.wizardry.api.capability.mana.CapManager;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.core.renderer.StructureErrorRenderer;
 import com.teamwizardry.wizardry.common.tile.TileManaBattery;
 import com.teamwizardry.wizardry.init.ModBlocks;
+import com.teamwizardry.wizardry.init.ModStructures;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -37,7 +36,7 @@ import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
-import java.util.HashSet;
+import java.util.ArrayList;
 
 /**
  * Created by Demoniaque.
@@ -47,11 +46,12 @@ import java.util.HashSet;
 public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> {
 
 	private static IBakedModel modelRing, modelCrystal, modelRingOuter;
-	private CachedStructure cachedStructure;
+	private WizardryStructure wizardryStructure;
 
 	public TileManaBatteryRenderer(@Nonnull TileManaBattery manaBattery) {
 		super(manaBattery);
-		cachedStructure = new CachedStructure(((IStructure) tile.getBlockType()).getStructure().loc, tile.getWorld());
+		wizardryStructure = ModStructures.INSTANCE.getStructure(tile.getBlockType());
+		// new WizardryStructure(((IStructure) tile.getBlockType()).getStructure().loc, tile.getWorld());
 	}
 
 	static {
@@ -146,30 +146,13 @@ public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> 
 		GlStateManager.disableBlend();
 		GlStateManager.popMatrix();
 
-		HashSet<BlockPos> errors = ((IStructure) tile.getBlockType()).getErroredBlocks(tile.getWorld(), tile.getPos());
+		ArrayList<BlockPos> errors = new ArrayList<>(((IStructure) tile.getBlockType()).testStructure(tile.getWorld(), tile.getPos()));
+		errors.sort(Vec3i::compareTo);
 		if (tile.revealStructure && tile.getBlockType() instanceof IStructure && !errors.isEmpty()) {
 
-			IStructure structure = ((IStructure) tile.getBlockType());
+			wizardryStructure.draw(tile.getWorld(), (float) (Math.sin(tile.getWorld().getTotalWorldTime() / 10.0) + 1) / 10.0f + 0.4f);
 
-			GlStateManager.pushMatrix();
-			GlStateManager.enableBlend();
-			GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-			GlStateManager.enablePolygonOffset();
-			GlStateManager.doPolygonOffset(1f, -0.05f);
-
-			GlStateManager.translate(-structure.offsetToCenter().getX(), -structure.offsetToCenter().getY(), -structure.offsetToCenter().getZ());
-			Minecraft mc = Minecraft.getMinecraft();
-			Tessellator tes = Tessellator.getInstance();
-			BufferBuilder buffer = tes.getBuffer();
-
-			mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-
-			renderLayers(tes, buffer, cachedStructure);
-
-			GlStateManager.disablePolygonOffset();
-			GlStateManager.color(1F, 1F, 1F, 1F);
-			GlStateManager.enableDepth();
-			GlStateManager.popMatrix();
+			return;
 
 		} else if (!tile.revealStructure && !errors.isEmpty()) {
 			for (BlockPos error : errors)
@@ -196,16 +179,4 @@ public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> 
 		}
 	}
 
-	public static void renderLayers(Tessellator tes, BufferBuilder buffer, CachedStructure cachedStructure) {
-		for (BlockRenderLayer layer : cachedStructure.blocks.keySet()) {
-			buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-			buffer.addVertexData(cachedStructure.vboCaches.get(layer));
-
-			for (int i = 0; i < buffer.getVertexCount(); i++) {
-				int idx = buffer.getColorIndex(i + 1);
-				buffer.putColorRGBA(idx, 255, 255, 255, 200);
-			}
-			tes.draw();
-		}
-	}
 }

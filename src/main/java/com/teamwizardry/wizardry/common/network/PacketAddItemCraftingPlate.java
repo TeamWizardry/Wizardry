@@ -4,31 +4,31 @@ import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.autoregister.PacketRegister;
 import com.teamwizardry.librarianlib.features.network.PacketBase;
 import com.teamwizardry.librarianlib.features.saving.Save;
-import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
-import com.teamwizardry.wizardry.client.render.block.TileCraftingPlateRenderer;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 
 @PacketRegister(Side.CLIENT)
-public class PacketUpdateCraftingPlateRenderer extends PacketBase {
+public class PacketAddItemCraftingPlate extends PacketBase {
 
 	@Save
-	public BlockPos pos;
+	private BlockPos pos;
 	@Save
-	public int slot;
+	private ItemStack stack;
 
-	public PacketUpdateCraftingPlateRenderer() {
+	public PacketAddItemCraftingPlate() {
 	}
 
-	public PacketUpdateCraftingPlateRenderer(BlockPos pos, int slot) {
+	public PacketAddItemCraftingPlate(BlockPos pos, ItemStack stack) {
 
 		this.pos = pos;
-		this.slot = slot;
+		this.stack = stack;
 	}
 
 	@Override
@@ -39,16 +39,11 @@ public class PacketUpdateCraftingPlateRenderer extends PacketBase {
 		if (world == null) return;
 		if (!world.isBlockLoaded(pos)) return;
 
-		ClientRunnable.run(new ClientRunnable() {
-			@Override
-			@SideOnly(Side.CLIENT)
-			public void runIfClient() {
-				TileCraftingPlate plate = (TileCraftingPlate) world.getTileEntity(pos);
-				if (plate == null) return;
-				if (plate.renderHandler != null) {
-					((TileCraftingPlateRenderer) plate.renderHandler).update(slot);
-				}
-			}
-		});
+		TileEntity entity = world.getTileEntity(pos);
+		if (entity instanceof TileCraftingPlate) {
+			TileCraftingPlate plate = (TileCraftingPlate) entity;
+
+			ItemHandlerHelper.insertItem(plate.realInventory.getHandler(), stack, false);
+		}
 	}
 }

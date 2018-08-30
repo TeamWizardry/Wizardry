@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.item.wheels;
+package com.teamwizardry.wizardry.api.item.wheels;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -22,7 +22,7 @@ public interface IPearlWheelHolder {
 	}
 
 	static ItemStack getPearlHolder(EntityPlayer player) {
-		EventPearlInventories event = new EventPearlInventories(player);
+		FindPearlWheelEvent event = new FindPearlWheelEvent(player);
 
 		event.addItems(player.inventory.mainInventory, 0);
 		event.addItems(player.inventory.armorInventory, 1);

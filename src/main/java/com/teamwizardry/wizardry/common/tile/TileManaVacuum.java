@@ -1,22 +1,21 @@
 package com.teamwizardry.wizardry.common.tile;
 
-import javax.annotation.Nonnull;
-
 import com.teamwizardry.librarianlib.features.autoregister.TileRegister;
 import com.teamwizardry.librarianlib.features.base.block.tile.module.ModuleFluid;
 import com.teamwizardry.librarianlib.features.base.block.tile.module.ModuleInventory;
-import com.teamwizardry.librarianlib.features.base.block.tile.module.SerializableFluidTank;
 import com.teamwizardry.librarianlib.features.saving.Module;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.block.TileManaInteractor;
 import com.teamwizardry.wizardry.common.block.fluid.ModFluids;
 import com.teamwizardry.wizardry.init.ModItems;
-
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.items.ItemStackHandler;
 
-@TileRegister("mana_vacuum")
+import javax.annotation.Nonnull;
+
+@TileRegister(Wizardry.MODID + ":mana_vacuum")
 //@TileRenderer(TileManaVacuumRenderer.class)
 public class TileManaVacuum extends TileManaInteractor
 {

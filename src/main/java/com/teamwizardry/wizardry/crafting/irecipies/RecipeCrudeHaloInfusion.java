@@ -4,6 +4,7 @@ import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.api.item.halo.HaloInfusionItem;
 import com.teamwizardry.wizardry.api.item.halo.HaloInfusionItemRegistry;
 import com.teamwizardry.wizardry.init.ModItems;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -31,7 +32,7 @@ public class RecipeCrudeHaloInfusion extends IForgeRegistryEntry.Impl<IRecipe> i
 		int availableItems = 0;
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);
-			if (stack.getItem() == ModItems.GLUE_STICK) {
+			if (stack.getItem() == Items.SLIME_BALL) {
 				if (foundGlueStick) return false;
 				foundGlueStick = true;
 			} else if (stack.getItem() == ModItems.FAKE_HALO) {
@@ -69,7 +70,7 @@ public class RecipeCrudeHaloInfusion extends IForgeRegistryEntry.Impl<IRecipe> i
 
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);
-			if (stack.getItem() == ModItems.GLUE_STICK) foundGlueStick = stack;
+			if (stack.getItem() == Items.SLIME_BALL) foundGlueStick = stack;
 			else if (stack.getItem() == ModItems.FAKE_HALO) foundHalo = stack;
 			else if (HaloInfusionItemRegistry.isHaloInfusionItem(stack))
 				infusionItems.add(HaloInfusionItemRegistry.getInfusionItemFromStack(stack));
@@ -125,7 +126,7 @@ public class RecipeCrudeHaloInfusion extends IForgeRegistryEntry.Impl<IRecipe> i
 		ItemStack gluestick;
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);
-			if (stack.getItem() == ModItems.GLUE_STICK) {
+			if (stack.getItem() == Items.SLIME_BALL) {
 				gluestick = stack.copy();
 				remainingItems.set(i, gluestick);
 				break;

@@ -6,7 +6,7 @@ import baubles.api.IBauble;
 import baubles.api.cap.IBaublesItemHandler;
 import com.google.common.collect.ImmutableList;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.common.item.wheels.EventPearlInventories;
+import com.teamwizardry.wizardry.api.item.wheels.FindPearlWheelEvent;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -20,7 +20,7 @@ public final class BaublesSupport {
 	
 	@SubscribeEvent
 	@Optional.Method(modid = "baubles")
-	public static void pearlInventory(EventPearlInventories inventories) {
+	public static void pearlInventory(FindPearlWheelEvent inventories) {
 		inventories.addItems(BaublesApi.getBaublesHandler(inventories.player), 5000);
 	}
 

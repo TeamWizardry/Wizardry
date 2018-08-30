@@ -6,31 +6,29 @@ import com.teamwizardry.librarianlib.features.animator.Easing;
 import com.teamwizardry.librarianlib.features.animator.animations.BasicAnimation;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBezier3D;
 import com.teamwizardry.librarianlib.features.tesr.TileRenderHandler;
-import com.teamwizardry.wizardry.api.block.CachedStructure;
 import com.teamwizardry.wizardry.api.block.IStructure;
+import com.teamwizardry.wizardry.api.block.WizardryStructure;
 import com.teamwizardry.wizardry.api.capability.mana.CapManager;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.core.renderer.StructureErrorRenderer;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
+import com.teamwizardry.wizardry.init.ModStructures;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 /**
@@ -43,13 +41,13 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 
 	private HashMap<Integer, LocationAndAngle> locationsAndAngles;
 
-	private CachedStructure cachedStructure;
+	private WizardryStructure wizardryStructure;
 
 	public TileCraftingPlateRenderer(@Nonnull TileCraftingPlate tile) {
 		super(tile);
 
 		animator.setUseWorldTicks(true);
-		cachedStructure = new CachedStructure(((IStructure) tile.getBlockType()).getStructure().loc, tile.getWorld());
+		wizardryStructure = ModStructures.INSTANCE.getStructure(tile.getBlockType());
 		locationsAndAngles = new HashMap<>();
 
 		for (int i = 0; i < tile.realInventory.getHandler().getSlots(); i++) {
@@ -68,30 +66,13 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 
 	@Override
 	public void render(float partialTicks, int destroyStage, float alpha) {
-		HashSet<BlockPos> errors = ((IStructure) tile.getBlockType()).getErroredBlocks(tile.getWorld(), tile.getPos());
+		ArrayList<BlockPos> errors = new ArrayList<>(((IStructure) tile.getBlockType()).testStructure(tile.getWorld(), tile.getPos()));
+		errors.sort(Vec3i::compareTo);
+
 		if (tile.revealStructure && tile.getBlockType() instanceof IStructure && !errors.isEmpty()) {
 
-			IStructure structure = ((IStructure) tile.getBlockType());
+			wizardryStructure.draw(tile.getWorld(), (float) (Math.sin(tile.getWorld().getTotalWorldTime() / 10.0) + 1) / 10.0f + 0.4f);
 
-			GlStateManager.pushMatrix();
-			GlStateManager.enableBlend();
-			GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-			GlStateManager.enablePolygonOffset();
-			GlStateManager.doPolygonOffset(1f, -0.05f);
-
-			GlStateManager.translate(-structure.offsetToCenter().getX(), -structure.offsetToCenter().getY(), -structure.offsetToCenter().getZ());
-			Minecraft mc = Minecraft.getMinecraft();
-			Tessellator tes = Tessellator.getInstance();
-			BufferBuilder buffer = tes.getBuffer();
-
-			mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-
-			TileManaBatteryRenderer.renderLayers(tes, buffer, cachedStructure);
-
-			GlStateManager.disablePolygonOffset();
-			GlStateManager.color(1F, 1F, 1F, 1F);
-			GlStateManager.enableDepth();
-			GlStateManager.popMatrix();
 			return;
 
 		} else if (!tile.revealStructure && !errors.isEmpty()) {
@@ -99,7 +80,7 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 				StructureErrorRenderer.addError(error);
 		}
 
-		// renderSpell each item at its current position
+		// render each item at its current position
 		final int mapSize = locationsAndAngles.size();
 		for (Map.Entry<Integer, LocationAndAngle> entry : locationsAndAngles.entrySet()) {
 

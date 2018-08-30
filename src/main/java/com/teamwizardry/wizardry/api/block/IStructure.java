@@ -6,7 +6,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -15,19 +14,18 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.template.Template;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Demoniaque.
  */
 public interface IStructure {
 
+	@Deprecated
 	static ItemStack craftItemFromInventory(EntityPlayer player, ItemStack output) {
 		HashSet<IRecipe> recipes = getRecipesForItem(output);
 		if (recipes.isEmpty()) return ItemStack.EMPTY;
@@ -98,6 +96,7 @@ public interface IStructure {
 		}
 	}
 
+	@Deprecated
 	static ItemStack findItemInventoryFromItem(EntityPlayer player, ItemStack toFind) {
 		ItemStack stack = ItemStack.EMPTY;
 		for (ItemStack invStack : player.inventory.mainInventory)
@@ -109,6 +108,7 @@ public interface IStructure {
 		return stack;
 	}
 
+	@Deprecated
 	static HashSet<IRecipe> getRecipesForItem(ItemStack stack) {
 		HashSet<IRecipe> recipes = new HashSet<>();
 		for (IRecipe recipe : ForgeRegistries.RECIPES.getValues()) {
@@ -120,11 +120,16 @@ public interface IStructure {
 		return recipes;
 	}
 
-	CachedStructure getStructure();
+	WizardryStructure getStructure();
 
 	Vec3i offsetToCenter();
 
-	default boolean isStructureComplete(World world, BlockPos pos) {
+	/**
+	 * Will return a list of blocks that are incorrect. If this list is empty, the structure is complete.
+	 */
+	default Set<BlockPos> testStructure(World world, BlockPos pos) {
+		Set<BlockPos> errors = new HashSet<>();
+
 		for (Template.BlockInfo info : getStructure().blockInfos()) {
 			if (info.blockState == null) continue;
 			if (info.blockState.getMaterial() == Material.AIR || info.blockState.getBlock() == Blocks.STRUCTURE_VOID)
@@ -146,19 +151,17 @@ public interface IStructure {
 						world.setBlockState(realPos, info.blockState);
 					continue;
 				}
-				return false;
+				errors.add(realPos);
 			}
 		}
-		return true;
+		return errors;
 	}
 
-	default HashSet<BlockPos> getErroredBlocks(World world, BlockPos pos) {
-		HashSet<BlockPos> set = new HashSet<>();
+	default boolean buildStructure(World world, BlockPos pos) {
+		if (world.isRemote) return true;
 
 		for (Template.BlockInfo info : getStructure().blockInfos()) {
 			if (info.blockState == null) continue;
-			if (info.blockState.getMaterial() == Material.AIR || info.blockState.getBlock() == Blocks.STRUCTURE_VOID)
-				continue;
 
 			BlockPos realPos = info.pos.add(pos).subtract(offsetToCenter());
 			IBlockState state = world.getBlockState(realPos);
@@ -168,71 +171,8 @@ public interface IStructure {
 					continue;
 				}
 
-				if (info.blockState.getBlock() instanceof BlockStairs && state.getBlock() instanceof BlockStairs
-						&& info.blockState.getBlock() == state.getBlock()
-						&& info.blockState.getValue(BlockStairs.HALF) == state.getValue(BlockStairs.HALF)
-						&& info.blockState.getValue(BlockStairs.SHAPE) == state.getValue(BlockStairs.SHAPE)) {
-					continue;
-				}
-				set.add(realPos);
-			}
-		}
-		return set;
-	}
+				world.setBlockState(realPos, info.blockState);
 
-
-	default boolean tickStructure(World world, EntityPlayer player, BlockPos pos) {
-		if (world.isRemote) return true;
-
-		for (Template.BlockInfo info : getStructure().blockInfos()) {
-			if (info.blockState == null) continue;
-
-			BlockPos realPos = info.pos.add(pos).subtract(offsetToCenter());
-			IBlockState state = world.getBlockState(realPos);
-			if (state.getBlock() != info.blockState.getBlock()) {
-
-				if (state.getBlock() == ModBlocks.CREATIVE_MANA_BATTERY && info.blockState.getBlock() == ModBlocks.MANA_BATTERY) {
-					continue;
-				}
-
-				if (player.isCreative()) {
-					world.setBlockState(realPos, info.blockState);
-				} else {
-					if (world.isAirBlock(realPos)) {
-						ItemStack requiredStack = new ItemStack(info.blockState.getBlock());
-						ItemStack stack = findItemInventoryFromItem(player, requiredStack);
-
-						if (stack.isEmpty()) {
-							ItemStack outputItem = craftItemFromInventory(player, requiredStack);
-
-							if (outputItem.isEmpty()) continue;
-							outputItem.shrink(1);
-							player.inventory.addItemStackToInventory(outputItem);
-							player.inventory.markDirty();
-							world.setBlockState(realPos, info.blockState);
-							return true;
-						} else {
-							stack.shrink(1);
-							world.setBlockState(realPos, info.blockState);
-							return true;
-						}
-					}
-				}
-			} else if (world.getBlockState(realPos) != info.blockState) {
-				if (player.isCreative() || !info.blockState.getMaterial().isLiquid()) {
-					world.setBlockState(realPos, info.blockState);
-					return true;
-				} else {
-					FluidStack fluidStack = new FluidStack(FluidRegistry.lookupFluidForBlock(info.blockState.getBlock()), 1);
-					ItemStack fluidBucket = findItemInventoryFromItem(player, FluidUtil.getFilledBucket(fluidStack));
-					if (!fluidBucket.isEmpty()) {
-						fluidBucket.shrink(1);
-						player.addItemStackToInventory(new ItemStack(Items.BUCKET));
-						player.inventory.markDirty();
-						world.setBlockState(realPos, info.blockState);
-						return true;
-					}
-				}
 			}
 		}
 		return true;

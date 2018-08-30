@@ -6,6 +6,7 @@ import com.teamwizardry.librarianlib.features.base.block.tile.module.ModuleInven
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.saving.Module;
 import com.teamwizardry.librarianlib.features.tesr.TileRenderer;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.item.halo.HaloInfusionItemRegistry;
 import com.teamwizardry.wizardry.client.render.block.TileHaloInfuserRenderer;
 import com.teamwizardry.wizardry.common.entity.EntityHaloInfusionItem;
@@ -24,7 +25,7 @@ import java.util.ArrayList;
 /**
  * Created by Demoniaque.
  */
-@TileRegister("halo_infuser")
+@TileRegister(Wizardry.MODID + ":halo_infuser")
 @TileRenderer(TileHaloInfuserRenderer.class)
 public class TileHaloInfuser extends TileModTickable {
 

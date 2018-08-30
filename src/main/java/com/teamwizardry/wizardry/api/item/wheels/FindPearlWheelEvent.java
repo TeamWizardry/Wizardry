@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.item.wheels;
+package com.teamwizardry.wizardry.api.item.wheels;
 
 import com.google.common.collect.Lists;
 import gnu.trove.map.hash.TObjectIntHashMap;
@@ -19,12 +19,12 @@ import java.util.List;
  * Created at 12:25 PM on 3/4/18.
  */
 @Cancelable
-public class EventPearlInventories extends Event {
+public class FindPearlWheelEvent extends Event {
 	private final TObjectIntHashMap<Iterable<ItemStack>> inventories = new TObjectIntHashMap<>();
 
 	public final EntityPlayer player;
 
-	public EventPearlInventories(EntityPlayer player) {
+	public FindPearlWheelEvent(EntityPlayer player) {
 		this.player = player;
 	}
 

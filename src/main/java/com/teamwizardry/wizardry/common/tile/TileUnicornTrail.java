@@ -3,9 +3,9 @@ package com.teamwizardry.wizardry.common.tile;
 import com.teamwizardry.librarianlib.features.autoregister.TileRegister;
 import com.teamwizardry.librarianlib.features.base.block.tile.TileMod;
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
-import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.Wizardry;
@@ -23,7 +23,7 @@ import static com.teamwizardry.wizardry.api.Constants.MISC.SPARKLE_BLURRED;
 /**
  * Created by Demoniaque.
  */
-@TileRegister("unicorn_trail")
+@TileRegister(Wizardry.MODID + ":unicorn_trail")
 public class TileUnicornTrail extends TileMod implements ITickable {
 
 	@Save

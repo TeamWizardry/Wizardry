@@ -4,8 +4,8 @@ import com.teamwizardry.librarianlib.features.base.block.tile.BlockModContainer;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.block.CachedStructure;
 import com.teamwizardry.wizardry.api.block.IStructure;
+import com.teamwizardry.wizardry.api.block.WizardryStructure;
 import com.teamwizardry.wizardry.api.item.IInfusable;
 import com.teamwizardry.wizardry.api.spell.SpellBuilder;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
@@ -13,6 +13,7 @@ import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
+import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
 import com.teamwizardry.wizardry.init.ModStructures;
@@ -73,7 +74,7 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 
 		ItemStack heldItem = playerIn.getHeldItem(hand);
 
-		if (isStructureComplete(worldIn, pos)) {
+		if (testStructure(worldIn, pos).isEmpty()) {
 			TileCraftingPlate plate = getTE(worldIn, pos);
 			if (!plate.inputPearl.getHandler().getStackInSlot(0).isEmpty()) return false;
 			if (!heldItem.isEmpty()) {
@@ -162,7 +163,7 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 
 		} else {
 			if (playerIn.isCreative() && playerIn.isSneaking()) {
-				tickStructure(worldIn, playerIn, pos);
+				buildStructure(worldIn, pos);
 			} else {
 				TileCraftingPlate plate = getTE(worldIn, pos);
 				plate.revealStructure = !plate.revealStructure;
@@ -188,8 +189,8 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 	}
 
 	@Override
-	public CachedStructure getStructure() {
-		return ModStructures.INSTANCE.structures.get("crafting_altar");
+	public WizardryStructure getStructure() {
+		return ModStructures.INSTANCE.getStructure(ModBlocks.CRAFTING_PLATE);
 	}
 
 	@Override
