@@ -28,8 +28,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 /**
  * Created by Demoniaque on 6/11/2016.
@@ -39,7 +39,7 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 
 	private static Animator animator = new Animator();
 
-	private HashMap<Integer, LocationAndAngle> locationsAndAngles;
+	private WeakHashMap<Integer, LocationAndAngle> locationsAndAngles;
 
 	private WizardryStructureRenderCompanion wizardryStructure;
 
@@ -48,7 +48,7 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 
 		animator.setUseWorldTicks(true);
 		wizardryStructure = ModStructures.INSTANCE.getStructure(tile.getBlockType());
-		locationsAndAngles = new HashMap<>();
+		locationsAndAngles = new WeakHashMap<>();
 
 		for (int i = 0; i < tile.realInventory.getHandler().getSlots(); i++) {
 			update(i);
@@ -163,6 +163,8 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 
 
 		private void animationLoop() {
+			if (tile.isInvalid()) return;
+
 			try (CapManager.CapManagerBuilder manager = CapManager.forObject(tile.getWizardryCap())) {
 
 				Vec3d newDest;
@@ -181,7 +183,6 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 				anim.setEasing(!manager.isManaEmpty() ? Easing.easeInOutQuint : Easing.easeInOutSine);
 				anim.setCompletion(this::animationLoop);
 				animator.add(anim);
-
 			}
 		}
 	}

@@ -85,6 +85,7 @@ public class TileCraftingPlate extends TileManaInteractor {
 				PacketHandler.NETWORK.sendToAllAround(new PacketUpdateCraftingPlateRenderer(pos, slot), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
 			}
 		}
+
 	});
 
 	@Module

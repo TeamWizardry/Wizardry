@@ -11,7 +11,9 @@ import com.teamwizardry.wizardry.api.spell.SpellBuilder;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.common.network.PacketAddItemCraftingPlate;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
+import com.teamwizardry.wizardry.common.network.PacketRemoveItemCraftingPlate;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModItems;
@@ -34,6 +36,7 @@ import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -121,16 +124,10 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 						worldIn.notifyBlockUpdate(pos, state, state, 3);
 
 					} else if (!(stack.getItem() instanceof IInfusable)) {
-						for (int i = 0; i < plate.realInventory.getHandler().getSlots(); i++) {
-							if (plate.realInventory.getHandler().getStackInSlot(i).isEmpty()) {
-								plate.realInventory.getHandler().setStackInSlot(i, stack);
-								plate.markDirty();
-
-								playerIn.openContainer.detectAndSendChanges();
-
-								break;
-							}
-						}
+						ItemHandlerHelper.insertItem(plate.realInventory.getHandler(), stack, false);
+						PacketHandler.NETWORK.sendToAllAround(new PacketAddItemCraftingPlate(pos, stack), new NetworkRegistry.TargetPoint(worldIn.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
+						plate.markDirty();
+						playerIn.openContainer.detectAndSendChanges();
 					}
 
 					return true;
@@ -148,6 +145,7 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 
 					for (int i = plate.realInventory.getHandler().getSlots() - 1; i >= 0; i--) {
 						ItemStack extracted = plate.realInventory.getHandler().extractItem(i, playerIn.isSneaking() ? 64 : 1, false);
+						PacketHandler.NETWORK.sendToAllAround(new PacketRemoveItemCraftingPlate(pos, i), new NetworkRegistry.TargetPoint(worldIn.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
 						if (!extracted.isEmpty()) {
 							playerIn.addItemStackToInventory(extracted);
 							plate.markDirty();

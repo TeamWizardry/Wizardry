@@ -4,29 +4,27 @@ import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.autoregister.PacketRegister;
 import com.teamwizardry.librarianlib.features.network.PacketBase;
 import com.teamwizardry.librarianlib.features.saving.Save;
-import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
-import com.teamwizardry.wizardry.client.render.block.TileCraftingPlateRenderer;
 import com.teamwizardry.wizardry.common.tile.TileCraftingPlate;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
 @PacketRegister(Side.CLIENT)
-public class PacketUpdateCraftingPlateRenderer extends PacketBase {
+public class PacketRemoveItemCraftingPlate extends PacketBase {
 
 	@Save
-	public BlockPos pos;
+	private BlockPos pos;
 	@Save
-	public int slot;
+	private int slot;
 
-	public PacketUpdateCraftingPlateRenderer() {
+	public PacketRemoveItemCraftingPlate() {
 	}
 
-	public PacketUpdateCraftingPlateRenderer(BlockPos pos, int slot) {
+	public PacketRemoveItemCraftingPlate(BlockPos pos, int slot) {
 
 		this.pos = pos;
 		this.slot = slot;
@@ -37,21 +35,15 @@ public class PacketUpdateCraftingPlateRenderer extends PacketBase {
 		if (ctx.side.isServer()) return;
 
 		World world = LibrarianLib.PROXY.getClientPlayer().world;
+		EntityPlayer player = LibrarianLib.PROXY.getClientPlayer();
 		if (world == null) return;
 		if (!world.isBlockLoaded(pos)) return;
 
-		ClientRunnable.run(new ClientRunnable() {
-			@Override
-			@SideOnly(Side.CLIENT)
-			public void runIfClient() {
-				TileEntity entity = world.getTileEntity(pos);
-				if (entity instanceof TileCraftingPlate) {
-					TileCraftingPlate plate = (TileCraftingPlate) entity;
-					if (plate.renderHandler != null) {
-						((TileCraftingPlateRenderer) plate.renderHandler).update(slot);
-					}
-				}
-			}
-		});
+		TileEntity entity = world.getTileEntity(pos);
+		if (entity instanceof TileCraftingPlate) {
+			TileCraftingPlate plate = (TileCraftingPlate) entity;
+
+			plate.realInventory.getHandler().extractItem(slot, player.isSneaking() ? 64 : 1, false);
+		}
 	}
 }
