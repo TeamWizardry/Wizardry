@@ -45,8 +45,6 @@ public class Wizardry {
 
 		Wizardry.logger.info("o͡͡͡╮༼ ಠДಠ ༽╭o͡͡͡━☆ﾟ.*･｡ﾟ IT'S LEVI-OH-SA, NOT LEVIOSAA");
 
-		logger = event.getModLog();
-
 		proxy.preInit(event);
 	}
 

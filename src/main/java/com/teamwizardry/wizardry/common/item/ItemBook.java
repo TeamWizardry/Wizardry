@@ -37,7 +37,7 @@ import java.util.List;
 @Mod.EventBusSubscriber(modid = Wizardry.MODID)
 public class ItemBook extends ItemModBook implements IPickupAchievement {
 
-	public static Book BOOK = new Book("book");
+	public static Book BOOK;
 
 	public ItemBook() {
 		super("book");

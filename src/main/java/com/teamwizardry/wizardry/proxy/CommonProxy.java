@@ -1,5 +1,7 @@
 package com.teamwizardry.wizardry.proxy;
 
+import com.teamwizardry.librarianlib.features.gui.provided.book.helper.PageTypes;
+import com.teamwizardry.librarianlib.features.gui.provided.book.hierarchy.book.Book;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
@@ -9,9 +11,11 @@ import com.teamwizardry.wizardry.api.capability.world.WizardryWorldCapability;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.client.gui.GuiHandler;
+import com.teamwizardry.wizardry.client.gui.book.PageWizardryStructure;
 import com.teamwizardry.wizardry.common.advancement.AchievementEvents;
 import com.teamwizardry.wizardry.common.core.EventHandler;
 import com.teamwizardry.wizardry.common.core.version.ManifestHandler;
+import com.teamwizardry.wizardry.common.item.ItemBook;
 import com.teamwizardry.wizardry.common.module.effects.ModuleEffectLeap;
 import com.teamwizardry.wizardry.common.module.effects.ModuleEffectTimeSlow;
 import com.teamwizardry.wizardry.common.network.*;
@@ -88,6 +92,9 @@ public class CommonProxy {
 		PacketHandler.register(PacketSyncCooldown.class, Side.CLIENT);
 		PacketHandler.register(PacketVanishPotion.class, Side.CLIENT);
 		PacketHandler.register(PacketDevilDustFizzle.class, Side.CLIENT);
+
+		PageTypes.INSTANCE.registerPageProvider("wizardry_structure", PageWizardryStructure::new);
+		ItemBook.BOOK = new Book("book");
 	}
 
 	public void init(FMLInitializationEvent event) {

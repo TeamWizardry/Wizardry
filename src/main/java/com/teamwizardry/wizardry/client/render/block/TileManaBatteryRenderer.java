@@ -10,7 +10,7 @@ import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.IStructure;
-import com.teamwizardry.wizardry.api.block.WizardryStructure;
+import com.teamwizardry.wizardry.api.block.WizardryStructureRenderCompanion;
 import com.teamwizardry.wizardry.api.capability.mana.CapManager;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.core.renderer.StructureErrorRenderer;
@@ -46,7 +46,7 @@ import java.util.ArrayList;
 public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> {
 
 	private static IBakedModel modelRing, modelCrystal, modelRingOuter;
-	private WizardryStructure wizardryStructure;
+	private WizardryStructureRenderCompanion wizardryStructure;
 
 	public TileManaBatteryRenderer(@Nonnull TileManaBattery manaBattery) {
 		super(manaBattery);

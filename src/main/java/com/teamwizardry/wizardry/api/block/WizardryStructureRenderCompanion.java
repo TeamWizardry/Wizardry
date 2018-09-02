@@ -2,7 +2,6 @@ package com.teamwizardry.wizardry.api.block;
 
 import com.google.common.collect.HashMultimap;
 import com.teamwizardry.librarianlib.features.kotlin.ClientUtilMethods;
-import com.teamwizardry.librarianlib.features.structure.Structure;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import net.minecraft.block.Block;
@@ -30,10 +29,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 
-public class WizardryStructure extends Structure {
+public class WizardryStructureRenderCompanion {
 
 	@SideOnly(Side.CLIENT)
 	private HashMultimap<BlockRenderLayer, Template.BlockInfo> blocks = HashMultimap.create();
@@ -44,36 +45,43 @@ public class WizardryStructure extends Structure {
 	private IBlockAccess access = null;
 	private Vec3i offset = null;
 	private ResourceLocation loc;
+	private WizardryStructure structure;
 
-	public WizardryStructure(@Nonnull ResourceLocation loc) {
-		super(loc);
-		this.loc = loc;
+	public WizardryStructureRenderCompanion(ResourceLocation location) {
+		this.loc = location;
 	}
 
-	public void redraw() {
-		builtVBO = false;
+	@Nonnull
+	public List<Template.BlockInfo> getBlockInfos() {
+		if (getOrMakeStructure() == null) return new ArrayList<>();
+
+		return structure.blockInfos();
 	}
 
-	public List<Template.BlockInfo> sudoGetTemplateBlocks() {
-		return getTemplateBlocks();
+	@Nullable
+	private WizardryStructure getOrMakeStructure() {
+		if (structure == null) {
+			Block block = ForgeRegistries.BLOCKS.getValue(loc);
+			if (!(block instanceof IStructure) || block.getRegistryName() == null) return null;
+
+			structure = new WizardryStructure(block.getRegistryName());
+			offset = ((IStructure) block).offsetToCenter();
+		}
+
+		return structure;
 	}
 
 	@SideOnly(Side.CLIENT)
 	public void draw(IBlockAccess access, float alpha) {
-		if (offset == null) {
-			Block block = ForgeRegistries.BLOCKS.getValue(loc);
-			if (!(block instanceof IStructure)) return;
-
-			offset = ((IStructure) block).offsetToCenter();
-		}
+		if (getOrMakeStructure() == null) return;
 
 		if (!builtVBO || this.access != access) {
 			blocks = HashMultimap.create();
 			vboCaches = new EnumMap<>(BlockRenderLayer.class);
 
-			if (getTemplateBlocks() == null) return;
+			if (structure.sudoGetTemplateBlocks() == null) return;
 
-			for (Template.BlockInfo info : getTemplateBlocks()) {
+			for (Template.BlockInfo info : structure.sudoGetTemplateBlocks()) {
 				if (info.blockState.getMaterial() == Material.AIR) continue;
 				if (info.blockState.getRenderType() == EnumBlockRenderType.INVISIBLE) continue;
 				blocks.put(info.blockState.getBlock().getBlockLayer(), info);
@@ -87,7 +95,7 @@ public class WizardryStructure extends Structure {
 				buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 
 				for (Template.BlockInfo info : blocks.get(layer)) {
-					IBlockAccess blockAccess = access != null ? access : getBlockAccess();
+					IBlockAccess blockAccess = access != null ? access : structure.getBlockAccess();
 
 					buffer.setTranslation(info.pos.getX(), info.pos.getY(), info.pos.getZ());
 

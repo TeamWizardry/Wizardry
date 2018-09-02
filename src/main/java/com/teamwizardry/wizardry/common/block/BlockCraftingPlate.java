@@ -5,7 +5,7 @@ import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.IStructure;
-import com.teamwizardry.wizardry.api.block.WizardryStructure;
+import com.teamwizardry.wizardry.api.block.WizardryStructureRenderCompanion;
 import com.teamwizardry.wizardry.api.item.IInfusable;
 import com.teamwizardry.wizardry.api.spell.SpellBuilder;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
@@ -189,7 +189,7 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 	}
 
 	@Override
-	public WizardryStructure getStructure() {
+	public WizardryStructureRenderCompanion getStructure() {
 		return ModStructures.INSTANCE.getStructure(ModBlocks.CRAFTING_PLATE);
 	}
 

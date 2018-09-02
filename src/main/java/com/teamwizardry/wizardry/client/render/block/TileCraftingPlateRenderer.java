@@ -7,7 +7,7 @@ import com.teamwizardry.librarianlib.features.animator.animations.BasicAnimation
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBezier3D;
 import com.teamwizardry.librarianlib.features.tesr.TileRenderHandler;
 import com.teamwizardry.wizardry.api.block.IStructure;
-import com.teamwizardry.wizardry.api.block.WizardryStructure;
+import com.teamwizardry.wizardry.api.block.WizardryStructureRenderCompanion;
 import com.teamwizardry.wizardry.api.capability.mana.CapManager;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.core.renderer.StructureErrorRenderer;
@@ -41,7 +41,7 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 
 	private HashMap<Integer, LocationAndAngle> locationsAndAngles;
 
-	private WizardryStructure wizardryStructure;
+	private WizardryStructureRenderCompanion wizardryStructure;
 
 	public TileCraftingPlateRenderer(@Nonnull TileCraftingPlate tile) {
 		super(tile);
