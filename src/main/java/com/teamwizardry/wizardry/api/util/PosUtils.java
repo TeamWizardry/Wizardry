@@ -69,7 +69,7 @@ public final class PosUtils {
 
 	public static float[] vecToRotations(Vec3d vec) {
 		float yaw = (float) MathHelper.atan2(vec.z, vec.x);
-		float pitch = (float) Math.asin(vec.y / vec.lengthVector());
+		float pitch = (float) Math.asin(vec.y / vec.length());
 		return new float[]{(float) Math.toDegrees(pitch), (float) Math.toDegrees(yaw) + 90};
 	}
 

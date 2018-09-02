@@ -45,7 +45,7 @@ public class TileUnicornTrail extends TileMod implements ITickable {
 						builder.disableMotionCalculation();
 						builder.setAlphaFunction(new InterpFloatInOut(0.3f, 0f));
 						builder.setScaleFunction(new InterpScale(0.3f, 0f));
-						ParticleSpawner.spawn(builder, world, new StaticInterp<>(new Vec3d(getPos()).addVector(0.5, 0.5, 0.5)), 2, 0, (aFloat, particleBuilder) -> {
+						ParticleSpawner.spawn(builder, world, new StaticInterp<>(new Vec3d(getPos()).add(0.5, 0.5, 0.5)), 2, 0, (aFloat, particleBuilder) -> {
 							particleBuilder.setPositionOffset(new Vec3d(
 									RandUtil.nextDouble(-0.5, 0.5),
 									RandUtil.nextDouble(-0.5, 0.5),

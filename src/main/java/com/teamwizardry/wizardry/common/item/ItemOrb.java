@@ -21,6 +21,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -86,11 +87,11 @@ public class ItemOrb extends ItemMod implements IManaCell {
 			stack.setItemDamage(1);
 	}
 
+	@NotNull
 	@Override
-	@Nonnull
-	public String getUnlocalizedName(@Nonnull ItemStack stack) {
+	public String getTranslationKey(@NotNull ItemStack stack) {
 		float percentage = (int) (10 * CapManager.getMana(stack) / CapManager.getMaxMana(stack)) / 10f;
-		return super.getUnlocalizedName(stack) + ".fill." + ((int) (percentage * 100));
+		return super.getTranslationKey(stack) + ".fill." + ((int) (percentage * 100));
 	}
 
 	@Override

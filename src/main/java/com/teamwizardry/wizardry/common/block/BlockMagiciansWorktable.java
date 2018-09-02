@@ -94,7 +94,7 @@ public class BlockMagiciansWorktable extends BlockModContainer {
 	@Nonnull
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
-		return getDefaultState().withProperty(ISLEFTSIDE, (meta & 4) != 0).withProperty(FACING, EnumFacing.getHorizontal(meta & 3));
+		return getDefaultState().withProperty(ISLEFTSIDE, (meta & 4) != 0).withProperty(FACING, EnumFacing.byHorizontalIndex(meta & 3));
 	}
 
 	@Override

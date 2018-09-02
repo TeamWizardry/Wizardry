@@ -76,7 +76,7 @@ public class TileManaBattery extends TileManaInteractor {
 					@Override
 					@SideOnly(Side.CLIENT)
 					public void runIfClient() {
-						LibParticles.EXPLODE(world, new Vec3d(from.getPos()).addVector(0.5, 0.5, 0.5), Color.CYAN, Color.BLUE, 0.5, 0.5, 50, 50, 10, true);
+						LibParticles.EXPLODE(world, new Vec3d(from.getPos()).add(0.5, 0.5, 0.5), Color.CYAN, Color.BLUE, 0.5, 0.5, 50, 50, 10, true);
 					}
 				});
 			}

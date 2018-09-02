@@ -2,9 +2,9 @@ package com.teamwizardry.wizardry.client.render.block;
 
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
-import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
@@ -55,7 +55,7 @@ public class TileJarRenderer extends TileEntitySpecialRenderer<TileJar> {
 	public void render(TileJar te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
 		if (!te.hasFairy) return;
 		double timeDifference = (ClientTickHandler.getTicks() + partialTicks) / 20.0;
-		Vec3d pos = new Vec3d(te.getPos()).addVector(0.5, 0.35 + 0.2 * MathHelper.sin((float) timeDifference), 0.5);
+		Vec3d pos = new Vec3d(te.getPos()).add(0.5, 0.35 + 0.2 * MathHelper.sin((float) timeDifference), 0.5);
 
 		Color color = te.color;
 		ParticleBuilder glitter = new ParticleBuilder(10);

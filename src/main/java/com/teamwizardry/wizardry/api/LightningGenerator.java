@@ -1,14 +1,13 @@
 package com.teamwizardry.wizardry.api;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 import com.teamwizardry.librarianlib.features.math.interpolate.InterpFunction;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpLine;
 import com.teamwizardry.wizardry.api.util.RandUtilSeed;
 import com.teamwizardry.wizardry.api.util.TreeNode;
-
 import net.minecraft.util.math.Vec3d;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by Demoniaque.
@@ -39,7 +38,7 @@ public class LightningGenerator
 		InterpFunction<Vec3d> interp = new InterpLine(from.getData(), to);
 		ArrayList<Float> points = new ArrayList<>();
 
-		double dist = to.subtract(from.getData()).lengthVector();
+		double dist = to.subtract(from.getData()).length();
 		
 		points.add(1f);
 		for (int i = 0; i < dist * POINTS_PER_DIST; i++)

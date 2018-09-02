@@ -26,6 +26,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -76,12 +77,12 @@ public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, 
 		return "wasted";
 	}
 
+	@NotNull
 	@Override
-	@Nonnull
-	public String getUnlocalizedName(@Nonnull ItemStack stack) {
+	public String getTranslationKey(@NotNull ItemStack stack) {
 		if (!stack.hasTagCompound())
-			return super.getUnlocalizedName(stack);
-		return super.getUnlocalizedName(stack) + "." + getNameType(stack);
+			return super.getTranslationKey(stack);
+		return super.getTranslationKey(stack) + "." + getNameType(stack);
 	}
 
 	@Nonnull
@@ -156,7 +157,7 @@ public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, 
 
 		if (spellRings.isEmpty() && ItemNBTHelper.getFloat(stack, Constants.NBT.PURITY_OVERRIDE, -1f) < 0) {
 			float purity = getQuality(stack);
-			String desc = super.getUnlocalizedName(stack) + ".";
+			String desc = super.getTranslationKey(stack) + ".";
 			if (purity >= 1) desc += "perfect";
 			else {
 				boolean over = ItemNBTHelper.getInt(stack, Constants.NBT.PURITY, 0) > Constants.NBT.NACRE_PURITY_CONVERSION;
@@ -180,7 +181,7 @@ public class ItemNacrePearl extends ItemMod implements IInfusable, IExplodable, 
 					TooltipHelper.addToTooltip(tooltip, desc + i);
 			}
 		} else if (spellRings.isEmpty() && getQuality(stack) > 1f) {
-			String desc = super.getUnlocalizedName(stack) + ".ancient.desc";
+			String desc = super.getTranslationKey(stack) + ".ancient.desc";
 			String used = LibrarianLib.PROXY.canTranslate(desc) ? desc : desc + "0";
 			if (LibrarianLib.PROXY.canTranslate(used)) {
 				TooltipHelper.addToTooltip(tooltip, used);

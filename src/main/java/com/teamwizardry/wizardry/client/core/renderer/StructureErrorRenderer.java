@@ -37,7 +37,7 @@ public class StructureErrorRenderer {
 				return;
 		}
 
-		errors.add(new ParticleError(new Vec3d(pos).addVector(0.5, 0.5, 0.5), 100));
+		errors.add(new ParticleError(new Vec3d(pos).add(0.5, 0.5, 0.5), 100));
 	}
 
 	public static void addError(Vec3d pos) {

@@ -30,6 +30,6 @@ public class EntityAIUnicornWander extends EntityAIWander {
 			pos.move(UP);
 		}
 
-		return new Vec3d(pos).addVector(0.5, 0.5, 0.5);
+		return new Vec3d(pos).add(0.5, 0.5, 0.5);
 	}
 }

@@ -57,7 +57,7 @@ public class PotionSlippery extends PotionBase {
 						float f = entity.rotationPitch * 0.017453292F;
 						double d6 = Math.sqrt(vec3d.x * vec3d.x + vec3d.z * vec3d.z);
 						double d8 = Math.sqrt(entity.motionX * entity.motionX + entity.motionZ * entity.motionZ);
-						double d1 = vec3d.lengthVector();
+						double d1 = vec3d.length();
 						float f4 = MathHelper.cos(f);
 						f4 = (float) ((double) f4 * (double) f4 * Math.min(1.0D, d1 / 0.4D));
 						entity.motionY += -0.08D + (double) f4 * 0.06D;
@@ -152,7 +152,7 @@ public class PotionSlippery extends PotionBase {
 						} else {
 							blockpos$pooledmutableblockpos.setPos(entity.posX, 0.0D, entity.posZ);
 
-							if (!entity.world.isRemote || entity.world.isBlockLoaded(blockpos$pooledmutableblockpos) && entity.world.getChunkFromBlockCoords(blockpos$pooledmutableblockpos).isLoaded()) {
+							if (!entity.world.isRemote || entity.world.isBlockLoaded(blockpos$pooledmutableblockpos) && entity.world.getChunk(blockpos$pooledmutableblockpos).isLoaded()) {
 								if (!entity.hasNoGravity()) {
 									entity.motionY -= 0.08D;
 								}

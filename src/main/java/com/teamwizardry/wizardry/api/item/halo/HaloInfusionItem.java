@@ -17,7 +17,7 @@ public class HaloInfusionItem {
 
 	public HaloInfusionItem(ItemStack stack) {
 		this.stack = stack;
-		this.nbtName = stack.getUnlocalizedName();
+		this.nbtName = stack.getTranslationKey();
 	}
 
 	public HaloInfusionItem(Item item) {

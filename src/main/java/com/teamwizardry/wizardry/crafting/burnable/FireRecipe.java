@@ -31,7 +31,7 @@ public class FireRecipe {
 	public void tick(World world, BlockPos pos) {
 		currentDuration++;
 		if (currentDuration % 10 == 0) {
-			PacketHandler.NETWORK.sendToAllAround(new PacketDevilDustFizzle(new Vec3d(pos).addVector(0.5, 0.5, 0.5), currentDuration), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 20));
+			PacketHandler.NETWORK.sendToAllAround(new PacketDevilDustFizzle(new Vec3d(pos).add(0.5, 0.5, 0.5), currentDuration), new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 20));
 			world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), ModSounds.FRYING_SIZZLE, SoundCategory.BLOCKS, 0.7F, (float) RandUtil.nextDouble(0.8, 1.3));
 		}
 	}

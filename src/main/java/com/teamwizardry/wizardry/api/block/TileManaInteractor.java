@@ -1,10 +1,10 @@
 package com.teamwizardry.wizardry.api.block;
 
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBezier3D;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
-import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.saving.Module;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
@@ -152,7 +152,7 @@ public class TileManaInteractor extends TileCachable implements ITickable, IMana
 							ParticleBuilder helix = new ParticleBuilder(200);
 							helix.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 							helix.setAlphaFunction(new InterpFloatInOut(0.1f, 0.1f));
-							ParticleSpawner.spawn(helix, world, new StaticInterp<>(new Vec3d(interacterFrom.getPos()).addVector(0.5, 1, 0.5)), 1, 0, (someFloat, particleBuilder) -> {
+							ParticleSpawner.spawn(helix, world, new StaticInterp<>(new Vec3d(interacterFrom.getPos()).add(0.5, 1, 0.5)), 1, 0, (someFloat, particleBuilder) -> {
 								particleBuilder.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), RandUtil.nextInt(50, 200)));
 								particleBuilder.setScale(RandUtil.nextFloat(0.3f, 0.8f));
 								particleBuilder.setPositionFunction(new InterpBezier3D(Vec3d.ZERO, new Vec3d(getPos().subtract(interacterFrom.getPos())), new Vec3d(0, 5, 0), new Vec3d(0, -5, 0)));

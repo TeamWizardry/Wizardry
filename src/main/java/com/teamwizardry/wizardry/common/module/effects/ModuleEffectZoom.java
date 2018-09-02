@@ -1,11 +1,11 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpLine;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
-import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.ProcessData;
@@ -141,13 +141,13 @@ public class ModuleEffectZoom extends ModuleEffect {
 				particle.setAcceleration(Vec3d.ZERO);
 			}
 		});
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(origin.addVector(0, entity.height / 2.0, 0)), 10, 0, (aFloat, particleBuilder) -> {
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(origin.add(0, entity.height / 2.0, 0)), 10, 0, (aFloat, particleBuilder) -> {
 			glitter.setPositionOffset(new Vec3d(
 					RandUtil.nextDouble(-0.5, 0.5),
 					RandUtil.nextDouble(-0.5, 0.5),
 					RandUtil.nextDouble(-0.5, 0.5)
 			));
-			ParticleSpawner.spawn(glitter, world, new InterpLine(origin.add(particleBuilder.getPositionOffset()), to.add(particleBuilder.getPositionOffset()).addVector(0, entity.height / 2.0, 0)), (int) origin.distanceTo(to) * 5, 0, (aFloat2, particleBuilder2) -> {
+			ParticleSpawner.spawn(glitter, world, new InterpLine(origin.add(particleBuilder.getPositionOffset()), to.add(particleBuilder.getPositionOffset()).add(0, entity.height / 2.0, 0)), (int) origin.distanceTo(to) * 5, 0, (aFloat2, particleBuilder2) -> {
 				glitter.setAlpha(RandUtil.nextFloat(0.5f, 0.8f));
 				glitter.setScale(RandUtil.nextFloat(0.3f, 0.6f));
 				glitter.setLifetime(RandUtil.nextInt(30, 50));

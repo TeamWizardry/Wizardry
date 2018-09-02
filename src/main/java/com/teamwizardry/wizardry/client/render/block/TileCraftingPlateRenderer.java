@@ -108,13 +108,13 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 					if (RandUtil.nextInt(mapSize / 2) == 0) {
 						LibParticles.CLUSTER_DRAPE(
 								tile.getWorld(),
-								locationsAndAngle.location.add(new Vec3d(tile.getPos())).addVector(0.5, 0.5, 0.5));
+								locationsAndAngle.location.add(new Vec3d(tile.getPos())).add(0.5, 0.5, 0.5));
 					}
 				} else {
 					if (RandUtil.nextInt(mapSize / 4) == 0) {
 						LibParticles.CRAFTING_ALTAR_CLUSTER_SUCTION(
 								tile.getWorld(),
-								new Vec3d(tile.getPos()).addVector(0.5, 0.75, 0.5),
+								new Vec3d(tile.getPos()).add(0.5, 0.75, 0.5),
 								new InterpBezier3D(locationsAndAngle.location, new Vec3d(0, 0, 0)));
 					}
 				}
@@ -138,7 +138,7 @@ public class TileCraftingPlateRenderer extends TileRenderHandler<TileCraftingPla
 			Minecraft.getMinecraft().getRenderItem().renderItem(pearlToRender, TransformType.NONE);
 			GlStateManager.popMatrix();
 		} else if (errors.isEmpty() && RandUtil.nextInt(4) == 0) {
-			LibParticles.CRAFTING_ALTAR_IDLE(tile.getWorld(), new Vec3d(tile.getPos()).addVector(0.5, 0.7, 0.5));
+			LibParticles.CRAFTING_ALTAR_IDLE(tile.getWorld(), new Vec3d(tile.getPos()).add(0.5, 0.7, 0.5));
 		}
 	}
 

@@ -114,10 +114,10 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 						Entity victim = getData(DefaultKeys.ENTITY_HIT);
 						if (victim == null) {
 							return null;
-						} else return victim.getPositionVector().addVector(0, victim.height / 2.0, 0);
-					} else return new Vec3d(pos).addVector(0.5, 0.5, 0.5);
+						} else return victim.getPositionVector().add(0, victim.height / 2.0, 0);
+					} else return new Vec3d(pos).add(0.5, 0.5, 0.5);
 				} else return target;
-			} else return caster.getPositionVector().addVector(0, caster.height / 2.0, 0);
+			} else return caster.getPositionVector().add(0, caster.height / 2.0, 0);
 		} else return origin;
 	}
 
@@ -128,7 +128,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			Entity caster = getData(DefaultKeys.CASTER);
 			if (caster == null) {
 				return null;
-			} else return caster.getPositionVector().addVector(0, caster.height / 2.0, 0);
+			} else return caster.getPositionVector().add(0, caster.height / 2.0, 0);
 		} else return origin;
 	}
 
@@ -145,11 +145,11 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 						Entity caster = getData(DefaultKeys.CASTER);
 						if (caster == null) {
 							return null;
-						} else return caster.getPositionVector().addVector(0, caster.height / 2.0, 0);
+						} else return caster.getPositionVector().add(0, caster.height / 2.0, 0);
 					}
 					return origin;
-				} else return victim.getPositionVector().addVector(0, victim.height / 2.0, 0);
-			} else return new Vec3d(pos).addVector(0.5, 0.5, 0.5);
+				} else return victim.getPositionVector().add(0, victim.height / 2.0, 0);
+			} else return new Vec3d(pos).add(0.5, 0.5, 0.5);
 		}
 		return target;
 	}
@@ -163,8 +163,8 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 				Entity victim = getData(DefaultKeys.ENTITY_HIT);
 				if (victim == null) {
 					return null;
-				} else return victim.getPositionVector().addVector(0, victim.height / 2.0, 0);
-			} else return new Vec3d(pos).addVector(0.5, 0.5, 0.5);
+				} else return victim.getPositionVector().add(0, victim.height / 2.0, 0);
+			} else return new Vec3d(pos).add(0.5, 0.5, 0.5);
 		}
 		return target;
 	}
@@ -228,21 +228,21 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 
 	public void processEntity(@Nonnull Entity entity, boolean asCaster) {
 		if (asCaster) {
-			addData(DefaultKeys.ORIGIN, entity.getPositionVector().addVector(0, entity.getEyeHeight(), 0));
+			addData(DefaultKeys.ORIGIN, entity.getPositionVector().add(0, entity.getEyeHeight(), 0));
 			addData(DefaultKeys.CASTER, entity);
 			addData(DefaultKeys.YAW, entity.rotationYaw);
 			addData(DefaultKeys.PITCH, entity.rotationPitch);
 			addData(DefaultKeys.LOOK, entity.getLook(0));
 			addData(DefaultKeys.CAPABILITY, WizardryCapabilityProvider.getCap(entity));
 		} else {
-			addData(DefaultKeys.TARGET_HIT, entity.getPositionVector().addVector(0, entity.height / 2.0, 0));
+			addData(DefaultKeys.TARGET_HIT, entity.getPositionVector().add(0, entity.height / 2.0, 0));
 			addData(DefaultKeys.ENTITY_HIT, entity);
 		}
 	}
 
 	public void processBlock(@Nullable BlockPos pos, @Nullable EnumFacing facing, @Nullable Vec3d targetHit) {
 		if (pos == null && targetHit != null) pos = new BlockPos(targetHit);
-		if (targetHit == null && pos != null) targetHit = new Vec3d(pos).addVector(0.5, 0.5, 0.5);
+		if (targetHit == null && pos != null) targetHit = new Vec3d(pos).add(0.5, 0.5, 0.5);
 
 		addData(BLOCK_HIT, pos);
 		addData(DefaultKeys.TARGET_HIT, targetHit);

@@ -111,7 +111,7 @@ public class LightEffectUtil {
 			if (derivative.size() <= i) continue;
 			Vec3d der = derivative.get(i);
 
-			Vec3d norm = new Vec3d(der.y, -der.x, der.z).normalize().scale(thickness).scale(concave.size() < i ? concave.get(i).lengthVector() : 1);
+			Vec3d norm = new Vec3d(der.y, -der.x, der.z).normalize().scale(thickness).scale(concave.size() < i ? concave.get(i).length() : 1);
 
 			Vec3d midpoint = new Vec3d((from.x + to.x) / 2, (from.y + to.y) / 2, (from.z + to.z) / 2);
 
@@ -130,7 +130,7 @@ public class LightEffectUtil {
 			if (points.size() > i + 1 && derivative.size() > i + 1) {
 				Vec3d nextPoint = points.get(i + 1);
 				Vec3d nextDer = derivative.get(i + 1);
-				Vec3d nextDerNorm = new Vec3d(nextDer.y, -nextDer.x, nextDer.z).normalize().scale(thickness).scale(concave.size() < i ? concave.get(i).lengthVector() : 1);
+				Vec3d nextDerNorm = new Vec3d(nextDer.y, -nextDer.x, nextDer.z).normalize().scale(thickness).scale(concave.size() < i ? concave.get(i).length() : 1);
 				Vec3d nextMidPoint = new Vec3d((to.x + nextPoint.x) / 2, (to.y + nextPoint.y) / 2, (to.z + nextPoint.z) / 2);
 
 				vb.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION_COLOR);

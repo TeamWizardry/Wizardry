@@ -17,7 +17,7 @@ public class Utils {
 
 	public static float signAngle(Vec3d a, Vec3d b, Vec3d n) {
 		Vec3d cross = a.crossProduct(b);
-		double s = cross.lengthVector();
+		double s = cross.length();
 		double c = a.dotProduct(b);
 		double angle = MathHelper.atan2(s, c);
 

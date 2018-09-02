@@ -123,7 +123,7 @@ public class ItemSyringe extends ItemMod {
 
 	@Override
 	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
-		String desc = stack.getUnlocalizedName() + ".desc";
+		String desc = stack.getTranslationKey() + ".desc";
 		String used = LibrarianLib.PROXY.canTranslate(desc) ? desc : desc + "0";
 		if (LibrarianLib.PROXY.canTranslate(used)) {
 			TooltipHelper.addToTooltip(tooltip, used);

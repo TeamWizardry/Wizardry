@@ -49,7 +49,7 @@ public class TileHaloInfuser extends TileModTickable {
 
 		if (world.isRemote)
 			for (EntityHaloInfusionItem entity : entities)
-				entity.getHaloInfusionItem().render(entity.world, entity.getPositionVector().addVector(0, entity.height / 2.0, 0));
+				entity.getHaloInfusionItem().render(entity.world, entity.getPositionVector().add(0, entity.height / 2.0, 0));
 
 	}
 

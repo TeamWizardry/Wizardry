@@ -1,9 +1,9 @@
 package com.teamwizardry.wizardry.common.module.shapes;
 
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpCircle;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
-import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
@@ -78,7 +78,7 @@ public class ModuleShapeTouch extends ModuleShape {
 		if (caster == null) return previousData;
 		if (origin == null) return previousData;
 
-		RayTraceResult result = new RayTrace(data.world, look, caster.getPositionVector().addVector(0, caster.getEyeHeight(), 0),
+		RayTraceResult result = new RayTrace(data.world, look, caster.getPositionVector().add(0, caster.getEyeHeight(), 0),
 				caster instanceof EntityLivingBase ? ((EntityLivingBase) caster).getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue() : 5)
 				.setEntityFilter(input -> input != caster)
 				.setReturnLastUncollidableBlock(true)
@@ -109,7 +109,7 @@ public class ModuleShapeTouch extends ModuleShape {
 
 		ParticleBuilder glitter = new ParticleBuilder(1);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-		ParticleSpawner.spawn(glitter, spell.world, new InterpCircle(targetEntity.getPositionVector().addVector(0, targetEntity.height / 2.0, 0), new Vec3d(0, 1, 0), 1, 10), 50, RandUtil.nextInt(10, 15), (aFloat, particleBuilder) -> {
+		ParticleSpawner.spawn(glitter, spell.world, new InterpCircle(targetEntity.getPositionVector().add(0, targetEntity.height / 2.0, 0), new Vec3d(0, 1, 0), 1, 10), 50, RandUtil.nextInt(10, 15), (aFloat, particleBuilder) -> {
 			if (RandUtil.nextBoolean()) {
 				glitter.setColor(spellRing.getPrimaryColor());
 				glitter.setMotion(new Vec3d(0, RandUtil.nextDouble(0.01, 0.1), 0));

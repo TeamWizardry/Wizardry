@@ -89,7 +89,7 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 
 		SpellData spell = new SpellData(world);
 		spell.processEntity(player, true);
-		spell.processBlock(pos, side, new Vec3d(pos).addVector(0.5, 0.5, 0.5));
+		spell.processBlock(pos, side, new Vec3d(pos).add(0.5, 0.5, 0.5));
 		SpellUtils.runSpell(stack, spell);
 
 		setCooldown(world, player, hand, stack, spell);
@@ -241,7 +241,7 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 
 		if (spellRings.isEmpty() && ItemNBTHelper.getFloat(stack, Constants.NBT.PURITY_OVERRIDE, -1f) < 0) {
 			float purity = getQuality(stack);
-			String desc = super.getUnlocalizedName(stack) + ".";
+			String desc = super.getTranslationKey(stack) + ".";
 			if (purity >= 1) desc += "perfect";
 			else {
 				boolean over = ItemNBTHelper.getInt(stack, Constants.NBT.PURITY, 0) > Constants.NBT.NACRE_PURITY_CONVERSION;
@@ -265,7 +265,7 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 					TooltipHelper.addToTooltip(tooltip, desc + i);
 			}
 		} else if (spellRings.isEmpty() && getQuality(stack) > 1f) {
-			String desc = super.getUnlocalizedName(stack) + ".ancient.desc";
+			String desc = super.getTranslationKey(stack) + ".ancient.desc";
 			String used = LibrarianLib.PROXY.canTranslate(desc) ? desc : desc + "0";
 			if (LibrarianLib.PROXY.canTranslate(used)) {
 				TooltipHelper.addToTooltip(tooltip, used);

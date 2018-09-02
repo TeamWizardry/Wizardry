@@ -235,7 +235,7 @@ public class ModuleEffectLightning extends ModuleEffect {
 			double zoneRange = spellRing.getAttributeValue(AttributeRegistry.RANGE, data);
 
 			Vec3d min = targetPos.subtract(zoneAoE/2, zoneRange/2, zoneAoE/2);
-			Vec3d max = targetPos.addVector(zoneAoE/2, zoneRange/2, zoneAoE/2);
+			Vec3d max = targetPos.add(zoneAoE / 2, zoneRange / 2, zoneAoE / 2);
 
 			if (!childRing.taxCaster(data, true)) return;
 

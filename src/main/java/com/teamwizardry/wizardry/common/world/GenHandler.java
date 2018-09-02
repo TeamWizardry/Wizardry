@@ -19,7 +19,7 @@ public class GenHandler implements IWorldGenerator {
 			WorldGenManaLake gen = new WorldGenManaLake(ModFluids.MANA.getActualBlock());
 			int xRand = x * 16 + rand.nextInt(16);
 			int zRand = z * 16 + rand.nextInt(16);
-			int yRand = world.getChunkFromChunkCoords(x, z).getLowestHeight();
+			int yRand = world.getChunk(x, z).getLowestHeight();
 //			int yRand = world.getTopSolidOrLiquidBlock(new BlockPos(x, 0, z)).getY();
 			yRand = RandUtil.nextInt(yRand - 1, yRand);
 			BlockPos position = new BlockPos(xRand, yRand, zRand);

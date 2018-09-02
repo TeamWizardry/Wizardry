@@ -86,10 +86,10 @@ public class ModBlocks {
 	@SubscribeEvent
 	public static void remapFluids(RegistryEvent.MissingMappings<Block> event) {
 		event.getMappings().stream()
-				.filter(mapping -> mapping.key.getResourcePath().equals("mana"))
+				.filter(mapping -> mapping.key.getPath().equals("mana"))
 				.forEach(mapping -> mapping.remap(ModFluids.MANA.getActualBlock()));
 		event.getMappings().stream()
-				.filter(mapping -> mapping.key.getResourcePath().equals("nacre"))
+				.filter(mapping -> mapping.key.getPath().equals("nacre"))
 				.forEach(mapping -> mapping.remap(ModFluids.NACRE.getActualBlock()));
 	}
 

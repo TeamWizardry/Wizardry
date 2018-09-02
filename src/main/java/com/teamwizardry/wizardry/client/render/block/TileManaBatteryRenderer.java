@@ -170,7 +170,7 @@ public class TileManaBatteryRenderer extends TileRenderHandler<TileManaBattery> 
 			builder.disableRandom();
 			builder.disableMotionCalculation();
 
-			ParticleSpawner.spawn(builder, tile.getWorld(), new InterpCircle(new Vec3d(tile.getPos()).addVector(0.5, 0.5, 0.5), new Vec3d(x1, x1, y1), 1.5f), 20, 0, (aFloat, particleBuilder) -> {
+			ParticleSpawner.spawn(builder, tile.getWorld(), new InterpCircle(new Vec3d(tile.getPos()).add(0.5, 0.5, 0.5), new Vec3d(x1, x1, y1), 1.5f), 20, 0, (aFloat, particleBuilder) -> {
 				particleBuilder.setScale(0.5f);
 				particleBuilder.setColor(new Color(0xd600d2));
 				particleBuilder.setAlphaFunction(new InterpFloatInOut(1, 1));

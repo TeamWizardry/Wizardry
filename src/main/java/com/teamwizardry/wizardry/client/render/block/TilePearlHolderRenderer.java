@@ -104,9 +104,9 @@ public class TilePearlHolderRenderer extends TileEntitySpecialRenderer<TilePearl
 	private static final double TX = 0.25;
 
 	private static void side(Tessellator tess, double scale, Color color, EnumFacing facing, double u, double v) {
-		int normalX = facing.getFrontOffsetX();
-		int normalY = facing.getFrontOffsetY();
-		int normalZ = facing.getFrontOffsetZ();
+		int normalX = facing.getXOffset();
+		int normalY = facing.getYOffset();
+		int normalZ = facing.getZOffset();
 
 		BufferBuilder bf = tess.getBuffer();
 

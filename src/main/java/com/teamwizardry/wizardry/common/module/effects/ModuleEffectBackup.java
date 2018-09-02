@@ -62,7 +62,7 @@ public class ModuleEffectBackup extends ModuleEffect {
 		if (targetPos == null) return true;
 		if (!(caster instanceof EntityLivingBase)) return true;
 		if (facing != null && !world.isAirBlock(new BlockPos(targetPos))) {
-			targetPos = new Vec3d(new BlockPos(targetPos).offset(facing)).addVector(0.5, 0.5, 0.5);
+			targetPos = new Vec3d(new BlockPos(targetPos).offset(facing)).add(0.5, 0.5, 0.5);
 		}
 
 		EntityBackupZombie zombie = new EntityBackupZombie(world, (EntityLivingBase) caster, (int) duration);

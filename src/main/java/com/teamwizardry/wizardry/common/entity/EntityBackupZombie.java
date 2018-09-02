@@ -63,6 +63,16 @@ public class EntityBackupZombie extends EntityMob {
 		this.targetTasks.addTask(4, new EntityAITargetFiltered<>(this, EntityMob.class, false, new Predicate<Entity>() {
 			public boolean apply(@Nullable Entity entity) {
 				if (entity == null) return false;
+				if (entity.getDataManager().getAll() == null) return false;
+
+				boolean success = false;
+				for (EntityDataManager.DataEntry<?> entry : entity.getDataManager().getAll()) {
+					if (entry.getKey().equals(OWNER)) {
+						success = true;
+						break;
+					}
+				}
+				if (!success) return false;
 
 				UUID theirOwner = null;
 				Object ownerObj = entity.getDataManager().get(OWNER);

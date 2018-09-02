@@ -2,13 +2,13 @@ package com.teamwizardry.wizardry.client.fx;
 
 import com.teamwizardry.librarianlib.features.math.interpolate.InterpFunction;
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBezier3D;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpHelix;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpLine;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
-import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.Constants.MISC;
@@ -65,7 +65,7 @@ public class LibParticles {
 		fizz.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		fizz.setAlphaFunction(new InterpFloatInOut(0.3f, 0.3f));
 
-		ParticleSpawner.spawn(fizz, world, new StaticInterp<>(pos.addVector(0, 0.5, 0)), 10, 0, (aFloat, particleBuilder) -> {
+		ParticleSpawner.spawn(fizz, world, new StaticInterp<>(pos.add(0, 0.5, 0)), 10, 0, (aFloat, particleBuilder) -> {
 			fizz.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), RandUtil.nextInt(100, 255)));
 			fizz.setLifetime(RandUtil.nextInt(20, 30));
 			fizz.setPositionOffset(new Vec3d(
@@ -397,7 +397,7 @@ public class LibParticles {
 		beam.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		beam.setAlphaFunction(new InterpFloatInOut(1f, 1f));
 
-		pos = pos.addVector(0, 0.75, 0);
+		pos = pos.add(0, 0.75, 0);
 		ParticleSpawner.spawn(beam, world, new StaticInterp<>(pos), 1, 0, (aFloat, particleBuilder) -> {
 			beam.setScale(RandUtil.nextFloat());
 			beam.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), RandUtil.nextInt(100, 255)));
@@ -469,7 +469,7 @@ public class LibParticles {
 		builder.setAlphaFunction(new InterpFloatInOut(0.0f, 0.1f));
 		builder.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		builder.enableMotionCalculation();
-		ParticleSpawner.spawn(builder, world, new InterpLine(pos, pos.addVector(0, 100, 0)), RandUtil.nextInt(400, 500), 0, (aFloat, particleBuilder) -> {
+		ParticleSpawner.spawn(builder, world, new InterpLine(pos, pos.add(0, 100, 0)), RandUtil.nextInt(400, 500), 0, (aFloat, particleBuilder) -> {
 			builder.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), RandUtil.nextInt(200, 255)));
 			double radius = 1;
 			double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
@@ -505,7 +505,7 @@ public class LibParticles {
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		glitter.setAlphaFunction(new InterpFloatInOut(0.5f, 0.3f));
 
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(pedestal).addVector(0.5, 1, 0.5)), 1, 0, (aFloat, particleBuilder) -> {
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(pedestal).add(0.5, 1, 0.5)), 1, 0, (aFloat, particleBuilder) -> {
 			glitter.setColorFunction(new InterpColorHSV(ColorUtils.changeColorAlpha(Color.BLUE, RandUtil.nextInt(100, 150)), ColorUtils.changeColorAlpha(Color.CYAN, RandUtil.nextInt(100, 150))));
 			glitter.setScale(RandUtil.nextFloat());
 			glitter.setPositionFunction(new InterpBezier3D(Vec3d.ZERO, new Vec3d(center.subtract(pedestal)), new Vec3d(0, 3, 0), new Vec3d(0, 5, 0)));

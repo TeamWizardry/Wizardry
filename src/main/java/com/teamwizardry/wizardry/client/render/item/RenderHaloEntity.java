@@ -84,7 +84,7 @@ public class RenderHaloEntity implements LayerRenderer<EntityLivingBase> {
 		} else {
 		    Entity entity = entitylivingbaseIn;
 
-			Vec3d entityOrigin = entity.getPositionVector().addVector(0, entity.height + (entity.isSneaking() ? 0.2 : 0.4), 0);
+			Vec3d entityOrigin = entity.getPositionVector().add(0, entity.height + (entity.isSneaking() ? 0.2 : 0.4), 0);
 			InterpCircle circle = new InterpCircle(Vec3d.ZERO, new Vec3d(0, 1, 0), 0.3f, RandUtil.nextFloat(), RandUtil.nextFloat());
 
 			for (Vec3d origin : circle.list(5)) {
@@ -125,7 +125,7 @@ public class RenderHaloEntity implements LayerRenderer<EntityLivingBase> {
 													entity.prevPosZ + (entity.posZ - entity.prevPosZ) * ClientTickHandler.getPartialTicks() - Particle.interpPosZ
 											);
 									Vec3d newPos = interpPos
-											.addVector(0, entity.height + (entity.isSneaking() ? 0.2 : 0.4), 0)
+											.add(0, entity.height + (entity.isSneaking() ? 0.2 : 0.4), 0)
 											.add(origin);
 
 									baseRenderFunction.render(i,

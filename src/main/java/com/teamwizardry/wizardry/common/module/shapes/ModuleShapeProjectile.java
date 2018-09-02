@@ -94,7 +94,7 @@ public class ModuleShapeProjectile extends ModuleShape {
 		double dist = ring.getAttributeValue(AttributeRegistry.RANGE, data);
 
 		RayTraceResult result = new RayTrace(
-				data.world, look, caster.getPositionVector().addVector(0, caster.getEyeHeight(), 0), dist)
+				data.world, look, caster.getPositionVector().add(0, caster.getEyeHeight(), 0), dist)
 				.setEntityFilter(input -> input != caster)
 				.setReturnLastUncollidableBlock(true)
 				.setIgnoreBlocksWithoutBoundingBoxes(true)

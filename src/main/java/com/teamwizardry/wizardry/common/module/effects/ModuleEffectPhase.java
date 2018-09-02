@@ -1,9 +1,9 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
-import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.IDelayedModule;
@@ -267,7 +267,7 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 				ParticleBuilder glitter2 = new ParticleBuilder(10);
 				glitter2.setRenderNormalLayer(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 				glitter2.disableRandom();
-				ParticleSpawner.spawn(glitter2, spell.world, new StaticInterp<>(new Vec3d(entry.getKey()).addVector(0.5, 0.5, 0.5)), 5, (int) duration, (aFloat, build) -> {
+				ParticleSpawner.spawn(glitter2, spell.world, new StaticInterp<>(new Vec3d(entry.getKey()).add(0.5, 0.5, 0.5)), 5, (int) duration, (aFloat, build) -> {
 					build.setColor(Color.CYAN);
 					//build.setAlphaFunction(new InterpFloatInOut(1f, 0.1f));
 					build.setAlpha(RandUtil.nextFloat(0.05f, 0.2f));
@@ -300,7 +300,7 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 					if (adjState.getBlock() != Blocks.AIR && adjState.getBlock() != ModBlocks.FAKE_AIR) {
 
 						Vec3d directionOffsetVec = new Vec3d(facing.getOpposite().getDirectionVec()).scale(0.5);
-						Vec3d adjPos = new Vec3d(mutable).addVector(0.5, 0.5, 0.5).add(directionOffsetVec);
+						Vec3d adjPos = new Vec3d(mutable).add(0.5, 0.5, 0.5).add(directionOffsetVec);
 
 						for (EnumFacing subFacing : getPerpendicularFacings(facing)) {
 							mutable.move(subFacing);
@@ -312,7 +312,7 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 							} else subState = blockStateCache.get(mutable);
 
 							if (BlockUtils.isAnyAir(subState)) {
-								Vec3d subPos = new Vec3d(mutable).addVector(0.5, 0.5, 0.5).add(directionOffsetVec);
+								Vec3d subPos = new Vec3d(mutable).add(0.5, 0.5, 0.5).add(directionOffsetVec);
 								Vec3d midPointVec = new Vec3d(
 										(adjPos.x + subPos.x) / 2.0,
 										(adjPos.y + subPos.y) / 2.0,

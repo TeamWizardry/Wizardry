@@ -1,9 +1,9 @@
 package com.teamwizardry.wizardry.api.arena;
 
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpCircle;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
-import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.saving.AbstractSaveHandler;
 import com.teamwizardry.librarianlib.features.saving.Savable;
 import com.teamwizardry.librarianlib.features.saving.Save;
@@ -72,15 +72,15 @@ public class Arena implements INBTSerializable<NBTTagCompound> {
 				for (int y = 0; y < height; y++) {
 					BlockPos pos = center.add(x, y, z);
 					if (pos.getDistance(center.getX(), center.getY(), center.getZ()) > radius) {
-						LibParticles.STRUCTURE_FLAIR(world, new Vec3d(pos).addVector(0.5, 0.5, 0.5), Color.RED);
+						LibParticles.STRUCTURE_FLAIR(world, new Vec3d(pos).add(0.5, 0.5, 0.5), Color.RED);
 						return false;
 					}
 					if (!world.canBlockSeeSky(pos)) {
-						LibParticles.STRUCTURE_FLAIR(world, new Vec3d(pos).addVector(0.5, 0.5, 0.5), Color.GREEN);
+						LibParticles.STRUCTURE_FLAIR(world, new Vec3d(pos).add(0.5, 0.5, 0.5), Color.GREEN);
 						return false;
 					}
 					if (!world.isAirBlock(pos)) {
-						LibParticles.STRUCTURE_FLAIR(world, new Vec3d(pos).addVector(0.5, 0.5, 0.5), Color.BLUE);
+						LibParticles.STRUCTURE_FLAIR(world, new Vec3d(pos).add(0.5, 0.5, 0.5), Color.BLUE);
 						return false;
 					}
 				}
@@ -109,7 +109,7 @@ public class Arena implements INBTSerializable<NBTTagCompound> {
 					glitter.setAlphaFunction(new InterpFloatInOut(0.3f, 0.3f));
 					glitter.setCollision(true);
 					glitter.enableMotionCalculation();
-					ParticleSpawner.spawn(glitter, getWorld(), new InterpCircle(new Vec3d(getCenter()).addVector(0.5, getHeight(), 0.5), new Vec3d(0, 1, 0), (float) getRadius(), 1, RandUtil.nextFloat()), 10, RandUtil.nextInt(10), (aFloat, particleBuilder) -> {
+					ParticleSpawner.spawn(glitter, getWorld(), new InterpCircle(new Vec3d(getCenter()).add(0.5, getHeight(), 0.5), new Vec3d(0, 1, 0), (float) getRadius(), 1, RandUtil.nextFloat()), 10, RandUtil.nextInt(10), (aFloat, particleBuilder) -> {
 						particleBuilder.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), RandUtil.nextInt(100, 255)));
 						particleBuilder.setScale(RandUtil.nextFloat(0.5f, 1));
 						particleBuilder.addMotion(new Vec3d(RandUtil.nextDouble(-0.01, 0.01),
@@ -119,7 +119,7 @@ public class Arena implements INBTSerializable<NBTTagCompound> {
 					});
 
 					glitter.disableMotionCalculation();
-					ParticleSpawner.spawn(glitter, getWorld(), new InterpCircle(new Vec3d(getCenter()).addVector(0.5, 0, 0.5), new Vec3d(0, 1, 0), (float) getRadius(), 1, RandUtil.nextFloat()), 10, RandUtil.nextInt(10), (aFloat, particleBuilder) -> {
+					ParticleSpawner.spawn(glitter, getWorld(), new InterpCircle(new Vec3d(getCenter()).add(0.5, 0, 0.5), new Vec3d(0, 1, 0), (float) getRadius(), 1, RandUtil.nextFloat()), 10, RandUtil.nextInt(10), (aFloat, particleBuilder) -> {
 						particleBuilder.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), RandUtil.nextInt(100, 255)));
 						particleBuilder.setScale(RandUtil.nextFloat(0.5f, 1));
 						particleBuilder.addMotion(new Vec3d(RandUtil.nextDouble(-0.01, 0.01),

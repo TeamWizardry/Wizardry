@@ -337,7 +337,7 @@ public abstract class Module {
 		Color colorRGB = new Color(color);
 
 		Vec3d directionOffsetVec = new Vec3d(facing.getDirectionVec()).scale(0.5);
-		Vec3d adjPos = new Vec3d(pos).addVector(0.5, 0.5, 0.5).add(directionOffsetVec);
+		Vec3d adjPos = new Vec3d(pos).add(0.5, 0.5, 0.5).add(directionOffsetVec);
 
 		GL11.glLineWidth(1f);
 		GL11.glColor4ub((byte) colorRGB.getRed(), (byte) colorRGB.getGreen(), (byte) colorRGB.getBlue(), (byte) 255);

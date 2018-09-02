@@ -1,10 +1,10 @@
 package com.teamwizardry.wizardry.common.module.shapes;
 
+import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpCircle;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
-import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.Constants;
@@ -77,7 +77,7 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 		double range = spellRing.getAttributeValue(AttributeRegistry.RANGE, spell);
 
 		Vec3d min = targetPos.subtract(aoe/2, range/2, aoe/2);
-		Vec3d max = targetPos.addVector(aoe/2, range/2, aoe/2);
+		Vec3d max = targetPos.add(aoe / 2, range / 2, aoe / 2);
 
 		NBTTagCompound info = spell.getData(SpellData.DefaultKeys.COMPOUND, new NBTTagCompound());
 
@@ -110,7 +110,7 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 				if (spellRing.getChildRing() != null)
 					spellRing.getChildRing().runSpellRing(spell);
 			}
-			Vec3d pos = new Vec3d(target).addVector(0.5, 0.5, 0.5);
+			Vec3d pos = new Vec3d(target).add(0.5, 0.5, 0.5);
 				
 			SpellData copy = spell.copy();
 			copy.addData(ORIGIN, pos);

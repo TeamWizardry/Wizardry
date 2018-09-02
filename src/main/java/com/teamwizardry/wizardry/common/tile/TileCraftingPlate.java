@@ -253,7 +253,7 @@ public class TileCraftingPlate extends TileManaInteractor {
 
 				markDirty();
 
-				PacketHandler.NETWORK.sendToAllAround(new PacketExplode(new Vec3d(pos).addVector(0.5, 0.5, 0.5), Color.CYAN, Color.BLUE, 2, 2, 500, 300, 20, true),
+				PacketHandler.NETWORK.sendToAllAround(new PacketExplode(new Vec3d(pos).add(0.5, 0.5, 0.5), Color.CYAN, Color.BLUE, 2, 2, 500, 300, 20, true),
 						new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 256));
 
 				world.playSound(null, getPos(), ModSounds.BASS_BOOM, SoundCategory.BLOCKS, 1f, (float) RandUtil.nextDouble(1, 1.5));
@@ -264,7 +264,7 @@ public class TileCraftingPlate extends TileManaInteractor {
 					final double upperMag = 3;
 					final double scale = 0.8;
 					double mag = upperMag * (scale * dist / (-scale * dist - 1) + 1);
-					Vec3d dir = entity1.getPositionVector().subtract(new Vec3d(pos).addVector(0.5, 0.5, 0.5)).normalize().scale(mag);
+					Vec3d dir = entity1.getPositionVector().subtract(new Vec3d(pos).add(0.5, 0.5, 0.5)).normalize().scale(mag);
 
 					entity1.motionX = (dir.x);
 					entity1.motionY = (dir.y);

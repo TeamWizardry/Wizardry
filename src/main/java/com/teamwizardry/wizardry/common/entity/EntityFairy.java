@@ -103,8 +103,8 @@ public class EntityFairy extends FlyingEntityMod {
 			@Override
 			@SideOnly(Side.CLIENT)
 			public void runIfClient() {
-				LibParticles.FAIRY_HEAD(world, getPositionVector().addVector(0, 0.25, 0), getColor());
-				LibParticles.FAIRY_TRAIL(world, getPositionVector().addVector(0, 0.25, 0), getColor(), isSad(), new Random(getUniqueID().hashCode()).nextInt(150));
+				LibParticles.FAIRY_HEAD(world, getPositionVector().add(0, 0.25, 0), getColor());
+				LibParticles.FAIRY_TRAIL(world, getPositionVector().add(0, 0.25, 0), getColor(), isSad(), new Random(getUniqueID().hashCode()).nextInt(150));
 			}
 		});
 
@@ -114,7 +114,7 @@ public class EntityFairy extends FlyingEntityMod {
 				if (entity instanceof EntityPlayer) {
 
 					double dist = entity.getPositionVector().distanceTo(getPositionVector());
-					Vec3d sub = entity.getPositionVector().addVector(0, entity.height / 2, 0).subtract(getPositionVector()).normalize().scale(dist / 3.0);
+					Vec3d sub = entity.getPositionVector().add(0, entity.height / 2, 0).subtract(getPositionVector()).normalize().scale(dist / 3.0);
 
 					motionX = sub.x;
 					motionY = sub.y;
@@ -139,7 +139,7 @@ public class EntityFairy extends FlyingEntityMod {
 				if (entity.isSneaking()) continue;
 				nopeOut = true;
 
-				Vec3d sub = getPositionVector().subtract(entity.getPositionVector().addVector(0, entity.height / 2, 0)).normalize();
+				Vec3d sub = getPositionVector().subtract(entity.getPositionVector().add(0, entity.height / 2, 0)).normalize();
 
 				Random rand = new Random(hashCode());
 				double speed = rand.nextInt(9) + 1;
@@ -154,8 +154,8 @@ public class EntityFairy extends FlyingEntityMod {
 					for (int j = -2; j < 2; j++) {
 						BlockPos pos = new BlockPos(getPositionVector()).add(i, j, k);
 						if (!world.isAirBlock(pos)) {
-							Vec3d center = new Vec3d(pos).addVector(0.5, 0.5, 0.5);
-							Vec3d sub = getPositionVector().addVector(0, height / 2, 0).subtract(center).normalize();
+							Vec3d center = new Vec3d(pos).add(0.5, 0.5, 0.5);
+							Vec3d sub = getPositionVector().add(0, height / 2, 0).subtract(center).normalize();
 
 							Random rand = new Random(hashCode());
 							double speed = rand.nextInt(9) + 1;
@@ -192,7 +192,7 @@ public class EntityFairy extends FlyingEntityMod {
 	public void onDeath(@Nonnull DamageSource cause) {
 		super.onDeath(cause);
 		if (getHealth() <= 0)
-			PacketHandler.NETWORK.sendToAllAround(new PacketExplode(getPositionVector().addVector(0, 0.25, 0), color, color, 0.5, 0.5, RandUtil.nextInt(100, 200), 75, 25, true),
+			PacketHandler.NETWORK.sendToAllAround(new PacketExplode(getPositionVector().add(0, 0.25, 0), color, color, 0.5, 0.5, RandUtil.nextInt(100, 200), 75, 25, true),
 					new NetworkRegistry.TargetPoint(world.provider.getDimension(), posX, posY, posZ, 256));
 	}
 

@@ -44,8 +44,8 @@ public class RenderHaloInfusionItem extends Render<EntityHaloInfusionItem> {
 
 		double depthRadius = 0.5;
 		EntityPlayer player = Minecraft.getMinecraft().player;
-		Vec3d playerSub = player.getPositionVector().addVector(0, player.eyeHeight, 0).subtract(entity.getPositionVector().addVector(0, entity.height, 0));
-		Vec3d restricted = playerSub.scale(depthRadius / playerSub.lengthVector());
+		Vec3d playerSub = player.getPositionVector().add(0, player.eyeHeight, 0).subtract(entity.getPositionVector().add(0, entity.height, 0));
+		Vec3d restricted = playerSub.scale(depthRadius / playerSub.length());
 		restricted = new Vec3d(restricted.x, restricted.y / 2.0, restricted.z);
 
 		GlStateManager.pushMatrix();

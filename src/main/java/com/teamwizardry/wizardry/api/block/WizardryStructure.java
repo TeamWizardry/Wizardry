@@ -76,7 +76,7 @@ public class WizardryStructure extends Structure {
 			for (Template.BlockInfo info : getTemplateBlocks()) {
 				if (info.blockState.getMaterial() == Material.AIR) continue;
 				if (info.blockState.getRenderType() == EnumBlockRenderType.INVISIBLE) continue;
-				blocks.put(info.blockState.getBlock().getBlockLayer(), info);
+				blocks.put(info.blockState.getBlock().getRenderLayer(), info);
 			}
 
 			for (BlockRenderLayer layer : blocks.keySet()) {

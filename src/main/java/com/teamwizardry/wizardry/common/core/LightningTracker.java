@@ -1,7 +1,6 @@
 package com.teamwizardry.wizardry.common.core;
 
 import com.teamwizardry.wizardry.api.LightningGenerator;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
@@ -25,7 +24,7 @@ public class LightningTracker {
 	}
 
 	public void addEntity(Vec3d origin, Entity target, Entity caster, double potency, double duration) {
-		double dist = target.getPositionVector().subtract(origin).lengthVector();
+		double dist = target.getPositionVector().subtract(origin).length();
 		int numPoints = (int) (dist * LightningGenerator.POINTS_PER_DIST);
 		newEntries.add(new TrackingEntry(numPoints, potency, duration, caster, target));
 	}
@@ -50,7 +49,7 @@ public class LightningTracker {
 			entity.setFire((int) duration);
 		
 			if (caster instanceof EntityPlayer)
-				entity.attackEntityFrom(new EntityDamageSource("lightningbolt", (EntityPlayer) caster), (float) potency);
+				entity.attackEntityFrom(new EntityDamageSource("lightningbolt", caster), (float) potency);
 			else entity.attackEntityFrom(DamageSource.LIGHTNING_BOLT, (float) potency);
 			return true;
 		});

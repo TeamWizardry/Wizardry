@@ -77,10 +77,10 @@ public class FluidRecipeLoader {
 			BlockPos point = positions.iterator().next();
 			positions.remove(point);
 			for (int index = EnumFacing.VALUES.length - 1; index >= 0; index--) {
-				EnumFacing facing = EnumFacing.getFront(index);
-				tool.setPos(point.getX() + facing.getFrontOffsetX(),
-						point.getY() + facing.getFrontOffsetY(),
-						point.getZ() + facing.getFrontOffsetZ());
+				EnumFacing facing = EnumFacing.byIndex(index);
+				tool.setPos(point.getX() + facing.getXOffset(),
+						point.getY() + facing.getYOffset(),
+						point.getZ() + facing.getZOffset());
 
 				if (!visited.contains(tool)) {
 					BlockPos immutable = tool.toImmutable();
