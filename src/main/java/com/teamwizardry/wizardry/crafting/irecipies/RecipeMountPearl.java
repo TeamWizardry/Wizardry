@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 /**
  * Created by Demoniaque on 6/13/2016.
  */
-public class RecipePearl extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
+public class RecipeMountPearl extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe {
 	@Override
 	public boolean matches(@Nonnull InventoryCrafting inv, @Nonnull World worldIn) {
 		boolean foundBaseItem = false;

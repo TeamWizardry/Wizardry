@@ -1,10 +1,17 @@
 0.9.7
-Fixed crash when BetterFoliage is present.
-Improved structure rendering.
+Fixed incompatibility with BetterFPS's Riven Half algorithm. It prevented modifiers from opening in the worktable
+Fixed break spell instantly breaking armor when the spell is held and you look at the entity
+Redid structure handling, now renders things properly (like mana battery)
+Improved structure rendering
+Fixed crafting plate piling up animation loops non-stop even after breaking the tile
+Fixed crafting plate not syncing all items to client. Not all items hovered around
+Fixed crash when BetterFoliage is present
+Fixed forge not enforcing liblib versions required by wizardry
+Added pearl unmounting recipe from pearl mounted staffs
+
 
 0.9.6
 Fix in game changelog formatting versions incorrectly
-Fixed forge not enforcing liblib versions required by wizardry
 Fixed syringe + mana orb recipe
 Fixed GL leak makings hands transparent (thanks paul)
 
@@ -25,7 +32,4 @@ Fix Spirit Wight particles not rendering
 Spirit Wights no longer attack dead things
 Real halos no longer lag behind players
 Increased drop chance of unicorn horns to 1/8th of a chance
-
-0.9.3
-Fixed several particle rendering issues
 ... (changelog is too massive)
