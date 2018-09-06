@@ -90,7 +90,7 @@ public class ItemSyringe extends ItemMod {
 
 				RayTraceResult raytraceresult = this.rayTrace(player.world, (EntityPlayer) player, true);
 
-				if (raytraceresult.typeOfHit == RayTraceResult.Type.BLOCK) {
+				if (raytraceresult != null && raytraceresult.typeOfHit != null && raytraceresult.typeOfHit == RayTraceResult.Type.BLOCK) {
 					BlockPos blockpos = raytraceresult.getBlockPos();
 					if (raytraceresult.sideHit == null) raytraceresult.sideHit = EnumFacing.UP;
 
