@@ -130,8 +130,4 @@ public class TilePearlHolder extends TileManaInteractor implements ICooldown {
 	public void setItemStack(ItemStack stack) {
 		inventory.getHandler().setStackInSlot(0, stack);
 	}
-
-	public ItemStack extractItemStack() {
-		return inventory.getHandler().extractItem(0, 1, false);
-	}
 }

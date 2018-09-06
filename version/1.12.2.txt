@@ -1,4 +1,6 @@
 0.9.7
+Hotfix: Fix syringes crashing
+Hotfix: Fix pearl holders dropping their inventories on relog
 Fixed incompatibility with BetterFPS's Riven Half algorithm. It prevented modifiers from opening in the worktable
 Fixed break spell instantly breaking armor when the spell is held and you look at the entity
 Redid structure handling, now renders things properly (like mana battery)

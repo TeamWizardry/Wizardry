@@ -53,8 +53,6 @@ public class TileCachable extends TileMod
 
 		WizardryChunk chunk = WizardryChunkCapability.get(world.getChunk(chunkX, chunkZ));
 		chunk.addCachableTile(this);
-		this.onBreak();
-		this.onChunkUnload();
 	}
 
 	public double getCachedDistanceSq(TileEntity tile) {
