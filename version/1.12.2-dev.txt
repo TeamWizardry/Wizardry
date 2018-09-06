@@ -6,9 +6,7 @@ Improved structure rendering
 Fixed crafting plate piling up animation loops non-stop even after breaking the tile
 Fixed crafting plate not syncing all items to client. Not all items hovered around
 Fixed crash when BetterFoliage is present
-Fixed forge not enforcing liblib versions required by wizardry
 Added pearl unmounting recipe from pearl mounted staffs
-
 
 0.9.6
 Fix in game changelog formatting versions incorrectly
