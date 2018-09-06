@@ -14,7 +14,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -31,15 +30,13 @@ import org.lwjgl.opengl.GL11;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 
 public class WizardryStructureRenderCompanion {
 
-	@SideOnly(Side.CLIENT)
-	private HashMultimap<BlockRenderLayer, Template.BlockInfo> blocks = HashMultimap.create();
-	@SideOnly(Side.CLIENT)
-	private EnumMap<BlockRenderLayer, int[]> vboCaches = new EnumMap<>(BlockRenderLayer.class);
+	private HashMultimap<Integer, Template.BlockInfo> blocks = HashMultimap.create();
+	private HashMap<Integer, int[]> vboCaches = new HashMap<>();
 
 	private boolean builtVBO = false;
 	private IBlockAccess access = null;
@@ -77,24 +74,24 @@ public class WizardryStructureRenderCompanion {
 
 		if (!builtVBO || this.access != access) {
 			blocks = HashMultimap.create();
-			vboCaches = new EnumMap<>(BlockRenderLayer.class);
+			vboCaches.clear();
 
 			if (structure.sudoGetTemplateBlocks() == null) return;
 
 			for (Template.BlockInfo info : structure.sudoGetTemplateBlocks()) {
 				if (info.blockState.getMaterial() == Material.AIR) continue;
 				if (info.blockState.getRenderType() == EnumBlockRenderType.INVISIBLE) continue;
-				blocks.put(info.blockState.getBlock().getRenderLayer(), info);
+				blocks.put(info.blockState.getBlock().getRenderLayer().ordinal(), info);
 			}
 
-			for (BlockRenderLayer layer : blocks.keySet()) {
+			for (int layerID : blocks.keySet()) {
 				Tessellator tes = Tessellator.getInstance();
 				BufferBuilder buffer = tes.getBuffer();
 				BlockRendererDispatcher dispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
 
 				buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 
-				for (Template.BlockInfo info : blocks.get(layer)) {
+				for (Template.BlockInfo info : blocks.get(layerID)) {
 					IBlockAccess blockAccess = access != null ? access : structure.getBlockAccess();
 
 					buffer.setTranslation(info.pos.getX(), info.pos.getY(), info.pos.getZ());
@@ -116,7 +113,7 @@ public class WizardryStructureRenderCompanion {
 					buffer.setTranslation(0, 0, 0);
 				}
 
-				vboCaches.put(layer, ClientUtilMethods.createCacheArrayAndReset(buffer));
+				vboCaches.put(layerID, ClientUtilMethods.createCacheArrayAndReset(buffer));
 				builtVBO = true;
 				this.access = access;
 			}
@@ -133,11 +130,11 @@ public class WizardryStructureRenderCompanion {
 			GlStateManager.translate(-offset.getX(), -offset.getY(), -offset.getZ());
 
 
-			for (BlockRenderLayer layer : blocks.keySet()) {
+			for (int layerID : blocks.keySet()) {
 				Tessellator tes = Tessellator.getInstance();
 				BufferBuilder buffer = tes.getBuffer();
 				buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-				buffer.addVertexData(vboCaches.get(layer));
+				buffer.addVertexData(vboCaches.get(layerID));
 
 				for (int i = 0; i < buffer.getVertexCount(); i++) {
 					int idx = buffer.getColorIndex(i + 1);

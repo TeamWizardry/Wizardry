@@ -10,6 +10,8 @@ import com.teamwizardry.librarianlib.features.math.Vec2d;
 import com.teamwizardry.wizardry.api.block.WizardryStructureRenderCompanion;
 import com.teamwizardry.wizardry.init.ModStructures;
 import kotlin.jvm.functions.Function0;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -58,6 +60,7 @@ public class PageWizardryStructure implements Page {
 		return null;
 	}
 
+	@SideOnly(Side.CLIENT)
 	@NotNull
 	@Override
 	public List<Function0<GuiComponent>> createBookComponents(@NotNull IBookGui book, @NotNull Vec2d size) {
