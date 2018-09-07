@@ -42,6 +42,7 @@ public class ModBlocks {
 	public static BlockWisdomWoodFence WISDOM_WOOD_FENCE;
 	public static BlockWisdomWoodFenceGate WISDOM_WOOD_FENCE_GATE;
 	public static BlockWisdomWoodPigmentedPlanks WISDOM_WOOD_PIGMENTED_PLANKS;
+	public static BlockWisdomSapling WISDOM_SAPLING;
 
 	public static BlockTorikkiGrass TORIKKI_GRASS;
 
@@ -77,6 +78,7 @@ public class ModBlocks {
 		WISDOM_WOOD_FENCE = new BlockWisdomWoodFence();
 		WISDOM_WOOD_FENCE_GATE = new BlockWisdomWoodFenceGate();
 		WISDOM_WOOD_PIGMENTED_PLANKS = new BlockWisdomWoodPigmentedPlanks();
+		WISDOM_SAPLING = new BlockWisdomSapling();
 
 		TORIKKI_GRASS = new BlockTorikkiGrass();
 

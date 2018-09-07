@@ -95,7 +95,7 @@ public class WorldGenManaLake {
 										world.setBlockState(blockpos, Blocks.GRASS.getDefaultState(), 2);
 
 										if (rand.nextInt(3) == 0) {
-											WorldGeneratorWisdomTree tree = new WorldGeneratorWisdomTree(true);
+											WorldGeneratorWisdomTree tree = new WorldGeneratorWisdomTree(false);
 											tree.generate(world, rand, blockpos);
 										}
 									}

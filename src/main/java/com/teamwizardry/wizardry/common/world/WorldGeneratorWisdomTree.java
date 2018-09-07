@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.world;
 
+import com.teamwizardry.librarianlib.features.base.block.BlockModSapling;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -44,7 +45,7 @@ public class WorldGeneratorWisdomTree extends WorldGenAbstractTree {
 				for (int searchX = position.getX() - leafWidth; searchX <= position.getX() + leafWidth && canFit; ++searchX) {
 					for (int searchZ = position.getZ() - leafWidth; searchZ <= position.getZ() + leafWidth && canFit; ++searchZ) {
 						if (currentY >= 0 && currentY < worldIn.getHeight()) {
-							if (!this.isReplaceable(worldIn, poses.setPos(searchX, currentY, searchZ))) {
+							if (!this.isReplaceable(worldIn, poses.setPos(searchX, currentY, searchZ)) && !worldIn.getBlockState(poses.setPos(searchX, currentY, searchZ)).getBlock().isReplaceable(worldIn, poses.setPos(searchX, currentY, searchZ))) {
 								canFit = false;
 							}
 						} else {
@@ -90,7 +91,7 @@ public class WorldGeneratorWisdomTree extends WorldGenAbstractTree {
 						BlockPos upN = position.up(j2);
 						IBlockState state2 = worldIn.getBlockState(upN);
 
-						if (state2.getBlock().isAir(state2, worldIn, upN) || state2.getBlock().isLeaves(state2, worldIn, upN)) {
+						if (state2.getBlock().isAir(state2, worldIn, upN) || state2.getBlock().isLeaves(state2, worldIn, upN) || state2.getBlock() instanceof BlockModSapling) {
 							this.setBlockAndNotifyAdequately(worldIn, position.up(j2), LOG);
 						}
 					}

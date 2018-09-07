@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.block.wisdomwood;
 
 import com.teamwizardry.librarianlib.features.base.block.BlockModLeaves;
 import com.teamwizardry.librarianlib.features.base.block.IBlockColorProvider;
+import com.teamwizardry.wizardry.init.ModBlocks;
 import kotlin.jvm.functions.Function2;
 import kotlin.jvm.functions.Function4;
 import net.minecraft.block.state.IBlockState;
@@ -25,7 +26,7 @@ public class BlockWisdomLeaves extends BlockModLeaves implements IBlockColorProv
 	@Nullable
 	@Override
 	public Item getItemDropped(@Nonnull IBlockState state, @Nonnull Random rand, int fortune) {
-		return null;
+		return ModBlocks.WISDOM_SAPLING.getItemForm();
 	}
 
 	@Nullable
