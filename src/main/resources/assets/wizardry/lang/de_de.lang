@@ -293,3 +293,32 @@ wizardry.spell.shape_zone.desc.duration=Für jeden Punkt in <DAUER> hält der Za
 wizardry.advancement.begin.name=Kein Manabecken
 wizardry.advancement.begin.desc=Finde einen Manasee
 
+wizardry.gui.index=Index
+wizardry.gui.recipe=Spell Recipe
+
+wizardry.command.usage=/wizardry <reload/reset> [config/inventory]
+wizardry.command.success=Successfully reloaded modules.
+wizardry.command.reset=Attempting to reset moduleSet directory... Any modifications made to it will be lost!
+wizardry.command.success_delete=Successfully deleted %s
+wizardry.command.fail=Could not delete %s
+wizardry.command.fail_dir_delete=Could not delete moduleSet directory
+wizardry.command.fail_dir_create=Could not create moduleSet directory
+
+wizardry.update0=Don't let your bugs be thugs! Use our patented Magic-o-gon spray for only $9.99
+wizardry.update1=There's magic in the air...
+wizardry.update2=(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧
+wizardry.update3=I am now up back up to... One. Wizardry. Update.
+wizardry.update4=GET IN THE UPDATE, SHINJI
+wizardry.update5=it's outdated my dudes
+wizardry.update6=yo dawg we heard you like changelogs so we put changelogs in your changelogs so you can change while you log
+wizardry.update7=*:･ﾟ✧ᕕ( ᐛ )ᕗ
+
+
+wizardry.table.spell_saved=Der Zauberspruch wurde erfolgreich im Kodex gespeichert! Öffne das Buch und schaue dir das neue Lesezeichen für Zaubersprüche an.
+wizardry.table.no_codex_found=Keinen Zaubererkodex in deinem Inventar gefunden! Lege einen in dein Inventar um einen Zauberspruch zu speichern.
+wizardry.table.codex_found=Es wurde ein Zauberkodex gefunden. Zaubersprüche können gespeichert werden.
+wizardry.table.loop_error=Du darfst keine Schleifen erstellen.
+wizardry.table.loop_found=Es gibt irgendwo eine Schleife! Ein Zauberspruch sollte irgendwo anfangen ohne dass eine Verknüpfung dort hin führt.
+wizardry.table.connection_doesnt_work=Diese Komponenten können auf diese Weise nicht verbunden werden!
+wizardry.table.connection_effect_to_any=Ein Effekt kann nicht zu anderen Komponenten verknüpft werden. Die Verknüpfung muss von den anderen Komponenten zum Effekt erfolgen.
+wizardry.table.connection_event_to_something=Damit dein Zauberspruch die Ausnahme-Komponente benutzt, musst du die Form-Komponente zur Ausnahme verknüpfen, danach die Ausnahme zur Effekt-Komponente. Form -> Ausnahme -> Effekt.
