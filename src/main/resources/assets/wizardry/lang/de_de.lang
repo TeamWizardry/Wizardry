@@ -1,6 +1,9 @@
+﻿jei.wizardry.category.mana_crafting=Manarezepte
+
 tile.wizardry:crafting_plate.name=Fertigungsstelle
 tile.wizardry:magicians_worktable.name=Die Werkbank des Zauberers
 tile.wizardry:mana_battery.name=Manabatterie
+tile.wizardry:creative_mana_battery.name=Kreative Manabattery
 tile.wizardry:nacre.name=Perlmuttsaft
 tile.wizardry:mana.name=Manasaft
 tile.wizardry:cloud.name=Wolke
@@ -10,12 +13,36 @@ tile.wizardry:nacre_block.name=Perlmuttblock
 tile.wizardry:nacre_block_brick.name=Perlmuttziegel
 tile.wizardry:mana_magnet.name=Manamagnet
 tile.wizardry:torikki_grass.name=Torikkigras
+tile.wizardry:unicorn_trail.name=Einhornspur
+tile.wizardry:light.name=Licht
 
 entity.fairy.name=Elfe
 entity.spirit_wight.name=Spirit Wight
 entity.spirit_blight.name=Spirit Blight
 entity.unicorn.name=Einhorn
-entity.spell_projectile.name=Zauberstoß
+entity.spell_projectile.name=Zaubergeschoss
+
+item.wizardry:nacre_pearl.name=Perlmuttperle
+item.wizardry:nacre_pearl.ancient.name=Altertümliche Perlmuttperle
+item.wizardry:nacre_pearl.apex.name=Apex-Perlmuttperle
+item.wizardry:nacre_pearl.potent.name=Mächtige Perlmuttperle
+item.wizardry:nacre_pearl.decent.name=Gute Perlmuttperle
+item.wizardry:nacre_pearl.flawed.name=Fehlerhafte Perlmuttperle
+item.wizardry:nacre_pearl.drained.name=Verbrauchte Perlmuttperle
+item.wizardry:nacre_pearl.wasted.name=Abfall-Perlmuttperle
+
+item.wizardry:nacre_pearl.overdone.desc0=Sieht übersättigt aus.
+item.wizardry:nacre_pearl.overdone.desc1=Maybe less time will make it stronger.
+item.wizardry:nacre_pearl.over_near.desc0=Nur etwas übersättigt.
+item.wizardry:nacre_pearl.over_near.desc1=Vielleicht etwas weniger Zeit...
+item.wizardry:nacre_pearl.perfect.desc0=Perfekt!
+item.wizardry:nacre_pearl.perfect.desc1=Es scheint, als wären 30 Sekunden genau richtig.
+item.wizardry:nacre_pearl.under_near.desc0=Nur etwas zu wenig Sättigung.
+item.wizardry:nacre_pearl.under_near.desc1=Etwas mehr Zeit sollte helfen.
+item.wizardry:nacre_pearl.underdone.desc0=Sie hat zu wenig Sättigung.
+item.wizardry:nacre_pearl.underdone.desc1=Du musst sie länger drin lassen.
+item.wizardry:nacre_pearl.ancient.desc0=Diese Perle sieht merkwürdig aus.
+item.wizardry:nacre_pearl.ancient.desc1=Sie ist geheimnisvoll... und auf jeden Fall mächtig.
 
 item.wizardry:book.name=Der Zaubererkodex
 item.wizardry:spellRing.name=Goldener Ring
@@ -23,7 +50,6 @@ item.wizardry:ring_pearl.name=Goldener Ring
 item.wizardry:devil_dust.name=Teufelsstaub
 item.wizardry:mana_pearl.name=Manaperle
 item.wizardry:glass_pearl.name=Glasperle
-item.wizardry:nacre_pearl.name=Perlmuttperle
 item.wizardry:quartz_pearl.name=Quartzperle
 item.wizardry:debugger.name=Zauberstab der Kreativität
 item.wizardry:staff.name=Stab
@@ -37,7 +63,11 @@ item.wizardry:jar_fairy.name=Elfe in einem Glas
 item.wizardry:jar_jam.name=Elfenmarmelade
 item.wizardry:syringe.name=Leere Spritze
 item.wizardry:syringe_mana.name=ManaBooster Leicht™
+item.wizardry:syringe_mana.desc=Stellt 50%% Mana wieder her.
 item.wizardry:syringe_steroid.name=ManaBooster Impfstoff Premium Plus™
+item.wizardry:syringe_steroid.desc0=Sättigt deine komplette Manaleiste und löscht komplett deine Burnoutleiste für 10 Sekunden.
+item.wizardry:syringe_steroid.desc1=Nebeneffekte inklusive.
+item.wizardry:syringe_steroid.desc2=&oSpüre die Verbrennung.
 item.wizardry:mana_orb.name=Manakugel
 item.wizardry:glass_orb.name=Glaskugel
 item.wizardry:cape.name=Gewand
@@ -47,6 +77,23 @@ item.wizardry:light.name=Licht
 item.wizardry:halo_real.name=Heiligenschein
 item.wizardry:halo_fake.name=Falscher Heiligenschein
 item.wizardry:halo_creative.name= Kreativer Heiligenschein
+item.wizardry:repulsion_bomb.name=Rückstoßbombe
+item.wizardry:vortex_bomb.name=Vortexbombe
+item.wizardry:sky_dust.name=Himmelsstaub
+item.wizardry:glue_stick.name=Klebestift
+
+item.wizardry:glass_orb.fill.0.name=Glaskugel
+item.wizardry:mana_orb.fill.0.name=Manakugel 0%
+item.wizardry:mana_orb.fill.10.name=Manakugel 10%
+item.wizardry:mana_orb.fill.20.name=Manakugel 20%
+item.wizardry:mana_orb.fill.30.name=Manakugel 30%
+item.wizardry:mana_orb.fill.40.name=Manakugel 40%
+item.wizardry:mana_orb.fill.50.name=Manakugel 50%
+item.wizardry:mana_orb.fill.60.name=Manakugel 60%
+item.wizardry:mana_orb.fill.70.name=Manakugel 70%
+item.wizardry:mana_orb.fill.80.name=Manakugel 80%
+item.wizardry:mana_orb.fill.90.name=Manakugel 90%
+item.wizardry:mana_orb.fill.100.name=Manakugel 100%
 
 item.wizardry:wisdom_stick.name=Stock der Weisheit
 item.wizardry:wisdom_wood_door.name=Tür der Weisheit
@@ -58,6 +105,8 @@ tile.wizardry:wisdom_wood_stairs.name=Holztreppe der Weiheit
 tile.wizardry:wisdom_wood_trapdoor.name=Holzfalltür der Weisheit
 tile.wizardry:wisdom_wood_fence.name=Holzzaun der Weisheit
 tile.wizardry:wisdom_wood_fence_gate.name=Holzzauntor der Weisheit
+tile.wizardry:wisdom_leaves.name=Blätter der Weisheit
+
 
 advancement.wizardry.book=Du bist ein Zauberer, Harry
 advancement.wizardry.book.desc=Erstelle ein Buch, das dich auf deinem Weg der Magie unterstützt
@@ -68,10 +117,9 @@ advancement.wizardry.devildust.desc=Verbrenne Redstone im Feuer um Teufelsstaub 
 advancement.wizardry.crunch=§oKRACH.§a
 advancement.wizardry.crunch.desc=Falle durch das Grundgestein und gelange in den Himmel
 
-book.physicsbook.defaulttitle=Physikbuch
-
 fluid.nacre_fluid=Perlmutt
 fluid.mana_fluid=Mana
+
 death.attack.wizardry.mana=%s starb an dunkler Magie
 death.attack.wizardry.crash=%s wurde zerstört
 death.attack.wizardry.crash.player=%s wurde zerberstet von %s
