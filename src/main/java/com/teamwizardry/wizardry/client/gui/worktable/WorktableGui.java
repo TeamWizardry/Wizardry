@@ -209,13 +209,67 @@ public class WorktableGui extends GuiBase {
 
 				PacketHandler.NETWORK.sendToServer(new PacketSendSpellToBook(chains));
 
-				setToastMessage(LibrarianLib.PROXY.translate("wizardry.table.spell_saved"), Color.GREEN);
-				playAnimation();
+				playSaveAnimation();
 			});
 			getMainComponents().add(save);
 		}
 		// --- SAVE BUTTON --- //
 
+		// --- CLEAR BUTTON --- //
+		{
+			ComponentSprite clear = new ComponentSprite(BUTTON_NORMAL, 395, 30 + 5 + (int) (24 / 1.5), (int) (88 / 1.5), (int) (24 / 1.5));
+
+			// Button rendering
+			{
+				String saveStr = LibrarianLib.PROXY.translate("wizardry.misc.clear");
+				int stringWidth = Minecraft.getMinecraft().fontRenderer.getStringWidth(saveStr);
+				int fitWidth = clear.getSize().getXi() - 16;
+
+				ComponentText textSave = new ComponentText(16 + (int) (fitWidth / 2.0 - stringWidth / 2.0), (clear.getSize().getYi() / 2), ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.MIDDLE);
+				textSave.getText().setValue(saveStr);
+				clear.add(textSave);
+
+				ComponentSprite sprite = new ComponentSprite(BOOK_ICON, 2, 0);
+				clear.add(sprite);
+			}
+
+			clear.render.getTooltip().func((Function<GuiComponent, List<String>>) t -> {
+				List<String> txt = new ArrayList<>();
+
+				if (!animationPlaying) {
+					txt.add(TextFormatting.WHITE + LibrarianLib.PROXY.translate("wizardry.misc.clear_desc"));
+				}
+				return txt;
+			});
+
+			clear.BUS.hook(GuiComponentEvents.ComponentTickEvent.class, event -> {
+				if (animationPlaying) {
+					clear.setSprite(BUTTON_PRESSED);
+				} else {
+					if (event.component.getMouseOver())
+						clear.setSprite(BUTTON_HIGHLIGHTED);
+					else clear.setSprite(BUTTON_NORMAL);
+				}
+			});
+
+			clear.BUS.hook(GuiComponentEvents.MouseDownEvent.class, event -> {
+				if (event.component.getMouseOver())
+					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_IN, 1f, 1f);
+			});
+
+			clear.BUS.hook(GuiComponentEvents.MouseUpEvent.class, event -> {
+				if (event.component.getMouseOver())
+					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_OUT, 1f, 1f);
+			});
+
+			clear.BUS.hook(GuiComponentEvents.MouseClickEvent.class, (event) -> {
+				playClearAnimation();
+
+				setToastMessageNoHeader(LibrarianLib.PROXY.translate("wizardry.table.paper_cleared"), Color.GREEN);
+			});
+			getMainComponents().add(clear);
+		}
+		// --- CLEAR BUTTON --- //
 
 		load();
 	}
@@ -377,6 +431,11 @@ public class WorktableGui extends GuiBase {
 		toast.getColor().setValue(color);
 	}
 
+	public void setToastMessageNoHeader(String text, Color color) {
+		toast.getText().setValue(text);
+		toast.getColor().setValue(color);
+	}
+
 	private Set<TableModule> getSpellHeads() {
 		Set<TableModule> set = new HashSet<>();
 
@@ -420,7 +479,7 @@ public class WorktableGui extends GuiBase {
 		}
 	}
 
-	public void playAnimation() {
+	public void playSaveAnimation() {
 		animationPlaying = true;
 
 		if (selectedModule != null) {
@@ -551,7 +610,7 @@ public class WorktableGui extends GuiBase {
 					if (!(component instanceof TableModule)) continue;
 					TableModule fakeModule = (TableModule) component;
 
-					Vec2d random = fakeModule.getPos().add(RandUtil.nextDouble(-10, 10), RandUtil.nextDouble(-10, 10));
+					Vec2d random = fakeModule.getPos().add(RandUtil.nextDouble(-20, 20), RandUtil.nextDouble(-20, 20));
 
 					float delay = RandUtil.nextFloat(0.2f, 0.3f);
 					float dur = RandUtil.nextFloat(70, 100);
@@ -564,7 +623,7 @@ public class WorktableGui extends GuiBase {
 					KeyframeAnimation<TableModule> animX = new KeyframeAnimation<>(fakeModule, "pos.x");
 					animX.setDuration(dur);
 					animX.setKeyframes(new Keyframe[]{
-							new Keyframe(delay, fakeModule.getPos().getX() + 1, Easing.easeOutQuint),
+							new Keyframe(delay, fakeModule.getPos().getX(), Easing.easeOutQuint),
 							new Keyframe(0.45f, random.getX(), Easing.easeOutQuint),
 							new Keyframe(0.6f, random.getX(), Easing.easeOutQuint),
 							new Keyframe(1f, (bookIconMask.getSize().getX() / 2.0) - 8, Easing.easeInOutQuint)
@@ -573,7 +632,7 @@ public class WorktableGui extends GuiBase {
 					KeyframeAnimation<TableModule> animY = new KeyframeAnimation<>(fakeModule, "pos.y");
 					animY.setDuration(dur);
 					animY.setKeyframes(new Keyframe[]{
-							new Keyframe(delay, fakeModule.getPos().getY() + 3, Easing.easeOutQuint),
+							new Keyframe(delay, fakeModule.getPos().getY(), Easing.easeOutQuint),
 							new Keyframe(0.45f, random.getY(), Easing.easeOutQuint),
 							new Keyframe(0.6f, random.getY(), Easing.easeOutQuint),
 							new Keyframe(1f, -(bookIconMask.getSize().getY() / 2.0) - 4, Easing.easeInOutQuint)
@@ -582,6 +641,79 @@ public class WorktableGui extends GuiBase {
 					animY.setCompletion(fakeModule::invalidate);
 
 					fakeModule.add(animX, animY, animSound1, animSound2);
+				}
+			}
+		};
+
+		if (selectedModule != null) {
+			selectedModule = null;
+			getMainComponents().add(new ScheduledEventAnimation(5, runnable));
+		} else runnable.run();
+	}
+
+
+	public void playClearAnimation() {
+		animationPlaying = true;
+
+		if (selectedModule != null) {
+			Vec2d toSize = new Vec2d(16, 16);
+			BasicAnimation<TableModule> animSize = new BasicAnimation<>(selectedModule, "size");
+			animSize.setDuration(5);
+			animSize.setEasing(Easing.easeOutCubic);
+			animSize.setTo(toSize);
+			selectedModule.add(animSize);
+
+			BasicAnimation<TableModule> animPos = new BasicAnimation<>(selectedModule, "pos");
+			animPos.setDuration(5);
+			animPos.setEasing(Easing.easeOutCubic);
+			animPos.setTo(selectedModule.getPos().add((selectedModule.getSize().sub(toSize)).mul(0.5f)));
+			selectedModule.add(animPos);
+		}
+
+		Runnable runnable = () -> {
+			// PAPER ITEMS ANIMATION
+			{
+				ScheduledEventAnimation animFinish = new ScheduledEventAnimation(110, () -> {
+					animationPlaying = false;
+					syncToServer();
+				});
+				paper.add(animFinish);
+
+				for (GuiComponent component : paper.getChildren()) {
+					if (!(component instanceof TableModule)) continue;
+					TableModule module = (TableModule) component;
+
+					Vec2d random = module.getPos().add(RandUtil.nextDouble(-20, 20), RandUtil.nextDouble(-20, 20));
+
+					float delay = RandUtil.nextFloat(0.2f, 0.3f);
+					float dur = RandUtil.nextFloat(70, 100);
+
+					ScheduledEventAnimation animSound1 = new ScheduledEventAnimation(dur * delay, () -> Minecraft.getMinecraft().player.playSound(ModSounds.POP, 1f, 1f));
+
+					KeyframeAnimation<TableModule> animX = new KeyframeAnimation<>(module, "pos.x");
+					animX.setDuration(dur);
+					animX.setKeyframes(new Keyframe[]{
+							new Keyframe(delay, module.getPos().getX(), Easing.easeOutQuint),
+							new Keyframe(0.45f, random.getX(), Easing.easeOutQuint),
+							new Keyframe(0.6f, random.getX(), Easing.easeOutQuint),
+							new Keyframe(1f, random.getX() + RandUtil.nextDouble(-10, 10), Easing.easeInOutQuint)
+					});
+
+					KeyframeAnimation<TableModule> animY = new KeyframeAnimation<>(module, "pos.y");
+					animY.setDuration(dur);
+					animY.setKeyframes(new Keyframe[]{
+							new Keyframe(delay, module.getPos().getY(), Easing.easeOutQuint),
+							new Keyframe(0.45f, random.getY(), Easing.easeOutQuint),
+							new Keyframe(0.6f, random.getY(), Easing.easeOutQuint),
+							new Keyframe(1f, height + 100, Easing.easeInOutQuint)
+					});
+
+					animY.setCompletion(() -> {
+						module.invalidate();
+						Minecraft.getMinecraft().player.playSound(ModSounds.ZOOM, 1f, 1f);
+					});
+
+					module.add(animX, animY, animSound1);
 				}
 			}
 		};

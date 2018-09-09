@@ -158,6 +158,8 @@ wizardry.misc.moduleSet=Spell:
 wizardry.misc.sneak=<Sneak for info>
 wizardry.misc.ctrl=<Ctrl for more info>
 wizardry.misc.save=SAVE
+wizardry.misc.clear=CLEAR
+wizardry.misc.clear_desc=Will remove all spell components on the paper
 wizardry.misc.save_error=No codex found in your inventory! Place one in your inventory to save properly.
 wizardry.misc.sneak_expanded=&7<- &8Shift for more info&7 ->
 wizardry.misc.update_link=Wizardry Update Changelog
@@ -314,6 +316,7 @@ wizardry.update6=yo dawg we heard you like changelogs so we put changelogs in yo
 wizardry.update7=*:･ﾟ✧ᕕ( ᐛ )ᕗ
 
 
+wizardry.table.paper_cleared=Paper cleared.
 wizardry.table.spell_saved=Spell saved to codex successfully! Open the book and check the new spell recipe tab.
 wizardry.table.no_codex_found=You do not have a codex in your inventory! Once you have one, you can save your spell into the book.
 wizardry.table.codex_found=Codex found, you can save spells.
