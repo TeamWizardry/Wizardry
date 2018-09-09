@@ -113,8 +113,8 @@ advancement.wizardry.book.desc=Create a book to aid in your delve into magic
 advancement.wizardry.manapool=Not a Mana Pool
 advancement.wizardry.manapool.desc=Discover a pool of liquid Mana in your travels
 advancement.wizardry.devildust=Sugar and Spice
-advancement.wizardry.devildust.desc=Melt book in fire to make Devil Dust
-advancement.wizardry.crunch=§oCRUNCH.§a
+advancement.wizardry.devildust.desc=Melt redstone in fire to make Devil Dust
+advancement.wizardry.crunch=§oCRUNCH.§r
 advancement.wizardry.crunch.desc=Crash straight through Bedrock to the Underworld above
 
 fluid.nacre_fluid=Nacre
