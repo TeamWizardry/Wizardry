@@ -253,6 +253,7 @@ public class TableModule extends GuiComponent {
 						worktable.modifiers.refresh();
 					}
 					event.component.removeTag("connecting");
+					worktable.syncToServer();
 					return;
 				}
 
@@ -271,6 +272,7 @@ public class TableModule extends GuiComponent {
 								event.component.removeTag("connecting");
 								setLinksTo(null);
 								worktable.setToastMessage("", Color.GREEN);
+								worktable.syncToServer();
 								return;
 							} else if (isCompatibleWith(linkTo)) {
 								setLinksTo(linkTo);
@@ -293,6 +295,7 @@ public class TableModule extends GuiComponent {
 
 									worktable.setToastMessage(LibrarianLib.PROXY.translate("wizardry.table.loop_error"), Color.RED);
 								}
+								worktable.syncToServer();
 							} else {
 								String connectionFail = LibrarianLib.PROXY.translate("wizardry.table.connection_doesnt_work");
 								if (getModule() instanceof ModuleEffect && linkTo.getModule() instanceof ModuleEvent) {
@@ -314,6 +317,7 @@ public class TableModule extends GuiComponent {
 				}
 
 				event.component.removeTag("connecting");
+				worktable.syncToServer();
 			});
 
 		if (!benign || enableTooltip)

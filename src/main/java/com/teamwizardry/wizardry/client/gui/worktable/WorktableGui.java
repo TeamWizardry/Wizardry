@@ -13,10 +13,12 @@ import com.teamwizardry.librarianlib.features.gui.components.ComponentRect;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentText;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentVoid;
+import com.teamwizardry.librarianlib.features.gui.mixin.DragMixin;
 import com.teamwizardry.librarianlib.features.math.Vec2d;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.spell.CommonWorktableModule;
 import com.teamwizardry.wizardry.api.spell.SpellBuilder;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
@@ -26,14 +28,20 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleType;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.network.PacketSendSpellToBook;
+import com.teamwizardry.wizardry.common.network.PacketSyncWorktable;
+import com.teamwizardry.wizardry.common.tile.TileMagiciansWorktable;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
 import kotlin.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextFormatting;
+import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.*;
@@ -65,8 +73,12 @@ public class WorktableGui extends GuiBase {
 	private ComponentSprite tableComponent;
 	private boolean hadBook = false, bookWarnRevised = false;
 
-	public WorktableGui() {
+	@NotNull
+	private final BlockPos pos;
+
+	public WorktableGui(@Nonnull BlockPos pos) {
 		super(480, 224);
+		this.pos = pos;
 
 		// GRAY OUT BACKGROUND
 		ComponentRect grayBackground = new ComponentRect(0, 0, 40000, 40000);
@@ -195,12 +207,7 @@ public class WorktableGui extends GuiBase {
 					chains.add(chain);
 				}
 
-				for (ItemStack stack : Minecraft.getMinecraft().player.inventory.mainInventory) {
-					if (stack.getItem() == ModItems.BOOK) {
-						int slot = Minecraft.getMinecraft().player.inventory.getSlotFor(stack);
-						PacketHandler.NETWORK.sendToServer(new PacketSendSpellToBook(slot, chains));
-					}
-				}
+				PacketHandler.NETWORK.sendToServer(new PacketSendSpellToBook(chains));
 
 				setToastMessage(LibrarianLib.PROXY.translate("wizardry.table.spell_saved"), Color.GREEN);
 				playAnimation();
@@ -208,6 +215,77 @@ public class WorktableGui extends GuiBase {
 			getMainComponents().add(save);
 		}
 		// --- SAVE BUTTON --- //
+
+
+		load();
+	}
+
+	public void load() {
+		TileEntity tile = Minecraft.getMinecraft().world.getTileEntity(pos);
+		if (tile instanceof TileMagiciansWorktable) {
+			if (((TileMagiciansWorktable) tile).commonModules != null) {
+				Set<CommonWorktableModule> commonModules = ((TileMagiciansWorktable) tile).getCommonModules();
+
+				for (CommonWorktableModule commonHead : commonModules) {
+					CommonWorktableModule commonModule = commonHead;
+					TableModule lastModule = new TableModule(this, commonHead.module, true, false);
+					lastModule.setPos(commonHead.pos);
+
+					while (commonModule != null) {
+
+						paper.add(lastModule);
+						DragMixin drag = new DragMixin(lastModule, vec2d -> vec2d);
+						drag.setDragOffset(new Vec2d(6, 6));
+
+						for (ModuleModifier modifier : commonModule.modifiers.keySet()) {
+							lastModule.setData(Integer.class, modifier.getID(), commonModule.modifiers.get(modifier));
+						}
+
+						if (commonModule.linksTo != null) {
+							TableModule childModule = new TableModule(this, commonModule.linksTo.module, true, false);
+							childModule.setPos(commonModule.linksTo.pos);
+							lastModule.setLinksTo(childModule);
+							lastModule = childModule;
+						}
+
+						commonModule = commonModule.linksTo;
+					}
+				}
+			}
+		}
+	}
+
+	public void syncToServer() {
+		Set<CommonWorktableModule> commonModules = new HashSet<>();
+		for (TableModule head : getSpellHeads()) {
+
+			TableModule lastModule = head;
+			CommonWorktableModule lastCommonModule = new CommonWorktableModule(lastModule.hashCode(), lastModule.getModule(), lastModule.getPos(), null, new HashMap<>());
+			commonModules.add(lastCommonModule);
+
+			while (lastModule != null) {
+
+				if (lastModule != head) {
+					CommonWorktableModule commonModule = new CommonWorktableModule(lastModule.hashCode(), lastModule.getModule(), lastModule.getPos(), null, new HashMap<>());
+					lastCommonModule.setLinksTo(commonModule);
+					lastCommonModule = commonModule;
+				}
+
+				for (Module module : ModuleRegistry.INSTANCE.getModules(ModuleType.MODIFIER)) {
+					if (!(module instanceof ModuleModifier)) continue;
+					if (!lastModule.hasData(Integer.class, module.getID())) continue;
+
+					int count = lastModule.getData(Integer.class, module.getID());
+
+					lastCommonModule.addModifier((ModuleModifier) module, count);
+				}
+
+				lastModule = lastModule.getLinksTo();
+			}
+		}
+
+		int dim = Minecraft.getMinecraft().world.provider.getDimension();
+		PacketHandler.NETWORK.sendToServer(new PacketSyncWorktable(dim, pos, commonModules));
 	}
 
 	public void setCodexToastMessage() {
@@ -306,21 +384,22 @@ public class WorktableGui extends GuiBase {
 			if (!(child instanceof TableModule)) continue;
 			TableModule childModule = (TableModule) child;
 
-			if (childModule.getLinksTo() != null) {
-				boolean linkedToSomehow = false;
-				for (GuiComponent subChild : paper.getChildren()) {
-					if (!(subChild instanceof TableModule)) continue;
-					TableModule subChildModule = (TableModule) subChild;
-					if (subChildModule == childModule) continue;
+			if (childModule.isInvalid()) continue;
 
-					if (subChildModule.getLinksTo() == childModule) {
-						linkedToSomehow = true;
-						break;
-					}
+			boolean linkedToSomehow = false;
+			for (GuiComponent subChild : paper.getChildren()) {
+				if (subChild.isInvalid()) continue;
+				if (!(subChild instanceof TableModule)) continue;
+				TableModule subChildModule = (TableModule) subChild;
+				if (subChildModule == childModule) continue;
+
+				if (subChildModule.getLinksTo() == childModule) {
+					linkedToSomehow = true;
+					break;
 				}
-				if (!linkedToSomehow) {
-					set.add(childModule);
-				}
+			}
+			if (!linkedToSomehow) {
+				set.add(childModule);
 			}
 		}
 

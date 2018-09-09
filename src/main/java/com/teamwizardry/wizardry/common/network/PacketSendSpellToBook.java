@@ -6,7 +6,7 @@ import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.init.ModItems;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
@@ -21,37 +21,33 @@ import java.util.List;
 public class PacketSendSpellToBook extends PacketBase {
 
 	@Save
-	public int slot;
-	@Save
 	public NBTTagList moduleList;
 
 	public PacketSendSpellToBook() {
 	}
 
-	public PacketSendSpellToBook(int slot, List<List<Module>> compiledSpell) {
-		this.slot = slot;
-
+	public PacketSendSpellToBook(List<List<Module>> compiledSpell) {
 		if (compiledSpell == null) return;
 
-		NBTTagList list = new NBTTagList();
-		for (List<Module> moduleList : compiledSpell)
-		{
+		NBTTagList compiledList = new NBTTagList();
+		for (List<Module> moduleList : compiledSpell) {
 			for (Module module : moduleList)
-				list.appendTag(module.serialize());
-			list.appendTag(new NBTTagString());
+				compiledList.appendTag(module.serialize());
+			compiledList.appendTag(new NBTTagString());
 		}
-		moduleList = list;
+		moduleList = compiledList;
 	}
 
 	@Override
 	public void handle(@Nonnull MessageContext messageContext) {
-		EntityPlayer player = messageContext.getServerHandler().player;
+		for (ItemStack stack : Minecraft.getMinecraft().player.inventory.mainInventory) {
+			if (stack.getItem() == ModItems.BOOK) {
+				if (stack.getItem() != ModItems.BOOK) return;
 
-		ItemStack book = player.inventory.getStackInSlot(slot);
-		if (book.getItem() != ModItems.BOOK) return;
-
-		ItemNBTHelper.setList(book, Constants.NBT.SPELL, moduleList);
-		ItemNBTHelper.setBoolean(book, "has_spell", true);
-		ItemNBTHelper.setInt(book, "page", 0);
+				ItemNBTHelper.setList(stack, Constants.NBT.SPELL, moduleList);
+				ItemNBTHelper.setBoolean(stack, "has_spell", true);
+				ItemNBTHelper.setInt(stack, "page", 0);
+			}
+		}
 	}
 }
