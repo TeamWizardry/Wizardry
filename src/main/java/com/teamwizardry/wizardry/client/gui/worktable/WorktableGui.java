@@ -14,6 +14,7 @@ import com.teamwizardry.librarianlib.features.gui.components.ComponentSprite;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentText;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentVoid;
 import com.teamwizardry.librarianlib.features.gui.mixin.DragMixin;
+import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.math.Vec2d;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
@@ -35,6 +36,9 @@ import com.teamwizardry.wizardry.init.ModSounds;
 import kotlin.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -136,7 +140,7 @@ public class WorktableGui extends GuiBase {
 
 			// Button rendering
 			{
-				String saveStr = LibrarianLib.PROXY.translate("wizardry.misc.save");
+				String saveStr = LibrarianLib.PROXY.translate("wizardry.table.save");
 				int stringWidth = Minecraft.getMinecraft().fontRenderer.getStringWidth(saveStr);
 				int fitWidth = save.getSize().getXi() - 16;
 
@@ -152,7 +156,7 @@ public class WorktableGui extends GuiBase {
 				List<String> txt = new ArrayList<>();
 
 				if (!animationPlaying && !Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) {
-					txt.add(TextFormatting.RED + LibrarianLib.PROXY.translate("wizardry.misc.save_error"));
+					txt.add(TextFormatting.RED + LibrarianLib.PROXY.translate("wizardry.table.save_error"));
 				}
 				return txt;
 			});
@@ -181,14 +185,23 @@ public class WorktableGui extends GuiBase {
 				if (animationPlaying || !Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK)))
 					return;
 
+				Set<CommonWorktableModule> commonModules = new HashSet<>();
 				List<List<Module>> chains = new ArrayList<>();
 				for (TableModule head : getSpellHeads()) {
 					List<Module> chain = new ArrayList<>();
 
 					TableModule lastModule = head;
+					CommonWorktableModule lastCommonModule = new CommonWorktableModule(lastModule.hashCode(), lastModule.getModule(), lastModule.getPos(), null, new HashMap<>());
+					commonModules.add(lastCommonModule);
 
 					while (lastModule != null) {
 						chain.add(lastModule.getModule());
+
+						if (lastModule != head) {
+							CommonWorktableModule commonModule = new CommonWorktableModule(lastModule.hashCode(), lastModule.getModule(), lastModule.getPos(), null, new HashMap<>());
+							lastCommonModule.setLinksTo(commonModule);
+							lastCommonModule = commonModule;
+						}
 
 						for (Module module : ModuleRegistry.INSTANCE.getModules(ModuleType.MODIFIER)) {
 							if (!(module instanceof ModuleModifier)) continue;
@@ -199,6 +212,8 @@ public class WorktableGui extends GuiBase {
 							for (int i = 0; i < count; i++) {
 								chain.add(module);
 							}
+
+							lastCommonModule.addModifier((ModuleModifier) module, count);
 						}
 
 						lastModule = lastModule.getLinksTo();
@@ -207,9 +222,19 @@ public class WorktableGui extends GuiBase {
 					chains.add(chain);
 				}
 
-				PacketHandler.NETWORK.sendToServer(new PacketSendSpellToBook(chains));
+				NBTTagList commonList = new NBTTagList();
+				for (CommonWorktableModule commonModule : commonModules) {
+					commonList.appendTag(commonModule.serializeNBT());
+				}
+				for (ItemStack stack : Minecraft.getMinecraft().player.inventory.mainInventory) {
+					if (stack.getItem() == ModItems.BOOK) {
+						ItemNBTHelper.setList(stack, "common_modules", commonList);
+					}
+				}
 
-				playSaveAnimation();
+				PacketHandler.NETWORK.sendToServer(new PacketSendSpellToBook(Minecraft.getMinecraft().player.getUniqueID(), chains, commonModules));
+
+				playSaveAnimation(null);
 			});
 			getMainComponents().add(save);
 		}
@@ -221,7 +246,7 @@ public class WorktableGui extends GuiBase {
 
 			// Button rendering
 			{
-				String saveStr = LibrarianLib.PROXY.translate("wizardry.misc.clear");
+				String saveStr = LibrarianLib.PROXY.translate("wizardry.table.clear");
 				int stringWidth = Minecraft.getMinecraft().fontRenderer.getStringWidth(saveStr);
 				int fitWidth = clear.getSize().getXi() - 16;
 
@@ -237,7 +262,7 @@ public class WorktableGui extends GuiBase {
 				List<String> txt = new ArrayList<>();
 
 				if (!animationPlaying) {
-					txt.add(TextFormatting.WHITE + LibrarianLib.PROXY.translate("wizardry.misc.clear_desc"));
+					txt.add(TextFormatting.WHITE + LibrarianLib.PROXY.translate("wizardry.table.clear_desc"));
 				}
 				return txt;
 			});
@@ -263,13 +288,113 @@ public class WorktableGui extends GuiBase {
 			});
 
 			clear.BUS.hook(GuiComponentEvents.MouseClickEvent.class, (event) -> {
-				playClearAnimation();
+				playClearAnimation(() -> {
+					syncToServer();
+					animationPlaying = false;
+				});
 
 				setToastMessageNoHeader(LibrarianLib.PROXY.translate("wizardry.table.paper_cleared"), Color.GREEN);
 			});
 			getMainComponents().add(clear);
 		}
 		// --- CLEAR BUTTON --- //
+
+		// --- LOAD BUTTON --- //
+		{
+			ComponentSprite load = new ComponentSprite(BUTTON_NORMAL, 395, 30 + (5 + (int) (24 / 1.5)) * 2, (int) (88 / 1.5), (int) (24 / 1.5));
+
+			// Button rendering
+			{
+				String saveStr = LibrarianLib.PROXY.translate("wizardry.table.load");
+				int stringWidth = Minecraft.getMinecraft().fontRenderer.getStringWidth(saveStr);
+				int fitWidth = load.getSize().getXi() - 16;
+
+				ComponentText textSave = new ComponentText(16 + (int) (fitWidth / 2.0 - stringWidth / 2.0), (load.getSize().getYi() / 2), ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.MIDDLE);
+				textSave.getText().setValue(saveStr);
+				load.add(textSave);
+
+				ComponentSprite sprite = new ComponentSprite(BOOK_ICON, 2, 0);
+				load.add(sprite);
+			}
+
+			load.render.getTooltip().func((Function<GuiComponent, List<String>>) t -> {
+				List<String> txt = new ArrayList<>();
+
+				if (!animationPlaying) {
+					txt.add(TextFormatting.WHITE + LibrarianLib.PROXY.translate("wizardry.table.load_desc"));
+				}
+				return txt;
+			});
+
+			load.BUS.hook(GuiComponentEvents.ComponentTickEvent.class, event -> {
+				if (animationPlaying) {
+					load.setSprite(BUTTON_PRESSED);
+				} else {
+					if (event.component.getMouseOver())
+						load.setSprite(BUTTON_HIGHLIGHTED);
+					else load.setSprite(BUTTON_NORMAL);
+				}
+			});
+
+			load.BUS.hook(GuiComponentEvents.MouseDownEvent.class, event -> {
+				if (event.component.getMouseOver())
+					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_IN, 1f, 1f);
+			});
+
+			load.BUS.hook(GuiComponentEvents.MouseUpEvent.class, event -> {
+				if (event.component.getMouseOver())
+					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_OUT, 1f, 1f);
+			});
+
+			load.BUS.hook(GuiComponentEvents.MouseClickEvent.class, (event) -> {
+				NBTTagList commonList = null;
+				for (ItemStack stack : Minecraft.getMinecraft().player.inventory.mainInventory) {
+					if (stack.getItem() == ModItems.BOOK) {
+
+						NBTTagList list = ItemNBTHelper.getList(stack, "common_modules", NBTTagCompound.class);
+						if (list == null || list.isEmpty()) continue;
+
+						commonList = list;
+
+					}
+				}
+				if (commonList == null) return;
+
+				Set<CommonWorktableModule> commonModules = new HashSet<>();
+
+				for (NBTBase base : commonList) {
+					if (base instanceof NBTTagCompound) {
+						NBTTagCompound compound = (NBTTagCompound) base;
+
+						CommonWorktableModule commonModule = CommonWorktableModule.deserailize(compound);
+						commonModules.add(commonModule);
+					}
+				}
+
+				boolean isEmpty = true;
+				for (GuiComponent child : paper.getChildren()) {
+					if (child instanceof TableModule) {
+						isEmpty = false;
+						break;
+					}
+				}
+
+
+				if (isEmpty) {
+					playLoadAnimation(commonModules, () -> {
+						syncToServer();
+						animationPlaying = false;
+					});
+				} else playClearAnimation(() -> playLoadAnimation(commonModules, () -> {
+					syncToServer();
+					animationPlaying = false;
+				}));
+
+				setToastMessageNoHeader(LibrarianLib.PROXY.translate("wizardry.table.spell_loaded"), Color.GREEN);
+			});
+			getMainComponents().add(load);
+		}
+		// --- LOAD BUTTON --- //
 
 		load();
 	}
@@ -287,6 +412,8 @@ public class WorktableGui extends GuiBase {
 
 					while (commonModule != null) {
 
+						lastModule.radius = 10;
+						lastModule.textRadius = 0;
 						paper.add(lastModule);
 						DragMixin drag = new DragMixin(lastModule, vec2d -> vec2d);
 						drag.setDragOffset(new Vec2d(6, 6));
@@ -479,7 +606,7 @@ public class WorktableGui extends GuiBase {
 		}
 	}
 
-	public void playSaveAnimation() {
+	public void playSaveAnimation(@Nullable Runnable finish) {
 		animationPlaying = true;
 
 		if (selectedModule != null) {
@@ -549,7 +676,12 @@ public class WorktableGui extends GuiBase {
 
 				anim.setCompletion(() -> {
 					fakePaper.invalidate();
-					animationPlaying = false;
+
+					if (finish == null)
+						animationPlaying = false;
+					else {
+						finish.run();
+					}
 				});
 
 				ScheduledEventAnimation animSound = new ScheduledEventAnimation(120 * 0.5f, () -> Minecraft.getMinecraft().player.playSound(ModSounds.SCRIBBLING, 1f, 1f));
@@ -572,6 +704,12 @@ public class WorktableGui extends GuiBase {
 					for (Object tag : tableModule.getTagList()) fakeModule.addTag(tag);
 					fakeModule.getTransform().setTranslateZ(230);
 					fakePaper.add(fakeModule);
+
+					for (Module module : ModuleRegistry.INSTANCE.getModules(ModuleType.MODIFIER)) {
+						if (tableModule.hasData(Integer.class, module.getID())) {
+							fakeModule.setData(Integer.class, module.getID(), tableModule.getData(Integer.class, module.getID()));
+						}
+					}
 
 					UUID uuid = tableModule.getData(UUID.class, "uuid");
 					if (uuid != null)
@@ -638,9 +776,19 @@ public class WorktableGui extends GuiBase {
 							new Keyframe(1f, -(bookIconMask.getSize().getY() / 2.0) - 4, Easing.easeInOutQuint)
 					});
 
+					BasicAnimation<TableModule> animRadius = new BasicAnimation<>(fakeModule, "radius");
+					animRadius.setDuration(20);
+					animRadius.setEasing(Easing.easeOutCubic);
+					animRadius.setTo(0);
+
+					BasicAnimation<TableModule> animText = new BasicAnimation<>(fakeModule, "textRadius");
+					animText.setDuration(40);
+					animText.setEasing(Easing.easeOutCubic);
+					animText.setTo(0);
+
 					animY.setCompletion(fakeModule::invalidate);
 
-					fakeModule.add(animX, animY, animSound1, animSound2);
+					fakeModule.add(animX, animY, animSound1, animSound2, animRadius, animText);
 				}
 			}
 		};
@@ -651,8 +799,7 @@ public class WorktableGui extends GuiBase {
 		} else runnable.run();
 	}
 
-
-	public void playClearAnimation() {
+	public void playClearAnimation(@Nullable Runnable finish) {
 		animationPlaying = true;
 
 		if (selectedModule != null) {
@@ -674,8 +821,10 @@ public class WorktableGui extends GuiBase {
 			// PAPER ITEMS ANIMATION
 			{
 				ScheduledEventAnimation animFinish = new ScheduledEventAnimation(110, () -> {
-					animationPlaying = false;
-					syncToServer();
+					if (finish == null) {
+						animationPlaying = false;
+						syncToServer();
+					} else finish.run();
 				});
 				paper.add(animFinish);
 
@@ -715,6 +864,187 @@ public class WorktableGui extends GuiBase {
 
 					module.add(animX, animY, animSound1);
 				}
+			}
+		};
+
+		if (selectedModule != null) {
+			selectedModule = null;
+			getMainComponents().add(new ScheduledEventAnimation(5, runnable));
+		} else runnable.run();
+	}
+
+	public void playLoadAnimation(Set<CommonWorktableModule> commonModules, @Nullable Runnable finish) {
+		animationPlaying = true;
+
+		if (selectedModule != null) {
+			Vec2d toSize = new Vec2d(16, 16);
+			BasicAnimation<TableModule> animSize = new BasicAnimation<>(selectedModule, "size");
+			animSize.setDuration(5);
+			animSize.setEasing(Easing.easeOutCubic);
+			animSize.setTo(toSize);
+			selectedModule.add(animSize);
+
+			BasicAnimation<TableModule> animPos = new BasicAnimation<>(selectedModule, "pos");
+			animPos.setDuration(5);
+			animPos.setEasing(Easing.easeOutCubic);
+			animPos.setTo(selectedModule.getPos().add((selectedModule.getSize().sub(toSize)).mul(0.5f)));
+			selectedModule.add(animPos);
+		}
+
+		ComponentVoid bookIconMask = new ComponentVoid(0, -100, 180, 100);
+		paper.add(bookIconMask);
+
+		Vec2d bookOrigin = new Vec2d((bookIconMask.getSize().getX() / 2.0) - 8, -(bookIconMask.getSize().getY() / 2.0) - 4);
+
+		Runnable itemsRunnable = () -> {
+			// PAPER ITEMS ANIMATION
+			{
+				for (CommonWorktableModule commonHead : commonModules) {
+					CommonWorktableModule commonModule = commonHead;
+					TableModule lastModule = new TableModule(this, commonHead.module, true, false);
+					lastModule.setPos(commonHead.pos);
+
+					while (commonModule != null) {
+
+						paper.add(lastModule);
+						DragMixin drag = new DragMixin(lastModule, vec2d -> vec2d);
+						drag.setDragOffset(new Vec2d(6, 6));
+
+						lastModule.setData(Vec2d.class, "true_pos", commonModule.pos);
+
+						for (ModuleModifier modifier : commonModule.modifiers.keySet()) {
+							lastModule.setData(Integer.class, modifier.getID(), commonModule.modifiers.get(modifier));
+						}
+
+						lastModule.radius = 0;
+						lastModule.textRadius = 0;
+
+						if (commonModule.linksTo != null) {
+							TableModule childModule = new TableModule(this, commonModule.linksTo.module, true, false);
+							childModule.setPos(bookOrigin);
+							lastModule.setLinksTo(childModule);
+							lastModule = childModule;
+						}
+
+						commonModule = commonModule.linksTo;
+					}
+				}
+
+				for (GuiComponent component : paper.getChildren()) {
+					if (!(component instanceof TableModule)) continue;
+					TableModule module = (TableModule) component;
+
+					Vec2d target = module.getData(Vec2d.class, "true_pos");
+					if (target == null) {
+						module.invalidate();
+						continue;
+					}
+
+					Vec2d randGen = new Vec2d(RandUtil.nextDouble(-100, 100), RandUtil.nextDouble(-100, 100));
+					Vec2d random = bookOrigin.add(randGen);
+
+					float delay = RandUtil.nextFloat(0.2f, 0.3f);
+					float dur = RandUtil.nextFloat(70, 100);
+
+					ScheduledEventAnimation animSound1 = new ScheduledEventAnimation(dur * delay, () -> Minecraft.getMinecraft().player.playSound(ModSounds.WHOOSH, 1f, 1f));
+
+					KeyframeAnimation<TableModule> animX = new KeyframeAnimation<>(module, "pos.x");
+					animX.setDuration(dur);
+					animX.setKeyframes(new Keyframe[]{
+							new Keyframe(delay, bookOrigin.getX(), Easing.easeOutQuint),
+							new Keyframe(0.5f, random.getX(), Easing.easeOutQuint),
+							new Keyframe(0.6f, random.getX(), Easing.easeOutQuint),
+							new Keyframe(1f, target.getX(), Easing.easeOutQuint)
+					});
+
+					KeyframeAnimation<TableModule> animY = new KeyframeAnimation<>(module, "pos.y");
+					animY.setDuration(dur);
+					animY.setKeyframes(new Keyframe[]{
+							new Keyframe(delay, bookOrigin.getY(), Easing.easeOutQuint),
+							new Keyframe(0.5f, random.getY(), Easing.easeOutQuint),
+							new Keyframe(0.6f, random.getY(), Easing.easeOutQuint),
+							new Keyframe(1f, target.getY(), Easing.easeOutQuint)
+					});
+
+					animY.setCompletion(() -> {
+						BasicAnimation<TableModule> animRadius = new BasicAnimation<>(module, "radius");
+						animRadius.setDuration(20);
+						animRadius.setEasing(Easing.easeOutCubic);
+						animRadius.setTo(10);
+						module.add(animRadius);
+
+						BasicAnimation<TableModule> animText = new BasicAnimation<>(module, "textRadius");
+						animText.setDuration(40);
+						animText.setEasing(Easing.easeOutCubic);
+						animText.setTo(0);
+						module.add(animText);
+					});
+
+					module.add(animX, animY, animSound1);
+				}
+			}
+		};
+
+		Runnable runnable = () -> {
+
+			// GRAY BACKGROUND
+			{
+				ComponentRect grayBackground = new ComponentRect(0, 0, tableComponent.getSize().getXi(), tableComponent.getSize().getYi());
+				grayBackground.getColor().setValue(new Color(0.05f, 0.05f, 0.05f, 0f));
+				grayBackground.getTransform().setTranslateZ(200);
+				grayBackground.BUS.hook(GuiComponentEvents.ComponentTickEvent.class, event -> {
+					grayBackground.getColor().setValue(new Color(0.05f, 0.05f, 0.05f, backgroundAlpha));
+				});
+				//	tableComponent.add(grayBackground);
+
+				KeyframeAnimation<WorktableGui> anim = new KeyframeAnimation<>(this, "backgroundAlpha");
+				anim.setDuration(100);
+				anim.setKeyframes(new Keyframe[]{
+						new Keyframe(0, 0f, Easing.easeInOutQuint),
+						new Keyframe(0.2f, 0.65f, Easing.easeInOutQuint),
+						new Keyframe(0.7f, 0.65f, Easing.easeInOutQuint),
+						new Keyframe(1f, 0f, Easing.easeInOutQuint)
+				});
+				anim.setCompletion(grayBackground::invalidate);
+				//	getMainComponents().add(anim);
+			}
+
+			// BOOK PEAK ANIMATION
+			{
+				ComponentSprite bookIcon = new ComponentSprite(BOOK_ICON, (int) ((bookIconMask.getSize().getX() / 2.0) - 16), (int) (bookIconMask.getSize().getY() + 50), 32, 32);
+				bookIconMask.add(bookIcon);
+
+				bookIcon.getTransform().setTranslateZ(200);
+				bookIconMask.clipping.setClipToBounds(true);
+				bookIconMask.getTransform().setTranslateZ(250);
+
+				final Vec2d originalPos = bookIcon.getPos();
+				KeyframeAnimation<ComponentSprite> anim = new KeyframeAnimation<>(bookIcon, "pos.y");
+				anim.setDuration(120);
+				anim.setKeyframes(new Keyframe[]{
+						new Keyframe(0, originalPos.getY(), Easing.linear),
+						new Keyframe(0.4f, (bookIconMask.getSize().getY() / 2.0) - 25, Easing.easeInBack),
+						new Keyframe(0.5f, (bookIconMask.getSize().getY() / 2.0) - 10, Easing.easeOutBack),
+						new Keyframe(0.8f, (bookIconMask.getSize().getY() / 2.0) - 10, Easing.easeInBack),
+						new Keyframe(1f, originalPos.getY(), Easing.easeInBack)
+				});
+
+				ScheduledEventAnimation animSound = new ScheduledEventAnimation(120 * 0.4f, () -> {
+					Minecraft.getMinecraft().player.playSound(ModSounds.WHOOSH, 1f, 1f);
+					itemsRunnable.run();
+
+					ScheduledEventAnimation animFinish = new ScheduledEventAnimation(100, () -> {
+						bookIcon.invalidate();
+						if (finish == null)
+							animationPlaying = false;
+						else {
+							finish.run();
+						}
+					});
+					getMainComponents().add(animFinish);
+				});
+
+				bookIcon.add(anim, animSound);
 			}
 		};
 

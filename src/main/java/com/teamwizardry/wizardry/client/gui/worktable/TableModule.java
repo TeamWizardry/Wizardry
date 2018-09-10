@@ -128,94 +128,18 @@ public class TableModule extends GuiComponent {
 
 					if (worktable.selectedModule == this) {
 						Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_OUT, 1f, 1f);
+
 						worktable.selectedModule = null;
-
-						Vec2d toSize = new Vec2d(20, 20);
-						BasicAnimation<TableModule> animSize = new BasicAnimation<>(this, "size");
-						animSize.setDuration(5);
-						animSize.setEasing(Easing.easeOutCubic);
-						animSize.setTo(toSize);
-						add(animSize);
-
-						BasicAnimation<TableModule> animPos = new BasicAnimation<>(this, "pos");
-						animPos.setDuration(5);
-						animPos.setEasing(Easing.easeOutCubic);
-						animPos.setTo(getPos().add((getSize().sub(toSize)).mul(0.5f)));
-						add(animPos);
-
-						BasicAnimation<TableModule> animRadius = new BasicAnimation<>(this, "radius");
-						animRadius.setDuration(20);
-						animRadius.setEasing(Easing.easeOutCubic);
-						animRadius.setTo(16);
-						add(animRadius);
-
-						BasicAnimation<TableModule> animText = new BasicAnimation<>(this, "textRadius");
-						animText.setDuration(40);
-						animText.setEasing(Easing.easeOutCubic);
-						animText.setTo(30);
-						add(animText);
+						deselect(worktable, this);
 
 					} else {
 						Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_IN, 1f, 1f);
 						if (worktable.selectedModule != null) {
-							Vec2d toSize = new Vec2d(16, 16);
-							BasicAnimation<TableModule> animSize = new BasicAnimation<>(worktable.selectedModule, "size");
-							animSize.setDuration(5);
-							animSize.setEasing(Easing.easeOutCubic);
-							animSize.setTo(toSize);
-							worktable.selectedModule.add(animSize);
-
-							BasicAnimation<TableModule> animPos = new BasicAnimation<>(worktable.selectedModule, "pos");
-							animPos.setDuration(5);
-							animPos.setEasing(Easing.easeOutCubic);
-							animPos.setTo(worktable.selectedModule.getPos().add((worktable.selectedModule.getSize().sub(toSize)).mul(0.5f)));
-							worktable.selectedModule.add(animPos);
-
-							BasicAnimation<TableModule> animRadius = new BasicAnimation<>(worktable.selectedModule, "radius");
-							animRadius.setDuration(5);
-							animRadius.setEasing(Easing.easeOutCubic);
-							animRadius.setTo(10);
-							worktable.selectedModule.add(animRadius);
-
-							BasicAnimation<TableModule> animText2 = new BasicAnimation<>(worktable.selectedModule, "textRadius");
-							animText2.setDuration(40);
-							animText2.setEasing(Easing.easeOutCubic);
-							animText2.setTo(5);
-							worktable.selectedModule.add(animText2);
-
-							BasicAnimation<TableModule> animText = new BasicAnimation<>(this, "textRadius");
-							animText.setDuration(40);
-							animText.setEasing(Easing.easeOutCubic);
-							animText.setTo(0);
-							add(animText);
+							unhoverOver(worktable.selectedModule);
 						}
 
 						worktable.selectedModule = this;
-
-						Vec2d toSize = new Vec2d(24, 24);
-						BasicAnimation<TableModule> animSize = new BasicAnimation<>(this, "size");
-						animSize.setDuration(5);
-						animSize.setEasing(Easing.easeOutCubic);
-						animSize.setTo(toSize);
-						add(animSize);
-
-						BasicAnimation<TableModule> animPos = new BasicAnimation<>(this, "pos");
-						animPos.setDuration(5);
-						animPos.setEasing(Easing.easeOutCubic);
-						animPos.setTo(getPos().add((getSize().sub(toSize)).mul(0.5f)));
-						add(animPos);
-
-						BasicAnimation<TableModule> animRadius = new BasicAnimation<>(this, "radius");
-						animRadius.setDuration(20);
-						animRadius.setEasing(Easing.easeOutCubic);
-						animRadius.setTo(24);
-						add(animRadius);
-
-						BasicAnimation<TableModule> animText = new BasicAnimation<>(this, "textRadius");
-						animText.setDuration(40);
-						animText.setEasing(Easing.easeOutCubic);
-						animText.setTo(40);
-						add(animText);
+						select(worktable, this);
 					}
 
 					worktable.modifiers.refresh();
@@ -342,60 +266,16 @@ public class TableModule extends GuiComponent {
 			BUS.hook(GuiComponentEvents.MouseInEvent.class, event -> {
 				if (worktable.animationPlaying) return;
 				if (worktable.selectedModule == this) return;
-				Vec2d toSize = new Vec2d(20, 20);
-				BasicAnimation<TableModule> animSize = new BasicAnimation<>(this, "size");
-				animSize.setDuration(5);
-				animSize.setEasing(Easing.easeOutCubic);
-				animSize.setTo(toSize);
-				add(animSize);
 
-				BasicAnimation<TableModule> animPos = new BasicAnimation<>(this, "pos");
-				animPos.setDuration(5);
-				animPos.setEasing(Easing.easeOutCubic);
-				animPos.setTo(getPos().add((getSize().sub(toSize)).mul(0.5f)));
-				add(animPos);
-
-				BasicAnimation<TableModule> animRadius = new BasicAnimation<>(this, "radius");
-				animRadius.setDuration(20);
-				animRadius.setEasing(Easing.easeOutCubic);
-				animRadius.setTo(16);
-				add(animRadius);
-
-				BasicAnimation<TableModule> animText = new BasicAnimation<>(this, "textRadius");
-				animText.setDuration(40);
-				animText.setEasing(Easing.easeOutCubic);
-				animText.setTo(30);
-				add(animText);
+				hoverOver(this);
 			});
 
 		if (!benign)
 			BUS.hook(GuiComponentEvents.MouseOutEvent.class, event -> {
 				if (worktable.animationPlaying) return;
 				if (worktable.selectedModule == this) return;
-				Vec2d toSize = new Vec2d(16, 16);
-				BasicAnimation<TableModule> animSize = new BasicAnimation<>(this, "size");
-				animSize.setDuration(5);
-				animSize.setEasing(Easing.easeOutCubic);
-				animSize.setTo(toSize);
-				add(animSize);
 
-				BasicAnimation<TableModule> animPos = new BasicAnimation<>(this, "pos");
-				animPos.setDuration(5);
-				animPos.setEasing(Easing.easeOutCubic);
-				animPos.setTo(getPos().add((getSize().sub(toSize)).mul(0.5f)));
-				add(animPos);
-
-				BasicAnimation<TableModule> animRadius = new BasicAnimation<>(this, "radius");
-				animRadius.setDuration(20);
-				animRadius.setEasing(Easing.easeOutCubic);
-				animRadius.setTo(10);
-				add(animRadius);
-
-				BasicAnimation<TableModule> animText = new BasicAnimation<>(this, "textRadius");
-				animText.setDuration(40);
-				animText.setEasing(Easing.easeOutCubic);
-				animText.setTo(0);
-				add(animText);
+				unhoverOver(this);
 
 			});
 	}
@@ -665,5 +545,113 @@ public class TableModule extends GuiComponent {
 
 	public void setEnableTooltip(boolean enableTooltip) {
 		this.enableTooltip = enableTooltip;
+	}
+
+	public static void unhoverOver(TableModule module) {
+		Vec2d toSize = new Vec2d(16, 16);
+		BasicAnimation<TableModule> animSize = new BasicAnimation<>(module, "size");
+		animSize.setDuration(5);
+		animSize.setEasing(Easing.easeOutCubic);
+		animSize.setTo(toSize);
+		module.add(animSize);
+
+		BasicAnimation<TableModule> animPos = new BasicAnimation<>(module, "pos");
+		animPos.setDuration(5);
+		animPos.setEasing(Easing.easeOutCubic);
+		animPos.setTo(module.getPos().add((module.getSize().sub(toSize)).mul(0.5f)));
+		module.add(animPos);
+
+		BasicAnimation<TableModule> animRadius = new BasicAnimation<>(module, "radius");
+		animRadius.setDuration(20);
+		animRadius.setEasing(Easing.easeOutCubic);
+		animRadius.setTo(10);
+		module.add(animRadius);
+
+		BasicAnimation<TableModule> animText = new BasicAnimation<>(module, "textRadius");
+		animText.setDuration(40);
+		animText.setEasing(Easing.easeOutCubic);
+		animText.setTo(0);
+		module.add(animText);
+	}
+
+	public static void hoverOver(TableModule module) {
+		Vec2d toSize = new Vec2d(20, 20);
+		BasicAnimation<TableModule> animSize = new BasicAnimation<>(module, "size");
+		animSize.setDuration(5);
+		animSize.setEasing(Easing.easeOutCubic);
+		animSize.setTo(toSize);
+		module.add(animSize);
+
+		BasicAnimation<TableModule> animPos = new BasicAnimation<>(module, "pos");
+		animPos.setDuration(5);
+		animPos.setEasing(Easing.easeOutCubic);
+		animPos.setTo(module.getPos().add((module.getSize().sub(toSize)).mul(0.5f)));
+		module.add(animPos);
+
+		BasicAnimation<TableModule> animRadius = new BasicAnimation<>(module, "radius");
+		animRadius.setDuration(20);
+		animRadius.setEasing(Easing.easeOutCubic);
+		animRadius.setTo(16);
+		module.add(animRadius);
+
+		BasicAnimation<TableModule> animText = new BasicAnimation<>(module, "textRadius");
+		animText.setDuration(40);
+		animText.setEasing(Easing.easeOutCubic);
+		animText.setTo(30);
+		module.add(animText);
+	}
+
+	public static void select(WorktableGui worktable, TableModule module) {
+		Vec2d toSize = new Vec2d(24, 24);
+		BasicAnimation<TableModule> animSize = new BasicAnimation<>(module, "size");
+		animSize.setDuration(5);
+		animSize.setEasing(Easing.easeOutCubic);
+		animSize.setTo(toSize);
+		module.add(animSize);
+
+		BasicAnimation<TableModule> animPos = new BasicAnimation<>(module, "pos");
+		animPos.setDuration(5);
+		animPos.setEasing(Easing.easeOutCubic);
+		animPos.setTo(module.getPos().add((module.getSize().sub(toSize)).mul(0.5f)));
+		module.add(animPos);
+
+		BasicAnimation<TableModule> animRadius = new BasicAnimation<>(module, "radius");
+		animRadius.setDuration(20);
+		animRadius.setEasing(Easing.easeOutCubic);
+		animRadius.setTo(24);
+		module.add(animRadius);
+
+		BasicAnimation<TableModule> animText = new BasicAnimation<>(module, "textRadius");
+		animText.setDuration(40);
+		animText.setEasing(Easing.easeOutCubic);
+		animText.setTo(40);
+		module.add(animText);
+	}
+
+	public static void deselect(WorktableGui worktable, TableModule module) {
+		Vec2d toSize = new Vec2d(20, 20);
+		BasicAnimation<TableModule> animSize = new BasicAnimation<>(module, "size");
+		animSize.setDuration(5);
+		animSize.setEasing(Easing.easeOutCubic);
+		animSize.setTo(toSize);
+		module.add(animSize);
+
+		BasicAnimation<TableModule> animPos = new BasicAnimation<>(module, "pos");
+		animPos.setDuration(5);
+		animPos.setEasing(Easing.easeOutCubic);
+		animPos.setTo(module.getPos().add((module.getSize().sub(toSize)).mul(0.5f)));
+		module.add(animPos);
+
+		BasicAnimation<TableModule> animRadius = new BasicAnimation<>(module, "radius");
+		animRadius.setDuration(20);
+		animRadius.setEasing(Easing.easeOutCubic);
+		animRadius.setTo(16);
+		module.add(animRadius);
+
+		BasicAnimation<TableModule> animText = new BasicAnimation<>(module, "textRadius");
+		animText.setDuration(40);
+		animText.setEasing(Easing.easeOutCubic);
+		animText.setTo(30);
+		module.add(animText);
 	}
 }

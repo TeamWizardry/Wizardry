@@ -157,10 +157,6 @@ jei.recipe.wizardry:fluid=Fluid Recipe
 wizardry.misc.moduleSet=Spell:
 wizardry.misc.sneak=<Sneak for info>
 wizardry.misc.ctrl=<Ctrl for more info>
-wizardry.misc.save=SAVE
-wizardry.misc.clear=CLEAR
-wizardry.misc.clear_desc=Will remove all spell components on the paper
-wizardry.misc.save_error=No codex found in your inventory! Place one in your inventory to save properly.
 wizardry.misc.sneak_expanded=&7<- &8Shift for more info&7 ->
 wizardry.misc.update_link=Wizardry Update Changelog
 wizardry.misc.update_checker0=There's a new Wizardry update available.
@@ -316,6 +312,7 @@ wizardry.update6=yo dawg we heard you like changelogs so we put changelogs in yo
 wizardry.update7=*:･ﾟ✧ᕕ( ᐛ )ᕗ
 
 
+wizardry.table.spell_loaded=Spell loaded from condex.
 wizardry.table.paper_cleared=Paper cleared.
 wizardry.table.spell_saved=Spell saved to codex successfully! Open the book and check the new spell recipe tab.
 wizardry.table.no_codex_found=You do not have a codex in your inventory! Once you have one, you can save your spell into the book.
@@ -325,7 +322,12 @@ wizardry.table.loop_found=There's a loop somewhere! A spell should start from so
 wizardry.table.connection_doesnt_work=Those components can't be linked together like that!
 wizardry.table.connection_effect_to_any=An Effect module cannot link to another components. They can only be linked from other components.
 wizardry.table.connection_event_to_something=To make your spell use that Event component, hook your Shape TO it, then hook the Event TO the Effect. Shape -> Event -> Effect
-
+wizardry.table.save=SAVE
+wizardry.table.clear=CLEAR
+wizardry.table.load=LOAD
+wizardry.table.load_desc=Return the last spell saved in the first codex found in your inventory
+wizardry.table.clear_desc=Remove all spell components on the paper
+wizardry.table.save_error=No codex found in your inventory! Place one in your inventory to save properly.
 
 wizardry.book.shift_scroll=Shift + Scroll to flip pages
 wizardry.book.open_recipe_tab=Open recipe tab for more details
