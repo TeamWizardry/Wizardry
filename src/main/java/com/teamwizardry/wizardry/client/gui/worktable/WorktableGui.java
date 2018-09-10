@@ -63,10 +63,16 @@ public class WorktableGui extends GuiBase {
 	static final Sprite BUTTON_NORMAL = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/button.png"));
 	static final Sprite BUTTON_HIGHLIGHTED = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/button_highlighted.png"));
 	static final Sprite BUTTON_PRESSED = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/button_pressed.png"));
+	static final Sprite BUTTON_SHORT_NORMAL = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/button_short.png"));
+	static final Sprite BUTTON_SHORT_HIGHLIGHTED = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/button_short_highlighted.png"));
+	static final Sprite BUTTON_SHORT_PRESSED = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/button_short_pressed.png"));
 	static final Sprite PLATE = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/plate.png"));
 	static final Sprite PLATE_HIGHLIGHTED = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/plate_highlighted.png"));
 	static final Sprite STREAK = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/streak.png"));
 	static final Sprite BOOK_ICON = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/items/book.png"));
+	static final Sprite SAVE_ICON = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/save.png"));
+	static final Sprite BROOM_ICON = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/broom.png"));
+	static final Sprite BOOK_COVER_ICON = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/book_cover.png"));
 	final ComponentModifiers modifiers;
 	final ComponentVoid paper;
 	final ComponentText toast;
@@ -99,8 +105,8 @@ public class WorktableGui extends GuiBase {
 		tableComponent.add(paper);
 
 		// --- TOAST BOX --- //
-		toast = new ComponentText(384, 139, ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.TOP);
-		toast.setSize(new Vec2d(80, 69).mul(2));
+		toast = new ComponentText(384, 56, ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.TOP);
+		toast.setSize(new Vec2d(80, 63).mul(2));
 		toast.clipping.setClipToBounds(true);
 		toast.getTransform().setScale(0.5f);
 		toast.getWrap().setValue(160);
@@ -134,9 +140,18 @@ public class WorktableGui extends GuiBase {
 		modifiers = new ComponentModifiers(this);
 		tableComponent.add(modifiers);
 
+		int menuX = 384;
+		int menuY = 20;
+		int menuWidth = 80;
+		int buttonWidth = 20;
+		int buttonHeight = 16;
+		int buttonX = 390;
+		int buttonY = 25;
+		int spacing = 5;
+		int iconSize = 12;
 		// --- SAVE BUTTON --- //
 		{
-			ComponentSprite save = new ComponentSprite(BUTTON_NORMAL, 395, 30, (int) (88 / 1.5), (int) (24 / 1.5));
+			ComponentSprite save = new ComponentSprite(BUTTON_SHORT_NORMAL, menuX + (menuWidth / 2) - buttonWidth - (buttonWidth / 2) - spacing, spacing + menuY, buttonWidth, buttonHeight);
 
 			// Button rendering
 			{
@@ -146,28 +161,33 @@ public class WorktableGui extends GuiBase {
 
 				ComponentText textSave = new ComponentText(16 + (int) (fitWidth / 2.0 - stringWidth / 2.0), (save.getSize().getYi() / 2), ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.MIDDLE);
 				textSave.getText().setValue(saveStr);
-				save.add(textSave);
+				//save.add(textSave);
 
-				ComponentSprite sprite = new ComponentSprite(BOOK_ICON, 2, 0);
+				ComponentSprite sprite = new ComponentSprite(SAVE_ICON, (buttonWidth / 2) - (iconSize / 2), (buttonHeight / 2) - (iconSize / 2), iconSize, iconSize);
 				save.add(sprite);
 			}
 
 			save.render.getTooltip().func((Function<GuiComponent, List<String>>) t -> {
 				List<String> txt = new ArrayList<>();
 
-				if (!animationPlaying && !Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) {
-					txt.add(TextFormatting.RED + LibrarianLib.PROXY.translate("wizardry.table.save_error"));
+				if (!animationPlaying) {
+					txt.add(TextFormatting.GOLD + LibrarianLib.PROXY.translate("wizardry.table.save"));
+					txt.add(TextFormatting.GRAY + LibrarianLib.PROXY.translate("wizardry.table.save_desc"));
+
+					if (!Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) {
+						txt.add(TextFormatting.RED + LibrarianLib.PROXY.translate("wizardry.table.save_error"));
+					}
 				}
 				return txt;
 			});
 
 			save.BUS.hook(GuiComponentEvents.ComponentTickEvent.class, event -> {
 				if (animationPlaying || !Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) {
-					save.setSprite(BUTTON_PRESSED);
+					save.setSprite(BUTTON_SHORT_PRESSED);
 				} else {
 					if (event.component.getMouseOver())
-						save.setSprite(BUTTON_HIGHLIGHTED);
-					else save.setSprite(BUTTON_NORMAL);
+						save.setSprite(BUTTON_SHORT_HIGHLIGHTED);
+					else save.setSprite(BUTTON_SHORT_NORMAL);
 				}
 			});
 
@@ -240,68 +260,9 @@ public class WorktableGui extends GuiBase {
 		}
 		// --- SAVE BUTTON --- //
 
-		// --- CLEAR BUTTON --- //
-		{
-			ComponentSprite clear = new ComponentSprite(BUTTON_NORMAL, 395, 30 + 5 + (int) (24 / 1.5), (int) (88 / 1.5), (int) (24 / 1.5));
-
-			// Button rendering
-			{
-				String saveStr = LibrarianLib.PROXY.translate("wizardry.table.clear");
-				int stringWidth = Minecraft.getMinecraft().fontRenderer.getStringWidth(saveStr);
-				int fitWidth = clear.getSize().getXi() - 16;
-
-				ComponentText textSave = new ComponentText(16 + (int) (fitWidth / 2.0 - stringWidth / 2.0), (clear.getSize().getYi() / 2), ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.MIDDLE);
-				textSave.getText().setValue(saveStr);
-				clear.add(textSave);
-
-				ComponentSprite sprite = new ComponentSprite(BOOK_ICON, 2, 0);
-				clear.add(sprite);
-			}
-
-			clear.render.getTooltip().func((Function<GuiComponent, List<String>>) t -> {
-				List<String> txt = new ArrayList<>();
-
-				if (!animationPlaying) {
-					txt.add(TextFormatting.WHITE + LibrarianLib.PROXY.translate("wizardry.table.clear_desc"));
-				}
-				return txt;
-			});
-
-			clear.BUS.hook(GuiComponentEvents.ComponentTickEvent.class, event -> {
-				if (animationPlaying) {
-					clear.setSprite(BUTTON_PRESSED);
-				} else {
-					if (event.component.getMouseOver())
-						clear.setSprite(BUTTON_HIGHLIGHTED);
-					else clear.setSprite(BUTTON_NORMAL);
-				}
-			});
-
-			clear.BUS.hook(GuiComponentEvents.MouseDownEvent.class, event -> {
-				if (event.component.getMouseOver())
-					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_IN, 1f, 1f);
-			});
-
-			clear.BUS.hook(GuiComponentEvents.MouseUpEvent.class, event -> {
-				if (event.component.getMouseOver())
-					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_OUT, 1f, 1f);
-			});
-
-			clear.BUS.hook(GuiComponentEvents.MouseClickEvent.class, (event) -> {
-				playClearAnimation(() -> {
-					syncToServer();
-					animationPlaying = false;
-				});
-
-				setToastMessageNoHeader(LibrarianLib.PROXY.translate("wizardry.table.paper_cleared"), Color.GREEN);
-			});
-			getMainComponents().add(clear);
-		}
-		// --- CLEAR BUTTON --- //
-
 		// --- LOAD BUTTON --- //
 		{
-			ComponentSprite load = new ComponentSprite(BUTTON_NORMAL, 395, 30 + (5 + (int) (24 / 1.5)) * 2, (int) (88 / 1.5), (int) (24 / 1.5));
+			ComponentSprite load = new ComponentSprite(BUTTON_SHORT_NORMAL, menuX + (menuWidth / 2) - (buttonWidth / 2), spacing + menuY, buttonWidth, buttonHeight);
 
 			// Button rendering
 			{
@@ -311,9 +272,9 @@ public class WorktableGui extends GuiBase {
 
 				ComponentText textSave = new ComponentText(16 + (int) (fitWidth / 2.0 - stringWidth / 2.0), (load.getSize().getYi() / 2), ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.MIDDLE);
 				textSave.getText().setValue(saveStr);
-				load.add(textSave);
+				//	load.add(textSave);
 
-				ComponentSprite sprite = new ComponentSprite(BOOK_ICON, 2, 0);
+				ComponentSprite sprite = new ComponentSprite(BOOK_COVER_ICON, (buttonWidth / 2) - (iconSize / 2), (buttonHeight / 2) - (iconSize / 2), iconSize, iconSize);
 				load.add(sprite);
 			}
 
@@ -321,18 +282,19 @@ public class WorktableGui extends GuiBase {
 				List<String> txt = new ArrayList<>();
 
 				if (!animationPlaying) {
-					txt.add(TextFormatting.WHITE + LibrarianLib.PROXY.translate("wizardry.table.load_desc"));
+					txt.add(TextFormatting.GOLD + LibrarianLib.PROXY.translate("wizardry.table.load"));
+					txt.add(TextFormatting.GRAY + LibrarianLib.PROXY.translate("wizardry.table.load_desc"));
 				}
 				return txt;
 			});
 
 			load.BUS.hook(GuiComponentEvents.ComponentTickEvent.class, event -> {
 				if (animationPlaying) {
-					load.setSprite(BUTTON_PRESSED);
+					load.setSprite(BUTTON_SHORT_PRESSED);
 				} else {
 					if (event.component.getMouseOver())
-						load.setSprite(BUTTON_HIGHLIGHTED);
-					else load.setSprite(BUTTON_NORMAL);
+						load.setSprite(BUTTON_SHORT_HIGHLIGHTED);
+					else load.setSprite(BUTTON_SHORT_NORMAL);
 				}
 			});
 
@@ -395,6 +357,66 @@ public class WorktableGui extends GuiBase {
 			getMainComponents().add(load);
 		}
 		// --- LOAD BUTTON --- //
+
+		// --- CLEAR BUTTON --- //
+		{
+			ComponentSprite clear = new ComponentSprite(BUTTON_SHORT_NORMAL, menuX + (menuWidth / 2) + (buttonWidth / 2) + spacing, spacing + menuY, buttonWidth, buttonHeight);
+
+			// Button rendering
+			{
+				String saveStr = LibrarianLib.PROXY.translate("wizardry.table.clear");
+				int stringWidth = Minecraft.getMinecraft().fontRenderer.getStringWidth(saveStr);
+				int fitWidth = clear.getSize().getXi() - 16;
+
+				ComponentText textSave = new ComponentText(16 + (int) (fitWidth / 2.0 - stringWidth / 2.0), (clear.getSize().getYi() / 2), ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.MIDDLE);
+				textSave.getText().setValue(saveStr);
+				//	clear.add(textSave);
+
+				ComponentSprite sprite = new ComponentSprite(BROOM_ICON, (buttonWidth / 2) - (iconSize / 2), (buttonHeight / 2) - (iconSize / 2), iconSize, iconSize);
+				clear.add(sprite);
+			}
+
+			clear.render.getTooltip().func((Function<GuiComponent, List<String>>) t -> {
+				List<String> txt = new ArrayList<>();
+
+				if (!animationPlaying) {
+					txt.add(TextFormatting.GOLD + LibrarianLib.PROXY.translate("wizardry.table.clear"));
+					txt.add(TextFormatting.GRAY + LibrarianLib.PROXY.translate("wizardry.table.clear_desc"));
+				}
+				return txt;
+			});
+
+			clear.BUS.hook(GuiComponentEvents.ComponentTickEvent.class, event -> {
+				if (animationPlaying) {
+					clear.setSprite(BUTTON_SHORT_PRESSED);
+				} else {
+					if (event.component.getMouseOver())
+						clear.setSprite(BUTTON_SHORT_HIGHLIGHTED);
+					else clear.setSprite(BUTTON_SHORT_NORMAL);
+				}
+			});
+
+			clear.BUS.hook(GuiComponentEvents.MouseDownEvent.class, event -> {
+				if (event.component.getMouseOver())
+					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_IN, 1f, 1f);
+			});
+
+			clear.BUS.hook(GuiComponentEvents.MouseUpEvent.class, event -> {
+				if (event.component.getMouseOver())
+					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_OUT, 1f, 1f);
+			});
+
+			clear.BUS.hook(GuiComponentEvents.MouseClickEvent.class, (event) -> {
+				playClearAnimation(() -> {
+					syncToServer();
+					animationPlaying = false;
+				});
+
+				setToastMessageNoHeader(LibrarianLib.PROXY.translate("wizardry.table.paper_cleared"), Color.GREEN);
+			});
+			getMainComponents().add(clear);
+		}
+		// --- CLEAR BUTTON --- //
 
 		load();
 	}
@@ -837,6 +859,16 @@ public class WorktableGui extends GuiBase {
 					float delay = RandUtil.nextFloat(0.2f, 0.3f);
 					float dur = RandUtil.nextFloat(70, 100);
 
+					BasicAnimation<TableModule> animRadius = new BasicAnimation<>(module, "radius");
+					animRadius.setDuration(20);
+					animRadius.setEasing(Easing.easeOutCubic);
+					animRadius.setTo(0);
+
+					BasicAnimation<TableModule> animText = new BasicAnimation<>(module, "textRadius");
+					animText.setDuration(40);
+					animText.setEasing(Easing.easeOutCubic);
+					animText.setTo(0);
+
 					ScheduledEventAnimation animSound1 = new ScheduledEventAnimation(dur * delay, () -> Minecraft.getMinecraft().player.playSound(ModSounds.POP, 1f, 1f));
 
 					KeyframeAnimation<TableModule> animX = new KeyframeAnimation<>(module, "pos.x");
@@ -862,7 +894,7 @@ public class WorktableGui extends GuiBase {
 						Minecraft.getMinecraft().player.playSound(ModSounds.ZOOM, 1f, 1f);
 					});
 
-					module.add(animX, animY, animSound1);
+					module.add(animX, animY, animSound1, animRadius, animText);
 				}
 			}
 		};

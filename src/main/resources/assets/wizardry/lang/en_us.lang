@@ -322,11 +322,12 @@ wizardry.table.loop_found=There's a loop somewhere! A spell should start from so
 wizardry.table.connection_doesnt_work=Those components can't be linked together like that!
 wizardry.table.connection_effect_to_any=An Effect module cannot link to another components. They can only be linked from other components.
 wizardry.table.connection_event_to_something=To make your spell use that Event component, hook your Shape TO it, then hook the Event TO the Effect. Shape -> Event -> Effect
-wizardry.table.save=SAVE
-wizardry.table.clear=CLEAR
-wizardry.table.load=LOAD
-wizardry.table.load_desc=Return the last spell saved in the first codex found in your inventory
-wizardry.table.clear_desc=Remove all spell components on the paper
+wizardry.table.save=Save
+wizardry.table.clear=Clear
+wizardry.table.load=Load
+wizardry.table.load_desc=Load the last spell saved from the first codex found in your inventory.
+wizardry.table.clear_desc=Remove all spell components on the paper.
+wizardry.table.save_desc=Store the recipe for the spell into the codexes in your inventory.
 wizardry.table.save_error=No codex found in your inventory! Place one in your inventory to save properly.
 
 wizardry.book.shift_scroll=Shift + Scroll to flip pages

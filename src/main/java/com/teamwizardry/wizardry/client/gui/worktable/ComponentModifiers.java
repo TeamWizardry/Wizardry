@@ -36,7 +36,7 @@ public class ComponentModifiers extends GuiComponent {
 	private boolean animationPlaying = false, refreshRequested = false;
 
 	public ComponentModifiers(WorktableGui worktable) {
-		super(384, 30 + (5 + (int) (24 / 1.5)) * 2, 80, 16 * 5);
+		super(384, 127, 80, 81);
 		this.worktable = worktable;
 
 		clipping.setClipToBounds(true);
