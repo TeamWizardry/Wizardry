@@ -149,23 +149,17 @@ public class WorktableGui extends GuiBase {
 		int buttonY = 25;
 		int spacing = 5;
 		int iconSize = 12;
+		int iconSizeHovered = 16;
 		// --- SAVE BUTTON --- //
 		{
 			ComponentSprite save = new ComponentSprite(BUTTON_SHORT_NORMAL, menuX + (menuWidth / 2) - buttonWidth - (buttonWidth / 2) - spacing, spacing + menuY, buttonWidth, buttonHeight);
 
-			// Button rendering
-			{
-				String saveStr = LibrarianLib.PROXY.translate("wizardry.table.save");
-				int stringWidth = Minecraft.getMinecraft().fontRenderer.getStringWidth(saveStr);
-				int fitWidth = save.getSize().getXi() - 16;
+			String saveStr = LibrarianLib.PROXY.translate("wizardry.table.save");
+			int stringWidth = Minecraft.getMinecraft().fontRenderer.getStringWidth(saveStr);
+			int fitWidth = save.getSize().getXi() - 16;
 
-				ComponentText textSave = new ComponentText(16 + (int) (fitWidth / 2.0 - stringWidth / 2.0), (save.getSize().getYi() / 2), ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.MIDDLE);
-				textSave.getText().setValue(saveStr);
-				//save.add(textSave);
-
-				ComponentSprite sprite = new ComponentSprite(SAVE_ICON, (buttonWidth / 2) - (iconSize / 2), (buttonHeight / 2) - (iconSize / 2), iconSize, iconSize);
-				save.add(sprite);
-			}
+			ComponentSprite sprite = new ComponentSprite(SAVE_ICON, (buttonWidth / 2) - (iconSize / 2), (buttonHeight / 2) - (iconSize / 2), iconSize, iconSize);
+			save.add(sprite);
 
 			save.render.getTooltip().func((Function<GuiComponent, List<String>>) t -> {
 				List<String> txt = new ArrayList<>();
@@ -264,19 +258,16 @@ public class WorktableGui extends GuiBase {
 		{
 			ComponentSprite load = new ComponentSprite(BUTTON_SHORT_NORMAL, menuX + (menuWidth / 2) - (buttonWidth / 2), spacing + menuY, buttonWidth, buttonHeight);
 
-			// Button rendering
-			{
-				String saveStr = LibrarianLib.PROXY.translate("wizardry.table.load");
-				int stringWidth = Minecraft.getMinecraft().fontRenderer.getStringWidth(saveStr);
-				int fitWidth = load.getSize().getXi() - 16;
+			String saveStr = LibrarianLib.PROXY.translate("wizardry.table.load");
+			int stringWidth = Minecraft.getMinecraft().fontRenderer.getStringWidth(saveStr);
+			int fitWidth = load.getSize().getXi() - 16;
 
-				ComponentText textSave = new ComponentText(16 + (int) (fitWidth / 2.0 - stringWidth / 2.0), (load.getSize().getYi() / 2), ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.MIDDLE);
-				textSave.getText().setValue(saveStr);
-				//	load.add(textSave);
+			ComponentText textSave = new ComponentText(16 + (int) (fitWidth / 2.0 - stringWidth / 2.0), (load.getSize().getYi() / 2), ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.MIDDLE);
+			textSave.getText().setValue(saveStr);
+			//	load.add(textSave);
 
-				ComponentSprite sprite = new ComponentSprite(BOOK_COVER_ICON, (buttonWidth / 2) - (iconSize / 2), (buttonHeight / 2) - (iconSize / 2), iconSize, iconSize);
-				load.add(sprite);
-			}
+			ComponentSprite sprite = new ComponentSprite(BOOK_COVER_ICON, (buttonWidth / 2) - (iconSize / 2), (buttonHeight / 2) - (iconSize / 2), iconSize, iconSize);
+			load.add(sprite);
 
 			load.render.getTooltip().func((Function<GuiComponent, List<String>>) t -> {
 				List<String> txt = new ArrayList<>();
@@ -362,8 +353,6 @@ public class WorktableGui extends GuiBase {
 		{
 			ComponentSprite clear = new ComponentSprite(BUTTON_SHORT_NORMAL, menuX + (menuWidth / 2) + (buttonWidth / 2) + spacing, spacing + menuY, buttonWidth, buttonHeight);
 
-			// Button rendering
-			{
 				String saveStr = LibrarianLib.PROXY.translate("wizardry.table.clear");
 				int stringWidth = Minecraft.getMinecraft().fontRenderer.getStringWidth(saveStr);
 				int fitWidth = clear.getSize().getXi() - 16;
@@ -374,7 +363,6 @@ public class WorktableGui extends GuiBase {
 
 				ComponentSprite sprite = new ComponentSprite(BROOM_ICON, (buttonWidth / 2) - (iconSize / 2), (buttonHeight / 2) - (iconSize / 2), iconSize, iconSize);
 				clear.add(sprite);
-			}
 
 			clear.render.getTooltip().func((Function<GuiComponent, List<String>>) t -> {
 				List<String> txt = new ArrayList<>();
