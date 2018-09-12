@@ -68,11 +68,13 @@ public class WorktableGui extends GuiBase {
 	static final Sprite BUTTON_SHORT_PRESSED = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/button_short_pressed.png"));
 	static final Sprite PLATE = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/plate.png"));
 	static final Sprite PLATE_HIGHLIGHTED = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/plate_highlighted.png"));
+	static final Sprite PLATE_HIGHLIGHTED_ERROR = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/plate_highlighted_error.png"));
 	static final Sprite STREAK = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/streak.png"));
 	static final Sprite BOOK_ICON = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/items/book.png"));
 	static final Sprite SAVE_ICON = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/save.png"));
 	static final Sprite BROOM_ICON = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/broom.png"));
 	static final Sprite BOOK_COVER_ICON = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/book_cover.png"));
+
 	final ComponentModifiers modifiers;
 	final ComponentVoid paper;
 	final ComponentText toast;
@@ -82,6 +84,9 @@ public class WorktableGui extends GuiBase {
 	public boolean animationPlaying = false;
 	private ComponentSprite tableComponent;
 	private boolean hadBook = false, bookWarnRevised = false;
+	protected Set<CommonWorktableModule> commonModules = new HashSet<>();
+	private List<List<Module>> chains = new ArrayList<>();
+	private boolean canBeSaved = false;
 
 	@NotNull
 	private final BlockPos pos;
@@ -154,10 +159,6 @@ public class WorktableGui extends GuiBase {
 		{
 			ComponentSprite save = new ComponentSprite(BUTTON_SHORT_NORMAL, menuX + (menuWidth / 2) - buttonWidth - (buttonWidth / 2) - spacing, spacing + menuY, buttonWidth, buttonHeight);
 
-			String saveStr = LibrarianLib.PROXY.translate("wizardry.table.save");
-			int stringWidth = Minecraft.getMinecraft().fontRenderer.getStringWidth(saveStr);
-			int fitWidth = save.getSize().getXi() - 16;
-
 			ComponentSprite sprite = new ComponentSprite(SAVE_ICON, (buttonWidth / 2) - (iconSize / 2), (buttonHeight / 2) - (iconSize / 2), iconSize, iconSize);
 			save.add(sprite);
 
@@ -171,12 +172,16 @@ public class WorktableGui extends GuiBase {
 					if (!Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) {
 						txt.add(TextFormatting.RED + LibrarianLib.PROXY.translate("wizardry.table.save_error"));
 					}
+
+					if (!canBeSaved) {
+						txt.add(TextFormatting.RED + "Invalid Spell!");
+					}
 				}
 				return txt;
 			});
 
 			save.BUS.hook(GuiComponentEvents.ComponentTickEvent.class, event -> {
-				if (animationPlaying || !Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) {
+				if (!canBeSaved || animationPlaying || !Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK))) {
 					save.setSprite(BUTTON_SHORT_PRESSED);
 				} else {
 					if (event.component.getMouseOver())
@@ -186,21 +191,19 @@ public class WorktableGui extends GuiBase {
 			});
 
 			save.BUS.hook(GuiComponentEvents.MouseDownEvent.class, event -> {
-				if (event.component.getMouseOver())
+				if (!animationPlaying && event.component.getMouseOver())
 					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_IN, 1f, 1f);
 			});
 
 			save.BUS.hook(GuiComponentEvents.MouseUpEvent.class, event -> {
-				if (event.component.getMouseOver())
+				if (!animationPlaying && event.component.getMouseOver())
 					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_OUT, 1f, 1f);
 			});
 
-			save.BUS.hook(GuiComponentEvents.MouseClickEvent.class, (event) -> {
-				if (animationPlaying || !Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK)))
-					return;
+			paper.BUS.hook(TableModule.ModuleUpdateEvent.class, event -> {
+				commonModules.clear();
+				chains.clear();
 
-				Set<CommonWorktableModule> commonModules = new HashSet<>();
-				List<List<Module>> chains = new ArrayList<>();
 				for (TableModule head : getSpellHeads()) {
 					List<Module> chain = new ArrayList<>();
 
@@ -209,6 +212,7 @@ public class WorktableGui extends GuiBase {
 					commonModules.add(lastCommonModule);
 
 					while (lastModule != null) {
+						if (lastModule.isInvalid()) continue;
 						chain.add(lastModule.getModule());
 
 						if (lastModule != head) {
@@ -235,6 +239,109 @@ public class WorktableGui extends GuiBase {
 
 					chains.add(chain);
 				}
+
+				canBeSaved = true;
+
+				primary:
+				for (GuiComponent paperComponent : paper.getChildren()) {
+					if (!(paperComponent instanceof TableModule)) continue;
+					TableModule module = (TableModule) paperComponent;
+					if (module.isInvalid()) continue;
+
+					if (module.getLinksTo() == null) {
+						for (GuiComponent subPaperComponent : paper.getChildren()) {
+							if (!(subPaperComponent instanceof TableModule)) continue;
+							TableModule subModule = (TableModule) subPaperComponent;
+							if (subModule.isInvalid()) continue;
+							if (subModule == module) continue;
+
+							if (subModule.getLinksTo() == module) {
+								continue primary;
+							}
+						}
+
+						module.setErrored(true);
+						TableModule.select(module);
+						canBeSaved = false;
+						setToastMessage("Component is not linked to anything! Link it to something else to make it function properly.", Color.RED);
+					}
+				}
+				if (!canBeSaved) return;
+
+				primary:
+				for (GuiComponent paperComponent : paper.getChildren()) {
+					if (!(paperComponent instanceof TableModule)) continue;
+					TableModule module = (TableModule) paperComponent;
+					if (module.isInvalid()) continue;
+
+					if (module.getModule().getModuleType() != ModuleType.SHAPE) {
+
+						for (GuiComponent subPaperComponent : paper.getChildren()) {
+							if (!(subPaperComponent instanceof TableModule)) continue;
+							TableModule subModule = (TableModule) subPaperComponent;
+							if (subModule.isInvalid()) continue;
+							if (subModule == module) continue;
+
+							if (subModule.getLinksTo() == module) continue primary;
+						}
+
+						module.setErrored(true);
+						TableModule.select(module);
+						canBeSaved = false;
+						setToastMessage("Spell chain starts without a Shape component! Your spell needs to start with a shape to run properly.", Color.RED);
+					}
+				}
+				if (!canBeSaved) return;
+
+				boolean shapeLinkedFromNothing = false;
+				for (CommonWorktableModule module : commonModules) {
+
+					CommonWorktableModule lastModule = module;
+
+					while (lastModule != null) {
+
+						if (lastModule.module.getModuleType() == ModuleType.SHAPE) {
+							if (lastModule.linksTo == null) {
+								canBeSaved = false;
+								setToastMessage("Shape component is not linked to anything! It needs to link to something so you can run your spell properly.", Color.RED);
+
+							} else {
+								boolean isLinkedFrom = false;
+								for (CommonWorktableModule linkedFrom : commonModules) {
+									if (linkedFrom.linksTo == lastModule) {
+										isLinkedFrom = true;
+										break;
+									}
+								}
+								if (!isLinkedFrom)
+									shapeLinkedFromNothing = true;
+							}
+						} else if (lastModule.module.getModuleType() == ModuleType.EVENT) {
+							if (lastModule.linksTo == null) {
+								canBeSaved = false;
+								setToastMessage("Event is linked to nothing. Link it to an effect to use it properly.", Color.RED);
+							}
+						}
+
+						lastModule = lastModule.linksTo;
+					}
+				}
+
+				if (!canBeSaved) return;
+
+				if (!shapeLinkedFromNothing) {
+					canBeSaved = false;
+					setToastMessage("No spell starting with a shape found. Start a spell with a shape to be able to run it properly.", Color.RED);
+				}
+
+				if (canBeSaved) {
+					setToastMessage("Spell is valid!", Color.GREEN);
+				}
+			});
+
+			save.BUS.hook(GuiComponentEvents.MouseClickEvent.class, (event) -> {
+				if (!canBeSaved || animationPlaying || !Minecraft.getMinecraft().player.inventory.hasItemStack(new ItemStack(ModItems.BOOK)))
+					return;
 
 				NBTTagList commonList = new NBTTagList();
 				for (CommonWorktableModule commonModule : commonModules) {
@@ -290,16 +397,18 @@ public class WorktableGui extends GuiBase {
 			});
 
 			load.BUS.hook(GuiComponentEvents.MouseDownEvent.class, event -> {
-				if (event.component.getMouseOver())
+				if (!animationPlaying && event.component.getMouseOver())
 					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_IN, 1f, 1f);
 			});
 
 			load.BUS.hook(GuiComponentEvents.MouseUpEvent.class, event -> {
-				if (event.component.getMouseOver())
+				if (!animationPlaying && event.component.getMouseOver())
 					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_OUT, 1f, 1f);
 			});
 
 			load.BUS.hook(GuiComponentEvents.MouseClickEvent.class, (event) -> {
+				if (animationPlaying) return;
+
 				NBTTagList commonList = null;
 				for (ItemStack stack : Minecraft.getMinecraft().player.inventory.mainInventory) {
 					if (stack.getItem() == ModItems.BOOK) {
@@ -353,16 +462,16 @@ public class WorktableGui extends GuiBase {
 		{
 			ComponentSprite clear = new ComponentSprite(BUTTON_SHORT_NORMAL, menuX + (menuWidth / 2) + (buttonWidth / 2) + spacing, spacing + menuY, buttonWidth, buttonHeight);
 
-				String saveStr = LibrarianLib.PROXY.translate("wizardry.table.clear");
-				int stringWidth = Minecraft.getMinecraft().fontRenderer.getStringWidth(saveStr);
-				int fitWidth = clear.getSize().getXi() - 16;
+			String saveStr = LibrarianLib.PROXY.translate("wizardry.table.clear");
+			int stringWidth = Minecraft.getMinecraft().fontRenderer.getStringWidth(saveStr);
+			int fitWidth = clear.getSize().getXi() - 16;
 
-				ComponentText textSave = new ComponentText(16 + (int) (fitWidth / 2.0 - stringWidth / 2.0), (clear.getSize().getYi() / 2), ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.MIDDLE);
-				textSave.getText().setValue(saveStr);
-				//	clear.add(textSave);
+			ComponentText textSave = new ComponentText(16 + (int) (fitWidth / 2.0 - stringWidth / 2.0), (clear.getSize().getYi() / 2), ComponentText.TextAlignH.LEFT, ComponentText.TextAlignV.MIDDLE);
+			textSave.getText().setValue(saveStr);
+			//	clear.add(textSave);
 
-				ComponentSprite sprite = new ComponentSprite(BROOM_ICON, (buttonWidth / 2) - (iconSize / 2), (buttonHeight / 2) - (iconSize / 2), iconSize, iconSize);
-				clear.add(sprite);
+			ComponentSprite sprite = new ComponentSprite(BROOM_ICON, (buttonWidth / 2) - (iconSize / 2), (buttonHeight / 2) - (iconSize / 2), iconSize, iconSize);
+			clear.add(sprite);
 
 			clear.render.getTooltip().func((Function<GuiComponent, List<String>>) t -> {
 				List<String> txt = new ArrayList<>();
@@ -385,16 +494,18 @@ public class WorktableGui extends GuiBase {
 			});
 
 			clear.BUS.hook(GuiComponentEvents.MouseDownEvent.class, event -> {
-				if (event.component.getMouseOver())
+				if (!animationPlaying && event.component.getMouseOver())
 					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_IN, 1f, 1f);
 			});
 
 			clear.BUS.hook(GuiComponentEvents.MouseUpEvent.class, event -> {
-				if (event.component.getMouseOver())
+				if (!animationPlaying && event.component.getMouseOver())
 					Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_OUT, 1f, 1f);
 			});
 
 			clear.BUS.hook(GuiComponentEvents.MouseClickEvent.class, (event) -> {
+				if (animationPlaying) return;
+
 				playClearAnimation(() -> {
 					syncToServer();
 					animationPlaying = false;
@@ -407,6 +518,7 @@ public class WorktableGui extends GuiBase {
 		// --- CLEAR BUTTON --- //
 
 		load();
+		paper.BUS.fire(new TableModule.ModuleUpdateEvent());
 	}
 
 	public void load() {
@@ -766,7 +878,7 @@ public class WorktableGui extends GuiBase {
 
 					ScheduledEventAnimation animSound1 = new ScheduledEventAnimation(dur * delay, () -> Minecraft.getMinecraft().player.playSound(ModSounds.POP, 1f, 1f));
 
-					ScheduledEventAnimation animSound2 = new ScheduledEventAnimation(dur * 0.5f, () -> Minecraft.getMinecraft().player.playSound(ModSounds.WHOOSH, 1f, 1f));
+					ScheduledEventAnimation animSound2 = new ScheduledEventAnimation(dur * 0.75f, () -> Minecraft.getMinecraft().player.playSound(ModSounds.WHOOSH, 1f, 1f));
 
 					KeyframeAnimation<TableModule> animX = new KeyframeAnimation<>(fakeModule, "pos.x");
 					animX.setDuration(dur);

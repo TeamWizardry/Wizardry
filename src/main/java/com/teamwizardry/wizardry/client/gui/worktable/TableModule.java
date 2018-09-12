@@ -4,6 +4,7 @@ import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.animator.Easing;
 import com.teamwizardry.librarianlib.features.animator.animations.BasicAnimation;
+import com.teamwizardry.librarianlib.features.eventbus.Event;
 import com.teamwizardry.librarianlib.features.gui.EnumMouseButton;
 import com.teamwizardry.librarianlib.features.gui.component.GuiComponent;
 import com.teamwizardry.librarianlib.features.gui.component.GuiComponentEvents;
@@ -13,7 +14,10 @@ import com.teamwizardry.librarianlib.features.math.Vec2d;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBezier2D;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.spell.module.*;
+import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
+import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
+import com.teamwizardry.wizardry.api.spell.module.ModuleType;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -43,6 +47,8 @@ import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 
 public class TableModule extends GuiComponent {
 
+	private boolean errored = false;
+
 	@Nonnull
 	private final WorktableGui worktable;
 	@Nonnull
@@ -58,10 +64,6 @@ public class TableModule extends GuiComponent {
 	 * ALWAYS from the context of null. Never to any other component.
 	 */
 	private Vec2d initialPos;
-
-	//public float size = 16;
-	//public final float originalSize = 16;
-
 	public TableModule(@Nonnull WorktableGui worktable, @Nonnull Module module, boolean draggable, boolean benign) {
 		super(0, 0, PLATE.getWidth(), PLATE.getHeight());
 		this.worktable = worktable;
@@ -100,6 +102,11 @@ public class TableModule extends GuiComponent {
 			BUS.hook(DragMixin.DragPickupEvent.class, (event) -> {
 				if (worktable.animationPlaying) return;
 				if (!getMouseOver()) return;
+
+				if (isErrored()) {
+					setErrored(false);
+					deselect(this);
+				}
 				initialPos = event.component.thisPosToOtherContext(null);
 				if (event.getButton() == EnumMouseButton.RIGHT) {
 					event.component.addTag("connecting");
@@ -109,6 +116,10 @@ public class TableModule extends GuiComponent {
 
 		if (!benign)
 			BUS.hook(DragMixin.DragMoveEvent.class, (event) -> {
+				if (isErrored()) {
+					setErrored(false);
+					deselect(this);
+				}
 				if (worktable.animationPlaying || event.getButton() == EnumMouseButton.RIGHT) {
 					// event.getPos returns the before-moving position. Setting it back to it's place.
 					// This allows the component to stay where it is while also allowing us to draw a line
@@ -123,6 +134,11 @@ public class TableModule extends GuiComponent {
 
 				if (!event.component.hasTag("placed")) event.component.addTag("placed");
 
+				if (isErrored()) {
+					setErrored(false);
+					deselect(this);
+				}
+
 				Vec2d currentPos = event.component.thisPosToOtherContext(null);
 				if (event.getButton() == EnumMouseButton.LEFT && initialPos.squareDist(currentPos) < 0.1) {
 
@@ -130,7 +146,7 @@ public class TableModule extends GuiComponent {
 						Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_OUT, 1f, 1f);
 
 						worktable.selectedModule = null;
-						deselect(worktable, this);
+						deselect(this);
 
 					} else {
 						Minecraft.getMinecraft().player.playSound(ModSounds.BUTTON_CLICK_IN, 1f, 1f);
@@ -139,11 +155,10 @@ public class TableModule extends GuiComponent {
 						}
 
 						worktable.selectedModule = this;
-						select(worktable, this);
+						select(this);
 					}
 
 					worktable.modifiers.refresh();
-
 					event.component.removeTag("connecting");
 					return;
 				}
@@ -177,6 +192,7 @@ public class TableModule extends GuiComponent {
 						worktable.modifiers.refresh();
 					}
 					event.component.removeTag("connecting");
+					worktable.paper.BUS.fire(new ModuleUpdateEvent());
 					worktable.syncToServer();
 					return;
 				}
@@ -191,48 +207,53 @@ public class TableModule extends GuiComponent {
 						if (!linkTo.draggable) continue;
 						if (linkTo == this) continue;
 
-						if (checkSafety(paper)) {
-							if (getLinksTo() == linkTo) {
-								event.component.removeTag("connecting");
+						if (getLinksTo() == linkTo) {
+							event.component.removeTag("connecting");
+							setLinksTo(null);
+							worktable.setToastMessage("", Color.GREEN);
+							worktable.paper.BUS.fire(new ModuleUpdateEvent());
+							worktable.syncToServer();
+							return;
+						} else {
+							if (linkTo.getLinksTo() == this) {
 								setLinksTo(null);
-								worktable.setToastMessage("", Color.GREEN);
-								worktable.syncToServer();
-								return;
-							} else if (isCompatibleWith(linkTo)) {
-								setLinksTo(linkTo);
-								Minecraft.getMinecraft().player.playSound(ModSounds.BELL_TING, 1f, 1f);
+								linkTo.setLinksTo(null);
+							} else {
+								boolean linkedFrom = false;
+								for (GuiComponent component : paper.getChildren()) {
+									if (!(component instanceof TableModule)) continue;
+									TableModule child = (TableModule) component;
 
-								boolean linkedToSelf = false;
-								if (linkTo.getLinksTo() == this) {
-									linkedToSelf = true;
+									if (child.getLinksTo() == linkTo) {
+										child.setLinksTo(null);
+										linkedFrom = true;
+
+										if (child.isErrored()) {
+											child.setErrored(false);
+											deselect(child);
+										}
+									}
+								}
+								if (linkTo.getLinksTo() != null && linkedFrom) {
 									linkTo.setLinksTo(null);
 								}
+								setLinksTo(linkTo);
 
-								if (checkSafety(paper)) {
-									worktable.setToastMessage("", Color.GREEN);
-								} else {
-									setLinksTo(null);
+								if (linkTo.isErrored()) {
+									linkTo.setErrored(false);
+									deselect(linkTo);
 
-									if (linkedToSelf) {
-										linkTo.setLinksTo(this);
-									}
-
-									worktable.setToastMessage(LibrarianLib.PROXY.translate("wizardry.table.loop_error"), Color.RED);
 								}
-								worktable.syncToServer();
-							} else {
-								String connectionFail = LibrarianLib.PROXY.translate("wizardry.table.connection_doesnt_work");
-								if (getModule() instanceof ModuleEffect && linkTo.getModule() instanceof ModuleEvent) {
-									connectionFail += "\n\n" + LibrarianLib.PROXY.translate("wizardry.table.connection_effect_to_event");
-								} else if (getModule() instanceof ModuleEffect) {
-									connectionFail += "\n\n" + LibrarianLib.PROXY.translate("wizardry.table.connection_effect_to_any");
-								} else if (getModule() instanceof ModuleEvent && linkTo.getModule() instanceof ModuleShape) {
-									connectionFail += "\n\n" + LibrarianLib.PROXY.translate("wizardry.table.connection_event_to_something");
+								if (isErrored()) {
+									setErrored(false);
+									deselect(this);
 								}
-								worktable.setToastMessage(connectionFail, Color.RED);
 							}
-						} else {
-							worktable.setToastMessage(LibrarianLib.PROXY.translate("wizardry.table.loop_found"), Color.RED);
+
+							Minecraft.getMinecraft().player.playSound(ModSounds.BELL_TING, 1f, 1f);
+							worktable.setToastMessage("", Color.GREEN);
+							worktable.paper.BUS.fire(new ModuleUpdateEvent());
+							worktable.syncToServer();
 						}
 
 						event.component.removeTag("connecting");
@@ -241,6 +262,7 @@ public class TableModule extends GuiComponent {
 				}
 
 				event.component.removeTag("connecting");
+				worktable.paper.BUS.fire(new ModuleUpdateEvent());
 				worktable.syncToServer();
 			});
 
@@ -265,7 +287,7 @@ public class TableModule extends GuiComponent {
 		if (!benign)
 			BUS.hook(GuiComponentEvents.MouseInEvent.class, event -> {
 				if (worktable.animationPlaying) return;
-				if (worktable.selectedModule == this) return;
+				if (isErrored() || worktable.selectedModule == this) return;
 
 				hoverOver(this);
 			});
@@ -273,11 +295,38 @@ public class TableModule extends GuiComponent {
 		if (!benign)
 			BUS.hook(GuiComponentEvents.MouseOutEvent.class, event -> {
 				if (worktable.animationPlaying) return;
-				if (worktable.selectedModule == this) return;
+				if (isErrored() || worktable.selectedModule == this) return;
 
 				unhoverOver(this);
 
 			});
+	}
+
+	public static void select(TableModule module) {
+		Vec2d toSize = new Vec2d(24, 24);
+		BasicAnimation<TableModule> animSize = new BasicAnimation<>(module, "size");
+		animSize.setDuration(5);
+		animSize.setEasing(Easing.easeOutCubic);
+		animSize.setTo(toSize);
+		module.add(animSize);
+
+		BasicAnimation<TableModule> animPos = new BasicAnimation<>(module, "pos");
+		animPos.setDuration(5);
+		animPos.setEasing(Easing.easeOutCubic);
+		animPos.setTo(module.getPos().add((module.getSize().sub(toSize)).mul(0.5f)));
+		module.add(animPos);
+
+		BasicAnimation<TableModule> animRadius = new BasicAnimation<>(module, "radius");
+		animRadius.setDuration(20);
+		animRadius.setEasing(Easing.easeOutCubic);
+		animRadius.setTo(24);
+		module.add(animRadius);
+
+		BasicAnimation<TableModule> animText = new BasicAnimation<>(module, "textRadius");
+		animText.setDuration(40);
+		animText.setEasing(Easing.easeOutCubic);
+		animText.setTo(40);
+		module.add(animText);
 	}
 
 	public static void drawWire(Vec2d start, Vec2d end, Color primary, Color secondary) {
@@ -365,6 +414,33 @@ public class TableModule extends GuiComponent {
 		}
 	}
 
+	public static void deselect(TableModule module) {
+		Vec2d toSize = new Vec2d(20, 20);
+		BasicAnimation<TableModule> animSize = new BasicAnimation<>(module, "size");
+		animSize.setDuration(5);
+		animSize.setEasing(Easing.easeOutCubic);
+		animSize.setTo(toSize);
+		module.add(animSize);
+
+		BasicAnimation<TableModule> animPos = new BasicAnimation<>(module, "pos");
+		animPos.setDuration(5);
+		animPos.setEasing(Easing.easeOutCubic);
+		animPos.setTo(module.getPos().add((module.getSize().sub(toSize)).mul(0.5f)));
+		module.add(animPos);
+
+		BasicAnimation<TableModule> animRadius = new BasicAnimation<>(module, "radius");
+		animRadius.setDuration(20);
+		animRadius.setEasing(Easing.easeOutCubic);
+		animRadius.setTo(16);
+		module.add(animRadius);
+
+		BasicAnimation<TableModule> animText = new BasicAnimation<>(module, "textRadius");
+		animText.setDuration(40);
+		animText.setEasing(Easing.easeOutCubic);
+		animText.setTo(30);
+		module.add(animText);
+	}
+
 	@Override
 	public void drawComponent(@NotNull Vec2d mousePos, float partialTicks) {
 		super.drawComponent(mousePos, partialTicks);
@@ -373,7 +449,7 @@ public class TableModule extends GuiComponent {
 		GlStateManager.enableTexture2D();
 
 		Sprite plate;
-		plate = worktable.selectedModule == this ? PLATE_HIGHLIGHTED : PLATE;
+		plate = isErrored() ? PLATE_HIGHLIGHTED_ERROR : (worktable.selectedModule == this ? PLATE_HIGHLIGHTED : PLATE);
 		Vec2d pos = Vec2d.ZERO;
 
 		GlStateManager.translate(0, 0, -20);
@@ -381,14 +457,13 @@ public class TableModule extends GuiComponent {
 			drawWire(pos.add(getSize().getX() / 2.0, getSize().getY() / 2.0), mousePos, getColorForModule(module.getModuleType()), Color.WHITE);
 		}
 		if (linksTo != null) {
-			Vec2d posContext = linksTo.thisPosToOtherContext(this);
-			Vec2d posTo = new Vec2d(posContext.getX(), posContext.getY());
+			Vec2d posTo = linksTo.thisPosToOtherContext(this);
 			drawWire(pos.add(getSize().getX() / 2.0, getSize().getY() / 2.0), posTo.add(getSize().getX() / 2.0, getSize().getY() / 2.0), getColorForModule(module.getModuleType()), getColorForModule(linksTo.getModule().getModuleType()));
 		}
 
 		GlStateManager.translate(0, 0, 20);
 
-		if (worktable.selectedModule == this || (!benign && !worktable.animationPlaying && getMouseOver() && !hasTag("connecting"))) {
+		if (isErrored() || worktable.selectedModule == this || (!benign && !worktable.animationPlaying && getMouseOver() && !hasTag("connecting"))) {
 			GlStateManager.translate(0, 0, 80);
 		}
 
@@ -461,9 +536,13 @@ public class TableModule extends GuiComponent {
 			}
 		}
 
-		if (worktable.selectedModule == this || (!benign && !worktable.animationPlaying && getMouseOver() && !hasTag("connecting"))) {
+		if (isErrored() || worktable.selectedModule == this || (!benign && !worktable.animationPlaying && getMouseOver() && !hasTag("connecting"))) {
 			GlStateManager.translate(0, 0, -80);
 		}
+	}
+
+	public boolean isErrored() {
+		return errored;
 	}
 
 	@Nullable
@@ -487,52 +566,6 @@ public class TableModule extends GuiComponent {
 	@Nonnull
 	public Module getModule() {
 		return module;
-	}
-
-	/**
-	 * safe means that there's at least one module
-	 * that has a link to something but isn't being linked by something
-	 * IE: A spell chain head.
-	 */
-	private boolean checkSafety(GuiComponent paper) {
-		for (GuiComponent child : paper.getChildren()) {
-			if (child == this) continue;
-			if (!(child instanceof TableModule)) continue;
-			TableModule childModule = (TableModule) child;
-
-			boolean linkedFromSomewhere = false;
-			if (childModule.getLinksTo() != null) {
-				for (GuiComponent subChild : paper.getChildren()) {
-					if (subChild == child) continue;
-					if (!(subChild instanceof TableModule)) continue;
-					TableModule subChildModule = (TableModule) subChild;
-
-					if (childModule.getLinksTo() == subChildModule) continue;
-
-					if (subChildModule.getLinksTo() == childModule) {
-						linkedFromSomewhere = true;
-						break;
-					}
-				}
-			}
-
-			if (!linkedFromSomewhere) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private boolean isCompatibleWith(TableModule linkTo) {
-		switch (getModule().getModuleType()) {
-			case SHAPE:
-				return true;
-			case EVENT:
-				return linkTo.getModule() instanceof ModuleEffect;
-			default: {
-				return false;
-			}
-		}
 	}
 
 	public Sprite getIcon() {
@@ -601,57 +634,10 @@ public class TableModule extends GuiComponent {
 		module.add(animText);
 	}
 
-	public static void select(WorktableGui worktable, TableModule module) {
-		Vec2d toSize = new Vec2d(24, 24);
-		BasicAnimation<TableModule> animSize = new BasicAnimation<>(module, "size");
-		animSize.setDuration(5);
-		animSize.setEasing(Easing.easeOutCubic);
-		animSize.setTo(toSize);
-		module.add(animSize);
-
-		BasicAnimation<TableModule> animPos = new BasicAnimation<>(module, "pos");
-		animPos.setDuration(5);
-		animPos.setEasing(Easing.easeOutCubic);
-		animPos.setTo(module.getPos().add((module.getSize().sub(toSize)).mul(0.5f)));
-		module.add(animPos);
-
-		BasicAnimation<TableModule> animRadius = new BasicAnimation<>(module, "radius");
-		animRadius.setDuration(20);
-		animRadius.setEasing(Easing.easeOutCubic);
-		animRadius.setTo(24);
-		module.add(animRadius);
-
-		BasicAnimation<TableModule> animText = new BasicAnimation<>(module, "textRadius");
-		animText.setDuration(40);
-		animText.setEasing(Easing.easeOutCubic);
-		animText.setTo(40);
-		module.add(animText);
+	public void setErrored(boolean errored) {
+		this.errored = errored;
 	}
 
-	public static void deselect(WorktableGui worktable, TableModule module) {
-		Vec2d toSize = new Vec2d(20, 20);
-		BasicAnimation<TableModule> animSize = new BasicAnimation<>(module, "size");
-		animSize.setDuration(5);
-		animSize.setEasing(Easing.easeOutCubic);
-		animSize.setTo(toSize);
-		module.add(animSize);
-
-		BasicAnimation<TableModule> animPos = new BasicAnimation<>(module, "pos");
-		animPos.setDuration(5);
-		animPos.setEasing(Easing.easeOutCubic);
-		animPos.setTo(module.getPos().add((module.getSize().sub(toSize)).mul(0.5f)));
-		module.add(animPos);
-
-		BasicAnimation<TableModule> animRadius = new BasicAnimation<>(module, "radius");
-		animRadius.setDuration(20);
-		animRadius.setEasing(Easing.easeOutCubic);
-		animRadius.setTo(16);
-		module.add(animRadius);
-
-		BasicAnimation<TableModule> animText = new BasicAnimation<>(module, "textRadius");
-		animText.setDuration(40);
-		animText.setEasing(Easing.easeOutCubic);
-		animText.setTo(30);
-		module.add(animText);
+	public static class ModuleUpdateEvent extends Event {
 	}
 }
