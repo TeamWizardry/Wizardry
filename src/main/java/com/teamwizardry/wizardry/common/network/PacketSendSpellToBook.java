@@ -4,16 +4,21 @@ import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketBase;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.spell.CommonWorktableModule;
 import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.server.management.PlayerList;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * Created by Demoniaque.
@@ -21,37 +26,47 @@ import java.util.List;
 public class PacketSendSpellToBook extends PacketBase {
 
 	@Save
-	public int slot;
+	public NBTTagList commonModules;
+	@Save
+	private UUID playerUUID;
 	@Save
 	public NBTTagList moduleList;
 
 	public PacketSendSpellToBook() {
 	}
 
-	public PacketSendSpellToBook(int slot, List<List<Module>> compiledSpell) {
-		this.slot = slot;
+	public PacketSendSpellToBook(UUID playerUUID, List<List<Module>> compiledSpell, Set<CommonWorktableModule> commonModules) {
+		this.playerUUID = playerUUID;
+		if (compiledSpell == null || commonModules == null) return;
 
-		if (compiledSpell == null) return;
-
-		NBTTagList list = new NBTTagList();
-		for (List<Module> moduleList : compiledSpell)
-		{
+		NBTTagList compiledList = new NBTTagList();
+		for (List<Module> moduleList : compiledSpell) {
 			for (Module module : moduleList)
-				list.appendTag(module.serialize());
-			list.appendTag(new NBTTagString());
+				compiledList.appendTag(module.serialize());
+			compiledList.appendTag(new NBTTagString());
 		}
-		moduleList = list;
+		moduleList = compiledList;
+
+		NBTTagList commonList = new NBTTagList();
+		for (CommonWorktableModule commonModule : commonModules) {
+			commonList.appendTag(commonModule.serializeNBT());
+		}
+		this.commonModules = commonList;
 	}
 
 	@Override
 	public void handle(@Nonnull MessageContext messageContext) {
-		EntityPlayer player = messageContext.getServerHandler().player;
+		PlayerList players = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerList();
+		EntityPlayer player = players.getPlayerByUUID(playerUUID);
 
-		ItemStack book = player.inventory.getStackInSlot(slot);
-		if (book.getItem() != ModItems.BOOK) return;
+		for (ItemStack stack : player.inventory.mainInventory) {
+			if (stack.getItem() == ModItems.BOOK) {
 
-		ItemNBTHelper.setList(book, Constants.NBT.SPELL, moduleList);
-		ItemNBTHelper.setBoolean(book, "has_spell", true);
-		ItemNBTHelper.setInt(book, "page", 0);
+				ItemNBTHelper.setList(stack, "common_modules", commonModules);
+				ItemNBTHelper.setList(stack, Constants.NBT.SPELL, moduleList);
+				ItemNBTHelper.setBoolean(stack, "has_spell", true);
+				ItemNBTHelper.setInt(stack, "page", 0);
+			}
+		}
 	}
 }

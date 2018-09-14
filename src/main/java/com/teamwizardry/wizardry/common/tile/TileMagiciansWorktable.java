@@ -1,22 +1,18 @@
 package com.teamwizardry.wizardry.common.tile;
 
-import com.google.common.collect.HashMultimap;
 import com.teamwizardry.librarianlib.features.autoregister.TileRegister;
 import com.teamwizardry.librarianlib.features.base.block.tile.TileMod;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.CommonWorktableModule;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nonnull;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Demoniaque.
@@ -26,56 +22,38 @@ public class TileMagiciansWorktable extends TileMod {
 
 	@Save
 	public BlockPos linkedTable;
+	@Save
+	public NBTTagList commonModules;
 
-	public HashMap<SpellRing, UUID> paperComponents = new HashMap<>();
-	@Deprecated
-	public HashMultimap<Module, Module> modifiers = HashMultimap.create();
-	public HashMap<UUID, UUID> componentLinks = new HashMap<>();
-
-	@Override
-	public void writeCustomNBT(@Nonnull NBTTagCompound compound, boolean sync) {
-		super.writeCustomNBT(compound, sync);
-
-		NBTTagList list = new NBTTagList();
-		for (Map.Entry<SpellRing, UUID> entrySet : paperComponents.entrySet()) {
-			NBTTagCompound compound1 = new NBTTagCompound();
-			compound1.setTag("ring", entrySet.getKey().serializeNBT());
-			compound1.setString("uuid", entrySet.getValue().toString());
-			list.appendTag(compound1);
+	public void setCommonModules(@Nonnull Set<CommonWorktableModule> commonModules) {
+		NBTTagList commonList = new NBTTagList();
+		for (CommonWorktableModule commonModule : commonModules) {
+			commonList.appendTag(commonModule.serializeNBT());
 		}
-		compound.setTag("components", list);
-
-		list = new NBTTagList();
-		for (Map.Entry<UUID, UUID> entrySet : componentLinks.entrySet()) {
-			NBTTagCompound compound1 = new NBTTagCompound();
-			compound1.setString("uuid1", entrySet.getKey().toString());
-			compound1.setString("uuid2", entrySet.getValue().toString());
-			list.appendTag(compound1);
-		}
-		compound.setTag("links", list);
+		this.commonModules = commonList;
+		markDirty();
 	}
 
-	@Override
-	public void readCustomNBT(@Nonnull NBTTagCompound compound) {
-		super.readCustomNBT(compound);
-		componentLinks = new HashMap<>();
-		paperComponents = new HashMap<>();
+	public Set<CommonWorktableModule> getCommonModules() {
+		Set<CommonWorktableModule> commonModules = new HashSet<>();
 
-		for (NBTBase base : compound.getTagList("components", Constants.NBT.TAG_COMPOUND)) {
-			NBTTagCompound compound1 = (NBTTagCompound) base;
-			if (compound1.hasKey("ring") && compound1.hasKey("uuid")) {
+		if (this.commonModules != null) {
+			for (NBTBase base : this.commonModules) {
+				if (base instanceof NBTTagCompound) {
+					NBTTagCompound compound = (NBTTagCompound) base;
 
-				NBTTagCompound nbtModule = compound.getCompoundTag("ring");
-
-				paperComponents.put(SpellRing.deserializeRing(nbtModule), compound1.getUniqueId("uuid"));
+					CommonWorktableModule commonModule = CommonWorktableModule.deserailize(compound);
+					commonModules.add(commonModule);
+				}
 			}
 		}
 
-		for (NBTBase base : compound.getTagList("links", Constants.NBT.TAG_COMPOUND)) {
-			NBTTagCompound compound1 = (NBTTagCompound) base;
-			if (compound1.hasKey("uuid1") && compound1.hasKey("uuid2")) {
-				componentLinks.put(UUID.fromString(compound1.getString("uuid1")), UUID.fromString(compound1.getString("uuid2")));
-			}
-		}
+		return commonModules;
+	}
+
+	public void setCommonModules(NBTTagList commonModules) {
+		this.commonModules = commonModules;
+		markDirty();
+		world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
 	}
 }

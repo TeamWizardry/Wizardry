@@ -36,7 +36,7 @@ public class ComponentModifiers extends GuiComponent {
 	private boolean animationPlaying = false, refreshRequested = false;
 
 	public ComponentModifiers(WorktableGui worktable) {
-		super(384, 50, 80, 16 * 5);
+		super(384, 127, 80, 81);
 		this.worktable = worktable;
 
 		clipping.setClipToBounds(true);
@@ -179,6 +179,7 @@ public class ComponentModifiers extends GuiComponent {
 						worktable.selectedModule.setData(Integer.class, modifier.getID(), ++j);
 						status = 0;
 						worktable.setToastMessage("", Color.GREEN);
+						worktable.syncToServer();
 					} else if (event.getButton() == EnumMouseButton.RIGHT) {
 						if (worktable.selectedModule.hasData(Integer.class, modifier.getID())) {
 
@@ -190,6 +191,7 @@ public class ComponentModifiers extends GuiComponent {
 									worktable.selectedModule.removeData(Integer.class, modifier.getID());
 								}
 								status = 1;
+								worktable.syncToServer();
 							}
 							worktable.setToastMessage("", Color.GREEN);
 						}

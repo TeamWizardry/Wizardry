@@ -15,6 +15,7 @@ tile.wizardry:mana_magnet.name=Mana Magnet
 tile.wizardry:torikki_grass.name=Torikki Grass
 tile.wizardry:unicorn_trail.name=Unicorn Trail
 tile.wizardry:light.name=Light
+tile.wizardry:wisdom_sapling.name=Wisdom Sapling
 
 entity.fairy.name=Fairy
 entity.spirit_wight.name=Spirit Wight
@@ -113,8 +114,8 @@ advancement.wizardry.book.desc=Create a book to aid in your delve into magic
 advancement.wizardry.manapool=Not a Mana Pool
 advancement.wizardry.manapool.desc=Discover a pool of liquid Mana in your travels
 advancement.wizardry.devildust=Sugar and Spice
-advancement.wizardry.devildust.desc=Melt book in fire to make Devil Dust
-advancement.wizardry.crunch=§oCRUNCH.§a
+advancement.wizardry.devildust.desc=Melt redstone in fire to make Devil Dust
+advancement.wizardry.crunch=§oCRUNCH.§r
 advancement.wizardry.crunch.desc=Crash straight through Bedrock to the Underworld above
 
 fluid.nacre_fluid=Nacre
@@ -157,8 +158,6 @@ jei.recipe.wizardry:fluid=Fluid Recipe
 wizardry.misc.moduleSet=Spell:
 wizardry.misc.sneak=<Sneak for info>
 wizardry.misc.ctrl=<Ctrl for more info>
-wizardry.misc.save=SAVE
-wizardry.misc.save_error=No codex found in your inventory! Place one in your inventory to save properly.
 wizardry.misc.sneak_expanded=&7<- &8Shift for more info&7 ->
 wizardry.misc.update_link=Wizardry Update Changelog
 wizardry.misc.update_checker0=There's a new Wizardry update available.
@@ -314,6 +313,8 @@ wizardry.update6=yo dawg we heard you like changelogs so we put changelogs in yo
 wizardry.update7=*:･ﾟ✧ᕕ( ᐛ )ᕗ
 
 
+wizardry.table.spell_loaded=Spell loaded from condex.
+wizardry.table.paper_cleared=Paper cleared.
 wizardry.table.spell_saved=Spell saved to codex successfully! Open the book and check the new spell recipe tab.
 wizardry.table.no_codex_found=You do not have a codex in your inventory! Once you have one, you can save your spell into the book.
 wizardry.table.codex_found=Codex found, you can save spells.
@@ -322,7 +323,13 @@ wizardry.table.loop_found=There's a loop somewhere! A spell should start from so
 wizardry.table.connection_doesnt_work=Those components can't be linked together like that!
 wizardry.table.connection_effect_to_any=An Effect module cannot link to another components. They can only be linked from other components.
 wizardry.table.connection_event_to_something=To make your spell use that Event component, hook your Shape TO it, then hook the Event TO the Effect. Shape -> Event -> Effect
-
+wizardry.table.save=Save
+wizardry.table.clear=Clear
+wizardry.table.load=Load
+wizardry.table.load_desc=Load the last spell saved from the first codex found in your inventory.
+wizardry.table.clear_desc=Remove all spell components on the paper.
+wizardry.table.save_desc=Store the recipe for the spell into the codexes in your inventory.
+wizardry.table.save_error=No codex found in your inventory! Place one in your inventory to save properly.
 
 wizardry.book.shift_scroll=Shift + Scroll to flip pages
 wizardry.book.open_recipe_tab=Open recipe tab for more details
