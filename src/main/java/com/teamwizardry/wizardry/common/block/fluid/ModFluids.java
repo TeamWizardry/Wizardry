@@ -2,6 +2,8 @@ package com.teamwizardry.wizardry.common.block.fluid;
 
 import com.teamwizardry.librarianlib.features.base.fluid.ModFluid;
 import com.teamwizardry.wizardry.Wizardry;
+
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
@@ -34,7 +36,7 @@ public class ModFluids {
 			.setViscosity(100000)
 			.setDensity(3000)
 			.setVaporizes(false)
-			.makeBlock(Material.WATER);
+			.makeBlock(new MaterialNacre(MapColor.WATER));
 
 	public static void init() {
 		if (MANA.getActualBlock() == null)

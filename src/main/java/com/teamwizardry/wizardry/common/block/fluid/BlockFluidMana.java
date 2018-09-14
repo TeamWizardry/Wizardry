@@ -1,5 +1,14 @@
 package com.teamwizardry.wizardry.common.block.fluid;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+
 import com.teamwizardry.librarianlib.features.base.fluid.BlockModFluid;
 import com.teamwizardry.librarianlib.features.base.fluid.ModFluid;
 import com.teamwizardry.librarianlib.features.forgeevents.EntityUpdateEvent;
@@ -12,19 +21,29 @@ import com.teamwizardry.wizardry.common.core.DamageSourceMana;
 import com.teamwizardry.wizardry.crafting.mana.FluidRecipeLoader;
 import com.teamwizardry.wizardry.crafting.mana.ManaRecipes;
 import com.teamwizardry.wizardry.init.ModPotions;
+
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.init.PotionTypes;
+import net.minecraft.item.ItemGlassBottle;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.potion.PotionUtils;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.stats.StatList;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -34,18 +53,10 @@ import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import javax.annotation.Nonnull;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
 public class BlockFluidMana extends BlockModFluid {
 
 	public BlockFluidMana(ModFluid mana) {
-		super(mana, Material.WATER);
+		super(mana, new MaterialMana(MapColor.WATER));
 		setQuantaPerBlock(6);
 	}
 
@@ -56,7 +67,23 @@ public class BlockFluidMana extends BlockModFluid {
 		if (world.isRemote)
 			LibParticles.FIZZING_AMBIENT(world, new Vec3d(pos.getX(), pos.getY(), pos.getZ()));
 	}
-
+	
+	@Override
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+	{
+//		ItemStack stack = player.getHeldItem(hand);
+//		if (stack.getItem() instanceof ItemGlassBottle)
+//		{
+//			ItemGlassBottle bottle = (ItemGlassBottle) stack.getItem();
+//			stack.shrink(1);
+//			player.addStat(StatList.getObjectUseStats(bottle));
+//			ItemStack potion = PotionUtils.addPotionToItemStack(new ItemStack(Items.POTIONITEM), ModPotions.MANA);
+//			if (!player.addItemStackToInventory(potion))
+//				world.spawnEntity(new EntityItem(world, player.posX, player.posY, player.posZ, potion));
+//		}
+		return true;
+	}
+	
 	@SubscribeEvent
 	public static void onEntityUpdate(EntityUpdateEvent event) {
 		Entity entityIn = event.getEntity();
