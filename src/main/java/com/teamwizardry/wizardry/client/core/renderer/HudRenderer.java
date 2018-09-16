@@ -8,7 +8,6 @@ import com.teamwizardry.wizardry.api.capability.mana.CapManager;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,7 +23,7 @@ import net.minecraftforge.fml.relauncher.Side;
  * Created by Demoniaque on 6/20/2016.
  */
 @Mod.EventBusSubscriber(modid = Wizardry.MODID, value = Side.CLIENT)
-public class HudRenderer extends Gui {
+public class HudRenderer {
 
 	private static final Texture HUD_TEXTURE = new Texture(new ResourceLocation(Wizardry.MODID, "textures/gui/hud.png"));
 	private static final Sprite emptyManaBar = HUD_TEXTURE.getSprite("mana_empty", 101, 5);

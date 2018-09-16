@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "wizardry:items/pearl_belt",
+    "layer1": "wizardry:items/pearl_belt_slot_1"
+  }
+}

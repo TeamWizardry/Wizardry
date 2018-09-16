@@ -1,9 +1,7 @@
 package com.teamwizardry.wizardry.crafting.irecipies;
 
-import com.teamwizardry.wizardry.api.item.IInfusable;
-import com.teamwizardry.wizardry.common.item.ItemNacrePearl;
-import com.teamwizardry.wizardry.common.item.ItemRing;
-import com.teamwizardry.wizardry.common.item.ItemStaff;
+import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -25,14 +23,16 @@ public class RecipeMountPearl extends IForgeRegistryEntry.Impl<IRecipe> implemen
 
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);
-			if (stack.getItem() instanceof ItemRing
-					|| stack.getItem() instanceof ItemStaff) {
+			if (stack.getItem() == ModItems.RING
+					|| stack.getItem() == ModItems.STAFF) {
 
 				if (stack.getItemDamage() == 0)
 					foundBaseItem = true;
 			}
-			if (stack.getItem() instanceof ItemNacrePearl)
-				foundPearl = true;
+			if (stack.getItem() == ModItems.PEARL_NACRE) {
+				if (ItemNBTHelper.getBoolean(stack, "infused", false))
+					foundPearl = true;
+			}
 
 		}
 		return foundBaseItem && foundPearl;
@@ -46,13 +46,14 @@ public class RecipeMountPearl extends IForgeRegistryEntry.Impl<IRecipe> implemen
 
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);
-			if (stack.getItem() instanceof ItemRing
-					|| stack.getItem() instanceof ItemStaff) {
+			if (stack.getItem() == ModItems.RING
+					|| stack.getItem() == ModItems.STAFF) {
 				if (stack.getItemDamage() == 0)
 					baseItem = stack;
 			}
-			if (stack.getItem() instanceof IInfusable)
-				pearl = stack;
+			if (stack.getItem() == ModItems.PEARL_NACRE)
+				if (ItemNBTHelper.getBoolean(stack, "infused", false))
+					pearl = stack;
 		}
 
 		ItemStack baseItemCopy = baseItem.copy();

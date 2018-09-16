@@ -43,6 +43,10 @@ public class ConfigValues {
 	@ConfigProperty(category = "items", comment = "Halo mana regeneration and burnout degeneration per tick")
 	public static double haloGenSpeed = 0.001;
 
+	@ConfigIntRange(min = 1, max = 20)
+	@ConfigProperty(category = "items", comment = "Pearl belt inventory size")
+	public static int pearlBeltInvSize = 8;
+
 	@ConfigDoubleRange(min = 1, max = 2)
 	@ConfigProperty(category = "spells", comment = "The multiplier a spellData gets for a perfect or ancient quality outputPearl. [1,2]\n" +
 			"This will be multiplied by the quality value of the outputPearl, which is 1.0 for apex pearls and greater for ancient pearls.")

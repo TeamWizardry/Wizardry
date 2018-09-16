@@ -94,6 +94,7 @@ public class BlockCraftingPlate extends BlockModContainer implements IStructure 
 						list.appendTag(spellRing.serializeNBT());
 					}
 					ItemNBTHelper.setList(pearl, Constants.NBT.SPELL, list);
+					ItemNBTHelper.setBoolean(pearl, "infused", true);
 
 					//Color lastColor = SpellUtils.getAverageSpellColor(builder.getSpell());
 //

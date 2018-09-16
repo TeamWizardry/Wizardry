@@ -14,7 +14,6 @@ import com.teamwizardry.wizardry.api.block.TileManaInteractor;
 import com.teamwizardry.wizardry.api.capability.mana.CapManager;
 import com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.mana.WizardryCapabilityProvider;
-import com.teamwizardry.wizardry.api.item.EnumPearlType;
 import com.teamwizardry.wizardry.api.item.IInfusable;
 import com.teamwizardry.wizardry.api.item.INacreProduct;
 import com.teamwizardry.wizardry.api.spell.SpellBuilder;
@@ -229,7 +228,7 @@ public class TileCraftingPlate extends TileManaInteractor {
 				//ItemNBTHelper.setFloat(infusedPearl, "hue", hsv[0]);
 				//ItemNBTHelper.setFloat(infusedPearl, "saturation", hsv[1]);
 				ItemNBTHelper.setFloat(infusedPearl, Constants.NBT.RAND, world.rand.nextFloat());
-				ItemNBTHelper.setString(infusedPearl, "type", EnumPearlType.INFUSED.toString());
+				ItemNBTHelper.setBoolean(infusedPearl, "infused", true);
 
 				// Process spellData multipliers based on nacre quality
 				double pearlMultiplier = 1;

@@ -63,11 +63,14 @@ public interface INacreProduct extends IItemColorProvider {
 		if (override > 0)
 			return override;
 
-		int purity = Math.max(0, Math.min(NBT.NACRE_PURITY_CONVERSION * 2, ItemNBTHelper.getInt(stack, NBT.PURITY, NBT.NACRE_PURITY_CONVERSION)));
-		float quality = purity / (float) NBT.NACRE_PURITY_CONVERSION;
-		if (quality > 1) quality = 2 - quality;
-
-		return quality;
+		float timeConstant = NBT.NACRE_PURITY_CONVERSION;
+		int purity = ItemNBTHelper.getInt(stack, NBT.PURITY, NBT.NACRE_PURITY_CONVERSION);
+		if (purity > NBT.NACRE_PURITY_CONVERSION + 1)
+			return Math.max(0, 2f - purity / timeConstant);
+		else if (purity < NBT.NACRE_PURITY_CONVERSION - 1)
+			return Math.max(0, purity / timeConstant);
+		else
+			return 1f;
 	}
 
 	@Nullable

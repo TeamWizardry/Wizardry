@@ -2,9 +2,13 @@ package com.teamwizardry.wizardry.api.item.wheels;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.items.ItemStackHandler;
 
+import javax.annotation.Nullable;
 import java.util.Iterator;
 
 /**
@@ -12,7 +16,45 @@ import java.util.Iterator;
  * Created at 12:23 PM on 3/4/18.
  */
 public interface IPearlWheelHolder {
-	IItemHandler pearls(ItemStack stack);
+
+	@Nullable
+	ItemStackHandler getPearls(ItemStack stack);
+
+	default int getPearlCount(ItemStack holder) {
+		IItemHandler handler = getPearls(holder);
+		if (handler == null) return 0;
+
+		int total = 0;
+		for (int i = 0; i < handler.getSlots(); i++) {
+			ItemStack pearl = handler.getStackInSlot(i);
+			if (pearl.isEmpty()) continue;
+
+			total++;
+		}
+
+		return total;
+	}
+
+	/**
+	 * @return If true, adding the pearl was successful
+	 */
+	default boolean addPearl(ItemStack holder, ItemStack pearl) {
+		if (!shouldUse(holder)) return false;
+
+		ItemStackHandler handler = getPearls(holder);
+		if (handler == null) return false;
+
+		if (getPearlCount(holder) > 6) return false;
+
+		ItemHandlerHelper.insertItem(handler, pearl, false);
+
+		NBTTagCompound tag = holder.getTagCompound();
+		if (tag == null) tag = new NBTTagCompound();
+		tag.setTag("inv", handler.serializeNBT());
+		holder.setTagCompound(tag);
+
+		return true;
+	}
 
 	/**
 	 * Return false when this belt is disabled for some reason.

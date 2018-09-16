@@ -263,10 +263,13 @@ public class WorktableGui extends GuiBase {
 						module.setErrored(true);
 						TableModule.select(module);
 						canBeSaved = false;
-						setToastMessage("Component is not linked to anything! Link it to something else to make it function properly.", Color.RED);
 					}
 				}
-				if (!canBeSaved) return;
+
+				if (!canBeSaved) {
+					setToastMessage("Component is not linked to anything! Link it to something to make it function properly.", Color.RED);
+					return;
+				}
 
 				primary:
 				for (GuiComponent paperComponent : paper.getChildren()) {
@@ -288,10 +291,12 @@ public class WorktableGui extends GuiBase {
 						module.setErrored(true);
 						TableModule.select(module);
 						canBeSaved = false;
-						setToastMessage("Spell chain starts without a Shape component! Your spell needs to start with a shape to run properly.", Color.RED);
 					}
 				}
-				if (!canBeSaved) return;
+				if (!canBeSaved) {
+					setToastMessage("Spell chain starts without a Shape component! Your spell needs to start with a shape to run properly.", Color.RED);
+					return;
+				}
 
 				boolean shapeLinkedFromNothing = false;
 				for (CommonWorktableModule module : commonModules) {
