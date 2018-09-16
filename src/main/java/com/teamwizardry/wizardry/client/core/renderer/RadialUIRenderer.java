@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.client.core;
+package com.teamwizardry.wizardry.client.core.renderer;
 
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Mod.EventBusSubscriber(modid = Wizardry.MODID, value = Side.CLIENT)
-public class PearlBeltRadialUIHandler {
+public class RadialUIRenderer {
 
 	private static final int SELECTOR_RADIUS = 40;
 	private static final int SELECTOR_WIDTH = 25;
