@@ -16,6 +16,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -122,17 +123,27 @@ public class RadialUIRenderer {
 					int colorInt = function.invoke(pearl, 0);
 					Color color = new Color(colorInt);
 
+					double innerRadius = SELECTOR_RADIUS - SELECTOR_WIDTH / 2.0;
+					double outerRadius = SELECTOR_RADIUS + SELECTOR_WIDTH / 2.0 + (scrollSlot == j ? SELECTOR_SHIFT : 0);
+					
 					bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 					for (int i = 0; i < numSegmentsPerArc; i++) {
-						int currentRadius = SELECTOR_RADIUS + (scrollSlot == j ? SELECTOR_SHIFT : 0);
 						float currentAngle = i * anglePerSegment + angle;
-						bb.pos((currentRadius - SELECTOR_WIDTH / 2.0) * MathHelper.cos(currentAngle), (currentRadius - SELECTOR_WIDTH / 2.0) * MathHelper.sin(currentAngle), 0).color(color.getRed(), color.getGreen(), color.getBlue(), 255).endVertex();
-						bb.pos((currentRadius - SELECTOR_WIDTH / 2.0) * MathHelper.cos(currentAngle + anglePerSegment), (currentRadius - SELECTOR_WIDTH / 2.0) * MathHelper.sin(currentAngle + anglePerSegment), 0).color(color.getRed(), color.getGreen(), color.getBlue(), 255).endVertex();
-						bb.pos((currentRadius + SELECTOR_WIDTH / 2.0) * MathHelper.cos(currentAngle + anglePerSegment), (currentRadius + SELECTOR_WIDTH / 2.0) * MathHelper.sin(currentAngle + anglePerSegment), 0).color(color.getRed(), color.getGreen(), color.getBlue(), 0).endVertex();
-						bb.pos((currentRadius + SELECTOR_WIDTH / 2.0) * MathHelper.cos(currentAngle), (currentRadius + SELECTOR_WIDTH / 2.0) * MathHelper.sin(currentAngle), 0).color(color.getRed(), color.getGreen(), color.getBlue(), 0).endVertex();
+						bb.pos(innerRadius * MathHelper.cos(currentAngle), innerRadius * MathHelper.sin(currentAngle), 0).color(color.getRed(), color.getGreen(), color.getBlue(), 255).endVertex();
+						bb.pos(innerRadius * MathHelper.cos(currentAngle + anglePerSegment), innerRadius * MathHelper.sin(currentAngle + anglePerSegment), 0).color(color.getRed(), color.getGreen(), color.getBlue(), 255).endVertex();
+						bb.pos(outerRadius * MathHelper.cos(currentAngle + anglePerSegment), outerRadius * MathHelper.sin(currentAngle + anglePerSegment), 0).color(color.getRed(), color.getGreen(), color.getBlue(), 0).endVertex();
+						bb.pos(outerRadius * MathHelper.cos(currentAngle), outerRadius * MathHelper.sin(currentAngle), 0).color(color.getRed(), color.getGreen(), color.getBlue(), 0).endVertex();
 					}
 					tess.draw();
 
+					Vec3d bl = new Vec3d(innerRadius * MathHelper.cos(angle), innerRadius * MathHelper.sin(angle), 0);
+					Vec3d br = new Vec3d(innerRadius * MathHelper.cos(angle + anglePerColor), innerRadius * MathHelper.sin(angle + anglePerColor), 0);
+					Vec3d tl = new Vec3d(outerRadius * MathHelper.cos(angle), innerRadius * MathHelper.sin(angle), 0);
+					Vec3d tr = new Vec3d(outerRadius * MathHelper.cos(angle + anglePerColor), innerRadius * MathHelper.sin(angle + anglePerColor), 0);
+					
+					Vec3d center = new Vec3d((bl.x + br.x + tl.x + tr.x) / 4, (bl.y + br.y + tl.y + tr.y) / 4, 0);
+					Vec3d normal = center.normalize();
+					
 					angle += anglePerColor;
 				}
 
