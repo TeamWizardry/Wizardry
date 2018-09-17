@@ -136,12 +136,11 @@ public class RadialUIRenderer {
 					}
 					tess.draw();
 
-					Vec3d bl = new Vec3d(innerRadius * MathHelper.cos(angle), innerRadius * MathHelper.sin(angle), 0);
-					Vec3d br = new Vec3d(innerRadius * MathHelper.cos(angle + anglePerColor), innerRadius * MathHelper.sin(angle + anglePerColor), 0);
-					Vec3d tl = new Vec3d(outerRadius * MathHelper.cos(angle), innerRadius * MathHelper.sin(angle), 0);
-					Vec3d tr = new Vec3d(outerRadius * MathHelper.cos(angle + anglePerColor), innerRadius * MathHelper.sin(angle + anglePerColor), 0);
+					float centerAngle = angle + anglePerColor / 2;
+					Vec3d inner = new Vec3d(innerRadius * MathHelper.cos(centerAngle), innerRadius * MathHelper.sin(centerAngle), 0);
+					Vec3d outer = new Vec3d(outerRadius * MathHelper.cos(centerAngle), outerRadius * MathHelper.sin(centerAngle), 0);
 					
-					Vec3d center = new Vec3d((bl.x + br.x + tl.x + tr.x) / 4, (bl.y + br.y + tl.y + tr.y) / 4, 0);
+					Vec3d center = new Vec3d((inner.x + outer.x) / 2, (inner.y + outer.y) / 2, 0);
 					Vec3d normal = center.normalize();
 					
 					angle += anglePerColor;
