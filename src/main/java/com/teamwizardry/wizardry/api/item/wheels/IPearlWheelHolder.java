@@ -38,6 +38,25 @@ public interface IPearlWheelHolder {
 	/**
 	 * @return If true, adding the pearl was successful
 	 */
+	default ItemStack removePearl(ItemStack holder, int slot) {
+		if (!shouldUse(holder)) return ItemStack.EMPTY;
+
+		ItemStackHandler handler = getPearls(holder);
+		if (handler == null) return ItemStack.EMPTY;
+
+		ItemStack stack = handler.extractItem(slot, 1, false);
+
+		NBTTagCompound tag = holder.getTagCompound();
+		if (tag == null) tag = new NBTTagCompound();
+		tag.setTag("inv", handler.serializeNBT());
+		holder.setTagCompound(tag);
+
+		return stack;
+	}
+
+	/**
+	 * @return If true, adding the pearl was successful
+	 */
 	default boolean addPearl(ItemStack holder, ItemStack pearl) {
 		if (!shouldUse(holder)) return false;
 
