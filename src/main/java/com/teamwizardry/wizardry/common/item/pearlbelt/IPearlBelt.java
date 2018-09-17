@@ -26,12 +26,25 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import org.apache.logging.log4j.util.TriConsumer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 
 public interface IPearlBelt extends IPearlWheelHolder, INacreProduct.INacreDecayProduct {
+
+	default TriConsumer<EntityPlayer, ItemStack, Integer> beltRadialUISelection() {
+		return (player, holder, selection) -> {
+			int scrollSlot = ItemNBTHelper.getInt(holder, "scroll_slot", -1);
+			if (scrollSlot < 0) return;
+
+			ItemStack stack = removePearl(holder, scrollSlot);
+			if (stack.isEmpty()) return;
+
+			player.addItemStackToInventory(stack);
+		};
+	}
 
 	default void addBeltColorProperty(Item item) {
 		item.addPropertyOverride(new ResourceLocation("slot"), new IItemPropertyGetter() {
