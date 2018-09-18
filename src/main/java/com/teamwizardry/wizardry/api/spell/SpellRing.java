@@ -1,7 +1,15 @@
 package com.teamwizardry.wizardry.api.spell;
 
+import java.awt.Color;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.google.common.collect.ArrayListMultimap;
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.capability.mana.CapManager;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
@@ -15,9 +23,9 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -31,12 +39,6 @@ import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.awt.*;
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * Modules ala IBlockStates
  */
@@ -49,10 +51,16 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	private NBTTagCompound informationTag = new NBTTagCompound();
 
 	/**
-	 * A map holding modifiers.
+	 * A map holding compile time modifiers.
 	 */
 	@Nonnull
-	private ArrayListMultimap<Operation, AttributeModifier> modifiers = ArrayListMultimap.create();
+	private ArrayListMultimap<Operation, AttributeModifier> compileTimeModifiers = ArrayListMultimap.create();
+	
+	/**
+	 * A map holding cast time modifiers
+	 */
+	@Nonnull
+	private HashMap<Attribute, ArrayListMultimap<Operation, AttributeModifier>> castTimeModifiers = new HashMap<>();
 
 	/**
 	 * Primary rendering color.
@@ -114,6 +122,8 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	public boolean runSpellRing(SpellData data) {
 		if (module == null) return false;
 
+		if (data.getCaster() != null)
+			processCastTimeModifiers(data.getCaster(), data);
 		boolean success = module.castSpell(data, this) && !module.ignoreResultForRendering();
 		if (success) {
 
@@ -193,11 +203,11 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		double manaDrain = getManaDrain() * multiplier;
 		double burnoutFill = getBurnoutFill() * multiplier;
 
-		if (caster instanceof EntityLivingBase) {
-			float reduction = getCapeReduction((EntityLivingBase) caster);
-			manaDrain *= reduction;
-			burnoutFill *= reduction;
-		}
+//		if (caster instanceof EntityLivingBase) {
+//			float reduction = getCapeReduction((EntityLivingBase) caster);
+//			manaDrain *= reduction;
+//			burnoutFill *= reduction;
+//		}
 
 		boolean fail = false;
 
@@ -225,7 +235,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	/**
 	 * Get a modifier in this ring between the range. Returns the attribute value, modified by burnout and multipliers, for use in a spell.
 	 *
-	 * @param attribute The attribute you want. List in {@link AttributeRegistry} for default ones.
+	 * @param attribute The attribute you want. List in {@link AttributeRegistry} for default attributes.
 	 * @param data      The data of the spell being cast, used to get caster-specific modifiers.
 	 * @return The {@code double} potency of a modifier.
 	 */
@@ -237,8 +247,10 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		AttributeRange range = module.getAttributeRanges().get(attribute);
 
 		current = MathHelper.clamp(current, range.min, range.max);
+		current = getCastTimeValue(attribute, current);
 		current *= getPlayerBurnoutMultiplier(data);
 		current *= getTrueAttributeValue(AttributeRegistry.POWER_MULTI);
+		
 		return current;
 	}
 
@@ -257,6 +269,26 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 		return MathHelper.clamp(current, range.min, range.max);
 	}
+	
+	/**
+	 * Get the value of the given attribute after being passed through any cast time modifiers.
+	 * 
+	 * @param attribute The attribute you want. List in {@link AttributeRegistry} for default attributes.
+	 * @param value		The initial value of the given attribute, given by the compiled value in standard use cases.
+	 * @return The {@code double} potency of a modifier.
+	 */
+	public final double getCastTimeValue(Attribute attribute, double value)
+	{
+		ArrayListMultimap<Operation, AttributeModifier> operationMap = castTimeModifiers.get(attribute);
+		if (operationMap == null)
+			return value;
+		
+		for (Operation op : Operation.values())
+			for (AttributeModifier modifier : operationMap.get(op))
+				value = modifier.apply(value);
+		
+		return value;
+	}
 
 	/**
 	 * Will process all modifiers and attributes set.
@@ -272,7 +304,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		}
 
 		for (Operation op : Operation.values()) {
-			for (AttributeModifier modifier : modifiers.get(op)) {
+			for (AttributeModifier modifier : compileTimeModifiers.get(op)) {
 
 				if (!informationTag.hasKey(modifier.getAttribute().getNbtName()))
 					continue;
@@ -285,15 +317,31 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 			}
 		}
 	}
+	
+	public void processCastTimeModifiers(Entity entity, SpellData data)
+	{
+		List<AttributeModifier> modifiers = SpellModifierRegistry.compileModifiers(entity, this, data);
+		for (AttributeModifier modifier : modifiers)
+		{
+			Attribute attribute = modifier.getAttribute();
+			Operation operation = modifier.getOperation();
 
-	public final float getCapeReduction(EntityLivingBase caster) {
-		ItemStack stack = BaublesSupport.getItem(caster, ModItems.CAPE);
-		if (stack != ItemStack.EMPTY) {
-			float time = ItemNBTHelper.getInt(stack, "maxTick", 0);
-			return (float) MathHelper.clamp(1 - (time / 1000000.0), 0.25, 1);
+			ArrayListMultimap<Operation, AttributeModifier> operationMap = castTimeModifiers.get(attribute);
+			if (operationMap == null)
+				castTimeModifiers.put(attribute, operationMap = ArrayListMultimap.create());
+			
+			operationMap.put(operation, modifier);
 		}
-		return 1;
 	}
+
+//	public final float getCapeReduction(EntityLivingBase caster) {
+//		ItemStack stack = BaublesSupport.getItem(caster, ModItems.CAPE);
+//		if (stack != ItemStack.EMPTY) {
+//			float time = ItemNBTHelper.getInt(stack, "maxTick", 0);
+//			return (float) MathHelper.clamp(1 - (time / 1000000.0), 0.25, 1);
+//		}
+//		return 1;
+//	}
 
 	/**
 	 * Get all the children rings of this ring excluding itself.
@@ -390,15 +438,15 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 	@Nonnull
 	public ArrayListMultimap<Operation, AttributeModifier> getModifiers() {
-		return modifiers;
+		return compileTimeModifiers;
 	}
 
 	public void addModifier(ModuleModifier moduleModifier) {
-		moduleModifier.getAttributes().forEach(modifier -> modifiers.put(modifier.getOperation(), modifier));
+		moduleModifier.getAttributes().forEach(modifier -> compileTimeModifiers.put(modifier.getOperation(), modifier));
 	}
 
 	public void addModifier(AttributeModifier attributeModifier) {
-		modifiers.put(attributeModifier.getOperation(), attributeModifier);
+		compileTimeModifiers.put(attributeModifier.getOperation(), attributeModifier);
 	}
 
 	public int getCooldownTime(@Nullable SpellData data) {
@@ -457,9 +505,9 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	public NBTTagCompound serializeNBT() {
 		NBTTagCompound compound = new NBTTagCompound();
 
-		if (!modifiers.isEmpty()) {
+		if (!compileTimeModifiers.isEmpty()) {
 			NBTTagList attribs = new NBTTagList();
-			modifiers.forEach((op, modifier) -> {
+			compileTimeModifiers.forEach((op, modifier) -> {
 				NBTTagCompound modifierCompound = new NBTTagCompound();
 
 				modifierCompound.setInteger("operation", modifier.getOperation().ordinal());
@@ -488,7 +536,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		if (nbt.hasKey("secondary_color")) secondaryColor = Color.decode(nbt.getString("secondary_color"));
 
 		if (nbt.hasKey("modifiers")) {
-			modifiers.clear();
+			compileTimeModifiers.clear();
 			for (NBTBase base : nbt.getTagList("modifiers", Constants.NBT.TAG_COMPOUND)) {
 				if (base instanceof NBTTagCompound) {
 					NBTTagCompound modifierCompound = (NBTTagCompound) base;
@@ -496,7 +544,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 						Operation operation = Operation.values()[modifierCompound.getInteger("operation") % Operation.values().length];
 						Attribute attribute = AttributeRegistry.getAttributeFromName(modifierCompound.getString("attribute"));
 						double modifier = modifierCompound.getDouble("modifier");
-						modifiers.put(operation, new AttributeModifier(attribute, modifier, operation));
+						compileTimeModifiers.put(operation, new AttributeModifier(attribute, modifier, operation));
 					}
 				}
 			}

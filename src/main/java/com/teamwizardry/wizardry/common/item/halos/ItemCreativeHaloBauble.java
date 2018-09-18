@@ -1,20 +1,30 @@
 package com.teamwizardry.wizardry.common.item.halos;
 
-import baubles.api.BaubleType;
-import com.teamwizardry.librarianlib.features.base.item.ItemModBauble;
-import com.teamwizardry.wizardry.api.ConfigValues;
-import com.teamwizardry.wizardry.api.capability.mana.CapManager;
-import com.teamwizardry.wizardry.api.item.halo.IHalo;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.common.Optional;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nonnull;
-import java.util.List;
+import com.teamwizardry.librarianlib.features.base.item.ItemModBauble;
+import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.ConfigValues;
+import com.teamwizardry.wizardry.api.capability.mana.CapManager;
+import com.teamwizardry.wizardry.api.item.halo.IHalo;
+import com.teamwizardry.wizardry.api.spell.SpellModifierRegistry;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
+import com.teamwizardry.wizardry.api.spell.attribute.Operation;
+
+import baubles.api.BaubleType;
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.common.Optional;
 
 /**
  * Created by Demoniaque on 8/30/2016.
@@ -50,5 +60,22 @@ public class ItemCreativeHaloBauble extends ItemModBauble implements IHalo {
 	public void addInformation(@NotNull ItemStack stack, @Nullable World world, @NotNull List<String> tooltip, @NotNull ITooltipFlag flag) {
 		super.addInformation(stack, world, tooltip, flag);
 		tooltip.addAll(getHaloTooltip(stack));
+	}
+	
+	@Override
+	public void onEquippedOrLoadedIntoWorld(ItemStack stack, EntityLivingBase player)
+	{
+		SpellModifierRegistry.addModifier(player, new ResourceLocation(Wizardry.MODID, "creative_halo"), (spell, data) -> {
+			List<AttributeModifier> modifiers = new LinkedList<>();
+			modifiers.add(new AttributeModifier(AttributeRegistry.MANA, 0, Operation.MULTIPLY));
+			modifiers.add(new AttributeModifier(AttributeRegistry.BURNOUT, 0, Operation.MULTIPLY));
+			return modifiers;
+		});
+	}
+	
+	@Override
+	public void onUnequipped(ItemStack stack, EntityLivingBase player)
+	{
+		SpellModifierRegistry.removeModifier(player, new ResourceLocation(Wizardry.MODID, "creative_halo"));
 	}
 }
