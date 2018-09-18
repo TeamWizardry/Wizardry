@@ -11,8 +11,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -196,12 +196,6 @@ public class PearlRadialUIRenderer {
 
 			int scrollSlot = ItemNBTHelper.getInt(stack, "scroll_slot", -1);
 
-			GlStateManager.pushMatrix();
-			GlStateManager.enableBlend();
-			GlStateManager.disableTexture2D();
-			GlStateManager.translate(width / 2.0, height / 2.0, 0);
-			GlStateManager.shadeModel(GL11.GL_SMOOTH);
-
 			Tessellator tess = Tessellator.getInstance();
 			BufferBuilder bb = tess.getBuffer();
 			for (int j = 0; j < pearls.size(); j++) {
@@ -216,6 +210,13 @@ public class PearlRadialUIRenderer {
 
 				double innerRadius = SELECTOR_RADIUS - SELECTOR_WIDTH / 2.0;
 				double outerRadius = SELECTOR_RADIUS + SELECTOR_WIDTH / 2.0 + (scrollSlot == j ? SELECTOR_SHIFT : 0);
+
+				GlStateManager.pushMatrix();
+				GlStateManager.translate(width / 2.0, height / 2.0, 0);
+
+				GlStateManager.enableBlend();
+				GlStateManager.disableTexture2D();
+				GlStateManager.shadeModel(GL11.GL_SMOOTH);
 
 				bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 				for (int i = 0; i < numSegmentsPerArc; i++) {
@@ -232,22 +233,32 @@ public class PearlRadialUIRenderer {
 				Vec3d tl = new Vec3d(outerRadius * MathHelper.cos(angle), innerRadius * MathHelper.sin(angle), 0);
 				Vec3d tr = new Vec3d(outerRadius * MathHelper.cos(angle + anglePerColor), innerRadius * MathHelper.sin(angle + anglePerColor), 0);
 
-				Vec3d center = new Vec3d((bl.x + br.x + tl.x + tr.x) / 4, (bl.y + br.y + tl.y + tr.y) / 4, 0);
+				Vec3d center = new Vec3d((bl.x + br.x + tl.x + tr.x) / 4, (bl.y + br.y + tl.y + tr.y) / 4, 0).subtract(8, 8, 0);
 				Vec3d normal = center.normalize();
 
-				GlStateManager.translate(center.x, center.y, 0);
+				Vec3d pearlOffset = normal.scale(30 + Math.sin(Minecraft.getMinecraft().world.getTotalWorldTime() / 10.0) * 30);
 
-				Minecraft.getMinecraft().getItemRenderer().renderItem(player, stack, ItemCameraTransforms.TransformType.NONE);
+				RenderHelper.enableGUIStandardItemLighting();
+				GlStateManager.enableRescaleNormal();
+				GlStateManager.enableTexture2D();
 
-				GlStateManager.translate(-center.x, -center.y, 0);
+				GlStateManager.translate(pearlOffset.x, pearlOffset.y, 0);
+
+				Minecraft.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI(pearl, 0, 0);
+				Minecraft.getMinecraft().getRenderItem().renderItemOverlayIntoGUI(Minecraft.getMinecraft().fontRenderer, pearl, 0, 0, "");
+
+				GlStateManager.translate(-pearlOffset.x, -pearlOffset.y, 0);
+
+				GlStateManager.disableRescaleNormal();
+				RenderHelper.disableStandardItemLighting();
+				GlStateManager.disableBlend();
+				GlStateManager.disableAlpha();
+
+				GlStateManager.translate(-width / 2.0, -height / 2.0, 0);
+				GlStateManager.popMatrix();
 
 				angle += anglePerColor;
 			}
-
-			GlStateManager.enableTexture2D();
-			GlStateManager.disableBlend();
-			GlStateManager.disableAlpha();
-			GlStateManager.popMatrix();
 		}
 	}
 }
