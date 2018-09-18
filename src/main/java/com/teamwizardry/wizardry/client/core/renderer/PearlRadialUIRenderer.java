@@ -235,7 +235,7 @@ public class PearlRadialUIRenderer {
 				Vec3d center = new Vec3d((inner.x + outer.x) / 2, (inner.y + outer.y) / 2, 0);
 				Vec3d normal = center.normalize();
 
-				Vec3d pearlOffset = normal.scale(30 + Math.sin(Minecraft.getMinecraft().world.getTotalWorldTime() / 10.0) * 30);
+				Vec3d pearlOffset = normal.scale(70).subtract(8, 8, 0);
 
 				RenderHelper.enableGUIStandardItemLighting();
 				GlStateManager.enableRescaleNormal();
