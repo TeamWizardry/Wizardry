@@ -15,6 +15,7 @@ tile.wizardry:mana_magnet.name=Manamagnet
 tile.wizardry:torikki_grass.name=Torikkigras
 tile.wizardry:unicorn_trail.name=Einhornspur
 tile.wizardry:light.name=Licht
+tile.wizardry:wisdom_sapling.name=Setzling der Weisheit
 
 entity.fairy.name=Elfe
 entity.spirit_wight.name=Spirit Wight
@@ -32,7 +33,7 @@ item.wizardry:nacre_pearl.drained.name=Verbrauchte Perlmuttperle
 item.wizardry:nacre_pearl.wasted.name=Abfall-Perlmuttperle
 
 item.wizardry:nacre_pearl.overdone.desc0=Sieht übersättigt aus.
-item.wizardry:nacre_pearl.overdone.desc1=Maybe less time will make it stronger.
+item.wizardry:nacre_pearl.overdone.desc1=Etwas weniger Zeit könnte sie verstärken.
 item.wizardry:nacre_pearl.over_near.desc0=Nur etwas übersättigt.
 item.wizardry:nacre_pearl.over_near.desc1=Vielleicht etwas weniger Zeit...
 item.wizardry:nacre_pearl.perfect.desc0=Perfekt!
@@ -322,3 +323,31 @@ wizardry.table.loop_found=Es gibt irgendwo eine Schleife! Ein Zauberspruch sollt
 wizardry.table.connection_doesnt_work=Diese Komponenten können auf diese Weise nicht verbunden werden!
 wizardry.table.connection_effect_to_any=Ein Effekt kann nicht zu anderen Komponenten verknüpft werden. Die Verknüpfung muss von den anderen Komponenten zum Effekt erfolgen.
 wizardry.table.connection_event_to_something=Damit dein Zauberspruch die Ausnahme-Komponente benutzt, musst du die Form-Komponente zur Ausnahme verknüpfen, danach die Ausnahme zur Effekt-Komponente. Form -> Ausnahme -> Effekt.
+wizardry.table.save=Speichern
+wizardry.table.clear=Löschen
+wizardry.table.load=Laden
+wizardry.table.load_desc=Lädt den letzten gespeicherten Zauber von dem ersten Kodex in deinem Inventar.
+wizardry.table.clear_desc=Entfernt alle Komponenten von dieser Seite.
+wizardry.table.save_desc=Speichert den Zauber in den ersten Kodex in deinem Inventar.
+wizardry.table.save_error=Keinen Zaubererkodex in deinem Inventar gefunden! Lege einen in dein Inventar um einen Zauberspruch zu speichern.
+
+wizardry.book.shift_scroll=Shift + Mausrad um umzublättern
+wizardry.book.open_recipe_tab=Schaue unter dem Zauberspruch-Lesezeichen nach um mehr Details zu erhalten
+
+wizardry.book.spell_recipe_recipe=Zauberspruch
+wizardry.book.spell_recipe_structure=Zauberspruchaufbau
+
+wizardry.book.title=Der Zaubererkodex
+wizardry.book.subtitle=Nicht von Raziel
+wizardry.book.steps.title=Die 5 Schritte um ein Zauberer zu werden
+wizardry.book.mobs.title=Magische Monster
+wizardry.book.itemsblocks.title=Gegenstände und Blöcke
+wizardry.book.dimensions.title=Dimensionen
+
+wizardry.book.steps.mana.title=Schritt 1: Mana
+wizardry.book.steps.mana.desc=Lerne was Mana ist und warum du es unbedingt haben willst
+wizardry.book.steps.mana.content0=Zwischen allen Möglichkeiten aus denen Zauberer ihre Stärke beziehen können, ist Mana eindeutig die beste Quelle. Hellblaue Seen von dieser Flüssigkeit können überall in der Welt gefunden werden. Mana bildet sich auch in Lebewesen und Gegenstände, aus denen erfahrene Zauberer ständig neue Energie beziehen können. Nur mit Mana kannst du versuchen in der der Welt der Zauberei eine Gefahr darzustellen und dein Studium der Magie beginnen.
+wizardry.book.steps.mana.content1=A fair warning, the liquid is barely stable. Think of it as a river. A small flow of water is nice to relax in and drift along with, but a raging rapid is not something you want to jump in the way of. Touching it will drain your hunger as it tries to purge your body, while also making you float due to the sheer energy of the liquid. As a result, it's next to impossible to drown in it.
+wizardry.book.steps.mana.content2=Now of course, we want to get this liquid into our bodies to use it. To get mana inside of you, craft a syringe and craft that syringe with a mana orb or hold down the syringe pointing at some mana liquid in the world. You now have a mana syringe that you can inject straight into your bloodstream.
+wizardry.book.steps.mana.content3=Just like anything else, too much mana is a bad thing.. Drinking too much water can pose a threat to your health. Doing the same with mana is several magnitudes more dangerous. The body can only store a certain amount before it starts to manifest side effects known as "mana burn".<br>Imagine you took all of the world's animal life, gave them all pure caffeine, compressed them into a single squirrel, and then made that squirrel a wizard.<br>That's what having mana burn is like.
+wizardry.book.steps.mana.content4=Finally, you can store the mana liquid into orbs. Simply craft glass orbs and throw them a block of liquid mana, it will instantly fill up. You now have portable mana that you will need later. Do stock up on this stuff, you'll need a lot of it.
