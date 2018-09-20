@@ -6,7 +6,7 @@ import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.item.INacreProduct;
 import com.teamwizardry.wizardry.api.item.wheels.IPearlWheelHolder;
-import com.teamwizardry.wizardry.common.network.PacketAddPearlsToBelt;
+import com.teamwizardry.wizardry.common.network.belt.PacketPearlHolderCondenseInventory;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
 import kotlin.jvm.functions.Function2;
@@ -26,25 +26,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
-import org.apache.logging.log4j.util.TriConsumer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 
 public interface IPearlBelt extends IPearlWheelHolder, INacreProduct.INacreDecayProduct {
-
-	default TriConsumer<EntityPlayer, ItemStack, Integer> beltRadialUISelection() {
-		return (player, holder, selection) -> {
-			int scrollSlot = ItemNBTHelper.getInt(holder, "scroll_slot", -1);
-			if (scrollSlot < 0) return;
-
-			ItemStack stack = removePearl(holder, scrollSlot);
-			if (stack.isEmpty()) return;
-
-			player.addItemStackToInventory(stack);
-		};
-	}
 
 	default void addBeltColorProperty(Item item) {
 		item.addPropertyOverride(new ResourceLocation("slot"), new IItemPropertyGetter() {
@@ -67,8 +54,6 @@ public interface IPearlBelt extends IPearlWheelHolder, INacreProduct.INacreDecay
 	}
 
 	default void onRightClick(World world, EntityPlayer player, EnumHand hand) {
-		if (world.isRemote) return;
-
 		if (!shouldUse(player.getHeldItem(hand))) return;
 
 		boolean changed = false;
@@ -82,7 +67,7 @@ public interface IPearlBelt extends IPearlWheelHolder, INacreProduct.INacreDecay
 
 		if (changed) {
 			if (player instanceof EntityPlayerMP)
-				PacketHandler.NETWORK.sendTo(new PacketAddPearlsToBelt(player.inventory.getSlotFor(player.getHeldItem(hand))), (EntityPlayerMP) player);
+				PacketHandler.NETWORK.sendTo(new PacketPearlHolderCondenseInventory(player.inventory.getSlotFor(player.getHeldItem(hand))), (EntityPlayerMP) player);
 			player.playSound(ModSounds.BELL_TING, 1f, 1f);
 		}
 	}

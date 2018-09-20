@@ -1,10 +1,15 @@
 package com.teamwizardry.wizardry.client.core.renderer;
 
+import com.teamwizardry.librarianlib.features.animator.Animator;
+import com.teamwizardry.librarianlib.features.animator.Easing;
+import com.teamwizardry.librarianlib.features.animator.animations.BasicAnimation;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
-import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.api.item.INacreProduct;
 import com.teamwizardry.wizardry.common.item.pearlbelt.IPearlBelt;
+import com.teamwizardry.wizardry.common.network.belt.PacketPearlHolderSubtract;
+import com.teamwizardry.wizardry.common.network.belt.PacketStaffPearlSwap;
 import com.teamwizardry.wizardry.init.ModItems;
 import kotlin.jvm.functions.Function2;
 import net.minecraft.client.Minecraft;
@@ -20,7 +25,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -34,70 +39,54 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SideOnly(Side.CLIENT)
-@Mod.EventBusSubscriber(modid = Wizardry.MODID, value = Side.CLIENT)
 public class PearlRadialUIRenderer {
 
-	private static final int SELECTOR_RADIUS = 40;
-	private static final int SELECTOR_WIDTH = 25;
-	private static final int SELECTOR_SHIFT = 5;
-	private static final float SELECTOR_ALPHA = 0.7F;
-	private static boolean lastSneakTick = false;
+	public static PearlRadialUIRenderer INSTANCE = new PearlRadialUIRenderer();
+
+	private final int SELECTOR_RADIUS = 40;
+	private final int SELECTOR_WIDTH = 25;
+	private final int SELECTOR_SHIFT = 5;
+	private final float SELECTOR_ALPHA = 0.7F;
+	public float[] slotRadii = new float[20];
+	public BasicAnimation[] slotAnimations = new BasicAnimation[20];
+	public Animator ANIMATOR = new Animator();
+	private boolean lastSneakTick = false;
+
+	public PearlRadialUIRenderer() {
+		MinecraftForge.EVENT_BUS.register(this);
+	}
 
 	@SubscribeEvent
-	public static void clientTick(TickEvent.ClientTickEvent event) {
+	public void clientTick(TickEvent.ClientTickEvent event) {
 		EntityPlayer player = Minecraft.getMinecraft().player;
 		if (player == null) return;
 
 		if (player.isSneaking() && !lastSneakTick) {
 			lastSneakTick = true;
 		} else if (!player.isSneaking() && lastSneakTick) {
+			lastSneakTick = false;
 
 			ItemStack stack = player.getHeldItemMainhand();
-
 
 			if (stack.getItem() == ModItems.PEARL_BELT) {
 				int scrollSlot = ItemNBTHelper.getInt(stack, "scroll_slot", -1);
 				if (scrollSlot >= 0) {
-					IPearlBelt belt = (IPearlBelt) stack.getItem();
-					int count = belt.getPearlCount(stack) - 1;
 
-					if (count == 0) return;
-
-					ItemStack output = belt.removePearl(stack, scrollSlot);
-					if (output.isEmpty()) return;
-
-					player.addItemStackToInventory(output);
+					PacketHandler.NETWORK.sendToServer(new PacketPearlHolderSubtract(player.getUniqueID(), player.inventory.getSlotFor(stack), scrollSlot));
 				}
 
 			} else if (stack.getItem() == ModItems.STAFF) {
-				ItemStack beltStack = BaublesSupport.getItem(player, ModItems.PEARL_BELT);
-				if (beltStack.isEmpty()) return;
-
-				IPearlBelt belt = (IPearlBelt) beltStack.getItem();
-
 				int scrollSlot = ItemNBTHelper.getInt(stack, "scroll_slot", -1);
 				if (scrollSlot >= 0) {
 
-					int count = belt.getPearlCount(beltStack) - 1;
-					if (count == 0) return;
-
-					ItemStack infusedPearl = new ItemStack(ModItems.PEARL_NACRE);
-					if (stack.hasTagCompound()) infusedPearl.setTagCompound(stack.getTagCompound());
-
-					ItemStack output = belt.removePearl(beltStack, scrollSlot);
-					if (output.isEmpty()) return;
-
-
-					belt.addPearl(beltStack, infusedPearl);
-
-					stack.setTagCompound(output.getTagCompound());
+					PacketHandler.NETWORK.sendToServer(new PacketStaffPearlSwap(player.getUniqueID(), player.inventory.getSlotFor(stack)));
 				}
 			}
 		}
 	}
 
 	@SubscribeEvent
-	public static void onScroll(MouseEvent event) {
+	public void onScroll(MouseEvent event) {
 		EntityPlayer player = Minecraft.getMinecraft().player;
 		if (player == null) return;
 
@@ -123,6 +112,29 @@ public class PearlRadialUIRenderer {
 
 				if ((count == 1 || lastSlot != scrollSlot) && scrollSlot >= 0) {
 					ItemNBTHelper.setInt(stack, "scroll_slot", scrollSlot);
+
+					for (int i = 0; i < INSTANCE.slotAnimations.length; i++) {
+						BasicAnimation animation = INSTANCE.slotAnimations[i];
+						if (animation != null)
+							INSTANCE.ANIMATOR.removeAnimations(animation);
+
+						if (i == scrollSlot) continue;
+						BasicAnimation<PearlRadialUIRenderer> newAnimation = new BasicAnimation<>(this, "slotRadii[" + i + "]");
+						newAnimation.setTo(0);
+						newAnimation.setEasing(Easing.easeInQuint);
+						newAnimation.setDuration(50f);
+						INSTANCE.ANIMATOR.add(newAnimation);
+
+						INSTANCE.slotAnimations[i] = newAnimation;
+					}
+
+					BasicAnimation<PearlRadialUIRenderer> animation = new BasicAnimation<>(this, "slotRadii[" + scrollSlot + "]");
+					animation.setTo(SELECTOR_SHIFT * 2);
+					animation.setEasing(Easing.easeOutQuint);
+					animation.setDuration(50f);
+					INSTANCE.ANIMATOR.add(animation);
+
+					INSTANCE.slotAnimations[scrollSlot] = animation;
 
 					event.setCanceled(true);
 				}
@@ -157,7 +169,7 @@ public class PearlRadialUIRenderer {
 	}
 
 	@SubscribeEvent
-	public static void renderHud(RenderGameOverlayEvent.Post event) {
+	public void renderHud(RenderGameOverlayEvent.Post event) {
 		if (event.getType() == RenderGameOverlayEvent.ElementType.EXPERIENCE) {
 			EntityPlayer player = Minecraft.getMinecraft().player;
 			ItemStack stack = player.getHeldItemMainhand();
@@ -209,7 +221,7 @@ public class PearlRadialUIRenderer {
 				Color color = new Color(colorInt);
 
 				double innerRadius = SELECTOR_RADIUS - SELECTOR_WIDTH / 2.0;
-				double outerRadius = SELECTOR_RADIUS + SELECTOR_WIDTH / 2.0 + (scrollSlot == j ? SELECTOR_SHIFT : 0);
+				double outerRadius = SELECTOR_RADIUS + SELECTOR_WIDTH / 2.0 + (scrollSlot < 0 ? 0 : INSTANCE.slotRadii[scrollSlot]);// + (scrollSlot == j ? SELECTOR_SHIFT : 0);
 
 				GlStateManager.pushMatrix();
 				GlStateManager.translate(width / 2.0, height / 2.0, 0);
