@@ -242,7 +242,7 @@ wizardry.spell.effect_vanish.desc=Das Ziel kann keine Wesen sehen, während es s
 wizardry.spell.effect_vanish.desc.duration=Der Effekt hält <DAUER> Sekunden an.
 wizardry.spell.effect_zoom.name=Lichtgeschwindigkeit
 wizardry.spell.effect_zoom.desc=Du erreichst den angezielten Ort mit Lichtgeschwindigkeit. Der Effekt ändert sich, wenn er nicht auf dich selbst gewirkt wird.
-wizardry.spell.effect_zoom.desc.range=Lässt dich sofort um bi zu <REICHWEITE> Blöcke bewegen.
+wizardry.spell.effect_zoom.desc.range=Lässt dich sofort um bis zu <REICHWEITE> Blöcke bewegen.
 
 wizardry.spell.event_collide_block.name=Blockberührung
 wizardry.spell.event_collide_block.desc=Diese Regel lässt den Zauber nur dann wirken, wenn ein Block getroffen wird. Vor einen Effekt setzen, damit sich dieser nur auf Blöcke auswirkt.
