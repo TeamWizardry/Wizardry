@@ -116,7 +116,7 @@ advancement.wizardry.manapool.desc=Finde einen Manasee
 advancement.wizardry.devildust=Zucker und Gewürz
 advancement.wizardry.devildust.desc=Verbrenne Redstone im Feuer um Teufelsstaub herzustellen
 advancement.wizardry.crunch=§oKRACH.§a
-advancement.wizardry.crunch.desc=Falle durch das Grundgestein und gelange in den Himmel
+advancement.wizardry.crunch.desc=Falle durch das Grundgestein und gelange in den Unterirdischen Himmel
 
 fluid.nacre_fluid=Perlmutt
 fluid.mana_fluid=Mana
@@ -242,7 +242,7 @@ wizardry.spell.effect_vanish.desc=Das Ziel kann keine Wesen sehen, während es s
 wizardry.spell.effect_vanish.desc.duration=Der Effekt hält <DAUER> Sekunden an.
 wizardry.spell.effect_zoom.name=Lichtgeschwindigkeit
 wizardry.spell.effect_zoom.desc=Du erreichst den angezielten Ort mit Lichtgeschwindigkeit. Der Effekt ändert sich, wenn er nicht auf dich selbst gewirkt wird.
-wizardry.spell.effect_zoom.desc.range=Lässt dich sofort um  <REICHWEITE> Blöcke bewegen.
+wizardry.spell.effect_zoom.desc.range=Lässt dich sofort um bi zu <REICHWEITE> Blöcke bewegen.
 
 wizardry.spell.event_collide_block.name=Blockberührung
 wizardry.spell.event_collide_block.desc=Diese Regel lässt den Zauber nur dann wirken, wenn ein Block getroffen wird. Vor einen Effekt setzen, damit sich dieser nur auf Blöcke auswirkt.
@@ -300,8 +300,8 @@ wizardry.gui.recipe=Spell Recipe
 wizardry.command.usage=/wizardry <reload/reset> [config/inventory]
 wizardry.command.success=Successfully reloaded modules.
 wizardry.command.reset=Attempting to reset moduleSet directory... Any modifications made to it will be lost!
-wizardry.command.success_delete=Successfully deleted %s
-wizardry.command.fail=Could not delete %s
+wizardry.command.success_delete=%s wurde erfolgreich gelöscht
+wizardry.command.fail=%s konnte nicht gelöscht werden
 wizardry.command.fail_dir_delete=Could not delete moduleSet directory
 wizardry.command.fail_dir_create=Could not create moduleSet directory
 
@@ -347,7 +347,14 @@ wizardry.book.dimensions.title=Dimensionen
 wizardry.book.steps.mana.title=Schritt 1: Mana
 wizardry.book.steps.mana.desc=Lerne was Mana ist und warum du es unbedingt haben willst
 wizardry.book.steps.mana.content0=Zwischen allen Möglichkeiten aus denen Zauberer ihre Stärke beziehen können, ist Mana eindeutig die beste Quelle. Hellblaue Seen von dieser Flüssigkeit können überall in der Welt gefunden werden. Mana bildet sich auch in Lebewesen und Gegenstände, aus denen erfahrene Zauberer ständig neue Energie beziehen können. Nur mit Mana kannst du versuchen in der der Welt der Zauberei eine Gefahr darzustellen und dein Studium der Magie beginnen.
-wizardry.book.steps.mana.content1=A fair warning, the liquid is barely stable. Think of it as a river. A small flow of water is nice to relax in and drift along with, but a raging rapid is not something you want to jump in the way of. Touching it will drain your hunger as it tries to purge your body, while also making you float due to the sheer energy of the liquid. As a result, it's next to impossible to drown in it.
+wizardry.book.steps.mana.content1=Eine freundliche Warnung: Mana ist eine extrem instabile Flüssigkeit, die durch ihre große Menge an Energy nur darauf wartet sich irgendwohin zu entladen. Stelle dir Mana als einen Fluss vor. In einem kleinen Fluss kann man sich gut entspannen, während man in ihm herumtreibt; jedoch würdest du wohl kaum freiwillig in wütende Stromschnellen springen wollen. Berührst du den Manasee dann spürst du schnell, wie dein Hunger steigt, da die Flüssigkeit versucht deinen Körper zu reinigen. Gleichzeitig lässt sie dich durch ihre enorme Energie in die Luft schweben, was es nahezu unmöglich macht in Mana zu ertrinken.
 wizardry.book.steps.mana.content2=Now of course, we want to get this liquid into our bodies to use it. To get mana inside of you, craft a syringe and craft that syringe with a mana orb or hold down the syringe pointing at some mana liquid in the world. You now have a mana syringe that you can inject straight into your bloodstream.
 wizardry.book.steps.mana.content3=Just like anything else, too much mana is a bad thing.. Drinking too much water can pose a threat to your health. Doing the same with mana is several magnitudes more dangerous. The body can only store a certain amount before it starts to manifest side effects known as "mana burn".<br>Imagine you took all of the world's animal life, gave them all pure caffeine, compressed them into a single squirrel, and then made that squirrel a wizard.<br>That's what having mana burn is like.
 wizardry.book.steps.mana.content4=Finally, you can store the mana liquid into orbs. Simply craft glass orbs and throw them a block of liquid mana, it will instantly fill up. You now have portable mana that you will need later. Do stock up on this stuff, you'll need a lot of it.
+
+wizardry.book.dimensions.underworld.title=Unterirdischer Himmel
+wizardry.book.dimensions.underworld.desc=Erfahre mehr über den Unterirdischen Himmel
+wizardry.book.dimensions.underworld.content1=<WIP><br>Das Reich von Zachriel, Dem Engel der Erinnerung.
+wizardry.book.dimensions.underworld.content2=Es gibt wenig Leben im bewölkten Himmel der Unterwelt (schließlich ist es ja das Reich der Toten), aber einige Wesen kann man dort trotzdem finden<br><WIP>
+wizardry.book.dimensions.underworld.content3=Um in den Unterirdischen Himmel zu gelangen, musst du von einer Höhe von über 130 Blöcken abspringen und unten auf Grundgestein aufkommen. Statt zu sterben wirst du direkt durch das Grundgestein hindurch fallen und relativ weich zwischen den Wolken des Unterirdischen Himmels landen.
+wizardry.book.dimensions.underworld.content4=Um den Himmel wieder zu verlassen, springe einfach in die Leere unter den Wolken. Du wirst direkt am Anfangspunkt der Oberwelt aus den Wolken fallen.
