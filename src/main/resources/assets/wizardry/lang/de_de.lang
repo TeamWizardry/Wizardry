@@ -24,13 +24,13 @@ entity.unicorn.name=Einhorn
 entity.spell_projectile.name=Zaubergeschoss
 
 item.wizardry:nacre_pearl.name=Perlmuttperle
-item.wizardry:nacre_pearl.ancient.name=Altertümliche Perlmuttperle
-item.wizardry:nacre_pearl.apex.name=Apex-Perlmuttperle
+item.wizardry:nacre_pearl.ancient.name=Antike Perlmuttperle
+item.wizardry:nacre_pearl.apex.name=Übermächtige Perlmuttperle
 item.wizardry:nacre_pearl.potent.name=Mächtige Perlmuttperle
 item.wizardry:nacre_pearl.decent.name=Gute Perlmuttperle
 item.wizardry:nacre_pearl.flawed.name=Fehlerhafte Perlmuttperle
 item.wizardry:nacre_pearl.drained.name=Verbrauchte Perlmuttperle
-item.wizardry:nacre_pearl.wasted.name=Abfall-Perlmuttperle
+item.wizardry:nacre_pearl.wasted.name=Erloschene Perlmuttperle
 
 item.wizardry:nacre_pearl.overdone.desc0=Sieht übersättigt aus.
 item.wizardry:nacre_pearl.overdone.desc1=Etwas weniger Zeit könnte sie verstärken.
@@ -345,18 +345,23 @@ wizardry.book.itemsblocks.title=Gegenstände und Blöcke
 wizardry.book.dimensions.title=Dimensionen
 
 wizardry.book.steps.mana.title=Schritt 1: Mana
-wizardry.book.steps.mana.desc=Lerne was Mana ist und warum du es unbedingt haben willst
+wizardry.book.steps.mana.desc=Erfahre was Mana ist und warum du es unbedingt haben willst
 wizardry.book.steps.mana.content0=Zwischen allen Möglichkeiten aus denen Zauberer ihre Stärke beziehen können, ist Mana eindeutig die beste Quelle. Hellblaue Seen von dieser Flüssigkeit können überall in der Welt gefunden werden. Mana bildet sich auch in Lebewesen und Gegenstände, aus denen erfahrene Zauberer ständig neue Energie beziehen können. Nur mit Mana kannst du versuchen in der der Welt der Zauberei eine Gefahr darzustellen und dein Studium der Magie beginnen.
 wizardry.book.steps.mana.content1=Eine freundliche Warnung: Mana ist eine extrem instabile Flüssigkeit, die durch ihre große Menge an Energy nur darauf wartet sich irgendwohin zu entladen. Stelle dir Mana als einen Fluss vor. In einem kleinen Fluss kann man sich gut entspannen, während man in ihm herumtreibt; jedoch würdest du wohl kaum freiwillig in wütende Stromschnellen springen wollen. Berührst du den Manasee dann spürst du schnell, wie dein Hunger steigt, da die Flüssigkeit versucht deinen Körper zu reinigen. Gleichzeitig lässt sie dich durch ihre enorme Energie in die Luft schweben, was es nahezu unmöglich macht in Mana zu ertrinken.
 wizardry.book.steps.mana.content2=Natürlich wollen wir diese Flüssigkeit in unsere Körper bekommen um sie zu benutzen. Dafür musst du eine Spritze herstellen und diese entweder mit einer Manakugel füllen oder du kannst die leere Spritze benutzen, während du einen Manaquellblock anzielst. Dadurch besitzt du nun eine Manaspritze, die du direkt in deinen Blutkreislauf spritzen kannst.
-wizardry.book.steps.mana.content3=Wie alles andere, ist auch zu viel Mana schlecht für dich.. Trinkst du zu viel Wasser, kann dein Leben in Gefahr geraten. Machst du das gleiche mit Mana, sind die Auswirkungen um ein Vielfaches schlimmer. Der Körper kann nur eine gewisse Menge aufnehmen bis sich Nebenwirkungen bilden, die auch als ,,Manaverbrennung" bekannt sind.<br>Stell dir vor, du nimmst das Leben aller Tiere, gibst ihnen allen reines Koffein, steckst all das in ein einziges Eichhörnchen, und machst dieses Eichhörnchen zu einem Zauberer.<br>So fühlt es sich an, wenn man unter Manaverbrennung leidet.
+wizardry.book.steps.mana.content3=Wie alles andere, ist auch zu viel Mana schlecht für dich.. Trinkst du zu viel Wasser, kann dein Leben in Gefahr geraten. Machst du das gleiche mit Mana, sind die Auswirkungen um ein Vielfaches schlimmer. Der Körper kann nur eine gewisse Menge aufnehmen bis sich Nebenwirkungen bilden, die auch als ,,Manaverbrennung" bekannt sind.<br>Stell dir vor, du nimmst das Leben aller Tiere, gibst ihnen pures Koffein, steckst all das in ein einziges Eichhörnchen, und machst dieses Eichhörnchen zu einem Zauberer.<br>So fühlt es sich an, wenn man unter Manaverbrennung leidet.
 wizardry.book.steps.mana.content4=Schlussendlich kannst du flüssiges Mana in Kugeln lagern. Stelle einfach Glaskugeln her und wirf sie in einen Manaquellblock, worin diese sich augenblicklich füllen. Jetzt hast du tragbare Mana, die du später brauchen wirst. Stelle viele her, denn du wirst eine Menge dieser Kugeln später brauchen.
 
 wizardry.book.steps.garbs.title=Schritt 2: Garderobe
-wizardry.book.steps.garbs.desc=Erfahre mehr über die Kleidung, die du benutzen solltest
-wizardry.book.steps.garbs.content0=Sobald du dir Mana eingeflößt hast wirst du dich wundern, warum du keine Anzeige hast, die dir deinen Manastand angibt. Nun... obwohl jetzt Mana in deinem Blutsystem fließt, kannst du es nicht einfach so kontrollieren.<br>In Engeln befinden sich Teile reiner Heiligkeit. Ihre Anmut erlaubt es ihnen ständig neues Mana zu generieren... aber du hast es nicht so einfach. Du wirst dich mit dem zufrieden geben müssen, was man einen Falschen Heiligenschein nennt, statt dem prächtigen eines Engels.<br> Sobald du den Falschen Heiligenschein ausrüstest, bist du in der Lage deinen Manastand zu sehen und Mana zu kontrollieren.
+wizardry.book.steps.garbs.desc=Erfahre welche Kleidung du benutzen solltest
+wizardry.book.steps.garbs.content0=Sobald du dir Mana eingeflößt hast wirst du dich wundern, warum du keine Anzeige hast, die dir deinen Manastand angibt. Nun... obwohl jetzt Mana in deinem Blutsystem fließt, kannst du es nicht einfach so kontrollieren.<br>In Engeln schlummert reine Heiligkeit. Ihre Anmut erlaubt es ihnen ständig neues Mana zu generieren... aber du hast es nicht so einfach. Du wirst dich mit dem zufrieden geben müssen, was man einen Falschen Heiligenschein nennt, statt dem prächtigen eines Engels.<br> Sobald du den Falschen Heiligenschein ausrüstest, bist du in der Lage deinen Manastand zu sehen und Mana zu kontrollieren.
 wizardry.book.steps.garbs.content1=Das nächste ist der Umhang. Umhänge dienen nicht als Manaspeicher sondern als Verbindung, die Zauberern hilft, Mana zu besser zu kontrollieren und dadurch den Manaverbrauch zu mindern. Sobald du dir einen Umhang hergestellt hast, trage ihn und ziehe ihn niemals aus. Je länger du den Umhang trägst, desto stärker wird er. Anfangs verringern sich die Manakosten kaum, aber nachdem du ihn lange getragen hast verringern sich das benötigte Mana auf bis zu ein Viertel der ursprünglichen Kosten.
 wizardry.book.steps.garbs.content2=Umhänge sind zwar prächtig und mächtig, aber ebenso untreu. Sie geben sehr leicht ihre Loyalität für einen neuen Besitzer auf, denn ein Zauberer ist für sie so gut wie ein anderer. Wenn du einem Erzmagier seinen Umhang stehlen kannst, dann ist es das gleiche als ob du diesen Umhang selbst schon jahrelang tragen würdest.<br>Wenn du also einen hübschen, wehenden Umhang an einem abkühlenden Körper findest, schadet es nicht, diesen abzupulen und selbst anzuprobieren. Und mal ehrlich, spielt es denn eine Rolle, wie sie gestorben sind? Ein Umhang ist ein Umhang.
+
+wizardry.book.steps.nacre.title=Schritt 3: Perlmutt und Perlen
+wizardry.book.steps.nacre.desc=Erfahre was Perlen sind und welche magischen Eigenschaften sie besitzen
+wizardry.book.steps.nacre.content0=Perlmutt ist die Flüssigkeit aus der Perlen hergestellt werden und auch als ,,Mutter aller Perlen" bekannt ist. Es handelt sich dabei um eine dickflüssige, blasse und schimmernde Flüssigkeit, die Mana verlustfrei leiten kann.<br>Um diese Flüssigkeit zu erzeugen musst du einfach ein Goldnugget in einen Manaquellblock werfen, wodurch sich Mana und Goldnugget zu dem prächtigen Zeug vermischen.<br>Nun, der Grund warum du das machen möchtest ist folgender: Damit kannst du "Perlmuttperlen" erzeugen, die du wiederum mit einem Zauber versehen kannst.
+wizardry.book.steps.nacre.content1=Um eine Perlmuttperle zu erzeugen, musst du Glasperlen in die milchige Flüssigkeit werfen. Es gibt sechs Qualitätsstufen bei Perlmuttperlen. Erloschen ist die schlechteste, dann verbraucht, fehlerhaft, gut, mächtig und zum Schluss Übermächtig. Du möchtest möglichst Übermächtige Perlen benutzen, aber das benötigt einen hochpräzisen Aufwand. Je schlechter die Qualität der Perle, desto schwächer wird der Zauber und desto mehr Mana wird dieser verbrauchen.Für die beste Perlenqualität müssen die Glasperlen &ogenau&r 30 Sekunden lang im Perlmutt schwimmen lassen. Selbst ein bisschen mehr Zeit verschlechtert die Qualität, aber zu wenig verschlechtert die Qualität ebenfalls. Die Spitzenqualität ist natürlich keine Voraussetzung. Übermächtige Perlen sind perfekt, aber du wirst auch mit auch mächtigen und guten Perlen zufrieden sein.<br>Du wirst diese Perlen später für die Erstellung von Zaubern benutzen.
 
 wizardry.book.dimensions.underworld.title=Unterirdischer Himmel
 wizardry.book.dimensions.underworld.desc=Erfahre mehr über den Unterirdischen Himmel
