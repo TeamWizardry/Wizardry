@@ -32,13 +32,15 @@ import java.util.List;
 @Optional.Interface(iface = "baubles.api.IBauble", modid = "baubles")
 public class ItemCapeBauble extends ItemModBauble implements ICape {
 
+	public static final ResourceLocation CAPE_MODIFIER_LOC = new ResourceLocation(Wizardry.MODID, "cape");
+	
 	public ItemCapeBauble() {
 		super("cape");
 		setMaxStackSize(1);
 	}
 
-	@Optional.Method(modid = "baubles")
 	@Override
+	@Optional.Method(modid = "baubles")
 	public void onWornTick(ItemStack itemstack, EntityLivingBase player) {
 		if (player.world.isRemote) return;
 
@@ -46,8 +48,8 @@ public class ItemCapeBauble extends ItemModBauble implements ICape {
 	}
 
 	@Nonnull
-	@Optional.Method(modid = "baubles")
 	@Override
+	@Optional.Method(modid = "baubles")
 	public BaubleType getBaubleType(ItemStack itemStack) {
 		return BaubleType.BODY;
 	}
@@ -60,7 +62,7 @@ public class ItemCapeBauble extends ItemModBauble implements ICape {
 	@Override
 	public void onEquippedOrLoadedIntoWorld(ItemStack stack, EntityLivingBase player)
 	{
-		SpellModifierRegistry.addModifier(player, new ResourceLocation(Wizardry.MODID, "cape"), (spell, data) -> {
+		SpellModifierRegistry.addModifier(player, CAPE_MODIFIER_LOC, (spell, data) -> {
 			List<AttributeModifier> modifiers = new LinkedList<>();
 			float capeReduction = getCapeReduction(player);
 			modifiers.add(new AttributeModifier(AttributeRegistry.MANA, capeReduction, Operation.MULTIPLY));
@@ -82,6 +84,6 @@ public class ItemCapeBauble extends ItemModBauble implements ICape {
 	@Override
 	public void onUnequipped(ItemStack stack, EntityLivingBase player)
 	{
-		SpellModifierRegistry.removeModifier(player, new ResourceLocation(Wizardry.MODID, "cape"));
+		SpellModifierRegistry.removeModifier(player, CAPE_MODIFIER_LOC);
 	}
 }

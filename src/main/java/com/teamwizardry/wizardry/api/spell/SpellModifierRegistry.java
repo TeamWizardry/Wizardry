@@ -38,13 +38,11 @@ public class SpellModifierRegistry
 	{
 		List<AttributeModifier> modifiers = new LinkedList<>();
 		HashMap<ResourceLocation, ModifierPredicate<SpellRing, SpellData>> predicates = entityModifiers.get(entity.getUniqueID());
-		if (predicates == null) 
+		if (predicates == null)
 			return modifiers;
 		
 		for (ModifierPredicate<SpellRing, SpellData> predicate : predicates.values())
-		{
 			modifiers.addAll(predicate.apply(spell, data));
-		}
 		return modifiers;
 	}
 }

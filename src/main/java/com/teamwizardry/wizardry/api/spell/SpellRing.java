@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -49,7 +50,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	 * Used by modifier processing and the WorktableGUI to save GUI in TileWorktable
 	 */
 	private NBTTagCompound informationTag = new NBTTagCompound();
-
+	
 	/**
 	 * A map holding compile time modifiers.
 	 */
@@ -249,7 +250,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		current = MathHelper.clamp(current, range.min, range.max);
 		current = getCastTimeValue(attribute, current);
 		current *= getPlayerBurnoutMultiplier(data);
-		current *= getTrueAttributeValue(AttributeRegistry.POWER_MULTI);
+		current *= getPowerMultiplier();
 		
 		return current;
 	}
@@ -429,11 +430,11 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	}
 
 	public double getManaDrain() {
-		return informationTag.getDouble(AttributeRegistry.MANA.getNbtName()) * getManaMultiplier();
+		return getCastTimeValue(AttributeRegistry.MANA, informationTag.getDouble(AttributeRegistry.MANA.getNbtName())) * getManaMultiplier();
 	}
 
 	public double getBurnoutFill() {
-		return informationTag.getDouble(AttributeRegistry.BURNOUT.getNbtName()) * getBurnoutMultiplier();
+		return getCastTimeValue(AttributeRegistry.BURNOUT, informationTag.getDouble(AttributeRegistry.BURNOUT.getNbtName())) * getBurnoutMultiplier();
 	}
 
 	@Nonnull

@@ -32,6 +32,8 @@ import net.minecraftforge.fml.common.Optional;
 @Optional.Interface(iface = "baubles.api.IBauble", modid = "baubles")
 public class ItemCreativeHaloBauble extends ItemModBauble implements IHalo {
 
+	public static final ResourceLocation CREATIVE_HALO_MODIFIER_LOC = new ResourceLocation(Wizardry.MODID, "creative_halo");
+	
 	public ItemCreativeHaloBauble() {
 		super("halo_creative");
 		setMaxStackSize(1);
@@ -65,7 +67,7 @@ public class ItemCreativeHaloBauble extends ItemModBauble implements IHalo {
 	@Override
 	public void onEquippedOrLoadedIntoWorld(ItemStack stack, EntityLivingBase player)
 	{
-		SpellModifierRegistry.addModifier(player, new ResourceLocation(Wizardry.MODID, "creative_halo"), (spell, data) -> {
+		SpellModifierRegistry.addModifier(player, CREATIVE_HALO_MODIFIER_LOC, (spell, data) -> {
 			List<AttributeModifier> modifiers = new LinkedList<>();
 			modifiers.add(new AttributeModifier(AttributeRegistry.MANA, 0, Operation.MULTIPLY));
 			modifiers.add(new AttributeModifier(AttributeRegistry.BURNOUT, 0, Operation.MULTIPLY));
@@ -76,6 +78,6 @@ public class ItemCreativeHaloBauble extends ItemModBauble implements IHalo {
 	@Override
 	public void onUnequipped(ItemStack stack, EntityLivingBase player)
 	{
-		SpellModifierRegistry.removeModifier(player, new ResourceLocation(Wizardry.MODID, "creative_halo"));
+		SpellModifierRegistry.removeModifier(player, CREATIVE_HALO_MODIFIER_LOC);
 	}
 }
