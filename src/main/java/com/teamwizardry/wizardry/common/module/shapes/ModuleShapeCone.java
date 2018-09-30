@@ -69,6 +69,8 @@ public class ModuleShapeCone extends ModuleShape {
 
 		for (int i = 0; i < potency; i++) {
 
+			if (!spellRing.taxCaster(spell, 1.0 / potency, true)) return false;
+			
 			long seed = RandUtil.nextLong(100, 10000);
 			spell.addData(SEED, seed);
 			runRunOverrides(spell, spellRing);

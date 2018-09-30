@@ -8,7 +8,12 @@ import com.teamwizardry.wizardry.common.item.dusts.ItemSkyDust;
 import com.teamwizardry.wizardry.common.item.halos.*;
 import com.teamwizardry.wizardry.common.item.pearlbelt.ItemPearlBelt;
 import com.teamwizardry.wizardry.common.item.pearlbelt.ItemPearlBeltBauble;
+import com.teamwizardry.wizardry.common.item.tools.ItemUnicornDagger;
+
 import net.minecraft.item.Item;
+import net.minecraft.item.Item.ToolMaterial;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.common.Loader;
 
 /**
@@ -16,6 +21,8 @@ import net.minecraftforge.fml.common.Loader;
  */
 public class ModItems {
 
+	public static ToolMaterial UNICORN_HORN_MAT = EnumHelper.addToolMaterial("unicorn_horn", 0, 250, 0, -3, 15);
+	
 	//public static ItemGlassOrb GLASS_ORB;
 	public static ItemOrb ORB;
 	public static ItemNacrePearl PEARL_NACRE;
@@ -43,6 +50,8 @@ public class ModItems {
 	public static Item CREATIVE_HALO;
 
 	public static Item PEARL_BELT;
+	
+	public static ItemUnicornDagger UNICORN_DAGGER;
 
 	public static ItemMagicWand MAGIC_WAND;
 
@@ -70,6 +79,7 @@ public class ModItems {
 		SKY_DUST = new ItemSkyDust();
 
 		UNICORN_HORN = new ItemUnicornHorn();
+		MinecraftForge.EVENT_BUS.register(UNICORN_DAGGER = new ItemUnicornDagger());
 
 		WISDOM_STICK = new ItemWisdomStick();
 

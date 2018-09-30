@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
@@ -203,12 +202,6 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 		double manaDrain = getManaDrain() * multiplier;
 		double burnoutFill = getBurnoutFill() * multiplier;
-
-//		if (caster instanceof EntityLivingBase) {
-//			float reduction = getCapeReduction((EntityLivingBase) caster);
-//			manaDrain *= reduction;
-//			burnoutFill *= reduction;
-//		}
 
 		boolean fail = false;
 

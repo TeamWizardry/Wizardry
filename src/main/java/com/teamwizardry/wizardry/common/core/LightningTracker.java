@@ -48,9 +48,12 @@ public class LightningTracker {
 
 			entity.setFire((int) duration);
 		
+			int invTime = entity.hurtResistantTime;
+			entity.hurtResistantTime = 0;
 			if (caster instanceof EntityPlayer)
 				entity.attackEntityFrom(new EntityDamageSource("lightningbolt", caster), (float) potency);
 			else entity.attackEntityFrom(DamageSource.LIGHTNING_BOLT, (float) potency);
+			entity.hurtResistantTime = invTime;
 			return true;
 		});
 	}

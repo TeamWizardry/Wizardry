@@ -63,6 +63,10 @@ public class EntityAIUnicornCharge extends EntityAIBase {
 			unicorn.getAttackTarget().knockBack(unicorn, 3F, MathHelper.sin(this.unicorn.rotationYaw), -MathHelper.cos(this.unicorn.rotationYaw));
 			unicorn.knockBack(unicorn, 0.5F, -MathHelper.sin(this.unicorn.rotationYaw), MathHelper.cos(this.unicorn.rotationYaw));
 			unicorn.getAttackTarget().attackEntityFrom(DamageSource.causeMobDamage(unicorn), (float) damage);
+			int invTime = unicorn.getAttackTarget().hurtResistantTime;
+			unicorn.getAttackTarget().hurtResistantTime = 0;
+			unicorn.getAttackTarget().attackEntityFrom(DamageSource.causeIndirectMagicDamage(unicorn, null), (float) damage * 0.2f);
+			unicorn.getAttackTarget().hurtResistantTime = invTime;
 			targetHit = true;
 		}
 	}

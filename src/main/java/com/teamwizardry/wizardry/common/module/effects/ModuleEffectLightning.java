@@ -53,40 +53,10 @@ public class ModuleEffectLightning extends ModuleEffect {
 		registerRunOverride("shape_beam", getBeamOverride());
 		registerRunOverride("shape_zone", getZoneOverride());
 
-		//registerRenderOverride("shape_self", (data, spellRing, childRing) -> {});
 		registerRenderOverride("shape_touch", (data, spellRing, childRing) -> {});
 		registerRenderOverride("shape_projectile", (data, spellRing, childRing) -> {});
 		registerRenderOverride("shape_cone", (data, spellRing, childRing) -> {});
 		registerRenderOverride("shape_beam", (data, spellRing, childRing) -> {});
-		/*registerRenderOverride("shape_zone", (data, spellRing, childRing) -> {
-			ClientRunnable.run(new ClientRunnable() {
-				@Override
-				@SideOnly(Side.CLIENT)
-				public void runIfClient() {
-					Vec3d target = data.getTarget();
-
-					if (target == null) return;
-					if (RandUtil.nextInt(10) != 0) return;
-
-					double aoe = spellRing.getAttributeValue(AttributeRegistry.AREA, data);
-
-					ParticleBuilder glitter = new ParticleBuilder(10);
-					glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-					glitter.setScaleFunction(new InterpScale(1, 0));
-					glitter.setCollision(true);
-					ParticleSpawner.spawn(glitter, data.world, new InterpCircle(target, new Vec3d(0, 1, 0), (float) aoe, 1, RandUtil.nextFloat()), (int) (aoe * 30), 10, (aFloat, particleBuilder) -> {
-						glitter.setAlphaFunction(new InterpFloatInOut(0.3f, 0.3f));
-						glitter.setLifetime(RandUtil.nextInt(30, 50));
-						glitter.setColorFunction(new InterpColorHSV(spellRing.getPrimaryColor(), spellRing.getSecondaryColor()));
-						glitter.setMotion(new Vec3d(
-								RandUtil.nextDouble(-0.01, 0.01),
-								RandUtil.nextDouble(-0.1, 0.1),
-								RandUtil.nextDouble(-0.01, 0.01)
-						));
-					});
-				}
-			});
-		});*/
 	}
 
 	@Nonnull
@@ -110,17 +80,16 @@ public class ModuleEffectLightning extends ModuleEffect {
 			Vec3d origin = data.getOrigin();
 			if (origin == null) return;
 			
+			if (!childRing.taxCaster(data, true)) return;
+			
 			double range = childRing.getAttributeValue(AttributeRegistry.RANGE, data);
 			double potency = childRing.getAttributeValue(AttributeRegistry.POTENCY, data) / 2;
 			double duration = childRing.getAttributeValue(AttributeRegistry.DURATION, data);
 
-			if (!childRing.taxCaster(data, true)) return;
-			
 			RandUtilSeed rand = new RandUtilSeed(RandUtil.nextLong(100, 100000));
 			float pitch = rand.nextFloat(-45, 45);
 			float yaw = rand.nextFloat(0, 360);
 			doLightning(rand.nextLong(100, 100000), world, caster, origin, Vec3d.fromPitchYaw(pitch, yaw).normalize().scale(range).add(origin), range, potency, duration);
-			LightningTracker.INSTANCE.addEntity(origin, caster, caster, potency, duration);
 		};
 	}
 	
@@ -131,6 +100,7 @@ public class ModuleEffectLightning extends ModuleEffect {
 			Entity caster = data.getCaster();
 			Vec3d origin = data.getOriginWithFallback();
 			if (look == null || caster == null || origin == null) return;
+			
 			if (!childRing.taxCaster(data, true)) return;
 			
 			double range = childRing.getAttributeValue(AttributeRegistry.RANGE, data);
@@ -157,6 +127,8 @@ public class ModuleEffectLightning extends ModuleEffect {
 			Vec3d origin = data.getOriginWithFallback();
 			if (origin == null) return;
 
+			if (!childRing.taxCaster(data, true)) return;
+			
 			double dist = spellRing.getAttributeValue(AttributeRegistry.RANGE, data);
 			double speed = spellRing.getAttributeValue(AttributeRegistry.SPEED, data);
 
@@ -177,13 +149,13 @@ public class ModuleEffectLightning extends ModuleEffect {
 			Vec3d origin = data.getOriginHand();
 
 			if (origin == null) return;
-
+			
+			if (!childRing.taxCaster(data, true)) return;
+			
 			double lightningRange = childRing.getAttributeValue(AttributeRegistry.RANGE, data);
 			double lightningPotency = childRing.getAttributeValue(AttributeRegistry.POTENCY, data) / 2.0;
 			double lightningDuration = childRing.getAttributeValue(AttributeRegistry.DURATION, data);
 			double beamRange = spellRing.getAttributeValue(AttributeRegistry.RANGE, data);
-
-			if (!childRing.taxCaster(data, true)) return;
 
 			RayTraceResult traceResult = new RayTrace(world, PosUtils.vecFromRotations(pitch, yaw), origin, beamRange)
 					.setSkipBlocks(true)
@@ -203,6 +175,8 @@ public class ModuleEffectLightning extends ModuleEffect {
 			Entity caster = data.getCaster();
 			
 			if (origin == null) return;
+			
+			if (!childRing.taxCaster(data, true)) return;
 
 			double coneRange = spellRing.getAttributeValue(AttributeRegistry.RANGE, data);
 			double lightningRange = childRing.getAttributeValue(AttributeRegistry.RANGE, data);
@@ -228,6 +202,8 @@ public class ModuleEffectLightning extends ModuleEffect {
 
 			if (targetPos == null) return;
 
+			if (!childRing.taxCaster(data, true)) return;
+			
 			double lightningRange = childRing.getAttributeValue(AttributeRegistry.RANGE, data);
 			double lightningPotency = childRing.getAttributeValue(AttributeRegistry.POTENCY, data) / 2.0;
 			double lightningDuration = childRing.getAttributeValue(AttributeRegistry.DURATION, data);
@@ -236,8 +212,6 @@ public class ModuleEffectLightning extends ModuleEffect {
 
 			Vec3d min = targetPos.subtract(zoneAoE/2, zoneRange/2, zoneAoE/2);
 			Vec3d max = targetPos.add(zoneAoE / 2, zoneRange / 2, zoneAoE / 2);
-
-			if (!childRing.taxCaster(data, true)) return;
 
 			RandUtilSeed rand = new RandUtilSeed(RandUtil.nextLong(100, 100000));
 			

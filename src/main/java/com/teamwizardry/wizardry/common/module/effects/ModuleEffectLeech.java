@@ -61,6 +61,8 @@ public class ModuleEffectLeech extends ModuleEffect {
 		if (!spellRing.taxCaster(spell, true)) return false;
 
 		if (targetEntity instanceof EntityLivingBase) {
+			int invTime = targetEntity.hurtResistantTime;
+			targetEntity.hurtResistantTime = 0;
 			if (targetEntity instanceof EntityPlayer) {
 
 				double targetMana = CapManager.getMana(targetEntity);
@@ -90,6 +92,7 @@ public class ModuleEffectLeech extends ModuleEffect {
 					targetEntity.attackEntityFrom(DamageSource.MAGIC, (float) potency);
 
 			}
+			targetEntity.hurtResistantTime = invTime;
 		}
 
 		Vec3d target = spell.getTargetWithFallback();
