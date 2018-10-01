@@ -3,7 +3,7 @@
 tile.wizardry:crafting_plate.name=Fertigungsstelle
 tile.wizardry:magicians_worktable.name=Die Werkbank des Zauberers
 tile.wizardry:mana_battery.name=Manabatterie
-tile.wizardry:creative_mana_battery.name=Kreative Manabattery
+tile.wizardry:creative_mana_battery.name=Kreative Manabatterie
 tile.wizardry:nacre.name=Perlmuttsaft
 tile.wizardry:mana.name=Manasaft
 tile.wizardry:cloud.name=Wolke
@@ -199,7 +199,7 @@ wizardry.spell.effect_gravity_well.desc.potency=Die Kraft, mit der Wesen herange
 wizardry.spell.effect_gravity_well.desc.duration=Für jeden Punkt in <DAUER> hält der Effekt eine halbe Sekunde länger an.
 wizardry.spell.effect_leap.name=Sprung
 wizardry.spell.effect_leap.desc=Stößt dich nach oben und nach vorne.
-wizardry.spell.effect_leap.desc.potency=Erlaubt einen weiteren Sprung in der Luft pro 10 Punkte in <STÄRKE>. Divides fall distance by 1 + <STÄRKE>/8, rounded up.
+wizardry.spell.effect_leap.desc.potency=Erlaubt einen weiteren Sprung in der Luft pro 10 Punkte in <STÄRKE>. Bei der Berechnung von Fallschaden wird die Falltiefe durch (1+ <STÄRKE> /8 (aufgerundet)) geteilt. Du kannst also pro 8 <STÄRKE> um 3 Blöcke tiefer fallen ohne Schaden zu bekommen.
 wizardry.spell.effect_leech.name=Schmarotzer
 wizardry.spell.effect_leech.desc=Fügt einem Ziel magischen Schaden zu. Falls dieses Ziel stirbt, erhälst du etwas von dessen Mana.
 wizardry.spell.effect_leech.desc.potency=Verursacht einen halben Punkt magischen Schaden (1/4 Herz) pro Punkt in <STÄRKE>. 
@@ -314,7 +314,7 @@ wizardry.update7=*:･ﾟ✧ᕕ( ᐛ )ᕗ
 
 
 wizardry.table.spell_loaded=Der Zauberspruch aus deinem Kodex wurde geladen.
-wizardry.table.paper_cleared=Seite leer gefegt.
+wizardry.table.paper_cleared=Seite wurde leer gefegt.
 wizardry.table.spell_saved=Der Zauberspruch wurde erfolgreich im Kodex gespeichert! Öffne das Buch und schaue dir das neue Lesezeichen für Zaubersprüche an.
 wizardry.table.no_codex_found=Keinen Zaubererkodex in deinem Inventar gefunden! Lege einen in dein Inventar um einen Zauberspruch zu speichern.
 wizardry.table.codex_found=Es wurde ein Zauberkodex gefunden. Zaubersprüche können gespeichert werden.
@@ -363,7 +363,25 @@ wizardry.book.steps.nacre.desc=Erfahre was Perlen sind und welche magischen Eige
 wizardry.book.steps.nacre.content0=Perlmutt ist die Flüssigkeit aus der Perlen hergestellt werden und auch als ,,Mutter aller Perlen" bekannt ist. Es handelt sich dabei um eine dickflüssige, blasse und schimmernde Flüssigkeit, die Mana verlustfrei leiten kann.<br>Um diese Flüssigkeit zu erzeugen musst du einfach ein Goldnugget in einen Manaquellblock werfen, wodurch sich Mana und Goldnugget zu dem prächtigen Zeug vermischen.<br>Nun, der Grund warum du das machen möchtest ist folgender: Damit kannst du "Perlmuttperlen" erzeugen, die du wiederum mit einem Zauber versehen kannst.
 wizardry.book.steps.nacre.content1=Um eine Perlmuttperle zu erzeugen, musst du Glasperlen in die milchige Flüssigkeit werfen. Es gibt sechs Qualitätsstufen bei Perlmuttperlen. Erloschen ist die schlechteste, dann verbraucht, fehlerhaft, gut, mächtig und zum Schluss Übermächtig. Du möchtest möglichst Übermächtige Perlen benutzen, aber das benötigt einen hochpräzisen Aufwand. Je schlechter die Qualität der Perle, desto schwächer wird der Zauber und desto mehr Mana wird dieser verbrauchen.Für die beste Perlenqualität müssen die Glasperlen &ogenau&r 30 Sekunden lang im Perlmutt schwimmen lassen. Selbst ein bisschen mehr Zeit verschlechtert die Qualität, aber zu wenig verschlechtert die Qualität ebenfalls. Die Spitzenqualität ist natürlich keine Voraussetzung. Übermächtige Perlen sind stark, aber du wirst auch mit auch mächtigen und guten Perlen zufrieden sein.<br>Du wirst diese Perlen später für die Erstellung von Zaubern benutzen.
 
+wizardry.book.steps.structures.title=Schritt 4: Bauwerke
+wizardry.book.steps.structures.desc=Erfahre wie man die nötigen Bauwerke baut
+wizardry.book.steps.structures.content0=Du hast dein Mana, du hast deinen krummen Heiligenschein, du hast deinen wunderschönen Umhang und du hast deine glänzenden Perlmuttperlen.Aber wie füllt man eigentlich eine Perle mit einem Zauber? Nun, wir brauchen noch eine Sache, bevor wir dazu kommen.
+wizardry.book.steps.structures.content1=Das erste Bauwerk ist eine Manabatterie. Diese Struktur ist ein riesiger Manaspeicher.<br>Jeder Zauberer lernt schnell, dass dies das Zentrum seiner Macht ist. Der Kern der Manabatterie kann Mana viel effizienter aufnehmen als alle anderen Lagermöglichkeiten. Um ihn vollständig zu füllen musst du sehr viele Manakugeln auf den Säulen des Bauwerks platzieren. Der Kern wird automatisch sein gespeichertes Mana an platzierte Manakugeln außerhalb der eigenen Säulen abgeben, wodurch eine automatische und effektive Übertragung außerhalb der Manabatterie gewährleistet ist.
+wizardry.book.steps.structures.content2=Sobald du den Manabatterieblock platziert hast erscheinen rote Punkte, die dort aufleuchten, wo noch Blöcke des Bauwerks hingesetzt werden müssen. Halte Shift gedrückt und mache einen rechtsklick auf den Kern, um ein Hologramm des fertigen Bauwerks zu sehen. Verändere die Lage der Batterie wie es dir gefällt. Sobald du dann alle Blöcke der Manabatterie gesetzt hast, sind keine rot leuchtenden Punkte mehr zu sehen.
+wizardry.book.steps.structures.content3=Dieses Bauwerk wird technisch nicht unbedingt benötigt. Du könntest in den anderen Bauwerken mit der Hand neue Manakugeln setzen nachdem die alten geleert wurden, aber du wirst schnell feststellen, dass es eine sehr nervige und langweilige Arbeit ist. Insbesondere bei Vorgängen, die eine große Menge an Mana benötigen.
+wizardry.book.steps.structures.content4=Das letzte Bauwerk, das du benötigst, und das wohl wichtigste von allen, ist der Altar der Herstellung. In diesem Bauwerk wirst du nach Zauberrezepten Zutaten auf die Fertigungsstelle werfen und diese mit einer Perlmuttperle abschließen, um eine Perle zu erzeugen, die in der Lage ist, deinen Zauber zu beschwören.<br>Wie das genau funktioniert lernst du in einem anderen Kapitel. Jetzt baue erst einmal dieses Bauwerk sehr nahe an die Struktur der Manabatterie. Dann platziere auf den Säulen des Altars der Herstellung entweder Glas- oder Manakugeln um den Kern des Altars, die Fertigungsstelle, mit Mana zu versorgen.
+wizardry.book.steps.structures.content5=Du solltest wissen, dass die Manabatterie in der Lage ist, automatisch die Manakugeln auf den Säulen des Altars der Herstellung zu füllen, so lange der Kern der Manabatterie mit Mana gefüllt ist. Die Kugeln im Altar wiederum füllen die Fertigungsstelle.
 
+wizardry.book.steps.spell_creation.title=Schritt 5: Zauberspruchherstellung
+wizardry.book.steps.spell_creation.desc=Erfahre wie du endlich deinen ersten Zauber erstellst
+wizardry.book.steps.spell_creation.content0=This is the step where you actually make your spells. You're finally ready.<br>To start off, make yourself a Magician's Worktable, and place it down. Once you open it up, you will see several things.<br>It's very important that you carry this codex in your inventory while making a spell. I'll tell you why in a bit.
+wizardry.book.steps.spell_creation.content1=To your top left, you will see three sidebars. The top left sidebar is for Shape components. Shape components control how your spell will be cast. IE: If you want it to cast as a beam, as a projectile, upon smacking something, as a zone, etc…
+wizardry.book.steps.spell_creation.content2=To the right of the Shapes are the Effect components. These control what your spell actually does. If you want a lightning spell, a time slowing spell, a slippery spell, a gravity well, etc…
+wizardry.book.steps.spell_creation.content3=Below the Shapes are the Event components. These filter &oout&r everything else. For example, when you run a projectile spell, it will run on entities and/or blocks regardless. With an event component, you will be able to affect &oonly&r entities, for example.
+wizardry.book.steps.spell_creation.content4=To make your first spell, drag a Shape component onto the piece of paper in the center, then drag an effect component to the center. Then hold down right click and drag from the Shape component to the Effect component on your paper, you will see a connecting line. This line's direction matters, and connecting it in reverse won't work. This is because doing it like this tells your spell that it will first run a Projectile Shape, then when that Projectile Shape hits and needs to run its Effect, it will run the Effect you pass into it. The opposite is an Effect shape that doesn't know how to actually start, so it fizzles out.<br>Try this example: Drag a Projectile Shape and a Freeze Effect and right click drag from the Projectile Shape to the Freeze Effect.
+wizardry.book.steps.spell_creation.content5=This spell is very weak at it's base. You can upgrade it at the cost of more mana or burnout. For example, if you want to add more range to the projectile, click on the Projectile Shape that you placed on your paper, you will see a list of modifiers you can apply on the right. Click the Range modifier to apply it. Click more to apply more.
+wizardry.book.steps.spell_creation.content6=Once you are satisfied with your spell, click the &oSave&r button on the top right. This will save your spell's recipe into &othis&r codex. You will see a new bookmark in this codex with the recipe of the spell you want to create. So be sure you have this codex on your person when you make a spell.
+wizardry.book.steps.spell_creation.content7=Now that you saved your spell, check the Spell Recipe bookmark in this book. You will see a list of items that you need to gather and throw into the crafting plate &o&lin order&r. Fill your Mana Battery up with mana, then throw your nacre pearl into the crafting plate. Finally, wait for your spell to craft for a minute. You will be greeted with an explosion of mana around the nacre pearl sitting at the center of the plate. You now have an spell-infused pearl at your disposal. Craft it with an empty staff to mount it to it, then you can use your staff to cast your spell! Congratulations, my friend. You are now a wizard. I fear for the poor animals in the wake of your first pyrokinetics.
 
 wizardry.book.items_blocks.devil_dust.title=Teufelsstaub
 wizardry.book.items_blocks.devil_dust.content0=&oTeufelsstaub ist eine gereinigte Version des leitfähigen Redstones, welche statt Elektrizität zu leiten, Magie leitet.&r
