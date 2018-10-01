@@ -158,8 +158,6 @@ jei.recipe.wizardry:fluid=Veränderung durch Flüssigkeiten
 wizardry.misc.moduleSet=Zauberspruch:
 wizardry.misc.sneak=<Schleiche für Informationen>
 wizardry.misc.ctrl=<Strg für weitere Informationen>
-wizardry.misc.save=SPEICHERN
-wizardry.misc.save_error=Keinen Zaubererkodex in deinem Inventar gefunden! Lege einen in dein Inventar um einen Zauberspruch zu speichern.
 wizardry.misc.sneak_expanded=&7<- &8Shift für weitere Informationen&7 ->
 wizardry.misc.update_link=Liste der Zauberei Aktualisierungen
 wizardry.misc.update_checker0=Eine neue Zauberei-Aktualisierung ist verfügbar.
@@ -315,6 +313,8 @@ wizardry.update6=Jo Mann, wir haben gehört, dass du Änderungsberichte magst, a
 wizardry.update7=*:･ﾟ✧ᕕ( ᐛ )ᕗ
 
 
+wizardry.table.spell_loaded=Der Zauberspruch aus deinem Kodex wurde geladen.
+wizardry.table.paper_cleared=Seite leer gefegt.
 wizardry.table.spell_saved=Der Zauberspruch wurde erfolgreich im Kodex gespeichert! Öffne das Buch und schaue dir das neue Lesezeichen für Zaubersprüche an.
 wizardry.table.no_codex_found=Keinen Zaubererkodex in deinem Inventar gefunden! Lege einen in dein Inventar um einen Zauberspruch zu speichern.
 wizardry.table.codex_found=Es wurde ein Zauberkodex gefunden. Zaubersprüche können gespeichert werden.
