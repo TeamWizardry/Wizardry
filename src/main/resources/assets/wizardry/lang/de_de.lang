@@ -17,9 +17,9 @@ tile.wizardry:unicorn_trail.name=Einhornspur
 tile.wizardry:light.name=Licht
 tile.wizardry:wisdom_sapling.name=Setzling der Weisheit
 
-entity.fairy.name=Elfe
-entity.spirit_wight.name=Spirit Wight
-entity.spirit_blight.name=Spirit Blight
+entity.fairy.name=Fee
+entity.spirit_wight.name=Geisterwesen
+entity.spirit_blight.name=Plagegeist
 entity.unicorn.name=Einhorn
 entity.spell_projectile.name=Zaubergeschoss
 
@@ -55,13 +55,13 @@ item.wizardry:quartz_pearl.name=Quartzperle
 item.wizardry:debugger.name=Zauberstab der Kreativität
 item.wizardry:staff.name=Stab
 item.wizardry:staff_pearl.name=Stab mit einer Perle
-item.wizardry:fairy_dust.name=Elfenstaub
-item.wizardry:fairy_imbued_apple.name=In Elfenstaub getränkter Apfel
-item.wizardry:fairy_wings.name=Elfenflügel
-item.wizardry:unicorn_horn.name=Einhorn-Horn
+item.wizardry:fairy_dust.name=Feenstaub
+item.wizardry:fairy_imbued_apple.name=In Feenstaub getränkter Apfel
+item.wizardry:fairy_wings.name=Feenflügel
+item.wizardry:unicorn_horn.name=Einhornhorn
 item.wizardry:jar.name=Glas
-item.wizardry:jar_fairy.name=Elfe in einem Glas
-item.wizardry:jar_jam.name=Elfenmarmelade
+item.wizardry:jar_fairy.name=Fee in einem Glas
+item.wizardry:jar_jam.name=Feenmarmelade
 item.wizardry:syringe.name=Leere Spritze
 item.wizardry:syringe_mana.name=ManaBooster Leicht™
 item.wizardry:syringe_mana.desc=Stellt 50%% Mana wieder her.
@@ -399,7 +399,23 @@ wizardry.book.items_blocks.orbs.title=Kugeln
 wizardry.book.items_blocks.orbs.content0=Glaskugeln kann man sowohl mit Perlmutt als auch mit Mana füllen, wodurch man von diesen mächtigen Flüssigkeiten die schimmernden Perlmuttperlen und die unbezahlbaren Manakugeln erhält.
 wizardry.book.items_blocks.orbs.content1=An Manakugeln kommt man, wenn man einfach Glaskugeln in einen Manaquellblock wirft.<br>Perlmuttperlen benötigen jedoch eine hohe Genauigkeit. Wie du an die stärksten Perlmuttperlen kommst, kannst du im Kapitel ,,Die 5 Schritte um ein Zauberer zu werden" im Schritt 3 nachlesen: Perlmutt und Perlen.
 
+wizardry.book.mobs.fairies.title=Feen
+wizardry.book.mobs.fairies.desc=Wo sie zu finden sind und wie man sie zu Marmelade verarbeitet
+wizardry.book.mobs.fairies.content1=Die erste Eigenschaft von dem, was wir ,,Feen" nennen -- und bei weitem die erste, die junge Zauberlehrlinge bemerken -- ist, dass sie extrem nervig sind. Obwohl sie eigentlich als Nebenprodukt beim Verbrauch von Mana enstehen und nichts besitzen, was Intelligenz auch nur ähnelt, verfügen sie jedoch über die bemerkenswerte Gabe sich zur falschen Zeit am falschen Ort zu befinden. Jedes mal, wenn ein Zauberer in der Nähe Feen anfängt sich auf einen komplexen und großartigen Zauber zu konzentrieren, ist es fast schon garantiert, dass diese kleinen Unruhestifter ihr möglichstes tun, um den magischen Vorgang zu stören.
+wizardry.book.mobs.fairies.content2=Doch wie auch Einhörner, sind diese Bewohner des Unterirdischen Himmels nicht komplett nutzlos: Wenn du eine fangen und in ein Glas questschen kannst, dient sie als vorzügliche Lichtquelle. Desweiteren kannst du sie zu leckerer Marmelade verarbeiten.
 
+wizardry.book.mobs.spirit_wights.title=Geisterwesen
+wizardry.book.mobs.spirit_wights.desc=Rastlose Reisende in den Wolken
+wizardry.book.mobs.spirit_wights.content1=Little is known about these underworld-native creatures. Those few unfortunate enough to have any interaction with them rarely survive the experience; as a result, the few observations that survive are more to do with how quickly they can disassemble the average wizard than with their patterns or behaviours. As a result, the only real advice for dealing with them is this: if you see one, run. And don't stop.
+wizardry.book.mobs.spirit_wights.content2=It is possible to fight a spiritwight. It is even theoretically possible to win, in the same way that it is theoretically possible to win a fist fight with a dragon. Strong potions of harming have proven to have some effect on them, in so far as these things can be measured, and it is possible that a wizard of exceptional power and skill may be able to craft weapons and armour strong enough to successfully oppose them. If this is you, do make sure to tell people; they probably won't believe you, but at least someone will know.
+wizardry.book.mobs.spirit_wights.content3=If you decline to fight them -- which, let's be honest, is the only sensible choice -- then do not be deceived by their sluggishness. Spiritwights are slow, lumbering things, but this belies their relentless nature. Once a spiritwight has caught the scent of a wizard, they will hunt them almost to the ends of the earth. When you run from them, keep looking over your shoulder. and don't ever stop for long. They certainly won't.
+wizardry.book.mobs.spirit_wights.content4=It is one final point of interest that spiritwights reserve their hatred for wizards. As far as we know, they show no interest in any other creature. A unicorn may go where a wizard fears to tread, and face no danger. There must be some reason for this, but who knows it.
+
+wizardry.book.mobs.unicorns.title=Einhörner
+wizardry.book.mobs.unicorns.desc=Noch nie war von den Wolken gekickt zu werden so einfach
+wizardry.book.mobs.unicorns.content1=Please, make no mistake; these are not the gentle, damsel-loving creatures of song and story. The tales I heard as a child about unicorns were keen to stress their beauty and intelligence, their kindness and faithfulness. Real unicorns are better described as 'stroppy'.
+wizardry.book.mobs.unicorns.content2=These underworld-native creatures are savage and territorial, sharp of horn and hard of hoof. As far as we can tell, they possess a burning desire to kick, stab or otherwise maim any animal that crosses their path - wizards included - and will even resort to biting if in the mood. They seem to harbor a particular grudge against fairies, which they eat when possible.
+wizardry.book.mobs.unicorns.content3=Some have argued that unicorns have little practical value, but their horns have potent magical properties. Also - as I've said elsewhere - fairies are remarkably annoying, so anything that keeps their numbers down can't be all bad.
 
 wizardry.book.dimensions.underworld.title=Unterirdischer Himmel
 wizardry.book.dimensions.underworld.desc=Erfahre mehr über den Unterirdischen Himmel
