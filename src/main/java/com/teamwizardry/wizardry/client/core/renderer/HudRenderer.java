@@ -49,7 +49,7 @@ public class HudRenderer {
 			GlStateManager.pushMatrix();
 			GlStateManager.color(1.0F, 1.0F, 1.0F);
 			int barSide = Minecraft.getMinecraft().gameSettings.mainHand == EnumHandSide.RIGHT ? 1 : -1;
-			int right = ((width / 2) - (100 / 2)) + 145 * barSide;
+			int right = ((width / 2) - (100 / 2)) + 155 * barSide;
 			int top = height - 17;
 			emptyManaBar.draw(ClientTickHandler.getTicks(), right, top);
 			emptyBurnoutBar.draw(ClientTickHandler.getTicks(), right, top + 6);
