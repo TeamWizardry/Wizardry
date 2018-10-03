@@ -12,6 +12,7 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.Post;
@@ -47,7 +48,8 @@ public class HudRenderer {
 
 			GlStateManager.pushMatrix();
 			GlStateManager.color(1.0F, 1.0F, 1.0F);
-			int right = ((width / 2) - (100 / 2)) + 145;
+			int barSide = Minecraft.getMinecraft().gameSettings.mainHand == EnumHandSide.RIGHT ? 1 : -1;
+			int right = ((width / 2) - (100 / 2)) + 155 * barSide;
 			int top = height - 17;
 			emptyManaBar.draw(ClientTickHandler.getTicks(), right, top);
 			emptyBurnoutBar.draw(ClientTickHandler.getTicks(), right, top + 6);
