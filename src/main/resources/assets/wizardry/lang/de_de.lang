@@ -3,7 +3,7 @@
 tile.wizardry:crafting_plate.name=Fertigungsstelle
 tile.wizardry:magicians_worktable.name=Die Werkbank des Zauberers
 tile.wizardry:mana_battery.name=Manabatterie
-tile.wizardry:creative_mana_battery.name=Kreative Manabattery
+tile.wizardry:creative_mana_battery.name=Kreative Manabatterie
 tile.wizardry:nacre.name=Perlmuttsaft
 tile.wizardry:mana.name=Manasaft
 tile.wizardry:cloud.name=Wolke
@@ -15,24 +15,25 @@ tile.wizardry:mana_magnet.name=Manamagnet
 tile.wizardry:torikki_grass.name=Torikkigras
 tile.wizardry:unicorn_trail.name=Einhornspur
 tile.wizardry:light.name=Licht
+tile.wizardry:wisdom_sapling.name=Setzling der Weisheit
 
-entity.fairy.name=Elfe
-entity.spirit_wight.name=Spirit Wight
-entity.spirit_blight.name=Spirit Blight
+entity.fairy.name=Fee
+entity.spirit_wight.name=Geisterwesen
+entity.spirit_blight.name=Plagegeist
 entity.unicorn.name=Einhorn
 entity.spell_projectile.name=Zaubergeschoss
 
 item.wizardry:nacre_pearl.name=Perlmuttperle
-item.wizardry:nacre_pearl.ancient.name=Altertümliche Perlmuttperle
-item.wizardry:nacre_pearl.apex.name=Apex-Perlmuttperle
+item.wizardry:nacre_pearl.ancient.name=Antike Perlmuttperle
+item.wizardry:nacre_pearl.apex.name=Übermächtige Perlmuttperle
 item.wizardry:nacre_pearl.potent.name=Mächtige Perlmuttperle
 item.wizardry:nacre_pearl.decent.name=Gute Perlmuttperle
 item.wizardry:nacre_pearl.flawed.name=Fehlerhafte Perlmuttperle
 item.wizardry:nacre_pearl.drained.name=Verbrauchte Perlmuttperle
-item.wizardry:nacre_pearl.wasted.name=Abfall-Perlmuttperle
+item.wizardry:nacre_pearl.wasted.name=Erloschene Perlmuttperle
 
 item.wizardry:nacre_pearl.overdone.desc0=Sieht übersättigt aus.
-item.wizardry:nacre_pearl.overdone.desc1=Maybe less time will make it stronger.
+item.wizardry:nacre_pearl.overdone.desc1=Etwas weniger Zeit könnte sie verstärken.
 item.wizardry:nacre_pearl.over_near.desc0=Nur etwas übersättigt.
 item.wizardry:nacre_pearl.over_near.desc1=Vielleicht etwas weniger Zeit...
 item.wizardry:nacre_pearl.perfect.desc0=Perfekt!
@@ -54,13 +55,13 @@ item.wizardry:quartz_pearl.name=Quartzperle
 item.wizardry:debugger.name=Zauberstab der Kreativität
 item.wizardry:staff.name=Stab
 item.wizardry:staff_pearl.name=Stab mit einer Perle
-item.wizardry:fairy_dust.name=Elfenstaub
-item.wizardry:fairy_imbued_apple.name=In Elfenstaub getränkter Apfel
-item.wizardry:fairy_wings.name=Elfenflügel
-item.wizardry:unicorn_horn.name=Einhorn-Horn
+item.wizardry:fairy_dust.name=Feenstaub
+item.wizardry:fairy_imbued_apple.name=In Feenstaub getränkter Apfel
+item.wizardry:fairy_wings.name=Feenflügel
+item.wizardry:unicorn_horn.name=Einhornhorn
 item.wizardry:jar.name=Glas
-item.wizardry:jar_fairy.name=Elfe in einem Glas
-item.wizardry:jar_jam.name=Elfenmarmelade
+item.wizardry:jar_fairy.name=Fee in einem Glas
+item.wizardry:jar_jam.name=Feenmarmelade
 item.wizardry:syringe.name=Leere Spritze
 item.wizardry:syringe_mana.name=ManaBooster Leicht™
 item.wizardry:syringe_mana.desc=Stellt 50%% Mana wieder her.
@@ -76,7 +77,7 @@ item.wizardry:syringe_blood.name=Blutgefüllte Spritze
 item.wizardry:light.name=Licht
 item.wizardry:halo_real.name=Heiligenschein
 item.wizardry:halo_fake.name=Falscher Heiligenschein
-item.wizardry:halo_creative.name= Kreativer Heiligenschein
+item.wizardry:halo_creative.name=Kreativer Heiligenschein
 item.wizardry:repulsion_bomb.name=Rückstoßbombe
 item.wizardry:vortex_bomb.name=Vortexbombe
 item.wizardry:sky_dust.name=Himmelsstaub
@@ -115,7 +116,7 @@ advancement.wizardry.manapool.desc=Finde einen Manasee
 advancement.wizardry.devildust=Zucker und Gewürz
 advancement.wizardry.devildust.desc=Verbrenne Redstone im Feuer um Teufelsstaub herzustellen
 advancement.wizardry.crunch=§oKRACH.§a
-advancement.wizardry.crunch.desc=Falle durch das Grundgestein und gelange in den Himmel
+advancement.wizardry.crunch.desc=Falle durch das Grundgestein und gelange in den Unterirdischen Himmel
 
 fluid.nacre_fluid=Perlmutt
 fluid.mana_fluid=Mana
@@ -157,8 +158,6 @@ jei.recipe.wizardry:fluid=Veränderung durch Flüssigkeiten
 wizardry.misc.moduleSet=Zauberspruch:
 wizardry.misc.sneak=<Schleiche für Informationen>
 wizardry.misc.ctrl=<Strg für weitere Informationen>
-wizardry.misc.save=SPEICHERN
-wizardry.misc.save_error=Keinen Zaubererkodex in deinem Inventar gefunden! Lege einen in dein Inventar um einen Zauberspruch zu speichern.
 wizardry.misc.sneak_expanded=&7<- &8Shift für weitere Informationen&7 ->
 wizardry.misc.update_link=Liste der Zauberei Aktualisierungen
 wizardry.misc.update_checker0=Eine neue Zauberei-Aktualisierung ist verfügbar.
@@ -200,7 +199,7 @@ wizardry.spell.effect_gravity_well.desc.potency=Die Kraft, mit der Wesen herange
 wizardry.spell.effect_gravity_well.desc.duration=Für jeden Punkt in <DAUER> hält der Effekt eine halbe Sekunde länger an.
 wizardry.spell.effect_leap.name=Sprung
 wizardry.spell.effect_leap.desc=Stößt dich nach oben und nach vorne.
-wizardry.spell.effect_leap.desc.potency=Erlaubt einen weiteren Sprung in der Luft pro 10 Punkte in <STÄRKE>. Divides fall distance by 1 + <STÄRKE>/8, rounded up.
+wizardry.spell.effect_leap.desc.potency=Erlaubt einen weiteren Sprung in der Luft pro 10 Punkte in <STÄRKE>. Bei der Berechnung von Fallschaden wird die Falltiefe durch (1+ <STÄRKE> /8 (aufgerundet)) geteilt. Du kannst also pro 8 <STÄRKE> um 3 Blöcke tiefer fallen ohne Schaden zu bekommen.
 wizardry.spell.effect_leech.name=Schmarotzer
 wizardry.spell.effect_leech.desc=Fügt einem Ziel magischen Schaden zu. Falls dieses Ziel stirbt, erhälst du etwas von dessen Mana.
 wizardry.spell.effect_leech.desc.potency=Verursacht einen halben Punkt magischen Schaden (1/4 Herz) pro Punkt in <STÄRKE>. 
@@ -241,7 +240,7 @@ wizardry.spell.effect_vanish.desc=Das Ziel kann keine Wesen sehen, während es s
 wizardry.spell.effect_vanish.desc.duration=Der Effekt hält <DAUER> Sekunden an.
 wizardry.spell.effect_zoom.name=Lichtgeschwindigkeit
 wizardry.spell.effect_zoom.desc=Du erreichst den angezielten Ort mit Lichtgeschwindigkeit. Der Effekt ändert sich, wenn er nicht auf dich selbst gewirkt wird.
-wizardry.spell.effect_zoom.desc.range=Lässt dich sofort um  <REICHWEITE> Blöcke bewegen.
+wizardry.spell.effect_zoom.desc.range=Lässt dich sofort um bis zu <REICHWEITE> Blöcke bewegen.
 
 wizardry.spell.event_collide_block.name=Blockberührung
 wizardry.spell.event_collide_block.desc=Diese Regel lässt den Zauber nur dann wirken, wenn ein Block getroffen wird. Vor einen Effekt setzen, damit sich dieser nur auf Blöcke auswirkt.
@@ -299,21 +298,23 @@ wizardry.gui.recipe=Spell Recipe
 wizardry.command.usage=/wizardry <reload/reset> [config/inventory]
 wizardry.command.success=Successfully reloaded modules.
 wizardry.command.reset=Attempting to reset moduleSet directory... Any modifications made to it will be lost!
-wizardry.command.success_delete=Successfully deleted %s
-wizardry.command.fail=Could not delete %s
+wizardry.command.success_delete=%s wurde erfolgreich gelöscht
+wizardry.command.fail=%s konnte nicht gelöscht werden
 wizardry.command.fail_dir_delete=Could not delete moduleSet directory
 wizardry.command.fail_dir_create=Could not create moduleSet directory
 
-wizardry.update0=Don't let your bugs be thugs! Use our patented Magic-o-gon spray for only $9.99
-wizardry.update1=There's magic in the air...
+wizardry.update0=Lass dich nicht von umherschwirrenden Spielfehlern ärgern! Hol dir unser patentiertes magisches Aktualisierung-Spray für nur 9,99€
+wizardry.update1=Es liegt Magie in der Luft...
 wizardry.update2=(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧
-wizardry.update3=I am now up back up to... One. Wizardry. Update.
-wizardry.update4=GET IN THE UPDATE, SHINJI
-wizardry.update5=it's outdated my dudes
-wizardry.update6=yo dawg we heard you like changelogs so we put changelogs in your changelogs so you can change while you log
+wizardry.update3=Ich bin zurück mit... Einer. Zauberei. Aktualisierung.
+wizardry.update4=HOL DIE AKTUALISIERUNG RAN, SHINJI
+wizardry.update5=Es ist nicht aktuell, Leute
+wizardry.update6=Jo Mann, wir haben gehört, dass du Änderungsberichte magst, also haben wir Änderungsberichte in deine Änderungsberichte gesteckt, damit du dich ändern kannst, während du berichtest
 wizardry.update7=*:･ﾟ✧ᕕ( ᐛ )ᕗ
 
 
+wizardry.table.spell_loaded=Der Zauberspruch aus deinem Kodex wurde geladen.
+wizardry.table.paper_cleared=Seite wurde leer gefegt.
 wizardry.table.spell_saved=Der Zauberspruch wurde erfolgreich im Kodex gespeichert! Öffne das Buch und schaue dir das neue Lesezeichen für Zaubersprüche an.
 wizardry.table.no_codex_found=Keinen Zaubererkodex in deinem Inventar gefunden! Lege einen in dein Inventar um einen Zauberspruch zu speichern.
 wizardry.table.codex_found=Es wurde ein Zauberkodex gefunden. Zaubersprüche können gespeichert werden.
@@ -322,3 +323,103 @@ wizardry.table.loop_found=Es gibt irgendwo eine Schleife! Ein Zauberspruch sollt
 wizardry.table.connection_doesnt_work=Diese Komponenten können auf diese Weise nicht verbunden werden!
 wizardry.table.connection_effect_to_any=Ein Effekt kann nicht zu anderen Komponenten verknüpft werden. Die Verknüpfung muss von den anderen Komponenten zum Effekt erfolgen.
 wizardry.table.connection_event_to_something=Damit dein Zauberspruch die Ausnahme-Komponente benutzt, musst du die Form-Komponente zur Ausnahme verknüpfen, danach die Ausnahme zur Effekt-Komponente. Form -> Ausnahme -> Effekt.
+wizardry.table.save=Speichern
+wizardry.table.clear=Löschen
+wizardry.table.load=Laden
+wizardry.table.load_desc=Lädt den letzten gespeicherten Zauber von dem ersten Kodex in deinem Inventar.
+wizardry.table.clear_desc=Entfernt alle Komponenten von dieser Seite.
+wizardry.table.save_desc=Speichert den Zauber in den ersten Kodex in deinem Inventar.
+wizardry.table.save_error=Keinen Zaubererkodex in deinem Inventar gefunden! Lege einen in dein Inventar um einen Zauberspruch zu speichern.
+
+wizardry.book.shift_scroll=Shift + Mausrad um umzublättern
+wizardry.book.open_recipe_tab=Schaue unter dem Zauberspruch-Lesezeichen nach um mehr Details zu erhalten
+
+wizardry.book.spell_recipe_recipe=Zauberspruch
+wizardry.book.spell_recipe_structure=Zauberspruchaufbau
+
+wizardry.book.title=Der Zaubererkodex
+wizardry.book.subtitle=Nicht von Raziel
+wizardry.book.steps.title=Die 5 Schritte um ein Zauberer zu werden
+wizardry.book.mobs.title=Magische Monster
+wizardry.book.itemsblocks.title=Gegenstände und Blöcke
+wizardry.book.dimensions.title=Dimensionen
+
+wizardry.book.steps.mana.title=Schritt 1: Mana
+wizardry.book.steps.mana.desc=Erfahre was Mana ist und warum du es unbedingt haben willst
+wizardry.book.steps.mana.content0=Zwischen allen Möglichkeiten aus denen Zauberer ihre Stärke beziehen können, ist Mana eindeutig die beste Quelle. Hellblaue Seen von dieser Flüssigkeit können überall in der Welt gefunden werden. Mana bildet sich auch in Lebewesen und Gegenstände, aus denen erfahrene Zauberer ständig neue Energie beziehen können. Nur mit Mana kannst du versuchen in der der Welt der Zauberei eine Gefahr darzustellen und dein Studium der Magie beginnen.
+wizardry.book.steps.mana.content1=Eine freundliche Warnung: Mana ist eine extrem instabile Flüssigkeit, die durch ihre große Menge an Energy nur darauf wartet sich irgendwohin zu entladen. Stelle dir Mana als einen Fluss vor. In einem kleinen Fluss kann man sich gut entspannen, während man in ihm herumtreibt; jedoch würdest du wohl kaum freiwillig in wütende Stromschnellen springen wollen. Berührst du den Manasee dann spürst du schnell, wie dein Hunger steigt, da die Flüssigkeit versucht deinen Körper zu reinigen. Gleichzeitig lässt sie dich durch ihre enorme Energie in die Luft schweben, was es nahezu unmöglich macht in Mana zu ertrinken.
+wizardry.book.steps.mana.content2=Natürlich wollen wir diese Flüssigkeit in unsere Körper bekommen um sie zu benutzen. Dafür musst du eine Spritze herstellen und diese entweder mit einer Manakugel füllen oder du kannst die leere Spritze benutzen, während du einen Manaquellblock anzielst. Dadurch besitzt du nun eine Manaspritze, die du direkt in deinen Blutkreislauf spritzen kannst.
+wizardry.book.steps.mana.content3=Wie alles andere, ist auch zu viel Mana schlecht für dich.. Trinkst du zu viel Wasser, kann dein Leben in Gefahr geraten. Machst du das gleiche mit Mana, sind die Auswirkungen um ein Vielfaches schlimmer. Der Körper kann nur eine gewisse Menge aufnehmen bis sich Nebenwirkungen bilden, die auch als ,,Manaverbrennung" bekannt sind.<br>Stell dir vor, du nimmst das Leben aller Tiere, gibst ihnen pures Koffein, steckst all das in ein einziges Eichhörnchen, und machst dieses Eichhörnchen zu einem Zauberer.<br>So fühlt es sich an, wenn man unter Manaverbrennung leidet.
+wizardry.book.steps.mana.content4=Schlussendlich kannst du flüssiges Mana in Kugeln lagern. Stelle einfach Glaskugeln her und wirf sie in einen Manaquellblock, worin diese sich augenblicklich füllen. Jetzt hast du tragbare Mana, die du später brauchen wirst. Stelle viele her, denn du wirst eine Menge dieser Kugeln später brauchen.
+
+wizardry.book.steps.garbs.title=Schritt 2: Garderobe
+wizardry.book.steps.garbs.desc=Erfahre welche Kleidung du benutzen solltest
+wizardry.book.steps.garbs.content0=Sobald du dir Mana eingeflößt hast wirst du dich wundern, warum du keine Anzeige hast, die dir deinen Manastand angibt. Nun... obwohl jetzt Mana in deinem Blutsystem fließt, kannst du es nicht einfach so kontrollieren.<br>In Engeln schlummert reine Heiligkeit. Ihre Anmut erlaubt es ihnen ständig neues Mana zu generieren... aber du hast es nicht so einfach. Du wirst dich mit dem zufrieden geben müssen, was man einen Falschen Heiligenschein nennt, statt dem prächtigen eines Engels.<br> Sobald du den Falschen Heiligenschein ausrüstest, bist du in der Lage deinen Manastand zu sehen und Mana zu kontrollieren.
+wizardry.book.steps.garbs.content1=Das nächste ist der Umhang. Umhänge dienen nicht als Manaspeicher sondern als Verbindung, die Zauberern hilft, Mana zu besser zu kontrollieren und dadurch den Manaverbrauch zu mindern. Sobald du dir einen Umhang hergestellt hast, trage ihn und ziehe ihn niemals aus. Je länger du den Umhang trägst, desto stärker wird er. Anfangs verringern sich die Manakosten kaum, aber nachdem du ihn lange getragen hast verringern sich das benötigte Mana auf bis zu ein Viertel der ursprünglichen Kosten.
+wizardry.book.steps.garbs.content2=Umhänge sind zwar prächtig und mächtig, aber ebenso untreu. Sie geben sehr leicht ihre Loyalität für einen neuen Besitzer auf, denn ein Zauberer ist für sie so gut wie ein anderer. Wenn du einem Erzmagier seinen Umhang stehlen kannst, dann ist es das gleiche als ob du diesen Umhang selbst schon jahrelang tragen würdest.<br>Wenn du also einen hübschen, wehenden Umhang an einem abkühlenden Körper findest, schadet es nicht, diesen abzupulen und selbst anzuprobieren. Und mal ehrlich, spielt es denn eine Rolle, wie sie gestorben sind? Ein Umhang ist ein Umhang.
+
+wizardry.book.steps.nacre.title=Schritt 3: Perlmutt und Perlen
+wizardry.book.steps.nacre.desc=Erfahre was Perlen sind und welche magischen Eigenschaften sie besitzen
+wizardry.book.steps.nacre.content0=Perlmutt ist die Flüssigkeit aus der Perlen hergestellt werden und auch als ,,Mutter aller Perlen" bekannt ist. Es handelt sich dabei um eine dickflüssige, blasse und schimmernde Flüssigkeit, die Mana verlustfrei leiten kann.<br>Um diese Flüssigkeit zu erzeugen musst du einfach ein Goldnugget in einen Manaquellblock werfen, wodurch sich Mana und Goldnugget zu dem prächtigen Zeug vermischen.<br>Nun, der Grund warum du das machen möchtest ist folgender: Damit kannst du "Perlmuttperlen" erzeugen, die du wiederum mit einem Zauber versehen kannst.
+wizardry.book.steps.nacre.content1=Um eine Perlmuttperle zu erzeugen, musst du Glasperlen in die milchige Flüssigkeit werfen. Es gibt sechs Qualitätsstufen bei Perlmuttperlen. Erloschen ist die schlechteste, dann verbraucht, fehlerhaft, gut, mächtig und zum Schluss Übermächtig. Du möchtest möglichst Übermächtige Perlen benutzen, aber das benötigt einen hochpräzisen Aufwand. Je schlechter die Qualität der Perle, desto schwächer wird der Zauber und desto mehr Mana wird dieser verbrauchen.Für die beste Perlenqualität müssen die Glasperlen &ogenau&r 30 Sekunden lang im Perlmutt schwimmen lassen. Selbst ein bisschen mehr Zeit verschlechtert die Qualität, aber zu wenig verschlechtert die Qualität ebenfalls. Die Spitzenqualität ist natürlich keine Voraussetzung. Übermächtige Perlen sind stark, aber du wirst auch mit auch mächtigen und guten Perlen zufrieden sein.<br>Du wirst diese Perlen später für die Erstellung von Zaubern benutzen.
+
+wizardry.book.steps.structures.title=Schritt 4: Bauwerke
+wizardry.book.steps.structures.desc=Erfahre wie man die nötigen Bauwerke baut
+wizardry.book.steps.structures.content0=Du hast dein Mana, du hast deinen krummen Heiligenschein, du hast deinen wunderschönen Umhang und du hast deine glänzenden Perlmuttperlen.Aber wie füllt man eigentlich eine Perle mit einem Zauber? Nun, wir brauchen noch eine Sache, bevor wir dazu kommen.
+wizardry.book.steps.structures.content1=Das erste Bauwerk ist eine Manabatterie. Diese Struktur ist ein riesiger Manaspeicher.<br>Jeder Zauberer lernt schnell, dass dies das Zentrum seiner Macht ist. Der Kern der Manabatterie kann Mana viel effizienter aufnehmen als alle anderen Lagermöglichkeiten. Um ihn vollständig zu füllen musst du sehr viele Manakugeln auf den Säulen des Bauwerks platzieren. Der Kern wird automatisch sein gespeichertes Mana an platzierte Manakugeln außerhalb der eigenen Säulen abgeben, wodurch eine automatische und effektive Übertragung außerhalb der Manabatterie gewährleistet ist.
+wizardry.book.steps.structures.content2=Sobald du den Manabatterieblock platziert hast erscheinen rote Punkte, die dort aufleuchten, wo noch Blöcke des Bauwerks hingesetzt werden müssen. Halte Shift gedrückt und mache einen rechtsklick auf den Kern, um ein Hologramm des fertigen Bauwerks zu sehen. Verändere die Lage der Batterie wie es dir gefällt. Sobald du dann alle Blöcke der Manabatterie gesetzt hast, sind keine rot leuchtenden Punkte mehr zu sehen.
+wizardry.book.steps.structures.content3=Dieses Bauwerk wird technisch nicht unbedingt benötigt. Du könntest in den anderen Bauwerken mit der Hand neue Manakugeln setzen nachdem die alten geleert wurden, aber du wirst schnell feststellen, dass es eine sehr nervige und langweilige Arbeit ist. Insbesondere bei Vorgängen, die eine große Menge an Mana benötigen.
+wizardry.book.steps.structures.content4=Das letzte Bauwerk, das du benötigst, und das wohl wichtigste von allen, ist der Altar der Herstellung. In diesem Bauwerk wirst du nach Zauberrezepten Zutaten auf die Fertigungsstelle werfen und diese mit einer Perlmuttperle abschließen, um eine Perle zu erzeugen, die in der Lage ist, deinen Zauber zu beschwören.<br>Wie das genau funktioniert lernst du in einem anderen Kapitel. Jetzt baue erst einmal dieses Bauwerk sehr nahe an die Struktur der Manabatterie. Dann platziere auf den Säulen des Altars der Herstellung entweder Glas- oder Manakugeln um den Kern des Altars, die Fertigungsstelle, mit Mana zu versorgen.
+wizardry.book.steps.structures.content5=Du solltest wissen, dass die Manabatterie in der Lage ist, automatisch die Manakugeln auf den Säulen des Altars der Herstellung zu füllen, so lange der Kern der Manabatterie mit Mana gefüllt ist. Die Kugeln im Altar wiederum füllen die Fertigungsstelle.
+
+wizardry.book.steps.spell_creation.title=Schritt 5: Zauberspruchherstellung
+wizardry.book.steps.spell_creation.desc=Erfahre wie du endlich deinen ersten Zauber erstellst
+wizardry.book.steps.spell_creation.content0=This is the step where you actually make your spells. You're finally ready.<br>To start off, make yourself a Magician's Worktable, and place it down. Once you open it up, you will see several things.<br>It's very important that you carry this codex in your inventory while making a spell. I'll tell you why in a bit.
+wizardry.book.steps.spell_creation.content1=To your top left, you will see three sidebars. The top left sidebar is for Shape components. Shape components control how your spell will be cast. IE: If you want it to cast as a beam, as a projectile, upon smacking something, as a zone, etc…
+wizardry.book.steps.spell_creation.content2=To the right of the Shapes are the Effect components. These control what your spell actually does. If you want a lightning spell, a time slowing spell, a slippery spell, a gravity well, etc…
+wizardry.book.steps.spell_creation.content3=Below the Shapes are the Event components. These filter &oout&r everything else. For example, when you run a projectile spell, it will run on entities and/or blocks regardless. With an event component, you will be able to affect &oonly&r entities, for example.
+wizardry.book.steps.spell_creation.content4=To make your first spell, drag a Shape component onto the piece of paper in the center, then drag an effect component to the center. Then hold down right click and drag from the Shape component to the Effect component on your paper, you will see a connecting line. This line's direction matters, and connecting it in reverse won't work. This is because doing it like this tells your spell that it will first run a Projectile Shape, then when that Projectile Shape hits and needs to run its Effect, it will run the Effect you pass into it. The opposite is an Effect shape that doesn't know how to actually start, so it fizzles out.<br>Try this example: Drag a Projectile Shape and a Freeze Effect and right click drag from the Projectile Shape to the Freeze Effect.
+wizardry.book.steps.spell_creation.content5=This spell is very weak at it's base. You can upgrade it at the cost of more mana or burnout. For example, if you want to add more range to the projectile, click on the Projectile Shape that you placed on your paper, you will see a list of modifiers you can apply on the right. Click the Range modifier to apply it. Click more to apply more.
+wizardry.book.steps.spell_creation.content6=Once you are satisfied with your spell, click the &oSave&r button on the top right. This will save your spell's recipe into &othis&r codex. You will see a new bookmark in this codex with the recipe of the spell you want to create. So be sure you have this codex on your person when you make a spell.
+wizardry.book.steps.spell_creation.content7=Now that you saved your spell, check the Spell Recipe bookmark in this book. You will see a list of items that you need to gather and throw into the crafting plate &o&lin order&r. Fill your Mana Battery up with mana, then throw your nacre pearl into the crafting plate. Finally, wait for your spell to craft for a minute. You will be greeted with an explosion of mana around the nacre pearl sitting at the center of the plate. You now have an spell-infused pearl at your disposal. Craft it with an empty staff to mount it to it, then you can use your staff to cast your spell! Congratulations, my friend. You are now a wizard. I fear for the poor animals in the wake of your first pyrokinetics.
+
+wizardry.book.items_blocks.devil_dust.title=Teufelsstaub
+wizardry.book.items_blocks.devil_dust.content0=&oTeufelsstaub ist eine gereinigte Version des leitfähigen Redstones, welche statt Elektrizität zu leiten, Magie leitet.&r
+wizardry.book.items_blocks.devil_dust.content1=Er wird hergestellt, indem man Redstone ins Feuer wirft. Es wird etwas zischen und dann den höllischen Staub ausspucken.
+
+wizardry.book.items_blocks.wisdom_wood.title=Holz der Weisheit
+wizardry.book.items_blocks.wisdom_wood.content0=&oHolz der Weisheit hat sich in eine Holzart entwickelt, die sich wie ein Parasit von Mana ernährt. Dies macht es sehr nützlich um Dinge herzustellen, die die flüssige Macht umformen. Wenn wir aus bearbeitetem Holz der Weisheit einen Lehrlingsumhang herstellen könnten, dann könnten wir effektiv verhindern, dass du überhaupt irgendwelche Magie benutzen kannst - womit wir uns den Ärger hier ersparen würden.&r
+wizardry.book.items_blocks.wisdom_wood.content1=Jede Holzart kann in Holz der Weisheit umgewandelt werden, indem man einfach Holz in Mana wirft.
+
+wizardry.book.items_blocks.crude_halo.title=Falscher Heiligenschein
+wizardry.book.items_blocks.crude_halo.content0=&oDer Falsche Heiligenschein ist ein schlechter Stellvertreter der Heiligkeit. Obwohl er nicht annähernd so mächtig wie die Anmut eines Engels ist, kann er... zumindest Mana aufnehmen, wenn nicht sogar auf seinen Träger übertragen.&r
+wizardry.book.items_blocks.crude_halo.content1=Wenn du gerne Schmuck (baubles) und Plunder trägst, kannst du den Falschen Heiligenschein auf deinem Kopf über der Rüstung befestigen. Andernfalls musst du ihn anstelle eines Helmes aufsetzen. Er sieht zwar nicht so schick aus wie der echte, aber er macht seine Arbeit.
+
+wizardry.book.items_blocks.orbs.title=Kugeln
+wizardry.book.items_blocks.orbs.content0=Glaskugeln kann man sowohl mit Perlmutt als auch mit Mana füllen, wodurch man von diesen mächtigen Flüssigkeiten die schimmernden Perlmuttperlen und die unbezahlbaren Manakugeln erhält.
+wizardry.book.items_blocks.orbs.content1=An Manakugeln kommt man, wenn man einfach Glaskugeln in einen Manaquellblock wirft.<br>Perlmuttperlen benötigen jedoch eine hohe Genauigkeit. Wie du an die stärksten Perlmuttperlen kommst, kannst du im Kapitel ,,Die 5 Schritte um ein Zauberer zu werden" im Schritt 3 nachlesen: Perlmutt und Perlen.
+
+wizardry.book.mobs.fairies.title=Feen
+wizardry.book.mobs.fairies.desc=Wo sie zu finden sind und wie man sie zu Marmelade verarbeitet
+wizardry.book.mobs.fairies.content1=Die erste Eigenschaft von dem, was wir ,,Feen" nennen -- und bei weitem die erste, die junge Zauberlehrlinge bemerken -- ist, dass sie extrem nervig sind. Obwohl sie eigentlich als Nebenprodukt beim Verbrauch von Mana enstehen und nichts besitzen, was Intelligenz auch nur ähnelt, verfügen sie jedoch über die bemerkenswerte Gabe sich zur falschen Zeit am falschen Ort zu befinden. Jedes mal, wenn ein Zauberer in der Nähe Feen anfängt sich auf einen komplexen und großartigen Zauber zu konzentrieren, ist es fast schon garantiert, dass diese kleinen Unruhestifter ihr möglichstes tun, um den magischen Vorgang zu stören.
+wizardry.book.mobs.fairies.content2=Doch wie auch Einhörner, sind diese Bewohner des Unterirdischen Himmels nicht komplett nutzlos: Wenn du eine fangen und in ein Glas questschen kannst, dient sie als vorzügliche Lichtquelle. Desweiteren kannst du sie zu leckerer Marmelade verarbeiten.
+
+wizardry.book.mobs.spirit_wights.title=Geisterwesen
+wizardry.book.mobs.spirit_wights.desc=Rastlose Reisende in den Wolken
+wizardry.book.mobs.spirit_wights.content1=Little is known about these underworld-native creatures. Those few unfortunate enough to have any interaction with them rarely survive the experience; as a result, the few observations that survive are more to do with how quickly they can disassemble the average wizard than with their patterns or behaviours. As a result, the only real advice for dealing with them is this: if you see one, run. And don't stop.
+wizardry.book.mobs.spirit_wights.content2=It is possible to fight a spiritwight. It is even theoretically possible to win, in the same way that it is theoretically possible to win a fist fight with a dragon. Strong potions of harming have proven to have some effect on them, in so far as these things can be measured, and it is possible that a wizard of exceptional power and skill may be able to craft weapons and armour strong enough to successfully oppose them. If this is you, do make sure to tell people; they probably won't believe you, but at least someone will know.
+wizardry.book.mobs.spirit_wights.content3=If you decline to fight them -- which, let's be honest, is the only sensible choice -- then do not be deceived by their sluggishness. Spiritwights are slow, lumbering things, but this belies their relentless nature. Once a spiritwight has caught the scent of a wizard, they will hunt them almost to the ends of the earth. When you run from them, keep looking over your shoulder. and don't ever stop for long. They certainly won't.
+wizardry.book.mobs.spirit_wights.content4=It is one final point of interest that spiritwights reserve their hatred for wizards. As far as we know, they show no interest in any other creature. A unicorn may go where a wizard fears to tread, and face no danger. There must be some reason for this, but who knows it.
+
+wizardry.book.mobs.unicorns.title=Einhörner
+wizardry.book.mobs.unicorns.desc=Noch nie war von den Wolken gekickt zu werden so einfach
+wizardry.book.mobs.unicorns.content1=Please, make no mistake; these are not the gentle, damsel-loving creatures of song and story. The tales I heard as a child about unicorns were keen to stress their beauty and intelligence, their kindness and faithfulness. Real unicorns are better described as 'stroppy'.
+wizardry.book.mobs.unicorns.content2=These underworld-native creatures are savage and territorial, sharp of horn and hard of hoof. As far as we can tell, they possess a burning desire to kick, stab or otherwise maim any animal that crosses their path - wizards included - and will even resort to biting if in the mood. They seem to harbor a particular grudge against fairies, which they eat when possible.
+wizardry.book.mobs.unicorns.content3=Some have argued that unicorns have little practical value, but their horns have potent magical properties. Also - as I've said elsewhere - fairies are remarkably annoying, so anything that keeps their numbers down can't be all bad.
+
+wizardry.book.dimensions.underworld.title=Unterirdischer Himmel
+wizardry.book.dimensions.underworld.desc=Erfahre mehr über den Unterirdischen Himmel
+wizardry.book.dimensions.underworld.content1=<WIP><br>Das Reich von Zachriel, Dem Engel der Erinnerung.
+wizardry.book.dimensions.underworld.content2=Es gibt wenig Leben im bewölkten Himmel der Unterwelt (schließlich ist es ja das Reich der Toten), aber einige Wesen kann man dort trotzdem finden<br><WIP>
+wizardry.book.dimensions.underworld.content3=Um in den Unterirdischen Himmel zu gelangen, musst du von einer Höhe von über 130 Blöcken abspringen und unten auf Grundgestein aufkommen. Statt zu sterben wirst du direkt durch das Grundgestein hindurch fallen und relativ weich zwischen den Wolken des Unterirdischen Himmels landen.
+wizardry.book.dimensions.underworld.content4=Um den Himmel wieder zu verlassen, springe einfach in die Leere unter den Wolken. Du wirst direkt am Anfangspunkt der Oberwelt aus den Wolken fallen.
