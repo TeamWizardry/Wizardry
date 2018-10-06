@@ -17,6 +17,10 @@ import static org.objectweb.asm.Opcodes.*;
  */
 public class WizardryTransformer implements IClassTransformer {
 
+	private static final String CLASS_BLOCK = "net/minecraft/block/Block";
+	private static final String CLASS_BLOCK_POS = "net/minecraft/util/math/BlockPos";
+	private static final String CLASS_BLOCK_STATE = "net/minecraft/block/state/IBlockState";
+	private static final String CLASS_BLOCK_ACCESS = "net/minecraft/world/IBlockAccess";
 	private static final String CLASS_ENTITY_PLAYER = "net/minecraft/entity/player/EntityPlayer";
 	private static final String CLASS_ENTITY = "net/minecraft/entity/Entity";
 	private static final String CLASS_ENTITY_LIVING_BASE = "net/minecraft/entity/EntityLivingBase";
@@ -146,6 +150,31 @@ public class WizardryTransformer implements IClassTransformer {
 							newInstructions.add(new VarInsnNode(FSTORE, 3));
 
 							methodNode.instructions.insertBefore(methodNode.instructions.getFirst(), newInstructions);
+
+							for (int i = 0; i < methodNode.instructions.size(); i++) {
+								AbstractInsnNode insnNode = methodNode.instructions.get(i);
+								if (insnNode instanceof MethodInsnNode) {
+									MethodInsnNode node = (MethodInsnNode) insnNode;
+									if (node.getOpcode() == Opcodes.INVOKEVIRTUAL
+											&& node.owner.equals(CLASS_BLOCK)
+											&& node.name.equals("getSlipperiness")
+											&& node.desc.equals("(L" +
+											CLASS_BLOCK_STATE + ";L" +
+											CLASS_BLOCK_ACCESS + ";L" +
+											CLASS_BLOCK_POS + ";L" +
+											CLASS_ENTITY + ";)F")) {
+
+										InsnList afterInstructions = new InsnList();
+
+										afterInstructions.add(new VarInsnNode(ALOAD, 0));
+										afterInstructions.add(new MethodInsnNode(INVOKESTATIC, ASM_HOOKS, "slipperyHook",
+												"(FL" + CLASS_ENTITY + ";)F", false));
+
+										methodNode.instructions.insert(insnNode, afterInstructions);
+									}
+								}
+							}
+
 							methodNode.instructions.resetLabels();
 							return true;
 						}
