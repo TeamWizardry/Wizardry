@@ -22,16 +22,16 @@ public class WizardryASMHooks {
 		return event.noClip;
 	}
 
-	public static boolean entityPreMoveHook(Entity entity, MoverType type, double x, double y, double z) {
+	public static EntityMoveEvent entityPreMoveHook(Entity entity, MoverType type, double x, double y, double z) {
 		EntityMoveEvent event = new EntityMoveEvent(entity, type, x, y, z);
 		MinecraftForge.EVENT_BUS.post(event);
-		return !event.override;
+		return event;
 	}
 
-	public static boolean travel(EntityLivingBase entity, float strafe, float vertical, float forward) {
+	public static EntityTravelEvent travel(EntityLivingBase entity, float strafe, float vertical, float forward) {
 		EntityTravelEvent event = new EntityTravelEvent(entity, strafe, vertical, forward);
 		MinecraftForge.EVENT_BUS.post(event);
-		return !event.override;
+		return event;
 	}
 
 	public static boolean entityRenderShadowAndFire(Entity entity) {

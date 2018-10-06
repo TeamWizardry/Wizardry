@@ -38,7 +38,7 @@ public class PotionSlippery extends PotionBase {
 	@SubscribeEvent
 	public void entityMove(EntityTravelEvent event) {
 		if (!event.entity.isPotionActive(this)) return;
-		event.override = true;
+		event.setCanceled(true); // TODO: 10/6/18 fix your shit demoniaque
 
 		EntityLivingBase entity = event.entity;
 		float strafe = event.strafe / 2.0f;

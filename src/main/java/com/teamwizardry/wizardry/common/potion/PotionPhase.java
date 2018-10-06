@@ -58,7 +58,7 @@ public class PotionPhase extends PotionBase {
 		EntityLivingBase base = (EntityLivingBase) event.entity;
 		if (!base.isPotionActive(ModPotions.PHASE)) return;
 
-		event.override = true;
+		event.setCanceled(true); // TODO: 10/6/18 fix your shit demoniaque
 		//event.entity.noClip = true;
 		event.entity.fallDistance = 0;
 		event.entity.isAirBorne = true;
