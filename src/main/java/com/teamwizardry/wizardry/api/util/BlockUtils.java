@@ -140,7 +140,8 @@ public final class BlockUtils {
 	public static boolean hasEditPermission(@Nonnull BlockPos pos, @Nonnull EntityPlayerMP player) {
 		if (FMLCommonHandler.instance().getMinecraftServerInstance().isBlockProtected(player.getEntityWorld(), pos, player))
 			return false;
-
+		IBlockState block = player.getEntityWorld().getBlockState(pos);
+		if(block.getBlockHardness(player.getEntityWorld(), pos) == -1.0F && !player.capabilities.isCreativeMode) return false;
 		for (EnumFacing e : EnumFacing.VALUES)
 			if (!player.canPlayerEdit(pos, e, player.getHeldItemMainhand()))
 				return false;
