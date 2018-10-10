@@ -6,6 +6,7 @@ package com.teamwizardry.wizardry.api;
 public class Constants {
 
 	public static class MISC {
+		public static final String DIAMOND = "particles/diamond";
 		public static final String SPARKLE_BLURRED = "particles/sparkle_blurred";
 		public static final String SMOKE = "particles/smoke";
 	}

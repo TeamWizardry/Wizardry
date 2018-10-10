@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.client.fx;
 
+import com.teamwizardry.librarianlib.features.animator.Easing;
 import com.teamwizardry.librarianlib.features.math.interpolate.InterpFunction;
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
@@ -9,6 +10,11 @@ import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpLi
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
+import com.teamwizardry.librarianlib.features.particlesystem.ParticleSystem;
+import com.teamwizardry.librarianlib.features.particlesystem.bindings.EaseBinding;
+import com.teamwizardry.librarianlib.features.particlesystem.bindings.StoredBinding;
+import com.teamwizardry.librarianlib.features.particlesystem.modules.BasicPhysicsUpdateModule;
+import com.teamwizardry.librarianlib.features.particlesystem.modules.SpriteRenderModule;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.Constants.MISC;
@@ -25,26 +31,96 @@ import net.minecraft.world.World;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Created by Demoniaque on 8/29/2016.
  */
 public class LibParticles {
 
-	private static int beamTick = 0;
-
-	static {
-		Timer timer = new Timer();
-		timer.scheduleAtFixedRate(new TimerTask() {
-			@Override
-			public void run() {
-				beamTick++;
-				if (beamTick > 100) beamTick = 0;
-			}
-		}, 0, 1);
+	public static void EXPLODE(World world, Vec3d pos, Color color1, Color color2, double strengthUpwards, double strengthSideways, int amount, int lifeTime, int lifeTimeRange, boolean bounce) {
+		ParticleBuilder glitter = new ParticleBuilder(10);
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
+		glitter.setCollision(true);
+		glitter.enableMotionCalculation();
+		glitter.setColorFunction(new InterpColorHSV(ColorUtils.changeColorAlpha(color1, RandUtil.nextInt(50, 150)), ColorUtils.changeColorAlpha(color2, RandUtil.nextInt(50, 150))));
+		glitter.setAcceleration(new Vec3d(0, RandUtil.nextDouble(-0.03, -0.04), 0));
+		glitter.setCanBounce(true);
+		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), amount, 0, (i, build) -> {
+			double radius = RandUtil.nextDouble(1, 2);
+			double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
+			double r = radius * RandUtil.nextFloat();
+			double x = r * MathHelper.cos((float) theta);
+			double z = r * MathHelper.sin((float) theta);
+			Vec3d normalize = new Vec3d(x, 0, z).normalize();
+			glitter.setMotion(new Vec3d(
+					normalize.x * RandUtil.nextDouble(-strengthSideways, strengthSideways),
+					RandUtil.nextDouble(-strengthUpwards, strengthUpwards),
+					normalize.z * RandUtil.nextDouble(-strengthSideways, strengthSideways)
+			));
+			glitter.setAlphaFunction(new InterpFloatInOut(0.0f, RandUtil.nextFloat()));
+			glitter.setLifetime(RandUtil.nextInt(lifeTime - lifeTimeRange, lifeTime + lifeTimeRange));
+			glitter.setScale(RandUtil.nextFloat());
+		});
 	}
+
+	public static class ParticleExplosion extends ParticleSystem {
+
+		public static ParticleExplosion INSTANCE = new ParticleExplosion();
+
+		private ParticleExplosion() {
+		}
+
+		@Override
+		public void configure() {
+			StoredBinding size = bind(1);
+			StoredBinding position = bind(3);
+			StoredBinding previousPosition = bind(3);
+			StoredBinding velocity = bind(3);
+			StoredBinding colorFrom = bind(4);
+			StoredBinding colorTo = bind(4);
+
+			getUpdateModules().add(new BasicPhysicsUpdateModule(
+					position,
+					previousPosition,
+					velocity,
+					true,
+					0.1,
+					0.3f,
+					0.2f,
+					0.01f
+			));
+
+			getRenderModules().add(new SpriteRenderModule(
+					new ResourceLocation(Wizardry.MODID, "textures/particles/sparkle_blurred.png"),
+					previousPosition,
+					position,
+					new EaseBinding(getLifetime(), getAge(), null, null, Easing.linear, 4, colorFrom, colorTo),
+					size
+			));
+		}
+
+		public void spawn(int lifeTime, int lifeTimeRange, int amount, Vec3d pos, Color colorFrom, Color colorTo, double strengthUpwards, double strengthSideways) {
+			reload();
+			for (int i = 0; i < amount; i++) {
+				double radius = RandUtil.nextDouble(1, 2);
+				double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
+				double r = radius * RandUtil.nextFloat();
+				double x = r * MathHelper.cos((float) theta) * RandUtil.nextDouble(-strengthSideways, strengthSideways);
+				double z = r * MathHelper.sin((float) theta) * RandUtil.nextDouble(-strengthSideways, strengthSideways);
+
+				addParticle(
+						lifeTime + RandUtil.nextDouble(-lifeTimeRange, lifeTimeRange),
+						RandUtil.nextDouble(0.2, 1f),
+						pos.x, pos.y, pos.z,
+						pos.x, pos.y, pos.z,
+						x, RandUtil.nextDouble(-strengthUpwards, strengthUpwards), z,
+						colorFrom.getRed() / 255.0, colorFrom.getGreen() / 255.0, colorFrom.getBlue() / 255.0, colorFrom.getAlpha() / 255.0,
+						colorTo.getRed() / 255.0, colorTo.getGreen() / 255.0, colorTo.getBlue() / 255.0, colorTo.getAlpha() / 255.0
+				);
+			}
+		}
+	}
+
 
 	public static void FIZZING_AMBIENT(World world, Vec3d pos) {
 		ParticleBuilder glitter = new ParticleBuilder(30);
@@ -87,82 +163,6 @@ public class LibParticles {
 			glitter.setLifetime(RandUtil.nextInt(20, 30));
 			glitter.setColor(ColorUtils.changeColorAlpha(new Color(0x0097FF), RandUtil.nextInt(100, 255)));
 			glitter.setMotion(new Vec3d(RandUtil.nextDouble(-0.5, 0.5), RandUtil.nextDouble(-0.5, 0.5), RandUtil.nextDouble(-0.5, 0.5)));
-		});
-	}
-
-	public static void DEVIL_DUST_BIG_CRACKLES(World world, Vec3d pos) {
-		ParticleBuilder glitter = new ParticleBuilder(30);
-		glitter.setScale(RandUtil.nextFloat());
-		glitter.setColor(new Color(RandUtil.nextFloat(), 0, 0));
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
-		glitter.setAlphaFunction(new InterpFloatInOut(0.0f, 0.3f));
-
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 1, 0, (i, builder) -> {
-			Vec3d offset = new Vec3d(RandUtil.nextDouble(-0.5, 0.5), RandUtil.nextDouble(-0.5, 0.5), RandUtil.nextDouble(-0.5, 0.5));
-			glitter.setPositionOffset(offset);
-			glitter.setLifetime(RandUtil.nextInt(30, 50));
-			glitter.setMotion(new Vec3d(RandUtil.nextDouble(-0.01, 0.01), RandUtil.nextDouble(0.04, 0.06), RandUtil.nextDouble(-0.01, 0.01)));
-		});
-	}
-
-	public static void DEVIL_DUST_SMALL_CRACKLES(World world, Vec3d pos) {
-		ParticleBuilder glitter = new ParticleBuilder(10);
-		glitter.setColor(new Color(RandUtil.nextFloat(), 0, 0).darker());
-		glitter.setScale((float) RandUtil.nextDouble(0, 0.5));
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
-		glitter.setAlphaFunction(new InterpFloatInOut(0.0f, 0.3f));
-
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 5, 0, (i, builder) -> {
-			glitter.setLifetime(RandUtil.nextInt(10, 30));
-			glitter.setMotion(new Vec3d(RandUtil.nextDouble(-0.03, 0.03), RandUtil.nextDouble(0.07, 0.2), RandUtil.nextDouble(-0.03, 0.03)));
-		});
-	}
-
-	public static void BOOK_BEAM_NORMAL(World world, Vec3d pos) {
-		ParticleBuilder glitter = new ParticleBuilder(50);
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
-		glitter.setAlphaFunction(new InterpFloatInOut(0.0f, 0.3f));
-
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 10, 0, (aFloat, particleBuilder) -> {
-			glitter.setMotion(new Vec3d(RandUtil.nextDouble(-0.02, 0.02), RandUtil.nextDouble(0, 1.0), RandUtil.nextDouble(-0.02, 0.02)));
-			glitter.setColor(new Color(255, 255, 255, RandUtil.nextInt(0, 255)));
-			glitter.setScale(RandUtil.nextFloat());
-			glitter.setLifetime(RandUtil.nextInt(0, 50));
-		});
-	}
-
-	public static void BOOK_BEAM_HELIX(World world, Vec3d pos) {
-		ParticleBuilder helix = new ParticleBuilder(200);
-		helix.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
-		helix.setAlphaFunction(new InterpFloatInOut(0.3f, 0.3f));
-
-		ParticleSpawner.spawn(helix, world, new StaticInterp<>(pos), 30, 0, (aFloat, particleBuilder) -> {
-			helix.setColor(new Color(255, 255, 255, RandUtil.nextInt(0, 255)));
-			helix.setScale(RandUtil.nextFloat());
-			helix.setPositionFunction(new InterpHelix(Vec3d.ZERO, new Vec3d(0, RandUtil.nextDouble(1.0, 255.0), 0), 0, RandUtil.nextInt(1, 5), RandUtil.nextInt(1, 5), 0));
-			helix.setLifetime(RandUtil.nextInt(0, 200));
-		});
-	}
-
-	public static void BOOK_LARGE_EXPLOSION(World world, Vec3d pos) {
-		ParticleBuilder glitter = new ParticleBuilder(1000);
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
-		glitter.setAlphaFunction(new InterpFloatInOut(0.0f, 0.3f));
-
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), 1000, 0, (i, build) -> {
-
-			double radius = 1.0;
-			double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
-			double r = radius * RandUtil.nextFloat();
-			double x = r * MathHelper.cos((float) theta);
-			double z = r * MathHelper.sin((float) theta);
-
-			glitter.setPositionOffset(new Vec3d(0, RandUtil.nextDouble(0, 255.0), 0));
-			glitter.setMotion(new Vec3d(x, 0, z));
-			glitter.setJitter(10, new Vec3d(RandUtil.nextDouble(-0.05, 0.05), RandUtil.nextDouble(-0.05, -0.01), RandUtil.nextDouble(-0.05, 0.05)));
-			glitter.enableMotionCalculation();
-			glitter.setColor(new Color(255, 255, 255, RandUtil.nextInt(70, 170)));
-			glitter.setScale((float) RandUtil.nextDouble(0.3, 0.5));
 		});
 	}
 
@@ -319,31 +319,6 @@ public class LibParticles {
 		ParticleSpawner.spawn(glitter2, world, new StaticInterp<>(pos), 3);
 	}
 
-	public static void EXPLODE(World world, Vec3d pos, Color color1, Color color2, double strengthUpwards, double strengthSideways, int amount, int lifeTime, int lifeTimeRange, boolean bounce) {
-		ParticleBuilder glitter = new ParticleBuilder(10);
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
-		glitter.setCollision(true);
-		glitter.enableMotionCalculation();
-		glitter.setColorFunction(new InterpColorHSV(ColorUtils.changeColorAlpha(color1, RandUtil.nextInt(50, 150)), ColorUtils.changeColorAlpha(color2, RandUtil.nextInt(50, 150))));
-		glitter.setAcceleration(new Vec3d(0, RandUtil.nextDouble(-0.03, -0.04), 0));
-		glitter.setCanBounce(true);
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(pos), amount, 0, (i, build) -> {
-			double radius = RandUtil.nextDouble(1, 2);
-			double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
-			double r = radius * RandUtil.nextFloat();
-			double x = r * MathHelper.cos((float) theta);
-			double z = r * MathHelper.sin((float) theta);
-			Vec3d normalize = new Vec3d(x, 0, z).normalize();
-			glitter.setMotion(new Vec3d(
-					normalize.x * RandUtil.nextDouble(-strengthSideways, strengthSideways),
-					RandUtil.nextDouble(-strengthUpwards, strengthUpwards),
-					normalize.z * RandUtil.nextDouble(-strengthSideways, strengthSideways)
-			));
-			glitter.setAlphaFunction(new InterpFloatInOut(0.0f, RandUtil.nextFloat()));
-			glitter.setLifetime(RandUtil.nextInt(lifeTime - lifeTimeRange, lifeTime + lifeTimeRange));
-			glitter.setScale(RandUtil.nextFloat());
-		});
-	}
 
 	public static void STRUCTURE_FLAIR(World world, Vec3d pos, Color color) {
 		ParticleBuilder glitter = new ParticleBuilder(10);

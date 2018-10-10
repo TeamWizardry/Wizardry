@@ -85,6 +85,17 @@ public class PearlRadialUIRenderer {
 		}
 	}
 
+	private static int getScrollSlot(MouseEvent event, int count, int scrollSlot) {
+		if (event.getDwheel() < 0) {
+			if (scrollSlot == count) scrollSlot = 0;
+			else scrollSlot = MathHelper.clamp(scrollSlot + 1, 0, count);
+		} else {
+			if (scrollSlot == 0) scrollSlot = count;
+			else scrollSlot = MathHelper.clamp(scrollSlot - 1, 0, count);
+		}
+		return scrollSlot;
+	}
+
 	@SubscribeEvent
 	public void onScroll(MouseEvent event) {
 		EntityPlayer player = Minecraft.getMinecraft().player;
@@ -102,13 +113,7 @@ public class PearlRadialUIRenderer {
 				int scrollSlot = ItemNBTHelper.getInt(stack, "scroll_slot", -1);
 				int lastSlot = scrollSlot;
 
-				if (event.getDwheel() < 0) {
-					if (scrollSlot == count) scrollSlot = 0;
-					else scrollSlot = MathHelper.clamp(scrollSlot + 1, 0, count);
-				} else {
-					if (scrollSlot == 0) scrollSlot = count;
-					else scrollSlot = MathHelper.clamp(scrollSlot - 1, 0, count);
-				}
+				scrollSlot = getScrollSlot(event, count, scrollSlot);
 
 				if ((count == 1 || lastSlot != scrollSlot) && scrollSlot >= 0) {
 					ItemNBTHelper.setInt(stack, "scroll_slot", scrollSlot);
@@ -151,13 +156,7 @@ public class PearlRadialUIRenderer {
 				int scrollSlot = ItemNBTHelper.getInt(stack, "scroll_slot", -1);
 				int lastSlot = scrollSlot;
 
-				if (event.getDwheel() < 0) {
-					if (scrollSlot == count) scrollSlot = 0;
-					else scrollSlot = MathHelper.clamp(scrollSlot + 1, 0, count);
-				} else {
-					if (scrollSlot == 0) scrollSlot = count;
-					else scrollSlot = MathHelper.clamp(scrollSlot - 1, 0, count);
-				}
+				scrollSlot = getScrollSlot(event, count, scrollSlot);
 
 				if ((count == 1 || lastSlot != scrollSlot) && scrollSlot >= 0) {
 					ItemNBTHelper.setInt(stack, "scroll_slot", scrollSlot);

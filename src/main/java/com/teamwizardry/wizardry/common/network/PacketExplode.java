@@ -10,6 +10,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
@@ -53,7 +54,7 @@ public class PacketExplode extends PacketBase {
 	}
 
 	@Override
-	public void handle(MessageContext messageContext) {
+	public void handle(@NotNull MessageContext messageContext) {
 		if (messageContext.side.isServer()) return;
 
 		World world = LibrarianLib.PROXY.getClientPlayer().world;
@@ -63,6 +64,7 @@ public class PacketExplode extends PacketBase {
 			@Override
 			@SideOnly(Side.CLIENT)
 			public void runIfClient() {
+				//	LibParticles.ParticleExplosion.INSTANCE.spawn(lifeTime, lifeTimeRange, amount, pos, color1, color2, strengthUpwards, strengthSideways);
 				LibParticles.EXPLODE(world, pos, color1, color2, strengthSideways, strengthUpwards, amount, lifeTime, lifeTimeRange, bounce);
 			}
 		});
