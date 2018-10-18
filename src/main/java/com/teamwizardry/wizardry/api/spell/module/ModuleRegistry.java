@@ -71,6 +71,8 @@ public class ModuleRegistry {
 	}
 
 	public void loadUnprocessedModules() {
+		// TODO: Retrieve module types instead ... Modules themselves are registered then in loadModules
+		
 		modules.clear();
 		AnnotationHelper.INSTANCE.findAnnotatedClasses(LibrarianLib.PROXY.getAsmDataTable(), Module.class, RegisterModule.class, (clazz, info) -> {
 			try {
@@ -89,22 +91,25 @@ public class ModuleRegistry {
 		Wizardry.logger.info(" | Starting module registration");
 
 		HashSet<Module> processed = new HashSet<>();
-
-		for (Module module : modules) {
+		
+		// TODO: Create modules for each configuration file ... Determine unbound modules ....
+		String[] files = directory.list();
+		for (String fName : files) {
+//			File file = new File(directory, module.getID() + ".json");
+			File file = new File(directory, fName);
+			
 			Wizardry.logger.info(" | |");
-			Wizardry.logger.info(" | |_ Registering module " + module.getID());
-
-			File file = new File(directory, module.getID() + ".json");
+			Wizardry.logger.info(" | |_ Parsing module configuration " + fName);
 
 			if (!file.exists()) {
 				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! " + file.getName() + " does NOT exist.");
-				Wizardry.logger.error("| |___ Failed to register module " + module.getID());
+//				Wizardry.logger.error("| |___ Failed to register module " + module.getID());
 				continue;
 			}
 
 			if (!file.canRead()) {
 				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! Something is preventing me from reading " + file.getName());
-				Wizardry.logger.error("| |___ Failed to register module " + module.getID());
+//				Wizardry.logger.error("| |___ Failed to register module " + module.getID());
 			}
 
 			JsonElement element;
@@ -116,21 +121,32 @@ public class ModuleRegistry {
 			}
 
 			if (element == null) {
-				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! Could not parse " + file.getName() + ". Invalid json.");
-				Wizardry.logger.error("| |___ Failed to register module " + module.getID());
+				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! Could not parse " + fName + ". Invalid json.");
+				Wizardry.logger.error("| |___ Failed to parse " + fName);
 				continue;
 			}
 
 			if (!element.isJsonObject()) {
-				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! " + file.getName() + "'s json is NOT a Json Object.");
-				Wizardry.logger.error("| |___ Failed to register module " + module.getID());
+				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! " + fName + "'s json is NOT a Json Object.");
+				Wizardry.logger.error("| |___ Failed to parse " + fName);
 				continue;
 			}
 			JsonObject moduleObject = element.getAsJsonObject();
 
+			// Get ID
+			if (!moduleObject.has("type")) {
+				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! No 'type' key found in " + file.getName() + ". Unknown item to use for element.");
+				Wizardry.logger.error("| |___ Failed to parse " + fName);
+				continue;
+			}
+			
+			String moduleID = moduleObject.get("type").getAsString();
+
+			Wizardry.logger.info(" | | |_ Registering module " + moduleID);
+			
 			if (!moduleObject.has("item")) {
 				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! No 'item' key found in " + file.getName() + ". Unknown item to use for element.");
-				Wizardry.logger.error("| |___ Failed to register module " + module.getID());
+				Wizardry.logger.error("| |___ Failed to register module " + moduleID);
 				continue;
 			}
 
@@ -141,8 +157,8 @@ public class ModuleRegistry {
 
 			Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(moduleObject.getAsJsonPrimitive("item").getAsString()));
 			if (item == null || item.getRegistryName() == null) {
-				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! Item for module " + module.getID() + " does not exist '" + moduleObject.getAsJsonPrimitive("item").getAsString() + "'");
-				Wizardry.logger.error("| |___ Failed to register module " + module.getID());
+				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! Item for module " + moduleID + " does not exist '" + moduleObject.getAsJsonPrimitive("item").getAsString() + "'");
+				Wizardry.logger.error("| |___ Failed to register module " + moduleID);
 				continue;
 			} else {
 				Wizardry.logger.info(" | | |_ Found Item " + item.getRegistryName().toString());
@@ -230,6 +246,8 @@ public class ModuleRegistry {
 					}
 				}
 			}
+			
+			// TODO: Create a module
 
 			module.init(new ItemStack(item, 1, itemMeta), primaryColor, secondaryColor, attributeRanges);
 
@@ -267,7 +285,7 @@ public class ModuleRegistry {
 			}
 
 			processed.add(module);
-			Wizardry.logger.info(" | |_ Module " + module.getID() + " registered successfully!");
+			Wizardry.logger.info(" | |_ Module " + moduleID + " registered successfully!");
 		}
 
 		primary:
