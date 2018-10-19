@@ -69,7 +69,7 @@ public class TableModule extends GuiComponent {
 		this.worktable = worktable;
 		this.module = module;
 		this.draggable = draggable;
-		icon = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/icons/" + module.getID() + ".png"));
+		icon = new Sprite(module.getIconLocation());
 		this.benign = enableTooltip = benign;
 
 		initialPos = thisPosToOtherContext(null);

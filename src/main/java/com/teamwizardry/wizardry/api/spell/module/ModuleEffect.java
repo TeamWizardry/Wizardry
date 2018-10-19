@@ -14,6 +14,7 @@ import com.teamwizardry.wizardry.api.util.DefaultHashMap;
 
 import kotlin.Pair;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -22,9 +23,9 @@ public class ModuleEffect extends Module {
 	protected HashMap<String, OverrideConsumer<SpellData, SpellRing, SpellRing>> runOverrides = new HashMap<>();
 	protected HashMap<String, OverrideConsumer<SpellData, SpellRing, SpellRing>> renderOverrides = new HashMap<>();
 
-	public ModuleEffect(IModuleEffect moduleClass, String moduleName, ItemStack itemStack, Color primaryColor, Color secondaryColor,
+	public ModuleEffect(IModuleEffect moduleClass, String moduleName, ResourceLocation icon, ItemStack itemStack, Color primaryColor, Color secondaryColor,
 			DefaultHashMap<Attribute, AttributeRange> attributeRanges) {
-		super(moduleClass, moduleName, itemStack, primaryColor, secondaryColor, attributeRanges);
+		super(moduleClass, moduleName, icon, itemStack, primaryColor, secondaryColor, attributeRanges);
 		moduleClass.initEffect(this);
 	}
 	

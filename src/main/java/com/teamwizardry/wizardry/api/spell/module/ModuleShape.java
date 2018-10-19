@@ -12,14 +12,15 @@ import com.teamwizardry.wizardry.api.util.DefaultHashMap;
 
 import kotlin.Pair;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ModuleShape extends Module {
 
-	public ModuleShape(IModuleShape moduleClass, ItemStack itemStack, String moduleName, Color primaryColor, Color secondaryColor,
+	public ModuleShape(IModuleShape moduleClass, ItemStack itemStack, String moduleName, ResourceLocation icon, Color primaryColor, Color secondaryColor,
 			DefaultHashMap<Attribute, AttributeRange> attributeRanges) {
-		super(moduleClass, moduleName, itemStack, primaryColor, secondaryColor, attributeRanges);
+		super(moduleClass, moduleName, icon, itemStack, primaryColor, secondaryColor, attributeRanges);
 	}
 
 	@Nonnull

@@ -4,6 +4,7 @@ import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.capability.world.WizardryWorld;
 import com.teamwizardry.wizardry.api.capability.world.WizardryWorldCapability;
 import com.teamwizardry.wizardry.api.events.SpellCastEvent;
@@ -30,6 +31,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -57,6 +59,7 @@ public abstract class Module {
 
 	protected final String moduleName;
 	protected final IModule moduleClass;
+	protected final ResourceLocation icon;
 	protected final List<AttributeModifier> attributes = new ArrayList<>();
 	protected Map<Attribute, AttributeRange> attributeRanges = new DefaultHashMap<>(AttributeRange.BACKUP);
 	protected Color primaryColor;
@@ -76,30 +79,33 @@ public abstract class Module {
 	
 	static Module createInstance(IModule moduleClass,
 			String moduleName,
+			ResourceLocation icon,
 			ItemStack itemStack,
             Color primaryColor,
             Color secondaryColor,
             DefaultHashMap<Attribute, AttributeRange> attributeRanges) {
 		if( moduleClass instanceof IModuleEffect )
-			return new ModuleEffect((IModuleEffect)moduleClass, moduleName, itemStack, primaryColor, secondaryColor, attributeRanges);
+			return new ModuleEffect((IModuleEffect)moduleClass, moduleName, icon, itemStack, primaryColor, secondaryColor, attributeRanges);
 		else if( moduleClass instanceof IModuleModifier )
-			return new ModuleModifier((IModuleModifier)moduleClass, moduleName, itemStack, primaryColor, secondaryColor, attributeRanges);
+			return new ModuleModifier((IModuleModifier)moduleClass, moduleName, icon, itemStack, primaryColor, secondaryColor, attributeRanges);
 		else if( moduleClass instanceof IModuleEvent )
-			return new ModuleEvent((IModuleEvent)moduleClass, itemStack, moduleName, primaryColor, secondaryColor, attributeRanges);
+			return new ModuleEvent((IModuleEvent)moduleClass, itemStack, moduleName, icon, primaryColor, secondaryColor, attributeRanges);
 		else if( moduleClass instanceof IModuleShape )
-			return new ModuleShape((IModuleShape)moduleClass, itemStack, moduleName, primaryColor, secondaryColor, attributeRanges);
+			return new ModuleShape((IModuleShape)moduleClass, itemStack, moduleName, icon, primaryColor, secondaryColor, attributeRanges);
 		else
 			throw new UnsupportedOperationException("Unknown module type.");
 	}
 
 	protected Module(IModule moduleClass,
 				  String moduleName,
+				  ResourceLocation icon,
 				  ItemStack itemStack,
 	              Color primaryColor,
 	              Color secondaryColor,
 	              DefaultHashMap<Attribute, AttributeRange> attributeRanges) {
 		this.moduleClass = moduleClass;
 		this.moduleName = moduleName;
+		this.icon = icon;
 		this.itemStack = itemStack;
 		this.primaryColor = primaryColor;
 		this.secondaryColor = secondaryColor;
@@ -580,5 +586,11 @@ public abstract class Module {
 	@Nonnull
 	public final NBTTagString serialize() {
 		return new NBTTagString(moduleClass.getID());
+	}
+
+	public ResourceLocation getIconLocation() {
+		if( icon == null )
+			return new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/icons/" + getID() + ".png");
+		return icon;
 	}
 }

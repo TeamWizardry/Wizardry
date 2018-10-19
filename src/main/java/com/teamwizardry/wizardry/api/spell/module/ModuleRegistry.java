@@ -148,28 +148,35 @@ public class ModuleRegistry {
 				continue;
 			}
 			
-			String moduleID = moduleObject.get("type").getAsString();
-			IModule moduleClass = IDtoModuleClass.get(moduleID);
+			String moduleClassID = moduleObject.get("type").getAsString();
+			IModule moduleClass = IDtoModuleClass.get(moduleClassID);
 			if (moduleClass == null) {
-				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! Referenced type " + moduleID + " is unknown.");
+				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! Referenced type " + moduleClassID + " is unknown.");
 				Wizardry.logger.error("| |___ Failed to parse " + fName);
 				continue;
 			}
 
-			Wizardry.logger.info(" | | |_ Registering module " + moduleID);
-			
 			// Get Name
 			if (!moduleObject.has("name")) {
 				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! No 'name' key found in " + file.getName() + ". Unknown name to use for element.");
-				Wizardry.logger.error("| |___ Failed to register module " + moduleID);
+				Wizardry.logger.error("| |___ Failed to register module " + moduleClassID);
 				continue;
 			}
 			
 			String moduleName = moduleObject.get("name").getAsString();
+
+			Wizardry.logger.info(" | | |_ Registering module " + moduleName + " of class " + moduleClassID);
+			
+			// Get optional icon
+			ResourceLocation icon = null;
+			if (moduleObject.has("icon")) {
+				String iconID = moduleObject.get("icon").getAsString();
+				icon = new ResourceLocation(iconID);
+			}
 			
 			if (!moduleObject.has("item")) {
 				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! No 'item' key found in " + file.getName() + ". Unknown item to use for element.");
-				Wizardry.logger.error("| |___ Failed to register module " + moduleID);
+				Wizardry.logger.error("| |___ Failed to register module " + moduleClassID);
 				continue;
 			}
 
@@ -180,8 +187,8 @@ public class ModuleRegistry {
 
 			Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(moduleObject.getAsJsonPrimitive("item").getAsString()));
 			if (item == null || item.getRegistryName() == null) {
-				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! Item for module " + moduleID + " does not exist '" + moduleObject.getAsJsonPrimitive("item").getAsString() + "'");
-				Wizardry.logger.error("| |___ Failed to register module " + moduleID);
+				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! Item for module " + moduleClassID + " does not exist '" + moduleObject.getAsJsonPrimitive("item").getAsString() + "'");
+				Wizardry.logger.error("| |___ Failed to register module " + moduleClassID);
 				continue;
 			} else {
 				Wizardry.logger.info(" | | |_ Found Item " + item.getRegistryName().toString());
@@ -270,7 +277,7 @@ public class ModuleRegistry {
 				}
 			}
 			
-			Module module = Module.createInstance(moduleClass, moduleName, new ItemStack(item, 1, itemMeta), primaryColor, secondaryColor, attributeRanges);
+			Module module = Module.createInstance(moduleClass, moduleName, icon, new ItemStack(item, 1, itemMeta), primaryColor, secondaryColor, attributeRanges);
 
 			if (moduleObject.has("modifiers") && moduleObject.get("modifiers").isJsonArray()) {
 				Wizardry.logger.info(" | | |___ Found Modifiers. About to process them");
@@ -307,7 +314,7 @@ public class ModuleRegistry {
 
 			modules.add(module);
 //			processed.add(moduleClass);
-			Wizardry.logger.info(" | |_ Module " + moduleID + " registered successfully!");
+			Wizardry.logger.info(" | |_ Module " + moduleClassID + " registered successfully!");
 		}
 
 /*		primary:

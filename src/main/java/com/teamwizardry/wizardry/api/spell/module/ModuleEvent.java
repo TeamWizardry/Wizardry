@@ -11,12 +11,13 @@ import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry.Attribute
 import com.teamwizardry.wizardry.api.util.DefaultHashMap;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 
 public class ModuleEvent extends Module {
 	
-	public ModuleEvent(IModuleEvent moduleClass, ItemStack itemStack, String moduleName, Color primaryColor, Color secondaryColor,
+	public ModuleEvent(IModuleEvent moduleClass, ItemStack itemStack, String moduleName, ResourceLocation icon, Color primaryColor, Color secondaryColor,
 			DefaultHashMap<Attribute, AttributeRange> attributeRanges) {
-		super(moduleClass, moduleName, itemStack, primaryColor, secondaryColor, attributeRanges);
+		super(moduleClass, moduleName, icon, itemStack, primaryColor, secondaryColor, attributeRanges);
 	}
 
 	@Nonnull

@@ -8,6 +8,7 @@ import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry.Attribute
 import com.teamwizardry.wizardry.api.util.DefaultHashMap;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 
 import java.awt.Color;
 
@@ -15,9 +16,9 @@ import javax.annotation.Nonnull;
 
 public class ModuleModifier extends Module {
 
-	public ModuleModifier(IModuleModifier moduleClass, String moduleName, ItemStack itemStack, Color primaryColor, Color secondaryColor,
+	public ModuleModifier(IModuleModifier moduleClass, String moduleName, ResourceLocation icon, ItemStack itemStack, Color primaryColor, Color secondaryColor,
 			DefaultHashMap<Attribute, AttributeRange> attributeRanges) {
-		super(moduleClass, moduleName, itemStack, primaryColor, secondaryColor, attributeRanges);
+		super(moduleClass, moduleName, icon, itemStack, primaryColor, secondaryColor, attributeRanges);
 	}
 
 	@Nonnull
