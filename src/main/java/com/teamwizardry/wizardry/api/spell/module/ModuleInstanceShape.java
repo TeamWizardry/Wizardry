@@ -16,9 +16,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class ModuleShape extends Module {
+public class ModuleInstanceShape extends ModuleInstance {
 
-	public ModuleShape(IModuleShape moduleClass, ItemStack itemStack, String moduleName, ResourceLocation icon, Color primaryColor, Color secondaryColor,
+	public ModuleInstanceShape(IModuleShape moduleClass, ItemStack itemStack, String moduleName, ResourceLocation icon, Color primaryColor, Color secondaryColor,
 			DefaultHashMap<Attribute, AttributeRange> attributeRanges) {
 		super(moduleClass, moduleName, icon, itemStack, primaryColor, secondaryColor, attributeRanges);
 	}

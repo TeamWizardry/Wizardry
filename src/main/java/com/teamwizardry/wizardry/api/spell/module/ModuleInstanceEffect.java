@@ -18,12 +18,12 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class ModuleEffect extends Module {
+public class ModuleInstanceEffect extends ModuleInstance {
 
 	protected HashMap<String, OverrideConsumer<SpellData, SpellRing, SpellRing>> runOverrides = new HashMap<>();
 	protected HashMap<String, OverrideConsumer<SpellData, SpellRing, SpellRing>> renderOverrides = new HashMap<>();
 
-	public ModuleEffect(IModuleEffect moduleClass, String moduleName, ResourceLocation icon, ItemStack itemStack, Color primaryColor, Color secondaryColor,
+	public ModuleInstanceEffect(IModuleEffect moduleClass, String moduleName, ResourceLocation icon, ItemStack itemStack, Color primaryColor, Color secondaryColor,
 			DefaultHashMap<Attribute, AttributeRange> attributeRanges) {
 		super(moduleClass, moduleName, icon, itemStack, primaryColor, secondaryColor, attributeRanges);
 		moduleClass.initEffect(this);
@@ -79,23 +79,23 @@ public class ModuleEffect extends Module {
 		return false;
 	}
 
-	public boolean hasRunOverrideFor(Module module) {
+	public boolean hasRunOverrideFor(ModuleInstance module) {
 		return ModuleRegistry.INSTANCE.runOverrides.containsKey(new Pair<>(module, this));
 	}
 
 	@SideOnly(Side.CLIENT)
-	public boolean hasRenderOverrideFor(Module module) {
+	public boolean hasRenderOverrideFor(ModuleInstance module) {
 		return ModuleRegistry.INSTANCE.renderOverrides.containsKey(new Pair<>(module, this));
 	}
 
 	@Nullable
-	public OverrideConsumer<SpellData, SpellRing, SpellRing> getRunOverrideFor(Module module) {
+	public OverrideConsumer<SpellData, SpellRing, SpellRing> getRunOverrideFor(ModuleInstance module) {
 		return ModuleRegistry.INSTANCE.runOverrides.get(new Pair<>(module, this));
 	}
 
 	@Nullable
 	@SideOnly(Side.CLIENT)
-	public OverrideConsumer<SpellData, SpellRing, SpellRing> getRenderOverrideFor(Module module) {
+	public OverrideConsumer<SpellData, SpellRing, SpellRing> getRenderOverrideFor(ModuleInstance module) {
 		return ModuleRegistry.INSTANCE.renderOverrides.get(new Pair<>(module, this));
 	}
 	

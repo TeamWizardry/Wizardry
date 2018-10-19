@@ -13,7 +13,7 @@ import com.teamwizardry.wizardry.api.util.DefaultHashMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
-public class ModuleEvent extends Module {
+public class ModuleEvent extends ModuleInstance {
 	
 	public ModuleEvent(IModuleEvent moduleClass, ItemStack itemStack, String moduleName, ResourceLocation icon, Color primaryColor, Color secondaryColor,
 			DefaultHashMap<Attribute, AttributeRange> attributeRanges) {

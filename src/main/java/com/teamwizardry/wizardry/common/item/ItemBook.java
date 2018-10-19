@@ -7,7 +7,7 @@ import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
-import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.client.gui.book.GuiBook;
 import com.teamwizardry.wizardry.common.advancement.IPickupAchievement;
 import com.teamwizardry.wizardry.common.advancement.ModAdvancements;
@@ -67,7 +67,7 @@ public class ItemBook extends ItemModBook implements IPickupAchievement {
 
 				if (event.getDwheel() > 0) {
 
-					List<List<Module>> spellModules = SpellUtils.deserializeModuleList(moduleList);
+					List<List<ModuleInstance>> spellModules = SpellUtils.deserializeModuleList(moduleList);
 					List<ItemStack> spellItems = SpellUtils.getSpellItems(spellModules);
 
 					int page = ItemNBTHelper.getInt(stack, "page", 0);

@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 
-public interface IRunnableModule<InstanceType extends Module> {
+public interface IRunnableModule<InstanceType extends ModuleInstance> {
 	/**
 	 * Only return false if the spellData cannot be taxed from mana. Return true otherwise.
 	 */

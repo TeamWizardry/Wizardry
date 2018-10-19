@@ -10,7 +10,7 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.module.IModuleShape;
-import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceShape;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
@@ -37,7 +37,7 @@ public class ModuleShapeSelf implements IModuleShape {
 	}
 
 	@Override
-	public boolean run(ModuleShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Entity caster = spell.getCaster();
 		if (caster == null) return false;
 
@@ -52,7 +52,7 @@ public class ModuleShapeSelf implements IModuleShape {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(ModuleShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		if (instance.runRenderOverrides(spell, spellRing)) return;
 
 		Entity caster = spell.getCaster();

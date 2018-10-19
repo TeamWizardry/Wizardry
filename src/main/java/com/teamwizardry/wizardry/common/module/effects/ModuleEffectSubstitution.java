@@ -15,7 +15,7 @@ import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.IModuleModifier;
-import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
@@ -68,7 +68,7 @@ public class ModuleEffectSubstitution implements IModuleEffect, IBlockSelectable
 	}
 
 	@Override
-	public boolean run(ModuleEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Entity targetEntity = spell.getVictim();
 		Entity caster = spell.getCaster();
 		BlockPos targetBlock = spell.getTargetPos();
@@ -161,7 +161,7 @@ public class ModuleEffectSubstitution implements IModuleEffect, IBlockSelectable
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(ModuleEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		Entity caster = spell.getCaster();
 		BlockPos targetBlock = spell.getTargetPos();
@@ -216,7 +216,7 @@ public class ModuleEffectSubstitution implements IModuleEffect, IBlockSelectable
 
 	@NotNull
 	@Override
-	public SpellData renderVisualization(ModuleEffect instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+	public SpellData renderVisualization(ModuleInstanceEffect instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
 		if (ring.getParentRing() != null
 				&& ring.getParentRing().getModule() != null
 				&& ring.getParentRing().getModule() == ModuleRegistry.INSTANCE.getModule("event_collide_entity"))

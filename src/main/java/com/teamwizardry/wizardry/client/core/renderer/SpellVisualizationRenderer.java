@@ -6,7 +6,7 @@ import com.teamwizardry.wizardry.api.item.ICooldown;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
-import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,7 +24,7 @@ import java.util.Set;
 @Mod.EventBusSubscriber(modid = Wizardry.MODID, value = Side.CLIENT)
 public class SpellVisualizationRenderer {
 
-	private static HashMap<Module, SpellData> previousTickCache = new HashMap<>();
+	private static HashMap<ModuleInstance, SpellData> previousTickCache = new HashMap<>();
 
 	@SubscribeEvent
 	public static void tickDisplay(CustomWorldRenderEvent event) {
@@ -40,7 +40,7 @@ public class SpellVisualizationRenderer {
 
 		List<SpellRing> chains = SpellUtils.getSpellChains(hand);
 
-		Set<Module> untransientModules = new HashSet<>();
+		Set<ModuleInstance> untransientModules = new HashSet<>();
 
 		for (SpellRing chain : chains) {
 
@@ -69,8 +69,8 @@ public class SpellVisualizationRenderer {
 			}
 		}
 
-		Set<Module> tmp = new HashSet<>(previousTickCache.keySet());
-		for (Module module : tmp) {
+		Set<ModuleInstance> tmp = new HashSet<>(previousTickCache.keySet());
+		for (ModuleInstance module : tmp) {
 			if (!untransientModules.contains(module)) {
 				previousTickCache.remove(module);
 			}

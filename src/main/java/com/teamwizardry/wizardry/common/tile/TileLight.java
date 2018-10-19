@@ -10,8 +10,7 @@ import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
 import com.teamwizardry.librarianlib.features.utilities.client.ClientRunnable;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.spell.module.Module;
-import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import net.minecraft.util.ITickable;
@@ -28,13 +27,13 @@ import java.awt.*;
 @TileRegister(Wizardry.MODID + ":light")
 public class TileLight extends TileMod implements ITickable {
 	
-	Module module = null;
+	ModuleInstance module = null;
 	
-	public void setModule(Module module) {
+	public void setModule(ModuleInstance module) {
 		this.module = module;	// The light color is inherited from this given module
 	}
 	
-	public Module getModule() {
+	public ModuleInstance getModule() {
 		return this.module;
 	}
 
@@ -45,8 +44,6 @@ public class TileLight extends TileMod implements ITickable {
 			@SideOnly(Side.CLIENT)
 			public void runIfClient() {
 				if (RandUtil.nextInt(4) == 0) {
-//					Module module = ModuleRegistry.INSTANCE.getModule("effect_light");
-					
 					Color primaryColor;
 					Color secondaryColor;
 					if( module != null ) {

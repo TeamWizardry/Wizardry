@@ -11,7 +11,7 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceShape;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
@@ -166,8 +166,8 @@ public class EntitySpellProjectile extends EntityMod {
 				@Override
 				@SideOnly(Side.CLIENT)
 				public void runIfClient() {
-					if (spellRing.getModule() instanceof ModuleShape)
-						if (((ModuleShape) spellRing.getModule()).runRenderOverrides(spellData, spellRing))
+					if (spellRing.getModule() instanceof ModuleInstanceShape)
+						if (((ModuleInstanceShape) spellRing.getModule()).runRenderOverrides(spellData, spellRing))
 							return;
 
 					ParticleBuilder glitter = new ParticleBuilder(10);

@@ -23,8 +23,8 @@ import com.teamwizardry.wizardry.api.spell.CommonWorktableModule;
 import com.teamwizardry.wizardry.api.spell.SpellBuilder;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
-import com.teamwizardry.wizardry.api.spell.module.Module;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleType;
 import com.teamwizardry.wizardry.api.util.RandUtil;
@@ -85,7 +85,7 @@ public class WorktableGui extends GuiBase {
 	private ComponentSprite tableComponent;
 	private boolean hadBook = false, bookWarnRevised = false;
 	protected Set<CommonWorktableModule> commonModules = new HashSet<>();
-	private List<List<Module>> chains = new ArrayList<>();
+	private List<List<ModuleInstance>> chains = new ArrayList<>();
 	private boolean canBeSaved = false;
 
 	@NotNull
@@ -205,7 +205,7 @@ public class WorktableGui extends GuiBase {
 				chains.clear();
 
 				for (TableModule head : getSpellHeads()) {
-					List<Module> chain = new ArrayList<>();
+					List<ModuleInstance> chain = new ArrayList<>();
 
 					TableModule lastModule = head;
 					CommonWorktableModule lastCommonModule = new CommonWorktableModule(lastModule.hashCode(), lastModule.getModule(), lastModule.getPos(), null, new HashMap<>());
@@ -221,8 +221,8 @@ public class WorktableGui extends GuiBase {
 							lastCommonModule = commonModule;
 						}
 
-						for (Module module : ModuleRegistry.INSTANCE.getModules(ModuleType.MODIFIER)) {
-							if (!(module instanceof ModuleModifier)) continue;
+						for (ModuleInstance module : ModuleRegistry.INSTANCE.getModules(ModuleType.MODIFIER)) {
+							if (!(module instanceof ModuleInstanceModifier)) continue;
 							if (!lastModule.hasData(Integer.class, module.getID())) continue;
 
 							int count = lastModule.getData(Integer.class, module.getID());
@@ -231,7 +231,7 @@ public class WorktableGui extends GuiBase {
 								chain.add(module);
 							}
 
-							lastCommonModule.addModifier((ModuleModifier) module, count);
+							lastCommonModule.addModifier((ModuleInstanceModifier) module, count);
 						}
 
 						lastModule = lastModule.getLinksTo();
@@ -545,7 +545,7 @@ public class WorktableGui extends GuiBase {
 						DragMixin drag = new DragMixin(lastModule, vec2d -> vec2d);
 						drag.setDragOffset(new Vec2d(6, 6));
 
-						for (ModuleModifier modifier : commonModule.modifiers.keySet()) {
+						for (ModuleInstanceModifier modifier : commonModule.modifiers.keySet()) {
 							lastModule.setData(Integer.class, modifier.getID(), commonModule.modifiers.get(modifier));
 						}
 
@@ -579,13 +579,13 @@ public class WorktableGui extends GuiBase {
 					lastCommonModule = commonModule;
 				}
 
-				for (Module module : ModuleRegistry.INSTANCE.getModules(ModuleType.MODIFIER)) {
-					if (!(module instanceof ModuleModifier)) continue;
+				for (ModuleInstance module : ModuleRegistry.INSTANCE.getModules(ModuleType.MODIFIER)) {
+					if (!(module instanceof ModuleInstanceModifier)) continue;
 					if (!lastModule.hasData(Integer.class, module.getID())) continue;
 
 					int count = lastModule.getData(Integer.class, module.getID());
 
-					lastCommonModule.addModifier((ModuleModifier) module, count);
+					lastCommonModule.addModifier((ModuleInstanceModifier) module, count);
 				}
 
 				lastModule = lastModule.getLinksTo();
@@ -613,17 +613,17 @@ public class WorktableGui extends GuiBase {
 	}
 
 	public String getSpellName() {
-		List<List<Module>> chains = new ArrayList<>();
+		List<List<ModuleInstance>> chains = new ArrayList<>();
 		for (TableModule head : getSpellHeads()) {
-			List<Module> chain = new ArrayList<>();
+			List<ModuleInstance> chain = new ArrayList<>();
 
 			TableModule lastModule = head;
 
 			while (lastModule != null) {
 				chain.add(lastModule.getModule());
 
-				for (Module module : ModuleRegistry.INSTANCE.getModules(ModuleType.MODIFIER)) {
-					if (!(module instanceof ModuleModifier)) continue;
+				for (ModuleInstance module : ModuleRegistry.INSTANCE.getModules(ModuleType.MODIFIER)) {
+					if (!(module instanceof ModuleInstanceModifier)) continue;
 					if (!lastModule.hasData(Integer.class, module.getID())) continue;
 
 					int count = lastModule.getData(Integer.class, module.getID());
@@ -721,7 +721,7 @@ public class WorktableGui extends GuiBase {
 
 	private void addModules(ComponentSprite parent, ModuleType type) {
 		int column = 0, row = 0;
-		for (Module module : ModuleRegistry.INSTANCE.getModules(type)) {
+		for (ModuleInstance module : ModuleRegistry.INSTANCE.getModules(type)) {
 			TableModule tableModule = new TableModule(this, module, false, false);
 			tableModule.setPos(new Vec2d(row * 16, column * 16));
 			parent.add(tableModule);
@@ -832,7 +832,7 @@ public class WorktableGui extends GuiBase {
 					fakeModule.getTransform().setTranslateZ(230);
 					fakePaper.add(fakeModule);
 
-					for (Module module : ModuleRegistry.INSTANCE.getModules(ModuleType.MODIFIER)) {
+					for (ModuleInstance module : ModuleRegistry.INSTANCE.getModules(ModuleType.MODIFIER)) {
 						if (tableModule.hasData(Integer.class, module.getID())) {
 							fakeModule.setData(Integer.class, module.getID(), tableModule.getData(Integer.class, module.getID()));
 						}
@@ -1049,7 +1049,7 @@ public class WorktableGui extends GuiBase {
 
 						lastModule.setData(Vec2d.class, "true_pos", commonModule.pos);
 
-						for (ModuleModifier modifier : commonModule.modifiers.keySet()) {
+						for (ModuleInstanceModifier modifier : commonModule.modifiers.keySet()) {
 							lastModule.setData(Integer.class, modifier.getID(), commonModule.modifiers.get(modifier));
 						}
 

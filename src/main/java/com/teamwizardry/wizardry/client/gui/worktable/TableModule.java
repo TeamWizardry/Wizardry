@@ -14,8 +14,8 @@ import com.teamwizardry.librarianlib.features.math.Vec2d;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBezier2D;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.spell.module.Module;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.module.ModuleType;
 import com.teamwizardry.wizardry.init.ModSounds;
@@ -52,7 +52,7 @@ public class TableModule extends GuiComponent {
 	@Nonnull
 	private final WorktableGui worktable;
 	@Nonnull
-	private final Module module;
+	private final ModuleInstance module;
 	private final boolean draggable;
 	private final Sprite icon;
 	private final boolean benign;
@@ -64,7 +64,7 @@ public class TableModule extends GuiComponent {
 	 * ALWAYS from the context of null. Never to any other component.
 	 */
 	private Vec2d initialPos;
-	public TableModule(@Nonnull WorktableGui worktable, @Nonnull Module module, boolean draggable, boolean benign) {
+	public TableModule(@Nonnull WorktableGui worktable, @Nonnull ModuleInstance module, boolean draggable, boolean benign) {
 		super(0, 0, PLATE.getWidth(), PLATE.getHeight());
 		this.worktable = worktable;
 		this.module = module;
@@ -475,20 +475,20 @@ public class TableModule extends GuiComponent {
 		icon.bind();
 		icon.draw(0, shrink / 2.0f, shrink / 2.0f, getSize().getXf() - shrink, getSize().getYf() - shrink);
 
-		HashMap<ModuleModifier, Integer> modifiers = new HashMap<>();
-		List<ModuleModifier> modifierList = new ArrayList<>();
-		for (Module module : ModuleRegistry.INSTANCE.getModules(ModuleType.MODIFIER)) {
-			if (!(module instanceof ModuleModifier)) continue;
+		HashMap<ModuleInstanceModifier, Integer> modifiers = new HashMap<>();
+		List<ModuleInstanceModifier> modifierList = new ArrayList<>();
+		for (ModuleInstance module : ModuleRegistry.INSTANCE.getModules(ModuleType.MODIFIER)) {
+			if (!(module instanceof ModuleInstanceModifier)) continue;
 			if (!hasData(Integer.class, module.getID())) continue;
 
-			modifiers.put((ModuleModifier) module, getData(Integer.class, module.getID()));
-			modifierList.add((ModuleModifier) module);
+			modifiers.put((ModuleInstanceModifier) module, getData(Integer.class, module.getID()));
+			modifierList.add((ModuleInstanceModifier) module);
 		}
 
 		int count = modifierList.size();
 		for (int i = 0; i < count; i++) {
 
-			ModuleModifier modifier = modifierList.get(i);
+			ModuleInstanceModifier modifier = modifierList.get(i);
 
 			Vec2d modSize = getSize().mul(0.75f);
 
@@ -564,7 +564,7 @@ public class TableModule extends GuiComponent {
 	}
 
 	@Nonnull
-	public Module getModule() {
+	public ModuleInstance getModule() {
 		return module;
 	}
 

@@ -7,8 +7,7 @@ import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.IModuleModifier;
-import com.teamwizardry.wizardry.api.spell.module.Module;
-import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.spell.module.OverrideConsumer;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.PosUtils;
@@ -48,7 +47,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 public class ModuleEffectLightning implements IModuleEffect {
 
 	@Override
-	public void initEffect(ModuleEffect instance) {
+	public void initEffect(ModuleInstanceEffect instance) {
 		instance.registerRunOverride("shape_self", getSelfOverride());
 		instance.registerRunOverride("shape_touch", getTouchOverride());
 		instance.registerRunOverride("shape_projectile", getProjectileOverride());
@@ -229,7 +228,7 @@ public class ModuleEffectLightning implements IModuleEffect {
 	}
 	
 	@Override
-	public boolean run(ModuleEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		// NO-OP, should always be overriding a shape
 		return true;
 	}
@@ -237,7 +236,7 @@ public class ModuleEffectLightning implements IModuleEffect {
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(ModuleEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		// NO-OP, should always be overriding a shape
 	}
 	

@@ -55,7 +55,7 @@ import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 /**
  * Created by Demoniaque.
  */
-public abstract class Module {
+public abstract class ModuleInstance {
 
 	protected final String moduleName;
 	protected final IModule moduleClass;
@@ -65,19 +65,19 @@ public abstract class Module {
 	protected Color primaryColor;
 	protected Color secondaryColor;
 	protected ItemStack itemStack;
-	protected ModuleModifier [] applicableModifiers = null;
+	protected ModuleInstanceModifier [] applicableModifiers = null;
 
 	@Nullable
-	public static Module deserialize(NBTTagString tagString) {
+	public static ModuleInstance deserialize(NBTTagString tagString) {
 		return ModuleRegistry.INSTANCE.getModule(tagString.getString());
 	}
 
 	@Nullable
-	public static Module deserialize(String id) {
+	public static ModuleInstance deserialize(String id) {
 		return ModuleRegistry.INSTANCE.getModule(id);
 	}
 	
-	static Module createInstance(IModule moduleClass,
+	static ModuleInstance createInstance(IModule moduleClass,
 			String moduleName,
 			ResourceLocation icon,
 			ItemStack itemStack,
@@ -85,18 +85,18 @@ public abstract class Module {
             Color secondaryColor,
             DefaultHashMap<Attribute, AttributeRange> attributeRanges) {
 		if( moduleClass instanceof IModuleEffect )
-			return new ModuleEffect((IModuleEffect)moduleClass, moduleName, icon, itemStack, primaryColor, secondaryColor, attributeRanges);
+			return new ModuleInstanceEffect((IModuleEffect)moduleClass, moduleName, icon, itemStack, primaryColor, secondaryColor, attributeRanges);
 		else if( moduleClass instanceof IModuleModifier )
-			return new ModuleModifier((IModuleModifier)moduleClass, moduleName, icon, itemStack, primaryColor, secondaryColor, attributeRanges);
+			return new ModuleInstanceModifier((IModuleModifier)moduleClass, moduleName, icon, itemStack, primaryColor, secondaryColor, attributeRanges);
 		else if( moduleClass instanceof IModuleEvent )
 			return new ModuleEvent((IModuleEvent)moduleClass, itemStack, moduleName, icon, primaryColor, secondaryColor, attributeRanges);
 		else if( moduleClass instanceof IModuleShape )
-			return new ModuleShape((IModuleShape)moduleClass, itemStack, moduleName, icon, primaryColor, secondaryColor, attributeRanges);
+			return new ModuleInstanceShape((IModuleShape)moduleClass, itemStack, moduleName, icon, primaryColor, secondaryColor, attributeRanges);
 		else
 			throw new UnsupportedOperationException("Unknown module type.");
 	}
 
-	protected Module(IModule moduleClass,
+	protected ModuleInstance(IModule moduleClass,
 				  String moduleName,
 				  ResourceLocation icon,
 				  ItemStack itemStack,
@@ -433,25 +433,25 @@ public abstract class Module {
 	 * @return Any set with applicable ModuleModifiers.
 	 */
 	@Nullable
-	public ModuleModifier[] applicableModifiers() {
+	public ModuleInstanceModifier[] applicableModifiers() {
 		// Find all registered compatible modifiers and return them. Results are cached.
 		if( applicableModifiers == null ) {
-			LinkedList<ModuleModifier> applicableModifiersList = new LinkedList<>();
+			LinkedList<ModuleInstanceModifier> applicableModifiersList = new LinkedList<>();
 			
 			IModuleModifier[] modifierClasses = moduleClass.applicableModifiers();
 			if( modifierClasses != null ) {
-				for( Module mod : ModuleRegistry.INSTANCE.modules ) {
+				for( ModuleInstance mod : ModuleRegistry.INSTANCE.modules ) {
 					IModule mc = mod.getModuleClass();
 					for( IModuleModifier modifier : modifierClasses ) {
 						if( mc.getClassID().equals(modifier.getClassID()) ) {
-							applicableModifiersList.add((ModuleModifier)mod);	// Expected to be of type ModuleModifier
+							applicableModifiersList.add((ModuleInstanceModifier)mod);	// Expected to be of type ModuleModifier
 							break;
 						}
 					}
 				}
 			}
 			
-			applicableModifiers = applicableModifiersList.toArray(new ModuleModifier[applicableModifiersList.size()]);
+			applicableModifiers = applicableModifiersList.toArray(new ModuleInstanceModifier[applicableModifiersList.size()]);
 		}
 		return applicableModifiers;
 	}

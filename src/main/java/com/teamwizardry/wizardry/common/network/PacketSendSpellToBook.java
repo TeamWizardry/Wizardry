@@ -5,7 +5,7 @@ import com.teamwizardry.librarianlib.features.network.PacketBase;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.CommonWorktableModule;
-import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -35,13 +35,13 @@ public class PacketSendSpellToBook extends PacketBase {
 	public PacketSendSpellToBook() {
 	}
 
-	public PacketSendSpellToBook(UUID playerUUID, List<List<Module>> compiledSpell, Set<CommonWorktableModule> commonModules) {
+	public PacketSendSpellToBook(UUID playerUUID, List<List<ModuleInstance>> compiledSpell, Set<CommonWorktableModule> commonModules) {
 		this.playerUUID = playerUUID;
 		if (compiledSpell == null || commonModules == null) return;
 
 		NBTTagList compiledList = new NBTTagList();
-		for (List<Module> moduleList : compiledSpell) {
-			for (Module module : moduleList)
+		for (List<ModuleInstance> moduleList : compiledSpell) {
+			for (ModuleInstance module : moduleList)
 				compiledList.appendTag(module.serialize());
 			compiledList.appendTag(new NBTTagString());
 		}

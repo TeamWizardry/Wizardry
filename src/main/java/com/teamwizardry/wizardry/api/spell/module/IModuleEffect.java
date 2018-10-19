@@ -1,8 +1,8 @@
 package com.teamwizardry.wizardry.api.spell.module;
 
-public interface IModuleEffect extends IModule, IRenderableModule<ModuleEffect>, IRunnableModule<ModuleEffect> {
+public interface IModuleEffect extends IModule, IRenderableModule<ModuleInstanceEffect>, IRunnableModule<ModuleInstanceEffect> {
 
-	default void initEffect(ModuleEffect instance) {
+	default void initEffect(ModuleInstanceEffect instance) {
 	}
 
 }

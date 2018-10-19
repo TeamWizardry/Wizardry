@@ -8,8 +8,7 @@ import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.IModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.IModuleShape;
-import com.teamwizardry.wizardry.api.spell.module.Module;
-import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceShape;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
@@ -74,7 +73,7 @@ public class ModuleShapeBeam implements IModuleShape, IContinuousModule {
 	}
 
 	@Override
-	public boolean run(ModuleShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		Vec3d look = spell.getData(LOOK);
 		Vec3d position = spell.getOrigin();
@@ -150,7 +149,7 @@ public class ModuleShapeBeam implements IModuleShape, IContinuousModule {
 
 	@NotNull
 	@Override
-	public SpellData renderVisualization(ModuleShape instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+	public SpellData renderVisualization(ModuleInstanceShape instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
 		World world = data.world;
 		Vec3d look = data.getData(LOOK);
 		Vec3d position = data.getOrigin();
@@ -172,7 +171,7 @@ public class ModuleShapeBeam implements IModuleShape, IContinuousModule {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(ModuleShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		if (instance.runRenderOverrides(spell, spellRing)) return;
 
 		World world = spell.world;

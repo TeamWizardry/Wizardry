@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.api.spell;
 
-import com.teamwizardry.wizardry.api.spell.module.Module;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -53,15 +53,15 @@ public class SpellBuilder {
 
 			// Step through each item in line. If modifier, add to lastModule, if not, add to compiled.
 			for (ItemStack stack : line) {
-				Module module = ModuleRegistry.INSTANCE.getModule(stack);
+				ModuleInstance module = ModuleRegistry.INSTANCE.getModule(stack);
 
 				if (module == null) continue;
 
-				if (module instanceof ModuleModifier) {
+				if (module instanceof ModuleInstanceModifier) {
 					if (!uncompressedChain.isEmpty()) {
 						for (int i = 0; i < stack.getCount(); i++) {
 							SpellRing lastRing = uncompressedChain.peekLast();
-							lastRing.addModifier((ModuleModifier) module);
+							lastRing.addModifier((ModuleInstanceModifier) module);
 						}
 					}
 				} else {
@@ -96,9 +96,9 @@ public class SpellBuilder {
 
 		for (SpellRing ring : spellList) {
 			SpellRing chainEnd = ring;
-			List<ModuleModifier> cascadingModifiers = new LinkedList<>();
+			List<ModuleInstanceModifier> cascadingModifiers = new LinkedList<>();
 			while (chainEnd != null) {
-				for (ModuleModifier modifier : cascadingModifiers)
+				for (ModuleInstanceModifier modifier : cascadingModifiers)
 					chainEnd.addModifier(modifier);
 				if (chainEnd.getChildRing() == null) {
 					if (chainEnd.getModule() != null) {

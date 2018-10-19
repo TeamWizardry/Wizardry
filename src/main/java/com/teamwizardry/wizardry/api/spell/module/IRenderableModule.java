@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 
-public interface IRenderableModule<InstanceType extends Module> {
+public interface IRenderableModule<InstanceType extends ModuleInstance> {
 	
 	/**
 	 * Will render whatever GL code is specified here while the spell is being held by the

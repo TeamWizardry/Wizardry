@@ -4,7 +4,7 @@ import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.spell.IDelayedModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.common.core.SpellTicker;
 import com.teamwizardry.wizardry.common.core.nemez.NemezTracker;
 import com.teamwizardry.wizardry.common.network.PacketSyncWizardryWorld;
@@ -48,7 +48,7 @@ public class StandardWizardryWorld implements WizardryWorld {
 	}
 
 	@Override
-	public void addDelayedSpell(Module module, SpellRing spellRing, SpellData data, int expiry) {
+	public void addDelayedSpell(ModuleInstance module, SpellRing spellRing, SpellData data, int expiry) {
 		if (module.getModuleClass() instanceof IDelayedModule)
 			delayedStorageSet.add(new SpellTicker.DelayedObject(module, spellRing, data, data.world.getTotalWorldTime(), expiry));
 

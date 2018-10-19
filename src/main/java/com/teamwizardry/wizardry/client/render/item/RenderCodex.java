@@ -9,7 +9,7 @@ import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
-import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.gui.book.GuiBook;
 import com.teamwizardry.wizardry.init.ModItems;
@@ -456,7 +456,7 @@ public class RenderCodex {
 		NBTTagList moduleList = ItemNBTHelper.getList(stack, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
 		if (moduleList == null) return new String[0];
 
-		List<List<Module>> spellModules = SpellUtils.deserializeModuleList(moduleList);
+		List<List<ModuleInstance>> spellModules = SpellUtils.deserializeModuleList(moduleList);
 		spellModules = SpellUtils.getEssentialModules(spellModules);
 		int page = ItemNBTHelper.getInt(stack, "page", 0);
 
@@ -464,9 +464,9 @@ public class RenderCodex {
 
 		int widthOfSpace = fr.getStringWidth(" ");
 		StringBuilder builder = new StringBuilder("Spell Structure:\n");
-		for (List<Module> spellModuleList : spellModules) {
+		for (List<ModuleInstance> spellModuleList : spellModules) {
 			String margin = null;
-			for (Module module : spellModuleList) {
+			for (ModuleInstance module : spellModuleList) {
 				if (margin == null) {
 					margin = " - ";
 					builder.append(margin).append(module.getReadableName()).append("\n");

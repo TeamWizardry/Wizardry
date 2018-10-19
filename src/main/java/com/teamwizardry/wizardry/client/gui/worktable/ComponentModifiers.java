@@ -12,8 +12,8 @@ import com.teamwizardry.librarianlib.features.gui.component.GuiComponentEvents;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentRect;
 import com.teamwizardry.librarianlib.features.gui.components.ComponentText;
 import com.teamwizardry.librarianlib.features.math.Vec2d;
-import com.teamwizardry.wizardry.api.spell.module.Module;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceModifier;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.client.Minecraft;
@@ -89,15 +89,15 @@ public class ComponentModifiers extends GuiComponent {
 				return;
 			}
 
-			Module module = selectedModule.getModule();
+			ModuleInstance module = selectedModule.getModule();
 
-			ModuleModifier[] applicableModifiers = module.applicableModifiers();
+			ModuleInstanceModifier[] applicableModifiers = module.applicableModifiers();
 			if (applicableModifiers == null || applicableModifiers.length <= 0) {
 				animationPlaying = false;
 				return;
 			}
 
-			ModuleModifier[] modifiers = module.applicableModifiers();
+			ModuleInstanceModifier[] modifiers = module.applicableModifiers();
 			if (modifiers == null) {
 				animationPlaying = false;
 				return;
@@ -115,7 +115,7 @@ public class ComponentModifiers extends GuiComponent {
 				int lengthToTravel = (i + 1) * PIXELS_PER_BAR; // units: pixels
 				float slideDuration = outDuration * lengthToTravel / slideOutDist; // units: ticks
 
-				ModuleModifier modifier = modifiers[i];
+				ModuleInstanceModifier modifier = modifiers[i];
 
 				ComponentRect bar = new ComponentRect(0, 0, getSize().getXi(), PIXELS_PER_BAR);
 				bar.getColor().setValue(new Color(0x80000000, true));

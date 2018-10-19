@@ -11,16 +11,10 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.ILingeringModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
-import com.teamwizardry.wizardry.api.spell.attribute.AttributeRange;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
-import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry.Attribute;
 import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.IModuleModifier;
-import com.teamwizardry.wizardry.api.spell.module.Module;
-import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
-import com.teamwizardry.wizardry.api.spell.module.ModuleType;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
@@ -43,20 +37,11 @@ import javax.annotation.Nonnull;
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ENTITY_HIT;
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ORIGIN;
 
-import java.util.List;
-import java.util.Map;
-
 /**
  * Created by Demoniaque.
  */
 @RegisterModule
 public class ModuleEffectAntiGravityWell implements IModuleEffect, ILingeringModule {
-
-//	@Nonnull
-//	@Override
-//	public ModuleType getModuleType() {
-//		return ModuleType.EFFECT;
-//	}
 
 	@Nonnull
 	@Override
@@ -70,7 +55,7 @@ public class ModuleEffectAntiGravityWell implements IModuleEffect, ILingeringMod
 	}
 
 	@Override
-	public boolean run(ModuleEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		Vec3d position = spell.getTarget();
 
@@ -107,7 +92,7 @@ public class ModuleEffectAntiGravityWell implements IModuleEffect, ILingeringMod
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(ModuleEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Vec3d position = spell.getData(ORIGIN);
 
 		if (position == null) return;

@@ -18,9 +18,9 @@ import com.teamwizardry.wizardry.api.spell.attribute.AttributeRange;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry.Attribute;
 import com.teamwizardry.wizardry.api.spell.attribute.Operation;
-import com.teamwizardry.wizardry.api.spell.module.Module;
-import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceModifier;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
 
@@ -78,7 +78,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	 * The Module of this Ring.
 	 */
 	@Nullable
-	private Module module;
+	private ModuleInstance module;
 
 	/**
 	 * The parent ring of this Ring, the ring that will have been run before this.
@@ -95,7 +95,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	private SpellRing() {
 	}
 
-	public SpellRing(@Nonnull Module module) {
+	public SpellRing(@Nonnull ModuleInstance module) {
 		setModule(module);
 	}
 
@@ -183,16 +183,16 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	/**
 	 * If the given module is overriding this module's run
 	 */
-	public boolean isRunBeingOverridenBy(@Nonnull Module module) {
-		return this.module != null && module instanceof ModuleEffect && ((ModuleEffect) module).hasRunOverrideFor(this.module);
+	public boolean isRunBeingOverridenBy(@Nonnull ModuleInstance module) {
+		return this.module != null && module instanceof ModuleInstanceEffect && ((ModuleInstanceEffect) module).hasRunOverrideFor(this.module);
 	}
 
 	/**
 	 * If the given module is overriding this module's run
 	 */
 	@SideOnly(Side.CLIENT)
-	public boolean isRenderBeingOverridenBy(@Nonnull Module module) {
-		return this.module != null && module instanceof ModuleEffect && ((ModuleEffect) module).hasRenderOverrideFor(this.module);
+	public boolean isRenderBeingOverridenBy(@Nonnull ModuleInstance module) {
+		return this.module != null && module instanceof ModuleInstanceEffect && ((ModuleInstanceEffect) module).hasRenderOverrideFor(this.module);
 	}
 
 	//TODO: pearl holders
@@ -372,11 +372,11 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	}
 
 	@Nullable
-	public Module getModule() {
+	public ModuleInstance getModule() {
 		return module;
 	}
 
-	public void setModule(@Nonnull Module module) {
+	public void setModule(@Nonnull ModuleInstance module) {
 		this.module = module;
 
 		setPrimaryColor(module.getPrimaryColor());
@@ -435,7 +435,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		return compileTimeModifiers;
 	}
 
-	public void addModifier(ModuleModifier moduleModifier) {
+	public void addModifier(ModuleInstanceModifier moduleModifier) {
 		moduleModifier.getAttributes().forEach(modifier -> compileTimeModifiers.put(modifier.getOperation(), modifier));
 	}
 
@@ -524,7 +524,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 	@Override
 	public void deserializeNBT(NBTTagCompound nbt) {
-		if (nbt.hasKey("module")) this.module = Module.deserialize(nbt.getString("module"));
+		if (nbt.hasKey("module")) this.module = ModuleInstance.deserialize(nbt.getString("module"));
 		if (nbt.hasKey("extra")) informationTag = nbt.getCompoundTag("extra");
 		if (nbt.hasKey("primary_color")) primaryColor = Color.decode(nbt.getString("primary_color"));
 		if (nbt.hasKey("secondary_color")) secondaryColor = Color.decode(nbt.getString("secondary_color"));
