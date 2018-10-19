@@ -49,7 +49,7 @@ public class StandardWizardryWorld implements WizardryWorld {
 
 	@Override
 	public void addDelayedSpell(Module module, SpellRing spellRing, SpellData data, int expiry) {
-		if (module instanceof IDelayedModule)
+		if (module.getModuleClass() instanceof IDelayedModule)
 			delayedStorageSet.add(new SpellTicker.DelayedObject(module, spellRing, data, data.world.getTotalWorldTime(), expiry));
 
 		PacketHandler.NETWORK.sendToDimension(new PacketSyncWizardryWorld(serializeNBT()), data.world.provider.getDimension());

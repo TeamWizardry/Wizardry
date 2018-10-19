@@ -142,7 +142,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	}
 
 	public boolean isContinuous() {
-		return module instanceof IContinuousModule;
+		return module.getModuleClass() instanceof IContinuousModule;
 	}
 
 	public Set<SpellRing> getOverridingRings() {
@@ -444,8 +444,8 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	}
 
 	public int getCooldownTime(@Nullable SpellData data) {
-		if (data != null && module instanceof IOverrideCooldown)
-			return ((IOverrideCooldown) module).getNewCooldown(data, this);
+		if (data != null && module.getModuleClass() instanceof IOverrideCooldown)
+			return ((IOverrideCooldown) module.getModuleClass()).getNewCooldown(data, this);
 
 		return (int) informationTag.getDouble(AttributeRegistry.COOLDOWN.getNbtName());
 	}

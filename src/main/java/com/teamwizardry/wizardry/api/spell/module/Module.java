@@ -546,7 +546,7 @@ public abstract class Module {
 	public final boolean castSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		if (spell.world.isRemote) return true;
 
-		if (this instanceof ILingeringModule) {
+		if (moduleClass instanceof ILingeringModule) {
 			boolean alreadyLingering = false;
 
 			WizardryWorld worldCap = WizardryWorldCapability.get(spell.world);
@@ -558,7 +558,7 @@ public abstract class Module {
 				}
 			}
 			if (!alreadyLingering)
-				worldCap.addLingerSpell(spellRing, spell, ((ILingeringModule) this).getLingeringTime(spell, spellRing));
+				worldCap.addLingerSpell(spellRing, spell, ((ILingeringModule) moduleClass).getLingeringTime(spell, spellRing));
 		}
 
 		SpellCastEvent event = new SpellCastEvent(spellRing, spell);

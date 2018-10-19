@@ -72,7 +72,7 @@ public class SpellTicker {
 			long subtract = currentWorldTime - fromWorldTime;
 
 			if (subtract > delayedObject.getExpiry()) {
-				((IDelayedModule) delayedObject.getModule()).runDelayedEffect(delayedObject.getSpellData(), delayedObject.getSpellRing());
+				((IDelayedModule) delayedObject.getModule().getModuleClass()).runDelayedEffect(delayedObject.getSpellData(), delayedObject.getSpellRing());
 				delayed.remove();
 				change = true;
 			}
