@@ -43,7 +43,7 @@ public class ModuleRegistry {
 	public HashMap<Pair<ModuleShape, ModuleEffect>, OverrideConsumer<SpellData, SpellRing, SpellRing>> renderOverrides = new HashMap<>();
 	public HashMap<String, IModule> IDtoModuleClass = new HashMap<>();
 
-	private Deque<Module> left = new ArrayDeque<>();
+//	private Deque<Module> left = new ArrayDeque<>();
 
 	private ModuleRegistry() {
 	}
@@ -150,7 +150,7 @@ public class ModuleRegistry {
 			
 			String moduleID = moduleObject.get("type").getAsString();
 			IModule moduleClass = IDtoModuleClass.get(moduleID);
-			if (!moduleObject.has("type")) {
+			if (moduleClass == null) {
 				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! Referenced type " + moduleID + " is unknown.");
 				Wizardry.logger.error("| |___ Failed to parse " + fName);
 				continue;
@@ -270,8 +270,6 @@ public class ModuleRegistry {
 				}
 			}
 			
-			// TODO: Create a module
-
 			Module module = Module.createInstance(moduleClass, moduleName, new ItemStack(item, 1, itemMeta), primaryColor, secondaryColor, attributeRanges);
 
 			if (moduleObject.has("modifiers") && moduleObject.get("modifiers").isJsonArray()) {
