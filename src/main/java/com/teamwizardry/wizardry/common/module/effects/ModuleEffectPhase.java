@@ -10,8 +10,9 @@ import com.teamwizardry.wizardry.api.spell.IDelayedModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
+import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.IModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
@@ -56,7 +57,7 @@ import static com.teamwizardry.wizardry.api.util.PosUtils.getPerpendicularFacing
  * Created by Demoniaque.
  */
 @RegisterModule
-public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
+public class ModuleEffectPhase implements IModuleEffect, IDelayedModule {
 
 	@Nonnull
 	@Override
@@ -65,8 +66,8 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 	}
 
 	@Override
-	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierIncreaseDuration(), new ModuleModifierIncreaseAOE(), new ModuleModifierIncreaseRange()};
+	public IModuleModifier[] applicableModifiers() {
+		return new IModuleModifier[]{new ModuleModifierIncreaseDuration(), new ModuleModifierIncreaseAOE(), new ModuleModifierIncreaseRange()};
 	}
 
 	@Override
@@ -82,7 +83,7 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 	}
 
 	@Override
-	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(ModuleEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Entity caster = spell.getCaster();
 		Entity targetEntity = spell.getVictim();
 		BlockPos targetPos = spell.getTargetPos();
@@ -240,7 +241,7 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 			spell.addData(SpellData.DefaultKeys.BLOCK_SET, poses);
 			spell.addData(SpellData.DefaultKeys.BLOCKSTATE_CACHE, stateCache);
 
-			addDelayedSpell(this, spellRing, spell, (int) duration);
+			addDelayedSpell(instance, spellRing, spell, (int) duration);
 		}
 
 		return true;
@@ -248,7 +249,7 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(ModuleEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		EnumFacing faceHit = spell.getFaceHit();
 
 		Set<BlockPos> blockSet = spell.getData(SpellData.DefaultKeys.BLOCK_SET, new HashSet<>());
@@ -346,7 +347,7 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 
 	@NotNull
 	@Override
-	public SpellData renderVisualization(@Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+	public SpellData renderVisualization(ModuleEffect instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
 		if (ring.getParentRing() != null
 				&& ring.getParentRing().getModule() != null
 				&& ring.getParentRing().getModule() == ModuleRegistry.INSTANCE.getModule("event_collide_entity"))
@@ -360,7 +361,7 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 
 		if (faceHit != null && targetPos != null) {
 
-			IBlockState targetState = getCachableBlockstate(data.world, targetPos, previousData);
+			IBlockState targetState = instance.getCachableBlockstate(data.world, targetPos, previousData);
 			if (BlockUtils.isAnyAir(targetState)) return previousData;
 
 			BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(targetPos);
@@ -430,7 +431,7 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 				boolean fullAirPlane = true;
 				for (BlockPos pos : BlockPos.getAllInBox((int) bb.minX, (int) bb.minY, (int) bb.minZ, (int) bb.maxX, (int) bb.maxY, (int) bb.maxZ)) {
 
-					IBlockState originalState = getCachableBlockstate(data.world, pos, previousData);
+					IBlockState originalState = instance.getCachableBlockstate(data.world, pos, previousData);
 					Block block = originalState.getBlock();
 
 					if (edges.contains(pos)) continue;
@@ -453,7 +454,7 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 							mutable2.move(facing);
 
 							if (!tmp.containsKey(mutable2))
-								drawFaceOutline(mutable2, facing.getOpposite());
+								instance.drawFaceOutline(mutable2, facing.getOpposite());
 
 							mutable2.move(facing.getOpposite());
 						}

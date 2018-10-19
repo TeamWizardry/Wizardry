@@ -27,6 +27,16 @@ import java.awt.*;
  */
 @TileRegister(Wizardry.MODID + ":light")
 public class TileLight extends TileMod implements ITickable {
+	
+	Module module = null;
+	
+	public void setModule(Module module) {
+		this.module = module;	// The light color is inherited from this given module
+	}
+	
+	public Module getModule() {
+		return this.module;
+	}
 
 	@Override
 	public void update() {
@@ -35,7 +45,20 @@ public class TileLight extends TileMod implements ITickable {
 			@SideOnly(Side.CLIENT)
 			public void runIfClient() {
 				if (RandUtil.nextInt(4) == 0) {
-					Module module = ModuleRegistry.INSTANCE.getModule("effect_light");
+//					Module module = ModuleRegistry.INSTANCE.getModule("effect_light");
+					
+					Color primaryColor;
+					Color secondaryColor;
+					if( module != null ) {
+						primaryColor = module.getPrimaryColor();
+						secondaryColor = module.getSecondaryColor();
+					}
+					else {
+						// NOTE: Usually should never happen, if tile entity is initialized correctly in ModuleEffectLight.
+						primaryColor = new Color(0xAA00AA);	// Purple color.
+						secondaryColor = new Color(0x000000);
+					}
+					
 					ParticleBuilder glitter = new ParticleBuilder(30);
 					glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 					glitter.setAlphaFunction(new InterpFloatInOut(0.3f, 0.3f));
@@ -48,9 +71,9 @@ public class TileLight extends TileMod implements ITickable {
 								RandUtil.nextDouble(-0.01, 0.01)));
 
 						if (RandUtil.nextBoolean()) {
-							build.setColorFunction(new InterpColorHSV(module.getPrimaryColor(), module.getSecondaryColor()));
+							build.setColorFunction(new InterpColorHSV(primaryColor, secondaryColor));
 						} else {
-							build.setColorFunction(new InterpColorHSV(module.getSecondaryColor(), module.getPrimaryColor()));
+							build.setColorFunction(new InterpColorHSV(secondaryColor, primaryColor));
 						}
 					});
 				}

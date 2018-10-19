@@ -9,8 +9,9 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
+import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.IModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
@@ -36,7 +37,7 @@ import javax.annotation.Nonnull;
  * Created by Demoniaque.
  */
 @RegisterModule
-public class ModuleEffectLowGravity extends ModuleEffect {
+public class ModuleEffectLowGravity implements IModuleEffect {
 
 	@Nonnull
 	@Override
@@ -45,13 +46,13 @@ public class ModuleEffectLowGravity extends ModuleEffect {
 	}
 
 	@Override
-	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierIncreasePotency(), new ModuleModifierIncreaseDuration()};
+	public IModuleModifier[] applicableModifiers() {
+		return new IModuleModifier[]{new ModuleModifierIncreasePotency(), new ModuleModifierIncreaseDuration()};
 	}
 
 	@Override
 	@SuppressWarnings("unused")
-	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(ModuleEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		Entity targetEntity = spell.getVictim();
 		BlockPos targetPos = spell.getTargetPos();
@@ -71,7 +72,7 @@ public class ModuleEffectLowGravity extends ModuleEffect {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(ModuleEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		Vec3d position = spell.getTarget();
 

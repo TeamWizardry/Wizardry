@@ -1,15 +1,26 @@
 package com.teamwizardry.wizardry.api.spell.module;
 
+import java.awt.Color;
+
 import javax.annotation.Nonnull;
 
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRange;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry.Attribute;
+import com.teamwizardry.wizardry.api.util.DefaultHashMap;
 
 import kotlin.Pair;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public abstract class ModuleShape extends Module {
+public class ModuleShape extends Module {
+
+	public ModuleShape(IModuleShape moduleClass, ItemStack itemStack, Color primaryColor, Color secondaryColor,
+			DefaultHashMap<Attribute, AttributeRange> attributeRanges) {
+		super(moduleClass, itemStack, primaryColor, secondaryColor, attributeRanges);
+	}
 
 	@Nonnull
 	@Override

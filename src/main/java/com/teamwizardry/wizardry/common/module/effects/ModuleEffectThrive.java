@@ -3,8 +3,9 @@ package com.teamwizardry.wizardry.common.module.effects;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
+import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.IModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
@@ -35,7 +36,7 @@ import javax.annotation.Nonnull;
  * Created by Demoniaque.
  */
 @RegisterModule
-public class ModuleEffectThrive extends ModuleEffect {
+public class ModuleEffectThrive implements IModuleEffect {
 
 	@Nonnull
 	@Override
@@ -44,12 +45,12 @@ public class ModuleEffectThrive extends ModuleEffect {
 	}
 
 	@Override
-	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierIncreasePotency()};
+	public IModuleModifier[] applicableModifiers() {
+		return new IModuleModifier[]{new ModuleModifierIncreasePotency()};
 	}
 
 	@Override
-	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(ModuleEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		BlockPos targetPos = spell.getTargetPos();
 		Entity targetEntity = spell.getVictim();
@@ -90,11 +91,11 @@ public class ModuleEffectThrive extends ModuleEffect {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(ModuleEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		Vec3d position = spell.getTarget();
 
 		if (position == null) return;
-		LibParticles.EFFECT_REGENERATE(world, position, getPrimaryColor());
+		LibParticles.EFFECT_REGENERATE(world, position, instance.getPrimaryColor());
 	}
 }

@@ -3,6 +3,9 @@ package com.teamwizardry.wizardry.common.module.effects;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
+import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.IModuleModifier;
+import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
@@ -35,7 +38,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.FACE_HIT
  * Created by Demoniaque.
  */
 @RegisterModule
-public class ModuleEffectBreak extends ModuleEffect {
+public class ModuleEffectBreak implements IModuleEffect {
 
 	@Nonnull
 	@Override
@@ -44,12 +47,12 @@ public class ModuleEffectBreak extends ModuleEffect {
 	}
 
 	@Override
-	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierIncreaseAOE(), new ModuleModifierIncreasePotency()};
+	public IModuleModifier[] applicableModifiers() {
+		return new IModuleModifier[]{new ModuleModifierIncreaseAOE(), new ModuleModifierIncreasePotency()};
 	}
 
 	@Override
-	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(ModuleEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		BlockPos targetPos = spell.getData(BLOCK_HIT);
 		EnumFacing facing = spell.getData(FACE_HIT);
@@ -85,18 +88,18 @@ public class ModuleEffectBreak extends ModuleEffect {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(ModuleEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		Vec3d position = spell.getTarget();
 
 		if (position == null) return;
 
-		LibParticles.EXPLODE(world, position, getPrimaryColor(), getSecondaryColor(), 0.2, 0.3, 20, 40, 10, true);
+		LibParticles.EXPLODE(world, position, instance.getPrimaryColor(), instance.getSecondaryColor(), 0.2, 0.3, 20, 40, 10, true);
 	}
 
 	@NotNull
 	@Override
-	public SpellData renderVisualization(@Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+	public SpellData renderVisualization(ModuleEffect instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
 		if (ring.getParentRing() != null
 				&& ring.getParentRing().getModule() != null
 				&& ring.getParentRing().getModule() == ModuleRegistry.INSTANCE.getModule("event_collide_entity"))
@@ -127,9 +130,9 @@ public class ModuleEffectBreak extends ModuleEffect {
 			BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(pos);
 			for (EnumFacing face : EnumFacing.VALUES) {
 					mutable.move(face);
-					IBlockState adjStat = getCachableBlockstate(data.world, mutable, previousData);
+					IBlockState adjStat = instance.getCachableBlockstate(data.world, mutable, previousData);
 					if (adjStat.getBlock() != state.getBlock() || !blocks.contains(mutable)) {
-						drawFaceOutline(mutable, face.getOpposite());
+						instance.drawFaceOutline(mutable, face.getOpposite());
 				}
 				mutable.move(face.getOpposite());
 			}

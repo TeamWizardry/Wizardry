@@ -9,6 +9,7 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.module.IModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
@@ -27,7 +28,7 @@ import javax.annotation.Nonnull;
  * Created by Demoniaque.
  */
 @RegisterModule
-public class ModuleShapeSelf extends ModuleShape {
+public class ModuleShapeSelf implements IModuleShape {
 
 	@Nonnull
 	@Override
@@ -36,13 +37,13 @@ public class ModuleShapeSelf extends ModuleShape {
 	}
 
 	@Override
-	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(ModuleShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Entity caster = spell.getCaster();
 		if (caster == null) return false;
 
 		if (!spellRing.taxCaster(spell, true)) return false;
 		
-		runRunOverrides(spell, spellRing);
+		instance.runRunOverrides(spell, spellRing);
 		
 		spell.processEntity(caster, false);
 
@@ -51,8 +52,8 @@ public class ModuleShapeSelf extends ModuleShape {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		if (runRenderOverrides(spell, spellRing)) return;
+	public void renderSpell(ModuleShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		if (instance.runRenderOverrides(spell, spellRing)) return;
 
 		Entity caster = spell.getCaster();
 		World world = spell.world;

@@ -41,6 +41,7 @@ public class ModuleRegistry {
 	public ArrayList<Module> modules = new ArrayList<>();
 	public HashMap<Pair<ModuleShape, ModuleEffect>, OverrideConsumer<SpellData, SpellRing, SpellRing>> runOverrides = new HashMap<>();
 	public HashMap<Pair<ModuleShape, ModuleEffect>, OverrideConsumer<SpellData, SpellRing, SpellRing>> renderOverrides = new HashMap<>();
+	public HashMap<String, IModule<?>> IDtoModuleClass = new HashMap<>();
 
 	private Deque<Module> left = new ArrayDeque<>();
 
@@ -73,12 +74,16 @@ public class ModuleRegistry {
 	public void loadUnprocessedModules() {
 		// TODO: Retrieve module types instead ... Modules themselves are registered then in loadModules
 		
-		modules.clear();
-		AnnotationHelper.INSTANCE.findAnnotatedClasses(LibrarianLib.PROXY.getAsmDataTable(), Module.class, RegisterModule.class, (clazz, info) -> {
+//		modules.clear();
+		AnnotationHelper.INSTANCE.findAnnotatedClasses(LibrarianLib.PROXY.getAsmDataTable(), IModule.class, RegisterModule.class, (clazz, info) -> {
 			try {
 				Constructor<?> ctor = clazz.getConstructor();
 				Object object = ctor.newInstance();
-				if (object instanceof Module) modules.add((Module) object);
+				if (object instanceof IModule) {
+					IModule<?> moduleClass = (IModule<?>)object;
+					IDtoModuleClass.put(moduleClass.getID(), moduleClass);
+//					modules.add((IModule) object); 
+				}
 			} catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 				e.printStackTrace();
 			}
@@ -90,7 +95,9 @@ public class ModuleRegistry {
 		Wizardry.logger.info(" _______________________________________________________________________\\\\");
 		Wizardry.logger.info(" | Starting module registration");
 
-		HashSet<Module> processed = new HashSet<>();
+//		HashSet<IModule<?>> processed = new HashSet<>();
+		
+		modules.clear();
 		
 		// TODO: Create modules for each configuration file ... Determine unbound modules ....
 		String[] files = directory.list();
@@ -141,6 +148,12 @@ public class ModuleRegistry {
 			}
 			
 			String moduleID = moduleObject.get("type").getAsString();
+			IModule<?> moduleClass = IDtoModuleClass.get(moduleID);
+			if (!moduleObject.has("type")) {
+				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! Referenced type " + moduleID + " is unknown.");
+				Wizardry.logger.error("| |___ Failed to parse " + fName);
+				continue;
+			}
 
 			Wizardry.logger.info(" | | |_ Registering module " + moduleID);
 			
@@ -249,7 +262,7 @@ public class ModuleRegistry {
 			
 			// TODO: Create a module
 
-			module.init(new ItemStack(item, 1, itemMeta), primaryColor, secondaryColor, attributeRanges);
+			Module module = Module.createInstance(moduleClass, new ItemStack(item, 1, itemMeta), primaryColor, secondaryColor, attributeRanges);
 
 			if (moduleObject.has("modifiers") && moduleObject.get("modifiers").isJsonArray()) {
 				Wizardry.logger.info(" | | |___ Found Modifiers. About to process them");
@@ -284,13 +297,14 @@ public class ModuleRegistry {
 				Wizardry.logger.info(" | | |___ Modifiers Registered Successfully.");
 			}
 
-			processed.add(module);
+			modules.add(module);
+//			processed.add(moduleClass);
 			Wizardry.logger.info(" | |_ Module " + moduleID + " registered successfully!");
 		}
 
-		primary:
-		for (Module module1 : modules) {
-			for (Module module2 : processed)
+/*		primary:
+		for (Module module : modules) {
+			for (IModule<?> moduleClass : processed)
 				if (module1.getID().equals(module2.getID())) continue primary;
 
 			left.add(module1);
@@ -301,10 +315,10 @@ public class ModuleRegistry {
 			Wizardry.logger.error("|_ Missing or ignored modules detected in modules directory:");
 			for (Module module : left) Wizardry.logger.error("| |_ " + module.getID());
 		}
-		left.clear();
+		left.clear(); */
 
-		modules.clear();
-		modules.addAll(processed);
+//		modules.clear();
+//		modules.addAll(processed);
 
 		modules.sort(Comparator.comparing(Module::getID));
 

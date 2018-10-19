@@ -10,8 +10,9 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
+import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.IModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
@@ -37,7 +38,7 @@ import javax.annotation.Nonnull;
  * Created by Demoniaque.
  */
 @RegisterModule
-public class ModuleEffectTimeSlow extends ModuleEffect {
+public class ModuleEffectTimeSlow implements IModuleEffect {
 
 	@SubscribeEvent
 	public static void skipTick(LivingEvent.LivingUpdateEvent event) {
@@ -71,13 +72,13 @@ public class ModuleEffectTimeSlow extends ModuleEffect {
 	}
 
 	@Override
-	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierIncreasePotency(), new ModuleModifierIncreaseDuration()};
+	public IModuleModifier[] applicableModifiers() {
+		return new IModuleModifier[]{new ModuleModifierIncreasePotency(), new ModuleModifierIncreaseDuration()};
 	}
 
 	@Override
 	@SuppressWarnings("unused")
-	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(ModuleEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		BlockPos targetPos = spell.getTargetPos();
 		Entity targetEntity = spell.getVictim();
@@ -95,14 +96,14 @@ public class ModuleEffectTimeSlow extends ModuleEffect {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(ModuleEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		Vec3d position = spell.getTarget();
 
 		if (position == null) return;
 
 		ParticleBuilder glitter = new ParticleBuilder(30);
-		glitter.setColorFunction(new InterpColorHSV(getPrimaryColor(), getSecondaryColor()));
+		glitter.setColorFunction(new InterpColorHSV(instance.getPrimaryColor(), instance.getSecondaryColor()));
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 		glitter.setScaleFunction(new InterpScale(1, 0));
 		glitter.setCollision(true);

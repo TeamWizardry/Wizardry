@@ -11,8 +11,9 @@ import com.teamwizardry.wizardry.api.spell.IContinuousModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
+import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.IModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
@@ -35,7 +36,7 @@ import java.util.List;
  * Created by Demoniaque.
  */
 @RegisterModule
-public class ModuleEffectTelekinesis extends ModuleEffect implements IContinuousModule {
+public class ModuleEffectTelekinesis implements IModuleEffect, IContinuousModule {
 
 	@Nonnull
 	@Override
@@ -44,12 +45,12 @@ public class ModuleEffectTelekinesis extends ModuleEffect implements IContinuous
 	}
 
 	@Override
-	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierIncreaseAOE()};
+	public IModuleModifier[] applicableModifiers() {
+		return new IModuleModifier[]{new ModuleModifierIncreaseAOE()};
 	}
 
 	@Override
-	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(ModuleEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		Vec3d targetPos = spell.getTarget();
 		Entity caster = spell.getCaster();
@@ -85,14 +86,14 @@ public class ModuleEffectTelekinesis extends ModuleEffect implements IContinuous
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(ModuleEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		Vec3d position = spell.getTarget();
 
 		if (position == null) return;
 
 		ParticleBuilder glitter = new ParticleBuilder(50);
-		glitter.setColorFunction(new InterpColorHSV(getPrimaryColor(), getSecondaryColor()));
+		glitter.setColorFunction(new InterpColorHSV(instance.getPrimaryColor(), instance.getSecondaryColor()));
 		glitter.setScale(1);
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
 

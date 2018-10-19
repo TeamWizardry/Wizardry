@@ -6,7 +6,9 @@ import com.teamwizardry.wizardry.api.spell.IContinuousModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
+import com.teamwizardry.wizardry.api.spell.module.IModuleModifier;
+import com.teamwizardry.wizardry.api.spell.module.IModuleShape;
+import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.RandUtil;
@@ -40,7 +42,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.LOOK;
  */
 @RegisterModule
 @Mod.EventBusSubscriber(modid = Wizardry.MODID)
-public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
+public class ModuleShapeBeam implements IModuleShape, IContinuousModule {
 
 	public static final String BEAM_OFFSET = "beam offset";
 	public static final String BEAM_CAST = "beam cast";
@@ -54,8 +56,8 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 	}
 
 	@Override
-	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierIncreaseRange(), new ModuleModifierIncreasePotency()};
+	public IModuleModifier[] applicableModifiers() {
+		return new IModuleModifier[]{new ModuleModifierIncreaseRange(), new ModuleModifierIncreasePotency()};
 	}
 
 	@Override
@@ -72,7 +74,7 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 	}
 
 	@Override
-	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(ModuleShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		Vec3d look = spell.getData(LOOK);
 		Vec3d position = spell.getOrigin();
@@ -98,7 +100,7 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 				return false;
 			}
 
-			runRunOverrides(spell, spellRing);
+			instance.runRunOverrides(spell, spellRing);
 
 			RayTraceResult trace = new RayTrace(world, look, position, range)
 					.setEntityFilter(input -> input != caster)
@@ -112,7 +114,7 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 				spellRing.getChildRing().runSpellRing(spell);
 
 			ticker.cast = true;
-			sendRenderPacket(spell, spellRing);
+			instance.sendRenderPacket(spell, spellRing);
 		}
 
 		ticker.ticks = beamOffset;
@@ -148,7 +150,7 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 
 	@NotNull
 	@Override
-	public SpellData renderVisualization(@Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+	public SpellData renderVisualization(ModuleShape instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
 		World world = data.world;
 		Vec3d look = data.getData(LOOK);
 		Vec3d position = data.getOrigin();
@@ -170,8 +172,8 @@ public class ModuleShapeBeam extends ModuleShape implements IContinuousModule {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		if (runRenderOverrides(spell, spellRing)) return;
+	public void renderSpell(ModuleShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		if (instance.runRenderOverrides(spell, spellRing)) return;
 
 		World world = spell.world;
 		Vec3d look = spell.getData(LOOK);

@@ -5,8 +5,10 @@ import com.teamwizardry.wizardry.api.spell.IOverrideCooldown;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
+import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.IModuleModifier;
+import com.teamwizardry.wizardry.api.spell.module.Module;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
 import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
@@ -33,7 +35,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.LOOK;
  * Created by Demoniaque.
  */
 @RegisterModule
-public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown {
+public class ModuleEffectLeap implements IModuleEffect, IOverrideCooldown {
 
 	@Nonnull
 	@Override
@@ -42,8 +44,8 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 	}
 
 	@Override
-	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierIncreasePotency()};
+	public IModuleModifier[] applicableModifiers() {
+		return new IModuleModifier[]{new ModuleModifierIncreasePotency()};
 	}
 
 	@Override
@@ -76,7 +78,7 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 	}
 
 	@Override
-	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(ModuleEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Vec3d lookVec = spell.getData(LOOK);
 		Entity target = spell.getVictim();
 
@@ -115,7 +117,7 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(ModuleEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Vec3d position = spell.getTarget();
 		Entity entityHit = spell.getVictim();
 
@@ -125,7 +127,7 @@ public class ModuleEffectLeap extends ModuleEffect implements IOverrideCooldown 
 		if (!entityHit.hasNoGravity()) {
 			Vec3d normal = new Vec3d(entityHit.motionX, entityHit.motionY, entityHit.motionZ).normalize().scale(1 / 2.0);
 
-			LibParticles.AIR_THROTTLE(spell.world, position, normal, getPrimaryColor(), getSecondaryColor(), 0.5);
+			LibParticles.AIR_THROTTLE(spell.world, position, normal, instance.getPrimaryColor(), instance.getSecondaryColor(), 0.5);
 
 		}
 	}
