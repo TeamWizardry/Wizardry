@@ -437,12 +437,14 @@ public abstract class Module {
 			LinkedList<ModuleModifier> applicableModifiersList = new LinkedList<>();
 			
 			IModuleModifier[] modifierClasses = moduleClass.applicableModifiers();
-			for( Module mod : ModuleRegistry.INSTANCE.modules ) {
-				IModule mc = mod.getModuleClass();
-				for( IModuleModifier modifier : modifierClasses ) {
-					if( mc.equals(modifier) ) {
-						applicableModifiersList.add((ModuleModifier)mod);	// Expected to be of type ModuleModifier
-						break;
+			if( modifierClasses != null ) {
+				for( Module mod : ModuleRegistry.INSTANCE.modules ) {
+					IModule mc = mod.getModuleClass();
+					for( IModuleModifier modifier : modifierClasses ) {
+						if( mc.getID().equals(modifier.getID()) ) {
+							applicableModifiersList.add((ModuleModifier)mod);	// Expected to be of type ModuleModifier
+							break;
+						}
 					}
 				}
 			}
