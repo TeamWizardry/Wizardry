@@ -15,9 +15,9 @@ import javax.annotation.Nonnull;
 
 public class ModuleModifier extends Module {
 
-	public ModuleModifier(IModuleModifier moduleClass, ItemStack itemStack, Color primaryColor, Color secondaryColor,
+	public ModuleModifier(IModuleModifier moduleClass, String moduleName, ItemStack itemStack, Color primaryColor, Color secondaryColor,
 			DefaultHashMap<Attribute, AttributeRange> attributeRanges) {
-		super(moduleClass, itemStack, primaryColor, secondaryColor, attributeRanges);
+		super(moduleClass, moduleName, itemStack, primaryColor, secondaryColor, attributeRanges);
 	}
 
 	@Nonnull
@@ -31,7 +31,7 @@ public class ModuleModifier extends Module {
 	}
 
 	public String getShortHandKey() {
-		return "wizardry.spell." + getID() + ".short";
+		return "wizardry.spell." + moduleName + ".short";
 	}
 
 }

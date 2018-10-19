@@ -22,9 +22,9 @@ public class ModuleEffect extends Module {
 	protected HashMap<String, OverrideConsumer<SpellData, SpellRing, SpellRing>> runOverrides = new HashMap<>();
 	protected HashMap<String, OverrideConsumer<SpellData, SpellRing, SpellRing>> renderOverrides = new HashMap<>();
 
-	public ModuleEffect(IModuleEffect moduleClass, ItemStack itemStack, Color primaryColor, Color secondaryColor,
+	public ModuleEffect(IModuleEffect moduleClass, String moduleName, ItemStack itemStack, Color primaryColor, Color secondaryColor,
 			DefaultHashMap<Attribute, AttributeRange> attributeRanges) {
-		super(moduleClass, itemStack, primaryColor, secondaryColor, attributeRanges);
+		super(moduleClass, moduleName, itemStack, primaryColor, secondaryColor, attributeRanges);
 		moduleClass.initEffect(this);
 	}
 	
@@ -96,5 +96,33 @@ public class ModuleEffect extends Module {
 	@SideOnly(Side.CLIENT)
 	public OverrideConsumer<SpellData, SpellRing, SpellRing> getRenderOverrideFor(Module module) {
 		return ModuleRegistry.INSTANCE.renderOverrides.get(new Pair<>(module, this));
+	}
+	
+	/**
+	 * Only return false if the spellData cannot be taxed from mana. Return true otherwise.
+	 */
+	@Override
+	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		return ((IModuleEffect)moduleClass).run(this, spell, spellRing);
+	}
+	
+	/**
+	 * Will render whatever GL code is specified here while the spell is being held by the
+	 * player's hand.
+	 */
+	@Override
+	@Nonnull
+	@SideOnly(Side.CLIENT)
+	public SpellData renderVisualization(@Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+		return ((IModuleEffect)moduleClass).renderVisualization(this, data, ring, previousData);
+	}
+	
+	/**
+	 * This method runs client side when the spellData runs. Spawn particles here.
+	 */
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		((IModuleEffect)moduleClass).renderSpell(this, spell, spellRing);
 	}
 }

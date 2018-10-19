@@ -1,4 +1,6 @@
 {
+  "name": "effect_thrive",
+  "type": "effect_thrive",
   "item": "minecraft:bone",
   "primary_color": "00FFFF",
   "secondary_color": "00FFFF",

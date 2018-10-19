@@ -1,4 +1,6 @@
 {
+  "name": "shape_cone",
+  "type": "shape_cone",
   "item": "minecraft:gunpowder",
   "mana": {
     "base": 40

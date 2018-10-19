@@ -1,4 +1,6 @@
 {
+  "name": "shape_beam",
+  "type": "shape_beam",
   "item": "wizardry:unicorn_horn",
   "mana": {
     "base": 10,

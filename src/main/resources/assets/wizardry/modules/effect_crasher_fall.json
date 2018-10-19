@@ -1,4 +1,6 @@
 {
+  "name": "effect_crasher_fall",
+  "type": "effect_crasher_fall",
   "item": "minecraft:obsidian",
   "mana_drain": 200.0,
   "burnout_fill": 100.0,

@@ -55,12 +55,14 @@ import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
  */
 public abstract class Module {
 
-	protected final IModule<?> moduleClass;
+	protected final String moduleName;
+	protected final IModule moduleClass;
 	protected final List<AttributeModifier> attributes = new ArrayList<>();
 	protected Map<Attribute, AttributeRange> attributeRanges = new DefaultHashMap<>(AttributeRange.BACKUP);
 	protected Color primaryColor;
 	protected Color secondaryColor;
 	protected ItemStack itemStack;
+	protected ModuleModifier [] applicableModifiers = null;
 
 	@Nullable
 	public static Module deserialize(NBTTagString tagString) {
@@ -72,33 +74,40 @@ public abstract class Module {
 		return ModuleRegistry.INSTANCE.getModule(id);
 	}
 	
-	static Module createInstance(IModule<?> moduleClass,
+	static Module createInstance(IModule moduleClass,
+			String moduleName,
 			ItemStack itemStack,
             Color primaryColor,
             Color secondaryColor,
             DefaultHashMap<Attribute, AttributeRange> attributeRanges) {
 		if( moduleClass instanceof IModuleEffect )
-			return new ModuleEffect((IModuleEffect)moduleClass, itemStack, primaryColor, secondaryColor, attributeRanges);
+			return new ModuleEffect((IModuleEffect)moduleClass, moduleName, itemStack, primaryColor, secondaryColor, attributeRanges);
 		else if( moduleClass instanceof IModuleModifier )
-			return new ModuleModifier((IModuleModifier)moduleClass, itemStack, primaryColor, secondaryColor, attributeRanges);
+			return new ModuleModifier((IModuleModifier)moduleClass, moduleName, itemStack, primaryColor, secondaryColor, attributeRanges);
 		else if( moduleClass instanceof IModuleEvent )
-			return new ModuleEvent((IModuleEvent)moduleClass, itemStack, primaryColor, secondaryColor, attributeRanges);
+			return new ModuleEvent((IModuleEvent)moduleClass, itemStack, moduleName, primaryColor, secondaryColor, attributeRanges);
 		else if( moduleClass instanceof IModuleShape )
-			return new ModuleShape((IModuleShape)moduleClass, itemStack, primaryColor, secondaryColor, attributeRanges);
+			return new ModuleShape((IModuleShape)moduleClass, itemStack, moduleName, primaryColor, secondaryColor, attributeRanges);
 		else
 			throw new UnsupportedOperationException("Unknown module type.");
 	}
 
-	protected Module(IModule<?> moduleClass,
+	protected Module(IModule moduleClass,
+				  String moduleName,
 				  ItemStack itemStack,
 	              Color primaryColor,
 	              Color secondaryColor,
 	              DefaultHashMap<Attribute, AttributeRange> attributeRanges) {
 		this.moduleClass = moduleClass;
+		this.moduleName = moduleName;
 		this.itemStack = itemStack;
 		this.primaryColor = primaryColor;
 		this.secondaryColor = secondaryColor;
 		this.attributeRanges = attributeRanges;
+	}
+	
+	public final IModule getModuleClass() {
+		return this.moduleClass;
 	}
 	
 	/**
@@ -108,9 +117,13 @@ public abstract class Module {
 	@Nonnull
 	@SideOnly(Side.CLIENT)
 	public SpellData renderVisualization(@Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
-		return moduleClass.renderVisualization(this, data, ring, previousData);
+		return standardRenderVisualization(data, ring, previousData);
 	}
 
+	public final SpellData standardRenderVisualization(@Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+		return new SpellData(data.world);
+	}
+	
 	@Nullable
 	public final ItemStack getAvailableStack(Collection<ItemStack> stacks) {
 		for (ItemStack stack : stacks) {
@@ -260,7 +273,11 @@ public abstract class Module {
 	 */
 	@Nonnull
 	public final String getNameKey() {
-		return "wizardry.spell." + moduleClass.getID() + ".name";
+		return "wizardry.spell." + moduleName + ".name";
+	}
+
+	public final String getName() {
+		return this.moduleName;
 	}
 
 	/**
@@ -407,14 +424,32 @@ public abstract class Module {
 	}
 
 	/**
-	 * Specify all applicable modifiers that can be applied to this module.
+	 * Specify all applicable modifiers that can be applied to this module. <br />
+	 * <b>NOTE</b>: Don't call this method during initialization phase, as it is not guaranteed
+	 * that all modules could have been parsed.
 	 *
 	 * @return Any set with applicable ModuleModifiers.
 	 */
 	@Nullable
 	public ModuleModifier[] applicableModifiers() {
-		// TODO: Find all registered compatible modifiers and return them. Use cache!
-		return moduleClass.applicableModifiers();
+		// Find all registered compatible modifiers and return them. Results are cached.
+		if( applicableModifiers == null ) {
+			LinkedList<ModuleModifier> applicableModifiersList = new LinkedList<>();
+			
+			IModuleModifier[] modifierClasses = moduleClass.applicableModifiers();
+			for( Module mod : ModuleRegistry.INSTANCE.modules ) {
+				IModule mc = mod.getModuleClass();
+				for( IModuleModifier modifier : modifierClasses ) {
+					if( mc.equals(modifier) ) {
+						applicableModifiersList.add((ModuleModifier)mod);	// Expected to be of type ModuleModifier
+						break;
+					}
+				}
+			}
+			
+			applicableModifiers = applicableModifiersList.toArray(new ModuleModifier[applicableModifiersList.size()]);
+		}
+		return applicableModifiers;
 	}
 
 	/**
@@ -422,7 +457,7 @@ public abstract class Module {
 	 */
 	@Nonnull
 	public final String getDescriptionKey() {
-		return "wizardry.spell." + moduleClass.getID() + ".desc";
+		return "wizardry.spell." + moduleName + ".desc";
 	}
 
 	@Nonnull
@@ -490,8 +525,8 @@ public abstract class Module {
 	/**
 	 * Only return false if the spellData cannot be taxed from mana. Return true otherwise.
 	 */
-	public final boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		return moduleClass.run(this, spell, spellRing);
+	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		return true;
 	}
 
 	/**
@@ -499,7 +534,6 @@ public abstract class Module {
 	 */
 	@SideOnly(Side.CLIENT)
 	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		return moduleClass.renderSpell(this, spell, spellRing);
 	}
 
 	/**
@@ -530,7 +564,7 @@ public abstract class Module {
 		SpellCastEvent event = new SpellCastEvent(spellRing, spell);
 		MinecraftForge.EVENT_BUS.post(event);
 
-		return !event.isCanceled() && moduleClass.run(this, spell, spellRing);
+		return !event.isCanceled() && run(spell, spellRing);
 	}
 
 	public final void sendRenderPacket(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {

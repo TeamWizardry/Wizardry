@@ -1,4 +1,6 @@
 {
+  "name": "modifier_extend_time",
+  "type": "modifier_extend_time",
   "item": "minecraft:gold_nugget",
   "modifiers": [
     {

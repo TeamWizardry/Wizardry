@@ -41,7 +41,7 @@ public class ModuleRegistry {
 	public ArrayList<Module> modules = new ArrayList<>();
 	public HashMap<Pair<ModuleShape, ModuleEffect>, OverrideConsumer<SpellData, SpellRing, SpellRing>> runOverrides = new HashMap<>();
 	public HashMap<Pair<ModuleShape, ModuleEffect>, OverrideConsumer<SpellData, SpellRing, SpellRing>> renderOverrides = new HashMap<>();
-	public HashMap<String, IModule<?>> IDtoModuleClass = new HashMap<>();
+	public HashMap<String, IModule> IDtoModuleClass = new HashMap<>();
 
 	private Deque<Module> left = new ArrayDeque<>();
 
@@ -75,12 +75,13 @@ public class ModuleRegistry {
 		// TODO: Retrieve module types instead ... Modules themselves are registered then in loadModules
 		
 //		modules.clear();
+		IDtoModuleClass.clear();
 		AnnotationHelper.INSTANCE.findAnnotatedClasses(LibrarianLib.PROXY.getAsmDataTable(), IModule.class, RegisterModule.class, (clazz, info) -> {
 			try {
 				Constructor<?> ctor = clazz.getConstructor();
 				Object object = ctor.newInstance();
 				if (object instanceof IModule) {
-					IModule<?> moduleClass = (IModule<?>)object;
+					IModule moduleClass = (IModule)object;
 					IDtoModuleClass.put(moduleClass.getID(), moduleClass);
 //					modules.add((IModule) object); 
 				}
@@ -148,7 +149,7 @@ public class ModuleRegistry {
 			}
 			
 			String moduleID = moduleObject.get("type").getAsString();
-			IModule<?> moduleClass = IDtoModuleClass.get(moduleID);
+			IModule moduleClass = IDtoModuleClass.get(moduleID);
 			if (!moduleObject.has("type")) {
 				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! Referenced type " + moduleID + " is unknown.");
 				Wizardry.logger.error("| |___ Failed to parse " + fName);
@@ -156,6 +157,15 @@ public class ModuleRegistry {
 			}
 
 			Wizardry.logger.info(" | | |_ Registering module " + moduleID);
+			
+			// Get Name
+			if (!moduleObject.has("name")) {
+				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! No 'name' key found in " + file.getName() + ". Unknown name to use for element.");
+				Wizardry.logger.error("| |___ Failed to register module " + moduleID);
+				continue;
+			}
+			
+			String moduleName = moduleObject.get("name").getAsString();
 			
 			if (!moduleObject.has("item")) {
 				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! No 'item' key found in " + file.getName() + ". Unknown item to use for element.");
@@ -262,7 +272,7 @@ public class ModuleRegistry {
 			
 			// TODO: Create a module
 
-			Module module = Module.createInstance(moduleClass, new ItemStack(item, 1, itemMeta), primaryColor, secondaryColor, attributeRanges);
+			Module module = Module.createInstance(moduleClass, moduleName, new ItemStack(item, 1, itemMeta), primaryColor, secondaryColor, attributeRanges);
 
 			if (moduleObject.has("modifiers") && moduleObject.get("modifiers").isJsonArray()) {
 				Wizardry.logger.info(" | | |___ Found Modifiers. About to process them");

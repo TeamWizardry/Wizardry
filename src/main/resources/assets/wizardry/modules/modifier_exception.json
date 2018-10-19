@@ -1,4 +1,6 @@
 {
+  "name": "modifier_exception",
+  "type": "modifier_exception",
   "item": "wizardry:syringe_blood",
   "modifiers": [
     {

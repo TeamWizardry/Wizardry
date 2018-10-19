@@ -1,4 +1,6 @@
 {
+  "name": "effect_zoom",
+  "type": "effect_zoom",
   "item": "wizardry:fairy_wings",
   "primary_color": "f442ce",
   "secondary_color": "41d9f4",

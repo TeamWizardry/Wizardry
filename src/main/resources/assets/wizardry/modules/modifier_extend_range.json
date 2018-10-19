@@ -1,4 +1,6 @@
 {
+  "name": "modifier_extend_range",
+  "type": "modifier_extend_range",
   "item": "minecraft:dye",
   "item_meta": "4",
   "modifiers": [

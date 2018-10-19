@@ -1,4 +1,6 @@
 {
+  "name": "modifier_increase_potency",
+  "type": "modifier_increase_potency",
   "item": "minecraft:prismarine_crystals",
   "modifiers": [
     {

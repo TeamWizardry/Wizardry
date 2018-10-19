@@ -17,9 +17,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ModuleShape extends Module {
 
-	public ModuleShape(IModuleShape moduleClass, ItemStack itemStack, Color primaryColor, Color secondaryColor,
+	public ModuleShape(IModuleShape moduleClass, ItemStack itemStack, String moduleName, Color primaryColor, Color secondaryColor,
 			DefaultHashMap<Attribute, AttributeRange> attributeRanges) {
-		super(moduleClass, itemStack, primaryColor, secondaryColor, attributeRanges);
+		super(moduleClass, moduleName, itemStack, primaryColor, secondaryColor, attributeRanges);
 	}
 
 	@Nonnull
@@ -54,6 +54,32 @@ public class ModuleShape extends Module {
 		}
 		return overriden;
 	}
+	
+	/**
+	 * Only return false if the spellData cannot be taxed from mana. Return true otherwise.
+	 */
+	@Override
+	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		return ((IModuleShape)moduleClass).run(this, spell, spellRing);
+	}
 
-
+	/**
+	 * Will render whatever GL code is specified here while the spell is being held by the
+	 * player's hand.
+	 */
+	@Override
+	@Nonnull
+	@SideOnly(Side.CLIENT)
+	public SpellData renderVisualization(@Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+		return ((IModuleShape)moduleClass).renderVisualization(this, data, ring, previousData);
+	}
+	
+	/**
+	 * This method runs client side when the spellData runs. Spawn particles here.
+	 */
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		((IModuleShape)moduleClass).renderSpell(this, spell, spellRing);
+	}
 }
