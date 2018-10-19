@@ -61,7 +61,7 @@ public class ModuleEffectPhase implements IModuleEffect, IDelayedModule {
 
 	@Nonnull
 	@Override
-	public String getID() {
+	public String getClassID() {
 		return "effect_phase";
 	}
 

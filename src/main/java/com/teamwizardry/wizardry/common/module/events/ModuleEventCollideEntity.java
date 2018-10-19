@@ -19,7 +19,7 @@ public class ModuleEventCollideEntity implements IModuleEvent {
 
 	@Nonnull
 	@Override
-	public String getID() {
+	public String getClassID() {
 		return "event_collide_entity";
 	}
 

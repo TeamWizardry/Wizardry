@@ -30,7 +30,7 @@ public class ModuleEffectTimeLock implements IModuleEffect, IDelayedModule {
 
 	@Nonnull
 	@Override
-	public String getID() {
+	public String getClassID() {
 		return "effect_time_lock";
 	}
 

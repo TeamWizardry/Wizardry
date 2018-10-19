@@ -82,7 +82,7 @@ public class ModuleRegistry {
 				Object object = ctor.newInstance();
 				if (object instanceof IModule) {
 					IModule moduleClass = (IModule)object;
-					IDtoModuleClass.put(moduleClass.getID(), moduleClass);
+					IDtoModuleClass.put(moduleClass.getClassID(), moduleClass);
 //					modules.add((IModule) object); 
 				}
 			} catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
@@ -141,7 +141,7 @@ public class ModuleRegistry {
 			}
 			JsonObject moduleObject = element.getAsJsonObject();
 
-			// Get ID
+			// Get Class ID
 			if (!moduleObject.has("type")) {
 				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! No 'type' key found in " + file.getName() + ". Unknown item to use for element.");
 				Wizardry.logger.error("| |___ Failed to parse " + fName);
@@ -159,7 +159,7 @@ public class ModuleRegistry {
 			// Get Name
 			if (!moduleObject.has("name")) {
 				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! No 'name' key found in " + file.getName() + ". Unknown name to use for element.");
-				Wizardry.logger.error("| |___ Failed to register module " + moduleClassID);
+				Wizardry.logger.error("| |___ Failed to parse " + fName);
 				continue;
 			}
 			
@@ -176,7 +176,7 @@ public class ModuleRegistry {
 			
 			if (!moduleObject.has("item")) {
 				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! No 'item' key found in " + file.getName() + ". Unknown item to use for element.");
-				Wizardry.logger.error("| |___ Failed to register module " + moduleClassID);
+				Wizardry.logger.error("| |___ Failed to register module " + moduleName);
 				continue;
 			}
 
@@ -187,8 +187,8 @@ public class ModuleRegistry {
 
 			Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(moduleObject.getAsJsonPrimitive("item").getAsString()));
 			if (item == null || item.getRegistryName() == null) {
-				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! Item for module " + moduleClassID + " does not exist '" + moduleObject.getAsJsonPrimitive("item").getAsString() + "'");
-				Wizardry.logger.error("| |___ Failed to register module " + moduleClassID);
+				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! Item for module " + moduleName + " does not exist '" + moduleObject.getAsJsonPrimitive("item").getAsString() + "'");
+				Wizardry.logger.error("| |___ Failed to register module " + moduleName);
 				continue;
 			} else {
 				Wizardry.logger.info(" | | |_ Found Item " + item.getRegistryName().toString());
@@ -314,7 +314,7 @@ public class ModuleRegistry {
 
 			modules.add(module);
 //			processed.add(moduleClass);
-			Wizardry.logger.info(" | |_ Module " + moduleClassID + " registered successfully!");
+			Wizardry.logger.info(" | |_ Module " + moduleName + " registered successfully!");
 		}
 
 /*		primary:

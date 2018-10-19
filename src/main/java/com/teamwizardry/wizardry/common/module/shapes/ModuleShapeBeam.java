@@ -51,7 +51,7 @@ public class ModuleShapeBeam implements IModuleShape, IContinuousModule {
 
 	@Nonnull
 	@Override
-	public String getID() {
+	public String getClassID() {
 		return "shape_beam";
 	}
 

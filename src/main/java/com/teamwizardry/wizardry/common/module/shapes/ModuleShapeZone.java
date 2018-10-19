@@ -50,7 +50,7 @@ public class ModuleShapeZone implements IModuleShape, ILingeringModule {
 	
 	@Nonnull
 	@Override
-	public String getID() {
+	public String getClassID() {
 		return "shape_zone";
 	}
 

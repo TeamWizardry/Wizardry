@@ -258,7 +258,7 @@ public abstract class Module {
 	 * @return A lower case snake_case string.
 	 */
 	public final String getID() {
-		return moduleClass.getID();
+		return moduleName;
 	}
 
 	@Override
@@ -280,10 +280,6 @@ public abstract class Module {
 	@Nonnull
 	public final String getNameKey() {
 		return "wizardry.spell." + moduleName + ".name";
-	}
-
-	public final String getName() {
-		return this.moduleName;
 	}
 
 	/**
@@ -447,7 +443,7 @@ public abstract class Module {
 				for( Module mod : ModuleRegistry.INSTANCE.modules ) {
 					IModule mc = mod.getModuleClass();
 					for( IModuleModifier modifier : modifierClasses ) {
-						if( mc.getID().equals(modifier.getID()) ) {
+						if( mc.getClassID().equals(modifier.getClassID()) ) {
 							applicableModifiersList.add((ModuleModifier)mod);	// Expected to be of type ModuleModifier
 							break;
 						}
@@ -585,7 +581,7 @@ public abstract class Module {
 
 	@Nonnull
 	public final NBTTagString serialize() {
-		return new NBTTagString(moduleClass.getID());
+		return new NBTTagString(getID());
 	}
 
 	public ResourceLocation getIconLocation() {

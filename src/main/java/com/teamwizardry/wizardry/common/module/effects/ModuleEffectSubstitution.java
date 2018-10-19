@@ -57,7 +57,7 @@ public class ModuleEffectSubstitution implements IModuleEffect, IBlockSelectable
 
 	@Nonnull
 	@Override
-	public String getID() {
+	public String getClassID() {
 		return "effect_substitution";
 	}
 

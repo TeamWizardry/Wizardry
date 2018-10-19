@@ -60,7 +60,7 @@ public class ModuleEffectAntiGravityWell implements IModuleEffect, ILingeringMod
 
 	@Nonnull
 	@Override
-	public String getID() {
+	public String getClassID() {
 		return "effect_anti_gravity_well";
 	}
 

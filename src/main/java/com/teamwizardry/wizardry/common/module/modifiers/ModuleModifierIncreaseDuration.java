@@ -13,7 +13,7 @@ public class ModuleModifierIncreaseDuration implements IModuleModifier {
 
 	@Nonnull
 	@Override
-	public String getID() {
+	public String getClassID() {
 		return "modifier_extend_time";
 	}
 

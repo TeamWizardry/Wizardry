@@ -43,7 +43,7 @@ public class ModuleEffectLeech implements IModuleEffect {
 
 	@Nonnull
 	@Override
-	public String getID() {
+	public String getClassID() {
 		return "effect_leech";
 	}
 

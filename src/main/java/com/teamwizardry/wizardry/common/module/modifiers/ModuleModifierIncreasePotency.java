@@ -13,7 +13,7 @@ public class ModuleModifierIncreasePotency implements IModuleModifier {
 
 	@Nonnull
 	@Override
-	public String getID() {
+	public String getClassID() {
 		return "modifier_increase_potency";
 	}
 }

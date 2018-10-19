@@ -41,7 +41,7 @@ public class ModuleEffectLight implements IModuleEffect {
 
 	@Nonnull
 	@Override
-	public String getID() {
+	public String getClassID() {
 		return "effect_light";
 	}
 

@@ -45,7 +45,7 @@ public class ModuleEffectGravityWell implements IModuleEffect, ILingeringModule 
 
 	@Nonnull
 	@Override
-	public String getID() {
+	public String getClassID() {
 		return "effect_gravity_well";
 	}
 

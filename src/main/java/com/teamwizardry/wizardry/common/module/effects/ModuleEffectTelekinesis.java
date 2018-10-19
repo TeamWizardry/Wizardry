@@ -40,7 +40,7 @@ public class ModuleEffectTelekinesis implements IModuleEffect, IContinuousModule
 
 	@Nonnull
 	@Override
-	public String getID() {
+	public String getClassID() {
 		return "effect_telekinesis";
 	}
 

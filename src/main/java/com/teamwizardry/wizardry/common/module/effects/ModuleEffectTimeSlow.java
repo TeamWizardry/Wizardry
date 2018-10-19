@@ -67,7 +67,7 @@ public class ModuleEffectTimeSlow implements IModuleEffect {
 
 	@Nonnull
 	@Override
-	public String getID() {
+	public String getClassID() {
 		return "effect_time_slow";
 	}
 

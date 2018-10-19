@@ -35,7 +35,7 @@ public class ModuleShapeProjectile implements IModuleShape {
 
 	@Nonnull
 	@Override
-	public String getID() {
+	public String getClassID() {
 		return "shape_projectile";
 	}
 

@@ -44,7 +44,7 @@ public class ModuleEffectPlace implements IModuleEffect, IBlockSelectable {
 
 	@Nonnull
 	@Override
-	public String getID() {
+	public String getClassID() {
 		return "effect_place";
 	}
 

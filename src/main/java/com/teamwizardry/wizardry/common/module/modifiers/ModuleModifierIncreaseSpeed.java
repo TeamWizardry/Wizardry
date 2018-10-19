@@ -13,7 +13,7 @@ public class ModuleModifierIncreaseSpeed implements IModuleModifier {
 
 	@Nonnull
 	@Override
-	public String getID() {
+	public String getClassID() {
 		return "modifier_increase_speed";
 	}
 }

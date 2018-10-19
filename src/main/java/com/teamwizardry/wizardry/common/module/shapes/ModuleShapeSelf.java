@@ -32,7 +32,7 @@ public class ModuleShapeSelf implements IModuleShape {
 
 	@Nonnull
 	@Override
-	public String getID() {
+	public String getClassID() {
 		return "shape_self";
 	}
 
