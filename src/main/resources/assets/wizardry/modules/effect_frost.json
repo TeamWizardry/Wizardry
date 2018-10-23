@@ -1,4 +1,6 @@
 {
+  "name": "effect_frost",
+  "type": "effect_frost",
   "item": "minecraft:snowball",
   "primary_color": "FFFFFF",
   "secondary_color": "FFFFFF",

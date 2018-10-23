@@ -134,7 +134,7 @@ public class EventHandler {
 		Entity caster = event.getSpellData().getData(SpellData.DefaultKeys.CASTER);
 		int chance = 5;
 		for (SpellRing spellRing : SpellUtils.getAllSpellRings(event.getSpellRing()))
-			if (spellRing instanceof IContinuousModule) {
+			if (spellRing.getModule().getModuleClass() instanceof IContinuousModule) {
 				chance = 1000;
 				break;
 			}

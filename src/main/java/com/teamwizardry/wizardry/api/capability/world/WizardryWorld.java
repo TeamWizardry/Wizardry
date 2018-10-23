@@ -2,7 +2,7 @@ package com.teamwizardry.wizardry.api.capability.world;
 
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.common.core.SpellTicker;
 import com.teamwizardry.wizardry.common.core.nemez.NemezTracker;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,7 +16,7 @@ public interface WizardryWorld extends ICapabilitySerializable<NBTTagCompound> {
 
 	void addLingerSpell(SpellRing spellRing, SpellData data, int expiry);
 
-	void addDelayedSpell(Module module, SpellRing spellRing, SpellData data, int expiry);
+	void addDelayedSpell(ModuleInstance module, SpellRing spellRing, SpellData data, int expiry);
 
 	NemezTracker addNemezDrive(BlockPos pos, NemezTracker nemezDrive);
 

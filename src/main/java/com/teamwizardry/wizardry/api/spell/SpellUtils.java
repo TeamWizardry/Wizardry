@@ -3,8 +3,8 @@ package com.teamwizardry.wizardry.api.spell;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
-import com.teamwizardry.wizardry.api.spell.module.Module;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceModifier;
 import com.teamwizardry.wizardry.api.util.ColorUtils;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.Entity;
@@ -100,10 +100,10 @@ public class SpellUtils {
 		return rings;
 	}
 	
-	public static List<List<Module>> deserializeModuleList(@Nonnull NBTTagList list)
+	public static List<List<ModuleInstance>> deserializeModuleList(@Nonnull NBTTagList list)
 	{
-		List<List<Module>> modules = new ArrayList<>();
-		List<Module> moduleList = new ArrayList<>();
+		List<List<ModuleInstance>> modules = new ArrayList<>();
+		List<ModuleInstance> moduleList = new ArrayList<>();
 		for (int i = 0; i < list.tagCount(); i++)
 		{
 			NBTBase base = list.get(i);
@@ -115,7 +115,7 @@ public class SpellUtils {
 					modules.add(moduleList);
 				moduleList = new ArrayList<>();
 			}
-			Module module = Module.deserialize(string);
+			ModuleInstance module = ModuleInstance.deserialize(string);
 			if (module == null) continue;
 			moduleList.add(module);
 		}
@@ -129,12 +129,12 @@ public class SpellUtils {
 	 * @param modules The list of spell module chains.
 	 * @return A list of required items.
 	 */
-	public static List<ItemStack> getSpellItems(List<List<Module>> modules)
+	public static List<ItemStack> getSpellItems(List<List<ModuleInstance>> modules)
 	{
 		Deque<ItemStack> items = new ArrayDeque<>();
-		for (List<Module> moduleList : modules)
+		for (List<ModuleInstance> moduleList : modules)
 		{
-			for (Module module : moduleList)
+			for (ModuleInstance module : moduleList)
 			{
 				ItemStack stack = module.getItemStack();
 				ItemStack last = items.peekLast();
@@ -156,13 +156,13 @@ public class SpellUtils {
 	 * @param modules The list of spell chains in the spell.
 	 * @return The list of spell chains containing only essential modules.
 	 */
-	public static List<List<Module>> getEssentialModules(List<List<Module>> modules)
+	public static List<List<ModuleInstance>> getEssentialModules(List<List<ModuleInstance>> modules)
 	{
-		List<List<Module>> essentialModules = new ArrayList<>();
+		List<List<ModuleInstance>> essentialModules = new ArrayList<>();
 		modules.forEach(moduleList -> {
-			List<Module> essentialList = new ArrayList<>();
+			List<ModuleInstance> essentialList = new ArrayList<>();
 			moduleList.forEach(module -> {
-				if (!(module instanceof ModuleModifier))
+				if (!(module instanceof ModuleInstanceModifier))
 					essentialList.add(module);
 			});
 			essentialModules.add(essentialList);

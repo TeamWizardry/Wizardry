@@ -1,4 +1,6 @@
 {
+  "name": "shape_self",
+  "type": "shape_self",
   "item": "minecraft:diamond",
   "mana": {
     "base": 30

@@ -14,7 +14,7 @@ import com.teamwizardry.librarianlib.features.gui.provided.book.hierarchy.book.B
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
-import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.ItemStack;
@@ -65,7 +65,7 @@ public class ComponentSpellRecipe implements IBookElement {
 		NBTTagList moduleList = ItemNBTHelper.getList(bookStack, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
 		if (moduleList == null) return contexts;
 
-		List<List<Module>> spellModules = SpellUtils.deserializeModuleList(moduleList);
+		List<List<ModuleInstance>> spellModules = SpellUtils.deserializeModuleList(moduleList);
 		List<ItemStack> spellItems = SpellUtils.getSpellItems(spellModules);
 		spellModules = SpellUtils.getEssentialModules(spellModules);
 
@@ -73,9 +73,9 @@ public class ComponentSpellRecipe implements IBookElement {
 
 		int widthOfSpace = fr.getStringWidth(" ");
 		StringBuilder builder = new StringBuilder(LibrarianLib.PROXY.translate("wizardry.book.spell_recipe_structure") + "\n");
-		for (List<Module> spellModuleList : spellModules) {
+		for (List<ModuleInstance> spellModuleList : spellModules) {
 			String margin = null;
-			for (Module module : spellModuleList) {
+			for (ModuleInstance module : spellModuleList) {
 				if (margin == null) {
 					margin = " - ";
 					builder.append(margin).append(module.getReadableName()).append("\n");

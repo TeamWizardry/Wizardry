@@ -1,4 +1,6 @@
 {
+  "name": "effect_telekinesis",
+  "type": "effect_telekinesis",
   "item": "minecraft:reeds",
   "primary_color": "FFFFFF",
   "secondary_color": "FFFFFF",

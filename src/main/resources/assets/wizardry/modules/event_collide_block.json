@@ -1,4 +1,6 @@
 {
+  "name": "event_collide_block",
+  "type": "event_collide_block",
   "item": "minecraft:coal",
   "mana": { "base": 10 },
   "burnout": { "base": 5 }

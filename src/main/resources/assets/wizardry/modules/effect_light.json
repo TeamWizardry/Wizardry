@@ -1,4 +1,6 @@
 {
+  "name": "effect_light",
+  "type": "effect_light",
   "item": "minecraft:glowstone",
   "primary_color": "00FFFF",
   "secondary_color": "FF0000",

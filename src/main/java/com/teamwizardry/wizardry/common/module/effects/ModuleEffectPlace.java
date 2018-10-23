@@ -4,8 +4,9 @@ import com.teamwizardry.wizardry.api.spell.IBlockSelectable;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
-import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
+import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.IModuleModifier;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
@@ -39,21 +40,21 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.FACE_HIT
  * Created by Demoniaque.
  */
 @RegisterModule
-public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable {
+public class ModuleEffectPlace implements IModuleEffect, IBlockSelectable {
 
 	@Nonnull
 	@Override
-	public String getID() {
+	public String getClassID() {
 		return "effect_place";
 	}
 
 	@Override
-	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierIncreaseAOE()};
+	public IModuleModifier[] applicableModifiers() {
+		return new IModuleModifier[]{new ModuleModifierIncreaseAOE()};
 	}
 
 	@Override
-	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		BlockPos targetPos = spell.getData(BLOCK_HIT);
 		Entity caster = spell.getCaster();
@@ -64,14 +65,14 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 		double area = spellRing.getAttributeValue(AttributeRegistry.AREA, spell);
 
 		if (caster instanceof EntityPlayer) {
-			IBlockState selected = getSelectedBlockState((EntityPlayer) caster);
+			IBlockState selected = instance.getSelectedBlockState((EntityPlayer) caster);
 			if (selected == null) return true;
 
 			IBlockState targetState = world.getBlockState(targetPos);
-			List<ItemStack> stacks = getAllOfStackFromInventory((EntityPlayer) caster, selected);
+			List<ItemStack> stacks = instance.getAllOfStackFromInventory((EntityPlayer) caster, selected);
 			if (stacks.isEmpty()) return true;
 			
-			int stackCount = getCountOfStacks(stacks);
+			int stackCount = instance.getCountOfStacks(stacks);
 			Set<BlockPos> blocks = BlockUtils.blocksInSquare(targetPos, facing, Math.min(stackCount, (int) area), (int) ((Math.sqrt(area)+1)/2), pos -> {
 				if (BlockUtils.isAnyAir(targetState)) return true;
 
@@ -93,7 +94,7 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 
 				IBlockState oldState = world.getBlockState(pos);
 
-				ItemStack availableStack = getAvailableStack(stacks);
+				ItemStack availableStack = instance.getAvailableStack(stacks);
 				if (availableStack == null) return true;
 
 				BlockUtils.placeBlock(world, pos, facing, availableStack);
@@ -121,18 +122,18 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		Vec3d position = spell.getTarget();
 
 		if (position == null) return;
 
-		LibParticles.EXPLODE(world, position, getPrimaryColor(), getSecondaryColor(), 0.2, 0.3, 20, 40, 10, true);
+		LibParticles.EXPLODE(world, position, instance.getPrimaryColor(), instance.getSecondaryColor(), 0.2, 0.3, 20, 40, 10, true);
 	}
 
 	@NotNull
 	@Override
-	public SpellData renderVisualization(@Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+	public SpellData renderVisualization(ModuleInstanceEffect instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
 		if (ring.getParentRing() != null
 				&& ring.getParentRing().getModule() != null
 				&& ring.getParentRing().getModule() == ModuleRegistry.INSTANCE.getModule("event_collide_entity"))
@@ -147,29 +148,29 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 		double area = ring.getAttributeValue(AttributeRegistry.AREA, data);
 
 		if (caster instanceof EntityPlayer) {
-			IBlockState selected = getSelectedBlockState((EntityPlayer) caster);
+			IBlockState selected = instance.getSelectedBlockState((EntityPlayer) caster);
 			if (selected == null) return previousData;
 
 			IBlockState targetState = data.world.getBlockState(targetPos);
-			List<ItemStack> stacks = getAllOfStackFromInventory((EntityPlayer) caster, selected);
+			List<ItemStack> stacks = instance.getAllOfStackFromInventory((EntityPlayer) caster, selected);
 			if (stacks.isEmpty()) return previousData;
 
-			int stackCount = getCountOfStacks(stacks);
+			int stackCount = instance.getCountOfStacks(stacks);
 			Set<BlockPos> blocks = BlockUtils.blocksInSquare(targetPos, facing, Math.min(stackCount, (int) area), (int) ((Math.sqrt(area)+1)/2), pos -> {
 				if (BlockUtils.isAnyAir(targetState)) return true;
 
 				BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(pos);
-				IBlockState adjacentState = getCachableBlockstate(data.world, mutable.offset(facing), previousData);
+				IBlockState adjacentState = instance.getCachableBlockstate(data.world, mutable.offset(facing), previousData);
 				if (adjacentState.getBlock() != Blocks.AIR) return true;
 
-				IBlockState state = getCachableBlockstate(data.world, pos, previousData);
+				IBlockState state = instance.getCachableBlockstate(data.world, pos, previousData);
 				return state.getBlock() != targetState.getBlock();
 			});
 
 			if (blocks.isEmpty()) {
 				if (targetState.getBlock() == Blocks.AIR)
-					drawCubeOutline(data.world, targetPos, targetState);
-				else drawFaceOutline(targetPos, facing);
+					instance.drawCubeOutline(data.world, targetPos, targetState);
+				else instance.drawFaceOutline(targetPos, facing);
 			} else
 				for (BlockPos areaPos : blocks) {
 					BlockPos pos = areaPos.offset(facing);
@@ -181,7 +182,7 @@ public class ModuleEffectPlace extends ModuleEffect implements IBlockSelectable 
 
 						if (blocks.contains(mutable)) {
 
-							drawFaceOutline(mutable, facing1.getOpposite());
+							instance.drawFaceOutline(mutable, facing1.getOpposite());
 						}
 						mutable.move(facing1.getOpposite());
 					}

@@ -1,4 +1,6 @@
 {
+  "name": "effect_phase",
+  "type": "effect_phase",
   "item": "minecraft:ender_pearl",
   "primary_color": "800000",
   "secondary_color": "FF0000",

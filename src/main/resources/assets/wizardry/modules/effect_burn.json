@@ -1,4 +1,6 @@
 {
+  "name": "effect_burn",
+  "type": "effect_burn",
   "item": "minecraft:blaze_powder",
   "primary_color": "FF3C3C",
   "secondary_color": "A10000",

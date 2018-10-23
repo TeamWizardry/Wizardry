@@ -38,23 +38,24 @@ public class ModuleRegistry {
 
 	public final static ModuleRegistry INSTANCE = new ModuleRegistry();
 
-	public ArrayList<Module> modules = new ArrayList<>();
-	public HashMap<Pair<ModuleShape, ModuleEffect>, OverrideConsumer<SpellData, SpellRing, SpellRing>> runOverrides = new HashMap<>();
-	public HashMap<Pair<ModuleShape, ModuleEffect>, OverrideConsumer<SpellData, SpellRing, SpellRing>> renderOverrides = new HashMap<>();
+	public ArrayList<ModuleInstance> modules = new ArrayList<>();
+	public HashMap<Pair<ModuleInstanceShape, ModuleInstanceEffect>, OverrideConsumer<SpellData, SpellRing, SpellRing>> runOverrides = new HashMap<>();
+	public HashMap<Pair<ModuleInstanceShape, ModuleInstanceEffect>, OverrideConsumer<SpellData, SpellRing, SpellRing>> renderOverrides = new HashMap<>();
+	public HashMap<String, IModule> IDtoModuleClass = new HashMap<>();
 
-	private Deque<Module> left = new ArrayDeque<>();
+//	private Deque<Module> left = new ArrayDeque<>();
 
 	private ModuleRegistry() {
 	}
 
-	public Module getModule(String id) {
-		for (Module module : modules) if (module.getID().equals(id)) return module;
+	public ModuleInstance getModule(String id) {
+		for (ModuleInstance module : modules) if (module.getID().equals(id)) return module;
 		return null;
 	}
 
 	@Nullable
-	public Module getModule(ItemStack itemStack) {
-		for (Module module : modules)
+	public ModuleInstance getModule(ItemStack itemStack) {
+		for (ModuleInstance module : modules)
 			if (ItemStack.areItemsEqual(itemStack, module.getItemStack())) {
 				return module;
 			}
@@ -62,21 +63,24 @@ public class ModuleRegistry {
 	}
 
 	@Nonnull
-	public ArrayList<Module> getModules(ModuleType type) {
-		ArrayList<Module> modules = new ArrayList<>();
-		for (Module module : this.modules) if (module.getModuleType() == type) modules.add(module);
+	public ArrayList<ModuleInstance> getModules(ModuleType type) {
+		ArrayList<ModuleInstance> modules = new ArrayList<>();
+		for (ModuleInstance module : this.modules) if (module.getModuleType() == type) modules.add(module);
 
-		modules.sort(Comparator.comparing(Module::getReadableName));
+		modules.sort(Comparator.comparing(ModuleInstance::getReadableName));
 		return modules;
 	}
 
 	public void loadUnprocessedModules() {
-		modules.clear();
-		AnnotationHelper.INSTANCE.findAnnotatedClasses(LibrarianLib.PROXY.getAsmDataTable(), Module.class, RegisterModule.class, (clazz, info) -> {
+		IDtoModuleClass.clear();
+		AnnotationHelper.INSTANCE.findAnnotatedClasses(LibrarianLib.PROXY.getAsmDataTable(), IModule.class, RegisterModule.class, (clazz, info) -> {
 			try {
 				Constructor<?> ctor = clazz.getConstructor();
 				Object object = ctor.newInstance();
-				if (object instanceof Module) modules.add((Module) object);
+				if (object instanceof IModule) {
+					IModule moduleClass = (IModule)object;
+					IDtoModuleClass.put(moduleClass.getClassID(), moduleClass);
+				}
 			} catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 				e.printStackTrace();
 			}
@@ -88,23 +92,24 @@ public class ModuleRegistry {
 		Wizardry.logger.info(" _______________________________________________________________________\\\\");
 		Wizardry.logger.info(" | Starting module registration");
 
-		HashSet<Module> processed = new HashSet<>();
-
-		for (Module module : modules) {
+		modules.clear();
+		
+		String[] files = directory.list();
+		for (String fName : files) {
+			File file = new File(directory, fName);
+			
 			Wizardry.logger.info(" | |");
-			Wizardry.logger.info(" | |_ Registering module " + module.getID());
-
-			File file = new File(directory, module.getID() + ".json");
+			Wizardry.logger.info(" | |_ Parsing module configuration " + fName);
 
 			if (!file.exists()) {
 				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! " + file.getName() + " does NOT exist.");
-				Wizardry.logger.error("| |___ Failed to register module " + module.getID());
+				Wizardry.logger.error("| |___ Failed to parse " + fName);
 				continue;
 			}
 
 			if (!file.canRead()) {
 				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! Something is preventing me from reading " + file.getName());
-				Wizardry.logger.error("| |___ Failed to register module " + module.getID());
+				Wizardry.logger.error("| |___ Failed to parse " + fName);
 			}
 
 			JsonElement element;
@@ -116,21 +121,54 @@ public class ModuleRegistry {
 			}
 
 			if (element == null) {
-				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! Could not parse " + file.getName() + ". Invalid json.");
-				Wizardry.logger.error("| |___ Failed to register module " + module.getID());
+				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! Could not parse " + fName + ". Invalid json.");
+				Wizardry.logger.error("| |___ Failed to parse " + fName);
 				continue;
 			}
 
 			if (!element.isJsonObject()) {
-				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! " + file.getName() + "'s json is NOT a Json Object.");
-				Wizardry.logger.error("| |___ Failed to register module " + module.getID());
+				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! " + fName + "'s json is NOT a Json Object.");
+				Wizardry.logger.error("| |___ Failed to parse " + fName);
 				continue;
 			}
 			JsonObject moduleObject = element.getAsJsonObject();
 
+			// Get Class ID
+			if (!moduleObject.has("type")) {
+				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! No 'type' key found in " + file.getName() + ". Unknown item to use for element.");
+				Wizardry.logger.error("| |___ Failed to parse " + fName);
+				continue;
+			}
+			
+			String moduleClassID = moduleObject.get("type").getAsString();
+			IModule moduleClass = IDtoModuleClass.get(moduleClassID);
+			if (moduleClass == null) {
+				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! Referenced type " + moduleClassID + " is unknown.");
+				Wizardry.logger.error("| |___ Failed to parse " + fName);
+				continue;
+			}
+
+			// Get Name
+			if (!moduleObject.has("name")) {
+				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! No 'name' key found in " + file.getName() + ". Unknown name to use for element.");
+				Wizardry.logger.error("| |___ Failed to parse " + fName);
+				continue;
+			}
+			
+			String moduleName = moduleObject.get("name").getAsString();
+
+			Wizardry.logger.info(" | | |_ Registering module " + moduleName + " of class " + moduleClassID);
+			
+			// Get optional icon
+			ResourceLocation icon = null;
+			if (moduleObject.has("icon")) {
+				String iconID = moduleObject.get("icon").getAsString();
+				icon = new ResourceLocation(iconID);
+			}
+			
 			if (!moduleObject.has("item")) {
 				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! No 'item' key found in " + file.getName() + ". Unknown item to use for element.");
-				Wizardry.logger.error("| |___ Failed to register module " + module.getID());
+				Wizardry.logger.error("| |___ Failed to register module " + moduleName);
 				continue;
 			}
 
@@ -141,8 +179,8 @@ public class ModuleRegistry {
 
 			Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(moduleObject.getAsJsonPrimitive("item").getAsString()));
 			if (item == null || item.getRegistryName() == null) {
-				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! Item for module " + module.getID() + " does not exist '" + moduleObject.getAsJsonPrimitive("item").getAsString() + "'");
-				Wizardry.logger.error("| |___ Failed to register module " + module.getID());
+				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! Item for module " + moduleName + " does not exist '" + moduleObject.getAsJsonPrimitive("item").getAsString() + "'");
+				Wizardry.logger.error("| |___ Failed to register module " + moduleName);
 				continue;
 			} else {
 				Wizardry.logger.info(" | | |_ Found Item " + item.getRegistryName().toString());
@@ -230,8 +268,8 @@ public class ModuleRegistry {
 					}
 				}
 			}
-
-			module.init(new ItemStack(item, 1, itemMeta), primaryColor, secondaryColor, attributeRanges);
+			
+			ModuleInstance module = ModuleInstance.createInstance(moduleClass, moduleName, icon, new ItemStack(item, 1, itemMeta), primaryColor, secondaryColor, attributeRanges);
 
 			if (moduleObject.has("modifiers") && moduleObject.get("modifiers").isJsonArray()) {
 				Wizardry.logger.info(" | | |___ Found Modifiers. About to process them");
@@ -266,13 +304,14 @@ public class ModuleRegistry {
 				Wizardry.logger.info(" | | |___ Modifiers Registered Successfully.");
 			}
 
-			processed.add(module);
-			Wizardry.logger.info(" | |_ Module " + module.getID() + " registered successfully!");
+			modules.add(module);
+//			processed.add(moduleClass);
+			Wizardry.logger.info(" | |_ Module " + moduleName + " registered successfully!");
 		}
 
-		primary:
-		for (Module module1 : modules) {
-			for (Module module2 : processed)
+/*		primary:
+		for (Module module : modules) {
+			for (IModule<?> moduleClass : processed)
 				if (module1.getID().equals(module2.getID())) continue primary;
 
 			left.add(module1);
@@ -283,12 +322,12 @@ public class ModuleRegistry {
 			Wizardry.logger.error("|_ Missing or ignored modules detected in modules directory:");
 			for (Module module : left) Wizardry.logger.error("| |_ " + module.getID());
 		}
-		left.clear();
+		left.clear(); */
 
-		modules.clear();
-		modules.addAll(processed);
+//		modules.clear();
+//		modules.addAll(processed);
 
-		modules.sort(Comparator.comparing(Module::getID));
+		modules.sort(Comparator.comparing(ModuleInstance::getID));
 
 		Wizardry.logger.info(" |");
 		Wizardry.logger.info(" | Module registration processing complete! (ᵔᴥᵔ)");
@@ -297,25 +336,25 @@ public class ModuleRegistry {
 
 	public void loadModuleOverrides()
 	{
-		for (Module effect : getModules(ModuleType.EFFECT))
+		for (ModuleInstance effect : getModules(ModuleType.EFFECT))
 		{
-			if (!(effect instanceof ModuleEffect))
+			if (!(effect instanceof ModuleInstanceEffect))
 				continue;
 
-			((ModuleEffect) effect).runOverrides.forEach((moduleID, override) -> {
-				Module shape = getModule(moduleID);
-				if (shape instanceof ModuleShape)
+			((ModuleInstanceEffect) effect).runOverrides.forEach((moduleID, override) -> {
+				ModuleInstance shape = getModule(moduleID);
+				if (shape instanceof ModuleInstanceShape)
 				{
-					runOverrides.put(new Pair<>((ModuleShape) shape, (ModuleEffect) effect), override);
+					runOverrides.put(new Pair<>((ModuleInstanceShape) shape, (ModuleInstanceEffect) effect), override);
 					Wizardry.logger.info(" | Registered " + shape.getReadableName() + " -> " + effect.getReadableName() + " run override.");
 				}
 			});
 			
-			((ModuleEffect) effect).renderOverrides.forEach((moduleID, override) -> {
-				Module shape = getModule(moduleID);
-				if (shape instanceof ModuleShape)
+			((ModuleInstanceEffect) effect).renderOverrides.forEach((moduleID, override) -> {
+				ModuleInstance shape = getModule(moduleID);
+				if (shape instanceof ModuleInstanceShape)
 				{
-					renderOverrides.put(new Pair<>((ModuleShape) shape, (ModuleEffect) effect), override);
+					renderOverrides.put(new Pair<>((ModuleInstanceShape) shape, (ModuleInstanceEffect) effect), override);
 					Wizardry.logger.info(" | Registered " + shape.getReadableName() + " -> " + effect.getReadableName() + " renderSpell override.");
 				}
 			});
@@ -323,7 +362,7 @@ public class ModuleRegistry {
 	}
 	
 	public void copyMissingModules(File directory) {
-		for (Module module : modules) {
+		for (ModuleInstance module : modules) {
 			File file = new File(directory + "/modules/", module.getID() + ".json");
 			if (file.exists()) continue;
 
@@ -344,7 +383,7 @@ public class ModuleRegistry {
 	
 	public void copyAllModules(File directory)
 	{
-		for (Module module : modules)
+		for (ModuleInstance module : modules)
 		{
 			InputStream stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "modules/" + module.getID() + ".json");
 			if (stream == null)

@@ -1,4 +1,6 @@
 {
+  "name": "modifier_increase_speed",
+  "type": "modifier_increase_speed",
   "item": "minecraft:dragon_breath",
   "modifiers": [
     {

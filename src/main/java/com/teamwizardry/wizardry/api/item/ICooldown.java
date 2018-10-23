@@ -29,7 +29,7 @@ public interface ICooldown {
 			if (ring.isContinuous()) return;
 
 			if (ring.getModule() instanceof IOverrideCooldown) {
-				maxCooldown = ((IOverrideCooldown) ring.getModule()).getNewCooldown(data, ring);
+				maxCooldown = ((IOverrideCooldown) ring.getModule().getModuleClass()).getNewCooldown(data, ring);
 				break;
 			}
 

@@ -1,4 +1,6 @@
 {
+  "name": "modifier_increase_aoe",
+  "type": "modifier_increase_aoe",
   "item": "minecraft:emerald",
   "modifiers": [
     {

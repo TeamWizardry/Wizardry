@@ -9,11 +9,13 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
+import com.teamwizardry.wizardry.common.tile.TileLight;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
@@ -34,16 +36,16 @@ import javax.annotation.Nonnull;
  * Created by Demoniaque.
  */
 @RegisterModule
-public class ModuleEffectLight extends ModuleEffect {
+public class ModuleEffectLight implements IModuleEffect {
 
 	@Nonnull
 	@Override
-	public String getID() {
+	public String getClassID() {
 		return "effect_light";
 	}
 
 	@Override
-	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		BlockPos targetPos = spell.getTargetPos();
 		EnumFacing facing = spell.getFaceHit();
@@ -57,6 +59,11 @@ public class ModuleEffectLight extends ModuleEffect {
 		if (facing != null && world.isAirBlock(targetPos.offset(facing))) finalPos = targetPos.offset(facing);
 
 		BlockUtils.placeBlock(world, finalPos, ModBlocks.LIGHT.getDefaultState(), caster instanceof EntityPlayerMP ? (EntityPlayerMP) caster : null);
+		TileLight te = BlockUtils.getTileEntity(world, finalPos, TileLight.class);
+		if( te != null ) {
+			// Should be always the case.
+			te.setModule(instance);
+		}
 
 		world.playSound(null, targetPos, ModSounds.SPARKLE, SoundCategory.AMBIENT, 1f, 1f);
 
@@ -65,7 +72,7 @@ public class ModuleEffectLight extends ModuleEffect {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		BlockPos position = spell.getTargetPos();
 		EnumFacing facing = spell.getFaceHit();
@@ -92,9 +99,9 @@ public class ModuleEffectLight extends ModuleEffect {
 			build.setDeceleration(new Vec3d(0.4, 0.4, 0.4));
 
 			if (RandUtil.nextBoolean()) {
-				build.setColorFunction(new InterpColorHSV(getPrimaryColor(), getSecondaryColor()));
+				build.setColorFunction(new InterpColorHSV(instance.getPrimaryColor(), instance.getSecondaryColor()));
 			} else {
-				build.setColorFunction(new InterpColorHSV(getSecondaryColor(), getPrimaryColor()));
+				build.setColorFunction(new InterpColorHSV(instance.getSecondaryColor(), instance.getPrimaryColor()));
 			}
 		});
 	}
