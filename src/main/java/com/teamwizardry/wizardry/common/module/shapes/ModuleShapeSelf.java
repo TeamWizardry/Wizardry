@@ -31,6 +31,10 @@ import javax.annotation.Nonnull;
 @RegisterModule(ID="shape_self")
 public class ModuleShapeSelf implements IModuleShape {
 
+	enum TestEnum {
+		BLA, BLUB
+	}
+	
 	@ModuleParameter("script.name")
 	public String testString;
 
@@ -75,6 +79,12 @@ public class ModuleShapeSelf implements IModuleShape {
 
 	@ModuleParameter("script.booleanAsString")
 	public String booleanAsString;
+	
+	@ModuleParameter("script.enum1")
+	public TestEnum enum1;
+	
+	@ModuleParameter("script.enum2")
+	public TestEnum enum2;
 	
 	@Override
 	public boolean run(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
