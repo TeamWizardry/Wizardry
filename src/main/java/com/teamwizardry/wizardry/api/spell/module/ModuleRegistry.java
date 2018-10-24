@@ -389,21 +389,10 @@ public class ModuleRegistry {
 		// TODO: Move to utils
 		if( elem.isString() )
 			return elem.getAsString();
-		else if( elem.isNumber() ) {
-			try {
-				return elem.getAsInt();
-			}
-			catch(NumberFormatException exc) {
-				// Not an integer. Maybe a double?
-			}
-			
-			try {
-				return elem.getAsDouble();
-			}
-			catch(NumberFormatException exc) {
-				// Not a double. Use a fallback case.
-			}
-		}
+		else if( elem.isNumber() )
+			return elem.getAsNumber();
+		else if( elem.isBoolean() )
+			return elem.getAsBoolean();
 		// ... TODO: Add more data types.
 		
 		String value = elem.getAsString();
