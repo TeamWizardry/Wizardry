@@ -2,12 +2,11 @@ package com.teamwizardry.wizardry.api.spell.module;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.teamwizardry.wizardry.api.spell.annotation.ConfigField;
+import com.teamwizardry.wizardry.api.spell.annotation.ModuleParameter;
 
 public class ModuleFactory {
 	private final Class<? extends IModule> clazz;
@@ -22,7 +21,7 @@ public class ModuleFactory {
 		
 		// Determine configurable fields via reflection
 		for(Field field : clazz.getDeclaredFields()) {
-			ConfigField cfg = field.getDeclaredAnnotation(ConfigField.class);
+			ModuleParameter cfg = field.getDeclaredAnnotation(ModuleParameter.class);
 			if( cfg == null )
 				continue;
 			
