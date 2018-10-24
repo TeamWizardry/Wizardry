@@ -451,7 +451,7 @@ public abstract class ModuleInstance {
 				for( ModuleInstance mod : ModuleRegistry.INSTANCE.modules ) {
 					for( String modifier : modifierNames ) {
 						if( mod.getClassID().equals(modifier) ) {
-							if( mod instanceof ModuleInstanceModifier ) {
+							if( !(mod instanceof ModuleInstanceModifier) ) {
 								// TODO: Log it!
 								continue;
 							}

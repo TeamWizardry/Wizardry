@@ -74,8 +74,7 @@ public class ModuleFactory {
 				// NOTE: Throw an exception instead
 				throw new ModuleInitException("Not all configuration fields are mapped for module '" + moduleClassID + "'.");
 			}
-		} catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
 			throw new ModuleInitException("Couldn't initialize module '" + moduleClassID + "'. See cause.", e);
 		}
 		

@@ -78,9 +78,12 @@ public class ModuleRegistry {
 		AnnotationHelper.INSTANCE.findAnnotatedClasses(LibrarianLib.PROXY.getAsmDataTable(), IModule.class, RegisterModule.class, (clazz, info) -> {
 			try {
 				String id = info.getString("ID");
+				if( id == null )
+					throw new ModuleInitException("Missing ID for module class " + clazz);
+				
 				if( IModule.class.isAssignableFrom(clazz) ) {
 					ModuleFactory entry = new ModuleFactory(id, clazz);
-					IDtoModuleClassFactory.put(entry.getClassID(), entry);
+					IDtoModuleClassFactory.put(id, entry);
 				}
 			}
 			catch(ModuleInitException exc) {
