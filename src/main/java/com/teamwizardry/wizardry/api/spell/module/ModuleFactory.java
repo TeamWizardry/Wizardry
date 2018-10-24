@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.teamwizardry.wizardry.api.spell.annotation.ConfigField;
+
 public class ModuleFactory {
 	private final Class<? extends IModule> clazz;
 	private final HashMap<Map<String, Object>, IModule> instances = new HashMap<>();

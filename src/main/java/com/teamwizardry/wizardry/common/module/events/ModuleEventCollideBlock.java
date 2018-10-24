@@ -6,9 +6,9 @@ import javax.annotation.Nonnull;
 
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.module.IModuleEvent;
 import com.teamwizardry.wizardry.api.spell.module.ModuleEvent;
-import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 
 import net.minecraft.util.math.BlockPos;
 

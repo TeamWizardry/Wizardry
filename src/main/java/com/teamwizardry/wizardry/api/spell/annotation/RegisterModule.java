@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.api.spell.module;
+package com.teamwizardry.wizardry.api.spell.annotation;
 
 import java.lang.annotation.Target;
 import java.lang.annotation.ElementType;
