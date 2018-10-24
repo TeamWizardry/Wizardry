@@ -30,18 +30,12 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.LOOK;
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
+@RegisterModule(ID="shape_projectile")
 public class ModuleShapeProjectile implements IModuleShape {
 
-	@Nonnull
 	@Override
-	public String getClassID() {
-		return "shape_projectile";
-	}
-
-	@Override
-	public IModuleModifier[] applicableModifiers() {
-		return new IModuleModifier[]{new ModuleModifierIncreaseRange(), new ModuleModifierIncreaseSpeed()};
+	public String[] compatibleModifierClasses() {
+		return new String[]{"modifier_extend_range", "modifier_increase_speed"};
 	}
 
 	@Override

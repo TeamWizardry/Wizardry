@@ -23,18 +23,12 @@ import javax.annotation.Nonnull;
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
+@RegisterModule(ID="effect_vanish")
 public class ModuleEffectVanish implements IModuleEffect {
 
-	@Nonnull
 	@Override
-	public String getClassID() {
-		return "effect_vanish";
-	}
-
-	@Override
-	public IModuleModifier[] applicableModifiers() {
-		return new IModuleModifier[]{new ModuleModifierIncreaseDuration()};
+	public String[] compatibleModifierClasses() {
+		return new String[]{"modifier_extend_time"};
 	}
 
 	@Override

@@ -28,18 +28,12 @@ import javax.annotation.Nonnull;
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
+@RegisterModule(ID="shape_self")
 public class ModuleShapeSelf implements IModuleShape {
 
 	@ConfigField("script.name")
 	public String test;
 	
-	@Nonnull
-	@Override
-	public String getClassID() {
-		return "shape_self";
-	}
-
 	@Override
 	public boolean run(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Entity caster = spell.getCaster();

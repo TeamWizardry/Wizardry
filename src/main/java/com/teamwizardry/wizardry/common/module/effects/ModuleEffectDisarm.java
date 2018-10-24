@@ -28,16 +28,10 @@ import javax.annotation.Nonnull;
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
+@RegisterModule(ID="effect_disarm")
 public class ModuleEffectDisarm implements IModuleEffect {
 
 	private Function1<EntityLiving, Object> inventoryHandsDropChances = MethodHandleHelper.wrapperForGetter(EntityLiving.class, "inventoryHandsDropChances", "field_184655_bs", "bs");
-
-	@Nonnull
-	@Override
-	public String getClassID() {
-		return "effect_disarm";
-	}
 
 	@Override
 	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {

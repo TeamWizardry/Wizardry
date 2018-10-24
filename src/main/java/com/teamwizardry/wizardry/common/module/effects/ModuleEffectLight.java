@@ -35,14 +35,8 @@ import javax.annotation.Nonnull;
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
+@RegisterModule(ID="effect_light")
 public class ModuleEffectLight implements IModuleEffect {
-
-	@Nonnull
-	@Override
-	public String getClassID() {
-		return "effect_light";
-	}
 
 	@Override
 	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {

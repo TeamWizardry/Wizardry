@@ -56,18 +56,12 @@ import static com.teamwizardry.wizardry.api.util.PosUtils.getPerpendicularFacing
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
+@RegisterModule(ID="effect_phase")
 public class ModuleEffectPhase implements IModuleEffect, IDelayedModule {
 
-	@Nonnull
 	@Override
-	public String getClassID() {
-		return "effect_phase";
-	}
-
-	@Override
-	public IModuleModifier[] applicableModifiers() {
-		return new IModuleModifier[]{new ModuleModifierIncreaseDuration(), new ModuleModifierIncreaseAOE(), new ModuleModifierIncreaseRange()};
+	public String[] compatibleModifierClasses() {
+		return new String[]{"modifier_extend_time", "modifier_increase_aoe", "modifier_extend_range"};
 	}
 
 	@Override

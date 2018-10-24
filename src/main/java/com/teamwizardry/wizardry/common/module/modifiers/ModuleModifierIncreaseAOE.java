@@ -8,12 +8,6 @@ import javax.annotation.Nonnull;
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
+@RegisterModule(ID="modifier_increase_aoe")
 public class ModuleModifierIncreaseAOE implements IModuleModifier {
-
-	@Nonnull
-	@Override
-	public String getClassID() {
-		return "modifier_increase_aoe";
-	}
 }

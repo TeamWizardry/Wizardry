@@ -35,18 +35,12 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.FACE_HIT
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
+@RegisterModule(ID="effect_backup")
 public class ModuleEffectBackup implements IModuleEffect {
 
-	@Nonnull
 	@Override
-	public String getClassID() {
-		return "effect_backup";
-	}
-
-	@Override
-	public IModuleModifier[] applicableModifiers() {
-		return new IModuleModifier[]{new ModuleModifierIncreaseDuration()};
+	public String[] compatibleModifierClasses() {
+		return new String[]{"modifier_extend_time"};
 	}
 
 	@Override

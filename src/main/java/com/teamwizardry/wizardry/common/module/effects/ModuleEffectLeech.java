@@ -37,18 +37,12 @@ import javax.annotation.Nonnull;
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
+@RegisterModule(ID="effect_leech")
 public class ModuleEffectLeech implements IModuleEffect {
 
-	@Nonnull
 	@Override
-	public String getClassID() {
-		return "effect_leech";
-	}
-
-	@Override
-	public IModuleModifier[] applicableModifiers() {
-		return new IModuleModifier[]{new ModuleModifierIncreasePotency()};
+	public String[] compatibleModifierClasses() {
+		return new String[]{"modifier_increase_potency"};
 	}
 
 	@Override

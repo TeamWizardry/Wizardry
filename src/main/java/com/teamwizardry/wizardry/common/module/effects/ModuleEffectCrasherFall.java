@@ -25,18 +25,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
+@RegisterModule(ID="effect_crasher_fall")
 public class ModuleEffectCrasherFall implements IModuleEffect {
 
-	@Nonnull
 	@Override
-	public String getClassID() {
-		return "effect_crasher_fall";
-	}
-
-	@Override
-	public IModuleModifier[] applicableModifiers() {
-		return new IModuleModifier[]{new ModuleModifierIncreaseRange(), new ModuleModifierIncreaseDuration()};
+	public String[] compatibleModifierClasses() {
+		return new String[]{"modifier_extend_range", "modifier_extend_time"};
 	}
 
 	@Override

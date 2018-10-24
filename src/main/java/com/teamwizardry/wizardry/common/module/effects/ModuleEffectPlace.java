@@ -39,18 +39,12 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.FACE_HIT
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
+@RegisterModule(ID="effect_place")
 public class ModuleEffectPlace implements IModuleEffect, IBlockSelectable {
 
-	@Nonnull
 	@Override
-	public String getClassID() {
-		return "effect_place";
-	}
-
-	@Override
-	public IModuleModifier[] applicableModifiers() {
-		return new IModuleModifier[]{new ModuleModifierIncreaseAOE()};
+	public String[] compatibleModifierClasses() {
+		return new String[]{"modifier_increase_aoe"};
 	}
 
 	@Override

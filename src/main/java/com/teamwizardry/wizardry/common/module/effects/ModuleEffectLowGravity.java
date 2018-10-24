@@ -36,18 +36,12 @@ import javax.annotation.Nonnull;
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
+@RegisterModule(ID="effect_low_gravity")
 public class ModuleEffectLowGravity implements IModuleEffect {
 
-	@Nonnull
 	@Override
-	public String getClassID() {
-		return "effect_low_gravity";
-	}
-
-	@Override
-	public IModuleModifier[] applicableModifiers() {
-		return new IModuleModifier[]{new ModuleModifierIncreasePotency(), new ModuleModifierIncreaseDuration()};
+	public String[] compatibleModifierClasses() {
+		return new String[]{"modifier_increase_potency", "modifier_extend_time"};
 	}
 
 	@Override

@@ -32,14 +32,8 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.LOOK;
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
+@RegisterModule(ID="shape_touch")
 public class ModuleShapeTouch implements IModuleShape {
-
-	@Nonnull
-	@Override
-	public String getClassID() {
-		return "shape_touch";
-	}
 
 	@Override
 	public boolean run(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {

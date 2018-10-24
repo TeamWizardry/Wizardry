@@ -10,7 +10,7 @@ public interface IModule {
 	 * @return Any set with applicable ModuleModifiers.
 	 */
 	@Nullable
-	default String[] applicableModifiers() {
+	default String[] compatibleModifierClasses() {
 		return null;
 	}
 	

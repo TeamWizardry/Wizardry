@@ -40,18 +40,12 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ORIGIN;
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
+@RegisterModule(ID="effect_anti_gravity_well")
 public class ModuleEffectAntiGravityWell implements IModuleEffect, ILingeringModule {
 
-	@Nonnull
 	@Override
-	public String getClassID() {
-		return "effect_anti_gravity_well";
-	}
-
-	@Override
-	public IModuleModifier[] applicableModifiers() {
-		return new IModuleModifier[]{new ModuleModifierIncreaseAOE(), new ModuleModifierIncreasePotency(), new ModuleModifierIncreaseDuration()};
+	public String[] compatibleModifierClasses() {
+		return new String[]{"modifier_increase_aoe", "modifier_increase_potency", "modifier_extend_time"};
 	}
 
 	@Override

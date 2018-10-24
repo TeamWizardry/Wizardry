@@ -35,18 +35,12 @@ import java.util.List;
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
+@RegisterModule(ID="effect_telekinesis")
 public class ModuleEffectTelekinesis implements IModuleEffect, IContinuousModule {
 
-	@Nonnull
 	@Override
-	public String getClassID() {
-		return "effect_telekinesis";
-	}
-
-	@Override
-	public IModuleModifier[] applicableModifiers() {
-		return new IModuleModifier[]{new ModuleModifierIncreaseAOE()};
+	public String[] compatibleModifierClasses() {
+		return new String[]{"modifier_increase_aoe"};
 	}
 
 	@Override

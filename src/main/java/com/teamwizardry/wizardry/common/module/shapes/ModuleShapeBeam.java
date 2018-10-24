@@ -39,7 +39,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.LOOK;
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
+@RegisterModule(ID="shape_beam")
 @Mod.EventBusSubscriber(modid = Wizardry.MODID)
 public class ModuleShapeBeam implements IModuleShape, IContinuousModule {
 
@@ -48,15 +48,9 @@ public class ModuleShapeBeam implements IModuleShape, IContinuousModule {
 
 	public static final HashMap<ItemStack, BeamTicker> beamTickMap = new HashMap<>();
 
-	@Nonnull
 	@Override
-	public String getClassID() {
-		return "shape_beam";
-	}
-
-	@Override
-	public IModuleModifier[] applicableModifiers() {
-		return new IModuleModifier[]{new ModuleModifierIncreaseRange(), new ModuleModifierIncreasePotency()};
+	public String[] compatibleModifierClasses() {
+		return new String[]{"modifier_extend_range", "modifier_increase_potency"};
 	}
 
 	@Override

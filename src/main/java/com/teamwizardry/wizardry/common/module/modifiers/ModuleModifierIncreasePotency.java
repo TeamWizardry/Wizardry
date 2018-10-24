@@ -8,12 +8,6 @@ import javax.annotation.Nonnull;
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
+@RegisterModule(ID="modifier_increase_potency")
 public class ModuleModifierIncreasePotency implements IModuleModifier {
-
-	@Nonnull
-	@Override
-	public String getClassID() {
-		return "modifier_increase_potency";
-	}
 }

@@ -6,6 +6,7 @@ import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
+import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.module.IModuleModifier;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
@@ -24,18 +25,12 @@ import java.awt.*;
 /**
  * Created by Demoniaque.
  */
-//TODO: @RegisterModule
+@RegisterModule(ID="effect_time_lock")
 public class ModuleEffectTimeLock implements IModuleEffect, IDelayedModule {
 
-	@Nonnull
 	@Override
-	public String getClassID() {
-		return "effect_time_lock";
-	}
-
-	@Override
-	public IModuleModifier[] applicableModifiers() {
-		return new IModuleModifier[]{new ModuleModifierIncreaseDuration()};
+	public String[] compatibleModifierClasses() {
+		return new String[]{"modifier_extend_time"};
 	}
 
 	@Override

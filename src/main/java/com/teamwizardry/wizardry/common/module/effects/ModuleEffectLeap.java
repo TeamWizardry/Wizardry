@@ -33,18 +33,12 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.LOOK;
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
+@RegisterModule(ID="effect_leap")
 public class ModuleEffectLeap implements IModuleEffect, IOverrideCooldown {
 
-	@Nonnull
 	@Override
-	public String getClassID() {
-		return "effect_leap";
-	}
-
-	@Override
-	public IModuleModifier[] applicableModifiers() {
-		return new IModuleModifier[]{new ModuleModifierIncreasePotency()};
+	public String[] compatibleModifierClasses() {
+		return new String[]{"modifier_increase_potency"};
 	}
 
 	@Override

@@ -52,19 +52,12 @@ import java.util.Set;
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
+@RegisterModule(ID="effect_substitution")
 public class ModuleEffectSubstitution implements IModuleEffect, IBlockSelectable {
 
-	@Nonnull
 	@Override
-	public String getClassID() {
-		return "effect_substitution";
-	}
-
-
-	@Override
-	public IModuleModifier[] applicableModifiers() {
-		return new IModuleModifier[]{new ModuleModifierIncreaseAOE()};
+	public String[] compatibleModifierClasses() {
+		return new String[]{"modifier_increase_aoe"};
 	}
 
 	@Override

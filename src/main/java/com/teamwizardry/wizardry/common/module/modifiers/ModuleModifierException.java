@@ -8,13 +8,6 @@ import javax.annotation.Nonnull;
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
+@RegisterModule(ID="modifier_exception")
 public class ModuleModifierException implements IModuleModifier {
-
-	@Nonnull
-	@Override
-	public String getClassID() {
-		return "modifier_exception";
-	}
-
 }

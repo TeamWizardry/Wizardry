@@ -36,18 +36,12 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
+@RegisterModule(ID="shape_cone")
 public class ModuleShapeCone implements IModuleShape {
 
-	@Nonnull
 	@Override
-	public String getClassID() {
-		return "shape_cone";
-	}
-
-	@Override
-	public IModuleModifier[] applicableModifiers() {
-		return new IModuleModifier[]{new ModuleModifierIncreasePotency(), new ModuleModifierIncreaseRange()};
+	public String[] compatibleModifierClasses() {
+		return new String[]{"modifier_increase_potency", "modifier_extend_range"};
 	}
 
 	@Override

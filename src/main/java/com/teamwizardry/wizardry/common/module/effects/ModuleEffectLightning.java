@@ -43,7 +43,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
+@RegisterModule(ID="effect_lightning")
 public class ModuleEffectLightning implements IModuleEffect {
 
 	@Override
@@ -61,15 +61,9 @@ public class ModuleEffectLightning implements IModuleEffect {
 		instance.registerRenderOverride("shape_beam", (data, spellRing, childRing) -> {});
 	}
 
-	@Nonnull
 	@Override
-	public String getClassID() {
-		return "effect_lightning";
-	}
-
-	@Override
-	public IModuleModifier[] applicableModifiers() {
-		return new IModuleModifier[]{new ModuleModifierIncreaseRange(), new ModuleModifierIncreasePotency(), new ModuleModifierIncreaseDuration()};
+	public String[] compatibleModifierClasses() {
+		return new String[]{"modifier_extend_range", "modifier_increase_potency", "modifier_extend_time"};
 	}
 
 	private OverrideConsumer<SpellData, SpellRing, SpellRing> getSelfOverride() {

@@ -35,18 +35,12 @@ import javax.annotation.Nonnull;
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
+@RegisterModule(ID="effect_thrive")
 public class ModuleEffectThrive implements IModuleEffect {
 
-	@Nonnull
 	@Override
-	public String getClassID() {
-		return "effect_thrive";
-	}
-
-	@Override
-	public IModuleModifier[] applicableModifiers() {
-		return new IModuleModifier[]{new ModuleModifierIncreasePotency()};
+	public String[] compatibleModifierClasses() {
+		return new String[]{"modifier_increase_potency"};
 	}
 
 	@Override

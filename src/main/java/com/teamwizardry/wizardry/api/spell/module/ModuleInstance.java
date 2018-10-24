@@ -264,6 +264,10 @@ public abstract class ModuleInstance {
 	public final String getID() {
 		return moduleName;
 	}
+	
+	public final String getClassID() {
+		return createdByFactory.getClassID();
+	}
 
 	@Override
 	public final String toString() {
@@ -442,11 +446,11 @@ public abstract class ModuleInstance {
 		if( applicableModifiers == null ) {
 			LinkedList<ModuleInstanceModifier> applicableModifiersList = new LinkedList<>();
 			
-			String[] modifierNames = moduleClass.applicableModifiers();
+			String[] modifierNames = moduleClass.compatibleModifierClasses();
 			if( modifierNames != null ) {
 				for( ModuleInstance mod : ModuleRegistry.INSTANCE.modules ) {
 					for( String modifier : modifierNames ) {
-						if( mod.getID().equals(modifier) ) {
+						if( mod.getClassID().equals(modifier) ) {
 							if( mod instanceof ModuleInstanceModifier ) {
 								// TODO: Log it!
 								continue;

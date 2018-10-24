@@ -13,14 +13,8 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.BLOCK_HI
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
+@RegisterModule(ID="event_collide_entity")
 public class ModuleEventCollideEntity implements IModuleEvent {
-
-	@Nonnull
-	@Override
-	public String getClassID() {
-		return "event_collide_entity";
-	}
 
 	@Override
 	public boolean run(ModuleEvent instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {

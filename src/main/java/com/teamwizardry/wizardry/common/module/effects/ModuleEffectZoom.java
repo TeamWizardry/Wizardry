@@ -42,7 +42,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.constructPair;
  * Created by Demoniaque.
  */
 // TODO: Tracer's blink sound effect
-@RegisterModule
+@RegisterModule(ID="effect_zoom")
 public class ModuleEffectZoom implements IModuleEffect {
 
 	private static final Pair<String, Class<Vec3d>> ORIGINAL_LOC = constructPair("original_loc", Vec3d.class, new ProcessData.Process<NBTTagCompound, Vec3d>() {
@@ -65,15 +65,9 @@ public class ModuleEffectZoom implements IModuleEffect {
 		}
 	});
 
-	@Nonnull
 	@Override
-	public String getClassID() {
-		return "effect_zoom";
-	}
-
-	@Override
-	public IModuleModifier[] applicableModifiers() {
-		return new IModuleModifier[]{new ModuleModifierIncreaseRange()};
+	public String[] compatibleModifierClasses() {
+		return new String[]{"modifier_extend_range"};
 	}
 
 	@Override

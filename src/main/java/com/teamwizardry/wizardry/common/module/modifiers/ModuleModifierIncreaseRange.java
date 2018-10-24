@@ -8,12 +8,6 @@ import javax.annotation.Nonnull;
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
+@RegisterModule(ID="modifier_extend_range")
 public class ModuleModifierIncreaseRange implements IModuleModifier {
-
-	@Nonnull
-	@Override
-	public String getClassID() {
-		return "modifier_extend_range";
-	}
 }
