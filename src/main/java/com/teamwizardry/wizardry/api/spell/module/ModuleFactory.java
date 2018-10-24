@@ -13,9 +13,10 @@ public class ModuleFactory {
 	private final HashMap<String, Field> configurableFields = new HashMap<>();
 	private final String moduleClassID;
 	
-	ModuleFactory(Class<? extends IModule> clazz) throws ModuleInitException {
+	ModuleFactory(String moduleClassID, Class<? extends IModule> clazz) throws ModuleInitException {
 		// NOTE: Instanciable only from ModuleRegistry
 		this.clazz = clazz;
+		this.moduleClassID = moduleClassID;
 		
 		// Determine configurable fields via reflection
 		for(Field field : clazz.getDeclaredFields()) {
@@ -26,12 +27,6 @@ public class ModuleFactory {
 			// Add configuration
 			configurableFields.put(cfg.value(), field);
 		}
-		
-		// TODO: Remove it as soon as IDs are not needed to be stored as member variable
-		IModule deflt = getInstance();
-		if( deflt == null )
-			throw new IllegalStateException("Couldn't initialize default module.");
-		this.moduleClassID = deflt.getClassID();
 	}
 	
 	public Class<? extends IModule> getModuleClass() {
@@ -61,25 +56,21 @@ public class ModuleFactory {
 			
 			// Assign parameter values. Exactly every field must be assigned.
 			// Default instance is always created to retrieve at least spell class ID name.
-			// TODO: Remove this condition and put ID as parameter of RegisterModule instead  
-			if( !params.isEmpty() ) {
+			// TODO: Handle datatypes correctly
+			int countFields = 0;
+			for( Entry<String, Object> entry : params.entrySet() ) {
+				Field field = configurableFields.get(entry.getKey());
+				if( field == null )
+					throw new IllegalArgumentException("Field for configuration '" + entry.getKey() + "' is not existing.");
 				
-				// TODO: Handle datatypes correctly
-				int countFields = 0;
-				for( Entry<String, Object> entry : params.entrySet() ) {
-					Field field = configurableFields.get(entry.getKey());
-					if( field == null )
-						throw new IllegalArgumentException("Field for configuration '" + entry.getKey() + "' is not existing.");
-					
-					field.set(module, entry.getValue());
-					countFields ++;
-				}
-				
-				//
-				if( countFields != configurableFields.size() ) {
-					// NOTE: Throw an exception instead
-					throw new ModuleInitException("Not all configuration fields are mapped for module '" + moduleClassID + "'.");
-				}
+				field.set(module, entry.getValue());
+				countFields ++;
+			}
+			
+			//
+			if( countFields != configurableFields.size() ) {
+				// NOTE: Throw an exception instead
+				throw new ModuleInitException("Not all configuration fields are mapped for module '" + moduleClassID + "'.");
 			}
 		} catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 			e.printStackTrace();

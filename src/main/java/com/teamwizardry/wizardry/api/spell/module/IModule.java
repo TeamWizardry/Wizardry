@@ -10,19 +10,11 @@ public interface IModule {
 	 * @return Any set with applicable ModuleModifiers.
 	 */
 	@Nullable
-	default IModuleModifier[] applicableModifiers() {
-		// TODO: Use string array instead. Later use parameter mapping with asterisks
+	default String[] applicableModifiers() {
 		return null;
 	}
 	
 	default boolean ignoreResultForRendering() {
 		return false;
 	}
-
-	/**
-	 * A lower case snake_case string id that reflects the module to identify it during serialization/deserialization.
-	 *
-	 * @return A lower case snake_case string.
-	 */
-	String getClassID();
 }

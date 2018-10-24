@@ -442,12 +442,15 @@ public abstract class ModuleInstance {
 		if( applicableModifiers == null ) {
 			LinkedList<ModuleInstanceModifier> applicableModifiersList = new LinkedList<>();
 			
-			IModuleModifier[] modifierClasses = moduleClass.applicableModifiers();
-			if( modifierClasses != null ) {
+			String[] modifierNames = moduleClass.applicableModifiers();
+			if( modifierNames != null ) {
 				for( ModuleInstance mod : ModuleRegistry.INSTANCE.modules ) {
-					IModule mc = mod.getModuleClass();
-					for( IModuleModifier modifier : modifierClasses ) {
-						if( mc.getClassID().equals(modifier.getClassID()) ) {
+					for( String modifier : modifierNames ) {
+						if( mod.getID().equals(modifier) ) {
+							if( mod instanceof ModuleInstanceModifier ) {
+								// TODO: Log it!
+								continue;
+							}
 							applicableModifiersList.add((ModuleInstanceModifier)mod);	// Expected to be of type ModuleModifier
 							break;
 						}

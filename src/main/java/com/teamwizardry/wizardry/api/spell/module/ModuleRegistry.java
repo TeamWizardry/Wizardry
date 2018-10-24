@@ -76,8 +76,9 @@ public class ModuleRegistry {
 		IDtoModuleClassFactory.clear();
 		AnnotationHelper.INSTANCE.findAnnotatedClasses(LibrarianLib.PROXY.getAsmDataTable(), IModule.class, RegisterModule.class, (clazz, info) -> {
 			try {
+				String id = info.getString("ID");
 				if( IModule.class.isAssignableFrom(clazz) ) {
-					ModuleFactory entry = new ModuleFactory(clazz);
+					ModuleFactory entry = new ModuleFactory(id, clazz);
 					IDtoModuleClassFactory.put(entry.getClassID(), entry);
 				}
 			}
