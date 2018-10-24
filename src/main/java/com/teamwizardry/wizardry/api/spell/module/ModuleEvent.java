@@ -15,9 +15,9 @@ import net.minecraft.util.ResourceLocation;
 
 public class ModuleEvent extends ModuleInstance {
 	
-	public ModuleEvent(IModuleEvent moduleClass, ItemStack itemStack, String moduleName, ResourceLocation icon, Color primaryColor, Color secondaryColor,
+	public ModuleEvent(IModuleEvent moduleClass, ModuleFactory createdByFactory, ItemStack itemStack, String moduleName, ResourceLocation icon, Color primaryColor, Color secondaryColor,
 			DefaultHashMap<Attribute, AttributeRange> attributeRanges) {
-		super(moduleClass, moduleName, icon, itemStack, primaryColor, secondaryColor, attributeRanges);
+		super(moduleClass, createdByFactory, moduleName, icon, itemStack, primaryColor, secondaryColor, attributeRanges);
 	}
 
 	@Nonnull

@@ -44,7 +44,7 @@ public class ModuleRegistry {
 	public ArrayList<ModuleInstance> modules = new ArrayList<>();
 	public HashMap<Pair<ModuleInstanceShape, ModuleInstanceEffect>, OverrideConsumer<SpellData, SpellRing, SpellRing>> runOverrides = new HashMap<>();
 	public HashMap<Pair<ModuleInstanceShape, ModuleInstanceEffect>, OverrideConsumer<SpellData, SpellRing, SpellRing>> renderOverrides = new HashMap<>();
-	public HashMap<String, ModuleEntry> IDtoModuleClass = new HashMap<>();
+	public HashMap<String, ModuleFactory> IDtoModuleClassFactory = new HashMap<>();
 
 	private ModuleRegistry() {
 	}
@@ -73,23 +73,17 @@ public class ModuleRegistry {
 	}
 
 	public void loadUnprocessedModules() {
-		IDtoModuleClass.clear();
+		IDtoModuleClassFactory.clear();
 		AnnotationHelper.INSTANCE.findAnnotatedClasses(LibrarianLib.PROXY.getAsmDataTable(), IModule.class, RegisterModule.class, (clazz, info) -> {
-//			try {
-/*				Constructor<?> ctor = clazz.getConstructor();
-				Object object = ctor.newInstance();
-				if (object instanceof IModule) {
-					IModule moduleClass = (IModule)object;
-					IDtoModuleClass.put(moduleClass.getClassID(), moduleClass);
-				}*/
+			try {
 				if( IModule.class.isAssignableFrom(clazz) ) {
-					ModuleEntry entry = new ModuleEntry(clazz);
-					IModule deflt = entry.getInstance();
-					IDtoModuleClass.put(deflt.getClassID(), entry);
+					ModuleFactory entry = new ModuleFactory(clazz);
+					IDtoModuleClassFactory.put(entry.getClassID(), entry);
 				}
-//			} catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-//				e.printStackTrace();
-//			}
+			}
+			catch(ModuleInitException exc) {
+				exc.printStackTrace();
+			}
 			return null;
 		});
 	}
@@ -147,8 +141,8 @@ public class ModuleRegistry {
 			}
 			
 			String moduleClassID = moduleObject.get("type").getAsString();
-			ModuleEntry moduleClassEntry = IDtoModuleClass.get(moduleClassID);
-			if (moduleClassEntry == null) {
+			ModuleFactory moduleClassFactory = IDtoModuleClassFactory.get(moduleClassID);
+			if (moduleClassFactory == null) {
 				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! Referenced type " + moduleClassID + " is unknown.");
 				Wizardry.logger.error("| |___ Failed to parse " + fName);
 				continue;
@@ -178,38 +172,42 @@ public class ModuleRegistry {
 				icon = new ResourceLocation(iconID);
 			}
 			
-			// Get optional parameters
+			// Retrieve module using optional parameters
 			IModule moduleClass;
-			if (moduleObject.has("parameters") ) {
-				if( !moduleObject.get("parameters").isJsonObject() ) {
-					Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! Field 'parameters' has an invalid type in " + file.getName() + ". It is expected to be an object.");
-					Wizardry.logger.error("| |___ Failed to register module " + moduleName);
-					continue;
-				}
-				
-				JsonObject parameters = moduleObject.getAsJsonObject("parameters");
-				HashMap<String, Object> keyToValues = new HashMap<>();
-				loadModuleClassParameters(keyToValues, null, parameters );
-				
-				// Test for mappability. Remove unmappable parameters with a warning output
-				Iterator<Entry<String, Object>> iter = keyToValues.entrySet().iterator();
-				while( iter.hasNext() ) {
-					Entry<String, Object> pair = iter.next();
-					if( !moduleClassEntry.hasConfigField(pair.getKey()) ) {
-						Wizardry.logger.warn("| | |_ WARNING: Parameter field '" + pair.getKey() + "' is not supported by type '" + moduleClassID + "'. Field is ignored.");
-						iter.remove();
+			try
+			{
+				if (moduleObject.has("parameters") ) {
+					if( !moduleObject.get("parameters").isJsonObject() ) {
+						Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! Field 'parameters' has an invalid type in " + file.getName() + ". It is expected to be an object.");
+						Wizardry.logger.error("| |___ Failed to register module " + moduleName);
+						continue;
 					}
+					
+					JsonObject parameters = moduleObject.getAsJsonObject("parameters");
+					HashMap<String, Object> keyToValues = new HashMap<>();
+					loadModuleClassParameters(keyToValues, null, parameters );
+					
+					// Test for mappability. Remove unmappable parameters with a warning output
+					Iterator<Entry<String, Object>> iter = keyToValues.entrySet().iterator();
+					while( iter.hasNext() ) {
+						Entry<String, Object> pair = iter.next();
+						if( !moduleClassFactory.hasConfigField(pair.getKey()) ) {
+							Wizardry.logger.warn("| | |_ WARNING: Parameter field '" + pair.getKey() + "' is not supported by type '" + moduleClassID + "'. Field is ignored.");
+							iter.remove();
+						}
+					}
+					
+					// Retrieve or create an instance for each parameter set
+					moduleClass = moduleClassFactory.getInstance(keyToValues);
 				}
-				
-				// Retrieve or create an instance for each parameter set
-				moduleClass = moduleClassEntry.getInstance(keyToValues);
-				if( moduleClass == null )
-					continue;	// Some error happened
+				else {
+					moduleClass = moduleClassFactory.getInstance();
+				}
 			}
-			else {
-				moduleClass = moduleClassEntry.getInstance();
-				if( moduleClass == null )
-					continue;	// Some error happened
+			catch(ModuleInitException exc) {
+				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! " + exc.getMessage());
+				Wizardry.logger.error("| |___ Failed to register module " + moduleName);
+				continue;
 			}
 				
 			
@@ -316,7 +314,7 @@ public class ModuleRegistry {
 				}
 			}
 			
-			ModuleInstance module = ModuleInstance.createInstance(moduleClass, moduleName, icon, new ItemStack(item, 1, itemMeta), primaryColor, secondaryColor, attributeRanges);
+			ModuleInstance module = ModuleInstance.createInstance(moduleClass, moduleClassFactory, moduleName, icon, new ItemStack(item, 1, itemMeta), primaryColor, secondaryColor, attributeRanges);
 
 			if (moduleObject.has("modifiers") && moduleObject.get("modifiers").isJsonArray()) {
 				Wizardry.logger.info(" | | |___ Found Modifiers. About to process them");
@@ -482,78 +480,4 @@ public class ModuleRegistry {
 		}
 	}
 	
-	/////////////
-	
-	private static class ModuleEntry {
-		private final Class<? extends IModule> clazz;
-		private final HashMap<Map<String, Object>, IModule> instances = new HashMap<>();
-		private final HashMap<String, Field> configurableFields = new HashMap<>();
-		
-		ModuleEntry(Class<? extends IModule> clazz) {
-			this.clazz = clazz;
-			
-			// Determine configurable fields via reflection
-			for(Field field : clazz.getDeclaredFields()) {
-//				Annotation[] annots = field.getAnnotationsByType(ConfigField.class);
-				ConfigField cfg = field.getDeclaredAnnotation(ConfigField.class);
-//				if( annots.length > 1 )
-//					throw new IllegalStateException("Expected maximal one annotation of type ConfigField for field '" + field.getName() + "'");
-//				if( annots.length <= 0 )
-//					continue;
-//				String configName = ((ConfigField)annots[0]).value();
-				if( cfg == null )
-					continue;
-				
-				// Add configuration
-				configurableFields.put(cfg.value(), field);
-			}
-		}
-		
-		public boolean hasConfigField(String key) {
-			return configurableFields.containsKey(key);
-		}
-
-		IModule getInstance() {
-			return getInstance(new HashMap<>());
-		}
-		
-		IModule getInstance(HashMap<String, Object> params) {
-			IModule module = instances.get(params);
-			if( module != null )
-				return module;
-			
-			try {
-				Constructor<?> ctor = clazz.getConstructor();
-				module = (IModule)ctor.newInstance();
-				
-				// Assign parameter values. Exactly every field must be assigned.
-				// Default instance is always created to retrieve at least spell class ID name.
-				// TODO: Remove this condition and put ID as parameter of RegisterModule instead  
-				if( !params.isEmpty() ) {
-					int countFields = 0;
-					for( Entry<String, Object> entry : params.entrySet() ) {
-						Field field = configurableFields.get(entry.getKey());
-						if( field == null )
-							throw new IllegalArgumentException("Field for configuration '" + entry.getKey() + "' is not existing.");
-						
-						field.set(module, entry.getValue());
-						countFields ++;
-					}
-					
-					//
-					if( countFields != configurableFields.size() ) {
-						// TODO: Display error ...
-						return null;
-					}
-				}
-			} catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-				e.printStackTrace();
-				// TODO: Display error ...
-				return null;
-			}
-			
-			instances.put(params, module);
-			return module;
-		}
-	}
 }

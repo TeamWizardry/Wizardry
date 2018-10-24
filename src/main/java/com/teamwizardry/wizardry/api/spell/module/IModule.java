@@ -11,6 +11,7 @@ public interface IModule {
 	 */
 	@Nullable
 	default IModuleModifier[] applicableModifiers() {
+		// TODO: Use string array instead. Later use parameter mapping with asterisks
 		return null;
 	}
 	

@@ -58,6 +58,7 @@ import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 public abstract class ModuleInstance {
 
 	protected final String moduleName;
+	protected final ModuleFactory createdByFactory;
 	protected final IModule moduleClass;
 	protected final ResourceLocation icon;
 	protected final List<AttributeModifier> attributes = new ArrayList<>();
@@ -78,6 +79,7 @@ public abstract class ModuleInstance {
 	}
 	
 	static ModuleInstance createInstance(IModule moduleClass,
+			ModuleFactory createdByFactory,
 			String moduleName,
 			ResourceLocation icon,
 			ItemStack itemStack,
@@ -85,18 +87,19 @@ public abstract class ModuleInstance {
             Color secondaryColor,
             DefaultHashMap<Attribute, AttributeRange> attributeRanges) {
 		if( moduleClass instanceof IModuleEffect )
-			return new ModuleInstanceEffect((IModuleEffect)moduleClass, moduleName, icon, itemStack, primaryColor, secondaryColor, attributeRanges);
+			return new ModuleInstanceEffect((IModuleEffect)moduleClass, createdByFactory, moduleName, icon, itemStack, primaryColor, secondaryColor, attributeRanges);
 		else if( moduleClass instanceof IModuleModifier )
-			return new ModuleInstanceModifier((IModuleModifier)moduleClass, moduleName, icon, itemStack, primaryColor, secondaryColor, attributeRanges);
+			return new ModuleInstanceModifier((IModuleModifier)moduleClass, createdByFactory, moduleName, icon, itemStack, primaryColor, secondaryColor, attributeRanges);
 		else if( moduleClass instanceof IModuleEvent )
-			return new ModuleEvent((IModuleEvent)moduleClass, itemStack, moduleName, icon, primaryColor, secondaryColor, attributeRanges);
+			return new ModuleEvent((IModuleEvent)moduleClass, createdByFactory, itemStack, moduleName, icon, primaryColor, secondaryColor, attributeRanges);
 		else if( moduleClass instanceof IModuleShape )
-			return new ModuleInstanceShape((IModuleShape)moduleClass, itemStack, moduleName, icon, primaryColor, secondaryColor, attributeRanges);
+			return new ModuleInstanceShape((IModuleShape)moduleClass, createdByFactory, itemStack, moduleName, icon, primaryColor, secondaryColor, attributeRanges);
 		else
 			throw new UnsupportedOperationException("Unknown module type.");
 	}
 
 	protected ModuleInstance(IModule moduleClass,
+			      ModuleFactory createdByFactory,
 				  String moduleName,
 				  ResourceLocation icon,
 				  ItemStack itemStack,
@@ -104,6 +107,7 @@ public abstract class ModuleInstance {
 	              Color secondaryColor,
 	              DefaultHashMap<Attribute, AttributeRange> attributeRanges) {
 		this.moduleClass = moduleClass;
+		this.createdByFactory = createdByFactory;
 		this.moduleName = moduleName;
 		this.icon = icon;
 		this.itemStack = itemStack;

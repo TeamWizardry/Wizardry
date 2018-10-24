@@ -14,9 +14,9 @@ import javax.annotation.Nonnull;
 
 public class ModuleInstanceModifier extends ModuleInstance {
 
-	public ModuleInstanceModifier(IModuleModifier moduleClass, String moduleName, ResourceLocation icon, ItemStack itemStack, Color primaryColor, Color secondaryColor,
+	public ModuleInstanceModifier(IModuleModifier moduleClass, ModuleFactory createdByFactory, String moduleName, ResourceLocation icon, ItemStack itemStack, Color primaryColor, Color secondaryColor,
 			DefaultHashMap<Attribute, AttributeRange> attributeRanges) {
-		super(moduleClass, moduleName, icon, itemStack, primaryColor, secondaryColor, attributeRanges);
+		super(moduleClass, createdByFactory, moduleName, icon, itemStack, primaryColor, secondaryColor, attributeRanges);
 	}
 
 	@Nonnull
