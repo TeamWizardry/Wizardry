@@ -1,6 +1,6 @@
 {
-  "name": "effect_anti_gravity_well",
-  "type": "effect_anti_gravity_well",
+  "sub_module_id": "effect_anti_gravity_well",
+  "reference_module_id": "effect_anti_gravity_well",
   "item": "wizardry:bomb",
   "meta": "1",
   "primary_color": "0015ff",

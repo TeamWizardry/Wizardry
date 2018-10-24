@@ -1,6 +1,6 @@
 {
-  "name": "effect_frost",
-  "type": "effect_frost",
+  "sub_module_id": "effect_frost",
+  "reference_module_id": "effect_frost",
   "item": "minecraft:snowball",
   "primary_color": "FFFFFF",
   "secondary_color": "FFFFFF",

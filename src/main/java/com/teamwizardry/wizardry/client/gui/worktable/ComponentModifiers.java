@@ -171,24 +171,24 @@ public class ComponentModifiers extends GuiComponent {
 					if (!event.component.getMouseOver()) return;
 					if (worktable.selectedModule == null) return;
 
-					int j = worktable.selectedModule.hasData(Integer.class, modifier.getID()) ? worktable.selectedModule.getData(Integer.class, modifier.getID()) : 0;
+					int j = worktable.selectedModule.hasData(Integer.class, modifier.getSubModuleID()) ? worktable.selectedModule.getData(Integer.class, modifier.getSubModuleID()) : 0;
 
 					int status = -1;
 					if (event.getButton() == EnumMouseButton.LEFT) {
 						Minecraft.getMinecraft().player.playSound(ModSounds.POP, 1f, 1f);
-						worktable.selectedModule.setData(Integer.class, modifier.getID(), ++j);
+						worktable.selectedModule.setData(Integer.class, modifier.getSubModuleID(), ++j);
 						status = 0;
 						worktable.setToastMessage("", Color.GREEN);
 						worktable.syncToServer();
 					} else if (event.getButton() == EnumMouseButton.RIGHT) {
-						if (worktable.selectedModule.hasData(Integer.class, modifier.getID())) {
+						if (worktable.selectedModule.hasData(Integer.class, modifier.getSubModuleID())) {
 
 							if (j > 0) {
 								Minecraft.getMinecraft().player.playSound(ModSounds.ZOOM, 1f, 1f);
-								worktable.selectedModule.setData(Integer.class, modifier.getID(), --j);
+								worktable.selectedModule.setData(Integer.class, modifier.getSubModuleID(), --j);
 
 								if (j <= 0) {
-									worktable.selectedModule.removeData(Integer.class, modifier.getID());
+									worktable.selectedModule.removeData(Integer.class, modifier.getSubModuleID());
 								}
 								status = 1;
 								worktable.syncToServer();

@@ -12,12 +12,12 @@ public class ModuleFactory {
 	private final Class<? extends IModule> clazz;
 	private final HashMap<Map<String, Object>, IModule> instances = new HashMap<>();
 	private final HashMap<String, Field> configurableFields = new HashMap<>();
-	private final String moduleClassID;
+	private final String referenceModuleID;
 	
-	ModuleFactory(String moduleClassID, Class<? extends IModule> clazz) throws ModuleInitException {
+	ModuleFactory(String referenceModuleID, Class<? extends IModule> clazz) throws ModuleInitException {
 		// NOTE: Instanciable only from ModuleRegistry
 		this.clazz = clazz;
-		this.moduleClassID = moduleClassID;
+		this.referenceModuleID = referenceModuleID;
 		
 		// Determine configurable fields via reflection
 		for(Field field : clazz.getDeclaredFields()) {
@@ -34,8 +34,8 @@ public class ModuleFactory {
 		return clazz;
 	}
 	
-	public String getClassID() {
-		return moduleClassID;
+	public String getReferenceModuleID() {
+		return referenceModuleID;
 	}
 	
 	public boolean hasConfigField(String key) {
@@ -80,7 +80,7 @@ public class ModuleFactory {
 					}
 					
 					if( !found )
-						throw new ModuleInitException("Unknown enumeration value '" + strValue + "' for field '" + cfgField.getKey() + "' in '" + moduleClassID + "'.");
+						throw new ModuleInitException("Unknown enumeration value '" + strValue + "' for field '" + cfgField.getKey() + "' in '" + referenceModuleID + "'.");
 				}
 				else {
 					if( value instanceof Number ) {
@@ -98,7 +98,7 @@ public class ModuleFactory {
 						else if( field.getType().equals(String.class) )
 							field.set(module, number.toString());
 						else
-							throw new ModuleInitException("Incompatible datatype for field '" + cfgField.getKey() + "' in '" + moduleClassID + "'. Configuration is a number.");
+							throw new ModuleInitException("Incompatible datatype for field '" + cfgField.getKey() + "' in '" + referenceModuleID + "'. Configuration is a number.");
 					}
 					else if( value instanceof String )
 						field.set(module, value);
@@ -109,10 +109,10 @@ public class ModuleFactory {
 						else if( field.getType().equals(String.class) )
 							field.set(module, bval.toString());
 						else
-							throw new ModuleInitException("Incompatible datatype for field '" + cfgField.getKey() + "' in '" + moduleClassID + "'. Configuration is a boolean.");
+							throw new ModuleInitException("Incompatible datatype for field '" + cfgField.getKey() + "' in '" + referenceModuleID + "'. Configuration is a boolean.");
 					}
 					else
-						throw new ModuleInitException("Incompatible datatype for field '" + cfgField.getKey() + "' in '" + moduleClassID + "'. Configuration has an unknown value type.");
+						throw new ModuleInitException("Incompatible datatype for field '" + cfgField.getKey() + "' in '" + referenceModuleID + "'. Configuration has an unknown value type.");
 				}
 				countFields ++;
 			}
@@ -120,10 +120,10 @@ public class ModuleFactory {
 			// Check that all fields are mapped.
 			if( countFields != configurableFields.size() ) {
 				// NOTE: Throw an exception instead
-				throw new ModuleInitException("Unknown field mappings exist for module '" + moduleClassID + "'.");
+				throw new ModuleInitException("Unknown field mappings exist for module '" + referenceModuleID + "'.");
 			}
 		} catch (Exception e) {
-			throw new ModuleInitException("Couldn't initialize module '" + moduleClassID + "'. See cause.", e);
+			throw new ModuleInitException("Couldn't initialize module '" + referenceModuleID + "'. See cause.", e);
 		}
 		
 		instances.put(params, module);

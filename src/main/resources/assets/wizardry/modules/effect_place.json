@@ -1,6 +1,6 @@
 {
-  "name": "effect_place",
-  "type": "effect_place",
+  "sub_module_id": "effect_place",
+  "reference_module_id": "effect_place",
   "item": "minecraft:clay",
   "primary_color": "2EFFFF",
   "secondary_color": "F3FFFF",

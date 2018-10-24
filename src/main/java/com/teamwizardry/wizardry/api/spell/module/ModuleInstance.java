@@ -57,7 +57,7 @@ import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
  */
 public abstract class ModuleInstance {
 
-	protected final String moduleName;
+	protected final String subModuleID;
 	protected final ModuleFactory createdByFactory;
 	protected final IModule moduleClass;
 	protected final ResourceLocation icon;
@@ -80,20 +80,20 @@ public abstract class ModuleInstance {
 	
 	static ModuleInstance createInstance(IModule moduleClass,
 			ModuleFactory createdByFactory,
-			String moduleName,
+			String subModuleID,
 			ResourceLocation icon,
 			ItemStack itemStack,
             Color primaryColor,
             Color secondaryColor,
             DefaultHashMap<Attribute, AttributeRange> attributeRanges) {
 		if( moduleClass instanceof IModuleEffect )
-			return new ModuleInstanceEffect((IModuleEffect)moduleClass, createdByFactory, moduleName, icon, itemStack, primaryColor, secondaryColor, attributeRanges);
+			return new ModuleInstanceEffect((IModuleEffect)moduleClass, createdByFactory, subModuleID, icon, itemStack, primaryColor, secondaryColor, attributeRanges);
 		else if( moduleClass instanceof IModuleModifier )
-			return new ModuleInstanceModifier((IModuleModifier)moduleClass, createdByFactory, moduleName, icon, itemStack, primaryColor, secondaryColor, attributeRanges);
+			return new ModuleInstanceModifier((IModuleModifier)moduleClass, createdByFactory, subModuleID, icon, itemStack, primaryColor, secondaryColor, attributeRanges);
 		else if( moduleClass instanceof IModuleEvent )
-			return new ModuleEvent((IModuleEvent)moduleClass, createdByFactory, itemStack, moduleName, icon, primaryColor, secondaryColor, attributeRanges);
+			return new ModuleInstanceEvent((IModuleEvent)moduleClass, createdByFactory, itemStack, subModuleID, icon, primaryColor, secondaryColor, attributeRanges);
 		else if( moduleClass instanceof IModuleShape )
-			return new ModuleInstanceShape((IModuleShape)moduleClass, createdByFactory, itemStack, moduleName, icon, primaryColor, secondaryColor, attributeRanges);
+			return new ModuleInstanceShape((IModuleShape)moduleClass, createdByFactory, itemStack, subModuleID, icon, primaryColor, secondaryColor, attributeRanges);
 		else
 			throw new UnsupportedOperationException("Unknown module type.");
 	}
@@ -108,7 +108,7 @@ public abstract class ModuleInstance {
 	              DefaultHashMap<Attribute, AttributeRange> attributeRanges) {
 		this.moduleClass = moduleClass;
 		this.createdByFactory = createdByFactory;
-		this.moduleName = moduleName;
+		this.subModuleID = moduleName;
 		this.icon = icon;
 		this.itemStack = itemStack;
 		this.primaryColor = primaryColor;
@@ -261,17 +261,17 @@ public abstract class ModuleInstance {
 	 *
 	 * @return A lower case snake_case string.
 	 */
-	public final String getID() {
-		return moduleName;
+	public final String getSubModuleID() {
+		return subModuleID;
 	}
 	
-	public final String getClassID() {
-		return createdByFactory.getClassID();
+	public final String getReferenceModuleID() {
+		return createdByFactory.getReferenceModuleID();
 	}
 
 	@Override
 	public final String toString() {
-		return getID();
+		return getSubModuleID();
 	}
 
 	/**
@@ -287,7 +287,7 @@ public abstract class ModuleInstance {
 	 */
 	@Nonnull
 	public final String getNameKey() {
-		return "wizardry.spell." + moduleName + ".name";
+		return "wizardry.spell." + subModuleID + ".name";
 	}
 
 	/**
@@ -450,7 +450,7 @@ public abstract class ModuleInstance {
 			if( modifierNames != null ) {
 				for( ModuleInstance mod : ModuleRegistry.INSTANCE.modules ) {
 					for( String modifier : modifierNames ) {
-						if( mod.getClassID().equals(modifier) ) {
+						if( mod.getReferenceModuleID().equals(modifier) ) {
 							if( !(mod instanceof ModuleInstanceModifier) ) {
 								// TODO: Log it!
 								continue;
@@ -472,7 +472,7 @@ public abstract class ModuleInstance {
 	 */
 	@Nonnull
 	public final String getDescriptionKey() {
-		return "wizardry.spell." + moduleName + ".desc";
+		return "wizardry.spell." + subModuleID + ".desc";
 	}
 
 	@Nonnull
@@ -592,12 +592,12 @@ public abstract class ModuleInstance {
 
 	@Nonnull
 	public final NBTTagString serialize() {
-		return new NBTTagString(getID());
+		return new NBTTagString(getSubModuleID());
 	}
 
 	public ResourceLocation getIconLocation() {
 		if( icon == null )
-			return new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/icons/" + getID() + ".png");
+			return new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/icons/" + getSubModuleID() + ".png");
 		return icon;
 	}
 }

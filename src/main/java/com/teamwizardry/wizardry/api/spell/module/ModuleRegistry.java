@@ -47,7 +47,7 @@ public class ModuleRegistry {
 	}
 
 	public ModuleInstance getModule(String id) {
-		for (ModuleInstance module : modules) if (module.getID().equals(id)) return module;
+		for (ModuleInstance module : modules) if (module.getSubModuleID().equals(id)) return module;
 		return null;
 	}
 
@@ -135,13 +135,13 @@ public class ModuleRegistry {
 			JsonObject moduleObject = element.getAsJsonObject();
 
 			// Get Class ID
-			if (!moduleObject.has("type") || !moduleObject.get("type").isJsonPrimitive() ) {
-				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! No valid 'type' key found in " + file.getName() + ". Unknown module class to use for element.");
+			if (!moduleObject.has("reference_module_id") || !moduleObject.get("reference_module_id").isJsonPrimitive() ) {
+				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! No valid 'reference_module_id' key found in " + file.getName() + ". Unknown module class to use for element.");
 				Wizardry.logger.error("| |___ Failed to parse " + fName);
 				continue;
 			}
 			
-			String moduleClassID = moduleObject.get("type").getAsString();
+			String moduleClassID = moduleObject.get("reference_module_id").getAsString();
 			ModuleFactory moduleClassFactory = IDtoModuleClassFactory.get(moduleClassID);
 			if (moduleClassFactory == null) {
 				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! Referenced type " + moduleClassID + " is unknown.");
@@ -150,13 +150,13 @@ public class ModuleRegistry {
 			}
 
 			// Get Name
-			if (!moduleObject.has("name") || !moduleObject.get("name").isJsonPrimitive() ) {
-				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! No valid 'name' key found in " + file.getName() + ". Unknown name to use for element.");
+			if (!moduleObject.has("sub_module_id") || !moduleObject.get("sub_module_id").isJsonPrimitive() ) {
+				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! No valid 'sub_module_id' key found in " + file.getName() + ". Unknown name to use for element.");
 				Wizardry.logger.error("| |___ Failed to parse " + fName);
 				continue;
 			}
 			
-			String moduleName = moduleObject.get("name").getAsString();
+			String moduleName = moduleObject.get("sub_module_id").getAsString();
 
 			Wizardry.logger.info(" | | |_ Registering module " + moduleName + " of class " + moduleClassID);
 			
@@ -354,7 +354,7 @@ public class ModuleRegistry {
 			Wizardry.logger.info(" | |_ Module " + moduleName + " registered successfully!");
 		}
 
-		modules.sort(Comparator.comparing(ModuleInstance::getID));
+		modules.sort(Comparator.comparing(ModuleInstance::getSubModuleID));
 
 		Wizardry.logger.info(" |");
 		Wizardry.logger.info(" | Module registration processing complete! (ᵔᴥᵔ)");
@@ -429,18 +429,18 @@ public class ModuleRegistry {
 	
 	public void copyMissingModules(File directory) {
 		for (ModuleInstance module : modules) {
-			File file = new File(directory + "/modules/", module.getID() + ".json");
+			File file = new File(directory + "/modules/", module.getSubModuleID() + ".json");
 			if (file.exists()) continue;
 
-			InputStream stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "modules/" + module.getID() + ".json");
+			InputStream stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "modules/" + module.getSubModuleID() + ".json");
 			if (stream == null) {
-				Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not read module " + module.getID() + " from mod jar! Report this to the devs on Github!");
+				Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not read module " + module.getSubModuleID() + " from mod jar! Report this to the devs on Github!");
 				continue;
 			}
 
 			try {
 				FileUtils.copyInputStreamToFile(stream, file);
-				Wizardry.logger.info("    > Module " + module.getID() + " copied successfully from mod jar.");
+				Wizardry.logger.info("    > Module " + module.getSubModuleID() + " copied successfully from mod jar.");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -451,17 +451,17 @@ public class ModuleRegistry {
 	{
 		for (ModuleInstance module : modules)
 		{
-			InputStream stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "modules/" + module.getID() + ".json");
+			InputStream stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "modules/" + module.getSubModuleID() + ".json");
 			if (stream == null)
 			{
-				Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not read module " + module.getID() + " from mod jar! Report this to the devs on Github!");
+				Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not read module " + module.getSubModuleID() + " from mod jar! Report this to the devs on Github!");
 				continue;
 			}
 			
 			try
 			{
-				FileUtils.copyInputStreamToFile(stream, new File(directory + "/modules/", module.getID() + ".json"));
-				Wizardry.logger.info("    > Module " + module.getID() + " copied successfully from mod jar.");
+				FileUtils.copyInputStreamToFile(stream, new File(directory + "/modules/", module.getSubModuleID() + ".json"));
+				Wizardry.logger.info("    > Module " + module.getSubModuleID() + " copied successfully from mod jar.");
 			}
 			catch (IOException e)
 			{

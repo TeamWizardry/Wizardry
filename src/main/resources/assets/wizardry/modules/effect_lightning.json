@@ -1,6 +1,6 @@
 {
-  "name": "effect_lightning",
-  "type": "effect_lightning",
+  "sub_module_id": "effect_lightning",
+  "reference_module_id": "effect_lightning",
   "item": "minecraft:ice",
   "mana_drain": 200.0,
   "burnout_fill": 100.0,

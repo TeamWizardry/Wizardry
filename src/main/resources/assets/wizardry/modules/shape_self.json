@@ -1,6 +1,6 @@
 {
-  "name": "shape_self",
-  "type": "shape_self",
+  "sub_module_id": "shape_self",
+  "reference_module_id": "shape_self",
   "item": "minecraft:diamond",
   "mana": {
     "base": 30

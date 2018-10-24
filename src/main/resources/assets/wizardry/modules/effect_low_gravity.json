@@ -1,6 +1,6 @@
 {
-  "name": "effect_low_gravity",
-  "type": "effect_low_gravity",
+  "sub_module_id": "effect_low_gravity",
+  "reference_module_id": "effect_low_gravity",
   "item": "minecraft:feather",
   "mana_drain": 200.0,
   "burnout_fill": 100.0,

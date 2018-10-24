@@ -1,6 +1,6 @@
 {
-  "name": "modifier_increase_speed",
-  "type": "modifier_increase_speed",
+  "sub_module_id": "modifier_increase_speed",
+  "reference_module_id": "modifier_increase_speed",
   "item": "minecraft:dragon_breath",
   "modifiers": [
     {

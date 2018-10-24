@@ -8,7 +8,7 @@ import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.module.IModuleEvent;
-import com.teamwizardry.wizardry.api.spell.module.ModuleEvent;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEvent;
 
 import net.minecraft.util.math.BlockPos;
 
@@ -19,7 +19,7 @@ import net.minecraft.util.math.BlockPos;
 public class ModuleEventCollideBlock implements IModuleEvent {
 
 	@Override
-	public boolean run(ModuleEvent module, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(ModuleInstanceEvent module, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		BlockPos pos = spell.getTargetPos();
 		spell.removeData(ENTITY_HIT);
 		return pos != null;

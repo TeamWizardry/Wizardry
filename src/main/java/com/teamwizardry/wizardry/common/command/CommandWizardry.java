@@ -98,7 +98,7 @@ public class CommandWizardry extends CommandBase {
 			notifyCommandListener(sender, this, TextFormatting.YELLOW + " ________________________________________________\\\\");
 			notifyCommandListener(sender, this, TextFormatting.YELLOW + " | " + TextFormatting.GRAY + "Module List");
 			for (ModuleInstance module : ModuleRegistry.INSTANCE.modules) {
-				notifyCommandListener(sender, this, TextFormatting.YELLOW + " | |_ " + TextFormatting.GREEN + module.getID() + TextFormatting.RESET + ": " + TextFormatting.GRAY + module.getReadableName());
+				notifyCommandListener(sender, this, TextFormatting.YELLOW + " | |_ " + TextFormatting.GREEN + module.getSubModuleID() + TextFormatting.RESET + ": " + TextFormatting.GRAY + module.getReadableName());
 			}
 			notifyCommandListener(sender, this, TextFormatting.YELLOW + " |________________________________________________//");
 
@@ -135,7 +135,7 @@ public class CommandWizardry extends CommandBase {
 			if (modifierList != null) {
 				notifyCommandListener(sender, this, TextFormatting.YELLOW + " |  |_ " + TextFormatting.GREEN + "Applicable Modifiers ");
 				for (ModuleInstanceModifier modifier : modifierList)
-					notifyCommandListener(sender, this, TextFormatting.YELLOW + " |     |_ " + TextFormatting.DARK_GREEN + modifier.getID());
+					notifyCommandListener(sender, this, TextFormatting.YELLOW + " |     |_ " + TextFormatting.DARK_GREEN + modifier.getSubModuleID());
 			}
 			notifyCommandListener(sender, this, TextFormatting.YELLOW + " |________________________________________________//");
 		} else {
