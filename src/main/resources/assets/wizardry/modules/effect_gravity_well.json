@@ -1,6 +1,6 @@
 {
-  "name": "effect_gravity_well",
-  "type": "effect_gravity_well",
+  "sub_module_id": "effect_gravity_well",
+  "reference_module_id": "effect_gravity_well",
   "item": "wizardry:bomb",
   "meta": "0",
   "primary_color": "ff0000",

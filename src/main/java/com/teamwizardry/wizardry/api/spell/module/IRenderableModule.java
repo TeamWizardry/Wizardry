@@ -5,6 +5,14 @@ import javax.annotation.Nonnull;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 
+/**
+ * Interface for module features related to rendering. <br />
+ * <b>NOTE</b>: Shouldn't be derived directly from. Instead use one of interface derivatives from same package.
+ * 
+ * @author Avatair
+ *
+ * @param <InstanceType> the associated instance class.
+ */
 public interface IRenderableModule<InstanceType extends ModuleInstance> {
 	
 	/**

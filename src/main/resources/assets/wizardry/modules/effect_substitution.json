@@ -1,6 +1,6 @@
 {
-  "name": "effect_substitution",
-  "type": "effect_substitution",
+  "sub_module_id": "effect_substitution",
+  "reference_module_id": "effect_substitution",
   "item": "minecraft:ender_eye",
   "primary_color": "FF0000",
   "secondary_color": "00FFFF",

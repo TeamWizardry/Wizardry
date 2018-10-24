@@ -223,9 +223,9 @@ public class WorktableGui extends GuiBase {
 
 						for (ModuleInstance module : ModuleRegistry.INSTANCE.getModules(ModuleType.MODIFIER)) {
 							if (!(module instanceof ModuleInstanceModifier)) continue;
-							if (!lastModule.hasData(Integer.class, module.getID())) continue;
+							if (!lastModule.hasData(Integer.class, module.getSubModuleID())) continue;
 
-							int count = lastModule.getData(Integer.class, module.getID());
+							int count = lastModule.getData(Integer.class, module.getSubModuleID());
 
 							for (int i = 0; i < count; i++) {
 								chain.add(module);
@@ -546,7 +546,7 @@ public class WorktableGui extends GuiBase {
 						drag.setDragOffset(new Vec2d(6, 6));
 
 						for (ModuleInstanceModifier modifier : commonModule.modifiers.keySet()) {
-							lastModule.setData(Integer.class, modifier.getID(), commonModule.modifiers.get(modifier));
+							lastModule.setData(Integer.class, modifier.getSubModuleID(), commonModule.modifiers.get(modifier));
 						}
 
 						if (commonModule.linksTo != null) {
@@ -581,9 +581,9 @@ public class WorktableGui extends GuiBase {
 
 				for (ModuleInstance module : ModuleRegistry.INSTANCE.getModules(ModuleType.MODIFIER)) {
 					if (!(module instanceof ModuleInstanceModifier)) continue;
-					if (!lastModule.hasData(Integer.class, module.getID())) continue;
+					if (!lastModule.hasData(Integer.class, module.getSubModuleID())) continue;
 
-					int count = lastModule.getData(Integer.class, module.getID());
+					int count = lastModule.getData(Integer.class, module.getSubModuleID());
 
 					lastCommonModule.addModifier((ModuleInstanceModifier) module, count);
 				}
@@ -624,9 +624,9 @@ public class WorktableGui extends GuiBase {
 
 				for (ModuleInstance module : ModuleRegistry.INSTANCE.getModules(ModuleType.MODIFIER)) {
 					if (!(module instanceof ModuleInstanceModifier)) continue;
-					if (!lastModule.hasData(Integer.class, module.getID())) continue;
+					if (!lastModule.hasData(Integer.class, module.getSubModuleID())) continue;
 
-					int count = lastModule.getData(Integer.class, module.getID());
+					int count = lastModule.getData(Integer.class, module.getSubModuleID());
 
 					for (int i = 0; i < count; i++) {
 						chain.add(module);
@@ -833,8 +833,8 @@ public class WorktableGui extends GuiBase {
 					fakePaper.add(fakeModule);
 
 					for (ModuleInstance module : ModuleRegistry.INSTANCE.getModules(ModuleType.MODIFIER)) {
-						if (tableModule.hasData(Integer.class, module.getID())) {
-							fakeModule.setData(Integer.class, module.getID(), tableModule.getData(Integer.class, module.getID()));
+						if (tableModule.hasData(Integer.class, module.getSubModuleID())) {
+							fakeModule.setData(Integer.class, module.getSubModuleID(), tableModule.getData(Integer.class, module.getSubModuleID()));
 						}
 					}
 
@@ -1050,7 +1050,7 @@ public class WorktableGui extends GuiBase {
 						lastModule.setData(Vec2d.class, "true_pos", commonModule.pos);
 
 						for (ModuleInstanceModifier modifier : commonModule.modifiers.keySet()) {
-							lastModule.setData(Integer.class, modifier.getID(), commonModule.modifiers.get(modifier));
+							lastModule.setData(Integer.class, modifier.getSubModuleID(), commonModule.modifiers.get(modifier));
 						}
 
 						lastModule.radius = 0;

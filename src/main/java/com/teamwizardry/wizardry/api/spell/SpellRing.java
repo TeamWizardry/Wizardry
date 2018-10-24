@@ -307,7 +307,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 				informationTag.setDouble(modifier.getAttribute().getNbtName(), newValue);
 
-				Wizardry.logger.info(module == null ? "<null module>" : module.getID() + ": Attribute: " + modifier.getAttribute() + ": " + current + "-> " + newValue);
+				Wizardry.logger.info(module == null ? "<null module>" : module.getSubModuleID() + ": Attribute: " + modifier.getAttribute() + ": " + current + "-> " + newValue);
 			}
 		}
 	}
@@ -517,7 +517,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		compound.setString("secondary_color", String.valueOf(secondaryColor.getRGB()));
 
 		if (childRing != null) compound.setTag("child_ring", this.childRing.serializeNBT());
-		if (module != null) compound.setString("module", module.getID());
+		if (module != null) compound.setString("module", module.getSubModuleID());
 
 		return compound;
 	}

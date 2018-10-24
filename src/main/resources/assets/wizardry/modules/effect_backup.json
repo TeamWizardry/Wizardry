@@ -1,6 +1,6 @@
 {
-  "name": "effect_backup",
-  "type": "effect_backup",
+  "sub_module_id": "effect_backup",
+  "reference_module_id": "effect_backup",
   "item": "minecraft:rotten_flesh",
   "primary_color": "381700",
   "secondary_color": "8e0000",

@@ -23,9 +23,9 @@ public class ModuleInstanceEffect extends ModuleInstance {
 	protected HashMap<String, OverrideConsumer<SpellData, SpellRing, SpellRing>> runOverrides = new HashMap<>();
 	protected HashMap<String, OverrideConsumer<SpellData, SpellRing, SpellRing>> renderOverrides = new HashMap<>();
 
-	public ModuleInstanceEffect(IModuleEffect moduleClass, String moduleName, ResourceLocation icon, ItemStack itemStack, Color primaryColor, Color secondaryColor,
+	public ModuleInstanceEffect(IModuleEffect moduleClass, ModuleFactory createdByFactory, String subModuleID, ResourceLocation icon, ItemStack itemStack, Color primaryColor, Color secondaryColor,
 			DefaultHashMap<Attribute, AttributeRange> attributeRanges) {
-		super(moduleClass, moduleName, icon, itemStack, primaryColor, secondaryColor, attributeRanges);
+		super(moduleClass, createdByFactory, subModuleID, icon, itemStack, primaryColor, secondaryColor, attributeRanges);
 		moduleClass.initEffect(this);
 	}
 	

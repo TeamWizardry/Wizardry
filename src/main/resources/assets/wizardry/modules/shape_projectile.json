@@ -1,6 +1,6 @@
 {
-  "name": "shape_projectile",
-  "type": "shape_projectile",
+  "sub_module_id": "shape_projectile",
+  "reference_module_id": "shape_projectile",
   "item": "minecraft:nether_wart",
   "mana": {
     "base": 50

@@ -1,6 +1,6 @@
 {
-  "name": "effect_time_slow",
-  "type": "effect_time_slow",
+  "sub_module_id": "effect_time_slow",
+  "reference_module_id": "effect_time_slow",
   "item": "minecraft:red_flower",
   "primary_color": "8D0000",
   "secondary_color": "FFA5A5",

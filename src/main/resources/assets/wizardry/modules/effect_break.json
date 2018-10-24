@@ -1,6 +1,6 @@
 {
-  "name": "effect_break",
-  "type": "effect_break",
+  "sub_module_id": "effect_break",
+  "reference_module_id": "effect_break",
   "item": "minecraft:sand",
   "primary_color": "A52A2A",
   "secondary_color": "FFA7A7",

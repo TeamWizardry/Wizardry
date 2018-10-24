@@ -1,6 +1,6 @@
 {
-  "name": "effect_leech",
-  "type": "effect_leech",
+  "sub_module_id": "effect_leech",
+  "reference_module_id": "effect_leech",
   "item": "minecraft:lead",
   "primary_color": "00ffff",
   "secondary_color": "00ff61",

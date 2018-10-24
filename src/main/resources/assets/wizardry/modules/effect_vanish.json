@@ -1,6 +1,6 @@
 {
-  "name": "effect_vanish",
-  "type": "effect_vanish",
+  "sub_module_id": "effect_vanish",
+  "reference_module_id": "effect_vanish",
   "item": "minecraft:fermented_spider_eye",
   "primary_color": "FFFFFF",
   "secondary_color": "42D1D1",
