@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.utilities.AnnotationHelper;
 import com.teamwizardry.wizardry.Wizardry;
@@ -26,7 +27,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.io.*;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.Map.Entry;
@@ -41,9 +44,7 @@ public class ModuleRegistry {
 	public ArrayList<ModuleInstance> modules = new ArrayList<>();
 	public HashMap<Pair<ModuleInstanceShape, ModuleInstanceEffect>, OverrideConsumer<SpellData, SpellRing, SpellRing>> runOverrides = new HashMap<>();
 	public HashMap<Pair<ModuleInstanceShape, ModuleInstanceEffect>, OverrideConsumer<SpellData, SpellRing, SpellRing>> renderOverrides = new HashMap<>();
-	public HashMap<String, IModule> IDtoModuleClass = new HashMap<>();
-
-//	private Deque<Module> left = new ArrayDeque<>();
+	public HashMap<String, ModuleEntry> IDtoModuleClass = new HashMap<>();
 
 	private ModuleRegistry() {
 	}
@@ -74,16 +75,21 @@ public class ModuleRegistry {
 	public void loadUnprocessedModules() {
 		IDtoModuleClass.clear();
 		AnnotationHelper.INSTANCE.findAnnotatedClasses(LibrarianLib.PROXY.getAsmDataTable(), IModule.class, RegisterModule.class, (clazz, info) -> {
-			try {
-				Constructor<?> ctor = clazz.getConstructor();
+//			try {
+/*				Constructor<?> ctor = clazz.getConstructor();
 				Object object = ctor.newInstance();
 				if (object instanceof IModule) {
 					IModule moduleClass = (IModule)object;
 					IDtoModuleClass.put(moduleClass.getClassID(), moduleClass);
+				}*/
+				if( IModule.class.isAssignableFrom(clazz) ) {
+					ModuleEntry entry = new ModuleEntry(clazz);
+					IModule deflt = entry.getInstance();
+					IDtoModuleClass.put(deflt.getClassID(), entry);
 				}
-			} catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-				e.printStackTrace();
-			}
+//			} catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+//				e.printStackTrace();
+//			}
 			return null;
 		});
 	}
@@ -134,23 +140,23 @@ public class ModuleRegistry {
 			JsonObject moduleObject = element.getAsJsonObject();
 
 			// Get Class ID
-			if (!moduleObject.has("type")) {
-				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! No 'type' key found in " + file.getName() + ". Unknown item to use for element.");
+			if (!moduleObject.has("type") || !moduleObject.get("type").isJsonPrimitive() ) {
+				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! No valid 'type' key found in " + file.getName() + ". Unknown module class to use for element.");
 				Wizardry.logger.error("| |___ Failed to parse " + fName);
 				continue;
 			}
 			
 			String moduleClassID = moduleObject.get("type").getAsString();
-			IModule moduleClass = IDtoModuleClass.get(moduleClassID);
-			if (moduleClass == null) {
+			ModuleEntry moduleClassEntry = IDtoModuleClass.get(moduleClassID);
+			if (moduleClassEntry == null) {
 				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! Referenced type " + moduleClassID + " is unknown.");
 				Wizardry.logger.error("| |___ Failed to parse " + fName);
 				continue;
 			}
 
 			// Get Name
-			if (!moduleObject.has("name")) {
-				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! No 'name' key found in " + file.getName() + ". Unknown name to use for element.");
+			if (!moduleObject.has("name") || !moduleObject.get("name").isJsonPrimitive() ) {
+				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! No valid 'name' key found in " + file.getName() + ". Unknown name to use for element.");
 				Wizardry.logger.error("| |___ Failed to parse " + fName);
 				continue;
 			}
@@ -162,9 +168,50 @@ public class ModuleRegistry {
 			// Get optional icon
 			ResourceLocation icon = null;
 			if (moduleObject.has("icon")) {
+				if( !moduleObject.get("icon").isJsonPrimitive() ) {
+					Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! Field 'icon' has an invalid type in " + file.getName() + ". It is expected to be a string.");
+					Wizardry.logger.error("| |___ Failed to register module " + moduleName);
+					continue;
+				}
+
 				String iconID = moduleObject.get("icon").getAsString();
 				icon = new ResourceLocation(iconID);
 			}
+			
+			// Get optional parameters
+			IModule moduleClass;
+			if (moduleObject.has("parameters") ) {
+				if( !moduleObject.get("parameters").isJsonObject() ) {
+					Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! Field 'parameters' has an invalid type in " + file.getName() + ". It is expected to be an object.");
+					Wizardry.logger.error("| |___ Failed to register module " + moduleName);
+					continue;
+				}
+				
+				JsonObject parameters = moduleObject.getAsJsonObject("parameters");
+				HashMap<String, Object> keyToValues = new HashMap<>();
+				loadModuleClassParameters(keyToValues, null, parameters );
+				
+				// Test for mappability. Remove unmappable parameters with a warning output
+				Iterator<Entry<String, Object>> iter = keyToValues.entrySet().iterator();
+				while( iter.hasNext() ) {
+					Entry<String, Object> pair = iter.next();
+					if( !moduleClassEntry.hasConfigField(pair.getKey()) ) {
+						Wizardry.logger.warn("| | |_ WARNING: Parameter field '" + pair.getKey() + "' is not supported by type '" + moduleClassID + "'. Field is ignored.");
+						iter.remove();
+					}
+				}
+				
+				// Retrieve or create an instance for each parameter set
+				moduleClass = moduleClassEntry.getInstance(keyToValues);
+				if( moduleClass == null )
+					continue;	// Some error happened
+			}
+			else {
+				moduleClass = moduleClassEntry.getInstance();
+				if( moduleClass == null )
+					continue;	// Some error happened
+			}
+				
 			
 			if (!moduleObject.has("item")) {
 				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! No 'item' key found in " + file.getName() + ". Unknown item to use for element.");
@@ -305,33 +352,64 @@ public class ModuleRegistry {
 			}
 
 			modules.add(module);
-//			processed.add(moduleClass);
 			Wizardry.logger.info(" | |_ Module " + moduleName + " registered successfully!");
 		}
-
-/*		primary:
-		for (Module module : modules) {
-			for (IModule<?> moduleClass : processed)
-				if (module1.getID().equals(module2.getID())) continue primary;
-
-			left.add(module1);
-		}
-
-		if (!left.isEmpty()) {
-			Wizardry.logger.error("|");
-			Wizardry.logger.error("|_ Missing or ignored modules detected in modules directory:");
-			for (Module module : left) Wizardry.logger.error("| |_ " + module.getID());
-		}
-		left.clear(); */
-
-//		modules.clear();
-//		modules.addAll(processed);
 
 		modules.sort(Comparator.comparing(ModuleInstance::getID));
 
 		Wizardry.logger.info(" |");
 		Wizardry.logger.info(" | Module registration processing complete! (ᵔᴥᵔ)");
 		Wizardry.logger.info(" |_______________________________________________________________________//");
+	}
+	
+	private void loadModuleClassParameters(Map<String, Object> parameters, String prefix, JsonObject from) {
+		for (Entry<String, JsonElement> entry : from.entrySet()) {
+			JsonElement elem = entry.getValue();
+			
+			String name;
+			if( prefix != null && !prefix.isEmpty() )
+				name = prefix + "." + entry.getKey();
+			else
+				name = entry.getKey();
+			
+			if( elem.isJsonPrimitive() ) {
+				// ... add key value
+				parameters.put(name, getJsonValue(name, elem.getAsJsonPrimitive()));
+			}
+			else if( elem.isJsonObject() ) {
+				// ... recur into method
+				loadModuleClassParameters(parameters, name, elem.getAsJsonObject());
+			}
+			else {
+				Wizardry.logger.warn("| | |_ WARNING! Ignoring parameter '" + name + "' having an invalid type. It is expected to be either a primitive or an object.");
+			}
+		}
+	}
+	
+	private Object getJsonValue(String key, JsonPrimitive elem) {
+		// TODO: Move to utils
+		if( elem.isString() )
+			return elem.getAsString();
+		else if( elem.isNumber() ) {
+			try {
+				return elem.getAsInt();
+			}
+			catch(NumberFormatException exc) {
+				// Not an integer. Maybe a double?
+			}
+			
+			try {
+				return elem.getAsDouble();
+			}
+			catch(NumberFormatException exc) {
+				// Not a double. Use a fallback case.
+			}
+		}
+		// ... TODO: Add more data types.
+		
+		String value = elem.getAsString();
+		Wizardry.logger.warn("| | |_ WARNING! Using fallback as string for parameter '" + key + "' having value '" + value + "'.");
+		return value;
 	}
 
 	public void loadModuleOverrides()
@@ -401,6 +479,81 @@ public class ModuleRegistry {
 			{
 				e.printStackTrace();
 			}
+		}
+	}
+	
+	/////////////
+	
+	private static class ModuleEntry {
+		private final Class<? extends IModule> clazz;
+		private final HashMap<Map<String, Object>, IModule> instances = new HashMap<>();
+		private final HashMap<String, Field> configurableFields = new HashMap<>();
+		
+		ModuleEntry(Class<? extends IModule> clazz) {
+			this.clazz = clazz;
+			
+			// Determine configurable fields via reflection
+			for(Field field : clazz.getDeclaredFields()) {
+//				Annotation[] annots = field.getAnnotationsByType(ConfigField.class);
+				ConfigField cfg = field.getDeclaredAnnotation(ConfigField.class);
+//				if( annots.length > 1 )
+//					throw new IllegalStateException("Expected maximal one annotation of type ConfigField for field '" + field.getName() + "'");
+//				if( annots.length <= 0 )
+//					continue;
+//				String configName = ((ConfigField)annots[0]).value();
+				if( cfg == null )
+					continue;
+				
+				// Add configuration
+				configurableFields.put(cfg.value(), field);
+			}
+		}
+		
+		public boolean hasConfigField(String key) {
+			return configurableFields.containsKey(key);
+		}
+
+		IModule getInstance() {
+			return getInstance(new HashMap<>());
+		}
+		
+		IModule getInstance(HashMap<String, Object> params) {
+			IModule module = instances.get(params);
+			if( module != null )
+				return module;
+			
+			try {
+				Constructor<?> ctor = clazz.getConstructor();
+				module = (IModule)ctor.newInstance();
+				
+				// Assign parameter values. Exactly every field must be assigned.
+				// Default instance is always created to retrieve at least spell class ID name.
+				// TODO: Remove this condition and put ID as parameter of RegisterModule instead  
+				if( !params.isEmpty() ) {
+					int countFields = 0;
+					for( Entry<String, Object> entry : params.entrySet() ) {
+						Field field = configurableFields.get(entry.getKey());
+						if( field == null )
+							throw new IllegalArgumentException("Field for configuration '" + entry.getKey() + "' is not existing.");
+						
+						field.set(module, entry.getValue());
+						countFields ++;
+					}
+					
+					//
+					if( countFields != configurableFields.size() ) {
+						// TODO: Display error ...
+						return null;
+					}
+				}
+			} catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+				e.printStackTrace();
+				// TODO: Display error ...
+				return null;
+			}
+			
+			instances.put(params, module);
+			return module;
 		}
 	}
 }

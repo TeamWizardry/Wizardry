@@ -9,6 +9,7 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.module.ConfigField;
 import com.teamwizardry.wizardry.api.spell.module.IModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceShape;
 import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
@@ -30,6 +31,9 @@ import javax.annotation.Nonnull;
 @RegisterModule
 public class ModuleShapeSelf implements IModuleShape {
 
+	@ConfigField("script.name")
+	public String test;
+	
 	@Nonnull
 	@Override
 	public String getClassID() {

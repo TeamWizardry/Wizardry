@@ -1,6 +1,11 @@
 {
   "name": "shape_self",
   "type": "shape_self",
+  "parameters": {
+    "script" : {
+  	  "name" : "blablub"
+    }
+  },
   "item": "minecraft:diamond",
   "mana": {
     "base": 30
