@@ -31,61 +31,6 @@ import javax.annotation.Nonnull;
 @RegisterModule(ID="shape_self")
 public class ModuleShapeSelf implements IModuleShape {
 
-	enum TestEnum {
-		BLA, BLUB
-	}
-	
-	@ModuleParameter("script.name")
-	public String testString;
-
-	@ModuleParameter("script.byte1")
-	public byte testByte1;
-
-	@ModuleParameter("script.byte2")
-	public Byte testByte2;
-
-	@ModuleParameter("script.int1")
-	public int testInteger1;
-
-	@ModuleParameter("script.int2")
-	public Integer testInteger2;
-
-	@ModuleParameter("script.float1")
-	public float testFloat1;
-	
-	@ModuleParameter("script.float2")
-	public Float testFloat2;
-
-	@ModuleParameter("script.double1")
-	public double testDouble1;
-
-	@ModuleParameter("script.double2")
-	public Double testDouble2;
-	
-	@ModuleParameter("script.long1")
-	public long testLong1;
-
-	@ModuleParameter("script.long2")
-	public Long testLong2;
-	
-	@ModuleParameter("script.numberAsString")
-	public String numberAsString;
-	
-	@ModuleParameter("script.bool1")
-	public boolean testBoolean1;
-
-	@ModuleParameter("script.bool2")
-	public Boolean testBoolean2;
-
-	@ModuleParameter("script.booleanAsString")
-	public String booleanAsString;
-	
-	@ModuleParameter("script.enum1")
-	public TestEnum enum1;
-	
-	@ModuleParameter("script.enum2")
-	public TestEnum enum2;
-	
 	@Override
 	public boolean run(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Entity caster = spell.getCaster();

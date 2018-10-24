@@ -1,27 +1,6 @@
 {
   "name": "shape_self",
   "type": "shape_self",
-  "parameters": {
-    "script" : {
-  	  "name" : "blablub",
-  	  "byte1" : 10,
-  	  "byte2" : 20,
-  	  "int1" : 1,
-  	  "int2" : 2,
-  	  "float1" : 11.1,
-  	  "float2" : 12.2,
-  	  "double1" : 21.3,
-  	  "double2" : 22.4,
-  	  "long1" : 3,
-  	  "long2" : 4,
-  	  "numberAsString" : 100,
-  	  "bool1" : true,
-  	  "bool2" : false,
-  	  "booleanAsString" : true,
-  	  "enum1" : "BlA",
-  	  "enum2" : "bLuB"
-    }
-  },
   "item": "minecraft:diamond",
   "mana": {
     "base": 30
