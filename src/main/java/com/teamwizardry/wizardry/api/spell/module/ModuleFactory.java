@@ -7,7 +7,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.teamwizardry.wizardry.api.spell.annotation.ModuleParameter;
+import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
 
+/**
+ * A factory object to create new module instances based on passed parameter sets.
+ * Annotations like {@link ModuleParameter} are used to identify linked parameters.
+ * 
+ * @author Avatair
+ */
 public class ModuleFactory {
 	private final Class<? extends IModule> clazz;
 	private final HashMap<Map<String, Object>, IModule> instances = new HashMap<>();
@@ -30,22 +37,53 @@ public class ModuleFactory {
 		}
 	}
 	
+	/**
+	 * Returns the associated class object of the regarded module.
+	 * 
+	 * @return the associated class object.
+	 */
 	public Class<? extends IModule> getModuleClass() {
 		return clazz;
 	}
 	
+	/**
+	 * Returns the ID of the module class, as provided by {@link RegisterModule}.
+	 * 
+	 * @return the reference module ID
+	 */
 	public String getReferenceModuleID() {
 		return referenceModuleID;
 	}
 	
+	/**
+	 * Checks whether a given configuration field exists.
+	 * 
+	 * @param key the name of the configuration field.
+	 * @return <code>true</code> iff yes.
+	 */
 	public boolean hasConfigField(String key) {
 		return configurableFields.containsKey(key);
 	}
 
+	/**
+	 * Returns an instance of the module implementation having no parameters. Creates a new one if not existing.
+	 * 
+	 * @return the instance.
+	 * @throws ModuleInitException if something went wrong when creating the instance or some parameters weren't linked successfully.
+	 */
 	public IModule getInstance() throws ModuleInitException {
 		return getInstance(new HashMap<>());
 	}
 	
+	/**
+	 * Returns an instance of the module implementation using given parameters. Creates a new one if not existing. <br/>
+	 * <b>NOTE</b>: An instance is created only once for a given parameter set. <br />
+	 * <b>NOTE</b>: Every parameter must be linked exactly once.
+	 * 
+	 * @param params a map providing values for every parameter.  
+	 * @return the instance.
+	 * @throws ModuleInitException if something went wrong when creating the instance or some parameters weren't linked successfully.
+	 */
 	public IModule getInstance(HashMap<String, Object> params) throws ModuleInitException {
 		IModule module = instances.get(params);
 		if( module != null )

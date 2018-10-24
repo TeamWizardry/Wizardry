@@ -1,5 +1,10 @@
 package com.teamwizardry.wizardry.api.spell.module;
 
+/**
+ * An exception which is thrown in case a module couldn't be initialized properly.
+ * 
+ * @author Avatair
+ */
 public class ModuleInitException extends Exception {
 
 	/**

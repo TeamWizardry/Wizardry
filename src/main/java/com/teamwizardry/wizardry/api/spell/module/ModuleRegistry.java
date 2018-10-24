@@ -41,7 +41,7 @@ public class ModuleRegistry {
 	public ArrayList<ModuleInstance> modules = new ArrayList<>();
 	public HashMap<Pair<ModuleInstanceShape, ModuleInstanceEffect>, OverrideConsumer<SpellData, SpellRing, SpellRing>> runOverrides = new HashMap<>();
 	public HashMap<Pair<ModuleInstanceShape, ModuleInstanceEffect>, OverrideConsumer<SpellData, SpellRing, SpellRing>> renderOverrides = new HashMap<>();
-	public HashMap<String, ModuleFactory> IDtoModuleClassFactory = new HashMap<>();
+	public HashMap<String, ModuleFactory> IDtoModuleFactory = new HashMap<>();
 
 	private ModuleRegistry() {
 	}
@@ -70,7 +70,7 @@ public class ModuleRegistry {
 	}
 
 	public void loadUnprocessedModules() {
-		IDtoModuleClassFactory.clear();
+		IDtoModuleFactory.clear();
 		AnnotationHelper.INSTANCE.findAnnotatedClasses(LibrarianLib.PROXY.getAsmDataTable(), IModule.class, RegisterModule.class, (clazz, info) -> {
 			try {
 				String id = info.getString("ID");
@@ -79,7 +79,7 @@ public class ModuleRegistry {
 				
 				if( IModule.class.isAssignableFrom(clazz) ) {
 					ModuleFactory entry = new ModuleFactory(id, clazz);
-					IDtoModuleClassFactory.put(id, entry);
+					IDtoModuleFactory.put(id, entry);
 				}
 			}
 			catch(ModuleInitException exc) {
@@ -142,7 +142,7 @@ public class ModuleRegistry {
 			}
 			
 			String moduleClassID = moduleObject.get("reference_module_id").getAsString();
-			ModuleFactory moduleClassFactory = IDtoModuleClassFactory.get(moduleClassID);
+			ModuleFactory moduleClassFactory = IDtoModuleFactory.get(moduleClassID);
 			if (moduleClassFactory == null) {
 				Wizardry.logger.error("| | |_ SOMETHING WENT WRONG! Referenced type " + moduleClassID + " is unknown.");
 				Wizardry.logger.error("| |___ Failed to parse " + fName);
