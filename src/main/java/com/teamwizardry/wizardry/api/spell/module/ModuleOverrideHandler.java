@@ -18,17 +18,13 @@ public class ModuleOverrideHandler {
 	private HashMap<String, OverridePointer> overridePointers = new HashMap<>();
 	private HashMap<String, Object> cachedProxies = new HashMap<>();
 
-	ModuleOverrideHandler(SpellRing spellRing) throws ModuleInitException {
-		this(getSequenceFromSpellRing(spellRing));
-	}
-	
-	ModuleOverrideHandler(ModuleInstance[] spellSequence) throws ModuleInitException {
+	public ModuleOverrideHandler(ModuleInstance[] spellSequence) throws ModuleOverrideException {
 		for( ModuleInstance module : spellSequence )
 			applyOverrides(module);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <T> T getConsumerInterface(Class<T> interfaceClass) throws ModuleInitException {
+	public <T> T getConsumerInterface(Class<T> interfaceClass) throws ModuleOverrideException {
 		String className = interfaceClass.getName();
 		Object obj = cachedProxies.get(className);
 		if( obj == null ) {
@@ -43,7 +39,7 @@ public class ModuleOverrideHandler {
 		return (T)obj;
 	}
 	
-	private <T> T createConsumerInterface(Class<T> interfaceClass) throws ModuleInitException {
+	private <T> T createConsumerInterface(Class<T> interfaceClass) throws ModuleOverrideException {
 		// Retrieve all overridable methods and check them for compatibility with base class
 		Map<String, Method> overridableMethods = ModuleClassUtils.getOverridableModuleMethods(interfaceClass);
 		
@@ -60,7 +56,7 @@ public class ModuleOverrideHandler {
 		return proxy;
 	}
 	
-	private void applyOverrides( ModuleInstance module ) throws ModuleInitException {
+	private void applyOverrides( ModuleInstance module ) throws ModuleOverrideException {
 		Map<String, Method> overrides = module.getFactory().getOverrides();
 		
 		for( Entry<String, Method> entry : overrides.entrySet() ) {
@@ -70,7 +66,7 @@ public class ModuleOverrideHandler {
 			}
 			else {
 				if( !areMethodsCompatible(ptr.getBaseMethod(), entry.getValue()) )
-					throw new ModuleInitException("Method '" + ptr.getBaseMethod() + "' can't be overridden by '" + entry.getValue() + "' due to incompatible signature.");
+					throw new ModuleOverrideException("Method '" + ptr.getBaseMethod() + "' can't be overridden by '" + entry.getValue() + "' due to incompatible signature.");
 				ptr = new OverridePointer(ptr, module, entry.getKey(), entry.getValue());
 			}
 			
@@ -80,7 +76,7 @@ public class ModuleOverrideHandler {
 	
 	/////////////////
 	
-	private static ModuleInstance[] getSequenceFromSpellRing(SpellRing spellRing) {
+	public static ModuleInstance[] getSequenceFromSpellRing(SpellRing spellRing) {
 		SpellRing cur = spellRing;
 		LinkedList<ModuleInstance> instances = new LinkedList<>();
 		while( cur != null ) {
@@ -92,18 +88,6 @@ public class ModuleOverrideHandler {
 		}
 		
 		return instances.toArray(new ModuleInstance[instances.size()]);
-	}
-	
-	public static String getCacheKey(ModuleInstance[] instances) {
-		// TODO: Change me as soon as SpellRing is hierarchical.
-		
-		StringBuilder builder = new StringBuilder();
-		for( ModuleInstance module : instances ) {
-			if( builder.length() > 0 )
-				builder.append(">");
-			builder.append(module);
-		}
-		return builder.toString();
 	}
 	
 	private static boolean areMethodsCompatible(Method baseMtd, Method overrideMtd) {
@@ -147,6 +131,7 @@ public class ModuleOverrideHandler {
 		// For every checked exception at the interface method
 		// there should exist an exception type at base
 		// which is assignable from the interface method exception
+		// TODO: Maybe ignore unchecked exceptions?
 		for( Class<?> overrideExcp : overrideExcps ) {
 			boolean found = false;
 			for( Class<?> baseExcp : baseExcps ) {
@@ -167,11 +152,11 @@ public class ModuleOverrideHandler {
 	private class OverrideInvoker implements InvocationHandler {
 		private final HashMap<String, OverridePointer> callMap = new HashMap<>();
 
-		public OverrideInvoker(Map<String, Method> overrides) throws ModuleInitException {
+		public OverrideInvoker(Map<String, Method> overrides) throws ModuleOverrideException {
 			for( Entry<String, Method> override : overrides.entrySet() ) {
 				OverridePointer ptr = overridePointers.get(override.getKey());
 				if( ptr == null )
-					throw new ModuleInitException("Override with name '" + override.getKey() + "' referenced by '" + override.getValue()+"' is not existing.");
+					throw new ModuleOverrideException("Override with name '" + override.getKey() + "' referenced by '" + override.getValue()+"' is not existing.");
 				callMap.put(override.getValue().getName(), ptr);
 			}
 		}

@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.api.spell;
 
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceModifier;
+import com.teamwizardry.wizardry.api.spell.module.ModuleOverrideException;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -74,13 +75,14 @@ public class SpellBuilder {
 			spellChains.add(new ArrayList<>(uncompressedChain));
 		}
 
-		// We now have a code line of modules. link them as children in order.
+		// We now have a code line of modules. link them as children in order. Initialize overrides
 		for (List<SpellRing> rings : spellChains) {
 			if (rings.isEmpty()) continue;
 
 			Deque<SpellRing> deque = new ArrayDeque<>(rings);
 
 			SpellRing ringHead = deque.pop();
+			ringHead.setRootRing(ringHead);
 
 			SpellRing lastRing = ringHead;
 			while (!deque.isEmpty()) {
@@ -88,9 +90,19 @@ public class SpellBuilder {
 
 				lastRing.setChildRing(child);
 				child.setParentRing(lastRing);
+				child.setRootRing(ringHead);
 
 				lastRing = child;
 			}
+			
+			// Init overrides
+			try {
+				ringHead.getOverrideHandler();	// Perform a lazy loading of override handler.
+			}
+			catch(ModuleOverrideException exc) {
+				throw new IllegalStateException("Failed to initialize overrides. See cause.", exc);
+			}
+			
 			spellList.add(ringHead);
 		}
 

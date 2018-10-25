@@ -21,6 +21,8 @@ import com.teamwizardry.wizardry.api.spell.attribute.Operation;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceModifier;
+import com.teamwizardry.wizardry.api.spell.module.ModuleOverrideException;
+import com.teamwizardry.wizardry.api.spell.module.ModuleOverrideHandler;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
 
@@ -85,12 +87,24 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	 */
 	@Nullable
 	private SpellRing parentRing = null;
+	
+	/**
+	 * The root ring of this Ring. It points to <code>this</code> if this Ring is already a root.
+	 */
+	@Nonnull
+	private SpellRing rootRing = this;
 
 	/**
 	 * The child ring of this Ring, the ring that will run after this.
 	 */
 	@Nullable
 	private SpellRing childRing = null;
+	
+	/**
+	 * A module override handler.
+	 */
+	@Nonnull
+	private ModuleOverrideHandler overrideHandler = null;
 
 	private SpellRing() {
 	}
@@ -100,6 +114,20 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	}
 
 	public static SpellRing deserializeRing(NBTTagCompound compound) {
+		SpellRing ring = internalDeserializeRing(compound);
+				
+		// Init overrides
+		try {
+			ring.getOverrideHandler();	// Perform a lazy loading of override handler.
+		}
+		catch(ModuleOverrideException exc) {
+			throw new IllegalStateException("Failed to initialize overrides. See cause.", exc);
+		}
+
+		return ring;
+	}
+	
+	private static SpellRing internalDeserializeRing(NBTTagCompound compound) {
 		SpellRing ring = new SpellRing();
 		ring.deserializeNBT(compound);
 
@@ -110,7 +138,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 			lastRing = lastRing.getChildRing();
 		}
 		if (lastRing != null) lastRing.updateColorChain();
-
+		
 		return ring;
 	}
 
@@ -358,7 +386,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		return childRing;
 	}
 
-	public void setChildRing(@Nonnull SpellRing childRing) {
+	void setChildRing(@Nonnull SpellRing childRing) {
 		this.childRing = childRing;
 	}
 
@@ -367,8 +395,30 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		return parentRing;
 	}
 
-	public void setParentRing(@Nullable SpellRing parentRing) {
+	void setParentRing(@Nullable SpellRing parentRing) {
 		this.parentRing = parentRing;
+	}
+	
+	@Nonnull
+	public SpellRing getRootRing() {
+		return rootRing;
+	}
+	
+	void setRootRing(@Nonnull SpellRing rootRing) {
+		this.rootRing = rootRing;
+	}
+	
+	@Nonnull
+	public ModuleOverrideHandler getOverrideHandler() {
+		if( overrideHandler == null ) {
+			if( this != rootRing )
+				overrideHandler = rootRing.getOverrideHandler();
+			else {
+				overrideHandler = SpellOverrideCache.INSTANCE.getOrCreateHandler(this, true);
+			}
+		}
+		
+		return overrideHandler;
 	}
 
 	@Nullable
@@ -544,9 +594,11 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 			}
 		}
 
+		setRootRing(this);
 		if (nbt.hasKey("child_ring")) {
-			SpellRing childRing = deserializeRing(nbt.getCompoundTag("child_ring"));
+			SpellRing childRing = internalDeserializeRing(nbt.getCompoundTag("child_ring"));
 			childRing.setParentRing(this);
+			childRing.setRootRing(this);
 			setChildRing(childRing);
 		}
 	}
