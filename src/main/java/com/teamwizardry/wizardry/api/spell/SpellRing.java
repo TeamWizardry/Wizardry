@@ -7,10 +7,13 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.teamwizardry.wizardry.Wizardry;
@@ -50,13 +53,14 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 	/**
 	 * Mostly used as a cache key. <br/>
-	 * <b>NOTE</b>: Must be initialized only by serializeNBT() to have a normalized key!
+	 * <b>NOTE</b>: Must be initialized only by {@link #serializeNBT()} to have a normalized key!
 	 */
 	private NBTTagCompound serializedTag = null;
 	
 	/**
 	 * Store all processed modifier info and any extra you want here.
 	 * Used by modifier processing and the WorktableGUI to save GUI in TileWorktable
+	 * <b>NOTE</b>: Must be initialized only by {@link #processModifiers()} to have a normalized key used for cache nbt!
 	 */
 	private NBTTagCompound informationTag = new NBTTagCompound();
 	
@@ -273,27 +277,44 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	 * WILL RESET THE INFORMATION TAG.
 	 */
 	public void processModifiers() {
-		informationTag = new NBTTagCompound();
+//		informationTag = new NBTTagCompound();
+		HashMap<String, Double> informationMap = new HashMap<>();
 
 		if (module != null) {
 			module.getAttributeRanges().forEach((attribute, range) -> {
-				setDoubleToNBT(informationTag, attribute.getNbtName(), range.base);
+//				setDoubleToNBT(informationTag, attribute.getNbtName(), range.base);
+				informationMap.put(attribute.getNbtName(), range.base);
 			});
 		}
 
 		for (Operation op : Operation.values()) {
 			for (AttributeModifier modifier : compileTimeModifiers.get(op)) {
 
-				if (!informationTag.hasKey(modifier.getAttribute().getNbtName()))
+//				if (!informationTag.hasKey(modifier.getAttribute().getNbtName()))
+				Double current = informationMap.get(modifier.getAttribute().getNbtName());
+				if( current == null )
 					continue;
-				double current = getDoubleFromNBT(informationTag, modifier.getAttribute().getNbtName());
+//				if (!informationMap.containsKey(modifier.getAttribute().getNbtName()) )
+//					continue;
+//				double current = getDoubleFromNBT(informationTag, modifier.getAttribute().getNbtName());
 				double newValue = modifier.apply(current);
 
-				setDoubleToNBT(informationTag, modifier.getAttribute().getNbtName(), newValue);
+//				setDoubleToNBT(informationTag, modifier.getAttribute().getNbtName(), newValue);
+				informationMap.put(modifier.getAttribute().getNbtName(), newValue);
 
 				Wizardry.logger.info(module == null ? "<null module>" : module.getSubModuleID() + ": Attribute: " + modifier.getAttribute() + ": " + current + "-> " + newValue);
 			}
 		}
+		
+		// Output a sorted list of tags to informationTag
+		ArrayList<Pair<String, Double>> sortedInformationList = new ArrayList<>(informationMap.size());
+		informationMap.forEach((key, val) -> sortedInformationList.add(Pair.of(key, val)));
+		Collections.sort(sortedInformationList, (o1, o2) -> o1.getKey().compareTo(o2.getKey()));
+
+		informationTag = new NBTTagCompound();
+		for( Pair<String, Double> entry : sortedInformationList ) {
+			setDoubleToNBT(informationTag, entry.getKey(), entry.getValue());
+		}		
 	}
 	
 //	public final float getCapeReduction(EntityLivingBase caster) {
