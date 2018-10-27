@@ -7,6 +7,7 @@ import com.teamwizardry.wizardry.api.capability.world.WizardryWorldCapability;
 import com.teamwizardry.wizardry.api.spell.IDelayedModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.SpellRingCache;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.common.network.PacketSyncWizardryWorld;
 import net.minecraft.nbt.NBTTagCompound;
@@ -142,7 +143,7 @@ public class SpellTicker {
 
 		@Override
 		public void deserializeNBT(NBTTagCompound nbt) {
-			spellRing = SpellRing.deserializeRing(nbt.getCompoundTag("spell_ring"));
+			spellRing = SpellRingCache.INSTANCE.getSpellRingByNBT(nbt.getCompoundTag("spell_ring"));
 			spellData = SpellData.deserializeData(world, nbt.getCompoundTag("spell_data"));
 			worldTime = nbt.getLong("world_time");
 			expiry = nbt.getInteger("expiry");
@@ -215,7 +216,7 @@ public class SpellTicker {
 		@Override
 		public void deserializeNBT(NBTTagCompound nbt) {
 			if (nbt.hasKey("spell_ring"))
-				spellRing = SpellRing.deserializeRing(nbt.getCompoundTag("spell_ring"));
+				spellRing = SpellRingCache.INSTANCE.getSpellRingByNBT(nbt.getCompoundTag("spell_ring"));
 			if (nbt.hasKey("spell_data"))
 				spellData = SpellData.deserializeData(world, nbt.getCompoundTag("spell_data"));
 			if (nbt.hasKey("world_time"))

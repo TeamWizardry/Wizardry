@@ -1,9 +1,14 @@
 package com.teamwizardry.wizardry.api.spell;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.teamwizardry.librarianlib.features.saving.Savable;
 import com.teamwizardry.wizardry.api.capability.mana.DefaultWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.mana.WizardryCapabilityProvider;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
+import com.teamwizardry.wizardry.api.spell.attribute.Operation;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry.Attribute;
+
 import kotlin.Pair;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -38,6 +43,14 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 	public final World world;
 	@Nonnull
 	private final HashMap<Pair, Object> data = new HashMap<>();
+	
+	/**
+	 * A map holding cast time modifiers
+	 */
+	// TODO: It is mutable. Move to SpellData.
+	@Nonnull
+	private HashMap<Attribute, ArrayListMultimap<Operation, AttributeModifier>> castTimeModifiers = new HashMap<>();
+	
 
 	public SpellData(@Nonnull World world) {
 		this.world = world;

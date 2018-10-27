@@ -9,6 +9,7 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.SpellRingCache;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRange;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.util.PosUtils;
@@ -51,7 +52,7 @@ public class EntityLightningProjectile extends EntitySpellProjectile {
 
 	protected SpellRing getChildRing() {
 		NBTTagCompound compound = getDataManager().get(CHILD_RING);
-		return SpellRing.deserializeRing(compound);
+		return SpellRingCache.INSTANCE.getSpellRingByNBT(compound);
 	}
 
 	protected void setChildRing(SpellRing ring) {
@@ -156,7 +157,7 @@ public class EntityLightningProjectile extends EntitySpellProjectile {
 		super.readCustomNBT(compound);
 
 		if (compound.hasKey("child_ring")) {
-			setChildRing(SpellRing.deserializeRing(compound.getCompoundTag("child_ring")));
+			setChildRing(SpellRingCache.INSTANCE.getSpellRingByNBT(compound.getCompoundTag("child_ring")));
 		}
 	}
 

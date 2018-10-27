@@ -111,6 +111,12 @@ public class SpellBuilder {
 				chainEnd = chainEnd.getChildRing();
 			}
 		}
+		
+		// Register spell chain at the end
+		for (SpellRing ring : spellList) {
+			SpellRingCache.INSTANCE.registerSpellChain(ring);
+		}
+		
 		return spellList;
 	}
 
