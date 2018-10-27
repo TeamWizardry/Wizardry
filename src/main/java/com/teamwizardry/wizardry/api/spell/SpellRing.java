@@ -1,6 +1,9 @@
 package com.teamwizardry.wizardry.api.spell;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -493,15 +496,26 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		NBTTagCompound compound = new NBTTagCompound();
 
 		if (!compileTimeModifiers.isEmpty()) {
-			NBTTagList attribs = new NBTTagList();
+			// Retrieve all modifier compounds
+			ArrayList<NBTTagCompound> sortedModifierList = new ArrayList<>(compileTimeModifiers.size());
 			compileTimeModifiers.forEach((op, modifier) -> {
 				NBTTagCompound modifierCompound = new NBTTagCompound();
 
 				modifierCompound.setInteger("operation", modifier.getOperation().ordinal());
 				modifierCompound.setString("attribute", modifier.getAttribute().getNbtName());
 				setFixedToNBT(modifierCompound, "modifier", modifier.getModifierFixed());
-				attribs.appendTag(modifierCompound);
+//				attribs.appendTag(modifierCompound);
+				sortedModifierList.add(modifierCompound);
 			});
+			
+			// Sort and store them
+			NBTTagList attribs = new NBTTagList();
+
+			Collections.sort(sortedModifierList, (o1, o2) -> compareModifierCompounds(o1, o2) );
+			for( NBTTagCompound modifierCompound : sortedModifierList ) {
+				attribs.appendTag(modifierCompound);
+			}
+
 			compound.setTag("modifiers", attribs);
 		}
 
@@ -513,6 +527,16 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		if (module != null) compound.setString("module", module.getSubModuleID());
 
 		return compound;
+	}
+	
+	private static int compareModifierCompounds(NBTTagCompound nbt1, NBTTagCompound nbt2) {
+		int op1 = nbt1.getInteger("operation");
+		int op2 = nbt2.getInteger("operation");
+		
+		if( op1 != op2 )
+			return (op1 - op2) > 0?1:-1;
+		
+		return nbt1.getString("attribute").compareTo(nbt2.getString("attribute"));
 	}
 
 	@Override
