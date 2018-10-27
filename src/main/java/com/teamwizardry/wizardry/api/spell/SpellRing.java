@@ -46,7 +46,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 	/**
-	 * Also used as a cache key
+	 * Mostly used as a cache key. <br/>
+	 * <b>NOTE</b>: Must be initialized only by serializeNBT() to have a normalized key!
 	 */
 	private NBTTagCompound serializedTag = null;
 	
@@ -123,7 +124,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		if (module == null) return false;
 
 		if (data.getCaster() != null)
-			processCastTimeModifiers(data.getCaster(), data);
+			data.processCastTimeModifiers(data.getCaster(), this);
 		boolean success = module.castSpell(data, this) && !module.ignoreResultForRendering();
 		if (success) {
 
@@ -200,8 +201,8 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		Entity caster = data.getCaster();
 		if (caster == null) return false;
 
-		double manaDrain = getManaDrain() * multiplier;
-		double burnoutFill = getBurnoutFill() * multiplier;
+		double manaDrain = getManaDrain(data) * multiplier;
+		double burnoutFill = getBurnoutFill(data) * multiplier;
 
 		boolean fail = false;
 
@@ -241,7 +242,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		AttributeRange range = module.getAttributeRanges().get(attribute);
 
 		current = MathHelper.clamp(current, range.min, range.max);
-		current = getCastTimeValue(attribute, current);
+		current = data.getCastTimeValue(attribute, current);
 		current *= getPlayerBurnoutMultiplier(data);
 		current *= getPowerMultiplier();
 		
@@ -264,28 +265,6 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		return MathHelper.clamp(current, range.min, range.max);
 	}
 	
-	/**
-	 * Get the value of the given attribute after being passed through any cast time modifiers.
-	 * 
-	 * @param attribute The attribute you want. List in {@link AttributeRegistry} for default attributes.
-	 * @param value		The initial value of the given attribute, given by the compiled value in standard use cases.
-	 * @return The {@code double} potency of a modifier.
-	 */
-	public final double getCastTimeValue(Attribute attribute, double value)
-	{
-		// TODO: Move to SpellData
-		
-		ArrayListMultimap<Operation, AttributeModifier> operationMap = castTimeModifiers.get(attribute);
-		if (operationMap == null)
-			return value;
-		
-		for (Operation op : Operation.values())
-			for (AttributeModifier modifier : operationMap.get(op))
-				value = modifier.apply(value);
-		
-		return value;
-	}
-
 	/**
 	 * Will process all modifiers and attributes set.
 	 * WILL RESET THE INFORMATION TAG.
@@ -314,24 +293,6 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		}
 	}
 	
-	public void processCastTimeModifiers(Entity entity, SpellData data)
-	{
-		// TODO: Move to SpellData
-		
-		List<AttributeModifier> modifiers = SpellModifierRegistry.compileModifiers(entity, this, data);
-		for (AttributeModifier modifier : modifiers)
-		{
-			Attribute attribute = modifier.getAttribute();
-			Operation operation = modifier.getOperation();
-
-			ArrayListMultimap<Operation, AttributeModifier> operationMap = castTimeModifiers.get(attribute);
-			if (operationMap == null)
-				castTimeModifiers.put(attribute, operationMap = ArrayListMultimap.create());
-			
-			operationMap.put(operation, modifier);
-		}
-	}
-
 //	public final float getCapeReduction(EntityLivingBase caster) {
 //		ItemStack stack = BaublesSupport.getItem(caster, ModItems.CAPE);
 //		if (stack != ItemStack.EMPTY) {
@@ -426,12 +387,32 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		return getTrueAttributeValue(AttributeRegistry.BURNOUT_MULTI);
 	}
 
-	public double getManaDrain() {
-		return getCastTimeValue(AttributeRegistry.MANA, getDoubleFromNBT(informationTag, AttributeRegistry.MANA.getNbtName())) * getManaMultiplier();
+	/**
+	 * Returns mana drain value. If spell data is passed, then the value is modified additionally by runtime data,
+	 * e.g. by cape and halo attributes of caster.
+	 * 
+	 * @param data runtime data of active spell. Can be <code>null</code>.
+	 * @return mana drain value
+	 */
+	public double getManaDrain(SpellData data) {
+		double value = getDoubleFromNBT(informationTag, AttributeRegistry.MANA.getNbtName());
+		if( data != null )
+			value = data.getCastTimeValue(AttributeRegistry.MANA, value);
+		return value * getManaMultiplier();
 	}
 
-	public double getBurnoutFill() {
-		return getCastTimeValue(AttributeRegistry.BURNOUT, getDoubleFromNBT(informationTag, AttributeRegistry.BURNOUT.getNbtName())) * getBurnoutMultiplier();
+	/**
+	 * Returns burnout fill value. If spell data is passed, then the value is modified additionally by runtime data,
+	 * e.g. by cape and halo attributes of caster.
+	 * 
+	 * @param data runtime data of active spell. Can be <code>null</code>.
+	 * @return burnout fill value
+	 */
+	public double getBurnoutFill(SpellData data) {
+		double value = getDoubleFromNBT(informationTag, AttributeRegistry.BURNOUT.getNbtName());
+		if( data != null )
+			value = data.getCastTimeValue(AttributeRegistry.BURNOUT, value); 
+		return value * getBurnoutMultiplier();
 	}
 
 // Avatair: Don't know what to do with it ...
@@ -536,6 +517,8 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 	@Override
 	public void deserializeNBT(NBTTagCompound nbt) {
+		// NOTE: Don't store nbt to serializedNBT. This one must be generated only by serializeNBT()
+		
 		if (nbt.hasKey("module")) this.module = ModuleInstance.deserialize(nbt.getString("module"));
 		if (nbt.hasKey("extra")) informationTag = nbt.getCompoundTag("extra");
 		if (nbt.hasKey("primary_color")) primaryColor = Color.decode(nbt.getString("primary_color"));

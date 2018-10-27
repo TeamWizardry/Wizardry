@@ -13,8 +13,12 @@ public class SpellRingCache {
 	}
 	
 	public SpellRing getSpellRingByNBT(NBTTagCompound key) {
+		return internalGetSpellRingByNBT(key, true);
+	}
+	
+	SpellRing internalGetSpellRingByNBT(NBTTagCompound key, boolean mayCreate) {
 		SpellRing spellRing = cache.get(key);
-		if( spellRing == null ) {
+		if( spellRing == null && mayCreate ) {
 			// deserialize ring and register it
 			spellRing = SpellRing.deserializeRing(key);
 			registerSpellChain(spellRing);
