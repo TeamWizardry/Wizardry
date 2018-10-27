@@ -59,8 +59,9 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	
 	/**
 	 * Store all processed modifier info and any extra you want here.
-	 * Used by modifier processing and the WorktableGUI to save GUI in TileWorktable
-	 * <b>NOTE</b>: Must be initialized only by {@link #processModifiers()} to have a normalized key used for cache nbt!
+	 * Used by modifier processing and the WorktableGUI to save GUI in TileWorktable <br/>
+	 * <b>NOTE</b>: Must be initialized only by {@link #processModifiers()} or {@link #deserializeNBT(NBTTagCompound)}
+	 * to have normalized keys, used for cache nbt!
 	 */
 	private NBTTagCompound informationTag = new NBTTagCompound();
 	
@@ -307,14 +308,44 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		}
 		
 		// Output a sorted list of tags to informationTag
-		ArrayList<Pair<String, Double>> sortedInformationList = new ArrayList<>(informationMap.size());
-		informationMap.forEach((key, val) -> sortedInformationList.add(Pair.of(key, val)));
+/*		ArrayList<Pair<String, Long>> sortedInformationList = new ArrayList<>(informationMap.size());
+		informationMap.forEach((key, val) -> sortedInformationList.add(Pair.of(key, FixedPointUtils.doubleToFixed(val))));
 		Collections.sort(sortedInformationList, (o1, o2) -> o1.getKey().compareTo(o2.getKey()));
 
 		informationTag = new NBTTagCompound();
-		for( Pair<String, Double> entry : sortedInformationList ) {
-			setDoubleToNBT(informationTag, entry.getKey(), entry.getValue());
-		}		
+		for( Pair<String, Long> entry : sortedInformationList ) {
+			setFixedToNBT(informationTag, entry.getKey(), entry.getValue());
+		} */
+		informationTag = normalizeInformationTag(informationMap);
+	}
+	
+	private final NBTTagCompound normalizeInformationTag(NBTTagCompound informationNbt) {
+		ArrayList<Pair<String, Long>> sortedInformationList = new ArrayList<>(informationNbt.getSize());
+		// NOTE: Minecraft is not providing a way to iterate a nbt compound. Had to use access transformer to informationNbt.tagMap
+		for( String key : informationNbt.tagMap.keySet() ) {
+			sortedInformationList.add( Pair.of(key, getFixedFromNBT(informationNbt, key)) );
+		}
+		Collections.sort(sortedInformationList, (o1, o2) -> o1.getKey().compareTo(o2.getKey()));
+		
+		NBTTagCompound newInformationTag = new NBTTagCompound();
+		for( Pair<String, Long> entry : sortedInformationList ) {
+			setFixedToNBT(newInformationTag, entry.getKey(), entry.getValue());
+		}
+		
+		return newInformationTag;
+	}
+	
+	private final NBTTagCompound normalizeInformationTag(HashMap<String, Double> informationMap) {
+		ArrayList<Pair<String, Long>> sortedInformationList = new ArrayList<>(informationMap.size());
+		informationMap.forEach((key, val) -> sortedInformationList.add(Pair.of(key, FixedPointUtils.doubleToFixed(val))));
+		Collections.sort(sortedInformationList, (o1, o2) -> o1.getKey().compareTo(o2.getKey()));
+		
+		NBTTagCompound newInformationTag = new NBTTagCompound();
+		for( Pair<String, Long> entry : sortedInformationList ) {
+			setFixedToNBT(newInformationTag, entry.getKey(), entry.getValue());
+		}
+		
+		return newInformationTag;
 	}
 	
 //	public final float getCapeReduction(EntityLivingBase caster) {
@@ -562,10 +593,10 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 	@Override
 	public void deserializeNBT(NBTTagCompound nbt) {
-		// NOTE: Don't store nbt to serializedNBT. This one must be generated only by serializeNBT()
+		// NOTE: Don't store nbt argument to serializedNBT. This one must be generated only by serializeNBT()
 		
 		if (nbt.hasKey("module")) this.module = ModuleInstance.deserialize(nbt.getString("module"));
-		if (nbt.hasKey("extra")) informationTag = nbt.getCompoundTag("extra");
+		if (nbt.hasKey("extra")) informationTag = normalizeInformationTag(nbt.getCompoundTag("extra"));
 		if (nbt.hasKey("primary_color")) primaryColor = Color.decode(nbt.getString("primary_color"));
 		if (nbt.hasKey("secondary_color")) secondaryColor = Color.decode(nbt.getString("secondary_color"));
 
