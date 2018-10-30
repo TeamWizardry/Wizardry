@@ -18,9 +18,13 @@ public class ModuleOverrideHandler {
 	private HashMap<String, OverridePointer> overridePointers = new HashMap<>();
 	private HashMap<String, Object> cachedProxies = new HashMap<>();
 
-	public ModuleOverrideHandler(ModuleInstance[] spellSequence) throws ModuleOverrideException {
-		for( ModuleInstance module : spellSequence )
-			applyOverrides(module);
+	public ModuleOverrideHandler(SpellRing spellRing) throws ModuleOverrideException {
+		if( spellRing.getParentRing() != null )
+			throw new IllegalArgumentException("passed spellRing is not a root.");
+		
+		SpellRing[] spellSequence = getSequenceFromSpellRing(spellRing);
+		for( SpellRing curRing : spellSequence )
+			applyOverrides(curRing);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -41,7 +45,7 @@ public class ModuleOverrideHandler {
 	
 	private <T> T createConsumerInterface(Class<T> interfaceClass) throws ModuleOverrideException {
 		// Retrieve all overridable methods and check them for compatibility with base class
-		Map<String, Method> overridableMethods = ModuleClassUtils.getOverridableModuleMethods(interfaceClass);
+		Map<String, Method> overridableMethods = ModuleClassUtils.getOverridableModuleMethods(interfaceClass, true);
 		
 		// Create invocation handler. All interface methods are mapped to their base method pendants
 		OverrideInvoker invocationHandler = new OverrideInvoker(overridableMethods);
@@ -56,18 +60,19 @@ public class ModuleOverrideHandler {
 		return proxy;
 	}
 	
-	private void applyOverrides( ModuleInstance module ) throws ModuleOverrideException {
+	private void applyOverrides( SpellRing spellRing ) throws ModuleOverrideException {
+		ModuleInstance module = spellRing.getModule();
 		Map<String, Method> overrides = module.getFactory().getOverrides();
 		
 		for( Entry<String, Method> entry : overrides.entrySet() ) {
 			OverridePointer ptr = overridePointers.get(entry.getKey());
 			if( ptr == null ) {
-				ptr = new OverridePointer(null, module, entry.getKey(), entry.getValue());
+				ptr = new OverridePointer(spellRing, null, module, entry.getKey(), entry.getValue());
 			}
 			else {
 				if( !areMethodsCompatible(ptr.getBaseMethod(), entry.getValue()) )
 					throw new ModuleOverrideException("Method '" + ptr.getBaseMethod() + "' can't be overridden by '" + entry.getValue() + "' due to incompatible signature.");
-				ptr = new OverridePointer(ptr, module, entry.getKey(), entry.getValue());
+				ptr = new OverridePointer(spellRing,ptr, module, entry.getKey(), entry.getValue());
 			}
 			
 			overridePointers.put(entry.getKey(), ptr);			
@@ -76,18 +81,18 @@ public class ModuleOverrideHandler {
 	
 	/////////////////
 	
-	public static ModuleInstance[] getSequenceFromSpellRing(SpellRing spellRing) {
+	private static SpellRing[] getSequenceFromSpellRing(SpellRing spellRing) {
 		SpellRing cur = spellRing;
-		LinkedList<ModuleInstance> instances = new LinkedList<>();
+		LinkedList<SpellRing> instances = new LinkedList<>();
 		while( cur != null ) {
 			ModuleInstance module = cur.getModule();
 			if( !module.getFactory().hasOverrides() )
 				continue;
-			instances.add(module);
+			instances.add(cur);
 			cur = cur.getChildRing();
 		}
 		
-		return instances.toArray(new ModuleInstance[instances.size()]);
+		return instances.toArray(new SpellRing[instances.size()]);
 	}
 	
 	private static boolean areMethodsCompatible(Method baseMtd, Method overrideMtd) {
@@ -181,16 +186,22 @@ public class ModuleOverrideHandler {
 	}
 	
 	private static class OverridePointer {
+		private final SpellRing spellRingWithOverride;
 		private final String overrideName;
 		private final Method baseMethod;
 		private final ModuleInstance module;
 		private final OverridePointer prev;
 		
-		OverridePointer(OverridePointer prev, ModuleInstance module, String overrideName, Method baseMethod) {
+		OverridePointer(SpellRing spellRingWithOverride, OverridePointer prev, ModuleInstance module, String overrideName, Method baseMethod) {
+			this.spellRingWithOverride = spellRingWithOverride;
 			this.baseMethod = baseMethod;
 			this.module = module;
 			this.overrideName = overrideName;
 			this.prev = prev;
+		}
+		
+		SpellRing getSpellRingWithOverride() {
+			return spellRingWithOverride;
 		}
 		
 		Method getBaseMethod() {

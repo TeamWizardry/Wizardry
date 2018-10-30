@@ -41,7 +41,7 @@ public class ModuleFactory {
 		}
 		
 		// Determine overriden methods via reflection
-		overridableMethods.putAll(ModuleClassUtils.getOverridableModuleMethods(clazz));
+		overridableMethods.putAll(ModuleClassUtils.getOverridableModuleMethods(clazz, false));
 	}
 	
 	/**
