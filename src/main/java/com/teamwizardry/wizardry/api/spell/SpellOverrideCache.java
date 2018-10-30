@@ -25,7 +25,9 @@ public class SpellOverrideCache {
 	}
 	
 	ModuleOverrideHandler getOrCreateHandler(SpellRing spellChain, boolean initializeIfNotExisting) throws ModuleOverrideException {
-		spellChain = spellChain.getRootRing();
+		if( spellChain.getParentRing() != null )
+			throw new IllegalArgumentException("spellChain is not a root.");
+
 		ModuleInstance[] overrides = ModuleOverrideHandler.getSequenceFromSpellRing(spellChain);
 		String key = getCacheKey(overrides);
 		
