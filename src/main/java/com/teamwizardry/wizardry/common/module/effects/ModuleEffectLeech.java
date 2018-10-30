@@ -63,13 +63,13 @@ public class ModuleEffectLeech implements IModuleEffect {
 				targetEntity.attackEntityFrom(DamageSource.MAGIC, (float) potency);
 				if (targetEntity.isDead) {
 					targetMana /= 2;
-					targetMana = MathHelper.clamp(targetMana, targetMana, spellRing.getManaDrain() * 2);
+					targetMana = MathHelper.clamp(targetMana, targetMana, spellRing.getManaDrain(spell) * 2);
 					CapManager.forObject(caster).addMana(targetMana).close();
 				}
 
 			} else if (targetEntity instanceof EntityWitch) {
 
-				double targetMana = spellRing.getManaDrain() * 2;
+				double targetMana = spellRing.getManaDrain(spell) * 2;
 
 				targetEntity.attackEntityFrom(DamageSource.MAGIC, (float) potency);
 				if (targetEntity.isDead) {

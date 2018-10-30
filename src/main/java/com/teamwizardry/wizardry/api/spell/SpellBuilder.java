@@ -113,7 +113,21 @@ public class SpellBuilder {
 				chainEnd = chainEnd.getChildRing();
 			}
 		}
-		return spellList;
+		
+		// Register spell chain at the end. Use cached version if found an already registered chain.
+		// TODO: For the future: Maybe find a better optimized solution, if constructing a spell ring is more time consuming.
+		ArrayList<SpellRing> cachedSpellList = new ArrayList<>(spellList.size());
+		for (SpellRing ring : spellList) {
+			SpellRing cachedRing = SpellRingCache.INSTANCE.internalGetSpellRingByNBT(ring.serializeNBT(), false);
+			if( cachedRing != null )
+				cachedSpellList.add(cachedRing);
+			else {
+				ring = SpellRingCache.INSTANCE.registerSpellRing(ring);
+				cachedSpellList.add(ring);
+			}
+		}
+		
+		return cachedSpellList;
 	}
 
 	public List<ItemStack> getInventory() {

@@ -214,11 +214,11 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 									+ tmpRing.getModuleReadableName()
 									+ " - "
 									+ TextFormatting.BLUE
-									+ Math.round(tmpRing.getManaDrain() * tmpRing.getManaMultiplier())
+									+ Math.round(tmpRing.getManaDrain(null) * tmpRing.getManaMultiplier())
 									+ TextFormatting.GRAY
 									+ "/"
 									+ TextFormatting.RED
-									+ Math.round(tmpRing.getBurnoutFill() * tmpRing.getBurnoutMultiplier()));
+									+ Math.round(tmpRing.getBurnoutFill(null) * tmpRing.getBurnoutMultiplier()));
 					if (GuiScreen.isShiftKeyDown()) {
 						for (String key : tmpRing.getInformationTag().getKeySet()) {
 							double value = tmpRing.getInformationTag().getDouble(key);
