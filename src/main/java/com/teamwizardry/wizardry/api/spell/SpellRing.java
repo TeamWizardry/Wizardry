@@ -21,6 +21,7 @@ import com.teamwizardry.wizardry.api.spell.attribute.Operation;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceModifier;
+import com.teamwizardry.wizardry.api.spell.module.ModuleOverrideHandler;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
 
@@ -92,6 +93,11 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	@Nullable
 	private SpellRing childRing = null;
 
+	/**
+	 * A module override handler.
+	 */
+	@Nonnull
+	private ModuleOverrideHandler lazy_overrideHandler = null;	// "lazy" means, that access to variable should be done internally only over getter
 
 	private SpellRing() {
 	}
@@ -370,6 +376,19 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 	public void setParentRing(@Nullable SpellRing parentRing) {
 		this.parentRing = parentRing;
+	}
+	
+	@Nonnull
+	public ModuleOverrideHandler getOverrideHandler() {
+		if( lazy_overrideHandler == null ) {
+			if( parentRing != null )
+				lazy_overrideHandler = parentRing.getOverrideHandler();
+			else {
+				lazy_overrideHandler = SpellOverrideCache.INSTANCE.getOrCreateHandler(this, true);
+			}
+		}
+		
+		return lazy_overrideHandler;
 	}
 	
 	@Nullable
