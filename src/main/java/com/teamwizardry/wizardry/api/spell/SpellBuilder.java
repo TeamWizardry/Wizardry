@@ -120,7 +120,7 @@ public class SpellBuilder {
 			if( cachedRing != null )
 				cachedSpellList.add(cachedRing);
 			else {
-				SpellRingCache.INSTANCE.registerSpellRing(ring);
+				ring = SpellRingCache.INSTANCE.registerSpellRing(ring);
 				cachedSpellList.add(ring);
 			}
 		}

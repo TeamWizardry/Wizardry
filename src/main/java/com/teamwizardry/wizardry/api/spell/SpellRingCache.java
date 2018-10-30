@@ -30,25 +30,25 @@ public class SpellRingCache {
 		if( spellRing == null && mayCreate ) {
 			// deserialize ring and register it
 			spellRing = SpellRing.deserializeRing(key);
-			registerSpellRing(spellRing);
-			Wizardry.logger.info("SpellRing cache miss for " + spellRing);
+			spellRing = registerSpellRing(spellRing);
+//OFF			Wizardry.logger.info("SpellRing cache miss for " + spellRing);
 		}
 		
 		return spellRing;
 	}
 	
-	void registerSpellRing(SpellRing spellRing) {
+	SpellRing registerSpellRing(SpellRing spellRing) {
+		// NOTE: Is a workaround!
 		if( spellRing.getParentRing() != null )
 			throw new IllegalArgumentException("Expects a spell ring chain head.");
-
-		cache.put(spellRing.serializeNBT(), spellRing);
 		
-/*		// Called by SpellBuilder
-		SpellRing cur = spellRing;
-		while( cur != null ) {
-			cache.put(cur.serializeNBT(), cur);
-			cur = cur.getChildRing();
-		} */
-		
+		NBTTagCompound nbt = spellRing.serializeNBT();
+		SpellRing other = cache.put(nbt, spellRing);
+		if( other != null && other != spellRing ) {
+			cache.put(nbt, other);
+			return other;
+		}
+		else
+			return spellRing;
 	}
 }
