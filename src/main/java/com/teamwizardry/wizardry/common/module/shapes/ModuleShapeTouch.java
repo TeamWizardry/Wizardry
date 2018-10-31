@@ -8,6 +8,8 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.annotation.ContextRing;
+import com.teamwizardry.wizardry.api.spell.annotation.ModuleOverride;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.module.IModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceShape;
@@ -47,7 +49,9 @@ public class ModuleShapeTouch implements IModuleShape {
 		if (origin == null) return false;
 		if (!spellRing.taxCaster(spell, true)) return false;
 
-		instance.runRunOverrides(spell, spellRing);
+		IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
+//		instance.runRunOverrides(spell, spellRing);
+		overrides.onRunTouch(spell, spellRing);
 		
 		RayTraceResult result = new RayTrace(
 				spell.world, look, origin,
@@ -96,7 +100,9 @@ public class ModuleShapeTouch implements IModuleShape {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void renderSpell(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		if (instance.runRenderOverrides(spell, spellRing)) return;
+		IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
+		if( overrides.onRenderTouch(spell, spellRing) ) return;
+//		if (instance.runRenderOverrides(spell, spellRing)) return;
 
 		Entity targetEntity = spell.getVictim();
 
@@ -119,4 +125,16 @@ public class ModuleShapeTouch implements IModuleShape {
 			glitter.setScaleFunction(new InterpScale(1, 0));
 		});
 	}
+	
+	//////////////////
+	
+	@ModuleOverride("shape_touch_run")
+	public void onRunTouch(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+	}
+	
+	@ModuleOverride("shape_touch_render")
+	public boolean onRenderTouch(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+		return false;
+	}
+
 }

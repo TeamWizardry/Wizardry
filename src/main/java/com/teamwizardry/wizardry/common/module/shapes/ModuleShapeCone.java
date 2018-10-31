@@ -9,6 +9,8 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.annotation.ContextRing;
+import com.teamwizardry.wizardry.api.spell.annotation.ModuleOverride;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.IModuleShape;
@@ -65,7 +67,10 @@ public class ModuleShapeCone implements IModuleShape {
 			
 			long seed = RandUtil.nextLong(100, 10000);
 			spell.addData(SEED, seed);
-			instance.runRunOverrides(spell, spellRing);
+			
+			IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
+//			instance.runRunOverrides(spell, spellRing);
+			overrides.onRunCone(spell, spellRing);
 			
 			float angle = (float) range * 2;
 			float newPitch = pitch + RandUtil.nextFloat(-angle, angle);
@@ -98,7 +103,9 @@ public class ModuleShapeCone implements IModuleShape {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void renderSpell(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		if (instance.runRenderOverrides(spell, spellRing)) return;
+		IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
+//		if (instance.runRenderOverrides(spell, spellRing)) return;
+		if( overrides.onRenderCone(spell, spellRing) ) return;
 
 		Vec3d target = spell.getTarget();
 
@@ -115,5 +122,16 @@ public class ModuleShapeCone implements IModuleShape {
 			lines.setAlphaFunction(new InterpFloatInOut(0.3f, 0.3f));
 			lines.setLifetime(RandUtil.nextInt(10, 20));
 		});
+	}
+	
+	/////////////
+	
+	@ModuleOverride("shape_cone_run")
+	public void onRunCone(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+	}
+	
+	@ModuleOverride("shape_cone_render")
+	public boolean onRenderCone(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+		return false;
 	}
 }

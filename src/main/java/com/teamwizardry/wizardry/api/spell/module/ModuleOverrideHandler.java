@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.annotation.ContextRing;
 import com.teamwizardry.wizardry.api.util.ModuleClassUtils;
 
 public class ModuleOverrideHandler {
@@ -116,18 +117,23 @@ public class ModuleOverrideHandler {
 		
 		// Check compatibility of parameters
 		int countParams = baseMtd.getParameterCount();
-		if( countParams != overrideMtd.getParameterCount() )
-			return false;		
-		
 		Parameter[] baseParams = baseMtd.getParameters();
 		Parameter[] overrideParams = overrideMtd.getParameters();
-		
+
+		int handledMethods = 0;
 		for( int i = 0; i < countParams; i ++ ) {
 			Parameter baseParam = baseParams[i];
 			Parameter overrideParam = overrideParams[i];
 			if( !baseParam.getType().isAssignableFrom(overrideParam.getType()) )
 				return false;
+			if( baseParam.isAnnotationPresent(ContextRing.class) )
+				continue;	// Ignore parameters taking values from context
+			
+			handledMethods ++;
 		}
+		
+		if( handledMethods != overrideMtd.getParameterCount() )
+			return false;		
 		
 		// Check compatibility of exceptions
 		Class<?>[] baseExcps = baseMtd.getExceptionTypes();
@@ -156,8 +162,11 @@ public class ModuleOverrideHandler {
 	
 	private class OverrideInvoker implements InvocationHandler {
 		private final HashMap<String, OverridePointer> callMap = new HashMap<>();
-
-		public OverrideInvoker(Map<String, Method> overrides) throws ModuleOverrideException {
+		private final int idxContextRing;
+		
+		public OverrideInvoker(Map<String, Method> overrides, int idxContextRing) throws ModuleOverrideException {
+			this.idxContextRing = idxContextRing;
+			
 			for( Entry<String, Method> override : overrides.entrySet() ) {
 				OverridePointer ptr = overridePointers.get(override.getKey());
 				if( ptr == null )
@@ -171,10 +180,29 @@ public class ModuleOverrideHandler {
 			String name = method.getName();
 			OverridePointer ptr = callMap.get(name);
 			if( ptr == null )
-				throw new UnsupportedOperationException("Method '" + method + "' is not declared as override.");
+				throw new UnsupportedOperationException("Override '" + name + "' for '" + method + "' is not existing.");
+			
+			Object passedArgs[] = args;
+			if( idxContextRing >= 0 ) {
+				// Add spell ring
+				passedArgs = new Object[args.length + 1];
+				int i = 0;
+				int j = 0;
+				while( i < args.length ) {
+					if( i == idxContextRing ) {
+						passedArgs[j] = ptr.getSpellRingWithOverride();
+						j ++;
+						continue;
+					}
+					passedArgs[j] = args[i];
+					
+					i ++;
+					j ++;
+				}
+			}
 
 			try {
-				return ptr.getBaseMethod().invoke(ptr.getModule().getModuleClass(), args);
+				return ptr.getBaseMethod().invoke(ptr.getModule().getModuleClass(), passedArgs);
 			} catch (InvocationTargetException e) {
 				throw e.getTargetException();
 			} catch (IllegalAccessException | IllegalArgumentException e) {

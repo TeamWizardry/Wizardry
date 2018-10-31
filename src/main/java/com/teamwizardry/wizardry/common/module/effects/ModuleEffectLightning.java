@@ -6,6 +6,7 @@ import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.annotation.ModuleOverride;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.annotation.ContextRing;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
@@ -58,19 +59,23 @@ public class ModuleEffectLightning implements IModuleEffect {
 	}
 
 	@ModuleOverride("shape_touch_render")
-	public void onRenderTouch(SpellData data, SpellRing shape, SpellRing childRing) {
+	public boolean onRenderTouch(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+		return true;
 	}
 
 	@ModuleOverride("shape_projectile_render")
-	public void onRenderProjectile(SpellData data, SpellRing shape, SpellRing childRing) {
+	public boolean onRenderProjectile(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+		return true;
 	}
 
 	@ModuleOverride("shape_cone_render")
-	public void onRenderCone(SpellData data, SpellRing shape, SpellRing childRing) {
+	public boolean onRenderCone(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+		return true;
 	}
 
 	@ModuleOverride("shape_beam_render")
-	public void onRenderBeam(SpellData data, SpellRing shape, SpellRing childRing) {
+	public boolean onRenderBeam(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+		return true;
 	}
 
 	
@@ -82,7 +87,7 @@ public class ModuleEffectLightning implements IModuleEffect {
 //	private OverrideConsumer<SpellData, SpellRing, SpellRing> getSelfOverride() {
 //		return (data, spellRing, childRing) -> {
 	@ModuleOverride("shape_self_run")
-	public void onRunSelf(SpellData data, SpellRing shape, SpellRing childRing) {
+	public void onRunSelf(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
 		World world = data.world;
 		if (world.isRemote) return;
 		
@@ -108,7 +113,7 @@ public class ModuleEffectLightning implements IModuleEffect {
 //	private OverrideConsumer<SpellData, SpellRing, SpellRing> getTouchOverride() {
 //		return (data, spellRing, childRing) -> {
 	@ModuleOverride("shape_touch_run")
-	public void onRunTouch(SpellData data, SpellRing shape, SpellRing childRing) {
+	public void onRunTouch(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
 		World world = data.world;
 		Vec3d look = data.getData(LOOK);
 		Entity caster = data.getCaster();
@@ -137,14 +142,14 @@ public class ModuleEffectLightning implements IModuleEffect {
 //	private OverrideConsumer<SpellData, SpellRing, SpellRing> getProjectileOverride() {
 //		return (data, spellRing, childRing) -> {
 	@ModuleOverride("shape_projectile_run")
-	public void onRunProjectile(SpellData data, SpellRing shape, SpellRing childRing) {
+	public boolean onRunProjectile(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
 		World world = data.world;
-		if (world.isRemote) return;
+		if (world.isRemote) return true;
 
 		Vec3d origin = data.getOriginWithFallback();
-		if (origin == null) return;
+		if (origin == null) return true;
 
-		if (!childRing.taxCaster(data, true)) return;
+		if (!childRing.taxCaster(data, true)) return true;
 		
 		double dist = shape.getAttributeValue(AttributeRegistry.RANGE, data);
 		double speed = shape.getAttributeValue(AttributeRegistry.SPEED, data);
@@ -152,6 +157,8 @@ public class ModuleEffectLightning implements IModuleEffect {
 		EntityLightningProjectile proj = new EntityLightningProjectile(world, shape, childRing, data, (float) dist, (float) speed, (float) 0.1);
 		proj.setPosition(origin.x, origin.y, origin.z);
 		world.spawnEntity(proj);
+		
+		return true;
 	}
 //		};
 //	}
@@ -160,7 +167,7 @@ public class ModuleEffectLightning implements IModuleEffect {
 //	private OverrideConsumer<SpellData, SpellRing, SpellRing> getBeamOverride() {
 //		return (data, spellRing, childRing) -> {
 	@ModuleOverride("shape_beam_run")
-	public void onRunBeam(SpellData data, SpellRing shape, SpellRing childRing) {
+	public void onRunBeam(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
 		World world = data.world;
 		if (world.isRemote) return;
 		Entity caster = data.getCaster();
@@ -190,7 +197,7 @@ public class ModuleEffectLightning implements IModuleEffect {
 //	private OverrideConsumer<SpellData, SpellRing, SpellRing> getConeOverride() {
 //		return (data, spellRing, childRing) -> {
 	@ModuleOverride("shape_cone_run")
-	public void onRunCone(SpellData data, SpellRing shape, SpellRing childRing) {
+	public void onRunCone(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
 		World world = data.world;
 		float yaw = data.getData(YAW, 0F);
 		float pitch = data.getData(PITCH, 0F);
@@ -221,7 +228,7 @@ public class ModuleEffectLightning implements IModuleEffect {
 //	private OverrideConsumer<SpellData, SpellRing, SpellRing> getZoneOverride() {
 //		return (data, spellRing, childRing) -> {
 	@ModuleOverride("shape_zone_run")
-	public void onRunZone(SpellData data, SpellRing shape, SpellRing childRing) {
+	public void onRunZone(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
 		World world = data.world;
 		Entity caster = data.getCaster();
 		Vec3d targetPos = data.getTargetWithFallback();
@@ -253,7 +260,7 @@ public class ModuleEffectLightning implements IModuleEffect {
 //	}
 	
 	@Override
-	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @ContextRing @Nonnull SpellRing spellRing) {
 		// NO-OP, should always be overriding a shape
 		return true;
 	}
@@ -261,7 +268,7 @@ public class ModuleEffectLightning implements IModuleEffect {
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @ContextRing @Nonnull SpellRing spellRing) {
 		// NO-OP, should always be overriding a shape
 	}
 	

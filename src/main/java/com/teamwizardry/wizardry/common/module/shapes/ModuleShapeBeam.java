@@ -5,7 +5,9 @@ import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.spell.IContinuousModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.annotation.ModuleOverride;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.annotation.ContextRing;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.IModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceShape;
@@ -90,7 +92,9 @@ public class ModuleShapeBeam implements IModuleShape, IContinuousModule {
 				return false;
 			}
 
-			instance.runRunOverrides(spell, spellRing);
+			IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
+//			instance.runRunOverrides(spell, spellRing);
+			overrides.onRunBeam(spell, spellRing);
 
 			RayTraceResult trace = new RayTrace(world, look, position, range)
 					.setEntityFilter(input -> input != caster)
@@ -163,7 +167,10 @@ public class ModuleShapeBeam implements IModuleShape, IContinuousModule {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void renderSpell(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		if (instance.runRenderOverrides(spell, spellRing)) return;
+		IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
+		if( overrides.onRenderBeam(spell, spellRing) )
+			return;
+//		if (instance.runRenderOverrides(spell, spellRing)) return;
 
 		World world = spell.world;
 		Vec3d look = spell.getData(LOOK);
@@ -196,5 +203,18 @@ public class ModuleShapeBeam implements IModuleShape, IContinuousModule {
 
 		BeamTicker() {
 		}
+	}
+	
+	///////////
+	
+	@ModuleOverride("shape_beam_render")
+	public boolean onRenderBeam(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+		// Default implementation
+		return false;
+	}
+	
+	@ModuleOverride("shape_beam_run")
+	public void onRunBeam(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+		// Default implementation
 	}
 }

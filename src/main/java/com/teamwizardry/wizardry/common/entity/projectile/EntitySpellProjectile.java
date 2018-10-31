@@ -16,7 +16,9 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceShape;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
+import com.teamwizardry.wizardry.common.module.shapes.IShapeOverrides;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
+import com.teamwizardry.wizardry.common.module.shapes.IShapeOverrides;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.nbt.NBTTagCompound;
@@ -167,9 +169,12 @@ public class EntitySpellProjectile extends EntityMod {
 				@Override
 				@SideOnly(Side.CLIENT)
 				public void runIfClient() {
-					if (spellRing.getModule() instanceof ModuleInstanceShape)
-						if (((ModuleInstanceShape) spellRing.getModule()).runRenderOverrides(spellData, spellRing))
-							return;
+					IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
+					if( overrides.onRenderProjectile(spellData, spellRing) )
+						return;
+//					if (spellRing.getModule() instanceof ModuleInstanceShape)
+//						if (((ModuleInstanceShape) spellRing.getModule()).runRenderOverrides(spellData, spellRing))
+//							return;
 
 					ParticleBuilder glitter = new ParticleBuilder(10);
 					glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));

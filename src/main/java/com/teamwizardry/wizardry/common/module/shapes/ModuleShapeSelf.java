@@ -9,6 +9,8 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.annotation.ContextRing;
+import com.teamwizardry.wizardry.api.spell.annotation.ModuleOverride;
 import com.teamwizardry.wizardry.api.spell.annotation.ModuleParameter;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.module.IModuleShape;
@@ -38,7 +40,9 @@ public class ModuleShapeSelf implements IModuleShape {
 
 		if (!spellRing.taxCaster(spell, true)) return false;
 		
-		instance.runRunOverrides(spell, spellRing);
+		IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
+//		instance.runRunOverrides(spell, spellRing);
+		overrides.onRunSelf(spell, spellRing);
 		
 		spell.processEntity(caster, false);
 
@@ -48,7 +52,9 @@ public class ModuleShapeSelf implements IModuleShape {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void renderSpell(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		if (instance.runRenderOverrides(spell, spellRing)) return;
+		IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
+		if( overrides.onRenderSelf(spell, spellRing) ) return;
+//		if (instance.runRenderOverrides(spell, spellRing)) return;
 
 		Entity caster = spell.getCaster();
 		World world = spell.world;
@@ -83,5 +89,16 @@ public class ModuleShapeSelf implements IModuleShape {
 			}
 		});
 
+	}
+	
+	///////////////////
+	
+	@ModuleOverride("shape_self_run")
+	public void onRunSelf(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+	}
+	
+	@ModuleOverride("shape_self_render")
+	public boolean onRenderSelf(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+		return false;
 	}
 }

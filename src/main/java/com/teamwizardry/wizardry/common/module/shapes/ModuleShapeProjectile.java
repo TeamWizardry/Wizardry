@@ -2,6 +2,8 @@ package com.teamwizardry.wizardry.common.module.shapes;
 
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.annotation.ContextRing;
+import com.teamwizardry.wizardry.api.spell.annotation.ModuleOverride;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.IModuleShape;
@@ -53,7 +55,9 @@ public class ModuleShapeProjectile implements IModuleShape {
 
 		if (!spellRing.taxCaster(spell, true)) return false;
 		
-		EntitySpellProjectile proj = new EntitySpellProjectile(world, spellRing, spell, (float) dist, (float) speed, (float) 0.1, !instance.runRunOverrides(spell, spellRing));
+		IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
+		
+		EntitySpellProjectile proj = new EntitySpellProjectile(world, spellRing, spell, (float) dist, (float) speed, (float) 0.1, /*!instance.runRunOverrides(spell, spellRing)*/overrides.onRunProjectile(spell, spellRing));
 		proj.setPosition(origin.x, origin.y, origin.z);
 		proj.velocityChanged = true;
 
@@ -66,9 +70,11 @@ public class ModuleShapeProjectile implements IModuleShape {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void renderSpell(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		if (spellRing.isRunBeingOverriden()) {
-			instance.runRenderOverrides(spell, spellRing);
-		}
+		IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
+		overrides.onRenderProjectile(spell, spellRing);
+//		if (spellRing.isRunBeingOverriden()) {
+//			instance.runRenderOverrides(spell, spellRing);
+//		}
 	}
 
 	@NotNull
@@ -100,5 +106,18 @@ public class ModuleShapeProjectile implements IModuleShape {
 		previousData.processTrace(result);
 
 		return previousData;
+	}
+	
+	///////////
+	
+	@ModuleOverride("shape_projectile_run")
+	public boolean onRunProjectile(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+		return false;		
+	}
+
+	
+	@ModuleOverride("shape_projectile_render")
+	public boolean onRenderProjectile(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+		return false;
 	}
 }
