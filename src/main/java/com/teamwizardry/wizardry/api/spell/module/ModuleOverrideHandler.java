@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.annotation.ContextRing;
 import com.teamwizardry.wizardry.api.spell.annotation.ModuleOverrideInterface;
+import com.teamwizardry.wizardry.api.spell.module.ModuleFactory.OverrideMethod;
 
 public class ModuleOverrideHandler {
 	
@@ -46,7 +47,7 @@ public class ModuleOverrideHandler {
 	
 	private <T> T createConsumerInterface(Class<T> interfaceClass) throws ModuleOverrideException {
 		// Retrieve all overridable methods and check them for compatibility with base class
-		Map<String, MethodEntry> overridableMethods = getInterfaceMethods(interfaceClass);
+		Map<String, Method> overridableMethods = getInterfaceMethods(interfaceClass);
 		
 		// Create invocation handler. All interface methods are mapped to their base method pendants
 		OverrideInvoker invocationHandler = new OverrideInvoker(overridableMethods);
@@ -63,15 +64,15 @@ public class ModuleOverrideHandler {
 	
 	private void applyOverrides( SpellRing spellRing ) throws ModuleOverrideException {
 		ModuleInstance module = spellRing.getModule();
-		Map<String, Method> overrides = module.getFactory().getOverrides();
+		Map<String, OverrideMethod> overrides = module.getFactory().getOverrides();
 		
-		for( Entry<String, Method> entry : overrides.entrySet() ) {
+		for( Entry<String, OverrideMethod> entry : overrides.entrySet() ) {
 			OverridePointer ptr = overridePointers.get(entry.getKey());
 			if( ptr == null ) {
 				ptr = new OverridePointer(spellRing, null, entry.getKey(), entry.getValue());
 			}
 			else {
-				if( !areMethodsCompatible(ptr.getBaseMethod(), entry.getValue()) )
+				if( !areMethodsCompatible(ptr.getBaseMethod().getMethod(), entry.getValue().getMethod()) )
 					throw new ModuleOverrideException("Method '" + ptr.getBaseMethod() + "' can't be overridden by '" + entry.getValue() + "' due to incompatible signature.");
 				ptr = new OverridePointer(spellRing,ptr, entry.getKey(), entry.getValue());
 			}
@@ -87,9 +88,9 @@ public class ModuleOverrideHandler {
 		LinkedList<SpellRing> instances = new LinkedList<>();
 		while( cur != null ) {
 			ModuleInstance module = cur.getModule();
-			if( !module.getFactory().hasOverrides() )
-				continue;
-			instances.add(cur);
+			if( module.getFactory().hasOverrides() ) {
+				instances.add(cur);
+			}			
 			cur = cur.getChildRing();
 		}
 		
@@ -240,11 +241,12 @@ public class ModuleOverrideHandler {
 	private class OverrideInvoker implements InvocationHandler {
 		private final HashMap<String, OverrideInterfaceMethod> callMap = new HashMap<>();
 		
-		public OverrideInvoker(Map<String, MethodEntry> overrides) throws ModuleOverrideException {
-			for( Entry<String, MethodEntry> override : overrides.entrySet() ) {
+		public OverrideInvoker(Map<String, Method> overrides) throws ModuleOverrideException {
+			for( Entry<String, Method> override : overrides.entrySet() ) {
 				OverridePointer ptr = overridePointers.get(override.getKey());
 				if( ptr == null )
-					throw new ModuleOverrideException("Override with name '" + override.getKey() + "' referenced by '" + override.getValue() + "' is not existing.");
+					continue;	// Ignore unmapped methods. invoke() will throw a proper exception on attempt to call them.
+//					throw new ModuleOverrideException("Override with name '" + override.getKey() + "' referenced by '" + override.getValue() + "' is not existing.");
 				
 				OverrideInterfaceMethod intfMethod = new OverrideInterfaceMethod(ptr, override.getValue());
 				callMap.put(intfMethod.getKey(), intfMethod);
@@ -258,7 +260,7 @@ public class ModuleOverrideHandler {
 			if( intfMethod == null )
 				throw new UnsupportedOperationException("Override '" + name + "' for '" + method + "' is not existing.");
 			OverridePointer ptr = intfMethod.getOverridePointer();
-			int idxContextParamRing = intfMethod.getInterfaceMethodEntry().getIdxContextParamRing();
+			int idxContextParamRing = ptr.getBaseMethod().getIdxContextParamRing();
 			
 			Object passedArgs[] = args;
 			if( idxContextParamRing >= 0 ) {
@@ -266,13 +268,13 @@ public class ModuleOverrideHandler {
 				passedArgs = new Object[args.length + 1];
 				int i = 0;
 				int j = 0;
-				while( i < args.length ) {
+				while( i < passedArgs.length ) {
 					if( i == idxContextParamRing ) {
-						passedArgs[j] = ptr.getSpellRingWithOverride();
-						j ++;
+						passedArgs[i] = ptr.getSpellRingWithOverride();
+						i ++;
 						continue;
 					}
-					passedArgs[j] = args[i];
+					passedArgs[i] = args[j];
 					
 					i ++;
 					j ++;
@@ -280,7 +282,7 @@ public class ModuleOverrideHandler {
 			}
 
 			try {
-				return ptr.getBaseMethod().invoke(ptr.getModule().getModuleClass(), passedArgs);
+				return ptr.getBaseMethod().getMethod().invoke(ptr.getModule().getModuleClass(), passedArgs);
 			} catch (InvocationTargetException e) {
 				throw e.getTargetException();
 			} catch (IllegalAccessException | IllegalArgumentException e) {
@@ -293,8 +295,8 @@ public class ModuleOverrideHandler {
 	
 	////////////////////////
 	
-	public static Map<String, MethodEntry> getInterfaceMethods(Class<?> clazz) throws ModuleOverrideException {
-		HashMap<String, MethodEntry> overridableMethods = new HashMap<>();
+	public static Map<String, Method> getInterfaceMethods(Class<?> clazz) throws ModuleOverrideException {
+		HashMap<String, Method> overridableMethods = new HashMap<>();
 
 		// TODO: Check for ambiguity of method names. Handle overrides by superclass properly!
 		
@@ -312,9 +314,7 @@ public class ModuleOverrideHandler {
 				throw new ModuleOverrideException("Failed to aquire reflection access to method '" + method.toString() + "', annotated by @ModuleOverrideInterface.", e);
 			}
 			
-			MethodEntry entry = new MethodEntry(method, -1);
-			
-			overridableMethods.put(ovrd.value(), entry);
+			overridableMethods.put(ovrd.value(), method);
 		}
 		
 		return overridableMethods;
@@ -325,10 +325,10 @@ public class ModuleOverrideHandler {
 	private static class OverridePointer {
 		private final SpellRing spellRingWithOverride;
 		private final String overrideName;
-		private final Method baseMethod;
+		private final OverrideMethod baseMethod;
 		private final OverridePointer prev;
 		
-		OverridePointer(SpellRing spellRingWithOverride, OverridePointer prev, String overrideName, Method baseMethod) {
+		OverridePointer(SpellRing spellRingWithOverride, OverridePointer prev, String overrideName, OverrideMethod baseMethod) {
 			this.spellRingWithOverride = spellRingWithOverride;
 			this.baseMethod = baseMethod;
 			this.overrideName = overrideName;
@@ -339,7 +339,7 @@ public class ModuleOverrideHandler {
 			return spellRingWithOverride;
 		}
 		
-		Method getBaseMethod() {
+		OverrideMethod getBaseMethod() {
 			return this.baseMethod;
 		}
 		
@@ -356,45 +356,26 @@ public class ModuleOverrideHandler {
 		}
 	}
 	
-	private static class MethodEntry {
-		private final Method method;
-		private final int idxContextParamRing;
-		
-		MethodEntry(Method method, int idxContextParamRing) {
-			super();
-			this.method = method;
-			this.idxContextParamRing = idxContextParamRing;
-		}
-
-		Method getMethod() {
-			return method;
-		}
-
-		int getIdxContextParamRing() {
-			return idxContextParamRing;
-		}		
-	}
-	
 	private static class OverrideInterfaceMethod {
 		private final OverridePointer overridePointer;
-		private final MethodEntry interfaceMethodEntry;
+		private final Method interfaceMethod;
 		
-		OverrideInterfaceMethod(OverridePointer overridePointer, MethodEntry interfaceMethodEntry) {
+		OverrideInterfaceMethod(OverridePointer overridePointer, Method interfaceMethod) {
 			super();
 			this.overridePointer = overridePointer;
-			this.interfaceMethodEntry = interfaceMethodEntry;
+			this.interfaceMethod = interfaceMethod;
 		}
 
 		OverridePointer getOverridePointer() {
 			return overridePointer;
 		}
 
-		MethodEntry getInterfaceMethodEntry() {
-			return interfaceMethodEntry;
+		Method getInterfaceMethod() {
+			return interfaceMethod;
 		}
 		
 		String getKey() {
-			return interfaceMethodEntry.getMethod().getName();
+			return interfaceMethod.getName();
 		}
 	}
 }

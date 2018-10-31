@@ -3,11 +3,13 @@ package com.teamwizardry.wizardry.api.spell.module;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.teamwizardry.wizardry.api.spell.annotation.ContextRing;
 import com.teamwizardry.wizardry.api.spell.annotation.ModuleOverride;
 import com.teamwizardry.wizardry.api.spell.annotation.ModuleParameter;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
@@ -22,7 +24,7 @@ public class ModuleFactory {
 	private final Class<? extends IModule> clazz;
 	private final HashMap<Map<String, Object>, IModule> instances = new HashMap<>();
 	private final HashMap<String, Field> configurableFields = new HashMap<>();
-	private final HashMap<String, Method> overridableMethods = new HashMap<>();
+	private final HashMap<String, OverrideMethod> overridableMethods = new HashMap<>();
 	private final String referenceModuleID;
 	
 	ModuleFactory(String referenceModuleID, Class<? extends IModule> clazz) throws ModuleInitException {
@@ -63,7 +65,20 @@ public class ModuleFactory {
 				throw new ModuleInitException("Failed to aquire reflection access to method '" + method.toString() + "', annotated by @ModuleOverride.", e);
 			}
 			
-			overridableMethods.put(ovrd.value(), method);
+			// Search for context parameters
+			int idxContextParamRing = -1;
+			Parameter[] params = method.getParameters();
+			for( int i = 0; i < params.length; i ++ ) {
+				Parameter param = params[i];
+				if( param.isAnnotationPresent(ContextRing.class) ) {
+					if( idxContextParamRing >= 0 )
+						throw new ModuleInitException("Method '" + method.toString() + "' has invalid @ContextRing annotated parameter. It is not allowed on multiple parameters.");
+					idxContextParamRing = i;
+				}
+			}
+			
+			OverrideMethod ovrdMethod = new OverrideMethod(method, idxContextParamRing);
+			overridableMethods.put(ovrd.value(), ovrdMethod);
 		}
 	}
 	
@@ -90,7 +105,7 @@ public class ModuleFactory {
 	 * 
 	 * @return a map, which associates an override name with a method.
 	 */
-	public Map<String, Method> getOverrides() {
+	public Map<String, OverrideMethod> getOverrides() {
 		return Collections.unmodifiableMap(overridableMethods);
 	}
 	
@@ -218,13 +233,22 @@ public class ModuleFactory {
 	
 	///////////
 	
-/*	private static class ModuleOverrideMethod {
-		private final String overrideName;
-		private final Method overrideMethod;
+	public static class OverrideMethod {
+		private final Method method;
+		private final int idxContextParamRing;
 		
-		ModuleOverrideMethod(String overrideName, Method overrideMethod) {
-			this.overrideName = overrideName;
-			this.overrideMethod = overrideMethod;
+		OverrideMethod(Method method, int idxContextParamRing) {
+			super();
+			this.method = method;
+			this.idxContextParamRing = idxContextParamRing;
 		}
-	}*/
+
+		public Method getMethod() {
+			return method;
+		}
+
+		public int getIdxContextParamRing() {
+			return idxContextParamRing;
+		}		
+	}
 }

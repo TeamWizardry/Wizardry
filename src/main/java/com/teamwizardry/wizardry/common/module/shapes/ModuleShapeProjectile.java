@@ -57,7 +57,7 @@ public class ModuleShapeProjectile implements IModuleShape {
 		
 		IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
 		
-		EntitySpellProjectile proj = new EntitySpellProjectile(world, spellRing, spell, (float) dist, (float) speed, (float) 0.1, /*!instance.runRunOverrides(spell, spellRing)*/overrides.onRunProjectile(spell, spellRing));
+		EntitySpellProjectile proj = new EntitySpellProjectile(world, spellRing, spell, (float) dist, (float) speed, (float) 0.1, !/*instance.runRunOverrides(spell, spellRing)*/overrides.onRunProjectile(spell, spellRing));
 		proj.setPosition(origin.x, origin.y, origin.z);
 		proj.velocityChanged = true;
 
