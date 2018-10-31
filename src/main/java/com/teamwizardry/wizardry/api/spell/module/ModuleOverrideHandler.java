@@ -12,7 +12,7 @@ import java.util.Map.Entry;
 
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.annotation.ContextRing;
-import com.teamwizardry.wizardry.api.util.ModuleClassUtils;
+import com.teamwizardry.wizardry.api.spell.annotation.ModuleOverrideInterface;
 
 public class ModuleOverrideHandler {
 	
@@ -46,7 +46,7 @@ public class ModuleOverrideHandler {
 	
 	private <T> T createConsumerInterface(Class<T> interfaceClass) throws ModuleOverrideException {
 		// Retrieve all overridable methods and check them for compatibility with base class
-		Map<String, Method> overridableMethods = ModuleClassUtils.getOverridableModuleMethods(interfaceClass, true);
+		Map<String, MethodEntry> overridableMethods = getInterfaceMethods(interfaceClass);
 		
 		// Create invocation handler. All interface methods are mapped to their base method pendants
 		OverrideInvoker invocationHandler = new OverrideInvoker(overridableMethods);
@@ -142,10 +142,14 @@ public class ModuleOverrideHandler {
 		// For every checked exception at the interface method
 		// there should exist an exception type at base
 		// which is assignable from the interface method exception
-		// TODO: Maybe ignore unchecked exceptions?
 		for( Class<?> overrideExcp : overrideExcps ) {
+			if( RuntimeException.class.equals(overrideExcp) )
+				continue;
+			
 			boolean found = false;
 			for( Class<?> baseExcp : baseExcps ) {
+				if( RuntimeException.class.equals(baseExcp) )
+					continue;
 				if( baseExcp.isAssignableFrom(overrideExcp) ) {
 					found = true;
 					break;
@@ -161,35 +165,36 @@ public class ModuleOverrideHandler {
 	/////////////////
 	
 	private class OverrideInvoker implements InvocationHandler {
-		private final HashMap<String, OverridePointer> callMap = new HashMap<>();
-		private final int idxContextRing;
+		private final HashMap<String, OverrideInterfaceMethod> callMap = new HashMap<>();
 		
-		public OverrideInvoker(Map<String, Method> overrides, int idxContextRing) throws ModuleOverrideException {
-			this.idxContextRing = idxContextRing;
-			
-			for( Entry<String, Method> override : overrides.entrySet() ) {
+		public OverrideInvoker(Map<String, MethodEntry> overrides) throws ModuleOverrideException {
+			for( Entry<String, MethodEntry> override : overrides.entrySet() ) {
 				OverridePointer ptr = overridePointers.get(override.getKey());
 				if( ptr == null )
-					throw new ModuleOverrideException("Override with name '" + override.getKey() + "' referenced by '" + override.getValue()+"' is not existing.");
-				callMap.put(override.getValue().getName(), ptr);
+					throw new ModuleOverrideException("Override with name '" + override.getKey() + "' referenced by '" + override.getValue() + "' is not existing.");
+				
+				OverrideInterfaceMethod intfMethod = new OverrideInterfaceMethod(ptr, override.getValue());
+				callMap.put(intfMethod.getKey(), intfMethod);
 			}
 		}
 
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 			String name = method.getName();
-			OverridePointer ptr = callMap.get(name);
-			if( ptr == null )
+			OverrideInterfaceMethod intfMethod = callMap.get(name);
+			if( intfMethod == null )
 				throw new UnsupportedOperationException("Override '" + name + "' for '" + method + "' is not existing.");
+			OverridePointer ptr = intfMethod.getOverridePointer();
+			int idxContextParamRing = intfMethod.getInterfaceMethodEntry().getIdxContextParamRing();
 			
 			Object passedArgs[] = args;
-			if( idxContextRing >= 0 ) {
+			if( idxContextParamRing >= 0 ) {
 				// Add spell ring
 				passedArgs = new Object[args.length + 1];
 				int i = 0;
 				int j = 0;
 				while( i < args.length ) {
-					if( i == idxContextRing ) {
+					if( i == idxContextParamRing ) {
 						passedArgs[j] = ptr.getSpellRingWithOverride();
 						j ++;
 						continue;
@@ -212,6 +217,28 @@ public class ModuleOverrideHandler {
 			}
 		}
 	}
+	
+	////////////////////////
+	
+	public static Map<String, MethodEntry> getInterfaceMethods(Class<?> clazz) throws ModuleOverrideException {
+		HashMap<String, MethodEntry> overridableMethods = new HashMap<>();
+
+		for(Method method : clazz.getMethods()) {
+			ModuleOverrideInterface ovrd = method.getDeclaredAnnotation(ModuleOverrideInterface.class);
+			if( ovrd == null )
+				continue;
+			if( !method.isAccessible() )
+				throw new ModuleOverrideException("Method '" + method.toString() + "' is annotated by @ModuleOverrideInterface but is unaccessible.");
+			
+			MethodEntry entry = new MethodEntry(method, -1);
+			
+			overridableMethods.put(ovrd.value(), entry);
+		}
+		
+		return overridableMethods;
+	}
+	
+	////////////////////////
 	
 	private static class OverridePointer {
 		private final SpellRing spellRingWithOverride;
@@ -246,6 +273,48 @@ public class ModuleOverrideHandler {
 		
 		String getOverrideName() {
 			return overrideName;
+		}
+	}
+	
+	private static class MethodEntry {
+		private final Method method;
+		private final int idxContextParamRing;
+		
+		MethodEntry(Method method, int idxContextParamRing) {
+			super();
+			this.method = method;
+			this.idxContextParamRing = idxContextParamRing;
+		}
+
+		Method getMethod() {
+			return method;
+		}
+
+		int getIdxContextParamRing() {
+			return idxContextParamRing;
+		}		
+	}
+	
+	private static class OverrideInterfaceMethod {
+		private final OverridePointer overridePointer;
+		private final MethodEntry interfaceMethodEntry;
+		
+		OverrideInterfaceMethod(OverridePointer overridePointer, MethodEntry interfaceMethodEntry) {
+			super();
+			this.overridePointer = overridePointer;
+			this.interfaceMethodEntry = interfaceMethodEntry;
+		}
+
+		OverridePointer getOverridePointer() {
+			return overridePointer;
+		}
+
+		MethodEntry getInterfaceMethodEntry() {
+			return interfaceMethodEntry;
+		}
+		
+		String getKey() {
+			return interfaceMethodEntry.getMethod().getName();
 		}
 	}
 }

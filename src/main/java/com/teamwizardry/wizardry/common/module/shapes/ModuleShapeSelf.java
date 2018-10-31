@@ -95,10 +95,12 @@ public class ModuleShapeSelf implements IModuleShape {
 	
 	@ModuleOverride("shape_self_run")
 	public void onRunSelf(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+		// Default implementation
 	}
 	
 	@ModuleOverride("shape_self_render")
 	public boolean onRenderSelf(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+		// Default implementation
 		return false;
 	}
 }

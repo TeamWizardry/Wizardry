@@ -112,12 +112,14 @@ public class ModuleShapeProjectile implements IModuleShape {
 	
 	@ModuleOverride("shape_projectile_run")
 	public boolean onRunProjectile(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+		// Default implementation
 		return false;		
 	}
 
 	
 	@ModuleOverride("shape_projectile_render")
 	public boolean onRenderProjectile(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+		// Default implementation
 		return false;
 	}
 }

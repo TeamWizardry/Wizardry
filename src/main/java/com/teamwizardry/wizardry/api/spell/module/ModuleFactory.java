@@ -8,9 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.teamwizardry.wizardry.api.spell.annotation.ModuleOverride;
 import com.teamwizardry.wizardry.api.spell.annotation.ModuleParameter;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
-import com.teamwizardry.wizardry.api.util.ModuleClassUtils;
 
 /**
  * A factory object to create new module instances based on passed parameter sets.
@@ -41,7 +41,16 @@ public class ModuleFactory {
 		}
 		
 		// Determine overriden methods via reflection
-		overridableMethods.putAll(ModuleClassUtils.getOverridableModuleMethods(clazz, false));
+		// FIXME: Separation of concerns: Overridable methods are not part of factory. Move them or rename factory class appropriately.
+		for(Method method : clazz.getMethods()) {
+			ModuleOverride ovrd = method.getDeclaredAnnotation(ModuleOverride.class);
+			if( ovrd == null )
+				continue;
+			if( !method.isAccessible() )
+				throw new ModuleInitException("Method '" + method.toString() + "' is annotated by @ModuleOverride but is unaccessible.");
+			
+			overridableMethods.put(ovrd.value(), method);
+		}
 	}
 	
 	/**

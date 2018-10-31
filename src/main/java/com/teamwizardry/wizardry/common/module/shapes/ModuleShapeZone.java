@@ -160,10 +160,12 @@ public class ModuleShapeZone implements IModuleShape, ILingeringModule {
 	
 	@ModuleOverride("shape_zone_run")
 	public void onRunZone(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+		// Default implementation
 	}
 
 	@ModuleOverride("shape_zone_render")
 	public boolean onRenderZone(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+		// Default implementation
 		return false;
 	}
 }
