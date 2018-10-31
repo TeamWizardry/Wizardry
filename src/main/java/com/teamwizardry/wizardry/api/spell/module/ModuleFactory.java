@@ -37,8 +37,6 @@ public class ModuleFactory {
 			ModuleParameter cfg = field.getDeclaredAnnotation(ModuleParameter.class);
 			if( cfg == null )
 				continue;
-//			if( !field.isAccessible() )
-//				throw new ModuleInitException("Field '" + field.toString() + "' is annotated by @ModuleParameter but is unaccessible.");
 			try {
 				field.setAccessible(true);
 			}
@@ -55,8 +53,6 @@ public class ModuleFactory {
 			ModuleOverride ovrd = method.getDeclaredAnnotation(ModuleOverride.class);
 			if( ovrd == null )
 				continue;
-//			if( !method.isAccessible() )
-//				throw new ModuleInitException("Method '" + method.toString() + "' is annotated by @ModuleOverride but is unaccessible.");
 			
 			try {
 				method.setAccessible(true);

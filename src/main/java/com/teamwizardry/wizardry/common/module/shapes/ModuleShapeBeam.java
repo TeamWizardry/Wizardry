@@ -93,7 +93,6 @@ public class ModuleShapeBeam implements IModuleShape, IContinuousModule {
 			}
 
 			IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
-//			instance.runRunOverrides(spell, spellRing);
 			overrides.onRunBeam(spell, spellRing);
 
 			RayTraceResult trace = new RayTrace(world, look, position, range)
@@ -170,7 +169,6 @@ public class ModuleShapeBeam implements IModuleShape, IContinuousModule {
 		IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
 		if( overrides.onRenderBeam(spell, spellRing) )
 			return;
-//		if (instance.runRenderOverrides(spell, spellRing)) return;
 
 		World world = spell.world;
 		Vec3d look = spell.getData(LOOK);

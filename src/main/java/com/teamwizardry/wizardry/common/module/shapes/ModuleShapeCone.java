@@ -69,7 +69,6 @@ public class ModuleShapeCone implements IModuleShape {
 			spell.addData(SEED, seed);
 			
 			IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
-//			instance.runRunOverrides(spell, spellRing);
 			overrides.onRunCone(spell, spellRing);
 			
 			float angle = (float) range * 2;
@@ -104,7 +103,6 @@ public class ModuleShapeCone implements IModuleShape {
 	@SideOnly(Side.CLIENT)
 	public void renderSpell(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
-//		if (instance.runRenderOverrides(spell, spellRing)) return;
 		if( overrides.onRenderCone(spell, spellRing) ) return;
 
 		Vec3d target = spell.getTarget();

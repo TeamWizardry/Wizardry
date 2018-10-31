@@ -98,8 +98,6 @@ public class ModuleOverrideHandler {
 	}
 	
 	private static boolean areMethodsCompatible(Method baseMtd, Method overrideMtd) {
-		// TODO: Move to reflection utils.
-		
 		// WARNING: Update this method, if language conventions in java change. 
 		
 		// Check compatibility of return types
@@ -162,53 +160,6 @@ public class ModuleOverrideHandler {
 			j ++;
 		}
 		
-		
-/*		int i = 0, j = 0;
-		
-		while( i < baseParams.length || j < baseParams.length ) {
-			if( i < baseParams.length ) {
-				Parameter baseParam = baseParams[i];
-				if( baseParam.isAnnotationPresent(ContextRing.class) ) {
-					i ++;
-					continue;	// Ignore parameters taking values from context
-				}
-
-				if( j < baseParams.length ) {
-					Parameter overrideParam = overrideParams[j];
-					// ...
-					j ++;
-				}
-				else {
-					// ...
-				}
-				i ++;
-			}
-			else {
-				Parameter overrideParam = overrideParams[j];
-				// ...
-				j ++;
-			}
-		} */
-		
-/*		int checkHandledMethods = 0;
-		for( int i = 0, j = 0; i < baseParams.length; i ++ ) {
-			Parameter baseParam = baseParams[i];
-			Parameter overrideParam = overrideParams[i];
-			if( !baseParam.getType().isAssignableFrom(overrideParam.getType()) )
-				return false;
-			if( baseParam.isAnnotationPresent(ContextRing.class) )
-				continue;	// Ignore parameters taking values from context
-			
-			checkHandledMethods ++;
-		}
-		
-		for( int i = 0; i < overrideParams.length; i ++ ) {
-			Parameter overrideParam = overrideParams[i];
-		}
-		
-		if( checkHandledMethods != 0 )
-			return false;		*/
-		
 		// Check compatibility of exceptions
 		Class<?>[] baseExcps = baseMtd.getExceptionTypes();
 		Class<?>[] overrideExcps = overrideMtd.getExceptionTypes();
@@ -246,7 +197,6 @@ public class ModuleOverrideHandler {
 				OverridePointer ptr = overridePointers.get(override.getKey());
 				if( ptr == null )
 					continue;	// Ignore unmapped methods. invoke() will throw a proper exception on attempt to call them.
-//					throw new ModuleOverrideException("Override with name '" + override.getKey() + "' referenced by '" + override.getValue() + "' is not existing.");
 				
 				OverrideInterfaceMethod intfMethod = new OverrideInterfaceMethod(ptr, override.getValue());
 				callMap.put(intfMethod.getKey(), intfMethod);
@@ -304,8 +254,6 @@ public class ModuleOverrideHandler {
 			ModuleOverrideInterface ovrd = method.getDeclaredAnnotation(ModuleOverrideInterface.class);
 			if( ovrd == null )
 				continue;
-//			if( !method.isAccessible() )
-//				throw new ModuleOverrideException("Method '" + method.toString() + "' is annotated by @ModuleOverrideInterface but is unaccessible.");
 			
 			try {
 				method.setAccessible(true);

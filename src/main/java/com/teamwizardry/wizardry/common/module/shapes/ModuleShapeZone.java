@@ -86,7 +86,6 @@ public class ModuleShapeZone implements IModuleShape, ILingeringModule {
 			}
 			
 			IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
-//			instance.runRunOverrides(spell, spellRing);
 			overrides.onRunZone(spell, spellRing);
 			
 			BlockPos target = new BlockPos(RandUtil.nextDouble(min.x, max.x), RandUtil.nextDouble(min.y, max.y), RandUtil.nextDouble(min.z, max.z));
@@ -126,7 +125,6 @@ public class ModuleShapeZone implements IModuleShape, ILingeringModule {
 	public void renderSpell(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
 		if( overrides.onRenderZone(spell, spellRing) ) return;
-//		if (instance.runRenderOverrides(spell, spellRing)) return;
 
 		Vec3d target = spell.getTarget();
 

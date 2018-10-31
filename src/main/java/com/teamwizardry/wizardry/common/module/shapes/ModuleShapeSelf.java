@@ -41,7 +41,6 @@ public class ModuleShapeSelf implements IModuleShape {
 		if (!spellRing.taxCaster(spell, true)) return false;
 		
 		IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
-//		instance.runRunOverrides(spell, spellRing);
 		overrides.onRunSelf(spell, spellRing);
 		
 		spell.processEntity(caster, false);
@@ -54,7 +53,6 @@ public class ModuleShapeSelf implements IModuleShape {
 	public void renderSpell(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
 		if( overrides.onRenderSelf(spell, spellRing) ) return;
-//		if (instance.runRenderOverrides(spell, spellRing)) return;
 
 		Entity caster = spell.getCaster();
 		World world = spell.world;

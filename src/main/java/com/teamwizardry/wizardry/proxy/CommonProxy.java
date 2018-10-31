@@ -144,7 +144,6 @@ public class CommonProxy {
 	}
 
 	public void postInit(FMLPostInitializationEvent event) {
-		ModuleRegistry.INSTANCE.loadModuleOverrides();
 	}
 
 	@SubscribeEvent

@@ -8,8 +8,6 @@ import com.google.gson.JsonPrimitive;
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.utilities.AnnotationHelper;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.spell.SpellData;
-import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRange;
@@ -17,7 +15,6 @@ import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry.Attribute;
 import com.teamwizardry.wizardry.api.spell.attribute.Operation;
 import com.teamwizardry.wizardry.api.util.DefaultHashMap;
-import kotlin.Pair;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -39,8 +36,6 @@ public class ModuleRegistry {
 	public final static ModuleRegistry INSTANCE = new ModuleRegistry();
 
 	public ArrayList<ModuleInstance> modules = new ArrayList<>();
-	public HashMap<Pair<ModuleInstanceShape, ModuleInstanceEffect>, OverrideConsumer<SpellData, SpellRing, SpellRing>> runOverrides = new HashMap<>();
-	public HashMap<Pair<ModuleInstanceShape, ModuleInstanceEffect>, OverrideConsumer<SpellData, SpellRing, SpellRing>> renderOverrides = new HashMap<>();
 	public HashMap<String, ModuleFactory> IDtoModuleFactory = new HashMap<>();
 
 	private ModuleRegistry() {
@@ -400,33 +395,6 @@ public class ModuleRegistry {
 		return value;
 	}
 
-	public void loadModuleOverrides()
-	{
-		for (ModuleInstance effect : getModules(ModuleType.EFFECT))
-		{
-			if (!(effect instanceof ModuleInstanceEffect))
-				continue;
-
-			((ModuleInstanceEffect) effect).runOverrides.forEach((moduleID, override) -> {
-				ModuleInstance shape = getModule(moduleID);
-				if (shape instanceof ModuleInstanceShape)
-				{
-					runOverrides.put(new Pair<>((ModuleInstanceShape) shape, (ModuleInstanceEffect) effect), override);
-					Wizardry.logger.info(" | Registered " + shape.getReadableName() + " -> " + effect.getReadableName() + " run override.");
-				}
-			});
-			
-			((ModuleInstanceEffect) effect).renderOverrides.forEach((moduleID, override) -> {
-				ModuleInstance shape = getModule(moduleID);
-				if (shape instanceof ModuleInstanceShape)
-				{
-					renderOverrides.put(new Pair<>((ModuleInstanceShape) shape, (ModuleInstanceEffect) effect), override);
-					Wizardry.logger.info(" | Registered " + shape.getReadableName() + " -> " + effect.getReadableName() + " renderSpell override.");
-				}
-			});
-		}
-	}
-	
 	public void copyMissingModules(File directory) {
 		for (ModuleInstance module : modules) {
 			File file = new File(directory + "/modules/", module.getSubModuleID() + ".json");

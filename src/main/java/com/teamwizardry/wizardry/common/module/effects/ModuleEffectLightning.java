@@ -45,17 +45,6 @@ public class ModuleEffectLightning implements IModuleEffect {
 
 	@Override
 	public void initEffect(ModuleInstanceEffect instance) {
-/*		instance.registerRunOverride("shape_self", getSelfOverride());
-		instance.registerRunOverride("shape_touch", getTouchOverride());
-		instance.registerRunOverride("shape_projectile", getProjectileOverride());
-		instance.registerRunOverride("shape_cone", getConeOverride());
-		instance.registerRunOverride("shape_beam", getBeamOverride());
-		instance.registerRunOverride("shape_zone", getZoneOverride());
-
-		instance.registerRenderOverride("shape_touch", (data, spellRing, childRing) -> {});
-		instance.registerRenderOverride("shape_projectile", (data, spellRing, childRing) -> {});
-		instance.registerRenderOverride("shape_cone", (data, spellRing, childRing) -> {});
-		instance.registerRenderOverride("shape_beam", (data, spellRing, childRing) -> {}); */
 	}
 
 	@ModuleOverride("shape_touch_render")
@@ -84,8 +73,6 @@ public class ModuleEffectLightning implements IModuleEffect {
 		return new String[]{"modifier_extend_range", "modifier_increase_potency", "modifier_extend_time"};
 	}
 
-//	private OverrideConsumer<SpellData, SpellRing, SpellRing> getSelfOverride() {
-//		return (data, spellRing, childRing) -> {
 	@ModuleOverride("shape_self_run")
 	public void onRunSelf(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
 		World world = data.world;
@@ -107,11 +94,7 @@ public class ModuleEffectLightning implements IModuleEffect {
 		float yaw = rand.nextFloat(0, 360);
 		doLightning(rand.nextLong(100, 100000), world, caster, origin, Vec3d.fromPitchYaw(pitch, yaw).normalize().scale(range).add(origin), range, potency, duration);
 	}
-//		};
-//	}
-	
-//	private OverrideConsumer<SpellData, SpellRing, SpellRing> getTouchOverride() {
-//		return (data, spellRing, childRing) -> {
+
 	@ModuleOverride("shape_touch_run")
 	public void onRunTouch(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
 		World world = data.world;
@@ -135,12 +118,7 @@ public class ModuleEffectLightning implements IModuleEffect {
 		
 		doLightning(RandUtil.nextLong(100, 100000), world, caster, origin, trace.hitVec, range, potency, duration);
 	}
-//		};
-//	}
-	
 
-//	private OverrideConsumer<SpellData, SpellRing, SpellRing> getProjectileOverride() {
-//		return (data, spellRing, childRing) -> {
 	@ModuleOverride("shape_projectile_run")
 	public boolean onRunProjectile(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
 		World world = data.world;
@@ -160,12 +138,7 @@ public class ModuleEffectLightning implements IModuleEffect {
 		
 		return true;
 	}
-//		};
-//	}
-	
-	
-//	private OverrideConsumer<SpellData, SpellRing, SpellRing> getBeamOverride() {
-//		return (data, spellRing, childRing) -> {
+
 	@ModuleOverride("shape_beam_run")
 	public void onRunBeam(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
 		World world = data.world;
@@ -191,11 +164,7 @@ public class ModuleEffectLightning implements IModuleEffect {
 
 		doLightning(RandUtil.nextLong(100, 100000), world, caster, origin, traceResult.hitVec, lightningRange, lightningPotency, lightningDuration);
 	}
-//		};
-//	}
-	
-//	private OverrideConsumer<SpellData, SpellRing, SpellRing> getConeOverride() {
-//		return (data, spellRing, childRing) -> {
+
 	@ModuleOverride("shape_cone_run")
 	public void onRunCone(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
 		World world = data.world;
@@ -222,11 +191,7 @@ public class ModuleEffectLightning implements IModuleEffect {
 		Vec3d to = Vec3d.fromPitchYaw(newPitch, newYaw).normalize().scale(coneRange).add(origin);
 		doLightning(rand.nextLong(100, 100000), world, caster, origin, to, lightningRange, lightningPotency, lightningDuration);
 	}
-//		};
-//	}
-	
-//	private OverrideConsumer<SpellData, SpellRing, SpellRing> getZoneOverride() {
-//		return (data, spellRing, childRing) -> {
+
 	@ModuleOverride("shape_zone_run")
 	public void onRunZone(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
 		World world = data.world;
@@ -256,8 +221,6 @@ public class ModuleEffectLightning implements IModuleEffect {
 		
 		doLightning(rand.nextLong(100, 100000), world, caster, from, to, lightningRange, lightningPotency, lightningDuration);
 	}
-//		};
-//	}
 	
 	@Override
 	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @ContextRing @Nonnull SpellRing spellRing) {

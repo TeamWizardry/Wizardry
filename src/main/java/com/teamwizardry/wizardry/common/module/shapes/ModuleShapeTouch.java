@@ -50,7 +50,6 @@ public class ModuleShapeTouch implements IModuleShape {
 		if (!spellRing.taxCaster(spell, true)) return false;
 
 		IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
-//		instance.runRunOverrides(spell, spellRing);
 		overrides.onRunTouch(spell, spellRing);
 		
 		RayTraceResult result = new RayTrace(
@@ -102,7 +101,6 @@ public class ModuleShapeTouch implements IModuleShape {
 	public void renderSpell(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
 		if( overrides.onRenderTouch(spell, spellRing) ) return;
-//		if (instance.runRenderOverrides(spell, spellRing)) return;
 
 		Entity targetEntity = spell.getVictim();
 

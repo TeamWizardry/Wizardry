@@ -172,9 +172,6 @@ public class EntitySpellProjectile extends EntityMod {
 					IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
 					if( overrides.onRenderProjectile(spellData, spellRing) )
 						return;
-//					if (spellRing.getModule() instanceof ModuleInstanceShape)
-//						if (((ModuleInstanceShape) spellRing.getModule()).runRenderOverrides(spellData, spellRing))
-//							return;
 
 					ParticleBuilder glitter = new ParticleBuilder(10);
 					glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));

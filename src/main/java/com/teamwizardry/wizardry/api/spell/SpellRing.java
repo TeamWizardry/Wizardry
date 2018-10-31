@@ -24,7 +24,6 @@ import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry.Attribute;
 import com.teamwizardry.wizardry.api.spell.attribute.Operation;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
-import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleOverrideHandler;
 import com.teamwizardry.wizardry.api.util.FixedPointUtils;
@@ -43,8 +42,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Modules ala IBlockStates
@@ -177,55 +174,6 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		return module.getModuleClass() instanceof IContinuousModule;
 	}
 
-	public Set<SpellRing> getOverridingRings() {
-		Set<SpellRing> set = new HashSet<>();
-		if (module == null) return set;
-
-		for (SpellRing child : getAllChildRings()) {
-			if (child.getModule() == null) continue;
-			if (isRunBeingOverridenBy(child.getModule())) set.add(child);
-		}
-
-		return set;
-	}
-
-	public boolean isRunBeingOverriden() {
-		if (module == null) return false;
-
-		for (SpellRing child : getAllChildRings()) {
-			if (child.getModule() == null) continue;
-			if (isRunBeingOverridenBy(child.getModule())) return true;
-		}
-
-		return false;
-	}
-
-	@SideOnly(Side.CLIENT)
-	public boolean isRenderBeingOverriden() {
-		if (module == null) return false;
-
-		for (SpellRing child : getAllChildRings()) {
-			if (child.getModule() == null) continue;
-			if (isRenderBeingOverridenBy(child.getModule())) return true;
-		}
-
-		return false;
-	}
-
-	/**
-	 * If the given module is overriding this module's run
-	 */
-	public boolean isRunBeingOverridenBy(@Nonnull ModuleInstance module) {
-		return this.module != null && module instanceof ModuleInstanceEffect && ((ModuleInstanceEffect) module).hasRunOverrideFor(this.module);
-	}
-
-	/**
-	 * If the given module is overriding this module's run
-	 */
-	@SideOnly(Side.CLIENT)
-	public boolean isRenderBeingOverridenBy(@Nonnull ModuleInstance module) {
-		return this.module != null && module instanceof ModuleInstanceEffect && ((ModuleInstanceEffect) module).hasRenderOverrideFor(this.module);
-	}
 
 	//TODO: pearl holders
 	public boolean taxCaster(SpellData data, double multiplier, boolean failSound) {
