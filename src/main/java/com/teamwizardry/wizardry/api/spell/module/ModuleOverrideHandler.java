@@ -68,12 +68,12 @@ public class ModuleOverrideHandler {
 		for( Entry<String, Method> entry : overrides.entrySet() ) {
 			OverridePointer ptr = overridePointers.get(entry.getKey());
 			if( ptr == null ) {
-				ptr = new OverridePointer(spellRing, null, module, entry.getKey(), entry.getValue());
+				ptr = new OverridePointer(spellRing, null, entry.getKey(), entry.getValue());
 			}
 			else {
 				if( !areMethodsCompatible(ptr.getBaseMethod(), entry.getValue()) )
 					throw new ModuleOverrideException("Method '" + ptr.getBaseMethod() + "' can't be overridden by '" + entry.getValue() + "' due to incompatible signature.");
-				ptr = new OverridePointer(spellRing,ptr, module, entry.getKey(), entry.getValue());
+				ptr = new OverridePointer(spellRing,ptr, entry.getKey(), entry.getValue());
 			}
 			
 			overridePointers.put(entry.getKey(), ptr);			
@@ -116,12 +116,81 @@ public class ModuleOverrideHandler {
 		}
 		
 		// Check compatibility of parameters
-		int countParams = baseMtd.getParameterCount();
 		Parameter[] baseParams = baseMtd.getParameters();
 		Parameter[] overrideParams = overrideMtd.getParameters();
 
-		int handledMethods = 0;
-		for( int i = 0; i < countParams; i ++ ) {
+		int i = 0, j = 0;
+		while( i < baseParams.length || j < baseParams.length ) {
+			if( i >= baseParams.length ) {
+				while( j < overrideParams.length ) {
+					Parameter overrideParam = overrideParams[j];
+					if( !overrideParam.isAnnotationPresent(ContextRing.class) )
+						return false;	// Unmappable extra parameter.
+					j ++;
+				}
+				break;
+			}
+			
+			if( j >= overrideParams.length ) {
+				while( i < overrideParams.length ) {
+					Parameter baseParam = baseParams[i];
+					if( !baseParam.isAnnotationPresent(ContextRing.class) )
+						return false;	// Unmappable extra parameter.
+					i ++;
+				}
+				break;
+			}
+			
+			// 
+			Parameter baseParam = baseParams[i];
+			if( baseParam.isAnnotationPresent(ContextRing.class) ) {
+				i ++;
+				continue;	// Ignore parameters taking values from context
+			}
+			
+			Parameter overrideParam = overrideParams[j];
+			if( overrideParam.isAnnotationPresent(ContextRing.class) ) {
+				j ++;
+				continue;	// Ignore parameters taking values from context
+			}
+			
+			if( !baseParam.getType().isAssignableFrom(overrideParam.getType()) )
+				return false;
+			
+			i ++;
+			j ++;
+		}
+		
+		
+/*		int i = 0, j = 0;
+		
+		while( i < baseParams.length || j < baseParams.length ) {
+			if( i < baseParams.length ) {
+				Parameter baseParam = baseParams[i];
+				if( baseParam.isAnnotationPresent(ContextRing.class) ) {
+					i ++;
+					continue;	// Ignore parameters taking values from context
+				}
+
+				if( j < baseParams.length ) {
+					Parameter overrideParam = overrideParams[j];
+					// ...
+					j ++;
+				}
+				else {
+					// ...
+				}
+				i ++;
+			}
+			else {
+				Parameter overrideParam = overrideParams[j];
+				// ...
+				j ++;
+			}
+		} */
+		
+/*		int checkHandledMethods = 0;
+		for( int i = 0, j = 0; i < baseParams.length; i ++ ) {
 			Parameter baseParam = baseParams[i];
 			Parameter overrideParam = overrideParams[i];
 			if( !baseParam.getType().isAssignableFrom(overrideParam.getType()) )
@@ -129,11 +198,15 @@ public class ModuleOverrideHandler {
 			if( baseParam.isAnnotationPresent(ContextRing.class) )
 				continue;	// Ignore parameters taking values from context
 			
-			handledMethods ++;
+			checkHandledMethods ++;
 		}
 		
-		if( handledMethods != overrideMtd.getParameterCount() )
-			return false;		
+		for( int i = 0; i < overrideParams.length; i ++ ) {
+			Parameter overrideParam = overrideParams[i];
+		}
+		
+		if( checkHandledMethods != 0 )
+			return false;		*/
 		
 		// Check compatibility of exceptions
 		Class<?>[] baseExcps = baseMtd.getExceptionTypes();
@@ -223,12 +296,21 @@ public class ModuleOverrideHandler {
 	public static Map<String, MethodEntry> getInterfaceMethods(Class<?> clazz) throws ModuleOverrideException {
 		HashMap<String, MethodEntry> overridableMethods = new HashMap<>();
 
+		// TODO: Check for ambiguity of method names. Handle overrides by superclass properly!
+		
 		for(Method method : clazz.getMethods()) {
 			ModuleOverrideInterface ovrd = method.getDeclaredAnnotation(ModuleOverrideInterface.class);
 			if( ovrd == null )
 				continue;
-			if( !method.isAccessible() )
-				throw new ModuleOverrideException("Method '" + method.toString() + "' is annotated by @ModuleOverrideInterface but is unaccessible.");
+//			if( !method.isAccessible() )
+//				throw new ModuleOverrideException("Method '" + method.toString() + "' is annotated by @ModuleOverrideInterface but is unaccessible.");
+			
+			try {
+				method.setAccessible(true);
+			}
+			catch(SecurityException e) {
+				throw new ModuleOverrideException("Failed to aquire reflection access to method '" + method.toString() + "', annotated by @ModuleOverrideInterface.", e);
+			}
 			
 			MethodEntry entry = new MethodEntry(method, -1);
 			
@@ -244,13 +326,11 @@ public class ModuleOverrideHandler {
 		private final SpellRing spellRingWithOverride;
 		private final String overrideName;
 		private final Method baseMethod;
-		private final ModuleInstance module;
 		private final OverridePointer prev;
 		
-		OverridePointer(SpellRing spellRingWithOverride, OverridePointer prev, ModuleInstance module, String overrideName, Method baseMethod) {
+		OverridePointer(SpellRing spellRingWithOverride, OverridePointer prev, String overrideName, Method baseMethod) {
 			this.spellRingWithOverride = spellRingWithOverride;
 			this.baseMethod = baseMethod;
-			this.module = module;
 			this.overrideName = overrideName;
 			this.prev = prev;
 		}
@@ -264,7 +344,7 @@ public class ModuleOverrideHandler {
 		}
 		
 		ModuleInstance getModule() {
-			return module;
+			return spellRingWithOverride.getModule();
 		}
 		
 		OverridePointer getPrev() {

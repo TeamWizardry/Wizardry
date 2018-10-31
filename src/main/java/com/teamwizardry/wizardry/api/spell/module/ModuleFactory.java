@@ -35,19 +35,33 @@ public class ModuleFactory {
 			ModuleParameter cfg = field.getDeclaredAnnotation(ModuleParameter.class);
 			if( cfg == null )
 				continue;
-			if( !field.isAccessible() )
-				throw new ModuleInitException("Field '" + field.toString() + "' is annotated by @ModuleParameter but is unaccessible.");
+//			if( !field.isAccessible() )
+//				throw new ModuleInitException("Field '" + field.toString() + "' is annotated by @ModuleParameter but is unaccessible.");
+			try {
+				field.setAccessible(true);
+			}
+			catch(SecurityException e) {
+				throw new ModuleInitException("Failed to aquire reflection access to field '" + field.toString() + "', annotated by @ModuleParameter.", e);
+			}
 			configurableFields.put(cfg.value(), field);
 		}
 		
 		// Determine overriden methods via reflection
 		// FIXME: Separation of concerns: Overridable methods are not part of factory. Move them or rename factory class appropriately.
+		// TODO: Check for ambiguity of method names. Handle overrides by superclass properly!
 		for(Method method : clazz.getMethods()) {
 			ModuleOverride ovrd = method.getDeclaredAnnotation(ModuleOverride.class);
 			if( ovrd == null )
 				continue;
-			if( !method.isAccessible() )
-				throw new ModuleInitException("Method '" + method.toString() + "' is annotated by @ModuleOverride but is unaccessible.");
+//			if( !method.isAccessible() )
+//				throw new ModuleInitException("Method '" + method.toString() + "' is annotated by @ModuleOverride but is unaccessible.");
+			
+			try {
+				method.setAccessible(true);
+			}
+			catch(SecurityException e) {
+				throw new ModuleInitException("Failed to aquire reflection access to method '" + method.toString() + "', annotated by @ModuleOverride.", e);
+			}
 			
 			overridableMethods.put(ovrd.value(), method);
 		}
