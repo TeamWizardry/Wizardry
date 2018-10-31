@@ -36,7 +36,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by Demoniaque.
  */
 @RegisterModule(ID="shape_cone")
-public class ModuleShapeCone implements IModuleShape {
+public class ModuleShapeCone extends AbstractModuleShape implements IModuleShape {
 
 	@Override
 	public String[] compatibleModifierClasses() {

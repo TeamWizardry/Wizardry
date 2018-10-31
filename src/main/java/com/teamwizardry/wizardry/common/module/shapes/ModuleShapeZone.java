@@ -40,7 +40,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
  * Created by Demoniaque.
  */
 @RegisterModule(ID="shape_zone")
-public class ModuleShapeZone implements IModuleShape, ILingeringModule {
+public class ModuleShapeZone extends AbstractModuleShape implements IModuleShape, ILingeringModule {
 
 	public static final String ZONE_OFFSET = "zone offset";
 	public static final String ZONE_CAST = "zone cast";

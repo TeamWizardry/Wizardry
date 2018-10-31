@@ -5,7 +5,7 @@ import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.annotation.ModuleOverrideInterface;
 
 public interface IShapeOverrides {
-
+	
 	@ModuleOverrideInterface("shape_touch_render")
 	boolean onRenderTouch(SpellData data, SpellRing shape);
 

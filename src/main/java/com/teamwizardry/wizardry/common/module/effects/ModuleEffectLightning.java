@@ -222,6 +222,11 @@ public class ModuleEffectLightning implements IModuleEffect {
 		doLightning(rand.nextLong(100, 100000), world, caster, from, to, lightningRange, lightningPotency, lightningDuration);
 	}
 	
+	@ModuleOverride("generic_chargeup_time")
+	public int modifyChargeupTime(int originalTime, @ContextRing SpellRing mySpellRing) {
+		return mySpellRing.getChargeUpTime();
+	}
+	
 	@Override
 	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @ContextRing @Nonnull SpellRing spellRing) {
 		// NO-OP, should always be overriding a shape

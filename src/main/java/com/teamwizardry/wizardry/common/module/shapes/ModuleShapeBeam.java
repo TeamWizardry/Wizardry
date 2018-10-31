@@ -40,7 +40,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.LOOK;
  */
 @RegisterModule(ID="shape_beam")
 @Mod.EventBusSubscriber(modid = Wizardry.MODID)
-public class ModuleShapeBeam implements IModuleShape, IContinuousModule {
+public class ModuleShapeBeam extends AbstractModuleShape implements IModuleShape, IContinuousModule {
 
 	public static final String BEAM_OFFSET = "beam offset";
 	public static final String BEAM_CAST = "beam cast";

@@ -30,7 +30,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.LOOK;
  * Created by Demoniaque.
  */
 @RegisterModule(ID="shape_projectile")
-public class ModuleShapeProjectile implements IModuleShape {
+public class ModuleShapeProjectile extends AbstractModuleShape implements IModuleShape {
 
 	@Override
 	public String[] compatibleModifierClasses() {

@@ -207,8 +207,13 @@ public class ModuleOverrideHandler {
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 			String name = method.getName();
 			OverrideInterfaceMethod intfMethod = callMap.get(name);
-			if( intfMethod == null )
-				throw new UnsupportedOperationException("Override '" + name + "' for '" + method + "' is not existing.");
+			if( intfMethod == null ) {
+				ModuleOverrideInterface annot = method.getDeclaredAnnotation(ModuleOverrideInterface.class);
+				if( annot != null )
+					throw new UnsupportedOperationException("Override method for '" + annot.value() + "' invoke via '" + method + "' is not implemented or not public.");
+				else
+					throw new UnsupportedOperationException("Method '" + method + "' is not an override. Annotation @ModuleOverrideInterface must be supplied.");
+			}
 			OverridePointer ptr = intfMethod.getOverridePointer();
 			int idxContextParamRing = ptr.getBaseMethod().getIdxContextParamRing();
 			

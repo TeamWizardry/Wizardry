@@ -12,6 +12,7 @@ import com.teamwizardry.wizardry.api.spell.IBlockSelectable;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
+import com.teamwizardry.wizardry.common.module.IModuleOverrides;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -301,15 +302,13 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 	private int getChargeupTime(ItemStack stack) {
 		int maxChargeUp = 0;
 		for (SpellRing spellRing : SpellUtils.getAllSpellRings(stack)) {
-			Set<SpellRing> overridingRings = spellRing.getOverridingRings();
 			if (spellRing.isContinuous()) {
 				return 72000;
 			} else if (spellRing.getChargeUpTime() > maxChargeUp)
 				maxChargeUp = spellRing.getChargeUpTime();
-
-			for (SpellRing ring : overridingRings) {
-				maxChargeUp = ring.getChargeUpTime();
-			}
+			
+			IModuleOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IModuleOverrides.class);
+			maxChargeUp = overrides.modifyChargeupTime(maxChargeUp);
 		}
 
 		return maxChargeUp;

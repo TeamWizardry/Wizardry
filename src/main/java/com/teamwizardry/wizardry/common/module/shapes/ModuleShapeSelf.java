@@ -31,7 +31,7 @@ import javax.annotation.Nonnull;
  * Created by Demoniaque.
  */
 @RegisterModule(ID="shape_self")
-public class ModuleShapeSelf implements IModuleShape {
+public class ModuleShapeSelf extends AbstractModuleShape implements IModuleShape {
 
 	@Override
 	public boolean run(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
