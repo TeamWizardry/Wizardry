@@ -7,34 +7,38 @@ import com.teamwizardry.wizardry.api.spell.annotation.ModuleOverrideInterface;
 public interface IShapeOverrides {
 
 	@ModuleOverrideInterface("shape_touch_render")
-	void onRenderTouch(SpellData data, SpellRing shape, SpellRing childRing);
+	boolean onRenderTouch(SpellData data, SpellRing shape);
 
 	@ModuleOverrideInterface("shape_projectile_render")
-	void onRenderProjectile(SpellData data, SpellRing shape, SpellRing childRing);
+	boolean onRenderProjectile(SpellData data, SpellRing shape);
 
 	@ModuleOverrideInterface("shape_cone_render")
-	void onRenderCone(SpellData data, SpellRing shape, SpellRing childRing);
+	boolean onRenderCone(SpellData data, SpellRing shape);
 
 	@ModuleOverrideInterface("shape_beam_render")
-	void onRenderBeam(SpellData data, SpellRing shape, SpellRing childRing);
+	boolean onRenderBeam(SpellData data, SpellRing shape);
 
+	@ModuleOverrideInterface("shape_zone_render")
+	boolean onRenderZone(SpellData data, SpellRing shape);
+
+	@ModuleOverrideInterface("shape_self_render")
+	boolean onRenderSelf(SpellData data, SpellRing shape);
+	
 	@ModuleOverrideInterface("shape_self_run")
-	void onRunSelf(SpellData data, SpellRing shape, SpellRing childRing);
+	void onRunSelf(SpellData data, SpellRing shape);
 
 	@ModuleOverrideInterface("shape_touch_run")
-	void onRunTouch(SpellData data, SpellRing shape, SpellRing childRing);
+	void onRunTouch(SpellData data, SpellRing shape);
 
 	@ModuleOverrideInterface("shape_projectile_run")
-	void onRunProjectile(SpellData data, SpellRing shape, SpellRing childRing);
+	boolean onRunProjectile(SpellData data, SpellRing shape);
 
 	@ModuleOverrideInterface("shape_beam_run")
-	void onRunBeam(SpellData data, SpellRing shape, SpellRing childRing);
+	void onRunBeam(SpellData data, SpellRing shape);
 
 	@ModuleOverrideInterface("shape_cone_run")
-	void onRunCone(SpellData data, SpellRing shape, SpellRing childRing);
+	void onRunCone(SpellData data, SpellRing shape);
 
 	@ModuleOverrideInterface("shape_zone_run")
-	void onRunZone(SpellData data, SpellRing shape, SpellRing childRing);
-
-	
+	void onRunZone(SpellData data, SpellRing shape);
 }

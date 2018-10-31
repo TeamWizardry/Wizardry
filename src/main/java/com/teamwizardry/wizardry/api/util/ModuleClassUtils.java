@@ -24,8 +24,6 @@ public class ModuleClassUtils {
 			if( !method.isAccessible() )
 				throw new ModuleOverrideException("Method '" + method.toString() + "' is annotated by @ModuleOverride but is unaccessible.");
 			
-			// TODO: Check if first argument is a valid invoke helper
-			
 			String overrideName = isInterface ? ((ModuleOverrideInterface)ovrd).value() : ((ModuleOverride)ovrd).value();
 			overridableMethods.put(overrideName, method);
 		}
