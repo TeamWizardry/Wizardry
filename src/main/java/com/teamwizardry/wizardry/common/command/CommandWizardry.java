@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.common.command;
 
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
+import com.teamwizardry.wizardry.api.spell.SpellRingCache;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceModifier;
@@ -45,8 +46,9 @@ public class CommandWizardry extends CommandBase {
 		if (args.length < 1) throw new WrongUsageException(getUsage(sender));
 
 		if (args[0].equalsIgnoreCase("reload")) {
-
+			SpellRingCache.INSTANCE.clear();
 			ModuleRegistry.INSTANCE.loadUnprocessedModules();
+			ModuleRegistry.INSTANCE.loadOverrideDefaults();
 			ModuleRegistry.INSTANCE.copyMissingModules(CommonProxy.directory);
 			ModuleRegistry.INSTANCE.loadModules(CommonProxy.directory);
 

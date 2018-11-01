@@ -16,6 +16,7 @@ import com.teamwizardry.wizardry.api.spell.annotation.ContextSuper;
 import com.teamwizardry.wizardry.api.spell.annotation.ModuleOverride;
 import com.teamwizardry.wizardry.api.spell.annotation.ModuleParameter;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.module.ModuleOverrideHandler.OverrideMethod;
 
 /**
  * A factory object to create new module instances based on passed parameter sets.
@@ -48,44 +49,9 @@ public class ModuleFactory {
 			}
 			configurableFields.put(cfg.value(), field);
 		}
-		
-		// Determine overriden methods via reflection
-		// FIXME: Separation of concerns: Overridable methods are not part of factory. Move them or rename factory class appropriately.
-		// TODO: Check for ambiguity of method names. Handle overrides by superclass properly!
-		// TODO: No multiple context annotations on same parameter
-		for(Method method : clazz.getMethods()) {
-			ModuleOverride ovrd = method.getDeclaredAnnotation(ModuleOverride.class);
-			if( ovrd == null )
-				continue;
-			
-			try {
-				method.setAccessible(true);
-			}
-			catch(SecurityException e) {
-				throw new ModuleInitException("Failed to aquire reflection access to method '" + method.toString() + "', annotated by @ModuleOverride.", e);
-			}
-			
-			// Search for context parameters
-			int idxContextParamRing = -1;
-			int idxContextParamSuper = -1;
-			Parameter[] params = method.getParameters();
-			for( int i = 0; i < params.length; i ++ ) {
-				Parameter param = params[i];
-				if( param.isAnnotationPresent(ContextRing.class) ) {
-					if( idxContextParamRing >= 0 )
-						throw new ModuleInitException("Method '" + method.toString() + "' has invalid @ContextRing annotated parameter. It is not allowed on multiple parameters.");
-					idxContextParamRing = i;
-				}
-				if( param.isAnnotationPresent(ContextSuper.class) ) {
-					if( idxContextParamSuper >= 0 )
-						throw new ModuleInitException("Method '" + method.toString() + "' has invalid @ContextSuper annotated parameter. It is not allowed on multiple parameters.");
-					idxContextParamSuper = i;
-				}
-			}
-			
-			OverrideMethod ovrdMethod = new OverrideMethod(method, idxContextParamRing, idxContextParamSuper);
-			overridableMethods.put(ovrd.value(), ovrdMethod);
-		}
+
+		// Determine overrides
+		overridableMethods.putAll(ModuleOverrideHandler.getOverrideMethodsFromClass(clazz, true));
 	}
 	
 	/**
@@ -235,43 +201,5 @@ public class ModuleFactory {
 		
 		instances.put(params, module);
 		return module;
-	}
-	
-	///////////
-	
-	public static class OverrideMethod {
-		private final Method method;
-		private final MethodHandle methodHandle;
-		private final int idxContextParamRing;
-		private final int idxContextParamSuper;
-		
-		OverrideMethod(Method method, int idxContextParamRing, int idxContextParamSuper) throws ModuleInitException {
-			super();
-
-			try {
-				this.method = method;
-				this.idxContextParamRing = idxContextParamRing >= 0 ? idxContextParamRing : -2;
-				this.idxContextParamSuper = idxContextParamSuper >= 0 ? idxContextParamSuper : -2;
-				this.methodHandle = MethodHandles.lookup().unreflect(method);
-			} catch (Exception e) {
-				throw new ModuleInitException("Couldn't initialize override method binding. See cause.", e);
-			}
-		}
-
-		public Method getMethod() {
-			return method;
-		}
-		
-		public MethodHandle getMethodHandle() {
-			return methodHandle;
-		}
-
-		public int getIdxContextParamRing() {
-			return idxContextParamRing;
-		}
-		
-		public int getIdxContextParamSuper() {
-			return idxContextParamSuper;
-		}
 	}
 }

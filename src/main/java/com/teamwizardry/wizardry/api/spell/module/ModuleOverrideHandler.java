@@ -1,5 +1,7 @@
 package com.teamwizardry.wizardry.api.spell.module;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.lang.invoke.WrongMethodTypeException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -13,8 +15,9 @@ import java.util.Map.Entry;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.annotation.ContextRing;
 import com.teamwizardry.wizardry.api.spell.annotation.ContextSuper;
+import com.teamwizardry.wizardry.api.spell.annotation.ModuleOverride;
 import com.teamwizardry.wizardry.api.spell.annotation.ModuleOverrideInterface;
-import com.teamwizardry.wizardry.api.spell.module.ModuleFactory.OverrideMethod;
+import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry.OverrideDefaultMethod;
 
 public class ModuleOverrideHandler {
 	
@@ -27,9 +30,15 @@ public class ModuleOverrideHandler {
 		if( spellChain.getParentRing() != null )
 			throw new IllegalArgumentException("passed spellRing is not a root.");
 		
+		// Apply default overrides
+		for( OverrideDefaultMethod methodEntry : ModuleRegistry.INSTANCE.getDefaultOverrides().values() ) {
+			applyDefaultOverride(methodEntry);
+		}
+		
+		// Apply overrides from spell chain
 		SpellRing[] spellSequence = getSequenceFromSpellChain(spellChain);
 		for( SpellRing curRing : spellSequence )
-			applyOverrides(curRing);
+			applyModuleOverrides(curRing);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -65,7 +74,7 @@ public class ModuleOverrideHandler {
 		return proxy;
 	}
 	
-	private void applyOverrides( SpellRing spellRing ) throws ModuleOverrideException {
+	private void applyModuleOverrides( SpellRing spellRing ) throws ModuleOverrideException {
 		ModuleInstance module = spellRing.getModule();
 		Map<String, OverrideMethod> overrides = module.getFactory().getOverrides();
 		
@@ -77,11 +86,17 @@ public class ModuleOverrideHandler {
 			else {
 				if( !areMethodsCompatible(ptr.getBaseMethod().getMethod(), entry.getValue().getMethod()) )
 					throw new ModuleOverrideException("Method '" + ptr.getBaseMethod() + "' can't be overridden by '" + entry.getValue() + "' due to incompatible signature.");
-				ptr = new OverridePointer(spellRing,ptr, entry.getKey(), entry.getValue());
+				ptr = new OverridePointer(spellRing, ptr, entry.getKey(), entry.getValue());
 			}
 			
 			overridePointers.put(entry.getKey(), ptr);			
 		}
+	}
+	
+	private void applyDefaultOverride( OverrideDefaultMethod methodEntry ) {
+		if( overridePointers.containsKey(methodEntry.getOverrideName()) )
+			throw new IllegalStateException("Duplicate override found.");	// Should not happen, as duplication cases are catched in ModuleRegistry.registerOverrideDefaults()
+		OverridePointer ptr = new OverridePointer(methodEntry);
 	}
 	
 	/////////////////
@@ -193,6 +208,56 @@ public class ModuleOverrideHandler {
 	private static boolean isExtraParameter(Parameter param) {
 		return param.isAnnotationPresent(ContextRing.class) ||
 			   param.isAnnotationPresent(ContextSuper.class);
+	}
+	
+	static HashMap<String, OverrideMethod> getOverrideMethodsFromClass(Class<?> clazz, boolean hasContext) throws ModuleInitException {
+		HashMap<String, OverrideMethod> overridableMethods = new HashMap<>();
+		// Determine overriden methods via reflection
+		// FIXME: Separation of concerns: Overridable methods are not part of factory. Move them or rename factory class appropriately.
+		// TODO: Check for ambiguity of method names. Handle overrides by superclass properly!
+		for(Method method : clazz.getMethods()) {
+			ModuleOverride ovrd = method.getDeclaredAnnotation(ModuleOverride.class);
+			if( ovrd == null )
+				continue;
+			
+			try {
+				method.setAccessible(true);
+			}
+			catch(SecurityException e) {
+				throw new ModuleInitException("Failed to aquire reflection access to method '" + method.toString() + "', annotated by @ModuleOverride.", e);
+			}
+			
+			// Search for context parameters
+			int idxContextParamRing = -1;
+			int idxContextParamSuper = -2;
+			Parameter[] params = method.getParameters();
+			for( int i = 0; i < params.length; i ++ ) {
+				Parameter param = params[i];
+				if( param.isAnnotationPresent(ContextRing.class) ) {
+					if( idxContextParamRing >= 0 )
+						throw new ModuleInitException("Method '" + method.toString() + "' has invalid @ContextRing annotated parameter. It is not allowed on multiple parameters.");
+					idxContextParamRing = i;
+				}
+				if( param.isAnnotationPresent(ContextSuper.class) ) {
+					if( idxContextParamSuper >= 0 )
+						throw new ModuleInitException("Method '" + method.toString() + "' has invalid @ContextSuper annotated parameter. It is not allowed on multiple parameters.");
+					idxContextParamSuper = i;
+				}
+			}
+			
+			if( !hasContext ) {
+				if( idxContextParamRing >= 0 || idxContextParamSuper >= 0 )
+					throw new ModuleInitException("Context parameters are not allowed.");
+			}
+			
+			if( idxContextParamRing == idxContextParamSuper )
+				throw new ModuleInitException("Method '" + method.toString() + "' has a parameter which is annotated with multiple roles.");
+			
+			OverrideMethod ovrdMethod = new OverrideMethod(method, idxContextParamRing, idxContextParamSuper);
+			overridableMethods.put(ovrd.value(), ovrdMethod);
+		}
+		
+		return overridableMethods;
 	}
 	
 	/////////////////
@@ -336,6 +401,7 @@ public class ModuleOverrideHandler {
 	////////////////////////
 	
 	static class OverridePointer {
+		private final Object object;
 		private final SpellRing spellRingWithOverride;
 		private final String overrideName;
 		private final OverrideMethod baseMethod;
@@ -346,8 +412,17 @@ public class ModuleOverrideHandler {
 			this.baseMethod = baseMethod;
 			this.overrideName = overrideName;
 			this.prev = prev;
+			this.object = getModule().getModuleClass();
 		}
 		
+		public OverridePointer(OverrideDefaultMethod methodEntry) {
+			this.spellRingWithOverride = null;
+			this.baseMethod = methodEntry.getMethod();
+			this.overrideName = methodEntry.getOverrideName();
+			this.prev = null;
+			this.object = methodEntry.getObj();
+		}
+
 		SpellRing getSpellRingWithOverride() {
 			return spellRingWithOverride;
 		}
@@ -357,6 +432,8 @@ public class ModuleOverrideHandler {
 		}
 		
 		ModuleInstance getModule() {
+			if( spellRingWithOverride == null )
+				return null;
 			return spellRingWithOverride.getModule();
 		}
 		
@@ -385,7 +462,7 @@ public class ModuleOverrideHandler {
 			int j = 0;
 			while( i < passedArgs.length ) {
 				if( i == 0 ) {
-					passedArgs[i] = getModule().getModuleClass();
+					passedArgs[i] = object;
 				}
 				else if( i == idxContextParamRing + 1 ) {
 					passedArgs[i] = spellRingWithOverride;
@@ -430,6 +507,44 @@ public class ModuleOverrideHandler {
 		
 		String getKey() {
 			return interfaceMethod.getName();
+		}
+	}
+	
+	static class OverrideMethod {
+		private final Method method;
+		private final MethodHandle methodHandle;
+		private final int idxContextParamRing;
+		private final int idxContextParamSuper;
+		
+		OverrideMethod(Method method, int idxContextParamRing, int idxContextParamSuper) throws ModuleInitException {
+			super();
+
+			try {
+				this.method = method;
+				this.methodHandle = MethodHandles.lookup().unreflect(method);
+
+				// NOTE: Parameter indices should be less or equal to -2 if missing to make ModuleOverrideHandler.OverridePointer.invoke work correctly
+				this.idxContextParamRing = idxContextParamRing >= 0 ? idxContextParamRing : -2;
+				this.idxContextParamSuper = idxContextParamSuper >= 0 ? idxContextParamSuper : -2;
+			} catch (Exception e) {
+				throw new ModuleInitException("Couldn't initialize override method binding. See cause.", e);
+			}
+		}
+
+		Method getMethod() {
+			return method;
+		}
+		
+		MethodHandle getMethodHandle() {
+			return methodHandle;
+		}
+
+		int getIdxContextParamRing() {
+			return idxContextParamRing;
+		}
+		
+		int getIdxContextParamSuper() {
+			return idxContextParamSuper;
 		}
 	}
 }

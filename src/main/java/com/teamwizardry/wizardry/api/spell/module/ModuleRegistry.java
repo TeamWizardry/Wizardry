@@ -8,11 +8,14 @@ import com.google.gson.JsonPrimitive;
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.utilities.AnnotationHelper;
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.spell.annotation.ModuleOverride;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.annotation.RegisterOverrideDefaults;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRange;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry.Attribute;
+import com.teamwizardry.wizardry.api.spell.module.ModuleOverrideHandler.OverrideMethod;
 import com.teamwizardry.wizardry.api.spell.attribute.Operation;
 import com.teamwizardry.wizardry.api.util.DefaultHashMap;
 import net.minecraft.item.Item;
@@ -25,6 +28,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.io.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -37,6 +43,7 @@ public class ModuleRegistry {
 
 	public ArrayList<ModuleInstance> modules = new ArrayList<>();
 	public HashMap<String, ModuleFactory> IDtoModuleFactory = new HashMap<>();
+	public HashMap<String, OverrideDefaultMethod> IDtoOverrideDefaultMethod = new HashMap<>();
 
 	private ModuleRegistry() {
 	}
@@ -78,10 +85,44 @@ public class ModuleRegistry {
 				}
 			}
 			catch(ModuleInitException exc) {
-				exc.printStackTrace();
+				Wizardry.logger.error("Error occurred while registering a module class '" + clazz + "'.", exc);
 			}
 			return null;
 		});
+	}
+	
+	public void loadOverrideDefaults() {
+		IDtoOverrideDefaultMethod.clear();
+		AnnotationHelper.INSTANCE.findAnnotatedClasses(LibrarianLib.PROXY.getAsmDataTable(), Object.class, RegisterOverrideDefaults.class, (clazz, info) -> {
+			try {
+				// Create instance
+				Constructor<?> ctor = clazz.getConstructor();
+				Object obj = (IModule)ctor.newInstance();
+				
+				// Register all overrides
+				registerOverrideDefaults(clazz, obj);
+			}
+			catch(ModuleInitException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException exc) {
+				Wizardry.logger.error("Error occurred while registering an override generics '" + clazz + "'.", exc);
+			}
+			
+			return null;
+		});
+	}
+	
+	private void registerOverrideDefaults(Class<?> clazz, Object obj) throws ModuleInitException {
+		HashMap<String, OverrideMethod> overrides = ModuleOverrideHandler.getOverrideMethodsFromClass(clazz, false);
+		
+		for( Entry<String, OverrideMethod> override : overrides.entrySet() ) {
+			// Throw error if another method with same override name is already existing
+			OverrideDefaultMethod methodEntry = IDtoOverrideDefaultMethod.get(override.getKey());
+			if( methodEntry != null ) 
+				throw new ModuleInitException("Override '" + override.getKey() + "' is already existing at '" + methodEntry.obj.getClass() + "'. Duplicate entry found in '" + clazz + "'.");
+			
+			// Register at ID table
+			methodEntry = new OverrideDefaultMethod(override.getKey(), override.getValue(), obj);
+			IDtoOverrideDefaultMethod.put(override.getKey(), methodEntry);
+		}
 	}
 
 	public void loadModules(File directory) {
@@ -435,6 +476,37 @@ public class ModuleRegistry {
 			{
 				e.printStackTrace();
 			}
+		}
+	}
+	
+	Map<String, OverrideDefaultMethod> getDefaultOverrides() {
+		return Collections.unmodifiableMap(IDtoOverrideDefaultMethod);
+	}
+	
+	/////////////////
+	
+	static class OverrideDefaultMethod {
+		private final String overrideName;
+		private final OverrideMethod method;
+		private final Object obj;
+		
+		OverrideDefaultMethod(String overrideName, OverrideMethod method, Object obj) {
+			super();
+			this.overrideName = overrideName;
+			this.method = method;
+			this.obj = obj;
+		}
+		
+		String getOverrideName() {
+			return overrideName;
+		}
+
+		OverrideMethod getMethod() {
+			return method;
+		}
+
+		Object getObj() {
+			return obj;
 		}
 	}
 	

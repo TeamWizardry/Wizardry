@@ -53,4 +53,8 @@ public class SpellRingCache {
 			return spellRing;
 		}
 	}
+
+	public synchronized void clear() {
+		cache.clear();
+	}
 }
