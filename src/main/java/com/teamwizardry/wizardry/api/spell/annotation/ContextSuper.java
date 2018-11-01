@@ -8,5 +8,5 @@ import java.lang.annotation.Target;
 
 @Retention(RUNTIME)
 @Target(PARAMETER)
-public @interface ContextRing {
+public @interface ContextSuper {
 }

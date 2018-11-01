@@ -1,5 +1,7 @@
 package com.teamwizardry.wizardry.api.spell.module;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -10,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.teamwizardry.wizardry.api.spell.annotation.ContextRing;
+import com.teamwizardry.wizardry.api.spell.annotation.ContextSuper;
 import com.teamwizardry.wizardry.api.spell.annotation.ModuleOverride;
 import com.teamwizardry.wizardry.api.spell.annotation.ModuleParameter;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
@@ -63,6 +66,7 @@ public class ModuleFactory {
 			
 			// Search for context parameters
 			int idxContextParamRing = -1;
+			int idxContextParamSuper = -1;
 			Parameter[] params = method.getParameters();
 			for( int i = 0; i < params.length; i ++ ) {
 				Parameter param = params[i];
@@ -71,9 +75,14 @@ public class ModuleFactory {
 						throw new ModuleInitException("Method '" + method.toString() + "' has invalid @ContextRing annotated parameter. It is not allowed on multiple parameters.");
 					idxContextParamRing = i;
 				}
+				if( param.isAnnotationPresent(ContextSuper.class) ) {
+					if( idxContextParamSuper >= 0 )
+						throw new ModuleInitException("Method '" + method.toString() + "' has invalid @ContextSuper annotated parameter. It is not allowed on multiple parameters.");
+					idxContextParamSuper = i;
+				}
 			}
 			
-			OverrideMethod ovrdMethod = new OverrideMethod(method, idxContextParamRing);
+			OverrideMethod ovrdMethod = new OverrideMethod(method, idxContextParamRing, idxContextParamSuper);
 			overridableMethods.put(ovrd.value(), ovrdMethod);
 		}
 	}
@@ -231,20 +240,37 @@ public class ModuleFactory {
 	
 	public static class OverrideMethod {
 		private final Method method;
+		private final MethodHandle methodHandle;
 		private final int idxContextParamRing;
+		private final int idxContextParamSuper;
 		
-		OverrideMethod(Method method, int idxContextParamRing) {
+		OverrideMethod(Method method, int idxContextParamRing, int idxContextParamSuper) throws ModuleInitException {
 			super();
-			this.method = method;
-			this.idxContextParamRing = idxContextParamRing;
+
+			try {
+				this.method = method;
+				this.idxContextParamRing = idxContextParamRing;
+				this.idxContextParamSuper = idxContextParamSuper;
+				this.methodHandle = MethodHandles.lookup().unreflect(method);
+			} catch (Exception e) {
+				throw new ModuleInitException("Couldn't initialize override method binding. See cause.", e);
+			}
 		}
 
 		public Method getMethod() {
 			return method;
 		}
+		
+		public MethodHandle getMethodHandle() {
+			return methodHandle;
+		}
 
 		public int getIdxContextParamRing() {
 			return idxContextParamRing;
-		}		
+		}
+		
+		public int getIdxContextParamSuper() {
+			return idxContextParamSuper;
+		}
 	}
 }

@@ -1,7 +1,7 @@
 package com.teamwizardry.wizardry.api.spell.module;
 
+import java.lang.invoke.WrongMethodTypeException;
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Proxy;
@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.annotation.ContextRing;
+import com.teamwizardry.wizardry.api.spell.annotation.ContextSuper;
 import com.teamwizardry.wizardry.api.spell.annotation.ModuleOverrideInterface;
 import com.teamwizardry.wizardry.api.spell.module.ModuleFactory.OverrideMethod;
 
@@ -125,7 +126,7 @@ public class ModuleOverrideHandler {
 			if( i >= baseParams.length ) {
 				while( j < overrideParams.length ) {
 					Parameter overrideParam = overrideParams[j];
-					if( !overrideParam.isAnnotationPresent(ContextRing.class) )
+					if( !isExtraParameter( overrideParam ) )
 						return false;	// Unmappable extra parameter.
 					j ++;
 				}
@@ -135,7 +136,7 @@ public class ModuleOverrideHandler {
 			if( j >= overrideParams.length ) {
 				while( i < overrideParams.length ) {
 					Parameter baseParam = baseParams[i];
-					if( !baseParam.isAnnotationPresent(ContextRing.class) )
+					if( !isExtraParameter( baseParam ) )
 						return false;	// Unmappable extra parameter.
 					i ++;
 				}
@@ -144,13 +145,13 @@ public class ModuleOverrideHandler {
 			
 			// 
 			Parameter baseParam = baseParams[i];
-			if( baseParam.isAnnotationPresent(ContextRing.class) ) {
+			if( isExtraParameter( baseParam ) ) {
 				i ++;
 				continue;	// Ignore parameters taking values from context
 			}
 			
 			Parameter overrideParam = overrideParams[j];
-			if( overrideParam.isAnnotationPresent(ContextRing.class) ) {
+			if( isExtraParameter( overrideParam ) ) {
 				j ++;
 				continue;	// Ignore parameters taking values from context
 			}
@@ -186,7 +187,12 @@ public class ModuleOverrideHandler {
 				return false;
 		}
 
-		return true;		
+		return true;
+	}
+	
+	private static boolean isExtraParameter(Parameter param) {
+		return param.isAnnotationPresent(ContextRing.class) ||
+			   param.isAnnotationPresent(ContextSuper.class);
 	}
 	
 	/////////////////
@@ -236,37 +242,9 @@ public class ModuleOverrideHandler {
 						throw new UnsupportedOperationException("Method '" + method + "' is not an override. Annotation @ModuleOverrideInterface must be supplied.");
 				}
 			}
-			OverridePointer ptr = intfMethod.getOverridePointer();
-			int idxContextParamRing = ptr.getBaseMethod().getIdxContextParamRing();
 			
-			Object passedArgs[] = args;
-			if( idxContextParamRing >= 0 ) {
-				// Add spell ring
-				passedArgs = new Object[args.length + 1];
-				int i = 0;
-				int j = 0;
-				while( i < passedArgs.length ) {
-					if( i == idxContextParamRing ) {
-						passedArgs[i] = ptr.getSpellRingWithOverride();
-						i ++;
-						continue;
-					}
-					passedArgs[i] = args[j];
-					
-					i ++;
-					j ++;
-				}
-			}
-
-			try {
-				return ptr.getBaseMethod().getMethod().invoke(ptr.getModule().getModuleClass(), passedArgs);
-			} catch (InvocationTargetException e) {
-				throw e.getTargetException();
-			} catch (IllegalAccessException | IllegalArgumentException e) {
-				// NOTE: If this happens, then correctness of checks like "areMethodsCompatible()" a.s.o. need to be debugged.
-				e.printStackTrace();
-				throw new IllegalStateException("Couldn't invoke call. See cause.", e);
-			}
+			OverridePointer ptr = intfMethod.getOverridePointer();
+			return ptr.invoke(args);
 		}
 		
 		private boolean isMethodHashCode(Method method) {
@@ -355,7 +333,7 @@ public class ModuleOverrideHandler {
 	
 	////////////////////////
 	
-	private static class OverridePointer {
+	static class OverridePointer {
 		private final SpellRing spellRingWithOverride;
 		private final String overrideName;
 		private final OverrideMethod baseMethod;
@@ -386,6 +364,82 @@ public class ModuleOverrideHandler {
 		
 		String getOverrideName() {
 			return overrideName;
+		}
+		
+		Object invoke(Object[] args) throws Throwable {
+			int idxContextParamRing = baseMethod.getIdxContextParamRing();
+			int idxContextParamSuper = baseMethod.getIdxContextParamSuper();
+			
+/*			Object passedArgs[] = args;
+			int countExtra = 0;
+			if( idxContextParamRing >= 0 )
+				countExtra ++;
+			if( idxContextParamSuper >= 0 )
+				countExtra ++;
+			if( countExtra > 0 ) {
+				// Add spell ring
+				passedArgs = new Object[args.length + countExtra];
+				int i = 0;
+				int j = 0;
+				while( i < passedArgs.length ) {
+					if( i == idxContextParamRing ) {
+						passedArgs[i] = spellRingWithOverride;
+					}
+					else if( i == idxContextParamSuper ) {
+						passedArgs[i] = new ModuleOverrideSuper(this);
+					}
+					else {
+						passedArgs[i] = args[j];
+						j ++;
+					}
+					i ++;
+				}
+			}*/
+			
+			Object passedArgs[] = args;
+			int countExtra = 1;
+			if( idxContextParamRing >= 0 )
+				countExtra ++;
+			if( idxContextParamSuper >= 0 )
+				countExtra ++;
+			
+			// Add extra arguments like this pointer a.s.o.
+			passedArgs = new Object[args.length + countExtra];
+			int i = 0;
+			int j = 0;
+			while( i < passedArgs.length ) {
+				if( i == 0 ) {
+					passedArgs[i] = getModule().getModuleClass();
+				}
+				else if( i == idxContextParamRing ) {
+					passedArgs[i] = spellRingWithOverride;
+				}
+				else if( i == idxContextParamSuper ) {
+					passedArgs[i] = new ModuleOverrideSuper(this);
+				}
+				else {
+					passedArgs[i] = args[j];
+					j ++;
+				}
+				i ++;
+			}
+			
+			try {
+				return baseMethod.getMethodHandle().invokeWithArguments(passedArgs);
+			}
+			catch(WrongMethodTypeException | ClassCastException e) {
+				// NOTE: If this happens, then correctness of checks like "areMethodsCompatible()" a.s.o. need to be debugged.
+				throw new IllegalStateException("Couldn't invoke call. See cause.", e);
+			}
+
+/*			try {
+				return baseMethod.getMethod().invoke(getModule().getModuleClass(), passedArgs);
+			} catch (InvocationTargetException e) {
+				throw e.getTargetException();
+			} catch (IllegalAccessException | IllegalArgumentException e) {
+				// NOTE: If this happens, then correctness of checks like "areMethodsCompatible()" a.s.o. need to be debugged.
+				throw new IllegalStateException("Couldn't invoke call. See cause.", e);
+			}*/
 		}
 	}
 	
