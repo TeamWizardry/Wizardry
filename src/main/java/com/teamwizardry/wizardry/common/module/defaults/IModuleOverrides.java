@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.module;
+package com.teamwizardry.wizardry.common.module.defaults;
 
 import com.teamwizardry.wizardry.api.spell.annotation.ModuleOverrideInterface;
 

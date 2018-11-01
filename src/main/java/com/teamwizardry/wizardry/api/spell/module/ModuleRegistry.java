@@ -8,7 +8,6 @@ import com.google.gson.JsonPrimitive;
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.utilities.AnnotationHelper;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.spell.annotation.ModuleOverride;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterOverrideDefaults;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
@@ -30,7 +29,6 @@ import java.awt.*;
 import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -97,7 +95,7 @@ public class ModuleRegistry {
 			try {
 				// Create instance
 				Constructor<?> ctor = clazz.getConstructor();
-				Object obj = (IModule)ctor.newInstance();
+				Object obj = ctor.newInstance();
 				
 				// Register all overrides
 				registerOverrideDefaults(clazz, obj);

@@ -31,9 +31,8 @@ public class ModuleOverrideHandler {
 			throw new IllegalArgumentException("passed spellRing is not a root.");
 		
 		// Apply default overrides
-		for( OverrideDefaultMethod methodEntry : ModuleRegistry.INSTANCE.getDefaultOverrides().values() ) {
+		for( OverrideDefaultMethod methodEntry : ModuleRegistry.INSTANCE.getDefaultOverrides().values() )
 			applyDefaultOverride(methodEntry);
-		}
 		
 		// Apply overrides from spell chain
 		SpellRing[] spellSequence = getSequenceFromSpellChain(spellChain);
@@ -89,7 +88,7 @@ public class ModuleOverrideHandler {
 				ptr = new OverridePointer(spellRing, ptr, entry.getKey(), entry.getValue());
 			}
 			
-			overridePointers.put(entry.getKey(), ptr);			
+			overridePointers.put(entry.getKey(), ptr);
 		}
 	}
 	
@@ -97,6 +96,7 @@ public class ModuleOverrideHandler {
 		if( overridePointers.containsKey(methodEntry.getOverrideName()) )
 			throw new IllegalStateException("Duplicate override found.");	// Should not happen, as duplication cases are catched in ModuleRegistry.registerOverrideDefaults()
 		OverridePointer ptr = new OverridePointer(methodEntry);
+		overridePointers.put(methodEntry.getOverrideName(), ptr);
 	}
 	
 	/////////////////

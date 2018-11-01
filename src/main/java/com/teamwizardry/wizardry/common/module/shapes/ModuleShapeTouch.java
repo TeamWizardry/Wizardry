@@ -35,7 +35,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.LOOK;
  * Created by Demoniaque.
  */
 @RegisterModule(ID="shape_touch")
-public class ModuleShapeTouch extends AbstractModuleShape implements IModuleShape {
+public class ModuleShapeTouch implements IModuleShape {
 
 	@Override
 	public boolean run(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {

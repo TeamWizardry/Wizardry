@@ -8,9 +8,11 @@ import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.annotation.ModuleOverride;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.annotation.ContextRing;
+import com.teamwizardry.wizardry.api.spell.annotation.ContextSuper;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.IModuleShape;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceShape;
+import com.teamwizardry.wizardry.api.spell.module.ModuleOverrideSuper;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
@@ -40,7 +42,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.LOOK;
  */
 @RegisterModule(ID="shape_beam")
 @Mod.EventBusSubscriber(modid = Wizardry.MODID)
-public class ModuleShapeBeam extends AbstractModuleShape implements IModuleShape, IContinuousModule {
+public class ModuleShapeBeam implements IModuleShape, IContinuousModule {
 
 	public static final String BEAM_OFFSET = "beam offset";
 	public static final String BEAM_CAST = "beam cast";
@@ -212,7 +214,7 @@ public class ModuleShapeBeam extends AbstractModuleShape implements IModuleShape
 	}
 	
 	@ModuleOverride("shape_beam_run")
-	public void onRunBeam(SpellData data, SpellRing shape) {
+	public void onRunBeam(@ContextSuper ModuleOverrideSuper ovdSuper, SpellData data, SpellRing shape) {
 		// Default implementation
 	}
 }

@@ -1,14 +1,21 @@
 package com.teamwizardry.wizardry.api.spell;
 
-import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
-import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceModifier;
-import com.teamwizardry.wizardry.api.spell.module.ModuleOverrideException;
-import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceModifier;
+import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
+
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 public class SpellBuilder {
 

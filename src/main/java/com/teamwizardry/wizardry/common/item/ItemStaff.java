@@ -12,7 +12,7 @@ import com.teamwizardry.wizardry.api.spell.IBlockSelectable;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
-import com.teamwizardry.wizardry.common.module.IModuleOverrides;
+import com.teamwizardry.wizardry.common.module.defaults.IModuleOverrides;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
