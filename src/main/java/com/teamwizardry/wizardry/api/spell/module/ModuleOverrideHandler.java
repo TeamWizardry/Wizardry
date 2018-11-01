@@ -19,12 +19,14 @@ public class ModuleOverrideHandler {
 	
 	private HashMap<String, OverridePointer> overridePointers = new HashMap<>();
 	private HashMap<String, Object> cachedProxies = new HashMap<>();
+	private final SpellRing spellChain;
 
-	public ModuleOverrideHandler(SpellRing spellRing) throws ModuleOverrideException {
-		if( spellRing.getParentRing() != null )
+	public ModuleOverrideHandler(SpellRing spellChain) throws ModuleOverrideException {
+		this.spellChain = spellChain;
+		if( spellChain.getParentRing() != null )
 			throw new IllegalArgumentException("passed spellRing is not a root.");
 		
-		SpellRing[] spellSequence = getSequenceFromSpellRing(spellRing);
+		SpellRing[] spellSequence = getSequenceFromSpellChain(spellChain);
 		for( SpellRing curRing : spellSequence )
 			applyOverrides(curRing);
 	}
@@ -50,7 +52,7 @@ public class ModuleOverrideHandler {
 		Map<String, Method> overridableMethods = getInterfaceMethods(interfaceClass);
 		
 		// Create invocation handler. All interface methods are mapped to their base method pendants
-		OverrideInvoker invocationHandler = new OverrideInvoker(overridableMethods);
+		OverrideInvoker invocationHandler = new OverrideInvoker(overridableMethods, interfaceClass.getName());
 		
 		//
 		ClassLoader myClassLoader = getClass().getClassLoader();	// Inherit class loader from this class
@@ -83,7 +85,7 @@ public class ModuleOverrideHandler {
 	
 	/////////////////
 	
-	private static SpellRing[] getSequenceFromSpellRing(SpellRing spellRing) {
+	private static SpellRing[] getSequenceFromSpellChain(SpellRing spellRing) {
 		SpellRing cur = spellRing;
 		LinkedList<SpellRing> instances = new LinkedList<>();
 		while( cur != null ) {
@@ -168,12 +170,12 @@ public class ModuleOverrideHandler {
 		// there should exist an exception type at base
 		// which is assignable from the interface method exception
 		for( Class<?> overrideExcp : overrideExcps ) {
-			if( RuntimeException.class.equals(overrideExcp) )
+			if( RuntimeException.class.isAssignableFrom(overrideExcp) )
 				continue;
 			
 			boolean found = false;
 			for( Class<?> baseExcp : baseExcps ) {
-				if( RuntimeException.class.equals(baseExcp) )
+				if( RuntimeException.class.isAssignableFrom(baseExcp) )
 					continue;
 				if( baseExcp.isAssignableFrom(overrideExcp) ) {
 					found = true;
@@ -191,8 +193,11 @@ public class ModuleOverrideHandler {
 	
 	private class OverrideInvoker implements InvocationHandler {
 		private final HashMap<String, OverrideInterfaceMethod> callMap = new HashMap<>();
+		private final String displayedInterfaceName;
 		
-		public OverrideInvoker(Map<String, Method> overrides) throws ModuleOverrideException {
+		public OverrideInvoker(Map<String, Method> overrides, String displayedInterfaceName) throws ModuleOverrideException {
+			this.displayedInterfaceName = displayedInterfaceName;
+			
 			for( Entry<String, Method> override : overrides.entrySet() ) {
 				OverridePointer ptr = overridePointers.get(override.getKey());
 				if( ptr == null )
@@ -208,11 +213,28 @@ public class ModuleOverrideHandler {
 			String name = method.getName();
 			OverrideInterfaceMethod intfMethod = callMap.get(name);
 			if( intfMethod == null ) {
-				ModuleOverrideInterface annot = method.getDeclaredAnnotation(ModuleOverrideInterface.class);
-				if( annot != null )
-					throw new UnsupportedOperationException("Override method for '" + annot.value() + "' invoke via '" + method + "' is not implemented or not public.");
-				else
-					throw new UnsupportedOperationException("Method '" + method + "' is not an override. Annotation @ModuleOverrideInterface must be supplied.");
+				// Check for default methods
+				// NOTE: Hopefully monitor method calls are not redirected to this invoke handler.
+				if( isMethodToString(method) ) {
+					return "Proxy for '" + displayedInterfaceName + "' on " + spellChain;
+				}
+				else if( isMethodHashCode(method) ) {
+					return (int)0;
+				}
+				else if( isMethodEquals(method) ) {
+					return proxy == args[0];
+				}
+				else if( isMethodClone(method) ) {
+					throw new CloneNotSupportedException("Override handler has no clone ability.");
+				}
+				else {
+					// Nothing found. Throw an exception.
+					ModuleOverrideInterface annot = method.getDeclaredAnnotation(ModuleOverrideInterface.class);
+					if( annot != null )
+						throw new UnsupportedOperationException("Override method for '" + annot.value() + "' invoke via '" + method + "' is not implemented or not public.");
+					else
+						throw new UnsupportedOperationException("Method '" + method + "' is not an override. Annotation @ModuleOverrideInterface must be supplied.");
+				}
 			}
 			OverridePointer ptr = intfMethod.getOverridePointer();
 			int idxContextParamRing = ptr.getBaseMethod().getIdxContextParamRing();
@@ -245,6 +267,64 @@ public class ModuleOverrideHandler {
 				e.printStackTrace();
 				throw new IllegalStateException("Couldn't invoke call. See cause.", e);
 			}
+		}
+		
+		private boolean isMethodHashCode(Method method) {
+			// TODO: Move to utils.
+			if( method == null )
+				return false;
+			
+			if( method.getParameterCount() != 0 )
+				return false;
+			if( !int.class.equals(method.getReturnType()) )
+				return false;
+			if( !"hashCode".equals(method.getName()) )
+				return false;
+			return true;
+		}
+		
+		private boolean isMethodEquals(Method method) {
+			// TODO: Move to utils.
+			if( method == null )
+				return false;
+
+			if( method.getParameterCount() != 1 )
+				return false;
+			if( !method.getParameterTypes()[0].equals(Object.class) )
+				return false;
+			if( !boolean.class.equals(method.getReturnType()) )
+				return false;
+			if( !"equals".equals(method.getName()) )
+				return false;
+			return true;
+		}
+		
+		private boolean isMethodToString(Method method) {
+			// TODO: Move to utils.
+			if( method == null )
+				return false;
+			
+			if( method.getParameterCount() != 0 )
+				return false;
+			if( !String.class.equals(method.getReturnType()) )
+				return false;
+			if( !"toString".equals(method.getName()) )
+				return false;
+			return true;
+		}
+		
+		private boolean isMethodClone(Method method) {
+			// TODO: Move to utils.
+			if( method == null )
+				return false;
+			
+			if( method.getParameterCount() != 0 )
+				return false;
+			if( !Object.class.equals(method.getReturnType()) )
+				return false;
+			if( !"clone".equals(method.getName()) )
+				return false;
+			return true;
 		}
 	}
 	
