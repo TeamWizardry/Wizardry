@@ -7,9 +7,11 @@ import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.annotation.ModuleOverride;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.annotation.ContextRing;
+import com.teamwizardry.wizardry.api.spell.annotation.ContextSuper;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
+import com.teamwizardry.wizardry.api.spell.module.ModuleOverrideSuper;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RandUtilSeed;
@@ -74,7 +76,10 @@ public class ModuleEffectLightning implements IModuleEffect {
 	}
 
 	@ModuleOverride("shape_self_run")
-	public void onRunSelf(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+	public void onRunSelf(@ContextSuper ModuleOverrideSuper ovdSuper, SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+		if( ovdSuper.hasSuper() )
+			ovdSuper.invoke(true, data, shape);
+
 		World world = data.world;
 		if (world.isRemote) return;
 		
@@ -96,7 +101,10 @@ public class ModuleEffectLightning implements IModuleEffect {
 	}
 
 	@ModuleOverride("shape_touch_run")
-	public void onRunTouch(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+	public void onRunTouch(@ContextSuper ModuleOverrideSuper ovdSuper, SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+		if( ovdSuper.hasSuper() )
+			ovdSuper.invoke(true, data, shape);
+
 		World world = data.world;
 		Vec3d look = data.getData(LOOK);
 		Entity caster = data.getCaster();
@@ -120,7 +128,10 @@ public class ModuleEffectLightning implements IModuleEffect {
 	}
 
 	@ModuleOverride("shape_projectile_run")
-	public boolean onRunProjectile(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+	public boolean onRunProjectile(@ContextSuper ModuleOverrideSuper ovdSuper, SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+		if( ovdSuper.hasSuper() )
+			ovdSuper.invoke(true, data, shape);
+
 		World world = data.world;
 		if (world.isRemote) return true;
 
@@ -140,7 +151,10 @@ public class ModuleEffectLightning implements IModuleEffect {
 	}
 
 	@ModuleOverride("shape_beam_run")
-	public void onRunBeam(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+	public void onRunBeam(@ContextSuper ModuleOverrideSuper ovdSuper, SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+		if( ovdSuper.hasSuper() )
+			ovdSuper.invoke(true, data, shape);
+		
 		World world = data.world;
 		if (world.isRemote) return;
 		Entity caster = data.getCaster();
@@ -166,7 +180,10 @@ public class ModuleEffectLightning implements IModuleEffect {
 	}
 
 	@ModuleOverride("shape_cone_run")
-	public void onRunCone(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+	public void onRunCone(@ContextSuper ModuleOverrideSuper ovdSuper, SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+		if( ovdSuper.hasSuper() )
+			ovdSuper.invoke(true, data, shape);
+
 		World world = data.world;
 		float yaw = data.getData(YAW, 0F);
 		float pitch = data.getData(PITCH, 0F);
@@ -193,7 +210,10 @@ public class ModuleEffectLightning implements IModuleEffect {
 	}
 
 	@ModuleOverride("shape_zone_run")
-	public void onRunZone(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+	public void onRunZone(@ContextSuper ModuleOverrideSuper ovdSuper, SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+		if( ovdSuper.hasSuper() )
+			ovdSuper.invoke(true, data, shape);
+
 		World world = data.world;
 		Entity caster = data.getCaster();
 		Vec3d targetPos = data.getTargetWithFallback();

@@ -370,32 +370,6 @@ public class ModuleOverrideHandler {
 			int idxContextParamRing = baseMethod.getIdxContextParamRing();
 			int idxContextParamSuper = baseMethod.getIdxContextParamSuper();
 			
-/*			Object passedArgs[] = args;
-			int countExtra = 0;
-			if( idxContextParamRing >= 0 )
-				countExtra ++;
-			if( idxContextParamSuper >= 0 )
-				countExtra ++;
-			if( countExtra > 0 ) {
-				// Add spell ring
-				passedArgs = new Object[args.length + countExtra];
-				int i = 0;
-				int j = 0;
-				while( i < passedArgs.length ) {
-					if( i == idxContextParamRing ) {
-						passedArgs[i] = spellRingWithOverride;
-					}
-					else if( i == idxContextParamSuper ) {
-						passedArgs[i] = new ModuleOverrideSuper(this);
-					}
-					else {
-						passedArgs[i] = args[j];
-						j ++;
-					}
-					i ++;
-				}
-			}*/
-			
 			Object passedArgs[] = args;
 			int countExtra = 1;
 			if( idxContextParamRing >= 0 )
@@ -415,7 +389,7 @@ public class ModuleOverrideHandler {
 					passedArgs[i] = spellRingWithOverride;
 				}
 				else if( i == idxContextParamSuper + 1 ) {
-					passedArgs[i] = new ModuleOverrideSuper(this);
+					passedArgs[i] = new ModuleOverrideSuper(prev);
 				}
 				else {
 					passedArgs[i] = args[j];
@@ -431,15 +405,6 @@ public class ModuleOverrideHandler {
 				// NOTE: If this happens, then correctness of checks like "areMethodsCompatible()" a.s.o. need to be debugged.
 				throw new IllegalStateException("Couldn't invoke call. See cause.", e);
 			}
-
-/*			try {
-				return baseMethod.getMethod().invoke(getModule().getModuleClass(), passedArgs);
-			} catch (InvocationTargetException e) {
-				throw e.getTargetException();
-			} catch (IllegalAccessException | IllegalArgumentException e) {
-				// NOTE: If this happens, then correctness of checks like "areMethodsCompatible()" a.s.o. need to be debugged.
-				throw new IllegalStateException("Couldn't invoke call. See cause.", e);
-			}*/
 		}
 	}
 	

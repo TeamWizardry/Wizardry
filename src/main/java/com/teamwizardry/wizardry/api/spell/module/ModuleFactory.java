@@ -52,6 +52,7 @@ public class ModuleFactory {
 		// Determine overriden methods via reflection
 		// FIXME: Separation of concerns: Overridable methods are not part of factory. Move them or rename factory class appropriately.
 		// TODO: Check for ambiguity of method names. Handle overrides by superclass properly!
+		// TODO: No multiple context annotations on same parameter
 		for(Method method : clazz.getMethods()) {
 			ModuleOverride ovrd = method.getDeclaredAnnotation(ModuleOverride.class);
 			if( ovrd == null )
