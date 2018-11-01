@@ -1,10 +1,9 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
-import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpHelix;
+import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBezier3D;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
-import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
 import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
@@ -16,27 +15,26 @@ import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.util.RandUtil;
-import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 
 import javax.annotation.Nonnull;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ORIGIN;
 
 
-@RegisterModule(ID="effect_poison_cloud")
+@RegisterModule(ID = "effect_poison_cloud")
 public class ModuleEffectPoisonCloud implements IModuleEffect, ILingeringModule {
 
     @Override
@@ -55,10 +53,10 @@ public class ModuleEffectPoisonCloud implements IModuleEffect, ILingeringModule 
 
         for (Entity entity : world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(new BlockPos(position)).grow(area, area, area))) {
             if (entity == null) continue;
-            if(entity instanceof EntityLivingBase) {
+            if (entity instanceof EntityLivingBase) {
                 EntityLivingBase living = (EntityLivingBase) entity;
-                living.addPotionEffect(new PotionEffect(Potion.getPotionById(9),100));
-                living.addPotionEffect(new PotionEffect(Potion.getPotionById(19),60));
+                living.addPotionEffect(new PotionEffect(Potion.getPotionById(9), 100));
+                living.addPotionEffect(new PotionEffect(Potion.getPotionById(19), 60));
             }
         }
 
@@ -73,12 +71,23 @@ public class ModuleEffectPoisonCloud implements IModuleEffect, ILingeringModule 
         if (position == null) return;
 
         ParticleBuilder glitter = new ParticleBuilder(0);
-        glitter.setColorFunction(new InterpColorHSV(instance.getPrimaryColor(), instance.getSecondaryColor()));
-        ParticleSpawner.spawn(glitter, spell.world, new StaticInterp<>(position), 50, 10, (aFloat, particleBuilder) -> {
-            glitter.setScale((float) RandUtil.nextDouble(0.3, 1));
-            glitter.setAlphaFunction(new InterpFloatInOut(0.3f, (float) RandUtil.nextDouble(0.6, 1)));
-            glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SMOKE));
-            glitter.setLifetime(RandUtil.nextInt(20, 40));
+        glitter.setColor(instance.getPrimaryColor());
+        glitter.setScale(1);
+        glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SMOKE));
+        glitter.disableRandom();
+
+        ParticleSpawner.spawn(glitter, spell.world, new StaticInterp<>(position), 20, 0, (aFloat, particleBuilder) -> {
+            glitter.setLifetime(RandUtil.nextInt(10, 40));
+            glitter.setScale(RandUtil.nextFloat());
+            glitter.setAlphaFunction(new InterpFloatInOut(0.3f, RandUtil.nextFloat()));
+
+            double radius = 2;
+            double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
+            double r = radius * RandUtil.nextFloat();
+            double x = r * MathHelper.cos((float) theta);
+            double z = r * MathHelper.sin((float) theta);
+            Vec3d dest = new Vec3d(x, RandUtil.nextDouble(-1, 1), z);
+            glitter.setPositionFunction(new InterpBezier3D(Vec3d.ZERO, dest, dest.scale(2), new Vec3d(dest.x, RandUtil.nextDouble(-2, 2), dest.z)));
         });
     }
 
