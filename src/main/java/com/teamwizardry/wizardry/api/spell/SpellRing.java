@@ -388,7 +388,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	}
 	
 	@Nonnull
-	public ModuleOverrideHandler getOverrideHandler() {
+	public synchronized ModuleOverrideHandler getOverrideHandler() {
 		if( lazy_overrideHandler == null ) {
 			if( parentRing != null )
 				lazy_overrideHandler = parentRing.getOverrideHandler();

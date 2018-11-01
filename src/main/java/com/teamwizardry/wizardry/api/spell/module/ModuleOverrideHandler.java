@@ -33,7 +33,7 @@ public class ModuleOverrideHandler {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <T> T getConsumerInterface(Class<T> interfaceClass) throws ModuleOverrideException {
+	public synchronized <T> T getConsumerInterface(Class<T> interfaceClass) throws ModuleOverrideException {
 		String className = interfaceClass.getName();
 		Object obj = cachedProxies.get(className);
 		if( obj == null ) {

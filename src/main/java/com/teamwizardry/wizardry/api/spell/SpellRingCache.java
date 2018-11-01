@@ -25,19 +25,18 @@ public class SpellRingCache {
 	 * @param mayCreate creates a new cache record iff <code>true</code>.
 	 * @return a spell chain or <code>null</code> if no spell chain was created.
 	 */
-	SpellRing internalGetSpellRingByNBT(NBTTagCompound key, boolean mayCreate) {
+	synchronized SpellRing internalGetSpellRingByNBT(NBTTagCompound key, boolean mayCreate) {
 		SpellRing spellRing = cache.get(key);
 		if( spellRing == null && mayCreate ) {
 			// deserialize ring and register it
 			spellRing = SpellRing.deserializeRing(key);
 			spellRing = registerSpellRing(spellRing);
-//OFF			Wizardry.logger.info("SpellRing cache miss for " + spellRing);
 		}
 		
 		return spellRing;
 	}
 	
-	SpellRing registerSpellRing(SpellRing spellRing) {
+	synchronized SpellRing registerSpellRing(SpellRing spellRing) {
 		// NOTE: Is a workaround!
 		if( spellRing.getParentRing() != null )
 			throw new IllegalArgumentException("Expects a spell ring chain head.");
@@ -48,7 +47,10 @@ public class SpellRingCache {
 			cache.put(nbt, other);
 			return other;
 		}
-		else
+		else {
+			if( other == null )
+				Wizardry.logger.info("SpellRing cache miss for " + spellRing);
 			return spellRing;
+		}
 	}
 }
