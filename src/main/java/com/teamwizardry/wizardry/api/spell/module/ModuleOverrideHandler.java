@@ -411,10 +411,10 @@ public class ModuleOverrideHandler {
 				if( i == 0 ) {
 					passedArgs[i] = getModule().getModuleClass();
 				}
-				else if( i == idxContextParamRing ) {
+				else if( i == idxContextParamRing + 1 ) {
 					passedArgs[i] = spellRingWithOverride;
 				}
-				else if( i == idxContextParamSuper ) {
+				else if( i == idxContextParamSuper + 1 ) {
 					passedArgs[i] = new ModuleOverrideSuper(this);
 				}
 				else {

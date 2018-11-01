@@ -249,8 +249,8 @@ public class ModuleFactory {
 
 			try {
 				this.method = method;
-				this.idxContextParamRing = idxContextParamRing;
-				this.idxContextParamSuper = idxContextParamSuper;
+				this.idxContextParamRing = idxContextParamRing >= 0 ? idxContextParamRing : -2;
+				this.idxContextParamSuper = idxContextParamSuper >= 0 ? idxContextParamSuper : -2;
 				this.methodHandle = MethodHandles.lookup().unreflect(method);
 			} catch (Exception e) {
 				throw new ModuleInitException("Couldn't initialize override method binding. See cause.", e);
