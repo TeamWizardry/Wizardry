@@ -201,16 +201,18 @@ public class ModuleOverrideHandler {
 		private final HashMap<String, OverrideInterfaceMethod> callMap = new HashMap<>();
 		private final String displayedInterfaceName;
 		
-		public OverrideInvoker(Map<String, Method> overrides, String displayedInterfaceName) throws ModuleOverrideException {
+		public OverrideInvoker(Map<String, Method> interfaceMethods, String displayedInterfaceName) throws ModuleOverrideException {
 			this.displayedInterfaceName = displayedInterfaceName;
 			
-			for( Entry<String, Method> override : overrides.entrySet() ) {
-				OverridePointer ptr = overridePointers.get(override.getKey());
+			for( Entry<String, Method> interfaceMethod : interfaceMethods.entrySet() ) {
+				OverridePointer ptr = overridePointers.get(interfaceMethod.getKey());
 				if( ptr == null )
 					continue;	// Ignore unmapped methods. invoke() will throw a proper exception on attempt to call them.
+				if( !areMethodsCompatible(interfaceMethod.getValue(), ptr.getBaseMethod().getMethod()) )
+					throw new ModuleOverrideException("Interface method signature of '" + interfaceMethod.getValue() + "' is incompatible with '" + ptr.getBaseMethod().getMethod() + "'.");
 				
-				OverrideInterfaceMethod intfMethod = new OverrideInterfaceMethod(ptr, override.getValue());
-				callMap.put(intfMethod.getKey(), intfMethod);
+				OverrideInterfaceMethod intfMethodEntry = new OverrideInterfaceMethod(ptr, interfaceMethod.getValue());
+				callMap.put(intfMethodEntry.getKey(), intfMethodEntry);
 			}
 		}
 

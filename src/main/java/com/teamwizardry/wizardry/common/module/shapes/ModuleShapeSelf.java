@@ -92,12 +92,12 @@ public class ModuleShapeSelf extends AbstractModuleShape implements IModuleShape
 	///////////////////
 	
 	@ModuleOverride("shape_self_run")
-	public void onRunSelf(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+	public void onRunSelf(SpellData data, SpellRing shape) {
 		// Default implementation
 	}
 	
 	@ModuleOverride("shape_self_render")
-	public boolean onRenderSelf(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+	public boolean onRenderSelf(SpellData data, SpellRing shape) {
 		// Default implementation
 		return false;
 	}

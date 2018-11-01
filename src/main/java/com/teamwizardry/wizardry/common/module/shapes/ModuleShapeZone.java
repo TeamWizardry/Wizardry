@@ -157,12 +157,12 @@ public class ModuleShapeZone extends AbstractModuleShape implements IModuleShape
 	////////////////
 	
 	@ModuleOverride("shape_zone_run")
-	public void onRunZone(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+	public void onRunZone(SpellData data, SpellRing shape) {
 		// Default implementation
 	}
 
 	@ModuleOverride("shape_zone_render")
-	public boolean onRenderZone(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+	public boolean onRenderZone(SpellData data, SpellRing shape) {
 		// Default implementation
 		return false;
 	}

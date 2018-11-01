@@ -45,7 +45,7 @@ public class ModuleOverrideSuper {
 		}
 	}
 	
-	public void throwUncatched() throws RuntimeException {
+	public void rethrowUncatched() throws RuntimeException {
 		if( occurredException == null )
 			return;
 		

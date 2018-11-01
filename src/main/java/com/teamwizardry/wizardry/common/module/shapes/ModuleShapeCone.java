@@ -125,12 +125,12 @@ public class ModuleShapeCone extends AbstractModuleShape implements IModuleShape
 	/////////////
 	
 	@ModuleOverride("shape_cone_run")
-	public void onRunCone(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+	public void onRunCone(SpellData data, SpellRing shape) {
 		// Default implementation
 	}
 	
 	@ModuleOverride("shape_cone_render")
-	public boolean onRenderCone(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+	public boolean onRenderCone(SpellData data, SpellRing shape) {
 		// Default implementation
 		return false;
 	}

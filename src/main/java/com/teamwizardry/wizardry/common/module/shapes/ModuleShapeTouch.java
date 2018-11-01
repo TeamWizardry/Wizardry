@@ -127,12 +127,12 @@ public class ModuleShapeTouch extends AbstractModuleShape implements IModuleShap
 	//////////////////
 	
 	@ModuleOverride("shape_touch_run")
-	public void onRunTouch(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+	public void onRunTouch(SpellData data, SpellRing shape) {
 		// Default implementation
 	}
 	
 	@ModuleOverride("shape_touch_render")
-	public boolean onRenderTouch(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+	public boolean onRenderTouch(SpellData data, SpellRing shape) {
 		// Default implementation
 		return false;
 	}

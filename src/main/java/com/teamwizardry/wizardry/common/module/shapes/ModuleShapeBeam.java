@@ -206,13 +206,13 @@ public class ModuleShapeBeam extends AbstractModuleShape implements IModuleShape
 	///////////
 	
 	@ModuleOverride("shape_beam_render")
-	public boolean onRenderBeam(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+	public boolean onRenderBeam(SpellData data, SpellRing shape) {
 		// Default implementation
 		return false;
 	}
 	
 	@ModuleOverride("shape_beam_run")
-	public void onRunBeam(SpellData data, SpellRing shape, @ContextRing SpellRing childRing) {
+	public void onRunBeam(SpellData data, SpellRing shape) {
 		// Default implementation
 	}
 }
