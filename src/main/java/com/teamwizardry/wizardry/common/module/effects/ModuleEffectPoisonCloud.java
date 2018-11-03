@@ -1,7 +1,6 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
-import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBezier3D;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpLine;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
@@ -18,7 +17,7 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.potion.Potion;
+import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -32,7 +31,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ORIGIN;
 
 
 @RegisterModule(ID = "effect_poison_cloud")
@@ -49,7 +47,10 @@ public class ModuleEffectPoisonCloud implements IModuleEffect, ILingeringModule 
         Vec3d position = spell.getTarget();
 
         if (position == null) return false;
-        double potency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell) - 10;
+
+        if (!spellRing.taxCaster(spell, true)) return false;
+
+        double potency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell);
 
         double area = spellRing.getAttributeValue(AttributeRegistry.AREA, spell);
 
@@ -58,9 +59,9 @@ public class ModuleEffectPoisonCloud implements IModuleEffect, ILingeringModule 
             if (entity instanceof EntityLivingBase) {
                 EntityLivingBase living = (EntityLivingBase) entity;
                 if(potency >= 3) {
-                    living.addPotionEffect(new PotionEffect(Potion.getPotionById(9), 100));
+                    living.addPotionEffect(new PotionEffect(MobEffects.NAUSEA, 100));
                 }
-                living.addPotionEffect(new PotionEffect(Potion.getPotionById(19), 60, (int) (potency/3 >= 3 ? 3 : potency/3)));
+                living.addPotionEffect(new PotionEffect(MobEffects.POISON, 60, (int) (potency/3 >= 3 ? 3 : potency/3)));
             }
         }
 
