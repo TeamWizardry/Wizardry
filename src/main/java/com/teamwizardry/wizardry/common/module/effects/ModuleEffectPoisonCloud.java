@@ -49,6 +49,7 @@ public class ModuleEffectPoisonCloud implements IModuleEffect, ILingeringModule 
         Vec3d position = spell.getTarget();
 
         if (position == null) return false;
+        double potency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell) - 10;
 
         double area = spellRing.getAttributeValue(AttributeRegistry.AREA, spell);
 
@@ -56,8 +57,10 @@ public class ModuleEffectPoisonCloud implements IModuleEffect, ILingeringModule 
             if (entity == null) continue;
             if (entity instanceof EntityLivingBase) {
                 EntityLivingBase living = (EntityLivingBase) entity;
-                living.addPotionEffect(new PotionEffect(Potion.getPotionById(9), 100));
-                living.addPotionEffect(new PotionEffect(Potion.getPotionById(19), 60));
+                if(potency >= 3) {
+                    living.addPotionEffect(new PotionEffect(Potion.getPotionById(9), 100));
+                }
+                living.addPotionEffect(new PotionEffect(Potion.getPotionById(19), 60, (int) (potency/3 >= 3 ? 3 : potency/3)));
             }
         }
 
