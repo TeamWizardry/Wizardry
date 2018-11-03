@@ -6,6 +6,11 @@ import com.teamwizardry.wizardry.Wizardry;
 
 import net.minecraft.nbt.NBTTagCompound;
 
+/**
+ * A singleton to cache all spell rings as resolved from a given NBT or created by the spell builder.
+ * 
+ * @author Avatair
+ */
 public class SpellRingCache {
 	private final HashMap<NBTTagCompound, SpellRing> cache = new HashMap<>();
 	
@@ -14,11 +19,18 @@ public class SpellRingCache {
 	private SpellRingCache() {
 	}
 	
+	/**
+	 * Returns a spell chain from an NBT.
+	 * 
+	 * @param key a compound containing the NBT.
+	 * @return the head element of the spell chain.
+	 */
 	public SpellRing getSpellRingByNBT(NBTTagCompound key) {
 		return internalGetSpellRingByNBT(key, true);
 	}
 	
 	/**
+	 * Returns a cached spell chain. Creates a new element in case of cache miss.
 	 * <b>NOTE</b>: Called by {@link SpellBuilder} as well. 
 	 * 
 	 * @param key nbt key to retrieve a spell chain from.
@@ -35,9 +47,16 @@ public class SpellRingCache {
 		
 		return spellRing;
 	}
-	
+
+	/**
+	 * Attempts to registers a spell chain element.
+	 * <b>NOTE</b>: Doesn't overwrite an existing element. Returns the actually registered element, matching same NBT key. 
+	 * 
+	 * @param spellRing the head element of the spell chain.
+	 * @return the cached spell chain element. Is different to passed <code>spellRing</code> in case a matching chain exists in cache.
+	 */
 	synchronized SpellRing registerSpellRing(SpellRing spellRing) {
-		// NOTE: Is a workaround!
+		// NOTE: Is a workaround! In the future a spell dictionary is needed.
 		if( spellRing.getParentRing() != null )
 			throw new IllegalArgumentException("Expects a spell ring chain head.");
 		
@@ -54,6 +73,9 @@ public class SpellRingCache {
 		}
 	}
 
+	/**
+	 * Clears the cache.
+	 */
 	public synchronized void clear() {
 		cache.clear();
 	}

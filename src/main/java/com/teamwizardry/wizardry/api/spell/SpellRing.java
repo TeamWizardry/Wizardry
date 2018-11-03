@@ -102,7 +102,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	 * A module override handler.
 	 */
 	@Nonnull
-	private ModuleOverrideHandler lazy_overrideHandler = null;	// "lazy" means, that access to variable should be done internally only over getter
+	private ModuleOverrideHandler lazy_overrideHandler = null;	// "lazy" means, that access to variable should be done only over getter
 
 	/**
 	 * The constructor.<br/>
@@ -387,6 +387,11 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		this.parentRing = parentRing;
 	}
 	
+	/**
+	 * Returns the handler to invoke overrides of the whole spell chain. 
+	 * 
+	 * @return the override handler of the spell chain.
+	 */
 	@Nonnull
 	public synchronized ModuleOverrideHandler getOverrideHandler() {
 		if( lazy_overrideHandler == null ) {

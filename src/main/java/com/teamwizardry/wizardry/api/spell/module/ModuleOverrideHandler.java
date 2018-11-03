@@ -19,12 +19,23 @@ import com.teamwizardry.wizardry.api.spell.annotation.ModuleOverride;
 import com.teamwizardry.wizardry.api.spell.annotation.ModuleOverrideInterface;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry.OverrideDefaultMethod;
 
+/**
+ * A handler to call overwritten methods within a spell chain using a consumer interface.
+ * 
+ * @author Avatair
+ */
 public class ModuleOverrideHandler {
 	
 	private HashMap<String, OverridePointer> overridePointers = new HashMap<>();
 	private HashMap<String, Object> cachedProxies = new HashMap<>();
 	private final SpellRing spellChain;
 
+	/**
+	 * The constructor. Called only within {@link SpellRing#getOverrideHandler}.
+	 * 
+	 * @param spellChain the spell chain head element owning this handler. 
+	 * @throws ModuleOverrideException if some incompatible method signatures have been found.
+	 */
 	public ModuleOverrideHandler(SpellRing spellChain) throws ModuleOverrideException {
 		this.spellChain = spellChain;
 		if( spellChain.getParentRing() != null )
@@ -40,6 +51,14 @@ public class ModuleOverrideHandler {
 			applyModuleOverrides(curRing);
 	}
 	
+	/**
+	 * Returns an object implementing the given consumer interface class. Invoking methods from it will invoke 
+	 * override methods accordingly.
+	 * 
+	 * @param interfaceClass the interface type.
+	 * @return an object implementing the passed interface type.
+	 * @throws ModuleOverrideException if the passed interface type has at least one override method with incompatible signature. 
+	 */
 	@SuppressWarnings("unchecked")
 	public synchronized <T> T getConsumerInterface(Class<T> interfaceClass) throws ModuleOverrideException {
 		String className = interfaceClass.getName();
@@ -56,6 +75,14 @@ public class ModuleOverrideHandler {
 		return (T)obj;
 	}
 	
+	/**
+	 * Allocates a new object for the consumer interface. <br/>
+	 * <b>NOTE</b>: This method should not be called directly, use {@link #getConsumerInterface} instead.
+	 * 
+	 * @param interfaceClass the interface type.
+	 * @return an object implementing the passed interface type.
+	 * @throws ModuleOverrideException if the passed interface type has at least one override method with incompatible signature.
+	 */
 	private <T> T createConsumerInterface(Class<T> interfaceClass) throws ModuleOverrideException {
 		// Retrieve all overridable methods and check them for compatibility with base class
 		Map<String, Method> overridableMethods = getInterfaceMethods(interfaceClass);
@@ -73,6 +100,13 @@ public class ModuleOverrideHandler {
 		return proxy;
 	}
 	
+	/**
+	 * Applies a new spell ring on the override stack. <br/>
+	 * <b>NOTE</b>: Is called in the order of the spell chain elements, starting with the head element. 
+	 * 
+	 * @param spellRing the actual spell chain element.
+	 * @throws ModuleOverrideException if some incompatible method signatures have been found.
+	 */
 	private void applyModuleOverrides( SpellRing spellRing ) throws ModuleOverrideException {
 		ModuleInstance module = spellRing.getModule();
 		Map<String, OverrideMethod> overrides = module.getFactory().getOverrides();
@@ -92,6 +126,12 @@ public class ModuleOverrideHandler {
 		}
 	}
 	
+	/**
+	 * Applies a default override method to the override stack. <br/>
+	 * <b>NOTE</b>: Is called before any spell chain element is processed. 
+	 * 
+	 * @param methodEntry the default method.
+	 */
 	private void applyDefaultOverride( OverrideDefaultMethod methodEntry ) {
 		if( overridePointers.containsKey(methodEntry.getOverrideName()) )
 			throw new IllegalStateException("Duplicate override found.");	// Should not happen, as duplication cases are catched in ModuleRegistry.registerOverrideDefaults()
@@ -101,6 +141,13 @@ public class ModuleOverrideHandler {
 	
 	/////////////////
 	
+	/**
+	 * Retrieves an array of spell chain elements ordered by their occurrence in the chain,
+	 * which implement at least one override.
+	 * 
+	 * @param spellRing the head element of the spell chain.
+	 * @return the array containing all elements having an override.
+	 */
 	private static SpellRing[] getSequenceFromSpellChain(SpellRing spellRing) {
 		SpellRing cur = spellRing;
 		LinkedList<SpellRing> instances = new LinkedList<>();
@@ -115,6 +162,14 @@ public class ModuleOverrideHandler {
 		return instances.toArray(new SpellRing[instances.size()]);
 	}
 	
+	/**
+	 * Returns whether the second method has a compatible signature to override the base method.
+	 * Special parameters, annotated with {@link ContextRing} or {@link ContextSuper} are ignored.
+	 * 
+	 * @param baseMtd the first method being overridden or the interface method.
+	 * @param overrideMtd the second method overriding the first method.
+	 * @return <code>true</code> iff yes.
+	 */
 	private static boolean areMethodsCompatible(Method baseMtd, Method overrideMtd) {
 		// WARNING: Update this method, if language conventions in java change. 
 		
@@ -205,11 +260,25 @@ public class ModuleOverrideHandler {
 		return true;
 	}
 	
+	/**
+	 * Returns whether a parameter is a special one, taking values from the given caller context.
+	 * 
+	 * @param param the parameter.
+	 * @return <code>true</code> iff yes.
+	 */
 	private static boolean isExtraParameter(Parameter param) {
 		return param.isAnnotationPresent(ContextRing.class) ||
 			   param.isAnnotationPresent(ContextSuper.class);
 	}
 	
+	/**
+	 * Returns a list of override methods from a given type, implementing them.
+	 * 
+	 * @param clazz the type.
+	 * @param hasContext if <code>true</code> then the method may contain context parameters.
+	 * @return a collection, mapping override names to their according methods. 
+	 * @throws ModuleInitException if a method exists having invalid argument types or if some issues with reflection occurred.
+	 */
 	static HashMap<String, OverrideMethod> getOverrideMethodsFromClass(Class<?> clazz, boolean hasContext) throws ModuleInitException {
 		HashMap<String, OverrideMethod> overridableMethods = new HashMap<>();
 		// Determine overriden methods via reflection
@@ -260,12 +329,54 @@ public class ModuleOverrideHandler {
 		return overridableMethods;
 	}
 	
+	/**
+	 * Returns a list of override methods from a given interface type. 
+	 * 
+	 * @param clazz the interface type to retrieve methods from.
+	 * @return a collection, mapping override names to their according methods. 
+	 * @throws ModuleOverrideException if some issues with the reflection occurred.
+	 */
+	public static Map<String, Method> getInterfaceMethods(Class<?> clazz) throws ModuleOverrideException {
+		HashMap<String, Method> overridableMethods = new HashMap<>();
+
+		// TODO: Check for ambiguity of method names. Handle overrides by superclass properly!
+		
+		for(Method method : clazz.getMethods()) {
+			ModuleOverrideInterface ovrd = method.getDeclaredAnnotation(ModuleOverrideInterface.class);
+			if( ovrd == null )
+				continue;
+			
+			try {
+				method.setAccessible(true);
+			}
+			catch(SecurityException e) {
+				throw new ModuleOverrideException("Failed to aquire reflection access to method '" + method.toString() + "', annotated by @ModuleOverrideInterface.", e);
+			}
+			
+			overridableMethods.put(ovrd.value(), method);
+		}
+		
+		return overridableMethods;
+	}
+	
 	/////////////////
 	
+	/**
+	 * An invocation handler for the reflection proxy object implementing a consumer interface.
+	 * 
+	 * @author Avatair
+	 */
 	private class OverrideInvoker implements InvocationHandler {
 		private final HashMap<String, OverrideInterfaceMethod> callMap = new HashMap<>();
 		private final String displayedInterfaceName;
 		
+		/**
+		 * The constructor.
+		 * 
+		 * @param interfaceMethods a map containing all interface methods.
+		 * @param displayedInterfaceName name of the interface. Is used only to return messages for thrown exceptions.
+		 * @throws ModuleOverrideException if some method has an incompatible signature.
+		 */
 		public OverrideInvoker(Map<String, Method> interfaceMethods, String displayedInterfaceName) throws ModuleOverrideException {
 			this.displayedInterfaceName = displayedInterfaceName;
 			
@@ -281,6 +392,9 @@ public class ModuleOverrideHandler {
 			}
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 			String name = method.getName();
@@ -314,6 +428,12 @@ public class ModuleOverrideHandler {
 			return ptr.invoke(args);
 		}
 		
+		/**
+		 * Returns whether the method is {@link Object#hashCode}.
+		 * 
+		 * @param method the method to test.
+		 * @return <code>true</code> iff yes.
+		 */
 		private boolean isMethodHashCode(Method method) {
 			// TODO: Move to utils.
 			if( method == null )
@@ -328,6 +448,12 @@ public class ModuleOverrideHandler {
 			return true;
 		}
 		
+		/**
+		 * Returns whether the method is {@link Object#equals}.
+		 * 
+		 * @param method the method to test.
+		 * @return <code>true</code> iff yes.
+		 */
 		private boolean isMethodEquals(Method method) {
 			// TODO: Move to utils.
 			if( method == null )
@@ -344,6 +470,12 @@ public class ModuleOverrideHandler {
 			return true;
 		}
 		
+		/**
+		 * Returns whether the method is {@link Object#toString}.
+		 * 
+		 * @param method the method to test.
+		 * @return <code>true</code> iff yes.
+		 */
 		private boolean isMethodToString(Method method) {
 			// TODO: Move to utils.
 			if( method == null )
@@ -358,6 +490,12 @@ public class ModuleOverrideHandler {
 			return true;
 		}
 		
+		/**
+		 * Returns whether the method is {@link Object#clone}.
+		 * 
+		 * @param method the method to test.
+		 * @return <code>true</code> iff yes.
+		 */
 		private boolean isMethodClone(Method method) {
 			// TODO: Move to utils.
 			if( method == null )
@@ -375,31 +513,11 @@ public class ModuleOverrideHandler {
 	
 	////////////////////////
 	
-	public static Map<String, Method> getInterfaceMethods(Class<?> clazz) throws ModuleOverrideException {
-		HashMap<String, Method> overridableMethods = new HashMap<>();
-
-		// TODO: Check for ambiguity of method names. Handle overrides by superclass properly!
-		
-		for(Method method : clazz.getMethods()) {
-			ModuleOverrideInterface ovrd = method.getDeclaredAnnotation(ModuleOverrideInterface.class);
-			if( ovrd == null )
-				continue;
-			
-			try {
-				method.setAccessible(true);
-			}
-			catch(SecurityException e) {
-				throw new ModuleOverrideException("Failed to aquire reflection access to method '" + method.toString() + "', annotated by @ModuleOverrideInterface.", e);
-			}
-			
-			overridableMethods.put(ovrd.value(), method);
-		}
-		
-		return overridableMethods;
-	}
-	
-	////////////////////////
-	
+	/**
+	 * A pointer object pointing to a discovered override implementation in the context of the spell chain.
+	 * 
+	 * @author Avatair
+	 */
 	static class OverridePointer {
 		private final Object object;
 		private final SpellRing spellRingWithOverride;
@@ -407,6 +525,14 @@ public class ModuleOverrideHandler {
 		private final OverrideMethod baseMethod;
 		private final OverridePointer prev;
 		
+		/**
+		 * The constructor which is called in case of a spell module override implementation.
+		 * 
+		 * @param spellRingWithOverride the ring referring to the module containing the override implementation.
+		 * @param prev the overridden method or <code>null</code> if no such method exists. Is used to refer to a super method.
+		 * @param overrideName the override name.
+		 * @param baseMethod the override implementation.
+		 */
 		OverridePointer(SpellRing spellRingWithOverride, OverridePointer prev, String overrideName, OverrideMethod baseMethod) {
 			this.spellRingWithOverride = spellRingWithOverride;
 			this.baseMethod = baseMethod;
@@ -415,6 +541,11 @@ public class ModuleOverrideHandler {
 			this.object = getModule().getModuleClass();
 		}
 		
+		/**
+		 * The constructor which is called in case of a default override implementation.
+		 * 
+		 * @param methodEntry the reference to the default implementation.
+		 */
 		public OverridePointer(OverrideDefaultMethod methodEntry) {
 			this.spellRingWithOverride = null;
 			this.baseMethod = methodEntry.getMethod();
@@ -423,28 +554,61 @@ public class ModuleOverrideHandler {
 			this.object = methodEntry.getObj();
 		}
 
+		/**
+		 * Returns the spell chain element referring to a module containing the override implementation.
+		 * 
+		 * @return the spell chain element.
+		 */
 		SpellRing getSpellRingWithOverride() {
 			return spellRingWithOverride;
 		}
 		
+		/**
+		 * Returns the override method implementation reference.
+		 * 
+		 * @return the override method reference.
+		 */
 		OverrideMethod getBaseMethod() {
 			return this.baseMethod;
 		}
 		
+		/**
+		 * Returns the module implementing the override method in case this pointer points to a spell chain.
+		 * 
+		 * @return the module or <code>null</code> if the implementation is a default implementation. 
+		 */
 		ModuleInstance getModule() {
 			if( spellRingWithOverride == null )
 				return null;
 			return spellRingWithOverride.getModule();
 		}
 		
+		/**
+		 * Returns the pointer referring to an implementation which got immediately overridden
+		 * or <code>null</code> if no such method exists.
+		 * 
+		 * @return the override pointer for the previous method.
+		 */
 		OverridePointer getPrev() {
 			return prev;
 		}
 		
+		/**
+		 * Returns the override name, as declared in the {@link ModuleOverrideHandler} or {@link ModuleOverrideInterface} annotation.
+		 * 
+		 * @return the override name.
+		 */
 		String getOverrideName() {
 			return overrideName;
 		}
 		
+		/**
+		 * Invokes the override implementation.
+		 * 
+		 * @param args passed arguments
+		 * @return the return value from the override call.
+		 * @throws Throwable any occurred exception thrown by the override implementation or by the Java Method Handler. 
+		 */
 		Object invoke(Object[] args) throws Throwable {
 			int idxContextParamRing = baseMethod.getIdxContextParamRing();
 			int idxContextParamSuper = baseMethod.getIdxContextParamSuper();
@@ -487,35 +651,77 @@ public class ModuleOverrideHandler {
 		}
 	}
 	
+	/**
+	 * An object represents a linkage of a interface method to its corresponding override pointer.
+	 * 
+	 * @author Avatair
+	 */
 	private static class OverrideInterfaceMethod {
 		private final OverridePointer overridePointer;
 		private final Method interfaceMethod;
 		
+		/**
+		 * The constructor.
+		 * 
+		 * @param overridePointer the given override pointer.
+		 * @param interfaceMethod the linked interface method.
+		 */
 		OverrideInterfaceMethod(OverridePointer overridePointer, Method interfaceMethod) {
 			super();
 			this.overridePointer = overridePointer;
 			this.interfaceMethod = interfaceMethod;
 		}
 
+		/**
+		 * Returns the associated override pointer.
+		 * 
+		 * @return the override pointer.
+		 */
 		OverridePointer getOverridePointer() {
 			return overridePointer;
 		}
 
+		/**
+		 * Returns the associated override interface method. 
+		 * 
+		 * @return the interface method.
+		 */
 		Method getInterfaceMethod() {
 			return interfaceMethod;
 		}
 		
+		/**
+		 * Returns the key to be used to retrieve this object from a {@link HashMap}.
+		 * 
+		 * @return the key.
+		 */
 		String getKey() {
 			return interfaceMethod.getName();
 		}
 	}
 	
+	/**
+	 * A method registry entry for an override implementation. Can be either an implementation on a module
+	 * or a default implementation. 
+	 * 
+	 * @author Avatair
+	 */
 	static class OverrideMethod {
 		private final Method method;
 		private final MethodHandle methodHandle;
 		private final int idxContextParamRing;
 		private final int idxContextParamSuper;
 		
+		/**
+		 * The constructor. Is called from {@link ModuleOverrideHandler#getOverrideMethodsFromClass}.
+		 * 
+		 * @param method the override implementation method.
+		 * @param idxContextParamRing index of the parameter containing the actual spell chain element containing the override.
+		 *        Is negative if no such parameter exists.
+		 * @param idxContextParamSuper index of the parameter containing the actual spell chain element containing the override.
+		 *        Is negative if no such parameter exists.
+		 * @throws ModuleInitException
+		 */
 		OverrideMethod(Method method, int idxContextParamRing, int idxContextParamSuper) throws ModuleInitException {
 			super();
 
@@ -531,18 +737,38 @@ public class ModuleOverrideHandler {
 			}
 		}
 
+		/**
+		 * Returns the implementation method.
+		 * 
+		 * @return the implementation method.
+		 */
 		Method getMethod() {
 			return method;
 		}
 		
+		/**
+		 * Returns the method handle pointing to the implementation method. Is used for invocation at {@link OverridePointer#invoke}.
+		 * 
+		 * @return the method handle.
+		 */
 		MethodHandle getMethodHandle() {
 			return methodHandle;
 		}
 
+		/**
+		 * Returns the index of the parameter for the referenced ring if existing.
+		 * 
+		 * @return the index of the parameter for the referenced ring or a negative value if no such parameter exists.
+		 */
 		int getIdxContextParamRing() {
 			return idxContextParamRing;
 		}
 		
+		/**
+		 * Returns the index of the parameter for the super method handler if existing.
+		 * 
+		 * @return the index of the parameter for the super method handler or a negative value if no such parameter exists.
+		 */
 		int getIdxContextParamSuper() {
 			return idxContextParamSuper;
 		}
