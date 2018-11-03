@@ -2,6 +2,7 @@ package com.teamwizardry.wizardry.common.module.effects;
 
 import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpBezier3D;
+import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpLine;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
 import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
@@ -66,9 +67,10 @@ public class ModuleEffectPoisonCloud implements IModuleEffect, ILingeringModule 
     @Override
     @SideOnly(Side.CLIENT)
     public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-        Vec3d position = spell.getData(ORIGIN);
+        Vec3d position = spell.getTarget();
 
         if (position == null) return;
+
 
         ParticleBuilder glitter = new ParticleBuilder(0);
         glitter.setColor(instance.getPrimaryColor());
@@ -76,18 +78,17 @@ public class ModuleEffectPoisonCloud implements IModuleEffect, ILingeringModule 
         glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SMOKE));
         glitter.disableRandom();
 
-        ParticleSpawner.spawn(glitter, spell.world, new StaticInterp<>(position), 20, 0, (aFloat, particleBuilder) -> {
+        ParticleSpawner.spawn(glitter, spell.world, new StaticInterp<>(position), 10, 0, (aFloat, particleBuilder) -> {
             glitter.setLifetime(RandUtil.nextInt(10, 40));
             glitter.setScale(RandUtil.nextFloat());
             glitter.setAlphaFunction(new InterpFloatInOut(0.3f, RandUtil.nextFloat()));
-
-            double radius = 2;
+            double area = spellRing.getAttributeValue(AttributeRegistry.AREA, spell);
             double theta = 2.0f * (float) Math.PI * RandUtil.nextFloat();
-            double r = radius * RandUtil.nextFloat();
+            double r = area * RandUtil.nextFloat();
             double x = r * MathHelper.cos((float) theta);
             double z = r * MathHelper.sin((float) theta);
-            Vec3d dest = new Vec3d(x, RandUtil.nextDouble(-1, 1), z);
-            glitter.setPositionFunction(new InterpBezier3D(Vec3d.ZERO, dest, dest.scale(2), new Vec3d(dest.x, RandUtil.nextDouble(-2, 2), dest.z)));
+            Vec3d start = new Vec3d(x,0,z);
+            glitter.setPositionFunction(new InterpLine(start,start.add(0,area,0)));
         });
     }
 
