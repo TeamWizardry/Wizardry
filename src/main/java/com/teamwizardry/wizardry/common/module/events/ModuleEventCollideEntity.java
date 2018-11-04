@@ -2,12 +2,11 @@ package com.teamwizardry.wizardry.common.module.events;
 
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.module.ModuleEvent;
-import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
-import net.minecraft.entity.Entity;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.module.IModuleEvent;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEvent;
 
+import net.minecraft.entity.Entity;
 import javax.annotation.Nonnull;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.BLOCK_HIT;
@@ -15,25 +14,13 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.BLOCK_HI
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
-public class ModuleEventCollideEntity extends ModuleEvent {
-
-	@Nonnull
-	@Override
-	public String getID() {
-		return "event_collide_entity";
-	}
+@RegisterModule(ID="event_collide_entity")
+public class ModuleEventCollideEntity implements IModuleEvent {
 
 	@Override
-	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(ModuleInstanceEvent instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Entity entity = spell.getVictim();
 		spell.removeData(BLOCK_HIT);
 		return entity != null;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-
 	}
 }

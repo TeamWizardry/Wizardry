@@ -1,8 +1,8 @@
 package com.teamwizardry.wizardry.api.spell;
 
 import com.teamwizardry.librarianlib.features.math.Vec2d;
-import com.teamwizardry.wizardry.api.spell.module.Module;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -14,15 +14,15 @@ import java.util.Objects;
 
 public class CommonWorktableModule implements INBTSerializable<NBTTagCompound> {
 
-	public Module module;
+	public ModuleInstance module;
 	public Vec2d pos;
 	@Nullable
 	public CommonWorktableModule linksTo = null;
 	@Nonnull
-	public HashMap<ModuleModifier, Integer> modifiers = new HashMap<>();
+	public HashMap<ModuleInstanceModifier, Integer> modifiers = new HashMap<>();
 	public int hash = -1;
 
-	public CommonWorktableModule(int hash, Module module, Vec2d pos, @Nullable CommonWorktableModule linksTo, @Nonnull HashMap<ModuleModifier, Integer> modifiers) {
+	public CommonWorktableModule(int hash, ModuleInstance module, Vec2d pos, @Nullable CommonWorktableModule linksTo, @Nonnull HashMap<ModuleInstanceModifier, Integer> modifiers) {
 		this.hash = hash;
 		this.module = module;
 		this.pos = pos;
@@ -39,7 +39,7 @@ public class CommonWorktableModule implements INBTSerializable<NBTTagCompound> {
 		return worktableModule;
 	}
 
-	public void addModifier(ModuleModifier moduleModifier, int count) {
+	public void addModifier(ModuleInstanceModifier moduleModifier, int count) {
 		modifiers.put(moduleModifier, count);
 	}
 
@@ -69,7 +69,7 @@ public class CommonWorktableModule implements INBTSerializable<NBTTagCompound> {
 		}
 
 		if (module != null)
-			compound.setString("module", module.getID());
+			compound.setString("module", module.getSubModuleID());
 
 		if (pos != null) {
 			compound.setDouble("x", pos.getX());
@@ -79,9 +79,9 @@ public class CommonWorktableModule implements INBTSerializable<NBTTagCompound> {
 			compound.setTag("linksTo", linksTo.serializeNBT());
 
 		NBTTagCompound modifierNBT = new NBTTagCompound();
-		for (ModuleModifier modifier : modifiers.keySet()) {
+		for (ModuleInstanceModifier modifier : modifiers.keySet()) {
 			int count = modifiers.get(modifier);
-			modifierNBT.setInteger(modifier.getID(), count);
+			modifierNBT.setInteger(modifier.getSubModuleID(), count);
 		}
 		compound.setTag("modifiers", modifierNBT);
 
@@ -91,7 +91,7 @@ public class CommonWorktableModule implements INBTSerializable<NBTTagCompound> {
 	@Override
 	public void deserializeNBT(NBTTagCompound nbt) {
 		if (nbt.hasKey("module")) {
-			module = Module.deserialize(nbt.getString("module"));
+			module = ModuleInstance.deserialize(nbt.getString("module"));
 		}
 		if (nbt.hasKey("x") && nbt.hasKey("y")) {
 			pos = new Vec2d(nbt.getDouble("x"), nbt.getDouble("y"));
@@ -102,11 +102,11 @@ public class CommonWorktableModule implements INBTSerializable<NBTTagCompound> {
 		if (nbt.hasKey("modifiers")) {
 			modifiers = new HashMap<>();
 			for (String base : nbt.getCompoundTag("modifiers").getKeySet()) {
-				Module module = ModuleRegistry.INSTANCE.getModule(base);
-				if (!(module instanceof ModuleModifier)) continue;
+				ModuleInstance module = ModuleRegistry.INSTANCE.getModule(base);
+				if (!(module instanceof ModuleInstanceModifier)) continue;
 				int count = nbt.getCompoundTag("modifiers").getInteger(base);
 
-				modifiers.put((ModuleModifier) module, count);
+				modifiers.put((ModuleInstanceModifier) module, count);
 			}
 		}
 

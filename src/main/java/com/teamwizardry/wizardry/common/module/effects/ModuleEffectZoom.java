@@ -12,13 +12,12 @@ import com.teamwizardry.wizardry.api.spell.ProcessData;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellData.DataField;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
-import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
-import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseRange;
 import com.teamwizardry.wizardry.init.ModPotions;
 import kotlin.Pair;
 import net.minecraft.entity.Entity;
@@ -42,8 +41,8 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.constructField;
  * Created by Demoniaque.
  */
 // TODO: Tracer's blink sound effect
-@RegisterModule
-public class ModuleEffectZoom extends ModuleEffect {
+@RegisterModule(ID="effect_zoom")
+public class ModuleEffectZoom implements IModuleEffect {
 
 	private static final DataField<Vec3d> ORIGINAL_LOC = constructField("original_loc", Vec3d.class);
 /*	private static final Pair<String, Class<Vec3d>> ORIGINAL_LOC = constructPair("original_loc", Vec3d.class, new ProcessData.Process<NBTTagCompound, Vec3d>() {
@@ -66,19 +65,13 @@ public class ModuleEffectZoom extends ModuleEffect {
 		}
 	}); */
 
-	@Nonnull
 	@Override
-	public String getID() {
-		return "effect_zoom";
+	public String[] compatibleModifierClasses() {
+		return new String[]{"modifier_extend_range"};
 	}
 
 	@Override
-	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierIncreaseRange()};
-	}
-
-	@Override
-	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		Entity entityHit = spell.getVictim();
 		Vec3d look = spell.getData(LOOK);
@@ -117,7 +110,7 @@ public class ModuleEffectZoom extends ModuleEffect {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 
 		Entity entity = spell.getVictim();
@@ -153,7 +146,7 @@ public class ModuleEffectZoom extends ModuleEffect {
 				glitter.setAlpha(RandUtil.nextFloat(0.5f, 0.8f));
 				glitter.setScale(RandUtil.nextFloat(0.3f, 0.6f));
 				glitter.setLifetime(RandUtil.nextInt(30, 50));
-				glitter.setColorFunction(new InterpColorHSV(getPrimaryColor(), getSecondaryColor()));
+				glitter.setColorFunction(new InterpColorHSV(instance.getPrimaryColor(), instance.getSecondaryColor()));
 				glitter.setAlphaFunction(new InterpFloatInOut(0f, 1f));
 			});
 		});

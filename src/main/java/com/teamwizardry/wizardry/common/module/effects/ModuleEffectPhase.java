@@ -9,22 +9,19 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.IDelayedModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.SpellDataTypes.BlockSet;
 import com.teamwizardry.wizardry.api.spell.SpellDataTypes.BlockStateCache;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
-import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
+import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
-import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.core.renderer.PhasedBlockRenderer;
 import com.teamwizardry.wizardry.common.core.SpellNemezTracker;
 import com.teamwizardry.wizardry.common.core.nemez.NemezEventHandler;
 import com.teamwizardry.wizardry.common.core.nemez.NemezTracker;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseAOE;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseDuration;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseRange;
 import com.teamwizardry.wizardry.init.ModBlocks;
 import com.teamwizardry.wizardry.init.ModPotions;
 import com.teamwizardry.wizardry.init.ModSounds;
@@ -57,18 +54,12 @@ import static com.teamwizardry.wizardry.api.util.PosUtils.getPerpendicularFacing
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
-public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
-
-	@Nonnull
-	@Override
-	public String getID() {
-		return "effect_phase";
-	}
+@RegisterModule(ID="effect_phase")
+public class ModuleEffectPhase implements IModuleEffect, IDelayedModule {
 
 	@Override
-	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierIncreaseDuration(), new ModuleModifierIncreaseAOE(), new ModuleModifierIncreaseRange()};
+	public String[] compatibleModifierClasses() {
+		return new String[]{"modifier_extend_time", "modifier_increase_aoe", "modifier_extend_range"};
 	}
 
 	@Override
@@ -84,7 +75,7 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 	}
 
 	@Override
-	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Entity caster = spell.getCaster();
 		Entity targetEntity = spell.getVictim();
 		BlockPos targetPos = spell.getTargetPos();
@@ -242,7 +233,7 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 			spell.addData(SpellData.DefaultKeys.BLOCK_SET, new BlockSet(poses));
 			spell.addData(SpellData.DefaultKeys.BLOCKSTATE_CACHE, new BlockStateCache(stateCache));
 
-			addDelayedSpell(this, spellRing, spell, (int) duration);
+			addDelayedSpell(instance, spellRing, spell, (int) duration);
 		}
 
 		return true;
@@ -250,7 +241,7 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		EnumFacing faceHit = spell.getFaceHit();
 
 		Set<BlockPos> blockSet = spell.getData(SpellData.DefaultKeys.BLOCK_SET, new BlockSet(new HashSet<>())).getBlockSet();
@@ -348,7 +339,7 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 
 	@NotNull
 	@Override
-	public SpellData renderVisualization(@Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+	public SpellData renderVisualization(ModuleInstanceEffect instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
 		if (ring.getParentRing() != null
 				&& ring.getParentRing().getModule() != null
 				&& ring.getParentRing().getModule() == ModuleRegistry.INSTANCE.getModule("event_collide_entity"))
@@ -362,7 +353,7 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 
 		if (faceHit != null && targetPos != null) {
 
-			IBlockState targetState = getCachableBlockstate(data.world, targetPos, previousData);
+			IBlockState targetState = instance.getCachableBlockstate(data.world, targetPos, previousData);
 			if (BlockUtils.isAnyAir(targetState)) return previousData;
 
 			BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(targetPos);
@@ -432,7 +423,7 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 				boolean fullAirPlane = true;
 				for (BlockPos pos : BlockPos.getAllInBox((int) bb.minX, (int) bb.minY, (int) bb.minZ, (int) bb.maxX, (int) bb.maxY, (int) bb.maxZ)) {
 
-					IBlockState originalState = getCachableBlockstate(data.world, pos, previousData);
+					IBlockState originalState = instance.getCachableBlockstate(data.world, pos, previousData);
 					Block block = originalState.getBlock();
 
 					if (edges.contains(pos)) continue;
@@ -455,7 +446,7 @@ public class ModuleEffectPhase extends ModuleEffect implements IDelayedModule {
 							mutable2.move(facing);
 
 							if (!tmp.containsKey(mutable2))
-								drawFaceOutline(mutable2, facing.getOpposite());
+								instance.drawFaceOutline(mutable2, facing.getOpposite());
 
 							mutable2.move(facing.getOpposite());
 						}

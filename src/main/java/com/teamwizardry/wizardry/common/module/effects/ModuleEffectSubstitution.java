@@ -12,15 +12,14 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.IBlockSelectable;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
-import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
+import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
-import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseAOE;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -51,23 +50,16 @@ import java.util.Set;
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
-public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSelectable {
-
-	@Nonnull
-	@Override
-	public String getID() {
-		return "effect_substitution";
-	}
-
+@RegisterModule(ID="effect_substitution")
+public class ModuleEffectSubstitution implements IModuleEffect, IBlockSelectable {
 
 	@Override
-	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierIncreaseAOE()};
+	public String[] compatibleModifierClasses() {
+		return new String[]{"modifier_increase_aoe"};
 	}
 
 	@Override
-	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Entity targetEntity = spell.getVictim();
 		Entity caster = spell.getCaster();
 		BlockPos targetBlock = spell.getTargetPos();
@@ -160,7 +152,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		Entity caster = spell.getCaster();
 		BlockPos targetBlock = spell.getTargetPos();
@@ -170,7 +162,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 
 			ParticleBuilder glitter = new ParticleBuilder(RandUtil.nextInt(20, 30));
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-			glitter.setColorFunction(new InterpColorHSV(getPrimaryColor(), getSecondaryColor()));
+			glitter.setColorFunction(new InterpColorHSV(instance.getPrimaryColor(), instance.getSecondaryColor()));
 			ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(targetEntity.posX, targetEntity.posY, targetEntity.posZ)), 50, RandUtil.nextInt(20, 30), (aFloat, particleBuilder) -> {
 				glitter.setScale((float) RandUtil.nextDouble(0.3, 1));
 				glitter.setAlphaFunction(new InterpFloatInOut(0.3f, (float) RandUtil.nextDouble(0.6, 1)));
@@ -183,7 +175,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 				));
 			});
 
-			glitter.setColorFunction(new InterpColorHSV(getSecondaryColor(), getPrimaryColor()));
+			glitter.setColorFunction(new InterpColorHSV(instance.getSecondaryColor(), instance.getPrimaryColor()));
 			ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(caster.posX, caster.posY, caster.posZ)), 50, RandUtil.nextInt(20, 30), (aFloat, particleBuilder) -> {
 				glitter.setScale((float) RandUtil.nextDouble(0.3, 1));
 				glitter.setAlphaFunction(new InterpFloatInOut(0.3f, (float) RandUtil.nextDouble(0.6, 1)));
@@ -198,7 +190,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 		} else if (targetBlock != null) {
 			ParticleBuilder glitter = new ParticleBuilder(RandUtil.nextInt(20, 30));
 			glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-			glitter.setColorFunction(new InterpColorHSV(getPrimaryColor(), getSecondaryColor()));
+			glitter.setColorFunction(new InterpColorHSV(instance.getPrimaryColor(), instance.getSecondaryColor()));
 			ParticleSpawner.spawn(glitter, world, new StaticInterp<>(new Vec3d(targetBlock).add(0.5, 0.5, 0.5)), 20, 0, (aFloat, particleBuilder) -> {
 				glitter.setScale((float) RandUtil.nextDouble(0.3, 1));
 				glitter.setAlphaFunction(new InterpFloatInOut(0.3f, (float) RandUtil.nextDouble(0.6, 1)));
@@ -215,7 +207,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 
 	@NotNull
 	@Override
-	public SpellData renderVisualization(@Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+	public SpellData renderVisualization(ModuleInstanceEffect instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
 		if (ring.getParentRing() != null
 				&& ring.getParentRing().getModule() != null
 				&& ring.getParentRing().getModule() == ModuleRegistry.INSTANCE.getModule("event_collide_entity"))
@@ -238,7 +230,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 				if (compound == null) return previousData;
 
 				IBlockState state = NBTUtil.readBlockState(compound);
-				IBlockState targetState = getCachableBlockstate(data.world, targetBlock, previousData);
+				IBlockState targetState = instance.getCachableBlockstate(data.world, targetBlock, previousData);
 				if (targetState.getBlock() == state.getBlock()) return previousData;
 
 				double area = ring.getAttributeValue(AttributeRegistry.AREA, data);
@@ -292,7 +284,7 @@ public class ModuleEffectSubstitution extends ModuleEffect implements IBlockSele
 
 						if (adjState.getBlock() != targetState.getBlock() || !blocks.contains(mutable)) {
 
-							drawFaceOutline(mutable, face.getOpposite());
+							instance.drawFaceOutline(mutable, face.getOpposite());
 						}
 						mutable.move(face.getOpposite());
 					}

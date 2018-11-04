@@ -2,7 +2,7 @@ package com.teamwizardry.wizardry.common.network;
 
 import com.teamwizardry.librarianlib.features.network.PacketBase;
 import com.teamwizardry.librarianlib.features.saving.Save;
-import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
@@ -15,12 +15,12 @@ import java.util.ArrayList;
 public class PacketSyncModules extends PacketBase {
 
 	@Save
-	public ArrayList<Module> modules;
+	public ArrayList<ModuleInstance> modules;
 
 	public PacketSyncModules() {
 	}
 
-	public PacketSyncModules(ArrayList<Module> modules) {
+	public PacketSyncModules(ArrayList<ModuleInstance> modules) {
 		this.modules = modules;
 	}
 

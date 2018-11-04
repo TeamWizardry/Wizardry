@@ -1,4 +1,6 @@
 {
+  "sub_module_id": "effect_light",
+  "reference_module_id": "effect_light",
   "item": "minecraft:glowstone",
   "primary_color": "00FFFF",
   "secondary_color": "FF0000",

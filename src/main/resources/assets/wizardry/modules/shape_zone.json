@@ -1,4 +1,6 @@
 {
+    "sub_module_id": "shape_zone",
+    "reference_module_id": "shape_zone",
 	"item": "minecraft:glass",
 	"mana": {
 		"base": 50

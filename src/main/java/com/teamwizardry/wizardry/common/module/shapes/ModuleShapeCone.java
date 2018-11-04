@@ -9,16 +9,14 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
-import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
-import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.module.IModuleShape;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceShape;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseRange;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.RayTraceResult;
@@ -35,18 +33,12 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
-public class ModuleShapeCone extends ModuleShape {
-
-	@Nonnull
-	@Override
-	public String getID() {
-		return "shape_cone";
-	}
+@RegisterModule(ID="shape_cone")
+public class ModuleShapeCone implements IModuleShape {
 
 	@Override
-	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierIncreasePotency(), new ModuleModifierIncreaseRange()};
+	public String[] compatibleModifierClasses() {
+		return new String[]{"modifier_increase_potency", "modifier_extend_range"};
 	}
 
 	@Override
@@ -55,7 +47,7 @@ public class ModuleShapeCone extends ModuleShape {
 	}
 
 	@Override
-	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		float yaw = spell.getData(YAW, 0F);
 		float pitch = spell.getData(PITCH, 0F);
@@ -73,7 +65,7 @@ public class ModuleShapeCone extends ModuleShape {
 			
 			long seed = RandUtil.nextLong(100, 10000);
 			spell.addData(SEED, seed);
-			runRunOverrides(spell, spellRing);
+			instance.runRunOverrides(spell, spellRing);
 			
 			float angle = (float) range * 2;
 			float newPitch = pitch + RandUtil.nextFloat(-angle, angle);
@@ -91,7 +83,7 @@ public class ModuleShapeCone extends ModuleShape {
 			if (lookFallback != null) lookFallback.scale(range);
 			newSpell.processTrace(result, lookFallback);
 
-			sendRenderPacket(newSpell, spellRing);
+			instance.sendRenderPacket(newSpell, spellRing);
 
 			newSpell.addData(ORIGIN, result.hitVec);
 
@@ -105,8 +97,8 @@ public class ModuleShapeCone extends ModuleShape {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		if (runRenderOverrides(spell, spellRing)) return;
+	public void renderSpell(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		if (instance.runRenderOverrides(spell, spellRing)) return;
 
 		Vec3d target = spell.getTarget();
 

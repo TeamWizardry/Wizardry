@@ -7,11 +7,13 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.ForgeHooks;
@@ -193,6 +195,14 @@ public final class BlockUtils {
 	public static Set<BlockPos> blocksInSquare(BlockPos center, EnumFacing facing, int maxBlocks, int maxRange, Predicate<BlockPos> ignore)
 	{
 		return blocksInSquare(center, facing.getAxis(), maxBlocks, maxRange, ignore);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T extends TileEntity> T getTileEntity(IBlockAccess world, BlockPos pos, Class<T> clazz) {
+		TileEntity te = world.getTileEntity(pos);
+		if( !clazz.isInstance(te) )
+			return null;
+		return (T)te;
 	}
 
 }

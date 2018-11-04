@@ -1,4 +1,6 @@
 {
+  "sub_module_id": "shape_touch",
+  "reference_module_id": "shape_touch",
   "item": "minecraft:beef",
   "mana": {
     "base": 30

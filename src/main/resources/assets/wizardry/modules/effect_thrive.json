@@ -1,4 +1,6 @@
 {
+  "sub_module_id": "effect_thrive",
+  "reference_module_id": "effect_thrive",
   "item": "minecraft:bone",
   "primary_color": "00FFFF",
   "secondary_color": "00FFFF",

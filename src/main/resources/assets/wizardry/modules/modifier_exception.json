@@ -1,4 +1,6 @@
 {
+  "sub_module_id": "modifier_exception",
+  "reference_module_id": "modifier_exception",
   "item": "wizardry:syringe_blood",
   "modifiers": [
     {

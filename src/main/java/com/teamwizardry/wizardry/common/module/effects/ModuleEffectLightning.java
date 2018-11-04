@@ -4,20 +4,17 @@ import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.LightningGenerator;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
-import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
+import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.spell.module.OverrideConsumer;
-import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.PosUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RandUtilSeed;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.common.core.LightningTracker;
 import com.teamwizardry.wizardry.common.entity.projectile.EntityLightningProjectile;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseDuration;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseRange;
 import com.teamwizardry.wizardry.common.network.PacketRenderLightningBolt;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
@@ -42,32 +39,27 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
-public class ModuleEffectLightning extends ModuleEffect {
+@RegisterModule(ID="effect_lightning")
+public class ModuleEffectLightning implements IModuleEffect {
 
-	public ModuleEffectLightning() {
-		registerRunOverride("shape_self", getSelfOverride());
-		registerRunOverride("shape_touch", getTouchOverride());
-		registerRunOverride("shape_projectile", getProjectileOverride());
-		registerRunOverride("shape_cone", getConeOverride());
-		registerRunOverride("shape_beam", getBeamOverride());
-		registerRunOverride("shape_zone", getZoneOverride());
-
-		registerRenderOverride("shape_touch", (data, spellRing, childRing) -> {});
-		registerRenderOverride("shape_projectile", (data, spellRing, childRing) -> {});
-		registerRenderOverride("shape_cone", (data, spellRing, childRing) -> {});
-		registerRenderOverride("shape_beam", (data, spellRing, childRing) -> {});
-	}
-
-	@Nonnull
 	@Override
-	public String getID() {
-		return "effect_lightning";
+	public void initEffect(ModuleInstanceEffect instance) {
+		instance.registerRunOverride("shape_self", getSelfOverride());
+		instance.registerRunOverride("shape_touch", getTouchOverride());
+		instance.registerRunOverride("shape_projectile", getProjectileOverride());
+		instance.registerRunOverride("shape_cone", getConeOverride());
+		instance.registerRunOverride("shape_beam", getBeamOverride());
+		instance.registerRunOverride("shape_zone", getZoneOverride());
+
+		instance.registerRenderOverride("shape_touch", (data, spellRing, childRing) -> {});
+		instance.registerRenderOverride("shape_projectile", (data, spellRing, childRing) -> {});
+		instance.registerRenderOverride("shape_cone", (data, spellRing, childRing) -> {});
+		instance.registerRenderOverride("shape_beam", (data, spellRing, childRing) -> {});
 	}
 
 	@Override
-	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierIncreaseRange(), new ModuleModifierIncreasePotency(), new ModuleModifierIncreaseDuration()};
+	public String[] compatibleModifierClasses() {
+		return new String[]{"modifier_extend_range", "modifier_increase_potency", "modifier_extend_time"};
 	}
 
 	private OverrideConsumer<SpellData, SpellRing, SpellRing> getSelfOverride() {
@@ -226,7 +218,7 @@ public class ModuleEffectLightning extends ModuleEffect {
 	}
 	
 	@Override
-	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		// NO-OP, should always be overriding a shape
 		return true;
 	}
@@ -234,7 +226,7 @@ public class ModuleEffectLightning extends ModuleEffect {
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		// NO-OP, should always be overriding a shape
 	}
 	

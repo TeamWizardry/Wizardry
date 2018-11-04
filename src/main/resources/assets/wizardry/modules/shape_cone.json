@@ -1,4 +1,6 @@
 {
+  "sub_module_id": "shape_cone",
+  "reference_module_id": "shape_cone",
   "item": "minecraft:gunpowder",
   "mana": {
     "base": 40

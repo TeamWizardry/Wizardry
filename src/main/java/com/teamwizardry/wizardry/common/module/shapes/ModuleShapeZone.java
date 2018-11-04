@@ -11,16 +11,12 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.ILingeringModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
-import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
-import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.module.IModuleShape;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceShape;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseAOE;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseDuration;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseRange;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -41,21 +37,15 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
-public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
+@RegisterModule(ID="shape_zone")
+public class ModuleShapeZone implements IModuleShape, ILingeringModule {
 
 	public static final String ZONE_OFFSET = "zone offset";
 	public static final String ZONE_CAST = "zone cast";
 	
-	@Nonnull
 	@Override
-	public String getID() {
-		return "shape_zone";
-	}
-
-	@Override
-	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierIncreaseAOE(), new ModuleModifierIncreasePotency(), new ModuleModifierIncreaseRange(), new ModuleModifierIncreaseDuration()};
+	public String[] compatibleModifierClasses() {
+		return new String[]{"modifier_increase_aoe", "modifier_increase_potency", "modifier_extend_range", "modifier_extend_time"};
 	}
 
 	@Override
@@ -64,7 +54,7 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 	}
 
 	@Override
-	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 //		Vec3d position = spell.getData(ORIGIN);
 //		Entity caster = spell.getCaster();
@@ -93,7 +83,7 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 				return false;
 			}
 			
-			runRunOverrides(spell, spellRing);
+			instance.runRunOverrides(spell, spellRing);
 			
 			BlockPos target = new BlockPos(RandUtil.nextDouble(min.x, max.x), RandUtil.nextDouble(min.y, max.y), RandUtil.nextDouble(min.z, max.z));
 			List<Entity> entities = world.getEntitiesWithinAABBExcludingEntity(null, new AxisAlignedBB(target));
@@ -129,8 +119,8 @@ public class ModuleShapeZone extends ModuleShape implements ILingeringModule {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		if (runRenderOverrides(spell, spellRing)) return;
+	public void renderSpell(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		if (instance.runRenderOverrides(spell, spellRing)) return;
 
 		Vec3d target = spell.getTarget();
 

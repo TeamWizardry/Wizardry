@@ -2,8 +2,8 @@ package com.teamwizardry.wizardry.common.command;
 
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
-import com.teamwizardry.wizardry.api.spell.module.Module;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.common.network.PacketSyncModules;
 import com.teamwizardry.wizardry.proxy.CommonProxy;
@@ -97,15 +97,15 @@ public class CommandWizardry extends CommandBase {
 
 			notifyCommandListener(sender, this, TextFormatting.YELLOW + " ________________________________________________\\\\");
 			notifyCommandListener(sender, this, TextFormatting.YELLOW + " | " + TextFormatting.GRAY + "Module List");
-			for (Module module : ModuleRegistry.INSTANCE.modules) {
-				notifyCommandListener(sender, this, TextFormatting.YELLOW + " | |_ " + TextFormatting.GREEN + module.getID() + TextFormatting.RESET + ": " + TextFormatting.GRAY + module.getReadableName());
+			for (ModuleInstance module : ModuleRegistry.INSTANCE.modules) {
+				notifyCommandListener(sender, this, TextFormatting.YELLOW + " | |_ " + TextFormatting.GREEN + module.getSubModuleID() + TextFormatting.RESET + ": " + TextFormatting.GRAY + module.getReadableName());
 			}
 			notifyCommandListener(sender, this, TextFormatting.YELLOW + " |________________________________________________//");
 
 		} else if (args[0].equalsIgnoreCase("debug")) {
 			if (args.length < 2) throw new WrongUsageException(getUsage(sender));
 
-			Module module = ModuleRegistry.INSTANCE.getModule(args[1]);
+			ModuleInstance module = ModuleRegistry.INSTANCE.getModule(args[1]);
 
 			if (module == null) {
 				notifyCommandListener(sender, this, "Module not found.");
@@ -131,11 +131,11 @@ public class CommandWizardry extends CommandBase {
 			for (AttributeModifier attributeModifier : module.getAttributes())
 				notifyCommandListener(sender, this, TextFormatting.YELLOW + " |  |  |_ " + TextFormatting.GRAY + attributeModifier.toString());
 
-			ModuleModifier[] modifierList = module.applicableModifiers();
+			ModuleInstanceModifier[] modifierList = module.applicableModifiers();
 			if (modifierList != null) {
 				notifyCommandListener(sender, this, TextFormatting.YELLOW + " |  |_ " + TextFormatting.GREEN + "Applicable Modifiers ");
-				for (ModuleModifier modifier : modifierList)
-					notifyCommandListener(sender, this, TextFormatting.YELLOW + " |     |_ " + TextFormatting.DARK_GREEN + modifier.getID());
+				for (ModuleInstanceModifier modifier : modifierList)
+					notifyCommandListener(sender, this, TextFormatting.YELLOW + " |     |_ " + TextFormatting.DARK_GREEN + modifier.getSubModuleID());
 			}
 			notifyCommandListener(sender, this, TextFormatting.YELLOW + " |________________________________________________//");
 		} else {

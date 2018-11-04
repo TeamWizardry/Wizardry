@@ -1,39 +1,28 @@
 package com.teamwizardry.wizardry.common.module.events;
 
-import com.teamwizardry.wizardry.api.spell.SpellData;
-import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.module.ModuleEvent;
-import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
-import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ENTITY_HIT;
 
 import javax.annotation.Nonnull;
 
-import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ENTITY_HIT;
+import com.teamwizardry.wizardry.api.spell.SpellData;
+import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.module.IModuleEvent;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEvent;
+
+import net.minecraft.util.math.BlockPos;
 
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
-public class ModuleEventCollideBlock extends ModuleEvent {
-
-	@Nonnull
-	@Override
-	public String getID() {
-		return "event_collide_block";
-	}
+@RegisterModule(ID="event_collide_block")
+public class ModuleEventCollideBlock implements IModuleEvent {
 
 	@Override
-	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(ModuleInstanceEvent module, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		BlockPos pos = spell.getTargetPos();
 		spell.removeData(ENTITY_HIT);
 		return pos != null;
 	}
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-
-	}
 }

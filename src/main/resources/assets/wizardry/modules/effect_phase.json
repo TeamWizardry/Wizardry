@@ -1,4 +1,6 @@
 {
+  "sub_module_id": "effect_phase",
+  "reference_module_id": "effect_phase",
   "item": "minecraft:ender_pearl",
   "primary_color": "800000",
   "secondary_color": "FF0000",

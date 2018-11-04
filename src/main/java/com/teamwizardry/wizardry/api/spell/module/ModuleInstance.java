@@ -4,6 +4,7 @@ import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.capability.world.WizardryWorld;
 import com.teamwizardry.wizardry.api.capability.world.WizardryWorldCapability;
 import com.teamwizardry.wizardry.api.events.SpellCastEvent;
@@ -30,6 +31,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -53,34 +55,71 @@ import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 /**
  * Created by Demoniaque.
  */
-public abstract class Module {
+public abstract class ModuleInstance {
 
+	protected final String subModuleID;
+	protected final ModuleFactory createdByFactory;
+	protected final IModule moduleClass;
+	protected final ResourceLocation icon;
 	protected final List<AttributeModifier> attributes = new ArrayList<>();
 	protected Map<Attribute, AttributeRange> attributeRanges = new DefaultHashMap<>(AttributeRange.BACKUP);
 	protected Color primaryColor;
 	protected Color secondaryColor;
 	protected ItemStack itemStack;
+	protected ModuleInstanceModifier [] applicableModifiers = null;
 
 	@Nullable
-	public static Module deserialize(NBTTagString tagString) {
+	public static ModuleInstance deserialize(NBTTagString tagString) {
 		return ModuleRegistry.INSTANCE.getModule(tagString.getString());
 	}
 
 	@Nullable
-	public static Module deserialize(String id) {
+	public static ModuleInstance deserialize(String id) {
 		return ModuleRegistry.INSTANCE.getModule(id);
 	}
+	
+	static ModuleInstance createInstance(IModule moduleClass,
+			ModuleFactory createdByFactory,
+			String subModuleID,
+			ResourceLocation icon,
+			ItemStack itemStack,
+            Color primaryColor,
+            Color secondaryColor,
+            DefaultHashMap<Attribute, AttributeRange> attributeRanges) {
+		if( moduleClass instanceof IModuleEffect )
+			return new ModuleInstanceEffect((IModuleEffect)moduleClass, createdByFactory, subModuleID, icon, itemStack, primaryColor, secondaryColor, attributeRanges);
+		else if( moduleClass instanceof IModuleModifier )
+			return new ModuleInstanceModifier((IModuleModifier)moduleClass, createdByFactory, subModuleID, icon, itemStack, primaryColor, secondaryColor, attributeRanges);
+		else if( moduleClass instanceof IModuleEvent )
+			return new ModuleInstanceEvent((IModuleEvent)moduleClass, createdByFactory, itemStack, subModuleID, icon, primaryColor, secondaryColor, attributeRanges);
+		else if( moduleClass instanceof IModuleShape )
+			return new ModuleInstanceShape((IModuleShape)moduleClass, createdByFactory, itemStack, subModuleID, icon, primaryColor, secondaryColor, attributeRanges);
+		else
+			throw new UnsupportedOperationException("Unknown module type.");
+	}
 
-	public final void init(ItemStack itemStack,
-	                       Color primaryColor,
-	                       Color secondaryColor,
-	                       DefaultHashMap<Attribute, AttributeRange> attributeRanges) {
+	protected ModuleInstance(IModule moduleClass,
+			      ModuleFactory createdByFactory,
+				  String moduleName,
+				  ResourceLocation icon,
+				  ItemStack itemStack,
+	              Color primaryColor,
+	              Color secondaryColor,
+	              DefaultHashMap<Attribute, AttributeRange> attributeRanges) {
+		this.moduleClass = moduleClass;
+		this.createdByFactory = createdByFactory;
+		this.subModuleID = moduleName;
+		this.icon = icon;
 		this.itemStack = itemStack;
 		this.primaryColor = primaryColor;
 		this.secondaryColor = secondaryColor;
 		this.attributeRanges = attributeRanges;
 	}
-
+	
+	public final IModule getModuleClass() {
+		return this.moduleClass;
+	}
+	
 	/**
 	 * Will render whatever GL code is specified here while the spell is being held by the
 	 * player's hand.
@@ -88,9 +127,13 @@ public abstract class Module {
 	@Nonnull
 	@SideOnly(Side.CLIENT)
 	public SpellData renderVisualization(@Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
-		return new SpellData(data.world);
+		return standardRenderVisualization(data, ring, previousData);
 	}
 
+	public final SpellData standardRenderVisualization(@Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+		return new SpellData(data.world);
+	}
+	
 	@Nullable
 	public final ItemStack getAvailableStack(Collection<ItemStack> stacks) {
 		for (ItemStack stack : stacks) {
@@ -211,20 +254,24 @@ public abstract class Module {
 	 *
 	 * @return A ModuleType representing the type of module this is.
 	 */
-	@Nonnull
 	public abstract ModuleType getModuleType();
-
+	
 	/**
 	 * A lower case snake_case string id that reflects the module to identify it during serialization/deserialization.
 	 *
 	 * @return A lower case snake_case string.
 	 */
-	@Nonnull
-	public abstract String getID();
+	public final String getSubModuleID() {
+		return subModuleID;
+	}
+	
+	public final String getReferenceModuleID() {
+		return createdByFactory.getReferenceModuleID();
+	}
 
 	@Override
 	public final String toString() {
-		return getID();
+		return getSubModuleID();
 	}
 
 	/**
@@ -240,7 +287,7 @@ public abstract class Module {
 	 */
 	@Nonnull
 	public final String getNameKey() {
-		return "wizardry.spell." + getID() + ".name";
+		return "wizardry.spell." + subModuleID + ".name";
 	}
 
 	/**
@@ -366,11 +413,10 @@ public abstract class Module {
 		GlStateManager.enableDepth();
 		GlStateManager.popMatrix();
 	}
-
-	@Nonnull
+	
 	public List<String> getDetailedInfo() {
 		List<String> detailedInfo = new ArrayList<>();
-		for (Attribute attribute : attributeRanges.keySet()) {
+		for (Attribute attribute : this.attributeRanges.keySet()) {
 			if (attribute.hasDetailedText())
 				detailedInfo.addAll(getDetailedInfo(attribute));
 		}
@@ -388,13 +434,37 @@ public abstract class Module {
 	}
 
 	/**
-	 * Specify all applicable modifiers that can be applied to this module.
+	 * Specify all applicable modifiers that can be applied to this module. <br />
+	 * <b>NOTE</b>: Don't call this method during initialization phase, as it is not guaranteed
+	 * that all modules could have been parsed.
 	 *
 	 * @return Any set with applicable ModuleModifiers.
 	 */
 	@Nullable
-	public ModuleModifier[] applicableModifiers() {
-		return null;
+	public ModuleInstanceModifier[] applicableModifiers() {
+		// Find all registered compatible modifiers and return them. Results are cached.
+		if( applicableModifiers == null ) {
+			LinkedList<ModuleInstanceModifier> applicableModifiersList = new LinkedList<>();
+			
+			String[] modifierNames = moduleClass.compatibleModifierClasses();
+			if( modifierNames != null ) {
+				for( ModuleInstance mod : ModuleRegistry.INSTANCE.modules ) {
+					for( String modifier : modifierNames ) {
+						if( mod.getReferenceModuleID().equals(modifier) ) {
+							if( !(mod instanceof ModuleInstanceModifier) ) {
+								// TODO: Log it!
+								continue;
+							}
+							applicableModifiersList.add((ModuleInstanceModifier)mod);	// Expected to be of type ModuleModifier
+							break;
+						}
+					}
+				}
+			}
+			
+			applicableModifiers = applicableModifiersList.toArray(new ModuleInstanceModifier[applicableModifiersList.size()]);
+		}
+		return applicableModifiers;
 	}
 
 	/**
@@ -402,7 +472,7 @@ public abstract class Module {
 	 */
 	@Nonnull
 	public final String getDescriptionKey() {
-		return "wizardry.spell." + getID() + ".desc";
+		return "wizardry.spell." + subModuleID + ".desc";
 	}
 
 	@Nonnull
@@ -450,7 +520,7 @@ public abstract class Module {
 	public List<AttributeModifier> getAttributes() {
 		return attributes;
 	}
-
+	
 	public Map<Attribute, AttributeRange> getAttributeRanges() {
 		return attributeRanges;
 	}
@@ -462,21 +532,24 @@ public abstract class Module {
 	public final void addAttributeRange(Attribute attribute, AttributeRange range) {
 		this.attributeRanges.put(attribute, range);
 	}
-
-	public boolean ignoreResultForRendering() {
-		return false;
+	
+	public final boolean ignoreResultForRendering() {
+		return moduleClass.ignoreResultForRendering();
 	}
-
+	
 	/**
 	 * Only return false if the spellData cannot be taxed from mana. Return true otherwise.
 	 */
-	public abstract boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing);
+	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		return true;
+	}
 
 	/**
 	 * This method runs client side when the spellData runs. Spawn particles here.
 	 */
 	@SideOnly(Side.CLIENT)
-	public abstract void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing);
+	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	}
 
 	/**
 	 * Use this to run the module properly without rendering.
@@ -488,7 +561,7 @@ public abstract class Module {
 	public final boolean castSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		if (spell.world.isRemote) return true;
 
-		if (this instanceof ILingeringModule) {
+		if (moduleClass instanceof ILingeringModule) {
 			boolean alreadyLingering = false;
 
 			WizardryWorld worldCap = WizardryWorldCapability.get(spell.world);
@@ -500,7 +573,7 @@ public abstract class Module {
 				}
 			}
 			if (!alreadyLingering)
-				worldCap.addLingerSpell(spellRing, spell, ((ILingeringModule) this).getLingeringTime(spell, spellRing));
+				worldCap.addLingerSpell(spellRing, spell, ((ILingeringModule) moduleClass).getLingeringTime(spell, spellRing));
 		}
 
 		SpellCastEvent event = new SpellCastEvent(spellRing, spell);
@@ -519,6 +592,12 @@ public abstract class Module {
 
 	@Nonnull
 	public final NBTTagString serialize() {
-		return new NBTTagString(getID());
+		return new NBTTagString(getSubModuleID());
+	}
+
+	public ResourceLocation getIconLocation() {
+		if( icon == null )
+			return new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/icons/" + getSubModuleID() + ".png");
+		return icon;
 	}
 }

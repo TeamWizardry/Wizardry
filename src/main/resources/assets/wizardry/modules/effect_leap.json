@@ -1,4 +1,6 @@
 {
+  "sub_module_id": "effect_leap",
+  "reference_module_id": "effect_leap",
   "item": "minecraft:rabbit_foot",
   "primary_color": "FFFFFF",
   "secondary_color": "FFFFFF",

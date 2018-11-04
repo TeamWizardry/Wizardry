@@ -1,4 +1,6 @@
 {
+  "sub_module_id": "shape_beam",
+  "reference_module_id": "shape_beam",
   "item": "wizardry:unicorn_horn",
   "mana": {
     "base": 10,

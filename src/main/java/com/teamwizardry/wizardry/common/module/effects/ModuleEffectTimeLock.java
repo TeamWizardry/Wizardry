@@ -3,12 +3,12 @@ package com.teamwizardry.wizardry.common.module.effects;
 import com.teamwizardry.wizardry.api.spell.IDelayedModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
-import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
+import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseDuration;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.SoundCategory;
@@ -23,22 +23,16 @@ import java.awt.*;
 /**
  * Created by Demoniaque.
  */
-//TODO: @RegisterModule
-public class ModuleEffectTimeLock extends ModuleEffect implements IDelayedModule {
+@RegisterModule(ID="effect_time_lock")
+public class ModuleEffectTimeLock implements IModuleEffect, IDelayedModule {
 
-	@Nonnull
 	@Override
-	public String getID() {
-		return "effect_time_lock";
+	public String[] compatibleModifierClasses() {
+		return new String[]{"modifier_extend_time"};
 	}
 
 	@Override
-	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierIncreaseDuration()};
-	}
-
-	@Override
-	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		Entity targetEntity = spell.getVictim();
 
@@ -60,14 +54,14 @@ public class ModuleEffectTimeLock extends ModuleEffect implements IDelayedModule
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		Vec3d position = spell.getTarget();
 
 		if (position == null) return;
 
-		Color color = getPrimaryColor();
-		if (RandUtil.nextBoolean()) color = getSecondaryColor();
+		Color color = instance.getPrimaryColor();
+		if (RandUtil.nextBoolean()) color = instance.getSecondaryColor();
 
 		LibParticles.EFFECT_BURN(world, position, color);
 	}

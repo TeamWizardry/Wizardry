@@ -1,4 +1,6 @@
 {
+  "sub_module_id": "modifier_extend_range",
+  "reference_module_id": "modifier_extend_range",
   "item": "minecraft:dye",
   "item_meta": "4",
   "modifiers": [

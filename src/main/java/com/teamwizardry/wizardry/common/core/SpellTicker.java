@@ -7,7 +7,7 @@ import com.teamwizardry.wizardry.api.capability.world.WizardryWorldCapability;
 import com.teamwizardry.wizardry.api.spell.IDelayedModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.module.Module;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.common.network.PacketSyncWizardryWorld;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -72,7 +72,7 @@ public class SpellTicker {
 			long subtract = currentWorldTime - fromWorldTime;
 
 			if (subtract > delayedObject.getExpiry()) {
-				((IDelayedModule) delayedObject.getModule()).runDelayedEffect(delayedObject.getSpellData(), delayedObject.getSpellRing());
+				((IDelayedModule) delayedObject.getModule().getModuleClass()).runDelayedEffect(delayedObject.getSpellData(), delayedObject.getSpellRing());
 				delayed.remove();
 				change = true;
 			}
@@ -151,7 +151,7 @@ public class SpellTicker {
 
 	public static class DelayedObject implements INBTSerializable<NBTTagCompound> {
 
-		private Module module;
+		private ModuleInstance module;
 		private SpellRing spellRing;
 		private SpellData spellData;
 		private long worldTime;
@@ -160,7 +160,7 @@ public class SpellTicker {
 		@NotNull
 		private final World world;
 
-		public DelayedObject(Module module, SpellRing spellRing, SpellData spellData, long worldTime, int expiry) {
+		public DelayedObject(ModuleInstance module, SpellRing spellRing, SpellData spellData, long worldTime, int expiry) {
 			this.module = module;
 			this.spellRing = spellRing;
 			this.spellData = spellData;
@@ -195,7 +195,7 @@ public class SpellTicker {
 			return object;
 		}
 
-		public Module getModule() {
+		public ModuleInstance getModule() {
 			return module;
 		}
 
@@ -223,7 +223,7 @@ public class SpellTicker {
 			if (nbt.hasKey("expiry"))
 				expiry = nbt.getInteger("expiry");
 			if (nbt.hasKey("module"))
-				module = Module.deserialize(nbt.getString("module"));
+				module = ModuleInstance.deserialize(nbt.getString("module"));
 		}
 	}
 }

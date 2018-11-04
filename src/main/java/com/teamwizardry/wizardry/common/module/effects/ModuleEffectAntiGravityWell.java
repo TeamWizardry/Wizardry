@@ -11,16 +11,12 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.ILingeringModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
-import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
-import com.teamwizardry.wizardry.api.spell.module.ModuleType;
-import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseAOE;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseDuration;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketEntityVelocity;
@@ -40,28 +36,16 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ORIGIN;
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
-public class ModuleEffectAntiGravityWell extends ModuleEffect implements ILingeringModule {
+@RegisterModule(ID="effect_anti_gravity_well")
+public class ModuleEffectAntiGravityWell implements IModuleEffect, ILingeringModule {
 
-	@Nonnull
 	@Override
-	public ModuleType getModuleType() {
-		return ModuleType.EFFECT;
-	}
-
-	@Nonnull
-	@Override
-	public String getID() {
-		return "effect_anti_gravity_well";
+	public String[] compatibleModifierClasses() {
+		return new String[]{"modifier_increase_aoe", "modifier_increase_potency", "modifier_extend_time"};
 	}
 
 	@Override
-	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierIncreaseAOE(), new ModuleModifierIncreasePotency(), new ModuleModifierIncreaseDuration()};
-	}
-
-	@Override
-	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		Vec3d position = spell.getTarget();
 
@@ -98,13 +82,13 @@ public class ModuleEffectAntiGravityWell extends ModuleEffect implements ILinger
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Vec3d position = spell.getData(ORIGIN);
 
 		if (position == null) return;
 
 		ParticleBuilder glitter = new ParticleBuilder(0);
-		glitter.setColorFunction(new InterpColorHSV(getPrimaryColor(), getSecondaryColor()));
+		glitter.setColorFunction(new InterpColorHSV(instance.getPrimaryColor(), instance.getSecondaryColor()));
 		ParticleSpawner.spawn(glitter, spell.world, new StaticInterp<>(position), 10, 10, (aFloat, particleBuilder) -> {
 			glitter.setScale((float) RandUtil.nextDouble(0.3, 1));
 			glitter.setAlphaFunction(new InterpFloatInOut(0.3f, (float) RandUtil.nextDouble(0.6, 1)));

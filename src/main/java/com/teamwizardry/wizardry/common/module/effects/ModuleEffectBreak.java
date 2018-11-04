@@ -2,15 +2,13 @@ package com.teamwizardry.wizardry.common.module.effects;
 
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
-import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
+import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
-import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 import com.teamwizardry.wizardry.api.util.BlockUtils;
 import com.teamwizardry.wizardry.client.fx.LibParticles;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseAOE;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreasePotency;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -34,22 +32,16 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.FACE_HIT
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
-public class ModuleEffectBreak extends ModuleEffect {
+@RegisterModule(ID="effect_break")
+public class ModuleEffectBreak implements IModuleEffect {
 
-	@Nonnull
 	@Override
-	public String getID() {
-		return "effect_break";
+	public String[] compatibleModifierClasses() {
+		return new String[]{"modifier_increase_aoe", "modifier_increase_potency"};
 	}
 
 	@Override
-	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierIncreaseAOE(), new ModuleModifierIncreasePotency()};
-	}
-
-	@Override
-	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		BlockPos targetPos = spell.getData(BLOCK_HIT);
 		EnumFacing facing = spell.getData(FACE_HIT);
@@ -85,18 +77,18 @@ public class ModuleEffectBreak extends ModuleEffect {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		Vec3d position = spell.getTarget();
 
 		if (position == null) return;
 
-		LibParticles.EXPLODE(world, position, getPrimaryColor(), getSecondaryColor(), 0.2, 0.3, 20, 40, 10, true);
+		LibParticles.EXPLODE(world, position, instance.getPrimaryColor(), instance.getSecondaryColor(), 0.2, 0.3, 20, 40, 10, true);
 	}
 
 	@NotNull
 	@Override
-	public SpellData renderVisualization(@Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+	public SpellData renderVisualization(ModuleInstanceEffect instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
 		if (ring.getParentRing() != null
 				&& ring.getParentRing().getModule() != null
 				&& ring.getParentRing().getModule() == ModuleRegistry.INSTANCE.getModule("event_collide_entity"))
@@ -127,9 +119,9 @@ public class ModuleEffectBreak extends ModuleEffect {
 			BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos(pos);
 			for (EnumFacing face : EnumFacing.VALUES) {
 					mutable.move(face);
-					IBlockState adjStat = getCachableBlockstate(data.world, mutable, previousData);
+					IBlockState adjStat = instance.getCachableBlockstate(data.world, mutable, previousData);
 					if (adjStat.getBlock() != state.getBlock() || !blocks.contains(mutable)) {
-						drawFaceOutline(mutable, face.getOpposite());
+						instance.drawFaceOutline(mutable, face.getOpposite());
 				}
 				mutable.move(face.getOpposite());
 			}

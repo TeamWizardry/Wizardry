@@ -1,4 +1,6 @@
 {
+  "sub_module_id": "effect_disarm",
+  "reference_module_id": "effect_disarm",
   "item": "minecraft:blaze_rod",
   "primary_color": "FFFFFF",
   "secondary_color": "FF0000",

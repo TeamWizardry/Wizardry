@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.api.spell.module;
 
+import java.awt.Color;
 import java.util.HashMap;
 
 import javax.annotation.Nonnull;
@@ -7,15 +8,26 @@ import javax.annotation.Nullable;
 
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRange;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry.Attribute;
+import com.teamwizardry.wizardry.api.util.DefaultHashMap;
 
 import kotlin.Pair;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public abstract class ModuleEffect extends Module {
+public class ModuleInstanceEffect extends ModuleInstance {
 
 	protected HashMap<String, OverrideConsumer<SpellData, SpellRing, SpellRing>> runOverrides = new HashMap<>();
 	protected HashMap<String, OverrideConsumer<SpellData, SpellRing, SpellRing>> renderOverrides = new HashMap<>();
+
+	public ModuleInstanceEffect(IModuleEffect moduleClass, ModuleFactory createdByFactory, String subModuleID, ResourceLocation icon, ItemStack itemStack, Color primaryColor, Color secondaryColor,
+			DefaultHashMap<Attribute, AttributeRange> attributeRanges) {
+		super(moduleClass, createdByFactory, subModuleID, icon, itemStack, primaryColor, secondaryColor, attributeRanges);
+		moduleClass.initEffect(this);
+	}
 	
 	@Nonnull
 	@Override
@@ -67,23 +79,51 @@ public abstract class ModuleEffect extends Module {
 		return false;
 	}
 
-	public boolean hasRunOverrideFor(Module module) {
+	public boolean hasRunOverrideFor(ModuleInstance module) {
 		return ModuleRegistry.INSTANCE.runOverrides.containsKey(new Pair<>(module, this));
 	}
 
 	@SideOnly(Side.CLIENT)
-	public boolean hasRenderOverrideFor(Module module) {
+	public boolean hasRenderOverrideFor(ModuleInstance module) {
 		return ModuleRegistry.INSTANCE.renderOverrides.containsKey(new Pair<>(module, this));
 	}
 
 	@Nullable
-	public OverrideConsumer<SpellData, SpellRing, SpellRing> getRunOverrideFor(Module module) {
+	public OverrideConsumer<SpellData, SpellRing, SpellRing> getRunOverrideFor(ModuleInstance module) {
 		return ModuleRegistry.INSTANCE.runOverrides.get(new Pair<>(module, this));
 	}
 
 	@Nullable
 	@SideOnly(Side.CLIENT)
-	public OverrideConsumer<SpellData, SpellRing, SpellRing> getRenderOverrideFor(Module module) {
+	public OverrideConsumer<SpellData, SpellRing, SpellRing> getRenderOverrideFor(ModuleInstance module) {
 		return ModuleRegistry.INSTANCE.renderOverrides.get(new Pair<>(module, this));
+	}
+	
+	/**
+	 * Only return false if the spellData cannot be taxed from mana. Return true otherwise.
+	 */
+	@Override
+	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		return ((IModuleEffect)moduleClass).run(this, spell, spellRing);
+	}
+	
+	/**
+	 * Will render whatever GL code is specified here while the spell is being held by the
+	 * player's hand.
+	 */
+	@Override
+	@Nonnull
+	@SideOnly(Side.CLIENT)
+	public SpellData renderVisualization(@Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+		return ((IModuleEffect)moduleClass).renderVisualization(this, data, ring, previousData);
+	}
+	
+	/**
+	 * This method runs client side when the spellData runs. Spawn particles here.
+	 */
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		((IModuleEffect)moduleClass).renderSpell(this, spell, spellRing);
 	}
 }

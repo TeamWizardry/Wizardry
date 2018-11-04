@@ -1,19 +1,11 @@
 package com.teamwizardry.wizardry.common.module.modifiers;
 
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
-import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
-
-import javax.annotation.Nonnull;
+import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.module.IModuleModifier;
 
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
-public class ModuleModifierIncreaseSpeed extends ModuleModifier {
-
-	@Nonnull
-	@Override
-	public String getID() {
-		return "modifier_increase_speed";
-	}
+@RegisterModule(ID="modifier_increase_speed")
+public class ModuleModifierIncreaseSpeed implements IModuleModifier {
 }

@@ -8,8 +8,9 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
-import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
-import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.module.IModuleShape;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceShape;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
@@ -31,17 +32,11 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.LOOK;
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
-public class ModuleShapeTouch extends ModuleShape {
-
-	@Nonnull
-	@Override
-	public String getID() {
-		return "shape_touch";
-	}
+@RegisterModule(ID="shape_touch")
+public class ModuleShapeTouch implements IModuleShape {
 
 	@Override
-	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Vec3d look = spell.getData(LOOK);
 
 		Entity caster = spell.getCaster();
@@ -52,7 +47,7 @@ public class ModuleShapeTouch extends ModuleShape {
 		if (origin == null) return false;
 		if (!spellRing.taxCaster(spell, true)) return false;
 
-		runRunOverrides(spell, spellRing);
+		instance.runRunOverrides(spell, spellRing);
 		
 		RayTraceResult result = new RayTrace(
 				spell.world, look, origin,
@@ -68,7 +63,7 @@ public class ModuleShapeTouch extends ModuleShape {
 
 	@NotNull
 	@Override
-	public SpellData renderVisualization(@Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+	public SpellData renderVisualization(ModuleInstanceShape instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
 		Vec3d look = data.getData(LOOK);
 
 		Entity caster = data.getCaster();
@@ -100,8 +95,8 @@ public class ModuleShapeTouch extends ModuleShape {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		if (runRenderOverrides(spell, spellRing)) return;
+	public void renderSpell(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		if (instance.runRenderOverrides(spell, spellRing)) return;
 
 		Entity targetEntity = spell.getVictim();
 

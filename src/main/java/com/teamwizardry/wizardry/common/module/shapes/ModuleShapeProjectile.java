@@ -2,15 +2,13 @@ package com.teamwizardry.wizardry.common.module.shapes;
 
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
-import com.teamwizardry.wizardry.api.spell.module.ModuleShape;
-import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.module.IModuleShape;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceShape;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.common.entity.projectile.EntitySpellProjectile;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseRange;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseSpeed;
 import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.SoundCategory;
@@ -29,18 +27,12 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.LOOK;
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
-public class ModuleShapeProjectile extends ModuleShape {
-
-	@Nonnull
-	@Override
-	public String getID() {
-		return "shape_projectile";
-	}
+@RegisterModule(ID="shape_projectile")
+public class ModuleShapeProjectile implements IModuleShape {
 
 	@Override
-	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierIncreaseRange(), new ModuleModifierIncreaseSpeed()};
+	public String[] compatibleModifierClasses() {
+		return new String[]{"modifier_extend_range", "modifier_increase_speed"};
 	}
 
 	@Override
@@ -49,7 +41,7 @@ public class ModuleShapeProjectile extends ModuleShape {
 	}
 
 	@Override
-	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		if (world.isRemote) return true;
 
@@ -61,7 +53,7 @@ public class ModuleShapeProjectile extends ModuleShape {
 
 		if (!spellRing.taxCaster(spell, true)) return false;
 		
-		EntitySpellProjectile proj = new EntitySpellProjectile(world, spellRing, spell, (float) dist, (float) speed, (float) 0.1, !runRunOverrides(spell, spellRing));
+		EntitySpellProjectile proj = new EntitySpellProjectile(world, spellRing, spell, (float) dist, (float) speed, (float) 0.1, !instance.runRunOverrides(spell, spellRing));
 		proj.setPosition(origin.x, origin.y, origin.z);
 		proj.velocityChanged = true;
 
@@ -73,15 +65,15 @@ public class ModuleShapeProjectile extends ModuleShape {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		if (spellRing.isRunBeingOverriden()) {
-			runRenderOverrides(spell, spellRing);
+			instance.runRenderOverrides(spell, spellRing);
 		}
 	}
 
 	@NotNull
 	@Override
-	public SpellData renderVisualization(@Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
+	public SpellData renderVisualization(ModuleInstanceShape instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
 		Vec3d look = data.getData(LOOK);
 
 		Entity caster = data.getCaster();

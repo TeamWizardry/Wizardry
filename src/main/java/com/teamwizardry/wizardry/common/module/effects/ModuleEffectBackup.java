@@ -9,14 +9,13 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
-import com.teamwizardry.wizardry.api.spell.module.ModuleEffect;
-import com.teamwizardry.wizardry.api.spell.module.ModuleModifier;
-import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import com.teamwizardry.wizardry.common.entity.EntityBackupZombie;
-import com.teamwizardry.wizardry.common.module.modifiers.ModuleModifierIncreaseDuration;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.EnumFacing;
@@ -34,22 +33,16 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.FACE_HIT
 /**
  * Created by Demoniaque.
  */
-@RegisterModule
-public class ModuleEffectBackup extends ModuleEffect {
+@RegisterModule(ID="effect_backup")
+public class ModuleEffectBackup implements IModuleEffect {
 
-	@Nonnull
 	@Override
-	public String getID() {
-		return "effect_backup";
+	public String[] compatibleModifierClasses() {
+		return new String[]{"modifier_extend_time"};
 	}
 
 	@Override
-	public ModuleModifier[] applicableModifiers() {
-		return new ModuleModifier[]{new ModuleModifierIncreaseDuration()};
-	}
-
-	@Override
-	public boolean run(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		Vec3d targetPos = spell.getTarget();
 		EnumFacing facing = spell.getData(FACE_HIT);
@@ -75,7 +68,7 @@ public class ModuleEffectBackup extends ModuleEffect {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void renderSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
 		Vec3d position = spell.getTarget();
 
@@ -83,7 +76,7 @@ public class ModuleEffectBackup extends ModuleEffect {
 
 		ParticleBuilder glitter = new ParticleBuilder(1);
 		glitter.setAlphaFunction(new InterpFloatInOut(0.0f, 0.1f));
-		glitter.setColorFunction(new InterpColorHSV(getPrimaryColor(), getSecondaryColor()));
+		glitter.setColorFunction(new InterpColorHSV(instance.getPrimaryColor(), instance.getSecondaryColor()));
 		glitter.enableMotionCalculation();
 		glitter.setScaleFunction(new InterpScale(1, 0));
 		glitter.setAcceleration(new Vec3d(0, -0.05, 0));
