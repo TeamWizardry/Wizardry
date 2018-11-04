@@ -8,6 +8,8 @@ import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.arena.ArenaManager;
 import com.teamwizardry.wizardry.api.capability.chunk.WizardryChunkCapability;
 import com.teamwizardry.wizardry.api.capability.world.WizardryWorldCapability;
+import com.teamwizardry.wizardry.api.spell.DataInitException;
+import com.teamwizardry.wizardry.api.spell.ProcessData;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
 import com.teamwizardry.wizardry.client.gui.GuiHandler;
@@ -141,6 +143,8 @@ public class CommonProxy {
 				ModuleRegistry.INSTANCE.copyAllModules(moduleDirectory);
 			ModuleRegistry.INSTANCE.loadModules(moduleDirectory);
 		}
+		
+		ProcessData.INSTANCE.registerAnnotatedDataTypes();
 	}
 
 	public void postInit(FMLPostInitializationEvent event) {
