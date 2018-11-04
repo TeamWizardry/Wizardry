@@ -4,6 +4,10 @@ import com.teamwizardry.librarianlib.features.saving.Savable;
 import com.teamwizardry.wizardry.api.capability.mana.DefaultWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.mana.WizardryCapabilityProvider;
+import com.teamwizardry.wizardry.api.spell.ProcessData.DataType;
+import com.teamwizardry.wizardry.api.spell.SpellDataTypes.BlockSet;
+import com.teamwizardry.wizardry.api.spell.SpellDataTypes.BlockStateCache;
+
 import kotlin.Pair;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -21,6 +25,7 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.BLOCK_HIT;
@@ -32,18 +37,61 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.BLOCK_HI
 @SuppressWarnings("rawtypes")
 public class SpellData implements INBTSerializable<NBTTagCompound> {
 
-	private static HashMap<Pair, ProcessData.Process> dataProcessor = new HashMap<>();
+//	private static HashMap<Pair, ProcessData.Process> dataProcessor = new HashMap<>();
+	private static HashMap<String, DataField<?>> availableFields = new HashMap<>(); 
 
 	@Nonnull
 	public final World world;
-	@Nonnull
-	private final HashMap<Pair, Object> data = new HashMap<>();
 
+//	@Nonnull
+//	private final HashMap<Pair, Object> data = new HashMap<>();
+
+	@Nonnull
+	private final HashMap<DataField<?>, Object> data = new HashMap<>();
+	
 	public SpellData(@Nonnull World world) {
 		this.world = world;
 	}
-
+	
+	@Nonnull
+	public static <T> DataField<T> constructField(@Nonnull String key, @Nonnull Class<T> type) {
+		DataField<T> field = new DataField<T>(key, type);
+		availableFields.put(key, field);
+		return field;
+	}
+	
+	public void addAllData(HashMap<DataField<?>, Object> data) {
+		this.data.putAll(data);
+	}
+	
+	public <T> void addData(@Nonnull DataField<T> key, @Nullable T value) {
+		this.data.put(key, value);
+	}
+	
+	public <T> void removeData(@Nonnull DataField<T> key) {
+		this.data.remove(key);
+	}
+	
+	@Nullable
 	@SuppressWarnings("unchecked")
+	public <T> T getData(@Nonnull DataField<T> key) {
+		return getData(key, null);
+	}
+
+	@Nonnull
+	@SuppressWarnings("unchecked")
+	public <T> T getData(@Nonnull DataField<T> key, @Nonnull T def) {
+		Object value = data.get(key);
+		if ( value != null && key.getDataType().isInstance(value) )
+			return (T)value;
+		return def;
+	}
+	
+	public <T> boolean hasData(@Nonnull DataField<T> key) {
+		return data.get(key) != null;
+	}
+	
+/*	@SuppressWarnings("unchecked")
 	@Nonnull
 	public static <T, E extends NBTBase> Pair<String, Class<T>> constructPair(@Nonnull String key, @Nonnull Class<?> type, ProcessData.Process<E, T> data) {
 		Pair<String, Class<T>> pair = new Pair(key, type);
@@ -81,7 +129,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 
 	public <T> boolean hasData(@Nonnull Pair<String, Class<T>> pair) {
 		return data.containsKey(pair) && data.get(pair) != null;
-	}
+	}*/
 
 	public void processTrace(RayTraceResult trace, @Nullable Vec3d fallback) {
 
@@ -263,27 +311,33 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public void deserializeNBT(NBTTagCompound nbt) {
 		primary:
 		for (String key : nbt.getKeySet()) {
-			for (Pair pair : dataProcessor.keySet()) {
+/*			for (Pair pair : dataProcessor.keySet()) {
 				if (pair.getFirst().equals(key)) {
 					NBTBase nbtType = nbt.getTag(pair.getFirst() + "");
 					data.put(pair, dataProcessor.get(pair).deserialize(world, nbtType));
 					continue primary;
 				}
+			}*/
+			DataField<?> field = availableFields.get(key);
+			if( field != null ) {
+				NBTBase nbtType = nbt.getTag(key);
+				data.put(field, field.getDataTypeProcess().deserialize(world, nbtType));
+				continue primary;
 			}
 		}
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public NBTTagCompound serializeNBT() {
 		NBTTagCompound compound = new NBTTagCompound();
-		for (Pair pair : data.keySet()) {
-			NBTBase nbtClass = dataProcessor.get(pair).serialize(data.get(pair));
-			compound.setTag(pair.getFirst() + "", nbtClass);
+		for (Entry<DataField<? extends Object>, Object> entry : data.entrySet()) {
+//			NBTBase nbtClass = dataProcessor.get(pair).serialize(data.get(pair));
+//			compound.setTag(pair.getFirst() + "", nbtClass);
+			NBTBase nbtClass = entry.getKey().getDataTypeProcess().serialize(entry.getValue());
+			compound.setTag(entry.getKey().getFieldName(), nbtClass);
 		}
 
 		return compound;
@@ -296,9 +350,89 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 				", data=" + data +
 				'}';
 	}
+	
+	/////////////////
+	
+	public static class DataField<E> {
+		private final String fieldName;
+		private final Class<E> dataType;
+		private DataType lazy_dataTypeProcess = null;	// Lazy, because datatypes might not been initialized, if calling before ProcessData.registerAnnotatedDataTypes()
+		
+		public DataField(String fieldName, Class<E> dataType) {
+			this.fieldName = fieldName;
+			this.dataType = dataType;
+		}
+
+		public String getFieldName() {
+			return fieldName;
+		}
+
+		public Class<E> getDataType() {
+			return dataType;
+		}
+
+		public DataType getDataTypeProcess() {
+			if( lazy_dataTypeProcess == null )
+				lazy_dataTypeProcess = ProcessData.INSTANCE.getDataType(dataType);
+			return lazy_dataTypeProcess;
+		}
+
+		//////////////////////////
+		
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((dataType == null) ? 0 : dataType.toString().hashCode());
+			result = prime * result + ((fieldName == null) ? 0 : fieldName.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			DataField other = (DataField) obj;
+			if (dataType == null) {
+				if (other.dataType != null)
+					return false;
+			} else if (!dataType.toString().equals(other.dataType.toString()))
+				return false;
+			if (fieldName == null) {
+				if (other.fieldName != null)
+					return false;
+			} else if (!fieldName.equals(other.fieldName))
+				return false;
+			return true;
+		}
+	}
+	
+	/////////////////
 
 	public static class DefaultKeys {
-
+		public static final DataField<NBTTagList> TAG_LIST = constructField("list", NBTTagList.class);
+		public static final DataField<NBTTagCompound> COMPOUND = constructField("compound", NBTTagCompound.class);
+		public static final DataField<Integer> MAX_TIME = constructField("max_time", Integer.class);
+		public static final DataField<Entity> CASTER = constructField("caster", Entity.class);
+		public static final DataField<Float> YAW = constructField("yaw", Float.class);
+		public static final DataField<Float> PITCH = constructField("pitch", Float.class);
+		public static final DataField<Vec3d> LOOK = constructField("look", Vec3d.class);
+		public static final DataField<Vec3d> ORIGIN = constructField("origin", Vec3d.class);
+		public static final DataField<Entity> ENTITY_HIT = constructField("entity_hit", Entity.class);
+		public static final DataField<BlockPos> BLOCK_HIT = constructField("block_hit", BlockPos.class);
+		public static final DataField<EnumFacing> FACE_HIT = constructField("face_hit", EnumFacing.class);
+		public static final DataField<IWizardryCapability> CAPABILITY = constructField("capability", IWizardryCapability.class);
+		public static final DataField<Vec3d> TARGET_HIT = constructField("target_hit", Vec3d.class);
+		public static final DataField<IBlockState> BLOCK_STATE = constructField("block_state", IBlockState.class);
+		public static final DataField<Long> SEED = constructField("seed", Long.class);
+		public static final DataField<BlockSet> BLOCK_SET = constructField("block_set", BlockSet.class);
+		public static final DataField<BlockStateCache> BLOCKSTATE_CACHE = constructField("blockstate_cache", BlockStateCache.class);
+		
+/*
 		public static final Pair<String, Class<NBTTagList>> TAG_LIST = constructPair("list", NBTTagList.class, new ProcessData.Process<NBTTagList, NBTTagList>() {
 
 			@Nonnull
@@ -615,6 +749,6 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 				return stateCache;
 			}
 		});
-	
+	*/
 	}
 }

@@ -36,7 +36,7 @@ public class ProcessData {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <E> DataType<E> getDataType(@Nonnull Class<E> type) {
+	public <E> DataType getDataType(@Nonnull Class<E> type) {
 		String dataTypeName = type.getName();
 		DatatypeEntry<?, ?> entry = datatypeRegistry.get(dataTypeName);
 		if( entry == null )
@@ -98,7 +98,7 @@ public class ProcessData {
 	
 	////////////////
 	
-	public static class DatatypeEntry<T extends NBTBase, E> implements DataType<E> {
+	public static class DatatypeEntry<T extends NBTBase, E> implements DataType {
 		
 		private final String dataTypeName;
 		private final Class<E> dataTypeClazz;
@@ -124,18 +124,19 @@ public class ProcessData {
 			return storageTypeClazz;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		@Nonnull
-		public NBTBase serialize(@Nullable E object) {
-//			if( !dataTypeClazz.equals(object.getClass()) ) // TODO: Make a new exception class
-//				throw new IllegalStateException("Object to serialize must be of class '" + dataTypeClazz + "'");
-			return ioProcess.serialize(object);
+		public NBTBase serialize(@Nullable Object object) {
+			if( !dataTypeClazz.equals(object.getClass()) ) // TODO: Make a new exception class
+				throw new IllegalStateException("Object to serialize must be of class '" + dataTypeClazz + "'");
+			return ioProcess.serialize((E)object);
 		}
 		
 		@Override
 		@SuppressWarnings("unchecked")
 		@Nonnull
-		public E deserialize(@Nullable World world, @Nonnull NBTBase object) {
+		public Object deserialize(@Nullable World world, @Nonnull NBTBase object) {
 			if( !storageTypeClazz.equals(object.getClass()) )
 				throw new DataSerializationException("Storage object to deserialize must be of class '" + storageTypeClazz + "'");
 			Object obj = ioProcess.deserialize(world, (T)object);
@@ -147,12 +148,12 @@ public class ProcessData {
 		}
 	}
 	
-	public interface DataType<E> {
+	public interface DataType {
 		@Nonnull
-		NBTBase serialize(@Nullable E object);
+		NBTBase serialize(@Nullable Object object);
 		
 		@Nonnull
-		E deserialize(@Nullable World world, @Nonnull NBTBase object);
+		Object deserialize(@Nullable World world, @Nonnull NBTBase object);
 	}
 	
 	////////////////
