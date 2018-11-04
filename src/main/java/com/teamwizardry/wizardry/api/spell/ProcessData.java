@@ -14,7 +14,6 @@ import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.utilities.AnnotationHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterDataType;
-import com.teamwizardry.wizardry.api.spell.module.RegisterModule;
 
 /**
  * Created by Demoniaque.
@@ -41,8 +40,8 @@ public class ProcessData {
 		DatatypeEntry<?, ?> entry = datatypeRegistry.get(dataTypeName);
 		if( entry == null )
 			throw new DataSerializationException("Datatype '" + dataTypeName + "' is not existing.");
-		if( !entry.getClass().equals(type) )  // NOTE: Keep it as IllegalStateException
-			throw new IllegalStateException("Datatype '" + dataTypeName + "' is not compatible with class '" + type + "'.");
+		if( !isClassEqual(entry.getDataTypeClazz(), type) )  // NOTE: Keep it as IllegalStateException
+			throw new IllegalStateException("Datatype '" + entry.getDataTypeName() + "' is not compatible with class '" + type + "'.");
 
 		return (DatatypeEntry<?, E>)entry;
 	}
@@ -128,8 +127,8 @@ public class ProcessData {
 		@Override
 		@Nonnull
 		public NBTBase serialize(@Nullable Object object) {
-			if( !dataTypeClazz.equals(object.getClass()) ) // TODO: Make a new exception class
-				throw new IllegalStateException("Object to serialize must be of class '" + dataTypeClazz + "'");
+			if( !dataTypeClazz.isAssignableFrom(object.getClass()) )
+				throw new DataSerializationException("Object to serialize must be at least of class '" + dataTypeClazz + "'");
 			return ioProcess.serialize((E)object);
 		}
 		
@@ -137,7 +136,7 @@ public class ProcessData {
 		@SuppressWarnings("unchecked")
 		@Nonnull
 		public Object deserialize(@Nullable World world, @Nonnull NBTBase object) {
-			if( !storageTypeClazz.equals(object.getClass()) )
+			if( !isClassEqual(storageTypeClazz, object.getClass()) )
 				throw new DataSerializationException("Storage object to deserialize must be of class '" + storageTypeClazz + "'");
 			Object obj = ioProcess.deserialize(world, (T)object);
 			if( obj == null )
@@ -148,6 +147,14 @@ public class ProcessData {
 		}
 	}
 	
+	////////////////
+	
+	public static boolean isClassEqual(Class<?> clsA, Class<?> clsB) {
+		return clsA.isAssignableFrom(clsB) && clsB.isAssignableFrom(clsA);
+	}
+	
+	////////////////
+	
 	public interface DataType {
 		@Nonnull
 		NBTBase serialize(@Nullable Object object);
@@ -155,8 +162,6 @@ public class ProcessData {
 		@Nonnull
 		Object deserialize(@Nullable World world, @Nonnull NBTBase object);
 	}
-	
-	////////////////
 	
 	public interface Process<T extends NBTBase, E> {
 		@Nonnull

@@ -120,7 +120,7 @@ public class SpellDataTypes {
 		}
 	}
 	
-	@RegisterDataType(storageType="net.minecraft.nbt.NBTTagLong.NBTTagLong", dataType="net.minecraft.util.math.BlockPos")
+	@RegisterDataType(storageType="net.minecraft.nbt.NBTTagLong", dataType="net.minecraft.util.math.BlockPos")
 	public static class BlockPosType implements Process<NBTTagLong, BlockPos> {
 		@Override
 		public NBTTagLong serialize(BlockPos object) {
@@ -134,7 +134,7 @@ public class SpellDataTypes {
 		}
 	}
 	
-	@RegisterDataType(storageType="net.minecraft.nbt.NBTTagString.NBTTagString", dataType="net.minecraft.util.EnumFacing")
+	@RegisterDataType(storageType="net.minecraft.nbt.NBTTagString", dataType="net.minecraft.util.EnumFacing")
 	public static class EnumFacingType implements Process<NBTTagString, EnumFacing> {
 		@Override
 		public NBTTagString serialize(EnumFacing object) {
@@ -148,7 +148,7 @@ public class SpellDataTypes {
 		}
 	}
 	
-	@RegisterDataType(storageType="net.minecraft.nbt.NBTTagCompound.NBTTagCompound", dataType="com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability")
+	@RegisterDataType(storageType="net.minecraft.nbt.NBTTagCompound", dataType="com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability")
 	public static class WizardryCapabilityType implements Process<NBTTagCompound, IWizardryCapability> {
 		@Override
 		public NBTTagCompound serialize(IWizardryCapability object) {
@@ -164,7 +164,7 @@ public class SpellDataTypes {
 		}
 	}
 	
-	@RegisterDataType(storageType="net.minecraft.nbt.NBTTagCompound.NBTTagCompound", dataType="net.minecraft.block.state.IBlockState")
+	@RegisterDataType(storageType="net.minecraft.nbt.NBTTagCompound", dataType="net.minecraft.block.state.IBlockState")
 	public static class BlockStateType implements Process<NBTTagCompound, IBlockState> {
 		@Override
 		public NBTTagCompound serialize(IBlockState object) {
@@ -180,7 +180,7 @@ public class SpellDataTypes {
 		}
 	}
 	
-	@RegisterDataType(storageType="net.minecraft.nbt.NBTTagLong.NBTTagLong", dataType="java.lang.Long")
+	@RegisterDataType(storageType="net.minecraft.nbt.NBTTagLong", dataType="java.lang.Long")
 	public static class LongType implements Process<NBTTagLong, Long> {
 		@Override
 		public NBTTagLong serialize(Long object) {
@@ -194,7 +194,7 @@ public class SpellDataTypes {
 		}
 	}
 	
-	@RegisterDataType(storageType="net.minecraft.nbt.NBTTagList", dataType="com.teamwizardry.wizardry.api.spell.SpellDataTypes.BlockSet")
+	@RegisterDataType(storageType="net.minecraft.nbt.NBTTagList", dataType="com.teamwizardry.wizardry.api.spell.SpellDataTypes$BlockSet")
 	public static class BlockSetType implements Process<NBTTagList, BlockSet> {
 		@Override
 		public NBTTagList serialize(BlockSet object) {
@@ -223,7 +223,7 @@ public class SpellDataTypes {
 		}
 	}
 	
-	@RegisterDataType(storageType="net.minecraft.nbt.NBTTagList", dataType="com.teamwizardry.wizardry.api.spell.SpellDataTypes.BlockStateCache")
+	@RegisterDataType(storageType="net.minecraft.nbt.NBTTagList", dataType="com.teamwizardry.wizardry.api.spell.SpellDataTypes$BlockStateCache")
 	public static class BlockStateCacheType implements Process<NBTTagList, BlockStateCache> {
 		@Override
 		public NBTTagList serialize(BlockStateCache object) {
