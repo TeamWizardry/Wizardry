@@ -8,7 +8,6 @@ import com.teamwizardry.librarianlib.features.particle.ParticleSpawner;
 import com.teamwizardry.librarianlib.features.particle.functions.InterpColorHSV;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
-import com.teamwizardry.wizardry.api.spell.ProcessData;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellData.DataField;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
@@ -19,10 +18,8 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.init.ModPotions;
-import kotlin.Pair;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.RayTraceResult;
@@ -45,25 +42,6 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.constructField;
 public class ModuleEffectZoom implements IModuleEffect {
 
 	private static final DataField<Vec3d> ORIGINAL_LOC = constructField("original_loc", Vec3d.class);
-/*	private static final Pair<String, Class<Vec3d>> ORIGINAL_LOC = constructPair("original_loc", Vec3d.class, new ProcessData.Process<NBTTagCompound, Vec3d>() {
-		@Nonnull
-		@Override
-		public NBTTagCompound serialize(Vec3d object) {
-			NBTTagCompound compound = new NBTTagCompound();
-			compound.setDouble("x", object.x);
-			compound.setDouble("y", object.y);
-			compound.setDouble("z", object.z);
-			return compound;
-		}
-
-		@Override
-		public Vec3d deserialize(@Nonnull World world, @Nonnull NBTTagCompound object) {
-			double x = object.getDouble("x");
-			double y = object.getDouble("y");
-			double z = object.getDouble("z");
-			return new Vec3d(x, y, z);
-		}
-	}); */
 
 	@Override
 	public String[] compatibleModifierClasses() {

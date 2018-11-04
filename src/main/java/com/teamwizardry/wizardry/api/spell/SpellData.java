@@ -1,14 +1,12 @@
 package com.teamwizardry.wizardry.api.spell;
 
 import com.teamwizardry.librarianlib.features.saving.Savable;
-import com.teamwizardry.wizardry.api.capability.mana.DefaultWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.mana.WizardryCapabilityProvider;
 import com.teamwizardry.wizardry.api.spell.ProcessData.DataType;
 import com.teamwizardry.wizardry.api.spell.SpellDataTypes.BlockSet;
 import com.teamwizardry.wizardry.api.spell.SpellDataTypes.BlockStateCache;
 
-import kotlin.Pair;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.*;
@@ -18,13 +16,12 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
-import org.jetbrains.annotations.NotNull;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -37,14 +34,10 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.BLOCK_HI
 @SuppressWarnings("rawtypes")
 public class SpellData implements INBTSerializable<NBTTagCompound> {
 
-//	private static HashMap<Pair, ProcessData.Process> dataProcessor = new HashMap<>();
 	private static HashMap<String, DataField<?>> availableFields = new HashMap<>(); 
 
 	@Nonnull
 	public final World world;
-
-//	@Nonnull
-//	private final HashMap<Pair, Object> data = new HashMap<>();
 
 	@Nonnull
 	private final HashMap<DataField<?>, Object> data = new HashMap<>();
@@ -60,6 +53,10 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 		return field;
 	}
 	
+	@Nonnull static Collection<DataField<?>> getAllAvailableFields() {
+		return Collections.unmodifiableCollection(availableFields.values());
+	}
+	
 	public void addAllData(HashMap<DataField<?>, Object> data) {
 		this.data.putAll(data);
 	}
@@ -73,7 +70,6 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 	}
 	
 	@Nullable
-	@SuppressWarnings("unchecked")
 	public <T> T getData(@Nonnull DataField<T> key) {
 		return getData(key, null);
 	}
@@ -91,46 +87,6 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 		return data.get(key) != null;
 	}
 	
-/*	@SuppressWarnings("unchecked")
-	@Nonnull
-	public static <T, E extends NBTBase> Pair<String, Class<T>> constructPair(@Nonnull String key, @Nonnull Class<?> type, ProcessData.Process<E, T> data) {
-		Pair<String, Class<T>> pair = new Pair(key, type);
-		dataProcessor.put(pair, data);
-		return pair;
-	}
-
-	public void addAllData(HashMap<Pair, Object> data) {
-		this.data.putAll(data);
-	}
-
-	public <T> void addData(@Nonnull Pair<String, Class<T>> key, @Nullable T value) {
-		this.data.put(key, value);
-	}
-
-	public <T> void removeData(@Nonnull Pair<String, Class<T>> key) {
-		this.data.remove(key);
-	}
-
-	@Nullable
-	@SuppressWarnings("unchecked")
-	public <T> T getData(@Nonnull Pair<String, Class<T>> pair) {
-		if (data.containsKey(pair) && pair.getSecond().isInstance(data.get(pair)))
-			return (T) data.get(pair);
-		return null;
-	}
-
-	@Nonnull
-	@SuppressWarnings("unchecked")
-	public <T> T getData(@Nonnull Pair<String, Class<T>> pair, @Nonnull T def) {
-		if (data.containsKey(pair) && pair.getSecond().isInstance(data.get(pair)))
-			return (T) data.get(pair);
-		return def;
-	}
-
-	public <T> boolean hasData(@Nonnull Pair<String, Class<T>> pair) {
-		return data.containsKey(pair) && data.get(pair) != null;
-	}*/
-
 	public void processTrace(RayTraceResult trace, @Nullable Vec3d fallback) {
 
 		if (trace.typeOfHit == RayTraceResult.Type.ENTITY)
@@ -314,13 +270,6 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 	public void deserializeNBT(NBTTagCompound nbt) {
 		primary:
 		for (String key : nbt.getKeySet()) {
-/*			for (Pair pair : dataProcessor.keySet()) {
-				if (pair.getFirst().equals(key)) {
-					NBTBase nbtType = nbt.getTag(pair.getFirst() + "");
-					data.put(pair, dataProcessor.get(pair).deserialize(world, nbtType));
-					continue primary;
-				}
-			}*/
 			DataField<?> field = availableFields.get(key);
 			if( field != null ) {
 				NBTBase nbtType = nbt.getTag(key);
@@ -334,8 +283,6 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 	public NBTTagCompound serializeNBT() {
 		NBTTagCompound compound = new NBTTagCompound();
 		for (Entry<DataField<? extends Object>, Object> entry : data.entrySet()) {
-//			NBTBase nbtClass = dataProcessor.get(pair).serialize(data.get(pair));
-//			compound.setTag(pair.getFirst() + "", nbtClass);
 			NBTBase nbtClass = entry.getKey().getDataTypeProcess().serialize(entry.getValue());
 			compound.setTag(entry.getKey().getFieldName(), nbtClass);
 		}
@@ -431,324 +378,5 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 		public static final DataField<Long> SEED = constructField("seed", Long.class);
 		public static final DataField<BlockSet> BLOCK_SET = constructField("block_set", BlockSet.class);
 		public static final DataField<BlockStateCache> BLOCKSTATE_CACHE = constructField("blockstate_cache", BlockStateCache.class);
-		
-/*
-		public static final Pair<String, Class<NBTTagList>> TAG_LIST = constructPair("list", NBTTagList.class, new ProcessData.Process<NBTTagList, NBTTagList>() {
-
-			@Nonnull
-			@Override
-			public NBTTagList serialize(@Nullable NBTTagList object) {
-				return object == null ? new NBTTagList() : object;
-			}
-
-			@Nullable
-			@Override
-			public NBTTagList deserialize(@Nullable World world, @Nonnull NBTTagList object) {
-				return object;
-			}
-		});
-
-		public static final Pair<String, Class<NBTTagCompound>> COMPOUND = constructPair("compound", NBTTagCompound.class, new ProcessData.Process<NBTTagCompound, NBTTagCompound>() {
-			@Nonnull
-			@Override
-			public NBTTagCompound serialize(@Nullable NBTTagCompound object) {
-				return object == null ? new NBTTagCompound() : object;
-			}
-
-			@Override
-			public NBTTagCompound deserialize(@Nullable World world, @Nonnull NBTTagCompound object) {
-				return object;
-			}
-		});
-
-		public static final Pair<String, Class<Integer>> MAX_TIME = constructPair("max_time", Integer.class, new ProcessData.Process<NBTTagInt, Integer>() {
-			@Nonnull
-			@Override
-			public NBTTagInt serialize(@Nullable Integer object) {
-				if (object == null) return new NBTTagInt(1);
-				return new NBTTagInt(object);
-			}
-
-			@Override
-			public Integer deserialize(World world, @Nonnull NBTTagInt object) {
-				return object.getInt();
-			}
-		});
-
-		public static final Pair<String, Class<Entity>> CASTER = constructPair("caster", Entity.class, new ProcessData.Process<NBTTagInt, Entity>() {
-			@Nonnull
-			@Override
-			public NBTTagInt serialize(Entity object) {
-				if (object != null)
-					return new NBTTagInt(object.getEntityId());
-				return new NBTTagInt(-1);
-			}
-
-			@Override
-			public Entity deserialize(World world, @Nonnull NBTTagInt object) {
-				return world.getEntityByID(object.getInt());
-			}
-		});
-
-		public static final Pair<String, Class<Float>> YAW = constructPair("yaw", Float.class, new ProcessData.Process<NBTTagFloat, Float>() {
-			@Nonnull
-			@Override
-			public NBTTagFloat serialize(Float object) {
-				return new NBTTagFloat(object);
-			}
-
-			@Override
-			public Float deserialize(World world, @Nonnull NBTTagFloat object) {
-				return object.getFloat();
-			}
-		});
-
-		public static final Pair<String, Class<Float>> PITCH = constructPair("pitch", Float.class, new ProcessData.Process<NBTTagFloat, Float>() {
-			@Nonnull
-			@Override
-			public NBTTagFloat serialize(Float object) {
-				return new NBTTagFloat(object);
-			}
-
-			@Override
-			public Float deserialize(World world, @Nonnull NBTTagFloat object) {
-				return object.getFloat();
-			}
-		});
-
-		public static final Pair<String, Class<Vec3d>> LOOK = constructPair("look", Vec3d.class, new ProcessData.Process<NBTTagCompound, Vec3d>() {
-			@Nonnull
-			@Override
-			public NBTTagCompound serialize(Vec3d object) {
-				NBTTagCompound compound = new NBTTagCompound();
-				compound.setDouble("x", object.x);
-				compound.setDouble("y", object.y);
-				compound.setDouble("z", object.z);
-				return compound;
-			}
-
-			@Override
-			public Vec3d deserialize(World world, @Nonnull NBTTagCompound object) {
-				double x = object.getDouble("x");
-				double y = object.getDouble("y");
-				double z = object.getDouble("z");
-				return new Vec3d(x, y, z);
-			}
-		});
-
-		public static final Pair<String, Class<Vec3d>> ORIGIN = constructPair("origin", Vec3d.class, new ProcessData.Process<NBTTagCompound, Vec3d>() {
-			@Nonnull
-			@Override
-			public NBTTagCompound serialize(Vec3d object) {
-				NBTTagCompound compound = new NBTTagCompound();
-				compound.setDouble("x", object.x);
-				compound.setDouble("y", object.y);
-				compound.setDouble("z", object.z);
-				return compound;
-			}
-
-			@Override
-			public Vec3d deserialize(World world, @Nonnull NBTTagCompound object) {
-				double x = object.getDouble("x");
-				double y = object.getDouble("y");
-				double z = object.getDouble("z");
-				return new Vec3d(x, y, z);
-			}
-		});
-
-		public static final Pair<String, Class<Entity>> ENTITY_HIT = constructPair("entity_hit", Entity.class, new ProcessData.Process<NBTTagInt, Entity>() {
-			@Nonnull
-			@Override
-			public NBTTagInt serialize(Entity object) {
-				if (object == null) return new NBTTagInt(-1);
-				return new NBTTagInt(object.getEntityId());
-			}
-
-			@Override
-			public Entity deserialize(World world, @Nonnull NBTTagInt object) {
-				return world.getEntityByID(object.getInt());
-			}
-		});
-
-		public static final Pair<String, Class<BlockPos>> BLOCK_HIT = constructPair("block_hit", BlockPos.class, new ProcessData.Process<NBTTagLong, BlockPos>() {
-			@Nonnull
-			@Override
-			public NBTTagLong serialize(BlockPos object) {
-				if (object == null) return new NBTTagLong(-1L);
-				return new NBTTagLong(object.toLong());
-			}
-
-			@Override
-			public BlockPos deserialize(World world, @Nonnull NBTTagLong object) {
-				return BlockPos.fromLong(object.getLong());
-			}
-		});
-
-		@Nonnull
-		public static final Pair<String, Class<EnumFacing>> FACE_HIT = constructPair("face_hit", EnumFacing.class, new ProcessData.Process<NBTTagString, EnumFacing>() {
-			@Nonnull
-			@Override
-			public NBTTagString serialize(EnumFacing object) {
-				if (object == null) return new NBTTagString("UP");
-				return new NBTTagString(object.name());
-			}
-
-			@Override
-			public EnumFacing deserialize(World world, @Nonnull NBTTagString object) {
-				return EnumFacing.valueOf(object.getString());
-			}
-		});
-
-		@Nonnull
-		public static final Pair<String, Class<IWizardryCapability>> CAPABILITY = constructPair("capability", IWizardryCapability.class, new ProcessData.Process<NBTTagCompound, IWizardryCapability>() {
-			@Nonnull
-			@Override
-			public NBTTagCompound serialize(IWizardryCapability object) {
-				if (object == null) return new NBTTagCompound();
-				return object.serializeNBT();
-			}
-
-			@Override
-			public IWizardryCapability deserialize(World world, @Nonnull NBTTagCompound object) {
-				DefaultWizardryCapability cap = new DefaultWizardryCapability();
-				cap.deserializeNBT(object);
-				return cap;
-			}
-		});
-
-		@Nonnull
-		public static final Pair<String, Class<Vec3d>> TARGET_HIT = constructPair("target_hit", Vec3d.class, new ProcessData.Process<NBTTagCompound, Vec3d>() {
-			@Nonnull
-			@Override
-			public NBTTagCompound serialize(Vec3d object) {
-				if (object == null) return new NBTTagCompound();
-				NBTTagCompound compound = new NBTTagCompound();
-				compound.setDouble("x", object.x);
-				compound.setDouble("y", object.y);
-				compound.setDouble("z", object.z);
-				return compound;
-			}
-
-			@Override
-			public Vec3d deserialize(World world, @Nonnull NBTTagCompound object) {
-				if (!object.hasKey("x") || !object.hasKey("y") || !object.hasKey("z")) return Vec3d.ZERO;
-				double x = object.getDouble("x");
-				double y = object.getDouble("y");
-				double z = object.getDouble("z");
-				return new Vec3d(x, y, z);
-			}
-		});
-
-		@Nonnull
-		public static final Pair<String, Class<IBlockState>> BLOCK_STATE = constructPair("block_state", IBlockState.class, new ProcessData.Process<NBTTagCompound, IBlockState>() {
-
-			@Nonnull
-			@Override
-			public NBTTagCompound serialize(@Nullable IBlockState object) {
-				NBTTagCompound nbtState = new NBTTagCompound();
-				if (object == null) return nbtState;
-				NBTUtil.writeBlockState(nbtState, object);
-				return nbtState;
-			}
-
-			@Override
-			public IBlockState deserialize(@Nullable World world, @Nonnull NBTTagCompound object) {
-				return NBTUtil.readBlockState(object);
-			}
-		});
-
-		@Nonnull
-		public static final Pair<String, Class<Long>> SEED = constructPair("seed", Long.class, new ProcessData.Process<NBTTagLong, Long>() {
-
-			@Nonnull
-			@Override
-			public NBTTagLong serialize(@Nullable Long object) {
-				if (object == null) return new NBTTagLong(0);
-				return new NBTTagLong(object);
-			}
-
-			@Nonnull
-			@Override
-			public Long deserialize(World world, @Nonnull NBTTagLong object) {
-				return object.getLong();
-			}
-		});
-
-		public static final Pair<String, Class<Set<BlockPos>>> BLOCK_SET = constructPair("block_set", Set.class, new ProcessData.Process<NBTTagList, Set<BlockPos>>() {
-
-			@Nonnull
-			@Override
-			public NBTTagList serialize(@Nullable Set<BlockPos> object) {
-				NBTTagList list = new NBTTagList();
-
-				if (object == null) return list;
-
-				for (BlockPos pos : object) {
-					list.appendTag(new NBTTagLong(pos.toLong()));
-				}
-
-				return list;
-			}
-
-			@NotNull
-			@Override
-			public Set<BlockPos> deserialize(@Nullable World world, @Nonnull NBTTagList object) {
-				Set<BlockPos> poses = new HashSet<>();
-
-				for (NBTBase base : object) {
-					if (base instanceof NBTTagLong) {
-						poses.add(BlockPos.fromLong(((NBTTagLong) base).getLong()));
-					}
-				}
-
-				return poses;
-			}
-		});
-		
-		public static final Pair<String, Class<HashMap<BlockPos, IBlockState>>> BLOCKSTATE_CACHE = constructPair("block_state_cache", HashMap.class, new ProcessData.Process<NBTTagList, HashMap<BlockPos, IBlockState>>() {
-
-			@Nonnull
-			@Override
-			public NBTTagList serialize(@Nullable HashMap<BlockPos, IBlockState> object) {
-				NBTTagList list = new NBTTagList();
-
-				if (object == null) return list;
-
-				for (Map.Entry<BlockPos, IBlockState> entry : object.entrySet()) {
-					NBTTagCompound compound = new NBTTagCompound();
-					compound.setLong("pos", entry.getKey().toLong());
-
-					NBTTagCompound nbtState = new NBTTagCompound();
-					NBTUtil.writeBlockState(nbtState, entry.getValue());
-					compound.setTag("blockstate", nbtState);
-
-					list.appendTag(compound);
-				}
-
-				return list;
-			}
-
-			@Override
-			public HashMap<BlockPos, IBlockState> deserialize(@Nullable World world, @Nonnull NBTTagList object) {
-				HashMap<BlockPos, IBlockState> stateCache = new HashMap<>();
-
-				for (NBTBase base : object) {
-					if (base instanceof NBTTagCompound) {
-
-						NBTTagCompound compound = (NBTTagCompound) base;
-						if (compound.hasKey("pos") && compound.hasKey("blockstate")) {
-							BlockPos pos = BlockPos.fromLong(compound.getLong("pos"));
-							IBlockState state = NBTUtil.readBlockState(compound.getCompoundTag("blockstate"));
-
-							stateCache.put(pos, state);
-
-						}
-					}
-				}
-
-				return stateCache;
-			}
-		});
-	*/
 	}
 }
