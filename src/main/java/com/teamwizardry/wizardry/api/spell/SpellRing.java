@@ -46,7 +46,11 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
- * Modules ala IBlockStates
+ * Modules ala IBlockStates. <br />
+ * <b>NOTE</b>: Is read only. Use {@link SpellRingCache} or {@link SpellBuilder} to create new SpellRing instances. <br/>
+ * <b>IMPORTANT</b>: All new NBT fields, which are float or double should be stored in their fixed point form.
+ *                   Also lists and compounds must be sorted by some arbitrary, but fixed, order.
+ *                   This way it is assured that the {@link NBTBase#equals} in the resulting NBT is reliable.   
  */
 public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
@@ -295,12 +299,10 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	 * <b>NOTE</b>: Called only by {@link SpellBuilder}.
 	 */
 	void processModifiers() {
-//		informationTag = new NBTTagCompound();
 		HashMap<String, Double> informationMap = new HashMap<>();
 
 		if (module != null) {
 			module.getAttributeRanges().forEach((attribute, range) -> {
-//				setDoubleToNBT(informationTag, attribute.getNbtName(), range.base);
 				informationMap.put(attribute.getNbtName(), range.base);
 			});
 		}
@@ -308,16 +310,11 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		for (Operation op : Operation.values()) {
 			for (AttributeModifier modifier : compileTimeModifiers.get(op)) {
 
-//				if (!informationTag.hasKey(modifier.getAttribute().getNbtName()))
 				Double current = informationMap.get(modifier.getAttribute().getNbtName());
 				if( current == null )
 					continue;
-//				if (!informationMap.containsKey(modifier.getAttribute().getNbtName()) )
-//					continue;
-//				double current = getDoubleFromNBT(informationTag, modifier.getAttribute().getNbtName());
 				double newValue = modifier.apply(current);
 
-//				setDoubleToNBT(informationTag, modifier.getAttribute().getNbtName(), newValue);
 				informationMap.put(modifier.getAttribute().getNbtName(), newValue);
 
 				Wizardry.logger.info(module == null ? "<null module>" : module.getSubModuleID() + ": Attribute: " + modifier.getAttribute() + ": " + current + "-> " + newValue);
@@ -325,14 +322,6 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		}
 		
 		// Output a sorted list of tags to informationTag
-/*		ArrayList<Pair<String, Long>> sortedInformationList = new ArrayList<>(informationMap.size());
-		informationMap.forEach((key, val) -> sortedInformationList.add(Pair.of(key, FixedPointUtils.doubleToFixed(val))));
-		Collections.sort(sortedInformationList, (o1, o2) -> o1.getKey().compareTo(o2.getKey()));
-
-		informationTag = new NBTTagCompound();
-		for( Pair<String, Long> entry : sortedInformationList ) {
-			setFixedToNBT(informationTag, entry.getKey(), entry.getValue());
-		} */
 		informationTag = sortInformationTag(informationMap);
 	}
 	
@@ -533,12 +522,6 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		return value * getBurnoutMultiplier();
 	}
 
-// Avatair: Don't know what to do with it ...
-//	@Nonnull
-//	public ArrayListMultimap<Operation, AttributeModifier> getModifiers() {
-//		return (ArrayListMultimap<Operation, AttributeModifier>)compileTimeModifiers;
-//	}
-
 	/**
 	 * Adds a modifier module to spell ring. <br/>
 	 * <b>NOTE</b>: In actual implementation, only attributes are overtaken. <br/> 
@@ -637,7 +620,6 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 				modifierCompound.setInteger("operation", modifier.getOperation().ordinal());
 				modifierCompound.setString("attribute", modifier.getAttribute().getNbtName());
 				FixedPointUtils.setFixedToNBT(modifierCompound, "modifier", modifier.getModifierFixed());
-//				attribs.appendTag(modifierCompound);
 				modifierList.add(modifierCompound);
 			});
 			
@@ -703,23 +685,6 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 
 						long modifierFixed = FixedPointUtils.getFixedFromNBT(modifierCompound, "modifier");
 						compileTimeModifiers.put(operation, new AttributeModifierSpellRing(attribute, modifierFixed, operation));
-						
-/*						byte dataType = modifierCompound.getTagId("modifier"); // See net.minecraft.nbt.NBTBase.NBT_TYPES[] for meaning of type ids.
-						if( dataType == 5 || dataType == 6 ) {
-							// NOTE: For legacy case only.
-							
-							// If 5=float or 6=double type
-							double modifier = modifierCompound.getDouble("modifier");
-							compileTimeModifiers.put(operation, new AttributeModifierSpellRing(attribute, modifier, operation));
-						}
-						else if( dataType == 1 || dataType == 2 || dataType == 3 || dataType == 4 ) {
-							// If 1=byte, 2=short, 3=int, 4=long
-							long modifierFixed = modifierCompound.getLong("modifier");
-							compileTimeModifiers.put(operation, new AttributeModifierSpellRing(attribute, modifierFixed, operation));
-						}
-						else {
-							// Ignore.
-						}*/
 					}
 				}
 			}
@@ -731,10 +696,6 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 			setChildRing(childRing);
 		}
 	}
-
-//	public SpellRing copy() {
-//		return deserializeRing(serializeNBT());
-//	}
 	
 	////////////////////
 		
