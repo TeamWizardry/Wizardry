@@ -241,6 +241,11 @@ wizardry.spell.effect_vanish.desc.duration=Effect lasts for <DURATION> seconds.
 wizardry.spell.effect_zoom.name=Zoom
 wizardry.spell.effect_zoom.desc=Zoom directly to the targeted position.
 wizardry.spell.effect_zoom.desc.range=Instantly moves you up to <RANGE> blocks.
+wizardry.spell.effect_poison_cloud.name=Poison Cloud
+wizardry.spell.effect_poison_cloud.desc=Create a poisonous cloud of gas
+wizardry.spell.effect_poison_cloud.desc.potency=Potency above 3 will inflict nausea and every 3 points of <POTENCY> will increase the level of poison to a maximum of 4.
+wizardry.spell.effect_poison_cloud.desc.area=Will inflict poison on each entity within <AREA> blocks.
+wizardry.spell.effect_poison_cloud.desc.duration=Lasts half a second for each point of <DURATION>.
 
 wizardry.spell.event_collide_block.name=On Block Collision
 wizardry.spell.event_collide_block.desc=This event triggers when the spell collides with a block. Place directly before an effect to cause it to only affect blocks.
