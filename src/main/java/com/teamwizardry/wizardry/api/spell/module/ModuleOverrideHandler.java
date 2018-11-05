@@ -283,11 +283,13 @@ public class ModuleOverrideHandler {
 		HashMap<String, OverrideMethod> overridableMethods = new HashMap<>();
 		// Determine overriden methods via reflection
 		// FIXME: Separation of concerns: Overridable methods are not part of factory. Move them or rename factory class appropriately.
-		// TODO: Check for ambiguity of method names. Handle overrides by superclass properly!
 		for(Method method : clazz.getMethods()) {
 			ModuleOverride ovrd = method.getDeclaredAnnotation(ModuleOverride.class);
 			if( ovrd == null )
 				continue;
+			
+			if( overridableMethods.containsKey(ovrd.value()) )
+				throw new ModuleInitException("Multiple methods exist in class '" + clazz + "' with same override name '" + ovrd.value() + "'.");
 			
 			try {
 				method.setAccessible(true);
@@ -339,12 +341,13 @@ public class ModuleOverrideHandler {
 	public static Map<String, Method> getInterfaceMethods(Class<?> clazz) throws ModuleOverrideException {
 		HashMap<String, Method> overridableMethods = new HashMap<>();
 
-		// TODO: Check for ambiguity of method names. Handle overrides by superclass properly!
-		
 		for(Method method : clazz.getMethods()) {
 			ModuleOverrideInterface ovrd = method.getDeclaredAnnotation(ModuleOverrideInterface.class);
 			if( ovrd == null )
 				continue;
+			
+			if( overridableMethods.containsKey(ovrd.value()) )
+				throw new ModuleOverrideException("Multiple methods exist in class '" + clazz + "' with same override name '" + ovrd.value() + "'.");
 			
 			try {
 				method.setAccessible(true);
