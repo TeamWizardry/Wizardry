@@ -27,19 +27,11 @@ public class ModuleInstanceEvent extends ModuleInstance {
 	}
 	
 	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean ignoreResultsForRendering() {
-		return ((IModuleEffect)moduleClass).ignoreResultsForRendering();
-	}
-
-	/**
 	 * {@inheritDoc}	
 	 */
 	@Override
 	public boolean noChildrenRun() {
-		return ((IModuleEffect)moduleClass).noChildrenRun();
+		return ((IModuleEvent)moduleClass).noChildrenRun();
 	}
 	
 	/**

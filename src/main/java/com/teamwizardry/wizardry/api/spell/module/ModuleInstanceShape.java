@@ -33,7 +33,7 @@ public class ModuleInstanceShape extends ModuleInstance {
 	 */
 	@Override
 	public boolean ignoreResultsForRendering() {
-		return ((IModuleEffect)moduleClass).ignoreResultsForRendering();
+		return ((IModuleShape)moduleClass).ignoreResultsForRendering();
 	}
 
 	
@@ -42,7 +42,7 @@ public class ModuleInstanceShape extends ModuleInstance {
 	 */
 	@Override
 	public boolean noChildrenRun() {
-		return ((IModuleEffect)moduleClass).noChildrenRun();
+		return ((IModuleShape)moduleClass).noChildrenRun();
 	}
 	
 	/**

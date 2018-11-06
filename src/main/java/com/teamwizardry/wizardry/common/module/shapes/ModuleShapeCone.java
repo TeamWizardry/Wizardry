@@ -42,6 +42,11 @@ public class ModuleShapeCone implements IModuleShape {
 	public String[] compatibleModifierClasses() {
 		return new String[]{"modifier_increase_potency", "modifier_extend_range"};
 	}
+	
+	@Override
+	public boolean ignoreResultsForRendering() {
+		return true;
+	}
 
 	@Override
 	public boolean noChildrenRun() {

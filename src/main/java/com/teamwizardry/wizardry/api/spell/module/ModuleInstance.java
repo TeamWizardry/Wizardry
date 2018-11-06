@@ -577,27 +577,35 @@ public abstract class ModuleInstance {
 	 * @return If the spellData has succeeded.
 	 */
 	public final boolean castSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
-		if (spell.world.isRemote) return true;
+		boolean success = true;
+		if (!spell.world.isRemote) {
 
-		if (moduleClass instanceof ILingeringModule) {
-			boolean alreadyLingering = false;
-
-			WizardryWorld worldCap = WizardryWorldCapability.get(spell.world);
-			for (SpellTicker.LingeringObject lingeringObject : worldCap.getLingeringObjects()) {
-				if (lingeringObject.getSpellRing() == spellRing
-						|| lingeringObject.getSpellData() == spell) {
-					alreadyLingering = true;
-					break;
+			if (moduleClass instanceof ILingeringModule) {
+				boolean alreadyLingering = false;
+	
+				WizardryWorld worldCap = WizardryWorldCapability.get(spell.world);
+				for (SpellTicker.LingeringObject lingeringObject : worldCap.getLingeringObjects()) {
+					if (lingeringObject.getSpellRing() == spellRing
+							|| lingeringObject.getSpellData() == spell) {
+						alreadyLingering = true;
+						break;
+					}
 				}
+				if (!alreadyLingering)
+					worldCap.addLingerSpell(spellRing, spell, ((ILingeringModule) moduleClass).getLingeringTime(spell, spellRing));
 			}
-			if (!alreadyLingering)
-				worldCap.addLingerSpell(spellRing, spell, ((ILingeringModule) moduleClass).getLingeringTime(spell, spellRing));
+	
+			SpellCastEvent event = new SpellCastEvent(spellRing, spell);
+			MinecraftForge.EVENT_BUS.post(event);
+
+			success = !event.isCanceled() && run(spell, spellRing);
 		}
-
-		SpellCastEvent event = new SpellCastEvent(spellRing, spell);
-		MinecraftForge.EVENT_BUS.post(event);
-
-		return !event.isCanceled() && run(spell, spellRing);
+		
+		if( success || ignoreResultsForRendering() ) {
+			sendRenderPacket(spell, spellRing);
+		}
+		
+		return success;
 	}
 
 	public final void sendRenderPacket(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {

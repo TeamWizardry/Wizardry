@@ -55,6 +55,11 @@ public class ModuleShapeBeam implements IModuleShape, IContinuousModule {
 	}
 
 	@Override
+	public boolean ignoreResultsForRendering() {
+		return true;
+	}
+	
+	@Override
 	public boolean noChildrenRun() {
 		return true;
 	}

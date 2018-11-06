@@ -51,6 +51,11 @@ public class ModuleShapeZone implements IModuleShape, ILingeringModule {
 	}
 
 	@Override
+	public boolean ignoreResultsForRendering() {
+		return true;
+	}
+	
+	@Override
 	public boolean noChildrenRun() {
 		return true;
 	}
