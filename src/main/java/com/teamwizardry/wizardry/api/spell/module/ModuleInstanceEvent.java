@@ -27,6 +27,22 @@ public class ModuleInstanceEvent extends ModuleInstance {
 	}
 	
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean ignoreResultsForRendering() {
+		return ((IModuleEffect)moduleClass).ignoreResultsForRendering();
+	}
+
+	/**
+	 * {@inheritDoc}	
+	 */
+	@Override
+	public boolean noChildrenRun() {
+		return ((IModuleEffect)moduleClass).noChildrenRun();
+	}
+	
+	/**
 	 * Only return false if the spellData cannot be taxed from mana. Return true otherwise.
 	 */
 	@Override

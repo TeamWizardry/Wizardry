@@ -152,26 +152,35 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	 *
 	 * @param data The SpellData object.
 	 */
-	public boolean runSpellRing(SpellData data) {
-		if (module == null) return false;
+	public void runSpellRing(SpellData data) {
+		if (module == null)
+			return;
 
 		if (data.getCaster() != null)
 			data.processCastTimeModifiers(data.getCaster(), this);
-		boolean success = module.castSpell(data, this) && !module.ignoreResultForRendering();
-		if (success) {
-
-			if (module != null) {
-				module.sendRenderPacket(data, this);
-			}
-
-			if (getChildRing() != null) return getChildRing().runSpellRing(data);
-		} else if (module.ignoreResultForRendering()) {
-			if (module != null) {
-				module.sendRenderPacket(data, this);
-			}
+		
+//		boolean doTraverse = module.castSpell(data, this) && !module.noChildrenRun();
+		boolean success = module.castSpell(data, this);
+		if( success || module.ignoreResultsForRendering() ) {
+			module.sendRenderPacket(data, this);
 		}
 
-		return success;
+//		if (doTraverse) {
+		if (success && !module.noChildrenRun()) {
+
+//			if (module != null) {
+//				module.sendRenderPacket(data, this);
+//			}
+
+			if (getChildRing() != null) 
+				getChildRing().runSpellRing(data);
+		} else if (module.noChildrenRun()) {
+//			if (module != null) {
+//				module.sendRenderPacket(data, this);
+//			}
+		}
+
+//		return doTraverse;
 	}
 
 	public boolean isContinuous() {

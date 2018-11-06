@@ -23,8 +23,4 @@ public interface IModule {
 	default String[] compatibleModifierClasses() {
 		return null;
 	}
-	
-	default boolean ignoreResultForRendering() {
-		return false;
-	}
 }

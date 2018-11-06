@@ -44,7 +44,7 @@ public class ModuleShapeCone implements IModuleShape {
 	}
 
 	@Override
-	public boolean ignoreResultForRendering() {
+	public boolean noChildrenRun() {
 		return true;
 	}
 

@@ -38,7 +38,7 @@ public class ModuleShapeProjectile implements IModuleShape {
 	}
 
 	@Override
-	public boolean ignoreResultForRendering() {
+	public boolean noChildrenRun() {
 		return true;
 	}
 

@@ -18,4 +18,13 @@ public interface IRunnableModule<InstanceType extends ModuleInstance> {
 	 * Only return false if the spellData cannot be taxed from mana. Return true otherwise.
 	 */
 	boolean run(InstanceType instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing);
+	
+	/**
+	 * If children shouldn't be traversed after execution.
+	 * 
+	 * @return <code>true</code> iff yes.
+	 */
+	default boolean noChildrenRun() {
+		return false;
+	}
 }

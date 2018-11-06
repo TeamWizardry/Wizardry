@@ -29,4 +29,13 @@ public interface IRenderableModule<InstanceType extends ModuleInstance> {
 	default void renderSpell(InstanceType instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		
 	}
+	
+	/**
+	 * If module shouldn't be rendered when executing.
+	 * 
+	 * @return <code>true</code> iff yes.
+	 */
+	default boolean ignoreResultsForRendering() {
+		return false;
+	}
 }

@@ -536,9 +536,23 @@ public abstract class ModuleInstance {
 	public final void addAttributeRange(Attribute attribute, AttributeRange range) {
 		this.attributeRanges.put(attribute, range);
 	}
+
+	/**
+	 * If module shouldn't be rendered when executing.
+	 * 
+	 * @return <code>true</code> iff yes.
+	 */
+	public boolean ignoreResultsForRendering() {
+		return false;
+	}
 	
-	public final boolean ignoreResultForRendering() {
-		return moduleClass.ignoreResultForRendering();
+	/**
+	 * If children shouldn't be traversed after execution.
+	 * 
+	 * @return <code>true</code> iff yes.
+	 */
+	public boolean noChildrenRun() {
+		return true;
 	}
 	
 	/**
