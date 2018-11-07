@@ -241,6 +241,11 @@ wizardry.spell.effect_vanish.desc.duration=Der Effekt hält <DAUER> Sekunden an.
 wizardry.spell.effect_zoom.name=Lichtgeschwindigkeit
 wizardry.spell.effect_zoom.desc=Du erreichst den angezielten Ort mit Lichtgeschwindigkeit. Der Effekt ändert sich, wenn er nicht auf dich selbst gewirkt wird.
 wizardry.spell.effect_zoom.desc.range=Lässt dich sofort um bis zu <REICHWEITE> Blöcke bewegen.
+wizardry.spell.effect_poison_cloud.name=Giftgas
+wizardry.spell.effect_poison_cloud.desc=Erzeugt einen giftigen Nebel
+wizardry.spell.effect_poison_cloud.desc.potency=Bei einer Stärke von mehr als 3 fügt das Giftgas zusätzlich Übelkeit hinzu und alle 3 Punkte in <STÄRKE> erhöht die Giftwirkung um ein Level. Das höchste Level ist 4.
+wizardry.spell.effect_poison_cloud.desc.area=Es werden alle Wesen vergiftet, die sich <GEBIET> Blöcke um das Zentrum der Wolke befinden.
+wizardry.spell.effect_poison_cloud.desc.duration=Der Nebel hält eine halbe Sekunde für jeden Punkt in <DAUER> an.
 
 wizardry.spell.event_collide_block.name=Blockberührung
 wizardry.spell.event_collide_block.desc=Diese Regel lässt den Zauber nur dann wirken, wenn ein Block getroffen wird. Vor einen Effekt setzen, damit sich dieser nur auf Blöcke auswirkt.
@@ -412,10 +417,10 @@ wizardry.book.mobs.spirit_wights.content3=If you decline to fight them -- which,
 wizardry.book.mobs.spirit_wights.content4=It is one final point of interest that spiritwights reserve their hatred for wizards. As far as we know, they show no interest in any other creature. A unicorn may go where a wizard fears to tread, and face no danger. There must be some reason for this, but who knows it.
 
 wizardry.book.mobs.unicorns.title=Einhörner
-wizardry.book.mobs.unicorns.desc=Noch nie war von den Wolken gekickt zu werden so einfach
-wizardry.book.mobs.unicorns.content1=Please, make no mistake; these are not the gentle, damsel-loving creatures of song and story. The tales I heard as a child about unicorns were keen to stress their beauty and intelligence, their kindness and faithfulness. Real unicorns are better described as 'stroppy'.
-wizardry.book.mobs.unicorns.content2=These underworld-native creatures are savage and territorial, sharp of horn and hard of hoof. As far as we can tell, they possess a burning desire to kick, stab or otherwise maim any animal that crosses their path - wizards included - and will even resort to biting if in the mood. They seem to harbor a particular grudge against fairies, which they eat when possible.
-wizardry.book.mobs.unicorns.content3=Some have argued that unicorns have little practical value, but their horns have potent magical properties. Also - as I've said elsewhere - fairies are remarkably annoying, so anything that keeps their numbers down can't be all bad.
+wizardry.book.mobs.unicorns.desc=Noch nie war von den Wolken gekickt werden so einfach
+wizardry.book.mobs.unicorns.content1=Bitte mache nicht den Fehler, sie mit den sanften und Jungfrauen liebenden Geschöpfen aus Geschichten und Lidern zu verwechseln. Jene Kindergeschichten, die mit Begeisterung von der Schönheit und der Intelligenz, von der Freundlichkeit und der Treue der Einhörnern erzählt. Echte Einhörner kann man besser als 'leicht reizbar' beschreiben.
+wizardry.book.mobs.unicorns.content2=Diese Bewohner des Unterirdischen Himmels sind wilde und territoriale Kreaturen mit spitzen Hörnern und harten Hufen. Soweit wir wissen besitzen sie ein unstillbares verlangen, jedes Tier, das ihren Weg kreuzt, zu treten, aufzuspießen oder auf andere Weise zu verstümmeln (wenn sie in der Laune sind greifen sie sogar auf Beißen zurück) - und Zauberer wie uns verschonen sie erst recht nicht. Sie scheinen einen besonderen Groll gegen Feen zu hegen und fressen diese, wenn sich die Gelegenheit dazu bietet.
+wizardry.book.mobs.unicorns.content3=Einige vertreten die Meinung, dass Einhörner keinen praktischen Nutzen haben, doch ihre Hörner besitzen mächtige magische Eigenschaften. Außerdem sind Feen  - wie ich an anderer Stelle schon erwähnt hatte - extrem nervtötend. Deshalb kann alles was deren Anzahl verringert nicht komplett schlecht sein.
 
 wizardry.book.dimensions.underworld.title=Unterirdischer Himmel
 wizardry.book.dimensions.underworld.desc=Erfahre mehr über den Unterirdischen Himmel
