@@ -655,11 +655,11 @@ public class WorktableGui extends GuiBase {
 							.append(TextFormatting.GRAY)
 							.append("(")
 							.append(TextFormatting.BLUE)
-							.append(Math.round(tmpRing.getManaDrain() * tmpRing.getManaMultiplier()))
+							.append(Math.round(tmpRing.getManaDrain(null) * tmpRing.getManaMultiplier()))
 							.append(TextFormatting.GRAY)
 							.append("/")
 							.append(TextFormatting.RED)
-							.append(Math.round(tmpRing.getBurnoutFill() * tmpRing.getBurnoutMultiplier()))
+							.append(Math.round(tmpRing.getBurnoutFill(null) * tmpRing.getBurnoutMultiplier()))
 							.append(TextFormatting.GRAY)
 							.append(")");
 					tmpRing = tmpRing.getChildRing();

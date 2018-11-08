@@ -1,9 +1,15 @@
 package com.teamwizardry.wizardry.api.spell;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.teamwizardry.librarianlib.features.saving.Savable;
 import com.teamwizardry.wizardry.api.capability.mana.DefaultWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.mana.WizardryCapabilityProvider;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
+import com.teamwizardry.wizardry.api.spell.attribute.Operation;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry.Attribute;
+
 import kotlin.Pair;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -20,6 +26,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -38,6 +45,14 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 	public final World world;
 	@Nonnull
 	private final HashMap<Pair, Object> data = new HashMap<>();
+	
+	/**
+	 * A map holding cast time modifiers
+	 */
+	// TODO: It is mutable. Move to SpellData.
+	@Nonnull
+	private HashMap<Attribute, ArrayListMultimap<Operation, AttributeModifier>> castTimeModifiers = new HashMap<>();
+	
 
 	public SpellData(@Nonnull World world) {
 		this.world = world;
@@ -296,6 +311,46 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 				", data=" + data +
 				'}';
 	}
+	
+	////////////////////
+	
+	public void processCastTimeModifiers(Entity entity, SpellRing spellRing)
+	{
+		List<AttributeModifier> modifiers = SpellModifierRegistry.compileModifiers(entity, spellRing, this);
+		for (AttributeModifier modifier : modifiers)
+		{
+			Attribute attribute = modifier.getAttribute();
+			Operation operation = modifier.getOperation();
+
+			ArrayListMultimap<Operation, AttributeModifier> operationMap = castTimeModifiers.get(attribute);
+			if (operationMap == null)
+				castTimeModifiers.put(attribute, operationMap = ArrayListMultimap.create());
+			
+			operationMap.put(operation, modifier);
+		}
+	}
+	
+	/**
+	 * Get the value of the given attribute after being passed through any cast time modifiers.
+	 * 
+	 * @param attribute The attribute you want. List in {@link AttributeRegistry} for default attributes.
+	 * @param value		The initial value of the given attribute, given by the compiled value in standard use cases.
+	 * @return The {@code double} potency of a modifier.
+	 */
+	public final double getCastTimeValue(Attribute attribute, double value)
+	{
+		ArrayListMultimap<Operation, AttributeModifier> operationMap = castTimeModifiers.get(attribute);
+		if (operationMap == null)
+			return value;
+		
+		for (Operation op : Operation.values())
+			for (AttributeModifier modifier : operationMap.get(op))
+				value = modifier.apply(value);
+		
+		return value;
+	}
+	
+	////////////////////
 
 	public static class DefaultKeys {
 

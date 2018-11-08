@@ -137,6 +137,7 @@ public class CommonProxy {
 				}
 
 			ModuleRegistry.INSTANCE.loadUnprocessedModules();
+			ModuleRegistry.INSTANCE.loadOverrideDefaults();
 			if (ConfigValues.useInternalValues)
 				ModuleRegistry.INSTANCE.copyAllModules(moduleDirectory);
 			ModuleRegistry.INSTANCE.loadModules(moduleDirectory);
@@ -144,7 +145,6 @@ public class CommonProxy {
 	}
 
 	public void postInit(FMLPostInitializationEvent event) {
-		ModuleRegistry.INSTANCE.loadModuleOverrides();
 	}
 
 	@SubscribeEvent

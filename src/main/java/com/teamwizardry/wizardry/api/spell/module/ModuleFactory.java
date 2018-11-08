@@ -2,12 +2,14 @@ package com.teamwizardry.wizardry.api.spell.module;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import com.teamwizardry.wizardry.api.spell.annotation.ModuleParameter;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.module.ModuleOverrideHandler.OverrideMethod;
 
 /**
  * A factory object to create new module instances based on passed parameter sets.
@@ -19,6 +21,7 @@ public class ModuleFactory {
 	private final Class<? extends IModule> clazz;
 	private final HashMap<Map<String, Object>, IModule> instances = new HashMap<>();
 	private final HashMap<String, Field> configurableFields = new HashMap<>();
+	private final HashMap<String, OverrideMethod> overridableMethods = new HashMap<>();
 	private final String referenceModuleID;
 	
 	ModuleFactory(String referenceModuleID, Class<? extends IModule> clazz) throws ModuleInitException {
@@ -27,14 +30,21 @@ public class ModuleFactory {
 		this.referenceModuleID = referenceModuleID;
 		
 		// Determine configurable fields via reflection
-		for(Field field : clazz.getDeclaredFields()) {
+		for(Field field : clazz.getFields()) {
 			ModuleParameter cfg = field.getDeclaredAnnotation(ModuleParameter.class);
 			if( cfg == null )
 				continue;
-			
-			// Add configuration
+			try {
+				field.setAccessible(true);
+			}
+			catch(SecurityException e) {
+				throw new ModuleInitException("Failed to aquire reflection access to field '" + field.toString() + "', annotated by @ModuleParameter.", e);
+			}
 			configurableFields.put(cfg.value(), field);
 		}
+
+		// Determine overrides
+		overridableMethods.putAll(ModuleOverrideHandler.getOverrideMethodsFromClass(clazz, true));
 	}
 	
 	/**
@@ -56,6 +66,15 @@ public class ModuleFactory {
 	}
 	
 	/**
+	 * Returns a map containing all overridable methods within the module.
+	 * 
+	 * @return a map, which associates an override name with a method.
+	 */
+	public Map<String, OverrideMethod> getOverrides() {
+		return Collections.unmodifiableMap(overridableMethods);
+	}
+	
+	/**
 	 * Checks whether a given configuration field exists.
 	 * 
 	 * @param key the name of the configuration field.
@@ -63,6 +82,15 @@ public class ModuleFactory {
 	 */
 	public boolean hasConfigField(String key) {
 		return configurableFields.containsKey(key);
+	}
+	
+	/**
+	 * Checks whether the module has methods, which can be overridden.
+	 * 
+	 * @return <code>true</code> iff yes.
+	 */
+	public boolean hasOverrides() {
+		return !overridableMethods.isEmpty();
 	}
 
 	/**
