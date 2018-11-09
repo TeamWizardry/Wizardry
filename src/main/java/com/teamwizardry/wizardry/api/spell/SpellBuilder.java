@@ -1,13 +1,21 @@
 package com.teamwizardry.wizardry.api.spell;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import javax.annotation.Nonnull;
+
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-
-import javax.annotation.Nonnull;
-import java.util.*;
 
 public class SpellBuilder {
 
@@ -91,6 +99,7 @@ public class SpellBuilder {
 
 				lastRing = child;
 			}
+			
 			spellList.add(ringHead);
 		}
 
@@ -111,7 +120,21 @@ public class SpellBuilder {
 				chainEnd = chainEnd.getChildRing();
 			}
 		}
-		return spellList;
+		
+		// Register spell chain at the end. Use cached version if found an already registered chain.
+		// TODO: For the future: Maybe find a better optimized solution, if constructing a spell ring is more time consuming.
+		ArrayList<SpellRing> cachedSpellList = new ArrayList<>(spellList.size());
+		for (SpellRing ring : spellList) {
+			SpellRing cachedRing = SpellRingCache.INSTANCE.internalGetSpellRingByNBT(ring.serializeNBT(), false);
+			if( cachedRing != null )
+				cachedSpellList.add(cachedRing);
+			else {
+				ring = SpellRingCache.INSTANCE.registerSpellRing(ring);
+				cachedSpellList.add(ring);
+			}
+		}
+		
+		return cachedSpellList;
 	}
 
 	public List<ItemStack> getInventory() {

@@ -121,6 +121,10 @@ public abstract class ModuleInstance {
 		return this.moduleClass;
 	}
 	
+	public final ModuleFactory getFactory() {
+		return this.createdByFactory;
+	}
+	
 	/**
 	 * Will render whatever GL code is specified here while the spell is being held by the
 	 * player's hand.

@@ -11,11 +11,14 @@ import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.SpellRingCache;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceShape;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
+import com.teamwizardry.wizardry.common.module.shapes.IShapeOverrides;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
+import com.teamwizardry.wizardry.common.module.shapes.IShapeOverrides;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.nbt.NBTTagCompound;
@@ -103,7 +106,7 @@ public class EntitySpellProjectile extends EntityMod {
 
 	protected SpellRing getSpellRing() {
 		NBTTagCompound compound = getDataManager().get(SPELL_RING);
-		return SpellRing.deserializeRing(compound);
+		return SpellRingCache.INSTANCE.getSpellRingByNBT(compound);
 	}
 
 	protected void setSpellRing(SpellRing ring) {
@@ -166,9 +169,9 @@ public class EntitySpellProjectile extends EntityMod {
 				@Override
 				@SideOnly(Side.CLIENT)
 				public void runIfClient() {
-					if (spellRing.getModule() instanceof ModuleInstanceShape)
-						if (((ModuleInstanceShape) spellRing.getModule()).runRenderOverrides(spellData, spellRing))
-							return;
+					IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
+					if( overrides.onRenderProjectile(spellData, spellRing) )
+						return;
 
 					ParticleBuilder glitter = new ParticleBuilder(10);
 					glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
@@ -297,7 +300,7 @@ public class EntitySpellProjectile extends EntityMod {
 	@Override
 	public void readCustomNBT(@Nonnull NBTTagCompound compound) {
 		if (compound.hasKey("spell_ring")) {
-			setSpellRing(SpellRing.deserializeRing(compound.getCompoundTag("spell_ring")));
+			setSpellRing(SpellRingCache.INSTANCE.getSpellRingByNBT(compound.getCompoundTag("spell_ring")));
 		}
 
 		if (world != null && compound.hasKey("spell_data")) {
