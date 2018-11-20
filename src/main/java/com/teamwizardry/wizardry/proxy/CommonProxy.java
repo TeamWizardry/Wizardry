@@ -54,9 +54,9 @@ public class CommonProxy {
 
 		new SpellData.DefaultKeys();
 
-		ManifestHandler.INSTANCE.loadNewInternalManifest("modules", "fluid_recipes", "fire_recipes");
+		ManifestHandler.INSTANCE.loadNewInternalManifest("wizmodules", "fluid_recipes", "fire_recipes");
 		ManifestHandler.INSTANCE.loadExternalManifest(directory);
-		ManifestHandler.INSTANCE.processComparisons(directory, "modules", "fluid_recipes", "fire_recipes");
+		ManifestHandler.INSTANCE.processComparisons(directory, "wizmodules", "fluid_recipes", "fire_recipes");
 
 		new ModTab();
 		ModBlocks.init();
@@ -129,7 +129,7 @@ public class CommonProxy {
 
 		moduleLoading:
 		{
-			File moduleDirectory = new File(directory, "modules");
+			File moduleDirectory = new File(directory, "wizmodules");
 			if (!moduleDirectory.exists())
 				if (!moduleDirectory.mkdirs()) {
 					Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not create directory " + moduleDirectory.getPath());

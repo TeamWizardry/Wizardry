@@ -10,6 +10,10 @@ import com.google.gson.stream.JsonWriter;
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.crafting.mana.ManaRecipes;
+
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
+
 import org.apache.commons.io.FileUtils;
 
 import javax.annotation.Nonnull;
@@ -87,29 +91,32 @@ public class ManifestHandler {
 	}
 
 	public void loadNewInternalManifest(String... categories) {
-		for (String category : categories) {
-
-			try {
-				for (String fileName : ManaRecipes.getResourceListing(Wizardry.MODID, category)) {
-					if (fileName.isEmpty()) continue;
-
-					InputStream stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, category + "/" + fileName);
-					if (stream == null) {
-						Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not read " + fileName + " in " + category + " from mod jar! Report this to the devs on Github!");
-						continue;
-					}
-					try (BufferedReader br = new BufferedReader(new InputStreamReader(stream, Charset.defaultCharset()))) {
-						StringBuilder sb = new StringBuilder();
-						String line;
-						while ((line = br.readLine()) != null) {
-							sb.append(line);
-							sb.append('\n');
+		Map<String, ModContainer> modList = Loader.instance().getIndexedModList();
+		for (Map.Entry<String, ModContainer> entry : modList.entrySet() ) {
+			for (String category : categories) {
+	
+				try {
+					for (String fileName : ManaRecipes.getResourceListing(entry.getKey(), category)) {
+						if (fileName.isEmpty()) continue;
+	
+						InputStream stream = LibrarianLib.PROXY.getResource(entry.getKey(), category + "/" + fileName);
+						if (stream == null) {
+							Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not read " + fileName + " in " + category + " from mod jar! Report this to the devs on Github!");
+							continue;
 						}
-						addItemToManifest(category, Files.getNameWithoutExtension(fileName), sb.toString().hashCode() + "");
+						try (BufferedReader br = new BufferedReader(new InputStreamReader(stream, Charset.defaultCharset()))) {
+							StringBuilder sb = new StringBuilder();
+							String line;
+							while ((line = br.readLine()) != null) {
+								sb.append(line);
+								sb.append('\n');
+							}
+							addItemToManifest(category, Files.getNameWithoutExtension(fileName), sb.toString().hashCode() + "");
+						}
 					}
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
 		}
 	}

@@ -20,6 +20,8 @@ import com.teamwizardry.wizardry.api.util.DefaultHashMap;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.apache.commons.io.FileUtils;
 
@@ -456,23 +458,26 @@ public class ModuleRegistry {
 	
 	public void copyAllModules(File directory)
 	{
-		for (ModuleInstance module : modules)
-		{
-			InputStream stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "modules/" + module.getSubModuleID() + ".json");
-			if (stream == null)
+		Map<String, ModContainer> modList = Loader.instance().getIndexedModList();
+		for (Map.Entry<String, ModContainer> entry : modList.entrySet() ) {
+			for (ModuleInstance module : modules)
 			{
-				Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not read module " + module.getSubModuleID() + " from mod jar! Report this to the devs on Github!");
-				continue;
-			}
-			
-			try
-			{
-				FileUtils.copyInputStreamToFile(stream, new File(directory + "/modules/", module.getSubModuleID() + ".json"));
-				Wizardry.logger.info("    > Module " + module.getSubModuleID() + " copied successfully from mod jar.");
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
+				InputStream stream = LibrarianLib.PROXY.getResource(entry.getKey(), "wizmodules/" + module.getSubModuleID() + ".json");
+				if (stream == null)
+				{
+					Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not read module " + module.getSubModuleID() + " from mod jar of '" + entry.getKey() + "'! Report this to the devs on Github!");
+					continue;
+				}
+				
+				try
+				{
+					FileUtils.copyInputStreamToFile(stream, new File(directory + "/wizmodules/", module.getSubModuleID() + ".json"));
+					Wizardry.logger.info("    > Module " + module.getSubModuleID() + " copied successfully from mod jar.");
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
 			}
 		}
 	}
