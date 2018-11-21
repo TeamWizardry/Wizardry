@@ -3,8 +3,10 @@ package com.teamwizardry.wizardry.common.core.version;
 import com.google.common.io.Files;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonWriter;
 import com.teamwizardry.librarianlib.core.LibrarianLib;
@@ -23,6 +25,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ManifestHandler {
+	
+	public static final String MANIFEST_FILENAME = "manifest.json"; 
 
 	public static ManifestHandler INSTANCE = new ManifestHandler();
 	private HashMap<String, HashMap<String, String>> internalManifestMap = new HashMap<>();
@@ -32,7 +36,13 @@ public class ManifestHandler {
 
 	private ManifestHandler() {
 	}
-
+	
+	public ManifestUpgrader startUpgrade(File directory) {
+		ManifestUpgrader upgrader = new ManifestUpgrader(directory);
+		upgrader.startUpgradeManifest();
+		return upgrader;
+	}
+	
 	public void processComparisons(File directory, String... categories) {
 		boolean change = false;
 
@@ -73,7 +83,7 @@ public class ManifestHandler {
 		}
 
 		if (change) {
-			File externalManifest = new File(directory, "manifest.json");
+			File externalManifest = new File(directory, MANIFEST_FILENAME);
 			if (!externalManifest.exists()) {
 
 				try {
@@ -85,7 +95,7 @@ public class ManifestHandler {
 					e.printStackTrace();
 				}
 			}
-			writeJsonToFile(generateInternalManifestJson(), externalManifest);
+			writeJsonToFile(generateManifestJson(internalManifestMap), externalManifest);
 			externalManifestMap.putAll(internalManifestMap);
 			Wizardry.logger.info("    > Successfully generated new manifest file");
 		}
@@ -161,7 +171,7 @@ public class ManifestHandler {
 	 */
 	public void loadExternalManifest(@Nonnull File directory) {
 		try {
-			File externalManifest = new File(directory, "manifest.json");
+			File externalManifest = new File(directory, MANIFEST_FILENAME);
 			if (!externalManifest.exists()) {
 
 				if (!externalManifest.createNewFile()) {
@@ -169,7 +179,7 @@ public class ManifestHandler {
 					return;
 				}
 
-				writeJsonToFile(generateInternalManifestJson(), externalManifest);
+				writeJsonToFile(generateManifestJson(internalManifestMap), externalManifest);
 				externalManifestMap.putAll(internalManifestMap);
 				generatedNewManifest = true;
 				Wizardry.logger.info("    > Successfully generated new manifest file");
@@ -182,39 +192,47 @@ public class ManifestHandler {
 			}
 
 			Wizardry.logger.info("    > Found manifest file. Reading...");
-			JsonElement element = new JsonParser().parse(new FileReader(externalManifest));
+			loadManifestFile(externalManifest, externalManifestMap, true);
+			Wizardry.logger.info("    >  |____________________________________/");
 
-			if (element != null && element.isJsonObject()) {
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	static void loadManifestFile(File externalManifest, HashMap<String, HashMap<String, String>> manifestMap, boolean verbose) throws IOException {
+		JsonElement element = new JsonParser().parse(new FileReader(externalManifest));
 
-				for (Map.Entry<String, JsonElement> categorySet : element.getAsJsonObject().entrySet()) {
-					String category = categorySet.getKey();
-					JsonElement categoryElement = categorySet.getValue();
+		if (element != null && element.isJsonObject()) {
 
-					externalManifestMap.putIfAbsent(category, new HashMap<>());
+			for (Map.Entry<String, JsonElement> categorySet : element.getAsJsonObject().entrySet()) {
+				String category = categorySet.getKey();
+				JsonElement categoryElement = categorySet.getValue();
+
+				manifestMap.putIfAbsent(category, new HashMap<>());
+				if( verbose ) {
 					Wizardry.logger.info("    >  |");
 					Wizardry.logger.info("    >  |_ Category found: " + category);
+				}
 
-					if (categoryElement.isJsonArray()) {
-						for (JsonElement element1 : categoryElement.getAsJsonArray()) {
-							if (!element1.isJsonObject()) continue;
+				if (categoryElement.isJsonArray()) {
+					for (JsonElement element1 : categoryElement.getAsJsonArray()) {
+						if (!element1.isJsonObject()) continue;
 
-							JsonObject externalObject = element1.getAsJsonObject();
+						JsonObject externalObject = element1.getAsJsonObject();
 
-							if (!externalObject.has("id") || !externalObject.has("hash")) continue;
+						if (!externalObject.has("id") || !externalObject.has("hash")) continue;
 
-							String id = externalObject.getAsJsonPrimitive("id").getAsString();
-							String hash = externalObject.getAsJsonPrimitive("hash").getAsString();
+						String id = externalObject.getAsJsonPrimitive("id").getAsString();
+						String hash = externalObject.getAsJsonPrimitive("hash").getAsString();
 
-							externalManifestMap.get(category).put(id, hash);
+						manifestMap.get(category).put(id, hash);
+						if( verbose ) {
 							Wizardry.logger.info("    >  | |_ " + id + ": " + hash);
 						}
 					}
 				}
 			}
-			Wizardry.logger.info("    >  |____________________________________/");
-
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -244,10 +262,10 @@ public class ManifestHandler {
 			Wizardry.logger.warn("    > File name conflict for " + category + "/" + id + ".json occurring in mods '" + modId + "' and '" + prevModId + "'. Some stuff wont be available." );
 	}
 
-	public JsonObject generateInternalManifestJson() {
+	static JsonObject generateManifestJson(HashMap<String, HashMap<String, String>> manifestMap) {
 		JsonObject jsonManifest = new JsonObject();
 
-		for (Map.Entry<String, HashMap<String, String>> categoryEntry : internalManifestMap.entrySet()) {
+		for (Map.Entry<String, HashMap<String, String>> categoryEntry : manifestMap.entrySet()) {
 			String category = categoryEntry.getKey();
 
 			JsonArray categoryArray = new JsonArray();
@@ -265,7 +283,7 @@ public class ManifestHandler {
 		return jsonManifest;
 	}
 
-	public void writeJsonToFile(JsonObject object, File file) {
+	public static void writeJsonToFile(JsonObject object, File file) {
 		try (JsonWriter writer = new JsonWriter(Files.newWriter(file, Charset.defaultCharset()))) {
 			Streams.write(object, writer);
 		} catch (IOException e) {

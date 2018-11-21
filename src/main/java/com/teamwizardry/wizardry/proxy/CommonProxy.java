@@ -15,6 +15,7 @@ import com.teamwizardry.wizardry.client.gui.book.PageWizardryStructure;
 import com.teamwizardry.wizardry.common.advancement.AchievementEvents;
 import com.teamwizardry.wizardry.common.core.EventHandler;
 import com.teamwizardry.wizardry.common.core.version.ManifestHandler;
+import com.teamwizardry.wizardry.common.core.version.ManifestUpgrader;
 import com.teamwizardry.wizardry.common.item.ItemBook;
 import com.teamwizardry.wizardry.common.module.effects.ModuleEffectLeap;
 import com.teamwizardry.wizardry.common.module.effects.ModuleEffectTimeSlow;
@@ -54,6 +55,10 @@ public class CommonProxy {
 
 		new SpellData.DefaultKeys();
 
+		ManifestUpgrader maniUpgrader = ManifestHandler.INSTANCE.startUpgrade(directory);
+		maniUpgrader.changeCategoryName("modules", "wizmodules");
+		maniUpgrader.finalizeUpgrade();
+		
 		ManifestHandler.INSTANCE.loadNewInternalManifest("wizmodules", "fluid_recipes", "fire_recipes");
 		ManifestHandler.INSTANCE.loadExternalManifest(directory);
 		ManifestHandler.INSTANCE.processComparisons(directory, "wizmodules", "fluid_recipes", "fire_recipes");
