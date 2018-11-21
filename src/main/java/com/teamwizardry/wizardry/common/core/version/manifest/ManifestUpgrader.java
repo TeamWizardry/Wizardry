@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.common.core.version;
+package com.teamwizardry.wizardry.common.core.version.manifest;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +11,7 @@ public class ManifestUpgrader {
 	private HashMap<String, HashMap<String, String>> manifestMap;
 	
 	private boolean hasManifestChanged = false; 
+	private boolean hasFolderChanged = false;
 	
 	private boolean isFinalized = false;
 	private boolean hasErrors = false;
@@ -37,7 +38,7 @@ public class ManifestUpgrader {
 				}
 				
 				manifestMap = new HashMap<>();
-				ManifestHandler.loadManifestFile(externalManifest, manifestMap, false);
+				ManifestUtils.loadManifestFile(externalManifest, manifestMap, false);
 			}
 		}
 		catch(IOException exc) {
@@ -65,6 +66,8 @@ public class ManifestUpgrader {
 		File folder = new File(directory + "/" + oldName + "/");
 		if( folder.exists() ) {
 			folder.renameTo(new File(directory + "/" + newName + "/"));
+			
+			hasFolderChanged = true;
 		}
 	}
 	
@@ -82,15 +85,18 @@ public class ManifestUpgrader {
 				externalManifest.delete();
 				externalManifest.createNewFile();
 				
-				ManifestHandler.writeJsonToFile(ManifestHandler.generateManifestJson(manifestMap), externalManifest);
+				ManifestUtils.writeJsonToFile(ManifestUtils.generateManifestJson(manifestMap), externalManifest);
 				
 				Wizardry.logger.info("    > Successfully updated manifest file");
 			}
+			
+			if( !hasFolderChanged && !hasManifestChanged )
+				Wizardry.logger.info("    > Manifest is up-to-date. No changes were performed.");
 		}
 		catch(IOException exc) {
 			exc.printStackTrace();
 		}
 		
-		isFinalized = false;
+		isFinalized = true;
 	}
 }
