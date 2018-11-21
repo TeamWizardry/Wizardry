@@ -27,6 +27,7 @@ public class ManifestHandler {
 	public static ManifestHandler INSTANCE = new ManifestHandler();
 	private HashMap<String, HashMap<String, String>> internalManifestMap = new HashMap<>();
 	private HashMap<String, HashMap<String, String>> externalManifestMap = new HashMap<>();
+	private HashMap<String, HashMap<String, String>> fileToMod = new HashMap<>();
 	private boolean generatedNewManifest = false;
 
 	private ManifestHandler() {
@@ -111,7 +112,7 @@ public class ManifestHandler {
 								sb.append(line);
 								sb.append('\n');
 							}
-							addItemToManifest(category, Files.getNameWithoutExtension(fileName), sb.toString().hashCode() + "");
+							addItemToManifest(category, entry.getKey(), Files.getNameWithoutExtension(fileName), sb.toString().hashCode() + "");
 						}
 					}
 				} catch (IOException e) {
@@ -122,7 +123,14 @@ public class ManifestHandler {
 	}
 
 	private void generateFile(File directory, String category, String key) {
-		InputStream stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, category + "/" + key + ".json");
+		String modId = fileToMod.get(category).get(key);
+		if( modId == null ) {
+			// NOTE: If some bad state occurred in ManifestHandler.processComparisons()
+			Wizardry.logger.error("    > SOMETHING WENT WRONG! Expected file " + key + ".json in " + category + " in config folder! Report this to the devs on Github!");
+			return;
+		}
+		
+		InputStream stream = LibrarianLib.PROXY.getResource(modId, category + "/" + key + ".json");
 		if (stream == null) {
 			Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not read under " + category + " in " + key + " from mod jar! Report this to the devs on Github!");
 			return;
@@ -210,21 +218,30 @@ public class ManifestHandler {
 		}
 	}
 
-	public void addItemToManifest(String category, String id, File file) {
+	public void addItemToManifest(String category, String modId, String id, File file) {
 		internalManifestMap.putIfAbsent(category, new HashMap<>());
 
 		try {
 			String mintContents = Files.toString(file, Charset.defaultCharset());
 
 			internalManifestMap.get(category).put(id, mintContents.hashCode() + "");
+			setItemModId(category, id, modId);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void addItemToManifest(String category, String id, String hash) {
+	public void addItemToManifest(String category, String modId, String id, String hash) {
 		internalManifestMap.putIfAbsent(category, new HashMap<>());
 		internalManifestMap.get(category).put(id, hash);
+		setItemModId(category, id, modId);
+	}
+	
+	private void setItemModId(String category, String id, String modId) {
+		fileToMod.putIfAbsent(category, new HashMap<>());
+		String prevModId = fileToMod.get(category).put(id, modId);
+		if( prevModId != null )
+			Wizardry.logger.warn("    > File name conflict for " + category + "/" + id + ".json occurring in mods '" + modId + "' and '" + prevModId + "'. Some stuff wont be available." );
 	}
 
 	public JsonObject generateInternalManifestJson() {
