@@ -16,7 +16,8 @@ import com.teamwizardry.wizardry.client.gui.GuiHandler;
 import com.teamwizardry.wizardry.client.gui.book.PageWizardryStructure;
 import com.teamwizardry.wizardry.common.advancement.AchievementEvents;
 import com.teamwizardry.wizardry.common.core.EventHandler;
-import com.teamwizardry.wizardry.common.core.version.ManifestHandler;
+import com.teamwizardry.wizardry.common.core.version.manifest.ManifestHandler;
+import com.teamwizardry.wizardry.common.core.version.manifest.ManifestUpgrader;
 import com.teamwizardry.wizardry.common.item.ItemBook;
 import com.teamwizardry.wizardry.common.module.effects.ModuleEffectLeap;
 import com.teamwizardry.wizardry.common.module.effects.ModuleEffectTimeSlow;
@@ -56,9 +57,13 @@ public class CommonProxy {
 
 		new SpellData.DefaultKeys();
 
-		ManifestHandler.INSTANCE.loadNewInternalManifest("modules", "fluid_recipes", "fire_recipes");
+		ManifestUpgrader maniUpgrader = ManifestHandler.INSTANCE.startUpgrade(directory);
+		maniUpgrader.changeCategoryName("modules", "wizmodules");
+		maniUpgrader.finalizeUpgrade();
+		
+		ManifestHandler.INSTANCE.loadNewInternalManifest("wizmodules", "fluid_recipes", "fire_recipes");
 		ManifestHandler.INSTANCE.loadExternalManifest(directory);
-		ManifestHandler.INSTANCE.processComparisons(directory, "modules", "fluid_recipes", "fire_recipes");
+		ManifestHandler.INSTANCE.processComparisons(directory, "wizmodules", "fluid_recipes", "fire_recipes");
 
 		new ModTab();
 		ModBlocks.init();
@@ -131,7 +136,7 @@ public class CommonProxy {
 
 		moduleLoading:
 		{
-			File moduleDirectory = new File(directory, "modules");
+			File moduleDirectory = new File(directory, "wizmodules");
 			if (!moduleDirectory.exists())
 				if (!moduleDirectory.mkdirs()) {
 					Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not create directory " + moduleDirectory.getPath());
