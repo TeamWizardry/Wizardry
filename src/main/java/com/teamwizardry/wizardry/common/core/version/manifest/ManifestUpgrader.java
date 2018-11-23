@@ -54,12 +54,14 @@ public class ManifestUpgrader {
 			throw new IllegalStateException("Upgrade is already finalized");
 		
 		// rename category in manifest
-		HashMap<String, String> entry = manifestMap.get(oldName);
-		if( entry != null ) {
-			manifestMap.remove(oldName);
-			manifestMap.put(newName, entry);
-			
-			hasManifestChanged = true;
+		if( manifestMap != null ) {
+			HashMap<String, String> entry = manifestMap.get(oldName);
+			if( entry != null ) {
+				manifestMap.remove(oldName);
+				manifestMap.put(newName, entry);
+				
+				hasManifestChanged = true;
+			}
 		}
 		
 		// rename folder
