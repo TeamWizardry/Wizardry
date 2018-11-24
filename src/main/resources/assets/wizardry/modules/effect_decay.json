@@ -1,0 +1,11 @@
+{
+	"sub_module_id": "effect_decay",
+	"reference_module_id": "effect_decay",
+	"item": "minecraft:fermented_spider_eye",
+	"primary_color": "208000",
+	"secondary_color": "000000",
+	"mana": { "base": 100 },
+	"burnout": { "base": 50 },
+	"duration": { "base": 10, "min": 1, "max": 60 },
+	"potency": { "base": 1, "min": 1, "max": 20 }
+}

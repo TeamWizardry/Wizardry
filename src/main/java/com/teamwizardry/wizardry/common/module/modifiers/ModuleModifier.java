@@ -6,6 +6,6 @@ import com.teamwizardry.wizardry.api.spell.module.IModuleModifier;
 /**
  * Created by Demoniaque.
  */
-@RegisterModule(ID="modifier_extend_range")
-public class ModuleModifierIncreaseRange implements IModuleModifier {
+@RegisterModule(ID="modifier")
+public class ModuleModifier implements IModuleModifier {
 }

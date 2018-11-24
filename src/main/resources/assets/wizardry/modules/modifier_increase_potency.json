@@ -1,6 +1,6 @@
 {
   "sub_module_id": "modifier_increase_potency",
-  "reference_module_id": "modifier_increase_potency",
+  "reference_module_id": "modifier",
   "item": "minecraft:prismarine_crystals",
   "modifiers": [
     {

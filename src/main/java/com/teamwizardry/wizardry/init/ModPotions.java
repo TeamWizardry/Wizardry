@@ -2,6 +2,8 @@ package com.teamwizardry.wizardry.init;
 
 import com.teamwizardry.wizardry.common.potion.*;
 
+import net.minecraftforge.common.MinecraftForge;
+
 /**
  * Created by Demoniaque.
  */
@@ -17,6 +19,8 @@ public class ModPotions {
 	public static PotionVanish VANISH;
 	public static PotionCrash CRASH;
 	public static PotionZachCorruption ZACH_CORRUPTION;
+	public static PotionSuffocate SUFFOCATE;
+	public static PotionGrace GRACE;
 
 	public static void init() {
 		NULLIFY_GRAVITY = new PotionNullGrav();
@@ -29,5 +33,7 @@ public class ModPotions {
 		CRASH = new PotionCrash();
 		VANISH = new PotionVanish();
 		ZACH_CORRUPTION = new PotionZachCorruption();
+		SUFFOCATE = new PotionSuffocate();
+		MinecraftForge.EVENT_BUS.register(GRACE = new PotionGrace());
 	}
 }

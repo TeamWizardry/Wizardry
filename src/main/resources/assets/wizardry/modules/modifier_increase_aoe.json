@@ -1,6 +1,6 @@
 {
   "sub_module_id": "modifier_increase_aoe",
-  "reference_module_id": "modifier_increase_aoe",
+  "reference_module_id": "modifier",
   "item": "minecraft:emerald",
   "modifiers": [
     {
