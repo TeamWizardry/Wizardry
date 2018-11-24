@@ -11,6 +11,7 @@ import com.teamwizardry.wizardry.api.events.SpellCastEvent;
 import com.teamwizardry.wizardry.api.spell.ILingeringModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.SpellDataTypes.BlockStateCache;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRange;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
@@ -118,6 +119,10 @@ public abstract class ModuleInstance {
 	
 	public final IModule getModuleClass() {
 		return this.moduleClass;
+	}
+	
+	public final ModuleFactory getFactory() {
+		return this.createdByFactory;
 	}
 	
 	/**
@@ -303,7 +308,7 @@ public abstract class ModuleInstance {
 	 */
 	@Nonnull
 	public final IBlockState getCachableBlockstate(@Nonnull World world, @Nonnull BlockPos targetBlock, @Nonnull SpellData previousData) {
-		HashMap<BlockPos, IBlockState> cache = previousData.getData(SpellData.DefaultKeys.BLOCKSTATE_CACHE);
+		Map<BlockPos, IBlockState> cache = previousData.getData(SpellData.DefaultKeys.BLOCKSTATE_CACHE).getBlockStateCache();
 
 		IBlockState state;
 		if (cache != null) {
@@ -311,12 +316,12 @@ public abstract class ModuleInstance {
 				return cache.get(targetBlock);
 			} else {
 				cache.put(targetBlock, state = world.getBlockState(targetBlock));
-				previousData.addData(BLOCKSTATE_CACHE, cache);
+				previousData.addData(BLOCKSTATE_CACHE, new BlockStateCache(cache));
 			}
 		} else {
 			cache = new HashMap<>();
 			cache.put(targetBlock, state = world.getBlockState(targetBlock));
-			previousData.addData(BLOCKSTATE_CACHE, cache);
+			previousData.addData(BLOCKSTATE_CACHE, new BlockStateCache(cache));
 		}
 
 		return state;

@@ -10,6 +10,8 @@ import com.teamwizardry.wizardry.api.spell.IDelayedModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.SpellDataTypes.BlockSet;
+import com.teamwizardry.wizardry.api.spell.SpellDataTypes.BlockStateCache;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
@@ -228,8 +230,8 @@ public class ModuleEffectPhase implements IModuleEffect, IDelayedModule {
 			nemezDrive.collapse();
 
 			//spell.addData(SpellData.DefaultKeys.NEMEZ, nemezDrive.serializeNBT());
-			spell.addData(SpellData.DefaultKeys.BLOCK_SET, poses);
-			spell.addData(SpellData.DefaultKeys.BLOCKSTATE_CACHE, stateCache);
+			spell.addData(SpellData.DefaultKeys.BLOCK_SET, new BlockSet(poses));
+			spell.addData(SpellData.DefaultKeys.BLOCKSTATE_CACHE, new BlockStateCache(stateCache));
 
 			addDelayedSpell(instance, spellRing, spell, (int) duration);
 		}
@@ -242,8 +244,8 @@ public class ModuleEffectPhase implements IModuleEffect, IDelayedModule {
 	public void renderSpell(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		EnumFacing faceHit = spell.getFaceHit();
 
-		Set<BlockPos> blockSet = spell.getData(SpellData.DefaultKeys.BLOCK_SET, new HashSet<>());
-		HashMap<BlockPos, IBlockState> blockStateCache = spell.getData(SpellData.DefaultKeys.BLOCKSTATE_CACHE, new HashMap<>());
+		Set<BlockPos> blockSet = spell.getData(SpellData.DefaultKeys.BLOCK_SET, new BlockSet(new HashSet<>())).getBlockSet();
+		Map<BlockPos, IBlockState> blockStateCache = spell.getData(SpellData.DefaultKeys.BLOCKSTATE_CACHE, new BlockStateCache(new HashMap<>())).getBlockStateCache();
 		HashMap<BlockPos, IBlockState> tmpCache = new HashMap<>(blockStateCache);
 
 		double duration = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 20;

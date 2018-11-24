@@ -8,19 +8,20 @@ import com.google.gson.JsonPrimitive;
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.utilities.AnnotationHelper;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.spell.SpellData;
-import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
+import com.teamwizardry.wizardry.api.spell.annotation.RegisterOverrideDefaults;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRange;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry.Attribute;
+import com.teamwizardry.wizardry.api.spell.module.ModuleOverrideHandler.OverrideMethod;
 import com.teamwizardry.wizardry.api.spell.attribute.Operation;
 import com.teamwizardry.wizardry.api.util.DefaultHashMap;
-import kotlin.Pair;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.apache.commons.io.FileUtils;
 
@@ -28,6 +29,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.io.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -39,9 +42,8 @@ public class ModuleRegistry {
 	public final static ModuleRegistry INSTANCE = new ModuleRegistry();
 
 	public ArrayList<ModuleInstance> modules = new ArrayList<>();
-	public HashMap<Pair<ModuleInstanceShape, ModuleInstanceEffect>, OverrideConsumer<SpellData, SpellRing, SpellRing>> runOverrides = new HashMap<>();
-	public HashMap<Pair<ModuleInstanceShape, ModuleInstanceEffect>, OverrideConsumer<SpellData, SpellRing, SpellRing>> renderOverrides = new HashMap<>();
 	public HashMap<String, ModuleFactory> IDtoModuleFactory = new HashMap<>();
+	public HashMap<String, OverrideDefaultMethod> IDtoOverrideDefaultMethod = new HashMap<>();
 
 	private ModuleRegistry() {
 	}
@@ -83,10 +85,44 @@ public class ModuleRegistry {
 				}
 			}
 			catch(ModuleInitException exc) {
-				exc.printStackTrace();
+				Wizardry.logger.error("Error occurred while registering a module class '" + clazz + "'.", exc);
 			}
 			return null;
 		});
+	}
+	
+	public void loadOverrideDefaults() {
+		IDtoOverrideDefaultMethod.clear();
+		AnnotationHelper.INSTANCE.findAnnotatedClasses(LibrarianLib.PROXY.getAsmDataTable(), Object.class, RegisterOverrideDefaults.class, (clazz, info) -> {
+			try {
+				// Create instance
+				Constructor<?> ctor = clazz.getConstructor();
+				Object obj = ctor.newInstance();
+				
+				// Register all overrides
+				registerOverrideDefaults(clazz, obj);
+			}
+			catch(ModuleInitException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException exc) {
+				Wizardry.logger.error("Error occurred while registering an override generics '" + clazz + "'.", exc);
+			}
+			
+			return null;
+		});
+	}
+	
+	private void registerOverrideDefaults(Class<?> clazz, Object obj) throws ModuleInitException {
+		HashMap<String, OverrideMethod> overrides = ModuleOverrideHandler.getOverrideMethodsFromClass(clazz, false);
+		
+		for( Entry<String, OverrideMethod> override : overrides.entrySet() ) {
+			// Throw error if another method with same override name is already existing
+			OverrideDefaultMethod methodEntry = IDtoOverrideDefaultMethod.get(override.getKey());
+			if( methodEntry != null ) 
+				throw new ModuleInitException("Override '" + override.getKey() + "' is already existing at '" + methodEntry.obj.getClass() + "'. Duplicate entry found in '" + clazz + "'.");
+			
+			// Register at ID table
+			methodEntry = new OverrideDefaultMethod(override.getKey(), override.getValue(), obj);
+			IDtoOverrideDefaultMethod.put(override.getKey(), methodEntry);
+		}
 	}
 
 	public void loadModules(File directory) {
@@ -400,33 +436,6 @@ public class ModuleRegistry {
 		return value;
 	}
 
-	public void loadModuleOverrides()
-	{
-		for (ModuleInstance effect : getModules(ModuleType.EFFECT))
-		{
-			if (!(effect instanceof ModuleInstanceEffect))
-				continue;
-
-			((ModuleInstanceEffect) effect).runOverrides.forEach((moduleID, override) -> {
-				ModuleInstance shape = getModule(moduleID);
-				if (shape instanceof ModuleInstanceShape)
-				{
-					runOverrides.put(new Pair<>((ModuleInstanceShape) shape, (ModuleInstanceEffect) effect), override);
-					Wizardry.logger.info(" | Registered " + shape.getReadableName() + " -> " + effect.getReadableName() + " run override.");
-				}
-			});
-			
-			((ModuleInstanceEffect) effect).renderOverrides.forEach((moduleID, override) -> {
-				ModuleInstance shape = getModule(moduleID);
-				if (shape instanceof ModuleInstanceShape)
-				{
-					renderOverrides.put(new Pair<>((ModuleInstanceShape) shape, (ModuleInstanceEffect) effect), override);
-					Wizardry.logger.info(" | Registered " + shape.getReadableName() + " -> " + effect.getReadableName() + " renderSpell override.");
-				}
-			});
-		}
-	}
-	
 	public void copyMissingModules(File directory) {
 		for (ModuleInstance module : modules) {
 			File file = new File(directory + "/modules/", module.getSubModuleID() + ".json");
@@ -449,24 +458,58 @@ public class ModuleRegistry {
 	
 	public void copyAllModules(File directory)
 	{
-		for (ModuleInstance module : modules)
-		{
-			InputStream stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "modules/" + module.getSubModuleID() + ".json");
-			if (stream == null)
+		Map<String, ModContainer> modList = Loader.instance().getIndexedModList();
+		for (Map.Entry<String, ModContainer> entry : modList.entrySet() ) {
+			for (ModuleInstance module : modules)
 			{
-				Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not read module " + module.getSubModuleID() + " from mod jar! Report this to the devs on Github!");
-				continue;
+				InputStream stream = LibrarianLib.PROXY.getResource(entry.getKey(), "wizmodules/" + module.getSubModuleID() + ".json");
+				if (stream == null)
+				{
+					Wizardry.logger.error("    > SOMETHING WENT WRONG! Could not read module " + module.getSubModuleID() + " from mod jar of '" + entry.getKey() + "'! Report this to the devs on Github!");
+					continue;
+				}
+				
+				try
+				{
+					FileUtils.copyInputStreamToFile(stream, new File(directory + "/wizmodules/", module.getSubModuleID() + ".json"));
+					Wizardry.logger.info("    > Module " + module.getSubModuleID() + " copied successfully from mod jar.");
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
 			}
-			
-			try
-			{
-				FileUtils.copyInputStreamToFile(stream, new File(directory + "/modules/", module.getSubModuleID() + ".json"));
-				Wizardry.logger.info("    > Module " + module.getSubModuleID() + " copied successfully from mod jar.");
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
+		}
+	}
+	
+	Map<String, OverrideDefaultMethod> getDefaultOverrides() {
+		return Collections.unmodifiableMap(IDtoOverrideDefaultMethod);
+	}
+	
+	/////////////////
+	
+	static class OverrideDefaultMethod {
+		private final String overrideName;
+		private final OverrideMethod method;
+		private final Object obj;
+		
+		OverrideDefaultMethod(String overrideName, OverrideMethod method, Object obj) {
+			super();
+			this.overrideName = overrideName;
+			this.method = method;
+			this.obj = obj;
+		}
+		
+		String getOverrideName() {
+			return overrideName;
+		}
+
+		OverrideMethod getMethod() {
+			return method;
+		}
+
+		Object getObj() {
+			return obj;
 		}
 	}
 	
