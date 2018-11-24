@@ -72,7 +72,7 @@ public class ModuleEffectLightning implements IModuleEffect {
 
 	
 	@Override
-	public String[] compatibleModifierClasses() {
+	public String[] compatibleModifiers() {
 		return new String[]{"modifier_extend_range", "modifier_increase_potency", "modifier_extend_time"};
 	}
 

@@ -44,7 +44,7 @@ public class ModuleEffectZoom implements IModuleEffect {
 	private static final DataField<Vec3d> ORIGINAL_LOC = constructField("original_loc", Vec3d.class);
 
 	@Override
-	public String[] compatibleModifierClasses() {
+	public String[] compatibleModifiers() {
 		return new String[]{"modifier_extend_range"};
 	}
 

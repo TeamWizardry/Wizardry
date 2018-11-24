@@ -37,7 +37,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.FACE_HIT
 public class ModuleEffectBackup implements IModuleEffect {
 
 	@Override
-	public String[] compatibleModifierClasses() {
+	public String[] compatibleModifiers() {
 		return new String[]{"modifier_extend_time"};
 	}
 

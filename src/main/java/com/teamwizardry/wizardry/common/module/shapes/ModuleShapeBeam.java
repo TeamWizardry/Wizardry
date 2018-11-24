@@ -50,7 +50,7 @@ public class ModuleShapeBeam implements IModuleShape, IContinuousModule {
 	public static final HashMap<ItemStack, BeamTicker> beamTickMap = new HashMap<>();
 
 	@Override
-	public String[] compatibleModifierClasses() {
+	public String[] compatibleModifiers() {
 		return new String[]{"modifier_extend_range", "modifier_increase_potency"};
 	}
 

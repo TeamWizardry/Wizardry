@@ -54,7 +54,7 @@ import java.util.Set;
 public class ModuleEffectSubstitution implements IModuleEffect, IBlockSelectable {
 
 	@Override
-	public String[] compatibleModifierClasses() {
+	public String[] compatibleModifiers() {
 		return new String[]{"modifier_increase_aoe"};
 	}
 

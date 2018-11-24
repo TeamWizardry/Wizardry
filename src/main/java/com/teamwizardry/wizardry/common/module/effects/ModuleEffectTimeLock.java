@@ -27,7 +27,7 @@ import java.awt.*;
 public class ModuleEffectTimeLock implements IModuleEffect, IDelayedModule {
 
 	@Override
-	public String[] compatibleModifierClasses() {
+	public String[] compatibleModifiers() {
 		return new String[]{"modifier_extend_time"};
 	}
 

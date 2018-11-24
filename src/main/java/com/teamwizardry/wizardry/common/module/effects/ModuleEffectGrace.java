@@ -20,7 +20,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ModuleEffectGrace implements IModuleEffect
 {
 	@Override
-	public String[] compatibleModifierClasses()
+	public String[] compatibleModifiers()
 	{
 		return new String[]{"modifier_extend_time"};
 	}

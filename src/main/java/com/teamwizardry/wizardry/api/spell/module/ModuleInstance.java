@@ -451,7 +451,7 @@ public abstract class ModuleInstance {
 		if( applicableModifiers == null ) {
 			LinkedList<ModuleInstanceModifier> applicableModifiersList = new LinkedList<>();
 			// TODO: Replace applicable modifier list with more dynamic system
-			String[] modifierNames = moduleClass.compatibleModifierClasses();
+			String[] modifierNames = moduleClass.compatibleModifiers();
 			if( modifierNames != null ) {
 				for( ModuleInstance mod : ModuleRegistry.INSTANCE.modules ) {
 					for( String modifier : modifierNames ) {

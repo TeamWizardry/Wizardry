@@ -33,7 +33,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.LOOK;
 public class ModuleShapeProjectile implements IModuleShape {
 
 	@Override
-	public String[] compatibleModifierClasses() {
+	public String[] compatibleModifiers() {
 		return new String[]{"modifier_extend_range", "modifier_increase_speed"};
 	}
 

@@ -41,7 +41,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.FACE_HIT
 public class ModuleEffectPlace implements IModuleEffect, IBlockSelectable {
 
 	@Override
-	public String[] compatibleModifierClasses() {
+	public String[] compatibleModifiers() {
 		return new String[]{"modifier_increase_aoe"};
 	}
 

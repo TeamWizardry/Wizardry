@@ -58,7 +58,7 @@ import static com.teamwizardry.wizardry.api.util.PosUtils.getPerpendicularFacing
 public class ModuleEffectPhase implements IModuleEffect, IDelayedModule {
 
 	@Override
-	public String[] compatibleModifierClasses() {
+	public String[] compatibleModifiers() {
 		return new String[]{"modifier_extend_time", "modifier_increase_aoe", "modifier_extend_range"};
 	}
 

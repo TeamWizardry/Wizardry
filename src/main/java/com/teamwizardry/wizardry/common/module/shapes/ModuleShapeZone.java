@@ -46,7 +46,7 @@ public class ModuleShapeZone implements IModuleShape, ILingeringModule {
 	public static final String ZONE_CAST = "zone cast";
 	
 	@Override
-	public String[] compatibleModifierClasses() {
+	public String[] compatibleModifiers() {
 		return new String[]{"modifier_increase_aoe", "modifier_increase_potency", "modifier_extend_range", "modifier_extend_time"};
 	}
 

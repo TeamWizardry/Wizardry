@@ -23,7 +23,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ModuleEffectShatter implements IModuleEffect {
 
 	@Override
-	public String[] compatibleModifierClasses() {
+	public String[] compatibleModifiers() {
 		return new String[]{"modifier_increase_potency"};
 	}
 
