@@ -571,18 +571,21 @@ public abstract class ModuleInstance {
 	}
 
 	/**
-	 * Use this to run the module properly without rendering.
+	 * Use this to run the module properly.
 	 *
-	 * @param spell     The spellData associated with it.
-	 * @param spellRing The SpellRing made with this.
+	 * @param spell       The spellData associated with it.
+	 * @param spellRing   The SpellRing made with this.
+	 * @param doRendering if rendering needs to be performed.
 	 * @return If the spellData has succeeded.
 	 */
-	public final boolean castSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+	public final boolean castSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing, boolean doRendering) {
 		boolean success = true;
 		if (!spell.world.isRemote) {
+			boolean alreadyCasted = false;
 
-			boolean alreadyLingering = false;
+			// Lingering execution
 			if (moduleClass instanceof ILingeringModule) {
+				boolean alreadyLingering = false;
 				WizardryWorld worldCap = WizardryWorldCapability.get(spell.world);
 				for (SpellTicker.LingeringObject lingeringObject : worldCap.getLingeringObjects()) {
 					if (lingeringObject.getSpellRing() == spellRing
@@ -591,30 +594,29 @@ public abstract class ModuleInstance {
 						break;
 					}
 				}
-//				if (!alreadyLingering) {
+				
+				if (!alreadyLingering) {
 //					SpellCastEvent event = new SpellCastEvent(spellRing, spell);
 //					MinecraftForge.EVENT_BUS.post(event);
 //
 //					success = !event.isCanceled() && run(spell, spellRing) && ((ILingeringModule) moduleClass).runOnce(this, spell, spellRing);
-//
-//					if (success) {
-//						worldCap.addLingerSpell(spellRing, spell, ((ILingeringModule) moduleClass).getLingeringTime(spell, spellRing));
-//					}
-//
-//					return success;
-//				}
+					success = internalCastSpell(spell, spellRing) && ((ILingeringModule) moduleClass).runOnce(this, spell, spellRing);
+
+					if (success) {
+						worldCap.addLingerSpell(spellRing, spell, ((ILingeringModule) moduleClass).getLingeringTime(spell, spellRing));
+					}
+
+					alreadyCasted = true;
+				}
 			}
 			
-			SpellCastEvent event = new SpellCastEvent(spellRing, spell);
-			MinecraftForge.EVENT_BUS.post(event);
+//			SpellCastEvent event = new SpellCastEvent(spellRing, spell);
+//			MinecraftForge.EVENT_BUS.post(event);
 
-			success = !event.isCanceled() && run(spell, spellRing);
-			
-			if ((moduleClass instanceof ILingeringModule) && !isAlreadyLingering) {
-				success = success && ((ILingeringModule) moduleClass).runOnce(this, spell, spellRing);
-				if (success) {
-					worldCap.addLingerSpell(spellRing, spell, ((ILingeringModule) moduleClass).getLingeringTime(spell, spellRing));
-				}
+//			success = !event.isCanceled() && run(spell, spellRing);
+			if( !alreadyCasted ) {
+				success = internalCastSpell(spell, spellRing);
+				alreadyCasted = true;
 			}
 		}
 		
@@ -623,6 +625,13 @@ public abstract class ModuleInstance {
 		}
 		
 		return success;
+	}
+	
+	private final boolean internalCastSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
+		SpellCastEvent event = new SpellCastEvent(spellRing, spell);
+		MinecraftForge.EVENT_BUS.post(event);
+
+		return !event.isCanceled() && run(spell, spellRing);
 	}
 
 	public final void sendRenderPacket(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {

@@ -129,7 +129,7 @@ public class ModuleShapeBeam implements IModuleShape, IContinuousModule {
 				spellRing.getChildRing().runSpellRing(spell);
 
 			ticker.cast = true;
-			instance.sendRenderPacket(spell, spellRing);
+			instance.sendRenderPacket(spell, spellRing);	// Is already executed via SpellRing.runSpellRing() ??? 
 		}
 
 		ticker.ticks = beamOffset;

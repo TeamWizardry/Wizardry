@@ -104,7 +104,7 @@ public class ModuleShapeCone implements IModuleShape {
 			if (lookFallback != null) lookFallback.scale(range);
 			newSpell.processTrace(result, lookFallback);
 
-			instance.sendRenderPacket(newSpell, spellRing);
+			instance.sendRenderPacket(newSpell, spellRing);		// Is already executed via SpellRing.runSpellRing() ???
 
 			newSpell.addData(ORIGIN, result.hitVec);
 
