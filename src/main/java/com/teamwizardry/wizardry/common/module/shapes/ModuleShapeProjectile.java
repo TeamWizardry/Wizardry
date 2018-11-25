@@ -32,21 +32,33 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.LOOK;
 @RegisterModule(ID="shape_projectile")
 public class ModuleShapeProjectile implements IModuleShape {
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String[] compatibleModifierClasses() {
 		return new String[]{"modifier_extend_range", "modifier_increase_speed"};
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean ignoreResultsForRendering() {
 		return true;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public boolean noChildrenRun() {
-		return true;
+	public boolean shouldRunChildren() {
+		return false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean run(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
@@ -72,6 +84,9 @@ public class ModuleShapeProjectile implements IModuleShape {
 		return success;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void renderSpell(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
@@ -79,6 +94,9 @@ public class ModuleShapeProjectile implements IModuleShape {
 		overrides.onRenderProjectile(spell, spellRing);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@NotNull
 	@Override
 	public SpellData renderVisualization(ModuleInstanceShape instance, @Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {

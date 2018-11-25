@@ -161,7 +161,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 		
 		boolean success = module.castSpell(data, this);
 
-		if (success && !module.noChildrenRun()) {
+		if (success && module.shouldRunChildren()) {
 			if (getChildRing() != null) 
 				getChildRing().runSpellRing(data);
 		}

@@ -39,8 +39,8 @@ public class ModuleInstanceEffect extends ModuleInstance {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean noChildrenRun() {
-		return ((IModuleEffect)moduleClass).noChildrenRun();
+	public boolean shouldRunChildren() {
+		return ((IModuleEffect)moduleClass).shouldRunChildren();
 	}
 
 	/**

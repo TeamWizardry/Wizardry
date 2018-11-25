@@ -551,7 +551,7 @@ public abstract class ModuleInstance {
 	 * 
 	 * @return <code>true</code> iff yes.
 	 */
-	public boolean noChildrenRun() {
+	public boolean shouldRunChildren() {
 		return true;
 	}
 	

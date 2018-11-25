@@ -49,21 +49,33 @@ public class ModuleShapeBeam implements IModuleShape, IContinuousModule {
 
 	public static final HashMap<ItemStack, BeamTicker> beamTickMap = new HashMap<>();
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String[] compatibleModifierClasses() {
 		return new String[]{"modifier_extend_range", "modifier_increase_potency"};
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean ignoreResultsForRendering() {
 		return true;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public boolean noChildrenRun() {
-		return true;
+	public boolean shouldRunChildren() {
+		return false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@SubscribeEvent
 	public static void tick(TickEvent.PlayerTickEvent event) {
 		if (event.phase != TickEvent.Phase.END) return;
@@ -72,6 +84,9 @@ public class ModuleShapeBeam implements IModuleShape, IContinuousModule {
 		beamTickMap.keySet().removeIf(itemStack -> !ItemStack.areItemStacksEqual(itemStack, stack));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean run(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;

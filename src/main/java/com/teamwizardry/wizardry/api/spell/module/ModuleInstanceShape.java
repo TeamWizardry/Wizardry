@@ -41,8 +41,8 @@ public class ModuleInstanceShape extends ModuleInstance {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean noChildrenRun() {
-		return ((IModuleShape)moduleClass).noChildrenRun();
+	public boolean shouldRunChildren() {
+		return ((IModuleShape)moduleClass).shouldRunChildren();
 	}
 	
 	/**

@@ -20,11 +20,11 @@ public interface IRunnableModule<InstanceType extends ModuleInstance> {
 	boolean run(InstanceType instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing);
 	
 	/**
-	 * If children shouldn't be traversed after execution.
+	 * If children should be traversed after execution by the standard Spell Ring execution.
 	 * 
 	 * @return <code>true</code> iff yes.
 	 */
-	default boolean noChildrenRun() {
-		return false;
+	default boolean shouldRunChildren() {
+		return true;
 	}
 }

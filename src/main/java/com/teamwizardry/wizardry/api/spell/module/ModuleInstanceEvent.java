@@ -30,8 +30,8 @@ public class ModuleInstanceEvent extends ModuleInstance {
 	 * {@inheritDoc}	
 	 */
 	@Override
-	public boolean noChildrenRun() {
-		return ((IModuleEvent)moduleClass).noChildrenRun();
+	public boolean shouldRunChildren() {
+		return ((IModuleEvent)moduleClass).shouldRunChildren();
 	}
 	
 	/**

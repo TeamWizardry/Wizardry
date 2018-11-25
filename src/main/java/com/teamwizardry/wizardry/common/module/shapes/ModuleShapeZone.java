@@ -45,21 +45,33 @@ public class ModuleShapeZone implements IModuleShape, ILingeringModule {
 	public static final String ZONE_OFFSET = "zone offset";
 	public static final String ZONE_CAST = "zone cast";
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String[] compatibleModifierClasses() {
 		return new String[]{"modifier_increase_aoe", "modifier_increase_potency", "modifier_extend_range", "modifier_extend_time"};
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean ignoreResultsForRendering() {
 		return true;
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public boolean noChildrenRun() {
-		return true;
+	public boolean shouldRunChildren() {
+		return false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean run(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
@@ -125,6 +137,9 @@ public class ModuleShapeZone implements IModuleShape, ILingeringModule {
 		return true;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void renderSpell(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {

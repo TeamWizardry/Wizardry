@@ -38,21 +38,33 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.*;
 @RegisterModule(ID="shape_cone")
 public class ModuleShapeCone implements IModuleShape {
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String[] compatibleModifierClasses() {
 		return new String[]{"modifier_increase_potency", "modifier_extend_range"};
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean ignoreResultsForRendering() {
 		return true;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public boolean noChildrenRun() {
-		return true;
+	public boolean shouldRunChildren() {
+		return false;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean run(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		World world = spell.world;
@@ -104,6 +116,9 @@ public class ModuleShapeCone implements IModuleShape {
 		return true;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void renderSpell(ModuleInstanceShape instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
