@@ -35,7 +35,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.LOOK;
 public class ModuleEffectLeap implements IModuleEffect, IOverrideCooldown {
 
 	@Override
-	public String[] compatibleModifierClasses() {
+	public String[] compatibleModifiers() {
 		return new String[]{"modifier_increase_potency"};
 	}
 

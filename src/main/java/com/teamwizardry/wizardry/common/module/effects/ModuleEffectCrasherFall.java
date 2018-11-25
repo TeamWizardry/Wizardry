@@ -26,7 +26,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ModuleEffectCrasherFall implements IModuleEffect {
 
 	@Override
-	public String[] compatibleModifierClasses() {
+	public String[] compatibleModifiers() {
 		return new String[]{"modifier_extend_range", "modifier_extend_time"};
 	}
 

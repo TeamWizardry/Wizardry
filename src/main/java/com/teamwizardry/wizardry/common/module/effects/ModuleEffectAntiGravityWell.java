@@ -40,7 +40,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.ORIGIN;
 public class ModuleEffectAntiGravityWell implements IModuleEffect, ILingeringModule {
 
 	@Override
-	public String[] compatibleModifierClasses() {
+	public String[] compatibleModifiers() {
 		return new String[]{"modifier_increase_aoe", "modifier_increase_potency", "modifier_extend_time"};
 	}
 

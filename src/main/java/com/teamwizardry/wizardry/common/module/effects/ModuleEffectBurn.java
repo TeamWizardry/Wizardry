@@ -36,7 +36,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ModuleEffectBurn implements IModuleEffect {
 
 	@Override
-	public String[] compatibleModifierClasses() {
+	public String[] compatibleModifiers() {
 		return new String[]{"modifier_increase_aoe", "modifier_extend_time"};
 	}
 

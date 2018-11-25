@@ -25,7 +25,7 @@ import javax.annotation.Nonnull;
 public class ModuleEffectVanish implements IModuleEffect {
 
 	@Override
-	public String[] compatibleModifierClasses() {
+	public String[] compatibleModifiers() {
 		return new String[]{"modifier_extend_time"};
 	}
 

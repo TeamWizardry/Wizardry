@@ -1,10 +1,11 @@
 {
-  "sub_module_id": "modifier_extend_time",
-  "reference_module_id": "modifier_extend_time",
-  "item": "minecraft:gold_nugget",
+  "sub_module_id": "modifier_extend_range",
+  "reference_module_id": "modifier",
+  "item": "minecraft:dye",
+  "item_meta": "4",
   "modifiers": [
     {
-      "attribute": "duration",
+      "attribute": "range",
       "operation": "add",
       "amount": 1
     },

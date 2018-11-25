@@ -1,10 +1,10 @@
 {
-  "sub_module_id": "modifier_increase_speed",
-  "reference_module_id": "modifier_increase_speed",
-  "item": "minecraft:dragon_breath",
+  "sub_module_id": "modifier_increase_potency",
+  "reference_module_id": "modifier",
+  "item": "minecraft:prismarine_crystals",
   "modifiers": [
     {
-      "attribute": "speed",
+      "attribute": "potency",
       "operation": "add",
       "amount": 1
     },

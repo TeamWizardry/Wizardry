@@ -36,7 +36,7 @@ import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.FACE_HIT
 public class ModuleEffectBreak implements IModuleEffect {
 
 	@Override
-	public String[] compatibleModifierClasses() {
+	public String[] compatibleModifiers() {
 		return new String[]{"modifier_increase_aoe", "modifier_increase_potency"};
 	}
 

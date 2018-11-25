@@ -282,7 +282,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	private static final NBTTagCompound sortInformationTag(NBTTagCompound informationNbt) {
 		ArrayList<Pair<String, Long>> sortedInformationList = new ArrayList<>(informationNbt.getSize());
 		// NOTE: Minecraft is not providing a way to iterate a nbt compound. Had to use access transformer to informationNbt.tagMap
-		for( String key : informationNbt.tagMap.keySet() ) {
+		for (String key : informationNbt.getKeySet()) {
 			sortedInformationList.add( Pair.of(key, FixedPointUtils.getFixedFromNBT(informationNbt, key)) );
 		}
 		Collections.sort(sortedInformationList, (o1, o2) -> o1.getKey().compareTo(o2.getKey()));

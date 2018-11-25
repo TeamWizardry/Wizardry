@@ -42,7 +42,7 @@ public class ModuleShapeCone implements IModuleShape {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String[] compatibleModifierClasses() {
+	public String[] compatibleModifiers() {
 		return new String[]{"modifier_increase_potency", "modifier_extend_range"};
 	}
 	

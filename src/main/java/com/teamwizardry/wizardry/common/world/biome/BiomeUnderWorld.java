@@ -5,6 +5,7 @@ import java.util.Random;
 
 import javax.annotation.Nonnull;
 
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.common.entity.EntitySpiritWight;
@@ -48,7 +49,7 @@ public class BiomeUnderWorld extends Biome {
 	@SubscribeEvent
 	public void onTickPlayerTick(TickEvent.PlayerTickEvent event) {
 		if (event.player.world.isRemote) return;
-
+		if (event.player.world.provider.getDimensionType() != Wizardry.underWorld) return;
 		if (!event.player.world.getGameRules().getBoolean("doMobSpawning")) return;
 
 		if (RandUtil.nextInt(300) == 0 && getEntityCount(EntityFairy.class, event.player.getPosition(), event.player.world, 64) < 15) {

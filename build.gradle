@@ -22,7 +22,6 @@ targetCompatibility = 1.8
 
 configurations.all {
     resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
-    
 }
 
 minecraft {
@@ -64,7 +63,8 @@ jar {
     manifest {
         attributes(
                 "FMLCorePluginContainsFMLMod": "true",
-                "FMLCorePlugin": "$core_plugin"
+                "FMLCorePlugin": "$core_plugin",
+                "FMLAT": 'wizardry_at.cfg'
         )
     }
 }

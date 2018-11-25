@@ -37,7 +37,7 @@ import java.util.List;
 public class ModuleEffectTelekinesis implements IModuleEffect, IContinuousModule {
 
 	@Override
-	public String[] compatibleModifierClasses() {
+	public String[] compatibleModifiers() {
 		return new String[]{"modifier_increase_aoe"};
 	}
 

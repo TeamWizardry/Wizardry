@@ -31,7 +31,7 @@ public class LightningTracker {
 
 	@SubscribeEvent
 	public void tick(TickEvent.WorldTickEvent event) {
-		newEntries.stream().forEach(e -> entityToEntry.put(e.getTarget(), e));
+		newEntries.forEach(e -> entityToEntry.put(e.getTarget(), e));
 		newEntries.clear();
 		
 		entityToEntry.keySet().removeIf(entity -> {

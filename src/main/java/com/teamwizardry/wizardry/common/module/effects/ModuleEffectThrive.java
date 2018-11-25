@@ -37,7 +37,7 @@ import javax.annotation.Nonnull;
 public class ModuleEffectThrive implements IModuleEffect {
 
 	@Override
-	public String[] compatibleModifierClasses() {
+	public String[] compatibleModifiers() {
 		return new String[]{"modifier_increase_potency"};
 	}
 

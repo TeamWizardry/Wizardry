@@ -44,7 +44,7 @@ import javax.annotation.Nonnull;
 public class ModuleEffectFrost implements IModuleEffect {
 
 	@Override
-	public String[] compatibleModifierClasses() {
+	public String[] compatibleModifiers() {
 		return new String[]{"modifier_increase_aoe", "modifier_extend_time"};
 	}
 

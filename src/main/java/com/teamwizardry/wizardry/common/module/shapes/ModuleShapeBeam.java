@@ -53,7 +53,7 @@ public class ModuleShapeBeam implements IModuleShape, IContinuousModule {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String[] compatibleModifierClasses() {
+	public String[] compatibleModifiers() {
 		return new String[]{"modifier_extend_range", "modifier_increase_potency"};
 	}
 

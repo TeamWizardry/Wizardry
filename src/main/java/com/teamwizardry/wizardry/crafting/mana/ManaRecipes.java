@@ -16,6 +16,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
+
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -23,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ManaRecipes {
 	public static final ManaRecipes INSTANCE = new ManaRecipes();
@@ -69,23 +72,25 @@ public class ManaRecipes {
 	}
 	
 	public void copyAllRecipes(File directory) {
-		for (String recipeName : getResourceListing(Wizardry.MODID, "fluid_recipes")) {
-			if (recipeName.isEmpty()) continue;
-
-			InputStream stream = LibrarianLib.PROXY.getResource(Wizardry.MODID, "fluid_recipes/" + recipeName);
-			if (stream == null) {
-				Wizardry.logger.fatal("    > SOMETHING WENT WRONG! Could not read recipe " + recipeName + " from mod jar! Report this to the devs on Github!");
-				continue;
-			}
-
-			try {
-				FileUtils.copyInputStreamToFile(stream, new File(directory, recipeName));
-				Wizardry.logger.info("    > Mana recipe " + recipeName + " copied successfully from mod jar.");
-			} catch (IOException e) {
-				e.printStackTrace();
+		Map<String, ModContainer> modList = Loader.instance().getIndexedModList();
+		for (Map.Entry<String, ModContainer> entry : modList.entrySet() ) {
+			for (String recipeName : getResourceListing(entry.getKey(), "fluid_recipes")) {
+				if (recipeName.isEmpty()) continue;
+	
+				InputStream stream = LibrarianLib.PROXY.getResource(entry.getKey(), "fluid_recipes/" + recipeName);
+				if (stream == null) {
+					Wizardry.logger.fatal("    > SOMETHING WENT WRONG! Could not read recipe " + recipeName + " from mod jar of '" + entry.getKey() + "'! Report this to the devs on Github!");
+					continue;
+				}
+	
+				try {
+					FileUtils.copyInputStreamToFile(stream, new File(directory, recipeName));
+					Wizardry.logger.info("    > Mana recipe " + recipeName + " copied successfully from mod jar.");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
-
 	}
 
 	public static class ExplodableCrafter extends FluidCraftInstance {

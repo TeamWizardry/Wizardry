@@ -20,7 +20,7 @@ public interface IModule {
 	 * @return Any set with IDs of applicable IModuleModifier instances.
 	 */
 	@Nullable
-	default String[] compatibleModifierClasses() {
+	default String[] compatibleModifiers() {
 		return null;
 	}
 }
