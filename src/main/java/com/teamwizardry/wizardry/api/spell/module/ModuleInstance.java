@@ -10,8 +10,8 @@ import com.teamwizardry.wizardry.api.capability.world.WizardryWorldCapability;
 import com.teamwizardry.wizardry.api.events.SpellCastEvent;
 import com.teamwizardry.wizardry.api.spell.ILingeringModule;
 import com.teamwizardry.wizardry.api.spell.SpellData;
-import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellDataTypes.BlockStateCache;
+import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRange;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
@@ -67,7 +67,7 @@ public abstract class ModuleInstance {
 	protected Color primaryColor;
 	protected Color secondaryColor;
 	protected ItemStack itemStack;
-	protected ModuleInstanceModifier [] applicableModifiers = null;
+	protected ModuleInstanceModifier[] applicableModifiers = null;
 
 	@Nullable
 	public static ModuleInstance deserialize(NBTTagString tagString) {
@@ -78,35 +78,15 @@ public abstract class ModuleInstance {
 	public static ModuleInstance deserialize(String id) {
 		return ModuleRegistry.INSTANCE.getModule(id);
 	}
-	
-	static ModuleInstance createInstance(IModule moduleClass,
-			ModuleFactory createdByFactory,
-			String subModuleID,
-			ResourceLocation icon,
-			ItemStack itemStack,
-            Color primaryColor,
-            Color secondaryColor,
-            DefaultHashMap<Attribute, AttributeRange> attributeRanges) {
-		if( moduleClass instanceof IModuleEffect )
-			return new ModuleInstanceEffect((IModuleEffect)moduleClass, createdByFactory, subModuleID, icon, itemStack, primaryColor, secondaryColor, attributeRanges);
-		else if( moduleClass instanceof IModuleModifier )
-			return new ModuleInstanceModifier((IModuleModifier)moduleClass, createdByFactory, subModuleID, icon, itemStack, primaryColor, secondaryColor, attributeRanges);
-		else if( moduleClass instanceof IModuleEvent )
-			return new ModuleInstanceEvent((IModuleEvent)moduleClass, createdByFactory, itemStack, subModuleID, icon, primaryColor, secondaryColor, attributeRanges);
-		else if( moduleClass instanceof IModuleShape )
-			return new ModuleInstanceShape((IModuleShape)moduleClass, createdByFactory, itemStack, subModuleID, icon, primaryColor, secondaryColor, attributeRanges);
-		else
-			throw new UnsupportedOperationException("Unknown module type.");
-	}
 
 	protected ModuleInstance(IModule moduleClass,
-			      ModuleFactory createdByFactory,
-				  String moduleName,
-				  ResourceLocation icon,
-				  ItemStack itemStack,
-	              Color primaryColor,
-	              Color secondaryColor,
-	              DefaultHashMap<Attribute, AttributeRange> attributeRanges) {
+	                         ModuleFactory createdByFactory,
+	                         String moduleName,
+	                         ResourceLocation icon,
+	                         ItemStack itemStack,
+	                         Color primaryColor,
+	                         Color secondaryColor,
+	                         DefaultHashMap<Attribute, AttributeRange> attributeRanges) {
 		this.moduleClass = moduleClass;
 		this.createdByFactory = createdByFactory;
 		this.subModuleID = moduleName;
@@ -116,15 +96,35 @@ public abstract class ModuleInstance {
 		this.secondaryColor = secondaryColor;
 		this.attributeRanges = attributeRanges;
 	}
-	
+
+	static ModuleInstance createInstance(IModule moduleClass,
+	                                     ModuleFactory createdByFactory,
+	                                     String subModuleID,
+	                                     ResourceLocation icon,
+	                                     ItemStack itemStack,
+	                                     Color primaryColor,
+	                                     Color secondaryColor,
+	                                     DefaultHashMap<Attribute, AttributeRange> attributeRanges) {
+		if (moduleClass instanceof IModuleEffect)
+			return new ModuleInstanceEffect((IModuleEffect) moduleClass, createdByFactory, subModuleID, icon, itemStack, primaryColor, secondaryColor, attributeRanges);
+		else if (moduleClass instanceof IModuleModifier)
+			return new ModuleInstanceModifier((IModuleModifier) moduleClass, createdByFactory, subModuleID, icon, itemStack, primaryColor, secondaryColor, attributeRanges);
+		else if (moduleClass instanceof IModuleEvent)
+			return new ModuleInstanceEvent((IModuleEvent) moduleClass, createdByFactory, itemStack, subModuleID, icon, primaryColor, secondaryColor, attributeRanges);
+		else if (moduleClass instanceof IModuleShape)
+			return new ModuleInstanceShape((IModuleShape) moduleClass, createdByFactory, itemStack, subModuleID, icon, primaryColor, secondaryColor, attributeRanges);
+		else
+			throw new UnsupportedOperationException("Unknown module type.");
+	}
+
 	public final IModule getModuleClass() {
 		return this.moduleClass;
 	}
-	
+
 	public final ModuleFactory getFactory() {
 		return this.createdByFactory;
 	}
-	
+
 	/**
 	 * Will render whatever GL code is specified here while the spell is being held by the
 	 * player's hand.
@@ -138,7 +138,7 @@ public abstract class ModuleInstance {
 	public final SpellData standardRenderVisualization(@Nonnull SpellData data, @Nonnull SpellRing ring, @Nonnull SpellData previousData) {
 		return new SpellData(data.world);
 	}
-	
+
 	@Nullable
 	public final ItemStack getAvailableStack(Collection<ItemStack> stacks) {
 		for (ItemStack stack : stacks) {
@@ -260,7 +260,7 @@ public abstract class ModuleInstance {
 	 * @return A ModuleType representing the type of module this is.
 	 */
 	public abstract ModuleType getModuleType();
-	
+
 	/**
 	 * A lower case snake_case string id that reflects the module to identify it during serialization/deserialization.
 	 *
@@ -269,7 +269,7 @@ public abstract class ModuleInstance {
 	public final String getSubModuleID() {
 		return subModuleID;
 	}
-	
+
 	public final String getReferenceModuleID() {
 		return createdByFactory.getReferenceModuleID();
 	}
@@ -418,7 +418,7 @@ public abstract class ModuleInstance {
 		GlStateManager.enableDepth();
 		GlStateManager.popMatrix();
 	}
-	
+
 	public List<String> getDetailedInfo() {
 		List<String> detailedInfo = new ArrayList<>();
 		for (Attribute attribute : this.attributeRanges.keySet()) {
@@ -448,25 +448,25 @@ public abstract class ModuleInstance {
 	@Nullable
 	public ModuleInstanceModifier[] applicableModifiers() {
 		// Find all registered compatible modifiers and return them. Results are cached.
-		if( applicableModifiers == null ) {
+		if (applicableModifiers == null) {
 			LinkedList<ModuleInstanceModifier> applicableModifiersList = new LinkedList<>();
 			// TODO: Replace applicable modifier list with more dynamic system
 			String[] modifierNames = moduleClass.compatibleModifiers();
-			if( modifierNames != null ) {
-				for( ModuleInstance mod : ModuleRegistry.INSTANCE.modules ) {
-					for( String modifier : modifierNames ) {
-						if( mod.getSubModuleID().equals(modifier) ) {
-							if( !(mod instanceof ModuleInstanceModifier) ) {
+			if (modifierNames != null) {
+				for (ModuleInstance mod : ModuleRegistry.INSTANCE.modules) {
+					for (String modifier : modifierNames) {
+						if (mod.getSubModuleID().equals(modifier)) {
+							if (!(mod instanceof ModuleInstanceModifier)) {
 								// TODO: Log it!
 								continue;
 							}
-							applicableModifiersList.add((ModuleInstanceModifier)mod);	// Expected to be of type ModuleModifier
+							applicableModifiersList.add((ModuleInstanceModifier) mod);    // Expected to be of type ModuleModifier
 							break;
 						}
 					}
 				}
 			}
-			
+
 			applicableModifiers = applicableModifiersList.toArray(new ModuleInstanceModifier[applicableModifiersList.size()]);
 		}
 		return applicableModifiers;
@@ -525,7 +525,7 @@ public abstract class ModuleInstance {
 	public List<AttributeModifier> getAttributes() {
 		return attributes;
 	}
-	
+
 	public Map<Attribute, AttributeRange> getAttributeRanges() {
 		return attributeRanges;
 	}
@@ -537,11 +537,11 @@ public abstract class ModuleInstance {
 	public final void addAttributeRange(Attribute attribute, AttributeRange range) {
 		this.attributeRanges.put(attribute, range);
 	}
-	
+
 	public final boolean ignoreResultForRendering() {
 		return moduleClass.ignoreResultForRendering();
 	}
-	
+
 	/**
 	 * Only return false if the spellData cannot be taxed from mana. Return true otherwise.
 	 */
@@ -577,8 +577,18 @@ public abstract class ModuleInstance {
 					break;
 				}
 			}
-			if (!alreadyLingering)
-				worldCap.addLingerSpell(spellRing, spell, ((ILingeringModule) moduleClass).getLingeringTime(spell, spellRing));
+			if (!alreadyLingering) {
+				SpellCastEvent event = new SpellCastEvent(spellRing, spell);
+				MinecraftForge.EVENT_BUS.post(event);
+
+				boolean success = !event.isCanceled() && run(spell, spellRing) && ((ILingeringModule) moduleClass).runOnce(this, spell, spellRing);
+
+				if (success) {
+					worldCap.addLingerSpell(spellRing, spell, ((ILingeringModule) moduleClass).getLingeringTime(spell, spellRing));
+				}
+
+				return success;
+			}
 		}
 
 		SpellCastEvent event = new SpellCastEvent(spellRing, spell);
@@ -601,7 +611,7 @@ public abstract class ModuleInstance {
 	}
 
 	public ResourceLocation getIconLocation() {
-		if( icon == null )
+		if (icon == null)
 			return new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/icons/" + getSubModuleID() + ".png");
 		return icon;
 	}

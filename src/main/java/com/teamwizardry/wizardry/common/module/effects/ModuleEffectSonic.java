@@ -1,14 +1,12 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
-import javax.annotation.Nonnull;
-
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterModule;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
-
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,6 +16,8 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nonnull;
 
 @RegisterModule(ID="effect_sonic")
 public class ModuleEffectSonic implements IModuleEffect {
@@ -32,8 +32,6 @@ public class ModuleEffectSonic implements IModuleEffect {
 		Entity targetEntity = spell.getVictim();
 		Entity caster = spell.getCaster();
 		World world = spell.world;
-		
-		if (world == null) return false;
 
 		double potency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell) / 2;
 		double area = spellRing.getAttributeValue(AttributeRegistry.AREA, spell) / 2;
@@ -42,6 +40,7 @@ public class ModuleEffectSonic implements IModuleEffect {
 
 		if (targetEntity instanceof EntityLivingBase)
 		{
+			Minecraft.getMinecraft().player.sendChatMessage(potency + " - " + area);
 			damageEntity((EntityLivingBase) targetEntity, caster, (float) potency);
 		
 			if (((EntityLivingBase) targetEntity).getHealth() <= 0)
