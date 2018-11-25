@@ -596,10 +596,6 @@ public abstract class ModuleInstance {
 				}
 				
 				if (!alreadyLingering) {
-//					SpellCastEvent event = new SpellCastEvent(spellRing, spell);
-//					MinecraftForge.EVENT_BUS.post(event);
-//
-//					success = !event.isCanceled() && run(spell, spellRing) && ((ILingeringModule) moduleClass).runOnce(this, spell, spellRing);
 					success = internalCastSpell(spell, spellRing) && ((ILingeringModule) moduleClass).runOnce(this, spell, spellRing);
 
 					if (success) {
@@ -610,10 +606,6 @@ public abstract class ModuleInstance {
 				}
 			}
 			
-//			SpellCastEvent event = new SpellCastEvent(spellRing, spell);
-//			MinecraftForge.EVENT_BUS.post(event);
-
-//			success = !event.isCanceled() && run(spell, spellRing);
 			if( !alreadyCasted ) {
 				success = internalCastSpell(spell, spellRing);
 				alreadyCasted = true;
