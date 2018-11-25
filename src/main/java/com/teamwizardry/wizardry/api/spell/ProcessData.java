@@ -127,8 +127,10 @@ public class ProcessData {
 		@Override
 		@Nonnull
 		public NBTBase serialize(@Nullable Object object) {
-			if( !dataTypeClazz.isAssignableFrom(object.getClass()) )
-				throw new DataSerializationException("Object to serialize must be at least of class '" + dataTypeClazz + "'");
+			if( object != null ) {
+				if( !dataTypeClazz.isAssignableFrom(object.getClass()) )
+					throw new DataSerializationException("Object to serialize must be at least of class '" + dataTypeClazz + "'");
+			}
 			return ioProcess.serialize((E)object);
 		}
 		
