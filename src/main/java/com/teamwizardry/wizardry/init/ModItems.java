@@ -7,12 +7,9 @@ import com.teamwizardry.wizardry.common.item.dusts.ItemFairyDust;
 import com.teamwizardry.wizardry.common.item.dusts.ItemSkyDust;
 import com.teamwizardry.wizardry.common.item.halos.*;
 import com.teamwizardry.wizardry.common.item.pearlbelt.ItemPearlBelt;
-import com.teamwizardry.wizardry.common.item.pearlbelt.ItemPearlBeltBauble;
 import com.teamwizardry.wizardry.common.item.tools.ItemUnicornDagger;
-
 import net.minecraft.item.Item;
 import net.minecraft.item.Item.ToolMaterial;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.common.Loader;
 
@@ -79,24 +76,22 @@ public class ModItems {
 		SKY_DUST = new ItemSkyDust();
 
 		UNICORN_HORN = new ItemUnicornHorn();
-		MinecraftForge.EVENT_BUS.register(UNICORN_DAGGER = new ItemUnicornDagger());
+		UNICORN_DAGGER = new ItemUnicornDagger();
 
 		WISDOM_STICK = new ItemWisdomStick();
+
+		PEARL_BELT = new ItemPearlBelt();
 
 		if (Loader.isModLoaded("baubles")) {
 			CAPE = new ItemCapeBauble();
 			FAKE_HALO = new ItemFakeHaloBauble();
 			REAL_HALO = new ItemRealHaloBauble();
 			CREATIVE_HALO = new ItemCreativeHaloBauble();
-
-			PEARL_BELT = new ItemPearlBeltBauble();
 		} else {
 			CAPE = new ItemCapeChest();
 			FAKE_HALO = new ItemFakeHaloHead();
 			REAL_HALO = new ItemRealHaloHead();
 			CREATIVE_HALO = new ItemCreativeHaloHead();
-
-			PEARL_BELT = new ItemPearlBelt();
 		}
 	}
 }

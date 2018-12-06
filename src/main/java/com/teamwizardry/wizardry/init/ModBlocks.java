@@ -1,13 +1,14 @@
 package com.teamwizardry.wizardry.init;
 
 
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.common.block.*;
 import com.teamwizardry.wizardry.common.block.fluid.ModFluids;
 import com.teamwizardry.wizardry.common.block.wisdomwood.*;
 import net.minecraft.block.Block;
 import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -15,6 +16,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 /**
  * Created by Demoniaque on 3/24/2016.
  */
+@Mod.EventBusSubscriber(modid = Wizardry.MODID)
 public class ModBlocks {
 
 	public static BlockCraftingPlate CRAFTING_PLATE;
@@ -49,8 +51,6 @@ public class ModBlocks {
 	public static BlockUnicornTrail UNICORN_TRAIL;
 
 	public static void init() {
-
-		MinecraftForge.EVENT_BUS.register(ModBlocks.class);
 
 		ModFluids.init();
 

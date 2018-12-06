@@ -10,6 +10,7 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
@@ -20,6 +21,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class ItemFakeHaloHead extends ItemModArmor implements IHalo {
@@ -59,5 +61,15 @@ public class ItemFakeHaloHead extends ItemModArmor implements IHalo {
 	public void addInformation(@NotNull ItemStack stack, @Nullable World world, @NotNull List<String> tooltip, @NotNull ITooltipFlag flag) {
 		super.addInformation(stack, world, tooltip, flag);
 		tooltip.addAll(getHaloTooltip(stack));
+	}
+
+	private boolean isInitialized; { isInitialized = true; }
+
+	@Nonnull
+	@Override
+	public Item setMaxDamage(int maxDamageIn) {
+		if (!isInitialized)
+			return this;
+		return super.setMaxDamage(maxDamageIn);
 	}
 }

@@ -48,7 +48,7 @@ public class ClientProxy extends CommonProxy {
 		super.preInit(event);
 
 		if (ConfigValues.versionCheckerEnabled)
-			MinecraftForge.EVENT_BUS.register(VersionChecker.INSTANCE);
+			VersionChecker.register();
 
 		PearlRadialUIRenderer.INSTANCE.getClass();
 

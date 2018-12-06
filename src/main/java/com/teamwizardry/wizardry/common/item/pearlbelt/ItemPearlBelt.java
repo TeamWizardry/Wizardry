@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.common.item.pearlbelt;
 
-import com.teamwizardry.librarianlib.features.base.item.ItemMod;
+import baubles.api.BaubleType;
+import com.teamwizardry.librarianlib.features.base.item.ItemModBauble;
 import kotlin.jvm.functions.Function2;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -9,14 +10,17 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class ItemPearlBelt extends ItemMod implements IPearlBelt {
+@Optional.Interface(iface = "baubles.api.IBauble", modid = "baubles")
+public class ItemPearlBelt extends ItemModBauble implements IPearlBelt {
 
 	public ItemPearlBelt() {
 		super("pearl_belt");
@@ -31,6 +35,13 @@ public class ItemPearlBelt extends ItemMod implements IPearlBelt {
 		onRightClick(world, player, hand);
 
 		return super.onItemRightClick(world, player, hand);
+	}
+
+	@Nonnull
+	@Override
+	@Optional.Method(modid = "baubles")
+	public BaubleType getBaubleType(@NotNull ItemStack stack) {
+		return BaubleType.BELT;
 	}
 
 	@Nullable

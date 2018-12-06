@@ -10,6 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.*;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -19,23 +20,23 @@ import java.util.ArrayList;
 
 public final class VersionChecker {
 
-	public static VersionChecker INSTANCE = new VersionChecker();
-
 	public static boolean doneChecking = false;
 	public static String onlineVersion = null;
 	public static String updateMessage = null;
 	private static boolean triedToWarnPlayer = false;
 
-	private VersionChecker() {
-		new ThreadVersionChecker();
+	public static void register() {
+		MinecraftForge.EVENT_BUS.register(VersionChecker.class);
+		if (ConfigValues.versionCheckerEnabled)
+			new ThreadVersionChecker();
 	}
 
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
-	public void onTick(TickEvent.ClientTickEvent event) {
-		EntityPlayer player = Minecraft.getMinecraft().player;
-
+	public static void onTick(TickEvent.ClientTickEvent event) {
 		if (!ConfigValues.versionCheckerEnabled) return;
+
+		EntityPlayer player = Minecraft.getMinecraft().player;
 
 		if (doneChecking && event.phase == TickEvent.Phase.END && player != null && !triedToWarnPlayer) {
 			ITextComponent component = new TextComponentString("[").setStyle(new Style().setColor(TextFormatting.GREEN))

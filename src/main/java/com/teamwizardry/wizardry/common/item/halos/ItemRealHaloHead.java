@@ -8,12 +8,14 @@ import com.teamwizardry.wizardry.api.item.halo.IHalo;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class ItemRealHaloHead extends ItemModArmor implements IHalo {
@@ -49,5 +51,15 @@ public class ItemRealHaloHead extends ItemModArmor implements IHalo {
 	public void addInformation(@NotNull ItemStack stack, @Nullable World world, @NotNull List<String> tooltip, @NotNull ITooltipFlag flag) {
 		super.addInformation(stack, world, tooltip, flag);
 		tooltip.addAll(getHaloTooltip(stack));
+	}
+
+	private boolean isInitialized; { isInitialized = true; }
+
+	@Nonnull
+	@Override
+	public Item setMaxDamage(int maxDamageIn) {
+		if (!isInitialized)
+			return this;
+		return super.setMaxDamage(maxDamageIn);
 	}
 }

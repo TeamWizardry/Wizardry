@@ -7,10 +7,12 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -38,5 +40,15 @@ public class ItemCapeChest extends ItemModArmor implements ICape {
 	@Override
 	public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
 		tooltip.addAll(getCapeTooltip(stack));
+	}
+
+	private boolean isInitialized; { isInitialized = true; }
+
+	@Nonnull
+	@Override
+	public Item setMaxDamage(int maxDamageIn) {
+		if (!isInitialized)
+			return this;
+		return super.setMaxDamage(maxDamageIn);
 	}
 }
