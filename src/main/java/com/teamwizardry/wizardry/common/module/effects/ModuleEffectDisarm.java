@@ -44,18 +44,10 @@ public class ModuleEffectDisarm implements IModuleEffect {
 				ItemStack held = ((EntityLivingBase) targetEntity).getHeldItemMainhand();
 
 				if (targetEntity instanceof EntityPlayer) {
-					for (int i = 9; i < ((EntityPlayer) targetEntity).inventory.getSizeInventory(); i++) {
-						if (((EntityPlayer) targetEntity).inventory.getStackInSlot(i) == ItemStack.EMPTY) {
-							((EntityPlayer) targetEntity).inventory.setInventorySlotContents(i, held.copy());
-							held.setCount(0);
-							return true;
-						}
-					}
-
 					ItemStack copy = held.copy();
 					held.setCount(0);
 					EntityItem item = new EntityItem(spell.world, targetEntity.posX, targetEntity.posY + 1, targetEntity.posZ, copy);
-					item.setPickupDelay(5);
+					item.setDefaultPickupDelay();
 					spell.world.playSound(null, targetEntity.getPosition(), ModSounds.ELECTRIC_BLAST, SoundCategory.NEUTRAL, 1, 1);
 					return spell.world.spawnEntity(item);
 				} else {

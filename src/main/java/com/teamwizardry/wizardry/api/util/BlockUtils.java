@@ -132,7 +132,23 @@ public final class BlockUtils {
 		BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(world, pos, oldState, playerMP);
 
 		MinecraftForge.EVENT_BUS.post(event);
-		return !event.isCanceled() && (drop ? world.destroyBlock(pos, true) : world.setBlockToAir(pos));
+		
+		if (!event.isCanceled())
+		{
+			TileEntity tile = world.getTileEntity(pos);
+			Block block = oldState.getBlock();
+			
+			if (block.removedByPlayer(oldState, world, pos, playerMP, true))
+			{
+				block.onPlayerDestroy(world, pos, oldState);
+				block.harvestBlock(world, playerMP, pos, oldState, tile, null);
+			}
+			else
+				world.setBlockToAir(pos);
+			
+			return true;
+		}
+		return false;
 	}
 
 	public static boolean hasBreakPermission(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull EntityPlayerMP player) {
