@@ -12,13 +12,11 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellRingCache;
-import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceShape;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.RayTrace;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import com.teamwizardry.wizardry.common.module.shapes.IShapeOverrides;
 import com.teamwizardry.wizardry.common.network.PacketExplode;
-import com.teamwizardry.wizardry.common.module.shapes.IShapeOverrides;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.nbt.NBTTagCompound;
@@ -329,7 +327,7 @@ public class EntitySpellProjectile extends EntityMod {
 		if (world.isRemote) return;
 
 		compound.setTag("spell_ring", getSpellRing().serializeNBT());
-		compound.setTag("spell_data", getSpellRing().serializeNBT());
+		compound.setTag("spell_data", getSpellData().serializeNBT());
 
 		compound.setDouble("distance", getDistance());
 		compound.setDouble("speed", getSpeed());

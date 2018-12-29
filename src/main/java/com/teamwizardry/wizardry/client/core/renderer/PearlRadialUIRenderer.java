@@ -114,8 +114,9 @@ public class PearlRadialUIRenderer {
 				int lastSlot = scrollSlot;
 
 				scrollSlot = getScrollSlot(event, count, scrollSlot);
+				Minecraft.getMinecraft().player.sendChatMessage(scrollSlot + "");
 
-				if ((count == 1 || lastSlot != scrollSlot) && scrollSlot >= 0) {
+				if ((lastSlot != scrollSlot) && scrollSlot >= 0) {
 					ItemNBTHelper.setInt(stack, "scroll_slot", scrollSlot);
 
 					for (int i = 0; i < INSTANCE.slotAnimations.length; i++) {
@@ -124,19 +125,19 @@ public class PearlRadialUIRenderer {
 							INSTANCE.ANIMATOR.removeAnimations(animation);
 
 						if (i == scrollSlot) continue;
-						BasicAnimation<PearlRadialUIRenderer> newAnimation = new BasicAnimation<>(this, "slotRadii[" + i + "]");
+						BasicAnimation<PearlRadialUIRenderer> newAnimation = new BasicAnimation<>(INSTANCE, "slotRadii[" + i + "]");
 						newAnimation.setTo(0);
-						newAnimation.setEasing(Easing.easeInQuint);
-						newAnimation.setDuration(50f);
+						newAnimation.setEasing(Easing.easeOutQuint);
+						newAnimation.setDuration(20f);
 						INSTANCE.ANIMATOR.add(newAnimation);
 
 						INSTANCE.slotAnimations[i] = newAnimation;
 					}
 
-					BasicAnimation<PearlRadialUIRenderer> animation = new BasicAnimation<>(this, "slotRadii[" + scrollSlot + "]");
-					animation.setTo(SELECTOR_SHIFT * 2);
+					BasicAnimation<PearlRadialUIRenderer> animation = new BasicAnimation<>(INSTANCE, "slotRadii[" + scrollSlot + "]");
+					animation.setTo(SELECTOR_SHIFT * 10);
 					animation.setEasing(Easing.easeOutQuint);
-					animation.setDuration(50f);
+					animation.setDuration(20f);
 					INSTANCE.ANIMATOR.add(animation);
 
 					INSTANCE.slotAnimations[scrollSlot] = animation;
@@ -205,8 +206,6 @@ public class PearlRadialUIRenderer {
 			float anglePerSegment = anglePerColor / (numSegmentsPerArc);
 			float angle = 0;
 
-			int scrollSlot = ItemNBTHelper.getInt(stack, "scroll_slot", -1);
-
 			Tessellator tess = Tessellator.getInstance();
 			BufferBuilder bb = tess.getBuffer();
 			for (int j = 0; j < pearls.size(); j++) {
@@ -220,7 +219,7 @@ public class PearlRadialUIRenderer {
 				Color color = new Color(colorInt);
 
 				double innerRadius = SELECTOR_RADIUS - SELECTOR_WIDTH / 2.0;
-				double outerRadius = SELECTOR_RADIUS + SELECTOR_WIDTH / 2.0 + (scrollSlot < 0 ? 0 : INSTANCE.slotRadii[scrollSlot]);// + (scrollSlot == j ? SELECTOR_SHIFT : 0);
+				double outerRadius = SELECTOR_RADIUS + SELECTOR_WIDTH / 2.0 + (INSTANCE.slotRadii[j]);// + (scrollSlot == j ? SELECTOR_SHIFT : 0);
 
 				GlStateManager.pushMatrix();
 				GlStateManager.translate(width / 2.0, height / 2.0, 0);

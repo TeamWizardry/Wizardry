@@ -248,7 +248,7 @@ public class PotionPhase extends PotionBase {
 				d16 = 0.0D;
 			}
 
-			if (block != null && entity.onGround) {
+			if (entity.onGround) {
 				block.onEntityWalk(entity.world, blockpos, entity);
 			}
 
