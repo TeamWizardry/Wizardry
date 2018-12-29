@@ -53,7 +53,7 @@ public class EntitySpellProjectile extends EntityMod {
 
 	public EntitySpellProjectile(World world) {
 		super(world);
-		setSize(0.3F, 0.3F);
+		setSize(0.5F, 0.5F);
 		isImmuneToFire = true;
 
 		if (world.isRemote)
@@ -62,7 +62,7 @@ public class EntitySpellProjectile extends EntityMod {
 
 	public EntitySpellProjectile(World world, SpellRing spellRing, SpellData spellData, float dist, float speed, float gravity, boolean render) {
 		super(world);
-		setSize(0.3F, 0.3F);
+		setSize(0.5F, 0.5F);
 		isImmuneToFire = true;
 
 		setSpellData(spellData);
@@ -168,7 +168,7 @@ public class EntitySpellProjectile extends EntityMod {
 				@SideOnly(Side.CLIENT)
 				public void runIfClient() {
 					IShapeOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IShapeOverrides.class);
-					if( overrides.onRenderProjectile(spellData, spellRing) )
+					if (overrides.onRenderProjectile(spellData, spellRing))
 						return;
 
 					ParticleBuilder glitter = new ParticleBuilder(10);
@@ -248,6 +248,7 @@ public class EntitySpellProjectile extends EntityMod {
 			for (Entity entity : entities) {
 				if (entity == caster) return;
 				if (entity instanceof EntitySpellProjectile) return;
+				spellData.processEntity(entity, false);
 			}
 
 			RayTraceResult result = new RayTrace(world, look, getPositionVector(), 1)
