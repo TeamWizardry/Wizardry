@@ -308,10 +308,13 @@ public abstract class ModuleInstance {
 	 */
 	@Nonnull
 	public final IBlockState getCachableBlockstate(@Nonnull World world, @Nonnull BlockPos targetBlock, @Nonnull SpellData previousData) {
-		Map<BlockPos, IBlockState> cache = previousData.getData(SpellData.DefaultKeys.BLOCKSTATE_CACHE).getBlockStateCache();
+		BlockStateCache cacheData = previousData.getData(SpellData.DefaultKeys.BLOCKSTATE_CACHE);
+		Map<BlockPos, IBlockState> cache;
 
 		IBlockState state;
-		if (cache != null) {
+		if (cacheData != null && cacheData.getBlockStateCache() != null) {
+
+			cache = cacheData.getBlockStateCache();
 			if (cache.containsKey(targetBlock)) {
 				return cache.get(targetBlock);
 			} else {
@@ -540,7 +543,7 @@ public abstract class ModuleInstance {
 
 	/**
 	 * If module shouldn't be rendered when executing.
-	 * 
+	 *
 	 * @return <code>true</code> iff yes.
 	 */
 	public boolean ignoreResultsForRendering() {
@@ -549,7 +552,7 @@ public abstract class ModuleInstance {
 
 	/**
 	 * If children shouldn't be traversed after execution.
-	 * 
+	 *
 	 * @return <code>true</code> iff yes.
 	 */
 	public boolean shouldRunChildren() {
@@ -594,7 +597,7 @@ public abstract class ModuleInstance {
 						break;
 					}
 				}
-				
+
 				if (!alreadyLingering) {
 					success = internalCastSpell(spell, spellRing) && ((ILingeringModule) moduleClass).runOnce(this, spell, spellRing);
 
@@ -605,20 +608,20 @@ public abstract class ModuleInstance {
 					alreadyCasted = true;
 				}
 			}
-			
-			if( !alreadyCasted ) {
+
+			if (!alreadyCasted) {
 				success = internalCastSpell(spell, spellRing);
 				alreadyCasted = true;
 			}
 		}
-		
-		if( success || ignoreResultsForRendering() ) {
+
+		if (success || ignoreResultsForRendering()) {
 			sendRenderPacket(spell, spellRing);
 		}
-		
+
 		return success;
 	}
-	
+
 	private final boolean internalCastSpell(@Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		SpellCastEvent event = new SpellCastEvent(spellRing, spell);
 		MinecraftForge.EVENT_BUS.post(event);
