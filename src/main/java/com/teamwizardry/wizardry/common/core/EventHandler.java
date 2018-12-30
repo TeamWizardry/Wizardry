@@ -84,7 +84,7 @@ public class EventHandler {
 		if (!(event.getEntity() instanceof EntityPlayer)) return;
 		if (fallResetter.contains(event.getEntity().getUniqueID()))
 		{
-			if (event.getSource() == DamageSource.OUT_OF_WORLD)
+			if (event.getEntity().posY < 0 || event.getEntity().posY > event.getEntity().world.getHeight())
 			{
 				event.setCanceled(true);
 				return;
