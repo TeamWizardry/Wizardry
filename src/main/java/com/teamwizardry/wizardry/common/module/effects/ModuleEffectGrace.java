@@ -64,7 +64,8 @@ public class ModuleEffectGrace implements IModuleEffect, ILingeringModule {
 		World world = spell.world;
 		Entity target = spell.getVictim();
 
-		if (target == null) return;
+		if (!(target instanceof EntityLivingBase)) return;
+		if (!((EntityLivingBase) target).isPotionActive(ModPotions.GRACE)) return;
 
 		ParticleBuilder glitter = new ParticleBuilder(30);
 		glitter.setColorFunction(new InterpColorHSV(instance.getPrimaryColor(), instance.getSecondaryColor()));

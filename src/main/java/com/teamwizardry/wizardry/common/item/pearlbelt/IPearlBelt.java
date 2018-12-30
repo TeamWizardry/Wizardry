@@ -54,20 +54,22 @@ public interface IPearlBelt extends IPearlWheelHolder, INacreProduct.INacreDecay
 	}
 
 	default void onRightClick(World world, EntityPlayer player, EnumHand hand) {
-		if (!shouldUse(player.getHeldItem(hand))) return;
+		ItemStack belt = player.getHeldItem(hand);
+		if (!shouldUse(belt)) return;
 
 		boolean changed = false;
 		for (ItemStack stack : player.inventory.mainInventory)
 			if (stack.getItem() == ModItems.PEARL_NACRE)
 				if (ItemNBTHelper.getBoolean(stack, "infused", false))
-					if (addPearl(player.getHeldItem(hand), stack.copy())) {
+					if (addPearl(belt, stack.copy())) {
 						stack.shrink(1);
 						changed = true;
 					}
 
 		if (changed) {
+			ItemNBTHelper.setInt(belt, "scroll_slot", -1);
 			if (player instanceof EntityPlayerMP)
-				PacketHandler.NETWORK.sendTo(new PacketPearlHolderCondenseInventory(player.inventory.getSlotFor(player.getHeldItem(hand))), (EntityPlayerMP) player);
+				PacketHandler.NETWORK.sendTo(new PacketPearlHolderCondenseInventory(player.inventory.getSlotFor(belt)), (EntityPlayerMP) player);
 			player.playSound(ModSounds.BELL_TING, 1f, 1f);
 		}
 	}

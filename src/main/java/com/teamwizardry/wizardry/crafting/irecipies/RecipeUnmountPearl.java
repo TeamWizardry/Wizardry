@@ -4,6 +4,7 @@ import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
@@ -53,6 +54,7 @@ public class RecipeUnmountPearl extends IForgeRegistryEntry.Impl<IRecipe> implem
 
 		ItemStack infusedPearl = new ItemStack(ModItems.PEARL_NACRE);
 		if (foundStaff.hasTagCompound()) infusedPearl.setTagCompound(foundStaff.getTagCompound());
+		foundStaff.setTagCompound(new NBTTagCompound());
 
 		return infusedPearl;
 	}

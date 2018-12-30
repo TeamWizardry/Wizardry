@@ -45,11 +45,15 @@ public class SpellTicker {
 		World world = event.world;
 		WizardryWorld worldCap = WizardryWorldCapability.get(world);
 
+		if (worldCap == null) return;
+		if (worldCap.getLingeringObjects() == null) return;
+
 		boolean change = false;
 
 		Iterator<LingeringObject> lingering = worldCap.getLingeringObjects().iterator();
 		while (lingering.hasNext()) {
 			LingeringObject lingeringObject = lingering.next();
+			if (lingeringObject == null) continue;
 
 			long fromWorldTime = lingeringObject.getWorldTime();
 			long currentWorldTime = event.world.getTotalWorldTime();

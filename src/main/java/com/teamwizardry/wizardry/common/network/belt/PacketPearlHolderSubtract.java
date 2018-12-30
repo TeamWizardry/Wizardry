@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.common.network.belt;
 
 import com.teamwizardry.librarianlib.features.autoregister.PacketRegister;
+import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketBase;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.wizardry.common.item.pearlbelt.IPearlBelt;
@@ -48,5 +49,6 @@ public class PacketPearlHolderSubtract extends PacketBase {
 		if (output.isEmpty()) return;
 
 		player.addItemStackToInventory(output);
+		ItemNBTHelper.setInt(holder, "scroll_slot", -1);
 	}
 }
