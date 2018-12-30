@@ -82,10 +82,19 @@ public class EventHandler {
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void underworldTeleport(LivingHurtEvent event) {
 		if (!(event.getEntity() instanceof EntityPlayer)) return;
-		if (event.getSource() == DamageSource.FALL && fallResetter.contains(event.getEntity().getUniqueID())) {
-			fallResetter.remove(event.getEntity().getUniqueID());
-			event.setCanceled(true);
-			return;
+		if (fallResetter.contains(event.getEntity().getUniqueID()))
+		{
+			if (event.getSource() == DamageSource.OUT_OF_WORLD)
+			{
+				event.setCanceled(true);
+				return;
+			}
+			if (event.getSource() == DamageSource.FALL)
+			{
+				fallResetter.remove(event.getEntity().getUniqueID());
+				event.setCanceled(true);
+				return;
+			}
 		}
 		if (event.getEntity().getEntityWorld().provider.getDimension() == Wizardry.underWorld.getId()) {
 			if (event.getEntity().posY < 0) {
