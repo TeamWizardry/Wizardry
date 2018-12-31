@@ -1,5 +1,6 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
+import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpCircle;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
@@ -14,7 +15,6 @@ import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.util.RandUtil;
-import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -89,13 +89,27 @@ public class ModuleEffectSonic implements IModuleEffect {
 
 		ParticleBuilder glitter = new ParticleBuilder(30);
 		glitter.setColorFunction(new InterpColorHSV(instance.getPrimaryColor(), instance.getSecondaryColor()));
-		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
+		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.DIAMOND));
+		glitter.setDeceleration(new Vec3d(0.5, 0.5, 0.5));
+		glitter.setCollision(true);
+		glitter.setCanBounce(true);
+		glitter.setAcceleration(new Vec3d(0, RandUtil.nextDouble(-0.01, 0.01), 0));
 
-		ParticleSpawner.spawn(glitter, world, new InterpCircle(new Vec3d(0, 1, 0), look, 2, 1f, 0), 20, 0, (aFloat, particleBuilder) -> {
-			particleBuilder.setLifetime(RandUtil.nextInt(15, 20));
-			particleBuilder.setScaleFunction(new InterpScale(RandUtil.nextFloat(0.5f, 1f), 0f));
-			particleBuilder.setAlphaFunction(new InterpFloatInOut(0.3f, 0.3f));
-			particleBuilder.setMotion(particleBuilder.getPositionOffset().scale(-1));
-		});
+		Vec3d entityOrigin = target.getPositionVector().add(target.width / 2.0, target.height / 2.0, target.width / 2.0);
+		InterpCircle circle = new InterpCircle(Vec3d.ZERO, new Vec3d(0, 1, 0), target.width);
+
+		double area = spellRing.getAttributeValue(AttributeRegistry.AREA, spell) / 2;
+		for (Vec3d origin : circle.list(50)) {
+			ParticleSpawner.spawn(glitter, world, new StaticInterp<>(entityOrigin.add(origin)), 5, 0, (aFloat, particleBuilder) -> {
+				particleBuilder.setLifetime(RandUtil.nextInt(50, 100));
+				particleBuilder.setScale(RandUtil.nextFloat(0.25f, 1));
+				particleBuilder.setAlphaFunction(new InterpFloatInOut(0.1f, 0.5f));
+				particleBuilder.setAcceleration(new Vec3d(0, RandUtil.nextDouble(-0.01, 0.01), 0));
+
+				particleBuilder.setMotion(origin.normalize().scale(RandUtil.nextDouble(0, area / 2.0)));
+
+				particleBuilder.setJitter(1, new Vec3d(RandUtil.nextDouble(-0.01, 0.01), RandUtil.nextDouble(-0.01, 0.01), RandUtil.nextDouble(-0.01, 0.01)));
+			});
+		}
 	}
 }

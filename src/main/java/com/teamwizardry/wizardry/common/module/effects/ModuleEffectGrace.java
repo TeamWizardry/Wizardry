@@ -1,6 +1,5 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
-import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpCircle;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
@@ -19,10 +18,13 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
 import com.teamwizardry.wizardry.init.ModPotions;
+import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -41,11 +43,15 @@ public class ModuleEffectGrace implements IModuleEffect, ILingeringModule {
 	public boolean runOnce(ModuleInstance instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Entity entity = spell.getVictim();
 		World world = spell.world;
+		BlockPos pos = spell.getTargetPos();
+
+		if (pos == null) return true;
 
 		double time = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 10;
 
 		if (!spellRing.taxCaster(spell, true)) return false;
 
+		world.playSound(null, pos, ModSounds.GRACE, SoundCategory.NEUTRAL, RandUtil.nextFloat(0.6f, 1f), RandUtil.nextFloat(0.5f, 1f));
 		if (entity instanceof EntityLivingBase) {
 			((EntityLivingBase) entity).addPotionEffect(new PotionEffect(ModPotions.GRACE, (int) time));
 		}
@@ -70,20 +76,12 @@ public class ModuleEffectGrace implements IModuleEffect, ILingeringModule {
 		ParticleBuilder glitter = new ParticleBuilder(30);
 		glitter.setColorFunction(new InterpColorHSV(instance.getPrimaryColor(), instance.getSecondaryColor()));
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-		glitter.setCollision(true);
-		glitter.setCanBounce(true);
+		glitter.disableRandom();
 
-		Vec3d motion;
-		if (target.motionX != 0 || target.motionY != 0 || target.motionZ != 0)
-			motion = new Vec3d(target.motionX, target.motionY, target.motionZ);
-		else motion = new Vec3d(0, 1, 0);
-
-		ParticleSpawner.spawn(glitter, world, new StaticInterp<>(target.getPositionVector().add(0, target.height / 2.0, 0)), 20, 0, (aFloat, particleBuilder) -> {
-			particleBuilder.setLifetime(RandUtil.nextInt(15, 20));
-			particleBuilder.setScaleFunction(new InterpScale(RandUtil.nextFloat(0.5f, 1f), 0f));
-			particleBuilder.setAlphaFunction(new InterpFloatInOut(0.3f, 0.3f));
-			InterpCircle circle = new InterpCircle(Vec3d.ZERO, motion.normalize(), 2, 1f, RandUtil.nextFloat(0, 1));
-			particleBuilder.setMotion(circle.get(aFloat).scale(0.1));
+		ParticleSpawner.spawn(glitter, world, new InterpCircle(target.getPositionVector().add(0, target.height / 2.0, 0), new Vec3d(Math.cos(world.getTotalWorldTime() / 10.0), 1, Math.cos(world.getTotalWorldTime() / 10.0)), 2), 15, 0, (aFloat, particleBuilder) -> {
+			particleBuilder.setLifetime(RandUtil.nextInt(20, 25));
+			particleBuilder.setScaleFunction(new InterpScale(RandUtil.nextFloat(1f, 1.5f), 0f));
+			particleBuilder.setAlphaFunction(new InterpFloatInOut(aFloat, aFloat));
 		});
 	}
 

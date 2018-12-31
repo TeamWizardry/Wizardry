@@ -2,8 +2,8 @@
   "sub_module_id": "effect_grace",
   "reference_module_id": "effect_grace",
   "item": "minecraft:waterlily",
-  "primary_color": "E0E0E0",
-  "secondary_color": "C4EFFF",
+  "primary_color": "FFFFFF",
+  "secondary_color": "ffee00",
   "mana": {
     "base": 100
   },

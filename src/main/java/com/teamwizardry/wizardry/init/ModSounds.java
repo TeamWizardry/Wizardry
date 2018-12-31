@@ -49,6 +49,8 @@ public class ModSounds {
 	public static ModSoundEvent GOOD_ETHEREAL_CHILLS;
 	public static ModSoundEvent SCRIBBLING;
 	public static ModSoundEvent SPELL_FAIL;
+	public static ModSoundEvent GAS_LEAK;
+	public static ModSoundEvent GRACE;
 
 	public static void init() {
 		SPELL_FAIL = new ModSoundEvent("spell_fail");
@@ -94,6 +96,8 @@ public class ModSounds {
 		ZAP = new ModSoundEvent("zap");
 		ELECTRIC_WHITE_NOISE = new ModSoundEvent("electric_white_noise");
 		SPARKLE = new ModSoundEvent("sparkle");
+		GAS_LEAK = new ModSoundEvent("gas_leak");
+		GRACE = new ModSoundEvent("grace");
 	}
 
 }

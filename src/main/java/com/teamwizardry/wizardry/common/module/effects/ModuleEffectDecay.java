@@ -15,11 +15,13 @@ import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.api.util.interp.InterpScale;
+import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -44,11 +46,15 @@ public class ModuleEffectDecay implements IModuleEffect {
 		BlockPos targetPos = spell.getTargetPos();
 //		Entity caster = spell.getCaster();
 
+		if (targetPos == null) return false;
+
 		double potency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell) / 5;
 //		double area = spellRing.getAttributeValue(AttributeRegistry.AREA, spell) / 2;
 		double time = spellRing.getAttributeValue(AttributeRegistry.DURATION, spell) * 10;
 
 		if (!spellRing.taxCaster(spell, true)) return false;
+
+		spell.world.playSound(null, targetPos, ModSounds.SLOW_MOTION_IN, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat(0.1f, 0.5f));
 
 		if (targetEntity instanceof EntityLivingBase) {
 			EntityLivingBase target = (EntityLivingBase) targetEntity;
