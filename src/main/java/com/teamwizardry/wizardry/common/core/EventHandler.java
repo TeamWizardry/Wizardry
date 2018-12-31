@@ -82,10 +82,19 @@ public class EventHandler {
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void underworldTeleport(LivingHurtEvent event) {
 		if (!(event.getEntity() instanceof EntityPlayer)) return;
-		if (event.getSource() == DamageSource.FALL && fallResetter.contains(event.getEntity().getUniqueID())) {
-			fallResetter.remove(event.getEntity().getUniqueID());
-			event.setCanceled(true);
-			return;
+		if (fallResetter.contains(event.getEntity().getUniqueID()))
+		{
+			if (event.getEntity().posY < 0 || event.getEntity().posY > event.getEntity().world.getHeight())
+			{
+				event.setCanceled(true);
+				return;
+			}
+			if (event.getSource() == DamageSource.FALL)
+			{
+				fallResetter.remove(event.getEntity().getUniqueID());
+				event.setCanceled(true);
+				return;
+			}
 		}
 		if (event.getEntity().getEntityWorld().provider.getDimension() == Wizardry.underWorld.getId()) {
 			if (event.getEntity().posY < 0) {
@@ -94,8 +103,8 @@ public class EventHandler {
 				event.setAmount(0);
 				BlockPos spawn = player.isSpawnForced(0) ? player.getBedLocation(0) : player.world.getSpawnPoint().add(player.world.rand.nextGaussian() * 16, 0, player.world.rand.nextGaussian() * 16);
 				BlockPos teleportTo = spawn.add(0, 300 - spawn.getY(), 0);
-				TeleportUtil.teleportToDimension((EntityPlayer) event.getEntity(), 0, teleportTo.getX(), teleportTo.getY(), teleportTo.getZ());
 				fallResetter.add(event.getEntity().getUniqueID());
+				TeleportUtil.teleportToDimension((EntityPlayer) event.getEntity(), 0, teleportTo.getX(), teleportTo.getY(), teleportTo.getZ());
 				event.setCanceled(true);
 			}
 		} else if (event.getEntity().getEntityWorld().provider.getDimension() == 0) {
@@ -103,9 +112,9 @@ public class EventHandler {
 				BlockPos location = event.getEntity().getPosition();
 				BlockPos bedrock = PosUtils.checkNeighborBlocksThoroughly(event.getEntity().getEntityWorld(), location, Blocks.BEDROCK);
 				if (bedrock != null) {
+					fallResetter.add(event.getEntity().getUniqueID());
 					TeleportUtil.teleportToDimension((EntityPlayer) event.getEntity(), Wizardry.underWorld.getId(), 0, 300, 0);
 					((EntityPlayer) event.getEntity()).addPotionEffect(new PotionEffect(ModPotions.NULLIFY_GRAVITY, 100, 0, true, false));
-					fallResetter.add(event.getEntity().getUniqueID());
 					event.setCanceled(true);
 				}
 			}

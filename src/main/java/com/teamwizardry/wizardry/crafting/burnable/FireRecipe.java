@@ -48,8 +48,9 @@ public class FireRecipe {
 			return ItemStack.EMPTY;
 		}
 		count *= input.getCount();
-		output.setCount(count);
-		return output.copy();
+		ItemStack out = output.copy();
+		out.setCount(count);
+		return out;
 	}
 
 	public FireRecipe copy() {
@@ -57,6 +58,6 @@ public class FireRecipe {
 	}
 
 	public ItemStack getOutput() {
-		return output;
+		return output.copy();
 	}
 }
