@@ -4,35 +4,32 @@ import com.google.common.collect.ArrayListMultimap;
 import com.teamwizardry.librarianlib.features.saving.Savable;
 import com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability;
 import com.teamwizardry.wizardry.api.capability.mana.WizardryCapabilityProvider;
-import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
-import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
-import com.teamwizardry.wizardry.api.spell.attribute.Operation;
-import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry.Attribute;
-
 import com.teamwizardry.wizardry.api.spell.ProcessData.DataType;
 import com.teamwizardry.wizardry.api.spell.SpellDataTypes.BlockSet;
 import com.teamwizardry.wizardry.api.spell.SpellDataTypes.BlockStateCache;
-
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
+import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry.Attribute;
+import com.teamwizardry.wizardry.api.spell.attribute.Operation;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map.Entry;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.Map.Entry;
 
 import static com.teamwizardry.wizardry.api.spell.SpellData.DefaultKeys.BLOCK_HIT;
 
@@ -256,6 +253,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			addData(DefaultKeys.CAPABILITY, WizardryCapabilityProvider.getCap(entity));
 		} else {
 			addData(DefaultKeys.TARGET_HIT, entity.getPositionVector().add(0, entity.height / 2.0, 0));
+			addData(DefaultKeys.BLOCK_HIT, entity.getPosition());
 			addData(DefaultKeys.ENTITY_HIT, entity);
 		}
 	}
@@ -404,11 +402,8 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 			} else if (!dataType.toString().equals(other.dataType.toString()))
 				return false;
 			if (fieldName == null) {
-				if (other.fieldName != null)
-					return false;
-			} else if (!fieldName.equals(other.fieldName))
-				return false;
-			return true;
+				return other.fieldName == null;
+			} else return fieldName.equals(other.fieldName);
 		}
 	}
 	

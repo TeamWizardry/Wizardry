@@ -38,7 +38,6 @@ import org.apache.commons.lang3.StringUtils;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by Demoniaque on 6/7/2016.
@@ -53,10 +52,8 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 	@Override
 	public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer playerIn, EntityLivingBase target, EnumHand hand) {
 		if (isCoolingDown(playerIn.world, stack)) return false;
-
 		if (BaublesSupport.getItem(playerIn, ModItems.CREATIVE_HALO, ModItems.FAKE_HALO, ModItems.REAL_HALO).isEmpty())
 			return false;
-
 		if (requiresBowAction(stack)) return false;
 
 		SpellData spell = new SpellData(playerIn.world);
