@@ -216,6 +216,21 @@
       "wizardry:grace"
     ]
   },
+  "sound_bomb": {
+    "sounds": [
+      "wizardry:sound_bomb"
+    ]
+  },
+  "firework": {
+    "sounds": [
+      "wizardry:firework"
+    ]
+  },
+  "marble_explosion": {
+    "sounds": [
+      "wizardry:marble_explosion"
+    ]
+  },
   "scribbling": {
     "sounds": [
       "wizardry:scribbling_1",

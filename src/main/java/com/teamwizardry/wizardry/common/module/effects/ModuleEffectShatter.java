@@ -14,6 +14,7 @@ import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.init.ModPotions;
+import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,6 +22,8 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -41,6 +44,9 @@ public class ModuleEffectShatter implements IModuleEffect {
 	public boolean run(ModuleInstanceEffect instance, @Nonnull SpellData spell, @Nonnull SpellRing spellRing) {
 		Entity targetEntity = spell.getVictim();
 		Entity caster = spell.getCaster();
+		BlockPos pos = spell.getTargetPos();
+
+		if (pos == null) return false;
 
 		double potency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell) / 2;
 
@@ -59,6 +65,9 @@ public class ModuleEffectShatter implements IModuleEffect {
 			
 			int invTime = targetEntity.hurtResistantTime;
 			targetEntity.hurtResistantTime = 0;
+
+			spell.world.playSound(null, pos, ModSounds.MARBLE_EXPLOSION, SoundCategory.NEUTRAL, 2, RandUtil.nextFloat(0.8f, 1.2f));
+			spell.world.playSound(null, pos, ModSounds.FIREWORK, SoundCategory.NEUTRAL, 2, RandUtil.nextFloat(0.8f, 1.2f));
 			if (caster instanceof EntityLivingBase)
 			{
 				((EntityLivingBase) caster).setLastAttackedEntity(targetEntity);

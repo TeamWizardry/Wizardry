@@ -51,6 +51,9 @@ public class ModSounds {
 	public static ModSoundEvent SPELL_FAIL;
 	public static ModSoundEvent GAS_LEAK;
 	public static ModSoundEvent GRACE;
+	public static ModSoundEvent SOUND_BOMB;
+	public static ModSoundEvent FIREWORK;
+	public static ModSoundEvent MARBLE_EXPLOSION;
 
 	public static void init() {
 		SPELL_FAIL = new ModSoundEvent("spell_fail");
@@ -98,6 +101,9 @@ public class ModSounds {
 		SPARKLE = new ModSoundEvent("sparkle");
 		GAS_LEAK = new ModSoundEvent("gas_leak");
 		GRACE = new ModSoundEvent("grace");
+		SOUND_BOMB = new ModSoundEvent("sound_bomb");
+		FIREWORK = new ModSoundEvent("firework");
+		MARBLE_EXPLOSION = new ModSoundEvent("marble_explosion");
 	}
 
 }

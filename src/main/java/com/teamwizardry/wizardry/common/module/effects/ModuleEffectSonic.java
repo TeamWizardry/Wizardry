@@ -15,13 +15,16 @@ import com.teamwizardry.wizardry.api.spell.attribute.AttributeRegistry;
 import com.teamwizardry.wizardry.api.spell.module.IModuleEffect;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceEffect;
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.init.ModSounds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -42,6 +45,9 @@ public class ModuleEffectSonic implements IModuleEffect {
 		Entity targetEntity = spell.getVictim();
 		Entity caster = spell.getCaster();
 		World world = spell.world;
+		BlockPos pos = spell.getTargetPos();
+
+		if (pos == null) return false;
 
 		double potency = spellRing.getAttributeValue(AttributeRegistry.POTENCY, spell) / 2;
 		double area = spellRing.getAttributeValue(AttributeRegistry.AREA, spell) / 2;
@@ -50,6 +56,7 @@ public class ModuleEffectSonic implements IModuleEffect {
 
 		if (targetEntity instanceof EntityLivingBase) {
 			Minecraft.getMinecraft().player.sendChatMessage(potency + " - " + area);
+			world.playSound(null, pos, ModSounds.SOUND_BOMB, SoundCategory.NEUTRAL, 1, RandUtil.nextFloat(0.8f, 1.2f));
 			damageEntity((EntityLivingBase) targetEntity, caster, (float) potency);
 
 			if (((EntityLivingBase) targetEntity).getHealth() <= 0) {
