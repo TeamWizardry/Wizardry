@@ -15,8 +15,8 @@ import java.util.Set;
 public class FluidTracker {
 	public static FluidTracker INSTANCE = new FluidTracker();
 	private HashMap<Integer, HashMultimap<BlockPos, FluidCraftInstance>> fluidCrafters = new HashMap<>();
-
-	public void addManaCraft(World world, BlockPos pos, FluidCraftInstance crafter) {
+	
+	public synchronized void addManaCraft(World world, BlockPos pos, FluidCraftInstance crafter) {
 		int dim = world.provider.getDimension();
 		HashMultimap<BlockPos, FluidCraftInstance> worldCrafters = fluidCrafters.get(dim);
 		if (worldCrafters == null) {
@@ -31,7 +31,7 @@ public class FluidTracker {
 			worldCrafters.put(pos, crafter);
 	}
 
-	public void tick(World tickedWorld) {
+	public synchronized void tick(World tickedWorld) {
 		if (fluidCrafters.isEmpty())
 			return;
 		int dim = tickedWorld.provider.getDimension();
