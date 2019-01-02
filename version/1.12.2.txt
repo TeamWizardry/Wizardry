@@ -1,3 +1,19 @@
+0.9.8
+Added Unicorn Dagger
+Added four new Effect modules
+Fix Arc not using any mana or burnout
+Fix Lightning's Arc and Projectile sub-spells not using any mana or burnout
+Added Pearl Belt to let you swap out a staff's pearl on the fly
+Added Wisdom Wood Sapling
+Fixed getting water bottles when using bottles on mana and nacre
+Worktable now requires functional spell links to save
+Worktable now saves its current state
+Added Load and Clear buttons to the worktable
+Added some recipes to the book
+Fixed fire recipe exponential output
+Fixed minor crash and spell issues
+Deleted void monster
+
 0.9.7
 Hotfix: Fix syringes crashing
 Hotfix: Fix pearl holders dropping their inventories on relog
