@@ -1,3 +1,7 @@
+0.9.9
+Temporarily disabled a WIP item
+Renamed manifest.json to wizManifest.json due to Twitch export issue
+
 0.9.8
 Added Unicorn Dagger
 Added four new Effect modules

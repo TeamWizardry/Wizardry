@@ -6,7 +6,7 @@ import com.teamwizardry.wizardry.common.item.dusts.ItemDevilDust;
 import com.teamwizardry.wizardry.common.item.dusts.ItemFairyDust;
 import com.teamwizardry.wizardry.common.item.dusts.ItemSkyDust;
 import com.teamwizardry.wizardry.common.item.halos.*;
-import com.teamwizardry.wizardry.common.item.pearlbelt.ItemPearlBelt;
+//import com.teamwizardry.wizardry.common.item.pearlbelt.ItemPearlBelt;
 import com.teamwizardry.wizardry.common.item.tools.ItemUnicornDagger;
 import net.minecraft.item.Item;
 import net.minecraft.item.Item.ToolMaterial;
@@ -46,7 +46,7 @@ public class ModItems {
 	public static Item REAL_HALO;
 	public static Item CREATIVE_HALO;
 
-	public static Item PEARL_BELT;
+//	public static Item PEARL_BELT;
 	
 	public static ItemUnicornDagger UNICORN_DAGGER;
 
@@ -80,7 +80,7 @@ public class ModItems {
 
 		WISDOM_STICK = new ItemWisdomStick();
 
-		PEARL_BELT = new ItemPearlBelt();
+//		PEARL_BELT = new ItemPearlBelt();
 
 		if (Loader.isModLoaded("baubles")) {
 			CAPE = new ItemCapeBauble();

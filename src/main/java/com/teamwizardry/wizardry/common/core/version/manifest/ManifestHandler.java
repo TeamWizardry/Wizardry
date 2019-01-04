@@ -19,7 +19,7 @@ import java.util.Map;
 
 public class ManifestHandler {
 	
-	public static final String MANIFEST_FILENAME = "manifest.json"; 
+	public static final String MANIFEST_FILENAME = "wizManifest.json";
 
 	public static ManifestHandler INSTANCE = new ManifestHandler();
 	private HashMap<String, HashMap<String, String>> internalManifestMap = new HashMap<>();
