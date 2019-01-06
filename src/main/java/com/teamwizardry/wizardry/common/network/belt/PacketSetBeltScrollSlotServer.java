@@ -4,7 +4,6 @@ import com.teamwizardry.librarianlib.features.autoregister.PacketRegister;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketBase;
 import com.teamwizardry.librarianlib.features.saving.Save;
-import com.teamwizardry.wizardry.common.item.pearlbelt.IPearlBelt;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -13,34 +12,30 @@ import net.minecraftforge.fml.relauncher.Side;
 import org.jetbrains.annotations.NotNull;
 
 @PacketRegister(Side.SERVER)
-public class PacketPearlHolderSubtract extends PacketBase {
+public class PacketSetBeltScrollSlotServer extends PacketBase {
 
 	@Save
-	public int holderSlot;
+	public int itemSlot;
 	@Save
-	public int holderSlotRemoval;
+	public int scrollSlot;
 
-	public PacketPearlHolderSubtract(int holderSlot, int holderSlotRemoval) {
-		this.holderSlot = holderSlot;
-		this.holderSlotRemoval = holderSlotRemoval;
+	public PacketSetBeltScrollSlotServer() {
 	}
 
-	public PacketPearlHolderSubtract() {
+	public PacketSetBeltScrollSlotServer(int itemSlot, int scrollSlot) {
+
+		this.itemSlot = itemSlot;
+		this.scrollSlot = scrollSlot;
 	}
 
 	@Override
 	public void handle(@NotNull MessageContext ctx) {
 		EntityPlayer player = ctx.getServerHandler().player;
 
-		ItemStack holder = player.inventory.getStackInSlot(holderSlot);
+		ItemStack belt = player.inventory.getStackInSlot(itemSlot);
+		if (belt.getItem() != ModItems.PEARL_BELT) return;
 
-		if (holder.getItem() != ModItems.PEARL_BELT) return;
-		IPearlBelt belt = (IPearlBelt) holder.getItem();
+		ItemNBTHelper.setInt(belt, "scroll_slot", scrollSlot);
 
-		ItemStack output = belt.removePearl(holder, holderSlotRemoval);
-		if (output.isEmpty()) return;
-
-		player.addItemStackToInventory(output);
-		ItemNBTHelper.setInt(holder, "scroll_slot", -1);
 	}
 }

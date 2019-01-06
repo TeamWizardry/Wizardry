@@ -2,13 +2,13 @@ package com.teamwizardry.wizardry.api.item.wheels;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Iterator;
 
 /**
@@ -18,7 +18,7 @@ import java.util.Iterator;
 public interface IPearlWheelHolder {
 
 	@Nullable
-	ItemStackHandler getPearls(ItemStack stack);
+	IItemHandler getPearls(ItemStack stack);
 
 	default int getPearlCount(ItemStack holder) {
 		IItemHandler handler = getPearls(holder);
@@ -41,17 +41,31 @@ public interface IPearlWheelHolder {
 	default ItemStack removePearl(ItemStack holder, int slot) {
 		if (!shouldUse(holder)) return ItemStack.EMPTY;
 
-		ItemStackHandler handler = getPearls(holder);
+		IItemHandler handler = getPearls(holder);
 		if (handler == null) return ItemStack.EMPTY;
 
-		ItemStack stack = handler.extractItem(slot, 1, false);
+		ItemStack output = handler.extractItem(slot, 1, false);
 
-		NBTTagCompound tag = holder.getTagCompound();
-		if (tag == null) tag = new NBTTagCompound();
-		tag.setTag("inv", handler.serializeNBT());
-		holder.setTagCompound(tag);
+		sortInv(handler);
 
-		return stack;
+		return output;
+	}
+
+	default void sortInv(IItemHandler handler) {
+		if (handler == null) return;
+
+		Deque<ItemStack> stacks = new ArrayDeque<>();
+
+		for (int i = 0; i < handler.getSlots(); i++) {
+			ItemStack stack = handler.extractItem(i, 1, false);
+			if (stack.isEmpty()) continue;
+			stacks.add(stack);
+		}
+
+		for (int i = 0; i < handler.getSlots(); i++) {
+			if (stacks.isEmpty()) break;
+			handler.insertItem(i, stacks.pop(), false);
+		}
 	}
 
 	/**
@@ -60,17 +74,13 @@ public interface IPearlWheelHolder {
 	default boolean addPearl(ItemStack holder, ItemStack pearl) {
 		if (!shouldUse(holder)) return false;
 
-		ItemStackHandler handler = getPearls(holder);
+		IItemHandler handler = getPearls(holder);
 		if (handler == null) return false;
 
 		if (getPearlCount(holder) > 6) return false;
 
 		ItemHandlerHelper.insertItem(handler, pearl, false);
-
-		NBTTagCompound tag = holder.getTagCompound();
-		if (tag == null) tag = new NBTTagCompound();
-		tag.setTag("inv", handler.serializeNBT());
-		holder.setTagCompound(tag);
+		sortInv(handler);
 
 		return true;
 	}

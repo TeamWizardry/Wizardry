@@ -178,7 +178,9 @@
   },
   "teleport": {
     "sounds": [
-      "wizardry:teleport"
+      "wizardry:teleport_1",
+      "wizardry:teleport_2",
+      "wizardry:teleport_3"
     ]
   },
   "thunder_blast": {

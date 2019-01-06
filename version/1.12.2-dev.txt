@@ -1,3 +1,7 @@
+0.10.0
+Added pearl belt to hold multiple pearls (yes you can actually stop bugging us about it now)
+Fix teleport sounds for the substitute spell
+
 0.9.9
 Temporarily disabled a WIP item
 Renamed manifest.json to wizManifest.json due to Twitch export issue

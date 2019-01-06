@@ -1,22 +1,35 @@
 package com.teamwizardry.wizardry.common.command;
 
+import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
+import com.teamwizardry.wizardry.api.Constants;
+import com.teamwizardry.wizardry.api.spell.SpellBuilder;
+import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellRingCache;
 import com.teamwizardry.wizardry.api.spell.attribute.AttributeModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceModifier;
 import com.teamwizardry.wizardry.api.spell.module.ModuleRegistry;
+import com.teamwizardry.wizardry.api.spell.module.ModuleType;
+import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.network.PacketSyncModules;
+import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.proxy.CommonProxy;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nonnull;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -45,7 +58,38 @@ public class CommandWizardry extends CommandBase {
 	public void execute(@Nonnull MinecraftServer server, @Nonnull ICommandSender sender, @Nonnull String[] args) throws CommandException {
 		if (args.length < 1) throw new WrongUsageException(getUsage(sender));
 
-		if (args[0].equalsIgnoreCase("reload")) {
+		if (args[0].equalsIgnoreCase("genpearl") || args[0].equalsIgnoreCase("genstaff")) {
+			Entity entity = sender.getCommandSenderEntity();
+			if (entity instanceof EntityPlayerMP) {
+
+				ItemStack item;
+				if (args[0].equalsIgnoreCase("genstaff")) {
+					item = new ItemStack(ModItems.STAFF);
+					item.setItemDamage(1);
+				} else item = new ItemStack(ModItems.PEARL_NACRE);
+
+				List<ItemStack> recipe = new ArrayList<>();
+				recipe.add(ModuleRegistry.INSTANCE.getModules(ModuleType.SHAPE).get(RandUtil.nextInt(ModuleRegistry.INSTANCE.getModules(ModuleType.SHAPE).size() - 1)).getItemStack());
+				recipe.add(ModuleRegistry.INSTANCE.getModules(ModuleType.EFFECT).get(RandUtil.nextInt(ModuleRegistry.INSTANCE.getModules(ModuleType.EFFECT).size() - 1)).getItemStack());
+				recipe.add(new ItemStack(ModItems.DEVIL_DUST));
+
+				SpellBuilder builder = new SpellBuilder(recipe, 1);
+
+				NBTTagList list = new NBTTagList();
+				for (SpellRing spellRing : builder.getSpell()) {
+					list.appendTag(spellRing.serializeNBT());
+				}
+				ItemNBTHelper.setList(item, Constants.NBT.SPELL, list);
+				ItemNBTHelper.setBoolean(item, "infused", true);
+
+				((EntityPlayerMP) entity).addItemStackToInventory(item);
+				((EntityPlayerMP) entity).openContainer.detectAndSendChanges();
+
+			} else {
+				notifyCommandListener(sender, this, "TODO: You're not a player.");
+			}
+
+		} else if (args[0].equalsIgnoreCase("reload")) {
 			SpellRingCache.INSTANCE.clear();
 			ModuleRegistry.INSTANCE.loadUnprocessedModules();
 			ModuleRegistry.INSTANCE.loadOverrideDefaults();

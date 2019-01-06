@@ -5,7 +5,6 @@ import com.teamwizardry.librarianlib.features.utilities.client.CustomBlockMapSpr
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.client.core.CapeHandler;
-//import com.teamwizardry.wizardry.client.core.renderer.PearlRadialUIRenderer;
 import com.teamwizardry.wizardry.client.render.item.RenderHaloEntity;
 import com.teamwizardry.wizardry.common.core.version.VersionChecker;
 import com.teamwizardry.wizardry.init.ModEntities;
@@ -36,6 +35,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.Map;
 
+//import com.teamwizardry.wizardry.client.core.renderer.PearlRadialUIRenderer;
+
 @SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy {
 
@@ -49,8 +50,6 @@ public class ClientProxy extends CommonProxy {
 
 		if (ConfigValues.versionCheckerEnabled)
 			VersionChecker.register();
-
-//		PearlRadialUIRenderer.INSTANCE.getClass();
 
 		ModEntities.initModels();
 

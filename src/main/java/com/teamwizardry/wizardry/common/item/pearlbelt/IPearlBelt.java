@@ -2,11 +2,10 @@ package com.teamwizardry.wizardry.common.item.pearlbelt;
 
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
-import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.item.INacreProduct;
 import com.teamwizardry.wizardry.api.item.wheels.IPearlWheelHolder;
-import com.teamwizardry.wizardry.common.network.belt.PacketPearlHolderCondenseInventory;
+import com.teamwizardry.wizardry.common.network.belt.PacketSetBeltScrollSlotClient;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
 import kotlin.jvm.functions.Function2;
@@ -17,15 +16,14 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -37,7 +35,7 @@ public interface IPearlBelt extends IPearlWheelHolder, INacreProduct.INacreDecay
 		item.addPropertyOverride(new ResourceLocation("slot"), new IItemPropertyGetter() {
 			@SideOnly(Side.CLIENT)
 			public float apply(@Nonnull ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn) {
-				ItemStackHandler handler = getPearls(stack);
+				IItemHandler handler = getPearls(stack);
 				if (handler == null) return 0;
 
 				int total = 0;
@@ -54,50 +52,42 @@ public interface IPearlBelt extends IPearlWheelHolder, INacreProduct.INacreDecay
 	}
 
 	default void onRightClick(World world, EntityPlayer player, EnumHand hand) {
+		if (world.isRemote) return;
+
 		ItemStack belt = player.getHeldItem(hand);
 		if (!shouldUse(belt)) return;
 
-		boolean changed = false;
-		for (ItemStack stack : player.inventory.mainInventory)
-			if (stack.getItem() == ModItems.PEARL_NACRE)
-				if (ItemNBTHelper.getBoolean(stack, "infused", false))
-					if (addPearl(belt, stack.copy())) {
-						stack.shrink(1);
-						changed = true;
-					}
+		if (!player.isSneaking()) {
+			boolean changed = false;
+			for (ItemStack stack : player.inventory.mainInventory)
+				if (stack.getItem() == ModItems.PEARL_NACRE)
+					if (ItemNBTHelper.getBoolean(stack, "infused", false))
+						if (addPearl(belt, stack.copy())) {
+							stack.shrink(1);
+							changed = true;
+						}
 
-		if (changed) {
-			ItemNBTHelper.setInt(belt, "scroll_slot", -1);
+			if (changed) {
+				ItemNBTHelper.setInt(belt, "scroll_slot", 0);
+				player.playSound(ModSounds.BELL_TING, 1f, 1f);
+			}
+		} else {
+			int scrollSlot = ItemNBTHelper.getInt(belt, "scroll_slot", -1);
+			if (scrollSlot == -1) return;
+
+			ItemStack output = removePearl(belt, scrollSlot);
+			if (output.isEmpty()) return;
+
+			player.addItemStackToInventory(output);
+			ItemNBTHelper.setInt(belt, "scroll_slot", Math.max(scrollSlot - 1, 0));
+
 			if (player instanceof EntityPlayerMP)
-				PacketHandler.NETWORK.sendTo(new PacketPearlHolderCondenseInventory(player.inventory.getSlotFor(belt)), (EntityPlayerMP) player);
-			player.playSound(ModSounds.BELL_TING, 1f, 1f);
+				PacketHandler.NETWORK.sendTo(new PacketSetBeltScrollSlotClient(player.inventory.getSlotFor(belt), -1), (EntityPlayerMP) player);
 		}
 	}
 
-	default void initBelt(ItemStack stack, @Nullable NBTTagCompound nbt) {
-		if (nbt == null) nbt = new NBTTagCompound();
-		nbt.setTag("inv", new ItemStackHandler(ConfigValues.pearlBeltInvSize).serializeNBT());
-		stack.setTagCompound(nbt);
-	}
-
-	default ItemStackHandler getBeltPearls(ItemStack stack) {
-		NBTTagCompound tag = stack.getTagCompound();
-		ItemStackHandler handler = null;
-		if (tag == null || !tag.hasKey("inv")) {
-			tag = new NBTTagCompound();
-			handler = new ItemStackHandler(ConfigValues.pearlBeltInvSize);
-
-			tag.setTag("inv", new ItemStackHandler(ConfigValues.pearlBeltInvSize).serializeNBT());
-			stack.setTagCompound(handler.serializeNBT());
-		}
-
-		if (tag.hasKey("inv")) {
-			NBTTagCompound inv = tag.getCompoundTag("inv");
-			handler = new ItemStackHandler();
-			handler.deserializeNBT(inv);
-		}
-
-		return handler;
+	default IItemHandler getBeltPearls(ItemStack stack) {
+		return stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 	}
 
 	default Function2<ItemStack, Integer, Integer> getBeltColorFunction() {

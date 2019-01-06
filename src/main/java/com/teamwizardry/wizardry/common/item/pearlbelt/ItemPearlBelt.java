@@ -2,18 +2,21 @@ package com.teamwizardry.wizardry.common.item.pearlbelt;
 
 import baubles.api.BaubleType;
 import com.teamwizardry.librarianlib.features.base.item.ItemModBauble;
+import com.teamwizardry.wizardry.api.ConfigValues;
+import com.teamwizardry.wizardry.api.capability.item.ProxiedItemStackHandler;
 import kotlin.jvm.functions.Function2;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -34,7 +37,7 @@ public class ItemPearlBelt extends ItemModBauble implements IPearlBelt {
 	public ActionResult<ItemStack> onItemRightClick(@NotNull World world, @NotNull EntityPlayer player, @NotNull EnumHand hand) {
 		onRightClick(world, player, hand);
 
-		return super.onItemRightClick(world, player, hand);
+		return ActionResult.newResult(EnumActionResult.PASS, player.getHeldItem(hand));
 	}
 
 	@Nonnull
@@ -46,14 +49,7 @@ public class ItemPearlBelt extends ItemModBauble implements IPearlBelt {
 
 	@Nullable
 	@Override
-	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
-		initBelt(stack, nbt);
-		return null;
-	}
-
-	@Nullable
-	@Override
-	public ItemStackHandler getPearls(ItemStack stack) {
+	public IItemHandler getPearls(ItemStack stack) {
 		return getBeltPearls(stack);
 	}
 
@@ -62,5 +58,22 @@ public class ItemPearlBelt extends ItemModBauble implements IPearlBelt {
 	@SideOnly(Side.CLIENT)
 	public Function2<ItemStack, Integer, Integer> getItemColorFunction() {
 		return getBeltColorFunction();
+	}
+
+	@Nullable
+	@Override
+	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
+		return new BeltItemHandler(stack);
+	}
+
+	public static class BeltItemHandler extends ProxiedItemStackHandler {
+		public BeltItemHandler(ItemStack stack) {
+			super(stack, ConfigValues.pearlBeltInvSize);
+		}
+
+		@Override
+		protected int getStackLimit(int slot, @Nonnull ItemStack stack) {
+			return ConfigValues.pearlBeltInvSize;
+		}
 	}
 }
