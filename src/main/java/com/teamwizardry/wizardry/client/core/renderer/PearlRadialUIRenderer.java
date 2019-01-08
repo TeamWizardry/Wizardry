@@ -11,6 +11,7 @@ import com.teamwizardry.wizardry.api.item.INacreProduct;
 import com.teamwizardry.wizardry.common.item.pearlbelt.IPearlBelt;
 import com.teamwizardry.wizardry.common.network.belt.PacketSetBeltScrollSlotServer;
 import com.teamwizardry.wizardry.init.ModItems;
+import com.teamwizardry.wizardry.init.ModKeybinds;
 import kotlin.jvm.functions.Function2;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
@@ -97,7 +98,7 @@ public class PearlRadialUIRenderer {
 		EntityPlayer player = Minecraft.getMinecraft().player;
 		if (player == null) return;
 
-		if (Keyboard.isCreated() && event.getDwheel() != 0 && player.isSneaking()) {
+		if (Keyboard.isCreated() && ModKeybinds.pearlSwapping.isKeyDown() && event.getDwheel() != 0) {
 
 			ItemStack stack = player.getHeldItemMainhand();
 
@@ -167,7 +168,7 @@ public class PearlRadialUIRenderer {
 
 	@SubscribeEvent
 	public static void renderHud(RenderGameOverlayEvent.Post event) {
-		if (event.getType() == RenderGameOverlayEvent.ElementType.EXPERIENCE) {
+		if (ModKeybinds.pearlSwapping.isKeyDown() && event.getType() == RenderGameOverlayEvent.ElementType.EXPERIENCE) {
 			EntityPlayer player = Minecraft.getMinecraft().player;
 			ItemStack stack = player.getHeldItemMainhand();
 

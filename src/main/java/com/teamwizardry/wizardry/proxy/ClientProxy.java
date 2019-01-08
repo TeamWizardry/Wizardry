@@ -9,6 +9,7 @@ import com.teamwizardry.wizardry.client.render.item.RenderHaloEntity;
 import com.teamwizardry.wizardry.common.core.version.VersionChecker;
 import com.teamwizardry.wizardry.init.ModEntities;
 import com.teamwizardry.wizardry.init.ModItems;
+import com.teamwizardry.wizardry.init.ModKeybinds;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function2;
 import net.minecraft.client.Minecraft;
@@ -65,6 +66,8 @@ public class ClientProxy extends CommonProxy {
 		ModelBakery.registerItemVariants(ModItems.BOOK, new ModelResourceLocation("wizardry:book", "inventory"));
 		ModelResourceLocation default3dPath = new ModelResourceLocation("wizardry:book", "inventory");
 		ModelLoader.setCustomMeshDefinition(ModItems.BOOK, stack -> default3dPath);
+
+		ModKeybinds.register();
 	}
 
 	@Override

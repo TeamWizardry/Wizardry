@@ -149,6 +149,8 @@ potion.wizardry.zach_corruption=Corruption
 
 item_group.wizardry=Wizardry
 
+key.pearl_swapping.desc=Pearl Swapping
+
 jei.recipe.block.wizardry:fluid=Output replaces liquid
 jei.recipe.consumes.wizardry:fluid=Consumes the liquid used
 jei.recipe.requires.wizardry:fluid=Needs %d source blocks of liquid

@@ -57,7 +57,7 @@ public interface IPearlBelt extends IPearlWheelHolder, INacreProduct.INacreDecay
 		ItemStack belt = player.getHeldItem(hand);
 		if (!shouldUse(belt)) return;
 
-		if (!player.isSneaking()) {
+		if (player.isSneaking()) {
 			boolean changed = false;
 			for (ItemStack stack : player.inventory.mainInventory)
 				if (stack.getItem() == ModItems.PEARL_NACRE)
