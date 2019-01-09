@@ -266,6 +266,9 @@ wizardry.spell.effect_sonic.desc.area=Secondary explosion deals damage to all en
 wizardry.spell.effect_suffocate.name=Suffocate
 wizardry.spell.effect_suffocate.desc=Causes the target to suffocate as if they had run out of air.
 wizardry.spell.effect_suffocate.desc.duration=Lasts half a second for each point of <DURATION>.
+wizardry.spell.effect_bouncing.name=Bouncing
+wizardry.spell.effect_bouncing.desc=Entities hit by this spell will bounce on everything they fall on. Blocks hit will also become bouncy.
+wizardry.spell.effect_bouncing.desc.duration=Lasts half a second for each point of <DURATION>.
 
 wizardry.spell.event_collide_block.name=On Block Collision
 wizardry.spell.event_collide_block.desc=This event triggers when the spell collides with a block. Place directly before an effect to cause it to only affect blocks.

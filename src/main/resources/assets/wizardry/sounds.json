@@ -249,5 +249,10 @@
     "sounds": [
       "wizardry:spell_fail"
     ]
+  },
+  "slime_squishing": {
+    "sounds": [
+      "wizardry:slime_squishing"
+    ]
   }
 }

@@ -1,7 +1,6 @@
 package com.teamwizardry.wizardry.init;
 
 import com.teamwizardry.wizardry.common.potion.*;
-
 import net.minecraftforge.common.MinecraftForge;
 
 /**
@@ -21,6 +20,7 @@ public class ModPotions {
 	public static PotionZachCorruption ZACH_CORRUPTION;
 	public static PotionSuffocate SUFFOCATE;
 	public static PotionGrace GRACE;
+	public static PotionBouncing BOUNCING;
 
 	public static void init() {
 		NULLIFY_GRAVITY = new PotionNullGrav();
@@ -35,5 +35,6 @@ public class ModPotions {
 		ZACH_CORRUPTION = new PotionZachCorruption();
 		SUFFOCATE = new PotionSuffocate();
 		MinecraftForge.EVENT_BUS.register(GRACE = new PotionGrace());
+		MinecraftForge.EVENT_BUS.register(BOUNCING = new PotionBouncing());
 	}
 }

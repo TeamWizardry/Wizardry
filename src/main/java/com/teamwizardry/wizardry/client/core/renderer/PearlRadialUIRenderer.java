@@ -28,7 +28,6 @@ import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.IItemHandler;
@@ -48,39 +47,9 @@ public class PearlRadialUIRenderer {
 	private final static int SELECTOR_SHIFT = 5;
 	private final static float SELECTOR_ALPHA = 0.7F;
 	public static PearlRadialUIRenderer INSTANCE = new PearlRadialUIRenderer();
-	private static boolean lastSneakTick = false;
 	public final float[] slotRadii = new float[ConfigValues.pearlBeltInvSize];
 	private final BasicAnimation[] slotAnimations = new BasicAnimation[ConfigValues.pearlBeltInvSize];
 	private final Animator ANIMATOR = new Animator();
-
-	@SubscribeEvent
-	public static void clientTick(TickEvent.ClientTickEvent event) {
-		EntityPlayer player = Minecraft.getMinecraft().player;
-		if (player == null) return;
-
-		if (player.isSneaking() && !lastSneakTick) {
-			lastSneakTick = true;
-		} else if (!player.isSneaking() && lastSneakTick) {
-			lastSneakTick = false;
-
-			ItemStack stack = player.getHeldItemMainhand();
-
-			if (stack.getItem() == ModItems.PEARL_BELT) {
-				int scrollSlot = ItemNBTHelper.getInt(stack, "scroll_slot", -1);
-				if (scrollSlot >= 0) {
-
-					//	PacketHandler.NETWORK.sendToServer(new PacketPearlHolderSubtract(player.inventory.getSlotFor(stack), scrollSlot));
-				}
-
-			} else if (stack.getItem() == ModItems.STAFF) {
-				int scrollSlot = ItemNBTHelper.getInt(stack, "scroll_slot", -1);
-				if (scrollSlot >= 0) {
-
-					//	PacketHandler.NETWORK.sendToServer(new PacketStaffPearlSwap(player.inventory.getSlotFor(stack)));
-				}
-			}
-		}
-	}
 
 	private static int getScrollSlot(MouseEvent event, int count, int scrollSlot) {
 		if (event.getDwheel() < 0) {
@@ -111,7 +80,6 @@ public class PearlRadialUIRenderer {
 				int scrollSlot = ItemNBTHelper.getInt(stack, "scroll_slot", -1);
 
 				scrollSlot = getScrollSlot(event, count, scrollSlot);
-				Minecraft.getMinecraft().player.sendChatMessage(scrollSlot + "");
 
 				if (scrollSlot >= 0) {
 					ItemNBTHelper.setInt(stack, "scroll_slot", scrollSlot);

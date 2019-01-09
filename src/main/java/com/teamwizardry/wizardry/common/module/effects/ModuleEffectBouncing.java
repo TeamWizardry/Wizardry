@@ -1,5 +1,7 @@
 package com.teamwizardry.wizardry.common.module.effects;
 
+import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
+import com.teamwizardry.librarianlib.features.math.interpolate.StaticInterp;
 import com.teamwizardry.librarianlib.features.math.interpolate.numeric.InterpFloatInOut;
 import com.teamwizardry.librarianlib.features.math.interpolate.position.InterpCircle;
 import com.teamwizardry.librarianlib.features.particle.ParticleBuilder;
@@ -32,8 +34,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 
-@RegisterModule(ID = "effect_grace")
-public class ModuleEffectGrace implements IModuleEffect, ILingeringModule {
+@RegisterModule(ID = "effect_bouncing")
+public class ModuleEffectBouncing implements IModuleEffect, ILingeringModule {
+
 	@Override
 	public String[] compatibleModifiers() {
 		return new String[]{"modifier_extend_time"};
@@ -51,9 +54,9 @@ public class ModuleEffectGrace implements IModuleEffect, ILingeringModule {
 
 		if (!spellRing.taxCaster(spell, true)) return false;
 
-		world.playSound(null, pos, ModSounds.GRACE, SoundCategory.NEUTRAL, RandUtil.nextFloat(0.6f, 1f), RandUtil.nextFloat(0.5f, 1f));
+		world.playSound(null, pos, ModSounds.SLIME_SQUISHING, SoundCategory.NEUTRAL, RandUtil.nextFloat(0.6f, 1f), RandUtil.nextFloat(0.5f, 1f));
 		if (entity instanceof EntityLivingBase) {
-			((EntityLivingBase) entity).addPotionEffect(new PotionEffect(ModPotions.GRACE, (int) time, 0, true, false));
+			((EntityLivingBase) entity).addPotionEffect(new PotionEffect(ModPotions.BOUNCING, (int) time, 0, true, false));
 		}
 
 		return true;
@@ -70,19 +73,25 @@ public class ModuleEffectGrace implements IModuleEffect, ILingeringModule {
 		World world = spell.world;
 		Entity target = spell.getVictim();
 
+		if (ClientTickHandler.getTicks() % 10 == 0) return;
 		if (!(target instanceof EntityLivingBase)) return;
-		if (!((EntityLivingBase) target).isPotionActive(ModPotions.GRACE)) return;
+		if (!((EntityLivingBase) target).isPotionActive(ModPotions.BOUNCING)) return;
 
 		ParticleBuilder glitter = new ParticleBuilder(30);
 		glitter.setColorFunction(new InterpColorHSV(instance.getPrimaryColor(), instance.getSecondaryColor()));
 		glitter.setRender(new ResourceLocation(Wizardry.MODID, Constants.MISC.SPARKLE_BLURRED));
-		glitter.disableRandom();
 
-		ParticleSpawner.spawn(glitter, world, new InterpCircle(target.getPositionVector().add(0, target.height / 2.0, 0), new Vec3d(Math.cos(world.getTotalWorldTime() / 10.0), 1, Math.cos(world.getTotalWorldTime() / 10.0)), 2), 15, 0, (aFloat, particleBuilder) -> {
-			particleBuilder.setLifetime(RandUtil.nextInt(20, 25));
-			particleBuilder.setScaleFunction(new InterpScale(RandUtil.nextFloat(1f, 1.5f), 0f));
-			particleBuilder.setAlphaFunction(new InterpFloatInOut(aFloat, aFloat));
-		});
+		InterpCircle circle = new InterpCircle(Vec3d.ZERO, new Vec3d(0, 1, 0), target.width, RandUtil.nextFloat(), RandUtil.nextFloat());
+		for (Vec3d origin : circle.list(30)) {
+			ParticleSpawner.spawn(glitter, world, new StaticInterp<>(target.getPositionVector()), 1, 0, (aFloat, particleBuilder) -> {
+				particleBuilder.setLifetime(RandUtil.nextInt(20, 25));
+				particleBuilder.setScaleFunction(new InterpScale(RandUtil.nextFloat(1f, 1.5f), 0f));
+				particleBuilder.setAlphaFunction(new InterpFloatInOut(aFloat, aFloat));
+
+				particleBuilder.setMotion(origin.normalize().scale(1.0 / 5.0));
+				particleBuilder.setAcceleration(new Vec3d(0, RandUtil.nextDouble(-0.01, 0.01), 0));
+			});
+		}
 	}
 
 	@Override

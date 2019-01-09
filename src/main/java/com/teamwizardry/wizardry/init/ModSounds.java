@@ -54,6 +54,7 @@ public class ModSounds {
 	public static ModSoundEvent SOUND_BOMB;
 	public static ModSoundEvent FIREWORK;
 	public static ModSoundEvent MARBLE_EXPLOSION;
+	public static ModSoundEvent SLIME_SQUISHING;
 
 	public static void init() {
 		SPELL_FAIL = new ModSoundEvent("spell_fail");
@@ -104,6 +105,7 @@ public class ModSounds {
 		SOUND_BOMB = new ModSoundEvent("sound_bomb");
 		FIREWORK = new ModSoundEvent("firework");
 		MARBLE_EXPLOSION = new ModSoundEvent("marble_explosion");
+		SLIME_SQUISHING = new ModSoundEvent("slime_squishing");
 	}
 
 }
