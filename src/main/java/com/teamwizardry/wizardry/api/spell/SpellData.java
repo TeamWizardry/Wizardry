@@ -91,7 +91,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 	@SuppressWarnings("unchecked")
 	public <T> T getData(@Nonnull DataField<T> key, @Nonnull T def) {
 		Object value = data.get(key);
-		if ( value != null && key.getDataType().isInstance(value) )
+		if (key.getDataType().isInstance(value))
 			return (T)value;
 		return def;
 	}
@@ -282,13 +282,11 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 
 	@Override
 	public void deserializeNBT(NBTTagCompound nbt) {
-		primary:
 		for (String key : nbt.getKeySet()) {
 			DataField<?> field = availableFields.get(key);
-			if( field != null ) {
+			if (field != null) {
 				NBTBase nbtType = nbt.getTag(key);
 				data.put(field, field.getDataTypeProcess().deserialize(world, nbtType));
-				continue primary;
 			}
 		}
 	}
@@ -296,7 +294,7 @@ public class SpellData implements INBTSerializable<NBTTagCompound> {
 	@Override
 	public NBTTagCompound serializeNBT() {
 		NBTTagCompound compound = new NBTTagCompound();
-		for (Entry<DataField<? extends Object>, Object> entry : data.entrySet()) {
+		for (Entry<DataField<?>, Object> entry : data.entrySet()) {
 			NBTBase nbtClass = entry.getKey().getDataTypeProcess().serialize(entry.getValue());
 			compound.setTag(entry.getKey().getFieldName(), nbtClass);
 		}

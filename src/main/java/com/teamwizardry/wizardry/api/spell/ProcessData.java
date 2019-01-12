@@ -1,19 +1,17 @@
 package com.teamwizardry.wizardry.api.spell;
 
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.world.World;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.teamwizardry.librarianlib.core.LibrarianLib;
 import com.teamwizardry.librarianlib.features.utilities.AnnotationHelper;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.spell.annotation.RegisterDataType;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.world.World;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 
 /**
  * Created by Demoniaque.
@@ -43,7 +41,7 @@ public class ProcessData {
 		if( !isClassEqual(entry.getDataTypeClazz(), type) )  // NOTE: Keep it as IllegalStateException
 			throw new IllegalStateException("Datatype '" + entry.getDataTypeName() + "' is not compatible with class '" + type + "'.");
 
-		return (DatatypeEntry<?, E>)entry;
+		return entry;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -140,12 +138,12 @@ public class ProcessData {
 		public Object deserialize(@Nullable World world, @Nonnull NBTBase object) {
 			if( !isClassEqual(storageTypeClazz, object.getClass()) )
 				throw new DataSerializationException("Storage object to deserialize must be of class '" + storageTypeClazz + "'");
-			Object obj = ioProcess.deserialize(world, (T)object);
+			E obj = ioProcess.deserialize(world, (T) object);
 			if( obj == null )
 				throw new DataSerializationException("Deserialized object is null.");
 			if( !dataTypeClazz.isInstance(obj) )
 				throw new DataSerializationException("Deserialized object must be of class '" + dataTypeClazz + "', but is actually of '" + obj.getClass() + "'");
-			return (E)obj;
+			return obj;
 		}
 	}
 	
