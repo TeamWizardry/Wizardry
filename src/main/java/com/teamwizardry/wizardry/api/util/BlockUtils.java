@@ -141,7 +141,7 @@ public final class BlockUtils {
 			if (block.removedByPlayer(oldState, world, pos, playerMP, true))
 			{
 				block.onPlayerDestroy(world, pos, oldState);
-				block.harvestBlock(world, playerMP, pos, oldState, tile, null);
+				block.harvestBlock(world, playerMP, pos, oldState, tile, ItemStack.EMPTY);
 			}
 			else
 				world.setBlockToAir(pos);
