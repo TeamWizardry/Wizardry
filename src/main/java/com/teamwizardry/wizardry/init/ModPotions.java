@@ -34,7 +34,7 @@ public class ModPotions {
 		VANISH = new PotionVanish();
 		ZACH_CORRUPTION = new PotionZachCorruption();
 		SUFFOCATE = new PotionSuffocate();
+		BOUNCING = new PotionBouncing();
 		MinecraftForge.EVENT_BUS.register(GRACE = new PotionGrace());
-		MinecraftForge.EVENT_BUS.register(BOUNCING = new PotionBouncing());
 	}
 }

@@ -1,19 +1,5 @@
 package com.teamwizardry.wizardry.api.spell;
 
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import org.apache.commons.lang3.tuple.Pair;
-
 import com.google.common.collect.ArrayListMultimap;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
@@ -30,7 +16,6 @@ import com.teamwizardry.wizardry.api.spell.module.ModuleOverrideHandler;
 import com.teamwizardry.wizardry.api.util.FixedPointUtils;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModSounds;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTBase;
@@ -43,6 +28,13 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
+import org.apache.commons.lang3.tuple.Pair;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.awt.*;
+import java.util.*;
+import java.util.List;
 
 /**
  * Modules ala IBlockStates. <br />
@@ -613,7 +605,7 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 	private static NBTTagList sortModifierList(List<NBTTagCompound> modifierList) {
 		NBTTagList attribs = new NBTTagList();
 
-		Collections.sort(modifierList, (o1, o2) -> compareModifierCompounds(o1, o2) );
+		modifierList.sort(SpellRing::compareModifierCompounds);
 		for( NBTTagCompound modifierCompound : modifierList ) {
 			attribs.appendTag(modifierCompound);
 		}
@@ -662,7 +654,25 @@ public class SpellRing implements INBTSerializable<NBTTagCompound> {
 			setChildRing(childRing);
 		}
 	}
-	
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		SpellRing ring = (SpellRing) o;
+		return Objects.equals(serializedTag, ring.serializedTag) &&
+				Objects.equals(informationTag, ring.informationTag) &&
+				Objects.equals(primaryColor, ring.primaryColor) &&
+				Objects.equals(secondaryColor, ring.secondaryColor) &&
+				Objects.equals(module, ring.module) &&
+				Objects.equals(parentRing, ring.parentRing);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(serializedTag, informationTag, primaryColor, secondaryColor, module, parentRing);
+	}
+
 	////////////////////
 		
 	/**

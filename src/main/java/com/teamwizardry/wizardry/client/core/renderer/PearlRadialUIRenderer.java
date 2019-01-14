@@ -4,30 +4,47 @@ import com.teamwizardry.librarianlib.core.client.ClientTickHandler;
 import com.teamwizardry.librarianlib.features.animator.Animator;
 import com.teamwizardry.librarianlib.features.animator.Easing;
 import com.teamwizardry.librarianlib.features.animator.animations.BasicAnimation;
+import com.teamwizardry.librarianlib.features.animator.animations.ScheduledEventAnimation;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
+import com.teamwizardry.librarianlib.features.sprite.Sprite;
+import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.api.item.INacreProduct;
+import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.SpellUtils;
+import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.common.item.pearlbelt.IPearlBelt;
 import com.teamwizardry.wizardry.common.network.belt.PacketSetBeltScrollSlotServer;
 import com.teamwizardry.wizardry.init.ModItems;
 import com.teamwizardry.wizardry.init.ModKeybinds;
+import kotlin.Pair;
 import kotlin.jvm.functions.Function2;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.model.pipeline.LightUtil;
+import net.minecraftforge.client.model.pipeline.QuadGatheringTransformer;
+import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -36,6 +53,7 @@ import net.minecraftforge.items.IItemHandler;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,26 +63,67 @@ import java.util.List;
 @Mod.EventBusSubscriber(Side.CLIENT)
 public class PearlRadialUIRenderer {
 
-	private final static int SELECTOR_RADIUS = 90;
-	private final static int SELECTOR_WIDTH = 50;
-	public static PearlRadialUIRenderer INSTANCE = new PearlRadialUIRenderer();
-	private final static int SELECTOR_SHIFT = 5;
-	private final static float SELECTOR_ALPHA = 0.7F;
+	public static final PearlRadialUIRenderer INSTANCE = new PearlRadialUIRenderer();
+
+	private static final ResourceLocation RES_ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
+	private static final LightGatheringTransformer lightGatherer = new LightGatheringTransformer();
+
+	private static final Sprite SpritePlate = new Sprite(new ResourceLocation(Wizardry.MODID, "textures/gui/worktable/plate.png"));
+
+	private static final int SELECTOR_RADIUS = 90;
+	private static final int SELECTOR_WIDTH = 50;
+	private static final int SELECTOR_SHIFT = 5;
+	private static final float SELECTOR_ALPHA = 0.7F;
+	@Nonnull
+	private static final BasicAnimation[] slotAnimations = new BasicAnimation[ConfigValues.pearlBeltInvSize];
+	@Nonnull
+	private static final Animator ANIMATOR = new Animator();
+	//--------//
+	//-----------------------------------------//
+	@Nonnull
+	private static BasicAnimation<PearlRadialUIRenderer> centerRadiusAnim = new BasicAnimation<>(INSTANCE, "centerRadius");
+	//--------//
+	@Nonnull
+	private static BasicAnimation<PearlRadialUIRenderer> heartBeatAnim = new BasicAnimation<>(INSTANCE, "heartBeatRadius");
+	//--------//
+	//--------//
+	@Nonnull
+	private static BasicAnimation<PearlRadialUIRenderer> parasolGradientAnim = new BasicAnimation<>(INSTANCE, "parasolGradientRadius");
+	//--------//
+	@Nonnull
+	private static BasicAnimation<PearlRadialUIRenderer> colorAnim = new BasicAnimation<>(INSTANCE, "color");
+	//--------//
+	//--------//
+	@Nonnull
+	private static BasicAnimation<PearlRadialUIRenderer> itemExpansionAnim = new BasicAnimation<>(INSTANCE, "itemExpansion");
+	//-----------------------------------------//
+	@Nonnull
+	private static Pair<Integer, List<ItemStack>> snapshotPearls = new Pair<>(0, new ArrayList<>());
+	//--------//
+	@Nonnull
+	private static List<ItemStack> pearls = new ArrayList<>();
+	@Nonnull
+	private static Pair<Integer, List<ItemStack>> newPearls = new Pair<>(0, new ArrayList<>());
+	//-----------------------------------------//
+	//-----------------------------------------//
+	private static boolean changing = false;
+	private static boolean wasEmpty = true;
+	//-----------------------------------------//
+	private static boolean init = false;
+	@Nonnull
+	private static String centerText = "Shift + Right Click to\nattach all pearls in your\ninventory to this belt";
+	//-----------------------------------------//
+	@Nonnull
 	public final float[] slotRadii = new float[ConfigValues.pearlBeltInvSize];
-	private final BasicAnimation[] slotAnimations = new BasicAnimation[ConfigValues.pearlBeltInvSize];
-	public double suckPearlHeartBeatRadius = 0.0; // Yes I know it's verbose, shut up.
-	public BasicAnimation suckPearlHeartBeatAnim = null;
-	public BasicAnimation radiusAnim = null;
-	public double pearlGradientRadius = 0;
-	public float color;
-	public double pearlsCenterRadius = SELECTOR_RADIUS - SELECTOR_WIDTH / 2.0 - 0.5;
-
-	private boolean wasEmpty = true;
-
-	private final Animator ANIMATOR = new Animator();
+	//-----------------------------------------//
+	public double centerRadius = SELECTOR_RADIUS - SELECTOR_WIDTH / 2.0 - 0.5;
+	public double heartBeatRadius = 0.0;
+	public double parasolGradientRadius = 0;
+	//-----------------------------------------//
+	public float color = RandUtil.nextFloat();
+	public float itemExpansion = 0;
 
 	private PearlRadialUIRenderer() {
-		this.color = RandUtil.nextFloat();
 	}
 
 	private static int getScrollSlot(MouseEvent event, int count, int scrollSlot) {
@@ -80,16 +139,29 @@ public class PearlRadialUIRenderer {
 
 	@SubscribeEvent
 	public static void onScroll(MouseEvent event) {
+		if (event.getDwheel() == 0 || !Keyboard.isCreated()) return;
+
 		EntityPlayer player = Minecraft.getMinecraft().player;
 		if (player == null) return;
 
-		if (Keyboard.isCreated() && ModKeybinds.pearlSwapping.isKeyDown() && event.getDwheel() != 0) {
+		ItemStack stack = player.getHeldItemMainhand();
 
-			ItemStack stack = player.getHeldItemMainhand();
+		if (ModKeybinds.pearlSwapping.isKeyDown()) {
 
 			if (stack.getItem() == ModItems.PEARL_BELT) {
 
 				IPearlBelt belt = (IPearlBelt) stack.getItem();
+
+				IItemHandler handler = belt.getPearls(stack);
+				if (handler == null) return;
+				List<ItemStack> temp = new ArrayList<>();
+				for (int i = 0; i < handler.getSlots(); i++) {
+					ItemStack pearl = handler.getStackInSlot(i);
+					if (pearl.isEmpty()) continue;
+					temp.add(pearl);
+				}
+				newPearls = new Pair<>(genSnapshotHashcode(temp), temp);
+
 				int rawCount = belt.getPearlCount(stack);
 				int count = Math.max(rawCount - 1, 0);
 
@@ -101,28 +173,28 @@ public class PearlRadialUIRenderer {
 					ItemNBTHelper.setInt(stack, "scroll_slot", scrollSlot);
 					PacketHandler.NETWORK.sendToServer(new PacketSetBeltScrollSlotServer(player.inventory.getSlotFor(stack), scrollSlot));
 
-					for (int i = 0; i < INSTANCE.slotAnimations.length; i++) {
-						BasicAnimation animation = INSTANCE.slotAnimations[i];
+					for (int i = 0; i < slotAnimations.length; i++) {
+						BasicAnimation animation = slotAnimations[i];
 						if (animation != null)
-							INSTANCE.ANIMATOR.removeAnimations(animation);
+							ANIMATOR.removeAnimations(animation);
 
 						if (i == scrollSlot) continue;
 						BasicAnimation<PearlRadialUIRenderer> newAnimation = new BasicAnimation<>(INSTANCE, "slotRadii[" + i + "]");
 						newAnimation.setTo(0);
 						newAnimation.setEasing(Easing.easeOutQuint);
 						newAnimation.setDuration(20f);
-						INSTANCE.ANIMATOR.add(newAnimation);
+						ANIMATOR.add(newAnimation);
 
-						INSTANCE.slotAnimations[i] = newAnimation;
+						slotAnimations[i] = newAnimation;
 					}
 
 					BasicAnimation<PearlRadialUIRenderer> animation = new BasicAnimation<>(INSTANCE, "slotRadii[" + scrollSlot + "]");
 					animation.setTo(SELECTOR_SHIFT * 10);
 					animation.setEasing(Easing.easeOutQuint);
 					animation.setDuration(20f);
-					INSTANCE.ANIMATOR.add(animation);
+					ANIMATOR.add(animation);
 
-					INSTANCE.slotAnimations[scrollSlot] = animation;
+					slotAnimations[scrollSlot] = animation;
 
 					event.setCanceled(true);
 				}
@@ -147,14 +219,32 @@ public class PearlRadialUIRenderer {
 					event.setCanceled(true);
 				}
 			}
+		} else {
+			for (int i = 0; i < slotAnimations.length; i++) {
+				BasicAnimation animation = slotAnimations[i];
+				if (animation != null)
+					ANIMATOR.removeAnimations(animation);
+
+				BasicAnimation<PearlRadialUIRenderer> newAnimation = new BasicAnimation<>(INSTANCE, "slotRadii[" + i + "]");
+				newAnimation.setTo(0);
+				newAnimation.setEasing(Easing.easeOutQuint);
+				newAnimation.setDuration(20f);
+				ANIMATOR.add(newAnimation);
+
+				slotAnimations[i] = newAnimation;
+			}
 		}
 	}
 
 	@SubscribeEvent
 	public static void renderHud(RenderGameOverlayEvent.Pre event) {
 		//ModKeybinds.pearlSwapping.isKeyDown() &&
+		if (!init) {
+			ANIMATOR.add(centerRadiusAnim, colorAnim, heartBeatAnim, parasolGradientAnim, itemExpansionAnim);
+			init = true;
+			return;
+		}
 		if (event.getType() == RenderGameOverlayEvent.ElementType.CROSSHAIRS) {
-			event.setCanceled(true);
 			EntityPlayer player = Minecraft.getMinecraft().player;
 			ItemStack stack = player.getHeldItemMainhand();
 
@@ -173,22 +263,16 @@ public class PearlRadialUIRenderer {
 
 			IItemHandler handler = belt.getPearls(stack);
 			if (handler == null) return;
+			//	event.setCanceled(true);
 
 			ScaledResolution resolution = event.getResolution();
 			int width = resolution.getScaledWidth();
 			int height = resolution.getScaledHeight();
 
-			List<ItemStack> pearls = new ArrayList<>();
-			for (int i = 0; i < handler.getSlots(); i++) {
-				ItemStack pearl = handler.getStackInSlot(i);
-				if (pearl.isEmpty()) continue;
-				pearls.add(pearl);
-			}
-
 			Tessellator tess = Tessellator.getInstance();
 			BufferBuilder bb = tess.getBuffer();
 
-			// CIRCLE
+			// ------------- CENTER CIRCLE ------------- //
 			{
 				GlStateManager.pushMatrix();
 				int thing1 = GL11.glGetInteger(GL11.GL_ALPHA_TEST_FUNC);
@@ -207,19 +291,19 @@ public class PearlRadialUIRenderer {
 				double y;
 
 				Color transitioningColor = new Color(Color.HSBtoRGB(INSTANCE.color, 0.25f, 1f));
-				Color color = new Color(transitioningColor.getRed() / 255f, transitioningColor.getBlue() / 255f, transitioningColor.getGreen() / 255f, MathHelper.clamp(1f - (float) (INSTANCE.suckPearlHeartBeatRadius / INSTANCE.pearlsCenterRadius), 0f, 1f));
+				Color color = new Color(transitioningColor.getRed() / 255f, transitioningColor.getBlue() / 255f, transitioningColor.getGreen() / 255f, MathHelper.clamp(1f - (float) (INSTANCE.heartBeatRadius / INSTANCE.centerRadius), 0f, 1f));
 				bb.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION_COLOR);
 				bb.pos(0.0, 0.0, 0.0).color(color.getRed(), color.getGreen(), color.getBlue(), 0).endVertex();
 				for (int i = 0; i < vertexCount; i++) {
 					double angle = i * 2.0 * Math.PI / vertexCount;
 
-					x = MathHelper.cos((float) angle) * INSTANCE.suckPearlHeartBeatRadius;
-					y = MathHelper.sin((float) angle) * INSTANCE.suckPearlHeartBeatRadius;
+					x = MathHelper.cos((float) angle) * INSTANCE.heartBeatRadius;
+					y = MathHelper.sin((float) angle) * INSTANCE.heartBeatRadius;
 
 					bb.pos(y, x, 0.0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
 				}
-				x = MathHelper.cos((float) (2.0 * Math.PI)) * INSTANCE.suckPearlHeartBeatRadius;
-				y = MathHelper.sin((float) (2.0 * Math.PI)) * INSTANCE.suckPearlHeartBeatRadius;
+				x = MathHelper.cos((float) (2.0 * Math.PI)) * INSTANCE.heartBeatRadius;
+				y = MathHelper.sin((float) (2.0 * Math.PI)) * INSTANCE.heartBeatRadius;
 				bb.pos(y, x, 0.0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
 
 				tess.draw();
@@ -230,13 +314,13 @@ public class PearlRadialUIRenderer {
 				for (int i = 0; i < vertexCount; i++) {
 					double angle = i * 2.0 * Math.PI / vertexCount;
 
-					x = MathHelper.cos((float) angle) * INSTANCE.pearlsCenterRadius;
-					y = MathHelper.sin((float) angle) * INSTANCE.pearlsCenterRadius;
+					x = MathHelper.cos((float) angle) * INSTANCE.centerRadius;
+					y = MathHelper.sin((float) angle) * INSTANCE.centerRadius;
 
 					bb.pos(y, x, 0.0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
 				}
-				x = MathHelper.cos((float) (2.0 * Math.PI)) * INSTANCE.pearlsCenterRadius;
-				y = MathHelper.sin((float) (2.0 * Math.PI)) * INSTANCE.pearlsCenterRadius;
+				x = MathHelper.cos((float) (2.0 * Math.PI)) * INSTANCE.centerRadius;
+				y = MathHelper.sin((float) (2.0 * Math.PI)) * INSTANCE.centerRadius;
 				bb.pos(y, x, 0.0).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).endVertex();
 
 				tess.draw();
@@ -248,13 +332,13 @@ public class PearlRadialUIRenderer {
 				for (int i = 0; i < vertexCount; i++) {
 					double angle = i * 2.0 * Math.PI / vertexCount;
 
-					x = MathHelper.cos((float) angle) * INSTANCE.pearlsCenterRadius;
-					y = MathHelper.sin((float) angle) * INSTANCE.pearlsCenterRadius;
+					x = MathHelper.cos((float) angle) * INSTANCE.centerRadius;
+					y = MathHelper.sin((float) angle) * INSTANCE.centerRadius;
 
 					bb.pos(y, x, 0.0).color(color.getRed(), color.getGreen(), color.getBlue(), 255).endVertex();
 				}
-				x = MathHelper.cos((float) (2.0 * Math.PI)) * INSTANCE.pearlsCenterRadius;
-				y = MathHelper.sin((float) (2.0 * Math.PI)) * INSTANCE.pearlsCenterRadius;
+				x = MathHelper.cos((float) (2.0 * Math.PI)) * INSTANCE.centerRadius;
+				y = MathHelper.sin((float) (2.0 * Math.PI)) * INSTANCE.centerRadius;
 				bb.pos(y, x, 0.0).color(color.getRed(), color.getGreen(), color.getBlue(), 255).endVertex();
 
 				tess.draw();
@@ -263,148 +347,120 @@ public class PearlRadialUIRenderer {
 				GlStateManager.enableTexture2D();
 				GlStateManager.popMatrix();
 			}
+			renderText(width, height, centerText);
+			// ------------- CENTER CIRCLE ------------- //
 
-			if (pearls.isEmpty()) {
-				if (!INSTANCE.wasEmpty && (INSTANCE.radiusAnim == null || INSTANCE.radiusAnim.getFinished())) {
-					INSTANCE.radiusAnim = new BasicAnimation<>(INSTANCE, "pearlsCenterRadius");
-					INSTANCE.radiusAnim.setTo(100.0);
-					INSTANCE.radiusAnim.setEasing(Easing.easeInOutQuart);
-					INSTANCE.radiusAnim.setDuration(40f);
-					INSTANCE.ANIMATOR.add(INSTANCE.radiusAnim);
 
-					INSTANCE.wasEmpty = true;
-				}
+			// ------------- PEARL UPDATER ------------- //
+			List<ItemStack> temp = new ArrayList<>();
+			for (int i = 0; i < handler.getSlots(); i++) {
+				ItemStack pearl = handler.getStackInSlot(i);
+				if (pearl.isEmpty()) continue;
+				temp.add(pearl);
+			}
+			newPearls = new Pair<>(genSnapshotHashcode(temp), temp);
 
-				if (INSTANCE.suckPearlHeartBeatAnim == null || INSTANCE.suckPearlHeartBeatAnim.getFinished()) {
-					INSTANCE.suckPearlHeartBeatAnim = new BasicAnimation<>(INSTANCE, "suckPearlHeartBeatRadius");
-					INSTANCE.suckPearlHeartBeatAnim.setTo(INSTANCE.pearlsCenterRadius);
-					INSTANCE.suckPearlHeartBeatAnim.setFrom(0.0);
-					INSTANCE.suckPearlHeartBeatAnim.setEasing(Easing.easeOutQuint);
-					INSTANCE.suckPearlHeartBeatAnim.setDuration(100f);
-					INSTANCE.ANIMATOR.add(INSTANCE.suckPearlHeartBeatAnim);
+			if (!changing)
+				if (!newPearls.getFirst().equals(snapshotPearls.getFirst())) {
+					if (newPearls.getSecond().isEmpty()) {
+						pearls = snapshotPearls.getSecond();
+						changing = true;
 
-					BasicAnimation colorTransition = new BasicAnimation<>(INSTANCE, "color");
-					colorTransition.setTo(INSTANCE.color + 0.25f > 1f ? 0.25f : INSTANCE.color + 0.25f);
-					colorTransition.setEasing(Easing.linear);
-					colorTransition.setDuration(100f);
-					INSTANCE.ANIMATOR.add(colorTransition);
-				}
+						final Pair<Integer, List<ItemStack>> tmp = newPearls;
+						ScheduledEventAnimation timer = new ScheduledEventAnimation(30f, () -> {
+							snapshotPearls = tmp;
+							pearls = tmp.getSecond();
+							changing = false;
+						});
+						ANIMATOR.add(timer);
+					} else {
+						final Pair<Integer, List<ItemStack>> tmp = newPearls;
 
-				// EMPTY BELT TEXT
-				{
-					GlStateManager.pushMatrix();
-					GlStateManager.enableTexture2D();
-					GlStateManager.alphaFunc(GL11.GL_ALWAYS, 1);
-					GlStateManager.enableBlend();
-					GlStateManager.shadeModel(GL11.GL_SMOOTH);
-					GlStateManager.translate(width / 2.0, height / 2.0, 0);
+						pearls = tmp.getSecond();
+						changing = true;
 
-					String line = "Shift + Right Click to\nattach all pearls in your\ninventory to this belt";
-					String[] split = line.split("\n");
-					for (int i = 0; i < split.length; i++) {
-						String text = split[i];
-						Minecraft.getMinecraft().fontRenderer.drawString(
-								text,
-								(int) (-Minecraft.getMinecraft().fontRenderer.getStringWidth(text) / 2.0),
-								(int) ((-Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + -Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / (split.length / 2.0)) + i * Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT),
-								0x000000);
+						ANIMATOR.add(new ScheduledEventAnimation(30f, () -> {
+							snapshotPearls = tmp;
+							changing = false;
+						}));
 					}
-
-					float rot1 = MathHelper.sin(ClientTickHandler.getTicks() / 50f) * 5;
-					GlStateManager.rotate(rot1, 0, 0, 1f * ClientTickHandler.getPartialTicks());
-					for (int i = 0; i < split.length; i++) {
-						String text = split[i];
-						Minecraft.getMinecraft().fontRenderer.drawString(
-								text,
-								(int) (-Minecraft.getMinecraft().fontRenderer.getStringWidth(text) / 2.0),
-								(int) ((-Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + -Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / (split.length / 2.0)) + i * Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT),
-								0x2b000000);
-					}
-					GlStateManager.rotate(-rot1, 0, 0, 1f * ClientTickHandler.getPartialTicks());
-
-					float rot2 = MathHelper.sin(ClientTickHandler.getTicks() / 20f) * 6;
-					GlStateManager.rotate(rot2, 0, 0, 1f * ClientTickHandler.getPartialTicks());
-					for (int i = 0; i < split.length; i++) {
-						String text = split[i];
-						Minecraft.getMinecraft().fontRenderer.drawString(
-								text,
-								(int) (-Minecraft.getMinecraft().fontRenderer.getStringWidth(text) / 2.0),
-								(int) ((-Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + -Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / (split.length / 2.0)) + i * Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT),
-								0x21000000);
-					}
-					GlStateManager.rotate(-rot2, 0, 0, 1f * ClientTickHandler.getPartialTicks());
-
-					GlStateManager.popMatrix();
 				}
-				return;
-			} else {
-				if (INSTANCE.wasEmpty && (INSTANCE.radiusAnim == null || INSTANCE.radiusAnim.getFinished())) {
-					INSTANCE.pearlGradientRadius = INSTANCE.pearlsCenterRadius;
+			// ------------- PEARL UPDATER ------------- //
 
-					BasicAnimation radiusAnim = new BasicAnimation<>(INSTANCE, "pearlsCenterRadius");
-					radiusAnim.setTo(SELECTOR_RADIUS - SELECTOR_WIDTH / 2.0);
-					radiusAnim.setEasing(Easing.easeInOutQuart);
-					radiusAnim.setDuration(30f);
-					radiusAnim.setCompletion(() -> {
 
-					});
-					INSTANCE.ANIMATOR.add(radiusAnim);
-
-					BasicAnimation gradientRadius = new BasicAnimation<>(INSTANCE, "pearlGradientRadius");
-					gradientRadius.setTo(INSTANCE.pearlsCenterRadius + 20);
-					gradientRadius.setFrom(INSTANCE.pearlsCenterRadius);
-					gradientRadius.setEasing(Easing.easeOutQuart);
-					gradientRadius.setDuration(20f);
-					INSTANCE.ANIMATOR.add(gradientRadius);
-
-					INSTANCE.wasEmpty = false;
-				}
+			// ------------- ANIMATIONS ------------- //
+			if (colorAnim.getFinished()) {
+				colorAnim = new BasicAnimation<>(INSTANCE, "color");
+				colorAnim.setTo(INSTANCE.color + 0.25f > 1f ? 0.25f : INSTANCE.color + 0.25f);
+				colorAnim.setEasing(Easing.linear);
+				colorAnim.setDuration(100f);
+				ANIMATOR.add(colorAnim);
 			}
 
-			if (INSTANCE.radiusAnim == null || INSTANCE.radiusAnim.getFinished()) {
-				GlStateManager.pushMatrix();
-				GlStateManager.enableTexture2D();
-				GlStateManager.alphaFunc(GL11.GL_ALWAYS, 1);
-				GlStateManager.enableBlend();
-				GlStateManager.shadeModel(GL11.GL_SMOOTH);
-				GlStateManager.translate(width / 2.0, height / 2.0, 0);
+			if (centerRadiusAnim.getFinished() && parasolGradientAnim.getFinished())
+				if (newPearls.getSecond().isEmpty()) {
+					if (!wasEmpty) {
+						centerText = "Shift + Right Click to\nattach all pearls in your\ninventory to this belt";
 
-				String line = "Scroll to select\na pearl.\n\nRight Click to pull\nthe pearl out.";
-				String[] split = line.split("\n");
-				for (int i = 0; i < split.length; i++) {
-					String text = split[i];
-					Minecraft.getMinecraft().fontRenderer.drawString(
-							text,
-							(int) (-Minecraft.getMinecraft().fontRenderer.getStringWidth(text) / 2.0),
-							(int) ((-Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT - Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + -Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / (split.length / 2.0)) + i * Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT),
-							0x000000);
+						centerRadiusAnim = new BasicAnimation<>(INSTANCE, "centerRadius");
+						centerRadiusAnim.setTo(100.0);
+						centerRadiusAnim.setEasing(Easing.easeInOutQuart);
+						centerRadiusAnim.setDuration(30f);
+						ANIMATOR.add(centerRadiusAnim);
+
+						parasolGradientAnim = new BasicAnimation<>(INSTANCE, "parasolGradientRadius");
+						parasolGradientAnim.setTo(100.0);
+						parasolGradientAnim.setEasing(Easing.easeOutQuart);
+						parasolGradientAnim.setDuration(30f);
+						ANIMATOR.add(parasolGradientAnim);
+
+						itemExpansionAnim = new BasicAnimation<>(INSTANCE, "itemExpansion");
+						itemExpansionAnim.setTo(0);
+						itemExpansionAnim.setEasing(Easing.easeOutQuart);
+						itemExpansionAnim.setDuration(20f);
+						ANIMATOR.add(itemExpansionAnim);
+
+						wasEmpty = true;
+					}
+
+					if (centerRadiusAnim.getFinished() && heartBeatAnim.getFinished()) {
+						heartBeatAnim = new BasicAnimation<>(INSTANCE, "heartBeatRadius");
+						heartBeatAnim.setTo(INSTANCE.centerRadius);
+						heartBeatAnim.setFrom(0.0);
+						heartBeatAnim.setEasing(Easing.easeOutQuint);
+						heartBeatAnim.setDuration(100f);
+						ANIMATOR.add(heartBeatAnim);
+					}
+
+				} else if (wasEmpty) {
+					centerText = "Scroll to select\na pearl.\n\nRight Click to pull\nthe pearl out.";
+
+					centerRadiusAnim = new BasicAnimation<>(INSTANCE, "centerRadius");
+					centerRadiusAnim.setTo(SELECTOR_RADIUS - SELECTOR_WIDTH / 2.0);
+					centerRadiusAnim.setEasing(Easing.easeInOutQuart);
+					centerRadiusAnim.setDuration(30f);
+					ANIMATOR.add(centerRadiusAnim);
+
+					parasolGradientAnim = new BasicAnimation<>(INSTANCE, "parasolGradientRadius");
+					parasolGradientAnim.setTo(INSTANCE.centerRadius + 20);
+					parasolGradientAnim.setFrom(INSTANCE.centerRadius);
+					parasolGradientAnim.setEasing(Easing.easeOutQuart);
+					parasolGradientAnim.setDuration(30f);
+					ANIMATOR.add(parasolGradientAnim);
+
+					itemExpansionAnim = new BasicAnimation<>(INSTANCE, "itemExpansion");
+					itemExpansionAnim.setTo(1f);
+					itemExpansionAnim.setEasing(Easing.easeOutQuart);
+					itemExpansionAnim.setDuration(20f);
+					ANIMATOR.add(itemExpansionAnim);
+
+					wasEmpty = false;
 				}
+			// ------------- ANIMATIONS ------------- //
 
-				float rot1 = MathHelper.sin(ClientTickHandler.getTicks() / 50f) * 5;
-				GlStateManager.rotate(rot1, 0, 0, 1f * ClientTickHandler.getPartialTicks());
-				for (int i = 0; i < split.length; i++) {
-					String text = split[i];
-					Minecraft.getMinecraft().fontRenderer.drawString(
-							text,
-							(int) (-Minecraft.getMinecraft().fontRenderer.getStringWidth(text) / 2.0),
-							(int) ((-Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT - Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + -Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / (split.length / 2.0)) + i * Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT),
-							0x2b000000);
-				}
-				GlStateManager.rotate(-rot1, 0, 0, 1f * ClientTickHandler.getPartialTicks());
 
-				float rot2 = MathHelper.sin(ClientTickHandler.getTicks() / 20f) * 6;
-				GlStateManager.rotate(rot2, 0, 0, 1f * ClientTickHandler.getPartialTicks());
-				for (int i = 0; i < split.length; i++) {
-					String text = split[i];
-					Minecraft.getMinecraft().fontRenderer.drawString(
-							text,
-							(int) (-Minecraft.getMinecraft().fontRenderer.getStringWidth(text) / 2.0),
-							(int) ((-Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT - Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + -Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / (split.length / 2.0)) + i * Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT),
-							0x21000000);
-				}
-				GlStateManager.rotate(-rot2, 0, 0, 1f * ClientTickHandler.getPartialTicks());
-				GlStateManager.popMatrix();
-
+			// ------------- PARASOL AND PEARL RENDERING ------------- //
+			if (!pearls.isEmpty()) {
 
 				int numSegmentsPerArc = (int) Math.ceil(360d / pearls.size());
 				float anglePerColor = (float) (2 * Math.PI / pearls.size());
@@ -421,8 +477,8 @@ public class PearlRadialUIRenderer {
 					int colorInt = function.invoke(pearl, 0);
 					Color color = new Color(colorInt);
 
-					double innerRadius = INSTANCE.pearlsCenterRadius + 0.5;
-					double outerRadius = INSTANCE.pearlGradientRadius + (INSTANCE.slotRadii[j]);// + (scrollSlot == j ? SELECTOR_SHIFT : 0);
+					double innerRadius = INSTANCE.centerRadius + 0.5;
+					double outerRadius = INSTANCE.parasolGradientRadius + (INSTANCE.slotRadii[j]);// + (scrollSlot == j ? SELECTOR_SHIFT : 0);
 
 					GlStateManager.pushMatrix();
 					int thing1 = GL11.glGetInteger(GL11.GL_ALPHA_TEST_FUNC);
@@ -438,8 +494,8 @@ public class PearlRadialUIRenderer {
 					bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
 					for (int i = 0; i < numSegmentsPerArc; i++) {
 						float currentAngle = i * anglePerSegment + angle;
-						bb.pos(innerRadius * MathHelper.cos(currentAngle), innerRadius * MathHelper.sin(currentAngle), 0).color(color.getRed(), color.getGreen(), color.getBlue(), 255).endVertex();
-						bb.pos(innerRadius * MathHelper.cos(currentAngle + anglePerSegment), innerRadius * MathHelper.sin(currentAngle + anglePerSegment), 0).color(color.getRed(), color.getGreen(), color.getBlue(), 255).endVertex();
+						bb.pos(innerRadius * MathHelper.cos(currentAngle), innerRadius * MathHelper.sin(currentAngle), 0).color(color.getRed(), color.getGreen(), color.getBlue(), (int) (INSTANCE.itemExpansion * 255)).endVertex();
+						bb.pos(innerRadius * MathHelper.cos(currentAngle + anglePerSegment), innerRadius * MathHelper.sin(currentAngle + anglePerSegment), 0).color(color.getRed(), color.getGreen(), color.getBlue(), (int) (INSTANCE.itemExpansion * 255)).endVertex();
 						bb.pos(outerRadius * MathHelper.cos(currentAngle + anglePerSegment), outerRadius * MathHelper.sin(currentAngle + anglePerSegment), 0).color(color.getRed(), color.getGreen(), color.getBlue(), 0).endVertex();
 						bb.pos(outerRadius * MathHelper.cos(currentAngle), outerRadius * MathHelper.sin(currentAngle), 0).color(color.getRed(), color.getGreen(), color.getBlue(), 0).endVertex();
 					}
@@ -452,23 +508,108 @@ public class PearlRadialUIRenderer {
 					Vec3d center = new Vec3d((inner.x + outer.x) / 2, (inner.y + outer.y) / 2, 0);
 					Vec3d normal = center.normalize();
 
-					Vec3d pearlOffset = normal.scale(INSTANCE.pearlsCenterRadius / 2).subtract(8, 8, 0);
+					Vec3d pearlOffset = normal.scale(INSTANCE.centerRadius / 2).scale(INSTANCE.itemExpansion);
 
 					RenderHelper.enableGUIStandardItemLighting();
 					GlStateManager.enableRescaleNormal();
 					GlStateManager.enableTexture2D();
 
 					GlStateManager.scale(2, 2, 2);
-					GlStateManager.translate(pearlOffset.x, pearlOffset.y, 0);
+					GlStateManager.translate(pearlOffset.x - 8, pearlOffset.y - 8, 0);
+					GlStateManager.color(1f, 1f, 1f, INSTANCE.itemExpansion);
 
-					Minecraft.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI(pearl, 0, 0);
-					Minecraft.getMinecraft().getRenderItem().renderItemOverlayIntoGUI(Minecraft.getMinecraft().fontRenderer, pearl, 0, 0, "");
+					{
+						IBakedModel model = Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(pearl, null, Minecraft.getMinecraft().player);
 
-					GlStateManager.translate(-pearlOffset.x, -pearlOffset.y, 0);
-					GlStateManager.scale(-2, -2, -2);
+						GlStateManager.pushMatrix();
+						Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+						Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
+						GlStateManager.enableRescaleNormal();
+						GlStateManager.enableAlpha();
+						GlStateManager.alphaFunc(516, 0.1F);
+						GlStateManager.enableBlend();
+						GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+
+						GlStateManager.translate(8.0F, 8.0F, 0.0F);
+						GlStateManager.scale(1.0F, -1.0F, 1.0F);
+						GlStateManager.scale(16.0F, 16.0F, 16.0F);
+
+						if (model.isGui3d()) GlStateManager.enableLighting();
+						else GlStateManager.disableLighting();
+
+						ForgeHooksClient.handleCameraTransforms(model, ItemCameraTransforms.TransformType.GUI, false);
+
+						if (!stack.isEmpty()) {
+							GlStateManager.pushMatrix();
+							GlStateManager.translate(-0.5F, -0.5F, -0.5F);
+
+							if (model.isBuiltInRenderer()) {
+								GlStateManager.enableRescaleNormal();
+								stack.getItem().getTileEntityItemStackRenderer().renderByItem(stack);
+							} else {
+								renderModel(model, 0xFFFFFF | (((int) (INSTANCE.itemExpansion * 255)) << 24), pearl);
+
+								if (stack.hasEffect()) {
+									renderEffect(model);
+								}
+							}
+
+							GlStateManager.popMatrix();
+						}
+
+						GlStateManager.disableAlpha();
+						GlStateManager.disableRescaleNormal();
+						GlStateManager.disableLighting();
+						GlStateManager.popMatrix();
+
+						Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+						Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
+
+						//	Minecraft.getMinecraft().getRenderItem().renderItemOverlayIntoGUI(Minecraft.getMinecraft().fontRenderer, pearl, 0, 0, "");
+					}
+
+					GlStateManager.translate(-pearlOffset.x + 8, -pearlOffset.y + 8, 0);
+					GlStateManager.scale(1, 1, 1);
 
 					GlStateManager.disableRescaleNormal();
 					RenderHelper.disableStandardItemLighting();
+
+
+					GlStateManager.color(1f, 1f, 1f, INSTANCE.itemExpansion);
+					List<SpellRing> rings = SpellUtils.getSpellChains(pearl);
+					float size = 10;
+					for (SpellRing parentRing : rings) {
+						ModuleInstance parentModule = parentRing.getModule();
+						if (parentModule == null) continue;
+						Sprite parentSprite = new Sprite(parentModule.getIconLocation());
+
+						Vec3d parentVec = pearlOffset.add(normal.scale(size).scale(INSTANCE.itemExpansion));
+
+						SpritePlate.bind();
+						SpritePlate.draw(0, (float) parentVec.x - (size / 2f), (float) parentVec.y - (size / 2f), size, size);
+
+						parentSprite.bind();
+						parentSprite.draw(0, (float) parentVec.x - ((size - 4) / 2f), (float) parentVec.y - ((size - 4) / 2f), size - 4, size - 4);
+
+						List<SpellRing> children = new ArrayList<>(parentRing.getAllChildRings());
+						for (int i = 0; i < children.size(); i++) {
+							SpellRing ring = children.get(i);
+
+							ModuleInstance module = ring.getModule();
+							if (module == null) continue;
+							Sprite moduleSprite = new Sprite(module.getIconLocation());
+
+							Vec3d moduleVec = pearlOffset.add(normal.scale(size)).add(normal.scale(size * 1.5).scale(i + 1).scale(INSTANCE.itemExpansion));
+
+							SpritePlate.bind();
+							SpritePlate.draw(0, (float) moduleVec.x - (size / 2f), (float) moduleVec.y - (size / 2f), size, size);
+
+							moduleSprite.bind();
+							moduleSprite.draw(0, (float) moduleVec.x - ((size - 1) / 2f), (float) moduleVec.y - ((size - 1) / 2f), size - 1, size - 1);
+						}
+					}
+
+
 					GlStateManager.disableBlend();
 					GlStateManager.disableAlpha();
 					GlStateManager.alphaFunc(thing1, thing2);
@@ -479,6 +620,312 @@ public class PearlRadialUIRenderer {
 					angle += anglePerColor;
 				}
 			}
+			// ------------- PARASOL AND PEARL RENDERING ------------- //
+		}
+	}
+
+	private static int genSnapshotHashcode(List<ItemStack> pearls) {
+		int hashcode = 0;
+		for (ItemStack stack : pearls) {
+			List<SpellRing> rings = SpellUtils.getAllSpellRings(stack);
+			for (SpellRing ring : rings) {
+				hashcode += ring.hashCode();
+			}
+		}
+		return hashcode;
+	}
+
+	private static void renderText(double width, double height, String string) {
+		GlStateManager.pushMatrix();
+		GlStateManager.enableTexture2D();
+		GlStateManager.alphaFunc(GL11.GL_ALWAYS, 1);
+		GlStateManager.enableBlend();
+		GlStateManager.shadeModel(GL11.GL_SMOOTH);
+		GlStateManager.translate(width / 2.0, height / 2.0, 0);
+
+		String[] split = string.split("\n");
+		for (int i = 0; i < split.length; i++) {
+			String text = split[i];
+			Minecraft.getMinecraft().fontRenderer.drawString(
+					text,
+					(int) (-Minecraft.getMinecraft().fontRenderer.getStringWidth(text) / 2.0),
+					(int) ((-Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT - Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + -Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / (split.length / 2.0)) + i * Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT),
+					0x000000);
+		}
+
+		float rot1 = MathHelper.sin(ClientTickHandler.getTicks() / 50f) * 5;
+		GlStateManager.rotate(rot1, 0, 0, 1f * ClientTickHandler.getPartialTicks());
+		for (int i = 0; i < split.length; i++) {
+			String text = split[i];
+			Minecraft.getMinecraft().fontRenderer.drawString(
+					text,
+					(int) (-Minecraft.getMinecraft().fontRenderer.getStringWidth(text) / 2.0),
+					(int) ((-Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT - Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + -Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / (split.length / 2.0)) + i * Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT),
+					0x2b000000);
+		}
+		GlStateManager.rotate(-rot1, 0, 0, 1f * ClientTickHandler.getPartialTicks());
+
+		float rot2 = MathHelper.sin(ClientTickHandler.getTicks() / 20f) * 6;
+		GlStateManager.rotate(rot2, 0, 0, 1f * ClientTickHandler.getPartialTicks());
+		for (int i = 0; i < split.length; i++) {
+			String text = split[i];
+			Minecraft.getMinecraft().fontRenderer.drawString(
+					text,
+					(int) (-Minecraft.getMinecraft().fontRenderer.getStringWidth(text) / 2.0),
+					(int) ((-Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT - Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + -Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT / (split.length / 2.0)) + i * Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT),
+					0x21000000);
+		}
+		GlStateManager.rotate(-rot2, 0, 0, 1f * ClientTickHandler.getPartialTicks());
+		GlStateManager.popMatrix();
+	}
+
+	private static void renderQuads(BufferBuilder renderer, List<BakedQuad> quads, int color, ItemStack stack) {
+		color &= 0xFF000000;
+		boolean flag = !stack.isEmpty();
+		int i = 0;
+
+		for (int j = quads.size(); i < j; ++i) {
+			BakedQuad bakedquad = quads.get(i);
+			int k = color | 0xFFFFFF;
+
+			if (flag && bakedquad.hasTintIndex()) {
+				k = Minecraft.getMinecraft().getItemColors().colorMultiplier(stack, bakedquad.getTintIndex());
+
+				if (EntityRenderer.anaglyphEnable) {
+					k = TextureUtil.anaglyphColor(k);
+				}
+
+				k &= 0xFFFFFF;
+				k |= color;
+			}
+
+			LightUtil.renderQuadColor(renderer, bakedquad, k);
+		}
+	}
+
+	private static int getColorMultiplier(ItemStack stack, int tintIndex) {
+		if (tintIndex == -1 || stack.isEmpty()) return 0xFFFFFFFF;
+
+		int colorMultiplier = Minecraft.getMinecraft().getItemColors().colorMultiplier(stack, tintIndex);
+
+		if (EntityRenderer.anaglyphEnable) {
+			colorMultiplier = TextureUtil.anaglyphColor(colorMultiplier);
+		}
+
+		// FUCK YOU
+		//	// Always full opacity
+		//	colorMultiplier |= 0xff << 24; // -16777216
+
+		return colorMultiplier;
+	}
+
+
+	//					colorMultiplier = (newColorMultiplier & 0xFFFFFF) | ((int)(INSTANCE.itemExpansion * 255) << 24);
+	private static void renderLitItem(RenderItem ri, IBakedModel model, int color, ItemStack stack) {
+		List<BakedQuad> allquads = new ArrayList<>();
+
+		for (EnumFacing enumfacing : EnumFacing.VALUES) {
+			allquads.addAll(model.getQuads(null, enumfacing, 0));
+		}
+
+		allquads.addAll(model.getQuads(null, null, 0));
+
+		if (allquads.isEmpty()) return;
+
+		// Current list of consecutive quads with the same lighting
+		List<BakedQuad> segment = new ArrayList<>();
+
+		// Lighting of the current segment
+		int segmentBlockLight = -1;
+		int segmentSkyLight = -1;
+		// Coloring of the current segment
+		int segmentColorMultiplier = color;
+		// If the current segment contains lighting data
+		boolean hasLighting = false;
+
+		// Tint index cache to avoid unnecessary IItemColor lookups
+		int prevTintIndex = -1;
+
+		for (int i = 0; i < allquads.size(); i++) {
+			BakedQuad q = allquads.get(i);
+
+			// Lighting of the current quad
+			int bl = 0;
+			int sl = 0;
+
+			// Fail-fast on ITEM, as it cannot have light data
+			if (q.getFormat() != DefaultVertexFormats.ITEM && q.getFormat().hasUvOffset(1)) {
+				q.pipe(lightGatherer);
+				if (lightGatherer.hasLighting()) {
+					bl = lightGatherer.blockLight;
+					sl = lightGatherer.skyLight;
+				}
+			}
+
+			int colorMultiplier = segmentColorMultiplier;
+
+			// If there is no color override, and this quad is tinted, we need to apply IItemColor
+			if (color == 0xFFFFFFFF && q.hasTintIndex()) {
+				int tintIndex = q.getTintIndex();
+
+				if (prevTintIndex != tintIndex) {
+					colorMultiplier = getColorMultiplier(stack, tintIndex);
+				}
+				prevTintIndex = tintIndex;
+			} else {
+				colorMultiplier = color;
+				prevTintIndex = -1;
+			}
+
+			boolean lightingDirty = segmentBlockLight != bl || segmentSkyLight != sl;
+			boolean colorDirty = hasLighting && segmentColorMultiplier != colorMultiplier;
+
+			// If lighting or color data has changed, draw the segment and flush it
+			if (lightingDirty || colorDirty) {
+				if (i > 0) // Make sure this isn't the first quad being processed
+				{
+					drawSegment(ri, color, stack, segment, segmentBlockLight, segmentSkyLight, segmentColorMultiplier, lightingDirty && (hasLighting || segment.size() < i), colorDirty);
+				}
+				segmentBlockLight = bl;
+				segmentSkyLight = sl;
+				segmentColorMultiplier = colorMultiplier;
+				hasLighting = segmentBlockLight > 0 || segmentSkyLight > 0;
+			}
+
+			segment.add(q);
+		}
+
+		drawSegment(ri, color, stack, segment, segmentBlockLight, segmentSkyLight, segmentColorMultiplier, hasLighting || segment.size() < allquads.size(), false);
+
+		// Clean up render state if necessary
+		if (hasLighting) {
+			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, OpenGlHelper.lastBrightnessX, OpenGlHelper.lastBrightnessY);
+			GL11.glMaterial(GL11.GL_FRONT_AND_BACK, GL11.GL_EMISSION, RenderHelper.setColorBuffer(0, 0, 0, 1));
+		}
+	}
+
+	private static void drawSegment(RenderItem ri, int baseColor, ItemStack stack, List<BakedQuad> segment, int bl, int sl, int tintColor, boolean updateLighting, boolean updateColor) {
+		BufferBuilder bufferbuilder = Tessellator.getInstance().getBuffer();
+		bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
+
+		float lastBl = OpenGlHelper.lastBrightnessX;
+		float lastSl = OpenGlHelper.lastBrightnessY;
+
+		if (updateLighting || updateColor) {
+			float emissive = Math.max(bl, sl) / 240f;
+
+			float r = (tintColor >>> 16 & 0xff) / 255f;
+			float g = (tintColor >>> 8 & 0xff) / 255f;
+			float b = (tintColor & 0xff) / 255f;
+
+			GL11.glMaterial(GL11.GL_FRONT_AND_BACK, GL11.GL_EMISSION, RenderHelper.setColorBuffer(emissive * r, emissive * g, emissive * b, 1));
+
+			if (updateLighting) {
+				OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, Math.max(bl, lastBl), Math.max(sl, lastSl));
+			}
+		}
+
+		renderQuads(bufferbuilder, segment, baseColor, stack);
+		Tessellator.getInstance().draw();
+
+		// Preserve this as it represents the "world" lighting
+		OpenGlHelper.lastBrightnessX = lastBl;
+		OpenGlHelper.lastBrightnessY = lastSl;
+
+		segment.clear();
+	}
+
+	private static void renderModel(IBakedModel model, int color, ItemStack stack) {
+		if (ForgeModContainer.allowEmissiveItems) {
+			renderLitItem(Minecraft.getMinecraft().getRenderItem(), model, color, stack);
+			return;
+		}
+		Tessellator tessellator = Tessellator.getInstance();
+		BufferBuilder bufferbuilder = tessellator.getBuffer();
+		bufferbuilder.begin(7, DefaultVertexFormats.ITEM);
+
+		for (EnumFacing enumfacing : EnumFacing.values()) {
+			renderQuads(bufferbuilder, model.getQuads(null, enumfacing, 0L), color, stack);
+		}
+
+		renderQuads(bufferbuilder, model.getQuads(null, null, 0L), color, stack);
+		tessellator.draw();
+	}
+
+	private static void renderEffect(IBakedModel model) {
+		GlStateManager.depthMask(false);
+		GlStateManager.depthFunc(514);
+		GlStateManager.disableLighting();
+		GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_COLOR, GlStateManager.DestFactor.ONE);
+		Minecraft.getMinecraft().getTextureManager().bindTexture(RES_ITEM_GLINT);
+		GlStateManager.matrixMode(5890);
+		GlStateManager.pushMatrix();
+		GlStateManager.scale(8.0F, 8.0F, 8.0F);
+		float f = (float) (Minecraft.getSystemTime() % 3000L) / 3000.0F / 8.0F;
+		GlStateManager.translate(f, 0.0F, 0.0F);
+		GlStateManager.rotate(-50.0F, 0.0F, 0.0F, 1.0F);
+		renderModel(model, -8372020, ItemStack.EMPTY);
+		GlStateManager.popMatrix();
+		GlStateManager.pushMatrix();
+		GlStateManager.scale(8.0F, 8.0F, 8.0F);
+		float f1 = (float) (Minecraft.getSystemTime() % 4873L) / 4873.0F / 8.0F;
+		GlStateManager.translate(-f1, 0.0F, 0.0F);
+		GlStateManager.rotate(10.0F, 0.0F, 0.0F, 1.0F);
+		renderModel(model, -8372020, ItemStack.EMPTY);
+		GlStateManager.popMatrix();
+		GlStateManager.matrixMode(5888);
+		GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+		GlStateManager.enableLighting();
+		GlStateManager.depthFunc(515);
+		GlStateManager.depthMask(true);
+		Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+	}
+
+	private static class LightGatheringTransformer extends QuadGatheringTransformer {
+
+		private static final VertexFormat FORMAT = new VertexFormat().addElement(DefaultVertexFormats.TEX_2F).addElement(DefaultVertexFormats.TEX_2S);
+
+		int blockLight, skyLight;
+
+		{
+			setVertexFormat(FORMAT);
+		}
+
+		boolean hasLighting() {
+			return dataLength[1] >= 2;
+		}
+
+		@Override
+		protected void processQuad() {
+			// Reset light data
+			blockLight = 0;
+			skyLight = 0;
+			// Compute average light for all 4 vertices
+			for (int i = 0; i < 4; i++) {
+				blockLight += (int) ((quadData[1][i][0] * 0xFFFF) / 0x20);
+				skyLight += (int) ((quadData[1][i][1] * 0xFFFF) / 0x20);
+			}
+			// Values must be multiplied by 16, divided by 4 for average => x4
+			blockLight *= 4;
+			skyLight *= 4;
+		}
+
+		// Dummy overrides
+
+		@Override
+		public void setQuadTint(int tint) {
+		}
+
+		@Override
+		public void setQuadOrientation(EnumFacing orientation) {
+		}
+
+		@Override
+		public void setApplyDiffuseLighting(boolean diffuse) {
+		}
+
+		@Override
+		public void setTexture(TextureAtlasSprite texture) {
 		}
 	}
 }

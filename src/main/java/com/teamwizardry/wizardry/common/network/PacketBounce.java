@@ -9,9 +9,6 @@ import org.jetbrains.annotations.NotNull;
 @PacketRegister(Side.SERVER)
 public class PacketBounce extends PacketBase {
 
-	public PacketBounce() {
-	}
-
 	@Override
 	public void handle(@NotNull MessageContext ctx) {
 		ctx.getServerHandler().player.fallDistance = 0;

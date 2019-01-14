@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.common.core;
 
 import com.teamwizardry.wizardry.Wizardry;
+import com.teamwizardry.wizardry.api.BounceHandler;
 import com.teamwizardry.wizardry.api.ConfigValues;
 import com.teamwizardry.wizardry.api.Constants.MISC;
 import com.teamwizardry.wizardry.api.block.FluidTracker;
@@ -15,10 +16,15 @@ import com.teamwizardry.wizardry.api.util.TeleportUtil;
 import com.teamwizardry.wizardry.common.entity.EntityFairy;
 import com.teamwizardry.wizardry.crafting.burnable.EntityBurnableItem;
 import com.teamwizardry.wizardry.init.ModPotions;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.network.play.server.SPacketEntityVelocity;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
@@ -27,10 +33,12 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -50,6 +58,75 @@ public class EventHandler {
 		event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, MISC.SMOKE));
 		event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, MISC.SPARKLE_BLURRED));
 		event.getMap().registerSprite(new ResourceLocation(Wizardry.MODID, MISC.DIAMOND));
+	}
+
+
+	private static final BlockPos sub = new BlockPos(0, -1, 0);
+
+	/**
+	 * Code "borrowed" from Tinker's construct slime boots
+	 * https://github.com/SlimeKnights/TinkersConstruct/blob/23034cb63e98bba06faf1cdc4074009daf93be1f/src/main/java/slimeknights/tconstruct/gadgets/item/ItemSlimeBoots.java
+	 * <p>
+	 * I don't feel like re-inventing the wheel. Shut up.
+	 */
+	@SubscribeEvent
+	public void onFall(LivingFallEvent event) {
+		EntityLivingBase entity = event.getEntityLiving();
+		if (entity.getEntityWorld().isRemote) return;
+
+		BounceHandler.bouncingBlocks.removeIf(bouncyBlock -> {
+			if (bouncyBlock.getWorld() == entity.getEntityWorld().provider.getDimension()) {
+				return entity.getEntityWorld().getTotalWorldTime() - bouncyBlock.getTime() >= bouncyBlock.getExpiry();
+			}
+			return false;
+		});
+
+		if (!entity.isPotionActive(ModPotions.BOUNCING)) {
+			boolean success = false;
+
+			int x1 = entity.getPosition().getX();
+			int y1 = entity.getPosition().getY();
+			int z1 = entity.getPosition().getZ();
+
+			for (BounceHandler.BouncyBlock bouncyBlock : BounceHandler.bouncingBlocks) {
+				int x2 = bouncyBlock.getPos().getX();
+				int y2 = bouncyBlock.getPos().getY();
+				int z2 = bouncyBlock.getPos().getZ();
+				Minecraft.getMinecraft().player.sendChatMessage(bouncyBlock.getPos() + " - " + entity.getPosition().add(sub));
+				if (bouncyBlock.getWorld() == entity.getEntityWorld().provider.getDimension() &&
+						((x1 >= x2 - 1 || x1 <= x2 + 1)
+								&& (y1 >= y2 - 1 || y1 <= y2 + 1)
+								&& (z1 >= z2 - 1 || z1 <= z2 + 1))) {
+					success = true;
+					break;
+				}
+			}
+			if (!success) return;
+		}
+
+		//	if (event.getDistance() > 2) {
+
+		event.setCanceled(true);
+		event.setDamageMultiplier(0);
+		entity.fallDistance = 0;
+		entity.isAirBorne = true;
+		entity.onGround = false;
+		entity.motionY = -entity.motionY;
+		entity.velocityChanged = true;
+
+		if (entity instanceof EntityPlayerMP)
+			((EntityPlayerMP) entity).connection.sendPacket(new SPacketEntityVelocity(entity));
+		//	PacketHandler.NETWORK.sendToServer(new PacketBounce());
+		//	PacketHandler.NETWORK.sendToServer(new PacketAddBouncyEntity(entity, entity.motionY));
+		//	BounceHandler.addBounceHandler(entity, entity.motionY);
+
+		entity.playSound(SoundEvents.ENTITY_SLIME_SQUISH, 1f, 1f);
+		//	}
+	}
+
+	@SubscribeEvent
+	public void worldTick(TickEvent.WorldTickEvent event) {
+
 	}
 
 	@SubscribeEvent
@@ -82,15 +159,12 @@ public class EventHandler {
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void underworldTeleport(LivingHurtEvent event) {
 		if (!(event.getEntity() instanceof EntityPlayer)) return;
-		if (fallResetter.contains(event.getEntity().getUniqueID()))
-		{
-			if (event.getEntity().posY < 0 || event.getEntity().posY > event.getEntity().world.getHeight())
-			{
+		if (fallResetter.contains(event.getEntity().getUniqueID())) {
+			if (event.getEntity().posY < 0 || event.getEntity().posY > event.getEntity().world.getHeight()) {
 				event.setCanceled(true);
 				return;
 			}
-			if (event.getSource() == DamageSource.FALL)
-			{
+			if (event.getSource() == DamageSource.FALL) {
 				fallResetter.remove(event.getEntity().getUniqueID());
 				event.setCanceled(true);
 				return;
