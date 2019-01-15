@@ -6,6 +6,7 @@ import com.teamwizardry.librarianlib.features.animator.Easing;
 import com.teamwizardry.librarianlib.features.animator.animations.BasicAnimation;
 import com.teamwizardry.librarianlib.features.animator.animations.ScheduledEventAnimation;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.librarianlib.features.math.Vec2d;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.sprite.Sprite;
 import com.teamwizardry.wizardry.Wizardry;
@@ -16,6 +17,7 @@ import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.api.util.RandUtil;
+import com.teamwizardry.wizardry.client.gui.worktable.TableModule;
 import com.teamwizardry.wizardry.common.item.pearlbelt.IPearlBelt;
 import com.teamwizardry.wizardry.common.network.belt.PacketSetBeltScrollSlotServer;
 import com.teamwizardry.wizardry.init.ModItems;
@@ -367,7 +369,7 @@ public class PearlRadialUIRenderer {
 						changing = true;
 
 						final Pair<Integer, List<ItemStack>> tmp = newPearls;
-						ScheduledEventAnimation timer = new ScheduledEventAnimation(30f, () -> {
+						ScheduledEventAnimation timer = new ScheduledEventAnimation(16, () -> {
 							snapshotPearls = tmp;
 							pearls = tmp.getSecond();
 							changing = false;
@@ -376,10 +378,11 @@ public class PearlRadialUIRenderer {
 					} else {
 						final Pair<Integer, List<ItemStack>> tmp = newPearls;
 
-						pearls = tmp.getSecond();
 						changing = true;
 
-						ANIMATOR.add(new ScheduledEventAnimation(30f, () -> {
+						ANIMATOR.add(new ScheduledEventAnimation(8, () -> pearls = tmp.getSecond()));
+
+						ANIMATOR.add(new ScheduledEventAnimation(16, () -> {
 							snapshotPearls = tmp;
 							changing = false;
 						}));
@@ -405,19 +408,19 @@ public class PearlRadialUIRenderer {
 						centerRadiusAnim = new BasicAnimation<>(INSTANCE, "centerRadius");
 						centerRadiusAnim.setTo(100.0);
 						centerRadiusAnim.setEasing(Easing.easeInOutQuart);
-						centerRadiusAnim.setDuration(30f);
+						centerRadiusAnim.setDuration(16);
 						ANIMATOR.add(centerRadiusAnim);
 
 						parasolGradientAnim = new BasicAnimation<>(INSTANCE, "parasolGradientRadius");
 						parasolGradientAnim.setTo(100.0);
 						parasolGradientAnim.setEasing(Easing.easeOutQuart);
-						parasolGradientAnim.setDuration(30f);
+						parasolGradientAnim.setDuration(16);
 						ANIMATOR.add(parasolGradientAnim);
 
 						itemExpansionAnim = new BasicAnimation<>(INSTANCE, "itemExpansion");
 						itemExpansionAnim.setTo(0);
 						itemExpansionAnim.setEasing(Easing.easeOutQuart);
-						itemExpansionAnim.setDuration(20f);
+						itemExpansionAnim.setDuration(16);
 						ANIMATOR.add(itemExpansionAnim);
 
 						wasEmpty = true;
@@ -432,26 +435,54 @@ public class PearlRadialUIRenderer {
 						ANIMATOR.add(heartBeatAnim);
 					}
 
+				} else if (!snapshotPearls.getSecond().isEmpty() && changing) {
+
+					parasolGradientAnim = new BasicAnimation<>(INSTANCE, "parasolGradientRadius");
+					parasolGradientAnim.setTo(INSTANCE.centerRadius);
+					parasolGradientAnim.setEasing(Easing.easeOutQuart);
+					parasolGradientAnim.setCompletion(() -> {
+						parasolGradientAnim = new BasicAnimation<>(INSTANCE, "parasolGradientRadius");
+						parasolGradientAnim.setTo(120);
+						parasolGradientAnim.setEasing(Easing.easeOutQuart);
+						parasolGradientAnim.setDuration(8);
+						ANIMATOR.add(parasolGradientAnim);
+					});
+					parasolGradientAnim.setDuration(8);
+					ANIMATOR.add(parasolGradientAnim);
+
+					itemExpansionAnim = new BasicAnimation<>(INSTANCE, "itemExpansion");
+					itemExpansionAnim.setTo(0);
+					itemExpansionAnim.setEasing(Easing.easeOutQuart);
+					itemExpansionAnim.setDuration(8);
+					itemExpansionAnim.setCompletion(() -> {
+						itemExpansionAnim = new BasicAnimation<>(INSTANCE, "itemExpansion");
+						itemExpansionAnim.setTo(1f);
+						itemExpansionAnim.setEasing(Easing.easeOutQuart);
+						itemExpansionAnim.setDuration(8);
+						ANIMATOR.add(itemExpansionAnim);
+					});
+					ANIMATOR.add(itemExpansionAnim);
+
 				} else if (wasEmpty) {
-					centerText = "Scroll to select\na pearl.\n\nRight Click to pull\nthe pearl out.";
+					centerText = "Shift + Scroll to select\na pearl.\n\nRight Click to pull\nthe pearl out.";
 
 					centerRadiusAnim = new BasicAnimation<>(INSTANCE, "centerRadius");
 					centerRadiusAnim.setTo(SELECTOR_RADIUS - SELECTOR_WIDTH / 2.0);
 					centerRadiusAnim.setEasing(Easing.easeInOutQuart);
-					centerRadiusAnim.setDuration(30f);
+					centerRadiusAnim.setDuration(16);
 					ANIMATOR.add(centerRadiusAnim);
 
 					parasolGradientAnim = new BasicAnimation<>(INSTANCE, "parasolGradientRadius");
 					parasolGradientAnim.setTo(INSTANCE.centerRadius + 20);
 					parasolGradientAnim.setFrom(INSTANCE.centerRadius);
 					parasolGradientAnim.setEasing(Easing.easeOutQuart);
-					parasolGradientAnim.setDuration(30f);
+					parasolGradientAnim.setDuration(16);
 					ANIMATOR.add(parasolGradientAnim);
 
 					itemExpansionAnim = new BasicAnimation<>(INSTANCE, "itemExpansion");
 					itemExpansionAnim.setTo(1f);
 					itemExpansionAnim.setEasing(Easing.easeOutQuart);
-					itemExpansionAnim.setDuration(20f);
+					itemExpansionAnim.setDuration(16);
 					ANIMATOR.add(itemExpansionAnim);
 
 					wasEmpty = false;
@@ -484,6 +515,7 @@ public class PearlRadialUIRenderer {
 					int thing1 = GL11.glGetInteger(GL11.GL_ALPHA_TEST_FUNC);
 					float thing2 = GL11.glGetFloat(GL11.GL_ALPHA_TEST_REF);
 
+					GlStateManager.enableAlpha();
 					GlStateManager.alphaFunc(GL11.GL_ALWAYS, 1);
 					GlStateManager.enableBlend();
 					GlStateManager.disableTexture2D();
@@ -510,15 +542,15 @@ public class PearlRadialUIRenderer {
 
 					Vec3d pearlOffset = normal.scale(INSTANCE.centerRadius / 2).scale(INSTANCE.itemExpansion);
 
-					RenderHelper.enableGUIStandardItemLighting();
-					GlStateManager.enableRescaleNormal();
-					GlStateManager.enableTexture2D();
-
-					GlStateManager.scale(2, 2, 2);
-					GlStateManager.translate(pearlOffset.x - 8, pearlOffset.y - 8, 0);
-					GlStateManager.color(1f, 1f, 1f, INSTANCE.itemExpansion);
-
 					{
+						RenderHelper.enableGUIStandardItemLighting();
+						GlStateManager.enableRescaleNormal();
+						GlStateManager.enableTexture2D();
+
+						GlStateManager.scale(2, 2, 2);
+						GlStateManager.translate(pearlOffset.x - 8, pearlOffset.y - 8, 10);
+						GlStateManager.color(1f, 1f, 1f, INSTANCE.itemExpansion);
+
 						IBakedModel model = Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(pearl, null, Minecraft.getMinecraft().player);
 
 						GlStateManager.pushMatrix();
@@ -557,55 +589,62 @@ public class PearlRadialUIRenderer {
 							GlStateManager.popMatrix();
 						}
 
+						GlStateManager.scale(1, 1, 1);
+
 						GlStateManager.disableAlpha();
 						GlStateManager.disableRescaleNormal();
 						GlStateManager.disableLighting();
 						GlStateManager.popMatrix();
 
+						GlStateManager.translate(-pearlOffset.x + 8, -pearlOffset.y + 8, 0);
 						Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 						Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
-
-						//	Minecraft.getMinecraft().getRenderItem().renderItemOverlayIntoGUI(Minecraft.getMinecraft().fontRenderer, pearl, 0, 0, "");
+						GlStateManager.disableRescaleNormal();
+						RenderHelper.disableStandardItemLighting();
 					}
 
-					GlStateManager.translate(-pearlOffset.x + 8, -pearlOffset.y + 8, 0);
+					GlStateManager.color(1f, 1f, 1f, INSTANCE.itemExpansion);
 					GlStateManager.scale(1, 1, 1);
 
-					GlStateManager.disableRescaleNormal();
-					RenderHelper.disableStandardItemLighting();
-
-
-					GlStateManager.color(1f, 1f, 1f, INSTANCE.itemExpansion);
 					List<SpellRing> rings = SpellUtils.getSpellChains(pearl);
+					float startAngle = angle + 0.25f;
+					float endAngle = angle + anglePerColor - 0.25f;
+					float anglePerRing = (endAngle - startAngle) / (rings.size() + 1);
 					float size = 10;
-					for (SpellRing parentRing : rings) {
-						ModuleInstance parentModule = parentRing.getModule();
-						if (parentModule == null) continue;
-						Sprite parentSprite = new Sprite(parentModule.getIconLocation());
+					for (int i = 0; i < rings.size(); i++) {
+						float currentAngle = startAngle + (i + 1) * anglePerRing;
+						double x = MathHelper.cos(currentAngle);
+						double y = MathHelper.sin(currentAngle);
+						Vec3d chainNormal = new Vec3d(x, y, 0).normalize();
+						Vec3d chainOffset = chainNormal.scale((INSTANCE.centerRadius / 2.0) * INSTANCE.itemExpansion).add(chainNormal.scale(size).scale(INSTANCE.itemExpansion));
 
-						Vec3d parentVec = pearlOffset.add(normal.scale(size).scale(INSTANCE.itemExpansion));
-
-						SpritePlate.bind();
-						SpritePlate.draw(0, (float) parentVec.x - (size / 2f), (float) parentVec.y - (size / 2f), size, size);
-
-						parentSprite.bind();
-						parentSprite.draw(0, (float) parentVec.x - ((size - 4) / 2f), (float) parentVec.y - ((size - 4) / 2f), size - 4, size - 4);
-
-						List<SpellRing> children = new ArrayList<>(parentRing.getAllChildRings());
-						for (int i = 0; i < children.size(); i++) {
-							SpellRing ring = children.get(i);
-
+						List<SpellRing> allSpellRings = SpellUtils.getAllSpellRings(rings.get(i));
+						for (int k = 0; k < allSpellRings.size(); k++) {
+							SpellRing ring = allSpellRings.get(k);
 							ModuleInstance module = ring.getModule();
 							if (module == null) continue;
 							Sprite moduleSprite = new Sprite(module.getIconLocation());
 
-							Vec3d moduleVec = pearlOffset.add(normal.scale(size)).add(normal.scale(size * 1.5).scale(i + 1).scale(INSTANCE.itemExpansion));
+							Vec3d moduleVec = chainOffset.add(chainNormal.scale(size * 1.5).scale(k).scale(INSTANCE.itemExpansion));
 
 							SpritePlate.bind();
 							SpritePlate.draw(0, (float) moduleVec.x - (size / 2f), (float) moduleVec.y - (size / 2f), size, size);
 
 							moduleSprite.bind();
 							moduleSprite.draw(0, (float) moduleVec.x - ((size - 1) / 2f), (float) moduleVec.y - ((size - 1) / 2f), size - 1, size - 1);
+
+							if (k + 1 < allSpellRings.size()) {
+								SpellRing linksTo = allSpellRings.get(k + 1);
+								ModuleInstance linksToModule = linksTo.getModule();
+								if (linksToModule == null) continue;
+								Vec3d linksToVec = chainOffset.add(chainNormal.scale(size * 1.5).scale(k + 1).scale(INSTANCE.itemExpansion));
+
+								TableModule.drawWire(
+										new Vec2d(moduleVec.x, moduleVec.y),
+										new Vec2d(linksToVec.x, linksToVec.y),
+										TableModule.getColorForModule(module.getModuleType()),
+										TableModule.getColorForModule(linksToModule.getModuleType()));
+							}
 						}
 					}
 
