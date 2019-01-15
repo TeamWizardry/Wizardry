@@ -42,8 +42,6 @@ import java.util.UUID;
 import java.util.function.Function;
 
 import static com.teamwizardry.wizardry.client.gui.worktable.WorktableGui.*;
-import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 
 public class TableModule extends GuiComponent {
 
@@ -64,6 +62,7 @@ public class TableModule extends GuiComponent {
 	 * ALWAYS from the context of null. Never to any other component.
 	 */
 	private Vec2d initialPos;
+
 	public TableModule(@Nonnull WorktableGui worktable, @Nonnull ModuleInstance module, boolean draggable, boolean benign) {
 		super(0, 0, PLATE.getWidth(), PLATE.getHeight());
 		this.worktable = worktable;
@@ -330,11 +329,15 @@ public class TableModule extends GuiComponent {
 	}
 
 	public static void drawWire(Vec2d start, Vec2d end, Color primary, Color secondary) {
+		drawWire(start, end, primary, secondary, 1f);
+	}
+
+	public static void drawWire(Vec2d start, Vec2d end, Color primary, Color secondary, float alpha) {
 		GlStateManager.pushMatrix();
 		GlStateManager.enableBlend();
+		GlStateManager.enableAlpha();
 		GlStateManager.disableCull();
-		GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		GlStateManager.color(1, 1, 1, 1);
+		GlStateManager.shadeModel(GL11.GL_SMOOTH);
 		GlStateManager.translate(0, 0, -10);
 		STREAK.bind();
 		InterpBezier2D bezier = new InterpBezier2D(start, end);
@@ -381,10 +384,10 @@ public class TableModule extends GuiComponent {
 			Vec2d point3 = point.add(normal.mul(0.5)).sub(perp);
 			Vec2d point4 = lastPoint.sub(normal.mul(0.5)).sub(perp);
 
-			vb.pos(point1.getXf(), point1.getYf(), 0).tex(0, 0).color(r, g, b, 1f).endVertex();
-			vb.pos(point2.getXf(), point2.getYf(), 0).tex(0, 1).color(r, g, b, 1f).endVertex();
-			vb.pos(point3.getXf(), point3.getYf(), 0).tex(1, 0).color(r, g, b, 1f).endVertex();
-			vb.pos(point4.getXf(), point4.getYf(), 0).tex(1, 1).color(r, g, b, 1f).endVertex();
+			vb.pos(point1.getXf(), point1.getYf(), 0).tex(0, 0).color(r, g, b, alpha).endVertex();
+			vb.pos(point2.getXf(), point2.getYf(), 0).tex(0, 1).color(r, g, b, alpha).endVertex();
+			vb.pos(point3.getXf(), point3.getYf(), 0).tex(1, 0).color(r, g, b, alpha).endVertex();
+			vb.pos(point4.getXf(), point4.getYf(), 0).tex(1, 1).color(r, g, b, alpha).endVertex();
 
 			lastPoint = point;
 		}

@@ -375,6 +375,13 @@ public class PearlRadialUIRenderer {
 							changing = false;
 						});
 						ANIMATOR.add(timer);
+
+					} else if (snapshotPearls.getSecond().isEmpty()) {
+
+						final Pair<Integer, List<ItemStack>> tmp = newPearls;
+						pearls = tmp.getSecond();
+						snapshotPearls = tmp;
+
 					} else {
 						final Pair<Integer, List<ItemStack>> tmp = newPearls;
 
@@ -468,7 +475,7 @@ public class PearlRadialUIRenderer {
 
 					centerRadiusAnim = new BasicAnimation<>(INSTANCE, "centerRadius");
 					centerRadiusAnim.setTo(SELECTOR_RADIUS - SELECTOR_WIDTH / 2.0);
-					centerRadiusAnim.setEasing(Easing.easeInOutQuart);
+					centerRadiusAnim.setEasing(Easing.easeOutQuart);
 					centerRadiusAnim.setDuration(16);
 					ANIMATOR.add(centerRadiusAnim);
 
