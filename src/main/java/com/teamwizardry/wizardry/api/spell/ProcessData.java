@@ -139,10 +139,12 @@ public class ProcessData {
 			if( !isClassEqual(storageTypeClazz, object.getClass()) )
 				throw new DataSerializationException("Storage object to deserialize must be of class '" + storageTypeClazz + "'");
 			E obj = ioProcess.deserialize(world, (T) object);
-			if( obj == null )
-				throw new DataSerializationException("Deserialized object is null.");
-			if( !dataTypeClazz.isInstance(obj) )
-				throw new DataSerializationException("Deserialized object must be of class '" + dataTypeClazz + "', but is actually of '" + obj.getClass() + "'");
+			if( obj != null ) {
+				if( !dataTypeClazz.isInstance(obj) )
+					throw new DataSerializationException("Deserialized object must be of class '" + dataTypeClazz + "', but is actually of '" + obj.getClass() + "'");
+			}
+//WORKAROUND			else
+//WORKAROUND				throw new DataSerializationException("Deserialized object is null.");
 			return obj;
 		}
 	}
