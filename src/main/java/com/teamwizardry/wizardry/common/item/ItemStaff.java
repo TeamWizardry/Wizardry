@@ -8,12 +8,14 @@ import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
 import com.teamwizardry.wizardry.api.item.ICooldown;
 import com.teamwizardry.wizardry.api.item.INacreProduct;
+import com.teamwizardry.wizardry.api.item.pearlswapping.IPearlSwappable;
 import com.teamwizardry.wizardry.api.spell.IBlockSelectable;
 import com.teamwizardry.wizardry.api.spell.SpellData;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
 import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.common.module.defaults.IModuleOverrides;
 import com.teamwizardry.wizardry.init.ModItems;
+import com.teamwizardry.wizardry.init.ModKeybinds;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.util.ITooltipFlag;
@@ -42,15 +44,28 @@ import java.util.List;
 /**
  * Created by Demoniaque on 6/7/2016.
  */
-public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProduct, ICooldown {
+public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProduct, ICooldown, IPearlSwappable {
 
 	public ItemStaff() {
 		super("staff", "staff", "staff_pearl");
 		setMaxStackSize(1);
 	}
 
+	@Nonnull
+	@Override
+	public ItemStack swapPearl(ItemStack pearlHolder, ItemStack stackSwipeTo) {
+		ItemStack extractedPearl = new ItemStack(ModItems.PEARL_NACRE);
+		SpellUtils.copySpell(pearlHolder, extractedPearl);
+
+		SpellUtils.copySpell(stackSwipeTo, pearlHolder);
+		pearlHolder.setItemDamage(1);
+
+		return extractedPearl;
+	}
+
 	@Override
 	public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer playerIn, EntityLivingBase target, EnumHand hand) {
+		if (ModKeybinds.pearlSwapping.isKeyDown()) return false;
 		if (isCoolingDown(playerIn.world, stack)) return false;
 		if (BaublesSupport.getItem(playerIn, ModItems.CREATIVE_HALO, ModItems.FAKE_HALO, ModItems.REAL_HALO).isEmpty())
 			return false;
@@ -68,6 +83,8 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 	@Nonnull
 	@Override
 	public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float par8, float par9, float par10) {
+		if (ModKeybinds.pearlSwapping.isKeyDown()) return EnumActionResult.PASS;
+
 		ItemStack stack = player.getHeldItem(hand);
 		if (player.isSneaking()) {
 			for (SpellRing spellRing : SpellUtils.getAllSpellRings(stack)) {
@@ -98,6 +115,12 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 	@Nonnull
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, @Nonnull EnumHand hand) {
+		if (ModKeybinds.pearlSwapping.isKeyDown()) {
+			ItemStack stack = player.getHeldItem(hand);
+			swapOnRightClick(player, stack);
+			return new ActionResult<>(EnumActionResult.PASS, stack);
+		}
+
 		ItemStack stack = player.getHeldItem(hand);
 		if (player.isSneaking()) {
 			for (SpellRing spellRing : SpellUtils.getAllSpellRings(stack)) {
@@ -136,6 +159,7 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 
 	@Override
 	public void onUsingTick(ItemStack stack, EntityLivingBase player, int count) {
+		if (ModKeybinds.pearlSwapping.isKeyDown()) return;
 		if (isCoolingDown(player.world, stack)) return;
 		if (!(player instanceof EntityPlayer)) return;
 
@@ -303,7 +327,7 @@ public class ItemStaff extends ItemMod implements INacreProduct.INacreDecayProdu
 				return 72000;
 			} else if (spellRing.getChargeUpTime() > maxChargeUp)
 				maxChargeUp = spellRing.getChargeUpTime();
-			
+
 			IModuleOverrides overrides = spellRing.getOverrideHandler().getConsumerInterface(IModuleOverrides.class);
 			maxChargeUp = overrides.modifyChargeupTime(maxChargeUp);
 		}

@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.api.item.wheels;
+package com.teamwizardry.wizardry.api.item.pearlswapping;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

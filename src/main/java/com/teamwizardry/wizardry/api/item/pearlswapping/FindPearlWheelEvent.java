@@ -1,4 +1,4 @@
-package com.teamwizardry.wizardry.api.item.wheels;
+package com.teamwizardry.wizardry.api.item.pearlswapping;
 
 import com.google.common.collect.Lists;
 import gnu.trove.map.hash.TObjectIntHashMap;

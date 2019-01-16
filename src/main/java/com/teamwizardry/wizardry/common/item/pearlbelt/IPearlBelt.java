@@ -4,9 +4,10 @@ import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.item.INacreProduct;
-import com.teamwizardry.wizardry.api.item.wheels.IPearlWheelHolder;
-import com.teamwizardry.wizardry.common.network.belt.PacketSetBeltScrollSlotClient;
+import com.teamwizardry.wizardry.api.item.pearlswapping.IPearlWheelHolder;
+import com.teamwizardry.wizardry.common.network.pearlswapping.PacketSetScrollSlotClient;
 import com.teamwizardry.wizardry.init.ModItems;
+import com.teamwizardry.wizardry.init.ModKeybinds;
 import com.teamwizardry.wizardry.init.ModSounds;
 import kotlin.jvm.functions.Function2;
 import net.minecraft.client.Minecraft;
@@ -68,10 +69,10 @@ public interface IPearlBelt extends IPearlWheelHolder, INacreProduct.INacreDecay
 						}
 
 			if (changed) {
-				ItemNBTHelper.setInt(belt, "scroll_slot", 0);
+				ItemNBTHelper.setInt(belt, "scroll_slot", -1);
 				player.playSound(ModSounds.BELL_TING, 1f, 1f);
 			}
-		} else {
+		} else if (ModKeybinds.pearlSwapping.isKeyDown()) {
 			int scrollSlot = ItemNBTHelper.getInt(belt, "scroll_slot", -1);
 			if (scrollSlot == -1) return;
 
@@ -80,10 +81,11 @@ public interface IPearlBelt extends IPearlWheelHolder, INacreProduct.INacreDecay
 
 			player.addItemStackToInventory(output);
 			ItemNBTHelper.setInt(belt, "scroll_slot", Math.max(scrollSlot - 1, 0));
-
-			if (player instanceof EntityPlayerMP)
-				PacketHandler.NETWORK.sendTo(new PacketSetBeltScrollSlotClient(player.inventory.getSlotFor(belt), -1), (EntityPlayerMP) player);
 		}
+
+
+		if (player instanceof EntityPlayerMP)
+			PacketHandler.NETWORK.sendTo(new PacketSetScrollSlotClient(player.inventory.getSlotFor(belt), -1), (EntityPlayerMP) player);
 	}
 
 	default IItemHandler getBeltPearls(ItemStack stack) {

@@ -1,6 +1,7 @@
 package com.teamwizardry.wizardry.crafting.irecipies;
 
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
+import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.init.ModItems;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
@@ -23,8 +24,7 @@ public class RecipeMountPearl extends IForgeRegistryEntry.Impl<IRecipe> implemen
 
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);
-			if (stack.getItem() == ModItems.RING
-					|| stack.getItem() == ModItems.STAFF) {
+			if (stack.getItem() == ModItems.STAFF) {
 
 				if (stack.getItemDamage() == 0)
 					foundBaseItem = true;
@@ -42,25 +42,24 @@ public class RecipeMountPearl extends IForgeRegistryEntry.Impl<IRecipe> implemen
 	@Override
 	public ItemStack getCraftingResult(@Nonnull InventoryCrafting inv) {
 		ItemStack pearl = ItemStack.EMPTY;
-		ItemStack baseItem = ItemStack.EMPTY;
+		ItemStack staff = ItemStack.EMPTY;
 
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack stack = inv.getStackInSlot(i);
-			if (stack.getItem() == ModItems.RING
-					|| stack.getItem() == ModItems.STAFF) {
+			if (stack.getItem() == ModItems.STAFF) {
 				if (stack.getItemDamage() == 0)
-					baseItem = stack;
+					staff = stack;
 			}
 			if (stack.getItem() == ModItems.PEARL_NACRE)
 				if (ItemNBTHelper.getBoolean(stack, "infused", false))
 					pearl = stack;
 		}
 
-		ItemStack baseItemCopy = baseItem.copy();
-		baseItemCopy.setItemDamage(1);
-		if (pearl.hasTagCompound()) baseItemCopy.setTagCompound(pearl.getTagCompound());
+		ItemStack newStaff = staff.copy();
+		SpellUtils.copySpell(pearl, newStaff);
+		newStaff.setItemDamage(1);
 
-		return baseItemCopy;
+		return newStaff;
 	}
 
 	@Override

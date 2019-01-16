@@ -6,7 +6,7 @@ import baubles.api.IBauble;
 import baubles.api.cap.IBaublesItemHandler;
 import com.google.common.collect.ImmutableList;
 import com.teamwizardry.wizardry.Wizardry;
-import com.teamwizardry.wizardry.api.item.wheels.FindPearlWheelEvent;
+import com.teamwizardry.wizardry.api.item.pearlswapping.FindPearlWheelEvent;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;

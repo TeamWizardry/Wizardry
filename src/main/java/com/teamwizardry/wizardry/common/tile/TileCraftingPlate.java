@@ -2,14 +2,12 @@ package com.teamwizardry.wizardry.common.tile;
 
 import com.teamwizardry.librarianlib.features.autoregister.TileRegister;
 import com.teamwizardry.librarianlib.features.base.block.tile.module.ModuleInventory;
-import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.librarianlib.features.network.PacketHandler;
 import com.teamwizardry.librarianlib.features.saving.Module;
 import com.teamwizardry.librarianlib.features.saving.Save;
 import com.teamwizardry.librarianlib.features.tesr.TileRenderer;
 import com.teamwizardry.wizardry.Wizardry;
 import com.teamwizardry.wizardry.api.ConfigValues;
-import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.block.TileManaInteractor;
 import com.teamwizardry.wizardry.api.capability.mana.CapManager;
 import com.teamwizardry.wizardry.api.capability.mana.IWizardryCapability;
@@ -18,6 +16,7 @@ import com.teamwizardry.wizardry.api.item.IInfusable;
 import com.teamwizardry.wizardry.api.item.INacreProduct;
 import com.teamwizardry.wizardry.api.spell.SpellBuilder;
 import com.teamwizardry.wizardry.api.spell.SpellRing;
+import com.teamwizardry.wizardry.api.spell.SpellUtils;
 import com.teamwizardry.wizardry.api.util.RandUtil;
 import com.teamwizardry.wizardry.client.render.block.TileCraftingPlateRenderer;
 import com.teamwizardry.wizardry.common.block.BlockCraftingPlate;
@@ -223,13 +222,6 @@ public class TileCraftingPlate extends TileManaInteractor {
 				inputPearl.getHandler().setStackInSlot(0, ItemStack.EMPTY);
 				outputPearl.getHandler().setStackInSlot(0, infusedPearl);
 
-				//Color lastColor = SpellUtils.getAverageSpellColor(builder.getSpell());
-				//float[] hsv = ColorUtils.getHSVFromColor(lastColor);
-				//ItemNBTHelper.setFloat(infusedPearl, "hue", hsv[0]);
-				//ItemNBTHelper.setFloat(infusedPearl, "saturation", hsv[1]);
-				ItemNBTHelper.setFloat(infusedPearl, Constants.NBT.RAND, world.rand.nextFloat());
-				ItemNBTHelper.setBoolean(infusedPearl, "infused", true);
-
 				// Process spellData multipliers based on nacre quality
 				double pearlMultiplier = 1;
 				if (infusedPearl.getItem() instanceof INacreProduct) {
@@ -249,7 +241,8 @@ public class TileCraftingPlate extends TileManaInteractor {
 				for (SpellRing spellRing : builder.getSpell()) {
 					list.appendTag(spellRing.serializeNBT());
 				}
-				ItemNBTHelper.setList(infusedPearl, Constants.NBT.SPELL, list);
+
+				SpellUtils.infuseSpell(infusedPearl, list);
 
 				markDirty();
 

@@ -3,6 +3,7 @@ package com.teamwizardry.wizardry.api.spell;
 import com.teamwizardry.librarianlib.features.helpers.ItemNBTHelper;
 import com.teamwizardry.wizardry.api.Constants;
 import com.teamwizardry.wizardry.api.item.BaublesSupport;
+import com.teamwizardry.wizardry.api.item.INacreProduct;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstance;
 import com.teamwizardry.wizardry.api.spell.module.ModuleInstanceModifier;
 import com.teamwizardry.wizardry.api.util.ColorUtils;
@@ -17,6 +18,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -27,7 +29,58 @@ public class SpellUtils {
 
 	// TODO: config this
 	public final static Item CODE_LINE_BREAK = ModItems.DEVIL_DUST;
-	
+
+	public static void copySpell(ItemStack from, ItemStack to) {
+		NBTTagList spell = getSpell(from);
+		if (spell == null) return;
+
+		if (to.getItem() instanceof INacreProduct.INacreDecayProduct && from.getItem() instanceof INacreProduct.INacreDecayProduct) {
+			ItemNBTHelper.setFloat(to, Constants.NBT.RAND, ItemNBTHelper.getFloat(from, Constants.NBT.RAND, -1));
+		}
+
+		infuseSpell(to, spell);
+	}
+
+	public static void transferSpell(ItemStack from, ItemStack to) {
+		NBTTagList spell = uninfuseSpell(from);
+		if (spell == null) return;
+
+		if (to.getItem() instanceof INacreProduct.INacreDecayProduct && from.getItem() instanceof INacreProduct.INacreDecayProduct) {
+			ItemNBTHelper.setFloat(to, Constants.NBT.RAND, ItemNBTHelper.getFloat(from, Constants.NBT.RAND, -1));
+		}
+
+		infuseSpell(to, spell);
+	}
+
+	@Nullable
+	public static NBTTagList getSpell(ItemStack spellHolder) {
+		if (ItemNBTHelper.verifyExistence(spellHolder, Constants.NBT.SPELL)) {
+			return ItemNBTHelper.getList(spellHolder, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+		}
+
+		return null;
+	}
+
+	public static void infuseSpell(ItemStack toInfuse, NBTTagList spell) {
+		ItemNBTHelper.setBoolean(toInfuse, "infused", true);
+		ItemNBTHelper.setList(toInfuse, Constants.NBT.SPELL, spell);
+	}
+
+	@Nullable
+	public static NBTTagList uninfuseSpell(ItemStack toUninfuse) {
+		if (ItemNBTHelper.verifyExistence(toUninfuse, "infused"))
+			ItemNBTHelper.removeEntry(toUninfuse, "infused");
+
+		if (ItemNBTHelper.verifyExistence(toUninfuse, Constants.NBT.SPELL)) {
+			NBTTagList spell = ItemNBTHelper.getList(toUninfuse, Constants.NBT.SPELL, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+			ItemNBTHelper.removeEntry(toUninfuse, Constants.NBT.SPELL);
+
+			return spell;
+		}
+
+		return null;
+	}
+
 	public static Color getAverageSpellColor(List<SpellRing> spellChains) {
 		List<Color> colorSet = new ArrayList<>();
 
@@ -99,18 +152,15 @@ public class SpellUtils {
 		}
 		return rings;
 	}
-	
-	public static List<List<ModuleInstance>> deserializeModuleList(@Nonnull NBTTagList list)
-	{
+
+	public static List<List<ModuleInstance>> deserializeModuleList(@Nonnull NBTTagList list) {
 		List<List<ModuleInstance>> modules = new ArrayList<>();
 		List<ModuleInstance> moduleList = new ArrayList<>();
-		for (int i = 0; i < list.tagCount(); i++)
-		{
+		for (int i = 0; i < list.tagCount(); i++) {
 			NBTBase base = list.get(i);
 			if (!(base instanceof NBTTagString)) continue;
 			NBTTagString string = (NBTTagString) base;
-			if (string.isEmpty())
-			{
+			if (string.isEmpty()) {
 				if (!moduleList.isEmpty())
 					modules.add(moduleList);
 				moduleList = new ArrayList<>();
@@ -123,19 +173,17 @@ public class SpellUtils {
 			modules.add(moduleList);
 		return modules;
 	}
-	
+
 	/**
 	 * Gets a list of items required to create the given list of spell module chains.
+	 *
 	 * @param modules The list of spell module chains.
 	 * @return A list of required items.
 	 */
-	public static List<ItemStack> getSpellItems(List<List<ModuleInstance>> modules)
-	{
+	public static List<ItemStack> getSpellItems(List<List<ModuleInstance>> modules) {
 		Deque<ItemStack> items = new ArrayDeque<>();
-		for (List<ModuleInstance> moduleList : modules)
-		{
-			for (ModuleInstance module : moduleList)
-			{
+		for (List<ModuleInstance> moduleList : modules) {
+			for (ModuleInstance module : moduleList) {
 				ItemStack stack = module.getItemStack();
 				ItemStack last = items.peekLast();
 				if (last == null)
@@ -153,11 +201,11 @@ public class SpellUtils {
 
 	/**
 	 * Gives a list of all non-modifier modules in a spell.
+	 *
 	 * @param modules The list of spell chains in the spell.
 	 * @return The list of spell chains containing only essential modules.
 	 */
-	public static List<List<ModuleInstance>> getEssentialModules(List<List<ModuleInstance>> modules)
-	{
+	public static List<List<ModuleInstance>> getEssentialModules(List<List<ModuleInstance>> modules) {
 		List<List<ModuleInstance>> essentialModules = new ArrayList<>();
 		modules.forEach(moduleList -> {
 			List<ModuleInstance> essentialList = new ArrayList<>();
@@ -169,7 +217,7 @@ public class SpellUtils {
 		});
 		return essentialModules;
 	}
-	
+
 	/**
 	 * Gets all SpellRings children from the passed spellRing object with itself included.
 	 *
