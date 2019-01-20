@@ -34,7 +34,7 @@ public class SpellUtils {
 		NBTTagList spell = getSpell(from);
 		if (spell == null) return;
 
-		if (to.getItem() instanceof INacreProduct.INacreDecayProduct && from.getItem() instanceof INacreProduct.INacreDecayProduct) {
+		if (to.getItem() instanceof INacreProduct && from.getItem() instanceof INacreProduct) {
 			ItemNBTHelper.setFloat(to, Constants.NBT.RAND, ItemNBTHelper.getFloat(from, Constants.NBT.RAND, -1));
 		}
 
